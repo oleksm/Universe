@@ -1,18 +1,32 @@
 # yaml-language-server: $schema=../../schema/structure.schema.yaml
-identity:
-  key: structure.platform
-  name: "Halvard platform"
-  maker: org.halvard
-  kind: station
-  revision: outdated
-  description: "An orbital platform, in vacuum and free fall: an open truss deck carrying 16 pads, the main structure along one edge with an unpressurised hangar inside. Station frame (the game's, crates/core/world/src/station.rs): the deck faces +y, its top at y -100, its bottom at y -150, across x -300 to 300, along z -225 to 375; the main structure from z -375 to -225, y -150 to 150, its hangar door on its face at z -225. The pads, 90 m across (a 45 m capture radius), in a 4 x 4 grid at 150 m: x -225, -75, 75, 225 and z -150, 0, 150, 300. Nothing on it is built for weight: in orbit the deck takes berthing and the station's slow turn, so it is a space frame, not a slab. The deck: primary Warren trusses 50 m deep along every pad-grid line between the pads (x -300, -150, 0, 150, 300 and z -225, -75, 75, 225, 375), a 3 m strut lattice under a walkway grating on top, and a pad plate with berthing clamps at each pad. The main structure: a strut-lattice hall clad in 2 mm aluminium for shielding from sun and debris; the hangar a 200 x 120 x 80 m bay behind a door 100 m wide and 60 m tall (y -100 to -40), its crew and plant in pressurised modules inside the hall, not yet designed. The fitted transceiver and relay are separate."
-physical:
-  length: 600
-  width: 750
-  height: 300
+# built_of and physical.mass written by tools/standards/platform.py; the rest by hand.
+identity: {key: structure.platform, name: Halvard platform, maker: org.halvard, kind: station, revision: outdated, description: 'An orbital platform, in vacuum and free fall: an open truss deck carrying 16 pads, the main structure along one edge with an unpressurised hangar inside. Station frame (the game''s, crates/core/world/src/station.rs): the deck faces +y, its top at y -100, its bottom at y -150, across x -300 to 300, along z -225 to 375; the main structure from z -375 to -225, y -150 to 150, its hangar door on its face at z -225. The pads, 90 m across (a 45 m capture radius), in a 4 x 4 grid at 150 m: x -225, -75, 75, 225 and z -150, 0, 150, 300. Nothing on it is built for weight: in orbit the deck takes berthing and the station''s slow turn, so it is a space frame, not a slab. The deck: primary lattice trusses 45 m deep (3 m thick) along every pad-grid line between the pads (x -300, -150, 0, 150, 300 and z -225, -75, 75, 225, 375), a 3 m strut lattice under a walkway grating on top, and a pad
+    plate with berthing clamps at each pad. The main structure: a strut-lattice hall clad in 2 mm aluminium for shielding from sun and debris; the hangar a 200 x 120 x 80 m bay behind a door 100 m wide and 60 m tall (y -100 to -40), its crew and plant in pressurised modules inside the hall, not yet designed. The fitted transceiver and relay are separate.'}
+physical: {length: 600, width: 750, height: 300, mass: 31808364}
 fit:
-  - { item: equipment.gate.transceiver.station, count: 1 }
-  - { item: equipment.gate.relay.hyper, count: 1 }
+- {item: equipment.gate.transceiver.station, count: 1}
+- {item: equipment.gate.relay.hyper, count: 1}
 basis:
-  - { of: [identity.description, physical], tier: invented, review: true, note: "Scope set 2026-10-14 for the modeller (blender asked). The envelope and datums are the game's (station.rs) so play stays as it is; the construction follows from free fall: a 50 m deep solid deck would be absurd, so the deck is a deep open truss. Members, masses and the pressurised modules not yet sized; struts from the kit (SFO 13) on a 0.5 m grid, aluminium 6061. Static: hangar door closed." }
-  - { of: [fit], tier: invented, review: true, note: "As the game has it (content/base/structures.ron), an early list: to be reviewed. What it is built of, its size and what it weighs are not said." }
+- of: [identity.description, physical]
+  tier: invented
+  review: true
+  note: 'Scope set 2026-10-14 for the modeller (blender asked). The envelope and datums are the game''s (station.rs) so play stays as it is; the construction follows from free fall: a 50 m deep solid deck would be absurd, so the deck is a deep open truss. Members, masses and the pressurised modules not yet sized; struts from the kit (SFO 13) on a 0.5 m grid, aluminium 6061. Static: hangar door closed.'
+- of: [fit]
+  tier: invented
+  review: true
+  note: 'As the game has it (content/base/structures.ron), an early list: to be reviewed. What it is built of, its size and what it weighs are not said.'
+- of: [built_of, physical.mass]
+  tier: derived
+  review: true
+  note: 'Counted by tools/standards/platform.py from the 3 m lattice (every cell edge a straight strut, every square face one diagonal, a node at every corner; where groups meet, the truss''s heavier kit). Masses from the strut and node records. Free fall: berthing a 150 t ship at 0.3 m/s, stopped over 0.5 m, puts about 14 kN on its pad, which a al6061-tb-100x3 strut carries many times over; the game''s deck speed (10 m/s) would put about 15 MN, which no deck takes. Not checked: the station''s turn, thermal cycling, the pressurised modules (not designed).'
+built_of:
+- {what: 'Deck trusses: struts', item: stock.al6061-tb-160x5-s3000, mass: 8818633, note: 'ten lattice trusses 3 m thick and 45 m deep under the deck, on the pad-grid lines (x -300, -150, 0, 150, 300 along z; z -225, -75, 75, 225, 375 along x): 153,360 straight struts stock.al6061-tb-160x5-s3000 (28.64 kg) and 120,250 diagonals stock.al6061-tb-160x5-d3000 (36.81 kg), one in every square face'}
+- {what: 'Deck trusses: nodes', item: stock.st4340-node-220b, mass: 2992419, note: '62,720 nodes'}
+- {what: 'Deck lattice: struts', item: stock.al6061-tb-100x3-s3000, mass: 4069508, note: 'the deck''s lattice, 3 m cells one deep, 600 x 600 m, its top at y -100: 195,291 straight struts stock.al6061-tb-100x3-s3000 (10.13 kg) and 158,425 diagonals stock.al6061-tb-100x3-d3000 (13.2 kg), one in every square face'}
+- {what: 'Deck lattice: nodes', item: stock.st4340-node-160b, mass: 1393579, note: '76,882 nodes'}
+- {what: 'Hall frame: struts', item: stock.al6061-tb-100x3-s3000, mass: 6869119, note: 'the main structure''s frame, 600 x 150 x 297 m, one 3 m cell thick on all six faces, less the hangar door: 330,719 straight struts stock.al6061-tb-100x3-s3000 (10.13 kg) and 266,586 diagonals stock.al6061-tb-100x3-d3000 (13.2 kg), one in every square face'}
+- {what: 'Hall frame: nodes', item: stock.st4340-node-160b, mass: 2384774, note: '131,565 nodes'}
+- {what: Pad plates, item: material.aluminium-honeycomb, mass: 1723680, note: '16 square plates 90 m a side on the deck lattice at x [-225, -75, 75, 225] and z [-150, 0, 150, 300]: 2 mm 6061 faces on a 50 mm honeycomb core, 13.3 kg/m2 (faces counted with the core here)'}
+- {what: Berthing clamps, item: good.electric-motors, mass: 32000.0, note: 'four recessed clamps at each pad''s edges, 500 kg each with their drives, from memory'}
+- {what: Walkway grating, item: material.aluminium-alloy-6061, mass: 180000.0, note: '3 m walkways over the ten trusses, 18,000 m2 at about 10 kg/m2 (from memory); the rest of the deck is open lattice'}
+- {what: Hall cladding, item: stock.al6061-sh-2, mass: 3344652, note: '2 mm 6061 sheet over the hall''s six faces, 619,380 m2, against sun and debris; the closed hangar door''s leaves the same'}
