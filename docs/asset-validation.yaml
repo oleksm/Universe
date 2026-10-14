@@ -4390,3 +4390,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: layout.ladle-station-air
+    version: 1
+    manifest_sha256: "80a0be95039e69901b9b7a7eff2587fe59706bcfb300d0f14c3b8acf9f102603"
+    installed: cacd7b60
+    game: "the loader (world::assets) at fso cacd7b60"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/ladle-station-air/v1 (24320872 bytes, bounds [-39.3, -7.0, -33.6561] to [28.9879, 27.112, 23.2041]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
