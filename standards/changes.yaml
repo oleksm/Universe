@@ -2732,7 +2732,7 @@
 - { record: unit.mould-car-12, at: "2026-10-14T17:51:14Z", status: draft, summary: "first tracked", sha: "acd7a125fd88a142" }
 - { record: unit.slag-pot-car, at: "2026-10-14T14:59:35Z", status: draft, summary: "changed", sha: "99ae6089782a9bea" }
 - { record: unit.stripper-crane-20t, at: "2026-10-14T17:51:14Z", status: draft, summary: "first tracked", sha: "badfb6c3f9f6eccb" }
-- { record: unit.vacuum-degasser-80t, at: "2026-10-14T18:17:55Z", status: draft, summary: "changed: physical, built_of", sha: "b77933d6b8082826" }
+- { record: unit.vacuum-degasser-80t, at: "2026-10-14T18:21:19Z", status: draft, summary: "changed: visual", sha: "ffc0a08bc9c8d304" }
 - { record: vocabulary.asteroid, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "c85b5b93f49a4621" }
 - { record: vocabulary.asteroid-family, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "3893f86924156b47" }
 - { record: vocabulary.asteroid-moon, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "8de295aa732db166" }
