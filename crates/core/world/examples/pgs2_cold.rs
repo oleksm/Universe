@@ -201,12 +201,9 @@ impl Pgs {
     }
     /// The faces of `q`'s cell (empty outside every window): every face that may hold q.
     fn candidates(&self, q: DVec3) -> Result<Vec<u32>, String> {
-        let a = q.abs();
-        let face = if a.x >= a.y && a.x >= a.z { if q.x >= 0. { 0 } else { 1 } } else if a.y >= a.z { if q.y >= 0. { 2 } else { 3 } } else if q.z >= 0. { 4 } else { 5 };
-        let (s, t, m) = match face { 0 | 1 => (q.y, q.z, a.x), 2 | 3 => (q.z, q.x, a.y), _ => (q.x, q.y, a.z) };
+        let face = cube_face(q);
         let Some(w) = self.windows.iter().find(|w| w.face == face) else { return Ok(vec![]) };
-        let cell = |u: f64| (((u + 1.) / 2. * w.n as f64).floor() as i64).clamp(0, w.n as i64 - 1) as u32;
-        let (i, j) = (cell(s / m), cell(t / m));
+        let (_, i, j) = cube_cell(q, w.n);
         if i < w.i0 || j < w.j0 || i >= w.i0 + w.ni || j >= w.j0 + w.nj { return Ok(vec![]); }
         let c = self.section(11)?.offset + (w.start + (j - w.j0) * w.ni + (i - w.i0)) as usize * 8;
         let (start, count) = (self.map.u32(c)? as usize, self.map.u32(c + 4)? as usize);
@@ -229,17 +226,22 @@ impl Pgs {
         let root = self.map.u32(self.section(16)?.offset + p as usize * 4)?;
         Ok(if root == NONE { (1, p) } else { (0, root) })
     }
-    fn face_key(&self, f: u32) -> Result<[(u8, u32); 3], String> {
+    /// The canonical order's key: the cell curve of the face's centroid (unnormalised mean of its
+    /// stored points, on this file's grid), then its vertex triple under composed keys, rotated to
+    /// start at the least.
+    fn face_key(&self, f: u32) -> Result<(u64, [(u8, u32); 3]), String> {
         let v = self.face(f)?.0;
+        let [a, b, c] = [self.point(v[0])?.0, self.point(v[1])?.0, self.point(v[2])?.0];
+        let n = self.windows.first().ok_or("no windows")?.n;
         let k = [self.key(v[0])?, self.key(v[1])?, self.key(v[2])?];
         let r = (0..3).min_by_key(|&i| k[i]).unwrap();
-        Ok([k[r], k[(r + 1) % 3], k[(r + 2) % 3]])
+        Ok((curve((a + b + c) / 3., n), [k[r], k[(r + 1) % 3], k[(r + 2) % 3]]))
     }
     /// The writer's rule, checked on touch: a region's faces stored in canonical (composed) order.
     fn check_order(&self, f: u32) -> Result<(), String> {
         let n = self.section(2)?.count as u32;
         let here = self.face_key(f)?;
-        if (f > 0 && self.face_key(f - 1)? >= here) || (f + 1 < n && self.face_key(f + 1)? <= here) {
+        if (f > 0 && self.face_key(f - 1)? > here) || (f + 1 < n && self.face_key(f + 1)? < here) {
             return Err(format!("{}: region faces not in canonical order (face {f})", self.map.name));
         }
         Ok(())
@@ -257,6 +259,34 @@ impl Pgs {
         let w = (b - a).cross(p - a).dot(normal) / den;
         Ok((1.0 - v - w) * h[0] + v * h[1] + w * h[2])
     }
+}
+
+/// Cube face of a direction: the largest absolute coordinate, ties to the earlier of x, y, z;
+/// faces +X, -X, +Y, -Y, +Z, -Z.
+fn cube_face(q: DVec3) -> u32 {
+    let a = q.abs();
+    let axis = if a.x >= a.y && a.x >= a.z { 0 } else if a.y >= a.z { 1 } else { 2 };
+    2 * axis + (q[axis as usize] < 0.) as u32
+}
+fn cube_cell(q: DVec3, n: u32) -> (u32, u32, u32) {
+    let face = cube_face(q);
+    let a = q.abs();
+    let (s, t, m) = match face { 0 | 1 => (q.y, q.z, a.x), 2 | 3 => (q.z, q.x, a.y), _ => (q.x, q.y, a.z) };
+    let cell = |u: f64| (((u + 1.) / 2. * n as f64).floor() as i64).clamp(0, n as i64 - 1) as u32;
+    (face, cell(s / m), cell(t / m))
+}
+/// The cell curve: cube face, then the Morton code of (i, j) (i in the even bits, j in the odd).
+fn curve(q: DVec3, n: u32) -> u64 {
+    let spread = |x: u32| {
+        let mut x = x as u64;
+        x = (x | x << 16) & 0x0000FFFF0000FFFF;
+        x = (x | x << 8) & 0x00FF00FF00FF00FF;
+        x = (x | x << 4) & 0x0F0F0F0F0F0F0F0F;
+        x = (x | x << 2) & 0x3333333333333333;
+        (x | x << 1) & 0x5555555555555555
+    };
+    let (face, i, j) = cube_cell(q, n);
+    ((face as u64) << 62) + (spread(i) | spread(j) << 1)
 }
 
 struct Region {
@@ -494,7 +524,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut package = Package::open(dir)?;
     let (mut same_height, mut same_face, mut same_water, mut same_categories, mut worst) = (0, 0, 0, 0, 0f64);
     let mut differences = vec![];
-    let (mut canon_height, mut canon_face, mut canon_worst) = (0, 0, 0f64);
+    let (mut canon_height, mut canon_face, mut canon_geometry, mut canon_worst) = (0, 0, 0, 0f64);
     let start = Instant::now();
     let queries = fixtures["queries"].as_array().ok_or("queries")?;
     for f in queries {
@@ -505,6 +535,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             let s = c.query(d)?;
             canon_height += (s.height_m.to_bits() == r.height_m.to_bits()) as usize;
             canon_face += (s.face as u64 == r.face) as usize;
+            // The same triangle (as a set of stored vertex positions), whatever its id.
+            let pgs = package.file(r.owner.0);
+            let v = pgs.face(r.owner.1)?.0;
+            let mut mine = [pgs.point(v[0])?.0, pgs.point(v[1])?.0, pgs.point(v[2])?.0].map(|p| p.to_array().map(f64::to_bits));
+            let mut theirs = c.face_geometry(s.face).ok_or("face")?.positions.map(|p| p.to_array().map(f64::to_bits));
+            mine.sort();
+            theirs.sort();
+            canon_geometry += (mine == theirs) as usize;
             canon_worst = canon_worst.max((s.height_m - r.height_m).abs());
         }
         worst = worst.max((r.height_m - h).abs());
@@ -523,7 +561,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let report = json!({"format":"pgs2-cold-read/1","package":dir,"page_bytes":PAGE,
         "method":"files mapped (MADV_RANDOM); page cache emptied of the package's files by posix_fadvise DONTNEED, checked by mincore; pages_read = pages the reader asked for; pages_resident_after includes any kernel readahead. Manifest opening records checked at open (header+table sha256, kind-19 block-hash section sha256); each 64 KiB block checked against its hash on first touch (its pages counted as read). No section read whole; whole-file and per-section hashes not checked (acceptance's).",
         "cold":runs,
-        "fixtures":{"queries":queries.len(),"height_bit_identical":same_height,"height_max_abs_diff_m":worst,"composed_face_identical":same_face,"water_identical":same_water,"categories_identical":same_categories,"warm_ms_total":warm_ms,"vs_canonical_reader":canonical.as_ref().map(|_| json!({"height_bit_identical":canon_height,"face_identical":canon_face,"height_max_abs_diff_m":canon_worst})),"differences":differences,
+        "fixtures":{"queries":queries.len(),"height_bit_identical":same_height,"height_max_abs_diff_m":worst,"composed_face_identical":same_face,"water_identical":same_water,"categories_identical":same_categories,"warm_ms_total":warm_ms,"vs_canonical_reader":canonical.as_ref().map(|_| json!({"height_bit_identical":canon_height,"face_id_identical":canon_face,"owner_triangle_identical":canon_geometry,"height_max_abs_diff_m":canon_worst})),"differences":differences,
             "touched_after_all":package.touched()},
         "notes":["Composed face ids computed from the region file's own face order, assumed canonical (compose(): sorted by global vertex triples).","Ties: every face of root and region whose cell lists it and whose closed triangle holds the direction; the owner is the least composed id."]});
     std::fs::write(out, serde_json::to_vec_pretty(&report)?)?;

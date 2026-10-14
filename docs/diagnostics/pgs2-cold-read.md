@@ -40,3 +40,21 @@ footprints hash, block 0 hash (on touch), header/table hash, overlapping footpri
 The reader checks the region id in a region's header against the manifest, and the canonical order on touch (each
 held face against its stored neighbours, by composed vertex keys: kept points by root id, then added points in
 stored order). With these checks the v8 figures above hold (region 11–17 ms, root 1.3 ms, 4.0 MB / 0.45 MB).
+
+## Spatial canonical order (planet-trees `pgs2` 8d54089, planet-unfold 9ddb838)
+
+Kept points by root id; added points along the cell curve (cube face, Morton code of (i, j) on the file's n); faces
+by the curve key of their centroid, then their composed triple. The reader's on-touch check uses that key (stored
+order non-decreasing). Goldens rebuilt under the rule: 226 of 226 pass, 5 of 5 refused.
+
+| first query, cold | open + query | bytes read | region blocks checked |
+|---|---|---|---|
+| region cap centre | 5.6–10.5 ms (38.5 ms once, run right after reading the 167 MB monolithic file) | 1.54 MB (was 3.99) | 16: points 7, faces 5, cells 1, cell faces 1, root ids 2 (was 52) |
+| antipode, root only | 1.3–1.4 ms | 0.45 MB | — |
+
+All 4,352 v8 fixtures against the canonical reader on the monolithic file: height bit for bit, and the owning
+triangle (its stored vertices) identical; face ids differ (313 equal) because the region's faces are reordered.
+
+Most of the bytes are the 64 KiB hash blocks: a cell's 19 faces are 608 B and their points about 2.3 KB, but each
+touch checks a whole block. A finer grid would not change that; smaller hash blocks would (16 KiB blocks: a hash
+section four times larger, 373 KB to check at open for this region).
