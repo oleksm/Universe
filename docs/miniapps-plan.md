@@ -144,7 +144,7 @@ internals, it only stops hosting the other apps.
 | 4 Planet view extracted | done: `game::planet_view`; game captures differ from main as main does from itself | 16d95e35 |
 | 5 Planet viewer app | done: `freefall-planet [world id]`, opens in about 0.8 s without the universe | c008e653 |
 | 6 Game as an app | done: WORLDS opens the planet viewer over the game; planet studio state gone from `App`. **Not done:** the shipyard still embeds its studio (needs a document handed back to the game) | 41ce3ac5 |
-| 7 Launcher | done: `freefall --apps`, `freefall --app <game, planet, studio> [arg]` | (this commit) |
+| 7 Launcher | done: `freefall --apps`, `freefall --app <game, planet, studio> [arg]` | 02362b49 |
 | 8 Factory, scenes | not started | |
 
 Deviations from the plan above: apps are modules in the `game` crate, not crates of their own
