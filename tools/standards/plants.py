@@ -667,6 +667,8 @@ def ladle_station_air(us, recs):
     members.append({"item": "stock.st4340-box-400x400x25", "count": 4, "where": f"crane runways, two a side, {x_in / 2:.0f} m lengths, along x on the inside of the long walls: their rail plane {RUNWAY:g} m up at y -11.4 and +11.4"})
     fmass += runway
     clad_area = 2 * (x1 - x0) * (z1 - z0) + 2 * (y1 - y0) * (z1 - z0) + (x1 - x0) * (y1 - y0) - sum(max(d - a, e - b) * (f - c) for a, b, c, d, e, f in doors)
+    clad_net = clad_area
+    clad_area = 5300.0                                    # m2 measured on blender's hall (candidate v01): the net walls and roof with 291 m2 of reveals and eaves
     clad = clad_area * 0.002 * RHO["aluminium"]
     rcap = frames.strut_capacity(yaml.safe_load(open(S + "mill-stock/" + strut(sec["roof"], cell)[1]["kit"]["section"].split(".", 1)[1].upper() + ".yaml")))
     wcap = frames.strut_capacity(yaml.safe_load(open(S + "mill-stock/" + strut(sec["wall"], cell)[1]["kit"]["section"].split(".", 1)[1].upper() + ".yaml")))
@@ -713,6 +715,13 @@ def ladle_station_air(us, recs):
         {"what": "Cooling tower basin", "item": CONC, "volume": r((tw + 0.6) * 12.6 * 0.5 + 2 * (tw + 0.3 + 12.3) * 2.0 * 0.3 + 8 * 0.6 * 0.6 * 2.0), "note": f"sunk as the furnace shop's: 0.3 m walls round its {tw:.0f} x 12 m footprint, tops at z 0, floor top at z -2; eight pedestals, under the tower's four feet and its skid's four corners (blender)"},
         {"what": "Rail beds", "item": CONC, "volume": r(48 * 0.125), "note": "under the ladle rail, 0.125 m3 a metre as the furnace shop's"},
     ]
+    # Measured on blender's assembled station (candidate v01, hall-quantities.json, 2026-10-14).
+    measured = {"Degasser pit": 137.24, "Degasser floor": 37.84, "Transformer vault": 72.14, "Stair tower footing": 16.632, "Rail beds": 7.2, "Cooling tower basin": 114.66}
+    for g in ground:
+        if g["what"] in measured:
+            g["volume"] = measured[g["what"]]
+            g["note"] = (g.get("note", "") + "; measured on blender's model").lstrip("; ")
+    ground.append({"what": "Link supports", "item": CONC, "volume": 3.41, "note": "footings for the alloy gallery's trestles, the duct's supports and the pipes' plinths; measured on blender's model"})
     for g in ground:
         g["mass"] = r(g["volume"] * RHO["concrete"])
     used = [recs[b["unit"].split(".", 1)[1]] for b in bays] + [recs[m_["unit"].split(".", 1)[1]] for m_ in mobile] + [crane]
