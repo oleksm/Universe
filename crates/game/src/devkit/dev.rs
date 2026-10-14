@@ -19,16 +19,28 @@ pub fn world(seed: u64) -> Result<universe_sim::world::World, String> {
     }
     if std::env::var_os("UNIVERSE_RECORD").is_some() { return Err("PGS1 preview sources are not supported by seed-only replay yet".into()); }
     let folder = std::path::PathBuf::from(folder);
-    let manifest: serde_json::Value = serde_json::from_slice(&std::fs::read(folder.join("manifest.json")).map_err(|e| e.to_string())?).map_err(|e| e.to_string())?;
-    let bytes = std::fs::read(folder.join("surface.pgs")).map_err(|e| e.to_string())?;
-    let entry = &manifest["files"]["surface.pgs"];
-    if manifest["format"] != "planet-graph-surface/1" || entry["sha256"] != sha256(&bytes) || entry["bytes"].as_u64() != Some(bytes.len() as u64) {
-        return Err("surface manifest/hash/size mismatch".into());
-    }
-    let surface = std::sync::Arc::new(Surface::read(&bytes)?);
-    if !matches!(surface.capabilities, 1 | 3 | 33 | 35) { return Err("this preview supports canonical terrain, water and category roots only".into()); }
+    // (A revision-4 package, `planet.json`: root and regions mapped, regions read on first touch;
+    // its identity is the manifest's SHA256. Else one surface.pgs, read whole.)
+    let (surface, hash, manifest) = if folder.join("planet.json").exists() {
+        let clock = std::time::Instant::now();
+        let (surface, sha) = Surface::open_package(&folder)?;
+        log::info!("PGS1 package {}: opened in {:.2} ms; {} composed faces", folder.display(), clock.elapsed().as_secs_f64() * 1e3, surface.face_count());
+        let manifest: serde_json::Value = serde_json::from_slice(&std::fs::read(folder.join("planet.json")).map_err(|e| e.to_string())?).map_err(|e| e.to_string())?;
+        (surface, sha, manifest)
+    } else {
+        let manifest: serde_json::Value = serde_json::from_slice(&std::fs::read(folder.join("manifest.json")).map_err(|e| e.to_string())?).map_err(|e| e.to_string())?;
+        let bytes = std::fs::read(folder.join("surface.pgs")).map_err(|e| e.to_string())?;
+        let entry = &manifest["files"]["surface.pgs"];
+        if manifest["format"] != "planet-graph-surface/1" || entry["sha256"] != sha256(&bytes) || entry["bytes"].as_u64() != Some(bytes.len() as u64) {
+            return Err("surface manifest/hash/size mismatch".into());
+        }
+        (Surface::read(&bytes)?, sha256(&bytes), manifest)
+    };
+    let surface = std::sync::Arc::new(surface);
+    // (Bit 4, the cell index, is how a package is read; it changes nothing the preview shows.)
+    if !matches!(surface.capabilities & !16, 1 | 3 | 33 | 35) { return Err("this preview supports canonical terrain, water and category roots only".into()); }
     if !surface.provenance[0].is_empty() && surface.provenance[0] != key { return Err("package body binding differs from UNIVERSE_BODY".into()); }
-    crate::pgs_preview::configure(&folder, &key, &surface, &sha256(&bytes), &manifest)?;
+    crate::pgs_preview::configure(&folder, &key, &surface, &hash, &manifest)?;
     let world = World::with_surfaces(seed, std::sync::Arc::new([(key.clone(), surface)].into_iter().collect()));
     let system = world.system(world.home_system);
     let body = system.bodies.iter().find(|b| b.key == key).ok_or("preview body is not in the home system")?;
@@ -2260,4 +2272,80 @@ pub fn camera_walk(app: &mut App) {
         let look = ahead * down.to_radians().cos() - up * down.to_radians().sin();
         app.camera.orientation = universe_sim::ship::facing(look, if down > 60.0 { ahead } else { up }).as_quat();
     }
+}
+
+/// (Dev: `UNIVERSE_PGS1_FLIGHT=file`: the camera flown through keyframes over `UNIVERSE_BODY`,
+/// one per line, `frame dx dy dz alt pitch heading [shot]`: the body-frame direction under the
+/// eye; the height over the datum, or over the ground with a `g` suffix (`2000g`); degrees down
+/// from level; degrees from north (+Y) toward east; a capture's name. Between keyframes the
+/// direction turns evenly, the height over the ground goes geometrically, pitch and heading
+/// linearly. Frames are game frames. Captures go beside the file named by `UNIVERSE_SCREENSHOT`'s
+/// folder, or the flight file's.)
+pub fn camera_flight(app: &mut App) {
+    struct Key { frame: u64, dir: DVec3, alt: f64, ground: bool, pitch: f64, heading: f64, shot: Option<String> }
+    struct Flight { keys: Vec<Key>, frame: u64, planet: usize, folder: std::path::PathBuf }
+    static FLIGHT: std::sync::Mutex<Option<Option<Flight>>> = std::sync::Mutex::new(None);
+    let Ok(mut flight) = FLIGHT.lock() else { return };
+    if flight.is_none() {
+        let Some(path) = std::env::var_os("UNIVERSE_PGS1_FLIGHT") else { *flight = Some(None); return };
+        let path = std::path::PathBuf::from(path);
+        let text = std::fs::read_to_string(&path).unwrap_or_else(|e| panic!("UNIVERSE_PGS1_FLIGHT {}: {e}", path.display()));
+        let mut keys = vec![];
+        for line in text.lines().map(str::trim).filter(|l| !l.is_empty() && !l.starts_with('#')) {
+            let f: Vec<&str> = line.split_whitespace().collect();
+            assert!(f.len() >= 7, "flight line: frame dx dy dz alt pitch heading [shot]: {line}");
+            let n = |i: usize| f[i].trim_end_matches('g').parse::<f64>().unwrap_or_else(|_| panic!("flight line: {line}"));
+            keys.push(Key { frame: n(0) as u64, dir: DVec3::new(n(1), n(2), n(3)).normalize(), alt: n(4), ground: f[4].ends_with('g'), pitch: n(5), heading: n(6), shot: f.get(7).map(|s| s.to_string()) });
+        }
+        assert!(keys.windows(2).all(|w| w[0].frame < w[1].frame), "flight keyframes must ascend");
+        let sys = app.charts.system(app.v.ship_system);
+        let planet = std::env::var("UNIVERSE_BODY").ok().and_then(|k| sys.bodies.iter().position(|b| b.key == k)).expect("UNIVERSE_PGS1_FLIGHT needs UNIVERSE_BODY");
+        let folder = std::env::var_os("UNIVERSE_SCREENSHOT").map(std::path::PathBuf::from).and_then(|p| p.parent().map(|p| p.to_owned())).unwrap_or_else(|| path.parent().unwrap().to_owned());
+        log::info!("FLIGHT {}: {} keyframes to frame {}", path.display(), keys.len(), keys.last().map_or(0, |k| k.frame));
+        *flight = Some(Some(Flight { keys, frame: 0, planet, folder }));
+    }
+    let Some(Some(f)) = flight.as_mut() else { return };
+    let sys = app.charts.system(app.v.ship_system);
+    let t = app.now();
+    let b = &sys.bodies[f.planet];
+    let (Some(terrain), Some(centre)) = (b.terrain.as_ref(), app.view.positions.get(f.planet).copied()) else { return };
+    let now = f.frame;
+    f.frame += 1;
+    let i = f.keys.partition_point(|k| k.frame <= now).max(1) - 1;
+    let (a, z) = (&f.keys[i], &f.keys[(i + 1).min(f.keys.len() - 1)]);
+    let s = if z.frame > a.frame { ((now.min(z.frame) - a.frame) as f64 / (z.frame - a.frame) as f64).clamp(0.0, 1.0) } else { 0.0 };
+    let angle = a.dir.angle_between(z.dir);
+    let dir = if angle < 1e-12 { a.dir } else { ((a.dir * ((1.0 - s) * angle).sin() + z.dir * (s * angle).sin()) / angle.sin()).normalize() };
+    let over = |k: &Key| if k.ground { k.alt } else { k.alt - terrain.surface(k.dir) };
+    let (oa, oz) = (over(a).max(1.7), over(z).max(1.7));
+    let height = terrain.surface(dir) + (oa.ln() * (1.0 - s) + oz.ln() * s).exp();
+    let pitch = (a.pitch * (1.0 - s) + z.pitch * s).to_radians();
+    let heading = (a.heading * (1.0 - s) + z.heading * s).to_radians();
+    let rot = b.rotation(t);
+    let north = (DVec3::Y - dir * dir.y).normalize();
+    let east = north.cross(dir);
+    let ahead = north * heading.cos() + east * heading.sin();
+    let look = rot * (ahead * pitch.cos() - dir * pitch.sin());
+    app.camera.position = centre + rot * (dir * (b.rail.radius + height));
+    app.camera.orientation = universe_sim::ship::facing(look, if pitch.to_degrees() > 60.0 { rot * ahead } else { rot * dir }).as_quat();
+    app.camera.near = (0.5f32).min((height - terrain.surface(dir)).max(0.05) as f32 * 0.5);
+    if let Some(k) = f.keys.iter().find(|k| k.frame == now) {
+        log::info!("FLIGHT frame {now}: key at {:?}, {:.1} m over the ground, pitch {:.0}, heading {:.0}", dir.to_array(), height - terrain.surface(dir), pitch.to_degrees(), heading.to_degrees());
+        if let Some(shot) = &k.shot {
+            *PENDING_SHOT.lock().unwrap() = Some(f.folder.join(format!("{shot}.png")));
+        }
+    }
+    // The package's reads and the process's resident memory, every 300 frames and at keyframes.
+    if now % 300 == 0 || f.keys.iter().any(|k| k.frame == now) {
+        if let Some(report) = terrain.surface_source().and_then(|s| s.package_report()) {
+            let rss = std::fs::read_to_string("/proc/self/status").ok().and_then(|s| s.lines().find(|l| l.starts_with("VmRSS:")).and_then(|l| l.split_whitespace().nth(1)?.parse::<u64>().ok())).map(|kb| kb * 1024);
+            log::info!("PGS_PACKAGE {}", serde_json::json!({"frame":now,"process_rss_bytes":rss,"reads":report}));
+        }
+    }
+}
+
+static PENDING_SHOT: std::sync::Mutex<Option<std::path::PathBuf>> = std::sync::Mutex::new(None);
+/// A capture the flight asked for this frame, if any.
+pub fn take_shot() -> Option<std::path::PathBuf> {
+    PENDING_SHOT.lock().ok()?.take()
 }

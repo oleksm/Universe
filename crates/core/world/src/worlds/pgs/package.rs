@@ -89,6 +89,7 @@ impl File {
         let version = u16::from_le_bytes(at(4, 2)?.try_into().unwrap());
         let want = match version { 1 => 7, 2 => 10, v => return Err(fail(&format!("version {v}"))) };
         let capabilities = u32_at(8)?;
+        if capabilities & 16 == 0 { return Err(fail("no cell index (capability bit 4)")); }
         if u32_at(32)? as usize != want { return Err(fail("header string count")); }
         let (mut o, mut strings) = (36, vec![]);
         for _ in 0..want {
@@ -238,9 +239,22 @@ impl File {
         }
         Ok(())
     }
+    /// Bytes of this file the page cache holds now (mincore), whoever read them; None off Unix.
+    fn resident(&self) -> Option<u64> {
+        #[cfg(unix)]
+        {
+            let pages = self.map.len().div_ceil(4096);
+            let mut v = vec![0u8; pages];
+            // SAFETY: the mapping is live for self's lifetime; v holds one byte per page.
+            let r = unsafe { libc::mincore(self.map.as_ptr() as *mut _, self.map.len(), v.as_mut_ptr()) };
+            (r == 0).then(|| v.iter().filter(|&&b| b & 1 != 0).count() as u64 * 4096)
+        }
+        #[cfg(not(unix))]
+        None
+    }
     fn report(&self) -> Value {
         let checked: u32 = self.verified.iter().map(|w| w.load(Ordering::Relaxed).count_ones()).sum();
-        json!({"file":self.name,"bytes":self.map.len(),"bytes_read":self.read.load(Ordering::Relaxed),"blocks":self.blocks,"blocks_checked":checked,
+        json!({"file":self.name,"bytes":self.map.len(),"bytes_read":self.read.load(Ordering::Relaxed),"blocks":self.blocks,"blocks_checked":checked,"resident_bytes":self.resident(),
             "first_block_ms_after_open":self.first_block_ms.get()})
     }
 }

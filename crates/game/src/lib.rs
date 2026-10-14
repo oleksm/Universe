@@ -1376,6 +1376,8 @@ impl App {
         }
         #[cfg(feature = "dev")]
         dev::camera_walk(self);
+        #[cfg(feature = "dev")]
+        dev::camera_flight(self);
     }
 }
 
@@ -1390,6 +1392,10 @@ impl Game for App {
         }
 
         crate::visual_assets::maintain();
+        #[cfg(feature = "dev")]
+        if let Some(shot) = dev::take_shot() {
+            ctx.screenshot(shot);
+        }
         let dt = ctx.dt as f64;
         // The observer: the live port's questions answered; a recording's frame kept.
         observe::answer(self, ctx);
