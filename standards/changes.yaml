@@ -2713,7 +2713,7 @@
 - { record: unit.baghouse-800k, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "5526685837f20b72" }
 - { record: unit.cooling-tower, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "95edfcc8150d7e56" }
 - { record: unit.dri-bin-200t, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "77c4d3bb47d2077d" }
-- { record: unit.eaf-vessel-80t, at: "2026-10-14T03:17:44Z", status: draft, summary: "changed: physical, built_of", sha: "fb914c7bc1b5e6c8" }
+- { record: unit.eaf-vessel-80t, at: "2026-10-14T03:24:10Z", status: draft, summary: "changed: basis", sha: "1e7a29da177bb967" }
 - { record: unit.furnace-transformer-90mva, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "b2ba6874bb680078" }
 - { record: unit.hall-crane-20t, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "5e8e21a5adca9521" }
 - { record: unit.ladle-car-80t, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "17a2ef15a2c324c2" }
