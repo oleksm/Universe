@@ -26,7 +26,7 @@ bays:
   mount: plant-mount.bay-s2
   unit: unit.alloy-bins-8
   at: [-9.0, 21.0, 0.0]
-  note: outside, north
+  note: outside, north; a stair tower (not yet sized) up to its walkway's access at (-3, 21, 12), for filling and the feeders' upkeep
 - id: B
   mount: plant-mount.bay-s2
   unit: unit.baghouse-200k

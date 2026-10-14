@@ -664,7 +664,7 @@ def ladle_station_air(us, recs):
         {"id": "L", "mount": "plant-mount.bay-s2", "unit": "unit.ladle-furnace-80t", "at": [-9.0, 0.0, 0.0], "note": "over the ladle rail; the car stops at x -9 under its roof"},
         {"id": "T", "mount": "plant-mount.bay-s1", "unit": "unit.furnace-transformer-14mva", "at": [-9.0, -9.0, 0.0], "note": "in a fire-walled vault (y -12 to -6) south of the ladle furnace, its terminals facing it"},
         {"id": "D", "mount": "plant-mount.bay-s2", "unit": "unit.vacuum-degasser-80t", "at": [6.0, -7.0, 0.0], "note": "south of the rail, its box from y -12 to the car's lane at -2: the tank at (3, -5), its rim 0.7 m clear of the lane; the crane lifts the ladle from the car stopped at x 3"},
-        {"id": "A", "mount": "plant-mount.bay-s2", "unit": "unit.alloy-bins-8", "at": [-9.0, 21.0, 0.0], "note": "outside, north"},
+        {"id": "A", "mount": "plant-mount.bay-s2", "unit": "unit.alloy-bins-8", "at": [-9.0, 21.0, 0.0], "note": "outside, north; a stair tower (not yet sized) up to its walkway's access at (-3, 21, 12), for filling and the feeders' upkeep"},
         {"id": "B", "mount": "plant-mount.bay-s2", "unit": "unit.baghouse-200k", "at": [9.0, 24.0, 0.0], "note": "outside, north-east"},
         {"id": "C", "mount": "plant-mount.bay-s3", "unit": "unit.cooling-tower-1cell", "at": [-33.0, -9.0, 0.0], "note": "outside, west of the hall and south of the rail"},
     ]
