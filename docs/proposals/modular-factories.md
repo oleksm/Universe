@@ -123,7 +123,8 @@ Blender's brief: `python3 tools/standards/next_asset.py --key unit.<name>` for e
 The owner left the next step to registry's judgement ("things are made of anything that look reasonable for the situation and conditions"). So the steel line goes on as units, layout by layout, along the ladle rail:
 
 - `layouts/ladle-station-air.yaml`: an 80 t ladle furnace and a vacuum tank degasser under a crane hall, the heat arriving on its car from the arc furnace shop. New units: ladle furnace (its transformer rated for 4 degrees a minute of heating, 14 MVA), vacuum degasser, alloy bins, a 200,000 m3/h baghouse, a one-cell cooling tower, a 150 t ladle crane (its girders the lightest that meet span/800 and 150 MPa). The hall's wall struts are chosen for the crane's wheel loads. 2,868 t, 8.9 MW against the module's 7.5.
-- Then the casting bay, the shaft furnace and its hydrogen, the pellet plant, and the airless variants.
+- `layouts/casting-bay-air.yaml`: top teeming into small ingots, each sized to one heavy crate (2 t): 1,592 kg of sound ingot, 1 m long, 0.48 to 0.42 m square. A heat fills 44 moulds on a train of four mould cars; a second train stands while its ingots freeze; a 20 t stripper crane strips them onto an ingot car for the ingot yard. New units: mould car (grey cast iron moulds, a new material), stripper crane, ingot car. No cooling water: the moulds and ingots cool in the hall's air. 3,380 t, 0.67 MW against the module's 1 MW.
+- Then the shaft furnace and its hydrogen, the pellet plant, and the airless variants.
 
 Sizing helpers shared by the generators: `frames.lattice_count`, `frames.strut_capacity`, `frames.lightest_section`.
 

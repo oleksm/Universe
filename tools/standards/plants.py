@@ -282,8 +282,8 @@ def baghouse_unit(q_m3h, dims):
         basis=[{"of": ["physical", "built_of", "needs.power"], "tier": "invented", "review": True, "note": f"{q_m3h:,.0f} m3/h, 1.2 m/min through the cloth, the fan at 4 kPa and 75%: from memory. Fan power {fan / 1e3:.0f} kW."}])
 
 
-def ladle_crane_unit(cap, span, trolley):
-    """A double-girder ladle crane: the lightest pair of box girders that keeps the load's deflection within span/800 and
+def bridge_crane_unit(cap, span, trolley, kind="Ladle crane", job="it lifts and carries a full ladle: off its car into the degasser and back, or over the moulds to pour", gear="a main hoist and a ladle beam"):
+    """A double-girder bridge crane: the lightest pair of box girders that keeps the load's deflection within span/800 and
     their bending stress, all loads on, within 150 MPa (0.6 of A36's yield)."""
     best = None
     for h in [x / 10 for x in range(14, 31)]:
@@ -299,10 +299,10 @@ def ladle_crane_unit(cap, span, trolley):
     m, h, t, I, defl, sigma = best
     ends = 0.15 * cap                                     # end carriages, wheels and drives: from memory
     return dict(
-        name=f"Ladle crane, {cap / 1000:.0f} t", size_class=2, dims=(8.0, r(span + 0.6, 3), r(h + 1.6, 3)),
-        desc=f"A double-girder ladle crane on the hall's runways: it lifts a full ladle off its car into the degasser and back. Hangs on the frame; names no bay. It travels along its x, its wheels at y -{span / 2:g} and +{span / 2:g} ({span} m between the rails), its ends 0.3 m beyond; its origin on the runway's rail plane; the trolley, with a main hoist and a ladle beam, runs 9 m either way along y, the hook raised to 0.1 m under the rail plane. Parked at the hall's centre.",
+        name=f"{kind}, {cap / 1000:.0f} t", size_class=2, dims=(8.0, r(span + 0.6, 3), r(h + 1.6, 3)),
+        desc=f"A double-girder {kind.lower()} on the hall's runways: {job}. Hangs on the frame; names no bay. It travels along its x, its wheels at y -{span / 2:g} and +{span / 2:g} ({span} m between the rails), its ends 0.3 m beyond; its origin on the runway's rail plane; the trolley, with {gear}, runs 9 m either way along y, the hook raised to 0.1 m under the rail plane. Parked at the hall's centre.",
         built_of=[part("Bridge girders", A36, m, f"two box girders {h:.1f} x 0.8 m, {t * 1000:.0f} mm wall, {span + 0.6:.1f} m long over a {span} m span, the lightest that meet span/800 under the load ({defl * 1000:.1f} mm, span/{span / defl:.0f}) and 150 MPa with every load on ({sigma / 1e6:.0f} MPa)"),
-                  part("Trolley, hoist and ladle beam", A36, trolley, f"{trolley / cap:.0%} of the load, from memory"),
+                  part("Trolley and hoist", A36, trolley, f"with {gear}: {trolley / cap:.0%} of the load, from memory"),
                   part("End carriages and drives", "good.electric-motors", ends, "15% of the load, from memory")],
         needs={"power": 2.0 * cap},
         basis=[{"of": ["physical", "built_of"], "tier": "derived", "review": True, "note": "Girders sized as the desc says; trolley and end carriages from memory; the hook, reeving and drives not sized."},
@@ -366,7 +366,7 @@ def ladle_units():
         holds=8 * vol1 * 3500 * 0.8, needs={"power": 40000.0},
         basis=[{"of": ["physical", "built_of", "holds"], "tier": "derived", "review": True, "note": f"Eight bins of {vol1:.1f} m3 at about 3,500 kg/m3 of ferroalloy lumps (from memory), four fifths full."}])
     out["baghouse-200k"] = baghouse_unit(200000, (12.0, 8.0, 12.0))
-    out["ladle-crane-150t"] = ladle_crane_unit(150000.0, 22.8, 37500.0)
+    out["ladle-crane-150t"] = bridge_crane_unit(150000.0, 22.8, 37500.0)
     return out
 
 
@@ -729,6 +729,146 @@ def ladle_station_air(us, recs):
     return layout, bays
 
 
+# ---------------------------------------------------------------- the casting bay's figures
+cmod = yaml.safe_load(open(S + "modules/casting-bay.yaml"))
+CREC = cmod["recipes"][0]
+C_RATE, C_HEAT, C_P = CREC["rate"], CREC["batch"], CREC["power"]
+SOUND = 1 / CREC["inputs"][0]["quantity"]            # the share of the steel that becomes sound ingot (the module's, sourced)
+CAST_IRON = "material.cast-iron-grey"
+# The ingot: one to a heavy crate (package.crate-heavy: 2 t, about 1.1 x 0.9 x 0.7 m inside), lying flat.
+ING_L, ING_A, ING_B = 1.0, 0.48, 0.42                 # m: long, its square side at the big end and the small
+ING_V = ING_L * (ING_A ** 2 + ING_A * ING_B + ING_B ** 2) / 3
+ING_M = ING_V * 7850                                  # kg of sound ingot
+HOT_TOP = ING_M * (1 / SOUND - 1)                     # kg of the head cut off as scrap
+MOULDS = math.ceil(C_HEAT / (ING_M + HOT_TOP))        # moulds a heat fills
+PER_CAR = 12
+CARS = math.ceil(MOULDS / PER_CAR)
+
+
+def casting_units():
+    """The casting bay's own units."""
+    out = {}
+    wall = 0.12
+    mould = ((ING_A + 2 * wall) ** 2 - ING_A ** 2) * ING_L * 1.15 * 7200          # a big-end-up mould 1.15 ingots tall, its wall 120 mm
+    stool = (ING_A + 2 * wall + 0.08) ** 2 * 0.15 * 7200
+    frame_ = (2 * box_tube(0.4, 0.4, 0.025, 6.0) + 6.0 * 2.8 * 0.04) * RHO["steel"]
+    out["mould-car-12"] = dict(
+        name="Ingot mould car, 12 moulds", size_class=1, dims=(6.0, 2.8, 2.3),
+        desc=f"A self-propelled rail car carrying twelve cast iron ingot moulds in two rows of six at 0.85 m, each on its stool, big end up: each takes {ING_M + HOT_TOP:,.0f} kg of steel, a {ING_L:g} m ingot tapering from {ING_A:g} to {ING_B:g} m square with its hot top; the ingot fits one to a heavy crate. The ladle is held over each mould in turn by the crane and teemed from its slide-gate nozzle; the train stands while the ingots freeze, then the stripper crane lifts the moulds off. It travels along its x on 2 m gauge, its origin on the running plane; the moulds' tops 2.3 m up.",
+        built_of=[part("Moulds", CAST_IRON, PER_CAR * mould, f"{PER_CAR} moulds, {wall * 1000:.0f} mm walls, {ING_L * 1.15:.2f} m tall: {mould:,.0f} kg each"),
+                  part("Stools", CAST_IRON, PER_CAR * stool, f"{PER_CAR} base plates 0.15 m thick: {stool:,.0f} kg each"),
+                  part("Car frame and deck", "stock.st4340-box-400x400x25", frame_, "two box beams 400 x 400 x 25 mm, 6 m, and a deck 6 x 2.8 m of 40 mm plate"),
+                  part("Bogies and drive", "good.electric-motors", 3000.0, "from memory")],
+        holds=PER_CAR * (ING_M + HOT_TOP), needs={"power": 30000.0},
+        basis=[{"of": ["physical", "built_of", "holds"], "tier": "derived", "review": True, "note": f"The ingot sized to the heavy crate (2 t); its hot top the module's scrap share. Moulds about their ingot's mass and more, as practice runs (from memory). Car and drive from memory."}])
+    out["stripper-crane-20t"] = bridge_crane_unit(20000.0, 22.8, 6000.0, kind="Stripper crane", job="it lifts the moulds off the frozen ingots, a ram in its tongs pushing a sticking ingot down, and sets the ingots on the ingot car and the moulds back on their cars", gear="stripping tongs and a ram")
+    deck = 8.0 * 3.0 * 0.04 * RHO["steel"]
+    frame2 = 2 * box_tube(0.4, 0.4, 0.025, 8.0) * RHO["steel"]
+    out["ingot-car-40t"] = dict(
+        name="Ingot car, 40 t", size_class=2, dims=(8.0, 3.0, 1.2),
+        desc="A self-propelled flat rail car that takes the stripped ingots, still hot, to the ingot yard: 25 ingots in rows on its steel deck. It travels along its x on 2 m gauge, its origin on the running plane; the deck 1.2 m up.",
+        built_of=[part("Car frame and deck", "stock.st4340-box-400x400x25", frame2 + deck, "two box beams 400 x 400 x 25 mm, 8 m, and a deck 8 x 3 m of 40 mm plate"),
+                  part("Bogies and drive", "good.electric-motors", 4000.0, "from memory")],
+        holds=40000.0, needs={"power": 40000.0},
+        basis=[{"of": ["physical", "built_of"], "tier": "derived", "review": True, "note": "From the dimensions; bogies and drive from memory."}])
+    return out
+
+
+def casting_bay_air(us, recs):
+    """The casting bay on a world with air at 1 g: the ladle comes in on its car, the 150 t crane teems it into the moulds on
+    a train of mould cars; a second train stands while its ingots freeze; the stripper crane strips them and loads the ingot car."""
+    cell, box = 3.0, (-33.0, -15.0, 0.0, 33.0, 15.0, 27.0)
+    doors = [(-33.0, 3.0, 0.0, -30.0, 9.0, 6.0),      # ladle rail in, west
+             (30.0, 3.0, 0.0, 33.0, 9.0, 6.0)]        # ingot rail out, east, to the ingot yard
+    groups, ground_nodes, n_nodes, cells = lattice(box, cell, 8, None, doors)
+    x0, y0, z0, x1, y1, z1 = box
+    span_in = y1 - y0 - 2 * cell
+    crane = recs["ladle-crane-150t"]
+    cap, trolley = 150000.0, 37500.0
+    roof_q = (0.002 * RHO["aluminium"] + 20.0) * G + 1000.0
+    chord = roof_q * cell * span_in ** 2 / 8 / cell
+    wheel = ((cap + trolley) * (1 - 1.5 / (span_in - 1.2)) + crane["physical"]["mass"] / 2) * G / 2
+    vert = wheel + roof_q * cell * span_in / 2
+    sec = {"roof": frames.lightest_section(chord), "wall": frames.lightest_section(vert)}
+    members, fmass = [], 0.0
+    for g in ("wall", "roof"):
+        for diag, n in ((False, groups[g][0]), (True, groups[g][1])):
+            key, st = strut(sec[g], cell, diag)
+            members.append({"item": key, "count": n, "where": g})
+            fmass += n * st["physical"]["mass"]
+    node_key = strut(sec["wall"], cell)[1]["kit"]["node"]
+    node = yaml.safe_load(open(S + "mill-stock/" + node_key.split(".", 1)[1].upper() + ".yaml"))
+    members.append({"item": node_key, "count": n_nodes, "where": "nodes"})
+    fmass += n_nodes * frames.node_mass(node, frames.materials())
+    rw_a = 0.4 * 0.4 - 0.35 * 0.35
+    rw_sigma = wheel * cell / 4 / ((0.4 ** 4 - 0.35 ** 4) / 12 / 0.2)
+    assert 1.5 * rw_sigma <= 470e6, rw_sigma
+    x_in = x1 - x0 - 2 * cell
+    members.append({"item": "stock.st4340-box-400x400x25", "count": 4, "where": f"crane runways, two a side, {x_in / 2:.0f} m lengths, along x on the inside of the long walls: their rail plane 18 m up at y -11.4 and +11.4; the ladle crane works the west half, the stripper crane the east"})
+    fmass += 2 * x_in * rw_a * RHO["steel"]
+    clad_area = 2 * (x1 - x0) * (z1 - z0) + 2 * (y1 - y0) * (z1 - z0) + (x1 - x0) * (y1 - y0) - sum(max(d - a, e - b) * (f - c) for a, b, c, d, e, f in doors)
+    clad = clad_area * 0.002 * RHO["aluminium"]
+    sec_stock = lambda g: yaml.safe_load(open(S + "mill-stock/" + strut(sec[g], cell)[1]["kit"]["section"].split(".", 1)[1].upper() + ".yaml"))
+    rcap, wcap = frames.strut_capacity(sec_stock("roof")), frames.strut_capacity(sec_stock("wall"))
+    sized = (f"At 1 g: roof {roof_q:.0f} Pa (2 mm aluminium, the frame about 20 kg/m2, 1 kPa of snow and wind, the last invented) over a {span_in:.0f} m span in 3 m deep strips puts {chord / 1e3:.0f} kN in a chord: "
+             f"{sec['roof']} takes {rcap / 1e3:.0f} kN. A wheel of the 150 t crane with a full ladle at the runway's end puts {wheel / 1e3:.0f} kN on a wall node, with the roof's share {vert / 1e3:.0f} kN: "
+             f"{sec['wall']} takes {wcap / 1e3:.0f} kN. Each the kit's lightest section with half again to spare. A wheel between two nodes bends the runway to {rw_sigma / 1e6:.0f} MPa, against 470 MPa for 4340 with half again to spare. Wind on the walls and the footings' loads not yet checked.")
+    car_L = us["mould-car-12"]["dims"][0]
+    train = CARS * car_L
+    links = [
+        link("rail", "ladle rail", (-36.0, 6.0, 0.0), (-12.0, 6.0, 0.0), A36, 2 * 60.0, None, "two 60 kg/m rails at 3 m gauge between the heads' inner faces, set in the floor with 40 mm flangeways, running plane the floor; in by the west door from the ladle station's rail; the car's centre stops at x -15, where the crane lifts the ladle off it"),
+        link("rail", "teeming rail", (-30.0, -6.0, 0.0), (30.0, -6.0, 0.0), A36, 2 * 50.0, None, f"two 50 kg/m rails at 2 m gauge, set in the floor, running plane the floor: room for two trains of {CARS} mould cars ({train:.0f} m each), one being teemed in the west half while the other stands to freeze and be stripped in the east"),
+        link("rail", "ingot rail", (3.0, 6.0, 0.0), (36.0, 6.0, 0.0), A36, 2 * 50.0, None, "two 50 kg/m rails at 2 m gauge, set in the floor, running plane the floor; out by the east door to the ingot yard; the car's centre stops at x 15 beside the stripping"),
+    ]
+    mobile = [{"unit": "unit.ladle-car-80t", "rides": "ladle rail", "at": [-15.0, 6.0, 0.0]}]
+    mobile += [{"unit": "unit.mould-car-12", "rides": "teeming rail", "at": [round(-27.0 + car_L / 2 + i * car_L, 2), -6.0, 0.0]} for i in range(CARS)]
+    mobile += [{"unit": "unit.mould-car-12", "rides": "teeming rail", "at": [round(3.0 + car_L / 2 + i * car_L, 2), -6.0, 0.0]} for i in range(CARS)]
+    mobile += [{"unit": "unit.ingot-car-40t", "rides": "ingot rail", "at": [15.0, 6.0, 0.0]}]
+    ground = [
+        {"what": "Casting floor", "item": CONC, "volume": r(x_in * span_in * 0.4), "note": f"a 0.4 m slab over the hall's floor, {x_in:.0f} x {span_in:.0f} m, so spilt steel meets concrete, not soil"},
+        {"what": "Teeming pit", "item": CONC, "volume": r(30 * 6 * 0.3), "note": "x -30 to 0, y -9 to -3: a 0.3 m deeper lining under the teeming, to catch a spill"},
+        {"what": "Frame footings", "item": CONC, "volume": r(ground_nodes * 2.25), "note": f"a 1.5 x 1.5 x 1 m pad under each of the lattice's {ground_nodes} ground nodes"},
+    ]
+    for g in ground:
+        g["mass"] = r(g["volume"] * RHO["concrete"])
+    used = [recs[m_["unit"].split(".", 1)[1]] for m_ in mobile] + [crane, recs["stripper-crane-20t"]]
+    power = sum(u.get("needs", {}).get("power", 0) for u in used) + sum(l.get("power", 0) for l in links)
+    mass_units = sum(u["physical"]["mass"] for u in used)
+    mass_links = sum(l["mass"] for l in links)
+    mass_ground = sum(g["mass"] for g in ground)
+    frame_mass = fmass + clad
+    total = mass_units + mass_links + frame_mass + mass_ground
+    mp = cmod["physical"]
+    against = (f"module.casting-bay: one box {mp['length']:g} x {mp['width']:g} x {mp['height']:g} m, {C_P / 1e6:.1f} MW. "
+               f"This layout: the same rate, {C_RATE * 3.6:.0f} t an hour; {power / 1e6:.2f} MW, the cranes and the cars; no cooling water (the moulds and ingots cool in the hall's air); "
+               f"{(mass_units + mass_links + frame_mass) / 1000:.0f} t of plant and frame and {mass_ground / 1000:.0f} t of concrete. A heat of {C_HEAT / 1000:.0f} t fills {MOULDS} moulds on {CARS} cars: "
+               f"{MOULDS} ingots of {ING_M:,.0f} kg, one to a heavy crate.")
+    xs = [x0, x1] + [p[0] for l in links for p in (l["from"], l["to"])]
+    ys = [y0, y1]
+    layout = {
+        "identity": {"key": "layout.casting-bay-air", "name": "Casting bay, world with air",
+                     "description": f"Ingot teeming under a crane hall: the heat comes in on its ladle car from the ladle station; the 150 t crane holds the ladle over a train of {CARS} mould cars and teems {MOULDS} small ingots, one to a heavy crate; the train stands while they freeze, the 20 t stripper crane lifts the moulds off and loads the ingots on a car to the ingot yard. For a world with air at about 1 g."},
+        "stands_for": "module.casting-bay",
+        "site": {"atmosphere": "air", "gravity": [8.0, 11.0]},
+        "physical": {"length": r(max(xs) - min(xs)), "width": r(max(ys) - min(ys)), "height": z1, "mass": r(total)},
+        "bays": [], "mobile": mobile, "links": links,
+        "frame": {"box": list(box), "cell": cell, "shape": f"Walls one cell thick, 24 m tall; a roof one cell deep over a {x_in:.0f} x {span_in:.0f} m floor; doors 6 m wide and tall for the ladle rail (west) and the ingot rail (east).",
+                  "openings": [list(d) for d in doors], "members": members,
+                  "cladding": {"item": "stock.al6061-sh-2", "area": r(clad_area), "mass": r(clad)},
+                  "carries": ["unit.ladle-crane-150t", "unit.stripper-crane-20t"], "mass": r(frame_mass), "sized": sized},
+        "ground": ground,
+        "totals": {"rate": C_RATE, "power": r(power), "heat": 0.0, "water": 0.0, "mass": r(total), "against_module": against},
+        "staff": cmod.get("staff"),
+        "basis": [{"of": ["bays", "links", "mobile", "frame.box", "frame.openings"], "tier": "invented", "review": True, "note": "Laid out after the ladle station, on its ladle rail. Top teeming from the ladle into small ingots, chosen so an ingot fits a heavy crate; lengths from memory."},
+                  {"of": ["frame.members", "frame.mass", "frame.cladding"], "tier": "derived", "review": True, "note": "Counted from the lattice (tools/standards/plants.py); sections chosen by the loads in frame.sized; masses from the strut and node records."},
+                  {"of": ["ground"], "tier": "derived", "review": True, "note": "Volumes from the shapes in the notes, concrete at 2,400 kg/m3; not sized for the ground's bearing."},
+                  {"of": ["totals", "physical"], "tier": "derived", "note": "Summed from the units, links, frame and ground."},
+                  {"of": ["staff"], "tier": "derived", "note": "The module's watch, unchanged."}],
+    }
+    print(f"layout.casting-bay-air: {total / 1000:.0f} t, {power / 1e6:.2f} MW, frame {frame_mass / 1000:.0f} t, {MOULDS} moulds on {CARS} cars, ingot {ING_M:.0f} kg ({sec})")
+    return layout, []
+
+
 def mounts_for(bays, recs):
     # Mounts: each class round what its bays take, a quarter to spare, at the site's most gravity.
     g_max = 9.81 * 1.0
@@ -765,8 +905,9 @@ def main():
     lu = ladle_units()
     lu["cooling-tower-1cell"] = cooling_unit(sum(u["needs"].get("heat", 0) for u in lu.values()), "the ladle station's")
     us.update(lu)
+    us.update(casting_units())
     recs = {slug: unit_record(slug, u) for slug, u in us.items()}
-    layouts = {"arc-furnace-air": arc_furnace_air(us, recs), "ladle-station-air": ladle_station_air(us, recs)}
+    layouts = {"arc-furnace-air": arc_furnace_air(us, recs), "ladle-station-air": ladle_station_air(us, recs), "casting-bay-air": casting_bay_air(us, recs)}
     mounts = mounts_for([b for _, bays in layouts.values() for b in bays], recs)
     for slug, d in mounts.items():
         write(S + f"plant-mounts/{slug}.yaml", d)

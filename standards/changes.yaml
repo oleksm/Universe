@@ -822,6 +822,7 @@
 - { record: law.tube-time, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "934385090028c5e6" }
 - { record: law.year, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "29f1ef4424e5cc98" }
 - { record: layout.arc-furnace-air, at: "2026-10-14T17:43:17Z", status: draft, summary: "changed", sha: "a2407e84fcd931d4" }
+- { record: layout.casting-bay-air, at: "2026-10-14T17:51:14Z", status: draft, summary: "first tracked", sha: "aff1c8c3aeeaf451" }
 - { record: layout.ladle-station-air, at: "2026-10-14T17:44:16Z", status: draft, summary: "changed", sha: "cf01ab94614b46ef" }
 - { record: market.art, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "517671b6a46daee3" }
 - { record: market.artifacts, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "6b51c19897f56c1a" }
@@ -851,6 +852,7 @@
 - { record: material.bearing-bronze-c93200, at: "2026-10-06T18:50:34Z", status: review, summary: "changed: identity, basis", sha: "173ec820caaeaab9" }
 - { record: material.carbon-carbon-composite, at: "2026-10-13T22:27:27Z", status: review, summary: "first tracked", sha: "c9379c1cd39cc924" }
 - { record: material.carbon-fibre-composite, at: "2026-10-14T01:29:44Z", status: review, summary: "changed: identity", sha: "723efd98a84e1d92" }
+- { record: material.cast-iron-grey, at: "2026-10-14T17:51:14Z", status: review, summary: "first tracked", sha: "6b33a95bffed7275" }
 - { record: material.copper, at: "2026-10-06T18:50:34Z", status: review, summary: "changed: identity", sha: "4f49fb5d47775d83" }
 - { record: material.d-he3, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "95cc7aff5ad7f8d1" }
 - { record: material.d-t, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "3727abb5d8549761" }
@@ -2723,10 +2725,13 @@
 - { record: unit.furnace-transformer-14mva, at: "2026-10-14T17:43:17Z", status: draft, summary: "first tracked", sha: "078a8a23a650b575" }
 - { record: unit.furnace-transformer-90mva, at: "2026-10-14T15:45:44Z", status: draft, summary: "changed: identity", sha: "d7b34abc2bacd989" }
 - { record: unit.hall-crane-20t, at: "2026-10-14T15:45:44Z", status: draft, summary: "changed", sha: "88da9f2b1f1ffdd5" }
+- { record: unit.ingot-car-40t, at: "2026-10-14T17:51:14Z", status: draft, summary: "first tracked", sha: "6d0a1c08ea1ffee4" }
 - { record: unit.ladle-car-80t, at: "2026-10-14T14:50:41Z", status: draft, summary: "changed", sha: "455ad05163bdf8c8" }
-- { record: unit.ladle-crane-150t, at: "2026-10-14T17:43:17Z", status: draft, summary: "first tracked", sha: "88909849a3665800" }
+- { record: unit.ladle-crane-150t, at: "2026-10-14T17:51:14Z", status: draft, summary: "changed: identity, built_of", sha: "873aebfa6330861f" }
 - { record: unit.ladle-furnace-80t, at: "2026-10-14T17:46:49Z", status: draft, summary: "changed: identity", sha: "ab86ed83f81389ab" }
+- { record: unit.mould-car-12, at: "2026-10-14T17:51:14Z", status: draft, summary: "first tracked", sha: "acd7a125fd88a142" }
 - { record: unit.slag-pot-car, at: "2026-10-14T14:59:35Z", status: draft, summary: "changed", sha: "99ae6089782a9bea" }
+- { record: unit.stripper-crane-20t, at: "2026-10-14T17:51:14Z", status: draft, summary: "first tracked", sha: "badfb6c3f9f6eccb" }
 - { record: unit.vacuum-degasser-80t, at: "2026-10-14T17:44:16Z", status: draft, summary: "changed", sha: "364457c5e1379e97" }
 - { record: vocabulary.asteroid, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "c85b5b93f49a4621" }
 - { record: vocabulary.asteroid-family, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "3893f86924156b47" }

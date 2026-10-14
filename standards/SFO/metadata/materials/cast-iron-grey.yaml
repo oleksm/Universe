@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/material.schema.yaml
+# Data: from memory of grey cast iron (ASTM A48 class 30, EN-GJL-200): density about 7,200 kg/m3, tensile about 200 MPa, brittle, good in heat cycling; melts near 1,200 C. Review.
+identity:
+  key: material.cast-iron-grey
+  name: Grey cast iron
+  class: alloy
+  form: [casting]
+mass:
+  density: 7200.0
+mechanical:
+  tensile_strength: 200000000.0
+  elongation_at_break: 0.5
+thermal:
+  max_service_temperature: 873.15
