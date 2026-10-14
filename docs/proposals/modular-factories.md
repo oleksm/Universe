@@ -94,24 +94,26 @@ The owner approved one example, for blender to model. `tools/standards/plants.py
 
 - `standards/SFO/metadata/0024-plant-mounts.yaml`: SFO 24, plant mounts, units and layouts (schemas `plant-mount`, `unit`, `layout`).
 - `plant-mounts/bay-s{1,2,3}.yaml`: bays 6, 12 and 24 m square.
-- `units/`, eight units, each with its mass from its material and dimensions:
+- `units/`, eight units, each with its mass from its material and dimensions (model version in brackets):
 
   | Unit | Mass |
   |---|---|
-  | Arc furnace vessel, 80 t | 311 t |
-  | Furnace transformer, 90 MVA | 144 t |
-  | Sponge iron bin | 17 t |
-  | Baghouse | 198 t |
-  | Cooling tower | 157 t |
-  | Ladle car | 56 t |
-  | Slag pot car | 26 t |
-  | Hall crane, 20 t | 28 t |
+  | Arc furnace vessel, 80 t (v3) | 307 t |
+  | Furnace transformer, 90 MVA (v1) | 144 t |
+  | Sponge iron bin (v1) | 17 t |
+  | Baghouse (v2) | 198 t |
+  | Cooling tower (v1) | 157 t |
+  | Ladle car (v1) | 56 t |
+  | Slag pot car (v1) | 27 t |
+  | Hall crane, 20 t (v2) | 27 t |
 
 - `layouts/arc-furnace-air.yaml`: the arc furnace shop for a world with air at 1 g.
-  - It has 5 bays, 2 rail cars and 7 links.
-  - The hall is 30 × 30 × 27 m, a lattice of 3 m struts checked for roof and crane loads.
-  - Ground works are listed too.
-  - Totals: the module's 26.7 kg/s at 74.2 MW, 18.4 MW rejected by the tower, 10.2 kg/s of water, 1,188 t of plant and frame, 2,734 t of concrete.
+  - It has 5 bays, 2 rail cars and 8 links. Pipes, the duct and the conveyor follow routed paths (`via`).
+  - The hall is 33 × 30 × 27 m, a lattice of 3 m struts checked for roof and crane loads, with framed openings for the duct and the conveyor.
+  - The ground works have their shapes in notes: the furnace platform with its ladle slot, slag tunnel and slag well, the transformer vault, the sunk tower basin, the pipe trench.
+  - Totals: the module's 26.7 kg/s at 74.2 MW, 18.4 MW rejected by the tower, 10.2 kg/s of water, 1,208 t of plant and frame, 3,426 t of concrete (1,428 m³).
   - By contrast, the module record was one 100 × 40 × 35 m box at 72 MW, with no water.
+
+Result, 2026-10-14: blender modelled all eight units and assembled the shop (`models/arc-furnace-air/v1`, 257,238 triangles). The game's loader reads every model; drawing units and layouts is engine's. Fitting the units together found about 30 faults that one box per module could never show. Examples: the slag fell onto the furnace's own cradle until a spout was added; the slag car did not fit the hall; the crane's ends touched the walls; the pipes ran through walls; the bin's cone was missing from its height. Each was fixed in `tools/standards/plants.py`, and where blender measured a part, its mass is bound as measured. Still open: anything that moves (tilt, crane, cars), electrical clearance, wind and footing loads, combustion in the off-gas gap.
 
 Blender's brief: `python3 tools/standards/next_asset.py --key unit.<name>` for each unit, and `--key layout.arc-furnace-air` for the assembly.
