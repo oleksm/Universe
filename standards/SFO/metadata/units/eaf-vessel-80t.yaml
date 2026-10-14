@@ -3,7 +3,7 @@
 identity: {key: unit.eaf-vessel-80t, name: 'Arc furnace vessel, 80 t', description: 'An AC arc furnace that taps 80 t: a refractory hearth 6.6 m across, water-cooled upper shell and roof, three graphite electrodes on masts, a tilting cradle and an eccentric bottom tap. Fed sponge iron through a fifth hole in the roof. Stands on a platform 5 m up so a ladle car runs under its tap.'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 10.0, height: 16.0, mass: 306900.0}
+physical: {length: 12.0, width: 10.0, height: 16.0, mass: 306700.0}
 built_of:
 - {what: Hearth shell, item: material.structural-steel-a36, mass: 33060.0, note: '6.6 m across, 2.0 m tall, 50 mm plate, its dished bottom 1.25 times the disc'}
 - {what: Hearth lining, item: good.refractory-brick, mass: 148400.0, note: '0.9 m under the bath, 0.45 m up the hearth wall'}
@@ -14,8 +14,9 @@ built_of:
 - {what: Electrode masts, item: material.structural-steel-a36, mass: 23400.0, note: 'three box masts 0.8 x 0.8 m, 40 mm wall, 7.27, 8.17 and 9.07 m long, staggered so the arms clear; shown at rest, moving in fixed guide collars on seated rams'}
 - {what: Current-conducting arms, item: material.aluminium-1350, mass: 3482.0, note: 'three box arms 6 m long, 0.6 m deep, 30 mm wall: rear 4 m 0.8 m wide, 0.5 m taper, front 1.5 m 0.3 m wide to clear the neighbouring rods (geometric gap 30 mm; electrical clearance not yet checked)'}
 - {what: Secondary cables, item: material.copper, mass: 4190.0, note: 'two water-cooled copper cables a phase, 12 m, each 6495 mm2 for half of 65 kA at 5 A/mm2'}
-- {what: Slag spout, item: material.structural-steel-a36, mass: 673.7, note: 'a steel trough 0.8 m wide, 0.4 m deep, 30 mm plate, 1.79 m long, outside sizes (a clear channel 0.44 m wide and 0.22 m deep inside its wall and lining); its floor from the slag door''s sill (local x -3.32, 3.2 m up) sloping 20 degrees down to x -5.0, 2.59 m up, 0.5 m past the cradle deck, so the slag falls clear into the pot'}
-- {what: Slag spout lining, item: good.refractory-brick, mass: 1287.0, note: 150 mm of refractory in the trough}
+- {what: Slag spout, item: material.structural-steel-a36, mass: 648.4, note: 'a steel trough 0.8 m wide, 0.4 m deep, 30 mm plate, 1.79 m long, outside sizes (a clear channel 0.44 m wide and 0.22 m deep inside its wall and lining); its floor from the slag door''s sill (local x -3.32, 3.2 m up) sloping 20 degrees down to x -5.0, 2.59 m up, 0.5 m past the cradle deck, so the slag falls clear into the pot'}
+- {what: Slag spout lining, item: good.refractory-brick, mass: 949.3, note: 150 mm of refractory in the trough}
+- {what: Slag spout brackets, item: material.structural-steel-a36, mass: 169.8, note: 'four seated brackets of 120 x 120 x 6 mm tube and plate that carry the trough on the cradle; measured on blender''s model (eaf-vessel-80t candidate v02: tubes 83.4 kg, plates 86.4 kg)'}
 - {what: Tilt and mast hydraulics, item: good.pumps, mass: 15000.0, note: 'cylinders, pumps and valves; from memory'}
 holds: 107100.0
 needs: {power: 72000000, heat: 10800000.0, gravity: 1.6, atmosphere: any}
