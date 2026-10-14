@@ -4330,3 +4330,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.alloy-bins-8
+    version: 1
+    manifest_sha256: "7ebfccfbf3e6feb46fbdcadf82126b9a4b7f784075906326e6d1968d940b0c30"
+    installed: ad6be96e
+    game: "the loader (world::assets) at fso 1c387466"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/alloy-bins-8/v1 (1512692 bytes, bounds [-6.28, 0.0, -3.15] to [6.28, 15.14, 3.15]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
