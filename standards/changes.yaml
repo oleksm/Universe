@@ -1344,7 +1344,7 @@
 - { record: part.wb-03, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "fc9231a50b47acd4" }
 - { record: part.wb-04, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "63ae488f7cfc4f5a" }
 - { record: plant-mount.bay-s1, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "fb1701d5df1ba8b3" }
-- { record: plant-mount.bay-s2, at: "2026-10-14T03:12:49Z", status: draft, summary: "changed: bears", sha: "50e1e96ef410a44f" }
+- { record: plant-mount.bay-s2, at: "2026-10-14T03:17:44Z", status: draft, summary: "changed: bears", sha: "b3b23fa153241ef7" }
 - { record: plant-mount.bay-s3, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "bf4fec9ac3b42946" }
 - { record: population.biraidim.far-cloud, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "4d04c1b699eb49db" }
 - { record: population.biraidim.shikra-family, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "86d3c16b41bc181d" }
@@ -2713,7 +2713,7 @@
 - { record: unit.baghouse-800k, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "5526685837f20b72" }
 - { record: unit.cooling-tower, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "95edfcc8150d7e56" }
 - { record: unit.dri-bin-200t, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "77c4d3bb47d2077d" }
-- { record: unit.eaf-vessel-80t, at: "2026-10-14T03:12:49Z", status: draft, summary: "changed: physical, built_of", sha: "bbcb3d8ee572760a" }
+- { record: unit.eaf-vessel-80t, at: "2026-10-14T03:17:44Z", status: draft, summary: "changed: physical, built_of", sha: "fb914c7bc1b5e6c8" }
 - { record: unit.furnace-transformer-90mva, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "b2ba6874bb680078" }
 - { record: unit.hall-crane-20t, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "5e8e21a5adca9521" }
 - { record: unit.ladle-car-80t, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "17a2ef15a2c324c2" }
