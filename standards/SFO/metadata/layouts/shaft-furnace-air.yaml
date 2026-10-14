@@ -5,7 +5,7 @@ stands_for: module.shaft-furnace
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 258.6, width: 120.0, height: 54.0, mass: 14700000.0}
+physical: {length: 258.6, width: 120.0, height: 54.0, mass: 15030000.0}
 bays:
 - id: F
   mount: plant-mount.bay-s3
@@ -131,23 +131,25 @@ links:
 - kind: pipe
   name: warm gas to the heater
   from: [24.0, 21.0, 17.0]
-  to: [24.0, -28.0, 2.0]
-  length: 84.0
+  to: [12.0, -27.3, 2.0]
+  length: 79.3
   item: material.structural-steel-a36
-  mass: 56180.0
+  mass: 53030.0
   via:
   - [24.0, 14.0, 17.0]
   - [14.0, 14.0, 17.0]
-  - [14.0, -28.0, 17.0]
-  - [14.0, -28.0, 2.0]
-  note: 2.3 m across, 12 mm wall, insulated, 300 deg C
+  - [14.0, -15.0, 17.0]
+  - [10.0, -15.0, 17.0]
+  - [10.0, -15.0, 2.0]
+  - [10.0, -27.3, 2.0]
+  note: '2.3 m across, 12 mm wall, insulated, 300 deg C: down the tower''s east side and in at the heater''s west end, into its cold header'
 - kind: duct
   name: hot gas to the bustle
-  from: [24.0, -20.0, 15.0]
+  from: [24.0, -20.0, 18.0]
   to: [0.0, -7.5, 26.0]
-  length: 47.5
+  length: 44.5
   item: material.structural-steel-a36
-  mass: 375500.0
+  mass: 351800.0
   via:
   - [24.0, -20.0, 26.0]
   - [0.0, -20.0, 26.0]
@@ -227,11 +229,11 @@ frame:
 ground:
 - {what: Tower foundation, item: good.concrete, volume: 1440.0, note: 'a mat 24 x 24 m, 2.5 m thick, under the tower and the shaft''s columns', mass: 3456000.0}
 - {what: Product belt pit, item: good.concrete, volume: 34.0, note: 'under the discharge lock, 10 x 4 m, 3 m deep, 0.3 m walls', mass: 81600.0}
-- {what: Unit slabs, item: good.concrete, volume: 585.5, note: 0.8 m under each unit on the ground, mass: 1405000.0}
+- {what: Unit slabs, item: good.concrete, volume: 662.3, note: 0.8 m under each unit on the ground, mass: 1590000.0}
 - {what: Transformer vault, item: good.concrete, volume: 132.0, note: fire walls 7 m tall round the heater's transformer, mass: 316800.0}
 - {what: Cooling tower basins, item: good.concrete, volume: 1516.0, note: 'sunk as the furnace shop''s: 0.3 m walls, floor top at z -2', mass: 3638000.0}
 - {what: Gallery trestle footings, item: good.concrete, volume: 104.0, note: '8 m3 under each of the pellet belt''s trestles, 4 m3 under the product belt''s', mass: 249600.0}
-totals: {rate: 55.5555555555556, power: 152200000.0, heat: 129600000.0, water: 72.04, mass: 14700000.0, against_module: 'module.shaft-furnace: one box 150 x 100 x 137 m, 22 MW, which leaves out heating the gas. This layout: the same 200 t of sponge iron an hour; 152 MW, of which the hydrogen heater is 125: hydrogen brings no heat of its own, so the shaft''s 112 MW comes from 14.3 kg/s of gas (4.8 times what the reduction uses) heated by electricity; 130 MW to the towers, 72 kg/s of water evaporated; the 26.9 kg/s of water made goes back to the hydrogen plant. 5,557 t of plant and frame, 9,147 t of concrete.'}
+totals: {rate: 55.5555555555556, power: 152200000.0, heat: 129600000.0, water: 72.04, mass: 15030000.0, against_module: 'module.shaft-furnace: one box 150 x 100 x 137 m, 22 MW, which leaves out heating the gas. This layout: the same 200 t of sponge iron an hour; 152 MW, of which the hydrogen heater is 125: hydrogen brings no heat of its own, so the shaft''s 112 MW comes from 14.3 kg/s of gas (4.8 times what the reduction uses) heated by electricity; 130 MW to the towers, 72 kg/s of water evaporated; the 26.9 kg/s of water made goes back to the hydrogen plant. 5,702 t of plant and frame, 9,332 t of concrete.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}

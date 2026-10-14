@@ -1012,14 +1012,25 @@ def shaft_units():
     elem = Q_HEATER / 20e3 / 0.155                     # kg of FeCrAl strip at 20 kW/m2 of surface, 0.155 m2/kg for 20 x 2 mm strip
     hv = n_h * (cyl_shell(Dh, Hh, 0.025, bottom=2.0) * RHO["steel"])
     hr = n_h * math.pi * ((Dh / 2) ** 2 - (Dh / 2 - 0.3) ** 2) * Hh * RHO["refractory"]
+    hd_c = main_dia(mol_flow(GAS), T_PRE, P_SHAFT)     # m bore of the cold header, as the layout's warm gas pipe
+    hd_h = main_dia(mol_flow(GAS), T_GAS, P_SHAFT)     # m bore of the hot header, as the layout's hot duct
+    hL = 20.0
+    hdr_c = math.pi * (hd_c + 0.012) * 0.012 * hL * RHO["steel"]
+    hdr_hs = math.pi * (hd_h + 0.4 + 0.016) * 0.016 * hL * RHO["steel"]
+    hdr_hr = math.pi * (hd_h + 0.2) * 0.2 * hL * RHO["refractory"]
     out[f"gas-heater-{Q_HEATER / 1e6:.0f}mw"] = dict(
-        name=f"Hydrogen heater, {Q_HEATER / 1e6:.0f} MW", size_class=3, fits="bay-s3", dims=(24.0, 8.0, 18.0),
-        desc=(f"Heats {GAS:.1f} kg/s of hydrogen from {T_PRE:.0f} to {T_GAS:.0f} deg C with electric resistance elements: {n_h} lined vessels {Dh:g} m across and {Hh:g} m tall in a row along x at 6 m, "
-              "the gas in at the bottom of each (from a header on -y, 2 m up) and out at the top into a lined hot header on +y, 15 m up, toward the shaft's bustle. Its power by cables from its transformer, to a terminal house at its -x end."),
+        name=f"Hydrogen heater, {Q_HEATER / 1e6:.0f} MW", size_class=3, fits="bay-s3", dims=(24.0, 12.0, 18.0),
+        desc=(f"Heats {GAS:.1f} kg/s of hydrogen from {T_PRE:.0f} to {T_GAS:.0f} deg C with electric resistance elements: {n_h} lined vessels {Dh:g} m across and {Hh:g} m tall (z 0.5 to 16.5) in a row along x at 6 m (x -9, -3, 3, 9), on the unit's centre line. "
+              f"The gas in at the bottom of each from a cold header ({hd_c:.2f} m bore, 12 mm wall) along x at y -3.3, z 2, whose inlet flange is on its -x end at the unit's face (x -12); "
+              f"out at the top of each into a lined hot header ({hd_h:.2f} m bore inside 200 mm of refractory, 16 mm shell, {hd_h + 0.432:.2f} m outside) along x at y 4, z 15, from x -10 to 10, whose outlet is a stub up from its middle (x 0) to a flange at z 18, the unit's top. "
+              "Its power by cables from its transformer to a terminal house at its -x end, on the +y side (clear of the cold header's flange). The headers' supports are the unit's own."),
         built_of=[part("Vessels", A36, hv, f"{n_h} vessels {Dh:g} m across, {Hh:g} m, 25 mm plate, heads twice the disc"),
                   part("Lining", REF, hr, "300 mm"),
                   part("Elements", "material.stainless-steel-304", elem, f"FeCrAl strip, which the registry has not got: stainless steel stands for it; {elem / 1000:.0f} t at 20 kW/m2 of surface"),
-                  part("Headers, terminals and controls", A36, 30000.0, "from memory")],
+                  part("Cold header", A36, hdr_c, f"{hL:g} m of {hd_c:.2f} m pipe, 12 mm wall"),
+                  part("Hot header", A36, hdr_hs, f"{hL:g} m of {hd_h + 0.4:.2f} m shell, 16 mm plate"),
+                  part("Hot header lining", REF, hdr_hr, "200 mm"),
+                  part("Branches, supports, terminals and controls", A36, 30000.0, "from memory")],
         needs={"power": Q_HEATER / 0.98},
         basis=[{"of": ["physical", "built_of"], "tier": "invented", "review": True, "note": "Vessels and element loading from memory; elements sized from the duty."},
                {"of": ["needs"], "tier": "derived", "note": f"The gas's {GAS:.1f} kg/s at {CP_H2 / 1e3:.1f} kJ/kg K over {T_GAS - T_PRE:.0f} K, at 98% (from memory)."}])
@@ -1162,8 +1173,8 @@ def shaft_furnace_air(us, recs):
         link("duct", "wet gas to the scrubber", (24.0, 27.0, 1.5), (42.0, 24.0, 2.0), A36, pm(d_wet), None, f"{d_wet:.1f} m across, 12 mm plate", via=[(24.0, 32.0, 1.5), (40.0, 32.0, 1.5), (40.0, 24.0, 2.0)]),
         link("duct", "clean gas to the compressor", (48.0, 24.0, 23.0), (68.0, 4.0, 1.5), A36, pm(d_dry), None, f"{d_dry:.1f} m across, 12 mm plate; the hydrogen plant's make-up joins it here", via=[(48.0, 24.0, 26.0), (68.0, 24.0, 26.0), (68.0, 4.0, 26.0)]),
         link("pipe", "compressed gas to the recuperator", (50.0, -4.0, 1.5), (24.0, 21.0, 1.0), A36, pm(d_cmp), None, f"{d_cmp:.1f} m across, 12 mm wall, {P_SHAFT / 1e5:.1f} bar", via=[(36.0, -4.0, 1.5), (36.0, 14.0, 1.5), (24.0, 14.0, 1.0)]),
-        link("pipe", "warm gas to the heater", (24.0, 21.0, 17.0), (24.0, -28.0, 2.0), A36, pm(d_pre), None, f"{d_pre:.1f} m across, 12 mm wall, insulated, {T_PRE:.0f} deg C", via=[(24.0, 14.0, 17.0), (14.0, 14.0, 17.0), (14.0, -28.0, 17.0), (14.0, -28.0, 2.0)]),
-        link("duct", "hot gas to the bustle", (24.0, -20.0, 15.0), (0.0, -side / 2, z_bustle), A36, lined(d_hot), None, f"{d_hot:.1f} m inside 200 mm of refractory, 16 mm shell: hydrogen at {T_GAS:.0f} deg C, in through the tower's south wall to the bustle's inlet; its shell runs warm, so it is the hydrogen-tight steel of the loop that matters (not yet specified)", via=[(24.0, -20.0, z_bustle), (0.0, -20.0, z_bustle)]),
+        link("pipe", "warm gas to the heater", (24.0, 21.0, 17.0), (12.0, -27.3, 2.0), A36, pm(d_pre), None, f"{d_pre:.1f} m across, 12 mm wall, insulated, {T_PRE:.0f} deg C: down the tower's east side and in at the heater's west end, into its cold header", via=[(24.0, 14.0, 17.0), (14.0, 14.0, 17.0), (14.0, -15.0, 17.0), (10.0, -15.0, 17.0), (10.0, -15.0, 2.0), (10.0, -27.3, 2.0)]),
+        link("duct", "hot gas to the bustle", (24.0, -20.0, 18.0), (0.0, -side / 2, z_bustle), A36, lined(d_hot), None, f"{d_hot:.1f} m inside 200 mm of refractory, 16 mm shell: hydrogen at {T_GAS:.0f} deg C, in through the tower's south wall to the bustle's inlet; its shell runs warm, so it is the hydrogen-tight steel of the loop that matters (not yet specified)", via=[(24.0, -20.0, z_bustle), (0.0, -20.0, z_bustle)]),
         link("pipe", "hydrogen make-up", (100.0, 4.0, 1.5), (68.0, 4.0, 1.5), A36, pm(d_mk, 0.008), None, f"{d_mk:.1f} m across, 8 mm wall: {H2_USED:.2f} kg/s from the hydrogen plant, beyond the layout"),
         link("pipe", "condensate to the hydrogen plant", (54.0, 24.0, 0.5), (100.0, 24.0, 0.5), A36, math.pi * 0.2 * 0.006 * RHO["steel"], None, f"200 mm, 6 mm wall: the {STEAM:.1f} kg/s of water the reduction made, back to the electrolysers, beyond the layout"),
         link("pipe", "cooling water mains", (-72.0, 42.0, 0.75), (60.0, -12.0, 0.75), A36, 2 * pm(d_cw, 0.012), None, f"a pair of {d_cw:.1f} m pipes, 12 mm wall, flow and return: {flow:,.0f} kg/s at a 10 K rise, along the towers' row and down the plant to the scrubber, compressor, cooling loop and transformer", via=[(84.0, 42.0, 0.75), (84.0, -12.0, 0.75)]),
@@ -2297,8 +2308,8 @@ def shaft_furnace_airless(us, recs):
         link("conveyor", "hot sponge iron", (0.0, 0.0, 6.0), (-60.0, 0.0, 6.0), "material.stainless-steel-304", 400.0, 150000.0, f"a closed drag chain conveyor in an insulated casing: {S_RATE:.1f} kg/s of sponge iron at about {T_HOT_DRI:.0f} deg C to the arc furnace shop's bin, beyond the layout; the hot charge saves the furnace about {S_RATE * CP_DRI * (T_HOT_DRI - 25) / 1e6:.0f} MW"),
         link("pipe", "top gas main", (side / 2 - 0.5, 0.0, z_top_gas), (24.0, 24.0, 18.0), A36, pm(d_top), None, f"{d_top:.1f} m, 16 mm wall for 8 bar, insulated", via=[(15.0, 0.0, z_top_gas), (24.0, 24.0, z_top_gas)]),
         link("pipe", "gas to the condenser and compressor", (24.0, 27.0, 1.5), (42.0, 0.0, 1.5), A36, pm(d_gas), None, f"{d_gas:.1f} m, 16 mm", via=[(24.0, 32.0, 1.5), (42.0, 32.0, 1.5), (42.0, 24.0, 12.0), (54.0, 24.0, 2.0), (54.0, 0.0, 1.5)]),
-        link("pipe", "compressed gas back to the recuperator and heater", (42.0, 0.0, 1.5), (24.0, -28.0, 2.0), A36, pm(d_gas), None, f"{d_gas:.1f} m, 16 mm, insulated after the recuperator", via=[(36.0, 0.0, 1.5), (36.0, 14.0, 1.5), (24.0, 14.0, 17.0), (14.0, 14.0, 17.0), (14.0, -28.0, 17.0), (14.0, -28.0, 2.0)]),
-        link("pipe", "hot gas to the bustle", (24.0, -20.0, 15.0), (0.0, -side / 2, z_bustle), A36, lined(d_hot), None, f"{d_hot:.1f} m inside 200 mm of refractory, 25 mm shell for 8 bar", via=[(24.0, -20.0, z_bustle), (0.0, -20.0, z_bustle)]),
+        link("pipe", "compressed gas back to the recuperator and heater", (42.0, 0.0, 1.5), (12.0, -27.3, 2.0), A36, pm(d_gas), None, f"{d_gas:.1f} m, 16 mm, insulated after the recuperator", via=[(36.0, 0.0, 1.5), (36.0, 14.0, 1.5), (24.0, 14.0, 17.0), (14.0, 14.0, 17.0), (14.0, -15.0, 17.0), (10.0, -15.0, 17.0), (10.0, -15.0, 2.0), (10.0, -27.3, 2.0)]),
+        link("pipe", "hot gas to the bustle", (24.0, -20.0, 18.0), (0.0, -side / 2, z_bustle), A36, lined(d_hot), None, f"{d_hot:.1f} m inside 200 mm of refractory, 25 mm shell for 8 bar", via=[(24.0, -20.0, z_bustle), (0.0, -20.0, z_bustle)]),
         link("pipe", "hydrogen make-up", (100.0, 4.0, 1.5), (54.0, 4.0, 1.5), "material.stainless-steel-304", pm(0.25, 0.008), None, f"{H2_USED:.2f} kg/s from the hydrogen plant's electrolysers, which run at 10 bar so that no make-up compressor is needed"),
         link("pipe", "condensate to the hydrogen plant", (54.0, 24.0, 0.5), (100.0, 24.0, 0.5), "material.stainless-steel-304", math.pi * 0.2 * 0.006 * 7900, None, f"200 mm: {STEAM - _left:.1f} kg/s of water back to the electrolysers: on a moon every kilogram comes back"),
         link("pipe", "loop water to the radiators", (rad_at[-1][0] - 22.0, rad_at[-1][1], 1.0), (48.0, 20.0, 1.0), A36, 2 * pm(d_cw, 0.010), None, f"a pair of {d_cw:.2f} m pipes at about {HP_T_LOOP:.0f} K: {flow:,.0f} kg/s along the {n_rad} radiator fields' rows to the condenser, a branch to the transformer", via=[(-36.0, rad_at[-1][1], 1.0), (-36.0, 36.0, 1.0), (48.0, 36.0, 1.0)]),

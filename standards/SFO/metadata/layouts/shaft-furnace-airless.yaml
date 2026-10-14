@@ -5,7 +5,7 @@ stands_for: module.shaft-furnace
 site:
   atmosphere: none
   gravity: [1.6, 2.0]
-physical: {length: 473.3, width: 456.0, height: 45.0, mass: 7995000.0}
+physical: {length: 473.3, width: 456.0, height: 45.0, mass: 8290000.0}
 bays:
 - id: F
   mount: plant-mount.bay-s3
@@ -304,25 +304,27 @@ links:
 - kind: pipe
   name: compressed gas back to the recuperator and heater
   from: [42.0, 0.0, 1.5]
-  to: [24.0, -28.0, 2.0]
-  length: 116.6
+  to: [12.0, -27.3, 2.0]
+  length: 111.9
   item: material.structural-steel-a36
-  mass: 46840.0
+  mass: 44950.0
   via:
   - [36.0, 0.0, 1.5]
   - [36.0, 14.0, 1.5]
   - [24.0, 14.0, 17.0]
   - [14.0, 14.0, 17.0]
-  - [14.0, -28.0, 17.0]
-  - [14.0, -28.0, 2.0]
+  - [14.0, -15.0, 17.0]
+  - [10.0, -15.0, 17.0]
+  - [10.0, -15.0, 2.0]
+  - [10.0, -27.3, 2.0]
   note: 1.0 m, 16 mm, insulated after the recuperator
 - kind: pipe
   name: hot gas to the bustle
-  from: [24.0, -20.0, 15.0]
+  from: [24.0, -20.0, 18.0]
   to: [0.0, -6.5, 16.0]
-  length: 38.5
+  length: 39.5
   item: material.structural-steel-a36
-  mass: 202700.0
+  mass: 208000.0
   via:
   - [24.0, -20.0, 16.0]
   - [0.0, -20.0, 16.0]
@@ -383,11 +385,11 @@ frame:
   sized: 'At 2 m/s2 the shaft with its burden, 4.8 MN, on 8 columns of 300 x 300 x 20 mm 4340 box: 27 MPa each. No wind: the lattice braces the columns and carries six aluminium grating platforms (6 mm, 60% of the plan), the kit''s lightest aluminium strut (al6061-tb-80x2). Footings not yet checked.'
 ground:
 - {what: Tower foundation, item: material.regolith-sintered, volume: 864.0, note: a mat of sintered regolith blocks 1.5 m thick (a fifth of the load of 1 g), mass: 2160000.0}
-- {what: Unit pads, item: material.regolith-sintered, volume: 259.9, note: 0.5 m under each unit, mass: 649800.0}
+- {what: Unit pads, item: material.regolith-sintered, volume: 307.9, note: 0.5 m under each unit, mass: 769800.0}
 - {what: Radiator legs' pads, item: material.regolith-sintered, volume: 124.9, mass: 312200.0}
 - {what: Crew post berm, item: material.regolith, volume: 164.6, mass: 246900.0}
 - {what: Trestle footings, item: material.regolith-sintered, volume: 39.0, mass: 97500.0}
-totals: {rate: 55.5555555555556, power: 127500000.0, heat: 62090000.0, water: 0.0, mass: 7995000.0, against_module: 'module.shaft-furnace: one box, 22 MW. The layout for air draws 152 MW and sends 130 MW up four towers. This layout: the same rate; 127 MW (heater 121, compressor 4.1: at 8 bar the compressor only makes up the loop''s pressure drop); 62 MW to 43 radiator fields at 345 K (10 ha), for the water must condense somewhere and only light can take the heat away; no cooling zone or loop (the sponge iron goes on hot); no water used up. 4,528 t of plant and frame, 3,466 t of sintered regolith.'}
+totals: {rate: 55.5555555555556, power: 127500000.0, heat: 62090000.0, water: 0.0, mass: 8290000.0, against_module: 'module.shaft-furnace: one box, 22 MW. The layout for air draws 152 MW and sends 130 MW up four towers. This layout: the same rate; 127 MW (heater 121, compressor 4.1: at 8 bar the compressor only makes up the loop''s pressure drop); 62 MW to 43 radiator fields at 345 K (10 ha), for the water must condense somewhere and only light can take the heat away; no cooling zone or loop (the sponge iron goes on hot); no water used up. 4,703 t of plant and frame, 3,586 t of sintered regolith.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}
