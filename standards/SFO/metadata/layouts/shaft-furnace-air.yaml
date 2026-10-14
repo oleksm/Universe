@@ -5,7 +5,7 @@ stands_for: module.shaft-furnace
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 258.6, width: 120.0, height: 54.0, mass: 15190000.0}
+physical: {length: 258.6, width: 120.0, height: 54.0, mass: 15260000.0}
 bays:
 - id: F
   mount: plant-mount.bay-s3
@@ -130,16 +130,16 @@ links:
   note: 1.7 m across, 12 mm wall, 2.8 bar
 - kind: pipe
   name: warm gas to the heater
-  from: [24.0, 18.8, 17.0]
+  from: [24.0, 18.8, 16.75]
   to: [12.0, -27.3, 2.0]
-  length: 77.1
+  length: 76.85
   item: material.structural-steel-a36
-  mass: 51560.0
+  mass: 51390.0
   via:
-  - [24.0, 14.0, 17.0]
-  - [14.0, 14.0, 17.0]
-  - [14.0, -15.0, 17.0]
-  - [10.0, -15.0, 17.0]
+  - [24.0, 14.0, 16.75]
+  - [14.0, 14.0, 16.75]
+  - [14.0, -15.0, 16.75]
+  - [10.0, -15.0, 16.75]
   - [10.0, -15.0, 2.0]
   - [10.0, -27.3, 2.0]
   note: '2.3 m across, 12 mm wall, insulated, 300 deg C: down the tower''s east side and in at the heater''s west end, into its cold header'
@@ -237,7 +237,7 @@ ground:
 - {what: Transformer vault, item: good.concrete, volume: 132.0, note: fire walls 7 m tall round the heater's transformer, mass: 316800.0}
 - {what: Cooling tower basins, item: good.concrete, volume: 1516.0, note: 'sunk as the furnace shop''s: 0.3 m walls, floor top at z -2', mass: 3638000.0}
 - {what: Gallery trestle footings, item: good.concrete, volume: 104.0, note: '8 m3 under each of the pellet belt''s trestles, 4 m3 under the product belt''s', mass: 249600.0}
-totals: {rate: 55.5555555555556, power: 152200000.0, heat: 129600000.0, water: 72.04, mass: 15190000.0, against_module: 'module.shaft-furnace: one box 150 x 100 x 137 m, 22 MW, which leaves out heating the gas. This layout: the same 200 t of sponge iron an hour; 152 MW, of which the hydrogen heater is 125: hydrogen brings no heat of its own, so the shaft''s 112 MW comes from 14.3 kg/s of gas (4.8 times what the reduction uses) heated by electricity; 130 MW to the towers, 72 kg/s of water evaporated; the 26.9 kg/s of water made goes back to the hydrogen plant. 5,756 t of plant and frame, 9,433 t of concrete.'}
+totals: {rate: 55.5555555555556, power: 152200000.0, heat: 129600000.0, water: 72.04, mass: 15260000.0, against_module: 'module.shaft-furnace: one box 150 x 100 x 137 m, 22 MW, which leaves out heating the gas. This layout: the same 200 t of sponge iron an hour; 152 MW, of which the hydrogen heater is 125: hydrogen brings no heat of its own, so the shaft''s 112 MW comes from 14.3 kg/s of gas (4.8 times what the reduction uses) heated by electricity; 130 MW to the towers, 72 kg/s of water evaporated; the 26.9 kg/s of water made goes back to the hydrogen plant. 5,823 t of plant and frame, 9,433 t of concrete.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}
