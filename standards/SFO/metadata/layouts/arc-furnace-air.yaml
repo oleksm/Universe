@@ -56,7 +56,8 @@ links:
   length: 23.03
   item: material.structural-steel-a36
   mass: 11360.0
-  note: 2 m across, 10 mm plate, water-cooled for its first part; from the roof's fourth hole, 2 m east and 1.5 m north of the electrodes, to the baghouse
+  heat: 7200000.0
+  note: 2 m across, 10 mm plate, water-cooled for its first part (it takes about 10% of the arc's power from the hot gas, from memory), with the burn-out gap where air comes in and the CO burns; from the roof's fourth hole, 2 m east and 1.5 m north of the electrodes, to the baghouse's inlet
 - kind: busbar
   name: secondary bus
   from: [-12.0, -3.5, 4.0]

@@ -145,14 +145,13 @@ def units():
     fan = Q * 4000 / 0.75
     out["baghouse-800k"] = dict(
         name="Off-gas baghouse, 800,000 m3/h", size_class=3, fits="bay-s3", dims=(24.0, 12.0, 18.0),
-        desc="Cleans the furnace's fume before it goes to the air: a water-cooled duct off the roof's fourth hole, a burn-out gap, then filter bags in a steel casing, the dust shaken into hoppers. Two fans draw the gas through.",
+        desc="Cleans the furnace's fume before it goes to the air: filter bags in a closed 18 x 8 m steel casing over six hoppers, the dust shaken down and let out through sealed valves; two fans with their stacks in the 6 m strip at one end draw the gas through. The gas comes in at the top of one long side (local 0, -6, 15) from the layout's water-cooled duct and burn-out gap.",
         built_of=[part("Casing and hoppers", A36, casing, "24 x 12 x 18 m, 8 mm plate"),
                   part("Structure", A36, casing * 0.5, "half the casing, from memory"),
                   part("Filter bags", "material.ptfe", cloth * 0.5, f"{bags} bags 150 mm across and 8 m long, {cloth:.0f} m2 of PTFE-membrane cloth at 0.5 kg/m2"),
                   part("Fans and motors", "good.electric-motors", 2 * 8000.0, "two induced-draught fans, from memory")],
-        holds=0.015 * RATE * 3600 * 4, needs={"power": fan, "heat": OFFGAS_SHARE * P},
+        holds=0.015 * RATE * 3600 * 4, needs={"power": fan},
         basis=[{"of": ["physical", "built_of", "needs.power"], "tier": "invented", "review": True, "note": f"Off-gas 800,000 m3/h, 1.2 m/min through the cloth, fans at 4 kPa and 75%: from memory. Fan power {fan / 1e6:.2f} MW, not in the module's figure."},
-               {"of": ["needs.heat"], "tier": "invented", "review": True, "note": f"The water-cooled duct takes about {OFFGAS_SHARE:.0%} of the arc's power from the hot gas, from memory."},
                {"of": ["holds"], "tier": "derived", "note": "Four hours of the recipe's dust in the hoppers."}])
     return out
 
@@ -296,7 +295,7 @@ def unit_record(slug, u):
 
 def main():
     us = units()
-    loop_heat = sum(u["needs"].get("heat", 0) for u in us.values())
+    loop_heat = sum(u["needs"].get("heat", 0) for u in us.values()) + OFFGAS_SHARE * P   # the units and the layout's water-cooled duct
     us["cooling-tower"] = cooling_unit(loop_heat)
     us.update(car_units())
     recs = {slug: unit_record(slug, u) for slug, u in us.items()}
@@ -347,11 +346,13 @@ def main():
         {"id": "C", "mount": "plant-mount.bay-s3", "unit": "unit.cooling-tower", "at": [-36.0, -6.0, 0.0], "note": "outside, west"},
     ]
 
-    def link(kind, name, a, b, item, per_m, power=None, note=None):
+    def link(kind, name, a, b, item, per_m, power=None, note=None, heat=None):
         L = math.dist(a, b)
         d = {"kind": kind, "name": name, "from": list(a), "to": list(b), "length": r(L), "item": item, "mass": r(per_m * L)}
         if power:
             d["power"] = r(power)
+        if heat:
+            d["heat"] = r(heat)
         if note:
             d["note"] = note
         return d
@@ -359,7 +360,7 @@ def main():
     bus_area = I2 / 4e6
     links = [
         link("conveyor", "sponge iron feed", (-12.0, 30.0, 6.0), (-12.0, 7.8, 13.3), A36, 150.0, DRI * G * 7.0 / 0.5 + 20000, "0.8 m troughed belt, 150 kg/m with its gallery (from memory), 16 degrees; into the roof's fifth hole, 1.8 m north of the electrodes"),
-        link("duct", "off-gas", (-10.0, 7.5, 13.5), (6.0, 24.0, 15.0), A36, math.pi * 2.0 * 0.010 * RHO["steel"], None, "2 m across, 10 mm plate, water-cooled for its first part; from the roof's fourth hole, 2 m east and 1.5 m north of the electrodes, to the baghouse"),
+        link("duct", "off-gas", (-10.0, 7.5, 13.5), (6.0, 24.0, 15.0), A36, math.pi * 2.0 * 0.010 * RHO["steel"], None, f"2 m across, 10 mm plate, water-cooled for its first part (it takes about {OFFGAS_SHARE:.0%} of the arc's power from the hot gas, from memory), with the burn-out gap where air comes in and the CO burns; from the roof's fourth hole, 2 m east and 1.5 m north of the electrodes, to the baghouse's inlet", heat=OFFGAS_SHARE * P),
         link("busbar", "secondary bus", (-12.0, -3.5, 4.0), (-12.0, 0.8, 7.3), CU, 3 * bus_area * RHO["copper"], None, f"three water-cooled copper tube bars, {bus_area * 1e6:.0f} mm2 each for {I2 / 1000:.0f} kA at 4 A/mm2; from the transformer's three secondary terminals (its +y face, x -1.3, 0 and +1.3 m, 4 m up) through the vault wall to three insulated terminals spread 1.3 m apart along x behind the mast bank, then the furnace's cables"),
         link("rail", "ladle rail", (-7.5, 6.0, 0.0), (30.0, 6.0, 0.0), A36, 2 * 60.0, None, "two 60 kg/m rails under the tap, out of the hall's east door to the ladle station"),
         link("rail", "slag rail", (-16.5, 0.0, 0.0), (-16.5, 21.0, 0.0), A36, 2 * 60.0, None, "under the slag door, out of the north door"),
@@ -408,7 +409,7 @@ def main():
     # Totals.
     used = [recs[b["unit"].split(".", 1)[1]] for b in bays] + [recs[m_["unit"].split(".", 1)[1]] for m_ in mobile] + [recs["hall-crane-20t"]]
     power = sum(u.get("needs", {}).get("power", 0) for u in used) + sum(l.get("power", 0) for l in links)
-    heat = sum(u.get("needs", {}).get("heat", 0) for u in used)
+    heat = sum(u.get("needs", {}).get("heat", 0) for u in used) + sum(l.get("heat", 0) for l in links)
     water = sum(u.get("needs", {}).get("water", 0) for u in used)
     mass_units = sum(u["physical"]["mass"] for u in used)
     mass_links = sum(l["mass"] for l in links)

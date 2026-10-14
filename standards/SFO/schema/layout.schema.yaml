@@ -68,6 +68,7 @@ properties:
         item: { type: string, x-ref: [material, stock, good] }
         mass: { type: number, exclusiveMinimum: 0, x-unit: "kg" }
         power: { type: number, minimum: 0, x-unit: "W" }
+        heat: { type: number, minimum: 0, x-unit: "W", description: "W this link gives the cooling loop (a water-cooled duct)" }
         note: { type: string }
   frame:
     description: "The hall or open frame, of standard struts (SFO 13) on its grid, and what clads it."

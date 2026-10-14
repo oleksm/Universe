@@ -3,7 +3,7 @@
 identity: {key: plant-mount.bay-s3, name: 'Plant bay, class 3', size_class: 3, description: A 24 m square of prepared ground or floor and the feeds to it.}
 footprint: {length: 24.0, width: 24.0}
 bears: {load: 2500000.0}
-feeds: {power: 1480000.0, heat: 9000000.0, water: 12.8}
+feeds: {power: 1480000.0, water: 12.8}
 basis:
 - of: [footprint]
   tier: invented
