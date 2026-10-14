@@ -680,7 +680,7 @@ def ladle_station_air(us, recs):
     pit_r, pit_d = 3.5, 6.0
     ground = [
         {"what": "Ladle furnace foundation", "item": CONC, "volume": r(12 * 10 * 1.0 - 5 * 12 * 0.3), "note": "x -15 to -3, y -5 to 5, 1 m, a 0.3 m recess along the car's lane for the rails"},
-        {"what": "Degasser pit", "item": CONC, "volume": r(math.pi * ((pit_r + 0.6) ** 2 - pit_r ** 2) * pit_d + math.pi * (pit_r + 0.6) ** 2 * 1.0), "note": f"round the tank at (3, -5): {2 * pit_r:g} m across inside, {pit_d:g} m deep, 0.6 m walls, a 1 m floor"},
+        {"what": "Degasser pit", "item": CONC, "volume": r(math.pi * ((pit_r + 0.6) ** 2 - pit_r ** 2) * pit_d + math.pi * (pit_r + 0.6) ** 2 * 1.0), "note": f"round the tank at (3, -5): {2 * pit_r:g} m across inside, {pit_d:g} m deep, 0.6 m walls, a 1 m floor; a service notch through the wall's top at x 2.4 to 3.6, y -9.2 to -8.3, z -1.8 to 0 for the vacuum riser (1 m across, at 3, -8.4), with a cover plate"},
         {"what": "Degasser floor", "item": CONC, "volume": r(12 * 10 * 0.5 - math.pi * (pit_r + 0.6) ** 2 * 0.5), "note": "x 0 to 12, y -12 to -2 round the pit, 0.5 m"},
         {"what": "Transformer vault", "item": CONC, "volume": r(8 * 6 * 0.5 + 28 * 6 * 0.3), "note": "x -13 to -5, y -12 to -6 round the transformer: a 0.5 m slab and 0.3 m fire walls 6 m tall; the bus through its north wall, 1 m short of the ladle furnace's box"},
         {"what": "Frame footings", "item": CONC, "volume": r(ground_nodes * 2.25), "note": f"a 1.5 x 1.5 x 1 m pad under each of the lattice's {ground_nodes} ground nodes"},
