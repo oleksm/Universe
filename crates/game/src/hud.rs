@@ -29,10 +29,6 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
         crate::newspanel::draw(frame, app);
         return;
     }
-    // (The planet studio's panel beside the world it looks at, not over it.)
-    if let Some(studio) = &app.panels.planet_studio {
-        crate::planet_studio::draw(frame, app, studio);
-    }
     if app.panels.standards.is_some() {
         crate::standards::draw(frame, app);
         return;
@@ -51,13 +47,6 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
     }
     if let Some(pick) = app.passengers.filter(|_| app.mode == Mode::Pilot) {
         crate::passengers::draw(frame, app, pick);
-        return;
-    }
-    if let Some(y) = &app.panels.shipyard {
-        universe_prof::time("draw/shipyard", || crate::shipyard::draw(frame, app, y));
-        let mut top = 95.0;
-        if app.debug > 0 { top = perf(frame, app, ctx, top) + 6.0; }
-        if universe_prof::enabled() { profile_panel(frame, top); }
         return;
     }
     // The thrusters panel: a screen of its own (in the pilot's seat).

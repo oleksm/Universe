@@ -104,6 +104,9 @@ pub struct Context {
     /// Slow frames written down (the log and `Config::hitch_log`): the game
     /// sets it while its debug view is on; off, they're only counted.
     pub watch_hitches: bool,
+    /// Updated under an app that covers it (`apps::Cover::Covers`): nothing of it is drawn this
+    /// frame, so it needn't prepare what it would draw.
+    pub covered: bool,
     /// Seconds since the last frame (clamped to avoid huge steps after stalls).
     pub dt: f32,
     /// Seconds since start.
@@ -396,6 +399,7 @@ impl<G: Game> ApplicationHandler for Runner<G> {
         let ctx = Context {
             input: Input::default(),
             watch_hitches: false,
+            covered: false,
             dt: 0.0,
             time: 0.0,
             fps: 0.0,

@@ -8,7 +8,7 @@ use universe_sim::world::spaceport::{pad_direction, PADS, PAD_RADIUS};
 use universe_sim::gate::APPROACH_DISTANCE;
 use universe_sim::{Action, Approach, BodyKind, DockingStatus, GateFrame, GateStatus, LandingStatus, Plan, ShipState, StationFrame};
 
-use crate::{ship_visible, terrain_view, App, Mode};
+use crate::{ship_visible, App, Mode};
 
 pub const LABEL: Color = Color::hex(0x7a8a9a);
 pub const SHIP_COLOR: Color = Color::hex(0xdcebf2);
@@ -18,7 +18,7 @@ pub fn color(c: [f32; 3]) -> Color {
 }
 
 pub fn draw(frame: &mut Frame, app: &App) {
-    crate::visuals::begin_view(&frame.camera, app.ship.velocity * app.warp(), format!("{:?}",app.view.cache));
+    crate::visuals::begin_view(&frame.camera, app.ship.velocity * app.warp(), format!("{:?}",app.view.origin));
     if app.mode == Mode::Observer && app.observer.studio {
         studio(frame, app);
         return;
@@ -110,9 +110,9 @@ fn height_pins(frame: &mut Frame, app: &App) {
     let cam = frame.camera.position;
     let size = frame.size();
     let mut placed: Vec<(Vec2, Vec2)> = Vec::new();
-    for (&(origin, i), globe) in &app.caches.globes {
+    for (&(origin, i), globe) in &app.caches.planet.globes {
         let Some((_, lines)) = &globe.lines else { continue };
-        if origin != app.view.cache {
+        if origin != app.view.origin {
             continue;
         }
         let b = &sys.bodies[i];
@@ -540,35 +540,30 @@ fn orbits(frame: &mut Frame, app: &App) {
 }
 
 /// A terrain globe bigger than this on screen (radius, px) gets its full mesh.
-const GLOBE_FULL_PX: f32 = 90.0;
+
+/// What the planet view is drawn from: the system in view, now.
+fn sight(app: &App) -> crate::planet_view::Sight<'_> {
+    let underfoot = match app.v.crew.place {
+        universe_sim::world::Place::Outside { body, .. } if app.view.origin == app.v.ship_system => Some(body),
+        _ => None,
+    };
+    crate::planet_view::Sight {
+        system: &app.view.system,
+        cache: app.view.origin,
+        positions: &app.view.positions,
+        t: app.now(),
+        show_grid: app.show_grid,
+        outside: matches!(app.v.crew.place, universe_sim::world::Place::Outside { .. }),
+        underfoot,
+    }
+}
 
 fn bodies(frame: &mut Frame, app: &App) {
     let sys = &app.view.system;
     let t = app.now();
     let cam = frame.camera.position;
-    // The world nearest the eye with its full-resolution maps ready (within a few radii): drawn with them.
-    let near = app
-        .caches
-        .world_maps
-        .iter()
-        .filter(|((o, _), _)| *o == app.view.cache)
-        .filter_map(|((_, i), m)| Some((*i, m.lock().ok()?.clone()?)))
-        .filter(|(i, _)| app.view.positions[*i].distance(cam) < sys.bodies[*i].rail.radius * 6.0)
-        .min_by(|a, b| app.view.positions[a.0].distance(cam).total_cmp(&app.view.positions[b.0].distance(cam)));
-    if let Some((i, maps)) = near
-        && let Some(globe) = app.caches.globes.get(&(app.view.cache, i))
-    {
-        if std::env::var_os("UNIVERSE_NO_WORLD_MAPS").is_none() {
-            frame.keep_alive(globe.clone());
-            frame.world_maps(&maps, &globe.map, app.view.positions[i], sys.bodies[i].rail.radius);
-            // Its clouds now: the year's phase and El Niño's index at world time (one epoch for
-            // every player), the time wrapped as the clouds' shader wants it.
-            if let Some((year_days, enso)) = &maps.clouds_year {
-                let (month, index) = universe_sim::world::worlds::clouds_at(t, *year_days, enso.as_ref());
-                frame.world_clouds(sys.bodies[i].rotation(t).as_quat().as_dquat(), month, index, t.rem_euclid(universe_engine::shaders::CLOUD_WRAP_S) as f32);
-            }
-        }
-    }
+    let sight = sight(app);
+    app.caches.planet.draw_maps(frame, &sight);
     for (i, b) in sys.bodies.iter().enumerate() {
         // (Rocks: see `rocks`.)
         if b.kind.is_rock() {
@@ -629,54 +624,7 @@ fn bodies(frame: &mut Frame, app: &App) {
             continue;
         }
 
-        if let Some(ready) = app.caches.globes.get(&(app.view.cache, i)) {
-            frame.keep_alive(ready.clone());
-            let (full, coarse, map) = (&ready.full, &ready.coarse, &ready.map);
-            // Small on screen: the coarse mesh does (a sixteenth of the triangles).
-            let globe = if px > GLOBE_FULL_PX { full } else { coarse };
-            // Terrain world: from afar its globe; near, its ground as patches
-            // finer toward the eye (see `terrain_lod`).
-            let near = cam.distance(center) - b.rail.radius < terrain_view::near_altitude(b);
-            let patches_ready = near && universe_prof::time("draw/scene/bodies/ground", || {
-                app.caches.terrain_lod.borrow_mut().draw(frame, app.view.cache, &app.view.system, i, map, center, b.rotation(t), cam, c, t, matches!(app.v.crew.place, universe_sim::world::Place::Outside { .. }))
-            });
-            if patches_ready {
-                // A world drawn from its lines: the lines laid on the ground round the eye.
-                if let Some((_, lines)) = ready.lines.as_ref() {
-                    universe_prof::time("draw/scene/bodies/lines near", || {
-                        crate::lines_near::draw(&mut app.caches.lines_near.borrow_mut(), frame, (app.view.cache, i), &app.view.system, lines, center, b.rotation(t), cam);
-                    });
-                }
-            } else {
-                let relief = b.terrain.as_ref().map_or(0.0, |t| t.amplitude) as f32;
-                universe_prof::time("draw/scene/bodies/globe mesh", || {
-                    let (depth, shell) = terrain_view::air(b).unwrap_or_default();
-                    frame.no_shadow(|frame| {
-                        frame.with_air(depth, shell, |frame| {
-                            frame.with_globe(map, terrain_view::globe_kind(b), relief, terrain_view::globe_bright(b), [0.0, 0.0, 0.0, 1.0], DVec3::ZERO, |frame| {
-                                frame.model_shaded_faded(globe, &Transform { position: center, rotation, scale: b.rail.radius }, c, c, if app.show_grid { grid_detail(px) } else { 0.0 });
-                            })
-                        })
-                    });
-                    // A world drawn from its vector lines: the lines over it, in their own colours.
-                    if let Some((lines, _)) = ready.lines.as_ref() {
-                        frame.no_shadow(|frame| frame.model_colored(lines, &Transform { position: center, rotation, scale: b.rail.radius }, 1.0, 0.0));
-                    }
-                });
-            }
-            // The grid on the ground (F4), and underfoot on foot.
-            if near && app.show_grid {
-                universe_prof::time("draw/scene/bodies/surface grid", || terrain_view::surface_grid(frame, b, center, t, None, true));
-                if let universe_sim::world::Place::Outside { body, .. } = app.v.crew.place
-                    && body == i
-                    && app.view.origin == app.v.ship_system
-                {
-                    terrain_view::surface_grid(frame, b, center, t, Some(4.0), true);
-                }
-            }
-            if frame.projected_radius(center, b.rail.radius) > 150.0 {
-                universe_prof::time("draw/scene/bodies/crater rims", || terrain_view::crater_rims(frame, b, center, t));
-            }
+        if app.caches.planet.draw_world(frame, &sight, i, center, px, c) {
         } else {
             let (model, fill): (&universe_engine::Mesh, Color) = match b.kind {
                 BodyKind::Star => (&app.models.star, c),
@@ -693,14 +641,14 @@ fn bodies(frame: &mut Frame, app: &App) {
                     let hot = Color([fill.0[0] * 5.0 + 1.0, fill.0[1] * 5.0 + 1.0, fill.0[2] * 5.0 + 1.0, 1.0]);
                     frame.model(model, &at, Color([0.0, 0.0, 0.0, 0.0]), hot);
                 } else {
-                    frame.model_shaded_faded(model, &at, c, fill, if app.show_grid { grid_detail(px) } else { 0.0 });
+                    frame.model_shaded_faded(model, &at, c, fill, if app.show_grid { crate::planet_view::grid_detail(px) } else { 0.0 });
                 }
             });
         }
 
         // Air: its rim lit by the sun; settled worlds, their lights by night.
         if b.rail.atmosphere.is_some() {
-            atmosphere(frame, app, i, center);
+            app.caches.planet.atmosphere(frame, &sight, i, center);
         }
         universe_prof::time("draw/scene/bodies/city lights", || city_lights(frame, app, i, center));
 
@@ -731,14 +679,6 @@ fn bodies(frame: &mut Frame, app: &App) {
     }
 }
 
-/// How much of a body's latitude/longitude grid to show at `px` pixels of
-/// radius on screen: none when small (a lit disc and its outline circle are
-/// enough), fading in as it grows, and never more than a light touch (the
-/// shading carries the shape).
-fn grid_detail(px: f32) -> f32 {
-    0.5 * ((px - 80.0) / 420.0).clamp(0.0, 1.0)
-}
-
 pub const TRAFFIC: Color = Color::hex(0x50d8ff);
 /// Ships that are aggressed (fair game).
 pub const AGGRESSED: Color = Color::hex(0xff4040);
@@ -762,47 +702,6 @@ fn livery(name: &str) -> usize {
 /// A world's air seen edge-on: a band round its limb, the sky's colour
 /// where the sun lights it (a warm band at the terminator), dark at night,
 /// fading out as it thins with height.
-fn atmosphere(frame: &mut Frame, app: &App, i: usize, center: DVec3) {
-    let b = &app.view.system.bodies[i];
-    let cam = frame.camera.position;
-    let to = center - cam;
-    let d = to.length();
-    let r = b.rail.radius;
-    if d <= r * 1.02 {
-        return;
-    }
-    let Some(star) = app.view.system.bodies.iter().position(|b| b.kind == BodyKind::Star) else { return };
-    let sun = (app.view.positions[star] - center).normalize();
-    let dir = to / d;
-    // The limb: the circle where the line of sight grazes the surface.
-    let limb_c = center - dir * (r * r / d);
-    let limb_r = r * (1.0 - (r * r) / (d * d)).sqrt();
-    let thick = 1.0 + 0.035_f64.max(100_000.0 / r);
-    let (u, v) = (dir.any_orthonormal_vector(), dir.cross(dir.any_orthonormal_vector()));
-    let sky = terrain_view::sky_color(b);
-    let n = 96;
-    let point = |k: usize, s: f64| {
-        let a = k as f64 / n as f64 * std::f64::consts::TAU;
-        let out = u * a.cos() + v * a.sin();
-        (limb_c + out * limb_r * s, out)
-    };
-    let light = |out: DVec3| {
-        // Lit by how far round to the sun this edge is; warm at the terminator.
-        let day = out.dot(sun);
-        let lit = ((day + 0.25) / 1.25).clamp(0.0, 1.0) as f32;
-        let warm = (1.0 - (day.abs() / 0.3)).clamp(0.0, 1.0) as f32;
-        let k = 2.4 * lit;
-        [k * (sky[0] + 0.8 * warm), k * (sky[1] + 0.25 * warm), k * sky[2] * (1.0 - 0.5 * warm)]
-    };
-    for k in 0..n {
-        let ((a0, o0), (a1, o1)) = (point(k, 1.0), point(k + 1, 1.0));
-        let ((b0, _), (b1, _)) = (point(k, thick), point(k + 1, thick));
-        let (l0, l1) = (light(o0), light(o1));
-        frame.glow_triangle([a0, a1, b1], [l0, l1, [0.0; 3]]);
-        frame.glow_triangle([a0, b1, b0], [l0, [0.0; 3], [0.0; 3]]);
-    }
-}
-
 /// A settled world's lights by night: round each of its spaceports, towns
 /// scattered about the city, as many as it has people; only where the sun's down.
 fn city_lights(frame: &mut Frame, app: &App, i: usize, center: DVec3) {
@@ -816,7 +715,7 @@ fn city_lights(frame: &mut Frame, app: &App, i: usize, center: DVec3) {
         return;
     }
     // Optional lights appear only with worker-prepared surface placements.
-    let Some(globe) = app.caches.globes.get(&(app.view.cache, i)) else { return };
+    let Some(globe) = app.caches.planet.globes.get(&(app.view.origin, i)) else { return };
     for (k, port) in sys.spaceports.iter().enumerate().filter(|(_, p)| p.body == i) {
         let people = app.v.economy.iter().find(|p| p.system == app.view.origin && p.facility == universe_sim::world::Facility::Spaceport(k)).map_or(0.0, |p| p.population);
         if people <= 0.0 {
@@ -1944,8 +1843,13 @@ fn labels(frame: &mut Frame, app: &App) {
 /// `center`, turned `rot`, drawn as a faint fill, its twelve edges, and its
 /// `name` along the edge of its top nearest the eye.
 fn rig_box(frame: &mut Frame, center: DVec3, rot: DQuat, half: DVec3, name: &str) {
+    named_box(frame, center, rot, half, name, Color::hex(0x9fb4c8));
+}
+
+/// A thing with no model: a translucent box at its size, its edges in `edge`, its name along the top
+/// edge nearest the eye (the rigs', the factory layout's modules).
+pub(crate) fn named_box(frame: &mut Frame, center: DVec3, rot: DQuat, half: DVec3, name: &str, edge: Color) {
     let corner = |k: usize| center + rot * DVec3::new(if k & 1 == 0 { -half.x } else { half.x }, if k & 2 == 0 { -half.y } else { half.y }, if k & 4 == 0 { -half.z } else { half.z });
-    let edge = Color::hex(0x9fb4c8);
     for (a, b) in [(0, 1), (2, 3), (4, 5), (6, 7), (0, 2), (1, 3), (4, 6), (5, 7), (0, 4), (1, 5), (2, 6), (3, 7)] {
         frame.line(corner(a), corner(b), edge);
     }

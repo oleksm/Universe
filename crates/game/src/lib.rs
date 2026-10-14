@@ -34,7 +34,11 @@ mod frame_visual;
 mod studio_only;
 mod test_drive;
 mod flight_input;
+mod factory_app;
+mod planet_app;
+mod scene_app;
 mod planet_studio;
+mod planet_view;
 mod standards;
 mod sound;
 mod terrain_lod;
@@ -52,7 +56,7 @@ use std::sync::Arc;
 
 use serde::{Deserialize, Serialize};
 use universe_engine::glam::DVec3;
-use universe_engine::{Camera, Config, Context, Frame, Game, KeyCode, MouseButton};
+use universe_engine::{Camera, Config, Context, Frame, KeyCode, MouseButton};
 use universe_sim::world::crew::Reach;
 use universe_sim::world::{CrewEvent, Triggers, WalkCommands};
 use universe_sim::world::charts::Charts;
@@ -62,7 +66,7 @@ use models::Models;
 use observer::{Focus, Observer};
 
 /// The world's seed: the registry's (`seeding.galaxy`, which the registry requires).
-fn seed() -> u64 {
+pub(crate) fn seed() -> u64 {
     universe_sim::world::registry::registry().galaxy().expect("seeding.galaxy").seed as u64
 }
 const WARPS: [f64; 8] = [1.0, 10.0, 100.0, 1e3, 1e4, 1e5, 1e6, 1e7];
@@ -98,13 +102,7 @@ pub struct View {
     pub ship_pos: DVec3,
     /// Dominant body near the ship, if the ship is in this system.
     pub reference: Option<usize>,
-    /// What the system's globes, maps and ground patches are kept under: `origin`, or
-    /// `STUDIO_CACHE` for the planet studio's world alone.
-    pub cache: usize,
 }
-
-/// The planet studio's own system's cache key (see `View::cache`).
-pub const STUDIO_CACHE: usize = usize::MAX;
 
 /// Whose motion to draw: ours, or craft `i`'s.
 #[derive(Clone, Copy, Debug)]
@@ -139,9 +137,7 @@ pub enum Layer {
     GalaxyMap,
     Market,
     Economy,
-    Worlds,
     News,
-    Shipyard,
     Graphics,
     Standards,
     Passengers,
@@ -192,12 +188,8 @@ pub struct App {
     pub approach: Option<Approach>,
     /// Time the world tick took (ms, smoothed): every ship's turn.
     pub sim_ms: f32,
-    /// The planet studio's world shown alone, in a system of its own (see `planet_studio`).
-    pub studio_world: Option<Arc<StarSystem>>,
-    /// A frame of the shown world's history drawn in place of its colour today (the studio's
-    /// timeline).
-    pub world_frame: Option<planet_studio::WorldFrame>,
-    pub world_look: planet_studio::Look,
+    /// An app to open over the game (the planet viewer, from WORLDS), handed to the host.
+    pub open: Option<Box<dyn universe_engine::apps::App>>,
     /// The star systems we've been to (kept in the save).
     pub explored: std::collections::BTreeSet<usize>,
     /// At a vending machine, its panel open: the item picked.
@@ -290,13 +282,12 @@ pub struct Panels {
     pub nav_map: Option<navmap::NavMap>,
     /// The economy panel, when open (5).
     pub economy_panel: Option<economy::EconomyPanel>,
-    /// The planet studio (WORLDS), while open; and how a baked world's ground is coloured.
-    pub planet_studio: Option<planet_studio::PlanetStudio>,
     /// The galaxy map, when open (U from the navigation map).
     pub galaxy_map: Option<galaxymap::GalaxyMap>,
     /// The market screen, when open; and whether we're docked at a market.
     pub market: Option<market::MarketView>,
-    /// The ship planner (the shipyard, docked at a station), while open.
+    /// A shipyard to open over the game (the key, or a dev scenario's, made ready here), handed
+    /// to the host as an app at the end of the frame.
     pub shipyard: Option<shipyard::Shipyard>,
     /// The standards registry open (docked), and where in its tree.
     pub standards: Option<standards::StandardsView>,
@@ -346,17 +337,10 @@ pub struct NetState {
 
 /// What's built for drawing and kept between frames.
 pub struct Caches {
-    /// The ground near worlds, as patches (see `terrain_lod`); made while drawing.
-    pub terrain_lod: std::cell::RefCell<terrain_lod::Lod>,
-    /// Ready globe leases for the current view. Missing entries draw base geometry.
-    pub globes: std::collections::HashMap<(usize, usize), Arc<globe_assets::Globe>>,
+    /// Worlds' globes, maps, ground and lines (see `planet_view`).
+    pub planet: planet_view::PlanetView,
     /// The registry's things' models (`visual`), loaded the first time each is drawn.
     pub visuals: visuals::Visuals,
-    /// The lines laid on the ground round the eye, near a world drawn from its lines (see `lines_near`).
-    pub lines_near: std::cell::RefCell<lines_near::Near>,
-    /// Worlds grown by the planet simulation: their full-resolution maps, made in the
-    /// background (None till ready), by (system, body).
-    pub world_maps: std::collections::HashMap<(usize, usize), std::sync::Arc<std::sync::Mutex<Option<std::sync::Arc<universe_engine::WorldMaps>>>>>,
     /// Asteroid meshes, built once per (system, field, body among the field's bodies).
     pub rocks: std::collections::HashMap<(usize, usize, usize), Arc<rocks::Ready>>,
     /// Mining rigs: how far each ship's gear is out (see `rig`).
@@ -420,7 +404,7 @@ impl App {
             muted: false,
             music_off: false,
             messages: Vec::new(),
-            view: View { origin, system, positions: Vec::new(), ship_pos: DVec3::ZERO, reference: None, cache: origin },
+            view: View { origin, system, positions: Vec::new(), ship_pos: DVec3::ZERO, reference: None },
             approach: None,
             sim_ms: 0.0,
             mining: Default::default(),
@@ -430,9 +414,7 @@ impl App {
             show_thrusters: false,
             passengers: None,
             jets_held: 0,
-            studio_world: None,
-            world_frame: None,
-            world_look: Default::default(),
+            open: None,
             explored: Default::default(),
             deckplans: Vec::new(),
             layout_sent: None,
@@ -480,7 +462,6 @@ impl App {
                 nav_map: None,
                 galaxy_map: None,
                 economy_panel: None,
-                planet_studio: None,
                 market: None,
                 shipyard: None,
             },
@@ -505,11 +486,8 @@ impl App {
                 newsroom: None,
             },
             caches: Caches {
-                globes: std::collections::HashMap::new(),
-                lines_near: Default::default(),
+                planet: Default::default(),
                 visuals: Default::default(),
-                world_maps: std::collections::HashMap::new(),
-                terrain_lod: Default::default(),
                 rocks: std::collections::HashMap::new(),
                 rigs: Default::default(),
                 sky: std::cell::RefCell::new(None),
@@ -675,14 +653,10 @@ impl App {
     /// panels open over it (the galaxy map over the navigation map), each
     /// from the layer under it, and close back to it.
     fn top_layer(&self) -> Layer {
-        if self.panels.shipyard.is_some() {
-            Layer::Shipyard
-        } else if self.panels.market.is_some() {
+        if self.panels.market.is_some() {
             Layer::Market
         } else if self.panels.economy_panel.is_some() {
             Layer::Economy
-        } else if self.panels.planet_studio.is_some() {
-            Layer::Worlds
         } else if self.news_panel {
             Layer::News
         } else if self.panels.galaxy_map.is_some() {
@@ -710,7 +684,11 @@ impl App {
             return;
         }
         if self.mode == Mode::Observer && keys::pressed(input, keys::Act::Worlds) {
-            self.panels.planet_studio = Some(planet_studio::PlanetStudio::open());
+            // (The planet viewer over the game, at the home system's worlds, from the charts at hand.)
+            match planet_app::PlanetApp::with_home(self.charts.system(self.v.ship_system), None) {
+                Ok(planet) => self.open = Some(Box::new(planet)),
+                Err(e) => self.say(format!("WORLDS: {e}").to_uppercase()),
+            }
             return;
         }
         if input.pressed(KeyCode::F11) {
@@ -803,7 +781,7 @@ impl App {
         }
         // SHIFT+F4: the heights of worlds drawn from their lines stretched, x1, x5, x10, for seeing
         // their relief; their globes, ground and lines made again.
-        if input.pressed(KeyCode::F4) && shift && self.caches.globes.values().any(|g| g.lines.is_some()) {
+        if input.pressed(KeyCode::F4) && shift && self.caches.planet.globes.values().any(|g| g.lines.is_some()) {
             let next = match universe_sim::world::worlds::stretch() as u32 {
                 1 => 5.0,
                 5 => 10.0,
@@ -811,12 +789,12 @@ impl App {
             };
             universe_sim::world::worlds::set_stretch(next);
             globe_assets::invalidate();
-            let worlds: Vec<(usize, usize)> = self.caches.globes.keys().copied().collect();
+            let worlds: Vec<(usize, usize)> = self.caches.planet.globes.keys().copied().collect();
             for k in worlds {
-                self.caches.globes.remove(&k);
+                self.caches.planet.globes.remove(&k);
             }
-            *self.caches.lines_near.borrow_mut() = Default::default();
-            *self.caches.terrain_lod.borrow_mut() = Default::default();
+            *self.caches.planet.lines_near.borrow_mut() = Default::default();
+            *self.caches.planet.terrain_lod.borrow_mut() = Default::default();
             self.say(format!("HEIGHTS X{next}"));
         }
         if input.pressed(KeyCode::F2) {
@@ -1181,78 +1159,6 @@ impl App {
         }
     }
 
-    /// Terrain globes for the system in view (built once, on first sight), and the full maps of
-    /// a baked world near the eye.
-    fn build_globes(&mut self) {
-        let origin = self.view.cache;
-        // Drop inactive leases; the shared scheduler retains recently used data for return.
-        self.caches.globes.retain(|&(o, _), _| o == origin);
-        self.caches.world_maps.retain(|&(o, _), _| o == origin);
-        globe_assets::maintain();
-        for (i, b) in self.view.system.bodies.iter().enumerate() {
-            let position = self.view.positions.get(i).copied().unwrap_or_default();
-            if let Some(globe) = globe_assets::request(self.view.system.clone(), i, &self.camera, position) {
-                self.caches.globes.insert((origin, i), globe);
-            } else {
-                self.caches.globes.remove(&(origin, i));
-            }
-            // A world with a bake: its full-resolution maps, read and encoded on a thread of their
-            // own once the eye comes within `WORLD_MAPS_NEAR` of it, let go past `WORLD_MAPS_FAR`
-            // (a few hundred megabytes each while held).
-            let away = self.view.positions.get(i).map_or(f64::INFINITY, |c| c.distance(self.camera.position)) / b.rail.radius;
-            if away > WORLD_MAPS_FAR {
-                self.caches.world_maps.remove(&(origin, i));
-            }
-            if let Some(t) = b.terrain.as_ref().filter(|t| t.baked())
-                && away < WORLD_MAPS_NEAR
-                && self.caches.globes.contains_key(&(origin, i))
-                && !self.caches.world_maps.contains_key(&(origin, i))
-            {
-                let slot = std::sync::Arc::new(std::sync::Mutex::new(None));
-                self.caches.world_maps.insert((origin, i), slot.clone());
-                let (t, look) = (t.clone(), self.world_look);
-                // (A frame of its history in place of today's colour: its sea and clouds then
-                // aren't today's, so none.)
-                let then = self.world_frame.clone().filter(|f| f.key == b.key);
-                let key = b.key.clone();
-                let lines = self.caches.globes.get(&(origin, i)).is_some_and(|g| g.lines.is_some());
-                std::thread::spawn(move || {
-                    let started = std::time::Instant::now();
-                    // (Each read and encoded before the next is read: one image held at a time.)
-                    let names = [look.file(), "globe_ground.jpg", "globe_normal.jpg", "climate.png", "rockid.png", "globe_spec.png"];
-                    let mut k = 0;
-                    let encoded = names.map(|name| {
-                        let image = match &then {
-                            Some(f) if k == 0 => f.history.image(f.frame),
-                            Some(_) if name == "globe_spec.png" => None,
-                            // (A world drawn from its lines: their flat ground in place of its colour, and
-                            // none of its bake's other maps: ground, normals, climate, rock, shine.)
-                            None if lines => if k == 0 { universe_sim::world::worlds::lines_colour_rgba(&key) } else { None },
-                            _ => t.bake_image(name),
-                        };
-                        let e = image.and_then(|(w, h, rgba)| universe_engine::WorldMaps::encode(k, universe_engine::pbr::Image { width: w as u32, height: h as u32, rgba }));
-                        k += 1;
-                        e
-                    });
-                    let maps = universe_engine::WorldMaps::encoded(encoded, t.bake_air())
-                        .with_air_luts(t.bake_air_luts().map(|l| [l.transmittance, l.multiscatter]));
-                    let mut maps = maps;
-                    if let Some(c) = t.bake_clouds().filter(|_| then.is_none()) {
-                        let img = |(w, h, rgba): (usize, usize, Vec<u8>)| universe_engine::pbr::Image { width: w as u32, height: h as u32, rgba };
-                        let [a, b, c3] = c.maps;
-                        maps.clouds_year = Some((c.year_days, c.enso));
-                        maps.clouds_format = c.format;
-                        maps = maps.with_clouds(Some([img(a), img(b), img(c3)]));
-                    }
-                    log::info!("world maps read and encoded in {:.1} s", started.elapsed().as_secs_f64());
-                    if let Ok(mut s) = slot.lock() {
-                        *s = Some(std::sync::Arc::new(maps));
-                    }
-                });
-            }
-        }
-    }
-
     /// The nav target (or else the nearest station), where it is at the moment drawn.
     fn nav_marker_now(&self) -> Option<(String, DVec3)> {
         let (name, _) = self.v.nav_marker.clone()?;
@@ -1290,10 +1196,7 @@ impl App {
             Mode::Pilot => self.v.ship_system,
             Mode::Observer => self.observer.origin(&self.v),
         };
-        // (The planet studio's world alone: its own system in the view.)
-        let studio = self.studio_world.clone().filter(|_| self.mode == Mode::Observer);
-        let cache = if studio.is_some() { STUDIO_CACHE } else { origin };
-        let system = studio.unwrap_or_else(|| self.charts.system(origin));
+        let system = self.charts.system(origin);
         let mut positions = std::mem::take(&mut self.view.positions);
         system.positions(self.now(), &mut positions);
         let ship_pos = self.place(Who::Me).0 + self.charts.galaxy.offset(origin, self.v.ship_system);
@@ -1304,7 +1207,7 @@ impl App {
         if origin != self.view.origin {
             self.engine.send(universe_sim::Command::LookAt(Some(origin)));
         }
-        self.view = View { origin, system, positions, ship_pos, reference, cache };
+        self.view = View { origin, system, positions, ship_pos, reference };
     }
 
     fn focus_position(&self) -> DVec3 {
@@ -1382,8 +1285,12 @@ impl App {
     }
 }
 
-impl Game for App {
-    fn update(&mut self, ctx: &mut Context) {
+impl universe_engine::apps::App for App {
+    fn name(&self) -> &str {
+        "game"
+    }
+
+    fn update(&mut self, ctx: &mut Context) -> universe_engine::apps::Next {
         if self.showcase.is_none() {
             if let Some(path) = &self.showcase_path {
                 if let Some(model) = visual_assets::request_native(path, &[]) {
@@ -1417,42 +1324,19 @@ impl Game for App {
         self.system_keys(ctx);
         // Our hull's inside as laid out, to the world engine when it changes (to walk
         // in); the editor's private document stays in its client session.
-        if self.panels.shipyard.is_none() {
+        if !ctx.covered {
             self.send_layout();
         }
         // Where we are is explored.
         self.explored.insert(self.v.ship_system);
         let top = self.top_layer();
         match top {
-            Layer::Shipyard => {
-                // (Worked with the mouse: the cursor free; but a test drive steering
-                // with it takes it, as flight does.)
-                if !universe_prof::time("studio", || shipyard::input(self, ctx)) {
-                    self.panels.shipyard = None;
-                }
-                let want = self.panels.shipyard.as_ref().is_some_and(|y| y.wants_mouse());
-                if ctx.cursor_grabbed() != want {
-                    ctx.grab_cursor(want);
-                }
-            }
             Layer::Market => {
                 market::input(self, ctx);
             }
             Layer::Economy => {
                 if !economy::input(self, ctx) {
                     self.panels.economy_panel = None;
-                }
-            }
-            Layer::Worlds => {
-                if !planet_studio::input(self, ctx) {
-                    self.panels.planet_studio = None;
-                    // (Its world alone goes with it: back to the system's star.)
-                    if self.world_frame.take().is_some() {
-                        self.caches.world_maps.clear();
-                    }
-                    if self.studio_world.take().is_some() {
-                        self.observer.focus = observer::Focus::Body { system: self.view.origin, body: 0 };
-                    }
                 }
             }
             Layer::News => self.news_panel = newspanel::input(self, ctx),
@@ -1530,9 +1414,9 @@ impl Game for App {
         if fresh {
             universe_prof::time("update/events", || self.handle_events(ctx));
         }
-        // An opaque Studio owns the visible scene; prepare the world again when it returns.
-        if self.panels.shipyard.is_none() {
-            universe_prof::time("update/globes", || self.build_globes());
+        // Covered by an app (the shipyard, the planet viewer): prepare the world again when it returns.
+        if !ctx.covered {
+            universe_prof::time("update/globes", || self.caches.planet.prepare(&self.view.system, self.view.origin, &self.view.positions, &self.camera, Default::default(), None));
             universe_prof::time("update/rocks", || self.build_rocks());
             self.update_rigs(ctx.dt);
         }
@@ -1646,6 +1530,12 @@ impl Game for App {
             m.ttl -= ctx.dt;
         }
         self.messages.retain(|m| m.ttl > 0.0);
+        // (A shipyard opened (the key, or a dev scenario's): an app over the game.)
+        if let Some(y) = self.panels.shipyard.take() {
+            self.open = Some(Box::new(shipyard::ShipyardApp::new(y, self)));
+        }
+        // (An app asked for, over the game: the host opens it; ESC in it comes back here.)
+        self.open.take().map_or(universe_engine::apps::Next::Stay, universe_engine::apps::Next::Open)
     }
 
     fn camera(&self) -> Camera {
@@ -1654,9 +1544,7 @@ impl Game for App {
 
     fn draw(&self, frame: &mut Frame, ctx: &Context) {
         frame.graphics = self.graphics;
-        if self.panels.shipyard.is_none() {
-            universe_prof::time("draw/scene", || scene::draw(frame, self));
-        }
+        universe_prof::time("draw/scene", || scene::draw(frame, self));
         // (Dev: the showcased model alone, no HUD: `UNIVERSE_MODEL_CLEAN`.)
         if !(self.showcase.is_some() && std::env::var_os("UNIVERSE_MODEL_CLEAN").is_some()) {
             universe_prof::time("draw/hud", || hud::draw(frame, self, ctx));
@@ -1716,10 +1604,74 @@ pub fn studio(args: &[String], window: bool) -> bool {
         let first = flag.map_or(1, |k| k + 1);
         let design = args.get(first).filter(|a| !a.starts_with("--")).map(String::as_str);
         let design = design.map(str::to_owned);
-        universe_engine::run_prepared(Config { title: "Freefall studio".into(), ..Default::default() }, move || studio_only::StudioOnly::new(design.as_deref()));
+        universe_engine::apps::run_prepared(Config { title: "Freefall studio".into(), ..Default::default() }, move || studio_only::StudioOnly::new(design.as_deref()));
         return true;
     }
     false
+}
+
+/// The apps the launcher opens alone (`freefall --app <name> [its argument]`), and what each is.
+pub const APPS: &[(&str, &str)] = &[
+    ("game", "the game: the live world"),
+    ("planet", "the planet viewer: every released world, [world id] to open at"),
+    ("studio", "the ship studio: [design] to open"),
+    ("scene", "a scene: <file.scene.yaml>, run on its own clocks in a world of its own"),
+    ("factory", "the factory layout studio: a works' modules on its parcel, [facility key] to open"),
+];
+
+/// The launcher: `--apps` lists the apps, `--app <name> [arg]` opens one alone. False: neither was
+/// asked for.
+fn launch(args: &[String]) -> bool {
+    if args.iter().any(|a| a == "--apps") {
+        for (name, about) in APPS {
+            println!("{name:<8} {about}");
+        }
+        return true;
+    }
+    let Some(k) = args.iter().position(|a| a == "--app") else { return false };
+    let rest: Vec<String> = std::iter::once(args[0].clone()).chain(args[k + 2..].iter().cloned()).collect();
+    match args.get(k + 1).map(String::as_str) {
+        Some("game") => return false,
+        Some("planet") => planet(&rest),
+        Some("factory") => {
+            let _ = env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info,wgpu_core=warn,wgpu_hal=warn")).try_init();
+            let key = rest.get(1).cloned();
+            universe_engine::apps::run_prepared(Config { title: "Freefall factory layout".into(), ..Default::default() }, move || {
+                factory_app::FactoryApp::new(key.as_deref()).unwrap_or_else(|e| panic!("factory layout: {e}"))
+            });
+        }
+        Some("scene") => {
+            let _ = env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info,wgpu_core=warn,wgpu_hal=warn")).try_init();
+            let Some(path) = rest.get(1).cloned() else {
+                eprintln!("freefall --app scene <file.scene.yaml> (content/scenes has some)");
+                std::process::exit(2);
+            };
+            let scene = scene_app::SceneApp::open(&path).unwrap_or_else(|e| {
+                eprintln!("scene: {e}");
+                std::process::exit(2);
+            });
+            universe_engine::apps::run_prepared(Config { title: "Freefall scene".into(), ..Default::default() }, move || scene);
+        }
+        Some("studio") => {
+            let mut a = rest.clone();
+            a.insert(1, "--studio".into());
+            studio(&a, true);
+        }
+        other => {
+            eprintln!("no app {:?}: freefall --apps lists them", other.unwrap_or(""));
+            std::process::exit(2);
+        }
+    }
+    true
+}
+
+/// The planet viewer alone (`freefall-planet [world id]`, `freefall --app planet`): no universe loaded.
+pub fn planet(args: &[String]) {
+    let _ = env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info,wgpu_core=warn,wgpu_hal=warn")).try_init();
+    let id = args.get(1).filter(|a| !a.starts_with("--")).cloned();
+    universe_engine::apps::run_prepared(Config { title: "Freefall planets".into(), ..Default::default() }, move || {
+        planet_app::PlanetApp::new(id.as_deref()).unwrap_or_else(|e| panic!("planet viewer: {e}"))
+    });
 }
 
 /// The game (`freefall`). The studio's flags still open the studio, as before it had its own binary.
@@ -1727,7 +1679,7 @@ pub fn play() {
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info,wgpu_core=warn,wgpu_hal=warn"))
         .init();
     let args: Vec<String> = std::env::args().collect();
-    if studio(&args, false) {
+    if launch(&args) || studio(&args, false) {
         return;
     }
     // The renderer and simulation configure their worker pools before startup.
@@ -1741,5 +1693,5 @@ pub fn play() {
     if let Some(dir) = hitch_log.as_ref().and_then(|p| p.parent()) {
         let _ = std::fs::create_dir_all(dir);
     }
-    universe_engine::run_prepared(Config { title: "Freefall".into(), hitch_log, ..Default::default() }, App::new);
+    universe_engine::apps::run_prepared(Config { title: "Freefall".into(), hitch_log, ..Default::default() }, App::new);
 }

@@ -2,7 +2,8 @@
 //! schedules commands and observes results; it implements no physical laws.
 use std::sync::Arc;
 use universe_engine::glam::{DQuat, DVec3};
-use universe_engine::scene::TickClock;
+use universe_sim::clocks::{Runtime, Subscriptions};
+use universe_sim::world::registry::ClockKey;
 use universe_sim::physics::{Atmosphere, Collider, RailBody};
 use universe_sim::world::{
     World,
@@ -18,7 +19,7 @@ pub(super) struct LocalFlight {
     pub world: World,
     pub ship: Ship,
     system: usize,
-    clock: TickClock,
+    clock: Runtime,
     /// The tangent-frame origin used only by the camera and instruments.
     pub origin: DVec3,
     pub commands: ShipCommands,
@@ -65,11 +66,12 @@ impl LocalFlight {
             world,
             ship,
             system: 0,
-            clock: TickClock::new(
-                universe_sim::clocks::tick(),
+            // (The realtime clock alone: this world has no economy, market or rails.)
+            clock: Runtime::new(
+                &Subscriptions::of(&[ClockKey::Realtime]),
+                1.0,
                 universe_sim::universe::TICK_BUDGET as u32,
-            )
-            .map_err(str::to_owned)?,
+            )?,
             origin,
             commands,
             events: Vec::new(),
@@ -86,8 +88,10 @@ impl LocalFlight {
             events,
             ..
         } = self;
-        clock
-            .advance(elapsed, |_, dt| {
+        if !elapsed.is_finite() || elapsed < 0.0 {
+            return Err("invalid elapsed time".into());
+        }
+        clock.advance(elapsed, &mut |_, _, dt| {
                 // Stay destroyed until the user resets: normal world's respawn
                 // would construct a stock ship, which is not this design.
                 if matches!(ship.state, ShipState::Destroyed { .. }) {
@@ -98,8 +102,7 @@ impl LocalFlight {
                 commands.power = None;
                 commands.manual = None;
                 commands.throttle = ship.throttle;
-            })
-            .map_err(str::to_owned)?;
+            });
         Ok(())
     }
 
@@ -132,7 +135,7 @@ impl LocalFlight {
     }
 
     pub fn pending(&self) -> f64 {
-        self.clock.pending()
+        self.clock.pending(ClockKey::Realtime)
     }
 }
 
