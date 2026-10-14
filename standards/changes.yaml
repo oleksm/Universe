@@ -824,9 +824,11 @@
 - { record: layout.arc-furnace-air, at: "2026-10-14T17:43:17Z", status: draft, summary: "changed", sha: "a2407e84fcd931d4" }
 - { record: layout.arc-furnace-airless, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "befaa429a44d04ce" }
 - { record: layout.casting-bay-air, at: "2026-10-14T17:51:14Z", status: draft, summary: "first tracked", sha: "aff1c8c3aeeaf451" }
+- { record: layout.casting-bay-airless, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "c79d0a2965525bdc" }
 - { record: layout.hydrogen-plant-air, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "379207799e0d24b5" }
 - { record: layout.ingot-yard-air, at: "2026-10-14T19:11:30Z", status: draft, summary: "changed", sha: "39f79738e350feef" }
 - { record: layout.ladle-station-air, at: "2026-10-14T19:07:37Z", status: draft, summary: "changed: physical, bays, links, ground, totals", sha: "d3b475ddaa972b7a" }
+- { record: layout.ladle-station-airless, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "47acf5ee6202ed61" }
 - { record: layout.ore-yard-air, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "80cee716ce980cb3" }
 - { record: layout.pellet-plant-air, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "17d04bf873e1439b" }
 - { record: layout.shaft-furnace-air, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "63006f42442df554" }
@@ -1355,10 +1357,10 @@
 - { record: part.wb-02, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "3796f49a5bc8fa2e" }
 - { record: part.wb-03, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "fc9231a50b47acd4" }
 - { record: part.wb-04, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "63ae488f7cfc4f5a" }
-- { record: plant-mount.bay-s1, at: "2026-10-14T19:18:22Z", status: draft, summary: "changed: basis", sha: "db0ca58ea3fe512f" }
-- { record: plant-mount.bay-s2, at: "2026-10-14T19:18:22Z", status: draft, summary: "changed: bears, basis", sha: "51009f3627f98883" }
-- { record: plant-mount.bay-s3, at: "2026-10-14T19:07:37Z", status: draft, summary: "changed: basis", sha: "e19fcadc46824201" }
-- { record: plant-mount.bay-s4, at: "2026-10-14T19:18:22Z", status: draft, summary: "changed: basis", sha: "17a3b30b8737097f" }
+- { record: plant-mount.bay-s1, at: "2026-10-14T19:21:56Z", status: draft, summary: "changed: basis", sha: "6b030695791229c4" }
+- { record: plant-mount.bay-s2, at: "2026-10-14T19:21:56Z", status: draft, summary: "changed: basis", sha: "a38b0d06c70a9683" }
+- { record: plant-mount.bay-s3, at: "2026-10-14T19:21:56Z", status: draft, summary: "changed: basis", sha: "eef1001bea403821" }
+- { record: plant-mount.bay-s4, at: "2026-10-14T19:21:56Z", status: draft, summary: "changed: basis", sha: "70723cbbfc5b90ed" }
 - { record: population.biraidim.far-cloud, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "4d04c1b699eb49db" }
 - { record: population.biraidim.shikra-family, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "86d3c16b41bc181d" }
 - { record: population.biraidim.taumeibru-family, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "2626282163a26720" }
@@ -2738,6 +2740,7 @@
 - { record: unit.cooling-tower-shaft-4, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "fdf083634bb1f815" }
 - { record: unit.crating-line, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "4f803762d4f4c669" }
 - { record: unit.crew-post, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "94bf58a6622c650d" }
+- { record: unit.degassing-stand, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "3f2a0b824b4bd169" }
 - { record: unit.disc-filter-2, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "69dea37a935cbf59" }
 - { record: unit.dri-bin-200t, at: "2026-10-14T14:08:01Z", status: draft, summary: "changed", sha: "1077e81910f4da8c" }
 - { record: unit.dri-cooling-loop, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "90a31d0c8b504a3f" }
@@ -2747,6 +2750,7 @@
 - { record: unit.forklift-2t5, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "f2ec04344ce47c2c" }
 - { record: unit.furnace-transformer-14mva, at: "2026-10-14T18:15:58Z", status: draft, summary: "changed", sha: "f296531f2bc7dd18" }
 - { record: unit.furnace-transformer-90mva, at: "2026-10-14T15:45:44Z", status: draft, summary: "changed: identity", sha: "d7b34abc2bacd989" }
+- { record: unit.gantry-crane-150t-moon, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "2bac67a62284e749" }
 - { record: unit.gantry-crane-20t-moon, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "3ca773510e64b059" }
 - { record: unit.gas-heater-122mw, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "3efcee224385e2d1" }
 - { record: unit.hall-crane-20t, at: "2026-10-14T15:45:44Z", status: draft, summary: "changed", sha: "88da9f2b1f1ffdd5" }
@@ -2758,6 +2762,7 @@
 - { record: unit.ladle-car-80t, at: "2026-10-14T14:50:41Z", status: draft, summary: "changed", sha: "455ad05163bdf8c8" }
 - { record: unit.ladle-crane-150t, at: "2026-10-14T17:51:14Z", status: draft, summary: "changed: identity, built_of", sha: "873aebfa6330861f" }
 - { record: unit.ladle-furnace-80t, at: "2026-10-14T18:15:58Z", status: draft, summary: "changed", sha: "9cf8dd025ee54189" }
+- { record: unit.ladle-furnace-80t-sealed, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "2b557a04dd7cd03c" }
 - { record: unit.mill-crane-30t, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "40e31c07816559a2" }
 - { record: unit.mould-car-12, at: "2026-10-14T17:51:14Z", status: draft, summary: "first tracked", sha: "acd7a125fd88a142" }
 - { record: unit.offgas-filter-sealed, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "c6b566e979038e64" }
@@ -2773,6 +2778,7 @@
 - { record: unit.stack-crane-20t, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "dada8ceeb1793c71" }
 - { record: unit.stacker-reclaimer-1500th, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "37f21c4682c96ba8" }
 - { record: unit.stripper-crane-20t, at: "2026-10-14T17:51:14Z", status: draft, summary: "first tracked", sha: "badfb6c3f9f6eccb" }
+- { record: unit.stripper-gantry-20t-moon, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "b6a035fa51651740" }
 - { record: unit.top-gas-scrubber, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "43d6cefca9d48a23" }
 - { record: unit.truck-dump-hopper, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "69379232aafc2169" }
 - { record: unit.vacuum-degasser-80t, at: "2026-10-14T18:23:23Z", status: draft, summary: "changed", sha: "b01f8bbfcca9fb37" }

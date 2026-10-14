@@ -1,0 +1,143 @@
+# yaml-language-server: $schema=../../schema/layout.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: layout.ladle-station-airless, name: 'Ladle station, airless', description: 'The ladle station on airless ground at about a moon''s gravity: the heat comes on its car from the arc furnace shop, stands a quarter hour on an open degassing stand where the vacuum takes its gases, then goes under the sealed ladle furnace, which alloys and reheats it under argon, and on to the casting bay. Radiators for the tower, a maintenance gantry crane, a pressurised crew post. Built separately from the station for air.'}
+stands_for: module.ladle-station
+site:
+  atmosphere: none
+  gravity: [1.6, 2.0]
+physical: {length: 126.0, width: 105.0, height: 27.0, mass: 1625000.0}
+bays:
+- id: D
+  mount: plant-mount.bay-s2
+  unit: unit.degassing-stand
+  at: [-15.0, 0.0, 0.0]
+  note: 'first on the rail from the arc furnace shop: degas before alloying'
+- id: L
+  mount: plant-mount.bay-s2
+  unit: unit.ladle-furnace-80t-sealed
+  at: [3.0, 0.0, 0.0]
+  note: over the ladle rail
+- id: T
+  mount: plant-mount.bay-s1
+  unit: unit.furnace-transformer-14mva
+  at: [3.0, -9.0, 0.0]
+  note: on its slab south of the ladle furnace, no fire walls
+- id: A
+  mount: plant-mount.bay-s3
+  unit: unit.alloy-bins-8
+  at: [3.0, 27.0, 0.0]
+  note: north; open feeders and belt, vacuum-rated
+- id: G
+  mount: plant-mount.bay-s2
+  unit: unit.offgas-filter-sealed
+  at: [21.0, 18.0, 0.0]
+  note: 'north-east: the ladle furnace''s argon and fume'
+- id: P
+  mount: plant-mount.bay-s1
+  unit: unit.crew-post
+  at: [18.0, -12.0, 0.0]
+  note: south-east, under its berm
+- id: RL1
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-330k
+  at: [-24.0, -42.0, 0.0]
+  note: south-west
+- id: RL2
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-330k
+  at: [-72.0, -42.0, 0.0]
+  note: south-west
+mobile:
+- unit: unit.ladle-car-80t
+  rides: ladle rail
+  at: [-15.0, 0.0, 0.0]
+- unit: unit.gantry-crane-20t-moon
+  rides: crane rails
+  at: [-6.0, 0.0, 0.0]
+links:
+- kind: rail
+  name: ladle rail
+  from: [-30.0, 0.0, 0.0]
+  to: [30.0, 0.0, 0.0]
+  length: 60.0
+  item: material.structural-steel-a36
+  mass: 7200.0
+  note: two 60 kg/m rails at 3 m gauge on sintered regolith sleepers, from the arc furnace shop to the casting bay; the car stops at x -15 (the stand) and 3 (the ladle furnace)
+- kind: busbar
+  name: secondary bus
+  from: [3.0, -7.65, 2.1333333333333333]
+  to: [3.0, -5.0, 6.0]
+  length: 4.688
+  item: material.copper
+  mass: 828.5
+  note: as for air
+- kind: conveyor
+  name: alloy feed
+  from: [3.0, 27.0, 7.0]
+  to: [3.0, 3.0, 9.4]
+  length: 24.12
+  item: material.structural-steel-a36
+  mass: 2412.0
+  power: 20000.0
+  note: 0.65 m belt, open (no gallery on airless ground), into the furnace's alloy lock
+- kind: duct
+  name: fume
+  from: [5.0, 0.0, 7.5]
+  to: [15.0, 18.0, 8.0]
+  length: 24.89
+  item: material.structural-steel-a36
+  mass: 1841.0
+  via:
+  - [5.0, 0.0, 10.0]
+  - [15.0, 10.0, 10.0]
+  note: '0.5 m: the argon and fume from under the sealed roof, a tenth of the air shop''s flow'
+- kind: pipe
+  name: cooling water to the radiators
+  from: [-94.0, -18.0, 1.0]
+  to: [-1.5, -4.5, 1.0]
+  length: 106.0
+  item: material.structural-steel-a36
+  mass: 7842.0
+  via:
+  - [-1.5, -18.0, 1.0]
+  note: a pair of 250 mm pipes, flow and return, at about 330 K, along the 2 radiator fields' north edge to the furnace's manifold, a branch to the transformer
+- kind: rail
+  name: crane rails
+  from: [-24.0, -12.0, 0.0]
+  to: [12.0, 12.0, 0.0]
+  length: 132.0
+  item: material.structural-steel-a36
+  mass: 13200.0
+  via:
+  - [12.0, -12.0, 0.0]
+  - [12.0, 12.0, 0.0]
+  - [-24.0, 12.0, 0.0]
+  note: the maintenance gantry crane's two rails, 24 m apart, over the stand and the ladle furnace
+ground:
+- {what: Ladle furnace foundation, item: material.regolith-sintered, volume: 102.0, note: 'as for air, of sintered regolith', mass: 255000.0}
+- {what: Stand and transformer pads, item: material.regolith-sintered, volume: 58.0, mass: 145000.0}
+- {what: Bins and filter pads, item: material.regolith-sintered, volume: 108.2, mass: 270500.0}
+- {what: Crew post berm, item: material.regolith, volume: 164.6, mass: 246900.0}
+- {what: Rail sleepers, item: material.regolith-sintered, volume: 103.2, mass: 258000.0}
+- {what: Radiator legs' pads, item: material.regolith-sintered, volume: 5.808, mass: 14520.0}
+totals: {rate: 41.6666666666667, power: 7838000.0, heat: 1568000.0, water: 0.0, mass: 1625000.0, against_module: 'module.ladle-station: one box, the same on every world. This layout: the same rate; 7.8 MW; 1.6 MW to 2 radiator fields at 330 K; no water used up. No degasser: the vacuum degasses the ladle on an open stand, but must not see the alloys, which the sealed ladle furnace adds under argon; no ladle crane (nothing is lifted into a tank) and no hall. 435 t of plant, 1,190 t of sintered regolith.'}
+staff:
+- {profession: profession.plant-operator, count: 6}
+- {profession: profession.metalworker, count: 2}
+- {profession: profession.technician, count: 1}
+- {profession: profession.engineer, count: 1}
+basis:
+- of: [bays, links, mobile]
+  tier: invented
+  review: true
+  note: Laid out for airless ground.
+- of: [ground]
+  tier: derived
+  review: true
+  note: Volumes as for air, of sintered regolith at 2,500 kg/m3 and loose regolith at 1,500.
+- of: [totals, physical]
+  tier: derived
+  note: Summed from the units, links and ground.
+- of: [staff]
+  tier: derived
+  note: The module's watch, unchanged; it works from the crew post.

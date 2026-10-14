@@ -1935,6 +1935,160 @@ def arc_furnace_airless(us, recs):
     return layout, bays
 
 
+def airless_ladle_units(us):
+    """The airless ladle station's and casting bay's own units."""
+    out = {}
+    lf = dict(us["ladle-furnace-80t"])
+    lf["name"] = "Ladle furnace, 80 t, sealed"
+    lf["desc"] = ("The 80 t ladle furnace closed for airless ground: its roof's skirt seals on the ladle's rim with a soft ring, glands round the electrodes, the alloys in through a lock in the chute, and argon fed under the roof to about 50 kPa, so the arc burns as in air and the manganese it adds is not boiled off into the vacuum (open to vacuum, an 80 t heat at 1,600 deg C would lose about a fifth of its manganese in a quarter hour). "
+                 "Its fume, mostly argon, leaves by the roof's elbow to the layout's filter. Otherwise as unit.ladle-furnace-80t: " + us["ladle-furnace-80t"]["desc"])
+    lf["built_of"] = list(us["ladle-furnace-80t"]["built_of"]) + [
+        part("Rim seal and electrode glands", A36, 2500.0, "from memory"),
+        part("Alloy lock", A36, 1200.0, "two valves in the chute, from memory")]
+    lf["needs"] = dict(us["ladle-furnace-80t"]["needs"])
+    lf["basis"] = us["ladle-furnace-80t"]["basis"] + [{"of": ["identity.description"], "tier": "invented", "review": True, "note": "Manganese's loss: its vapour pressure over a 1% melt (about 40 Pa at 1,873 K, from memory) through Hertz-Knudsen over the ladle's 7 m2. Sealed roofs as on closed furnaces; not built for vacuum."}]
+    out["ladle-furnace-80t-sealed"] = lf
+    out["degassing-stand"] = dict(
+        name="Degassing stand", size_class=2, fits="bay-s2", dims=(10.0, 8.0, 8.0),
+        desc=("Where the ladle stands on its car in the open vacuum for a quarter hour while argon through its porous plug stirs the melt: the hydrogen and nitrogen leave of themselves, as they do in a degasser's tank on a world with air, and the carbon and oxygen meet as CO. "
+              "A refractory heat shield on a swing arm hangs 1 m over the ladle's open top, with gaps for the gas, so the melt loses less heat by radiation (about 4 MW open, 4 degrees a minute); the argon and a sampling lance come from the stand. Before the alloys, which the sealed ladle furnace adds. The car stops at local (0, 0)."),
+        built_of=[part("Swing arm and post", A36, 12000.0, "from memory"),
+                  part("Heat shield", REF, math.pi * 1.8 ** 2 * 0.15 * RHO["refractory"], "3.6 m across, 150 mm"),
+                  part("Argon valve stand and lance", A36, 2000.0, "from memory")],
+        needs={"power": 30e3, "atmosphere": "vacuum"},
+        basis=[{"of": ["physical", "built_of"], "tier": "invented", "review": True, "note": "From memory."},
+               {"of": ["identity.description"], "tier": "derived", "review": True, "note": "Radiation from 7 m2 of melt at 1,873 K at emissivity 0.9; 80 t at 820 J/kg K."}])
+    for cap, trolley, kind, job, gear, key in ((150000.0, 37500.0, "Ladle gantry crane", "on its own legs over the teeming rail and the ladle rail: it lifts the full ladle off its car and holds it over each mould in turn", "a main hoist and a ladle beam", "gantry-crane-150t-moon"),
+                                                (20000.0, 6000.0, "Stripper gantry crane", "on its own legs over the teeming rail's east half: it lifts the moulds off the frozen ingots and sets the ingots on the ingot car", "stripping tongs and a ram", "stripper-gantry-20t-moon")):
+        c = bridge_crane_unit(cap, 24.0, trolley, kind=kind, job=job, gear=gear, g=MOON_G[1], h_min=0.6)
+        legs = 4 * box_tube(1.0, 1.0, 0.025, 24.0) * RHO["steel"] if cap > 50000 else 4 * box_tube(0.8, 0.8, 0.02, 22.0) * RHO["steel"]
+        c["built_of"].append(part("Legs and sill beams", A36, legs * 1.15, "four box legs and two sill beams, from the legs' size (the sills 15%)"))
+        c["dims"] = (10.0, 25.0, 27.0)
+        c["desc"] = c["desc"].replace("on the hall's runways", "on its own legs, running on two ground rails 24 m apart").replace("its origin on the runway's rail plane", "its origin on the ground rails' plane, its girders 24 m up") + f" Sized for {MOON_G[1]:g} m/s2."
+        out[key] = c
+    return out
+
+
+def ladle_station_airless(us, recs):
+    """The ladle station on airless ground: the ladle degasses on an open stand, then the sealed ladle furnace alloys and
+    reheats it under argon; no degasser, no hall, no ladle crane."""
+    lf_heat = recs["ladle-furnace-80t-sealed"]["needs"].get("heat", 0) + recs["furnace-transformer-14mva"]["needs"].get("heat", 0)
+    f_low = recs["radiator-field-330k"]["rejects"]["heat"]
+    n_low = math.ceil(lf_heat / f_low)
+    bays = [
+        {"id": "D", "mount": "plant-mount.bay-s2", "unit": "unit.degassing-stand", "at": [-24.0 + 9.0, 0.0, 0.0], "note": "first on the rail from the arc furnace shop: degas before alloying"},
+        {"id": "L", "mount": "plant-mount.bay-s2", "unit": "unit.ladle-furnace-80t-sealed", "at": [3.0, 0.0, 0.0], "note": "over the ladle rail"},
+        {"id": "T", "mount": "plant-mount.bay-s1", "unit": "unit.furnace-transformer-14mva", "at": [3.0, -9.0, 0.0], "note": "on its slab south of the ladle furnace, no fire walls"},
+        {"id": "A", "mount": "plant-mount.bay-s3", "unit": "unit.alloy-bins-8", "at": [3.0, 27.0, 0.0], "note": "north; open feeders and belt, vacuum-rated"},
+        {"id": "G", "mount": "plant-mount.bay-s2", "unit": "unit.offgas-filter-sealed", "at": [21.0, 18.0, 0.0], "note": "north-east: the ladle furnace's argon and fume"},
+        {"id": "P", "mount": "plant-mount.bay-s1", "unit": "unit.crew-post", "at": [18.0, -12.0, 0.0], "note": "south-east, under its berm"},
+    ]
+    bays += [{"id": f"RL{i + 1}", "mount": "plant-mount.bay-s4", "unit": "unit.radiator-field-330k", "at": [-24.0 - 48.0 * i, -42.0, 0.0], "note": "south-west"} for i in range(n_low)]
+    tr = us["furnace-transformer-14mva"]
+    tL, tW, tH = tr["dims"]
+    links = [
+        link("rail", "ladle rail", (-30.0, 0.0, 0.0), (30.0, 0.0, 0.0), A36, 2 * 60.0, None, "two 60 kg/m rails at 3 m gauge on sintered regolith sleepers, from the arc furnace shop to the casting bay; the car stops at x -15 (the stand) and 3 (the ladle furnace)"),
+        link("busbar", "secondary bus", (3.0, -9.0 + tW / 2, tH * 2 / 3), (3.0, -5.0, 6.0), CU, 3 * L_I2 / 4e6 * RHO["copper"], None, "as for air"),
+        link("conveyor", "alloy feed", (3.0, 27.0, 7.0), (3.0, 3.0, 9.4), A36, 100.0, 20000.0, "0.65 m belt, open (no gallery on airless ground), into the furnace's alloy lock"),
+        link("duct", "fume", (5.0, 0.0, 7.5), (15.0, 18.0, 8.0), A36, math.pi * 0.5 * 0.006 * RHO["steel"], None, "0.5 m: the argon and fume from under the sealed roof, a tenth of the air shop's flow", via=[(5.0, 0.0, 10.0), (15.0, 10.0, 10.0)]),
+        link("pipe", "cooling water to the radiators", (-24.0 - 48.0 * (n_low - 1) - 22.0, -18.0, 1.0), (-1.5, -4.5, 1.0), A36, math.pi * 0.25 * 0.006 * RHO["steel"] * 2, None, f"a pair of 250 mm pipes, flow and return, at about 330 K, along the {n_low} radiator fields' north edge to the furnace's manifold, a branch to the transformer", via=[(-1.5, -18.0, 1.0)]),
+        link("rail", "crane rails", (-24.0, -12.0, 0.0), (12.0, 12.0, 0.0), A36, 2 * 50.0, None, "the maintenance gantry crane's two rails, 24 m apart, over the stand and the ladle furnace", via=[(12.0, -12.0, 0.0), (12.0, 12.0, 0.0), (-24.0, 12.0, 0.0)]),
+    ]
+    mobile = [{"unit": "unit.ladle-car-80t", "rides": "ladle rail", "at": [-15.0, 0.0, 0.0]},
+              {"unit": "unit.gantry-crane-20t-moon", "rides": "crane rails", "at": [-6.0, 0.0, 0.0]}]
+    ground = [
+        {"what": "Ladle furnace foundation", "item": SINTER, "volume": r(12 * 10 * 1.0 - 5 * 12 * 0.3), "note": "as for air, of sintered regolith"},
+        {"what": "Stand and transformer pads", "item": SINTER, "volume": r(10 * 8 * 0.5 + 6 * 6 * 0.5)},
+        {"what": "Bins and filter pads", "item": SINTER, "volume": r(12.6 * 6.3 * 1.0 + 12 * 6 * 0.4)},
+        {"what": "Crew post berm", "item": "material.regolith", "volume": r(10 * 8 * 3.0 - math.pi * 4 * 6)},
+        {"what": "Rail sleepers", "item": SINTER, "volume": r(60 * 1.0 + 72 * 0.6)},
+        {"what": "Radiator legs' pads", "item": SINTER, "volume": r(n_low * 4 * (44.0 * 44.0 / 72.0) * 0.027)},
+    ]
+    for g in ground:
+        g["mass"] = r(g["volume"] * (RHO_SINTER if g["item"] == SINTER else 1500.0))
+    used = [recs[b["unit"].split(".", 1)[1]] for b in bays] + [recs[m_["unit"].split(".", 1)[1]] for m_ in mobile]
+    power = sum(u.get("needs", {}).get("power", 0) for u in used) + sum(l.get("power", 0) for l in links)
+    heat = sum(u.get("needs", {}).get("heat", 0) for u in used)
+    mass_units = sum(u["physical"]["mass"] for u in used)
+    mass_links = sum(l["mass"] for l in links)
+    mass_ground = sum(g["mass"] for g in ground)
+    total = mass_units + mass_links + mass_ground
+    against = (f"module.ladle-station: one box, the same on every world. This layout: the same rate; {power / 1e6:.1f} MW; {heat / 1e6:.1f} MW to {n_low} radiator fields at 330 K; no water used up. "
+               f"No degasser: the vacuum degasses the ladle on an open stand, but must not see the alloys, which the sealed ladle furnace adds under argon; no ladle crane (nothing is lifted into a tank) and no hall. "
+               f"{(mass_units + mass_links) / 1000:,.0f} t of plant, {mass_ground / 1000:,.0f} t of sintered regolith.")
+    xs = [b["at"][0] + s * BAY[int(b["mount"][-1])] / 2 for b in bays for s in (-1, 1)] + [p[0] for l in links for p in (l["from"], l["to"])]
+    ys = [b["at"][1] + s * BAY[int(b["mount"][-1])] / 2 for b in bays for s in (-1, 1)] + [p[1] for l in links for p in (l["from"], l["to"])]
+    layout = {
+        "identity": {"key": "layout.ladle-station-airless", "name": "Ladle station, airless",
+                     "description": "The ladle station on airless ground at about a moon's gravity: the heat comes on its car from the arc furnace shop, stands a quarter hour on an open degassing stand where the vacuum takes its gases, then goes under the sealed ladle furnace, which alloys and reheats it under argon, and on to the casting bay. Radiators for the tower, a maintenance gantry crane, a pressurised crew post. Built separately from the station for air."},
+        "stands_for": "module.ladle-station",
+        "site": {"atmosphere": "none", "gravity": list(MOON_G)},
+        "physical": {"length": r(max(xs) - min(xs)), "width": r(max(ys) - min(ys)), "height": 27.0, "mass": r(total)},
+        "bays": bays, "mobile": mobile, "links": links, "ground": ground,
+        "totals": {"rate": L_RATE, "power": r(power), "heat": r(heat), "water": 0.0, "mass": r(total), "against_module": against},
+        "staff": lmod.get("staff"),
+        "basis": [{"of": ["bays", "links", "mobile"], "tier": "invented", "review": True, "note": "Laid out for airless ground."},
+                  {"of": ["ground"], "tier": "derived", "review": True, "note": "Volumes as for air, of sintered regolith at 2,500 kg/m3 and loose regolith at 1,500."},
+                  {"of": ["totals", "physical"], "tier": "derived", "note": "Summed from the units, links and ground."},
+                  {"of": ["staff"], "tier": "derived", "note": "The module's watch, unchanged; it works from the crew post."}],
+    }
+    print(f"layout.ladle-station-airless: {total / 1000:,.0f} t, {power / 1e6:.1f} MW, {heat / 1e6:.1f} MW to {n_low} radiator fields")
+    return layout, bays
+
+
+def casting_bay_airless(us, recs):
+    """The casting bay on airless ground: as for air, the cranes on their own legs and no hall; the moulds and ingots
+    cool by radiation alone."""
+    car_L = us["mould-car-12"]["dims"][0]
+    train = CARS * car_L
+    links = [
+        link("rail", "ladle rail", (-36.0, 6.0, 0.0), (-12.0, 6.0, 0.0), A36, 2 * 60.0, None, "as for air, on sintered regolith sleepers; the car stops at x -15, under the ladle gantry"),
+        link("rail", "teeming rail", (-30.0, -6.0, 0.0), (30.0, -6.0, 0.0), A36, 2 * 50.0, None, f"as for air: two trains of {CARS} mould cars ({train:.0f} m each); teeming in vacuum takes the hydrogen out of the stream as it falls"),
+        link("rail", "ingot rail", (3.0, 6.0, 0.0), (36.0, 6.0, 0.0), A36, 2 * 50.0, None, "as for air: out to the ingot yard"),
+        link("rail", "ladle gantry rails", (-33.0, -12.0, 0.0), (0.0, 12.0, 0.0), A36, 2 * 60.0, None, "the ladle gantry's two rails, 24 m apart, over the west half", via=[(0.0, -12.0, 0.0), (0.0, 12.0, 0.0), (-33.0, 12.0, 0.0)]),
+        link("rail", "stripper gantry rails", (0.0, -12.0, 0.0), (33.0, 12.0, 0.0), A36, 2 * 50.0, None, "the stripper gantry's two rails over the east half, beside the ladle gantry's ends", via=[(33.0, -12.0, 0.0), (33.0, 12.0, 0.0), (0.0, 12.0, 0.0)]),
+    ]
+    mobile = [{"unit": "unit.ladle-car-80t", "rides": "ladle rail", "at": [-15.0, 6.0, 0.0]}]
+    mobile += [{"unit": "unit.mould-car-12", "rides": "teeming rail", "at": [round(-27.0 + car_L / 2 + i * car_L, 2), -6.0, 0.0]} for i in range(CARS)]
+    mobile += [{"unit": "unit.mould-car-12", "rides": "teeming rail", "at": [round(3.0 + car_L / 2 + i * car_L, 2), -6.0, 0.0]} for i in range(CARS)]
+    mobile += [{"unit": "unit.ingot-car-40t", "rides": "ingot rail", "at": [15.0, 6.0, 0.0]},
+               {"unit": "unit.gantry-crane-150t-moon", "rides": "ladle gantry rails", "at": [-15.0, 0.0, 0.0]},
+               {"unit": "unit.stripper-gantry-20t-moon", "rides": "stripper gantry rails", "at": [15.0, 0.0, 0.0]}]
+    bays = [{"id": "P", "mount": "plant-mount.bay-s1", "unit": "unit.crew-post", "at": [0.0, -21.0, 0.0], "note": "south, under its berm"}]
+    ground = [
+        {"what": "Casting floor", "item": SINTER, "volume": r(60 * 24 * 0.4), "note": "0.4 m of sintered regolith under the teeming and stripping, so spilt steel meets stone"},
+        {"what": "Gantry rail sleepers", "item": SINTER, "volume": r(4 * 33 * 1.0)},
+        {"what": "Crew post berm", "item": "material.regolith", "volume": r(10 * 8 * 3.0 - math.pi * 4 * 6)},
+    ]
+    for g in ground:
+        g["mass"] = r(g["volume"] * (RHO_SINTER if g["item"] == SINTER else 1500.0))
+    used = [recs[m_["unit"].split(".", 1)[1]] for m_ in mobile] + [recs[b["unit"].split(".", 1)[1]] for b in bays]
+    power = sum(u.get("needs", {}).get("power", 0) for u in used)
+    mass_units = sum(u["physical"]["mass"] for u in used)
+    mass_links = sum(l["mass"] for l in links)
+    mass_ground = sum(g["mass"] for g in ground)
+    total = mass_units + mass_links + mass_ground
+    against = (f"module.casting-bay: one box, the same on every world. This layout: the same rate; {power / 1e6:.2f} MW; no water; no hall: the 150 t and 20 t cranes stand on their own legs, sized for {MOON_G[1]:g} m/s2. "
+               f"The moulds and ingots cool by radiation alone, with no air to help: the second train stands longer (not yet worked out). {(mass_units + mass_links) / 1000:,.0f} t of plant, {mass_ground / 1000:,.0f} t of sintered regolith.")
+    xs = [-36.0, 36.0]
+    layout = {
+        "identity": {"key": "layout.casting-bay-airless", "name": "Casting bay, airless",
+                     "description": "Ingot teeming on airless ground at about a moon's gravity: as for air, a train of mould cars teemed from the ladle and a second freezing, but under gantry cranes on their own legs and no hall; the stream degasses as it falls through the vacuum. Built separately from the bay for air."},
+        "stands_for": "module.casting-bay",
+        "site": {"atmosphere": "none", "gravity": list(MOON_G)},
+        "physical": {"length": 72.0, "width": 48.0, "height": 27.0, "mass": r(total)},
+        "bays": bays, "mobile": mobile, "links": links, "ground": ground,
+        "totals": {"rate": C_RATE, "power": r(power), "heat": 0.0, "water": 0.0, "mass": r(total), "against_module": against},
+        "staff": cmod.get("staff"),
+        "basis": [{"of": ["bays", "links", "mobile"], "tier": "invented", "review": True, "note": "As the bay for air, on airless ground."},
+                  {"of": ["ground"], "tier": "derived", "review": True, "note": "Sintered regolith at 2,500 kg/m3, loose at 1,500."},
+                  {"of": ["totals", "physical"], "tier": "derived", "note": "Summed from the units, links and ground."},
+                  {"of": ["staff"], "tier": "derived", "note": "The module's watch, unchanged."}],
+    }
+    print(f"layout.casting-bay-airless: {total / 1000:,.0f} t, {power / 1e6:.2f} MW")
+    return layout, bays
+
+
 def mounts_for(bays, recs):
     # Mounts: each class round what its bays take, a quarter to spare, at the site's most gravity.
     g_max = 9.81 * 1.0
@@ -1984,8 +2138,10 @@ def main():
     us.update(pellet_units())
     us.update(yard_units())
     us.update(airless_units(us))
+    us.update(airless_ladle_units(us))
     recs = {slug: unit_record(slug, u) for slug, u in us.items()}
-    layouts = {"arc-furnace-air": arc_furnace_air(us, recs), "ladle-station-air": ladle_station_air(us, recs), "casting-bay-air": casting_bay_air(us, recs), "shaft-furnace-air": shaft_furnace_air(us, recs), "hydrogen-plant-air": hydrogen_plant_air(us, recs), "pellet-plant-air": pellet_plant_air(us, recs), "ore-yard-air": ore_yard_air(us, recs), "ingot-yard-air": ingot_yard_air(us, recs), "arc-furnace-airless": arc_furnace_airless(us, recs)}
+    layouts = {"arc-furnace-air": arc_furnace_air(us, recs), "ladle-station-air": ladle_station_air(us, recs), "casting-bay-air": casting_bay_air(us, recs), "shaft-furnace-air": shaft_furnace_air(us, recs), "hydrogen-plant-air": hydrogen_plant_air(us, recs), "pellet-plant-air": pellet_plant_air(us, recs), "ore-yard-air": ore_yard_air(us, recs), "ingot-yard-air": ingot_yard_air(us, recs), "arc-furnace-airless": arc_furnace_airless(us, recs),
+               "ladle-station-airless": ladle_station_airless(us, recs), "casting-bay-airless": casting_bay_airless(us, recs)}
     mounts = mounts_for([b for _, bays in layouts.values() for b in bays], recs)
     for slug, d in mounts.items():
         write(S + f"plant-mounts/{slug}.yaml", d)
