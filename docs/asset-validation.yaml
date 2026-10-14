@@ -4405,3 +4405,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.stair-tower-12m
+    version: 1
+    manifest_sha256: "0145bca239eb47c0071f8c4cb9fdb7797324f36c8b3facb2d5257d07ebdf125c"
+    installed: fd2969b5
+    game: "the loader (world::assets) at fso fd2969b5"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/stair-tower-12m/v1 (559420 bytes, bounds [-1.5761, -0.136, -3.08] to [1.5761, 13.125, 3.08]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
