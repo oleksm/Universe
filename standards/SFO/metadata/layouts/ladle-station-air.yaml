@@ -5,7 +5,7 @@ stands_for: module.ladle-station
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 69.0, width: 51.0, height: 27.0, mass: 2903000.0}
+physical: {length: 69.0, width: 51.0, height: 27.0, mass: 2924000.0}
 bays:
 - id: L
   mount: plant-mount.bay-s2
@@ -131,7 +131,7 @@ ground:
 - {what: Baghouse slab, item: good.concrete, volume: 57.6, mass: 138200.0}
 - {what: Cooling tower basin, item: good.concrete, volume: 112.5, note: 'sunk as the furnace shop''s: 0.3 m walls round its 12 x 12 m footprint, tops at z 0, floor top at z -2; five pedestals', mass: 270000.0}
 - {what: Rail beds, item: good.concrete, volume: 6.0, note: 'under the ladle rail, 0.125 m3 a metre as the furnace shop''s', mass: 14400.0}
-totals: {rate: 41.6666666666667, power: 8907000.0, heat: 1568000.0, water: 0.8674, mass: 2903000.0, against_module: 'module.ladle-station: one box 40 x 30 x 35 m, 7.5 MW. This layout: the same rate; 8.9 MW (the module''s figure is the arc''s average; the degasser''s pumps, the fan, the crane and the tower are on top); 0.9 kg/s of water the module did not name; 1016 t of plant and frame and 1886 t of concrete.'}
+totals: {rate: 41.6666666666667, power: 8907000.0, heat: 1568000.0, water: 0.8674, mass: 2924000.0, against_module: 'module.ladle-station: one box 40 x 30 x 35 m, 7.5 MW. This layout: the same rate; 8.9 MW (the module''s figure is the arc''s average; the degasser''s pumps, the fan, the crane and the tower are on top); 0.9 kg/s of water the module did not name; 1038 t of plant and frame and 1886 t of concrete.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}
