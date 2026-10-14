@@ -138,6 +138,8 @@ The owner left the next step to registry's judgement ("things are made of anythi
   - The platform is sintered regolith, as there is no water to make concrete. No water is used up.
   - 72.9 MW and 3,700 t.
   - Units can now say what they reject (`rejects: heat, temperature`).
+- `layouts/ladle-station-airless.yaml`: the vacuum does the degasser's work. The ladle stands a quarter hour on an open stand while argon stirs it, then goes under a sealed ladle furnace that adds the alloys under 50 kPa of argon. Open to vacuum, a 1% manganese melt would lose about a fifth of its manganese in that time. There is no degasser and no ladle crane, since nothing is lifted into a tank. 1,625 t against 2,925 for air.
+- `layouts/casting-bay-airless.yaml`: teeming as for air, under 150 t and 20 t gantry cranes on their own legs, sized for 2 m/s2. The moulds and ingots cool by radiation alone; how much longer the second train stands is not yet worked out.
 
 Sizing helpers shared by the generators: `frames.lattice_count`, `frames.strut_capacity`, `frames.lightest_section`.
 
