@@ -9,6 +9,12 @@ built_of:
 - {what: End carriages and drives, item: good.electric-motors, mass: 3000.0, note: '15% of the load, from memory'}
 - {what: Stripping tool, item: material.structural-steel-a36, mass: 3000.0, note: 'outer pads bearing down on a mould''s y-face lugs and a centre hook that takes the lifting eye set in the hot top (the head itself is inside the mould''s walls) and draws the ingot up through a 1.3 m stroke (the ingot and its head stand 1.15 m in the mould); from memory, grip and loads unsized'}
 needs: {power: 40000.0}
+visual:
+  format: "freefall-model/1"
+  path: "models/stripper-crane-20t/v1"
+  manifest_sha256: "490c774b610236ed6ae7ecc33b40319b67547c9e5c07ff8d1c6e19f58c62f290"
+  version: 1
+  triangles: 6700
 life: 788940000
 basis:
 - of: [physical, built_of]
