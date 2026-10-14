@@ -2706,7 +2706,7 @@
 - { record: structure.orbital, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "e604e676cbc1d3fe" }
 - { record: structure.outpost, at: "2026-10-14T16:46:21Z", status: draft, summary: "changed: visual", sha: "f27f9517b95f123a" }
 - { record: structure.platform, at: "2026-10-14T17:04:19Z", status: draft, summary: "changed: visual", sha: "da2e0b4610bdb069" }
-- { record: structure.spaceport, at: "2026-10-14T17:07:34Z", status: draft, summary: "changed: identity, physical, basis", sha: "93978da5b9f56609" }
+- { record: structure.spaceport, at: "2026-10-14T17:09:10Z", status: draft, summary: "changed: identity", sha: "ac7c6b4f3fa6d025" }
 - { record: system.biraidim, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "45c285c7343ec94b" }
 - { record: system.driumum, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "6c0b410fca302540" }
 - { record: system.liham, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "891572eaa9c2ef46" }
