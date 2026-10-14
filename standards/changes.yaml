@@ -561,9 +561,9 @@
 - { record: facility.treistun.port-zaudalein.zaudalein-power-station, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "8a6463d5769ed94e" }
 - { record: facility.treistun.port-zaudalein.zaudalein-smelter, at: "2026-10-06T18:25:49Z", status: "", summary: "first tracked", sha: "5d1416deaae2ca02" }
 - { record: facility.treistun.port-zaudalein.zaudalein-warehouse, at: "2026-10-07T03:22:23Z", status: "", summary: "changed", sha: "9e07662a977525f1" }
-- { record: gate.ring.i, at: "2026-10-07T03:42:03Z", status: review, summary: "changed: fit", sha: "75112d7f1154f9db" }
-- { record: gate.ring.ii, at: "2026-10-07T03:42:03Z", status: review, summary: "changed: fit", sha: "1dab97d358dc8ccd" }
-- { record: gate.ring.iii, at: "2026-10-07T03:42:03Z", status: review, summary: "changed: fit", sha: "aff6458e1d837227" }
+- { record: gate.ring.i, at: "2026-10-14T00:00:04Z", status: review, summary: "changed: basis", sha: "c9e9ca0ad678cd06" }
+- { record: gate.ring.ii, at: "2026-10-14T00:00:04Z", status: review, summary: "changed: basis", sha: "d202a827ebfb452b" }
+- { record: gate.ring.iii, at: "2026-10-14T00:00:04Z", status: review, summary: "changed: basis", sha: "9fc422b034b3c5de" }
 - { record: good.aggregate, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "7bb7e1dbd16457ee" }
 - { record: good.almonds, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "d336f0a6e736548b" }
 - { record: good.alumina, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "b032433665f28491" }
@@ -1325,8 +1325,8 @@
 - { record: part.rf-02, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "b0b002e1f9410521" }
 - { record: part.rf-03, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "7a7e8bda0f57d8b0" }
 - { record: part.rf-04, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "90bdd5aa55afa7f7" }
-- { record: part.ring-01, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "e5227832f83b60dc" }
-- { record: part.ring-01-001, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "e41e2d2b407786a1" }
+- { record: part.ring-01, at: "2026-10-14T00:00:04Z", status: draft, summary: "changed: physical, shape, basis", sha: "78a597cf5b0d78d4" }
+- { record: part.ring-01-001, at: "2026-10-14T00:00:04Z", status: draft, summary: "changed: fit", sha: "e53b9f70c70acfa3" }
 - { record: part.ring-01-002, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "67fe721949caab14" }
 - { record: part.sf-01, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "9229906ed6bedc67" }
 - { record: part.sf-02, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "ac8c33572d5f740e" }
