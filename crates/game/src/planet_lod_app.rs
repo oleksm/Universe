@@ -26,6 +26,10 @@ use universe_engine::{Camera, Color, Context, Frame, KeyCode, Light, Mesh, Mouse
 const CHUNK: f64 = 8000.0;
 /// Decision cell edge (m): the vertices decided together (each cell keeps its own margin).
 const CELL: f64 = 1000.0;
+/// Mesh rebuilds a frame stop once this much time is spent (ms); the rest keep their old mesh.
+const MESH_BUDGET_MS: f64 = 4.0;
+/// Chunks built in parallel at a time.
+const BATCH: usize = 48;
 /// Tiles of the planet outside the pattern grouped this many to a side per mesh.
 const TILE_GROUP: u32 = 4;
 /// Straight down at and above this altitude, level with the horizon at the ground (as the page).
@@ -119,6 +123,8 @@ struct Ui {
     in_view: std::sync::Arc<std::sync::atomic::AtomicUsize>,
     counting: std::sync::Arc<std::sync::atomic::AtomicBool>,
     sent: usize,
+    /// The window's width over its height (the last draw's).
+    aspect: f64,
     chunks_drawn: usize,
     tiles_drawn: usize,
     pattern_tris: usize,
@@ -172,8 +178,10 @@ pub struct PlanetLodApp {
     heading: f64,
     stats: Stats,
     queued: Vec<bool>,
-    /// UNIVERSE_PLANETLOD_FLY: the camera descends and drifts by itself (captures ignore the keys).
+    /// UNIVERSE_PLANETLOD_FLY: the camera descends and drifts by itself (captures ignore the keys);
+    /// =pan: it slides sideways at its altitude instead.
     fly: bool,
+    pan: bool,
     /// UNIVERSE_PLANETLOD_MAXDRAW: at most this many chunks drawn (to tell a draw's cost from a triangle's).
     max_draw: usize,
     meta: Meta,
@@ -454,6 +462,7 @@ impl PlanetLodApp {
             stats: Stats::default(),
             queued,
             fly: std::env::var_os("UNIVERSE_PLANETLOD_FLY").is_some(),
+            pan: std::env::var("UNIVERSE_PLANETLOD_FLY").is_ok_and(|v| v == "pan"),
             max_draw: std::env::var("UNIVERSE_PLANETLOD_MAXDRAW").ok().and_then(|v| v.parse().ok()).unwrap_or(usize::MAX),
             meta,
             ex: 1.0,
@@ -778,6 +787,14 @@ impl PlanetLodApp {
         th - cos_a.clamp(-1.0, 1.0).acos() <= hz + (r_occ / top).min(1.0).acos()
     }
 
+    /// Whether chunk `ch` can be seen: some of it above the horizon and in the view.
+    fn chunk_visible(&self, ch: &Chunk, cam: &Camera, aspect: f64) -> bool {
+        let dir = ch.origin.normalize();
+        let cos_a = 1.0 - 0.5 * (ch.radius / self.d.r).powi(2);
+        let top = 6000.0 * self.ex;
+        self.above_horizon(dir, cos_a, top, cam.position) && Self::in_view(cam, ch.origin, ch.radius + top, aspect)
+    }
+
     fn in_view(cam: &Camera, centre: DVec3, radius: f64, aspect: f64) -> bool {
         let fwd = (cam.orientation * Vec3::NEG_Z).as_dvec3();
         let to = centre - cam.position;
@@ -889,29 +906,55 @@ impl App for PlanetLodApp {
             self.alt = (self.alt * (1.2 * boost * dt * climb).exp()).clamp(ALT_MIN, 6.0 * r);
         }
         self.heading += input.axis(KeyCode::ArrowLeft, KeyCode::ArrowRight) as f64 * (1.2 * dt).to_degrees();
-        if self.fly {
+        if self.pan {
+            self.lon += 0.25 * (ctx.time * 0.4).sin();
+        } else if self.fly {
             self.alt = (self.alt * 0.995).max(300.0);
             self.lon += 2e-4;
         }
         let eye = self.eye();
         self.lod_update(eye);
+        // Meshes again (the engine's audit, 14 Oct: at altitude a coarse vertex flipping at its
+        // appearing distance marks most chunks, and rebuilding them all in the frame cost 13-53 ms): only
+        // the stale chunks in view, nearest first, built in parallel in batches until the frame's budget is
+        // spent; the rest keep their old mesh and wait (out of view: until they come into view).
+        use rayon::prelude::*;
         let t0 = Instant::now();
         let mut rebuilt = 0;
-        let stale: Vec<usize> = (0..self.chunks.len()).filter(|&c| !self.chunks[c].tris.is_empty() && (self.chunks[c].stale || self.chunks[c].mesh_view != Some(self.view))).collect();
-        for c in stale {
-            let (mesh, tris) = self.build_chunk(c);
-            let ch = &mut self.chunks[c];
-            ch.mesh = Some(mesh);
-            ch.mesh_view = Some(self.view);
-            ch.stale = false;
-            ch.tri_count = tris;
-            rebuilt += 1;
-        }
+        let cam = self.camera();
+        let aspect = match self.ui.lock().unwrap().aspect { a if a > 0.0 => a, _ => 16.0 / 9.0 };
         let view = self.view;
+        let mut todo: Vec<(f64, usize)> = (0..self.chunks.len())
+            .filter(|&c| {
+                let ch = &self.chunks[c];
+                !ch.tris.is_empty() && (ch.stale || ch.mesh_view != Some(view)) && self.chunk_visible(ch, &cam, aspect)
+            })
+            .map(|c| (self.chunks[c].origin.distance(cam.position), c))
+            .collect();
+        todo.sort_by(|a, b| a.0.total_cmp(&b.0));
+        for batch in todo.chunks(BATCH) {
+            if t0.elapsed().as_secs_f64() * 1e3 > MESH_BUDGET_MS {
+                break;
+            }
+            let built: Vec<(usize, Mesh, usize)> = batch.par_iter().map(|&(_, c)| {
+                let (m, n) = self.build_chunk(c);
+                (c, m, n)
+            }).collect();
+            for (c, mesh, tris) in built {
+                let ch = &mut self.chunks[c];
+                ch.mesh = Some(mesh);
+                ch.mesh_view = Some(view);
+                ch.stale = false;
+                ch.tri_count = tris;
+                rebuilt += 1;
+            }
+        }
         let need: Vec<usize> = (0..self.tiles.len()).filter(|&g| self.tiles[g].mesh.as_ref().is_none_or(|(v, _)| *v != view)).collect();
-        for g in need {
-            let mesh = self.build_tiles(&self.tiles[g]);
-            self.tiles[g].mesh = Some((view, mesh));
+        if !need.is_empty() {
+            let built: Vec<(usize, Mesh)> = need.par_iter().map(|&g| (g, self.build_tiles(&self.tiles[g]))).collect();
+            for (g, mesh) in built {
+                self.tiles[g].mesh = Some((view, mesh));
+            }
         }
         if self.show_feat && self.feat.is_none() && !self.meta.features.is_empty() {
             self.feat = Some(self.build_features());
@@ -1019,10 +1062,7 @@ impl App for PlanetLodApp {
             if ch.tri_count == 0 {
                 continue;
             }
-            let dir = ch.origin.normalize();
-            let cos_a = 1.0 - 0.5 * (ch.radius / self.d.r).powi(2);
-            let top = 6000.0 * self.ex;
-            if !self.above_horizon(dir, cos_a, top, eye) || !Self::in_view(&cam, ch.origin, ch.radius + top, aspect) {
+            if !self.chunk_visible(ch, &cam, aspect) {
                 continue;
             }
             let t = Transform { position: ch.origin, rotation: Quat::IDENTITY, scale: 1.0 };
@@ -1057,6 +1097,7 @@ impl App for PlanetLodApp {
         // The counts the panel shows that need the drawn meshes: the view box every 0.3 s.
         let mut ui = self.ui.lock().unwrap();
         ui.sent = sent;
+        ui.aspect = aspect;
         ui.chunks_drawn = chunks_drawn;
         ui.tiles_drawn = tiles_drawn;
         ui.pattern_tris = pattern_tris;
