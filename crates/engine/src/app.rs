@@ -206,6 +206,10 @@ pub fn run<G: Game>(mut config: Config, game: G) {
             };
         }
         if let Ok(title) = std::env::var("UNIVERSE_DIAGNOSTIC_TITLE") { config.title = title; }
+        if let Ok(size) = std::env::var("UNIVERSE_DIAGNOSTIC_SIZE") {
+            let (w, h) = size.split_once('x').expect("UNIVERSE_DIAGNOSTIC_SIZE: WxH");
+            config.window_size = (w.parse().expect("width"), h.parse().expect("height"));
+        }
         log::info!("presentation diagnostic: title={:?} vsync={} window={:?}", config.title, config.vsync, config.window_size);
     }
     let event_loop = EventLoop::new().expect("failed to create event loop");
