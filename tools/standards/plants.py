@@ -220,7 +220,7 @@ def car_units():
     defl = cap * G * span ** 3 / (48 * 205e9 * 2 * I)
     out["hall-crane-20t"] = dict(
         name="Hall crane, 20 t", size_class=2, dims=(6.0, span, 3.0),
-        desc="A double-girder bridge crane on the hall's runways, for the roof, the electrodes and relining. Hangs on the frame; names no bay.",
+        desc="A double-girder bridge crane on the hall's runways, for the roof, the electrodes and relining. Hangs on the frame; names no bay. It travels along its x on four wheels, two end carriages 6 m long at y -11.7 and +11.7; its origin on the runway's rail plane, the two girders 1.8 m either side of it; the trolley runs 10 m either way along y, the hook raised to 0.1 m under the rail plane. Parked at the hall's centre.",
         built_of=[part("Bridge girders", A36, gird, f"two box girders 1.4 x 0.6 m, 12 mm wall, {span:.0f} m: {defl * 1000:.0f} mm under 20 t at mid-span, span/{span / defl:.0f}"),
                   part("Trolley and hoist", A36, 6000.0, "from memory"),
                   part("End carriages and drives", "good.electric-motors", 4000.0, "from memory")],
@@ -330,7 +330,7 @@ def main():
     members.append({"item": node_key, "count": n_nodes, "where": "nodes"})
     fmass += n_nodes * nm
     runway = 2 * 24.0 * frames.area({"identity": {"form": "box"}, "size": {"width": 0.4, "height": 0.4, "wall": 0.025}}) * RHO["steel"]
-    members.append({"item": "stock.st4340-box-400x400x25", "count": 4, "where": "crane runways, two a side, 12 m lengths"})
+    members.append({"item": "stock.st4340-box-400x400x25", "count": 4, "where": "crane runways, two a side, 12 m lengths, along x on the inside of the long walls: their rail plane 20.5 m up at y -11.7 and +11.7, 3.5 m under the roof's bottom chord"})
     fmass += runway
     x0, y0, z0, x1, y1, z1 = box
     clad_area = 2 * (x1 - x0) * (z1 - z0) + 2 * (y1 - y0) * (z1 - z0) + (x1 - x0) * (y1 - y0) - sum((d - a) * (f - c) for a, b, c, d, e, f in doors)

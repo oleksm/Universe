@@ -111,7 +111,7 @@ frame:
   - {item: stock.st4340-tb-100x5-s3000, count: 453, where: roof}
   - {item: stock.st4340-tb-100x5-d3000, count: 384, where: roof}
   - {item: stock.st4340-node-160b, count: 814, where: nodes}
-  - {item: stock.st4340-box-400x400x25, count: 4, where: 'crane runways, two a side, 12 m lengths'}
+  - {item: stock.st4340-box-400x400x25, count: 4, where: 'crane runways, two a side, 12 m lengths, along x on the inside of the long walls: their rail plane 20.5 m up at y -11.7 and +11.7, 3.5 m under the roof''s bottom chord'}
   cladding: {item: stock.al6061-sh-2, area: 4104.0, mass: 22160.0}
   carries: [unit.hall-crane-20t]
   mass: 219100.0
