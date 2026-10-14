@@ -374,6 +374,10 @@ impl GpuMesh {
 /// Each edge's normal, to light it by: the faces it bounds, averaged (a
 /// crease lit as either side is); a detail line (on a face, not bounding
 /// one), the face nearest its middle; a bare line, the way out from the centre.
+/// An edge with no face by index or by its ends' positions takes the nearest face only in a model
+/// this small (the search is over every face for every such edge).
+const NEAREST_FACE_MAX: usize = 256;
+
 fn edge_normals(mesh: &Mesh) -> Vec<Vec3> {
     let face_n: Vec<Vec3> = mesh.faces.iter().map(|f| {
         let [a, b, c] = f.map(|i| mesh.positions[i as usize]);
@@ -385,12 +389,31 @@ fn edge_normals(mesh: &Mesh) -> Vec<Vec3> {
             *by_edge.entry((a.min(b), a.max(b))).or_default() += n;
         }
     }
+    // Edges given vertices of their own (not the faces'): their faces found by where their ends
+    // are (linear). The nearest-face search, edges x faces, is the last resort for small models.
+    let mut by_point: HashMap<[u32; 3], Vec3> = HashMap::new();
+    if mesh.edges.iter().any(|e| !by_edge.contains_key(&(e[0].min(e[1]), e[0].max(e[1])))) {
+        for (f, &n) in mesh.faces.iter().zip(&face_n) {
+            for &i in f {
+                *by_point.entry(mesh.positions[i as usize].to_array().map(f32::to_bits)).or_default() += n;
+            }
+        }
+    }
     mesh.edges.iter().map(|e| {
         let (a, b) = (e[0].min(e[1]), e[0].max(e[1]));
         if let Some(n) = by_edge.get(&(a, b)).and_then(|n| n.try_normalize()) {
             return n;
         }
         let mid = (mesh.positions[a as usize] + mesh.positions[b as usize]) / 2.0;
+        let at = |i: u32| by_point.get(&mesh.positions[i as usize].to_array().map(f32::to_bits)).copied();
+        if let (Some(n), Some(m)) = (at(a), at(b))
+            && let Some(n) = (n + m).try_normalize()
+        {
+            return n;
+        }
+        if mesh.faces.len() > NEAREST_FACE_MAX {
+            return mid.normalize_or_zero();
+        }
         let nearest = mesh.faces.iter().zip(&face_n).filter(|(_, n)| **n != Vec3::ZERO).map(|(f, n)| {
             let [p, q, r] = f.map(|i| mesh.positions[i as usize]);
             (distance_to_triangle(mid, p, q, r), *n)

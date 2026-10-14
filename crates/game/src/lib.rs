@@ -1292,6 +1292,11 @@ impl universe_engine::apps::App for App {
         "game"
     }
 
+    /// (F3 and SHIFT+F3 are the game's own: its debug panel, the observer.)
+    fn debug_keys(&self) -> bool {
+        true
+    }
+
     fn update(&mut self, ctx: &mut Context) -> universe_engine::apps::Next {
         if self.showcase.is_none() {
             if let Some(path) = &self.showcase_path {
@@ -1606,10 +1611,16 @@ pub fn studio(args: &[String], window: bool) -> bool {
         let first = flag.map_or(1, |k| k + 1);
         let design = args.get(first).filter(|a| !a.starts_with("--")).map(String::as_str);
         let design = design.map(str::to_owned);
-        universe_engine::apps::run_prepared(Config { title: "Freefall studio".into(), ..Default::default() }, move || studio_only::StudioOnly::new(design.as_deref()));
+        run_app(Config { title: "Freefall studio".into(), ..Default::default() }, move || studio_only::StudioOnly::new(design.as_deref()));
         return true;
     }
     false
+}
+
+/// Start an app alone on the engine host, with the game's debug view (F3: frame graph, asset
+/// figures, profiler) for apps that don't draw their own.
+fn run_app<A: universe_engine::apps::App + 'static>(config: Config, factory: impl FnOnce() -> A + Send + 'static) {
+    universe_engine::apps::run_prepared_with(config, hud::studio_assets, factory);
 }
 
 /// The apps the launcher opens alone (`freefall --app <name> [its argument]`), and what each is.
@@ -1639,7 +1650,7 @@ fn launch(args: &[String]) -> bool {
         Some("factory") => {
             let _ = env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info,wgpu_core=warn,wgpu_hal=warn")).try_init();
             let key = rest.get(1).cloned();
-            universe_engine::apps::run_prepared(Config { title: "Freefall factory layout".into(), ..Default::default() }, move || {
+            run_app(Config { title: "Freefall factory layout".into(), ..Default::default() }, move || {
                 factory_app::FactoryApp::new(key.as_deref()).unwrap_or_else(|e| panic!("factory layout: {e}"))
             });
         }
@@ -1660,7 +1671,7 @@ fn launch(args: &[String]) -> bool {
                 eprintln!("scene: {e}");
                 std::process::exit(2);
             });
-            universe_engine::apps::run_prepared(Config { title: "Freefall scene".into(), ..Default::default() }, move || scene);
+            run_app(Config { title: "Freefall scene".into(), ..Default::default() }, move || scene);
         }
         Some("studio") => {
             let mut a = rest.clone();
@@ -1679,7 +1690,7 @@ fn launch(args: &[String]) -> bool {
 pub fn planet(args: &[String]) {
     let _ = env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info,wgpu_core=warn,wgpu_hal=warn")).try_init();
     let id = args.get(1).filter(|a| !a.starts_with("--")).cloned();
-    universe_engine::apps::run_prepared(Config { title: "Freefall planets".into(), ..Default::default() }, move || {
+    run_app(Config { title: "Freefall planets".into(), ..Default::default() }, move || {
         planet_app::PlanetApp::new(id.as_deref()).unwrap_or_else(|e| panic!("planet viewer: {e}"))
     });
 }
@@ -1703,5 +1714,5 @@ pub fn play() {
     if let Some(dir) = hitch_log.as_ref().and_then(|p| p.parent()) {
         let _ = std::fs::create_dir_all(dir);
     }
-    universe_engine::apps::run_prepared(Config { title: "Freefall".into(), hitch_log, ..Default::default() }, App::new);
+    run_app(Config { title: "Freefall".into(), hitch_log, ..Default::default() }, App::new);
 }

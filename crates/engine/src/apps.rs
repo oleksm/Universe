@@ -45,6 +45,41 @@ pub trait App: Send {
     fn cover(&self) -> Cover {
         Cover::Hides
     }
+    /// Whether it handles F3 (the debug view and profiler) itself; if not, the host does for it.
+    fn debug_keys(&self) -> bool {
+        false
+    }
+}
+
+/// The host's debug view over the apps (F3: 0 off, 1 frame figures, 2 and the profiler): drawn
+/// after them. A client gives its own (the game's frame graph and asset figures); without one,
+/// `plain_overlay`.
+pub type Overlay = fn(&mut Frame, &Context, u8);
+
+/// The frame's figures and the profiler's scopes as plain text, top right.
+pub fn plain_overlay(frame: &mut Frame, ctx: &Context, debug: u8) {
+    if debug == 0 {
+        return;
+    }
+    let p = &ctx.perf;
+    let mut lines = vec![
+        format!("{:.0} FPS  FRAME {:.1} MS", ctx.fps, p.frame_ms),
+        format!("UPDATE {:.1}  DRAW {:.1}  RENDER {:.1}  WAIT {:.1} MS", p.update_ms, p.draw_ms, p.render_ms, p.wait_ms),
+        format!("{} TRIANGLES  {} LINES  {} MESHES", p.triangles, p.lines, p.resources.meshes),
+    ];
+    if debug > 1 {
+        for (name, ms, calls) in universe_prof::last_frame().into_iter().filter(|x| x.1 >= 0.05).take(24) {
+            lines.push(format!("{ms:>7.2} MS  {name}  ({calls}X)"));
+        }
+    }
+    let size = frame.size();
+    let line = crate::frame::GLYPH + 2.0;
+    let w = lines.iter().map(|l| l.len()).max().unwrap_or(0) as f32 * crate::frame::GLYPH + 12.0;
+    let x = size.x - w - 6.0;
+    frame.hud_rect(glam::Vec2::new(x, 6.0), glam::Vec2::new(w, line * lines.len() as f32 + 8.0), crate::Color([0.0, 0.0, 0.0, 0.7]));
+    for (k, l) in lines.iter().enumerate() {
+        frame.text(glam::Vec2::new(x + 6.0, 10.0 + k as f32 * line), l, crate::Color::hex(0x91adbb));
+    }
 }
 
 /// Which of a stack's apps (bottom first) are updated and drawn, given each one's cover.
@@ -85,11 +120,20 @@ pub fn plan(covers: &[Cover]) -> Plan {
 /// The apps in one window, bottom first.
 pub struct Host {
     apps: Vec<Box<dyn App>>,
+    /// The host's debug view (F3), for apps that don't handle it, and how it's drawn.
+    debug: u8,
+    overlay: Overlay,
 }
 
 impl Host {
     pub fn new(first: Box<dyn App>) -> Self {
-        Host { apps: vec![first] }
+        Host { apps: vec![first], debug: 0, overlay: plain_overlay }
+    }
+
+    /// Its debug view drawn by `overlay` (the client's own).
+    pub fn with_overlay(mut self, overlay: Overlay) -> Self {
+        self.overlay = overlay;
+        self
     }
 
     /// The app on top.
@@ -104,6 +148,14 @@ impl Host {
 
 impl Game for Host {
     fn update(&mut self, ctx: &mut Context) {
+        // F3 for an app that doesn't take it: the debug view, its second press the profiler too.
+        if !self.top().debug_keys() && ctx.input.pressed(crate::KeyCode::F3) && !ctx.input.down(crate::KeyCode::ShiftLeft) && !ctx.input.down(crate::KeyCode::ShiftRight) {
+            self.debug = (self.debug + 1) % 3;
+            universe_prof::enable(self.debug == 2);
+        }
+        if !self.top().debug_keys() {
+            ctx.watch_hitches = self.debug > 0;
+        }
         let plan = plan(&self.covers());
         let top = self.apps.len() - 1;
         let mut next = Next::Stay;
@@ -145,6 +197,9 @@ impl Game for Host {
         for k in plan(&self.covers()).drawn {
             self.apps[k].draw(frame, ctx);
         }
+        if !self.top().debug_keys() {
+            (self.overlay)(frame, ctx, self.debug);
+        }
     }
 }
 
@@ -166,7 +221,12 @@ impl App for Closed {
 
 /// Start a host whose first app is made by `factory`, off the window's thread (see `run_prepared`).
 pub fn run_prepared<A: App + 'static>(config: crate::app::Config, factory: impl FnOnce() -> A + Send + 'static) {
-    crate::app::run_prepared(config, move || Host::new(Box::new(factory())));
+    run_prepared_with(config, plain_overlay, factory);
+}
+
+/// `run_prepared` with the client's debug view (`Overlay`).
+pub fn run_prepared_with<A: App + 'static>(config: crate::app::Config, overlay: Overlay, factory: impl FnOnce() -> A + Send + 'static) {
+    crate::app::run_prepared(config, move || Host::new(Box::new(factory())).with_overlay(overlay));
 }
 
 /// Any `Game` as an app that stays until the window closes (the game before it is moved).

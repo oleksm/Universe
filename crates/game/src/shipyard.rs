@@ -116,8 +116,6 @@ pub struct ShipyardApp {
     y: Shipyard,
     place: String,
     credits: f64,
-    /// The game's debug view (F3) as it was: the frame and asset figures shown over it.
-    debug: u8,
 }
 
 impl ShipyardApp {
@@ -126,7 +124,7 @@ impl ShipyardApp {
     pub fn new(mut y: Shipyard, app: &App) -> Self {
         y.initialize(app);
         let place = station(app).map_or_else(|| "SHIPYARD".to_string(), |s| format!("SHIPYARD - {s}"));
-        ShipyardApp { y, place, credits: app.v.credits, debug: app.debug }
+        ShipyardApp { y, place, credits: app.v.credits }
     }
 }
 
@@ -156,9 +154,8 @@ impl universe_engine::apps::App for ShipyardApp {
         universe_engine::Camera::default()
     }
 
-    fn draw(&self, frame: &mut Frame, ctx: &Context) {
+    fn draw(&self, frame: &mut Frame, _: &Context) {
         universe_prof::time("draw/shipyard", || draw(frame, &self.place, self.credits, &self.y));
-        crate::hud::studio_assets(frame, ctx, self.debug);
     }
 
     /// The game runs on under it (its sounds, its link), not drawn.
