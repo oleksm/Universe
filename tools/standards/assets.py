@@ -14,6 +14,8 @@ FORMAT = "freefall-model/1"
 KINDS = {
     "equipment": ("SFO/metadata/equipment", 60_000),
     "module": ("SFO/metadata/modules", 150_000),
+    "unit": ("SFO/metadata/units", 60_000),
+    "layout": ("SFO/metadata/layouts", 400_000),
     "building": ("SFO/metadata/buildings", 150_000),
     "structure": ("SFO/metadata/structures", 400_000),
     "gate": ("SFO/metadata/gates", 400_000),

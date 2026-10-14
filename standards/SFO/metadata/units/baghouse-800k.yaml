@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.baghouse-800k, name: 'Off-gas baghouse, 800,000 m3/h', description: 'Cleans the furnace''s fume before it goes to the air: a water-cooled duct off the roof''s fourth hole, a burn-out gap, then filter bags in a steel casing, the dust shaken into hoppers. Two fans draw the gas through.'}
+size_class: 3
+fits: plant-mount.bay-s3
+physical: {length: 24.0, width: 12.0, height: 18.0, mass: 197900.0}
+built_of:
+- {what: Casing and hoppers, item: material.structural-steel-a36, mass: 117600.0, note: '24 x 12 x 18 m, 8 mm plate'}
+- {what: Structure, item: material.structural-steel-a36, mass: 58780.0, note: 'half the casing, from memory'}
+- {what: Filter bags, item: material.ptfe, mass: 5556.0, note: '2948 bags 150 mm across and 8 m long, 11111 m2 of PTFE-membrane cloth at 0.5 kg/m2'}
+- {what: Fans and motors, item: good.electric-motors, mass: 16000.0, note: 'two induced-draught fans, from memory'}
+holds: 5760.0
+needs: {power: 1185000.0, heat: 7200000.0}
+life: 788940000
+basis:
+- of: [physical, built_of, needs.power]
+  tier: invented
+  review: true
+  note: 'Off-gas 800,000 m3/h, 1.2 m/min through the cloth, fans at 4 kPa and 75%: from memory. Fan power 1.19 MW, not in the module''s figure.'
+- of: [needs.heat]
+  tier: invented
+  review: true
+  note: The water-cooled duct takes about 10% of the arc's power from the hot gas, from memory.
+- of: [holds]
+  tier: derived
+  note: Four hours of the recipe's dust in the hoppers.
+- of: [life]
+  rule: rule.life-plant

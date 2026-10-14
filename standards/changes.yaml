@@ -726,6 +726,7 @@
 - { record: good.refined-steel-304, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "dbc35a062f9c6d9a" }
 - { record: good.refined-steel-4340, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "c3d2f0726e5e0f22" }
 - { record: good.refined-steel-a36, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "152c9e7c701c2ab0" }
+- { record: good.refractory-brick, at: "2026-10-14T02:49:38Z", status: review, summary: "first tracked", sha: "eb0643eed9761025" }
 - { record: good.rice, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "567cae80f4ed0bfd" }
 - { record: good.salt, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "9bc419e17dfe10f9" }
 - { record: good.salt-dome-sulphur-ore, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "298ef1074d03e8bf" }
@@ -820,6 +821,7 @@
 - { record: law.tube-mass, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "a2f143c80b1de3d3" }
 - { record: law.tube-time, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "934385090028c5e6" }
 - { record: law.year, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "29f1ef4424e5cc98" }
+- { record: layout.arc-furnace-air, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "5102e47830715482" }
 - { record: market.art, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "517671b6a46daee3" }
 - { record: market.artifacts, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "6b51c19897f56c1a" }
 - { record: market.biologics, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "003ee842af8f7674" }
@@ -1341,6 +1343,9 @@
 - { record: part.wb-02, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "3796f49a5bc8fa2e" }
 - { record: part.wb-03, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "fc9231a50b47acd4" }
 - { record: part.wb-04, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "63ae488f7cfc4f5a" }
+- { record: plant-mount.bay-s1, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "fb1701d5df1ba8b3" }
+- { record: plant-mount.bay-s2, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "1d30756b6665f2a7" }
+- { record: plant-mount.bay-s3, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "bf4fec9ac3b42946" }
 - { record: population.biraidim.far-cloud, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "4d04c1b699eb49db" }
 - { record: population.biraidim.shikra-family, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "86d3c16b41bc181d" }
 - { record: population.biraidim.taumeibru-family, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "2626282163a26720" }
@@ -1551,6 +1556,7 @@
 - { record: standard.sfo.21, at: "2026-10-06T23:31:03Z", status: "", summary: "first tracked", sha: "ca2ee50ba2ef1b3e" }
 - { record: standard.sfo.22, at: "2026-10-07T01:43:50Z", status: "", summary: "first tracked", sha: "630a0a3d09c711c3" }
 - { record: standard.sfo.23, at: "2026-10-07T01:43:50Z", status: "", summary: "first tracked", sha: "6c69dfad37bc6967" }
+- { record: standard.sfo.24, at: "2026-10-14T02:49:38Z", status: "", summary: "first tracked", sha: "d6822f4883565644" }
 - { record: standard.sfo.3, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "104975206a1bfa51" }
 - { record: standard.sfo.4, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "040dcede10426705" }
 - { record: standard.sfo.5, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "29a1398afa92253f" }
@@ -2704,6 +2710,14 @@
 - { record: system.liham, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "891572eaa9c2ef46" }
 - { record: system.moryemzai, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "f8e4fd33ee4cf599" }
 - { record: system.treistun, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "dd9719e496514353" }
+- { record: unit.baghouse-800k, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "5526685837f20b72" }
+- { record: unit.cooling-tower, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "95edfcc8150d7e56" }
+- { record: unit.dri-bin-200t, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "77c4d3bb47d2077d" }
+- { record: unit.eaf-vessel-80t, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "18eaaf6cdc3f9e05" }
+- { record: unit.furnace-transformer-90mva, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "b2ba6874bb680078" }
+- { record: unit.hall-crane-20t, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "5e8e21a5adca9521" }
+- { record: unit.ladle-car-80t, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "17a2ef15a2c324c2" }
+- { record: unit.slag-pot-car, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "2934b5dd3f375f29" }
 - { record: vocabulary.asteroid, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "c85b5b93f49a4621" }
 - { record: vocabulary.asteroid-family, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "3893f86924156b47" }
 - { record: vocabulary.asteroid-moon, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "8de295aa732db166" }

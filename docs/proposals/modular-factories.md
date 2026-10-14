@@ -87,3 +87,31 @@ Start with one line, from ore to cast steel: `pellet-plant`, `shaft-furnace`, `a
 1. Approve the direction, and the steel line as the pilot?
 2. Should players build works layouts in the studio, as they do ship fits, or should works layouts stay registry-only for now?
 3. Should each unit carry its own staff (operators per unit), or should staff stay per layout?
+
+## 9. The first example (2026-10-13)
+
+The owner approved one example, for blender to model. `tools/standards/plants.py` writes it:
+
+- `standards/SFO/metadata/0024-plant-mounts.yaml`: SFO 24, plant mounts, units and layouts (schemas `plant-mount`, `unit`, `layout`).
+- `plant-mounts/bay-s{1,2,3}.yaml`: bays 6, 12 and 24 m square.
+- `units/`, eight units, each with its mass from its material and dimensions:
+
+  | Unit | Mass |
+  |---|---|
+  | Arc furnace vessel, 80 t | 311 t |
+  | Furnace transformer, 90 MVA | 144 t |
+  | Sponge iron bin | 17 t |
+  | Baghouse | 198 t |
+  | Cooling tower | 157 t |
+  | Ladle car | 56 t |
+  | Slag pot car | 26 t |
+  | Hall crane, 20 t | 28 t |
+
+- `layouts/arc-furnace-air.yaml`: the arc furnace shop for a world with air at 1 g.
+  - It has 5 bays, 2 rail cars and 7 links.
+  - The hall is 30 × 30 × 27 m, a lattice of 3 m struts checked for roof and crane loads.
+  - Ground works are listed too.
+  - Totals: the module's 26.7 kg/s at 74.2 MW, 18.4 MW rejected by the tower, 10.2 kg/s of water, 1,188 t of plant and frame, 2,734 t of concrete.
+  - By contrast, the module record was one 100 × 40 × 35 m box at 72 MW, with no water.
+
+Blender's brief: `python3 tools/standards/next_asset.py --key unit.<name>` for each unit, and `--key layout.arc-furnace-air` for the assembly.

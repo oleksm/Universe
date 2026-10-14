@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.refractory-brick
+  name: "Refractory brick"
+  kind: product
+  description: "Magnesia-carbon brick, the lining of steel furnaces and ladles: fired magnesia bound with graphite and pitch. It stands molten steel and slag at 1,600 °C."
+physical:
+  bulk_density: 3000
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "Magnesia-carbon brick is about 2,900 to 3,100 kg/m3, from memory. No module makes it yet (from magnesite, graphite and pitch): open." }

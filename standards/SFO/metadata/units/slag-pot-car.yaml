@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.slag-pot-car, name: 'Slag pot car, 10 m3', description: A cast steel pot on a rail car that runs under the furnace's slag door and takes the slag out to be cooled and broken.}
+size_class: 1
+physical: {length: 5.0, width: 3.5, height: 3.4, mass: 26200.0}
+built_of:
+- {what: Pot, item: material.structural-steel-a36, mass: 15700.0, note: 'cast steel 80 mm, 10 m3'}
+- {what: Car, item: material.structural-steel-a36, mass: 9000.0, note: from memory}
+- {what: Drives, item: good.electric-motors, mass: 1500.0, note: from memory}
+holds: 12000.0
+needs: {power: 30000.0}
+life: 788940000
+basis:
+- of: [physical, built_of]
+  tier: derived
+  review: true
+  note: A tap's slag (12 t, the recipe's 0.15) foamed to about 1,500 kg/m3 (from memory), a quarter to spare.
+- of: [life]
+  rule: rule.life-plant

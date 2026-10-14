@@ -1,0 +1,51 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Plant unit
+x-kind: [unit]
+description: "standards/SFO/metadata/units/<name>.yaml: one piece of plant built to a plant mount (SFO 24), the works' counterpart of a ship's equipment. Its size and mass come from what it is built of; what it needs says what a layout must bring to it; the unit that does a process's work carries the recipe."
+type: object
+additionalProperties: false
+required: [identity, size_class, physical, built_of]
+allOf:
+  - { $ref: "../../common.schema.yaml#/definitions/physical_object" }
+  - { properties: { physical: { required: [length, width, height, mass] } } }
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      description: { type: string }
+  size_class: { type: integer, minimum: 1, maximum: 4 }
+  fits: { type: string, x-ref: [plant-mount], description: "The plant mount it is built to, by its key. A unit that rides a rail or hangs on a frame names none." }
+  physical: { $ref: "../../common.schema.yaml#/definitions/physical", description: "Its size (length along the layout, width across, height above its bay) and its mass empty. mass is the sum of built_of." }
+  built_of:
+    description: "What it is made of: one line each, its mass worked out from the material and the dimensions the note gives."
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [what, item, mass]
+      properties:
+        what: { type: string }
+        item: { type: string, x-ref: [material, stock, good], description: "What it is made of, by its key." }
+        mass: { type: number, exclusiveMinimum: 0, x-unit: "kg" }
+        note: { type: string, description: "How the mass was worked out." }
+  holds: { type: number, minimum: 0, x-unit: "kg", description: "kg it holds in service (a charge, a bin's fill, water), on top of its mass; its bay bears both." }
+  needs:
+    type: object
+    additionalProperties: false
+    properties:
+      power: { type: number, minimum: 0, x-unit: "W", description: "W it draws at full rate" }
+      heat: { type: number, minimum: 0, x-unit: "W", description: "W of heat the layout's cooling loop must carry away from it" }
+      water: { type: number, minimum: 0, x-unit: "kg/s", description: "kg/s of water it uses up" }
+      gravity: { type: number, minimum: 0, x-unit: "m/s2", description: "m/s2, the least gravity it works in" }
+      atmosphere: { enum: [any, air, vacuum], description: "What it needs round it. any (the default)." }
+  recipes: { $ref: "module.schema.yaml#/properties/recipes" }
+  life: { type: number, x-unit: "s" }
+  visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
+  revision:
+    $ref: "../../common.schema.yaml#/definitions/record_revision"
+    default: { status: draft, owner: registry, on_conflict: propose, because: "A trial unit (SFO 24): sized from material and dimensions, many of them from memory, marked in its basis.", ask: docs/proposals/modular-factories.md }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

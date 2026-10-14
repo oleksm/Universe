@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.hall-crane-20t, name: 'Hall crane, 20 t', description: 'A double-girder bridge crane on the hall''s runways, for the roof, the electrodes and relining. Hangs on the frame; names no bay.'}
+size_class: 2
+physical: {length: 6.0, width: 24.0, height: 3.0, mass: 27870.0}
+built_of:
+- {what: Bridge girders, item: material.structural-steel-a36, mass: 17870.0, note: 'two box girders 1.4 x 0.6 m, 12 mm wall, 24 m: 11 mm under 20 t at mid-span, span/2185'}
+- {what: Trolley and hoist, item: material.structural-steel-a36, mass: 6000.0, note: from memory}
+- {what: End carriages and drives, item: good.electric-motors, mass: 4000.0, note: from memory}
+needs: {power: 60000.0}
+life: 788940000
+basis:
+- of: [physical, built_of]
+  tier: derived
+  review: true
+  note: Girders sized for 20 t at mid-span within span/800; trolley and drives from memory.
+- of: [life]
+  rule: rule.life-plant

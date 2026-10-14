@@ -93,13 +93,21 @@ def brief(kind, key, path, r, used):
     fn = r.get("function") or {}
     if fn:
         b["function"] = {k: v for k, v in fn.items() if not isinstance(v, list)}   # (a rocket's chamber design comes with it)
-    if r.get("fits"):
+    if kind == "unit" and r.get("fits"):
+        m = yaml.safe_load(open(os.path.join(TREE, "SFO/metadata/plant-mounts", r["fits"].split(".", 1)[1] + ".yaml")))
+        b["mount"] = {"key": r["fits"], "footprint_m": m.get("footprint")}
+    elif r.get("fits"):
         m = yaml.safe_load(open(os.path.join(TREE, "SFO/metadata/mounts", r["fits"].split(".", 1)[1] + ".yaml"))) if os.path.exists(os.path.join(TREE, "SFO/metadata/mounts", r["fits"].split(".", 1)[1] + ".yaml")) else {}
         b["mount"] = {"key": r["fits"], "envelope_m": m.get("envelope"), "attachment": m.get("attachment")}
-    lst = (r.get("built_of") or {}).get("list") or []
+    lst = (r.get("built_of") or {}).get("list") or [] if not isinstance(r.get("built_of"), list) else []
+    if isinstance(r.get("built_of"), list):
+        b["made_of"] = [{"what": p["what"], "of": p["item"], "mass_kg": p["mass"], "note": p.get("note")} for p in r["built_of"]]
+    if kind == "layout":
+        b["layout"] = {k: r.get(k) for k in ("site", "bays", "mobile", "links", "frame", "ground")}
+        b["model_notes"] = "a layout is assembled from its units' models placed at their bays (x along, y across, z up, metres from its middle at ground level) on the frame and ground works it names; model the frame and the links, place the units"
     if lst:
         b["parts"] = [{"code": p["code"], "name": p["name"], "description": p.get("description"), "mass_kg": p["mass"], "box_m": [p["length"], p["width"], p["height"]], "of": p.get("item")} for p in lst]
-    elif (r.get("built_of") or {}).get("parts"):
+    elif isinstance(r.get("built_of"), dict) and r["built_of"].get("parts"):
         folder = os.path.join(TREE, "SFO/metadata/parts", r["built_of"]["parts"])
         b["parts"] = [{"code": d["identity"]["code"], "name": d["identity"]["name"], "mass_kg": (d.get("physical") or {}).get("mass"),
                        "box_m": [(d.get("physical") or {}).get(k) for k in ("length", "width", "height")]}

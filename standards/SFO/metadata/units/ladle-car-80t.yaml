@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.ladle-car-80t, name: 'Ladle and transfer car, 80 t', description: 'A refractory-lined steel ladle that takes one tap, on a motor car that runs on rails from under the furnace''s tap to the ladle station.'}
+size_class: 2
+physical: {length: 6.0, width: 4.0, height: 4.4, mass: 55720.0}
+built_of:
+- {what: Ladle lining, item: good.refractory-brick, mass: 22890.0, note: '2.9 m inside, 2.6 m deep, 0.2 m walls, 0.3 m bottom'}
+- {what: Ladle shell and trunnion ring, item: material.structural-steel-a36, mass: 16230.0, note: '40 mm plate, the trunnion ring and lugs three tenths more'}
+- {what: Car frame and deck, item: stock.st4340-box-400x400x25, mass: 14600.0, note: 'four box beams 400 x 400 x 25 mm, 6 m, and a deck 6 x 4 m of 40 mm plate'}
+- {what: Drives, item: good.electric-motors, mass: 2000.0, note: from memory}
+holds: 88000.0
+needs: {power: 50000.0}
+life: 788940000
+basis:
+- of: [physical, built_of]
+  tier: derived
+  review: true
+  note: 'Sized to hold a tap of 80 t of steel (7,000 kg/m3) with its slag cover and freeboard: 17 m3 inside. Lining thicknesses from memory.'
+- of: [life]
+  rule: rule.life-plant
