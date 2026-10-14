@@ -8,17 +8,17 @@ identity:
   description: "What a class 1 power plant slot offers, and what fits it."
 envelope:
   length: 13.8
-  width: 6.89
-  height: 2.2
+  width: 7.17
+  height: 2.37
 bears:
-  mass: 2380.0
+  mass: 3140.0
 attachment:
-  points: 4
+  points: 8
   pattern: corners
   each:
-    tension: 17500.0
-    compression: 17500.0
-    shear: 8730.0
+    tension: 11500.0
+    compression: 11500.0
+    shear: 5770.0
 feeds:
   cooling: 9290000.0
   fuel: 4.14e-08

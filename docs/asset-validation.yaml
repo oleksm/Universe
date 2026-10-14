@@ -3972,3 +3972,18 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual GPU appearance/cost and temporal edges; final hull placement/clearance; pressure, cryogenic and loaded support qualification"
+  - key: gate.ring.i
+    version: 1
+    manifest_sha256: "d4ab5b1d5bf5a76deb8fd11566ebf63b6e2b38e99ca5223029c37570bb3c7938"
+    installed: 936892a7
+    game: "the loader (world::assets) at fso 936892a7"
+    date: "2026-10-13"
+    result: partial
+    drawn: true
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/ring-i/v1 (959160 bytes, bounds [-1619.9994, -60.0, -1619.9994] to [1619.9994, 60.0, 1619.9994]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames at play distance, GPU look and cost"
+      - "Actual gate GPU appearance/cost and temporal edges; corrected centreline vs game light radius; capture/collision aperture; separate relay/beacon placement; global ring structure unqualified"

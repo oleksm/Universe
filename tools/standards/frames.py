@@ -4,6 +4,7 @@ studio and the game.
     python3 tools/standards/frames.py --stock    # mill lengths and sheet sizes on frame stock; end fittings and bolts, with their recipes
     python3 tools/standards/frames.py --check    # every assembly's derived groups against its members, nodes and decks
     python3 tools/standards/frames.py --write    # write them (fittings, bill, physical, making) into the assemblies
+    python3 tools/standards/frames.py --struts   # the standard struts (kit members), with their recipes
 
 The designer places members, nodes and decks; the rest follows:
 - A member end within 1 mm of a node meets it. It is welded where the member is of the node's material and not pinned;
@@ -18,6 +19,16 @@ The designer places members, nodes and decks; the rest follows:
 - The bill: members packed into mill lengths (longest first, first fit), each deck laid on whole sheets the cheaper way
   round, fittings by the piece (clips' plate with 15% cut away).
 - Physical: the mass of members, nodes, decks and fittings; length, width and height the extent in x, z and y.
+
+Standard struts (form strut, `kit`): a member sold whole, its section cut to length with an END and a bolt in each end,
+like a space-frame kit (MERO). Its standard length is the module, node centre to node centre, on a 0.5 m grid: straight
+0.5, 1, 1.5, 2, 3, 4 and 6 m, and the face diagonal of a square of each up to 4 m (L * sqrt 2), as their own items.
+Each section meets one node size, the smallest at least twice as wide; the cut is the module less that node's diameter
+and the two ENDs (each as long as the section is wide). A module is offered where the cut is at least twice the
+section's width, no longer than a mill length, and the module at most 200 radii of gyration (a compression member's
+usual limit). Tube and bar of 4340, 6061, Ti-6Al-4V and carbon composite up to 250 mm; box sections are beams, not
+kit. Keys: stock.<section>-s<mm> straight, stock.<section>-d<mm> the diagonal of a <mm> square. In an assembly a strut
+member must run between two nodes exactly its module apart (1 mm): it brings its own ENDs and bolts, and is never cut.
 """
 import glob, math, os, sys
 import yaml
@@ -34,6 +45,10 @@ TUBE_MILL, BOX_MILL = 6.0, 12.0
 SHEETS = {"metal plate": (6.0, 2.0), "metal sheet": (2.5, 1.25), "composite": (3.0, 1.5)}
 CLIP_STRIP, CLIP_TABS, CLIP_GAUGE, CLIP_EVERY = 0.06, 0.08, 0.005, 0.5
 SLEEVE, NODE_TOL, DECK_TOL = 0.3, 0.001, 0.02
+STRAIGHT, SQUARES = [0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 6.0], [0.5, 1.0, 1.5, 2.0, 3.0, 4.0]
+KIT_MATERIALS = {"material.high-strength-steel-4340", "material.aluminium-alloy-6061", "material.carbon-fibre-composite", "material.titanium-alloy-ti-6al-4v"}
+KIT_MAX_WIDTH, KIT_SLENDER = 0.25, 200
+SCRAP = {"material.high-strength-steel-4340": "stock.st4340-scrap", "material.aluminium-alloy-6061": "stock.al6061-scrap", "material.titanium-alloy-ti-6al-4v": "stock.ti64-scrap"}
 STEEL = "material.high-strength-steel-4340"
 STOCK_NOTE_TUBE = "Mill lengths: 6 m for tube and bar, 12 m for box section, the commonest mill and extrusion lengths on Earth; chosen, a frame longer than its member's length is spliced (tools/standards/frames.py)."
 
@@ -215,6 +230,111 @@ def write_new(code, text):
         open(path, "w", encoding="utf-8").write(text)
 
 
+def fmt(v):
+    return f"{v:g}"
+
+
+def struts():
+    """Write the standard struts and their recipes in the welding bay. Idempotent: rewrites every strut record."""
+    stocks, mats = load("mill-stock"), materials()
+    nodes = sorted(((d["size"]["diameter"], "wall" in d["size"], k) for k, (f, d) in stocks.items() if ".st4340-node-" in k))
+    made, n = [], 0
+    for key, (f, d) in sorted(stocks.items()):
+        idn, z = d["identity"], d.get("size") or {}
+        mat = d["made_from"][0]["item"]
+        if idn["form"] not in ("tube", "bar") or mat not in KIT_MATERIALS or z["diameter"] > KIT_MAX_WIDTH + 1e-9:
+            continue
+        w = z["diameter"]
+        node = next(((D, k) for D, hollow, k in nodes if D >= 2 * w - 1e-9), None)
+        if not node:
+            continue
+        D, nk = node
+        a_, rho = area(d), density(d, mats)
+        t = min(z.get("wall", w / 2), w / 2)
+        gyr = math.sqrt(w * w + (w - 2 * t) ** 2) / 4
+        end = min((k for k, (ff, e) in stocks.items() if ".st4340-end-" in k and e["size"]["diameter"] >= w - 1e-9), key=lambda k: stocks[k][1]["size"]["diameter"])
+        bolt = f"stock.st4340-bolt-m{bolt_for(w)}"
+        me, mb = stocks[end][1]["physical"]["mass"], stocks[bolt][1]["physical"]["mass"]
+        for kind, L in [("s", L) for L in STRAIGHT] + [("d", L) for L in SQUARES]:
+            module = round(L * math.sqrt(2), 4) if kind == "d" else L
+            cut = round(module - D - 2 * w, 4)
+            if cut < 2 * w - 1e-9 or cut > TUBE_MILL + 1e-9 or module / gyr > KIT_SLENDER:
+                continue
+            mm = round(L * 1000)
+            code, skey = f"{idn['code']}-{kind.upper()}{mm}", f"{key}-{kind}{mm}"
+            mass = round(cut * a_ * rho + 2 * me + 2 * mb, 2)
+            per = math.floor(TUBE_MILL / cut + 1e-9)
+            used = TUBE_MILL / per * a_ * rho
+            what = f"{fmt(L)} m" if kind == "s" else f"diagonal, {fmt(L)} m square"
+            sec = idn["name"]
+            size = f"  diameter: {w}\n" + (f"  wall: {z['wall']}\n" if "wall" in z else "") + f"  length: {round(cut + 2 * w, 4)}\n"
+            note = (f"A standard strut (tools/standards/frames.py): {fmt(module)} m node centre to node centre"
+                    + (f", the face diagonal of a {fmt(L)} m square" if kind == "d" else "")
+                    + f"; {fmt(cut)} m of {sec} between two {round(w * 1000)} mm ENDs, made to meet {round(D * 1000)} mm nodes, an M{bolt_for(w)} bolt in each END. Its length here is END tip to END tip. Ladder, grid and limits chosen.")
+            text = f"""# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: {skey}
+  code: {code}
+  name: "{sec} strut, {what}"
+  traded_as: {idn.get('traded_as', 'market.metals')}
+  form: strut
+  temper: "{idn.get('temper', 'as made')}"
+package: package.bar-bundle
+""" + (f"tint: [{', '.join(fmt(c) for c in d['tint'])}]\n" if d.get("tint") else "") + f"""made_from:
+  - item: {mat}
+  - item: {STEEL}
+size:
+{size}kit:
+  section: {key}
+  node: {nk}
+  end: {end}
+  bolt: {bolt}
+  module: {module}
+  cut: {cut}
+physical:
+  mass: {mass}
+basis:
+  - {{ of: [size, kit, physical.mass], tier: derived, review: true, note: {q(note)} }}
+"""
+            path = os.path.join(S, "mill-stock", code + ".yaml")
+            if not os.path.exists(path) or open(path, encoding="utf-8").read() != text:
+                open(path, "w", encoding="utf-8").write(text)
+            outs = [(SCRAP[mat], round((used - cut * a_ * rho) / mass, 4))] if mat in SCRAP and used - cut * a_ * rho > 1e-6 else []
+            made.append((skey, [(key, round(used / mass, 4)), (end, round(2 * me / mass, 4)), (bolt, round(2 * mb / mass, 4))], outs))
+            n += 1
+    fp = os.path.join(S, "modules/welding-bay.yaml")
+    text = open(fp, encoding="utf-8").read()
+    head, sep, tail = text.partition("\nlife:")
+    head = head.split("\nrecipes:\n")[0]
+    body = "".join(f"""  - makes: {k}
+    does: "Its section cut to length, an END fitting welded or bonded into each end, a bolt put in each."
+    inputs:
+""" + "".join(f"      - {{ item: {i}, quantity: {qq} }}\n" for i, qq in ins) + ("    outputs:\n" + "".join(f"      - {{ item: {i}, quantity: {qq} }}\n" for i, qq in outs) if outs else "") + """    rate: 0.277777777777778
+    power: 130000.0
+""" for k, ins, outs in made)
+    new = head + "\nrecipes:\n" + body.rstrip("\n") + sep + tail
+    if new != text:
+        open(fp, "w", encoding="utf-8").write(new)
+    print(f"{n} struts")
+
+
+def misfits(rec, stocks):
+    """Strut members that are not their module long or do not meet a node at each end."""
+    out = []
+    nodes = rec.get("nodes") or []
+    for i, m in enumerate(rec.get("members") or []):
+        kit = stocks[m["stock"]][1].get("kit")
+        if not kit:
+            continue
+        L = math.dist(m["a"], m["b"])
+        if abs(L - kit["module"]) > NODE_TOL:
+            out.append(f"member {i}: {m['stock']} is {kit['module']} m node to node, placed {L:.4f} m")
+        for end in (m["a"], m["b"]):
+            if not any(near(n["at"], end) for n in nodes):
+                out.append(f"member {i}: {m['stock']} has an end at {end} with no node")
+    return out
+
+
 # ---- assemblies
 
 def near(p, q_):
@@ -255,8 +375,16 @@ def derive(rec, stocks, mats):
     lengths = {}
     for m in rec.get("members") or []:
         st = S_(m["stock"])
-        rho, a_, w = density(st, mats), area(st), width(st)
         L = math.dist(m["a"], m["b"])
+        if st.get("kit"):
+            w = S_(st["kit"]["section"])["size"]["diameter"]
+            mass += st["physical"]["mass"]
+            c, m_ = bill.get(m["stock"], (0, 0.0))
+            bill[m["stock"]] = (c + 1, m_ + st["physical"]["mass"])
+            ext(m["a"], w / 2)
+            ext(m["b"], w / 2)
+            continue
+        rho, a_, w = density(st, mats), area(st), width(st)
         mass += L * a_ * rho
         lengths.setdefault(m["stock"], []).append(L)
         ext(m["a"], w / 2)
@@ -301,7 +429,8 @@ def derive(rec, stocks, mats):
         c, m_ = bill.get(dk["stock"], (0, 0.0))
         bill[dk["stock"]] = (c + sheets, m_ + sheets * L * W * kpa)
         for m in rec.get("members") or []:
-            w = width(S_(m["stock"]))
+            st_ = S_(m["stock"])
+            w = S_(st_["kit"]["section"])["size"]["diameter"] if st_.get("kit") else width(st_)
             ya, yb = m["a"][1] + w / 2, m["b"][1] + w / 2
             if not (abs(ya - dk["y"]) <= DECK_TOL and abs(yb - dk["y"]) <= DECK_TOL):
                 continue
@@ -365,6 +494,9 @@ def assemblies(write):
     bad = 0
     for key, (f, rec) in load("assemblies").items():
         fittings, bill, phys = derive(rec, stocks, mats)
+        for msg in misfits(rec, stocks):
+            bad += 1
+            print(f"{os.path.relpath(f, ROOT)}: {msg}")
         want = {**rec, "fittings": fittings, "bill": bill, "physical": {**(rec.get("physical") or {}), **phys}}
         want.setdefault("making", {"module": "module.welding-bay"})
         if any(want.get(k) != rec.get(k) for k in ("fittings", "bill", "physical", "making")):
@@ -380,5 +512,7 @@ def assemblies(write):
 if __name__ == "__main__":
     if "--stock" in sys.argv:
         stock()
+    if "--struts" in sys.argv:
+        struts()
     if "--write" in sys.argv or "--check" in sys.argv:
         sys.exit(1 if assemblies("--write" in sys.argv) else 0)

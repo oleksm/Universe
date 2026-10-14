@@ -45,3 +45,12 @@ The stock comes from the mills that already make it: the extrusion press, pierci
 
 ## 6. Loading it in the game
 The registry's `build.rs` generates its types from the schemas. The new kind (`x-kind: assembly`, folder `assemblies`) and `size.length` should arrive when the types are regenerated. No assembly records exist yet; the studio's first save makes one. Questions go to the registry session.
+
+## 7. Standard struts (kit members), 2026-10-13
+The studio asked for frames built only from whole, standard beams. Struts are stock, form `strut`, written by `tools/standards/frames.py --struts` (703 records) and made in `module.welding-bay`.
+- **Standard length:** the `kit.module`, node centre to node centre, on a 0.5 m grid. Snap the nodes to the grid; a strut fits where its two nodes are exactly its module apart (within 1 mm).
+- **Ladder:** straight struts of 0.5, 1, 1.5, 2, 3, 4 and 6 m. Diagonals are separate items: the face diagonal of a square of 0.5, 1, 1.5, 2, 3 or 4 m (L·√2, stored to 0.1 mm). A rectangle that isn't square has no diagonal.
+- **Keys:** `stock.<section>-s<mm>` for a straight strut, `stock.<section>-d<mm>` for the diagonal of a square <mm> on a side. Examples: `stock.cfc-tb-120x3-s2000`, `stock.cfc-tb-120x3-d2000`.
+- **One key per member:** each strut comes with its END fittings and bolts. `kit` names its section, the node it's made for, the END, the bolt, the module and the cut length (module less the node's diameter and the two ENDs). `size.length` is from END tip to END tip.
+- **Which sections and lengths:** tube and bar of 4340, 6061, Ti-6Al-4V and carbon composite, up to 250 mm. Box sections are beams, not kit pieces. Each section meets one node size, the smallest at least twice its width. A length is offered only where the cut is at least twice the width and fits in a 6 m mill length, and the module is at most 200 radii of gyration.
+- **In an assembly:** a strut member adds its own mass, ENDs and bolts, and is never cut or spliced. `frames.py --check` and `build.py` flag a strut whose length isn't its module, or one with an end that doesn't meet a node.

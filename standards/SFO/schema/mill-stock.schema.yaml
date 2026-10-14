@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Mill stock
 x-kind: [stock]
-description: 'Stock: what lies in a store and is sold. Only stock, and the made things kept by the piece (parts, equipment, hulls), names a market category: a material or a good does not. standards/SFO/metadata/mill-stock/<code>.yaml: one item of mill stock: a material in a form and a size. standards/SFO/metadata/stock/<code>.yaml: a good in the form it is stocked and sold in. What a unit of it weighs is worked out from its material''s density. Its shape follows from its form and size, and the game draws it from them, with no model: a tube is round, its diameter outside and its wall; a bar is a solid round of its diameter; a box is a rectangular hollow section, width by height outside, and its wall; a forging named NODE is a ball of its diameter, hollow where a wall is given; an END forging is a cone as long as the tube it ends is wide, from the tube''s diameter to its bolt''s; a fastener is a hex bolt and nut, the bolt''s diameter by its length under the head; plate, sheet and panel are slabs of their thickness. Length, and a plate''s width, are as sold (mill lengths, sheet sizes).'
+description: 'Stock: what lies in a store and is sold. Only stock, and the made things kept by the piece (parts, equipment, hulls), names a market category: a material or a good does not. standards/SFO/metadata/mill-stock/<code>.yaml: one item of mill stock: a material in a form and a size. standards/SFO/metadata/stock/<code>.yaml: a good in the form it is stocked and sold in. What a unit of it weighs is worked out from its material''s density. Its shape follows from its form and size, and the game draws it from them, with no model: a tube is round, its diameter outside and its wall; a bar is a solid round of its diameter; a box is a rectangular hollow section, width by height outside, and its wall; a forging named NODE is a ball of its diameter, hollow where a wall is given; an END forging is a cone as long as the tube it ends is wide, from the tube''s diameter to its bolt''s; a fastener is a hex bolt and nut, the bolt''s diameter by its length under the head; plate, sheet and panel are slabs of their thickness; a strut is its section (kit.section) between two END cones, node surface to node surface. Length, and a plate''s width, are as sold (mill lengths, sheet sizes).'
 type: object
 additionalProperties: false
 required: [identity, made_from]
@@ -55,6 +55,18 @@ properties:
           shear_modulus: { type: number, x-unit: "Pa", description: "Pa, the core's shear modulus in its weaker (W) direction" }
       bond: { type: number, x-unit: "kg/m2", description: "kg/m2 of adhesive film, both faces" }
       mass_per_area: { type: number, x-unit: "kg/m2", description: "kg/m2 of the whole panel: 2 * face density * face thickness + core density * depth + bond" }
+  kit:
+    type: object
+    description: "For a strut (form strut): a standard frame member sold whole, a length of its section with an END fitting fixed in each end and a bolt in each, ready to bolt to two nodes (the MERO joint; SFO 13). Its standard length is the module, node centre to node centre; the studio places it only where its two nodes are that far apart (tools/standards/frames.py)."
+    additionalProperties: false
+    required: [section, node, end, bolt, module, cut]
+    properties:
+      section: { type: string, x-ref: [stock], description: "The tube or bar it is cut from, by its key." }
+      node: { type: string, x-ref: [stock], description: "The node it is made to meet at each end, by its key: the nearest it is drawn and checked against." }
+      end: { type: string, x-ref: [stock], description: "The END fitting fixed in each end, by its key." }
+      bolt: { type: string, x-ref: [stock], description: "The bolt in each END, by its key." }
+      module: { type: number, x-unit: "m", description: "m, node centre to node centre: its standard length." }
+      cut: { type: number, x-unit: "m", description: "m of its section: the module less the node's diameter and the two ENDs." }
   physical: { $ref: "../../common.schema.yaml#/definitions/physical" }
   revision:
     $ref: "../../common.schema.yaml#/definitions/record_revision"

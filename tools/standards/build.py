@@ -3157,6 +3157,8 @@ for _f, _r in frames.load("assemblies").values():
     _fit, _bill, _phys = frames.derive(_r, frames.load("mill-stock"), frames.materials())
     if _fit != _r.get("fittings") or _bill != _r.get("bill") or any((_r.get("physical") or {}).get(k) != v for k, v in _phys.items()):
         problem(_f, "derived groups out of date: run tools/standards/frames.py --write")
+    for _m in frames.misfits(_r, frames.load("mill-stock")):
+        problem(_f, _m)
 
 write_html()
 if problems:

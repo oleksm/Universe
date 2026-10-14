@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.st4340-tb-80x5-d2000
+  code: ST4340-TB-80X5-D2000
+  name: "4340 tube 80 x 5 mm strut, diagonal, 2 m square"
+  traded_as: market.metals
+  form: strut
+  temper: "quenched and tempered"
+package: package.bar-bundle
+tint: [0.44, 0.45, 0.47]
+made_from:
+  - item: material.high-strength-steel-4340
+  - item: material.high-strength-steel-4340
+size:
+  diameter: 0.08
+  wall: 0.005
+  length: 2.6684
+kit:
+  section: stock.st4340-tb-80x5
+  node: stock.st4340-node-160
+  end: stock.st4340-end-80
+  bolt: stock.st4340-bolt-m20
+  module: 2.8284
+  cut: 2.5084
+physical:
+  mass: 24.67
+basis:
+  - { of: [size, kit, physical.mass], tier: derived, review: true, note: "A standard strut (tools/standards/frames.py): 2.8284 m node centre to node centre, the face diagonal of a 2 m square; 2.5084 m of 4340 tube 80 x 5 mm between two 80 mm ENDs, made to meet 160 mm nodes, an M20 bolt in each END. Its length here is END tip to END tip. Ladder, grid and limits chosen." }

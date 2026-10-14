@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.ti64-tb-100x3-s4000
+  code: TI64-TB-100X3-S4000
+  name: "Ti-6-4 tube 100 x 3 mm strut, 4 m"
+  traded_as: market.metals
+  form: strut
+  temper: "annealed"
+package: package.bar-bundle
+tint: [0.56, 0.56, 0.59]
+made_from:
+  - item: material.titanium-alloy-ti-6al-4v
+  - item: material.high-strength-steel-4340
+size:
+  diameter: 0.1
+  wall: 0.003
+  length: 3.8
+kit:
+  section: stock.ti64-tb-100x3
+  node: stock.st4340-node-200
+  end: stock.st4340-end-100
+  bolt: stock.st4340-bolt-m30
+  module: 4.0
+  cut: 3.6
+physical:
+  mass: 18.33
+basis:
+  - { of: [size, kit, physical.mass], tier: derived, review: true, note: "A standard strut (tools/standards/frames.py): 4 m node centre to node centre; 3.6 m of Ti-6-4 tube 100 x 3 mm between two 100 mm ENDs, made to meet 200 mm nodes, an M30 bolt in each END. Its length here is END tip to END tip. Ladder, grid and limits chosen." }
