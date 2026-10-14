@@ -5,7 +5,7 @@ stands_for: module.arc-furnace
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 84.0, width: 60.0, height: 27.0, mass: 4493000.0}
+physical: {length: 84.0, width: 60.0, height: 27.0, mass: 4492000.0}
 bays:
 - id: V
   mount: plant-mount.bay-s2
@@ -53,13 +53,14 @@ links:
   name: off-gas
   from: [-10.0, 7.5, 13.5]
   to: [6.0, 24.0, 15.0]
-  length: 27.06
+  length: 27.4
   item: material.structural-steel-a36
-  mass: 13350.0
+  mass: 13510.0
   via:
   - [-10.0, 7.5, 15.0]
   - [-4.5, 13.5, 15.0]
-  - [6.0, 18.0, 15.0]
+  - [-3.0, 16.6, 15.0]
+  - [6.0, 19.0, 15.0]
   heat: 7200000.0
   note: '2 m across, 10 mm plate, water-cooled for its first part (it takes about 10% of the arc''s power from the hot gas, from memory), with the burn-out gap where air comes in and the CO burns; from the roof''s fourth hole, 2 m east and 1.5 m north of the electrodes: up from the hole, east-north-east through the north wall''s opening, then along +y into the baghouse''s inlet, with elbows at the turns'
 - kind: busbar
@@ -114,16 +115,16 @@ links:
 - kind: pipe
   name: cooling water to the off-gas duct
   from: [-27.0, -1.5, 0.75]
-  to: [1.3, 16.0, 14.0]
-  length: 66.55
+  to: [1.3, 17.8, 14.0]
+  length: 64.57
   item: material.structural-steel-a36
-  mass: 13130.0
+  mass: 12740.0
   via:
   - [-26.0, -1.5, 0.75]
   - [-26.0, -1.5, -1.0]
   - [-26.0, 18.0, -1.0]
   - [1.3, 18.0, -1.0]
-  - [1.3, 18.0, 14.0]
+  - [1.3, 18.0, 13.0]
   note: 'a pair of 500 mm pipes, 8 mm wall, flow and return, from the tower''s second port pair: outside the hall, down into a covered trench 1 m deep, north past the hall''s west end, east along y 18 under the slag rail, up a riser to the underside of the duct''s water jacket just outside the hall''s north wall; the jacket carries the water back along the duct''s water-cooled first part (the baghouse takes no water)'
 frame:
   box: [-24.0, -15.0, 0.0, 9.0, 15.0, 27.0]
@@ -152,7 +153,7 @@ ground:
 - {what: Baghouse slab, item: good.concrete, volume: 172.8, mass: 414700.0}
 - {what: Cooling tower basin, item: good.concrete, volume: 187.2, note: a 0.5 m floor and 2 m walls, mass: 449300.0}
 - {what: Bin footing, item: good.concrete, volume: 36.0, mass: 86400.0}
-totals: {rate: 26.6666666666667, power: 74200000.0, heat: 18450000.0, water: 10.2, mass: 4493000.0, against_module: 'module.arc-furnace: one box 100 x 40 x 35 m, 72 MW, its parts 930 t. This layout: the same rate; 74.2 MW (the module left out the transformer''s losses, the fans and pumps); 10.2 kg/s of water the module did not name (the tower''s evaporation); 1207 t of plant and frame and 3285 t of concrete.'}
+totals: {rate: 26.6666666666667, power: 74200000.0, heat: 18450000.0, water: 10.2, mass: 4492000.0, against_module: 'module.arc-furnace: one box 100 x 40 x 35 m, 72 MW, its parts 930 t. This layout: the same rate; 74.2 MW (the module left out the transformer''s losses, the fans and pumps); 10.2 kg/s of water the module did not name (the tower''s evaporation); 1207 t of plant and frame and 3285 t of concrete.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}
