@@ -58,3 +58,10 @@ triangle (its stored vertices) identical; face ids differ (313 equal) because th
 Most of the bytes are the 64 KiB hash blocks: a cell's 19 faces are 608 B and their points about 2.3 KB, but each
 touch checks a whole block. A finer grid would not change that; smaller hash blocks would (16 KiB blocks: a hash
 section four times larger, 373 KB to check at open for this region).
+
+## Four regions (`~/planet-data/pgs2/s15-4regions`, planet-trees `pgs2` 8a20c21)
+
+S15 root and four non-adjacent regions (494 MB). Each of the four runs' 4,352 fixtures through the package (17,408):
+water and categories identical, heights within 1.2e-8 m of the lab's (tolerance 1 mm). Cold first query: first
+region's cap centre 6.9–11.9 ms, 1.89 MB; root only 2.2 ms, 0.49 MB. Cross-region "across" is not exercised (no
+adjacent regions).
