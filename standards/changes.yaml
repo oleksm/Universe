@@ -823,7 +823,7 @@
 - { record: law.year, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "29f1ef4424e5cc98" }
 - { record: layout.arc-furnace-air, at: "2026-10-14T17:43:17Z", status: draft, summary: "changed", sha: "a2407e84fcd931d4" }
 - { record: layout.arc-furnace-airless, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "befaa429a44d04ce" }
-- { record: layout.casting-bay-air, at: "2026-10-14T20:43:24Z", status: draft, summary: "changed: physical, totals", sha: "d3c84669115f7f7a" }
+- { record: layout.casting-bay-air, at: "2026-10-14T20:47:01Z", status: draft, summary: "changed: physical, totals", sha: "cfe9e80e84ff84d7" }
 - { record: layout.casting-bay-airless, at: "2026-10-14T20:43:24Z", status: draft, summary: "changed: physical, totals", sha: "e3ef5af1a81ad489" }
 - { record: layout.hydrogen-plant-air, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "379207799e0d24b5" }
 - { record: layout.hydrogen-plant-airless, at: "2026-10-14T19:28:17Z", status: draft, summary: "first tracked", sha: "7d8c41a2b8a39bdb" }
@@ -2768,7 +2768,7 @@
 - { record: unit.ladle-furnace-80t, at: "2026-10-14T18:15:58Z", status: draft, summary: "changed", sha: "9cf8dd025ee54189" }
 - { record: unit.ladle-furnace-80t-sealed, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "2b557a04dd7cd03c" }
 - { record: unit.mill-crane-30t, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "40e31c07816559a2" }
-- { record: unit.mould-car-12, at: "2026-10-14T20:44:58Z", status: draft, summary: "changed: visual", sha: "b4d0081299a3a224" }
+- { record: unit.mould-car-12, at: "2026-10-14T20:47:01Z", status: draft, summary: "changed", sha: "599233360afac449" }
 - { record: unit.offgas-filter-sealed, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "c6b566e979038e64" }
 - { record: unit.plant-transformer-35mva, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "1f1d36f62a5197e3" }
 - { record: unit.radiator-field-330k, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "e970c81177589484" }
@@ -2785,7 +2785,7 @@
 - { record: unit.stack-crane-20t, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "dada8ceeb1793c71" }
 - { record: unit.stacker-reclaimer-1500th, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "37f21c4682c96ba8" }
 - { record: unit.stair-tower-12m, at: "2026-10-14T20:31:28Z", status: draft, summary: "changed", sha: "47201be2e61453ae" }
-- { record: unit.stripper-crane-20t, at: "2026-10-14T20:32:09Z", status: draft, summary: "changed: identity, built_of", sha: "154ac643f63a48ab" }
+- { record: unit.stripper-crane-20t, at: "2026-10-14T20:47:01Z", status: draft, summary: "changed: identity, physical, built_of", sha: "1dcd3af4691e3e68" }
 - { record: unit.stripper-gantry-20t-moon, at: "2026-10-14T20:32:09Z", status: draft, summary: "changed: identity, built_of", sha: "9953a4704a13f3dd" }
 - { record: unit.top-gas-condenser-8bar, at: "2026-10-14T19:26:44Z", status: draft, summary: "first tracked", sha: "61482cc1d5511262" }
 - { record: unit.top-gas-scrubber, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "43d6cefca9d48a23" }

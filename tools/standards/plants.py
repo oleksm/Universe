@@ -797,6 +797,10 @@ def casting_units():
         holds=PER_CAR * (ING_M + HOT_TOP), needs={"power": 30000.0},
         basis=[{"of": ["physical", "built_of", "holds"], "tier": "derived", "review": True, "note": f"The ingot sized to the heavy crate (2 t); its hot top the module's scrap share. Moulds about their ingot's mass and more, as practice runs (from memory). Car and drive from memory."}])
     out["stripper-crane-20t"] = bridge_crane_unit(20000.0, 22.8, 6000.0, kind="Stripper crane", job="it lifts each frozen ingot up out of its mould by the hot top, the arms of its tongs holding the mould down by its lugs (a big-end-up mould frees its ingot only upward), and sets the ingots on the ingot car", gear="ingot tongs whose arms hold the mould down")
+    sc = out["stripper-crane-20t"]
+    sc["built_of"].append(part("Stripping tool", A36, 3000.0, "outer pads bearing down on a mould's y-face lugs and a centre jaw head that grips the hot top and draws the ingot up through a 1.3 m stroke (the ingot and its head stand 1.15 m in the mould); from memory, grip and loads unsized"))
+    sc["dims"] = (sc["dims"][0], sc["dims"][1], r(sc["dims"][2] + 1.6, 3))
+    sc["desc"] += " Its stripping tool hangs from the trolley, raised to 1.6 m under the rail plane when parked: the box runs from there to the trolley's top."
     deck = 8.0 * 3.0 * 0.04 * RHO["steel"]
     frame2 = 2 * box_tube(0.4, 0.4, 0.025, 8.0) * RHO["steel"]
     out["ingot-car-40t"] = dict(
