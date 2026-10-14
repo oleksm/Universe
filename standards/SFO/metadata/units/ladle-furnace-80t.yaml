@@ -4,14 +4,14 @@ identity: {key: unit.ladle-furnace-80t, name: 'Ladle furnace, 80 t', description
     masts at the rear (y -3.8), their arms fanning forward, the centre arm 0.6 m higher; the gantry''s columns at x -5 and 5, y -4.4 and 4.4, 12 m tall, its two cross beams on top.'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 10.0, height: 14.0, mass: 75000.0}
+physical: {length: 12.0, width: 10.7, height: 14.0, mass: 75880.0}
 built_of:
 - {what: Roof panels, item: material.structural-steel-a36, mass: 5010.0, note: 'water-cooled pipe panels over a dome 4.6 m across, 1.15 times the disc, the lifting frame half as much again'}
 - {what: Roof delta, item: good.refractory-brick, mass: 771.6, note: 'the refractory centre round the electrode ports, 1.2 m across, 0.3 m thick, less its electrode, feed and fume bores: 0.257 m3 as measured on blender''s model (candidate v01)'}
-- {what: Gantry, item: material.structural-steel-a36, mass: 53130.0, note: 'four box columns 0.6 m, 25 mm wall, 12 m tall, two cross beams 0.8 x 0.5 m, 10 m, longitudinal ties, the mast bench, the roof-lift heads and 200 mm baseplates (these provisional, not load-sized): measured on blender''s model (candidate v01); columns and beams alone 31,479 kg'}
+- {what: Gantry, item: material.structural-steel-a36, mass: 53900.0, note: 'four box columns 0.6 m, 25 mm wall, 12 m tall, two cross beams 0.8 x 0.5 m, 10 m, longitudinal ties, the mast bench, the roof-lift heads, a grounded hanger beam over the mast bank for the cables and 200 mm baseplates (these provisional, not load-sized): measured on blender''s model (candidate v01); columns and beams alone 31,479 kg'}
 - {what: Electrode masts, item: material.structural-steel-a36, mass: 7830.0, note: 'three box masts 0.5 m, 25 mm wall, 7 m'}
 - {what: Current-conducting arms, item: material.aluminium-1350, mass: 843.0, note: 'three box arms 0.5 x 0.35 m, 20 mm wall, trimmed at their insulated carriages: measured on blender''s model (candidate v01)'}
-- {what: Secondary cables, item: material.copper, mass: 1414.0, note: 'two water-cooled copper cables a phase, 10 m, each 2630 mm2 for half of 26 kA at 5 A/mm2'}
+- {what: Secondary cables, item: material.copper, mass: 1528.0, note: 'two water-cooled copper cables a phase, each 2630 mm2 for half of 26 kA at 5 A/mm2, run behind the steel and over the top on six insulators: measured on blender''s model (1,414 kg for 10 m each)'}
 - {what: Roof lift and mast hydraulics, item: good.pumps, mass: 6000.0, note: from memory}
 holds: 625.3
 needs: {power: 7500000.0, heat: 1500000.0, gravity: 1.6, atmosphere: any}

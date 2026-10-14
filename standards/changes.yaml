@@ -823,7 +823,7 @@
 - { record: law.year, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "29f1ef4424e5cc98" }
 - { record: layout.arc-furnace-air, at: "2026-10-14T17:43:17Z", status: draft, summary: "changed", sha: "a2407e84fcd931d4" }
 - { record: layout.casting-bay-air, at: "2026-10-14T17:51:14Z", status: draft, summary: "first tracked", sha: "aff1c8c3aeeaf451" }
-- { record: layout.ladle-station-air, at: "2026-10-14T17:53:50Z", status: draft, summary: "changed: physical, totals", sha: "18306ca772469f65" }
+- { record: layout.ladle-station-air, at: "2026-10-14T17:58:28Z", status: draft, summary: "changed: physical, totals", sha: "916c119e25deca66" }
 - { record: market.art, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "517671b6a46daee3" }
 - { record: market.artifacts, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "6b51c19897f56c1a" }
 - { record: market.biologics, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "003ee842af8f7674" }
@@ -2728,7 +2728,7 @@
 - { record: unit.ingot-car-40t, at: "2026-10-14T17:51:14Z", status: draft, summary: "first tracked", sha: "6d0a1c08ea1ffee4" }
 - { record: unit.ladle-car-80t, at: "2026-10-14T14:50:41Z", status: draft, summary: "changed", sha: "455ad05163bdf8c8" }
 - { record: unit.ladle-crane-150t, at: "2026-10-14T17:51:14Z", status: draft, summary: "changed: identity, built_of", sha: "873aebfa6330861f" }
-- { record: unit.ladle-furnace-80t, at: "2026-10-14T17:53:50Z", status: draft, summary: "changed: identity, physical, built_of", sha: "878460a6a7a3af7f" }
+- { record: unit.ladle-furnace-80t, at: "2026-10-14T17:58:28Z", status: draft, summary: "changed: physical, built_of", sha: "1abac596ecf10d91" }
 - { record: unit.mould-car-12, at: "2026-10-14T17:51:14Z", status: draft, summary: "first tracked", sha: "acd7a125fd88a142" }
 - { record: unit.slag-pot-car, at: "2026-10-14T14:59:35Z", status: draft, summary: "changed", sha: "99ae6089782a9bea" }
 - { record: unit.stripper-crane-20t, at: "2026-10-14T17:51:14Z", status: draft, summary: "first tracked", sha: "badfb6c3f9f6eccb" }
