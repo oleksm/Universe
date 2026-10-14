@@ -825,6 +825,7 @@ impl Package {
             let cell = level.entry["spacing_m"].as_f64().unwrap_or(1000.0) * r_units;
             let (mut cross_worst, mut cross_n) = (0f64, 0u64);
             let (mut point_worst, mut points_n) = (0f64, 0u64);
+            let mut counted = vec![false; fp.len()];
             for &rf in &self.regions[k].footprint {
                 let ([a, b, c], _) = self.root.corners(rf)?;
                 // (Divided by the norm, as the writer does: the same rounding.)
@@ -836,9 +837,11 @@ impl Package {
                 let inv = glam::DMat3::from_cols(a, b, c).inverse();
                 let on = |p: DVec3| { let w = inv * p; (w.x + w.y + w.z - 1.0).abs() <= 1e-9 && w.min_element() >= -1e-12 };
                 let xy = |p: DVec3| { let d = p - a; glam::DVec2::new(d.dot(e1), d.dot(e2)) };
-                // Level-0 points on this face against the level's own faces (a point on an edge
-                // two footprint faces share counts on each, as the writer measures).
-                for &(p, h, _) in fp.iter().filter(|p| on(p.0)) {
+                // Level-0 points on this face against the level's own faces, each once (a point on
+                // an edge two footprint faces share is one overlay vertex).
+                for (j, &(p, h, _)) in fp.iter().enumerate() {
+                    if counted[j] || !on(p) { continue; }
+                    counted[j] = true;
                     let q = p.normalize();
                     let mut best = None;
                     for f in file.candidates(q)? {
@@ -884,7 +887,9 @@ impl Package {
                         let d0 = b0 - a0;
                         let t = (d0.x * db.y - d0.y * db.x) / den;
                         let s = (d0.x * da.y - d0.y * da.x) / den;
-                        let eps = 1e-12;
+                        // Strictly inside both edges; nearer an end it is a vertex touch, a level-0
+                        // point already counted.
+                        let eps = 1e-9;
                         if !(t > eps && t < 1.0 - eps && s > eps && s < 1.0 - eps) { continue; }
                         let (hla, hlb) = (lp[la as usize].1, lp[lb as usize].1);
                         let (hfa, hfb) = (fp[fa as usize].1, fp[fb as usize].1);
