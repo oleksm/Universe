@@ -4138,3 +4138,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.ladle-car-80t
+    version: 1
+    manifest_sha256: "8546661890682095c80d5c13fa824fe125f5d249efcc373ee61837b41244d95b"
+    installed: a409eb74
+    game: "the loader (world::assets) at fso a409eb74"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/ladle-car-80t/v1 (446228 bytes, bounds [-3.0, -0.04, -2.0] to [3.0, 4.4, 2.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
