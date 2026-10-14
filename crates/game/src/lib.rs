@@ -1715,7 +1715,7 @@ pub fn studio(args: &[String], window: bool) -> bool {
         let first = flag.map_or(1, |k| k + 1);
         let design = args.get(first).filter(|a| !a.starts_with("--")).map(String::as_str);
         let design = design.map(str::to_owned);
-        universe_engine::run_prepared(Config { title: "Freefall studio".into(), ..Default::default() }, move || studio_only::StudioOnly::new(design.as_deref()));
+        universe_engine::apps::run_prepared(Config { title: "Freefall studio".into(), ..Default::default() }, move || studio_only::StudioOnly::new(design.as_deref()));
         return true;
     }
     false

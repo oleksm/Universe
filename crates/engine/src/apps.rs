@@ -31,7 +31,8 @@ pub enum Next {
     Swap(Box<dyn App>),
 }
 
-pub trait App {
+/// (`Send`: an app is prepared off the window's thread, as `run_prepared` does.)
+pub trait App: Send {
     /// Its name (the launcher's, the profiler's).
     fn name(&self) -> &str;
     /// Advance it: input (when on top) and the player's frame clock in `ctx`.
@@ -157,10 +158,15 @@ impl App for Closed {
     fn draw(&self, _: &mut Frame, _: &Context) {}
 }
 
-/// Any `Game` as an app that stays until the window closes (the game before it is moved).
-pub struct Whole<G: Game>(pub &'static str, pub G);
+/// Start a host whose first app is made by `factory`, off the window's thread (see `run_prepared`).
+pub fn run_prepared<A: App + 'static>(config: crate::app::Config, factory: impl FnOnce() -> A + Send + 'static) {
+    crate::app::run_prepared(config, move || Host::new(Box::new(factory())));
+}
 
-impl<G: Game> App for Whole<G> {
+/// Any `Game` as an app that stays until the window closes (the game before it is moved).
+pub struct Whole<G: Game + Send>(pub &'static str, pub G);
+
+impl<G: Game + Send> App for Whole<G> {
     fn name(&self) -> &str {
         self.0
     }
