@@ -341,6 +341,9 @@ def main():
     fmass += runway
     x0, y0, z0, x1, y1, z1 = box
     clad_area = 2 * (x1 - x0) * (z1 - z0) + 2 * (y1 - y0) * (z1 - z0) + (x1 - x0) * (y1 - y0) - sum(max(d - a, e - b) * (f - c) for a, b, c, d, e, f in doors)
+    FLASH = 12.67 + 35.43 + 35.41 + 50.05      # m2 of roof edge and corner returns and the conveyor and duct flashings, measured on blender's hall (candidate v01)
+    clad_net = clad_area
+    clad_area += FLASH
     clad = clad_area * 0.002 * RHO["aluminium"]
 
     # The frame's loads, checked: roof strips spanning 24 m, wall verticals under the crane.
@@ -413,6 +416,10 @@ def main():
         {"what": "Cooling tower basin", "item": CONC, "volume": r((tw + 0.6) * (12.6) * 0.5 + 2 * (tw + 0.3 + 12.3) * 2.0 * 0.3 + 10 * 0.6 * 0.6 * 2.0),
          "note": f"sunk, so the tower's lower louvres and ports stay clear: 0.3 m walls round its {tw:.0f} x 12 m footprint, their tops at z 0, the floor's top at z -2 (0.5 m thick); ten 0.6 x 0.6 m pedestals, six under the tower's feet and four under its pump skid's corners, at z 0 (blender)"},
         {"what": "Bin footing", "item": CONC, "volume": 36.0},
+        # Measured on blender's hall (candidate v01, hall-quantities.json): the smaller works the layout's links stand on.
+        {"what": "Rail beds", "item": CONC, "volume": 8.27, "note": "under the ladle and slag rails, with their 40 mm flangeways; measured on blender's model"},
+        {"what": "Pipe trench", "item": CONC, "volume": 11.23 + 11.80, "note": "floor (11.2 m3) and covers (11.8 m3) of the 1 m trench the duct's water pair runs in; measured on blender's model"},
+        {"what": "Link supports", "item": CONC, "volume": 2.16 + 1.44 + 1.20 + 3.85, "note": "footings for the conveyor's trestles (2.2 m3), the duct's supports (1.4 m3) and the water riser (1.2 m3), and the pipes' plinths (3.8 m3); measured on blender's model"},
     ]
     for g in ground:
         g["mass"] = r(g["volume"] * RHO["concrete"])
@@ -477,7 +484,7 @@ def main():
         "totals": {"rate": RATE, "power": r(power), "heat": r(heat), "water": r(water), "mass": r(total), "against_module": against},
         "staff": mod.get("staff"),
         "basis": [{"of": ["bays", "links", "mobile", "frame.box", "frame.openings"], "tier": "invented", "review": True, "note": "Laid out for the trial: the platform and vault side by side under the hall, the rest outside. Lengths from memory of melt shops."},
-                  {"of": ["frame.members", "frame.mass", "frame.cladding"], "tier": "derived", "review": True, "note": "Counted from the lattice (tools/standards/plants.py): every cell edge a straight strut, every square face one diagonal, a node at every corner; masses from the strut and node records."},
+                  {"of": ["frame.members", "frame.mass", "frame.cladding"], "tier": "derived", "review": True, "note": f"Counted from the lattice (tools/standards/plants.py): every cell edge a straight strut, every square face one diagonal, a node at every corner; masses from the strut and node records. Cladding: the walls and roof less the openings ({clad_net:.0f} m2; blender's hall measured 4,222 m2), with {FLASH:.0f} m2 of returns and flashings as measured on blender's hall (candidate v01, 2026-10-14)."},
                   {"of": ["ground"], "tier": "derived", "review": True, "note": "Volumes chosen for the trial, concrete at 2,400 kg/m3; not sized for the ground's bearing."},
                   {"of": ["totals", "physical"], "tier": "derived", "note": "Summed from the units, links, frame and ground."},
                   {"of": ["staff"], "tier": "derived", "note": "The module's watch, unchanged: whether staff go by unit is open."}],
