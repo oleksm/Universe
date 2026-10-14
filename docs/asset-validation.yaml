@@ -4198,3 +4198,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.hall-crane-20t
+    version: 2
+    manifest_sha256: "59f02a1de6bc44d5679baab4b24f5927ead0327684602226b6c50f1e0614285f"
+    installed: de9159f2
+    game: "the loader (world::assets) at fso de9159f2"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/hall-crane-20t/v2 (309104 bytes, bounds [-3.0, -0.0989, -11.7] to [3.0, 2.9, 11.7]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
