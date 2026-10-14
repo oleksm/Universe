@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.crop-saws, name: 'Crop saws, 9', description: '9 horizontal band saws in 3 rows of 3 along x, each with its roller table: the ingot crane sets a cooled ingot on a table lying along x, its big end at the blade, and the blade cuts the hot top off (255 kg, with its lifting eye) through the 0.48 m square section in about 10 minutes with the handling; the head drops into a scrap bin under the table, which goes back to the arc furnace as scrap, and the crane lifts the sound ingot onto the crating line. 54 ingots an hour from the casting bay need 9.'}
+size_class: 2
+fits: plant-mount.bay-s2
+physical: {length: 12.0, width: 10.0, height: 3.0, mass: 94500.0}
+built_of:
+- {what: Band saws, item: good.electric-motors, mass: 81000.0, note: 'about 9 t a saw for a 0.5 m section, from memory'}
+- {what: Roller tables and scrap bins, item: material.structural-steel-a36, mass: 13500.0, note: from memory}
+needs: {power: 135000.0}
+life: 788940000
+basis:
+- of: [built_of, needs, physical]
+  tier: invented
+  review: true
+  note: The count from the casting bay's rate and a cut of 300 cm2 a minute (a large band saw in carbon steel, from memory); saw mass and power from memory.
+- of: [life]
+  rule: rule.life-plant

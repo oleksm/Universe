@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.ingot-crane-10t, name: 'Ingot crane, 10 t', description: 'A double-girder ingot crane on the hall''s runways: it lifts hot ingots off the ingot car with its tongs, a row at a time, onto the cooling racks, and later onto the crating line''s roller table. Hangs on the frame; names no bay. It travels along its x, its wheels at y -11.4 and +11.4 (22.8 m between the rails), its ends 0.3 m beyond; its origin on the runway''s rail plane; the trolley, with ingot tongs, runs 9 m either way along y, the hook raised to 0.1 m under the rail plane. Parked at the hall''s centre.'}
+identity: {key: unit.ingot-crane-10t, name: 'Ingot crane, 10 t', description: 'A double-girder ingot crane on the hall''s runways: it lifts hot ingots off the ingot car with its tongs by their lifting eyes, one at a time, onto the cooling racks; later lays each cooled ingot on a crop saw''s table and the cropped ingot onto the crating line''s roller table. Hangs on the frame; names no bay. It travels along its x, its wheels at y -11.4 and +11.4 (22.8 m between the rails), its ends 0.3 m beyond; its origin on the runway''s rail plane; the trolley, with ingot tongs, runs 9 m either way along y, the hook raised to 0.1 m under the rail plane. Parked at the hall''s centre.'}
 size_class: 2
 physical: {length: 8.0, width: 23.4, height: 3.0, mass: 23690.0}
 built_of:

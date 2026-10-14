@@ -1598,6 +1598,9 @@ REPOSE = 37.0                      # degrees: iron ore's angle of repose, from m
 CRATE = yaml.safe_load(open(S + "packages/crate-heavy.yaml"))
 
 
+CUT_RATE = 300e-4 / 60                                 # m2/s a large band saw cuts in carbon steel (300 cm2 a minute, from memory)
+
+
 def yard_units():
     out = {}
     out["stacker-reclaimer-1500th"] = dict(
@@ -1614,13 +1617,26 @@ def yard_units():
         built_of=[part("Hopper and grizzly", A36, 45000.0, "from memory"), part("Apron feeder", "good.electric-motors", 25000.0, "from memory")],
         holds=100000.0, needs={"power": 150e3},
         basis=[{"of": ["physical", "built_of", "holds", "needs"], "tier": "invented", "review": True, "note": "From memory."}])
-    out["ingot-crane-10t"] = bridge_crane_unit(10000.0, 22.8, 3000.0, kind="Ingot crane", job="it lifts hot ingots off the ingot car with its tongs, a row at a time, onto the cooling racks, and later onto the crating line's roller table", gear="ingot tongs")
+    out["ingot-crane-10t"] = bridge_crane_unit(10000.0, 22.8, 3000.0, kind="Ingot crane", job="it lifts hot ingots off the ingot car with its tongs by their lifting eyes, one at a time, onto the cooling racks; later lays each cooled ingot on a crop saw's table and the cropped ingot onto the crating line's roller table", gear="ingot tongs")
     out["sampling-lab"] = dict(
         name="Sampling laboratory", size_class=1, fits="bay-s1", dims=(6.0, 6.0, 3.5),
         desc="A cabin with a saw that cuts a sample from one ingot of each heat, a grinder, and a spark emission spectrometer that reads the steel's composition in minutes, so the heat's grade can be certified on its crates' labels.",
         built_of=[part("Cabin", A36, 8000.0, "from memory"), part("Saw, grinder and spectrometer", "good.electric-motors", 3000.0, "from memory")],
         needs={"power": 60e3},
         basis=[{"of": ["physical", "built_of", "needs"], "tier": "invented", "review": True, "note": "From memory."}])
+    # The crop saws: each cooled ingot's hot top is sawn off at its big end before crating.
+    cut_area = ING_A ** 2
+    t_cut = cut_area / CUT_RATE + 120.0                    # s a cut, with the ingot's handling
+    ing_h = C_RATE * SOUND / ING_M                         # ingots a second
+    n_saws = math.ceil(ing_h * t_cut)
+    assert n_saws <= 9, "the crop saws' unit is laid out as 3 rows of 3"
+    out["crop-saws"] = dict(
+        name=f"Crop saws, {n_saws}", size_class=2, fits="bay-s2", dims=(12.0, 10.0, 3.0),
+        desc=f"{n_saws} horizontal band saws in 3 rows of 3 along x, each with its roller table: the ingot crane sets a cooled ingot on a table lying along x, its big end at the blade, and the blade cuts the hot top off ({HOT_TOP:,.0f} kg, with its lifting eye) through the {ING_A:g} m square section in about {t_cut / 60:.0f} minutes with the handling; the head drops into a scrap bin under the table, which goes back to the arc furnace as scrap, and the crane lifts the sound ingot onto the crating line. {ing_h * 3600:.0f} ingots an hour from the casting bay need {n_saws}.",
+        built_of=[part("Band saws", "good.electric-motors", n_saws * 9000.0, "about 9 t a saw for a 0.5 m section, from memory"),
+                  part("Roller tables and scrap bins", A36, n_saws * 1500.0, "from memory")],
+        needs={"power": n_saws * 15e3},
+        basis=[{"of": ["built_of", "needs", "physical"], "tier": "invented", "review": True, "note": f"The count from the casting bay's rate and a cut of {CUT_RATE * 1e4 * 60:.0f} cm2 a minute (a large band saw in carbon steel, from memory); saw mass and power from memory."}])
     out["crating-line"] = dict(
         name="Crating line", size_class=2, fits="bay-s2", dims=(12.0, 4.0, 3.0),
         desc="A roller table along x: a cooled ingot set on at its -x end is weighed, laid in a heavy crate on its skids, the lid nailed on and the label printed with the heat, grade and mass; the crate leaves at the +x end for a forklift.",
@@ -1749,6 +1765,7 @@ def ingot_yard_air(us, recs):
     bays = [
         {"id": "S", "mount": "plant-mount.bay-s1", "unit": "unit.sampling-lab", "at": [-21.0, -9.0, 0.0], "note": "in the hall, by the ingot rail"},
         {"id": "K", "mount": "plant-mount.bay-s2", "unit": "unit.crating-line", "at": [18.0, -3.0, 0.0], "note": "in the hall, running out of its east door"},
+        {"id": "C", "mount": "plant-mount.bay-s2", "unit": "unit.crop-saws", "at": [3.0, -6.0, 0.0], "note": "in the hall, west of the crating line, under the crane"},
     ]
     links = [
         link("rail", "ingot rail", (-36.0, 6.0, 0.0), (-6.0, 6.0, 0.0), A36, 2 * 50.0, None, "two 50 kg/m rails at 2 m gauge, set in the floor: in by the west door from the casting bay; the car stops at x -15 under the crane"),
@@ -1782,7 +1799,7 @@ def ingot_yard_air(us, recs):
                f"{(mass_units + mass_links + frame_mass) / 1000:,.0f} t of plant, frame and paving, {mass_ground / 1000:,.0f} t of concrete.")
     layout = {
         "identity": {"key": "layout.ingot-yard-air", "name": "Ingot yard, world with air",
-                     "description": "The ingots come in hot on their car from the casting bay; a crane lays them on racks in a cooling hall for a day; one of each heat is sampled and analysed; a crating line puts each ingot in a heavy crate with its label; forklifts stack the crates two high on a paved yard and load them onto trucks for the port. For a world with air at about 1 g."},
+                     "description": "The ingots come in hot on their car from the casting bay; a crane lays them on racks in a cooling hall for a day; one of each heat is sampled and analysed; band saws crop each ingot's hot top (back to the arc furnace as scrap); a crating line puts each ingot in a heavy crate with its label; forklifts stack the crates two high on a paved yard and load them onto trucks for the port. For a world with air at about 1 g."},
         "stands_for": "module.ingot-yard",
         "site": {"atmosphere": "air", "gravity": [8.0, 11.0]},
         "physical": {"length": L, "width": W, "height": z1, "mass": r(total)},
