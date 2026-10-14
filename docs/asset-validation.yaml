@@ -3987,3 +3987,18 @@ validations:
     pending:
       - "frames at play distance, GPU look and cost"
       - "Actual gate GPU appearance/cost and temporal edges; corrected centreline vs game light radius; capture/collision aperture; separate relay/beacon placement; global ring structure unqualified"
+  - key: gate.ring.ii
+    version: 1
+    manifest_sha256: "8dfaf67301493cadb75a7ac775771662d11b8d1044675666e48e492032ed4796"
+    installed: 52a6c7b1
+    game: "the loader (world::assets) at fso 52a6c7b1"
+    date: "2026-10-13"
+    result: partial
+    drawn: true
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/ring-ii/v1 (959164 bytes, bounds [-1619.9994, -60.0, -1619.9994] to [1619.9994, 60.0, 1619.9994]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames at play distance, GPU look and cost"
+      - "Engine owns actual gate GPU appearance/cost, temporal edges, centreline/light radius and aperture/collision; separate external equipment placement; draft structure unqualified"
