@@ -1431,6 +1431,8 @@ fn stocks() -> &'static [Stock] {
 
 /// A node fitting, where a frame's members meet: one of the registry's forgings.
 pub struct NodeStock {
+    /// Its key in the registry.
+    pub key: String,
     /// Hollow (a shell, its wall on record), or a solid forging.
     hollow: bool,
     /// Across (m), and what it weighs (kg: a solid ball of its material).
@@ -1452,7 +1454,7 @@ fn node_stocks() -> &'static [NodeStock] {
                 Some(w) => 4.0 * std::f64::consts::PI * (d * 0.5).powi(2) * w * rho * (1.0 - w / d),
                 None => std::f64::consts::PI / 6.0 * d.powi(3) * rho,
             };
-            Some(NodeStock { hollow: s.size.wall.is_some(), diameter: d as f32, mass })
+            Some(NodeStock { key: s.identity.key.clone(), hollow: s.size.wall.is_some(), diameter: d as f32, mass })
         }).collect();
         out.sort_by(|a, b| a.mass.total_cmp(&b.mass));
         out
@@ -2737,6 +2739,16 @@ fn push_of(b: &Block, f: &Fitted) -> Option<(Vec3, f64)> {
 
 fn placed_module(b: &Block, f: Option<&Fitted>) -> crate::equipment_visual::Placed {
     crate::equipment_visual::placed_rotated(f.map_or("",|f|f.key.as_str()), b.at, b.rotation.unwrap_or_else(|| crate::equipment_visual::rotation(f.and_then(|f|push_of(b,f).map(|p|p.0)))), || b.faces(f.is_some_and(|f|f.round)).into_iter().map(|(t,_)|t).collect())
+}
+
+/// The frame's members and nodes as drawn from their stock (its decks are drawn
+/// with the rooms), in the design's frame.
+fn frame_structure(i: &Interior) -> Option<crate::equipment_visual::Placed> {
+    use crate::frame_visual as fv;
+    let members: Vec<fv::Member> = i.plan.beams.iter().map(|b| fv::Member { a: b.a, b: b.b, stock: &b.stock, roll: 0.0 }).collect();
+    let ns = nodes(&i.plan.beams, &roots(&i.plan, &i.fit));
+    let nodes: Vec<fv::Node> = ns.iter().filter_map(|(at, _, n)| n.map(|n| fv::Node { at: *at, stock: &n.key })).collect();
+    fv::placed(&members, &nodes, &[])
 }
 
 fn placed_equipment(interior: &Interior) -> Vec<crate::equipment_visual::Placed> {
@@ -4785,10 +4797,10 @@ fn craft(i: &Interior) -> crate::test_drive::Craft {
         name: i.plan.hull.clone(),
         native: i.spec().and_then(|s|s.visual.as_ref().map(|v|(v.clone(),s.shape().made_centre))),
         equipment: placed_equipment(i),
-        structure: vec![crate::equipment_visual::Placed::structure(i.stand_up().faces.into_iter().skip(2).map(|(positions,colour)| {
+        structure: std::iter::once(crate::equipment_visual::Placed::structure(i.stand_up().faces.into_iter().skip(2).map(|(positions,colour)| {
                 let normal=(positions[1]-positions[0]).cross(positions[2]-positions[0]).normalize_or_zero();
                 crate::equipment_visual::Face {positions,normals:[normal;3],colour,double_sided:true,blend:false,alpha_cutoff:None}
-            }).collect())],
+            }).collect())).chain(frame_structure(i)).collect(),
         visual_origin: mid32,
         rates: placed.iter().find(|p|p.2=="flight_computer").map(|p|DVec3::new(num(&p.3,"turn_rate"),num(&p.3,"turn_rate"),num(&p.3,"roll_rate"))),
         mass: total,
@@ -4798,7 +4810,6 @@ fn craft(i: &Interior) -> crate::test_drive::Craft {
         plants: of("power_plant").map(|p| num(&p.3, "output")).sum(),
         steady: placed.iter().map(|p| p.4).sum(),
         boxes,
-        members: i.plan.beams.iter().map(|b| [b.a - mid32, b.b - mid32]).collect(),
         gravity: i.plan.gravity(),
         area: f64::from(((hi.x - lo.x) * (hi.z - lo.z)).max(1.0)),
     };
@@ -7894,9 +7905,12 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
         let deck_col = if [interior.pick, interior.hover].contains(&Some(Hover::Deck(n))) || interior.set.contains(&Hover::Deck(n)) { PICKED } else { DECK };
         let c = [Vec3::new(plate.lo.x, plate.y, plate.lo.y), Vec3::new(plate.hi.x, plate.y, plate.lo.y), Vec3::new(plate.hi.x, plate.y, plate.hi.y), Vec3::new(plate.lo.x, plate.y, plate.hi.y)];
         if let [Some((a, _)), Some((b, _)), Some((cc, _)), Some((d, _))] = c.map(|p| cam.project(p)) {
-            let fill = [Color([DECK.0[0], DECK.0[1], DECK.0[2], 0.45]); 3];
-            frame.hud_triangle_colored([a, b, cc], fill);
-            frame.hud_triangle_colored([a, cc, d], fill);
+            // (Filled only picked: the plate itself is drawn from its stock.)
+            if deck_col == PICKED {
+                let fill = [Color([DECK.0[0], DECK.0[1], DECK.0[2], 0.45]); 3];
+                frame.hud_triangle_colored([a, b, cc], fill);
+                frame.hud_triangle_colored([a, cc, d], fill);
+            }
         }
         // (Its underside too: it is as thick as its stock.)
         let under = c.map(|p| p - Vec3::Y * deck_depth(plate));
@@ -7925,13 +7939,16 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
         };
         for (k, b) in plan.beams.iter().enumerate() {
             let lit = interior.beam_pick == Some(k) || interior.beam_hover == Some(k) || [interior.pick, interior.hover].contains(&Some(Hover::Member(k))) || interior.set.contains(&Hover::Member(k));
-            let (col, broken) = match outcome(k) {
+            // (How hard it's worked shows while framing; else the tube itself.)
+            let worked = if interior.tool == Tool::Frame { outcome(k) } else { None };
+            let (col, broken) = match worked {
                 _ if lit => (PICKED, false),
                 Some((_, true)) => (CLASH, true),
                 Some((u, _)) if u >= 1.0 => (Color([1.0, 0.3, 0.25, 1.0]), false),
                 Some((u, _)) if u >= 0.5 => (Color([1.0, 0.7, 0.2, 1.0]), false),
-                Some(_) => (Color([0.4, 1.0, 0.5, 1.0]), false),
-                None => (Color([0.75, 0.8, 0.85, 1.0]), false),
+                // (Easy, or not worked out: the tube itself shows, drawn from its stock.)
+                _ if member_clash.get(k).is_some_and(|c| c.is_some()) => (CLASH, false),
+                _ => continue,
             };
             if let (Some((pa, _)), Some((pb, _))) = (cam.project(b.a), cam.project(b.b)) {
                 if broken {
@@ -7956,6 +7973,7 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
                         frame.hud_triangle_colored([pa + oa, pb - ob, pa - oa], [CLASH; 3]);
                     }
                     let (oa, ob) = (side * wa, side * wb);
+                    let col = Color([col.0[0], col.0[1], col.0[2], col.0[3] * 0.7]);
                     frame.hud_triangle_colored([pa + oa, pb + ob, pb - ob], [col; 3]);
                     frame.hud_triangle_colored([pa + oa, pb - ob, pa - oa], [col; 3]);
                 }
@@ -7968,7 +7986,10 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
                     let d = node.map_or(*widest, |n| n.diameter);
                     let w = (d * cam.pixels_per_metre(z)).max(3.0);
                     let lit = [interior.pick, interior.hover].contains(&Some(Hover::Node(*at)));
-                    frame.hud_rect(q - Vec2::splat(w * 0.5), Vec2::splat(w), if lit { PICKED } else if node.is_some() { Color([0.9, 0.95, 1.0, 0.9]) } else { CLASH });
+                    // (A node in stock is drawn as its ball: marked here only picked, or missing.)
+                    if lit || node.is_none() {
+                        frame.hud_rect(q - Vec2::splat(w * 0.5), Vec2::splat(w), if lit { PICKED } else { CLASH });
+                    }
                 }
             }
         }
