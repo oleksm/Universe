@@ -824,7 +824,7 @@
 - { record: layout.arc-furnace-air, at: "2026-10-14T17:43:17Z", status: draft, summary: "changed", sha: "a2407e84fcd931d4" }
 - { record: layout.arc-furnace-airless, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "befaa429a44d04ce" }
 - { record: layout.casting-bay-air, at: "2026-10-14T20:47:01Z", status: draft, summary: "changed: physical, totals", sha: "cfe9e80e84ff84d7" }
-- { record: layout.casting-bay-airless, at: "2026-10-14T20:43:24Z", status: draft, summary: "changed: physical, totals", sha: "e3ef5af1a81ad489" }
+- { record: layout.casting-bay-airless, at: "2026-10-14T21:36:13Z", status: draft, summary: "changed: physical, totals", sha: "ed7687b7564fac7a" }
 - { record: layout.hydrogen-plant-air, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "379207799e0d24b5" }
 - { record: layout.hydrogen-plant-airless, at: "2026-10-14T19:28:17Z", status: draft, summary: "first tracked", sha: "7d8c41a2b8a39bdb" }
 - { record: layout.ingot-yard-air, at: "2026-10-14T19:11:30Z", status: draft, summary: "changed", sha: "39f79738e350feef" }
@@ -2761,7 +2761,7 @@
 - { record: unit.heater-transformer-131mva, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "00e8d55b912e6476" }
 - { record: unit.hydrogen-purifier, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "e16be6555070dc6b" }
 - { record: unit.induration-grate-125th, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "9741fdd206bb54be" }
-- { record: unit.ingot-car-40t, at: "2026-10-14T17:51:14Z", status: draft, summary: "first tracked", sha: "6d0a1c08ea1ffee4" }
+- { record: unit.ingot-car-40t, at: "2026-10-14T21:36:49Z", status: draft, summary: "changed: identity, physical, built_of, holds, basis", sha: "0952a47e5cdf2f82" }
 - { record: unit.ingot-crane-10t, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "53289950b4fd148c" }
 - { record: unit.ladle-car-80t, at: "2026-10-14T14:50:41Z", status: draft, summary: "changed", sha: "455ad05163bdf8c8" }
 - { record: unit.ladle-crane-150t, at: "2026-10-14T19:55:55Z", status: draft, summary: "changed", sha: "aa767b9adc1f891a" }
@@ -2785,7 +2785,7 @@
 - { record: unit.stack-crane-20t, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "dada8ceeb1793c71" }
 - { record: unit.stacker-reclaimer-1500th, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "37f21c4682c96ba8" }
 - { record: unit.stair-tower-12m, at: "2026-10-14T20:31:28Z", status: draft, summary: "changed", sha: "47201be2e61453ae" }
-- { record: unit.stripper-crane-20t, at: "2026-10-14T21:32:42Z", status: draft, summary: "changed: visual", sha: "4cc907e0bd16ee56" }
+- { record: unit.stripper-crane-20t, at: "2026-10-14T21:36:13Z", status: draft, summary: "changed", sha: "248463a76b95017a" }
 - { record: unit.stripper-gantry-20t-moon, at: "2026-10-14T20:32:09Z", status: draft, summary: "changed: identity, built_of", sha: "9953a4704a13f3dd" }
 - { record: unit.top-gas-condenser-8bar, at: "2026-10-14T19:26:44Z", status: draft, summary: "first tracked", sha: "61482cc1d5511262" }
 - { record: unit.top-gas-scrubber, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "43d6cefca9d48a23" }

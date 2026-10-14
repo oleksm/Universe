@@ -777,6 +777,8 @@ HOT_TOP = ING_M * (1 / SOUND - 1)                     # kg of the head cut off a
 MOULDS = math.ceil(C_HEAT / (ING_M + HOT_TOP))        # moulds a heat fills
 PER_CAR = 12
 CARS = math.ceil(MOULDS / PER_CAR)
+CAR_N = int(40000.0 // (ING_M + HOT_TOP))              # stripped ingots, heads on, an ingot car takes under 40 t
+assert CAR_N == 21, "the ingot car's deck pattern (3 rows of 7) assumes 21"
 
 
 def casting_units():
@@ -805,11 +807,12 @@ def casting_units():
     frame2 = 2 * box_tube(0.4, 0.4, 0.025, 8.0) * RHO["steel"]
     out["ingot-car-40t"] = dict(
         name="Ingot car, 40 t", size_class=2, dims=(8.0, 3.0, 1.2),
-        desc="A self-propelled flat rail car that takes the stripped ingots, still hot, to the ingot yard: 25 ingots in rows on its steel deck. It travels along its x on 2 m gauge, its origin on the running plane; the deck 1.2 m up.",
-        built_of=[part("Car frame and deck", "stock.st4340-box-400x400x25", frame2 + deck, "two box beams 400 x 400 x 25 mm, 8 m, and a deck 8 x 3 m of 40 mm plate"),
+        desc=f"A self-propelled flat rail car that takes the stripped ingots, still hot and with their hot tops on, to the ingot yard: {CAR_N} of them (each {ING_M + HOT_TOP:,.0f} kg, {CAR_N * (ING_M + HOT_TOP) / 1000:.1f} t, the most under its 40 t), standing big end up as the stripper crane sets them, in 3 rows of 7 at 1.1 m along x and 0.9 m across, so the yard crane's tongs take them by the same lifting eye. The heads are cropped in the yard. It travels along its x on 2 m gauge, its origin on the running plane; the deck 1.2 m up.",
+        built_of=[part("Car frame and deck", "stock.st4340-box-400x400x25", 12234.9, f"two box beams 400 x 400 x 25 mm, 8 m, and a deck 8 x 3 m of 40 mm plate; measured on model v1 (by formula {frame2 + deck:,.0f} kg)"),
+                  part("Cross members", A36, 716.2, "four fabricated 260 x 160 x 12 mm boxes between the beams (not kit stock); measured on model v1"),
                   part("Bogies and drive", "good.electric-motors", 4000.0, "from memory")],
-        holds=40000.0, needs={"power": 40000.0},
-        basis=[{"of": ["physical", "built_of"], "tier": "derived", "review": True, "note": "From the dimensions; bogies and drive from memory."}])
+        holds=r(CAR_N * (ING_M + HOT_TOP)), needs={"power": 40000.0},
+        basis=[{"of": ["physical", "built_of"], "tier": "derived", "review": True, "note": "Frame, deck and cross members measured on model v1; the load the most stripped ingots under 40 t; bogies and drive from memory."}])
     return out
 
 
