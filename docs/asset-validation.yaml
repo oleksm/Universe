@@ -4109,15 +4109,15 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
   - key: unit.baghouse-800k
-    version: 1
-    manifest_sha256: "2566757b0a7d9325f998decf37abd1029d67d37cd73ae32d6c78fa45f0349356"
-    installed: 70efd8ba
-    game: "the loader (world::assets) at fso f5f80fd9"
+    version: 2
+    manifest_sha256: "fb223ba9c9cb718e522451aeec890f43ae3a2cd898c69b1f745aefaf348e3c8d"
+    installed: f5f80fd9
+    game: "the loader (world::assets) at fso 9cd4ea13"
     date: "2026-10-14"
-    result: fail
+    result: partial
     drawn: false
     checked:
-      - "loader (cargo test -p universe-world --test visuals): cargo:warning=../../../standards/SFO/metadata/units/baghouse-800k.yaml: unit.baghouse-800k: duplicate field `visual` at line 3 column 1: FAIL"
+      - "loader (cargo test -p universe-world --test visuals): models/baghouse-800k/v2 (531952 bytes, bounds [-11.99, 0.0, -4.525] to [10.775, 18.0, 6.0]): pass"
       - "installer checks at install (size, nodes, budget, static): pass"
       - "previews (thumb.png, icon.png in the package): pass"
     pending:
