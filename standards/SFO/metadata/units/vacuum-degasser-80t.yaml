@@ -3,12 +3,13 @@
 identity: {key: unit.vacuum-degasser-80t, name: 'Vacuum tank degasser, 80 t', description: 'Takes the dissolved hydrogen and nitrogen out of an 80 t heat: the crane lowers the ladle into a steel tank standing in a pit, a lid on a car closes it, and pumps take it down to about 67 Pa while argon stirs the melt. Local frame: the tank''s centre at (-3, 2), 4.5 m inside and 5.5 m deep, its rim at the floor; the lid car on its own rails parks at (3, 2); the pump set fills the strip y -5 to -2 along the unit, its vacuum line to a flange on the tank''s side. 3 m above the floor and 6 m below it (the pit is the layout''s).'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 10.0, height: 9.0, mass: 94560.0}
+physical: {length: 12.0, width: 10.0, height: 9.0, mass: 98030.0}
 built_of:
 - {what: Tank, item: material.structural-steel-a36, mass: 30890.0, note: '4.5 m inside, 5.5 m deep, 40 mm plate, its bottom the same, with its rim; measured on blender''s model (30022 kg as a plain shell)'}
 - {what: Tank floor lining, item: good.refractory-brick, mass: 14290.0, note: '0.3 m of refractory under the ladle, measured'}
 - {what: Lid, item: material.structural-steel-a36, mass: 9321.0, note: 'a shallow dish 5.2 m across, 50 mm plate, measured'}
-- {what: Lid car and rails, item: material.structural-steel-a36, mass: 12000.0, note: 'from memory, with two short girders carrying the rails over the pit''s open ring'}
+- {what: Tank seats, item: material.structural-steel-a36, mass: 2718.0, note: 'four hollow seats of 25 mm plate with their feet, from the tank''s bottom to the pit floor at z -6; measured'}
+- {what: Lid car and rails, item: material.structural-steel-a36, mass: 12750.0, note: 12 mm hollow main beams and the bridge girders over the pit's open ring measured; the drive and axles still an allowance}
 - {what: Vacuum pump set, item: good.pumps, mass: 25000.0, note: 'dry screw pumps behind Roots boosters, from memory'}
 - {what: Vacuum line, item: material.structural-steel-a36, mass: 3061.0, note: '1 m across, 10 mm, 11.04 m of main, header and branches (measured centreline) with flanges, run at z -1.2 under the rail bridge; measured'}
 needs: {power: 600000.0}
