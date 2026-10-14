@@ -69,4 +69,8 @@ Frame rate held at 20 km (897 chunk meshes, ~490k triangles, edges on): 19.8 fps
 | 600 km, all chunks, edges | 19.8 |
 
 Flying (descent 200 km to 3 km, `UNIVERSE_PLANETLOD_FLY=1`): LOD 5-30 ms a frame, mesh rebuilds 150-9,000 a
-second (0.6-57 ms a frame): 8 km chunks are too coarse to decide by (next: finer decision cells).
+second (0.6-57 ms a frame): 8 km chunks are too coarse to decide by.
+With 1 km decision cells (meshes still by 8 km chunks): LOD 5.6 ms at 130 km, 1.9 at 29 km, 0.8 at 3 km (the
+floor is the margin test over all ~150k cells; a hierarchy would take it off); mesh rebuilds 4,370/s at 130 km
+(22 ms a frame), 880/s at 29 km (2.9 ms), 200/s near the ground (0.7 ms). Rebuilds are bounded by the collapse
+subtrees' chunk boxes; smaller mesh chunks would cut them but multiply draws (waits on the render-thread answer).

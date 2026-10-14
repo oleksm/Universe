@@ -16,8 +16,10 @@ use universe_engine::apps::{App, Next};
 use universe_engine::glam::{DQuat, DVec3, Quat, Vec2, Vec3};
 use universe_engine::{Camera, Color, Context, Frame, KeyCode, Light, Mesh, MouseButton, Transform, WireModel};
 
-/// Chunk edge (m): a chunk is one mesh and one decision.
+/// Chunk edge (m): a chunk is one mesh.
 const CHUNK: f64 = 8000.0;
+/// Decision cell edge (m): the vertices decided together (each cell keeps its own margin).
+const CELL: f64 = 1000.0;
 /// Tiles of the planet outside the pattern grouped this many to a side per mesh.
 const TILE_GROUP: u32 = 4;
 /// Straight down at and above this altitude, level with the horizon at the ground (as the page).
@@ -52,17 +54,20 @@ struct Data {
 struct Chunk {
     origin: DVec3,
     radius: f64,
-    /// Its collapsed vertices (indices into `mv`, ascending: coarse first).
-    verts: Vec<u32>,
     tris: Vec<u32>,
     edges: Vec<u32>,
-    /// Where the eye was when it was decided, and how far it may move before deciding again.
-    eye_at: DVec3,
-    margin: f64,
     mesh: Option<Mesh>,
     mesh_view: Option<View>,
     stale: bool,
     tri_count: usize,
+}
+
+struct Cell {
+    /// Its collapsed vertices (indices into `mv`, ascending: coarse first).
+    verts: Vec<u32>,
+    /// Where the eye was when it was decided, and how far it may move before deciding again.
+    eye_at: DVec3,
+    margin: f64,
 }
 
 struct TileGroup {
@@ -92,14 +97,16 @@ pub struct PlanetLodApp {
     dir: PathBuf,
     d: Data,
     chunks: Vec<Chunk>,
-    /// Per vertex: its chunk (u32::MAX outside the pattern).
-    chunk_of: Vec<u32>,
+    cells: Vec<Cell>,
+    /// Per vertex: its decision cell (u32::MAX outside the pattern).
+    cell_of: Vec<u32>,
     /// Per vertex: the collapsed vertices whose decision reads it (csr).
     rdep_ptr: Vec<u32>,
     rdep: Vec<u32>,
     /// Per vertex: the chunks (x0, y0, x1, y1) its collapse subtree's triangles lie in.
     subtree: Vec<[i32; 4]>,
     grid: Grid,
+    cell_grid: Grid,
     on: Vec<u8>,
     tiles: Vec<TileGroup>,
     view: View,
@@ -123,6 +130,7 @@ struct Grid {
     north: DVec3,
     min: f64,
     n: i32,
+    size: f64,
 }
 
 impl Grid {
@@ -130,7 +138,7 @@ impl Grid {
         let d = p.normalize();
         let k = d.dot(self.p0);
         let (x, y) = (d.dot(self.east) / k * 6_371_000.0, d.dot(self.north) / k * 6_371_000.0);
-        let f = |v: f64| (((v - self.min) / CHUNK).floor() as i32).clamp(0, self.n - 1);
+        let f = |v: f64| (((v - self.min) / self.size).floor() as i32).clamp(0, self.n - 1);
         (f(x), f(y))
     }
     fn id(&self, p: DVec3) -> u32 {
@@ -210,23 +218,24 @@ impl PlanetLodApp {
             }
         }
         let gn = ((hi - lo) / CHUNK).ceil() as i32 + 1;
-        let grid = Grid { p0, east, north, min: lo, n: gn };
-        let mut chunks: Vec<Chunk> = (0..gn * gn)
-            .map(|_| Chunk { origin: DVec3::ZERO, radius: 0.0, verts: vec![], tris: vec![], edges: vec![], eye_at: DVec3::splat(f64::INFINITY), margin: 0.0, mesh: None, mesh_view: None, stale: true, tri_count: 0 })
-            .collect();
+        let grid = Grid { p0, east, north, min: lo, n: gn, size: CHUNK };
+        let cn = ((hi - lo) / CELL).ceil() as i32 + 1;
+        let cell_grid = Grid { p0, east, north, min: lo, n: cn, size: CELL };
+        let mut chunks: Vec<Chunk> = (0..gn * gn).map(|_| Chunk { origin: DVec3::ZERO, radius: 0.0, tris: vec![], edges: vec![], mesh: None, mesh_view: None, stale: true, tri_count: 0 }).collect();
+        let mut cells: Vec<Cell> = (0..cn * cn).map(|_| Cell { verts: vec![], eye_at: DVec3::splat(f64::INFINITY), margin: 0.0 }).collect();
         for (k, t) in d.ft.iter().enumerate() {
             chunks[grid.id(d.pos[t[0] as usize] + d.pos[t[1] as usize] + d.pos[t[2] as usize]) as usize].tris.push(k as u32);
         }
         for (k, e) in d.fe.iter().enumerate() {
             chunks[grid.id(d.pos[e[0] as usize] + d.pos[e[1] as usize]) as usize].edges.push(k as u32);
         }
-        let mut chunk_of = vec![u32::MAX; n];
+        let mut cell_of = vec![u32::MAX; n];
         for (i, &v) in d.mv.iter().enumerate() {
-            let c = grid.id(d.pos[v as usize]);
-            chunk_of[v as usize] = c;
-            chunks[c as usize].verts.push(i as u32);
+            let c = cell_grid.id(d.pos[v as usize]);
+            cell_of[v as usize] = c;
+            cells[c as usize].verts.push(i as u32);
         }
-        for c in chunks.iter_mut() {
+                for c in chunks.iter_mut() {
             let mut sum = DVec3::ZERO;
             let mut k = 0.0;
             for &t in &c.tris {
@@ -294,16 +303,18 @@ impl PlanetLodApp {
             on[v as usize] = 0;
         }
         let tiles = Self::tile_groups(&dir, &d)?;
-        let queued = vec![false; chunks.len()];
+        let queued = vec![false; cells.len()];
         let mut app = PlanetLodApp {
             dir,
             d,
             chunks,
-            chunk_of,
+            cells,
+            cell_of,
             rdep_ptr: cnt,
             rdep,
             subtree,
             grid,
+            cell_grid,
             on,
             tiles,
             view: View::Mesh,
@@ -403,7 +414,7 @@ impl PlanetLodApp {
         let t0 = Instant::now();
         let d = &self.d;
         let mut queue: Vec<u32> = Vec::new();
-        for (c, ch) in self.chunks.iter().enumerate() {
+        for (c, ch) in self.cells.iter().enumerate() {
             if !ch.verts.is_empty() && ch.eye_at.distance(eye) > ch.margin {
                 queue.push(c as u32);
                 self.queued[c] = true;
@@ -418,7 +429,7 @@ impl PlanetLodApp {
             self.queued[c] = false;
             decided += 1;
             let mut margin = f64::INFINITY;
-            let verts = std::mem::take(&mut self.chunks[c].verts);
+            let verts = std::mem::take(&mut self.cells[c].verts);
             for &i in &verts {
                 let i = i as usize;
                 let v = d.mv[i] as usize;
@@ -436,7 +447,7 @@ impl PlanetLodApp {
                     stale.push(self.subtree[v]);
                     // Those whose decision reads it are decided again.
                     for &j in &self.rdep[self.rdep_ptr[v] as usize..self.rdep_ptr[v + 1] as usize] {
-                        let cj = self.chunk_of[d.mv[j as usize] as usize] as usize;
+                        let cj = self.cell_of[d.mv[j as usize] as usize] as usize;
                         if !self.queued[cj] {
                             self.queued[cj] = true;
                             queue.push(cj as u32);
@@ -444,7 +455,7 @@ impl PlanetLodApp {
                     }
                 }
             }
-            let ch = &mut self.chunks[c];
+            let ch = &mut self.cells[c];
             ch.verts = verts;
             ch.eye_at = eye;
             ch.margin = margin;
