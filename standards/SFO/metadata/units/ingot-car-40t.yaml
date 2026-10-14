@@ -9,6 +9,12 @@ built_of:
 - {what: Bogies and drive, item: good.electric-motors, mass: 4000.0, note: from memory}
 holds: 38780.0
 needs: {power: 40000.0}
+visual:
+  format: "freefall-model/1"
+  path: "models/ingot-car-40t/v1"
+  manifest_sha256: "f28c52c42babf8c858de534f2b64e4122bac1a0eeb06619e5fdce214ab76eefd"
+  version: 1
+  triangles: 7648
 life: 788940000
 basis:
 - of: [physical, built_of]
