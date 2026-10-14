@@ -188,22 +188,13 @@ mod tests {
     use Cover::*;
 
     #[test]
-    fn one_app_is_updated_and_drawn() {
+    fn covers_decide_what_is_updated_and_drawn() {
         assert_eq!(plan(&[Hides]), Plan { updated: vec![0], drawn: vec![0] });
-    }
-
-    #[test]
-    fn a_full_app_hides_what_is_under_it() {
+        // A full app hides what is under it.
         assert_eq!(plan(&[Runs, Hides]), Plan { updated: vec![1], drawn: vec![1] });
-    }
-
-    #[test]
-    fn a_pausing_panel_shows_the_scene_but_stops_its_clocks() {
+        // A pausing panel shows the scene but stops its clocks.
         assert_eq!(plan(&[Hides, Pauses]), Plan { updated: vec![1], drawn: vec![0, 1] });
-    }
-
-    #[test]
-    fn running_overlays_keep_everything_under_them_going_down_to_a_pause() {
+        // Running overlays keep what is under them going, down to a pause or a hide.
         assert_eq!(plan(&[Hides, Pauses, Runs, Runs]), Plan { updated: vec![1, 2, 3], drawn: vec![0, 1, 2, 3] });
         assert_eq!(plan(&[Hides, Runs, Runs]), Plan { updated: vec![0, 1, 2], drawn: vec![0, 1, 2] });
         assert_eq!(plan(&[Hides, Hides, Runs]), Plan { updated: vec![1, 2], drawn: vec![1, 2] });

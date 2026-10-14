@@ -11,7 +11,7 @@ pub(super) struct Stand {
     hatches: Vec<StandHatch>,
     native_model: Option<(String, universe_engine::glam::DVec3)>,
     scene: std::cell::RefCell<universe_engine::scene::Scene>,
-    clock: universe_engine::scene::TickClock,
+    clock: universe_sim::clocks::Runtime,
     jump_pending: f64,
     pub(super) mesh: universe_sim::world::walk::WalkMesh,
     /// What's drawn: each face and its colour (the first two the ground, beneath
@@ -296,7 +296,7 @@ impl Interior {
             hatches,
             native_model: self.spec().and_then(|s|s.visual.as_ref().map(|v|(v.clone(),s.shape().made_centre))),
             scene: std::cell::RefCell::new(scene),
-            clock: universe_engine::scene::TickClock::new(universe_sim::clocks::tick(), universe_sim::universe::TICK_BUDGET as u32).expect("registry realtime clock"),
+            clock: universe_sim::clocks::Runtime::new(&universe_sim::clocks::Subscriptions::of(&[universe_sim::world::registry::ClockKey::Realtime]), 1.0, universe_sim::universe::TICK_BUDGET as u32).expect("registry realtime clock"),
             jump_pending: 0.,
             equipment,
             mesh,
@@ -405,7 +405,7 @@ pub(super) fn stand_input(ctx: &Context, s: &mut Stand, g: f64) {
     let mut w = Walker { feet: s.feet, velocity: s.velocity };
     s.jump_pending = s.jump_pending.max(jump);
     let jump_pending = &mut s.jump_pending;
-    s.clock.advance(dt, |_, step| {
+    s.clock.advance(dt, &mut |_, _, step| {
         // The shared walker sees the moving leaves each fixed step. Reuse each
         // compiled WalkMesh and the collider list; only translations change.
         for (collider, hatch) in colliders[hatch_start..].iter_mut().zip(hatches) {
@@ -415,7 +415,7 @@ pub(super) fn stand_input(ctx: &Context, s: &mut Stand, g: f64) {
         }
         w.step(&colliders, &|_| DVec3::Y, g, &climbable, &Stride { wish, jump: *jump_pending, climb }, step);
         *jump_pending = 0.;
-    }).expect("finite frame duration");
+    });
     s.feet = w.feet;
     s.velocity = w.velocity;
 }
@@ -495,7 +495,7 @@ mod tests {
             // Collider vertices are already centred; this offset belongs only to rendering.
             native_model: Some(("unused.glb".into(), DVec3::new(17., 8., -3.))),
             scene: Default::default(), hatches: vec![],
-            clock: universe_engine::scene::TickClock::new(0.01, 1).unwrap(), jump_pending: 0.,
+            clock: universe_sim::clocks::Runtime::new(&universe_sim::clocks::Subscriptions::of(&[universe_sim::world::registry::ClockKey::Realtime]), 1.0, universe_sim::universe::TICK_BUDGET as u32).expect("registry realtime clock"), jump_pending: 0.,
             faces: vec![], equipment: vec![], rooms: vec![], airlock_rooms: vec![],
             labels: vec![], members: vec![], shafts: vec![],
             feet: DVec3::ZERO, velocity: DVec3::ZERO, yaw: 0., pitch: 0.,
