@@ -2776,7 +2776,7 @@
 - { record: unit.radiator-field-345k, at: "2026-10-14T19:26:44Z", status: draft, summary: "first tracked", sha: "f1f0da9d08b1b0af" }
 - { record: unit.radiator-field-485k, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "3792fab468aa81d4" }
 - { record: unit.rectifier-transformer-21mva, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "e88f00a03453c505" }
-- { record: unit.recuperator, at: "2026-10-14T23:42:05Z", status: draft, summary: "changed: physical, built_of", sha: "0db799b4c78ca1bb" }
+- { record: unit.recuperator, at: "2026-10-14T23:43:03Z", status: draft, summary: "changed: visual", sha: "c65e9e7e951ee4da" }
 - { record: unit.recycle-compressor, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "20665cbbf05406cb" }
 - { record: unit.recycle-compressor-8bar, at: "2026-10-14T19:26:44Z", status: draft, summary: "first tracked", sha: "f34cdf84380aedc8" }
 - { record: unit.sampling-lab, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "fe76c914c3297692" }
