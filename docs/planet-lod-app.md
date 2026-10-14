@@ -52,3 +52,21 @@ and the coarser triangle it rises from (H0I/H0W).
 - L3 frame time at 20 km, held and flying, on the RTX 5090: LOD CPU work under 2 ms a frame; 60 fps.
 - L4 a vertex appears where the coarser surface stands: jump at appearing under 1 px (h0 from final heights
   instead of the page's live chain; measured).
+
+## Measurements, stage A (14 Oct, release, RTX 5090, 1440x810 window on workspace 8)
+
+App work with the camera held: LOD 0.02 ms, meshes 0.02 ms a frame (nothing decided, nothing rebuilt).
+Frame rate held at 20 km (897 chunk meshes, ~490k triangles, edges on): 19.8 fps; the profiler puts 50 ms in
+"hand over to the render thread" (main waits), GPU pass timings under 0.5 ms.
+
+| what is drawn (20 km, held) | fps |
+|---|---|
+| 7 tile groups, no chunks (`UNIVERSE_PLANETLOD_MAXDRAW=0`) | 55.6 |
+| + 100 chunks | 24.7 |
+| + all 897 chunks, edges | 19.8 |
+| all chunks, no edges (Real view) | 25.8 |
+| all chunks, edges, no shadow casting | 19.8 |
+| 600 km, all chunks, edges | 19.8 |
+
+Flying (descent 200 km to 3 km, `UNIVERSE_PLANETLOD_FLY=1`): LOD 5-30 ms a frame, mesh rebuilds 150-9,000 a
+second (0.6-57 ms a frame): 8 km chunks are too coarse to decide by (next: finer decision cells).
