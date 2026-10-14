@@ -10,6 +10,12 @@ built_of:
 - {what: Drives, item: good.electric-motors, mass: 2000.0, note: from memory}
 holds: 88000.0
 needs: {power: 50000.0}
+visual:
+  format: "freefall-model/1"
+  path: "models/ladle-car-80t/v1"
+  manifest_sha256: "8546661890682095c80d5c13fa824fe125f5d249efcc373ee61837b41244d95b"
+  version: 1
+  triangles: 10192
 life: 788940000
 basis:
 - of: [physical, built_of]
