@@ -4271,3 +4271,17 @@ validations:
       - "previews (thumb.png, icon.png in the package): pass"
     pending:
       - "frames at play distance, GPU look and cost"
+  - key: structure.spaceport
+    version: 1
+    manifest_sha256: "32ec880db730b7b2056f6158060f8c572cbf4cd4711d81a4c626056f8fbced35"
+    installed: f4fbba2f
+    game: "the loader (world::assets) at fso f4fbba2f"
+    date: "2026-10-14"
+    result: partial
+    drawn: true
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/spaceport/v1 (3453656 bytes, bounds [-300.0, -4.9487, -300.0] to [300.0, 36.035, 560.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames at play distance, GPU look and cost"
