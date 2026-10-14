@@ -135,7 +135,6 @@ pub enum Layer {
     Market,
     Economy,
     News,
-    Shipyard,
     Graphics,
     Standards,
     Passengers,
@@ -284,7 +283,8 @@ pub struct Panels {
     pub galaxy_map: Option<galaxymap::GalaxyMap>,
     /// The market screen, when open; and whether we're docked at a market.
     pub market: Option<market::MarketView>,
-    /// The ship planner (the shipyard, docked at a station), while open.
+    /// A shipyard to open over the game (the key, or a dev scenario's, made ready here), handed
+    /// to the host as an app at the end of the frame.
     pub shipyard: Option<shipyard::Shipyard>,
     /// The standards registry open (docked), and where in its tree.
     pub standards: Option<standards::StandardsView>,
@@ -650,9 +650,7 @@ impl App {
     /// panels open over it (the galaxy map over the navigation map), each
     /// from the layer under it, and close back to it.
     fn top_layer(&self) -> Layer {
-        if self.panels.shipyard.is_some() {
-            Layer::Shipyard
-        } else if self.panels.market.is_some() {
+        if self.panels.market.is_some() {
             Layer::Market
         } else if self.panels.economy_panel.is_some() {
             Layer::Economy
@@ -1323,24 +1321,13 @@ impl universe_engine::apps::App for App {
         self.system_keys(ctx);
         // Our hull's inside as laid out, to the world engine when it changes (to walk
         // in); the editor's private document stays in its client session.
-        if self.panels.shipyard.is_none() {
+        if !ctx.covered {
             self.send_layout();
         }
         // Where we are is explored.
         self.explored.insert(self.v.ship_system);
         let top = self.top_layer();
         match top {
-            Layer::Shipyard => {
-                // (Worked with the mouse: the cursor free; but a test drive steering
-                // with it takes it, as flight does.)
-                if !universe_prof::time("studio", || shipyard::input(self, ctx)) {
-                    self.panels.shipyard = None;
-                }
-                let want = self.panels.shipyard.as_ref().is_some_and(|y| y.wants_mouse());
-                if ctx.cursor_grabbed() != want {
-                    ctx.grab_cursor(want);
-                }
-            }
             Layer::Market => {
                 market::input(self, ctx);
             }
@@ -1424,8 +1411,8 @@ impl universe_engine::apps::App for App {
         if fresh {
             universe_prof::time("update/events", || self.handle_events(ctx));
         }
-        // An opaque Studio owns the visible scene; prepare the world again when it returns.
-        if self.panels.shipyard.is_none() {
+        // Covered by an app (the shipyard, the planet viewer): prepare the world again when it returns.
+        if !ctx.covered {
             universe_prof::time("update/globes", || self.caches.planet.prepare(&self.view.system, self.view.origin, &self.view.positions, &self.camera, Default::default(), None));
             universe_prof::time("update/rocks", || self.build_rocks());
             self.update_rigs(ctx.dt);
@@ -1540,6 +1527,10 @@ impl universe_engine::apps::App for App {
             m.ttl -= ctx.dt;
         }
         self.messages.retain(|m| m.ttl > 0.0);
+        // (A shipyard opened (the key, or a dev scenario's): an app over the game.)
+        if let Some(y) = self.panels.shipyard.take() {
+            self.open = Some(Box::new(shipyard::ShipyardApp::new(y, self)));
+        }
         // (An app asked for, over the game: the host opens it; ESC in it comes back here.)
         self.open.take().map_or(universe_engine::apps::Next::Stay, universe_engine::apps::Next::Open)
     }
@@ -1550,9 +1541,7 @@ impl universe_engine::apps::App for App {
 
     fn draw(&self, frame: &mut Frame, ctx: &Context) {
         frame.graphics = self.graphics;
-        if self.panels.shipyard.is_none() {
-            universe_prof::time("draw/scene", || scene::draw(frame, self));
-        }
+        universe_prof::time("draw/scene", || scene::draw(frame, self));
         // (Dev: the showcased model alone, no HUD: `UNIVERSE_MODEL_CLEAN`.)
         if !(self.showcase.is_some() && std::env::var_os("UNIVERSE_MODEL_CLEAN").is_some()) {
             universe_prof::time("draw/hud", || hud::draw(frame, self, ctx));

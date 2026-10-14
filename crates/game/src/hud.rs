@@ -49,13 +49,6 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
         crate::passengers::draw(frame, app, pick);
         return;
     }
-    if let Some(y) = &app.panels.shipyard {
-        universe_prof::time("draw/shipyard", || crate::shipyard::draw(frame, app, y));
-        let mut top = 95.0;
-        if app.debug > 0 { top = perf(frame, app, ctx, top) + 6.0; }
-        if universe_prof::enabled() { profile_panel(frame, top); }
-        return;
-    }
     // The thrusters panel: a screen of its own (in the pilot's seat).
     if app.show_thrusters && app.mode == Mode::Pilot && app.v.crew.seated() {
         crate::thrusterpanel::draw(frame, app);

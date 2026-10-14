@@ -14,6 +14,8 @@ use crate::frame::Frame;
 pub enum Cover {
     /// They are neither updated nor drawn (a full app: its own view of its own world).
     Hides,
+    /// They are updated (without input), not drawn: their clocks run on, their view is covered.
+    Covers,
     /// They are drawn, not updated: their clocks stand still (a panel over a paused scene).
     Pauses,
     /// They are drawn and updated, without input: their clocks run on under it.
@@ -70,6 +72,7 @@ pub fn plan(covers: &[Cover]) -> Plan {
         }
         match covers[k] {
             Cover::Hides => (draws, runs) = (false, false),
+            Cover::Covers => draws = false,
             Cover::Pauses => runs = false,
             Cover::Runs => {}
         }
@@ -104,14 +107,17 @@ impl Game for Host {
         let plan = plan(&self.covers());
         let top = self.apps.len() - 1;
         let mut next = Next::Stay;
-        for k in plan.updated {
+        for &k in &plan.updated {
             let _p = universe_prof::scope("app");
             if k == top {
                 next = self.apps[k].update(ctx);
             } else {
-                // (Under the top one: its clocks run, but the keys aren't its.)
+                // (Under the top one: its clocks run, but the keys aren't its; covered, it
+                // needn't prepare what it would draw.)
                 let input = std::mem::take(&mut ctx.input);
+                ctx.covered = !plan.drawn.contains(&k);
                 let _ = self.apps[k].update(ctx);
+                ctx.covered = false;
                 ctx.input = input;
             }
         }
@@ -198,5 +204,7 @@ mod tests {
         assert_eq!(plan(&[Hides, Pauses, Runs, Runs]), Plan { updated: vec![1, 2, 3], drawn: vec![0, 1, 2, 3] });
         assert_eq!(plan(&[Hides, Runs, Runs]), Plan { updated: vec![0, 1, 2], drawn: vec![0, 1, 2] });
         assert_eq!(plan(&[Hides, Hides, Runs]), Plan { updated: vec![1, 2], drawn: vec![1, 2] });
+        // A covering app keeps what is under it running, not drawn.
+        assert_eq!(plan(&[Hides, Covers]), Plan { updated: vec![0, 1], drawn: vec![1] });
     }
 }

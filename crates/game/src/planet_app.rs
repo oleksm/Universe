@@ -141,6 +141,11 @@ impl App for PlanetApp {
         "planet"
     }
 
+    /// Over the game, the game runs on under it (its world, its sounds), not drawn.
+    fn cover(&self) -> universe_engine::apps::Cover {
+        universe_engine::apps::Cover::Covers
+    }
+
     fn update(&mut self, ctx: &mut Context) -> Next {
         let _scope = universe_prof::scope("update/planet");
         crate::visual_assets::maintain();
