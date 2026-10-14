@@ -1,12 +1,13 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.alloy-bins-8, name: 'Alloy bins, 8', description: 'Eight steel bins of ferroalloys and fluxes hung in a deck 12 m up, two rows of four at local x -4.5, -1.5, 1.5, 4.5 and y -1.5, 1.5: each 2.5 m across, its cylinder z 12 to 15, its cone down to an outlet at z 10.5. Under each outlet a vibrating feeder (z 10 to 10.5) sends its alloy inward to a weigh hopper shared by the pair across y, four hoppers on load cells at x -4.5, -1.5, 1.5, 4.5, y 0, z 8.6 to 9.8, each weighing up to 2 t. The hoppers empty onto two collecting belts at z 8, the west two running east and the east two running west, both into a transfer chute at x 0, y 0, whose foot at local (0, 0, 7.4) drops onto the layout''s belt to the ladle furnace''s chute. Six box legs at x -6, 0, 6 and y -3, 3.'}
+identity: {key: unit.alloy-bins-8, name: 'Alloy bins, 8', description: 'Eight steel bins of ferroalloys and fluxes hung in a deck 12 m up, two rows of four at local x -4.5, -1.5, 1.5, 4.5 and y -1.5, 1.5: each 2.5 m across, its cylinder z 12 to 15, its cone down to an outlet at z 10.5. Under each outlet a vibrating feeder (z 10 to 10.5) sends its alloy inward to a weigh hopper shared by the pair across y, four hoppers on load cells at x -4.5, -1.5, 1.5, 4.5, y 0, z 8.6 to 9.8, each weighing up to 2 t. The hoppers empty onto two collecting belts at z 8, the west two running east and the east two running west, both into a transfer chute at x 0, y 0, whose foot at local (0, 0, 7.4) drops onto the layout''s belt to the ladle furnace''s chute. Load path: each bin hangs by a bearing collar (radius about 1.5 m) on uprights at x -6, -3, 0, 3, 6, each upright shared by two bins; the uprights stand on two row beams under the bins'' centrelines (y -1.5, 1.5, top z 9.9, below the feeders); the row beams
+    on six legs at x -6, 0, 6, y -1.5, 1.5, braced across. A 10 mm walkway deck at z 12 round the collars.'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 6.0, height: 15.0, mass: 41730.0}
+physical: {length: 12.0, width: 6.0, height: 15.0, mass: 44410.0}
 built_of:
 - {what: Bins, item: material.structural-steel-a36, mass: 11770.0, note: '8 bins 2.5 m across, 3.0 m of cylinder over a 1.5 m cone, 6 mm plate'}
-- {what: Stand, item: stock.st4340-box-300x300x20, mass: 23960.0, note: 'six box legs 300 x 300 x 20 mm, 12 m, and a 12 x 6 m deck of 20 mm plate'}
+- {what: Stand, item: stock.st4340-box-300x300x20, mass: 26640.0, note: 'six legs 9.7 m and ten uprights 2.1 m of 300 x 300 x 20 mm box, two 12 m row beams of 400 x 400 x 25 mm box (a full bin at mid-span of 6 m: 730 kN m, 165 MPa), a 12 x 6 m walkway deck of 10 mm plate; braces not yet counted'}
 - {what: 'Feeders, weigh hoppers and collecting belts', item: good.electric-motors, mass: 6000.0, note: 'eight vibrating feeders, four weigh hoppers on load cells, two short belts and a transfer chute, from memory'}
 holds: 384800.0
 needs: {power: 40000.0}

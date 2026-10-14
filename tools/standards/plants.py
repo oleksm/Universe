@@ -358,16 +358,17 @@ def ladle_units():
     Db, Hc, Hk = 2.5, 3.0, 1.5
     vol1 = math.pi * (Db / 2) ** 2 * Hc + math.pi * (Db / 2) ** 2 * Hk / 3
     bins = 8 * (cyl_shell(Db, Hc, 0.006) + math.pi * Db / 2 * math.hypot(Db / 2, Hk) * 0.006) * RHO["steel"]
-    stand = 6 * box_tube(0.3, 0.3, 0.02, 12.0) * RHO["steel"] + 12 * 6 * 0.02 * RHO["steel"]
+    stand = (6 * box_tube(0.3, 0.3, 0.02, 9.7) + 2 * box_tube(0.4, 0.4, 0.025, 12.0) + 10 * box_tube(0.3, 0.3, 0.02, 2.1)) * RHO["steel"] + 12 * 6 * 0.01 * RHO["steel"]
     out["alloy-bins-8"] = dict(
         name="Alloy bins, 8", size_class=2, fits="bay-s2", dims=(12.0, 6.0, 15.0),
         desc=("Eight steel bins of ferroalloys and fluxes hung in a deck 12 m up, two rows of four at local x -4.5, -1.5, 1.5, 4.5 and y -1.5, 1.5: "
               f"each {Db} m across, its cylinder z 12 to 15, its cone down to an outlet at z 10.5. Under each outlet a vibrating feeder (z 10 to 10.5) sends its alloy inward to a weigh hopper "
               "shared by the pair across y, four hoppers on load cells at x -4.5, -1.5, 1.5, 4.5, y 0, z 8.6 to 9.8, each weighing up to 2 t. "
               "The hoppers empty onto two collecting belts at z 8, the west two running east and the east two running west, both into a transfer chute at x 0, y 0, "
-              "whose foot at local (0, 0, 7.4) drops onto the layout's belt to the ladle furnace's chute. Six box legs at x -6, 0, 6 and y -3, 3."),
+              "whose foot at local (0, 0, 7.4) drops onto the layout's belt to the ladle furnace's chute. "
+              "Load path: each bin hangs by a bearing collar (radius about 1.5 m) on uprights at x -6, -3, 0, 3, 6, each upright shared by two bins; the uprights stand on two row beams under the bins' centrelines (y -1.5, 1.5, top z 9.9, below the feeders); the row beams on six legs at x -6, 0, 6, y -1.5, 1.5, braced across. A 10 mm walkway deck at z 12 round the collars."),
         built_of=[part("Bins", A36, bins, f"8 bins {Db} m across, {Hc} m of cylinder over a {Hk} m cone, 6 mm plate"),
-                  part("Stand", "stock.st4340-box-300x300x20", stand, "six box legs 300 x 300 x 20 mm, 12 m, and a 12 x 6 m deck of 20 mm plate"),
+                  part("Stand", "stock.st4340-box-300x300x20", stand, "six legs 9.7 m and ten uprights 2.1 m of 300 x 300 x 20 mm box, two 12 m row beams of 400 x 400 x 25 mm box (a full bin at mid-span of 6 m: 730 kN m, 165 MPa), a 12 x 6 m walkway deck of 10 mm plate; braces not yet counted"),
                   part("Feeders, weigh hoppers and collecting belts", "good.electric-motors", 6000.0, "eight vibrating feeders, four weigh hoppers on load cells, two short belts and a transfer chute, from memory")],
         holds=8 * vol1 * 3500 * 0.8, needs={"power": 40000.0},
         basis=[{"of": ["physical", "built_of", "holds"], "tier": "derived", "review": True, "note": f"Eight bins of {vol1:.1f} m3 at about 3,500 kg/m3 of ferroalloy lumps (from memory), four fifths full."}])
