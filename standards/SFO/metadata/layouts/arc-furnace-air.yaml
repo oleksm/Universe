@@ -51,18 +51,18 @@ links:
   note: '0.8 m chevron-cleated belt in a covered gallery, 150 kg/m with the gallery (from memory), 19.1 degrees: steeper than a plain belt carries pellets (they roll back above about 15 degrees), so cleated; its head 0.4 m over the roof''s fifth hole, 1.8 m north of the electrodes, with a short drop chute into it'
 - kind: duct
   name: off-gas
-  from: [-10.0, 7.5, 13.5]
+  from: [-10.0, 7.5, 13.65]
   to: [6.0, 24.0, 15.0]
-  length: 27.4
+  length: 27.25
   item: material.structural-steel-a36
-  mass: 13510.0
+  mass: 13440.0
   via:
   - [-10.0, 7.5, 15.0]
   - [-4.5, 13.5, 15.0]
   - [-3.0, 16.6, 15.0]
   - [6.0, 19.0, 15.0]
   heat: 7200000.0
-  note: '2 m across, 10 mm plate, water-cooled for its first part (it takes about 10% of the arc''s power from the hot gas, from memory), with the burn-out gap where air comes in and the CO burns; from the roof''s fourth hole, 2 m east and 1.5 m north of the electrodes: up from the hole, east-north-east through the north wall''s opening, then along +y into the baghouse''s inlet, with elbows at the turns'
+  note: '2 m across, 10 mm plate, water-cooled for its first part (it takes about 10% of the arc''s power from the hot gas, from memory), starting above the burn-out gap: 0.15 m between the top of the vessel''s elbow (z 13.5, it moves with the furnace) and the fixed duct''s catch hood (from z 13.65), so the furnace can tilt and air is drawn in to burn the CO (0.15 m nominal, adjustable on real plant; not sized for combustion); from the roof''s fourth hole, 2 m east and 1.5 m north of the electrodes: up from the hole, east-north-east through the north wall''s opening, then along +y into the baghouse''s inlet, with elbows at the turns'
 - kind: busbar
   name: secondary bus
   from: [-12.0, -3.5, 4.0]
