@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.stripper-crane-20t, name: 'Stripper crane, 20 t', description: 'A double-girder stripper crane on the hall''s runways: it lifts the moulds off the frozen ingots, a ram in its tongs pushing a sticking ingot down, and sets the ingots on the ingot car and the moulds back on their cars. Hangs on the frame; names no bay. It travels along its x, its wheels at y -11.4 and +11.4 (22.8 m between the rails), its ends 0.3 m beyond; its origin on the runway''s rail plane; the trolley, with stripping tongs and a ram, runs 9 m either way along y, the hook raised to 0.1 m under the rail plane. Parked at the hall''s centre.'}
+identity: {key: unit.stripper-crane-20t, name: 'Stripper crane, 20 t', description: 'A double-girder stripper crane on the hall''s runways: it lifts each frozen ingot up out of its mould by the hot top, the arms of its tongs holding the mould down by its lugs (a big-end-up mould frees its ingot only upward), and sets the ingots on the ingot car. Hangs on the frame; names no bay. It travels along its x, its wheels at y -11.4 and +11.4 (22.8 m between the rails), its ends 0.3 m beyond; its origin on the runway''s rail plane; the trolley, with stripping tongs and a ram, runs 9 m either way along y, the hook raised to 0.1 m under the rail plane. Parked at the hall''s centre.'}
 size_class: 2
 physical: {length: 8.0, width: 23.4, height: 3.0, mass: 28190.0}
 built_of:

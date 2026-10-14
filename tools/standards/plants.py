@@ -788,14 +788,14 @@ def casting_units():
     frame_ = (2 * box_tube(0.4, 0.4, 0.025, 6.0) + 6.0 * 2.8 * 0.04) * RHO["steel"]
     out["mould-car-12"] = dict(
         name="Ingot mould car, 12 moulds", size_class=1, dims=(6.0, 2.8, 2.3),
-        desc=f"A self-propelled rail car carrying twelve cast iron ingot moulds in two rows of six at 0.85 m, each on its stool, big end up: each takes {ING_M + HOT_TOP:,.0f} kg of steel, a {ING_L:g} m ingot tapering from {ING_A:g} to {ING_B:g} m square with its hot top; the ingot fits one to a heavy crate. The ladle is held over each mould in turn by the crane and teemed from its slide-gate nozzle; the train stands while the ingots freeze, then the stripper crane lifts the moulds off. It travels along its x on 2 m gauge, its origin on the running plane; the moulds' tops 2.3 m up.",
+        desc=f"A self-propelled rail car carrying twelve cast iron ingot moulds in two rows of six at 0.85 m, each on its stool, big end up: each takes {ING_M + HOT_TOP:,.0f} kg of steel, a {ING_L:g} m ingot tapering from {ING_A:g} to {ING_B:g} m square with its hot top; the ingot fits one to a heavy crate. The ladle is held over each mould in turn by the crane and teemed from its slide-gate nozzle; the train stands while the ingots freeze, then the stripper crane lifts each ingot up out of its mould by the hot top (big end up, the ingot can only leave upward), its tongs' arms holding the mould down by its lugs; the moulds stay on the car. Two trunnion lugs a mould on its y faces, 100 mm across, 80 mm out, near z 2.05, for those arms and for changing a mould. It travels along its x on 2 m gauge, its origin on the running plane; the moulds' tops 2.3 m up.",
         built_of=[part("Moulds", CAST_IRON, PER_CAR * mould, f"{PER_CAR} moulds, {wall * 1000:.0f} mm walls, {ING_L * 1.15:.2f} m tall: {mould:,.0f} kg each"),
                   part("Stools", CAST_IRON, PER_CAR * stool, f"{PER_CAR} base plates 0.15 m thick: {stool:,.0f} kg each"),
                   part("Car frame and deck", "stock.st4340-box-400x400x25", frame_, "two box beams 400 x 400 x 25 mm, 6 m, and a deck 6 x 2.8 m of 40 mm plate"),
                   part("Bogies and drive", "good.electric-motors", 3000.0, "from memory")],
         holds=PER_CAR * (ING_M + HOT_TOP), needs={"power": 30000.0},
         basis=[{"of": ["physical", "built_of", "holds"], "tier": "derived", "review": True, "note": f"The ingot sized to the heavy crate (2 t); its hot top the module's scrap share. Moulds about their ingot's mass and more, as practice runs (from memory). Car and drive from memory."}])
-    out["stripper-crane-20t"] = bridge_crane_unit(20000.0, 22.8, 6000.0, kind="Stripper crane", job="it lifts the moulds off the frozen ingots, a ram in its tongs pushing a sticking ingot down, and sets the ingots on the ingot car and the moulds back on their cars", gear="stripping tongs and a ram")
+    out["stripper-crane-20t"] = bridge_crane_unit(20000.0, 22.8, 6000.0, kind="Stripper crane", job="it lifts each frozen ingot up out of its mould by the hot top, the arms of its tongs holding the mould down by its lugs (a big-end-up mould frees its ingot only upward), and sets the ingots on the ingot car", gear="stripping tongs and a ram")
     deck = 8.0 * 3.0 * 0.04 * RHO["steel"]
     frame2 = 2 * box_tube(0.4, 0.4, 0.025, 8.0) * RHO["steel"]
     out["ingot-car-40t"] = dict(
@@ -881,7 +881,7 @@ def casting_bay_air(us, recs):
     ys = [y0, y1]
     layout = {
         "identity": {"key": "layout.casting-bay-air", "name": "Casting bay, world with air",
-                     "description": f"Ingot teeming under a crane hall: the heat comes in on its ladle car from the ladle station; the 150 t crane holds the ladle over a train of {CARS} mould cars and teems {MOULDS} small ingots, one to a heavy crate; the train stands while they freeze, the 20 t stripper crane lifts the moulds off and loads the ingots on a car to the ingot yard. For a world with air at about 1 g."},
+                     "description": f"Ingot teeming under a crane hall: the heat comes in on its ladle car from the ladle station; the 150 t crane holds the ladle over a train of {CARS} mould cars and teems {MOULDS} small ingots, one to a heavy crate; the train stands while they freeze, the 20 t stripper crane draws the ingots up out of the moulds and loads them on a car to the ingot yard. For a world with air at about 1 g."},
         "stands_for": "module.casting-bay",
         "site": {"atmosphere": "air", "gravity": [8.0, 11.0]},
         "physical": {"length": r(max(xs) - min(xs)), "width": r(max(ys) - min(ys)), "height": z1, "mass": r(total)},
@@ -1984,7 +1984,7 @@ def airless_ladle_units(us):
         basis=[{"of": ["physical", "built_of"], "tier": "invented", "review": True, "note": "From memory."},
                {"of": ["identity.description"], "tier": "derived", "review": True, "note": "Radiation from 7 m2 of melt at 1,873 K at emissivity 0.9; 80 t at 820 J/kg K."}])
     for cap, trolley, kind, job, gear, key in ((150000.0, 37500.0, "Ladle gantry crane", "on its own legs over the teeming rail and the ladle rail: it lifts the full ladle off its car and holds it over each mould in turn", "a main hoist and a ladle beam", "gantry-crane-150t-moon"),
-                                                (20000.0, 6000.0, "Stripper gantry crane", "on its own legs over the teeming rail's east half: it lifts the moulds off the frozen ingots and sets the ingots on the ingot car", "stripping tongs and a ram", "stripper-gantry-20t-moon")):
+                                                (20000.0, 6000.0, "Stripper gantry crane", "on its own legs over the teeming rail's east half: it lifts each frozen ingot up out of its mould by the hot top, the mould held down by its lugs, and sets the ingots on the ingot car", "stripping tongs and a ram", "stripper-gantry-20t-moon")):
         c = bridge_crane_unit(cap, 24.0, trolley, kind=kind, job=job, gear=gear, g=MOON_G[1], h_min=0.6)
         legs = 4 * box_tube(1.0, 1.0, 0.025, 24.0) * RHO["steel"] if cap > 50000 else 4 * box_tube(0.8, 0.8, 0.02, 22.0) * RHO["steel"]
         c["built_of"].append(part("Legs and sill beams", A36, legs * 1.15, "four box legs and two sill beams, from the legs' size (the sills 15%)"))

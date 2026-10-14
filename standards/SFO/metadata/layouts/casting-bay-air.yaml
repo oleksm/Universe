@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../schema/layout.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: layout.casting-bay-air, name: 'Casting bay, world with air', description: 'Ingot teeming under a crane hall: the heat comes in on its ladle car from the ladle station; the 150 t crane holds the ladle over a train of 4 mould cars and teems 44 small ingots, one to a heavy crate; the train stands while they freeze, the 20 t stripper crane lifts the moulds off and loads the ingots on a car to the ingot yard. For a world with air at about 1 g.'}
+identity: {key: layout.casting-bay-air, name: 'Casting bay, world with air', description: 'Ingot teeming under a crane hall: the heat comes in on its ladle car from the ladle station; the 150 t crane holds the ladle over a train of 4 mould cars and teems 44 small ingots, one to a heavy crate; the train stands while they freeze, the 20 t stripper crane draws the ingots up out of the moulds and loads them on a car to the ingot yard. For a world with air at about 1 g.'}
 stands_for: module.casting-bay
 site:
   atmosphere: air
