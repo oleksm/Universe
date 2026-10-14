@@ -4525,3 +4525,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.recuperator
+    version: 1
+    manifest_sha256: "e6b1b44ca5d620ba75e5f4a31ee70c206bf041c137ca83b9f555b89c470b5082"
+    installed: bcfe6590
+    game: "the loader (world::assets) at fso bcfe6590"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/recuperator/v1 (1194616 bytes, bounds [-5.42, 0.0, -5.2] to [5.42, 18.0, 5.2]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
