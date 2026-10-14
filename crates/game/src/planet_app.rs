@@ -141,6 +141,12 @@ impl App for PlanetApp {
         "planet"
     }
 
+    fn status(&self) -> String {
+        let b = &self.system.bodies[self.body];
+        serde_json::json!({"world": b.key, "radius_m": b.rail.radius, "distance_m": self.distance, "look": format!("{:?}", self.look),
+            "history_frame": self.then.as_ref().map(|f| f.frame), "time_s": self.clocks.time()}).to_string()
+    }
+
     /// Over the game, the game runs on under it (its world, its sounds), not drawn.
     fn cover(&self) -> universe_engine::apps::Cover {
         universe_engine::apps::Cover::Covers

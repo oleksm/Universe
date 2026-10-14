@@ -1616,9 +1616,10 @@ pub fn studio(args: &[String], window: bool) -> bool {
 }
 
 /// Start an app alone on the engine host, with the game's debug view (F3: frame graph, asset
-/// figures, profiler) for apps that don't draw their own.
+/// figures, profiler) and its observer (SHIFT+F3: the live port, recordings) for apps that don't
+/// have their own.
 fn run_app<A: universe_engine::apps::App + 'static>(config: Config, factory: impl FnOnce() -> A + Send + 'static) {
-    universe_engine::apps::run_prepared_with(config, hud::studio_assets, factory);
+    universe_engine::apps::run_prepared_with(config, hud::studio_assets, devkit::observe::service(), factory);
 }
 
 /// The apps the launcher opens alone (`freefall --app <name> [its argument]`), and what each is.

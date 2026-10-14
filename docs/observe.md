@@ -1,5 +1,10 @@
 # Observing the running game
 
+Every app on the engine host has it, not only the game: the planet viewer, scenes, the factory
+layout, the shipyard and apps to come get SHIFT+F3, the live port and recordings from the host
+(`devkit::observe::AppObserver`, passed by the game's launcher); `/status` then names the app and
+carries its own `App::status`. The game and the standalone Studio keep their own (richer) one.
+
 For looking into what the player sees, without restarting or simulating it (`crates/game/src/observe.rs`).
 
 ## Observing (the player)
