@@ -72,7 +72,7 @@ def units():
     roof_s, roof_w = pipe_panel(1.15 * math.pi * 3.4 ** 2)
     delta = math.pi * 1.0 ** 2 * 0.4 * RHO["refractory"]
     cradle = (2 * box_tube(1.5, 1.0, 0.04, 9.0) + 9 * 9 * 0.04) * RHO["steel"]
-    masts = 3 * box_tube(0.8, 0.8, 0.04, 10.0) * RHO["steel"]
+    masts = box_tube(0.8, 0.8, 0.04, 7.27 + 8.17 + 9.07) * RHO["steel"]   # staggered so the arms clear each other (blender, construction QC)
     arms = 3 * box_tube(0.8, 0.6, 0.03, 6.0) * RHO["aluminium"]
     cable_area = I2 / 2 / 5e6           # m2 each of two water-cooled cables a phase at 5 A/mm2
     cables = 3 * 2 * 12.0 * cable_area * RHO["copper"]
@@ -88,7 +88,7 @@ def units():
             part("Roof panels", A36, roof_s, "water-cooled pipe panels over a dome 6.8 m across, 1.15 times the disc"),
             part("Roof delta", REF, delta, "the refractory centre round the three electrode ports, 2 m across, 0.4 m thick"),
             part("Tilting cradle", A36, cradle, "two rocker box girders 1.5 x 1 m, 40 mm wall, 9 m long, and a deck 9 x 9 m of 40 mm plate"),
-            part("Electrode masts", A36, masts, "three box masts 0.8 x 0.8 m, 40 mm wall, 10 m tall"),
+            part("Electrode masts", A36, masts, "three box masts 0.8 x 0.8 m, 40 mm wall, 7.27, 8.17 and 9.07 m long, staggered so the arms clear; shown at rest, moving in fixed guide collars on seated rams"),
             part("Current-conducting arms", AL, arms, "three box arms 0.8 x 0.6 m, 30 mm wall, 6 m long"),
             part("Secondary cables", CU, cables, f"two water-cooled copper cables a phase, 12 m, each {cable_area * 1e6:.0f} mm2 for half of {I2 / 1000:.0f} kA at 5 A/mm2"),
             part("Tilt and mast hydraulics", "good.pumps", hyd, "cylinders, pumps and valves; from memory"),

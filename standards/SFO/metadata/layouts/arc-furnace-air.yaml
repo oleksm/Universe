@@ -5,7 +5,7 @@ stands_for: module.arc-furnace
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 78.0, width: 60.0, height: 27.0, mass: 3920000.0}
+physical: {length: 78.0, width: 60.0, height: 27.0, mass: 3915000.0}
 bays:
 - id: V
   mount: plant-mount.bay-s2
@@ -122,7 +122,7 @@ ground:
 - {what: Baghouse slab, item: good.concrete, volume: 172.8, mass: 414700.0}
 - {what: Cooling tower basin, item: good.concrete, volume: 187.2, mass: 449300.0}
 - {what: Bin footing, item: good.concrete, volume: 36.0, mass: 86400.0}
-totals: {rate: 26.6666666666667, power: 74200000.0, heat: 18450000.0, water: 10.2, mass: 3920000.0, against_module: 'module.arc-furnace: one box 100 x 40 x 35 m, 72 MW, its parts 930 t. This layout: the same rate; 74.2 MW (the module left out the transformer''s losses, the fans and pumps); 10.2 kg/s of water the module did not name (the tower''s evaporation); 1186 t of plant and frame and 2734 t of concrete.'}
+totals: {rate: 26.6666666666667, power: 74200000.0, heat: 18450000.0, water: 10.2, mass: 3915000.0, against_module: 'module.arc-furnace: one box 100 x 40 x 35 m, 72 MW, its parts 930 t. This layout: the same rate; 74.2 MW (the module left out the transformer''s losses, the fans and pumps); 10.2 kg/s of water the module did not name (the tower''s evaporation); 1181 t of plant and frame and 2734 t of concrete.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}

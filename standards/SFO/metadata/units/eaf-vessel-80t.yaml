@@ -3,7 +3,7 @@
 identity: {key: unit.eaf-vessel-80t, name: 'Arc furnace vessel, 80 t', description: 'An AC arc furnace that taps 80 t: a refractory hearth 6.6 m across, water-cooled upper shell and roof, three graphite electrodes on masts, a tilting cradle and an eccentric bottom tap. Fed sponge iron through a fifth hole in the roof. Stands on a platform 5 m up so a ladle car runs under its tap.'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 10.0, height: 16.0, mass: 310600.0}
+physical: {length: 12.0, width: 10.0, height: 16.0, mass: 305400.0}
 built_of:
 - {what: Hearth shell, item: material.structural-steel-a36, mass: 33060.0, note: '6.6 m across, 2.0 m tall, 50 mm plate, its dished bottom 1.25 times the disc'}
 - {what: Hearth lining, item: good.refractory-brick, mass: 148400.0, note: '0.9 m under the bath, 0.45 m up the hearth wall'}
@@ -11,7 +11,7 @@ built_of:
 - {what: Roof panels, item: material.structural-steel-a36, mass: 7298.0, note: 'water-cooled pipe panels over a dome 6.8 m across, 1.15 times the disc'}
 - {what: Roof delta, item: good.refractory-brick, mass: 3770.0, note: 'the refractory centre round the three electrode ports, 2 m across, 0.4 m thick'}
 - {what: Tilting cradle, item: material.structural-steel-a36, mass: 52790.0, note: 'two rocker box girders 1.5 x 1 m, 40 mm wall, 9 m long, and a deck 9 x 9 m of 40 mm plate'}
-- {what: Electrode masts, item: material.structural-steel-a36, mass: 28640.0, note: 'three box masts 0.8 x 0.8 m, 40 mm wall, 10 m tall'}
+- {what: Electrode masts, item: material.structural-steel-a36, mass: 23400.0, note: 'three box masts 0.8 x 0.8 m, 40 mm wall, 7.27, 8.17 and 9.07 m long, staggered so the arms clear; shown at rest, moving in fixed guide collars on seated rams'}
 - {what: Current-conducting arms, item: material.aluminium-1350, mass: 3907.0, note: 'three box arms 0.8 x 0.6 m, 30 mm wall, 6 m long'}
 - {what: Secondary cables, item: material.copper, mass: 4190.0, note: 'two water-cooled copper cables a phase, 12 m, each 6495 mm2 for half of 65 kA at 5 A/mm2'}
 - {what: Tilt and mast hydraulics, item: good.pumps, mass: 15000.0, note: 'cylinders, pumps and valves; from memory'}
