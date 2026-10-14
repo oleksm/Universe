@@ -85,8 +85,8 @@ def units():
     hyd = 15000.0
     holds = HEAT + 0.15 * HEAT + SLAG + up_w + roof_w   # the charge, a sixth left as the heel (from memory), slag and panel water
     out["eaf-vessel-80t"] = dict(
-        name="Arc furnace vessel, 80 t", size_class=2, fits="bay-s2", dims=(12.0, 10.0, 16.0),
-        desc=f"An AC arc furnace that taps {HEAT / 1000:.0f} t: a refractory hearth {D} m across, water-cooled upper shell and roof, three graphite electrodes on masts, a tilting cradle and an eccentric bottom tap. Fed sponge iron through a fifth hole in the roof. Stands on a platform 5 m up so a ladle car runs under its tap.",
+        name="Arc furnace vessel, 80 t", size_class=2, fits="bay-s2", dims=(12.0, 10.8, 14.0),   # as built in blender's model: the arms' tails and cables reach 6.25 m behind the axis, the cradle 4.5 m in front
+        desc=f"An AC arc furnace that taps {HEAT / 1000:.0f} t: a refractory hearth {D} m across, water-cooled upper shell and roof, three graphite electrodes on masts, a tilting cradle and an eccentric bottom tap. Fed sponge iron through a fifth hole in the roof. Stands on a platform 5 m up so a ladle car runs under its tap. Its box is not centred across: the arms\' tails and the secondary cables reach 6.25 m behind the furnace\'s axis (toward the transformer), the cradle 4.5 m in front; 14 m tall with the masts at rest.",
         built_of=[
             part("Hearth shell", A36, shell, f"{D} m across, {Hh} m tall, 50 mm plate, its dished bottom 1.25 times the disc"),
             part("Hearth lining", REF, lining, "0.9 m under the bath, 0.45 m up the hearth wall"),
