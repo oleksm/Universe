@@ -40,7 +40,7 @@ const ID_FEAT: u32 = 22;
 const ID_EX: u32 = 30;
 const ID_KEYS: u32 = 40;
 const ID_VIS: u32 = 50;
-const PANEL_W: f32 = 372.0;
+const PANEL_W: f32 = 284.0;
 
 #[derive(Clone, Copy, PartialEq)]
 enum View {
@@ -1119,24 +1119,24 @@ impl PlanetLodApp {
     fn panel(&self, frame: &mut Frame, ctx: &Context, ui: &Ui) -> (Hit, Vec<Hit>) {
         use hud_kit::{ACCENT, BAD, GOOD, INK, INK3, WARN};
         let m = &self.meta;
-        let mut p = Panel::new(10.0, 10.0, PANEL_W, 0.7);
+        let mut p = Panel::new(8.0, 8.0, PANEL_W, 0.62);
         let fps = ctx.fps;
         let fc = if fps >= 50.0 { GOOD } else if fps >= 25.0 { WARN } else { BAD };
-        p.title("PLANET LOD", (&format!("{fps:.0} FPS"), fc), ("-", ID_HIDE));
-        let alt = if self.alt >= 10_000.0 { format!("{} KM", thousands((self.alt / 1000.0).round())) } else { format!("{} M", thousands(self.alt.round())) };
+        p.title("Planet LOD", (&format!("{fps:.0} fps"), fc), ("–", ID_HIDE));
+        let alt = if self.alt >= 10_000.0 { format!("{} km", thousands((self.alt / 1000.0).round())) } else { format!("{} m", thousands(self.alt.round())) };
         p.big(&alt, "over the surface");
         match self.ground_h {
             Some(h) => p.row("ground under you", &format!("{} m", thousands(h.round())), ""),
             None => p.row("ground under you", "no triangle under the eye", ""),
         }
         let lo = (self.lon + 540.0).rem_euclid(360.0) - 180.0;
-        p.row("position", &format!("{:.2} {}  {:.2} {}", self.lat.abs(), if self.lat < 0.0 { "S" } else { "N" }, lo.abs(), if lo < 0.0 { "W" } else { "E" }), "");
-        p.row("heading - pitch", &format!("{:.0} - {:.0} down", self.heading.rem_euclid(360.0), self.pitch_down()), "");
+        p.row("position", &format!("{:.2}° {}  {:.2}° {}", self.lat.abs(), if self.lat < 0.0 { "S" } else { "N" }, lo.abs(), if lo < 0.0 { "W" } else { "E" }), "");
+        p.row("heading · pitch", &format!("{:.0}° · {:.0}° down", self.heading.rem_euclid(360.0), self.pitch_down()), "");
         // Levels of detail.
         let n = self.d.mv.len().max(1);
         let lv = (0..self.lvl_count.len()).rev().find(|&k| self.lvl_count[k] > 0).map_or(0, |k| k + 1);
         let (full, rising) = self.risen;
-        let rising_badge = if rising > 0 { (format!("{} RISING", thousands(rising as f64)), WARN) } else { ("ALL IN".to_string(), GOOD) };
+        let rising_badge = if rising > 0 { (format!("{} rising", thousands(rising as f64)), WARN) } else { ("all in".to_string(), GOOD) };
         let lvb = format!("L{lv} / {}", m.level_d.len());
         p.section("LEVEL OF DETAIL", &[(&lvb, ACCENT), (&rising_badge.0, rising_badge.1)]);
         let eye = self.eye();
@@ -1145,61 +1145,61 @@ impl PlanetLodApp {
         let d_reg = ((ang * self.d.r - m.radius_m).max(0.0)).hypot((cr - self.d.r - self.ex * m.top_m).max(0.0));
         let dist = if d_reg >= 1000.0 { format!("{:.1} km", d_reg / 1000.0) } else { format!("{d_reg:.0} m") };
         p.row("distance to the pattern", &dist, "");
-        p.row("pattern vertices drawn", &thousands(self.stats.drawn as f64), &format!("of {} - {:.1}%", thousands(n as f64), 100.0 * self.stats.drawn as f64 / n as f64));
+        p.row("pattern vertices drawn", &thousands(self.stats.drawn as f64), &format!("of {} · {:.1}%", thousands(n as f64), 100.0 * self.stats.drawn as f64 / n as f64));
         p.bar(self.stats.drawn as f32 / n as f32, full as f32 / n as f32);
-        p.row("fully risen - rising", &format!("{} - {}", thousands(full as f64), thousands(rising as f64)), "");
+        p.row("fully risen · rising", &format!("{} · {}", thousands(full as f64), thousands(rising as f64)), "");
         p.row("pattern triangles drawn", &thousands(ui.pattern_tris as f64), "");
         let a = m.level_d.iter().rposition(|&dd| dd > d_reg).map_or(0, |j| j + 1);
         let one = m.level_tris.get(a).copied().unwrap_or(0);
-        let more = if one > ui.pattern_tris && ui.pattern_tris > 0 { format!("{:.1}x more", one as f64 / ui.pattern_tris as f64) } else { String::new() };
+        let more = if one > ui.pattern_tris && ui.pattern_tris > 0 { format!("{:.1}× more", one as f64 / ui.pattern_tris as f64) } else { String::new() };
         p.row("with one level for all", &thousands(one as f64), &more);
-        p.row("LOD update", &format!("{:.2} ms", self.stats.lod_ms), &format!("meshes {:.2} ms - {} made", self.stats.mesh_ms, self.stats.rebuilt));
+        p.row("LOD update", &format!("{:.2} ms", self.stats.lod_ms), &format!("meshes {:.2} ms · {} made", self.stats.mesh_ms, self.stats.rebuilt));
         p.row("planet tiles drawn", &thousands(ui.tiles_drawn as f64), &format!("of {} groups", self.tiles.len()));
-        p.row("pattern chunks drawn", &thousands(ui.chunks_drawn as f64), &format!("of {}", self.chunks.iter().filter(|c| !c.tris.is_empty()).count()));
-        p.row("settings", &format!("{}x ahead - {}x margin - {:.1} m/km", m.ahead, m.margin, m.px_per_m * 1000.0), "");
+        p.row("pattern cells drawn", &thousands(ui.chunks_drawn as f64), &format!("of {}", self.chunks.iter().filter(|c| !c.tris.is_empty()).count()));
+        p.row("settings", &format!("{}× ahead · {}× margin · {:.1} m/km", m.ahead, m.margin, m.px_per_m * 1000.0), "");
         // The chart: drawn (accent) and fully in (white) against the altitude flown, level distances.
-        let (o, s) = p.area(84.0);
-        let x_of = |alt: f32| o.x + 30.0 + (7.0 - alt.clamp(10.0, 1e7).log10()) / 6.0 * (s.x - 40.0);
-        let y_of = |f: f32| o.y + s.y - 16.0 - f * (s.y - 28.0);
+        let (o, s) = p.area(62.0);
+        let x_of = |alt: f32| o.x + 22.0 + (7.0 - alt.clamp(10.0, 1e7).log10()) / 6.0 * (s.x - 30.0);
+        let y_of = |f: f32| o.y + s.y - 11.0 - f * (s.y - 20.0);
         for (k, dd) in m.level_d.iter().enumerate() {
             let x = x_of(*dd as f32).round();
-            p.line(Vec2::new(x, o.y + 12.0), Vec2::new(x, o.y + s.y - 16.0), Color::hex(0x262a32));
-            p.text(Vec2::new(x - 8.0, o.y + 2.0), &format!("L{}", k + 1), INK3);
+            p.line(Vec2::new(x, o.y + 9.0), Vec2::new(x, o.y + s.y - 11.0), Color::hex(0x262a32));
+            p.text(Vec2::new(x - 4.0, o.y + 2.0), &format!("L{}", k + 1), INK3);
         }
-        p.line(Vec2::new(o.x + 30.0, y_of(0.0)), Vec2::new(o.x + s.x - 8.0, y_of(0.0)), Color::hex(0x3a3f4a));
-        p.text(Vec2::new(o.x + 2.0, y_of(1.0) - 4.0), "100%", INK3);
-        p.text(Vec2::new(o.x + 20.0, y_of(0.0) - 4.0), "0", INK3);
-        p.text(Vec2::new(o.x + 30.0, o.y + s.y - 11.0), "10,000 km", INK3);
-        p.text(Vec2::new(o.x + s.x - 48.0, o.y + s.y - 11.0), "10 m", INK3);
+        p.line(Vec2::new(o.x + 22.0, y_of(0.0)), Vec2::new(o.x + s.x - 6.0, y_of(0.0)), Color::hex(0x3a3f4a));
+        p.text(Vec2::new(o.x + 2.0, y_of(1.0) - 2.0), "100%", INK3);
+        p.text(Vec2::new(o.x + 14.0, y_of(0.0) - 2.0), "0", INK3);
+        p.text(Vec2::new(o.x + 22.0, o.y + s.y - 8.0), "10,000 km", INK3);
+        p.text(Vec2::new(o.x + s.x - 22.0, o.y + s.y - 8.0), "10 m", INK3);
         for h in &self.history {
             p.rect(Vec2::new(x_of(h[0]) - 1.5, y_of(h[1]) - 1.5), Vec2::splat(3.0), ACCENT);
             p.rect(Vec2::new(x_of(h[0]) - 1.0, y_of(h[2]) - 1.0), Vec2::splat(2.0), INK);
         }
-        p.note("# drawn   # fully risen    per altitude flown", INK3);
+        p.note("drawn (orange) · fully risen (white) · per altitude flown", INK3);
         // The mesh.
         p.section("MESH", &[]);
         p.row("vertices", &thousands(self.d.pos.len() as f64), &format!("{} in the pattern", kilo(n)));
         let off = self.tiles.iter().map(|g| g.tris.len()).sum::<usize>();
-        p.row("triangles off the pattern", &thousands(off as f64), &format!("{} land - {} sea", kilo(m.land_tris), kilo(m.sea_tris)));
+        p.row("triangles off the pattern", &thousands(off as f64), &format!("{} land · {} sea", kilo(m.land_tris), kilo(m.sea_tris)));
         p.row("sent to the GPU", &thousands(ui.sent as f64), "");
         p.row("in the view box", &thousands(ui.in_view as f64), "");
         if ui.vis_note {
-            p.row("visible (own a pixel)", "needs the engine's ID render", "");
+            p.row("visible", "needs the engine's ID render", "");
         } else {
             p.row_button("visible (own a pixel)", "measure", ID_VIS);
         }
-        p.row("edges kept from lines", &thousands(m.kept as f64), &format!("of {} - {:.1}%", thousands(m.segments as f64), 100.0 * m.kept as f64 / m.segments.max(1) as f64));
-        p.row("heights", &format!("{} ... {} m", thousands(m.h_lo.round()), thousands(m.h_hi.round())), "");
+        p.row("edges kept from lines", &thousands(m.kept as f64), &format!("of {} · {:.1}%", thousands(m.segments as f64), 100.0 * m.kept as f64 / m.segments.max(1) as f64));
+        p.row("heights", &format!("{} – {} m", thousands(m.h_lo.round()), thousands(m.h_hi.round())), "");
         // The view.
         p.section("VIEW", &[]);
         p.seg(&["Mesh", "Real"], if self.view == View::Mesh { 0 } else { 1 }, ID_MESH);
         let real = self.view == View::Real;
         p.chips(&[("edges", self.show_edges && !real, !real, ID_EDGES), ("faces", self.show_faces, true, ID_FACES), ("crest & valleys", self.show_feat, !m.features.is_empty(), ID_FEAT)]);
-        p.slider("height x", self.ex as f32, 1.0, 50.0, &format!("{:.0}", self.ex), ID_EX);
+        p.slider("height ×", self.ex as f32, 1.0, 50.0, &format!("{:.0}", self.ex), ID_EX);
         p.chips(&[(if self.keys_open { "controls (hide)" } else { "controls" }, self.keys_open, true, ID_KEYS)]);
         if self.keys_open {
-            for (k, what) in [("W A S D", "fly"), ("Q E - wheel", "down / up"), ("<- -> - right-drag", "turn"), ("Shift", "x5 speed"), ("drag", "slide"), ("V", "mesh or real"), ("H", "hide this panel"), ("Esc", "close")] {
-                p.note(&format!("{k:<20}{what}"), hud_kit::INK2);
+            for (k, what) in [("W A S D", "fly"), ("Q E · wheel", "down / up"), ("<- -> · right-drag", "turn"), ("Shift", "× 5 speed"), ("drag", "slide"), ("V", "mesh or real"), ("H", "hide this panel"), ("Esc", "close")] {
+                p.note(&format!("{k:<19}{what}"), hud_kit::INK2);
             }
             p.note("Straight down in orbit, tilting to the horizon at the ground.", INK3);
         }

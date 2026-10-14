@@ -1,21 +1,27 @@
 //! A side panel of HUD widgets, laid out top to bottom (a shared part: the planet LOD app's panel
 //! first). Drawn immediate-mode: each frame the app lays the panel out in `draw`; the widgets that
 //! take the mouse leave their boxes (`Hit`), which the app's next `update` reads against the cursor.
-//! The engine's font is ASCII on an 8 px grid; `big` text is drawn at twice the size.
+//! Slim as the browser panels it stands for: values in the text size `k`, labels a little dimmer,
+//! notes (the browser's `<small>`) smaller and dim; the font is monospaced on the engine's 8 px grid
+//! (`·`, `×`, `°` and `–` are in it).
 
 use universe_engine::glam::Vec2;
 use universe_engine::{Color, Frame, GLYPH};
 
 pub const INK: Color = Color::hex(0xe8ebf0);
-pub const INK2: Color = Color::hex(0xb4bac4);
-pub const INK3: Color = Color::hex(0x7d8592);
+pub const INK2: Color = Color::hex(0xa9b0bb);
+pub const INK3: Color = Color::hex(0x6c7380);
 pub const LINE: Color = Color::hex(0x2c313a);
 pub const ACCENT: Color = Color::hex(0xff6a00);
 pub const GOOD: Color = Color::hex(0x5fd38a);
 pub const WARN: Color = Color::hex(0xffb040);
 pub const BAD: Color = Color::hex(0xff5a5a);
-pub const BG: Color = Color([0.07, 0.08, 0.1, 0.9]);
+pub const BG: Color = Color([0.075, 0.082, 0.1, 0.88]);
 
+/// Notes and section headers this share of the text size.
+const SMALL: f32 = 0.86;
+/// Inner margin (HUD px).
+const PAD: f32 = 7.0;
 
 /// A box the mouse can act on: its corner, size and what it is (the app's own number).
 #[derive(Clone, Copy, Debug)]
@@ -40,9 +46,8 @@ enum Cmd {
 
 /// The panel being laid out: commands kept until `finish`, which draws its background first.
 pub struct Panel {
-    /// Text size (1: the engine's 8 px grid) and the glyph's width at it.
+    /// Text size (1: the engine's 8 px grid).
     k: f32,
-    g: f32,
     x: f32,
     y: f32,
     top: f32,
@@ -51,182 +56,204 @@ pub struct Panel {
     pub hits: Vec<Hit>,
 }
 
+/// How wide `s` is at text size `k`.
+pub fn width(s: &str, k: f32) -> f32 {
+    s.chars().count() as f32 * GLYPH * k
+}
+
 impl Panel {
     /// A panel at (x, y), `w` wide, its text at `k` times the engine's size.
     pub fn new(x: f32, y: f32, w: f32, k: f32) -> Self {
-        Panel { k, g: GLYPH * k, x, y: y + 10.0 * k, top: y, w, cmds: vec![], hits: vec![] }
+        Panel { k, x, y: y + PAD, top: y, w, cmds: vec![], hits: vec![] }
     }
 
-    fn row_h(&self) -> f32 {
-        self.g + 7.0 * self.k
+    fn line_h(&self) -> f32 {
+        (GLYPH + 5.5) * self.k
     }
 
-    fn text_at(&mut self, p: Vec2, s: &str, c: Color, scale: f32) {
-        self.cmds.push(Cmd::Text(p, s.to_string(), c, scale));
+    fn put(&mut self, p: Vec2, s: &str, c: Color, k: f32) {
+        self.cmds.push(Cmd::Text(p, s.to_string(), c, k));
     }
 
-    fn right(&mut self, y: f32, parts: &[(&str, Color)]) {
-        let n: usize = parts.iter().map(|(s, _)| s.chars().count()).sum();
-        let mut x = self.x + self.w - 12.0 - n as f32 * self.g;
-        for (s, c) in parts {
-            self.text_at(Vec2::new(x, y), s, *c, self.k);
-            x += s.chars().count() as f32 * self.g;
+    /// Parts set flush right on the line at `y`: (text, colour, small).
+    fn right(&mut self, y: f32, parts: &[(&str, Color, bool)]) {
+        let (k0, k1) = (self.k, self.k * SMALL);
+        let ks = |small: bool| if small { k1 } else { k0 };
+        let total: f32 = parts.iter().map(|(s, _, sm)| width(s, ks(*sm))).sum();
+        let mut x = self.x + self.w - PAD - total;
+        for (s, c, sm) in parts {
+            let k = ks(*sm);
+            // (Small text sits on the same baseline.)
+            let dy = (k0 - k) * GLYPH * 0.85;
+            self.put(Vec2::new(x, y + dy), s, *c, k);
+            x += width(s, k);
         }
     }
 
-    /// A badge: text in a coloured frame; returns its width.
+    /// A badge: text in a coloured frame at `p`; returns its width.
     fn badge_at(&mut self, p: Vec2, s: &str, c: Color) -> f32 {
-        let w = s.chars().count() as f32 * self.g + 10.0;
-        self.cmds.push(Cmd::Frame(p - Vec2::new(0.0, 3.0), Vec2::new(w, self.g + 6.0), c));
-        self.text_at(p + Vec2::new(5.0, 0.0), s, c, self.k);
+        let k = self.k * SMALL;
+        let w = width(s, k) + 6.0;
+        self.cmds.push(Cmd::Frame(p - Vec2::new(0.0, 2.0), Vec2::new(w, GLYPH * k + 4.0), c));
+        self.put(p + Vec2::new(3.0, 0.0), s, c, k);
         w
     }
 
-    /// The title, a badge at the right, and a button (id) at the far right.
+    /// The title, a badge before the far right, and a button (id) at the far right.
     pub fn title(&mut self, s: &str, badge: (&str, Color), button: (&str, u32)) {
         let y = self.y;
-        self.text_at(Vec2::new(self.x + 12.0, y), s, INK, self.k);
-        let bw = button.0.chars().count() as f32 * self.g + 10.0;
-        let bx = self.x + self.w - 12.0 - bw;
-        self.cmds.push(Cmd::Frame(Vec2::new(bx, y - 3.0), Vec2::new(bw, self.g + 6.0), LINE));
-        self.text_at(Vec2::new(bx + 5.0, y), button.0, INK2, self.k);
-        self.hits.push(Hit { min: Vec2::new(bx, y - 3.0), size: Vec2::new(bw, self.g + 6.0), id: button.1 });
-        let w = badge.0.chars().count() as f32 * self.g + 10.0;
-        self.badge_at(Vec2::new(bx - 8.0 - w, y), badge.0, badge.1);
-        self.y += self.row_h() + 2.0;
+        self.put(Vec2::new(self.x + PAD, y), s, INK, self.k);
+        let k = self.k * SMALL;
+        let bw = width(button.0, k) + 8.0;
+        let bx = self.x + self.w - PAD - bw;
+        let size = Vec2::new(bw, GLYPH * k + 4.0);
+        self.cmds.push(Cmd::Frame(Vec2::new(bx, y - 2.0), size, LINE));
+        self.put(Vec2::new(bx + 4.0, y), button.0, INK2, k);
+        self.hits.push(Hit { min: Vec2::new(bx, y - 2.0), size, id: button.1 });
+        let w = width(badge.0, k) + 6.0;
+        self.badge_at(Vec2::new(bx - 5.0 - w, y), badge.0, badge.1);
+        self.y += self.line_h() + 3.0;
         self.rule();
     }
 
     pub fn rule(&mut self) {
-        let y = self.y - 4.0;
+        let y = self.y - 3.0;
         self.cmds.push(Cmd::Line(Vec2::new(self.x + 1.0, y), Vec2::new(self.x + self.w - 1.0, y), LINE));
-        self.y += 4.0;
+        self.y += 3.0;
     }
 
-    /// A big value with a small note after it.
+    /// A big value with a note after it.
     pub fn big(&mut self, value: &str, note: &str) {
-        let y = self.y + 2.0;
-        self.text_at(Vec2::new(self.x + 12.0, y), value, INK, 2.0 * self.k);
-        self.text_at(Vec2::new(self.x + 20.0 + value.chars().count() as f32 * self.g * 2.0, y + self.g), note, INK2, self.k);
-        self.y += 2.0 * self.g + 12.0;
+        let y = self.y + 1.0;
+        let kb = 1.7 * self.k;
+        self.put(Vec2::new(self.x + PAD, y), value, INK, kb);
+        self.put(Vec2::new(self.x + PAD + width(value, kb) + 5.0, y + GLYPH * (kb - self.k * SMALL) * 0.85), note, INK2, self.k * SMALL);
+        self.y += GLYPH * kb + 6.0;
     }
 
-    /// A section header with badges after it.
+    /// A section header (small, dim) with badges after it.
     pub fn section(&mut self, s: &str, badges: &[(&str, Color)]) {
-        self.y += 6.0;
+        self.y += 3.0;
         self.rule();
         let y = self.y;
-        self.text_at(Vec2::new(self.x + 12.0, y), s, INK3, self.k);
-        let mut x = self.x + 12.0 + (s.chars().count() + 2) as f32 * self.g;
+        let k = self.k * SMALL;
+        self.put(Vec2::new(self.x + PAD, y), s, INK3, k);
+        let mut x = self.x + PAD + width(s, k) + 7.0;
         for (b, c) in badges {
-            x += self.badge_at(Vec2::new(x, y), b, *c) + 6.0;
+            x += self.badge_at(Vec2::new(x, y), b, *c) + 4.0;
         }
-        self.y += self.row_h() + 2.0;
+        self.y += self.line_h() + 1.0;
     }
 
-    /// A property: its name at the left, its value (and a dim note) at the right.
+    /// A property: its name at the left, its value and a small dim note at the right.
     pub fn row(&mut self, label: &str, value: &str, note: &str) {
         let y = self.y;
-        self.text_at(Vec2::new(self.x + 12.0, y), label, INK2, self.k);
+        self.put(Vec2::new(self.x + PAD, y), label, INK2, self.k);
         if note.is_empty() {
-            self.right(y, &[(value, INK)]);
+            self.right(y, &[(value, INK, false)]);
         } else {
-            self.right(y, &[(value, INK), (" ", INK3), (note, INK3)]);
+            self.right(y, &[(value, INK, false), (" ", INK3, true), (note, INK3, true)]);
         }
-        self.y += self.row_h();
+        self.y += self.line_h();
     }
 
     /// A row whose value is a button (id).
     pub fn row_button(&mut self, label: &str, button: &str, id: u32) {
         let y = self.y;
-        self.text_at(Vec2::new(self.x + 12.0, y), label, INK2, self.k);
-        let bw = button.chars().count() as f32 * self.g + 12.0;
-        let bx = self.x + self.w - 12.0 - bw;
-        self.cmds.push(Cmd::Frame(Vec2::new(bx, y - 3.0), Vec2::new(bw, self.g + 6.0), INK3));
-        self.text_at(Vec2::new(bx + 6.0, y), button, INK, self.k);
-        self.hits.push(Hit { min: Vec2::new(bx, y - 3.0), size: Vec2::new(bw, self.g + 6.0), id });
-        self.y += self.row_h();
+        self.put(Vec2::new(self.x + PAD, y), label, INK2, self.k);
+        let k = self.k * SMALL;
+        let bw = width(button, k) + 8.0;
+        let bx = self.x + self.w - PAD - bw;
+        let size = Vec2::new(bw, GLYPH * k + 4.0);
+        self.cmds.push(Cmd::Frame(Vec2::new(bx, y - 1.0), size, INK3));
+        self.put(Vec2::new(bx + 4.0, y + 1.0), button, INK, k);
+        self.hits.push(Hit { min: Vec2::new(bx, y - 1.0), size, id });
+        self.y += self.line_h();
     }
 
     /// A bar: the first share in the accent, the second (part of it) in white.
     pub fn bar(&mut self, a: f32, b: f32) {
-        let (x, y, w) = (self.x + 12.0, self.y, self.w - 24.0);
-        self.cmds.push(Cmd::Rect(Vec2::new(x, y), Vec2::new(w, 5.0), LINE));
-        self.cmds.push(Cmd::Rect(Vec2::new(x, y), Vec2::new(w * a.clamp(0.0, 1.0), 5.0), ACCENT));
-        self.cmds.push(Cmd::Rect(Vec2::new(x, y + 1.5), Vec2::new(w * b.clamp(0.0, 1.0), 2.0), INK));
-        self.y += 12.0;
+        let (x, y, w) = (self.x + PAD, self.y + 0.5, self.w - 2.0 * PAD);
+        self.cmds.push(Cmd::Rect(Vec2::new(x, y), Vec2::new(w, 3.0), LINE));
+        self.cmds.push(Cmd::Rect(Vec2::new(x, y), Vec2::new(w * a.clamp(0.0, 1.0), 3.0), ACCENT));
+        self.cmds.push(Cmd::Rect(Vec2::new(x, y + 1.0), Vec2::new(w * b.clamp(0.0, 1.0), 1.0), INK));
+        self.y += 8.0;
     }
 
     /// Buttons side by side, the chosen one filled (ids from `id0`).
     pub fn seg(&mut self, options: &[&str], chosen: usize, id0: u32) {
-        let (x, y, w) = (self.x + 12.0, self.y, self.w - 24.0);
+        let (x, y, w) = (self.x + PAD, self.y, self.w - 2.0 * PAD);
         let bw = w / options.len() as f32;
+        let h = GLYPH * self.k + 6.0;
         for (k, o) in options.iter().enumerate() {
-            let p = Vec2::new(x + k as f32 * bw, y - 4.0);
-            let size = Vec2::new(bw, self.g + 10.0);
+            let p = Vec2::new(x + k as f32 * bw, y - 3.0);
+            let size = Vec2::new(bw, h);
             if k == chosen {
                 self.cmds.push(Cmd::Rect(p, size, ACCENT));
             }
             self.cmds.push(Cmd::Frame(p, size, LINE));
-            let tx = p.x + (bw - o.chars().count() as f32 * self.g) * 0.5;
-            self.text_at(Vec2::new(tx, y + 1.0), o, if k == chosen { Color::hex(0x111111) } else { INK2 }, self.k);
+            let tx = p.x + (bw - width(o, self.k)) * 0.5;
+            self.put(Vec2::new(tx, y), o, if k == chosen { Color::hex(0x111111) } else { INK2 }, self.k);
             self.hits.push(Hit { min: p, size, id: id0 + k as u32 });
         }
-        self.y += self.row_h() + 6.0;
+        self.y += h + 3.0;
     }
 
-    /// Check boxes in a row: (label, on, enabled, id).
+    /// Check boxes in a row, as chips: (label, on, enabled, id).
     pub fn chips(&mut self, items: &[(&str, bool, bool, u32)]) {
-        let mut x = self.x + 12.0;
+        let k = self.k;
+        let mut x = self.x + PAD;
         let y = self.y;
+        let b = GLYPH * k * 0.8;
         for &(label, on, enabled, id) in items {
-            let w = (label.chars().count() + 3) as f32 * self.g + 10.0;
-            let p = Vec2::new(x, y - 4.0);
-            let size = Vec2::new(w, self.g + 9.0);
+            let w = b + 4.0 + width(label, k) + 9.0;
+            let p = Vec2::new(x, y - 3.0);
+            let size = Vec2::new(w, GLYPH * k + 6.0);
             let c = if !enabled { LINE } else if on { INK } else { INK2 };
             self.cmds.push(Cmd::Frame(p, size, if on && enabled { INK3 } else { LINE }));
-            self.cmds.push(Cmd::Frame(Vec2::new(x + 5.0, y), Vec2::new(self.g, self.g), c));
+            let bp = Vec2::new(x + 4.0, y + (GLYPH * k - b) * 0.5);
+            self.cmds.push(Cmd::Frame(bp, Vec2::splat(b), c));
             if on {
-                self.cmds.push(Cmd::Rect(Vec2::new(x + 5.0 + 0.25 * self.g, y + 0.25 * self.g), Vec2::splat(0.5 * self.g), if enabled { ACCENT } else { LINE }));
+                self.cmds.push(Cmd::Rect(bp + Vec2::splat(b * 0.22), Vec2::splat(b * 0.56), if enabled { ACCENT } else { LINE }));
             }
-            self.text_at(Vec2::new(x + 5.0 + 2.0 * self.g, y), label, c, self.k);
+            self.put(Vec2::new(bp.x + b + 4.0, y), label, c, k);
             if enabled {
                 self.hits.push(Hit { min: p, size, id });
             }
-            x += w + 6.0;
+            x += w + 4.0;
         }
-        self.y += self.row_h() + 4.0;
+        self.y += GLYPH * k + 9.0;
     }
 
     /// A slider (id): its label, the track, the value shown at the right.
     pub fn slider(&mut self, label: &str, value: f32, min: f32, max: f32, shown: &str, id: u32) {
         let y = self.y;
-        self.text_at(Vec2::new(self.x + 12.0, y), label, INK2, self.k);
-        let x0 = self.x + 12.0 + (label.chars().count() + 1) as f32 * self.g;
-        let x1 = self.x + self.w - 16.0 - 4.0 * self.g;
-        let k = ((value - min) / (max - min)).clamp(0.0, self.k);
-        let my = y + self.g * 0.5;
-        self.cmds.push(Cmd::Rect(Vec2::new(x0, my - 1.5), Vec2::new(x1 - x0, 3.0), LINE));
-        self.cmds.push(Cmd::Rect(Vec2::new(x0, my - 1.5), Vec2::new((x1 - x0) * k, 3.0), ACCENT));
-        self.cmds.push(Cmd::Rect(Vec2::new(x0 + (x1 - x0) * k - 4.0, my - 5.0), Vec2::new(8.0, 10.0), ACCENT));
-        self.right(y, &[(shown, INK)]);
-        self.hits.push(Hit { min: Vec2::new(x0 - 4.0, y - 4.0), size: Vec2::new(x1 - x0 + 8.0, self.g + 8.0), id });
-        self.y += self.row_h() + 2.0;
+        self.put(Vec2::new(self.x + PAD, y), label, INK2, self.k);
+        let x0 = self.x + PAD + width(label, self.k) + 6.0;
+        let x1 = self.x + self.w - PAD - width("50", self.k) - 6.0;
+        let t = ((value - min) / (max - min)).clamp(0.0, 1.0);
+        let my = y + GLYPH * self.k * 0.5;
+        self.cmds.push(Cmd::Rect(Vec2::new(x0, my - 1.0), Vec2::new(x1 - x0, 2.0), LINE));
+        self.cmds.push(Cmd::Rect(Vec2::new(x0, my - 1.0), Vec2::new((x1 - x0) * t, 2.0), ACCENT));
+        self.cmds.push(Cmd::Rect(Vec2::new(x0 + (x1 - x0) * t - 2.5, my - 4.0), Vec2::new(5.0, 8.0), ACCENT));
+        self.right(y, &[(shown, INK, false)]);
+        self.hits.push(Hit { min: Vec2::new(x0 - 4.0, y - 3.0), size: Vec2::new(x1 - x0 + 8.0, GLYPH * self.k + 6.0), id });
+        self.y += self.line_h() + 1.0;
     }
 
-    /// Plain lines of text (keys, notes).
+    /// A line of small text (keys, notes, a legend).
     pub fn note(&mut self, s: &str, c: Color) {
         let y = self.y;
-        self.text_at(Vec2::new(self.x + 12.0, y), s, c, self.k);
-        self.y += self.row_h() - 2.0;
+        self.put(Vec2::new(self.x + PAD, y), s, c, self.k * SMALL);
+        self.y += (GLYPH + 4.0) * self.k * SMALL;
     }
 
     /// A box of `h` px for a chart: its corner and size (draw into it with `line`, `rect`, `text`).
     pub fn area(&mut self, h: f32) -> (Vec2, Vec2) {
-        let p = Vec2::new(self.x + 12.0, self.y);
-        let s = Vec2::new(self.w - 24.0, h);
+        let p = Vec2::new(self.x + PAD, self.y);
+        let s = Vec2::new(self.w - 2.0 * PAD, h);
         self.cmds.push(Cmd::Rect(p, s, Color([0.055, 0.063, 0.078, 1.0])));
-        self.y += h + 8.0;
+        self.y += h + 4.0;
         (p, s)
     }
 
@@ -238,13 +265,15 @@ impl Panel {
         self.cmds.push(Cmd::Rect(p, s, c));
     }
 
+    /// Small text at `p` (chart labels).
     pub fn text(&mut self, p: Vec2, s: &str, c: Color) {
-        self.text_at(p, s, c, self.k);
+        let k = self.k * SMALL * 0.9;
+        self.put(p, s, c, k);
     }
 
     /// Draw it: the background, then everything in the order laid out. Returns the panel's box.
     pub fn finish(self, frame: &mut Frame) -> (Hit, Vec<Hit>) {
-        let size = Vec2::new(self.w, self.y - self.top + 4.0);
+        let size = Vec2::new(self.w, self.y - self.top + 2.0);
         frame.hud_rect(Vec2::new(self.x, self.top), size, BG);
         frame.hud_box(Vec2::new(self.x, self.top), size, LINE);
         for c in self.cmds {
