@@ -43,7 +43,11 @@ impl PlanetApp {
     /// The viewer at the home system's first baked world, or at world `id` (a release's world id).
     pub fn new(id: Option<&str>) -> Result<Self, String> {
         let world = universe_sim::world::World::new(crate::seed());
-        let home = world.charts().system(world.home_system);
+        Self::with_home(world.charts().system(world.home_system), id)
+    }
+
+    /// The viewer over a charted system already at hand (the game's home system, from its charts).
+    pub fn with_home(home: Arc<StarSystem>, id: Option<&str>) -> Result<Self, String> {
         let clocks = Runtime::new(&Subscriptions::of(&[ClockKey::Celestial, ClockKey::Planetary]), 1.0, 1000)?;
         let body = home.bodies.iter().position(|b| b.terrain.as_ref().is_some_and(|t| t.baked())).unwrap_or(0);
         let mut app = PlanetApp {
@@ -105,6 +109,22 @@ impl PlanetApp {
             (self.yaw, self.pitch) = (sun.x.atan2(sun.z) + 0.6, 0.25);
         }
         Ok(())
+    }
+
+    /// Shown in look `look` (its maps made again).
+    pub fn set_look(&mut self, look: Look) {
+        self.look = look;
+        self.view.world_maps.clear();
+    }
+
+    /// Frame `n` of the shown world's history in place of today, if it has one.
+    pub fn show_frame(&mut self, n: usize) {
+        if let Some((key, Some(history))) = self.studio.shown.clone()
+            && n < history.frames.len()
+        {
+            self.then = Some(WorldFrame { key, history, frame: n });
+            self.view.world_maps.clear();
+        }
     }
 
     fn update_positions(&mut self) {

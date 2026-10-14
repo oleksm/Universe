@@ -18,7 +18,7 @@ pub fn color(c: [f32; 3]) -> Color {
 }
 
 pub fn draw(frame: &mut Frame, app: &App) {
-    crate::visuals::begin_view(&frame.camera, app.ship.velocity * app.warp(), format!("{:?}",app.view.cache));
+    crate::visuals::begin_view(&frame.camera, app.ship.velocity * app.warp(), format!("{:?}",app.view.origin));
     if app.mode == Mode::Observer && app.observer.studio {
         studio(frame, app);
         return;
@@ -112,7 +112,7 @@ fn height_pins(frame: &mut Frame, app: &App) {
     let mut placed: Vec<(Vec2, Vec2)> = Vec::new();
     for (&(origin, i), globe) in &app.caches.planet.globes {
         let Some((_, lines)) = &globe.lines else { continue };
-        if origin != app.view.cache {
+        if origin != app.view.origin {
             continue;
         }
         let b = &sys.bodies[i];
@@ -549,7 +549,7 @@ fn sight(app: &App) -> crate::planet_view::Sight<'_> {
     };
     crate::planet_view::Sight {
         system: &app.view.system,
-        cache: app.view.cache,
+        cache: app.view.origin,
         positions: &app.view.positions,
         t: app.now(),
         show_grid: app.show_grid,
@@ -715,7 +715,7 @@ fn city_lights(frame: &mut Frame, app: &App, i: usize, center: DVec3) {
         return;
     }
     // Optional lights appear only with worker-prepared surface placements.
-    let Some(globe) = app.caches.planet.globes.get(&(app.view.cache, i)) else { return };
+    let Some(globe) = app.caches.planet.globes.get(&(app.view.origin, i)) else { return };
     for (k, port) in sys.spaceports.iter().enumerate().filter(|(_, p)| p.body == i) {
         let people = app.v.economy.iter().find(|p| p.system == app.view.origin && p.facility == universe_sim::world::Facility::Spaceport(k)).map_or(0.0, |p| p.population);
         if people <= 0.0 {

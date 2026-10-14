@@ -818,29 +818,20 @@ fn s_asteroid(app: &mut App, name: &str, c: &Ctx) {
 }
 
 fn s_worlds(app: &mut App, _name: &str, _c: &Ctx) {
-    // The planet studio, gone to UNIVERSE_WORLD (a world id: TRD1 Harvest by default), in
-    // UNIVERSE_LOOK (colour, geology, energy).
-    let mut studio = crate::planet_studio::PlanetStudio::open();
+    // The planet viewer over the game, gone to UNIVERSE_WORLD (a world id: TRD1 Heath by default),
+    // in UNIVERSE_LOOK (colour, geology, energy); UNIVERSE_HISTORY_FRAME: its history's frame n,
+    // counted from 0, in place of today.
     let want = std::env::var("UNIVERSE_WORLD").unwrap_or_else(|_| "TRD1".into());
-    studio.selected = studio.list.iter().position(|r| r.world_id == want).unwrap_or(0);
-    app.world_look = match std::env::var("UNIVERSE_LOOK").as_deref() {
+    let mut planet = crate::planet_app::PlanetApp::with_home(app.charts.system(app.v.ship_system), Some(&want)).unwrap_or_else(|e| panic!("worlds: {e}"));
+    planet.set_look(match std::env::var("UNIVERSE_LOOK").as_deref() {
         Ok("geology") => crate::planet_studio::Look::Geology,
         Ok("energy") => crate::planet_studio::Look::Energy,
         _ => crate::planet_studio::Look::Colour,
-    };
-    let r = studio.list.get(studio.selected).cloned();
-    app.panels.planet_studio = Some(studio);
-    if let Some(r) = r {
-        let _ = crate::planet_studio::go_to(app, &r);
+    });
+    if let Some(n) = crate::devenv::num("UNIVERSE_HISTORY_FRAME").map(|n| n as usize) {
+        planet.show_frame(n);
     }
-    // (UNIVERSE_HISTORY_FRAME: its history's frame n, counted from 0, in place of today.)
-    if let Some(n) = crate::devenv::num("UNIVERSE_HISTORY_FRAME").map(|n| n as usize)
-        && let Some((key, Some(history))) = app.panels.planet_studio.as_ref().and_then(|s| s.shown.clone())
-        && n < history.frames.len()
-    {
-        app.world_frame = Some(crate::planet_studio::WorldFrame { key, history, frame: n });
-    }
-    app.observer.yaw = 2.2;
+    app.open = Some(Box::new(planet));
 }
 
 fn s_rig(app: &mut App, _name: &str, c: &Ctx) {

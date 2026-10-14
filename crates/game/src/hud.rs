@@ -29,10 +29,6 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
         crate::newspanel::draw(frame, app);
         return;
     }
-    // (The planet studio's panel beside the world it looks at, not over it.)
-    if let Some(studio) = &app.panels.planet_studio {
-        crate::planet_studio::draw(frame, app, studio);
-    }
     if app.panels.standards.is_some() {
         crate::standards::draw(frame, app);
         return;
