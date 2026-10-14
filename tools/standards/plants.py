@@ -789,9 +789,10 @@ def casting_units():
     out["mould-car-12"] = dict(
         name="Ingot mould car, 12 moulds", size_class=1, dims=(6.0, 2.8, 2.3),
         desc=f"A self-propelled rail car carrying twelve cast iron ingot moulds in two rows of six at 0.85 m, each on its stool, big end up: each takes {ING_M + HOT_TOP:,.0f} kg of steel, a {ING_L:g} m ingot tapering from {ING_A:g} to {ING_B:g} m square with its hot top; the ingot fits one to a heavy crate. The ladle is held over each mould in turn by the crane and teemed from its slide-gate nozzle; the train stands while the ingots freeze, then the stripper crane lifts each ingot up out of its mould by the hot top (big end up, the ingot can only leave upward), its tongs' arms holding the mould down by its lugs; the moulds stay on the car. Two trunnion lugs a mould on its y faces, 100 mm across, 80 mm out, near z 2.05, for those arms and for changing a mould. It travels along its x on 2 m gauge, its origin on the running plane; the moulds' tops 2.3 m up.",
-        built_of=[part("Moulds", CAST_IRON, PER_CAR * mould, f"{PER_CAR} moulds, {wall * 1000:.0f} mm walls, {ING_L * 1.15:.2f} m tall: {mould:,.0f} kg each"),
-                  part("Stools", CAST_IRON, PER_CAR * stool, f"{PER_CAR} base plates 0.15 m thick: {stool:,.0f} kg each"),
-                  part("Car frame and deck", "stock.st4340-box-400x400x25", frame_, "two box beams 400 x 400 x 25 mm, 6 m, and a deck 6 x 2.8 m of 40 mm plate"),
+        built_of=[part("Moulds", CAST_IRON, 27490.5, f"{PER_CAR} moulds with their lugs, {wall * 1000:.0f} mm walls, {ING_L * 1.15:.2f} m tall; measured on blender's model ({PER_CAR * mould:,.0f} kg as plain walls)"),
+                  part("Stools", CAST_IRON, 8251.7, f"{PER_CAR} base plates 0.15 m thick; measured"),
+                  part("Car frame and deck", "stock.st4340-box-400x400x25", 8798.8, "two box beams 400 x 400 x 25 mm, 6 m, and a deck 6 x 2.8 m of 40 mm plate; measured"),
+                  part("Cross members", A36, 716.2, "four 260 x 160 x 12 mm hollow members between the beams, fabricated (not kit stock); measured, provisional"),
                   part("Bogies and drive", "good.electric-motors", 3000.0, "from memory")],
         holds=PER_CAR * (ING_M + HOT_TOP), needs={"power": 30000.0},
         basis=[{"of": ["physical", "built_of", "holds"], "tier": "derived", "review": True, "note": f"The ingot sized to the heavy crate (2 t); its hot top the module's scrap share. Moulds about their ingot's mass and more, as practice runs (from memory). Car and drive from memory."}])
