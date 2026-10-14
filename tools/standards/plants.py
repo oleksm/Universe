@@ -173,7 +173,7 @@ def cooling_unit(heat, whose="the furnace's"):
     pumps = flow / 1000 * 400e3 / 0.75
     fans = 0.008 * heat
     return dict(
-        name=f"Cooling tower, {cells} cells", size_class=3, fits="bay-s3", dims=(12.0 * cells, 12.0, 14.0),
+        name=f"Cooling tower, {cells} cells", size_class=3 if cells <= 2 else 4, fits="bay-s3" if cells <= 2 else "bay-s4", dims=(12.0 * cells, 12.0, 14.0),
         desc=f"An induced-draught wet tower: {whose} closed water loop gives up its heat through a plate exchanger to tower water, which sprays down through fill against a fan's draught and evaporates. The loop's pumps and exchanger stand on a skid inside its footprint; the loop leaves by two pairs of 500 mm ports on its east end (local x +{6.0 * cells:.0f}, 0.75 m up, at y 0 and +4.5), and the layout's pipes and concrete basin are not the unit's. On a world with air only; airless ground needs radiators instead.",
         built_of=[part("Cells", A36, 60000.0 * cells, "steel frame, fill, drift eliminators and fan deck: 60 t a cell, from memory"),
                   part("Fans and motors", "good.electric-motors", 6000.0 * cells, "one 10 m fan a cell, from memory"),
@@ -876,6 +876,304 @@ def casting_bay_air(us, recs):
     return layout, []
 
 
+# ---------------------------------------------------------------- the shaft furnace's figures
+smod = yaml.safe_load(open(S + "modules/shaft-furnace.yaml"))
+SREC = smod["recipes"][0]
+S_RATE, S_P = SREC["rate"], SREC["power"]                    # kg/s of sponge iron, W (sourced: 110 kWh a tonne, not heating the gas)
+PELLETS = next(i["quantity"] for i in SREC["inputs"] if i["item"] == "good.iron-ore-pellets") * S_RATE
+H2_USED = next(i["quantity"] for i in SREC["inputs"] if i["item"] == "element.h") * S_RATE
+STEAM = next(o["quantity"] for o in SREC["outputs"] if o["item"] == "good.water") * S_RATE
+CP_H2, CP_PEL, CP_DRI, CP_STEAM = 14.3e3, 900.0, 700.0, 2.0e3   # J/kg K: hydrogen, pellets, sponge iron, steam (handbook figures, rounded)
+ENDO = 0.86e6                     # J/kg of iron: Fe2O3 + 3 H2 -> 2 Fe + 3 H2O takes about 96 kJ a mole of oxide (handbook)
+T_GAS, T_TOP, T_PRE, T_COLD = 900.0, 350.0, 300.0, 40.0     # deg C: gas into the bustle, top gas out, gas after the recuperator, after the scrubber (from memory of hydrogen shaft furnaces)
+T_BURDEN, T_OUT = 850.0, 50.0     # deg C: the burden at the bottom of the reduction zone, the sponge iron discharged cold
+SHELL_LOSS = 0.05                 # share of the gas's heat lost through the shell, from memory
+P_SHAFT, P_SUCTION = 2.8e5, 1.3e5  # Pa: gas into the shaft, at the compressor's suction (from memory)
+V_GAS = 30.0                      # m/s in the gas mains, chosen
+# Heat balance of the reduction zone: the gas brings the heat that warms the pellets and drives the reduction.
+Q_SHAFT = (ENDO * S_RATE + PELLETS * CP_PEL * (T_BURDEN - 25.0)) * (1 + SHELL_LOSS)
+GAS = Q_SHAFT / (CP_H2 * (T_GAS - T_TOP))                   # kg/s of hydrogen blown in
+H2_TOP = GAS - H2_USED
+Q_HEATER = GAS * CP_H2 * (T_GAS - T_PRE)
+Q_RECUP = GAS * CP_H2 * (T_PRE - T_COLD)
+T_RECUP_OUT = T_TOP - Q_RECUP / (H2_TOP * CP_H2 + STEAM * CP_STEAM)
+Q_SCRUB = (H2_TOP * CP_H2 + STEAM * CP_STEAM) * (T_RECUP_OUT - T_COLD) + 0.97 * STEAM * 2.4e6   # nearly all the steam condenses at 40 deg C and 1.3 bar
+GAMMA, ETA_K = 1.41, 0.80
+W_COMP = GAS * CP_H2 * (T_COLD + 273.15) * ((P_SHAFT / P_SUCTION) ** ((GAMMA - 1) / GAMMA) - 1) / ETA_K
+Q_COOLZONE = S_RATE * CP_DRI * (T_BURDEN - T_OUT)
+COOL_GAS = Q_COOLZONE / (CP_H2 * (600.0 - T_COLD))          # kg/s of hydrogen through the cooling zone, out at 600 deg C
+W_COOL = COOL_GAS * CP_H2 * (T_COLD + 273.15) * (1.3 ** ((GAMMA - 1) / GAMMA) - 1) / ETA_K
+HEATER_PF = 0.95
+
+
+def mol_flow(kg_h2, kg_steam=0.0):
+    return kg_h2 / 2.016e-3 + kg_steam / 18.015e-3
+
+
+def main_dia(mol_s, T_c, p):
+    """m across a gas main carrying mol_s at T_c and p, at V_GAS."""
+    q = mol_s * 8.314 * (T_c + 273.15) / p
+    return math.sqrt(4 * q / (math.pi * V_GAS))
+
+
+def shaft_units():
+    """The hydrogen shaft furnace's own units."""
+    out = {}
+    D = 6.6                                            # m inside the lining, from memory of shafts for 1.5 to 2 Mt a year
+    zones = {"top": 4.0, "reduction": 12.0, "transition": 4.0, "cooling": 9.0, "cone": 5.0}
+    hot = zones["top"] + zones["reduction"] + zones["transition"]
+    cold = zones["cooling"] + zones["cone"]
+    t_hot, t_cold, t_sh = 0.35, 0.15, 0.04
+    Do = D + 2 * t_hot + 2 * t_sh
+    Z_OUT = 8.0                                         # the discharge's outlet above the floor, over the product belt
+    z_bustle = Z_OUT + zones["cone"] + zones["cooling"] + zones["transition"]
+    z_top = Z_OUT + hot + cold
+    z_ring = Z_OUT + cold
+    H = z_top + 8.0                                     # the charge hopper and seal leg above
+    shell = cyl_shell(Do, hot + cold, t_sh) * RHO["steel"]
+    lining = (math.pi * ((D / 2 + t_hot) ** 2 - (D / 2) ** 2) * hot + math.pi * ((D / 2 + t_cold) ** 2 - (D / 2) ** 2) * cold) * RHO["refractory"]
+    d_b = main_dia(mol_flow(GAS), T_GAS, P_SHAFT)
+    R_b = Do / 2 + 0.3 + d_b / 2
+    bustle_s = math.pi * (d_b + 0.4) * 0.02 * 2 * math.pi * R_b * RHO["steel"]
+    bustle_r = math.pi * (d_b + 0.2) * 0.2 * 2 * math.pi * R_b * RHO["refractory"]
+    burden = (math.pi * (D / 2) ** 2 * (hot + cold - zones["cone"]) + math.pi * (D / 2) ** 2 * zones["cone"] / 3) * 1900.0
+    ring = 2 * math.pi * (Do / 2 + 0.4) * box_tube(0.8, 1.2, 0.04, 1.0) * RHO["steel"]
+    side = max(12.0, round(2 * R_b + d_b + 1.0))
+    out["shaft-furnace-200th"] = dict(
+        name=f"Hydrogen shaft furnace, {S_RATE * 3.6:.0f} t an hour", size_class=2 if side <= 12 else 3, fits="bay-s2" if side <= 12 else "bay-s3", dims=(side, side, round(H, 1)),
+        desc=(f"A refractory-lined steel shaft {D:g} m across inside, through which iron ore pellets sink by their own weight for about {burden / S_RATE / 3600:.0f} hours against hot hydrogen rising, coming out at the bottom as cold sponge iron. "
+              f"Local frame: the shaft's axis at (0, 0). From the top down: a charge hopper and seal leg (z {z_top:.0f} to {H:.0f}) with the pellet belt's head over it; the top gas outlet at z {z_top - 1:.0f} on +x; "
+              f"the reduction zone ({zones['reduction']:g} m); the bustle main, a ring {d_b:.1f} m across round the shaft at z {z_bustle:.0f}, through whose ports hydrogen at {T_GAS:.0f} deg C enters, its inlet on -y; "
+              f"the transition; the cooling zone ({zones['cooling']:g} m), cooled by a loop of cold hydrogen in at z {z_ring - 8:.0f} and out at z {z_ring - 3:.0f} (ports on -x); a discharge cone to burden feeders and a lock at z {Z_OUT:g}, over the layout's product belt. "
+              f"Hung from a ring girder at z {z_ring:.0f} (radius {Do / 2 + 0.4:.1f} m, the cooling zone's top, under the bustle) on the layout's columns. About {burden / 1000:,.0f} t of burden inside."),
+        built_of=[part("Shell", A36, shell, f"{Do:.2f} m across, {hot + cold:g} m, {t_sh * 1000:.0f} mm plate; the cones not counted apart"),
+                  part("Lining", REF, lining, f"{t_hot * 1000:.0f} mm in the hot {hot:g} m, {t_cold * 1000:.0f} mm against wear in the cooling zone and cone"),
+                  part("Bustle main", A36, bustle_s, f"a ring {2 * R_b:.1f} m across of {d_b + 0.4:.1f} m pipe, 20 mm plate"),
+                  part("Bustle lining", REF, bustle_r, "200 mm inside the ring"),
+                  part("Support ring girder", A36, ring, "a box 0.8 x 1.2 m, 40 mm plate, round the shaft"),
+                  part("Charge hopper, seal leg and distributor", A36, 40000.0, "from memory"),
+                  part("Burden feeders and discharge lock", "good.electric-motors", 30000.0, "from memory")],
+        holds=burden,
+        needs={"power": S_P - W_COMP - W_COOL, "gravity": 1.0, "atmosphere": "any"},
+        recipes=smod["recipes"], life=smod.get("life"),
+        basis=[{"of": ["recipes"], "tier": "derived", "note": "The module's recipe (module.shaft-furnace), carried here: the module stays the game's until it reads layouts. Its sources are the module's."},
+               {"of": ["physical", "built_of", "holds"], "tier": "derived", "review": True, "note": f"From the materials and dimensions in built_of; the shaft's size and zones from memory of shafts for 1.5 to 2 Mt a year; the burden at 1,900 kg/m3 (from memory). The source's 137 m (module.shaft-furnace) is a whole plant's tower; this shaft with its hopper is {H:.0f} m."},
+               {"of": ["needs.power"], "tier": "derived", "note": f"The module's {S_P / 1e6:.0f} MW (sourced, 110 kWh a tonne, gas heating left out) less the compressors, which are units of their own: feeders, belts, the charge's seals, instruments."},
+               {"of": ["needs.gravity"], "tier": "invented", "review": True, "note": "The burden sinks by its own weight against the gas's drag; at low g the gas must be slowed or the bed lifts. Not checked below 1 m/s2."}])
+    # Gas heater: electric resistance banks in lined vessels; hydrogen cannot be heated by burning the gas it is.
+    n_h, Dh, Hh = 4, 4.0, 16.0
+    elem = Q_HEATER / 20e3 / 0.155                     # kg of FeCrAl strip at 20 kW/m2 of surface, 0.155 m2/kg for 20 x 2 mm strip
+    hv = n_h * (cyl_shell(Dh, Hh, 0.025, bottom=2.0) * RHO["steel"])
+    hr = n_h * math.pi * ((Dh / 2) ** 2 - (Dh / 2 - 0.3) ** 2) * Hh * RHO["refractory"]
+    out[f"gas-heater-{Q_HEATER / 1e6:.0f}mw"] = dict(
+        name=f"Hydrogen heater, {Q_HEATER / 1e6:.0f} MW", size_class=3, fits="bay-s3", dims=(24.0, 8.0, 18.0),
+        desc=(f"Heats {GAS:.1f} kg/s of hydrogen from {T_PRE:.0f} to {T_GAS:.0f} deg C with electric resistance elements: {n_h} lined vessels {Dh:g} m across and {Hh:g} m tall in a row along x at 6 m, "
+              "the gas in at the bottom of each (from a header on -y, 2 m up) and out at the top into a lined hot header on +y, 15 m up, toward the shaft's bustle. Its power by cables from its transformer, to a terminal house at its -x end."),
+        built_of=[part("Vessels", A36, hv, f"{n_h} vessels {Dh:g} m across, {Hh:g} m, 25 mm plate, heads twice the disc"),
+                  part("Lining", REF, hr, "300 mm"),
+                  part("Elements", "material.stainless-steel-304", elem, f"FeCrAl strip, which the registry has not got: stainless steel stands for it; {elem / 1000:.0f} t at 20 kW/m2 of surface"),
+                  part("Headers, terminals and controls", A36, 30000.0, "from memory")],
+        needs={"power": Q_HEATER / 0.98},
+        basis=[{"of": ["physical", "built_of"], "tier": "invented", "review": True, "note": "Vessels and element loading from memory; elements sized from the duty."},
+               {"of": ["needs"], "tier": "derived", "note": f"The gas's {GAS:.1f} kg/s at {CP_H2 / 1e3:.1f} kJ/kg K over {T_GAS - T_PRE:.0f} K, at 98% (from memory)."}])
+    ht = transformer_unit(Q_HEATER / 0.98 / HEATER_PF, "the hydrogen heater's elements, through thyristor sets in its terminal house")
+    ht["name"] = ht["name"].replace("Furnace", "Heater")
+    out[f"heater-transformer-{Q_HEATER / 0.98 / HEATER_PF / 1e6:.0f}mva"] = ht
+    # Recuperator: the top gas warms the cold recycle gas.
+    A = Q_RECUP / (100.0 * 57.0)                       # m2 at 100 W/m2 K over a log mean of about 57 K
+    tubes = A / (math.pi * 0.05 * 12.0)
+    out["recuperator"] = dict(
+        name=f"Recuperator, {Q_RECUP / 1e6:.0f} MW", size_class=2, fits="bay-s2", dims=(12.0, 6.0, 18.0),
+        desc=(f"Two vertical shell-and-tube exchangers side by side (local x -3 and 3): the top gas from the shaft, {T_TOP:.0f} deg C with its steam, down through the tubes to {T_RECUP_OUT:.0f} deg C, "
+              f"above its dew point; the cleaned recycle gas up through the shells from {T_COLD:.0f} to {T_PRE:.0f} deg C. Top gas in at the top, out at the bottom on +y; recycle in at the bottom and out at the top on -y."),
+        built_of=[part("Tubes", "material.stainless-steel-304", tubes * math.pi * 0.047 * 0.003 * 12.0 * 7900, f"{tubes:,.0f} tubes 50 mm, 3 mm wall, 12 m: {A:,.0f} m2"),
+                  part("Shells and heads", A36, 2 * cyl_shell(4.5, 16.0, 0.02, bottom=2.0) * RHO["steel"], "two shells 4.5 m across, 16 m, 20 mm plate")],
+        needs={},
+        basis=[{"of": ["physical", "built_of"], "tier": "derived", "review": True, "note": f"Area from the duty ({Q_RECUP / 1e6:.0f} MW) at 100 W/m2 K, from memory for hydrogen on both sides; shells from memory."}])
+    # Scrubber: cools the top gas and takes out its water and dust.
+    q_s = mol_flow(H2_TOP, STEAM) * 8.314 * (T_RECUP_OUT + 273.15) / P_SUCTION
+    Ds = math.sqrt(4 * q_s / 3.0 / math.pi)
+    out["top-gas-scrubber"] = dict(
+        name="Top gas scrubber", size_class=2, fits="bay-s2", dims=(12.0, 12.0, 24.0),
+        desc=(f"A packed tower {Ds:.1f} m across and 22 m tall: the top gas up through it against sprayed water, which cools it to {T_COLD:.0f} deg C, condenses the {STEAM:.1f} kg/s of water the reduction made and washes out the dust. "
+              "Gas in at the bottom on -x, out at the top to the compressor; the condensate and spray water drain from its sump to a plate exchanger on its skid, which gives the heat to the tower loop, the condensate overflowing to the hydrogen plant."),
+        built_of=[part("Shell", A36, cyl_shell(Ds, 22.0, 0.016, bottom=2.0) * RHO["steel"], f"{Ds:.1f} m across, 22 m, 16 mm plate"),
+                  part("Packing", "material.stainless-steel-304", math.pi * Ds ** 2 / 4 * 10.0 * 250.0, "10 m of metal packing at 250 kg/m3"),
+                  part("Sprays, pumps and exchanger", "good.pumps", 40000.0, "from memory")],
+        needs={"power": Q_SCRUB / (4186 * 10) / 1000 * 300e3 / 0.75, "heat": Q_SCRUB},
+        basis=[{"of": ["physical", "built_of"], "tier": "derived", "review": True, "note": f"Across from the gas's {q_s:.0f} m3/s at 3 m/s; height and packing from memory."},
+               {"of": ["needs"], "tier": "derived", "note": f"The gas cooled from {T_RECUP_OUT:.0f} to {T_COLD:.0f} deg C and 97% of its steam condensed at 2.4 MJ/kg: {Q_SCRUB / 1e6:.0f} MW to the tower; its spray water pumped at 3 bar and 75%."}])
+    # Recycle compressor: hydrogen is light, so each stage adds little pressure.
+    head = CP_H2 * (T_COLD + 273.15) * ((P_SHAFT / P_SUCTION) ** ((GAMMA - 1) / GAMMA) - 1)
+    stages = math.ceil(head / 80e3)
+    out["recycle-compressor"] = dict(
+        name=f"Recycle compressor, {W_COMP / 1e6:.0f} MW", size_class=3, fits="bay-s3", dims=(22.0, 8.0, 7.0),
+        desc=(f"Raises {GAS:.1f} kg/s of hydrogen (the recycle with the hydrogen plant's make-up) from {P_SUCTION / 1e5:.1f} to {P_SHAFT / 1e5:.1f} bar: {stages} centrifugal stages, about 80 kJ/kg each at the impellers' tip speed limit, "
+              "in three casings on one line along x with intercoolers, driven by an electric motor at the -x end. Suction on +y at the +x end, discharge on -y at the -x end, both 1.5 m up."),
+        built_of=[part("Casings and rotors", "material.high-strength-steel-4340", 8000.0 * W_COMP / 1e6 * 0.6, "from memory: 8 t a MW of drive, three fifths of it the machines"),
+                  part("Motor", "good.electric-motors", 8000.0 * W_COMP / 1e6 * 0.4, "from memory"),
+                  part("Intercoolers", "material.stainless-steel-304", 15000.0, "from memory")],
+        needs={"power": W_COMP / 0.96, "heat": W_COMP},
+        basis=[{"of": ["physical", "built_of"], "tier": "invented", "review": True, "note": "8 t a MW of drive and the layout from memory."},
+               {"of": ["needs"], "tier": "derived", "note": f"Isentropic head {head / 1e3:.0f} kJ/kg at {ETA_K:.0%}, a motor at 96%; all the work leaves by the intercoolers and aftercooler to the tower."}])
+    # Cooling gas loop: cold hydrogen through the cooling zone, its heat to the tower.
+    out["dri-cooling-loop"] = dict(
+        name="Sponge iron cooling loop", size_class=2, fits="bay-s2", dims=(12.0, 8.0, 16.0),
+        desc=(f"Cools the sponge iron in the shaft's cooling zone from {T_BURDEN:.0f} to {T_OUT:.0f} deg C: {COOL_GAS:.1f} kg/s of hydrogen blown up through the zone, out at about 600 deg C, "
+              "through a gas cooler and a small scrubber (a packed tower 3 m across, 14 m tall, at local x -3) and back by a compressor (local x 3). Ports to the shaft on +y, 2 m up: cold out at local x -2, hot back at x 2."),
+        built_of=[part("Cooler and scrubber", A36, cyl_shell(3.0, 14.0, 0.012, bottom=2.0) * RHO["steel"] + 20000.0, "the tower's shell, 12 mm, and a gas cooler of 20 t from memory"),
+                  part("Compressor and motor", "good.electric-motors", 8000.0 * W_COOL / 1e6 + 5000.0, "from memory")],
+        needs={"power": W_COOL / 0.96, "heat": Q_COOLZONE + W_COOL},
+        basis=[{"of": ["physical", "built_of"], "tier": "invented", "review": True, "note": "Sizes from memory."},
+               {"of": ["needs"], "tier": "derived", "note": f"The sponge iron's {S_RATE:.1f} kg/s at {CP_DRI:.0f} J/kg K over {T_BURDEN - T_OUT:.0f} K; the gas's rise 40 to 600 deg C; compression 1.3 times at {ETA_K:.0%}."}])
+    return out
+
+
+def shaft_furnace_air(us, recs):
+    """The hydrogen shaft furnace on a world with air at 1 g: an open braced tower round the shaft, the gas loop on the
+    ground beside it, cooling towers to the north. Open, not a hall: a hydrogen leak must rise away, not gather under a roof."""
+    sh_key = "shaft-furnace-200th"
+    sh = us[sh_key]
+    side, _, H = sh["dims"]
+    cell = 3.0
+    top = math.ceil((H + 4.0) / cell) * cell             # the tower's roof over the belt's head house
+    box = (-12.0, -12.0, 0.0, 12.0, 12.0, top)
+    z_top_gas = float(sh["desc"].split("top gas outlet at z ")[1].split(" ")[0])
+    z_bustle = float(sh["desc"].split("a ring ")[1].split("at z ")[1].split(",")[0])
+    z_ring = float(sh["desc"].split("ring girder at z ")[1].split(" ")[0])
+    openings = [(9.0, -3.0, z_top_gas - 3.0, 12.0, 3.0, top - 3.0),            # east wall: the top gas main out and the pellet belt in
+                (-3.0, -12.0, z_bustle - 3.0, 3.0, -9.0, z_bustle + 3.0),     # south wall: the hot gas main in to the bustle
+                (-12.0, -3.0, 3.0, -9.0, 3.0, z_ring)]                        # west wall: the product belt out, the cooling loop's pipes
+    groups, ground_nodes, n_nodes, cells = lattice(box, cell, round(top / cell) - 1, None, openings)
+    x0, y0, z0, x1, y1, z1 = box
+    # Wind: 1 kPa (invented) on one face; the tower's walls take its moment as chords.
+    wind_M = 1000.0 * (x1 - x0) * top * top / 2
+    chord_force = wind_M / (y1 - y0) / round((x1 - x0) / cell + 1)
+    sec = frames.lightest_section(chord_force)
+    members, fmass = [], 0.0
+    for g in ("wall", "roof"):
+        for diag, n in ((False, groups[g][0]), (True, groups[g][1])):
+            key, st = strut(sec, cell, diag)
+            members.append({"item": key, "count": n, "where": "tower walls" if g == "wall" else "tower roof"})
+            fmass += n * st["physical"]["mass"]
+    node_key = strut(sec, cell)[1]["kit"]["node"]
+    node = yaml.safe_load(open(S + "mill-stock/" + node_key.split(".", 1)[1].upper() + ".yaml"))
+    members.append({"item": node_key, "count": n_nodes, "where": "nodes"})
+    fmass += n_nodes * frames.node_mass(node, frames.materials())
+    # The shaft hangs from its ring girder on eight box columns.
+    srec = recs[sh_key]
+    load = (srec["physical"]["mass"] + srec.get("holds", 0)) * G
+    col_a = 0.4 * 0.4 - 0.35 * 0.35
+    n_col = 8
+    col_sigma = load / n_col / col_a
+    while 1.5 * col_sigma > 470e6:
+        n_col += 4
+        col_sigma = load / n_col / col_a
+    col_r = math.sqrt((0.4 ** 4 - 0.35 ** 4) / 12 / col_a)
+    members.append({"item": "stock.st4340-box-400x400x25", "count": n_col, "where": f"columns under the shaft's ring girder, {z_ring:.0f} m, on a circle of radius {float(sh['desc'].split('(radius ')[1].split(' ')[0]):g} m beside the cooling zone and cone, the first at 22.5 degrees off x so the product belt passes between; braced to the tower's walls every 6 m"})
+    fmass += n_col * z_ring * col_a * RHO["steel"]
+    deck = 6 * (x1 - x0) * (y1 - y0) * 0.6 * 0.01 * RHO["steel"]       # six platforms of grating, 60% of the plan
+    cap = frames.strut_capacity(yaml.safe_load(open(S + "mill-stock/" + strut(sec, cell)[1]["kit"]["section"].split(".", 1)[1].upper() + ".yaml")))
+    sized = (f"At 1 g the shaft with its burden, {load / 1e6:.1f} MN, hangs from its ring girder at z {z_ring:.0f} on {n_col} columns of 400 x 400 x 25 mm 4340 box: {col_sigma / 1e6:.0f} MPa each, against 470 MPa with half again to spare; "
+             f"braced every 6 m their slenderness is {6.0 / col_r:.0f}. Wind of 1 kPa (invented) on a {x1 - x0:.0f} x {top:.0f} m face makes {wind_M / 1e6:.0f} MN m at the base, {chord_force / 1e3:.0f} kN in each wall chord: "
+             f"{sec} takes {cap / 1e3:.0f} kN, the kit's lightest with half again to spare. Six grating platforms, 10 mm, 60% of the plan. Footings' loads and the belt's head house not yet checked.")
+
+    heater = next(k for k in us if k.startswith("gas-heater-"))
+    htr = next(k for k in us if k.startswith("heater-transformer-"))
+    towers = [k for k in us if k.startswith("cooling-tower-shaft-")]
+    bays = [
+        {"id": "F", "mount": f"plant-mount.{sh['fits']}", "unit": f"unit.{sh_key}", "at": [0.0, 0.0, 0.0], "note": "in the tower, on its columns; the product belt under its discharge"},
+        {"id": "R", "mount": "plant-mount.bay-s2", "unit": "unit.recuperator", "at": [24.0, 24.0, 0.0], "note": "north-east of the tower, under the top gas main's fall"},
+        {"id": "S", "mount": "plant-mount.bay-s2", "unit": "unit.top-gas-scrubber", "at": [48.0, 24.0, 0.0], "note": "east of the recuperator"},
+        {"id": "K", "mount": "plant-mount.bay-s3", "unit": "unit.recycle-compressor", "at": [60.0, 0.0, 0.0], "note": "under the pellet belt's gallery (36 m over it), in its own open shed"},
+        {"id": "H", "mount": "plant-mount.bay-s3", "unit": f"unit.{heater}", "at": [24.0, -24.0, 0.0], "note": "south-east of the tower, its hot header toward the bustle"},
+        {"id": "T", "mount": "plant-mount.bay-s2", "unit": f"unit.{htr}", "at": [48.0, -24.0, 0.0], "note": "in a fire-walled vault beside the heater's terminal house"},
+        {"id": "L", "mount": "plant-mount.bay-s2", "unit": "unit.dri-cooling-loop", "at": [-24.0, -24.0, 0.0], "note": "south-west of the tower, clear of the product belt"},
+    ]
+    bays += [{"id": f"C{i + 1}", "mount": "plant-mount.bay-s4", "unit": f"unit.{t}", "at": [-48.0 + 48.0 * i, 60.0, 0.0], "note": "north, in a row"} for i, t in enumerate(towers)]
+    d_top = main_dia(mol_flow(H2_TOP, STEAM), T_TOP, P_SUCTION)
+    d_wet = main_dia(mol_flow(H2_TOP, STEAM), T_RECUP_OUT, P_SUCTION)
+    d_dry = main_dia(mol_flow(H2_TOP), T_COLD, P_SUCTION)
+    d_cmp = main_dia(mol_flow(GAS), T_COLD, P_SHAFT)
+    d_pre = main_dia(mol_flow(GAS), T_PRE, P_SHAFT)
+    d_hot = main_dia(mol_flow(GAS), T_GAS, P_SHAFT)
+    d_mk = main_dia(mol_flow(H2_USED), T_COLD, P_SUCTION)
+    d_cg = main_dia(mol_flow(COOL_GAS), T_COLD, 1.5e5)
+    d_cg_hot = main_dia(mol_flow(COOL_GAS), 600.0, 1.5e5)
+    pm = lambda d, t=0.012: math.pi * d * t * RHO["steel"]
+    lined = lambda d: math.pi * (d + 0.4) * 0.016 * RHO["steel"] + math.pi * (d + 0.2) * 0.2 * RHO["refractory"]
+    rise = 15.0
+    belt_len = (H + 2.0 - 2.0) / math.sin(math.radians(rise))
+    belt_x = belt_len * math.cos(math.radians(rise))
+    loop_heat = sum(recs[k]["needs"].get("heat", 0) for k in ("top-gas-scrubber", "recycle-compressor", "dri-cooling-loop", htr))
+    flow = loop_heat / (4186 * 10)
+    d_cw = math.sqrt(4 * flow / 1000 / 2.5 / math.pi)
+    links = [
+        link("conveyor", "pellet belt", (round(belt_x, 1), 0.0, 2.0), (0.0, 0.0, round(H + 2.0, 1)), A36, 180.0, 300000.0, f"a 1.2 m belt in a covered gallery on trestles every 18 m, 180 kg/m with the gallery (from memory), rising at {rise:g} degrees from the pellet plant's transfer house to a head house on the tower's roof over the charge hopper; {PELLETS:.0f} kg/s of pellets"),
+        link("conveyor", "product belt", (0.0, 0.0, 5.0), (-60.0, 0.0, 5.0), A36, 150.0, 150000.0, "a 1 m belt in a gallery 5 m up, from under the discharge lock west to the arc furnace shop's sponge iron bin, beyond the layout"),
+        link("duct", "top gas main", (sh["dims"][0] / 2 - 0.5, 0.0, z_top_gas), (24.0, 24.0, 18.0), A36, pm(d_top), None, f"{d_top:.1f} m across, 12 mm plate, insulated: {T_TOP:.0f} deg C top gas with its steam, out of the tower's east wall and down to the recuperator", via=[(15.0, 0.0, z_top_gas), (24.0, 24.0, z_top_gas)]),
+        link("duct", "wet gas to the scrubber", (24.0, 27.0, 1.5), (42.0, 24.0, 2.0), A36, pm(d_wet), None, f"{d_wet:.1f} m across, 12 mm plate", via=[(24.0, 32.0, 1.5), (40.0, 32.0, 1.5), (40.0, 24.0, 2.0)]),
+        link("duct", "clean gas to the compressor", (48.0, 24.0, 23.0), (68.0, 4.0, 1.5), A36, pm(d_dry), None, f"{d_dry:.1f} m across, 12 mm plate; the hydrogen plant's make-up joins it here", via=[(48.0, 24.0, 26.0), (68.0, 24.0, 26.0), (68.0, 4.0, 26.0)]),
+        link("pipe", "compressed gas to the recuperator", (50.0, -4.0, 1.5), (24.0, 21.0, 1.0), A36, pm(d_cmp), None, f"{d_cmp:.1f} m across, 12 mm wall, {P_SHAFT / 1e5:.1f} bar", via=[(36.0, -4.0, 1.5), (36.0, 14.0, 1.5), (24.0, 14.0, 1.0)]),
+        link("pipe", "warm gas to the heater", (24.0, 21.0, 17.0), (24.0, -28.0, 2.0), A36, pm(d_pre), None, f"{d_pre:.1f} m across, 12 mm wall, insulated, {T_PRE:.0f} deg C", via=[(24.0, 14.0, 17.0), (14.0, 14.0, 17.0), (14.0, -28.0, 17.0), (14.0, -28.0, 2.0)]),
+        link("duct", "hot gas to the bustle", (24.0, -20.0, 15.0), (0.0, -(sh["dims"][0] / 2 - 0.5), z_bustle), A36, lined(d_hot), None, f"{d_hot:.1f} m inside 200 mm of refractory, 16 mm shell: hydrogen at {T_GAS:.0f} deg C, in through the tower's south wall to the bustle's inlet; its shell runs warm, so it is the hydrogen-tight steel of the loop that matters (not yet specified)", via=[(24.0, -20.0, z_bustle), (0.0, -20.0, z_bustle)]),
+        link("pipe", "hydrogen make-up", (100.0, 4.0, 1.5), (68.0, 4.0, 1.5), A36, pm(d_mk, 0.008), None, f"{d_mk:.1f} m across, 8 mm wall: {H2_USED:.2f} kg/s from the hydrogen plant, beyond the layout"),
+        link("pipe", "condensate to the hydrogen plant", (54.0, 24.0, 0.5), (100.0, 24.0, 0.5), A36, math.pi * 0.2 * 0.006 * RHO["steel"], None, f"200 mm, 6 mm wall: the {STEAM:.1f} kg/s of water the reduction made, back to the electrolysers, beyond the layout"),
+        link("pipe", "cooling water mains", (-72.0, 42.0, 0.75), (60.0, -12.0, 0.75), A36, 2 * pm(d_cw, 0.012), None, f"a pair of {d_cw:.1f} m pipes, 12 mm wall, flow and return: {flow:,.0f} kg/s at a 10 K rise, along the towers' row and down the plant to the scrubber, compressor, cooling loop and transformer", via=[(84.0, 42.0, 0.75), (84.0, -12.0, 0.75)]),
+        link("pipe", "cold gas to the cooling zone", (-26.0, -20.0, 2.0), (-(side / 2 - 0.5), 0.0, z_ring - 8.0), A36, pm(d_cg, 0.008), None, f"{d_cg:.1f} m, 8 mm wall: {COOL_GAS:.1f} kg/s of hydrogen at {T_COLD:.0f} deg C, through the tower's west wall", via=[(-26.0, -20.0, z_ring - 8.0), (-26.0, 0.0, z_ring - 8.0)]),
+        link("pipe", "hot gas from the cooling zone", (-(side / 2 - 0.5), 0.0, z_ring - 3.0), (-22.0, -20.0, 2.0), A36, pm(d_cg_hot, 0.010) * 1.5, None, f"{d_cg_hot:.1f} m, 10 mm wall, insulated (half as much again): about 600 deg C, back to the loop's cooler", via=[(-22.0, 0.0, z_ring - 3.0), (-22.0, -20.0, z_ring - 3.0)]),
+        link("cable", "heater supply", (48.0, -24.0, 4.0), (12.0, -24.0, 2.0), CU, 3 * Q_HEATER / HEATER_PF / (math.sqrt(3) * 6600) / 3 / 4e6 * RHO["copper"] * 3, None, "three phases at 6.6 kV in a cable tray, copper at 4 A/mm2, to the heater's terminal house"),
+    ]
+    tower_units = [recs[t] for t in towers]
+    ground = [
+        {"what": "Tower foundation", "item": CONC, "volume": r((x1 - x0) * (y1 - y0) * 2.5), "note": f"a mat {x1 - x0:.0f} x {y1 - y0:.0f} m, 2.5 m thick, under the tower and the shaft's columns"},
+        {"what": "Product belt pit", "item": CONC, "volume": r(10 * 4 * 0.4 + 2 * 10 * 3 * 0.3), "note": "under the discharge lock, 10 x 4 m, 3 m deep, 0.3 m walls"},
+        {"what": "Unit slabs", "item": CONC, "volume": r(sum(recs[b["unit"].split(".", 1)[1]]["physical"]["length"] * recs[b["unit"].split(".", 1)[1]]["physical"]["width"] * 0.8 for b in bays[1:] if not b["id"].startswith("C"))), "note": "0.8 m under each unit on the ground"},
+        {"what": "Transformer vault", "item": CONC, "volume": r(12 * 8 * 0.5 + 40 * 7 * 0.3), "note": "fire walls 7 m tall round the heater's transformer"},
+        {"what": "Cooling tower basins", "item": CONC, "volume": r(sum((t["physical"]["length"] + 0.6) * 12.6 * 0.5 + 2 * (t["physical"]["length"] + 0.3 + 12.3) * 2.0 * 0.3 for t in tower_units)), "note": "sunk as the furnace shop's: 0.3 m walls, floor top at z -2"},
+        {"what": "Gallery trestle footings", "item": CONC, "volume": r(math.ceil(belt_x / 18) * 8.0 + 4 * 4.0), "note": "8 m3 under each of the pellet belt's trestles, 4 m3 under the product belt's"},
+    ]
+    for g in ground:
+        g["mass"] = r(g["volume"] * RHO["concrete"])
+    used = [recs[b["unit"].split(".", 1)[1]] for b in bays]
+    power = sum(u.get("needs", {}).get("power", 0) for u in used) + sum(l.get("power", 0) for l in links)
+    heat = sum(u.get("needs", {}).get("heat", 0) for u in used)
+    water = sum(u.get("needs", {}).get("water", 0) for u in used)
+    mass_units = sum(u["physical"]["mass"] for u in used)
+    mass_links = sum(l["mass"] for l in links)
+    mass_ground = sum(g["mass"] for g in ground)
+    frame_mass = fmass + deck
+    total = mass_units + mass_links + frame_mass + mass_ground
+    mp = smod["physical"]
+    against = (f"module.shaft-furnace: one box {mp['length']:g} x {mp['width']:g} x {mp['height']:g} m, {S_P / 1e6:.0f} MW, which leaves out heating the gas. "
+               f"This layout: the same {S_RATE * 3.6:.0f} t of sponge iron an hour; {power / 1e6:.0f} MW, of which the hydrogen heater is {Q_HEATER / 0.98 / 1e6:.0f}: hydrogen brings no heat of its own, so the shaft's {Q_SHAFT / 1e6:.0f} MW comes from {GAS:.1f} kg/s of gas "
+               f"({GAS / H2_USED:.1f} times what the reduction uses) heated by electricity; {heat / 1e6:.0f} MW to the towers, {water:.0f} kg/s of water evaporated; the {STEAM:.1f} kg/s of water made goes back to the hydrogen plant. "
+               f"{(mass_units + mass_links + frame_mass) / 1000:,.0f} t of plant and frame, {mass_ground / 1000:,.0f} t of concrete.")
+    xs = [x0, x1] + [b["at"][0] + s * BAY[int(b["mount"][-1])] / 2 for b in bays for s in (-1, 1)] + [p[0] for l in links for p in (l["from"], l["to"])]
+    ys = [y0, y1] + [b["at"][1] + s * BAY[int(b["mount"][-1])] / 2 for b in bays for s in (-1, 1)] + [p[1] for l in links for p in (l["from"], l["to"])]
+    layout = {
+        "identity": {"key": "layout.shaft-furnace-air", "name": "Hydrogen shaft furnace, world with air",
+                     "description": "Direct reduction of iron ore pellets by hydrogen: a refractory-lined shaft in an open braced tower, its gas loop on the ground beside it (recuperator, scrubber, recycle compressor, electric heater) and a cooling loop for the sponge iron; four cooling towers to the north. The pellets come up a belt from the pellet plant, the sponge iron leaves by belt to the arc furnace shop, the hydrogen comes from the hydrogen plant and the water the reduction makes goes back to it. Open, not a hall, so a hydrogen leak rises away. For a world with air at about 1 g."},
+        "stands_for": "module.shaft-furnace",
+        "site": {"atmosphere": "air", "gravity": [8.0, 11.0]},
+        "physical": {"length": r(max(xs) - min(xs)), "width": r(max(ys) - min(ys)), "height": z1, "mass": r(total)},
+        "bays": bays, "links": links,
+        "frame": {"box": list(box), "cell": cell, "shape": f"An open braced tower {x1 - x0:.0f} x {y1 - y0:.0f} m and {top:.0f} m tall round the shaft: walls one cell thick, a roof one cell deep carrying the belt's head house, six grating platforms; no cladding.",
+                  "openings": [], "members": members, "carries": [f"unit.{sh_key}"], "mass": r(frame_mass), "sized": sized},
+        "ground": ground,
+        "totals": {"rate": S_RATE, "power": r(power), "heat": r(heat), "water": r(water), "mass": r(total), "against_module": against},
+        "staff": smod.get("staff"),
+        "basis": [{"of": ["bays", "links", "frame.box"], "tier": "invented", "review": True, "note": "Laid out from memory of direct reduction plants; the gas loop's temperatures and pressures from memory."},
+                  {"of": ["totals"], "tier": "derived", "review": True, "note": f"From the heat balance in tools/standards/plants.py: the reduction takes {ENDO / 1e6:.2f} MJ a kg of iron (handbook), the pellets are warmed to {T_BURDEN:.0f} deg C, {SHELL_LOSS:.0%} is lost through the shell; the gas falls from {T_GAS:.0f} to {T_TOP:.0f} deg C."},
+                  {"of": ["frame.members", "frame.mass"], "tier": "derived", "review": True, "note": "Counted from the lattice; sections and columns chosen by the loads in frame.sized."},
+                  {"of": ["ground"], "tier": "derived", "review": True, "note": "Volumes from the shapes in the notes, concrete at 2,400 kg/m3; not sized for the ground's bearing."},
+                  {"of": ["physical"], "tier": "derived", "note": "Summed from the units, links, frame and ground."},
+                  {"of": ["staff"], "tier": "derived", "note": "The module's watch, unchanged."}],
+    }
+    print(f"layout.shaft-furnace-air: {total / 1000:,.0f} t, {power / 1e6:.0f} MW (heater {Q_HEATER / 1e6:.0f}), gas {GAS:.1f} kg/s, {heat / 1e6:.0f} MW to {len(towers)} towers, {water:.0f} kg/s water, frame {frame_mass / 1000:.0f} t ({sec}, {n_col} columns)")
+    return layout, bays
+
+
 def mounts_for(bays, recs):
     # Mounts: each class round what its bays take, a quarter to spare, at the site's most gravity.
     g_max = 9.81 * 1.0
@@ -913,8 +1211,14 @@ def main():
     lu["cooling-tower-1cell"] = cooling_unit(sum(u["needs"].get("heat", 0) for u in lu.values()), "the ladle station's")
     us.update(lu)
     us.update(casting_units())
+    su = shaft_units()
+    sh_heat = sum(u["needs"].get("heat", 0) for u in su.values()) + TRANSFORMER_LOSS * Q_HEATER / 0.98 / HEATER_PF
+    n_t = math.ceil(sh_heat / 40e6)
+    for i in range(n_t):
+        su[f"cooling-tower-shaft-{i + 1}"] = cooling_unit(sh_heat / n_t, f"the shaft furnace's (one of {n_t})")
+    us.update(su)
     recs = {slug: unit_record(slug, u) for slug, u in us.items()}
-    layouts = {"arc-furnace-air": arc_furnace_air(us, recs), "ladle-station-air": ladle_station_air(us, recs), "casting-bay-air": casting_bay_air(us, recs)}
+    layouts = {"arc-furnace-air": arc_furnace_air(us, recs), "ladle-station-air": ladle_station_air(us, recs), "casting-bay-air": casting_bay_air(us, recs), "shaft-furnace-air": shaft_furnace_air(us, recs)}
     mounts = mounts_for([b for _, bays in layouts.values() for b in bays], recs)
     for slug, d in mounts.items():
         write(S + f"plant-mounts/{slug}.yaml", d)

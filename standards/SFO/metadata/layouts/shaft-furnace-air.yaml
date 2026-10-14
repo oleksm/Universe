@@ -1,0 +1,262 @@
+# yaml-language-server: $schema=../../schema/layout.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: layout.shaft-furnace-air, name: 'Hydrogen shaft furnace, world with air', description: 'Direct reduction of iron ore pellets by hydrogen: a refractory-lined shaft in an open braced tower, its gas loop on the ground beside it (recuperator, scrubber, recycle compressor, electric heater) and a cooling loop for the sponge iron; four cooling towers to the north. The pellets come up a belt from the pellet plant, the sponge iron leaves by belt to the arc furnace shop, the hydrogen comes from the hydrogen plant and the water the reduction makes goes back to it. Open, not a hall, so a hydrogen leak rises away. For a world with air at about 1 g.'}
+stands_for: module.shaft-furnace
+site:
+  atmosphere: air
+  gravity: [8.0, 11.0]
+physical: {length: 258.6, width: 120.0, height: 54.0, mass: 14700000.0}
+bays:
+- id: F
+  mount: plant-mount.bay-s3
+  unit: unit.shaft-furnace-200th
+  at: [0.0, 0.0, 0.0]
+  note: in the tower, on its columns; the product belt under its discharge
+- id: R
+  mount: plant-mount.bay-s2
+  unit: unit.recuperator
+  at: [24.0, 24.0, 0.0]
+  note: north-east of the tower, under the top gas main's fall
+- id: S
+  mount: plant-mount.bay-s2
+  unit: unit.top-gas-scrubber
+  at: [48.0, 24.0, 0.0]
+  note: east of the recuperator
+- id: K
+  mount: plant-mount.bay-s3
+  unit: unit.recycle-compressor
+  at: [60.0, 0.0, 0.0]
+  note: under the pellet belt's gallery (36 m over it), in its own open shed
+- id: H
+  mount: plant-mount.bay-s3
+  unit: unit.gas-heater-122mw
+  at: [24.0, -24.0, 0.0]
+  note: south-east of the tower, its hot header toward the bustle
+- id: T
+  mount: plant-mount.bay-s2
+  unit: unit.heater-transformer-131mva
+  at: [48.0, -24.0, 0.0]
+  note: in a fire-walled vault beside the heater's terminal house
+- id: L
+  mount: plant-mount.bay-s2
+  unit: unit.dri-cooling-loop
+  at: [-24.0, -24.0, 0.0]
+  note: south-west of the tower, clear of the product belt
+- id: C1
+  mount: plant-mount.bay-s4
+  unit: unit.cooling-tower-shaft-1
+  at: [-48.0, 60.0, 0.0]
+  note: north, in a row
+- id: C2
+  mount: plant-mount.bay-s4
+  unit: unit.cooling-tower-shaft-2
+  at: [0.0, 60.0, 0.0]
+  note: north, in a row
+- id: C3
+  mount: plant-mount.bay-s4
+  unit: unit.cooling-tower-shaft-3
+  at: [48.0, 60.0, 0.0]
+  note: north, in a row
+- id: C4
+  mount: plant-mount.bay-s4
+  unit: unit.cooling-tower-shaft-4
+  at: [96.0, 60.0, 0.0]
+  note: north, in a row
+links:
+- kind: conveyor
+  name: pellet belt
+  from: [186.6, 0.0, 2.0]
+  to: [0.0, 0.0, 52.0]
+  length: 193.2
+  item: material.structural-steel-a36
+  mass: 34770.0
+  power: 300000.0
+  note: a 1.2 m belt in a covered gallery on trestles every 18 m, 180 kg/m with the gallery (from memory), rising at 15 degrees from the pellet plant's transfer house to a head house on the tower's roof over the charge hopper; 79 kg/s of pellets
+- kind: conveyor
+  name: product belt
+  from: [0.0, 0.0, 5.0]
+  to: [-60.0, 0.0, 5.0]
+  length: 60.0
+  item: material.structural-steel-a36
+  mass: 9000.0
+  power: 150000.0
+  note: a 1 m belt in a gallery 5 m up, from under the discharge lock west to the arc furnace shop's sponge iron bin, beyond the layout
+- kind: duct
+  name: top gas main
+  from: [7.0, 0.0, 41.0]
+  to: [24.0, 24.0, 18.0]
+  length: 56.63
+  item: material.structural-steel-a36
+  mass: 57970.0
+  via:
+  - [15.0, 0.0, 41.0]
+  - [24.0, 24.0, 41.0]
+  note: '3.5 m across, 12 mm plate, insulated: 350 deg C top gas with its steam, out of the tower''s east wall and down to the recuperator'
+- kind: duct
+  name: wet gas to the scrubber
+  from: [24.0, 27.0, 1.5]
+  to: [42.0, 24.0, 2.0]
+  length: 31.02
+  item: material.structural-steel-a36
+  mass: 24670.0
+  via:
+  - [24.0, 32.0, 1.5]
+  - [40.0, 32.0, 1.5]
+  - [40.0, 24.0, 2.0]
+  note: 2.7 m across, 12 mm plate
+- kind: duct
+  name: clean gas to the compressor
+  from: [48.0, 24.0, 23.0]
+  to: [68.0, 4.0, 1.5]
+  length: 67.5
+  item: material.structural-steel-a36
+  mass: 43510.0
+  via:
+  - [48.0, 24.0, 26.0]
+  - [68.0, 24.0, 26.0]
+  - [68.0, 4.0, 26.0]
+  note: 2.2 m across, 12 mm plate; the hydrogen plant's make-up joins it here
+- kind: pipe
+  name: compressed gas to the recuperator
+  from: [50.0, -4.0, 1.5]
+  to: [24.0, 21.0, 1.0]
+  length: 51.01
+  item: material.structural-steel-a36
+  mass: 25220.0
+  via:
+  - [36.0, -4.0, 1.5]
+  - [36.0, 14.0, 1.5]
+  - [24.0, 14.0, 1.0]
+  note: 1.7 m across, 12 mm wall, 2.8 bar
+- kind: pipe
+  name: warm gas to the heater
+  from: [24.0, 21.0, 17.0]
+  to: [24.0, -28.0, 2.0]
+  length: 84.0
+  item: material.structural-steel-a36
+  mass: 56180.0
+  via:
+  - [24.0, 14.0, 17.0]
+  - [14.0, 14.0, 17.0]
+  - [14.0, -28.0, 17.0]
+  - [14.0, -28.0, 2.0]
+  note: 2.3 m across, 12 mm wall, insulated, 300 deg C
+- kind: duct
+  name: hot gas to the bustle
+  from: [24.0, -20.0, 15.0]
+  to: [0.0, -7.0, 26.0]
+  length: 48.0
+  item: material.structural-steel-a36
+  mass: 379400.0
+  via:
+  - [24.0, -20.0, 26.0]
+  - [0.0, -20.0, 26.0]
+  note: '3.2 m inside 200 mm of refractory, 16 mm shell: hydrogen at 900 deg C, in through the tower''s south wall to the bustle''s inlet; its shell runs warm, so it is the hydrogen-tight steel of the loop that matters (not yet specified)'
+- kind: pipe
+  name: hydrogen make-up
+  from: [100.0, 4.0, 1.5]
+  to: [68.0, 4.0, 1.5]
+  length: 32.0
+  item: material.structural-steel-a36
+  mass: 7100.0
+  note: '1.1 m across, 8 mm wall: 3.00 kg/s from the hydrogen plant, beyond the layout'
+- kind: pipe
+  name: condensate to the hydrogen plant
+  from: [54.0, 24.0, 0.5]
+  to: [100.0, 24.0, 0.5]
+  length: 46.0
+  item: material.structural-steel-a36
+  mass: 1361.0
+  note: '200 mm, 6 mm wall: the 26.9 kg/s of water the reduction made, back to the electrolysers, beyond the layout'
+- kind: pipe
+  name: cooling water mains
+  from: [-72.0, 42.0, 0.75]
+  to: [60.0, -12.0, 0.75]
+  length: 234.0
+  item: material.structural-steel-a36
+  mass: 173900.0
+  via:
+  - [84.0, 42.0, 0.75]
+  - [84.0, -12.0, 0.75]
+  note: 'a pair of 1.3 m pipes, 12 mm wall, flow and return: 3,096 kg/s at a 10 K rise, along the towers'' row and down the plant to the scrubber, compressor, cooling loop and transformer'
+- kind: pipe
+  name: cold gas to the cooling zone
+  from: [-26.0, -20.0, 2.0]
+  to: [-7.0, 0.0, 14.0]
+  length: 51.0
+  item: material.structural-steel-a36
+  mass: 11990.0
+  via:
+  - [-26.0, -20.0, 14.0]
+  - [-26.0, 0.0, 14.0]
+  note: '1.2 m, 8 mm wall: 3.9 kg/s of hydrogen at 40 deg C, through the tower''s west wall'
+- kind: pipe
+  name: hot gas from the cooling zone
+  from: [-7.0, 0.0, 19.0]
+  to: [-22.0, -20.0, 2.0]
+  length: 52.0
+  item: material.structural-steel-a36
+  mass: 38270.0
+  via:
+  - [-22.0, 0.0, 19.0]
+  - [-22.0, -20.0, 19.0]
+  note: '2.0 m, 10 mm wall, insulated (half as much again): about 600 deg C, back to the loop''s cooler'
+- kind: cable
+  name: heater supply
+  from: [48.0, -24.0, 4.0]
+  to: [12.0, -24.0, 2.0]
+  length: 36.06
+  item: material.copper
+  mass: 2728.0
+  note: three phases at 6.6 kV in a cable tray, copper at 4 A/mm2, to the heater's terminal house
+frame:
+  box: [-12.0, -12.0, 0.0, 12.0, 12.0, 54.0]
+  cell: 3.0
+  shape: 'An open braced tower 24 x 24 m and 54 m tall round the shaft: walls one cell thick, a roof one cell deep carrying the belt''s head house, six grating platforms; no cladding.'
+  openings: []
+  members:
+  - {item: stock.st4340-tb-120x3-s3000, count: 2390, where: tower walls}
+  - {item: stock.st4340-tb-120x3-d3000, count: 1852, where: tower walls}
+  - {item: stock.st4340-tb-120x3-s3000, count: 290, where: tower roof}
+  - {item: stock.st4340-tb-120x3-d3000, count: 246, where: tower roof}
+  - {item: stock.st4340-node-160b, count: 1096, where: nodes}
+  - {item: stock.st4340-box-400x400x25, count: 8, where: 'columns under the shaft''s ring girder, 22 m, on a circle of radius 4.1 m beside the cooling zone and cone, the first at 22.5 degrees off x so the product belt passes between; braced to the tower''s walls every 6 m'}
+  carries: [unit.shaft-furnace-200th]
+  mass: 388400.0
+  sized: 'At 1 g the shaft with its burden, 31.6 MN, hangs from its ring girder at z 22 on 8 columns of 400 x 400 x 25 mm 4340 box: 105 MPa each, against 470 MPa with half again to spare; braced every 6 m their slenderness is 39. Wind of 1 kPa (invented) on a 24 x 54 m face makes 35 MN m at the base, 162 kN in each wall chord: st4340-tb-120x3 takes 424 kN, the kit''s lightest with half again to spare. Six grating platforms, 10 mm, 60% of the plan. Footings'' loads and the belt''s head house not yet checked.'
+ground:
+- {what: Tower foundation, item: good.concrete, volume: 1440.0, note: 'a mat 24 x 24 m, 2.5 m thick, under the tower and the shaft''s columns', mass: 3456000.0}
+- {what: Product belt pit, item: good.concrete, volume: 34.0, note: 'under the discharge lock, 10 x 4 m, 3 m deep, 0.3 m walls', mass: 81600.0}
+- {what: Unit slabs, item: good.concrete, volume: 585.5, note: 0.8 m under each unit on the ground, mass: 1405000.0}
+- {what: Transformer vault, item: good.concrete, volume: 132.0, note: fire walls 7 m tall round the heater's transformer, mass: 316800.0}
+- {what: Cooling tower basins, item: good.concrete, volume: 1516.0, note: 'sunk as the furnace shop''s: 0.3 m walls, floor top at z -2', mass: 3638000.0}
+- {what: Gallery trestle footings, item: good.concrete, volume: 104.0, note: '8 m3 under each of the pellet belt''s trestles, 4 m3 under the product belt''s', mass: 249600.0}
+totals: {rate: 55.5555555555556, power: 152200000.0, heat: 129600000.0, water: 72.04, mass: 14700000.0, against_module: 'module.shaft-furnace: one box 150 x 100 x 137 m, 22 MW, which leaves out heating the gas. This layout: the same 200 t of sponge iron an hour; 152 MW, of which the hydrogen heater is 125: hydrogen brings no heat of its own, so the shaft''s 112 MW comes from 14.3 kg/s of gas (4.8 times what the reduction uses) heated by electricity; 130 MW to the towers, 72 kg/s of water evaporated; the 26.9 kg/s of water made goes back to the hydrogen plant. 5,554 t of plant and frame, 9,147 t of concrete.'}
+staff:
+- {profession: profession.plant-operator, count: 6}
+- {profession: profession.metalworker, count: 2}
+- {profession: profession.technician, count: 1}
+- {profession: profession.engineer, count: 1}
+basis:
+- of: [bays, links, frame.box]
+  tier: invented
+  review: true
+  note: Laid out from memory of direct reduction plants; the gas loop's temperatures and pressures from memory.
+- of: [totals]
+  tier: derived
+  review: true
+  note: 'From the heat balance in tools/standards/plants.py: the reduction takes 0.86 MJ a kg of iron (handbook), the pellets are warmed to 850 deg C, 5% is lost through the shell; the gas falls from 900 to 350 deg C.'
+- of: [frame.members, frame.mass]
+  tier: derived
+  review: true
+  note: Counted from the lattice; sections and columns chosen by the loads in frame.sized.
+- of: [ground]
+  tier: derived
+  review: true
+  note: Volumes from the shapes in the notes, concrete at 2,400 kg/m3; not sized for the ground's bearing.
+- of: [physical]
+  tier: derived
+  note: Summed from the units, links, frame and ground.
+- of: [staff]
+  tier: derived
+  note: The module's watch, unchanged.

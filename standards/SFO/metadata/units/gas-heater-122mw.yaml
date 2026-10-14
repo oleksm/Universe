@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.gas-heater-122mw, name: 'Hydrogen heater, 122 MW', description: 'Heats 14.3 kg/s of hydrogen from 300 to 900 deg C with electric resistance elements: 4 lined vessels 4 m across and 16 m tall in a row along x at 6 m, the gas in at the bottom of each (from a header on -y, 2 m up) and out at the top into a lined hot header on +y, 15 m up, toward the shaft''s bustle. Its power by cables from its transformer, to a terminal house at its -x end.'}
+size_class: 3
+fits: plant-mount.bay-s3
+physical: {length: 24.0, width: 8.0, height: 18.0, mass: 916600.0}
+built_of:
+- {what: Vessels, item: material.structural-steel-a36, mass: 177600.0, note: '4 vessels 4 m across, 16 m, 25 mm plate, heads twice the disc'}
+- {what: Lining, item: good.refractory-brick, mass: 669500.0, note: 300 mm}
+- {what: Elements, item: material.stainless-steel-304, mass: 39450.0, note: 'FeCrAl strip, which the registry has not got: stainless steel stands for it; 39 t at 20 kW/m2 of surface'}
+- {what: 'Headers, terminals and controls', item: material.structural-steel-a36, mass: 30000.0, note: from memory}
+needs: {power: 124800000.0}
+life: 788940000
+basis:
+- of: [physical, built_of]
+  tier: invented
+  review: true
+  note: Vessels and element loading from memory; elements sized from the duty.
+- of: [needs]
+  tier: derived
+  note: The gas's 14.3 kg/s at 14.3 kJ/kg K over 600 K, at 98% (from memory).
+- of: [life]
+  rule: rule.life-plant
