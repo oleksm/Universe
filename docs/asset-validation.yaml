@@ -4450,3 +4450,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.ingot-car-40t
+    version: 1
+    manifest_sha256: "f28c52c42babf8c858de534f2b64e4122bac1a0eeb06619e5fdce214ab76eefd"
+    installed: 7065874c
+    game: "the loader (world::assets) at fso 6824a75a"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/ingot-car-40t/v1 (323040 bytes, bounds [-4.0, -0.04, -1.5] to [4.0, 1.2, 1.5]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
