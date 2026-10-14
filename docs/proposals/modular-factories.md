@@ -129,6 +129,15 @@ The owner left the next step to registry's judgement ("things are made of anythi
 - `layouts/pellet-plant-air.yaml`: 125 t of pellets an hour in one crane hall: a ball mill grinds the fines wet, disc filters dry the slurry, four balling discs roll green balls, and a straight induration grate (4 x 28 m) dries, fires and cools them. Its firing heat, the module's sourced 0.5 GJ a tonne, comes from electric plasma torches, since there is no fuel to burn. The grate needs a class 4 bay. 26.1 MW against the module's 23, and no cooling water. One shaft furnace needs about 2.3 of these plants.
 - `layouts/ore-yard-air.yaml` and `layouts/ingot-yard-air.yaml`, the line's two ends. The ore yard's two beds come from the module's 150 kt, at the ore's bulk density and a 37 degree angle of repose (105 x 40 x 15 m each), worked by a stacker-reclaimer on its rail and fed by a truck dump hopper. In the ingot yard, a crane lays the hot ingots on racks in a cooling hall for a day (9.5 MW to the air); a lab samples each heat; a crating line puts one ingot in each heavy crate. Forklifts then stack the crates two high, the crate's limit: 30,452 crates need a 140 x 171 m yard, more than the module's 150 x 100 m box. Layout links can now be roads, for the forklifts.
 - So the steel line for a world with air is laid out, ore to crate: eight layouts, 48 units. Next: the airless variants.
+- `layouts/arc-furnace-airless.yaml`, the first airless layout (a moon, 1.6 to 2 m/s2), built separately, not reused:
+  - The furnace is sealed and holds its own gas (CO, started with argon) at 1 bar. In vacuum the melt would boil and lose its manganese, and the slag would not foam.
+  - No hall, since there is no weather to keep off; a gantry crane on its own legs instead.
+  - There is no air to carry heat away, so radiator fields replace the cooling tower. They are sized for lunar noon: the sun on their top faces, warm shaded ground under them. Twelve fields at 330 K carry the panels' water and one at 485 K carries the duct's steam: 3 ha, because a cool panel in the noon sun sheds only about 525 W/m2. A heat pump would cut that to 3 fields for 7 MW more power; it is not fitted.
+  - A sealed filter lets the off-gas go; there is no baghouse.
+  - The crew works in a pressurised post under a berm.
+  - The platform is sintered regolith, as there is no water to make concrete. No water is used up.
+  - 72.9 MW and 3,700 t.
+  - Units can now say what they reject (`rejects: heat, temperature`).
 
 Sizing helpers shared by the generators: `frames.lattice_count`, `frames.strut_capacity`, `frames.lightest_section`.
 
