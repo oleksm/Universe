@@ -4257,3 +4257,17 @@ validations:
       - "previews (thumb.png, icon.png in the package): pass"
     pending:
       - "frames at play distance, GPU look and cost"
+  - key: structure.platform
+    version: 1
+    manifest_sha256: "200e6c7f546e905a2268fcf727384db255dd312c6735d1e418d5a22d79065334"
+    installed: b7642e29
+    game: "the loader (world::assets) at fso b7642e29"
+    date: "2026-10-14"
+    result: partial
+    drawn: true
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/platform/v1 (5819616 bytes, bounds [-300.18, -148.0, -375.2] to [300.18, 149.18, 375.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames at play distance, GPU look and cost"
