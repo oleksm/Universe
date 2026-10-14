@@ -4510,3 +4510,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.heater-transformer-131mva
+    version: 1
+    manifest_sha256: "f819d7559dd216ea49ae536e13e2af8e70ea163ad600118e653aedc294254029"
+    installed: c25b82ae
+    game: "the loader (world::assets) at fso c25b82ae"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/heater-transformer-131mva/v1 (520940 bytes, bounds [-4.55, 0.0, -2.8125] to [4.5158, 6.75, 2.475]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
