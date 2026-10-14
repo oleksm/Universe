@@ -165,7 +165,7 @@ def cooling_unit(heat):
     fans = 0.008 * heat
     return dict(
         name=f"Cooling tower, {cells} cells", size_class=3, fits="bay-s3", dims=(12.0 * cells, 12.0, 14.0),
-        desc=f"An induced-draught wet tower: the furnace's closed water loop gives up its heat through a plate exchanger to tower water, which sprays down through fill against a fan's draught and evaporates. On a world with air only; airless ground needs radiators instead.",
+        desc=f"An induced-draught wet tower: the furnace's closed water loop gives up its heat through a plate exchanger to tower water, which sprays down through fill against a fan's draught and evaporates. The loop's pumps and exchanger stand on a skid inside its footprint; the loop leaves by two pairs of 500 mm ports on its east end (local x +{6.0 * cells:.0f}, 0.75 m up, at y 0 and +4.5), and the layout's pipes and concrete basin are not the unit's. On a world with air only; airless ground needs radiators instead.",
         built_of=[part("Cells", A36, 60000.0 * cells, "steel frame, fill, drift eliminators and fan deck: 60 t a cell, from memory"),
                   part("Fans and motors", "good.electric-motors", 6000.0 * cells, "one 10 m fan a cell, from memory"),
                   part("Loop pumps and exchanger", "good.pumps", 25000.0, "from memory")],
@@ -364,8 +364,8 @@ def main():
         link("busbar", "secondary bus", (-12.0, -3.5, 4.0), (-12.0, 0.8, 7.3), CU, 3 * bus_area * RHO["copper"], None, f"three water-cooled copper tube bars, {bus_area * 1e6:.0f} mm2 each for {I2 / 1000:.0f} kA at 4 A/mm2; from the transformer's three secondary terminals (its +y face, x -1.3, 0 and +1.3 m, 4 m up) through the vault wall to three insulated terminals spread 1.3 m apart along x behind the mast bank, then the furnace's cables"),
         link("rail", "ladle rail", (-7.5, 6.0, 0.0), (30.0, 6.0, 0.0), A36, 2 * 60.0, None, "two 60 kg/m rails under the tap, out of the hall's east door to the ladle station"),
         link("rail", "slag rail", (-16.5, 0.0, 0.0), (-16.5, 21.0, 0.0), A36, 2 * 60.0, None, "under the slag door, out of the north door"),
-        link("pipe", "cooling water to the hall", (-24.0, -6.0, 0.0), (-18.0, 0.0, 5.0), A36, pipe_m, None, "a pair of 500 mm pipes, 8 mm wall, flow and return"),
-        link("pipe", "cooling water to the baghouse", (-24.0, 0.0, 0.0), (-6.0, 24.0, 2.0), A36, pipe_m, None, "a pair of 500 mm pipes, 8 mm wall"),
+        link("pipe", "cooling water to the hall", (-24.0, -6.0, 0.75), (-18.0, 0.0, 5.0), A36, pipe_m, None, "a pair of 500 mm pipes, 8 mm wall, flow and return, from the tower's first port pair"),
+        link("pipe", "cooling water to the baghouse", (-24.0, -1.5, 0.75), (-6.0, 24.0, 2.0), A36, pipe_m, None, "a pair of 500 mm pipes, 8 mm wall, flow and return, from the tower's second port pair"),
     ]
     mobile = [{"unit": "unit.ladle-car-80t", "rides": "ladle rail", "at": [-7.5, 6.0, 0.0]},
               {"unit": "unit.slag-pot-car", "rides": "slag rail", "at": [-16.5, 6.0, 0.0]}]

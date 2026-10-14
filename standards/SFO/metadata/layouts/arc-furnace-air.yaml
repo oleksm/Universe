@@ -84,20 +84,20 @@ links:
   note: under the slag door, out of the north door
 - kind: pipe
   name: cooling water to the hall
-  from: [-24.0, -6.0, 0.0]
+  from: [-24.0, -6.0, 0.75]
   to: [-18.0, 0.0, 5.0]
-  length: 9.849
+  length: 9.49
   item: material.structural-steel-a36
-  mass: 1943.0
-  note: a pair of 500 mm pipes, 8 mm wall, flow and return
+  mass: 1872.0
+  note: a pair of 500 mm pipes, 8 mm wall, flow and return, from the tower's first port pair
 - kind: pipe
   name: cooling water to the baghouse
-  from: [-24.0, 0.0, 0.0]
+  from: [-24.0, -1.5, 0.75]
   to: [-6.0, 24.0, 2.0]
-  length: 30.07
+  length: 31.24
   item: material.structural-steel-a36
-  mass: 5932.0
-  note: a pair of 500 mm pipes, 8 mm wall
+  mass: 6163.0
+  note: a pair of 500 mm pipes, 8 mm wall, flow and return, from the tower's second port pair
 frame:
   box: [-21.0, -15.0, 0.0, 9.0, 15.0, 27.0]
   cell: 3.0

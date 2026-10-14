@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.cooling-tower, name: 'Cooling tower, 2 cells', description: 'An induced-draught wet tower: the furnace''s closed water loop gives up its heat through a plate exchanger to tower water, which sprays down through fill against a fan''s draught and evaporates. On a world with air only; airless ground needs radiators instead.'}
+identity: {key: unit.cooling-tower, name: 'Cooling tower, 2 cells', description: 'An induced-draught wet tower: the furnace''s closed water loop gives up its heat through a plate exchanger to tower water, which sprays down through fill against a fan''s draught and evaporates. The loop''s pumps and exchanger stand on a skid inside its footprint; the loop leaves by two pairs of 500 mm ports on its east end (local x +12, 0.75 m up, at y 0 and +4.5), and the layout''s pipes and concrete basin are not the unit''s. On a world with air only; airless ground needs radiators instead.'}
 size_class: 3
 fits: plant-mount.bay-s3
 physical: {length: 24.0, width: 12.0, height: 14.0, mass: 157000.0}
