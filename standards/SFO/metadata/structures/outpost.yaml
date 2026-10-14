@@ -5,8 +5,13 @@ identity:
   maker: org.halvard
   kind: outpost
   revision: outdated
-  description: "A small settlement's port: pads, a works, a few thousand people."
+  description: "A small settlement's port on airless ground: two class 2 pads, 100 m across, each ringed by a regolith blast berm, 250 m apart on a 400 by 300 m graded site; between them a pressurised terminal, a 60 by 24 by 8 m hall under a 3 m regolith mound, with a crew airlock and a cargo lock; a rover road joining pads, terminal and the settlement. The settlement's buildings and works are not part of it, nor is the fitted ground terminal, which stands on the site."
+physical:
+  length: 400
+  width: 300
+  height: 11
 fit:
   - { item: equipment.gate.terminal-ground.s3, count: 1 }
 basis:
+  - { of: [identity.description, physical], tier: invented, review: true, note: "Scope set 2026-10-13 for the modeller (blender asked). Only the port: the settlement record carries its buildings and its works (the modules), so a works hall here would count them twice. For airless places (most outposts stand on moons); a world with air wants another design, open for Halden Camp on Heath. Pads class 2 (SFO 23), 100 m to stand the 66 m MC-07 and the 60 m hauler with room round them. On airless ground a landing jet throws regolith a long way (Apollo 12 sandblasted Surveyor III 160 m off, from memory), so each pad has a 3 m berm and they stand 250 m apart. The 3 m mound over the hall shields it from radiation and micrometeoroids, as lunar base studies propose (2 to 3 m, from memory). Height: the mound, 8 m hall and 3 m cover. Sizes chosen, nothing sized for a load; what it is built of is open." }
   - { of: [fit], tier: invented, review: true, note: "As the game has it (content/base/structures.ron), an early list: to be reviewed. What it is built of, its size and what it weighs are not said." }
