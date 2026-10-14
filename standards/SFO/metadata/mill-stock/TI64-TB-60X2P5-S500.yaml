@@ -14,15 +14,15 @@ made_from:
 size:
   diameter: 0.06
   wall: 0.0025
-  length: 0.38
+  length: 0.41
 kit:
   section: stock.ti64-tb-60x2p5
-  node: stock.st4340-node-120
+  node: stock.st4340-node-90b
   end: stock.st4340-end-60
   bolt: stock.st4340-bolt-m16
   module: 0.5
-  cut: 0.26
+  cut: 0.29
 physical:
-  mass: 1.19
+  mass: 1.25
 basis:
-  - { of: [size, kit, physical.mass], tier: derived, review: true, note: "A standard strut (tools/standards/frames.py): 0.5 m node centre to node centre; 0.26 m of Ti-6-4 tube 60 x 2.5 mm between two 60 mm ENDs, made to meet 120 mm nodes, an M16 bolt in each END. Its length here is END tip to END tip. Ladder, grid and limits chosen." }
+  - { of: [size, kit, physical.mass], tier: derived, review: true, note: "A standard strut (tools/standards/frames.py): 0.5 m node centre to node centre; 0.29 m of Ti-6-4 tube 60 x 2.5 mm between two 60 mm ENDs, made to meet 90 mm nodes, an M16 bolt in each END. Its length here is END tip to END tip. Ladder, grid and limits chosen." }

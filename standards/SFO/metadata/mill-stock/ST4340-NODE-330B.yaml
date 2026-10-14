@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.st4340-node-330b
+  code: ST4340-NODE-330B
+  name: "4340 bolted hollow node 330 mm, 80 mm wall"
+  traded_as: market.metals
+  form: forging
+  temper: "quenched and tempered"
+package: package.crate-heavy
+tint: [0.44, 0.45, 0.47]
+made_from:
+  - item: material.high-strength-steel-4340
+size:
+  diameter: 0.33
+  wall: 0.08
+basis:
+  - { of: [size], tier: derived, review: true, note: "A bolted hollow node (tools/standards/frames.py): two hot-pressed hemispheres welded, bored and tapped for up to eight M64 bolts, its wall 1.25 bolt diameters for the thread's grip, wide enough that END faces two bolt diameters across clear at 45 degrees: about 162.8 kg. The rule chosen; the thread's grip from common practice (a steel thread engages about one diameter), not sized for a load." }

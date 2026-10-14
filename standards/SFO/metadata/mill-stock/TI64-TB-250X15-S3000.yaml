@@ -14,15 +14,15 @@ made_from:
 size:
   diameter: 0.25
   wall: 0.015
-  length: 2.5
+  length: 2.67
 kit:
   section: stock.ti64-tb-250x15
-  node: stock.st4340-node-500h
+  node: stock.st4340-node-330b
   end: stock.st4340-end-250
   bolt: stock.st4340-bolt-m64
   module: 3.0
-  cut: 2.0
+  cut: 2.17
 physical:
-  mass: 145.25
+  mass: 153.66
 basis:
-  - { of: [size, kit, physical.mass], tier: derived, review: true, note: "A standard strut (tools/standards/frames.py): 3 m node centre to node centre; 2 m of Ti-6-4 tube 250 x 15 mm between two 250 mm ENDs, made to meet 500 mm nodes, an M64 bolt in each END. Its length here is END tip to END tip. Ladder, grid and limits chosen." }
+  - { of: [size, kit, physical.mass], tier: derived, review: true, note: "A standard strut (tools/standards/frames.py): 3 m node centre to node centre; 2.17 m of Ti-6-4 tube 250 x 15 mm between two 250 mm ENDs, made to meet 330 mm nodes, an M64 bolt in each END. Its length here is END tip to END tip. Ladder, grid and limits chosen." }

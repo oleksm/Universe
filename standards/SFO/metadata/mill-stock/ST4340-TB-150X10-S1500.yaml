@@ -14,15 +14,15 @@ made_from:
 size:
   diameter: 0.15
   wall: 0.01
-  length: 1.2
+  length: 1.28
 kit:
   section: stock.st4340-tb-150x10
-  node: stock.st4340-node-300
+  node: stock.st4340-node-220b
   end: stock.st4340-end-150
   bolt: stock.st4340-bolt-m42
   module: 1.5
-  cut: 0.9
+  cut: 0.98
 physical:
-  mass: 42.18
+  mass: 44.94
 basis:
-  - { of: [size, kit, physical.mass], tier: derived, review: true, note: "A standard strut (tools/standards/frames.py): 1.5 m node centre to node centre; 0.9 m of 4340 tube 150 x 10 mm between two 150 mm ENDs, made to meet 300 mm nodes, an M42 bolt in each END. Its length here is END tip to END tip. Ladder, grid and limits chosen." }
+  - { of: [size, kit, physical.mass], tier: derived, review: true, note: "A standard strut (tools/standards/frames.py): 1.5 m node centre to node centre; 0.98 m of 4340 tube 150 x 10 mm between two 150 mm ENDs, made to meet 220 mm nodes, an M42 bolt in each END. Its length here is END tip to END tip. Ladder, grid and limits chosen." }

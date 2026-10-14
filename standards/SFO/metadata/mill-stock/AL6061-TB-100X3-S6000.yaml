@@ -14,15 +14,15 @@ made_from:
 size:
   diameter: 0.1
   wall: 0.003
-  length: 5.8
+  length: 5.84
 kit:
   section: stock.al6061-tb-100x3
-  node: stock.st4340-node-200
+  node: stock.st4340-node-160b
   end: stock.st4340-end-100
   bolt: stock.st4340-bolt-m30
   module: 6.0
-  cut: 5.6
+  cut: 5.64
 physical:
-  mass: 17.44
+  mass: 17.54
 basis:
-  - { of: [size, kit, physical.mass], tier: derived, review: true, note: "A standard strut (tools/standards/frames.py): 6 m node centre to node centre; 5.6 m of 6061 tube 100 x 3 mm between two 100 mm ENDs, made to meet 200 mm nodes, an M30 bolt in each END. Its length here is END tip to END tip. Ladder, grid and limits chosen." }
+  - { of: [size, kit, physical.mass], tier: derived, review: true, note: "A standard strut (tools/standards/frames.py): 6 m node centre to node centre; 5.64 m of 6061 tube 100 x 3 mm between two 100 mm ENDs, made to meet 160 mm nodes, an M30 bolt in each END. Its length here is END tip to END tip. Ladder, grid and limits chosen." }
