@@ -1054,7 +1054,7 @@ def shaft_units():
         built_of=[part("Tubes", "material.stainless-steel-304", tubes * math.pi * 0.047 * 0.003 * 12.0 * 7900, f"{tubes:,.0f} tubes 50 mm, 3 mm wall, 12 m: {A:,.0f} m2"),
                   part("Shells, heads and bands", A36, 82643.8, f"two shells 4.5 m across, 16 m, 20 mm plate, with their bands; measured on model v1 (by formula {2 * cyl_shell(4.5, 16.0, 0.02, bottom=2.0) * RHO['steel']:,.0f} kg)"),
                   part("Skirts and feet", A36, 9164.2, "measured on model v1"),
-                  part("Headers and branches", A36, 47043.7, "the top gas header, the 8.2 m wet, clean and warm headers, the warm outlet's riser with its tee-back plate, and the branches; measured on model v1"),
+                  part("Headers and branches", A36, 46875.9, "the top gas header, the 8.2 m wet, clean and warm headers, the warm outlet's riser with its tee-back plate, and the branches; measured on model v1"),
                   part("Header supports", A36, 9833.5, "measured on model v1")],
         needs={},
         basis=[{"of": ["physical", "built_of"], "tier": "derived", "review": True, "note": f"Area from the duty ({Q_RECUP / 1e6:.0f} MW) at 100 W/m2 K, from memory for hydrogen on both sides; shells from memory. The model's heads are 20 mm flat plates, not yet qualified for pressure."}])
