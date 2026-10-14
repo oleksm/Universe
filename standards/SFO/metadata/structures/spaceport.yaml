@@ -6,6 +6,12 @@ identity: {key: structure.spaceport, name: Halvard spaceport, maker: org.halvard
 physical: {length: 600, width: 860, height: 41, mass: 438236052}
 fit:
 - {item: equipment.gate.terminal-ground.s3, count: 1}
+visual:
+  format: "freefall-model/1"
+  path: "models/spaceport/v1"
+  manifest_sha256: "32ec880db730b7b2056f6158060f8c572cbf4cd4711d81a4c626056f8fbced35"
+  version: 1
+  triangles: 58662
 basis:
 - of: [identity.description, physical]
   tier: invented
