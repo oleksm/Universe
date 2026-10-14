@@ -3,9 +3,9 @@
 identity: {key: unit.gas-heater-119mw-8bar, name: 'Hydrogen heater, 119 MW, 8 bar', description: 'Heats 14.3 kg/s of hydrogen from 317 to 900 deg C with electric resistance elements: 4 lined vessels 4 m across and 16 m tall (z 0.5 to 16.5) in a row along x at 6 m (x -9, -3, 3, 9), on the unit''s centre line. The gas in at the bottom of each from a cold header (2.26 m bore, 12 mm wall) along x at y -3.3, z 2, whose inlet flange is on its -x end at the unit''s face (x -12); out at the top of each into a lined hot header (3.23 m bore inside 200 mm of refractory, 16 mm shell, 3.67 m outside) along x at y 4, z 15, from x -10.25 to 10.25, whose outlet is a stub up from its middle (x 0) to a flange at z 18, the unit''s top. Its power by cables from its transformer to a terminal house at its -x end, on the +y side (clear of the cold header''s flange). The headers'' supports are the unit''s own. Its vessels hold the loop''s 8 bar (25 mm plate at 4 m: 64 MPa, the shell kept cool by its lining).'}
 size_class: 3
 fits: plant-mount.bay-s3
-physical: {length: 24.0, width: 12.0, height: 18.0, mass: 1144000.0}
+physical: {length: 24.0, width: 12.0, height: 18.0, mass: 1145000.0}
 built_of:
-- {what: Vessels, item: material.structural-steel-a36, mass: 166300.0, note: '4 vessels 4 m across, 16 m, 25 mm plate, 1 m deep ellipsoidal heads, with their bands; measured on model v1 (by formula 177,563 kg)'}
+- {what: Vessels, item: material.structural-steel-a36, mass: 167600.0, note: '4 vessels 4 m across, 16 m, 25 mm plate, 1 m deep ellipsoidal heads, with their bands; measured on model v1 (by formula 177,563 kg)'}
 - {what: Skirts and base rings, item: material.structural-steel-a36, mass: 12230.0, note: 8 mm skirts from the floor to the vessels' bottoms; measured on model v1}
 - {what: Lining, item: good.refractory-brick, mass: 669500.0, note: 300 mm}
 - {what: Elements, item: material.stainless-steel-304, mass: 39450.0, note: 'FeCrAl strip, which the registry has not got: stainless steel stands for it; 39 t at 20 kW/m2 of surface'}
