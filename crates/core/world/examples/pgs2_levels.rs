@@ -3,7 +3,7 @@
 //! declared deviation re-measured at the overlay's vertices), and a sweep of directions over each
 //! region with levels: at the tolerance of each level the answer stays within the declared
 //! deviation of level 0, tolerance 0 is level 0 exactly.
-//! cargo run -p universe-world --release --example pgs2_levels -- PACKAGE_DIR OUT.json
+//! cargo run -p universe-world --release --example pgs2_levels -- PACKAGE_DIR OUT.json [REGION_ID_PREFIX]
 use glam::DVec3;
 use serde_json::{Value, json};
 use std::path::Path;
@@ -15,8 +15,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let manifest: Value = serde_json::from_slice(&std::fs::read(dir.join("planet.json"))?)?;
     let (s, sha) = Surface::open_package(dir)?;
     let mut regions = vec![];
+    let only = a.get(2).cloned().unwrap_or_default();
+    let t0 = std::time::Instant::now();
     for r in manifest["regions"].as_array().unwrap().iter().filter(|r| r["levels"].is_array()) {
         let id = r["id"].as_str().unwrap();
+        if !id.starts_with(&only) {
+            continue;
+        }
         let cap = &r["cap"];
         let centre = DVec3::from_slice(&cap["centre"].as_array().unwrap().iter().map(|v| v.as_f64().unwrap()).collect::<Vec<_>>());
         let radius = cap["radius"].as_f64().unwrap();
@@ -40,12 +45,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 let q = s.query_to(d, *t)?;
                 worst = worst.max((q.height_m - fine[k]).abs());
             }
+            eprintln!("{id:.8} sweep {name}: {worst:.6} m ({:.1} s)", t0.elapsed().as_secs_f64());
             sweep.push(json!({"tolerance":name,"tolerance_m":t,"directions":dirs.len(),"max_abs_difference_from_level0_m":worst,
                 "within_tolerance":worst <= t + 1e-6}));
         }
         let before = s.package_report().unwrap();
         let started = std::time::Instant::now();
         let verify = s.verify_levels(id)?;
+        eprintln!("{id:.8} verify: {:.1} s", started.elapsed().as_secs_f64());
         regions.push(json!({"region":id,"sweep":sweep,"verify":verify,"verify_s":started.elapsed().as_secs_f64(),"reads_before_verify":before}));
     }
     let report = json!({"format":"pgs2-levels-check/1","package":dir,"manifest_sha256":sha,"regions":regions});
