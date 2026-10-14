@@ -10,6 +10,12 @@ built_of:
 - {what: Weigh feeder, item: good.electric-motors, mass: 1500.0, note: from memory}
 holds: 211200.0
 needs: {power: 15000.0}
+visual:
+  format: "freefall-model/1"
+  path: "models/dri-bin-200t/v1"
+  manifest_sha256: "645258c5520f113d6bb15698eb1955bcbe62f93a416ab3858055398d1541096a"
+  version: 1
+  triangles: 4584
 life: 788940000
 basis:
 - of: [physical, built_of, holds]
