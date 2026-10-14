@@ -2712,9 +2712,9 @@
 - { record: system.treistun, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "dd9719e496514353" }
 - { record: unit.baghouse-800k, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "5526685837f20b72" }
 - { record: unit.cooling-tower, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "95edfcc8150d7e56" }
-- { record: unit.dri-bin-200t, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "77c4d3bb47d2077d" }
+- { record: unit.dri-bin-200t, at: "2026-10-14T13:57:32Z", status: draft, summary: "changed: identity, physical, built_of, basis", sha: "e30e9f2d1abb16fd" }
 - { record: unit.eaf-vessel-80t, at: "2026-10-14T13:48:05Z", status: draft, summary: "changed", sha: "c3f8d82e8f55274a" }
-- { record: unit.furnace-transformer-90mva, at: "2026-10-14T13:55:39Z", status: draft, summary: "changed: visual", sha: "f4bca36a0252f169" }
+- { record: unit.furnace-transformer-90mva, at: "2026-10-14T13:57:32Z", status: draft, summary: "changed", sha: "341b2e97a3acbe52" }
 - { record: unit.hall-crane-20t, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "5e8e21a5adca9521" }
 - { record: unit.ladle-car-80t, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "17a2ef15a2c324c2" }
 - { record: unit.slag-pot-car, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "2934b5dd3f375f29" }

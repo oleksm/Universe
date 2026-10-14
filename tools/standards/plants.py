@@ -124,15 +124,18 @@ def units():
     Db = 5.0
     Hc = (vol - math.pi * Db ** 2 / 4 * 3.0 / 3) / (math.pi * Db ** 2 / 4)   # cylinder above a 3 m cone
     bin_m = cyl_shell(Db, Hc, 0.008) * RHO["steel"] + math.pi * Db / 2 * math.hypot(Db / 2, 3.0) * 0.008 * RHO["steel"]
-    legs = 4 * box_tube(0.3, 0.3, 0.02, 6.0 + Hc) * RHO["steel"]
+    Z_OUT, FEED_H, CONE_H, ROOF_H = 6.0, 0.8, 3.0, 0.2   # feeder outlet at the conveyor's tail, the feeder under the cone, a shallow roof
+    z_cyl = Z_OUT + FEED_H + CONE_H                      # the cylinder's bottom, 9.8 m
+    leg_L = z_cyl + 1.5                                  # legs carry the lower cylinder 1.5 m up its shell
+    legs = 4 * box_tube(0.3, 0.3, 0.02, leg_L) * RHO["steel"]
     out["dri-bin-200t"] = dict(
-        name=f"Sponge iron bin, {hold / 1000:.0f} t", size_class=1, fits="bay-s1", dims=(6.0, 6.0, r(6.0 + Hc + 1.0, 3)),
-        desc="A sealed steel bin on four legs that holds two hours of sponge iron, kept dry (it rusts and heats in wet air), with a weigh feeder under its cone onto the furnace's conveyor.",
+        name=f"Sponge iron bin, {hold / 1000:.0f} t", size_class=1, fits="bay-s1", dims=(6.0, 6.0, r(z_cyl + Hc + ROOF_H, 3)),
+        desc=f"A sealed steel bin on four legs that holds two hours of sponge iron, kept dry (it rusts and heats in wet air), with a weigh feeder under its cone onto the furnace's conveyor: feeder outlet 6 m up, 3 m south of the bin's axis (local 0, -3, 6), cone 6.8 to 9.8 m, cylinder to {z_cyl + Hc:.1f} m, shallow roof to {z_cyl + Hc + ROOF_H:.1f} m.",
         built_of=[part("Bin", A36, bin_m, f"{Db} m across, {Hc:.1f} m of cylinder over a 3 m cone, 8 mm plate"),
-                  part("Legs", "stock.st4340-box-300x300x20", legs, f"four box legs 300 x 300 x 20 mm, {6.0 + Hc:.1f} m"),
+                  part("Legs", "stock.st4340-box-300x300x20", legs, f"four box legs 300 x 300 x 20 mm, {leg_L:.1f} m, to the lower cylinder"),
                   part("Weigh feeder", "good.electric-motors", 1500.0, "from memory")],
         holds=hold, needs={"power": 15000.0},
-        basis=[{"of": ["physical", "built_of", "holds"], "tier": "derived", "review": True, "note": f"Two hours of the furnace's sponge iron ({DRI:.1f} kg/s) at about 1,700 kg/m3 in bulk (from memory). The cone's outlet 6 m up for the conveyor."}])
+        basis=[{"of": ["physical", "built_of", "holds"], "tier": "derived", "review": True, "note": f"Two hours of the furnace's sponge iron ({DRI:.1f} kg/s) at about 1,700 kg/m3 in bulk (from memory). The feeder's outlet 6 m up for the conveyor, the feeder 0.8 m under the cone (blender, 2026-10-14). Legs in compression about 25 MPa full; their bracing and the wind on the bin not checked."}])
 
     # Off-gas line and baghouse.
     Q = 800000 / 3600                         # m3/s of off-gas after dilution: from memory, for 80 to 100 t furnaces

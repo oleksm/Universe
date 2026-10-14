@@ -1,12 +1,12 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.dri-bin-200t, name: 'Sponge iron bin, 211 t', description: 'A sealed steel bin on four legs that holds two hours of sponge iron, kept dry (it rusts and heats in wet air), with a weigh feeder under its cone onto the furnace''s conveyor.'}
+identity: {key: unit.dri-bin-200t, name: 'Sponge iron bin, 211 t', description: 'A sealed steel bin on four legs that holds two hours of sponge iron, kept dry (it rusts and heats in wet air), with a weigh feeder under its cone onto the furnace''s conveyor: feeder outlet 6 m up, 3 m south of the bin''s axis (local 0, -3, 6), cone 6.8 to 9.8 m, cylinder to 15.1 m, shallow roof to 15.3 m.'}
 size_class: 1
 fits: plant-mount.bay-s1
-physical: {length: 6.0, width: 6.0, height: 12.3, mass: 16650.0}
+physical: {length: 6.0, width: 6.0, height: 15.3, mass: 16630.0}
 built_of:
 - {what: Bin, item: material.structural-steel-a36, mass: 7181.0, note: '5.0 m across, 5.3 m of cylinder over a 3 m cone, 8 mm plate'}
-- {what: Legs, item: stock.st4340-box-300x300x20, mass: 7967.0, note: 'four box legs 300 x 300 x 20 mm, 11.3 m'}
+- {what: Legs, item: stock.st4340-box-300x300x20, mass: 7948.0, note: 'four box legs 300 x 300 x 20 mm, 11.3 m, to the lower cylinder'}
 - {what: Weigh feeder, item: good.electric-motors, mass: 1500.0, note: from memory}
 holds: 211200.0
 needs: {power: 15000.0}
@@ -15,6 +15,6 @@ basis:
 - of: [physical, built_of, holds]
   tier: derived
   review: true
-  note: Two hours of the furnace's sponge iron (29.3 kg/s) at about 1,700 kg/m3 in bulk (from memory). The cone's outlet 6 m up for the conveyor.
+  note: Two hours of the furnace's sponge iron (29.3 kg/s) at about 1,700 kg/m3 in bulk (from memory). The feeder's outlet 6 m up for the conveyor, the feeder 0.8 m under the cone (blender, 2026-10-14). Legs in compression about 25 MPa full; their bracing and the wind on the bin not checked.
 - of: [life]
   rule: rule.life-plant
