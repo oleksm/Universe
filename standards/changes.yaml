@@ -2764,7 +2764,7 @@
 - { record: unit.ingot-car-40t, at: "2026-10-14T17:51:14Z", status: draft, summary: "first tracked", sha: "6d0a1c08ea1ffee4" }
 - { record: unit.ingot-crane-10t, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "53289950b4fd148c" }
 - { record: unit.ladle-car-80t, at: "2026-10-14T14:50:41Z", status: draft, summary: "changed", sha: "455ad05163bdf8c8" }
-- { record: unit.ladle-crane-150t, at: "2026-10-14T17:51:14Z", status: draft, summary: "changed: identity, built_of", sha: "873aebfa6330861f" }
+- { record: unit.ladle-crane-150t, at: "2026-10-14T19:53:01Z", status: draft, summary: "changed: visual", sha: "9487117b1f3bc7f7" }
 - { record: unit.ladle-furnace-80t, at: "2026-10-14T18:15:58Z", status: draft, summary: "changed", sha: "9cf8dd025ee54189" }
 - { record: unit.ladle-furnace-80t-sealed, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "2b557a04dd7cd03c" }
 - { record: unit.mill-crane-30t, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "40e31c07816559a2" }

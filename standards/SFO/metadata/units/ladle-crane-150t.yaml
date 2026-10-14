@@ -8,6 +8,12 @@ built_of:
 - {what: Trolley and hoist, item: material.structural-steel-a36, mass: 37500.0, note: 'with a main hoist and a ladle beam: 25% of the load, from memory'}
 - {what: End carriages and drives, item: good.electric-motors, mass: 22500.0, note: '15% of the load, from memory'}
 needs: {power: 300000.0}
+visual:
+  format: "freefall-model/1"
+  path: "models/ladle-crane-150t/v1"
+  manifest_sha256: "0f8e3ad4ef5e8ec0b692d35648d1da1b510e78d033b8f6aff3216b4a24ec9233"
+  version: 1
+  triangles: 7308
 life: 788940000
 basis:
 - of: [physical, built_of]
