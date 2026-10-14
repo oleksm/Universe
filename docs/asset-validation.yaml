@@ -4420,3 +4420,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.mould-car-12
+    version: 1
+    manifest_sha256: "3ed158435a215e553246ff91bc0a073b7d0c12fcf9c3bdb1c6e311f7829cf210"
+    installed: 241e0d0b
+    game: "the loader (world::assets) at fso 241e0d0b"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/mould-car-12/v1 (455180 bytes, bounds [-3.0, -0.04, -1.4] to [3.0, 2.3, 1.4]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
