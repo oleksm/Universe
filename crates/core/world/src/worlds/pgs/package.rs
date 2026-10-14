@@ -340,6 +340,9 @@ struct Region {
     /// the footprint (infinite when not declared: the root never answers for the region).
     levels: Vec<Level>,
     root_deviation_max_m: f64,
+    /// Level 0's added points in stored order (their local ids), read from kind 16 when a
+    /// level is first held to level 0.
+    added_ids: OnceLock<Result<Vec<u32>, String>>,
 }
 
 impl Region {
@@ -363,7 +366,7 @@ fn levels_of(id: &str, r: &Value, folder: &Path) -> Result<(Vec<Level>, f64), St
         let (max, rms) = (l["deviation_max_m"].as_f64().ok_or_else(|| fail("level deviation_max_m"))?, l["deviation_rms_m"].as_f64().ok_or_else(|| fail("level deviation_rms_m"))?);
         if !(max.is_finite() && rms.is_finite() && rms >= 0.0 && rms <= max) { return Err(fail("level deviation not finite, or RMS above the maximum")); }
         let path = folder.join(l["file"].as_str().ok_or_else(|| fail("level file"))?);
-        levels.push(Level { k, deviation_max_m: max, path, entry: l.clone(), file: OnceLock::new(), open_ms: OnceLock::new(), touched: OnceLock::new() });
+        levels.push(Level { k, deviation_max_m: max, path, entry: l.clone(), file: OnceLock::new(), open_ms: OnceLock::new(), touched: OnceLock::new(), checked: OnceLock::new(), ranks: OnceLock::new() });
     }
     if levels.first().is_some_and(|l| l.k < 1) || levels.windows(2).any(|w| w[1].k <= w[0].k) { return Err(fail("levels not listed by increasing level from 1")); }
     if levels.windows(2).any(|w| w[1].deviation_max_m < w[0].deviation_max_m) { return Err(fail("level deviations decrease")); }
@@ -385,6 +388,10 @@ struct Level {
     file: OnceLock<Result<File, String>>,
     open_ms: OnceLock<f64>,
     touched: OnceLock<f64>,
+    /// Level points already held to level 0 (one bit each), and each point's rank among the
+    /// level's added points (NONE for a kept point), made when first needed.
+    checked: OnceLock<Vec<AtomicU64>>,
+    ranks: OnceLock<Result<Vec<u32>, String>>,
 }
 
 /// Which file answers a query inside a region's footprint.
@@ -467,7 +474,7 @@ impl Package {
             let count = |f: &str| r[f].as_u64().ok_or_else(|| format!("region {id}: manifest {f}"));
             let (faces, added) = (u32::try_from(count("faces")?).map_err(|_| "faces")?, count("added_points")? as usize);
             let (levels, root_deviation_max_m) = levels_of(&id, r, folder)?;
-            regions.push(Region { id, path, entry: r.clone(), lowest: footprint[0], footprint, faces, added, file: OnceLock::new(), open_ms: OnceLock::new(), boundary: OnceLock::new(), touched: OnceLock::new(), levels, root_deviation_max_m });
+            regions.push(Region { id, path, entry: r.clone(), lowest: footprint[0], footprint, faces, added, file: OnceLock::new(), open_ms: OnceLock::new(), boundary: OnceLock::new(), touched: OnceLock::new(), levels, root_deviation_max_m, added_ids: OnceLock::new() });
         }
         owner.sort();
         if owner.windows(2).any(|w| w[0].0 == w[1].0) { return Err("two regions claim the same root face (footprints overlap)".into()); }
@@ -567,6 +574,36 @@ impl Package {
         let s = file.u32(file.section(20)?.offset + added as usize * 4)?;
         if s as usize >= self.regions[k].added { return Err(file.fail("kind 20 names no level-0 added point")); }
         Ok(s)
+    }
+    /// Kind 20 against level 0, while both files are open: the owner face's points, each once,
+    /// byte-identical to the level-0 point they name (kept points by root id against the root's).
+    fn check_level_face(&self, k: usize, i: usize, f: u32) -> Result<(), String> {
+        let r = &self.regions[k];
+        let Some(Ok(fine)) = r.file.get() else { return Ok(()) };
+        let level = self.level_file(k, i)?;
+        let bits = r.levels[i].checked.get_or_init(|| (0..level.count(1).div_ceil(64)).map(|_| AtomicU64::new(0)).collect());
+        fn raw(file: &File, p: u32) -> Result<&[u8], String> { file.at(file.section(1)?.offset + p as usize * 40, 40) }
+        for v in level.face(f)?.0 {
+            let (word, bit) = (&bits[v as usize / 64], 1u64 << (v % 64));
+            if word.load(Ordering::Acquire) & bit != 0 { continue; }
+            let root_id = level.root_point(v)?;
+            let same = if root_id != NONE {
+                raw(level, v)? == raw(&self.root, root_id)?
+            } else {
+                // The level's added points in stored order: v's rank among them is its kind-20 row.
+                let ranks = r.levels[i].ranks.get_or_init(|| {
+                    let mut n = 0;
+                    (0..level.count(1) as u32).map(|p| level.root_point(p).map(|id| if id == NONE { n += 1; n - 1 } else { NONE })).collect()
+                }).as_ref().map_err(Clone::clone)?;
+                let rank = ranks[v as usize];
+                let added = r.added_ids.get_or_init(|| (0..fine.count(1) as u32).filter_map(|p| match fine.root_point(p) { Ok(id) if id != NONE => None, Ok(_) => Some(Ok(p)), Err(e) => Some(Err(e)) }).collect()).as_ref().map_err(Clone::clone)?;
+                let s = self.level_source(k, i, rank)?;
+                raw(level, v)? == raw(fine, *added.get(s as usize).ok_or_else(|| level.fail("kind 20 beyond level 0's added points"))?)?
+            };
+            if !same { return Err(level.fail(&format!("point {v} differs from the level-0 point kind 20 names"))); }
+            word.fetch_or(bit, Ordering::AcqRel);
+        }
+        Ok(())
     }
     fn rep_file(&self, k: usize, rep: Rep) -> Result<&File, String> {
         match rep { Rep::Root => Ok(&self.root), Rep::Fine => self.region_file(k), Rep::Level(i) => self.level_file(k, i) }
@@ -679,6 +716,7 @@ impl Package {
         let height_m = height(q, [a, b, c], h);
         let categories = file.face(f)?.3;
         let face = self.composed_at(tolerance_m, region, rep, f);
+        if let (Some(k), Rep::Level(i)) = (region, rep) { self.check_level_face(k, i, f)?; }
         let water = if self.root.capabilities & 2 == 0 { Water::Unknown } else {
             let (mut wet, mut shore) = (None, false);
             for &(r, rep, g) in &tied {
@@ -883,7 +921,8 @@ impl Package {
                         let (a0, a1, b0, b1) = (lxy[la as usize], lxy[lb as usize], u, v);
                         let (da, db) = (a1 - a0, b1 - b0);
                         let den = da.x * db.y - da.y * db.x;
-                        if den.abs() == 0.0 { continue; }
+                        // Collinear (never a crossing) within roundoff of the edges' lengths.
+                        if den.abs() <= 1e-9 * da.length() * db.length() { continue; }
                         let d0 = b0 - a0;
                         let t = (d0.x * db.y - d0.y * db.x) / den;
                         let s = (d0.x * da.y - d0.y * da.x) / den;
