@@ -823,7 +823,7 @@
 - { record: law.year, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "29f1ef4424e5cc98" }
 - { record: layout.arc-furnace-air, at: "2026-10-14T17:43:17Z", status: draft, summary: "changed", sha: "a2407e84fcd931d4" }
 - { record: layout.arc-furnace-airless, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "befaa429a44d04ce" }
-- { record: layout.casting-bay-air, at: "2026-10-14T21:49:29Z", status: draft, summary: "changed: visual", sha: "562df002a015c8db" }
+- { record: layout.casting-bay-air, at: "2026-10-14T21:51:51Z", status: draft, summary: "changed", sha: "5831780394711ff7" }
 - { record: layout.casting-bay-airless, at: "2026-10-14T21:36:13Z", status: draft, summary: "changed: physical, totals", sha: "ed7687b7564fac7a" }
 - { record: layout.hydrogen-plant-air, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "379207799e0d24b5" }
 - { record: layout.hydrogen-plant-airless, at: "2026-10-14T19:28:17Z", status: draft, summary: "first tracked", sha: "7d8c41a2b8a39bdb" }
@@ -832,8 +832,8 @@
 - { record: layout.ladle-station-airless, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "47acf5ee6202ed61" }
 - { record: layout.ore-yard-air, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "80cee716ce980cb3" }
 - { record: layout.pellet-plant-air, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "17d04bf873e1439b" }
-- { record: layout.shaft-furnace-air, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "63006f42442df554" }
-- { record: layout.shaft-furnace-airless, at: "2026-10-14T19:26:44Z", status: draft, summary: "first tracked", sha: "91bd41d979faabb9" }
+- { record: layout.shaft-furnace-air, at: "2026-10-14T21:51:51Z", status: draft, summary: "changed: links, totals", sha: "17a59a9ae7fed2fb" }
+- { record: layout.shaft-furnace-airless, at: "2026-10-14T21:51:51Z", status: draft, summary: "changed: physical, links, totals", sha: "9348f3c3f7c692eb" }
 - { record: market.art, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "517671b6a46daee3" }
 - { record: market.artifacts, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "6b51c19897f56c1a" }
 - { record: market.biologics, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "003ee842af8f7674" }
@@ -2780,7 +2780,7 @@
 - { record: unit.recycle-compressor, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "20665cbbf05406cb" }
 - { record: unit.recycle-compressor-8bar, at: "2026-10-14T19:26:44Z", status: draft, summary: "first tracked", sha: "f34cdf84380aedc8" }
 - { record: unit.sampling-lab, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "fe76c914c3297692" }
-- { record: unit.shaft-furnace-200th, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "a54da5809c4e3684" }
+- { record: unit.shaft-furnace-200th, at: "2026-10-14T21:51:51Z", status: draft, summary: "changed: identity", sha: "7f0e8eb06c959140" }
 - { record: unit.shaft-furnace-200th-hp, at: "2026-10-14T19:26:44Z", status: draft, summary: "first tracked", sha: "a36f3c28899dff95" }
 - { record: unit.slag-pot-car, at: "2026-10-14T14:59:35Z", status: draft, summary: "changed", sha: "99ae6089782a9bea" }
 - { record: unit.stack-crane-20t, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "dada8ceeb1793c71" }
