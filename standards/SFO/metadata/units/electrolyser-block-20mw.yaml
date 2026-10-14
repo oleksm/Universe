@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.electrolyser-block-20mw, name: 'Electrolyser block, 19 MW', description: 'Alkaline electrolysis at about 3 bar: 4 stacks of 233 cells each (2.7 m2 active, 0.4 A/cm2 at 1.9 V, 443 V a stack), lying along y at local x -9, -4, 1 and 6, each 6.2 m long and 2.4 m across on a skid 1 m high; the lye (30% potassium hydroxide) carries the gases to two separators at x 10.5 (hydrogen at y -2.5, oxygen at y 2.5), 2 m across and 6 m tall on 2 m legs, and back by pumps through coolers. 43 kA of direct current by a busbar to its terminals at local (0, -6, 3); hydrogen and oxygen out of the separators'' tops (z 8) into the layout''s headers; demineralised water and the cooling loop in at local (11, 6, 1).'}
+size_class: 3
+fits: plant-mount.bay-s3
+physical: {length: 24.0, width: 12.0, height: 8.0, mass: 211000.0}
+built_of:
+- {what: Bipolar plates, item: material.structural-steel-a36, mass: 76250.0, note: '931 plates of 3 mm steel, 3.5 m2 each with its rim, nickel-plated'}
+- {what: Electrodes and plating, item: material.nickel-200, mass: 8990.0, note: 'nickel mesh at 1.5 kg/m2 each side, 25 um of plating'}
+- {what: Diaphragms, item: material.polyethylene-uhmw, mass: 1257.0, note: 'porous polysulfone with zirconia, about 0.5 kg/m2, which the registry has not got: polyethylene stands for it'}
+- {what: End plates and tie rods, item: material.structural-steel-a36, mass: 64820.0, note: 'two plates 2.4 m across, 200 mm, and 2 t of rods a stack'}
+- {what: Separators, item: material.structural-steel-a36, mass: 8286.0, note: 'two vessels 2 m across, 6 m, 12 mm plate'}
+- {what: Lye, item: good.water, mass: 43430.0, note: '30% potassium hydroxide lye in the cells and half the separators, 1,280 kg/m3, which the registry has not got: water stands for it'}
+- {what: Lye pumps and coolers, item: good.pumps, mass: 8000.0, note: from memory}
+needs: {power: 19100000.0, heat: 4221000.0, water: 0.945}
+recipes:
+- makes: element.h
+  does: Water is split to make the hydrogen for the next step, and the water that step gives off comes back here.
+  inputs:
+  - {item: good.water, quantity: 9}
+  outputs:
+  - {item: element.o, quantity: 8}
+  rate: 0.10500000000000001
+  power: 19095989.583333332
+life: 788940000
+basis:
+- of: [recipes]
+  tier: derived
+  note: 'The module''s recipe (module.hydrogen-plant) for one block of 5: the hydrogen from Faraday''s law: 43 kA through 4 stacks of 233 cells in series; the power the cells'' share (95% of the module''s, the rest the rectifiers and plant).'
+- of: [physical, built_of]
+  tier: derived
+  review: true
+  note: 'Cells from the current: 2,513 m2 of active area at 0.4 A/cm2; plate, mesh and diaphragm weights and the stack''s layout from memory of pressurised alkaline electrolysers.'
+- of: [needs.heat]
+  tier: derived
+  note: 'The cells'' voltage over the thermoneutral 1.48 V leaves as heat: 4.2 MW, to the cooling loop.'
+- of: [life]
+  rule: rule.life-plant

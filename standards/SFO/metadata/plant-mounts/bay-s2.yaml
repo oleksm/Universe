@@ -10,4 +10,4 @@ basis:
   note: 'Sides 6, 12, 24, 48 m by class: chosen, each twice the last, so the bays of a layout share one grid.'
 - of: [bears, feeds]
   rule: rule.mounts-margin
-  note: Round the units fitted to it in the trial (unit.eaf-vessel-80t, unit.furnace-transformer-90mva, unit.ladle-furnace-80t, unit.vacuum-degasser-80t, unit.alloy-bins-8, unit.baghouse-200k, unit.recuperator, unit.top-gas-scrubber, unit.heater-transformer-131mva, unit.dri-cooling-loop) at 1 g, full.
+  note: Round the units fitted to it in the trial (unit.eaf-vessel-80t, unit.furnace-transformer-90mva, unit.ladle-furnace-80t, unit.vacuum-degasser-80t, unit.alloy-bins-8, unit.baghouse-200k, unit.recuperator, unit.top-gas-scrubber, unit.heater-transformer-131mva, unit.dri-cooling-loop, unit.rectifier-transformer-21mva, unit.rectifier-transformer-21mva, unit.rectifier-transformer-21mva, unit.rectifier-transformer-21mva, unit.rectifier-transformer-21mva, unit.hydrogen-purifier, unit.water-treatment) at 1 g, full.

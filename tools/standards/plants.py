@@ -1174,6 +1174,199 @@ def shaft_furnace_air(us, recs):
     return layout, bays
 
 
+# ---------------------------------------------------------------- the hydrogen plant's figures
+hmod = yaml.safe_load(open(S + "modules/hydrogen-plant.yaml"))
+HREC = hmod["recipes"][0]
+H_RATE, H_P = HREC["rate"], HREC["power"]                  # kg/s of hydrogen, W (sourced: 53 kWh a kg)
+H_WATER = HREC["inputs"][0]["quantity"] * H_RATE
+H_O2 = HREC["outputs"][0]["quantity"] * H_RATE
+FARADAY = 96485.0
+N_BLK = 5                          # electrolyser blocks, 20 MW each: chosen
+V_CELL, J_CELL = 1.9, 4000.0       # V a cell and A/m2 of active area: from memory of pressurised alkaline electrolysers
+V_TN = 1.48                        # V: the thermoneutral voltage; what a cell takes above it leaves as heat
+CELL_A, CELLS_STACK, STACKS = 2.7, None, 4   # m2 of active area a cell (1.85 m across): from memory
+I_BLK = H_RATE / N_BLK / 2.016e-3 * 2 * FARADAY             # A summed over every cell of one block (ampere-cells), all of it making gas (a Faraday efficiency of 1)
+P_STACKS = I_BLK * V_CELL                                    # W into one block's cells
+N_CELLS = math.ceil(I_BLK / J_CELL / CELL_A)
+PER_STACK = math.ceil(N_CELLS / STACKS)
+I_DC = I_BLK / PER_STACK                                     # A of direct current into a block: its stacks in parallel, each its cells in series
+NI = "material.nickel-200"
+
+
+def hydrogen_units():
+    out = {}
+    area = I_BLK / J_CELL
+    n_cells, per_stack = N_CELLS, PER_STACK
+    V_stack = per_stack * V_CELL
+    pitch = 0.025
+    L_stack = per_stack * pitch + 0.4
+    plate = 3.5 * 0.003 * 7800                               # a bipolar plate of 3 mm steel over the cell's 3.5 m2 with its rim
+    elec = 2 * 1.5 * CELL_A + 2 * 3.5 * 25e-6 * 8890          # two nickel mesh electrodes at 1.5 kg/m2 and 25 um of nickel plating both sides
+    dia = 0.5 * CELL_A
+    ends = STACKS * (2 * math.pi * 1.2 ** 2 * 0.2 * 7850 + 2000.0)
+    lye = (n_cells * CELL_A * 0.006 + 2 * math.pi * 1.0 ** 2 * 6.0 * 0.5) * 1280.0
+    seps = 2 * cyl_shell(2.0, 6.0, 0.012, bottom=2.0) * RHO["steel"]
+    out["electrolyser-block-20mw"] = dict(
+        name=f"Electrolyser block, {P_STACKS / 1e6:.0f} MW", size_class=3, fits="bay-s3", dims=(24.0, 12.0, 8.0),
+        desc=(f"Alkaline electrolysis at about 3 bar: {STACKS} stacks of {per_stack} cells each ({CELL_A:g} m2 active, {J_CELL / 1e4:g} A/cm2 at {V_CELL:g} V, {V_stack:.0f} V a stack), lying along y at local x -9, -4, 1 and 6, "
+              f"each {L_stack:.1f} m long and 2.4 m across on a skid 1 m high; the lye (30% potassium hydroxide) carries the gases to two separators at x 10.5 (hydrogen at y -2.5, oxygen at y 2.5), 2 m across and 6 m tall on 2 m legs, "
+              f"and back by pumps through coolers. {I_DC / 1e3:.0f} kA of direct current by a busbar to its terminals at local (0, -6, 3); hydrogen and oxygen out of the separators' tops (z 8) into the layout's headers; demineralised water and the cooling loop in at local (11, 6, 1)."),
+        built_of=[part("Bipolar plates", A36, n_cells * plate, f"{n_cells} plates of 3 mm steel, 3.5 m2 each with its rim, nickel-plated"),
+                  part("Electrodes and plating", NI, n_cells * elec, "nickel mesh at 1.5 kg/m2 each side, 25 um of plating"),
+                  part("Diaphragms", "material.polyethylene-uhmw", n_cells * dia, "porous polysulfone with zirconia, about 0.5 kg/m2, which the registry has not got: polyethylene stands for it"),
+                  part("End plates and tie rods", A36, ends, f"two plates 2.4 m across, 200 mm, and 2 t of rods a stack"),
+                  part("Separators", A36, seps, "two vessels 2 m across, 6 m, 12 mm plate"),
+                  part("Lye", "good.water", lye, "30% potassium hydroxide lye in the cells and half the separators, 1,280 kg/m3, which the registry has not got: water stands for it"),
+                  part("Lye pumps and coolers", "good.pumps", 8000.0, "from memory")],
+        needs={"power": P_STACKS, "heat": I_BLK * (V_CELL - V_TN), "water": H_WATER / N_BLK},
+        recipes=[dict(HREC, rate=H_RATE / N_BLK, power=P_STACKS)],
+        basis=[{"of": ["recipes"], "tier": "derived", "note": f"The module's recipe (module.hydrogen-plant) for one block of {N_BLK}: the hydrogen from Faraday's law: {I_DC / 1e3:.0f} kA through {STACKS} stacks of {PER_STACK} cells in series; the power the cells' share ({P_STACKS * N_BLK / H_P:.0%} of the module's, the rest the rectifiers and plant)."},
+               {"of": ["physical", "built_of"], "tier": "derived", "review": True, "note": f"Cells from the current: {area:,.0f} m2 of active area at {J_CELL / 1e4:g} A/cm2; plate, mesh and diaphragm weights and the stack's layout from memory of pressurised alkaline electrolysers."},
+               {"of": ["needs.heat"], "tier": "derived", "note": f"The cells' voltage over the thermoneutral {V_TN} V leaves as heat: {(V_CELL - V_TN) * I_BLK / 1e6:.1f} MW, to the cooling loop."}])
+    P_rect = (H_P / N_BLK - P_STACKS) * 0.6                   # of the block's share above its cells: the rectifier's losses; the rest the plant's
+    rt = transformer_unit(P_STACKS / 0.95, f"one electrolyser block: a 12-pulse thyristor rectifier in the same skid gives {I_DC / 1e3:.0f} kA at {V_stack:.0f} V direct")
+    rt["name"] = f"Rectifier transformer, {P_STACKS / 0.95 / 1e6:.0f} MVA"
+    rt["built_of"].append(part("Rectifier", AL, 10000.0, "thyristor stacks on water-cooled aluminium heat sinks, from memory"))
+    rt["needs"] = {"power": P_rect, "heat": P_rect}
+    rt["desc"] = rt["desc"].replace("Three secondary terminals on one long face (+y)", "The rectifier's two DC terminals on one long face (+y)")
+    out["rectifier-transformer-21mva"] = rt
+    out["hydrogen-purifier"] = dict(
+        name="Hydrogen purifier", size_class=2, fits="bay-s2", dims=(12.0, 8.0, 9.0),
+        desc="Takes the last oxygen out of the hydrogen over a palladium catalyst (it burns to water) and dries it in two adsorber vessels that take turns, one regenerating by heat while the other works. Gas in at local (-6, 0, 6), out at (6, 0, 2).",
+        built_of=[part("Vessels and piping", A36, 25000.0, "a deoxidiser and two adsorbers 1.5 m across and 6 m, from memory"),
+                  part("Adsorbent", "material.fused-silica", 8000.0, "molecular sieve beads, which the registry has not got: fused silica stands for it")],
+        needs={"power": 300e3},
+        basis=[{"of": ["physical", "built_of", "needs"], "tier": "invented", "review": True, "note": "Sizes, masses and the regeneration heaters' power from memory."}])
+    out["water-treatment"] = dict(
+        name="Water treatment", size_class=2, fits="bay-s2", dims=(12.0, 8.0, 5.0),
+        desc=f"Makes the {H_WATER:.1f} kg/s of demineralised water the cells split: filters, reverse osmosis and an electrodeionisation stage, on skids under a roof. Raw water in at local (6, 0, 0.5), clean water out at (-6, 0, 0.5).",
+        built_of=[part("Skids and membranes", A36, 25000.0, "from memory"), part("Pumps", "good.pumps", 4000.0, "from memory")],
+        needs={"power": 200e3},
+        basis=[{"of": ["physical", "built_of", "needs"], "tier": "invented", "review": True, "note": "From memory."}])
+    out["stack-crane-20t"] = bridge_crane_unit(20000.0, 22.8, 6000.0, kind="Stack crane", job="it lifts an electrolyser stack's end plates and cell packs out for refurbishment and sets in new ones", gear="a main hoist")
+    return out
+
+
+def hydrogen_plant_air(us, recs):
+    """The hydrogen plant on a world with air at 1 g: five electrolyser blocks in a vented hall, their rectifiers outside."""
+    cell, box = 3.0, (-60.0, -15.0, 0.0, 60.0, 15.0, 18.0)
+    xs_b = [-48.0, -24.0, 0.0, 24.0, 48.0]
+    openings = [(x - 1.5, -15.0, 3.0, x + 1.5, -12.0, 6.0) for x in xs_b]           # the DC busbars, south wall
+    openings += [(57.0, -9.0, 6.0, 60.0, 9.0, 12.0),                                 # the hydrogen and oxygen headers, east wall
+                 (-3.0, 12.0, 0.0, 3.0, 15.0, 3.0),                                  # the cooling water mains, north wall
+                 (57.0, -3.0, 0.0, 60.0, 3.0, 6.0)]                                  # a door, east
+    groups, ground_nodes, n_nodes, cells = lattice(box, cell, 5, None, openings)
+    x0, y0, z0, x1, y1, z1 = box
+    span_in = y1 - y0 - 2 * cell
+    crane = recs["stack-crane-20t"]
+    cap, trolley = 20000.0, 6000.0
+    RUNWAY = 11.0
+    roof_q = (0.002 * RHO["aluminium"] + 20.0) * G + 1000.0
+    chord = roof_q * cell * span_in ** 2 / 8 / cell
+    wheel = ((cap + trolley) * (1 - 1.5 / (span_in - 1.2)) + crane["physical"]["mass"] / 2) * G / 2
+    vert = wheel + roof_q * cell * span_in / 2
+    sec = {"roof": frames.lightest_section(chord), "wall": frames.lightest_section(vert)}
+    members, fmass = [], 0.0
+    for g in ("wall", "roof"):
+        for diag, n in ((False, groups[g][0]), (True, groups[g][1])):
+            key, st = strut(sec[g], cell, diag)
+            members.append({"item": key, "count": n, "where": g})
+            fmass += n * st["physical"]["mass"]
+    node_key = strut(sec["wall"], cell)[1]["kit"]["node"]
+    node = yaml.safe_load(open(S + "mill-stock/" + node_key.split(".", 1)[1].upper() + ".yaml"))
+    members.append({"item": node_key, "count": n_nodes, "where": "nodes"})
+    fmass += n_nodes * frames.node_mass(node, frames.materials())
+    rw_a = 0.4 * 0.4 - 0.35 * 0.35
+    rw_sigma = wheel * cell / 4 / ((0.4 ** 4 - 0.35 ** 4) / 12 / 0.2)
+    assert 1.5 * rw_sigma <= 470e6, rw_sigma
+    x_in = x1 - x0 - 2 * cell
+    members.append({"item": "stock.st4340-box-400x400x25", "count": 6, "where": f"crane runways, three a side, {x_in / 3:.0f} m lengths, along x on the inside of the long walls: their rail plane {RUNWAY:g} m up at y -11.4 and +11.4"})
+    fmass += 2 * x_in * rw_a * RHO["steel"]
+    vent = (x1 - x0 - 2 * cell) * 1.5                                                  # a ridge vent 1.5 m wide the hall's length
+    clad_area = 2 * (x1 - x0) * (z1 - z0) + 2 * (y1 - y0) * (z1 - z0) + (x1 - x0) * (y1 - y0) - vent - sum(max(d - a, e - b) * (f - c) for a, b, c, d, e, f in openings)
+    clad = clad_area * 0.002 * RHO["aluminium"]
+    sec_stock = lambda g: yaml.safe_load(open(S + "mill-stock/" + strut(sec[g], cell)[1]["kit"]["section"].split(".", 1)[1].upper() + ".yaml"))
+    rcap, wcap = frames.strut_capacity(sec_stock("roof")), frames.strut_capacity(sec_stock("wall"))
+    sized = (f"At 1 g: roof {roof_q:.0f} Pa (2 mm aluminium, the frame about 20 kg/m2, 1 kPa of snow and wind, the last invented) over a {span_in:.0f} m span in 3 m deep strips puts {chord / 1e3:.0f} kN in a chord: "
+             f"{sec['roof']} takes {rcap / 1e3:.0f} kN. A wheel of the 20 t crane loaded at the runway's end puts {wheel / 1e3:.0f} kN on a wall node, with the roof's share {vert / 1e3:.0f} kN: "
+             f"{sec['wall']} takes {wcap / 1e3:.0f} kN. Each the kit's lightest section with half again to spare. The runway bends to {rw_sigma / 1e6:.0f} MPa between nodes, against 470 MPa with half again to spare. Wind and footings not yet checked.")
+    blk = us["electrolyser-block-20mw"]
+    rt = us["rectifier-transformer-21mva"]
+    tower = us["cooling-tower-h2"]
+    bays = [{"id": f"E{i + 1}", "mount": "plant-mount.bay-s3", "unit": "unit.electrolyser-block-20mw", "at": [x, 0.0, 0.0], "note": "in the hall"} for i, x in enumerate(xs_b)]
+    bays += [{"id": f"R{i + 1}", "mount": "plant-mount.bay-s2", "unit": "unit.rectifier-transformer-21mva", "at": [x, -24.0, 0.0], "note": "outside, south, its DC terminals toward the hall"} for i, x in enumerate(xs_b)]
+    bays += [{"id": "P", "mount": "plant-mount.bay-s2", "unit": "unit.hydrogen-purifier", "at": [72.0, 0.0, 0.0], "note": "outside, east"},
+             {"id": "W", "mount": "plant-mount.bay-s2", "unit": "unit.water-treatment", "at": [72.0, -24.0, 0.0], "note": "outside, south-east"},
+             {"id": "C", "mount": f"plant-mount.{tower['fits']}", "unit": "unit.cooling-tower-h2", "at": [0.0, 48.0, 0.0], "note": "north"}]
+    rW, rH = rt["dims"][1], rt["dims"][2]
+    bus_a = I_DC / 1.5e6
+    d_h2 = main_dia(mol_flow(H_RATE), 40.0, 3e5) * 30.0 ** 0.5 / 15.0 ** 0.5            # at 15 m/s in the headers
+    d_o2 = math.sqrt(4 * (H_O2 / 32e-3 * 8.314 * 313 / 3e5) / (math.pi * 15.0))
+    pm = lambda d, t: math.pi * d * t * RHO["steel"]
+    loop = sum(recs[k]["needs"].get("heat", 0) for k in ("electrolyser-block-20mw",)) * N_BLK + recs["rectifier-transformer-21mva"]["needs"]["heat"] * N_BLK
+    flow = loop / (4186 * 10)
+    d_cw = math.sqrt(4 * flow / 1000 / 2.5 / math.pi)
+    ss = "material.stainless-steel-304"
+    links = [link("busbar", f"DC bus {i + 1}", (x, -24.0 + rW / 2, rH * 2 / 3), (x, -6.0, 3.0), AL, 2 * bus_a * RHO["aluminium"], None, f"two aluminium bars, {bus_a * 1e4:.0f} cm2 each for {I_DC / 1e3:.0f} kA at 1.5 A/mm2, through the hall's south wall") for i, x in enumerate(xs_b)]
+    links += [
+        link("pipe", "hydrogen header", (xs_b[0] + 10.5, -2.5, 8.0), (66.0, 0.0, 6.0), ss, pm(d_h2, 0.006), None, f"{d_h2:.2f} m stainless, 6 mm wall, at 3 bar: from each block's hydrogen separator along the hall at z 9, out by the east wall to the purifier", via=[(xs_b[0] + 10.5, -2.5, 9.0), (58.5, -2.5, 9.0), (58.5, 0.0, 6.0)]),
+        link("pipe", "hydrogen to the shaft furnace", (78.0, 0.0, 2.0), (110.0, 0.0, 2.0), ss, pm(d_h2, 0.006), None, f"{H_RATE:.3f} kg/s of dry hydrogen at about 3 bar, on to the shaft furnace's make-up, beyond the layout"),
+        link("pipe", "oxygen header", (xs_b[0] + 10.5, 2.5, 8.0), (110.0, 6.0, 9.0), ss, pm(d_o2, 0.006), None, f"{d_o2:.2f} m stainless, 6 mm wall: the {H_O2:.1f} kg/s of oxygen, out by the east wall to a vent stack or to buyers (the arc furnace lances it), beyond the layout; clean, oil-free, as oxygen service needs", via=[(xs_b[0] + 10.5, 2.5, 9.0), (58.5, 2.5, 9.0), (58.5, 6.0, 9.0)]),
+        link("pipe", "demineralised water", (66.0, -24.0, 0.5), (59.0, 6.0, 1.0), ss, pm(0.1, 0.004), None, f"100 mm stainless, {H_WATER:.1f} kg/s to the blocks' feed points along the hall's north side", via=[(62.0, -24.0, 0.5), (62.0, 6.0, 0.5)]),
+        link("pipe", "raw water", (110.0, -24.0, 0.5), (78.0, -24.0, 0.5), A36, pm(0.15, 0.005), None, "150 mm: town or river water, or the shaft furnace's condensate, beyond the layout"),
+        link("pipe", "cooling water mains", (tower["dims"][0] / 2, 48.0, 0.75), (-48.0 + 11.0, 6.0, 1.0), A36, 2 * pm(d_cw, 0.010), None, f"a pair of {d_cw:.2f} m pipes, 10 mm wall, flow and return: {flow:,.0f} kg/s at a 10 K rise, into the hall by the north wall and along it to each block's coolers, a branch out to the rectifiers", via=[(tower["dims"][0] / 2 + 1.5, 48.0, 0.75), (tower["dims"][0] / 2 + 1.5, 20.0, 0.75), (0.0, 20.0, 0.75), (0.0, 9.0, 1.0), (-37.0, 9.0, 1.0)]),
+    ]
+    ground = [
+        {"what": "Hall floor", "item": CONC, "volume": r(x_in * span_in * 0.4), "note": f"0.4 m, {x_in:.0f} x {span_in:.0f} m, with a lye-proof coating and bunds round each block"},
+        {"what": "Frame footings", "item": CONC, "volume": r(ground_nodes * 2.25), "note": f"a 1.5 x 1.5 x 1 m pad under each of the lattice's {ground_nodes} ground nodes"},
+        {"what": "Rectifier slabs and fire walls", "item": CONC, "volume": r(N_BLK * (12 * 8 * 0.5) + (N_BLK + 1) * 8 * 6 * 0.3), "note": "a slab under each, a fire wall between"},
+        {"what": "Outside slabs", "item": CONC, "volume": r(2 * 12 * 8 * 0.5), "note": "under the purifier and the water treatment"},
+        {"what": "Cooling tower basin", "item": CONC, "volume": r((tower["dims"][0] + 0.6) * 12.6 * 0.5 + 2 * (tower["dims"][0] + 0.3 + 12.3) * 2.0 * 0.3), "note": "sunk as the furnace shop's"},
+    ]
+    for g in ground:
+        g["mass"] = r(g["volume"] * RHO["concrete"])
+    used = [recs[b["unit"].split(".", 1)[1]] for b in bays] + [crane]
+    power = sum(u.get("needs", {}).get("power", 0) for u in used)
+    heat = sum(u.get("needs", {}).get("heat", 0) for u in used)
+    water = sum(u.get("needs", {}).get("water", 0) for u in used)
+    mass_units = sum(u["physical"]["mass"] for u in used)
+    mass_links = sum(l["mass"] for l in links)
+    mass_ground = sum(g["mass"] for g in ground)
+    frame_mass = fmass + clad
+    total = mass_units + mass_links + frame_mass + mass_ground
+    mp = hmod["physical"]
+    xs = [x0, x1] + [b["at"][0] + s * BAY[int(b["mount"][-1])] / 2 for b in bays for s in (-1, 1)] + [p[0] for l in links for p in (l["from"], l["to"])]
+    ys = [y0, y1] + [b["at"][1] + s * BAY[int(b["mount"][-1])] / 2 for b in bays for s in (-1, 1)] + [p[1] for l in links for p in (l["from"], l["to"])]
+    site_area = (max(xs) - min(xs)) * (max(ys) - min(ys))
+    against = (f"module.hydrogen-plant: one box {mp['length']:g} x {mp['width']:g} x {mp['height']:g} m, {H_P / 1e6:.0f} MW. "
+               f"This layout: the same {H_RATE * 3600:,.0f} kg of hydrogen an hour; {power / 1e6:.1f} MW (the cells {N_BLK * P_STACKS / 1e6:.1f}, at {V_CELL} V, {N_BLK * P_STACKS / H_RATE / 3.6e6:.1f} kWh a kg); {heat / 1e6:.1f} MW to the tower, {water:.1f} kg/s of water used and evaporated; "
+               f"{(mass_units + mass_links + frame_mass) / 1000:,.0f} t of plant and frame, {mass_ground / 1000:,.0f} t of concrete; {site_area / 1e4:.1f} ha, against the source's 0.8 to 1.7 for 100 MW. "
+               f"It makes {H_RATE:.3f} kg/s; one shaft furnace at its full rate takes {H2_USED:.2f}, about {H2_USED / H_RATE:.1f} of these.")
+    layout = {
+        "identity": {"key": "layout.hydrogen-plant-air", "name": "Hydrogen plant, world with air",
+                     "description": f"Water split by electricity: {N_BLK} pressurised alkaline electrolyser blocks of {P_STACKS / 1e6:.0f} MW in a hall with a ridge vent (hydrogen rises and must find its way out), each fed by its own rectifier transformer outside; a purifier, water treatment and a cooling tower. The hydrogen goes on to the shaft furnace, the oxygen to a vent or to buyers. For a world with air at about 1 g."},
+        "stands_for": "module.hydrogen-plant",
+        "site": {"atmosphere": "air", "gravity": [8.0, 11.0]},
+        "physical": {"length": r(max(xs) - min(xs)), "width": r(max(ys) - min(ys)), "height": z1, "mass": r(total)},
+        "bays": bays, "links": links,
+        "frame": {"box": list(box), "cell": cell, "shape": f"Walls one cell thick, 15 m tall; a roof one cell deep over a {x_in:.0f} x {span_in:.0f} m floor, open along its ridge (a vent 1.5 m wide) so hydrogen cannot gather; framed openings in the south wall for the DC busbars, in the east for the gas headers and a door, in the north for the cooling water.",
+                  "openings": [list(o) for o in openings], "members": members,
+                  "cladding": {"item": "stock.al6061-sh-2", "area": r(clad_area), "mass": r(clad)},
+                  "carries": ["unit.stack-crane-20t"], "mass": r(frame_mass), "sized": sized},
+        "ground": ground,
+        "totals": {"rate": H_RATE, "power": r(power), "heat": r(heat), "water": r(water), "mass": r(total), "against_module": against},
+        "staff": hmod.get("staff"),
+        "basis": [{"of": ["bays", "links", "frame.box", "frame.openings"], "tier": "invented", "review": True, "note": "Laid out from memory of alkaline electrolysis plants."},
+                  {"of": ["totals"], "tier": "derived", "note": "Summed from the units; the cells' power and heat from Faraday's law and the cell voltage."},
+                  {"of": ["frame.members", "frame.mass", "frame.cladding"], "tier": "derived", "review": True, "note": "Counted from the lattice; sections chosen by the loads in frame.sized."},
+                  {"of": ["ground"], "tier": "derived", "review": True, "note": "Volumes from the shapes in the notes, concrete at 2,400 kg/m3."},
+                  {"of": ["physical"], "tier": "derived", "note": "Summed from the units, links, frame and ground."},
+                  {"of": ["staff"], "tier": "derived", "note": "The module's watch, unchanged."}],
+    }
+    print(f"layout.hydrogen-plant-air: {total / 1000:,.0f} t, {power / 1e6:.1f} MW, {heat / 1e6:.1f} MW to the tower, {water:.1f} kg/s water, {site_area / 1e4:.2f} ha, frame {frame_mass / 1000:.0f} t ({sec})")
+    return layout, bays
+
+
 def mounts_for(bays, recs):
     # Mounts: each class round what its bays take, a quarter to spare, at the site's most gravity.
     g_max = 9.81 * 1.0
@@ -1217,8 +1410,11 @@ def main():
     for i in range(n_t):
         su[f"cooling-tower-shaft-{i + 1}"] = cooling_unit(sh_heat / n_t, f"the shaft furnace's (one of {n_t})")
     us.update(su)
+    hu = hydrogen_units()
+    hu["cooling-tower-h2"] = cooling_unit(N_BLK * (hu["electrolyser-block-20mw"]["needs"]["heat"] + hu["rectifier-transformer-21mva"]["needs"]["heat"]), "the electrolysers' and rectifiers'")
+    us.update(hu)
     recs = {slug: unit_record(slug, u) for slug, u in us.items()}
-    layouts = {"arc-furnace-air": arc_furnace_air(us, recs), "ladle-station-air": ladle_station_air(us, recs), "casting-bay-air": casting_bay_air(us, recs), "shaft-furnace-air": shaft_furnace_air(us, recs)}
+    layouts = {"arc-furnace-air": arc_furnace_air(us, recs), "ladle-station-air": ladle_station_air(us, recs), "casting-bay-air": casting_bay_air(us, recs), "shaft-furnace-air": shaft_furnace_air(us, recs), "hydrogen-plant-air": hydrogen_plant_air(us, recs)}
     mounts = mounts_for([b for _, bays in layouts.values() for b in bays], recs)
     for slug, d in mounts.items():
         write(S + f"plant-mounts/{slug}.yaml", d)

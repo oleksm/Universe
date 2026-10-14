@@ -10,4 +10,4 @@ basis:
   note: 'Sides 6, 12, 24, 48 m by class: chosen, each twice the last, so the bays of a layout share one grid.'
 - of: [bears, feeds]
   rule: rule.mounts-margin
-  note: Round the units fitted to it in the trial (unit.baghouse-800k, unit.cooling-tower, unit.cooling-tower-1cell, unit.shaft-furnace-200th, unit.recycle-compressor, unit.gas-heater-122mw) at 1 g, full.
+  note: Round the units fitted to it in the trial (unit.baghouse-800k, unit.cooling-tower, unit.cooling-tower-1cell, unit.shaft-furnace-200th, unit.recycle-compressor, unit.gas-heater-122mw, unit.electrolyser-block-20mw, unit.electrolyser-block-20mw, unit.electrolyser-block-20mw, unit.electrolyser-block-20mw, unit.electrolyser-block-20mw) at 1 g, full.

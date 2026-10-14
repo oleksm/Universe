@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.hydrogen-purifier, name: Hydrogen purifier, description: 'Takes the last oxygen out of the hydrogen over a palladium catalyst (it burns to water) and dries it in two adsorber vessels that take turns, one regenerating by heat while the other works. Gas in at local (-6, 0, 6), out at (6, 0, 2).'}
+size_class: 2
+fits: plant-mount.bay-s2
+physical: {length: 12.0, width: 8.0, height: 9.0, mass: 33000.0}
+built_of:
+- {what: Vessels and piping, item: material.structural-steel-a36, mass: 25000.0, note: 'a deoxidiser and two adsorbers 1.5 m across and 6 m, from memory'}
+- {what: Adsorbent, item: material.fused-silica, mass: 8000.0, note: 'molecular sieve beads, which the registry has not got: fused silica stands for it'}
+needs: {power: 300000.0}
+life: 788940000
+basis:
+- of: [physical, built_of, needs]
+  tier: invented
+  review: true
+  note: Sizes, masses and the regeneration heaters' power from memory.
+- of: [life]
+  rule: rule.life-plant
