@@ -874,10 +874,10 @@ def casting_bay_air(us, recs):
         {"what": "Casting floor", "item": CONC, "volume": r(x_in * span_in * 0.4), "note": f"a 0.4 m slab over the hall's floor, {x_in:.0f} x {span_in:.0f} m, so spilt steel meets concrete, not soil"},
         {"what": "Teeming pit", "item": CONC, "volume": r(30 * 6 * 0.3), "note": "x -30 to 0, y -9 to -3: 0.3 m more concrete below the floor slab under the teeming, its top flush with the floor (z 0) so the rails sit as elsewhere: a spill freezes on the floor and the thicker slab keeps it off the ground beneath"},
         {"what": "Frame footings", "item": CONC, "volume": r(ground_nodes * 2.25), "note": f"a 1.5 x 1.5 x 1 m pad under each of the lattice's {ground_nodes} ground nodes"},
-        {"what": "Door aprons", "item": CONC, "volume": 27.28, "note": "a 6 x 6 x 0.4 m slab outside each rail door, the rails set in it; measured on blender's hall (candidate v01)"},
-        {"what": "Rail seat beds", "item": CONC, "volume": 8.2, "note": "the rails' channels in the floor, after the flangeway cuts; measured on blender's hall (candidate v01)"},
+        {"what": "Door aprons", "item": CONC, "volume": 27.11, "note": "a 6 x 6 x 0.4 m slab outside each rail door, the rails set in it; measured on blender's hall (candidate v01)"},
+        {"what": "Rail seat beds", "item": CONC, "volume": 8.58, "note": "the rails' channels in the floor, after the flangeway cuts; measured on blender's hall (candidate v01)"},
     ]
-    measured = {"Casting floor": 562.75, "Teeming pit": 54.0, "Frame footings": 261.0}   # m3 on blender's hall (candidate v01), after flangeway cuts
+    measured = {"Casting floor": 562.24, "Teeming pit": 54.0, "Frame footings": 261.0}   # m3 on blender's hall (candidate v01), after flangeway cuts
     for g in ground:
         if g["what"] in measured:
             g["volume"] = measured[g["what"]]
