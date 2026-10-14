@@ -18,6 +18,12 @@ ground:
   - { what: "Rover roads", item: material.regolith-sintered, volume: 128.4, mass: 321000, note: "sintered strips joining the pads, the terminal and the settlement's edge" }
 fit:
   - { item: equipment.gate.terminal-ground.s3, count: 1 }
+visual:
+  format: "freefall-model/1"
+  path: "models/outpost/v1"
+  manifest_sha256: "e1d98ac398197e8adc8a3926b179bc42d8814bcbb6e43b6c81eb426a89315ffe"
+  version: 1
+  triangles: 7102
 basis:
   - { of: [ground, physical.mass], tier: derived, review: true, note: "Volumes measured on blender's blockout (structure-outpost blockout v02, 2026-10-14); masses from the regolith materials, both to review. The 400 x 300 m site is graded too (31,290 m3 of regolith moved in place, not counted as mass). The mass leaves out the terminal hall and its locks: their pressure construction is not designed (the model's portal linings are envelopes, not steel)." }
   - { of: [identity.description, physical], tier: invented, review: true, note: "Scope set 2026-10-13 for the modeller (blender asked). Only the port: the settlement record carries its buildings and its works (the modules), so a works hall here would count them twice. For airless places (most outposts stand on moons); a world with air wants another design, open for Halden Camp on Heath. Pads class 2 (SFO 23), 100 m to stand the 66 m MC-07 and the 60 m hauler with room round them. On airless ground a landing jet throws regolith a long way (Apollo 12 sandblasted Surveyor III 160 m off, from memory), so each pad has a 3 m berm and they stand 250 m apart. The 3 m mound over the hall shields it from radiation and micrometeoroids, as lunar base studies propose (2 to 3 m, from memory). Height: the mound, 8 m hall and 3 m cover. Sizes chosen, nothing sized for a load; what it is built of is open." }
