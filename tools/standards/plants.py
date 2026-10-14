@@ -356,7 +356,7 @@ def main():
     links = [
         link("conveyor", "sponge iron feed", (-12.0, 30.0, 6.0), (-12.0, 7.8, 13.3), A36, 150.0, DRI * G * 7.0 / 0.5 + 20000, "0.8 m troughed belt, 150 kg/m with its gallery (from memory), 16 degrees; into the roof's fifth hole, 1.8 m north of the electrodes"),
         link("duct", "off-gas", (-10.0, 7.5, 13.5), (6.0, 24.0, 15.0), A36, math.pi * 2.0 * 0.010 * RHO["steel"], None, "2 m across, 10 mm plate, water-cooled for its first part; from the roof's fourth hole, 2 m east and 1.5 m north of the electrodes, to the baghouse"),
-        link("busbar", "secondary bus", (-12.0, -1.0, 4.0), (-12.0, 2.0, 7.0), CU, 3 * bus_area * RHO["copper"], None, f"three water-cooled copper tube bars, {bus_area * 1e6:.0f} mm2 each for {I2 / 1000:.0f} kA at 4 A/mm2; through the vault wall to the furnace's cables"),
+        link("busbar", "secondary bus", (-12.0, -1.0, 4.0), (-12.0, 0.8, 7.3), CU, 3 * bus_area * RHO["copper"], None, f"three water-cooled copper tube bars, {bus_area * 1e6:.0f} mm2 each for {I2 / 1000:.0f} kA at 4 A/mm2; through the vault wall to three insulated terminals spread 1.3 m apart along x behind the mast bank, then the furnace's cables"),
         link("rail", "ladle rail", (-7.5, 6.0, 0.0), (30.0, 6.0, 0.0), A36, 2 * 60.0, None, "two 60 kg/m rails under the tap, out of the hall's east door to the ladle station"),
         link("rail", "slag rail", (-16.5, 0.0, 0.0), (-16.5, 21.0, 0.0), A36, 2 * 60.0, None, "under the slag door, out of the north door"),
         link("pipe", "cooling water to the hall", (-24.0, -6.0, 0.0), (-18.0, 0.0, 5.0), A36, pipe_m, None, "a pair of 500 mm pipes, 8 mm wall, flow and return"),
