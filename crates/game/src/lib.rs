@@ -1657,7 +1657,7 @@ fn launch(args: &[String]) -> bool {
         Some("planetlod") => {
             let _ = env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info,wgpu_core=warn,wgpu_hal=warn")).try_init();
             let dir = rest.get(1).cloned();
-            universe_engine::apps::run_prepared(Config { title: "Freefall planet LOD".into(), ..Default::default() }, move || {
+            run_app(Config { title: "Freefall planet LOD".into(), ..Default::default() }, move || {
                 planet_lod_app::PlanetLodApp::new(dir.as_deref()).unwrap_or_else(|e| panic!("planet LOD: {e}"))
             });
         }

@@ -55,6 +55,14 @@ and the coarser triangle it rises from (H0I/H0W).
 
 ## Measurements, stage A (14 Oct, release, RTX 5090, 1440x810 window on workspace 8)
 
+**Withdrawn (the engine's review, 14 Oct):** the frame rates below measured an engine fault, not draw cost. The
+app gave wire edges their own vertices, so the engine's edge normals fell back to a nearest-face search per edge
+(edges x faces) on the render thread: 40 s to upload the tile groups, frames handed over after 50 ms timeouts.
+Fixed on main (36cf1065: normals by the edge ends; the app's edges now index the face corners). After the fix,
+captures on a hidden workspace still wait in 'acquire surface' (~31 ms a frame: the compositor, not the app);
+on screen the engine measured 120 fps (the refresh cap) at 20 km held: render thread 1.1 ms, app 1.0 ms.
+Flying 150 km to 24 km (after the fix): 21 to 110 fps, the app's mesh rebuilds 40 ms a frame at 150 km (next).
+
 App work with the camera held: LOD 0.02 ms, meshes 0.02 ms a frame (nothing decided, nothing rebuilt).
 Frame rate held at 20 km (897 chunk meshes, ~490k triangles, edges on): 19.8 fps; the profiler puts 50 ms in
 "hand over to the render thread" (main waits), GPU pass timings under 0.5 ms.
