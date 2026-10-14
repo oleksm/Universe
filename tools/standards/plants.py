@@ -404,12 +404,14 @@ def main():
     plat_v = (P0[1] - P0[0]) * (P1[1] - P1[0]) * PY - slot - tunnel - well + (P0[1] - P0[0]) * (P1[1] - P1[0]) * 1.0
     plat_note = ("x -20 to -6, y 0 to 12, top 5 m, on a 1 m slab; a ladle slot open above between the rockers (x -11 to -6, y 3.5 to 8.5, the tap over it); "
                  "a slag tunnel along y (x -19 to -14, 4.4 m clear under a 0.6 m deck) with a 3 x 3 m well in the deck (x -18.5 to -15.5, y 4.5 to 7.5) under the spout")
+    tw = us["cooling-tower"]["dims"][0]
     ground = [
         {"what": "Furnace platform", "item": CONC, "volume": r(plat_v), "note": plat_note},
         {"what": "Transformer vault", "item": CONC, "volume": r(12 * 12 * 0.6 + 48 * 8 * 0.3), "note": "x -18 to -6, y -12 to 0 round the transformer: a 0.6 m slab and 0.3 m fire walls 8 m tall; the bus through its north wall"},
         {"what": "Frame footings", "item": CONC, "volume": r(ground_nodes * 2.25), "note": f"a 1.5 x 1.5 x 1 m pad under each of the lattice's {ground_nodes} ground nodes"},
         {"what": "Baghouse slab", "item": CONC, "volume": r(24 * 12 * 0.6)},
-        {"what": "Cooling tower basin", "item": CONC, "volume": r(us["cooling-tower"]["dims"][0] * 12 * 0.5 + 2 * (us["cooling-tower"]["dims"][0] + 12) * 2 * 0.3), "note": "a 0.5 m floor and 2 m walls"},
+        {"what": "Cooling tower basin", "item": CONC, "volume": r((tw + 0.6) * (12.6) * 0.5 + 2 * (tw + 0.3 + 12.3) * 2.0 * 0.3 + 12 * 0.6 * 0.6 * 2.0),
+         "note": f"sunk, so the tower's lower louvres and ports stay clear: 0.3 m walls round its {tw:.0f} x 12 m footprint, their tops at z 0, the floor's top at z -2 (0.5 m thick); twelve 0.6 x 0.6 m pedestals carry the tower's feet at z 0 (blender)"},
         {"what": "Bin footing", "item": CONC, "volume": 36.0},
     ]
     for g in ground:
