@@ -1,16 +1,16 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.ladle-furnace-80t, name: 'Ladle furnace, 80 t', description: 'Reheats and trims an 80 t heat in its ladle, the ladle standing on its car under the furnace: a steel gantry straddles the ladle rail (a lane 5 m wide left clear under it along x), carrying a water-cooled roof 4.6 m across that is lowered onto the ladle, three graphite electrodes on masts with their arms, and an alloy chute through the roof. Its arc, about 10.9 MW at full heat, comes from its own transformer by a bus on its -y side (local 0, -5, 6); its cooling water by a manifold at local (-4.5, -4.5, 1); the alloys by a chute whose top stands at local (0, 3, 9); its fume leaves by an elbow on the roof at local (2, 0, 7.5). Argon is blown through the ladle''s porous plug from the car. At rest: the roof''s rim on the ladle''s lip (z 4.4), its crown at 5.2; three 300 mm graphite electrodes on a 0.35 m pitch radius through the roof''s delta; the masts at the rear (y -3.8), their arms fanning forward, the centre
-    arm 0.6 m higher; the gantry''s columns at x -5 and 5, y -4.4 and 4.4, 12 m tall, its two cross beams on top.'}
+identity: {key: unit.ladle-furnace-80t, name: 'Ladle furnace, 80 t', description: 'Reheats and trims an 80 t heat in its ladle, the ladle standing on its car under the furnace: a steel gantry straddles the ladle rail (a lane 5 m wide left clear under it along x), carrying a water-cooled roof 4.6 m across that is lowered onto the ladle (an annular seat skirt, radius 1.45 to 1.70 m, sits on its rim), three graphite electrodes on masts with their arms, and an alloy chute through the roof. Its arc, about 10.9 MW at full heat, comes from its own transformer by a bus on its -y side (local 0, -5, 6); its cooling water by a manifold at local (-4.5, -4.5, 1); the alloys by a chute whose top stands at local (0, 3, 9); its fume leaves by an elbow on the roof at local (2, 0, 7.5). Argon is blown through the ladle''s porous plug from the car. At rest: the roof''s rim on the ladle''s lip (z 4.4), its crown at 5.2; three 300 mm graphite electrodes on a 0.35 m pitch radius through the roof''s delta; the
+    masts at the rear (y -3.8), their arms fanning forward, the centre arm 0.6 m higher; the gantry''s columns at x -5 and 5, y -4.4 and 4.4, 12 m tall, its two cross beams on top.'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 10.0, height: 14.0, mass: 53800.0}
+physical: {length: 12.0, width: 10.0, height: 14.0, mass: 75000.0}
 built_of:
 - {what: Roof panels, item: material.structural-steel-a36, mass: 5010.0, note: 'water-cooled pipe panels over a dome 4.6 m across, 1.15 times the disc, the lifting frame half as much again'}
-- {what: Roof delta, item: good.refractory-brick, mass: 1018.0, note: 'the refractory centre round the electrode ports, 1.2 m across, 0.3 m thick'}
-- {what: Gantry, item: material.structural-steel-a36, mass: 31480.0, note: 'four box columns 0.6 m, 25 mm wall, 12 m tall, and two box beams 0.8 x 0.5 m, 10 m'}
+- {what: Roof delta, item: good.refractory-brick, mass: 771.6, note: 'the refractory centre round the electrode ports, 1.2 m across, 0.3 m thick, less its electrode, feed and fume bores: 0.257 m3 as measured on blender''s model (candidate v01)'}
+- {what: Gantry, item: material.structural-steel-a36, mass: 53130.0, note: 'four box columns 0.6 m, 25 mm wall, 12 m tall, two cross beams 0.8 x 0.5 m, 10 m, longitudinal ties, the mast bench, the roof-lift heads and 200 mm baseplates (these provisional, not load-sized): measured on blender''s model (candidate v01); columns and beams alone 31,479 kg'}
 - {what: Electrode masts, item: material.structural-steel-a36, mass: 7830.0, note: 'three box masts 0.5 m, 25 mm wall, 7 m'}
-- {what: Current-conducting arms, item: material.aluminium-1350, mass: 1050.0, note: 'three box arms 0.5 x 0.35 m, 20 mm wall, 4 m'}
+- {what: Current-conducting arms, item: material.aluminium-1350, mass: 843.0, note: 'three box arms 0.5 x 0.35 m, 20 mm wall, trimmed at their insulated carriages: measured on blender''s model (candidate v01)'}
 - {what: Secondary cables, item: material.copper, mass: 1414.0, note: 'two water-cooled copper cables a phase, 10 m, each 2630 mm2 for half of 26 kA at 5 A/mm2'}
 - {what: Roof lift and mast hydraulics, item: good.pumps, mass: 6000.0, note: from memory}
 holds: 625.3
