@@ -314,9 +314,13 @@ def main():
     us.update(car_units())
     recs = {slug: unit_record(slug, u) for slug, u in us.items()}
 
-    # The layout: hall x[-21, 9] y[-15, 15], 3 m lattice walls one cell thick, a roof one cell deep at 24 m.
-    cell, box = 3.0, (-21.0, -15.0, 0.0, 9.0, 15.0, 27.0)
-    doors = [(6.0, 3.0, 0.0, 9.0, 9.0, 6.0), (-18.0, 12.0, 0.0, -15.0, 15.0, 6.0)]
+    # The layout: hall x[-24, 9] y[-15, 15], 3 m lattice walls one cell thick, a roof one cell deep at 24 m.
+    # West wall one cell out from the slag rail (x -16.5) so the 3.5 m slag car runs 2.75 m clear of it (blender, assembly check).
+    cell, box = 3.0, (-24.0, -15.0, 0.0, 9.0, 15.0, 27.0)
+    doors = [(6.0, 3.0, 0.0, 9.0, 9.0, 6.0),          # ladle rail, east
+             (-21.0, 12.0, 0.0, -12.0, 15.0, 6.0),    # slag rail, north: 9 m, centred on the rail
+             (-15.0, 12.0, 9.0, -9.0, 15.0, 15.0),    # sponge iron conveyor through the north wall, z 10.9 to 11.9 with its gallery
+             (-6.0, 12.0, 12.0, 0.0, 15.0, 18.0)]     # off-gas duct, 2 m across, through the north wall
     groups, ground_nodes, n_nodes, cells = lattice(box, cell, 8, None, doors)
     sec = {"wall": "st4340-tb-120x5", "roof": "st4340-tb-100x5"}
     members, fmass = [], 0.0
@@ -330,11 +334,11 @@ def main():
     nm = frames.node_mass(node, frames.materials())
     members.append({"item": node_key, "count": n_nodes, "where": "nodes"})
     fmass += n_nodes * nm
-    runway = 2 * 24.0 * frames.area({"identity": {"form": "box"}, "size": {"width": 0.4, "height": 0.4, "wall": 0.025}}) * RHO["steel"]
-    members.append({"item": "stock.st4340-box-400x400x25", "count": 4, "where": "crane runways, two a side, 12 m lengths, along x on the inside of the long walls: their rail plane 20.5 m up at y -11.7 and +11.7, 3.5 m under the roof's bottom chord"})
+    runway = 2 * (x1_in := box[3] - box[0] - 2 * cell) * frames.area({"identity": {"form": "box"}, "size": {"width": 0.4, "height": 0.4, "wall": 0.025}}) * RHO["steel"]
+    members.append({"item": "stock.st4340-box-400x400x25", "count": 4, "where": f"crane runways, two a side, {x1_in / 2:.1f} m lengths, along x on the inside of the long walls: their rail plane 20.5 m up at y -11.7 and +11.7, 3.5 m under the roof's bottom chord"})
     fmass += runway
     x0, y0, z0, x1, y1, z1 = box
-    clad_area = 2 * (x1 - x0) * (z1 - z0) + 2 * (y1 - y0) * (z1 - z0) + (x1 - x0) * (y1 - y0) - sum((d - a) * (f - c) for a, b, c, d, e, f in doors)
+    clad_area = 2 * (x1 - x0) * (z1 - z0) + 2 * (y1 - y0) * (z1 - z0) + (x1 - x0) * (y1 - y0) - sum(max(d - a, e - b) * (f - c) for a, b, c, d, e, f in doors)
     clad = clad_area * 0.002 * RHO["aluminium"]
 
     # The frame's loads, checked: roof strips spanning 24 m, wall verticals under the crane.
@@ -357,7 +361,7 @@ def main():
         {"id": "T", "mount": "plant-mount.bay-s2", "unit": "unit.furnace-transformer-90mva", "at": [-12.0, -6.0, 0.0], "note": "in the fire-walled vault beside the platform"},
         {"id": "F", "mount": "plant-mount.bay-s1", "unit": "unit.dri-bin-200t", "at": [-12.0, 33.0, 0.0], "note": "outside, north, far enough for the conveyor to climb at a belt's slope"},
         {"id": "B", "mount": "plant-mount.bay-s3", "unit": "unit.baghouse-800k", "at": [6.0, 30.0, 0.0], "note": "outside, north-east"},
-        {"id": "C", "mount": "plant-mount.bay-s3", "unit": "unit.cooling-tower", "at": [-36.0, -6.0, 0.0], "note": "outside, west"},
+        {"id": "C", "mount": "plant-mount.bay-s3", "unit": "unit.cooling-tower", "at": [-39.0, -6.0, 0.0], "note": "outside, west, 3 m from the hall"},
     ]
 
     def link(kind, name, a, b, item, per_m, power=None, note=None, heat=None):
@@ -378,15 +382,24 @@ def main():
         link("busbar", "secondary bus", (-12.0, -3.5, 4.0), (-12.0, 0.8, 7.3), CU, 3 * bus_area * RHO["copper"], None, f"three water-cooled copper tube bars, {bus_area * 1e6:.0f} mm2 each for {I2 / 1000:.0f} kA at 4 A/mm2; from the transformer's three secondary terminals (its +y face, x -1.3, 0 and +1.3 m, 4 m up) through the vault wall to three insulated terminals spread 1.3 m apart along x behind the mast bank, then the furnace's cables"),
         link("rail", "ladle rail", (-7.5, 6.0, 0.0), (30.0, 6.0, 0.0), A36, 2 * 60.0, None, "two 60 kg/m rails (heads 72 mm wide) at 3 m gauge between the heads' inner faces, as railways measure it; their running plane the floor (z 0), under the tap, out of the hall's east door to the ladle station"),
         link("rail", "slag rail", (-16.5, 0.0, 0.0), (-16.5, 21.0, 0.0), A36, 2 * 60.0, None, "two 60 kg/m rails at 2.5 m gauge between the heads' inner faces, running plane the floor; under the slag door, out of the north door"),
-        link("pipe", "cooling water to the hall", (-24.0, -6.0, 0.75), (-18.0, 0.0, 5.0), A36, pipe_m, None, "a pair of 500 mm pipes, 8 mm wall, flow and return, from the tower's first port pair"),
-        link("pipe", "cooling water to the baghouse", (-24.0, -1.5, 0.75), (-6.0, 24.0, 2.0), A36, pipe_m, None, "a pair of 500 mm pipes, 8 mm wall, flow and return, from the tower's second port pair"),
+        link("pipe", "cooling water to the hall", (-27.0, -6.0, 0.75), (-18.0, 0.0, 5.0), A36, pipe_m, None, "a pair of 500 mm pipes, 8 mm wall, flow and return, from the tower's first port pair"),
+        link("pipe", "cooling water to the baghouse", (-27.0, -1.5, 0.75), (-6.0, 24.0, 2.0), A36, pipe_m, None, "a pair of 500 mm pipes, 8 mm wall, flow and return, from the tower's second port pair"),
     ]
     mobile = [{"unit": "unit.ladle-car-80t", "rides": "ladle rail", "at": [-7.5, 6.0, 0.0]},
               {"unit": "unit.slag-pot-car", "rides": "slag rail", "at": [-16.5, 6.0, 0.0]}]
 
+    # Furnace platform, top 5 m (the vessel's seat), x -20 to -6, y 0 to 12, on a 1 m slab. The rockers bear on it at y about 2 and 10.
+    # Ladle slot, open above, between the rockers: x -10 to -6, y 3.5 to 8.5, the tap over it. Slag tunnel along y under the slag door:
+    # x -19 to -14, 4.4 m clear (a 0.6 m deck, the pot's lip 1 m under it), and a 3 x 3 m well in its deck where the spout's stream falls.
+    P0, P1, PY = (-20.0, -6.0), (0.0, 12.0), 5.0
+    slot = 4.0 * 5.0 * PY
+    tunnel, well = 5.0 * 12.0 * 4.4, 3.0 * 3.0 * 0.6
+    plat_v = (P0[1] - P0[0]) * (P1[1] - P1[0]) * PY - slot - tunnel - well + (P0[1] - P0[0]) * (P1[1] - P1[0]) * 1.0
+    plat_note = ("x -20 to -6, y 0 to 12, top 5 m, on a 1 m slab; a ladle slot open above between the rockers (x -10 to -6, y 3.5 to 8.5, the tap over it); "
+                 "a slag tunnel along y (x -19 to -14, 4.4 m clear under a 0.6 m deck) with a 3 x 3 m well in the deck (x -18.5 to -15.5, y 4.5 to 7.5) under the spout")
     ground = [
-        {"what": "Furnace platform", "item": CONC, "volume": 384.0, "note": "12 x 12 x 5 m with tunnels for the ladle and slag cars, on a 1 m slab"},
-        {"what": "Transformer vault", "item": CONC, "volume": r(12 * 12 * 0.6 + 48 * 8 * 0.3), "note": "a 0.6 m slab and 0.3 m fire walls 8 m tall"},
+        {"what": "Furnace platform", "item": CONC, "volume": r(plat_v), "note": plat_note},
+        {"what": "Transformer vault", "item": CONC, "volume": r(12 * 12 * 0.6 + 48 * 8 * 0.3), "note": "x -18 to -6, y -12 to 0 round the transformer: a 0.6 m slab and 0.3 m fire walls 8 m tall; the bus through its north wall"},
         {"what": "Frame footings", "item": CONC, "volume": r(ground_nodes * 2.25), "note": f"a 1.5 x 1.5 x 1 m pad under each of the lattice's {ground_nodes} ground nodes"},
         {"what": "Baghouse slab", "item": CONC, "volume": r(24 * 12 * 0.6)},
         {"what": "Cooling tower basin", "item": CONC, "volume": r(us["cooling-tower"]["dims"][0] * 12 * 0.5 + 2 * (us["cooling-tower"]["dims"][0] + 12) * 2 * 0.3), "note": "a 0.5 m floor and 2 m walls"},
@@ -394,7 +407,6 @@ def main():
     ]
     for g in ground:
         g["mass"] = r(g["volume"] * RHO["concrete"])
-        g.pop("note", None)
 
     # Mounts: each class round what its bays take, a quarter to spare, at the site's most gravity.
     g_max = 9.81 * 1.0
@@ -448,7 +460,7 @@ def main():
         "site": {"atmosphere": "air", "gravity": [8.0, 11.0]},
         "physical": {"length": r(max(xs) - min(xs)), "width": r(max(ys) - min(ys)), "height": z1, "mass": r(total)},
         "bays": bays, "mobile": mobile, "links": links,
-        "frame": {"box": list(box), "cell": cell, "shape": "Walls one cell thick, 24 m tall; a roof one cell deep over a 24 x 24 m floor; doors 6 m tall for the ladle rail (east) and the slag rail (north).",
+        "frame": {"box": list(box), "cell": cell, "shape": f"Walls one cell thick, 24 m tall; a roof one cell deep over a {x1_in:.0f} x 24 m floor; doors 6 m tall for the ladle rail (east, 6 m wide) and the slag rail (north, 9 m wide); framed service openings in the north wall for the conveyor (6 x 6 m) and the off-gas duct (6 x 6 m), the lattice's cells there left out, the cells over them (z 18 to 24) bridging the gap under the runway.",
                   "openings": [list(d) for d in doors], "members": members,
                   "cladding": {"item": "stock.al6061-sh-2", "area": r(clad_area), "mass": r(clad)},
                   "carries": ["unit.hall-crane-20t"], "mass": r(frame_mass), "sized": sized},

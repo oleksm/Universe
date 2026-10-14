@@ -87,7 +87,7 @@ properties:
   ground:
     description: "Ground works: foundations, plinths and pits, of concrete."
     type: array
-    items: { type: object, additionalProperties: false, required: [what, item, volume, mass], properties: { what: { type: string }, item: { type: string, x-ref: [good, material] }, volume: { type: number, x-unit: "m3" }, mass: { type: number, x-unit: "kg" } } }
+    items: { type: object, additionalProperties: false, required: [what, item, volume, mass], properties: { what: { type: string }, item: { type: string, x-ref: [good, material] }, volume: { type: number, x-unit: "m3" }, mass: { type: number, x-unit: "kg" }, note: { type: string, description: "Its shape and where it lies." } } }
   totals:
     description: "Worked out from the units, links, frame and ground."
     type: object
