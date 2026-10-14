@@ -44,7 +44,7 @@ impl Look {
         }
     }
 
-    fn next(self) -> Look {
+    pub fn next(self) -> Look {
         match self {
             Look::Colour => Look::Geology,
             Look::Geology => Look::Energy,
@@ -58,7 +58,7 @@ pub struct PlanetStudio {
     pub list: Vec<Release>,
     pub selected: usize,
     /// What the last ENTER said, if it couldn't go there.
-    note: String,
+    pub note: String,
     /// The world gone to: its body's key (the game's, or the studio's own) and its history, if
     /// it has one (read on going).
     pub shown: Option<(String, Option<std::sync::Arc<History>>)>,
@@ -99,7 +99,7 @@ pub fn go_to(app: &mut App, r: &Release) -> Result<(), String> {
         s.shown = Some((key, history));
     }
     let Some(key) = r.body.as_deref() else {
-        let sys = alone(app, r)?;
+        let sys = alone(&app.charts.system(app.view.origin), r)?;
         let radius = sys.bodies[1].rail.radius;
         app.studio_world = Some(std::sync::Arc::new(sys));
         app.mode = crate::Mode::Observer;
@@ -116,10 +116,9 @@ pub fn go_to(app: &mut App, r: &Release) -> Result<(), String> {
 
 /// A system for the view alone: the star of the system in view and world `r` round it, shaped
 /// from the system's first baked world with air (its orbit, its air), its ground `r`'s release.
-fn alone(app: &App, r: &Release) -> Result<universe_sim::world::system::StarSystem, String> {
+pub fn alone(home: &universe_sim::world::system::StarSystem, r: &Release) -> Result<universe_sim::world::system::StarSystem, String> {
     use universe_sim::world::system::StarSystem;
     use universe_sim::world::terrain::{Terrain, TerrainKind};
-    let home = app.charts.system(app.view.origin);
     let like = home.bodies.iter().find(|b| b.terrain.as_ref().is_some_and(|t| t.baked()) && b.rail.atmosphere.is_some()).ok_or("NO BAKED WORLD HERE TO SHAPE IT FROM")?;
     let heights = universe_sim::world::worlds::Heights::of_release(r).ok_or("ITS SURFACE CAN'T BE READ")?;
     let mut world = like.clone();
@@ -161,6 +160,24 @@ fn alone(app: &App, r: &Release) -> Result<universe_sim::world::system::StarSyst
     })
 }
 
+/// The timeline moved `step` (-1 back, 1 on, 0 not) from `now` (None: today): the frame to show,
+/// None when it doesn't move.
+pub fn timeline(studio: &PlanetStudio, now: Option<&WorldFrame>, step: i32) -> Option<Option<WorldFrame>> {
+    let (key, Some(history)) = studio.shown.clone()? else { return None };
+    if step == 0 {
+        return None;
+    }
+    let last = history.frames.len().saturating_sub(1);
+    let now = now.map(|f| f.frame);
+    let next = match (now, step) {
+        (None, -1) => Some(last),
+        (None, _) => None,
+        (Some(i), -1) => Some(i.saturating_sub(1)),
+        (Some(i), _) => (i < last).then_some(i + 1),
+    };
+    (next != now).then(|| next.map(|frame| WorldFrame { key, history, frame }))
+}
+
 /// Keys while open. False when it should close.
 pub fn input(app: &mut App, ctx: &Context) -> bool {
     let input = &ctx.input;
@@ -182,21 +199,9 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
         (false, true) => 1,
         _ => 0,
     };
-    if step != 0
-        && let Some((key, Some(history))) = app.panels.planet_studio.as_ref().and_then(|s| s.shown.clone())
-    {
-        let last = history.frames.len().saturating_sub(1);
-        let now = app.world_frame.as_ref().map(|f| f.frame);
-        let next = match (now, step) {
-            (None, -1) => Some(last),
-            (None, _) => None,
-            (Some(i), -1) => Some(i.saturating_sub(1)),
-            (Some(i), _) => (i < last).then_some(i + 1),
-        };
-        if next != now {
-            app.world_frame = next.map(|frame| WorldFrame { key, history, frame });
-            app.caches.planet.world_maps.clear();
-        }
+    if let Some(next) = app.panels.planet_studio.as_ref().and_then(|s| timeline(s, app.world_frame.as_ref(), step)) {
+        app.world_frame = next;
+        app.caches.planet.world_maps.clear();
     }
     if input.pressed(KeyCode::KeyL) {
         app.world_look = app.world_look.next();
@@ -217,12 +222,17 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
 }
 
 pub fn draw(frame: &mut Frame, app: &App, studio: &PlanetStudio) {
+    panel(frame, studio, app.world_look, app.world_frame.as_ref());
+}
+
+/// The studio's panel: the worlds, the timeline of the one shown, its notes and keys.
+pub fn panel(frame: &mut Frame, studio: &PlanetStudio, look: Look, then: Option<&WorldFrame>) {
     let line = universe_engine::GLYPH + 2.0;
     let (x, mut y) = (12.0, 90.0);
     let w = 470.0;
     let rows = studio.list.len() as f32;
     frame.hud_rect(Vec2::new(x - 6.0, y - 6.0), Vec2::new(w, line * (rows + 16.0)), PANEL);
-    frame.text(Vec2::new(x, y), &format!("WORLDS   LOOK: {}  (L)", app.world_look.name()), TEXT);
+    frame.text(Vec2::new(x, y), &format!("WORLDS   LOOK: {}  (L)", look.name()), TEXT);
     y += line * 1.5;
     frame.text(Vec2::new(x, y), &format!(" {:<6} {:<14} {:>7} {:>6} {:>8} {:>7}", "WORLD", "NAME", "RADIUS", "LAND", "DEPOSITS", "SURFACE"), DIM);
     y += line;
@@ -237,7 +247,7 @@ pub fn draw(frame: &mut Frame, app: &App, studio: &PlanetStudio) {
     y += line * 0.5;
     // The timeline of the world gone to: today, or one of its history's globes.
     if let Some((_, history)) = &studio.shown {
-        match (history, &app.world_frame) {
+        match (history, then) {
             (Some(h), Some(f)) => {
                 let fr = &h.frames[f.frame];
                 frame.text(Vec2::new(x, y), &format!("TIMELINE {}/{}  {:.2} GYR ({:.2} GYR AGO)", f.frame + 1, h.frames.len(), fr.time_gyr, fr.ago_gyr), TEXT);

@@ -33,6 +33,7 @@ mod equipment_visual;
 mod studio_only;
 mod test_drive;
 mod flight_input;
+mod planet_app;
 mod planet_studio;
 mod planet_view;
 mod standards;
@@ -62,7 +63,7 @@ use models::Models;
 use observer::{Focus, Observer};
 
 /// The world's seed: the registry's (`seeding.galaxy`, which the registry requires).
-fn seed() -> u64 {
+pub(crate) fn seed() -> u64 {
     universe_sim::world::registry::registry().galaxy().expect("seeding.galaxy").seed as u64
 }
 const WARPS: [f64; 8] = [1.0, 10.0, 100.0, 1e3, 1e4, 1e5, 1e6, 1e7];
@@ -1638,6 +1639,15 @@ pub fn studio(args: &[String], window: bool) -> bool {
         return true;
     }
     false
+}
+
+/// The planet viewer alone (`freefall-planet [world id]`): no universe loaded.
+pub fn planet(args: &[String]) {
+    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info,wgpu_core=warn,wgpu_hal=warn")).init();
+    let id = args.get(1).filter(|a| !a.starts_with("--")).cloned();
+    universe_engine::apps::run_prepared(Config { title: "Freefall planets".into(), ..Default::default() }, move || {
+        planet_app::PlanetApp::new(id.as_deref()).unwrap_or_else(|e| panic!("planet viewer: {e}"))
+    });
 }
 
 /// The game (`freefall`). The studio's flags still open the studio, as before it had its own binary.
