@@ -2705,7 +2705,7 @@
 - { record: street.treistun.port-zaudalein.east-road, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "3f2152608557a534" }
 - { record: structure.orbital, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "e604e676cbc1d3fe" }
 - { record: structure.outpost, at: "2026-10-14T16:46:21Z", status: draft, summary: "changed: visual", sha: "f27f9517b95f123a" }
-- { record: structure.platform, at: "2026-10-14T16:53:49Z", status: draft, summary: "changed: identity", sha: "0eaaae561e05aea7" }
+- { record: structure.platform, at: "2026-10-14T17:00:14Z", status: draft, summary: "changed: physical, built_of", sha: "27393cc7fe6ced54" }
 - { record: structure.spaceport, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "b2e176d2347765f8" }
 - { record: system.biraidim, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "45c285c7343ec94b" }
 - { record: system.driumum, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "6c0b410fca302540" }

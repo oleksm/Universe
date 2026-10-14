@@ -103,9 +103,10 @@ def main():
     built.append({"what": "Pad plates", "item": "material.aluminium-honeycomb", "mass": r(plates),
                   "note": f"16 square plates {PAD_SIDE:.0f} m a side on the deck lattice at x {PAD_X} and z {PAD_Z}: 2 mm 6061 faces on a 50 mm honeycomb core, {sand:.1f} kg/m2 (faces counted with the core here)"})
     built.append({"what": "Berthing clamps", "item": "good.electric-motors", "mass": 16 * 4 * 500.0, "note": "four recessed clamps at each pad's edges, 500 kg each with their drives, from memory"})
-    walk = (len(LINES_X) + len(LINES_Z)) * 600.0 * 3.0
+    spur = 150 / 2 - PAD_SIDE / 2 - 1.5           # from a pad's edge to the walkway's side over the next truss (blender)
+    walk = (len(LINES_X) + len(LINES_Z)) * 600.0 * 3.0 + 16 * 3.0 * spur
     grate = walk * 10.0
-    built.append({"what": "Walkway grating", "item": "material.aluminium-alloy-6061", "mass": r(grate), "note": f"3 m walkways over the ten trusses, {walk:,.0f} m2 at about 10 kg/m2 (from memory); the rest of the deck is open lattice"})
+    built.append({"what": "Walkway grating", "item": "material.aluminium-alloy-6061", "mass": r(grate), "note": f"3 m walkways over the ten trusses and a {spur:.1f} m spur from each pad's edge to the nearest, {walk:,.0f} m2 at about 10 kg/m2 (from memory); the rest of the deck is open lattice"})
     clad_a = 2 * (600 * 297 + 150 * 297 + 600 * 150) - 102 * 60
     clad = clad_a * 0.002 * al
     built.append({"what": "Hall cladding", "item": "stock.al6061-sh-2", "mass": r(clad), "note": f"2 mm 6061 sheet over the hall's six faces, {clad_a:,.0f} m2, against sun and debris; the closed hangar door's leaves the same"})
