@@ -84,8 +84,19 @@ v6 7717 max 0.98 m, 7 over. Level-15 patches (18.8 m cells) miss steep features;
   re-taken from a standing start shows none, and package and monolithic give pixel-identical frames there
   (`flight/crest-ab/`). Likely patch skirts or cracks at LOD borders in rough ground; **not identified**.
 
+## Frame time
+
+With the owner's leave, a visible window on his workspace, floated at 1280×720 (surface 1280×720, vsync, 120 Hz
+display), the walker landing at the v8 cap centre and walking on (`visible2/`, `visible.sh`): ready from frame 435,
+never lost after; 7,770 frame intervals after a 600-frame warm-up past ready: **p50 8.33 ms, p95 8.96 ms, p99
+10.04 ms, max 16.09 ms, none over 33.3 ms**. GPU passes 0.5 ms in all. Contact on ready frames ≤ 1.4 µm, 96 m walked,
+19 groups; planets' checker fails only the 435 startup frames (`check.json`).
+
+The first attempt (`visible/`) did not float: the window tiled at 959×1052. It showed long stretches at exactly
+52 ms with the GPU idle, which is a compositor pacing the window (focus elsewhere), not the game. It is kept as
+evidence and not counted.
+
 ## Not done
 
-- **Frame p95 at 1280×720**: needs a visible window on the owner's screen (workspace 8 is compositor-throttled).
 - The 6,561-probe regional screen.
 - Residency policy, coarse region representation for distance.
