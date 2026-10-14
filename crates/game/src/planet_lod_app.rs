@@ -813,6 +813,23 @@ impl App for PlanetLodApp {
         "planetlod"
     }
 
+    /// For the observer's /status: where the eye is and what the levels of detail are doing.
+    fn status(&self) -> String {
+        let ui = self.ui.lock().unwrap();
+        serde_json::json!({
+            "view": if self.view == View::Mesh { "mesh" } else { "real" },
+            "altitude_m": self.alt, "lat": self.lat, "lon": self.lon, "heading_deg": self.heading.rem_euclid(360.0),
+            "ground_m": self.ground_h, "height_x": self.ex,
+            "pattern_vertices_drawn": self.stats.drawn, "pattern_vertices": self.d.mv.len(),
+            "fully_risen": self.risen.0, "rising": self.risen.1,
+            "lod_ms": self.stats.lod_ms, "cells_decided": self.stats.decided, "vertices_changed": self.stats.changed,
+            "mesh_ms": self.stats.mesh_ms, "chunks_rebuilt": self.stats.rebuilt,
+            "chunks_drawn": ui.chunks_drawn, "tile_groups_drawn": ui.tiles_drawn,
+            "triangles_sent": ui.sent, "pattern_triangles_drawn": ui.pattern_tris,
+            "in_view_box": ui.in_view.load(std::sync::atomic::Ordering::Acquire),
+        }).to_string()
+    }
+
     fn update(&mut self, ctx: &mut Context) -> Next {
         let _scope = universe_prof::scope("update/planetlod");
         let input = &ctx.input;
