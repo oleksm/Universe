@@ -359,11 +359,14 @@ links:
   note: 'a pair of 0.87 m pipes at about 345 K: 1,483 kg/s along the 43 radiator fields'' rows to the condenser, a branch to the transformer'
 - kind: cable
   name: heater supply
-  from: [48.0, -24.0, 4.0]
-  to: [12.0, -24.0, 2.0]
-  length: 36.06
+  from: [48.0, -21.1875, 4.5]
+  to: [13.0, -18.0, 3.0]
+  length: 40.99
   item: material.copper
-  mass: 2651.0
+  mass: 3014.0
+  via:
+  - [48.0, -17.0, 4.5]
+  - [13.0, -17.0, 4.5]
   note: as for air
 frame:
   box: [-12.0, -12.0, 0.0, 12.0, 12.0, 45.0]
@@ -389,7 +392,7 @@ ground:
 - {what: Radiator legs' pads, item: material.regolith-sintered, volume: 124.9, mass: 312200.0}
 - {what: Crew post berm, item: material.regolith, volume: 164.6, mass: 246900.0}
 - {what: Trestle footings, item: material.regolith-sintered, volume: 39.0, mass: 97500.0}
-totals: {rate: 55.5555555555556, power: 127500000.0, heat: 62090000.0, water: 0.0, mass: 8347000.0, against_module: 'module.shaft-furnace: one box, 22 MW. The layout for air draws 152 MW and sends 130 MW up four towers. This layout: the same rate; 127 MW (heater 121, compressor 4.1: at 8 bar the compressor only makes up the loop''s pressure drop); 62 MW to 43 radiator fields at 345 K (10 ha), for the water must condense somewhere and only light can take the heat away; no cooling zone or loop (the sponge iron goes on hot); no water used up. 4,760 t of plant and frame, 3,586 t of sintered regolith.'}
+totals: {rate: 55.5555555555556, power: 127500000.0, heat: 62090000.0, water: 0.0, mass: 8347000.0, against_module: 'module.shaft-furnace: one box, 22 MW. The layout for air draws 152 MW and sends 130 MW up four towers. This layout: the same rate; 127 MW (heater 121, compressor 4.1: at 8 bar the compressor only makes up the loop''s pressure drop); 62 MW to 43 radiator fields at 345 K (10 ha), for the water must condense somewhere and only light can take the heat away; no cooling zone or loop (the sponge iron goes on hot); no water used up. 4,761 t of plant and frame, 3,586 t of sintered regolith.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}

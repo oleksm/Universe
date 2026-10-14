@@ -205,12 +205,15 @@ links:
   note: '2.0 m, 10 mm wall, insulated (half as much again): about 600 deg C, back to the loop''s cooler'
 - kind: cable
   name: heater supply
-  from: [48.0, -24.0, 4.0]
-  to: [12.0, -24.0, 2.0]
-  length: 36.06
+  from: [48.0, -21.1875, 4.5]
+  to: [13.0, -18.0, 3.0]
+  length: 40.99
   item: material.copper
-  mass: 2728.0
-  note: three phases at 6.6 kV in a cable tray, copper at 4 A/mm2, to the heater's terminal house
+  mass: 3102.0
+  via:
+  - [48.0, -17.0, 4.5]
+  - [13.0, -17.0, 4.5]
+  note: 'three phases at 6.6 kV in a cable tray, copper at 4 A/mm2: from the transformer''s secondary terminals on its +y face, north to y -17, west along the heater''s north side and into its terminal house''s +y face'
 frame:
   box: [-12.0, -12.0, 0.0, 12.0, 12.0, 54.0]
   cell: 3.0

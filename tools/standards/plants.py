@@ -1023,7 +1023,7 @@ def shaft_units():
         desc=(f"Heats {GAS:.1f} kg/s of hydrogen from {T_PRE:.0f} to {T_GAS:.0f} deg C with electric resistance elements: {n_h} lined vessels {Dh:g} m across and {Hh:g} m tall (z 0.5 to 16.5) in a row along x at 6 m (x -9, -3, 3, 9), on the unit's centre line. "
               f"The gas in at the bottom of each from a cold header ({hd_c:.2f} m bore, 12 mm wall) along x at y -3.3, z 2, whose inlet flange is on its -x end at the unit's face (x -12); "
               f"out at the top of each into a lined hot header ({hd_h:.2f} m bore inside 200 mm of refractory, 16 mm shell, {hd_h + 0.432:.2f} m outside) along x at y 4, z 15, from x -10.25 to 10.25, whose outlet is a stub up from its middle (x 0) to a flange at z 18, the unit's top. "
-              "Its power by cables from its transformer to a terminal house at its -x end, on the +y side (clear of the cold header's flange). The headers' supports are the unit's own."),
+              "Its power by cables from its transformer to a terminal house at its -x end, on the +y side (clear of the cold header's flange), its +y face on the unit's face (y 6) with the cable entry at (-11, 6, 3). The headers' supports are the unit's own."),
         built_of=[part("Vessels", A36, 167601.6, f"{n_h} vessels {Dh:g} m across, {Hh:g} m, 25 mm plate, 1 m deep ellipsoidal heads, with their bands; measured on model v1 (by formula {hv:,.0f} kg)"),
                   part("Skirts and base rings", A36, 12229.5, "8 mm skirts from the floor to the vessels' bottoms; measured on model v1"),
                   part("Lining", REF, hr, "300 mm"),
@@ -1185,7 +1185,7 @@ def shaft_furnace_air(us, recs):
         link("pipe", "cooling water mains", (-72.0, 42.0, 0.75), (60.0, -12.0, 0.75), A36, 2 * pm(d_cw, 0.012), None, f"a pair of {d_cw:.1f} m pipes, 12 mm wall, flow and return: {flow:,.0f} kg/s at a 10 K rise, along the towers' row and down the plant to the scrubber, compressor, cooling loop and transformer", via=[(84.0, 42.0, 0.75), (84.0, -12.0, 0.75)]),
         link("pipe", "cold gas to the cooling zone", (-26.0, -20.0, 2.0), (-(side / 2 - 0.5), 0.0, z_ring - 8.0), A36, pm(d_cg, 0.008), None, f"{d_cg:.1f} m, 8 mm wall: {COOL_GAS:.1f} kg/s of hydrogen at {T_COLD:.0f} deg C, through the tower's west wall", via=[(-26.0, -20.0, z_ring - 8.0), (-26.0, 0.0, z_ring - 8.0)]),
         link("pipe", "hot gas from the cooling zone", (-(side / 2 - 0.5), 0.0, z_ring - 3.0), (-22.0, -20.0, 2.0), A36, pm(d_cg_hot, 0.010) * 1.5, None, f"{d_cg_hot:.1f} m, 10 mm wall, insulated (half as much again): about 600 deg C, back to the loop's cooler", via=[(-22.0, 0.0, z_ring - 3.0), (-22.0, -20.0, z_ring - 3.0)]),
-        link("cable", "heater supply", (48.0, -24.0, 4.0), (12.0, -24.0, 2.0), CU, 3 * Q_HEATER / HEATER_PF / (math.sqrt(3) * 6600) / 3 / 4e6 * RHO["copper"] * 3, None, "three phases at 6.6 kV in a cable tray, copper at 4 A/mm2, to the heater's terminal house"),
+        link("cable", "heater supply", (48.0, -21.1875, 4.5), (13.0, -18.0, 3.0), CU, 3 * Q_HEATER / HEATER_PF / (math.sqrt(3) * 6600) / 3 / 4e6 * RHO["copper"] * 3, None, "three phases at 6.6 kV in a cable tray, copper at 4 A/mm2: from the transformer's secondary terminals on its +y face, north to y -17, west along the heater's north side and into its terminal house's +y face", via=[(48.0, -17.0, 4.5), (13.0, -17.0, 4.5)]),
     ]
     tower_units = [recs[t] for t in towers]
     ground = [
@@ -2318,7 +2318,7 @@ def shaft_furnace_airless(us, recs):
         link("pipe", "hydrogen make-up", (100.0, 4.0, 1.5), (54.0, 4.0, 1.5), "material.stainless-steel-304", pm(0.25, 0.008), None, f"{H2_USED:.2f} kg/s from the hydrogen plant's electrolysers, which run at 10 bar so that no make-up compressor is needed"),
         link("pipe", "condensate to the hydrogen plant", (54.0, 24.0, 0.5), (100.0, 24.0, 0.5), "material.stainless-steel-304", math.pi * 0.2 * 0.006 * 7900, None, f"200 mm: {STEAM - _left:.1f} kg/s of water back to the electrolysers: on a moon every kilogram comes back"),
         link("pipe", "loop water to the radiators", (rad_at[-1][0] - 22.0, rad_at[-1][1], 1.0), (48.0, 20.0, 1.0), A36, 2 * pm(d_cw, 0.010), None, f"a pair of {d_cw:.2f} m pipes at about {HP_T_LOOP:.0f} K: {flow:,.0f} kg/s along the {n_rad} radiator fields' rows to the condenser, a branch to the transformer", via=[(-36.0, rad_at[-1][1], 1.0), (-36.0, 36.0, 1.0), (48.0, 36.0, 1.0)]),
-        link("cable", "heater supply", (48.0, -24.0, 4.0), (12.0, -24.0, 2.0), CU, 3 * HP_Q_HEATER / HEATER_PF / (math.sqrt(3) * 6600) / 4e6 * RHO["copper"], None, "as for air"),
+        link("cable", "heater supply", (48.0, -21.1875, 4.5), (13.0, -18.0, 3.0), CU, 3 * HP_Q_HEATER / HEATER_PF / (math.sqrt(3) * 6600) / 4e6 * RHO["copper"], None, "as for air", via=[(48.0, -17.0, 4.5), (13.0, -17.0, 4.5)]),
     ]
     ground = [
         {"what": "Tower foundation", "item": SINTER, "volume": r(24 * 24 * 1.5), "note": "a mat of sintered regolith blocks 1.5 m thick (a fifth of the load of 1 g)"},

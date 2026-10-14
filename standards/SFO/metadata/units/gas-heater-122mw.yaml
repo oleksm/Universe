@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.gas-heater-122mw, name: 'Hydrogen heater, 122 MW', description: 'Heats 14.3 kg/s of hydrogen from 300 to 900 deg C with electric resistance elements: 4 lined vessels 4 m across and 16 m tall (z 0.5 to 16.5) in a row along x at 6 m (x -9, -3, 3, 9), on the unit''s centre line. The gas in at the bottom of each from a cold header (2.26 m bore, 12 mm wall) along x at y -3.3, z 2, whose inlet flange is on its -x end at the unit''s face (x -12); out at the top of each into a lined hot header (3.23 m bore inside 200 mm of refractory, 16 mm shell, 3.67 m outside) along x at y 4, z 15, from x -10.25 to 10.25, whose outlet is a stub up from its middle (x 0) to a flange at z 18, the unit''s top. Its power by cables from its transformer to a terminal house at its -x end, on the +y side (clear of the cold header''s flange). The headers'' supports are the unit''s own.'}
+identity: {key: unit.gas-heater-122mw, name: 'Hydrogen heater, 122 MW', description: 'Heats 14.3 kg/s of hydrogen from 300 to 900 deg C with electric resistance elements: 4 lined vessels 4 m across and 16 m tall (z 0.5 to 16.5) in a row along x at 6 m (x -9, -3, 3, 9), on the unit''s centre line. The gas in at the bottom of each from a cold header (2.26 m bore, 12 mm wall) along x at y -3.3, z 2, whose inlet flange is on its -x end at the unit''s face (x -12); out at the top of each into a lined hot header (3.23 m bore inside 200 mm of refractory, 16 mm shell, 3.67 m outside) along x at y 4, z 15, from x -10.25 to 10.25, whose outlet is a stub up from its middle (x 0) to a flange at z 18, the unit''s top. Its power by cables from its transformer to a terminal house at its -x end, on the +y side (clear of the cold header''s flange), its +y face on the unit''s face (y 6) with the cable entry at (-11, 6, 3). The headers'' supports are the unit''s own.'}
 size_class: 3
 fits: plant-mount.bay-s3
 physical: {length: 24.0, width: 12.0, height: 18.0, mass: 1145000.0}
@@ -18,13 +18,8 @@ built_of:
 - {what: Terminal house base, item: material.structural-steel-a36, mass: 2846.0, note: measured on model v1}
 - {what: 'Terminals, thyristor sets and controls', item: good.electric-motors, mass: 10000.0, note: from memory}
 needs: {power: 124800000.0}
-visual:
-  format: "freefall-model/1"
-  path: "models/gas-heater-122mw/v1"
-  manifest_sha256: "273834c6e66616924fda57b296b0ec4a6f062351267a470ebca9ab29d10e6427"
-  version: 1
-  triangles: 51550
 life: 788940000
+visual: {format: freefall-model/1, path: models/gas-heater-122mw/v1, manifest_sha256: 273834c6e66616924fda57b296b0ec4a6f062351267a470ebca9ab29d10e6427, version: 1, triangles: 51550}
 basis:
 - of: [physical, built_of]
   tier: invented
