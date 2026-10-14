@@ -1024,7 +1024,7 @@ def shaft_units():
               f"The gas in at the bottom of each from a cold header ({hd_c:.2f} m bore, 12 mm wall) along x at y -3.3, z 2, whose inlet flange is on its -x end at the unit's face (x -12); "
               f"out at the top of each into a lined hot header ({hd_h:.2f} m bore inside 200 mm of refractory, 16 mm shell, {hd_h + 0.432:.2f} m outside) along x at y 4, z 15, from x -10.25 to 10.25, whose outlet is a stub up from its middle (x 0) to a flange at z 18, the unit's top. "
               "Its power by cables from its transformer to a terminal house at its -x end, on the +y side (clear of the cold header's flange). The headers' supports are the unit's own."),
-        built_of=[part("Vessels", A36, 167599.3, f"{n_h} vessels {Dh:g} m across, {Hh:g} m, 25 mm plate, 1 m deep ellipsoidal heads, with their bands; measured on model v1 (by formula {hv:,.0f} kg)"),
+        built_of=[part("Vessels", A36, 167601.6, f"{n_h} vessels {Dh:g} m across, {Hh:g} m, 25 mm plate, 1 m deep ellipsoidal heads, with their bands; measured on model v1 (by formula {hv:,.0f} kg)"),
                   part("Skirts and base rings", A36, 12229.5, "8 mm skirts from the floor to the vessels' bottoms; measured on model v1"),
                   part("Lining", REF, hr, "300 mm"),
                   part("Elements", "material.stainless-steel-304", elem, f"FeCrAl strip, which the registry has not got: stainless steel stands for it; {elem / 1000:.0f} t at 20 kW/m2 of surface"),
