@@ -3150,6 +3150,14 @@ def write_html():
         f.write(page)
 
 
+# (Every built frame's derived groups follow its members, nodes and decks: tools/standards/frames.py.)
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import frames  # noqa: E402
+for _f, _r in frames.load("assemblies").values():
+    _fit, _bill, _phys = frames.derive(_r, frames.load("mill-stock"), frames.materials())
+    if _fit != _r.get("fittings") or _bill != _r.get("bill") or any((_r.get("physical") or {}).get(k) != v for k, v in _phys.items()):
+        problem(_f, "derived groups out of date: run tools/standards/frames.py --write")
+
 write_html()
 if problems:
     print(f"{len(problems)} problem(s):", file=sys.stderr)

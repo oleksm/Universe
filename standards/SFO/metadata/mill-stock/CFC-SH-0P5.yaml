@@ -11,5 +11,8 @@ made_from:
   - item: material.carbon-fibre-composite
 size:
   thickness: 0.0005
+  length: 3.0
+  width: 1.5
 basis:
+  - { of: [size.length, size.width], tier: invented, review: true, note: "Sold in sheets of 3.0 by 1.5 m: 6 by 2 m for metal plate, 2.5 by 1.25 m for sheet, 3 by 1.5 m for composite and sandwich panel (an autoclave's bed); chosen. A deck is laid out on whole sheets (tools/standards/frames.py)." }
   - { of: [size], tier: invented, review: true, note: "A gauge the deck panels want. Chosen." }

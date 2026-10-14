@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.st4340-end-160
+  code: ST4340-END-160
+  name: "4340 end fitting 160 mm"
+  traded_as: market.metals
+  form: forging
+  temper: "quenched and tempered"
+package: package.crate-heavy
+tint: [0.44, 0.45, 0.47]
+made_from:
+  - item: material.high-strength-steel-4340
+size:
+  diameter: 0.16
+  length: 0.16
+physical:
+  mass: 3.858
+basis:
+  - { of: [size, physical.mass], tier: invented, review: true, note: "The cone welded or bonded into a 160 mm member's end, through which one M42 bolt holds it to a node (the MERO joint): as long as the member is wide, about 0.12 rho d^3 with its bore. Chosen (tools/standards/frames.py), not drawn." }

@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.st4340-end-200
+  code: ST4340-END-200
+  name: "4340 end fitting 200 mm"
+  traded_as: market.metals
+  form: forging
+  temper: "quenched and tempered"
+package: package.crate-heavy
+tint: [0.44, 0.45, 0.47]
+made_from:
+  - item: material.high-strength-steel-4340
+size:
+  diameter: 0.2
+  length: 0.2
+physical:
+  mass: 7.536
+basis:
+  - { of: [size, physical.mass], tier: invented, review: true, note: "The cone welded or bonded into a 200 mm member's end, through which one M56 bolt holds it to a node (the MERO joint): as long as the member is wide, about 0.12 rho d^3 with its bore. Chosen (tools/standards/frames.py), not drawn." }
