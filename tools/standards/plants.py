@@ -3221,7 +3221,7 @@ def yard_airless_units(us):
     legs = 4 * box_tube(0.5, 0.5, 0.012, 12.0) * RHO["steel"] + 2 * box_tube(0.5, 0.4, 0.012, 8.0) * RHO["steel"]
     c["built_of"].append(part("Legs and sill beams", A36, legs, "four box legs 0.5 x 0.5 m, 12 mm, 12 m, and two sill beams"))
     c["dims"] = (8.0, 25.0, 14.0)
-    c["desc"] = c["desc"].replace("on the hall's runways", "on its own legs, running on two ground rails 24 m apart").replace("its origin on the runway's rail plane", "its origin on the ground rails' plane, its girders 12 m up") + f" Sized for {g:g} m/s2. Its scissor tongs as the ingot crane's (unit.ingot-crane-10t)."
+    c["desc"] = c["desc"].replace("on the hall's runways", "on its own legs, running on two ground rails 24 m apart").replace("its origin on the runway's rail plane", "its origin on the ground rails' plane, its girders 12 m up").replace("the hook raised to 0.1 m under the rail plane", "the hook raised under the bridge") + f" Sized for {g:g} m/s2. Its scissor tongs as the ingot crane's (unit.ingot-crane-10t)."
     out["ingot-gantry-10t-moon"] = c
     lab = dict(us["sampling-lab"])
     lab["name"] = "Sampling laboratory, sealed"
