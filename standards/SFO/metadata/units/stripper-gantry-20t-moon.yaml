@@ -11,6 +11,12 @@ built_of:
 - {what: Legs and sill beams, item: material.structural-steel-a36, mass: 53560.0, note: 'four box legs 0.8 x 0.8 m, 20 mm, from the sills'' tops at z 1 to 24, and two sill beams; measured on model v1'}
 - {what: 'Seats, braces and rails', item: material.structural-steel-a36, mass: 19950.0, note: 'the trolley''s rails, the legs'' braces and seats, the wheel seats; measured on model v1'}
 needs: {power: 40000.0}
+visual:
+  format: "freefall-model/1"
+  path: "models/stripper-gantry-20t-moon/v1"
+  manifest_sha256: "b5d80811bd194de4d6df67f50534f3acbaa1ca6d06498c60de639af9c2ee1efa"
+  version: 1
+  triangles: 6840
 life: 788940000
 basis:
 - of: [physical, built_of]
