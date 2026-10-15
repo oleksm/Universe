@@ -2275,8 +2275,9 @@ def radiator_unit(T, whose):
                   part("Legs", "material.aluminium-alloy-6061", 1592.5, "four 100 mm box legs, 4 mm, 3 m, a panel; measured on model v1"),
                   part("Panel rails", "material.aluminium-alloy-6061", 1639.3, "100 x 50 x 3 mm channel round each panel's edge, carrying its skins between the legs; measured on model v1"),
                   (part("Headers, branches and supports", "material.aluminium-alloy-6061", 3174.5, "the mains round the margin, an 80 mm pair to each row and 50 mm stubs to each panel, 3 mm walls (2 mm the stubs), with their supports: measured on model v1") if T < 400 else
-                   part("Headers, branches and supports", "material.stainless-steel-304", 2 * 50.0 * math.pi * d_h * 0.006 * 7900 + 16 * 44.0 * math.pi * 0.1 * 0.003 * 7900 + 2 * panels * 1.0 * math.pi * 0.05 * 0.002 * 7900 + 1000.0,
-                        f"steam at about {T - 273.15:.0f} deg C and 20 bar is too hot and too high for aluminium pipe: stainless steel 304, the {d_h * 1000:.0f} mm mains 6 mm along the -x edge only (about 67 MPa), 100 mm row pairs 3 mm along x, 50 mm stubs 2 mm, and their supports (1 t, from memory); the panels' own 20 mm aluminium tubes see only about 13 MPa")),
+                   part("Headers and branches", "material.stainless-steel-304", 11155.8,
+                        f"steam at about {T - 273.15:.0f} deg C and 20 bar is too hot and too high for aluminium pipe: stainless steel 304, the {d_h * 1000:.0f} mm mains 6 mm along the -x edge (about 67 MPa), a raised inlet crossover at z 1.6, 100 mm row pairs 3 mm along x, 50 mm stubs 2 mm; measured on blender's model of the 485 K field (v1); the panels' own 20 mm aluminium tubes see only about 13 MPa")),
+                  *([part("Pipe supports", "material.aluminium-alloy-6061", 25458.1 - 20907.1 - 1592.5 - 1639.3, "measured on model v1")] if T >= 400 else []),
                   part("Pumps", "good.pumps", 2000.0, "from memory")],
         holds=water, rejects={"heat": q * A, "temperature": T}, needs={"power": pumps, "atmosphere": "vacuum"},
         basis=[{"of": ["rejects", "physical"], "tier": "derived", "review": True, "note": f"Stefan-Boltzmann at emissivity {RAD_EPS}; absorptance, the shaded ground's temperature and the panel's layout invented or from memory."},
