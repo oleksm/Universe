@@ -4945,3 +4945,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.truck-dump-hopper
+    version: 2
+    manifest_sha256: "8b26fae88ef7ef55e55cf8410f67efe360e4bc962ba1dd66808f93404b1947c4"
+    installed: d2762ecc
+    game: "the loader (world::assets) at fso d2762ecc"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/truck-dump-hopper/v2 (318160 bytes, bounds [-6.05, -6.0, -5.15] to [6.05, 2.0, 5.15]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
