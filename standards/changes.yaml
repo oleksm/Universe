@@ -2789,7 +2789,7 @@
 - { record: unit.stripper-crane-20t, at: "2026-10-14T21:36:13Z", status: draft, summary: "changed", sha: "248463a76b95017a" }
 - { record: unit.stripper-gantry-20t-moon, at: "2026-10-14T20:32:09Z", status: draft, summary: "changed: identity, built_of", sha: "9953a4704a13f3dd" }
 - { record: unit.top-gas-condenser-8bar, at: "2026-10-14T19:26:44Z", status: draft, summary: "first tracked", sha: "61482cc1d5511262" }
-- { record: unit.top-gas-scrubber, at: "2026-10-15T00:40:50Z", status: draft, summary: "changed: physical, built_of", sha: "54368d26f9e4ea6f" }
+- { record: unit.top-gas-scrubber, at: "2026-10-15T00:41:54Z", status: draft, summary: "changed: visual", sha: "627b5976c869197c" }
 - { record: unit.truck-dump-hopper, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "69379232aafc2169" }
 - { record: unit.vacuum-degasser-80t, at: "2026-10-14T18:23:23Z", status: draft, summary: "changed", sha: "b01f8bbfcca9fb37" }
 - { record: unit.water-treatment, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "bd4aa8977b986fd2" }
