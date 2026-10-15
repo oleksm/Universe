@@ -210,95 +210,95 @@ links:
   note: a pair of 0.63 m pipes, 10 mm wall, off the mains at the west end, south in a trench clear of the tower to the loop's flanges on its -x face
 - kind: pipe
   name: tower water to C1, pair 1
-  from: [-75.0, 42.0, 0.75]
+  from: [-77.15, 42.0, 0.75]
   to: [-78.0, 60.0, 0.75]
-  length: 21.0
+  length: 18.85
   item: material.structural-steel-a36
-  mass: 4143.0
+  mass: 3719.0
   via:
-  - [-75.0, 60.0, 0.75]
-  note: a pair of 500 mm pipes, 8 mm wall, flow and return, off the mains north up the gap between the towers to the port pair on the tower's east end
+  - [-77.15, 60.0, 0.75]
+  note: a pair of 500 mm pipes, 8 mm wall, flow and return, off the mains north up the gap between the towers to the port pair on the tower's east end; the gap's four lanes at 0.5, 1.2, 1.9 and 2.6 m east of the ports, this pair in the first two; the flow bridges over the return main at z 1.8
 - kind: pipe
   name: tower water to C1, pair 2
-  from: [-75.0, 42.0, 0.75]
+  from: [-75.75, 42.0, 0.75]
   to: [-78.0, 64.5, 0.75]
-  length: 25.5
+  length: 24.75
   item: material.structural-steel-a36
-  mass: 5031.0
+  mass: 4883.0
   via:
-  - [-75.0, 64.5, 0.75]
-  note: a pair of 500 mm pipes, 8 mm wall, flow and return, off the mains north up the gap between the towers to the port pair on the tower's east end
+  - [-75.75, 64.5, 0.75]
+  note: a pair of 500 mm pipes, 8 mm wall, flow and return, off the mains north up the gap between the towers to the port pair on the tower's east end; the gap's four lanes at 0.5, 1.2, 1.9 and 2.6 m east of the ports, this pair in the last two; the flow bridges over the return main at z 1.8
 - kind: pipe
   name: tower water to C2, pair 1
-  from: [-21.0, 42.0, 0.75]
+  from: [-23.150000000000006, 42.0, 0.75]
   to: [-24.0, 60.0, 0.75]
-  length: 21.0
+  length: 18.85
   item: material.structural-steel-a36
-  mass: 4143.0
+  mass: 3719.0
   via:
-  - [-21.0, 60.0, 0.75]
-  note: a pair of 500 mm pipes, 8 mm wall, flow and return, off the mains north up the gap between the towers to the port pair on the tower's east end
+  - [-23.150000000000006, 60.0, 0.75]
+  note: a pair of 500 mm pipes, 8 mm wall, flow and return, off the mains north up the gap between the towers to the port pair on the tower's east end; the gap's four lanes at 0.5, 1.2, 1.9 and 2.6 m east of the ports, this pair in the first two; the flow bridges over the return main at z 1.8
 - kind: pipe
   name: tower water to C2, pair 2
-  from: [-21.0, 42.0, 0.75]
+  from: [-21.75, 42.0, 0.75]
   to: [-24.0, 64.5, 0.75]
-  length: 25.5
+  length: 24.75
   item: material.structural-steel-a36
-  mass: 5031.0
+  mass: 4883.0
   via:
-  - [-21.0, 64.5, 0.75]
-  note: a pair of 500 mm pipes, 8 mm wall, flow and return, off the mains north up the gap between the towers to the port pair on the tower's east end
+  - [-21.75, 64.5, 0.75]
+  note: a pair of 500 mm pipes, 8 mm wall, flow and return, off the mains north up the gap between the towers to the port pair on the tower's east end; the gap's four lanes at 0.5, 1.2, 1.9 and 2.6 m east of the ports, this pair in the last two; the flow bridges over the return main at z 1.8
 - kind: pipe
   name: tower water to C3, pair 1
-  from: [33.0, 42.0, 0.75]
+  from: [30.849999999999994, 42.0, 0.75]
   to: [30.0, 60.0, 0.75]
-  length: 21.0
+  length: 18.85
   item: material.structural-steel-a36
-  mass: 4143.0
+  mass: 3719.0
   via:
-  - [33.0, 60.0, 0.75]
-  note: a pair of 500 mm pipes, 8 mm wall, flow and return, off the mains north up the gap between the towers to the port pair on the tower's east end
+  - [30.849999999999994, 60.0, 0.75]
+  note: a pair of 500 mm pipes, 8 mm wall, flow and return, off the mains north up the gap between the towers to the port pair on the tower's east end; the gap's four lanes at 0.5, 1.2, 1.9 and 2.6 m east of the ports, this pair in the first two; the flow bridges over the return main at z 1.8
 - kind: pipe
   name: tower water to C3, pair 2
-  from: [33.0, 42.0, 0.75]
+  from: [32.25, 42.0, 0.75]
   to: [30.0, 64.5, 0.75]
-  length: 25.5
+  length: 24.75
   item: material.structural-steel-a36
-  mass: 5031.0
+  mass: 4883.0
   via:
-  - [33.0, 64.5, 0.75]
-  note: a pair of 500 mm pipes, 8 mm wall, flow and return, off the mains north up the gap between the towers to the port pair on the tower's east end
+  - [32.25, 64.5, 0.75]
+  note: a pair of 500 mm pipes, 8 mm wall, flow and return, off the mains north up the gap between the towers to the port pair on the tower's east end; the gap's four lanes at 0.5, 1.2, 1.9 and 2.6 m east of the ports, this pair in the last two; the flow bridges over the return main at z 1.8
 - kind: pipe
   name: tower water to C4, pair 1
-  from: [87.0, 42.0, 0.75]
+  from: [84.85, 42.0, 0.75]
   to: [84.0, 60.0, 0.75]
-  length: 21.0
+  length: 18.85
   item: material.structural-steel-a36
-  mass: 4143.0
+  mass: 3719.0
   via:
-  - [87.0, 60.0, 0.75]
-  note: a pair of 500 mm pipes, 8 mm wall, flow and return, off the mains north up the gap between the towers to the port pair on the tower's east end
+  - [84.85, 60.0, 0.75]
+  note: a pair of 500 mm pipes, 8 mm wall, flow and return, off the mains north up the gap between the towers to the port pair on the tower's east end; the gap's four lanes at 0.5, 1.2, 1.9 and 2.6 m east of the ports, this pair in the first two; the flow bridges over the return main at z 1.8
 - kind: pipe
   name: tower water to C4, pair 2
-  from: [87.0, 42.0, 0.75]
+  from: [86.25, 42.0, 0.75]
   to: [84.0, 64.5, 0.75]
-  length: 25.5
+  length: 24.75
   item: material.structural-steel-a36
-  mass: 5031.0
+  mass: 4883.0
   via:
-  - [87.0, 64.5, 0.75]
-  note: a pair of 500 mm pipes, 8 mm wall, flow and return, off the mains north up the gap between the towers to the port pair on the tower's east end
+  - [86.25, 64.5, 0.75]
+  note: a pair of 500 mm pipes, 8 mm wall, flow and return, off the mains north up the gap between the towers to the port pair on the tower's east end; the gap's four lanes at 0.5, 1.2, 1.9 and 2.6 m east of the ports, this pair in the last two; the flow bridges over the return main at z 1.8
 - kind: pipe
   name: cooling water mains
-  from: [-75.0, 42.0, 0.75]
+  from: [-79.0, 42.0, 0.75]
   to: [60.0, -12.0, 0.75]
-  length: 243.0
+  length: 247.0
   item: material.structural-steel-a36
-  mass: 180600.0
+  mass: 183600.0
   via:
   - [87.0, 42.0, 0.75]
   - [87.0, -12.0, 0.75]
-  note: 'a pair of 1.3 m pipes, 12 mm wall, flow and return: 3,096 kg/s at a 10 K rise, along the towers'' row and down the plant to the scrubber, compressor, cooling loop and transformer'
+  note: 'a pair of 1.3 m pipes, 12 mm wall, flow and return (at y 41 and 43 along the row, x 86 and 88 down the east leg, capped at x -79): 3,096 kg/s at a 10 K rise, along the towers'' row and down the plant to the scrubber, compressor, cooling loop and transformer'
 - kind: pipe
   name: cold gas to the cooling zone
   from: [-26.0, -20.0, 2.0]
@@ -360,7 +360,7 @@ ground:
 - {what: Transformer vault, item: good.concrete, volume: 132.0, note: fire walls 7 m tall round the heater's transformer, mass: 316800.0}
 - {what: Cooling tower basins, item: good.concrete, volume: 1516.0, note: 'one under each tower, sunk as the furnace shop''s: 0.3 m walls, floor top at z -2; 6 m apart, no shared walls', mass: 3638000.0}
 - {what: Gallery trestle footings, item: good.concrete, volume: 104.0, note: '8 m3 under each of the pellet belt''s trestles, 4 m3 under the product belt''s', mass: 249600.0}
-totals: {rate: 55.5555555555556, power: 152200000.0, heat: 129600000.0, water: 72.04, mass: 15610000.0, against_module: 'module.shaft-furnace: one box 150 x 100 x 137 m, 22 MW, which leaves out heating the gas. This layout: the same 200 t of sponge iron an hour; 152 MW, of which the hydrogen heater is 125: hydrogen brings no heat of its own, so the shaft''s 112 MW comes from 14.3 kg/s of gas (4.8 times what the reduction uses) heated by electricity; 130 MW to the towers, 72 kg/s of water evaporated; the 26.9 kg/s of water made goes back to the hydrogen plant. 6,007 t of plant and frame, 9,601 t of concrete.'}
+totals: {rate: 55.5555555555556, power: 152200000.0, heat: 129600000.0, water: 72.04, mass: 15610000.0, against_module: 'module.shaft-furnace: one box 150 x 100 x 137 m, 22 MW, which leaves out heating the gas. This layout: the same 200 t of sponge iron an hour; 152 MW, of which the hydrogen heater is 125: hydrogen brings no heat of its own, so the shaft''s 112 MW comes from 14.3 kg/s of gas (4.8 times what the reduction uses) heated by electricity; 130 MW to the towers, 72 kg/s of water evaporated; the 26.9 kg/s of water made goes back to the hydrogen plant. 6,008 t of plant and frame, 9,601 t of concrete.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}
