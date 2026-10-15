@@ -2733,7 +2733,7 @@ def shaft_furnace_airless(us, recs):
     z_top_gas = float(sh["desc"].split("top gas outlet at z ")[1].split(" ")[0])
     z_bustle = float(sh["desc"].split("the bustle main at z ")[1].split(",")[0])
     z_ring = float(sh["desc"].split("ring girder at z ")[1].split(" ")[0])
-    openings = [(9.0, -3.0, z_top_gas - 3.0, 12.0, 3.0, top - 3.0), (-3.0, -12.0, z_bustle - 3.0, 3.0, -9.0, z_bustle + 3.0), (-12.0, -3.0, 3.0, -9.0, 3.0, 9.0)]
+    openings = [(9.0, -3.0, z_top_gas - 3.0, 12.0, 3.0, top - 3.0), (-3.0, -12.0, z_bustle - 3.0, 3.0, -9.0, z_bustle + 3.0), (-12.0, -3.0, 3.0, -9.0, 3.0, 9.0), (-3.0, -3.0, top - 3.0, 3.0, 3.0, top + 3.0)]   # the last: the roof's framed opening for the charge belt's head
     groups, ground_nodes, n_nodes, cells = lattice(box, cell, round(top / cell) - 1, None, openings)
     srec = recs[sh_key]
     g = MOON_G[1]
@@ -2789,7 +2789,7 @@ def shaft_furnace_airless(us, recs):
     rise = 15.0
     belt_x = H / math.sin(math.radians(rise)) * math.cos(math.radians(rise))
     links = [
-        link("conveyor", "pellet belt", (round(belt_x, 1), 0.0, 2.0), (0.0, 0.0, round(H + 2.0, 1)), A36, 120.0, 300000.0 * MOON_G[1] / G + 50000.0, f"a 1.2 m belt on trestles, open, rising at {rise:g} degrees to the charge lock's hopper; its bearings and grease vacuum-rated"),
+        link("conveyor", "pellet belt", (round(belt_x, 1), 0.0, 2.0), (0.0, 0.0, round(H + 2.0, 1)), A36, 120.0, 300000.0 * MOON_G[1] / G + 50000.0, f"a 1.2 m belt on trestles, open, rising at {rise:g} degrees to the charge lock's hopper, its head through a framed 6 x 6 m opening in the tower's roof (a hood and drop chute to the hopper's rim at z 40); over the compressor its trestles are portals with legs at y -5.5 and 5.5, clear to z 9; its bearings and grease vacuum-rated"),
         link("conveyor", "hot sponge iron", (0.0, 0.0, 6.0), (-60.0, 0.0, 6.0), "material.stainless-steel-304", 400.0, 150000.0, f"a closed drag chain conveyor in an insulated casing: {S_RATE:.1f} kg/s of sponge iron at about {T_HOT_DRI:.0f} deg C to the arc furnace shop's bin, beyond the layout; the hot charge saves the furnace about {S_RATE * CP_DRI * (T_HOT_DRI - 25) / 1e6:.0f} MW"),
         link("pipe", "top gas main", (side / 2 - 0.5, 0.0, z_top_gas), (24.0, 24.0, 18.0), A36, pm(d_top), None, f"{d_top:.1f} m, 16 mm wall for 8 bar, insulated", via=[(15.0, 0.0, z_top_gas), (24.0, 24.0, z_top_gas)]),
         link("pipe", "wet gas to the condenser", (24.0, 29.2, 1.5), (42.0, 24.0, 12.0), A36, pm(d_gas), None, f"{d_gas:.1f} m, 16 mm: from the recuperator's wet header (its +y flange) round the north and up into the condenser's inlet along +x", via=[(24.0, 32.0, 1.5), (38.0, 32.0, 1.5), (38.0, 32.0, 12.0), (38.0, 24.0, 12.0)]),

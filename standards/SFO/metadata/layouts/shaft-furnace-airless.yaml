@@ -266,7 +266,7 @@ links:
   item: material.structural-steel-a36
   mass: 18550.0
   power: 111200.0
-  note: a 1.2 m belt on trestles, open, rising at 15 degrees to the charge lock's hopper; its bearings and grease vacuum-rated
+  note: a 1.2 m belt on trestles, open, rising at 15 degrees to the charge lock's hopper, its head through a framed 6 x 6 m opening in the tower's roof (a hood and drop chute to the hopper's rim at z 40); over the compressor its trestles are portals with legs at y -5.5 and 5.5, clear to z 9; its bearings and grease vacuum-rated
 - kind: conveyor
   name: hot sponge iron
   from: [0.0, 0.0, 6.0]
@@ -427,15 +427,16 @@ frame:
   - [9.0, -3.0, 28.0, 12.0, 3.0, 42.0]
   - [-3.0, -12.0, 13.0, 3.0, -9.0, 19.0]
   - [-12.0, -3.0, 3.0, -9.0, 3.0, 9.0]
+  - [-3.0, -3.0, 42.0, 3.0, 3.0, 48.0]
   members:
   - {item: stock.al6061-tb-80x2-s3000, count: 1991, where: tower walls}
   - {item: stock.al6061-tb-80x2-d3000, count: 1537, where: tower walls}
-  - {item: stock.al6061-tb-80x2-s3000, count: 290, where: tower roof}
-  - {item: stock.al6061-tb-80x2-d3000, count: 246, where: tower roof}
-  - {item: stock.st4340-node-110b, count: 934, where: nodes}
+  - {item: stock.al6061-tb-80x2-s3000, count: 281, where: tower roof}
+  - {item: stock.al6061-tb-80x2-d3000, count: 234, where: tower roof}
+  - {item: stock.st4340-node-110b, count: 932, where: nodes}
   - {item: stock.st4340-box-300x300x20, count: 8, where: 'columns under the shaft''s ring girder, 12 m, braced to the tower every 6 m'}
   carries: [unit.shaft-furnace-200th-hp]
-  mass: 85050.0
+  mass: 84910.0
   sized: 'At 2 m/s2 the shaft with its burden, 4.9 MN, on 8 columns of 300 x 300 x 20 mm 4340 box: 27 MPa each. No wind: the lattice braces the columns and carries six aluminium grating platforms (6 mm, 60% of the plan), the kit''s lightest aluminium strut (al6061-tb-80x2). Footings not yet checked.'
 ground:
 - {what: Tower foundation, item: material.regolith-sintered, volume: 864.0, note: a mat of sintered regolith blocks 1.5 m thick (a fifth of the load of 1 g), mass: 2160000.0}
