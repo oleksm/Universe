@@ -5095,3 +5095,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.offgas-filter-sealed
+    version: 1
+    manifest_sha256: "e7754676f126f8e8e4ec8a936d2b1ec74935f5e4d1bd8120441e2b91104211b9"
+    installed: 635b52cf
+    game: "the loader (world::assets) at fso 635b52cf"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/offgas-filter-sealed/v1 (187956 bytes, bounds [-6.0, 0.0, -2.875] to [5.36, 10.0, 2.875]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
