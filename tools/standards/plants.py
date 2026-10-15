@@ -2597,9 +2597,9 @@ def casting_bay_airless(us, recs):
     mobile += [{"unit": "unit.ingot-car-40t", "rides": "ingot rail", "at": [15.0, 6.0, 0.0]},
                {"unit": "unit.gantry-crane-150t-moon", "rides": "ladle gantry rails", "at": [-15.0, 0.0, 0.0]},
                {"unit": "unit.stripper-gantry-20t-moon", "rides": "stripper gantry rails", "at": [15.0, 0.0, 0.0]}]
-    bays = [{"id": "P", "mount": "plant-mount.bay-s1", "unit": "unit.crew-post", "at": [0.0, -21.0, 0.0], "note": "south, under its berm"}]
+    bays = [{"id": "P", "mount": "plant-mount.bay-s1", "unit": "unit.crew-post", "at": [0.0, -24.0, 0.0], "note": "south, under its berm, which stays clear of the gantries' south rails at y -12"}]
     ground = [
-        {"what": "Casting floor", "item": SINTER, "volume": r(60 * 24 * 0.4), "note": "0.4 m of sintered regolith under the teeming and stripping, so spilt steel meets stone"},
+        {"what": "Casting floor", "item": SINTER, "volume": r(72 * 20 * 0.4), "note": "72 x 20 m, 0.4 m of sintered regolith at grade under the three rails (x -36 to 36, y -10 to 10), so spilt steel meets stone; its rails set in 0.4 m channels that take the cars' treads and flanges"},
         {"what": "Gantry rail sleepers", "item": SINTER, "volume": r(4 * 33 * 1.0)},
         {"what": "Crew post berm", "item": "material.regolith", "volume": BERM, "note": "loose regolith at least 1 m over the post everywhere (its top 4 x 2 m, 5.3 m up), lying at 35 degrees, its foot about 19 x 17 m, a cavity for the post; measured on blender's arc furnace shop; with openings for its windows (light wells on the north) and its airlock (a ramp cut on the west); with openings for its windows and airlock; at the airlock's door a landing of packed regolith 2 x 2 m, its top at the threshold (1.35 m up), and a ramp down to the ground at about 1 in 3"},
     ]

@@ -5,7 +5,7 @@ stands_for: module.ladle-station
 site:
   atmosphere: none
   gravity: [1.6, 2.0]
-physical: {length: 128.0, width: 96.15, height: 27.0, mass: 2221000.0}
+physical: {length: 133.3, width: 96.15, height: 27.0, mass: 2221000.0}
 bays:
 - id: D
   mount: plant-mount.bay-s2
@@ -169,12 +169,7 @@ staff:
 - {profession: profession.metalworker, count: 2}
 - {profession: profession.technician, count: 1}
 - {profession: profession.engineer, count: 1}
-visual:
-  format: "freefall-model/1"
-  path: "models/ladle-station-airless/v1"
-  manifest_sha256: "b435df68cbd2fa6179f3bfe1dcb01030beaf9f07377043673220515df900e4d5"
-  version: 1
-  triangles: 186544
+visual: {format: freefall-model/1, path: models/ladle-station-airless/v1, manifest_sha256: b435df68cbd2fa6179f3bfe1dcb01030beaf9f07377043673220515df900e4d5, version: 1, triangles: 186544}
 basis:
 - of: [bays, links, mobile]
   tier: invented
