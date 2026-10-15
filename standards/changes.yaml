@@ -2746,8 +2746,8 @@
 - { record: unit.dri-cooling-loop, at: "2026-10-15T01:24:23Z", status: draft, summary: "changed", sha: "46962a5f5ae51829" }
 - { record: unit.eaf-vessel-80t, at: "2026-10-14T16:01:10Z", status: draft, summary: "changed: physical, built_of, visual", sha: "f948e3f34829ba7e" }
 - { record: unit.eaf-vessel-80t-sealed, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "6a1b4d84de74483c" }
-- { record: unit.electrolyser-block-20mw, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "acb6b5721d188de4" }
-- { record: unit.electrolyser-block-20mw-10bar, at: "2026-10-14T19:28:17Z", status: draft, summary: "first tracked", sha: "8f4f42aafcbab7aa" }
+- { record: unit.electrolyser-block-20mw, at: "2026-10-15T02:30:01Z", status: draft, summary: "changed: identity", sha: "bf007d3f56ff6465" }
+- { record: unit.electrolyser-block-20mw-10bar, at: "2026-10-15T02:30:01Z", status: draft, summary: "changed: identity", sha: "4681f59aa2748be0" }
 - { record: unit.forklift-2t5, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "f2ec04344ce47c2c" }
 - { record: unit.furnace-transformer-14mva, at: "2026-10-14T18:15:58Z", status: draft, summary: "changed", sha: "f296531f2bc7dd18" }
 - { record: unit.furnace-transformer-90mva, at: "2026-10-14T15:45:44Z", status: draft, summary: "changed: identity", sha: "d7b34abc2bacd989" }

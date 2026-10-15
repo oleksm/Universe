@@ -1354,7 +1354,8 @@ def hydrogen_units():
         name=f"Electrolyser block, {P_STACKS / 1e6:.0f} MW", size_class=3, fits="bay-s3", dims=(24.0, 12.0, 8.0),
         desc=(f"Alkaline electrolysis at about 3 bar: {STACKS} stacks of {per_stack} cells each ({CELL_A:g} m2 active, {J_CELL / 1e4:g} A/cm2 at {V_CELL:g} V, {V_stack:.0f} V a stack), lying along y at local x -9, -4, 1 and 6, "
               f"each {L_stack:.1f} m long and 2.4 m across on a skid 1 m high; the lye (30% potassium hydroxide) carries the gases to two separators at x 10.5 (hydrogen at y -2.5, oxygen at y 2.5), 2 m across and 6 m tall on 2 m legs, "
-              f"and back by pumps through coolers. {I_DC / 1e3:.0f} kA of direct current by a busbar to its terminals at local (0, -6, 3); hydrogen and oxygen out of the separators' tops (z 8) into the layout's headers; demineralised water and the cooling loop in at local (11, 6, 1)."),
+              f"and back by pumps through coolers. The stacks are in parallel: {I_DC / 1e3:.1f} kA of direct current at {V_stack:.0f} V by a busbar to its terminals at local (0, -6, 3), a branch to each stack's ends ({I_DC / STACKS / 1e3:.1f} kA a stack); hydrogen and oxygen out of the separators' tops (z 8) into the layout's headers; "
+              f"on the +y face, 1 m up, round local (11, 6, 1): the cooling loop's pair of 250 mm flanges ({I_BLK * (V_CELL - V_TN) / (4186 * 10):.0f} kg/s at a 10 K rise; flow x 10.6, return x 11.4) and the demineralised water's 50 mm flange at x 9.8."),
         built_of=[part("Bipolar plates", A36, n_cells * plate, f"{n_cells} plates of 3 mm steel, 3.5 m2 each with its rim, nickel-plated"),
                   part("Electrodes and plating", NI, n_cells * elec, "nickel mesh at 1.5 kg/m2 each side, 25 um of plating"),
                   part("Diaphragms", "material.polyethylene-uhmw", n_cells * dia, "porous polysulfone with zirconia, about 0.5 kg/m2, which the registry has not got: polyethylene stands for it"),
