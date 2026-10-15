@@ -5110,3 +5110,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.gantry-crane-20t-moon
+    version: 1
+    manifest_sha256: "410195f4ab5b7ad60ddfc6f651edff50de697389a61c573e7d96190916c0e417"
+    installed: 44efdde4
+    game: "the loader (world::assets) at fso 44efdde4"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/gantry-crane-20t-moon/v1 (224508 bytes, bounds [-4.9, -0.04, -12.57] to [4.9, 23.7, 12.57]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
