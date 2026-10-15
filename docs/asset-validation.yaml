@@ -4570,3 +4570,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.dri-cooling-loop
+    version: 1
+    manifest_sha256: "173747509218d3e143bc3b3f90eda330ac4ae768f71b49ab2022f0d1fc2249ff"
+    installed: d83481d9
+    game: "the loader (world::assets) at fso d83481d9"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/dri-cooling-loop/v1 (463616 bytes, bounds [-6.0, -0.0, -4.0] to [5.53, 15.1899, 4.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
