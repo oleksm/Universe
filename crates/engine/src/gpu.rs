@@ -45,6 +45,9 @@ impl Gpu {
                 max_inter_stage_shader_variables: adapter.limits().max_inter_stage_shader_variables.min(32),
                 // (A world's maps, tables and clouds beside the shadows and globes: past 16.)
                 max_sampled_textures_per_shader_stage: adapter.limits().max_sampled_textures_per_shader_stage.min(32),
+                // (The mesh pool grows past the default 128 MB binding where the GPU lets it: to 1 GB.)
+                max_storage_buffer_binding_size: adapter.limits().max_storage_buffer_binding_size.min(1 << 30),
+                max_buffer_size: adapter.limits().max_buffer_size.min(1 << 30),
                 ..wgpu::Limits::default()
             },
             experimental_features: wgpu::ExperimentalFeatures::disabled(),

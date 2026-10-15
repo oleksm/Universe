@@ -29,7 +29,7 @@ pub mod worldmaps;
 pub use app::{run, run_prepared, Config, Context, Game, Perf, Resources, HISTORY, HITCH};
 pub use camera::Camera;
 pub use audio::{Audio, Jet};
-pub use frame::{CanvasAlpha, disc_covered, text_size, Color, Frame, Graphics, Light, Reflector, GLYPH};
+pub use frame::{CanvasAlpha, disc_covered, text_size, Color, Frame, Graphics, Light, PoolGroup, Reflector, GLYPH};
 pub use glam;
 pub use input::{Input, KeyCode, MouseButton};
 pub use model::{GlobeMap, Mesh, Transform, WireModel};
@@ -44,3 +44,5 @@ pub mod scene;
 pub mod viewport;
 
 pub mod mesh_budget;
+pub mod pool;
+pub use pool::{Morph, PoolModel, PooledMesh};
