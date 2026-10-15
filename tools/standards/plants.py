@@ -2706,7 +2706,7 @@ def shaft_airless_units(us):
                {"of": ["needs.heat"], "tier": "derived", "note": f"The top gas cooled {T_REC_OUT:.0f} to {T_COND:.0f} deg C and its water condensed down to 6% of the recycle (2.33 MJ/kg); with the compressor's aftercooler."}])
     out["recycle-compressor-8bar"] = dict(
         name=f"Recycle compressor, {HP_W_COMP / 1e6:.1f} MW, 8 bar", size_class=2, fits="bay-s2", dims=(12.0, 6.0, 5.0),
-        desc=f"Raises {GAS:.1f} kg/s of hydrogen from {HP_SUCTION / 1e5:.1f} to {HP_SHAFT / 1e5:.1f} bar, the loop's pressure drop only: two centrifugal stages in one casing and a motor. At 8 bar the gas is dense enough that this is a small machine. Suction at local (6, 0, 1.5), discharge at (-6, 0, 1.5).",
+        desc=f"Raises {GAS:.1f} kg/s of hydrogen from {HP_SUCTION / 1e5:.1f} to {HP_SHAFT / 1e5:.1f} bar, the loop's pressure drop only: two centrifugal stages in one casing and a motor. At 8 bar the gas is dense enough that this is a small machine. Suction at local (6, 0, 1.5), discharge at (-6, 0, 1.5); the casing's axis along y at (0, 1.3, 2.5), the motor behind it (y -2.6 to -0.4); the motor's 6.6 kV terminal box on top at (0, -1.5, 4.5); its water cooler's flanges at (-3.3, -2.8, 1) and (-2.7, -2.8, 1), for the motor's losses (about 4%) to the layout's loop.",
         built_of=[part("Casing, rotor and motor", "material.high-strength-steel-4340", 8000.0 * HP_W_COMP / 1e6, "8 t a MW of drive, from memory")],
         needs={"power": HP_W_COMP / 0.96, "atmosphere": "any"},
         basis=[{"of": ["physical", "built_of"], "tier": "invented", "review": True, "note": "From memory."},
@@ -2794,6 +2794,8 @@ def shaft_furnace_airless(us, recs):
         link("pipe", "hydrogen make-up", (100.0, 4.0, 1.5), (54.0, 4.0, 1.5), "material.stainless-steel-304", pm(0.25, 0.008), None, f"{H2_USED:.2f} kg/s from the hydrogen plant's electrolysers, which run at 10 bar so that no make-up compressor is needed"),
         link("pipe", "condensate to the hydrogen plant", (54.0, 24.0, 0.5), (100.0, 24.0, 0.5), "material.stainless-steel-304", math.pi * 0.2 * 0.006 * 7900, None, f"200 mm: {STEAM - _left:.1f} kg/s of water back to the electrolysers: on a moon every kilogram comes back"),
         link("pipe", "loop water to the radiators", (rad_at[-1][0] - 22.0, rad_at[-1][1], 1.0), (48.0, 20.0, 1.0), A36, 2 * pm(d_cw, 0.010), None, f"a pair of {d_cw:.2f} m pipes at about {HP_T_LOOP:.0f} K: {flow:,.0f} kg/s along the {n_rad} radiator fields' rows to the condenser, a branch to the transformer", via=[(-36.0, rad_at[-1][1], 1.0), (-36.0, 36.0, 1.0), (48.0, 36.0, 1.0)]),
+        link("pipe", "compressor motor cooling", (48.0, 20.0, 1.0), (45.0, -2.8, 1.0), A36, 2 * math.pi * 0.1 * 0.005 * RHO["steel"], None, "a pair of 100 mm pipes teed off the loop water at the condenser, west and south to the compressor motor's cooler", via=[(40.0, 20.0, 1.0), (40.0, -2.8, 1.0)]),
+        link("cable", "compressor supply", (100.0, -1.5, 4.5), (48.0, -1.5, 4.5), CU, 3 * HP_W_COMP / 0.96 / 0.9 / (math.sqrt(3) * 6600) / 4e6 * RHO["copper"], None, "three phases at 6.6 kV from the site's switchgear, beyond the layout, on a tray to the compressor motor's terminal box"),
         link("cable", "heater supply", (48.0, -21.1875, 4.5), (12.45, -21.4, 1.575), CU, 3 * HP_Q_HEATER / HEATER_PF / (math.sqrt(3) * 6600) / 4e6 * RHO["copper"], None, "as for air", via=[(48.0, -17.0, 4.5), (12.45, -17.0, 4.5), (12.45, -17.0, 1.575)]),
     ]
     ground = [
