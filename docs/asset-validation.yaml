@@ -4735,3 +4735,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.disc-filter-2
+    version: 1
+    manifest_sha256: "5c5e751207d166c8c9627c818b4c2c5ebc3b8ed0f8fbaeea3568e100894aeefc"
+    installed: 81cc6ea4
+    game: "the loader (world::assets) at fso 81cc6ea4"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/disc-filter-2/v1 (1083796 bytes, bounds [-6.0, 0.0, -4.0] to [6.0, 5.5, 2.5472]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
