@@ -775,6 +775,11 @@ impl PlanetLodApp {
         for (k, a) in anchors.iter().rev().take(5).enumerate() {
             pins.push((unit(a.0, a.1), a.2, format!("v {} - {} m", k + 1, thousands(a.2.round())), false));
         }
+        // Named places (labels.json beside the view, optional: [{lon, lat, z, text}]), e.g. the generated and the
+        // real disc of a side-by-side comparison.
+        for l in json(&dir, "labels.json").ok().and_then(|l| l.as_array().cloned()).unwrap_or_default() {
+            pins.push((unit(num(&l["lon"]), num(&l["lat"])), num(&l["z"]), l["text"].as_str().unwrap_or("").to_string(), true));
+        }
         let queued = vec![false; cells.len()];
         let bd = Arc::new(BuildData {
             pos: d.pos.clone(),
