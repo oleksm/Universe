@@ -2784,7 +2784,7 @@
 - { record: unit.plant-transformer-35mva, at: "2026-10-15T12:04:36Z", status: draft, summary: "changed", sha: "f44a73b0e421c0ea" }
 - { record: unit.pressure-hall-30m, at: "2026-10-15T16:13:40Z", status: draft, summary: "first tracked", sha: "4a7bbfb54eda5ef5" }
 - { record: unit.pressure-hall-30m-end, at: "2026-10-15T16:13:40Z", status: draft, summary: "first tracked", sha: "059f108b220860d9" }
-- { record: unit.radiator-field-330k, at: "2026-10-15T19:56:07Z", status: draft, summary: "changed: physical, built_of", sha: "9db802303e2be625" }
+- { record: unit.radiator-field-330k, at: "2026-10-15T19:58:45Z", status: draft, summary: "changed: visual", sha: "6cda2009ef39822c" }
 - { record: unit.radiator-field-345k, at: "2026-10-15T19:56:07Z", status: draft, summary: "changed: physical, built_of", sha: "ad95078ae688ee0c" }
 - { record: unit.radiator-field-485k, at: "2026-10-15T19:56:07Z", status: draft, summary: "changed: physical, built_of", sha: "3e64e1c3761567f0" }
 - { record: unit.rectifier-transformer-21mva, at: "2026-10-15T03:01:55Z", status: draft, summary: "changed", sha: "785569a9e884e75d" }
