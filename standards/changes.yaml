@@ -2736,7 +2736,7 @@
 - { record: unit.cooling-tower, at: "2026-10-14T14:37:56Z", status: draft, summary: "changed", sha: "20447996507fd0ba" }
 - { record: unit.cooling-tower-1cell, at: "2026-10-14T19:55:55Z", status: draft, summary: "changed", sha: "b9a2ebb48ebfbe05" }
 - { record: unit.cooling-tower-h2, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "f32056eb92214f48" }
-- { record: unit.cooling-tower-shaft-1, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "e800d229120d5b00" }
+- { record: unit.cooling-tower-shaft-1, at: "2026-10-15T01:22:25Z", status: draft, summary: "changed: visual", sha: "0bf82857f9e5b579" }
 - { record: unit.cooling-tower-shaft-2, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "10e173a1b39f7a13" }
 - { record: unit.cooling-tower-shaft-3, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "0c92289b3fc57f4c" }
 - { record: unit.cooling-tower-shaft-4, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "fdf083634bb1f815" }
