@@ -1994,7 +1994,7 @@ def yard_units():
                {"of": ["needs"], "tier": "invented", "review": True, "note": "From memory of yard trippers."}])
     out["truck-dump-hopper"] = dict(
         name="Truck dump hopper", size_class=2, fits="bay-s2", dims=(12.0, 10.0, 8.0),
-        desc="A steel hopper over a pit that a tipping truck backs onto and empties into, 100 t, with an apron feeder under it onto the yard belt; its grizzly bars keep out the lumps. The trucks come from the port, its feeder's outlet at local (0, 0, -4) in the pit.",
+        desc="A steel hopper over a pit that a tipping truck backs onto and empties into, 100 t, with an apron feeder under it onto the yard belt; its grizzly bars keep out the lumps. The trucks come from the port, its feeder's outlet at local (0, 0, -4) in the pit. Its steel deck round the mouth carries the truck as it tips: a loaded rear axle of about 130 t (a 170 t truck, the load thrown back as it tips; from memory), times 1.25 for impact, 1.6 MN on two wheel groups 5 m apart; the dump-edge beam across x, 7 m between its columns at x -5.5 and 1.5, is a 700 x 400 x 30 mm box: one group at mid-span bends it 1.4 MN m, 122 MPa against A36's 165 allowed.",
         built_of=[part("Hopper and grizzly", A36, 45000.0, "from memory"), part("Apron feeder", "good.electric-motors", 25000.0, "from memory")],
         holds=100000.0, needs={"power": 150e3},
         basis=[{"of": ["physical", "built_of", "holds", "needs"], "tier": "invented", "review": True, "note": "From memory."}])
