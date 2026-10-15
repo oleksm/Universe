@@ -289,6 +289,17 @@ links:
   - [86.25, 64.5, 0.75]
   note: a pair of 500 mm pipes, 8 mm wall, flow and return, off the mains north up the gap between the towers to the port pair on the tower's east end; the gap's four lanes at 0.5, 1.2, 1.9 and 2.6 m east of the ports, this pair in the last two; the flow bridges over the return main at z 1.8
 - kind: pipe
+  name: cooling water to the heater transformer
+  from: [60.0, -12.0, 0.75]
+  to: [43.45, -24.0, 1.0]
+  length: 31.47
+  item: material.structural-steel-a36
+  mass: 1164.0
+  via:
+  - [42.0, -12.0, 0.75]
+  - [42.0, -24.0, 0.75]
+  note: 'a pair of 150 mm pipes, 5 mm wall, flow and return: 16 kg/s at a 10 K rise for its oil-to-water coolers, off the mains'' end, west in a trench to x 42, south, in under the vault''s wall to the water ports on its -x end, 1 m up (the pair''s centre here; each pipe to its port)'
+- kind: pipe
   name: cooling water mains
   from: [-79.0, 42.0, 0.75]
   to: [60.0, -12.0, 0.75]
@@ -360,7 +371,7 @@ ground:
 - {what: Transformer vault, item: good.concrete, volume: 132.0, note: fire walls 7 m tall round the heater's transformer, mass: 316800.0}
 - {what: Cooling tower basins, item: good.concrete, volume: 1516.0, note: 'one under each tower, sunk as the furnace shop''s: 0.3 m walls, floor top at z -2; 6 m apart, no shared walls', mass: 3638000.0}
 - {what: Gallery trestle footings, item: good.concrete, volume: 104.0, note: '8 m3 under each of the pellet belt''s trestles, 4 m3 under the product belt''s', mass: 249600.0}
-totals: {rate: 55.5555555555556, power: 152200000.0, heat: 129600000.0, water: 72.04, mass: 15610000.0, against_module: 'module.shaft-furnace: one box 150 x 100 x 137 m, 22 MW, which leaves out heating the gas. This layout: the same 200 t of sponge iron an hour; 152 MW, of which the hydrogen heater is 125: hydrogen brings no heat of its own, so the shaft''s 112 MW comes from 14.3 kg/s of gas (4.8 times what the reduction uses) heated by electricity; 130 MW to the towers, 72 kg/s of water evaporated; the 26.9 kg/s of water made goes back to the hydrogen plant. 6,008 t of plant and frame, 9,601 t of concrete.'}
+totals: {rate: 55.5555555555556, power: 152200000.0, heat: 129600000.0, water: 72.04, mass: 15610000.0, against_module: 'module.shaft-furnace: one box 150 x 100 x 137 m, 22 MW, which leaves out heating the gas. This layout: the same 200 t of sponge iron an hour; 152 MW, of which the hydrogen heater is 125: hydrogen brings no heat of its own, so the shaft''s 112 MW comes from 14.3 kg/s of gas (4.8 times what the reduction uses) heated by electricity; 130 MW to the towers, 72 kg/s of water evaporated; the 26.9 kg/s of water made goes back to the hydrogen plant. 6,009 t of plant and frame, 9,601 t of concrete.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}
