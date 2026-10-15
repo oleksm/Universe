@@ -5305,3 +5305,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.top-gas-condenser-8bar
+    version: 1
+    manifest_sha256: "931287e69cb670a4b73626e184fbb1e8f97f53263ba9ba0d27e165d814b9c8fe"
+    installed: 1ced507f
+    game: "the loader (world::assets) at fso 1ced507f"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/top-gas-condenser-8bar/v1 (1882092 bytes, bounds [-6.0, 0.0, -3.45] to [6.1, 13.0, 4.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
