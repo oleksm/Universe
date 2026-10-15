@@ -822,7 +822,7 @@
 - { record: law.tube-time, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "934385090028c5e6" }
 - { record: law.year, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "29f1ef4424e5cc98" }
 - { record: layout.arc-furnace-air, at: "2026-10-15T14:53:36Z", status: draft, summary: "changed: links", sha: "9553ccf6eed90e0e" }
-- { record: layout.arc-furnace-airless, at: "2026-10-15T19:56:07Z", status: draft, summary: "changed: physical, totals", sha: "d76d85c49be90175" }
+- { record: layout.arc-furnace-airless, at: "2026-10-15T20:00:30Z", status: draft, summary: "changed: physical, totals", sha: "6a225a6105f8e90a" }
 - { record: layout.casting-bay-air, at: "2026-10-15T02:26:46Z", status: draft, summary: "changed: physical", sha: "64ae565ca9d653a2" }
 - { record: layout.casting-bay-airless, at: "2026-10-15T19:49:11Z", status: draft, summary: "changed: physical, totals", sha: "54c37f86536debbc" }
 - { record: layout.hydrogen-plant-air, at: "2026-10-15T04:31:57Z", status: draft, summary: "changed: physical", sha: "6142a0437e383639" }
@@ -2784,9 +2784,9 @@
 - { record: unit.plant-transformer-35mva, at: "2026-10-15T12:04:36Z", status: draft, summary: "changed", sha: "f44a73b0e421c0ea" }
 - { record: unit.pressure-hall-30m, at: "2026-10-15T16:13:40Z", status: draft, summary: "first tracked", sha: "4a7bbfb54eda5ef5" }
 - { record: unit.pressure-hall-30m-end, at: "2026-10-15T16:13:40Z", status: draft, summary: "first tracked", sha: "059f108b220860d9" }
-- { record: unit.radiator-field-330k, at: "2026-10-15T19:58:45Z", status: draft, summary: "changed: visual", sha: "6cda2009ef39822c" }
-- { record: unit.radiator-field-345k, at: "2026-10-15T19:56:07Z", status: draft, summary: "changed: physical, built_of", sha: "ad95078ae688ee0c" }
-- { record: unit.radiator-field-485k, at: "2026-10-15T19:56:07Z", status: draft, summary: "changed: physical, built_of", sha: "3e64e1c3761567f0" }
+- { record: unit.radiator-field-330k, at: "2026-10-15T20:00:30Z", status: draft, summary: "changed: built_of", sha: "cacc6559212d0505" }
+- { record: unit.radiator-field-345k, at: "2026-10-15T20:00:30Z", status: draft, summary: "changed: built_of", sha: "37c918d2fdf426bd" }
+- { record: unit.radiator-field-485k, at: "2026-10-15T20:00:30Z", status: draft, summary: "changed: physical, built_of", sha: "b2dc71d59e2cb3cb" }
 - { record: unit.rectifier-transformer-21mva, at: "2026-10-15T03:01:55Z", status: draft, summary: "changed", sha: "785569a9e884e75d" }
 - { record: unit.recuperator, at: "2026-10-14T23:45:38Z", status: draft, summary: "changed", sha: "ebc37258521d7133" }
 - { record: unit.recycle-compressor, at: "2026-10-15T01:10:30Z", status: draft, summary: "changed: physical, built_of", sha: "944821761b1a4077" }

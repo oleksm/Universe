@@ -9,18 +9,13 @@ built_of:
 - {what: Panel tubes, item: material.aluminium-alloy-6061, mass: 3284.0, note: 'tubes 20 mm across, 1.5 mm wall, at 150 mm, bonded between the sheets (not drawn)'}
 - {what: Legs, item: material.aluminium-alloy-6061, mass: 1592.0, note: 'four 100 mm box legs, 4 mm, 3 m, a panel; measured on model v1'}
 - {what: Panel rails, item: material.aluminium-alloy-6061, mass: 1639.0, note: '100 x 50 x 3 mm channel round each panel''s edge, carrying its skins between the legs; measured on model v1'}
-- {what: 'Headers, branches and supports', item: material.aluminium-alloy-6061, mass: 3175.0, note: 'the mains round the margin, an 80 mm pair to each row and 50 mm stubs to each panel, 3 mm walls (2 mm the stubs), with their supports: measured on model v1 for 150 mm mains'}
+- {what: 'Headers, branches and supports', item: material.aluminium-alloy-6061, mass: 3174.0, note: 'the mains round the margin, an 80 mm pair to each row and 50 mm stubs to each panel, 3 mm walls (2 mm the stubs), with their supports: measured on model v1'}
 - {what: Pumps, item: good.pumps, mass: 2000.0, note: from memory}
 holds: 2930.0
 needs: {power: 9709.0, atmosphere: vacuum}
 rejects: {heat: 1016000.0, temperature: 330.0}
-visual:
-  format: "freefall-model/1"
-  path: "models/radiator-field-330k/v1"
-  manifest_sha256: "98e6b271749bafe82bc8ba6908048abb83a4bcdde422ee9a151f012e35aa02e7"
-  version: 1
-  triangles: 30656
 life: 788940000
+visual: {format: freefall-model/1, path: models/radiator-field-330k/v1, manifest_sha256: 98e6b271749bafe82bc8ba6908048abb83a4bcdde422ee9a151f012e35aa02e7, version: 1, triangles: 30656}
 basis:
 - of: [rejects, physical]
   tier: derived

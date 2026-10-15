@@ -3,13 +3,13 @@
 identity: {key: unit.radiator-field-485k, name: 'Radiator field, 9.6 MW at 485 K', description: '32 aluminium panels 5.5 x 11 m (4 along x by 8 along y), each on a frame of 100 x 50 mm channel rails round its edge, raised 3 m on four legs and laid flat edge to edge over 44 x 44 m, carrying the off-gas duct''s evaporative loop''s water at about 485 K through tubes bonded between their two face sheets; the top face, white, radiates to the sky, the underside to the shaded ground. 4962 W a m2 of panel at lunar noon, the worst case: the sun overhead on the top (0.2 of 1361 W/m2 absorbed), the ground under it at 300 K; more at night. The loop''s flow and return headers (400 mm) run round the edge in the 2 m margin, a branch to each row of panels; its ports at local (-24, -0.6, 1) flow and (-24, 0.6, 1) return.  For airless ground only: on a world with air a tower is lighter. Kept clean of dust, which darkens the white.'}
 size_class: 4
 fits: plant-mount.bay-s4
-physical: {length: 48.0, width: 48.0, height: 3.5, mass: 37890.0}
+physical: {length: 48.0, width: 48.0, height: 3.5, mass: 41780.0}
 built_of:
 - {what: Panel skins and edges, item: material.aluminium-alloy-6061, mass: 20910.0, note: 'two 2 mm face sheets a panel and their edges; measured on blender''s model of the 330 K field (v1), the same for every field'}
 - {what: Panel tubes, item: material.aluminium-alloy-6061, mass: 3284.0, note: 'tubes 20 mm across, 1.5 mm wall, at 150 mm, bonded between the sheets (not drawn)'}
 - {what: Legs, item: material.aluminium-alloy-6061, mass: 1592.0, note: 'four 100 mm box legs, 4 mm, 3 m, a panel; measured on model v1'}
 - {what: Panel rails, item: material.aluminium-alloy-6061, mass: 1639.0, note: '100 x 50 x 3 mm channel round each panel''s edge, carrying its skins between the legs; measured on model v1'}
-- {what: 'Headers, branches and supports', item: material.aluminium-alloy-6061, mass: 8465.0, note: 'the mains round the margin, an 80 mm pair to each row and 50 mm stubs to each panel, 3 mm walls (2 mm the stubs), with their supports: measured on model v1 for 150 mm mains, scaled to these 400 mm mains'}
+- {what: 'Headers, branches and supports', item: material.stainless-steel-304, mass: 12360.0, note: 'steam at about 212 deg C and 20 bar is too hot and too high for aluminium pipe: stainless steel 304, the 400 mm mains 6 mm along the -x edge only (about 67 MPa), 100 mm row pairs 3 mm along x, 50 mm stubs 2 mm, and their supports (1 t, from memory); the panels'' own 20 mm aluminium tubes see only about 13 MPa'}
 - {what: Pumps, item: good.pumps, mass: 2000.0, note: from memory}
 holds: 2930.0
 needs: {power: 91790.0, atmosphere: vacuum}
