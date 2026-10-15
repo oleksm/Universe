@@ -2751,7 +2751,7 @@
 - { record: unit.electrolyser-block-20mw, at: "2026-10-15T02:45:51Z", status: draft, summary: "changed", sha: "af9b2af95ad77993" }
 - { record: unit.electrolyser-block-20mw-10bar, at: "2026-10-15T02:38:10Z", status: draft, summary: "changed: physical, built_of", sha: "b93cbbc1cf0fb4d4" }
 - { record: unit.filter-press-2, at: "2026-10-15T16:13:40Z", status: draft, summary: "first tracked", sha: "7732a46a3aedde04" }
-- { record: unit.forklift-2t5, at: "2026-10-15T18:20:39Z", status: draft, summary: "changed: identity", sha: "2cb73bf60162b7eb" }
+- { record: unit.forklift-2t5, at: "2026-10-15T18:31:59Z", status: draft, summary: "changed: visual", sha: "28fbbc4107ca7e8c" }
 - { record: unit.furnace-transformer-14mva, at: "2026-10-14T18:15:58Z", status: draft, summary: "changed", sha: "f296531f2bc7dd18" }
 - { record: unit.furnace-transformer-90mva, at: "2026-10-14T15:45:44Z", status: draft, summary: "changed: identity", sha: "d7b34abc2bacd989" }
 - { record: unit.gantry-crane-150t-moon, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "2bac67a62284e749" }
