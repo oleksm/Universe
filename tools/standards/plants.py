@@ -2248,6 +2248,17 @@ RHO_SINTER = 2500.0
 DRI_C = 0.02                       # share of carbon in the sponge iron, from memory
 
 
+def _berm():
+    """m3 of loose regolith over a crew post: a frustum 1 m over its crest, its top 1 m wider than the post each way, its sides at the angle of repose, less the post's box."""
+    L, W, H = 6.0, 4.4, 4.6
+    h, run = H + 0.7, (H + 0.7) / math.tan(math.radians(35.0))
+    a1, a2 = (L + 2) * (W + 2), (L + 2 + 2 * run) * (W + 2 + 2 * run)
+    return r(h / 3 * (a1 + a2 + math.sqrt(a1 * a2)) - L * W * H)
+
+
+BERM = _berm()
+
+
 def radiator_unit(T, whose):
     """A field of raised horizontal radiator panels filling a class 4 bay, rejecting a loop's heat at T to the sky.
     Sized for the worst case on an airless moon: the sun overhead on the top face, warm shaded ground under."""
@@ -2386,7 +2397,7 @@ def arc_furnace_airless(us, recs):
         {"what": "Furnace platform", "item": SINTER, "volume": r(plat_v), "note": "as for air (the ladle slot, slag tunnel and well), of sintered regolith blocks: there is no water to make concrete"},
         {"what": "Transformer slab", "item": SINTER, "volume": r(12 * 12 * 0.6), "note": "no fire walls"},
         {"what": "Service trench", "item": SINTER, "volume": r(4.0 * (1.6 * 0.3 + 2 * 1.5 * 0.3)), "note": "a covered trench of sintered regolith under the crane's south rail at x -24, for the cooling main"},
-        {"what": "Crew post berm", "item": "material.regolith", "volume": r(10 * 8 * 3.0 - math.pi * 4 * 6), "note": "loose regolith heaped 1 m over the post"},
+        {"what": "Crew post berm", "item": "material.regolith", "volume": BERM, "note": "loose regolith 1 m over the post's crest (its top 5.3 m up), lying at 35 degrees, a cavity for the post, with openings for its windows (light wells on the north) and its airlock (a ramp cut on the west); with openings for its windows and airlock; at the airlock's door a landing of packed regolith 2 x 2 m, its top at the threshold (1.35 m up), and a ramp down to the ground at about 1 in 3"},
         {"what": "Radiator legs' pads", "item": SINTER, "volume": r((n_low + n_hot) * 4 * (44.0 * 44.0 / 72.0) * 0.3 * 0.3 * 0.3), "note": "a 0.3 m block under each leg"},
         {"what": "Rail sleepers and pads", "item": SINTER, "volume": r(43.5 * 1.0 + 22.75 * 1.0 + 72.0 * 0.6 + 12 * 6 * 0.4 + 6.0), "note": "under the ladle, slag and crane rails, the filter and the bin"},
     ]
@@ -2492,7 +2503,7 @@ def ladle_station_airless(us, recs):
         {"what": "Ladle furnace foundation", "item": SINTER, "volume": r(12 * 10 * 1.0 - 5 * 12 * 0.3), "note": "as for air, of sintered regolith"},
         {"what": "Stand and transformer pads", "item": SINTER, "volume": r(10 * 8 * 0.5 + 6 * 6 * 0.5)},
         {"what": "Bins and filter pads", "item": SINTER, "volume": r(12.6 * 6.3 * 1.0 + 12 * 6 * 0.4)},
-        {"what": "Crew post berm", "item": "material.regolith", "volume": r(10 * 8 * 3.0 - math.pi * 4 * 6), "note": "loose regolith 1 m deep over the post, with openings for its windows and airlock; at the airlock's door a landing of packed regolith 2 x 2 m, its top at the threshold (1.35 m up), and a ramp down to the ground at about 1 in 3"},
+        {"what": "Crew post berm", "item": "material.regolith", "volume": BERM, "note": "loose regolith 1 m over the post's crest (its top 5.3 m up), lying at 35 degrees, a cavity for the post, with openings for its windows (light wells on the north) and its airlock (a ramp cut on the west); with openings for its windows and airlock; at the airlock's door a landing of packed regolith 2 x 2 m, its top at the threshold (1.35 m up), and a ramp down to the ground at about 1 in 3"},
         {"what": "Rail sleepers", "item": SINTER, "volume": r(60 * 1.0 + 72 * 0.6)},
         {"what": "Radiator legs' pads", "item": SINTER, "volume": r(n_low * 4 * (44.0 * 44.0 / 72.0) * 0.027)},
     ]
@@ -2550,7 +2561,7 @@ def casting_bay_airless(us, recs):
     ground = [
         {"what": "Casting floor", "item": SINTER, "volume": r(60 * 24 * 0.4), "note": "0.4 m of sintered regolith under the teeming and stripping, so spilt steel meets stone"},
         {"what": "Gantry rail sleepers", "item": SINTER, "volume": r(4 * 33 * 1.0)},
-        {"what": "Crew post berm", "item": "material.regolith", "volume": r(10 * 8 * 3.0 - math.pi * 4 * 6), "note": "loose regolith 1 m deep over the post, with openings for its windows and airlock; at the airlock's door a landing of packed regolith 2 x 2 m, its top at the threshold (1.35 m up), and a ramp down to the ground at about 1 in 3"},
+        {"what": "Crew post berm", "item": "material.regolith", "volume": BERM, "note": "loose regolith 1 m over the post's crest (its top 5.3 m up), lying at 35 degrees, a cavity for the post, with openings for its windows (light wells on the north) and its airlock (a ramp cut on the west); with openings for its windows and airlock; at the airlock's door a landing of packed regolith 2 x 2 m, its top at the threshold (1.35 m up), and a ramp down to the ground at about 1 in 3"},
     ]
     for g in ground:
         g["mass"] = r(g["volume"] * (RHO_SINTER if g["item"] == SINTER else 1500.0))
@@ -2738,7 +2749,7 @@ def shaft_furnace_airless(us, recs):
         {"what": "Tower foundation", "item": SINTER, "volume": r(24 * 24 * 1.5), "note": "a mat of sintered regolith blocks 1.5 m thick (a fifth of the load of 1 g)"},
         {"what": "Unit pads", "item": SINTER, "volume": r(sum(recs[b["unit"].split(".", 1)[1]]["physical"]["length"] * recs[b["unit"].split(".", 1)[1]]["physical"]["width"] * 0.5 for b in bays[1:] if not b["id"].startswith("RL"))), "note": "0.5 m under each unit"},
         {"what": "Radiator legs' pads", "item": SINTER, "volume": r(n_rad * 4 * (44.0 * 44.0 / 72.0) * 0.027)},
-        {"what": "Crew post berm", "item": "material.regolith", "volume": r(10 * 8 * 3.0 - math.pi * 4 * 6), "note": "loose regolith 1 m deep over the post, with openings for its windows and airlock; at the airlock's door a landing of packed regolith 2 x 2 m, its top at the threshold (1.35 m up), and a ramp down to the ground at about 1 in 3"},
+        {"what": "Crew post berm", "item": "material.regolith", "volume": BERM, "note": "loose regolith 1 m over the post's crest (its top 5.3 m up), lying at 35 degrees, a cavity for the post, with openings for its windows (light wells on the north) and its airlock (a ramp cut on the west); with openings for its windows and airlock; at the airlock's door a landing of packed regolith 2 x 2 m, its top at the threshold (1.35 m up), and a ramp down to the ground at about 1 in 3"},
         {"what": "Trestle footings", "item": SINTER, "volume": r(math.ceil(belt_x / 18) * 3.0 + 6 * 2.0)},
     ]
     for gr in ground:
@@ -2834,7 +2845,7 @@ def hydrogen_plant_airless(us, recs):
         {"what": "Block pads", "item": SINTER, "volume": r(N_BLK * 24 * 12 * 0.4), "note": "0.4 m of sintered regolith with lye-proof bunds"},
         {"what": "Rectifier and outside pads", "item": SINTER, "volume": r(N_BLK * 12 * 8 * 0.5 + 2 * 12 * 8 * 0.5)},
         {"what": "Radiator legs' pads", "item": SINTER, "volume": r(n_rad * 4 * (44.0 * 44.0 / 72.0) * 0.027)},
-        {"what": "Crew post berm", "item": "material.regolith", "volume": r(10 * 8 * 3.0 - math.pi * 4 * 6), "note": "loose regolith 1 m deep over the post, with openings for its windows and airlock; at the airlock's door a landing of packed regolith 2 x 2 m, its top at the threshold (1.35 m up), and a ramp down to the ground at about 1 in 3"},
+        {"what": "Crew post berm", "item": "material.regolith", "volume": BERM, "note": "loose regolith 1 m over the post's crest (its top 5.3 m up), lying at 35 degrees, a cavity for the post, with openings for its windows (light wells on the north) and its airlock (a ramp cut on the west); with openings for its windows and airlock; at the airlock's door a landing of packed regolith 2 x 2 m, its top at the threshold (1.35 m up), and a ramp down to the ground at about 1 in 3"},
     ]
     for g in ground:
         g["mass"] = r(g["volume"] * (RHO_SINTER if g["item"] == SINTER else 1500.0))
@@ -3139,7 +3150,7 @@ def pellet_plant_airless(us, recs):
         {"what": "Pellet belt trench", "item": SINTER, "volume": r(4.0 * 0.5 * 55.0 + 2 * 55.0 * 5.0 * 0.5), "note": "the belt's ramp out of the pit, east: floor and walls"},
         {"what": "Unit pads", "item": SINTER, "volume": r(2 * 24 * 12 * 0.5 + 12 * 8 * 0.5 + 6 * 6 * 0.5), "note": "0.5 m under the gas loops, the transformer and the ore lock"},
         {"what": "Radiator legs' pads", "item": SINTER, "volume": r(n_rad * 4 * (44.0 * 44.0 / 72.0) * 0.027)},
-        {"what": "Crew post berm", "item": "material.regolith", "volume": r(10 * 8 * 3.0 - math.pi * 4 * 6), "note": "loose regolith 1 m deep over the post, with openings for its windows and airlock; at the airlock's door a landing of packed regolith 2 x 2 m, its top at the threshold (1.35 m up), and a ramp down to the ground at about 1 in 3"},
+        {"what": "Crew post berm", "item": "material.regolith", "volume": BERM, "note": "loose regolith 1 m over the post's crest (its top 5.3 m up), lying at 35 degrees, a cavity for the post, with openings for its windows (light wells on the north) and its airlock (a ramp cut on the west); with openings for its windows and airlock; at the airlock's door a landing of packed regolith 2 x 2 m, its top at the threshold (1.35 m up), and a ramp down to the ground at about 1 in 3"},
         {"what": "Gallery and belt trestles", "item": SINTER, "volume": r(math.ceil((x_head - x_nz) / 12) * 2.0 + math.ceil(85 / 18) * 2.0)},
     ]
     for g_ in ground:
@@ -3291,7 +3302,7 @@ def ingot_yard_airless(us, recs):
     ground += [{"what": "Work floor", "item": SINTER, "volume": r((x_g - x_e) * 24.0 * 0.4), "note": "0.4 m of sintered regolith under the tipper, saws and crating line"},
                {"what": "Gantry rail sleepers", "item": SINTER, "volume": r(2 * (x_g + 36.0) * 1.0 * 0.6)},
                {"what": "Stack yard", "item": SINTER, "volume": r((yard_L * yard_W - rows * yard_L * 4.5) * 0.25), "note": f"{yard_L:.0f} x {yard_W:.0f} m of sintered regolith 0.25 m: {crates:,} steel crates four high in {lanes} lanes ten deep (no tarpaulins: no weather)"},
-               {"what": "Berms", "item": "material.regolith", "volume": r(2 * (10 * 8 * 3.0 - math.pi * 4 * 6))}]
+               {"what": "Berms", "item": "material.regolith", "volume": r(2 * BERM), "note": "over the crew post and the sealed lab, each as a crew post's: 1 m over the crest at 35 degrees (the lab's a little longer, not counted)"}]
     for g_ in ground:
         g_["mass"] = r(g_["volume"] * (7200.0 if g_["item"] == CAST_IRON else RHO_SINTER if g_["item"] == SINTER else 1500.0))
     used = [recs[b["unit"].split(".", 1)[1]] for b in bays] + [recs[m_["unit"].split(".", 1)[1]] for m_ in mobile]

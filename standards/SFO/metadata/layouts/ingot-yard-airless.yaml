@@ -5,7 +5,7 @@ stands_for: module.ingot-yard
 site:
   atmosphere: none
   gravity: [1.6, 2.0]
-physical: {length: 278.1, width: 114.0, height: 14.0, mass: 10810000.0}
+physical: {length: 278.1, width: 114.0, height: 14.0, mass: 13710000.0}
 bays:
 - id: T
   mount: plant-mount.bay-s1
@@ -104,8 +104,8 @@ ground:
 - {what: Work floor, item: material.regolith-sintered, volume: 384.0, note: '0.4 m of sintered regolith under the tipper, saws and crating line', mass: 960000.0}
 - {what: Gantry rail sleepers, item: material.regolith-sintered, volume: 172.8, mass: 432000.0}
 - {what: Stack yard, item: material.regolith-sintered, volume: 2402.0, note: '100 x 114 m of sintered regolith 0.25 m: 29,037 steel crates four high in 726 lanes ten deep (no tarpaulins: no weather)', mass: 6005000.0}
-- {what: Berms, item: material.regolith, volume: 329.2, mass: 493800.0}
-totals: {rate: 0.0, power: 513000.0, heat: 0.0, water: 0.0, mass: 10810000.0, against_module: 'module.ingot-yard: one box, holding 50 kt. This layout: 29,037 steel crates four high (a moon''s gravity and the steel crate allow it) on a yard 100 x 114 m; no hall: 914 ingots stand 17 hours on 4 beds open to the sky, radiating 7.9 MW to it (with no air, light alone takes their heat; on a lunar day the sun adds about a tenth near the end); the saws cut dry, two sets; 0.51 MW; no water; one gantry makes about four moves an ingot (217 an hour), more than one crane can at a minute or so a move: its count is not yet worked out; 2,351 t of plant, 8,461 t of beds and ground.'}
+- {what: Berms, item: material.regolith, volume: 2264.0, note: 'over the crew post and the sealed lab, each as a crew post''s: 1 m over the crest at 35 degrees (the lab''s a little longer, not counted)', mass: 3396000.0}
+totals: {rate: 0.0, power: 513000.0, heat: 0.0, water: 0.0, mass: 13710000.0, against_module: 'module.ingot-yard: one box, holding 50 kt. This layout: 29,037 steel crates four high (a moon''s gravity and the steel crate allow it) on a yard 100 x 114 m; no hall: 914 ingots stand 17 hours on 4 beds open to the sky, radiating 7.9 MW to it (with no air, light alone takes their heat; on a lunar day the sun adds about a tenth near the end); the saws cut dry, two sets; 0.51 MW; no water; one gantry makes about four moves an ingot (217 an hour), more than one crane can at a minute or so a move: its count is not yet worked out; 2,351 t of plant, 11,363 t of beds and ground.'}
 staff:
 - {profession: profession.docker, count: 3}
 - {profession: profession.clerk, count: 1}
