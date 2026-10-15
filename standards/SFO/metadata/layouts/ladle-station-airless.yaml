@@ -95,7 +95,7 @@ links:
   via:
   - [5.0, 0.0, 10.0]
   - [15.0, 10.0, 10.0]
-  note: '0.5 m: the argon and fume from under the sealed roof, a tenth of the air shop''s flow; a reducer from the roof''s 1 m neck to the duct at its start'
+  note: '0.5 m: the argon and fume from under the sealed roof, a tenth of the air shop''s flow; a reducer from the roof''s 1 m neck to the duct at its start (z 7.5 to 8.5), and a widener to the filter''s 1.2 m inlet at its end (x 13.5 to 15)'
 - kind: pipe
   name: cooling water to the radiators
   from: [-98.0, -18.0, 1.0]
