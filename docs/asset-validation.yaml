@@ -5020,3 +5020,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.crop-saws
+    version: 1
+    manifest_sha256: "a49ddbf3d07a5d7238142f67f465575aca4a1bbc12d454c9d46cd15805fc723a"
+    installed: 1af9f1ab
+    game: "the loader (world::assets) at fso 1af9f1ab"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/crop-saws/v1 (2113900 bytes, bounds [-5.85, 0.0, -4.64] to [5.79, 2.84, 4.5]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
