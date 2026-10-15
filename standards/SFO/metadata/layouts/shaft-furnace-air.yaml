@@ -71,7 +71,7 @@ links:
   item: material.structural-steel-a36
   mass: 34770.0
   power: 300000.0
-  note: a 1.2 m belt in a covered gallery on trestles every 18 m, 180 kg/m with the gallery (from memory), rising at 15 degrees from the pellet plant's transfer house to a head house on the tower's roof over the charge hopper; 79 kg/s of pellets; over the recycle compressor its trestles are portals straddling it (legs at y -5.5 and 5.5, clear to z 9, braced above)
+  note: a 1.2 m belt in a covered gallery on trestles every 18 m, 180 kg/m with the gallery (from memory), rising at 15 degrees from the pellet plant's transfer house to a head house on the tower's roof over the charge hopper, the belt's head 2 m above the hopper's rim (z 50) dropping into it by a closed hood and chute, flanged to the rim; 79 kg/s of pellets; over the recycle compressor its trestles are portals straddling it (legs at y -5.5 and 5.5, clear to z 9, braced above)
 - kind: conveyor
   name: product belt
   from: [0.0, 0.0, 5.0]
@@ -80,7 +80,7 @@ links:
   item: material.structural-steel-a36
   mass: 9000.0
   power: 150000.0
-  note: a 1 m belt in a gallery 5 m up, from under the discharge lock west to the arc furnace shop's sponge iron bin, beyond the layout
+  note: a 1 m belt in a gallery 5 m up, from under the discharge lock (its bottom at z 7) west to the arc furnace shop's sponge iron bin, beyond the layout; the lock drops onto it by a closed chute flanged to its bottom, loading the belt 1 m west of the axis, through an opening in the gallery's cover
 - kind: duct
   name: top gas main
   from: [7.0, 0.0, 41.0]
