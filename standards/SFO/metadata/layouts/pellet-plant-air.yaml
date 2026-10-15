@@ -87,15 +87,17 @@ links:
 - kind: pipe
   name: filtrate
   from: [-30.0, 3.0, 6.5]
-  to: [-53.0, 0.8, 5.0]
-  length: 26.7
+  to: [-52.5, 0.35, 3.8]
+  length: 28.85
   item: material.structural-steel-a36
-  mass: 592.6
+  mass: 640.3
   via:
   - [-33.0, 3.0, 6.5]
   - [-33.0, 3.0, 5.0]
   - [-53.0, 3.0, 5.0]
-  note: '150 mm: the filtrate back from the filters'' pump to the mill, into the +y side of its feed chute by a flanged nozzle 1 m above the ore belt''s head, the water and ore meeting inside the chute'
+  - [-52.5, 3.0, 5.0]
+  - [-52.5, 3.0, 3.8]
+  note: '150 mm: the filtrate back from the filters'' pump to the mill, into the +y wall of its feed chute (the wall at y 0.4, z 3.8, past the ore belt''s head) by a nozzle seated 50 mm into it, its flange at y 0.55'
 - kind: conveyor
   name: cake belt
   from: [-30.0, -2.4, 6.98]
