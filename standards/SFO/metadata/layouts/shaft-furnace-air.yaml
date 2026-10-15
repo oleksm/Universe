@@ -292,13 +292,15 @@ links:
   name: cooling water to the heater transformer
   from: [60.0, -12.0, 0.75]
   to: [43.45, -24.0, 1.0]
-  length: 31.47
+  length: 34.7
   item: material.structural-steel-a36
-  mass: 1164.0
+  mass: 1284.0
   via:
-  - [42.0, -12.0, 0.75]
-  - [42.0, -24.0, 0.75]
-  note: 'a pair of 150 mm pipes, 5 mm wall, flow and return: 16 kg/s at a 10 K rise for its oil-to-water coolers, off the mains'' end, west in a trench to x 42, south, in under the vault''s wall to the water ports on its -x end, 1 m up (the pair''s centre here; each pipe to its port)'
+  - [60.0, -12.0, -0.75]
+  - [42.0, -12.0, -0.75]
+  - [42.0, -24.0, -0.75]
+  - [42.0, -24.0, 1.0]
+  note: 'a pair of 150 mm pipes, 5 mm wall, flow and return: 16 kg/s at a 10 K rise for its oil-to-water coolers, off the mains'' end, west in a trench to x 42, south, in under the vault''s wall to the water ports on its -x end, 1 m up, at y -24.6 and -23.4 (the pair''s centre here); in a trench 0.8 m wide, its floor at z -1.3, the pipes'' centres at z -0.6 and -0.9 under the mains and crossings, rising at x 42 through bored openings in the vault''s wall'
 - kind: pipe
   name: cooling water mains
   from: [-79.0, 42.0, 0.75]
