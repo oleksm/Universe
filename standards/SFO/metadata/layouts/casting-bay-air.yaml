@@ -5,7 +5,7 @@ stands_for: module.casting-bay
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 72.0, width: 30.0, height: 27.0, mass: 3449000.0}
+physical: {length: 72.0, width: 31.5, height: 27.11, mass: 3449000.0}
 bays: []
 mobile:
 - unit: unit.ladle-car-80t

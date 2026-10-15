@@ -463,6 +463,21 @@ def write(path, d):
         yaml.safe_dump(d, f, sort_keys=False, width=1000, allow_unicode=True, default_flow_style=None)
 
 
+def cover_model(path, d):
+    """A layout's box grows to cover its installed model's measured size (above grade): the model holds what the record
+    has no shape for (basins, aprons, walkways, eaves)."""
+    if not os.path.exists(path):
+        return
+    v = (yaml.safe_load(open(path)) or {}).get("visual")
+    man = os.path.join(os.environ.get("UNIVERSE_ASSETS") or os.path.expanduser("~/git/freefall-assets"), v["path"], "manifest.json") if v else None
+    if not man or not os.path.exists(man):
+        return
+    import json
+    (x0, _, z0), (x1, y1, z1) = json.load(open(man))["bounds_m"]
+    ph = d["physical"]
+    ph["length"], ph["width"], ph["height"] = max(ph["length"], r(x1 - x0)), max(ph["width"], r(z1 - z0)), max(ph["height"], r(y1))
+
+
 def unit_dims(recs, bay):
     """A bay's unit's length and width: the layout's box is what is fitted, not the mounts' parcels."""
     ph = recs[bay["unit"].split(".", 1)[1]]["physical"]
@@ -620,8 +635,8 @@ def arc_furnace_air(us, recs):
                f"This layout: the same rate; {power / 1e6:.1f} MW (the module left out the transformer's losses, the fans and pumps); "
                f"{water:.1f} kg/s of water the module did not name (the tower's evaporation); {(mass_units + mass_links + frame_mass) / 1000:.0f} t of plant and frame and {mass_ground / 1000:.0f} t of concrete.")
 
-    xs = [x0, x1] + [b["at"][0] + s * unit_dims(recs, b)[0] / 2 for b in bays for s in (-1, 1)] + [p[0] for l in links for p in (l["from"], l["to"])]
-    ys = [y0, y1] + [b["at"][1] + s * unit_dims(recs, b)[1] / 2 for b in bays for s in (-1, 1)] + [p[1] for l in links for p in (l["from"], l["to"])]
+    xs = [x0, x1] + [b["at"][0] + s * unit_dims(recs, b)[0] / 2 for b in bays for s in (-1, 1)] + [p[0] for l in links for p in (l["from"], l["to"], *l.get("via", []))]
+    ys = [y0, y1] + [b["at"][1] + s * unit_dims(recs, b)[1] / 2 for b in bays for s in (-1, 1)] + [p[1] for l in links for p in (l["from"], l["to"], *l.get("via", []))]
     layout = {
         "identity": {"key": "layout.arc-furnace-air", "name": "Arc furnace shop, world with air",
                      "description": "One 80 t arc furnace with its transformer, sponge iron feed, fume plant and cooling tower, under a strut-lattice hall that keeps rain off the steel (water on molten steel bursts into steam). For a world with air at about 1 g. The trial layout of SFO 24."},
@@ -756,8 +771,8 @@ def ladle_station_air(us, recs):
     against = (f"module.ladle-station: one box {mp['length']:g} x {mp['width']:g} x {mp['height']:g} m, {L_P / 1e6:.1f} MW. "
                f"This layout: the same rate; {power / 1e6:.1f} MW (the module's figure is the arc's average; the degasser's pumps, the fan, the crane and the tower are on top); "
                f"{water:.1f} kg/s of water the module did not name; {(mass_units + mass_links + frame_mass) / 1000:.0f} t of plant and frame and {mass_ground / 1000:.0f} t of concrete.")
-    xs = [x0, x1] + [b["at"][0] + s * unit_dims(recs, b)[0] / 2 for b in bays for s in (-1, 1)] + [p[0] for l in links for p in (l["from"], l["to"])]
-    ys = [y0, y1] + [b["at"][1] + s * unit_dims(recs, b)[1] / 2 for b in bays for s in (-1, 1)] + [p[1] for l in links for p in (l["from"], l["to"])]
+    xs = [x0, x1] + [b["at"][0] + s * unit_dims(recs, b)[0] / 2 for b in bays for s in (-1, 1)] + [p[0] for l in links for p in (l["from"], l["to"], *l.get("via", []))]
+    ys = [y0, y1] + [b["at"][1] + s * unit_dims(recs, b)[1] / 2 for b in bays for s in (-1, 1)] + [p[1] for l in links for p in (l["from"], l["to"], *l.get("via", []))]
     layout = {
         "identity": {"key": "layout.ladle-station-air", "name": "Ladle station, world with air",
                      "description": "An 80 t ladle furnace and a vacuum tank degasser on the ladle rail under a crane hall, with the furnace's transformer, alloy bins, a fume baghouse and a cooling tower. The heat comes in on its car from the arc furnace shop, is reheated and trimmed under the ladle furnace, lifted by the 150 t crane into the degasser and back, and goes on to the casting bay. For a world with air at about 1 g."},
@@ -914,7 +929,7 @@ def casting_bay_air(us, recs):
                f"This layout: the same rate, {C_RATE * 3.6:.0f} t an hour; {power / 1e6:.2f} MW, the cranes and the cars; no cooling water (the moulds and ingots cool in the hall's air); "
                f"{(mass_units + mass_links + frame_mass) / 1000:.0f} t of plant and frame and {mass_ground / 1000:.0f} t of concrete. A heat of {C_HEAT / 1000:.0f} t fills {MOULDS} moulds on {CARS} cars: "
                f"{MOULDS} ingots of {ING_M:,.0f} kg, one to a heavy crate.")
-    xs = [x0, x1] + [p[0] for l in links for p in (l["from"], l["to"])]
+    xs = [x0, x1] + [p[0] for l in links for p in (l["from"], l["to"], *l.get("via", []))]
     ys = [y0, y1]
     layout = {
         "identity": {"key": "layout.casting-bay-air", "name": "Casting bay, world with air",
@@ -1277,8 +1292,8 @@ def shaft_furnace_air(us, recs):
                f"This layout: the same {S_RATE * 3.6:.0f} t of sponge iron an hour; {power / 1e6:.0f} MW, of which the hydrogen heater is {Q_HEATER / 0.98 / 1e6:.0f}: hydrogen brings no heat of its own, so the shaft's {Q_SHAFT / 1e6:.0f} MW comes from {GAS:.1f} kg/s of gas "
                f"({GAS / H2_USED:.1f} times what the reduction uses) heated by electricity; {heat / 1e6:.0f} MW to the towers, {water:.0f} kg/s of water evaporated; the {STEAM:.1f} kg/s of water made goes back to the hydrogen plant. "
                f"{(mass_units + mass_links + frame_mass) / 1000:,.0f} t of plant and frame, {mass_ground / 1000:,.0f} t of concrete.")
-    xs = [x0, x1] + [b["at"][0] + s * unit_dims(recs, b)[0] / 2 for b in bays for s in (-1, 1)] + [p[0] for l in links for p in (l["from"], l["to"])]
-    ys = [y0, y1] + [b["at"][1] + s * unit_dims(recs, b)[1] / 2 for b in bays for s in (-1, 1)] + [p[1] for l in links for p in (l["from"], l["to"])]
+    xs = [x0, x1] + [b["at"][0] + s * unit_dims(recs, b)[0] / 2 for b in bays for s in (-1, 1)] + [p[0] for l in links for p in (l["from"], l["to"], *l.get("via", []))]
+    ys = [y0, y1] + [b["at"][1] + s * unit_dims(recs, b)[1] / 2 for b in bays for s in (-1, 1)] + [p[1] for l in links for p in (l["from"], l["to"], *l.get("via", []))]
     layout = {
         "identity": {"key": "layout.shaft-furnace-air", "name": "Hydrogen shaft furnace, world with air",
                      "description": "Direct reduction of iron ore pellets by hydrogen: a refractory-lined shaft in an open braced tower, its gas loop on the ground beside it (recuperator, scrubber, recycle compressor, electric heater) and a cooling loop for the sponge iron; four cooling towers to the north. The pellets come up a belt from the pellet plant, the sponge iron leaves by belt to the arc furnace shop, the hydrogen comes from the hydrogen plant and the water the reduction makes goes back to it. Open, not a hall, so a hydrogen leak rises away. For a world with air at about 1 g."},
@@ -1464,8 +1479,8 @@ def hydrogen_plant_air(us, recs):
     frame_mass = fmass + clad
     total = mass_units + mass_links + frame_mass + mass_ground
     mp = hmod["physical"]
-    xs = [x0, x1] + [b["at"][0] + s * unit_dims(recs, b)[0] / 2 for b in bays for s in (-1, 1)] + [p[0] for l in links for p in (l["from"], l["to"])]
-    ys = [y0, y1] + [b["at"][1] + s * unit_dims(recs, b)[1] / 2 for b in bays for s in (-1, 1)] + [p[1] for l in links for p in (l["from"], l["to"])]
+    xs = [x0, x1] + [b["at"][0] + s * unit_dims(recs, b)[0] / 2 for b in bays for s in (-1, 1)] + [p[0] for l in links for p in (l["from"], l["to"], *l.get("via", []))]
+    ys = [y0, y1] + [b["at"][1] + s * unit_dims(recs, b)[1] / 2 for b in bays for s in (-1, 1)] + [p[1] for l in links for p in (l["from"], l["to"], *l.get("via", []))]
     site_area = (max(xs) - min(xs)) * (max(ys) - min(ys))
     against = (f"module.hydrogen-plant: one box {mp['length']:g} x {mp['width']:g} x {mp['height']:g} m, {H_P / 1e6:.0f} MW. "
                f"This layout: the same {H_RATE * 3600:,.0f} kg of hydrogen an hour; {power / 1e6:.1f} MW (the cells {N_BLK * P_STACKS / 1e6:.1f}, at {V_CELL} V, {N_BLK * P_STACKS / H_RATE / 3.6e6:.1f} kWh a kg); {heat / 1e6:.1f} MW to the tower, {water:.1f} kg/s of water used and evaporated; "
@@ -1653,8 +1668,8 @@ def pellet_plant_air(us, recs):
     frame_mass = fmass + clad
     total = mass_units + mass_links + frame_mass + mass_ground
     mp = pmod["physical"]
-    xs = [x0, x1] + [b["at"][0] + s * unit_dims(recs, b)[0] / 2 for b in bays for s in (-1, 1)] + [p[0] for l in links for p in (l["from"], l["to"])]
-    ys = [y0, y1] + [b["at"][1] + s * unit_dims(recs, b)[1] / 2 for b in bays for s in (-1, 1)] + [p[1] for l in links for p in (l["from"], l["to"])]
+    xs = [x0, x1] + [b["at"][0] + s * unit_dims(recs, b)[0] / 2 for b in bays for s in (-1, 1)] + [p[0] for l in links for p in (l["from"], l["to"], *l.get("via", []))]
+    ys = [y0, y1] + [b["at"][1] + s * unit_dims(recs, b)[1] / 2 for b in bays for s in (-1, 1)] + [p[1] for l in links for p in (l["from"], l["to"], *l.get("via", []))]
     against = (f"module.pellet-plant: one box {mp['length']:g} x {mp['width']:g} x {mp['height']:g} m, {P_P / 1e6:.0f} MW (45 kWh and 0.5 GJ of heat a tonne, the heat counted as power). "
                f"This layout: the same {P_RATE * 3.6:.0f} t an hour; {power / 1e6:.1f} MW, of which {P_FIRE / 0.9 / 1e6:.1f} the grate's plasma torches; no cooling water (the pellets cool on the grate in the air it draws, the waste gas leaves by the baghouse's stack); "
                f"{water:.1f} kg/s of water dried off the green balls; {(mass_units + mass_links + frame_mass) / 1000:,.0f} t of plant and frame, {mass_ground / 1000:,.0f} t of concrete. "
@@ -2057,8 +2072,8 @@ def arc_furnace_airless(us, recs):
     against = (f"module.arc-furnace: one box, the same on every world. This layout: the same rate; {power / 1e6:.1f} MW; {heat / 1e6:.1f} MW to {n_low + n_hot} radiator fields ({rejects / 1e6:.1f} MW at lunar noon), "
                f"{n_low} at 330 K for the panels and transformer and {n_hot} at {hot:.0f} K for the duct, in place of the tower; no water used up (closed loops); no hall, no baghouse (the furnace is sealed); "
                f"{(mass_units + mass_links) / 1000:,.0f} t of plant and {mass_ground / 1000:,.0f} t of sintered regolith. The radiators cover {(n_low + n_hot) * 48 * 48 / 1e4:.1f} ha: the heat that went up a tower's plume as steam must here leave as light, and at 330 K a panel in the noon sun sheds little. A heat pump lifting the panels' heat to {hot:.0f} K (at half Carnot's) would need about {hp_w / 1e6:.0f} MW more power and {hp_fields} hot fields in place of all {n_low + n_hot} (not fitted).")
-    xs = [b["at"][0] + s * unit_dims(recs, b)[0] / 2 for b in bays for s in (-1, 1)] + [p[0] for l in links for p in (l["from"], l["to"])]
-    ys = [b["at"][1] + s * unit_dims(recs, b)[1] / 2 for b in bays for s in (-1, 1)] + [p[1] for l in links for p in (l["from"], l["to"])]
+    xs = [b["at"][0] + s * unit_dims(recs, b)[0] / 2 for b in bays for s in (-1, 1)] + [p[0] for l in links for p in (l["from"], l["to"], *l.get("via", []))]
+    ys = [b["at"][1] + s * unit_dims(recs, b)[1] / 2 for b in bays for s in (-1, 1)] + [p[1] for l in links for p in (l["from"], l["to"], *l.get("via", []))]
     layout = {
         "identity": {"key": "layout.arc-furnace-airless", "name": "Arc furnace shop, airless",
                      "description": "The 80 t arc furnace on airless ground at about a moon's gravity: sealed, holding its own gas at 1 bar; no hall (no weather to keep off) but a gantry crane on its own legs; its heat to fields of radiator panels instead of a cooling tower, one set cool for the panels' water and one hot for the duct's steam; its off-gas filtered and let go; the crew in a pressurised post under a berm; its platform of sintered regolith. Built separately from the shop for air, not reused."},
@@ -2160,8 +2175,8 @@ def ladle_station_airless(us, recs):
     against = (f"module.ladle-station: one box, the same on every world. This layout: the same rate; {power / 1e6:.1f} MW; {heat / 1e6:.1f} MW to {n_low} radiator fields at 330 K; no water used up. "
                f"No degasser: the vacuum degasses the ladle on an open stand, but must not see the alloys, which the sealed ladle furnace adds under argon; no ladle crane (nothing is lifted into a tank) and no hall. "
                f"{(mass_units + mass_links) / 1000:,.0f} t of plant, {mass_ground / 1000:,.0f} t of sintered regolith.")
-    xs = [b["at"][0] + s * unit_dims(recs, b)[0] / 2 for b in bays for s in (-1, 1)] + [p[0] for l in links for p in (l["from"], l["to"])]
-    ys = [b["at"][1] + s * unit_dims(recs, b)[1] / 2 for b in bays for s in (-1, 1)] + [p[1] for l in links for p in (l["from"], l["to"])]
+    xs = [b["at"][0] + s * unit_dims(recs, b)[0] / 2 for b in bays for s in (-1, 1)] + [p[0] for l in links for p in (l["from"], l["to"], *l.get("via", []))]
+    ys = [b["at"][1] + s * unit_dims(recs, b)[1] / 2 for b in bays for s in (-1, 1)] + [p[1] for l in links for p in (l["from"], l["to"], *l.get("via", []))]
     layout = {
         "identity": {"key": "layout.ladle-station-airless", "name": "Ladle station, airless",
                      "description": "The ladle station on airless ground at about a moon's gravity: the heat comes on its car from the arc furnace shop, stands a quarter hour on an open degassing stand where the vacuum takes its gases, then goes under the sealed ladle furnace, which alloys and reheats it under argon, and on to the casting bay. Radiators for the tower, a maintenance gantry crane, a pressurised crew post. Built separately from the station for air."},
@@ -2407,8 +2422,8 @@ def shaft_furnace_airless(us, recs):
     against = (f"module.shaft-furnace: one box, {S_P / 1e6:.0f} MW. The layout for air draws {air_power / 1e6:.0f} MW and sends 130 MW up four towers. This layout: the same rate; {power / 1e6:.0f} MW (heater {HP_Q_HEATER / 0.98 / 1e6:.0f}, compressor {HP_W_COMP / 1e6:.1f}: at 8 bar the compressor only makes up the loop's pressure drop); "
                f"{heat / 1e6:.0f} MW to {n_rad} radiator fields at {HP_T_LOOP:.0f} K ({n_rad * 48 * 48 / 1e4:.0f} ha), for the water must condense somewhere and only light can take the heat away; no cooling zone or loop (the sponge iron goes on hot); no water used up. "
                f"{(mass_units + mass_links + frame_mass) / 1000:,.0f} t of plant and frame, {mass_ground / 1000:,.0f} t of sintered regolith.")
-    xs = [b["at"][0] + s * unit_dims(recs, b)[0] / 2 for b in bays for s in (-1, 1)] + [p[0] for l in links for p in (l["from"], l["to"])]
-    ys = [b["at"][1] + s * unit_dims(recs, b)[1] / 2 for b in bays for s in (-1, 1)] + [p[1] for l in links for p in (l["from"], l["to"])]
+    xs = [b["at"][0] + s * unit_dims(recs, b)[0] / 2 for b in bays for s in (-1, 1)] + [p[0] for l in links for p in (l["from"], l["to"], *l.get("via", []))]
+    ys = [b["at"][1] + s * unit_dims(recs, b)[1] / 2 for b in bays for s in (-1, 1)] + [p[1] for l in links for p in (l["from"], l["to"], *l.get("via", []))]
     layout = {
         "identity": {"key": "layout.shaft-furnace-airless", "name": "Hydrogen shaft furnace, airless",
                      "description": "Direct reduction by hydrogen on airless ground at about a moon's gravity: the gas loop at 8 bar so the top gas's water condenses warm enough for radiators to take its heat, the sponge iron discharged hot through a lock straight to the arc furnace shop, the heat to fields of radiators. Hydrogen leaking into vacuum just leaves (no air, no fire), so the tower is an open lattice for bracing, not for venting. Built separately from the plant for air."},
@@ -2496,8 +2511,8 @@ def hydrogen_plant_airless(us, recs):
     total = mass_units + mass_links + mass_ground
     against = (f"module.hydrogen-plant: one box, {H_P / 1e6:.0f} MW. This layout: the same rate; {power / 1e6:.1f} MW; {heat / 1e6:.1f} MW to {n_rad} radiator fields at {HP_T_LOOP:.0f} K ({n_rad * 48 * 48 / 1e4:.1f} ha); "
                f"its {H_WATER:.1f} kg/s of water all comes back from the shaft furnace, none evaporated; no hall; the blocks at 10 bar feed the furnace's loop with no compressor. {(mass_units + mass_links) / 1000:,.0f} t of plant, {mass_ground / 1000:,.0f} t of sintered regolith.")
-    xs = [b_["at"][0] + s * BAY[int(b_["mount"][-1])] / 2 for b_ in bays for s in (-1, 1)] + [p[0] for l in links for p in (l["from"], l["to"])]
-    ys = [b_["at"][1] + s * BAY[int(b_["mount"][-1])] / 2 for b_ in bays for s in (-1, 1)] + [p[1] for l in links for p in (l["from"], l["to"])]
+    xs = [b_["at"][0] + s * BAY[int(b_["mount"][-1])] / 2 for b_ in bays for s in (-1, 1)] + [p[0] for l in links for p in (l["from"], l["to"], *l.get("via", []))]
+    ys = [b_["at"][1] + s * BAY[int(b_["mount"][-1])] / 2 for b_ in bays for s in (-1, 1)] + [p[1] for l in links for p in (l["from"], l["to"], *l.get("via", []))]
     layout = {
         "identity": {"key": "layout.hydrogen-plant-airless", "name": "Hydrogen plant, airless",
                      "description": f"Water split by electricity on airless ground at about a moon's gravity: {N_BLK} electrolyser blocks at 10 bar in the open, their rectifiers beside them, the heat to radiator fields; the water comes back from the shaft furnace, the hydrogen goes to it at its loop's pressure, the oxygen is kept. Built separately from the plant for air."},
@@ -2578,6 +2593,7 @@ def main():
     for slug, d in recs.items():
         write(S + f"units/{slug}.yaml", d)
     for slug, (d, _) in layouts.items():
+        cover_model(S + f"layouts/{slug}.yaml", d)
         write(S + f"layouts/{slug}.yaml", d)
     print(f"{len(mounts)} mounts, {len(recs)} units, {len(layouts)} layouts")
 
