@@ -1750,7 +1750,7 @@ def pellet_units():
                   part("Frame and tilt gear", A36, 14680.8, "the braced hollow-section frame and its tilt mounts; measured on model v1"),
                   part("Roller screen", A36, 1715.8 + 562.3, "its rails, frame and fines tray (1,715.8 kg) and 12 rolls of 100 x 5 mm tube, 4 m long (562.3); measured on model v1"),
                   part("Screen drive", "good.electric-motors", 400.0, "from memory"),
-                  part("Scrapers and chutes", A36, 1347.9, "measured on model v1")],
+                  part("Scrapers and chutes", A36, 1247.45, "measured on model v1")],
         needs={"power": 90e3 + 15e3},
         basis=[{"of": ["physical", "built_of", "needs"], "tier": "derived", "review": True,
                 "note": f"The pan's plate from its size; its speed from the critical speed 42.3 sqrt(sin a / D); a quarter of the plant's {P_ORE + P_WATER:.1f} kg/s of moist ore each; the drive 90 kW and the screen 15 kW, the frame, gear and screen's weights from memory."}])

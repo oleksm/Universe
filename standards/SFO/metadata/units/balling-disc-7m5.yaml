@@ -4,7 +4,7 @@ identity: {key: unit.balling-disc-7m5, name: 'Balling disc, 7.5 m', description:
     drop through into a tray and out at (0, -3.5, 0.65) to the layout''s return belt, the balls roll off the screen''s end at (0, -4.5, 1).'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 9.0, width: 9.0, height: 7.0, mass: 39080.0}
+physical: {length: 9.0, width: 9.0, height: 7.0, mass: 38980.0}
 built_of:
 - {what: 'Pan, rim and ribs', item: material.structural-steel-a36, mass: 10370.0, note: 'the pan''s floor in 20 mm plate, its rim 0.5 m deep in 12 mm, twelve radial ribs 0.4 m deep in 20 mm under it; measured on model v1'}
 - {what: 'Hub, bearing and girth gear', item: material.high-strength-steel-4340, mass: 5000.0, note: from memory}
@@ -12,7 +12,7 @@ built_of:
 - {what: Frame and tilt gear, item: material.structural-steel-a36, mass: 14680.0, note: the braced hollow-section frame and its tilt mounts; measured on model v1}
 - {what: Roller screen, item: material.structural-steel-a36, mass: 2278.0, note: 'its rails, frame and fines tray (1,715.8 kg) and 12 rolls of 100 x 5 mm tube, 4 m long (562.3); measured on model v1'}
 - {what: Screen drive, item: good.electric-motors, mass: 400.0, note: from memory}
-- {what: Scrapers and chutes, item: material.structural-steel-a36, mass: 1348.0, note: measured on model v1}
+- {what: Scrapers and chutes, item: material.structural-steel-a36, mass: 1247.0, note: measured on model v1}
 needs: {power: 105000.0}
 life: 788940000
 basis:
