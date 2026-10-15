@@ -5275,3 +5275,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: layout.ladle-station-airless
+    version: 2
+    manifest_sha256: "b9f97206cfd0db9eda6078b8201404aa6808abcb7cff795aa13ce5a33a0874bf"
+    installed: d0c48434
+    game: "the loader (world::assets) at fso d0c48434"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/ladle-station-airless/v2 (9441040 bytes, bounds [-98.7, -2.0058, -30.3] to [34.5692, 23.7, 64.1]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
