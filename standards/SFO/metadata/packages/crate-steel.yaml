@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/package.schema.yaml
+identity:
+  key: package.crate-steel
+  name: "Steel crate"
+  description: "A low crate of 2 mm steel sheet on a welded angle frame and steel skids, its lid latched, not nailed: ingots, blanks, forgings and boxed parts where there is no timber (airless ground) or where crates come back to be used again."
+physical:
+  length: 1.2
+  width: 1.0
+  height: 0.8
+  mass: 130
+holds:
+  volume: 0.71
+  mass: 2000
+handling: forklift
+stack: 4
+labels:
+  - { node: label, face: "+Z", centre: [0.0, 0.48, 0.501], size: [0.3, 0.15] }
+  - { node: label_2, face: "-Z", centre: [0.0, 0.48, -0.501], size: [0.3, 0.15] }
+shows_contents: false
+basis:
+  - { of: [physical, holds, handling], tier: derived, review: true, note: "The heavy crate's size and inside; its 5.9 m2 of 2 mm sheet (93 kg) and its frame, skids and latches (about 40 kg, from memory)." }
+  - { of: [stack], tier: invented, review: true, note: "Four high: the frame's corner posts take three full crates at 1 g with some to spare (from memory, not checked); on a moon's gravity the same." }
