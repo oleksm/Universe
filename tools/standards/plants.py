@@ -1567,6 +1567,7 @@ def hydrogen_plant_air(us, recs):
     fmass += 2 * x_in * rw_a * RHO["steel"]
     vent = (x1 - x0 - 2 * cell) * 1.5                                                  # a ridge vent 1.5 m wide the hall's length
     clad_area = 2 * (x1 - x0) * (z1 - z0) + 2 * (y1 - y0) * (z1 - z0) + (x1 - x0) * (y1 - y0) - vent - sum(max(d - a, e - b) * (f - c) for a, b, c, d, e, f in openings)
+    clad_area = 9416.56                                                               # m2 measured on blender's layout (candidate v01), the returns round openings and the vent included
     clad = clad_area * 0.002 * RHO["aluminium"]
     sec_stock = lambda g: yaml.safe_load(open(S + "mill-stock/" + strut(sec[g], cell)[1]["kit"]["section"].split(".", 1)[1].upper() + ".yaml"))
     rcap, wcap = frames.strut_capacity(sec_stock("roof")), frames.strut_capacity(sec_stock("wall"))
@@ -1620,8 +1621,10 @@ def hydrogen_plant_air(us, recs):
         {"what": "Cooling tower basin", "item": CONC, "volume": r((tower["dims"][0] + 0.6) * 12.6 * 0.5 + 2 * (tower["dims"][0] + 0.3 + 12.3) * 2.0 * 0.3), "note": "sunk as the furnace shop's: a 0.5 m floor 0.6 m wider than the tower each way, walls 0.3 m thick and 2 m deep, the water just under z 0"},
         {"what": "Tower pedestals", "item": CONC, "volume": r(12 * 0.6 * 0.6 * 2.0), "note": "twelve 0.6 m square piers from the basin floor (z -2) to z 0 under the tower's eight feet (x ±17.6 and ±6, y ±5.6) and its skid's four corners"},
     ]
+    ground += [{"what": "Support footings", "item": CONC, "volume": 8.62, "note": "feet under the DC bus posts (1.01 m3), the gas header portals (2.87), the oxygen line's supports (0.68), the ground pipes' supports (3.97) and the hydrogen elbow (0.08); measured on blender's layout (candidate v01)"},
+               {"what": "Support steel", "item": A36, "volume": r(67276.1 / RHO["steel"]), "note": "the crane runways' seats (25 mm boxes), the gas header portals (200 x 200 x 8 beams on 160 x 8 round posts at y -8 and 8 every 6 m along x, beams about z 8.65), the bus posts and the pipes' small 6 mm boxes, with solid shoes; joints and anchors left out, not checked for strength; measured on blender's layout (candidate v01), 67,276 kg"}]
     for g in ground:
-        g["mass"] = r(g["volume"] * RHO["concrete"])
+        g["mass"] = r(g["volume"] * (RHO["steel"] if g["item"] == A36 else RHO["concrete"]))
     used = [recs[b["unit"].split(".", 1)[1]] for b in bays] + [crane]
     power = sum(u.get("needs", {}).get("power", 0) for u in used)
     heat = sum(u.get("needs", {}).get("heat", 0) for u in used)
@@ -1637,7 +1640,7 @@ def hydrogen_plant_air(us, recs):
     site_area = (max(xs) - min(xs)) * (max(ys) - min(ys))
     against = (f"module.hydrogen-plant: one box {mp['length']:g} x {mp['width']:g} x {mp['height']:g} m, {H_P / 1e6:.0f} MW. "
                f"This layout: the same {H_RATE * 3600:,.0f} kg of hydrogen an hour; {power / 1e6:.1f} MW (the cells {N_BLK * P_STACKS / 1e6:.1f}, at {V_CELL} V, {N_BLK * P_STACKS / H_RATE / 3.6e6:.1f} kWh a kg); {heat / 1e6:.1f} MW to the tower, {water:.1f} kg/s of water used and evaporated; "
-               f"{(mass_units + mass_links + frame_mass) / 1000:,.0f} t of plant and frame, {mass_ground / 1000:,.0f} t of concrete; {site_area / 1e4:.1f} ha, against the source's 0.8 to 1.7 for 100 MW. "
+               f"{(mass_units + mass_links + frame_mass + sum(g["mass"] for g in ground if g["item"] == A36)) / 1000:,.0f} t of plant, frame and supports, {sum(g["mass"] for g in ground if g["item"] == CONC) / 1000:,.0f} t of concrete; {site_area / 1e4:.1f} ha, against the source's 0.8 to 1.7 for 100 MW. "
                f"It makes {H_RATE:.3f} kg/s; one shaft furnace at its full rate takes {H2_USED:.2f}, about {H2_USED / H_RATE:.1f} of these.")
     layout = {
         "identity": {"key": "layout.hydrogen-plant-air", "name": "Hydrogen plant, world with air",
