@@ -2027,7 +2027,7 @@ def yard_units():
         basis=[{"of": ["built_of", "needs", "physical"], "tier": "invented", "review": True, "note": f"The count from the casting bay's rate and a cut of {CUT_RATE * 1e4 * 60:.0f} cm2 a minute (a large band saw in carbon steel, from memory); saw mass and power from memory."}])
     out["crating-line"] = dict(
         name="Crating line", size_class=2, fits="bay-s2", dims=(12.0, 4.0, 3.0),
-        desc="A roller table along x: a cooled ingot set on at its -x end is weighed, laid in a heavy crate on its skids, the lid nailed on and the label printed with the heat, grade and mass; the crate leaves at the +x end for a forklift.",
+        desc="A roller table along x, its rollers' tops 0.8 m up: a forklift sets an empty heavy crate, its lid on top, at the -x end (x -6 to -2); it rolls to the crating station at x 0, where the lid is lifted aside and the ingot crane lowers a cropped ingot straight into it from the saws, lying, its tongs' jaws in the gaps between the ingot and the crate's sides; a platform scale under the station weighs crate and ingot (the crate's tare known); the crate rolls on to the nailer's portal at x 3.5, where the lid is nailed on, past the label printer at x 4.8 (heat, grade and mass), and leaves at the +x end for a forklift.",
         built_of=[part("Roller table, scale and nailer", A36, 12000.0, "from memory")],
         needs={"power": 40e3},
         basis=[{"of": ["physical", "built_of", "needs"], "tier": "invented", "review": True, "note": "From memory."}])
