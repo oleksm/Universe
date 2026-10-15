@@ -2699,7 +2699,7 @@ def shaft_airless_units(us):
                   part("Tubes", "material.stainless-steel-304", 30000.0, "from memory"),
                   part("Filter and drain pot", A36, 9462.2, "the candle filter 2 m across, 20 mm, and the drain pot 1 m, 12 mm; measured on model v1"),
                   part("Filter candles", "material.silicon-carbide", 2000.0, "from memory"),
-                  part("Skirts, supports and feet", A36, 15611.1, "measured on model v1"),
+                  part("Skirts, supports and feet", A36, 15738.5, "measured on model v1"),
                   part("Piping", A36, 28443.5, "the gas headers and pipes (1 m, 16 mm), the coolant pair (12 mm) and the drain (6 mm); measured on model v1, the joints' overlapping skins counted twice, so a little high")],
         needs={"heat": HP_Q_COND + HP_W_COMP, "atmosphere": "vacuum"},
         basis=[{"of": ["physical", "built_of"], "tier": "invented", "review": True, "note": "From memory."},
