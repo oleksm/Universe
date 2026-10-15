@@ -4675,3 +4675,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.stack-crane-20t
+    version: 1
+    manifest_sha256: "8eaf0d78065d699c797125e0d3ee84f65d13f8236ef9e7febeb0633e92c6649a"
+    installed: ff5e8700
+    game: "the loader (world::assets) at fso ff5e8700"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/stack-crane-20t/v1 (309276 bytes, bounds [-4.0, -0.0989, -11.7] to [4.0, 2.9, 11.7]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
