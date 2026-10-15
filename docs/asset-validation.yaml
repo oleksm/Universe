@@ -4975,3 +4975,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.ingot-crane-10t
+    version: 1
+    manifest_sha256: "9c659c060e5c25b71118cbedd054cf83d0c4255895d9c28dcddf1fd52e4db857"
+    installed: c630cf1b
+    game: "the loader (world::assets) at fso c630cf1b"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/ingot-crane-10t/v1 (388272 bytes, bounds [-4.0, -1.9, -11.7] to [4.0, 2.9, 11.7]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
