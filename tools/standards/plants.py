@@ -1771,7 +1771,7 @@ def pellet_units():
                   part("Hood lining", REF, 380256.4, "300 mm over the hood's walls and roof; measured on model v1"),
                   part("Hood casing", A36, 36133.7, "10 mm; measured on model v1"),
                   part("Wind boxes", A36, 22790.4, "between the runs, 10 mm plate; measured on model v1"),
-                  part("Machine frame, supports and chutes", A36, 215476.1, "the machine's frame, its supports, cable trays, the feed and discharge chutes; measured on model v1"),
+                  part("Machine frame, supports and chutes", A36, 214754.7, "the machine's frame, its supports, cable trays, the feed and discharge chutes; measured on model v1"),
                   part("Sprockets, bearings and drive", "material.high-strength-steel-4340", 20000.0, "two sprockets with their shafts and bearings and the chain's drive, from memory"),
                   part("Recuperation duct", A36, 18.4 * math.pi * 3.51 * 0.010 * RHO["steel"], "18.4 m over the roof, a 10 mm shell 3.52 m across; length measured on model v1"),
                   part("Recuperation duct lining", REF, 18.4 * (math.pi / 4 * (3.5 ** 2 - 3.3 ** 2) * 3000 + math.pi / 4 * (3.3 ** 2 - 2.9 ** 2) * 1000), "a dense 100 mm face on 200 mm of insulating castable at about 1,000 kg/m3 (from memory), which the registry has not got: refractory brick stands for it, by mass"),

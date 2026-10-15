@@ -5,13 +5,13 @@ identity: {key: unit.induration-grate-125th, name: 'Induration grate, 125 t an h
     350 deg C (2.4 m mains), the two waste fans as much again at about 120 deg C (1.9 m mains); each box group''s down-legs 1.0 to 1.2 m, one every 4 m. Green balls in on a roller feeder at local (-20, 0, 9) over the loading end; fired pellets tip off the +x sprocket into a chute to (21, 0, 2); waste gas out to the layout''s duct at (0, 6, 3).'}
 size_class: 4
 fits: plant-mount.bay-s4
-physical: {length: 44.0, width: 14.4, height: 18.0, mass: 1146000.0}
+physical: {length: 44.0, width: 14.4, height: 18.0, mass: 1145000.0}
 built_of:
 - {what: Pallet cars, item: material.stainless-steel-304, mass: 255000.0, note: '51 cars 4 x 1.5 m of heat-resisting cast steel, 5 t each (from memory); stainless steel stands for the alloy'}
 - {what: Hood lining, item: good.refractory-brick, mass: 380300.0, note: 300 mm over the hood's walls and roof; measured on model v1}
 - {what: Hood casing, item: material.structural-steel-a36, mass: 36130.0, note: 10 mm; measured on model v1}
 - {what: Wind boxes, item: material.structural-steel-a36, mass: 22790.0, note: 'between the runs, 10 mm plate; measured on model v1'}
-- {what: 'Machine frame, supports and chutes', item: material.structural-steel-a36, mass: 215500.0, note: 'the machine''s frame, its supports, cable trays, the feed and discharge chutes; measured on model v1'}
+- {what: 'Machine frame, supports and chutes', item: material.structural-steel-a36, mass: 214800.0, note: 'the machine''s frame, its supports, cable trays, the feed and discharge chutes; measured on model v1'}
 - {what: 'Sprockets, bearings and drive', item: material.high-strength-steel-4340, mass: 20000.0, note: 'two sprockets with their shafts and bearings and the chain''s drive, from memory'}
 - {what: Recuperation duct, item: material.structural-steel-a36, mass: 15930.0, note: '18.4 m over the roof, a 10 mm shell 3.52 m across; length measured on model v1'}
 - {what: Recuperation duct lining, item: good.refractory-brick, mass: 94800.0, note: 'a dense 100 mm face on 200 mm of insulating castable at about 1,000 kg/m3 (from memory), which the registry has not got: refractory brick stands for it, by mass'}
