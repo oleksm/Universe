@@ -2751,7 +2751,7 @@
 - { record: unit.dri-bin-200t, at: "2026-10-14T14:08:01Z", status: draft, summary: "changed", sha: "1077e81910f4da8c" }
 - { record: unit.dri-cooling-loop, at: "2026-10-15T01:24:23Z", status: draft, summary: "changed", sha: "46962a5f5ae51829" }
 - { record: unit.eaf-vessel-80t, at: "2026-10-14T16:01:10Z", status: draft, summary: "changed: physical, built_of, visual", sha: "f948e3f34829ba7e" }
-- { record: unit.eaf-vessel-80t-sealed, at: "2026-10-15T19:05:15Z", status: draft, summary: "changed: physical, built_of", sha: "9823d2d9bbb706e2" }
+- { record: unit.eaf-vessel-80t-sealed, at: "2026-10-15T19:07:54Z", status: draft, summary: "changed: built_of", sha: "2b3763537990c92a" }
 - { record: unit.electrolyser-block-20mw, at: "2026-10-15T02:45:51Z", status: draft, summary: "changed", sha: "af9b2af95ad77993" }
 - { record: unit.electrolyser-block-20mw-10bar, at: "2026-10-15T02:38:10Z", status: draft, summary: "changed: physical, built_of", sha: "b93cbbc1cf0fb4d4" }
 - { record: unit.filter-press-2, at: "2026-10-15T16:13:40Z", status: draft, summary: "first tracked", sha: "7732a46a3aedde04" }
