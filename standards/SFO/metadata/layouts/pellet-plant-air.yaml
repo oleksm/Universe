@@ -117,8 +117,8 @@ links:
   note: 'a 0.8 m reversible belt along x -12, 0.4 m under the cake belt''s head: south to one header or north to the other'
 - kind: conveyor
   name: south cake header
-  from: [-12.0, -8.0, 8.2]
-  to: [8.0, -8.0, 8.2]
+  from: [-12.0, -8.0, 8.18]
+  to: [8.0, -8.0, 8.18]
   length: 20.0
   item: material.structural-steel-a36
   mass: 2000.0
@@ -126,8 +126,8 @@ links:
   note: a 0.8 m belt along y -8, 0.4 m under the shuttle's south end, with ploughs at x -6 and 6 dropping 1.2 m by chutes into discs B1 and B2's feed (z 7)
 - kind: conveyor
   name: north cake header
-  from: [-12.0, 8.0, 8.2]
-  to: [8.0, 8.0, 8.2]
+  from: [-12.0, 8.0, 8.18]
+  to: [8.0, 8.0, 8.18]
   length: 20.0
   item: material.structural-steel-a36
   mass: 2000.0
@@ -171,11 +171,11 @@ links:
   note: a 0.8 m shuttle belt north over the grate's open loading end, 0.3 m under the lift's head, dropping 0.3 m onto the roller feeder (9 m) across the grate's width
 - kind: conveyor
   name: pellet belt
-  from: [62.0, 0.0, 2.0]
+  from: [62.25, 0.0, 2.0]
   to: [110.0, 0.0, 2.0]
-  length: 48.0
+  length: 47.75
   item: material.structural-steel-a36
-  mass: 7200.0
+  mass: 7162.0
   power: 100000.0
   note: 'a 1 m belt: 34.7 kg/s of fired pellets off the grate''s end, out by the east wall to the shaft furnace''s pellet belt, beyond the layout'
 - kind: duct
