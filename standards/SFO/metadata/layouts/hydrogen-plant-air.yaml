@@ -407,6 +407,12 @@ staff:
 - {profession: profession.chemist, count: 2}
 - {profession: profession.plant-operator, count: 4}
 - {profession: profession.technician, count: 1}
+visual:
+  format: "freefall-model/1"
+  path: "models/hydrogen-plant-air/v1"
+  manifest_sha256: "2ff411d9e9ffae155e2527aa97fe5b516db8ccf94b45237d0e6f8d1d7b5d1909"
+  version: 1
+  triangles: 398772
 basis:
 - of: [bays, links, frame.box, frame.openings]
   tier: invented
