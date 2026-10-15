@@ -4555,3 +4555,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.recycle-compressor
+    version: 1
+    manifest_sha256: "f6531ecd42aba91e5bf346fa3151f57c694c6485f8348248881fb4c8ff51b732"
+    installed: 0a5f2453
+    game: "the loader (world::assets) at fso 0a5f2453"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/recycle-compressor/v1 (685148 bytes, bounds [-11.0, 0.0, -4.0] to [11.0, 6.76, 4.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
