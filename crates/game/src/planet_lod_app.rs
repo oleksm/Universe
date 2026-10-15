@@ -295,6 +295,8 @@ struct Clusters {
     level: Vec<u8>,
     meshes: Vec<Option<(View, PooledMesh, bool)>>,
     shown: Vec<u32>,
+    /// The clusters whose meshes go to the GPU before any other's.
+    upload_first: Vec<u32>,
     /// The last frame each was wanted (shown, chosen or coming), for evicting the longest unwanted past RESIDENT.
     used: Vec<u64>,
     frame: u64,
@@ -318,6 +320,7 @@ impl Clusters {
             level,
             meshes: (0..n).map(|_| None).collect(),
             shown: vec![],
+            upload_first: vec![],
             used: vec![0; n],
             frame: 0,
             px: 2.0 * 25f64.to_radians().tan() / 1080.0,
@@ -1045,8 +1048,6 @@ impl PlanetLodApp {
     fn update_clusters(&mut self, eye: DVec3, _dt: f64) {
         use rayon::prelude::*;
         let t0 = Instant::now();
-        let cam = self.camera();
-        let aspect = match self.ui.lock().unwrap().aspect { a if a > 0.0 => a, _ => 16.0 / 9.0 };
         let view = self.view;
         let ahead = {
             let mut step = self.vel * 1.0;
@@ -1059,7 +1060,6 @@ impl PlanetLodApp {
         let mut cl = self.clusters.as_ref().unwrap().lock().unwrap();
         let want = cl.select(eye);
         let pre = cl.select(ahead);
-        let visible = |cl: &Clusters, i: usize| Self::in_view(&cam, cl.origin(i), cl.row[i][4] as f64, aspect);
         // build what is wanted or coming and not built (in this view), in parallel, at most 4,000 a frame
         let mut need: Vec<usize> = want.iter().chain(pre.iter()).map(|&i| i as usize).filter(|&i| cl.meshes[i].as_ref().is_none_or(|(v, _, _)| *v != view)).collect();
         need.sort_unstable();
@@ -1070,11 +1070,9 @@ impl PlanetLodApp {
         for (i, m) in built {
             cl.meshes[i] = Some((view, m, false));
         }
-        // shown: the wanted cut once its clusters in view are all on the GPU
-        let ready = want.iter().all(|&i| {
-            let i = i as usize;
-            !visible(&cl, i) || cl.meshes[i].as_ref().is_some_and(|(v, m, _)| *v == view && m.gpu_resident())
-        });
+        // shown: the wanted cut once all its clusters are on the GPU. (Only those in view, before: flying or turning
+        // brought the rest into view before they were uploaded, and they were skipped: black holes in the ground.)
+        let ready = want.iter().all(|&i| cl.meshes[i as usize].as_ref().is_some_and(|(v, m, _)| *v == view && m.gpu_resident()));
         if ready {
             cl.shown = want.clone();
         }
@@ -1082,6 +1080,8 @@ impl PlanetLodApp {
         // Kept at most RESIDENT cluster meshes: the longest unwanted dropped (their GPU copies go with them).
         cl.frame += 1;
         let now = cl.frame;
+        // uploads first for what is shown, wanted, then coming
+        cl.upload_first = cl.shown.iter().chain(want.iter()).chain(pre.iter()).copied().collect();
         let marks: Vec<u32> = cl.shown.iter().chain(want.iter()).chain(pre.iter()).copied().collect();
         for i in marks {
             cl.used[i as usize] = now;
@@ -1504,13 +1504,18 @@ impl App for PlanetLodApp {
             // (Asked again every frame until on the GPU: a frame the render thread skips loses its requests, and
             // asking once left meshes never uploaded. The engine skips those it has.)
             let mut handed = 0;
-            for m in cl.meshes.iter_mut().flatten() {
-                if !m.1.gpu_resident() && handed < 3000 {
+            let first = std::mem::take(&mut cl.upload_first);
+            for i in first.iter().map(|&i| i as usize).chain(0..cl.meshes.len()) {
+                if handed >= 3000 {
+                    break;
+                }
+                if let Some(m) = cl.meshes[i].as_mut().filter(|m| !m.1.gpu_resident()) {
                     frame.prepare_pooled(&m.1);
                     m.2 = true;
                     handed += 1;
                 }
             }
+            cl.upload_first = first;
             let mut tris_shown = 0;
             // (One group for every cluster drawn: the engine draws them all in one call for faces, one for edges.)
             let group = frame.pool_group(&Transform { position: DVec3::ZERO, rotation: Quat::IDENTITY, scale: 1.0 }, pat_line, fill_of(land), if edges { 1.0 } else { 0.0 }, true);
@@ -1520,6 +1525,10 @@ impl App for PlanetLodApp {
                 let o = cl.origin(i);
                 if !Self::in_view(&cam, o, cl.row[i][4] as f64, aspect) {
                     continue;
+                }
+                if !mesh.gpu_resident() {
+                    // (a cluster in view with nothing on the GPU yet: a hole this frame; should never happen)
+                    log::warn!("PLANETLOD hole: cluster {i} in view not on the GPU");
                 }
                 frame.pooled(group, mesh, o);
                 drawn_clusters.push(i as u32);
