@@ -1690,9 +1690,11 @@ def pellet_units():
         name=f"Ball mill, {D:g} m", size_class=3, fits="bay-s3", dims=(18.0, 9.0, 6.5),
         desc=(f"Grinds the ore wet, to about 80% finer than 45 um, so it can be balled: a steel drum {D:g} m across and {Lm:g} m long on trunnion bearings, its axis along x 3 m up, a third full of steel balls, turned by a girth gear and a {P_mill / 1e6:.1f} MW motor at its +x end: the gear 6.0 m across (about 1.35 times the drum, so its pinion clears the shell; from memory) on a flange by the +x head, in a guard 6.4 m across that reaches z 6.2 and sits in a 0.4 m pit in the floor below; its pinion on the -y side at axis height, a gearbox and the motor on the floor beyond, out to y -4.4. "
               "Ore and water in by a chute at its -x trunnion (local -8, 0, 4); the slurry out of its +x trunnion into a sump and pumped on (local 8, 3, 0.5)."),
-        built_of=[part("Shell and heads", A36, shell, f"{D:g} m across, {Lm:g} m, 45 mm plate"),
+        built_of=[part("Shell and heads", A36, 43468.8, f"{D:g} m across, {Lm:g} m, 45 mm plate: the shell 33,776.9 kg and the annular heads 9,691.8; measured on model v1"),
                   part("Liners", A36, liners, "75 mm wear liners of manganese steel, which the registry has not got: structural steel stands for it"),
-                  part("Trunnions, bearings and girth gear", "material.high-strength-steel-4340", 40000.0, "from memory"),
+                  part("Trunnions and flanges", "material.high-strength-steel-4340", 8703.2, "the hollow trunnions' walls (7,478.8 kg) and their flanges to the heads (1,224.4); measured on model v1"),
+                  part("Bearings and girth gear", "material.high-strength-steel-4340", 30000.0, "the two trunnion bearings and the 6 m girth gear with its pinion, from memory"),
+                  part("Gear guard", A36, 1778.7, "5 mm plate round the girth gear; measured on model v1"),
                   part("Motor and gearbox", "good.electric-motors", 6.0 * P_mill / 1e3, "6 t a MW, from memory"),
                   part("Slurry sump and pumps", "good.pumps", 8000.0, "from memory")],
         holds=balls, needs={"power": P_mill, "water": P_WATER},

@@ -3,11 +3,13 @@
 identity: {key: unit.ball-mill-4m4, name: 'Ball mill, 4.4 m', description: 'Grinds the ore wet, to about 80% finer than 45 um, so it can be balled: a steel drum 4.4 m across and 7 m long on trunnion bearings, its axis along x 3 m up, a third full of steel balls, turned by a girth gear and a 2.1 MW motor at its +x end: the gear 6.0 m across (about 1.35 times the drum, so its pinion clears the shell; from memory) on a flange by the +x head, in a guard 6.4 m across that reaches z 6.2 and sits in a 0.4 m pit in the floor below; its pinion on the -y side at axis height, a gearbox and the motor on the floor beyond, out to y -4.4. Ore and water in by a chute at its -x trunnion (local -8, 0, 4); the slurry out of its +x trunnion into a sump and pumped on (local 8, 3, 0.5).'}
 size_class: 3
 fits: plant-mount.bay-s3
-physical: {length: 18.0, width: 9.0, height: 6.5, mass: 160800.0}
+physical: {length: 18.0, width: 9.0, height: 6.5, mass: 159900.0}
 built_of:
-- {what: Shell and heads, item: material.structural-steel-a36, mass: 44920.0, note: '4.4 m across, 7 m, 45 mm plate'}
+- {what: Shell and heads, item: material.structural-steel-a36, mass: 43470.0, note: '4.4 m across, 7 m, 45 mm plate: the shell 33,776.9 kg and the annular heads 9,691.8; measured on model v1'}
 - {what: Liners, item: material.structural-steel-a36, mass: 55030.0, note: '75 mm wear liners of manganese steel, which the registry has not got: structural steel stands for it'}
-- {what: 'Trunnions, bearings and girth gear', item: material.high-strength-steel-4340, mass: 40000.0, note: from memory}
+- {what: Trunnions and flanges, item: material.high-strength-steel-4340, mass: 8703.0, note: 'the hollow trunnions'' walls (7,478.8 kg) and their flanges to the heads (1,224.4); measured on model v1'}
+- {what: Bearings and girth gear, item: material.high-strength-steel-4340, mass: 30000.0, note: 'the two trunnion bearings and the 6 m girth gear with its pinion, from memory'}
+- {what: Gear guard, item: material.structural-steel-a36, mass: 1779.0, note: 5 mm plate round the girth gear; measured on model v1}
 - {what: Motor and gearbox, item: good.electric-motors, mass: 12890.0, note: '6 t a MW, from memory'}
 - {what: Slurry sump and pumps, item: good.pumps, mass: 8000.0, note: from memory}
 holds: 150400.0
