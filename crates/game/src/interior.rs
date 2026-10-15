@@ -135,7 +135,6 @@ pub struct Interior {
     saved_source: Option<String>,
     code_panel: Option<ship_code::CodePanel>,
     code_draft: Option<String>,
-    saved_view: Option<ship_code::ViewState>,
     /// The hull's lines, for which hull; and being worked out (on a thread of their
     /// own: they take a moment), for which.
     lines: Option<(String, Arc<Hull>)>,
@@ -4374,8 +4373,9 @@ impl Interior {
     pub fn unsaved(&self) -> bool {
         if self.code_draft.is_some() {return true;}
         if let Some(saved)=&self.saved {
+            // (The view, camera and layers shown, is saved with it but is no change:
+            // looking round never asks to save.)
             *saved!=self.plan || self.saved_decks.as_ref().is_some_and(|d|*d!=self.decks_now)
-                || self.saved_view.as_ref().is_some_and(|v|*v!=self.view_state())
         } else {
             self.plan.authored.is_some() || !self.plan.blocks.is_empty() || !self.plan.lines.is_empty()
                 || !self.plan.beams.is_empty() || !self.plan.plates.is_empty() || self.decks_now.is_some()
@@ -4509,7 +4509,6 @@ impl Interior {
         let decks = self.read_decks();
         self.saved_decks = Some(decks.clone());
         self.decks_now = decks.clone();
-        self.saved_view = Some(self.view_state());
         self.load_decks = Some(decks.unwrap_or_else(|| universe_sim::world::deckplan::DeckPlan { hull: id.into(), decks: Vec::new() }));
         // (Nothing of the last design's carried over.)
         self.undo.clear();
