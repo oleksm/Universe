@@ -2744,7 +2744,7 @@
 - { record: unit.cooling-tower-shaft, at: "2026-10-15T01:24:23Z", status: draft, summary: "first tracked", sha: "de1f2baa4965e350" }
 - { record: unit.crating-line, at: "2026-10-15T18:20:39Z", status: draft, summary: "changed", sha: "01857ce676efe665" }
 - { record: unit.crating-line-steel, at: "2026-10-15T19:02:03Z", status: draft, summary: "first tracked", sha: "decf119cb2734d07" }
-- { record: unit.crew-post, at: "2026-10-15T19:39:57Z", status: draft, summary: "changed: identity", sha: "39cb5c94ad1262fa" }
+- { record: unit.crew-post, at: "2026-10-15T19:40:47Z", status: draft, summary: "changed: identity", sha: "074cc2f9e51015eb" }
 - { record: unit.crop-saws, at: "2026-10-15T18:20:39Z", status: draft, summary: "changed", sha: "57aeb9a5c2d969ec" }
 - { record: unit.degassing-stand, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "3f2a0b824b4bd169" }
 - { record: unit.disc-filter-2, at: "2026-10-15T05:01:04Z", status: draft, summary: "changed", sha: "52719317d0ef0afd" }
