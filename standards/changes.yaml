@@ -830,7 +830,7 @@
 - { record: layout.ingot-yard-air, at: "2026-10-14T21:38:01Z", status: draft, summary: "changed: identity, physical, bays, totals", sha: "be2f1f8941755a1b" }
 - { record: layout.ladle-station-air, at: "2026-10-15T02:26:46Z", status: draft, summary: "changed: physical", sha: "31ea2691985163d3" }
 - { record: layout.ladle-station-airless, at: "2026-10-15T02:24:50Z", status: draft, summary: "changed: physical", sha: "fa8e490ab722454b" }
-- { record: layout.ore-yard-air, at: "2026-10-15T16:01:43Z", status: draft, summary: "changed: physical, mobile, totals", sha: "eeb9c2df03a6be02" }
+- { record: layout.ore-yard-air, at: "2026-10-15T16:15:50Z", status: draft, summary: "changed: physical, totals", sha: "4fe5bcfd21218299" }
 - { record: layout.pellet-plant-air, at: "2026-10-15T16:01:43Z", status: draft, summary: "changed: physical", sha: "89e9d07d51ec2d4b" }
 - { record: layout.pellet-plant-airless, at: "2026-10-15T16:13:40Z", status: draft, summary: "first tracked", sha: "3bb793bc252de4d3" }
 - { record: layout.shaft-furnace-air, at: "2026-10-15T02:28:54Z", status: draft, summary: "changed: physical", sha: "8e973731966b75b2" }
@@ -2790,7 +2790,7 @@
 - { record: unit.shaft-furnace-200th-hp, at: "2026-10-14T19:26:44Z", status: draft, summary: "first tracked", sha: "a36f3c28899dff95" }
 - { record: unit.slag-pot-car, at: "2026-10-14T14:59:35Z", status: draft, summary: "changed", sha: "99ae6089782a9bea" }
 - { record: unit.stack-crane-20t, at: "2026-10-15T04:02:06Z", status: draft, summary: "changed", sha: "169bc25878c20b1a" }
-- { record: unit.stacker-reclaimer-1500th, at: "2026-10-15T16:01:43Z", status: draft, summary: "changed: identity", sha: "98bd1f1ecb282638" }
+- { record: unit.stacker-reclaimer-1500th, at: "2026-10-15T16:15:50Z", status: draft, summary: "changed: identity, physical, built_of, basis", sha: "4fa250031700b79d" }
 - { record: unit.stair-tower-12m, at: "2026-10-14T20:31:28Z", status: draft, summary: "changed", sha: "47201be2e61453ae" }
 - { record: unit.stripper-crane-20t, at: "2026-10-14T21:36:13Z", status: draft, summary: "changed", sha: "248463a76b95017a" }
 - { record: unit.stripper-gantry-20t-moon, at: "2026-10-14T20:32:09Z", status: draft, summary: "changed: identity, built_of", sha: "9953a4704a13f3dd" }

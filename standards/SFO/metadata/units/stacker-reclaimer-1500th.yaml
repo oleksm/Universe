@@ -1,18 +1,29 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.stacker-reclaimer-1500th, name: 'Bucket wheel stacker-reclaimer, 1,500 t an hour', description: 'Runs on its rail between two stockpile beds: stacking, its boom (32 m, slewing either side) drops ore from the yard belt''s tripper onto a bed; reclaiming, the bucket wheel at the boom''s end cuts into the pile''s face and sends the ore back down the boom onto the yard belt, which then runs the other way. Stacks 1,500 t an hour (a ship''s load landed at the port in a day), reclaims 500. Travels along its x on 10 m gauge, its origin on the running plane at the slewing centre. Stacking, its tripper (unit.yard-tripper-1500th, a separate car on the same rails, coupled behind it on -x) drops the ore into a feed hopper over the slewing centre at local (0, 0, 8.5), onto the boom''s belt; its counterweight arm clears the tripper''s head above z 11.'}
+identity: {key: unit.stacker-reclaimer-1500th, name: 'Bucket wheel stacker-reclaimer, 1,500 t an hour', description: 'Runs on its rail between two stockpile beds: stacking, its boom (32 m, slewing either side) drops ore from the yard belt''s tripper onto a bed; reclaiming, the bucket wheel at the boom''s end cuts into the pile''s face and sends the ore back down the boom onto the yard belt, which then runs the other way. Stacks 1,500 t an hour (a ship''s load landed at the port in a day), reclaims 500. Travels along its x on 10 m gauge, its origin on the running plane at the slewing centre. Stacking, its tripper (unit.yard-tripper-1500th, a separate car on the same rails, coupled behind it on -x) drops the ore into a feed hopper over the slewing centre at local (0, 0, 8.5), onto the boom''s belt. Its counterweight arm reaches back to x -16, its underside 11.8 m up, clear of the tripper''s head; the ballast, 150 t of cast iron blocks centred at x -14, balances the boom horizontal and stacking
+    about the slewing centre. The boom reaches x 34.75 with the wheel.'}
 size_class: 3
-physical: {length: 40.0, width: 12.0, height: 20.0, mass: 450000.0}
+physical: {length: 51.0, width: 12.0, height: 20.0, mass: 471600.0}
 built_of:
-- {what: 'Boom, counterweight boom and slewing frame', item: material.structural-steel-a36, mass: 260000.0, note: from memory}
-- {what: Portal and bogies, item: material.structural-steel-a36, mass: 120000.0, note: from memory}
-- {what: 'Bucket wheel, drives and belts', item: good.electric-motors, mass: 70000.0, note: from memory}
+- {what: Portal and slewing base, item: material.structural-steel-a36, mass: 66720.0, note: 'the portal''s legs and girders, the slewing base''s rings and the rail flanges; measured on model v1'}
+- {what: 'Wheels, axles and bearings', item: material.high-strength-steel-4340, mass: 37980.0, note: 'sixteen running wheels and their axles and bearings, drawn solid as they are; measured on model v1'}
+- {what: Bogie frames, item: material.structural-steel-a36, mass: 13860.0, note: 'drawn solid (41.6 t); counted at a third, about how full a fabricated box is (from memory)'}
+- {what: Slewing frame and mast, item: material.structural-steel-a36, mass: 45770.0, note: 'the slewing rings, luff tower, mast and stays'' seats, the central chute and feed hopper; measured on model v1'}
+- {what: Counterweight arm, item: material.structural-steel-a36, mass: 21980.0, note: 'drawn 8 m long (10,992 kg); taken to 16 m by its length, to be remeasured'}
+- {what: Boom, item: material.structural-steel-a36, mass: 60150.0, note: 'chords, diagonals, stays, idlers and the wheel''s axle, bearings and pedestal at its tip; measured on model v1'}
+- {what: Bucket wheel, item: material.structural-steel-a36, mass: 25170.0, note: 'rim, spokes and buckets; measured on model v1'}
+- {what: Ballast, item: material.cast-iron-grey, mass: 150000.0, note: 'from the moment about the slewing centre with the boom horizontal and stacking: the boom 48 t and its belts and ore at 16 m, the wheel and its tip 45 t at 31.5, less the arm at 8 and the house at 4 behind; at 14 m'}
+- {what: 'Drives, belts and machinery house', item: good.electric-motors, mass: 50000.0, note: 'the wheel''s 8 t drive, travel, slew and luff drives, the boom''s belts and drums and the house''s electrics, from memory'}
 needs: {power: 900000.0}
 life: 788940000
 basis:
-- of: [physical, built_of, needs]
+- of: [physical, built_of]
+  tier: derived
+  review: true
+  note: Steel measured on blender's candidate v01 where drawn hollow; the ballast from the balance; drives from memory.
+- of: [needs]
   tier: invented
   review: true
-  note: Masses, rates and power from memory of stacker-reclaimers of this size.
+  note: Rates and power from memory of stacker-reclaimers of this size.
 - of: [life]
   rule: rule.life-plant
