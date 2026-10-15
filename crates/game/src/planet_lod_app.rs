@@ -288,8 +288,8 @@ impl Decider {
 struct Clusters {
     /// err, cx, cy, cz, r, perr, pcx, pcy, pcz, pr (planet metres; perr < 0: nothing above).
     row: Vec<[f32; 10]>,
-    ptr: Vec<[u32; 2]>,
-    tris: Vec<[u32; 3]>,
+    ptr: Arc<Vec<[u32; 2]>>,
+    tris: Arc<Vec<[u32; 3]>>,
     level: Vec<u8>,
     meshes: Vec<Option<(View, PooledMesh, bool)>>,
     shown: Vec<u32>,
@@ -310,8 +310,8 @@ impl Clusters {
         let n = level.len();
         Ok(Clusters {
             row: f.chunks_exact(10).map(|c| std::array::from_fn(|i| c[i])).collect(),
-            ptr: pt.chunks_exact(2).map(|c| [c[0], c[1]]).collect(),
-            tris: t.chunks_exact(3).map(|c| [c[0], c[1], c[2]]).collect(),
+            ptr: Arc::new(pt.chunks_exact(2).map(|c| [c[0], c[1]]).collect()),
+            tris: Arc::new(t.chunks_exact(3).map(|c| [c[0], c[1], c[2]]).collect()),
             level,
             meshes: (0..n).map(|_| None).collect(),
             shown: vec![],
@@ -1483,6 +1483,8 @@ impl App for PlanetLodApp {
             sent += g.tris.len();
             drawn.push((mesh, g.origin));
         }
+        let mut drawn_clusters: Vec<u32> = vec![];
+        let cl_data = self.clusters.as_ref().map(|c| { let c = c.lock().unwrap(); (c.ptr.clone(), c.tris.clone()) });
         if let Some(cl) = &self.clusters {
             let mut cl = cl.lock().unwrap();
             // (Asked again every frame until on the GPU: a frame the render thread skips loses its requests, and
@@ -1506,6 +1508,7 @@ impl App for PlanetLodApp {
                     continue;
                 }
                 frame.pooled(group, mesh, o);
+                drawn_clusters.push(i as u32);
                 chunks_drawn += 1;
                 tris_shown += cl.ptr[i][1] as usize;
             }
@@ -1583,9 +1586,15 @@ impl App for PlanetLodApp {
             let meshes: Vec<(Mesh, DVec3)> = drawn.iter().map(|(m, o)| ((*m).clone(), *o)).collect();
             let (out, busy) = (ui.in_view.clone(), ui.counting.clone());
             let aspect = aspect as f32;
+            // (Pooled clusters keep no triangles the app can read back: counted from the clusters' own lists.)
+            let bd = self.bd.clone();
             std::thread::spawn(move || {
                 let refs: Vec<(&Mesh, DVec3)> = meshes.iter().map(|(m, o)| (m, *o)).collect();
-                out.store(view_box_count(&cam, aspect, &refs), Ordering::Release);
+                let mut k = view_box_count(&cam, aspect, &refs);
+                if let Some((ptr, tris)) = cl_data {
+                    k += view_box_count_tris(&cam, aspect, &bd.pos, drawn_clusters.iter().flat_map(|&i| { let [a, n] = ptr[i as usize]; tris[a as usize..(a + n) as usize].iter().copied() }));
+                }
+                out.store(k, Ordering::Release);
                 busy.store(false, Ordering::Release);
             });
         }
@@ -1602,6 +1611,32 @@ impl App for PlanetLodApp {
 
 /// Triangles of the drawn meshes not wholly outside one clip plane and facing the eye (what the GPU
 /// rasterizes), as the page's 'in the view box'.
+/// The same count for triangles given by planet vertex ids.
+fn view_box_count_tris(cam: &Camera, aspect: f32, pos: &[DVec3], tris: impl Iterator<Item = [u32; 3]>) -> usize {
+    let vp = cam.view_proj(aspect);
+    let mut k = 0;
+    for t in tris {
+        let [a, b, c] = t.map(|v| vp * (pos[v as usize] - cam.position).as_vec3().extend(1.0));
+        let mut out = false;
+        for ax in 0..3 {
+            if (a[ax] > a.w && b[ax] > b.w && c[ax] > c.w) || (-a[ax] > a.w && -b[ax] > b.w && -c[ax] > c.w) {
+                out = true;
+                break;
+            }
+        }
+        if !out && a.w > 0.0 && b.w > 0.0 && c.w > 0.0 {
+            let (ax, ay, bx, by, cx, cy) = (a.x / a.w, a.y / a.w, b.x / b.w, b.y / b.w, c.x / c.w, c.y / c.w);
+            if (bx - ax) * (cy - ay) - (by - ay) * (cx - ax) <= 0.0 {
+                out = true;
+            }
+        }
+        if !out {
+            k += 1;
+        }
+    }
+    k
+}
+
 fn view_box_count(cam: &Camera, aspect: f32, drawn: &[(&Mesh, DVec3)]) -> usize {
     let vp = cam.view_proj(aspect);
     let mut k = 0;
