@@ -5,7 +5,7 @@ stands_for: module.pellet-plant
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 210.0, width: 67.85, height: 27.0, mass: 9544000.0}
+physical: {length: 210.0, width: 67.85, height: 27.0, mass: 9506000.0}
 bays:
 - id: M
   mount: plant-mount.bay-s3
@@ -68,23 +68,39 @@ links:
   name: slurry
   from: [-37.0, 3.0, 0.5]
   to: [-24.0, 0.0, 9.0]
-  length: 15.82
+  length: 25.04
   item: material.structural-steel-a36
-  mass: 975.3
-  note: 250 mm rubber-lined, 10 mm wall, pumped from the mill's sump up to the filters' troughs on their deck
+  mass: 1544.0
+  via:
+  - [-37.0, 3.0, 9.5]
+  - [-24.0, 3.0, 9.5]
+  note: 250 mm rubber-lined, 10 mm wall, pumped from the mill's sump up to the filters' distribution box between their troughs
+- kind: pipe
+  name: filtrate
+  from: [-30.0, 3.0, 6.5]
+  to: [-53.0, 0.0, 4.0]
+  length: 27.66
+  item: material.structural-steel-a36
+  mass: 614.0
+  via:
+  - [-33.0, 3.0, 6.5]
+  - [-33.0, 3.0, 5.0]
+  - [-53.0, 3.0, 5.0]
+  note: '150 mm: the filtrate back from the filters'' pump to the mill''s feed chute'
 - kind: conveyor
   name: cake belt
-  from: [-24.0, -4.0, 7.0]
+  from: [-30.0, -2.4, 7.0]
   to: [6.0, 8.0, 7.5]
-  length: 42.13
+  length: 46.6
   item: material.structural-steel-a36
-  mass: 4213.0
+  mass: 4660.0
   via:
-  - [-12.0, -4.0, 8.0]
+  - [-18.0, -2.4, 7.0]
+  - [-12.0, -2.4, 8.0]
   - [-12.0, 0.0, 8.5]
   - [6.0, 0.0, 8.5]
   power: 40000.0
-  note: a 0.8 m belt from under the filters, shuttling over the four discs' feed points
+  note: a 0.8 m belt on the filters' deck along x under all eight discs' chutes (y -2.4, 1 m above the deck), then up and over the four balling discs' feed points, shuttling
 - kind: conveyor
   name: green ball belt
   from: [-6.0, -10.5, 1.0]
@@ -152,7 +168,7 @@ ground:
 - {what: Grate foundations, item: good.concrete, volume: 528.0, note: under the machine's frame, mass: 1267000.0}
 - {what: Frame footings, item: good.concrete, volume: 445.5, note: a 1.5 x 1.5 x 1 m pad under each of the lattice's 198 ground nodes, mass: 1069000.0}
 - {what: Outside slabs, item: good.concrete, volume: 271.2, note: the baghouse's slab and the transformer's vault, mass: 650900.0}
-totals: {rate: 34.7222222222222, power: 26080000.0, heat: 0.0, water: 3.28, mass: 9544000.0, against_module: 'module.pellet-plant: one box 250 x 100 x 40 m, 23 MW (45 kWh and 0.5 GJ of heat a tonne, the heat counted as power). This layout: the same 125 t an hour; 26.1 MW, of which 19.3 the grate''s plasma torches; no cooling water (the pellets cool on the grate in the air it draws, the waste gas leaves by the baghouse''s stack); 3.3 kg/s of water dried off the green balls; 2,356 t of plant and frame, 7,188 t of concrete. One shaft furnace at its full rate takes 79.4 kg/s of pellets, about 2.3 of these.'}
+totals: {rate: 34.7222222222222, power: 25850000.0, heat: 0.0, water: 3.28, mass: 9506000.0, against_module: 'module.pellet-plant: one box 250 x 100 x 40 m, 23 MW (45 kWh and 0.5 GJ of heat a tonne, the heat counted as power). This layout: the same 125 t an hour; 25.8 MW, of which 19.3 the grate''s plasma torches; no cooling water (the pellets cool on the grate in the air it draws, the waste gas leaves by the baghouse''s stack); 3.3 kg/s of water dried off the green balls; 2,317 t of plant and frame, 7,188 t of concrete. One shaft furnace at its full rate takes 79.4 kg/s of pellets, about 2.3 of these.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}

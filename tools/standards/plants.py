@@ -1701,12 +1701,34 @@ def pellet_units():
         basis=[{"of": ["physical", "built_of", "holds", "needs.power"], "tier": "derived", "review": True, "note": f"Drum from memory for a mill drawing about {P_mill / 1e6:.1f} MW; masses from its plate; the ball charge a third of its volume at 4,650 kg/m3 (from memory)."},
                {"of": ["needs.water"], "tier": "derived", "note": f"The water the plant loses: the green balls hold {MOIST:.0%}, dried off on the grate; the rest of the grinding water comes back from the filters."}])
     A_f = P_ORE * 3600 / 1000 / 1.0
+    SOLIDS = 0.70                                             # the mill's slurry, by weight, as it comes to the filters: from memory
+    w_in = P_ORE * (1 - SOLIDS) / SOLIDS                      # kg/s of water in the slurry
+    w_filt = w_in - P_WATER                                   # back to the mill as filtrate
+    D_d, d_hub, n_d = 3.15, 0.6, 4                            # discs: 4 a filter, 3.15 m across on a 0.6 m hub
+    a_f = n_d * 2 * math.pi / 4 * (D_d ** 2 - d_hub ** 2)     # m2 a filter, both faces
+    n_f = math.ceil(A_f / a_f)
+    air = 1.5 * n_f * a_f / 60                                # m3/s of air drawn through the cake at 1.5 m3 a minute a m2 (from memory)
+    p_vac = 1.6e3 * air * 60                                  # W: liquid ring pumps at 1.6 kW a m3 a minute, at about 0.2 bar absolute (from memory)
+    p_aux = n_f * (7.5e3 + 15e3) + w_filt / 1000 * 3e5 / 0.7 + 30e3   # disc drives and agitators, the filtrate pump, the blow-back compressor
+    vat = cyl_shell(D_d + 0.25, 4.0, 0.008) / 2 + 2 * (D_d + 0.25) * 2.2 * 0.008      # a U trough 4 m long, half a cylinder, two end plates
+    shaft = cyl_shell(d_hub, 5.0, 0.025)
+    recv = cyl_shell(1.6, 3.0, 0.010, bottom=2.2)
+    per = (vat + shaft + recv) * RHO["steel"]
     out["disc-filter-2"] = dict(
         name="Disc filters, 2", size_class=2, fits="bay-s2", dims=(12.0, 8.0, 6.0),
-        desc=f"Two vacuum disc filters side by side ({A_f / 2:.0f} m2 each) take the water out of the slurry down to {MOIST:.0%}; the cake drops onto the layout's belt below their discharge (local 0, -4, 1); the vacuum pumps on their -x end, the filtrate back to the mill.",
-        built_of=[part("Filters", A36, 30000.0 * 2, "from memory"), part("Vacuum pumps", "good.pumps", 12000.0, "from memory")],
-        needs={"power": 600e3},
-        basis=[{"of": ["physical", "built_of", "needs"], "tier": "invented", "review": True, "note": f"{A_f:.0f} m2 at a tonne a m2 an hour, masses and power from memory."}])
+        desc=(f"Two vacuum disc filters end to end take the water out of the mill's slurry ({SOLIDS:.0%} solids, {P_ORE:.1f} kg/s of ore) down to {MOIST:.0%}: each has {n_d} discs {D_d:g} m across on a {d_hub:g} m hollow shaft ({a_f:.0f} m2, both faces), "
+              f"both shafts on one line along x at y 0, 3.7 m up, turning about once a minute in open U troughs ({D_d + 0.25:.2f} m wide, 4 m long: x -5 to -1 and 1 to 5) with agitators, each driven from its outer end (x -6 to -5, 5 to 6). "
+              f"The discs rise on the +y side and fall on the -y side, where the cake is blown off into a short steep chute beside each disc, straight down onto the layout's cake belt, which runs along x under them all at y -2.4, 1 m up (x -6 to 6); no transfer inside the unit. "
+              f"Slurry in by a distribution box between the troughs (local 0, 0, 3) that splits it between them; on the +y side two filtrate receivers (1.6 m across, 3 m tall, at (-3, 3) and (3, 3)), the vacuum pumps between them ({p_vac / 1e3:.0f} kW, x -1.5 to 1.5, y 2.5 to 4) and the filtrate pump; "
+              f"the filtrate ({w_filt:.1f} kg/s) out at (-6, 3, 0.5) back to the mill; the pumps' air out of a vent at (0, 3.5, 5.5); 400 V supply at (6, 3.5, 0.5)."),
+        built_of=[part("Troughs, shafts and receivers", A36, n_f * per, f"for each filter: a U trough in 8 mm plate, a hollow shaft {d_hub:g} m by 5 m in 25 mm, a receiver 1.6 m by 3 m in 10 mm"),
+                  part("Disc sectors and cloth", "material.polyethylene-uhmw", n_f * a_f * 30.0, "polypropylene sectors under their cloth at 30 kg/m2 of filter face, from memory; polyethylene stands for polypropylene"),
+                  part("Drives, agitators and stands", A36, n_f * 4500.0, "a drive, an agitator and the stand under each filter, from memory"),
+                  part("Vacuum pumps and compressor", "good.pumps", 25.0 * p_vac / 1e3 + 1000.0, "liquid ring pumps at 25 kg/kW, the blow-back compressor and the filtrate pump, from memory")],
+        needs={"power": p_vac + p_aux},
+        basis=[{"of": ["physical", "built_of", "needs"], "tier": "derived", "review": True,
+                "note": (f"From the plant's {P_ORE:.1f} kg/s of ore at a tonne a m2 an hour: {A_f:.0f} m2, {n_f} filters of {n_d} discs; {w_in:.1f} kg/s of water in at {SOLIDS:.0%} solids, {P_WATER:.2f} kg/s stays in the cake, {w_filt:.1f} back; "
+                         f"{air:.1f} m3/s of air through the cake, the vacuum pumps {p_vac / 1e3:.0f} kW, drives, agitators, filtrate pump and blow-back {p_aux / 1e3:.0f} kW. Slurry density, air rate and equipment weights from memory.")}])
     out["balling-disc-7m5"] = dict(
         name="Balling disc, 7.5 m", size_class=2, fits="bay-s2", dims=(9.0, 9.0, 7.0),
         desc="A shallow pan 7.5 m across, tilted 45 degrees and turning, rolls the moist ore into green balls 9 to 16 mm across; they spill over its rim onto a roller screen that sends the small ones back. Cake in from above (local 0, 2, 7), green balls out at (0, -4.5, 1).",
@@ -1800,8 +1822,9 @@ def pellet_plant_air(us, recs):
     d_gas = math.sqrt(4 * q_gas / (math.pi * 20.0))
     links = [
         link("conveyor", "ore belt", (-100.0, 0.0, 2.0), (-53.0, 0.0, 4.0), A36, 150.0, 100000.0, f"a 1 m belt in a gallery: {P_ORE:.1f} kg/s of ore fines from the ore yard, beyond the layout, through the west wall into the mill's chute", via=[(-62.0, 0.0, 9.0)]),
-        link("pipe", "slurry", (-37.0, 3.0, 0.5), (-24.0, 0.0, 9.0), A36, math.pi * 0.25 * 0.010 * RHO["steel"], None, "250 mm rubber-lined, 10 mm wall, pumped from the mill's sump up to the filters' troughs on their deck"),
-        link("conveyor", "cake belt", (-24.0, -4.0, 7.0), (6.0, 8.0, 7.5), A36, 100.0, 40000.0, "a 0.8 m belt from under the filters, shuttling over the four discs' feed points", via=[(-12.0, -4.0, 8.0), (-12.0, 0.0, 8.5), (6.0, 0.0, 8.5)]),
+        link("pipe", "slurry", (-37.0, 3.0, 0.5), (-24.0, 0.0, 9.0), A36, math.pi * 0.25 * 0.010 * RHO["steel"], None, "250 mm rubber-lined, 10 mm wall, pumped from the mill's sump up to the filters' distribution box between their troughs", via=[(-37.0, 3.0, 9.5), (-24.0, 3.0, 9.5)]),
+        link("pipe", "filtrate", (-30.0, 3.0, 6.5), (-53.0, 0.0, 4.0), A36, math.pi * 0.15 * 0.006 * RHO["steel"], None, "150 mm: the filtrate back from the filters' pump to the mill's feed chute", via=[(-33.0, 3.0, 6.5), (-33.0, 3.0, 5.0), (-53.0, 3.0, 5.0)]),
+        link("conveyor", "cake belt", (-30.0, -2.4, 7.0), (6.0, 8.0, 7.5), A36, 100.0, 40000.0, "a 0.8 m belt on the filters' deck along x under all eight discs' chutes (y -2.4, 1 m above the deck), then up and over the four balling discs' feed points, shuttling", via=[(-18.0, -2.4, 7.0), (-12.0, -2.4, 8.0), (-12.0, 0.0, 8.5), (6.0, 0.0, 8.5)]),
         link("conveyor", "green ball belt", (-6.0, -10.5, 1.0), (21.0, 0.0, 9.0), A36, 100.0, 40000.0, "a 0.8 m belt collecting the four discs' green balls (the north pair's by a short cross belt from y 1.5), rising to the grate's roller feeder", via=[(12.0, -10.5, 1.0)]),
         link("conveyor", "pellet belt", (62.0, 0.0, 2.0), (110.0, 0.0, 2.0), A36, 150.0, 100000.0, f"a 1 m belt: {P_RATE:.1f} kg/s of fired pellets off the grate's end, out by the east wall to the shaft furnace's pellet belt, beyond the layout"),
         link("duct", "waste gas", (41.0, 6.0, 3.0), (39.0, 30.0, 12.0), A36, math.pi * d_gas * 0.006 * RHO["steel"], None, f"{d_gas:.1f} m across, 6 mm plate, insulated: from the process fans' discharge through the north wall to the baghouse's inlet", via=[(39.0, 6.0, 3.0), (39.0, 20.0, 3.0), (39.0, 20.0, 12.0)]),
