@@ -4585,3 +4585,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.cooling-tower-shaft-1
+    version: 1
+    manifest_sha256: "35be38a48538288af3957fa9984642961abfdd1e88e8d4841e4ae92d3cbf6833"
+    installed: f8621ffc
+    game: "the loader (world::assets) at fso f8621ffc"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/cooling-tower-shaft-1/v1 (1075304 bytes, bounds [-23.975, 0.0, -5.95] to [24.0, 14.0, 5.95]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
