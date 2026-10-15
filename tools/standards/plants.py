@@ -1381,7 +1381,7 @@ def hydrogen_units():
     rt["needs"] = {"power": P_rect, "heat": P_rect}
     rt["desc"] = (rt["desc"].replace("Three secondary terminals on one long face (+y), 4.5 m up", "Its secondary bushings on its +y face into the rectifier house")
                   .replace("Three secondary terminals on one long face (+y)", "Its secondary bushings on its +y face into the rectifier house")
-                  + f" Local frame: the transformer's tank on the -y side (y -{(W_t + 3.0) / 2:g} to {W_t - (W_t + 3.0) / 2:g}); the rectifier in a closed house on the +y side ({L_t:g} m along x, 2.4 m deep to the +y face at y {(W_t + 3.0) / 2:g}, 2.8 m tall), its heat sinks on the transformer's water cooler; "
+                  + f" Local frame: the transformer's tank on the -y side (y -{(W_t + 3.0) / 2:g} to {W_t - (W_t + 3.0) / 2:g}); the rectifier in a closed house on the +y side (x -2.1 to 2.1, y 0.6 to {(W_t + 3.0) / 2:g}, 2.8 m tall, three service doors), fed across the gap by a shielded AC bridge, its heat sinks' water joining the transformer cooler's pair, whose ports are on the -x end at (-{L_t / 2:g}, -1.86, 1) and (-{L_t / 2:g}, -1.14, 1); "
                   f"the rectifier's two DC terminals on the house's +y face at x -0.45 and 0.45, 2.4 m up, toward the hall.")
     out["rectifier-transformer-21mva"] = rt
     out["hydrogen-purifier"] = dict(
