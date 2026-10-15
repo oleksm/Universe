@@ -2475,10 +2475,12 @@ def airless_ladle_units(us):
     for cap, trolley, kind, job, gear, key in ((150000.0, 37500.0, "Ladle gantry crane", "on its own legs over the teeming rail and the ladle rail: it lifts the full ladle off its car and holds it over each mould in turn", "a main hoist and a ladle beam", "gantry-crane-150t-moon"),
                                                 (20000.0, 6000.0, "Stripper gantry crane", "on its own legs over the teeming rail's east half: it lifts each frozen ingot up out of its mould by the hot top, the mould held down by its lugs, and sets the ingots on the ingot car", "ingot tongs whose arms hold the mould down", "stripper-gantry-20t-moon")):
         c = bridge_crane_unit(cap, 24.0, trolley, kind=kind, job=job, gear=gear, g=MOON_G[1], h_min=0.6)
-        legs = 4 * box_tube(1.0, 1.0, 0.025, 24.0) * RHO["steel"] if cap > 50000 else 4 * box_tube(0.8, 0.8, 0.02, 22.0) * RHO["steel"]
+        legs = 4 * box_tube(1.0, 1.0, 0.025, 23.0) * RHO["steel"] if cap > 50000 else 4 * box_tube(0.8, 0.8, 0.02, 22.0) * RHO["steel"]
         c["built_of"].append(part("Legs and sill beams", A36, legs * 1.15, "four box legs and two sill beams, from the legs' size (the sills 15%)"))
         c["dims"] = (10.0, 25.0, 27.0)
         c["desc"] = c["desc"].replace("on the hall's runways", "on its own legs, running on two ground rails 24 m apart").replace("its origin on the runway's rail plane", "its origin on the ground rails' plane, its girders 24 m up") + f" Sized for {MOON_G[1]:g} m/s2."
+        if cap > 50000:
+            c["desc"] += " Its bridge datum is the girders' underside at z 24 (their tops about 25.1, the trolley's rails 25.18); the legs, 1 x 1 m, 25 mm, stand from the sill beams' tops at z 1; parked, the hook's ladle beam hangs at z 22.2 under the full rope stack, not packed up to the girders."
         out[key] = c
     return out
 

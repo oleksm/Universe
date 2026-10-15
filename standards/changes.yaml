@@ -824,7 +824,7 @@
 - { record: layout.arc-furnace-air, at: "2026-10-15T14:53:36Z", status: draft, summary: "changed: links", sha: "9553ccf6eed90e0e" }
 - { record: layout.arc-furnace-airless, at: "2026-10-15T20:56:35Z", status: draft, summary: "changed: physical", sha: "4af540607b5a01f4" }
 - { record: layout.casting-bay-air, at: "2026-10-15T02:26:46Z", status: draft, summary: "changed: physical", sha: "64ae565ca9d653a2" }
-- { record: layout.casting-bay-airless, at: "2026-10-15T20:27:46Z", status: draft, summary: "changed: physical, ground, totals", sha: "fc1d305bc1fcc3eb" }
+- { record: layout.casting-bay-airless, at: "2026-10-15T21:17:48Z", status: draft, summary: "changed: physical, totals", sha: "2a08f7762f19d3a7" }
 - { record: layout.hydrogen-plant-air, at: "2026-10-15T04:31:57Z", status: draft, summary: "changed: physical", sha: "6142a0437e383639" }
 - { record: layout.hydrogen-plant-airless, at: "2026-10-15T20:27:46Z", status: draft, summary: "changed: physical, ground, totals", sha: "17d2364d90afd386" }
 - { record: layout.ingot-yard-air, at: "2026-10-15T19:02:03Z", status: draft, summary: "changed: totals", sha: "92e4f7a88130bd7a" }
@@ -2746,7 +2746,7 @@
 - { record: unit.crating-line-steel, at: "2026-10-15T19:02:03Z", status: draft, summary: "first tracked", sha: "decf119cb2734d07" }
 - { record: unit.crew-post, at: "2026-10-15T19:52:17Z", status: draft, summary: "changed", sha: "df344af78ebf56cc" }
 - { record: unit.crop-saws, at: "2026-10-15T18:20:39Z", status: draft, summary: "changed", sha: "57aeb9a5c2d969ec" }
-- { record: unit.degassing-stand, at: "2026-10-15T21:15:26Z", status: draft, summary: "changed: visual", sha: "622ca7674444a3a0" }
+- { record: unit.degassing-stand, at: "2026-10-15T21:17:48Z", status: draft, summary: "changed", sha: "eeb93e44dc6690c1" }
 - { record: unit.disc-filter-2, at: "2026-10-15T05:01:04Z", status: draft, summary: "changed", sha: "52719317d0ef0afd" }
 - { record: unit.dri-bin-200t, at: "2026-10-14T14:08:01Z", status: draft, summary: "changed", sha: "1077e81910f4da8c" }
 - { record: unit.dri-cooling-loop, at: "2026-10-15T01:24:23Z", status: draft, summary: "changed", sha: "46962a5f5ae51829" }
@@ -2758,7 +2758,7 @@
 - { record: unit.forklift-2t5, at: "2026-10-15T18:36:43Z", status: draft, summary: "changed", sha: "060854c588a349b1" }
 - { record: unit.furnace-transformer-14mva, at: "2026-10-14T18:15:58Z", status: draft, summary: "changed", sha: "f296531f2bc7dd18" }
 - { record: unit.furnace-transformer-90mva, at: "2026-10-14T15:45:44Z", status: draft, summary: "changed: identity", sha: "d7b34abc2bacd989" }
-- { record: unit.gantry-crane-150t-moon, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "2bac67a62284e749" }
+- { record: unit.gantry-crane-150t-moon, at: "2026-10-15T21:17:48Z", status: draft, summary: "changed: identity, physical, built_of", sha: "3e064f2e4a282052" }
 - { record: unit.gantry-crane-20t-moon, at: "2026-10-15T19:38:09Z", status: draft, summary: "changed", sha: "db2ad651cb251105" }
 - { record: unit.gas-heater-119mw-8bar, at: "2026-10-14T23:18:51Z", status: draft, summary: "changed: identity", sha: "0dea2e83b88bdb70" }
 - { record: unit.gas-heater-122mw, at: "2026-10-14T23:18:51Z", status: draft, summary: "changed: identity", sha: "0387b010dcb0fe1c" }
