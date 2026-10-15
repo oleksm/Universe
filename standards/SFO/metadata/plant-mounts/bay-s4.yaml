@@ -2,7 +2,7 @@
 # Written by tools/standards/plants.py: change it there.
 identity: {key: plant-mount.bay-s4, name: 'Plant bay, class 4', size_class: 4, description: A 48 m square of prepared ground or floor and the feeds to it.}
 footprint: {length: 48.0, width: 48.0}
-bears: {load: 14000000.0}
+bears: {load: 14100000.0}
 feeds: {power: 27200000.0, water: 22.5}
 basis:
 - of: [footprint]
