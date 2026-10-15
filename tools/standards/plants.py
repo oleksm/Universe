@@ -1107,7 +1107,10 @@ def shaft_units():
               "that washes out the dust with recirculated spray and trims the gas to 40 deg C; from its top down to a compressor at x 3 (motor on its -y side) and back to the cold flange. "
               f"The cooler's and the scrubber's water, {(Q_COOLZONE + W_COOL) / (4186 * 10):,.0f} kg/s at a 10 K rise, by a pair of {math.sqrt(4 * (Q_COOLZONE + W_COOL) / (4186 * 10) / 1000 / 2.5 / math.pi):.2f} m flanges on the -x face at z 1 (flow y -1, return y 1); "
               "the scrubber's blowdown (dust slurry) by a 100 mm drain to (-6, -3, 0.5); the motor's 6.6 kV supply into its terminal box, cable entry on the -y face at (3, -4, 1)."),
-        built_of=[part("Cooler and scrubber", A36, cyl_shell(3.0, 14.0, 0.012, bottom=2.0) * RHO["steel"] + 20000.0, "the tower's shell, 12 mm, and a gas cooler of 20 t from memory"),
+        built_of=[part("Scrubber shell, ends, skirt and seams", A36, 16785.4, f"3 m across, 14 m, 12 mm plate, 18 mm end plates; measured on model v1 (by formula {cyl_shell(3.0, 14.0, 0.012, bottom=2.0) * RHO['steel']:,.0f} kg)"),
+                  part("Scrubber packing", "material.stainless-steel-304", math.pi * 3.0 ** 2 / 4 * 6.0 * 250.0, "6 m of metal packing at 250 kg/m3, from memory"),
+                  part("Gas cooler", A36, 20000.0, "from memory"),
+                  part("Supports, skids and seats", A36, 17103.0, "the cooler's legs, the machine skid and seats, the pipes' feet and braces; measured on model v1"),
                   part("Compressor and motor", "good.electric-motors", 8000.0 * W_COOL / 1e6 + 5000.0, "from memory")],
         needs={"power": W_COOL / 0.96, "heat": Q_COOLZONE + W_COOL},
         basis=[{"of": ["physical", "built_of"], "tier": "invented", "review": True, "note": "Sizes from memory."},

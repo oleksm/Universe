@@ -4,9 +4,12 @@ identity: {key: unit.dri-cooling-loop, name: Sponge iron cooling loop, descripti
     (dust slurry) by a 100 mm drain to (-6, -3, 0.5); the motor''s 6.6 kV supply into its terminal box, cable entry on the -y face at (3, -4, 1).'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 8.0, height: 16.0, mass: 52550.0}
+physical: {length: 12.0, width: 8.0, height: 16.0, mass: 83280.0}
 built_of:
-- {what: Cooler and scrubber, item: material.structural-steel-a36, mass: 33760.0, note: 'the tower''s shell, 12 mm, and a gas cooler of 20 t from memory'}
+- {what: 'Scrubber shell, ends, skirt and seams', item: material.structural-steel-a36, mass: 16790.0, note: '3 m across, 14 m, 12 mm plate, 18 mm end plates; measured on model v1 (by formula 13,761 kg)'}
+- {what: Scrubber packing, item: material.stainless-steel-304, mass: 10600.0, note: '6 m of metal packing at 250 kg/m3, from memory'}
+- {what: Gas cooler, item: material.structural-steel-a36, mass: 20000.0, note: from memory}
+- {what: 'Supports, skids and seats', item: material.structural-steel-a36, mass: 17100.0, note: 'the cooler''s legs, the machine skid and seats, the pipes'' feet and braces; measured on model v1'}
 - {what: Compressor and motor, item: good.electric-motors, mass: 18790.0, note: from memory}
 needs: {power: 1796000.0, heat: 32840000.0}
 life: 788940000
