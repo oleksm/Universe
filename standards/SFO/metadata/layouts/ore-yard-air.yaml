@@ -5,7 +5,7 @@ stands_for: module.ore-yard
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 214.7, width: 101.6, height: 20.0, mass: 5484000.0}
+physical: {length: 214.7, width: 101.6, height: 20.0, mass: 5521000.0}
 bays:
 - id: H
   mount: plant-mount.bay-s2
@@ -14,6 +14,9 @@ bays:
   note: at the rail's west end, its feeder in a pit onto the yard belt
 mobile:
 - unit: unit.stacker-reclaimer-1500th
+  rides: machine rail
+  at: [0.0, 0.0, 0.0]
+- unit: unit.yard-tripper-1500th
   rides: machine rail
   at: [0.0, 0.0, 0.0]
 links:
@@ -62,7 +65,7 @@ ground:
 - {what: Rail bed, item: good.concrete, volume: 199.5, note: two strips 1 m wide and 0.8 m deep under the rails, mass: 478800.0}
 - {what: Hopper pit, item: good.concrete, volume: 177.6, note: '6 m deep under the hopper, 0.4 m walls', mass: 426200.0}
 - {what: Bed pads, item: good.concrete, volume: 1667.0, note: 'two pads 105 x 40 m, 0.2 m, at y -28 and 28, sloped to drains', mass: 4001000.0}
-totals: {rate: 0.0, power: 1550000.0, heat: 0.0, water: 0.2, mass: 5484000.0, against_module: 'module.ore-yard: one box 200 x 100 x 15 m, holding 150 kt. This layout: two beds 105 m long, 40 m across and 15 m high (iron ore at 2400 kg/m3 lying at 37 degrees) hold the same; 1.55 MW with every drive running, against the module''s 0.5; 578 t of plant, 4,906 t of concrete.'}
+totals: {rate: 0.0, power: 1580000.0, heat: 0.0, water: 0.2, mass: 5521000.0, against_module: 'module.ore-yard: one box 200 x 100 x 15 m, holding 150 kt. This layout: two beds 105 m long, 40 m across and 15 m high (iron ore at 2400 kg/m3 lying at 37 degrees) hold the same; 1.58 MW with every drive running, against the module''s 0.5; 615 t of plant, 4,906 t of concrete.'}
 staff:
 - {profession: profession.docker, count: 3}
 - {profession: profession.clerk, count: 1}

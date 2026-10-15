@@ -1952,12 +1952,26 @@ def yard_units():
     out = {}
     out["stacker-reclaimer-1500th"] = dict(
         name="Bucket wheel stacker-reclaimer, 1,500 t an hour", size_class=3, dims=(40.0, 12.0, 20.0),
-        desc="Runs on its rail between two stockpile beds: stacking, its boom (32 m, slewing either side) drops ore from the yard belt's tripper onto a bed; reclaiming, the bucket wheel at the boom's end cuts into the pile's face and sends the ore back down the boom onto the yard belt, which then runs the other way. Stacks 1,500 t an hour (a ship's load landed at the port in a day), reclaims 500. Travels along its x on 10 m gauge, its origin on the running plane at the slewing centre.",
+        desc="Runs on its rail between two stockpile beds: stacking, its boom (32 m, slewing either side) drops ore from the yard belt's tripper onto a bed; reclaiming, the bucket wheel at the boom's end cuts into the pile's face and sends the ore back down the boom onto the yard belt, which then runs the other way. Stacks 1,500 t an hour (a ship's load landed at the port in a day), reclaims 500. Travels along its x on 10 m gauge, its origin on the running plane at the slewing centre. Stacking, its tripper (unit.yard-tripper-1500th, a separate car on the same rails, coupled behind it on -x) drops the ore into a feed hopper over the slewing centre at local (0, 0, 8.5), onto the boom's belt; its counterweight arm clears the tripper's head above z 11.",
         built_of=[part("Boom, counterweight boom and slewing frame", A36, 260000.0, "from memory"),
                   part("Portal and bogies", A36, 120000.0, "from memory"),
                   part("Bucket wheel, drives and belts", "good.electric-motors", 70000.0, "from memory")],
         needs={"power": 900e3},
         basis=[{"of": ["physical", "built_of", "needs"], "tier": "invented", "review": True, "note": "Masses, rates and power from memory of stacker-reclaimers of this size."}])
+    rise, ang = 9.5 - 1.0, 15.0                           # the yard belt lifted from 1 m to the head pulley's top at 9.5, at its steepest for ore
+    incline = rise / math.tan(math.radians(ang))
+    L_t = incline + 2.0 + 2.0                                 # the incline, the head's overhang and the tail's
+    out["yard-tripper-1500th"] = dict(
+        name="Yard belt tripper, 1,500 t an hour", size_class=3, dims=(round(L_t, 1), 12.0, 11.0),
+        desc=(f"A car on the stacker-reclaimer's rails, coupled behind it by a drawbar, that lifts the yard belt out of its run: the belt climbs over the tripper at {ang:g} degrees ({incline:.1f} m to rise {rise:g} m, from 1 m up to its head pulley's top at 9.5 m), turns down round the head and back to the yard under the car. "
+              "Stacking, the ore leaves over the head into a chute to the machine's feed hopper at its slewing centre; reclaiming, a flap closes the chute and the ore the machine sends down its central chute lands on the belt beyond the tripper. "
+              f"Its origin on the running plane under the head's chute, at the machine's slewing centre when coupled; it reaches back to local x -{L_t - 2.0:.1f}, its tail at 1 m. Four bogies on the 10 m gauge, two travel drives that follow the machine's."),
+        built_of=[part("Trusses and deck", A36, L_t * 600.0, "two side trusses and the idler deck at 600 kg a metre, from memory"),
+                  part("Head and bend pulleys, chute and flap", A36, 8000.0, "from memory"),
+                  part("Bogies and travel drives", "good.electric-motors", 4 * 2000.0, "from memory")],
+        needs={"power": 30e3},
+        basis=[{"of": ["physical"], "tier": "derived", "note": f"The incline from the lift, {rise:g} m at {ang:g} degrees (iron ore's steepest on a plain belt, from memory)."},
+               {"of": ["built_of", "needs"], "tier": "invented", "review": True, "note": "From memory of yard trippers."}])
     out["truck-dump-hopper"] = dict(
         name="Truck dump hopper", size_class=2, fits="bay-s2", dims=(12.0, 10.0, 8.0),
         desc="A steel hopper over a pit that a tipping truck backs onto and empties into, 100 t, with an apron feeder under it onto the yard belt; its grizzly bars keep out the lumps. The trucks come from the port, its feeder's outlet at local (0, 0, -4) in the pit.",
@@ -2015,7 +2029,8 @@ def ore_yard_air(us, recs):
         link("conveyor", "out belt", (r(-x0 + 20), 0.0, 1.0), (r(-x0 + 80), 0.0, 1.0), A36, 150.0, 100000.0, "a 1 m belt to the pellet plant's ore belt, beyond the layout"),
         link("pipe", "dust sprays", (r(x0), beds_y + base / 2 + 2, 1.0), (r(-x0), -(beds_y + base / 2 + 2), 1.0), A36, math.pi * 0.1 * 0.004 * RHO["steel"], None, "100 mm, along both beds' outer edges, spraying water to keep the dust down", via=[(r(-x0), beds_y + base / 2 + 2, 1.0), (r(-x0) + 2, 0.0, 1.0), (r(x0) - 2, 0.0, 1.0), (r(x0), -(beds_y + base / 2 + 2), 1.0)]),
     ]
-    mobile = [{"unit": "unit.stacker-reclaimer-1500th", "rides": "machine rail", "at": [0.0, 0.0, 0.0]}]
+    mobile = [{"unit": "unit.stacker-reclaimer-1500th", "rides": "machine rail", "at": [0.0, 0.0, 0.0]},
+              {"unit": "unit.yard-tripper-1500th", "rides": "machine rail", "at": [0.0, 0.0, 0.0]}]
     ground = [
         {"what": "Rail bed", "item": CONC, "volume": r((bed_L + 20) * 2 * 1.0 * 0.8), "note": "two strips 1 m wide and 0.8 m deep under the rails"},
         {"what": "Hopper pit", "item": CONC, "volume": r(12 * 10 * 0.6 + 2 * (12 + 10) * 6 * 0.4), "note": "6 m deep under the hopper, 0.4 m walls"},

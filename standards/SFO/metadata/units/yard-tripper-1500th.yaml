@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.yard-tripper-1500th, name: 'Yard belt tripper, 1,500 t an hour', description: 'A car on the stacker-reclaimer''s rails, coupled behind it by a drawbar, that lifts the yard belt out of its run: the belt climbs over the tripper at 15 degrees (31.7 m to rise 8.5 m, from 1 m up to its head pulley''s top at 9.5 m), turns down round the head and back to the yard under the car. Stacking, the ore leaves over the head into a chute to the machine''s feed hopper at its slewing centre; reclaiming, a flap closes the chute and the ore the machine sends down its central chute lands on the belt beyond the tripper. Its origin on the running plane under the head''s chute, at the machine''s slewing centre when coupled; it reaches back to local x -33.7, its tail at 1 m. Four bogies on the 10 m gauge, two travel drives that follow the machine''s.'}
+size_class: 3
+physical: {length: 35.7, width: 12.0, height: 11.0, mass: 37430.0}
+built_of:
+- {what: Trusses and deck, item: material.structural-steel-a36, mass: 21430.0, note: 'two side trusses and the idler deck at 600 kg a metre, from memory'}
+- {what: 'Head and bend pulleys, chute and flap', item: material.structural-steel-a36, mass: 8000.0, note: from memory}
+- {what: Bogies and travel drives, item: good.electric-motors, mass: 8000.0, note: from memory}
+needs: {power: 30000.0}
+life: 788940000
+basis:
+- of: [physical]
+  tier: derived
+  note: The incline from the lift, 8.5 m at 15 degrees (iron ore's steepest on a plain belt, from memory).
+- of: [built_of, needs]
+  tier: invented
+  review: true
+  note: From memory of yard trippers.
+- of: [life]
+  rule: rule.life-plant
