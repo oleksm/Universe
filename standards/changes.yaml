@@ -832,7 +832,7 @@
 - { record: layout.ladle-station-airless, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "47acf5ee6202ed61" }
 - { record: layout.ore-yard-air, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "80cee716ce980cb3" }
 - { record: layout.pellet-plant-air, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "17d04bf873e1439b" }
-- { record: layout.shaft-furnace-air, at: "2026-10-15T01:10:30Z", status: draft, summary: "changed: physical, totals", sha: "870cc3fb22b28915" }
+- { record: layout.shaft-furnace-air, at: "2026-10-15T01:11:50Z", status: draft, summary: "changed: physical, links, totals", sha: "20384732132c3454" }
 - { record: layout.shaft-furnace-airless, at: "2026-10-14T23:42:05Z", status: draft, summary: "changed: totals", sha: "4bf9d1063418ef56" }
 - { record: market.art, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "517671b6a46daee3" }
 - { record: market.artifacts, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "6b51c19897f56c1a" }
@@ -2746,7 +2746,7 @@
 - { record: unit.degassing-stand, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "3f2a0b824b4bd169" }
 - { record: unit.disc-filter-2, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "69dea37a935cbf59" }
 - { record: unit.dri-bin-200t, at: "2026-10-14T14:08:01Z", status: draft, summary: "changed", sha: "1077e81910f4da8c" }
-- { record: unit.dri-cooling-loop, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "90a31d0c8b504a3f" }
+- { record: unit.dri-cooling-loop, at: "2026-10-15T01:11:50Z", status: draft, summary: "changed: identity", sha: "1bfdb0dfcb394745" }
 - { record: unit.eaf-vessel-80t, at: "2026-10-14T16:01:10Z", status: draft, summary: "changed: physical, built_of, visual", sha: "f948e3f34829ba7e" }
 - { record: unit.eaf-vessel-80t-sealed, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "6a1b4d84de74483c" }
 - { record: unit.electrolyser-block-20mw, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "acb6b5721d188de4" }

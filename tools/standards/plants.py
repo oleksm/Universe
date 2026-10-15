@@ -1102,7 +1102,11 @@ def shaft_units():
     out["dri-cooling-loop"] = dict(
         name="Sponge iron cooling loop", size_class=2, fits="bay-s2", dims=(12.0, 8.0, 16.0),
         desc=(f"Cools the sponge iron in the shaft's cooling zone from {T_BURDEN:.0f} to {T_OUT:.0f} deg C: {COOL_GAS:.1f} kg/s of hydrogen blown up through the zone, out at about 600 deg C, "
-              "through a gas cooler and a small scrubber (a packed tower 3 m across, 14 m tall, at local x -3) and back by a compressor (local x 3). Ports to the shaft on +y, 2 m up: cold out at local x -2, hot back at x 2."),
+              f"Ports to the shaft on the +y face, 2 m up: hot back by a {main_dia(mol_flow(COOL_GAS), 600.0, 1.5e5):.1f} m flange at (2, 4, 2), insulated, cold out by a {main_dia(mol_flow(COOL_GAS), T_COLD, 1.5e5):.1f} m flange at (-2, 4, 2). "
+              f"The hot gas rises to the top of a vertical shell-and-tube cooler (2.6 m across, z 3 to 12, on legs, at (0, -2.1)), gas in the tubes, water in the shell, down to 60 deg C; out at its bottom by a {main_dia(mol_flow(COOL_GAS), 60.0, 1.5e5):.1f} m pipe into the bottom of a small packed scrubber (3 m across, 14 m tall, 12 mm plate, at (-3, 0)) "
+              "that washes out the dust with recirculated spray and trims the gas to 40 deg C; from its top down to a compressor at x 3 (motor on its -y side) and back to the cold flange. "
+              f"The cooler's and the scrubber's water, {(Q_COOLZONE + W_COOL) / (4186 * 10):,.0f} kg/s at a 10 K rise, by a pair of {math.sqrt(4 * (Q_COOLZONE + W_COOL) / (4186 * 10) / 1000 / 2.5 / math.pi):.2f} m flanges on the -x face at z 1 (flow y -1, return y 1); "
+              "the scrubber's blowdown (dust slurry) by a 100 mm drain to (-6, -3, 0.5); the motor's 6.6 kV supply into its terminal box, cable entry on the -y face at (3, -4, 1)."),
         built_of=[part("Cooler and scrubber", A36, cyl_shell(3.0, 14.0, 0.012, bottom=2.0) * RHO["steel"] + 20000.0, "the tower's shell, 12 mm, and a gas cooler of 20 t from memory"),
                   part("Compressor and motor", "good.electric-motors", 8000.0 * W_COOL / 1e6 + 5000.0, "from memory")],
         needs={"power": W_COOL / 0.96, "heat": Q_COOLZONE + W_COOL},
@@ -1192,6 +1196,7 @@ def shaft_furnace_air(us, recs):
     d_cw = math.sqrt(4 * flow / 1000 / 2.5 / math.pi)
     d_scr = math.sqrt(4 * Q_SCRUB / (4186 * 10) / 1000 / 2.5 / math.pi)
     d_kc = math.sqrt(4 * W_COMP / (4186 * 10) / 1000 / 2.5 / math.pi)
+    d_lc = math.sqrt(4 * (Q_COOLZONE + W_COOL) / (4186 * 10) / 1000 / 2.5 / math.pi)
     links = [
         link("conveyor", "pellet belt", (round(belt_x, 1), 0.0, 2.0), (0.0, 0.0, round(H + 2.0, 1)), A36, 180.0, 300000.0, f"a 1.2 m belt in a covered gallery on trestles every 18 m, 180 kg/m with the gallery (from memory), rising at {rise:g} degrees from the pellet plant's transfer house to a head house on the tower's roof over the charge hopper; {PELLETS:.0f} kg/s of pellets"),
         link("conveyor", "product belt", (0.0, 0.0, 5.0), (-60.0, 0.0, 5.0), A36, 150.0, 150000.0, "a 1 m belt in a gallery 5 m up, from under the discharge lock west to the arc furnace shop's sponge iron bin, beyond the layout"),
@@ -1205,6 +1210,7 @@ def shaft_furnace_air(us, recs):
         link("pipe", "condensate to the hydrogen plant", (54.0, 29.3, 0.5), (100.0, 29.3, 0.5), A36, math.pi * 0.2 * 0.006 * RHO["steel"], None, f"200 mm, 6 mm wall: the {STEAM:.1f} kg/s of water the reduction made, back to the electrolysers, beyond the layout"),
         link("pipe", "tower loop to the scrubber", (84.0, 31.5, 0.75), (51.5, 30.0, 1.0), A36, 2 * pm(d_scr, 0.012), None, f"a pair of {d_scr:.1f} m pipes, 12 mm wall, flow and return, off the mains on the plant's east side, west along y 31.5 and up to the scrubber's flanges on its +y face", via=[(51.5, 31.5, 0.75)]),
         link("pipe", "cooler water to the compressor", (66.25, -12.0, 0.75), (66.25, -4.0, 1.0), A36, 2 * pm(d_kc, 0.010), None, f"a pair of {d_kc:.1f} m pipes, 10 mm wall, off the mains' end, north to the compressor's flanges on its -y face"),
+        link("pipe", "cooling water to the sponge iron cooling loop", (-34.0, 42.0, 0.75), (-30.0, -24.0, 1.0), A36, 2 * pm(d_lc, 0.010), None, f"a pair of {d_lc:.2f} m pipes, 10 mm wall, off the mains at the west end, south in a trench clear of the tower to the loop's flanges on its -x face", via=[(-34.0, -24.0, 0.75)]),
         link("pipe", "cooling water mains", (-72.0, 42.0, 0.75), (60.0, -12.0, 0.75), A36, 2 * pm(d_cw, 0.012), None, f"a pair of {d_cw:.1f} m pipes, 12 mm wall, flow and return: {flow:,.0f} kg/s at a 10 K rise, along the towers' row and down the plant to the scrubber, compressor, cooling loop and transformer", via=[(84.0, 42.0, 0.75), (84.0, -12.0, 0.75)]),
         link("pipe", "cold gas to the cooling zone", (-26.0, -20.0, 2.0), (-(side / 2 - 0.5), 0.0, z_ring - 8.0), A36, pm(d_cg, 0.008), None, f"{d_cg:.1f} m, 8 mm wall: {COOL_GAS:.1f} kg/s of hydrogen at {T_COLD:.0f} deg C, through the tower's west wall", via=[(-26.0, -20.0, z_ring - 8.0), (-26.0, 0.0, z_ring - 8.0)]),
         link("pipe", "hot gas from the cooling zone", (-(side / 2 - 0.5), 0.0, z_ring - 3.0), (-22.0, -20.0, 2.0), A36, pm(d_cg_hot, 0.010) * 1.5, None, f"{d_cg_hot:.1f} m, 10 mm wall, insulated (half as much again): about 600 deg C, back to the loop's cooler", via=[(-22.0, 0.0, z_ring - 3.0), (-22.0, -20.0, z_ring - 3.0)]),
