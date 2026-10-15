@@ -1715,12 +1715,12 @@ def pellet_units():
     recv = cyl_shell(1.6, 3.0, 0.010, bottom=2.2)
     per = (vat + shaft + recv) * RHO["steel"]
     out["disc-filter-2"] = dict(
-        name="Disc filters, 2", size_class=2, fits="bay-s2", dims=(12.0, 8.0, 6.0),
+        name="Disc filters, 2", size_class=2, fits="bay-s2", dims=(12.0, 6.6, 6.0),
         desc=(f"Two vacuum disc filters end to end take the water out of the mill's slurry ({SOLIDS:.0%} solids, {P_ORE:.1f} kg/s of ore) down to {MOIST:.0%}: each has {n_d} discs {D_d:g} m across on a {d_hub:g} m hollow shaft ({a_f:.0f} m2, both faces), "
               f"both shafts on one line along x at y 0, 3.7 m up, turning about once a minute in open U troughs ({D_d + 0.25:.2f} m wide, 4 m long: x -5 to -1 and 1 to 5) with agitators, each driven from its outer end (x -6 to -5, 5 to 6). "
               f"The discs rise on the +y side and fall on the -y side, where the cake is blown off into a short steep chute beside each disc, straight down onto the layout's cake belt, which runs along x under them all at y -2.4, 1 m up (x -6 to 6); no transfer inside the unit. "
               f"Slurry in by a distribution box between the troughs (local 0, 0, 3) that splits it between them; on the +y side two filtrate receivers (1.6 m across, 3 m tall, at (-3, 3) and (3, 3)), the vacuum pumps between them ({p_vac / 1e3:.0f} kW, x -1.5 to 1.5, y 2.5 to 4) and the filtrate pump; "
-              f"the filtrate ({w_filt:.1f} kg/s) out at (-6, 3, 0.5) back to the mill; the pumps' air out of a vent at (0, 3.5, 5.5); 400 V supply at (6, 3.5, 0.5)."),
+              f"the filtrate ({w_filt:.1f} kg/s) out at (-6, 3, 0.5) back to the mill; the pumps' air out of a vent at (0, 3.5, 5.5); 400 V supply at (6, 3.5, 0.5). Its parts span y -2.55 to 4 about the local origin (the chutes to the pump skid): its width is that extent, not centred."),
         built_of=[part("Troughs, shafts and receivers", A36, 3762.6 + 3539.4 + 3318.7, f"the two U troughs in 8 mm plate (shells 2,672.6 kg, heads 1,090.0), the hollow shafts {d_hub:g} m by 5 m in 25 mm (3,539.4), the receivers 1.6 m by 3 m in 10 mm (shells 2,348.9, heads 608.6, rings 361.2); measured on model v1"),
                   part("Disc sectors and cloth", "material.polyethylene-uhmw", n_f * a_f * 30.0, "polypropylene sectors under their cloth at 30 kg/m2 of filter face, from memory; polyethylene stands for polypropylene"),
                   part("Stand webs and chutes", A36, 1491.4 + 881.6, "the stands' saddle webs (1,491.4 kg) and the cake chutes' plates (881.6); measured on model v1"),
