@@ -399,6 +399,12 @@ staff:
 - {profession: profession.metalworker, count: 2}
 - {profession: profession.technician, count: 1}
 - {profession: profession.engineer, count: 1}
+visual:
+  format: "freefall-model/1"
+  path: "models/shaft-furnace-air/v1"
+  manifest_sha256: "3f3139441e3b9a4c658f005c07e5522e3b141796c6849e68bdc85b15ccffd3f0"
+  version: 1
+  triangles: 371200
 basis:
 - of: [bays, links, frame.box]
   tier: invented
