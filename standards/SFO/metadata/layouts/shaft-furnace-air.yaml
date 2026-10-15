@@ -71,7 +71,7 @@ links:
   item: material.structural-steel-a36
   mass: 34770.0
   power: 300000.0
-  note: a 1.2 m belt in a covered gallery on trestles every 18 m, 180 kg/m with the gallery (from memory), rising at 15 degrees from the pellet plant's transfer house to a head house on the tower's roof over the charge hopper; 79 kg/s of pellets
+  note: a 1.2 m belt in a covered gallery on trestles every 18 m, 180 kg/m with the gallery (from memory), rising at 15 degrees from the pellet plant's transfer house to a head house on the tower's roof over the charge hopper; 79 kg/s of pellets; over the recycle compressor its trestles are portals straddling it (legs at y -5.5 and 5.5, clear to z 9, braced above)
 - kind: conveyor
   name: product belt
   from: [0.0, 0.0, 5.0]
@@ -153,7 +153,7 @@ links:
   via:
   - [24.0, -20.0, 26.0]
   - [0.0, -20.0, 26.0]
-  note: '3.2 m inside 200 mm of refractory, 16 mm shell: hydrogen at 900 deg C, in through the tower''s south wall to the bustle''s inlet; its shell runs warm, so it is the hydrogen-tight steel of the loop that matters (not yet specified)'
+  note: '3.2 m inside 200 mm of refractory, 16 mm shell: hydrogen at 900 deg C, in through the tower''s south wall to the bustle''s inlet; its shell runs warm, so it is the hydrogen-tight steel of the loop that matters (not yet specified); its support beside the heater stands outside the heater''s footprint, carrying the duct on a head beam'
 - kind: pipe
   name: hydrogen make-up
   from: [100.0, 4.0, 1.5]
