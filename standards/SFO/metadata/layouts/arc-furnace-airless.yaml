@@ -5,7 +5,7 @@ stands_for: module.arc-furnace
 site:
   atmosphere: none
   gravity: [1.6, 2.0]
-physical: {length: 249.0, width: 192.0, height: 25.0, mass: 5232000.0}
+physical: {length: 251.0, width: 192.0, height: 25.0, mass: 5234000.0}
 bays:
 - id: V
   mount: plant-mount.bay-s2
@@ -165,16 +165,16 @@ links:
   note: the gantry crane's two straight rails, 36 m long along x at y -12 and 12 (24 m apart); the link runs on their centre line
 - kind: pipe
   name: cooling water to the radiators
-  from: [-214.0, -126.0, 1.0]
+  from: [-218.0, -126.0, 1.0]
   to: [-15.8, 11.1, 5.5]
-  length: 722.9
+  length: 734.9
   item: material.structural-steel-a36
-  mass: 142600.0
+  mass: 145000.0
   via:
   - [-24.0, -126.0, 1.0]
   - [-24.0, -78.0, 1.0]
-  - [-214.0, -78.0, 1.0]
-  - [-214.0, -30.0, 1.0]
+  - [-218.0, -78.0, 1.0]
+  - [-218.0, -30.0, 1.0]
   - [-24.0, -30.0, 1.0]
   - [-24.0, -30.0, 1.0]
   - [-24.0, -14.0, 1.0]
@@ -185,7 +185,7 @@ links:
   - [-19.5, -0.5, 1.5]
   - [-19.5, -0.5, 5.5]
   - [-19.5, 11.1, 5.5]
-  note: 'a pair of 500 mm pipes, 8 mm wall, flow and return, at about 330 K: along the edges of the 12 low radiator fields'' rows, their headers teed off it, then north, dipping to z -0.8 in a covered trench under the crane''s south rail (y -14 to -10), and east to the furnace''s manifold (its flanges at (-15.8, 10.9) and (-15.8, 11.3), 5.5 m up)'
+  note: 'a pair of 500 mm pipes, 8 mm wall, flow and return, at about 330 K: along the edges of the 12 low radiator fields'' rows (the pair 0.8 m apart, its west ends 2 m past the westernmost ports), each field''s ports joined by a 150 mm pair (the flow branch rising to z 1.8 over the return main), then north, dipping to z -0.8 in a covered trench under the crane''s south rail (y -14 to -10), and east to the furnace''s manifold (its flanges at (-15.8, 10.9) and (-15.8, 11.3), 5.5 m up)'
 - kind: pipe
   name: transformer cooling
   from: [-24.0, -8.38, 1.0]
@@ -217,7 +217,7 @@ ground:
 - {what: Crew post berm, item: material.regolith, volume: 1132.0, note: 'loose regolith 1 m over the post''s crest (its top 5.3 m up), lying at 35 degrees, a cavity for the post, with openings for its windows (light wells on the north) and its airlock (a ramp cut on the west); with openings for its windows and airlock; at the airlock''s door a landing of packed regolith 2 x 2 m, its top at the threshold (1.35 m up), and a ramp down to the ground at about 1 in 3', mass: 1698000.0}
 - {what: Radiator legs' pads, item: material.regolith-sintered, volume: 37.75, note: a 0.3 m block under each leg, mass: 94380.0}
 - {what: Rail sleepers and pads, item: material.regolith-sintered, volume: 144.2, note: 'under the ladle, slag and crane rails, the filter and the bin', mass: 360500.0}
-totals: {rate: 26.6666666666667, power: 72880000.0, heat: 18450000.0, water: 0.0, mass: 5232000.0, against_module: 'module.arc-furnace: one box, the same on every world. This layout: the same rate; 72.9 MW; 18.4 MW to 13 radiator fields (21.8 MW at lunar noon), 12 at 330 K for the panels and transformer and 1 at 485 K for the duct, in place of the tower; no water used up (closed loops); no hall, no baghouse (the furnace is sealed); 1,315 t of plant and 3,917 t of sintered regolith. The radiators cover 3.0 ha: the heat that went up a tower''s plume as steam must here leave as light, and at 330 K a panel in the noon sun sheds little. A heat pump lifting the panels'' heat to 485 K (at half Carnot''s) would need about 7 MW more power and 3 hot fields in place of all 13 (not fitted).'}
+totals: {rate: 26.6666666666667, power: 72880000.0, heat: 18450000.0, water: 0.0, mass: 5234000.0, against_module: 'module.arc-furnace: one box, the same on every world. This layout: the same rate; 72.9 MW; 18.4 MW to 13 radiator fields (21.8 MW at lunar noon), 12 at 330 K for the panels and transformer and 1 at 485 K for the duct, in place of the tower; no water used up (closed loops); no hall, no baghouse (the furnace is sealed); 1,318 t of plant and 3,917 t of sintered regolith. The radiators cover 3.0 ha: the heat that went up a tower''s plume as steam must here leave as light, and at 330 K a panel in the noon sun sheds little. A heat pump lifting the panels'' heat to 485 K (at half Carnot''s) would need about 7 MW more power and 3 hot fields in place of all 13 (not fitted).'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}

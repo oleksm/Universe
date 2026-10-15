@@ -822,7 +822,7 @@
 - { record: law.tube-time, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "934385090028c5e6" }
 - { record: law.year, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "29f1ef4424e5cc98" }
 - { record: layout.arc-furnace-air, at: "2026-10-15T14:53:36Z", status: draft, summary: "changed: links", sha: "9553ccf6eed90e0e" }
-- { record: layout.arc-furnace-airless, at: "2026-10-15T20:18:37Z", status: draft, summary: "changed: physical, links, totals", sha: "d6de66c0cc234157" }
+- { record: layout.arc-furnace-airless, at: "2026-10-15T20:21:14Z", status: draft, summary: "changed: physical, links, totals", sha: "e609f2239ab0b941" }
 - { record: layout.casting-bay-air, at: "2026-10-15T02:26:46Z", status: draft, summary: "changed: physical", sha: "64ae565ca9d653a2" }
 - { record: layout.casting-bay-airless, at: "2026-10-15T20:14:01Z", status: draft, summary: "changed: physical, ground, totals", sha: "63c6754a757494bb" }
 - { record: layout.hydrogen-plant-air, at: "2026-10-15T04:31:57Z", status: draft, summary: "changed: physical", sha: "6142a0437e383639" }
