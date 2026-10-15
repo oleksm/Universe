@@ -1616,7 +1616,8 @@ def hydrogen_plant_air(us, recs):
         {"what": "Frame footings", "item": CONC, "volume": r(ground_nodes * 2.25), "note": f"a 1.5 x 1.5 x 1 m pad under each of the lattice's {ground_nodes} ground nodes"},
         {"what": "Rectifier slabs and fire walls", "item": CONC, "volume": r(N_BLK * (12 * 8 * 0.5) + (N_BLK + 1) * 8 * 6 * 0.3), "note": "a 12 x 8 x 0.5 m slab under each, its top at z 0 with an oil sump; fire walls 8 m long, 6 m tall, 0.3 m thick along y at x -60, -36, -12, 12, 36 and 60"},
         {"what": "Outside slabs", "item": CONC, "volume": r(2 * 12 * 8 * 0.5), "note": "12 x 8 x 0.5 m under the purifier and the water treatment, tops at z 0, the water treatment's with a drain channel to its reject flange"},
-        {"what": "Cooling tower basin", "item": CONC, "volume": r((tower["dims"][0] + 0.6) * 12.6 * 0.5 + 2 * (tower["dims"][0] + 0.3 + 12.3) * 2.0 * 0.3), "note": "sunk as the furnace shop's: a 0.5 m floor 0.6 m wider than the tower each way, walls 0.3 m thick and 2 m deep, the water just under z 0; the tower stands on the walls"},
+        {"what": "Cooling tower basin", "item": CONC, "volume": r((tower["dims"][0] + 0.6) * 12.6 * 0.5 + 2 * (tower["dims"][0] + 0.3 + 12.3) * 2.0 * 0.3), "note": "sunk as the furnace shop's: a 0.5 m floor 0.6 m wider than the tower each way, walls 0.3 m thick and 2 m deep, the water just under z 0"},
+        {"what": "Tower pedestals", "item": CONC, "volume": r(12 * 0.6 * 0.6 * 2.0), "note": "twelve 0.6 m square piers from the basin floor (z -2) to z 0 under the tower's eight feet (x ±17.6 and ±6, y ±5.6) and its skid's four corners"},
     ]
     for g in ground:
         g["mass"] = r(g["volume"] * RHO["concrete"])
