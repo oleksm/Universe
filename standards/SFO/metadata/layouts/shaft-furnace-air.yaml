@@ -353,13 +353,19 @@ links:
 frame:
   box: [-12.0, -12.0, 0.0, 12.0, 12.0, 54.0]
   cell: 3.0
-  shape: 'An open braced tower 24 x 24 m and 54 m tall round the shaft: walls one cell thick, a roof one cell deep carrying the belt''s head house, six grating platforms at z 9, 15, 24, 30, 36, 45 (the lock and feeders, the cooling zone''s ports, round the bustle, the reduction zone, 3 m under the top gas main, the seal leg), each with a 10 m hole round the shaft, at z 24 a 17 m hole round the bustle (about 15 m across); stairs in switchback flights 1.2 m wide inside the north-west corner of the walls (x -12 to -6, y 9 to 12; the members inside that prism left out, its faces'' posts and bracing kept), landing beams on the 3 m nodes, landing on each platform and the roof at z 51; no cladding.'
+  shape: 'An open braced tower 24 x 24 m and 54 m tall round the shaft: walls one cell thick, a roof one cell deep carrying the belt''s head house, six grating platforms at z 9, 15, 24, 30, 36, 45 (the lock and feeders, the cooling zone''s ports, round the bustle, the reduction zone, 3 m under the top gas main, the seal leg), each with a 10 m hole round the shaft, at z 24 a 17 m hole round the bustle (about 15 m across); stairs in switchback flights 1.2 m wide inside the north-west corner of the walls (x -12 to -6, y 9 to 12; the members inside that prism left out, its faces'' posts and bracing kept), landing beams on the 3 m nodes, landing on each platform through a doorway 3 m wide and 3 m high in the stair''s inner face (x -9 to -6, y 9) and the roof at z 51; no cladding.'
   openings:
   - [9.0, -3.0, 38.0, 12.0, 3.0, 51.0]
   - [-3.0, -3.0, 45.0, 12.0, 3.0, 54.0]
   - [-3.0, -12.0, 23.0, 3.0, -9.0, 29.0]
   - [-12.0, -3.0, 3.0, -9.0, 3.0, 22.0]
   - [-11.9, 9.1, 0.1, -6.1, 11.9, 53.9]
+  - [-8.9, 8.9, 9.1, -6.1, 9.1, 11.9]
+  - [-8.9, 8.9, 15.1, -6.1, 9.1, 17.9]
+  - [-8.9, 8.9, 24.1, -6.1, 9.1, 26.9]
+  - [-8.9, 8.9, 30.1, -6.1, 9.1, 32.9]
+  - [-8.9, 8.9, 36.1, -6.1, 9.1, 38.9]
+  - [-8.9, 8.9, 45.1, -6.1, 9.1, 47.9]
   members:
   - {item: stock.st4340-tb-120x3-s3000, count: 2266, where: tower walls}
   - {item: stock.st4340-tb-120x3-d3000, count: 1731, where: tower walls}

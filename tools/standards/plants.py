@@ -1130,11 +1130,13 @@ def shaft_furnace_air(us, recs):
     z_top_gas = float(sh["desc"].split("top gas outlet at z ")[1].split(" ")[0])
     z_bustle = float(sh["desc"].split("a ring ")[1].split("at z ")[1].split(",")[0])
     z_ring = float(sh["desc"].split("underside is at z ")[1].split(" ")[0])
+    decks = (9, 15, 24, 30, 36, 45)                      # m: lock and feeders, cooling ports, bustle, reduction zone, under the top gas outlet, seal leg
     openings = [(9.0, -3.0, z_top_gas - 3.0, 12.0, 3.0, top - 3.0),            # east wall: the top gas main out
                 (-3.0, -3.0, top - 3 * cell, 12.0, 3.0, top),                  # roof and the east wall's top: the pellet belt's gallery, rising at 15 degrees, comes in through the roof to its head over the hopper
                 (-3.0, -12.0, z_bustle - 3.0, 3.0, -9.0, z_bustle + 3.0),     # south wall: the hot gas main in to the bustle
                 (-12.0, -3.0, 3.0, -9.0, 3.0, z_ring),                       # west wall: the product belt out, the cooling loop's pipes
-                (-11.9, 9.1, 0.1, -6.1, 11.9, top - 0.1)]               # the stair's prism in the north-west wall cells: members inside it go, those in its faces (posts, face bracing) stay
+                (-11.9, 9.1, 0.1, -6.1, 11.9, top - 0.1),
+                *[(-8.9, 8.9, z + 0.1, -6.1, 9.1, z + 2.9) for z in decks]]    # a doorway from each landing onto its platform in the stair's inner face (posts and headers kept)             # the stair's prism in the north-west wall cells: members inside it go, those in its faces (posts, face bracing) stay
     groups, ground_nodes, n_nodes, cells = lattice(box, cell, round(top / cell) - 1, None, openings)
     x0, y0, z0, x1, y1, z1 = box
     # Wind: 1 kPa (invented) on one face; the tower's walls take its moment as chords.
@@ -1164,7 +1166,6 @@ def shaft_furnace_air(us, recs):
     members.append({"item": "stock.st4340-box-400x400x25", "count": n_col, "where": f"columns under the shaft's ring girder, {z_ring:.0f} m, on a circle of radius {float(sh['desc'].split('(radius ')[1].split(' ')[0]):g} m beside the cooling zone and cone, the first at 22.5 degrees off x so the product belt passes between; braced to the tower's walls every 6 m"})
     fmass += n_col * z_ring * col_a * RHO["steel"]
     deck = 6 * (x1 - x0) * (y1 - y0) * 0.6 * 0.01 * RHO["steel"]       # six platforms of grating, 60% of the plan
-    decks = (9, 15, 24, 30, 36, 45)                      # m: lock and feeders, cooling ports, bustle, reduction zone, under the top gas outlet, seal leg
     flights = math.ceil((top - cell) / 3.0)               # switchback flights of 3 m up to the roof
     deck += flights * 750.0 * 0.75                        # the stair's flights and landings, 750 kg a 4 m flight (as the stair tower's)
     cap = frames.strut_capacity(yaml.safe_load(open(S + "mill-stock/" + strut(sec, cell)[1]["kit"]["section"].split(".", 1)[1].upper() + ".yaml")))
@@ -1261,7 +1262,7 @@ def shaft_furnace_air(us, recs):
         "physical": {"length": r(max(xs) - min(xs)), "width": r(max(ys) - min(ys)), "height": z1, "mass": r(total)},
         "bays": bays, "links": links,
         "frame": {"box": list(box), "cell": cell, "shape": f"An open braced tower {x1 - x0:.0f} x {y1 - y0:.0f} m and {top:.0f} m tall round the shaft: walls one cell thick, a roof one cell deep carrying the belt's head house, six grating platforms at z {', '.join(str(z) for z in decks)} (the lock and feeders, the cooling zone's ports, round the bustle, the reduction zone, 3 m under the top gas main, the seal leg), each with a 10 m hole round the shaft, at z 24 a 17 m hole round the bustle (about 15 m across); "
-                           f"stairs in switchback flights 1.2 m wide inside the north-west corner of the walls (x -12 to -6, y 9 to 12; the members inside that prism left out, its faces' posts and bracing kept), landing beams on the 3 m nodes, landing on each platform and the roof at z {top - cell:.0f}; no cladding.",
+                           f"stairs in switchback flights 1.2 m wide inside the north-west corner of the walls (x -12 to -6, y 9 to 12; the members inside that prism left out, its faces' posts and bracing kept), landing beams on the 3 m nodes, landing on each platform through a doorway 3 m wide and 3 m high in the stair's inner face (x -9 to -6, y 9) and the roof at z {top - cell:.0f}; no cladding.",
                   "openings": [list(o) for o in openings], "members": members, "carries": [f"unit.{sh_key}"], "mass": r(frame_mass), "sized": sized},
         "ground": ground,
         "totals": {"rate": S_RATE, "power": r(power), "heat": r(heat), "water": r(water), "mass": r(total), "against_module": against},
