@@ -142,7 +142,7 @@ pub fn stair(ship: &Ship) -> (DVec3, DVec3) {
 }
 
 /// The ship's surfaces to walk on, if it's modelled.
-fn walk_mesh(ship: &Ship) -> Option<&'static crate::walk::WalkMesh> {
+fn walk_mesh(ship: &Ship) -> Option<&crate::walk::WalkMesh> {
     ship.spec().shape().walk.as_deref()
 }
 
@@ -213,7 +213,7 @@ pub fn ramp_angle(sys: &StarSystem, ship: &Ship) -> f64 {
 /// The ship as something to walk on and bump into, placed (`at`, `rot`),
 /// its ramp swung down by `ramp` (rad): its own surfaces, or failing that
 /// its convex parts.
-pub fn ship_colliders(ship: &Ship, at: DVec3, rot: DQuat, ramp: f64, out: &mut Vec<Collider<'_>>) {
+pub fn ship_colliders<'a>(ship: &'a Ship, at: DVec3, rot: DQuat, ramp: f64, out: &mut Vec<Collider<'a>>) {
     let shape = ship.spec().shape();
     if let Some(r) = &shape.ramp {
         let turn = r.turn(ramp);

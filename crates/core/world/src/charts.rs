@@ -13,6 +13,7 @@ use crate::units::LIGHT_YEAR;
 
 pub struct Charts {
     pub seed: u64,
+    isolated: bool,
     surfaces: Arc<crate::worlds::pgs::Sources>,
     pub galaxy: Galaxy,
     pub gate_links: Vec<(usize, usize)>,
@@ -28,7 +29,14 @@ impl Charts {
     }
 
     pub fn new(seed: u64, galaxy: Galaxy, gate_links: Vec<(usize, usize)>, goods: Vec<Item>, home_system: usize) -> Self {
-        Charts { surfaces: Default::default(), seed, galaxy, gate_links, goods, home_system, systems: Mutex::new(HashMap::new()) }
+        Charts { isolated: false, surfaces: Default::default(), seed, galaxy, gate_links, goods, home_system, systems: Mutex::new(HashMap::new()) }
+    }
+
+    pub(crate) fn isolated(galaxy: Galaxy, system: Arc<StarSystem>) -> Self {
+        let mut charts = Self::new(galaxy.seed, galaxy, Vec::new(), Vec::new(), system.index);
+        charts.isolated = true;
+        charts.systems.get_mut().unwrap().insert(system.index, system);
+        charts
     }
 
     pub(crate) fn with_surfaces(mut self, sources: Arc<crate::worlds::pgs::Sources>) -> Self {
@@ -45,6 +53,7 @@ impl Charts {
         if let Some(s) = cache.get(&i) {
             return s.clone();
         }
+        assert!(!self.isolated, "system {i} is not in these isolated charts");
         let mut sys = generate(&self.galaxy, &self.gate_links, i);
         crate::worlds::pgs::apply_sources(&mut sys, &self.surfaces);
         let sys = Arc::new(sys);

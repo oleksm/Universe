@@ -8,6 +8,8 @@ use std::collections::{BTreeMap, HashMap, HashSet};
 const NONE: u32 = u32::MAX;
 const TIE: f64 = 1e-12;
 
+mod package;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Water {
     Unknown,
@@ -72,6 +74,8 @@ pub struct Surface {
     bodies: BTreeMap<u32, f64>,
     tree: Vec<Node>,
     max: f64,
+    /// A revision-4 package (root and regions, mapped) in place of the decoded file.
+    package: Option<std::sync::Arc<package::Package>>,
 }
 
 struct Bytes<'a> {
@@ -116,7 +120,30 @@ struct Section {
     hash: [u8; 32],
 }
 
+/// Immutable copy of one canonical chord face for bounded visual workers.
+/// `water_level_m` is visible water, never a replacement for `bed_heights_m`.
+#[derive(Clone, Copy, Debug)]
+pub struct FaceGeometry {
+    pub positions: [DVec3; 3],
+    pub bed_heights_m: [f64; 3],
+    pub neighbours: [u32; 3],
+    pub body: u32,
+    pub water_level_m: Option<f64>,
+}
+
 impl Surface {
+    pub fn face_geometry(&self, id: u32) -> Option<FaceGeometry> {
+        if let Some(p) = &self.package { return p.face_geometry(id); }
+        let f = self.faces.get(id as usize)?;
+        Some(FaceGeometry {
+            positions: f.vertices.map(|i| self.points[i].position),
+            bed_heights_m: f.vertices.map(|i| self.points[i].height),
+            neighbours: f.neighbours.map(|i| i as u32),
+            body: f.body,
+            water_level_m: self.bodies.get(&f.body).copied(),
+        })
+    }
+
     /// Strict canonical root reader, with per-section checksums and closed topology.
     pub fn read(data: &[u8]) -> Result<Self, String> {
         let mut b = Bytes { data, at: 0 };
@@ -401,6 +428,7 @@ impl Surface {
             bodies,
             tree: Vec::new(),
             max,
+            package: None,
         };
         let mut centres: Vec<_> = surface
             .faces
@@ -420,10 +448,25 @@ impl Surface {
         surface.build_tree(&mut centres, 0);
         Ok(surface)
     }
+    /// A revision-4 package (`planet.json`, root and regions): files mapped, the manifest's
+    /// opening records checked, regions' records read on first touch. Returns the surface and
+    /// the manifest's SHA256 (the package's identity).
+    pub fn open_package(folder: &std::path::Path) -> Result<(Self, String), String> {
+        let opened = package::Package::open(folder)?;
+        let sha = opened.package.manifest_sha256().to_owned();
+        let p = opened.package;
+        Ok((Self { radius_m: p.radius_m, capabilities: opened.capabilities, provenance: opened.provenance, points: vec![], faces: vec![], bodies: BTreeMap::new(), tree: vec![], max: p.max_height, package: Some(std::sync::Arc::new(p)) }, sha))
+    }
+    /// For a package: what has been read, per file (bytes, first touch). None for a decoded file.
+    pub fn package_report(&self) -> Option<serde_json::Value> {
+        self.package.as_ref().map(|p| p.report())
+    }
     pub fn point_count(&self) -> usize {
+        if let Some(p) = &self.package { return p.point_count(); }
         self.points.len()
     }
     pub fn face_count(&self) -> usize {
+        if let Some(p) = &self.package { return p.face_count(); }
         self.faces.len()
     }
     pub fn max_height(&self) -> f64 {
@@ -493,14 +536,22 @@ impl Surface {
             return Err("invalid differential radius".into());
         }
         let q = direction.normalize();
-        let f = &self.faces[sample.face as usize];
-        let [a,b,c] = f.vertices.map(|i| &self.points[i]);
-        let e1 = b.position - a.position;
-        let e2 = c.position - a.position;
-        let g = ((b.height-a.height)*e2.cross(f.normal)
-            + (c.height-a.height)*f.normal.cross(e1))/f.normal.length_squared();
-        let nq = f.normal.dot(q);
-        let ambient = (g - f.normal*(g.dot(q)/nq))*(f.plane/nq);
+        let ([pa, pb, pc], [ha, hb, hc]) = match &self.package {
+            Some(p) => p.corners(sample.face)?,
+            None => {
+                let f = &self.faces[sample.face as usize];
+                let [a, b, c] = f.vertices.map(|i| &self.points[i]);
+                ([a.position, b.position, c.position], [a.height, b.height, c.height])
+            }
+        };
+        let normal = (pb - pa).cross(pc - pa);
+        let plane = normal.dot(pa);
+        let e1 = pb - pa;
+        let e2 = pc - pa;
+        let g = ((hb-ha)*e2.cross(normal)
+            + (hc-ha)*normal.cross(e1))/normal.length_squared();
+        let nq = normal.dot(q);
+        let ambient = (g - normal*(g.dot(q)/nq))*(plane/nq);
         let gradient = ambient - q*ambient.dot(q);
         Ok((sample, Differential { gradient, normal: (q-gradient/radius).normalize(), slope: gradient.length()/radius }))
     }
@@ -509,6 +560,7 @@ impl Surface {
     /// A runtime centroid index seeds a neighbour walk; boundary traversal visits
     /// the entire tied fan, including a wet face when the terrain owner is dry.
     pub fn query(&self, direction: DVec3) -> Result<Sample, String> {
+        if let Some(p) = &self.package { return p.query(direction); }
         let length = direction.length();
         if !direction.is_finite() || !length.is_finite() || length == 0.0 {
             return Err("invalid query direction".into());

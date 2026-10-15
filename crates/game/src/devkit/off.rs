@@ -52,4 +52,9 @@ pub mod observe {
     pub fn stop(_app: &mut App, _ctx: &Context) {}
 
     pub fn answer(_app: &mut App, _ctx: &mut Context) {}
+
+    /// No observer beside the apps in a player build.
+    pub fn service() -> Option<Box<dyn universe_engine::apps::Service>> {
+        None
+    }
 }

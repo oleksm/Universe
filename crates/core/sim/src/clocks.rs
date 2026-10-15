@@ -73,3 +73,145 @@ impl ClockHandler for Binding {
         "every craft every tick (200 Hz as recorded), side by side on a frozen world: bubbles not yet"
     }
 }
+
+/// The clocks an app runs (`docs/miniapps-plan.md` §2.2): a set of the tree's clocks, each with a
+/// period in its record. A clock not in the set does not run at all.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct Subscriptions(pub std::collections::BTreeSet<ClockKey>);
+
+impl Subscriptions {
+    pub fn of(keys: &[ClockKey]) -> Self {
+        Subscriptions(keys.iter().copied().collect())
+    }
+}
+
+/// What a runtime's clocks step: one call a clock a step, at the step's end time.
+pub trait Clocked {
+    /// Clock `k` steps from `t - dt` to `t` (game seconds).
+    fn step(&mut self, k: ClockKey, t: f64, dt: f64);
+}
+
+impl<F: FnMut(ClockKey, f64, f64)> Clocked for F {
+    fn step(&mut self, k: ClockKey, t: f64, dt: f64) {
+        self(k, t, dt)
+    }
+}
+
+/// The tick tree as a scheduler over one world instance (its own time and time scale): each
+/// subscribed clock steps at its record's period, in time order (at the same moment, the slower
+/// clock first, so faster ones read its published state). A clock gets at most `budget` steps an
+/// `advance`; the rest waits for the next one (never dropped), as the realtime tick does.
+pub struct Runtime {
+    clocks: Vec<(ClockKey, f64, f64)>,
+    /// Game seconds per real second; 0 stands still.
+    pub scale: f64,
+    time: f64,
+    budget: u32,
+}
+
+impl Runtime {
+    /// Refused: a clock that steps on events or is a group (a runtime steps by time only).
+    pub fn new(subs: &Subscriptions, scale: f64, budget: u32) -> Result<Self, String> {
+        let mut clocks = vec![];
+        for &k in &subs.0 {
+            let every = every(k).ok_or_else(|| format!("{} has no period: it isn't stepped by time", k.key()))?;
+            clocks.push((k, every, 0.0));
+        }
+        Self::with(clocks, scale, budget)
+    }
+
+    fn with(mut clocks: Vec<(ClockKey, f64, f64)>, scale: f64, budget: u32) -> Result<Self, String> {
+        if !(scale.is_finite() && scale >= 0.0) || budget == 0 {
+            return Err("a runtime needs a finite scale and a budget".into());
+        }
+        // (Slowest first: at the same moment, it steps before the faster ones.)
+        clocks.sort_by(|a, b| b.1.total_cmp(&a.1));
+        Ok(Runtime { clocks, scale, time: 0.0, budget })
+    }
+
+    /// The world instance's time (game seconds).
+    pub fn time(&self) -> f64 {
+        self.time
+    }
+
+    /// Clock `k`'s last step's end, if it is subscribed.
+    pub fn done_to(&self, k: ClockKey) -> Option<f64> {
+        self.clocks.iter().find(|c| c.0 == k).map(|c| c.2)
+    }
+
+    /// Game seconds clock `k` has still to step (0 when not subscribed).
+    pub fn pending(&self, k: ClockKey) -> f64 {
+        self.done_to(k).map_or(0.0, |d| self.time - d)
+    }
+
+    /// Real seconds `real_dt` pass: world time moves on by `real_dt × scale`, and every clock
+    /// steps that is due by then (within its budget). How many steps each clock took.
+    pub fn advance(&mut self, real_dt: f64, w: &mut impl Clocked) -> Vec<(ClockKey, u32)> {
+        self.time += real_dt.max(0.0) * self.scale;
+        let mut steps = vec![0u32; self.clocks.len()];
+        loop {
+            // The next due step: earliest end; ties to the slowest (first in the list).
+            let next = (0..self.clocks.len())
+                .filter(|&i| steps[i] < self.budget && self.clocks[i].2 + self.clocks[i].1 <= self.time + 1e-9)
+                .min_by(|&a, &b| (self.clocks[a].2 + self.clocks[a].1).total_cmp(&(self.clocks[b].2 + self.clocks[b].1)).then(a.cmp(&b)));
+            let Some(i) = next else { break };
+            let (k, every, done) = &mut self.clocks[i];
+            *done += *every;
+            w.step(*k, *done, *every);
+            steps[i] += 1;
+        }
+        self.clocks.iter().zip(steps).map(|(c, n)| (c.0, n)).collect()
+    }
+
+    /// World time jumps to `t` (a timeline scrubbed): no steps between, every clock done to `t`.
+    pub fn scrub(&mut self, t: f64) {
+        self.time = t;
+        for c in &mut self.clocks {
+            c.2 = t;
+        }
+    }
+}
+
+#[cfg(test)]
+mod runtime_tests {
+    use super::*;
+    use ClockKey::*;
+
+    #[derive(Default)]
+    struct Log(Vec<(ClockKey, f64)>);
+    impl Clocked for Log {
+        fn step(&mut self, k: ClockKey, t: f64, _: f64) {
+            self.0.push((k, t));
+        }
+    }
+
+    #[test]
+    fn subscribed_clocks_step_in_time_order_within_budget() {
+        // Only subscribed clocks step, at their record periods.
+        let mut r = Runtime::new(&Subscriptions::of(&[Economy]), 1.0, 1000).unwrap();
+        let mut log = Log::default();
+        r.advance(35.0, &mut log);
+        assert_eq!(log.0, vec![(Economy, 10.0), (Economy, 20.0), (Economy, 30.0)]);
+        assert!(r.done_to(Realtime).is_none());
+        assert!(Runtime::new(&Subscriptions::of(&[Rails]), 1.0, 1).is_err(), "an event clock isn't stepped by time");
+        // At the same moment the slower clock steps first.
+        let mut r = Runtime::with(vec![(Market, 1.0, 0.0), (Economy, 2.0, 0.0)], 1.0, 100).unwrap();
+        let mut log = Log::default();
+        r.advance(2.0, &mut log);
+        assert_eq!(log.0, vec![(Market, 1.0), (Economy, 2.0), (Market, 2.0)]);
+        // Over budget, steps wait (not dropped); scale 0 stands still; scrub jumps.
+        let mut r = Runtime::with(vec![(Realtime, 0.25, 0.0)], 1.0, 2).unwrap();
+        let mut log = Log::default();
+        r.advance(1.0, &mut log);
+        assert_eq!((log.0.len(), r.pending(Realtime)), (2, 0.5));
+        r.advance(0.0, &mut log);
+        assert_eq!(log.0.len(), 4);
+        r.scale = 0.0;
+        r.advance(10.0, &mut log);
+        assert_eq!(log.0.len(), 4);
+        r.scrub(100.0);
+        r.scale = 1.0;
+        r.advance(0.25, &mut log);
+        assert_eq!(log.0.last(), Some(&(Realtime, 100.25)));
+    }
+}

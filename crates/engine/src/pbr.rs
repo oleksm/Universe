@@ -17,6 +17,7 @@ pub struct PbrModel {
     id: u64,
     pub data: Arc<PbrData>,
     radius: f32,
+    primitive_centres: Arc<Vec<Vec3>>,
     bounds: [Vec3; 2],
     leases: Vec<Lease>,
 }
@@ -109,7 +110,13 @@ impl PbrModel {
             bounds[0] = bounds[0].min(p);
             bounds[1] = bounds[1].max(p);
         }
+        let primitive_centres = Arc::new(data.primitives.iter().map(|p| {
+            let mut lo = Vec3::splat(f32::INFINITY); let mut hi = Vec3::splat(f32::NEG_INFINITY);
+            for v in &p.vertices { let v = Vec3::from_array(v.pos); lo = lo.min(v); hi = hi.max(v); }
+            if p.vertices.is_empty() { Vec3::ZERO } else { (lo+hi)*0.5 }
+        }).collect());
         PbrModel {
+            primitive_centres,
             bounds,
             leases: Vec::new(),
             id: NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed),
@@ -513,7 +520,11 @@ pub(crate) struct PbrRenderer {
     /// This frame: (model, its instance's index, the part drawn), and those that cast.
     draws: Vec<(u64, u32, u8)>,
     casters: Vec<(u64, u32, u8)>,
+    blended: Vec<(u64, u32, usize, f32)>,
     frames: u64,
+    upload_spent: std::time::Duration,
+    upload_bytes_frame: usize,
+    pub(crate) view_demand: std::collections::HashSet<u64>,
 }
 
 const VERTEX_ATTRS: [wgpu::VertexAttribute; 4] =
@@ -719,7 +730,7 @@ impl PbrRenderer {
         let shadow_shader = crate::shaders::single(device, "pbr_shadow");
         let shadow_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("pbr shadow"),
-            bind_group_layouts: &[Some(light)],
+            bind_group_layouts: &[Some(light), Some(&material_layout)],
             immediate_size: 0,
         });
         let shadow_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
@@ -747,7 +758,10 @@ impl PbrRenderer {
                 },
             }),
             multisample: Default::default(),
-            fragment: None,
+            fragment: Some(wgpu::FragmentState {
+                module: &shadow_shader, entry_point: Some("fs_pbr_shadow"),
+                compilation_options: Default::default(), targets: &[],
+            }),
             multiview_mask: None,
             cache: None,
         });
@@ -791,8 +805,17 @@ impl PbrRenderer {
             capacity: 64,
             draws: Vec::new(),
             casters: Vec::new(),
+            blended: Vec::new(),
             frames: 0,
+            upload_spent: std::time::Duration::ZERO,
+            upload_bytes_frame: 0,
+            view_demand: Default::default(),
         }
+    }
+
+    pub(crate) fn begin_frame(&mut self) {
+        self.upload_spent = std::time::Duration::ZERO;
+        self.upload_bytes_frame = 0;
     }
 
     /// This frame's models up (new ones uploaded, old ones dropped), their
@@ -803,14 +826,15 @@ impl PbrRenderer {
         queue: &wgpu::Queue,
         draws: &[crate::frame::PbrDraw],
         reach: f32,
+        forward: Vec3,
     ) {
         self.frames += 1;
         let now = std::time::Instant::now();
         let frame_start = now;
-        let mut upload_bytes = 0;
+        let mut upload_bytes = self.upload_bytes_frame;
 
         // Visible resources cannot be retired under pressure while this frame uses them.
-        let visible: std::collections::HashSet<_> = draws.iter().map(|d| d.model.id()).collect();
+        let visible: std::collections::HashSet<_> = draws.iter().map(|d| d.model.id()).chain(self.view_demand.iter().copied()).collect();
         self.retired.retain(|(done, m)| {
             if done.load(std::sync::atomic::Ordering::Acquire) {
                 if !m.placeholder {
@@ -873,7 +897,7 @@ impl PbrRenderer {
         for id in ids {
             let job = self.pending.get_mut(&id).unwrap();
             while upload_bytes < 8 * 1024 * 1024
-                && frame_start.elapsed() < std::time::Duration::from_millis(2)
+                && self.upload_spent + frame_start.elapsed() < std::time::Duration::from_millis(2)
                 && !job.tasks.is_empty()
             {
                 let sent = job.transfer(queue, (8 * 1024 * 1024 - upload_bytes).min(1024 * 1024));
@@ -960,7 +984,7 @@ impl PbrRenderer {
                         .features()
                         .contains(wgpu::Features::TEXTURE_COMPRESSION_BC),
                 );
-            if frame_start.elapsed() > std::time::Duration::from_millis(2) {
+            if self.upload_spent + frame_start.elapsed() > std::time::Duration::from_millis(2) {
                 continue;
             }
             let resident = self.resident_bytes();
@@ -991,6 +1015,8 @@ impl PbrRenderer {
             );
         }
         self.prepared.maintain();
+        self.upload_spent += frame_start.elapsed();
+        self.upload_bytes_frame = upload_bytes;
         let data: Vec<crate::frame::Instance> = draws.iter().map(|d| d.instance).collect();
         if data.len() as u64 > self.capacity {
             self.capacity = (data.len() as u64).next_power_of_two();
@@ -1009,6 +1035,20 @@ impl PbrRenderer {
             .enumerate()
             .map(|(i, d)| (d.model.id(), i as u32, d.part))
             .collect();
+        self.blended.clear();
+        for (k, d) in draws.iter().enumerate() {
+            for (pi, p) in d.model.data.primitives.iter().enumerate() {
+                if p.part != d.part || !d.model.data.materials[p.material].blend { continue; }
+                // Primitive-centre sorting is shared across models/material pipelines.
+                // Intersecting transparent surfaces still require a different algorithm.
+                let c = d.model.primitive_centres[pi];
+                let inst = &d.instance;
+                let at = Vec3::from_slice(&inst.c0[..3])*c.x + Vec3::from_slice(&inst.c1[..3])*c.y
+                    + Vec3::from_slice(&inst.c2[..3])*c.z + Vec3::from_slice(&inst.t[..3]);
+                self.blended.push((d.model.id(), k as u32, pi, at.dot(forward)));
+            }
+        }
+        self.blended.sort_by(|a,b| b.3.total_cmp(&a.3));
         self.casters = draws
             .iter()
             .enumerate()
@@ -1191,7 +1231,7 @@ impl PbrRenderer {
         }
         pass.set_vertex_buffer(1, self.instances.slice(..));
         // (What's solid first, then the see-through over it.)
-        for (kind, pipe) in self.pipes.iter().enumerate() {
+        for (kind, pipe) in self.pipes.iter().enumerate().take(SEE_THROUGH) {
             pass.set_pipeline(pipe);
             for &(id, k, part) in &self.draws {
                 let Some(m) = self.models.get(&id) else {
@@ -1208,6 +1248,17 @@ impl PbrRenderer {
                 }
             }
         }
+        for &(id, k, primitive, _) in &self.blended {
+            let Some(m) = self.models.get(&id) else { continue; };
+            // A pending model can still have placeholder topology.
+            if m.placeholder { continue; }
+            let (v, i, n, mat, kind, _) = &m.primitives[primitive];
+            pass.set_pipeline(&self.pipes[*kind]);
+            pass.set_bind_group(2, &m.materials[*mat], &[]);
+            pass.set_vertex_buffer(0, v.slice(..));
+            pass.set_index_buffer(i.slice(..), wgpu::IndexFormat::Uint32);
+            pass.draw_indexed(0..*n, 0, k..k+1);
+        }
     }
 
     /// The casters in a shadow cascade's pass (its light bound already).
@@ -1222,11 +1273,12 @@ impl PbrRenderer {
                 continue;
             };
             // (Glass lets the sun through.)
-            for (v, i, n, _, _, _) in m
+            for (v, i, n, mat, _, _) in m
                 .primitives
                 .iter()
                 .filter(|p| p.4 < SEE_THROUGH && p.5 == part)
             {
+                pass.set_bind_group(1, &m.materials[*mat], &[]);
                 pass.set_vertex_buffer(0, v.slice(..));
                 pass.set_index_buffer(i.slice(..), wgpu::IndexFormat::Uint32);
                 pass.draw_indexed(0..*n, 0, k..k + 1);

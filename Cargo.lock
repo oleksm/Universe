@@ -2986,10 +2986,12 @@ dependencies = [
  "rayon",
  "serde",
  "serde_json",
+ "serde_norway",
  "universe-engine",
  "universe-prof",
  "universe-ship-design",
  "universe-sim",
+ "universe-terrain-contact",
 ]
 
 [[package]]
@@ -3097,12 +3099,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "universe-terrain-contact"
+version = "0.1.0"
+dependencies = [
+ "glam",
+ "serde",
+ "serde_json",
+ "universe-world",
+]
+
+[[package]]
 name = "universe-world"
 version = "0.1.0"
 dependencies = [
  "glam",
  "gltf",
+ "libc",
  "log",
+ "memmap2",
  "png",
  "rayon",
  "ron",

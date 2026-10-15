@@ -14,21 +14,33 @@ pub fn world(seed: u64) -> Result<universe_sim::world::World, String> {
     use universe_sim::world::{World, worlds::{pgs::Surface, sha256}};
     let Some(folder) = std::env::var_os("UNIVERSE_PGS1") else { return Ok(World::new(seed)); };
     let key = std::env::var("UNIVERSE_BODY").map_err(|_| "UNIVERSE_PGS1 requires UNIVERSE_BODY")?;
-    if !matches!(std::env::var("UNIVERSE_SCENARIO").as_deref(), Ok("planet" | "lowflight")) {
-        return Err("PGS1 preview requires UNIVERSE_SCENARIO=planet or lowflight".into());
+    if !matches!(std::env::var("UNIVERSE_SCENARIO").as_deref(), Ok("planet" | "lowflight" | "groundwalk")) {
+        return Err("PGS1 preview requires UNIVERSE_SCENARIO=planet, lowflight or groundwalk".into());
     }
     if std::env::var_os("UNIVERSE_RECORD").is_some() { return Err("PGS1 preview sources are not supported by seed-only replay yet".into()); }
     let folder = std::path::PathBuf::from(folder);
-    let manifest: serde_json::Value = serde_json::from_slice(&std::fs::read(folder.join("manifest.json")).map_err(|e| e.to_string())?).map_err(|e| e.to_string())?;
-    let bytes = std::fs::read(folder.join("surface.pgs")).map_err(|e| e.to_string())?;
-    let entry = &manifest["files"]["surface.pgs"];
-    if manifest["format"] != "planet-graph-surface/1" || entry["sha256"] != sha256(&bytes) || entry["bytes"].as_u64() != Some(bytes.len() as u64) {
-        return Err("surface manifest/hash/size mismatch".into());
-    }
-    let surface = std::sync::Arc::new(Surface::read(&bytes)?);
-    if !matches!(surface.capabilities, 1 | 3 | 33 | 35) { return Err("this preview supports canonical terrain, water and category roots only".into()); }
+    // (A revision-4 package, `planet.json`: root and regions mapped, regions read on first touch;
+    // its identity is the manifest's SHA256. Else one surface.pgs, read whole.)
+    let (surface, hash, manifest) = if folder.join("planet.json").exists() {
+        let clock = std::time::Instant::now();
+        let (surface, sha) = Surface::open_package(&folder)?;
+        log::info!("PGS1 package {}: opened in {:.2} ms; {} composed faces", folder.display(), clock.elapsed().as_secs_f64() * 1e3, surface.face_count());
+        let manifest: serde_json::Value = serde_json::from_slice(&std::fs::read(folder.join("planet.json")).map_err(|e| e.to_string())?).map_err(|e| e.to_string())?;
+        (surface, sha, manifest)
+    } else {
+        let manifest: serde_json::Value = serde_json::from_slice(&std::fs::read(folder.join("manifest.json")).map_err(|e| e.to_string())?).map_err(|e| e.to_string())?;
+        let bytes = std::fs::read(folder.join("surface.pgs")).map_err(|e| e.to_string())?;
+        let entry = &manifest["files"]["surface.pgs"];
+        if manifest["format"] != "planet-graph-surface/1" || entry["sha256"] != sha256(&bytes) || entry["bytes"].as_u64() != Some(bytes.len() as u64) {
+            return Err("surface manifest/hash/size mismatch".into());
+        }
+        (Surface::read(&bytes)?, sha256(&bytes), manifest)
+    };
+    let surface = std::sync::Arc::new(surface);
+    // (Bit 4, the cell index, is how a package is read; it changes nothing the preview shows.)
+    if !matches!(surface.capabilities & !16, 1 | 3 | 33 | 35) { return Err("this preview supports canonical terrain, water and category roots only".into()); }
     if !surface.provenance[0].is_empty() && surface.provenance[0] != key { return Err("package body binding differs from UNIVERSE_BODY".into()); }
-    crate::pgs_preview::configure(&folder, &key, &surface, &sha256(&bytes), &manifest)?;
+    crate::pgs_preview::configure(&folder, &key, &surface, &hash, &manifest)?;
     let world = World::with_surfaces(seed, std::sync::Arc::new([(key.clone(), surface)].into_iter().collect()));
     let system = world.system(world.home_system);
     let body = system.bodies.iter().find(|b| b.key == key).ok_or("preview body is not in the home system")?;
@@ -271,6 +283,7 @@ pub const SCENARIOS: &[Scenario] = &[
     Scenario { names: &["aboard"], about: "Out of the seat, at the back of the cabin looking forward up the corridor.", run: s_aboard },
     Scenario { names: &["boarded"], about: "Just in through the hatch, facing into the ship.", run: s_boarded },
     Scenario { names: &["vending", "vendingopen"], about: "Landed at the port, on foot by its vending machine, facing it (\"vendingopen\".", run: s_vending },
+    Scenario { names: &["groundwalk"], about: "Lowflight's place (UNIVERSE_LAT/LON, UNIVERSE_HEADING), set down there, stepped out and a few metres off: on foot on open ground (UNIVERSE_PGS1_WALKER walks on).", run: s_groundwalk },
     Scenario { names: &["rawland"], about: "Set down on open ground (no port), step out, walk off a way and face the ship.", run: s_rawland },
     Scenario { names: &["sunlook"], about: "Landed (on a pad at Port Trethi, by day), standing in the hold, looking straight at the sun (through the hull).", run: s_sunlook },
     Scenario { names: &["studiowalk"], about: "The demo layout walked: up the ramp (UNIVERSE_SIDE m off the centre line) and on forward, through the wall's door or into it (where you end: logged).", run: s_studiowalk },
@@ -805,29 +818,20 @@ fn s_asteroid(app: &mut App, name: &str, c: &Ctx) {
 }
 
 fn s_worlds(app: &mut App, _name: &str, _c: &Ctx) {
-    // The planet studio, gone to UNIVERSE_WORLD (a world id: TRD1 Harvest by default), in
-    // UNIVERSE_LOOK (colour, geology, energy).
-    let mut studio = crate::planet_studio::PlanetStudio::open();
+    // The planet viewer over the game, gone to UNIVERSE_WORLD (a world id: TRD1 Heath by default),
+    // in UNIVERSE_LOOK (colour, geology, energy); UNIVERSE_HISTORY_FRAME: its history's frame n,
+    // counted from 0, in place of today.
     let want = std::env::var("UNIVERSE_WORLD").unwrap_or_else(|_| "TRD1".into());
-    studio.selected = studio.list.iter().position(|r| r.world_id == want).unwrap_or(0);
-    app.world_look = match std::env::var("UNIVERSE_LOOK").as_deref() {
+    let mut planet = crate::planet_app::PlanetApp::with_home(app.charts.system(app.v.ship_system), Some(&want)).unwrap_or_else(|e| panic!("worlds: {e}"));
+    planet.set_look(match std::env::var("UNIVERSE_LOOK").as_deref() {
         Ok("geology") => crate::planet_studio::Look::Geology,
         Ok("energy") => crate::planet_studio::Look::Energy,
         _ => crate::planet_studio::Look::Colour,
-    };
-    let r = studio.list.get(studio.selected).cloned();
-    app.panels.planet_studio = Some(studio);
-    if let Some(r) = r {
-        let _ = crate::planet_studio::go_to(app, &r);
+    });
+    if let Some(n) = crate::devenv::num("UNIVERSE_HISTORY_FRAME").map(|n| n as usize) {
+        planet.show_frame(n);
     }
-    // (UNIVERSE_HISTORY_FRAME: its history's frame n, counted from 0, in place of today.)
-    if let Some(n) = crate::devenv::num("UNIVERSE_HISTORY_FRAME").map(|n| n as usize)
-        && let Some((key, Some(history))) = app.panels.planet_studio.as_ref().and_then(|s| s.shown.clone())
-        && n < history.frames.len()
-    {
-        app.world_frame = Some(crate::planet_studio::WorldFrame { key, history, frame: n });
-    }
-    app.observer.yaw = 2.2;
+    app.open = Some(Box::new(planet));
 }
 
 fn s_rig(app: &mut App, _name: &str, c: &Ctx) {
@@ -1211,12 +1215,11 @@ fn s_manual(app: &mut App, _name: &str, _c: &Ctx) {
     u.start_in_flight();
     let s = u.vessels[universe_sim::PLAYER].ship.spec();
     let bit = |name: &str| s.thrusters.iter().position(|t| t.nozzle.ends_with(name)).map_or(0, |k| 1u64 << k);
+    let held = if std::env::var("UNIVERSE_BURN").is_ok() {
+        s.thrusters.iter().take(64).enumerate().filter(|(_, t)| t.role == universe_sim::world::ship::ThrusterRole::Main).map(|(k, _)| 1u64 << k).sum()
+    } else {bit("nose_left_side") | bit("tail_right_side")};
     u.vessels[universe_sim::PLAYER].ship.manual = true;
-    u.vessels[universe_sim::PLAYER].ship.held = bit("nose_left_side") | bit("tail_right_side");
-    // UNIVERSE_BURN: the mains held instead (to see the drive lit from behind).
-    if std::env::var("UNIVERSE_BURN").is_ok() {
-        u.vessels[universe_sim::PLAYER].ship.held = s.thrusters.iter().enumerate().filter(|(_, t)| t.role == universe_sim::world::ship::ThrusterRole::Main).map(|(k, _)| 1u64 << k).sum();
-    }
+    u.vessels[universe_sim::PLAYER].ship.held = held;
     for _ in 0..20 {
         u.step_world(1.0 / 60.0, 1.0, &Controls::default());
     }
@@ -1684,6 +1687,38 @@ fn s_rawland(app: &mut App, _name: &str, _c: &Ctx) {
     log::info!("scenario rawland: ship {:?}, crew {:?}", u.vessels[universe_sim::PLAYER].ship.state, u.crew.place);
 }
 
+fn s_groundwalk(app: &mut App, _name: &str, c: &Ctx) {
+    // Over the place, a few metres up, still; let it settle onto the ground.
+    s_lowflight(app, "lowflight", c);
+    let mut ticks = 0;
+    while ticks < 3600 && !matches!(app.engine.universe().vessels[universe_sim::PLAYER].ship.state, ShipState::Landed { .. }) {
+        app.engine.universe().step_world(1.0 / 60.0, 1.0, &Controls::default());
+        ticks += 1;
+    }
+    at_hatch(app, 0.0);
+    if !universe_sim::world::crew::walks_out(&app.engine.universe().vessels[universe_sim::PLAYER].ship) {
+        app.engine.universe().walk(&universe_sim::world::WalkCommands { interact: true, ..Default::default() }, 0.02);
+    }
+    for _ in 0..250 {
+        app.engine.universe().walk(&universe_sim::world::WalkCommands { forward: 1.0, ..Default::default() }, 0.02);
+    }
+    let u = app.engine.universe();
+    log::info!("scenario groundwalk: landed after {ticks} ticks; ship {:?}, crew {:?}", u.vessels[universe_sim::PLAYER].ship.state, u.crew.place);
+}
+
+/// (Dev: `UNIVERSE_PGS1_WALKER`, on foot: after `UNIVERSE_PGS1_CAMERA_WALK_AFTER` s (20) the
+/// walker walks on (forward held, as W is) through the game's own walking commands.)
+pub fn walker_input(mut c: universe_sim::world::WalkCommands) -> universe_sim::world::WalkCommands {
+    static START: std::sync::OnceLock<std::time::Instant> = std::sync::OnceLock::new();
+    if std::env::var_os("UNIVERSE_PGS1_WALKER").is_some() {
+        let after = crate::devenv::num("UNIVERSE_PGS1_CAMERA_WALK_AFTER").unwrap_or(20.0);
+        if START.get_or_init(std::time::Instant::now).elapsed().as_secs_f64() > after {
+            c.forward = 1.0;
+        }
+    }
+    c
+}
+
 fn s_sunlook(app: &mut App, _name: &str, _c: &Ctx) {
     // Landed (on a pad at Port Trethi, by day), standing in the hold, looking
     // straight at the sun (through the hull).
@@ -1817,13 +1852,21 @@ fn s_studiopreview(app: &mut App, _name: &str, _c: &Ctx) {
         d.planes = universe_sim::world::deckplan::fill(&mesh, floor).into_iter().map(Into::into).collect();
         plan.decks = vec![d];
     }
-    let at = (universe_engine::glam::DVec3::new(x, floor + 0.05, z), yaw);
-    app.engine.universe().set_layout(&plan);
-    app.engine.universe().preview(Some(at));
-    app.panels.preview = app.panels.shipyard.take();
-    app.mode = Mode::Pilot;
-    app.chase_cam = false;
-    app.engine.universe().walk(&universe_sim::world::WalkCommands { pitch, ..Default::default() }, 0.02);
+    if let Some(y) = app.panels.shipyard.as_mut() {
+        studio_decks(y, plan);
+        y.interior_mut().stand_test(Some([x, floor + 0.05, z, yaw]));
+        y.interior_mut().stand_pitch(pitch);
+    }
+}
+
+/// Seed only the editor document, after consuming any pending saved-deck load.
+fn studio_decks(y: &mut crate::shipyard::Shipyard, plan: universe_sim::world::deckplan::DeckPlan) {
+    let mut decks = std::mem::take(y.deckplans_mut());
+    y.interior_mut().sync_decks(&mut decks, 0.0);
+    decks.retain(|p| p.hull != plan.hull);
+    decks.push(plan);
+    y.interior_mut().sync_decks(&mut decks, 0.0);
+    *y.deckplans_mut() = decks;
 }
 
 fn s_interior(app: &mut App, _name: &str, _c: &Ctx) {
@@ -1836,10 +1879,15 @@ fn s_interior(app: &mut App, _name: &str, _c: &Ctx) {
     // check of it is a picture or a report, fastest with the world asleep.)
     app.paused = true;
     let turn: Vec<f32> = crate::devenv::list("UNIVERSE_TURN");
-    let mut y = match turn[..] {
-        [yaw, pitch] => crate::shipyard::Shipyard::interior_turned(yaw, pitch),
-        _ => crate::shipyard::Shipyard::interior(app),
-    };
+    let mut y = crate::shipyard::Shipyard::interior(app);
+    if let [yaw, pitch] = turn[..] {
+        // Keep the initialized session so its first frame cannot replace fixture decks.
+        *y.interior_mut() = crate::interior::Interior::turned(yaw, pitch);
+        let mut decks = std::mem::take(y.deckplans_mut());
+        let spec = app.ship.spec();
+        y.interior_mut().sync(&spec.key, spec.shape(), &mut decks, 0.0);
+        *y.deckplans_mut() = decks;
+    }
     // (UNIVERSE_NEW=none|<hull key>: a new design; UNIVERSE_DIALOG=new|open: that
     // dialog open.)
     if let Ok(h) = std::env::var("UNIVERSE_NEW") {
@@ -1891,8 +1939,7 @@ fn s_interior(app: &mut App, _name: &str, _c: &Ctx) {
         y.interior_mut().sample(&spec.key, spec.shape());
         // (And the deck studio's demo decks, to be seen here too.)
         let decks = demo_plan(app);
-        app.deckplans.retain(|p| p.hull != decks.hull);
-        app.deckplans.push(decks);
+        studio_decks(&mut y, decks);
         // (UNIVERSE_WALK=k: walked in the middle of line k, as WALK HERE.)
         if let Some(k) = std::env::var("UNIVERSE_WALK").ok().and_then(|v| v.parse().ok()) {
             y.interior_mut().walk_line(k);
@@ -1907,7 +1954,6 @@ fn s_studio(app: &mut App, _name: &str, _c: &Ctx) {
     apply(app, "docked");
     mc07(app);
     let key = app.ship.spec().key.clone();
-    app.deckplans.retain(|p| p.hull != key);
     let mut y = crate::shipyard::Shipyard::laying_out(app);
     // (UNIVERSE_PLAN: the 3D studio's sample access plan, to be seen here.)
     if std::env::var_os("UNIVERSE_PLAN").is_some() {
@@ -1969,7 +2015,9 @@ fn s_studio(app: &mut App, _name: &str, _c: &Ctx) {
             let areas: Vec<String> = deck.planes.iter().map(|p| format!("{:.0}", universe_sim::world::deckplan::floor_strips(p, &sides, &[]).iter().map(|s| (s.1 - s.0) * (s.3 - s.2)).sum::<f64>())).collect();
             log::info!("scenario studio: filled {} floors, m2 {}", deck.planes.len(), areas.join(" "));
         }
-        app.deckplans.push(plan);
+        studio_decks(&mut y, plan);
+    } else {
+        studio_decks(&mut y, universe_sim::world::deckplan::DeckPlan { hull: key, decks: Vec::new() });
     }
     app.panels.shipyard = Some(y);
 }
@@ -2175,4 +2223,120 @@ fn s_marketnear(app: &mut App, name: &str, _c: &Ctx) {
     m.shown = m.markets.iter().position(|(g, _)| Some(*g) == f).unwrap_or(0);
     m.refresh(app);
     app.panels.market = Some(m);
+}
+
+/// (Dev: `UNIVERSE_PGS1_CAMERA_WALK`=m/s, paused over canonical ground: after
+/// `UNIVERSE_PGS1_CAMERA_WALK_AFTER` s (20), the camera alone walks on from where it stands, 1.7 m
+/// over the canonical ground, along its own heading: a moving camera subject for the contact
+/// group's readiness trace. The ship and the world stay put; nothing physical walks.)
+pub fn camera_walk(app: &mut App) {
+    struct Walk { start: std::time::Instant, planet: usize, from: DVec3, toward: DVec3 }
+    static WALK: std::sync::Mutex<Option<Walk>> = std::sync::Mutex::new(None);
+    let Some(speed) = crate::devenv::num("UNIVERSE_PGS1_CAMERA_WALK") else { return };
+    let sys = app.charts.system(app.v.ship_system);
+    let t = app.now();
+    let Ok(mut walk) = WALK.lock() else { return };
+    if walk.is_none() {
+        let Some(planet) = std::env::var("UNIVERSE_BODY").ok().and_then(|k| sys.bodies.iter().position(|b| b.key == k)) else { return };
+        let Some(centre) = app.view.positions.get(planet).copied() else { return };
+        let inv = sys.bodies[planet].rotation(t).inverse();
+        let from = (inv * (app.camera.position - centre)).normalize();
+        let look = inv * (app.camera.orientation.as_dquat() * -DVec3::Z);
+        let toward = (look - from * look.dot(from)).normalize();
+        *walk = Some(Walk { start: std::time::Instant::now(), planet, from, toward });
+    }
+    let Some(w) = walk.as_ref() else { return };
+    let b = &sys.bodies[w.planet];
+    let (Some(terrain), Some(centre)) = (b.terrain.as_ref(), app.view.positions.get(w.planet).copied()) else { return };
+    let after = crate::devenv::num("UNIVERSE_PGS1_CAMERA_WALK_AFTER").unwrap_or(20.0);
+    let gone = speed * (w.start.elapsed().as_secs_f64() - after).max(0.0);
+    let a = gone / b.rail.radius;
+    let dir = (w.from * a.cos() + w.toward * a.sin()).normalize();
+    let height = terrain.surface(dir);
+    // (UNIVERSE_PGS1_CAMERA_WALK_HEIGHT: that far over the ground instead of eye height, m.)
+    let over = crate::devenv::num("UNIVERSE_PGS1_CAMERA_WALK_HEIGHT").unwrap_or(universe_sim::world::crew::EYE);
+    app.camera.position = centre + b.rotation(t) * (dir * (b.rail.radius + height + over));
+    // (UNIVERSE_PGS1_CAMERA_PITCH: looking that many degrees down along the way, instead of as it was.)
+    if let Some(down) = crate::devenv::num("UNIVERSE_PGS1_CAMERA_PITCH") {
+        let rot = b.rotation(t);
+        let (up, ahead) = (rot * dir, rot * (w.toward - dir * w.toward.dot(dir)).normalize());
+        let look = ahead * down.to_radians().cos() - up * down.to_radians().sin();
+        app.camera.orientation = universe_sim::ship::facing(look, if down > 60.0 { ahead } else { up }).as_quat();
+    }
+}
+
+/// (Dev: `UNIVERSE_PGS1_FLIGHT=file`: the camera flown through keyframes over `UNIVERSE_BODY`,
+/// one per line, `frame dx dy dz alt pitch heading [shot]`: the body-frame direction under the
+/// eye; the height over the datum, or over the ground with a `g` suffix (`2000g`); degrees down
+/// from level; degrees from north (+Y) toward east; a capture's name. Between keyframes the
+/// direction turns evenly, the height over the ground goes geometrically, pitch and heading
+/// linearly. Frames are game frames. Captures go beside the file named by `UNIVERSE_SCREENSHOT`'s
+/// folder, or the flight file's.)
+pub fn camera_flight(app: &mut App) {
+    struct Key { frame: u64, dir: DVec3, alt: f64, ground: bool, pitch: f64, heading: f64, shot: Option<String> }
+    struct Flight { keys: Vec<Key>, frame: u64, planet: usize, folder: std::path::PathBuf }
+    static FLIGHT: std::sync::Mutex<Option<Option<Flight>>> = std::sync::Mutex::new(None);
+    let Ok(mut flight) = FLIGHT.lock() else { return };
+    if flight.is_none() {
+        let Some(path) = std::env::var_os("UNIVERSE_PGS1_FLIGHT") else { *flight = Some(None); return };
+        let path = std::path::PathBuf::from(path);
+        let text = std::fs::read_to_string(&path).unwrap_or_else(|e| panic!("UNIVERSE_PGS1_FLIGHT {}: {e}", path.display()));
+        let mut keys = vec![];
+        for line in text.lines().map(str::trim).filter(|l| !l.is_empty() && !l.starts_with('#')) {
+            let f: Vec<&str> = line.split_whitespace().collect();
+            assert!(f.len() >= 7, "flight line: frame dx dy dz alt pitch heading [shot]: {line}");
+            let n = |i: usize| f[i].trim_end_matches('g').parse::<f64>().unwrap_or_else(|_| panic!("flight line: {line}"));
+            keys.push(Key { frame: n(0) as u64, dir: DVec3::new(n(1), n(2), n(3)).normalize(), alt: n(4), ground: f[4].ends_with('g'), pitch: n(5), heading: n(6), shot: f.get(7).map(|s| s.to_string()) });
+        }
+        assert!(keys.windows(2).all(|w| w[0].frame < w[1].frame), "flight keyframes must ascend");
+        let sys = app.charts.system(app.v.ship_system);
+        let planet = std::env::var("UNIVERSE_BODY").ok().and_then(|k| sys.bodies.iter().position(|b| b.key == k)).expect("UNIVERSE_PGS1_FLIGHT needs UNIVERSE_BODY");
+        let folder = std::env::var_os("UNIVERSE_SCREENSHOT").map(std::path::PathBuf::from).and_then(|p| p.parent().map(|p| p.to_owned())).unwrap_or_else(|| path.parent().unwrap().to_owned());
+        log::info!("FLIGHT {}: {} keyframes to frame {}", path.display(), keys.len(), keys.last().map_or(0, |k| k.frame));
+        *flight = Some(Some(Flight { keys, frame: 0, planet, folder }));
+    }
+    let Some(Some(f)) = flight.as_mut() else { return };
+    let sys = app.charts.system(app.v.ship_system);
+    let t = app.now();
+    let b = &sys.bodies[f.planet];
+    let (Some(terrain), Some(centre)) = (b.terrain.as_ref(), app.view.positions.get(f.planet).copied()) else { return };
+    let now = f.frame;
+    f.frame += 1;
+    let i = f.keys.partition_point(|k| k.frame <= now).max(1) - 1;
+    let (a, z) = (&f.keys[i], &f.keys[(i + 1).min(f.keys.len() - 1)]);
+    let s = if z.frame > a.frame { ((now.min(z.frame) - a.frame) as f64 / (z.frame - a.frame) as f64).clamp(0.0, 1.0) } else { 0.0 };
+    let angle = a.dir.angle_between(z.dir);
+    let dir = if angle < 1e-12 { a.dir } else { ((a.dir * ((1.0 - s) * angle).sin() + z.dir * (s * angle).sin()) / angle.sin()).normalize() };
+    let over = |k: &Key| if k.ground { k.alt } else { k.alt - terrain.surface(k.dir) };
+    let (oa, oz) = (over(a).max(1.7), over(z).max(1.7));
+    let height = terrain.surface(dir) + (oa.ln() * (1.0 - s) + oz.ln() * s).exp();
+    let pitch = (a.pitch * (1.0 - s) + z.pitch * s).to_radians();
+    let heading = (a.heading * (1.0 - s) + z.heading * s).to_radians();
+    let rot = b.rotation(t);
+    let north = (DVec3::Y - dir * dir.y).normalize();
+    let east = north.cross(dir);
+    let ahead = north * heading.cos() + east * heading.sin();
+    let look = rot * (ahead * pitch.cos() - dir * pitch.sin());
+    app.camera.position = centre + rot * (dir * (b.rail.radius + height));
+    app.camera.orientation = universe_sim::ship::facing(look, if pitch.to_degrees() > 60.0 { rot * ahead } else { rot * dir }).as_quat();
+    app.camera.near = (0.5f32).min((height - terrain.surface(dir)).max(0.05) as f32 * 0.5);
+    if let Some(k) = f.keys.iter().find(|k| k.frame == now) {
+        log::info!("FLIGHT frame {now}: key at {:?}, {:.1} m over the ground, pitch {:.0}, heading {:.0}", dir.to_array(), height - terrain.surface(dir), pitch.to_degrees(), heading.to_degrees());
+        if let Some(shot) = &k.shot {
+            *PENDING_SHOT.lock().unwrap() = Some(f.folder.join(format!("{shot}.png")));
+        }
+    }
+    // The package's reads and the process's resident memory, every 300 frames and at keyframes.
+    if now % 300 == 0 || f.keys.iter().any(|k| k.frame == now) {
+        if let Some(report) = terrain.surface_source().and_then(|s| s.package_report()) {
+            let rss = std::fs::read_to_string("/proc/self/status").ok().and_then(|s| s.lines().find(|l| l.starts_with("VmRSS:")).and_then(|l| l.split_whitespace().nth(1)?.parse::<u64>().ok())).map(|kb| kb * 1024);
+            log::info!("PGS_PACKAGE {}", serde_json::json!({"frame":now,"process_rss_bytes":rss,"reads":report}));
+        }
+    }
+}
+
+static PENDING_SHOT: std::sync::Mutex<Option<std::path::PathBuf>> = std::sync::Mutex::new(None);
+/// A capture the flight asked for this frame, if any.
+pub fn take_shot() -> Option<std::path::PathBuf> {
+    PENDING_SHOT.lock().ok()?.take()
 }

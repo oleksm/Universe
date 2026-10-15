@@ -1,19 +1,16 @@
-//! The planet studio (WORLDS): every world the planet simulation has released (the worlds store's
-//! index), the game's or not, and one looked at in the observer's orbit with its ground, air and
-//! clouds as the game draws them (`docs/planet-studio-plan.md`). A world that isn't one of the
-//! game's is shown alone: a system of its own for the view (the sim never sees it), the system's
-//! star and the world, its radius, day and tilt as the store gives them, its ground from its
-//! release, the rest (its air) as the world it is shaped from. Its timeline: the store's history
-//! of it, globes in time order, PAGE UP back and PAGE DOWN on, its colour then on today's relief (its
-//! sea and clouds today's, so not drawn). Up and down pick a world, ENTER goes to it, L changes
-//! the look (its true colour, its rock, its oil and gas), ESC closes. The wheel and a drag turn
-//! and zoom as in the observer.
+//! The planet studio's parts (WORLDS), used by the planet viewer app (`planet_app`): every world the
+//! planet simulation has released (the worlds store's index), the game's or not
+//! (`docs/planet-studio-plan.md`). A world that isn't one of the game's is shown alone: a system of
+//! its own for the view (the sim never sees it), the system's star and the world, its radius, day
+//! and tilt as the store gives them, its ground from its release, the rest (its air) as the world
+//! it is shaped from. Its timeline: the store's history of it, globes in time order, its colour then
+//! on today's relief (its sea and clouds today's, so not drawn). The looks: its true colour, its
+//! rock, its oil and gas.
 
 use universe_engine::glam::Vec2;
-use universe_engine::{Color, Context, Frame, KeyCode};
+use universe_engine::{Color, Frame};
 use universe_sim::world::worlds::{History, Release};
 
-use crate::App;
 use crate::palette::{DIM, PANEL, TEXT};
 
 
@@ -44,7 +41,7 @@ impl Look {
         }
     }
 
-    fn next(self) -> Look {
+    pub fn next(self) -> Look {
         match self {
             Look::Colour => Look::Geology,
             Look::Geology => Look::Energy,
@@ -58,7 +55,7 @@ pub struct PlanetStudio {
     pub list: Vec<Release>,
     pub selected: usize,
     /// What the last ENTER said, if it couldn't go there.
-    note: String,
+    pub note: String,
     /// The world gone to: its body's key (the game's, or the studio's own) and its history, if
     /// it has one (read on going).
     pub shown: Option<(String, Option<std::sync::Arc<History>>)>,
@@ -79,47 +76,11 @@ impl PlanetStudio {
     }
 }
 
-/// Go to world `r`: the observer round its body (the game's, or one of its own: see `alone`),
-/// at a few of its radii.
-pub fn go_to(app: &mut App, r: &Release) -> Result<(), String> {
-    app.studio_world = None;
-    if app.world_frame.take().is_some() {
-        app.caches.world_maps.clear();
-    }
-    let history = match History::release(r) {
-        Some(Ok(h)) => Some(std::sync::Arc::new(h)),
-        Some(Err(e)) => {
-            eprintln!("{}: its history can't be read ({e})", r.world_id);
-            None
-        }
-        None => None,
-    };
-    let key = r.body.clone().unwrap_or_else(|| format!("studio.{}", r.world_id));
-    if let Some(s) = app.panels.planet_studio.as_mut() {
-        s.shown = Some((key, history));
-    }
-    let Some(key) = r.body.as_deref() else {
-        let sys = alone(app, r)?;
-        let radius = sys.bodies[1].rail.radius;
-        app.studio_world = Some(std::sync::Arc::new(sys));
-        app.mode = crate::Mode::Observer;
-        app.observer.focus = crate::observer::Focus::Body { system: app.view.origin, body: 1 };
-        app.observer.distance = radius * 3.0;
-        return Ok(());
-    };
-    let body = app.view.system.bodies.iter().position(|b| b.key == key).ok_or("NOT IN THE SYSTEM IN VIEW")?;
-    app.mode = crate::Mode::Observer;
-    app.observer.focus = crate::observer::Focus::Body { system: app.view.origin, body };
-    app.observer.distance = app.view.system.bodies[body].rail.radius * 3.0;
-    Ok(())
-}
-
 /// A system for the view alone: the star of the system in view and world `r` round it, shaped
 /// from the system's first baked world with air (its orbit, its air), its ground `r`'s release.
-fn alone(app: &App, r: &Release) -> Result<universe_sim::world::system::StarSystem, String> {
+pub fn alone(home: &universe_sim::world::system::StarSystem, r: &Release) -> Result<universe_sim::world::system::StarSystem, String> {
     use universe_sim::world::system::StarSystem;
     use universe_sim::world::terrain::{Terrain, TerrainKind};
-    let home = app.charts.system(app.view.origin);
     let like = home.bodies.iter().find(|b| b.terrain.as_ref().is_some_and(|t| t.baked()) && b.rail.atmosphere.is_some()).ok_or("NO BAKED WORLD HERE TO SHAPE IT FROM")?;
     let heights = universe_sim::world::worlds::Heights::of_release(r).ok_or("ITS SURFACE CAN'T BE READ")?;
     let mut world = like.clone();
@@ -161,68 +122,32 @@ fn alone(app: &App, r: &Release) -> Result<universe_sim::world::system::StarSyst
     })
 }
 
-/// Keys while open. False when it should close.
-pub fn input(app: &mut App, ctx: &Context) -> bool {
-    let input = &ctx.input;
-    if input.pressed(KeyCode::Escape) || crate::keys::pressed(input, crate::keys::Act::Worlds) {
-        return false;
+/// The timeline moved `step` (-1 back, 1 on, 0 not) from `now` (None: today): the frame to show,
+/// None when it doesn't move.
+pub fn timeline(studio: &PlanetStudio, now: Option<&WorldFrame>, step: i32) -> Option<Option<WorldFrame>> {
+    let (key, Some(history)) = studio.shown.clone()? else { return None };
+    if step == 0 {
+        return None;
     }
-    let Some(studio) = app.panels.planet_studio.as_mut() else { return false };
-    let n = studio.list.len().max(1);
-    if input.pressed(KeyCode::ArrowDown) {
-        studio.selected = (studio.selected + 1) % n;
-    }
-    if input.pressed(KeyCode::ArrowUp) {
-        studio.selected = (studio.selected + n - 1) % n;
-    }
-    // (The timeline: PAGE UP back in time from today, PAGE DOWN on to today. The arrows turn the
-    // observer.)
-    let step = match (input.pressed(KeyCode::PageUp), input.pressed(KeyCode::PageDown)) {
-        (true, false) => -1,
-        (false, true) => 1,
-        _ => 0,
+    let last = history.frames.len().saturating_sub(1);
+    let now = now.map(|f| f.frame);
+    let next = match (now, step) {
+        (None, -1) => Some(last),
+        (None, _) => None,
+        (Some(i), -1) => Some(i.saturating_sub(1)),
+        (Some(i), _) => (i < last).then_some(i + 1),
     };
-    if step != 0
-        && let Some((key, Some(history))) = app.panels.planet_studio.as_ref().and_then(|s| s.shown.clone())
-    {
-        let last = history.frames.len().saturating_sub(1);
-        let now = app.world_frame.as_ref().map(|f| f.frame);
-        let next = match (now, step) {
-            (None, -1) => Some(last),
-            (None, _) => None,
-            (Some(i), -1) => Some(i.saturating_sub(1)),
-            (Some(i), _) => (i < last).then_some(i + 1),
-        };
-        if next != now {
-            app.world_frame = next.map(|frame| WorldFrame { key, history, frame });
-            app.caches.world_maps.clear();
-        }
-    }
-    if input.pressed(KeyCode::KeyL) {
-        app.world_look = app.world_look.next();
-        // (Its maps made again in the new look.)
-        app.caches.world_maps.clear();
-    }
-    if input.pressed(KeyCode::Enter) {
-        let r = app.panels.planet_studio.as_ref().and_then(|s| s.list.get(s.selected).cloned());
-        let note = match r {
-            Some(r) => go_to(app, &r).err().unwrap_or_default(),
-            None => "NO WORLDS: IS THE WORLDS STORE HERE? (UNIVERSE_WORLDS)".into(),
-        };
-        if let Some(s) = app.panels.planet_studio.as_mut() {
-            s.note = note;
-        }
-    }
-    true
+    (next != now).then(|| next.map(|frame| WorldFrame { key, history, frame }))
 }
 
-pub fn draw(frame: &mut Frame, app: &App, studio: &PlanetStudio) {
+/// The studio's panel: the worlds, the timeline of the one shown, its notes and keys.
+pub fn panel(frame: &mut Frame, studio: &PlanetStudio, look: Look, then: Option<&WorldFrame>) {
     let line = universe_engine::GLYPH + 2.0;
     let (x, mut y) = (12.0, 90.0);
     let w = 470.0;
     let rows = studio.list.len() as f32;
     frame.hud_rect(Vec2::new(x - 6.0, y - 6.0), Vec2::new(w, line * (rows + 16.0)), PANEL);
-    frame.text(Vec2::new(x, y), &format!("WORLDS   LOOK: {}  (L)", app.world_look.name()), TEXT);
+    frame.text(Vec2::new(x, y), &format!("WORLDS   LOOK: {}  (L)", look.name()), TEXT);
     y += line * 1.5;
     frame.text(Vec2::new(x, y), &format!(" {:<6} {:<14} {:>7} {:>6} {:>8} {:>7}", "WORLD", "NAME", "RADIUS", "LAND", "DEPOSITS", "SURFACE"), DIM);
     y += line;
@@ -237,7 +162,7 @@ pub fn draw(frame: &mut Frame, app: &App, studio: &PlanetStudio) {
     y += line * 0.5;
     // The timeline of the world gone to: today, or one of its history's globes.
     if let Some((_, history)) = &studio.shown {
-        match (history, &app.world_frame) {
+        match (history, then) {
             (Some(h), Some(f)) => {
                 let fr = &h.frames[f.frame];
                 frame.text(Vec2::new(x, y), &format!("TIMELINE {}/{}  {:.2} GYR ({:.2} GYR AGO)", f.frame + 1, h.frames.len(), fr.time_gyr, fr.ago_gyr), TEXT);

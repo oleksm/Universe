@@ -2,7 +2,7 @@
 
 use glam::{DQuat, DVec3};
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Debug)]
 pub struct RigidBody {
     /// Relative to the rail system's root (m).
     pub position: DVec3,
@@ -15,8 +15,9 @@ pub struct RigidBody {
     /// what touches anything, if it has no `parts`).
     pub radius: f64,
     /// Its solid shape for contact, as spheres fixed in its frame (empty: the
-    /// one sphere of `radius` at its centre).
-    pub parts: &'static [Sphere],
+    /// one sphere of `radius` at its centre). Owned for transient definitions;
+    /// borrowed for permanent content.
+    pub parts: std::borrow::Cow<'static, [Sphere]>,
     /// Ballistic coefficient: mass / (drag coefficient × area) (kg/m²), for
     /// drag in an atmosphere. Zero: no drag.
     pub ballistic: f64,
@@ -24,7 +25,7 @@ pub struct RigidBody {
 
 impl RigidBody {
     pub fn new(position: DVec3, velocity: DVec3, orientation: DQuat, radius: f64) -> Self {
-        Self { position, velocity, orientation, angular_velocity: DVec3::ZERO, radius, parts: &[], ballistic: 0.0 }
+        Self { position, velocity, orientation, angular_velocity: DVec3::ZERO, radius, parts: std::borrow::Cow::Borrowed(&[]), ballistic: 0.0 }
     }
 }
 

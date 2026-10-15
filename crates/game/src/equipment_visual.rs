@@ -1,98 +1,266 @@
-//! Shared immutable, hash-checked equipment geometry. Consumers decide whether
-//! a neutral preview or a fully operational mounted mechanism is permitted.
+//! Retained equipment shared by Studio and the world. Installed geometry is the
+//! cache's original PBR model; only locally authored structure is built here.
 pub use crate::visual_assets::Visual;
-use glam::Vec3;
-use std::sync::Arc;
+use glam::{Mat4, Quat, Vec3};
+use std::sync::{Arc, OnceLock};
+use universe_engine::{
+    PbrModel,
+    pbr::{Material, PbrData, PbrVertex, Primitive},
+    scene::{Geometry, ObjectId, Pose, Scene},
+    viewport::{PixelRect, Projection, View},
+};
 
 pub fn get(key: &str) -> Option<Arc<Visual>> {
     crate::visual_assets::request(key, 1).filter(|v| v.neutral_error.is_none())
 }
 
+/// Construction input for local structure only, never a copy of installed GLB geometry.
 #[derive(Clone)]
 pub struct Face {
     pub positions: [Vec3; 3],
     pub normals: [Vec3; 3],
     pub colour: universe_engine::Color,
     pub double_sided: bool,
-    /// Authored glTF alpha mode; a low base alpha alone does not imply blending.
     pub blend: bool,
     pub alpha_cutoff: Option<f32>,
 }
 
-/// One resolved visual, shared by design, walk, balance and test drive. Physical
-/// envelopes remain independent. transform maps authored metres into design space.
+#[derive(Clone)]
+struct Resolved {
+    model: PbrModel,
+    transform: Mat4,
+    bounds: Option<[glam::DVec3; 2]>,
+}
+impl Resolved {
+    fn installed(v: Arc<Visual>, at: Vec3, r: Quat) -> Option<Self> {
+        if v.neutral_error.is_some() {
+            return None;
+        }
+        Some(Self {
+            // Attach the lease to the submitted handle, never to Visual.model:
+            // the scene and any in-flight frame must pin the entire cache entry.
+            model: v.model.with_lease(v.clone()),
+            transform: Mat4::from_rotation_translation(r, at - r * v.centre),
+            bounds: Some([v.lo, v.hi]),
+        })
+    }
+}
+
+struct Pending {
+    key: String,
+    at: Vec3,
+    rotation: Quat,
+    ready: OnceLock<Resolved>,
+}
+
+/// Keep placements alongside stable document IDs. Construction builds local
+/// geometry once; clones share it and the pending promotion cell. Physics and
+/// the saved placement are never changed by a visual becoming ready.
 #[derive(Clone)]
 pub struct Placed {
-    pub faces: Arc<Vec<Face>>,
-    pub transform: glam::Mat4,
-    pub installed: bool,
-    // Hold the full cache lease whenever faces are retained outside the cache.
-    lease: Option<Arc<Visual>>,
-    pending: Option<(String, Vec3, glam::Quat)>,
+    model: PbrModel,
+    pub transform: Mat4,
+    /// Whether installed at construction (not an operational/physics gate).
+    bounds: Option<[glam::DVec3; 2]>,
+    pending: Option<Arc<Pending>>,
 }
 
 impl Placed {
-    /// Locally authored structure has no external cache owner or pending asset.
     pub fn structure(faces: Vec<Face>) -> Self {
+        let mut data = PbrData::default();
+        let mut groups = std::collections::BTreeMap::new();
+        let (mut lo, mut hi) = (Vec3::splat(f32::INFINITY), Vec3::splat(f32::NEG_INFINITY));
+        for face in faces {
+            let key = (
+                face.colour.0.map(f32::to_bits),
+                face.double_sided,
+                face.blend,
+                face.alpha_cutoff.map(f32::to_bits),
+            );
+            let index = *groups.entry(key).or_insert_with(|| {
+                let index = data.materials.len();
+                data.materials.push(Material {
+                    base_color: face.colour.0,
+                    metallic: 0.,
+                    roughness: 0.8,
+                    emissive: [0.; 3],
+                    normal_scale: 1.,
+                    base_tex: None,
+                    mr_tex: None,
+                    normal_tex: None,
+                    emissive_tex: None,
+                    occlusion_tex: None,
+                    occlusion_strength: 1.,
+                    alpha_cutoff: face.alpha_cutoff,
+                    blend: face.blend,
+                    double_sided: face.double_sided,
+                });
+                data.primitives.push(Primitive {
+                    vertices: Vec::new(),
+                    indices: Vec::new(),
+                    material: index,
+                    part: 0,
+                });
+                index
+            });
+            let primitive = &mut data.primitives[index];
+            for (p, n) in face.positions.into_iter().zip(face.normals) {
+                lo = lo.min(p);
+                hi = hi.max(p);
+                primitive.indices.push(
+                    primitive
+                        .vertices
+                        .len()
+                        .try_into()
+                        .expect("local structure exceeds u32 vertices"),
+                );
+                let n = n.normalize_or_zero();
+                let tangent = if n.length_squared() > 0. {
+                    n.any_orthonormal_vector()
+                } else {
+                    Vec3::X
+                };
+                primitive.vertices.push(PbrVertex {
+                    pos: p.to_array(),
+                    normal: n.to_array(),
+                    tangent: tangent.extend(1.).to_array(),
+                    uv: [0.; 2],
+                });
+            }
+        }
         Self {
-            faces: Arc::new(faces),
-            transform: glam::Mat4::IDENTITY,
-            installed: false,
-            lease: None,
+            model: PbrModel::new(data),
+            transform: Mat4::IDENTITY,
+
+            bounds: (lo.is_finite() && hi.is_finite()).then(|| [lo.as_dvec3(), hi.as_dvec3()]),
             pending: None,
         }
     }
+
+    fn promote_with(&self, request: impl FnOnce(&str) -> Option<Arc<Visual>>) -> Option<&Resolved> {
+        let pending = self.pending.as_ref()?;
+        if pending.ready.get().is_none() {
+            if let Some(ready) = request(&pending.key)
+                .and_then(|v| Resolved::installed(v, pending.at, pending.rotation))
+            {
+                let _ = pending.ready.set(ready);
+            }
+        }
+        pending.ready.get()
+    }
+
+    /// Upsert one stable session object. Parent must already exist. Promotion
+    /// replaces this object's geometry/pose atomically; it does not add children.
+    /// Local fallbacks are already in design space, matching placed_rotated's
+    /// historical fallback contract. Installed models are centred at `at`.
+    pub fn set_node(
+        &self,
+        scene: &mut Scene,
+        id: &ObjectId,
+        parent: Option<ObjectId>,
+    ) -> Result<(), &'static str> {
+        let ready = self.promote_with(get);
+        let (model, transform, bounds) = ready
+            .map_or((&self.model, self.transform, self.bounds), |r| {
+                (&r.model, r.transform, r.bounds)
+            });
+        let pose = pose(transform)?;
+        if let Some(node) = scene.get(*id) {
+            if node.parent == parent
+                && node.pose.position == pose.position
+                && node.pose.rotation == pose.rotation
+                && node.pose.scale == pose.scale
+                && node.bounds == bounds
+                && matches!(&node.geometry, Some(Geometry::Model { model: m, part: 0 }) if m.id() == model.id())
+            {
+                return Ok(());
+            }
+        }
+        // Preserve the session's visibility/layer choices when a pending visual promotes.
+        let mut node = scene.get(*id).cloned().unwrap_or_default();
+        node.parent = parent;
+        node.pose = pose;
+        node.bounds = bounds;
+        node.geometry = Some(Geometry::Model {
+            model: model.clone(),
+            part: 0,
+        });
+        scene.set(*id, node)
+    }
 }
 
-pub fn rotation(thrust: Option<Vec3>) -> glam::Quat {
+fn pose(matrix: Mat4) -> Result<Pose, &'static str> {
+    if !matrix.is_finite() || matrix.determinant() <= 0. {
+        return Err("equipment transform must be rigid with positive uniform scale");
+    }
+    let (scale, rotation, position) = matrix.to_scale_rotation_translation();
+    if !scale.is_finite()
+        || scale.min_element() <= 0.
+        || !scale.abs_diff_eq(Vec3::splat(scale.x), 1e-5)
+        || !rotation.is_finite()
+        || !matrix.abs_diff_eq(
+            Mat4::from_scale_rotation_translation(scale, rotation, position),
+            1e-5,
+        )
+    {
+        return Err("equipment transform must be rigid with positive uniform scale");
+    }
+    Ok(Pose {
+        position: position.as_dvec3(),
+        rotation: rotation.as_dquat().normalize(),
+        scale: scale.x as f64,
+    })
+}
+
+pub fn rotation(thrust: Option<Vec3>) -> Quat {
     thrust
         .and_then(Vec3::try_normalize)
-        .map_or(glam::Quat::IDENTITY, |d| {
-            glam::Quat::from_rotation_arc(Vec3::Y, d)
-        })
+        .map_or(Quat::IDENTITY, |d| Quat::from_rotation_arc(Vec3::Y, d))
 }
 
-/// Full authoring orientation, shared by every Studio view.
 pub fn placed_rotated(
     key: &str,
     at: Vec3,
-    r: glam::Quat,
+    r: Quat,
     fallback: impl FnOnce() -> Vec<[Vec3; 3]>,
 ) -> Placed {
-    if let Some(v) = get(key) {
+    if let Some(ready) = get(key).and_then(|v| Resolved::installed(v, at, r)) {
         return Placed {
-            faces: v.faces.clone(),
-            transform: glam::Mat4::from_rotation_translation(r, at - r * v.centre),
-            installed: true,
-            lease: Some(v),
+            model: ready.model,
+            transform: ready.transform,
+            bounds: ready.bounds,
+
             pending: None,
         };
     }
-    let faces = fallback()
-        .into_iter()
-        .map(|positions| {
-            let normal = (positions[1] - positions[0])
-                .cross(positions[2] - positions[0])
-                .normalize_or_zero();
-            Face {
-                positions,
-                normals: [normal; 3],
-                colour: universe_engine::Color::rgb(0.55, 0.5, 0.62),
-                double_sided: true,
-                blend: false,
-                alpha_cutoff: None,
-            }
-        })
-        .collect();
-    Placed {
-        faces: Arc::new(faces),
-        transform: glam::Mat4::IDENTITY,
-        installed: false,
-        lease: None,
-        pending: Some((key.into(), at, r)),
-    }
+    let mut placed = Placed::structure(
+        fallback()
+            .into_iter()
+            .map(|positions| {
+                let normal = (positions[1] - positions[0])
+                    .cross(positions[2] - positions[0])
+                    .normalize_or_zero();
+                Face {
+                    positions,
+                    normals: [normal; 3],
+                    colour: universe_engine::Color::rgb(0.55, 0.5, 0.62),
+                    double_sided: true,
+                    blend: false,
+                    alpha_cutoff: None,
+                }
+            })
+            .collect(),
+    );
+    placed.pending = Some(Arc::new(Pending {
+        key: key.into(),
+        at,
+        rotation: r,
+        ready: OnceLock::new(),
+    }));
+    placed
 }
 
+/// Legacy camera input. New sessions can construct engine View directly.
 pub struct Camera {
     pub eye: Vec3,
     pub right: Vec3,
@@ -102,385 +270,281 @@ pub struct Camera {
     pub centre: glam::Vec2,
     pub near: f32,
 }
-
-pub struct Projected {
-    pub depth: f32,
-    pub points: [glam::Vec2; 3],
-    pub distances: [f32; 3],
-    pub near: f32,
-    pub colours: [universe_engine::Color; 3],
-    pub blend: bool,
-    pub alpha_cutoff: Option<f32>,
-}
-impl Projected {
-    pub fn draw(&self, frame: &mut universe_engine::Frame) {
-        let alpha = if self.blend {
-            universe_engine::CanvasAlpha::Blend
-        } else if let Some(cutoff) = self.alpha_cutoff {
-            universe_engine::CanvasAlpha::Mask(cutoff)
-        } else {
-            universe_engine::CanvasAlpha::Opaque
-        };
-        frame.canvas_triangle_alpha(self.points, self.distances, self.near, self.colours, alpha);
-    }
-}
-
-/// Camera adaptation, shading, near clipping and ordering have one implementation.
-/// parent is identity in design/walk; flight supplies pose * translation(-COM).
-#[cfg(test)]
-pub fn project(placed: &[Placed], parent: glam::Mat4, camera: &Camera) -> Vec<Projected> {
-    let mut output = Vec::new();
-    project_each(placed, parent, camera, |triangle| output.push(triangle));
-    output
-}
-
-/// Stream triangles into the consumer: dense installed meshes need no intermediate
-/// projected mesh allocation/copy on every frame. Walk may still collect its labels
-/// and geometry for ordering; design, catalogue and flight submit directly.
-pub fn draw(
-    placed: &[Placed],
-    parent: glam::Mat4,
-    camera: &Camera,
-    frame: &mut universe_engine::Frame,
-) {
-    project_each(placed, parent, camera, |triangle| triangle.draw(frame));
-}
-
-pub fn project_each(
-    placed: &[Placed],
-    parent: glam::Mat4,
-    camera: &Camera,
-    mut emit: impl FnMut(Projected),
-) {
-    use universe_engine::Color;
-    let _scope = universe_prof::scope("draw/studio/project-equipment");
-    let light = (-camera.forward + camera.up * 0.7 - camera.right * 0.4).normalize();
-    for item in placed {
-        // A stand/test craft may have been built while the asset was pending.
-        // Resolve again at draw time so it promotes without rebuilding physics.
-        let ready = item.pending.as_ref().and_then(|(key, at, r)| {
-            get(key).map(|v| {
-                let matrix = glam::Mat4::from_rotation_translation(*r, *at - *r * v.centre);
-                (v, matrix)
-            })
-        });
-        let (faces, transform) = ready
-            .as_ref()
-            .map_or((&item.faces, item.transform), |(v, m)| (&v.faces, *m));
-        let _lease = &item.lease;
-        let matrix = parent * transform;
-        for face in faces.iter() {
-            let positions = face.positions.map(|p| matrix.transform_point3(p));
-            let geometric = (positions[1] - positions[0]).cross(positions[2] - positions[0]);
-            if !face.double_sided && geometric.dot(camera.eye - positions[0]) <= 0. {
-                continue;
-            }
-            let view = positions.map(|p| {
-                let delta = p - camera.eye;
-                Vec3::new(
-                    delta.dot(camera.right),
-                    delta.dot(camera.up),
-                    delta.dot(camera.forward),
-                )
-            });
-            if view.iter().all(|p| p.z < camera.near) {
-                continue;
-            }
-            let vertices = [0, 1, 2].map(|i| {
-                let p = view[i];
-                let n = matrix
-                    .transform_vector3(face.normals[i])
-                    .normalize_or_zero();
-                let shade = 0.3 + 0.7 * n.dot(light).max(0.);
-                let c = glam::Vec4::from_array(face.colour.0)
-                    * glam::Vec4::new(shade, shade, shade, 1.);
-                (p, c)
-            });
-            // A triangle clipped by one plane has at most four vertices. The
-            // overwhelmingly common all-visible case requires no clipping.
-            let mut clipped = [(Vec3::ZERO, glam::Vec4::ZERO); 4];
-            let mut count = 0;
-            if view.iter().all(|p| p.z >= camera.near) {
-                clipped[..3].copy_from_slice(&vertices);
-                count = 3;
-            } else {
-                for i in 0..3 {
-                    let (a, b) = (vertices[i], vertices[(i + 1) % 3]);
-                    if a.0.z >= camera.near {
-                        clipped[count] = a;
-                        count += 1;
-                    }
-                    if (a.0.z >= camera.near) != (b.0.z >= camera.near) {
-                        let t = (camera.near - a.0.z) / (b.0.z - a.0.z);
-                        clipped[count] = (a.0.lerp(b.0, t), a.1.lerp(b.1, t));
-                        count += 1;
-                    }
-                }
-            }
-            for i in 1..count.saturating_sub(1) {
-                let triangle = [clipped[0], clipped[i], clipped[i + 1]];
-                emit(Projected {
-                    depth: triangle.iter().map(|v| v.0.z).sum::<f32>() / 3.,
-                    distances: triangle.map(|v| v.0.z.max(camera.near)),
-                    near: camera.near,
-                    points: triangle.map(|(p, _)| {
-                        camera.centre + glam::Vec2::new(p.x, -p.y) * (camera.focal / p.z)
-                    }),
-                    colours: triangle.map(|(_, c)| Color(c.to_array())),
-                    blend: face.blend,
-                    alpha_cutoff: face.alpha_cutoff,
-                });
-            }
+impl Camera {
+    /// The shared perspective is symmetric: rect must be centred on `centre`.
+    pub fn view(&self, rect: PixelRect) -> Result<View, &'static str> {
+        if !rect.origin.is_finite()
+            || !rect.size.is_finite()
+            || rect.size.min_element() <= 0.
+            || !self.centre.abs_diff_eq(rect.origin + rect.size * 0.5, 0.01)
+            || !self.eye.is_finite()
+            || !self.focal.is_finite()
+            || self.focal <= 0.
+            || !self.near.is_finite()
+            || self.near <= 0.
+        {
+            return Err("invalid equipment viewport or camera centre");
         }
+        let basis = glam::Mat3::from_cols(self.right, self.up, -self.forward);
+        if !basis.is_finite()
+            || (basis.determinant() - 1.).abs() > 1e-4
+            || !(basis.transpose() * basis).abs_diff_eq(glam::Mat3::IDENTITY, 1e-4)
+        {
+            return Err("equipment camera basis must be right-handed and orthonormal");
+        }
+        Ok(View {
+            camera: universe_engine::Camera {
+                position: self.eye.as_dvec3(),
+                orientation: Quat::from_mat3(&basis).normalize(),
+                fov_y: 2. * (rect.size.y * 0.5 / self.focal).atan(),
+                near: self.near,
+            },
+            projection: Projection::Perspective,
+            rect,
+            layers: u64::MAX,
+        })
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    fn reference_project(placed: &[Placed], parent: glam::Mat4, camera: &Camera) -> Vec<Projected> {
-        use universe_engine::Color;
-        let light = (-camera.forward + camera.up * 0.7 - camera.right * 0.4).normalize();
-        let mut output = Vec::new();
-        for item in placed {
-            // A stand/test craft may have been built while the asset was pending.
-            // Resolve again at draw time so it promotes without rebuilding physics.
-            let ready = item.pending.as_ref().and_then(|(key, at, r)| {
-                get(key).map(|v| {
-                    let matrix = glam::Mat4::from_rotation_translation(*r, *at - *r * v.centre);
-                    (v, matrix)
-                })
-            });
-            let (faces, transform) = ready
-                .as_ref()
-                .map_or((&item.faces, item.transform), |(v, m)| (&v.faces, *m));
-            let _lease = &item.lease;
-            let matrix = parent * transform;
-            for face in faces.iter() {
-                let positions = face.positions.map(|p| matrix.transform_point3(p));
-                let geometric = (positions[1] - positions[0]).cross(positions[2] - positions[0]);
-                if !face.double_sided && geometric.dot(camera.eye - positions[0]) <= 0. {
-                    continue;
-                }
-                let vertices: Vec<_> = (0..3)
-                    .map(|i| {
-                        let delta = positions[i] - camera.eye;
-                        let p = Vec3::new(
-                            delta.dot(camera.right),
-                            delta.dot(camera.up),
-                            delta.dot(camera.forward),
-                        );
-                        let n = matrix
-                            .transform_vector3(face.normals[i])
-                            .normalize_or_zero();
-                        let shade = 0.3 + 0.7 * n.dot(light).max(0.);
-                        let c = glam::Vec4::from_array(face.colour.0)
-                            * glam::Vec4::new(shade, shade, shade, 1.);
-                        (p, c)
-                    })
-                    .collect();
-                let mut clipped = Vec::new();
-                for i in 0..3 {
-                    let (a, b) = (vertices[i], vertices[(i + 1) % 3]);
-                    if a.0.z >= camera.near {
-                        clipped.push(a);
-                    }
-                    if (a.0.z >= camera.near) != (b.0.z >= camera.near) {
-                        let t = (camera.near - a.0.z) / (b.0.z - a.0.z);
-                        clipped.push((a.0.lerp(b.0, t), a.1.lerp(b.1, t)));
-                    }
-                }
-                for i in 1..clipped.len().saturating_sub(1) {
-                    let triangle = [clipped[0], clipped[i], clipped[i + 1]];
-                    output.push(Projected {
-                        depth: triangle.iter().map(|v| v.0.z).sum::<f32>() / 3.,
-                        distances: triangle.map(|v| v.0.z.max(camera.near)),
-                        near: camera.near,
-                        points: triangle.map(|(p, _)| {
-                            camera.centre + glam::Vec2::new(p.x, -p.y) * (camera.focal / p.z)
-                        }),
-                        colours: triangle.map(|(_, c)| Color(c.to_array())),
-                        blend: face.blend,
-                        alpha_cutoff: face.alpha_cutoff,
-                    });
-                }
-            }
-        }
-        output
-    }
+    use universe_engine::scene::Node;
+    use glam::{DQuat, DVec3, Vec2};
 
-    // Independent pre-optimization path: all near-plane classifications, rotated
-    // parents/placements, sidedness and material modes must yield identical pixels.
-    #[test]
-    fn streamed_projection_matches_reference_at_near_plane() {
-        let camera = Camera {
-            eye: Vec3::ZERO,
-            right: Vec3::X,
-            up: Vec3::Y,
-            forward: Vec3::Z,
-            focal: 120.,
-            centre: glam::Vec2::splat(240.),
-            near: 0.1,
+    fn face(blend: bool, cutoff: Option<f32>) -> Face {
+        Face {
+            positions: [Vec3::ZERO, Vec3::X, Vec3::Y],
+            normals: [Vec3::Z; 3],
+            colour: universe_engine::Color([0.2, 0.4, 0.6, 0.3]),
+            double_sided: true,
+            blend,
+            alpha_cutoff: cutoff,
+        }
+    }
+    fn visual(neutral_error: Option<String>) -> Arc<Visual> {
+        Arc::new(Visual {
+            source_sha256: "fixture".into(),
+            model: Placed::structure(vec![face(false, None)]).model,
+            centre: Vec3::new(2., 3., 4.),
+            nodes: Default::default(),
+            has_motion: true,
+            lo: DVec3::ZERO,
+            hi: DVec3::splat(8.),
+            neutral_error,
+        })
+    }
+    fn pending(at: Vec3, rotation: Quat) -> Placed {
+        let mut item = Placed::structure(vec![face(false, None)]);
+        item.pending = Some(Arc::new(Pending {
+            key: "fixture".into(),
+            at,
+            rotation,
+            ready: OnceLock::new(),
+        }));
+        item
+    }
+    fn model(scene: &Scene, id: ObjectId) -> &PbrModel {
+        let Some(Geometry::Model { model, part: 0 }) = &scene.get(id).unwrap().geometry else {
+            panic!("expected PBR model")
         };
-        let mut faces = Vec::new();
-        for a in [-0.4, 0.1, 0.9] {
-            for b in [-0.4, 0.1, 0.9] {
-                for c in [-0.4, 0.1, 0.9] {
-                    for double_sided in [false, true] {
-                        for (blend, alpha_cutoff) in
-                            [(false, None), (true, None), (false, Some(0.5))]
-                        {
-                            faces.push(Face {
-                                positions: [
-                                    Vec3::new(-1., -1., a),
-                                    Vec3::new(0., 1., b),
-                                    Vec3::new(1., -1., c),
-                                ],
-                                normals: [Vec3::NEG_Z, Vec3::NEG_Y, Vec3::X],
-                                colour: universe_engine::Color([0.2, 0.5, 0.8, 0.4]),
-                                double_sided,
-                                blend,
-                                alpha_cutoff,
-                            });
-                        }
-                    }
-                }
-            }
-        }
-        let mut item = Placed::structure(faces);
-        for angle in [0., 0.3, 1.5] {
-            item.transform = glam::Mat4::from_rotation_y(angle);
-            let parent = glam::Mat4::from_rotation_x(angle * 0.5);
-            let expected = reference_project(std::slice::from_ref(&item), parent, &camera);
-            let actual = project(std::slice::from_ref(&item), parent, &camera);
-            assert_eq!(actual.len(), expected.len());
-            for (a, b) in actual.iter().zip(&expected) {
-                assert_eq!(a.points, b.points);
-                assert_eq!(a.distances, b.distances);
-                assert_eq!(a.depth, b.depth);
-                assert_eq!(a.colours.map(|c| c.0), b.colours.map(|c| c.0));
-                assert_eq!(a.blend, b.blend);
-                assert_eq!(a.alpha_cutoff, b.alpha_cutoff);
-            }
+        model
+    }
+
+    #[test]
+    fn structure_is_built_once_and_preserves_material_modes() {
+        let item = Placed::structure(vec![
+            face(false, None),
+            face(false, None),
+            face(false, Some(0.5)),
+            face(true, None),
+        ]);
+        assert_eq!(item.model.data.primitives.len(), 3);
+        assert_eq!(item.model.data.primitives[0].vertices.len(), 6);
+        let materials = &item.model.data.materials;
+        assert!(!materials[0].blend);
+        assert_eq!(materials[0].alpha_cutoff, None);
+        assert_eq!(materials[1].alpha_cutoff, Some(0.5));
+        assert!(materials[2].blend);
+        assert!(
+            materials
+                .iter()
+                .all(|m| m.double_sided && m.base_color[3] == 0.3)
+        );
+        let mut scene = Scene::default();
+        let id = ObjectId(7);
+        item.set_node(&mut scene, &id, None).unwrap();
+        let revision = scene.revision();
+        for _ in 0..5 {
+            item.clone().set_node(&mut scene, &id, None).unwrap();
+            assert_eq!(model(&scene, id).id(), item.model.id());
+            assert!(Arc::ptr_eq(&model(&scene, id).data, &item.model.data));
+            assert_eq!(scene.revision(), revision);
         }
     }
 
     #[test]
-    fn pending_stand_promotes_and_world_uses_same_model() {
-        use std::time::{Duration, Instant};
-        if universe_sim::world::assets::store().is_none() {
-            return;
+    fn pending_promotes_same_object_once_with_parent_and_shared_lease() {
+        let at = Vec3::new(7., 11., 13.);
+        let rotation = Quat::from_euler(glam::EulerRot::XYZ, 0.2, 0.4, 0.6);
+        let item = pending(at, rotation);
+        let twin = item.clone();
+        let mut scene = Scene::default();
+        let (root, id) = (ObjectId(10), ObjectId(11));
+        let parent = Pose {
+            position: DVec3::new(100., -20., 30.),
+            rotation: DQuat::from_rotation_y(0.7),
+            scale: 2.,
+        };
+        scene
+            .set(
+                root,
+                Node {
+                    pose: parent,
+                    ..Node::default()
+                },
+            )
+            .unwrap();
+        assert!(item.promote_with(|_| None).is_none());
+        item.set_node(&mut scene, &id, Some(root)).unwrap();
+        let fallback_id = model(&scene, id).id();
+        // Consumer settings survive asynchronous replacement.
+        let mut node = scene.get(id).unwrap().clone();
+        node.layers = 4;
+        node.visible = false;
+        scene.set(id, node).unwrap();
+        let ready = visual(None);
+        let weak = Arc::downgrade(&ready);
+        let model_id = ready.model.id();
+        item.promote_with(|_| Some(ready.clone())).unwrap();
+        twin.promote_with(|_| panic!("promoted clones must never request again"))
+            .unwrap();
+        item.set_node(&mut scene, &id, Some(root)).unwrap();
+        assert_ne!(model(&scene, id).id(), fallback_id);
+        assert_eq!(model(&scene, id).id(), model_id);
+        assert!(Arc::ptr_eq(&model(&scene, id).data, &ready.model.data));
+        assert_eq!(scene.get(id).unwrap().layers, 4);
+        assert!(!scene.get(id).unwrap().visible);
+        let world = scene.world_pose(id).unwrap();
+        let centre = world.position + world.rotation * (ready.centre.as_dvec3() * world.scale);
+        let expected = parent.position + parent.rotation * (at.as_dvec3() * parent.scale);
+        // Placement matrices are legacy f32; decomposition and parent scaling
+        // introduce a few micrometres of rounding at these metre coordinates.
+        assert!(
+            centre.abs_diff_eq(expected, 5e-6),
+            "centre delta {:?}",
+            centre - expected
+        );
+        assert!(
+            (world.rotation * DVec3::X)
+                .abs_diff_eq(parent.rotation * (rotation * Vec3::X).as_dvec3(), 1e-6)
+        );
+        let revision = scene.revision();
+        item.set_node(&mut scene, &id, Some(root)).unwrap();
+        assert_eq!(scene.revision(), revision);
+        assert!(
+            item.pending.is_some(),
+            "promotion must not change saved/physics state"
+        );
+        // Queued frame submission is another clone of the very same PBR handle.
+        let queued_model = model(&scene, id).clone();
+        drop(ready);
+        drop(item);
+        drop(twin);
+        assert!(weak.upgrade().is_some(), "scene pins the cache owner");
+        scene.remove(root);
+        assert!(
+            weak.upgrade().is_some(),
+            "queued submission also pins the owner"
+        );
+        drop(queued_model);
+        assert!(weak.upgrade().is_none(), "no owner/model reference cycle");
+    }
+
+    #[test]
+    fn neutral_gate_keeps_fallback_and_later_valid_visual_can_promote() {
+        let item = pending(Vec3::ZERO, Quat::IDENTITY);
+        assert!(
+            item.promote_with(|_| Some(visual(Some("skin requires evaluation".into()))))
+                .is_none()
+        );
+        let mut scene = Scene::default();
+        let id = ObjectId(1);
+        item.set_node(&mut scene, &id, None).unwrap();
+        assert_eq!(model(&scene, id).id(), item.model.id());
+        let ready = visual(None);
+        assert!(
+            ready.has_motion,
+            "sidecar future motion permits a valid neutral GLB"
+        );
+        item.promote_with(|_| Some(ready.clone())).unwrap();
+        item.set_node(&mut scene, &id, None).unwrap();
+        assert_eq!(model(&scene, id).id(), ready.model.id());
+    }
+
+    #[test]
+    fn invalid_transform_or_parent_leaves_existing_node_intact() {
+        let mut item = Placed::structure(vec![face(false, None)]);
+        let mut scene = Scene::default();
+        let id = ObjectId(1);
+        item.set_node(&mut scene, &id, None).unwrap();
+        let revision = scene.revision();
+        for transform in [
+            Mat4::from_scale(Vec3::new(1., 2., 1.)),
+            Mat4::ZERO,
+            Mat4::from_scale(Vec3::splat(-1.)),
+        ] {
+            item.transform = transform;
+            assert!(item.set_node(&mut scene, &id, None).is_err());
+            assert_eq!(scene.revision(), revision);
         }
-        let key = "equipment.engine.ch.s2";
-        let at = Vec3::new(3., 2., 10.);
-        let r = glam::Quat::from_euler(glam::EulerRot::XYZ, 0.21, 0.37, 0.55);
-        // Represent a stand created before loading starts, regardless of other tests.
-        let mut pending = placed_rotated("not-installed", at, r, || vec![]);
-        pending.pending = Some((key.into(), at, r));
-        let until = Instant::now() + Duration::from_secs(15);
-        let ready = loop {
-            if let Some(v) = get(key) {
-                break v;
-            }
+        item.transform = Mat4::IDENTITY;
+        assert!(item.set_node(&mut scene, &id, Some(ObjectId(9))).is_err());
+        assert!(item.set_node(&mut scene, &id, Some(id)).is_err());
+        assert_eq!(scene.revision(), revision);
+    }
+
+    #[test]
+    fn camera_adapter_uses_shared_view_for_distinct_viewport_rectangles() {
+        for rect in [
+            PixelRect {
+                origin: Vec2::ZERO,
+                size: Vec2::new(800., 600.),
+            },
+            PixelRect {
+                origin: Vec2::new(600., 20.),
+                size: Vec2::new(160., 84.),
+            },
+        ] {
+            let centre = rect.origin + rect.size * 0.5;
+            let camera = Camera {
+                eye: Vec3::new(3., 4., 5.),
+                right: Vec3::X,
+                up: Vec3::Y,
+                forward: Vec3::NEG_Z,
+                focal: 100.,
+                centre,
+                near: 0.1,
+            };
+            let view = camera.view(rect).unwrap();
+            let projected = view
+                .project((camera.eye + Vec3::new(1., 1., -10.)).as_dvec3())
+                .unwrap();
             assert!(
-                Instant::now() < until,
-                "{:?}",
-                crate::visual_assets::snapshot()
+                projected
+                    .truncate()
+                    .abs_diff_eq(centre + Vec2::new(10., -10.), 1e-4)
             );
-            std::thread::sleep(Duration::from_millis(2));
-        };
-        let world = crate::visuals::Visuals
-            .get(key)
-            .expect("world shares ready entry");
-        assert!(Arc::ptr_eq(&ready, &world));
-        let installed = placed_rotated(key, at, r, || panic!("ready model fell back"));
-        assert!(Arc::ptr_eq(installed.lease.as_ref().unwrap(), &ready));
-        assert!(
-            installed
-                .transform
-                .transform_vector3(Vec3::X)
-                .abs_diff_eq(r * Vec3::X, 1e-6)
-        );
-        let cam = Camera {
-            eye: Vec3::ZERO,
-            right: Vec3::X,
-            up: Vec3::Y,
-            forward: Vec3::Z,
-            focal: 100.,
-            centre: glam::Vec2::ZERO,
-            near: 0.1,
-        };
-        // Both identity (walk) and craft parent (balance/drive) must promote.
-        for parent in [
-            glam::Mat4::IDENTITY,
-            glam::Mat4::from_rotation_translation(
-                glam::Quat::from_rotation_y(0.15),
-                Vec3::new(1., 0., 2.),
-            ),
-        ] {
-            let a = project(std::slice::from_ref(&pending), parent, &cam);
-            let b = project(std::slice::from_ref(&installed), parent, &cam);
-            assert!(!a.is_empty());
-            assert_eq!(a.len(), b.len());
-            for (a, b) in a.iter().zip(&b) {
-                assert_eq!(a.points, b.points);
-                assert_eq!(a.distances, b.distances);
-                assert_eq!(a.blend, b.blend);
-                assert_eq!(a.alpha_cutoff, b.alpha_cutoff);
-            }
-        }
-        assert!(
-            !pending.installed,
-            "promotion does not mutate saved placement or physics"
-        );
-    }
-    #[test]
-    fn authored_alpha_survives_clipping_and_placed_transforms() {
-        let camera = Camera {
-            eye: Vec3::ZERO,
-            right: Vec3::X,
-            up: Vec3::Y,
-            forward: Vec3::Z,
-            focal: 100.,
-            centre: glam::Vec2::ZERO,
-            near: 0.1,
-        };
-        // Low factor alpha is valid even for OPAQUE: preserve the mode separately.
-        for (blend, alpha_cutoff) in [
-            (false, None),
-            (false, Some(0.5)),
-            (false, Some(1.5)),
-            (true, None),
-        ] {
-            let face = Face {
-                positions: [
-                    Vec3::new(-1., -1., 0.02),
-                    Vec3::new(1., -1., 2.),
-                    Vec3::new(0., 1., 2.),
-                ],
-                normals: [Vec3::NEG_Z; 3],
-                colour: universe_engine::Color([0.3, 0.6, 0.9, 0.2]),
-                double_sided: true,
-                blend,
-                alpha_cutoff,
-            };
-            let item = Placed {
-                faces: Arc::new(vec![face]),
-                transform: glam::Mat4::from_translation(Vec3::X),
-                installed: true,
-                lease: None,
-                pending: None,
-            };
-            // A flight parent and placement cancel; every clipped child keeps its material.
-            let projected = project(&[item], glam::Mat4::from_translation(Vec3::NEG_X), &camera);
-            assert_eq!(projected.len(), 2);
-            for triangle in projected {
-                assert_eq!(triangle.blend, blend);
-                assert_eq!(triangle.alpha_cutoff, alpha_cutoff);
-                assert!(triangle.colours.iter().all(|c| (c.0[3] - 0.2).abs() < 1e-6));
-                assert!(triangle.distances.iter().all(|z| *z >= camera.near));
-            }
+            let ray = view.ray(centre).unwrap();
+            assert!(ray.direction.abs_diff_eq(DVec3::NEG_Z, 1e-6));
+            assert!(
+                camera
+                    .view(PixelRect {
+                        origin: rect.origin + Vec2::X,
+                        ..rect
+                    })
+                    .is_err()
+            );
         }
     }
-
 }

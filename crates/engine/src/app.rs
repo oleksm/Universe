@@ -77,10 +77,16 @@ pub struct Resources {
     pub asset_hits: u64,
     pub asset_unloads: u64,
     pub asset_gpu_bytes: usize,
+    /// All cached untextured mesh buffers; reservation budgets additionally cover retired work.
+    pub mesh_gpu_bytes: usize,
     pub asset_preparing: usize,
     /// Worlds' surface maps in GPU layers, of the layers there are.
     pub globe_layers: usize,
     pub globe_capacity: usize,
+    /// The mesh pool (see `pool`): its meshes, its size and what of it is used (bytes).
+    pub pool_meshes: usize,
+    pub pool_bytes: u64,
+    pub pool_used_bytes: u64,
 }
 
 /// Frames kept in `Perf::history`.
@@ -102,6 +108,9 @@ pub struct Context {
     /// Slow frames written down (the log and `Config::hitch_log`): the game
     /// sets it while its debug view is on; off, they're only counted.
     pub watch_hitches: bool,
+    /// Updated under an app that covers it (`apps::Cover::Covers`): nothing of it is drawn this
+    /// frame, so it needn't prepare what it would draw.
+    pub covered: bool,
     /// Seconds since the last frame (clamped to avoid huge steps after stalls).
     pub dt: f32,
     /// Seconds since start.
@@ -193,7 +202,23 @@ struct Runner<G> {
     start: Instant,
 }
 
-pub fn run<G: Game>(config: Config, game: G) {
+pub fn run<G: Game>(mut config: Config, game: G) {
+    // Isolated presentation controls for captures; normal launches are unchanged.
+    if std::env::var_os("UNIVERSE_SCREENSHOT").is_some() || std::env::var_os("UNIVERSE_TEST").is_some() {
+        if let Ok(mode) = std::env::var("UNIVERSE_DIAGNOSTIC_PRESENT") {
+            config.vsync = match mode.as_str() {
+                "auto-vsync" => true,
+                "auto-no-vsync" => false,
+                _ => panic!("UNIVERSE_DIAGNOSTIC_PRESENT: auto-vsync|auto-no-vsync"),
+            };
+        }
+        if let Ok(title) = std::env::var("UNIVERSE_DIAGNOSTIC_TITLE") { config.title = title; }
+        if let Ok(size) = std::env::var("UNIVERSE_DIAGNOSTIC_SIZE") {
+            let (w, h) = size.split_once('x').expect("UNIVERSE_DIAGNOSTIC_SIZE: WxH");
+            config.window_size = (w.parse().expect("width"), h.parse().expect("height"));
+        }
+        log::info!("presentation diagnostic: title={:?} vsync={} window={:?}", config.title, config.vsync, config.window_size);
+    }
     let event_loop = EventLoop::new().expect("failed to create event loop");
     event_loop.set_control_flow(ControlFlow::Poll);
     let mut runner = Runner { config, game, state: None, start: Instant::now() };
@@ -320,6 +345,9 @@ impl<G: Game> Runner<G> {
         if auto_capture {
             let elapsed = (now - self.start).as_secs_f64();
             log::info!("{} frames in {elapsed:.2}s ({:.2} ms/frame)", s.frame_count, elapsed * 1000.0 / s.frame_count as f64);
+            if std::env::var_os("UNIVERSE_FRAME_TIMINGS").is_some() {
+                log::info!("FRAME_WINDOW history_ms={:?} update_ms={} draw_ms={} render_ms={} wait_ms={} resources={:?} triangles={}", p.history, p.update_ms, p.draw_ms, p.render_ms, p.wait_ms, p.resources, p.triangles);
+            }
             let passes = crate::gputime::times();
             if !passes.is_empty() {
                 log::info!("GPU a pass (ms): {}", passes.iter().map(|(n, ms)| format!("{n} {ms:.2}")).collect::<Vec<_>>().join(", "));
@@ -351,10 +379,11 @@ impl<G: Game> ApplicationHandler for Runner<G> {
             return;
         }
         let (w, h) = self.config.window_size;
-        // (A test or dev run, UNIVERSE_TEST or UNIVERSE_SCREENSHOT set: titled "<title> test", so
-        // the window manager can put it out of the way: workspace 8, by the user's rule.)
+        // (A test or dev run, UNIVERSE_TEST or UNIVERSE_SCREENSHOT set: titled "Freefall test" whatever
+        // the app, so the window manager puts it out of the way: workspace 8, by the user's rule,
+        // which matches that title exactly.)
         let test = std::env::var_os("UNIVERSE_TEST").is_some() || std::env::var_os("UNIVERSE_SCREENSHOT").is_some();
-        let title = if test { format!("{} test", self.config.title) } else { self.config.title.clone() };
+        let title = if test { "Freefall test".to_string() } else { self.config.title.clone() };
         let window = Arc::new(
             event_loop
                 .create_window(
@@ -375,6 +404,7 @@ impl<G: Game> ApplicationHandler for Runner<G> {
         let ctx = Context {
             input: Input::default(),
             watch_hitches: false,
+            covered: false,
             dt: 0.0,
             time: 0.0,
             fps: 0.0,

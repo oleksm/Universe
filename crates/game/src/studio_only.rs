@@ -1,14 +1,12 @@
-//! The interior studio alone (`freefall --studio [design]`): no universe, no
-//! galaxy, no world running, only the studio in a window, on the MC-07's hull spec
-//! (imported from its model, as a hull the studio can design in) for any design
-//! that has one.
+//! Client-owned Studio host. Opening an empty design requires no commissioned
+//! ship; its document and preview sessions own their state.
 
 use universe_engine::glam::Vec2;
-use universe_engine::{Camera, Color, Context, Frame, Game};
+use universe_engine::apps::{App, Next};
+use universe_engine::{Camera, Color, Context, Frame};
 
 pub struct StudioOnly {
     interior: crate::interior::Interior,
-    spec: &'static universe_sim::world::ship::ClassSpec,
     deckplans: Vec<universe_sim::world::deckplan::DeckPlan>,
     /// Dev (UNIVERSE_ISSUE=n): the issue to go to, once the checks have it.
     issue: Option<usize>,
@@ -25,13 +23,7 @@ impl StudioOnly {
             crate::interior::ship_code::check_path(std::path::Path::new(path))
                 .unwrap_or_else(|e| panic!("ship code: {e}"));
         }
-        crate::mounted::prepare();
-        let started = std::time::Instant::now();
-        let content = universe_sim::world::content::content();
-        let path = "assets/models/mc07.glb";
-        let class = std::fs::read(path).map_err(|e| e.to_string()).and_then(|b| universe_sim::world::import::commission(&b, path));
-        let spec = content.get(class.unwrap_or_else(|e| panic!("the studio needs the MC-07's model, {path}: {e}")));
-        log::info!("startup Studio hull physics: {:.3} ms", started.elapsed().as_secs_f64()*1000.);
+        let hull_error = design.and_then(|id| prepare_legacy_hull(id).err());
         let mut interior = crate::interior::Interior::new();
         match design {
             Some(name) => interior.open_design(name),
@@ -39,6 +31,13 @@ impl StudioOnly {
         }
         // (Its modules matched to their records, as the shipyard does on opening it.)
         interior.refit();
+        if let Some(error) = hull_error {
+            log::warn!("Studio hull: {error}");
+            interior.note(&format!("HULL: {error}"));
+        }
+        // Saved decks must be present before a startup WALK or test drive is built.
+        let mut deckplans = Vec::new();
+        interior.sync_decks(&mut deckplans, 0.0);
         if let Ok(t) = std::env::var("UNIVERSE_TOOL") {
             interior.use_tool(&t);
         }
@@ -61,12 +60,55 @@ impl StudioOnly {
         }
         if std::env::var_os("UNIVERSE_SHIP_CODE").is_some(){interior.open_code();}
         let issue = crate::devenv::num("UNIVERSE_ISSUE").map(|n| n as usize);
-        StudioOnly { interior, spec, deckplans: Vec::new(), issue, #[cfg(feature = "dev")] diagnostics: Diagnostics::default(), debug: std::env::var("UNIVERSE_DEBUG").ok().and_then(|v|v.parse().ok()).unwrap_or(0) }
+        StudioOnly { interior, deckplans, issue, #[cfg(feature = "dev")] diagnostics: Diagnostics::default(), debug: std::env::var("UNIVERSE_DEBUG").ok().and_then(|v|v.parse().ok()).unwrap_or(0) }
     }
 }
 
-impl Game for StudioOnly {
-    fn update(&mut self, ctx: &mut Context) {
+/// Legacy JSON stores an imported hull key, not a persistent content handle.
+/// Resolve only that model before opening; YAML resolves its own dependencies.
+fn prepare_legacy_hull(id: &str) -> Result<(), String> {
+    let folder = crate::save::data_dir().join("freefall").join("interiors");
+    if id.ends_with(".ship.yaml") || id.ends_with(".ship.yml") || folder.join(format!("{id}.ship.yaml")).exists() {
+        return Ok(());
+    }
+    #[derive(serde::Deserialize)]
+    struct HullRef {
+        #[serde(default)]
+        on: Option<String>,
+    }
+    // Match Interior::open_design: absent `on` means the design ID is the hull
+    // key; an explicitly empty `on` means a design with no hull.
+    let saved = std::fs::read_to_string(folder.join(format!("{id}.json")))
+        .ok().and_then(|text| serde_json::from_str::<HullRef>(&text).ok());
+    let key = saved.as_ref().and_then(|p| p.on.as_deref()).unwrap_or(id);
+    if !key.starts_with("hull.import.")
+        || universe_sim::world::content::content().handle::<universe_sim::world::ship::ClassSpec>(key).is_some()
+    {
+        return Ok(());
+    }
+    let model = universe_sim::world::registry::registry().hulls.iter()
+        .filter_map(|record| record.model.as_deref())
+        .find(|model| {
+            // This is the stable path-derived key used by import::hull_from_gltf.
+            let stem = std::path::Path::new(model).file_stem().and_then(|s| s.to_str()).unwrap_or("imported");
+            format!("hull.import.{}", stem.to_lowercase().replace(|c: char| !c.is_ascii_alphanumeric(), "_")) == key
+        })
+        .ok_or_else(|| format!("no installed model for {key}"))?;
+    let bytes = std::fs::read(model).map_err(|e| format!("{model}: {e}"))?;
+    universe_sim::world::import::commission(&bytes, model).map(|_| ())
+}
+
+impl App for StudioOnly {
+    fn name(&self) -> &str {
+        "studio"
+    }
+
+    /// (F3 and SHIFT+F3 are its own: the debug view, the observer.)
+    fn debug_keys(&self) -> bool {
+        true
+    }
+
+    fn update(&mut self, ctx: &mut Context) -> Next {
         let _scope = universe_prof::scope("update/studio");
         crate::visual_assets::maintain();
         #[cfg(feature = "dev")]
@@ -80,14 +122,16 @@ impl Game for StudioOnly {
             let observing = false;
             universe_prof::enable(self.debug == 2 || observing);
         }
-        let stay = crate::interior::input_with(self.spec, &mut self.deckplans, ctx, &mut self.interior);
+        let stay = crate::interior::input_with(&mut self.deckplans, ctx, &mut self.interior);
+        // Native-hull WALK requests use the same local stand as the embedded host.
+        if let Some((at, yaw)) = self.interior.walk.take() {
+            self.interior.stand_test(Some([at.x, at.y, at.z, yaw]));
+        }
         // (A test drive steering with the mouse takes it, as the game's flight does.)
         let want = self.interior.wants_mouse();
         if ctx.cursor_grabbed() != want {
             ctx.grab_cursor(want);
         }
-        // (A walk through the ship flown: there's none here; the test stand walks.)
-        self.interior.walk = None;
         if let Some(n) = self.issue
             && self.interior.go_to_issue(n)
         {
@@ -96,8 +140,9 @@ impl Game for StudioOnly {
         if !stay {
             #[cfg(feature = "dev")]
             crate::devkit::observe::stop(self, ctx);
-            ctx.exit();
+            return Next::Close;
         }
+        Next::Stay
     }
 
     fn camera(&self) -> Camera {

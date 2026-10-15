@@ -305,10 +305,15 @@ struct GpuMesh {
     edges: wgpu::Buffer,
     edge_vertices: u32,
     used: u64,
+    // Dropped after both buffer handles; defer the reservation through submitted GPU work.
+    _fence: MeshFence,
 }
+struct MeshFence { resident:std::sync::Arc<std::sync::atomic::AtomicUsize>, queue: wgpu::Queue, reservation: Option<std::sync::Arc<crate::mesh_budget::Reservation>> }
+impl Drop for MeshFence { fn drop(&mut self) { self.resident.fetch_sub(1,std::sync::atomic::Ordering::Release);if let Some(r)=self.reservation.take(){self.queue.on_submitted_work_done(move||drop(r));}} }
 
 impl GpuMesh {
-    fn new(device: &wgpu::Device, mesh: &Mesh) -> Self {
+    fn new(gpu: &Gpu, mesh: &Mesh) -> Self {
+        let device=&gpu.device;
         use wgpu::util::DeviceExt;
         let color = |i: u32| mesh.colors.get(i as usize).copied().unwrap_or([1.0; 4]);
         let data = |i: u32| mesh.data.get(i as usize).copied().unwrap_or([0.0; 4]);
@@ -353,13 +358,26 @@ impl GpuMesh {
                 usage: wgpu::BufferUsages::VERTEX,
             })
         };
-        GpuMesh { faces: buffer("mesh faces", &faces), face_vertices: faces.len() as u32, edges: buffer("mesh edges", &edges), edge_vertices: edges.len() as u32, used: 0 }
+        let face_buffer = buffer("mesh faces", &faces);
+        let edge_buffer = buffer("mesh edges", &edges);
+        // Publish the receipt only after both buffers exist.
+        mesh.gpu_residents.fetch_add(1, std::sync::atomic::Ordering::Release);
+        GpuMesh {
+            faces: face_buffer, face_vertices: faces.len() as u32,
+            edges: edge_buffer, edge_vertices: edges.len() as u32, used: 0,
+            _fence: MeshFence { resident: mesh.gpu_residents.clone(),
+                queue: gpu.queue.clone(), reservation: mesh.reservation.clone() },
+        }
     }
 }
 
 /// Each edge's normal, to light it by: the faces it bounds, averaged (a
 /// crease lit as either side is); a detail line (on a face, not bounding
 /// one), the face nearest its middle; a bare line, the way out from the centre.
+/// An edge with no face by index or by its ends' positions takes the nearest face only in a model
+/// this small (the search is over every face for every such edge).
+const NEAREST_FACE_MAX: usize = 256;
+
 fn edge_normals(mesh: &Mesh) -> Vec<Vec3> {
     let face_n: Vec<Vec3> = mesh.faces.iter().map(|f| {
         let [a, b, c] = f.map(|i| mesh.positions[i as usize]);
@@ -371,12 +389,31 @@ fn edge_normals(mesh: &Mesh) -> Vec<Vec3> {
             *by_edge.entry((a.min(b), a.max(b))).or_default() += n;
         }
     }
+    // Edges given vertices of their own (not the faces'): their faces found by where their ends
+    // are (linear). The nearest-face search, edges x faces, is the last resort for small models.
+    let mut by_point: HashMap<[u32; 3], Vec3> = HashMap::new();
+    if mesh.edges.iter().any(|e| !by_edge.contains_key(&(e[0].min(e[1]), e[0].max(e[1])))) {
+        for (f, &n) in mesh.faces.iter().zip(&face_n) {
+            for &i in f {
+                *by_point.entry(mesh.positions[i as usize].to_array().map(f32::to_bits)).or_default() += n;
+            }
+        }
+    }
     mesh.edges.iter().map(|e| {
         let (a, b) = (e[0].min(e[1]), e[0].max(e[1]));
         if let Some(n) = by_edge.get(&(a, b)).and_then(|n| n.try_normalize()) {
             return n;
         }
         let mid = (mesh.positions[a as usize] + mesh.positions[b as usize]) / 2.0;
+        let at = |i: u32| by_point.get(&mesh.positions[i as usize].to_array().map(f32::to_bits)).copied();
+        if let (Some(n), Some(m)) = (at(a), at(b))
+            && let Some(n) = (n + m).try_normalize()
+        {
+            return n;
+        }
+        if mesh.faces.len() > NEAREST_FACE_MAX {
+            return mid.normalize_or_zero();
+        }
         let nearest = mesh.faces.iter().zip(&face_n).filter(|(_, n)| **n != Vec3::ZERO).map(|(f, n)| {
             let [p, q, r] = f.map(|i| mesh.positions[i as usize]);
             (distance_to_triangle(mid, p, q, r), *n)
@@ -415,6 +452,8 @@ struct Target {
     color_msaa: wgpu::TextureView,
     color: wgpu::TextureView,
     depth: wgpu::TextureView,
+    front_depth: wgpu::TextureView,
+    depth_bind: wgpu::BindGroup,
     hud: wgpu::TextureView,
     hud_depth: wgpu::TextureView,
     /// The front layer (see `Frame::in_front`): drawn, and resolved.
@@ -422,6 +461,7 @@ struct Target {
     front: wgpu::TextureView,
     composite: wgpu::TextureView,
     blit: wgpu::BindGroup,
+    copy: wgpu::BindGroup,
 }
 
 pub(crate) struct Renderer {
@@ -437,6 +477,9 @@ pub(crate) struct Renderer {
     /// Fixed framebuffer aspect ratio (for reproducible screenshots), else follow the window.
     forced_aspect: Option<f32>,
     target: Target,
+    view_targets: HashMap<u64, Target>,
+    view_pipe: wgpu::RenderPipeline,
+    depth_layout: wgpu::BindGroupLayout,
     globals: wgpu::Buffer,
     globals_bind: wgpu::BindGroup,
     blit_layout: wgpu::BindGroupLayout,
@@ -458,6 +501,10 @@ pub(crate) struct Renderer {
     /// The air's light behind everything (a full-screen pass: `air_sky`).
     air_sky_pipe: wgpu::RenderPipeline,
     mesh_line_pipe: wgpu::RenderPipeline,
+    /// The pooled meshes (see `pool`): the store, their faces' and edges' pipelines.
+    pool: crate::pool::PoolStore,
+    pool_pipe: wgpu::RenderPipeline,
+    pool_line_pipe: wgpu::RenderPipeline,
     shadows: Shadows,
     globes: Globes,
     /// The full-resolution maps of the world near the eye (group 2).
@@ -738,6 +785,33 @@ impl Renderer {
             })
         };
         let mesh_pipe = mesh_pipeline("mesh faces", "vs_mesh", wgpu::PrimitiveTopology::TriangleList, true, wgpu::CompareFunction::Greater);
+        // (Pooled meshes: no vertex buffers, everything read from the pool by index; group 3.)
+        let pool = crate::pool::PoolStore::new(device);
+        let pool_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+            label: Some("mesh pool"),
+            bind_group_layouts: &[Some(&globals_layout), Some(&shadow_layout), Some(&world_bind.layout), Some(&pool.layout)],
+            immediate_size: 0,
+        });
+        let pool_pipeline = |label: &str, vs: &str, topology: wgpu::PrimitiveTopology, write: bool, compare: wgpu::CompareFunction| {
+            device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+                label: Some(label),
+                layout: Some(&pool_layout),
+                vertex: wgpu::VertexState { module: &scene, entry_point: Some(vs), compilation_options: Default::default(), buffers: &[] },
+                primitive: wgpu::PrimitiveState { topology, ..Default::default() },
+                depth_stencil: Some(wgpu::DepthStencilState { format: DEPTH_FORMAT, depth_write_enabled: Some(write), depth_compare: Some(compare), stencil: Default::default(), bias: Default::default() }),
+                multisample: wgpu::MultisampleState { count: SAMPLES, ..Default::default() },
+                fragment: Some(wgpu::FragmentState {
+                    module: &scene,
+                    entry_point: Some("fs_mesh"),
+                    compilation_options: Default::default(),
+                    targets: &[Some(wgpu::ColorTargetState { format: SCENE_FORMAT, blend: Some(wgpu::BlendState::ALPHA_BLENDING), write_mask: wgpu::ColorWrites::ALL })],
+                }),
+                multiview_mask: None,
+                cache: None,
+            })
+        };
+        let pool_pipe = pool_pipeline("pool faces", "vs_pool", wgpu::PrimitiveTopology::TriangleList, true, wgpu::CompareFunction::Greater);
+        let pool_line_pipe = pool_pipeline("pool edges", "vs_pool_line", wgpu::PrimitiveTopology::LineList, false, wgpu::CompareFunction::GreaterEqual);
         let air_sky_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             label: Some("air sky"),
             layout: Some(&mesh_layout),
@@ -762,12 +836,19 @@ impl Renderer {
         let point_pipe = scene_pipeline("points", "vs_line", Topo::PointList, Some((false, Cmp::GreaterEqual)), alpha, world);
         // Lights' glows add up, behind what's solid, hiding nothing.
         let glow_pipe = scene_pipeline("glows", "vs_line", Topo::TriangleList, Some((false, Cmp::GreaterEqual)), additive, world);
-        let (atlas_bind, hud_tri_pipe, canvas_pipe, canvas_blend_pipe) = hud_atlas(gpu, &globals_layout);
+        let depth_layout = gpu.device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            label: Some("scene depth for labels"), entries: &[wgpu::BindGroupLayoutEntry {
+                binding: 0, visibility: wgpu::ShaderStages::FRAGMENT,
+                ty: wgpu::BindingType::Texture { sample_type: wgpu::TextureSampleType::Depth,
+                    view_dimension: wgpu::TextureViewDimension::D2, multisampled: true }, count: None,
+            }],
+        });
+        let (atlas_bind, hud_tri_pipe, canvas_pipe, canvas_blend_pipe) = hud_atlas(gpu, &globals_layout, &depth_layout);
         let hud_pipe = scene_pipeline("hud", "vs_hud", Topo::LineList, Some((false, Cmp::Always)), alpha, (COLOR_FORMAT, 1));
 
-        let (blit_layout, blit_pipe, capture_pipe, sampler, linear) = blit_stage(gpu);
+        let (blit_layout, blit_pipe, capture_pipe, sampler, linear, view_pipe) = blit_stage(gpu);
 
-        let target = Self::create_target(gpu, low_height, hud_scale, forced_aspect, &blit_layout, &sampler, &linear, &globals);
+        let target = Self::create_target(gpu, low_height, hud_scale, forced_aspect, &blit_layout, &sampler, &linear, &globals, &depth_layout, None);
         let pbr = crate::pbr::PbrRenderer::new(device, &globals_layout, &shadow_layout, &light_layout, SCENE_FORMAT, DEPTH_FORMAT, SAMPLES);
         Self {
             env,
@@ -794,10 +875,16 @@ impl Renderer {
             hud_pipe,
             blit_pipe,
             capture_pipe,
+            view_pipe,
+            depth_layout,
+            view_targets: HashMap::new(),
             sky: DynBuffer::new(device, "sky"),
             mesh_pipe,
             air_sky_pipe,
             mesh_line_pipe,
+            pool,
+            pool_pipe,
+            pool_line_pipe,
             meshes: HashMap::new(),
             instances: DynBuffer::new(device, "mesh instances"),
             face_runs: Vec::new(),
@@ -854,11 +941,13 @@ impl Renderer {
         sampler: &wgpu::Sampler,
         linear: &wgpu::Sampler,
         globals: &wgpu::Buffer,
+        depth_layout: &wgpu::BindGroupLayout,
+        explicit: Option<(UVec2, UVec2)>,
     ) -> Target {
-        let out = Self::scene_size(gpu, forced_aspect);
+        let out = explicit.map_or_else(|| Self::scene_size(gpu, forced_aspect), |e| e.0);
         let k = Self::render_scale(out);
         let size = (out.as_vec2() * k).round().as_uvec2().max(UVec2::ONE);
-        let hud_size = Self::low_res_size(gpu, low_height, forced_aspect) * hud_scale;
+        let hud_size = explicit.map_or_else(|| Self::low_res_size(gpu, low_height, forced_aspect) * hud_scale, |e| e.1);
         let texture_n = |label, size: UVec2, format, usage, samples: u32| {
             gpu.device
                 .create_texture(&wgpu::TextureDescriptor {
@@ -879,12 +968,17 @@ impl Renderer {
         let color = texture("scene", size, SCENE_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING);
         // (Read after the scene, for the sun probe.)
         let depth = texture_n("scene depth", size, DEPTH_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING, SAMPLES);
+        let front_depth = texture_n("front depth", size, DEPTH_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING, SAMPLES);
+        let depth_bind = gpu.device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some("label scene depth"), layout: depth_layout,
+            entries: &[wgpu::BindGroupEntry { binding: 0, resource: wgpu::BindingResource::TextureView(&depth) }],
+        });
         // (The HUD's layout is `hud_size` pixels; drawn at the screen's full resolution.)
         let hud = texture("hud", out, COLOR_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING);
         let hud_depth = texture("canvas depth", out, DEPTH_FORMAT, U::RENDER_ATTACHMENT);
         let front_msaa = texture_n("front (antialiased)", size, SCENE_FORMAT, U::RENDER_ATTACHMENT, SAMPLES);
         let front = texture("front", size, SCENE_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING);
-        let composite = texture("composite", out, COLOR_FORMAT, U::RENDER_ATTACHMENT | U::COPY_SRC);
+        let composite = texture("composite", out, COLOR_FORMAT, U::RENDER_ATTACHMENT | U::COPY_SRC | U::TEXTURE_BINDING);
         let blit = gpu.device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("blit"),
             layout,
@@ -897,13 +991,24 @@ impl Renderer {
                 wgpu::BindGroupEntry { binding: 5, resource: globals.as_entire_binding() },
             ],
         });
-        Target { size, out, hud_size, color_msaa, color, depth, hud, hud_depth, front_msaa, front, composite, blit }
+        let copy = gpu.device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some("view composite"), layout,
+            entries: &[
+                wgpu::BindGroupEntry { binding: 0, resource: wgpu::BindingResource::TextureView(&composite) },
+                wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::TextureView(&hud) },
+                wgpu::BindGroupEntry { binding: 2, resource: wgpu::BindingResource::Sampler(sampler) },
+                wgpu::BindGroupEntry { binding: 3, resource: wgpu::BindingResource::TextureView(&front) },
+                wgpu::BindGroupEntry { binding: 4, resource: wgpu::BindingResource::Sampler(linear) },
+                wgpu::BindGroupEntry { binding: 5, resource: globals.as_entire_binding() },
+            ],
+        });
+        Target { size, out, hud_size, color_msaa, color, depth, front_depth, depth_bind, hud, hud_depth, front_msaa, front, composite, blit, copy }
     }
 
     pub fn resize(&mut self, gpu: &Gpu) {
         if Self::scene_size(gpu, self.forced_aspect) != self.target.out {
             self.target =
-                Self::create_target(gpu, self.low_height, self.hud_scale, self.forced_aspect, &self.blit_layout, &self.sampler, &self.linear, &self.globals);
+                Self::create_target(gpu, self.low_height, self.hud_scale, self.forced_aspect, &self.blit_layout, &self.sampler, &self.linear, &self.globals, &self.depth_layout, None);
         }
     }
 
@@ -925,14 +1030,39 @@ impl Renderer {
             asset_hits: self.pbr.hits(),
             asset_unloads: self.pbr.evictions(),
             asset_gpu_bytes: self.pbr.resident_bytes(),
+            mesh_gpu_bytes: self.meshes.values().map(|m|(m.faces.size()+m.edges.size()) as usize).sum(),
             asset_preparing: self.pbr.preparing(),
             globe_layers: self.globes.layers.iter().filter(|l| l.is_some()).count(),
             globe_capacity: self.globes.layers.len(),
+            pool_meshes: self.pool.usage().2,
+            pool_bytes: self.pool.usage().0,
+            pool_used_bytes: self.pool.usage().1,
         }
     }
 
     /// Render `frame`; if `capture` is set, also save the composited image (at HUD resolution) as PNG.
     pub fn render(&mut self, gpu: &mut Gpu, frame: &Frame, capture: Option<&Path>) {
+        self.pbr.begin_frame();
+        // Gather union demand before any child upload/eviction decision.
+        self.pbr.view_demand = frame.pbr.iter().chain(frame.views.iter().flat_map(|(_,_,f,_)| f.pbr.iter()))
+            .map(|d| d.model.id()).collect();
+        self.view_targets.retain(|id,_| frame.views.iter().any(|(i,_,_,_)| i == id));
+        let scale = self.target.out.as_vec2() / frame.size();
+        if let Some(t) = self.gputime.as_mut() { t.begin_frame(); }
+        for (id, rect, child, _) in &frame.views {
+            let out = (rect.size * scale).ceil().as_uvec2().max(UVec2::ONE);
+            let mut target = self.view_targets.remove(id).filter(|t| t.out == out).unwrap_or_else(||
+                Self::create_target(gpu, self.low_height, self.hud_scale, None, &self.blit_layout,
+                    &self.sampler, &self.linear, &self.globals, &self.depth_layout, Some((out, rect.size.ceil().as_uvec2()))));
+            std::mem::swap(&mut target, &mut self.target);
+            self.render_frame(gpu, child, None, false);
+            std::mem::swap(&mut target, &mut self.target);
+            self.view_targets.insert(*id, target);
+        }
+        self.render_frame(gpu, frame, capture, true);
+    }
+
+    fn render_frame(&mut self, gpu: &mut Gpu, frame: &Frame, capture: Option<&Path>, present: bool) {
         let size = self.target.size.as_vec2();
         let hud = self.target.hud_size.as_vec2();
         // The sun probe's answers since (see `sunprobe`), and where it looks this frame.
@@ -942,7 +1072,7 @@ impl Renderer {
             t.collect();
         }
         let probe = frame.sun_probe.and_then(|(at, radius)| {
-            let clip = frame.camera.view_proj(size.x / size.y) * (at - frame.camera.position).as_vec3().extend(1.0);
+            let clip = frame.projection.matrix(&frame.camera, size.x / size.y) * (at - frame.camera.position).as_vec3().extend(1.0);
             (clip.w > 0.0).then(|| {
                 let ndc = clip.truncate() / clip.w;
                 // (Twice as near as the sun's own core: anything standing in front of it.)
@@ -989,7 +1119,7 @@ impl Renderer {
             }
         };
         let globals = Globals {
-            view_proj: frame.camera.view_proj(size.x / size.y).to_cols_array_2d(),
+            view_proj: frame.projection.matrix(&frame.camera, size.x / size.y).to_cols_array_2d(),
             hud_proj: orthographic(0.0, hud.x, hud.y, 0.0, -1.0, 1.0).to_cols_array_2d(),
             shadow_near: shadow_near.to_cols_array_2d(),
             shadow_far: shadow_far.to_cols_array_2d(),
@@ -1012,8 +1142,8 @@ impl Renderer {
             // (The sky's own glow: the floor the meshes take, so ships and stations agree.)
             env_mode: [if frame.studio { 1.0 } else { 0.0 }, crate::frame::SHADE_AMBIENT, 0.0, 0.0],
             env_sky: frame.clear.0,
-            view: [2.0 * (frame.camera.fov_y * 0.5).tan() / self.target.size.y as f32, world_fade, world_luts, 0.0],
-            inv_view_proj: frame.camera.view_proj(size.x / size.y).inverse().to_cols_array_2d(),
+            view: [2.0 * (frame.camera.fov_y * 0.5).tan() / self.target.size.y as f32, world_fade, world_luts, if matches!(frame.projection, crate::viewport::Projection::Orthographic { .. }) { 1.0 } else { 0.0 }],
+            inv_view_proj: frame.projection.matrix(&frame.camera, size.x / size.y).inverse().to_cols_array_2d(),
             world_at,
             world_to_body: glam::Mat4::from_quat(frame.world_turn.inverse().as_quat()).to_cols_array_2d(),
         };
@@ -1033,23 +1163,23 @@ impl Renderer {
         self.hud_tris.upload_bytes(gpu, bytemuck::cast_slice(&frame.hud_tris), frame.hud_tris.len() as u32);
         self.hud.upload(gpu, &frame.hud);
         universe_prof::time("render/upload meshes", || self.upload_meshes(gpu, frame));
-        universe_prof::time("render/upload PBR", || self.pbr.upload(&gpu.device, &gpu.queue, &frame.pbr, frame.shadow_reach as f32 * 1.5));
+        universe_prof::time("render/upload PBR", || self.pbr.upload(&gpu.device, &gpu.queue, &frame.pbr, frame.shadow_reach as f32 * 1.5, frame.camera.forward()));
         drop(upload);
 
         let acquire = std::time::Instant::now();
-        let next = universe_prof::time("render/acquire surface", || gpu.surface.get_current_texture());
+        let next = present.then(|| universe_prof::time("render/acquire surface", || gpu.surface.get_current_texture()));
         self.wait = acquire.elapsed();
         // (No frame from the window (a screen asleep, a window hidden): nothing to show, but a
         // capture asked for is still drawn and saved, from the offscreen composite.)
         let surface_texture = match next {
-            wgpu::CurrentSurfaceTexture::Success(t) | wgpu::CurrentSurfaceTexture::Suboptimal(t) => Some(t),
-            wgpu::CurrentSurfaceTexture::Outdated | wgpu::CurrentSurfaceTexture::Lost => {
+            Some(wgpu::CurrentSurfaceTexture::Success(t) | wgpu::CurrentSurfaceTexture::Suboptimal(t)) => Some(t),
+            Some(wgpu::CurrentSurfaceTexture::Outdated | wgpu::CurrentSurfaceTexture::Lost) => {
                 gpu.surface.configure(&gpu.device, &gpu.config);
                 None
             }
             _ => None,
         };
-        if surface_texture.is_none() && capture.is_none() {
+        if present && surface_texture.is_none() && capture.is_none() {
             return;
         }
         let surface_view = surface_texture.as_ref().map(|t| t.texture.create_view(&Default::default()));
@@ -1064,16 +1194,17 @@ impl Renderer {
         self.world.cache.frame(&gpu.device, &gpu.queue, &mut encoder, world, under);
         self.shadow_passes(&mut encoder, sun.is_some());
         let clear = if world_ready && frame.world_maps.as_ref().is_some_and(|(m, ..)| m.air[15] > 0.5) { crate::Color::BLACK } else { frame.clear };
-        self.scene_pass(&mut encoder, clear, probe.is_some());
+        self.scene_pass(&mut encoder, clear, true);
         if probe.is_some() {
             self.sunprobe.run(&gpu.device, &mut encoder, &self.target.depth, false);
         }
         self.front_pass(&mut encoder, probe.is_some());
         if probe.is_some() {
-            self.sunprobe.run(&gpu.device, &mut encoder, &self.target.depth, true);
+            self.sunprobe.run(&gpu.device, &mut encoder, &self.target.front_depth, true);
             self.sunprobe.copy_out(&mut encoder);
         }
         universe_prof::time("render/encode canvas and HUD", || self.hud_pass(&mut encoder, frame));
+        if !present { self.composite(&mut encoder, &self.target.composite, &self.capture_pipe); }
         let readback = capture.map(|_| {
             self.composite(&mut encoder, &self.target.composite, &self.capture_pipe);
             self.copy_to_buffer(gpu, &mut encoder)
@@ -1091,7 +1222,7 @@ impl Renderer {
                     },
                 })],
                 depth_stencil_attachment: None,
-                timestamp_writes: self.gputime.as_ref().map(|t| t.pass(4)),
+                timestamp_writes: self.gputime.as_ref().and_then(|t| t.pass(4)),
                 occlusion_query_set: None,
                 multiview_mask: None,
             });
@@ -1099,13 +1230,13 @@ impl Renderer {
             pass.set_bind_group(0, &self.target.blit, &[]);
             pass.draw(0..3, 0..1);
         }
-        if let Some(t) = self.gputime.as_mut() {
-            t.copy_out(&mut encoder);
+        if present {
+            if let Some(t) = self.gputime.as_mut() { t.copy_out(&mut encoder); }
         }
         universe_prof::time("render/submit", || gpu.queue.submit([encoder.finish()]));
         self.sunprobe.submitted();
-        if let Some(t) = self.gputime.as_mut() {
-            t.submitted();
+        if present {
+            if let Some(t) = self.gputime.as_mut() { t.submitted(); }
         }
         if let Some(t) = surface_texture {
             gpu.queue.present(t);
@@ -1132,7 +1263,7 @@ impl Renderer {
                     depth_ops: Some(wgpu::Operations { load: wgpu::LoadOp::Clear(1.0), store: wgpu::StoreOp::Store }),
                     stencil_ops: None,
                 }),
-                timestamp_writes: self.gputime.as_ref().map(|t| t.shadow(k as u32)),
+                timestamp_writes: self.gputime.as_ref().and_then(|t| t.shadow(k as u32)),
                 occlusion_query_set: None,
                 multiview_mask: None,
             });
@@ -1172,7 +1303,7 @@ impl Renderer {
                 }),
                 stencil_ops: None,
             }),
-            timestamp_writes: self.gputime.as_ref().map(|t| t.pass(1)),
+            timestamp_writes: self.gputime.as_ref().and_then(|t| t.pass(1)),
             occlusion_query_set: None,
             multiview_mask: None,
         });
@@ -1185,11 +1316,13 @@ impl Renderer {
         pass.draw(0..3, 0..1);
         self.solids.draw(&mut pass, &self.solid_pipe);
         self.draw_meshes(&mut pass, &self.face_runs, &self.mesh_pipe, |m| (&m.faces, m.face_vertices));
+        self.draw_pool(&mut pass, 0, false);
         self.pbr.draw(&mut pass);
         // (The textured models take group 2 for their materials: the world's maps back.)
         pass.set_bind_group(2, &self.world.bind, &[]);
         self.lines.draw(&mut pass, &self.line_pipe);
         self.draw_meshes(&mut pass, &self.edge_runs, &self.mesh_line_pipe, |m| (&m.edges, m.edge_vertices));
+        self.draw_pool(&mut pass, 0, true);
         self.points.draw(&mut pass, &self.point_pipe);
         self.glows.draw(&mut pass, &self.glow_pipe);
     }
@@ -1206,11 +1339,11 @@ impl Renderer {
                 ops: wgpu::Operations { load: wgpu::LoadOp::Clear(wgpu::Color::TRANSPARENT), store: wgpu::StoreOp::Discard },
             })],
             depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
-                view: &self.target.depth,
+                view: &self.target.front_depth,
                 depth_ops: Some(wgpu::Operations { load: wgpu::LoadOp::Clear(0.0), store: if keep_depth { wgpu::StoreOp::Store } else { wgpu::StoreOp::Discard } }),
                 stencil_ops: None,
             }),
-            timestamp_writes: self.gputime.as_ref().map(|t| t.pass(2)),
+            timestamp_writes: self.gputime.as_ref().and_then(|t| t.pass(2)),
             occlusion_query_set: None,
             multiview_mask: None,
         });
@@ -1218,42 +1351,77 @@ impl Renderer {
         pass.set_bind_group(1, &self.shadows.bind, &[]);
         pass.set_bind_group(2, &self.world.bind, &[]);
         self.draw_meshes(&mut pass, &self.front_face_runs, &self.mesh_pipe, |m| (&m.faces, m.face_vertices));
+        self.draw_pool(&mut pass, 1, false);
         self.front_lines.draw(&mut pass, &self.line_pipe);
         self.draw_meshes(&mut pass, &self.front_edge_runs, &self.mesh_line_pipe, |m| (&m.edges, m.edge_vertices));
+        self.draw_pool(&mut pass, 1, true);
         self.front_glows.draw(&mut pass, &self.glow_pipe);
     }
 
     /// Ordered UI and perspective canvases. A new canvas clears only depth;
     /// UI keeps its submission order and never tests or writes canvas depth.
     fn hud_pass(&self, encoder: &mut wgpu::CommandEncoder, frame: &Frame) {
-        let sections = canvas_batches(&frame.hud_tris);
+        // Explicit UI/view submission boundaries; views neither hide earlier UI
+        // outside their rectangles nor get covered by earlier card backgrounds.
+        {
+            let _clear = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: Some("clear UI"),
+                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                    view: &self.target.hud, depth_slice: None, resolve_target: None,
+                    ops: wgpu::Operations { load: wgpu::LoadOp::Clear(wgpu::Color::TRANSPARENT), store: wgpu::StoreOp::Store },
+                })], depth_stencil_attachment: None, timestamp_writes: self.gputime.as_ref().and_then(|t| t.pass(3)),
+                occlusion_query_set: None, multiview_mask: None,
+            });
+        }
+        let mut start = 0;
+        for (id, rect, _, end) in &frame.views {
+            self.hud_range(encoder, frame, start..*end, false);
+            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: Some("view composition"),
+                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                    view: &self.target.hud, depth_slice: None, resolve_target: None,
+                    ops: wgpu::Operations { load: wgpu::LoadOp::Load, store: wgpu::StoreOp::Store },
+                })], depth_stencil_attachment: None, timestamp_writes: self.gputime.as_ref().and_then(|t| t.pass(3)),
+                occlusion_query_set: None, multiview_mask: None,
+            });
+            pass.set_pipeline(&self.view_pipe);
+            let scale = self.target.out.as_vec2()/frame.size();
+            let origin = rect.origin * scale; let size = rect.size * scale;
+            pass.set_viewport(origin.x, origin.y, size.x, size.y, 0., 1.);
+            pass.set_bind_group(0, &self.view_targets[id].copy, &[]);
+            pass.draw(0..3, 0..1);
+            start = *end;
+        }
+        self.hud_range(encoder, frame, start..frame.hud_tris.len(), true);
+    }
+
+    fn hud_range(&self, encoder: &mut wgpu::CommandEncoder, frame: &Frame,
+        range: std::ops::Range<usize>, final_range: bool) {
+        let sections = canvas_batches(&frame.hud_tris[range.clone()]);
         for (section, batches) in sections.iter().enumerate() {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("UI / depth canvas"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                     view: &self.target.hud, depth_slice: None, resolve_target: None,
-                    ops: wgpu::Operations { load: if section == 0 { wgpu::LoadOp::Clear(wgpu::Color::TRANSPARENT) } else { wgpu::LoadOp::Load }, store: wgpu::StoreOp::Store },
+                    ops: wgpu::Operations { load: wgpu::LoadOp::Load, store: wgpu::StoreOp::Store },
                 })],
                 depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
                     view: &self.target.hud_depth,
                     depth_ops: Some(wgpu::Operations { load: wgpu::LoadOp::Clear(0.), store: wgpu::StoreOp::Store }),
                     stencil_ops: None,
                 }),
-                timestamp_writes: if section == 0 { self.gputime.as_ref().map(|t| t.pass(3)) } else { None },
+                timestamp_writes: self.gputime.as_ref().and_then(|t| t.pass(3)),
                 occlusion_query_set: None, multiview_mask: None,
             });
             pass.set_bind_group(0, &self.globals_bind, &[]);
             pass.set_bind_group(1, &self.atlas_bind, &[]);
+            pass.set_bind_group(2, &self.target.depth_bind, &[]);
             pass.set_vertex_buffer(0, self.hud_tris.buffer.slice(..));
-            for (range, kind) in batches {
-                pass.set_pipeline(match kind {
-                    0 => &self.hud_tri_pipe,
-                    1 => &self.canvas_pipe,
-                    _ => &self.canvas_blend_pipe,
-                });
-                pass.draw(range.clone(), 0..1);
+            for (local, kind) in batches {
+                pass.set_pipeline(match kind { 0 => &self.hud_tri_pipe, 1 => &self.canvas_pipe, _ => &self.canvas_blend_pipe });
+                pass.draw(local.start+range.start as u32..local.end+range.start as u32, 0..1);
             }
-            if section + 1 == sections.len() { self.hud.draw(&mut pass, &self.hud_pipe); }
+            if final_range && section + 1 == sections.len() { self.hud.draw(&mut pass, &self.hud_pipe); }
         }
     }
 
@@ -1263,9 +1431,16 @@ impl Renderer {
         self.frames += 1;
         let now = self.frames;
         for d in frame.meshes.iter().chain(&frame.front) {
-            self.meshes.entry(d.mesh.id()).or_insert_with(|| GpuMesh::new(&gpu.device, &d.mesh)).used = now;
+            self.meshes.entry(d.mesh.id()).or_insert_with(|| GpuMesh::new(gpu, &d.mesh)).used = now;
         }
-        self.meshes.retain(|_, m| now - m.used < MESH_KEEP);
+        for mesh in &frame.mesh_uploads {self.meshes.entry(mesh.id()).or_insert_with(||GpuMesh::new(gpu,mesh)).used=now;}
+        // Released by their owner: gone now unless drawn this frame (their fence still waits
+        // for submitted work before any reservation is let go).
+        for id in &frame.mesh_releases { if self.meshes.get(id).is_some_and(|m| m.used != now) { self.meshes.remove(id); } }
+        // Meshes whose every copy is gone: let go now (none can be drawn again).
+        let gone = std::mem::take(&mut *crate::model::GONE.lock().unwrap_or_else(|e| e.into_inner()));
+        for id in gone { self.meshes.remove(&id); }
+        self.meshes.retain(|_,m|now-m.used<MESH_KEEP);
         let mut data: Vec<Instance> = Vec::with_capacity((frame.meshes.len() + frame.front.len()) * 2);
         (self.face_runs, self.edge_runs) = batch(&frame.meshes, &mut data);
         (self.front_face_runs, self.front_edge_runs) = batch(&frame.front, &mut data);
@@ -1298,6 +1473,19 @@ impl Renderer {
         let ground: Vec<&crate::frame::MeshDraw> = frame.meshes.iter().filter(|d| d.ground && glam::Vec3::from_slice(&d.instance.t[..3]).length() - d.reach < (GROUND_HALF * 1.5) as f32).collect();
         self.shadows.ground_runs = casters(&ground, &mut data);
         self.instances.upload_bytes(gpu, bytemuck::cast_slice(&data), data.len() as u32);
+        universe_prof::time("render/upload meshes/pool", || self.pool.frame(gpu, &frame.pool));
+    }
+
+    /// The pooled meshes' faces (or edges) of a layer (0 the scene, 1 the front): one draw.
+    fn draw_pool(&self, pass: &mut wgpu::RenderPass<'_>, layer: u32, edges: bool) {
+        let (faces, lines) = if layer == 0 { self.pool.scene } else { self.pool.front };
+        let corners = if edges { lines } else { faces };
+        if corners == 0 {
+            return;
+        }
+        pass.set_pipeline(if edges { &self.pool_line_pipe } else { &self.pool_pipe });
+        pass.set_bind_group(3, &self.pool.bind, &[]);
+        pass.draw(0..corners, layer..layer + 1);
     }
 
     fn draw_meshes(&self, pass: &mut wgpu::RenderPass<'_>, runs: &[(u64, u32, u32)], pipeline: &wgpu::RenderPipeline, part: impl Fn(&GpuMesh) -> (&wgpu::Buffer, u32)) {
@@ -1465,7 +1653,7 @@ pub fn wait_for_writes() {
 
 /// The HUD's triangles (panels and text): the font's atlas bound, and their pipeline. (The HUD has
 /// its own layer without depth, antialiasing or HDR.)
-fn hud_atlas(gpu: &Gpu, globals_layout: &wgpu::BindGroupLayout) -> (wgpu::BindGroup, wgpu::RenderPipeline, wgpu::RenderPipeline, wgpu::RenderPipeline) {
+fn hud_atlas(gpu: &Gpu, globals_layout: &wgpu::BindGroupLayout, depth_layout: &wgpu::BindGroupLayout) -> (wgpu::BindGroup, wgpu::RenderPipeline, wgpu::RenderPipeline, wgpu::RenderPipeline) {
     let device = &gpu.device;
     let alpha = wgpu::BlendState::ALPHA_BLENDING;
     let atlas_data = crate::font::atlas();
@@ -1509,7 +1697,7 @@ fn hud_atlas(gpu: &Gpu, globals_layout: &wgpu::BindGroupLayout) -> (wgpu::BindGr
     let hud_shader = crate::shaders::single(device, "hud");
     let pipeline = |geometry: bool, write_depth: bool| device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
         label: Some("hud tris"),
-        layout: Some(&device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: Some("hud"), bind_group_layouts: &[Some(globals_layout), Some(&atlas_layout)], immediate_size: 0 })),
+        layout: Some(&device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: Some("hud"), bind_group_layouts: &[Some(globals_layout), Some(&atlas_layout), Some(depth_layout)], immediate_size: 0 })),
         vertex: wgpu::VertexState {
             module: &hud_shader,
             entry_point: Some("vs_hud"),
@@ -1542,7 +1730,7 @@ fn hud_atlas(gpu: &Gpu, globals_layout: &wgpu::BindGroupLayout) -> (wgpu::BindGr
 /// The last stage: what puts the scene, front and HUD layers together on the screen (or a
 /// capture): its layout, its pipelines for the window's format and the capture's, and its two
 /// samplers (nearest, linear).
-fn blit_stage(gpu: &Gpu) -> (wgpu::BindGroupLayout, wgpu::RenderPipeline, wgpu::RenderPipeline, wgpu::Sampler, wgpu::Sampler) {
+fn blit_stage(gpu: &Gpu) -> (wgpu::BindGroupLayout, wgpu::RenderPipeline, wgpu::RenderPipeline, wgpu::Sampler, wgpu::Sampler, wgpu::RenderPipeline) {
     let device = &gpu.device;
     let texture_entry = |binding| wgpu::BindGroupLayoutEntry {
         binding,
@@ -1587,7 +1775,7 @@ fn blit_stage(gpu: &Gpu) -> (wgpu::BindGroupLayout, wgpu::RenderPipeline, wgpu::
         bind_group_layouts: &[Some(&blit_layout)],
         immediate_size: 0,
     });
-    let blit_pipeline = |label: &str, format: wgpu::TextureFormat| {
+    let blit_pipeline = |label: &str, format: wgpu::TextureFormat, entry: &str| {
         device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             label: Some(label),
             layout: Some(&blit_layout_pipeline),
@@ -1602,7 +1790,7 @@ fn blit_stage(gpu: &Gpu) -> (wgpu::BindGroupLayout, wgpu::RenderPipeline, wgpu::
             multisample: Default::default(),
             fragment: Some(wgpu::FragmentState {
                 module: &blit,
-                entry_point: Some("fs_main"),
+                entry_point: Some(entry),
                 compilation_options: Default::default(),
                 targets: &[Some(format.into())],
             }),
@@ -1610,8 +1798,8 @@ fn blit_stage(gpu: &Gpu) -> (wgpu::BindGroupLayout, wgpu::RenderPipeline, wgpu::
             cache: None,
         })
     };
-    let blit_pipe = blit_pipeline("blit", gpu.config.format);
-    let capture_pipe = blit_pipeline("capture", COLOR_FORMAT);
+    let blit_pipe = blit_pipeline("blit", gpu.config.format, "fs_main");
+    let capture_pipe = blit_pipeline("capture", COLOR_FORMAT, "fs_main");
     let sampler = device.create_sampler(&wgpu::SamplerDescriptor {
         label: Some("nearest"),
         mag_filter: wgpu::FilterMode::Nearest,
@@ -1624,7 +1812,8 @@ fn blit_stage(gpu: &Gpu) -> (wgpu::BindGroupLayout, wgpu::RenderPipeline, wgpu::
         min_filter: wgpu::FilterMode::Linear,
         ..Default::default()
     });
-    (blit_layout, blit_pipe, capture_pipe, sampler, linear)
+    let view_pipe = blit_pipeline("view copy", COLOR_FORMAT, "fs_copy");
+    (blit_layout, blit_pipe, capture_pipe, sampler, linear, view_pipe)
 }
 
 /// Group by explicit canvas ID. UI before a canvas remains before it; UI

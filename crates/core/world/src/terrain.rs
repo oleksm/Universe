@@ -129,6 +129,9 @@ impl Terrain {
         self.graph.as_ref().map(|s| s.query_differential(dir, radius_m).expect("valid terrain direction/radius"))
     }
 
+    /// Immutable canonical source shared with bounded visual workers.
+    pub fn surface_source(&self) -> Option<std::sync::Arc<crate::worlds::pgs::Surface>> { self.graph.clone() }
+
     /// Whether a canonical surface supplies the terrain (no inferred water or materials).
     pub fn canonical_surface(&self) -> bool { self.graph.is_some() }
 

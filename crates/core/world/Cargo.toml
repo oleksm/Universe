@@ -20,6 +20,12 @@ rayon.workspace = true
 sha2 = "0.10"
 png = "0.18"
 zune-jpeg = "0.4"
+memmap2 = "0.9"
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
+
+[dev-dependencies]
 
 [build-dependencies]
 serde.workspace = true

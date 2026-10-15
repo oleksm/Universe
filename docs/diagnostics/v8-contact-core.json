@@ -1,0 +1,485 @@
+{
+  "status": "cpu_refused_no_runtime_publication",
+  "source_sha256": "4b30e7eda8e707dff50498f0be80476bf82d5dfd4b8160c662b1a2113dadfe80",
+  "spatial_contract": {
+    "footprint_m": 128,
+    "core_m": 64,
+    "core_contact_m": 0.1,
+    "band_walk_ready": false,
+    "previous_full_footprint_gate": "FAILED; unchanged"
+  },
+  "construction": {
+    "results": [
+      {
+        "area_m2": 16383.999986638613,
+        "cpu_ms": 27.862721999999998,
+        "duplicate_disagreement_m": 3.814697265625e-06,
+        "estimated_gpu_bytes": 4294624,
+        "feature": "nearest_known_shore",
+        "geometry_sha256": "9e9b0fb30d54102d8fc6b41df145f28c1bf2bb6c15f93dbfa18768c2bdd303ec",
+        "outer_vertex_max_displacement_m": 4.13019470557967e-06,
+        "reason": "pending core/seam/topology audits",
+        "retained_patch_search": 221,
+        "retained_triangles": 28887,
+        "serialized_bytes": 1784384,
+        "source_search": 6,
+        "status": "built_for_audit",
+        "triangles": 25563,
+        "vertices": 14812
+      },
+      {
+        "area_m2": 16383.999988917596,
+        "cpu_ms": 29.787539,
+        "duplicate_disagreement_m": 3.814697265625e-06,
+        "estimated_gpu_bytes": 4442632,
+        "feature": "parent_face_join",
+        "geometry_sha256": "50b9a7c6dcb95667341fc8fe7e397f0b3b9cef92c2c6c3db174a5e53166114fb",
+        "outer_vertex_max_displacement_m": 4.250203041781562e-06,
+        "reason": "pending core/seam/topology audits",
+        "retained_patch_search": 201,
+        "retained_triangles": 30153,
+        "serialized_bytes": 1859288,
+        "source_search": 8,
+        "status": "built_for_audit",
+        "triangles": 26444,
+        "vertices": 15296
+      },
+      {
+        "cpu_ms": 35.467013,
+        "feature": "sampling_window_join",
+        "reason": "core triangle cap",
+        "status": "refused"
+      },
+      {
+        "cpu_ms": 34.857064,
+        "feature": "relief_native_join",
+        "reason": "triangle cap; retained=30376, source=114, vertices=18671, area=11139.319828985006",
+        "status": "refused"
+      },
+      {
+        "cpu_ms": 36.479976,
+        "feature": "canonical_crest_1",
+        "reason": "triangle cap; retained=29559, source=200, vertices=18589, area=10594.305816081425",
+        "status": "refused"
+      },
+      {
+        "cpu_ms": 36.381202,
+        "feature": "canonical_crest_2",
+        "reason": "triangle cap; retained=29792, source=193, vertices=18636, area=10737.635869723148",
+        "status": "refused"
+      },
+      {
+        "cpu_ms": 35.986454,
+        "feature": "canonical_crest_3",
+        "reason": "triangle cap; retained=29499, source=184, vertices=18632, area=11013.476887701796",
+        "status": "refused"
+      }
+    ],
+    "scope": "CPU retained grid reconstruction plus canonical overlay; no GPU residency/readiness claim",
+    "source_sha256": "4b30e7eda8e707dff50498f0be80476bf82d5dfd4b8160c662b1a2113dadfe80"
+  },
+  "audit": {
+    "results": [
+      {
+        "band_error_m": {
+          "count": 170870,
+          "finite_count": 170870,
+          "invalid_count": 0,
+          "max": 0.0019056314486078918,
+          "p99": 0.00016476159589728923,
+          "rms": 7.428945662169807e-05
+        },
+        "band_normal_degrees": {
+          "count": 170870,
+          "finite_count": 170870,
+          "invalid_count": 0,
+          "max": 0.2890447206351012,
+          "p99": 0.06149547234093958,
+          "rms": 0.01715052513049873
+        },
+        "core_normal_degrees": {
+          "count": 8071,
+          "finite_count": 8008,
+          "invalid_count": 63,
+          "max": 77.48851102378187,
+          "p99": 0.2603413017044473,
+          "rms": 4.110232167062
+        },
+        "core_visible_error_m": {
+          "count": 8071,
+          "finite_count": 8071,
+          "invalid_count": 0,
+          "max": 2.036627847701311e-06,
+          "p99": 1.5610712580382824e-06,
+          "rms": 5.368812531245876e-07
+        },
+        "degenerate_triangles": 9,
+        "dry_core_error_m": {
+          "count": 3972,
+          "finite_count": 3972,
+          "invalid_count": 0,
+          "max": 1.9093049559160136e-06,
+          "p99": 1.4564734556188341e-06,
+          "rms": 5.271303327329638e-07
+        },
+        "feature": "nearest_known_shore",
+        "frozen_queries": [
+          {
+            "error": {
+              "count": 12,
+              "finite_count": 12,
+              "invalid_count": 0,
+              "max": 1.6880221664905548e-09,
+              "p99": 1.6880221664905548e-09,
+              "rms": 6.746399313643618e-10
+            },
+            "hit_count": 12,
+            "label": "edge",
+            "water": "Wet { body: 18196, level_m: 3074.3485670432565, depth_m: 0.0 }"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 5.477340891957283e-08,
+              "p99": 5.477340891957283e-08,
+              "rms": 5.477340891957283e-08
+            },
+            "hit_count": 1,
+            "label": "face_a_side_0.1m",
+            "water": "Wet { body: 18196, level_m: 3074.3485670432565, depth_m: 0.0004544973553493037 }"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 5.832043825648725e-08,
+              "p99": 5.832043825648725e-08,
+              "rms": 5.832043825648725e-08
+            },
+            "hit_count": 1,
+            "label": "face_b_side_0.1m",
+            "water": "Dry"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 4.7386856749653816e-07,
+              "p99": 4.7386856749653816e-07,
+              "rms": 4.7386856749653816e-07
+            },
+            "hit_count": 1,
+            "label": "face_a_side_1.0m",
+            "water": "Wet { body: 18196, level_m: 3074.3485670432565, depth_m: 0.004544973543488595 }"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 5.038182280259207e-07,
+              "p99": 5.038182280259207e-07,
+              "rms": 5.038182280259207e-07
+            },
+            "hit_count": 1,
+            "label": "face_b_side_1.0m",
+            "water": "Dry"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 1.0252115316689014e-06,
+              "p99": 1.0252115316689014e-06,
+              "rms": 1.0252115316689014e-06
+            },
+            "hit_count": 1,
+            "label": "face_a_side_10.0m",
+            "water": "Wet { body: 18196, level_m: 3074.3485670432565, depth_m: 0.04544973630891036 }"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 1.0612084224703722e-06,
+              "p99": 1.0612084224703722e-06,
+              "rms": 1.0612084224703722e-06
+            },
+            "hit_count": 1,
+            "label": "face_b_side_10.0m",
+            "water": "Dry"
+          }
+        ],
+        "geometry_sha256": "9e9b0fb30d54102d8fc6b41df145f28c1bf2bb6c15f93dbfa18768c2bdd303ec",
+        "inner_error_m": {
+          "count": 3875,
+          "finite_count": 3875,
+          "invalid_count": 0,
+          "max": 1.5610712580382824e-06,
+          "p99": 1.1308075045235455e-06,
+          "rms": 4.219024944536116e-07
+        },
+        "outer_error_m": {
+          "count": 3962,
+          "finite_count": 3962,
+          "invalid_count": 0,
+          "max": 0.0019056314486078918,
+          "p99": 0.00030202677999113803,
+          "rms": 0.0001115790574807693
+        },
+        "sample_count": 178941,
+        "scope": "finite physical f32 triangle samples; wet visible geometry is not dry contact",
+        "wet_core_visible_error_m": {
+          "count": 4099,
+          "finite_count": 4099,
+          "invalid_count": 0,
+          "max": 2.036627847701311e-06,
+          "p99": 1.6026315279304981e-06,
+          "rms": 5.461640037695138e-07
+        },
+        "worst": {
+          "bed_height_m": 3074.348567041844,
+          "chart_xy": [
+            -64.0,
+            29.65245079
+          ],
+          "error_m": 0.0019056314486078918,
+          "visible_height_m": 3074.3485670432565,
+          "water": "Wet { body: 18196, level_m: 3074.3485670432565, depth_m: 0.0 }"
+        }
+      },
+      {
+        "band_error_m": {
+          "count": 176779,
+          "finite_count": 176779,
+          "invalid_count": 0,
+          "max": 0.0005084249742139946,
+          "p99": 8.617730600235518e-06,
+          "rms": 1.546894016052241e-05
+        },
+        "band_normal_degrees": {
+          "count": 176779,
+          "finite_count": 176779,
+          "invalid_count": 0,
+          "max": 17.66010013862726,
+          "p99": 0.011420315506982187,
+          "rms": 0.14228572112649832
+        },
+        "core_normal_degrees": {
+          "count": 8329,
+          "finite_count": 8252,
+          "invalid_count": 77,
+          "max": 82.83988491135334,
+          "p99": 0.1307128723653973,
+          "rms": 4.102364638822857
+        },
+        "core_visible_error_m": {
+          "count": 8329,
+          "finite_count": 8329,
+          "invalid_count": 0,
+          "max": 2.198779839091003e-06,
+          "p99": 1.5784789866302162e-06,
+          "rms": 5.337501909757062e-07
+        },
+        "degenerate_triangles": 11,
+        "dry_core_error_m": {
+          "count": 8329,
+          "finite_count": 8329,
+          "invalid_count": 0,
+          "max": 2.198779839091003e-06,
+          "p99": 1.5784789866302162e-06,
+          "rms": 5.337501909757062e-07
+        },
+        "feature": "parent_face_join",
+        "frozen_queries": [
+          {
+            "error": {
+              "count": 13,
+              "finite_count": 13,
+              "invalid_count": 0,
+              "max": 1.4797478797845542e-09,
+              "p99": 1.4797478797845542e-09,
+              "rms": 6.961620653874607e-10
+            },
+            "hit_count": 13,
+            "label": "edge",
+            "water": "Dry"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 5.893616616958752e-08,
+              "p99": 5.893616616958752e-08,
+              "rms": 5.893616616958752e-08
+            },
+            "hit_count": 1,
+            "label": "face_a_side_0.1m",
+            "water": "Dry"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 5.842230166308582e-08,
+              "p99": 5.842230166308582e-08,
+              "rms": 5.842230166308582e-08
+            },
+            "hit_count": 1,
+            "label": "face_b_side_0.1m",
+            "water": "Dry"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 5.220927050686441e-07,
+              "p99": 5.220927050686441e-07,
+              "rms": 5.220927050686441e-07
+            },
+            "hit_count": 1,
+            "label": "face_a_side_1.0m",
+            "water": "Dry"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 5.057227099314332e-07,
+              "p99": 5.057227099314332e-07,
+              "rms": 5.057227099314332e-07
+            },
+            "hit_count": 1,
+            "label": "face_b_side_1.0m",
+            "water": "Dry"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 7.767903298372403e-07,
+              "p99": 7.767903298372403e-07,
+              "rms": 7.767903298372403e-07
+            },
+            "hit_count": 1,
+            "label": "face_a_side_10.0m",
+            "water": "Dry"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 8.922534107114188e-07,
+              "p99": 8.922534107114188e-07,
+              "rms": 8.922534107114188e-07
+            },
+            "hit_count": 1,
+            "label": "face_b_side_10.0m",
+            "water": "Dry"
+          }
+        ],
+        "geometry_sha256": "50b9a7c6dcb95667341fc8fe7e397f0b3b9cef92c2c6c3db174a5e53166114fb",
+        "inner_error_m": {
+          "count": 4027,
+          "finite_count": 4027,
+          "invalid_count": 0,
+          "max": 1.6346821212209761e-06,
+          "p99": 1.3325243344297633e-06,
+          "rms": 4.487263008054298e-07
+        },
+        "outer_error_m": {
+          "count": 3858,
+          "finite_count": 3858,
+          "invalid_count": 0,
+          "max": 0.00046824433502479224,
+          "p99": 2.628070615173783e-05,
+          "rms": 2.1247204627305367e-05
+        },
+        "sample_count": 185108,
+        "scope": "finite physical f32 triangle samples; wet visible geometry is not dry contact",
+        "wet_core_visible_error_m": null,
+        "worst": {
+          "bed_height_m": 4772.917772515825,
+          "chart_xy": [
+            -61.75874688,
+            -16.0184769
+          ],
+          "error_m": -0.0005084249742139946,
+          "visible_height_m": 4772.917772515825,
+          "water": "Dry"
+        }
+      }
+    ],
+    "source_sha256": "4b30e7eda8e707dff50498f0be80476bf82d5dfd4b8160c662b1a2113dadfe80"
+  },
+  "topology": [
+    {
+      "feature": "nearest_known_shore",
+      "unexpected_edges": 2931,
+      "geometry_sha256": "9e9b0fb30d54102d8fc6b41df145f28c1bf2bb6c15f93dbfa18768c2bdd303ec"
+    },
+    {
+      "feature": "parent_face_join",
+      "unexpected_edges": 3036,
+      "geometry_sha256": "50b9a7c6dcb95667341fc8fe7e397f0b3b9cef92c2c6c3db174a5e53166114fb"
+    }
+  ],
+  "memory": {
+    "gpu_lifetime_cap_bytes": 16777216,
+    "additional_gpu_allocated_bytes": 0,
+    "queued_runtime_output_bytes": 0,
+    "total_renderer_geometry_bytes": null,
+    "process": {
+      "peak_rss_kib": 1680676
+    },
+    "peak_worker_transient_bytes": null
+  },
+  "not_run": [
+    "GPU fixed views",
+    "live shader/material checks",
+    "actual camera transform logging",
+    "core-following moving feet",
+    "delayed/refused builds in renderer",
+    "GPU lifetime reservations",
+    "runtime cancellation",
+    "eviction/revisit"
+  ],
+  "validation": {
+    "workspace_passed": 68,
+    "registry": "exit0"
+  },
+  "files": {
+    "out/review/v8-contact-core/plan.json": "da3ef1a8ca4efcc876416ea77f4e4b16daebd31a13ac7cc798973ff569617ffd",
+    "out/review/v8-contact-core/commands.json": "c692bb3dc3c3cc6f7f3ca0023b1c8d7cb0a2559022e8356611d2000eb4c8b849",
+    "out/review/v8-contact-core/resources.json": "e802597abafef35a464c951850331180d7bac94dd5c7e82bcd8adbe886621fcb",
+    "out/review/v8-contact-core/first-results.json": "8827b22232943eb58603162368691f6d57cd27bf7f01d78f7c02550515fa3a43",
+    "out/review/v8-contact-core/topology.json": "632557093e3be3f082bb35d431737e750d178c906d95b6cd4618e1bd5bd7a840",
+    "out/review/v8-contact-core/audit.json": "fb110e5f501d71a189ecbb810c551f126b0a523cd3035cd33332fff3d817b01c",
+    "out/review/v8-contact-core/geometry/results.json": "7007f3f1b417d2ad5466adbcec9d12054eb25fcbb36c5fea487af0697f76c197",
+    "out/review/v8-contact-core/geometry/nearest_known_shore.json": "9e9b0fb30d54102d8fc6b41df145f28c1bf2bb6c15f93dbfa18768c2bdd303ec",
+    "out/review/v8-contact-core/geometry/parent_face_join.json": "50b9a7c6dcb95667341fc8fe7e397f0b3b9cef92c2c6c3db174a5e53166114fb",
+    "out/review/v8-contact-core/tests.log": "ac0b58fe055cf2fb9a13eba4cab79362d1e7ebd2e37ec2f54b74bf226a3ff9e0",
+    "out/review/v8-contact-core/registry.log": "49623b36bdc4e6d13411774ecd5e95b5da7878d00205bc8d8dffa3dbcd8ed814",
+    "crates/core/world/examples/pgs_contact_core.rs": "00e9b9f34bf8134e990198fa1911f95c1af2b63ecae02ad3ed3a09754d3da6af",
+    "crates/core/world/examples/pgs_contact_audit.rs": "b58975375bab1fde185c7d3f2fbb267aaa707c2a035c619d115ad8e859499293",
+    "crates/core/world/examples/contact_core/mod.rs": "dc6ffc0a563ef5df591ad67bfb5d91b1430f54706103adc5d916b3197fb22a18",
+    "crates/core/world/examples/contact_core/grid.rs": "0f42e62612e972aed4a334399b4eeb2ff898980b20c2fbd1f7e7b6fde5bfab27",
+    "crates/core/world/examples/crease/mod.rs": "be5a9fdc6abf8ecaee6d3f9d9f49fad16b84c6a48a51602e9699c664ad0bdbad",
+    "crates/game/src/terrain_lod.rs": "5635b5b1042846dd9edf6b26f8dac5a64a80b769ecd8779a554656d93cf988ca",
+    "crates/engine/src/shaders/scene.wgsl": "1763fdd1fdbe230de3b398fe1e38ca10f779e0afbcdde7e474b82efaa81d79d4",
+    "target/release/examples/pgs_contact_core": "af345441056e5c76597453def24e9901fcf7cdabdaf73e44cf49b33b1f0c2ea5",
+    "target/release/examples/pgs_contact_audit": "7110316b9ca4bd0bf3b423045ded815a6ea9010c8897b1be151108e6c486ccd9"
+  }
+}

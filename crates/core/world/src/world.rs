@@ -39,6 +39,7 @@ pub struct StepResult {
 
 pub struct World {
     pub galaxy: Galaxy,
+    isolated: bool,
     surfaces: std::sync::Arc<crate::worlds::pgs::Sources>,
     /// Seconds since the epoch.
     pub time: f64,
@@ -129,7 +130,28 @@ impl World {
         let galaxy = Galaxy::generate(seed);
         let home_system = network::find_home(&galaxy, seed);
         let gate_links = network::build(&galaxy, home_system);
+        Self::empty(galaxy, home_system, gate_links, surfaces, false)
+    }
+
+    /// A single explicit system with independent time, caches and combat state.
+    /// No galaxy generation, gate network, or implicit system generation occurs.
+    /// Events remain caller-owned, as with `step_ship` and `command`.
+    /// The existing integrator requires body 0 as a root (it may be inert).
+    pub fn isolated(galaxy: Galaxy, system: StarSystem) -> Result<Self, String> {
+        if galaxy.stars.len() != 1 || system.index != 0 {
+            return Err("an isolated world requires one galaxy star and system index 0".into());
+        }
+        if system.bodies.first().is_none_or(|b| b.rail.parent.is_some()) {
+            return Err("an isolated system requires body 0 as its root".into());
+        }
+        let world = Self::empty(galaxy, 0, Vec::new(), Default::default(), true);
+        lock(&world.systems).insert(0, Arc::new(system));
+        Ok(world)
+    }
+
+    fn empty(galaxy: Galaxy, home_system: usize, gate_links: Vec<(usize, usize)>, surfaces: Arc<crate::worlds::pgs::Sources>, isolated: bool) -> Self {
         Self {
+            isolated,
             surfaces,
             galaxy,
             time: 0.0,
@@ -147,7 +169,7 @@ impl World {
             missiles: Vec::new(),
             beams: Vec::new(),
             impacts: Vec::new(),
-            goods: crate::goods::catalog(),
+            goods: if isolated { Vec::new() } else { crate::goods::catalog() },
             mined: HashMap::new(),
             turrets: Default::default(),
             turret_guns: HashMap::new(),
@@ -176,6 +198,7 @@ impl World {
         if let Some(sys) = systems.get(&i) {
             return sys.clone();
         }
+        assert!(!self.isolated, "system {i} is not in this isolated world");
         let mut sys = crate::charts::generate(&self.galaxy, &self.gate_links, i);
         crate::worlds::pgs::apply_sources(&mut sys, &self.surfaces);
         let sys = Arc::new(sys);
@@ -185,6 +208,9 @@ impl World {
 
     /// The charts of this galaxy, to share (with the client).
     pub fn charts(&self) -> crate::charts::Charts {
+        if self.isolated {
+            return crate::charts::Charts::isolated(self.galaxy.clone(), self.system(0));
+        }
         crate::charts::Charts::new(self.galaxy.seed, self.galaxy.clone(), self.gate_links.clone(), self.goods.clone(), self.home_system).with_surfaces(self.surfaces.clone())
     }
 
@@ -534,6 +560,11 @@ impl World {
         ship.hyper_jam = (ship.hyper_jam - real_dt * warp).max(0.0);
         self.command_at(ship, *system, commands, *clock, events);
         let sys = self.system(*system);
+        if ship.devices.is_some() {
+            let positions = self.rails_at(*system, *clock);
+            let density = universe_physics::air_at(&sys.bodies, ship.position, &positions, *clock).map_or(0., |(rho,_)|rho);
+            ship.devices.as_mut().unwrap().density = density;
+        }
         // Nearby stars, when already looked up for this system.
         let mut near = None;
         let result = match ship.state.clone() {
@@ -647,18 +678,22 @@ impl World {
         let mut rigid = ship.rigid();
         weld.place(&sys.bodies, t, &positions, &mut rigid);
         ship.set_rigid(&rigid);
-        // Turning in place on the pad, powered up; powered down, nothing fires.
+        // Allocate actual commands while the landing constraint holds position.
+        // Manual jets and assisted translation use the same resource limits as flight.
         if !ship.powered {
             (ship.throttle, ship.rcs) = (0.0, DVec3::ZERO);
+            ship.held = 0;
             ship.jets.clear();
-        } else if turn.is_some() {
-            ship.drive(turn.as_ref(), real_dt, false);
+            ship.applied = (DVec3::ZERO, DVec3::ZERO);
+        } else {
+            ship.drive(turn.as_ref(), real_dt, true);
         }
         let local_orientation = rot.inverse() * ship.orientation;
         ship.state = ShipState::Landed { body: weld.body, local_position: weld.local_position, local_orientation };
         // Let go, if the structure's release says so (its owner's rule).
         let rules = self.rules_of(system);
         crate::rules::release(&rules, sys, weld.body, weld.local_position, ship, t, events);
+        if ship.powered { ship.burn(real_dt); }
         result
     }
 

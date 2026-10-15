@@ -24,8 +24,7 @@ use crate::interior::layer;
 use universe_engine::glam::{DVec2, Vec2};
 use universe_engine::{Color, Context, Frame, KeyCode, MouseButton};
 use universe_sim::world::deckplan::{self, Deck, DeckPlan, Door, Sides, Wall};
-
-use crate::App;
+use universe_sim::world::ship::ClassSpec;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Default)]
 pub enum Tool {
@@ -206,16 +205,16 @@ const LABEL: Color = Color([0.7, 0.85, 1.0, 1.0]);
 
 impl Studio {
     /// The plan for `hull` (made when first drawn on).
-    fn plan<'a>(app: &'a mut App, hull: &str) -> &'a mut DeckPlan {
-        if let Some(k) = app.deckplans.iter().position(|p| p.hull == hull) {
-            return &mut app.deckplans[k];
+    fn plan<'a>(deckplans: &'a mut Vec<DeckPlan>, hull: &str) -> &'a mut DeckPlan {
+        if let Some(k) = deckplans.iter().position(|p| p.hull == hull) {
+            return &mut deckplans[k];
         }
-        app.deckplans.push(DeckPlan { hull: hull.into(), decks: Vec::new() });
-        app.deckplans.last_mut().expect("just added")
+        deckplans.push(DeckPlan { hull: hull.into(), decks: Vec::new() });
+        deckplans.last_mut().expect("just added")
     }
 
-    fn plan_of<'a>(app: &'a App, hull: &str) -> Option<&'a DeckPlan> {
-        app.deckplans.iter().find(|p| p.hull == hull)
+    fn plan_of<'a>(deckplans: &'a [DeckPlan], hull: &str) -> Option<&'a DeckPlan> {
+        deckplans.iter().find(|p| p.hull == hull)
     }
 
     /// Plan point ↔ screen, in the plan region (nose to the left, starboard up).
@@ -232,7 +231,8 @@ impl Studio {
     }
 
     /// The hull cut at the current deck (worked out again when the hull or deck changes).
-    fn refresh(&mut self, app: &App, hull_key: &str, shape: &universe_sim::world::shape::Shape) {
+    fn refresh(&mut self, deckplans: &[DeckPlan], hull_key: &str, spec: &ClassSpec) {
+        let shape = spec.shape();
         let Some(mesh) = shape.walk.as_ref() else {
             self.hull = None;
             return;
@@ -253,7 +253,7 @@ impl Studio {
             });
             self.elev_job = Some((hull_key.into(), rx));
         }
-        let decks = Self::plan_of(app, hull_key).map(|p| p.decks.clone()).unwrap_or_default();
+        let decks = Self::plan_of(deckplans, hull_key).map(|p| p.decks.clone()).unwrap_or_default();
         let y = decks.get(self.deck).map_or_else(|| first_floor(mesh), |d| d.floor);
         // (Cut just over the floor: the hull as it is at the deck, its walls solid under a doorway that starts higher.)
         if self.hull.as_ref().is_some_and(|h| h.key == hull_key && (h.y - y).abs() < 1e-9) {
@@ -264,7 +264,7 @@ impl Studio {
         let same = self.hull.as_ref().filter(|h| h.key == hull_key);
         let profile = same.map_or_else(|| mesh.section_x(0.0), |h| h.profile.clone());
         let first_floor = first_floor(mesh);
-        self.hull = Some(Hull { key: hull_key.into(), y, section, sides, profile, nose: nose_of(shape), name: app.ship.spec().name.clone(), dry_mass: app.ship.spec().dry_mass, keel: mesh.lo.y, first_floor, lo: mesh.lo, hi: mesh.hi });
+        self.hull = Some(Hull { key: hull_key.into(), y, section, sides, profile, nose: nose_of(shape), name: spec.name.clone(), dry_mass: spec.dry_mass, keel: mesh.lo.y, first_floor, lo: mesh.lo, hi: mesh.hi });
     }
 }
 
@@ -535,14 +535,16 @@ fn snap(p: DVec2, free: bool) -> DVec2 {
     if free { p } else { (p * 4.0).round() / 4.0 }
 }
 
-/// The studio's input (the shipyard's layout page). False: ESC with nothing to stop (leave).
-pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim::world::shape::Shape, studio: &mut Studio) -> bool {
+/// Edit the session's decks using its selected hull, independently of the game.
+/// False: ESC with nothing to stop (leave).
+pub fn input_with(deckplans: &mut Vec<DeckPlan>, ctx: &Context, hull_key: &str, spec: &ClassSpec, studio: &mut Studio) -> bool {
+    let shape = spec.shape();
     let input = &ctx.input;
     let size = ctx.hud_size.as_vec2();
     let (plan_r, low_r) = regions(size, panel_open(studio));
     let (side_r, end_r) = split_views(low_r);
     studio.spin += ctx.dt;
-    studio.refresh(app, hull_key, shape);
+    studio.refresh(deckplans, hull_key, spec);
     let Some(h) = studio.hull.as_ref() else {
         return !input.pressed(KeyCode::Escape);
     };
@@ -587,7 +589,7 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
     }
     // Decks.
     let first_floor = h.first_floor;
-    let plan = Studio::plan(app, hull_key);
+    let plan = Studio::plan(deckplans, hull_key);
     let n = plan.decks.len();
     // Another deck: on the first floor, or above the top one with its headroom
     // and a deck's thickness between (not past the hull's top).
@@ -950,12 +952,12 @@ fn inside(poly: &[DVec2], p: DVec2) -> bool {
     odd
 }
 
-/// The studio drawn (the shipyard's layout page).
-pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name: &str, studio: &Studio, access: &crate::interior::Access) {
+/// Draw the session's deck document (the shipyard's layout page).
+pub fn draw_with(frame: &mut Frame, deckplans: &[DeckPlan], place: &str, hull_key: &str, hull_name: &str, studio: &Studio, access: &crate::interior::Access) {
     let size = frame.size();
     let (plan_r, low_r) = regions(size, panel_open(studio));
     let (side_r, end_r) = split_views(low_r);
-    frame.text(Vec2::new(12.0, 10.0), &format!("{place}   LAYOUT STUDIO - {hull_name}   {:.0} CR", app.v.credits), LABEL);
+    frame.text(Vec2::new(12.0, 10.0), &format!("{place}   LAYOUT STUDIO - {hull_name}"), LABEL);
     // The toolbar: the tool in use lit, the button under the cursor brighter.
     {
         use crate::hud::{draw_cell, Lamp};
@@ -973,7 +975,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
         frame.text(plan_r.0 + Vec2::new(16.0, 16.0), &format!("{hull_name} HAS NO MODEL TO LAY OUT: THE STUDIO NEEDS A MODELLED HULL"), LABEL);
         return;
     };
-    let plan = Studio::plan_of(app, hull_key);
+    let plan = Studio::plan_of(deckplans, hull_key);
     let decks: &[Deck] = plan.map_or(&[], |p| &p.decks);
     let deck = decks.get(studio.deck);
     let shown = |k: usize| access.layers[k];

@@ -8,6 +8,7 @@ struct Globals {
 @group(0) @binding(0) var<uniform> g: Globals;
 @group(1) @binding(0) var atlas: texture_2d<f32>;
 @group(1) @binding(1) var atlas_sampler: sampler;
+@group(2) @binding(0) var scene_depth: texture_depth_multisampled_2d;
 
 struct HudIn {
     @location(0) pos: vec2<f32>,
@@ -23,6 +24,7 @@ struct HudOut {
     @location(1) color: vec4<f32>,
     @location(2) @interpolate(flat) geometry: u32,
     @location(3) @interpolate(flat) alpha: vec2<f32>,
+    @location(4) screen_uv: vec2<f32>,
 };
 
 @vertex
@@ -31,9 +33,9 @@ fn vs_hud(v: HudIn) -> HudOut {
     if v.depth.x > 0.0 {
         // Keep clip W: GPU interpolates colours perspectively and near/z
         // affinely in screen space. UI/font coverage must not affect meshes.
-        return HudOut(vec4<f32>(screen.xy * v.depth.x, v.depth.y, v.depth.x), v.uv, v.color, 1u, v.alpha);
+        return HudOut(vec4<f32>(screen.xy * v.depth.x, v.depth.y, v.depth.x), v.uv, v.color, 1u, v.alpha, screen.xy * vec2<f32>(0.5,-0.5) + vec2<f32>(0.5));
     }
-    return HudOut(screen, v.uv, v.color, 0u, v.alpha);
+    return HudOut(screen, v.uv, v.color, 0u, v.alpha, screen.xy * vec2<f32>(0.5,-0.5) + vec2<f32>(0.5));
 }
 
 @fragment
@@ -42,6 +44,15 @@ fn fs_hud(in: HudOut) -> @location(0) vec4<f32> {
         if in.alpha.x == 1.0 && in.color.a < in.alpha.y { discard; }
         if in.alpha.x == 2.0 { return in.color; }
         return vec4<f32>(in.color.rgb, 1.0);
+    }
+    if in.alpha.x == 3.0 {
+        let size = textureDimensions(scene_depth);
+        let pixel = clamp(vec2<i32>(in.screen_uv * vec2<f32>(size)), vec2<i32>(0), vec2<i32>(size)-vec2<i32>(1));
+        var nearest = 0.0;
+        for (var sample = 0u; sample < textureNumSamples(scene_depth); sample++) {
+            nearest = max(nearest, textureLoad(scene_depth, pixel, i32(sample)));
+        }
+        if in.alpha.y + 0.000001 < nearest { discard; }
     }
     let cover = textureSample(atlas, atlas_sampler, in.uv).r;
     return vec4<f32>(in.color.rgb, in.color.a * cover);

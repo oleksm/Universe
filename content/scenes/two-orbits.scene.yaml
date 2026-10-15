@@ -1,0 +1,11 @@
+# Two crafts on circular orbits round Heath, run on the realtime clock alone (the world's own ship
+# step) in a lab copy of the home system; the planets move on the celestial clock.
+# freefall --app scene content/scenes/two-orbits.scene.yaml
+name: Two orbits round Heath
+clocks: [clock.realtime, clock.celestial]
+scale: 20
+look_at: body.treistun.treistun-d
+distance_radii: 4
+crafts:
+  - { name: LOW, around: body.treistun.treistun-d, altitude_m: 400000 }
+  - { name: HIGH, around: body.treistun.treistun-d, altitude_m: 3000000, inclination_deg: 40 }

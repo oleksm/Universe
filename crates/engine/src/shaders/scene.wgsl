@@ -455,7 +455,7 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
     // drew each edge as a dark dash.)
     // (How obliquely from the world's smooth up, not the triangle's flat normal: that stepped the
     // pixel's size, the maps' level and the material's noise at every triangle edge.)
-    let oblique = 1.0 / max(abs(dot(normalize(in.up), normalize(-in.at))), 0.25);
+    let oblique = 1.0 / max(abs(dot(normalize(in.up), eye_direction(in.at))), 0.25);
     let span = 2.0 * length(in.at) * g.view.x * oblique;
     let footprint = select((length(ldx) + length(ldy)) / max(length(in.local), 1e-6), span / radius, on_patch);
     // (The globe maps' level on a patch from that: a texel spans π/2 / GLOBE_SIZE radians.)
@@ -650,7 +650,7 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
     var c = albedo.rgb * (vec3<f32>(in.ambient) + (1.0 - in.ambient) * light);
     // The sun's glint: where the surface turns the light to the eye (Blinn).
     if (in.material.x > 0.0 && dot(n, in.sun_dir) > 0.0) {
-        let h = normalize(in.sun_dir + normalize(-in.at));
+        let h = normalize(in.sun_dir + eye_direction(in.at));
         c += in.sun_light * in.material.x * pow(max(dot(n, h), 0.0), in.material.y) * seen;
     }
     // What glows of itself (windows, lamps, hot metal).
@@ -667,7 +667,7 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
             var si: SeaIn;
             si.depth_m = max(-ground.r * in.globe.z, 0.5);
             si.wind_ms = 9.0 * (1.0 - clamp(calm.r, 0.35, 1.0));
-            si.to_eye = normalize(-in.at);
+            si.to_eye = eye_direction(in.at);
             si.up = up;
             si.sun_dir = in.sun_dir;
             si.sun = in.sun_light * seen;
@@ -740,6 +740,10 @@ fn air_center(v: MeshIn) -> vec4<f32> {
 
 @vertex
 fn vs_mesh(v_in: MeshIn) -> MeshOut {
+    return mesh_vertex(v_in);
+}
+
+fn mesh_vertex(v_in: MeshIn) -> MeshOut {
     var v = v_in;
     var tint = v.color * v.fill_tint;
     // A patch of ground (its vertices in metres): its vertex colour is its way to its parent's
@@ -760,6 +764,10 @@ fn vs_mesh(v_in: MeshIn) -> MeshOut {
 
 @vertex
 fn vs_mesh_line(v: MeshIn) -> MeshOut {
+    return mesh_line_vertex(v);
+}
+
+fn mesh_line_vertex(v: MeshIn) -> MeshOut {
     let n = turn(v, v.normal);
     let k = sqrt(max(dot(n, v.light_dir.xyz), 0.0));
     let p = place(v);
@@ -767,4 +775,177 @@ fn vs_mesh_line(v: MeshIn) -> MeshOut {
     clip.z *= 1.003;
     // (Edges, panel lines: no glint of their own.)
     return MeshOut(clip, v.color * v.line_tint, k * v.light_color.rgb, fill(v, n), v.light_color.w, p, n, v.light_dir.xyz, v.light_color.rgb, vec4<f32>(0.0, 1.0, v.material.z, 0.0), v.pos * v.globe_at.w + v.globe_at.xyz, vec4<f32>(0.0), 1.0, vec3<f32>(0.0), vec4<f32>(0.0), vec2<f32>(0.0), n, vec4<f32>(0.0));
+}
+
+// The pooled meshes (see pool.rs): the pool (each mesh a header of 8 words, its vertices, indices,
+// face colours, morph), this frame's draws (each layer's in order, its faces' and edges' first
+// corners counted up), their groups (a mesh instance each), each layer's range of draws.
+struct PoolDraw {
+    t: vec3<f32>,
+    group: u32,
+    mesh: u32,
+    face_start: u32,
+    edge_start: u32,
+    pad: u32,
+};
+struct PoolGroup {
+    c0: vec4<f32>,
+    c1: vec4<f32>,
+    c2: vec4<f32>,
+    t: vec4<f32>,
+    line_tint: vec4<f32>,
+    fill_tint: vec4<f32>,
+    light_dir: vec4<f32>,
+    light_color: vec4<f32>,
+    refl_dir: vec4<f32>,
+    refl_color: vec4<f32>,
+    material: vec4<f32>,
+    globe: vec4<f32>,
+    globe_at: vec4<f32>,
+};
+@group(3) @binding(0) var<storage, read> pool: array<u32>;
+@group(3) @binding(1) var<storage, read> pool_draws: array<PoolDraw>;
+@group(3) @binding(2) var<storage, read> pool_groups: array<PoolGroup>;
+@group(3) @binding(3) var<storage, read> pool_lists: array<vec4<u32>>;
+
+// The draw corner `c` of a layer belongs to: the last whose first corner is at or before it.
+fn pool_find(layer: u32, c: u32, edges: bool) -> u32 {
+    let l = pool_lists[layer];
+    var lo = l.x;
+    var hi = l.x + l.y;
+    loop {
+        if (hi - lo <= 1u) {
+            break;
+        }
+        let mid = (lo + hi) / 2u;
+        var s = pool_draws[mid].face_start;
+        if (edges) {
+            s = pool_draws[mid].edge_start;
+        }
+        if (s <= c) {
+            lo = mid;
+        } else {
+            hi = mid;
+        }
+    }
+    return lo;
+}
+
+fn pool_index(at: u32, i: u32, u16s: bool) -> u32 {
+    if (u16s) {
+        return (pool[at + i / 2u] >> ((i & 1u) * 16u)) & 0xffffu;
+    }
+    return pool[at + i];
+}
+
+fn oct_normal(w: u32) -> vec3<f32> {
+    let e = unpack2x16snorm(w);
+    var n = vec3<f32>(e.x, e.y, 1.0 - abs(e.x) - abs(e.y));
+    if (n.z < 0.0) {
+        n = vec3<f32>((1.0 - abs(e.y)) * select(-1.0, 1.0, e.x >= 0.0), (1.0 - abs(e.x)) * select(-1.0, 1.0, e.y >= 0.0), n.z);
+    }
+    return normalize(n);
+}
+
+// A mesh instance for draw `d` in its group, with one vertex's own (model frame).
+fn pool_in(d: PoolDraw, pos: vec3<f32>, normal: vec3<f32>, color: vec4<f32>) -> MeshIn {
+    let g = pool_groups[d.group];
+    var v: MeshIn;
+    v.pos = pos;
+    v.normal = normal;
+    v.color = color;
+    v.c0 = g.c0;
+    v.c1 = g.c1;
+    v.c2 = g.c2;
+    v.t = vec4<f32>(d.t, g.t.w);
+    v.line_tint = g.line_tint;
+    v.fill_tint = g.fill_tint;
+    v.light_dir = g.light_dir;
+    v.light_color = g.light_color;
+    v.refl_dir = g.refl_dir;
+    v.refl_color = g.refl_color;
+    v.material = g.material;
+    v.globe = vec4<f32>(0.0);
+    v.globe_at = vec4<f32>(0.0, 0.0, 0.0, 1.0);
+    v.data = vec4<f32>(0.0);
+    return v;
+}
+
+// Vertex `i` of the mesh at `h` where it's drawn: moved toward its parent's shape by its morph
+// band (by its distance from the eye), if it has one.
+fn pool_pos(d: PoolDraw, h: u32, flags: u32, i: u32) -> vec3<f32> {
+    let a = h + 8u + i * (3u + (flags & 1u) + ((flags >> 1u) & 1u));
+    var p = vec3<f32>(bitcast<f32>(pool[a]), bitcast<f32>(pool[a + 1u]), bitcast<f32>(pool[a + 2u]));
+    if ((flags & 8u) != 0u) {
+        let m = h + pool[h + 7u] + i * 4u;
+        let band = unpack2x16float(pool[m + 3u]) * 1000.0;
+        let off = vec3<f32>(bitcast<f32>(pool[m]), bitcast<f32>(pool[m + 1u]), bitcast<f32>(pool[m + 2u]));
+        let v = pool_in(d, p, vec3<f32>(0.0), vec4<f32>(1.0));
+        p = p + off * smoothstep(band.x, band.y, length(place(v)));
+    }
+    return p;
+}
+
+// Vertex `i`'s normal (given or its faces') and colour.
+fn pool_normal(h: u32, flags: u32, i: u32) -> vec3<f32> {
+    if ((flags & 1u) == 0u) {
+        return vec3<f32>(0.0);
+    }
+    return oct_normal(pool[h + 8u + i * (3u + 1u + ((flags >> 1u) & 1u)) + 3u]);
+}
+
+fn pool_color(h: u32, flags: u32, i: u32) -> vec4<f32> {
+    if ((flags & 2u) == 0u) {
+        return vec4<f32>(1.0);
+    }
+    let stride = 3u + (flags & 1u) + 1u;
+    return unpack4x8unorm(pool[h + 8u + i * stride + stride - 1u]);
+}
+
+@vertex
+fn vs_pool(@builtin(vertex_index) c: u32, @builtin(instance_index) layer: u32) -> MeshOut {
+    let d = pool_draws[pool_find(layer, c, false)];
+    let k = c - d.face_start;
+    let face = k / 3u;
+    let h = d.mesh;
+    let flags = pool[h + 3u];
+    let at = h + pool[h + 4u];
+    let u16s = (flags & 16u) != 0u;
+    let ids = vec3<u32>(pool_index(at, face * 3u, u16s), pool_index(at, face * 3u + 1u, u16s), pool_index(at, face * 3u + 2u, u16s));
+    let i = ids[k % 3u];
+    var p = pool_pos(d, h, flags, i);
+    var n: vec3<f32>;
+    if ((flags & 32u) != 0u) {
+        n = pool_normal(h, flags, i);
+    } else {
+        // (Flat: the face's own normal, from its corners as drawn: the same at all three.)
+        let a = pool_pos(d, h, flags, ids.x);
+        let b = pool_pos(d, h, flags, ids.y);
+        let cc = pool_pos(d, h, flags, ids.z);
+        n = normalize(cross(b - a, cc - a));
+    }
+    var color = pool_color(h, flags, i);
+    if ((flags & 4u) != 0u) {
+        color = unpack4x8unorm(pool[h + pool[h + 6u] + face]);
+    }
+    return mesh_vertex(pool_in(d, p, n, color));
+}
+
+@vertex
+fn vs_pool_line(@builtin(vertex_index) c: u32, @builtin(instance_index) layer: u32) -> MeshOut {
+    let d = pool_draws[pool_find(layer, c, true)];
+    let k = c - d.edge_start;
+    let h = d.mesh;
+    let flags = pool[h + 3u];
+    let i = pool_index(h + pool[h + 5u], k, (flags & 16u) != 0u);
+    return mesh_line_vertex(pool_in(d, pool_pos(d, h, flags, i), pool_normal(h, flags, i), pool_color(h, flags, i)));
+}
+
+fn eye_direction(at: vec3<f32>) -> vec3<f32> {
+    if g.view.w > 0.5 {
+        let a = g.inv_view_proj * vec4<f32>(0.0, 0.0, 1.0, 1.0);
+        let b = g.inv_view_proj * vec4<f32>(0.0, 0.0, 0.5, 1.0);
+        return normalize(a.xyz / a.w - b.xyz / b.w);
+    }
+    return normalize(-at);
 }

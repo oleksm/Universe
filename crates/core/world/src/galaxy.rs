@@ -340,6 +340,7 @@ impl Galaxy {
             .map(|(i, s)| (s.position.distance_squared(origin), i))
             .collect();
         let k = k.min(all.len());
+        if k == 0 { return Vec::new(); }
         all.select_nth_unstable_by(k.saturating_sub(1), |a, b| a.0.total_cmp(&b.0));
         all.truncate(k);
         all.sort_by(|a, b| a.0.total_cmp(&b.0));

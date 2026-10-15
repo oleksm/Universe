@@ -1,0 +1,4232 @@
+{
+  "surface_sha256": "4b30e7eda8e707dff50498f0be80476bf82d5dfd4b8160c662b1a2113dadfe80",
+  "body_key": "body.treistun.treistun-e",
+  "frame": "host-body rotating frame, glTF/world metre convention; live World time supplied",
+  "host_radius_m": 6281370.0,
+  "source_radius_m": 6371000.0,
+  "samples": [
+    {
+      "commands": {
+        "forward": 1.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5172.876036910024,
+        "dry": true,
+        "face": 1569949,
+        "ground_clearance_m": -6.148184183984995e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792997.957631075,
+              -4832312.694476294,
+              1335118.6645613837
+            ],
+            "velocity": [
+              -0.3349477116464131,
+              -0.6554186052133761,
+              -1.420646501562927
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 0,
+      "time": 25010.173333351522
+    },
+    {
+      "commands": {
+        "forward": 1.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5172.891369034336,
+        "dry": true,
+        "face": 1569949,
+        "ground_clearance_m": 1.1314114090055227e-09
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792997.799407817,
+              -4832313.033971015,
+              1335117.957494334
+            ],
+            "velocity": [
+              -0.334947979103644,
+              -0.6554185410230855,
+              -1.4206464681184956
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 30,
+      "time": 25010.673333351515
+    },
+    {
+      "commands": {
+        "forward": 1.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5172.9067011579,
+        "dry": true,
+        "face": 1569949,
+        "ground_clearance_m": 8.321876521222293e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792997.641184425,
+              -4832313.373465704,
+              1335117.2504272996
+            ],
+            "velocity": [
+              -0.33494823692028436,
+              -0.6554184706781631,
+              -1.4206464397864416
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 60,
+      "time": 25011.173333351508
+    },
+    {
+      "commands": {
+        "forward": 1.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5172.92203328071,
+        "dry": true,
+        "face": 1569949,
+        "ground_clearance_m": -5.757101462222636e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792997.4829608994,
+              -4832313.712960357,
+              1335116.5433602794
+            ],
+            "velocity": [
+              -0.33494851401814546,
+              -0.6554184126424922,
+              -1.4206464012294662
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 90,
+      "time": 25011.6733333515
+    },
+    {
+      "commands": {
+        "forward": 1.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5172.937365402758,
+        "dry": true,
+        "face": 1569949,
+        "ground_clearance_m": -2.901288098655641e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792997.3247372448,
+              -4832314.052454976,
+              1335115.8362932752
+            ],
+            "velocity": [
+              -0.3349487766551126,
+              -0.6554183453748758,
+              -1.4206463703410865
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 120,
+      "time": 25012.173333351493
+    },
+    {
+      "commands": {
+        "forward": 1.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5172.952697524073,
+        "dry": true,
+        "face": 1569949,
+        "ground_clearance_m": -2.0372681319713593e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792997.166513452,
+              -4832314.391949566,
+              1335115.129226285
+            ],
+            "velocity": [
+              -0.33494904893269956,
+              -0.6554182842618832,
+              -1.4206463343402151
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 150,
+      "time": 25012.673333351486
+    },
+    {
+      "commands": {
+        "forward": 1.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5172.9680296446095,
+        "dry": true,
+        "face": 1569949,
+        "ground_clearance_m": -1.2005330063402653e-09
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792997.008289522,
+              -4832314.731444125,
+              1335114.4221593116
+            ],
+            "velocity": [
+              -0.3349493163899963,
+              -0.6554182200715719,
+              -1.420646300895507
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 180,
+      "time": 25013.17333335148
+    },
+    {
+      "commands": {
+        "forward": 1.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5172.983361764484,
+        "dry": true,
+        "face": 1569949,
+        "ground_clearance_m": 3.2741809263825417e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792996.8500654553,
+              -4832315.070938657,
+              1335113.7150923496
+            ],
+            "velocity": [
+              -0.3349495790270021,
+              -0.6554181528039407,
+              -1.420646270006966
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 210,
+      "time": 25013.67333335147
+    },
+    {
+      "commands": {
+        "forward": 1.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5172.999760050655,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 6.029949872754514e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792996.6924845283,
+              -4832315.411252691,
+              1335113.0082518333
+            ],
+            "velocity": [
+              -0.3349498513046305,
+              -0.6554180916909355,
+              -1.4206462340059254
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 240,
+      "time": 25014.173333351464
+    },
+    {
+      "commands": {
+        "forward": 1.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.017400355171,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 8.385541150346398e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792996.5356528396,
+              -4832315.752521406,
+              1335112.3016751062
+            ],
+            "velocity": [
+              -0.3349501187619677,
+              -0.655418027500611,
+              -1.4206462005610518
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 270,
+      "time": 25014.673333351457
+    },
+    {
+      "commands": {
+        "forward": 1.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.035040658931,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": -3.2741809263825417e-11
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792996.378821019,
+              -4832316.093790086,
+              1335111.5950983933
+            ],
+            "velocity": [
+              -0.334950381399011,
+              -0.6554179602329674,
+              -1.4206461696723478
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 300,
+      "time": 25015.17333335145
+    },
+    {
+      "commands": {
+        "forward": 1.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.052680961905,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": -1.1732481652870774e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792996.2219890687,
+              -4832316.435058732,
+              1335110.8885216955
+            ],
+            "velocity": [
+              -0.33495065367668125,
+              -0.6554178991199512,
+              -1.4206461336711382
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 330,
+      "time": 25015.673333351442
+    },
+    {
+      "commands": {
+        "forward": 1.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.070321264071,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 6.057234713807702e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792996.0651569865,
+              -4832316.776327343,
+              1335110.181945014
+            ],
+            "velocity": [
+              -0.33495092113405717,
+              -0.6554178349296158,
+              -1.420646100226098
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 360,
+      "time": 25016.173333351435
+    },
+    {
+      "commands": {
+        "forward": 1.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.087961565567,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 1.3642420526593924e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.9083247613,
+              -4832317.117595928,
+              1335109.4753683442
+            ],
+            "velocity": [
+              -0.33495118377113825,
+              -0.655417767661959,
+              -1.4206460693372325
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 390,
+      "time": 25016.673333351428
+    },
+    {
+      "commands": {
+        "forward": 1.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.105601866289,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 4.4019543565809727e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.7514924007,
+              -4832317.458864484,
+              1335108.7687916902
+            ],
+            "velocity": [
+              -0.33495144640823105,
+              -0.6554177003942973,
+              -1.420646038448313
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 420,
+      "time": 25017.17333335142
+    },
+    {
+      "commands": {
+        "forward": 1.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.123242166221,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": -3.2741809263825417e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.594659907,
+              -4832317.800133004,
+              1335108.0622150514
+            ],
+            "velocity": [
+              -0.3349517186859556,
+              -0.6554176392812645,
+              -1.4206460024468797
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 450,
+      "time": 25017.673333351413
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.14029445545,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 4.729372449219227e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.443055039,
+              -4832318.130025876,
+              1335107.3791909802
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 480,
+      "time": 25018.173333351406
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": true,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455461,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.047336694315163186
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.471615712,
+              -4832318.166412476,
+              1335107.3892441303
+            ],
+            "velocity": [
+              1.7136399703099598,
+              -2.1831962682760437,
+              0.6031890636268911
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 510,
+      "time": 25018.6733333514
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455461,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.09201007941373973
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.498569468,
+              -4832318.200751859,
+              1335107.3987316603
+            ],
+            "velocity": [
+              1.6172253420755984,
+              -2.0603629659398437,
+              0.5692518012309281
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 511,
+      "time": 25018.690000018065
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455465,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.1340201585480827
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.5239163134,
+              -4832318.23304402,
+              1335107.4076535692
+            ],
+            "velocity": [
+              1.5208107152115187,
+              -1.9375296653493979,
+              0.5353145393172944
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 512,
+      "time": 25018.70666668473
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455459,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.17336692893695727
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.5476562483,
+              -4832318.263288959,
+              1335107.4160098573
+            ],
+            "velocity": [
+              1.4243960896360284,
+              -1.8146963664006288,
+              0.5013772778572353
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 513,
+      "time": 25018.723333351398
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455455,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.21005039336432674
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.5697892727,
+              -4832318.291486677,
+              1335107.4238005243
+            ],
+            "velocity": [
+              1.3279814652674347,
+              -1.6918630689894598,
+              0.4674400168219951
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 514,
+      "time": 25018.740000018064
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.1402944554575,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.24407055089250207
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.5903153867,
+              -4832318.317637173,
+              1335107.4310255703
+            ],
+            "velocity": [
+              1.2315668420240449,
+              -1.5690297730118132,
+              0.43350275618281864
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 515,
+      "time": 25018.75666668473
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455459,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.2754274015296687
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.6092345905,
+              -4832318.341740448,
+              1335107.4376849951
+            ],
+            "velocity": [
+              1.135152219824167,
+              -1.4461964783636119,
+              0.39956549591095086
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 516,
+      "time": 25018.773333351397
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455461,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.3041209452749172
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.626546884,
+              -4832318.363796501,
+              1335107.4437787991
+            ],
+            "velocity": [
+              1.0387375985861083,
+              -1.323363184940779,
+              0.3656282359776366
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 517,
+      "time": 25018.790000018063
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455459,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.33015118120056286
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.642252267,
+              -4832318.383805333,
+              1335107.449306982
+            ],
+            "velocity": [
+              0.9423229782281762,
+              -1.2005298926392372,
+              0.33169097635412065
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 518,
+      "time": 25018.80666668473
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455461,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.3535181102306524
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.6563507393,
+              -4832318.401766943,
+              1335107.454269544
+            ],
+            "velocity": [
+              0.8459083586686782,
+              -1.0776966013549094,
+              0.2977537170116478
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 519,
+      "time": 25018.823333351396
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455461,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.3742217333019653
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.6688423017,
+              -4832318.417681332,
+              1335107.458666485
+            ],
+            "velocity": [
+              0.7494937398259219,
+              -0.9548633109837183,
+              0.2638164579214629
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 520,
+      "time": 25018.840000018063
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.1402944554575,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.39226204762235284
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.6797269536,
+              -4832318.431548499,
+              1335107.462497805
+            ],
+            "velocity": [
+              0.6530791216182148,
+              -0.8320300214215869,
+              0.22987919905481088
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 521,
+      "time": 25018.85666668473
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455461,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.4076390569061914
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.6890046955,
+              -4832318.443368444,
+              1335107.465763504
+            ],
+            "velocity": [
+              0.5566645039638642,
+              -0.7091967325644378,
+              0.19594194038293636
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 522,
+      "time": 25018.873333351396
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455469,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.42035275836224173
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.696675527,
+              -4832318.453141169,
+              1335107.468463582
+            ],
+            "velocity": [
+              0.4602498867811779,
+              -0.5863634443081942,
+              0.1620046818770843
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 523,
+      "time": 25018.890000018062
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455461,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.43040315387406736
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.7027394483,
+              -4832318.460866671,
+              1335107.470598039
+            ],
+            "velocity": [
+              0.363835269988463,
+              -0.4635301565487784,
+              0.12806742350849942
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 524,
+      "time": 25018.90666668473
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455461,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.4377902415544668
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.707196459,
+              -4832318.466544952,
+              1335107.4721668751
+            ],
+            "velocity": [
+              0.26742065350402716,
+              -0.3406968691821136,
+              0.0941301652484266
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 525,
+      "time": 25018.923333351395
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455465,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.4425140232706326
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.7100465596,
+              -4832318.470176012,
+              1335107.4731700902
+            ],
+            "velocity": [
+              0.17100603724617797,
+              -0.2178635821041227,
+              0.06019290706811064
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 526,
+      "time": 25018.94000001806
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455461,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.44457449717083364
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.71128975,
+              -4832318.47175985,
+              1335107.4736076845
+            ],
+            "velocity": [
+              0.07459142113322291,
+              -0.0950302952107285,
+              0.026255648938796387
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 527,
+      "time": 25018.956666684728
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455461,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.4439716641754785
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.71092603,
+              -4832318.471296467,
+              1335107.4734796577
+            ],
+            "velocity": [
+              -0.021823194916530553,
+              0.027802991602146148,
+              -0.007681609168271352
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 528,
+      "time": 25018.973333351394
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455461,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.44070552521952777
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.7089553997,
+              -4832318.468785862,
+              1335107.4727860098
+            ],
+            "velocity": [
+              -0.11823781098477495,
+              0.15063627843857844,
+              -0.041618867281847764
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 529,
+      "time": 25018.99000001806
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455465,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.4347760793680209
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.705377859,
+              -4832318.464228037,
+              1335107.471526741
+            ],
+            "velocity": [
+              -0.21465242715320268,
+              0.27346956540264544,
+              -0.075556125430688
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 530,
+      "time": 25019.006666684727
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455469,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.4261833266236863
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.7001934084,
+              -4832318.457622989,
+              1335107.4697018513
+            ],
+            "velocity": [
+              -0.3110670435035062,
+              0.3963028525984243,
+              -0.10949338364354722
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 531,
+      "time": 25019.023333351393
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455465,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.4149272660652059
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.6934020473,
+              -4832318.44897072,
+              1335107.4673113406
+            ],
+            "velocity": [
+              -0.40748166011737813,
+              0.5191361401299921,
+              -0.14343064194918065
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 532,
+      "time": 25019.04000001806
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.1402944554675,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.40100789953885396
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.685003776,
+              -4832318.43827123,
+              1335107.464355209
+            ],
+            "velocity": [
+              -0.503896277076511,
+              0.6419694281014262,
+              -0.17736790037634345
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 533,
+      "time": 25019.056666684726
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455465,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.3844252261260408
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.6749985944,
+              -4832318.425524518,
+              1335107.4608334564
+            ],
+            "velocity": [
+              -0.6003108944625973,
+              0.7648027166168035,
+              -0.21130515895379082
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 534,
+      "time": 25019.073333351393
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455465,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.36517924581858097
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.663386503,
+              -4832318.4107305845,
+              1335107.4567460828
+            ],
+            "velocity": [
+              -0.6967255123573294,
+              0.8876360057802014,
+              -0.2452424177102779
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 535,
+      "time": 25019.09000001806
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.1402944554675,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.34326995861647447
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.6501675006,
+              -4832318.39388943,
+              1335107.452093088
+            ],
+            "velocity": [
+              -0.7931401308423998,
+              1.0104692956956967,
+              -0.27917967667455984
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 536,
+      "time": 25019.106666684725
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455465,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.3186973635965842
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.635341588,
+              -4832318.375001053,
+              1335107.4468744725
+            ],
+            "velocity": [
+              -0.8895547499995009,
+              1.1333025864673667,
+              -0.31311693587539186
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 537,
+      "time": 25019.123333351392
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455465,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.2914614626133698
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.6189087653,
+              -4832318.3540654555,
+              1335107.441090236
+            ],
+            "velocity": [
+              -0.9859693699103256,
+              1.2561358781992888,
+              -0.3470541953415292
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 538,
+      "time": 25019.14000001806
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455465,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.26156225473823724
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.600869032,
+              -4832318.331082636,
+              1335107.4347403783
+            ],
+            "velocity": [
+              -1.082383990656566,
+              1.3789691709955398,
+              -0.3809914551017269
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 539,
+      "time": 25019.156666684725
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455465,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.22899973810854135
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.5812223884,
+              -4832318.306052594,
+              1335107.4278248998
+            ],
+            "velocity": [
+              -1.1787986123199148,
+              1.5018024649601969,
+              -0.41492871518474017
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 540,
+      "time": 25019.17333335139
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455465,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.193773917380895
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.5599688347,
+              -4832318.278975332,
+              1335107.4203438002
+            ],
+            "velocity": [
+              -1.2752132349820646,
+              1.6246357601973376,
+              -0.4488659756193243
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 541,
+      "time": 25019.190000018058
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455465,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.15588478696736274
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.5371083706,
+              -4832318.249850848,
+              1335107.4122970796
+            ],
+            "velocity": [
+              -1.3716278587247077,
+              1.7474690568110385,
+              -0.4828032364342344
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 542,
+      "time": 25019.206666684724
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455469,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.11533235152000998
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.512640996,
+              -4832318.218679142,
+              1335107.4036847379
+            ],
+            "velocity": [
+              -1.4680424836295372,
+              1.8703023549053777,
+              -0.5167404976582256
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 543,
+      "time": 25019.22333335139
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455465,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.07211660732718883
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.4865667108,
+              -4832318.1854602145,
+              1335107.3945067753
+            ],
+            "velocity": [
+              -1.564457109778245,
+              1.9931356545844314,
+              -0.5506777593200534
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 544,
+      "time": 25019.240000018057
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455465,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 0.0262375571692246
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.458885515,
+              -4832318.150194066,
+              1335107.3847631917
+            ],
+            "velocity": [
+              -1.6608717372525232,
+              2.1159689559522774,
+              -0.5846150214484725
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 545,
+      "time": 25019.256666684723
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.1402944554675,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 4.5565684558823705e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.4430550453,
+              -4832318.130025872,
+              1335107.379190979
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 546,
+      "time": 25019.27333335139
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455469,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 1.3851604308001697e-09
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.443055046,
+              -4832318.130025872,
+              1335107.379190979
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 547,
+      "time": 25019.290000018056
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455474,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": -4.82032191939652e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.4430550453,
+              -4832318.130025871,
+              1335107.3791909788
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 548,
+      "time": 25019.306666684723
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455467,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 4.5656634029001e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.443055046,
+              -4832318.130025871,
+              1335107.3791909788
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 549,
+      "time": 25019.32333335139
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455467,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 4.5656634029001e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.4430550463,
+              -4832318.130025871,
+              1335107.3791909788
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 550,
+      "time": 25019.340000018055
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455467,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 4.5656634029001e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.4430550467,
+              -4832318.130025871,
+              1335107.3791909788
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 551,
+      "time": 25019.356666684722
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455468,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 1.3860699255019426e-09
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.443055047,
+              -4832318.130025871,
+              1335107.3791909788
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 552,
+      "time": 25019.37333335139
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455468,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": -4.765752237290144e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.4430550467,
+              -4832318.13002587,
+              1335107.3791909786
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 553,
+      "time": 25019.390000018055
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.1402944554675,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 4.5565684558823705e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.443055047,
+              -4832318.13002587,
+              1335107.3791909786
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 554,
+      "time": 25019.40666668472
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.1402944554675,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 4.5565684558823705e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.4430550477,
+              -4832318.13002587,
+              1335107.3791909786
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 555,
+      "time": 25019.423333351388
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455473,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 1.381522451993078e-09
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.443055048,
+              -4832318.13002587,
+              1335107.3791909786
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 556,
+      "time": 25019.440000018054
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455472,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 1.382431946694851e-09
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.4430550486,
+              -4832318.13002587,
+              1335107.3791909786
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 557,
+      "time": 25019.45666668472
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455472,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 4.511093720793724e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.443055048,
+              -4832318.130025869,
+              1335107.3791909784
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 558,
+      "time": 25019.473333351387
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455474,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 4.4929038267582655e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.4430550486,
+              -4832318.130025869,
+              1335107.3791909784
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 559,
+      "time": 25019.490000018053
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455474,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 4.4929038267582655e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.443055049,
+              -4832318.130025869,
+              1335107.3791909784
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 560,
+      "time": 25019.50666668472
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455475,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 1.3797034625895321e-09
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.4430550495,
+              -4832318.130025869,
+              1335107.3791909784
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 561,
+      "time": 25019.523333351386
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455475,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": -4.829416866414249e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.443055049,
+              -4832318.130025868,
+              1335107.3791909781
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 562,
+      "time": 25019.540000018053
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455472,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 4.511093720793724e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.4430550495,
+              -4832318.130025868,
+              1335107.3791909781
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 563,
+      "time": 25019.55666668472
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455472,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 4.511093720793724e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.44305505,
+              -4832318.130025868,
+              1335107.3791909781
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 564,
+      "time": 25019.573333351385
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455472,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 4.511093720793724e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.4430550504,
+              -4832318.130025868,
+              1335107.3791909781
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 565,
+      "time": 25019.59000001805
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455473,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 1.381522451993078e-09
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.443055051,
+              -4832318.130025868,
+              1335107.3791909781
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 566,
+      "time": 25019.60666668472
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455473,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 4.501998773775995e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.4430550504,
+              -4832318.130025867,
+              1335107.379190978
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 567,
+      "time": 25019.623333351385
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455478,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 4.447429091669619e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.443055051,
+              -4832318.130025867,
+              1335107.379190978
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 568,
+      "time": 25019.64000001805
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455479,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 4.43833414465189e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.4430550514,
+              -4832318.130025867,
+              1335107.379190978
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 569,
+      "time": 25019.656666684717
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455484,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 1.3706085155718029e-09
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.443055052,
+              -4832318.130025867,
+              1335107.379190978
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 570,
+      "time": 25019.673333351384
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455476,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": -4.838511813431978e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.4430550514,
+              -4832318.130025866,
+              1335107.3791909777
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 571,
+      "time": 25019.69000001805
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455479,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 4.43833414465189e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.443055052,
+              -4832318.130025866,
+              1335107.3791909777
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 572,
+      "time": 25019.706666684717
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.140294455485,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 4.383764462545514e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.4430550523,
+              -4832318.130025866,
+              1335107.3791909777
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 573,
+      "time": 25019.723333351383
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.14029445548,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 1.3742464943788946e-09
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.443055053,
+              -4832318.130025866,
+              1335107.3791909777
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 574,
+      "time": 25019.74000001805
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.14029445548,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": -4.883986548520625e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.4430550523,
+              -4832318.1300258655,
+              1335107.3791909774
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 575,
+      "time": 25019.756666684716
+    },
+    {
+      "commands": {
+        "forward": -1.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.139706445532,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 1.2569216778501868e-09
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.4482828155,
+              -4832318.1186502455,
+              1335107.4027435302
+            ],
+            "velocity": [
+              0.334951982773822,
+              0.6554175886022211,
+              1.4206459635626094
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 600,
+      "time": 25020.173333351377
+    },
+    {
+      "commands": {
+        "forward": -1.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.122066146373,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": -6.102709448896348e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.605115434,
+              -4832317.7773817545,
+              1335108.1093201526
+            ],
+            "velocity": [
+              0.3349517201367038,
+              0.6554176558698899,
+              1.4206459944516372
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 630,
+      "time": 25020.67333335137
+    },
+    {
+      "commands": {
+        "forward": -1.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.104425846437,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 1.6189005691558123e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.761947917,
+              -4832317.436113234,
+              1335108.8158967905
+            ],
+            "velocity": [
+              0.33495144785897846,
+              0.6554177169829214,
+              1.4206460304530715
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 660,
+      "time": 25021.173333351362
+    },
+    {
+      "commands": {
+        "forward": -1.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.086785545762,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 7.421476766467094e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792995.9187802672,
+              -4832317.094844679,
+              1335109.522473442
+            ],
+            "velocity": [
+              0.3349511804015767,
+              0.6554177811732655,
+              1.4206460638982195
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 690,
+      "time": 25021.673333351355
+    },
+    {
+      "commands": {
+        "forward": -1.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.069145244305,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 1.1723386705853045e-09
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792996.0756124854,
+              -4832316.753576091,
+              1335110.2290501085
+            ],
+            "velocity": [
+              0.33495092258480413,
+              0.6554178515182375,
+              1.4206460922308577
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 720,
+      "time": 25022.173333351348
+    },
+    {
+      "commands": {
+        "forward": -1.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.05150494209,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 4.984030965715647e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792996.2324445723,
+              -4832316.412307467,
+              1335110.9356267895
+            ],
+            "velocity": [
+              0.33495064548681225,
+              0.6554179095539425,
+              1.4206461307883498
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 750,
+      "time": 25022.67333335134
+    },
+    {
+      "commands": {
+        "forward": -1.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.033864639113,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": -1.2760210665874183e-09
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792996.3892765213,
+              -4832316.071038813,
+              1335111.642203485
+            ],
+            "velocity": [
+              0.33495038284975637,
+              0.6554179768215901,
+              1.4206461616771067
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 780,
+      "time": 25023.173333351333
+    },
+    {
+      "commands": {
+        "forward": -1.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5173.0162243353525,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": -4.0472514228895307e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792996.5461083385,
+              -4832315.729770128,
+              1335112.3487801962
+            ],
+            "velocity": [
+              0.3349501105720998,
+              0.6554180379346027,
+              1.4206461976782585
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 810,
+      "time": 25023.673333351326
+    },
+    {
+      "commands": {
+        "forward": -1.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5172.998584030858,
+        "dry": true,
+        "face": 1572499,
+        "ground_clearance_m": 2.6921043172478676e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792996.7029400216,
+              -4832315.38850141,
+              1335113.0553569212
+            ],
+            "velocity": [
+              0.3349498431147636,
+              0.6554181021249269,
+              1.4206462311231305
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 840,
+      "time": 25024.17333335132
+    },
+    {
+      "commands": {
+        "forward": -1.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5172.982339623764,
+        "dry": true,
+        "face": 1569949,
+        "ground_clearance_m": 5.511537892743945e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792996.8606137848,
+              -4832315.048305656,
+              1335113.762230116
+            ],
+            "velocity": [
+              0.33494957565744077,
+              0.6554181663152463,
+              1.4206462645679465
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 870,
+      "time": 25024.67333335131
+    },
+    {
+      "commands": {
+        "forward": -1.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5172.967007503949,
+        "dry": true,
+        "face": 1569949,
+        "ground_clearance_m": -1.0459189070388675e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792997.018837847,
+              -4832314.708811121,
+              1335114.469297074
+            ],
+            "velocity": [
+              0.3349493082001313,
+              0.6554182305055622,
+              1.420646298012708
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 900,
+      "time": 25025.173333351304
+    },
+    {
+      "commands": {
+        "forward": -1.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5172.95167538337,
+        "dry": true,
+        "face": 1569949,
+        "ground_clearance_m": 4.547473508864641e-12
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792997.1770617734,
+              -4832314.369316556,
+              1335115.1763640477
+            ],
+            "velocity": [
+              0.33494904074283455,
+              0.6554182946958736,
+              1.4206463314574136
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 930,
+      "time": 25025.673333351297
+    },
+    {
+      "commands": {
+        "forward": -1.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5172.936343262044,
+        "dry": true,
+        "face": 1569949,
+        "ground_clearance_m": -1.0031726560555398e-09
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792997.335285566,
+              -4832314.0298219565,
+              1335115.8834310363
+            ],
+            "velocity": [
+              0.3349487732855511,
+              0.655418358886181,
+              1.4206463649020644
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 960,
+      "time": 25026.17333335129
+    },
+    {
+      "commands": {
+        "forward": -1.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5172.92101113997,
+        "dry": true,
+        "face": 1569949,
+        "ground_clearance_m": -1.2623786460608244e-09
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792997.49350922,
+              -4832313.690327329,
+              1335116.59049804
+            ],
+            "velocity": [
+              0.334948505828281,
+              0.6554184230764837,
+              1.42064639834666
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 990,
+      "time": 25026.673333351282
+    },
+    {
+      "commands": {
+        "forward": -1.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5172.905679017162,
+        "dry": true,
+        "face": 1569949,
+        "ground_clearance_m": 1.4370016288012266e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792997.65173274,
+              -4832313.350832671,
+              1335117.2975650583
+            ],
+            "velocity": [
+              0.3349482480116279,
+              0.6554184934214096,
+              1.4206464266787675
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 1020,
+      "time": 25027.173333351275
+    },
+    {
+      "commands": {
+        "forward": -1.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5172.8903468936205,
+        "dry": true,
+        "face": 1569949,
+        "ground_clearance_m": 4.2018655221909285e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792997.809956123,
+              -4832313.0113379825,
+              1335118.0046320907
+            ],
+            "velocity": [
+              0.3349479757340824,
+              0.6554185545343896,
+              1.4206464626794704
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 1050,
+      "time": 25027.673333351268
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5172.87705905264,
+        "dry": true,
+        "face": 1569949,
+        "ground_clearance_m": -8.731149137020111e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792997.9470829447,
+              -4832312.717109227,
+              1335118.6174235297
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 1080,
+      "time": 25028.17333335126
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5172.877059052755,
+        "dry": true,
+        "face": 1569949,
+        "ground_clearance_m": 1.8062564777210355e-09
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792997.947082936,
+              -4832312.717109237,
+              1335118.6174235253
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 1110,
+      "time": 25028.673333351253
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5172.877059052869,
+        "dry": true,
+        "face": 1569949,
+        "ground_clearance_m": 7.60337570682168e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792997.947082926,
+              -4832312.717109245,
+              1335118.6174235204
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 1140,
+      "time": 25029.173333351246
+    },
+    {
+      "commands": {
+        "forward": 0.0,
+        "interact": false,
+        "jump": false,
+        "pitch": 0.0,
+        "right": 0.0,
+        "run": false,
+        "yaw": 0.0
+      },
+      "contact": {
+        "canonical_height_m": 5172.877059052977,
+        "dry": true,
+        "face": 1569949,
+        "ground_clearance_m": -2.7830537874251604e-10
+      },
+      "crew": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792997.9470829163,
+              -4832312.717109254,
+              1335118.6174235155
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "dt": 0.016666666666666666,
+      "events": [],
+      "stage": "walk",
+      "tick": 1170,
+      "time": 25029.67333335124
+    }
+  ]
+}

@@ -102,6 +102,8 @@ impl Default for Graphics {
 pub struct Frame {
     keepalive: Vec<std::sync::Arc<dyn Send + Sync>>,
     pub camera: Camera,
+    pub projection: crate::viewport::Projection,
+    pub(crate) views: Vec<(u64, crate::viewport::PixelRect, Box<Frame>, usize)>,
     pub clear: Color,
     /// The light (e.g. the star), for the `*_shaded` draws. None: they draw
     /// unlit (full brightness).
@@ -153,6 +155,10 @@ pub struct Frame {
     pub(crate) hud: Vec<Vertex>,
     /// Meshes to draw this frame (transformed and lit on the GPU).
     pub(crate) meshes: Vec<MeshDraw>,
+    pub(crate) mesh_uploads: Vec<Mesh>,
+    pub(crate) mesh_releases: Vec<u64>,
+    /// Pooled meshes to draw this frame (see `pool_group`).
+    pub(crate) pool: crate::pool::PoolFrame,
     /// Meshes drawn over everything, the HUD included (see `in_front`).
     pub(crate) front: Vec<MeshDraw>,
     /// Textured, physically based models to draw this frame (see `model_pbr`).
@@ -172,6 +178,10 @@ pub struct Frame {
     /// The air drawn over a globe (see `with_air`): its depths packed, its shell (m).
     globe_air: [f32; 2],
 }
+
+/// A group of pooled draws this frame (see `Frame::pool_group`).
+#[derive(Clone, Copy, Debug)]
+pub struct PoolGroup(u32);
 
 /// One mesh draw: the mesh, and its instance data.
 pub(crate) struct MeshDraw {
@@ -340,18 +350,55 @@ const RIM: [(f32, f32); 12] = [
 pub const GLYPH: f32 = 8.0;
 
 impl Frame {
-    /// Lines, triangles and points in the draw lists (scene and HUD).
+    /// Submitted lines, triangles and points across the complete frame, including
+    /// child views and repeated instances. Shadows/composition are not extra
+    /// geometry submissions; PBR counts include only the requested part. These
+    /// are demand counts, not GPU residency or post-culling raster counts.
     pub(crate) fn counts(&self) -> (u32, u32, u32) {
-        let n = |v: &Vec<Vertex>| v.len() as u32;
-        let mesh_lines: usize = self.meshes.iter().filter(|m| m.edges).map(|m| m.mesh.edges.len()).sum();
-        let mesh_tris: usize = self.meshes.iter().map(|m| m.mesh.faces.len()).sum();
-        (n(&self.lines) / 2 + n(&self.hud) / 2 + mesh_lines as u32, n(&self.solids) / 3 + self.hud_tris.len() as u32 / 3 + mesh_tris as u32, n(&self.points) + n(&self.sky))
+        let meshes = || self.meshes.iter().chain(&self.front);
+        let mut lines = (self.lines.len() + self.front_lines.len() + self.hud.len()) / 2
+            + meshes().filter(|m| m.edges).map(|m| m.mesh.edges.len()).sum::<usize>();
+        let mut triangles = (self.solids.len() + self.hud_tris.len()) / 3
+            + meshes().map(|m| m.mesh.faces.len()).sum::<usize>()
+            + self.pbr.iter().map(|d| d.model.data.primitives.iter()
+                .filter(|p| p.part == d.part).map(|p| p.indices.len() / 3).sum::<usize>())
+                .sum::<usize>();
+        let mut points = self.points.len() + self.sky.len();
+        for (_, _, child, _) in &self.views {
+            let (l, t, p) = child.counts();
+            lines = lines.saturating_add(l as usize);
+            triangles = triangles.saturating_add(t as usize);
+            points = points.saturating_add(p as usize);
+        }
+        let count = |n: usize| n.min(u32::MAX as usize) as u32;
+        (count(lines), count(triangles), count(points))
+    }
+
+    /// Retained scene into an isolated viewport. Rect uses this frame's HUD coordinates.
+    /// Configure lighting/overlays on the child; its UI and depth are independent.
+    /// View IDs must be unique per host frame; nested views are refused.
+    pub fn scene_view(&mut self, id: u64, scene: &crate::scene::Scene,
+        view: &crate::viewport::View, configure: impl FnOnce(&mut Frame)) {
+        assert!(!self.views.iter().any(|(v,_,_,_)| *v == id), "duplicate view id");
+        assert!(view.valid(), "invalid view");
+        let r = view.rect;
+        assert!(r.origin.is_finite() && r.size.is_finite() && r.origin.min_element() >= 0.
+            && r.size.min_element() > 0. && (r.origin + r.size).cmple(self.size).all(), "invalid view rectangle");
+        let mut child = Frame::new(view.camera, r.size, r.size);
+        child.projection = view.projection;
+        configure(&mut child);
+        assert!(child.views.is_empty(), "nested views unsupported");
+        scene.draw(&mut child, view.layers);
+        self.views.push((id, r, Box::new(child), self.hud_tris.len()));
+        self.canvas_scene();
     }
 
     pub(crate) fn new(camera: Camera, scene_size: Vec2, hud_size: Vec2) -> Self {
         Self {
             keepalive: Vec::new(),
             camera,
+            projection: Default::default(),
+            views: Vec::new(),
             clear: Color::BLACK,
             light: None,
             reflector: None,
@@ -377,6 +424,9 @@ impl Frame {
             canvas_scene: 1,
             hud: Vec::new(),
             meshes: Vec::new(),
+            mesh_uploads: Vec::new(),
+            mesh_releases: Vec::new(),
+            pool: Default::default(),
             pbr: Vec::new(),
             front: Vec::new(),
             front_glows: Vec::new(),
@@ -409,6 +459,9 @@ impl Frame {
 
     /// Approximate on-screen radius of a sphere, in scene (low-res) pixels.
     pub fn projected_radius(&self, center: DVec3, radius: f64) -> f32 {
+        if let crate::viewport::Projection::Orthographic { height, .. } = self.projection {
+            return radius as f32 * self.scene_size.y / height;
+        }
         let d = (center - self.camera.position).length();
         if d <= radius {
             return f32::INFINITY;
@@ -578,7 +631,7 @@ impl Frame {
     }
 
     pub fn project(&self, p: DVec3) -> Option<Vec2> {
-        let clip = self.camera.view_proj(self.size.x / self.size.y) * self.camera.relative(p).extend(1.0);
+        let clip = self.projection.matrix(&self.camera, self.size.x / self.size.y) * self.camera.relative(p).extend(1.0);
         if clip.w <= 0.0 {
             return None;
         }
@@ -690,6 +743,35 @@ impl Frame {
         let d = MeshDraw { mesh: mesh.clone(), instance: inst, edges, casts: self.casts, reach: mesh.radius() * t.scale as f32, ground: self.ground };
         if self.in_front { self.front.push(d) } else { self.meshes.push(d) }
     }
+
+    /// A group of pooled draws (see `pooled`): every member turned and scaled by `t` and lit as at
+    /// its position, edges in `line` at `edges` of their brightness (0: none), faces in `fill`;
+    /// each colour times the mesh's own (a face's own colour if it has one, else its vertices').
+    /// Unlit: full brightness. (Pooled meshes cast no shadows yet.)
+    pub fn pool_group(&mut self, t: &Transform, line: Color, fill: Color, edges: f32, lit: bool) -> PoolGroup {
+        let [r, g, b, a] = line.0;
+        let inst = self.instance(t, [r * edges, g * edges, b * edges, a], fill.0, lit);
+        self.pool.groups.push((inst, edges > 0.0));
+        PoolGroup(self.pool.groups.len() as u32 - 1)
+    }
+
+    /// Draw pooled `mesh` at `origin` in `group`'s look (copied into the pool first if it isn't:
+    /// it shows from the frame it's in).
+    pub fn pooled(&mut self, group: PoolGroup, mesh: &crate::pool::PooledMesh, origin: DVec3) {
+        let d = crate::pool::Draw { t: self.rel(origin), group: group.0, mesh: self.pool.mesh(mesh) };
+        if self.in_front { self.pool.front.push(d) } else { self.pool.draws.push(d) }
+    }
+
+    /// Copy `mesh` into the pool without drawing it (`PooledMesh::gpu_resident` says when it is).
+    pub fn prepare_pooled(&mut self, mesh: &crate::pool::PooledMesh) {
+        self.pool.uploads.push(mesh.clone());
+    }
+
+    /// Stage an immutable mesh without drawing it. Poll Mesh::gpu_resident before group publication.
+    pub fn prepare_mesh(&mut self, mesh: &Mesh) { self.mesh_uploads.push(mesh.clone()); }
+    /// Its owner is done with mesh `id`: the renderer drops its buffers now rather than after
+    /// they go unused a while (unless drawn this frame). A reservation still waits for the GPU.
+    pub fn release_mesh(&mut self, id: u64) { self.mesh_releases.push(id); }
 
     /// Keep a CPU asset owner alive until this frame has been consumed.
     /// For PBR preparation spanning frames, also use `PbrModel::with_lease`.
@@ -912,6 +994,19 @@ impl Frame {
 
     /// Draw text (the HUD typeface, on its monospaced grid); `\n` starts a
     /// new line. Returns the end position.
+    /// A label anchored in world space. Depth-tested labels use the view's actual
+    /// scene depth (opaque/masked geometry); glass does not occlude them.
+    pub fn world_text(&mut self, at: DVec3, text: &str, color: Color, scale: f32, depth_tested: bool) {
+        let clip = self.projection.matrix(&self.camera, self.size.x/self.size.y) * self.camera.relative(at).extend(1.);
+        if clip.w <= 0. || !(0.0..=1.0).contains(&(clip.z/clip.w)) { return; }
+        let pos = Vec2::new((clip.x/clip.w+1.)*0.5*self.size.x, (1.-clip.y/clip.w)*0.5*self.size.y);
+        let start = self.hud_tris.len();
+        self.text_scaled(pos, text, color, scale);
+        if depth_tested {
+            for vertex in &mut self.hud_tris[start..] { vertex.alpha = [3., clip.z/clip.w]; }
+        }
+    }
+
     pub fn text(&mut self, pos: Vec2, text: &str, color: Color) -> Vec2 {
         self.text_scaled(pos, text, color, 1.0)
     }
@@ -958,4 +1053,35 @@ pub fn text_size(text: &str) -> Vec2 {
         h += 1;
     }
     Vec2::new(w as f32 * GLYPH, h as f32 * (GLYPH + 2.0) - 2.0)
+}
+
+#[cfg(test)]
+mod count_tests {
+    use super::*;
+    #[test]
+    fn complete_frame_counts_instances_parts_front_and_views_once() {
+        use crate::pbr::{PbrData, PbrModel, Primitive};
+        let model = PbrModel::new(PbrData {
+            primitives: vec![
+                Primitive { vertices: vec![], indices: vec![0; 6], material: 0, part: 0 },
+                Primitive { vertices: vec![], indices: vec![0; 9], material: 0, part: 1 },
+            ], ..Default::default()
+        });
+        let mut frame = Frame::new(Camera::default(), Vec2::splat(100.), Vec2::splat(100.));
+        let t = Transform::default();
+        frame.model_pbr(&model, &t); // two body triangles, not the other part
+        frame.model_pbr(&model, &t); // a second instance counts again
+        frame.in_front(|f| f.line(DVec3::ZERO, DVec3::X, Color::WHITE));
+        let mesh = Mesh::new(crate::model::WireModel {
+            positions: vec![Vec3::ZERO, Vec3::X, Vec3::Y],
+            edges: vec![[0, 1]], faces: vec![[0, 1, 2]], ..Default::default()
+        });
+        frame.in_front(|f| f.model(&mesh, &t, Color::WHITE, Color::WHITE));
+        let mut child = Frame::new(Camera::default(), Vec2::splat(50.), Vec2::splat(50.));
+        child.model_pbr_part(&model, &t, 1);
+        child.point(DVec3::ZERO, Color::WHITE);
+        child.hud_rect(Vec2::ZERO, Vec2::ONE, Color::WHITE);
+        frame.views.push((1, crate::viewport::PixelRect { origin: Vec2::ZERO, size: Vec2::splat(50.) }, Box::new(child), 0));
+        assert_eq!(frame.counts(), (2, 10, 1));
+    }
 }

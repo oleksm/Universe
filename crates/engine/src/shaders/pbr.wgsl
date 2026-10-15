@@ -174,7 +174,7 @@ fn fs_pbr(in: Out, @builtin(front_facing) front: bool) -> @location(0) vec4<f32>
     // frame; widen the roughness by how much it swings (Kaplanyan & Hoffman).
     let dn = 0.25 * (dot(dpdx(n), dpdx(n)) + dot(dpdy(n), dpdy(n)));
     roughness = sqrt(sqrt(min(roughness * roughness * roughness * roughness + min(2.0 * dn, 0.18), 1.0)));
-    let v = normalize(-in.at);
+    let v = eye_direction(in.at);
     let l = in.sun_dir.xyz;
     let nv = max(dot(n, v), 1e-4);
     let nl = max(dot(n, l), 0.0);
@@ -220,4 +220,13 @@ fn fs_pbr(in: Out, @builtin(front_facing) front: bool) -> @location(0) vec4<f32>
     c += mirrored * env_brdf(f0, roughness, nv) * occ * g.look2.x;
     c += lamp(select(vec4<f32>(1.0), textureSample(emissive_tex, tex_sampler, in.uv), textured).rgb * mat.emissive.rgb) * g.look.w;
     return vec4<f32>(c, alpha);
+}
+
+fn eye_direction(at: vec3<f32>) -> vec3<f32> {
+    if g.view.w > 0.5 {
+        let a = g.inv_view_proj * vec4<f32>(0.0, 0.0, 1.0, 1.0);
+        let b = g.inv_view_proj * vec4<f32>(0.0, 0.0, 0.5, 1.0);
+        return normalize(a.xyz / a.w - b.xyz / b.w);
+    }
+    return normalize(-at);
 }

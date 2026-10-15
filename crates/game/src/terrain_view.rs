@@ -44,6 +44,10 @@ pub fn sky_color(body: &Body) -> [f32; 3] {
 /// 0.15, 0.23, 0.37: its sky's colour, scattered, over a little grey haze.
 /// More air (denser, or standing taller under weaker gravity), deeper.
 pub fn air(body: &Body) -> Option<([f32; 3], f32)> {
+    // (Dev: UNIVERSE_PGS1_NO_AIR=1, no aerial haze over the ground: diagnostic captures of the
+    // terrain's geometry from altitude, never how the world looks.)
+    #[cfg(feature = "dev")]
+    if std::env::var_os("UNIVERSE_PGS1_NO_AIR").is_some() { return None; }
     let a = body.rail.atmosphere.as_ref()?;
     let column = (a.surface_density * a.scale_height / (1.225 * 8_500.0)) as f32;
     let sky = sky_color(body);
