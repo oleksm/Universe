@@ -2394,13 +2394,21 @@ def arc_furnace_airless(us, recs):
     P0, P1, PY = (-20.0, -6.0), (0.0, 12.0), 5.0
     plat_v = (P0[1] - P0[0]) * (P1[1] - P1[0]) * PY - 5.0 * 5.0 * PY - 5.0 * 12.0 * 4.4 - 3.0 * 3.0 * 0.6 + (P0[1] - P0[0]) * (P1[1] - P1[0]) * 1.0
     ground = [
-        {"what": "Furnace platform", "item": SINTER, "volume": r(plat_v), "note": "as for air (the ladle slot, slag tunnel and well), of sintered regolith blocks: there is no water to make concrete"},
-        {"what": "Transformer slab", "item": SINTER, "volume": r(12 * 12 * 0.6), "note": "no fire walls"},
-        {"what": "Service trench", "item": SINTER, "volume": r(4.0 * (1.6 * 0.3 + 2 * 1.5 * 0.3)), "note": "a covered trench of sintered regolith under the crane's south rail at x -24, for the cooling main"},
-        {"what": "Crew post berm", "item": "material.regolith", "volume": BERM, "note": "loose regolith at least 1 m over the post everywhere (its top 4 x 2 m, 5.3 m up), lying at 35 degrees, its foot about 19 x 17 m, a cavity for the post; measured on blender's arc furnace shop; with openings for its windows (light wells on the north) and its airlock (a ramp cut on the west); with openings for its windows and airlock; at the airlock's door a landing of packed regolith 2 x 2 m, its top at the threshold (1.35 m up), and a ramp down to the ground at about 1 in 3"},
-        {"what": "Radiator legs' pads", "item": SINTER, "volume": r((n_low + n_hot) * 4 * (44.0 * 44.0 / 72.0) * 0.3 * 0.3 * 0.3), "note": "a 0.3 m block under each leg"},
-        {"what": "Rail sleepers and pads", "item": SINTER, "volume": r(43.5 * 1.0 + 22.75 * 1.0 + 72.0 * 0.6 + 12 * 6 * 0.4 + 6.0), "note": "under the ladle, slag and crane rails, the filter and the bin"},
+        {"what": "Furnace platform", "item": SINTER, "volume": 612.06, "note": "as for air (the ladle slot, slag tunnel and well), of sintered regolith blocks: there is no water to make concrete; its blocks and top slab; measured on blender's layout (candidate v01)"},
+        {"what": "Transformer slab", "item": SINTER, "volume": 86.4, "note": "no fire walls; measured on blender's layout (candidate v01)"},
+        {"what": "Service trench", "item": SINTER, "volume": 5.98, "note": "a covered trench of sintered regolith under the crane's south rail at x -24, for the cooling main: floor, walls and cover; measured on blender's layout (candidate v01)"},
+        {"what": "Crew post berm", "item": "material.regolith", "volume": 584.56, "note": "loose regolith at least 1 m over the post everywhere (its top 4 x 2 m, 5.3 m up), lying at 35 degrees, its foot about 19 x 17 m, a cavity for the post, the ramp cut and the light wells; measured on blender's layout (candidate v01)"},
+        {"what": "Crew post entry and light wells", "item": SINTER, "volume": 14.0, "note": "the landing at the airlock's threshold, its ramp, the cut's retaining sides (200 mm) and the light wells' retainers, provisional; measured on blender's layout (candidate v01)"},
+        {"what": "Radiator legs' pads", "item": SINTER, "volume": 44.93, "note": "a block under each leg; measured on blender's layout (candidate v01)"},
+        {"what": "Rail beds", "item": SINTER, "volume": 17.25, "note": "under the ladle, slag and crane rails; measured on blender's layout (candidate v01)"},
+        {"what": "Unit pads", "item": SINTER, "volume": 79.4, "note": "under the off-gas filter (62.5) and the dust bin (16.9); measured on blender's layout (candidate v01)"},
+        {"what": "Pipe and trestle feet", "item": SINTER, "volume": 21.35, "note": "under the cooling, steam and condensate pipes, the off-gas duct's supports and the feed belt's trestles; measured on blender's layout (candidate v01)"},
     ]
+    measured = {"off-gas": 7523.2, "cooling water to the radiators": 141870.3 + 9158.9, "steam to the hot radiators": 26145.7 + 132.8, "transformer cooling": 361.7, "secondary bus": 2268.5 * RHO["copper"] / RHO["steel"]}
+    for l in links:
+        if l["name"] in measured:
+            l["mass"] = r(measured[l["name"]])
+            l["note"] = l.get("note", "") + "; its mass from the lengths measured on blender's layout (candidate v01)"
     for g in ground:
         g["mass"] = r(g["volume"] * (RHO_SINTER if g["item"] == SINTER else 1500.0))
     used = [recs[b["unit"].split(".", 1)[1]] for b in bays] + [recs[m_["unit"].split(".", 1)[1]] for m_ in mobile]
@@ -2423,7 +2431,7 @@ def arc_furnace_airless(us, recs):
                      "description": "The 80 t arc furnace on airless ground at about a moon's gravity: sealed, holding its own gas at 1 bar; no hall (no weather to keep off) but a gantry crane on its own legs; its heat to fields of radiator panels instead of a cooling tower, one set cool for the panels' water and one hot for the duct's steam; its off-gas filtered and let go; the crew in a pressurised post under a berm; its platform of sintered regolith. Built separately from the shop for air, not reused."},
         "stands_for": "module.arc-furnace",
         "site": {"atmosphere": "none", "gravity": list(MOON_G)},
-        "physical": {"length": r(max(xs) - min(xs)), "width": r(max(ys) - min(ys)), "height": 25.0, "mass": r(total)},
+        "physical": {"length": 251.65, "width": 190.75, "height": 23.7, "mass": r(total)},
         "bays": bays, "mobile": mobile, "links": links,
         "ground": ground,
         "totals": {"rate": RATE, "power": r(power), "heat": r(heat), "water": 0.0, "mass": r(total), "against_module": against},
