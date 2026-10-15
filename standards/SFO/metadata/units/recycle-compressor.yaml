@@ -10,6 +10,12 @@ built_of:
 - {what: Motor, item: good.electric-motors, mass: 63810.0, note: from memory}
 - {what: Intercoolers and aftercooler, item: material.stainless-steel-304, mass: 15000.0, note: from memory}
 needs: {power: 20770000.0, heat: 19940000.0}
+visual:
+  format: "freefall-model/1"
+  path: "models/recycle-compressor/v1"
+  manifest_sha256: "f6531ecd42aba91e5bf346fa3151f57c694c6485f8348248881fb4c8ff51b732"
+  version: 1
+  triangles: 12980
 life: 788940000
 basis:
 - of: [physical, built_of]
