@@ -5230,3 +5230,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.stripper-gantry-20t-moon
+    version: 1
+    manifest_sha256: "b5d80811bd194de4d6df67f50534f3acbaa1ca6d06498c60de639af9c2ee1efa"
+    installed: a7d87605
+    game: "the loader (world::assets) at fso a7d87605"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/stripper-gantry-20t-moon/v1 (282204 bytes, bounds [-5.0, -0.04, -12.72] to [5.0, 25.7, 12.72]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
