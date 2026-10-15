@@ -1162,6 +1162,9 @@ def shaft_furnace_air(us, recs):
     members.append({"item": "stock.st4340-box-400x400x25", "count": n_col, "where": f"columns under the shaft's ring girder, {z_ring:.0f} m, on a circle of radius {float(sh['desc'].split('(radius ')[1].split(' ')[0]):g} m beside the cooling zone and cone, the first at 22.5 degrees off x so the product belt passes between; braced to the tower's walls every 6 m"})
     fmass += n_col * z_ring * col_a * RHO["steel"]
     deck = 6 * (x1 - x0) * (y1 - y0) * 0.6 * 0.01 * RHO["steel"]       # six platforms of grating, 60% of the plan
+    decks = (9, 15, 24, 33, 39, 45)                      # m: lock and feeders, cooling ports, bustle, reduction zone, top gas outlet, seal leg
+    flights = math.ceil((top - cell) / 3.0)               # switchback flights of 3 m up to the roof
+    deck += flights * 750.0 * 0.75                        # the stair's flights and landings, 750 kg a 4 m flight (as the stair tower's)
     cap = frames.strut_capacity(yaml.safe_load(open(S + "mill-stock/" + strut(sec, cell)[1]["kit"]["section"].split(".", 1)[1].upper() + ".yaml")))
     sized = (f"At 1 g the shaft with its burden, {load / 1e6:.1f} MN, hangs from its ring girder at z {z_ring:.0f} on {n_col} columns of 400 x 400 x 25 mm 4340 box: {col_sigma / 1e6:.0f} MPa each, against 470 MPa with half again to spare; "
              f"braced every 6 m their slenderness is {6.0 / col_r:.0f}. Wind of 1 kPa (invented) on a {x1 - x0:.0f} x {top:.0f} m face makes {wind_M / 1e6:.0f} MN m at the base, {chord_force / 1e3:.0f} kN in each wall chord: "
@@ -1174,12 +1177,12 @@ def shaft_furnace_air(us, recs):
         {"id": "F", "mount": f"plant-mount.{sh['fits']}", "unit": f"unit.{sh_key}", "at": [0.0, 0.0, 0.0], "note": "in the tower, on its columns; the product belt under its discharge"},
         {"id": "R", "mount": "plant-mount.bay-s2", "unit": "unit.recuperator", "at": [24.0, 24.0, 0.0], "note": "north-east of the tower, under the top gas main's fall"},
         {"id": "S", "mount": "plant-mount.bay-s2", "unit": "unit.top-gas-scrubber", "at": [48.0, 24.0, 0.0], "note": "east of the recuperator"},
-        {"id": "K", "mount": "plant-mount.bay-s3", "unit": "unit.recycle-compressor", "at": [60.0, 0.0, 0.0], "note": "under the pellet belt's gallery (36 m over it), in its own open shed"},
+        {"id": "K", "mount": "plant-mount.bay-s3", "unit": "unit.recycle-compressor", "at": [60.0, 0.0, 0.0], "note": "in the open, an outdoor machine (no shed), under the pellet belt's gallery (36 m over it); its casings' tops and rotors lifted by a mobile crane from a hardstanding on its south side"},
         {"id": "H", "mount": "plant-mount.bay-s3", "unit": f"unit.{heater}", "at": [24.0, -24.0, 0.0], "note": "south-east of the tower, its hot header toward the bustle"},
         {"id": "T", "mount": "plant-mount.bay-s2", "unit": f"unit.{htr}", "at": [48.0, -24.0, 0.0], "note": "in a fire-walled vault beside the heater's terminal house"},
         {"id": "L", "mount": "plant-mount.bay-s2", "unit": "unit.dri-cooling-loop", "at": [-24.0, -24.0, 0.0], "note": "south-west of the tower, clear of the product belt"},
     ]
-    bays += [{"id": f"C{i + 1}", "mount": "plant-mount.bay-s4", "unit": f"unit.{t}", "at": [-48.0 + 48.0 * i, 60.0, 0.0], "note": "north, in a row"} for i, t in enumerate(towers)]
+    bays += [{"id": f"C{i + 1}", "mount": "plant-mount.bay-s4", "unit": f"unit.{t}", "at": [-102.0 + 54.0 * i, 60.0, 0.0], "note": "north, in a row 6 m apart, each with its own basin, its ports on its east end facing the gap"} for i, t in enumerate(towers)]
     d_top = main_dia(mol_flow(H2_TOP, STEAM), T_TOP, P_SUCTION)
     d_wet = main_dia(mol_flow(H2_TOP, STEAM), T_RECUP_OUT, P_SUCTION)
     d_dry = main_dia(mol_flow(H2_TOP), T_COLD, P_SUCTION)
@@ -1214,7 +1217,8 @@ def shaft_furnace_air(us, recs):
         link("pipe", "tower loop to the scrubber", (84.0, 31.5, 0.75), (51.5, 30.0, 1.0), A36, 2 * pm(d_scr, 0.012), None, f"a pair of {d_scr:.1f} m pipes, 12 mm wall, flow and return, off the mains on the plant's east side, west along y 31.5 and up to the scrubber's flanges on its +y face", via=[(51.5, 31.5, 0.75)]),
         link("pipe", "cooler water to the compressor", (66.25, -12.0, 0.75), (66.25, -4.0, 1.0), A36, 2 * pm(d_kc, 0.010), None, f"a pair of {d_kc:.1f} m pipes, 10 mm wall, off the mains' end, north to the compressor's flanges on its -y face"),
         link("pipe", "cooling water to the sponge iron cooling loop", (-34.0, 42.0, 0.75), (-30.0, -24.0, 1.0), A36, 2 * pm(d_lc, 0.010), None, f"a pair of {d_lc:.2f} m pipes, 10 mm wall, off the mains at the west end, south in a trench clear of the tower to the loop's flanges on its -x face", via=[(-34.0, -24.0, 0.75)]),
-        link("pipe", "cooling water mains", (-72.0, 42.0, 0.75), (60.0, -12.0, 0.75), A36, 2 * pm(d_cw, 0.012), None, f"a pair of {d_cw:.1f} m pipes, 12 mm wall, flow and return: {flow:,.0f} kg/s at a 10 K rise, along the towers' row and down the plant to the scrubber, compressor, cooling loop and transformer", via=[(84.0, 42.0, 0.75), (84.0, -12.0, 0.75)]),
+        *[link("pipe", f"tower water to C{i + 1}, pair {j + 1}", (-75.0 + 54.0 * i, 42.0, 0.75), (-78.0 + 54.0 * i, 60.0 + 4.5 * j, 0.75), A36, 2 * pm(0.5, 0.008), None, "a pair of 500 mm pipes, 8 mm wall, flow and return, off the mains north up the gap between the towers to the port pair on the tower's east end", via=[(-75.0 + 54.0 * i, 60.0 + 4.5 * j, 0.75)]) for i in range(len(towers)) for j in range(2)],
+        link("pipe", "cooling water mains", (-75.0, 42.0, 0.75), (60.0, -12.0, 0.75), A36, 2 * pm(d_cw, 0.012), None, f"a pair of {d_cw:.1f} m pipes, 12 mm wall, flow and return: {flow:,.0f} kg/s at a 10 K rise, along the towers' row and down the plant to the scrubber, compressor, cooling loop and transformer", via=[(87.0, 42.0, 0.75), (87.0, -12.0, 0.75)]),
         link("pipe", "cold gas to the cooling zone", (-26.0, -20.0, 2.0), (-(side / 2 - 0.5), 0.0, z_ring - 8.0), A36, pm(d_cg, 0.008), None, f"{d_cg:.1f} m, 8 mm wall: {COOL_GAS:.1f} kg/s of hydrogen at {T_COLD:.0f} deg C, through the tower's west wall", via=[(-26.0, -20.0, z_ring - 8.0), (-26.0, 0.0, z_ring - 8.0)]),
         link("pipe", "hot gas from the cooling zone", (-(side / 2 - 0.5), 0.0, z_ring - 3.0), (-22.0, -20.0, 2.0), A36, pm(d_cg_hot, 0.010) * 1.5, None, f"{d_cg_hot:.1f} m, 10 mm wall, insulated (half as much again): about 600 deg C, back to the loop's cooler", via=[(-22.0, 0.0, z_ring - 3.0), (-22.0, -20.0, z_ring - 3.0)]),
         link("cable", "heater supply", (48.0, -21.1875, 4.5), (12.45, -21.4, 1.575), CU, 3 * Q_HEATER / HEATER_PF / (math.sqrt(3) * 6600) / 3 / 4e6 * RHO["copper"] * 3, None, "three phases at 6.6 kV in a cable tray, copper at 4 A/mm2: from the transformer's secondary terminals on its +y face, north to y -17, west along the heater's north side, down at its west end and south into its terminal house's +y face", via=[(48.0, -17.0, 4.5), (12.45, -17.0, 4.5), (12.45, -17.0, 1.575)]),
@@ -1222,10 +1226,10 @@ def shaft_furnace_air(us, recs):
     tower_units = [recs[t] for t in towers]
     ground = [
         {"what": "Tower foundation", "item": CONC, "volume": r((x1 - x0) * (y1 - y0) * 2.5), "note": f"a mat {x1 - x0:.0f} x {y1 - y0:.0f} m, 2.5 m thick, under the tower and the shaft's columns"},
-        {"what": "Product belt pit", "item": CONC, "volume": r(10 * 4 * 0.4 + 2 * 10 * 3 * 0.3), "note": "under the discharge lock, 10 x 4 m, 3 m deep, 0.3 m walls"},
+        {"what": "Compressor crane hardstanding", "item": CONC, "volume": r(26 * 10 * 0.4), "note": "26 x 10 m, 0.4 m, south of the compressor (x 47 to 73, y -14 to -4), for a mobile crane"},
         {"what": "Unit slabs", "item": CONC, "volume": r(sum(recs[b["unit"].split(".", 1)[1]]["physical"]["length"] * recs[b["unit"].split(".", 1)[1]]["physical"]["width"] * 0.8 for b in bays[1:] if not b["id"].startswith("C"))), "note": "0.8 m under each unit on the ground"},
         {"what": "Transformer vault", "item": CONC, "volume": r(12 * 8 * 0.5 + 40 * 7 * 0.3), "note": "fire walls 7 m tall round the heater's transformer"},
-        {"what": "Cooling tower basins", "item": CONC, "volume": r(sum((t["physical"]["length"] + 0.6) * 12.6 * 0.5 + 2 * (t["physical"]["length"] + 0.3 + 12.3) * 2.0 * 0.3 for t in tower_units)), "note": "sunk as the furnace shop's: 0.3 m walls, floor top at z -2"},
+        {"what": "Cooling tower basins", "item": CONC, "volume": r(sum((t["physical"]["length"] + 0.6) * 12.6 * 0.5 + 2 * (t["physical"]["length"] + 0.3 + 12.3) * 2.0 * 0.3 for t in tower_units)), "note": "one under each tower, sunk as the furnace shop's: 0.3 m walls, floor top at z -2; 6 m apart, no shared walls"},
         {"what": "Gallery trestle footings", "item": CONC, "volume": r(math.ceil(belt_x / 18) * 8.0 + 4 * 4.0), "note": "8 m3 under each of the pellet belt's trestles, 4 m3 under the product belt's"},
     ]
     for g in ground:
@@ -1253,7 +1257,8 @@ def shaft_furnace_air(us, recs):
         "site": {"atmosphere": "air", "gravity": [8.0, 11.0]},
         "physical": {"length": r(max(xs) - min(xs)), "width": r(max(ys) - min(ys)), "height": z1, "mass": r(total)},
         "bays": bays, "links": links,
-        "frame": {"box": list(box), "cell": cell, "shape": f"An open braced tower {x1 - x0:.0f} x {y1 - y0:.0f} m and {top:.0f} m tall round the shaft: walls one cell thick, a roof one cell deep carrying the belt's head house, six grating platforms; no cladding.",
+        "frame": {"box": list(box), "cell": cell, "shape": f"An open braced tower {x1 - x0:.0f} x {y1 - y0:.0f} m and {top:.0f} m tall round the shaft: walls one cell thick, a roof one cell deep carrying the belt's head house, six grating platforms at z {', '.join(str(z) for z in decks)} (the lock and feeders, the cooling zone's ports, the bustle, the reduction zone, the top gas outlet, the seal leg), each with a 10 m hole round the shaft; "
+                           f"stairs in switchback flights inside the north-west corner of the walls (x -12 to -6, y 9 to 12), landing on each platform and the roof at z {top - cell:.0f}; no cladding.",
                   "openings": [], "members": members, "carries": [f"unit.{sh_key}"], "mass": r(frame_mass), "sized": sized},
         "ground": ground,
         "totals": {"rate": S_RATE, "power": r(power), "heat": r(heat), "water": r(water), "mass": r(total), "against_module": against},
