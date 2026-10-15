@@ -1461,6 +1461,9 @@ def hydrogen_plant_air(us, recs):
     flow = loop / (4186 * 10)
     d_cw = math.sqrt(4 * flow / 1000 / 2.5 / math.pi)
     ss = "material.stainless-steel-304"
+    q_r = recs["rectifier-transformer-21mva"]["needs"]["heat"]
+    d_rh = math.sqrt(4 * q_r * N_BLK / (4186 * 10) / 1000 / 2.5 / math.pi)
+    d_rb = max(0.08, math.sqrt(4 * q_r / (4186 * 10) / 1000 / 2.5 / math.pi))
     links = [link("busbar", f"DC bus {i + 1}", (x, -24.0 + rW / 2, rH * 2 / 3), (x, -6.0, 3.0), AL, 2 * bus_a * RHO["aluminium"], None, f"two aluminium bars, {bus_a * 1e4:.0f} cm2 each for {I_DC / 1e3:.0f} kA at 1.5 A/mm2, through the hall's south wall") for i, x in enumerate(xs_b)]
     links += [
         link("pipe", "hydrogen header", (xs_b[0] + 10.5, -2.5, 8.0), (66.0, 0.0, 6.0), ss, pm(d_h2, 0.006), None, f"{d_h2:.2f} m stainless, 6 mm wall, at 3 bar: from each block's hydrogen separator along the hall at z 9, out by the east wall to the purifier", via=[(xs_b[0] + 10.5, -2.5, 9.0), (58.5, -2.5, 9.0), (58.5, 0.0, 6.0)]),
@@ -1468,6 +1471,8 @@ def hydrogen_plant_air(us, recs):
         link("pipe", "oxygen header", (xs_b[0] + 10.5, 2.5, 8.0), (110.0, 6.0, 9.0), ss, pm(d_o2, 0.006), None, f"{d_o2:.2f} m stainless, 6 mm wall: the {H_O2:.1f} kg/s of oxygen, out by the east wall to a vent stack or to buyers (the arc furnace lances it), beyond the layout; clean, oil-free, as oxygen service needs", via=[(xs_b[0] + 10.5, 2.5, 9.0), (58.5, 2.5, 9.0), (58.5, 6.0, 9.0)]),
         link("pipe", "demineralised water", (66.0, -24.0, 0.5), (59.0, 6.0, 1.0), ss, pm(0.1, 0.004), None, f"100 mm stainless, {H_WATER:.1f} kg/s to the blocks' feed points along the hall's north side", via=[(62.0, -24.0, 0.5), (62.0, 6.0, 0.5)]),
         link("pipe", "raw water", (110.0, -24.0, 0.5), (78.0, -24.0, 0.5), A36, pm(0.15, 0.005), None, "150 mm: town or river water, or the shaft furnace's condensate, beyond the layout"),
+        link("pipe", "cooling water to the rectifiers", (tower["dims"][0] / 2, 48.0, 0.75), (xs_b[0] - 3.45, -30.0, 0.75), A36, 2 * pm(d_rh, 0.005), None, f"a pair of {d_rh:.2f} m pipes, 5 mm wall, flow and return: {q_r * N_BLK / (4186 * 10):.0f} kg/s for the rectifier transformers' coolers, from the tower east of the hall, south past the purifier and west along y -30 behind the rectifiers", via=[(63.0, 48.0, 0.75), (63.0, -30.0, 0.75)]),
+        *[link("pipe", f"cooling water to rectifier {i + 1}", (x - 3.45, -30.0, 0.75), (x - rt["dims"][0] / 2, -25.5, 1.0), A36, 2 * pm(d_rb, 0.004), None, f"a pair of {d_rb * 1000:.0f} mm pipes off the header, north and level into the cooler's ports on the -x end (y -25.86 and -25.14)", via=[(x - 3.45, -25.5, 0.75), (x - 3.45, -25.5, 1.0)]) for i, x in enumerate(xs_b)],
         link("pipe", "cooling water mains", (tower["dims"][0] / 2, 48.0, 0.75), (-48.0 + 11.0, 6.0, 1.0), A36, 2 * pm(d_cw, 0.010), None, f"a pair of {d_cw:.2f} m pipes, 10 mm wall, flow and return: {flow:,.0f} kg/s at a 10 K rise, into the hall by the north wall and along it to each block's coolers, a branch out to the rectifiers", via=[(tower["dims"][0] / 2 + 1.5, 48.0, 0.75), (tower["dims"][0] / 2 + 1.5, 20.0, 0.75), (0.0, 20.0, 0.75), (0.0, 9.0, 1.0), (-37.0, 9.0, 1.0)]),
     ]
     ground = [

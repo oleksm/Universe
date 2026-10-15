@@ -825,7 +825,7 @@
 - { record: layout.arc-furnace-airless, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "befaa429a44d04ce" }
 - { record: layout.casting-bay-air, at: "2026-10-15T02:26:46Z", status: draft, summary: "changed: physical", sha: "64ae565ca9d653a2" }
 - { record: layout.casting-bay-airless, at: "2026-10-14T21:36:13Z", status: draft, summary: "changed: physical, totals", sha: "ed7687b7564fac7a" }
-- { record: layout.hydrogen-plant-air, at: "2026-10-15T02:45:51Z", status: draft, summary: "changed: physical, links, totals", sha: "642a700d7d77de4f" }
+- { record: layout.hydrogen-plant-air, at: "2026-10-15T02:48:51Z", status: draft, summary: "changed: physical, links, totals", sha: "643b176901515119" }
 - { record: layout.hydrogen-plant-airless, at: "2026-10-15T02:45:51Z", status: draft, summary: "changed: physical, links, totals", sha: "5d523f7e9568dd2b" }
 - { record: layout.ingot-yard-air, at: "2026-10-14T21:38:01Z", status: draft, summary: "changed: identity, physical, bays, totals", sha: "be2f1f8941755a1b" }
 - { record: layout.ladle-station-air, at: "2026-10-15T02:26:46Z", status: draft, summary: "changed: physical", sha: "31ea2691985163d3" }
