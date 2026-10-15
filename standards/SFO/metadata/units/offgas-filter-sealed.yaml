@@ -3,11 +3,13 @@
 identity: {key: unit.offgas-filter-sealed, name: 'Off-gas filter, sealed', description: 'Takes the furnace''s 1.4 kg/s of CO with its dust from the steam-cooled duct at about 1 bar and 250 deg C, through ceramic candle filters in a closed vessel, and lets it out past the valve that holds the furnace''s pressure, up a short stack: on an airless world the gas simply leaves (or a later unit can compress it as fuel). The dust is let out through a lock into sealed bins. Gas in at local (-6, 0, 8).'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 6.0, height: 10.0, mass: 20840.0}
+physical: {length: 12.0, width: 6.0, height: 10.0, mass: 30480.0}
 built_of:
-- {what: Vessel, item: material.structural-steel-a36, mass: 11840.0, note: '4 m across, 8 m, 12 mm'}
+- {what: Vessel, item: material.structural-steel-a36, mass: 11150.0, note: '4 m across, z 2 to 10: hopper, barrel and domed head with their rings, 12 mm (about 17 MPa at 1 bar); measured on model v1'}
+- {what: Supports, item: material.structural-steel-a36, mass: 11630.0, note: its frame (12 mm) and pipe posts (8 mm) with their feet; measured on model v1}
+- {what: 'Ducts, stack, dust lock and bin', item: material.structural-steel-a36, mass: 3195.0, note: 'the gas inlet and its flange, the clean gas outlet and short stack, the dust lock''s chamber and the closed bin; measured on model v1'}
 - {what: Candles, item: material.silicon-carbide, mass: 3000.0, note: from memory}
-- {what: 'Valve, stack and dust lock', item: material.structural-steel-a36, mass: 6000.0, note: from memory}
+- {what: Pressure valve and dust valves, item: good.pumps, mass: 1500.0, note: 'the valve that holds the furnace''s pressure and the dust lock''s two valves with their drives, from memory'}
 needs: {power: 50000.0, atmosphere: vacuum}
 life: 788940000
 basis:

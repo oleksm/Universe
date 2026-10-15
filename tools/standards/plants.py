@@ -2298,9 +2298,11 @@ def airless_units(us):
         name="Off-gas filter, sealed", size_class=2, fits="bay-s2", dims=(12.0, 6.0, 10.0),
         desc=(f"Takes the furnace's {co:.1f} kg/s of CO with its dust from the steam-cooled duct at about 1 bar and 250 deg C, through ceramic candle filters in a closed vessel, and lets it out past the valve that holds the furnace's pressure, up a short stack: on an airless world the gas simply leaves (or a later unit can compress it as fuel). "
               "The dust is let out through a lock into sealed bins. Gas in at local (-6, 0, 8)."),
-        built_of=[part("Vessel", A36, cyl_shell(4.0, 8.0, 0.012, bottom=2.0) * RHO["steel"], "4 m across, 8 m, 12 mm"),
+        built_of=[part("Vessel", A36, 11152.7, "4 m across, z 2 to 10: hopper, barrel and domed head with their rings, 12 mm (about 17 MPa at 1 bar); measured on model v1"),
+                  part("Supports", A36, 11633.3, "its frame (12 mm) and pipe posts (8 mm) with their feet; measured on model v1"),
+                  part("Ducts, stack, dust lock and bin", A36, 3195.3, "the gas inlet and its flange, the clean gas outlet and short stack, the dust lock's chamber and the closed bin; measured on model v1"),
                   part("Candles", "material.silicon-carbide", 3000.0, "from memory"),
-                  part("Valve, stack and dust lock", A36, 6000.0, "from memory")],
+                  part("Pressure valve and dust valves", "good.pumps", 1500.0, "the valve that holds the furnace's pressure and the dust lock's two valves with their drives, from memory")],
         needs={"power": 50e3, "atmosphere": "vacuum"},
         basis=[{"of": ["physical", "built_of", "needs"], "tier": "invented", "review": True, "note": f"From memory; the CO from {DRI_C:.0%} carbon in the sponge iron (from memory) burnt to CO by the melt's oxygen."}])
     out["gantry-crane-20t-moon"] = bridge_crane_unit(20000.0, 24.0, 6000.0, kind="Gantry crane", job="on its own legs over the furnace and its transformer: it sets electrodes, lifts the roof and swaps the shell", gear="a main hoist", g=MOON_G[1], h_min=0.6)

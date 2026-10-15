@@ -44,13 +44,8 @@ recipes:
   rate: 26.6666666666667
   batch: 80000
   power: 72000000
-visual:
-  format: "freefall-model/1"
-  path: "models/eaf-vessel-80t-sealed/v1"
-  manifest_sha256: "c15d6a1e89561897e3ee2395b543ba04dbcc56996a058b1922a1952526ef889b"
-  version: 1
-  triangles: 47382
 life: 788940000
+visual: {format: freefall-model/1, path: models/eaf-vessel-80t-sealed/v1, manifest_sha256: c15d6a1e89561897e3ee2395b543ba04dbcc56996a058b1922a1952526ef889b, version: 1, triangles: 47382}
 basis:
 - of: [recipes]
   tier: derived
