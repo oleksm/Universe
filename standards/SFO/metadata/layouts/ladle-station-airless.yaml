@@ -169,12 +169,7 @@ staff:
 - {profession: profession.metalworker, count: 2}
 - {profession: profession.technician, count: 1}
 - {profession: profession.engineer, count: 1}
-visual:
-  format: "freefall-model/1"
-  path: "models/ladle-station-airless/v2"
-  manifest_sha256: "b9f97206cfd0db9eda6078b8201404aa6808abcb7cff795aa13ce5a33a0874bf"
-  version: 2
-  triangles: 186544
+visual: {format: freefall-model/1, path: models/ladle-station-airless/v2, manifest_sha256: b9f97206cfd0db9eda6078b8201404aa6808abcb7cff795aa13ce5a33a0874bf, version: 2, triangles: 186544}
 basis:
 - of: [bays, links, mobile]
   tier: invented

@@ -101,12 +101,7 @@ staff:
 - {profession: profession.metalworker, count: 2}
 - {profession: profession.technician, count: 1}
 - {profession: profession.engineer, count: 1}
-visual:
-  format: "freefall-model/1"
-  path: "models/casting-bay-airless/v1"
-  manifest_sha256: "7c323900a6808f1d71b2b2a0f2e1464b369cc7995b16f12e8ddd84824b939709"
-  version: 1
-  triangles: 125760
+visual: {format: freefall-model/1, path: models/casting-bay-airless/v1, manifest_sha256: 7c323900a6808f1d71b2b2a0f2e1464b369cc7995b16f12e8ddd84824b939709, version: 1, triangles: 125760}
 basis:
 - of: [bays, links, mobile]
   tier: invented
