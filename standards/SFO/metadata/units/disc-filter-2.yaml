@@ -4,11 +4,12 @@ identity: {key: unit.disc-filter-2, name: 'Disc filters, 2', description: 'Two v
     filtrate pump; the filtrate (10.9 kg/s) out at (-6, 3, 0.5) back to the mill; the pumps'' air out of a vent at (0, 3.5, 5.5); 400 V supply at (6, 3.5, 0.5).'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 8.0, height: 6.0, mass: 32140.0}
+physical: {length: 12.0, width: 8.0, height: 6.0, mass: 29810.0}
 built_of:
-- {what: 'Troughs, shafts and receivers', item: material.structural-steel-a36, mass: 11320.0, note: 'for each filter: a U trough in 8 mm plate, a hollow shaft 0.6 m by 5 m in 25 mm, a receiver 1.6 m by 3 m in 10 mm'}
+- {what: 'Troughs, shafts and receivers', item: material.structural-steel-a36, mass: 10620.0, note: 'the two U troughs in 8 mm plate (shells 2,672.6 kg, heads 1,090.0), the hollow shafts 0.6 m by 5 m in 25 mm (3,539.4), the receivers 1.6 m by 3 m in 10 mm (shells 2,348.9, heads 608.6, rings 361.2); measured on model v1'}
 - {what: Disc sectors and cloth, item: material.polyethylene-uhmw, mass: 3605.0, note: 'polypropylene sectors under their cloth at 30 kg/m2 of filter face, from memory; polyethylene stands for polypropylene'}
-- {what: 'Drives, agitators and stands', item: material.structural-steel-a36, mass: 9000.0, note: 'a drive, an agitator and the stand under each filter, from memory'}
+- {what: Stand webs and chutes, item: material.structural-steel-a36, mass: 2373.0, note: 'the stands'' saddle webs (1,491.4 kg) and the cake chutes'' plates (881.6); measured on model v1'}
+- {what: Drives and agitators, item: material.structural-steel-a36, mass: 5000.0, note: 'a drive and an agitator for each filter, from memory'}
 - {what: Vacuum pumps and compressor, item: good.pumps, mass: 8210.0, note: 'liquid ring pumps at 25 kg/kW, the blow-back compressor and the filtrate pump, from memory'}
 needs: {power: 368100.0}
 life: 788940000
