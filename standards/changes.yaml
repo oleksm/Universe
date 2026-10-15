@@ -831,7 +831,7 @@
 - { record: layout.ladle-station-air, at: "2026-10-15T02:26:46Z", status: draft, summary: "changed: physical", sha: "31ea2691985163d3" }
 - { record: layout.ladle-station-airless, at: "2026-10-15T02:24:50Z", status: draft, summary: "changed: physical", sha: "fa8e490ab722454b" }
 - { record: layout.ore-yard-air, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "80cee716ce980cb3" }
-- { record: layout.pellet-plant-air, at: "2026-10-15T12:07:16Z", status: draft, summary: "changed: physical, ground, totals", sha: "d8da87f236a2357c" }
+- { record: layout.pellet-plant-air, at: "2026-10-15T12:11:44Z", status: draft, summary: "changed: totals", sha: "6bd474d86b467ddb" }
 - { record: layout.shaft-furnace-air, at: "2026-10-15T02:28:54Z", status: draft, summary: "changed: physical", sha: "8e973731966b75b2" }
 - { record: layout.shaft-furnace-airless, at: "2026-10-15T02:24:50Z", status: draft, summary: "changed: physical", sha: "7749b2c8502caf19" }
 - { record: market.art, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "517671b6a46daee3" }
@@ -2729,7 +2729,7 @@
 - { record: system.treistun, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "dd9719e496514353" }
 - { record: unit.alloy-bins-8, at: "2026-10-14T19:07:37Z", status: draft, summary: "changed: size_class, fits, physical", sha: "6d6996996ea20656" }
 - { record: unit.baghouse-200k, at: "2026-10-14T19:55:55Z", status: draft, summary: "changed", sha: "cb7954ca19170a07" }
-- { record: unit.baghouse-450k, at: "2026-10-15T12:05:17Z", status: draft, summary: "changed: identity, physical, built_of", sha: "8abbdc3aef4d8f55" }
+- { record: unit.baghouse-450k, at: "2026-10-15T12:11:44Z", status: draft, summary: "changed: physical, built_of", sha: "5cf5ebd86f2e3652" }
 - { record: unit.baghouse-800k, at: "2026-10-14T14:37:56Z", status: draft, summary: "changed", sha: "ab9ba06de66e8e3c" }
 - { record: unit.ball-mill-4m4, at: "2026-10-15T04:43:02Z", status: draft, summary: "changed", sha: "0eb3c49367482949" }
 - { record: unit.balling-disc-7m5, at: "2026-10-15T05:12:58Z", status: draft, summary: "changed", sha: "b437d954fd9928d4" }

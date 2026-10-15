@@ -263,7 +263,7 @@ def transformer_unit(mva, purpose):
                {"of": ["needs"], "tier": "invented", "review": True, "note": f"Losses {TRANSFORMER_LOSS:.1%} of its rating, carried off by the cooling loop; from memory."}])
 
 
-def baghouse_unit(q_m3h, dims, stack_over=None):
+def baghouse_unit(q_m3h, dims, stack_over=None, stack_kg=None):
     """A pulse-jet baghouse for q_m3h of fume, in a casing of dims; with stack_over (m, the tallest building near it), its own
     stack to good-engineering-practice height, that building's height and half again, so the plume clears its wake."""
     Q = q_m3h / 3600
@@ -281,7 +281,8 @@ def baghouse_unit(q_m3h, dims, stack_over=None):
                   part("Structure", A36, casing * 0.5, "half the casing, from memory"),
                   part("Filter bags", "material.ptfe", cloth * 0.5, f"{bags} bags 150 mm across and 8 m long, {cloth:.0f} m2 of PTFE-membrane cloth at 0.5 kg/m2"),
                   part("Fan and motor", "good.electric-motors", 8000.0 * q_m3h / 400000, "an induced-draught fan, 8 t for 400,000 m3/h, in proportion; from memory")]
-                 + ([part("Stack", A36, math.pi * d_st * 0.010 * stack_h * RHO["steel"] * 1.1, f"{d_st:g} m across, {stack_h:g} m, 10 mm on average, a tenth more for its base ring, ladder and platforms; its wind loads not yet checked")] if stack_h else []),
+                 + ([part("Stack", A36, stack_kg or math.pi * d_st * 0.010 * stack_h * RHO["steel"] * 1.1, (f"the tapered shell (12 to 8 mm) with its side entry, rim, base ring, closure and eight anchor chairs; measured on model v1" if stack_kg else f"{d_st:g} m across, {stack_h:g} m, 10 mm on average, a tenth more for its base ring, ladder and platforms") + "; its wind loads not yet checked")]
+                    + ([part("Stack ladder and platforms", A36, 2000.0, "a caged ladder and two rest platforms, from memory")] if stack_kg else []) if stack_h else []),
         needs={"power": fan},
         basis=[{"of": ["physical", "built_of", "needs.power"], "tier": "invented", "review": True, "note": f"{q_m3h:,.0f} m3/h, 1.2 m/min through the cloth, the fan at 4 kPa and 75%: from memory. Fan power {fan / 1e3:.0f} kW."}])
 
@@ -1792,7 +1793,7 @@ def pellet_units():
     tp = transformer_unit(P_P / 0.9 / PF * 1.1, "the pellet plant: its torches, mill, fans and drives")
     tp["name"] = tp["name"].replace("Furnace", "Plant")
     out[f"plant-transformer-{P_P / 0.9 / PF * 1.1 / 1e6:.0f}mva"] = tp
-    out["baghouse-450k"] = baghouse_unit(450000, (24.0, 12.0, 14.0), stack_over=27.0)
+    out["baghouse-450k"] = baghouse_unit(450000, (24.0, 12.0, 14.0), stack_over=27.0, stack_kg=51875.5)
     out["cooling-tower-pellet"] = cooling_unit(out["induration-grate-125th"]["needs"]["heat"] + tp["needs"]["heat"], "the plasma torches' and the plant transformer's")
     return out
 

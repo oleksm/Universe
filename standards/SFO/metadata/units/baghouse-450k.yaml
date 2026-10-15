@@ -3,13 +3,14 @@
 identity: {key: unit.baghouse-450k, name: 'Fume baghouse, 450,000 m3/h', description: 'Cleans a furnace''s fume before it goes to the air: filter bags in a closed steel casing over hoppers, the dust shaken down and let out through sealed valves; a fan and its stack at one end draw the gas through. The gas comes in at the top of one long side (local 0, -6, 12). Its stack, 2.9 m across and 68 m tall, stands at the fan''s end (centre local (9, 0)): 27 m of building near it and half again, so the plume clears the building''s wake; steel, 12 mm at its foot tapering to 8 mm, on its own foundation.'}
 size_class: 3
 fits: plant-mount.bay-s3
-physical: {length: 24.0, width: 12.0, height: 68.0, mass: 214800.0}
+physical: {length: 24.0, width: 12.0, height: 68.0, mass: 215200.0}
 built_of:
 - {what: Casing and hoppers, item: material.structural-steel-a36, mass: 99480.0, note: '24 x 12 x 14 m, 8 mm plate'}
 - {what: Structure, item: material.structural-steel-a36, mass: 49740.0, note: 'half the casing, from memory'}
 - {what: Filter bags, item: material.ptfe, mass: 3125.0, note: '1658 bags 150 mm across and 8 m long, 6250 m2 of PTFE-membrane cloth at 0.5 kg/m2'}
 - {what: Fan and motor, item: good.electric-motors, mass: 9000.0, note: 'an induced-draught fan, 8 t for 400,000 m3/h, in proportion; from memory'}
-- {what: Stack, item: material.structural-steel-a36, mass: 53500.0, note: '2.9 m across, 68 m, 10 mm on average, a tenth more for its base ring, ladder and platforms; its wind loads not yet checked'}
+- {what: Stack, item: material.structural-steel-a36, mass: 51880.0, note: 'the tapered shell (12 to 8 mm) with its side entry, rim, base ring, closure and eight anchor chairs; measured on model v1; its wind loads not yet checked'}
+- {what: Stack ladder and platforms, item: material.structural-steel-a36, mass: 2000.0, note: 'a caged ladder and two rest platforms, from memory'}
 needs: {power: 666700.0}
 life: 788940000
 basis:
