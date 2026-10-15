@@ -5,7 +5,7 @@ stands_for: module.pellet-plant
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 210.0, width: 75.0, height: 68.0, mass: 10430000.0}
+physical: {length: 210.0, width: 75.0, height: 68.0, mass: 10440000.0}
 bays:
 - id: M
   mount: plant-mount.bay-s3
@@ -95,44 +95,95 @@ links:
 - kind: conveyor
   name: cake belt
   from: [-30.0, -2.4, 7.0]
-  to: [6.0, 8.0, 7.5]
-  length: 46.6
+  to: [-12.0, -2.4, 9.0]
+  length: 18.32
   item: material.structural-steel-a36
-  mass: 4660.0
+  mass: 1832.0
   via:
   - [-18.0, -2.4, 7.0]
-  - [-12.0, -2.4, 8.0]
-  - [-12.0, 0.0, 8.5]
-  - [6.0, 0.0, 8.5]
-  power: 40000.0
-  note: a 0.8 m belt on the filters' deck along x under all eight discs' chutes (y -2.4, 1 m above the deck), then up and over the four balling discs' feed points, shuttling
+  power: 30000.0
+  note: a 0.8 m belt on the filters' deck along x under all eight discs' chutes (y -2.4, 1 m above the deck), then rising at about 18 degrees to its head over the cake shuttle
+- kind: conveyor
+  name: cake shuttle
+  from: [-12.0, -4.0, 8.6]
+  to: [-12.0, 8.0, 8.6]
+  length: 12.0
+  item: material.structural-steel-a36
+  mass: 1200.0
+  power: 7500.0
+  note: 'a 0.8 m reversible belt along x -12, 0.4 m under the cake belt''s head: south to one header or north to the other'
+- kind: conveyor
+  name: south cake header
+  from: [-12.0, -4.0, 8.2]
+  to: [8.0, -4.0, 8.2]
+  length: 20.0
+  item: material.structural-steel-a36
+  mass: 2000.0
+  power: 10000.0
+  note: a 0.8 m belt along y -4, 0.4 m under the shuttle's south end, with ploughs at x -6 and 6 dropping 1.2 m by chutes into discs B1 and B2's feed (z 7)
+- kind: conveyor
+  name: north cake header
+  from: [-12.0, 8.0, 8.2]
+  to: [8.0, 8.0, 8.2]
+  length: 20.0
+  item: material.structural-steel-a36
+  mass: 2000.0
+  power: 10000.0
+  note: a 0.8 m belt along y 8, 0.4 m under the shuttle's north end, with ploughs at x -6 and 6 dropping 1.2 m by chutes into discs B3 and B4's feed (z 7)
+- kind: conveyor
+  name: north-west green ball belt
+  from: [-6.0, 0.75, 0.6]
+  to: [0.0, 0.75, 0.6]
+  length: 6.0
+  item: material.structural-steel-a36
+  mass: 600.0
+  power: 4000.0
+  note: a 0.8 m belt in the aisle between the rows (y 0.75), 0.4 m under disc B3's screen, east to the centre
+- kind: conveyor
+  name: north-east green ball belt
+  from: [6.0, 0.75, 0.6]
+  to: [0.0, 0.75, 0.6]
+  length: 6.0
+  item: material.structural-steel-a36
+  mass: 600.0
+  power: 4000.0
+  note: as the north-west, under disc B4's screen, west to the centre
+- kind: conveyor
+  name: green ball cross belt
+  from: [0.0, 0.75, 0.3]
+  to: [0.0, -10.5, 1.0]
+  length: 11.27
+  item: material.structural-steel-a36
+  mass: 1127.0
+  power: 6000.0
+  note: a 0.8 m belt south along the aisle at x 0, 0.3 m under the two north belts' heads, rising 0.7 m (under 4 degrees) to drop 0.4 m onto the collecting belt
 - kind: conveyor
   name: green ball belt
-  from: [10.5, -10.5, 1.0]
-  to: [-17.0, -10.5, 1.0]
-  length: 27.5
+  from: [12.0, -10.5, 0.6]
+  to: [-17.0, -10.5, 0.6]
+  length: 29.0
   item: material.structural-steel-a36
-  mass: 2750.0
+  mass: 2900.0
   power: 15000.0
-  note: a 0.8 m belt level along y -10.5 under the south discs' screens, west, collecting the four discs' green balls (the north pair's by a short cross belt from y 1.5)
+  note: a 0.8 m belt level along y -10.5, west, 0.4 m under discs B1 and B2's screens, taking the cross belt's balls too
 - kind: conveyor
   name: green ball lift
-  from: [-17.0, -11.5, 0.7]
-  to: [21.0, -11.5, 9.9]
-  length: 39.1
+  from: [-17.0, -11.35, 0.3]
+  to: [21.0, -11.35, 9.7]
+  length: 39.15
   item: material.structural-steel-a36
-  mass: 3910.0
+  mass: 3915.0
   power: 30000.0
-  note: a 0.8 m belt along the south wall rising east at under 14 degrees (green balls are soft and roll back on a steeper belt), from a 0.3 m drop off the collecting belt
+  note: a 0.8 m belt along the south wall rising east at under 14 degrees (green balls are soft and roll back on a steeper belt), 0.3 m under the collecting belt's head; it passes the south door about 4.8 m up
 - kind: conveyor
   name: green ball feed
-  from: [21.0, -11.5, 9.6]
-  to: [21.0, 0.0, 9.6]
-  length: 11.5
+  from: [21.0, -11.35, 9.4]
+  to: [21.0, 0.0, 9.4]
+  length: 11.35
   item: material.structural-steel-a36
-  mass: 1150.0
+  mass: 1135.0
   power: 10000.0
-  note: a 0.8 m shuttle belt north over the grate's open loading end, 0.3 m under the lift's head, onto the roller feeder (at 9 m) across the grate's width
+  note: a 0.8 m shuttle belt north over the grate's open loading end, 0.3 m under the lift's head, dropping 0.4 m onto the roller feeder (9 m) across the grate's width
 - kind: conveyor
   name: pellet belt
   from: [62.0, 0.0, 2.0]
@@ -219,7 +270,7 @@ ground:
 - {what: Outside slabs, item: good.concrete, volume: 271.2, note: the baghouse's slab and the transformer's vault, mass: 650900.0}
 - {what: Stack foundation, item: good.concrete, volume: 122.5, note: 'a block 7 x 7 x 2.5 m under the baghouse''s 68 m stack (centre (48, 36)), its top at grade, the stack''s base ring bolted to it: against an invented 1 kPa of wind on the stack, its overturning moment about 3.2 MN m leaves the load within the middle third of the block (e 0.9 m against 1.2); soil bearing about 130 kPa at the toe', mass: 294000.0}
 - {what: Cooling tower basin, item: good.concrete, volume: 114.7, note: 'a 0.5 m floor 0.6 m wider than the tower each way, walls 0.3 m thick and 2 m deep, eight piers under the tower''s four feet and its skid''s four corners', mass: 275300.0}
-totals: {rate: 34.7222222222222, power: 25970000.0, heat: 2105000.0, water: 4.444, mass: 10430000.0, against_module: 'module.pellet-plant: one box 250 x 100 x 40 m, 23 MW (45 kWh and 0.5 GJ of heat a tonne, the heat counted as power). This layout: the same 125 t an hour; 26.0 MW, of which 19.3 the grate''s plasma torches; the pellets cool on the grate in the air it draws and the waste gas leaves by the baghouse''s stack, so only the torches'' and the transformer''s 2.1 MW goes to a one-cell tower; 4.4 kg/s of water dried off the green balls; 2,653 t of plant and frame, 7,780 t of concrete. One shaft furnace at its full rate takes 79.4 kg/s of pellets, about 2.3 of these.'}
+totals: {rate: 34.7222222222222, power: 26000000.0, heat: 2105000.0, water: 4.444, mass: 10440000.0, against_module: 'module.pellet-plant: one box 250 x 100 x 40 m, 23 MW (45 kWh and 0.5 GJ of heat a tonne, the heat counted as power). This layout: the same 125 t an hour; 26.0 MW, of which 19.3 the grate''s plasma torches; the pellets cool on the grate in the air it draws and the waste gas leaves by the baghouse''s stack, so only the torches'' and the transformer''s 2.1 MW goes to a one-cell tower; 4.4 kg/s of water dried off the green balls; 2,658 t of plant and frame, 7,780 t of concrete. One shaft furnace at its full rate takes 79.4 kg/s of pellets, about 2.3 of these.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}
