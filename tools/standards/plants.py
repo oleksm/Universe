@@ -1836,6 +1836,7 @@ def pellet_plant_air(us, recs):
     members.append({"item": "stock.st4340-box-400x400x25", "count": 8, "where": f"crane runways, four a side, {x_in / 4:.1f} m lengths, along x on the inside of the long walls: their rail plane {RUNWAY:g} m up at y -11.4 and +11.4"})
     fmass += 2 * x_in * rw_a * RHO["steel"]
     clad_area = 2 * (x1 - x0) * (z1 - z0) + 2 * (y1 - y0) * (z1 - z0) + (x1 - x0) * (y1 - y0) - sum(max(d - a, e - b) * (f - c) for a, b, c, d, e, f in openings)
+    clad_area = 12673.74                # measured on blender's layout (candidate v01), net of openings and with reveals, lintels and eaves
     clad = clad_area * 0.002 * RHO["aluminium"]
     sec_stock = lambda g: yaml.safe_load(open(S + "mill-stock/" + strut(sec[g], cell)[1]["kit"]["section"].split(".", 1)[1].upper() + ".yaml"))
     rcap, wcap = frames.strut_capacity(sec_stock("roof")), frames.strut_capacity(sec_stock("wall"))
@@ -1878,16 +1879,21 @@ def pellet_plant_air(us, recs):
         link("cable", "plant supply", (0.0, -24.0 + us[tkey]["dims"][1] / 2, 2.9), (0.0, -10.0, 3.0), CU, 3 * P_P / 0.9 / PF / (math.sqrt(3) * 6600) / 4e6 * RHO["copper"], None, "three phases at 6.6 kV in a cable tray, copper at 4 A/mm2, through the south door to the hall's switchroom; the middle phase steps 0.3 m east round the green ball lift's post at (0, -10.7)"),
     ]
     ground = [
-        {"what": "Hall floor", "item": CONC, "volume": r(x_in * span_in * 0.4), "note": f"0.4 m, {x_in:.0f} x {span_in:.0f} m"},
-        {"what": "Mill foundation", "item": CONC, "volume": r(18 * 9 * 3.0), "note": "two piers under the trunnions on a 3 m block, sized to the drum's dynamic load (not yet checked), with a pit 0.4 m deep under the girth gear's guard (x -41.8 to -40.6, y -3.2 to 3.2, its floor at z -0.4)"},
-        {"what": "Filter deck", "item": CONC, "volume": r(14 * 8 * 0.5 + 6 * 1.0 * 1.0 * 6.0), "note": "a 14 x 8 x 0.5 m deck 6 m up on six 1 m square columns (two rows of three, 6 m apart along x); the green ball lift passes south of it"},
-        {"what": "Grate foundations", "item": CONC, "volume": r(44 * 12 * 1.0), "note": "under the machine's frame"},
-        {"what": "Frame footings", "item": CONC, "volume": r(ground_nodes * 2.25), "note": f"a 1.5 x 1.5 x 1 m pad under each of the lattice's {ground_nodes} ground nodes"},
-        {"what": "Pellet hopper", "item": A36, "volume": r(1200.0 / RHO["steel"]), "note": "the 4 m to 1 m hopper under the grate's discharge chute at x 62, 10 mm wear plate, from memory, 1.2 t"},
-        {"what": "Filter deck stair", "item": A36, "volume": r(2500.0 / RHO["steel"]), "note": "a steel stair with landings from the floor to the filter deck's west edge, from memory, 2.5 t"},
-        {"what": "Outside slabs", "item": CONC, "volume": r(24 * 12 * 0.6 + 12 * 8 * 0.5 + 28 * 6 * 0.3), "note": "the baghouse's slab and the transformer's vault"},
-        {"what": "Stack foundation", "item": CONC, "volume": r(7 * 7 * 2.5), "note": f"a block 7 x 7 x 2.5 m under the baghouse's {recs['baghouse-450k']['physical']['height']:g} m stack (centre (48, 36)), its top at grade, the stack's base ring bolted to it: against an invented 1 kPa of wind on the stack, its overturning moment about 3.2 MN m leaves the load within the middle third of the block (e 0.9 m against 1.2); soil bearing about 130 kPa at the toe"},
-        {"what": "Cooling tower basin", "item": CONC, "volume": r(12.6 * 12.6 * 0.5 + 4 * 12.3 * 2.0 * 0.3 + 8 * 0.6 * 0.6 * 2.0), "note": "a 0.5 m floor 0.6 m wider than the tower each way, walls 0.3 m thick and 2 m deep, eight piers under the tower's four feet and its skid's four corners"},
+        {"what": "Hall floor", "item": CONC, "volume": 904.8, "note": f"0.4 m, {x_in:.0f} x {span_in:.0f} m, less the machines' foundations it stops at; measured on blender's layout (candidate v01)"},
+        {"what": "Mill foundation", "item": CONC, "volume": 480.37, "note": "two piers under the trunnions on a 3 m block, sized to the drum's dynamic load (not yet checked), with a pit 0.4 m deep under the girth gear's guard (x -41.8 to -40.6, y -3.2 to 3.2, its floor at z -0.4); measured on blender's layout (candidate v01), net of the pit"},
+        {"what": "Filter deck", "item": CONC, "volume": 89.0, "note": "a 14 x 8 x 0.5 m deck 6 m up on six 1 m square columns (two rows of three, 6 m apart along x); the green ball lift passes south of it; measured on blender's layout (candidate v01)"},
+        {"what": "Grate foundations", "item": CONC, "volume": 528.0, "note": "under the machine's frame; measured on blender's layout (candidate v01)"},
+        {"what": "Frame footings", "item": CONC, "volume": r(ground_nodes * 2.25), "note": f"a 1.5 x 1.5 x 1 m pad under each of the lattice's {ground_nodes} ground nodes; 445.5 m3 measured on blender's layout (candidate v01)"},
+        {"what": "Pellet hopper", "item": A36, "volume": r(909.5 / RHO["steel"]), "note": "the 4 m to 1 m hopper under the grate's discharge chute at x 62, 10 mm wear plate, with its seats; measured on blender's layout (candidate v01), 910 kg"},
+        {"what": "Filter deck stair", "item": A36, "volume": r(20385.0 / RHO["steel"]), "note": "a steel stair in three 2 m flights with landings from the floor to the filter deck's west edge, and the deck's guard rails; solid treads and stringers as drawn, not a checked design; measured on blender's layout (candidate v01), 20,385 kg"},
+        {"what": "Outside slabs", "item": CONC, "volume": 196.7, "note": "the baghouse's slab and the transformer's vault floor, trimmed where the stack's foundation takes over; measured on blender's layout (candidate v01)"},
+        {"what": "Stack foundation", "item": CONC, "volume": r(7 * 7 * 2.5), "note": f"a block 7 x 7 x 2.5 m under the baghouse's {recs['baghouse-450k']['physical']['height']:g} m stack (centre (48, 36)), its top at grade, the stack's base ring bolted to it: against an invented 1 kPa of wind on the stack, its overturning moment about 3.2 MN m leaves the load within the middle third of the block (e 0.9 m against 1.2); soil bearing about 130 kPa at the toe; measured on blender's layout (candidate v01)"},
+        {"what": "Cooling tower basin", "item": CONC, "volume": 114.66, "note": "a 0.5 m floor 0.6 m wider than the tower each way, walls 0.3 m thick and 2 m deep, eight piers under the tower's four feet and its skid's four corners; measured on blender's layout (candidate v01)"},
+        {"what": "Transformer fire walls", "item": CONC, "volume": 42.74, "note": "the vault's walls round the plant transformer, with the cooling pipes' and cables' penetrations; measured on blender's layout (candidate v01)"},
+        {"what": "Service and conveyor piers", "item": CONC, "volume": 4.25, "note": "feet under the conveyors' trestles and the pipe and cable supports outside; measured on blender's layout (candidate v01)"},
+        {"what": "Runway brackets", "item": A36, "volume": r(19681.8 / RHO["steel"]), "note": "the stubs and diagonals that seat the crane runways on the wall nodes; measured on blender's layout (candidate v01), 19,682 kg"},
+        {"what": "Conveyor steel", "item": A36, "volume": r(25835.6 / RHO["steel"]), "note": "the belts' stringers, posts, trestles and bases; the links' own mass a metre stays for belt, idlers and drives, so the stringers may be counted twice (at most about 12 t); measured on blender's layout (candidate v01), 25,836 kg"},
+        {"what": "Pipe and cable supports", "item": A36, "volume": r(9762.7 / RHO["steel"]), "note": "portals, posts, shoes and bearings under the slurry, filtrate, cooling water, waste gas duct and supply cables; joints and anchors left out, not checked for strength; measured on blender's layout (candidate v01), 9,763 kg"},
     ]
     for g in ground:
         g["mass"] = r(g["volume"] * (RHO["steel"] if g["item"] == A36 else RHO["concrete"]))
@@ -1904,7 +1910,7 @@ def pellet_plant_air(us, recs):
     ys = [y0, y1] + [b["at"][1] + s * unit_dims(recs, b)[1] / 2 for b in bays for s in (-1, 1)] + [p[1] for l in links for p in (l["from"], l["to"], *l.get("via", []))]
     against = (f"module.pellet-plant: one box {mp['length']:g} x {mp['width']:g} x {mp['height']:g} m, {P_P / 1e6:.0f} MW (45 kWh and 0.5 GJ of heat a tonne, the heat counted as power). "
                f"This layout: the same {P_RATE * 3.6:.0f} t an hour; {power / 1e6:.1f} MW, of which {P_FIRE / 0.9 / 1e6:.1f} the grate's plasma torches; the pellets cool on the grate in the air it draws and the waste gas leaves by the baghouse's stack, so only the torches' and the transformer's {(q_t + q_tr) / 1e6:.1f} MW goes to a one-cell tower; "
-               f"{water:.1f} kg/s of water dried off the green balls; {(mass_units + mass_links + frame_mass) / 1000:,.0f} t of plant and frame, {mass_ground / 1000:,.0f} t of concrete. "
+               f"{water:.1f} kg/s of water dried off the green balls; {(mass_units + mass_links + frame_mass + sum(g["mass"] for g in ground if g["item"] == A36)) / 1000:,.0f} t of plant, frame and supports, {sum(g["mass"] for g in ground if g["item"] == CONC) / 1000:,.0f} t of concrete. "
                f"One shaft furnace at its full rate takes {PELLETS:.1f} kg/s of pellets, about {PELLETS / P_RATE:.1f} of these.")
     layout = {
         "identity": {"key": "layout.pellet-plant-air", "name": "Pellet plant, world with air",

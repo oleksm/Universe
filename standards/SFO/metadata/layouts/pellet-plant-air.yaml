@@ -5,7 +5,7 @@ stands_for: module.pellet-plant
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 210.0, width: 75.0, height: 68.0, mass: 10440000.0}
+physical: {length: 210.0, width: 75.0, height: 68.0, mass: 9768000.0}
 bays:
 - id: M
   mount: plant-mount.bay-s3
@@ -247,22 +247,27 @@ frame:
   - {item: stock.st4340-tb-100x3-d3000, count: 1671, where: roof}
   - {item: stock.st4340-node-220b, count: 2586, where: nodes}
   - {item: stock.st4340-box-400x400x25, count: 8, where: 'crane runways, four a side, 30.8 m lengths, along x on the inside of the long walls: their rail plane 18 m up at y -11.4 and +11.4'}
-  cladding: {item: stock.al6061-sh-2, area: 12300.0, mass: 66440.0}
+  cladding: {item: stock.al6061-sh-2, area: 12670.0, mass: 68440.0}
   carries: [unit.mill-crane-30t]
-  mass: 721400.0
+  mass: 723400.0
   sized: 'At 1 g: roof 1249 Pa (2 mm aluminium, the frame about 20 kg/m2, 1 kPa of snow and wind, the last invented) over a 24 m span in 3 m deep strips puts 90 kN in a chord: st4340-tb-100x3 takes 242 kN. A wheel of the 30 t crane loaded at the runway''s end puts 259 kN on a wall node, with the roof''s share 304 kN: st4340-tb-160x3 takes 695 kN. Each the kit''s lightest section with half again to spare. The runway bends to 44 MPa between nodes, against 470 MPa with half again to spare. Wind and footings not yet checked.'
 ground:
-- {what: Hall floor, item: good.concrete, volume: 1181.0, note: '0.4 m, 123 x 24 m', mass: 2834000.0}
-- {what: Mill foundation, item: good.concrete, volume: 486.0, note: 'two piers under the trunnions on a 3 m block, sized to the drum''s dynamic load (not yet checked), with a pit 0.4 m deep under the girth gear''s guard (x -41.8 to -40.6, y -3.2 to 3.2, its floor at z -0.4)', mass: 1166000.0}
-- {what: Filter deck, item: good.concrete, volume: 92.0, note: 'a 14 x 8 x 0.5 m deck 6 m up on six 1 m square columns (two rows of three, 6 m apart along x); the green ball lift passes south of it', mass: 220800.0}
-- {what: Grate foundations, item: good.concrete, volume: 528.0, note: under the machine's frame, mass: 1267000.0}
-- {what: Frame footings, item: good.concrete, volume: 445.5, note: a 1.5 x 1.5 x 1 m pad under each of the lattice's 198 ground nodes, mass: 1069000.0}
-- {what: Pellet hopper, item: material.structural-steel-a36, volume: 0.1529, note: 'the 4 m to 1 m hopper under the grate''s discharge chute at x 62, 10 mm wear plate, from memory, 1.2 t', mass: 1200.0}
-- {what: Filter deck stair, item: material.structural-steel-a36, volume: 0.3185, note: 'a steel stair with landings from the floor to the filter deck''s west edge, from memory, 2.5 t', mass: 2500.0}
-- {what: Outside slabs, item: good.concrete, volume: 271.2, note: the baghouse's slab and the transformer's vault, mass: 650900.0}
-- {what: Stack foundation, item: good.concrete, volume: 122.5, note: 'a block 7 x 7 x 2.5 m under the baghouse''s 68 m stack (centre (48, 36)), its top at grade, the stack''s base ring bolted to it: against an invented 1 kPa of wind on the stack, its overturning moment about 3.2 MN m leaves the load within the middle third of the block (e 0.9 m against 1.2); soil bearing about 130 kPa at the toe', mass: 294000.0}
-- {what: Cooling tower basin, item: good.concrete, volume: 114.7, note: 'a 0.5 m floor 0.6 m wider than the tower each way, walls 0.3 m thick and 2 m deep, eight piers under the tower''s four feet and its skid''s four corners', mass: 275300.0}
-totals: {rate: 34.7222222222222, power: 25990000.0, heat: 2105000.0, water: 4.444, mass: 10440000.0, against_module: 'module.pellet-plant: one box 250 x 100 x 40 m, 23 MW (45 kWh and 0.5 GJ of heat a tonne, the heat counted as power). This layout: the same 125 t an hour; 26.0 MW, of which 19.3 the grate''s plasma torches; the pellets cool on the grate in the air it draws and the waste gas leaves by the baghouse''s stack, so only the torches'' and the transformer''s 2.1 MW goes to a one-cell tower; 4.4 kg/s of water dried off the green balls; 2,661 t of plant and frame, 7,781 t of concrete. One shaft furnace at its full rate takes 79.4 kg/s of pellets, about 2.3 of these.'}
+- {what: Hall floor, item: good.concrete, volume: 904.8, note: '0.4 m, 123 x 24 m, less the machines'' foundations it stops at; measured on blender''s layout (candidate v01)', mass: 2172000.0}
+- {what: Mill foundation, item: good.concrete, volume: 480.37, note: 'two piers under the trunnions on a 3 m block, sized to the drum''s dynamic load (not yet checked), with a pit 0.4 m deep under the girth gear''s guard (x -41.8 to -40.6, y -3.2 to 3.2, its floor at z -0.4); measured on blender''s layout (candidate v01), net of the pit', mass: 1153000.0}
+- {what: Filter deck, item: good.concrete, volume: 89.0, note: 'a 14 x 8 x 0.5 m deck 6 m up on six 1 m square columns (two rows of three, 6 m apart along x); the green ball lift passes south of it; measured on blender''s layout (candidate v01)', mass: 213600.0}
+- {what: Grate foundations, item: good.concrete, volume: 528.0, note: under the machine's frame; measured on blender's layout (candidate v01), mass: 1267000.0}
+- {what: Frame footings, item: good.concrete, volume: 445.5, note: a 1.5 x 1.5 x 1 m pad under each of the lattice's 198 ground nodes; 445.5 m3 measured on blender's layout (candidate v01), mass: 1069000.0}
+- {what: Pellet hopper, item: material.structural-steel-a36, volume: 0.1159, note: 'the 4 m to 1 m hopper under the grate''s discharge chute at x 62, 10 mm wear plate, with its seats; measured on blender''s layout (candidate v01), 910 kg', mass: 909.8}
+- {what: Filter deck stair, item: material.structural-steel-a36, volume: 2.597, note: 'a steel stair in three 2 m flights with landings from the floor to the filter deck''s west edge, and the deck''s guard rails; solid treads and stringers as drawn, not a checked design; measured on blender''s layout (candidate v01), 20,385 kg', mass: 20390.0}
+- {what: Outside slabs, item: good.concrete, volume: 196.7, note: 'the baghouse''s slab and the transformer''s vault floor, trimmed where the stack''s foundation takes over; measured on blender''s layout (candidate v01)', mass: 472100.0}
+- {what: Stack foundation, item: good.concrete, volume: 122.5, note: 'a block 7 x 7 x 2.5 m under the baghouse''s 68 m stack (centre (48, 36)), its top at grade, the stack''s base ring bolted to it: against an invented 1 kPa of wind on the stack, its overturning moment about 3.2 MN m leaves the load within the middle third of the block (e 0.9 m against 1.2); soil bearing about 130 kPa at the toe; measured on blender''s layout (candidate v01)', mass: 294000.0}
+- {what: Cooling tower basin, item: good.concrete, volume: 114.66, note: 'a 0.5 m floor 0.6 m wider than the tower each way, walls 0.3 m thick and 2 m deep, eight piers under the tower''s four feet and its skid''s four corners; measured on blender''s layout (candidate v01)', mass: 275200.0}
+- {what: Transformer fire walls, item: good.concrete, volume: 42.74, note: 'the vault''s walls round the plant transformer, with the cooling pipes'' and cables'' penetrations; measured on blender''s layout (candidate v01)', mass: 102600.0}
+- {what: Service and conveyor piers, item: good.concrete, volume: 4.25, note: feet under the conveyors' trestles and the pipe and cable supports outside; measured on blender's layout (candidate v01), mass: 10200.0}
+- {what: Runway brackets, item: material.structural-steel-a36, volume: 2.507, note: 'the stubs and diagonals that seat the crane runways on the wall nodes; measured on blender''s layout (candidate v01), 19,682 kg', mass: 19680.0}
+- {what: Conveyor steel, item: material.structural-steel-a36, volume: 3.291, note: 'the belts'' stringers, posts, trestles and bases; the links'' own mass a metre stays for belt, idlers and drives, so the stringers may be counted twice (at most about 12 t); measured on blender''s layout (candidate v01), 25,836 kg', mass: 25830.0}
+- {what: Pipe and cable supports, item: material.structural-steel-a36, volume: 1.244, note: 'portals, posts, shoes and bearings under the slurry, filtrate, cooling water, waste gas duct and supply cables; joints and anchors left out, not checked for strength; measured on blender''s layout (candidate v01), 9,763 kg', mass: 9765.0}
+totals: {rate: 34.7222222222222, power: 25990000.0, heat: 2105000.0, water: 4.444, mass: 9768000.0, against_module: 'module.pellet-plant: one box 250 x 100 x 40 m, 23 MW (45 kWh and 0.5 GJ of heat a tonne, the heat counted as power). This layout: the same 125 t an hour; 26.0 MW, of which 19.3 the grate''s plasma torches; the pellets cool on the grate in the air it draws and the waste gas leaves by the baghouse''s stack, so only the torches'' and the transformer''s 2.1 MW goes to a one-cell tower; 4.4 kg/s of water dried off the green balls; 2,739 t of plant, frame and supports, 7,029 t of concrete. One shaft furnace at its full rate takes 79.4 kg/s of pellets, about 2.3 of these.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}
