@@ -5,7 +5,7 @@ stands_for: module.hydrogen-plant
 site:
   atmosphere: none
   gravity: [1.6, 2.0]
-physical: {length: 288.0, width: 198.0, height: 25.0, mass: 4841000.0}
+physical: {length: 288.0, width: 198.0, height: 25.0, mass: 4829000.0}
 bays:
 - id: E1
   mount: plant-mount.bay-s3
@@ -164,43 +164,43 @@ mobile:
 links:
 - kind: busbar
   name: DC bus 1
-  from: [-48.0, -22.5, 2.4]
+  from: [-48.0, -21.0, 2.4]
   to: [-48.0, -6.0, 3.0]
-  length: 16.51
+  length: 15.01
   item: material.aluminium-1350
-  mass: 2564.0
+  mass: 2331.0
   note: as for air, its insulation spaced for vacuum
 - kind: busbar
   name: DC bus 2
-  from: [-24.0, -22.5, 2.4]
+  from: [-24.0, -21.0, 2.4]
   to: [-24.0, -6.0, 3.0]
-  length: 16.51
+  length: 15.01
   item: material.aluminium-1350
-  mass: 2564.0
+  mass: 2331.0
   note: as for air, its insulation spaced for vacuum
 - kind: busbar
   name: DC bus 3
-  from: [0.0, -22.5, 2.4]
+  from: [0.0, -21.0, 2.4]
   to: [0.0, -6.0, 3.0]
-  length: 16.51
+  length: 15.01
   item: material.aluminium-1350
-  mass: 2564.0
+  mass: 2331.0
   note: as for air, its insulation spaced for vacuum
 - kind: busbar
   name: DC bus 4
-  from: [24.0, -22.5, 2.4]
+  from: [24.0, -21.0, 2.4]
   to: [24.0, -6.0, 3.0]
-  length: 16.51
+  length: 15.01
   item: material.aluminium-1350
-  mass: 2564.0
+  mass: 2331.0
   note: as for air, its insulation spaced for vacuum
 - kind: busbar
   name: DC bus 5
-  from: [48.0, -22.5, 2.4]
+  from: [48.0, -21.0, 2.4]
   to: [48.0, -6.0, 3.0]
-  length: 16.51
+  length: 15.01
   item: material.aluminium-1350
-  mass: 2564.0
+  mass: 2331.0
   note: as for air, its insulation spaced for vacuum
 - kind: pipe
   name: hydrogen header
@@ -282,7 +282,7 @@ ground:
 - {what: Rectifier and outside pads, item: material.regolith-sintered, volume: 336.0, mass: 840000.0}
 - {what: Radiator legs' pads, item: material.regolith-sintered, volume: 49.37, mass: 123400.0}
 - {what: Crew post berm, item: material.regolith, volume: 164.6, mass: 246900.0}
-totals: {rate: 0.525, power: 99010000.0, heat: 23820000.0, water: 0.0, mass: 4841000.0, against_module: 'module.hydrogen-plant: one box, 100 MW. This layout: the same rate; 99.0 MW; 23.8 MW to 17 radiator fields at 345 K (3.9 ha); its 4.7 kg/s of water all comes back from the shaft furnace, none evaporated; no hall; the blocks at 10 bar feed the furnace''s loop with no compressor. 2,191 t of plant, 2,650 t of sintered regolith.'}
+totals: {rate: 0.525, power: 99010000.0, heat: 23820000.0, water: 0.0, mass: 4829000.0, against_module: 'module.hydrogen-plant: one box, 100 MW. This layout: the same rate; 99.0 MW; 23.8 MW to 17 radiator fields at 345 K (3.9 ha); its 4.7 kg/s of water all comes back from the shaft furnace, none evaporated; no hall; the blocks at 10 bar feed the furnace''s loop with no compressor. 2,178 t of plant, 2,650 t of sintered regolith.'}
 staff:
 - {profession: profession.chemist, count: 2}
 - {profession: profession.plant-operator, count: 4}

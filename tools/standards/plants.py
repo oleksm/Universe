@@ -1372,9 +1372,17 @@ def hydrogen_units():
     P_rect = (H_P / N_BLK - P_STACKS) * 0.6                   # of the block's share above its cells: the rectifier's losses; the rest the plant's
     rt = transformer_unit(P_STACKS / 0.95, f"one electrolyser block: a 12-pulse thyristor rectifier in the same skid gives {I_DC / 1e3:.0f} kA at {V_stack:.0f} V direct")
     rt["name"] = f"Rectifier transformer, {P_STACKS / 0.95 / 1e6:.0f} MVA"
-    rt["built_of"].append(part("Rectifier", AL, 10000.0, "thyristor stacks on water-cooled aluminium heat sinks, from memory"))
+    L_t, W_t, H_t = rt["dims"]
+    rt["dims"] = (L_t, W_t + 3.0, H_t)                    # the transformer on the -y side, its rectifier house on the +y side, 0.6 m between
+    dc_cu = 2 * I_DC / 2e6 * 6.0 * RHO["copper"]          # two poles at 2 A/mm2, 6 m each inside the house
+    rt["built_of"] += [part("Rectifier stacks and heat sinks", AL, 3000.0, "two 6-pulse thyristor bridges (12-pulse together) on water-cooled aluminium heat sinks, from memory"),
+                       part("DC bus", CU, dc_cu, f"two copper poles inside the house, {I_DC / 2e6 * 1e4:.0f} cm2 each at 2 A/mm2"),
+                       part("Rectifier house", A36, 2500.0, "a closed steel house, its cabinets, doors and cooling manifold, from memory")]
     rt["needs"] = {"power": P_rect, "heat": P_rect}
-    rt["desc"] = rt["desc"].replace("Three secondary terminals on one long face (+y)", "The rectifier's two DC terminals on one long face (+y)")
+    rt["desc"] = (rt["desc"].replace("Three secondary terminals on one long face (+y), 4.5 m up", "Its secondary bushings on its +y face into the rectifier house")
+                  .replace("Three secondary terminals on one long face (+y)", "Its secondary bushings on its +y face into the rectifier house")
+                  + f" Local frame: the transformer's tank on the -y side (y -{(W_t + 3.0) / 2:g} to {W_t - (W_t + 3.0) / 2:g}); the rectifier in a closed house on the +y side ({L_t:g} m along x, 2.4 m deep to the +y face at y {(W_t + 3.0) / 2:g}, 2.8 m tall), its heat sinks on the transformer's water cooler; "
+                  f"the rectifier's two DC terminals on the house's +y face at x -0.45 and 0.45, 2.4 m up, toward the hall.")
     out["rectifier-transformer-21mva"] = rt
     out["hydrogen-purifier"] = dict(
         name="Hydrogen purifier", size_class=2, fits="bay-s2", dims=(12.0, 8.0, 9.0),

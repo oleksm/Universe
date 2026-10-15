@@ -1,15 +1,17 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.rectifier-transformer-21mva, name: 'Rectifier transformer, 20 MVA', description: 'Steps the grid down for one electrolyser block: a 12-pulse thyristor rectifier in the same skid gives 43 kA at 443 V direct, with on-load taps. Oil-filled in a closed tank, HV bushings and conservator on top, cooled by oil to water. The rectifier''s two DC terminals on one long face (+y), 2.4 m up; the oil-to-water cooler''s water ports on its -x end, 1 m up. Stands in a fire-walled vault.'}
+identity: {key: unit.rectifier-transformer-21mva, name: 'Rectifier transformer, 20 MVA', description: 'Steps the grid down for one electrolyser block: a 12-pulse thyristor rectifier in the same skid gives 43 kA at 443 V direct, with on-load taps. Oil-filled in a closed tank, HV bushings and conservator on top, cooled by oil to water. Its secondary bushings on its +y face into the rectifier house, 2.4 m up; the oil-to-water cooler''s water ports on its -x end, 1 m up. Stands in a fire-walled vault. Local frame: the transformer''s tank on the -y side (y -3 to 0); the rectifier in a closed house on the +y side (4.9 m along x, 2.4 m deep to the +y face at y 3, 2.8 m tall), its heat sinks on the transformer''s water cooler; the rectifier''s two DC terminals on the house''s +y face at x -0.45 and 0.45, 2.4 m up, toward the hall.'}
 size_class: 1
 fits: plant-mount.bay-s1
-physical: {length: 4.9, width: 3.0, height: 3.6, mass: 42160.0}
+physical: {length: 4.9, width: 6.0, height: 3.6, mass: 39980.0}
 built_of:
 - {what: Core, item: material.structural-steel-a36, mass: 12860.0, note: 'grain-oriented electrical steel, which the registry has not got: structural steel stands for it'}
 - {what: Windings, item: material.copper, mass: 8040.0}
 - {what: Tank and fittings, item: material.structural-steel-a36, mass: 4824.0}
 - {what: Oil, item: material.hydraulic-fluid, mass: 6432.0, note: 'transformer mineral oil, which the registry has not got: hydraulic fluid stands for it'}
-- {what: Rectifier, item: material.aluminium-1350, mass: 10000.0, note: 'thyristor stacks on water-cooled aluminium heat sinks, from memory'}
+- {what: Rectifier stacks and heat sinks, item: material.aluminium-1350, mass: 3000.0, note: 'two 6-pulse thyristor bridges (12-pulse together) on water-cooled aluminium heat sinks, from memory'}
+- {what: DC bus, item: material.copper, mass: 2319.0, note: 'two copper poles inside the house, 216 cm2 each at 2 A/mm2'}
+- {what: Rectifier house, item: material.structural-steel-a36, mass: 2500.0, note: 'a closed steel house, its cabinets, doors and cooling manifold, from memory'}
 needs: {power: 542400.0, heat: 542400.0}
 life: 788940000
 basis:
