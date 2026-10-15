@@ -5,7 +5,7 @@ stands_for: module.shaft-furnace
 site:
   atmosphere: none
   gravity: [1.6, 2.0]
-physical: {length: 473.3, width: 450.0, height: 45.0, mass: 9293000.0}
+physical: {length: 473.3, width: 450.0, height: 45.0, mass: 9273000.0}
 bays:
 - id: F
   mount: plant-mount.bay-s3
@@ -354,11 +354,11 @@ links:
 - kind: pipe
   name: hydrogen make-up
   from: [100.0, 4.0, 1.5]
-  to: [54.0, 4.0, 1.5]
-  length: 46.0
+  to: [57.0, 4.0, 1.583]
+  length: 43.0
   item: material.stainless-steel-304
-  mass: 2269.0
-  note: 3.00 kg/s from the hydrogen plant's electrolysers, which run at 10 bar so that no make-up compressor is needed
+  mass: 2121.0
+  note: 3.00 kg/s, teed into the compressor's suction pipe at x 57, from the hydrogen plant's electrolysers, which run at 10 bar so that no make-up compressor is needed
 - kind: pipe
   name: condensate to the hydrogen plant
   from: [54.0, 24.0, 0.5]
@@ -369,16 +369,15 @@ links:
   note: '200 mm: 20.5 kg/s of water back to the electrolysers: on a moon every kilogram comes back'
 - kind: pipe
   name: loop water to the radiators
-  from: [-82.0, 396.0, 1.0]
+  from: [-34.2, 396.0, 1.0]
   to: [48.0, 20.0, 1.0]
-  length: 506.0
+  length: 458.2
   item: material.structural-steel-a36
-  mass: 216900.0
+  mass: 196400.0
   via:
-  - [-36.0, 396.0, 1.0]
-  - [-36.0, 36.0, 1.0]
+  - [-34.2, 36.0, 1.0]
   - [48.0, 36.0, 1.0]
-  note: 'a pair of 0.87 m pipes at about 345 K: 1,483 kg/s along the 43 radiator fields'' rows to the condenser, a branch to the transformer'
+  note: 'a pair of 0.87 m pipes at about 345 K: 1,483 kg/s the mains (flow at x -34.8, return at -33.6) north along the fields'' east side, a pair along each row under the panels and a 150 mm reducer and branch to every field''s west ports (x 24 m west of its centre, y -0.6 and 0.6 about it); then east to the condenser''s pair (x 47.4 and 48.6)'
 - kind: pipe
   name: compressor motor cooling
   from: [48.0, 20.0, 1.0]
@@ -390,6 +389,16 @@ links:
   - [40.0, 20.0, 1.0]
   - [40.0, -2.8, 1.0]
   note: a pair of 100 mm pipes teed off the loop water at the condenser, west and south to the compressor motor's cooler
+- kind: pipe
+  name: transformer cooling
+  from: [40.0, -2.8, 1.0]
+  to: [43.45, -24.0, 1.0]
+  length: 24.65
+  item: material.structural-steel-a36
+  mass: 911.9
+  via:
+  - [40.0, -24.0, 1.0]
+  note: a pair of 150 mm pipes on from the compressor motor's branch, south to the heater transformer's oil-to-water cooler on its -x end, 1 m up
 - kind: cable
   name: compressor supply
   from: [100.0, -1.5, 4.5]
@@ -434,7 +443,7 @@ ground:
 - {what: Radiator legs' pads, item: material.regolith-sintered, volume: 124.9, mass: 312200.0}
 - {what: Crew post berm, item: material.regolith, volume: 586.23, note: 'loose regolith at least 1 m over the post everywhere (its top 4 x 2 m, 5.3 m up), lying at 35 degrees, its foot about 19 x 17 m, a cavity for the post; measured on blender''s arc furnace shop; with openings for its windows (light wells on the north) and its airlock (a ramp cut on the west); with openings for its windows and airlock; at the airlock''s door a landing of packed regolith 2 x 2 m, its top at the threshold (1.35 m up), and a ramp down to the ground at about 1 in 3', mass: 879300.0}
 - {what: Trestle footings, item: material.regolith-sintered, volume: 39.0, mass: 97500.0}
-totals: {rate: 55.5555555555556, power: 127500000.0, heat: 62090000.0, water: 0.0, mass: 9293000.0, against_module: 'module.shaft-furnace: one box, 22 MW. The layout for air draws 152 MW and sends 130 MW up four towers. This layout: the same rate; 127 MW (heater 121, compressor 4.1: at 8 bar the compressor only makes up the loop''s pressure drop); 62 MW to 43 radiator fields at 345 K (10 ha), for the water must condense somewhere and only light can take the heat away; no cooling zone or loop (the sponge iron goes on hot); no water used up. 5,020 t of plant and frame, 4,273 t of sintered regolith.'}
+totals: {rate: 55.5555555555556, power: 127500000.0, heat: 62090000.0, water: 0.0, mass: 9273000.0, against_module: 'module.shaft-furnace: one box, 22 MW. The layout for air draws 152 MW and sends 130 MW up four towers. This layout: the same rate; 127 MW (heater 121, compressor 4.1: at 8 bar the compressor only makes up the loop''s pressure drop); 62 MW to 43 radiator fields at 345 K (10 ha), for the water must condense somewhere and only light can take the heat away; no cooling zone or loop (the sponge iron goes on hot); no water used up. 5,001 t of plant and frame, 4,273 t of sintered regolith.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}
