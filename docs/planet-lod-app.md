@@ -82,3 +82,26 @@ With 1 km decision cells (meshes still by 8 km chunks): LOD 5.6 ms at 130 km, 1.
 floor is the margin test over all ~150k cells; a hierarchy would take it off); mesh rebuilds 4,370/s at 130 km
 (22 ms a frame), 880/s at 29 km (2.9 ms), 200/s near the ground (0.7 ms). Rebuilds are bounded by the collapse
 subtrees' chunk boxes; smaller mesh chunks would cut them but multiply draws (waits on the render-thread answer).
+
+## Toward 120 fps (14 Oct, the owner: "do all 4")
+
+Live, Yosemite (903k pattern vertices at 50 m, 0.5-0.9M triangles drawn): 61-116 fps flying. Per frame: LOD decisions
+on the main thread 7.7 ms mean (25 worst), mesh upload on the render thread 7.3 ms mean (17 worst), GPU scene
+0.3-0.7 ms. The GPU is idle; the CPU work scales with change.
+
+1. Chunks sized by triangle count (about 3,000 finest triangles), not 8 km: a flip re-sends 100s of KB, not MBs. (planets)
+2. Decisions in a worker thread: it owns what is drawn and takes the eye; the build worker takes its snapshots. (planets)
+3. Smaller GPU vertices and a mesh pool. (engine, general API; see below)
+4. A cluster DAG: fixed clusters of ~128 triangles per level, groups simplified to half with their borders locked,
+   picked by on-screen error; nothing rebuilt, uploaded once, cached, the 1 s preload by the same selection. (planets;
+   needs 3)
+
+### Ask 5 of the engine: meshes for many small, often replaced parts
+
+- Indexed meshes: shared vertices (positions as f32x3, normal and colour packed: about 16-24 B a vertex) instead of
+  56 B per corner; faces as an index list. Today a 30k-triangle chunk is about 5 MB a rebuild.
+- A pooled store: one large GPU buffer sub-allocated for thousands of small immutable meshes (clusters), each a
+  range, drawn in few calls (instancing or indirect), freed into the pool. Upload of a new part is a copy into the
+  pool, not a buffer creation.
+- Flat-shaded faces with per-face colour must stay possible (the Real view), and the per-vertex morph band (ask 1)
+  should work on pooled meshes.
