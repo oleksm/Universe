@@ -1248,8 +1248,14 @@ def shaft_furnace_air(us, recs):
         {"what": "Transformer vault", "item": CONC, "volume": r(12 * 8 * 0.5 + 40 * 7 * 0.3), "note": "fire walls 7 m tall round the heater's transformer"},
         {"what": "Cooling tower basins", "item": CONC, "volume": r(sum((t["physical"]["length"] + 0.6) * 12.6 * 0.5 + 2 * (t["physical"]["length"] + 0.3 + 12.3) * 2.0 * 0.3 for t in tower_units)), "note": "one under each tower, sunk as the furnace shop's: 0.3 m walls, floor top at z -2; 6 m apart, no shared walls"},
         {"what": "Gallery trestle footings", "item": CONC, "volume": r(math.ceil(belt_x / 18) * 8.0 + 4 * 4.0), "note": "8 m3 under each of the pellet belt's trestles, 4 m3 under the product belt's"},
+        {"what": "Pipe supports", "item": CONC, "volume": 56.46, "note": "plinths and feet under the ground-level pipes and the duct supports; measured on blender's layout (candidate v01)"},
+        {"what": "Coolant trench", "item": CONC, "volume": 24.98, "note": "the transformer's water pair's trench, 0.8 m wide, floor at z -1.3; measured on blender's layout (candidate v01)"},
     ]
+    measured = {"Cooling tower basins": 1587.28, "Tower foundation": 1440.0, "Unit slabs": 683.36, "Transformer vault": 128.70, "Compressor crane hardstanding": 104.0, "Gallery trestle footings": 92.0}   # m3 on blender's layout (candidate v01)
     for g in ground:
+        if g["what"] in measured:
+            g["volume"] = measured[g["what"]]
+            g["note"] = g.get("note", "") + "; measured on blender's layout (candidate v01)"
         g["mass"] = r(g["volume"] * RHO["concrete"])
     used = [recs[b["unit"].split(".", 1)[1]] for b in bays]
     power = sum(u.get("needs", {}).get("power", 0) for u in used) + sum(l.get("power", 0) for l in links)

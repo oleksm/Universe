@@ -832,7 +832,7 @@
 - { record: layout.ladle-station-airless, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "47acf5ee6202ed61" }
 - { record: layout.ore-yard-air, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "80cee716ce980cb3" }
 - { record: layout.pellet-plant-air, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "17d04bf873e1439b" }
-- { record: layout.shaft-furnace-air, at: "2026-10-15T02:12:30Z", status: draft, summary: "changed: links", sha: "8740add65034854d" }
+- { record: layout.shaft-furnace-air, at: "2026-10-15T02:17:48Z", status: draft, summary: "changed: physical, ground, totals", sha: "f2dfb48d886f59de" }
 - { record: layout.shaft-furnace-airless, at: "2026-10-14T23:42:05Z", status: draft, summary: "changed: totals", sha: "4bf9d1063418ef56" }
 - { record: market.art, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "517671b6a46daee3" }
 - { record: market.artifacts, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "6b51c19897f56c1a" }
