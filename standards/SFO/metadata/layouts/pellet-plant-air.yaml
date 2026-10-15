@@ -5,7 +5,7 @@ stands_for: module.pellet-plant
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 210.0, width: 67.85, height: 27.0, mass: 9691000.0}
+physical: {length: 210.0, width: 75.0, height: 27.0, mass: 9783000.0}
 bays:
 - id: M
   mount: plant-mount.bay-s3
@@ -52,6 +52,11 @@ bays:
   unit: unit.plant-transformer-35mva
   at: [0.0, -24.0, 0.0]
   note: outside, south, in a fire-walled vault
+- id: C
+  mount: plant-mount.bay-s3
+  unit: unit.cooling-tower-pellet
+  at: [30.0, -27.0, 0.0]
+  note: outside, south-east
 links:
 - kind: conveyor
   name: ore belt
@@ -133,13 +138,39 @@ links:
   - [39.0, 20.0, 3.0]
   - [39.0, 20.0, 12.0]
   note: '2.8 m across, 6 mm plate, insulated: from the process fans'' discharge through the north wall to the baghouse''s inlet'
+- kind: pipe
+  name: cooling water to the torches
+  from: [36.0, -27.0, 0.75]
+  to: [41.0, -6.0, 1.0]
+  length: 26.02
+  item: material.structural-steel-a36
+  mass: 1099.0
+  via:
+  - [40.5, -27.0, 0.75]
+  - [40.5, -8.0, 0.75]
+  - [40.5, -6.0, 1.0]
+  note: 'a pair of 171 mm pipes, flow and return: 46 kg/s from the tower''s ports at y 0 (local), east and north through the hall''s south wall to the grate''s flanges on its -y face'
+- kind: pipe
+  name: cooling water to the transformer
+  from: [36.0, -22.5, 0.75]
+  to: [-2.9, -24.0, 1.0]
+  length: 53.85
+  item: material.structural-steel-a36
+  mass: 849.9
+  via:
+  - [37.5, -22.5, 0.75]
+  - [37.5, -19.0, 0.75]
+  - [-4.5, -19.0, 0.75]
+  - [-4.5, -24.0, 0.75]
+  - [-4.5, -24.0, 1.0]
+  note: 'a pair of 80 mm pipes: 4.2 kg/s from the tower''s ports at local y 4.5, west along y -19 and into the transformer''s cooler ports on its -x end'
 - kind: cable
   name: plant supply
-  from: [0.0, -22.15, 4.0]
+  from: [0.0, -22.15, 2.9]
   to: [0.0, -10.0, 3.0]
-  length: 12.19
+  length: 12.15
   item: material.copper
-  mass: 228.9
+  mass: 228.2
   note: three phases at 6.6 kV in a cable tray, copper at 4 A/mm2, through the south door to the hall's switchroom
 frame:
   box: [-60.0, -15.0, 0.0, 69.0, 15.0, 27.0]
@@ -150,16 +181,17 @@ frame:
   - [66.0, -3.0, 0.0, 69.0, 3.0, 6.0]
   - [36.0, 12.0, 0.0, 42.0, 15.0, 6.0]
   - [-3.0, -15.0, 0.0, 3.0, -12.0, 6.0]
+  - [39.0, -15.0, 0.0, 42.0, -12.0, 3.0]
   members:
-  - {item: stock.st4340-tb-160x3-s3000, count: 4335, where: wall}
-  - {item: stock.st4340-tb-160x3-d3000, count: 3312, where: wall}
+  - {item: stock.st4340-tb-160x3-s3000, count: 4333, where: wall}
+  - {item: stock.st4340-tb-160x3-d3000, count: 3309, where: wall}
   - {item: stock.st4340-tb-100x3-s3000, count: 2004, where: roof}
   - {item: stock.st4340-tb-100x3-d3000, count: 1671, where: roof}
   - {item: stock.st4340-node-220b, count: 2586, where: nodes}
   - {item: stock.st4340-box-400x400x25, count: 8, where: 'crane runways, four a side, 30.8 m lengths, along x on the inside of the long walls: their rail plane 18 m up at y -11.4 and +11.4'}
-  cladding: {item: stock.al6061-sh-2, area: 12310.0, mass: 66480.0}
+  cladding: {item: stock.al6061-sh-2, area: 12300.0, mass: 66440.0}
   carries: [unit.mill-crane-30t]
-  mass: 721700.0
+  mass: 721400.0
   sized: 'At 1 g: roof 1249 Pa (2 mm aluminium, the frame about 20 kg/m2, 1 kPa of snow and wind, the last invented) over a 24 m span in 3 m deep strips puts 90 kN in a chord: st4340-tb-100x3 takes 242 kN. A wheel of the 30 t crane loaded at the runway''s end puts 259 kN on a wall node, with the roof''s share 304 kN: st4340-tb-160x3 takes 695 kN. Each the kit''s lightest section with half again to spare. The runway bends to 44 MPa between nodes, against 470 MPa with half again to spare. Wind and footings not yet checked.'
 ground:
 - {what: Hall floor, item: good.concrete, volume: 1181.0, note: '0.4 m, 123 x 24 m', mass: 2834000.0}
@@ -168,7 +200,7 @@ ground:
 - {what: Grate foundations, item: good.concrete, volume: 528.0, note: under the machine's frame, mass: 1267000.0}
 - {what: Frame footings, item: good.concrete, volume: 445.5, note: a 1.5 x 1.5 x 1 m pad under each of the lattice's 198 ground nodes, mass: 1069000.0}
 - {what: Outside slabs, item: good.concrete, volume: 271.2, note: the baghouse's slab and the transformer's vault, mass: 650900.0}
-totals: {rate: 34.7222222222222, power: 25910000.0, heat: 0.0, water: 3.28, mass: 9691000.0, against_module: 'module.pellet-plant: one box 250 x 100 x 40 m, 23 MW (45 kWh and 0.5 GJ of heat a tonne, the heat counted as power). This layout: the same 125 t an hour; 25.9 MW, of which 19.3 the grate''s plasma torches; no cooling water (the pellets cool on the grate in the air it draws, the waste gas leaves by the baghouse''s stack); 3.3 kg/s of water dried off the green balls; 2,502 t of plant and frame, 7,188 t of concrete. One shaft furnace at its full rate takes 79.4 kg/s of pellets, about 2.3 of these.'}
+totals: {rate: 34.7222222222222, power: 25950000.0, heat: 2105000.0, water: 4.444, mass: 9783000.0, against_module: 'module.pellet-plant: one box 250 x 100 x 40 m, 23 MW (45 kWh and 0.5 GJ of heat a tonne, the heat counted as power). This layout: the same 125 t an hour; 26.0 MW, of which 19.3 the grate''s plasma torches; the pellets cool on the grate in the air it draws and the waste gas leaves by the baghouse''s stack, so only the torches'' and the transformer''s 2.1 MW goes to a one-cell tower; 4.4 kg/s of water dried off the green balls; 2,595 t of plant and frame, 7,188 t of concrete. One shaft furnace at its full rate takes 79.4 kg/s of pellets, about 2.3 of these.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}

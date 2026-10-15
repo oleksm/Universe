@@ -1766,7 +1766,7 @@ def pellet_units():
         name=f"Induration grate, {P_RATE * 3.6:.0f} t an hour", size_class=4, fits="bay-s4", dims=(44.0, 14.4, 18.0),
         desc=(f"A straight grate {GRATE_W:g} m wide with {GRATE_L:g} m under its hood: a chain of {pallets} pallet cars carries a bed of green balls on a layer of fired ones along +x through drying, preheating, firing at about 1,300 deg C, and cooling; "
               f"the cooling zone's hot air goes back over the bed to the firing zone, so it needs only {P_FIRE / P_RATE / 1e3:.0f} kJ of new heat a kilogram, here {P_FIRE / 1e6:.1f} MW from {torches} electric plasma torches in the hood (there is no fuel to burn). "
-              f"The chain's loop: a straight top run {L_run:g} m long (x -{L_run / 2:g} to {L_run / 2:g}, the grate's top 8.5 m up), round sprockets of {R_sp:g} m pitch radius at each end, and back underneath at 5.3 m, {pallets} cars of 1.5 m filling its {2 * L_run + 2 * math.pi * R_sp:.1f} m; the hood (inside {GRATE_W:g} m wide, {GRATE_L:g} m long over x -{GRATE_L / 2:g} to {GRATE_L / 2:g}, its walls' lower edge 8.75 m up, clear of the cars' wheels, with sliding seals down to the cars' side walls, 4.75 m clear inside, its outer roof 13.8 m up) leaves 2.5 m open at each end to load and tip; the hot-air recycle ducts over it reach 17.8 m. Wind boxes between the runs (6 to 8.3 m up), in four groups along the hood: updraft drying x -14 to -10, downdraft drying and preheat -10 to -2, firing and after-firing -2 to 6 (the torches in the hood's walls there), cooling 6 to 14. Four fan skids on the +y side at x -9, -3, 3 and 9 (y 4.5, centres 3 m up): at x 9 the cooling fan blows outside air up through the cooling boxes; the hot air off the bed there goes back by a duct over the hood's roof from x 11 to the firing zone at x -3 (direct recuperation); at x 3 the recuperation fan draws the firing boxes' gas and blows it up through the updraft drying boxes; at x -3 the hood exhaust fan draws the updraft drying hood, and at x -9 the waste gas fan the downdraft drying and preheat boxes, both into one waste header to the layout's duct. Gas: the cooling fan {m_cool:.0f} kg/s of air, the recuperation duct over the roof the same at about 1,000 deg C ({duct(m_cool, 1000):.1f} m inside 0.3 m of lining), the recuperation fan {m_recu:.0f} kg/s at about 350 deg C ({duct(m_recu, 350):.1f} m mains), the two waste fans as much again at about 120 deg C ({duct(m_recu, 120):.1f} m mains); each box group's down-legs 1.0 to 1.2 m, one every 4 m. Green balls in on a roller feeder at local (-20, 0, 9) over the loading end; fired pellets tip off the +x sprocket into a chute to (21, 0, 2); waste gas out to the layout's duct at (0, 6, 3)."),
+              f"The chain's loop: a straight top run {L_run:g} m long (x -{L_run / 2:g} to {L_run / 2:g}, the grate's top 8.5 m up), round sprockets of {R_sp:g} m pitch radius at each end, and back underneath at 5.3 m, {pallets} cars of 1.5 m filling its {2 * L_run + 2 * math.pi * R_sp:.1f} m; the hood (inside {GRATE_W:g} m wide, {GRATE_L:g} m long over x -{GRATE_L / 2:g} to {GRATE_L / 2:g}, its walls' lower edge 8.75 m up, clear of the cars' wheels, with sliding seals down to the cars' side walls, 4.75 m clear inside, its outer roof 13.8 m up) leaves 2.5 m open at each end to load and tip; the hot-air recycle ducts over it reach 17.8 m. Wind boxes between the runs (6 to 8.3 m up), in four groups along the hood: updraft drying x -14 to -10, downdraft drying and preheat -10 to -2, firing and after-firing -2 to 6 (the torches in the hood's walls there), cooling 6 to 14. Four fan skids on the +y side at x -9, -3, 3 and 9 (y 4.5, centres 3 m up): at x 9 the cooling fan blows outside air up through the cooling boxes; the hot air off the bed there goes back by a duct over the hood's roof from x 11 to the firing zone at x -3 (direct recuperation); at x 3 the recuperation fan draws the firing boxes' gas and blows it up through the updraft drying boxes; at x -3 the hood exhaust fan draws the updraft drying hood, and at x -9 the waste gas fan the downdraft drying and preheat boxes, both into one waste header to the layout's duct. Gas: the cooling fan {m_cool:.0f} kg/s of air, the recuperation duct over the roof the same at about 1,000 deg C ({duct(m_cool, 1000):.1f} m inside 0.3 m of lining), the recuperation fan {m_recu:.0f} kg/s at about 350 deg C ({duct(m_recu, 350):.1f} m mains), the two waste fans as much again at about 120 deg C ({duct(m_recu, 120):.1f} m mains); each box group's down-legs 1.0 to 1.2 m, one every 4 m. Green balls in on a roller feeder at local (-20, 0, 9) over the loading end; fired pellets tip off the +x sprocket into a chute to (21, 0, 2); waste gas out to the layout's duct at (0, 6, 3); the torches' cooling water (a tenth of their power) by a pair of {math.sqrt(4 * P_FIRE / 0.9 * 0.1 / (4186 * 10) / 1000 / 2.0 / math.pi) * 1000:.0f} mm flanges on the -y face at (0, -6, 1) flow and (0.6, -6, 1) return, a ring main along the hood's walls to each torch."),
         built_of=[part("Pallet cars", "material.stainless-steel-304", pallets * 5000.0, f"{pallets} cars {GRATE_W:g} x 1.5 m of heat-resisting cast steel, 5 t each (from memory); stainless steel stands for the alloy"),
                   part("Hood lining", REF, 380256.4, "300 mm over the hood's walls and roof; measured on model v1"),
                   part("Hood casing", A36, 36133.7, "10 mm; measured on model v1"),
@@ -1778,7 +1778,7 @@ def pellet_units():
                   part("Gas mains and legs", A36, 36.7 * math.pi * 2.408 * 0.008 * RHO["steel"] + 74.5 * math.pi * 1.906 * 0.006 * RHO["steel"] + 5.2 * math.pi * 1.008 * 0.008 * RHO["steel"] + 13.0 * math.pi * 1.006 * 0.006 * RHO["steel"], "36.7 m of 2.4 m main in 8 mm, 74.5 m of 1.9 m in 6 mm, 5.2 m of 1 m firing legs in 8 mm and 13 m of 1 m legs in 6 mm; lengths measured on model v1, lagging left out"),
                   part("Plasma torches", "good.electric-motors", torches * 2000.0, f"{torches} torches of 1.5 MW, 2 t each with their supplies, from memory"),
                   part("Process fans", "good.electric-motors", 4 * 10000.0, "four fans, from memory")],
-        needs={"power": P_FIRE / 0.9 + fans, "gravity": 1.0},
+        needs={"power": P_FIRE / 0.9 + fans, "heat": P_FIRE / 0.9 * 0.1, "gravity": 1.0},
         recipes=pmod["recipes"], life=pmod.get("life"),
         basis=[{"of": ["recipes"], "tier": "derived", "note": "The module's recipe (module.pellet-plant), carried here: the module stays the game's until it reads layouts."},
                {"of": ["physical", "built_of"], "tier": "derived", "review": True, "note": f"The grate from the rate at about {P_RATE * 86.4 / (GRATE_W * GRATE_L):.0f} t a m2 a day; the hood, pallets and frame from memory."},
@@ -1789,6 +1789,7 @@ def pellet_units():
     tp["name"] = tp["name"].replace("Furnace", "Plant")
     out[f"plant-transformer-{P_P / 0.9 / PF * 1.1 / 1e6:.0f}mva"] = tp
     out["baghouse-450k"] = baghouse_unit(450000, (24.0, 12.0, 14.0))
+    out["cooling-tower-pellet"] = cooling_unit(out["induration-grate-125th"]["needs"]["heat"] + tp["needs"]["heat"], "the plasma torches' and the plant transformer's")
     return out
 
 
@@ -1798,7 +1799,8 @@ def pellet_plant_air(us, recs):
     openings = [(-60.0, -3.0, 6.0, -57.0, 3.0, 12.0),     # the ore belt in, west
                 (66.0, -3.0, 0.0, 69.0, 3.0, 6.0),        # the pellet belt out, east
                 (36.0, 12.0, 0.0, 42.0, 15.0, 6.0),       # the waste gas duct out, north
-                (-3.0, -15.0, 0.0, 3.0, -12.0, 6.0)]      # a door and the cables, south
+                (-3.0, -15.0, 0.0, 3.0, -12.0, 6.0),      # a door and the cables, south
+                (39.0, -15.0, 0.0, 42.0, -12.0, 3.0)]     # the torches' cooling water, south
     groups, ground_nodes, n_nodes, cells = lattice(box, cell, 8, None, openings)
     x0, y0, z0, x1, y1, z1 = box
     span_in = y1 - y0 - 2 * cell
@@ -1844,7 +1846,10 @@ def pellet_plant_air(us, recs):
         {"id": "G", "mount": "plant-mount.bay-s4", "unit": "unit.induration-grate-125th", "at": [41.0, 0.0, 0.0], "note": "in the hall's east end: its 48 m mount square is wider than the hall (the floor it stands on runs wall to wall)"},
         {"id": "D", "mount": "plant-mount.bay-s3", "unit": "unit.baghouse-450k", "at": [39.0, 36.0, 0.0], "note": "outside, north, its stack at its east end"},
         {"id": "T", "mount": "plant-mount.bay-s2", "unit": f"unit.{tkey}", "at": [0.0, -24.0, 0.0], "note": "outside, south, in a fire-walled vault"},
+        {"id": "C", "mount": "plant-mount.bay-s3", "unit": "unit.cooling-tower-pellet", "at": [30.0, -27.0, 0.0], "note": "outside, south-east"},
     ]
+    q_t, q_tr = recs["induration-grate-125th"]["needs"]["heat"], us[tkey]["needs"]["heat"]
+    d_tw, d_tt = math.sqrt(4 * q_t / (4186 * 10) / 1000 / 2.0 / math.pi), max(0.08, math.sqrt(4 * q_tr / (4186 * 10) / 1000 / 2.0 / math.pi))
     q_gas = 450000 / 3600
     d_gas = math.sqrt(4 * q_gas / (math.pi * 20.0))
     links = [
@@ -1855,7 +1860,9 @@ def pellet_plant_air(us, recs):
         link("conveyor", "green ball belt", (-6.0, -10.5, 1.0), (21.0, 0.0, 9.0), A36, 100.0, 40000.0, "a 0.8 m belt collecting the four discs' green balls (the north pair's by a short cross belt from y 1.5), rising to the grate's roller feeder", via=[(12.0, -10.5, 1.0)]),
         link("conveyor", "pellet belt", (62.0, 0.0, 2.0), (110.0, 0.0, 2.0), A36, 150.0, 100000.0, f"a 1 m belt: {P_RATE:.1f} kg/s of fired pellets off the grate's end, out by the east wall to the shaft furnace's pellet belt, beyond the layout"),
         link("duct", "waste gas", (41.0, 6.0, 3.0), (39.0, 30.0, 12.0), A36, math.pi * d_gas * 0.006 * RHO["steel"], None, f"{d_gas:.1f} m across, 6 mm plate, insulated: from the process fans' discharge through the north wall to the baghouse's inlet", via=[(39.0, 6.0, 3.0), (39.0, 20.0, 3.0), (39.0, 20.0, 12.0)]),
-        link("cable", "plant supply", (0.0, -24.0 + us[tkey]["dims"][1] / 2, 4.0), (0.0, -10.0, 3.0), CU, 3 * P_P / 0.9 / PF / (math.sqrt(3) * 6600) / 4e6 * RHO["copper"], None, "three phases at 6.6 kV in a cable tray, copper at 4 A/mm2, through the south door to the hall's switchroom"),
+        link("pipe", "cooling water to the torches", (36.0, -27.0, 0.75), (41.0, -6.0, 1.0), A36, 2 * math.pi * d_tw * 0.005 * RHO["steel"], None, f"a pair of {d_tw * 1000:.0f} mm pipes, flow and return: {q_t / (4186 * 10):.0f} kg/s from the tower's ports at y 0 (local), east and north through the hall's south wall to the grate's flanges on its -y face", via=[(40.5, -27.0, 0.75), (40.5, -8.0, 0.75), (40.5, -6.0, 1.0)]),
+        link("pipe", "cooling water to the transformer", (36.0, -22.5, 0.75), (-2.9, -24.0, 1.0), A36, 2 * math.pi * d_tt * 0.004 * RHO["steel"], None, f"a pair of {d_tt * 1000:.0f} mm pipes: {q_tr / (4186 * 10):.1f} kg/s from the tower's ports at local y 4.5, west along y -19 and into the transformer's cooler ports on its -x end", via=[(37.5, -22.5, 0.75), (37.5, -19.0, 0.75), (-4.5, -19.0, 0.75), (-4.5, -24.0, 0.75), (-4.5, -24.0, 1.0)]),
+        link("cable", "plant supply", (0.0, -24.0 + us[tkey]["dims"][1] / 2, 2.9), (0.0, -10.0, 3.0), CU, 3 * P_P / 0.9 / PF / (math.sqrt(3) * 6600) / 4e6 * RHO["copper"], None, "three phases at 6.6 kV in a cable tray, copper at 4 A/mm2, through the south door to the hall's switchroom"),
     ]
     ground = [
         {"what": "Hall floor", "item": CONC, "volume": r(x_in * span_in * 0.4), "note": f"0.4 m, {x_in:.0f} x {span_in:.0f} m"},
@@ -1879,7 +1886,7 @@ def pellet_plant_air(us, recs):
     xs = [x0, x1] + [b["at"][0] + s * unit_dims(recs, b)[0] / 2 for b in bays for s in (-1, 1)] + [p[0] for l in links for p in (l["from"], l["to"], *l.get("via", []))]
     ys = [y0, y1] + [b["at"][1] + s * unit_dims(recs, b)[1] / 2 for b in bays for s in (-1, 1)] + [p[1] for l in links for p in (l["from"], l["to"], *l.get("via", []))]
     against = (f"module.pellet-plant: one box {mp['length']:g} x {mp['width']:g} x {mp['height']:g} m, {P_P / 1e6:.0f} MW (45 kWh and 0.5 GJ of heat a tonne, the heat counted as power). "
-               f"This layout: the same {P_RATE * 3.6:.0f} t an hour; {power / 1e6:.1f} MW, of which {P_FIRE / 0.9 / 1e6:.1f} the grate's plasma torches; no cooling water (the pellets cool on the grate in the air it draws, the waste gas leaves by the baghouse's stack); "
+               f"This layout: the same {P_RATE * 3.6:.0f} t an hour; {power / 1e6:.1f} MW, of which {P_FIRE / 0.9 / 1e6:.1f} the grate's plasma torches; the pellets cool on the grate in the air it draws and the waste gas leaves by the baghouse's stack, so only the torches' and the transformer's {(q_t + q_tr) / 1e6:.1f} MW goes to a one-cell tower; "
                f"{water:.1f} kg/s of water dried off the green balls; {(mass_units + mass_links + frame_mass) / 1000:,.0f} t of plant and frame, {mass_ground / 1000:,.0f} t of concrete. "
                f"One shaft furnace at its full rate takes {PELLETS:.1f} kg/s of pellets, about {PELLETS / P_RATE:.1f} of these.")
     layout = {
@@ -1894,7 +1901,7 @@ def pellet_plant_air(us, recs):
                   "cladding": {"item": "stock.al6061-sh-2", "area": r(clad_area), "mass": r(clad)},
                   "carries": ["unit.mill-crane-30t"], "mass": r(frame_mass), "sized": sized},
         "ground": ground,
-        "totals": {"rate": P_RATE, "power": r(power), "heat": 0.0, "water": r(water), "mass": r(total), "against_module": against},
+        "totals": {"rate": P_RATE, "power": r(power), "heat": r(q_t + q_tr), "water": r(water), "mass": r(total), "against_module": against},
         "staff": pmod.get("staff"),
         "basis": [{"of": ["bays", "links", "frame.box", "frame.openings"], "tier": "invented", "review": True, "note": "Laid out from memory of straight-grate pellet plants."},
                   {"of": ["totals"], "tier": "derived", "note": "Summed from the units."},
