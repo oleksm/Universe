@@ -1,9 +1,9 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
 identity: {key: unit.ingot-crane-10t, name: 'Ingot crane, 10 t', description: 'A double-girder ingot crane on the hall''s runways: it lifts hot ingots off the ingot car, one at a time, onto the cooling racks; later lays each cooled ingot on a crop saw''s table and the cropped ingot onto the crating line''s roller table. Its scissor tongs hang from the single hook by their bail: closed 0.8 m along x, 0.4 m across and 1.8 m tall under the hook; their jaws, 0.4 m long, open from 0.35 to 0.7 m across y and grip an ingot by two opposite faces, standing (below its head) or lying, so a cropped ingot with no eye left is held the same way; parked, the tongs hang closed. Hangs on the frame; names no bay. It travels along its x, its wheels at y -11.4 and +11.4 (22.8 m between the rails), its ends 0.3 m beyond; its origin on the runway''s rail plane; the trolley, with scissor ingot tongs, about 1.5 t of the trolley''s, runs 9 m either way along y, the hook raised to 0.1 m under the rail plane. Parked
-    at the hall''s centre.'}
+    at the hall''s centre. Its box runs from the closed tongs'' jaws, 1.9 m under the rail plane when parked, to the trolley''s top.'}
 size_class: 2
-physical: {length: 8.0, width: 23.4, height: 3.0, mass: 23690.0}
+physical: {length: 8.0, width: 23.4, height: 4.8, mass: 23690.0}
 built_of:
 - {what: Bridge girders, item: material.structural-steel-a36, mass: 19190.0, note: 'two box girders 1.4 x 0.8 m, 12 mm wall, 23.4 m long over a 22.8 m span, the lightest that meet span/800 under the load (4.1 mm, span/5581) and 150 MPa with every load on (30 MPa)'}
 - {what: Trolley and hoist, item: material.structural-steel-a36, mass: 3000.0, note: 'with scissor ingot tongs, about 1.5 t of the trolley''s: 30% of the load, from memory'}

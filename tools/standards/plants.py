@@ -2003,6 +2003,9 @@ def yard_units():
         basis=[{"of": ["built_of"], "tier": "derived", "review": True, "note": "Steel measured on blender's model v1; the drive from memory."},
                {"of": ["physical", "holds", "needs"], "tier": "invented", "review": True, "note": "From memory."}])
     out["ingot-crane-10t"] = bridge_crane_unit(10000.0, 22.8, 3000.0, kind="Ingot crane", job="it lifts hot ingots off the ingot car, one at a time, onto the cooling racks; later lays each cooled ingot on a crop saw's table and the cropped ingot onto the crating line's roller table. Its scissor tongs hang from the single hook by their bail: closed 0.8 m along x, 0.4 m across and 1.8 m tall under the hook; their jaws, 0.4 m long, open from 0.35 to 0.7 m across y and grip an ingot by two opposite faces, standing (below its head) or lying, so a cropped ingot with no eye left is held the same way; parked, the tongs hang closed", gear="scissor ingot tongs, about 1.5 t of the trolley's")
+    ic = out["ingot-crane-10t"]
+    ic["dims"] = (ic["dims"][0], ic["dims"][1], r(ic["dims"][2] + 1.8, 3))        # the closed tongs hang 1.8 m under the raised hook
+    ic["desc"] += " Its box runs from the closed tongs' jaws, 1.9 m under the rail plane when parked, to the trolley's top."
     out["sampling-lab"] = dict(
         name="Sampling laboratory", size_class=1, fits="bay-s1", dims=(6.0, 6.0, 3.5),
         desc="A cabin with a saw that cuts a sample from one ingot of each heat, a grinder, and a spark emission spectrometer that reads the steel's composition in minutes, so the heat's grade can be certified on its crates' labels.",
