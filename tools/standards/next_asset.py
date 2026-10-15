@@ -143,7 +143,7 @@ h1{font-size:22px;margin:0 0 4px}h2{font-size:17px;margin:28px 0 8px}p{color:var
 table{border-collapse:collapse;width:100%;margin-bottom:8px}th,td{text-align:left;padding:4px 8px;border-bottom:1px solid var(--line)}
 th{color:var(--mute);font-weight:600}td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}code{font-size:12.5px}
 .bar{background:var(--track);border-radius:3px;height:8px;min-width:120px}.bar i{display:block;background:var(--bar);height:8px;border-radius:3px}
-.wrap{overflow-x:auto}"""
+.wrap{overflow-x:auto}td.img{width:64px;padding:2px 8px}td.img img{width:56px;height:56px;object-fit:contain;display:block;border-radius:4px;background:var(--track)}"""
 
 
 def report(q, used):
@@ -166,10 +166,13 @@ def report(q, used):
     h.append("</table></div><h2>Left, in queue order</h2><div class=wrap><table><tr><th class=n>#</th><th>Kind</th><th>Key</th><th>Name</th><th>Stage</th><th class=n>Used</th></tr>")
     for n, (kind, key, path, r) in enumerate(q, 1):
         h.append(f"<tr><td class=n>{n}</td><td>{kind}</td><td><code>{key}</code></td><td>{name(r)}</td><td>{stage(r) or 'draft'}</td><td class=n>{used.get(key, 0)}</td></tr>")
-    h.append("</table></div><h2>Done</h2><div class=wrap><table><tr><th>Kind</th><th>Key</th><th>Name</th><th class=n>Version</th><th class=n>Triangles</th></tr>")
+    h.append("</table></div><h2>Done</h2><div class=wrap><table><tr><th></th><th>Kind</th><th>Key</th><th>Name</th><th class=n>Version</th><th class=n>Triangles</th></tr>")
     for kind, key, r in sorted(done, key=lambda x: (x[0], x[1])):
         v = r["visual"]
-        h.append(f"<tr><td>{kind}</td><td><code>{key}</code></td><td>{name(r)}</td><td class=n>{v.get('version', '')}</td><td class=n>{v.get('triangles', 0):,}</td></tr>")
+        d = os.path.join(store(), v.get("path", ""))
+        icon, thumb = os.path.join(d, "icon.png"), os.path.join(d, "thumb.png")
+        img = (f"<a href='file://{e(thumb)}'><img loading=lazy src='file://{e(icon if os.path.exists(icon) else thumb)}' alt=''></a>" if os.path.exists(thumb) or os.path.exists(icon) else "")
+        h.append(f"<tr><td class=img>{img}</td><td>{kind}</td><td><code>{key}</code></td><td>{name(r)}</td><td class=n>{v.get('version', '')}</td><td class=n>{v.get('triangles', 0):,}</td></tr>")
     h.append("</table></div>")
     out = os.path.join(os.path.dirname(TREE), "out", "model-report.html")
     os.makedirs(os.path.dirname(out), exist_ok=True)
