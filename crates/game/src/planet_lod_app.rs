@@ -20,7 +20,7 @@ use crate::hud_kit::{self, Hit, Panel};
 
 use universe_engine::apps::{App, Next};
 use universe_engine::glam::{DVec3, Quat, Vec2, Vec3};
-use universe_engine::{Camera, Color, Context, Frame, KeyCode, Light, Mesh, MouseButton, Transform, WireModel};
+use universe_engine::{Camera, Color, Context, Frame, KeyCode, Light, Mesh, MouseButton, PoolModel, PooledMesh, Transform, WireModel};
 
 /// Chunk edge (m): a chunk is one mesh.
 /// Chunks hold about this many finest triangles (their edge from the pattern's density: about 15 km on the 3x3
@@ -291,7 +291,7 @@ struct Clusters {
     ptr: Vec<[u32; 2]>,
     tris: Vec<[u32; 3]>,
     level: Vec<u8>,
-    meshes: Vec<Option<(View, Mesh, bool)>>,
+    meshes: Vec<Option<(View, PooledMesh, bool)>>,
     shown: Vec<u32>,
     /// The last frame each was wanted (shown, chosen or coming), for evicting the longest unwanted past RESIDENT.
     used: Vec<u64>,
@@ -342,26 +342,15 @@ impl Clusters {
     }
 }
 
-/// A cluster's mesh (as a chunk's: Mesh view corners shared and every edge once, Real view flat faces).
-fn cluster_mesh(cl: &Clusters, i: usize, pos: &[DVec3], col: &[[u8; 3]], view: View) -> Mesh {
+/// A cluster's mesh in the engine's pool (ask 5: indexed, 12-20 B a vertex, every pooled mesh one draw): corners
+/// shared; Mesh view every edge once, Real view each face its last corner's colour.
+fn cluster_mesh(cl: &Clusters, i: usize, pos: &[DVec3], col: &[[u8; 3]], view: View) -> PooledMesh {
     let [a, n] = cl.ptr[i];
     let tris = &cl.tris[a as usize..(a + n) as usize];
     let origin = cl.origin(i);
-    let mut m = WireModel::default();
-    if view == View::Real {
-        for t in tris {
-            let k = m.positions.len() as u32;
-            for &v in t {
-                m.positions.push((pos[v as usize] - origin).as_vec3());
-            }
-            m.faces.push([k, k + 1, k + 2]);
-            let rgb = col[t[2] as usize].map(srgb_to_linear);
-            m.colors.extend([[rgb[0], rgb[1], rgb[2], 1.0]; 3]);
-        }
-        return Mesh::new(m);
-    }
+    let mut m = PoolModel::default();
     let mut local: std::collections::HashMap<u32, u32> = std::collections::HashMap::with_capacity(tris.len() * 2);
-    let mut at = |v: u32, m: &mut WireModel| -> u32 {
+    let mut at = |v: u32, m: &mut PoolModel| -> u32 {
         *local.entry(v).or_insert_with(|| {
             m.positions.push((pos[v as usize] - origin).as_vec3());
             m.positions.len() as u32 - 1
@@ -371,14 +360,19 @@ fn cluster_mesh(cl: &Clusters, i: usize, pos: &[DVec3], col: &[[u8; 3]], view: V
     for t in tris {
         let f = [at(t[0], &mut m), at(t[1], &mut m), at(t[2], &mut m)];
         m.faces.push(f);
-        for (x, y) in [(t[0], t[1]), (t[1], t[2]), (t[2], t[0])] {
-            if seen.insert((x.min(y), x.max(y))) {
-                let e = [at(x, &mut m), at(y, &mut m)];
-                m.edges.push(e);
+        if view == View::Real {
+            let c = col[t[2] as usize];
+            m.face_colors.push([c[0], c[1], c[2], 255]);
+        } else {
+            for (x, y) in [(t[0], t[1]), (t[1], t[2]), (t[2], t[0])] {
+                if seen.insert((x.min(y), x.max(y))) {
+                    let e = [at(x, &mut m), at(y, &mut m)];
+                    m.edges.push(e);
+                }
             }
         }
     }
-    Mesh::new(m)
+    PooledMesh::new(&m)
 }
 
 /// Cluster meshes kept at most (about 2 GB of GPU at 128 triangles each).
@@ -1058,7 +1052,7 @@ impl PlanetLodApp {
         need.dedup();
         need.truncate(4000);
         let (pos, col) = (&self.d.pos, &self.d.col);
-        let built: Vec<(usize, Mesh)> = need.par_iter().map(|&i| (i, cluster_mesh(&cl, i, pos, col, view))).collect();
+        let built: Vec<(usize, PooledMesh)> = need.par_iter().map(|&i| (i, cluster_mesh(&cl, i, pos, col, view))).collect();
         for (i, m) in built {
             cl.meshes[i] = Some((view, m, false));
         }
@@ -1489,7 +1483,6 @@ impl App for PlanetLodApp {
             sent += g.tris.len();
             drawn.push((mesh, g.origin));
         }
-        let mut drawn_cl: Vec<(Mesh, DVec3)> = vec![];
         if let Some(cl) = &self.clusters {
             let mut cl = cl.lock().unwrap();
             // (Asked again every frame until on the GPU: a frame the render thread skips loses its requests, and
@@ -1497,12 +1490,14 @@ impl App for PlanetLodApp {
             let mut handed = 0;
             for m in cl.meshes.iter_mut().flatten() {
                 if !m.1.gpu_resident() && handed < 3000 {
-                    frame.prepare_mesh(&m.1);
+                    frame.prepare_pooled(&m.1);
                     m.2 = true;
                     handed += 1;
                 }
             }
             let mut tris_shown = 0;
+            // (One group for every cluster drawn: the engine draws them all in one call for faces, one for edges.)
+            let group = frame.pool_group(&Transform { position: DVec3::ZERO, rotation: Quat::IDENTITY, scale: 1.0 }, pat_line, fill_of(land), if edges { 1.0 } else { 0.0 }, true);
             for &i in &cl.shown {
                 let i = i as usize;
                 let Some((_, mesh, _)) = &cl.meshes[i] else { continue };
@@ -1510,17 +1505,12 @@ impl App for PlanetLodApp {
                 if !Self::in_view(&cam, o, cl.row[i][4] as f64, aspect) {
                     continue;
                 }
-                let t = Transform { position: o, rotation: Quat::IDENTITY, scale: 1.0 };
-                draw(frame, mesh, &t, pat_line, fill_of(land));
+                frame.pooled(group, mesh, o);
                 chunks_drawn += 1;
                 tris_shown += cl.ptr[i][1] as usize;
-                drawn_cl.push((mesh.clone(), o));
             }
             sent += tris_shown;
             pattern_tris += tris_shown;
-        }
-        for (m, o) in &drawn_cl {
-            drawn.push((m, *o));
         }
         let max_draw = if self.clusters.is_some() { 0 } else { self.max_draw };
         for ch in &self.chunks {
