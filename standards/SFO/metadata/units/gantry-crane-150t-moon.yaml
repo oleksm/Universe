@@ -10,6 +10,12 @@ built_of:
 - {what: Legs and sill beams, item: material.structural-steel-a36, mass: 82740.0, note: 'four box legs 1 x 1 m, 25 mm, from the sills'' tops at z 1 to 24, and two sill beams; measured on model v1'}
 - {what: 'Seats, braces, rails and wheel pockets', item: material.structural-steel-a36, mass: 21920.0, note: 'the trolley''s rails, the legs'' braces and seats, the bridges over the wheel pockets; measured on model v1'}
 needs: {power: 300000.0}
+visual:
+  format: "freefall-model/1"
+  path: "models/gantry-crane-150t-moon/v1"
+  manifest_sha256: "ba799e17a82e1417e464ca665a79de2960ed761093b329323411e7198aaaa843"
+  version: 1
+  triangles: 7404
 life: 788940000
 basis:
 - of: [physical, built_of]
