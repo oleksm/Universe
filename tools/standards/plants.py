@@ -2270,10 +2270,12 @@ def radiator_unit(T, whose):
               f"the top face, white, radiates to the sky, the underside to the shaded ground. {q:.0f} W a m2 of panel at lunar noon, the worst case: the sun overhead on the top ({RAD_ALPHA:g} of {SUN:.0f} W/m2 absorbed), the ground under it at {T_UNDER:.0f} K; more at night. "
               f"The loop's flow and return headers ({d_h * 1000:.0f} mm) run round the edge in the 2 m margin, a branch to each row of panels; its ports at local (-24, -0.6, 1) flow and (-24, 0.6, 1) return. "
               " For airless ground only: on a world with air a tower is lighter. Kept clean of dust, which darkens the white."),
-        built_of=[part("Panels", "material.aluminium-alloy-6061", face + tubes, f"two 2 mm face sheets and tubes 20 mm across, 1.5 mm wall, at 150 mm"),
-                  part("Legs", "material.aluminium-alloy-6061", legs, "four 100 mm box legs, 4 mm, 3 m, a panel"),
-                  part("Panel rails", "material.aluminium-alloy-6061", rails, "100 x 50 x 3 mm channel round each panel's edge, carrying its skins between the legs"),
-                  part("Headers and pumps", "good.pumps", 4000.0 + 20.0 * A / 44.0, "from memory")],
+        built_of=[part("Panel skins and edges", "material.aluminium-alloy-6061", 20907.1, "two 2 mm face sheets a panel and their edges; measured on blender's model of the 330 K field (v1), the same for every field"),
+                  part("Panel tubes", "material.aluminium-alloy-6061", tubes, "tubes 20 mm across, 1.5 mm wall, at 150 mm, bonded between the sheets (not drawn)"),
+                  part("Legs", "material.aluminium-alloy-6061", 1592.5, "four 100 mm box legs, 4 mm, 3 m, a panel; measured on model v1"),
+                  part("Panel rails", "material.aluminium-alloy-6061", 1639.3, "100 x 50 x 3 mm channel round each panel's edge, carrying its skins between the legs; measured on model v1"),
+                  part("Headers, branches and supports", "material.aluminium-alloy-6061", 3174.5 * d_h / 0.15, "the mains round the margin, an 80 mm pair to each row and 50 mm stubs to each panel, 3 mm walls (2 mm the stubs), with their supports: measured on model v1 for 150 mm mains" + ("" if abs(d_h - 0.15) < 1e-9 else f", scaled to these {d_h * 1000:.0f} mm mains")),
+                  part("Pumps", "good.pumps", 2000.0, "from memory")],
         holds=water, rejects={"heat": q * A, "temperature": T}, needs={"power": pumps, "atmosphere": "vacuum"},
         basis=[{"of": ["rejects", "physical"], "tier": "derived", "review": True, "note": f"Stefan-Boltzmann at emissivity {RAD_EPS}; absorptance, the shaded ground's temperature and the panel's layout invented or from memory."},
                {"of": ["built_of", "holds", "needs"], "tier": "derived", "review": True, "note": "From the panel's sheets and tubes; pumps at 3 bar and 75%."}])
