@@ -2790,7 +2790,7 @@
 - { record: unit.shaft-furnace-200th-hp, at: "2026-10-14T19:26:44Z", status: draft, summary: "first tracked", sha: "a36f3c28899dff95" }
 - { record: unit.slag-pot-car, at: "2026-10-14T14:59:35Z", status: draft, summary: "changed", sha: "99ae6089782a9bea" }
 - { record: unit.stack-crane-20t, at: "2026-10-15T04:02:06Z", status: draft, summary: "changed", sha: "169bc25878c20b1a" }
-- { record: unit.stacker-reclaimer-1500th, at: "2026-10-15T16:25:23Z", status: draft, summary: "changed: visual", sha: "90af7ef98e59179b" }
+- { record: unit.stacker-reclaimer-1500th, at: "2026-10-15T16:31:37Z", status: draft, summary: "changed: identity", sha: "d4026872fb7b28dd" }
 - { record: unit.stair-tower-12m, at: "2026-10-14T20:31:28Z", status: draft, summary: "changed", sha: "47201be2e61453ae" }
 - { record: unit.stripper-crane-20t, at: "2026-10-14T21:36:13Z", status: draft, summary: "changed", sha: "248463a76b95017a" }
 - { record: unit.stripper-gantry-20t-moon, at: "2026-10-14T20:32:09Z", status: draft, summary: "changed: identity, built_of", sha: "9953a4704a13f3dd" }
@@ -2800,7 +2800,7 @@
 - { record: unit.vacuum-degasser-80t, at: "2026-10-14T18:23:23Z", status: draft, summary: "changed", sha: "b01f8bbfcca9fb37" }
 - { record: unit.water-treatment, at: "2026-10-15T04:02:06Z", status: draft, summary: "changed", sha: "7bb858e479a2759b" }
 - { record: unit.water-treatment-sealed, at: "2026-10-15T03:26:57Z", status: draft, summary: "first tracked", sha: "cc51e1a707bd7340" }
-- { record: unit.yard-tripper-1500th, at: "2026-10-15T16:01:43Z", status: draft, summary: "first tracked", sha: "93fff93119288082" }
+- { record: unit.yard-tripper-1500th, at: "2026-10-15T16:31:37Z", status: draft, summary: "changed: identity", sha: "054e3ef953b61d40" }
 - { record: vocabulary.asteroid, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "c85b5b93f49a4621" }
 - { record: vocabulary.asteroid-family, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "3893f86924156b47" }
 - { record: vocabulary.asteroid-moon, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "8de295aa732db166" }

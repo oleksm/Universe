@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
 identity: {key: unit.stacker-reclaimer-1500th, name: 'Bucket wheel stacker-reclaimer, 1,500 t an hour', description: 'Runs on its rail between two stockpile beds: stacking, its boom (32 m, slewing either side) drops ore from the yard belt''s tripper onto a bed; reclaiming, the bucket wheel at the boom''s end cuts into the pile''s face and sends the ore back down the boom onto the yard belt, which then runs the other way. Stacks 1,500 t an hour (a ship''s load landed at the port in a day), reclaims 500. Travels along its x on 10 m gauge, its origin on the running plane at the slewing centre. Stacking, its tripper (unit.yard-tripper-1500th, a separate car on the same rails, coupled behind it on -x) drops the ore into a feed hopper over the slewing centre at local (0, 0, 8.5), onto the boom''s belt. Its counterweight arm reaches back to x -16, its underside 11.8 m up, clear of the tripper''s head; the ballast, 150 t of cast iron blocks centred at x -14, balances the boom horizontal and stacking
-    about the slewing centre. The boom reaches x 34.75 with the wheel. It runs on four bogies, two to a rail with their centres at x -4.5 and 4.5, each 5.4 m long with four wheels of 1.2 m: sixteen wheels, about 290 kN each at 1 g.'}
+    about the slewing centre. The boom reaches x 34.75 with the wheel. It slews 95 degrees either way from along +x, enough to reach both beds as it travels, but not further, so its tripper can stand behind it: between z 7 and 11.8, the slewing part keeps within 15 degrees of the boom''s line near the axis (out to 3 m) and within 45 degrees beyond, and nothing of it reaches behind; its counterweight arm and supports hang from the mast above z 11.8; the mast''s legs stand at x 3 or more, the luff pivot at x 2.5; so at full slew none of it enters the tripper''s corridor (y -1.8 to 1.8, x -0.8 and back). The feed hopper is the tripper''s, not the machine''s, and the boom''s tail turns under it at the axis. It runs on four bogies, two to a rail with their centres at x -4.5 and 4.5, each 5.4 m long with four wheels of 1.2 m: sixteen wheels, about 290 kN each at 1 g.'}
 size_class: 3
 physical: {length: 51.0, width: 12.0, height: 20.0, mass: 519500.0}
 built_of:
@@ -15,13 +15,8 @@ built_of:
 - {what: Ballast, item: material.cast-iron-grey, mass: 150500.0, note: 'from the moment about the slewing centre with the boom horizontal and stacking: the boom 48 t and its belts and ore at 16 m, the wheel and its tip 46 t at 31.5, less the arm at 8 and the house at 4 behind; at 14 m; the model''s grey iron block, 149,981 kg with its bevels, agrees'}
 - {what: 'Drives, belts and machinery house', item: good.electric-motors, mass: 50000.0, note: 'the wheel''s 8 t drive, travel, slew and luff drives, the boom''s belts and drums and the house''s electrics, from memory'}
 needs: {power: 900000.0}
-visual:
-  format: "freefall-model/1"
-  path: "models/stacker-reclaimer-1500th/v1"
-  manifest_sha256: "c08f13e2311e87b9fb3b7993944a15b11bedddd2f823e7bee714da6f33aa0545"
-  version: 1
-  triangles: 20900
 life: 788940000
+visual: {format: freefall-model/1, path: models/stacker-reclaimer-1500th/v1, manifest_sha256: c08f13e2311e87b9fb3b7993944a15b11bedddd2f823e7bee714da6f33aa0545, version: 1, triangles: 20900}
 basis:
 - of: [physical, built_of]
   tier: derived
