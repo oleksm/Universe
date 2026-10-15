@@ -2033,7 +2033,7 @@ def yard_units():
         basis=[{"of": ["physical", "built_of", "needs"], "tier": "invented", "review": True, "note": "From memory."}])
     out["ingot-tipper"] = dict(
         name="Ingot tipper", size_class=1, fits="bay-s1", dims=(6.0, 3.0, 2.5),
-        desc=f"Lays a standing ingot down for the saws: the ingot crane sets a cooled ingot, big end up, into an L-shaped cradle at local (-1.5, 0), its back against the cradle's upright face (+x side); a hydraulic cylinder turns the cradle 90 degrees about a y axis at its foot, so the ingot lies along x on a short roller table, its big end toward +x, its top at about 1.5 m, where the crane takes it to a saw. About a minute a turn; {ING_M + HOT_TOP:,.0f} kg with its head.",
+        desc=f"Lays a standing ingot down for the saws: an L-shaped cradle whose pivot runs along y at local (0, 0, 1.0), on two pedestals at y -0.8 and 0.8. At rest its base plate is level at z 1.0 from x -0.5 to 0 and its back plate stands at x 0 from z 1.0 to 2.1; the ingot crane sets a cooled ingot, big end up, on the base against the back (its centre at (-0.24, 0)). A hydraulic cylinder turns the cradle 90 degrees toward +x about the pivot: the back plate comes down level at z 1.0, the ingot lies on it along x (x 0 to 1, its big end toward +x, its top at about 1.48), the base plate now an end stop at x 0; rollers from x 0 to 2 carry it clear, where the crane takes it to a saw. About a minute a turn; {ING_M + HOT_TOP:,.0f} kg with its head. Drawn at rest.",
         built_of=[part("Cradle, pivot and table", A36, 3500.0, "from memory"), part("Cylinder and power pack", "good.pumps", 800.0, "from memory")],
         needs={"power": 11e3},
         basis=[{"of": ["physical", "built_of", "needs"], "tier": "invented", "review": True, "note": "From memory."}])
@@ -2196,6 +2196,8 @@ def ingot_yard_air(us, recs):
     for g in ground:
         g["mass"] = r(g["volume"] * (7200.0 if g["item"] == CAST_IRON else RHO["concrete"]))
     fans = 4 * 22e3                                        # W: four wall fans blowing through the beds, from memory
+    links.append(link("cable", "cooling fans' supply", (-18.0, 11.0, 1.5), (18.0, 11.0, 1.5), CU, 0.6, None, "400 V along the north wall to four axial fans 2 m across on floor stands inside the north wall at x -18, -6, 6 and 18, their axes 1.5 m up, blowing south across the beds; the air leaves through the walls' open lowest 3 m and the roof's vents; 22 kW each, from memory (their mass with the stands about 1.2 t each, counted in the frame)"))
+    fmass += 4 * 1200.0
     used = [recs[b["unit"].split(".", 1)[1]] for b in bays] + [recs[m_["unit"].split(".", 1)[1]] for m_ in mobile] + [crane]
     power = sum(u.get("needs", {}).get("power", 0) for u in used) + fans
     mass_units = sum(u["physical"]["mass"] for u in used)

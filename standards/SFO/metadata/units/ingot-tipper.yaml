@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.ingot-tipper, name: Ingot tipper, description: 'Lays a standing ingot down for the saws: the ingot crane sets a cooled ingot, big end up, into an L-shaped cradle at local (-1.5, 0), its back against the cradle''s upright face (+x side); a hydraulic cylinder turns the cradle 90 degrees about a y axis at its foot, so the ingot lies along x on a short roller table, its big end toward +x, its top at about 1.5 m, where the crane takes it to a saw. About a minute a turn; 1,847 kg with its head.'}
+identity: {key: unit.ingot-tipper, name: Ingot tipper, description: 'Lays a standing ingot down for the saws: an L-shaped cradle whose pivot runs along y at local (0, 0, 1.0), on two pedestals at y -0.8 and 0.8. At rest its base plate is level at z 1.0 from x -0.5 to 0 and its back plate stands at x 0 from z 1.0 to 2.1; the ingot crane sets a cooled ingot, big end up, on the base against the back (its centre at (-0.24, 0)). A hydraulic cylinder turns the cradle 90 degrees toward +x about the pivot: the back plate comes down level at z 1.0, the ingot lies on it along x (x 0 to 1, its big end toward +x, its top at about 1.48), the base plate now an end stop at x 0; rollers from x 0 to 2 carry it clear, where the crane takes it to a saw. About a minute a turn; 1,847 kg with its head. Drawn at rest.'}
 size_class: 1
 fits: plant-mount.bay-s1
 physical: {length: 6.0, width: 3.0, height: 2.5, mass: 4300.0}
