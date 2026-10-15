@@ -2309,7 +2309,10 @@ def airless_units(us):
     gc = out["gantry-crane-20t-moon"]
     legs = 4 * box_tube(0.8, 0.8, 0.02, 22.0) * RHO["steel"] + 2 * box_tube(0.8, 0.6, 0.02, 10.0) * RHO["steel"]
     gc["built_of"].append(part("Legs and sill beams", A36, legs, "four box legs 0.8 x 0.8 m, 20 mm, 22 m, and two sill beams"))
-    gc["dims"] = (10.0, 25.0, 25.0)
+    gc["dims"] = (10.0, 25.2, 25.0)
+    gc["built_of"] = [dict(p_, mass=12922.6, note=p_["note"] + "; measured on blender's model v1, 12,922.6 kg") if p_["what"] == "Bridge girders" else p_ for p_ in gc["built_of"] if p_["what"] != "Legs and sill beams"]
+    gc["built_of"] += [part("Legs and sill beams", A36, 50801.2, "four box legs 0.8 x 0.8 m, 20 mm, from the sills' tops at z 1 to 22, and two sill beams 9.8 m; measured on model v1"),
+                       part("Rails, stops, plates, braces and hangers", A36, 11330.3, "the trolley's rails and stops, the end plates, the legs' braces and the festoon hangers; measured on model v1")]
     gc["desc"] = gc["desc"].replace("on the hall's runways", "on its own legs, running on two ground rails 24 m apart").replace("its origin on the runway's rail plane", "its origin on the ground rails' plane, its girders 22 m up") + f" Sized for {MOON_G[1]:g} m/s2."
     gc["desc"] += " Its bridge datum is the girders' underside at z 22 (their tops 22.8, the trolley's rails 22.88); parked, the hook is raised to z 21.9; the legs (0.8 x 0.8 m, 20 mm) stand from the sill beams' tops at z 1."
     out["crew-post"] = dict(
