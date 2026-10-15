@@ -1362,7 +1362,8 @@ def hydrogen_units():
                   part("End plates and tie rods", A36, ends, f"two plates 2.4 m across, 200 mm, and 2 t of rods a stack"),
                   part("Separators", A36, seps, "two vessels 2 m across, 6 m, 12 mm plate"),
                   part("Lye", "good.water", lye, "30% potassium hydroxide lye in the cells and half the separators, 1,280 kg/m3, which the registry has not got: water stands for it"),
-                  part("Lye pumps and coolers", "good.pumps", 8000.0, "from memory")],
+                  part("Lye pumps and coolers", "good.pumps", 8000.0, "from memory"),
+                  part("Skids, legs and stands", A36, 17869.6, "the stacks' skids and legs, the separators' feet, pipe and busbar stands; measured on model v1")],
         needs={"power": P_STACKS, "heat": I_BLK * (V_CELL - V_TN), "water": H_WATER / N_BLK},
         recipes=[dict(HREC, rate=H_RATE / N_BLK, power=P_STACKS)],
         basis=[{"of": ["recipes"], "tier": "derived", "note": f"The module's recipe (module.hydrogen-plant) for one block of {N_BLK}: the hydrogen from Faraday's law: {I_DC / 1e3:.0f} kA through {STACKS} stacks of {PER_STACK} cells in series; the power the cells' share ({P_STACKS * N_BLK / H_P:.0%} of the module's, the rest the rectifiers and plant)."},
@@ -2453,7 +2454,7 @@ def hydrogen_airless_units(us):
     b = dict(us["electrolyser-block-20mw"])
     b["name"] = b["name"] + ", 10 bar"
     seps = 2 * cyl_shell(2.0, 6.0, 0.025, bottom=2.0) * RHO["steel"]
-    b["built_of"] = [p_ for p_ in us["electrolyser-block-20mw"]["built_of"] if p_["what"] != "Separators"] + [part("Separators", A36, seps, "two vessels 2 m across, 6 m, 25 mm plate for 10 bar (40 MPa)")]
+    b["built_of"] = [dict(p_, note=p_["note"].replace("measured on model v1", "as the 3 bar block's, measured on its model v1")) for p_ in us["electrolyser-block-20mw"]["built_of"] if p_["what"] != "Separators"] + [part("Separators", A36, seps, "two vessels 2 m across, 6 m, 25 mm plate for 10 bar (40 MPa)")]
     b["desc"] = ("The electrolyser block built for airless ground: its stacks and separators held at about 10 bar, so the hydrogen goes to the shaft furnace's 8 bar loop with no compressor, standing in the open on a pad with no hall (in vacuum there is no air for a leak to burn in, but the oxygen side is kept apart and its lines are clean). "
                  "Its lye at about 80 deg C gives its heat to the layout's loop through its coolers. Otherwise as unit.electrolyser-block-20mw: " + us["electrolyser-block-20mw"]["desc"])
     b["needs"] = dict(us["electrolyser-block-20mw"]["needs"], atmosphere="any")

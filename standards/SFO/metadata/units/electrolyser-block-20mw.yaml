@@ -3,7 +3,7 @@
 identity: {key: unit.electrolyser-block-20mw, name: 'Electrolyser block, 19 MW', description: 'Alkaline electrolysis at about 3 bar: 4 stacks of 233 cells each (2.7 m2 active, 0.4 A/cm2 at 1.9 V, 443 V a stack), lying along y at local x -9, -4, 1 and 6, each 6.2 m long and 2.4 m across on a skid 1 m high; the lye (30% potassium hydroxide) carries the gases to two separators at x 10.5 (hydrogen at y -2.5, oxygen at y 2.5), 2 m across and 6 m tall on 2 m legs, and back by pumps through coolers. The stacks are in parallel: 43.1 kA of direct current at 443 V by a busbar to its terminals at local (0, -6, 3), a branch to each stack''s ends (10.8 kA a stack); hydrogen and oxygen out of the separators'' tops (z 8) into the layout''s headers; on the +y face, 1 m up, round local (11, 6, 1): the cooling loop''s pair of 250 mm flanges (101 kg/s at a 10 K rise; flow x 10.6, return x 11.4) and the demineralised water''s 50 mm flange at x 9.8.'}
 size_class: 3
 fits: plant-mount.bay-s3
-physical: {length: 24.0, width: 12.0, height: 8.0, mass: 211000.0}
+physical: {length: 24.0, width: 12.0, height: 8.0, mass: 228900.0}
 built_of:
 - {what: Bipolar plates, item: material.structural-steel-a36, mass: 76250.0, note: '931 plates of 3 mm steel, 3.5 m2 each with its rim, nickel-plated'}
 - {what: Electrodes and plating, item: material.nickel-200, mass: 8990.0, note: 'nickel mesh at 1.5 kg/m2 each side, 25 um of plating'}
@@ -12,6 +12,7 @@ built_of:
 - {what: Separators, item: material.structural-steel-a36, mass: 8286.0, note: 'two vessels 2 m across, 6 m, 12 mm plate'}
 - {what: Lye, item: good.water, mass: 43430.0, note: '30% potassium hydroxide lye in the cells and half the separators, 1,280 kg/m3, which the registry has not got: water stands for it'}
 - {what: Lye pumps and coolers, item: good.pumps, mass: 8000.0, note: from memory}
+- {what: 'Skids, legs and stands', item: material.structural-steel-a36, mass: 17870.0, note: 'the stacks'' skids and legs, the separators'' feet, pipe and busbar stands; measured on model v1'}
 needs: {power: 19100000.0, heat: 4221000.0, water: 0.945}
 recipes:
 - makes: element.h

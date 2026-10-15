@@ -825,8 +825,8 @@
 - { record: layout.arc-furnace-airless, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "befaa429a44d04ce" }
 - { record: layout.casting-bay-air, at: "2026-10-15T02:26:46Z", status: draft, summary: "changed: physical", sha: "64ae565ca9d653a2" }
 - { record: layout.casting-bay-airless, at: "2026-10-14T21:36:13Z", status: draft, summary: "changed: physical, totals", sha: "ed7687b7564fac7a" }
-- { record: layout.hydrogen-plant-air, at: "2026-10-15T02:24:50Z", status: draft, summary: "changed: physical, totals", sha: "ff79c37fec114854" }
-- { record: layout.hydrogen-plant-airless, at: "2026-10-14T19:28:17Z", status: draft, summary: "first tracked", sha: "7d8c41a2b8a39bdb" }
+- { record: layout.hydrogen-plant-air, at: "2026-10-15T02:37:13Z", status: draft, summary: "changed: physical, totals", sha: "a75b6dcc32fcc833" }
+- { record: layout.hydrogen-plant-airless, at: "2026-10-15T02:37:13Z", status: draft, summary: "changed: physical, totals", sha: "38fddac6c356f8cb" }
 - { record: layout.ingot-yard-air, at: "2026-10-14T21:38:01Z", status: draft, summary: "changed: identity, physical, bays, totals", sha: "be2f1f8941755a1b" }
 - { record: layout.ladle-station-air, at: "2026-10-15T02:26:46Z", status: draft, summary: "changed: physical", sha: "31ea2691985163d3" }
 - { record: layout.ladle-station-airless, at: "2026-10-15T02:24:50Z", status: draft, summary: "changed: physical", sha: "fa8e490ab722454b" }
@@ -2746,8 +2746,8 @@
 - { record: unit.dri-cooling-loop, at: "2026-10-15T01:24:23Z", status: draft, summary: "changed", sha: "46962a5f5ae51829" }
 - { record: unit.eaf-vessel-80t, at: "2026-10-14T16:01:10Z", status: draft, summary: "changed: physical, built_of, visual", sha: "f948e3f34829ba7e" }
 - { record: unit.eaf-vessel-80t-sealed, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "6a1b4d84de74483c" }
-- { record: unit.electrolyser-block-20mw, at: "2026-10-15T02:30:01Z", status: draft, summary: "changed: identity", sha: "bf007d3f56ff6465" }
-- { record: unit.electrolyser-block-20mw-10bar, at: "2026-10-15T02:30:01Z", status: draft, summary: "changed: identity", sha: "4681f59aa2748be0" }
+- { record: unit.electrolyser-block-20mw, at: "2026-10-15T02:37:13Z", status: draft, summary: "changed: physical, built_of", sha: "c1380a8c50c40b85" }
+- { record: unit.electrolyser-block-20mw-10bar, at: "2026-10-15T02:38:10Z", status: draft, summary: "changed: physical, built_of", sha: "b93cbbc1cf0fb4d4" }
 - { record: unit.forklift-2t5, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "f2ec04344ce47c2c" }
 - { record: unit.furnace-transformer-14mva, at: "2026-10-14T18:15:58Z", status: draft, summary: "changed", sha: "f296531f2bc7dd18" }
 - { record: unit.furnace-transformer-90mva, at: "2026-10-14T15:45:44Z", status: draft, summary: "changed: identity", sha: "d7b34abc2bacd989" }
