@@ -821,7 +821,7 @@
 - { record: law.tube-mass, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "a2f143c80b1de3d3" }
 - { record: law.tube-time, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "934385090028c5e6" }
 - { record: law.year, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "29f1ef4424e5cc98" }
-- { record: layout.arc-furnace-air, at: "2026-10-15T02:26:46Z", status: draft, summary: "changed: physical", sha: "9c46b2daef0b5cf0" }
+- { record: layout.arc-furnace-air, at: "2026-10-15T14:53:36Z", status: draft, summary: "changed: links", sha: "9553ccf6eed90e0e" }
 - { record: layout.arc-furnace-airless, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "befaa429a44d04ce" }
 - { record: layout.casting-bay-air, at: "2026-10-15T02:26:46Z", status: draft, summary: "changed: physical", sha: "64ae565ca9d653a2" }
 - { record: layout.casting-bay-airless, at: "2026-10-14T21:36:13Z", status: draft, summary: "changed: physical, totals", sha: "ed7687b7564fac7a" }
@@ -831,7 +831,7 @@
 - { record: layout.ladle-station-air, at: "2026-10-15T02:26:46Z", status: draft, summary: "changed: physical", sha: "31ea2691985163d3" }
 - { record: layout.ladle-station-airless, at: "2026-10-15T02:24:50Z", status: draft, summary: "changed: physical", sha: "fa8e490ab722454b" }
 - { record: layout.ore-yard-air, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "80cee716ce980cb3" }
-- { record: layout.pellet-plant-air, at: "2026-10-15T12:45:31Z", status: draft, summary: "changed: totals", sha: "61b2ef2c2bf1bede" }
+- { record: layout.pellet-plant-air, at: "2026-10-15T14:53:36Z", status: draft, summary: "changed: links", sha: "e13b789c336f78fb" }
 - { record: layout.shaft-furnace-air, at: "2026-10-15T02:28:54Z", status: draft, summary: "changed: physical", sha: "8e973731966b75b2" }
 - { record: layout.shaft-furnace-airless, at: "2026-10-15T02:24:50Z", status: draft, summary: "changed: physical", sha: "7749b2c8502caf19" }
 - { record: market.art, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "517671b6a46daee3" }
@@ -2760,7 +2760,7 @@
 - { record: unit.heater-transformer-131mva, at: "2026-10-14T23:21:51Z", status: draft, summary: "changed", sha: "7efdc1b7a92f020c" }
 - { record: unit.hydrogen-purifier, at: "2026-10-15T03:26:57Z", status: draft, summary: "changed", sha: "80a46b46c60f8eb6" }
 - { record: unit.hydrogen-purifier-10bar, at: "2026-10-15T03:01:55Z", status: draft, summary: "first tracked", sha: "e83da2f1e77940a3" }
-- { record: unit.induration-grate-125th, at: "2026-10-15T12:47:16Z", status: draft, summary: "changed: visual", sha: "fef555e531231ff3" }
+- { record: unit.induration-grate-125th, at: "2026-10-15T14:53:36Z", status: draft, summary: "changed", sha: "dd2b4366548b5b5c" }
 - { record: unit.ingot-car-40t, at: "2026-10-14T21:39:31Z", status: draft, summary: "changed", sha: "ffb4022d169c5a26" }
 - { record: unit.ingot-crane-10t, at: "2026-10-14T21:38:01Z", status: draft, summary: "changed: identity", sha: "81e5a51032488c8d" }
 - { record: unit.ladle-car-80t, at: "2026-10-14T14:50:41Z", status: draft, summary: "changed", sha: "455ad05163bdf8c8" }

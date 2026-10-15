@@ -79,8 +79,9 @@ links:
   item: material.structural-steel-a36
   mass: 1905.0
   via:
-  - [-37.0, 3.0, 12.2]
-  - [-24.0, 3.0, 12.2]
+  - [-37.0, 2.3, 0.5]
+  - [-37.0, 2.3, 12.2]
+  - [-24.0, 2.3, 12.2]
   - [-24.0, 0.0, 12.2]
   note: 250 mm rubber-lined, 10 mm wall, pumped from the mill's sump up to the filters' distribution box between their troughs, over the filtrate receivers at 12.2 m and down into the box's top
 - kind: pipe
@@ -202,7 +203,7 @@ links:
   - [40.5, -27.0, 0.75]
   - [40.5, -8.0, 0.75]
   - [40.5, -6.0, 1.0]
-  note: 'a pair of 171 mm pipes, flow and return: 46 kg/s from the tower''s ports at y 0 (local), east and north through the hall''s south wall to the grate''s flanges on its -y face'
+  note: 'a pair of 171 mm pipes, flow and return: 46 kg/s from the tower''s ports at y 0 (local), east and north through the hall''s south wall to the grate''s flanges on its -y face; the returns run 0.45 m up under the flows at 0.75, 500 mm reducers at the tower''s ports'
 - kind: pipe
   name: cooling water to the transformer
   from: [36.0, -22.5, 0.75]

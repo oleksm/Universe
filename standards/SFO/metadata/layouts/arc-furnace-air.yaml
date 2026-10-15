@@ -111,7 +111,7 @@ links:
   mass: 137.1
   via:
   - [-16.5, -6.0, 1.5]
-  note: 'a pair of 150 mm pipes, 5 mm wall, teed off the hall pair, through the vault''s west wall to the transformer''s cooler ports (its -x end, 1 m up): 450 kW at a 10 K rise is 11 kg/s'
+  note: 'a pair of 150 mm pipes, 5 mm wall, teed off the hall pair, through the vault''s west wall to the transformer''s cooler ports (its -x end, 1 m up): 450 kW at a 10 K rise is 11 kg/s; the returns run 0.45 m up under the flows at 0.75, 500 mm reducers at the tower''s ports'
 - kind: pipe
   name: cooling water to the off-gas duct
   from: [-27.0, -1.5, 0.75]
