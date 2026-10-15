@@ -5,7 +5,7 @@ stands_for: module.pellet-plant
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 210.0, width: 75.0, height: 68.0, mass: 10410000.0}
+physical: {length: 210.0, width: 75.0, height: 68.0, mass: 10430000.0}
 bays:
 - id: M
   mount: plant-mount.bay-s3
@@ -108,15 +108,31 @@ links:
   note: a 0.8 m belt on the filters' deck along x under all eight discs' chutes (y -2.4, 1 m above the deck), then up and over the four balling discs' feed points, shuttling
 - kind: conveyor
   name: green ball belt
-  from: [-6.0, -10.5, 1.0]
-  to: [21.0, 0.0, 9.0]
-  length: 33.98
+  from: [10.5, -10.5, 1.0]
+  to: [-17.0, -10.5, 1.0]
+  length: 27.5
   item: material.structural-steel-a36
-  mass: 3398.0
-  via:
-  - [12.0, -10.5, 1.0]
-  power: 40000.0
-  note: a 0.8 m belt collecting the four discs' green balls (the north pair's by a short cross belt from y 1.5), rising to the grate's roller feeder
+  mass: 2750.0
+  power: 15000.0
+  note: a 0.8 m belt level along y -10.5 under the south discs' screens, west, collecting the four discs' green balls (the north pair's by a short cross belt from y 1.5)
+- kind: conveyor
+  name: green ball lift
+  from: [-17.0, -11.5, 0.7]
+  to: [21.0, -11.5, 9.9]
+  length: 39.1
+  item: material.structural-steel-a36
+  mass: 3910.0
+  power: 30000.0
+  note: a 0.8 m belt along the south wall rising east at under 14 degrees (green balls are soft and roll back on a steeper belt), from a 0.3 m drop off the collecting belt
+- kind: conveyor
+  name: green ball feed
+  from: [21.0, -11.5, 9.6]
+  to: [21.0, 0.0, 9.6]
+  length: 11.5
+  item: material.structural-steel-a36
+  mass: 1150.0
+  power: 10000.0
+  note: a 0.8 m shuttle belt north over the grate's open loading end, 0.3 m under the lift's head, onto the roller feeder (at 9 m) across the grate's width
 - kind: conveyor
   name: pellet belt
   from: [62.0, 0.0, 2.0]
@@ -195,14 +211,15 @@ frame:
   sized: 'At 1 g: roof 1249 Pa (2 mm aluminium, the frame about 20 kg/m2, 1 kPa of snow and wind, the last invented) over a 24 m span in 3 m deep strips puts 90 kN in a chord: st4340-tb-100x3 takes 242 kN. A wheel of the 30 t crane loaded at the runway''s end puts 259 kN on a wall node, with the roof''s share 304 kN: st4340-tb-160x3 takes 695 kN. Each the kit''s lightest section with half again to spare. The runway bends to 44 MPa between nodes, against 470 MPa with half again to spare. Wind and footings not yet checked.'
 ground:
 - {what: Hall floor, item: good.concrete, volume: 1181.0, note: '0.4 m, 123 x 24 m', mass: 2834000.0}
-- {what: Mill foundation, item: good.concrete, volume: 486.0, note: 'two piers under the trunnions on a 3 m block, sized to the drum''s dynamic load (not yet checked)', mass: 1166000.0}
-- {what: Filter deck, item: good.concrete, volume: 84.0, note: a 0.5 m deck 6 m up on six columns, mass: 201600.0}
+- {what: Mill foundation, item: good.concrete, volume: 486.0, note: 'two piers under the trunnions on a 3 m block, sized to the drum''s dynamic load (not yet checked), with a pit 0.4 m deep under the girth gear''s guard (x -41.8 to -40.6, y -3.2 to 3.2, its floor at z -0.4)', mass: 1166000.0}
+- {what: Filter deck, item: good.concrete, volume: 92.0, note: 'a 14 x 8 x 0.5 m deck 6 m up on six 1 m square columns (two rows of three, 6 m apart along x); the green ball lift passes south of it', mass: 220800.0}
 - {what: Grate foundations, item: good.concrete, volume: 528.0, note: under the machine's frame, mass: 1267000.0}
 - {what: Frame footings, item: good.concrete, volume: 445.5, note: a 1.5 x 1.5 x 1 m pad under each of the lattice's 198 ground nodes, mass: 1069000.0}
+- {what: Filter deck stair, item: material.structural-steel-a36, volume: 0.3185, note: 'a steel stair with landings from the floor to the filter deck''s west edge, from memory, 2.5 t', mass: 2500.0}
 - {what: Outside slabs, item: good.concrete, volume: 271.2, note: the baghouse's slab and the transformer's vault, mass: 650900.0}
 - {what: Stack foundation, item: good.concrete, volume: 122.5, note: 'a block 7 x 7 x 2.5 m under the baghouse''s 68 m stack (centre (48, 36)), its top at grade, the stack''s base ring bolted to it: against an invented 1 kPa of wind on the stack, its overturning moment about 3.2 MN m leaves the load within the middle third of the block (e 0.9 m against 1.2); soil bearing about 130 kPa at the toe', mass: 294000.0}
-- {what: Cooling tower basin, item: good.concrete, volume: 117.5, note: 'a 0.5 m floor 0.6 m wider than the tower each way, walls 0.3 m thick and 2 m deep, twelve piers under the tower''s feet and skid, as the hydrogen plant''s', mass: 282000.0}
-totals: {rate: 34.7222222222222, power: 25950000.0, heat: 2105000.0, water: 4.444, mass: 10410000.0, against_module: 'module.pellet-plant: one box 250 x 100 x 40 m, 23 MW (45 kWh and 0.5 GJ of heat a tonne, the heat counted as power). This layout: the same 125 t an hour; 26.0 MW, of which 19.3 the grate''s plasma torches; the pellets cool on the grate in the air it draws and the waste gas leaves by the baghouse''s stack, so only the torches'' and the transformer''s 2.1 MW goes to a one-cell tower; 4.4 kg/s of water dried off the green balls; 2,649 t of plant and frame, 7,764 t of concrete. One shaft furnace at its full rate takes 79.4 kg/s of pellets, about 2.3 of these.'}
+- {what: Cooling tower basin, item: good.concrete, volume: 114.7, note: 'a 0.5 m floor 0.6 m wider than the tower each way, walls 0.3 m thick and 2 m deep, eight piers under the tower''s four feet and its skid''s four corners', mass: 275300.0}
+totals: {rate: 34.7222222222222, power: 25970000.0, heat: 2105000.0, water: 4.444, mass: 10430000.0, against_module: 'module.pellet-plant: one box 250 x 100 x 40 m, 23 MW (45 kWh and 0.5 GJ of heat a tonne, the heat counted as power). This layout: the same 125 t an hour; 26.0 MW, of which 19.3 the grate''s plasma torches; the pellets cool on the grate in the air it draws and the waste gas leaves by the baghouse''s stack, so only the torches'' and the transformer''s 2.1 MW goes to a one-cell tower; 4.4 kg/s of water dried off the green balls; 2,653 t of plant and frame, 7,780 t of concrete. One shaft furnace at its full rate takes 79.4 kg/s of pellets, about 2.3 of these.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}

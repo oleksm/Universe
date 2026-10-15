@@ -1862,7 +1862,9 @@ def pellet_plant_air(us, recs):
         link("pipe", "slurry", (-37.0, 3.0, 0.5), (-24.0, 0.0, 9.0), A36, math.pi * 0.25 * 0.010 * RHO["steel"], None, "250 mm rubber-lined, 10 mm wall, pumped from the mill's sump up to the filters' distribution box between their troughs", via=[(-37.0, 3.0, 9.5), (-24.0, 3.0, 9.5)]),
         link("pipe", "filtrate", (-30.0, 3.0, 6.5), (-53.0, 0.0, 4.0), A36, math.pi * 0.15 * 0.006 * RHO["steel"], None, "150 mm: the filtrate back from the filters' pump to the mill's feed chute", via=[(-33.0, 3.0, 6.5), (-33.0, 3.0, 5.0), (-53.0, 3.0, 5.0)]),
         link("conveyor", "cake belt", (-30.0, -2.4, 7.0), (6.0, 8.0, 7.5), A36, 100.0, 40000.0, "a 0.8 m belt on the filters' deck along x under all eight discs' chutes (y -2.4, 1 m above the deck), then up and over the four balling discs' feed points, shuttling", via=[(-18.0, -2.4, 7.0), (-12.0, -2.4, 8.0), (-12.0, 0.0, 8.5), (6.0, 0.0, 8.5)]),
-        link("conveyor", "green ball belt", (-6.0, -10.5, 1.0), (21.0, 0.0, 9.0), A36, 100.0, 40000.0, "a 0.8 m belt collecting the four discs' green balls (the north pair's by a short cross belt from y 1.5), rising to the grate's roller feeder", via=[(12.0, -10.5, 1.0)]),
+        link("conveyor", "green ball belt", (10.5, -10.5, 1.0), (-17.0, -10.5, 1.0), A36, 100.0, 15000.0, "a 0.8 m belt level along y -10.5 under the south discs' screens, west, collecting the four discs' green balls (the north pair's by a short cross belt from y 1.5)"),
+        link("conveyor", "green ball lift", (-17.0, -11.5, 0.7), (21.0, -11.5, 9.9), A36, 100.0, 30000.0, "a 0.8 m belt along the south wall rising east at under 14 degrees (green balls are soft and roll back on a steeper belt), from a 0.3 m drop off the collecting belt"),
+        link("conveyor", "green ball feed", (21.0, -11.5, 9.6), (21.0, 0.0, 9.6), A36, 100.0, 10000.0, "a 0.8 m shuttle belt north over the grate's open loading end, 0.3 m under the lift's head, onto the roller feeder (at 9 m) across the grate's width"),
         link("conveyor", "pellet belt", (62.0, 0.0, 2.0), (110.0, 0.0, 2.0), A36, 150.0, 100000.0, f"a 1 m belt: {P_RATE:.1f} kg/s of fired pellets off the grate's end, out by the east wall to the shaft furnace's pellet belt, beyond the layout"),
         link("duct", "waste gas", (41.0, 6.0, 3.0), (39.0, 30.0, 12.0), A36, math.pi * d_gas * 0.006 * RHO["steel"], None, f"{d_gas:.1f} m across, 6 mm plate, insulated: from the process fans' discharge through the north wall to the baghouse's inlet", via=[(39.0, 6.0, 3.0), (39.0, 20.0, 3.0), (39.0, 20.0, 12.0)]),
         link("pipe", "cooling water to the torches", (36.0, -27.0, 0.75), (41.0, -6.0, 1.0), A36, 2 * math.pi * d_tw * 0.005 * RHO["steel"], None, f"a pair of {d_tw * 1000:.0f} mm pipes, flow and return: {q_t / (4186 * 10):.0f} kg/s from the tower's ports at y 0 (local), east and north through the hall's south wall to the grate's flanges on its -y face", via=[(40.5, -27.0, 0.75), (40.5, -8.0, 0.75), (40.5, -6.0, 1.0)]),
@@ -1871,16 +1873,17 @@ def pellet_plant_air(us, recs):
     ]
     ground = [
         {"what": "Hall floor", "item": CONC, "volume": r(x_in * span_in * 0.4), "note": f"0.4 m, {x_in:.0f} x {span_in:.0f} m"},
-        {"what": "Mill foundation", "item": CONC, "volume": r(18 * 9 * 3.0), "note": "two piers under the trunnions on a 3 m block, sized to the drum's dynamic load (not yet checked)"},
-        {"what": "Filter deck", "item": CONC, "volume": r(12 * 8 * 0.5 + 6 * 1.0 * 1.0 * 6.0), "note": "a 0.5 m deck 6 m up on six columns"},
+        {"what": "Mill foundation", "item": CONC, "volume": r(18 * 9 * 3.0), "note": "two piers under the trunnions on a 3 m block, sized to the drum's dynamic load (not yet checked), with a pit 0.4 m deep under the girth gear's guard (x -41.8 to -40.6, y -3.2 to 3.2, its floor at z -0.4)"},
+        {"what": "Filter deck", "item": CONC, "volume": r(14 * 8 * 0.5 + 6 * 1.0 * 1.0 * 6.0), "note": "a 14 x 8 x 0.5 m deck 6 m up on six 1 m square columns (two rows of three, 6 m apart along x); the green ball lift passes south of it"},
         {"what": "Grate foundations", "item": CONC, "volume": r(44 * 12 * 1.0), "note": "under the machine's frame"},
         {"what": "Frame footings", "item": CONC, "volume": r(ground_nodes * 2.25), "note": f"a 1.5 x 1.5 x 1 m pad under each of the lattice's {ground_nodes} ground nodes"},
+        {"what": "Filter deck stair", "item": A36, "volume": r(2500.0 / RHO["steel"]), "note": "a steel stair with landings from the floor to the filter deck's west edge, from memory, 2.5 t"},
         {"what": "Outside slabs", "item": CONC, "volume": r(24 * 12 * 0.6 + 12 * 8 * 0.5 + 28 * 6 * 0.3), "note": "the baghouse's slab and the transformer's vault"},
         {"what": "Stack foundation", "item": CONC, "volume": r(7 * 7 * 2.5), "note": f"a block 7 x 7 x 2.5 m under the baghouse's {recs['baghouse-450k']['physical']['height']:g} m stack (centre (48, 36)), its top at grade, the stack's base ring bolted to it: against an invented 1 kPa of wind on the stack, its overturning moment about 3.2 MN m leaves the load within the middle third of the block (e 0.9 m against 1.2); soil bearing about 130 kPa at the toe"},
-        {"what": "Cooling tower basin", "item": CONC, "volume": r(12.6 * 12.6 * 0.5 + 4 * 12.3 * 2.0 * 0.3 + 12 * 0.6 * 0.6 * 2.0), "note": "a 0.5 m floor 0.6 m wider than the tower each way, walls 0.3 m thick and 2 m deep, twelve piers under the tower's feet and skid, as the hydrogen plant's"},
+        {"what": "Cooling tower basin", "item": CONC, "volume": r(12.6 * 12.6 * 0.5 + 4 * 12.3 * 2.0 * 0.3 + 8 * 0.6 * 0.6 * 2.0), "note": "a 0.5 m floor 0.6 m wider than the tower each way, walls 0.3 m thick and 2 m deep, eight piers under the tower's four feet and its skid's four corners"},
     ]
     for g in ground:
-        g["mass"] = r(g["volume"] * RHO["concrete"])
+        g["mass"] = r(g["volume"] * (RHO["steel"] if g["item"] == A36 else RHO["concrete"]))
     used = [recs[b["unit"].split(".", 1)[1]] for b in bays] + [crane]
     power = sum(u.get("needs", {}).get("power", 0) for u in used) + sum(l.get("power", 0) for l in links)
     water = sum(u.get("needs", {}).get("water", 0) for u in used)
