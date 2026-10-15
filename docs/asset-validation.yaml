@@ -5200,3 +5200,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.degassing-stand
+    version: 1
+    manifest_sha256: "d6f152ab5af50cf230ff187895ec0f38981ac51590578101ef18beb09682749f"
+    installed: 596e3725
+    game: "the loader (world::assets) at fso 596e3725"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/degassing-stand/v1 (164648 bytes, bounds [-3.3, 0.0, -1.82] to [1.85, 8.0, 4.1]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
