@@ -2146,6 +2146,7 @@ def ingot_yard_air(us, recs):
     members.append({"item": "stock.st4340-box-400x400x25", "count": 2, "where": f"crane runways, one a side, {x_in:.0f} m, their rail plane 9 m up at y -11.4 and +11.4"})
     fmass += 2 * x_in * rw_a * RHO["steel"]
     clad_area = 2 * (x1 - x0) * (z1 - z0) + 2 * (y1 - y0) * (z1 - z0) + (x1 - x0) * (y1 - y0) - sum(max(d - a, e - b) * (f - c) for a, b, c, d, e, f in doors) - 2 * (x1 - x0 + y1 - y0) * 3.0 + sum(max(d - a, e - b) * min(f - c, 3.0) for a, b, c, d, e, f in doors)   # the walls' lowest 3 m left open for the cooling air
+    clad_area -= 1.2 * 48.0                               # the roof's vent strip, y 0.9 to 2.1, x -24 to 24
     clad = clad_area * 0.002 * RHO["aluminium"]
     sec_stock = lambda g: yaml.safe_load(open(S + "mill-stock/" + strut(sec[g], cell)[1]["kit"]["section"].split(".", 1)[1].upper() + ".yaml"))
     sized = (f"At 1 g: roof {roof_q:.0f} Pa over a {span_in:.0f} m span puts {chord / 1e3:.0f} kN in a chord: {sec['roof']} takes {frames.strut_capacity(sec_stock('roof')) / 1e3:.0f} kN. "
@@ -2197,7 +2198,7 @@ def ingot_yard_air(us, recs):
         g["mass"] = r(g["volume"] * (7200.0 if g["item"] == CAST_IRON else RHO["concrete"]))
     fans = 4 * 22e3                                        # W: four wall fans blowing through the beds, from memory
     links.append(link("cable", "cooling fans' supply", (-18.0, 11.0, 1.5), (18.0, 11.0, 1.5), CU, 0.6, None, "400 V along the north wall to four axial fans 2 m across on floor stands inside the north wall at x -18, -6, 6 and 18, their axes 1.5 m up, blowing south across the beds; the air leaves through the walls' open lowest 3 m and the roof's vents; 22 kW each, from memory (their mass with the stands about 1.2 t each, counted in the frame)"))
-    fmass += 4 * 1200.0
+    fmass += 4 * 1200.0 + 48.0 * 2.4 * 0.002 * RHO['aluminium'] * 2   # the fans and stands; the vent's louvre caps
     used = [recs[b["unit"].split(".", 1)[1]] for b in bays] + [recs[m_["unit"].split(".", 1)[1]] for m_ in mobile] + [crane]
     power = sum(u.get("needs", {}).get("power", 0) for u in used) + fans
     mass_units = sum(u["physical"]["mass"] for u in used)
@@ -2217,9 +2218,9 @@ def ingot_yard_air(us, recs):
                      "description": "The ingots come in hot on their car from the casting bay; a crane lays them on racks in a cooling hall for a day; one of each heat is sampled and analysed; band saws crop each ingot's hot top (back to the arc furnace as scrap); a crating line puts each ingot in a heavy crate with its label; forklifts stack the crates two high on a paved yard and load them onto trucks for the port. For a world with air at about 1 g."},
         "stands_for": "module.ingot-yard",
         "site": {"atmosphere": "air", "gravity": [8.0, 11.0]},
-        "physical": {"length": L, "width": W, "height": z1, "mass": r(total)},
+        "physical": {"length": L, "width": W, "height": z1 + 0.45, "mass": r(total)},
         "bays": bays, "mobile": mobile, "links": links,
-        "frame": {"box": list(box), "cell": cell, "shape": f"Walls one cell thick, 12 m tall; a roof one cell deep over a {x_in:.0f} x {span_in:.0f} m floor; doors 6 m wide for the ingot rail (west) and the crates (east). Its walls' lower cells open at the sides for air (not yet drawn).",
+        "frame": {"box": list(box), "cell": cell, "shape": f"Walls one cell thick, 12 m tall; a roof one cell deep over a {x_in:.0f} x {span_in:.0f} m floor; doors 6 m wide for the ingot rail (west) and the crates (east). Its walls' lowest 3 m left unclad for the cooling air; a vent strip 1.2 m wide along the roof (y 0.9 to 2.1, x -24 to 24) under aluminium louvre caps standing 0.45 m above it, the chords kept.",
                   "openings": [list(d) for d in doors], "members": members,
                   "cladding": {"item": "stock.al6061-sh-2", "area": r(clad_area), "mass": r(clad)},
                   "carries": ["unit.ingot-crane-10t"], "mass": r(frame_mass), "sized": sized},
