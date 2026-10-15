@@ -5,7 +5,7 @@ stands_for: module.casting-bay
 site:
   atmosphere: none
   gravity: [1.6, 2.0]
-physical: {length: 72.0, width: 48.0, height: 27.0, mass: 4187000.0}
+physical: {length: 72.0, width: 48.0, height: 27.0, mass: 3368000.0}
 bays:
 - id: P
   mount: plant-mount.bay-s1
@@ -93,8 +93,8 @@ links:
 ground:
 - {what: Casting floor, item: material.regolith-sintered, volume: 576.0, note: '0.4 m of sintered regolith under the teeming and stripping, so spilt steel meets stone', mass: 1440000.0}
 - {what: Gantry rail sleepers, item: material.regolith-sintered, volume: 132.0, mass: 330000.0}
-- {what: Crew post berm, item: material.regolith, volume: 1132.0, note: 'loose regolith 1 m over the post''s crest (its top 5.3 m up), lying at 35 degrees, a cavity for the post, with openings for its windows (light wells on the north) and its airlock (a ramp cut on the west); with openings for its windows and airlock; at the airlock''s door a landing of packed regolith 2 x 2 m, its top at the threshold (1.35 m up), and a ramp down to the ground at about 1 in 3', mass: 1698000.0}
-totals: {rate: 27.7777777777778, power: 690000.0, heat: 0.0, water: 0.0, mass: 4187000.0, against_module: 'module.casting-bay: one box, the same on every world. This layout: the same rate; 0.69 MW; no water; no hall: the 150 t and 20 t cranes stand on their own legs, sized for 2 m/s2. The moulds and ingots cool by radiation alone, with no air to help: the second train stands longer (not yet worked out). 719 t of plant, 3,468 t of sintered regolith.'}
+- {what: Crew post berm, item: material.regolith, volume: 586.23, note: 'loose regolith at least 1 m over the post everywhere (its top 4 x 2 m, 5.3 m up), lying at 35 degrees, its foot about 19 x 17 m, a cavity for the post; measured on blender''s arc furnace shop; with openings for its windows (light wells on the north) and its airlock (a ramp cut on the west); with openings for its windows and airlock; at the airlock''s door a landing of packed regolith 2 x 2 m, its top at the threshold (1.35 m up), and a ramp down to the ground at about 1 in 3', mass: 879300.0}
+totals: {rate: 27.7777777777778, power: 690000.0, heat: 0.0, water: 0.0, mass: 3368000.0, against_module: 'module.casting-bay: one box, the same on every world. This layout: the same rate; 0.69 MW; no water; no hall: the 150 t and 20 t cranes stand on their own legs, sized for 2 m/s2. The moulds and ingots cool by radiation alone, with no air to help: the second train stands longer (not yet worked out). 719 t of plant, 2,649 t of sintered regolith.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}
