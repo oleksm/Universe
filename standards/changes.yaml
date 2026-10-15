@@ -2757,7 +2757,7 @@
 - { record: unit.gas-heater-122mw, at: "2026-10-14T23:18:51Z", status: draft, summary: "changed: identity", sha: "0387b010dcb0fe1c" }
 - { record: unit.hall-crane-20t, at: "2026-10-14T15:45:44Z", status: draft, summary: "changed", sha: "88da9f2b1f1ffdd5" }
 - { record: unit.heater-transformer-131mva, at: "2026-10-14T23:21:51Z", status: draft, summary: "changed", sha: "7efdc1b7a92f020c" }
-- { record: unit.hydrogen-purifier, at: "2026-10-15T03:15:59Z", status: draft, summary: "changed: physical, built_of", sha: "53247b16bad76fde" }
+- { record: unit.hydrogen-purifier, at: "2026-10-15T03:16:45Z", status: draft, summary: "changed: physical, built_of", sha: "8b402a474b5b18af" }
 - { record: unit.hydrogen-purifier-10bar, at: "2026-10-15T03:01:55Z", status: draft, summary: "first tracked", sha: "e83da2f1e77940a3" }
 - { record: unit.induration-grate-125th, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "9741fdd206bb54be" }
 - { record: unit.ingot-car-40t, at: "2026-10-14T21:39:31Z", status: draft, summary: "changed", sha: "ffb4022d169c5a26" }
