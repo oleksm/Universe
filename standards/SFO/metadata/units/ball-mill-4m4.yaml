@@ -14,6 +14,12 @@ built_of:
 - {what: Slurry sump and pumps, item: good.pumps, mass: 8000.0, note: from memory}
 holds: 150400.0
 needs: {power: 2149000.0, water: 3.28}
+visual:
+  format: "freefall-model/1"
+  path: "models/ball-mill-4m4/v1"
+  manifest_sha256: "a3095ce13179352c7581b7762111851e6c9b6460baa776d570bcfe50d04bdbd2"
+  version: 1
+  triangles: 11308
 life: 788940000
 basis:
 - of: [physical, built_of, holds, needs.power]
