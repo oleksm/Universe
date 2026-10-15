@@ -5035,3 +5035,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.forklift-2t5
+    version: 1
+    manifest_sha256: "1d5dce1a9e5c1c83b21b90416975f8769826867e830c1afb9909546bdf8fe50e"
+    installed: 00e426b9
+    game: "the loader (world::assets) at fso 00e426b9"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/forklift-2t5/v1 (289684 bytes, bounds [-1.815, 0.0, -0.635] to [1.8, 2.2, 0.635]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
