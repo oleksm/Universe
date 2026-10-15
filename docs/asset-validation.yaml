@@ -5170,3 +5170,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: layout.arc-furnace-airless
+    version: 1
+    manifest_sha256: "71396d8e114dad722d2d20c65478d8383b1e97f18472c7ec595aaa0ad777be0c"
+    installed: 56f16447
+    game: "the loader (world::assets) at fso 56f16447"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/arc-furnace-airless/v1 (19875416 bytes, bounds [-218.65, -1.4, -64.1] to [33.0, 23.7, 126.65]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
