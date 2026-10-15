@@ -5,7 +5,7 @@ stands_for: module.ingot-yard
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 235.7, width: 171.0, height: 15.45, mass: 17910000.0}
+physical: {length: 235.7, width: 171.0, height: 15.45, mass: 17930000.0}
 bays:
 - id: S
   mount: plant-mount.bay-s1
@@ -104,19 +104,21 @@ frame:
   - {item: stock.st4340-tb-100x3-d3000, count: 774, where: roof}
   - {item: stock.st4340-node-160b, count: 902, where: nodes}
   - {item: stock.st4340-box-400x400x25, count: 2, where: 'crane runways, one a side, 54 m, their rail plane 9 m up at y -11.4 and +11.4'}
-  cladding: {item: stock.al6061-sh-2, area: 3866.0, mass: 20880.0}
+  cladding: {item: stock.al6061-sh-2, area: 3881.0, mass: 20960.0}
   carries: [unit.ingot-crane-10t]
-  mass: 190200.0
+  mass: 189600.0
   sized: 'At 1 g: roof 1249 Pa over a 24 m span puts 90 kN in a chord: st4340-tb-100x3 takes 242 kN. A wheel of the 10 t crane loaded at the runway''s end, with the roof''s share, puts 163 kN on a wall node: st4340-tb-120x3 takes 424 kN. Wind and footings not yet checked.'
 ground:
-- {what: Hall floor, item: good.concrete, volume: 518.4, note: 0.4 m under the hall, mass: 1244000.0}
-- {what: Frame footings, item: good.concrete, volume: 243.0, note: a 1.5 x 1.5 x 1 m pad under each of the lattice's 108 ground nodes, mass: 583200.0}
-- {what: Stack yard, item: good.concrete, volume: 5029.0, note: '140 x 171 m paved 0.25 m east of the hall: 30,452 crates two high in 1523 lanes ten deep, either side of its aisles; outdoors, the crates under tarpaulins', mass: 12070000.0}
+- {what: Hall floor, item: good.concrete, volume: 493.4, note: '0.4 m under the hall, less the rail channel and the beds'' seats; measured on blender''s layout (candidate v01)', mass: 1184000.0}
+- {what: Frame footings, item: good.concrete, volume: 243.0, note: a 1.5 x 1.5 x 1 m pad under each of the lattice's 108 ground nodes; 243 m3 measured on blender's layout (candidate v01), mass: 583200.0}
+- {what: Aprons and rail channel, item: good.concrete, volume: 18.11, note: aprons outside the west and east doors (6.71 and 7.2 m3) and the ingot rail's channel bed (4.2); measured on blender's layout (candidate v01), mass: 43460.0}
+- {what: Runway brackets, item: material.structural-steel-a36, volume: 1.221, note: '400 x 400 x 25 mm stubs (6,712 kg) and 160 x 8 mm diagonals (2,874 kg) seating the crane runways on the inner wall nodes; measured on blender''s layout (candidate v01)', mass: 9585.0}
+- {what: Stack yard, item: good.concrete, volume: 5042.0, note: '140 x 171 m paved 0.25 m (5,985 m3 measured on blender''s layout, candidate v01, less the aisles, which are their link''s) east of the hall: 30,452 crates two high in 1523 lanes ten deep, either side of its aisles; outdoors, the crates under tarpaulins', mass: 12100000.0}
 - {what: 'Cooling bed, north', item: material.cast-iron-grey, volume: 12.6, note: 'cast iron floor plates 50 mm thick over x -5 to 23, y 0.5 to 9.5, so a hot ingot does not spall the concrete; 360 places, the ingots standing at 0.7 m along x and 1 m across y in the crane''s reach (y -9 to 9)', mass: 90720.0}
 - {what: 'Cooling bed, west', item: material.cast-iron-grey, volume: 2.062, note: 'cast iron floor plates 50 mm thick over x -23 to -17.5, y -4 to 3.5, so a hot ingot does not spall the concrete; 49 places, the ingots standing at 0.7 m along x and 1 m across y in the crane''s reach (y -9 to 9)', mass: 14850.0}
 - {what: 'Cooling bed, west centre', item: material.cast-iron-grey, volume: 3.6, note: 'cast iron floor plates 50 mm thick over x -17.5 to -9.5, y -5.5 to 3.5, so a hot ingot does not spall the concrete; 99 places, the ingots standing at 0.7 m along x and 1 m across y in the crane''s reach (y -9 to 9)', mass: 25920.0}
 - {what: 'Cooling bed, south-east', item: material.cast-iron-grey, volume: 1.925, note: 'cast iron floor plates 50 mm thick over x 12 to 23, y -9 to -5.5, so a hot ingot does not spall the concrete; 45 places, the ingots standing at 0.7 m along x and 1 m across y in the crane''s reach (y -9 to 9)', mass: 13860.0}
-totals: {rate: 0.0, power: 402000.0, heat: 0.0, water: 0.0, mass: 17910000.0, against_module: 'module.ingot-yard: one box 150 x 100 x 15 m, holding 50 kt. This layout: 30,452 heavy crates of one ingot each, two high as the crate allows, need a yard 140 x 171 m (2.4 ha), more than the module''s box; the cooling hall gives 9.5 MW of the ingots'' heat to the air; 0.40 MW against the module''s 0.5; 3,867 t of plant, frame and paving, 145 t of cooling beds, 13,897 t of concrete. 542 ingots cool 10 hours in the fans'' draught (553 places).'}
+totals: {rate: 0.0, power: 402000.0, heat: 0.0, water: 0.0, mass: 17930000.0, against_module: 'module.ingot-yard: one box 150 x 100 x 15 m, holding 50 kt. This layout: 30,452 heavy crates of one ingot each, two high as the crate allows, need a yard 140 x 171 m (2.4 ha), more than the module''s box; the cooling hall gives 9.5 MW of the ingots'' heat to the air; 0.40 MW against the module''s 0.5; 3,867 t of plant, frame and paving, 155 t of cooling beds and runway brackets, 13,911 t of concrete. 542 ingots cool 10 hours in the fans'' draught (553 places).'}
 staff:
 - {profession: profession.docker, count: 3}
 - {profession: profession.clerk, count: 1}
