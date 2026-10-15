@@ -73,13 +73,14 @@ links:
   name: slurry
   from: [-37.0, 3.0, 0.5]
   to: [-24.0, 0.0, 9.0]
-  length: 25.04
+  length: 30.9
   item: material.structural-steel-a36
-  mass: 1544.0
+  mass: 1905.0
   via:
-  - [-37.0, 3.0, 9.5]
-  - [-24.0, 3.0, 9.5]
-  note: 250 mm rubber-lined, 10 mm wall, pumped from the mill's sump up to the filters' distribution box between their troughs
+  - [-37.0, 3.0, 12.2]
+  - [-24.0, 3.0, 12.2]
+  - [-24.0, 0.0, 12.2]
+  note: 250 mm rubber-lined, 10 mm wall, pumped from the mill's sump up to the filters' distribution box between their troughs, over the filtrate receivers at 12.2 m and down into the box's top
 - kind: pipe
   name: filtrate
   from: [-30.0, 3.0, 6.5]
@@ -201,10 +202,11 @@ links:
   item: material.structural-steel-a36
   mass: 14610.0
   via:
-  - [39.0, 6.0, 3.0]
+  - [41.0, 8.5, 3.0]
+  - [39.0, 8.5, 3.0]
   - [39.0, 20.0, 3.0]
   - [39.0, 20.0, 12.0]
-  note: '2.8 m across, 6 mm plate, insulated: from the process fans'' discharge through the north wall to the baghouse''s inlet'
+  note: '2.8 m across, 6 mm plate, insulated: from the grate''s 1.9 m waste nozzle by a reducer north to y 8.5, through the north wall to the baghouse''s inlet'
 - kind: pipe
   name: cooling water to the torches
   from: [36.0, -27.0, 0.75]
