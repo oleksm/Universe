@@ -2214,7 +2214,7 @@ def ingot_yard_air(us, recs):
     against = (f"module.ingot-yard: one box {mp['length']:g} x {mp['width']:g} x {mp['height']:g} m, holding {imod['capacity']['holds'] / 1e6:.0f} kt. "
                f"This layout: {crates:,} heavy crates of one ingot each, two high as the crate allows, need a yard {yard_L:.0f} x {yard_W:.0f} m ({yard_L * yard_W / 1e4:.1f} ha), more than the module's box; "
                f"the cooling hall gives {rack_heat / 1e6:.1f} MW of the ingots' heat to the air; {power / 1e6:.2f} MW against the module's {imod['needs']['power'] / 1e6:.1f}; "
-               f"{(mass_units + mass_links + frame_mass) / 1000:,.0f} t of plant, frame and paving, {sum(g["mass"] for g in ground if g["item"] in (CAST_IRON, A36)) / 1000:,.0f} t of cooling beds and runway brackets, {sum(g["mass"] for g in ground if g["item"] == CONC) / 1000:,.0f} t of concrete. {on_racks} ingots cool {cool_h:g} hours in the fans' draught ({places} places).")
+               f"{(mass_units + mass_links + frame_mass) / 1000:,.0f} t of plant, frame and paving, {sum(g["mass"] for g in ground if g["item"] in (CAST_IRON, A36)) / 1000:,.0f} t of cooling beds and runway brackets, {sum(g["mass"] for g in ground if g["item"] == CONC) / 1000:,.0f} t of concrete. {on_racks} ingots cool {cool_h:g} hours in the fans' draught ({places} places). The crane makes about four moves an ingot ({4 * ing_rate * 3600:.0f} an hour), more than one crane can at a minute or so a move: the count of cranes is not yet worked out.")
     layout = {
         "identity": {"key": "layout.ingot-yard-air", "name": "Ingot yard, world with air",
                      "description": "The ingots come in hot on their car from the casting bay; a crane lays them on racks in a cooling hall for a day; one of each heat is sampled and analysed; band saws crop each ingot's hot top (back to the arc furnace as scrap); a crating line puts each ingot in a heavy crate with its label; forklifts stack the crates two high on a paved yard and load them onto trucks for the port. For a world with air at about 1 g."},
@@ -3155,6 +3155,150 @@ def pellet_plant_airless(us, recs):
     return layout, bays
 
 
+# The yards on airless ground: no water, no timber, no hall; the ingots cool by radiation to the sky.
+STEEL_CRATE = yaml.safe_load(open(S + "packages/crate-steel.yaml"))
+T_SAW = 150.0 + 273.15                 # K: an ingot cool enough for the saws (from memory)
+
+
+def yard_airless_units(us):
+    out = {}
+    g = MOON_G[1]
+    c = bridge_crane_unit(10000.0, 22.8, 3000.0, kind="Ingot gantry", job="on its own legs over the cooling beds, the tipper and the saws: it lifts hot ingots off the ingot car onto the beds, later sets each on the tipper, lays it on a saw's table and the cropped ingot in a steel crate on the crating line", gear="scissor ingot tongs, about 1.5 t of the trolley's", g=g, h_min=0.6)
+    legs = 4 * box_tube(0.5, 0.5, 0.012, 12.0) * RHO["steel"] + 2 * box_tube(0.5, 0.4, 0.012, 8.0) * RHO["steel"]
+    c["built_of"].append(part("Legs and sill beams", A36, legs, "four box legs 0.5 x 0.5 m, 12 mm, 12 m, and two sill beams"))
+    c["dims"] = (8.0, 25.0, 14.0)
+    c["desc"] = c["desc"].replace("on the hall's runways", "on its own legs, running on two ground rails 24 m apart").replace("its origin on the runway's rail plane", "its origin on the ground rails' plane, its girders 12 m up") + f" Sized for {g:g} m/s2. Its scissor tongs as the ingot crane's (unit.ingot-crane-10t)."
+    out["ingot-gantry-10t-moon"] = c
+    lab = dict(us["sampling-lab"])
+    lab["name"] = "Sampling laboratory, sealed"
+    lab["dims"] = (8.0, 6.0, 5.0)
+    lab["size_class"], lab["fits"] = 2, "bay-s2"
+    lab["desc"] = ("The sampling laboratory for airless ground: an aluminium cylinder 4 m across and 8 m long at 1 bar under a berm of loose regolith, its staff airlock at -x; the coupon comes in through a small sample lock (0.6 m across) beside it instead of a hatch. "
+                   "Inside as unit.sampling-lab: an abrasive cutter, a grinder and a spark emission spectrometer, its spark under argon as always. " + us["sampling-lab"]["desc"].split(": no ingot comes in. ")[1].split(" Inside,")[0])
+    lab["built_of"] = [part("Shell", "material.aluminium-alloy-6061", cyl_shell(4.0, 8.0, 0.006, bottom=2.0) * RHO["aluminium"], "4 m across, 8 m, 6 mm (1 bar gives 33 MPa)"),
+                       part("Locks, life support and fit-out", A36, 3000.0, "the staff airlock, the sample lock, air and heat, from memory"),
+                       part("Cutter, grinder and spectrometer", "good.electric-motors", 3000.0, "from memory")]
+    lab["needs"] = {"power": 80e3, "atmosphere": "vacuum"}
+    out["sampling-lab-sealed"] = lab
+    k = dict(us["crating-line"])
+    k["name"] = "Crating line, steel crates"
+    k["desc"] = us["crating-line"]["desc"].replace("an empty heavy crate", "an empty steel crate (package.crate-steel)").replace("the nailer's portal at x 3.5, where the lid is nailed on", "the latching portal at x 3.5, where the lid is clamped and latched").replace("label printer", "label marker (a stencil and paint that hold in vacuum)") + " For airless ground: no timber; its bearings and drives rated for vacuum and the lunar night."
+    k["needs"] = dict(us["crating-line"]["needs"], atmosphere="vacuum")
+    out["crating-line-steel"] = k
+    return out
+
+
+def ore_yard_airless(us, recs):
+    """The ore yard on airless ground: as for air, without the sprays; sintered regolith for concrete."""
+    air, _ = ore_yard_air(us, recs)
+    d = yaml.safe_load(yaml.safe_dump(air))
+    d["links"] = [l for l in d["links"] if not l["name"].startswith("dust sprays")]
+    for l in d["links"]:
+        if l["item"] == CONC:
+            l["item"], l["mass"] = SINTER, r(l["mass"] * RHO_SINTER / RHO["concrete"])
+            l["note"] = l["note"].replace("paved", "of sintered regolith")
+    for g_ in d["ground"]:
+        if g_["item"] == CONC:
+            g_["item"], g_["mass"] = SINTER, r(g_["volume"] * RHO_SINTER)
+            g_["note"] = g_.get("note", "").replace("; measured on blender's layout (candidate v01)", " (the volume as measured on blender's layout for air)").replace("sloped to drains", "level")
+    mass_units = sum(recs[b["unit"].split(".", 1)[1]]["physical"]["mass"] for b in d["bays"]) + sum(recs[m_["unit"].split(".", 1)[1]]["physical"]["mass"] for m_ in d["mobile"])
+    total = mass_units + sum(l["mass"] for l in d["links"]) + sum(g_["mass"] for g_ in d["ground"])
+    d["identity"] = {"key": "layout.ore-yard-airless", "name": "Ore yard, airless",
+                     "description": ("Two stockpile beds of ore either side of the bucket wheel stacker-reclaimer's rail, on airless ground at about a moon's gravity: as the yard for air, with the same machines, but no water sprays (with no air, dust thrown up falls back at once instead of drifting) and sintered regolith for concrete. "
+                                     "The machines' bearings, lubricants and belts are of kinds rated for vacuum and the lunar night's cold (rubber stiffens below about -50 deg C), not checked. Built separately from the yard for air.")}
+    d["site"] = {"atmosphere": "none", "gravity": list(MOON_G)}
+    d["physical"]["mass"] = r(total)
+    d["totals"]["water"] = 0.0
+    d["totals"]["mass"] = r(total)
+    d["totals"]["against_module"] = d["totals"]["against_module"].split(" t of plant and supports, ")[0].rsplit("; ", 1)[0] + f"; no water used; {total / 1000:,.0f} t in all, its ground of sintered regolith."
+    d["basis"] = [{"of": ["bays", "links", "mobile"], "tier": "invented", "review": True, "note": "As the yard for air, without the sprays."},
+                  {"of": ["ground", "physical"], "tier": "derived", "review": True, "note": "The beds as for air (iron ore's angle of repose barely depends on gravity); sintered regolith at 2,500 kg/m3 in place of concrete."},
+                  {"of": ["staff"], "tier": "derived", "note": "The module's watch, unchanged."}]
+    d.pop("visual", None)
+    print(f"layout.ore-yard-airless: {total / 1000:,.0f} t")
+    return d, d["bays"]
+
+
+def ingot_yard_airless(us, recs):
+    """The ingot yard on airless ground: no hall; a gantry over cooling beds open to the sky, steel crates four high."""
+    ing_rate = C_RATE * SOUND / ING_M
+    # Radiation alone, to a black sky: an ingot standing on a bed, 0.2 of its view to its neighbours.
+    area = 4 * (ING_A + ING_B) / 2 * ING_L + ING_A ** 2
+    mc = (ING_M + HOT_TOP) * 600.0
+    eps = 0.8 * 0.8
+    t_cool = mc / (3 * area * eps * SIGMA) * (1 / T_SAW ** 3 - 1 / (700.0 + 273.15) ** 3)
+    on_beds = math.ceil(ing_rate * t_cool)
+    pitch = 1.2
+    bed_x, bed_y = 22.0, 18.0
+    per_bed = int(bed_x / pitch) * int(bed_y / pitch)
+    n_beds = math.ceil(on_beds / per_bed)
+    beds = [(-26.0 + i * (bed_x + 2.0), -9.0) for i in range(n_beds)]
+    x_e = beds[-1][0] + bed_x
+    saws = 2
+    bays = [{"id": "T", "mount": "plant-mount.bay-s1", "unit": "unit.ingot-tipper", "at": [r(x_e + 4.5), -6.0, 0.0], "note": "east of the beds, under the gantry"},
+            {"id": "C1", "mount": "plant-mount.bay-s2", "unit": "unit.crop-saws", "at": [r(x_e + 16.0), -3.0, 0.0], "note": "cutting dry: no coolant in vacuum, so at about half the rate for air (from memory): two sets"},
+            {"id": "C2", "mount": "plant-mount.bay-s2", "unit": "unit.crop-saws", "at": [r(x_e + 30.0), -3.0, 0.0], "note": ""},
+            {"id": "K", "mount": "plant-mount.bay-s2", "unit": "unit.crating-line-steel", "at": [r(x_e + 30.0), 7.0, 0.0], "note": "under the gantry's east end, out along +x"},
+            {"id": "S", "mount": "plant-mount.bay-s2", "unit": "unit.sampling-lab-sealed", "at": [r(x_e + 6.0), -20.0, 0.0], "note": "outside the gantry, south, under its berm"},
+            {"id": "P", "mount": "plant-mount.bay-s1", "unit": "unit.crew-post", "at": [r(x_e + 18.0), -20.0, 0.0], "note": "south, under its berm"}]
+    x_g = x_e + 40.0
+    crates = math.ceil(imod["capacity"]["holds"] / (ING_M + STEEL_CRATE["physical"]["mass"]))
+    lanes = math.ceil(crates / STEEL_CRATE["stack"] / 10)
+    lane_w, lane_d = STEEL_CRATE["physical"]["width"] + 0.1, 10 * STEEL_CRATE["physical"]["length"]
+    rows = 4
+    per_row = math.ceil(lanes / (2 * rows))
+    yard_L, yard_W = per_row * lane_w, rows * (2 * lane_d + 4.5)
+    yx0 = x_g + 10.0
+    aisle_y = [r(-yard_W / 2 + lane_d + 2.25 + i * (2 * lane_d + 4.5)) for i in range(rows)]
+    aisle_path = []
+    for i, y in enumerate(aisle_y):
+        ends = (yx0, yx0 + yard_L) if i % 2 == 0 else (yx0 + yard_L, yx0)
+        aisle_path += [(r(ends[0]), y, 0.0), (r(ends[1]), y, 0.0)]
+    links = [
+        link("rail", "ingot rail", (-40.0, 6.0, 0.0), (-28.0, 6.0, 0.0), A36, 2 * 50.0, None, "from the casting bay, its car stopping at x -34 by the beds' west end, under the gantry"),
+        link("rail", "gantry rails", (-36.0, -12.0, 0.0), (r(x_g), 12.0, 0.0), A36, 2 * 60.0, None, "the ingot gantry's two rails, 24 m apart, over the beds, the tipper, the saws and the crating line", via=[(r(x_g), -12.0, 0.0), (r(x_g), 12.0, 0.0), (-36.0, 12.0, 0.0)]),
+        link("road", "yard aisles", aisle_path[0], aisle_path[-1], SINTER, 4.5 * 0.25 * RHO_SINTER, None, f"{rows} forklift aisles 4.5 m wide, {yard_L:.0f} m long, joined end to end, of sintered regolith 0.25 m", via=aisle_path[1:-1]),
+        link("road", "truck lane", (r(x_g), -3.0, 0.0), (r(yx0 + yard_L + 20.0), -3.0, 0.0), SINTER, 7.0 * 0.3 * RHO_SINTER, None, "7 m wide, sintered regolith 0.3 m: trucks load crates at the yard's east end, beyond the layout"),
+    ]
+    mobile = [{"unit": "unit.ingot-car-40t", "rides": "ingot rail", "at": [-34.0, 6.0, 0.0]},
+              {"unit": "unit.ingot-gantry-10t-moon", "rides": "gantry rails", "at": [0.0, 0.0, 0.0]}]
+    mobile += [{"unit": "unit.forklift-2t5", "rides": "yard aisles", "at": [r(yx0 + 10.0 + 20.0 * i), aisle_y[i % rows], 0.0]} for i in range(4)]
+    ground = [{"what": f"Cooling bed {i + 1}", "item": CAST_IRON, "volume": r(bed_x * bed_y * 0.05), "note": f"cast iron floor plates 50 mm thick over x {x:g} to {x + bed_x:g}, y {y:g} to {y + bed_y:g}, on sintered regolith: {per_bed} places, the ingots standing big end up at {pitch:g} m each way, open to the sky"} for i, (x, y) in enumerate(beds)]
+    ground += [{"what": "Work floor", "item": SINTER, "volume": r((x_g - x_e) * 24.0 * 0.4), "note": "0.4 m of sintered regolith under the tipper, saws and crating line"},
+               {"what": "Gantry rail sleepers", "item": SINTER, "volume": r(2 * (x_g + 36.0) * 1.0 * 0.6)},
+               {"what": "Stack yard", "item": SINTER, "volume": r((yard_L * yard_W - rows * yard_L * 4.5) * 0.25), "note": f"{yard_L:.0f} x {yard_W:.0f} m of sintered regolith 0.25 m: {crates:,} steel crates four high in {lanes} lanes ten deep (no tarpaulins: no weather)"},
+               {"what": "Berms", "item": "material.regolith", "volume": r(2 * (10 * 8 * 3.0 - math.pi * 4 * 6))}]
+    for g_ in ground:
+        g_["mass"] = r(g_["volume"] * (7200.0 if g_["item"] == CAST_IRON else RHO_SINTER if g_["item"] == SINTER else 1500.0))
+    used = [recs[b["unit"].split(".", 1)[1]] for b in bays] + [recs[m_["unit"].split(".", 1)[1]] for m_ in mobile]
+    power = sum(u.get("needs", {}).get("power", 0) for u in used)
+    mass_units = sum(u["physical"]["mass"] for u in used)
+    mass_links = sum(l["mass"] for l in links)
+    mass_ground = sum(g_["mass"] for g_ in ground)
+    total = mass_units + mass_links + mass_ground
+    heat = C_RATE * SOUND * 600.0 * (700.0 - 150.0)
+    against = (f"module.ingot-yard: one box, holding {imod['capacity']['holds'] / 1e6:.0f} kt. This layout: {crates:,} steel crates four high (a moon's gravity and the steel crate allow it) on a yard {yard_L:.0f} x {yard_W:.0f} m; "
+               f"no hall: {on_beds} ingots stand {t_cool / 3600:.0f} hours on {n_beds} beds open to the sky, radiating {heat / 1e6:.1f} MW to it (with no air, light alone takes their heat; on a lunar day the sun adds about a tenth near the end); "
+               f"the saws cut dry, two sets; {power / 1e6:.2f} MW; no water; one gantry makes about four moves an ingot ({4 * ing_rate * 3600:.0f} an hour), more than one crane can at a minute or so a move: its count is not yet worked out; {(mass_units + mass_links) / 1000:,.0f} t of plant, {mass_ground / 1000:,.0f} t of beds and ground.")
+    xs = [-40.0, yx0 + yard_L + 20.0]
+    layout = {
+        "identity": {"key": "layout.ingot-yard-airless", "name": "Ingot yard, airless",
+                     "description": "The ingots on airless ground at about a moon's gravity: they come hot on their car from the casting bay; a gantry crane on its own legs stands them on cast iron beds open to the black sky, where they cool by radiation alone; it tips them, the saws crop them dry, a sealed lab reads each heat, and they go one to a steel crate (no timber here), stacked four high by forklifts. No hall, no water. Built separately from the yard for air."},
+        "stands_for": "module.ingot-yard",
+        "site": {"atmosphere": "none", "gravity": list(MOON_G)},
+        "physical": {"length": r(max(xs) - min(xs)), "width": r(max(yard_W, 48.0)), "height": 14.0, "mass": r(total)},
+        "bays": bays, "mobile": mobile, "links": links, "ground": ground,
+        "totals": {"rate": 0.0, "power": r(power), "heat": 0.0, "water": 0.0, "mass": r(total), "against_module": against},
+        "staff": imod.get("staff"),
+        "basis": [{"of": ["bays", "links", "mobile"], "tier": "invented", "review": True, "note": "Laid out for airless ground from the yard for air."},
+                  {"of": ["ground"], "tier": "derived", "review": True, "note": f"The cooling time from radiation alone: an ingot's {area:.1f} m2 at emissivity 0.8, a fifth of its view to its neighbours, from 700 deg C to {T_SAW - 273.15:.0f} (from memory, for the saws): {t_cool / 3600:.1f} h, so {on_beds} on the beds; sintered regolith at 2,500 kg/m3, cast iron 7,200."},
+                  {"of": ["totals", "physical"], "tier": "derived", "note": "Summed from the units, links and ground."},
+                  {"of": ["staff"], "tier": "derived", "note": "The module's watch, unchanged."}],
+    }
+    print(f"layout.ingot-yard-airless: {total / 1000:,.0f} t, {on_beds} ingots on {n_beds} beds ({t_cool / 3600:.1f} h), {crates:,} crates, yard {yard_L:.0f} x {yard_W:.0f} m")
+    return layout, bays
+
+
 def mounts_for(bays, recs):
     # Mounts: each class round what its bays take, a quarter to spare, at the site's most gravity.
     g_max = 9.81 * 1.0
@@ -3208,11 +3352,12 @@ def main():
     us.update(shaft_airless_units(us))
     us.update(hydrogen_airless_units(us))
     us.update(pellet_airless_units(us))
+    us.update(yard_airless_units(us))
     recs = {slug: unit_record(slug, u) for slug, u in us.items()}
     layouts = {"arc-furnace-air": arc_furnace_air(us, recs), "ladle-station-air": ladle_station_air(us, recs), "casting-bay-air": casting_bay_air(us, recs), "shaft-furnace-air": shaft_furnace_air(us, recs), "hydrogen-plant-air": hydrogen_plant_air(us, recs), "pellet-plant-air": pellet_plant_air(us, recs), "ore-yard-air": ore_yard_air(us, recs), "ingot-yard-air": ingot_yard_air(us, recs), "arc-furnace-airless": arc_furnace_airless(us, recs),
                "ladle-station-airless": ladle_station_airless(us, recs), "casting-bay-airless": casting_bay_airless(us, recs),
                "shaft-furnace-airless": shaft_furnace_airless(us, recs), "hydrogen-plant-airless": hydrogen_plant_airless(us, recs),
-               "pellet-plant-airless": pellet_plant_airless(us, recs)}
+               "pellet-plant-airless": pellet_plant_airless(us, recs), "ore-yard-airless": ore_yard_airless(us, recs), "ingot-yard-airless": ingot_yard_airless(us, recs)}
     mounts = mounts_for([b for _, bays in layouts.values() for b in bays], recs)
     for slug, d in mounts.items():
         write(S + f"plant-mounts/{slug}.yaml", d)

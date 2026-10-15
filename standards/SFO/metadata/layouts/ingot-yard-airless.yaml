@@ -1,0 +1,130 @@
+# yaml-language-server: $schema=../../schema/layout.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: layout.ingot-yard-airless, name: 'Ingot yard, airless', description: 'The ingots on airless ground at about a moon''s gravity: they come hot on their car from the casting bay; a gantry crane on its own legs stands them on cast iron beds open to the black sky, where they cool by radiation alone; it tips them, the saws crop them dry, a sealed lab reads each heat, and they go one to a steel crate (no timber here), stacked four high by forklifts. No hall, no water. Built separately from the yard for air.'}
+stands_for: module.ingot-yard
+site:
+  atmosphere: none
+  gravity: [1.6, 2.0]
+physical: {length: 278.1, width: 114.0, height: 14.0, mass: 10850000.0}
+bays:
+- id: T
+  mount: plant-mount.bay-s1
+  unit: unit.ingot-tipper
+  at: [72.5, -6.0, 0.0]
+  note: east of the beds, under the gantry
+- id: C1
+  mount: plant-mount.bay-s2
+  unit: unit.crop-saws
+  at: [84.0, -3.0, 0.0]
+  note: 'cutting dry: no coolant in vacuum, so at about half the rate for air (from memory): two sets'
+- id: C2
+  mount: plant-mount.bay-s2
+  unit: unit.crop-saws
+  at: [98.0, -3.0, 0.0]
+  note: ''
+- id: K
+  mount: plant-mount.bay-s2
+  unit: unit.crating-line-steel
+  at: [98.0, 7.0, 0.0]
+  note: under the gantry's east end, out along +x
+- id: S
+  mount: plant-mount.bay-s2
+  unit: unit.sampling-lab-sealed
+  at: [74.0, -20.0, 0.0]
+  note: outside the gantry, south, under its berm
+- id: P
+  mount: plant-mount.bay-s1
+  unit: unit.crew-post
+  at: [86.0, -20.0, 0.0]
+  note: south, under its berm
+mobile:
+- unit: unit.ingot-car-40t
+  rides: ingot rail
+  at: [-34.0, 6.0, 0.0]
+- unit: unit.ingot-gantry-10t-moon
+  rides: gantry rails
+  at: [0.0, 0.0, 0.0]
+- unit: unit.forklift-2t5
+  rides: yard aisles
+  at: [128.0, -42.75, 0.0]
+- unit: unit.forklift-2t5
+  rides: yard aisles
+  at: [148.0, -14.25, 0.0]
+- unit: unit.forklift-2t5
+  rides: yard aisles
+  at: [168.0, 14.25, 0.0]
+- unit: unit.forklift-2t5
+  rides: yard aisles
+  at: [188.0, 42.75, 0.0]
+links:
+- kind: rail
+  name: ingot rail
+  from: [-40.0, 6.0, 0.0]
+  to: [-28.0, 6.0, 0.0]
+  length: 12.0
+  item: material.structural-steel-a36
+  mass: 1200.0
+  note: from the casting bay, its car stopping at x -34 by the beds' west end, under the gantry
+- kind: rail
+  name: gantry rails
+  from: [-36.0, -12.0, 0.0]
+  to: [108.0, 12.0, 0.0]
+  length: 456.0
+  item: material.structural-steel-a36
+  mass: 54720.0
+  via:
+  - [108.0, -12.0, 0.0]
+  - [108.0, 12.0, 0.0]
+  - [-36.0, 12.0, 0.0]
+  note: the ingot gantry's two rails, 24 m apart, over the beds, the tipper, the saws and the crating line
+- kind: road
+  name: yard aisles
+  from: [118.0, -42.75, 0.0]
+  to: [118.0, 42.75, 0.0]
+  length: 485.9
+  item: material.regolith-sintered
+  mass: 1367000.0
+  via:
+  - [218.1, -42.75, 0.0]
+  - [218.1, -14.25, 0.0]
+  - [118.0, -14.25, 0.0]
+  - [118.0, 14.25, 0.0]
+  - [218.1, 14.25, 0.0]
+  - [218.1, 42.75, 0.0]
+  note: 4 forklift aisles 4.5 m wide, 100 m long, joined end to end, of sintered regolith 0.25 m
+- kind: road
+  name: truck lane
+  from: [108.0, -3.0, 0.0]
+  to: [238.1, -3.0, 0.0]
+  length: 130.1
+  item: material.regolith-sintered
+  mass: 683000.0
+  note: '7 m wide, sintered regolith 0.3 m: trucks load crates at the yard''s east end, beyond the layout'
+ground:
+- {what: Cooling bed 1, item: material.cast-iron-grey, volume: 19.8, note: 'cast iron floor plates 50 mm thick over x -26 to -4, y -9 to 9, on sintered regolith: 270 places, the ingots standing big end up at 1.2 m each way, open to the sky', mass: 142600.0}
+- {what: Cooling bed 2, item: material.cast-iron-grey, volume: 19.8, note: 'cast iron floor plates 50 mm thick over x -2 to 20, y -9 to 9, on sintered regolith: 270 places, the ingots standing big end up at 1.2 m each way, open to the sky', mass: 142600.0}
+- {what: Cooling bed 3, item: material.cast-iron-grey, volume: 19.8, note: 'cast iron floor plates 50 mm thick over x 22 to 44, y -9 to 9, on sintered regolith: 270 places, the ingots standing big end up at 1.2 m each way, open to the sky', mass: 142600.0}
+- {what: Cooling bed 4, item: material.cast-iron-grey, volume: 19.8, note: 'cast iron floor plates 50 mm thick over x 46 to 68, y -9 to 9, on sintered regolith: 270 places, the ingots standing big end up at 1.2 m each way, open to the sky', mass: 142600.0}
+- {what: Work floor, item: material.regolith-sintered, volume: 384.0, note: '0.4 m of sintered regolith under the tipper, saws and crating line', mass: 960000.0}
+- {what: Gantry rail sleepers, item: material.regolith-sintered, volume: 172.8, mass: 432000.0}
+- {what: Stack yard, item: material.regolith-sintered, volume: 2402.0, note: '100 x 114 m of sintered regolith 0.25 m: 29,037 steel crates four high in 726 lanes ten deep (no tarpaulins: no weather)', mass: 6005000.0}
+- {what: Berms, item: material.regolith, volume: 329.2, mass: 493800.0}
+totals: {rate: 0.0, power: 513000.0, heat: 0.0, water: 0.0, mass: 10850000.0, against_module: 'module.ingot-yard: one box, holding 50 kt. This layout: 29,037 steel crates four high (a moon''s gravity and the steel crate allow it) on a yard 100 x 114 m; no hall: 914 ingots stand 17 hours on 4 beds open to the sky, radiating 7.9 MW to it (with no air, light alone takes their heat; on a lunar day the sun adds about a tenth near the end); the saws cut dry, two sets; 0.51 MW; no water; one gantry makes about four moves an ingot (217 an hour), more than one crane can at a minute or so a move: its count is not yet worked out; 2,386 t of plant, 8,461 t of beds and ground.'}
+staff:
+- {profession: profession.docker, count: 3}
+- {profession: profession.clerk, count: 1}
+basis:
+- of: [bays, links, mobile]
+  tier: invented
+  review: true
+  note: Laid out for airless ground from the yard for air.
+- of: [ground]
+  tier: derived
+  review: true
+  note: 'The cooling time from radiation alone: an ingot''s 2.0 m2 at emissivity 0.8, a fifth of its view to its neighbours, from 700 deg C to 150 (from memory, for the saws): 16.9 h, so 914 on the beds; sintered regolith at 2,500 kg/m3, cast iron 7,200.'
+- of: [totals, physical]
+  tier: derived
+  note: Summed from the units, links and ground.
+- of: [staff]
+  tier: derived
+  note: The module's watch, unchanged.

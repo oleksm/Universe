@@ -1,0 +1,84 @@
+# yaml-language-server: $schema=../../schema/layout.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+basis:
+- of: [bays, links, mobile]
+  tier: invented
+  review: true
+  note: As the yard for air, without the sprays.
+- of: [ground, physical]
+  tier: derived
+  review: true
+  note: The beds as for air (iron ore's angle of repose barely depends on gravity); sintered regolith at 2,500 kg/m3 in place of concrete.
+- of: [staff]
+  tier: derived
+  note: The module's watch, unchanged.
+bays:
+- at: [-108.0, 0.0, 0.0]
+  id: H
+  mount: plant-mount.bay-s2
+  note: west of the rail, its feeder in a pit onto the yard belt; trucks back onto its deck from -y
+  unit: unit.truck-dump-hopper
+ground:
+- {item: material.regolith-sintered, mass: 578600.0, note: two strips 1 m wide and 0.8 m deep under the rails (the volume as measured on blender's layout for air), volume: 231.46, what: Rail bed}
+- {item: material.regolith-sintered, mass: 500900.0, note: '6 m deep under the hopper, 13 x 11.2 m inside (the hopper''s feet reach y -5.15 and 5.15), 0.4 m walls, the east wall open 2 x 2 m for the yard belt; the hopper''s deck bridges its top (the volume as measured on blender''s layout for air)', volume: 200.36, what: Hopper pit}
+- {item: material.regolith-sintered, mass: 19200.0, note: 'a 0.3 m slab, its top at grade, bridging the 0.5 to 0.6 m between the pit''s walls and the hopper''s 12 x 10 m deck on the west, north and east, reinforcement not checked; a strip under the truck approach''s end closes the south (the volume as measured on blender''s layout for air)', volume: 7.68, what: Pit apron}
+- {item: material.regolith-sintered, mass: 75780.0, note: 'the yard belt''s trench from the pit''s east wall up to grade: floor 2.4 m wide, walls about 2.5 m deep on average, 0.3 m (the volume as measured on blender''s layout for air)', volume: 30.31, what: Belt ramp trench}
+- {item: material.regolith-sintered, mass: 15200.0, note: 'feet under the belts'' stands, the return''s seats, the spray posts and the transfer (the volume as measured on blender''s layout for air)', volume: 6.08, what: Support footings}
+- {item: material.structural-steel-a36, mass: 32150.0, note: 'the belts'' stringers, legs and crossbars, the return''s stands under the tripper, roller and drum seats, the transfer hood, the trench guards and the spray posts; the belts, idlers'' rolls, drums and drives are the links''; measured on blender''s layout (candidate v01), 32,158 kg', volume: 4.096, what: Belt and spray steel}
+- {item: material.regolith-sintered, mass: 4200000.0, note: 'two pads 105 x 40 m, 0.2 m, at y -28 and 28, level (the volume as measured on blender''s layout for air)', volume: 1680.0, what: Bed pads}
+identity: {key: layout.ore-yard-airless, name: 'Ore yard, airless', description: 'Two stockpile beds of ore either side of the bucket wheel stacker-reclaimer''s rail, on airless ground at about a moon''s gravity: as the yard for air, with the same machines, but no water sprays (with no air, dust thrown up falls back at once instead of drifting) and sintered regolith for concrete. The machines'' bearings, lubricants and belts are of kinds rated for vacuum and the lunar night''s cold (rubber stiffens below about -50 deg C), not checked. Built separately from the yard for air.'}
+links:
+- from: [-82.33, 0.0, 0.0]
+  item: material.structural-steel-a36
+  kind: rail
+  length: 144.7
+  mass: 33830.0
+  name: machine rail
+  note: 'two A120 crane rails (120 mm head, about 117 kg/m as measured on blender''s layout) at 10 m gauge on a concrete bed: each of the machine''s 16 wheels of 1.2 m puts about 290 kN on its rail, against about 640 kN a 120 mm head takes under a 1.2 m wheel (5.6 N/mm2 times its 96 mm of flat head times the diameter, from memory)'
+  to: [62.33, 0.0, 0.0]
+- from: [-108.0, 0.0, -4.4]
+  item: material.structural-steel-a36
+  kind: conveyor
+  length: 181.0
+  mass: 19910.0
+  name: yard belt
+  note: 'a 1.4 m reversible belt (its mass a metre the belt''s two strands and idlers, from memory; its stringers and stands are in the ground) between the rails, with the machine''s tripper on it: ore from the hopper to the machine stacking, from the machine to the out belt reclaiming. Its tail 0.4 m under the feeder''s outlet, out of the pit through an opening in its east wall and up at 14 degrees to 1 m, then level from x -86.0, where the tripper''s tail lies with the machine at its west limit (x -50.3)'
+  power: 400000.0
+  to: [72.33, 0.0, 1.0]
+  via:
+  - [-86.03, 0.0, 1.0]
+- from: [73.03, 0.0, 0.6]
+  item: material.structural-steel-a36
+  kind: conveyor
+  length: 59.29
+  mass: 4743.0
+  name: out belt
+  note: 'a 1 m belt (belt and idlers a metre, from memory) to the pellet plant''s ore belt, beyond the layout: its tail 0.4 m under the yard belt''s head, fed by a short chute narrowing 1.4 m to 1 m, then up to 1 m'
+  power: 100000.0
+  to: [132.3, 0.0, 1.0]
+  via:
+  - [77.03, 0.0, 1.0]
+- from: [-110.0, -49.8113446486123, 0.0]
+  item: material.regolith-sintered
+  kind: road
+  length: 44.21
+  mass: 232100.0
+  name: truck approach
+  note: '7 m wide, of sintered regolith 0.3 m: trucks from the port turn and back north onto the hopper''s deck, centred on its mouth (local x -2, between the wheel stops at -4.5 and 0.5); it ends at the pit''s south edge and covers the gap there'
+  to: [-110.0, -5.6, 0.0]
+mobile:
+- at: [0.0, 0.0, 0.0]
+  rides: machine rail
+  unit: unit.stacker-reclaimer-1500th
+- at: [0.0, 0.0, 0.0]
+  rides: machine rail
+  unit: unit.yard-tripper-1500th
+physical: {height: 20.0, length: 246.3, mass: 6410000.0, width: 101.6}
+site:
+  atmosphere: none
+  gravity: [1.6, 2.0]
+staff:
+- {count: 3, profession: profession.docker}
+- {count: 1, profession: profession.clerk}
+stands_for: module.ore-yard
+totals: {against_module: 'module.ore-yard: one box 200 x 100 x 15 m, holding 150 kt. This layout: two beds 105 m long, 40 m across and 15 m high (iron ore at 2400 kg/m3 lying at 37 degrees) hold the same; 1.58 MW with every drive running, against the module''s 0.5; no water used; 6,410 t in all, its ground of sintered regolith.', heat: 0.0, mass: 6410000.0, power: 1580000.0, rate: 0.0, water: 0.0}

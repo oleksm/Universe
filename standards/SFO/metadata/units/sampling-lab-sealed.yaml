@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.sampling-lab-sealed, name: 'Sampling laboratory, sealed', description: 'The sampling laboratory for airless ground: an aluminium cylinder 4 m across and 8 m long at 1 bar under a berm of loose regolith, its staff airlock at -x; the coupon comes in through a small sample lock (0.6 m across) beside it instead of a hatch. Inside as unit.sampling-lab: an abrasive cutter, a grinder and a spark emission spectrometer, its spark under argon as always. At a crop saw, one ingot of each heat has a second slice taken off its cut face, a coupon 0.48 m square and 25 mm thick (about 45 kg), which a worker brings on a hand cart to the lab''s pass-through hatch.'}
+size_class: 2
+fits: plant-mount.bay-s2
+physical: {length: 8.0, width: 6.0, height: 5.0, mass: 8036.0}
+built_of:
+- {what: Shell, item: material.aluminium-alloy-6061, mass: 2036.0, note: '4 m across, 8 m, 6 mm (1 bar gives 33 MPa)'}
+- {what: 'Locks, life support and fit-out', item: material.structural-steel-a36, mass: 3000.0, note: 'the staff airlock, the sample lock, air and heat, from memory'}
+- {what: 'Cutter, grinder and spectrometer', item: good.electric-motors, mass: 3000.0, note: from memory}
+needs: {power: 80000.0, atmosphere: vacuum}
+life: 788940000
+basis:
+- of: [physical, built_of, needs]
+  tier: invented
+  review: true
+  note: From memory.
+- of: [life]
+  rule: rule.life-plant
