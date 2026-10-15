@@ -4915,3 +4915,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.yard-tripper-1500th
+    version: 1
+    manifest_sha256: "7939c549e15cd86804e14dbab2ea7f0b5fb94d32b30bd7739bcbdbe40b1edcaf"
+    installed: 87c02296
+    game: "the loader (world::assets) at fso 87c02296"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/yard-tripper-1500th/v1 (1305508 bytes, bounds [-33.76, -0.0, -5.56] to [0.8133, 10.1871, 5.56]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
