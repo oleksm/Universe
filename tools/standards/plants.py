@@ -2316,10 +2316,11 @@ def airless_units(us):
     gc["desc"] = gc["desc"].replace("on the hall's runways", "on its own legs, running on two ground rails 24 m apart").replace("its origin on the runway's rail plane", "its origin on the ground rails' plane, its girders 22 m up") + f" Sized for {MOON_G[1]:g} m/s2."
     gc["desc"] += " Its bridge datum is the girders' underside at z 22 (their tops 22.8, the trolley's rails 22.88); parked, the hook is raised to z 21.9; the legs (0.8 x 0.8 m, 20 mm) stand from the sill beams' tops at z 1."
     out["crew-post"] = dict(
-        name="Crew post, pressurised", size_class=1, fits="bay-s1", dims=(6.0, 6.0, 5.0),
-        desc="The shift's control room on airless ground: an aluminium cylinder 4 m across and 6 m long at 1 bar, an airlock at its -x end, windows onto the furnace and the controls, air and water kept for its watch, under a berm of loose regolith 1 m deep against radiation and the cold.",
-        built_of=[part("Shell", "material.aluminium-alloy-6061", cyl_shell(4.0, 6.0, 0.006, bottom=2.0) * RHO["aluminium"], "4 m across, 6 m, 6 mm (1 bar gives 33 MPa)"),
-                  part("Airlock, life support and fit-out", "good.electric-motors", 3000.0, "from memory")],
+        name="Crew post, pressurised", size_class=1, fits="bay-s1", dims=(6.0, 4.4, 4.6),
+        desc="The shift's control room on airless ground: an aluminium cylinder 4 m across and 4 m long at 1 bar on two saddles, its axis along x 2.3 m up (the shell from x -1 to 3), with a 2 m airlock at its -x end (x -3 to -1) and closed windows on its +y side; air and water kept for its watch. The berm of loose regolith 1 m deep over it, against radiation and the cold, is the layout's, with openings for the airlock and the windows. Drawn as its bare shell, saddles and airlock, closed.",
+        built_of=[part("Shell", "material.aluminium-alloy-6061", cyl_shell(4.0, 4.0, 0.006, bottom=2.0) * RHO["aluminium"], "4 m across, 4 m, 6 mm (1 bar gives 33 MPa)"),
+                  part("Airlock and saddles", A36, 1500.0, "a 2 m airlock and two saddles, from memory"),
+                  part("Life support and fit-out", "good.electric-motors", 3000.0, "from memory")],
         needs={"power": 20e3, "atmosphere": "vacuum"},
         basis=[{"of": ["physical", "built_of", "needs"], "tier": "invented", "review": True, "note": "From memory."}])
     out["radiator-field-330k"] = radiator_unit(330.0, "the panels' and transformer's")

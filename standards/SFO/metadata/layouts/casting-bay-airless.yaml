@@ -5,7 +5,7 @@ stands_for: module.casting-bay
 site:
   atmosphere: none
   gravity: [1.6, 2.0]
-physical: {length: 72.0, width: 48.0, height: 27.0, mass: 2753000.0}
+physical: {length: 72.0, width: 48.0, height: 27.0, mass: 2754000.0}
 bays:
 - id: P
   mount: plant-mount.bay-s1
@@ -102,7 +102,7 @@ ground:
 - {what: Casting floor, item: material.regolith-sintered, volume: 576.0, note: '0.4 m of sintered regolith under the teeming and stripping, so spilt steel meets stone', mass: 1440000.0}
 - {what: Gantry rail sleepers, item: material.regolith-sintered, volume: 132.0, mass: 330000.0}
 - {what: Crew post berm, item: material.regolith, volume: 164.6, mass: 246900.0}
-totals: {rate: 27.7777777777778, power: 690000.0, heat: 0.0, water: 0.0, mass: 2753000.0, against_module: 'module.casting-bay: one box, the same on every world. This layout: the same rate; 0.69 MW; no water; no hall: the 150 t and 20 t cranes stand on their own legs, sized for 2 m/s2. The moulds and ingots cool by radiation alone, with no air to help: the second train stands longer (not yet worked out). 736 t of plant, 2,017 t of sintered regolith.'}
+totals: {rate: 27.7777777777778, power: 690000.0, heat: 0.0, water: 0.0, mass: 2754000.0, against_module: 'module.casting-bay: one box, the same on every world. This layout: the same rate; 0.69 MW; no water; no hall: the 150 t and 20 t cranes stand on their own legs, sized for 2 m/s2. The moulds and ingots cool by radiation alone, with no air to help: the second train stands longer (not yet worked out). 737 t of plant, 2,017 t of sintered regolith.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}
