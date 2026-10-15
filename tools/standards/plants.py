@@ -2526,16 +2526,29 @@ def ladle_station_airless(us, recs):
     mobile = [{"unit": "unit.ladle-car-80t", "rides": "ladle rail", "at": [-15.0, 0.0, 0.0]},
               {"unit": "unit.gantry-crane-20t-moon", "rides": "crane rails", "at": [-6.0, 0.0, 0.0]}]
     ground = [
-        {"what": "Ladle furnace foundation", "item": SINTER, "volume": r(12 * 10 * 1.0 - 5 * 12 * 0.3), "note": "as for air, of sintered regolith"},
-        {"what": "Stand and transformer pads", "item": SINTER, "volume": r(10 * 8 * 0.5 + 6 * 6 * 0.5)},
-        {"what": "Bins and filter pads", "item": SINTER, "volume": r(12.6 * 6.3 * 1.0 + 12 * 6 * 0.4)},
-        {"what": "Service trench", "item": SINTER, "volume": r(3.0 * (1.6 * 0.3 + 2 * 1.5 * 0.3)), "note": "a covered trench of sintered regolith under the crane's south rail at x -1.5, for the cooling trunk"},
-        {"what": "Crew post berm", "item": "material.regolith", "volume": BERM, "note": "loose regolith at least 1 m over the post everywhere (its top 4 x 2 m, 5.3 m up), lying at 35 degrees, its foot about 19 x 17 m, a cavity for the post; measured on blender's arc furnace shop; with openings for its windows (light wells on the north) and its airlock (a ramp cut on the west); with openings for its windows and airlock; at the airlock's door a landing of packed regolith 2 x 2 m, its top at the threshold (1.35 m up), and a ramp down to the ground at about 1 in 3"},
-        {"what": "Rail sleepers", "item": SINTER, "volume": r(60 * 1.0 + 72 * 0.6)},
-        {"what": "Radiator legs' pads", "item": SINTER, "volume": r(n_low * 4 * (44.0 * 44.0 / 72.0) * 0.027)},
+        {"what": "Ladle furnace foundation", "item": SINTER, "volume": 102.0, "note": "as for air, of sintered regolith; measured on blender's layout (candidate v01)"},
+        {"what": "Stand and transformer pads", "item": SINTER, "volume": 41.6, "note": "the degassing stand's (20.0) and the transformer's (21.6); measured on blender's layout (candidate v01)"},
+        {"what": "Bins and filter pads", "item": SINTER, "volume": 146.98, "note": "the alloy bins' (84.48) and the off-gas filter's (62.5); measured on blender's layout (candidate v01)"},
+        {"what": "Stair pad", "item": SINTER, "volume": 16.63, "note": "under the stair tower; measured on blender's layout (candidate v01)"},
+        {"what": "Service trench", "item": SINTER, "volume": 2.67, "note": "the trench under the crane's south rail at x -1.5, for the cooling trunk: floor and walls (its cover is steel); measured on blender's layout (candidate v01)"},
+        {"what": "Crew post berm", "item": "material.regolith", "volume": 584.56, "note": "loose regolith at least 1 m over the post everywhere, lying at 35 degrees, its foot about 19 x 17 m, a cavity for the post, the ramp cut and the light wells; measured on blender's layout (candidate v01)"},
+        {"what": "Crew post entry and light wells", "item": SINTER, "volume": 14.0, "note": "the landing, the ramp, the cut's retaining sides and the light wells' retainers, provisional; measured on blender's layout (candidate v01)"},
+        {"what": "Rail sleepers", "item": SINTER, "volume": 12.77, "note": "under the ladle rail (8.0) and the crane's rails (4.8); measured on blender's layout (candidate v01)"},
+        {"what": "Radiator legs' pads", "item": SINTER, "volume": 6.91, "note": "a block under each leg; measured on blender's layout (candidate v01)"},
+        {"what": "Feet", "item": SINTER, "volume": 3.05, "note": "under the alloy belt's trestles, the fume duct's supports and the pipes' supports; measured on blender's layout (candidate v01)"},
+        {"what": "Pipe supports and trench cover", "item": A36, "volume": r(2912.3 / RHO["steel"]), "note": "the pipes' and duct's supports (1,507 kg) and the trench's steel cover (1,405 kg), hollow stock, provisional; measured on blender's layout (candidate v01), 2,912 kg"},
     ]
+    bus_cu = (1000.4 + 279.6) * RHO["copper"] / RHO["steel"]
+    measured = {"ladle rail": 8129.5, "crane rails": 4606.4 + 49.5, "secondary bus": bus_cu, "alloy feed": 5546.5 + 24.18 * 50.0, "fume": 4518.4,
+                "cooling water to the radiators": 10558.6, "radiator branch 1": 4729.9 * 2331.3 / 4819.4, "radiator branch 2": 4729.9 * 2488.1 / 4819.4, "transformer cooling": 166.7}
+    for l in links:
+        if l["name"] in measured:
+            l["mass"] = r(measured[l["name"]])
+            l["note"] = l.get("note", "") + "; its mass measured on blender's layout (candidate v01)" + (", the belt's stringers, trestles and hood with 50 kg/m of belt and idlers from memory" if l["name"] == "alloy feed" else "")
+            if l["name"].startswith("radiator branch"):
+                l["note"] = l["note"].replace("a 150 mm pair", "a 250 mm pair")
     for g in ground:
-        g["mass"] = r(g["volume"] * (RHO_SINTER if g["item"] == SINTER else 1500.0))
+        g["mass"] = r(g["volume"] * (RHO_SINTER if g["item"] == SINTER else RHO["steel"] if g["item"] == A36 else 1500.0))
     used = [recs[b["unit"].split(".", 1)[1]] for b in bays] + [recs[m_["unit"].split(".", 1)[1]] for m_ in mobile]
     power = sum(u.get("needs", {}).get("power", 0) for u in used) + sum(l.get("power", 0) for l in links)
     heat = sum(u.get("needs", {}).get("heat", 0) for u in used)

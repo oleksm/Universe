@@ -5,7 +5,7 @@ stands_for: module.ladle-station
 site:
   atmosphere: none
   gravity: [1.6, 2.0]
-physical: {length: 128.0, width: 96.15, height: 27.0, mass: 2293000.0}
+physical: {length: 128.0, width: 96.15, height: 27.0, mass: 2221000.0}
 bays:
 - id: D
   mount: plant-mount.bay-s2
@@ -66,100 +66,104 @@ links:
   to: [30.0, 0.0, 0.0]
   length: 60.0
   item: material.structural-steel-a36
-  mass: 7200.0
-  note: two 60 kg/m rails at 3 m gauge on sintered regolith sleepers, from the arc furnace shop to the casting bay; the car stops at x -15 (the stand) and 3 (the ladle furnace)
+  mass: 8130.0
+  note: two 60 kg/m rails at 3 m gauge on sintered regolith sleepers, from the arc furnace shop to the casting bay; the car stops at x -15 (the stand) and 3 (the ladle furnace); its mass measured on blender's layout (candidate v01)
 - kind: busbar
   name: secondary bus
   from: [3.0, -7.65, 2.1333333333333333]
   to: [3.0, -5.0, 6.0]
   length: 4.688
   item: material.copper
-  mass: 828.5
-  note: as for air
+  mass: 1461.0
+  note: as for air; its mass measured on blender's layout (candidate v01)
 - kind: conveyor
   name: alloy feed
   from: [3.8, 27.0, 6.6]
   to: [3.0, 3.0, 9.4]
   length: 24.18
   item: material.structural-steel-a36
-  mass: 2418.0
+  mass: 6756.0
   power: 20000.0
-  note: 0.65 m belt, open (no gallery on airless ground), into the furnace's alloy lock; fed from the bins' outlet (3, 27, 7.4) by a short chute at 45 degrees, so the belt clears the bins' centre column
+  note: 0.65 m belt, open (no gallery on airless ground), into the furnace's alloy lock; fed from the bins' outlet (3, 27, 7.4) by a short chute at 45 degrees, so the belt clears the bins' centre column; its mass measured on blender's layout (candidate v01), the belt's stringers, trestles and hood with 50 kg/m of belt and idlers from memory
 - kind: duct
   name: fume
   from: [5.0, 0.0, 7.5]
   to: [15.0, 18.0, 8.0]
   length: 26.44
   item: material.structural-steel-a36
-  mass: 1956.0
+  mass: 4518.0
   via:
   - [5.0, 0.0, 10.0]
   - [5.0, 6.0, 10.0]
   - [12.0, 10.0, 10.0]
   - [13.5, 18.0, 8.0]
-  note: '0.5 m: the argon and fume from under the sealed roof, a tenth of the air shop''s flow; a reducer from the roof''s 1 m neck to the duct at its start (z 7.5 to 8.5), and a widener to the filter''s 1.2 m inlet at its end (x 13.5 to 15)'
+  note: '0.5 m: the argon and fume from under the sealed roof, a tenth of the air shop''s flow; a reducer from the roof''s 1 m neck to the duct at its start (z 7.5 to 8.5), and a widener to the filter''s 1.2 m inlet at its end (x 13.5 to 15); its mass measured on blender''s layout (candidate v01)'
 - kind: pipe
   name: cooling water to the radiators
   from: [-98.0, -18.0, 1.0]
   to: [-1.5, -4.5, 1.0]
   length: 113.2
   item: material.structural-steel-a36
-  mass: 8375.0
+  mass: 10560.0
   via:
   - [-1.5, -18.0, 1.0]
   - [-1.5, -13.5, 1.0]
   - [-1.5, -13.5, -0.6]
   - [-1.5, -10.5, -0.6]
   - [-1.5, -10.5, 1.0]
-  note: a pair of 250 mm pipes, flow and return, at about 330 K, as a trunk along y -18, north of the 2 radiator fields, to the furnace's ports at (-1.5, -4.7) and (-1.5, -4.3), 1 m up; flow 1 m up and return 0.65 above grade, both dipping (to z -0.6 and -0.95) in a covered trench under the crane's south rail from y -13.5 to -10.5
+  note: a pair of 250 mm pipes, flow and return, at about 330 K, as a trunk along y -18, north of the 2 radiator fields, to the furnace's ports at (-1.5, -4.7) and (-1.5, -4.3), 1 m up; flow 1 m up and return 0.65 above grade, both dipping (to z -0.6 and -0.95) in a covered trench under the crane's south rail from y -13.5 to -10.5; its mass measured on blender's layout (candidate v01)
 - kind: pipe
   name: radiator branch 1
   from: [-50.0, -18.0, 1.0]
   to: [-48.0, -42.0, 1.0]
   length: 26.0
   item: material.structural-steel-a36
-  mass: 769.4
+  mass: 2288.0
   via:
   - [-50.0, -42.0, 1.0]
-  note: a 150 mm pair from the trunk down outside the field's west edge to its ports (flow at y -42.6, return -41.4)
+  note: a 250 mm pair from the trunk down outside the field's west edge to its ports (flow at y -42.6, return -41.4); its mass measured on blender's layout (candidate v01)
 - kind: pipe
   name: radiator branch 2
   from: [-98.0, -18.0, 1.0]
   to: [-96.0, -42.0, 1.0]
   length: 26.0
   item: material.structural-steel-a36
-  mass: 769.4
+  mass: 2442.0
   via:
   - [-98.0, -42.0, 1.0]
-  note: a 150 mm pair from the trunk down outside the field's west edge to its ports (flow at y -42.6, return -41.4)
+  note: a 250 mm pair from the trunk down outside the field's west edge to its ports (flow at y -42.6, return -41.4); its mass measured on blender's layout (candidate v01)
 - kind: pipe
   name: transformer cooling
   from: [-1.5, -9.0, 1.0]
   to: [0.8500000000000001, -9.0, 1.35]
   length: 2.7
   item: material.structural-steel-a36
-  mass: 66.59
+  mass: 166.7
   via:
   - [0.050000000000000044, -9.0, 1.0]
   - [0.050000000000000044, -9.0, 1.35]
-  note: a pair of 100 mm pipes teed off the main at y -9, east to the transformer's cooler on its -x face (flow at z 1.35, return above it, as the furnace transformers' ports)
+  note: a pair of 100 mm pipes teed off the main at y -9, east to the transformer's cooler on its -x face (flow at z 1.35, return above it, as the furnace transformers' ports); its mass measured on blender's layout (candidate v01)
 - kind: rail
   name: crane rails
   from: [-24.0, 0.0, 0.0]
   to: [12.0, 0.0, 0.0]
   length: 36.0
   item: material.structural-steel-a36
-  mass: 3600.0
-  note: the maintenance gantry crane's two straight rails over the stand and the ladle furnace, at y -12 and 12 (24 m apart); the link runs on their centre line
+  mass: 4656.0
+  note: the maintenance gantry crane's two straight rails over the stand and the ladle furnace, at y -12 and 12 (24 m apart); the link runs on their centre line; its mass measured on blender's layout (candidate v01)
 ground:
-- {what: Ladle furnace foundation, item: material.regolith-sintered, volume: 102.0, note: 'as for air, of sintered regolith', mass: 255000.0}
-- {what: Stand and transformer pads, item: material.regolith-sintered, volume: 58.0, mass: 145000.0}
-- {what: Bins and filter pads, item: material.regolith-sintered, volume: 108.2, mass: 270500.0}
-- {what: Service trench, item: material.regolith-sintered, volume: 4.14, note: 'a covered trench of sintered regolith under the crane''s south rail at x -1.5, for the cooling trunk', mass: 10350.0}
-- {what: Crew post berm, item: material.regolith, volume: 586.23, note: 'loose regolith at least 1 m over the post everywhere (its top 4 x 2 m, 5.3 m up), lying at 35 degrees, its foot about 19 x 17 m, a cavity for the post; measured on blender''s arc furnace shop; with openings for its windows (light wells on the north) and its airlock (a ramp cut on the west); with openings for its windows and airlock; at the airlock''s door a landing of packed regolith 2 x 2 m, its top at the threshold (1.35 m up), and a ramp down to the ground at about 1 in 3', mass: 879300.0}
-- {what: Rail sleepers, item: material.regolith-sintered, volume: 103.2, mass: 258000.0}
-- {what: Radiator legs' pads, item: material.regolith-sintered, volume: 5.808, mass: 14520.0}
-totals: {rate: 41.6666666666667, power: 7838000.0, heat: 1568000.0, water: 0.0, mass: 2293000.0, against_module: 'module.ladle-station: one box, the same on every world. This layout: the same rate; 7.8 MW; 1.6 MW to 2 radiator fields at 330 K; no water used up. No degasser: the vacuum degasses the ladle on an open stand, but must not see the alloys, which the sealed ladle furnace adds under argon; no ladle crane (nothing is lifted into a tank) and no hall. 460 t of plant, 1,833 t of sintered regolith.'}
+- {what: Ladle furnace foundation, item: material.regolith-sintered, volume: 102.0, note: 'as for air, of sintered regolith; measured on blender''s layout (candidate v01)', mass: 255000.0}
+- {what: Stand and transformer pads, item: material.regolith-sintered, volume: 41.6, note: the degassing stand's (20.0) and the transformer's (21.6); measured on blender's layout (candidate v01), mass: 104000.0}
+- {what: Bins and filter pads, item: material.regolith-sintered, volume: 146.98, note: the alloy bins' (84.48) and the off-gas filter's (62.5); measured on blender's layout (candidate v01), mass: 367400.0}
+- {what: Stair pad, item: material.regolith-sintered, volume: 16.63, note: under the stair tower; measured on blender's layout (candidate v01), mass: 41580.0}
+- {what: Service trench, item: material.regolith-sintered, volume: 2.67, note: 'the trench under the crane''s south rail at x -1.5, for the cooling trunk: floor and walls (its cover is steel); measured on blender''s layout (candidate v01)', mass: 6675.0}
+- {what: Crew post berm, item: material.regolith, volume: 584.56, note: 'loose regolith at least 1 m over the post everywhere, lying at 35 degrees, its foot about 19 x 17 m, a cavity for the post, the ramp cut and the light wells; measured on blender''s layout (candidate v01)', mass: 876800.0}
+- {what: Crew post entry and light wells, item: material.regolith-sintered, volume: 14.0, note: 'the landing, the ramp, the cut''s retaining sides and the light wells'' retainers, provisional; measured on blender''s layout (candidate v01)', mass: 35000.0}
+- {what: Rail sleepers, item: material.regolith-sintered, volume: 12.77, note: under the ladle rail (8.0) and the crane's rails (4.8); measured on blender's layout (candidate v01), mass: 31920.0}
+- {what: Radiator legs' pads, item: material.regolith-sintered, volume: 6.91, note: a block under each leg; measured on blender's layout (candidate v01), mass: 17280.0}
+- {what: Feet, item: material.regolith-sintered, volume: 3.05, note: 'under the alloy belt''s trestles, the fume duct''s supports and the pipes'' supports; measured on blender''s layout (candidate v01)', mass: 7625.0}
+- {what: Pipe supports and trench cover, item: material.structural-steel-a36, volume: 0.371, note: 'the pipes'' and duct''s supports (1,507 kg) and the trench''s steel cover (1,405 kg), hollow stock, provisional; measured on blender''s layout (candidate v01), 2,912 kg', mass: 2912.0}
+totals: {rate: 41.6666666666667, power: 7838000.0, heat: 1568000.0, water: 0.0, mass: 2221000.0, against_module: 'module.ladle-station: one box, the same on every world. This layout: the same rate; 7.8 MW; 1.6 MW to 2 radiator fields at 330 K; no water used up. No degasser: the vacuum degasses the ladle on an open stand, but must not see the alloys, which the sealed ladle furnace adds under argon; no ladle crane (nothing is lifted into a tank) and no hall. 475 t of plant, 1,746 t of sintered regolith.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}
