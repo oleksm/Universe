@@ -13,7 +13,7 @@
 //! `UNIVERSE_PLANETLOD_AT="alt=20000&lat=-50.99&lon=71.44&heading=0&ex=1&view=real"` sets the start.
 
 use std::path::{Path, PathBuf};
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 use std::time::Instant;
 
 use crate::hud_kit::{self, Hit, Panel};
@@ -27,9 +27,11 @@ const CHUNK: f64 = 8000.0;
 /// Decision cell edge (m): the vertices decided together (each cell keeps its own margin).
 const CELL: f64 = 1000.0;
 /// Mesh rebuilds a frame stop once this much time is spent (ms); the rest keep their old mesh.
-const MESH_BUDGET_MS: f64 = 4.0;
-/// Chunks built in parallel at a time.
-const BATCH: usize = 48;
+/// Chunk meshes are built off the frame by a worker from a snapshot of what is drawn; a job's meshes are
+/// handed to the engine to upload (UPLOAD_TRIS triangles a frame) and all go on screen together once all are
+/// on the GPU, so a mixed state (some chunks new, their neighbours old: holes along long triangles, the
+/// owner's black triangles when scrolling) is never drawn.
+const UPLOAD_TRIS: usize = 80_000;
 /// Tiles of the planet outside the pattern grouped this many to a side per mesh.
 const TILE_GROUP: u32 = 4;
 /// Straight down at and above this altitude, level with the horizon at the ground (as the page).
@@ -155,6 +157,89 @@ struct Stats {
     drawn: usize,
 }
 
+/// What a chunk mesh is built from, shared with the build worker (made again when the height x changes).
+struct BuildData {
+    pos: Vec<DVec3>,
+    col: Vec<[u8; 3]>,
+    ft: Vec<[u32; 3]>,
+    fe: Vec<[u32; 2]>,
+    stand_in: Vec<u32>,
+    chunk_tris: Vec<Vec<u32>>,
+    chunk_edges: Vec<Vec<u32>>,
+    origin: Vec<DVec3>,
+}
+
+struct Job {
+    generation: u64,
+    view: View,
+    on: Arc<Vec<u8>>,
+    bd: Arc<BuildData>,
+    chunks: Vec<usize>,
+}
+
+/// A job's meshes, built: waiting to be uploaded, then put on screen together.
+struct Built {
+    generation: u64,
+    view: View,
+    meshes: Vec<(usize, Mesh, usize)>,
+    /// How many of them have been handed to the engine to upload.
+    prepared: usize,
+}
+
+/// A chunk's mesh from a snapshot `on` of what is drawn: its finest triangles and edges through their drawn
+/// stand-ins, each kept once (many resolve onto the same one). Mesh view: corners shared, edges indexing them;
+/// Real: flat faces in their last corner's colour, no edges.
+fn build_mesh(bd: &BuildData, on: &[u8], c: usize, view: View) -> (Mesh, usize) {
+    let resolve = |mut v: u32| {
+        while on[v as usize] == 0 {
+            v = bd.stand_in[v as usize];
+        }
+        v
+    };
+    let origin = bd.origin[c];
+    let mut seen_t = std::collections::HashSet::with_capacity(bd.chunk_tris[c].len());
+    let tris: Vec<[u32; 3]> = bd.chunk_tris[c].iter().map(|&t| bd.ft[t as usize].map(resolve)).filter(|[a, b, c]| a != b && b != c && a != c).filter(|t| {
+        let mut k = *t;
+        k.sort_unstable();
+        seen_t.insert(k)
+    }).collect();
+    let mut m = WireModel::default();
+    if view == View::Real {
+        for t in &tris {
+            let k = m.positions.len() as u32;
+            for &v in t {
+                m.positions.push((bd.pos[v as usize] - origin).as_vec3());
+            }
+            m.faces.push([k, k + 1, k + 2]);
+            let rgb = bd.col[t[2] as usize].map(srgb_to_linear);
+            m.colors.extend([[rgb[0], rgb[1], rgb[2], 1.0]; 3]);
+        }
+        let n = tris.len();
+        return (Mesh::new(m), n);
+    }
+    let mut local: std::collections::HashMap<u32, u32> = std::collections::HashMap::with_capacity(tris.len());
+    let mut at = |v: u32, m: &mut WireModel| -> u32 {
+        *local.entry(v).or_insert_with(|| {
+            m.positions.push((bd.pos[v as usize] - origin).as_vec3());
+            m.positions.len() as u32 - 1
+        })
+    };
+    for t in &tris {
+        let f = [at(t[0], &mut m), at(t[1], &mut m), at(t[2], &mut m)];
+        m.faces.push(f);
+    }
+    let mut seen_e = std::collections::HashSet::with_capacity(bd.chunk_edges[c].len());
+    for &e in &bd.chunk_edges[c] {
+        let [a, b] = bd.fe[e as usize].map(resolve);
+        if a != b && seen_e.insert((a.min(b), a.max(b))) {
+            let pair = [at(a, &mut m), at(b, &mut m)];
+            m.edges.push(pair);
+        }
+    }
+    let n = tris.len();
+    (Mesh::new(m), n)
+}
+
 pub struct PlanetLodApp {
     dir: PathBuf,
     d: Data,
@@ -178,6 +263,18 @@ pub struct PlanetLodApp {
     heading: f64,
     stats: Stats,
     queued: Vec<bool>,
+    /// The build worker: its inbox, what it sends back, whether a job is out, what jobs are built from, and the
+    /// generation (height x and view: an older one's results are dropped); the job built and going up.
+    jobs: std::sync::mpsc::Sender<Job>,
+    done: Mutex<std::sync::mpsc::Receiver<Built>>,
+    busy: bool,
+    bd: Arc<BuildData>,
+    generation: u64,
+    last_view: View,
+    built: Mutex<Option<Built>>,
+    /// The wheel's target altitude, eased to.
+    alt_target: f64,
+    easing: bool,
     /// UNIVERSE_PLANETLOD_FLY: the camera descends and drifts by itself (captures ignore the keys);
     /// =pan: it slides sideways at its altitude instead.
     fly: bool,
@@ -441,6 +538,30 @@ impl PlanetLodApp {
             pins.push((unit(a.0, a.1), a.2, format!("v {} - {} m", k + 1, thousands(a.2.round())), false));
         }
         let queued = vec![false; cells.len()];
+        let bd = Arc::new(BuildData {
+            pos: d.pos.clone(),
+            col: d.col.clone(),
+            ft: d.ft.clone(),
+            fe: d.fe.clone(),
+            stand_in: d.stand_in.clone(),
+            chunk_tris: chunks.iter().map(|c| c.tris.clone()).collect(),
+            chunk_edges: chunks.iter().map(|c| c.edges.clone()).collect(),
+            origin: chunks.iter().map(|c| c.origin).collect(),
+        });
+        let (jobs, inbox) = std::sync::mpsc::channel::<Job>();
+        let (outbox, done) = std::sync::mpsc::channel::<Built>();
+        std::thread::Builder::new().name("planetlod build".into()).spawn(move || {
+            use rayon::prelude::*;
+            while let Ok(job) = inbox.recv() {
+                let meshes: Vec<(usize, Mesh, usize)> = job.chunks.par_iter().map(|&c| {
+                    let (m, n) = build_mesh(&job.bd, &job.on, c, job.view);
+                    (c, m, n)
+                }).collect();
+                if outbox.send(Built { generation: job.generation, view: job.view, meshes, prepared: 0 }).is_err() {
+                    return;
+                }
+            }
+        }).map_err(|e| format!("build worker: {e}"))?;
         let mut app = PlanetLodApp {
             dir,
             d,
@@ -461,6 +582,15 @@ impl PlanetLodApp {
             heading: 0.0,
             stats: Stats::default(),
             queued,
+            jobs,
+            done: Mutex::new(done),
+            busy: false,
+            bd,
+            generation: 0,
+            last_view: View::Mesh,
+            built: Mutex::new(None),
+            alt_target: 20_000.0,
+            easing: false,
             fly: std::env::var_os("UNIVERSE_PLANETLOD_FLY").is_some(),
             pan: std::env::var("UNIVERSE_PLANETLOD_FLY").is_ok_and(|v| v == "pan"),
             max_draw: std::env::var("UNIVERSE_PLANETLOD_MAXDRAW").ok().and_then(|v| v.parse().ok()).unwrap_or(usize::MAX),
@@ -499,6 +629,7 @@ impl PlanetLodApp {
                 }
             }
         }
+        app.alt_target = app.alt;
         if app.ex != 1.0 {
             app.set_ex(app.ex);
         }
@@ -581,8 +712,8 @@ impl PlanetLodApp {
                     continue;
                 }
                 for &t in &self.chunks[(x * self.grid.n + y) as usize].tris {
-                    let r = d.ft[t as usize].map(|v| self.resolve(v));
-                    if r[0] != r[1] && r[1] != r[2] && r[0] != r[2] && let Some(h) = hit(r) {
+                    // (The finest surface, not the drawn: a change of detail must not move the eye.)
+                    if let Some(h) = hit(d.ft[t as usize]) {
                         return Some(h);
                     }
                 }
@@ -617,6 +748,10 @@ impl PlanetLodApp {
             g.mesh = None;
         }
         self.feat = None;
+        let old = self.bd.clone();
+        self.bd = Arc::new(BuildData { pos: self.d.pos.clone(), col: old.col.clone(), ft: old.ft.clone(), fe: old.fe.clone(), stand_in: old.stand_in.clone(), chunk_tris: old.chunk_tris.clone(), chunk_edges: old.chunk_edges.clone(), origin: old.origin.clone() });
+        self.generation += 1;
+        *self.built.lock().unwrap() = None;
     }
 
     /// The crest and valley lines, 3 m over the ground, coloured by their role.
@@ -713,26 +848,6 @@ impl PlanetLodApp {
         self.stats.decided = decided;
         self.stats.changed = changed;
         self.stats.lod_ms = t0.elapsed().as_secs_f64() * 1e3;
-    }
-
-    fn resolve(&self, mut v: u32) -> u32 {
-        while self.on[v as usize] == 0 {
-            v = self.d.stand_in[v as usize];
-        }
-        v
-    }
-
-    /// The chunk's mesh again: its finest triangles through their drawn stand-ins.
-    fn build_chunk(&self, c: usize) -> (Mesh, usize) {
-        let ch = &self.chunks[c];
-        let tris: Vec<[u32; 3]> = ch.tris.iter().map(|&t| self.d.ft[t as usize].map(|v| self.resolve(v))).filter(|[a, b, c]| a != b && b != c && a != c).collect();
-        let edges: Vec<[u32; 2]> = if self.view == View::Mesh {
-            ch.edges.iter().map(|&e| self.d.fe[e as usize].map(|v| self.resolve(v))).filter(|[a, b]| a != b).collect()
-        } else {
-            vec![]
-        };
-        let n = tris.len();
-        (self.model(ch.origin, &tris, &edges), n)
     }
 
     fn build_tiles(&self, g: &TileGroup) -> Mesh {
@@ -905,8 +1020,19 @@ impl App for PlanetLodApp {
             }
             _ => {}
         }
+        // (The wheel sets where to go and the altitude eases there in about 0.15 s: a step of the wheel was a
+        // jump of the whole view in one frame.)
         if input.scroll != 0.0 && !over_panel {
-            self.alt = (self.alt * (-0.15 * input.scroll as f64).exp()).clamp(ALT_MIN, 6.0 * r);
+            self.alt_target = ((if self.easing { self.alt_target } else { self.alt }) * (-0.15 * input.scroll as f64).exp()).clamp(ALT_MIN, 6.0 * r);
+            self.easing = true;
+        }
+        if self.easing {
+            let k = 1.0 - (-dt / 0.15).exp();
+            self.alt = (self.alt.ln() + (self.alt_target.ln() - self.alt.ln()) * k).exp();
+            if (self.alt / self.alt_target - 1.0).abs() < 1e-3 {
+                self.alt = self.alt_target;
+                self.easing = false;
+            }
         }
         // W A S D fly at a speed that crosses the view's width in about four seconds; Q E down and up.
         let boost = if shift { 5.0 } else { 1.0 };
@@ -920,6 +1046,7 @@ impl App for PlanetLodApp {
         }
         let climb = input.axis(KeyCode::KeyQ, KeyCode::KeyE) as f64;
         if climb != 0.0 {
+            self.easing = false;
             self.alt = (self.alt * (1.2 * boost * dt * climb).exp()).clamp(ALT_MIN, 6.0 * r);
         }
         self.heading += input.axis(KeyCode::ArrowLeft, KeyCode::ArrowRight) as f64 * (1.2 * dt).to_degrees();
@@ -931,39 +1058,62 @@ impl App for PlanetLodApp {
         }
         let eye = self.eye();
         self.lod_update(eye);
-        // Meshes again (the engine's audit, 14 Oct: at altitude a coarse vertex flipping at its
-        // appearing distance marks most chunks, and rebuilding them all in the frame cost 13-53 ms): only
-        // the stale chunks in view, nearest first, built in parallel in batches until the frame's budget is
-        // spent; the rest keep their old mesh and wait (out of view: until they come into view).
+        // Meshes again, built first and drawn after: a job's meshes all go on screen together once all are on
+        // the GPU; then the next job: every stale chunk in view and every chunk not built yet, from a snapshot of
+        // what is drawn (stale chunks out of view keep their mesh until they come into view).
         use rayon::prelude::*;
         let t0 = Instant::now();
         let mut rebuilt = 0;
         let cam = self.camera();
         let aspect = match self.ui.lock().unwrap().aspect { a if a > 0.0 => a, _ => 16.0 / 9.0 };
         let view = self.view;
-        let mut todo: Vec<(f64, usize)> = (0..self.chunks.len())
-            .filter(|&c| {
-                let ch = &self.chunks[c];
-                !ch.tris.is_empty() && (ch.stale || ch.mesh_view != Some(view)) && self.chunk_visible(ch, &cam, aspect)
-            })
-            .map(|c| (self.chunks[c].origin.distance(cam.position), c))
-            .collect();
-        todo.sort_by(|a, b| a.0.total_cmp(&b.0));
-        for batch in todo.chunks(BATCH) {
-            if t0.elapsed().as_secs_f64() * 1e3 > MESH_BUDGET_MS {
-                break;
+        if view != self.last_view {
+            self.last_view = view;
+            self.generation += 1;
+            *self.built.lock().unwrap() = None;
+            self.busy = false;
+        }
+        if let Some(b) = self.done.lock().unwrap().try_iter().last() {
+            if b.generation == self.generation {
+                *self.built.lock().unwrap() = Some(b);
             }
-            let built: Vec<(usize, Mesh, usize)> = batch.par_iter().map(|&(_, c)| {
-                let (m, n) = self.build_chunk(c);
-                (c, m, n)
-            }).collect();
-            for (c, mesh, tris) in built {
-                let ch = &mut self.chunks[c];
-                ch.mesh = Some(mesh);
-                ch.mesh_view = Some(view);
-                ch.stale = false;
-                ch.tri_count = tris;
-                rebuilt += 1;
+            self.busy = false;
+        }
+        {
+            let mut slot = self.built.lock().unwrap();
+            let ready = slot.as_ref().is_some_and(|b| b.prepared == b.meshes.len() && b.meshes.iter().all(|(_, m, _)| m.gpu_resident()));
+            if ready && let Some(b) = slot.take() {
+                for (c, mesh, tris) in b.meshes {
+                    let ch = &mut self.chunks[c];
+                    ch.mesh = Some(mesh);
+                    ch.mesh_view = Some(b.view);
+                    ch.tri_count = tris;
+                    rebuilt += 1;
+                }
+            }
+        }
+        if !self.busy && self.built.lock().unwrap().is_none() {
+            // (In view first; with nothing in view to do, chunks never built, 400 at a time, nearest first.)
+            let mut chunks: Vec<(f64, usize)> = (0..self.chunks.len())
+                .filter(|&c| {
+                    let ch = &self.chunks[c];
+                    !ch.tris.is_empty() && (ch.mesh.is_none() || ch.stale || ch.mesh_view != Some(view)) && self.chunk_visible(ch, &cam, aspect)
+                })
+                .map(|c| (self.chunks[c].origin.distance(cam.position), c))
+                .collect();
+            if chunks.is_empty() {
+                chunks = (0..self.chunks.len()).filter(|&c| !self.chunks[c].tris.is_empty() && self.chunks[c].mesh.is_none()).map(|c| (self.chunks[c].origin.distance(cam.position), c)).collect();
+                chunks.sort_by(|a, b| a.0.total_cmp(&b.0));
+                chunks.truncate(400);
+            }
+            chunks.sort_by(|a, b| a.0.total_cmp(&b.0));
+            if !chunks.is_empty() {
+                for &(_, c) in &chunks {
+                    // (Marked built now: a vertex flipping while the job is out marks it stale again.)
+                    self.chunks[c].stale = false;
+                }
+                let job = Job { generation: self.generation, view, on: Arc::new(self.on.clone()), bd: self.bd.clone(), chunks: chunks.into_iter().map(|(_, c)| c).collect() };
+                self.busy = self.jobs.send(job).is_ok();
             }
         }
         let need: Vec<usize> = (0..self.tiles.len()).filter(|&g| self.tiles[g].mesh.as_ref().is_none_or(|(v, _)| *v != view)).collect();
@@ -1109,6 +1259,16 @@ impl App for PlanetLodApp {
             {
                 let w = label.len() as f32 * universe_engine::GLYPH;
                 frame.text_boxed(p - Vec2::new(w * 0.5, universe_engine::GLYPH + 6.0), label, Color::hex(0x111111), c);
+            }
+        }
+        // The built job's meshes handed to the engine to upload (not drawn yet), within the frame's budget.
+        if let Some(b) = self.built.lock().unwrap().as_mut() {
+            let mut tris = 0;
+            while b.prepared < b.meshes.len() && tris < UPLOAD_TRIS {
+                let (_, mesh, n) = &b.meshes[b.prepared];
+                frame.prepare_mesh(mesh);
+                tris += n;
+                b.prepared += 1;
             }
         }
         // The counts the panel shows that need the drawn meshes: the view box every 0.3 s.
