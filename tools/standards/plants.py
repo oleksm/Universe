@@ -1984,12 +1984,14 @@ def yard_units():
         desc=(f"A car on the stacker-reclaimer's rails, coupled behind it by a drawbar, that lifts the yard belt out of its run: the belt climbs over the tripper at {ang:g} degrees ({incline:.1f} m to rise {rise:g} m, from 1 m up to its head pulley's top at 9.5 m), turns down round the head and back to the yard under the car. "
               "Stacking, the ore leaves over the head down a covered chute at 45 degrees into a feed hopper on the slewing axis, carried by the head's frame, its outlet at (0, 0, 8.5) over the boom's tail, which turns under it; reclaiming, a flap closes the chute and the ore the machine sends down its central chute lands on the belt beyond the tripper. "
               f"Its origin on the running plane under the head's chute, at the machine's slewing centre when coupled; it reaches back to local x -{L_t - 2.0:.1f}, its tail at 1 m. Four bogies on the 10 m gauge, two travel drives that follow the machine's; two fixed drawbars, the tripper's, from its front bogies' ends (x -8.75) by cross pins to brackets, also the tripper's, bolted flush to the machine's rear bogies' end faces (x -7.2, y -5.06 and 5.06, 1 m up), for the belt's pull on the head (about 10 kN lifting the ore, a few times that in start-up tension, from memory) and the car's own rolling."),
-        built_of=[part("Trusses and deck", A36, L_t * 600.0, "two side trusses and the idler deck at 600 kg a metre, from memory"),
-                  part("Head and bend pulleys, chute and flap", A36, 8000.0, "from memory"),
-                  part("Bogies and travel drives", "good.electric-motors", 4 * 2000.0, "from memory")],
+        built_of=[part("Trusses and supports", A36, 26462.8, "two side trusses, the idler deck and the return's supports; measured on model v1"),
+                  part("Pulleys, chute and hopper", A36, 4184.2, "the head and bend pulleys (hollow drums), the covered chute, flap and the axis feed hopper with its flange; measured on model v1"),
+                  part("Bogies, wheels and coupling", A36, 23784.3, "four bogies, their running wheels drawn solid, the drawbars, pins and brackets to the machine's bogies; measured on model v1"),
+                  part("Travel drives", "good.electric-motors", 2 * 1000.0, "two, from memory; the belt is the yard belt's")],
         needs={"power": 30e3},
         basis=[{"of": ["physical"], "tier": "derived", "note": f"The incline from the lift, {rise:g} m at {ang:g} degrees (iron ore's steepest on a plain belt, from memory)."},
-               {"of": ["built_of", "needs"], "tier": "invented", "review": True, "note": "From memory of yard trippers."}])
+               {"of": ["built_of"], "tier": "derived", "review": True, "note": "Steel measured on blender's model v1; drives from memory."},
+               {"of": ["needs"], "tier": "invented", "review": True, "note": "From memory of yard trippers."}])
     out["truck-dump-hopper"] = dict(
         name="Truck dump hopper", size_class=2, fits="bay-s2", dims=(12.0, 10.0, 8.0),
         desc="A steel hopper over a pit that a tipping truck backs onto and empties into, 100 t, with an apron feeder under it onto the yard belt; its grizzly bars keep out the lumps. The trucks come from the port, its feeder's outlet at local (0, 0, -4) in the pit.",
