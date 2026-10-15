@@ -4,7 +4,7 @@ identity: {key: unit.eaf-vessel-80t-sealed, name: 'Arc furnace vessel, 80 t, sea
     tilts), 300 mm bore, flow and return, from its ports at local (-3.8, 3.2, 2.6) and (-3.8, 3.6, 2.6), clear of the tilt pin and its actuator, down to a fixed manifold on the deck whose two ports face up at local (-3.8, 4.9, 0.5) and (-3.8, 5.3, 0.5). Its box is not centred across: the arms'' tails and the secondary cables reach 6.25 m behind the furnace''s axis (toward the transformer), its water hoses'' couplings at the deck manifold 5.49 m in front (the manifold itself is the layout''s); 14 m tall with the masts at rest.'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 11.74, height: 14.0, mass: 315400.0}
+physical: {length: 12.0, width: 11.74, height: 14.0, mass: 316400.0}
 built_of:
 - {what: Hearth shell, item: material.structural-steel-a36, mass: 33060.0, note: '6.6 m across, 2.0 m tall, 50 mm plate, its dished bottom 1.25 times the disc'}
 - {what: Hearth lining, item: good.refractory-brick, mass: 148400.0, note: '0.9 m under the bath, 0.45 m up the hearth wall'}
@@ -22,7 +22,7 @@ built_of:
 - {what: Tilt and mast hydraulics, item: good.pumps, mass: 15000.0, note: 'cylinders, pumps and valves; from memory'}
 - {what: Roof seal and electrode glands, item: material.structural-steel-a36, mass: 4000.0, note: 'a sand seal round the roof''s rim and three water-cooled glands, from memory'}
 - {what: Feed lock, item: material.structural-steel-a36, mass: 3000.0, note: 'two valves and a chamber over the fifth hole, from memory'}
-- {what: Off-gas bellows, item: material.stainless-steel-304, mass: 1500.0, note: '2 m across, from memory'}
+- {what: Off-gas bellows and reducer, item: material.stainless-steel-304, mass: 2500.0, note: 'a bellows 2 m across from the fourth hole''s flange (local z 8.5 to 9.1), then a reducer to the layout''s 1.2 m duct at z 9.7; from memory'}
 holds: 107100.0
 needs: {power: 72000000, heat: 10800000.0, gravity: 1.6, atmosphere: any}
 recipes:

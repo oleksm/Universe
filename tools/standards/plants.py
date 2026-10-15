@@ -2284,7 +2284,7 @@ def airless_units(us):
     v["built_of"] = list(us["eaf-vessel-80t"]["built_of"]) + [
         part("Roof seal and electrode glands", A36, 4000.0, "a sand seal round the roof's rim and three water-cooled glands, from memory"),
         part("Feed lock", A36, 3000.0, "two valves and a chamber over the fifth hole, from memory"),
-        part("Off-gas bellows", "material.stainless-steel-304", 1500.0, "2 m across, from memory")]
+        part("Off-gas bellows and reducer", "material.stainless-steel-304", 2500.0, "a bellows 2 m across from the fourth hole's flange (local z 8.5 to 9.1), then a reducer to the layout's 1.2 m duct at z 9.7; from memory")]
     v["needs"] = dict(us["eaf-vessel-80t"]["needs"], atmosphere="any")
     v["basis"] = us["eaf-vessel-80t"]["basis"] + [{"of": ["identity.description"], "tier": "invented", "review": True, "note": "Sealed as closed ferroalloy furnaces are; not a design that has been built for vacuum."}]
     out["eaf-vessel-80t-sealed"] = v
@@ -2345,8 +2345,8 @@ def arc_furnace_airless(us, recs):
         ends = (max(xs_row) + 24.0, min(xs_row) - 22.0) if k % 2 == 0 else (min(xs_row) - 22.0, max(xs_row) + 24.0)
         snake += [(ends[0], y - 24.0, 1.0), (ends[1], y - 24.0, 1.0)]
     links = [
-        link("conveyor", "sponge iron feed", (-12.0, 30.0, 6.0), (-12.0, 7.8, 14.2), A36, 150.0, DRI * MOON_G[1] * 8.2 / 0.5 + 20000, "0.8 m chevron-cleated belt, as for air but open (no gallery), its head over the feed lock; its bearings and grease vacuum-rated"),
-        link("duct", "off-gas", (-10.0, 7.5, 13.65), (0.0, 24.0, 8.0), A36, math.pi * 1.2 * 0.010 * RHO["steel"], None, f"1.2 m across (the gas is not diluted with air, as it is for air: a fifth of the flow), 10 mm plate, evaporatively cooled: water boils in its jacket at about {hot:.0f} K and the steam gives its heat to the hot radiators; from the bellows on the roof's fourth hole to the filter", heat=duct_heat, via=[(-10.0, 7.5, 15.0), (-4.0, 13.5, 15.0), (0.0, 20.0, 12.0)]),
+        link("conveyor", "sponge iron feed", (-12.0, 30.0, 6.0), (-12.0, 7.8, 15.5), A36, 150.0, DRI * MOON_G[1] * 9.5 / 0.5 + 20000, "0.8 m chevron-cleated belt, as for air but open (no gallery), rising at about 23 degrees, its head over the feed lock (the lock on the roof's neck from local z 8.3 to 10.1: two valves and a chamber between, the head 0.4 m above it); its bearings and grease vacuum-rated"),
+        link("duct", "off-gas", (-10.0, 7.5, 14.7), (0.0, 24.0, 8.0), A36, math.pi * 1.2 * 0.010 * RHO["steel"], None, f"1.2 m across (the gas is not diluted with air, as it is for air: a fifth of the flow), 10 mm plate, evaporatively cooled: water boils in its jacket at about {hot:.0f} K and the steam gives its heat to the hot radiators; from the bellows on the roof's fourth hole to the filter", heat=duct_heat, via=[(-10.0, 7.5, 15.0), (-4.0, 13.5, 15.0), (0.0, 20.0, 12.0)]),
         link("busbar", "secondary bus", (-12.0, -3.5, 4.0), (-12.0, 0.8, 7.3), CU, 3 * bus_area * RHO["copper"], None, f"three water-cooled copper tube bars, as for air; in vacuum their gaps hold no air to break down, but the gas a seal lets out can (Paschen), so the bars are wrapped and spaced as if in air"),
         link("rail", "ladle rail", (-10.5, 6.0, 0.0), (33.0, 6.0, 0.0), A36, 2 * 60.0, None, "as for air: two 60 kg/m rails at 3 m gauge, on sintered regolith sleepers; on to the ladle station. A ladle standing in vacuum loses its hydrogen: the degasser's work begins here"),
         link("rail", "slag rail", (-16.5, 0.5, 0.0), (-16.5, 23.25, 0.0), A36, 2 * 60.0, None, "as for air: 2.5 m gauge, on sintered regolith sleepers"),

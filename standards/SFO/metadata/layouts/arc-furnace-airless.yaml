@@ -5,7 +5,7 @@ stands_for: module.arc-furnace
 site:
   atmosphere: none
   gravity: [1.6, 2.0]
-physical: {length: 249.0, width: 192.0, height: 25.0, mass: 3697000.0}
+physical: {length: 249.0, width: 192.0, height: 25.0, mass: 3698000.0}
 bays:
 - id: V
   mount: plant-mount.bay-s2
@@ -111,19 +111,19 @@ links:
 - kind: conveyor
   name: sponge iron feed
   from: [-12.0, 30.0, 6.0]
-  to: [-12.0, 7.8, 14.2]
-  length: 23.67
+  to: [-12.0, 7.8, 15.5]
+  length: 24.15
   item: material.structural-steel-a36
-  mass: 3550.0
-  power: 20960.0
-  note: 0.8 m chevron-cleated belt, as for air but open (no gallery), its head over the feed lock; its bearings and grease vacuum-rated
+  mass: 3622.0
+  power: 21110.0
+  note: '0.8 m chevron-cleated belt, as for air but open (no gallery), rising at about 23 degrees, its head over the feed lock (the lock on the roof''s neck from local z 8.3 to 10.1: two valves and a chamber between, the head 0.4 m above it); its bearings and grease vacuum-rated'
 - kind: duct
   name: off-gas
-  from: [-10.0, 7.5, 13.65]
+  from: [-10.0, 7.5, 14.7]
   to: [0.0, 24.0, 8.0]
-  length: 23.69
+  length: 22.64
   item: material.structural-steel-a36
-  mass: 7012.0
+  mass: 6701.0
   via:
   - [-10.0, 7.5, 15.0]
   - [-4.0, 13.5, 15.0]
@@ -202,7 +202,7 @@ ground:
 - {what: Crew post berm, item: material.regolith, volume: 164.6, note: loose regolith heaped 1 m over the post, mass: 246900.0}
 - {what: Radiator legs' pads, item: material.regolith-sintered, volume: 37.75, note: a 0.3 m block under each leg, mass: 94380.0}
 - {what: Rail sleepers and pads, item: material.regolith-sintered, volume: 144.2, note: 'under the ladle, slag and crane rails, the filter and the bin', mass: 360500.0}
-totals: {rate: 26.6666666666667, power: 72880000.0, heat: 18450000.0, water: 0.0, mass: 3697000.0, against_module: 'module.arc-furnace: one box, the same on every world. This layout: the same rate; 72.9 MW; 18.4 MW to 13 radiator fields (21.8 MW at lunar noon), 12 at 330 K for the panels and transformer and 1 at 485 K for the duct, in place of the tower; no water used up (closed loops); no hall, no baghouse (the furnace is sealed); 1,246 t of plant and 2,452 t of sintered regolith. The radiators cover 3.0 ha: the heat that went up a tower''s plume as steam must here leave as light, and at 330 K a panel in the noon sun sheds little. A heat pump lifting the panels'' heat to 485 K (at half Carnot''s) would need about 7 MW more power and 3 hot fields in place of all 13 (not fitted).'}
+totals: {rate: 26.6666666666667, power: 72880000.0, heat: 18450000.0, water: 0.0, mass: 3698000.0, against_module: 'module.arc-furnace: one box, the same on every world. This layout: the same rate; 72.9 MW; 18.4 MW to 13 radiator fields (21.8 MW at lunar noon), 12 at 330 K for the panels and transformer and 1 at 485 K for the duct, in place of the tower; no water used up (closed loops); no hall, no baghouse (the furnace is sealed); 1,246 t of plant and 2,452 t of sintered regolith. The radiators cover 3.0 ha: the heat that went up a tower''s plume as steam must here leave as light, and at 330 K a panel in the noon sun sheds little. A heat pump lifting the panels'' heat to 485 K (at half Carnot''s) would need about 7 MW more power and 3 hot fields in place of all 13 (not fitted).'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}
