@@ -5,7 +5,7 @@ stands_for: module.shaft-furnace
 site:
   atmosphere: none
   gravity: [1.6, 2.0]
-physical: {length: 473.3, width: 450.0, height: 45.0, mass: 9251000.0}
+physical: {length: 473.3, width: 450.0, height: 45.0, mass: 9273000.0}
 bays:
 - id: F
   mount: plant-mount.bay-s3
@@ -412,7 +412,7 @@ ground:
 - {what: Radiator legs' pads, item: material.regolith-sintered, volume: 124.9, mass: 312200.0}
 - {what: Crew post berm, item: material.regolith, volume: 586.23, note: 'loose regolith at least 1 m over the post everywhere (its top 4 x 2 m, 5.3 m up), lying at 35 degrees, its foot about 19 x 17 m, a cavity for the post; measured on blender''s arc furnace shop; with openings for its windows (light wells on the north) and its airlock (a ramp cut on the west); with openings for its windows and airlock; at the airlock''s door a landing of packed regolith 2 x 2 m, its top at the threshold (1.35 m up), and a ramp down to the ground at about 1 in 3', mass: 879300.0}
 - {what: Trestle footings, item: material.regolith-sintered, volume: 39.0, mass: 97500.0}
-totals: {rate: 55.5555555555556, power: 127500000.0, heat: 62090000.0, water: 0.0, mass: 9251000.0, against_module: 'module.shaft-furnace: one box, 22 MW. The layout for air draws 152 MW and sends 130 MW up four towers. This layout: the same rate; 127 MW (heater 121, compressor 4.1: at 8 bar the compressor only makes up the loop''s pressure drop); 62 MW to 43 radiator fields at 345 K (10 ha), for the water must condense somewhere and only light can take the heat away; no cooling zone or loop (the sponge iron goes on hot); no water used up. 4,978 t of plant and frame, 4,273 t of sintered regolith.'}
+totals: {rate: 55.5555555555556, power: 127500000.0, heat: 62090000.0, water: 0.0, mass: 9273000.0, against_module: 'module.shaft-furnace: one box, 22 MW. The layout for air draws 152 MW and sends 130 MW up four towers. This layout: the same rate; 127 MW (heater 121, compressor 4.1: at 8 bar the compressor only makes up the loop''s pressure drop); 62 MW to 43 radiator fields at 345 K (10 ha), for the water must condense somewhere and only light can take the heat away; no cooling zone or loop (the sponge iron goes on hot); no water used up. 5,000 t of plant and frame, 4,273 t of sintered regolith.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}

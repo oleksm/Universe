@@ -2707,7 +2707,9 @@ def shaft_airless_units(us):
     out["recycle-compressor-8bar"] = dict(
         name=f"Recycle compressor, {HP_W_COMP / 1e6:.1f} MW, 8 bar", size_class=2, fits="bay-s2", dims=(12.0, 6.0, 5.0),
         desc=f"Raises {GAS:.1f} kg/s of hydrogen from {HP_SUCTION / 1e5:.1f} to {HP_SHAFT / 1e5:.1f} bar, the loop's pressure drop only: two centrifugal stages in one casing and a motor. At 8 bar the gas is dense enough that this is a small machine. Suction at local (6, 0, 1.5), discharge at (-6, 0, 1.5); the casing's axis along y at (0, 1.3, 2.5), the motor behind it (y -2.6 to -0.4); the motor's 6.6 kV terminal box on top at (0, -1.5, 4.5); its water cooler's flanges at (-3.3, -2.8, 1) and (-2.7, -2.8, 1), for the motor's losses (about 4%) to the layout's loop.",
-        built_of=[part("Casing, rotor and motor", "material.high-strength-steel-4340", 8000.0 * HP_W_COMP / 1e6, "8 t a MW of drive, from memory")],
+        built_of=[part("Casing, rotor and motor", "material.high-strength-steel-4340", 8000.0 * HP_W_COMP / 1e6, "8 t a MW of drive, from memory (the 13 t of casing and motor walls drawn on blender's model v1 are within it)"),
+                  part("Skid and supports", A36, 15591.7, "measured on blender's model v1"),
+                  part("Gas and coolant piping", A36, 7101.9, "the 1 m suction and discharge stubs and the 100 mm, 4 mm cooling pair to the motor's jacket; measured on model v1, the elbows' overlap counted twice")],
         needs={"power": HP_W_COMP / 0.96, "atmosphere": "any"},
         basis=[{"of": ["physical", "built_of"], "tier": "invented", "review": True, "note": "From memory."},
                {"of": ["needs"], "tier": "derived", "note": f"Isentropic at {ETA_K:.0%}, a motor at 96%; its heat leaves by the condenser's aftercooler."}])
