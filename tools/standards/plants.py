@@ -1130,7 +1130,8 @@ def shaft_furnace_air(us, recs):
     z_top_gas = float(sh["desc"].split("top gas outlet at z ")[1].split(" ")[0])
     z_bustle = float(sh["desc"].split("a ring ")[1].split("at z ")[1].split(",")[0])
     z_ring = float(sh["desc"].split("underside is at z ")[1].split(" ")[0])
-    openings = [(9.0, -3.0, z_top_gas - 3.0, 12.0, 3.0, top - 3.0),            # east wall: the top gas main out and the pellet belt in
+    openings = [(9.0, -3.0, z_top_gas - 3.0, 12.0, 3.0, top - 3.0),            # east wall: the top gas main out
+                (-3.0, -3.0, top - 3 * cell, 12.0, 3.0, top),                  # roof and the east wall's top: the pellet belt's gallery, rising at 15 degrees, comes in through the roof to its head over the hopper
                 (-3.0, -12.0, z_bustle - 3.0, 3.0, -9.0, z_bustle + 3.0),     # south wall: the hot gas main in to the bustle
                 (-12.0, -3.0, 3.0, -9.0, 3.0, z_ring)]                        # west wall: the product belt out, the cooling loop's pipes
     groups, ground_nodes, n_nodes, cells = lattice(box, cell, round(top / cell) - 1, None, openings)
@@ -1259,7 +1260,7 @@ def shaft_furnace_air(us, recs):
         "bays": bays, "links": links,
         "frame": {"box": list(box), "cell": cell, "shape": f"An open braced tower {x1 - x0:.0f} x {y1 - y0:.0f} m and {top:.0f} m tall round the shaft: walls one cell thick, a roof one cell deep carrying the belt's head house, six grating platforms at z {', '.join(str(z) for z in decks)} (the lock and feeders, the cooling zone's ports, the bustle, the reduction zone, the top gas outlet, the seal leg), each with a 10 m hole round the shaft; "
                            f"stairs in switchback flights inside the north-west corner of the walls (x -12 to -6, y 9 to 12), landing on each platform and the roof at z {top - cell:.0f}; no cladding.",
-                  "openings": [], "members": members, "carries": [f"unit.{sh_key}"], "mass": r(frame_mass), "sized": sized},
+                  "openings": [list(o) for o in openings], "members": members, "carries": [f"unit.{sh_key}"], "mass": r(frame_mass), "sized": sized},
         "ground": ground,
         "totals": {"rate": S_RATE, "power": r(power), "heat": r(heat), "water": r(water), "mass": r(total), "against_module": against},
         "staff": smod.get("staff"),
