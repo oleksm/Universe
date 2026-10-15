@@ -5,7 +5,7 @@ stands_for: module.hydrogen-plant
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 170.0, width: 84.0, height: 18.0, mass: 7487000.0}
+physical: {length: 173.0, width: 84.0, height: 18.0, mass: 7702000.0}
 bays:
 - id: E1
   mount: plant-mount.bay-s3
@@ -77,42 +77,57 @@ links:
   name: DC bus 1
   from: [-48.0, -21.0, 2.4]
   to: [-48.0, -6.0, 3.0]
-  length: 15.01
+  length: 15.34
   item: material.aluminium-1350
-  mass: 2331.0
-  note: two aluminium bars, 288 cm2 each for 43 kA at 1.5 A/mm2, through the hall's south wall
+  mass: 2382.0
+  via:
+  - [-48.0, -17.0, 3.6]
+  - [-48.0, -7.0, 3.6]
+  note: 'two aluminium bars, 288 cm2 each for 43 kA at 1.5 A/mm2: up to 3.6 m on a post south of the wall, level through the south wall''s opening (z 3 to 6), down to the block''s terminal'
 - kind: busbar
   name: DC bus 2
   from: [-24.0, -21.0, 2.4]
   to: [-24.0, -6.0, 3.0]
-  length: 15.01
+  length: 15.34
   item: material.aluminium-1350
-  mass: 2331.0
-  note: two aluminium bars, 288 cm2 each for 43 kA at 1.5 A/mm2, through the hall's south wall
+  mass: 2382.0
+  via:
+  - [-24.0, -17.0, 3.6]
+  - [-24.0, -7.0, 3.6]
+  note: 'two aluminium bars, 288 cm2 each for 43 kA at 1.5 A/mm2: up to 3.6 m on a post south of the wall, level through the south wall''s opening (z 3 to 6), down to the block''s terminal'
 - kind: busbar
   name: DC bus 3
   from: [0.0, -21.0, 2.4]
   to: [0.0, -6.0, 3.0]
-  length: 15.01
+  length: 15.34
   item: material.aluminium-1350
-  mass: 2331.0
-  note: two aluminium bars, 288 cm2 each for 43 kA at 1.5 A/mm2, through the hall's south wall
+  mass: 2382.0
+  via:
+  - [0.0, -17.0, 3.6]
+  - [0.0, -7.0, 3.6]
+  note: 'two aluminium bars, 288 cm2 each for 43 kA at 1.5 A/mm2: up to 3.6 m on a post south of the wall, level through the south wall''s opening (z 3 to 6), down to the block''s terminal'
 - kind: busbar
   name: DC bus 4
   from: [24.0, -21.0, 2.4]
   to: [24.0, -6.0, 3.0]
-  length: 15.01
+  length: 15.34
   item: material.aluminium-1350
-  mass: 2331.0
-  note: two aluminium bars, 288 cm2 each for 43 kA at 1.5 A/mm2, through the hall's south wall
+  mass: 2382.0
+  via:
+  - [24.0, -17.0, 3.6]
+  - [24.0, -7.0, 3.6]
+  note: 'two aluminium bars, 288 cm2 each for 43 kA at 1.5 A/mm2: up to 3.6 m on a post south of the wall, level through the south wall''s opening (z 3 to 6), down to the block''s terminal'
 - kind: busbar
   name: DC bus 5
   from: [48.0, -21.0, 2.4]
   to: [48.0, -6.0, 3.0]
-  length: 15.01
+  length: 15.34
   item: material.aluminium-1350
-  mass: 2331.0
-  note: two aluminium bars, 288 cm2 each for 43 kA at 1.5 A/mm2, through the hall's south wall
+  mass: 2382.0
+  via:
+  - [48.0, -17.0, 3.6]
+  - [48.0, -7.0, 3.6]
+  note: 'two aluminium bars, 288 cm2 each for 43 kA at 1.5 A/mm2: up to 3.6 m on a post south of the wall, level through the south wall''s opening (z 3 to 6), down to the block''s terminal'
 - kind: pipe
   name: hydrogen header
   from: [-37.5, -2.5, 8.0]
@@ -122,8 +137,8 @@ links:
   mass: 7026.0
   via:
   - [-37.5, -2.5, 9.0]
-  - [58.5, -2.5, 9.0]
-  - [58.5, 0.0, 6.0]
+  - [64.0, -2.5, 9.0]
+  - [64.0, 0.0, 6.0]
   note: '0.44 m stainless, 6 mm wall, at 3 bar: from each block''s hydrogen separator along the hall at z 9, out by the east wall to the purifier'
 - kind: pipe
   name: hydrogen to the shaft furnace
@@ -148,14 +163,54 @@ links:
 - kind: pipe
   name: demineralised water
   from: [66.0, -24.0, 0.5]
-  to: [59.0, 6.0, 1.0]
-  length: 37.04
+  to: [-38.2, 7.5, 0.5]
+  length: 135.7
   item: material.stainless-steel-304
-  mass: 365.4
+  mass: 1339.0
   via:
-  - [62.0, -24.0, 0.5]
-  - [62.0, 6.0, 0.5]
-  note: 100 mm stainless, 4.7 kg/s to the blocks' feed points along the hall's north side
+  - [64.5, -24.0, 0.5]
+  - [64.5, 7.5, 0.5]
+  note: '100 mm stainless, 4.7 kg/s: north along x 64.5, into the hall by the east wall''s low opening at y 7.5, west along y 7.5 past every block'
+- kind: pipe
+  name: demineralised water to block 1
+  from: [-38.2, 7.5, 0.5]
+  to: [-38.2, 6.0, 1.0]
+  length: 1.581
+  item: material.stainless-steel-304
+  mass: 5.849
+  note: 50 mm off the header into the block's flange
+- kind: pipe
+  name: demineralised water to block 2
+  from: [-14.2, 7.5, 0.5]
+  to: [-14.2, 6.0, 1.0]
+  length: 1.581
+  item: material.stainless-steel-304
+  mass: 5.849
+  note: 50 mm off the header into the block's flange
+- kind: pipe
+  name: demineralised water to block 3
+  from: [9.8, 7.5, 0.5]
+  to: [9.8, 6.0, 1.0]
+  length: 1.581
+  item: material.stainless-steel-304
+  mass: 5.849
+  note: 50 mm off the header into the block's flange
+- kind: pipe
+  name: demineralised water to block 4
+  from: [33.8, 7.5, 0.5]
+  to: [33.8, 6.0, 1.0]
+  length: 1.581
+  item: material.stainless-steel-304
+  mass: 5.849
+  note: 50 mm off the header into the block's flange
+- kind: pipe
+  name: demineralised water to block 5
+  from: [57.8, 7.5, 0.5]
+  to: [57.8, 6.0, 1.0]
+  length: 1.581
+  item: material.stainless-steel-304
+  mass: 5.849
+  note: 50 mm off the header into the block's flange
 - kind: pipe
   name: raw water
   from: [110.0, -24.0, 0.5]
@@ -174,26 +229,26 @@ links:
   note: '150 mm: the reverse osmosis concentrate and the filters'' backwash, beyond the layout'
 - kind: pipe
   name: cooling water to the rectifiers
-  from: [18.0, 48.0, 0.75]
+  from: [18.0, 52.5, 0.75]
   to: [-51.45, -30.0, 0.75]
-  length: 237.4
+  length: 283.9
   item: material.structural-steel-a36
-  mass: 13170.0
+  mass: 15750.0
   via:
-  - [63.0, 48.0, 0.75]
-  - [63.0, -30.0, 0.75]
-  note: 'a pair of 0.22 m pipes, 5 mm wall, flow and return: 99 kg/s for the rectifier transformers'' coolers and the purifier, from the tower east of the hall, south past the purifier (a tee for it at y -6) and west along y -30 behind the rectifiers'
+  - [84.0, 52.5, 0.75]
+  - [84.0, -30.0, 0.75]
+  note: 'a pair of 0.22 m pipes, 5 mm wall, flow and return: 99 kg/s for the rectifier transformers'' coolers and the purifier, from the tower''s ports at y 52.5, east along y 52.5 (north of the mains, which turn south at x 19.5, so the two never cross), south along x 84 east of the purifier and the water treatment (a tee for the purifier at y -6) and west along y -30 behind the water treatment and the rectifiers'
 - kind: pipe
   name: cooling water to the purifier
-  from: [63.0, -6.0, 0.75]
+  from: [84.0, -6.0, 0.75]
   to: [72.3, -4.0, 1.0]
-  length: 11.55
+  length: 13.95
   item: material.structural-steel-a36
-  mass: 338.2
+  mass: 408.4
   via:
   - [72.3, -6.0, 0.75]
   - [72.3, -6.0, 1.0]
-  note: a pair of 148 mm pipes off the rectifiers' header, east along y -6 and north, level into the purifier's flanges on its -y face (x 72 flow, 72.6 return)
+  note: a pair of 148 mm pipes off the rectifiers' header, west along y -6 and north, level into the purifier's flanges on its -y face (x 72 flow, 72.6 return)
 - kind: pipe
   name: cooling water to rectifier 1
   from: [-51.45, -30.0, 0.75]
@@ -252,48 +307,98 @@ links:
 - kind: pipe
   name: cooling water mains
   from: [18.0, 48.0, 0.75]
-  to: [-37.0, 6.0, 1.0]
-  length: 100.0
+  to: [0.0, 9.0, 1.0]
+  length: 60.0
   item: material.structural-steel-a36
-  mass: 26550.0
+  mass: 14540.0
   via:
   - [19.5, 48.0, 0.75]
   - [19.5, 20.0, 0.75]
   - [0.0, 20.0, 0.75]
+  - [0.0, 12.0, 1.0]
+  note: 'a pair of 0.49 m pipes, 10 mm wall, flow and return: 569 kg/s at a 10 K rise, from the tower''s ports at y 48, south along x 19.5, west along y 20, in by the north wall''s opening at x 0 to the header'
+- kind: pipe
+  name: cooling water header
+  from: [-37.0, 9.0, 1.0]
+  to: [59.0, 9.0, 1.0]
+  length: 96.0
+  item: material.structural-steel-a36
+  mass: 23270.0
+  via:
   - [0.0, 9.0, 1.0]
-  - [-37.0, 9.0, 1.0]
-  note: 'a pair of 0.54 m pipes, 10 mm wall, flow and return: 569 kg/s at a 10 K rise, into the hall by the north wall and along it to each block''s coolers, a branch out to the rectifiers'
+  note: the mains' pair on along y 9 inside the north wall, west and east of the tee at x 0, past every block's cooler ports
+- kind: pipe
+  name: cooling water to block 1
+  from: [-37.0, 9.0, 1.0]
+  to: [-37.0, 6.0, 1.0]
+  length: 3.0
+  item: material.structural-steel-a36
+  mass: 222.0
+  note: a pair of 250 mm pipes off the header, south, level into the block's flanges (x 10.6 flow, 11.4 return)
+- kind: pipe
+  name: cooling water to block 2
+  from: [-13.0, 9.0, 1.0]
+  to: [-13.0, 6.0, 1.0]
+  length: 3.0
+  item: material.structural-steel-a36
+  mass: 222.0
+  note: a pair of 250 mm pipes off the header, south, level into the block's flanges (x 10.6 flow, 11.4 return)
+- kind: pipe
+  name: cooling water to block 3
+  from: [11.0, 9.0, 1.0]
+  to: [11.0, 6.0, 1.0]
+  length: 3.0
+  item: material.structural-steel-a36
+  mass: 222.0
+  note: a pair of 250 mm pipes off the header, south, level into the block's flanges (x 10.6 flow, 11.4 return)
+- kind: pipe
+  name: cooling water to block 4
+  from: [35.0, 9.0, 1.0]
+  to: [35.0, 6.0, 1.0]
+  length: 3.0
+  item: material.structural-steel-a36
+  mass: 222.0
+  note: a pair of 250 mm pipes off the header, south, level into the block's flanges (x 10.6 flow, 11.4 return)
+- kind: pipe
+  name: cooling water to block 5
+  from: [59.0, 9.0, 1.0]
+  to: [59.0, 6.0, 1.0]
+  length: 3.0
+  item: material.structural-steel-a36
+  mass: 222.0
+  note: a pair of 250 mm pipes off the header, south, level into the block's flanges (x 10.6 flow, 11.4 return)
 frame:
-  box: [-60.0, -15.0, 0.0, 60.0, 15.0, 18.0]
+  box: [-63.0, -15.0, 0.0, 63.0, 15.0, 18.0]
   cell: 3.0
-  shape: Walls one cell thick, 15 m tall; a roof one cell deep over a 114 x 24 m floor, open along its ridge (a vent 1.5 m wide) so hydrogen cannot gather; framed openings in the south wall for the DC busbars, in the east for the gas headers and a door, in the north for the cooling water.
+  shape: Walls one cell thick, 15 m tall; a roof one cell deep over a 120 x 24 m floor, open along its ridge so hydrogen cannot gather (a vent 1.5 m wide over y 0.75 to 2.25, between the top chords at y 0 and 3, the top diagonals there left out; only the cross chords every 3 m span it); framed openings in the south wall for the DC busbars, in the east for the gas headers and a door, in the north for the cooling water.
   openings:
   - [-49.5, -15.0, 3.0, -46.5, -12.0, 6.0]
   - [-25.5, -15.0, 3.0, -22.5, -12.0, 6.0]
   - [-1.5, -15.0, 3.0, 1.5, -12.0, 6.0]
   - [22.5, -15.0, 3.0, 25.5, -12.0, 6.0]
   - [46.5, -15.0, 3.0, 49.5, -12.0, 6.0]
-  - [57.0, -9.0, 6.0, 60.0, 9.0, 12.0]
+  - [60.0, -9.0, 6.0, 63.0, 9.0, 12.0]
   - [-3.0, 12.0, 0.0, 3.0, 15.0, 3.0]
-  - [57.0, -3.0, 0.0, 60.0, 3.0, 6.0]
+  - [60.0, -3.0, 0.0, 63.0, 3.0, 6.0]
+  - [60.0, 6.0, 0.0, 63.0, 9.0, 3.0]
   members:
-  - {item: stock.st4340-tb-120x3-s3000, count: 2615, where: wall}
-  - {item: stock.st4340-tb-120x3-d3000, count: 1928, where: wall}
-  - {item: stock.st4340-tb-100x3-s3000, count: 1863, where: roof}
-  - {item: stock.st4340-tb-100x3-d3000, count: 1554, where: roof}
-  - {item: stock.st4340-node-160b, count: 1844, where: nodes}
-  - {item: stock.st4340-box-400x400x25, count: 6, where: 'crane runways, three a side, 38 m lengths, along x on the inside of the long walls: their rail plane 11 m up at y -11.4 and +11.4'}
-  cladding: {item: stock.al6061-sh-2, area: 8622.0, mass: 46560.0}
+  - {item: stock.st4340-tb-120x3-s3000, count: 2725, where: wall}
+  - {item: stock.st4340-tb-120x3-d3000, count: 2009, where: wall}
+  - {item: stock.st4340-tb-100x3-s3000, count: 1957, where: roof}
+  - {item: stock.st4340-tb-100x3-d3000, count: 1592, where: roof}
+  - {item: stock.st4340-node-160b, count: 1928, where: nodes}
+  - {item: stock.st4340-box-400x400x25, count: 6, where: 'crane runways, three a side, 40 m lengths, along x on the inside of the long walls: their rail plane 11 m up at y -11.4 and +11.4'}
+  cladding: {item: stock.al6061-sh-2, area: 9000.0, mass: 48600.0}
   carries: [unit.stack-crane-20t]
-  mass: 383700.0
+  mass: 400200.0
   sized: 'At 1 g: roof 1249 Pa (2 mm aluminium, the frame about 20 kg/m2, 1 kPa of snow and wind, the last invented) over a 24 m span in 3 m deep strips puts 90 kN in a chord: st4340-tb-100x3 takes 242 kN. A wheel of the 20 t crane loaded at the runway''s end puts 188 kN on a wall node, with the roof''s share 233 kN: st4340-tb-120x3 takes 424 kN. Each the kit''s lightest section with half again to spare. The runway bends to 32 MPa between nodes, against 470 MPa with half again to spare. Wind and footings not yet checked.'
 ground:
-- {what: Hall floor, item: good.concrete, volume: 1094.0, note: '0.4 m, 114 x 24 m, with a lye-proof coating and bunds round each block', mass: 2626000.0}
-- {what: Frame footings, item: good.concrete, volume: 423.0, note: a 1.5 x 1.5 x 1 m pad under each of the lattice's 188 ground nodes, mass: 1015000.0}
-- {what: Rectifier slabs and fire walls, item: good.concrete, volume: 326.4, note: 'a slab under each, a fire wall between', mass: 783400.0}
-- {what: Outside slabs, item: good.concrete, volume: 96.0, note: under the purifier and the water treatment, mass: 230400.0}
-- {what: Cooling tower basin, item: good.concrete, volume: 288.9, note: sunk as the furnace shop's, mass: 693400.0}
-totals: {rate: 0.525, power: 99100000.0, heat: 25260000.0, water: 18.7, mass: 7487000.0, against_module: 'module.hydrogen-plant: one box 150 x 100 x 20 m, 100 MW. This layout: the same 1,890 kg of hydrogen an hour; 99.1 MW (the cells 95.5, at 1.9 V, 50.5 kWh a kg); 25.3 MW to the tower, 18.7 kg/s of water used and evaporated; 2,139 t of plant and frame, 5,348 t of concrete; 1.4 ha, against the source''s 0.8 to 1.7 for 100 MW. It makes 0.525 kg/s; one shaft furnace at its full rate takes 3.00, about 5.7 of these.'}
+- {what: Hall floor, item: good.concrete, volume: 1152.0, note: '0.4 m, 120 x 24 m, top at z 0, with a lye-proof coating; a bund 0.3 m high and 0.2 m thick round each block, 0.5 m outside its skid, to hold a stack''s lye', mass: 2765000.0}
+- {what: Frame footings, item: good.concrete, volume: 441.0, note: a 1.5 x 1.5 x 1 m pad under each of the lattice's 196 ground nodes, mass: 1058000.0}
+- {what: Rectifier slabs and fire walls, item: good.concrete, volume: 326.4, note: 'a 12 x 8 x 0.5 m slab under each, its top at z 0 with an oil sump; fire walls 8 m long, 6 m tall, 0.3 m thick along y at x -60, -36, -12, 12, 36 and 60', mass: 783400.0}
+- {what: Outside slabs, item: good.concrete, volume: 96.0, note: '12 x 8 x 0.5 m under the purifier and the water treatment, tops at z 0, the water treatment''s with a drain channel to its reject flange', mass: 230400.0}
+- {what: Cooling tower basin, item: good.concrete, volume: 288.9, note: 'sunk as the furnace shop''s: a 0.5 m floor 0.6 m wider than the tower each way, walls 0.3 m thick and 2 m deep, the water just under z 0; the tower stands on the walls', mass: 693400.0}
+totals: {rate: 0.525, power: 99100000.0, heat: 25260000.0, water: 18.7, mass: 7702000.0, against_module: 'module.hydrogen-plant: one box 150 x 100 x 20 m, 100 MW. This layout: the same 1,890 kg of hydrogen an hour; 99.1 MW (the cells 95.5, at 1.9 V, 50.5 kWh a kg); 25.3 MW to the tower, 18.7 kg/s of water used and evaporated; 2,172 t of plant and frame, 5,530 t of concrete; 1.5 ha, against the source''s 0.8 to 1.7 for 100 MW. It makes 0.525 kg/s; one shaft furnace at its full rate takes 3.00, about 5.7 of these.'}
 staff:
 - {profession: profession.chemist, count: 2}
 - {profession: profession.plant-operator, count: 4}

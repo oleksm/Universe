@@ -825,7 +825,7 @@
 - { record: layout.arc-furnace-airless, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "befaa429a44d04ce" }
 - { record: layout.casting-bay-air, at: "2026-10-15T02:26:46Z", status: draft, summary: "changed: physical", sha: "64ae565ca9d653a2" }
 - { record: layout.casting-bay-airless, at: "2026-10-14T21:36:13Z", status: draft, summary: "changed: physical, totals", sha: "ed7687b7564fac7a" }
-- { record: layout.hydrogen-plant-air, at: "2026-10-15T03:44:13Z", status: draft, summary: "changed: totals", sha: "cf6c972eae59a283" }
+- { record: layout.hydrogen-plant-air, at: "2026-10-15T04:05:27Z", status: draft, summary: "changed: physical, links, frame, ground, totals", sha: "def3721445408b21" }
 - { record: layout.hydrogen-plant-airless, at: "2026-10-15T03:26:57Z", status: draft, summary: "changed: physical, bays, links, totals", sha: "f17169ab70753e43" }
 - { record: layout.ingot-yard-air, at: "2026-10-14T21:38:01Z", status: draft, summary: "changed: identity, physical, bays, totals", sha: "be2f1f8941755a1b" }
 - { record: layout.ladle-station-air, at: "2026-10-15T02:26:46Z", status: draft, summary: "changed: physical", sha: "31ea2691985163d3" }
@@ -2735,7 +2735,7 @@
 - { record: unit.balling-disc-7m5, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "580b8fd9433fdd37" }
 - { record: unit.cooling-tower, at: "2026-10-14T14:37:56Z", status: draft, summary: "changed", sha: "20447996507fd0ba" }
 - { record: unit.cooling-tower-1cell, at: "2026-10-14T19:55:55Z", status: draft, summary: "changed", sha: "b9a2ebb48ebfbe05" }
-- { record: unit.cooling-tower-h2, at: "2026-10-15T03:58:46Z", status: draft, summary: "changed: visual", sha: "cb3e310c37289e4f" }
+- { record: unit.cooling-tower-h2, at: "2026-10-15T04:02:06Z", status: draft, summary: "changed", sha: "811c23f22ab4f331" }
 - { record: unit.cooling-tower-shaft, at: "2026-10-15T01:24:23Z", status: draft, summary: "first tracked", sha: "de1f2baa4965e350" }
 - { record: unit.crating-line, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "4f803762d4f4c669" }
 - { record: unit.crew-post, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "94bf58a6622c650d" }
@@ -2781,7 +2781,7 @@
 - { record: unit.shaft-furnace-200th, at: "2026-10-14T23:03:43Z", status: draft, summary: "changed", sha: "475472e5d8cc7cc6" }
 - { record: unit.shaft-furnace-200th-hp, at: "2026-10-14T19:26:44Z", status: draft, summary: "first tracked", sha: "a36f3c28899dff95" }
 - { record: unit.slag-pot-car, at: "2026-10-14T14:59:35Z", status: draft, summary: "changed", sha: "99ae6089782a9bea" }
-- { record: unit.stack-crane-20t, at: "2026-10-15T03:52:05Z", status: draft, summary: "changed: visual", sha: "8de8674c9632d5c0" }
+- { record: unit.stack-crane-20t, at: "2026-10-15T04:02:06Z", status: draft, summary: "changed", sha: "169bc25878c20b1a" }
 - { record: unit.stacker-reclaimer-1500th, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "37f21c4682c96ba8" }
 - { record: unit.stair-tower-12m, at: "2026-10-14T20:31:28Z", status: draft, summary: "changed", sha: "47201be2e61453ae" }
 - { record: unit.stripper-crane-20t, at: "2026-10-14T21:36:13Z", status: draft, summary: "changed", sha: "248463a76b95017a" }
@@ -2790,7 +2790,7 @@
 - { record: unit.top-gas-scrubber, at: "2026-10-15T00:44:40Z", status: draft, summary: "changed", sha: "905cd617b18be94c" }
 - { record: unit.truck-dump-hopper, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "69379232aafc2169" }
 - { record: unit.vacuum-degasser-80t, at: "2026-10-14T18:23:23Z", status: draft, summary: "changed", sha: "b01f8bbfcca9fb37" }
-- { record: unit.water-treatment, at: "2026-10-15T03:47:06Z", status: draft, summary: "changed: visual", sha: "76d64e1e6c1cb33e" }
+- { record: unit.water-treatment, at: "2026-10-15T04:02:06Z", status: draft, summary: "changed", sha: "7bb858e479a2759b" }
 - { record: unit.water-treatment-sealed, at: "2026-10-15T03:26:57Z", status: draft, summary: "first tracked", sha: "cc51e1a707bd7340" }
 - { record: vocabulary.asteroid, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "c85b5b93f49a4621" }
 - { record: vocabulary.asteroid-family, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "3893f86924156b47" }

@@ -1530,13 +1530,15 @@ def hydrogen_units():
 
 def hydrogen_plant_air(us, recs):
     """The hydrogen plant on a world with air at 1 g: five electrolyser blocks in a vented hall, their rectifiers outside."""
-    cell, box = 3.0, (-60.0, -15.0, 0.0, 60.0, 15.0, 18.0)
+    cell, box = 3.0, (-63.0, -15.0, 0.0, 63.0, 15.0, 18.0)          # ends a cell past the end blocks, whose service parts reach x 59.6
     xs_b = [-48.0, -24.0, 0.0, 24.0, 48.0]
     openings = [(x - 1.5, -15.0, 3.0, x + 1.5, -12.0, 6.0) for x in xs_b]           # the DC busbars, south wall
-    openings += [(57.0, -9.0, 6.0, 60.0, 9.0, 12.0),                                 # the hydrogen and oxygen headers, east wall
+    openings += [(60.0, -9.0, 6.0, 63.0, 9.0, 12.0),                                 # the hydrogen and oxygen headers, east wall
                  (-3.0, 12.0, 0.0, 3.0, 15.0, 3.0),                                  # the cooling water mains, north wall
-                 (57.0, -3.0, 0.0, 60.0, 3.0, 6.0)]                                  # a door, east
-    groups, ground_nodes, n_nodes, cells = lattice(box, cell, 5, None, openings)
+                 (60.0, -3.0, 0.0, 63.0, 3.0, 6.0),                                  # a door, east
+                 (60.0, 6.0, 0.0, 63.0, 9.0, 3.0)]                                   # the demineralised water, east wall
+    vent_cuts = [(box[0] + (i + 0.5) * cell - 0.5, 1.0, box[5] - 0.1, box[0] + (i + 0.5) * cell + 0.5, 2.0, box[5] + 0.1) for i in range(1, round((box[3] - box[0]) / cell) - 1)]   # the roof's top diagonals over the vent, y 0 to 3
+    groups, ground_nodes, n_nodes, cells = lattice(box, cell, 5, None, openings, vent_cuts)
     x0, y0, z0, x1, y1, z1 = box
     span_in = y1 - y0 - 2 * cell
     crane = recs["stack-crane-20t"]
@@ -1586,32 +1588,35 @@ def hydrogen_plant_air(us, recs):
     pm = lambda d, t: math.pi * d * t * RHO["steel"]
     loop = sum(recs[k]["needs"].get("heat", 0) for k in ("electrolyser-block-20mw",)) * N_BLK + recs["rectifier-transformer-21mva"]["needs"]["heat"] * N_BLK
     flow = loop / (4186 * 10)
-    d_cw = math.sqrt(4 * flow / 1000 / 2.5 / math.pi)
+    d_cw = math.sqrt(4 * flow / 1000 / 3.0 / math.pi)                                 # at 3 m/s, so the pair fits the tower's 500 mm ports
     ss = "material.stainless-steel-304"
     q_r = recs["rectifier-transformer-21mva"]["needs"]["heat"]
     q_p = recs["hydrogen-purifier"]["needs"]["heat"]
     d_rh = math.sqrt(4 * (q_r * N_BLK + q_p) / (4186 * 10) / 1000 / 2.5 / math.pi)
     d_pb = math.sqrt(4 * q_p / (4186 * 10) / 1000 / 2.0 / math.pi)
     d_rb = max(0.08, math.sqrt(4 * q_r / (4186 * 10) / 1000 / 2.5 / math.pi))
-    links = [link("busbar", f"DC bus {i + 1}", (x, -24.0 + rW / 2, rH * 2 / 3), (x, -6.0, 3.0), AL, 2 * bus_a * RHO["aluminium"], None, f"two aluminium bars, {bus_a * 1e4:.0f} cm2 each for {I_DC / 1e3:.0f} kA at 1.5 A/mm2, through the hall's south wall") for i, x in enumerate(xs_b)]
+    links = [link("busbar", f"DC bus {i + 1}", (x, -24.0 + rW / 2, rH * 2 / 3), (x, -6.0, 3.0), AL, 2 * bus_a * RHO["aluminium"], None, f"two aluminium bars, {bus_a * 1e4:.0f} cm2 each for {I_DC / 1e3:.0f} kA at 1.5 A/mm2: up to 3.6 m on a post south of the wall, level through the south wall's opening (z 3 to 6), down to the block's terminal", via=[(x, -17.0, 3.6), (x, -7.0, 3.6)]) for i, x in enumerate(xs_b)]
     links += [
-        link("pipe", "hydrogen header", (xs_b[0] + 10.5, -2.5, 8.0), (66.0, 0.0, 6.0), ss, pm(d_h2, 0.006), None, f"{d_h2:.2f} m stainless, 6 mm wall, at 3 bar: from each block's hydrogen separator along the hall at z 9, out by the east wall to the purifier", via=[(xs_b[0] + 10.5, -2.5, 9.0), (58.5, -2.5, 9.0), (58.5, 0.0, 6.0)]),
+        link("pipe", "hydrogen header", (xs_b[0] + 10.5, -2.5, 8.0), (66.0, 0.0, 6.0), ss, pm(d_h2, 0.006), None, f"{d_h2:.2f} m stainless, 6 mm wall, at 3 bar: from each block's hydrogen separator along the hall at z 9, out by the east wall to the purifier", via=[(xs_b[0] + 10.5, -2.5, 9.0), (64.0, -2.5, 9.0), (64.0, 0.0, 6.0)]),
         link("pipe", "hydrogen to the shaft furnace", (78.0, 0.0, 2.0), (110.0, 0.0, 2.0), ss, pm(d_h2, 0.006), None, f"{H_RATE:.3f} kg/s of dry hydrogen at about 3 bar, on to the shaft furnace's make-up, beyond the layout"),
         link("pipe", "oxygen header", (xs_b[0] + 10.5, 2.5, 8.0), (110.0, 6.0, 9.0), ss, pm(d_o2, 0.006), None, f"{d_o2:.2f} m stainless, 6 mm wall: the {H_O2:.1f} kg/s of oxygen, out by the east wall to a vent stack or to buyers (the arc furnace lances it), beyond the layout; clean, oil-free, as oxygen service needs", via=[(xs_b[0] + 10.5, 2.5, 9.0), (58.5, 2.5, 9.0), (58.5, 6.0, 9.0)]),
-        link("pipe", "demineralised water", (66.0, -24.0, 0.5), (59.0, 6.0, 1.0), ss, pm(0.1, 0.004), None, f"100 mm stainless, {H_WATER:.1f} kg/s to the blocks' feed points along the hall's north side", via=[(62.0, -24.0, 0.5), (62.0, 6.0, 0.5)]),
+        link("pipe", "demineralised water", (66.0, -24.0, 0.5), (xs_b[0] + 9.8, 7.5, 0.5), ss, pm(0.1, 0.004), None, f"100 mm stainless, {H_WATER:.1f} kg/s: north along x 64.5, into the hall by the east wall's low opening at y 7.5, west along y 7.5 past every block", via=[(64.5, -24.0, 0.5), (64.5, 7.5, 0.5)]),
+        *[link("pipe", f"demineralised water to block {i + 1}", (x + 9.8, 7.5, 0.5), (x + 9.8, 6.0, 1.0), ss, pm(0.05, 0.003), None, "50 mm off the header into the block's flange") for i, x in enumerate(xs_b)],
         link("pipe", "raw water", (110.0, -24.0, 0.5), (78.0, -24.0, 0.5), A36, pm(0.15, 0.005), None, "150 mm: town or river water, or the shaft furnace's condensate, beyond the layout"),
         link("pipe", "reject to drain", (78.0, -20.6, 0.3), (110.0, -20.6, 0.3), A36, pm(0.15, 0.005), None, "150 mm: the reverse osmosis concentrate and the filters' backwash, beyond the layout"),
-        link("pipe", "cooling water to the rectifiers", (tower["dims"][0] / 2, 48.0, 0.75), (xs_b[0] - 3.45, -30.0, 0.75), A36, 2 * pm(d_rh, 0.005), None, f"a pair of {d_rh:.2f} m pipes, 5 mm wall, flow and return: {(q_r * N_BLK + q_p) / (4186 * 10):.0f} kg/s for the rectifier transformers' coolers and the purifier, from the tower east of the hall, south past the purifier (a tee for it at y -6) and west along y -30 behind the rectifiers", via=[(63.0, 48.0, 0.75), (63.0, -30.0, 0.75)]),
-        link("pipe", "cooling water to the purifier", (63.0, -6.0, 0.75), (72.3, -4.0, 1.0), A36, 2 * pm(d_pb, 0.004), None, f"a pair of {d_pb * 1000:.0f} mm pipes off the rectifiers' header, east along y -6 and north, level into the purifier's flanges on its -y face (x 72 flow, 72.6 return)", via=[(72.3, -6.0, 0.75), (72.3, -6.0, 1.0)]),
+        link("pipe", "cooling water to the rectifiers", (tower["dims"][0] / 2, 52.5, 0.75), (xs_b[0] - 3.45, -30.0, 0.75), A36, 2 * pm(d_rh, 0.005), None, f"a pair of {d_rh:.2f} m pipes, 5 mm wall, flow and return: {(q_r * N_BLK + q_p) / (4186 * 10):.0f} kg/s for the rectifier transformers' coolers and the purifier, from the tower's ports at y 52.5, east along y 52.5 (north of the mains, which turn south at x 19.5, so the two never cross), south along x 84 east of the purifier and the water treatment (a tee for the purifier at y -6) and west along y -30 behind the water treatment and the rectifiers", via=[(84.0, 52.5, 0.75), (84.0, -30.0, 0.75)]),
+        link("pipe", "cooling water to the purifier", (84.0, -6.0, 0.75), (72.3, -4.0, 1.0), A36, 2 * pm(d_pb, 0.004), None, f"a pair of {d_pb * 1000:.0f} mm pipes off the rectifiers' header, west along y -6 and north, level into the purifier's flanges on its -y face (x 72 flow, 72.6 return)", via=[(72.3, -6.0, 0.75), (72.3, -6.0, 1.0)]),
         *[link("pipe", f"cooling water to rectifier {i + 1}", (x - 3.45, -30.0, 0.75), (x - rt["dims"][0] / 2, -25.5, 1.0), A36, 2 * pm(d_rb, 0.004), None, f"a pair of {d_rb * 1000:.0f} mm pipes off the header, north and level into the cooler's ports on the -x end (y -25.86 and -25.14)", via=[(x - 3.45, -25.5, 0.75), (x - 3.45, -25.5, 1.0)]) for i, x in enumerate(xs_b)],
-        link("pipe", "cooling water mains", (tower["dims"][0] / 2, 48.0, 0.75), (-48.0 + 11.0, 6.0, 1.0), A36, 2 * pm(d_cw, 0.010), None, f"a pair of {d_cw:.2f} m pipes, 10 mm wall, flow and return: {flow:,.0f} kg/s at a 10 K rise, into the hall by the north wall and along it to each block's coolers, a branch out to the rectifiers", via=[(tower["dims"][0] / 2 + 1.5, 48.0, 0.75), (tower["dims"][0] / 2 + 1.5, 20.0, 0.75), (0.0, 20.0, 0.75), (0.0, 9.0, 1.0), (-37.0, 9.0, 1.0)]),
+        link("pipe", "cooling water mains", (tower["dims"][0] / 2, 48.0, 0.75), (0.0, 9.0, 1.0), A36, 2 * pm(d_cw, 0.010), None, f"a pair of {d_cw:.2f} m pipes, 10 mm wall, flow and return: {flow:,.0f} kg/s at a 10 K rise, from the tower's ports at y 48, south along x 19.5, west along y 20, in by the north wall's opening at x 0 to the header", via=[(tower["dims"][0] / 2 + 1.5, 48.0, 0.75), (tower["dims"][0] / 2 + 1.5, 20.0, 0.75), (0.0, 20.0, 0.75), (0.0, 12.0, 1.0)]),
+        link("pipe", "cooling water header", (xs_b[0] + 11.0, 9.0, 1.0), (xs_b[-1] + 11.0, 9.0, 1.0), A36, 2 * pm(d_cw, 0.010), None, "the mains' pair on along y 9 inside the north wall, west and east of the tee at x 0, past every block's cooler ports", via=[(0.0, 9.0, 1.0)]),
+        *[link("pipe", f"cooling water to block {i + 1}", (x + 11.0, 9.0, 1.0), (x + 11.0, 6.0, 1.0), A36, 2 * pm(0.25, 0.006), None, "a pair of 250 mm pipes off the header, south, level into the block's flanges (x 10.6 flow, 11.4 return)") for i, x in enumerate(xs_b)],
     ]
     ground = [
-        {"what": "Hall floor", "item": CONC, "volume": r(x_in * span_in * 0.4), "note": f"0.4 m, {x_in:.0f} x {span_in:.0f} m, with a lye-proof coating and bunds round each block"},
+        {"what": "Hall floor", "item": CONC, "volume": r(x_in * span_in * 0.4), "note": f"0.4 m, {x_in:.0f} x {span_in:.0f} m, top at z 0, with a lye-proof coating; a bund 0.3 m high and 0.2 m thick round each block, 0.5 m outside its skid, to hold a stack's lye"},
         {"what": "Frame footings", "item": CONC, "volume": r(ground_nodes * 2.25), "note": f"a 1.5 x 1.5 x 1 m pad under each of the lattice's {ground_nodes} ground nodes"},
-        {"what": "Rectifier slabs and fire walls", "item": CONC, "volume": r(N_BLK * (12 * 8 * 0.5) + (N_BLK + 1) * 8 * 6 * 0.3), "note": "a slab under each, a fire wall between"},
-        {"what": "Outside slabs", "item": CONC, "volume": r(2 * 12 * 8 * 0.5), "note": "under the purifier and the water treatment"},
-        {"what": "Cooling tower basin", "item": CONC, "volume": r((tower["dims"][0] + 0.6) * 12.6 * 0.5 + 2 * (tower["dims"][0] + 0.3 + 12.3) * 2.0 * 0.3), "note": "sunk as the furnace shop's"},
+        {"what": "Rectifier slabs and fire walls", "item": CONC, "volume": r(N_BLK * (12 * 8 * 0.5) + (N_BLK + 1) * 8 * 6 * 0.3), "note": "a 12 x 8 x 0.5 m slab under each, its top at z 0 with an oil sump; fire walls 8 m long, 6 m tall, 0.3 m thick along y at x -60, -36, -12, 12, 36 and 60"},
+        {"what": "Outside slabs", "item": CONC, "volume": r(2 * 12 * 8 * 0.5), "note": "12 x 8 x 0.5 m under the purifier and the water treatment, tops at z 0, the water treatment's with a drain channel to its reject flange"},
+        {"what": "Cooling tower basin", "item": CONC, "volume": r((tower["dims"][0] + 0.6) * 12.6 * 0.5 + 2 * (tower["dims"][0] + 0.3 + 12.3) * 2.0 * 0.3), "note": "sunk as the furnace shop's: a 0.5 m floor 0.6 m wider than the tower each way, walls 0.3 m thick and 2 m deep, the water just under z 0; the tower stands on the walls"},
     ]
     for g in ground:
         g["mass"] = r(g["volume"] * RHO["concrete"])
@@ -1639,7 +1644,7 @@ def hydrogen_plant_air(us, recs):
         "site": {"atmosphere": "air", "gravity": [8.0, 11.0]},
         "physical": {"length": r(max(xs) - min(xs)), "width": r(max(ys) - min(ys)), "height": z1, "mass": r(total)},
         "bays": bays, "links": links,
-        "frame": {"box": list(box), "cell": cell, "shape": f"Walls one cell thick, 15 m tall; a roof one cell deep over a {x_in:.0f} x {span_in:.0f} m floor, open along its ridge (a vent 1.5 m wide) so hydrogen cannot gather; framed openings in the south wall for the DC busbars, in the east for the gas headers and a door, in the north for the cooling water.",
+        "frame": {"box": list(box), "cell": cell, "shape": f"Walls one cell thick, 15 m tall; a roof one cell deep over a {x_in:.0f} x {span_in:.0f} m floor, open along its ridge so hydrogen cannot gather (a vent 1.5 m wide over y 0.75 to 2.25, between the top chords at y 0 and 3, the top diagonals there left out; only the cross chords every 3 m span it); framed openings in the south wall for the DC busbars, in the east for the gas headers and a door, in the north for the cooling water.",
                   "openings": [list(o) for o in openings], "members": members,
                   "cladding": {"item": "stock.al6061-sh-2", "area": r(clad_area), "mass": r(clad)},
                   "carries": ["unit.stack-crane-20t"], "mass": r(frame_mass), "sized": sized},
