@@ -2508,7 +2508,7 @@ def ladle_station_airless(us, recs):
         {"id": "A", "mount": "plant-mount.bay-s3", "unit": "unit.alloy-bins-8", "at": [3.0, 27.0, 0.0], "note": "north; open feeders and belt, vacuum-rated"},
         {"id": "S", "mount": "plant-mount.bay-s1", "unit": "unit.stair-tower-12m", "at": [11.0, 27.0, 0.0], "note": "against the bins' east end, as in the station for air: its top landing at (9, 27, 12) gives onto the bins' deck"},
         {"id": "G", "mount": "plant-mount.bay-s2", "unit": "unit.offgas-filter-sealed", "at": [21.0, 18.0, 0.0], "note": "north-east: the ladle furnace's argon and fume"},
-        {"id": "P", "mount": "plant-mount.bay-s1", "unit": "unit.crew-post", "at": [18.0, -12.0, 0.0], "note": "south-east, under its berm"},
+        {"id": "P", "mount": "plant-mount.bay-s1", "unit": "unit.crew-post", "at": [24.0, -18.0, 0.0], "note": "south-east, under its berm, which stays outside the crane's rails"},
     ]
     bays += [{"id": f"RL{i + 1}", "mount": "plant-mount.bay-s4", "unit": "unit.radiator-field-330k", "at": [-24.0 - 48.0 * i, -42.0, 0.0], "note": "south-west"} for i in range(n_low)]
     tr = us["furnace-transformer-14mva"]
@@ -2518,7 +2518,8 @@ def ladle_station_airless(us, recs):
         link("busbar", "secondary bus", (3.0, -9.0 + tW / 2, tH * 2 / 3), (3.0, -5.0, 6.0), CU, 3 * L_I2 / 4e6 * RHO["copper"], None, "as for air"),
         link("conveyor", "alloy feed", (3.0, 27.0, 7.0), (3.0, 3.0, 9.4), A36, 100.0, 20000.0, "0.65 m belt, open (no gallery on airless ground), into the furnace's alloy lock"),
         link("duct", "fume", (5.0, 0.0, 7.5), (15.0, 18.0, 8.0), A36, math.pi * 0.5 * 0.006 * RHO["steel"], None, "0.5 m: the argon and fume from under the sealed roof, a tenth of the air shop's flow; a reducer from the roof's 1 m neck to the duct at its start", via=[(5.0, 0.0, 10.0), (15.0, 10.0, 10.0)]),
-        link("pipe", "cooling water to the radiators", (-24.0 - 48.0 * (n_low - 1) - 22.0, -18.0, 1.0), (-1.5, -4.5, 1.0), A36, math.pi * 0.25 * 0.006 * RHO["steel"] * 2, None, f"a pair of 250 mm pipes, flow and return, at about 330 K, along the {n_low} radiator fields' north edge to the furnace's ports at (-1.5, -4.7) and (-1.5, -4.3), 1 m up", via=[(-1.5, -18.0, 1.0)]),
+        link("pipe", "cooling water to the radiators", (-24.0 - 48.0 * (n_low - 1) - 26.0, -18.0, 1.0), (-1.5, -4.5, 1.0), A36, math.pi * 0.25 * 0.006 * RHO["steel"] * 2, None, f"a pair of 250 mm pipes, flow and return, at about 330 K, as a trunk along y -18, north of the {n_low} radiator fields, to the furnace's ports at (-1.5, -4.7) and (-1.5, -4.3), 1 m up", via=[(-1.5, -18.0, 1.0)]),
+        *[link("pipe", f"radiator branch {k + 1}", (-24.0 - 48.0 * k - 26.0, -18.0, 1.0), (-24.0 - 48.0 * k - 24.0, -42.0, 1.0), A36, math.pi * 0.15 * 0.004 * RHO["steel"] * 2, None, "a 150 mm pair from the trunk down outside the field's west edge to its ports (flow at y -42.6, return -41.4)", via=[(-24.0 - 48.0 * k - 26.0, -42.0, 1.0)]) for k in range(n_low)],
         link("pipe", "transformer cooling", (-1.5, -9.0, 1.0), (3.0 - tL / 2, -9.0, 1.35), A36, 2 * math.pi * 0.1 * 0.005 * RHO["steel"], None, "a pair of 100 mm pipes teed off the main at y -9, east to the transformer's cooler on its -x face (flow at z 1.35, return above it, as the furnace transformers' ports)", via=[(3.0 - tL / 2 - 0.8, -9.0, 1.0), (3.0 - tL / 2 - 0.8, -9.0, 1.35)]),
         link("rail", "crane rails", (-24.0, 0.0, 0.0), (12.0, 0.0, 0.0), A36, 2 * 50.0, None, "the maintenance gantry crane's two straight rails over the stand and the ladle furnace, at y -12 and 12 (24 m apart); the link runs on their centre line"),
     ]

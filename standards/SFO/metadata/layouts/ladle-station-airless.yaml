@@ -5,7 +5,7 @@ stands_for: module.ladle-station
 site:
   atmosphere: none
   gravity: [1.6, 2.0]
-physical: {length: 126.0, width: 96.15, height: 27.0, mass: 2280000.0}
+physical: {length: 128.0, width: 96.15, height: 27.0, mass: 2282000.0}
 bays:
 - id: D
   mount: plant-mount.bay-s2
@@ -40,8 +40,8 @@ bays:
 - id: P
   mount: plant-mount.bay-s1
   unit: unit.crew-post
-  at: [18.0, -12.0, 0.0]
-  note: south-east, under its berm
+  at: [24.0, -18.0, 0.0]
+  note: south-east, under its berm, which stays outside the crane's rails
 - id: RL1
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-330k
@@ -98,14 +98,34 @@ links:
   note: '0.5 m: the argon and fume from under the sealed roof, a tenth of the air shop''s flow; a reducer from the roof''s 1 m neck to the duct at its start'
 - kind: pipe
   name: cooling water to the radiators
-  from: [-94.0, -18.0, 1.0]
+  from: [-98.0, -18.0, 1.0]
   to: [-1.5, -4.5, 1.0]
-  length: 106.0
+  length: 110.0
   item: material.structural-steel-a36
-  mass: 7842.0
+  mass: 8138.0
   via:
   - [-1.5, -18.0, 1.0]
-  note: a pair of 250 mm pipes, flow and return, at about 330 K, along the 2 radiator fields' north edge to the furnace's ports at (-1.5, -4.7) and (-1.5, -4.3), 1 m up
+  note: a pair of 250 mm pipes, flow and return, at about 330 K, as a trunk along y -18, north of the 2 radiator fields, to the furnace's ports at (-1.5, -4.7) and (-1.5, -4.3), 1 m up
+- kind: pipe
+  name: radiator branch 1
+  from: [-50.0, -18.0, 1.0]
+  to: [-48.0, -42.0, 1.0]
+  length: 26.0
+  item: material.structural-steel-a36
+  mass: 769.4
+  via:
+  - [-50.0, -42.0, 1.0]
+  note: a 150 mm pair from the trunk down outside the field's west edge to its ports (flow at y -42.6, return -41.4)
+- kind: pipe
+  name: radiator branch 2
+  from: [-98.0, -18.0, 1.0]
+  to: [-96.0, -42.0, 1.0]
+  length: 26.0
+  item: material.structural-steel-a36
+  mass: 769.4
+  via:
+  - [-98.0, -42.0, 1.0]
+  note: a 150 mm pair from the trunk down outside the field's west edge to its ports (flow at y -42.6, return -41.4)
 - kind: pipe
   name: transformer cooling
   from: [-1.5, -9.0, 1.0]
@@ -132,7 +152,7 @@ ground:
 - {what: Crew post berm, item: material.regolith, volume: 586.23, note: 'loose regolith at least 1 m over the post everywhere (its top 4 x 2 m, 5.3 m up), lying at 35 degrees, its foot about 19 x 17 m, a cavity for the post; measured on blender''s arc furnace shop; with openings for its windows (light wells on the north) and its airlock (a ramp cut on the west); with openings for its windows and airlock; at the airlock''s door a landing of packed regolith 2 x 2 m, its top at the threshold (1.35 m up), and a ramp down to the ground at about 1 in 3', mass: 879300.0}
 - {what: Rail sleepers, item: material.regolith-sintered, volume: 103.2, mass: 258000.0}
 - {what: Radiator legs' pads, item: material.regolith-sintered, volume: 5.808, mass: 14520.0}
-totals: {rate: 41.6666666666667, power: 7838000.0, heat: 1568000.0, water: 0.0, mass: 2280000.0, against_module: 'module.ladle-station: one box, the same on every world. This layout: the same rate; 7.8 MW; 1.6 MW to 2 radiator fields at 330 K; no water used up. No degasser: the vacuum degasses the ladle on an open stand, but must not see the alloys, which the sealed ladle furnace adds under argon; no ladle crane (nothing is lifted into a tank) and no hall. 458 t of plant, 1,822 t of sintered regolith.'}
+totals: {rate: 41.6666666666667, power: 7838000.0, heat: 1568000.0, water: 0.0, mass: 2282000.0, against_module: 'module.ladle-station: one box, the same on every world. This layout: the same rate; 7.8 MW; 1.6 MW to 2 radiator fields at 330 K; no water used up. No degasser: the vacuum degasses the ladle on an open stand, but must not see the alloys, which the sealed ladle furnace adds under argon; no ladle crane (nothing is lifted into a tank) and no hall. 460 t of plant, 1,822 t of sintered regolith.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}

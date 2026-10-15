@@ -830,7 +830,7 @@
 - { record: layout.ingot-yard-air, at: "2026-10-15T19:02:03Z", status: draft, summary: "changed: totals", sha: "92e4f7a88130bd7a" }
 - { record: layout.ingot-yard-airless, at: "2026-10-15T20:27:46Z", status: draft, summary: "changed: physical, ground, totals", sha: "fdf1e24a32bd8d4d" }
 - { record: layout.ladle-station-air, at: "2026-10-15T02:26:46Z", status: draft, summary: "changed: physical", sha: "31ea2691985163d3" }
-- { record: layout.ladle-station-airless, at: "2026-10-15T21:35:38Z", status: draft, summary: "changed: physical, bays, links, totals", sha: "2d08e20bdbe58d0d" }
+- { record: layout.ladle-station-airless, at: "2026-10-15T21:36:30Z", status: draft, summary: "changed: physical, bays, links, totals", sha: "ab0e6a80eb422cb8" }
 - { record: layout.ore-yard-air, at: "2026-10-15T17:42:59Z", status: draft, summary: "changed: physical", sha: "8bc46739c40587fb" }
 - { record: layout.ore-yard-airless, at: "2026-10-15T19:02:03Z", status: draft, summary: "first tracked", sha: "6b9f05ba1da5177d" }
 - { record: layout.pellet-plant-air, at: "2026-10-15T16:01:43Z", status: draft, summary: "changed: physical", sha: "89e9d07d51ec2d4b" }
