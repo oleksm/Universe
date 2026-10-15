@@ -4870,3 +4870,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: layout.pellet-plant-air
+    version: 1
+    manifest_sha256: "13b4b0fcbcac5c3d634496069cee1313f5afa290c887604b9e0981ca1086da4a"
+    installed: 90edfe1e
+    game: "the loader (world::assets) at fso 90edfe1e"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/pellet-plant-air/v1 (21321972 bytes, bounds [-100.0, -3.0, -42.0] to [110.04, 68.0, 33.3]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
