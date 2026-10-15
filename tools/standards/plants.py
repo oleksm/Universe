@@ -2454,7 +2454,8 @@ def airless_ladle_units(us):
     lf["desc"] = ("The 80 t ladle furnace closed for airless ground: its roof's skirt seals on the ladle's rim with a soft ring, glands round the electrodes, the alloys in through a lock in the chute, and argon fed under the roof to about 50 kPa, so the arc burns as in air and the manganese it adds is not boiled off into the vacuum (open to vacuum, an 80 t heat at 1,600 deg C would lose about a fifth of its manganese in a quarter hour). "
                  "Its fume, mostly argon, leaves by the roof's elbow to the layout's filter. Otherwise as unit.ladle-furnace-80t: " + us["ladle-furnace-80t"]["desc"])
     lf["built_of"] = list(us["ladle-furnace-80t"]["built_of"]) + [
-        part("Rim seal and electrode glands", A36, 2500.0, "from memory"),
+        part("Rim seal and electrode glands", A36, 2500.0, "a soft ring of ceramic fibre rope on the roof's skirt (a hot rim burns elastomers), which leaks some argon that the feed makes up, and insulated water-cooled glands round the electrodes, from memory"),
+        part("Roof locks", A36, 600.0, "50 kPa under the roof over the ladle's 2.9 m mouth lifts it with about 330 kN, less the roof's own weight at a moon's gravity (about as much again): two mechanical lock collars on the roof's lift rods hold it to the gantry with margin; from memory"),
         part("Alloy lock", A36, 1200.0, "two valves in the chute, from memory")]
     lf["needs"] = dict(us["ladle-furnace-80t"]["needs"])
     lf["basis"] = us["ladle-furnace-80t"]["basis"] + [{"of": ["identity.description"], "tier": "invented", "review": True, "note": "Manganese's loss: its vapour pressure over a 1% melt (about 40 Pa at 1,873 K, from memory) through Hertz-Knudsen over the ladle's 7 m2. Sealed roofs as on closed furnaces; not built for vacuum."}]
