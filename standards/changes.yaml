@@ -2770,7 +2770,7 @@
 - { record: unit.mill-crane-30t, at: "2026-10-15T11:53:26Z", status: draft, summary: "changed", sha: "dcacadeb2874c696" }
 - { record: unit.mould-car-12, at: "2026-10-14T20:49:23Z", status: draft, summary: "changed: identity", sha: "30b4c1cb9c96fef7" }
 - { record: unit.offgas-filter-sealed, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "c6b566e979038e64" }
-- { record: unit.plant-transformer-35mva, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "1f1d36f62a5197e3" }
+- { record: unit.plant-transformer-35mva, at: "2026-10-15T11:55:11Z", status: draft, summary: "changed: visual", sha: "96c175c611bed2e3" }
 - { record: unit.radiator-field-330k, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "e970c81177589484" }
 - { record: unit.radiator-field-345k, at: "2026-10-14T19:26:44Z", status: draft, summary: "first tracked", sha: "f1f0da9d08b1b0af" }
 - { record: unit.radiator-field-485k, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "3792fab468aa81d4" }
