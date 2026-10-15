@@ -822,7 +822,7 @@
 - { record: law.tube-time, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "934385090028c5e6" }
 - { record: law.year, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "29f1ef4424e5cc98" }
 - { record: layout.arc-furnace-air, at: "2026-10-15T14:53:36Z", status: draft, summary: "changed: links", sha: "9553ccf6eed90e0e" }
-- { record: layout.arc-furnace-airless, at: "2026-10-15T19:05:15Z", status: draft, summary: "changed: physical, links, totals", sha: "eca7ca94c197033a" }
+- { record: layout.arc-furnace-airless, at: "2026-10-15T19:19:23Z", status: draft, summary: "changed: physical, totals", sha: "aabe05c125239bf0" }
 - { record: layout.casting-bay-air, at: "2026-10-15T02:26:46Z", status: draft, summary: "changed: physical", sha: "64ae565ca9d653a2" }
 - { record: layout.casting-bay-airless, at: "2026-10-14T21:36:13Z", status: draft, summary: "changed: physical, totals", sha: "ed7687b7564fac7a" }
 - { record: layout.hydrogen-plant-air, at: "2026-10-15T04:31:57Z", status: draft, summary: "changed: physical", sha: "6142a0437e383639" }
@@ -2751,7 +2751,7 @@
 - { record: unit.dri-bin-200t, at: "2026-10-14T14:08:01Z", status: draft, summary: "changed", sha: "1077e81910f4da8c" }
 - { record: unit.dri-cooling-loop, at: "2026-10-15T01:24:23Z", status: draft, summary: "changed", sha: "46962a5f5ae51829" }
 - { record: unit.eaf-vessel-80t, at: "2026-10-14T16:01:10Z", status: draft, summary: "changed: physical, built_of, visual", sha: "f948e3f34829ba7e" }
-- { record: unit.eaf-vessel-80t-sealed, at: "2026-10-15T19:15:28Z", status: draft, summary: "changed: built_of", sha: "a378bb28cb956a91" }
+- { record: unit.eaf-vessel-80t-sealed, at: "2026-10-15T19:19:23Z", status: draft, summary: "changed: physical, built_of", sha: "70c7cd2ba8d3f51f" }
 - { record: unit.electrolyser-block-20mw, at: "2026-10-15T02:45:51Z", status: draft, summary: "changed", sha: "af9b2af95ad77993" }
 - { record: unit.electrolyser-block-20mw-10bar, at: "2026-10-15T02:38:10Z", status: draft, summary: "changed: physical, built_of", sha: "b93cbbc1cf0fb4d4" }
 - { record: unit.filter-press-2, at: "2026-10-15T16:13:40Z", status: draft, summary: "first tracked", sha: "7732a46a3aedde04" }
