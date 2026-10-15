@@ -11,6 +11,12 @@ built_of:
 - {what: Candles, item: material.silicon-carbide, mass: 3000.0, note: from memory}
 - {what: Pressure valve and dust valves, item: good.pumps, mass: 1500.0, note: 'the valve that holds the furnace''s pressure and the dust lock''s two valves with their drives, from memory'}
 needs: {power: 50000.0, atmosphere: vacuum}
+visual:
+  format: "freefall-model/1"
+  path: "models/offgas-filter-sealed/v1"
+  manifest_sha256: "e7754676f126f8e8e4ec8a936d2b1ec74935f5e4d1bd8120441e2b91104211b9"
+  version: 1
+  triangles: 6580
 life: 788940000
 basis:
 - of: [physical, built_of, needs]
