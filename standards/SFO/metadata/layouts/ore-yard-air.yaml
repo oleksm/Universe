@@ -5,7 +5,7 @@ stands_for: module.ore-yard
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 246.3, width: 101.6, height: 20.0, mass: 6188000.0}
+physical: {length: 247.7, width: 101.6, height: 20.0, mass: 6188000.0}
 bays:
 - id: H
   mount: plant-mount.bay-s2
@@ -86,12 +86,7 @@ totals: {rate: 0.0, power: 1580000.0, heat: 0.0, water: 0.2, mass: 6188000.0, ag
 staff:
 - {profession: profession.docker, count: 3}
 - {profession: profession.clerk, count: 1}
-visual:
-  format: "freefall-model/1"
-  path: "models/ore-yard-air/v1"
-  manifest_sha256: "6bb6212cd092f0e825e812bbd9ed8ace928fe4d91117438d29e200bedc3e68e1"
-  version: 1
-  triangles: 72732
+visual: {format: freefall-model/1, path: models/ore-yard-air/v1, manifest_sha256: 6bb6212cd092f0e825e812bbd9ed8ace928fe4d91117438d29e200bedc3e68e1, version: 1, triangles: 72732}
 basis:
 - of: [bays, links, mobile]
   tier: invented
