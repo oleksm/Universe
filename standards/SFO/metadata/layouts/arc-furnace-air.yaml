@@ -5,7 +5,7 @@ stands_for: module.arc-furnace
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 84.0, width: 60.0, height: 27.0, mass: 4634000.0}
+physical: {length: 84.0, width: 51.0, height: 27.0, mass: 4634000.0}
 bays:
 - id: V
   mount: plant-mount.bay-s2

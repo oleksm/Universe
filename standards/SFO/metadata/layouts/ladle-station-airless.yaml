@@ -5,7 +5,7 @@ stands_for: module.ladle-station
 site:
   atmosphere: none
   gravity: [1.6, 2.0]
-physical: {length: 126.0, width: 105.0, height: 27.0, mass: 1625000.0}
+physical: {length: 126.0, width: 96.15, height: 27.0, mass: 1625000.0}
 bays:
 - id: D
   mount: plant-mount.bay-s2

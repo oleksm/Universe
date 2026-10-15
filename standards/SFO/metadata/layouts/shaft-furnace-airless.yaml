@@ -5,7 +5,7 @@ stands_for: module.shaft-furnace
 site:
   atmosphere: none
   gravity: [1.6, 2.0]
-physical: {length: 473.3, width: 456.0, height: 45.0, mass: 8480000.0}
+physical: {length: 473.3, width: 450.0, height: 45.0, mass: 8480000.0}
 bays:
 - id: F
   mount: plant-mount.bay-s3
