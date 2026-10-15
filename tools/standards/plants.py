@@ -2044,20 +2044,30 @@ def ore_yard_air(us, recs):
     base = 2 * h / math.tan(math.radians(REPOSE))
     bed_L = hold / 2 / ORE_BULK / (base * h / 2)
     x0 = -bed_L / 2
-    bays = [{"id": "H", "mount": "plant-mount.bay-s2", "unit": "unit.truck-dump-hopper", "at": [r(x0 - 24.0), 0.0, 0.0], "note": "at the rail's west end, its feeder in a pit onto the yard belt"}]
+    # The machine's west limit stacks the bed's end; its tripper's tail then lies 33.7 m behind, where the belt must be level.
+    xm = x0 + 2.0
+    tail = xm - (recs["yard-tripper-1500th"]["physical"]["length"] - 2.0)
+    x_lv = tail - 2.0
+    z_tail, ramp = -4.4, 14.0
+    x_h = r(x_lv - (1.0 - z_tail) / math.tan(math.radians(ramp)), 3)
+    x_rail = r(xm - 32.0)
+    bays = [{"id": "H", "mount": "plant-mount.bay-s2", "unit": "unit.truck-dump-hopper", "at": [x_h, 0.0, 0.0], "note": "west of the rail, its feeder in a pit onto the yard belt; trucks back onto its deck from -y"}]
     gauge_y = 0.0
     beds_y = (base / 2 + 8.0)
     links = [
-        link("rail", "machine rail", (r(x0 - 10), 0.0, 0.0), (r(-x0 + 10), 0.0, 0.0), A36, 2 * 100.0, None, "two A120 crane rails (120 mm head, about 100 kg/m) at 10 m gauge on a concrete bed: each of the machine's 16 wheels of 1.2 m puts about 290 kN on its rail, against about 640 kN a 120 mm head takes under a 1.2 m wheel (5.6 N/mm2 times its 96 mm of flat head times the diameter, from memory)"),
-        link("conveyor", "yard belt", (r(x0 - 24.0), 0.0, -4.0), (r(-x0 + 20), 0.0, 1.0), A36, 200.0, 400000.0, "a 1.4 m reversible belt beside the rail, with the machine's tripper on it: ore from the hopper to the machine stacking, from the machine to the out belt reclaiming", via=[(r(x0 - 14.0), 0.0, 1.0)]),
+        link("rail", "machine rail", (x_rail, 0.0, 0.0), (r(-x0 + 10), 0.0, 0.0), A36, 2 * 100.0, None, "two A120 crane rails (120 mm head, about 100 kg/m) at 10 m gauge on a concrete bed: each of the machine's 16 wheels of 1.2 m puts about 290 kN on its rail, against about 640 kN a 120 mm head takes under a 1.2 m wheel (5.6 N/mm2 times its 96 mm of flat head times the diameter, from memory)"),
+        link("conveyor", "yard belt", (x_h, 0.0, z_tail), (r(-x0 + 20), 0.0, 1.0), A36, 200.0, 400000.0, f"a 1.4 m reversible belt between the rails, with the machine's tripper on it: ore from the hopper to the machine stacking, from the machine to the out belt reclaiming. Its tail 0.4 m under the feeder's outlet, out of the pit through an opening in its east wall and up at {ramp:g} degrees to 1 m, then level from x {x_lv:.1f}, where the tripper's tail lies with the machine at its west limit (x {xm:.1f})", via=[(r(x_lv), 0.0, 1.0)]),
         link("conveyor", "out belt", (r(-x0 + 20), 0.0, 1.0), (r(-x0 + 80), 0.0, 1.0), A36, 150.0, 100000.0, "a 1 m belt to the pellet plant's ore belt, beyond the layout"),
-        link("pipe", "dust sprays", (r(x0), beds_y + base / 2 + 2, 1.0), (r(-x0), -(beds_y + base / 2 + 2), 1.0), A36, math.pi * 0.1 * 0.004 * RHO["steel"], None, "100 mm, along both beds' outer edges, spraying water to keep the dust down", via=[(r(-x0), beds_y + base / 2 + 2, 1.0), (r(-x0) + 2, 0.0, 1.0), (r(x0) - 2, 0.0, 1.0), (r(x0), -(beds_y + base / 2 + 2), 1.0)]),
+        link("pipe", "dust sprays, north", (r(x0 - 2), beds_y + base / 2 + 2, 1.0), (r(-x0), beds_y + base / 2 + 2, 1.0), A36, math.pi * 0.1 * 0.004 * RHO["steel"], None, "100 mm along the north bed's outer edge, spraying water to keep the dust down, fed at its west end from the yard's water, beyond the layout"),
+        link("pipe", "dust sprays, south", (r(x0 - 2), -(beds_y + base / 2 + 2), 1.0), (r(-x0), -(beds_y + base / 2 + 2), 1.0), A36, math.pi * 0.1 * 0.004 * RHO["steel"], None, "100 mm along the south bed's outer edge, the same; neither crosses the rails or the belt"),
+        link("road", "truck approach", (x_h, -(beds_y + base / 2 + 2), 0.0), (x_h, -5.0, 0.0), CONC, 7.0 * 0.3 * RHO["concrete"], None, "7 m wide, paved 0.3 m: trucks from the port turn and back north onto the hopper's deck"),
     ]
     mobile = [{"unit": "unit.stacker-reclaimer-1500th", "rides": "machine rail", "at": [0.0, 0.0, 0.0]},
               {"unit": "unit.yard-tripper-1500th", "rides": "machine rail", "at": [0.0, 0.0, 0.0]}]
     ground = [
-        {"what": "Rail bed", "item": CONC, "volume": r((bed_L + 20) * 2 * 1.0 * 0.8), "note": "two strips 1 m wide and 0.8 m deep under the rails"},
-        {"what": "Hopper pit", "item": CONC, "volume": r(13.8 * 12.0 * 0.6 + 2 * (13.8 + 12.0) * 6 * 0.4), "note": "6 m deep under the hopper, 13 x 11.2 m inside (the hopper's feet reach y -5.15 and 5.15), 0.4 m walls"},
+        {"what": "Rail bed", "item": CONC, "volume": r((-x0 + 10 - x_rail) * 2 * 1.0 * 0.8), "note": "two strips 1 m wide and 0.8 m deep under the rails"},
+        {"what": "Hopper pit", "item": CONC, "volume": r(13.8 * 12.0 * 0.6 + 2 * (13.8 + 12.0) * 6 * 0.4), "note": "6 m deep under the hopper, 13 x 11.2 m inside (the hopper's feet reach y -5.15 and 5.15), 0.4 m walls, the east wall open 2 x 2 m for the yard belt; the hopper's deck bridges its top"},
+        {"what": "Belt ramp trench", "item": CONC, "volume": r((x_lv - x_h - 7.0) * (2.4 * 0.3 + 2 * 2.5 * 0.3)), "note": "the yard belt's trench from the pit's east wall up to grade: floor 2.4 m wide, walls about 2.5 m deep on average, 0.3 m"},
         {"what": "Bed pads", "item": CONC, "volume": r(2 * bed_L * base * 0.2), "note": f"two pads {bed_L:.0f} x {base:.0f} m, 0.2 m, at y -{beds_y:.0f} and {beds_y:.0f}, sloped to drains"},
     ]
     for g in ground:
@@ -2068,7 +2078,7 @@ def ore_yard_air(us, recs):
     mass_links = sum(l["mass"] for l in links)
     mass_ground = sum(g["mass"] for g in ground)
     total = mass_units + mass_links + mass_ground
-    L = r(-x0 + 80 - (x0 - 30))
+    L = r(-x0 + 80 - (x_h - 6.0))
     W = r(2 * (beds_y + base / 2 + 3))
     water = 0.2
     mp = omod["physical"]
