@@ -5335,3 +5335,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.gas-heater-119mw-8bar
+    version: 1
+    manifest_sha256: "73f5139caf11ab96a7bb41bd7b1c013459cdb143f26d8811672c12ee251c3015"
+    installed: cb15b9a2
+    game: "the loader (world::assets) at fso d20a351b"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/gas-heater-119mw-8bar/v1 (3469320 bytes, bounds [-12.03, -0.0, -5.931] to [11.12, 18.0, 4.542]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
