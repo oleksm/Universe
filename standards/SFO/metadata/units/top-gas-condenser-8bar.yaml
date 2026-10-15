@@ -12,6 +12,12 @@ built_of:
 - {what: 'Skirts, supports and feet', item: material.structural-steel-a36, mass: 15740.0, note: measured on model v1}
 - {what: Piping, item: material.structural-steel-a36, mass: 28440.0, note: 'the gas headers and pipes (1 m, 16 mm), the coolant pair (12 mm) and the drain (6 mm); measured on model v1, the joints'' overlapping skins counted twice, so a little high'}
 needs: {heat: 61430000.0, atmosphere: vacuum}
+visual:
+  format: "freefall-model/1"
+  path: "models/top-gas-condenser-8bar/v1"
+  manifest_sha256: "931287e69cb670a4b73626e184fbb1e8f97f53263ba9ba0d27e165d814b9c8fe"
+  version: 1
+  triangles: 48636
 life: 788940000
 basis:
 - of: [physical, built_of]
