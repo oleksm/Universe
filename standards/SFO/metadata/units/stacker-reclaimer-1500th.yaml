@@ -15,6 +15,12 @@ built_of:
 - {what: Ballast, item: material.cast-iron-grey, mass: 150500.0, note: 'from the moment about the slewing centre with the boom horizontal and stacking: the boom 48 t and its belts and ore at 16 m, the wheel and its tip 46 t at 31.5, less the arm at 8 and the house at 4 behind; at 14 m; the model''s grey iron block, 149,981 kg with its bevels, agrees'}
 - {what: 'Drives, belts and machinery house', item: good.electric-motors, mass: 50000.0, note: 'the wheel''s 8 t drive, travel, slew and luff drives, the boom''s belts and drums and the house''s electrics, from memory'}
 needs: {power: 900000.0}
+visual:
+  format: "freefall-model/1"
+  path: "models/stacker-reclaimer-1500th/v1"
+  manifest_sha256: "c08f13e2311e87b9fb3b7993944a15b11bedddd2f823e7bee714da6f33aa0545"
+  version: 1
+  triangles: 20900
 life: 788940000
 basis:
 - of: [physical, built_of]
