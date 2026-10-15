@@ -2033,7 +2033,7 @@ def yard_units():
         basis=[{"of": ["physical", "built_of", "needs"], "tier": "invented", "review": True, "note": "From memory."}])
     out["forklift-2t5"] = dict(
         name="Forklift, 2.5 t", size_class=1, dims=(3.6, 1.3, 2.2),
-        desc="A battery-electric counterbalance forklift that moves heavy crates from the crating line to the stacks and from the stacks onto trucks; it lifts a loaded crate (1.6 t) onto another, two high.",
+        desc="A battery-electric counterbalance forklift that moves heavy crates from the crating line to the stacks and from the stacks onto trucks; it lifts a loaded crate (" + f"{(ING_M + CRATE['physical']['mass']) / 1000:.1f} t: an ingot of {ING_M:,.0f} kg in a {CRATE['physical']['mass']} kg crate, its centre 0.6 m out on the forks) onto another, two high (forks to 1 m), and onto a truck's bed (up to about 1.8 m); rated 2.5 t at 0.5 m, about 2.1 t at 0.6.",
         built_of=[part("Chassis and counterweight", A36, 3200.0, "from memory"), part("Mast, motors and battery", "good.electric-motors", 1000.0, "from memory")],
         needs={"power": 8e3},
         basis=[{"of": ["physical", "built_of", "needs"], "tier": "invented", "review": True, "note": "From memory; power the average charge."}])
