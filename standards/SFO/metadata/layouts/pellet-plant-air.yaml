@@ -5,7 +5,7 @@ stands_for: module.pellet-plant
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 210.0, width: 67.85, height: 27.0, mass: 9504000.0}
+physical: {length: 210.0, width: 67.85, height: 27.0, mass: 9471000.0}
 bays:
 - id: M
   mount: plant-mount.bay-s3
@@ -168,7 +168,7 @@ ground:
 - {what: Grate foundations, item: good.concrete, volume: 528.0, note: under the machine's frame, mass: 1267000.0}
 - {what: Frame footings, item: good.concrete, volume: 445.5, note: a 1.5 x 1.5 x 1 m pad under each of the lattice's 198 ground nodes, mass: 1069000.0}
 - {what: Outside slabs, item: good.concrete, volume: 271.2, note: the baghouse's slab and the transformer's vault, mass: 650900.0}
-totals: {rate: 34.7222222222222, power: 25850000.0, heat: 0.0, water: 3.28, mass: 9504000.0, against_module: 'module.pellet-plant: one box 250 x 100 x 40 m, 23 MW (45 kWh and 0.5 GJ of heat a tonne, the heat counted as power). This layout: the same 125 t an hour; 25.8 MW, of which 19.3 the grate''s plasma torches; no cooling water (the pellets cool on the grate in the air it draws, the waste gas leaves by the baghouse''s stack); 3.3 kg/s of water dried off the green balls; 2,315 t of plant and frame, 7,188 t of concrete. One shaft furnace at its full rate takes 79.4 kg/s of pellets, about 2.3 of these.'}
+totals: {rate: 34.7222222222222, power: 25910000.0, heat: 0.0, water: 3.28, mass: 9471000.0, against_module: 'module.pellet-plant: one box 250 x 100 x 40 m, 23 MW (45 kWh and 0.5 GJ of heat a tonne, the heat counted as power). This layout: the same 125 t an hour; 25.9 MW, of which 19.3 the grate''s plasma torches; no cooling water (the pellets cool on the grate in the air it draws, the waste gas leaves by the baghouse''s stack); 3.3 kg/s of water dried off the green balls; 2,282 t of plant and frame, 7,188 t of concrete. One shaft furnace at its full rate takes 79.4 kg/s of pellets, about 2.3 of these.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}

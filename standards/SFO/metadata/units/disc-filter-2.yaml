@@ -12,13 +12,8 @@ built_of:
 - {what: Drives and agitators, item: material.structural-steel-a36, mass: 5000.0, note: 'a drive and an agitator for each filter, from memory'}
 - {what: Vacuum pumps and compressor, item: good.pumps, mass: 8210.0, note: 'liquid ring pumps at 25 kg/kW, the blow-back compressor and the filtrate pump, from memory'}
 needs: {power: 368100.0}
-visual:
-  format: "freefall-model/1"
-  path: "models/disc-filter-2/v1"
-  manifest_sha256: "5c5e751207d166c8c9627c818b4c2c5ebc3b8ed0f8fbaeea3568e100894aeefc"
-  version: 1
-  triangles: 26756
 life: 788940000
+visual: {format: freefall-model/1, path: models/disc-filter-2/v1, manifest_sha256: 5c5e751207d166c8c9627c818b4c2c5ebc3b8ed0f8fbaeea3568e100894aeefc, version: 1, triangles: 26756}
 basis:
 - of: [physical, built_of, needs]
   tier: derived

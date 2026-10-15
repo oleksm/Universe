@@ -1730,12 +1730,29 @@ def pellet_units():
         basis=[{"of": ["physical", "built_of", "needs"], "tier": "derived", "review": True,
                 "note": (f"From the plant's {P_ORE:.1f} kg/s of ore at a tonne a m2 an hour: {A_f:.0f} m2, {n_f} filters of {n_d} discs; {w_in:.1f} kg/s of water in at {SOLIDS:.0%} solids, {P_WATER:.2f} kg/s stays in the cake, {w_filt:.1f} back; "
                          f"{air:.1f} m3/s of air through the cake, the vacuum pumps {p_vac / 1e3:.0f} kW, drives, agitators, filtrate pump and blow-back {p_aux / 1e3:.0f} kW. Slurry density, air rate and equipment weights from memory.")}])
+    D_b, tilt = 7.5, 45.0
+    n_crit = 42.3 * math.sqrt(math.sin(math.radians(tilt)) / D_b)       # rpm at which the charge would ride round with the pan
+    n_run = round(0.62 * n_crit, 1)
+    net = (P_ORE + P_WATER) * 3600 / 1000 / 4                            # t/h of green balls each of four discs sends on
+    pan = math.pi / 4 * D_b ** 2 * 0.020 * RHO["steel"]
+    rim = math.pi * D_b * 0.5 * 0.012 * RHO["steel"]
+    ribs = 12 * (D_b / 2 - 0.4) * 0.4 * 0.020 * RHO["steel"]
+    torque = 90e3 / (n_run * 2 * math.pi / 60)
     out["balling-disc-7m5"] = dict(
         name="Balling disc, 7.5 m", size_class=2, fits="bay-s2", dims=(9.0, 9.0, 7.0),
-        desc="A shallow pan 7.5 m across, tilted 45 degrees and turning, rolls the moist ore into green balls 9 to 16 mm across; they spill over its rim onto a roller screen that sends the small ones back. Cake in from above (local 0, 2, 7), green balls out at (0, -4.5, 1).",
-        built_of=[part("Pan, frame and screen", A36, 40000.0, "from memory"), part("Drive", "good.electric-motors", 4000.0, "from memory")],
-        needs={"power": 90e3},
-        basis=[{"of": ["physical", "built_of", "needs"], "tier": "invented", "review": True, "note": "From memory; about 45 t of green balls an hour each, with what is sent back."}])
+        desc=(f"A shallow pan {D_b:g} m across, tilted {tilt:g} degrees and turning at about {n_run:g} rpm (62% of the {n_crit:.1f} rpm at which the charge would ride round with it), rolls the moist cake into green balls 9 to 16 mm across, "
+              f"about {net:.0f} t an hour; they spill over its rim onto a roller screen that sends the small ones back. The pan's centre at local (0, 0, 3.5), its face looking up and toward -y (normal (0, -0.707, 0.707)), its rim 0.5 m deep; "
+              f"behind it (+y) a slewing bearing and hub on a braced frame that sets its tilt, a girth drive at its back with a reducer and motor (90 kW, {torque / 1e3:.0f} kN m at the pan); fixed scrapers keep its face clear. "
+              f"Cake in from above by a chute (local 0, 2, 7); the balls fall from its low rim onto the roller screen (x -2 to 2, y -4.5 to -2.5, 1 to 1.6 m up), the fines through it back to the cake belt, the balls off its end at (0, -4.5, 1)."),
+        built_of=[part("Pan, rim and ribs", A36, pan + rim + ribs, f"the pan's floor in 20 mm plate, its rim 0.5 m deep in 12 mm, twelve radial ribs 0.4 m deep in 20 mm under it"),
+                  part("Hub, bearing and girth gear", "material.high-strength-steel-4340", 5000.0, "from memory"),
+                  part("Reducer and motor", "good.electric-motors", 5000.0, f"a 90 kW motor and a reducer for {torque / 1e3:.0f} kN m, from memory"),
+                  part("Frame and tilt gear", A36, 10000.0, "from memory"),
+                  part("Roller screen", A36, 4000.0, "about 25 rolls 4 m long with their drive, from memory"),
+                  part("Scrapers and chutes", A36, 1200.0, "from memory")],
+        needs={"power": 90e3 + 15e3},
+        basis=[{"of": ["physical", "built_of", "needs"], "tier": "derived", "review": True,
+                "note": f"The pan's plate from its size; its speed from the critical speed 42.3 sqrt(sin a / D); a quarter of the plant's {P_ORE + P_WATER:.1f} kg/s of moist ore each; the drive 90 kW and the screen 15 kW, the frame, gear and screen's weights from memory."}])
     pallets = math.ceil((2 * GRATE_L + 10.0) / 1.5)
     hood_a = (2 * 4.0 + 6.0) * GRATE_L
     torches = math.ceil(P_FIRE / 1.5e6)
