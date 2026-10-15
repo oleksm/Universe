@@ -2480,6 +2480,10 @@ def airless_ladle_units(us):
         c["dims"] = (10.0, 25.0, 27.0)
         c["desc"] = c["desc"].replace("on the hall's runways", "on its own legs, running on two ground rails 24 m apart").replace("its origin on the runway's rail plane", "its origin on the ground rails' plane, its girders 24 m up") + f" Sized for {MOON_G[1]:g} m/s2."
         if cap > 50000:
+            c["dims"] = (10.0, 25.4, 27.0)
+            c["built_of"] = [dict(p_, mass=17703.3, note=p_["note"] + "; measured on blender's model v1, 17,703.3 kg with its closed end plates") if p_["what"] == "Bridge girders" else p_ for p_ in c["built_of"] if p_["what"] != "Legs and sill beams"]
+            c["built_of"] += [part("Legs and sill beams", A36, 82738.1, "four box legs 1 x 1 m, 25 mm, from the sills' tops at z 1 to 24, and two sill beams; measured on model v1"),
+                              part("Seats, braces, rails and wheel pockets", A36, 21924.6, "the trolley's rails, the legs' braces and seats, the bridges over the wheel pockets; measured on model v1")]
             c["desc"] += " Its bridge datum is the girders' underside at z 24 (their tops about 25.1, the trolley's rails 25.18); the legs, 1 x 1 m, 25 mm, stand from the sill beams' tops at z 1; parked, the hook's ladle beam hangs at z 22.2 under the full rope stack, not packed up to the girders."
         out[key] = c
     return out
