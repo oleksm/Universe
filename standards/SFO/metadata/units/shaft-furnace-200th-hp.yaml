@@ -4,13 +4,14 @@ identity: {key: unit.shaft-furnace-200th-hp, name: 'Hydrogen shaft furnace, 200 
     and hopper z 32 to 40. About 1,387 t of burden inside.'}
 size_class: 3
 fits: plant-mount.bay-s3
-physical: {length: 13, width: 13, height: 40.0, mass: 1038000.0}
+physical: {length: 13, width: 13, height: 40.0, mass: 1048000.0}
 built_of:
-- {what: Shell, item: material.structural-steel-a36, mass: 174700.0, note: '7.38 m across, 24 m, 40 mm plate'}
+- {what: Shell, item: material.structural-steel-a36, mass: 177400.0, note: '7.38 m across, 24 m with its cone, roof and bands, 40 mm plate; measured on blender''s model v1'}
 - {what: Lining, item: good.refractory-brick, mass: 550200.0, note: 350 mm}
-- {what: Bustle main, item: material.structural-steel-a36, mass: 44010.0, note: 'a ring 9.9 m across, 25 mm plate for the pressure'}
+- {what: Bustle main, item: material.structural-steel-a36, mass: 43730.0, note: 'a ring 9.88 m across, 25 mm plate for the pressure; measured on model v1'}
 - {what: Bustle lining, item: good.refractory-brick, mass: 122900.0, note: 200 mm}
-- {what: Support ring girder, item: material.structural-steel-a36, mass: 30990.0, note: as for air}
+- {what: Support ring girder, item: material.structural-steel-a36, mass: 35860.0, note: 'a hollow ring and its land, as for air; measured on model v1'}
+- {what: Struts and seats, item: material.structural-steel-a36, mass: 2442.0, note: eight 200 x 200 x 12 mm struts and their 40 mm seats; measured on model v1}
 - {what: Charge and discharge pressure locks, item: material.structural-steel-a36, mass: 90000.0, note: 'two lock hoppers with their valves, from memory'}
 - {what: Burden feeders, item: good.electric-motors, mass: 25000.0, note: from memory}
 holds: 1387000.0

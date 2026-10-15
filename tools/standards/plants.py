@@ -2677,11 +2677,12 @@ def shaft_airless_units(us):
         desc=(f"The shaft of unit.shaft-furnace-200th built for airless ground: the gas loop at about {HP_SHAFT / 1e5:.0f} bar, so the shell is a pressure vessel ({hoop / 1e6:.0f} MPa in its {t_sh * 1000:.0f} mm plate) and the charge and discharge go through pressure locks; "
               f"no cooling zone: the sponge iron leaves through a lock at about {T_HOT_DRI:.0f} deg C into a closed hot conveyor to the arc furnace shop, which in vacuum it cannot rust on the way. "
               f"Local frame: the axis at (0, 0); the discharge lock under the cone, its top valve at z {Z_OUT:g} (7.8 to 8), its vessel 6.4 to 7.7, its lower valve 6.2 to 6.4, its outlet at z {Z_OUT - 2:g} onto the hot conveyor; the ring girder at z {z_ring:.0f} (radius {Do / 2 + 0.4:.1f} m); the bustle main at z {z_bustle:.0f}, a ring {2 * R_b:.2f} m across (radius {R_b:.2f} to the pipe's centre) of {d_b:.1f} m clear bore inside 200 mm of lining and a 25 mm shell ({d_b + 0.45:.2f} m outside), its inlet on -y (its flange the same {d_b:.1f} m bore); the top gas outlet at z {z_top - 1:.0f} on +x; the charge lock and hopper z {z_top:.0f} to {H:.0f}. About {burden / 1000:,.0f} t of burden inside."),
-        built_of=[part("Shell", A36, shell, f"{Do:.2f} m across, {hot:g} m, {t_sh * 1000:.0f} mm plate"),
+        built_of=[part("Shell", A36, 177422.7, f"{Do:.2f} m across, {hot:g} m with its cone, roof and bands, {t_sh * 1000:.0f} mm plate; measured on blender's model v1"),
                   part("Lining", REF, lining, f"{t_ref * 1000:.0f} mm"),
-                  part("Bustle main", A36, math.pi * (d_b + 0.4) * 0.025 * 2 * math.pi * R_b * RHO["steel"], f"a ring {2 * R_b:.1f} m across, 25 mm plate for the pressure"),
+                  part("Bustle main", A36, 43733.0, f"a ring {2 * R_b:.2f} m across, 25 mm plate for the pressure; measured on model v1"),
                   part("Bustle lining", REF, math.pi * (d_b + 0.2) * 0.2 * 2 * math.pi * R_b * RHO["refractory"], "200 mm"),
-                  part("Support ring girder", A36, 2 * math.pi * (Do / 2 + 0.4) * box_tube(0.8, 1.2, 0.04, 1.0) * RHO["steel"], "as for air"),
+                  part("Support ring girder", A36, 35860.4, "a hollow ring and its land, as for air; measured on model v1"),
+                  part("Struts and seats", A36, 2442.4, "eight 200 x 200 x 12 mm struts and their 40 mm seats; measured on model v1"),
                   part("Charge and discharge pressure locks", A36, 90000.0, "two lock hoppers with their valves, from memory"),
                   part("Burden feeders", "good.electric-motors", 25000.0, "from memory")],
         holds=burden,
