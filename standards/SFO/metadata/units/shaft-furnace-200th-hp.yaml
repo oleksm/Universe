@@ -26,13 +26,8 @@ recipes:
   - {item: good.water, quantity: 0.484}
   rate: 55.5555555555556
   power: 22000000
-visual:
-  format: "freefall-model/1"
-  path: "models/shaft-furnace-200th-hp/v1"
-  manifest_sha256: "3962dc1119298d6e9dda3b74d14384126fa35ea7ab1e13ce91fdf42ee3856a84"
-  version: 1
-  triangles: 21200
 life: 788940000
+visual: {format: freefall-model/1, path: models/shaft-furnace-200th-hp/v1, manifest_sha256: 3962dc1119298d6e9dda3b74d14384126fa35ea7ab1e13ce91fdf42ee3856a84, version: 1, triangles: 21200}
 basis:
 - of: [recipes]
   tier: derived

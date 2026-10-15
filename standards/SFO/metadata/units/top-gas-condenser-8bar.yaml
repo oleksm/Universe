@@ -3,10 +3,14 @@
 identity: {key: unit.top-gas-condenser-8bar, name: 'Top gas condenser, 57 MW', description: 'Two vertical shell-and-tube condensers at 8 bar: the top gas down through the tubes from 125 to 80 deg C, its water condensing (dew point about 116 deg C at this pressure, so the heat leaves warm), the loop''s water round the tubes from about 62 to 72 deg C; 20.5 kg/s of water drains to a pot and on to the hydrogen plant. A candle filter ahead of it takes the dust. Gas in at local (-6, 0, 12), out at (6, 0, 2).'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 8.0, height: 14.0, mass: 77160.0}
+physical: {length: 12.0, width: 8.0, height: 14.0, mass: 115400.0}
 built_of:
-- {what: Shells and tubes, item: material.stainless-steel-304, mass: 62160.0, note: 'two shells 3 m across, 12 m, 16 mm, and their tubes (30 t, from memory)'}
-- {what: Filter and drain pots, item: material.structural-steel-a36, mass: 15000.0, note: from memory}
+- {what: Shells and heads, item: material.stainless-steel-304, mass: 29870.0, note: 'two shells 3 m across, 12 m overall with elliptical heads, 16 mm (about 80 MPa at 8.5 bar); measured on blender''s model v1'}
+- {what: Tubes, item: material.stainless-steel-304, mass: 30000.0, note: from memory}
+- {what: Filter and drain pot, item: material.structural-steel-a36, mass: 9462.0, note: 'the candle filter 2 m across, 20 mm, and the drain pot 1 m, 12 mm; measured on model v1'}
+- {what: Filter candles, item: material.silicon-carbide, mass: 2000.0, note: from memory}
+- {what: 'Skirts, supports and feet', item: material.structural-steel-a36, mass: 15610.0, note: measured on model v1}
+- {what: Piping, item: material.structural-steel-a36, mass: 28440.0, note: 'the gas headers and pipes (1 m, 16 mm), the coolant pair (12 mm) and the drain (6 mm); measured on model v1, the joints'' overlapping skins counted twice, so a little high'}
 needs: {heat: 61430000.0, atmosphere: vacuum}
 life: 788940000
 basis:

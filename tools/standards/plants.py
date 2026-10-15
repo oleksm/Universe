@@ -2695,8 +2695,12 @@ def shaft_airless_units(us):
         name=f"Top gas condenser, {HP_Q_COND / 1e6:.0f} MW", size_class=2, fits="bay-s2", dims=(12.0, 8.0, 14.0),
         desc=(f"Two vertical shell-and-tube condensers at 8 bar: the top gas down through the tubes from {T_REC_OUT:.0f} to {T_COND:.0f} deg C, its water condensing (dew point about 116 deg C at this pressure, so the heat leaves warm), the loop's water round the tubes from about {HP_T_LOOP - 10 - 273.15:.0f} to {HP_T_LOOP - 273.15:.0f} deg C; "
               f"{STEAM - _left:.1f} kg/s of water drains to a pot and on to the hydrogen plant. A candle filter ahead of it takes the dust. Gas in at local (-6, 0, 12), out at (6, 0, 2)."),
-        built_of=[part("Shells and tubes", "material.stainless-steel-304", 2 * cyl_shell(3.0, 12.0, 0.016, bottom=2.0) * 7900 + 30000.0, "two shells 3 m across, 12 m, 16 mm, and their tubes (30 t, from memory)"),
-                  part("Filter and drain pots", A36, 15000.0, "from memory")],
+        built_of=[part("Shells and heads", "material.stainless-steel-304", 29866.3, "two shells 3 m across, 12 m overall with elliptical heads, 16 mm (about 80 MPa at 8.5 bar); measured on blender's model v1"),
+                  part("Tubes", "material.stainless-steel-304", 30000.0, "from memory"),
+                  part("Filter and drain pot", A36, 9462.2, "the candle filter 2 m across, 20 mm, and the drain pot 1 m, 12 mm; measured on model v1"),
+                  part("Filter candles", "material.silicon-carbide", 2000.0, "from memory"),
+                  part("Skirts, supports and feet", A36, 15611.1, "measured on model v1"),
+                  part("Piping", A36, 28443.5, "the gas headers and pipes (1 m, 16 mm), the coolant pair (12 mm) and the drain (6 mm); measured on model v1, the joints' overlapping skins counted twice, so a little high")],
         needs={"heat": HP_Q_COND + HP_W_COMP, "atmosphere": "vacuum"},
         basis=[{"of": ["physical", "built_of"], "tier": "invented", "review": True, "note": "From memory."},
                {"of": ["needs.heat"], "tier": "derived", "note": f"The top gas cooled {T_REC_OUT:.0f} to {T_COND:.0f} deg C and its water condensed down to 6% of the recycle (2.33 MJ/kg); with the compressor's aftercooler."}])
