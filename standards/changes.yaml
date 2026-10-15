@@ -825,7 +825,7 @@
 - { record: layout.arc-furnace-airless, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "befaa429a44d04ce" }
 - { record: layout.casting-bay-air, at: "2026-10-15T02:26:46Z", status: draft, summary: "changed: physical", sha: "64ae565ca9d653a2" }
 - { record: layout.casting-bay-airless, at: "2026-10-14T21:36:13Z", status: draft, summary: "changed: physical, totals", sha: "ed7687b7564fac7a" }
-- { record: layout.hydrogen-plant-air, at: "2026-10-15T03:43:16Z", status: draft, summary: "changed: physical, totals", sha: "02a229c553d5019f" }
+- { record: layout.hydrogen-plant-air, at: "2026-10-15T03:44:13Z", status: draft, summary: "changed: totals", sha: "cf6c972eae59a283" }
 - { record: layout.hydrogen-plant-airless, at: "2026-10-15T03:26:57Z", status: draft, summary: "changed: physical, bays, links, totals", sha: "f17169ab70753e43" }
 - { record: layout.ingot-yard-air, at: "2026-10-14T21:38:01Z", status: draft, summary: "changed: identity, physical, bays, totals", sha: "be2f1f8941755a1b" }
 - { record: layout.ladle-station-air, at: "2026-10-15T02:26:46Z", status: draft, summary: "changed: physical", sha: "31ea2691985163d3" }
@@ -2790,7 +2790,7 @@
 - { record: unit.top-gas-scrubber, at: "2026-10-15T00:44:40Z", status: draft, summary: "changed", sha: "905cd617b18be94c" }
 - { record: unit.truck-dump-hopper, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "69379232aafc2169" }
 - { record: unit.vacuum-degasser-80t, at: "2026-10-14T18:23:23Z", status: draft, summary: "changed", sha: "b01f8bbfcca9fb37" }
-- { record: unit.water-treatment, at: "2026-10-15T03:43:16Z", status: draft, summary: "changed: physical, built_of", sha: "5bce98e1255ca62e" }
+- { record: unit.water-treatment, at: "2026-10-15T03:44:13Z", status: draft, summary: "changed: physical, built_of", sha: "e7c4070d405471dc" }
 - { record: unit.water-treatment-sealed, at: "2026-10-15T03:26:57Z", status: draft, summary: "first tracked", sha: "cc51e1a707bd7340" }
 - { record: vocabulary.asteroid, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "c85b5b93f49a4621" }
 - { record: vocabulary.asteroid-family, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "3893f86924156b47" }

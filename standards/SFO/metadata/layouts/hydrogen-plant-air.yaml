@@ -293,7 +293,7 @@ ground:
 - {what: Rectifier slabs and fire walls, item: good.concrete, volume: 326.4, note: 'a slab under each, a fire wall between', mass: 783400.0}
 - {what: Outside slabs, item: good.concrete, volume: 96.0, note: under the purifier and the water treatment, mass: 230400.0}
 - {what: Cooling tower basin, item: good.concrete, volume: 288.9, note: sunk as the furnace shop's, mass: 693400.0}
-totals: {rate: 0.525, power: 99100000.0, heat: 25260000.0, water: 18.7, mass: 7487000.0, against_module: 'module.hydrogen-plant: one box 150 x 100 x 20 m, 100 MW. This layout: the same 1,890 kg of hydrogen an hour; 99.1 MW (the cells 95.5, at 1.9 V, 50.5 kWh a kg); 25.3 MW to the tower, 18.7 kg/s of water used and evaporated; 2,138 t of plant and frame, 5,348 t of concrete; 1.4 ha, against the source''s 0.8 to 1.7 for 100 MW. It makes 0.525 kg/s; one shaft furnace at its full rate takes 3.00, about 5.7 of these.'}
+totals: {rate: 0.525, power: 99100000.0, heat: 25260000.0, water: 18.7, mass: 7487000.0, against_module: 'module.hydrogen-plant: one box 150 x 100 x 20 m, 100 MW. This layout: the same 1,890 kg of hydrogen an hour; 99.1 MW (the cells 95.5, at 1.9 V, 50.5 kWh a kg); 25.3 MW to the tower, 18.7 kg/s of water used and evaporated; 2,139 t of plant and frame, 5,348 t of concrete; 1.4 ha, against the source''s 0.8 to 1.7 for 100 MW. It makes 0.525 kg/s; one shaft furnace at its full rate takes 3.00, about 5.7 of these.'}
 staff:
 - {profession: profession.chemist, count: 2}
 - {profession: profession.plant-operator, count: 4}

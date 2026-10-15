@@ -1522,7 +1522,7 @@ def hydrogen_units():
         "Tanks and cartridge filter": ("material.stainless-steel-304", 757.4, "the break tank, the cleaning tank and the cartridge housing"),
         "Roof, columns and pipe hangers": (A36, 7257.8, "six columns and feet, crossbeams, eaves, purlins, fascias, the roof sheet and the pipe crossbars and hangers under it"),
         "Tube rack": (A36, 842.9, "the reverse osmosis bank's rack"),
-        "Pump skid": (A36, 3114.4, "the pump skid's frame and base; the other groups stand on the pad on their own feet")})
+        "Pump skid": (A36, 3791.4, "the pump skid's frame, base and the bearers under the pumps' feet; the other groups stand on the pad on their own feet")})
     out["water-treatment-sealed"] = water_treatment("Water treatment, sealed", airless=True)
     out["stack-crane-20t"] = bridge_crane_unit(20000.0, 22.8, 6000.0, kind="Stack crane", job="it lifts an electrolyser stack's end plates and cell packs out for refurbishment and sets in new ones", gear="a main hoist")
     return out

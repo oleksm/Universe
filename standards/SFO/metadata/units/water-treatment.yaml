@@ -4,7 +4,7 @@ identity: {key: unit.water-treatment, name: Water treatment, description: 'Makes
     -1.6): the feed booster, high-pressure, product, backwash and cleaning pumps, the cleaning tank (1 m3) and the permeate break tank (2 m across, 1.6 m tall, at (-2.4, -2.7)). Raw water in at local (6, 0, 0.5), clean water out at (-6, 0, 0.5); reject and backwash out by a 150 mm flange at (6, 3.4, 0.3) (6.3 m3/h of concentrate, 93 m3/h while a filter backwashes). Its reject goes to drain. 400 V supply at (-6, -3.4, 0.5).'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 8.0, height: 5.0, mass: 31480.0}
+physical: {length: 12.0, width: 8.0, height: 5.0, mass: 32160.0}
 built_of:
 - {what: Filter sand, item: good.silica-sand, mass: 9772.0, note: '1.2 m of graded sand and gravel in each, 1,600 kg/m3'}
 - {what: Pressure tubes, item: material.stainless-steel-304, mass: 848.4, note: '5 tubes 0.21 m by 6.7 m in 4 mm for 18 bar, 30 kg of end caps each'}
@@ -16,7 +16,7 @@ built_of:
 - {what: Tanks and cartridge filter, item: material.stainless-steel-304, mass: 757.4, note: 'the break tank, the cleaning tank and the cartridge housing; measured on model v1'}
 - {what: 'Roof, columns and pipe hangers', item: material.structural-steel-a36, mass: 7258.0, note: 'six columns and feet, crossbeams, eaves, purlins, fascias, the roof sheet and the pipe crossbars and hangers under it; measured on model v1'}
 - {what: Tube rack, item: material.structural-steel-a36, mass: 842.9, note: the reverse osmosis bank's rack; measured on model v1}
-- {what: Pump skid, item: material.structural-steel-a36, mass: 3114.0, note: the pump skid's frame and base; the other groups stand on the pad on their own feet; measured on model v1}
+- {what: Pump skid, item: material.structural-steel-a36, mass: 3791.0, note: 'the pump skid''s frame, base and the bearers under the pumps'' feet; the other groups stand on the pad on their own feet; measured on model v1'}
 needs: {power: 28480.0}
 life: 788940000
 basis:
