@@ -1061,15 +1061,20 @@ def shaft_units():
     # Scrubber: cools the top gas and takes out its water and dust.
     q_s = mol_flow(H2_TOP, STEAM) * 8.314 * (T_RECUP_OUT + 273.15) / P_SUCTION
     Ds = math.sqrt(4 * q_s / 3.0 / math.pi)
+    px_area = Q_SCRUB / (4000.0 * 5.0)                # m2 of plate in the exchangers
+    spray_kw = Q_SCRUB / (4186 * 10) / 1000 * 300e3 / 0.75 / 1000
     out["top-gas-scrubber"] = dict(
         name="Top gas scrubber", size_class=2, fits="bay-s2", dims=(12.0, 12.0, 24.0),
         desc=(f"A packed tower {Ds:.1f} m across and 22 m tall: the top gas up through it against sprayed water, which cools it to {T_COLD:.0f} deg C, condenses the {STEAM:.1f} kg/s of water the reduction made and washes out the dust. "
               f"Gas in at the bottom on -x by a {main_dia(mol_flow(H2_TOP, STEAM), T_RECUP_OUT, P_SUCTION):.1f} m flange at (-6, 0, 2), out at the top by a {main_dia(mol_flow(H2_TOP), T_COLD, P_SUCTION):.1f} m flange at (0, 0, 23) to the compressor. "
               f"The condensate and spray water drain from its sump to a skid along x at y 5.3 (7 x 1.4 m, x -3.5 to 3.5): plate exchangers and spray pumps, the cooled water back up a riser to the sprays. The exchangers give the heat to the tower loop, {Q_SCRUB / (4186 * 10):,.0f} kg/s at a 10 K rise, by a pair of {math.sqrt(4 * Q_SCRUB / (4186 * 10) / 1000 / 2.5 / math.pi):.1f} m flanges on the +y face at z 1 (flow x 2.75, return x 4.25); "
               "the condensate overflows by a 200 mm pipe from the skid's +x end to a flange on the +x face at (6, 5.3, 0.5), to the hydrogen plant."),
-        built_of=[part("Shell", A36, cyl_shell(Ds, 22.0, 0.016, bottom=2.0) * RHO["steel"], f"{Ds:.1f} m across, 22 m, 16 mm plate"),
+        built_of=[part("Shell, heads and seams", A36, 89008.8, f"{Ds:.1f} m across, 22 m, 16 mm plate; measured on model v1 (by formula {cyl_shell(Ds, 22.0, 0.016, bottom=2.0) * RHO['steel']:,.0f} kg)"),
                   part("Packing", "material.stainless-steel-304", math.pi * Ds ** 2 / 4 * 10.0 * 250.0, "10 m of metal packing at 250 kg/m3"),
-                  part("Sprays, pumps and exchanger", "good.pumps", 40000.0, "from memory")],
+                  part("Skirt, skid, exchanger frames and supports", A36, 16308.3, "measured on model v1"),
+                  part("Pipework", A36, 13095.3, "the spray riser, sump drain, tower loop and condensate pipes on the unit; measured on model v1"),
+                  part("Exchanger plates", "material.stainless-steel-304", px_area * 0.0006 * 7900 * 1.15, f"{px_area:,.0f} m2 of 0.6 mm plate (and 15% for ports and edges): the {Q_SCRUB / 1e6:.0f} MW at 4,000 W/m2 K over a 5 K mean difference, from memory"),
+                  part("Spray pumps and motors", "good.pumps", spray_kw * 12.0, f"three pumps for {Q_SCRUB / (4186 * 10):,.0f} kg/s at 3 bar, {spray_kw:,.0f} kW in all, at 12 kg/kW with their motors (from memory)")],
         needs={"power": Q_SCRUB / (4186 * 10) / 1000 * 300e3 / 0.75, "heat": Q_SCRUB},
         basis=[{"of": ["physical", "built_of"], "tier": "derived", "review": True, "note": f"Across from the gas's {q_s:.0f} m3/s at 3 m/s; height and packing from memory."},
                {"of": ["needs"], "tier": "derived", "note": f"The gas cooled from {T_RECUP_OUT:.0f} to {T_COLD:.0f} deg C and 97% of its steam condensed at 2.4 MJ/kg: {Q_SCRUB / 1e6:.0f} MW to the tower; its spray water pumped at 3 bar and 75%."}])
