@@ -1337,6 +1337,61 @@ I_DC = I_BLK / PER_STACK                                     # A of direct curre
 NI = "material.nickel-200"
 
 
+def hydrogen_purifier(name, P, T_in, T_cool, cop, cool_txt):
+    """A deoxidiser and two dryers for the plant's hydrogen at P (Pa): saturated at T_in from the separators, cooled by water to T_cool and
+    chilled to 5 deg C (by a chiller of `cop`) before the beds."""
+    P_d = 1.2 * P + 2e5                                          # design pressure: a fifth over working and 2 bar for the relief valve's margin
+    n_h2 = mol_flow(H_RATE)
+    q3 = n_h2 * 8.314 * (T_cool + 273.15) / P                   # m3/s at the plant's pressure, after the coolers
+    v_bed = 0.5 * math.sqrt(3e5 / P)                             # m/s through the bed: 0.5 at 3 bar, less as the gas gets denser, so the beds stay seated
+    D_dry = math.ceil(math.sqrt(4 * q3 / v_bed / math.pi) * 10) / 10
+    pv = lambda T: 610.94 * math.exp(17.625 * T / (T + 243.04))     # Pa of water over water (Magnus)
+    O2_IN = 0.005                                                  # oxygen in the separators' hydrogen, mol fraction: from memory of alkaline plants
+    n_o2 = n_h2 * O2_IN
+    dT_deoxo = n_o2 * 484e3 / (n_h2 * 29.0)                      # 2 H2 + O2 to steam, 484 kJ a mol of oxygen
+    n_w40 = n_h2 * pv(T_in) / P + 2 * n_o2                       # saturated as it leaves the separators, and what the deoxidiser makes
+    n_w35, n_w5 = n_h2 * pv(T_cool) / P, n_h2 * pv(5) / P
+    q_after = n_h2 * 29.0 * (T_in + dT_deoxo - T_cool) + (n_w40 - n_w35) * 18.015e-3 * 2.43e6
+    q_chill = n_h2 * 29.0 * (T_cool - 5) + (n_w35 - n_w5) * 18.015e-3 * 2.47e6
+    w_cycle = n_w5 * 18.015e-3 * 8 * 3600                        # kg of water a bed takes in an 8 hour turn
+    sieve = w_cycle / 0.10                                       # at 10% by weight, a working capacity from memory
+    bed_h = sieve / 700 / (math.pi * D_dry ** 2 / 4) + 1.0      # 700 kg/m3, and a metre for the transfer zone
+    H_dry = math.ceil(bed_h + 1.5)
+    t_dry = math.ceil((P_d * D_dry / 2 / (138e6 * 0.85 - 0.6 * P_d) + 0.0015) * 1000) / 1000
+    regen = sieve * 900 * 230 + w_cycle * 2.6e6 + cyl_shell(D_dry, H_dry, t_dry, bottom=2.2) * 7900 * 500 * 230
+    p_heat = regen / (4 * 3600) / 0.85                           # W over 4 hours of the 8 hour turn, 85% reaching the bed
+    p_chill = q_chill / cop
+    q_cw = q_after + q_chill + p_chill + p_heat * 0.5            # to the cooling water: the after-cooler, the chiller's condenser, the regeneration cooler (averaged)
+    cat_v = n_h2 * 22.414e-3 * 3600 / 7000                       # m3 of catalyst at 7,000 an hour of gas at normal conditions
+    D_deo = 1.6
+    t_deo = math.ceil((P_d * D_deo / 2 / (138e6 * 0.85 - 0.6 * P_d) + 0.0015) * 1000) / 1000
+    vessels = (2 * cyl_shell(D_dry, H_dry, t_dry, bottom=2.2) + cyl_shell(D_deo, 3.5, t_deo, bottom=2.2)
+               + cyl_shell(1.0, 2.5, 0.008, bottom=2.2) + cyl_shell(0.6, 2.0, 0.006, bottom=2.2) + cyl_shell(0.5, 2.0, 0.006, bottom=2.2)) * 7900
+    d_cwp = math.sqrt(4 * q_cw / (4186 * 10) / 1000 / 2.0 / math.pi)
+    return dict(
+        name=name, size_class=2, fits="bay-s2", dims=(12.0, 8.0, 9.0),
+        desc=(f"Takes the last oxygen out of the electrolysers' hydrogen and dries it to a dew point near -60 deg C, at {P / 1e5:.0f} bar (rated {P_d / 1e5:.0f}). {cool_txt} In order: "
+              f"a feed/effluent exchanger (0.9 m across, 3.5 m long, horizontal along x at y 0, z 6, x -5.6 to -2.1, on a stand) warms the wet gas a little against the hot outlet; "
+              f"the deoxidiser ({D_deo:g} m across, 3.5 m tall, on 1 m legs, centre (-4, -2)) burns the {O2_IN:.1%} of oxygen to water over {cat_v:.1f} m3 of palladium catalyst, {dT_deoxo:.0f} K warmer; "
+              f"a water-cooled after-cooler (0.8 m across, 3.2 m long, along x at y 0.8, z 1.2, x -3.6 to -0.4) to {T_cool:.0f} deg C and a knockout drum (1 m across, 2.5 m, centre (0.4, 0.8)); "
+              f"a chiller package (x -2 to 1.6, y -3.8 to -1.4, 2.2 m tall) to 5 deg C with its cold separator; "
+              f"two dryers ({D_dry:g} m across, {H_dry:g} m straight with dished heads, {t_dry * 1000:.0f} mm wall, on skirts, centres (4, -2.2) and (4, 2.2)), one adsorbing for 8 hours while the other is heated 4 hours by a slip of dry gas and cooled; "
+              f"a regeneration heater cabinet (x -1.5 to 1.5, y 2.4 to 3.6, 2.2 m tall), its cooler (0.5 m across, 2 m, along x on the cabinet's roof) and a knockout pot (0.6 m across, 2 m, centre (2, 3.4)); a dust filter (0.5 m, 2 m, centre (5.5, 0)) before the outlet. "
+              f"Gas in at local (-6, 0, 6), out at (6, 0, 2); the cooling water's pair of {d_cwp * 1000:.0f} mm flanges on the -y face at (0, -4, 1) flow and (0.6, -4, 1) return ({q_cw / (4186 * 10):.0f} kg/s at a 10 K rise); "
+              f"condensate 50 mm out at (-6, 3, 0.3); 400 V supply at (6, -3.5, 0.5)."),
+        built_of=[part("Vessels", "material.stainless-steel-304", vessels, f"two dryers {D_dry:g} m by {H_dry:g} m in {t_dry * 1000:.0f} mm plate, the deoxidiser {D_deo:g} m by 3.5 m in {t_deo * 1000:.0f} mm, the drums and the filter, heads as 1.1 discs each"),
+                  part("Exchangers", "material.stainless-steel-304", 6000.0, "feed/effluent exchanger, after-cooler and regeneration cooler, from memory"),
+                  part("Chiller package", "good.pumps", 4500.0, f"a {q_chill / 1e3:.0f} kW screw chiller on its frame, from memory"),
+                  part("Regeneration heater", "material.stainless-steel-304", 1500.0, f"{p_heat / 1e3:.0f} kW of electric elements in a cabinet, from memory"),
+                  part("Adsorbent", "material.fused-silica", 2 * sieve, f"{sieve / 1e3:.1f} t of 4A molecular sieve a bed (the water of an 8 hour turn at 10%), which the registry has not got: fused silica stands for it"),
+                  part("Catalyst", "material.fused-silica", cat_v * 800, "palladium on alumina pellets at 800 kg/m3, 0.5% palladium, which the registry has not got: fused silica stands for it"),
+                  part("Skid, supports and piping", A36, 12000.0, "from memory")],
+        needs={"power": p_heat + p_chill + 20e3, "heat": q_cw},
+        basis=[{"of": ["physical", "built_of", "needs"], "tier": "derived", "review": True,
+                "note": (f"From the plant's {n_h2:.0f} mol/s of hydrogen: the dryers' diameter at {v_bed:.2f} m/s at {P / 1e5:.0f} bar, their walls for {P_d / 1e5:.0f} bar in 304 at 138 MPa (85% joints, 1.5 mm allowance), the sieve from the water left at 5 deg C over 8 hours, "
+                         f"regeneration warming sieve and shell 230 K and driving the water off in 4 hours ({p_heat / 1e3:.0f} kW), the chiller {q_chill / 1e3:.0f} kW at a COP of {cop:g}; oxygen content, capacities and the catalyst's space velocity from memory.")}])
+
+
 def hydrogen_units():
     out = {}
     area = I_BLK / J_CELL
@@ -1384,13 +1439,9 @@ def hydrogen_units():
                   + f" Local frame: the transformer's tank on the -y side (y -{(W_t + 3.0) / 2:g} to {W_t - (W_t + 3.0) / 2:g}); the rectifier in a closed house on the +y side (x -2.1 to 2.1, y 0.6 to {(W_t + 3.0) / 2:g}, 2.8 m tall, three service doors), fed across the gap by a shielded AC bridge, its heat sinks' water joining the transformer cooler's pair, whose ports are on the -x end at (-{L_t / 2:g}, -1.86, 1) and (-{L_t / 2:g}, -1.14, 1); "
                   f"the rectifier's two DC terminals on the house's +y face at x -0.45 and 0.45, 2.4 m up, toward the hall.")
     out["rectifier-transformer-21mva"] = rt
-    out["hydrogen-purifier"] = dict(
-        name="Hydrogen purifier", size_class=2, fits="bay-s2", dims=(12.0, 8.0, 9.0),
-        desc="Takes the last oxygen out of the hydrogen over a palladium catalyst (it burns to water) and dries it in two adsorber vessels that take turns, one regenerating by heat while the other works. Gas in at local (-6, 0, 6), out at (6, 0, 2).",
-        built_of=[part("Vessels and piping", A36, 25000.0, "a deoxidiser and two adsorbers 1.5 m across and 6 m, from memory"),
-                  part("Adsorbent", "material.fused-silica", 8000.0, "molecular sieve beads, which the registry has not got: fused silica stands for it")],
-        needs={"power": 300e3},
-        basis=[{"of": ["physical", "built_of", "needs"], "tier": "invented", "review": True, "note": "Sizes, masses and the regeneration heaters' power from memory."}])
+    out["hydrogen-purifier"] = hydrogen_purifier("Hydrogen purifier", 3e5, 40.0, 35.0, 4.0, "Cooled by the tower's water.")
+    out["hydrogen-purifier-10bar"] = hydrogen_purifier("Hydrogen purifier, 10 bar", 10e5, 80.0, 80.0, 2.0,
+                                                       f"For airless ground: its loop water comes back from the radiators at about {HP_T_LOOP - 273.15:.0f} deg C, so the after-cooler only takes the gas to 80 deg C and the chiller lifts all the rest to its condenser at about 85 deg C, at half the air plant's COP.")
     out["water-treatment"] = dict(
         name="Water treatment", size_class=2, fits="bay-s2", dims=(12.0, 8.0, 5.0),
         desc=f"Makes the {H_WATER:.1f} kg/s of demineralised water the cells split: filters, reverse osmosis and an electrodeionisation stage, on skids under a roof. Raw water in at local (6, 0, 0.5), clean water out at (-6, 0, 0.5).",
@@ -1462,7 +1513,9 @@ def hydrogen_plant_air(us, recs):
     d_cw = math.sqrt(4 * flow / 1000 / 2.5 / math.pi)
     ss = "material.stainless-steel-304"
     q_r = recs["rectifier-transformer-21mva"]["needs"]["heat"]
-    d_rh = math.sqrt(4 * q_r * N_BLK / (4186 * 10) / 1000 / 2.5 / math.pi)
+    q_p = recs["hydrogen-purifier"]["needs"]["heat"]
+    d_rh = math.sqrt(4 * (q_r * N_BLK + q_p) / (4186 * 10) / 1000 / 2.5 / math.pi)
+    d_pb = math.sqrt(4 * q_p / (4186 * 10) / 1000 / 2.0 / math.pi)
     d_rb = max(0.08, math.sqrt(4 * q_r / (4186 * 10) / 1000 / 2.5 / math.pi))
     links = [link("busbar", f"DC bus {i + 1}", (x, -24.0 + rW / 2, rH * 2 / 3), (x, -6.0, 3.0), AL, 2 * bus_a * RHO["aluminium"], None, f"two aluminium bars, {bus_a * 1e4:.0f} cm2 each for {I_DC / 1e3:.0f} kA at 1.5 A/mm2, through the hall's south wall") for i, x in enumerate(xs_b)]
     links += [
@@ -1471,7 +1524,8 @@ def hydrogen_plant_air(us, recs):
         link("pipe", "oxygen header", (xs_b[0] + 10.5, 2.5, 8.0), (110.0, 6.0, 9.0), ss, pm(d_o2, 0.006), None, f"{d_o2:.2f} m stainless, 6 mm wall: the {H_O2:.1f} kg/s of oxygen, out by the east wall to a vent stack or to buyers (the arc furnace lances it), beyond the layout; clean, oil-free, as oxygen service needs", via=[(xs_b[0] + 10.5, 2.5, 9.0), (58.5, 2.5, 9.0), (58.5, 6.0, 9.0)]),
         link("pipe", "demineralised water", (66.0, -24.0, 0.5), (59.0, 6.0, 1.0), ss, pm(0.1, 0.004), None, f"100 mm stainless, {H_WATER:.1f} kg/s to the blocks' feed points along the hall's north side", via=[(62.0, -24.0, 0.5), (62.0, 6.0, 0.5)]),
         link("pipe", "raw water", (110.0, -24.0, 0.5), (78.0, -24.0, 0.5), A36, pm(0.15, 0.005), None, "150 mm: town or river water, or the shaft furnace's condensate, beyond the layout"),
-        link("pipe", "cooling water to the rectifiers", (tower["dims"][0] / 2, 48.0, 0.75), (xs_b[0] - 3.45, -30.0, 0.75), A36, 2 * pm(d_rh, 0.005), None, f"a pair of {d_rh:.2f} m pipes, 5 mm wall, flow and return: {q_r * N_BLK / (4186 * 10):.0f} kg/s for the rectifier transformers' coolers, from the tower east of the hall, south past the purifier and west along y -30 behind the rectifiers", via=[(63.0, 48.0, 0.75), (63.0, -30.0, 0.75)]),
+        link("pipe", "cooling water to the rectifiers", (tower["dims"][0] / 2, 48.0, 0.75), (xs_b[0] - 3.45, -30.0, 0.75), A36, 2 * pm(d_rh, 0.005), None, f"a pair of {d_rh:.2f} m pipes, 5 mm wall, flow and return: {(q_r * N_BLK + q_p) / (4186 * 10):.0f} kg/s for the rectifier transformers' coolers and the purifier, from the tower east of the hall, south past the purifier (a tee for it at y -6) and west along y -30 behind the rectifiers", via=[(63.0, 48.0, 0.75), (63.0, -30.0, 0.75)]),
+        link("pipe", "cooling water to the purifier", (63.0, -6.0, 0.75), (72.3, -4.0, 1.0), A36, 2 * pm(d_pb, 0.004), None, f"a pair of {d_pb * 1000:.0f} mm pipes off the rectifiers' header, east along y -6 and north, level into the purifier's flanges on its -y face (x 72 flow, 72.6 return)", via=[(72.3, -6.0, 0.75), (72.3, -6.0, 1.0)]),
         *[link("pipe", f"cooling water to rectifier {i + 1}", (x - 3.45, -30.0, 0.75), (x - rt["dims"][0] / 2, -25.5, 1.0), A36, 2 * pm(d_rb, 0.004), None, f"a pair of {d_rb * 1000:.0f} mm pipes off the header, north and level into the cooler's ports on the -x end (y -25.86 and -25.14)", via=[(x - 3.45, -25.5, 0.75), (x - 3.45, -25.5, 1.0)]) for i, x in enumerate(xs_b)],
         link("pipe", "cooling water mains", (tower["dims"][0] / 2, 48.0, 0.75), (-48.0 + 11.0, 6.0, 1.0), A36, 2 * pm(d_cw, 0.010), None, f"a pair of {d_cw:.2f} m pipes, 10 mm wall, flow and return: {flow:,.0f} kg/s at a 10 K rise, into the hall by the north wall and along it to each block's coolers, a branch out to the rectifiers", via=[(tower["dims"][0] / 2 + 1.5, 48.0, 0.75), (tower["dims"][0] / 2 + 1.5, 20.0, 0.75), (0.0, 20.0, 0.75), (0.0, 9.0, 1.0), (-37.0, 9.0, 1.0)]),
     ]
@@ -2480,13 +2534,13 @@ def hydrogen_plant_airless(us, recs):
     of water kept."""
     xs_b = [-48.0, -24.0, 0.0, 24.0, 48.0]
     rad = f"radiator-field-{HP_T_LOOP:.0f}k"
-    loop = N_BLK * (recs["electrolyser-block-20mw-10bar"]["needs"]["heat"] + recs["rectifier-transformer-21mva"]["needs"]["heat"])
+    loop = N_BLK * (recs["electrolyser-block-20mw-10bar"]["needs"]["heat"] + recs["rectifier-transformer-21mva"]["needs"]["heat"]) + recs["hydrogen-purifier-10bar"]["needs"]["heat"]
     n_rad = math.ceil(loop / recs[rad]["rejects"]["heat"])
     cols = 6
     rad_at = [(-120.0 + 48.0 * (i % cols), 48.0 + 48.0 * (i // cols)) for i in range(n_rad)]
     bays = [{"id": f"E{i + 1}", "mount": "plant-mount.bay-s3", "unit": "unit.electrolyser-block-20mw-10bar", "at": [x, 0.0, 0.0], "note": "on its pad in the open"} for i, x in enumerate(xs_b)]
     bays += [{"id": f"R{i + 1}", "mount": "plant-mount.bay-s2", "unit": "unit.rectifier-transformer-21mva", "at": [x, -24.0, 0.0], "note": "south, no fire walls"} for i, x in enumerate(xs_b)]
-    bays += [{"id": "P", "mount": "plant-mount.bay-s2", "unit": "unit.hydrogen-purifier", "at": [72.0, 0.0, 0.0], "note": "east"},
+    bays += [{"id": "P", "mount": "plant-mount.bay-s2", "unit": "unit.hydrogen-purifier-10bar", "at": [72.0, 0.0, 0.0], "note": "east"},
              {"id": "W", "mount": "plant-mount.bay-s2", "unit": "unit.water-treatment", "at": [72.0, -24.0, 0.0], "note": "south-east: polishes the shaft furnace's condensate and the ice miners' water"},
              {"id": "Q", "mount": "plant-mount.bay-s1", "unit": "unit.crew-post", "at": [-72.0, -24.0, 0.0], "note": "south-west, under its berm"}]
     bays += [{"id": f"RL{i + 1}", "mount": "plant-mount.bay-s4", "unit": f"unit.{rad}", "at": [x, y, 0.0], "note": f"north, in rows of {cols}"} for i, (x, y) in enumerate(rad_at)]
@@ -2498,6 +2552,7 @@ def hydrogen_plant_airless(us, recs):
     d_h2 = main_dia(mol_flow(H_RATE), 40.0, 10e5) * math.sqrt(30.0 / 15.0)
     flow = loop / (4186 * 10)
     d_cw = math.sqrt(4 * flow / 1000 / 2.5 / math.pi)
+    d_pw = math.sqrt(4 * recs["hydrogen-purifier-10bar"]["needs"]["heat"] / (4186 * 10) / 1000 / 2.0 / math.pi)
     links = [link("busbar", f"DC bus {i + 1}", (x, -24.0 + rW / 2, rH * 2 / 3), (x, -6.0, 3.0), AL, 2 * bus_a * RHO["aluminium"], None, "as for air, its insulation spaced for vacuum") for i, x in enumerate(xs_b)]
     links += [
         link("pipe", "hydrogen header", (xs_b[0] + 10.5, -2.5, 8.0), (66.0, 0.0, 6.0), ss, pm(d_h2, 0.006), None, f"{d_h2:.2f} m stainless at 10 bar, to the purifier", via=[(xs_b[0] + 10.5, -2.5, 9.0), (58.5, -2.5, 9.0), (58.5, 0.0, 6.0)]),
@@ -2506,6 +2561,7 @@ def hydrogen_plant_airless(us, recs):
         link("pipe", "water in", (110.0, -24.0, 0.5), (78.0, -24.0, 0.5), ss, pm(0.15, 0.005), None, "150 mm: the shaft furnace's condensate and make-up from ice, beyond the layout"),
         link("pipe", "demineralised water", (66.0, -24.0, 0.5), (59.0, 6.0, 1.0), ss, pm(0.1, 0.004), None, f"{H_WATER:.1f} kg/s to the blocks", via=[(62.0, -24.0, 0.5), (62.0, 6.0, 0.5)]),
         link("pipe", "loop water to the radiators", (rad_at[-1][0] + 24.0, rad_at[-1][1], 1.0), (-48.0 + 11.0, 6.0, 1.0), A36, 2 * math.pi * d_cw * 0.010 * RHO["steel"], None, f"a pair of {d_cw:.2f} m pipes at about {HP_T_LOOP:.0f} K: {flow:,.0f} kg/s along the {n_rad} radiator fields' rows to the blocks' coolers, a branch to the rectifiers", via=[(84.0, rad_at[-1][1], 1.0), (84.0, 20.0, 1.0), (-37.0, 20.0, 1.0)]),
+        link("pipe", "loop water to the purifier", (84.0, 20.0, 1.0), (72.3, -4.0, 1.0), A36, 2 * math.pi * d_pw * 0.004 * RHO["steel"], None, f"a pair of {d_pw * 1000:.0f} mm pipes teed off the radiator loop at x 84, south and west along y -6, level into the purifier's flanges on its -y face (x 72 flow, 72.6 return)", via=[(84.0, -6.0, 1.0), (72.3, -6.0, 1.0)]),
         link("rail", "crane rails", (-60.0, -12.0, 0.0), (60.0, 12.0, 0.0), A36, 2 * 50.0, None, "the maintenance gantry's two rails, 24 m apart, along the blocks", via=[(60.0, -12.0, 0.0), (60.0, 12.0, 0.0), (-60.0, 12.0, 0.0)]),
     ]
     mobile = [{"unit": "unit.gantry-crane-20t-moon", "rides": "crane rails", "at": [0.0, 0.0, 0.0]}]
@@ -2590,7 +2646,7 @@ def main():
     su["cooling-tower-shaft"]["count"] = n_t          # placed n_t times in the layout; not part of the record
     us.update(su)
     hu = hydrogen_units()
-    hu["cooling-tower-h2"] = cooling_unit(N_BLK * (hu["electrolyser-block-20mw"]["needs"]["heat"] + hu["rectifier-transformer-21mva"]["needs"]["heat"]), "the electrolysers' and rectifiers'")
+    hu["cooling-tower-h2"] = cooling_unit(N_BLK * (hu["electrolyser-block-20mw"]["needs"]["heat"] + hu["rectifier-transformer-21mva"]["needs"]["heat"]) + hu["hydrogen-purifier"]["needs"]["heat"], "the electrolysers', rectifiers' and purifier's")
     us.update(hu)
     us.update(pellet_units())
     us.update(yard_units())

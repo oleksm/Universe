@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.hydrogen-purifier-10bar, name: 'Hydrogen purifier, 10 bar', description: 'Takes the last oxygen out of the electrolysers'' hydrogen and dries it to a dew point near -60 deg C, at 10 bar (rated 14). For airless ground: its loop water comes back from the radiators at about 72 deg C, so the after-cooler only takes the gas to 80 deg C and the chiller lifts all the rest to its condenser at about 85 deg C, at half the air plant''s COP. In order: a feed/effluent exchanger (0.9 m across, 3.5 m long, horizontal along x at y 0, z 6, x -5.6 to -2.1, on a stand) warms the wet gas a little against the hot outlet; the deoxidiser (1.6 m across, 3.5 m tall, on 1 m legs, centre (-4, -2)) burns the 0.5% of oxygen to water over 3.0 m3 of palladium catalyst, 83 K warmer; a water-cooled after-cooler (0.8 m across, 3.2 m long, along x at y 0.8, z 1.2, x -3.6 to -0.4) to 80 deg C and a knockout drum (1 m across, 2.5 m, centre (0.4, 0.8)); a chiller package (x -2 to 1.6, y -3.8 to -1.4, 2.2
+    m tall) to 5 deg C with its cold separator; two dryers (1.9 m across, 4 m straight with dished heads, 13 mm wall, on skirts, centres (4, -2.2) and (4, 2.2)), one adsorbing for 8 hours while the other is heated 4 hours by a slip of dry gas and cooled; a regeneration heater cabinet (x -1.5 to 1.5, y 2.4 to 3.6, 2.2 m tall), its cooler (0.5 m across, 2 m, along x on the cabinet''s roof) and a knockout pot (0.6 m across, 2 m, centre (2, 3.4)); a dust filter (0.5 m, 2 m, centre (5.5, 0)) before the outlet. Gas in at local (-6, 0, 6), out at (6, 0, 2); the cooling water''s pair of 193 mm flanges on the -y face at (0, -4, 1) flow and (0.6, -4, 1) return (59 kg/s at a 10 K rise); condensate 50 mm out at (-6, 3, 0.3); 400 V supply at (6, -3.5, 0.5).'}
+size_class: 2
+fits: plant-mount.bay-s2
+physical: {length: 12.0, width: 8.0, height: 9.0, mass: 38010.0}
+built_of:
+- {what: Vessels, item: material.stainless-steel-304, mass: 9256.0, note: 'two dryers 1.9 m by 4 m in 13 mm plate, the deoxidiser 1.6 m by 3.5 m in 12 mm, the drums and the filter, heads as 1.1 discs each'}
+- {what: Exchangers, item: material.stainless-steel-304, mass: 6000.0, note: 'feed/effluent exchanger, after-cooler and regeneration cooler, from memory'}
+- {what: Chiller package, item: good.pumps, mass: 4500.0, note: 'a 1113 kW screw chiller on its frame, from memory'}
+- {what: Regeneration heater, item: material.stainless-steel-304, mass: 1500.0, note: '74 kW of electric elements in a cabinet, from memory'}
+- {what: Adsorbent, item: material.fused-silica, mass: 2355.0, note: '1.2 t of 4A molecular sieve a bed (the water of an 8 hour turn at 10%), which the registry has not got: fused silica stands for it'}
+- {what: Catalyst, item: material.fused-silica, mass: 2402.0, note: 'palladium on alumina pellets at 800 kg/m3, 0.5% palladium, which the registry has not got: fused silica stands for it'}
+- {what: 'Skid, supports and piping', item: material.structural-steel-a36, mass: 12000.0, note: from memory}
+needs: {power: 650500.0, heat: 2451000.0}
+life: 788940000
+basis:
+- of: [physical, built_of, needs]
+  tier: derived
+  review: true
+  note: 'From the plant''s 260 mol/s of hydrogen: the dryers'' diameter at 0.27 m/s at 10 bar, their walls for 14 bar in 304 at 138 MPa (85% joints, 1.5 mm allowance), the sieve from the water left at 5 deg C over 8 hours, regeneration warming sieve and shell 230 K and driving the water off in 4 hours (74 kW), the chiller 1113 kW at a COP of 2; oxygen content, capacities and the catalyst''s space velocity from memory.'
+- of: [life]
+  rule: rule.life-plant

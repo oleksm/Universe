@@ -5,7 +5,7 @@ stands_for: module.hydrogen-plant
 site:
   atmosphere: none
   gravity: [1.6, 2.0]
-physical: {length: 288.0, width: 198.0, height: 25.0, mass: 4829000.0}
+physical: {length: 288.0, width: 198.0, height: 25.0, mass: 4890000.0}
 bays:
 - id: E1
   mount: plant-mount.bay-s3
@@ -59,7 +59,7 @@ bays:
   note: south, no fire walls
 - id: P
   mount: plant-mount.bay-s2
-  unit: unit.hydrogen-purifier
+  unit: unit.hydrogen-purifier-10bar
   at: [72.0, 0.0, 0.0]
   note: east
 - id: W
@@ -156,6 +156,11 @@ bays:
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
   at: [72.0, 144.0, 0.0]
+  note: north, in rows of 6
+- id: RL18
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [120.0, 144.0, 0.0]
   note: north, in rows of 6
 mobile:
 - unit: unit.gantry-crane-20t-moon
@@ -255,16 +260,27 @@ links:
   note: 4.7 kg/s to the blocks
 - kind: pipe
   name: loop water to the radiators
-  from: [96.0, 144.0, 1.0]
+  from: [144.0, 144.0, 1.0]
   to: [-37.0, 6.0, 1.0]
-  length: 271.0
+  length: 319.0
   item: material.structural-steel-a36
-  mass: 71950.0
+  mass: 88950.0
   via:
   - [84.0, 144.0, 1.0]
   - [84.0, 20.0, 1.0]
   - [-37.0, 20.0, 1.0]
-  note: 'a pair of 0.54 m pipes at about 345 K: 569 kg/s along the 17 radiator fields'' rows to the blocks'' coolers, a branch to the rectifiers'
+  note: 'a pair of 0.57 m pipes at about 345 K: 628 kg/s along the 18 radiator fields'' rows to the blocks'' coolers, a branch to the rectifiers'
+- kind: pipe
+  name: loop water to the purifier
+  from: [84.0, 20.0, 1.0]
+  to: [72.3, -4.0, 1.0]
+  length: 39.7
+  item: material.structural-steel-a36
+  mass: 1512.0
+  via:
+  - [84.0, -6.0, 1.0]
+  - [72.3, -6.0, 1.0]
+  note: a pair of 193 mm pipes teed off the radiator loop at x 84, south and west along y -6, level into the purifier's flanges on its -y face (x 72 flow, 72.6 return)
 - kind: rail
   name: crane rails
   from: [-60.0, -12.0, 0.0]
@@ -280,9 +296,9 @@ links:
 ground:
 - {what: Block pads, item: material.regolith-sintered, volume: 576.0, note: 0.4 m of sintered regolith with lye-proof bunds, mass: 1440000.0}
 - {what: Rectifier and outside pads, item: material.regolith-sintered, volume: 336.0, mass: 840000.0}
-- {what: Radiator legs' pads, item: material.regolith-sintered, volume: 49.37, mass: 123400.0}
+- {what: Radiator legs' pads, item: material.regolith-sintered, volume: 52.27, mass: 130700.0}
 - {what: Crew post berm, item: material.regolith, volume: 164.6, mass: 246900.0}
-totals: {rate: 0.525, power: 99010000.0, heat: 23820000.0, water: 0.0, mass: 4829000.0, against_module: 'module.hydrogen-plant: one box, 100 MW. This layout: the same rate; 99.0 MW; 23.8 MW to 17 radiator fields at 345 K (3.9 ha); its 4.7 kg/s of water all comes back from the shaft furnace, none evaporated; no hall; the blocks at 10 bar feed the furnace''s loop with no compressor. 2,178 t of plant, 2,650 t of sintered regolith.'}
+totals: {rate: 0.525, power: 99380000.0, heat: 26270000.0, water: 0.0, mass: 4890000.0, against_module: 'module.hydrogen-plant: one box, 100 MW. This layout: the same rate; 99.4 MW; 26.3 MW to 18 radiator fields at 345 K (4.1 ha); its 4.7 kg/s of water all comes back from the shaft furnace, none evaporated; no hall; the blocks at 10 bar feed the furnace''s loop with no compressor. 2,232 t of plant, 2,658 t of sintered regolith.'}
 staff:
 - {profession: profession.chemist, count: 2}
 - {profession: profession.plant-operator, count: 4}
