@@ -9,13 +9,8 @@ built_of:
 - {what: Skid and supports, item: material.structural-steel-a36, mass: 15590.0, note: measured on blender's model v1}
 - {what: Gas and coolant piping, item: material.structural-steel-a36, mass: 7107.0, note: 'the 1 m suction and discharge stubs and the 100 mm, 4 mm cooling pair to the motor''s jacket; measured on model v1, the elbows'' overlap counted twice'}
 needs: {power: 4241000.0, atmosphere: any}
-visual:
-  format: "freefall-model/1"
-  path: "models/recycle-compressor-8bar/v1"
-  manifest_sha256: "f440ad990ad711f11909111071341addefb919872611ad74fcde819e7a5c7aa0"
-  version: 1
-  triangles: 23616
 life: 788940000
+visual: {format: freefall-model/1, path: models/recycle-compressor-8bar/v1, manifest_sha256: f440ad990ad711f11909111071341addefb919872611ad74fcde819e7a5c7aa0, version: 1, triangles: 23616}
 basis:
 - of: [physical, built_of]
   tier: invented

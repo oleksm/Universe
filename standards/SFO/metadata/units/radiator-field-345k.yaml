@@ -14,13 +14,8 @@ built_of:
 holds: 2930.0
 needs: {power: 14070.0, atmosphere: vacuum}
 rejects: {heat: 1472000.0, temperature: 345.0}
-visual:
-  format: "freefall-model/1"
-  path: "models/radiator-field-345k/v1"
-  manifest_sha256: "435128449e1c3eb36ff43efced47744e66a4858dae367b017b837d796dc0f218"
-  version: 1
-  triangles: 30656
 life: 788940000
+visual: {format: freefall-model/1, path: models/radiator-field-345k/v1, manifest_sha256: 435128449e1c3eb36ff43efced47744e66a4858dae367b017b837d796dc0f218, version: 1, triangles: 30656}
 basis:
 - of: [rejects, physical]
   tier: derived
