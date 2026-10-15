@@ -5,7 +5,7 @@ stands_for: module.ore-yard
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 246.3, width: 101.6, height: 20.0, mass: 6168000.0}
+physical: {length: 246.3, width: 101.6, height: 20.0, mass: 6195000.0}
 bays:
 - id: H
   mount: plant-mount.bay-s2
@@ -66,18 +66,19 @@ links:
   note: 100 mm along the south bed's outer edge, the same; neither crosses the rails or the belt
 - kind: road
   name: truck approach
-  from: [-108.0, -49.8113446486123, 0.0]
-  to: [-108.0, -5.0, 0.0]
-  length: 44.81
+  from: [-110.0, -49.8113446486123, 0.0]
+  to: [-110.0, -5.6, 0.0]
+  length: 44.21
   item: good.concrete
-  mass: 225800.0
-  note: '7 m wide, paved 0.3 m: trucks from the port turn and back north onto the hopper''s deck'
+  mass: 222800.0
+  note: '7 m wide, paved 0.3 m: trucks from the port turn and back north onto the hopper''s deck, centred on its mouth (local x -2, between the wheel stops at -4.5 and 0.5); it ends at the pit''s south edge and covers the gap there'
 ground:
 - {what: Rail bed, item: good.concrete, volume: 231.5, note: two strips 1 m wide and 0.8 m deep under the rails, mass: 555600.0}
 - {what: Hopper pit, item: good.concrete, volume: 223.2, note: '6 m deep under the hopper, 13 x 11.2 m inside (the hopper''s feet reach y -5.15 and 5.15), 0.4 m walls, the east wall open 2 x 2 m for the yard belt; the hopper''s deck bridges its top', mass: 535700.0}
+- {what: Pit apron, item: good.concrete, volume: 12.38, note: 'a 0.3 m slab, its top at grade, bridging the 0.5 to 0.6 m between the pit''s walls and the hopper''s 12 x 10 m deck on the west, north and east, reinforcement not checked; the truck approach covers the south', mass: 29710.0}
 - {what: Belt ramp trench, item: good.concrete, volume: 33.23, note: 'the yard belt''s trench from the pit''s east wall up to grade: floor 2.4 m wide, walls about 2.5 m deep on average, 0.3 m', mass: 79750.0}
 - {what: Bed pads, item: good.concrete, volume: 1667.0, note: 'two pads 105 x 40 m, 0.2 m, at y -28 and 28, sloped to drains', mass: 4001000.0}
-totals: {rate: 0.0, power: 1580000.0, heat: 0.0, water: 0.2, mass: 6168000.0, against_module: 'module.ore-yard: one box 200 x 100 x 15 m, holding 150 kt. This layout: two beds 105 m long, 40 m across and 15 m high (iron ore at 2400 kg/m3 lying at 37 degrees) hold the same; 1.58 MW with every drive running, against the module''s 0.5; 996 t of plant, 5,172 t of concrete.'}
+totals: {rate: 0.0, power: 1580000.0, heat: 0.0, water: 0.2, mass: 6195000.0, against_module: 'module.ore-yard: one box 200 x 100 x 15 m, holding 150 kt. This layout: two beds 105 m long, 40 m across and 15 m high (iron ore at 2400 kg/m3 lying at 37 degrees) hold the same; 1.58 MW with every drive running, against the module''s 0.5; 993 t of plant, 5,202 t of concrete.'}
 staff:
 - {profession: profession.docker, count: 3}
 - {profession: profession.clerk, count: 1}

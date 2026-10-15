@@ -2060,13 +2060,14 @@ def ore_yard_air(us, recs):
         link("conveyor", "out belt", (r(-x0 + 20), 0.0, 1.0), (r(-x0 + 80), 0.0, 1.0), A36, 150.0, 100000.0, "a 1 m belt to the pellet plant's ore belt, beyond the layout"),
         link("pipe", "dust sprays, north", (r(x0 - 2), beds_y + base / 2 + 2, 1.0), (r(-x0), beds_y + base / 2 + 2, 1.0), A36, math.pi * 0.1 * 0.004 * RHO["steel"], None, "100 mm along the north bed's outer edge, spraying water to keep the dust down, fed at its west end from the yard's water, beyond the layout"),
         link("pipe", "dust sprays, south", (r(x0 - 2), -(beds_y + base / 2 + 2), 1.0), (r(-x0), -(beds_y + base / 2 + 2), 1.0), A36, math.pi * 0.1 * 0.004 * RHO["steel"], None, "100 mm along the south bed's outer edge, the same; neither crosses the rails or the belt"),
-        link("road", "truck approach", (x_h, -(beds_y + base / 2 + 2), 0.0), (x_h, -5.0, 0.0), CONC, 7.0 * 0.3 * RHO["concrete"], None, "7 m wide, paved 0.3 m: trucks from the port turn and back north onto the hopper's deck"),
+        link("road", "truck approach", (x_h - 2.0, -(beds_y + base / 2 + 2), 0.0), (x_h - 2.0, -5.6, 0.0), CONC, 7.0 * 0.3 * RHO["concrete"], None, "7 m wide, paved 0.3 m: trucks from the port turn and back north onto the hopper's deck, centred on its mouth (local x -2, between the wheel stops at -4.5 and 0.5); it ends at the pit's south edge and covers the gap there"),
     ]
     mobile = [{"unit": "unit.stacker-reclaimer-1500th", "rides": "machine rail", "at": [0.0, 0.0, 0.0]},
               {"unit": "unit.yard-tripper-1500th", "rides": "machine rail", "at": [0.0, 0.0, 0.0]}]
     ground = [
         {"what": "Rail bed", "item": CONC, "volume": r((-x0 + 10 - x_rail) * 2 * 1.0 * 0.8), "note": "two strips 1 m wide and 0.8 m deep under the rails"},
         {"what": "Hopper pit", "item": CONC, "volume": r(13.8 * 12.0 * 0.6 + 2 * (13.8 + 12.0) * 6 * 0.4), "note": "6 m deep under the hopper, 13 x 11.2 m inside (the hopper's feet reach y -5.15 and 5.15), 0.4 m walls, the east wall open 2 x 2 m for the yard belt; the hopper's deck bridges its top"},
+        {"what": "Pit apron", "item": CONC, "volume": r((14.6 * 12.8 - 13.0 * 11.2) * 0.3), "note": "a 0.3 m slab, its top at grade, bridging the 0.5 to 0.6 m between the pit's walls and the hopper's 12 x 10 m deck on the west, north and east, reinforcement not checked; the truck approach covers the south"},
         {"what": "Belt ramp trench", "item": CONC, "volume": r((x_lv - x_h - 7.0) * (2.4 * 0.3 + 2 * 2.5 * 0.3)), "note": "the yard belt's trench from the pit's east wall up to grade: floor 2.4 m wide, walls about 2.5 m deep on average, 0.3 m"},
         {"what": "Bed pads", "item": CONC, "volume": r(2 * bed_L * base * 0.2), "note": f"two pads {bed_L:.0f} x {base:.0f} m, 0.2 m, at y -{beds_y:.0f} and {beds_y:.0f}, sloped to drains"},
     ]
