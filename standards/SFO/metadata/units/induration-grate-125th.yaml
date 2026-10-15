@@ -27,6 +27,12 @@ recipes:
   - {item: element.o, quantity: 0.045}
   rate: 34.7222222222222
   power: 23000000
+visual:
+  format: "freefall-model/1"
+  path: "models/induration-grate-125th/v1"
+  manifest_sha256: "8a9942e4681c54c4b7e52613fcf05a3d09712e4e7bd6eaa15e089f5511dbbe55"
+  version: 1
+  triangles: 40420
 life: 788940000
 basis:
 - of: [recipes]
