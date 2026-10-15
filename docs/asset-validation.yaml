@@ -4990,3 +4990,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.sampling-lab
+    version: 1
+    manifest_sha256: "1c88555d840e1d6a7da6a10f68128d24e713dfb1cd91783ffcac8d02cb487dad"
+    installed: b519a3d1
+    game: "the loader (world::assets) at fso b519a3d1"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/sampling-lab/v1 (189152 bytes, bounds [-3.0, 0.0, -3.145] to [3.0, 3.5, 3.2]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
