@@ -2732,7 +2732,7 @@
 - { record: unit.baghouse-450k, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "71f7f9f26631f8e6" }
 - { record: unit.baghouse-800k, at: "2026-10-14T14:37:56Z", status: draft, summary: "changed", sha: "ab9ba06de66e8e3c" }
 - { record: unit.ball-mill-4m4, at: "2026-10-15T04:43:02Z", status: draft, summary: "changed", sha: "0eb3c49367482949" }
-- { record: unit.balling-disc-7m5, at: "2026-10-15T05:01:50Z", status: draft, summary: "changed: identity, physical, built_of, needs, basis", sha: "214f341974751817" }
+- { record: unit.balling-disc-7m5, at: "2026-10-15T05:03:54Z", status: draft, summary: "changed: identity, built_of", sha: "b6bbb72909c8cd7c" }
 - { record: unit.cooling-tower, at: "2026-10-14T14:37:56Z", status: draft, summary: "changed", sha: "20447996507fd0ba" }
 - { record: unit.cooling-tower-1cell, at: "2026-10-14T19:55:55Z", status: draft, summary: "changed", sha: "b9a2ebb48ebfbe05" }
 - { record: unit.cooling-tower-h2, at: "2026-10-15T04:02:06Z", status: draft, summary: "changed", sha: "811c23f22ab4f331" }
