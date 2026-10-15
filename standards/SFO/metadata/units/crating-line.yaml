@@ -7,6 +7,12 @@ physical: {length: 12.0, width: 4.0, height: 3.0, mass: 12000.0}
 built_of:
 - {what: 'Roller table, scale and nailer', item: material.structural-steel-a36, mass: 12000.0, note: from memory}
 needs: {power: 40000.0}
+visual:
+  format: "freefall-model/1"
+  path: "models/crating-line/v1"
+  manifest_sha256: "b0c099a8ffef5a750dfd2645f8a0955b07dda764468c77bcdd7bb39593349b13"
+  version: 1
+  triangles: 11252
 life: 788940000
 basis:
 - of: [physical, built_of, needs]

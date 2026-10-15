@@ -2739,7 +2739,7 @@
 - { record: unit.cooling-tower-h2, at: "2026-10-15T04:02:06Z", status: draft, summary: "changed", sha: "811c23f22ab4f331" }
 - { record: unit.cooling-tower-pellet, at: "2026-10-15T12:22:41Z", status: draft, summary: "changed", sha: "9d88f0c2b02938e1" }
 - { record: unit.cooling-tower-shaft, at: "2026-10-15T01:24:23Z", status: draft, summary: "first tracked", sha: "de1f2baa4965e350" }
-- { record: unit.crating-line, at: "2026-10-15T17:59:01Z", status: draft, summary: "changed: identity", sha: "8d4e6b24c651f247" }
+- { record: unit.crating-line, at: "2026-10-15T18:07:31Z", status: draft, summary: "changed: visual", sha: "6aa74aa2c8d42366" }
 - { record: unit.crew-post, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "94bf58a6622c650d" }
 - { record: unit.crop-saws, at: "2026-10-15T17:50:07Z", status: draft, summary: "changed: identity", sha: "c714d030771b6b82" }
 - { record: unit.degassing-stand, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "3f2a0b824b4bd169" }
