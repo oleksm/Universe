@@ -263,21 +263,25 @@ def transformer_unit(mva, purpose):
                {"of": ["needs"], "tier": "invented", "review": True, "note": f"Losses {TRANSFORMER_LOSS:.1%} of its rating, carried off by the cooling loop; from memory."}])
 
 
-def baghouse_unit(q_m3h, dims):
-    """A pulse-jet baghouse for q_m3h of fume, in a casing of dims."""
+def baghouse_unit(q_m3h, dims, stack_over=None):
+    """A pulse-jet baghouse for q_m3h of fume, in a casing of dims; with stack_over (m, the tallest building near it), its own
+    stack to good-engineering-practice height, that building's height and half again, so the plume clears its wake."""
     Q = q_m3h / 3600
     cloth = Q * 60 / 1.2
     bags = math.ceil(cloth / (math.pi * 0.15 * 8.0))
     L, W, H = dims
     casing = 2 * (L * W + L * H + W * H) * 0.008 * RHO["steel"]
     fan = Q * 4000 / 0.75
+    stack_h = float(math.ceil(2.5 * stack_over)) if stack_over else None
+    d_st = math.ceil(math.sqrt(4 * Q / 20.0 / math.pi) * 10) / 10
     return dict(
-        name=f"Fume baghouse, {q_m3h:,.0f} m3/h", size_class=2 if max(L, W) <= 12 else 3, fits="bay-s2" if max(L, W) <= 12 else "bay-s3", dims=dims,
-        desc=f"Cleans a furnace's fume before it goes to the air: filter bags in a closed steel casing over hoppers, the dust shaken down and let out through sealed valves; a fan and its stack at one end draw the gas through. The gas comes in at the top of one long side (local 0, -{W / 2:g}, {H - 2:g}).",
+        name=f"Fume baghouse, {q_m3h:,.0f} m3/h", size_class=2 if max(L, W) <= 12 else 3, fits="bay-s2" if max(L, W) <= 12 else "bay-s3", dims=(L, W, stack_h) if stack_h else dims,
+        desc=f"Cleans a furnace's fume before it goes to the air: filter bags in a closed steel casing over hoppers, the dust shaken down and let out through sealed valves; a fan and its stack at one end draw the gas through. The gas comes in at the top of one long side (local 0, -{W / 2:g}, {H - 2:g})." + (f" Its stack, {d_st:g} m across and {stack_h:g} m tall, stands at the fan's end (centre local ({L / 2 - 3:g}, 0)): {stack_over:g} m of building near it and half again, so the plume clears the building's wake; steel, 12 mm at its foot tapering to 8 mm, on its own foundation." if stack_h else ""),
         built_of=[part("Casing and hoppers", A36, casing, f"{L:g} x {W:g} x {H:g} m, 8 mm plate"),
                   part("Structure", A36, casing * 0.5, "half the casing, from memory"),
                   part("Filter bags", "material.ptfe", cloth * 0.5, f"{bags} bags 150 mm across and 8 m long, {cloth:.0f} m2 of PTFE-membrane cloth at 0.5 kg/m2"),
-                  part("Fan and motor", "good.electric-motors", 8000.0 * q_m3h / 400000, "an induced-draught fan, 8 t for 400,000 m3/h, in proportion; from memory")],
+                  part("Fan and motor", "good.electric-motors", 8000.0 * q_m3h / 400000, "an induced-draught fan, 8 t for 400,000 m3/h, in proportion; from memory")]
+                 + ([part("Stack", A36, math.pi * d_st * 0.010 * stack_h * RHO["steel"] * 1.1, f"{d_st:g} m across, {stack_h:g} m, 10 mm on average, a tenth more for its base ring, ladder and platforms; its wind loads not yet checked")] if stack_h else []),
         needs={"power": fan},
         basis=[{"of": ["physical", "built_of", "needs.power"], "tier": "invented", "review": True, "note": f"{q_m3h:,.0f} m3/h, 1.2 m/min through the cloth, the fan at 4 kPa and 75%: from memory. Fan power {fan / 1e3:.0f} kW."}])
 
@@ -1788,7 +1792,7 @@ def pellet_units():
     tp = transformer_unit(P_P / 0.9 / PF * 1.1, "the pellet plant: its torches, mill, fans and drives")
     tp["name"] = tp["name"].replace("Furnace", "Plant")
     out[f"plant-transformer-{P_P / 0.9 / PF * 1.1 / 1e6:.0f}mva"] = tp
-    out["baghouse-450k"] = baghouse_unit(450000, (24.0, 12.0, 14.0))
+    out["baghouse-450k"] = baghouse_unit(450000, (24.0, 12.0, 14.0), stack_over=27.0)
     out["cooling-tower-pellet"] = cooling_unit(out["induration-grate-125th"]["needs"]["heat"] + tp["needs"]["heat"], "the plasma torches' and the plant transformer's")
     return out
 
