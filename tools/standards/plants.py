@@ -1950,12 +1950,12 @@ CUT_RATE = 300e-4 / 60                                 # m2/s a large band saw c
 
 def yard_units():
     out = {}
-    # Measured on blender's candidate v01 (kg); the ballast from the moment about the slewing centre.
-    boom, wheel_end, wheel = 60351.9 - 12450.9, 12450.9, 25166.6     # the boom less what sits at its tip; the tip's axle, bearings and pedestal; the wheel
+    # Measured on blender's candidate v02 (kg); the ballast from the moment about the slewing centre.
+    boom, wheel_end, wheel = 56649.8 - 12450.9, 12450.9, 25166.6     # the boom less what sits at its tip; the tip's axle, bearings and pedestal; the wheel
     drives, belts = 50000.0, 6600.0                                   # drives, belts and machinery house; the boom's belt and drums (from memory)
     ore_on = 1500e3 / 3600 / 4.0 * 29.0                               # kg of ore on the boom's belt stacking, at 4 m/s
     arm_x, cw_x, house_x = 8.0, 14.0, 4.0                            # m behind the centre: the arm's middle, the ballast's, the house's
-    arm = 21983.9                                                     # the counterweight arm to x -16, measured
+    arm = 26655.5                                                     # the counterweight arm to x -16, measured
     pivot, mast_x, mast = 2.5, 3.0, 8127.6 + 977.1 + 4897.6               # the luff pivot and mast forward of the axis, clear of the tripper; the mast measured
     boom_x = (pivot + 31.5) / 2
     moment = (boom + belts + ore_on) * boom_x + (wheel_end + wheel + 8000.0) * 31.5 + mast * mast_x - arm * arm_x - 20000.0 * house_x
@@ -1964,14 +1964,14 @@ def yard_units():
         name="Bucket wheel stacker-reclaimer, 1,500 t an hour", size_class=3, dims=(51.0, 12.0, 20.0),
         desc="Runs on its rail between two stockpile beds: stacking, its boom (29 m from its luff pivot at x 2.5 to the wheel's axle at 31.5, slewing either side) drops ore from the yard belt's tripper onto a bed; reclaiming, the bucket wheel at the boom's end cuts into the pile's face and sends the ore back down the boom onto the yard belt, which then runs the other way. Stacks 1,500 t an hour (a ship's load landed at the port in a day), reclaims 500. Travels along its x on 10 m gauge, its origin on the running plane at the slewing centre. Stacking, its tripper (unit.yard-tripper-1500th, a separate car on the same rails, coupled behind it on -x) drops the ore into a feed hopper over the slewing centre at local (0, 0, 8.5), onto the boom's belt. "
              f"Its counterweight arm reaches back to x -16, its underside 11.8 m up, clear of the tripper's head; the ballast, {ballast / 1000:.0f} t of cast iron blocks centred at x -{cw_x:g}, balances the boom horizontal and stacking about the slewing centre. The boom reaches x 34.75 with the wheel. It slews 95 degrees either way from along +x, enough to reach both beds as it travels, but not further, so its tripper can stand behind it: between z 7 and 11.8, the slewing part keeps within 15 degrees of the boom's line near the axis (out to 3 m) and within 45 degrees beyond, and nothing of it reaches behind; its counterweight arm and supports hang from the mast above z 11.8; the mast's legs stand at x 3 or more, the luff pivot at x 2.5; so at full slew none of it enters the tripper's corridor (y -1.8 to 1.8, x -0.8 and back). The feed hopper is the tripper's, not the machine's, and the boom's tail turns under it at the axis. It runs on four bogies, two to a rail with their centres at x -4.5 and 4.5, each 5.4 m long with four wheels of 1.2 m: sixteen wheels, about 290 kN each at 1 g.",
-        built_of=[part("Portal and slewing base", A36, 63771.1, "the portal's legs and girders, the slewing base's rings and the bogies' rail flanges; measured on model v1"),
-                  part("Wheels, axles and bearings", STEEL, 75954.9, "sixteen running wheels of 1.2 m and their axles and bearings, drawn solid as they are; measured on model v1"),
+        built_of=[part("Portal and slewing base", A36, 69267.1, "the portal's legs and girders, the slewing base's rings, the bogies' ties and rail flanges; measured on model v2"),
+                  part("Wheels, axles and bearings", STEEL, 75954.9, "sixteen running wheels of 1.2 m and their axles and bearings, drawn solid as they are; measured on model v2"),
                   part("Bogie frames", A36, 66068.5 / 3, "four bogies 5.4 m long drawn solid (66.1 t); counted at a third, about how full a fabricated box is (from memory)"),
-                  part("Slewing frame and mast", A36, 49746.7, "the slewing rings, luff tower, mast and its rear stays, the counterweight's supports, the house's seats, the central chute and feed hopper; measured on model v1"),
-                  part("Counterweight arm", A36, arm, "to x -16, its underside 11.8 m up; measured on model v1"),
-                  part("Boom", A36, 60351.9, "chords, diagonals, stays, idlers and the wheel's axle, bearings and pedestal at its tip; measured on model v1"),
-                  part("Bucket wheel", A36, wheel, "rim, spokes and buckets; measured on model v1"),
-                  part("Ballast", CAST_IRON, ballast, f"from the moment about the slewing centre with the boom horizontal and stacking: the boom {boom / 1000:.0f} t and its belts and ore at {boom_x:g} m, the wheel and its tip {(wheel + wheel_end + 8000) / 1000:.0f} t at 31.5, the mast {mast / 1000:.0f} t at {mast_x:g}, less the arm at {arm_x:g} and the house at {house_x:g} behind; at {cw_x:g} m; the model v1's block (149,981 kg) was cast before the pivot and mast moved forward"),
+                  part("Slewing frame and mast", A36, 43012.4, "the slewing rings, luff tower, the mast forward at x 3 with its rear stays, the counterweight's supports from the mast, the house's seats and the central chute; measured on model v2"),
+                  part("Counterweight arm", A36, arm, "to x -16 from the mast, its underside 11.8 m up; measured on model v2"),
+                  part("Boom", A36, 56649.8, "chords, diagonals, stays, idlers and the wheel's axle, bearings and pedestal at its tip; measured on model v2"),
+                  part("Bucket wheel", A36, wheel, "rim, spokes and buckets; measured on model v2"),
+                  part("Ballast", CAST_IRON, ballast, f"from the moment about the slewing centre with the boom horizontal and stacking: the boom {boom / 1000:.0f} t and its belts and ore at {boom_x:g} m, the wheel and its tip {(wheel + wheel_end + 8000) / 1000:.0f} t at 31.5, the mast {mast / 1000:.0f} t at {mast_x:g}, less the arm at {arm_x:g} and the house at {house_x:g} behind; at {cw_x:g} m; model v2's grey iron block is 157,181 kg"),
                   part("Drives, belts and machinery house", "good.electric-motors", drives, "the wheel's 8 t drive, travel, slew and luff drives, the boom's belts and drums and the house's electrics, from memory")],
         needs={"power": 900e3},
         basis=[{"of": ["physical", "built_of"], "tier": "derived", "review": True, "note": "Steel measured on blender's candidate v01 where drawn hollow; the ballast from the balance; drives from memory."},
