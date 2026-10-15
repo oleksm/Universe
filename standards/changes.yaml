@@ -2766,7 +2766,7 @@
 - { record: unit.ladle-crane-150t, at: "2026-10-14T19:55:55Z", status: draft, summary: "changed", sha: "aa767b9adc1f891a" }
 - { record: unit.ladle-furnace-80t, at: "2026-10-14T18:15:58Z", status: draft, summary: "changed", sha: "9cf8dd025ee54189" }
 - { record: unit.ladle-furnace-80t-sealed, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "2b557a04dd7cd03c" }
-- { record: unit.mill-crane-30t, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "40e31c07816559a2" }
+- { record: unit.mill-crane-30t, at: "2026-10-15T11:49:42Z", status: draft, summary: "changed: visual", sha: "b115fa2ab70e0399" }
 - { record: unit.mould-car-12, at: "2026-10-14T20:49:23Z", status: draft, summary: "changed: identity", sha: "30b4c1cb9c96fef7" }
 - { record: unit.offgas-filter-sealed, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "c6b566e979038e64" }
 - { record: unit.plant-transformer-35mva, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "1f1d36f62a5197e3" }
