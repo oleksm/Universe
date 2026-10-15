@@ -1,9 +1,9 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.degassing-stand, name: Degassing stand, description: 'Where the ladle stands on its car in the open vacuum for a quarter hour while argon through its porous plug stirs the melt: the hydrogen and nitrogen leave of themselves, as they do in a degasser''s tank on a world with air, and the carbon and oxygen meet as CO. A refractory heat shield on a swing arm hangs 1 m over the ladle''s open top, with gaps for the gas, so the melt loses less heat by radiation (about 4 MW open, 4 degrees a minute); the argon and a sampling lance come from the stand. Before the alloys, which the sealed ladle furnace adds. The car stops at local (0, 0).'}
+identity: {key: unit.degassing-stand, name: Degassing stand, description: 'Where the ladle stands on its car in the open vacuum for a quarter hour while argon through its porous plug stirs the melt: the hydrogen and nitrogen leave of themselves, as they do in a degasser''s tank on a world with air, and the carbon and oxygen meet as CO. A refractory heat shield on a swing arm hangs 1 m over the ladle''s open top, with gaps for the gas, so the melt loses less heat by radiation (about 4 MW open, 4 degrees a minute); the argon and a sampling lance come from the stand. Before the alloys, which the sealed ladle furnace adds. The car stops at local (0, 0), travelling along x; the stand''s one swing post at (0, -3.5), the shield 3.6 m across with its underside 5.4 m up (1 m over the ladle''s rim) on an arm at 6.2 m, the sampling lance parked beside the rim up to 8 m, the argon cabinet at (-2.6, -3.5). Its box is the stand as built, not the bay; drawn with the shield over the ladle.'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 10.0, width: 8.0, height: 8.0, mass: 18580.0}
+physical: {length: 5.2, width: 6.0, height: 8.0, mass: 18580.0}
 built_of:
 - {what: Swing arm and post, item: material.structural-steel-a36, mass: 12000.0, note: from memory}
 - {what: Heat shield, item: good.refractory-brick, mass: 4580.0, note: '3.6 m across, 150 mm'}

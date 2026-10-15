@@ -2463,9 +2463,9 @@ def airless_ladle_units(us):
     lf["basis"] = us["ladle-furnace-80t"]["basis"] + [{"of": ["identity.description"], "tier": "invented", "review": True, "note": "Manganese's loss: its vapour pressure over a 1% melt (about 40 Pa at 1,873 K, from memory) through Hertz-Knudsen over the ladle's 7 m2. Sealed roofs as on closed furnaces; not built for vacuum."}]
     out["ladle-furnace-80t-sealed"] = lf
     out["degassing-stand"] = dict(
-        name="Degassing stand", size_class=2, fits="bay-s2", dims=(10.0, 8.0, 8.0),
+        name="Degassing stand", size_class=2, fits="bay-s2", dims=(5.2, 6.0, 8.0),
         desc=("Where the ladle stands on its car in the open vacuum for a quarter hour while argon through its porous plug stirs the melt: the hydrogen and nitrogen leave of themselves, as they do in a degasser's tank on a world with air, and the carbon and oxygen meet as CO. "
-              "A refractory heat shield on a swing arm hangs 1 m over the ladle's open top, with gaps for the gas, so the melt loses less heat by radiation (about 4 MW open, 4 degrees a minute); the argon and a sampling lance come from the stand. Before the alloys, which the sealed ladle furnace adds. The car stops at local (0, 0)."),
+              "A refractory heat shield on a swing arm hangs 1 m over the ladle's open top, with gaps for the gas, so the melt loses less heat by radiation (about 4 MW open, 4 degrees a minute); the argon and a sampling lance come from the stand. Before the alloys, which the sealed ladle furnace adds. The car stops at local (0, 0), travelling along x; the stand's one swing post at (0, -3.5), the shield 3.6 m across with its underside 5.4 m up (1 m over the ladle's rim) on an arm at 6.2 m, the sampling lance parked beside the rim up to 8 m, the argon cabinet at (-2.6, -3.5). Its box is the stand as built, not the bay; drawn with the shield over the ladle."),
         built_of=[part("Swing arm and post", A36, 12000.0, "from memory"),
                   part("Heat shield", REF, math.pi * 1.8 ** 2 * 0.15 * RHO["refractory"], "3.6 m across, 150 mm"),
                   part("Argon valve stand and lance", A36, 2000.0, "from memory")],
