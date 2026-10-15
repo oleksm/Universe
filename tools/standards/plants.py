@@ -1744,12 +1744,13 @@ def pellet_units():
               f"about {net:.0f} t an hour; they spill over its rim onto a roller screen that sends the small ones back. The pan's centre at local (0, 0, 3.5), its face looking up and toward -y (normal (0, -0.707, 0.707)), its rim 0.5 m deep; "
               f"behind it (+y) a slewing bearing and hub on a braced frame that sets its tilt, a girth drive at its back with a reducer and motor (90 kW, {torque / 1e3:.0f} kN m at the pan); fixed scrapers keep its face clear. "
               f"Cake in from above by a chute (local 0, 2, 7); the balls fall from its low rim (y -3.0, 1.2 m up) onto the roller screen: 12 rolls 100 mm across and 4 m long along x at 110 mm pitch (10 mm gaps), from y -3.15 to -4.45, their tops falling from 1.1 to 1.0 m, on rails and a drive from y -2.5 to -4.5; the fines drop through into a tray and out at (0, -3.5, 0.65) to the layout's return belt, the balls roll off the screen's end at (0, -4.5, 1)."),
-        built_of=[part("Pan, rim and ribs", A36, pan + rim + ribs, f"the pan's floor in 20 mm plate, its rim 0.5 m deep in 12 mm, twelve radial ribs 0.4 m deep in 20 mm under it"),
+        built_of=[part("Pan, rim and ribs", A36, 10374.5, "the pan's floor in 20 mm plate, its rim 0.5 m deep in 12 mm, twelve radial ribs 0.4 m deep in 20 mm under it; measured on model v1"),
                   part("Hub, bearing and girth gear", "material.high-strength-steel-4340", 5000.0, "from memory"),
                   part("Reducer and motor", "good.electric-motors", 5000.0, f"a 90 kW motor and a reducer for {torque / 1e3:.0f} kN m, from memory"),
-                  part("Frame and tilt gear", A36, 10000.0, "from memory"),
-                  part("Roller screen", A36, 4000.0, "12 rolls of 100 mm tube, 4 m long, their rails, drive and fines tray, from memory"),
-                  part("Scrapers and chutes", A36, 1200.0, "from memory")],
+                  part("Frame and tilt gear", A36, 14680.8, "the braced hollow-section frame and its tilt mounts; measured on model v1"),
+                  part("Roller screen", A36, 1715.8 + 562.3, "its rails, frame and fines tray (1,715.8 kg) and 12 rolls of 100 x 5 mm tube, 4 m long (562.3); measured on model v1"),
+                  part("Screen drive", "good.electric-motors", 400.0, "from memory"),
+                  part("Scrapers and chutes", A36, 1347.9, "measured on model v1")],
         needs={"power": 90e3 + 15e3},
         basis=[{"of": ["physical", "built_of", "needs"], "tier": "derived", "review": True,
                 "note": f"The pan's plate from its size; its speed from the critical speed 42.3 sqrt(sin a / D); a quarter of the plant's {P_ORE + P_WATER:.1f} kg/s of moist ore each; the drive 90 kW and the screen 15 kW, the frame, gear and screen's weights from memory."}])
