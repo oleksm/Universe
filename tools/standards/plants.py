@@ -2599,10 +2599,16 @@ def casting_bay_airless(us, recs):
                {"unit": "unit.stripper-gantry-20t-moon", "rides": "stripper gantry rails", "at": [15.0, 0.0, 0.0]}]
     bays = [{"id": "P", "mount": "plant-mount.bay-s1", "unit": "unit.crew-post", "at": [0.0, -24.0, 0.0], "note": "south, under its berm, which stays clear of the gantries' south rails at y -12"}]
     ground = [
-        {"what": "Casting floor", "item": SINTER, "volume": r(72 * 20 * 0.4), "note": "72 x 20 m, 0.4 m of sintered regolith at grade under the three rails (x -36 to 36, y -10 to 10), so spilt steel meets stone; its rails set in 0.4 m channels that take the cars' treads and flanges"},
-        {"what": "Gantry rail sleepers", "item": SINTER, "volume": r(4 * 33 * 1.0)},
-        {"what": "Crew post berm", "item": "material.regolith", "volume": BERM, "note": "loose regolith at least 1 m over the post everywhere (its top 4 x 2 m, 5.3 m up), lying at 35 degrees, its foot about 19 x 17 m, a cavity for the post; measured on blender's arc furnace shop; with openings for its windows (light wells on the north) and its airlock (a ramp cut on the west); with openings for its windows and airlock; at the airlock's door a landing of packed regolith 2 x 2 m, its top at the threshold (1.35 m up), and a ramp down to the ground at about 1 in 3"},
+        {"what": "Casting floor", "item": SINTER, "volume": 560.09, "note": "72 x 20 m, 0.4 m of sintered regolith at grade under the three rails (x -36 to 36, y -10 to 10), so spilt steel meets stone; its rails set in 0.4 m channels that take the cars' treads and flanges; measured on blender's layout (candidate v01)"},
+        {"what": "Gantry rail sleepers", "item": SINTER, "volume": 132.0, "note": "88 bearing blocks under the gantries' rails; measured on blender's layout (candidate v01)"},
+        {"what": "Crew post berm", "item": "material.regolith", "volume": 584.56, "note": "loose regolith at least 1 m over the post everywhere, lying at 35 degrees, a cavity for the post, the ramp cut and the light wells; measured on blender's layout (candidate v01)"},
+        {"what": "Crew post entry and light wells", "item": SINTER, "volume": 14.0, "note": "the landing, the ramp, the cut's retaining sides and the light wells' retainers, provisional; measured on blender's layout (candidate v01)"},
     ]
+    measured = {"ladle rail": 2879.0, "teeming rail": 7197.0, "ingot rail": 3958.0, "ladle gantry rails": 4539.0, "stripper gantry rails": 4539.0}
+    for l in links:
+        if l["name"] in measured:
+            l["mass"] = r(measured[l["name"]])
+            l["note"] = l["note"] + "; its mass measured on blender's layout (candidate v01): " + ("68.8 kg/m gantry rail" if "gantry" in l["name"] else "60 kg/m rail")
     for g in ground:
         g["mass"] = r(g["volume"] * (RHO_SINTER if g["item"] == SINTER else 1500.0))
     used = [recs[m_["unit"].split(".", 1)[1]] for m_ in mobile] + [recs[b["unit"].split(".", 1)[1]] for b in bays]
