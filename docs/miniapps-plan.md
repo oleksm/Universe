@@ -148,6 +148,7 @@ internals, it only stops hosting the other apps.
 | 6b Shipyard as an app | done: `ShipyardApp` over the game; `Cover::Covers` and `Context::covered` (the game runs on under it, undrawn) | ce8229ed |
 | 8a Scenes | done: `freefall --app scene <file>`; a lab copy of the home system, crafts on orbits, only the file's clocks (Realtime, Celestial, Planetary); `content/scenes/two-orbits.scene.yaml` | f2d3af8b |
 | 8b Factory layout | done: `freefall --app factory [facility]`; a works' modules as boxes at their records' sizes on its parcel; move, turn, save; out of place counted; no clocks | 37134eb8 |
+| 8c Planet LOD | done: `freefall --app planetlod [view]`; the planet-trees pattern's levels of detail, per-vertex or cluster DAG on the mesh pool; Yosemite (USGS) at 120 fps | engine-claude-planetlod |
 
 Deviations from the plan above: apps are modules in the `game` crate, not crates of their own
 (§5's second question, left open); DRIVE and WALK subscribe to Realtime only (Machinery has no work
