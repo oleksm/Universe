@@ -961,7 +961,6 @@ impl Interior {
         self.redo.clear();
         self.saved = Some(self.plan.clone());
         self.saved_decks = Some(self.decks_now.clone());
-        self.saved_view = Some(self.view_state());
         self.note("SHIP CODE OPENED");
         Ok(())
     }
@@ -1043,7 +1042,6 @@ impl Interior {
         self.source_path = Some(path.clone());
         self.saved = Some(self.plan.clone());
         self.saved_decks = Some(self.decks_now.clone());
-        self.saved_view = Some(self.view_state());
         Ok(path)
     }
     pub(crate) fn open_code(&mut self) {
@@ -1365,7 +1363,10 @@ mod tests {
         let mut i = Interior::prepared(&source()).unwrap();
         i.saved = Some(i.plan.clone());
         i.saved_decks = Some(i.decks_now.clone());
-        i.saved_view = Some(i.view_state());
+        assert!(!i.unsaved());
+        // Looking round is no change.
+        i.yaw += 1.;
+        i.hidden[0] = !i.hidden[0];
         assert!(!i.unsaved());
         i.code_draft = Some("invalid draft".into());
         assert!(i.unsaved());
