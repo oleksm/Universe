@@ -1898,7 +1898,7 @@ def pellet_plant_air(us, recs):
                      "description": "Fine ore made into fired pellets for the shaft furnace: a ball mill grinds it wet, disc filters dry it, four balling discs roll it into green balls, and a straight induration grate dries, fires and cools them, its heat from electric plasma torches; a baghouse cleans the waste gas. One crane hall. For a world with air at about 1 g."},
         "stands_for": "module.pellet-plant",
         "site": {"atmosphere": "air", "gravity": [8.0, 11.0]},
-        "physical": {"length": r(max(xs) - min(xs)), "width": r(max(ys) - min(ys)), "height": z1, "mass": r(total)},
+        "physical": {"length": r(max(xs) - min(xs)), "width": r(max(ys) - min(ys)), "height": max(z1, max(b["at"][2] + recs[b["unit"].split(".", 1)[1]]["physical"]["height"] for b in bays)), "mass": r(total)},
         "bays": bays, "links": links,
         "frame": {"box": list(box), "cell": cell, "shape": f"Walls one cell thick, 24 m tall; a roof one cell deep over a {x_in:.0f} x {span_in:.0f} m floor; framed openings for the ore belt (west), the pellet belt (east), the waste gas duct (north) and a door (south).",
                   "openings": [list(o) for o in openings], "members": members,
