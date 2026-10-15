@@ -23,6 +23,12 @@ recipes:
   - {item: element.o, quantity: 8}
   rate: 0.10500000000000001
   power: 19095989.583333332
+visual:
+  format: "freefall-model/1"
+  path: "models/electrolyser-block-20mw/v1"
+  manifest_sha256: "fba10ad99a8a16473ebfed89037ca61fd21ff6033b5db52156961ea5e7e6e770"
+  version: 1
+  triangles: 32312
 life: 788940000
 basis:
 - of: [recipes]
