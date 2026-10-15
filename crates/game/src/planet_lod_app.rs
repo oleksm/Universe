@@ -1489,6 +1489,7 @@ impl App for PlanetLodApp {
             sent += g.tris.len();
             drawn.push((mesh, g.origin));
         }
+        let mut drawn_cl: Vec<(Mesh, DVec3)> = vec![];
         if let Some(cl) = &self.clusters {
             let mut cl = cl.lock().unwrap();
             // (Asked again every frame until on the GPU: a frame the render thread skips loses its requests, and
@@ -1513,9 +1514,13 @@ impl App for PlanetLodApp {
                 draw(frame, mesh, &t, pat_line, fill_of(land));
                 chunks_drawn += 1;
                 tris_shown += cl.ptr[i][1] as usize;
+                drawn_cl.push((mesh.clone(), o));
             }
             sent += tris_shown;
             pattern_tris += tris_shown;
+        }
+        for (m, o) in &drawn_cl {
+            drawn.push((m, *o));
         }
         let max_draw = if self.clusters.is_some() { 0 } else { self.max_draw };
         for ch in &self.chunks {
@@ -1674,7 +1679,7 @@ impl PlanetLodApp {
         let dist = if d_reg >= 1000.0 { format!("{:.1} km", d_reg / 1000.0) } else { format!("{d_reg:.0} m") };
         p.row("distance to the pattern", &dist, "");
         match cl_stats {
-            Some((st, total, _)) => p.row("clusters chosen", &thousands(st[0] as f64), &format!("of {} · {} resident · {} a second ahead", thousands(total as f64), thousands(st[3] as f64), thousands(st[2] as f64))),
+            Some((st, total, _)) => p.row("clusters chosen", &thousands(st[0] as f64), &format!("of {} · {} kept", kilo(total), kilo(st[3]))),
             None => p.row("pattern vertices drawn", &thousands(self.stats.drawn as f64), &format!("of {} · {:.1}%", thousands(n as f64), 100.0 * self.stats.drawn as f64 / n as f64)),
         }
         p.bar(self.stats.drawn as f32 / n as f32, full as f32 / n as f32);
