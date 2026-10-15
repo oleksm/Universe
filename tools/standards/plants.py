@@ -1081,13 +1081,19 @@ def shaft_units():
     # Recycle compressor: hydrogen is light, so each stage adds little pressure.
     head = CP_H2 * (T_COLD + 273.15) * ((P_SHAFT / P_SUCTION) ** ((GAMMA - 1) / GAMMA) - 1)
     stages = math.ceil(head / 80e3)
+    kr = (P_SHAFT / P_SUCTION) ** (1 / 3)            # pressure ratio a casing
     out["recycle-compressor"] = dict(
         name=f"Recycle compressor, {W_COMP / 1e6:.0f} MW", size_class=3, fits="bay-s3", dims=(22.0, 8.0, 7.0),
         desc=(f"Raises {GAS:.1f} kg/s of hydrogen (the recycle with the hydrogen plant's make-up) from {P_SUCTION / 1e5:.1f} to {P_SHAFT / 1e5:.1f} bar: {stages} centrifugal stages, about 80 kJ/kg each at the impellers' tip speed limit, "
-              "in three casings on one line along x with intercoolers, driven by an electric motor at the -x end. Suction on +y at the +x end, discharge on -y at the -x end, both 1.5 m up."),
+              f"in three casings on one line along x (centres x -4.5, 0, 4.5, shaft at z 2.3, 3.3 m across), driven by an electric motor at the -x end (x -11 to -6.5). The gas runs from +x to -x: "
+              f"suction by a {main_dia(mol_flow(GAS), T_COLD, P_SUCTION):.2f} m flange on the +y face at (8, 4, 1.5), the recycle with the make-up (the make-up tees into the suction duct before it); "
+              f"each casing's outlet up to a cooler overhead (three shell-and-tube coolers along x at z 5.4, 2.6 m across and 3.6 m long: two intercoolers, between casings at {P_SUCTION * kr / 1e5:.2f} and {P_SUCTION * kr ** 2 / 1e5:.2f} bar by {main_dia(mol_flow(GAS), T_COLD, P_SUCTION * kr):.2f} and {main_dia(mol_flow(GAS), T_COLD, P_SUCTION * kr ** 2):.2f} m pipes, and an aftercooler), "
+              f"discharge from the aftercooler by a {main_dia(mol_flow(GAS), T_COLD, P_SHAFT):.2f} m flange on the -y face at (-10, -4, 1.5). "
+              f"The coolers' water, {W_COMP / (4186 * 10):,.0f} kg/s at a 10 K rise, by a pair of {math.sqrt(4 * W_COMP / (4186 * 10) / 1000 / 2.5 / math.pi):.1f} m flanges on the -y face at z 1 (flow x 5.5, return x 7). "
+              "The motor's 11 kV supply into its terminal box on the +y face, cable entry at (-8.75, 4, 1). The coolers' frame is the unit's own."),
         built_of=[part("Casings and rotors", "material.high-strength-steel-4340", 8000.0 * W_COMP / 1e6 * 0.6, "from memory: 8 t a MW of drive, three fifths of it the machines"),
                   part("Motor", "good.electric-motors", 8000.0 * W_COMP / 1e6 * 0.4, "from memory"),
-                  part("Intercoolers", "material.stainless-steel-304", 15000.0, "from memory")],
+                  part("Intercoolers and aftercooler", "material.stainless-steel-304", 15000.0, "from memory")],
         needs={"power": W_COMP / 0.96, "heat": W_COMP},
         basis=[{"of": ["physical", "built_of"], "tier": "invented", "review": True, "note": "8 t a MW of drive and the layout from memory."},
                {"of": ["needs"], "tier": "derived", "note": f"Isentropic head {head / 1e3:.0f} kJ/kg at {ETA_K:.0%}, a motor at 96%; all the work leaves by the intercoolers and aftercooler to the tower."}])
@@ -1184,6 +1190,7 @@ def shaft_furnace_air(us, recs):
     flow = loop_heat / (4186 * 10)
     d_cw = math.sqrt(4 * flow / 1000 / 2.5 / math.pi)
     d_scr = math.sqrt(4 * Q_SCRUB / (4186 * 10) / 1000 / 2.5 / math.pi)
+    d_kc = math.sqrt(4 * W_COMP / (4186 * 10) / 1000 / 2.5 / math.pi)
     links = [
         link("conveyor", "pellet belt", (round(belt_x, 1), 0.0, 2.0), (0.0, 0.0, round(H + 2.0, 1)), A36, 180.0, 300000.0, f"a 1.2 m belt in a covered gallery on trestles every 18 m, 180 kg/m with the gallery (from memory), rising at {rise:g} degrees from the pellet plant's transfer house to a head house on the tower's roof over the charge hopper; {PELLETS:.0f} kg/s of pellets"),
         link("conveyor", "product belt", (0.0, 0.0, 5.0), (-60.0, 0.0, 5.0), A36, 150.0, 150000.0, "a 1 m belt in a gallery 5 m up, from under the discharge lock west to the arc furnace shop's sponge iron bin, beyond the layout"),
@@ -1196,6 +1203,7 @@ def shaft_furnace_air(us, recs):
         link("pipe", "hydrogen make-up", (100.0, 4.0, 1.5), (68.0, 4.0, 1.5), A36, pm(d_mk, 0.008), None, f"{d_mk:.1f} m across, 8 mm wall: {H2_USED:.2f} kg/s from the hydrogen plant, beyond the layout"),
         link("pipe", "condensate to the hydrogen plant", (54.0, 29.3, 0.5), (100.0, 29.3, 0.5), A36, math.pi * 0.2 * 0.006 * RHO["steel"], None, f"200 mm, 6 mm wall: the {STEAM:.1f} kg/s of water the reduction made, back to the electrolysers, beyond the layout"),
         link("pipe", "tower loop to the scrubber", (84.0, 31.5, 0.75), (51.5, 30.0, 1.0), A36, 2 * pm(d_scr, 0.012), None, f"a pair of {d_scr:.1f} m pipes, 12 mm wall, flow and return, off the mains on the plant's east side, west along y 31.5 and up to the scrubber's flanges on its +y face", via=[(51.5, 31.5, 0.75)]),
+        link("pipe", "cooler water to the compressor", (66.25, -12.0, 0.75), (66.25, -4.0, 1.0), A36, 2 * pm(d_kc, 0.010), None, f"a pair of {d_kc:.1f} m pipes, 10 mm wall, off the mains' end, north to the compressor's flanges on its -y face"),
         link("pipe", "cooling water mains", (-72.0, 42.0, 0.75), (60.0, -12.0, 0.75), A36, 2 * pm(d_cw, 0.012), None, f"a pair of {d_cw:.1f} m pipes, 12 mm wall, flow and return: {flow:,.0f} kg/s at a 10 K rise, along the towers' row and down the plant to the scrubber, compressor, cooling loop and transformer", via=[(84.0, 42.0, 0.75), (84.0, -12.0, 0.75)]),
         link("pipe", "cold gas to the cooling zone", (-26.0, -20.0, 2.0), (-(side / 2 - 0.5), 0.0, z_ring - 8.0), A36, pm(d_cg, 0.008), None, f"{d_cg:.1f} m, 8 mm wall: {COOL_GAS:.1f} kg/s of hydrogen at {T_COLD:.0f} deg C, through the tower's west wall", via=[(-26.0, -20.0, z_ring - 8.0), (-26.0, 0.0, z_ring - 8.0)]),
         link("pipe", "hot gas from the cooling zone", (-(side / 2 - 0.5), 0.0, z_ring - 3.0), (-22.0, -20.0, 2.0), A36, pm(d_cg_hot, 0.010) * 1.5, None, f"{d_cg_hot:.1f} m, 10 mm wall, insulated (half as much again): about 600 deg C, back to the loop's cooler", via=[(-22.0, 0.0, z_ring - 3.0), (-22.0, -20.0, z_ring - 3.0)]),
