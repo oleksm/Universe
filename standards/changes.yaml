@@ -832,7 +832,7 @@
 - { record: layout.ladle-station-airless, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "47acf5ee6202ed61" }
 - { record: layout.ore-yard-air, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "80cee716ce980cb3" }
 - { record: layout.pellet-plant-air, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "17d04bf873e1439b" }
-- { record: layout.shaft-furnace-air, at: "2026-10-15T00:44:40Z", status: draft, summary: "changed: physical, links, totals", sha: "873f9dc2f410cbec" }
+- { record: layout.shaft-furnace-air, at: "2026-10-15T01:10:30Z", status: draft, summary: "changed: physical, totals", sha: "870cc3fb22b28915" }
 - { record: layout.shaft-furnace-airless, at: "2026-10-14T23:42:05Z", status: draft, summary: "changed: totals", sha: "4bf9d1063418ef56" }
 - { record: market.art, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "517671b6a46daee3" }
 - { record: market.artifacts, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "6b51c19897f56c1a" }
@@ -2777,7 +2777,7 @@
 - { record: unit.radiator-field-485k, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "3792fab468aa81d4" }
 - { record: unit.rectifier-transformer-21mva, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "e88f00a03453c505" }
 - { record: unit.recuperator, at: "2026-10-14T23:45:38Z", status: draft, summary: "changed", sha: "ebc37258521d7133" }
-- { record: unit.recycle-compressor, at: "2026-10-15T01:08:53Z", status: draft, summary: "changed: visual", sha: "768fc60c3c60b7d9" }
+- { record: unit.recycle-compressor, at: "2026-10-15T01:10:30Z", status: draft, summary: "changed: physical, built_of", sha: "944821761b1a4077" }
 - { record: unit.recycle-compressor-8bar, at: "2026-10-14T19:26:44Z", status: draft, summary: "first tracked", sha: "f34cdf84380aedc8" }
 - { record: unit.sampling-lab, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "fe76c914c3297692" }
 - { record: unit.shaft-furnace-200th, at: "2026-10-14T23:03:43Z", status: draft, summary: "changed", sha: "475472e5d8cc7cc6" }

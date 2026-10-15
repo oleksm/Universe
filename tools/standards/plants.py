@@ -1093,7 +1093,8 @@ def shaft_units():
               "The motor's 11 kV supply into its terminal box on the +y face, cable entry at (-8.75, 4, 1). The coolers' frame is the unit's own."),
         built_of=[part("Casings and rotors", "material.high-strength-steel-4340", 8000.0 * W_COMP / 1e6 * 0.6, "from memory: 8 t a MW of drive, three fifths of it the machines"),
                   part("Motor", "good.electric-motors", 8000.0 * W_COMP / 1e6 * 0.4, "from memory"),
-                  part("Intercoolers and aftercooler", "material.stainless-steel-304", 15000.0, "from memory")],
+                  part("Intercoolers and aftercooler", "material.stainless-steel-304", 15000.0, "from memory"),
+                  part("Skid, feet and cooler frame", A36, 48466.1, "measured on model v1 (fabricated square tubes and feet, sized provisionally)")],
         needs={"power": W_COMP / 0.96, "heat": W_COMP},
         basis=[{"of": ["physical", "built_of"], "tier": "invented", "review": True, "note": "8 t a MW of drive and the layout from memory."},
                {"of": ["needs"], "tier": "derived", "note": f"Isentropic head {head / 1e3:.0f} kJ/kg at {ETA_K:.0%}, a motor at 96%; all the work leaves by the intercoolers and aftercooler to the tower."}])
