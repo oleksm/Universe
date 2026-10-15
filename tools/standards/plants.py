@@ -2171,14 +2171,14 @@ def ingot_yard_air(us, recs):
         ends = (yx0, yx0 + yard_L) if i % 2 == 0 else (yx0 + yard_L, yx0)
         aisle_path += [(r(ends[0]), y, 0.0), (r(ends[1]), y, 0.0)]
     bays = [
-        {"id": "S", "mount": "plant-mount.bay-s1", "unit": "unit.sampling-lab", "at": [-21.0, -9.0, 0.0], "note": "in the hall, by the ingot rail"},
+        {"id": "S", "mount": "plant-mount.bay-s1", "unit": "unit.sampling-lab", "at": [-21.0, -7.5, 0.0], "note": "in the hall, by the ingot rail, its door and hatch facing south onto a 1.2 m walkway inside the wall"},
         {"id": "K", "mount": "plant-mount.bay-s2", "unit": "unit.crating-line", "at": [18.0, -3.0, 0.0], "note": "in the hall, running out of its east door"},
         {"id": "C", "mount": "plant-mount.bay-s2", "unit": "unit.crop-saws", "at": [3.0, -6.0, 0.0], "note": "in the hall, west of the crating line, under the crane"},
         {"id": "T", "mount": "plant-mount.bay-s1", "unit": "unit.ingot-tipper", "at": [-6.0, -6.0, 0.0], "note": "west of the saws: a cooled ingot, standing, is laid down here before the saws"},
     ]
     # The cooling beds: the ingots stand big end up as they left their moulds, in rows across y at 1.0 m (room for the tongs' jaws) and 0.7 m along x.
     pitch_x, pitch_y = 0.7, 1.0
-    beds = [("north", -5.0, 23.0, 0.5, 9.5), ("west", -23.0, -9.5, -5.5, 3.5), ("south-east", 12.0, 23.0, -9.0, -5.5)]
+    beds = [("north", -5.0, 23.0, 0.5, 9.5), ("west", -23.0, -17.5, -4.0, 3.5), ("west centre", -17.5, -9.5, -5.5, 3.5), ("south-east", 12.0, 23.0, -9.0, -5.5)]
     places = sum(int((xb - xa) / pitch_x) * int((yb - ya) / pitch_y) for _, xa, xb, ya, yb in beds)
     assert places >= on_racks, (places, on_racks)
     links = [
