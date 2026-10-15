@@ -281,6 +281,101 @@ impl Decider {
     }
 }
 
+/// The cluster DAG (planet-trees-pgs2 docs/cluster-dag.md, the owner's step 4): fixed clusters of about 128
+/// triangles, chosen each frame by their error on screen (own error under a pixel at its bounds, its parent's not:
+/// a group switches whole, watertight), each built and uploaded once and kept. Read from `<view>-clusters` beside
+/// the view folder; in place of the per-vertex decisions and the chunks.
+struct Clusters {
+    /// err, cx, cy, cz, r, perr, pcx, pcy, pcz, pr (planet metres; perr < 0: nothing above).
+    row: Vec<[f32; 10]>,
+    ptr: Vec<[u32; 2]>,
+    tris: Vec<[u32; 3]>,
+    level: Vec<u8>,
+    meshes: Vec<Option<(View, Mesh, bool)>>,
+    shown: Vec<u32>,
+    /// metres of error a pixel covers per metre away (1080 lines, 50 degrees)
+    px: f64,
+    stats: [usize; 5],
+}
+
+impl Clusters {
+    fn open(dir: &Path) -> Result<Self, String> {
+        let f: Vec<f32> = read(dir, "cluster.f32")?;
+        let pt: Vec<u32> = read(dir, "cluster_tri.u32")?;
+        let t: Vec<u32> = read(dir, "clusters.u32")?;
+        let level: Vec<u8> = read(dir, "cluster_level.u8")?;
+        let n = level.len();
+        Ok(Clusters {
+            row: f.chunks_exact(10).map(|c| std::array::from_fn(|i| c[i])).collect(),
+            ptr: pt.chunks_exact(2).map(|c| [c[0], c[1]]).collect(),
+            tris: t.chunks_exact(3).map(|c| [c[0], c[1], c[2]]).collect(),
+            level,
+            meshes: (0..n).map(|_| None).collect(),
+            shown: vec![],
+            px: 2.0 * 25f64.to_radians().tan() / 1080.0,
+            stats: [0; 5],
+        })
+    }
+
+    /// The clusters chosen for an eye at `eye`.
+    fn select(&self, eye: DVec3) -> Vec<u32> {
+        let mut out = Vec::new();
+        for (i, r) in self.row.iter().enumerate() {
+            let dist = |c: [f32; 3], rad: f32| (DVec3::new(c[0] as f64, c[1] as f64, c[2] as f64).distance(eye) - rad as f64).max(1e-3);
+            let own = r[0] as f64 <= self.px * dist([r[1], r[2], r[3]], r[4]);
+            let parent_coarse_enough = r[5] >= 0.0 && r[5] as f64 <= self.px * dist([r[6], r[7], r[8]], r[9]);
+            if own && !parent_coarse_enough {
+                out.push(i as u32);
+            }
+        }
+        out
+    }
+
+    fn origin(&self, i: usize) -> DVec3 {
+        let r = &self.row[i];
+        DVec3::new(r[1] as f64, r[2] as f64, r[3] as f64)
+    }
+}
+
+/// A cluster's mesh (as a chunk's: Mesh view corners shared and every edge once, Real view flat faces).
+fn cluster_mesh(cl: &Clusters, i: usize, pos: &[DVec3], col: &[[u8; 3]], view: View) -> Mesh {
+    let [a, n] = cl.ptr[i];
+    let tris = &cl.tris[a as usize..(a + n) as usize];
+    let origin = cl.origin(i);
+    let mut m = WireModel::default();
+    if view == View::Real {
+        for t in tris {
+            let k = m.positions.len() as u32;
+            for &v in t {
+                m.positions.push((pos[v as usize] - origin).as_vec3());
+            }
+            m.faces.push([k, k + 1, k + 2]);
+            let rgb = col[t[2] as usize].map(srgb_to_linear);
+            m.colors.extend([[rgb[0], rgb[1], rgb[2], 1.0]; 3]);
+        }
+        return Mesh::new(m);
+    }
+    let mut local: std::collections::HashMap<u32, u32> = std::collections::HashMap::with_capacity(tris.len() * 2);
+    let mut at = |v: u32, m: &mut WireModel| -> u32 {
+        *local.entry(v).or_insert_with(|| {
+            m.positions.push((pos[v as usize] - origin).as_vec3());
+            m.positions.len() as u32 - 1
+        })
+    };
+    let mut seen = std::collections::HashSet::with_capacity(tris.len() * 3);
+    for t in tris {
+        let f = [at(t[0], &mut m), at(t[1], &mut m), at(t[2], &mut m)];
+        m.faces.push(f);
+        for (x, y) in [(t[0], t[1]), (t[1], t[2]), (t[2], t[0])] {
+            if seen.insert((x.min(y), x.max(y))) {
+                let e = [at(x, &mut m), at(y, &mut m)];
+                m.edges.push(e);
+            }
+        }
+    }
+    Mesh::new(m)
+}
+
 /// What a chunk mesh is built from, shared with the build worker (made again when the height x changes).
 struct BuildData {
     pos: Vec<DVec3>,
@@ -377,6 +472,11 @@ pub struct PlanetLodApp {
     alt: f64,
     heading: f64,
     stats: Stats,
+    /// The cluster DAG, when the view has one (in place of the decisions and the chunks).
+    clusters: Option<Mutex<Clusters>>,
+    /// The eye's smoothed velocity (m/s), for the clusters' preload a second ahead, and where it was.
+    vel: DVec3,
+    last_eye: Option<DVec3>,
     /// The decider: its inbox and what it sends back; the latest snapshot of what is drawn.
     to_decider: std::sync::mpsc::Sender<ToDecider>,
     from_decider: Mutex<std::sync::mpsc::Receiver<Decided>>,
@@ -682,6 +782,8 @@ impl PlanetLodApp {
             }
         }).map_err(|e| format!("build worker: {e}"))?;
         let on_snap = Arc::new(on.clone());
+        let cdir = PathBuf::from(format!("{}-clusters", dir.display()));
+        let clusters = if cdir.join("cluster.f32").exists() { Some(Mutex::new(Clusters::open(&cdir)?)) } else { None };
         let mut decider = Decider {
             mv: d.mv.clone(), ma: d.ma.clone(), dptr: d.dptr.clone(), dep: d.dep.clone(), ao: d.ao.clone(), am: d.am.clone(), ml: d.ml.clone(),
             pos: d.pos.clone(), cells, cell_of, rdep_ptr: cnt, rdep, subtree, queued, on, drawn: 0, lvl_count: vec![0; 256], runs: 0,
@@ -715,6 +817,9 @@ impl PlanetLodApp {
             d,
             chunks,
             grid,
+            clusters,
+            vel: DVec3::ZERO,
+            last_eye: None,
             to_decider,
             from_decider: Mutex::new(from_decider),
             on_snap: on_snap.clone(),
@@ -919,6 +1024,51 @@ impl PlanetLodApp {
     }
 
     /// Decide again the chunks the eye has moved far enough from, and whatever their changes reach.
+    /// The cluster cut: chosen for the eye and for where it will be in a second (built and uploaded, not drawn);
+    /// shown once every cluster of it in view is on the GPU, else the cut shown stays.
+    fn update_clusters(&mut self, eye: DVec3, _dt: f64) {
+        use rayon::prelude::*;
+        let t0 = Instant::now();
+        let cam = self.camera();
+        let aspect = match self.ui.lock().unwrap().aspect { a if a > 0.0 => a, _ => 16.0 / 9.0 };
+        let view = self.view;
+        let ahead = {
+            let mut step = self.vel * 1.0;
+            let most = 0.5 * self.alt.max(ALT_MIN);
+            if step.length() > most {
+                step = step.normalize() * most;
+            }
+            eye + step
+        };
+        let mut cl = self.clusters.as_ref().unwrap().lock().unwrap();
+        let want = cl.select(eye);
+        let pre = cl.select(ahead);
+        let visible = |cl: &Clusters, i: usize| Self::in_view(&cam, cl.origin(i), cl.row[i][4] as f64, aspect);
+        // build what is wanted or coming and not built (in this view), in parallel, at most 4,000 a frame
+        let mut need: Vec<usize> = want.iter().chain(pre.iter()).map(|&i| i as usize).filter(|&i| cl.meshes[i].as_ref().is_none_or(|(v, _, _)| *v != view)).collect();
+        need.sort_unstable();
+        need.dedup();
+        need.truncate(4000);
+        let (pos, col) = (&self.d.pos, &self.d.col);
+        let built: Vec<(usize, Mesh)> = need.par_iter().map(|&i| (i, cluster_mesh(&cl, i, pos, col, view))).collect();
+        for (i, m) in built {
+            cl.meshes[i] = Some((view, m, false));
+        }
+        // shown: the wanted cut once its clusters in view are all on the GPU
+        let ready = want.iter().all(|&i| {
+            let i = i as usize;
+            !visible(&cl, i) || cl.meshes[i].as_ref().is_some_and(|(v, m, _)| *v == view && m.gpu_resident())
+        });
+        if ready {
+            cl.shown = want;
+        }
+        let finest = cl.shown.iter().map(|&i| cl.level[i as usize] as usize).min().unwrap_or(0);
+        cl.stats = [cl.shown.len(), need.len(), pre.len(), cl.meshes.iter().filter(|m| m.is_some()).count(), finest];
+        log::debug!("clusters shown {} built {} ahead {} resident {} finest level {}", cl.stats[0], cl.stats[1], cl.stats[2], cl.stats[3], cl.stats[4]);
+        drop(cl);
+        self.stats.lod_ms = t0.elapsed().as_secs_f64() * 1e3;
+    }
+
     fn build_tiles(&self, g: &TileGroup) -> Mesh {
         let edges: &[[u32; 2]] = if self.view == View::Mesh { &g.edges } else { &[] };
         self.model(g.origin, &g.tris, edges)
@@ -1126,7 +1276,9 @@ impl App for PlanetLodApp {
             self.lon += 2e-4;
         }
         let eye = self.eye();
-        let _ = self.to_decider.send(ToDecider::Eye(eye));
+        if self.clusters.is_none() {
+            let _ = self.to_decider.send(ToDecider::Eye(eye));
+        }
         let decided: Vec<Decided> = self.from_decider.lock().unwrap().try_iter().collect();
         let gn = self.grid.n;
         let (mut n_dec, mut n_chg, mut ms) = (0, 0, 0.0f64);
@@ -1156,6 +1308,16 @@ impl App for PlanetLodApp {
         self.stats.decided = n_dec;
         self.stats.changed = n_chg;
         self.stats.lod_ms = ms;
+        if let Some(prev) = self.last_eye
+            && dt > 0.0
+        {
+            let k = (dt / 0.25).min(1.0);
+            self.vel = self.vel * (1.0 - k) + (eye - prev) / dt * k;
+        }
+        self.last_eye = Some(eye);
+        if self.clusters.is_some() {
+            self.update_clusters(eye, dt);
+        }
         // Meshes again, built first and drawn after: a job's meshes all go on screen together once all are on
         // the GPU; then the next job: every stale chunk in view and every chunk not built yet, from a snapshot of
         // what is drawn (stale chunks out of view keep their mesh until they come into view).
@@ -1190,7 +1352,7 @@ impl App for PlanetLodApp {
                 }
             }
         }
-        if !self.busy && self.built.lock().unwrap().is_none() {
+        if self.clusters.is_none() && !self.busy && self.built.lock().unwrap().is_none() {
             // (In view first; with nothing in view to do, chunks never built, 400 at a time, nearest first.)
             let mut chunks: Vec<(f64, usize)> = (0..self.chunks.len())
                 .filter(|&c| {
@@ -1304,7 +1466,35 @@ impl App for PlanetLodApp {
             sent += g.tris.len();
             drawn.push((mesh, g.origin));
         }
-        let max_draw = self.max_draw;
+        if let Some(cl) = &self.clusters {
+            let mut cl = cl.lock().unwrap();
+            // (Asked again every frame until on the GPU: a frame the render thread skips loses its requests, and
+            // asking once left meshes never uploaded. The engine skips those it has.)
+            let mut handed = 0;
+            for m in cl.meshes.iter_mut().flatten() {
+                if !m.1.gpu_resident() && handed < 3000 {
+                    frame.prepare_mesh(&m.1);
+                    m.2 = true;
+                    handed += 1;
+                }
+            }
+            let mut tris_shown = 0;
+            for &i in &cl.shown {
+                let i = i as usize;
+                let Some((_, mesh, _)) = &cl.meshes[i] else { continue };
+                let o = cl.origin(i);
+                if !Self::in_view(&cam, o, cl.row[i][4] as f64, aspect) {
+                    continue;
+                }
+                let t = Transform { position: o, rotation: Quat::IDENTITY, scale: 1.0 };
+                draw(frame, mesh, &t, pat_line, fill_of(land));
+                chunks_drawn += 1;
+                tris_shown += cl.ptr[i][1] as usize;
+            }
+            sent += tris_shown;
+            pattern_tris += tris_shown;
+        }
+        let max_draw = if self.clusters.is_some() { 0 } else { self.max_draw };
         for ch in &self.chunks {
             if chunks_drawn >= max_draw {
                 break;
@@ -1353,6 +1543,12 @@ impl App for PlanetLodApp {
                 frame.prepare_mesh(mesh);
                 tris += n;
                 b.prepared += 1;
+            }
+            // (Those handed over and still not on the GPU asked again: a skipped frame loses its requests.)
+            if b.prepared == b.meshes.len() {
+                for (_, mesh, _) in b.meshes.iter().filter(|(_, m, _)| !m.gpu_resident()).take(200) {
+                    frame.prepare_mesh(mesh);
+                }
             }
         }
         // The counts the panel shows that need the drawn meshes: the view box every 0.3 s.
@@ -1444,7 +1640,9 @@ impl PlanetLodApp {
         let lv = (0..self.lvl_count.len()).rev().find(|&k| self.lvl_count[k] > 0).map_or(0, |k| k + 1);
         let (full, rising) = self.risen;
         let rising_badge = if rising > 0 { (format!("{} rising", thousands(rising as f64)), WARN) } else { ("all in".to_string(), GOOD) };
-        let lvb = format!("L{lv} / {}", m.level_d.len());
+        // (In cluster mode: the finest cluster level drawn, 0 the finest, and the clusters' own counts.)
+        let cl_stats = self.clusters.as_ref().map(|c| { let c = c.lock().unwrap(); (c.stats, c.row.len(), c.level.iter().copied().max().unwrap_or(0)) });
+        let lvb = match cl_stats { Some((st, _, top)) => format!("cluster L{} / {}", st[4], top), None => format!("L{lv} / {}", m.level_d.len()) };
         p.section("LEVEL OF DETAIL", &[(&lvb, ACCENT), (&rising_badge.0, rising_badge.1)]);
         let eye = self.eye();
         let cr = eye.length();
@@ -1452,7 +1650,10 @@ impl PlanetLodApp {
         let d_reg = ((ang * self.d.r - m.radius_m).max(0.0)).hypot((cr - self.d.r - self.ex * m.top_m).max(0.0));
         let dist = if d_reg >= 1000.0 { format!("{:.1} km", d_reg / 1000.0) } else { format!("{d_reg:.0} m") };
         p.row("distance to the pattern", &dist, "");
-        p.row("pattern vertices drawn", &thousands(self.stats.drawn as f64), &format!("of {} · {:.1}%", thousands(n as f64), 100.0 * self.stats.drawn as f64 / n as f64));
+        match cl_stats {
+            Some((st, total, _)) => p.row("clusters chosen", &thousands(st[0] as f64), &format!("of {} · {} resident · {} a second ahead", thousands(total as f64), thousands(st[3] as f64), thousands(st[2] as f64))),
+            None => p.row("pattern vertices drawn", &thousands(self.stats.drawn as f64), &format!("of {} · {:.1}%", thousands(n as f64), 100.0 * self.stats.drawn as f64 / n as f64)),
+        }
         p.bar(self.stats.drawn as f32 / n as f32, full as f32 / n as f32);
         p.row("fully risen · rising", &format!("{} · {}", thousands(full as f64), thousands(rising as f64)), "");
         p.row("pattern triangles drawn", &thousands(ui.pattern_tris as f64), "");
@@ -1462,7 +1663,11 @@ impl PlanetLodApp {
         p.row("with one level for all", &thousands(one as f64), &more);
         p.row("LOD update", &format!("{:.2} ms", self.stats.lod_ms), &format!("meshes {:.2} ms · {} made", self.stats.mesh_ms, self.stats.rebuilt));
         p.row("planet tiles drawn", &thousands(ui.tiles_drawn as f64), &format!("of {} groups", self.tiles.len()));
-        p.row("pattern cells drawn", &thousands(ui.chunks_drawn as f64), &format!("of {}", self.chunks.iter().filter(|c| !c.tris.is_empty()).count()));
+        if cl_stats.is_some() {
+            p.row("clusters drawn", &thousands(ui.chunks_drawn as f64), "in view");
+        } else {
+            p.row("pattern cells drawn", &thousands(ui.chunks_drawn as f64), &format!("of {}", self.chunks.iter().filter(|c| !c.tris.is_empty()).count()));
+        }
         p.row("settings", &format!("{}× ahead · {}× margin · {:.1} m/km", m.ahead, m.margin, m.px_per_m * 1000.0), "");
         // The chart: drawn (accent) and fully in (white) against the altitude flown, level distances.
         let (o, s) = p.area(62.0);
