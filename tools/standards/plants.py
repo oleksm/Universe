@@ -1754,7 +1754,8 @@ def pellet_units():
         needs={"power": 90e3 + 15e3},
         basis=[{"of": ["physical", "built_of", "needs"], "tier": "derived", "review": True,
                 "note": f"The pan's plate from its size; its speed from the critical speed 42.3 sqrt(sin a / D); a quarter of the plant's {P_ORE + P_WATER:.1f} kg/s of moist ore each; the drive 90 kW and the screen 15 kW, the frame, gear and screen's weights from memory."}])
-    pallets = math.ceil((2 * GRATE_L + 10.0) / 1.5)
+    L_run, R_sp = GRATE_L + 5.0, 1.6                      # the straight run: the hood's length and 2.5 m each end to load and tip; the sprockets' pitch radius
+    pallets = math.ceil((2 * L_run + 2 * math.pi * R_sp) / 1.5)
     hood_a = (2 * 4.0 + 6.0) * GRATE_L
     torches = math.ceil(P_FIRE / 1.5e6)
     fans = 20.0 * 3600 * P_RATE                           # W at 20 kWh a tonne (from memory)
@@ -1762,7 +1763,7 @@ def pellet_units():
         name=f"Induration grate, {P_RATE * 3.6:.0f} t an hour", size_class=4, fits="bay-s4", dims=(44.0, 12.0, 18.0),
         desc=(f"A straight grate {GRATE_W:g} m wide with {GRATE_L:g} m under its hood: a chain of {pallets} pallet cars carries a bed of green balls on a layer of fired ones along +x through drying, preheating, firing at about 1,300 deg C, and cooling; "
               f"the cooling zone's hot air goes back over the bed to the firing zone, so it needs only {P_FIRE / P_RATE / 1e3:.0f} kJ of new heat a kilogram, here {P_FIRE / 1e6:.1f} MW from {torches} electric plasma torches in the hood (there is no fuel to burn). "
-              f"Wind boxes under the grate, 5 m up on the machine's frame, draw the gas down through the bed to four process fans. Green balls in on a roller feeder at local (-20, 0, 9); fired pellets off its +x end at (21, 0, 2); waste gas out to the layout's duct at (0, 6, 3)."),
+              f"The chain's loop: a straight top run {L_run:g} m long (x -{L_run / 2:g} to {L_run / 2:g}, the grate's top 8.5 m up), round sprockets of {R_sp:g} m pitch radius at each end, and back underneath at 5.3 m, {pallets} cars of 1.5 m filling its {2 * L_run + 2 * math.pi * R_sp:.1f} m; the hood (inside {GRATE_W:g} m wide, 5 m high, {GRATE_L:g} m long over x -{GRATE_L / 2:g} to {GRATE_L / 2:g}, its outer roof 13.8 m up) leaves 2.5 m open at each end to load and tip; the hot-air recycle ducts over it reach 17.8 m. Wind boxes between the runs (6 to 8.3 m up) draw the gas down through the bed to four process fans. Green balls in on a roller feeder at local (-20, 0, 9) over the loading end; fired pellets tip off the +x sprocket into a chute to (21, 0, 2); waste gas out to the layout's duct at (0, 6, 3)."),
         built_of=[part("Pallet cars", "material.stainless-steel-304", pallets * 5000.0, f"{pallets} cars {GRATE_W:g} x 1.5 m of heat-resisting cast steel, 5 t each (from memory); stainless steel stands for the alloy"),
                   part("Hood lining", REF, hood_a * 0.3 * RHO["refractory"], f"{hood_a:.0f} m2 of hood, 300 mm"),
                   part("Hood casing", A36, hood_a * 0.010 * RHO["steel"], "10 mm"),

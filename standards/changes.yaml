@@ -831,7 +831,7 @@
 - { record: layout.ladle-station-air, at: "2026-10-15T02:26:46Z", status: draft, summary: "changed: physical", sha: "31ea2691985163d3" }
 - { record: layout.ladle-station-airless, at: "2026-10-15T02:24:50Z", status: draft, summary: "changed: physical", sha: "fa8e490ab722454b" }
 - { record: layout.ore-yard-air, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "80cee716ce980cb3" }
-- { record: layout.pellet-plant-air, at: "2026-10-15T05:07:48Z", status: draft, summary: "changed: physical, totals", sha: "2a53b8fb19ef8d9f" }
+- { record: layout.pellet-plant-air, at: "2026-10-15T05:12:58Z", status: draft, summary: "changed: physical, totals", sha: "aa666a054904ef90" }
 - { record: layout.shaft-furnace-air, at: "2026-10-15T02:28:54Z", status: draft, summary: "changed: physical", sha: "8e973731966b75b2" }
 - { record: layout.shaft-furnace-airless, at: "2026-10-15T02:24:50Z", status: draft, summary: "changed: physical", sha: "7749b2c8502caf19" }
 - { record: market.art, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "517671b6a46daee3" }
@@ -1362,7 +1362,7 @@
 - { record: plant-mount.bay-s1, at: "2026-10-15T01:25:05Z", status: draft, summary: "changed: basis", sha: "2f08ea6d5d1a2c13" }
 - { record: plant-mount.bay-s2, at: "2026-10-15T03:26:57Z", status: draft, summary: "changed: basis", sha: "06c4c920dfdc651f" }
 - { record: plant-mount.bay-s3, at: "2026-10-15T01:25:05Z", status: draft, summary: "changed: basis", sha: "0d6434ba0fb701e4" }
-- { record: plant-mount.bay-s4, at: "2026-10-15T01:25:05Z", status: draft, summary: "changed: basis", sha: "ff5327a9fe69bb44" }
+- { record: plant-mount.bay-s4, at: "2026-10-15T05:12:58Z", status: draft, summary: "changed: bears", sha: "c767765869830b6f" }
 - { record: population.biraidim.far-cloud, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "4d04c1b699eb49db" }
 - { record: population.biraidim.shikra-family, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "86d3c16b41bc181d" }
 - { record: population.biraidim.taumeibru-family, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "2626282163a26720" }
@@ -2732,7 +2732,7 @@
 - { record: unit.baghouse-450k, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "71f7f9f26631f8e6" }
 - { record: unit.baghouse-800k, at: "2026-10-14T14:37:56Z", status: draft, summary: "changed", sha: "ab9ba06de66e8e3c" }
 - { record: unit.ball-mill-4m4, at: "2026-10-15T04:43:02Z", status: draft, summary: "changed", sha: "0eb3c49367482949" }
-- { record: unit.balling-disc-7m5, at: "2026-10-15T05:11:11Z", status: draft, summary: "changed: visual", sha: "c8cb7978c212d05a" }
+- { record: unit.balling-disc-7m5, at: "2026-10-15T05:12:58Z", status: draft, summary: "changed", sha: "b437d954fd9928d4" }
 - { record: unit.cooling-tower, at: "2026-10-14T14:37:56Z", status: draft, summary: "changed", sha: "20447996507fd0ba" }
 - { record: unit.cooling-tower-1cell, at: "2026-10-14T19:55:55Z", status: draft, summary: "changed", sha: "b9a2ebb48ebfbe05" }
 - { record: unit.cooling-tower-h2, at: "2026-10-15T04:02:06Z", status: draft, summary: "changed", sha: "811c23f22ab4f331" }
@@ -2759,7 +2759,7 @@
 - { record: unit.heater-transformer-131mva, at: "2026-10-14T23:21:51Z", status: draft, summary: "changed", sha: "7efdc1b7a92f020c" }
 - { record: unit.hydrogen-purifier, at: "2026-10-15T03:26:57Z", status: draft, summary: "changed", sha: "80a46b46c60f8eb6" }
 - { record: unit.hydrogen-purifier-10bar, at: "2026-10-15T03:01:55Z", status: draft, summary: "first tracked", sha: "e83da2f1e77940a3" }
-- { record: unit.induration-grate-125th, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "9741fdd206bb54be" }
+- { record: unit.induration-grate-125th, at: "2026-10-15T05:12:58Z", status: draft, summary: "changed: identity, physical, built_of", sha: "19d0bfe7a8a0b7bc" }
 - { record: unit.ingot-car-40t, at: "2026-10-14T21:39:31Z", status: draft, summary: "changed", sha: "ffb4022d169c5a26" }
 - { record: unit.ingot-crane-10t, at: "2026-10-14T21:38:01Z", status: draft, summary: "changed: identity", sha: "81e5a51032488c8d" }
 - { record: unit.ladle-car-80t, at: "2026-10-14T14:50:41Z", status: draft, summary: "changed", sha: "455ad05163bdf8c8" }

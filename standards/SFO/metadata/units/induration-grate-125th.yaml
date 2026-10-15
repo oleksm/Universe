@@ -1,11 +1,12 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.induration-grate-125th, name: 'Induration grate, 125 t an hour', description: 'A straight grate 4 m wide with 28 m under its hood: a chain of 44 pallet cars carries a bed of green balls on a layer of fired ones along +x through drying, preheating, firing at about 1,300 deg C, and cooling; the cooling zone''s hot air goes back over the bed to the firing zone, so it needs only 500 kJ of new heat a kilogram, here 17.4 MW from 12 electric plasma torches in the hood (there is no fuel to burn). Wind boxes under the grate, 5 m up on the machine''s frame, draw the gas down through the bed to four process fans. Green balls in on a roller feeder at local (-20, 0, 9); fired pellets off its +x end at (21, 0, 2); waste gas out to the layout''s duct at (0, 6, 3).'}
+identity: {key: unit.induration-grate-125th, name: 'Induration grate, 125 t an hour', description: 'A straight grate 4 m wide with 28 m under its hood: a chain of 51 pallet cars carries a bed of green balls on a layer of fired ones along +x through drying, preheating, firing at about 1,300 deg C, and cooling; the cooling zone''s hot air goes back over the bed to the firing zone, so it needs only 500 kJ of new heat a kilogram, here 17.4 MW from 12 electric plasma torches in the hood (there is no fuel to burn). The chain''s loop: a straight top run 33 m long (x -16.5 to 16.5, the grate''s top 8.5 m up), round sprockets of 1.6 m pitch radius at each end, and back underneath at 5.3 m, 51 cars of 1.5 m filling its 76.1 m; the hood (inside 4 m wide, 5 m high, 28 m long over x -14 to 14, its outer roof 13.8 m up) leaves 2.5 m open at each end to load and tip; the hot-air recycle ducts over it reach 17.8 m. Wind boxes between the runs (6 to 8.3 m up) draw the gas down through the bed to four process
+    fans. Green balls in on a roller feeder at local (-20, 0, 9) over the loading end; fired pellets tip off the +x sprocket into a chute to (21, 0, 2); waste gas out to the layout''s duct at (0, 6, 3).'}
 size_class: 4
 fits: plant-mount.bay-s4
-physical: {length: 44.0, width: 12.0, height: 18.0, mass: 937900.0}
+physical: {length: 44.0, width: 12.0, height: 18.0, mass: 972900.0}
 built_of:
-- {what: Pallet cars, item: material.stainless-steel-304, mass: 220000.0, note: '44 cars 4 x 1.5 m of heat-resisting cast steel, 5 t each (from memory); stainless steel stands for the alloy'}
+- {what: Pallet cars, item: material.stainless-steel-304, mass: 255000.0, note: '51 cars 4 x 1.5 m of heat-resisting cast steel, 5 t each (from memory); stainless steel stands for the alloy'}
 - {what: Hood lining, item: good.refractory-brick, mass: 352800.0, note: '392 m2 of hood, 300 mm'}
 - {what: Hood casing, item: material.structural-steel-a36, mass: 30770.0, note: 10 mm}
 - {what: Wind boxes, item: material.structural-steel-a36, mass: 70340.0, note: 'under the grate, 10 mm plate'}
