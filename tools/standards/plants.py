@@ -2480,6 +2480,10 @@ def airless_ladle_units(us):
         c["dims"] = (10.0, 25.0, 27.0)
         c["desc"] = c["desc"].replace("on the hall's runways", "on its own legs, running on two ground rails 24 m apart").replace("its origin on the runway's rail plane", "its origin on the ground rails' plane, its girders 24 m up").replace("the hook raised to 0.1 m under the rail plane", "the hook raised under the bridge (its heights below)") + f" Sized for {MOON_G[1]:g} m/s2."
         if cap <= 50000:
+            c["dims"] = (10.0, 25.5, 27.0)
+            c["built_of"] = [dict(p_, mass=12922.6, note=p_["note"] + "; measured on blender's model v1, 12,922.6 kg") if p_["what"] == "Bridge girders" else p_ for p_ in c["built_of"] if p_["what"] != "Legs and sill beams"]
+            c["built_of"] += [part("Legs and sill beams", A36, 53559.3, "four box legs 0.8 x 0.8 m, 20 mm, from the sills' tops at z 1 to 24, and two sill beams; measured on model v1"),
+                              part("Seats, braces and rails", A36, 19947.5, "the trolley's rails, the legs' braces and seats, the wheel seats; measured on model v1")]
             c["desc"] += " Its bridge datum is the girders' underside at z 24 (0.6 x 0.8 m, 12 mm; their tops 24.8, the trolley's rails 24.88); the legs, 0.8 x 0.8 m, 20 mm, stand from the sill beams' tops at z 1; parked, the stripping tool (as the air stripper's, 3.24 m tall on its ropes) hangs fully raised under the trolley, its bottom at about z 21.2."
         if cap > 50000:
             c["dims"] = (10.0, 25.4, 27.0)
