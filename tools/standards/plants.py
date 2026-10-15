@@ -391,8 +391,9 @@ def ladle_units():
     return out
 
 
-def lattice(box, cell, top_k, wall_cells, openings):
-    """Members of a lattice of cubic cells: chords along the edges, one diagonal in each square face. Returns
+def lattice(box, cell, top_k, wall_cells, openings, cuts=()):
+    """Members of a lattice of cubic cells: chords along the edges, one diagonal in each square face. An opening drops the cells
+    whose centres lie in it; a cut drops only the members whose middles lie inside it (a stair through cells, a doorway in a face). Returns
     {"wall"|"roof": (straights, diagonals)}, ground nodes, nodes, the cells."""
     x0, y0, z0, x1, y1, z1 = box
     nx, ny, nz = round((x1 - x0) / cell), round((y1 - y0) / cell), round((z1 - z0) / cell)
@@ -419,6 +420,18 @@ def lattice(box, cell, top_k, wall_cells, openings):
             for s in (0, 1):
                 f = (ax, (i, j, k)[ax] + s) + tuple(v for n, v in enumerate((i, j, k)) if n != ax)
                 faces[f] = "wall" if "wall" in (faces.get(f), grp) else grp
+    if cuts:
+        mid = lambda pts: [x0 + cell * sum(p[n] for p in pts) / len(pts) if n == 0 else (y0 if n == 1 else z0) + cell * sum(p[n] for p in pts) / len(pts) for n in range(3)]
+        inside = lambda m: any(a < m[0] < d and b < m[1] < e and c < m[2] < f for a, b, c, d, e, f in cuts)
+        edges = {e: g for e, g in edges.items() if not inside(mid(e))}
+        def face_mid(fk):
+            ax, lv, u, v = fk
+            q = [0.0, 0.0, 0.0]
+            q[ax] = lv
+            rest = [n for n in range(3) if n != ax]
+            q[rest[0]], q[rest[1]] = u + 0.5, v + 0.5
+            return mid([tuple(q)])
+        faces = {fk: g for fk, g in faces.items() if not inside(face_mid(fk))}
     nodes = {p for e in edges for p in e}
     out = {g: (sum(1 for v in edges.values() if v == g), sum(1 for v in faces.values() if v == g)) for g in ("wall", "roof")}
     return out, sum(1 for p in nodes if p[2] == 0), len(nodes), cells
@@ -1134,10 +1147,10 @@ def shaft_furnace_air(us, recs):
     openings = [(9.0, -3.0, z_top_gas - 3.0, 12.0, 3.0, top - 3.0),            # east wall: the top gas main out
                 (-3.0, -3.0, top - 3 * cell, 12.0, 3.0, top),                  # roof and the east wall's top: the pellet belt's gallery, rising at 15 degrees, comes in through the roof to its head over the hopper
                 (-3.0, -12.0, z_bustle - 3.0, 3.0, -9.0, z_bustle + 3.0),     # south wall: the hot gas main in to the bustle
-                (-12.0, -3.0, 3.0, -9.0, 3.0, z_ring),                       # west wall: the product belt out, the cooling loop's pipes
-                (-11.9, 9.1, 0.1, -6.1, 11.9, top - 0.1),
+                (-12.0, -3.0, 3.0, -9.0, 3.0, z_ring)]                        # west wall: the product belt out, the cooling loop's pipes
+    cuts = [(-11.9, 9.1, 0.1, -6.1, 11.9, top - 0.1),
                 *[(-8.9, 8.9, z + 0.1, -6.1, 9.1, z + 2.9) for z in decks]]    # a doorway from each landing onto its platform in the stair's inner face (posts and headers kept)             # the stair's prism in the north-west wall cells: members inside it go, those in its faces (posts, face bracing) stay
-    groups, ground_nodes, n_nodes, cells = lattice(box, cell, round(top / cell) - 1, None, openings)
+    groups, ground_nodes, n_nodes, cells = lattice(box, cell, round(top / cell) - 1, None, openings, cuts)
     x0, y0, z0, x1, y1, z1 = box
     # Wind: 1 kPa (invented) on one face; the tower's walls take its moment as chords.
     wind_M = 1000.0 * (x1 - x0) * top * top / 2
@@ -1261,9 +1274,9 @@ def shaft_furnace_air(us, recs):
         "site": {"atmosphere": "air", "gravity": [8.0, 11.0]},
         "physical": {"length": r(max(xs) - min(xs)), "width": r(max(ys) - min(ys)), "height": z1, "mass": r(total)},
         "bays": bays, "links": links,
-        "frame": {"box": list(box), "cell": cell, "shape": f"An open braced tower {x1 - x0:.0f} x {y1 - y0:.0f} m and {top:.0f} m tall round the shaft: walls one cell thick, a roof one cell deep carrying the belt's head house, six grating platforms at z {', '.join(str(z) for z in decks)} (the lock and feeders, the cooling zone's ports, round the bustle, the reduction zone, 3 m under the top gas main, the seal leg), each with a 10 m hole round the shaft, at z 24 a 17 m hole round the bustle (about 15 m across); "
+        "frame": {"box": list(box), "cell": cell, "shape": f"An open braced tower {x1 - x0:.0f} x {y1 - y0:.0f} m and {top:.0f} m tall round the shaft: walls one cell thick, a roof one cell deep carrying the belt's head house, six grating platforms at z {', '.join(str(z) for z in decks)} (the lock and feeders, the cooling zone's ports, round the bustle, the reduction zone, 3 m under the top gas main, the seal leg), each 18 x 18 m inside the walls with a 10 m hole round the shaft, but at z 24 the tower's full 24 x 24 m plan (out over the wall cells) with a 17 m hole round the bustle (about 15 m across); grating seated on the frame's nodes; "
                            f"stairs in switchback flights 1.2 m wide inside the north-west corner of the walls (x -12 to -6, y 9 to 12; the members inside that prism left out, its faces' posts and bracing kept), landing beams on the 3 m nodes, landing on each platform through a doorway 3 m wide and 3 m high in the stair's inner face (x -9 to -6, y 9) and the roof at z {top - cell:.0f}; no cladding.",
-                  "openings": [list(o) for o in openings], "members": members, "carries": [f"unit.{sh_key}"], "mass": r(frame_mass), "sized": sized},
+                  "openings": [list(o) for o in openings + cuts], "members": members, "carries": [f"unit.{sh_key}"], "mass": r(frame_mass), "sized": sized},
         "ground": ground,
         "totals": {"rate": S_RATE, "power": r(power), "heat": r(heat), "water": r(water), "mass": r(total), "against_module": against},
         "staff": smod.get("staff"),

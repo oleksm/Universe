@@ -5,7 +5,7 @@ stands_for: module.shaft-furnace
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 312.6, width: 120.0, height: 54.0, mass: 15610000.0}
+physical: {length: 312.6, width: 120.0, height: 54.0, mass: 15620000.0}
 bays:
 - id: F
   mount: plant-mount.bay-s3
@@ -353,7 +353,7 @@ links:
 frame:
   box: [-12.0, -12.0, 0.0, 12.0, 12.0, 54.0]
   cell: 3.0
-  shape: 'An open braced tower 24 x 24 m and 54 m tall round the shaft: walls one cell thick, a roof one cell deep carrying the belt''s head house, six grating platforms at z 9, 15, 24, 30, 36, 45 (the lock and feeders, the cooling zone''s ports, round the bustle, the reduction zone, 3 m under the top gas main, the seal leg), each with a 10 m hole round the shaft, at z 24 a 17 m hole round the bustle (about 15 m across); stairs in switchback flights 1.2 m wide inside the north-west corner of the walls (x -12 to -6, y 9 to 12; the members inside that prism left out, its faces'' posts and bracing kept), landing beams on the 3 m nodes, landing on each platform through a doorway 3 m wide and 3 m high in the stair''s inner face (x -9 to -6, y 9) and the roof at z 51; no cladding.'
+  shape: 'An open braced tower 24 x 24 m and 54 m tall round the shaft: walls one cell thick, a roof one cell deep carrying the belt''s head house, six grating platforms at z 9, 15, 24, 30, 36, 45 (the lock and feeders, the cooling zone''s ports, round the bustle, the reduction zone, 3 m under the top gas main, the seal leg), each 18 x 18 m inside the walls with a 10 m hole round the shaft, but at z 24 the tower''s full 24 x 24 m plan (out over the wall cells) with a 17 m hole round the bustle (about 15 m across); grating seated on the frame''s nodes; stairs in switchback flights 1.2 m wide inside the north-west corner of the walls (x -12 to -6, y 9 to 12; the members inside that prism left out, its faces'' posts and bracing kept), landing beams on the 3 m nodes, landing on each platform through a doorway 3 m wide and 3 m high in the stair''s inner face (x -9 to -6, y 9) and the roof at z 51; no cladding.'
   openings:
   - [9.0, -3.0, 38.0, 12.0, 3.0, 51.0]
   - [-3.0, -3.0, 45.0, 12.0, 3.0, 54.0]
@@ -367,14 +367,14 @@ frame:
   - [-8.9, 8.9, 36.1, -6.1, 9.1, 38.9]
   - [-8.9, 8.9, 45.1, -6.1, 9.1, 47.9]
   members:
-  - {item: stock.st4340-tb-120x3-s3000, count: 2266, where: tower walls}
-  - {item: stock.st4340-tb-120x3-d3000, count: 1731, where: tower walls}
-  - {item: stock.st4340-tb-120x3-s3000, count: 250, where: tower roof}
-  - {item: stock.st4340-tb-120x3-d3000, count: 205, where: tower roof}
-  - {item: stock.st4340-node-160b, count: 1048, where: nodes}
+  - {item: stock.st4340-tb-120x3-s3000, count: 2373, where: tower walls}
+  - {item: stock.st4340-tb-120x3-d3000, count: 1795, where: tower walls}
+  - {item: stock.st4340-tb-120x3-s3000, count: 255, where: tower roof}
+  - {item: stock.st4340-tb-120x3-d3000, count: 210, where: tower roof}
+  - {item: stock.st4340-node-160b, count: 1086, where: nodes}
   - {item: stock.st4340-box-400x400x25, count: 8, where: 'columns under the shaft''s ring girder, 22 m, on a circle of radius 4.1 m beside the cooling zone and cone, the first at 22.5 degrees off x so the product belt passes between; braced to the tower''s walls every 6 m'}
   carries: [unit.shaft-furnace-200th]
-  mass: 386400.0
+  mass: 392800.0
   sized: 'At 1 g the shaft with its burden, 31.7 MN, hangs from its ring girder at z 22 on 8 columns of 400 x 400 x 25 mm 4340 box: 106 MPa each, against 470 MPa with half again to spare; braced every 6 m their slenderness is 39. Wind of 1 kPa (invented) on a 24 x 54 m face makes 35 MN m at the base, 162 kN in each wall chord: st4340-tb-120x3 takes 424 kN, the kit''s lightest with half again to spare. Six grating platforms, 10 mm, 60% of the plan. Footings'' loads and the belt''s head house not yet checked.'
 ground:
 - {what: Tower foundation, item: good.concrete, volume: 1440.0, note: 'a mat 24 x 24 m, 2.5 m thick, under the tower and the shaft''s columns', mass: 3456000.0}
@@ -383,7 +383,7 @@ ground:
 - {what: Transformer vault, item: good.concrete, volume: 132.0, note: fire walls 7 m tall round the heater's transformer, mass: 316800.0}
 - {what: Cooling tower basins, item: good.concrete, volume: 1516.0, note: 'one under each tower, sunk as the furnace shop''s: 0.3 m walls, floor top at z -2; 6 m apart, no shared walls', mass: 3638000.0}
 - {what: Gallery trestle footings, item: good.concrete, volume: 104.0, note: '8 m3 under each of the pellet belt''s trestles, 4 m3 under the product belt''s', mass: 249600.0}
-totals: {rate: 55.5555555555556, power: 152200000.0, heat: 129600000.0, water: 72.04, mass: 15610000.0, against_module: 'module.shaft-furnace: one box 150 x 100 x 137 m, 22 MW, which leaves out heating the gas. This layout: the same 200 t of sponge iron an hour; 152 MW, of which the hydrogen heater is 125: hydrogen brings no heat of its own, so the shaft''s 112 MW comes from 14.3 kg/s of gas (4.8 times what the reduction uses) heated by electricity; 130 MW to the towers, 72 kg/s of water evaporated; the 26.9 kg/s of water made goes back to the hydrogen plant. 6,011 t of plant and frame, 9,601 t of concrete.'}
+totals: {rate: 55.5555555555556, power: 152200000.0, heat: 129600000.0, water: 72.04, mass: 15620000.0, against_module: 'module.shaft-furnace: one box 150 x 100 x 137 m, 22 MW, which leaves out heating the gas. This layout: the same 200 t of sponge iron an hour; 152 MW, of which the hydrogen heater is 125: hydrogen brings no heat of its own, so the shaft''s 112 MW comes from 14.3 kg/s of gas (4.8 times what the reduction uses) heated by electricity; 130 MW to the towers, 72 kg/s of water evaporated; the 26.9 kg/s of water made goes back to the hydrogen plant. 6,018 t of plant and frame, 9,601 t of concrete.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}
