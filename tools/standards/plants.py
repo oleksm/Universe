@@ -2318,8 +2318,8 @@ def airless_units(us):
     out["crew-post"] = dict(
         name="Crew post, pressurised", size_class=1, fits="bay-s1", dims=(6.0, 4.4, 4.6),
         desc="The shift's control room on airless ground: an aluminium cylinder 4 m across and 4 m long at 1 bar on two saddles, its axis along x 2.3 m up (the shell from x -1 to 3), with a 2 m airlock at its -x end (x -3 to -1), coaxial, its outer door's threshold at (-3, 0, 1.35); both its round doors (1.9 m clear, 110 mm aluminium sandwich leaves) are plugs that open toward the higher pressure, the outer into the lock and the inner into the cabin, so the air holds them shut (about 280 kN) and their eight dogs are only latches; and closed windows on its +y side; air and water kept for its watch. The berm of loose regolith 1 m deep over it, against radiation and the cold, is the layout's, with openings for the airlock and the windows. Drawn as its bare shell, saddles and airlock, closed.",
-        built_of=[part("Shell", "material.aluminium-alloy-6061", cyl_shell(4.0, 4.0, 0.006, bottom=2.0) * RHO["aluminium"], "4 m across, 4 m, 6 mm (1 bar gives 33 MPa)"),
-                  part("Airlock and saddles", A36, 1500.0, "a 2 m airlock and two saddles, from memory"),
+        built_of=[part("Shell and doors", "material.aluminium-alloy-6061", 995.8, "the shell 4 m across and 4 m long, 6 mm (1 bar gives 33 MPa), and the two ribbed door leaves; measured on blender's model v1"),
+                  part("Airlock, saddles and frames", A36, 3490.0, "the 6 mm lock, two 10 mm saddles on 400 x 400 x 20 mm foot plates (about 15 kN each under the post and its berm at 2 m/s2), door frames, viewport rings and hardware; measured on blender's model v1"),
                   part("Life support and fit-out", "good.electric-motors", 3000.0, "from memory")],
         needs={"power": 20e3, "atmosphere": "vacuum"},
         basis=[{"of": ["physical", "built_of", "needs"], "tier": "invented", "review": True, "note": "From memory."}])

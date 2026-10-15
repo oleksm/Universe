@@ -822,21 +822,21 @@
 - { record: law.tube-time, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "934385090028c5e6" }
 - { record: law.year, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "29f1ef4424e5cc98" }
 - { record: layout.arc-furnace-air, at: "2026-10-15T14:53:36Z", status: draft, summary: "changed: links", sha: "9553ccf6eed90e0e" }
-- { record: layout.arc-furnace-airless, at: "2026-10-15T19:38:09Z", status: draft, summary: "changed: physical, totals", sha: "a6276f0f7e77ba3c" }
+- { record: layout.arc-furnace-airless, at: "2026-10-15T19:49:11Z", status: draft, summary: "changed: physical, totals", sha: "3ca707aa025ed71d" }
 - { record: layout.casting-bay-air, at: "2026-10-15T02:26:46Z", status: draft, summary: "changed: physical", sha: "64ae565ca9d653a2" }
-- { record: layout.casting-bay-airless, at: "2026-10-15T19:39:57Z", status: draft, summary: "changed: ground", sha: "ec49ecc15b2ad1b4" }
+- { record: layout.casting-bay-airless, at: "2026-10-15T19:49:11Z", status: draft, summary: "changed: physical, totals", sha: "54c37f86536debbc" }
 - { record: layout.hydrogen-plant-air, at: "2026-10-15T04:31:57Z", status: draft, summary: "changed: physical", sha: "6142a0437e383639" }
-- { record: layout.hydrogen-plant-airless, at: "2026-10-15T19:39:57Z", status: draft, summary: "changed: ground", sha: "42ca8ef7aa680d80" }
+- { record: layout.hydrogen-plant-airless, at: "2026-10-15T19:49:11Z", status: draft, summary: "changed: physical, totals", sha: "7043477a75146a97" }
 - { record: layout.ingot-yard-air, at: "2026-10-15T19:02:03Z", status: draft, summary: "changed: totals", sha: "92e4f7a88130bd7a" }
-- { record: layout.ingot-yard-airless, at: "2026-10-15T19:38:09Z", status: draft, summary: "changed: totals", sha: "8bf65f2ba9a5e1cb" }
+- { record: layout.ingot-yard-airless, at: "2026-10-15T19:49:11Z", status: draft, summary: "changed: totals", sha: "b47ab552fc899af9" }
 - { record: layout.ladle-station-air, at: "2026-10-15T02:26:46Z", status: draft, summary: "changed: physical", sha: "31ea2691985163d3" }
-- { record: layout.ladle-station-airless, at: "2026-10-15T19:39:57Z", status: draft, summary: "changed: ground", sha: "8ec1bc9958dde74a" }
+- { record: layout.ladle-station-airless, at: "2026-10-15T19:49:11Z", status: draft, summary: "changed: physical, totals", sha: "3aee86d2a60552d4" }
 - { record: layout.ore-yard-air, at: "2026-10-15T17:42:59Z", status: draft, summary: "changed: physical", sha: "8bc46739c40587fb" }
 - { record: layout.ore-yard-airless, at: "2026-10-15T19:02:03Z", status: draft, summary: "first tracked", sha: "6b9f05ba1da5177d" }
 - { record: layout.pellet-plant-air, at: "2026-10-15T16:01:43Z", status: draft, summary: "changed: physical", sha: "89e9d07d51ec2d4b" }
-- { record: layout.pellet-plant-airless, at: "2026-10-15T19:39:57Z", status: draft, summary: "changed: ground", sha: "b6d0bc1cc1520492" }
+- { record: layout.pellet-plant-airless, at: "2026-10-15T19:49:11Z", status: draft, summary: "changed: totals", sha: "e58c652570eaf40f" }
 - { record: layout.shaft-furnace-air, at: "2026-10-15T02:28:54Z", status: draft, summary: "changed: physical", sha: "8e973731966b75b2" }
-- { record: layout.shaft-furnace-airless, at: "2026-10-15T19:39:57Z", status: draft, summary: "changed: ground", sha: "d84c28d9e95b1d3c" }
+- { record: layout.shaft-furnace-airless, at: "2026-10-15T19:49:11Z", status: draft, summary: "changed: physical, totals", sha: "227d0fe2fbcf47ff" }
 - { record: market.art, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "517671b6a46daee3" }
 - { record: market.artifacts, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "6b51c19897f56c1a" }
 - { record: market.biologics, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "003ee842af8f7674" }
@@ -2744,7 +2744,7 @@
 - { record: unit.cooling-tower-shaft, at: "2026-10-15T01:24:23Z", status: draft, summary: "first tracked", sha: "de1f2baa4965e350" }
 - { record: unit.crating-line, at: "2026-10-15T18:20:39Z", status: draft, summary: "changed", sha: "01857ce676efe665" }
 - { record: unit.crating-line-steel, at: "2026-10-15T19:02:03Z", status: draft, summary: "first tracked", sha: "decf119cb2734d07" }
-- { record: unit.crew-post, at: "2026-10-15T19:40:47Z", status: draft, summary: "changed: identity", sha: "074cc2f9e51015eb" }
+- { record: unit.crew-post, at: "2026-10-15T19:49:11Z", status: draft, summary: "changed: physical, built_of", sha: "a29c8bc0ca98b3b4" }
 - { record: unit.crop-saws, at: "2026-10-15T18:20:39Z", status: draft, summary: "changed", sha: "57aeb9a5c2d969ec" }
 - { record: unit.degassing-stand, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "3f2a0b824b4bd169" }
 - { record: unit.disc-filter-2, at: "2026-10-15T05:01:04Z", status: draft, summary: "changed", sha: "52719317d0ef0afd" }
