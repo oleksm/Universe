@@ -1134,7 +1134,7 @@ def shaft_furnace_air(us, recs):
                 (-3.0, -3.0, top - 3 * cell, 12.0, 3.0, top),                  # roof and the east wall's top: the pellet belt's gallery, rising at 15 degrees, comes in through the roof to its head over the hopper
                 (-3.0, -12.0, z_bustle - 3.0, 3.0, -9.0, z_bustle + 3.0),     # south wall: the hot gas main in to the bustle
                 (-12.0, -3.0, 3.0, -9.0, 3.0, z_ring),                       # west wall: the product belt out, the cooling loop's pipes
-                (-11.9, 9.1, 0.1, -6.1, 11.9, top - cell - 0.1)]             # the stair's prism in the north-west wall cells: members inside it go, those in its faces (posts, face bracing) stay
+                (-11.9, 9.1, 0.1, -6.1, 11.9, top - 0.1)]               # the stair's prism in the north-west wall cells: members inside it go, those in its faces (posts, face bracing) stay
     groups, ground_nodes, n_nodes, cells = lattice(box, cell, round(top / cell) - 1, None, openings)
     x0, y0, z0, x1, y1, z1 = box
     # Wind: 1 kPa (invented) on one face; the tower's walls take its moment as chords.
