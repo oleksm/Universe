@@ -41,13 +41,15 @@ links:
   note: 'a 1.4 m reversible belt between the rails, with the machine''s tripper on it: ore from the hopper to the machine stacking, from the machine to the out belt reclaiming. Its tail 0.4 m under the feeder''s outlet, out of the pit through an opening in its east wall and up at 14 degrees to 1 m, then level from x -86.0, where the tripper''s tail lies with the machine at its west limit (x -50.3)'
 - kind: conveyor
   name: out belt
-  from: [72.33, 0.0, 1.0]
+  from: [73.03, 0.0, 0.6]
   to: [132.3, 0.0, 1.0]
-  length: 59.97
+  length: 59.29
   item: material.structural-steel-a36
-  mass: 8996.0
+  mass: 8893.0
+  via:
+  - [77.03, 0.0, 1.0]
   power: 100000.0
-  note: a 1 m belt to the pellet plant's ore belt, beyond the layout
+  note: 'a 1 m belt to the pellet plant''s ore belt, beyond the layout: its tail 0.4 m under the yard belt''s head, fed by a short chute narrowing 1.4 m to 1 m, then up to 1 m'
 - kind: pipe
   name: dust sprays, north
   from: [-54.33, 49.8113446486123, 1.0]
