@@ -2255,19 +2255,24 @@ def radiator_unit(T, whose):
     under = RAD_EPS * SIGMA * (T ** 4 - T_UNDER ** 4)
     q = top + under
     A = 44.0 * 44.0                                   # m2 of panel, 2 m gaps at the bay's edges for the loop's headers
-    panels = A / (6.0 * 12.0)
+    pw, pl = 5.5, 11.0                                # m: a panel, 4 along x by 8 along y fill the 44 m square
+    panels = round(A / (pw * pl))
     face = A * 0.002 * 2 * RHO["aluminium"]
     tubes = A / 0.15 * math.pi * 0.02 * 0.0015 * RHO["aluminium"]
     legs = panels * 4 * box_tube(0.1, 0.1, 0.004, 3.0) * RHO["aluminium"]
     water = A / 0.15 * math.pi / 4 * 0.017 ** 2 * RHO["water"]
     pumps = q * A / (4186 * 10) / 1000 * 300e3 / 0.75
+    d_h = max(0.1, math.ceil(math.sqrt(4 * q * A / (4186 * 10) / 1000 / 2.0 / math.pi) / 0.05) * 0.05)   # m: the headers, the loop's water at 2 m/s
+    rails = panels * (2 * pl + 2 * pw) * (0.1 + 2 * 0.05) * 0.003 * RHO["aluminium"]
     return dict(
         name=f"Radiator field, {q * A / 1e6:.1f} MW at {T:.0f} K", size_class=4, fits="bay-s4", dims=(48.0, 48.0, 3.5),
-        desc=(f"{panels:.0f} aluminium panels 6 x 12 m, raised 3 m on legs and laid flat edge to edge over 44 x 44 m, carrying {whose} loop's water at about {T:.0f} K through tubes bonded between their two face sheets; "
+        desc=(f"{panels:.0f} aluminium panels {pw:g} x {pl:g} m (4 along x by 8 along y), each on a frame of 100 x 50 mm channel rails round its edge, raised 3 m on four legs and laid flat edge to edge over 44 x 44 m, carrying {whose} loop's water at about {T:.0f} K through tubes bonded between their two face sheets; "
               f"the top face, white, radiates to the sky, the underside to the shaded ground. {q:.0f} W a m2 of panel at lunar noon, the worst case: the sun overhead on the top ({RAD_ALPHA:g} of {SUN:.0f} W/m2 absorbed), the ground under it at {T_UNDER:.0f} K; more at night. "
-              "The loop's headers run round the edge, its ports at local (-24, 0, 1). For airless ground only: on a world with air a tower is lighter. Kept clean of dust, which darkens the white."),
+              f"The loop's flow and return headers ({d_h * 1000:.0f} mm) run round the edge in the 2 m margin, a branch to each row of panels; its ports at local (-24, -0.6, 1) flow and (-24, 0.6, 1) return. "
+              " For airless ground only: on a world with air a tower is lighter. Kept clean of dust, which darkens the white."),
         built_of=[part("Panels", "material.aluminium-alloy-6061", face + tubes, f"two 2 mm face sheets and tubes 20 mm across, 1.5 mm wall, at 150 mm"),
                   part("Legs", "material.aluminium-alloy-6061", legs, "four 100 mm box legs, 4 mm, 3 m, a panel"),
+                  part("Panel rails", "material.aluminium-alloy-6061", rails, "100 x 50 x 3 mm channel round each panel's edge, carrying its skins between the legs"),
                   part("Headers and pumps", "good.pumps", 4000.0 + 20.0 * A / 44.0, "from memory")],
         holds=water, rejects={"heat": q * A, "temperature": T}, needs={"power": pumps, "atmosphere": "vacuum"},
         basis=[{"of": ["rejects", "physical"], "tier": "derived", "review": True, "note": f"Stefan-Boltzmann at emissivity {RAD_EPS}; absorptance, the shaded ground's temperature and the panel's layout invented or from memory."},
