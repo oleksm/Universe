@@ -336,7 +336,7 @@ links:
 frame:
   box: [-12.0, -12.0, 0.0, 12.0, 12.0, 54.0]
   cell: 3.0
-  shape: 'An open braced tower 24 x 24 m and 54 m tall round the shaft: walls one cell thick, a roof one cell deep carrying the belt''s head house, six grating platforms at z 9, 15, 24, 33, 39, 45 (the lock and feeders, the cooling zone''s ports, the bustle, the reduction zone, the top gas outlet, the seal leg), each with a 10 m hole round the shaft; stairs in switchback flights inside the north-west corner of the walls (x -12 to -6, y 9 to 12), landing on each platform and the roof at z 51; no cladding.'
+  shape: 'An open braced tower 24 x 24 m and 54 m tall round the shaft: walls one cell thick, a roof one cell deep carrying the belt''s head house, six grating platforms at z 9, 15, 24, 30, 36, 45 (the lock and feeders, the cooling zone''s ports, round the bustle, the reduction zone, 3 m under the top gas main, the seal leg), each with a 10 m hole round the shaft, at z 24 a 17 m hole round the bustle (about 15 m across); stairs in switchback flights inside the north-west corner of the walls (x -12 to -6, y 9 to 12), landing on each platform and the roof at z 51; no cladding.'
   openings:
   - [9.0, -3.0, 38.0, 12.0, 3.0, 51.0]
   - [-3.0, -3.0, 45.0, 12.0, 3.0, 54.0]

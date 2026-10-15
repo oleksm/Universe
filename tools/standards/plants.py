@@ -1163,7 +1163,7 @@ def shaft_furnace_air(us, recs):
     members.append({"item": "stock.st4340-box-400x400x25", "count": n_col, "where": f"columns under the shaft's ring girder, {z_ring:.0f} m, on a circle of radius {float(sh['desc'].split('(radius ')[1].split(' ')[0]):g} m beside the cooling zone and cone, the first at 22.5 degrees off x so the product belt passes between; braced to the tower's walls every 6 m"})
     fmass += n_col * z_ring * col_a * RHO["steel"]
     deck = 6 * (x1 - x0) * (y1 - y0) * 0.6 * 0.01 * RHO["steel"]       # six platforms of grating, 60% of the plan
-    decks = (9, 15, 24, 33, 39, 45)                      # m: lock and feeders, cooling ports, bustle, reduction zone, top gas outlet, seal leg
+    decks = (9, 15, 24, 30, 36, 45)                      # m: lock and feeders, cooling ports, bustle, reduction zone, under the top gas outlet, seal leg
     flights = math.ceil((top - cell) / 3.0)               # switchback flights of 3 m up to the roof
     deck += flights * 750.0 * 0.75                        # the stair's flights and landings, 750 kg a 4 m flight (as the stair tower's)
     cap = frames.strut_capacity(yaml.safe_load(open(S + "mill-stock/" + strut(sec, cell)[1]["kit"]["section"].split(".", 1)[1].upper() + ".yaml")))
@@ -1258,7 +1258,7 @@ def shaft_furnace_air(us, recs):
         "site": {"atmosphere": "air", "gravity": [8.0, 11.0]},
         "physical": {"length": r(max(xs) - min(xs)), "width": r(max(ys) - min(ys)), "height": z1, "mass": r(total)},
         "bays": bays, "links": links,
-        "frame": {"box": list(box), "cell": cell, "shape": f"An open braced tower {x1 - x0:.0f} x {y1 - y0:.0f} m and {top:.0f} m tall round the shaft: walls one cell thick, a roof one cell deep carrying the belt's head house, six grating platforms at z {', '.join(str(z) for z in decks)} (the lock and feeders, the cooling zone's ports, the bustle, the reduction zone, the top gas outlet, the seal leg), each with a 10 m hole round the shaft; "
+        "frame": {"box": list(box), "cell": cell, "shape": f"An open braced tower {x1 - x0:.0f} x {y1 - y0:.0f} m and {top:.0f} m tall round the shaft: walls one cell thick, a roof one cell deep carrying the belt's head house, six grating platforms at z {', '.join(str(z) for z in decks)} (the lock and feeders, the cooling zone's ports, round the bustle, the reduction zone, 3 m under the top gas main, the seal leg), each with a 10 m hole round the shaft, at z 24 a 17 m hole round the bustle (about 15 m across); "
                            f"stairs in switchback flights inside the north-west corner of the walls (x -12 to -6, y 9 to 12), landing on each platform and the roof at z {top - cell:.0f}; no cladding.",
                   "openings": [list(o) for o in openings], "members": members, "carries": [f"unit.{sh_key}"], "mass": r(frame_mass), "sized": sized},
         "ground": ground,
