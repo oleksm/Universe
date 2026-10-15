@@ -2455,7 +2455,7 @@ def airless_ladle_units(us):
                  "Its fume, mostly argon, leaves by the roof's elbow to the layout's filter. Otherwise as unit.ladle-furnace-80t: " + us["ladle-furnace-80t"]["desc"])
     lf["built_of"] = list(us["ladle-furnace-80t"]["built_of"]) + [
         part("Rim seal and electrode glands", A36, 2500.0, "a soft ring of ceramic fibre rope on the roof's skirt (a hot rim burns elastomers), which leaks some argon that the feed makes up, and insulated water-cooled glands round the electrodes, from memory"),
-        part("Roof locks", A36, 600.0, "50 kPa under the roof over the ladle's 2.9 m mouth lifts it with about 330 kN, less the roof's own weight at a moon's gravity (about as much again): two mechanical lock collars on the roof's lift rods hold it to the gantry with margin; from memory"),
+        part("Roof locks", A36, 600.0, "50 kPa under the roof over the ladle's 2.9 m mouth lifts it with about 330 kN; the roof's own weight (about 5.8 t, 9 kN at 1.6 m/s2) barely counts against it, so two mechanical lock collars on the roof's lift rods take about 165 kN each into the gantry; from memory"),
         part("Alloy lock", A36, 1200.0, "two valves in the chute, from memory")]
     lf["needs"] = dict(us["ladle-furnace-80t"]["needs"])
     lf["basis"] = us["ladle-furnace-80t"]["basis"] + [{"of": ["identity.description"], "tier": "invented", "review": True, "note": "Manganese's loss: its vapour pressure over a 1% melt (about 40 Pa at 1,873 K, from memory) through Hertz-Knudsen over the ladle's 7 m2. Sealed roofs as on closed furnaces; not built for vacuum."}]

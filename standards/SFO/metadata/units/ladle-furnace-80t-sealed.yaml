@@ -14,7 +14,7 @@ built_of:
 - {what: Secondary cables, item: material.copper, mass: 1528.0, note: 'two water-cooled copper cables a phase, each 2630 mm2 for half of 26 kA at 5 A/mm2, run behind the steel and over the top on six insulators: measured on blender''s model (1,414 kg for 10 m each)'}
 - {what: Roof lift and mast hydraulics, item: good.pumps, mass: 6000.0, note: from memory}
 - {what: Rim seal and electrode glands, item: material.structural-steel-a36, mass: 2500.0, note: 'a soft ring of ceramic fibre rope on the roof''s skirt (a hot rim burns elastomers), which leaks some argon that the feed makes up, and insulated water-cooled glands round the electrodes, from memory'}
-- {what: Roof locks, item: material.structural-steel-a36, mass: 600.0, note: '50 kPa under the roof over the ladle''s 2.9 m mouth lifts it with about 330 kN, less the roof''s own weight at a moon''s gravity (about as much again): two mechanical lock collars on the roof''s lift rods hold it to the gantry with margin; from memory'}
+- {what: Roof locks, item: material.structural-steel-a36, mass: 600.0, note: '50 kPa under the roof over the ladle''s 2.9 m mouth lifts it with about 330 kN; the roof''s own weight (about 5.8 t, 9 kN at 1.6 m/s2) barely counts against it, so two mechanical lock collars on the roof''s lift rods take about 165 kN each into the gantry; from memory'}
 - {what: Alloy lock, item: material.structural-steel-a36, mass: 1200.0, note: 'two valves in the chute, from memory'}
 holds: 625.3
 needs: {power: 7500000.0, heat: 1500000.0, gravity: 1.6, atmosphere: any}
