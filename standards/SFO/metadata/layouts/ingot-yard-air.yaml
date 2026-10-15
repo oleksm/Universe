@@ -5,7 +5,7 @@ stands_for: module.ingot-yard
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 235.7, width: 171.0, height: 15.0, mass: 17840000.0}
+physical: {length: 235.7, width: 171.0, height: 15.0, mass: 17910000.0}
 bays:
 - id: S
   mount: plant-mount.bay-s1
@@ -22,6 +22,11 @@ bays:
   unit: unit.crop-saws
   at: [3.0, -6.0, 0.0]
   note: in the hall, west of the crating line, under the crane
+- id: T
+  mount: plant-mount.bay-s1
+  unit: unit.ingot-tipper
+  at: [-6.0, -6.0, 0.0]
+  note: 'west of the saws: a cooled ingot, standing, is laid down here before the saws'
 mobile:
 - unit: unit.forklift-2t5
   rides: yard aisles
@@ -91,16 +96,18 @@ frame:
   - {item: stock.st4340-tb-100x3-d3000, count: 774, where: roof}
   - {item: stock.st4340-node-160b, count: 902, where: nodes}
   - {item: stock.st4340-box-400x400x25, count: 2, where: 'crane runways, one a side, 54 m, their rail plane 9 m up at y -11.4 and +11.4'}
-  - {item: stock.st4340-box-300x300x20, count: 74, where: 'cooling racks in 6 m lengths for 1300 ingots, from memory'}
-  cladding: {item: stock.al6061-sh-2, area: 4428.0, mass: 23910.0}
+  cladding: {item: stock.al6061-sh-2, area: 3924.0, mass: 21190.0}
   carries: [unit.ingot-crane-10t]
-  mass: 265200.0
+  mass: 184500.0
   sized: 'At 1 g: roof 1249 Pa over a 24 m span puts 90 kN in a chord: st4340-tb-100x3 takes 242 kN. A wheel of the 10 t crane loaded at the runway''s end, with the roof''s share, puts 163 kN on a wall node: st4340-tb-120x3 takes 424 kN. Wind and footings not yet checked.'
 ground:
-- {what: Cooling floor and racks' footings, item: good.concrete, volume: 518.4, note: '0.4 m under the hall: steel racks (in the hall''s frame) for the 1300 ingots of a day''s cooling', mass: 1244000.0}
+- {what: Hall floor, item: good.concrete, volume: 518.4, note: 0.4 m under the hall, mass: 1244000.0}
 - {what: Frame footings, item: good.concrete, volume: 243.0, note: a 1.5 x 1.5 x 1 m pad under each of the lattice's 108 ground nodes, mass: 583200.0}
 - {what: Stack yard, item: good.concrete, volume: 5029.0, note: '140 x 171 m paved 0.25 m east of the hall: 30,452 crates two high in 1523 lanes ten deep, either side of its aisles; outdoors, the crates under tarpaulins', mass: 12070000.0}
-totals: {rate: 0.0, power: 303000.0, heat: 0.0, water: 0.0, mass: 17840000.0, against_module: 'module.ingot-yard: one box 150 x 100 x 15 m, holding 50 kt. This layout: 30,452 heavy crates of one ingot each, two high as the crate allows, need a yard 140 x 171 m (2.4 ha), more than the module''s box; the cooling hall gives 9.5 MW of the ingots'' heat to the air; 0.30 MW against the module''s 0.5; 3,938 t of plant, frame and paving, 13,897 t of concrete.'}
+- {what: 'Cooling bed, north', item: material.cast-iron-grey, volume: 12.6, note: 'cast iron floor plates 50 mm thick over x -5 to 23, y 0.5 to 9.5, so a hot ingot does not spall the concrete; 360 places, the ingots standing at 0.7 m along x and 1 m across y in the crane''s reach (y -9 to 9)', mass: 90720.0}
+- {what: 'Cooling bed, west', item: material.cast-iron-grey, volume: 6.075, note: 'cast iron floor plates 50 mm thick over x -23 to -9.5, y -5.5 to 3.5, so a hot ingot does not spall the concrete; 171 places, the ingots standing at 0.7 m along x and 1 m across y in the crane''s reach (y -9 to 9)', mass: 43740.0}
+- {what: 'Cooling bed, south-east', item: material.cast-iron-grey, volume: 1.925, note: 'cast iron floor plates 50 mm thick over x 12 to 23, y -9 to -5.5, so a hot ingot does not spall the concrete; 45 places, the ingots standing at 0.7 m along x and 1 m across y in the crane''s reach (y -9 to 9)', mass: 13860.0}
+totals: {rate: 0.0, power: 402000.0, heat: 0.0, water: 0.0, mass: 17910000.0, against_module: 'module.ingot-yard: one box 150 x 100 x 15 m, holding 50 kt. This layout: 30,452 heavy crates of one ingot each, two high as the crate allows, need a yard 140 x 171 m (2.4 ha), more than the module''s box; the cooling hall gives 9.5 MW of the ingots'' heat to the air; 0.40 MW against the module''s 0.5; 3,861 t of plant, frame and paving, 148 t of cooling beds, 13,897 t of concrete. 542 ingots cool 10 hours in the fans'' draught (576 places).'}
 staff:
 - {profession: profession.docker, count: 3}
 - {profession: profession.clerk, count: 1}
