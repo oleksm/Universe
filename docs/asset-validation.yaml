@@ -4705,3 +4705,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: layout.hydrogen-plant-air
+    version: 1
+    manifest_sha256: "2ff411d9e9ffae155e2527aa97fe5b516db8ccf94b45237d0e6f8d1d7b5d1909"
+    installed: cbc03bd6
+    game: "the loader (world::assets) at fso cbc03bd6"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/hydrogen-plant-air/v1 (15967032 bytes, bounds [-63.75, -2.5, -54.3] to [110.0, 18.19, 30.9]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
