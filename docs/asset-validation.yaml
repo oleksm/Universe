@@ -4750,3 +4750,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.balling-disc-7m5
+    version: 1
+    manifest_sha256: "c985be6e94664545b174830d4f5bc5c7eac037648180c35a1ae1b66035c2f9e7"
+    installed: 198ce21b
+    game: "the loader (world::assets) at fso 198ce21b"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/balling-disc-7m5/v1 (219540 bytes, bounds [-4.5, 0.0, -3.9] to [4.5, 7.0, 4.55]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
