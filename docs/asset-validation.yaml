@@ -4855,3 +4855,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.induration-grate-125th
+    version: 3
+    manifest_sha256: "1b8cdff70fb214652d97d0f4b1b0f9991b746f45fdc4f830963b9f7b91531fdc"
+    installed: 4768f7ab
+    game: "the loader (world::assets) at fso 4768f7ab"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/induration-grate-125th/v3 (1892732 bytes, bounds [-22.45, -0.0, -8.3] to [21.5462, 17.66, 6.01]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
