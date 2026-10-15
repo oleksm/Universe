@@ -2741,7 +2741,7 @@
 - { record: unit.cooling-tower-shaft, at: "2026-10-15T01:24:23Z", status: draft, summary: "first tracked", sha: "de1f2baa4965e350" }
 - { record: unit.crating-line, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "4f803762d4f4c669" }
 - { record: unit.crew-post, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "94bf58a6622c650d" }
-- { record: unit.crop-saws, at: "2026-10-14T21:38:01Z", status: draft, summary: "first tracked", sha: "095789ee9c876d9f" }
+- { record: unit.crop-saws, at: "2026-10-15T17:50:07Z", status: draft, summary: "changed: identity", sha: "c714d030771b6b82" }
 - { record: unit.degassing-stand, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "3f2a0b824b4bd169" }
 - { record: unit.disc-filter-2, at: "2026-10-15T05:01:04Z", status: draft, summary: "changed", sha: "52719317d0ef0afd" }
 - { record: unit.dri-bin-200t, at: "2026-10-14T14:08:01Z", status: draft, summary: "changed", sha: "1077e81910f4da8c" }
@@ -2764,7 +2764,7 @@
 - { record: unit.hydrogen-purifier-10bar, at: "2026-10-15T03:01:55Z", status: draft, summary: "first tracked", sha: "e83da2f1e77940a3" }
 - { record: unit.induration-grate-125th, at: "2026-10-15T14:53:36Z", status: draft, summary: "changed", sha: "dd2b4366548b5b5c" }
 - { record: unit.ingot-car-40t, at: "2026-10-14T21:39:31Z", status: draft, summary: "changed", sha: "ffb4022d169c5a26" }
-- { record: unit.ingot-crane-10t, at: "2026-10-15T17:47:45Z", status: draft, summary: "changed: visual", sha: "75a2669c3d06c8d7" }
+- { record: unit.ingot-crane-10t, at: "2026-10-15T17:50:07Z", status: draft, summary: "changed", sha: "a2dbf5125aab1d88" }
 - { record: unit.ladle-car-80t, at: "2026-10-14T14:50:41Z", status: draft, summary: "changed", sha: "455ad05163bdf8c8" }
 - { record: unit.ladle-crane-150t, at: "2026-10-14T19:55:55Z", status: draft, summary: "changed", sha: "aa767b9adc1f891a" }
 - { record: unit.ladle-furnace-80t, at: "2026-10-14T18:15:58Z", status: draft, summary: "changed", sha: "9cf8dd025ee54189" }
@@ -2785,7 +2785,7 @@
 - { record: unit.recuperator, at: "2026-10-14T23:45:38Z", status: draft, summary: "changed", sha: "ebc37258521d7133" }
 - { record: unit.recycle-compressor, at: "2026-10-15T01:10:30Z", status: draft, summary: "changed: physical, built_of", sha: "944821761b1a4077" }
 - { record: unit.recycle-compressor-8bar, at: "2026-10-14T19:26:44Z", status: draft, summary: "first tracked", sha: "f34cdf84380aedc8" }
-- { record: unit.sampling-lab, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "fe76c914c3297692" }
+- { record: unit.sampling-lab, at: "2026-10-15T17:50:07Z", status: draft, summary: "changed: identity, built_of", sha: "1654c992fae6125a" }
 - { record: unit.shaft-furnace-200th, at: "2026-10-14T23:03:43Z", status: draft, summary: "changed", sha: "475472e5d8cc7cc6" }
 - { record: unit.shaft-furnace-200th-hp, at: "2026-10-14T19:26:44Z", status: draft, summary: "first tracked", sha: "a36f3c28899dff95" }
 - { record: unit.slag-pot-car, at: "2026-10-14T14:59:35Z", status: draft, summary: "changed", sha: "99ae6089782a9bea" }

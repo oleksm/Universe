@@ -2008,8 +2008,8 @@ def yard_units():
     ic["desc"] += " Its box runs from the closed tongs' jaws, 1.9 m under the rail plane when parked, to the trolley's top."
     out["sampling-lab"] = dict(
         name="Sampling laboratory", size_class=1, fits="bay-s1", dims=(6.0, 6.0, 3.5),
-        desc="A cabin with a saw that cuts a sample from one ingot of each heat, a grinder, and a spark emission spectrometer that reads the steel's composition in minutes, so the heat's grade can be certified on its crates' labels.",
-        built_of=[part("Cabin", A36, 8000.0, "from memory"), part("Saw, grinder and spectrometer", "good.electric-motors", 3000.0, "from memory")],
+        desc=f"A closed steel cabin where the steel of each heat is read: no ingot comes in. At a crop saw, one ingot of each heat has a second slice taken off its cut face, a coupon {ING_A:g} m square and 25 mm thick (about {ING_A ** 2 * 0.025 * 7850:.0f} kg), which a worker brings on a hand cart to the lab's pass-through hatch. Inside, an abrasive cutter takes a 40 mm piece off it, a grinder dresses its face, and a spark emission spectrometer reads the steel's composition in minutes, so the heat's grade can be certified on its crates' labels; the coupon is kept a while, then goes to scrap. A staff door, the pass-through hatch (0.6 x 0.6 m, 1 m up) beside it, the extraction and power at the rear.",
+        built_of=[part("Cabin", A36, 8000.0, "from memory"), part("Cutter, grinder and spectrometer", "good.electric-motors", 3000.0, "from memory")],
         needs={"power": 60e3},
         basis=[{"of": ["physical", "built_of", "needs"], "tier": "invented", "review": True, "note": "From memory."}])
     # The crop saws: each cooled ingot's hot top is sawn off at its big end before crating.
@@ -2020,7 +2020,7 @@ def yard_units():
     assert n_saws <= 9, "the crop saws' unit is laid out as 3 rows of 3"
     out["crop-saws"] = dict(
         name=f"Crop saws, {n_saws}", size_class=2, fits="bay-s2", dims=(12.0, 10.0, 3.0),
-        desc=f"{n_saws} horizontal band saws in 3 rows of 3 along x, each with its roller table: the ingot crane sets a cooled ingot on a table lying along x, its big end at the blade, and the blade cuts the hot top off ({HOT_TOP:,.0f} kg, with its lifting eye) through the {ING_A:g} m square section in about {t_cut / 60:.0f} minutes with the handling; the head drops into a scrap bin under the table, which goes back to the arc furnace as scrap, and the crane lifts the sound ingot onto the crating line. {ing_h * 3600:.0f} ingots an hour from the casting bay need {n_saws}.",
+        desc=f"{n_saws} horizontal band saws in 3 rows of 3 along x, each with its roller table: the ingot crane sets a cooled ingot on a table lying along x, its big end at the blade, and the blade cuts the hot top off (for one ingot of each heat, then a 25 mm coupon off the cut face, for the sampling lab) ({HOT_TOP:,.0f} kg, with its lifting eye) through the {ING_A:g} m square section in about {t_cut / 60:.0f} minutes with the handling; the head drops into a scrap bin under the table, which goes back to the arc furnace as scrap, and the crane lifts the sound ingot onto the crating line. {ing_h * 3600:.0f} ingots an hour from the casting bay need {n_saws}.",
         built_of=[part("Band saws", "good.electric-motors", n_saws * 9000.0, "about 9 t a saw for a 0.5 m section, from memory"),
                   part("Roller tables and scrap bins", A36, n_saws * 1500.0, "from memory")],
         needs={"power": n_saws * 15e3},
