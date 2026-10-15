@@ -1875,6 +1875,8 @@ def pellet_plant_air(us, recs):
         {"what": "Grate foundations", "item": CONC, "volume": r(44 * 12 * 1.0), "note": "under the machine's frame"},
         {"what": "Frame footings", "item": CONC, "volume": r(ground_nodes * 2.25), "note": f"a 1.5 x 1.5 x 1 m pad under each of the lattice's {ground_nodes} ground nodes"},
         {"what": "Outside slabs", "item": CONC, "volume": r(24 * 12 * 0.6 + 12 * 8 * 0.5 + 28 * 6 * 0.3), "note": "the baghouse's slab and the transformer's vault"},
+        {"what": "Stack foundation", "item": CONC, "volume": r(7 * 7 * 2.5), "note": f"a block 7 x 7 x 2.5 m under the baghouse's {recs['baghouse-450k']['physical']['height']:g} m stack (centre (48, 36)), its top at grade, the stack's base ring bolted to it: against an invented 1 kPa of wind on the stack, its overturning moment about 3.2 MN m leaves the load within the middle third of the block (e 0.9 m against 1.2); soil bearing about 130 kPa at the toe"},
+        {"what": "Cooling tower basin", "item": CONC, "volume": r(12.6 * 12.6 * 0.5 + 4 * 12.3 * 2.0 * 0.3 + 12 * 0.6 * 0.6 * 2.0), "note": "a 0.5 m floor 0.6 m wider than the tower each way, walls 0.3 m thick and 2 m deep, twelve piers under the tower's feet and skid, as the hydrogen plant's"},
     ]
     for g in ground:
         g["mass"] = r(g["volume"] * RHO["concrete"])
