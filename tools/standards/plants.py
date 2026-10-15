@@ -1133,7 +1133,8 @@ def shaft_furnace_air(us, recs):
     openings = [(9.0, -3.0, z_top_gas - 3.0, 12.0, 3.0, top - 3.0),            # east wall: the top gas main out
                 (-3.0, -3.0, top - 3 * cell, 12.0, 3.0, top),                  # roof and the east wall's top: the pellet belt's gallery, rising at 15 degrees, comes in through the roof to its head over the hopper
                 (-3.0, -12.0, z_bustle - 3.0, 3.0, -9.0, z_bustle + 3.0),     # south wall: the hot gas main in to the bustle
-                (-12.0, -3.0, 3.0, -9.0, 3.0, z_ring)]                        # west wall: the product belt out, the cooling loop's pipes
+                (-12.0, -3.0, 3.0, -9.0, 3.0, z_ring),                       # west wall: the product belt out, the cooling loop's pipes
+                (-11.9, 9.1, 0.1, -6.1, 11.9, top - cell - 0.1)]             # the stair's prism in the north-west wall cells: members inside it go, those in its faces (posts, face bracing) stay
     groups, ground_nodes, n_nodes, cells = lattice(box, cell, round(top / cell) - 1, None, openings)
     x0, y0, z0, x1, y1, z1 = box
     # Wind: 1 kPa (invented) on one face; the tower's walls take its moment as chords.
@@ -1259,7 +1260,7 @@ def shaft_furnace_air(us, recs):
         "physical": {"length": r(max(xs) - min(xs)), "width": r(max(ys) - min(ys)), "height": z1, "mass": r(total)},
         "bays": bays, "links": links,
         "frame": {"box": list(box), "cell": cell, "shape": f"An open braced tower {x1 - x0:.0f} x {y1 - y0:.0f} m and {top:.0f} m tall round the shaft: walls one cell thick, a roof one cell deep carrying the belt's head house, six grating platforms at z {', '.join(str(z) for z in decks)} (the lock and feeders, the cooling zone's ports, round the bustle, the reduction zone, 3 m under the top gas main, the seal leg), each with a 10 m hole round the shaft, at z 24 a 17 m hole round the bustle (about 15 m across); "
-                           f"stairs in switchback flights inside the north-west corner of the walls (x -12 to -6, y 9 to 12), landing on each platform and the roof at z {top - cell:.0f}; no cladding.",
+                           f"stairs in switchback flights 1.2 m wide inside the north-west corner of the walls (x -12 to -6, y 9 to 12; the members inside that prism left out, its faces' posts and bracing kept), landing beams on the 3 m nodes, landing on each platform and the roof at z {top - cell:.0f}; no cladding.",
                   "openings": [list(o) for o in openings], "members": members, "carries": [f"unit.{sh_key}"], "mass": r(frame_mass), "sized": sized},
         "ground": ground,
         "totals": {"rate": S_RATE, "power": r(power), "heat": r(heat), "water": r(water), "mass": r(total), "against_module": against},
