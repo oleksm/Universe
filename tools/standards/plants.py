@@ -2087,7 +2087,7 @@ def ore_yard_air(us, recs):
     mp = omod["physical"]
     against = (f"module.ore-yard: one box {mp['length']:g} x {mp['width']:g} x {mp['height']:g} m, holding {hold / 1e6:.0f} kt. "
                f"This layout: two beds {bed_L:.0f} m long, {base:.0f} m across and {h:g} m high (iron ore at {ORE_BULK} kg/m3 lying at {REPOSE:g} degrees) hold the same; {power / 1e6:.2f} MW with every drive running, against the module's {omod['needs']['power'] / 1e6:.1f}; "
-               f"{(mass_units + mass_links) / 1000:,.0f} t of plant, {mass_ground / 1000:,.0f} t of concrete.")
+               f"{(mass_units + mass_links + sum(g['mass'] for g in ground if g['item'] == A36)) / 1000:,.0f} t of plant and supports, {sum(g['mass'] for g in ground if g['item'] == CONC) / 1000:,.0f} t of concrete.")
     layout = {
         "identity": {"key": "layout.ore-yard-air", "name": "Ore yard, world with air",
                      "description": "Two stockpile beds of ore either side of a bucket wheel stacker-reclaimer's rail. Trucks from the port tip into a hopper; the yard belt takes the ore to the machine, which stacks it, and later reclaims it onto the belt for the pellet plant. Water sprays keep the dust down. Open ground, no hall. For a world with air at about 1 g."},

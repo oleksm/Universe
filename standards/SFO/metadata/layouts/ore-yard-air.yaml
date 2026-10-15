@@ -82,7 +82,7 @@ ground:
 - {what: Support footings, item: good.concrete, volume: 6.08, note: 'feet under the belts'' stands, the return''s seats, the spray posts and the transfer; measured on blender''s layout (candidate v01)', mass: 14590.0}
 - {what: Belt and spray steel, item: material.structural-steel-a36, volume: 4.096, note: 'the belts'' stringers, legs and crossbars, the return''s stands under the tripper, roller and drum seats, the transfer hood, the trench guards and the spray posts; the belts, idlers'' rolls, drums and drives are the links''; measured on blender''s layout (candidate v01), 32,158 kg', mass: 32150.0}
 - {what: Bed pads, item: good.concrete, volume: 1680.0, note: 'two pads 105 x 40 m, 0.2 m, at y -28 and 28, sloped to drains; measured on blender''s layout (candidate v01)', mass: 4032000.0}
-totals: {rate: 0.0, power: 1580000.0, heat: 0.0, water: 0.2, mass: 6188000.0, against_module: 'module.ore-yard: one box 200 x 100 x 15 m, holding 150 kt. This layout: two beds 105 m long, 40 m across and 15 m high (iron ore at 2400 kg/m3 lying at 37 degrees) hold the same; 1.58 MW with every drive running, against the module''s 0.5; 981 t of plant, 5,206 t of concrete.'}
+totals: {rate: 0.0, power: 1580000.0, heat: 0.0, water: 0.2, mass: 6188000.0, against_module: 'module.ore-yard: one box 200 x 100 x 15 m, holding 150 kt. This layout: two beds 105 m long, 40 m across and 15 m high (iron ore at 2400 kg/m3 lying at 37 degrees) hold the same; 1.58 MW with every drive running, against the module''s 0.5; 1,014 t of plant and supports, 5,174 t of concrete.'}
 staff:
 - {profession: profession.docker, count: 3}
 - {profession: profession.clerk, count: 1}
