@@ -97,13 +97,13 @@ links:
   note: '150 mm: the filtrate back from the filters'' pump to the mill''s feed chute'
 - kind: conveyor
   name: cake belt
-  from: [-30.0, -2.4, 7.0]
-  to: [-12.0, -2.4, 9.0]
+  from: [-30.0, -2.4, 6.98]
+  to: [-12.0, -2.4, 8.98]
   length: 18.32
   item: material.structural-steel-a36
   mass: 1832.0
   via:
-  - [-18.0, -2.4, 7.0]
+  - [-18.0, -2.4, 6.98]
   power: 30000.0
   note: a 0.8 m belt on the filters' deck along x under all eight discs' chutes (y -2.4, 1 m above the deck), then rising at about 18 degrees to its head over the cake shuttle
 - kind: conveyor
@@ -117,8 +117,8 @@ links:
   note: 'a 0.8 m reversible belt along x -12, 0.4 m under the cake belt''s head: south to one header or north to the other'
 - kind: conveyor
   name: south cake header
-  from: [-12.0, -8.0, 8.18]
-  to: [8.0, -8.0, 8.18]
+  from: [-12.0, -8.0, 8.2]
+  to: [8.0, -8.0, 8.2]
   length: 20.0
   item: material.structural-steel-a36
   mass: 2000.0
@@ -126,8 +126,8 @@ links:
   note: a 0.8 m belt along y -8, 0.4 m under the shuttle's south end, with ploughs at x -6 and 6 dropping 1.2 m by chutes into discs B1 and B2's feed (z 7)
 - kind: conveyor
   name: north cake header
-  from: [-12.0, 8.0, 8.18]
-  to: [8.0, 8.0, 8.18]
+  from: [-12.0, 8.0, 8.2]
+  to: [8.0, 8.0, 8.2]
   length: 20.0
   item: material.structural-steel-a36
   mass: 2000.0
