@@ -4615,3 +4615,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.electrolyser-block-20mw
+    version: 1
+    manifest_sha256: "fba10ad99a8a16473ebfed89037ca61fd21ff6033b5db52156961ea5e7e6e770"
+    installed: 9b81bab5
+    game: "the loader (world::assets) at fso 9b81bab5"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/electrolyser-block-20mw/v1 (1683540 bytes, bounds [-10.2, 0.0, -6.0] to [11.6, 8.0, 6.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
