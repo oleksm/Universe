@@ -4,7 +4,7 @@ identity: {key: unit.ladle-furnace-80t-sealed, name: 'Ladle furnace, 80 t, seale
     and an alloy chute through the roof. Its arc, about 10.9 MW at full heat, comes from its own transformer by a bus on its -y side (local 0, -5, 6); its cooling water by a manifold at local (-4.5, -4.5, 1); the alloys by a chute whose top stands at local (0, 3, 9); its fume leaves by an elbow on the roof at local (2, 0, 7.5). Argon is blown through the ladle''s porous plug from the car. At rest: the roof''s rim on the ladle''s lip (z 4.4), its crown at 5.2; three 300 mm graphite electrodes on a 0.35 m pitch radius through the roof''s delta; the masts at the rear (y -3.8), their arms fanning forward, the centre arm 0.6 m higher; the gantry''s columns at x -5 and 5, y -4.4 and 4.4, 12 m tall, its two cross beams on top.'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 10.7, height: 14.0, mass: 80180.0}
+physical: {length: 12.0, width: 10.7, height: 14.0, mass: 79940.0}
 built_of:
 - {what: Roof panels, item: material.structural-steel-a36, mass: 5010.0, note: 'water-cooled pipe panels over a dome 4.6 m across, 1.15 times the disc, the lifting frame half as much again'}
 - {what: Roof delta, item: good.refractory-brick, mass: 771.6, note: 'the refractory centre round the electrode ports, 1.2 m across, 0.3 m thick, less its electrode, feed and fume bores: 0.257 m3 as measured on blender''s model (candidate v01)'}
@@ -13,9 +13,11 @@ built_of:
 - {what: Current-conducting arms, item: material.aluminium-1350, mass: 843.0, note: 'three box arms 0.5 x 0.35 m, 20 mm wall, trimmed at their insulated carriages: measured on blender''s model (candidate v01)'}
 - {what: Secondary cables, item: material.copper, mass: 1528.0, note: 'two water-cooled copper cables a phase, each 2630 mm2 for half of 26 kA at 5 A/mm2, run behind the steel and over the top on six insulators: measured on blender''s model (1,414 kg for 10 m each)'}
 - {what: Roof lift and mast hydraulics, item: good.pumps, mass: 6000.0, note: from memory}
-- {what: Rim seal and electrode glands, item: material.structural-steel-a36, mass: 2500.0, note: 'a soft ring of ceramic fibre rope on the roof''s skirt (a hot rim burns elastomers), which leaks some argon that the feed makes up, and insulated water-cooled glands round the electrodes, from memory'}
-- {what: Roof locks, item: material.structural-steel-a36, mass: 600.0, note: '50 kPa under the roof over the ladle''s 2.9 m mouth lifts it with about 330 kN; the roof''s own weight (about 5.8 t, 9 kN at 1.6 m/s2) barely counts against it, so two mechanical lock collars on the roof''s lift rods take about 165 kN each into the gantry; from memory'}
-- {what: Alloy lock, item: material.structural-steel-a36, mass: 1200.0, note: 'two valves in the chute, from memory'}
+- {what: Electrode glands, item: material.structural-steel-a36, mass: 368.7, note: insulated water-cooled glands round the electrodes; measured on blender's model v1}
+- {what: Rim seal and gland packing, item: material.silicon-carbide, mass: 150.0, note: 'a soft ring of ceramic fibre rope on the roof''s skirt (a hot rim burns elastomers), which leaks some argon that the feed makes up, and the glands'' packing; silicon carbide stands for the ceramic fibre, from memory'}
+- {what: Roof locks, item: material.structural-steel-a36, mass: 1023.0, note: '50 kPa under the roof over the ladle''s 2.9 m mouth lifts it with about 330 kN; the roof''s own weight (about 5.8 t, 9 kN at 1.6 m/s2) barely counts against it, so lock collars on the two lift rods take about 165 kN each through twin 40 x 100 mm straps (about 21 MPa) to the cylinders'' fixed heads on the gantry; measured on model v1'}
+- {what: Alloy lock, item: material.structural-steel-a36, mass: 2014.0, note: two valves and a chamber in the chute; measured on model v1}
+- {what: Lock drives, item: good.electric-motors, mass: 500.0, note: 'the locks'' actuators, from memory'}
 holds: 625.3
 needs: {power: 7500000.0, heat: 1500000.0, gravity: 1.6, atmosphere: any}
 recipes:

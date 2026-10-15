@@ -2454,9 +2454,11 @@ def airless_ladle_units(us):
     lf["desc"] = ("The 80 t ladle furnace closed for airless ground: its roof's skirt seals on the ladle's rim with a soft ring, glands round the electrodes, the alloys in through a lock in the chute, and argon fed under the roof to about 50 kPa, so the arc burns as in air and the manganese it adds is not boiled off into the vacuum (open to vacuum, an 80 t heat at 1,600 deg C would lose about a fifth of its manganese in a quarter hour). "
                  "Its fume, mostly argon, leaves by the roof's elbow to the layout's filter. Otherwise as unit.ladle-furnace-80t: " + us["ladle-furnace-80t"]["desc"])
     lf["built_of"] = list(us["ladle-furnace-80t"]["built_of"]) + [
-        part("Rim seal and electrode glands", A36, 2500.0, "a soft ring of ceramic fibre rope on the roof's skirt (a hot rim burns elastomers), which leaks some argon that the feed makes up, and insulated water-cooled glands round the electrodes, from memory"),
-        part("Roof locks", A36, 600.0, "50 kPa under the roof over the ladle's 2.9 m mouth lifts it with about 330 kN; the roof's own weight (about 5.8 t, 9 kN at 1.6 m/s2) barely counts against it, so two mechanical lock collars on the roof's lift rods take about 165 kN each into the gantry; from memory"),
-        part("Alloy lock", A36, 1200.0, "two valves in the chute, from memory")]
+        part("Electrode glands", A36, 368.7, "insulated water-cooled glands round the electrodes; measured on blender's model v1"),
+        part("Rim seal and gland packing", "material.silicon-carbide", 150.0, "a soft ring of ceramic fibre rope on the roof's skirt (a hot rim burns elastomers), which leaks some argon that the feed makes up, and the glands' packing; silicon carbide stands for the ceramic fibre, from memory"),
+        part("Roof locks", A36, 1023.4, "50 kPa under the roof over the ladle's 2.9 m mouth lifts it with about 330 kN; the roof's own weight (about 5.8 t, 9 kN at 1.6 m/s2) barely counts against it, so lock collars on the two lift rods take about 165 kN each through twin 40 x 100 mm straps (about 21 MPa) to the cylinders' fixed heads on the gantry; measured on model v1"),
+        part("Alloy lock", A36, 2014.5, "two valves and a chamber in the chute; measured on model v1"),
+        part("Lock drives", "good.electric-motors", 500.0, "the locks' actuators, from memory")]
     lf["needs"] = dict(us["ladle-furnace-80t"]["needs"])
     lf["basis"] = us["ladle-furnace-80t"]["basis"] + [{"of": ["identity.description"], "tier": "invented", "review": True, "note": "Manganese's loss: its vapour pressure over a 1% melt (about 40 Pa at 1,873 K, from memory) through Hertz-Knudsen over the ladle's 7 m2. Sealed roofs as on closed furnaces; not built for vacuum."}]
     out["ladle-furnace-80t-sealed"] = lf
