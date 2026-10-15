@@ -5050,3 +5050,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: layout.ingot-yard-air
+    version: 1
+    manifest_sha256: "b086393f156b3670703d0db9a77a1d8a7d2e324a411f28255c5f0e669694238f"
+    installed: 41c72c93
+    game: "the loader (world::assets) at fso 41c72c93"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/ingot-yard-air/v1 (11988540 bytes, bounds [-36.0, -1.0, -85.5] to [199.7, 15.4422, 85.5]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
