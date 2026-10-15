@@ -10,6 +10,12 @@ built_of:
 - {what: Heat shield, item: good.refractory-brick, mass: 4573.0, note: '3.6 m across, its refractory; measured on model v1'}
 - {what: 'Slew drive, bearings and valves', item: good.electric-motors, mass: 1000.0, note: from memory}
 needs: {power: 30000.0, atmosphere: vacuum}
+visual:
+  format: "freefall-model/1"
+  path: "models/degassing-stand/v1"
+  manifest_sha256: "d6f152ab5af50cf230ff187895ec0f38981ac51590578101ef18beb09682749f"
+  version: 1
+  triangles: 2804
 life: 788940000
 basis:
 - of: [physical, built_of]
