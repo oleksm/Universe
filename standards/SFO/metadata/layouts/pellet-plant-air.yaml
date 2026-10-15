@@ -273,6 +273,12 @@ staff:
 - {profession: profession.metalworker, count: 2}
 - {profession: profession.technician, count: 1}
 - {profession: profession.engineer, count: 1}
+visual:
+  format: "freefall-model/1"
+  path: "models/pellet-plant-air/v1"
+  manifest_sha256: "13b4b0fcbcac5c3d634496069cee1313f5afa290c887604b9e0981ca1086da4a"
+  version: 1
+  triangles: 321240
 basis:
 - of: [bays, links, frame.box, frame.openings]
   tier: invented
