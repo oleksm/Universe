@@ -15,13 +15,8 @@ built_of:
 - {what: 'Skid, skirts and supports', item: material.structural-steel-a36, mass: 24150.0, note: 'the skid''s beams and feet, the dryers'' skirts and base rings, the exchangers'' stands and saddles, the headers'' posts; measured on model v1'}
 - {what: Piping and valve bodies, item: material.stainless-steel-304, mass: 3916.0, note: 'the process, regeneration and water pipes and the valves'' bodies; measured on model v1'}
 needs: {power: 296100.0, heat: 1448000.0}
-visual:
-  format: "freefall-model/1"
-  path: "models/hydrogen-purifier/v1"
-  manifest_sha256: "c68ccc70f176081bf583bcf03a409c8c79260a9f608cc8d69646d2d784531a58"
-  version: 1
-  triangles: 41476
 life: 788940000
+visual: {format: freefall-model/1, path: models/hydrogen-purifier/v1, manifest_sha256: c68ccc70f176081bf583bcf03a409c8c79260a9f608cc8d69646d2d784531a58, version: 1, triangles: 41476}
 basis:
 - of: [physical, built_of, needs]
   tier: derived

@@ -825,8 +825,8 @@
 - { record: layout.arc-furnace-airless, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "befaa429a44d04ce" }
 - { record: layout.casting-bay-air, at: "2026-10-15T02:26:46Z", status: draft, summary: "changed: physical", sha: "64ae565ca9d653a2" }
 - { record: layout.casting-bay-airless, at: "2026-10-14T21:36:13Z", status: draft, summary: "changed: physical, totals", sha: "ed7687b7564fac7a" }
-- { record: layout.hydrogen-plant-air, at: "2026-10-15T03:15:59Z", status: draft, summary: "changed: physical, totals", sha: "89efd816d10f1720" }
-- { record: layout.hydrogen-plant-airless, at: "2026-10-15T03:01:55Z", status: draft, summary: "changed: physical, bays, links, ground, totals", sha: "bffb596ec3d971bf" }
+- { record: layout.hydrogen-plant-air, at: "2026-10-15T03:26:57Z", status: draft, summary: "changed: links, totals", sha: "4422c8055df40e73" }
+- { record: layout.hydrogen-plant-airless, at: "2026-10-15T03:26:57Z", status: draft, summary: "changed: physical, bays, links, totals", sha: "f17169ab70753e43" }
 - { record: layout.ingot-yard-air, at: "2026-10-14T21:38:01Z", status: draft, summary: "changed: identity, physical, bays, totals", sha: "be2f1f8941755a1b" }
 - { record: layout.ladle-station-air, at: "2026-10-15T02:26:46Z", status: draft, summary: "changed: physical", sha: "31ea2691985163d3" }
 - { record: layout.ladle-station-airless, at: "2026-10-15T02:24:50Z", status: draft, summary: "changed: physical", sha: "fa8e490ab722454b" }
@@ -1360,7 +1360,7 @@
 - { record: part.wb-03, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "fc9231a50b47acd4" }
 - { record: part.wb-04, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "63ae488f7cfc4f5a" }
 - { record: plant-mount.bay-s1, at: "2026-10-15T01:25:05Z", status: draft, summary: "changed: basis", sha: "2f08ea6d5d1a2c13" }
-- { record: plant-mount.bay-s2, at: "2026-10-15T03:01:55Z", status: draft, summary: "changed: basis", sha: "9bb8e524a6742e07" }
+- { record: plant-mount.bay-s2, at: "2026-10-15T03:26:57Z", status: draft, summary: "changed: basis", sha: "06c4c920dfdc651f" }
 - { record: plant-mount.bay-s3, at: "2026-10-15T01:25:05Z", status: draft, summary: "changed: basis", sha: "0d6434ba0fb701e4" }
 - { record: plant-mount.bay-s4, at: "2026-10-15T01:25:05Z", status: draft, summary: "changed: basis", sha: "ff5327a9fe69bb44" }
 - { record: population.biraidim.far-cloud, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "4d04c1b699eb49db" }
@@ -2757,7 +2757,7 @@
 - { record: unit.gas-heater-122mw, at: "2026-10-14T23:18:51Z", status: draft, summary: "changed: identity", sha: "0387b010dcb0fe1c" }
 - { record: unit.hall-crane-20t, at: "2026-10-14T15:45:44Z", status: draft, summary: "changed", sha: "88da9f2b1f1ffdd5" }
 - { record: unit.heater-transformer-131mva, at: "2026-10-14T23:21:51Z", status: draft, summary: "changed", sha: "7efdc1b7a92f020c" }
-- { record: unit.hydrogen-purifier, at: "2026-10-15T03:23:18Z", status: draft, summary: "changed: visual", sha: "22d6cae080e8aa73" }
+- { record: unit.hydrogen-purifier, at: "2026-10-15T03:26:57Z", status: draft, summary: "changed", sha: "80a46b46c60f8eb6" }
 - { record: unit.hydrogen-purifier-10bar, at: "2026-10-15T03:01:55Z", status: draft, summary: "first tracked", sha: "e83da2f1e77940a3" }
 - { record: unit.induration-grate-125th, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "9741fdd206bb54be" }
 - { record: unit.ingot-car-40t, at: "2026-10-14T21:39:31Z", status: draft, summary: "changed", sha: "ffb4022d169c5a26" }
@@ -2790,7 +2790,8 @@
 - { record: unit.top-gas-scrubber, at: "2026-10-15T00:44:40Z", status: draft, summary: "changed", sha: "905cd617b18be94c" }
 - { record: unit.truck-dump-hopper, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "69379232aafc2169" }
 - { record: unit.vacuum-degasser-80t, at: "2026-10-14T18:23:23Z", status: draft, summary: "changed", sha: "b01f8bbfcca9fb37" }
-- { record: unit.water-treatment, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "bd4aa8977b986fd2" }
+- { record: unit.water-treatment, at: "2026-10-15T03:26:57Z", status: draft, summary: "changed: identity, physical, built_of, needs, basis", sha: "149d91e3db7ab48e" }
+- { record: unit.water-treatment-sealed, at: "2026-10-15T03:26:57Z", status: draft, summary: "first tracked", sha: "cc51e1a707bd7340" }
 - { record: vocabulary.asteroid, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "c85b5b93f49a4621" }
 - { record: vocabulary.asteroid-family, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "3893f86924156b47" }
 - { record: vocabulary.asteroid-moon, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "8de295aa732db166" }

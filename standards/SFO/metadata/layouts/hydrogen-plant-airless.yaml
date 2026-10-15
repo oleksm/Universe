@@ -5,7 +5,7 @@ stands_for: module.hydrogen-plant
 site:
   atmosphere: none
   gravity: [1.6, 2.0]
-physical: {length: 288.0, width: 198.0, height: 25.0, mass: 4890000.0}
+physical: {length: 288.0, width: 198.0, height: 25.0, mass: 4891000.0}
 bays:
 - id: E1
   mount: plant-mount.bay-s3
@@ -64,7 +64,7 @@ bays:
   note: east
 - id: W
   mount: plant-mount.bay-s2
-  unit: unit.water-treatment
+  unit: unit.water-treatment-sealed
   at: [72.0, -24.0, 0.0]
   note: 'south-east: polishes the shaft furnace''s condensate and the ice miners'' water'
 - id: Q
@@ -248,6 +248,14 @@ links:
   mass: 595.6
   note: '150 mm: the shaft furnace''s condensate and make-up from ice, beyond the layout'
 - kind: pipe
+  name: reject back
+  from: [78.0, -20.6, 0.3]
+  to: [110.0, -20.6, 0.3]
+  length: 32.0
+  item: material.stainless-steel-304
+  mass: 595.6
+  note: '150 mm: the concentrate and backwash kept, back to the ice plant''s evaporator beyond the layout'
+- kind: pipe
   name: demineralised water
   from: [66.0, -24.0, 0.5]
   to: [59.0, 6.0, 1.0]
@@ -298,7 +306,7 @@ ground:
 - {what: Rectifier and outside pads, item: material.regolith-sintered, volume: 336.0, mass: 840000.0}
 - {what: Radiator legs' pads, item: material.regolith-sintered, volume: 52.27, mass: 130700.0}
 - {what: Crew post berm, item: material.regolith, volume: 164.6, mass: 246900.0}
-totals: {rate: 0.525, power: 99380000.0, heat: 26270000.0, water: 0.0, mass: 4890000.0, against_module: 'module.hydrogen-plant: one box, 100 MW. This layout: the same rate; 99.4 MW; 26.3 MW to 18 radiator fields at 345 K (4.1 ha); its 4.7 kg/s of water all comes back from the shaft furnace, none evaporated; no hall; the blocks at 10 bar feed the furnace''s loop with no compressor. 2,232 t of plant, 2,658 t of sintered regolith.'}
+totals: {rate: 0.525, power: 99210000.0, heat: 26270000.0, water: 0.0, mass: 4891000.0, against_module: 'module.hydrogen-plant: one box, 100 MW. This layout: the same rate; 99.2 MW; 26.3 MW to 18 radiator fields at 345 K (4.1 ha); its 4.7 kg/s of water all comes back from the shaft furnace, none evaporated; no hall; the blocks at 10 bar feed the furnace''s loop with no compressor. 2,234 t of plant, 2,658 t of sintered regolith.'}
 staff:
 - {profession: profession.chemist, count: 2}
 - {profession: profession.plant-operator, count: 4}

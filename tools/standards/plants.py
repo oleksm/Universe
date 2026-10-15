@@ -1399,6 +1399,66 @@ def hydrogen_purifier(name, P, T_in, T_cool, cop, cool_txt, measured=None):
     return u
 
 
+def water_treatment(name, airless=False):
+    """Demineralised water for the cells: two sand filters, a cartridge filter, a two-stage reverse osmosis bank and an
+    electrodeionisation stage. For air under an open roof; airless in a closed, insulated house with every tank sealed."""
+    q_p = H_WATER * 3.6                                          # m3/h of product
+    rec = 0.85 if airless else 0.75                              # the bank's recovery: condensate and ice melt are cleaner than river water
+    perm = q_p / 0.9                                             # the EDI keeps 90%; its reject goes back to the bank's feed
+    feed = perm / rec
+    raw = feed - (perm - q_p)
+    conc = feed - perm
+    A_f = raw / 10.0                                             # m2 of sand at 10 m/h
+    D_f = math.ceil(math.sqrt(4 * A_f / math.pi) * 10) / 10
+    t_f = max(0.006, math.ceil((7e5 * D_f / 2 / (138e6 * 0.85 - 0.6 * 7e5) + 0.0015) * 1000) / 1000)
+    n_el = math.ceil(perm / (0.020 * 37.2))                     # 8 inch elements of 37.2 m2 at 20 L/m2/h
+    n_v = math.ceil(n_el / 6)
+    n_v1 = math.ceil(n_v * 0.6)
+    n_el = n_v * 6
+    p_ro = 10e5 if airless else 12e5
+    t_pv = math.ceil((1.5 * p_ro * 0.21 / 2 / (138e6 * 0.85) + 0.0015) * 1000) / 1000
+    n_edi = math.ceil(perm / 3.6)                                # modules of 3.6 m3/h
+    V_bt = perm / 4                                              # 15 minutes of permeate
+    H_bt = math.ceil(V_bt / (math.pi * 2.0 ** 2 / 4) * 10) / 10
+    pumps = {"feed booster": raw / 3600 * 3e5 / 0.7, "high-pressure": feed / 3600 * p_ro / 0.75, "product": q_p / 3600 * 4e5 / 0.7}
+    p_bw = 40 * A_f / 3600 * 2.5e5 / 0.7                         # backwash at 40 m/h, ten minutes a filter a day
+    p_edi = 0.4e3 * q_p                                          # W: 0.4 kWh a m3
+    p_heat = 10e3 if airless else 0.0                            # trace heating for the lunar night, from memory
+    power = sum(pumps.values()) + p_edi + 5e3 + p_heat
+    pump_m = sum(100 + 30 * w / 1e3 for w in list(pumps.values()) + [p_bw]) + 2 * 150 + 300   # 30 kg/kW and 100 kg a set; the CIP pump, the dosing skid
+    where = ("in a closed house of insulated sandwich panels under multi-layer insulation, unpressurised (the crews work in suits), every tank sealed under a nitrogen blanket with no vent to the vacuum, trace heaters for the night"
+             if airless else "on a skid under an open-sided roof on six columns, its eaves 4.5 m up")
+    feed_txt = "the shaft furnace's condensate and melted ice" if airless else "town or river water"
+    reject = ("Its reject is kept: back with the raw water's return, beyond the layout, to the ice plant's evaporator."
+              if airless else "Its reject goes to drain.")
+    u = dict(
+        name=name, size_class=2, fits="bay-s2", dims=(12.0, 8.0, 5.0),
+        desc=(f"Makes the {H_WATER:.1f} kg/s ({q_p:.1f} m3/h) of demineralised water the cells split, below 1 uS/cm, from {raw:.1f} m3/h of {feed_txt}, {where}. A service aisle along x at y -1.2 to 1.2. In order: "
+              f"two sand filters east ({D_f:g} m across, 2.5 m straight with dished heads, {t_f * 1000:.0f} mm plate rubber-lined, on 0.5 m legs, centres (4.6, -2.2) and (4.6, 2.2)), one backwashing while the other runs; "
+              f"a cartridge filter (0.4 m across, 1.5 m, at (2.6, 1.6)) and the antiscalant dosing; the reverse osmosis bank north, {n_v} pressure tubes 0.21 m across and 6.7 m long in stainless, horizontal along x from x -3.6 to 3.1, "
+              f"in a rack y 1.8 to 3.6, z 0.4 to 2.6 ({n_v1} first stage, {n_v - n_v1} second, {n_el} elements, {p_ro / 1e5:.0f} bar, {rec:.0%} recovery); "
+              f"a closed cabinet west for the electrodeionisation stage (x -5.8 to -4.2, y -2.2 to 2.2, 2.2 m tall: {n_edi} modules and their DC supplies); "
+              f"the pump skid south (x -3.6 to 3.4, y -3.8 to -1.6): the feed booster, high-pressure, product, backwash and cleaning pumps, the cleaning tank (1 m3) and the permeate break tank (2 m across, {H_bt:g} m tall, at (-2.4, -2.7)). "
+              f"Raw water in at local (6, 0, 0.5), clean water out at (-6, 0, 0.5); reject and backwash out by a 150 mm flange at (6, 3.4, 0.3) ({conc:.1f} m3/h of concentrate, {40 * A_f:.0f} m3/h while a filter backwashes). {reject} 400 V supply at (-6, -3.4, 0.5)."),
+        built_of=[part("Sand filters", A36, 2 * cyl_shell(D_f, 2.5, t_f, bottom=2.2) * RHO["steel"] + 2 * 150, f"two shells {D_f:g} m by 2.5 m in {t_f * 1000:.0f} mm for 7 bar, heads as 1.1 discs, their legs and nozzle plates"),
+                  part("Filter sand", "good.silica-sand", 2 * 1.2 * math.pi * D_f ** 2 / 4 * 1600, "1.2 m of graded sand and gravel in each, 1,600 kg/m3"),
+                  part("Pressure tubes", "material.stainless-steel-304", n_v * (cyl_shell(0.21, 6.7, t_pv) * 7900 + 30), f"{n_v} tubes 0.21 m by 6.7 m in {t_pv * 1000:.0f} mm for {1.5 * p_ro / 1e5:.0f} bar, 30 kg of end caps each"),
+                  part("Membrane elements", "material.polyethylene-uhmw", n_el * 16, f"{n_el} spiral-wound polyamide elements, 16 kg each, which the registry has not got: polyethylene stands for them"),
+                  part("Electrodeionisation", A36, n_edi * 180 + 1200, f"{n_edi} modules of ion-exchange membranes and resin between steel end plates, 180 kg each, and the cabinet with its DC supplies, from memory"),
+                  part("Tanks and cartridge filter", "material.stainless-steel-304", cyl_shell(2.0, H_bt, 0.004, bottom=2.2) * 7900 + 350, f"the break tank 2 m by {H_bt:g} m in 4 mm, the cleaning tank and the cartridge housing"),
+                  part("Pumps and dosing", "good.pumps", pump_m, "five pump sets at 30 kg/kW and 100 kg each, the dosing skid, from memory"),
+                  part("Piping and valves", "material.stainless-steel-304", 1500.0, "from memory"),
+                  part("Skid deck and rack", A36, 96 * 40 + 1500, "a beam deck under the bay at 40 kg/m2 and the tube rack, from memory")]
+                 + ([part("House frame", A36, 3000.0, "from memory"), part("House panels", "material.honeycomb-sandwich-panel", 296 * 0.06 * 150, "296 m2 of walls and roof, 60 mm panels"),
+                     part("Insulation", "material.multi-layer-insulation", 296 * 0.02 * 50, "20 mm of blanket over the house")]
+                    if airless else [part("Roof and columns", A36, 6 * 5 * 60 + 96 * 20, "six columns at 60 kg/m and 96 m2 of roof at 20 kg/m2 with its purlins, from memory")]),
+        needs=dict({"power": power}, **({"atmosphere": "any"} if airless else {})),
+        basis=[{"of": ["physical", "built_of", "needs"], "tier": "derived", "review": True,
+                "note": (f"From the cells' {q_p:.1f} m3/h: the EDI keeps 90%, the bank {rec:.0%} at 20 L/m2/h on 37.2 m2 elements, six to a tube; the sand filters at 10 m/h, their shells for 7 bar in A36 at 138 MPa (85% joints, 1.5 mm allowance); "
+                         f"pumps at 70-75% ({', '.join(f'{k} {v / 1e3:.1f} kW' for k, v in pumps.items())}), the EDI at 0.4 kWh/m3, 5 kW of controls; backwash {p_bw / 1e3:.0f} kW ten minutes a day, not counted. Fluxes, recoveries and equipment weights from memory.")}])
+    return u
+
+
 def hydrogen_units():
     out = {}
     area = I_BLK / J_CELL
@@ -1452,12 +1512,8 @@ def hydrogen_units():
                                                            "Piping and valve bodies": ("material.stainless-steel-304", 3916.0, "the process, regeneration and water pipes and the valves' bodies")})
     out["hydrogen-purifier-10bar"] = hydrogen_purifier("Hydrogen purifier, 10 bar", 10e5, 80.0, 80.0, 2.0,
                                                        f"For airless ground: its loop water comes back from the radiators at about {HP_T_LOOP - 273.15:.0f} deg C, so the after-cooler only takes the gas to 80 deg C and the chiller lifts all the rest to its condenser at about 85 deg C, at half the air plant's COP.")
-    out["water-treatment"] = dict(
-        name="Water treatment", size_class=2, fits="bay-s2", dims=(12.0, 8.0, 5.0),
-        desc=f"Makes the {H_WATER:.1f} kg/s of demineralised water the cells split: filters, reverse osmosis and an electrodeionisation stage, on skids under a roof. Raw water in at local (6, 0, 0.5), clean water out at (-6, 0, 0.5).",
-        built_of=[part("Skids and membranes", A36, 25000.0, "from memory"), part("Pumps", "good.pumps", 4000.0, "from memory")],
-        needs={"power": 200e3},
-        basis=[{"of": ["physical", "built_of", "needs"], "tier": "invented", "review": True, "note": "From memory."}])
+    out["water-treatment"] = water_treatment("Water treatment")
+    out["water-treatment-sealed"] = water_treatment("Water treatment, sealed", airless=True)
     out["stack-crane-20t"] = bridge_crane_unit(20000.0, 22.8, 6000.0, kind="Stack crane", job="it lifts an electrolyser stack's end plates and cell packs out for refurbishment and sets in new ones", gear="a main hoist")
     return out
 
@@ -1534,6 +1590,7 @@ def hydrogen_plant_air(us, recs):
         link("pipe", "oxygen header", (xs_b[0] + 10.5, 2.5, 8.0), (110.0, 6.0, 9.0), ss, pm(d_o2, 0.006), None, f"{d_o2:.2f} m stainless, 6 mm wall: the {H_O2:.1f} kg/s of oxygen, out by the east wall to a vent stack or to buyers (the arc furnace lances it), beyond the layout; clean, oil-free, as oxygen service needs", via=[(xs_b[0] + 10.5, 2.5, 9.0), (58.5, 2.5, 9.0), (58.5, 6.0, 9.0)]),
         link("pipe", "demineralised water", (66.0, -24.0, 0.5), (59.0, 6.0, 1.0), ss, pm(0.1, 0.004), None, f"100 mm stainless, {H_WATER:.1f} kg/s to the blocks' feed points along the hall's north side", via=[(62.0, -24.0, 0.5), (62.0, 6.0, 0.5)]),
         link("pipe", "raw water", (110.0, -24.0, 0.5), (78.0, -24.0, 0.5), A36, pm(0.15, 0.005), None, "150 mm: town or river water, or the shaft furnace's condensate, beyond the layout"),
+        link("pipe", "reject to drain", (78.0, -20.6, 0.3), (110.0, -20.6, 0.3), A36, pm(0.15, 0.005), None, "150 mm: the reverse osmosis concentrate and the filters' backwash, beyond the layout"),
         link("pipe", "cooling water to the rectifiers", (tower["dims"][0] / 2, 48.0, 0.75), (xs_b[0] - 3.45, -30.0, 0.75), A36, 2 * pm(d_rh, 0.005), None, f"a pair of {d_rh:.2f} m pipes, 5 mm wall, flow and return: {(q_r * N_BLK + q_p) / (4186 * 10):.0f} kg/s for the rectifier transformers' coolers and the purifier, from the tower east of the hall, south past the purifier (a tee for it at y -6) and west along y -30 behind the rectifiers", via=[(63.0, 48.0, 0.75), (63.0, -30.0, 0.75)]),
         link("pipe", "cooling water to the purifier", (63.0, -6.0, 0.75), (72.3, -4.0, 1.0), A36, 2 * pm(d_pb, 0.004), None, f"a pair of {d_pb * 1000:.0f} mm pipes off the rectifiers' header, east along y -6 and north, level into the purifier's flanges on its -y face (x 72 flow, 72.6 return)", via=[(72.3, -6.0, 0.75), (72.3, -6.0, 1.0)]),
         *[link("pipe", f"cooling water to rectifier {i + 1}", (x - 3.45, -30.0, 0.75), (x - rt["dims"][0] / 2, -25.5, 1.0), A36, 2 * pm(d_rb, 0.004), None, f"a pair of {d_rb * 1000:.0f} mm pipes off the header, north and level into the cooler's ports on the -x end (y -25.86 and -25.14)", via=[(x - 3.45, -25.5, 0.75), (x - 3.45, -25.5, 1.0)]) for i, x in enumerate(xs_b)],
@@ -2551,7 +2608,7 @@ def hydrogen_plant_airless(us, recs):
     bays = [{"id": f"E{i + 1}", "mount": "plant-mount.bay-s3", "unit": "unit.electrolyser-block-20mw-10bar", "at": [x, 0.0, 0.0], "note": "on its pad in the open"} for i, x in enumerate(xs_b)]
     bays += [{"id": f"R{i + 1}", "mount": "plant-mount.bay-s2", "unit": "unit.rectifier-transformer-21mva", "at": [x, -24.0, 0.0], "note": "south, no fire walls"} for i, x in enumerate(xs_b)]
     bays += [{"id": "P", "mount": "plant-mount.bay-s2", "unit": "unit.hydrogen-purifier-10bar", "at": [72.0, 0.0, 0.0], "note": "east"},
-             {"id": "W", "mount": "plant-mount.bay-s2", "unit": "unit.water-treatment", "at": [72.0, -24.0, 0.0], "note": "south-east: polishes the shaft furnace's condensate and the ice miners' water"},
+             {"id": "W", "mount": "plant-mount.bay-s2", "unit": "unit.water-treatment-sealed", "at": [72.0, -24.0, 0.0], "note": "south-east: polishes the shaft furnace's condensate and the ice miners' water"},
              {"id": "Q", "mount": "plant-mount.bay-s1", "unit": "unit.crew-post", "at": [-72.0, -24.0, 0.0], "note": "south-west, under its berm"}]
     bays += [{"id": f"RL{i + 1}", "mount": "plant-mount.bay-s4", "unit": f"unit.{rad}", "at": [x, y, 0.0], "note": f"north, in rows of {cols}"} for i, (x, y) in enumerate(rad_at)]
     rt = us["rectifier-transformer-21mva"]
@@ -2569,6 +2626,7 @@ def hydrogen_plant_airless(us, recs):
         link("pipe", "hydrogen to the shaft furnace", (78.0, 0.0, 2.0), (110.0, 0.0, 2.0), ss, pm(d_h2, 0.006), None, f"{H_RATE:.3f} kg/s at 10 bar, beyond the layout"),
         link("pipe", "oxygen header", (xs_b[0] + 10.5, 2.5, 8.0), (110.0, 6.0, 9.0), ss, pm(math.sqrt(4 * (H_O2 / 32e-3 * 8.314 * 353 / 10e5) / (math.pi * 15.0)), 0.006), None, f"the {H_O2:.1f} kg/s of oxygen, beyond the layout: on a moon it is worth keeping (crews' air, the pellet plant's firing)", via=[(xs_b[0] + 10.5, 2.5, 9.0), (58.5, 2.5, 9.0), (58.5, 6.0, 9.0)]),
         link("pipe", "water in", (110.0, -24.0, 0.5), (78.0, -24.0, 0.5), ss, pm(0.15, 0.005), None, "150 mm: the shaft furnace's condensate and make-up from ice, beyond the layout"),
+        link("pipe", "reject back", (78.0, -20.6, 0.3), (110.0, -20.6, 0.3), ss, pm(0.15, 0.005), None, "150 mm: the concentrate and backwash kept, back to the ice plant's evaporator beyond the layout"),
         link("pipe", "demineralised water", (66.0, -24.0, 0.5), (59.0, 6.0, 1.0), ss, pm(0.1, 0.004), None, f"{H_WATER:.1f} kg/s to the blocks", via=[(62.0, -24.0, 0.5), (62.0, 6.0, 0.5)]),
         link("pipe", "loop water to the radiators", (rad_at[-1][0] + 24.0, rad_at[-1][1], 1.0), (-48.0 + 11.0, 6.0, 1.0), A36, 2 * math.pi * d_cw * 0.010 * RHO["steel"], None, f"a pair of {d_cw:.2f} m pipes at about {HP_T_LOOP:.0f} K: {flow:,.0f} kg/s along the {n_rad} radiator fields' rows to the blocks' coolers, a branch to the rectifiers", via=[(84.0, rad_at[-1][1], 1.0), (84.0, 20.0, 1.0), (-37.0, 20.0, 1.0)]),
         link("pipe", "loop water to the purifier", (84.0, 20.0, 1.0), (72.3, -4.0, 1.0), A36, 2 * math.pi * d_pw * 0.004 * RHO["steel"], None, f"a pair of {d_pw * 1000:.0f} mm pipes teed off the radiator loop at x 84, south and west along y -6, level into the purifier's flanges on its -y face (x 72 flow, 72.6 return)", via=[(84.0, -6.0, 1.0), (72.3, -6.0, 1.0)]),
