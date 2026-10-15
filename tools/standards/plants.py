@@ -1612,7 +1612,8 @@ def hydrogen_plant_air(us, recs):
         *[link("pipe", f"cooling water to block {i + 1}", (x + 11.0, 9.0, 1.0), (x + 11.0, 6.0, 1.0), A36, 2 * pm(0.25, 0.006), None, "a pair of 250 mm pipes off the header, south, level into the block's flanges (x 10.6 flow, 11.4 return)") for i, x in enumerate(xs_b)],
     ]
     ground = [
-        {"what": "Hall floor", "item": CONC, "volume": r(x_in * span_in * 0.4), "note": f"0.4 m, {x_in:.0f} x {span_in:.0f} m, top at z 0, with a lye-proof coating; a bund 0.3 m high and 0.2 m thick round each block, 0.5 m outside its skid, to hold a stack's lye"},
+        {"what": "Hall floor", "item": CONC, "volume": r(x_in * span_in * 0.4), "note": f"0.4 m, {x_in:.0f} x {span_in:.0f} m, top at z 0, with a lye-proof coating"},
+        {"what": "Bunds", "item": CONC, "volume": r(N_BLK * 2 * (22.4 + 12.8 + 0.4) * 0.2 * 0.3), "note": "a curb 0.2 m thick and 0.3 m high round each whole block (inside it, block local x -10.7 to 11.7, y -6.4 to 6.4), to hold a stack's lye; E5's east curb ends 0.1 m short of the hall's inner wall plane"},
         {"what": "Frame footings", "item": CONC, "volume": r(ground_nodes * 2.25), "note": f"a 1.5 x 1.5 x 1 m pad under each of the lattice's {ground_nodes} ground nodes"},
         {"what": "Rectifier slabs and fire walls", "item": CONC, "volume": r(N_BLK * (12 * 8 * 0.5) + (N_BLK + 1) * 8 * 6 * 0.3), "note": "a 12 x 8 x 0.5 m slab under each, its top at z 0 with an oil sump; fire walls 8 m long, 6 m tall, 0.3 m thick along y at x -60, -36, -12, 12, 36 and 60"},
         {"what": "Outside slabs", "item": CONC, "volume": r(2 * 12 * 8 * 0.5), "note": "12 x 8 x 0.5 m under the purifier and the water treatment, tops at z 0, the water treatment's with a drain channel to its reject flange"},
