@@ -57,6 +57,12 @@ recipes:
   rate: 41.6666666666667
   batch: 80000
   power: 7500000.0
+visual:
+  format: "freefall-model/1"
+  path: "models/ladle-furnace-80t-sealed/v1"
+  manifest_sha256: "089a53bf2442adb3981bc188959b2d70cfc8f0373787db1e7baf0854f16ca8be"
+  version: 1
+  triangles: 20702
 life: 788940000
 basis:
 - of: [recipes]
