@@ -1687,8 +1687,8 @@ def pellet_units():
     balls = math.pi * ((D - 0.3) / 2) ** 2 * Lm * 0.35 * 4650.0
     P_mill = 18.0 * 3600 * P_ORE                          # W at 18 kWh a tonne (from memory, for pellet feed from fines)
     out["ball-mill-4m4"] = dict(
-        name=f"Ball mill, {D:g} m", size_class=3, fits="bay-s3", dims=(18.0, 9.0, 7.0),
-        desc=(f"Grinds the ore wet, to about 80% finer than 45 um, so it can be balled: a steel drum {D:g} m across and {Lm:g} m long on trunnion bearings, its axis along x 3 m up, a third full of steel balls, turned by a girth gear and a {P_mill / 1e6:.1f} MW motor at its +x end. "
+        name=f"Ball mill, {D:g} m", size_class=3, fits="bay-s3", dims=(18.0, 9.0, 6.5),
+        desc=(f"Grinds the ore wet, to about 80% finer than 45 um, so it can be balled: a steel drum {D:g} m across and {Lm:g} m long on trunnion bearings, its axis along x 3 m up, a third full of steel balls, turned by a girth gear and a {P_mill / 1e6:.1f} MW motor at its +x end: the gear 6.0 m across (about 1.35 times the drum, so its pinion clears the shell; from memory) on a flange by the +x head, in a guard 6.4 m across that reaches z 6.2 and sits in a 0.4 m pit in the floor below; its pinion on the -y side at axis height, a gearbox and the motor on the floor beyond, out to y -4.4. "
               "Ore and water in by a chute at its -x trunnion (local -8, 0, 4); the slurry out of its +x trunnion into a sump and pumped on (local 8, 3, 0.5)."),
         built_of=[part("Shell and heads", A36, shell, f"{D:g} m across, {Lm:g} m, 45 mm plate"),
                   part("Liners", A36, liners, "75 mm wear liners of manganese steel, which the registry has not got: structural steel stands for it"),
