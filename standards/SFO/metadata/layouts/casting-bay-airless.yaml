@@ -5,7 +5,7 @@ stands_for: module.casting-bay
 site:
   atmosphere: none
   gravity: [1.6, 2.0]
-physical: {length: 72.0, width: 48.0, height: 27.0, mass: 2756000.0}
+physical: {length: 72.0, width: 48.0, height: 27.0, mass: 2736000.0}
 bays:
 - id: P
   mount: plant-mount.bay-s1
@@ -76,33 +76,25 @@ links:
   note: 'as for air: out to the ingot yard'
 - kind: rail
   name: ladle gantry rails
-  from: [-33.0, -12.0, 0.0]
-  to: [0.0, 12.0, 0.0]
-  length: 123.0
+  from: [-33.0, 0.0, 0.0]
+  to: [0.0, 0.0, 0.0]
+  length: 33.0
   item: material.structural-steel-a36
-  mass: 14760.0
-  via:
-  - [0.0, -12.0, 0.0]
-  - [0.0, 12.0, 0.0]
-  - [-33.0, 12.0, 0.0]
-  note: the ladle gantry's two rails, 24 m apart, over the west half
+  mass: 3960.0
+  note: the ladle gantry's two straight rails over the west half, at y -12 and 12; the link runs on their centre line
 - kind: rail
   name: stripper gantry rails
-  from: [0.0, -12.0, 0.0]
-  to: [33.0, 12.0, 0.0]
-  length: 123.0
+  from: [0.0, 0.0, 0.0]
+  to: [33.0, 0.0, 0.0]
+  length: 33.0
   item: material.structural-steel-a36
-  mass: 12300.0
-  via:
-  - [33.0, -12.0, 0.0]
-  - [33.0, 12.0, 0.0]
-  - [0.0, 12.0, 0.0]
-  note: the stripper gantry's two rails over the east half, beside the ladle gantry's ends
+  mass: 3300.0
+  note: the stripper gantry's two straight rails over the east half, at y -12 and 12, beside the ladle gantry's ends; the link runs on their centre line
 ground:
 - {what: Casting floor, item: material.regolith-sintered, volume: 576.0, note: '0.4 m of sintered regolith under the teeming and stripping, so spilt steel meets stone', mass: 1440000.0}
 - {what: Gantry rail sleepers, item: material.regolith-sintered, volume: 132.0, mass: 330000.0}
 - {what: Crew post berm, item: material.regolith, volume: 164.6, note: 'loose regolith 1 m deep over the post, with openings for its windows and airlock; at the airlock''s door a landing of packed regolith 2 x 2 m, its top at the threshold (1.35 m up), and a ramp down to the ground at about 1 in 3', mass: 246900.0}
-totals: {rate: 27.7777777777778, power: 690000.0, heat: 0.0, water: 0.0, mass: 2756000.0, against_module: 'module.casting-bay: one box, the same on every world. This layout: the same rate; 0.69 MW; no water; no hall: the 150 t and 20 t cranes stand on their own legs, sized for 2 m/s2. The moulds and ingots cool by radiation alone, with no air to help: the second train stands longer (not yet worked out). 739 t of plant, 2,017 t of sintered regolith.'}
+totals: {rate: 27.7777777777778, power: 690000.0, heat: 0.0, water: 0.0, mass: 2736000.0, against_module: 'module.casting-bay: one box, the same on every world. This layout: the same rate; 0.69 MW; no water; no hall: the 150 t and 20 t cranes stand on their own legs, sized for 2 m/s2. The moulds and ingots cool by radiation alone, with no air to help: the second train stands longer (not yet worked out). 719 t of plant, 2,017 t of sintered regolith.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}

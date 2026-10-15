@@ -30,8 +30,8 @@ bays:
 - id: P
   mount: plant-mount.bay-s1
   unit: unit.crew-post
-  at: [6.0, -12.0, 0.0]
-  note: south-east, under its berm, its windows toward the furnace
+  at: [18.0, -18.0, 0.0]
+  note: south-east, clear of the crane's rails, under its berm, its airlock opening west
 - id: RL1
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-330k
@@ -156,16 +156,12 @@ links:
   note: 'as for air: 2.5 m gauge, on sintered regolith sleepers'
 - kind: rail
   name: crane rails
-  from: [-30.0, -12.0, 0.0]
-  to: [6.0, 12.0, 0.0]
-  length: 132.0
+  from: [-30.0, 0.0, 0.0]
+  to: [6.0, 0.0, 0.0]
+  length: 36.0
   item: material.structural-steel-a36
-  mass: 13200.0
-  via:
-  - [6.0, -12.0, 0.0]
-  - [6.0, 12.0, 0.0]
-  - [-30.0, 12.0, 0.0]
-  note: the gantry crane's two rails, 24 m apart along x (y -12 and 12), 36 m long
+  mass: 3600.0
+  note: the gantry crane's two straight rails, 36 m long along x at y -12 and 12 (24 m apart); the link runs on their centre line
 - kind: pipe
   name: cooling water to the radiators
   from: [-214.0, -126.0, 1.0]
@@ -188,14 +184,16 @@ links:
 - kind: pipe
   name: steam to the hot radiators
   from: [-4.0, 13.5, 14.0]
-  to: [-48.0, 42.0, 1.0]
-  length: 71.82
+  to: [-72.0, 42.0, 1.0]
+  length: 113.5
   item: material.structural-steel-a36
-  mass: 17000.0
+  mass: 26870.0
   via:
   - [-4.0, 13.5, 1.0]
-  - [-24.0, 42.0, 1.0]
-  note: 'a pair of 400 mm pipes, 12 mm wall: steam from the duct''s jacket at about 485 K (17 bar) to the hot radiator field, its water back'
+  - [-4.0, 18.0, 1.0]
+  - [-74.0, 18.0, 1.0]
+  - [-74.0, 42.0, 1.0]
+  note: 'a pair of 400 mm pipes, 12 mm wall: steam from the duct''s jacket at about 485 K (17 bar) to the hot radiator field''s ports (flow at y 41.4, return at 42.6, x -72), its water back; down, north to the corridor at y 18, west along it to x -74 and north to the ports'
 ground:
 - {what: Furnace platform, item: material.regolith-sintered, volume: 613.6, note: 'as for air (the ladle slot, slag tunnel and well), of sintered regolith blocks: there is no water to make concrete', mass: 1534000.0}
 - {what: Transformer slab, item: material.regolith-sintered, volume: 86.4, note: no fire walls, mass: 216000.0}

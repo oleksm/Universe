@@ -2352,7 +2352,7 @@ def arc_furnace_airless(us, recs):
         {"id": "T", "mount": "plant-mount.bay-s2", "unit": "unit.furnace-transformer-90mva", "at": [-12.0, -6.0, 0.0], "note": "on its slab beside the platform: no fire walls, since nothing burns without air"},
         {"id": "F", "mount": "plant-mount.bay-s1", "unit": "unit.dri-bin-200t", "at": [-12.0, 33.0, 0.0], "note": "north, as for air"},
         {"id": "G", "mount": "plant-mount.bay-s2", "unit": "unit.offgas-filter-sealed", "at": [6.0, 24.0, 0.0], "note": "north-east, where the baghouse stands for air"},
-        {"id": "P", "mount": "plant-mount.bay-s1", "unit": "unit.crew-post", "at": [6.0, -12.0, 0.0], "note": "south-east, under its berm, its windows toward the furnace"},
+        {"id": "P", "mount": "plant-mount.bay-s1", "unit": "unit.crew-post", "at": [18.0, -18.0, 0.0], "note": "south-east, clear of the crane's rails, under its berm, its airlock opening west"},
     ]
     cols = 4
     low_at = [(-48.0 - 48.0 * (i % cols), -6.0 - 48.0 * (i // cols)) for i in range(n_low)]
@@ -2372,9 +2372,9 @@ def arc_furnace_airless(us, recs):
         link("busbar", "secondary bus", (-12.0, -3.5, 4.0), (-12.0, 0.8, 7.3), CU, 3 * bus_area * RHO["copper"], None, f"three water-cooled copper tube bars, as for air; in vacuum their gaps hold no air to break down, but the gas a seal lets out can (Paschen), so the bars are wrapped and spaced as if in air"),
         link("rail", "ladle rail", (-10.5, 6.0, 0.0), (33.0, 6.0, 0.0), A36, 2 * 60.0, None, "as for air: two 60 kg/m rails at 3 m gauge, on sintered regolith sleepers; on to the ladle station. A ladle standing in vacuum loses its hydrogen: the degasser's work begins here"),
         link("rail", "slag rail", (-16.5, 0.5, 0.0), (-16.5, 23.25, 0.0), A36, 2 * 60.0, None, "as for air: 2.5 m gauge, on sintered regolith sleepers"),
-        link("rail", "crane rails", (-30.0, -12.0, 0.0), (6.0, 12.0, 0.0), A36, 2 * 50.0, None, "the gantry crane's two rails, 24 m apart along x (y -12 and 12), 36 m long", via=[(6.0, -12.0, 0.0), (6.0, 12.0, 0.0), (-30.0, 12.0, 0.0)]),
+        link("rail", "crane rails", (-30.0, 0.0, 0.0), (6.0, 0.0, 0.0), A36, 2 * 50.0, None, "the gantry crane's two straight rails, 36 m long along x at y -12 and 12 (24 m apart); the link runs on their centre line"),
         link("pipe", "cooling water to the radiators", snake[-1], (-15.8, 11.1, 5.5), A36, pipe_m, None, f"a pair of 500 mm pipes, 8 mm wall, flow and return, at about 330 K: along the edges of the {n_low} low radiator fields' rows, their headers teed off it, then east to the furnace's manifold, a branch to the transformer", via=list(reversed(snake[:-1])) + [(-24.0, -30.0, 1.0), (-24.0, -0.5, 1.0), (-19.5, -0.5, 1.5), (-19.5, -0.5, 5.5), (-19.5, 11.1, 5.5)]),
-        link("pipe", "steam to the hot radiators", (-4.0, 13.5, 14.0), (-72.0 + 24.0, 42.0, 1.0), A36, math.pi * 0.4 * 0.012 * RHO["steel"] * 2, None, f"a pair of 400 mm pipes, 12 mm wall: steam from the duct's jacket at about {hot:.0f} K (17 bar) to the hot radiator field, its water back", via=[(-4.0, 13.5, 1.0), (-24.0, 42.0, 1.0)]),
+        link("pipe", "steam to the hot radiators", (-4.0, 13.5, 14.0), (-72.0, 42.0, 1.0), A36, math.pi * 0.4 * 0.012 * RHO["steel"] * 2, None, f"a pair of 400 mm pipes, 12 mm wall: steam from the duct's jacket at about {hot:.0f} K (17 bar) to the hot radiator field's ports (flow at y 41.4, return at 42.6, x -72), its water back; down, north to the corridor at y 18, west along it to x -74 and north to the ports", via=[(-4.0, 13.5, 1.0), (-4.0, 18.0, 1.0), (-74.0, 18.0, 1.0), (-74.0, 42.0, 1.0)]),
     ]
     mobile = [{"unit": "unit.ladle-car-80t", "rides": "ladle rail", "at": [-7.5, 6.0, 0.0]},
               {"unit": "unit.slag-pot-car", "rides": "slag rail", "at": [-16.5, 6.0, 0.0]},
@@ -2482,7 +2482,7 @@ def ladle_station_airless(us, recs):
         link("conveyor", "alloy feed", (3.0, 27.0, 7.0), (3.0, 3.0, 9.4), A36, 100.0, 20000.0, "0.65 m belt, open (no gallery on airless ground), into the furnace's alloy lock"),
         link("duct", "fume", (5.0, 0.0, 7.5), (15.0, 18.0, 8.0), A36, math.pi * 0.5 * 0.006 * RHO["steel"], None, "0.5 m: the argon and fume from under the sealed roof, a tenth of the air shop's flow", via=[(5.0, 0.0, 10.0), (15.0, 10.0, 10.0)]),
         link("pipe", "cooling water to the radiators", (-24.0 - 48.0 * (n_low - 1) - 22.0, -18.0, 1.0), (-1.5, -4.5, 1.0), A36, math.pi * 0.25 * 0.006 * RHO["steel"] * 2, None, f"a pair of 250 mm pipes, flow and return, at about 330 K, along the {n_low} radiator fields' north edge to the furnace's manifold, a branch to the transformer", via=[(-1.5, -18.0, 1.0)]),
-        link("rail", "crane rails", (-24.0, -12.0, 0.0), (12.0, 12.0, 0.0), A36, 2 * 50.0, None, "the maintenance gantry crane's two rails, 24 m apart, over the stand and the ladle furnace", via=[(12.0, -12.0, 0.0), (12.0, 12.0, 0.0), (-24.0, 12.0, 0.0)]),
+        link("rail", "crane rails", (-24.0, 0.0, 0.0), (12.0, 0.0, 0.0), A36, 2 * 50.0, None, "the maintenance gantry crane's two straight rails over the stand and the ladle furnace, at y -12 and 12 (24 m apart); the link runs on their centre line"),
     ]
     mobile = [{"unit": "unit.ladle-car-80t", "rides": "ladle rail", "at": [-15.0, 0.0, 0.0]},
               {"unit": "unit.gantry-crane-20t-moon", "rides": "crane rails", "at": [-6.0, 0.0, 0.0]}]
@@ -2535,8 +2535,8 @@ def casting_bay_airless(us, recs):
         link("rail", "ladle rail", (-36.0, 6.0, 0.0), (-12.0, 6.0, 0.0), A36, 2 * 60.0, None, "as for air, on sintered regolith sleepers; the car stops at x -15, under the ladle gantry"),
         link("rail", "teeming rail", (-30.0, -6.0, 0.0), (30.0, -6.0, 0.0), A36, 2 * 50.0, None, f"as for air: two trains of {CARS} mould cars ({train:.0f} m each); teeming in vacuum takes the hydrogen out of the stream as it falls"),
         link("rail", "ingot rail", (3.0, 6.0, 0.0), (36.0, 6.0, 0.0), A36, 2 * 50.0, None, "as for air: out to the ingot yard"),
-        link("rail", "ladle gantry rails", (-33.0, -12.0, 0.0), (0.0, 12.0, 0.0), A36, 2 * 60.0, None, "the ladle gantry's two rails, 24 m apart, over the west half", via=[(0.0, -12.0, 0.0), (0.0, 12.0, 0.0), (-33.0, 12.0, 0.0)]),
-        link("rail", "stripper gantry rails", (0.0, -12.0, 0.0), (33.0, 12.0, 0.0), A36, 2 * 50.0, None, "the stripper gantry's two rails over the east half, beside the ladle gantry's ends", via=[(33.0, -12.0, 0.0), (33.0, 12.0, 0.0), (0.0, 12.0, 0.0)]),
+        link("rail", "ladle gantry rails", (-33.0, 0.0, 0.0), (0.0, 0.0, 0.0), A36, 2 * 60.0, None, "the ladle gantry's two straight rails over the west half, at y -12 and 12; the link runs on their centre line"),
+        link("rail", "stripper gantry rails", (0.0, 0.0, 0.0), (33.0, 0.0, 0.0), A36, 2 * 50.0, None, "the stripper gantry's two straight rails over the east half, at y -12 and 12, beside the ladle gantry's ends; the link runs on their centre line"),
     ]
     mobile = [{"unit": "unit.ladle-car-80t", "rides": "ladle rail", "at": [-15.0, 6.0, 0.0]}]
     mobile += [{"unit": "unit.mould-car-12", "rides": "teeming rail", "at": [round(-27.0 + car_L / 2 + i * car_L, 2), -6.0, 0.0]} for i in range(CARS)]
@@ -2825,7 +2825,7 @@ def hydrogen_plant_airless(us, recs):
         link("pipe", "demineralised water", (66.0, -24.0, 0.5), (59.0, 6.0, 1.0), ss, pm(0.1, 0.004), None, f"{H_WATER:.1f} kg/s to the blocks", via=[(62.0, -24.0, 0.5), (62.0, 6.0, 0.5)]),
         link("pipe", "loop water to the radiators", (rad_at[-1][0] + 24.0, rad_at[-1][1], 1.0), (-48.0 + 11.0, 6.0, 1.0), A36, 2 * math.pi * d_cw * 0.010 * RHO["steel"], None, f"a pair of {d_cw:.2f} m pipes at about {HP_T_LOOP:.0f} K: {flow:,.0f} kg/s along the {n_rad} radiator fields' rows to the blocks' coolers, a branch to the rectifiers", via=[(84.0, rad_at[-1][1], 1.0), (84.0, 20.0, 1.0), (-37.0, 20.0, 1.0)]),
         link("pipe", "loop water to the purifier", (84.0, 20.0, 1.0), (72.3, -4.0, 1.0), A36, 2 * math.pi * d_pw * 0.004 * RHO["steel"], None, f"a pair of {d_pw * 1000:.0f} mm pipes teed off the radiator loop at x 84, south and west along y -6, level into the purifier's flanges on its -y face (x 72 flow, 72.6 return)", via=[(84.0, -6.0, 1.0), (72.3, -6.0, 1.0)]),
-        link("rail", "crane rails", (-60.0, -12.0, 0.0), (60.0, 12.0, 0.0), A36, 2 * 50.0, None, "the maintenance gantry's two rails, 24 m apart, along the blocks", via=[(60.0, -12.0, 0.0), (60.0, 12.0, 0.0), (-60.0, 12.0, 0.0)]),
+        link("rail", "crane rails", (-60.0, 0.0, 0.0), (60.0, 0.0, 0.0), A36, 2 * 50.0, None, "the maintenance gantry's two straight rails along the blocks, at y -12 and 12; the link runs on their centre line"),
     ]
     mobile = [{"unit": "unit.gantry-crane-20t-moon", "rides": "crane rails", "at": [0.0, 0.0, 0.0]}]
     ground = [
@@ -3124,7 +3124,7 @@ def pellet_plant_airless(us, recs):
         link("pipe", "nitrogen make-up", (-xe - 60.0, 12.0, 1.0), (-xe - 6.5, 8.0, 10.0), ss, pm(0.05, 0.003), None, "50 mm: the hall's and the loops' leaks made up, from beyond the layout to the west head's service panel", via=[(-xe - 16.0, 12.0, 1.0), (-xe - 16.0, 12.0, 10.0), (-xe - 16.0, 8.0, 10.0)]),
     ]
     mobile = [{"unit": "unit.mill-crane-30t", "rides": "crane rails", "at": [-30.0, 0.0, HALL_D / 2 + 9.0]}]
-    links.append(link("rail", "crane rails", (-xe + 1.0, -11.4, HALL_D / 2 + 9.0), (xe - 1.0, 11.4, HALL_D / 2 + 9.0), A36, 50.0, None, "the crane's rails on the sections' runways, 22.8 m apart", via=[(xe - 1.0, -11.4, HALL_D / 2 + 9.0), (xe - 1.0, 11.4, HALL_D / 2 + 9.0), (-xe + 1.0, 11.4, HALL_D / 2 + 9.0)]))
+    links.append(link("rail", "crane rails", (-xe + 1.0, 0.0, HALL_D / 2 + 9.0), (xe - 1.0, 0.0, HALL_D / 2 + 9.0), A36, 2 * 50.0, None, "the crane's two straight rails on the sections' runways, at y -11.4 and 11.4 (22.8 m apart); the link runs on their centre line"))
     R = HALL_D / 2
     arc = 2 * math.pi * R / 3
     wedge = (HALL_D * (R / 2) - (R ** 2 * math.acos(0.5) - (R / 2) * math.sqrt(R ** 2 - (R / 2) ** 2))) - arc * 0.5
@@ -3278,7 +3278,7 @@ def ingot_yard_airless(us, recs):
         aisle_path += [(r(ends[0]), y, 0.0), (r(ends[1]), y, 0.0)]
     links = [
         link("rail", "ingot rail", (-40.0, 6.0, 0.0), (-28.0, 6.0, 0.0), A36, 2 * 50.0, None, "from the casting bay, its car stopping at x -34 by the beds' west end, under the gantry"),
-        link("rail", "gantry rails", (-36.0, -12.0, 0.0), (r(x_g), 12.0, 0.0), A36, 2 * 60.0, None, "the ingot gantry's two rails, 24 m apart, over the beds, the tipper, the saws and the crating line", via=[(r(x_g), -12.0, 0.0), (r(x_g), 12.0, 0.0), (-36.0, 12.0, 0.0)]),
+        link("rail", "gantry rails", (-36.0, 0.0, 0.0), (r(x_g), 0.0, 0.0), A36, 2 * 60.0, None, "the ingot gantry's two straight rails over the beds, the tipper, the saws and the crating line, at y -12 and 12; the link runs on their centre line"),
         link("road", "yard aisles", aisle_path[0], aisle_path[-1], SINTER, 4.5 * 0.25 * RHO_SINTER, None, f"{rows} forklift aisles 4.5 m wide, {yard_L:.0f} m long, joined end to end, of sintered regolith 0.25 m", via=aisle_path[1:-1]),
         link("road", "truck lane", (r(x_g), -3.0, 0.0), (r(yx0 + yard_L + 20.0), -3.0, 0.0), SINTER, 7.0 * 0.3 * RHO_SINTER, None, "7 m wide, sintered regolith 0.3 m: trucks load crates at the yard's east end, beyond the layout"),
     ]
