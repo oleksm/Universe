@@ -836,7 +836,7 @@
 - { record: layout.pellet-plant-air, at: "2026-10-15T16:01:43Z", status: draft, summary: "changed: physical", sha: "89e9d07d51ec2d4b" }
 - { record: layout.pellet-plant-airless, at: "2026-10-15T20:27:46Z", status: draft, summary: "changed: physical, ground, totals", sha: "4370552410830680" }
 - { record: layout.shaft-furnace-air, at: "2026-10-15T02:28:54Z", status: draft, summary: "changed: physical", sha: "8e973731966b75b2" }
-- { record: layout.shaft-furnace-airless, at: "2026-10-15T20:27:46Z", status: draft, summary: "changed: physical, ground, totals", sha: "97d9fe6301d3ca8b" }
+- { record: layout.shaft-furnace-airless, at: "2026-10-15T22:20:03Z", status: draft, summary: "changed: physical, totals", sha: "cad0282d23a5faae" }
 - { record: market.art, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "517671b6a46daee3" }
 - { record: market.artifacts, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "6b51c19897f56c1a" }
 - { record: market.biologics, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "003ee842af8f7674" }
@@ -2794,7 +2794,7 @@
 - { record: unit.sampling-lab, at: "2026-10-15T17:59:01Z", status: draft, summary: "changed", sha: "dfd15b1158ab752d" }
 - { record: unit.sampling-lab-sealed, at: "2026-10-15T19:02:03Z", status: draft, summary: "first tracked", sha: "8883d8e1e242029f" }
 - { record: unit.shaft-furnace-200th, at: "2026-10-14T23:03:43Z", status: draft, summary: "changed", sha: "475472e5d8cc7cc6" }
-- { record: unit.shaft-furnace-200th-hp, at: "2026-10-15T22:17:50Z", status: draft, summary: "changed: identity", sha: "ccca035ca1f35e5e" }
+- { record: unit.shaft-furnace-200th-hp, at: "2026-10-15T22:20:03Z", status: draft, summary: "changed: identity, physical, built_of", sha: "c9dc692de608eebe" }
 - { record: unit.slag-pot-car, at: "2026-10-14T14:59:35Z", status: draft, summary: "changed", sha: "99ae6089782a9bea" }
 - { record: unit.stack-crane-20t, at: "2026-10-15T04:02:06Z", status: draft, summary: "changed", sha: "169bc25878c20b1a" }
 - { record: unit.stacker-reclaimer-1500th, at: "2026-10-15T16:48:59Z", status: draft, summary: "changed", sha: "3c15bcfa29798a6f" }

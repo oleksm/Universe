@@ -2669,14 +2669,14 @@ def shaft_airless_units(us):
     shell = cyl_shell(Do, hot, t_sh) * RHO["steel"]
     lining = math.pi * ((D / 2 + t_ref) ** 2 - (D / 2) ** 2) * hot * RHO["refractory"]
     burden = (math.pi * (D / 2) ** 2 * (hot - zones["cone"]) + math.pi * (D / 2) ** 2 * zones["cone"] / 3) * 1900.0
-    d_b = main_dia(mol_flow(GAS), T_GAS, HP_SHAFT)
+    d_b = math.ceil(main_dia(mol_flow(GAS), T_GAS, HP_SHAFT) * 10) / 10     # the bore, rounded up to the next 0.1 m
     R_b = Do / 2 + 0.3 + d_b / 2
     side = max(12.0, round(2 * R_b + d_b + 1.0))
     out["shaft-furnace-200th-hp"] = dict(
         name=f"Hydrogen shaft furnace, {S_RATE * 3.6:.0f} t an hour, 8 bar, hot discharge", size_class=2 if side <= 12 else 3, fits="bay-s2" if side <= 12 else "bay-s3", dims=(side, side, round(H, 1)),
         desc=(f"The shaft of unit.shaft-furnace-200th built for airless ground: the gas loop at about {HP_SHAFT / 1e5:.0f} bar, so the shell is a pressure vessel ({hoop / 1e6:.0f} MPa in its {t_sh * 1000:.0f} mm plate) and the charge and discharge go through pressure locks; "
               f"no cooling zone: the sponge iron leaves through a lock at about {T_HOT_DRI:.0f} deg C into a closed hot conveyor to the arc furnace shop, which in vacuum it cannot rust on the way. "
-              f"Local frame: the axis at (0, 0); the discharge lock under the cone, its top valve at z {Z_OUT:g} (7.8 to 8), its vessel 6.4 to 7.7, its lower valve 6.2 to 6.4, its outlet at z {Z_OUT - 2:g} onto the hot conveyor; the ring girder at z {z_ring:.0f} (radius {Do / 2 + 0.4:.1f} m); the bustle main at z {z_bustle:.0f}, a ring {2 * R_b:.1f} m across of {d_b:.1f} m clear bore inside 200 mm of lining and a 25 mm shell ({d_b + 0.45:.2f} m outside), its inlet on -y (its flange the same {d_b:.1f} m bore); the top gas outlet at z {z_top - 1:.0f} on +x; the charge lock and hopper z {z_top:.0f} to {H:.0f}. About {burden / 1000:,.0f} t of burden inside."),
+              f"Local frame: the axis at (0, 0); the discharge lock under the cone, its top valve at z {Z_OUT:g} (7.8 to 8), its vessel 6.4 to 7.7, its lower valve 6.2 to 6.4, its outlet at z {Z_OUT - 2:g} onto the hot conveyor; the ring girder at z {z_ring:.0f} (radius {Do / 2 + 0.4:.1f} m); the bustle main at z {z_bustle:.0f}, a ring {2 * R_b:.2f} m across (radius {R_b:.2f} to the pipe's centre) of {d_b:.1f} m clear bore inside 200 mm of lining and a 25 mm shell ({d_b + 0.45:.2f} m outside), its inlet on -y (its flange the same {d_b:.1f} m bore); the top gas outlet at z {z_top - 1:.0f} on +x; the charge lock and hopper z {z_top:.0f} to {H:.0f}. About {burden / 1000:,.0f} t of burden inside."),
         built_of=[part("Shell", A36, shell, f"{Do:.2f} m across, {hot:g} m, {t_sh * 1000:.0f} mm plate"),
                   part("Lining", REF, lining, f"{t_ref * 1000:.0f} mm"),
                   part("Bustle main", A36, math.pi * (d_b + 0.4) * 0.025 * 2 * math.pi * R_b * RHO["steel"], f"a ring {2 * R_b:.1f} m across, 25 mm plate for the pressure"),
