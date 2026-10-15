@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.sampling-lab, name: Sampling laboratory, description: 'A cabin with a saw that cuts a sample from one ingot of each heat, a grinder, and a spark emission spectrometer that reads the steel''s composition in minutes, so the heat''s grade can be certified on its crates'' labels.'}
+size_class: 1
+fits: plant-mount.bay-s1
+physical: {length: 6.0, width: 6.0, height: 3.5, mass: 11000.0}
+built_of:
+- {what: Cabin, item: material.structural-steel-a36, mass: 8000.0, note: from memory}
+- {what: 'Saw, grinder and spectrometer', item: good.electric-motors, mass: 3000.0, note: from memory}
+needs: {power: 60000.0}
+life: 788940000
+basis:
+- of: [physical, built_of, needs]
+  tier: invented
+  review: true
+  note: From memory.
+- of: [life]
+  rule: rule.life-plant

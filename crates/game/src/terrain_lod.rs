@@ -7,6 +7,7 @@
 //! close; skirts hang from their edges to hide the seams between sizes.
 
 pub(crate) mod contact;
+pub(crate) mod group;
 
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -87,6 +88,16 @@ pub struct Lod {
     /// Where the eye was last frame (the world's frame) and when: its way ahead, for the look-ahead.
     last_eye: Option<(DVec3, std::time::Instant)>,
     contact_inputs: contact::ResidentInputs,
+    contact_group: group::Runtime,
+    readiness: Option<group::Trace>,
+}
+
+impl Drop for Lod {
+    fn drop(&mut self) {
+        if let Some(trace) = self.readiness.as_mut() {
+            trace.write(&self.contact_group);
+        }
+    }
 }
 
 /// How far ahead the look-ahead looks (s): the patches the eye will want then are made after those
@@ -245,31 +256,11 @@ fn make(body: &Body, key: Key) -> (WireModel, DVec3, bool) {
         colors.push(morph(i, j));
     }
     m.colors = colors;
-    // Each vertex's surface fields from a baked world's river tiles (wetness, scree, bare rock),
-    // and its slope (rise over run) from the heights 600 m either side of it each way (central
-    // differences: smooth from vertex to vertex, where a triangle's own normal steps at its edges),
-    // for the ground's material: w = ±(1 + slope), + where the fields are read.
-    let step = 600.0 / r;
+    // Each vertex's surface fields and slope, for the ground's material (see `fields_at`).
     let fields = |d: DVec3| -> [f32; 4] {
-        let Some(t) = body.terrain.as_ref() else { return [0.0; 4] };
-        // Palette 4 reads the local authoritative wet mask, independent of the orbit map.
-        if let Some(sample) = crate::terrain_view::canonical_texel(t, d) {
-            let slope = if crate::pgs_preview::palette(body).is_some_and(|p| p.materials()) {
-                t.surface_differential(d, r).map_or(0.0, |(_, derivative)| derivative.slope as f32)
-            } else { 0.0 };
-            return [sample[1], 0.0, 0.0, -(1.0+slope)];
-        }
-        let (f, w) = t.surface_fields_view(d);
+        let (f, w) = fields_at(body, r, d);
         whole.set(whole.get() && w);
-        let e1 = d.any_orthonormal_vector();
-        let e2 = d.cross(e1);
-        let h = |v: DVec3| ground(body, (d + v * step).normalize(), 600.0).0;
-        let (gx, gy) = ((h(e1) - h(-e1)) / 1200.0, (h(e2) - h(-e2)) / 1200.0);
-        let slope = (gx * gx + gy * gy).sqrt() as f32;
-        match f {
-            Some(f) => [f[0], f[1], f[2], 1.0 + slope],
-            None => [0.0, 0.0, 0.0, -(1.0 + slope)],
-        }
+        f
     };
     let mut data: Vec<[f32; 4]> = dirs.iter().map(|&d| fields(d)).collect();
     for &(i, j) in &edge {
@@ -279,6 +270,32 @@ fn make(body: &Body, key: Key) -> (WireModel, DVec3, bool) {
     }
     m.data = data;
     (m, origin, !whole.get())
+}
+
+/// A ground vertex's surface fields at `dir` from a baked world's river tiles (wetness, scree, bare
+/// rock), and its slope (rise over run) from the heights 600 m either side of it each way (central
+/// differences: smooth from vertex to vertex, where a triangle's own normal steps at its edges), for
+/// the ground's material: w = ±(1 + slope), + where the fields are read. And whether all was read.
+pub(crate) fn fields_at(body: &Body, r: f64, d: DVec3) -> ([f32; 4], bool) {
+    let Some(t) = body.terrain.as_ref() else { return ([0.0; 4], true) };
+    // Palette 4 reads the local authoritative wet mask, independent of the orbit map.
+    if let Some(sample) = crate::terrain_view::canonical_texel(t, d) {
+        let slope = if crate::pgs_preview::palette(body).is_some_and(|p| p.materials()) {
+            t.surface_differential(d, r).map_or(0.0, |(_, derivative)| derivative.slope as f32)
+        } else { 0.0 };
+        return ([sample[1], 0.0, 0.0, -(1.0+slope)], true);
+    }
+    let step = 600.0 / r;
+    let (f, w) = t.surface_fields_view(d);
+    let e1 = d.any_orthonormal_vector();
+    let e2 = d.cross(e1);
+    let h = |v: DVec3| ground(body, (d + v * step).normalize(), 600.0).0;
+    let (gx, gy) = ((h(e1) - h(-e1)) / 1200.0, (h(e2) - h(-e2)) / 1200.0);
+    let slope = (gx * gx + gy * gy).sqrt() as f32;
+    (match f {
+        Some(f) => [f[0], f[1], f[2], 1.0 + slope],
+        None => [0.0, 0.0, 0.0, -(1.0 + slope)],
+    }, w)
 }
 
 impl Lod {
@@ -305,6 +322,7 @@ impl Lod {
             self.done = Default::default();
             self.last_eye = None;
             self.contact_inputs.invalidate();
+            self.contact_group.invalidate(self.frame);
         }
         self.sources.insert(source, source_identity);
         self.frame += 1;
@@ -326,38 +344,8 @@ impl Lod {
         // (The lowest ground there could be: what the horizon may hide behind.)
         let low = r - body.terrain.as_ref().map_or(0.0, |t| t.max_height());
         let horizon = (low / eye_dist).clamp(-1.0, 1.0).acos();
-        let mut draw = Vec::new();
-        let mut want = Vec::new();
-        let mut stack: Vec<Key> = (0..6).map(|face| Key { system, body: body_index, face, level: 0, x: 0, y: 0 }).collect();
-        while let Some(key) = stack.pop() {
-            let (mid, size) = key.shape();
-            // Behind the horizon: none of it in sight.
-            if mid.angle_between(eye_dir) > horizon + size * 0.75 + 0.02 {
-                continue;
-            }
-            let dist = key.centre(&self.patches, r, canonical).distance(eye_local);
-            if key.level < (if canonical { CANONICAL_MAX_LEVEL } else { MAX_LEVEL }) && dist < SPLIT * size * r {
-                let children = key.children();
-                if children.iter().all(|c| self.patches.contains_key(c)) {
-                    // (All four kept while their parent splits, those out of
-                    // sight too: dropped, the parent stood in for a frame —
-                    // a coarse patch metres off the ground, at your feet.)
-                    for c in &children {
-                        if let Some(p) = self.patches.get_mut(c) {
-                            p.used = now;
-                        }
-                    }
-                    stack.extend(children);
-                    continue;
-                }
-                for c in children {
-                    if !self.patches.contains_key(&c) && want.len() < BUDGET && !want.contains(&c) {
-                        want.push(c);
-                    }
-                }
-            }
-            draw.push(key);
-        }
+        // The selection as the eye would have it: what is made and wanted follows this one.
+        let (draw, want) = self.traverse(system, body_index, r, canonical, eye_local, eye_dir, horizon, now, &Default::default());
         // Root patches are optional assets too. The caller draws the base globe
         // until all visible roots are ready; never sample them on the UI thread.
         let missing_root = draw.iter().any(|k| k.level == 0 && !self.patches.contains_key(k));
@@ -415,7 +403,82 @@ impl Lod {
             }
             return None;
         }
-        // What's not made yet: the nearest made above it stands in (each once).
+        // Settled round the eye: nothing it wants within 300 m is standing in for.
+        let settled = draw.iter().all(|k| self.patches.contains_key(k) || k.centre(&self.patches, r, canonical).distance(eye_local) > 300.0 + k.shape().1 * r);
+        let natural = self.stand_in(draw);
+        if !(canonical && surface.is_some() && std::env::var_os("UNIVERSE_PGS1_CONTACT_GROUP").is_some()) {
+            self.contact_inputs.invalidate();
+            return Some(natural);
+        }
+        // A contact group built and on the GPU takes over before this frame's selection, so its
+        // patches are pinned in it; standing groups' patches stay as they are (see `traverse`).
+        let natural_set: std::collections::HashSet<Key> = natural.iter().copied().collect();
+        self.contact_group.promote(now, &self.patches);
+        let pinned = self.contact_group.pinned();
+        let shown = if pinned.is_empty() {
+            natural.clone()
+        } else {
+            let (draw, _) = self.traverse(system, body_index, r, canonical, eye_local, eye_dir, horizon, now, &pinned);
+            self.stand_in(draw)
+        };
+        self.contact_inputs.capture((system, body_index, map_id), r, eye_local, surface, &natural, &self.patches);
+        if let Some(pool) = self.pool.as_ref() {
+            self.contact_group.update(now, &shown, &natural_set, settled, &self.patches, self.contact_inputs.snapshot(), eye_local, sys, body_index, pool);
+        }
+        Some(shown)
+    }
+
+    /// The patches to draw for an eye at `eye` (body frame), and the next finer wanted. Pinned
+    /// patches are kept as they are: never split, and what holds them always split down to them
+    /// (while all four of each split's children are resident).
+    #[allow(clippy::too_many_arguments)]
+    fn traverse(&mut self, system: usize, body_index: usize, r: f64, canonical: bool, eye_local: DVec3, eye_dir: DVec3, horizon: f64, now: u64, pinned: &std::collections::HashSet<Key>) -> (Vec<Key>, Vec<Key>) {
+        let above: std::collections::HashSet<Key> = pinned.iter().flat_map(|k| std::iter::successors(k.parent(), |p| p.parent())).collect();
+        let mut draw = Vec::new();
+        let mut want = Vec::new();
+        let mut stack: Vec<Key> = (0..6).map(|face| Key { system, body: body_index, face, level: 0, x: 0, y: 0 }).collect();
+        while let Some(key) = stack.pop() {
+            let (mid, size) = key.shape();
+            let held = pinned.contains(&key) || above.contains(&key);
+            // Behind the horizon: none of it in sight.
+            if !held && mid.angle_between(eye_dir) > horizon + size * 0.75 + 0.02 {
+                continue;
+            }
+            let split = if pinned.contains(&key) {
+                false
+            } else if above.contains(&key) {
+                true
+            } else {
+                let dist = key.centre(&self.patches, r, canonical).distance(eye_local);
+                key.level < (if canonical { CANONICAL_MAX_LEVEL } else { MAX_LEVEL }) && dist < SPLIT * size * r
+            };
+            if split {
+                let children = key.children();
+                if children.iter().all(|c| self.patches.contains_key(c)) {
+                    // (All four kept while their parent splits, those out of
+                    // sight too: dropped, the parent stood in for a frame —
+                    // a coarse patch metres off the ground, at your feet.)
+                    for c in &children {
+                        if let Some(p) = self.patches.get_mut(c) {
+                            p.used = now;
+                        }
+                    }
+                    stack.extend(children);
+                    continue;
+                }
+                for c in children {
+                    if !self.patches.contains_key(&c) && want.len() < BUDGET && !want.contains(&c) {
+                        want.push(c);
+                    }
+                }
+            }
+            draw.push(key);
+        }
+        (draw, want)
+    }
+
+    /// What's not made yet: the nearest made above it stands in (each once).
+    fn stand_in(&self, draw: Vec<Key>) -> Vec<Key> {
         let mut shown: Vec<Key> = Vec::with_capacity(draw.len());
         for mut key in draw {
             while !self.patches.contains_key(&key) {
@@ -429,11 +492,7 @@ impl Lod {
             }
         }
         // (A stand-in and a patch inside it both drawn: the finer wins in depth, hardly seen.)
-        let draw = shown;
-        if canonical && surface.is_some() && std::env::var_os("UNIVERSE_PGS1_CONTACT_GROUP").is_some() {
-            self.contact_inputs.capture((system, body_index, map_id), r, eye_local, surface, &draw, &self.patches);
-        } else { self.contact_inputs.invalidate(); }
-        Some(draw)
+        shown
     }
 
     fn evict_unused(&mut self, now:u64) {
@@ -450,7 +509,7 @@ impl Lod {
     /// Draw world `body` (of system `system`, its middle at `center`,
     /// turned `rotation`) as patches for an eye at `eye`, surfaced from `map`.
     #[allow(clippy::too_many_arguments)]
-    pub fn draw(&mut self, frame: &mut Frame, system: usize, sys: &Arc<universe_sim::StarSystem>, body_index: usize, map: &Arc<GlobeMap>, center: DVec3, rotation: DQuat, eye: DVec3, tint: Color) -> bool {
+    pub fn draw(&mut self, frame: &mut Frame, system: usize, sys: &Arc<universe_sim::StarSystem>, body_index: usize, map: &Arc<GlobeMap>, center: DVec3, rotation: DQuat, eye: DVec3, tint: Color, time_s: f64, on_foot: bool) -> bool {
         let draw = match self.select_resident(system, sys, body_index, map.id(), center, rotation, eye) {
             Some(draw) => draw, None => return false,
         };
@@ -483,22 +542,57 @@ impl Lod {
         let relief = body.terrain.as_ref().map_or(0.0, |t| t.amplitude) as f32;
         let turn = rotation.as_quat();
         let (depth, shell) = crate::terrain_view::air(body).unwrap_or_default();
-        for key in draw {
-            let Some(p) = self.patches.get_mut(&key) else { continue };
-            p.used = now;
-            let at = [(p.origin.x / r) as f32, (p.origin.y / r) as f32, (p.origin.z / r) as f32, (1.0 / r) as f32];
-            let t = Transform { position: center + rotation * p.origin, rotation: turn, scale: 1.0 };
+        self.contact_group.prepare(frame, now);
+        let group = self.contact_group.active.as_ref();
+        // Each piece drawn: its mesh, origin and how many of its triangles are ground (not skirt).
+        let mut pieces: Vec<(&Mesh, DVec3, usize)> = Vec::with_capacity(draw.len() + 2);
+        for key in &draw {
+            if let Some(p) = self.patches.get_mut(key) {
+                p.used = now;
+            }
+        }
+        for key in &draw {
+            let Some(p) = self.patches.get(key) else { continue };
+            // A published contact group draws its own in place of the patches it replaces.
+            match group.and_then(|g| g.patches.get(key)) {
+                Some(Some((m, ground))) => pieces.push((m, p.origin, *ground)),
+                Some(None) => {}
+                None => pieces.push((&p.mesh, p.origin, (GRID * GRID * 2) as usize)),
+            }
+        }
+        if let Some(g) = group {
+            pieces.push((&g.band, g.meta.band_origin, g.band.faces.len()));
+            pieces.extend(g.rim.iter().map(|m| (m, g.meta.band_origin, m.faces.len())));
+        }
+        for &(mesh, origin, _) in &pieces {
+            let at = [(origin.x / r) as f32, (origin.y / r) as f32, (origin.z / r) as f32, (1.0 / r) as f32];
+            let t = Transform { position: center + rotation * origin, rotation: turn, scale: 1.0 };
             let draw_patch = |frame: &mut Frame| {
                 frame.with_air(depth, shell, |frame| {
-                    frame.with_globe(map, kind, relief, crate::terrain_view::globe_bright(body), at, p.origin, |frame| {
-                        frame.model_shaded_faded(&p.mesh, &t, tint, tint, 0.0);
+                    frame.with_globe(map, kind, relief, crate::terrain_view::globe_bright(body), at, origin, |frame| {
+                        frame.model_shaded_faded(mesh, &t, tint, tint, 0.0);
                     })
                 })
             };
             #[cfg(feature = "dev")]
-            crate::pgs_debug::patch(frame, body, &p.mesh, p.origin, center, rotation);
+            crate::pgs_debug::patch(frame, body, mesh, origin, center, rotation);
             if crate::pgs_preview::terrain_shadows(body) { frame.ground_shadow(draw_patch); }
             else { frame.no_shadow(draw_patch); }
+        }
+        if canonical && std::env::var_os("UNIVERSE_PGS1_CONTACT_GROUP").is_some() {
+            let surface = body.terrain.as_ref().and_then(|t| t.surface_source());
+            if self.readiness.is_none() {
+                self.readiness = surface.as_ref().and_then(|s| group::Trace::from_env(r, s));
+            }
+            if let (Some(trace), Some(surface)) = (self.readiness.as_mut(), surface) {
+                // Diagnostic only: the ground under the eye, from the pieces actually submitted.
+                let submitted = pieces
+                    .iter()
+                    .filter(|(m, o, _)| (*o - eye_dir * o.dot(eye_dir)).length() <= m.radius() as f64 + 1.)
+                    .filter_map(|&(m, o, ground)| group::ray_hit(m, ground, o, eye_local))
+                    .reduce(f64::max);
+                trace.record(now, time_s, on_foot, eye_local, &surface, submitted, &self.contact_group, self.pending.len(), self.patches.len());
+            }
         }
         #[cfg(feature = "dev")]
         crate::pgs_debug::draw(frame, body, center, rotation);
@@ -551,6 +645,42 @@ mod tests {
         let child = key.children()[0];
         assert!((child.centre(&patches, r, true).length() - (r + 5_000.0)).abs() < 1e-8);
         assert!((child.centre(&HashMap::new(), r, true).length() - r).abs() < 1e-8);
+    }
+}
+
+#[cfg(test)]
+mod pinned {
+    use super::*;
+    #[test]
+    fn a_pinned_patch_is_drawn_as_it_is_and_its_holders_split_down_to_it() {
+        let r = 6_281_370.0;
+        let root = Key { system: 0, body: 1, face: 0, level: 0, x: 0, y: 0 };
+        let mut lod = Lod::default();
+        let patch = |k: Key| Patch { mesh: WireModel::default().into(), origin: k.shape().0 * r, used: 0, partial: false };
+        let mut keys = vec![root];
+        keys.extend(root.children());
+        keys.extend(root.children()[0].children());
+        for k in &keys {
+            lod.patches.insert(*k, patch(*k));
+        }
+        let target = root.children()[0].children()[3];
+        // Far off, the eye would have the root alone; right over the target, finer than it has.
+        let (far, near) = (DVec3::X * r * 10.0, target.shape().0 * (r + 2.0));
+        let run = |lod: &mut Lod, eye: DVec3, pins: &std::collections::HashSet<Key>| {
+            let mut d = lod.traverse(0, 1, r, false, eye, eye.normalize(), 3.0, 1, pins).0;
+            d.retain(|k| k.face == 0);
+            d.sort_by_key(|k| (k.level, k.x, k.y));
+            d
+        };
+        let none = Default::default();
+        assert_eq!(run(&mut lod, far, &none), vec![root]);
+        assert!(!run(&mut lod, near, &none).contains(&root));
+        let pins = std::collections::HashSet::from([target]);
+        for eye in [far, near] {
+            let drawn = run(&mut lod, eye, &pins);
+            assert!(drawn.contains(&target), "{drawn:?}");
+            assert!(!drawn.contains(&root) && !drawn.contains(&root.children()[0]));
+        }
     }
 }
 

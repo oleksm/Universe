@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.stacker-reclaimer-1500th, name: 'Bucket wheel stacker-reclaimer, 1,500 t an hour', description: 'Runs on its rail between two stockpile beds: stacking, its boom (32 m, slewing either side) drops ore from the yard belt''s tripper onto a bed; reclaiming, the bucket wheel at the boom''s end cuts into the pile''s face and sends the ore back down the boom onto the yard belt, which then runs the other way. Stacks 1,500 t an hour (a ship''s load landed at the port in a day), reclaims 500. Travels along its x on 10 m gauge, its origin on the running plane at the slewing centre.'}
+size_class: 3
+physical: {length: 40.0, width: 12.0, height: 20.0, mass: 450000.0}
+built_of:
+- {what: 'Boom, counterweight boom and slewing frame', item: material.structural-steel-a36, mass: 260000.0, note: from memory}
+- {what: Portal and bogies, item: material.structural-steel-a36, mass: 120000.0, note: from memory}
+- {what: 'Bucket wheel, drives and belts', item: good.electric-motors, mass: 70000.0, note: from memory}
+needs: {power: 900000.0}
+life: 788940000
+basis:
+- of: [physical, built_of, needs]
+  tier: invented
+  review: true
+  note: Masses, rates and power from memory of stacker-reclaimers of this size.
+- of: [life]
+  rule: rule.life-plant

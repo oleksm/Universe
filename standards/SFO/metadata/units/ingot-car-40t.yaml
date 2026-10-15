@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.ingot-car-40t, name: 'Ingot car, 40 t', description: 'A self-propelled flat rail car that takes the stripped ingots, still hot, to the ingot yard: 25 ingots in rows on its steel deck. It travels along its x on 2 m gauge, its origin on the running plane; the deck 1.2 m up.'}
+size_class: 2
+physical: {length: 8.0, width: 3.0, height: 1.2, mass: 16250.0}
+built_of:
+- {what: Car frame and deck, item: stock.st4340-box-400x400x25, mass: 12250.0, note: 'two box beams 400 x 400 x 25 mm, 8 m, and a deck 8 x 3 m of 40 mm plate'}
+- {what: Bogies and drive, item: good.electric-motors, mass: 4000.0, note: from memory}
+holds: 40000.0
+needs: {power: 40000.0}
+life: 788940000
+basis:
+- of: [physical, built_of]
+  tier: derived
+  review: true
+  note: From the dimensions; bogies and drive from memory.
+- of: [life]
+  rule: rule.life-plant

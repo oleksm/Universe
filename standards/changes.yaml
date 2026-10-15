@@ -388,9 +388,9 @@
 - { record: equipment.engine.fan.s1, at: "2026-10-13T00:40:35Z", status: draft, summary: "changed: visual", sha: "8571271370838a45" }
 - { record: equipment.engine.fan.s2, at: "2026-10-13T00:46:03Z", status: draft, summary: "changed: visual", sha: "131081299755298f" }
 - { record: equipment.engine.fan.s3, at: "2026-10-12T01:31:44Z", status: draft, summary: "changed: visual", sha: "cc49eb09dba4218d" }
-- { record: equipment.engine.ft.s1, at: "2026-10-13T01:06:15Z", status: draft, summary: "changed: visual", sha: "1fd6fb7dcc3b318c" }
-- { record: equipment.engine.ft.s2, at: "2026-10-13T01:12:22Z", status: draft, summary: "changed: visual", sha: "dc17f2e2b475823c" }
-- { record: equipment.engine.ft.s3, at: "2026-10-13T01:17:48Z", status: draft, summary: "changed: visual", sha: "86ea52dedce26c92" }
+- { record: equipment.engine.ft.s1, at: "2026-10-14T01:51:31Z", status: draft, summary: "changed: physical, built_of, basis", sha: "73ded0be9c4688a3" }
+- { record: equipment.engine.ft.s2, at: "2026-10-14T01:51:31Z", status: draft, summary: "changed: physical, built_of, basis", sha: "d0cc1d885805d9bf" }
+- { record: equipment.engine.ft.s3, at: "2026-10-14T01:51:31Z", status: draft, summary: "changed: physical, built_of, basis", sha: "cceabfddba9813c6" }
 - { record: equipment.engine.nt.s1, at: "2026-10-13T01:51:30Z", status: draft, summary: "changed: visual", sha: "110a68ce2e357997" }
 - { record: equipment.engine.nt.s2, at: "2026-10-13T02:06:07Z", status: draft, summary: "changed: visual", sha: "d485b3df704248eb" }
 - { record: equipment.engine.nt.s3, at: "2026-10-13T02:50:46Z", status: draft, summary: "changed: visual", sha: "cb5d8c594580a6b6" }
@@ -434,18 +434,18 @@
 - { record: equipment.lift.belly.s1, at: "2026-10-11T18:55:25Z", status: draft, summary: "changed: revision", sha: "b14a92771fd37651" }
 - { record: equipment.lift.belly.s2, at: "2026-10-11T18:55:25Z", status: draft, summary: "changed: revision", sha: "2510b2eaa9ec3756" }
 - { record: equipment.lift.belly.s3, at: "2026-10-11T18:55:25Z", status: draft, summary: "changed: revision", sha: "038d104c6c6ef3cf" }
-- { record: equipment.power.aurel.s1, at: "2026-10-14T00:30:43Z", status: draft, summary: "changed: basis", sha: "1f56e59619ac5ac6" }
-- { record: equipment.power.aurel.s2, at: "2026-10-14T00:30:43Z", status: draft, summary: "changed: basis", sha: "fe242d7724e4f408" }
-- { record: equipment.power.aurel.s3, at: "2026-10-14T00:30:43Z", status: draft, summary: "changed: basis", sha: "57cae14997caa959" }
+- { record: equipment.power.aurel.s1, at: "2026-10-14T01:52:22Z", status: draft, summary: "changed: basis", sha: "51f7430e70c85804" }
+- { record: equipment.power.aurel.s2, at: "2026-10-14T01:52:22Z", status: draft, summary: "changed: basis", sha: "c2bb2ded917597c5" }
+- { record: equipment.power.aurel.s3, at: "2026-10-14T01:52:22Z", status: draft, summary: "changed: basis", sha: "91d00f40e48ef4b7" }
 - { record: equipment.power.battery-vtol.s0, at: "2026-10-13T06:30:43Z", status: draft, summary: "changed: visual", sha: "e1305a44edbdbfb0" }
 - { record: equipment.power.battery-vtol.s1, at: "2026-10-12T01:40:18Z", status: draft, summary: "changed: visual", sha: "03fe8e8ac782e425" }
 - { record: equipment.power.battery-vtol.s2, at: "2026-10-13T06:36:57Z", status: draft, summary: "changed: visual", sha: "a0f2d85a4b00bdb8" }
 - { record: equipment.power.battery.s0, at: "2026-10-13T06:41:10Z", status: draft, summary: "changed: visual", sha: "4d3bfd92acb08d32" }
 - { record: equipment.power.battery.s1, at: "2026-10-12T02:10:45Z", status: draft, summary: "changed: visual", sha: "8e06eecd1ef3a586" }
 - { record: equipment.power.fuelcell.s1, at: "2026-10-13T13:32:36Z", status: draft, summary: "changed: visual", sha: "45d1aee343bd0a5c" }
-- { record: equipment.power.fusion.s1, at: "2026-10-14T01:25:20Z", status: draft, summary: "changed: physical, built_of, basis", sha: "c9a50189f3a00d7c" }
-- { record: equipment.power.fusion.s2, at: "2026-10-14T01:25:20Z", status: draft, summary: "changed: identity, physical, built_of, basis", sha: "2178ba44fd955a37" }
-- { record: equipment.power.fusion.s3, at: "2026-10-14T01:25:20Z", status: draft, summary: "changed: physical, built_of, basis", sha: "2689c404b9562bf5" }
+- { record: equipment.power.fusion.s1, at: "2026-10-14T01:52:22Z", status: draft, summary: "changed: basis", sha: "dcd41ca17bc6d0fd" }
+- { record: equipment.power.fusion.s2, at: "2026-10-14T01:52:22Z", status: draft, summary: "changed: basis", sha: "e88946b53bc4a7ef" }
+- { record: equipment.power.fusion.s3, at: "2026-10-14T01:52:22Z", status: draft, summary: "changed: basis", sha: "9ea6b7acd214ad13" }
 - { record: equipment.power.solar-array.s2, at: "2026-10-13T14:11:52Z", status: draft, summary: "changed: visual", sha: "f72449f6041078d2" }
 - { record: equipment.power.switchgear.s1, at: "2026-10-12T15:43:34Z", status: draft, summary: "changed: visual", sha: "9918c6813669d603" }
 - { record: equipment.sensors.altimeter.s1, at: "2026-10-12T00:41:34Z", status: draft, summary: "changed: visual", sha: "ac5a015c7002afad" }
@@ -504,8 +504,8 @@
 - { record: equipment.utility.refuelling-port.s1, at: "2026-10-13T18:47:21Z", status: draft, summary: "changed: visual", sha: "3c30b51453242ef5" }
 - { record: equipment.utility.suits.s1, at: "2026-10-12T00:52:18Z", status: draft, summary: "changed: visual", sha: "2410dcd4ec4f928c" }
 - { record: equipment.utility.transfer.boom, at: "2026-10-13T19:14:06Z", status: draft, summary: "changed: visual", sha: "b390569c732891a4" }
-- { record: equipment.utility.window.s1, at: "2026-10-13T19:28:03Z", status: draft, summary: "changed: visual", sha: "ea70f128c22a8636" }
-- { record: equipment.utility.window.s2, at: "2026-10-12T00:19:28Z", status: draft, summary: "changed: visual", sha: "3218d61a505e2c69" }
+- { record: equipment.utility.window.s1, at: "2026-10-14T01:47:58Z", status: draft, summary: "changed: built_of, basis", sha: "9730a7473504e93d" }
+- { record: equipment.utility.window.s2, at: "2026-10-14T01:47:58Z", status: draft, summary: "changed: physical, built_of, basis", sha: "5f3d9382050291f3" }
 - { record: facility.treistun.ashfall-camp.ashfall-life-support, at: "2026-10-06T18:25:49Z", status: "", summary: "first tracked", sha: "0b27523c1caa4f00" }
 - { record: facility.treistun.ashfall-camp.ashfall-mine, at: "2026-10-06T18:38:56Z", status: "", summary: "changed: modules", sha: "fa007901d7ff41a3" }
 - { record: facility.treistun.ashfall-camp.ashfall-power-station, at: "2026-10-06T18:25:49Z", status: "", summary: "first tracked", sha: "b86cf193f2405fbb" }
@@ -563,7 +563,7 @@
 - { record: facility.treistun.port-zaudalein.zaudalein-warehouse, at: "2026-10-07T03:22:23Z", status: "", summary: "changed", sha: "9e07662a977525f1" }
 - { record: gate.ring.i, at: "2026-10-14T01:27:41Z", status: review, summary: "changed: visual", sha: "fd41721e35742e7d" }
 - { record: gate.ring.ii, at: "2026-10-14T01:33:41Z", status: review, summary: "changed: visual", sha: "d5a649f3ad2ec6d7" }
-- { record: gate.ring.iii, at: "2026-10-14T01:21:21Z", status: review, summary: "changed: basis", sha: "b8eda6f1b95f7d16" }
+- { record: gate.ring.iii, at: "2026-10-14T01:40:08Z", status: review, summary: "changed: visual", sha: "44f16a4a72028ab4" }
 - { record: good.aggregate, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "7bb7e1dbd16457ee" }
 - { record: good.almonds, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "d336f0a6e736548b" }
 - { record: good.alumina, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "b032433665f28491" }
@@ -726,6 +726,7 @@
 - { record: good.refined-steel-304, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "dbc35a062f9c6d9a" }
 - { record: good.refined-steel-4340, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "c3d2f0726e5e0f22" }
 - { record: good.refined-steel-a36, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "152c9e7c701c2ab0" }
+- { record: good.refractory-brick, at: "2026-10-14T02:49:38Z", status: review, summary: "first tracked", sha: "eb0643eed9761025" }
 - { record: good.rice, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "567cae80f4ed0bfd" }
 - { record: good.salt, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "9bc419e17dfe10f9" }
 - { record: good.salt-dome-sulphur-ore, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "298ef1074d03e8bf" }
@@ -820,6 +821,19 @@
 - { record: law.tube-mass, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "a2f143c80b1de3d3" }
 - { record: law.tube-time, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "934385090028c5e6" }
 - { record: law.year, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "29f1ef4424e5cc98" }
+- { record: layout.arc-furnace-air, at: "2026-10-14T17:43:17Z", status: draft, summary: "changed", sha: "a2407e84fcd931d4" }
+- { record: layout.arc-furnace-airless, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "befaa429a44d04ce" }
+- { record: layout.casting-bay-air, at: "2026-10-14T20:31:28Z", status: draft, summary: "changed: identity", sha: "cfe9e80e84ff84d7" }
+- { record: layout.casting-bay-airless, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "c79d0a2965525bdc" }
+- { record: layout.hydrogen-plant-air, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "379207799e0d24b5" }
+- { record: layout.hydrogen-plant-airless, at: "2026-10-14T19:28:17Z", status: draft, summary: "first tracked", sha: "7d8c41a2b8a39bdb" }
+- { record: layout.ingot-yard-air, at: "2026-10-14T19:11:30Z", status: draft, summary: "changed", sha: "39f79738e350feef" }
+- { record: layout.ladle-station-air, at: "2026-10-14T20:31:28Z", status: draft, summary: "changed", sha: "bcf759bc2debdaf4" }
+- { record: layout.ladle-station-airless, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "47acf5ee6202ed61" }
+- { record: layout.ore-yard-air, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "80cee716ce980cb3" }
+- { record: layout.pellet-plant-air, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "17d04bf873e1439b" }
+- { record: layout.shaft-furnace-air, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "63006f42442df554" }
+- { record: layout.shaft-furnace-airless, at: "2026-10-14T19:26:44Z", status: draft, summary: "first tracked", sha: "91bd41d979faabb9" }
 - { record: market.art, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "517671b6a46daee3" }
 - { record: market.artifacts, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "6b51c19897f56c1a" }
 - { record: market.biologics, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "003ee842af8f7674" }
@@ -848,11 +862,12 @@
 - { record: material.bearing-bronze-c93200, at: "2026-10-06T18:50:34Z", status: review, summary: "changed: identity, basis", sha: "173ec820caaeaab9" }
 - { record: material.carbon-carbon-composite, at: "2026-10-13T22:27:27Z", status: review, summary: "first tracked", sha: "c9379c1cd39cc924" }
 - { record: material.carbon-fibre-composite, at: "2026-10-14T01:29:44Z", status: review, summary: "changed: identity", sha: "723efd98a84e1d92" }
+- { record: material.cast-iron-grey, at: "2026-10-14T17:51:14Z", status: review, summary: "first tracked", sha: "6b33a95bffed7275" }
 - { record: material.copper, at: "2026-10-06T18:50:34Z", status: review, summary: "changed: identity", sha: "4f49fb5d47775d83" }
 - { record: material.d-he3, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "95cc7aff5ad7f8d1" }
 - { record: material.d-t, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "3727abb5d8549761" }
 - { record: material.deuterium, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "c18843da0cb0ca3d" }
-- { record: material.fused-silica, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "51744f8a80a6dc50" }
+- { record: material.fused-silica, at: "2026-10-14T01:47:58Z", status: review, summary: "changed: identity", sha: "9cea1619c54b3692" }
 - { record: material.gold, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "e066e4b18ad2df65" }
 - { record: material.helium-3, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "566c90a94918ede3" }
 - { record: material.high-strength-steel-4340, at: "2026-10-14T01:29:44Z", status: review, summary: "changed: identity", sha: "4846a6f75f86b9c9" }
@@ -863,12 +878,16 @@
 - { record: material.kerolox, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "a89067f18adc3c4e" }
 - { record: material.lead, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "7c000bf7e6d32043" }
 - { record: material.methalox, at: "2026-10-07T01:45:03Z", status: review, summary: "changed: identity", sha: "3e3a93123f4f38da" }
+- { record: material.molybdenum, at: "2026-10-14T01:51:31Z", status: review, summary: "changed", sha: "ea610c770f90eaec" }
 - { record: material.molybdenum-disulphide, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "73f997d94032fa1e" }
 - { record: material.multi-layer-insulation, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: mass, basis", sha: "4eb924c5d35488a9" }
+- { record: material.nickel-200, at: "2026-10-14T19:01:11Z", status: review, summary: "first tracked", sha: "1d7411afd4a034a2" }
 - { record: material.nitrogen, at: "2026-10-07T01:45:03Z", status: review, summary: "changed", sha: "979738c8be4e54b9" }
 - { record: material.polyethylene-uhmw, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "26af8bdb2f507c81" }
 - { record: material.polyimide-film, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "287b8c5cff16eee0" }
 - { record: material.ptfe, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "11facd796d3868ff" }
+- { record: material.regolith, at: "2026-10-14T16:38:11Z", status: review, summary: "first tracked", sha: "3f7bd5c6fbd458da" }
+- { record: material.regolith-sintered, at: "2026-10-14T16:38:11Z", status: review, summary: "first tracked", sha: "a10b0fffdb304669" }
 - { record: material.silica-aerogel, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "b11e134209b0af63" }
 - { record: material.silica-tile-li-900, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "f42183a9650011b5" }
 - { record: material.silicon-carbide, at: "2026-10-06T18:50:34Z", status: review, summary: "changed: identity", sha: "ce704c88879358d7" }
@@ -926,7 +945,7 @@
 - { record: module.fusion-power-station, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "6a5bdc8121dd1e12" }
 - { record: module.gas-well, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "87bd449e5ddf5dbd" }
 - { record: module.general-warehouse, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "94ac9dafa1aa51e9" }
-- { record: module.glassworks, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "d1954bd11ce20472" }
+- { record: module.glassworks, at: "2026-10-14T01:47:58Z", status: review, summary: "changed: recipes, basis", sha: "5c5ddb42e816eaa1" }
 - { record: module.gold-works, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "d944e8ad72cfcf2a" }
 - { record: module.grain-silo, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "e0dec37d17cbeb5c" }
 - { record: module.grow-hall, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "0386f6f594d065b9" }
@@ -947,7 +966,7 @@
 - { record: module.market-garden, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "cb404f9dcff13fe6" }
 - { record: module.meat-works, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "a5cf19321ff594ae" }
 - { record: module.mine, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "a976bc47d41b1d9a" }
-- { record: module.molybdenum-works, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "16d0df1918971083" }
+- { record: module.molybdenum-works, at: "2026-10-14T01:51:31Z", status: review, summary: "changed: recipes, basis", sha: "62cb534106f52770" }
 - { record: module.nickel-smelter, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "646bf04e9d59751c" }
 - { record: module.oil-press, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "aee9597293b30d9b" }
 - { record: module.oil-well, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "7c6f9092d2d9590e" }
@@ -1340,6 +1359,10 @@
 - { record: part.wb-02, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "3796f49a5bc8fa2e" }
 - { record: part.wb-03, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "fc9231a50b47acd4" }
 - { record: part.wb-04, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "63ae488f7cfc4f5a" }
+- { record: plant-mount.bay-s1, at: "2026-10-14T19:55:55Z", status: draft, summary: "changed: basis", sha: "bbbf5a586af24ac7" }
+- { record: plant-mount.bay-s2, at: "2026-10-14T19:28:17Z", status: draft, summary: "changed: basis", sha: "d1848ab02209882b" }
+- { record: plant-mount.bay-s3, at: "2026-10-14T19:28:17Z", status: draft, summary: "changed: basis", sha: "e4f71783b5703302" }
+- { record: plant-mount.bay-s4, at: "2026-10-14T19:28:17Z", status: draft, summary: "changed: basis", sha: "748d2f3be058a7e3" }
 - { record: population.biraidim.far-cloud, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "4d04c1b699eb49db" }
 - { record: population.biraidim.shikra-family, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "86d3c16b41bc181d" }
 - { record: population.biraidim.taumeibru-family, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "2626282163a26720" }
@@ -1550,6 +1573,7 @@
 - { record: standard.sfo.21, at: "2026-10-06T23:31:03Z", status: "", summary: "first tracked", sha: "ca2ee50ba2ef1b3e" }
 - { record: standard.sfo.22, at: "2026-10-07T01:43:50Z", status: "", summary: "first tracked", sha: "630a0a3d09c711c3" }
 - { record: standard.sfo.23, at: "2026-10-07T01:43:50Z", status: "", summary: "first tracked", sha: "6c69dfad37bc6967" }
+- { record: standard.sfo.24, at: "2026-10-14T02:49:38Z", status: "", summary: "first tracked", sha: "d6822f4883565644" }
 - { record: standard.sfo.3, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "104975206a1bfa51" }
 - { record: standard.sfo.4, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "040dcede10426705" }
 - { record: standard.sfo.5, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "29a1398afa92253f" }
@@ -2025,6 +2049,10 @@
 - { record: stock.flax-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "c748a510ff7abcc2" }
 - { record: stock.flour-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "f1c1e325a9491ad2" }
 - { record: stock.fossil-placer-ore-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "e4bef8e3573710fb" }
+- { record: stock.fs-pl-12, at: "2026-10-14T01:47:58Z", status: review, summary: "first tracked", sha: "01b3645dddb9e935" }
+- { record: stock.fs-pl-27, at: "2026-10-14T01:47:58Z", status: review, summary: "first tracked", sha: "e6567b012f589aa5" }
+- { record: stock.fs-pl-54, at: "2026-10-14T01:47:58Z", status: review, summary: "first tracked", sha: "ade353360ba04ad6" }
+- { record: stock.fs-pl-6, at: "2026-10-14T01:47:58Z", status: review, summary: "first tracked", sha: "15ca3960ba4535ab" }
 - { record: stock.garlic-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "7c277d47f23cd23f" }
 - { record: stock.glass-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "1b3735a0ccbfff9e" }
 - { record: stock.glycerine-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "0fdd950ad1345704" }
@@ -2096,6 +2124,7 @@
 - { record: stock.methanol-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "7b56073189270525" }
 - { record: stock.milk-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "b70950abfb337f9f" }
 - { record: stock.mli-fl, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "378c2f47269f044f" }
+- { record: stock.mo-tb-12x0p5, at: "2026-10-14T01:51:31Z", status: review, summary: "first tracked", sha: "8455df0109a2bcfe" }
 - { record: stock.molybdenum-concentrate-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "28f315fd88422bd1" }
 - { record: stock.mutton-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "2e9582a1491bb236" }
 - { record: stock.natural-gas-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "4127ccde7981d434" }
@@ -2690,14 +2719,79 @@
 - { record: street.treistun.port-zaudalein.dock-road, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "57eeceb4623143a7" }
 - { record: street.treistun.port-zaudalein.east-road, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "3f2152608557a534" }
 - { record: structure.orbital, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "e604e676cbc1d3fe" }
-- { record: structure.outpost, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "3fc25e64c0b11612" }
-- { record: structure.platform, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "f53f28932fce2a25" }
-- { record: structure.spaceport, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "b2e176d2347765f8" }
+- { record: structure.outpost, at: "2026-10-14T16:46:21Z", status: draft, summary: "changed: visual", sha: "f27f9517b95f123a" }
+- { record: structure.platform, at: "2026-10-14T17:24:22Z", status: draft, summary: "changed: basis", sha: "c5ee49e285d3411d" }
+- { record: structure.spaceport, at: "2026-10-14T17:26:46Z", status: draft, summary: "changed: visual", sha: "8bf9c913ac5402ff" }
 - { record: system.biraidim, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "45c285c7343ec94b" }
 - { record: system.driumum, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "6c0b410fca302540" }
 - { record: system.liham, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "891572eaa9c2ef46" }
 - { record: system.moryemzai, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "f8e4fd33ee4cf599" }
 - { record: system.treistun, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "dd9719e496514353" }
+- { record: unit.alloy-bins-8, at: "2026-10-14T19:07:37Z", status: draft, summary: "changed: size_class, fits, physical", sha: "6d6996996ea20656" }
+- { record: unit.baghouse-200k, at: "2026-10-14T19:55:55Z", status: draft, summary: "changed", sha: "cb7954ca19170a07" }
+- { record: unit.baghouse-450k, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "71f7f9f26631f8e6" }
+- { record: unit.baghouse-800k, at: "2026-10-14T14:37:56Z", status: draft, summary: "changed", sha: "ab9ba06de66e8e3c" }
+- { record: unit.ball-mill-4m4, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "099aa608fdd86d06" }
+- { record: unit.balling-disc-7m5, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "580b8fd9433fdd37" }
+- { record: unit.cooling-tower, at: "2026-10-14T14:37:56Z", status: draft, summary: "changed", sha: "20447996507fd0ba" }
+- { record: unit.cooling-tower-1cell, at: "2026-10-14T19:55:55Z", status: draft, summary: "changed", sha: "b9a2ebb48ebfbe05" }
+- { record: unit.cooling-tower-h2, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "f32056eb92214f48" }
+- { record: unit.cooling-tower-shaft-1, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "e800d229120d5b00" }
+- { record: unit.cooling-tower-shaft-2, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "10e173a1b39f7a13" }
+- { record: unit.cooling-tower-shaft-3, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "0c92289b3fc57f4c" }
+- { record: unit.cooling-tower-shaft-4, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "fdf083634bb1f815" }
+- { record: unit.crating-line, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "4f803762d4f4c669" }
+- { record: unit.crew-post, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "94bf58a6622c650d" }
+- { record: unit.degassing-stand, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "3f2a0b824b4bd169" }
+- { record: unit.disc-filter-2, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "69dea37a935cbf59" }
+- { record: unit.dri-bin-200t, at: "2026-10-14T14:08:01Z", status: draft, summary: "changed", sha: "1077e81910f4da8c" }
+- { record: unit.dri-cooling-loop, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "90a31d0c8b504a3f" }
+- { record: unit.eaf-vessel-80t, at: "2026-10-14T16:01:10Z", status: draft, summary: "changed: physical, built_of, visual", sha: "f948e3f34829ba7e" }
+- { record: unit.eaf-vessel-80t-sealed, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "6a1b4d84de74483c" }
+- { record: unit.electrolyser-block-20mw, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "acb6b5721d188de4" }
+- { record: unit.electrolyser-block-20mw-10bar, at: "2026-10-14T19:28:17Z", status: draft, summary: "first tracked", sha: "8f4f42aafcbab7aa" }
+- { record: unit.forklift-2t5, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "f2ec04344ce47c2c" }
+- { record: unit.furnace-transformer-14mva, at: "2026-10-14T18:15:58Z", status: draft, summary: "changed", sha: "f296531f2bc7dd18" }
+- { record: unit.furnace-transformer-90mva, at: "2026-10-14T15:45:44Z", status: draft, summary: "changed: identity", sha: "d7b34abc2bacd989" }
+- { record: unit.gantry-crane-150t-moon, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "2bac67a62284e749" }
+- { record: unit.gantry-crane-20t-moon, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "3ca773510e64b059" }
+- { record: unit.gas-heater-119mw-8bar, at: "2026-10-14T19:26:44Z", status: draft, summary: "first tracked", sha: "a5b344a7a827fd94" }
+- { record: unit.gas-heater-122mw, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "3efcee224385e2d1" }
+- { record: unit.hall-crane-20t, at: "2026-10-14T15:45:44Z", status: draft, summary: "changed", sha: "88da9f2b1f1ffdd5" }
+- { record: unit.heater-transformer-131mva, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "00e8d55b912e6476" }
+- { record: unit.hydrogen-purifier, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "e16be6555070dc6b" }
+- { record: unit.induration-grate-125th, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "9741fdd206bb54be" }
+- { record: unit.ingot-car-40t, at: "2026-10-14T17:51:14Z", status: draft, summary: "first tracked", sha: "6d0a1c08ea1ffee4" }
+- { record: unit.ingot-crane-10t, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "53289950b4fd148c" }
+- { record: unit.ladle-car-80t, at: "2026-10-14T14:50:41Z", status: draft, summary: "changed", sha: "455ad05163bdf8c8" }
+- { record: unit.ladle-crane-150t, at: "2026-10-14T19:55:55Z", status: draft, summary: "changed", sha: "aa767b9adc1f891a" }
+- { record: unit.ladle-furnace-80t, at: "2026-10-14T18:15:58Z", status: draft, summary: "changed", sha: "9cf8dd025ee54189" }
+- { record: unit.ladle-furnace-80t-sealed, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "2b557a04dd7cd03c" }
+- { record: unit.mill-crane-30t, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "40e31c07816559a2" }
+- { record: unit.mould-car-12, at: "2026-10-14T20:31:28Z", status: draft, summary: "changed: identity", sha: "426e963847e6315b" }
+- { record: unit.offgas-filter-sealed, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "c6b566e979038e64" }
+- { record: unit.plant-transformer-35mva, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "1f1d36f62a5197e3" }
+- { record: unit.radiator-field-330k, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "e970c81177589484" }
+- { record: unit.radiator-field-345k, at: "2026-10-14T19:26:44Z", status: draft, summary: "first tracked", sha: "f1f0da9d08b1b0af" }
+- { record: unit.radiator-field-485k, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "3792fab468aa81d4" }
+- { record: unit.rectifier-transformer-21mva, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "e88f00a03453c505" }
+- { record: unit.recuperator, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "fdcbcbef6464475c" }
+- { record: unit.recycle-compressor, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "20665cbbf05406cb" }
+- { record: unit.recycle-compressor-8bar, at: "2026-10-14T19:26:44Z", status: draft, summary: "first tracked", sha: "f34cdf84380aedc8" }
+- { record: unit.sampling-lab, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "fe76c914c3297692" }
+- { record: unit.shaft-furnace-200th, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "a54da5809c4e3684" }
+- { record: unit.shaft-furnace-200th-hp, at: "2026-10-14T19:26:44Z", status: draft, summary: "first tracked", sha: "a36f3c28899dff95" }
+- { record: unit.slag-pot-car, at: "2026-10-14T14:59:35Z", status: draft, summary: "changed", sha: "99ae6089782a9bea" }
+- { record: unit.stack-crane-20t, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "dada8ceeb1793c71" }
+- { record: unit.stacker-reclaimer-1500th, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "37f21c4682c96ba8" }
+- { record: unit.stair-tower-12m, at: "2026-10-14T20:31:28Z", status: draft, summary: "changed", sha: "47201be2e61453ae" }
+- { record: unit.stripper-crane-20t, at: "2026-10-14T20:32:09Z", status: draft, summary: "changed: identity, built_of", sha: "154ac643f63a48ab" }
+- { record: unit.stripper-gantry-20t-moon, at: "2026-10-14T20:32:09Z", status: draft, summary: "changed: identity, built_of", sha: "9953a4704a13f3dd" }
+- { record: unit.top-gas-condenser-8bar, at: "2026-10-14T19:26:44Z", status: draft, summary: "first tracked", sha: "61482cc1d5511262" }
+- { record: unit.top-gas-scrubber, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "43d6cefca9d48a23" }
+- { record: unit.truck-dump-hopper, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "69379232aafc2169" }
+- { record: unit.vacuum-degasser-80t, at: "2026-10-14T18:23:23Z", status: draft, summary: "changed", sha: "b01f8bbfcca9fb37" }
+- { record: unit.water-treatment, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "bd4aa8977b986fd2" }
 - { record: vocabulary.asteroid, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "c85b5b93f49a4621" }
 - { record: vocabulary.asteroid-family, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "3893f86924156b47" }
 - { record: vocabulary.asteroid-moon, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "8de295aa732db166" }

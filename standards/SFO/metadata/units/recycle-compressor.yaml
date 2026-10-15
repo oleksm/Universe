@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.recycle-compressor, name: 'Recycle compressor, 20 MW', description: 'Raises 14.3 kg/s of hydrogen (the recycle with the hydrogen plant''s make-up) from 1.3 to 2.8 bar: 14 centrifugal stages, about 80 kJ/kg each at the impellers'' tip speed limit, in three casings on one line along x with intercoolers, driven by an electric motor at the -x end. Suction on +y at the +x end, discharge on -y at the -x end, both 1.5 m up.'}
+size_class: 3
+fits: plant-mount.bay-s3
+physical: {length: 22.0, width: 8.0, height: 7.0, mass: 174500.0}
+built_of:
+- {what: Casings and rotors, item: material.high-strength-steel-4340, mass: 95720.0, note: 'from memory: 8 t a MW of drive, three fifths of it the machines'}
+- {what: Motor, item: good.electric-motors, mass: 63810.0, note: from memory}
+- {what: Intercoolers, item: material.stainless-steel-304, mass: 15000.0, note: from memory}
+needs: {power: 20770000.0, heat: 19940000.0}
+life: 788940000
+basis:
+- of: [physical, built_of]
+  tier: invented
+  review: true
+  note: 8 t a MW of drive and the layout from memory.
+- of: [needs]
+  tier: derived
+  note: Isentropic head 1119 kJ/kg at 80%, a motor at 96%; all the work leaves by the intercoolers and aftercooler to the tower.
+- of: [life]
+  rule: rule.life-plant

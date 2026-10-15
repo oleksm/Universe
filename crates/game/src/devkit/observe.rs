@@ -253,7 +253,7 @@ fn resources(app: &App, ctx: &Context) -> Value {
         "assets": crate::visual_assets::snapshot(),
         "world_visuals": crate::globe_assets::snapshot(),
         "rock_visuals": crate::rocks::snapshot(),
-        "terrain_patches": app.caches.terrain_lod.borrow().patch_count(),
+        "terrain_patches": app.caches.planet.terrain_lod.borrow().patch_count(),
         "crafts": app.v.crafts.len(),
         "crafts_here": app.v.crafts.iter().filter(|c| c.system == app.view.origin).count(),
         "slugs": app.v.slugs.len(),
@@ -402,3 +402,81 @@ pub fn answer(app: &mut impl Host, ctx: &mut Context) {
     }
 }
 
+
+/// The observer beside any app on the host that hasn't one of its own (the planet viewer, scenes,
+/// the factory layout, the shipyard, apps to come): SHIFT+F3 observing (the live port, the profiler,
+/// the hitch log, a recording), the same port, sessions and recordings as the game's. What it says
+/// of the app is the app's own `App::status`.
+#[derive(Default)]
+pub struct AppObserver {
+    on: bool,
+    tried: bool,
+    port: Option<mpsc::Receiver<Request>>,
+    recording: Option<Recording>,
+    debug: u8,
+    name: String,
+    app: String,
+}
+
+/// The game's observer for apps on the host (see `AppObserver`); observing from the start with
+/// `UNIVERSE_OBSERVING=1`.
+pub fn service() -> Option<Box<dyn universe_engine::apps::Service>> {
+    let on = std::env::var("UNIVERSE_OBSERVING").as_deref() == Ok("1");
+    Some(Box::new(AppObserver { on, ..Default::default() }))
+}
+
+impl Host for AppObserver {
+    fn status(&self, ctx: &Context) -> Value {
+        let own: Value = serde_json::from_str(&self.app).unwrap_or(Value::Null);
+        json!({"mode": "app", "app": self.name, "state": own, "fps": ctx.fps, "debug": self.debug, "observing": self.on, "cpu": cpu()})
+    }
+    fn resources(&self, ctx: &Context) -> Value {
+        json!({"renderer": ctx.perf.resources, "assets": crate::visual_assets::snapshot(), "world_visuals": crate::globe_assets::snapshot(), "rock_visuals": crate::rocks::snapshot()})
+    }
+    fn recording(&mut self) -> &mut Option<Recording> { &mut self.recording }
+    fn requests(&self) -> Option<&mpsc::Receiver<Request>> { self.port.as_ref() }
+    fn observing(&self) -> bool { self.on }
+    fn profiling(&self) -> bool { self.debug == 2 || self.on }
+    fn notify(&mut self, text: String) { log::info!("{text}"); }
+    fn graphics(&mut self, _query: &str) -> Value {
+        json!({"supported": false, "reason": "this app has no graphics switches of the game's"})
+    }
+}
+
+impl universe_engine::apps::Service for AppObserver {
+    fn update(&mut self, ctx: &mut Context, top: &dyn universe_engine::apps::App, debug: u8) {
+        self.debug = debug;
+        if self.name != top.name() {
+            self.name = top.name().to_string();
+        }
+        self.app = top.status();
+        let input = &ctx.input;
+        let shift = input.down(universe_engine::KeyCode::ShiftLeft) || input.down(universe_engine::KeyCode::ShiftRight);
+        if input.pressed(universe_engine::KeyCode::F3) && shift {
+            if self.on {
+                stop(self, ctx);
+                self.on = false;
+                universe_prof::enable(self.debug == 2);
+            } else {
+                self.on = true;
+                start(self, ctx);
+            }
+        }
+        // (The port opened the first time observing comes on; it stays open, answering only then.)
+        if self.on && !self.tried {
+            self.tried = true;
+            self.port = listen();
+            universe_prof::enable(true);
+        }
+        ctx.watch_hitches |= self.on;
+        answer(self, ctx);
+        frame(self, ctx);
+    }
+
+    fn draw(&self, frame: &mut universe_engine::Frame, _ctx: &Context) {
+        if self.on {
+            let rec = self.recording.as_ref().map_or(String::new(), |r| format!("  REC {:.0} S", r.seconds()));
+            frame.text(universe_engine::glam::Vec2::new(12.0, frame.size().y - 44.0), &format!("OBSERVING{rec}  SHIFT+F3 TO STOP"), universe_engine::Color::hex(0xe5c778));
+        }
+    }
+}

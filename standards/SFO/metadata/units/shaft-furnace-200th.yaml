@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.shaft-furnace-200th, name: 'Hydrogen shaft furnace, 200 t an hour', description: 'A refractory-lined steel shaft 6.6 m across inside, through which iron ore pellets sink by their own weight for about 10 hours against hot hydrogen rising, coming out at the bottom as cold sponge iron. Local frame: the shaft''s axis at (0, 0). From the top down: a charge hopper and seal leg (z 42 to 50) with the pellet belt''s head over it; the top gas outlet at z 41 on +x; the reduction zone (12 m); the bustle main, a ring 3.2 m across round the shaft at z 26, through whose ports hydrogen at 900 deg C enters, its inlet on -y; the transition; the cooling zone (9 m), cooled by a loop of cold hydrogen in at z 14 and out at z 19 (ports on -x); a discharge cone to burden feeders and a lock at z 8, over the layout''s product belt. Hung from a ring girder at z 22 (radius 4.1 m, the cooling zone''s top, under the bustle) on the layout''s columns. About 1,993 t of burden inside.'}
+size_class: 3
+fits: plant-mount.bay-s3
+physical: {length: 15, width: 15, height: 50.0, mass: 1232000.0}
+built_of:
+- {what: Shell, item: material.structural-steel-a36, mass: 247500.0, note: '7.38 m across, 34 m, 40 mm plate; the cones not counted apart'}
+- {what: Lining, item: good.refractory-brick, mass: 592100.0, note: '350 mm in the hot 20 m, 150 mm against wear in the cooling zone and cone'}
+- {what: Bustle main, item: material.structural-steel-a36, mass: 63120.0, note: 'a ring 11.2 m across of 3.6 m pipe, 20 mm plate'}
+- {what: Bustle lining, item: good.refractory-brick, mass: 228000.0, note: 200 mm inside the ring}
+- {what: Support ring girder, item: material.structural-steel-a36, mass: 30990.0, note: 'a box 0.8 x 1.2 m, 40 mm plate, round the shaft'}
+- {what: 'Charge hopper, seal leg and distributor', item: material.structural-steel-a36, mass: 40000.0, note: from memory}
+- {what: Burden feeders and discharge lock, item: good.electric-motors, mass: 30000.0, note: from memory}
+holds: 1993000.0
+needs: {power: 334000.0, gravity: 1.0, atmosphere: any}
+recipes:
+- makes: good.sponge-iron
+  does: Hot hydrogen takes the oxygen out of the pellets, leaving sponge iron.
+  inputs:
+  - {item: good.iron-ore-pellets, quantity: 1.43}
+  - {item: element.h, quantity: 0.054}
+  outputs:
+  - {item: good.water, quantity: 0.484}
+  rate: 55.5555555555556
+  power: 22000000
+life: 788940000
+basis:
+- of: [recipes]
+  tier: derived
+  note: 'The module''s recipe (module.shaft-furnace), carried here: the module stays the game''s until it reads layouts. Its sources are the module''s.'
+- of: [physical, built_of, holds]
+  tier: derived
+  review: true
+  note: From the materials and dimensions in built_of; the shaft's size and zones from memory of shafts for 1.5 to 2 Mt a year; the burden at 1,900 kg/m3 (from memory). The source's 137 m (module.shaft-furnace) is a whole plant's tower; this shaft with its hopper is 50 m.
+- of: [needs.power]
+  tier: derived
+  note: 'The module''s 22 MW (sourced, 110 kWh a tonne, gas heating left out) less the compressors, which are units of their own: feeders, belts, the charge''s seals, instruments.'
+- of: [needs.gravity]
+  tier: invented
+  review: true
+  note: The burden sinks by its own weight against the gas's drag; at low g the gas must be slowed or the bed lifts. Not checked below 1 m/s2.
+- of: [life]
+  rule: rule.life-plant

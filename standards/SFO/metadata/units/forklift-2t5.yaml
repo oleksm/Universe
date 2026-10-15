@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.forklift-2t5, name: 'Forklift, 2.5 t', description: 'A battery-electric counterbalance forklift that moves heavy crates from the crating line to the stacks and from the stacks onto trucks; it lifts a loaded crate (1.6 t) onto another, two high.'}
+size_class: 1
+physical: {length: 3.6, width: 1.3, height: 2.2, mass: 4200.0}
+built_of:
+- {what: Chassis and counterweight, item: material.structural-steel-a36, mass: 3200.0, note: from memory}
+- {what: 'Mast, motors and battery', item: good.electric-motors, mass: 1000.0, note: from memory}
+needs: {power: 8000.0}
+life: 788940000
+basis:
+- of: [physical, built_of, needs]
+  tier: invented
+  review: true
+  note: From memory; power the average charge.
+- of: [life]
+  rule: rule.life-plant

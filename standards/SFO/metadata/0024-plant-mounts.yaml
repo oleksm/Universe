@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../schema/standard.schema.yaml
+identity:
+  key: standard.sfo.24
+title: Plant mounts, units and layouts
+parent: standard.sfo.10
+records: plant-mounts
+purpose: A works is built the way a ship is. A plant mount is a standard bay of prepared ground or floor; a plant unit (a furnace vessel, a transformer, a baghouse) is a product built to one; a layout fits units into bays, under a frame where it needs one, for a site it names. What a works weighs, draws, rejects and makes adds up from what is fitted, so the same process is built differently on a moon, in orbit or on a world with air.
+details:
+  text:
+    - "A plant mount (plant-mounts/bay-s<class>.yaml) says the ground a bay takes, the load its foundation bears (a force, so that the same bay takes a heavier unit where gravity is lower) and what it feeds: electric power, heat carried away, water."
+    - "A plant unit (units/<name>.yaml) names the mount it fits, its size and mass from what it is built of, what it needs (power, heat out, water, the least gravity it works in, the atmosphere it needs) and, for the unit that does the work, the recipe."
+    - "A layout (layouts/<name>.yaml) names the site it is for (atmosphere, gravity), its bays (where each stands, its mount, the unit fitted), the links between them (conveyors, ducts, rails, bus bars), its frame and cladding where it needs one, its ground works, and the totals worked out from all of these. It names the industrial module (SFO 10) it stands for: until the game reads layouts, the module record stays what the game runs."
+    - "Units come in size classes 1 to 4 as mounts do. A bay takes a unit of its class or smaller."
+    - "A trial, set 2026-10-13 (docs/proposals/modular-factories.md): one layout, the arc furnace on a world with air at 1 g. Review."
+status: draft

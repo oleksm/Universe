@@ -567,3 +567,49 @@ if __name__ == "__main__":
         struts()
     if "--write" in sys.argv or "--check" in sys.argv:
         sys.exit(1 if assemblies("--write" in sys.argv) else 0)
+
+
+def lattice_count(cells, rank):
+    """Members of a lattice of cubic cells, each cell (i, j, k) given a group: chords along the cell edges, one diagonal in
+    each square face, a node at every corner. Where groups meet, the higher rank takes the member. Returns
+    {group: (straights, diagonals, nodes)}."""
+    edges, faces, nodes = {}, {}, {}
+    def claim(d, key, g):
+        if rank[g] > rank.get(d.get(key), -1):
+            d[key] = g
+    for (i, j, k), g in cells.items():
+        for a in (0, 1):
+            for b in (0, 1):
+                claim(edges, ((i, j + a, k + b), 0), g); claim(edges, ((i + a, j, k + b), 1), g); claim(edges, ((i + a, j + b, k), 2), g)
+        for s in (0, 1):
+            claim(faces, (0, i + s, j, k), g); claim(faces, (1, i, j + s, k), g); claim(faces, (2, i, j, k + s), g)
+    for ((p, ax), g) in edges.items():
+        q = (p[0] + (ax == 0), p[1] + (ax == 1), p[2] + (ax == 2))
+        for n in (p, q):
+            claim(nodes, n, g)
+    tally = lambda d, g: sum(1 for v in d.values() if v == g)
+    return {g: (tally(edges, g), tally(faces, g), tally(nodes, g)) for g in rank}
+
+
+def strut_capacity(section, L=3.0):
+    """N a straight tube strut of this section takes in compression over L pinned: the lesser of Euler buckling and yield
+    (0.6 of 4340's tensile, the rule plants.py and spaceport.py check by)."""
+    z = section["size"]
+    d, t = z["diameter"], z["wall"]
+    I = math.pi / 64 * (d ** 4 - (d - 2 * t) ** 4)
+    return min(math.pi ** 2 * 205e9 * I / L ** 2, area(section) * 470e6)
+
+
+def lightest_section(force, metal="st4340", margin=1.5, with_diagonal=False):
+    """The kit's lightest tube section (by its 3 m strut's mass) whose strut takes force with the margin to spare;
+    with_diagonal: only sections the kit also cuts a 3 m cell's diagonal of."""
+    S = "standards/SFO/metadata/mill-stock/"
+    best = None
+    for f in os.listdir(S):
+        if f.startswith(f"{metal.upper()}-TB-") and f.endswith("-S3000.yaml") and (not with_diagonal or os.path.exists(S + f.replace("-S3000", "-D3000"))):
+            st = yaml.safe_load(open(S + f, encoding="utf-8"))
+            sec = yaml.safe_load(open(S + st["kit"]["section"].split(".", 1)[1].upper() + ".yaml", encoding="utf-8"))
+            if strut_capacity(sec) >= margin * force and (best is None or st["physical"]["mass"] < best[0]):
+                best = (st["physical"]["mass"], f[:-11].lower())
+    return best[1]
+

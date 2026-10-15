@@ -188,7 +188,8 @@ def read_schema(path):
     # (And a module's one recipe as its own figures, as they were before recipes: rate, inputs, outputs, needs.)
     if kind == "module" and "recipes" in props:
         props.pop("throughput", None)
-        R, cap = props.pop("recipes")["items"]["properties"], props.pop("capacity")["properties"]
+        item = props.pop("recipes")["items"]
+        R, cap = (V.resolve(item["$ref"], path)[0] if "$ref" in item else item)["properties"], props.pop("capacity")["properties"]
         group = lambda d: {"type": "object", "additionalProperties": False, "properties": d}
         was = {"rate": group({"throughput": R["rate"], "batch": R["batch"], **cap, "product": R["makes"], "power": props.pop("generation")["properties"]["supplies"]}),
                "inputs": group({"materials": {**R["inputs"], "description": "What goes in, t per t of its product."}}),
@@ -1048,7 +1049,7 @@ for name in sorted(os.listdir(TREE)):
 # its schema (schema/element.schema.yaml, schema/material.schema.yaml).
 KINDS = {"elements": "element", "materials": "material", "modules": "module", "goods": "good", "hulls": "hull", "mill-stock": "mill-stock", "equipment": "equipment", "gates": "gate"}
 # (Parts are filed in folders of their own: read further down.)
-NESTED = {"parts", "mounts"}      # (folders whose records the page lists elsewhere, or not yet)
+NESTED = {"parts", "mounts", "plant-mounts"}      # (folders whose records the page lists elsewhere, or not yet)
 SCHEMAS = {k: read_schema(os.path.join(TREE, "SFO", "schema", f"{v}.schema.yaml")) for k, v in KINDS.items()}
 elements, materials, processes, modules, goods, hulls, mill_stock, equipment, gates = [], [], [], [], [], [], [], [], []
 for s in standards:
@@ -2597,6 +2598,9 @@ report("goods", "Goods: where each comes from and goes", "Each good: where it co
 # (Record kinds the page had no view for: shown as written, each group a table with its schema's descriptions.)
 REGISTERS, REGISTER_GROUPS, KEY_PAGES = [], {}, {}
 _REG = [("mounts", "Mounts", "SFO", os.path.join("SFO", "metadata", "mounts"), "SFO/schema/mount.schema.yaml", "SFO 19"),
+        ("plant-mounts", "Plant mounts", "SFO", os.path.join("SFO", "metadata", "plant-mounts"), "SFO/schema/plant-mount.schema.yaml", "SFO 24"),
+        ("units", "Plant units", "SFO", os.path.join("SFO", "metadata", "units"), "SFO/schema/unit.schema.yaml", "SFO 24"),
+        ("layouts", "Plant layouts", "SFO", os.path.join("SFO", "metadata", "layouts"), "SFO/schema/layout.schema.yaml", "SFO 24"),
         ("buildings", "Buildings", "SFO", os.path.join("SFO", "metadata", "buildings"), "SFO/schema/building.schema.yaml", None),
         ("markets", "Markets", "SFO", os.path.join("SFO", "metadata", "markets"), "SFO/schema/market.schema.yaml", None),
         ("structures", "Structures", "SFO", os.path.join("SFO", "metadata", "structures"), "SFO/schema/structure.schema.yaml", None),

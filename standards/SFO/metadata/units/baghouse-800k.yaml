@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.baghouse-800k, name: 'Off-gas baghouse, 800,000 m3/h', description: 'Cleans the furnace''s fume before it goes to the air: filter bags in a closed 18 x 8 m steel casing over six hoppers, the dust shaken down and let out through sealed valves; two fans with their stacks in the 6 m strip at one end draw the gas through. The gas comes in at the top of one long side (local 0, -6, 15) from the layout''s water-cooled duct and burn-out gap.'}
+size_class: 3
+fits: plant-mount.bay-s3
+physical: {length: 24.0, width: 12.0, height: 18.0, mass: 197900.0}
+built_of:
+- {what: Casing and hoppers, item: material.structural-steel-a36, mass: 117600.0, note: '24 x 12 x 18 m, 8 mm plate'}
+- {what: Structure, item: material.structural-steel-a36, mass: 58780.0, note: 'half the casing, from memory'}
+- {what: Filter bags, item: material.ptfe, mass: 5556.0, note: '2948 bags 150 mm across and 8 m long, 11111 m2 of PTFE-membrane cloth at 0.5 kg/m2'}
+- {what: Fans and motors, item: good.electric-motors, mass: 16000.0, note: 'two induced-draught fans, from memory'}
+holds: 5760.0
+needs: {power: 1185000.0}
+life: 788940000
+visual: {format: freefall-model/1, path: models/baghouse-800k/v2, manifest_sha256: fb223ba9c9cb718e522451aeec890f43ae3a2cd898c69b1f745aefaf348e3c8d, version: 2, triangles: 8136}
+basis:
+- of: [physical, built_of, needs.power]
+  tier: invented
+  review: true
+  note: 'Off-gas 800,000 m3/h, 1.2 m/min through the cloth, fans at 4 kPa and 75%: from memory. Fan power 1.19 MW, not in the module''s figure.'
+- of: [holds]
+  tier: derived
+  note: Four hours of the recipe's dust in the hoppers.
+- of: [life]
+  rule: rule.life-plant

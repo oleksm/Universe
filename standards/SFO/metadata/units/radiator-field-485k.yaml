@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.radiator-field-485k, name: 'Radiator field, 9.6 MW at 485 K', description: '27 aluminium panels 6 x 12 m, raised 3 m on legs and laid flat edge to edge over 44 x 44 m, carrying the off-gas duct''s evaporative loop''s water at about 485 K through tubes bonded between their two face sheets; the top face, white, radiates to the sky, the underside to the shaded ground. 4962 W a m2 of panel at lunar noon, the worst case: the sun overhead on the top (0.2 of 1361 W/m2 absorbed), the ground under it at 300 K; more at night. The loop''s headers run round the edge, its ports at local (-24, 0, 1). For airless ground only: on a world with air a tower is lighter. Kept clean of dust, which darkens the white.'}
+size_class: 4
+fits: plant-mount.bay-s4
+physical: {length: 48.0, width: 48.0, height: 3.5, mass: 30410.0}
+built_of:
+- {what: Panels, item: material.aluminium-alloy-6061, mass: 24190.0, note: 'two 2 mm face sheets and tubes 20 mm across, 1.5 mm wall, at 150 mm'}
+- {what: Legs, item: material.aluminium-alloy-6061, mass: 1338.0, note: 'four 100 mm box legs, 4 mm, 3 m, a panel'}
+- {what: Headers and pumps, item: good.pumps, mass: 4880.0, note: from memory}
+holds: 2930.0
+needs: {power: 91790.0, atmosphere: vacuum}
+rejects: {heat: 9605000.0, temperature: 485.0}
+life: 788940000
+basis:
+- of: [rejects, physical]
+  tier: derived
+  review: true
+  note: Stefan-Boltzmann at emissivity 0.9; absorptance, the shaded ground's temperature and the panel's layout invented or from memory.
+- of: [built_of, holds, needs]
+  tier: derived
+  review: true
+  note: From the panel's sheets and tubes; pumps at 3 bar and 75%.
+- of: [life]
+  rule: rule.life-plant

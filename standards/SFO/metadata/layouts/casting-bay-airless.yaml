@@ -1,0 +1,125 @@
+# yaml-language-server: $schema=../../schema/layout.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: layout.casting-bay-airless, name: 'Casting bay, airless', description: 'Ingot teeming on airless ground at about a moon''s gravity: as for air, a train of mould cars teemed from the ladle and a second freezing, but under gantry cranes on their own legs and no hall; the stream degasses as it falls through the vacuum. Built separately from the bay for air.'}
+stands_for: module.casting-bay
+site:
+  atmosphere: none
+  gravity: [1.6, 2.0]
+physical: {length: 72.0, width: 48.0, height: 27.0, mass: 2756000.0}
+bays:
+- id: P
+  mount: plant-mount.bay-s1
+  unit: unit.crew-post
+  at: [0.0, -21.0, 0.0]
+  note: south, under its berm
+mobile:
+- unit: unit.ladle-car-80t
+  rides: ladle rail
+  at: [-15.0, 6.0, 0.0]
+- unit: unit.mould-car-12
+  rides: teeming rail
+  at: [-24.0, -6.0, 0.0]
+- unit: unit.mould-car-12
+  rides: teeming rail
+  at: [-18.0, -6.0, 0.0]
+- unit: unit.mould-car-12
+  rides: teeming rail
+  at: [-12.0, -6.0, 0.0]
+- unit: unit.mould-car-12
+  rides: teeming rail
+  at: [-6.0, -6.0, 0.0]
+- unit: unit.mould-car-12
+  rides: teeming rail
+  at: [6.0, -6.0, 0.0]
+- unit: unit.mould-car-12
+  rides: teeming rail
+  at: [12.0, -6.0, 0.0]
+- unit: unit.mould-car-12
+  rides: teeming rail
+  at: [18.0, -6.0, 0.0]
+- unit: unit.mould-car-12
+  rides: teeming rail
+  at: [24.0, -6.0, 0.0]
+- unit: unit.ingot-car-40t
+  rides: ingot rail
+  at: [15.0, 6.0, 0.0]
+- unit: unit.gantry-crane-150t-moon
+  rides: ladle gantry rails
+  at: [-15.0, 0.0, 0.0]
+- unit: unit.stripper-gantry-20t-moon
+  rides: stripper gantry rails
+  at: [15.0, 0.0, 0.0]
+links:
+- kind: rail
+  name: ladle rail
+  from: [-36.0, 6.0, 0.0]
+  to: [-12.0, 6.0, 0.0]
+  length: 24.0
+  item: material.structural-steel-a36
+  mass: 2880.0
+  note: as for air, on sintered regolith sleepers; the car stops at x -15, under the ladle gantry
+- kind: rail
+  name: teeming rail
+  from: [-30.0, -6.0, 0.0]
+  to: [30.0, -6.0, 0.0]
+  length: 60.0
+  item: material.structural-steel-a36
+  mass: 6000.0
+  note: 'as for air: two trains of 4 mould cars (24 m each); teeming in vacuum takes the hydrogen out of the stream as it falls'
+- kind: rail
+  name: ingot rail
+  from: [3.0, 6.0, 0.0]
+  to: [36.0, 6.0, 0.0]
+  length: 33.0
+  item: material.structural-steel-a36
+  mass: 3300.0
+  note: 'as for air: out to the ingot yard'
+- kind: rail
+  name: ladle gantry rails
+  from: [-33.0, -12.0, 0.0]
+  to: [0.0, 12.0, 0.0]
+  length: 123.0
+  item: material.structural-steel-a36
+  mass: 14760.0
+  via:
+  - [0.0, -12.0, 0.0]
+  - [0.0, 12.0, 0.0]
+  - [-33.0, 12.0, 0.0]
+  note: the ladle gantry's two rails, 24 m apart, over the west half
+- kind: rail
+  name: stripper gantry rails
+  from: [0.0, -12.0, 0.0]
+  to: [33.0, 12.0, 0.0]
+  length: 123.0
+  item: material.structural-steel-a36
+  mass: 12300.0
+  via:
+  - [33.0, -12.0, 0.0]
+  - [33.0, 12.0, 0.0]
+  - [0.0, 12.0, 0.0]
+  note: the stripper gantry's two rails over the east half, beside the ladle gantry's ends
+ground:
+- {what: Casting floor, item: material.regolith-sintered, volume: 576.0, note: '0.4 m of sintered regolith under the teeming and stripping, so spilt steel meets stone', mass: 1440000.0}
+- {what: Gantry rail sleepers, item: material.regolith-sintered, volume: 132.0, mass: 330000.0}
+- {what: Crew post berm, item: material.regolith, volume: 164.6, mass: 246900.0}
+totals: {rate: 27.7777777777778, power: 690000.0, heat: 0.0, water: 0.0, mass: 2756000.0, against_module: 'module.casting-bay: one box, the same on every world. This layout: the same rate; 0.69 MW; no water; no hall: the 150 t and 20 t cranes stand on their own legs, sized for 2 m/s2. The moulds and ingots cool by radiation alone, with no air to help: the second train stands longer (not yet worked out). 739 t of plant, 2,017 t of sintered regolith.'}
+staff:
+- {profession: profession.plant-operator, count: 6}
+- {profession: profession.metalworker, count: 2}
+- {profession: profession.technician, count: 1}
+- {profession: profession.engineer, count: 1}
+basis:
+- of: [bays, links, mobile]
+  tier: invented
+  review: true
+  note: As the bay for air, on airless ground.
+- of: [ground]
+  tier: derived
+  review: true
+  note: Sintered regolith at 2,500 kg/m3, loose at 1,500.
+- of: [totals, physical]
+  tier: derived
+  note: Summed from the units, links and ground.
+- of: [staff]
+  tier: derived
+  note: The module's watch, unchanged.

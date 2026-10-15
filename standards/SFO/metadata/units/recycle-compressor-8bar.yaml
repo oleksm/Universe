@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.recycle-compressor-8bar, name: 'Recycle compressor, 4.1 MW, 8 bar', description: 'Raises 14.3 kg/s of hydrogen from 7.3 to 8.5 bar, the loop''s pressure drop only: two centrifugal stages in one casing and a motor. At 8 bar the gas is dense enough that this is a small machine. Suction at local (6, 0, 1.5), discharge at (-6, 0, 1.5).'}
+size_class: 2
+fits: plant-mount.bay-s2
+physical: {length: 12.0, width: 6.0, height: 5.0, mass: 32570.0}
+built_of:
+- {what: 'Casing, rotor and motor', item: material.high-strength-steel-4340, mass: 32570.0, note: '8 t a MW of drive, from memory'}
+needs: {power: 4241000.0, atmosphere: any}
+life: 788940000
+basis:
+- of: [physical, built_of]
+  tier: invented
+  review: true
+  note: From memory.
+- of: [needs]
+  tier: derived
+  note: Isentropic at 80%, a motor at 96%; its heat leaves by the condenser's aftercooler.
+- of: [life]
+  rule: rule.life-plant

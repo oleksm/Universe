@@ -1,0 +1,108 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Plant layout
+x-kind: [layout]
+description: "standards/SFO/metadata/layouts/<name>.yaml: a works' fit (SFO 24): plant units in bays, the links between them, the frame over them where one is needed and the ground works under them, for the site it names. Written by tools/standards/plants.py; the totals are worked out from the rest. Coordinates: metres from the middle of the layout at ground level, x along its length, y across, z up."
+type: object
+additionalProperties: false
+required: [identity, stands_for, site, physical, bays, totals]
+allOf:
+  - { $ref: "../../common.schema.yaml#/definitions/physical_object" }
+  - { properties: { physical: { required: [length, width, height, mass] } } }
+definitions:
+  point: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "m" }
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      description: { type: string }
+  stands_for: { type: string, x-ref: [module], description: "The industrial module (SFO 10) it builds; its rate is the module's where the site is the one the module was set for." }
+  site:
+    type: object
+    additionalProperties: false
+    required: [atmosphere, gravity]
+    properties:
+      atmosphere: { enum: [air, none], description: "air: a world with air; none: airless ground or orbit." }
+      gravity: { type: array, items: { type: number, minimum: 0 }, minItems: 2, maxItems: 2, x-unit: "m/s2", description: "The range of gravity it is sized for, least and most." }
+  physical: { $ref: "../../common.schema.yaml#/definitions/physical", description: "The box round all of it, and its mass: units, links, frame and ground works." }
+  bays:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [id, mount, unit, at]
+      properties:
+        id: { type: string }
+        mount: { type: string, x-ref: [plant-mount] }
+        unit: { type: string, x-ref: [unit] }
+        at: { $ref: "#/definitions/point", description: "The middle of the bay on its floor." }
+        turn: { type: number, x-unit: "deg", description: "The unit's turn about z from the layout's x, degrees." }
+        note: { type: string }
+  mobile:
+    description: "Units that move on a link (a ladle car on its rail): where each stands at rest."
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [unit, rides, at]
+      properties:
+        unit: { type: string, x-ref: [unit] }
+        rides: { type: string, description: "The link it runs on, by its name." }
+        at: { $ref: "#/definitions/point" }
+  links:
+    description: "What joins the bays, laid by the layout: each a line from one point to another, its mass by length."
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [kind, from, to, length, mass]
+      properties:
+        kind: { enum: [conveyor, duct, rail, busbar, pipe, cable, road], description: "road: a paved lane that wheeled units (forklifts, trucks) run on." }
+        name: { type: string }
+        from: { $ref: "#/definitions/point" }
+        to: { $ref: "#/definitions/point" }
+        via: { type: array, items: { $ref: "#/definitions/point" }, description: "Corners the link turns at, in order from `from`; it runs straight between them." }
+        length: { type: number, exclusiveMinimum: 0, x-unit: "m" }
+        item: { type: string, x-ref: [material, stock, good] }
+        mass: { type: number, exclusiveMinimum: 0, x-unit: "kg" }
+        power: { type: number, minimum: 0, x-unit: "W" }
+        heat: { type: number, minimum: 0, x-unit: "W", description: "W this link gives the cooling loop (a water-cooled duct)" }
+        note: { type: string }
+  frame:
+    description: "The hall or open frame, of standard struts (SFO 13) on its grid, and what clads it."
+    type: object
+    additionalProperties: false
+    properties:
+      box: { type: array, items: { type: number }, minItems: 6, maxItems: 6, x-unit: "m", description: "[x0, y0, z0, x1, y1, z1] of the lattice's outside" }
+      cell: { type: number, x-unit: "m", description: "The lattice's cell, a strut module" }
+      shape: { type: string, description: "Which cells are filled: walls one cell thick and a roof one cell deep, and the openings." }
+      openings: { type: array, items: { type: array, items: { type: number, x-unit: "m" }, minItems: 6, maxItems: 6 }, description: "[x0, y0, z0, x1, y1, z1] of each door left open in the lattice" }
+      members: { type: array, items: { type: object, additionalProperties: false, required: [item, count], properties: { item: { type: string, x-ref: [stock] }, count: { type: integer, minimum: 1 }, where: { type: string } } } }
+      cladding: { type: object, additionalProperties: false, properties: { item: { type: string, x-ref: [stock] }, area: { type: number, x-unit: "m2" }, mass: { type: number, x-unit: "kg" } } }
+      carries: { type: array, items: { type: string }, description: "Plant hung on the frame (a crane), by unit key." }
+      mass: { type: number, x-unit: "kg" }
+      sized: { type: string, description: "The loads the members were checked against." }
+  ground:
+    description: "Ground works: foundations, plinths and pits, of concrete."
+    type: array
+    items: { type: object, additionalProperties: false, required: [what, item, volume, mass], properties: { what: { type: string }, item: { type: string, x-ref: [good, material] }, volume: { type: number, x-unit: "m3" }, mass: { type: number, x-unit: "kg" }, note: { type: string, description: "Its shape and where it lies." } } }
+  totals:
+    description: "Worked out from the units, links, frame and ground."
+    type: object
+    additionalProperties: false
+    properties:
+      rate: { type: number, x-unit: "kg/s", description: "kg/s of what it makes, the unit that does the work times its count" }
+      power: { type: number, x-unit: "W", description: "W drawn from outside at full rate" }
+      heat: { type: number, x-unit: "W", description: "W the cooling loop rejects" }
+      water: { type: number, x-unit: "kg/s", description: "kg/s of water used up" }
+      mass: { type: number, x-unit: "kg" }
+      against_module: { type: string, description: "How it compares with the module it stands for." }
+  staff: { $ref: "../../common.schema.yaml#/definitions/staff" }
+  visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
+  revision:
+    $ref: "../../common.schema.yaml#/definitions/record_revision"
+    default: { status: draft, owner: registry, on_conflict: propose, because: "A trial layout (SFO 24), worked out by tools/standards/plants.py.", ask: docs/proposals/modular-factories.md }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

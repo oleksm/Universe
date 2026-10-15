@@ -57,8 +57,14 @@ pub struct Patch {
 pub trait RetainedMesh: Send + Sync {
     fn position(&self, i: usize) -> [f32; 3];
     fn morph(&self, i: usize) -> [f32; 4];
+    /// The 512 grid triangles, never the skirts.
     fn faces(&self) -> &[[u32; 3]];
     fn vertex_count(&self) -> usize;
+    /// Every drawn triangle: the grid's, then each skirt's four (the patch layout). A
+    /// replacement must excise skirts too, so it needs these; grid-only meshes have none.
+    fn all_faces(&self) -> &[[u32; 3]] {
+        self.faces()
+    }
 }
 
 /// Strongly retained client geometry and its selected identity.
@@ -106,6 +112,15 @@ impl RetainedMesh for Patch {
     fn vertex_count(&self) -> usize {
         self.positions.len()
     }
+}
+
+/// A resident vertex as the mesh shader places it for an eye at `eye` (body frame), local to
+/// its patch `origin`: its own position blended toward its parent's by the geomorph.
+pub fn morphed(origin: DVec3, raw: Vec3, m: [f32; 4], eye: DVec3) -> Vec3 {
+    let far = (2.4 * 2. * m[3] as f64 * 0.95) as f32;
+    let distance = (origin + raw.as_dvec3() - eye).length() as f32;
+    let t = ((distance - far * 0.6) / (far * 0.4)).clamp(0., 1.);
+    raw + Vec3::new(m[0], m[1], m[2]) * (t * t * (3. - 2. * t))
 }
 
 /// Convert a subset of strongly retained meshes, bound against the complete
@@ -252,11 +267,7 @@ fn triangles_impl<'a>(
             if !raw.is_finite() || m.iter().any(|x| !x.is_finite()) || m[3] <= 0. {
                 return Err("invalid resident vertex/morph".into());
             }
-            let far = (2.4 * 2. * m[3] as f64 * 0.95) as f32;
-            let distance = (origin + raw.as_dvec3() - eye).length() as f32;
-            let t = ((distance - far * 0.6) / (far * 0.4)).clamp(0., 1.);
-            let v = raw + Vec3::new(m[0], m[1], m[2]) * (t * t * (3. - 2. * t));
-            vertices.push(origin + v.as_dvec3());
+            vertices.push(origin + morphed(origin, raw, m, eye).as_dvec3());
         }
         let mut seen = BTreeSet::new();
         for ids in p.mesh.faces() {

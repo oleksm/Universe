@@ -1,12 +1,45 @@
 # yaml-language-server: $schema=../../schema/structure.schema.yaml
-identity:
-  key: structure.spaceport
-  name: "Halvard spaceport"
-  maker: org.halvard
-  kind: spaceport
-  revision: outdated
-  description: "A port on a world's ground: 16 pads on a cleared plain."
+# built_of, ground and physical.mass written by tools/standards/spaceport.py; the rest by hand.
+identity: {key: structure.spaceport, name: Halvard spaceport, maker: org.halvard, kind: spaceport, revision: outdated, description: 'A port on the ground of a world with air at about 1 g (Heath''s kind; airless ground has the outpost''s design). Site frame (the game''s, crates/core/world/src/spaceport.rs): x east, y north, z up, from the pad grid''s centre. 16 class 2 pads (SFO 23), 90 m square, in a 4 x 4 grid at 150 m (centres x and y -225, -75, 75, 225): each 0.6 m of reinforced concrete on 0.5 m of crushed stone, a flame trench through its middle along x, the pad''s full 90 m, 6 m wide and 4 m deep clear inside: its walls and floor 0.6 m of concrete lined with 0.3 m of refractory brick, closed at the west end; at the east edge it runs on as a lined outlet 12 m long that rises the 4 m to grade, in the 15 m strip between the pad and the taxiway (the exhaust leaves at the surface, away from the pad). Taxiways 30 m wide, 0.4 m concrete, in the 60 m gaps between the pads (along x and y -150,
+    0, 150) and one south from the grid''s edge (y -270) to the hangar''s door; each pad joins its nearest north-south taxiway by a 30 m connector across the 15 m strip (the three western columns to the east, beside the trench outlet on two shoulders and full width beyond it; the eastern column to the west), grated over the ditches, never covering a flame trench. The hangar, its centre at y -450: a strut-lattice hall 96 m across (x) by 156 m deep (y) and 36 m tall, walls one 3 m cell thick, the roof a lattice four cells (12 m) deep spanning the 96 m, 24 m clear under it, clad in 2 mm aluminium, on a 0.4 m concrete slab, its front (north) face at y -372; it holds four ships of the MC-07''s size (66.1 x 30.9 x 19.1 m) two by two, nose in; its door in the north face, 45 m wide and 24 m tall, one ship at a time, closed. The site from y +300 to -560 and x -300 to 300; open drainage ditches 0.5 m wide and 0.3 m deep round the pads and the site, grated where taxiways cross them. Its height, 41
+    m, counts the hall''s 36 m above grade and the trenches'' 4.9 m below. The fitted ground terminal stands on the site and is separate; the game''s vending machine is the game''s.'}
+physical: {length: 600, width: 860, height: 41, mass: 438236052}
 fit:
-  - { item: equipment.gate.terminal-ground.s3, count: 1 }
+- {item: equipment.gate.terminal-ground.s3, count: 1}
+visual:
+  format: "freefall-model/1"
+  path: "models/spaceport/v1"
+  manifest_sha256: "32ec880db730b7b2056f6158060f8c572cbf4cd4711d81a4c626056f8fbced35"
+  version: 1
+  triangles: 58662
 basis:
-  - { of: [fit], tier: invented, review: true, note: "As the game has it (content/base/structures.ron), an early list: to be reviewed. What it is built of, its size and what it weighs are not said." }
+- of: [identity.description, physical]
+  tier: invented
+  review: true
+  note: Scope set 2026-10-14 for the modeller (blender asked). The pad grid and the hangar's place are the game's (spaceport.rs) so play stays as it is; the game's hangar (80 x 60 x 25 m, a 44 x 16 m door) cannot take a 66 m ship, so this one is sized to four MC-07s. Pads class 2 by SFO 23 (refractory concrete, a flame trench); heavy ships at 1 g want class 3 (a deluge), not given here. Thicknesses from memory of airfield and launch-pad practice. Masses to be worked out from the volumes once modelled.
+- of: [fit]
+  tier: invented
+  review: true
+  note: 'As the game has it (content/base/structures.ron), an early list: to be reviewed. What it is built of, its size and what it weighs are not said.'
+- of: [built_of, ground, physical.mass]
+  tier: derived
+  review: true
+  note: 'tools/standards/spaceport.py. Hangar at 1 g: the roof 2217 Pa (2 mm cladding, the frame 119 kg/m2 as counted, 1000 Pa of snow and wind, invented) over 96 m, 12 m deep, puts 638 kN in a chord of each 3 m strip: st4340-tb-160x5 takes 1144 kN; its web diagonals 113 kN at the ends: st4340-tb-100x3 takes 242 kN; a wall vertical takes the strip''s end, 319 kN: st4340-tb-160x3 takes 695 kN; each the lightest kit section with half again to spare. Not checked: wind on the walls, the door''s own frame, the footings. Ground works at blender''s measured volumes, masses from the goods'' bulk densities; the site''s grading (106,440 m3 moved in place) not counted.'
+built_of:
+- {what: 'Hangar roof: struts', item: stock.st4340-tb-160x5-s3000, mass: 1359489, note: 'the roof, four 3 m cells deep over the 96 m span: 3,392 chords stock.st4340-tb-160x5-s3000 (59.48 kg) in its top and bottom planes, 20,664 other straights stock.st4340-tb-100x3-s3000 (22.56 kg) and 21,968 diagonals stock.st4340-tb-100x3-d3000 (31.48 kg)'}
+- {what: 'Hangar roof: nodes', item: stock.st4340-node-220b, mass: 417230.6, note: '8,745 nodes'}
+- {what: 'Hangar wall: struts', item: stock.st4340-tb-160x3-s3000, mass: 507091.4, note: 'the walls, one 3 m cell thick, less the door: 5,944 straight struts stock.st4340-tb-160x3-s3000 (41.04 kg) and 4,744 diagonals stock.st4340-tb-160x3-d3000 (55.47 kg)'}
+- {what: 'Hangar wall: nodes', item: stock.st4340-node-220b, mass: 113742.4, note: '2,384 nodes'}
+- {what: Hangar cladding, item: stock.al6061-sh-2, mass: 172627.2, note: '2 mm 6061 sheet, 31,968 m2 over the walls and roof (blender''s model has 58 m3, the same, and 15 m3 of seam strips not counted)'}
+- {what: Hangar door, item: stock.al6061-sh-2, mass: 33264.0, note: 'three leaves, 45 x 24 m in all: 2 mm skins both sides on a frame of about 20 kg/m2 (from memory)'}
+- {what: Ditch grates, item: material.structural-steel-a36, mass: 84387.5, note: '10.75 m3 of steel grating where the taxiways cross the ditches, measured on blender''s model'}
+ground:
+- {what: Pads, item: good.concrete, volume: 71020.8, mass: 170449920, note: '16 pads 90 m square, 0.6 m of reinforced concrete, less their trenches; measured on blender''s model'}
+- {what: Pad bases, item: good.aggregate, volume: 59184.0, mass: 94694400, note: 0.5 m of crushed stone under the pads; measured on blender's model}
+- {what: 'Flame trenches, concrete', item: good.concrete, volume: 14583.7, mass: 35000880, note: 'floors, walls and west caps, 0.6 m, of the 16 trenches; measured on blender''s model'}
+- {what: 'Flame trenches, lining', item: good.refractory-brick, volume: 6443.4, mass: 19330200, note: 0.3 m of refractory brick inside them; measured on blender's model}
+- {what: 'Trench outlets, concrete', item: good.concrete, volume: 1480.9, mass: 3554160, note: the 12 m outlets rising to grade east of each pad; measured on blender's model}
+- {what: 'Trench outlets, lining', item: good.refractory-brick, volume: 631.1, mass: 1893300, note: their brick; measured on blender's model}
+- {what: Taxiways and roads, item: good.concrete, volume: 39873.1, mass: 95695440, note: '0.4 m: the taxiways, the pad connectors, the spine to the hangar and the 6 m service road; measured on blender''s model'}
+- {what: Terminal hardstand, item: good.concrete, volume: 230.4, mass: 552960.0, note: '24 m square at (200, -450), for the fitted ground terminal; measured on blender''s model'}
+- {what: Hangar slab, item: good.concrete, volume: 5990.4, mass: 14376960, note: '0.4 m under the hangar, 96 x 156 m; measured on blender''s model'}

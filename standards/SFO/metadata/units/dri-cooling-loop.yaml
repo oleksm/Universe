@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.dri-cooling-loop, name: Sponge iron cooling loop, description: 'Cools the sponge iron in the shaft''s cooling zone from 850 to 50 deg C: 3.9 kg/s of hydrogen blown up through the zone, out at about 600 deg C, through a gas cooler and a small scrubber (a packed tower 3 m across, 14 m tall, at local x -3) and back by a compressor (local x 3). Ports to the shaft on +y, 2 m up: cold out at local x -2, hot back at x 2.'}
+size_class: 2
+fits: plant-mount.bay-s2
+physical: {length: 12.0, width: 8.0, height: 16.0, mass: 52550.0}
+built_of:
+- {what: Cooler and scrubber, item: material.structural-steel-a36, mass: 33760.0, note: 'the tower''s shell, 12 mm, and a gas cooler of 20 t from memory'}
+- {what: Compressor and motor, item: good.electric-motors, mass: 18790.0, note: from memory}
+needs: {power: 1796000.0, heat: 32840000.0}
+life: 788940000
+basis:
+- of: [physical, built_of]
+  tier: invented
+  review: true
+  note: Sizes from memory.
+- of: [needs]
+  tier: derived
+  note: The sponge iron's 55.6 kg/s at 700 J/kg K over 800 K; the gas's rise 40 to 600 deg C; compression 1.3 times at 80%.
+- of: [life]
+  rule: rule.life-plant

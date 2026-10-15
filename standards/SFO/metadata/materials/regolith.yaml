@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/material.schema.yaml
+# Data: lunar regolith, from memory of the Lunar Sourcebook (Heiken, Vaniman and French, 1991): bulk density about 1,500 kg/m3 in the top 30 cm, rising with depth; particles about 3,100 kg/m3; angle of repose 30 to 40 degrees. Another world's regolith differs. Review.
+identity:
+  key: material.regolith
+  name: Regolith, loose
+  class: ceramic
+  form: [powder]
+mass:
+  density: 1500.0

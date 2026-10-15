@@ -18,6 +18,10 @@ path = "src/bin/freefall.rs"
 name = "freefall-studio"
 path = "src/bin/freefall-studio.rs"
 
+[[bin]]
+name = "freefall-planet"
+path = "src/bin/freefall-planet.rs"
+
 # The developer's kit (scenarios, the observer port): on by default; a player build is
 # `--no-default-features`.
 [features]
@@ -36,6 +40,7 @@ env_logger.workspace = true
 universe-sim = { path = "../core/sim" }
 serde.workspace = true
 serde_json.workspace = true
+serde_norway = "0.9"
 
 [target.'cfg(target_os = "linux")'.dependencies]
 libc = "0.2"

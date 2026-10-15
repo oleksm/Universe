@@ -17,7 +17,8 @@ physical:
 built_of:
   parts: utility-window-s1
   list:
-    - { code: WIN1-01, name: "Panes", description: "Fused silica: two 27 mm pressure panes and a 6 mm outer debris pane, spaced apart.", mass: 72.8, length: 0.743, width: 0.743, height: 0.111, item: stock.sic-tl-10, quantity: 83.7, module: module.cutting-table }
+    - { code: WIN1-01, name: "Pressure panes", description: "Fused silica: two 27 mm panes, spaced apart, either able to hold the cabin's pressure alone.", mass: 65.5, length: 0.743, width: 0.743, height: 0.054, item: stock.fs-pl-27, quantity: 75.3, module: module.cutting-table }
+    - { code: WIN1-03, name: "Debris pane", description: "Fused silica, 6 mm, outermost: takes the dust and grit so the pressure panes stay unscratched.", mass: 7.3, length: 0.743, width: 0.743, height: 0.006, item: stock.fs-pl-6, quantity: 8.4, module: module.cutting-table }
     - { code: WIN1-02, name: "Frame", description: "Titanium, rounded square: wall, retainers, pressure seats and captures for each pane, and four bored compression sleeves; bolts all round to the hull's window ring.", mass: 27.7, length: 0.8, width: 0.8, height: 0.15, item: stock.ti64-pl-5, quantity: 41.6, module: module.machining-centre }
 making:
   module: module.assembly-shop
@@ -33,7 +34,7 @@ visual:
   triangles: 6916
 life: 473364000
 basis:
-  - { of: [physical, function, size_class], tier: invented, review: true, note: "Half a square metre of triple glazing: the ISS cupola's side windows are about this (0.8 m, three panes). From memory. The pane stock is a stand-in: the registry has no glass stock yet." }
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "Half a square metre of triple glazing: the ISS cupola's side windows are about this (0.8 m, three panes). From memory. The panes are fused silica plate (FS-PL-27, FS-PL-6; 2026-10-13)." }
   - { of: [built_of.list, physical.mass, identity.description], tier: derived, review: true, note: "As window S2: panes as a square plate simply supported at its edges, 0.709 m across, at 101.3 kPa, stress = 0.287 x p x side^2 / t^2 at 20 MPa allowed (invented) gives 27 mm a pane; the debris pane scaled from S2, 6 mm. Modelled (blockout-v01 2026-10-13: 0.5 m2 clear, panes held over 0.551 m2) the panes at 2,200 kg/m3 weigh 72.8 kg and the titanium frame 26.7 kg; the four compression sleeves are calculated, 40/20 mm x 60 mm titanium, 1 kg. 100.5 kg in all, against the 60 kg first listed. No pane stock exists yet; SiC is a stand-in. Air pushes 101.3 kPa x 0.5 m2 = 51 kN on it, carried by the hull's window ring as for S2." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }

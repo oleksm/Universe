@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.mould-car-12, name: 'Ingot mould car, 12 moulds', description: 'A self-propelled rail car carrying twelve cast iron ingot moulds in two rows of six at 0.85 m, each on its stool, big end up: each takes 1,847 kg of steel, a 1 m ingot tapering from 0.48 to 0.42 m square with its hot top; the ingot fits one to a heavy crate. The ladle is held over each mould in turn by the crane and teemed from its slide-gate nozzle; the train stands while the ingots freeze, then the stripper crane lifts each ingot up out of its mould by the hot top (big end up, the ingot can only leave upward), its tongs'' arms holding the mould down by its lugs; the moulds stay on the car. Two trunnion lugs a mould on its y faces, 100 mm across, 80 mm out, near z 2.05, for those arms and for changing a mould. It travels along its x on 2 m gauge, its origin on the running plane; the moulds'' tops 2.3 m up.'}
+size_class: 1
+physical: {length: 6.0, width: 2.8, height: 2.3, mass: 48720.0}
+built_of:
+- {what: Moulds, item: material.cast-iron-grey, mass: 28620.0, note: '12 moulds, 120 mm walls, 1.15 m tall: 2,385 kg each'}
+- {what: Stools, item: material.cast-iron-grey, mass: 8294.0, note: '12 base plates 0.15 m thick: 691 kg each'}
+- {what: Car frame and deck, item: stock.st4340-box-400x400x25, mass: 8808.0, note: 'two box beams 400 x 400 x 25 mm, 6 m, and a deck 6 x 2.8 m of 40 mm plate'}
+- {what: Bogies and drive, item: good.electric-motors, mass: 3000.0, note: from memory}
+holds: 22160.0
+needs: {power: 30000.0}
+life: 788940000
+basis:
+- of: [physical, built_of, holds]
+  tier: derived
+  review: true
+  note: The ingot sized to the heavy crate (2 t); its hot top the module's scrap share. Moulds about their ingot's mass and more, as practice runs (from memory). Car and drive from memory.
+- of: [life]
+  rule: rule.life-plant

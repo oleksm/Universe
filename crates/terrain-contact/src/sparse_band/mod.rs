@@ -27,6 +27,27 @@ fn edge_key(mut a: [u32; 3], mut b: [u32; 3]) -> String {
         format!("diagonal:{a:?}:{b:?}")
     }
 }
+/// Where retained edge `a`-`b` (endpoints ordered by lattice tag) crosses the chart line
+/// `uv[axis] == side`, if it does: its chart position (snapped onto the line) and world point.
+/// The band's outer chain and the excised exterior both use this, so they agree bit for bit.
+pub fn crossing(chart: &Chart, wa: DVec3, wb: DVec3, axis: usize, side: f64) -> Option<(DVec2, DVec3)> {
+    let signed = |p: DVec3| {
+        chart.r * p.dot(if axis == 0 { chart.e } else { chart.n }) - side * p.dot(chart.c)
+    };
+    let da = signed(wa);
+    let db = signed(wb);
+    if (da > 0. && db > 0.) || (da < 0. && db < 0.) || da == db {
+        return None;
+    }
+    let t = da / (da - db);
+    if !(0. ..=1.).contains(&t) {
+        return None;
+    }
+    let pos = wa + (wb - wa) * t;
+    let mut uv = chart.project(pos).ok()?;
+    uv[axis] = side;
+    Some((uv, pos))
+}
 /// Exact provenance identifies a shared cube-grid line; proximity never does.
 pub fn chain(chart: &Chart, grid: &[Triangle], bound: f64) -> Result<(Vec<Event>, Value), Value> {
     let mut events: BTreeMap<String, Event> = BTreeMap::new();
@@ -42,22 +63,12 @@ pub fn chain(chart: &Chart, grid: &[Triangle], bound: f64) -> Result<(Vec<Event>
             };
             for axis in [0, 1] {
                 for side in [-bound, bound] {
-                    let signed = |p: DVec3| {
-                        chart.r * p.dot(if axis == 0 { chart.e } else { chart.n })
-                            - side * p.dot(chart.c)
+                    let Some((uv, pos)) = crossing(chart, tri.world[a], tri.world[b], axis, side)
+                    else {
+                        continue;
                     };
-                    let da = signed(tri.world[a]);
-                    let db = signed(tri.world[b]);
-                    if (da > 0. && db > 0.) || (da < 0. && db < 0.) || da == db {
-                        continue;
-                    }
-                    let t = da / (da - db);
-                    if !(0. ..=1.).contains(&t) {
-                        continue;
-                    }
-                    let pos = tri.world[a] + (tri.world[b] - tri.world[a]) * t;
-                    let mut uv = chart.project(pos).map_err(|e| json!({"reason":e}))?;
-                    uv[axis] = side;
+                    let t = (pos - tri.world[a]).length()
+                        / (tri.world[b] - tri.world[a]).length().max(f64::MIN_POSITIVE);
                     if uv[1 - axis].abs() > bound {
                         continue;
                     }
@@ -212,11 +223,23 @@ pub fn build_prepared_typed(
     grid: Vec<Triangle>,
     visits: usize,
 ) -> Result<Prepared, Value> {
+    build_prepared_radius(s, c, 6281370., id, base, &grid, visits)
+}
+
+/// As `build_prepared_typed`, on the host radius the runtime actually draws with.
+pub fn build_prepared_radius(
+    s: &Surface,
+    c: DVec3,
+    r: f64,
+    id: &str,
+    base: crease::Pair,
+    grid: &[Triangle],
+    visits: usize,
+) -> Result<Prepared, Value> {
     let clock = std::time::Instant::now();
-    let r = 6281370.;
     let chart = Chart::new(c, r);
     let origin = chart.c * (r + s.query(c).map_err(|e| json!({"reason":e}))?.height_m);
-    let (mut events, chain_report) = chain(&chart, &grid, 64.)?;
+    let (mut events, chain_report) = chain(&chart, grid, 64.)?;
     // Canonical source/8m boundary vertices are independently required constraints.
     let mut vertices = vec![];
     let mut uv = vec![];
@@ -237,7 +260,7 @@ pub fn build_prepared_typed(
                 let pos = if t == 0. {
                     source
                 } else {
-                    d * (source.length() * (1. - t) + retained(&grid, q, d)? * t)
+                    d * (source.length() * (1. - t) + retained(grid, q, d)? * t)
                 };
                 let i = vertices.len();
                 vertices.push((pos - origin).as_vec3().to_array());
@@ -337,7 +360,7 @@ pub fn build_prepared_typed(
             let d = chart.direction(centre);
             let source = grid::visible(s, d).map_err(|e| json!({"reason":e}))?;
             let w = smooth(centre);
-            let radial = (r + source) * (1. - w) + retained(&grid, centre, d)? * w;
+            let radial = (r + source) * (1. - w) + retained(grid, centre, d)? * w;
             let i = vertices.len() as u32;
             vertices.push((d * radial - origin).as_vec3().to_array());
             uv.push(centre.to_array());

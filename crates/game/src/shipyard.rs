@@ -1,6 +1,7 @@
-//! The shipyard: the interior studio (see `interior`), on the hull we fly. Open
-//! anywhere with the shipyard key; it or ESC closes. Both editors share a private
-//! deck document. Walking tests that document locally, never aboard the live ship.
+//! The shipyard: the interior studio (see `interior`), on the hull we fly, an app over the game
+//! (`ShipyardApp`). Open anywhere with the shipyard key; it or ESC closes. Both editors share a
+//! private deck document, copied from the game's once on opening and never handed back. Walking
+//! tests that document locally, never aboard the live ship.
 
 use universe_engine::glam::Vec2;
 use universe_engine::{Color, Context, Frame};
@@ -109,21 +110,58 @@ pub fn open(app: &mut App) -> Option<Shipyard> {
     Some(Shipyard::interior(app))
 }
 
-/// This frame's input. False: close it.
-pub fn input(app: &mut App, ctx: &Context) -> bool {
-    // The shipyard key closes it (the interior studio asks first if its plan is unsaved).
-    if crate::keys::pressed(&ctx.input, Act::Shipyard) {
-        return match app.panels.shipyard.as_mut() {
-            Some(y) => !y.may_close(),
-            None => false,
-        };
+/// The shipyard as an app over the game: the shipyard, where it is (the station docked at) and
+/// the credits as they were on opening (nothing is bought in it).
+pub struct ShipyardApp {
+    y: Shipyard,
+    place: String,
+    credits: f64,
+}
+
+impl ShipyardApp {
+    /// Shipyard `y` (seeded from the game, as dev scenarios that make one before it has seen the
+    /// game are on handing it over).
+    pub fn new(mut y: Shipyard, app: &App) -> Self {
+        y.initialize(app);
+        let place = station(app).map_or_else(|| "SHIPYARD".to_string(), |s| format!("SHIPYARD - {s}"));
+        ShipyardApp { y, place, credits: app.v.credits }
     }
-    // Legacy dev constructors do not receive App; seed them only on their first frame.
-    let Some(mut y) = app.panels.shipyard.take() else { return false };
-    y.initialize(app);
-    let stay = input_with(&mut y, ctx);
-    app.panels.shipyard = Some(y);
-    stay
+}
+
+impl universe_engine::apps::App for ShipyardApp {
+    fn name(&self) -> &str {
+        "shipyard"
+    }
+
+    fn update(&mut self, ctx: &mut Context) -> universe_engine::apps::Next {
+        use universe_engine::apps::Next;
+        // The shipyard key closes it (the interior studio asks first if its plan is unsaved).
+        let stay = if crate::keys::pressed(&ctx.input, Act::Shipyard) {
+            !self.y.may_close()
+        } else {
+            universe_prof::time("studio", || input_with(&mut self.y, ctx))
+        };
+        // (Worked with the mouse: the cursor free; but a test drive steering with it takes it,
+        // as flight does.)
+        let want = stay && self.y.wants_mouse();
+        if ctx.cursor_grabbed() != want {
+            ctx.grab_cursor(want);
+        }
+        if stay { Next::Stay } else { Next::Close }
+    }
+
+    fn camera(&self) -> universe_engine::Camera {
+        universe_engine::Camera::default()
+    }
+
+    fn draw(&self, frame: &mut Frame, _: &Context) {
+        universe_prof::time("draw/shipyard", || draw(frame, &self.place, self.credits, &self.y));
+    }
+
+    /// The game runs on under it (its sounds, its link), not drawn.
+    fn cover(&self) -> universe_engine::apps::Cover {
+        universe_engine::apps::Cover::Covers
+    }
 }
 
 /// Both pages edit one session document; no live-world access is needed.
@@ -192,14 +230,13 @@ fn inside((p, c): (Vec2, Vec2), q: Vec2) -> bool {
     q.x >= p.x && q.x <= p.x + c.x && q.y >= p.y && q.y <= p.y + c.y
 }
 
-pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
+pub fn draw(frame: &mut Frame, place: &str, credits: f64, y: &Shipyard) {
     let size = frame.size();
     frame.hud_rect(Vec2::ZERO, size, crate::palette::panel(1.0));
-    let place = station(app).map_or_else(|| "SHIPYARD".to_string(), |s| format!("SHIPYARD - {s}"));
     match y.page {
-        Page::Interior => crate::interior::draw(frame, &place, &y.interior),
+        Page::Interior => crate::interior::draw(frame, place, &y.interior),
         Page::Layout => match y.interior.spec() {
-            Some(hull) => crate::studio::draw_with(frame, &y.deckplans, &format!("{place}   {:.0} CR", app.v.credits), y.interior.id(), &hull.name, &y.studio, &y.interior.access()),
+            Some(hull) => crate::studio::draw_with(frame, &y.deckplans, &format!("{place}   {credits:.0} CR"), y.interior.id(), &hull.name, &y.studio, &y.interior.access()),
             None => {
                 let text = "THE DECK STUDIO LAYS DECKS OUT IN A HULL: THIS DESIGN HAS NONE (TAB: BACK TO 3D)";
                 let w = text.chars().count() as f32 * universe_engine::frame::GLYPH;

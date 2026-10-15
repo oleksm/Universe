@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.slag-pot-car, name: 'Slag pot car, 10 m3', description: 'A tapered cast steel pot (2.9 m across at the top, 2.5 m at the bottom, 1.74 m deep) seated on a four-wheel rail car that runs under the furnace''s slag door and takes the slag out to be cooled and broken. It travels along its length; 2.5 m gauge between the heads'' inner faces, its origin on the running plane; the pot''s lip 3.4 m up. The slag falls from the vessel''s door through the platform''s slag tunnel; the car has no chute.'}
+size_class: 1
+physical: {length: 5.0, width: 3.5, height: 3.4, mass: 26620.0}
+built_of:
+- {what: Pot, item: material.structural-steel-a36, mass: 13600.0, note: 'cast steel 80 mm: a frustum 2.9 m across at the top, 2.5 m at the bottom, 1.74 m deep inside, 10 m3'}
+- {what: Trunnion ring and pins, item: material.structural-steel-a36, mass: 2516.0, note: 'measured on blender''s model (slag-pot-car candidate v01: ring 2,200 kg, pins 316 kg)'}
+- {what: Car, item: material.structural-steel-a36, mass: 9000.0, note: from memory}
+- {what: Drives, item: good.electric-motors, mass: 1500.0, note: from memory}
+holds: 12000.0
+needs: {power: 30000.0}
+life: 788940000
+visual: {format: freefall-model/1, path: models/slag-pot-car/v1, manifest_sha256: 948c3d48f02fc2c5e5d7eddebd5ad26a118f7f1da4d74d1ae6673ab977c1d455, version: 1, triangles: 5952}
+basis:
+- of: [physical, built_of]
+  tier: derived
+  review: true
+  note: A tap's slag (12 t, the recipe's 0.15) foamed to about 1,500 kg/m3 (from memory), a quarter to spare.
+- of: [life]
+  rule: rule.life-plant

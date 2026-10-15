@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.top-gas-condenser-8bar, name: 'Top gas condenser, 57 MW', description: 'Two vertical shell-and-tube condensers at 8 bar: the top gas down through the tubes from 125 to 80 deg C, its water condensing (dew point about 116 deg C at this pressure, so the heat leaves warm), the loop''s water round the tubes from about 62 to 72 deg C; 20.5 kg/s of water drains to a pot and on to the hydrogen plant. A candle filter ahead of it takes the dust. Gas in at local (-6, 0, 12), out at (6, 0, 2).'}
+size_class: 2
+fits: plant-mount.bay-s2
+physical: {length: 12.0, width: 8.0, height: 14.0, mass: 77160.0}
+built_of:
+- {what: Shells and tubes, item: material.stainless-steel-304, mass: 62160.0, note: 'two shells 3 m across, 12 m, 16 mm, and their tubes (30 t, from memory)'}
+- {what: Filter and drain pots, item: material.structural-steel-a36, mass: 15000.0, note: from memory}
+needs: {heat: 61430000.0, atmosphere: vacuum}
+life: 788940000
+basis:
+- of: [physical, built_of]
+  tier: invented
+  review: true
+  note: From memory.
+- of: [needs.heat]
+  tier: derived
+  note: The top gas cooled 125 to 80 deg C and its water condensed down to 6% of the recycle (2.33 MJ/kg); with the compressor's aftercooler.
+- of: [life]
+  rule: rule.life-plant

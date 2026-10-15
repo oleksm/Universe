@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/material.schema.yaml
+# Data: invented. Regolith fused by heat (microwave or solar) into a hard crust; about 2,500 kg/m3, between loose regolith (1,500) and its grains (3,100). Review.
+identity:
+  key: material.regolith-sintered
+  name: Regolith, sintered
+  class: ceramic
+  form: [tile, blank]
+mass:
+  density: 2500.0

@@ -9,7 +9,7 @@ identity:
 size_class: 2
 fits: mount.engine-s2
 physical:
-  mass: 90000
+  mass: 101909
   volume: 160
   length: 10
   width: 4
@@ -23,6 +23,8 @@ built_of:
     - { code: FTE2-04, name: "Power conversion and heating", mass: 8100, length: 4.48, width: 1.79, height: 1.79, item: good.electronics, quantity: 8100, module: module.assembly-shop }
     - { code: FTE2-05, name: "Coolant and refrigeration", mass: 3600, length: 3.42, width: 1.37, height: 1.37, item: good.pumps, quantity: 3600, module: module.assembly-shop }
     - { code: FTE2-06, name: "Propellant feed", mass: 1800, length: 2.71, width: 1.09, height: 1.09, item: stock.st304-pl-3, quantity: 2070, module: module.machining-centre }
+    - { code: FTE2-07, name: "Radiator panels", description: "Two wings of 3 mm carbon-carbon, 1,083 m2 in all, stowed folded along the engine and swung out to stand edge-on to the jet; they shed the heat the reactor keeps from both faces at 1,500 K.", mass: 5684, length: 23.3, width: 23.3, height: 0.003, item: stock.cc-pl-3, quantity: 6536.6, module: module.assembly-shop }
+    - { code: FTE2-08, name: "Heat pipes, manifolds and booms", description: "Lithium heat pipes in molybdenum along the panels, the manifolds that feed them from the coolant loop, and the hinged booms that hold the wings out.", mass: 6225, length: 23.3, width: 0.5, height: 0.5, item: stock.mo-tb-12x0p5, quantity: 7158.7, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:
@@ -54,5 +56,5 @@ basis:
   - { of: [function.throttle, function.gimbal], tier: invented, review: true, note: "Deep throttling by fuel rate (a fifth); a magnetic nozzle steers the jet a few degrees. Chosen." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [built_of.list], tier: derived, review: true, note: "Layout, as the S1, with the modeller's first blockout (v1): the S1 exterior widened a third and lengthened two-thirds. The mount face is at the fore end and the jet aft. The shield is a shadow disc of nuclear graphite at 1,800 kg/m3, 3.87 m across and 1.03 m thick: 21.8 t, 22.5 t with its casing. The reactor is about 2.9 m across and 3.5 m long, centred 3 m aft of the mount face (reaction_offset, measured to the plasma centre). Steering is by the nozzle field (gimbal 0.05 rad), with no moving parts. This is a simplified analogue: Discovery II (NASA/TM-2005-213559) also wraps graphite round its reactor and nozzle coils, converging into a 60 degree shadow. Those coil blankets are not counted. The other part boxes are cube-root placeholders, not shapes. Review." }
-  - { of: [function.heat_to_hull, built_of.list], tier: derived, review: true, note: "Flag, not changed: the engine keeps heat that heat_to_hull does not count. Fusion power is jet / 0.41 = 2.1 GW, and half of it leaves in every direction. The X-rays, about 254 MW, stop in the first wall. The shield faces about a seventh of the sphere and stops about 115 MW of neutrons, and the coils take more. That is at least 369 MW, against 553 kW of mount cooling, and the other 0.09 lost in heating and the nozzle (190 MW) is extra. At 1,000 K a two-sided radiator rejects about 100 kW/m2, so the engine needs about 3,700 m2 of its own radiators, roughly 18 t at 5 kg/m2, which are not in the parts or the envelope. The engine owns its coolant loop and pumps (FTE2-05); who owns the radiators is open. Review." }
+  - { of: [function.heat_to_hull, built_of.list, physical.mass], tier: derived, review: true, note: "The engine carries its own radiators (2026-10-13; the owner left it to the registry): 101,909 kg (was 90,000). Heat it keeps: fusion power is jet / 0.41 = 2.12 GW and half leaves in every direction; the X-rays, about 254 MW, stop in the first wall; the shield stops about 115 MW of neutrons; 0.09 is lost in heating and the nozzle, 190.4 MW: 559.4 MW, the coils' share not counted. Shed at 1,500 K (carbon-carbon is good to 2,300 K; lithium heat pipes work at 1,300 to 1,800 K) with emissivity 0.9 from both faces, 517 kW/m2: 1,082.6 m2. Areal mass 10 kg/m2 with heat pipes and manifolds (invented, of the order of the heavy end of heat-pipe radiator studies, from memory; the panel 5.25 of it), and 10% for booms and hinges. Within mount.engine-s2. Open: stowed, the wings take about 21.7 m3 inside the envelope, not yet laid out; the panel's fin efficiency between heat pipes needs close spacing at 1,500 K, so the 10 kg/m2 is to be checked by a design." }
   - { of: [life], rule: rule.life-ship-system }

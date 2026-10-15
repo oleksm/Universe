@@ -240,6 +240,9 @@ impl RetainedMesh for ResidentPatch {
     fn morph(&self, index: usize) -> [f32; 4] {
         self.mesh.colors[index]
     }
+    fn all_faces(&self) -> &[[u32; 3]] {
+        &self.mesh.faces
+    }
     fn faces(&self) -> &[[u32; 3]] {
         &self.mesh.faces[..self
             .mesh

@@ -2,7 +2,8 @@
 //! ship; its document and preview sessions own their state.
 
 use universe_engine::glam::Vec2;
-use universe_engine::{Camera, Color, Context, Frame, Game};
+use universe_engine::apps::{App, Next};
+use universe_engine::{Camera, Color, Context, Frame};
 
 pub struct StudioOnly {
     interior: crate::interior::Interior,
@@ -97,8 +98,17 @@ fn prepare_legacy_hull(id: &str) -> Result<(), String> {
     universe_sim::world::import::commission(&bytes, model).map(|_| ())
 }
 
-impl Game for StudioOnly {
-    fn update(&mut self, ctx: &mut Context) {
+impl App for StudioOnly {
+    fn name(&self) -> &str {
+        "studio"
+    }
+
+    /// (F3 and SHIFT+F3 are its own: the debug view, the observer.)
+    fn debug_keys(&self) -> bool {
+        true
+    }
+
+    fn update(&mut self, ctx: &mut Context) -> Next {
         let _scope = universe_prof::scope("update/studio");
         crate::visual_assets::maintain();
         #[cfg(feature = "dev")]
@@ -130,8 +140,9 @@ impl Game for StudioOnly {
         if !stay {
             #[cfg(feature = "dev")]
             crate::devkit::observe::stop(self, ctx);
-            ctx.exit();
+            return Next::Close;
         }
+        Next::Stay
     }
 
     fn camera(&self) -> Camera {

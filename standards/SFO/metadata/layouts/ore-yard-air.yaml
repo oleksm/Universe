@@ -1,0 +1,84 @@
+# yaml-language-server: $schema=../../schema/layout.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: layout.ore-yard-air, name: 'Ore yard, world with air', description: 'Two stockpile beds of ore either side of a bucket wheel stacker-reclaimer''s rail. Trucks from the port tip into a hopper; the yard belt takes the ore to the machine, which stacks it, and later reclaims it onto the belt for the pellet plant. Water sprays keep the dust down. Open ground, no hall. For a world with air at about 1 g.'}
+stands_for: module.ore-yard
+site:
+  atmosphere: air
+  gravity: [8.0, 11.0]
+physical: {length: 214.7, width: 101.6, height: 20.0, mass: 5484000.0}
+bays:
+- id: H
+  mount: plant-mount.bay-s2
+  unit: unit.truck-dump-hopper
+  at: [-76.33, 0.0, 0.0]
+  note: at the rail's west end, its feeder in a pit onto the yard belt
+mobile:
+- unit: unit.stacker-reclaimer-1500th
+  rides: machine rail
+  at: [0.0, 0.0, 0.0]
+links:
+- kind: rail
+  name: machine rail
+  from: [-62.33, 0.0, 0.0]
+  to: [62.33, 0.0, 0.0]
+  length: 124.7
+  item: material.structural-steel-a36
+  mass: 14960.0
+  note: two 60 kg/m rails at 10 m gauge on a concrete bed
+- kind: conveyor
+  name: yard belt
+  from: [-76.33, 0.0, -4.0]
+  to: [72.33, 0.0, 1.0]
+  length: 149.8
+  item: material.structural-steel-a36
+  mass: 29970.0
+  via:
+  - [-66.33, 0.0, 1.0]
+  power: 400000.0
+  note: 'a 1.4 m reversible belt beside the rail, with the machine''s tripper on it: ore from the hopper to the machine stacking, from the machine to the out belt reclaiming'
+- kind: conveyor
+  name: out belt
+  from: [72.33, 0.0, 1.0]
+  to: [132.3, 0.0, 1.0]
+  length: 59.97
+  item: material.structural-steel-a36
+  mass: 8996.0
+  power: 100000.0
+  note: a 1 m belt to the pellet plant's ore belt, beyond the layout
+- kind: pipe
+  name: dust sprays
+  from: [-52.33, 49.8113446486123, 1.0]
+  to: [52.33, -49.8113446486123, 1.0]
+  length: 417.7
+  item: material.structural-steel-a36
+  mass: 4120.0
+  via:
+  - [52.33, 49.8113446486123, 1.0]
+  - [54.33, 0.0, 1.0]
+  - [-54.33, 0.0, 1.0]
+  - [-52.33, -49.8113446486123, 1.0]
+  note: 100 mm, along both beds' outer edges, spraying water to keep the dust down
+ground:
+- {what: Rail bed, item: good.concrete, volume: 199.5, note: two strips 1 m wide and 0.8 m deep under the rails, mass: 478800.0}
+- {what: Hopper pit, item: good.concrete, volume: 177.6, note: '6 m deep under the hopper, 0.4 m walls', mass: 426200.0}
+- {what: Bed pads, item: good.concrete, volume: 1667.0, note: 'two pads 105 x 40 m, 0.2 m, at y -28 and 28, sloped to drains', mass: 4001000.0}
+totals: {rate: 0.0, power: 1550000.0, heat: 0.0, water: 0.2, mass: 5484000.0, against_module: 'module.ore-yard: one box 200 x 100 x 15 m, holding 150 kt. This layout: two beds 105 m long, 40 m across and 15 m high (iron ore at 2400 kg/m3 lying at 37 degrees) hold the same; 1.55 MW with every drive running, against the module''s 0.5; 578 t of plant, 4,906 t of concrete.'}
+staff:
+- {profession: profession.docker, count: 3}
+- {profession: profession.clerk, count: 1}
+basis:
+- of: [bays, links, mobile]
+  tier: invented
+  review: true
+  note: Laid out from memory of ore yards.
+- of: [ground, physical]
+  tier: derived
+  review: true
+  note: The beds from the module's 150 kt, the ore's bulk density and its angle of repose (from memory); concrete at 2,400 kg/m3.
+- of: [totals.water]
+  tier: invented
+  review: true
+  note: Dust sprays, from memory.
+- of: [staff]
+  tier: derived
+  note: The module's watch, unchanged.
