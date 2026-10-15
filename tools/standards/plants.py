@@ -1567,7 +1567,7 @@ def hydrogen_plant_air(us, recs):
     fmass += 2 * x_in * rw_a * RHO["steel"]
     vent = (x1 - x0 - 2 * cell) * 1.5                                                  # a ridge vent 1.5 m wide the hall's length
     clad_area = 2 * (x1 - x0) * (z1 - z0) + 2 * (y1 - y0) * (z1 - z0) + (x1 - x0) * (y1 - y0) - vent - sum(max(d - a, e - b) * (f - c) for a, b, c, d, e, f in openings)
-    clad_area = 9416.56                                                               # m2 measured on blender's layout (candidate v01), the returns round openings and the vent included
+    clad_area = 9425.56                                                               # m2 measured on blender's layout (candidate v01), the returns round openings and the vent included
     clad = clad_area * 0.002 * RHO["aluminium"]
     sec_stock = lambda g: yaml.safe_load(open(S + "mill-stock/" + strut(sec[g], cell)[1]["kit"]["section"].split(".", 1)[1].upper() + ".yaml"))
     rcap, wcap = frames.strut_capacity(sec_stock("roof")), frames.strut_capacity(sec_stock("wall"))

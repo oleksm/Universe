@@ -388,7 +388,7 @@ frame:
   - {item: stock.st4340-tb-100x3-d3000, count: 1592, where: roof}
   - {item: stock.st4340-node-160b, count: 1928, where: nodes}
   - {item: stock.st4340-box-400x400x25, count: 6, where: 'crane runways, three a side, 40 m lengths, along x on the inside of the long walls: their rail plane 11 m up at y -11.4 and +11.4'}
-  cladding: {item: stock.al6061-sh-2, area: 9417.0, mass: 50850.0}
+  cladding: {item: stock.al6061-sh-2, area: 9426.0, mass: 50900.0}
   carries: [unit.stack-crane-20t]
   mass: 402500.0
   sized: 'At 1 g: roof 1249 Pa (2 mm aluminium, the frame about 20 kg/m2, 1 kPa of snow and wind, the last invented) over a 24 m span in 3 m deep strips puts 90 kN in a chord: st4340-tb-100x3 takes 242 kN. A wheel of the 20 t crane loaded at the runway''s end puts 188 kN on a wall node, with the roof''s share 233 kN: st4340-tb-120x3 takes 424 kN. Each the kit''s lightest section with half again to spare. The runway bends to 32 MPa between nodes, against 470 MPa with half again to spare. Wind and footings not yet checked.'
