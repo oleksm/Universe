@@ -2746,7 +2746,7 @@
 - { record: unit.crating-line-steel, at: "2026-10-15T19:02:03Z", status: draft, summary: "first tracked", sha: "decf119cb2734d07" }
 - { record: unit.crew-post, at: "2026-10-15T19:52:17Z", status: draft, summary: "changed", sha: "df344af78ebf56cc" }
 - { record: unit.crop-saws, at: "2026-10-15T18:20:39Z", status: draft, summary: "changed", sha: "57aeb9a5c2d969ec" }
-- { record: unit.degassing-stand, at: "2026-10-15T21:06:48Z", status: draft, summary: "changed: identity, physical", sha: "8d6048d81f2abb78" }
+- { record: unit.degassing-stand, at: "2026-10-15T21:07:46Z", status: draft, summary: "changed: identity", sha: "68201101d124053d" }
 - { record: unit.disc-filter-2, at: "2026-10-15T05:01:04Z", status: draft, summary: "changed", sha: "52719317d0ef0afd" }
 - { record: unit.dri-bin-200t, at: "2026-10-14T14:08:01Z", status: draft, summary: "changed", sha: "1077e81910f4da8c" }
 - { record: unit.dri-cooling-loop, at: "2026-10-15T01:24:23Z", status: draft, summary: "changed", sha: "46962a5f5ae51829" }
