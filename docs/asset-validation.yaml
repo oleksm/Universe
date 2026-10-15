@@ -4960,3 +4960,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: layout.ore-yard-air
+    version: 1
+    manifest_sha256: "6bb6212cd092f0e825e812bbd9ed8ace928fe4d91117438d29e200bedc3e68e1"
+    installed: 99705ac9
+    game: "the loader (world::assets) at fso 99705ac9"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/ore-yard-air/v1 (3305592 bytes, bounds [-114.9, -6.5, -49.9613] to [132.83, 20.0, 49.9613]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
