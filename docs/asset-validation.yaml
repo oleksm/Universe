@@ -4585,7 +4585,7 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
-  - key: unit.cooling-tower-shaft-1
+  - key: unit.cooling-tower-shaft
     version: 1
     manifest_sha256: "35be38a48538288af3957fa9984642961abfdd1e88e8d4841e4ae92d3cbf6833"
     installed: f8621ffc

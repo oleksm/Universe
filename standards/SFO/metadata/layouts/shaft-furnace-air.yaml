@@ -44,22 +44,22 @@ bays:
   note: south-west of the tower, clear of the product belt
 - id: C1
   mount: plant-mount.bay-s4
-  unit: unit.cooling-tower-shaft-1
+  unit: unit.cooling-tower-shaft
   at: [-48.0, 60.0, 0.0]
   note: north, in a row
 - id: C2
   mount: plant-mount.bay-s4
-  unit: unit.cooling-tower-shaft-2
+  unit: unit.cooling-tower-shaft
   at: [0.0, 60.0, 0.0]
   note: north, in a row
 - id: C3
   mount: plant-mount.bay-s4
-  unit: unit.cooling-tower-shaft-3
+  unit: unit.cooling-tower-shaft
   at: [48.0, 60.0, 0.0]
   note: north, in a row
 - id: C4
   mount: plant-mount.bay-s4
-  unit: unit.cooling-tower-shaft-4
+  unit: unit.cooling-tower-shaft
   at: [96.0, 60.0, 0.0]
   note: north, in a row
 links:

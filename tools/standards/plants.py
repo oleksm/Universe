@@ -1169,7 +1169,7 @@ def shaft_furnace_air(us, recs):
 
     heater = next(k for k in us if k.startswith("gas-heater-"))
     htr = next(k for k in us if k.startswith("heater-transformer-"))
-    towers = [k for k in us if k.startswith("cooling-tower-shaft-")]
+    towers = ["cooling-tower-shaft"] * us["cooling-tower-shaft"]["count"]
     bays = [
         {"id": "F", "mount": f"plant-mount.{sh['fits']}", "unit": f"unit.{sh_key}", "at": [0.0, 0.0, 0.0], "note": "in the tower, on its columns; the product belt under its discharge"},
         {"id": "R", "mount": "plant-mount.bay-s2", "unit": "unit.recuperator", "at": [24.0, 24.0, 0.0], "note": "north-east of the tower, under the top gas main's fall"},
@@ -2502,7 +2502,7 @@ def mounts_for(bays, recs):
                                             "description": f"A {BAY[c]:.0f} m square of prepared ground or floor and the feeds to it."},
                                "footprint": {"length": BAY[c], "width": BAY[c]}, "bears": {"load": r(v["load"] * M, 3)}, **({"feeds": feeds} if feeds else {}),
                                "basis": [{"of": ["footprint"], "tier": "invented", "note": "Sides 6, 12, 24, 48 m by class: chosen, each twice the last, so the bays of a layout share one grid."},
-                                         {"of": ["bears", "feeds"], "rule": "rule.mounts-margin", "note": f"Round the units fitted to it in the trial ({', '.join(v['units'])}) at 1 g, full."}]}
+                                         {"of": ["bears", "feeds"], "rule": "rule.mounts-margin", "note": f"Round the units fitted to it in the trial ({', '.join(dict.fromkeys(v['units']))}) at 1 g, full."}]}
     for b in bays:
         u, m = recs[b["unit"].split(".", 1)[1]], mounts[b["mount"].split(".", 1)[1]]
         assert u["physical"]["length"] <= m["footprint"]["length"] and u["physical"]["width"] <= m["footprint"]["width"], b
@@ -2522,8 +2522,8 @@ def main():
     su = shaft_units()
     sh_heat = sum(u["needs"].get("heat", 0) for u in su.values()) + TRANSFORMER_LOSS * Q_HEATER / 0.98 / HEATER_PF
     n_t = math.ceil(sh_heat / 40e6)
-    for i in range(n_t):
-        su[f"cooling-tower-shaft-{i + 1}"] = cooling_unit(sh_heat / n_t, f"the shaft furnace's (one of {n_t})")
+    su["cooling-tower-shaft"] = cooling_unit(sh_heat / n_t, f"the shaft furnace's (one of {n_t})")
+    su["cooling-tower-shaft"]["count"] = n_t          # placed n_t times in the layout; not part of the record
     us.update(su)
     hu = hydrogen_units()
     hu["cooling-tower-h2"] = cooling_unit(N_BLK * (hu["electrolyser-block-20mw"]["needs"]["heat"] + hu["rectifier-transformer-21mva"]["needs"]["heat"]), "the electrolysers' and rectifiers'")
