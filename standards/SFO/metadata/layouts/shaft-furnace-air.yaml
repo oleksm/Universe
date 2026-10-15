@@ -188,29 +188,35 @@ links:
   name: tower loop to the scrubber
   from: [84.0, 31.5, 0.75]
   to: [51.5, 30.0, 1.0]
-  length: 34.02
+  length: 34.25
   item: material.structural-steel-a36
-  mass: 19380.0
+  mass: 19510.0
   via:
   - [51.5, 31.5, 0.75]
+  - [51.5, 31.5, 1.0]
   note: a pair of 1.0 m pipes, 12 mm wall, flow and return, off the mains on the plant's east side, west along y 31.5 and up to the scrubber's flanges on its +y face
 - kind: pipe
   name: cooler water to the compressor
   from: [66.25, -12.0, 0.75]
   to: [66.25, -4.0, 1.0]
-  length: 8.004
+  length: 8.25
   item: material.structural-steel-a36
-  mass: 1945.0
+  mass: 2004.0
+  via:
+  - [66.25, -5.0, 0.75]
+  - [66.25, -5.0, 1.0]
   note: a pair of 0.5 m pipes, 10 mm wall, off the mains' end, north to the compressor's flanges on its -y face
 - kind: pipe
   name: cooling water to the sponge iron cooling loop
   from: [-34.0, 42.0, 0.75]
   to: [-30.0, -24.0, 1.0]
-  length: 70.01
+  length: 70.25
   item: material.structural-steel-a36
-  mass: 21820.0
+  mass: 21900.0
   via:
   - [-34.0, -24.0, 0.75]
+  - [-31.0, -24.0, 0.75]
+  - [-31.0, -24.0, 1.0]
   note: a pair of 0.63 m pipes, 10 mm wall, off the mains at the west end, south in a trench clear of the tower to the loop's flanges on its -x face
 - kind: pipe
   name: tower water to C1, pair 1
@@ -324,7 +330,8 @@ links:
   item: material.structural-steel-a36
   mass: 11990.0
   via:
-  - [-26.0, -20.0, 14.0]
+  - [-26.0, -17.0, 2.0]
+  - [-26.0, -17.0, 14.0]
   - [-26.0, 0.0, 14.0]
   note: '1.2 m, 8 mm wall: 3.9 kg/s of hydrogen at 40 deg C, through the tower''s west wall'
 - kind: pipe
@@ -336,7 +343,8 @@ links:
   mass: 38270.0
   via:
   - [-22.0, 0.0, 19.0]
-  - [-22.0, -20.0, 19.0]
+  - [-22.0, -17.0, 19.0]
+  - [-22.0, -17.0, 2.0]
   note: '2.0 m, 10 mm wall, insulated (half as much again): about 600 deg C, back to the loop''s cooler'
 - kind: cable
   name: heater supply
