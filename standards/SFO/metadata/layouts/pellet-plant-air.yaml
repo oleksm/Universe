@@ -87,15 +87,15 @@ links:
 - kind: pipe
   name: filtrate
   from: [-30.0, 3.0, 6.5]
-  to: [-53.0, 0.0, 4.0]
-  length: 27.66
+  to: [-53.0, 0.8, 5.0]
+  length: 26.7
   item: material.structural-steel-a36
-  mass: 614.0
+  mass: 592.6
   via:
   - [-33.0, 3.0, 6.5]
   - [-33.0, 3.0, 5.0]
   - [-53.0, 3.0, 5.0]
-  note: '150 mm: the filtrate back from the filters'' pump to the mill''s feed chute'
+  note: '150 mm: the filtrate back from the filters'' pump to the mill, into the +y side of its feed chute by a flanged nozzle 1 m above the ore belt''s head, the water and ore meeting inside the chute'
 - kind: conveyor
   name: cake belt
   from: [-30.0, -2.4, 6.98]
@@ -228,7 +228,7 @@ links:
   length: 12.15
   item: material.copper
   mass: 228.2
-  note: three phases at 6.6 kV in a cable tray, copper at 4 A/mm2, through the south door to the hall's switchroom
+  note: three phases at 6.6 kV in a cable tray, copper at 4 A/mm2, through the south door to the hall's switchroom; the middle phase steps 0.3 m east round the green ball lift's post at (0, -10.7)
 frame:
   box: [-60.0, -15.0, 0.0, 69.0, 15.0, 27.0]
   cell: 3.0
