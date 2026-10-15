@@ -4780,3 +4780,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.mill-crane-30t
+    version: 1
+    manifest_sha256: "a98fb4a6c71b3e3359cef712ac8c46b88a0f39fa99b200c7364d45d4f9f1d85d"
+    installed: e092b0fb
+    game: "the loader (world::assets) at fso e092b0fb"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/mill-crane-30t/v1 (309272 bytes, bounds [-4.0, -0.0989, -11.7] to [4.0, 2.9, 11.7]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
