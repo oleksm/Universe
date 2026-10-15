@@ -2506,6 +2506,7 @@ def ladle_station_airless(us, recs):
         {"id": "L", "mount": "plant-mount.bay-s2", "unit": "unit.ladle-furnace-80t-sealed", "at": [3.0, 0.0, 0.0], "note": "over the ladle rail"},
         {"id": "T", "mount": "plant-mount.bay-s1", "unit": "unit.furnace-transformer-14mva", "at": [3.0, -9.0, 0.0], "note": "on its slab south of the ladle furnace, no fire walls"},
         {"id": "A", "mount": "plant-mount.bay-s3", "unit": "unit.alloy-bins-8", "at": [3.0, 27.0, 0.0], "note": "north; open feeders and belt, vacuum-rated"},
+        {"id": "S", "mount": "plant-mount.bay-s1", "unit": "unit.stair-tower-12m", "at": [11.0, 27.0, 0.0], "note": "against the bins' east end, as in the station for air: its top landing at (9, 27, 12) gives onto the bins' deck"},
         {"id": "G", "mount": "plant-mount.bay-s2", "unit": "unit.offgas-filter-sealed", "at": [21.0, 18.0, 0.0], "note": "north-east: the ladle furnace's argon and fume"},
         {"id": "P", "mount": "plant-mount.bay-s1", "unit": "unit.crew-post", "at": [18.0, -12.0, 0.0], "note": "south-east, under its berm"},
     ]
@@ -2516,8 +2517,9 @@ def ladle_station_airless(us, recs):
         link("rail", "ladle rail", (-30.0, 0.0, 0.0), (30.0, 0.0, 0.0), A36, 2 * 60.0, None, "two 60 kg/m rails at 3 m gauge on sintered regolith sleepers, from the arc furnace shop to the casting bay; the car stops at x -15 (the stand) and 3 (the ladle furnace)"),
         link("busbar", "secondary bus", (3.0, -9.0 + tW / 2, tH * 2 / 3), (3.0, -5.0, 6.0), CU, 3 * L_I2 / 4e6 * RHO["copper"], None, "as for air"),
         link("conveyor", "alloy feed", (3.0, 27.0, 7.0), (3.0, 3.0, 9.4), A36, 100.0, 20000.0, "0.65 m belt, open (no gallery on airless ground), into the furnace's alloy lock"),
-        link("duct", "fume", (5.0, 0.0, 7.5), (15.0, 18.0, 8.0), A36, math.pi * 0.5 * 0.006 * RHO["steel"], None, "0.5 m: the argon and fume from under the sealed roof, a tenth of the air shop's flow", via=[(5.0, 0.0, 10.0), (15.0, 10.0, 10.0)]),
-        link("pipe", "cooling water to the radiators", (-24.0 - 48.0 * (n_low - 1) - 22.0, -18.0, 1.0), (-1.5, -4.5, 1.0), A36, math.pi * 0.25 * 0.006 * RHO["steel"] * 2, None, f"a pair of 250 mm pipes, flow and return, at about 330 K, along the {n_low} radiator fields' north edge to the furnace's manifold, a branch to the transformer", via=[(-1.5, -18.0, 1.0)]),
+        link("duct", "fume", (5.0, 0.0, 7.5), (15.0, 18.0, 8.0), A36, math.pi * 0.5 * 0.006 * RHO["steel"], None, "0.5 m: the argon and fume from under the sealed roof, a tenth of the air shop's flow; a reducer from the roof's 1 m neck to the duct at its start", via=[(5.0, 0.0, 10.0), (15.0, 10.0, 10.0)]),
+        link("pipe", "cooling water to the radiators", (-24.0 - 48.0 * (n_low - 1) - 22.0, -18.0, 1.0), (-1.5, -4.5, 1.0), A36, math.pi * 0.25 * 0.006 * RHO["steel"] * 2, None, f"a pair of 250 mm pipes, flow and return, at about 330 K, along the {n_low} radiator fields' north edge to the furnace's ports at (-1.5, -4.7) and (-1.5, -4.3), 1 m up", via=[(-1.5, -18.0, 1.0)]),
+        link("pipe", "transformer cooling", (-1.5, -9.0, 1.0), (3.0 - tL / 2, -9.0, 1.35), A36, 2 * math.pi * 0.1 * 0.005 * RHO["steel"], None, "a pair of 100 mm pipes teed off the main at y -9, east to the transformer's cooler on its -x face (flow at z 1.35, return above it, as the furnace transformers' ports)", via=[(3.0 - tL / 2 - 0.8, -9.0, 1.0), (3.0 - tL / 2 - 0.8, -9.0, 1.35)]),
         link("rail", "crane rails", (-24.0, 0.0, 0.0), (12.0, 0.0, 0.0), A36, 2 * 50.0, None, "the maintenance gantry crane's two straight rails over the stand and the ladle furnace, at y -12 and 12 (24 m apart); the link runs on their centre line"),
     ]
     mobile = [{"unit": "unit.ladle-car-80t", "rides": "ladle rail", "at": [-15.0, 0.0, 0.0]},
