@@ -293,6 +293,9 @@ struct Clusters {
     level: Vec<u8>,
     meshes: Vec<Option<(View, Mesh, bool)>>,
     shown: Vec<u32>,
+    /// The last frame each was wanted (shown, chosen or coming), for evicting the longest unwanted past RESIDENT.
+    used: Vec<u64>,
+    frame: u64,
     /// metres of error a pixel covers per metre away (1080 lines, 50 degrees)
     px: f64,
     stats: [usize; 5],
@@ -312,6 +315,8 @@ impl Clusters {
             level,
             meshes: (0..n).map(|_| None).collect(),
             shown: vec![],
+            used: vec![0; n],
+            frame: 0,
             px: 2.0 * 25f64.to_radians().tan() / 1080.0,
             stats: [0; 5],
         })
@@ -375,6 +380,9 @@ fn cluster_mesh(cl: &Clusters, i: usize, pos: &[DVec3], col: &[[u8; 3]], view: V
     }
     Mesh::new(m)
 }
+
+/// Cluster meshes kept at most (about 2 GB of GPU at 128 triangles each).
+const RESIDENT: usize = 16_000;
 
 /// What a chunk mesh is built from, shared with the build worker (made again when the height x changes).
 struct BuildData {
@@ -1060,9 +1068,24 @@ impl PlanetLodApp {
             !visible(&cl, i) || cl.meshes[i].as_ref().is_some_and(|(v, m, _)| *v == view && m.gpu_resident())
         });
         if ready {
-            cl.shown = want;
+            cl.shown = want.clone();
         }
         let finest = cl.shown.iter().map(|&i| cl.level[i as usize] as usize).min().unwrap_or(0);
+        // Kept at most RESIDENT cluster meshes: the longest unwanted dropped (their GPU copies go with them).
+        cl.frame += 1;
+        let now = cl.frame;
+        let marks: Vec<u32> = cl.shown.iter().chain(want.iter()).chain(pre.iter()).copied().collect();
+        for i in marks {
+            cl.used[i as usize] = now;
+        }
+        let resident = cl.meshes.iter().filter(|m| m.is_some()).count();
+        if resident > RESIDENT {
+            let mut old: Vec<(u64, usize)> = (0..cl.meshes.len()).filter(|&i| cl.meshes[i].is_some() && cl.used[i] < now).map(|i| (cl.used[i], i)).collect();
+            old.sort_unstable();
+            for &(_, i) in old.iter().take(resident - RESIDENT) {
+                cl.meshes[i] = None;
+            }
+        }
         cl.stats = [cl.shown.len(), need.len(), pre.len(), cl.meshes.iter().filter(|m| m.is_some()).count(), finest];
         log::debug!("clusters shown {} built {} ahead {} resident {} finest level {}", cl.stats[0], cl.stats[1], cl.stats[2], cl.stats[3], cl.stats[4]);
         drop(cl);
