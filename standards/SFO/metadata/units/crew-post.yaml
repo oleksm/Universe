@@ -9,6 +9,12 @@ built_of:
 - {what: 'Airlock, saddles and frames', item: material.structural-steel-a36, mass: 3490.0, note: 'the 6 mm lock, two 10 mm saddles on 400 x 400 x 20 mm foot plates (about 15 kN each under the post and its berm at 2 m/s2), door frames, viewport rings and hardware; measured on blender''s model v1'}
 - {what: Life support and fit-out, item: good.electric-motors, mass: 3000.0, note: from memory}
 needs: {power: 20000.0, atmosphere: vacuum}
+visual:
+  format: "freefall-model/1"
+  path: "models/crew-post/v1"
+  manifest_sha256: "ecc574880d20dfb64668f11ba4315a2bc744ee2e8793ba0b3689c35a6cd87e1d"
+  version: 1
+  triangles: 10224
 life: 788940000
 basis:
 - of: [physical, built_of, needs]
