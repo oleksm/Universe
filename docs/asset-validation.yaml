@@ -5065,3 +5065,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.ingot-tipper
+    version: 1
+    manifest_sha256: "67d9cd587fc04cae1634b6c443a34520b966bd13bca31b1d19ac354ab4657a9a"
+    installed: c01e94a1
+    game: "the loader (world::assets) at fso 5bec9ed0"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/ingot-tipper/v1 (87840 bytes, bounds [-2.85, 0.0, -1.5] to [2.55, 2.1, 1.5]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
