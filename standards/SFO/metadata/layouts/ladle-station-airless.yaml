@@ -117,7 +117,7 @@ ground:
 - {what: Ladle furnace foundation, item: material.regolith-sintered, volume: 102.0, note: 'as for air, of sintered regolith', mass: 255000.0}
 - {what: Stand and transformer pads, item: material.regolith-sintered, volume: 58.0, mass: 145000.0}
 - {what: Bins and filter pads, item: material.regolith-sintered, volume: 108.2, mass: 270500.0}
-- {what: Crew post berm, item: material.regolith, volume: 164.6, mass: 246900.0}
+- {what: Crew post berm, item: material.regolith, volume: 164.6, note: 'loose regolith 1 m deep over the post, with openings for its windows and airlock; at the airlock''s door a landing of packed regolith 2 x 2 m, its top at the threshold (1.35 m up), and a ramp down to the ground at about 1 in 3', mass: 246900.0}
 - {what: Rail sleepers, item: material.regolith-sintered, volume: 103.2, mass: 258000.0}
 - {what: Radiator legs' pads, item: material.regolith-sintered, volume: 5.808, mass: 14520.0}
 totals: {rate: 41.6666666666667, power: 7838000.0, heat: 1568000.0, water: 0.0, mass: 1646000.0, against_module: 'module.ladle-station: one box, the same on every world. This layout: the same rate; 7.8 MW; 1.6 MW to 2 radiator fields at 330 K; no water used up. No degasser: the vacuum degasses the ladle on an open stand, but must not see the alloys, which the sealed ladle furnace adds under argon; no ladle crane (nothing is lifted into a tank) and no hall. 456 t of plant, 1,190 t of sintered regolith.'}
