@@ -4885,3 +4885,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.stacker-reclaimer-1500th
+    version: 1
+    manifest_sha256: "c08f13e2311e87b9fb3b7993944a15b11bedddd2f823e7bee714da6f33aa0545"
+    installed: ad65d800
+    game: "the loader (world::assets) at fso ad65d800"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/stacker-reclaimer-1500th/v1 (1010844 bytes, bounds [-16.0, -0.06, -5.686] to [34.65, 20.0, 5.686]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
