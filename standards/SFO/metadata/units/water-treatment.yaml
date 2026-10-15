@@ -18,6 +18,12 @@ built_of:
 - {what: Tube rack, item: material.structural-steel-a36, mass: 842.9, note: the reverse osmosis bank's rack; measured on model v1}
 - {what: Pump skid, item: material.structural-steel-a36, mass: 3791.0, note: 'the pump skid''s frame, base and the bearers under the pumps'' feet; the other groups stand on the pad on their own feet; measured on model v1'}
 needs: {power: 28480.0}
+visual:
+  format: "freefall-model/1"
+  path: "models/water-treatment/v1"
+  manifest_sha256: "c44a856468e34bb6c730c4dc77ae8593b37448fb1d7372df6f020af8ddcee010"
+  version: 1
+  triangles: 23528
 life: 788940000
 basis:
 - of: [physical, built_of, needs]
