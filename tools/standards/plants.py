@@ -1995,9 +1995,13 @@ def yard_units():
     out["truck-dump-hopper"] = dict(
         name="Truck dump hopper", size_class=2, fits="bay-s2", dims=(12.0, 10.0, 8.0),
         desc="A steel hopper over a pit that a tipping truck backs onto and empties into, 100 t, with an apron feeder under it onto the yard belt; its grizzly bars keep out the lumps. The trucks come from the port, its feeder's outlet at local (0, 0, -4) in the pit. Its steel deck round the mouth carries the truck as it tips: a loaded rear axle of about 130 t (a 170 t truck, the load thrown back as it tips; from memory), times 1.25 for impact, 1.6 MN on two wheel groups 5 m apart; the dump-edge beam across x, 7 m between its columns at x -5.5 and 1.5, is a 700 x 400 x 30 mm box: one group at mid-span bends it 1.4 MN m, 122 MPa against A36's 165 allowed. Its grizzly: bars 80 x 200 mm solid at 380 mm (300 mm gaps, the biggest lump the 1.4 m yard belt takes), across the mouth along y on its rim beams and a 600 x 400 x 25 mm box beam across x at y 0, so they span 3 m: 2 m of ore on them (45 kPa) times 3 for the tipping's impact (from memory) bends each 61 kN m, 114 MPa.",
-        built_of=[part("Hopper and grizzly", A36, 45000.0, "from memory"), part("Apron feeder", "good.electric-motors", 25000.0, "from memory")],
+        built_of=[part("Hopper and grizzly", A36, 30764.4, "20 mm hopper, its rim beams and the grizzly; measured on model v1"),
+                  part("Deck and supports", A36, 65878.9, "the truck deck: 700 x 400 x 30 boxes under the dump edge and wheel tracks, 400 x 300 x 16 elsewhere, 20 mm plate in the wheel strips and 10 mm chequer plate, twelve columns to z -6, the guards; measured on model v1"),
+                  part("Apron feeder", A36, 13446.2, "pans, chain, drums and frame, the drums and axles drawn solid; measured on model v1"),
+                  part("Feeder drive", "good.electric-motors", 4000.0, "motor and gearbox for 150 kW, from memory")],
         holds=100000.0, needs={"power": 150e3},
-        basis=[{"of": ["physical", "built_of", "holds", "needs"], "tier": "invented", "review": True, "note": "From memory."}])
+        basis=[{"of": ["built_of"], "tier": "derived", "review": True, "note": "Steel measured on blender's model v1; the drive from memory."},
+               {"of": ["physical", "holds", "needs"], "tier": "invented", "review": True, "note": "From memory."}])
     out["ingot-crane-10t"] = bridge_crane_unit(10000.0, 22.8, 3000.0, kind="Ingot crane", job="it lifts hot ingots off the ingot car with its tongs by their lifting eyes, one at a time, onto the cooling racks; later lays each cooled ingot on a crop saw's table and the cropped ingot onto the crating line's roller table", gear="ingot tongs")
     out["sampling-lab"] = dict(
         name="Sampling laboratory", size_class=1, fits="bay-s1", dims=(6.0, 6.0, 3.5),
@@ -2053,7 +2057,7 @@ def ore_yard_air(us, recs):
               {"unit": "unit.yard-tripper-1500th", "rides": "machine rail", "at": [0.0, 0.0, 0.0]}]
     ground = [
         {"what": "Rail bed", "item": CONC, "volume": r((bed_L + 20) * 2 * 1.0 * 0.8), "note": "two strips 1 m wide and 0.8 m deep under the rails"},
-        {"what": "Hopper pit", "item": CONC, "volume": r(12 * 10 * 0.6 + 2 * (12 + 10) * 6 * 0.4), "note": "6 m deep under the hopper, 0.4 m walls"},
+        {"what": "Hopper pit", "item": CONC, "volume": r(13.8 * 12.0 * 0.6 + 2 * (13.8 + 12.0) * 6 * 0.4), "note": "6 m deep under the hopper, 13 x 11.2 m inside (the hopper's feet reach y -5.15 and 5.15), 0.4 m walls"},
         {"what": "Bed pads", "item": CONC, "volume": r(2 * bed_L * base * 0.2), "note": f"two pads {bed_L:.0f} x {base:.0f} m, 0.2 m, at y -{beds_y:.0f} and {beds_y:.0f}, sloped to drains"},
     ]
     for g in ground:

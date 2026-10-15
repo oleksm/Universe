@@ -4,15 +4,21 @@ identity: {key: unit.truck-dump-hopper, name: Truck dump hopper, description: 'A
     (from memory) bends each 61 kN m, 114 MPa.'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 10.0, height: 8.0, mass: 70000.0}
+physical: {length: 12.0, width: 10.0, height: 8.0, mass: 114100.0}
 built_of:
-- {what: Hopper and grizzly, item: material.structural-steel-a36, mass: 45000.0, note: from memory}
-- {what: Apron feeder, item: good.electric-motors, mass: 25000.0, note: from memory}
+- {what: Hopper and grizzly, item: material.structural-steel-a36, mass: 30760.0, note: '20 mm hopper, its rim beams and the grizzly; measured on model v1'}
+- {what: Deck and supports, item: material.structural-steel-a36, mass: 65880.0, note: 'the truck deck: 700 x 400 x 30 boxes under the dump edge and wheel tracks, 400 x 300 x 16 elsewhere, 20 mm plate in the wheel strips and 10 mm chequer plate, twelve columns to z -6, the guards; measured on model v1'}
+- {what: Apron feeder, item: material.structural-steel-a36, mass: 13450.0, note: 'pans, chain, drums and frame, the drums and axles drawn solid; measured on model v1'}
+- {what: Feeder drive, item: good.electric-motors, mass: 4000.0, note: 'motor and gearbox for 150 kW, from memory'}
 holds: 100000.0
 needs: {power: 150000.0}
 life: 788940000
 basis:
-- of: [physical, built_of, holds, needs]
+- of: [built_of]
+  tier: derived
+  review: true
+  note: Steel measured on blender's model v1; the drive from memory.
+- of: [physical, holds, needs]
   tier: invented
   review: true
   note: From memory.
