@@ -2741,7 +2741,7 @@
 - { record: unit.crew-post, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "94bf58a6622c650d" }
 - { record: unit.crop-saws, at: "2026-10-14T21:38:01Z", status: draft, summary: "first tracked", sha: "095789ee9c876d9f" }
 - { record: unit.degassing-stand, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "3f2a0b824b4bd169" }
-- { record: unit.disc-filter-2, at: "2026-10-15T04:53:24Z", status: draft, summary: "changed: identity, physical", sha: "7153a8d83060b2d8" }
+- { record: unit.disc-filter-2, at: "2026-10-15T04:59:14Z", status: draft, summary: "changed: visual", sha: "371ea62c74247778" }
 - { record: unit.dri-bin-200t, at: "2026-10-14T14:08:01Z", status: draft, summary: "changed", sha: "1077e81910f4da8c" }
 - { record: unit.dri-cooling-loop, at: "2026-10-15T01:24:23Z", status: draft, summary: "changed", sha: "46962a5f5ae51829" }
 - { record: unit.eaf-vessel-80t, at: "2026-10-14T16:01:10Z", status: draft, summary: "changed: physical, built_of, visual", sha: "f948e3f34829ba7e" }
