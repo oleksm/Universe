@@ -1337,7 +1337,7 @@ I_DC = I_BLK / PER_STACK                                     # A of direct curre
 NI = "material.nickel-200"
 
 
-def hydrogen_purifier(name, P, T_in, T_cool, cop, cool_txt):
+def hydrogen_purifier(name, P, T_in, T_cool, cop, cool_txt, measured=None):
     """A deoxidiser and two dryers for the plant's hydrogen at P (Pa): saturated at T_in from the separators, cooled by water to T_cool and
     chilled to 5 deg C (by a chiller of `cop`) before the beds."""
     P_d = 1.2 * P + 2e5                                          # design pressure: a fifth over working and 2 bar for the relief valve's margin
@@ -1368,7 +1368,7 @@ def hydrogen_purifier(name, P, T_in, T_cool, cop, cool_txt):
     vessels = (2 * cyl_shell(D_dry, H_dry, t_dry, bottom=2.2) + cyl_shell(D_deo, 3.5, t_deo, bottom=2.2)
                + cyl_shell(1.0, 2.5, 0.008, bottom=2.2) + cyl_shell(0.6, 2.0, 0.006, bottom=2.2) + cyl_shell(0.5, 2.0, 0.006, bottom=2.2)) * 7900
     d_cwp = math.sqrt(4 * q_cw / (4186 * 10) / 1000 / 2.0 / math.pi)
-    return dict(
+    u = dict(
         name=name, size_class=2, fits="bay-s2", dims=(12.0, 8.0, 9.0),
         desc=(f"Takes the last oxygen out of the electrolysers' hydrogen and dries it to a dew point near -60 deg C, at {P / 1e5:.0f} bar (rated {P_d / 1e5:.0f}). {cool_txt} In order: "
               f"a feed/effluent exchanger (0.9 m across, 3.5 m long, horizontal along x at y 0, z 6, x -5.6 to -2.1, on a stand) warms the wet gas a little against the hot outlet; "
@@ -1390,6 +1390,13 @@ def hydrogen_purifier(name, P, T_in, T_cool, cop, cool_txt):
         basis=[{"of": ["physical", "built_of", "needs"], "tier": "derived", "review": True,
                 "note": (f"From the plant's {n_h2:.0f} mol/s of hydrogen: the dryers' diameter at {v_bed:.2f} m/s at {P / 1e5:.0f} bar, their walls for {P_d / 1e5:.0f} bar in 304 at 138 MPa (85% joints, 1.5 mm allowance), the sieve from the water left at 5 deg C over 8 hours, "
                          f"regeneration warming sieve and shell 230 K and driving the water off in 4 hours ({p_heat / 1e3:.0f} kW), the chiller {q_chill / 1e3:.0f} kW at a COP of {cop:g}; oxygen content, capacities and the catalyst's space velocity from memory.")}])
+    for what, m in (measured or {}).items():                   # groups measured on the model: replace or add
+        u["built_of"] = [x for x in u["built_of"] if x["what"] != what]
+        if isinstance(m, float):
+            u["built_of"].insert(0, part(what, "material.stainless-steel-304", m, "the dryers, deoxidiser, drums and filter shells with their heads and nozzles; measured on model v1"))
+        elif m:
+            u["built_of"].append(part(what, m[0], m[1], m[2] + "; measured on model v1"))
+    return u
 
 
 def hydrogen_units():
@@ -1439,7 +1446,10 @@ def hydrogen_units():
                   + f" Local frame: the transformer's tank on the -y side (y -{(W_t + 3.0) / 2:g} to {W_t - (W_t + 3.0) / 2:g}); the rectifier in a closed house on the +y side (x -2.1 to 2.1, y 0.6 to {(W_t + 3.0) / 2:g}, 2.8 m tall, three service doors), fed across the gap by a shielded AC bridge, its heat sinks' water joining the transformer cooler's pair, whose ports are on the -x end at (-{L_t / 2:g}, -1.86, 1) and (-{L_t / 2:g}, -1.14, 1); "
                   f"the rectifier's two DC terminals on the house's +y face at x -0.45 and 0.45, 2.4 m up, toward the hall.")
     out["rectifier-transformer-21mva"] = rt
-    out["hydrogen-purifier"] = hydrogen_purifier("Hydrogen purifier", 3e5, 40.0, 35.0, 4.0, "Cooled by the tower's water.")
+    out["hydrogen-purifier"] = hydrogen_purifier("Hydrogen purifier", 3e5, 40.0, 35.0, 4.0, "Cooled by the tower's water.",
+                                                 measured={"Vessels": 7548.5, "Skid, supports and piping": None,
+                                                           "Skid, skirts and supports": (A36, 24152.5, "the skid's beams and feet, the dryers' skirts and base rings, the exchangers' stands and saddles, the headers' posts"),
+                                                           "Piping and valve bodies": ("material.stainless-steel-304", 3867.0, "the process, regeneration and water pipes and the valves' bodies")})
     out["hydrogen-purifier-10bar"] = hydrogen_purifier("Hydrogen purifier, 10 bar", 10e5, 80.0, 80.0, 2.0,
                                                        f"For airless ground: its loop water comes back from the radiators at about {HP_T_LOOP - 273.15:.0f} deg C, so the after-cooler only takes the gas to 80 deg C and the chiller lifts all the rest to its condenser at about 85 deg C, at half the air plant's COP.")
     out["water-treatment"] = dict(
