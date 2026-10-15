@@ -23,7 +23,9 @@ use universe_engine::glam::{DVec3, Quat, Vec2, Vec3};
 use universe_engine::{Camera, Color, Context, Frame, KeyCode, Light, Mesh, MouseButton, Transform, WireModel};
 
 /// Chunk edge (m): a chunk is one mesh.
-const CHUNK: f64 = 8000.0;
+/// Chunks hold about this many finest triangles (their edge from the pattern's density: about 15 km on the 3x3
+/// grid, 2 km on Yosemite's 50 m sampling, where 8 km chunks were 30k triangles and a flip re-sent MBs).
+const CHUNK_TRIS: f64 = 3000.0;
 /// Decision cell edge (m): the vertices decided together (each cell keeps its own margin).
 const CELL: f64 = 1000.0;
 /// Mesh rebuilds a frame stop once this much time is spent (ms); the rest keep their old mesh.
@@ -157,6 +159,128 @@ struct Stats {
     drawn: usize,
 }
 
+/// The decisions, in a thread of their own (the owner, 14 Oct: 7.7 ms a frame, 25 at worst, on Yosemite's 903k
+/// vertices): it owns what is drawn, takes the eye (the latest, older ones skipped), and sends back a snapshot of
+/// what is drawn, the chunks that went stale (boxes of chunks) and its counts.
+struct Decider {
+    mv: Vec<u32>,
+    ma: Vec<u32>,
+    dptr: Vec<u32>,
+    dep: Vec<u32>,
+    ao: Vec<f32>,
+    am: Vec<f32>,
+    ml: Vec<u8>,
+    pos: Vec<DVec3>,
+    cells: Vec<Cell>,
+    cell_of: Vec<u32>,
+    rdep_ptr: Vec<u32>,
+    rdep: Vec<u32>,
+    subtree: Vec<[i32; 4]>,
+    queued: Vec<bool>,
+    on: Vec<u8>,
+    drawn: usize,
+    lvl_count: Vec<usize>,
+    runs: u64,
+}
+
+enum ToDecider {
+    Eye(DVec3),
+    /// New places (the height x changed): every cell decided again.
+    Positions(Vec<DVec3>),
+}
+
+struct Decided {
+    /// What is drawn now, when anything changed.
+    on: Option<Arc<Vec<u8>>>,
+    stale: Vec<[i32; 4]>,
+    drawn: usize,
+    lvl_count: Vec<usize>,
+    decided: usize,
+    changed: usize,
+    ms: f64,
+    /// Every 15th run: the drawn vertices fully in and rising.
+    risen: Option<(usize, usize)>,
+}
+
+impl Decider {
+    fn update(&mut self, eye: DVec3) -> Decided {
+        let t0 = Instant::now();
+        let mut queue: Vec<u32> = Vec::new();
+        for (c, ch) in self.cells.iter().enumerate() {
+            if !ch.verts.is_empty() && ch.eye_at.distance(eye) > ch.margin {
+                queue.push(c as u32);
+                self.queued[c] = true;
+            }
+        }
+        let (mut decided, mut changed) = (0, 0);
+        let mut stale: Vec<[i32; 4]> = Vec::new();
+        let mut k = 0;
+        while k < queue.len() {
+            let c = queue[k] as usize;
+            k += 1;
+            self.queued[c] = false;
+            decided += 1;
+            let mut margin = f64::INFINITY;
+            let verts = std::mem::take(&mut self.cells[c].verts);
+            for &i in &verts {
+                let i = i as usize;
+                let v = self.mv[i] as usize;
+                let dist = self.pos[v].distance(eye);
+                let ao = self.ao[i] as f64;
+                margin = margin.min((dist - ao).abs());
+                let mut o = dist < ao && self.on[self.ma[i] as usize] == 1;
+                if o {
+                    o = (self.dptr[i]..self.dptr[i + 1]).all(|b| self.on[self.dep[b as usize] as usize] == 1);
+                }
+                if o as u8 != self.on[v] {
+                    self.on[v] = o as u8;
+                    changed += 1;
+                    if o {
+                        self.drawn += 1;
+                        self.lvl_count[self.ml[i] as usize] += 1;
+                    } else {
+                        self.drawn -= 1;
+                        self.lvl_count[self.ml[i] as usize] -= 1;
+                    }
+                    stale.push(self.subtree[v]);
+                    // Those whose decision reads it are decided again.
+                    for &j in &self.rdep[self.rdep_ptr[v] as usize..self.rdep_ptr[v + 1] as usize] {
+                        let cj = self.cell_of[self.mv[j as usize] as usize] as usize;
+                        if !self.queued[cj] {
+                            self.queued[cj] = true;
+                            queue.push(cj as u32);
+                        }
+                    }
+                }
+            }
+            let ch = &mut self.cells[c];
+            ch.verts = verts;
+            ch.eye_at = eye;
+            ch.margin = margin;
+        }
+        self.runs += 1;
+        let risen = (self.runs % 15 == 0).then(|| {
+            let (mut full, mut rising) = (0, 0);
+            for (i, &v) in self.mv.iter().enumerate() {
+                if self.on[v as usize] == 1 {
+                    if self.pos[v as usize].distance(eye) <= self.am[i] as f64 { full += 1 } else { rising += 1 }
+                }
+            }
+            (full, rising)
+        });
+        Decided {
+            on: (changed > 0 || self.runs == 1).then(|| Arc::new(self.on.clone())),
+            stale,
+            drawn: self.drawn,
+            lvl_count: self.lvl_count.clone(),
+            decided,
+            changed,
+            ms: t0.elapsed().as_secs_f64() * 1e3,
+            risen,
+        }
+    }
+}
+
 /// What a chunk mesh is built from, shared with the build worker (made again when the height x changes).
 struct BuildData {
     pos: Vec<DVec3>,
@@ -244,16 +368,7 @@ pub struct PlanetLodApp {
     dir: PathBuf,
     d: Data,
     chunks: Vec<Chunk>,
-    cells: Vec<Cell>,
-    /// Per vertex: its decision cell (u32::MAX outside the pattern).
-    cell_of: Vec<u32>,
-    /// Per vertex: the collapsed vertices whose decision reads it (csr).
-    rdep_ptr: Vec<u32>,
-    rdep: Vec<u32>,
-    /// Per vertex: the chunks (x0, y0, x1, y1) its collapse subtree's triangles lie in.
-    subtree: Vec<[i32; 4]>,
     grid: Grid,
-    on: Vec<u8>,
     tiles: Vec<TileGroup>,
     view: View,
     hud: bool,
@@ -262,7 +377,10 @@ pub struct PlanetLodApp {
     alt: f64,
     heading: f64,
     stats: Stats,
-    queued: Vec<bool>,
+    /// The decider: its inbox and what it sends back; the latest snapshot of what is drawn.
+    to_decider: std::sync::mpsc::Sender<ToDecider>,
+    from_decider: Mutex<std::sync::mpsc::Receiver<Decided>>,
+    on_snap: Arc<Vec<u8>>,
     /// The build worker: its inbox, what it sends back, whether a job is out, what jobs are built from, and the
     /// generation (height x and view: an older one's results are dropped); the job built and going up.
     jobs: std::sync::mpsc::Sender<Job>,
@@ -293,7 +411,6 @@ pub struct PlanetLodApp {
     ground_h: Option<f64>,
     /// Drawn collapsed vertices per level; the last full count of those fully in and rising.
     lvl_count: Vec<usize>,
-    scan: [usize; 3],
     risen: (usize, usize),
     /// (altitude, drawn share, fully-in share) as flown, for the chart.
     history: std::collections::VecDeque<[f32; 3]>,
@@ -419,8 +536,10 @@ impl PlanetLodApp {
                 hi = hi.max(v);
             }
         }
-        let gn = ((hi - lo) / CHUNK).ceil() as i32 + 1;
-        let grid = Grid { p0, east, north, min: lo, n: gn, size: CHUNK };
+        // (The triangles' centres fill a square of (hi - lo) on a side, not evenly: the chunk edge from the mean.)
+        let chunk = ((hi - lo).powi(2) * CHUNK_TRIS / d.ft.len().max(1) as f64).sqrt().clamp(1000.0, 16_000.0);
+        let gn = ((hi - lo) / chunk).ceil() as i32 + 1;
+        let grid = Grid { p0, east, north, min: lo, n: gn, size: chunk };
         let cn = ((hi - lo) / CELL).ceil() as i32 + 1;
         let cell_grid = Grid { p0, east, north, min: lo, n: cn, size: CELL };
         let mut chunks: Vec<Chunk> = (0..gn * gn).map(|_| Chunk { origin: DVec3::ZERO, radius: 0.0, tris: vec![], edges: vec![], mesh: None, mesh_view: None, stale: true, tri_count: 0 }).collect();
@@ -562,17 +681,43 @@ impl PlanetLodApp {
                 }
             }
         }).map_err(|e| format!("build worker: {e}"))?;
+        let on_snap = Arc::new(on.clone());
+        let mut decider = Decider {
+            mv: d.mv.clone(), ma: d.ma.clone(), dptr: d.dptr.clone(), dep: d.dep.clone(), ao: d.ao.clone(), am: d.am.clone(), ml: d.ml.clone(),
+            pos: d.pos.clone(), cells, cell_of, rdep_ptr: cnt, rdep, subtree, queued, on, drawn: 0, lvl_count: vec![0; 256], runs: 0,
+        };
+        let (to_decider, decider_inbox) = std::sync::mpsc::channel::<ToDecider>();
+        let (decider_out, from_decider) = std::sync::mpsc::channel::<Decided>();
+        std::thread::Builder::new().name("planetlod decide".into()).spawn(move || {
+            while let Ok(first) = decider_inbox.recv() {
+                // (The latest eye; new places applied in order.)
+                let mut eye = None;
+                for msg in std::iter::once(first).chain(decider_inbox.try_iter()) {
+                    match msg {
+                        ToDecider::Eye(e) => eye = Some(e),
+                        ToDecider::Positions(p) => {
+                            decider.pos = p;
+                            for c in &mut decider.cells {
+                                c.eye_at = DVec3::splat(f64::INFINITY);
+                            }
+                        }
+                    }
+                }
+                if let Some(e) = eye
+                    && decider_out.send(decider.update(e)).is_err()
+                {
+                    return;
+                }
+            }
+        }).map_err(|e| format!("decider: {e}"))?;
         let mut app = PlanetLodApp {
             dir,
             d,
             chunks,
-            cells,
-            cell_of,
-            rdep_ptr: cnt,
-            rdep,
-            subtree,
             grid,
-            on,
+            to_decider,
+            from_decider: Mutex::new(from_decider),
+            on_snap: on_snap.clone(),
             tiles,
             view: View::Mesh,
             hud: true,
@@ -581,7 +726,6 @@ impl PlanetLodApp {
             alt: 20_000.0,
             heading: 0.0,
             stats: Stats::default(),
-            queued,
             jobs,
             done: Mutex::new(done),
             busy: false,
@@ -604,7 +748,6 @@ impl PlanetLodApp {
             drag: None,
             ground_h: None,
             lvl_count: vec![0; 256],
-            scan: [0; 3],
             risen: (0, 0),
             history: Default::default(),
             last_hist: 0.0,
@@ -738,9 +881,7 @@ impl PlanetLodApp {
         for i in 0..self.d.pos.len() {
             self.d.pos[i] = self.d.dirs[i] * (r + ex * self.d.z[i] as f64);
         }
-        for c in &mut self.cells {
-            c.eye_at = DVec3::splat(f64::INFINITY);
-        }
+        let _ = self.to_decider.send(ToDecider::Positions(self.d.pos.clone()));
         for c in &mut self.chunks {
             c.stale = true;
         }
@@ -778,78 +919,6 @@ impl PlanetLodApp {
     }
 
     /// Decide again the chunks the eye has moved far enough from, and whatever their changes reach.
-    fn lod_update(&mut self, eye: DVec3) {
-        let t0 = Instant::now();
-        let d = &self.d;
-        let mut queue: Vec<u32> = Vec::new();
-        for (c, ch) in self.cells.iter().enumerate() {
-            if !ch.verts.is_empty() && ch.eye_at.distance(eye) > ch.margin {
-                queue.push(c as u32);
-                self.queued[c] = true;
-            }
-        }
-        let (mut decided, mut changed) = (0, 0);
-        let mut stale: Vec<[i32; 4]> = Vec::new();
-        let mut k = 0;
-        while k < queue.len() {
-            let c = queue[k] as usize;
-            k += 1;
-            self.queued[c] = false;
-            decided += 1;
-            let mut margin = f64::INFINITY;
-            let verts = std::mem::take(&mut self.cells[c].verts);
-            for &i in &verts {
-                let i = i as usize;
-                let v = d.mv[i] as usize;
-                let dist = d.pos[v].distance(eye);
-                let ao = d.ao[i] as f64;
-                margin = margin.min((dist - ao).abs());
-                let mut o = dist < ao && self.on[d.ma[i] as usize] == 1;
-                if o {
-                    o = (d.dptr[i]..d.dptr[i + 1]).all(|b| self.on[d.dep[b as usize] as usize] == 1);
-                }
-                if o as u8 != self.on[v] {
-                    self.on[v] = o as u8;
-                    changed += 1;
-                    if o {
-                        self.stats.drawn += 1;
-                        self.lvl_count[d.ml[i] as usize] += 1;
-                    } else {
-                        self.stats.drawn -= 1;
-                        self.lvl_count[d.ml[i] as usize] -= 1;
-                    }
-                    stale.push(self.subtree[v]);
-                    // Those whose decision reads it are decided again.
-                    for &j in &self.rdep[self.rdep_ptr[v] as usize..self.rdep_ptr[v + 1] as usize] {
-                        let cj = self.cell_of[d.mv[j as usize] as usize] as usize;
-                        if !self.queued[cj] {
-                            self.queued[cj] = true;
-                            queue.push(cj as u32);
-                        }
-                    }
-                }
-            }
-            let ch = &mut self.cells[c];
-            ch.verts = verts;
-            ch.eye_at = eye;
-            ch.margin = margin;
-        }
-        let gn = self.grid.n;
-        for b in stale {
-            if b[0] > b[2] {
-                continue;
-            }
-            for u in b[0]..=b[2] {
-                for v in b[1]..=b[3] {
-                    self.chunks[(u * gn + v) as usize].stale = true;
-                }
-            }
-        }
-        self.stats.decided = decided;
-        self.stats.changed = changed;
-        self.stats.lod_ms = t0.elapsed().as_secs_f64() * 1e3;
-    }
-
     fn build_tiles(&self, g: &TileGroup) -> Mesh {
         let edges: &[[u32; 2]] = if self.view == View::Mesh { &g.edges } else { &[] };
         self.model(g.origin, &g.tris, edges)
@@ -1057,7 +1126,36 @@ impl App for PlanetLodApp {
             self.lon += 2e-4;
         }
         let eye = self.eye();
-        self.lod_update(eye);
+        let _ = self.to_decider.send(ToDecider::Eye(eye));
+        let decided: Vec<Decided> = self.from_decider.lock().unwrap().try_iter().collect();
+        let gn = self.grid.n;
+        let (mut n_dec, mut n_chg, mut ms) = (0, 0, 0.0f64);
+        for dd in decided {
+            if let Some(on) = dd.on {
+                self.on_snap = on;
+            }
+            for b in dd.stale {
+                if b[0] > b[2] {
+                    continue;
+                }
+                for u in b[0]..=b[2] {
+                    for v in b[1]..=b[3] {
+                        self.chunks[(u * gn + v) as usize].stale = true;
+                    }
+                }
+            }
+            self.stats.drawn = dd.drawn;
+            self.lvl_count = dd.lvl_count;
+            if let Some(r) = dd.risen {
+                self.risen = r;
+            }
+            n_dec += dd.decided;
+            n_chg += dd.changed;
+            ms = ms.max(dd.ms);
+        }
+        self.stats.decided = n_dec;
+        self.stats.changed = n_chg;
+        self.stats.lod_ms = ms;
         // Meshes again, built first and drawn after: a job's meshes all go on screen together once all are on
         // the GPU; then the next job: every stale chunk in view and every chunk not built yet, from a snapshot of
         // what is drawn (stale chunks out of view keep their mesh until they come into view).
@@ -1112,7 +1210,7 @@ impl App for PlanetLodApp {
                     // (Marked built now: a vertex flipping while the job is out marks it stale again.)
                     self.chunks[c].stale = false;
                 }
-                let job = Job { generation: self.generation, view, on: Arc::new(self.on.clone()), bd: self.bd.clone(), chunks: chunks.into_iter().map(|(_, c)| c).collect() };
+                let job = Job { generation: self.generation, view, on: self.on_snap.clone(), bd: self.bd.clone(), chunks: chunks.into_iter().map(|(_, c)| c).collect() };
                 self.busy = self.jobs.send(job).is_ok();
             }
         }
@@ -1129,21 +1227,7 @@ impl App for PlanetLodApp {
         self.stats.rebuilt = rebuilt;
         self.stats.mesh_ms = t0.elapsed().as_secs_f64() * 1e3;
         self.ground_h = self.ground_at(unit(self.lon, self.lat));
-        // Fully in and rising: counted over a fifteenth of the collapsed vertices a frame.
         let n = self.d.mv.len();
-        let step = n.div_ceil(15);
-        let (a, b) = (self.scan[0], (self.scan[0] + step).min(n));
-        for i in a..b {
-            let v = self.d.mv[i] as usize;
-            if self.on[v] == 1 {
-                if self.d.pos[v].distance(eye) <= self.d.am[i] as f64 { self.scan[1] += 1 } else { self.scan[2] += 1 }
-            }
-        }
-        self.scan[0] = b;
-        if b >= n {
-            self.risen = (self.scan[1], self.scan[2]);
-            self.scan = [0; 3];
-        }
         if ctx.time - self.last_hist > 0.15 {
             self.last_hist = ctx.time;
             let nm = n.max(1) as f32;
