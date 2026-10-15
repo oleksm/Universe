@@ -2334,7 +2334,7 @@ def airless_units(us):
     gc["built_of"] = [dict(p_, mass=12922.6, note=p_["note"] + "; measured on blender's model v1, 12,922.6 kg") if p_["what"] == "Bridge girders" else p_ for p_ in gc["built_of"] if p_["what"] != "Legs and sill beams"]
     gc["built_of"] += [part("Legs and sill beams", A36, 50801.2, "four box legs 0.8 x 0.8 m, 20 mm, from the sills' tops at z 1 to 22, and two sill beams 9.8 m; measured on model v1"),
                        part("Rails, stops, plates, braces and hangers", A36, 11330.3, "the trolley's rails and stops, the end plates, the legs' braces and the festoon hangers; measured on model v1")]
-    gc["desc"] = gc["desc"].replace("on the hall's runways", "on its own legs, running on two ground rails 24 m apart").replace("its origin on the runway's rail plane", "its origin on the ground rails' plane, its girders 22 m up") + f" Sized for {MOON_G[1]:g} m/s2."
+    gc["desc"] = gc["desc"].replace("on the hall's runways", "on its own legs, running on two ground rails 24 m apart").replace("its origin on the runway's rail plane", "its origin on the ground rails' plane, its girders 22 m up").replace("the hook raised to 0.1 m under the rail plane", "the hook raised under the bridge (its heights below)") + f" Sized for {MOON_G[1]:g} m/s2."
     gc["desc"] += " Its bridge datum is the girders' underside at z 22 (their tops 22.8, the trolley's rails 22.88); parked, the hook is raised to z 21.9; the legs (0.8 x 0.8 m, 20 mm) stand from the sill beams' tops at z 1."
     out["crew-post"] = dict(
         name="Crew post, pressurised", size_class=1, fits="bay-s1", dims=(6.0, 4.4, 4.6),
@@ -2475,10 +2475,12 @@ def airless_ladle_units(us):
     for cap, trolley, kind, job, gear, key in ((150000.0, 37500.0, "Ladle gantry crane", "on its own legs over the teeming rail and the ladle rail: it lifts the full ladle off its car and holds it over each mould in turn", "a main hoist and a ladle beam", "gantry-crane-150t-moon"),
                                                 (20000.0, 6000.0, "Stripper gantry crane", "on its own legs over the teeming rail's east half: it lifts each frozen ingot up out of its mould by the hot top, the mould held down by its lugs, and sets the ingots on the ingot car", "ingot tongs whose arms hold the mould down", "stripper-gantry-20t-moon")):
         c = bridge_crane_unit(cap, 24.0, trolley, kind=kind, job=job, gear=gear, g=MOON_G[1], h_min=0.6)
-        legs = 4 * box_tube(1.0, 1.0, 0.025, 23.0) * RHO["steel"] if cap > 50000 else 4 * box_tube(0.8, 0.8, 0.02, 22.0) * RHO["steel"]
+        legs = 4 * box_tube(1.0, 1.0, 0.025, 23.0) * RHO["steel"] if cap > 50000 else 4 * box_tube(0.8, 0.8, 0.02, 23.0) * RHO["steel"]
         c["built_of"].append(part("Legs and sill beams", A36, legs * 1.15, "four box legs and two sill beams, from the legs' size (the sills 15%)"))
         c["dims"] = (10.0, 25.0, 27.0)
-        c["desc"] = c["desc"].replace("on the hall's runways", "on its own legs, running on two ground rails 24 m apart").replace("its origin on the runway's rail plane", "its origin on the ground rails' plane, its girders 24 m up") + f" Sized for {MOON_G[1]:g} m/s2."
+        c["desc"] = c["desc"].replace("on the hall's runways", "on its own legs, running on two ground rails 24 m apart").replace("its origin on the runway's rail plane", "its origin on the ground rails' plane, its girders 24 m up").replace("the hook raised to 0.1 m under the rail plane", "the hook raised under the bridge (its heights below)") + f" Sized for {MOON_G[1]:g} m/s2."
+        if cap <= 50000:
+            c["desc"] += " Its bridge datum is the girders' underside at z 24 (0.6 x 0.8 m, 12 mm; their tops 24.8, the trolley's rails 24.88); the legs, 0.8 x 0.8 m, 20 mm, stand from the sill beams' tops at z 1; parked, the stripping tool is raised to 1.6 m under the trolley's rails, its bottom about z 23.3."
         if cap > 50000:
             c["dims"] = (10.0, 25.4, 27.0)
             c["built_of"] = [dict(p_, mass=17703.3, note=p_["note"] + "; measured on blender's model v1, 17,703.3 kg with its closed end plates") if p_["what"] == "Bridge girders" else p_ for p_ in c["built_of"] if p_["what"] != "Legs and sill beams"]
