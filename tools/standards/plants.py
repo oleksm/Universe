@@ -1399,7 +1399,7 @@ def hydrogen_purifier(name, P, T_in, T_cool, cop, cool_txt, measured=None):
     return u
 
 
-def water_treatment(name, airless=False):
+def water_treatment(name, airless=False, measured=None):
     """Demineralised water for the cells: two sand filters, a cartridge filter, a two-stage reverse osmosis bank and an
     electrodeionisation stage. For air under an open roof; airless in a closed, insulated house with every tank sealed."""
     q_p = H_WATER * 3.6                                          # m3/h of product
@@ -1456,6 +1456,10 @@ def water_treatment(name, airless=False):
         basis=[{"of": ["physical", "built_of", "needs"], "tier": "derived", "review": True,
                 "note": (f"From the cells' {q_p:.1f} m3/h: the EDI keeps 90%, the bank {rec:.0%} at 20 L/m2/h on 37.2 m2 elements, six to a tube; the sand filters at 10 m/h, their shells for 7 bar in A36 at 138 MPa (85% joints, 1.5 mm allowance); "
                          f"pumps at 70-75% ({', '.join(f'{k} {v / 1e3:.1f} kW' for k, v in pumps.items())}), the EDI at 0.4 kWh/m3, 5 kW of controls; backwash {p_bw / 1e3:.0f} kW ten minutes a day, not counted. Fluxes, recoveries and equipment weights from memory.")}])
+    for what, m in (measured or {}).items():                   # groups measured on the model: replace or add
+        u["built_of"] = [x for x in u["built_of"] if x["what"] != what]
+        if m:
+            u["built_of"].append(part(what, m[0], m[1], m[2] + "; measured on model v1"))
     return u
 
 
@@ -1512,7 +1516,13 @@ def hydrogen_units():
                                                            "Piping and valve bodies": ("material.stainless-steel-304", 3916.0, "the process, regeneration and water pipes and the valves' bodies")})
     out["hydrogen-purifier-10bar"] = hydrogen_purifier("Hydrogen purifier, 10 bar", 10e5, 80.0, 80.0, 2.0,
                                                        f"For airless ground: its loop water comes back from the radiators at about {HP_T_LOOP - 273.15:.0f} deg C, so the after-cooler only takes the gas to 80 deg C and the chiller lifts all the rest to its condenser at about 85 deg C, at half the air plant's COP.")
-    out["water-treatment"] = water_treatment("Water treatment")
+    out["water-treatment"] = water_treatment("Water treatment", measured={
+        "Roof and columns": None, "Skid deck and rack": None,
+        "Sand filters": (A36, 2854.0, "the two shells with their heads, seams, legs, feet and isolation valves"),
+        "Tanks and cartridge filter": ("material.stainless-steel-304", 757.4, "the break tank, the cleaning tank and the cartridge housing"),
+        "Roof, columns and pipe hangers": (A36, 7257.8, "six columns and feet, crossbeams, eaves, purlins, fascias, the roof sheet and the pipe crossbars and hangers under it"),
+        "Tube rack": (A36, 842.9, "the reverse osmosis bank's rack"),
+        "Pump skid": (A36, 3114.4, "the pump skid's frame and base; the other groups stand on the pad on their own feet")})
     out["water-treatment-sealed"] = water_treatment("Water treatment, sealed", airless=True)
     out["stack-crane-20t"] = bridge_crane_unit(20000.0, 22.8, 6000.0, kind="Stack crane", job="it lifts an electrolyser stack's end plates and cell packs out for refurbishment and sets in new ones", gear="a main hoist")
     return out

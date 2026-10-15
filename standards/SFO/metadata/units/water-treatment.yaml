@@ -4,18 +4,19 @@ identity: {key: unit.water-treatment, name: Water treatment, description: 'Makes
     -1.6): the feed booster, high-pressure, product, backwash and cleaning pumps, the cleaning tank (1 m3) and the permeate break tank (2 m across, 1.6 m tall, at (-2.4, -2.7)). Raw water in at local (6, 0, 0.5), clean water out at (-6, 0, 0.5); reject and backwash out by a 150 mm flange at (6, 3.4, 0.3) (6.3 m3/h of concentrate, 93 m3/h while a filter backwashes). Its reject goes to drain. 400 V supply at (-6, -3.4, 0.5).'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 8.0, height: 5.0, mass: 29070.0}
+physical: {length: 12.0, width: 8.0, height: 5.0, mass: 31480.0}
 built_of:
-- {what: Sand filters, item: material.structural-steel-a36, mass: 2469.0, note: 'two shells 1.8 m by 2.5 m in 7 mm for 7 bar, heads as 1.1 discs, their legs and nozzle plates'}
 - {what: Filter sand, item: good.silica-sand, mass: 9772.0, note: '1.2 m of graded sand and gravel in each, 1,600 kg/m3'}
 - {what: Pressure tubes, item: material.stainless-steel-304, mass: 848.4, note: '5 tubes 0.21 m by 6.7 m in 4 mm for 18 bar, 30 kg of end caps each'}
 - {what: Membrane elements, item: material.polyethylene-uhmw, mass: 480.0, note: '30 spiral-wound polyamide elements, 16 kg each, which the registry has not got: polyethylene stands for them'}
 - {what: Electrodeionisation, item: material.structural-steel-a36, mass: 2280.0, note: '6 modules of ion-exchange membranes and resin between steel end plates, 180 kg each, and the cabinet with its DC supplies, from memory'}
-- {what: Tanks and cartridge filter, item: material.stainless-steel-304, mass: 886.1, note: 'the break tank 2 m by 1.6 m in 4 mm, the cleaning tank and the cartridge housing'}
 - {what: Pumps and dosing, item: good.pumps, mass: 1778.0, note: 'five pump sets at 30 kg/kW and 100 kg each, the dosing skid, from memory'}
 - {what: Piping and valves, item: material.stainless-steel-304, mass: 1500.0, note: from memory}
-- {what: Skid deck and rack, item: material.structural-steel-a36, mass: 5340.0, note: 'a beam deck under the bay at 40 kg/m2 and the tube rack, from memory'}
-- {what: Roof and columns, item: material.structural-steel-a36, mass: 3720.0, note: 'six columns at 60 kg/m and 96 m2 of roof at 20 kg/m2 with its purlins, from memory'}
+- {what: Sand filters, item: material.structural-steel-a36, mass: 2854.0, note: 'the two shells with their heads, seams, legs, feet and isolation valves; measured on model v1'}
+- {what: Tanks and cartridge filter, item: material.stainless-steel-304, mass: 757.4, note: 'the break tank, the cleaning tank and the cartridge housing; measured on model v1'}
+- {what: 'Roof, columns and pipe hangers', item: material.structural-steel-a36, mass: 7258.0, note: 'six columns and feet, crossbeams, eaves, purlins, fascias, the roof sheet and the pipe crossbars and hangers under it; measured on model v1'}
+- {what: Tube rack, item: material.structural-steel-a36, mass: 842.9, note: the reverse osmosis bank's rack; measured on model v1}
+- {what: Pump skid, item: material.structural-steel-a36, mass: 3114.0, note: the pump skid's frame and base; the other groups stand on the pad on their own feet; measured on model v1}
 needs: {power: 28480.0}
 life: 788940000
 basis:
