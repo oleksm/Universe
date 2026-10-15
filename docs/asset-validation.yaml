@@ -4720,3 +4720,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.ball-mill-4m4
+    version: 1
+    manifest_sha256: "a3095ce13179352c7581b7762111851e6c9b6460baa776d570bcfe50d04bdbd2"
+    installed: 3aefcecf
+    game: "the loader (world::assets) at fso 3aefcecf"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/ball-mill-4m4/v1 (424036 bytes, bounds [-8.1324, -0.2, -4.2] to [8.5, 6.2, 4.45]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
