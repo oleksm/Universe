@@ -4,10 +4,10 @@ identity: {key: unit.truck-dump-hopper, name: Truck dump hopper, description: 'A
     mouth along y on its rim beams and a 600 x 400 x 25 mm box beam across x at y 0, so they span 3 m: 2 m of ore on them (45 kPa) times 3 for the tipping''s impact (from memory) bends each 61 kN m, 114 MPa.'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 10.0, height: 8.0, mass: 114100.0}
+physical: {length: 12.0, width: 10.0, height: 8.0, mass: 118400.0}
 built_of:
 - {what: Hopper and grizzly, item: material.structural-steel-a36, mass: 30760.0, note: '20 mm hopper, its rim beams and the grizzly; measured on model v1'}
-- {what: Deck and supports, item: material.structural-steel-a36, mass: 65880.0, note: 'the truck deck: 700 x 400 x 30 boxes under the dump edge and wheel tracks, 400 x 300 x 16 elsewhere, 20 mm plate in the wheel strips and 10 mm chequer plate, twelve columns to z -6, the guards; measured on model v1'}
+- {what: Deck and supports, item: material.structural-steel-a36, mass: 70200.0, note: 'the truck deck: 700 x 400 x 30 boxes under the dump edge and wheel tracks, 400 x 300 x 16 elsewhere, 20 mm plate in the wheel strips and 10 mm chequer plate, twelve columns to z -6, the guards, and the east portal for the yard belt (300 x 300 x 20 header, sill and posts, 150 x 150 x 10 side braces); measured on model v2'}
 - {what: Apron feeder, item: material.structural-steel-a36, mass: 13450.0, note: 'pans, chain, drums and frame, the drums and axles drawn solid; measured on model v1'}
 - {what: Feeder drive, item: good.electric-motors, mass: 4000.0, note: 'motor and gearbox for 150 kW, from memory'}
 holds: 100000.0
