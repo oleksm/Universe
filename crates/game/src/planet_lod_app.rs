@@ -20,7 +20,7 @@ use crate::hud_kit::{self, Hit, Panel};
 
 use universe_engine::apps::{App, Next};
 use universe_engine::glam::{DVec3, Quat, Vec2, Vec3};
-use universe_engine::{Camera, Color, Context, Frame, KeyCode, Light, Mesh, MouseButton, PoolModel, PooledMesh, Transform, WireModel};
+use universe_engine::{Camera, Color, Context, Frame, KeyCode, Light, Mesh, Morph, MouseButton, PoolModel, PooledMesh, Transform, WireModel};
 
 /// Chunk edge (m): a chunk is one mesh.
 /// Chunks hold about this many finest triangles (their edge from the pattern's density: about 15 km on the 3x3
@@ -290,6 +290,8 @@ struct Clusters {
     row: Vec<[f32; 10]>,
     ptr: Arc<Vec<[u32; 2]>>,
     tris: Arc<Vec<[u32; 3]>>,
+    /// Per corner (as `tris`): metres its parent's surface stands above it (none: no morph).
+    morph: Vec<f32>,
     level: Vec<u8>,
     meshes: Vec<Option<(View, PooledMesh, bool)>>,
     shown: Vec<u32>,
@@ -312,6 +314,7 @@ impl Clusters {
             row: f.chunks_exact(10).map(|c| std::array::from_fn(|i| c[i])).collect(),
             ptr: Arc::new(pt.chunks_exact(2).map(|c| [c[0], c[1]]).collect()),
             tris: Arc::new(t.chunks_exact(3).map(|c| [c[0], c[1], c[2]]).collect()),
+            morph: read(dir, "cluster_morph.f32").unwrap_or_default(),
             level,
             meshes: (0..n).map(|_| None).collect(),
             shown: vec![],
@@ -349,16 +352,26 @@ fn cluster_mesh(cl: &Clusters, i: usize, pos: &[DVec3], col: &[[u8; 3]], view: V
     let tris = &cl.tris[a as usize..(a + n) as usize];
     let origin = cl.origin(i);
     let mut m = PoolModel::default();
+    // Morph (the smooth swap): each corner slides up or down to its parent's surface, all the way at the distance
+    // its parent takes over (its error a pixel there), none at half of it; so the swap finds the same shape.
+    let r = cl.row[i];
+    let far = if r[5] >= 0.0 { (r[5] as f64 / cl.px) as f32 } else { 0.0 };
+    let morph_on = far > 0.0 && cl.morph.len() == cl.tris.len() * 3;
     let mut local: std::collections::HashMap<u32, u32> = std::collections::HashMap::with_capacity(tris.len() * 2);
-    let mut at = |v: u32, m: &mut PoolModel| -> u32 {
+    let mut at = |v: u32, corner: usize, m: &mut PoolModel| -> u32 {
         *local.entry(v).or_insert_with(|| {
             m.positions.push((pos[v as usize] - origin).as_vec3());
+            if morph_on {
+                let dz = cl.morph[corner] as f64;
+                m.morph.push(Morph { offset: (pos[v as usize].normalize() * dz).as_vec3(), near: 0.5 * far, far });
+            }
             m.positions.len() as u32 - 1
         })
     };
     let mut seen = std::collections::HashSet::with_capacity(tris.len() * 3);
-    for t in tris {
-        let f = [at(t[0], &mut m), at(t[1], &mut m), at(t[2], &mut m)];
+    for (k, t) in tris.iter().enumerate() {
+        let c0 = (a as usize + k) * 3;
+        let f = [at(t[0], c0, &mut m), at(t[1], c0 + 1, &mut m), at(t[2], c0 + 2, &mut m)];
         m.faces.push(f);
         if view == View::Real {
             let c = col[t[2] as usize];
@@ -366,7 +379,8 @@ fn cluster_mesh(cl: &Clusters, i: usize, pos: &[DVec3], col: &[[u8; 3]], view: V
         } else {
             for (x, y) in [(t[0], t[1]), (t[1], t[2]), (t[2], t[0])] {
                 if seen.insert((x.min(y), x.max(y))) {
-                    let e = [at(x, &mut m), at(y, &mut m)];
+                    // (both ends are corners of this triangle: already placed)
+                    let e = [at(x, 0, &mut m), at(y, 0, &mut m)];
                     m.edges.push(e);
                 }
             }
