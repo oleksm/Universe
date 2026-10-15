@@ -832,7 +832,7 @@
 - { record: layout.ladle-station-airless, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "47acf5ee6202ed61" }
 - { record: layout.ore-yard-air, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "80cee716ce980cb3" }
 - { record: layout.pellet-plant-air, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "17d04bf873e1439b" }
-- { record: layout.shaft-furnace-air, at: "2026-10-15T00:39:17Z", status: draft, summary: "changed: physical, totals", sha: "7988af44081aabd0" }
+- { record: layout.shaft-furnace-air, at: "2026-10-15T00:40:50Z", status: draft, summary: "changed: physical, totals", sha: "065bf68593d06b9f" }
 - { record: layout.shaft-furnace-airless, at: "2026-10-14T23:42:05Z", status: draft, summary: "changed: totals", sha: "4bf9d1063418ef56" }
 - { record: market.art, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "517671b6a46daee3" }
 - { record: market.artifacts, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "6b51c19897f56c1a" }
@@ -2789,7 +2789,7 @@
 - { record: unit.stripper-crane-20t, at: "2026-10-14T21:36:13Z", status: draft, summary: "changed", sha: "248463a76b95017a" }
 - { record: unit.stripper-gantry-20t-moon, at: "2026-10-14T20:32:09Z", status: draft, summary: "changed: identity, built_of", sha: "9953a4704a13f3dd" }
 - { record: unit.top-gas-condenser-8bar, at: "2026-10-14T19:26:44Z", status: draft, summary: "first tracked", sha: "61482cc1d5511262" }
-- { record: unit.top-gas-scrubber, at: "2026-10-15T00:39:17Z", status: draft, summary: "changed: physical, built_of", sha: "79415b5fb2b22fde" }
+- { record: unit.top-gas-scrubber, at: "2026-10-15T00:40:50Z", status: draft, summary: "changed: physical, built_of", sha: "54368d26f9e4ea6f" }
 - { record: unit.truck-dump-hopper, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "69379232aafc2169" }
 - { record: unit.vacuum-degasser-80t, at: "2026-10-14T18:23:23Z", status: draft, summary: "changed", sha: "b01f8bbfcca9fb37" }
 - { record: unit.water-treatment, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "bd4aa8977b986fd2" }

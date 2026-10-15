@@ -1072,7 +1072,7 @@ def shaft_units():
         built_of=[part("Shell, heads and seams", A36, 89008.8, f"{Ds:.1f} m across, 22 m, 16 mm plate; measured on model v1 (by formula {cyl_shell(Ds, 22.0, 0.016, bottom=2.0) * RHO['steel']:,.0f} kg)"),
                   part("Packing", "material.stainless-steel-304", math.pi * Ds ** 2 / 4 * 10.0 * 250.0, "10 m of metal packing at 250 kg/m3"),
                   part("Skirt, skid, exchanger frames and supports", A36, 16308.3, "measured on model v1"),
-                  part("Pipework", A36, 13095.3, "the spray riser, sump drain, tower loop and condensate pipes on the unit; measured on model v1"),
+                  part("Pipework", A36, 12567.4, "the spray riser, sump drain, tower loop and condensate pipes on the unit; measured on model v1"),
                   part("Exchanger plates", "material.stainless-steel-304", px_area * 0.0006 * 7900 * 1.15, f"{px_area:,.0f} m2 of 0.6 mm plate (and 15% for ports and edges): the {Q_SCRUB / 1e6:.0f} MW at 4,000 W/m2 K over a 5 K mean difference, from memory"),
                   part("Spray pumps and motors", "good.pumps", spray_kw * 12.0, f"three pumps for {Q_SCRUB / (4186 * 10):,.0f} kg/s at 3 bar, {spray_kw:,.0f} kW in all, at 12 kg/kW with their motors (from memory)")],
         needs={"power": Q_SCRUB / (4186 * 10) / 1000 * 300e3 / 0.75, "heat": Q_SCRUB},
