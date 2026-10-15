@@ -14,6 +14,12 @@ built_of:
 - {what: Screen drive, item: good.electric-motors, mass: 400.0, note: from memory}
 - {what: Scrapers and chutes, item: material.structural-steel-a36, mass: 1247.0, note: measured on model v1}
 needs: {power: 105000.0}
+visual:
+  format: "freefall-model/1"
+  path: "models/balling-disc-7m5/v1"
+  manifest_sha256: "c985be6e94664545b174830d4f5bc5c7eac037648180c35a1ae1b66035c2f9e7"
+  version: 1
+  triangles: 4240
 life: 788940000
 basis:
 - of: [physical, built_of, needs]
