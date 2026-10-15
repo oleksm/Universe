@@ -2758,7 +2758,9 @@ def shaft_furnace_airless(us, recs):
     fmass += n_nodes * frames.node_mass(node, frames.materials())
     members.append({"item": "stock.st4340-box-300x300x20", "count": n_col, "where": f"columns under the shaft's ring girder, {z_ring:.0f} m, braced to the tower every 6 m"})
     fmass += n_col * z_ring * col_a * RHO["steel"]
-    deck = 6 * (box[3] - box[0]) * (box[4] - box[1]) * 0.6 * 0.006 * RHO["aluminium"]
+    beams = 6 * (4 * (box[3] - box[0]) + 8 * 4.5) * box_tube(0.15, 0.1, 0.004, 1.0) * RHO["aluminium"]   # each level's perimeter and eight radial beams, 150 x 100 x 4 mm aluminium box
+    ladder = 6 * 6.0 * 40.0                                                         # kg: a caged ladder, 40 kg a metre (from memory)
+    deck = 6 * (box[3] - box[0]) * (box[4] - box[1]) * 0.6 * 0.006 * RHO["aluminium"] + beams + ladder
     sized = (f"At {g:g} m/s2 the shaft with its burden, {load / 1e6:.1f} MN, on {n_col} columns of 300 x 300 x 20 mm 4340 box: {col_sigma / 1e6:.0f} MPa each. No wind: the lattice braces the columns and carries six aluminium grating platforms (6 mm, 60% of the plan), "
              f"the kit's lightest aluminium strut ({sec}). Footings not yet checked.")
     heater = next(k for k in us if k.startswith("gas-heater-") and k.endswith("-8bar"))
@@ -2833,7 +2835,7 @@ def shaft_furnace_airless(us, recs):
         "site": {"atmosphere": "none", "gravity": list(MOON_G)},
         "physical": {"length": r(max(xs) - min(xs)), "width": r(max(ys) - min(ys)), "height": top, "mass": r(total)},
         "bays": bays, "links": links,
-        "frame": {"box": list(box), "cell": cell, "shape": f"An open braced tower {box[3] - box[0]:.0f} x {box[4] - box[1]:.0f} m and {top:.0f} m tall of aluminium kit struts round the shaft; six grating platforms; no cladding.",
+        "frame": {"box": list(box), "cell": cell, "shape": f"An open braced tower {box[3] - box[0]:.0f} x {box[4] - box[1]:.0f} m and {top:.0f} m tall of aluminium kit struts round the shaft; six grating platforms at z 6, 12, 18, 24, 30 and 36, each a 24 m square with a 15.2 m square opening round the shaft (60% of the plan), 6 mm aluminium grating on a perimeter and eight radial 150 x 100 x 4 mm aluminium box beams, with guard rails; a caged ladder up the south-west corner between them; no cladding.",
                   "openings": [list(o) for o in openings], "members": members, "carries": [f"unit.{sh_key}"], "mass": r(frame_mass), "sized": sized},
         "ground": ground,
         "totals": {"rate": S_RATE, "power": r(power), "heat": r(heat), "water": 0.0, "mass": r(total), "against_module": against},
