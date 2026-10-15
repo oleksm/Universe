@@ -501,6 +501,10 @@ pub(crate) struct Renderer {
     /// The air's light behind everything (a full-screen pass: `air_sky`).
     air_sky_pipe: wgpu::RenderPipeline,
     mesh_line_pipe: wgpu::RenderPipeline,
+    /// The pooled meshes (see `pool`): the store, their faces' and edges' pipelines.
+    pool: crate::pool::PoolStore,
+    pool_pipe: wgpu::RenderPipeline,
+    pool_line_pipe: wgpu::RenderPipeline,
     shadows: Shadows,
     globes: Globes,
     /// The full-resolution maps of the world near the eye (group 2).
@@ -781,6 +785,33 @@ impl Renderer {
             })
         };
         let mesh_pipe = mesh_pipeline("mesh faces", "vs_mesh", wgpu::PrimitiveTopology::TriangleList, true, wgpu::CompareFunction::Greater);
+        // (Pooled meshes: no vertex buffers, everything read from the pool by index; group 3.)
+        let pool = crate::pool::PoolStore::new(device);
+        let pool_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+            label: Some("mesh pool"),
+            bind_group_layouts: &[Some(&globals_layout), Some(&shadow_layout), Some(&world_bind.layout), Some(&pool.layout)],
+            immediate_size: 0,
+        });
+        let pool_pipeline = |label: &str, vs: &str, topology: wgpu::PrimitiveTopology, write: bool, compare: wgpu::CompareFunction| {
+            device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+                label: Some(label),
+                layout: Some(&pool_layout),
+                vertex: wgpu::VertexState { module: &scene, entry_point: Some(vs), compilation_options: Default::default(), buffers: &[] },
+                primitive: wgpu::PrimitiveState { topology, ..Default::default() },
+                depth_stencil: Some(wgpu::DepthStencilState { format: DEPTH_FORMAT, depth_write_enabled: Some(write), depth_compare: Some(compare), stencil: Default::default(), bias: Default::default() }),
+                multisample: wgpu::MultisampleState { count: SAMPLES, ..Default::default() },
+                fragment: Some(wgpu::FragmentState {
+                    module: &scene,
+                    entry_point: Some("fs_mesh"),
+                    compilation_options: Default::default(),
+                    targets: &[Some(wgpu::ColorTargetState { format: SCENE_FORMAT, blend: Some(wgpu::BlendState::ALPHA_BLENDING), write_mask: wgpu::ColorWrites::ALL })],
+                }),
+                multiview_mask: None,
+                cache: None,
+            })
+        };
+        let pool_pipe = pool_pipeline("pool faces", "vs_pool", wgpu::PrimitiveTopology::TriangleList, true, wgpu::CompareFunction::Greater);
+        let pool_line_pipe = pool_pipeline("pool edges", "vs_pool_line", wgpu::PrimitiveTopology::LineList, false, wgpu::CompareFunction::GreaterEqual);
         let air_sky_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             label: Some("air sky"),
             layout: Some(&mesh_layout),
@@ -851,6 +882,9 @@ impl Renderer {
             mesh_pipe,
             air_sky_pipe,
             mesh_line_pipe,
+            pool,
+            pool_pipe,
+            pool_line_pipe,
             meshes: HashMap::new(),
             instances: DynBuffer::new(device, "mesh instances"),
             face_runs: Vec::new(),
@@ -1000,6 +1034,9 @@ impl Renderer {
             asset_preparing: self.pbr.preparing(),
             globe_layers: self.globes.layers.iter().filter(|l| l.is_some()).count(),
             globe_capacity: self.globes.layers.len(),
+            pool_meshes: self.pool.usage().2,
+            pool_bytes: self.pool.usage().0,
+            pool_used_bytes: self.pool.usage().1,
         }
     }
 
@@ -1279,11 +1316,13 @@ impl Renderer {
         pass.draw(0..3, 0..1);
         self.solids.draw(&mut pass, &self.solid_pipe);
         self.draw_meshes(&mut pass, &self.face_runs, &self.mesh_pipe, |m| (&m.faces, m.face_vertices));
+        self.draw_pool(&mut pass, 0, false);
         self.pbr.draw(&mut pass);
         // (The textured models take group 2 for their materials: the world's maps back.)
         pass.set_bind_group(2, &self.world.bind, &[]);
         self.lines.draw(&mut pass, &self.line_pipe);
         self.draw_meshes(&mut pass, &self.edge_runs, &self.mesh_line_pipe, |m| (&m.edges, m.edge_vertices));
+        self.draw_pool(&mut pass, 0, true);
         self.points.draw(&mut pass, &self.point_pipe);
         self.glows.draw(&mut pass, &self.glow_pipe);
     }
@@ -1312,8 +1351,10 @@ impl Renderer {
         pass.set_bind_group(1, &self.shadows.bind, &[]);
         pass.set_bind_group(2, &self.world.bind, &[]);
         self.draw_meshes(&mut pass, &self.front_face_runs, &self.mesh_pipe, |m| (&m.faces, m.face_vertices));
+        self.draw_pool(&mut pass, 1, false);
         self.front_lines.draw(&mut pass, &self.line_pipe);
         self.draw_meshes(&mut pass, &self.front_edge_runs, &self.mesh_line_pipe, |m| (&m.edges, m.edge_vertices));
+        self.draw_pool(&mut pass, 1, true);
         self.front_glows.draw(&mut pass, &self.glow_pipe);
     }
 
@@ -1432,6 +1473,19 @@ impl Renderer {
         let ground: Vec<&crate::frame::MeshDraw> = frame.meshes.iter().filter(|d| d.ground && glam::Vec3::from_slice(&d.instance.t[..3]).length() - d.reach < (GROUND_HALF * 1.5) as f32).collect();
         self.shadows.ground_runs = casters(&ground, &mut data);
         self.instances.upload_bytes(gpu, bytemuck::cast_slice(&data), data.len() as u32);
+        universe_prof::time("render/upload meshes/pool", || self.pool.frame(gpu, &frame.pool));
+    }
+
+    /// The pooled meshes' faces (or edges) of a layer (0 the scene, 1 the front): one draw.
+    fn draw_pool(&self, pass: &mut wgpu::RenderPass<'_>, layer: u32, edges: bool) {
+        let (faces, lines) = if layer == 0 { self.pool.scene } else { self.pool.front };
+        let corners = if edges { lines } else { faces };
+        if corners == 0 {
+            return;
+        }
+        pass.set_pipeline(if edges { &self.pool_line_pipe } else { &self.pool_pipe });
+        pass.set_bind_group(3, &self.pool.bind, &[]);
+        pass.draw(0..corners, layer..layer + 1);
     }
 
     fn draw_meshes(&self, pass: &mut wgpu::RenderPass<'_>, runs: &[(u64, u32, u32)], pipeline: &wgpu::RenderPipeline, part: impl Fn(&GpuMesh) -> (&wgpu::Buffer, u32)) {

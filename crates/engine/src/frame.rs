@@ -157,6 +157,8 @@ pub struct Frame {
     pub(crate) meshes: Vec<MeshDraw>,
     pub(crate) mesh_uploads: Vec<Mesh>,
     pub(crate) mesh_releases: Vec<u64>,
+    /// Pooled meshes to draw this frame (see `pool_group`).
+    pub(crate) pool: crate::pool::PoolFrame,
     /// Meshes drawn over everything, the HUD included (see `in_front`).
     pub(crate) front: Vec<MeshDraw>,
     /// Textured, physically based models to draw this frame (see `model_pbr`).
@@ -176,6 +178,10 @@ pub struct Frame {
     /// The air drawn over a globe (see `with_air`): its depths packed, its shell (m).
     globe_air: [f32; 2],
 }
+
+/// A group of pooled draws this frame (see `Frame::pool_group`).
+#[derive(Clone, Copy, Debug)]
+pub struct PoolGroup(u32);
 
 /// One mesh draw: the mesh, and its instance data.
 pub(crate) struct MeshDraw {
@@ -420,6 +426,7 @@ impl Frame {
             meshes: Vec::new(),
             mesh_uploads: Vec::new(),
             mesh_releases: Vec::new(),
+            pool: Default::default(),
             pbr: Vec::new(),
             front: Vec::new(),
             front_glows: Vec::new(),
@@ -735,6 +742,29 @@ impl Frame {
         let inst = self.instance(t, line, fill, lit);
         let d = MeshDraw { mesh: mesh.clone(), instance: inst, edges, casts: self.casts, reach: mesh.radius() * t.scale as f32, ground: self.ground };
         if self.in_front { self.front.push(d) } else { self.meshes.push(d) }
+    }
+
+    /// A group of pooled draws (see `pooled`): every member turned and scaled by `t` and lit as at
+    /// its position, edges in `line` at `edges` of their brightness (0: none), faces in `fill`;
+    /// each colour times the mesh's own (a face's own colour if it has one, else its vertices').
+    /// Unlit: full brightness. (Pooled meshes cast no shadows yet.)
+    pub fn pool_group(&mut self, t: &Transform, line: Color, fill: Color, edges: f32, lit: bool) -> PoolGroup {
+        let [r, g, b, a] = line.0;
+        let inst = self.instance(t, [r * edges, g * edges, b * edges, a], fill.0, lit);
+        self.pool.groups.push((inst, edges > 0.0));
+        PoolGroup(self.pool.groups.len() as u32 - 1)
+    }
+
+    /// Draw pooled `mesh` at `origin` in `group`'s look (copied into the pool first if it isn't:
+    /// it shows from the frame it's in).
+    pub fn pooled(&mut self, group: PoolGroup, mesh: &crate::pool::PooledMesh, origin: DVec3) {
+        let d = crate::pool::Draw { t: self.rel(origin), group: group.0, mesh: self.pool.mesh(mesh) };
+        if self.in_front { self.pool.front.push(d) } else { self.pool.draws.push(d) }
+    }
+
+    /// Copy `mesh` into the pool without drawing it (`PooledMesh::gpu_resident` says when it is).
+    pub fn prepare_pooled(&mut self, mesh: &crate::pool::PooledMesh) {
+        self.pool.uploads.push(mesh.clone());
     }
 
     /// Stage an immutable mesh without drawing it. Poll Mesh::gpu_resident before group publication.
