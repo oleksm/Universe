@@ -2735,7 +2735,7 @@
 - { record: unit.balling-disc-7m5, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "580b8fd9433fdd37" }
 - { record: unit.cooling-tower, at: "2026-10-14T14:37:56Z", status: draft, summary: "changed", sha: "20447996507fd0ba" }
 - { record: unit.cooling-tower-1cell, at: "2026-10-14T19:55:55Z", status: draft, summary: "changed", sha: "b9a2ebb48ebfbe05" }
-- { record: unit.cooling-tower-h2, at: "2026-10-15T03:01:55Z", status: draft, summary: "changed: identity, needs, basis", sha: "3c618a811b258e77" }
+- { record: unit.cooling-tower-h2, at: "2026-10-15T03:58:46Z", status: draft, summary: "changed: visual", sha: "cb3e310c37289e4f" }
 - { record: unit.cooling-tower-shaft, at: "2026-10-15T01:24:23Z", status: draft, summary: "first tracked", sha: "de1f2baa4965e350" }
 - { record: unit.crating-line, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "4f803762d4f4c669" }
 - { record: unit.crew-post, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "94bf58a6622c650d" }
