@@ -226,6 +226,12 @@ staff:
 - {profession: profession.metalworker, count: 2}
 - {profession: profession.technician, count: 1}
 - {profession: profession.engineer, count: 1}
+visual:
+  format: "freefall-model/1"
+  path: "models/arc-furnace-airless/v1"
+  manifest_sha256: "71396d8e114dad722d2d20c65478d8383b1e97f18472c7ec595aaa0ad777be0c"
+  version: 1
+  triangles: 394430
 basis:
 - of: [bays, links, mobile]
   tier: invented
