@@ -5260,3 +5260,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: layout.casting-bay-airless
+    version: 1
+    manifest_sha256: "7c323900a6808f1d71b2b2a0f2e1464b369cc7995b16f12e8ddd84824b939709"
+    installed: d082fc3e
+    game: "the loader (world::assets) at fso d082fc3e"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/casting-bay-airless/v1 (2248704 bytes, bounds [-36.0, -1.17, -12.75] to [36.0, 26.0, 32.5692]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
