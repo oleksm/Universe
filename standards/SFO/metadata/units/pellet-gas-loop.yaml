@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.pellet-gas-loop, name: 'Pellet shaft gas loop, 4 bar', description: 'Cleans, dries and drives one pellet shaft''s 20.7 kg/s of nitrogen at 4 bar: the top gas (120 deg C, about 0.7 m pipe) through a cyclone and a candle filter kept above its dew point (about 90 deg C), then down through a condenser that keeps the 1.6 kg/s of water the green balls brought (to the presses, and on to the mill: on a moon every kilogram comes back), the gas out at 65 deg C still carrying 0.9 kg/s of vapour round the loop; then a fan (260 kW, for the bed''s 23 kPa and the loop''s 15) back to the shaft''s bottom and its torch chambers. Oxygen make-up joins before the fan. Local frame: the cyclone at x -9, the filter at x -3, the condenser''s two shells at x 3 and 6, the fan at x 10; top gas in at (-9, 0, 13), cold gas out at (12, 0, 1.5), the condensate out at (6, 6, 0.3), the radiator loop''s flanges at (-12, -2, 1) and (-12, -1.4, 1), the oxygen in at (9, 6, 1).'}
+size_class: 3
+fits: plant-mount.bay-s3
+physical: {length: 24.0, width: 12.0, height: 14.0, mass: 67540.0}
+built_of:
+- {what: Cyclone, item: material.structural-steel-a36, mass: 7213.0, note: '3 m across, 9 m, 10 mm (60 MPa)'}
+- {what: Candle filter, item: material.structural-steel-a36, mass: 21940.0, note: '4 m across, 10 m, 16 mm, lagged; the candles 3 t of silicon carbide, from memory'}
+- {what: Condenser, item: material.stainless-steel-304, mass: 21310.0, note: 'two shells 2.5 m across, 10 m, 12 mm, and 6,125 m of 25 mm tube (1.2 mm): 5.2 MW at 300 W/m2 K over a 36 K mean difference'}
+- {what: Fan, item: good.electric-motors, mass: 5078.0, note: 'a centrifugal fan, 8 t a MW and its casing, from memory'}
+- {what: Pipework and pots, item: material.structural-steel-a36, mass: 12000.0, note: from memory}
+needs: {power: 270600.0, heat: 5468000.0, atmosphere: vacuum}
+life: 788940000
+basis:
+- of: [physical, built_of]
+  tier: derived
+  review: true
+  note: Vessels by their pressure; the condenser by its duty; weights of the rest from memory.
+- of: [needs]
+  tier: derived
+  note: The top gas cooled 120 to 65 deg C and its 1.6 kg/s of water condensed (2.35 MJ/kg); the vapour left at 65 deg C from its 25 kPa vapour pressure; the fan at 75%.
+- of: [life]
+  rule: rule.life-plant

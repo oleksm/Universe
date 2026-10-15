@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.filter-press-2, name: 'Filter presses, 2', description: 'Two membrane plate presses back to back take the water out of the mill''s slurry (70% solids) down to 9%, pushing it through cloth at 6 bar, which works the same at the hall''s 20 kPa as in air (a vacuum filter would pull against a fifth of an atmosphere): each has 13 chambers between 2.5 m polypropylene plates, filled, squeezed by its membranes at 15 bar and opened every 10 minutes, the two in turn, so the cake falls in slabs about every 5. Their fixed heads stand back to back at local x 0, their plate packs from x 0.5 to 3.5 each way, their closing cylinders (9.5 MN) at the outer ends (x ±6), all on a stand whose top is 8 m up; the cake drops through a lump breaker in the stand onto the layout''s cake belt along x at y 0, local z 7.6 (x -6 to 6). Slurry in at (0, 0, 9.5) between the heads; the filtrate (10.9 kg/s) collects in a tank in the stand and is pumped through a plate cooler, which takes the mill''s and
+    presses'' heat out of the water (2.3 MW: the grinding''s power all ends as warm slurry) into the radiator loop, so the water stays under 50 deg C; filtrate out at (5, -2.5, 0.5) to the mill, the radiator loop''s flanges at (-5, -3.25, 0.5) and (-4.4, -3.25, 0.5), the condensate from the shafts in at (4, -3.25, 0.5).'}
+size_class: 2
+fits: plant-mount.bay-s2
+physical: {length: 12.0, width: 6.5, height: 12.0, mass: 110900.0}
+built_of:
+- {what: Heads and followers, item: material.high-strength-steel-4340, mass: 49060.0, note: 'four plates 2.5 m square, 250 mm, which take the closing force in bending, from memory'}
+- {what: Side beams, item: material.high-strength-steel-4340, mass: 8949.0, note: '600 x 400 x 25 mm boxes, 6 m, two a press: each 100 MPa in tension'}
+- {what: Plates and cloth, item: material.polyethylene-uhmw, mass: 7875.0, note: 'recessed plates 100 mm thick, half solid, with their membranes; polyethylene stands for polypropylene'}
+- {what: 'Stand, hoppers and lump breakers', item: material.structural-steel-a36, mass: 30000.0, note: from memory}
+- {what: Filtrate cooler, item: material.stainless-steel-304, mass: 3000.0, note: 'a plate exchanger, from memory'}
+- {what: 'Cylinders, power packs and pumps', item: good.pumps, mass: 12000.0, note: from memory}
+needs: {power: 122900.0, heat: 2272000.0, atmosphere: any}
+life: 788940000
+basis:
+- of: [physical, built_of, needs.power]
+  tier: derived
+  review: true
+  note: 'Chambers from the rate: 16.6 kg/s a press, 778 kg of ore a chamber a 10 minute cycle (cycle, cake and plate weights from memory); the feed pump at 6 bar and three times the mean flow while filling, hydraulics, squeeze pump and breakers.'
+- of: [needs.heat]
+  tier: derived
+  note: The mill's 2.15 MW (18 kWh a tonne) and the presses' own power, all of it warm water by the time it reaches the cooler.
+- of: [life]
+  rule: rule.life-plant

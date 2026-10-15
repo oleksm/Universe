@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.pressure-hall-30m, name: 'Pressure hall section, 30 m', description: 'A 30 m length of a steel tube 30 m across lying on its side, flanged at both ends to the next section or a head, for a hall held at 20 kPa of nitrogen on airless ground (water stays liquid in it to about 60 deg C). Its 6 mm shell carries the pressure in hoop (50 MPa); 10 T rings 400 mm deep every 3 m stiffen it and carry the deck and the crane runways; the outside is wrapped in multilayer insulation against the lunar day and night. Local frame: the axis along x at z 15, the ends at x -15 and 15, its bottom on the cradle at z 0. A steel deck at z 7.5, 26 m wide, on posts down to the shell; the crane runways at z 24, y -11.4 and 11.4, hung from the rings. Fan coils under the deck take 173 kW of the machines'' heat out of the gas into the layout''s radiator loop, by a pair of 150 mm flanges at local (-14, -12, 7) and (-13.4, -12, 7). The section holds 4,875 kg of nitrogen.'}
+size_class: 4
+fits: plant-mount.bay-s4
+physical: {length: 30.0, width: 30.0, height: 30.0, mass: 350800.0}
+built_of:
+- {what: Shell, item: material.structural-steel-a36, mass: 133200.0, note: 6 mm plate}
+- {what: Ring stiffeners, item: material.structural-steel-a36, mass: 59190.0, note: '10 rings, 400 x 12 mm web, 200 x 16 mm flange'}
+- {what: Deck, item: material.structural-steel-a36, mass: 134900.0, note: '12 mm plate on a beam at each ring (150 kg/m) and three posts under each (100 kg/m): sized for about 20 kPa of floor at 2 m/s2 (from memory), not checked under the mill''s running load'}
+- {what: Crane runways, item: material.high-strength-steel-4340, mass: 17660.0, note: 'two 400 x 400 x 25 mm boxes, hung from the rings'}
+- {what: Insulation, item: material.polyimide-film, mass: 2827.0, note: 'multilayer blanket, about 1 kg/m2, from memory'}
+- {what: Fan coils, item: good.pumps, mass: 3000.0, note: from memory}
+holds: 4875.0
+needs: {power: 30000.0, heat: 173300.0, atmosphere: vacuum}
+life: 788940000
+basis:
+- of: [physical, built_of]
+  tier: derived
+  review: true
+  note: 'The shell from its hoop stress, 50 MPa against 150; the rings, deck and insulation from memory. Not checked for buckling: the hall is never let down to vacuum with its cradle''s load on it.'
+- of: [holds]
+  tier: derived
+  note: Nitrogen at 20 kPa and 20 deg C.
+- of: [needs.heat]
+  tier: derived
+  note: A third of the discs' drives (90 + 15 kW each) and 100 kW of crane, lights and fans; the mill's and presses' heat leaves in the filtrate instead.
+- of: [life]
+  rule: rule.life-plant

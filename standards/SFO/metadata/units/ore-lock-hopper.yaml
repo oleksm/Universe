@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.ore-lock-hopper, name: Ore lock hopper, description: 'Takes the dry ore fines from vacuum into the 20 kPa hall: a hopper on a frame over a lock 3 m across and 4 m tall (28 m3) between two dome valves; a load drops in from the hopper, the top valve shuts, nitrogen fills the lock from the hall, the bottom valve opens onto the hall''s ore belt, and the lock is pumped back down before the top opens again. About 3 loads an hour; the nitrogen lost each time is what is left at the pump''s 1 kPa, about 0.3 kg. Local frame: the ore belt in over the hopper at (0, 0, 17.5), the lock''s outlet at (0, 0, 10) onto the belt in a short gallery to the hall''s nozzle.'}
+size_class: 1
+fits: plant-mount.bay-s1
+physical: {length: 6.0, width: 6.0, height: 18.0, mass: 19070.0}
+built_of:
+- {what: 'Hopper, frame and lock', item: material.structural-steel-a36, mass: 16070.0, note: 'the lock 10 mm; the hopper and its 10 m frame 12 t, from memory'}
+- {what: Valves and pump, item: good.pumps, mass: 3000.0, note: from memory}
+needs: {power: 15000.0, atmosphere: vacuum}
+life: 788940000
+basis:
+- of: [physical, built_of, needs]
+  tier: invented
+  review: true
+  note: From memory; loads at 60% of the lock filled with ore at 2.3 t/m3.
+- of: [life]
+  rule: rule.life-plant

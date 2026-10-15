@@ -1,6 +1,15 @@
 # Pellet plant for airless ground (proposal)
 
-Status: proposed by registry, 2026-10-15. This replaces the open question "sealed grate-kiln or fluidised-bed fines". Records come next, in `tools/standards/plants.py`, as `layout.pellet-plant-airless`.
+Status: proposed by registry, 2026-10-15; records made the same day in `tools/standards/plants.py` as `layout.pellet-plant-airless`. This replaces the open question "sealed grate-kiln or fluidised-bed fines".
+
+## What changed when the records were made
+
+- **The loop runs at 4 bar, not 1.2.** At 1.6 m/s2 the shaft's bed weighs about 3.4 kPa a metre. At 1.2 bar the gas's drag through it would be about 5.4 kPa a metre, so the bed would lift and hang. At 4 bar the gas is denser and slower and its drag about 1.6 (Ergun, 12 mm pellets). This settles "Shaft gravity" below. The shaft is round, 4.7 m across, and its shell is a pressure vessel.
+- **The hall is built of sections.** It is three 30 m sections (`unit.pressure-hall-30m`) and two heads (`unit.pressure-hall-30m-end`), so it fits the plant bays. It lies at grade on a sintered bedding with loose regolith packed against it, not sunk, and nothing covers it. Without a cover it never carries a load from outside, so buckling is not a case.
+- **The green balls travel in a sealed gallery.** They go to the shafts in a 3 m tube at the hall's 20 kPa. In vacuum their water would boil off and freeze in their skins. The shafts stand in a 10 m pit so the gallery climbs less.
+- **The heat leaves in the filtrate.** The mill's power ends as warm slurry, so a cooler on the presses' filtrate takes it to the radiator loop at 330 K. Fan coils in the sections take the rest.
+- **The water is 3.3 kg/s, not 4.4.** That is the green balls' 9%. All of it is condensed in the loops and returned to the presses.
+- **The ore comes in through its own lock.** `unit.ore-lock-hopper` stands outside the west head.
 
 The site is airless, at about a moon's gravity (1.6 to 2 m/s2). The rate is the air plant's: 125 t of pellets an hour, for `layout.shaft-furnace-airless`.
 
