@@ -4690,3 +4690,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.cooling-tower-h2
+    version: 1
+    manifest_sha256: "43146992d5659aee0b0cd9be1b5b1f3509d6528f84af7d083b372de63dc498ea"
+    installed: 1dec51fc
+    game: "the loader (world::assets) at fso 1dec51fc"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/cooling-tower-h2/v1 (878704 bytes, bounds [-17.975, 0.0, -5.95] to [18.0, 14.0, 5.95]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
