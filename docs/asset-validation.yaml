@@ -6971,3 +6971,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.pellet-gas-loop
+    version: 2
+    manifest_sha256: "813d14d55c3985e8143344fed21978cf1eadeffb907f39cb918ad669a8b26e2d"
+    installed: d68e5949
+    game: "the loader (world::assets) at fso d68e5949"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/pellet-gas-loop/v2 (1261776 bytes, bounds [-12.0, -0.0, -6.0] to [12.0, 13.383, 6.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
