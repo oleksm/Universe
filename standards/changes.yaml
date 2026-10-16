@@ -169,7 +169,7 @@
 - { record: connector.termination-132kv-240mm2, at: "2026-10-16T15:00:44Z", status: draft, summary: "changed", sha: "a853f7385db64da5" }
 - { record: connector.termination-400v-16mm2, at: "2026-10-16T15:00:44Z", status: draft, summary: "changed", sha: "e6e1620d74528d26" }
 - { record: connector.termination-400v-300mm2, at: "2026-10-16T15:00:44Z", status: draft, summary: "changed", sha: "abe21b298e08922a" }
-- { record: connector.termination-400v-400mm2, at: "2026-10-16T15:00:44Z", status: draft, summary: "changed: visual", sha: "e81ff84303b23052" }
+- { record: connector.termination-400v-400mm2, at: "2026-10-16T15:07:27Z", status: draft, summary: "changed", sha: "e906d6e055d30309" }
 - { record: connector.termination-400v-70mm2, at: "2026-10-16T15:00:44Z", status: draft, summary: "changed", sha: "623472d9a9a9f918" }
 - { record: connector.termination-6p6kv-185mm2, at: "2026-10-16T14:24:23Z", status: draft, summary: "changed", sha: "a32ec5e3bb6184d8" }
 - { record: connector.termination-6p6kv-630mm2, at: "2026-10-16T15:00:44Z", status: draft, summary: "changed", sha: "f7e2a4150553a4d8" }
@@ -846,7 +846,7 @@
 - { record: layout.hydrogen-plant-air, at: "2026-10-15T04:31:57Z", status: draft, summary: "changed: physical", sha: "6142a0437e383639" }
 - { record: layout.hydrogen-plant-airless, at: "2026-10-16T03:46:16Z", status: draft, summary: "changed: physical, totals", sha: "af9c6b259e8f0c9e" }
 - { record: layout.ingot-yard-air, at: "2026-10-15T19:02:03Z", status: draft, summary: "changed: totals", sha: "92e4f7a88130bd7a" }
-- { record: layout.ingot-yard-airless, at: "2026-10-15T20:27:46Z", status: draft, summary: "changed: physical, ground, totals", sha: "fdf1e24a32bd8d4d" }
+- { record: layout.ingot-yard-airless, at: "2026-10-16T15:07:27Z", status: draft, summary: "changed", sha: "ed4176290017c331" }
 - { record: layout.ladle-station-air, at: "2026-10-15T02:26:46Z", status: draft, summary: "changed: physical", sha: "31ea2691985163d3" }
 - { record: layout.ladle-station-airless, at: "2026-10-15T22:16:54Z", status: draft, summary: "changed", sha: "1e1a6ec755d7d77c" }
 - { record: layout.ore-yard-air, at: "2026-10-15T17:42:59Z", status: draft, summary: "changed: physical", sha: "8bc46739c40587fb" }
@@ -1143,7 +1143,7 @@
 - { record: package.coil, at: "2026-10-11T16:41:22Z", status: "", summary: "changed: visual", sha: "92599addc98d32a4" }
 - { record: package.cold-crate, at: "2026-10-11T16:15:53Z", status: "", summary: "changed: visual", sha: "bfd01383484de204" }
 - { record: package.crate-heavy, at: "2026-10-11T16:09:26Z", status: "", summary: "changed: visual", sha: "ad320ca7ba5fce5f" }
-- { record: package.crate-steel, at: "2026-10-15T18:59:38Z", status: "", summary: "first tracked", sha: "21cc4325a4963332" }
+- { record: package.crate-steel, at: "2026-10-16T15:07:27Z", status: "", summary: "changed: visual", sha: "73ea86c165ca7d9d" }
 - { record: package.cryo-dewar, at: "2026-10-11T16:47:47Z", status: "", summary: "changed: visual", sha: "651b39e23672e69f" }
 - { record: package.fish-tank, at: "2026-10-11T15:54:27Z", status: "", summary: "changed: visual", sha: "820c0c779fdcda26" }
 - { record: package.gas-rack, at: "2026-10-11T16:51:54Z", status: "", summary: "changed: visual", sha: "871e5cbebd31e7cb" }
