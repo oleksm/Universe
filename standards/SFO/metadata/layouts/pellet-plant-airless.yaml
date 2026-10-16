@@ -298,7 +298,7 @@ links:
   to: [-66.0, 0.0, 26.5]
   length: 108.9
   item: material.silicone-rubber
-  mass: 31790.0
+  mass: 31750.0
   power: 50390.0
   fittings: {elbows: 0, tees: 0, supports: 7, connectors: 2}
   note: an open belt (dry ore in vacuum), up at 13 degrees to its head 3 m over the lock hopper's rim on its plinth
@@ -310,7 +310,7 @@ links:
   to: [-41.0, 0.0, 14.5]
   length: 25.0
   item: material.silicone-rubber
-  mass: 24590.0
+  mass: 24550.0
   taps: ['EW:high-nozzle']
   power: 20000.0
   fittings: {elbows: 0, tees: 1, supports: 2, connectors: 3}
@@ -451,7 +451,7 @@ links:
   to: [191.0, 14.5, 5.0]
   length: 79.75
   item: material.silicone-rubber
-  mass: 18850.0
+  mass: 18830.0
   power: 50390.0
   fittings: {elbows: 0, tees: 0, supports: 5, connectors: 1}
   note: open, east along the pit and up out of its trench

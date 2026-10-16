@@ -137,7 +137,7 @@ def chute(dn, item=SS):
     return key
 
 
-TRANSFER_MEASURED = {1.2: (1652.31, 146.40), 0.8: (1176.03, 103.72)}     # kg of plate and liner, by belt width (blender's models)
+TRANSFER_MEASURED = {1.2: (1652.31, 146.40), 1.0: (1395.23, 123.10), 0.8: (1176.03, 103.72)}     # kg of plate and liner, by belt width (blender's models)
 
 
 def _by_width(table, width):
