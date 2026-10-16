@@ -1552,7 +1552,7 @@
 - { record: rule.mounts-margin, at: "2026-10-13T05:32:00Z", status: review, summary: "changed: statement", sha: "88491f348e30a319" }
 - { record: rule.plant-weights-from-memory, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "d4bff33987b75c18" }
 - { record: rule.shares-chosen, at: "2026-10-07T03:53:08Z", status: review, summary: "first tracked", sha: "2f29f0362d9d7f04" }
-- { record: run.belt-1200, at: "2026-10-16T13:32:39Z", status: draft, summary: "changed: terminals", sha: "0ec4eb0d6b924e1e" }
+- { record: run.belt-1200, at: "2026-10-16T13:56:03Z", status: draft, summary: "changed: visual", sha: "673c75731d528efd" }
 - { record: run.cable-132kv-240mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "a205054f19a5a0ea" }
 - { record: run.cable-400v-16mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "37934f60e4ebef0e" }
 - { record: run.cable-400v-300mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "981d84d4f08ca29f" }
