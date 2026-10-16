@@ -3690,7 +3690,7 @@ def yard_airless_units(us):
     out["ingot-gantry-10t-moon"] = c
     lab = dict(us["sampling-lab"])
     lab["name"] = "Sampling laboratory, sealed"
-    lab["dims"] = (10.0, 6.0, 5.0)
+    lab["dims"] = (10.2, 4.0, 4.3)
     lab["size_class"], lab["fits"] = 2, "bay-s2"
     lab["desc"] = ("The sampling laboratory for airless ground: an aluminium cylinder 4 m across and 8 m long at 1 bar under a berm of loose regolith, its staff airlock at -x; the coupon comes in through a small sample lock beside it instead of a hatch. Local frame: the shell's axis along x at z 2.3, from x -2 to 6; one floor at z 1.4 through shell and lock (3.57 m wide in the shell, 1.73 m in the lock); the staff lock a 2.5 m cylinder from x -4 to -2, its axis at y -0.2, z 2.3, its doors 0.8 x 1.9 m for a crew in suits; the sample lock through the -x end head beside it, centred at y 1.55, z 2.3, from x -2.5 to -0.8, 0.6 m square clear (0.7 outside), its sill at z 2.0, reached from the layout's step platform (a coupon 0.48 m long fits only square). Steps up to the lock's door are the layout's. "
                    "Inside as unit.sampling-lab: an abrasive cutter, a grinder and a spark emission spectrometer, its spark under argon as always. " + us["sampling-lab"]["desc"].split(": no ingot comes in. ")[1].split(" Inside,")[0])
