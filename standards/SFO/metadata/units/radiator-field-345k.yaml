@@ -4,13 +4,13 @@ identity: {key: unit.radiator-field-345k, name: 'Radiator field, 1.5 MW at 345 K
     is lighter. Kept clean of dust, which darkens the white.'}
 size_class: 4
 fits: plant-mount.bay-s4
-physical: {length: 48.0, width: 48.0, height: 3.5, mass: 32730.0}
+physical: {length: 48.0, width: 48.0, height: 3.5, mass: 32740.0}
 built_of:
 - {what: Panel skins and edges, item: material.aluminium-alloy-6061, mass: 20910.0, note: 'two 2 mm face sheets a panel and their edges; measured on blender''s model of the 330 K field (v1), the same for every field'}
 - {what: Panel tubes, item: material.aluminium-alloy-6061, mass: 3284.0, note: 'tubes 20 mm across, 1.5 mm wall, at 150 mm, bonded between the sheets (not drawn)'}
 - {what: Legs, item: material.aluminium-alloy-6061, mass: 1592.0, note: 'four 100 mm box legs, 4 mm, 3 m, a panel; measured on model v1'}
 - {what: Panel rails, item: material.aluminium-alloy-6061, mass: 1639.0, note: '100 x 50 x 3 mm channel round each panel''s edge, carrying its skins between the legs; measured on model v1'}
-- {what: 'Headers, branches and supports', item: material.aluminium-alloy-6061, mass: 3305.05, note: 'the mains round the margin, an 80 mm pair to each row and 50 mm stubs to each panel, 3 mm walls (2 mm the stubs), with their supports: measured on model v1; with the branch and posts to the south-west ports, 131 kg more, measured on blender''s model v3'}
+- {what: 'Headers, branches and supports', item: material.aluminium-alloy-6061, mass: 3311.79, note: 'the mains round the margin, an 80 mm pair to each row and 50 mm stubs to each panel, 3 mm walls (2 mm the stubs), with their supports: measured on model v1; with the branch, posts and union housings to the south-west ports, 138 kg more, measured on blender''s model v3'}
 - {what: Pumps, item: good.pumps, mass: 2000.0, note: from memory}
 holds: 2930.0
 needs: {power: 14070.0, atmosphere: vacuum}
