@@ -49,8 +49,13 @@ ports:
   connector: connector.flange-dn150-pn10
   at: [-4.55, 0.6, 1.0]
   facing: [-1.0, 0.0, 0.0]
+visual:
+  format: "freefall-model/1"
+  path: "models/heater-transformer-131mva/v2"
+  manifest_sha256: "215f4307cbd1bd3b909c276a9880d3b857010bae3f7750cf82636c5071de9ca7"
+  version: 2
+  triangles: 12578
 life: 788940000
-visual: {format: freefall-model/1, path: models/heater-transformer-131mva/v1, manifest_sha256: f819d7559dd216ea49ae536e13e2af8e70ea163ad600118e653aedc294254029, version: 1, triangles: 8336}
 basis:
 - of: [physical, built_of]
   tier: invented
