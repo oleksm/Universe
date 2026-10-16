@@ -60,8 +60,13 @@ ports:
   connector: connector.flange-dn900-pn10
   at: [0.6, -4.0, 1.0]
   facing: [0.0, -1.0, 0.0]
+visual:
+  format: "freefall-model/1"
+  path: "models/top-gas-condenser-8bar/v2"
+  manifest_sha256: "c04f473d86ef390e5b61fedf86d552a7ae673df57bbdaf68dfc611ff75069273"
+  version: 2
+  triangles: 47568
 life: 788940000
-visual: {format: freefall-model/1, path: models/top-gas-condenser-8bar/v1, manifest_sha256: 931287e69cb670a4b73626e184fbb1e8f97f53263ba9ba0d27e165d814b9c8fe, version: 1, triangles: 48636}
 basis:
 - of: [physical, built_of]
   tier: invented
