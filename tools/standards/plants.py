@@ -3290,6 +3290,8 @@ def pellet_ports(us):
     ]
     # The mill.
     ml = us["ball-mill-4m4"]
+    if "Feed hopper, seal and services" not in [x["what"] for x in ml["built_of"]]:
+        ml["built_of"] = ml["built_of"] + [part("Feed hopper, seal and services", A36, 1080.9, "the 1.3 m receiving hopper and its chute into the trunnion, the seal's sleeve, the water and slurry stubs, the 6.6 kV terminal box and their supports; measured on blender's model v2 (2026-10-16)")]
     ml["ports"] = [
         port("ore-in", "in", "bulk", kit.belt_transfer(1.0), (-8, 0, 4), (0, 0, 1), item=ORE, rate=P_ORE, note="the feed chute's hopper at its -x trunnion"),
         port("water-in", "in", "liquid", kit.flange(0.1, 10, kit.SS), (-8, 1.2, 4), (0, 0, 1), item=WATER, note="the presses' filtrate back, into the feed chute"),

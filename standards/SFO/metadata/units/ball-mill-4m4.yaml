@@ -3,7 +3,7 @@
 identity: {key: unit.ball-mill-4m4, name: 'Ball mill, 4.4 m', description: 'Grinds the ore wet, to about 80% finer than 45 um, so it can be balled: a steel drum 4.4 m across and 7 m long on trunnion bearings, its axis along x 3 m up, a third full of steel balls, turned by a girth gear and a 2.1 MW motor at its +x end: the gear 6.0 m across (about 1.35 times the drum, so its pinion clears the shell; from memory) on a flange by the +x head, in a guard 6.4 m across that reaches z 6.2 and sits in a 0.4 m pit in the floor below; its pinion on the -y side at axis height, a gearbox and the motor on the floor beyond, out to y -4.4. Ore and water in by a chute at its -x trunnion (local -8, 0, 4); the slurry out of its +x trunnion into a sump and pumped on (local 8, 3, 0.5).'}
 size_class: 3
 fits: plant-mount.bay-s3
-physical: {length: 18.0, width: 9.0, height: 6.5, mass: 159900.0}
+physical: {length: 18.0, width: 9.0, height: 6.5, mass: 161000.0}
 built_of:
 - {what: Shell and heads, item: material.structural-steel-a36, mass: 43470.0, note: '4.4 m across, 7 m, 45 mm plate: the shell 33,776.9 kg and the annular heads 9,691.8; measured on model v1'}
 - {what: Liners, item: material.structural-steel-a36, mass: 55030.0, note: '75 mm wear liners of manganese steel, which the registry has not got: structural steel stands for it'}
@@ -12,6 +12,7 @@ built_of:
 - {what: Gear guard, item: material.structural-steel-a36, mass: 1779.0, note: 5 mm plate round the girth gear; measured on model v1}
 - {what: Motor and gearbox, item: good.electric-motors, mass: 12890.0, note: '6 t a MW, from memory'}
 - {what: Slurry sump and pumps, item: good.pumps, mass: 8000.0, note: from memory}
+- {what: 'Feed hopper, seal and services', item: material.structural-steel-a36, mass: 1081.0, note: 'the 1.3 m receiving hopper and its chute into the trunnion, the seal''s sleeve, the water and slurry stubs, the 6.6 kV terminal box and their supports; measured on blender''s model v2 (2026-10-16)'}
 holds: 150400.0
 needs: {power: 2149000.0, water: 3.28}
 ports:
@@ -50,12 +51,12 @@ ports:
   facing: [0.0, -1.0, 0.0]
   note: the motor's terminal box
 envelope:
-- [-5.451, -2.241, -0.001, 5.351, 2.241, 5.241]
-- [2.199, -3.201, -0.201, 2.861, 3.201, 6.201]
-- [0.899, -4.451, -0.001, 6.101, -2.199, 3.601]
-- [-8.134, -0.651, -0.001, -5.016, 0.651, 4.401]
-- [5.099, -0.801, -0.001, 7.701, 3.201, 3.701]
-- [6.699, 1.999, -0.001, 8.501, 4.201, 1.001]
+- [-5.351, -2.242, -0.001, 5.351, 2.242, 5.241]
+- [2.199, -3.751, -0.202, 2.857, 3.202, 6.201]
+- [0.899, -4.451, -0.001, 6.302, -2.449, 3.451]
+- [-8.661, -0.662, -0.001, -5.049, 1.256, 4.001]
+- [5.098, -0.802, -0.001, 7.701, 3.202, 3.701]
+- [6.698, 1.998, -0.001, 8.501, 4.201, 0.922]
 life: 788940000
 visual: {format: freefall-model/1, path: models/ball-mill-4m4/v1, manifest_sha256: a3095ce13179352c7581b7762111851e6c9b6460baa776d570bcfe50d04bdbd2, version: 1, triangles: 11308}
 basis:
