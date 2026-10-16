@@ -6061,3 +6061,19 @@ validations:
       - "GPU look and cost, placement on a real hull"
       - "world::assets has no connector kind yet (engine task 20261015T224523-registry-52e4)"
       - "dielectric design not checked (provisional plug-in termination)"
+  - key: run.cable-6p6kv-630mm2
+    version: 1
+    manifest_sha256: "030068fa84d6b555fee012d437ef4ebd25796134b6231de464be9476d5376407"
+    installed: aeb79c70
+    game: "the loader (world::assets) at fso aeb79c70"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run kind yet (engine task 20261015T224523-registry-52e4)"
