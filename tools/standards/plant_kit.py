@@ -406,6 +406,8 @@ def bus_joint(v, amps, phases=2):
                   "kind": "bus-joint", "size": r(n * a, 5), "rating": {"voltage": v, "current": r(amps)},
                   "physical": {"length": 0.3, "width": r(phases * w + (phases - 1) * 0.3 + 0.1, 3), "height": r(ph + 0.01, 3), "mass": r(sum(x["mass"] for x in built))}, "built_of": built,
                   "basis": [{"of": ["built_of", "physical"], "tier": "invented", "review": True, "note": "Plates, bolting and hoses from memory of electrolysis and furnace bus joints; the bolts' edge distance 35 mm (1.6 bolt diameters)."}]}
+    if ac and phases * n > 14:
+        _recs[key]["triangle_budget"] = 22000       # (three phases of brazed tubes and their bolting; blender, 2026-10-16)
     return key
 
 
