@@ -6221,3 +6221,18 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: package.crate-steel
+    version: 1
+    manifest_sha256: "db33d1c94e20f1907bafeb5c15322fe57d15e721981018e75c713755f208301e"
+    installed: 7ecced72
+    game: "the loader (world::assets) at fso 7ecced72"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/crate-steel/v1 (71812 bytes, bounds [-0.6, 0.0, -0.512] to [0.6, 0.8, 0.512]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
