@@ -2904,7 +2904,7 @@
 - { record: unit.ladle-furnace-80t-sealed, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "5b33d1da6593ca86" }
 - { record: unit.mill-crane-30t, at: "2026-10-16T19:40:41Z", status: draft, summary: "changed", sha: "8ec4bb60e1974d04" }
 - { record: unit.mould-car-12, at: "2026-10-14T20:49:23Z", status: draft, summary: "changed: identity", sha: "30b4c1cb9c96fef7" }
-- { record: unit.offgas-cooler-sealed, at: "2026-10-16T23:10:29Z", status: draft, summary: "first tracked", sha: "7403af2150492183" }
+- { record: unit.offgas-cooler-sealed, at: "2026-10-16T23:12:42Z", status: draft, summary: "changed: visual", sha: "ad0ad37c0592e4a4" }
 - { record: unit.offgas-filter-sealed, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "6d01f39393a39a5b" }
 - { record: unit.ore-lock-hopper, at: "2026-10-16T20:07:52Z", status: draft, summary: "changed", sha: "9c432e65e1f11287" }
 - { record: unit.pellet-gas-loop, at: "2026-10-16T20:19:14Z", status: draft, summary: "changed", sha: "65995db456c5946a" }
