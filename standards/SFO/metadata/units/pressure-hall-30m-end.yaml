@@ -4,14 +4,14 @@ identity: {key: unit.pressure-hall-30m-end, name: 'Pressure hall head, 30 m', de
     a boxed plate whose pass-throughs'' outer faces are at x 6.5 facing +x and inner faces at x 5.0 facing -x, at y -10.2 and -9.6 (200 mm water), -9.0 (50 mm stainless), z 10, and the cables'' glands at y -10.2 (6.6 kV) and -9.4 (400 V), z 10.8; the hall''s nitrogen make-up in at (6.5, -8.4, 10) and the lock pumps'' 400 V supply at (6.5, -8.6, 10.8), outer only. Each lock''s doors are pressure plugs, seated on their frames by the higher pressure: the inner door opens into the hall, the outer into the lock; drawn closed. The locks'' gas is pumped back into the hall before their outer doors open. Its flange ring as a section''s, 300 x 30 mm drilled for M24 at 150 mm, reaching 0.3 m outside the shell; the bolts and seals are the layout''s.'}
 size_class: 4
 fits: plant-mount.bay-s4
-physical: {length: 14.0, width: 30.6, height: 30.6, mass: 126800.0}
+physical: {length: 14.0, width: 30.6, height: 30.6, mass: 130000.0}
 built_of:
-- {what: Head, item: material.structural-steel-a36, mass: 41610.0, note: '2:1 ellipsoidal, 6 mm, less the locks'' and nozzle''s openings; measured on blender''s candidate (2026-10-16; the plate by its area, 1.084 D2, is 46.0 t uncut)'}
+- {what: Head, item: material.structural-steel-a36, mass: 41140.0, note: '2:1 ellipsoidal, 6 mm, less the locks'' and nozzle''s openings; measured on blender''s candidate (2026-10-16; the plate by its area, 1.084 D2, is 46.0 t uncut)'}
 - {what: Flange, item: material.structural-steel-a36, mass: 6920.0, note: 'an outward ring 300 x 30 mm, as a section''s; measured'}
 - {what: Deck and its beams, item: material.structural-steel-a36, mass: 21970.0, note: '12 mm at z 7.5 from the flange to the shell, on three transverse hollow beams seated on the shell, the locks'' floors tied in; measured'}
 - {what: Crew airlock, item: material.structural-steel-a36, mass: 6909.0, note: '10 mm, its floor and two plug doors; measured'}
 - {what: Vehicle lock, item: material.structural-steel-a36, mass: 44630.0, note: '8 mm shell, 50 mm end diaphragms (a flat 7.2 m end at 20 kPa needs about 38 mm), 8 mm ribbed plug doors, its floor; measured'}
-- {what: 'Belt nozzle, service panel and feet', item: material.structural-steel-a36, mass: 2784.0, note: measured}
+- {what: 'Nozzles, service panel and feet', item: material.structural-steel-a36, mass: 6435.0, note: measured}
 - {what: Lock pumps, item: good.pumps, mass: 2000.0, note: from memory}
 needs: {power: 50000.0, atmosphere: vacuum}
 ports:
