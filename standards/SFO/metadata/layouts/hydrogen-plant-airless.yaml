@@ -296,7 +296,7 @@ links:
   to: [-48.0, -6.0, 2.4]
   length: 21.8
   item: material.copper
-  mass: 5898.0
+  mass: 5917.0
   via:
   - [-48.0, -19.0, 2.4]
   - [-48.0, -19.0, -1.0]
@@ -327,7 +327,7 @@ links:
   to: [-24.0, -6.0, 2.4]
   length: 21.8
   item: material.copper
-  mass: 5898.0
+  mass: 5917.0
   via:
   - [-24.0, -19.0, 2.4]
   - [-24.0, -19.0, -1.0]
@@ -358,7 +358,7 @@ links:
   to: [0.0, -6.0, 2.4]
   length: 21.8
   item: material.copper
-  mass: 5898.0
+  mass: 5917.0
   via:
   - [0.0, -19.0, 2.4]
   - [0.0, -19.0, -1.0]
@@ -389,7 +389,7 @@ links:
   to: [24.0, -6.0, 2.4]
   length: 21.8
   item: material.copper
-  mass: 5898.0
+  mass: 5917.0
   via:
   - [24.0, -19.0, 2.4]
   - [24.0, -19.0, -1.0]
@@ -420,7 +420,7 @@ links:
   to: [48.0, -6.0, 2.4]
   length: 21.8
   item: material.copper
-  mass: 5898.0
+  mass: 5917.0
   via:
   - [48.0, -19.0, 2.4]
   - [48.0, -19.0, -1.0]
