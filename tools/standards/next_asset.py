@@ -86,7 +86,7 @@ def brief(kind, key, path, r, used):
          "size_m": {"length": size[0], "width": size[1], "height": size[2]} if size else None,
          "size_rule": f"the model's three sides, sorted, each {LOW:.0%} to {HIGH:.0%} of the record's, sorted (glTF metres; axes free)",
          "mass_kg": (r.get("physical") or {}).get("mass"),
-         "required_nodes": required_nodes(kind, r), "triangle_budget": KINDS[kind][1],
+         "required_nodes": required_nodes(kind, r), "triangle_budget": r.get("triangle_budget") or KINDS[kind][1],
          "record": os.path.relpath(path, os.path.dirname(TREE)),
          "install": f"python3 tools/standards/install_model.py <model.glb> --as={key} --source=<file.blend> --push",
          "package": f"{store()}/models/{tail(key)}/v<N>/"}

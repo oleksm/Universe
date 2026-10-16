@@ -749,7 +749,7 @@ def check_model(kind, r, info):
                 bad.append(f"label plate {lb['node']} is {e[across]:.3f} x {e[up]:.3f} m, the record's {w} x {h}")
         if "label" not in info.get("materials", []):
             bad.append("no material named label for its plates")
-    budget = KINDS[kind][1]
+    budget = r.get("triangle_budget") or KINDS[kind][1]       # (a run may carry its own, where the kind's is too few)
     if info["triangles"] > budget:
         bad.append(f"{info['triangles']:,} triangles drawn, over the {budget:,} a {kind} may have")
     return bad

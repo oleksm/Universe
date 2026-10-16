@@ -142,10 +142,10 @@ links:
   to: [3.0, -5.34, 6.0]
   length: 5.68
   item: material.copper
-  mass: 2255.0
+  mass: 2135.0
   via:
-  - [3.0, -6.5, 2.13]
-  - [3.0, -6.5, 6.0]
+  - [3.0, -6.3, 2.13]
+  - [3.0, -6.3, 6.0]
   power: 30020.0
   fittings: {elbows: 2, tees: 0, supports: 3, connectors: 2}
   note: three phases of water-cooled copper tube, 26 kA each, up from the transformer's joint to the furnace's cables; their loss, 30.0 kW, to the cool loop
@@ -438,7 +438,7 @@ ground:
 - {what: Rail sleepers, item: material.regolith-sintered, volume: 12.77, note: under the ladle rail (8.0) and the crane's rails (4.8); measured on blender's layout (candidate v01), mass: 31920.0}
 - {what: Radiator legs' pads, item: material.regolith-sintered, volume: 6.91, note: 'a block under each leg; 3.46 m3 a field, as measured on blender''s layout (candidate v01)', mass: 17280.0}
 - {what: Feet, item: material.regolith-sintered, volume: 3.05, note: 'under the belt, the pipes'' and the cables'' supports; as measured on blender''s layout (candidate v01) before the runs were re-laid, to measure again', mass: 7625.0}
-totals: {rate: 41.6666666666667, power: 7868000.0, heat: 1598000.0, water: 0.0, mass: 2663000.0, against_module: 'module.ladle-station: one box, the same on every world. This layout: the same rate; 7.9 MW; 1.6 MW to 2 radiator fields at 330 K; no water used up; 0.042 kg/s of argon, let go. No degasser: the vacuum degasses the ladle on an open stand, but must not see the alloys, which the sealed ladle furnace adds under argon; no ladle crane (nothing is lifted into a tank) and no hall. 474 t of plant, 2,189 t of sintered regolith.'}
+totals: {rate: 41.6666666666667, power: 7868000.0, heat: 1598000.0, water: 0.0, mass: 2663000.0, against_module: 'module.ladle-station: one box, the same on every world. This layout: the same rate; 7.9 MW; 1.6 MW to 2 radiator fields at 330 K; no water used up; 0.042 kg/s of argon, let go. No degasser: the vacuum degasses the ladle on an open stand, but must not see the alloys, which the sealed ladle furnace adds under argon; no ladle crane (nothing is lifted into a tank) and no hall. 473 t of plant, 2,189 t of sintered regolith.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}

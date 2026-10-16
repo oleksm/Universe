@@ -109,6 +109,7 @@ properties:
         pitch: { type: number, exclusiveMinimum: 0, x-unit: "m" }
   connector: { type: string, x-ref: [connector], description: "The connector its ends are built to, by key: it joins a port built to the same connector, or another run of its class." }
   carries: { enum: [gas, liquid, bulk, power], description: "What it can carry." }
+  triangle_budget: { type: integer, minimum: 1000, description: "Triangles its kit may have, where the kind's default (12,000) is too few: a bus of many tubes." }
   visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
   revision:
     $ref: "../../common.schema.yaml#/definitions/record_revision"

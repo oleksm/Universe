@@ -426,18 +426,23 @@ def busbar(v, amps, phases=2):
              _part("Cooling water", "good.water", water, "inside the tubes, half of them flow and half return, turned at the far joint"),
              _part("Clamps and spacers", A36, phases * rows * 6.0, "a clamp a row every metre, from memory")]
     per_m = sum(b["mass"] for b in built)
-    R = 0.6
+    R = R_RISE = 0.6
+    if ac:          # (the least tube's bend 0.6 m: the axis's radius is that plus the outermost tube's offset; blender, 2026-10-16)
+        R = 0.6 + (phases - 1) / 2 * (w + 0.3) + (w - od) / 2
+        R_RISE = 0.6 + (h - od) / 2
     what = (f"A three-phase alternating current bus, its phases' centres {w + 0.3:g} m apart (0.3 m clear), each {n} hollow copper tubes {od * 1000:.0f} mm across, water-cooled, on post insulators: {amps / 1000:.1f} kA a phase at {v:g} V. The tubes' {t * 1000:.0f} mm wall is about the skin depth of copper at 50 Hz, so the current fills it" if ac else
             f"A direct current bus of two poles, their centres {w + 0.3:g} m apart (0.3 m clear), each {n} hollow copper tubes {od * 1000:.0f} mm across, water-cooled, on post insulators: {amps / 1000:.1f} kA at {v:g} V")
     _recs[key] = {"identity": {"key": key, "name": f"Busbar, {'AC' if ac else 'DC'}, {math.ceil(amps / 1000):d} kA", "description": f"{what}; it loses {loss:,.0f} W a metre into its water, which the unit at its source carries away."},
                   "kind": "busbar", "size": r(n * a, 5), "outside": [r(phases * w + (phases - 1) * 0.3 + 0.1, 3), r(h + 0.1, 3)], "rating": {"voltage": v, "current": r(amps)},
                   "per_m": {"mass": r(per_m), "power": r(loss), "built_of": built},
-                  "elbow": {"radius": R, "mass": r(per_m * math.pi / 2 * R)},
-                  "riser": {"radius": R, "mass": r(per_m * math.pi / 2 * R)},
-                  "support": {"spacing": 3.0, "mass": 60.0, "per_m_height": 25.0, "item": A36},
+                  "elbow": {"radius": r(R, 3), "mass": r(per_m * math.pi / 2 * R)},
+                  "riser": {"radius": r(R_RISE, 3), "mass": r(per_m * math.pi / 2 * R_RISE)},
+                  "support": {"spacing": 3.0, "mass": 60.0 if not ac else 75.0, "per_m_height": 25.0, "item": A36},
                   "connector": bus_joint(v, amps, phases), "carries": "power",
                   "basis": [{"of": ["per_m"], "tier": "derived", "review": True, "note": f"Copper at {J_BUS / 1e6:g} A/mm2 water-cooled (from memory); its loss by its resistance at 60 deg C" + (" (the AC resistance taken as the DC's: the wall is about one skin depth)." if ac else ".")},
-                            {"of": ["elbow", "riser", "support"], "tier": "invented", "review": True, "note": "Bent tubes at 0.6 m; a steel post with two insulators every 3 m (from memory)."}]}
+                            {"of": ["elbow", "riser", "support"], "tier": "invented", "review": True, "note": ("Each tube bent at 0.6 m or more, so the bus's axis bends at that plus its outermost tube's offset; a steel post with three insulators, one a phase, every 3 m (from memory)." if ac else "Bent tubes at 0.6 m; a steel post with two insulators every 3 m (from memory).")}]}
+    if ac and phases * n > 14:
+        _recs[key]["triangle_budget"] = 28000       # (three phases of tubes: 12-sided tubes and their bends need it; blender, 2026-10-16)
     return key
 
 

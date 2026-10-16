@@ -2786,8 +2786,8 @@ def ladle_station_airless(us, recs):
     reheats it under argon; no degasser, no hall, no ladle crane. Laid of runs from port to port (SFO 25)."""
     rad = "radiator-field-330k"
     bus = kit.busbar(L_V2, L_I2, 3)
-    bus_path = [None, (3.0, -6.5, round(recs["furnace-transformer-14mva"]["ports"][1]["at"][2], 3)), (3.0, -6.5, 6.0), None]
-    bus_loss = kit._recs[bus]["per_m"]["power"] * (0.65 + 3.87 + 1.16)
+    bus_path = [None, (3.0, -6.3, round(recs["furnace-transformer-14mva"]["ports"][1]["at"][2], 3)), (3.0, -6.3, 6.0), None]
+    bus_loss = kit._recs[bus]["per_m"]["power"] * (0.85 + 3.87 + 0.96)
     lf_heat = recs["ladle-furnace-80t-sealed"]["needs"].get("heat", 0) + recs["furnace-transformer-14mva"]["needs"].get("heat", 0) + bus_loss
     f_low = recs[rad]["rejects"]["heat"]
     n_low = math.ceil(lf_heat / f_low)
