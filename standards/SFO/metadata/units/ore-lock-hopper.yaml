@@ -20,6 +20,7 @@ envelope:
 - [-2.51, -2.51, 9.99, 2.51, 2.51, 17.51]
 - [-0.11, -0.31, 0, 3.01, 2.16, 13.06]
 life: 788940000
+visual: {format: freefall-model/1, path: models/ore-lock-hopper/v1, manifest_sha256: 0968f0b2f09f80551271d3f6889d5a6a578d63d69ef994a418103b0335c747e3, version: 1, triangles: 12660}
 basis:
 - of: [physical, built_of, needs]
   tier: invented
