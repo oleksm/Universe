@@ -885,7 +885,7 @@
 - { record: law.tube-time, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "934385090028c5e6" }
 - { record: law.year, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "29f1ef4424e5cc98" }
 - { record: layout.arc-furnace-air, at: "2026-10-16T23:29:49Z", status: draft, summary: "changed", sha: "99dfd3c7c060b482" }
-- { record: layout.arc-furnace-airless, at: "2026-10-16T23:35:55Z", status: draft, summary: "changed", sha: "f08ffa8c21363a4f" }
+- { record: layout.arc-furnace-airless, at: "2026-10-16T23:40:53Z", status: draft, summary: "changed", sha: "be1f01817a97da00" }
 - { record: layout.casting-bay-air, at: "2026-10-15T02:26:46Z", status: draft, summary: "changed: physical", sha: "64ae565ca9d653a2" }
 - { record: layout.casting-bay-airless, at: "2026-10-15T22:16:54Z", status: draft, summary: "changed", sha: "70b05194ba7c5ed0" }
 - { record: layout.hydrogen-plant-air, at: "2026-10-16T15:26:56Z", status: draft, summary: "changed: physical, totals", sha: "3c89fd0fb0567a1c" }
@@ -2875,7 +2875,7 @@
 - { record: unit.crop-saws, at: "2026-10-15T18:20:39Z", status: draft, summary: "changed", sha: "57aeb9a5c2d969ec" }
 - { record: unit.degassing-stand, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "edb40c23673aafe7" }
 - { record: unit.disc-filter-2, at: "2026-10-15T05:01:04Z", status: draft, summary: "changed", sha: "52719317d0ef0afd" }
-- { record: unit.dri-bin-200t, at: "2026-10-16T23:35:55Z", status: draft, summary: "changed: visual", sha: "48990ba28dc0c750" }
+- { record: unit.dri-bin-200t, at: "2026-10-16T23:40:53Z", status: draft, summary: "changed", sha: "43cf3f13a1465eb2" }
 - { record: unit.dri-cooling-loop, at: "2026-10-15T01:24:23Z", status: draft, summary: "changed", sha: "46962a5f5ae51829" }
 - { record: unit.eaf-vessel-80t, at: "2026-10-14T16:01:10Z", status: draft, summary: "changed: physical, built_of, visual", sha: "f948e3f34829ba7e" }
 - { record: unit.eaf-vessel-80t-sealed, at: "2026-10-16T23:29:49Z", status: draft, summary: "changed", sha: "ac7db191c4e71e27" }
@@ -2905,7 +2905,7 @@
 - { record: unit.mill-crane-30t, at: "2026-10-16T19:40:41Z", status: draft, summary: "changed", sha: "8ec4bb60e1974d04" }
 - { record: unit.mould-car-12, at: "2026-10-14T20:49:23Z", status: draft, summary: "changed: identity", sha: "30b4c1cb9c96fef7" }
 - { record: unit.offgas-cooler-sealed, at: "2026-10-16T23:24:57Z", status: draft, summary: "changed", sha: "37dbfe7fe05fb2bf" }
-- { record: unit.offgas-filter-sealed, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "6d01f39393a39a5b" }
+- { record: unit.offgas-filter-sealed, at: "2026-10-16T23:40:53Z", status: draft, summary: "changed: visual", sha: "0cdd9e2874dfc07b" }
 - { record: unit.ore-lock-hopper, at: "2026-10-16T20:07:52Z", status: draft, summary: "changed", sha: "9c432e65e1f11287" }
 - { record: unit.pellet-gas-loop, at: "2026-10-16T20:19:14Z", status: draft, summary: "changed", sha: "65995db456c5946a" }
 - { record: unit.pellet-shaft-63th, at: "2026-10-16T21:20:35Z", status: draft, summary: "changed", sha: "ade26ef7388fa578" }
