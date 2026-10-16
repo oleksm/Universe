@@ -882,8 +882,8 @@
 - { record: layout.ladle-station-airless, at: "2026-10-15T22:16:54Z", status: draft, summary: "changed", sha: "1e1a6ec755d7d77c" }
 - { record: layout.ore-yard-air, at: "2026-10-15T17:42:59Z", status: draft, summary: "changed: physical", sha: "8bc46739c40587fb" }
 - { record: layout.ore-yard-airless, at: "2026-10-15T19:02:03Z", status: draft, summary: "first tracked", sha: "6b9f05ba1da5177d" }
-- { record: layout.pellet-plant-air, at: "2026-10-16T19:40:41Z", status: draft, summary: "changed", sha: "df1da092db9ea4f7" }
-- { record: layout.pellet-plant-airless, at: "2026-10-16T20:07:52Z", status: draft, summary: "changed", sha: "aff57eaa2799d06e" }
+- { record: layout.pellet-plant-air, at: "2026-10-16T20:19:14Z", status: draft, summary: "changed", sha: "d5f33d1142ad5b30" }
+- { record: layout.pellet-plant-airless, at: "2026-10-16T20:19:14Z", status: draft, summary: "changed", sha: "96a25bd5b8d97c3b" }
 - { record: layout.shaft-furnace-air, at: "2026-10-16T03:20:47Z", status: draft, summary: "changed: totals", sha: "56b2d2168ab078d2" }
 - { record: layout.shaft-furnace-airless, at: "2026-10-16T19:40:41Z", status: draft, summary: "changed", sha: "9a175c02e8cc08ea" }
 - { record: market.art, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "517671b6a46daee3" }
@@ -2835,7 +2835,7 @@
 - { record: unit.baghouse-450k, at: "2026-10-15T12:22:41Z", status: draft, summary: "changed", sha: "6fdb9b7fb2def8a2" }
 - { record: unit.baghouse-800k, at: "2026-10-14T14:37:56Z", status: draft, summary: "changed", sha: "ab9ba06de66e8e3c" }
 - { record: unit.ball-mill-4m4, at: "2026-10-16T19:40:41Z", status: draft, summary: "changed", sha: "4173f58fa47184d1" }
-- { record: unit.balling-disc-7m5, at: "2026-10-16T19:40:41Z", status: draft, summary: "changed", sha: "d7eb3514afd889da" }
+- { record: unit.balling-disc-7m5, at: "2026-10-16T20:19:14Z", status: draft, summary: "changed: visual", sha: "e3e9a59109e8d572" }
 - { record: unit.cooling-tower, at: "2026-10-14T14:37:56Z", status: draft, summary: "changed", sha: "20447996507fd0ba" }
 - { record: unit.cooling-tower-1cell, at: "2026-10-14T19:55:55Z", status: draft, summary: "changed", sha: "b9a2ebb48ebfbe05" }
 - { record: unit.cooling-tower-h2, at: "2026-10-15T04:02:06Z", status: draft, summary: "changed", sha: "811c23f22ab4f331" }
@@ -2878,7 +2878,7 @@
 - { record: unit.mould-car-12, at: "2026-10-14T20:49:23Z", status: draft, summary: "changed: identity", sha: "30b4c1cb9c96fef7" }
 - { record: unit.offgas-filter-sealed, at: "2026-10-15T19:31:37Z", status: draft, summary: "changed", sha: "9284f83f59113b00" }
 - { record: unit.ore-lock-hopper, at: "2026-10-16T20:07:52Z", status: draft, summary: "changed", sha: "9c432e65e1f11287" }
-- { record: unit.pellet-gas-loop, at: "2026-10-16T20:07:52Z", status: draft, summary: "changed: visual", sha: "72629930d7d4fd6e" }
+- { record: unit.pellet-gas-loop, at: "2026-10-16T20:19:14Z", status: draft, summary: "changed", sha: "65995db456c5946a" }
 - { record: unit.pellet-shaft-63th, at: "2026-10-16T19:40:41Z", status: draft, summary: "changed", sha: "aedfb2bd1d619ba3" }
 - { record: unit.plant-transformer-35mva, at: "2026-10-16T19:40:41Z", status: draft, summary: "changed", sha: "0a6366b63c501485" }
 - { record: unit.pressure-hall-30m, at: "2026-10-16T19:57:58Z", status: draft, summary: "changed", sha: "ec1f9e6677cf4830" }
