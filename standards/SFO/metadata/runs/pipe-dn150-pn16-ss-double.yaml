@@ -16,12 +16,7 @@ cap: {thickness: 0.008, mass: 1.1}
 support: {spacing: 6.2, mass: 19.5, per_m_height: 18.2, item: material.structural-steel-a36}
 connector: connector.flange-dn150-pn16-ss-double
 carries: gas
-visual:
-  format: "freefall-model/1"
-  path: "models/pipe-dn150-pn16-ss-double/v1"
-  manifest_sha256: "51b4ca8a180619eb0e7633dfd2bd890c6a0e21c96a462633c4596e7ffa1a1d8c"
-  version: 1
-  triangles: 2320
+visual: {format: freefall-model/1, path: models/pipe-dn150-pn16-ss-double/v1, manifest_sha256: 51b4ca8a180619eb0e7633dfd2bd890c6a0e21c96a462633c4596e7ffa1a1d8c, version: 1, triangles: 2320}
 basis:
 - of: [per_m]
   tier: derived

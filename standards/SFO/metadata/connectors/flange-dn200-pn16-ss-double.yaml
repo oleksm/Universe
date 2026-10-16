@@ -10,12 +10,7 @@ built_of:
 - {what: Flanges, item: material.stainless-steel-304, mass: 31.1, note: 'two weld-neck rings 0.396 m across, 20 mm thick, their necks tapering over 20 mm from 16 mm to the pipe''s wall; along the pipe the joint is 110 mm with the necks and the bolts'' and nuts'' ends'}
 - {what: Bolts and nuts, item: material.high-strength-steel-4340, mass: 2.2, note: '12 of M16, 78 mm, on a 0.348 m circle'}
 - {what: Gaskets, item: material.stainless-steel-304, mass: 0.6, note: 'spiral wound, stainless windings; two, the space between them piped to a leak watch'}
-visual:
-  format: "freefall-model/1"
-  path: "models/flange-dn200-pn16-ss-double/v1"
-  manifest_sha256: "832d7f92a75c05ca5e1d888bca7d4e0e6f0ac39bd2f9597ebb0211b3f0b88156"
-  version: 1
-  triangles: 5280
+visual: {format: freefall-model/1, path: models/flange-dn200-pn16-ss-double/v1, manifest_sha256: 832d7f92a75c05ca5e1d888bca7d4e0e6f0ac39bd2f9597ebb0211b3f0b88156, version: 1, triangles: 5280}
 basis:
 - of: [built_of, physical]
   tier: derived

@@ -57,13 +57,8 @@ ports:
 envelope:
 - [-2.45, -2.82, 0.0, 2.409, 0.65, 4.4]
 - [-2.439, -1.9, 0.0, 2.1, 3.0, 2.8]
-visual:
-  format: "freefall-model/1"
-  path: "models/rectifier-transformer-21mva/v2"
-  manifest_sha256: "689be998f837a44c2aff628e0a989f7ab2773ac92b98d8a91e88ce3ab27fcc87"
-  version: 2
-  triangles: 9132
 life: 788940000
+visual: {format: freefall-model/1, path: models/rectifier-transformer-21mva/v2, manifest_sha256: 689be998f837a44c2aff628e0a989f7ab2773ac92b98d8a91e88ce3ab27fcc87, version: 2, triangles: 9132}
 basis:
 - of: [physical, built_of]
   tier: invented

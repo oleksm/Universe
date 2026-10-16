@@ -20,12 +20,7 @@ repeat:
 - {piece: rung, pitch: 0.3}
 connector: connector.termination-400v-185mm2
 carries: power
-visual:
-  format: "freefall-model/1"
-  path: "models/cable-400v-185mm2/v1"
-  manifest_sha256: "08da45c64fb5a65790f12ebc4396c264b23241e271e9eab949462d5eb6730b8d"
-  version: 1
-  triangles: 9236
+visual: {format: freefall-model/1, path: models/cable-400v-185mm2/v1, manifest_sha256: 08da45c64fb5a65790f12ebc4396c264b23241e271e9eab949462d5eb6730b8d, version: 1, triangles: 9236}
 basis:
 - of: [per_m]
   tier: derived
