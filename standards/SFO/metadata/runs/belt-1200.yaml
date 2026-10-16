@@ -15,6 +15,9 @@ support: {spacing: 18.0, mass: 300.0, per_m_height: 75.0, item: material.structu
 repeat:
 - {piece: idler, pitch: 1.2}
 - {piece: return_roll, pitch: 3.0}
+terminals:
+  head: {mass: 4500.0, note: 'a 0.8 m lagged drive pulley, its bearings and frame, a gearbox and a motor of about 400 kW (from memory)'}
+  tail: {mass: 2200.0, note: 'a 0.63 m tail pulley on a screw take-up, its bearings and frame (from memory)'}
 connector: connector.belt-transfer-1200
 carries: bulk
 basis:

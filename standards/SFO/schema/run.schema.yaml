@@ -81,6 +81,13 @@ properties:
       mass: { type: number, exclusiveMinimum: 0, x-unit: "kg", description: "kg of one support's head and foot" }
       per_m_height: { type: number, minimum: 0, x-unit: "kg/m", description: "kg its leg weighs a metre of height to the run's centre" }
       item: { type: string, x-ref: [material, stock, good] }
+  terminals:
+    type: object
+    additionalProperties: false
+    description: "A conveyor's end machinery, once a run: its head (the delivering end: drive pulley, gearbox and motor) and its tail (the receiving end: tail pulley and take-up)."
+    properties:
+      head: { type: object, additionalProperties: false, required: [mass], properties: { mass: { type: number, exclusiveMinimum: 0, x-unit: "kg" }, note: { type: string } } }
+      tail: { type: object, additionalProperties: false, required: [mass], properties: { mass: { type: number, exclusiveMinimum: 0, x-unit: "kg" }, note: { type: string } } }
   repeat:
     type: array
     description: "Rigid pieces the game sets along a straight at a fixed pitch, not stretched with it (a belt's idlers and return rolls): each the model's piece by name and its pitch."

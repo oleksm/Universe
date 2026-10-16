@@ -247,6 +247,8 @@ def belt(width, rate):
                   "per_m": {"mass": r(per_m), "built_of": built},
                   "support": {"spacing": 18.0, "mass": 300.0, "per_m_height": 75.0, "item": A36},
                   "repeat": [{"piece": "idler", "pitch": 1.2}, {"piece": "return_roll", "pitch": 3.0}],
+                  "terminals": {"head": {"mass": 4500.0, "note": "a 0.8 m lagged drive pulley, its bearings and frame, a gearbox and a motor of about 400 kW (from memory)"},
+                                "tail": {"mass": 2200.0, "note": "a 0.63 m tail pulley on a screw take-up, its bearings and frame (from memory)"}},
                   "connector": belt_transfer(width), "carries": "bulk",
                   "basis": [{"of": ["per_m", "support"], "tier": "invented", "review": True, "note": "Belt, idlers and stringers from memory of 1.2 m belts; trestles every 18 m, a 300 kg cross beam and two 200 mm box legs (75 kg/m)."}]}
     return key
@@ -352,7 +354,7 @@ def lay(run_key, pts, count=1, tees=0, taps=(), port_ends=0, caps=0):
     m = count * (rec["per_m"]["mass"] * L + m_elb + port_ends * conn + caps * rec.get("cap", {}).get("mass", conn / 2))
     m += (tees + len(taps)) * rec.get("tee", {}).get("mass", 0.0) * count
     m += sum(_recs[c]["physical"]["mass"] for c in taps) * count
-    m += m_sup
+    m += m_sup + count * sum(t["mass"] for t in rec.get("terminals", {}).values())
     fit = {"elbows": n_elb, "tees": tees + len(taps), "supports": n_sup, "connectors": port_ends + caps + len(taps)}
     return m, fit, L
 
