@@ -20,13 +20,8 @@ envelope:
 - [7.5, -6, 0, 12, 6, 3.55]
 - [-12, -4.2, 0, 1.2, -1.2, 1.2]
 - [5.9, 3.6, 0, 6.1, 6, 0.4]
-visual:
-  format: "freefall-model/1"
-  path: "models/pellet-gas-loop/v1"
-  manifest_sha256: "498c0127dd9c705cbf5c8bde9c4fc14b63c3e0da4988d1f03fda0907180bc9ac"
-  version: 1
-  triangles: 24624
 life: 788940000
+visual: {format: freefall-model/1, path: models/pellet-gas-loop/v1, manifest_sha256: 498c0127dd9c705cbf5c8bde9c4fc14b63c3e0da4988d1f03fda0907180bc9ac, version: 1, triangles: 24624}
 basis:
 - of: [physical, built_of]
   tier: derived
