@@ -6236,3 +6236,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.ingot-gantry-10t-moon
+    version: 1
+    manifest_sha256: "5afd7128b51bef760f525654308d63138bf12bedd515c4f98d8f8e7f6bf6334c"
+    installed: 43495253
+    game: "the loader (world::assets) at fso 43495253"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/ingot-gantry-10t-moon/v1 (285516 bytes, bounds [-3.9, -0.04, -11.95] to [3.9, 13.7, 11.95]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
