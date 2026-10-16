@@ -2824,7 +2824,7 @@
 - { record: unit.pressure-hall-30m, at: "2026-10-15T16:13:40Z", status: draft, summary: "first tracked", sha: "4a7bbfb54eda5ef5" }
 - { record: unit.pressure-hall-30m-end, at: "2026-10-15T16:13:40Z", status: draft, summary: "first tracked", sha: "059f108b220860d9" }
 - { record: unit.radiator-field-330k, at: "2026-10-15T20:00:30Z", status: draft, summary: "changed: built_of", sha: "cacc6559212d0505" }
-- { record: unit.radiator-field-345k, at: "2026-10-16T03:47:41Z", status: draft, summary: "changed: physical, built_of", sha: "13411e45d0c03cd9" }
+- { record: unit.radiator-field-345k, at: "2026-10-16T03:48:31Z", status: draft, summary: "changed: visual", sha: "0acdca7899210647" }
 - { record: unit.radiator-field-485k, at: "2026-10-15T20:10:26Z", status: draft, summary: "changed", sha: "f642c1c225927653" }
 - { record: unit.rectifier-transformer-21mva, at: "2026-10-15T03:01:55Z", status: draft, summary: "changed", sha: "785569a9e884e75d" }
 - { record: unit.recuperator, at: "2026-10-16T03:35:46Z", status: draft, summary: "changed: envelope", sha: "95857803a2719b3c" }
