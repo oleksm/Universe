@@ -1586,7 +1586,7 @@
 - { record: rule.plant-weights-from-memory, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "d4bff33987b75c18" }
 - { record: rule.shares-chosen, at: "2026-10-07T03:53:08Z", status: review, summary: "first tracked", sha: "2f29f0362d9d7f04" }
 - { record: run.belt-1000, at: "2026-10-16T21:08:27Z", status: draft, summary: "changed", sha: "3b23d5db860cfc4e" }
-- { record: run.belt-1000-sealed, at: "2026-10-16T21:20:35Z", status: draft, summary: "changed", sha: "ca9cf3b298890db7" }
+- { record: run.belt-1000-sealed, at: "2026-10-16T21:27:40Z", status: draft, summary: "changed: visual", sha: "c1d6e7917a1ea05c" }
 - { record: run.belt-1200, at: "2026-10-16T13:57:34Z", status: draft, summary: "changed", sha: "1f38dc7c62f3bc04" }
 - { record: run.belt-800, at: "2026-10-16T21:02:45Z", status: draft, summary: "changed", sha: "69869a61efe133e3" }
 - { record: run.belt-800-sealed, at: "2026-10-16T21:25:19Z", status: draft, summary: "changed", sha: "77e75e5a932a8b68" }
