@@ -1524,7 +1524,8 @@ def hydrogen_units():
     rt["built_of"] += [part("Rectifier stacks and heat sinks", AL, 3000.0, "two 6-pulse thyristor bridges (12-pulse together) on water-cooled aluminium heat sinks, from memory"),
                        part("DC bus", CU, dc_cu, f"two copper poles inside the house, {I_DC / 2e6 * 1e4:.0f} cm2 each at 2 A/mm2"),
                        part("Rectifier house", A36, 2500.0, "a closed steel house, its cabinets, doors and cooling manifold, from memory"),
-                       part("HV cable box", A36, 2 * (3.0 * 0.8 + 3.0 * 0.8 + 0.8 * 0.8) * 0.006 * RHO["steel"], f"over the three HV bushings on the tank's top at y -1.5: 3 x 0.8 x 0.8 m, 6 mm, its gland plate on top at (0, -1.5, {H_t + 0.8:g})")]
+                       part("HV cable box", A36, 505.0, f"over the three HV bushings on the tank's top at y -1.5: 3 x 0.8 x 0.8 m, 6 mm, its gland plate on top at (0, -1.5, {H_t + 0.8:g}); measured on blender's model v2 (2026-10-16)"),
+                       part("HV box posts", A36, 58.6, "four 80 x 5 mm posts and their plates under the box; measured")]
     rt["dims"] = (L_t, W_t + 3.0, H_t + 0.8)
     rt["needs"] = {"power": P_rect, "heat": P_rect}
     rt["desc"] = (rt["desc"].replace("Three secondary terminals on one long face (+y), 4.5 m up", "Its secondary bushings on its +y face into the rectifier house")

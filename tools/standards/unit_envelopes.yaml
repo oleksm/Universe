@@ -58,3 +58,6 @@ unit.hydrogen-purifier-10bar:
 - [-6.0, -4.0, 0.0, 6.0, 4.0, 8.74]
 unit.water-treatment-sealed:
 - [-6.0, -4.0, 0.0, 6.0, 4.0, 5.02]
+unit.rectifier-transformer-21mva:
+- [-2.45, -2.82, 0.0, 2.409, 0.65, 4.4]
+- [-2.439, -1.9, 0.0, 2.1, 3.0, 2.8]

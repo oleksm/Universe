@@ -4,7 +4,7 @@ identity: {key: unit.rectifier-transformer-21mva, name: 'Rectifier transformer, 
     x -0.3 (+) and 0.3 (-). Fed at 33 kV through a cable box over its HV bushings, its gland plate on top at (0, -1.5, 4.4).'}
 size_class: 1
 fits: plant-mount.bay-s1
-physical: {length: 4.9, width: 6.0, height: 4.4, mass: 40490.0}
+physical: {length: 4.9, width: 6.0, height: 4.4, mass: 40540.0}
 built_of:
 - {what: Core, item: material.structural-steel-a36, mass: 12860.0, note: 'grain-oriented electrical steel, which the registry has not got: structural steel stands for it'}
 - {what: Windings, item: material.copper, mass: 8040.0}
@@ -13,7 +13,8 @@ built_of:
 - {what: Rectifier stacks and heat sinks, item: material.aluminium-1350, mass: 3000.0, note: 'two 6-pulse thyristor bridges (12-pulse together) on water-cooled aluminium heat sinks, from memory'}
 - {what: DC bus, item: material.copper, mass: 2319.0, note: 'two copper poles inside the house, 216 cm2 each at 2 A/mm2'}
 - {what: Rectifier house, item: material.structural-steel-a36, mass: 2500.0, note: 'a closed steel house, its cabinets, doors and cooling manifold, from memory'}
-- {what: HV cable box, item: material.structural-steel-a36, mass: 512.4, note: 'over the three HV bushings on the tank''s top at y -1.5: 3 x 0.8 x 0.8 m, 6 mm, its gland plate on top at (0, -1.5, 4.4)'}
+- {what: HV cable box, item: material.structural-steel-a36, mass: 505.0, note: 'over the three HV bushings on the tank''s top at y -1.5: 3 x 0.8 x 0.8 m, 6 mm, its gland plate on top at (0, -1.5, 4.4); measured on blender''s model v2 (2026-10-16)'}
+- {what: HV box posts, item: material.structural-steel-a36, mass: 58.6, note: four 80 x 5 mm posts and their plates under the box; measured}
 needs: {power: 542400.0, heat: 542400.0}
 ports:
 - id: hv-in
@@ -53,6 +54,9 @@ ports:
   connector: connector.flange-dn100-pn10
   at: [-2.45, -1.14, 1.0]
   facing: [-1.0, 0.0, 0.0]
+envelope:
+- [-2.45, -2.82, 0.0, 2.409, 0.65, 4.4]
+- [-2.439, -1.9, 0.0, 2.1, 3.0, 2.8]
 life: 788940000
 visual: {format: freefall-model/1, path: models/rectifier-transformer-21mva/v1, manifest_sha256: 15205789a7dffd47743c70ec8a5be040748465790573340fabd5a4198062e937, version: 1, triangles: 7768}
 basis:
