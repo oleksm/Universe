@@ -29,6 +29,8 @@ Draw from each record's `per_m.built_of`, `support` and the class's description:
 
 Under 12k triangles a kit. The installer requires the named nodes. It can't yet check a straight's section against `outside`, so please state the section in the about file.
 
+**Who draws the ring:** a port's `at` is the mating plane. Unit models end there in a plain stub (the run's `outside` across), with no flange ring. The connector model is the whole joint, and the game draws it at the plane.
+
 ## 3. The trial's units: ports and envelopes
 
 The 8 unit kinds in `layout.shaft-furnace-airless` now carry `ports` (id, flow, connector, `at`, `facing` in the unit's frame):
@@ -46,7 +48,7 @@ For each:
 a. **Check each installed model against its ports.** Is there a flange, terminal or chute at `at`, facing `facing`, of the connector's size? List the mismatches. Model changes (new unit versions) only where a port is missing or misplaced. Those that changed for the trial:
    - the compressor's cooler flanges moved to its -x face, low (-6, -2.2/-1.6, 0.3), and its cable entry to (0, -1.5, 5);
    - the heater's cable entry moved to the unit's -x face (-12, 1.45, 1.575);
-   - the furnace has a 400 V power entry at (-6.5, 2, 4);
+   - the furnace's top gas stub ends at x 6.0, its port moved to match; a 400 V drives' terminal box (0.8 x 0.6 x 1 m, its own part) on the ring girder's west face, its entry at (-4.7, 2, 12);
    - the radiator field has a pump power entry at (-24, 1.8, 0.3);
    - the condenser's water-in is at x -0.6 and its water-out at x 0.6.
 

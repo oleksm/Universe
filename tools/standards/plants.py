@@ -2687,7 +2687,8 @@ def shaft_airless_units(us):
                   part("Support ring girder", A36, 35860.4, "a hollow ring and its land, as for air; measured on model v1"),
                   part("Struts and seats", A36, 2442.4, "eight 200 x 200 x 12 mm struts and their 40 mm seats; measured on model v1"),
                   part("Charge and discharge pressure locks", A36, 90000.0, "two lock hoppers with their valves, from memory"),
-                  part("Burden feeders", "good.electric-motors", 25000.0, "from memory")],
+                  part("Burden feeders", "good.electric-motors", 25000.0, "from memory"),
+                  part("Drives' terminal box", A36, 350.0, "a 400 V box on the ring girder's west face feeding the locks', valves' and feeders' drives, 0.8 x 0.6 x 1 m; from memory")],
         holds=burden,
         needs={"power": 400e3, "gravity": 1.0, "atmosphere": "any"},
         recipes=smod["recipes"], life=smod.get("life"),
@@ -2775,10 +2776,10 @@ def trial_ports(us):
     lv = lambda w: kit.termination(400, kit.area_for(amps(w, 400)))
     us["shaft-furnace-200th-hp"]["ports"] = [
         port("charge-in", "in", "bulk", kit.belt_transfer(1.2), (0, 0, 40), (0, 0, 1), item="good.iron-ore-pellets", rate=PELLETS, note="the charge lock's hopper rim; a belt's head stands 3 m over it"),
-        port("top-gas-out", "out", "gas", g_top, (6.5, 0, 31), (1, 0, 0), item=H2, rate=top, pressure=HP_SUCTION, temperature=T_TOP + K, note="hydrogen with the reduction's steam"),
+        port("top-gas-out", "out", "gas", g_top, (6.0, 0, 31), (1, 0, 0), item=H2, rate=top, pressure=HP_SUCTION, temperature=T_TOP + K, note="hydrogen with the reduction's steam"),
         port("hot-gas-in", "in", "gas", g_hot, (0, -6.5, 16), (0, -1, 0), item=H2, rate=GAS, pressure=HP_SHAFT, temperature=T_GAS + K, note=f"the bustle main's inlet stub; the bustle itself 1.9 m clear, the stub's flange {z['hot'] - 0.4:.1f} m"),
         port("dri-out", "out", "bulk", kit.chute(0.8), (0, 0, 6), (0, 0, -1), item="good.sponge-iron", rate=S_RATE, temperature=T_HOT_DRI + K, note="the discharge lock's outlet, onto a closed conveyor's tail under it"),
-        port("power-in", "in", "power", lv(us["shaft-furnace-200th-hp"]["needs"]["power"]), (-6.5, 2.0, 4.0), (-1, 0, 0), power=us["shaft-furnace-200th-hp"]["needs"]["power"], voltage=400, note="the locks' and valves' drives"),
+        port("power-in", "in", "power", lv(us["shaft-furnace-200th-hp"]["needs"]["power"]), (-4.7, 2.0, 12.0), (-1, 0, 0), power=us["shaft-furnace-200th-hp"]["needs"]["power"], voltage=400, note="the drives' terminal box on the ring girder's west face"),
     ]
     us["recuperator"]["ports"] = [
         port("top-gas-in", "in", "gas", g_top, (0, 0, 18), (0, 0, 1), item=H2, rate=top, pressure=HP_SUCTION, temperature=T_TOP + K),
@@ -2994,7 +2995,7 @@ def shaft_furnace_airless(us, recs):
         L("compressor supply", kit.cable(6600, kit.area_for(amps(HP_W_COMP / 0.96, 6600))), ("edge:mv-in", "K:hv"), [None, (48.0, -1.5, 6.0), None]),
         L("transformer supply", kit.cable(132000, kit.area_for(amps(recs["heater-transformer-131mva"]["needs"]["power"] + recs[heater]["needs"]["power"], 132000, 0.95))), ("edge:hv-in", "T:hv-in"), [None, (48.0, -24.0, 8.0), None]),
         L("heater supply", kit.cable(6600, 630), ("T:lv-out", "H:power-in"), [None, (48.0, -17.0, 4.5), (11.3, -17.0, 4.5), (11.3, -22.55, 4.5), (11.3, -22.55, 1.575), None], (), math.ceil(amps(recs[heater]["needs"]["power"], 6600, 0.95) / (630e-6 * kit.J_VACUUM))),
-        L("furnace supply", kit.cable(lvf, kit.area_for(amps(recs[sh_key]["needs"]["power"], lvf))), ("edge:lv-furnace", "F:power-in"), [None, None], (), 1, None, "in through the tower's west opening"),
+        L("furnace supply", kit.cable(lvf, kit.area_for(amps(recs[sh_key]["needs"]["power"], lvf))), ("edge:lv-furnace", "F:power-in"), [None, (-7.0, 2.0, 4.0), (-7.0, 2.0, 12.0), None], (), 1, None, "in through the tower's west opening and up inside the platforms' opening round the shaft to the ring girder"),
         L("crew post supply", kit.cable(lvf, kit.area_for(amps(recs["crew-post"]["needs"]["power"], lvf))), ("edge:lv-post", "P:power-in"), [None, None], (), 1, None, "through the berm"),
     ]
     # The radiator loop: flow (hot, out of the condenser) and return mains as a parallel pair, the return on the right

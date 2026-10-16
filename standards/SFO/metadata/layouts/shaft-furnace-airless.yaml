@@ -368,11 +368,11 @@ links:
   name: top gas main
   run: run.pipe-dn1600-pn16-mli-double
   ends: ['F:top-gas-out', 'R:top-gas-in']
-  from: [6.5, 0.0, 31.0]
+  from: [6.0, 0.0, 31.0]
   to: [24.0, 24.0, 18.0]
-  length: 48.14
+  length: 48.64
   item: material.structural-steel-a36
-  mass: 32980.0
+  mass: 33240.0
   via:
   - [15.0, 0.0, 31.0]
   - [15.0, 10.0, 31.0]
@@ -521,12 +521,15 @@ links:
   run: run.cable-400v-300mm2
   ends: ['edge:lv-furnace', 'F:power-in']
   from: [-40.0, 2.0, 4.0]
-  to: [-6.5, 2.0, 4.0]
-  length: 33.5
+  to: [-4.7, 2.0, 12.0]
+  length: 43.3
   item: material.copper
-  mass: 832.5
-  fittings: {elbows: 0, tees: 0, supports: 12, connectors: 2}
-  note: in through the tower's west opening
+  mass: 1083.0
+  via:
+  - [-7.0, 2.0, 4.0]
+  - [-7.0, 2.0, 12.0]
+  fittings: {elbows: 2, tees: 0, supports: 13, connectors: 2}
+  note: in through the tower's west opening and up inside the platforms' opening round the shaft to the ring girder
 - kind: cable
   name: crew post supply
   run: run.cable-400v-16mm2

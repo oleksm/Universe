@@ -14,6 +14,7 @@ built_of:
 - {what: Struts and seats, item: material.structural-steel-a36, mass: 2442.0, note: eight 200 x 200 x 12 mm struts and their 40 mm seats; measured on model v1}
 - {what: Charge and discharge pressure locks, item: material.structural-steel-a36, mass: 90000.0, note: 'two lock hoppers with their valves, from memory'}
 - {what: Burden feeders, item: good.electric-motors, mass: 25000.0, note: from memory}
+- {what: Drives' terminal box, item: material.structural-steel-a36, mass: 350.0, note: 'a 400 V box on the ring girder''s west face feeding the locks'', valves'' and feeders'' drives, 0.8 x 0.6 x 1 m; from memory'}
 holds: 1387000.0
 needs: {power: 400000.0, gravity: 1.0, atmosphere: any}
 recipes:
@@ -44,7 +45,7 @@ ports:
   pressure: 730000.0
   temperature: 623.1
   connector: connector.flange-dn1600-pn16-double
-  at: [6.5, 0.0, 31.0]
+  at: [6.0, 0.0, 31.0]
   facing: [1.0, 0.0, 0.0]
   note: hydrogen with the reduction's steam
 - id: hot-gas-in
@@ -74,9 +75,9 @@ ports:
   power: 400000.0
   voltage: 400
   connector: connector.termination-400v-300mm2
-  at: [-6.5, 2.0, 4.0]
+  at: [-4.7, 2.0, 12.0]
   facing: [-1.0, 0.0, 0.0]
-  note: the locks' and valves' drives
+  note: the drives' terminal box on the ring girder's west face
 life: 788940000
 visual: {format: freefall-model/1, path: models/shaft-furnace-200th-hp/v1, manifest_sha256: 3962dc1119298d6e9dda3b74d14384126fa35ea7ab1e13ce91fdf42ee3856a84, version: 1, triangles: 21200}
 basis:
