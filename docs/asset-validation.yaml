@@ -5691,3 +5691,20 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "world::assets has no connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.pipe-dn1000-pn16-double
+    version: 1
+    manifest_sha256: "5fa32eea74316e6a356d5abe481f2b9e90178f605b8d011928f1bb000167486b"
+    installed: ad598a93
+    game: "the loader (world::assets) at fso ad598a93"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run kind yet (engine task 20261015T224523-registry-52e4)"
+      - "A36 at 623 K: the class's wall uses the 133 MPa allowable up to about 340 deg C; the top gas runs at 350 deg C, at the edge (registry review)"
