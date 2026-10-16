@@ -17,6 +17,12 @@ riser: {radius: 0.68, mass: 598.2}
 support: {spacing: 3.0, mass: 75.0, per_m_height: 25.0, item: material.structural-steel-a36}
 connector: connector.bus-joint-ac-65ka
 carries: power
+visual:
+  format: "freefall-model/1"
+  path: "models/busbar-ac-65ka/v1"
+  manifest_sha256: "eabaad9fda02ccfd7ef30f358e6d63a396d9d8b1f2a3df8df3a3a4023f54772a"
+  version: 1
+  triangles: 26320
 basis:
 - of: [per_m]
   tier: derived
