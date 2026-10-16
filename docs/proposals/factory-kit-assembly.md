@@ -87,3 +87,34 @@ Not done yet:
 
 `layout.hydrogen-plant-airless` is laid of runs too: 131 runs and 13 layout ports, 0 faults. Each electrolyser block takes 43 kA of direct current from its rectifier. On airless ground a bare bus can only radiate, and at lunar noon it would need plates about 4 m wide a pole. So SFO 25 gains the run kind `busbar` (two poles of water-cooled hollow copper, 7 tubes a pole, 6.8 kW lost a metre into its water) and the connector kind `bus-joint`. Each bus passes in a covered trench under the maintenance gantry's rail. The rectifier transformers gain a 33 kV cable box, a feeder each from the east edge. The radiator rows are shared with the shaft furnace (`radiator_rows`). The two layouts mate: the hydrogen plant's `h2-out` is the shaft furnace's `h2-in` flange (DN 250 PN 16, stainless, double seal).
 
+
+## The third layout: the airless pellet plant (2026-10-16, in progress)
+
+Laying the pellet plant from ports showed what the old drawn layout had hidden (its belts turned corners, its pipes passed through the hall's wall where it had no openings). The registry's choices:
+
+- **Kit and checker (3974d56c):**
+  - A port can be `optional`: a spare, blinded when unused (the hall heads' pass-throughs).
+  - A belt's head can drop `onto:` another belt, 0.5 m over it.
+  - A bulk tap reaches its belt by a short chute: 1.6 m aside, 1 m under or 0.8 m over.
+  - Belts can be `sealed`, in a 3 m gallery tube.
+  - A PN 1 class exists for the galleries' joints.
+  - A belt's height follows its width.
+  - The fit check tests a run's section, not its round, against units' boxes.
+- **The hall's heads (v2):** each head gets two nozzles, both optional:
+  - the deck-level nozzle, for the green balls going out east;
+  - a high nozzle at z 14.5 for the ore coming in west.
+
+  The ore gallery then runs straight from the lock to the mill's hopper. Each head also gets a service panel of pass-throughs (water pair, condensate, nitrogen, 6.6 kV, 400 V), each an outer and an inner port, all optional. The lock pumps get a power port.
+- **The ore lock** stands on a 6 m plinth of sintered regolith, so its outlet feeds the gallery at the high nozzle.
+- **The green balls:**
+  - a collector belt along the aisle under the four screens;
+  - a sealed gallery out of the east nozzle;
+  - a second sealed gallery rising at 15 degrees to a reversible shuttle over the shafts' charge hoppers.
+- **The gas loops' dust** falls into a bin under each lock (gas loop v2), emptied by forklift: no dust conveyor.
+- **The balling discs** return their undersize to their own feed (disc v2).
+- **The radiator field 330 K** takes the 345 K field's ports at its south-west corner (v2), so the shared `radiator_rows` lays its rows.
+- **The plant transformer** gets cable boxes (v2), as the heater transformer did.
+- **Power:**
+  - 6.6 kV from the transformer by a main with joint boxes, to the torches and the mill;
+  - 400 V from the site for the fans, the lock, the post and the fields;
+  - inside the hall, one 400 V main through the west head's panel, branched to the presses, the discs, the sections' fan coils and the heads' lock pumps.
