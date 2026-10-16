@@ -1646,7 +1646,7 @@
 - { record: standard.sfo.22, at: "2026-10-07T01:43:50Z", status: "", summary: "first tracked", sha: "630a0a3d09c711c3" }
 - { record: standard.sfo.23, at: "2026-10-07T01:43:50Z", status: "", summary: "first tracked", sha: "6c69dfad37bc6967" }
 - { record: standard.sfo.24, at: "2026-10-14T02:49:38Z", status: "", summary: "first tracked", sha: "d6822f4883565644" }
-- { record: standard.sfo.25, at: "2026-10-16T03:11:51Z", status: "", summary: "changed: details", sha: "a0123fe1144b55c5" }
+- { record: standard.sfo.25, at: "2026-10-16T15:28:13Z", status: "", summary: "changed", sha: "de3fc35829349522" }
 - { record: standard.sfo.3, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "104975206a1bfa51" }
 - { record: standard.sfo.4, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "040dcede10426705" }
 - { record: standard.sfo.5, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "29a1398afa92253f" }
