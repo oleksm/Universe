@@ -6356,3 +6356,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.rectifier-transformer-21mva
+    version: 2
+    manifest_sha256: "689be998f837a44c2aff628e0a989f7ab2773ac92b98d8a91e88ce3ab27fcc87"
+    installed: 74d0fa22
+    game: "the loader (world::assets) at fso 74d0fa22"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/rectifier-transformer-21mva/v2 (571780 bytes, bounds [-2.45, 0.0, -3.0] to [2.4084, 4.4, 2.82]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
