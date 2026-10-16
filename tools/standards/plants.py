@@ -3332,7 +3332,7 @@ def pellet_ports(us):
     # The gas loops: the dust into bins; the cold gas out at the shaft's bore.
     gl = us["pellet-gas-loop"]
     if "dust bin" not in gl["desc"]:
-        gl["desc"] = gl["desc"].replace("which lets it out by a 200 mm chute at (-9, 0, 3) and (-3, 0, 1.5), facing down onto the layout's closed dust conveyor.", "which lets it into a sealed 2 m3 dust bin under it, the loop's, changed by forklift about once a shift.")
+        gl["desc"] = gl["desc"].replace("which lets it out by a 200 mm chute at (-9, 0, 3) and (-3, 0, 1.5), facing down onto the layout's closed dust conveyor.", "which holds the loop's 4 bar and lets the dust into a dust-tight 2 m3 bin on the slab under it (5 mm plate, fork runners, a small filtered vent to the vacuum for the lock's pocket gas), the loop's, changed by forklift about once a shift.")
         gl["desc"] = gl["desc"].replace("the cold gas out by a 700 mm flange at (12, 0, 1.5) facing +x;", "the cold gas out by a 600 mm flange at (12, 0, 1.5) facing +x, the shafts' bore;")
         gl["built_of"] = gl["built_of"] + [part("Dust bins", A36, 2 * 800.0, "two sealed 2 m3 bins under the rotary locks, from memory")]
     gl["ports"] = [
