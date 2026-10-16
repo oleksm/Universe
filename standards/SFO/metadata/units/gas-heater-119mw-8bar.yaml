@@ -11,7 +11,7 @@ built_of:
 - {what: Lining, item: good.refractory-brick, mass: 669500.0, note: 300 mm}
 - {what: Elements, item: material.stainless-steel-304, mass: 39450.0, note: 'FeCrAl strip, which the registry has not got: stainless steel stands for it; 39 t at 20 kW/m2 of surface'}
 - {what: Cold header, item: material.structural-steel-a36, mass: 14239.1, note: '22 m of 2.26 m pipe, 12 mm wall, with its inlet; measured on model v1 (by formula 14,791 kg); its inlet a reducer to the 1 m port, measured on blender''s model v2'}
-- {what: Hot header and outlet, item: material.structural-steel-a36, mass: 33240.8, note: '20.5 m of 3.63 m shell, 16 mm plate, and its 3 m outlet; measured on model v1; its outlet a lined reducer to the 2.4 m port, measured on blender''s model v2'}
+- {what: Hot header and outlet, item: material.structural-steel-a36, mass: 32636.8, note: '20.5 m of 3.63 m shell, 16 mm plate, and its 3 m outlet; measured on model v1; its outlet a lined reducer to the 2.4 m port, the header opened under it, measured on blender''s model v2'}
 - {what: Hot header lining, item: good.refractory-brick, mass: 152100.0, note: '200 mm, in the header and its outlet'}
 - {what: Branches, item: material.structural-steel-a36, mass: 9598.0, note: 'a cold (1.2 m bore) and a hot (1.6 m bore, lined) branch to each vessel; measured on model v1'}
 - {what: Header supports, item: material.structural-steel-a36, mass: 29060.0, note: 'box columns 400 mm under the hot header, braced at 4, 8 and 12 m, with saddles; measured on model v1'}
