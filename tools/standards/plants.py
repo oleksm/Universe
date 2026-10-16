@@ -2436,6 +2436,13 @@ def arc_ports(us):
     ]
     b = us["dri-bin-200t"]
     top = b["dims"][2]
+    if "Outlet boot" not in [x["what"] for x in b["built_of"]]:
+        m2 = "measured on blender's model v2 (2026-10-16)"
+        b["built_of"] = b["built_of"] + [part("Outlet boot", A36, 163.3, f"a hollow boot from the feeder's end, its 800 mm bore facing down at (0, -3, 6); {m2}"),
+                                         part("Roof nozzle", A36, 23.9, f"the 800 mm inlet in its roof's middle; {m2}"),
+                                         part("Terminal box and its tie", A36, 102.8, m2),
+                                         part("Rail seats", A36, 94.2, f"seats keeping the feeder's rails on the front crossbeam, lowered 100 mm under the chute's connector; {m2}")]
+        b["desc"] += " Its outlet boot reaches local y -3.45, 0.45 m past its class 1 bay, over the belt it feeds (its envelope holds it; its box stays the bay's)."
     b["ports"] = [
         port("dri-in", "in", "bulk", kit.chute(0.8), (0.0, 0.0, top), (0, 0, 1), item="good.sponge-iron", rate=DRI, note="a nozzle in its roof's middle, a closed conveyor's head over it"),
         port("dri-out", "out", "bulk", kit.chute(0.8), (0.0, -3.0, 6.0), (0, 0, -1), item="good.sponge-iron", rate=DRI, note="the weigh feeder's outlet, onto a belt's tail"),
