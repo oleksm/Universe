@@ -6341,3 +6341,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.water-treatment-sealed
+    version: 1
+    manifest_sha256: "b69d739dbefa18d9b0321f3a873720dc642d2ce36ef91c421d0b9e44fb39479e"
+    installed: c09e250a
+    game: "the loader (world::assets) at fso c09e250a"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/water-treatment-sealed/v1 (268856 bytes, bounds [-6.0, -0.0, -4.003] to [6.0, 5.02, 4.003]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
