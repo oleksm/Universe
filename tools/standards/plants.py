@@ -3455,7 +3455,7 @@ def pellet_airless_units(us):
                   part("Rear crossheads", "material.high-strength-steel-4340", 24531.3, "two 250 mm plates 2.5 m square at x -5.8 and 5.8, where the closing cylinders push from, tied to the heads by the side beams; measured on blender's candidate (2026-10-16)"),
                   part("Side beams", "material.high-strength-steel-4340", 9710.5, f"600 x 400 x 25 mm boxes, 6 m, two a press: each {close / 2 / (0.6 * 0.4 - 0.55 * 0.35) / 1e6:.0f} MPa in tension; with their seats, measured on blender's candidate (2026-10-16)"),
                   part("Plates and cloth", "material.polyethylene-uhmw", 9644.7, f"{2 * (n_ch + 1)} recessed plates 100 mm thick, touching rim to rim, each face recessed 25 mm, with their membranes; polyethylene stands for polypropylene; measured"),
-                  part("Stand, supports and hoppers", A36, 43746.0, "the hollow stand, the cylinders' and pack's seats, the breakers' bearers, the cake hoppers, the pipes' stands and saddles; measured"),
+                  part("Stand, supports and hoppers", A36, 45853.5, "the hollow stand, its longitudinals at y -0.9 and 0.9 that keep the cake belt's corridor clear (y -0.75 to 0.75, z 6.9 to 7.75), the cylinders' and pack's seats, the breakers' bearers, the cake hoppers, the pipes' stands and saddles; measured"),
                   part("Lump breakers", "good.pumps", 2000.0, "two breakers' rotors and drives, from memory"),
                   part("Piping", A36, 796.7, "the feed split, the filtrate collectors and the cooling pipes inside the stand; measured"),
                   part("Filtrate cooler", "material.stainless-steel-304", 3000.0, "a plate exchanger, from memory"),
