@@ -5455,3 +5455,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.crew-post
+    version: 2
+    manifest_sha256: "73400f0b9521de6b288bfd8ea194dd32da6a68977db67f4d3b91efbdfed664cb"
+    installed: aec6f1ad
+    game: "the loader (world::assets) at fso aec6f1ad"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/crew-post/v2 (367680 bytes, bounds [-3.02, 0.0, -2.0] to [3.0, 4.3, 2.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
