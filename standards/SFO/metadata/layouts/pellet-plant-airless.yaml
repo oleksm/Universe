@@ -425,7 +425,7 @@ links:
   to: [113.0, 7.0, 22.0]
   length: 14.0
   item: material.silicone-rubber
-  mass: 26590.0
+  mass: 26840.0
   reversible: true
   power: 7500.0
   fittings: {elbows: 0, tees: 0, supports: 2, connectors: 2}

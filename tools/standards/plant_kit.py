@@ -137,6 +137,7 @@ def chute(dn, item=SS):
     return key
 
 
+SEALED_TRANSFER_MEASURED = {0.8: (806.35, 59.02)}     # kg of steel and liner, the sealed transfers measured
 TRANSFER_MEASURED = {1.2: (1652.31, 146.40), 1.0: (1395.23, 123.10), 0.8: (1176.03, 103.72)}     # kg of plate and liner, by belt width (blender's models)
 
 
@@ -166,6 +167,10 @@ def belt_transfer(width, sealed=False):
         built = [_part("Chute", A36, 4 * b * h_ * 0.010 * RHO[A36], f"a straight chute {b:.1f} m square, {h_:.3f} m long, 10 mm plate"),
                  _part("Wear liner", PE, 4 * b * h_ * 0.010 * RHO[PE], "10 mm UHMW polyethylene"),
                  _part("Flanges and seals", A36, 2 * 4 * (b + 0.1) * 0.1 * 0.02 * RHO[A36] + 20.0, f"a bolted flange {b + 0.2:.1f} m outside at each end, with their seals; from memory")]
+        if width in SEALED_TRANSFER_MEASURED:
+            st, li = SEALED_TRANSFER_MEASURED[width]
+            built = [_part("Chute, flanges and bolts", A36, st, f"a straight chute {b:.1f} m square, 10 mm, its four flange rings and 24 bolts; measured on blender's model v1"),
+                     _part("Wear liner", PE, li, "10 mm UHMW polyethylene; measured on blender's model v1")]
     desc = (f"Where a {width * 1000:.0f} mm belt's head drops into a hopper or onto another belt: the hood and the drop chute (3 m). A receiving belt's skirt is its tail's. Its origin is the head pulley's centre: the hood over it to 0.55 m up, inside the pulley's bearings, the chute flaring below it to its square and down to 3 m under the pulley, where the port is."
             if not sealed else f"Where a sealed gallery's {width * 1000:.0f} mm belt drops out of its head box: a closed chute from the box's bottom outlet (1.525 m under the head pulley's centre, the origin) down to 3 m under it, where the port is, bolted and sealed at both ends; the hood is the head box's.")
     _recs[key] = {"identity": {"key": key, "name": f"Belt transfer, {width * 1000:.0f} mm" + (", sealed" if sealed else ""), "description": desc},
