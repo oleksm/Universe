@@ -1,14 +1,13 @@
 # yaml-language-server: $schema=../../schema/connector.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: connector.belt-transfer-1200, name: 'Belt transfer, 1200 mm', description: 'Where a 1200 mm belt''s head drops into a hopper or onto another belt: the hood, the drop chute (3 m) and the skirt. Its origin is the head pulley''s centre: the hood over it to 0.55 m up, inside the pulley''s bearings, the chute flaring below it to its square and down to 3 m under the pulley, where the port is.'}
+identity: {key: connector.belt-transfer-1200, name: 'Belt transfer, 1200 mm', description: 'Where a 1200 mm belt''s head drops into a hopper or onto another belt: the hood and the drop chute (3 m). A receiving belt''s skirt is its tail''s. Its origin is the head pulley''s centre: the hood over it to 0.55 m up, inside the pulley''s bearings, the chute flaring below it to its square and down to 3 m under the pulley, where the port is.'}
 kind: belt-transfer
 size: 1.2
 sealing: open
-physical: {length: 1.5, width: 1.5, height: 3.55, mass: 1611.2}
+physical: {length: 1.5, width: 1.5, height: 3.55, mass: 1582.2}
 built_of:
 - {what: Hood and drop chute, item: material.structural-steel-a36, mass: 1413.0, note: 'a hood over the belt''s head and a chute 1.5 m square, 3 m down, 10 mm plate'}
 - {what: Wear liner, item: material.polyethylene-uhmw, mass: 169.2, note: 10 mm UHMW polyethylene}
-- {what: Skirt, item: material.silicone-rubber, mass: 29.0, note: 'the receiving side''s skirt, 3 m a side'}
 basis:
 - of: [built_of]
   tier: invented

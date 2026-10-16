@@ -138,8 +138,8 @@ def belt_transfer(width):
         return key
     b = width + 0.3
     built = [_part("Hood and drop chute", A36, 4 * b * 3.0 * 0.01 * RHO[A36], f"a hood over the belt's head and a chute {b:.1f} m square, 3 m down, 10 mm plate"),
-             _part("Wear liner", PE, 4 * b * 3.0 * 0.01 * RHO[PE], "10 mm UHMW polyethylene"), _part("Skirt", RUBBER, 2 * 3.0 * 0.3 * 0.015 * RHO[RUBBER], "the receiving side's skirt, 3 m a side")]
-    _recs[key] = {"identity": {"key": key, "name": f"Belt transfer, {width * 1000:.0f} mm", "description": f"Where a {width * 1000:.0f} mm belt's head drops into a hopper or onto another belt: the hood, the drop chute (3 m) and the skirt. Its origin is the head pulley's centre: the hood over it to 0.55 m up, inside the pulley's bearings, the chute flaring below it to its square and down to 3 m under the pulley, where the port is."},
+             _part("Wear liner", PE, 4 * b * 3.0 * 0.01 * RHO[PE], "10 mm UHMW polyethylene")]
+    _recs[key] = {"identity": {"key": key, "name": f"Belt transfer, {width * 1000:.0f} mm", "description": f"Where a {width * 1000:.0f} mm belt's head drops into a hopper or onto another belt: the hood and the drop chute (3 m). A receiving belt's skirt is its tail's. Its origin is the head pulley's centre: the hood over it to 0.55 m up, inside the pulley's bearings, the chute flaring below it to its square and down to 3 m under the pulley, where the port is."},
                   "kind": "belt-transfer", "size": width, "sealing": "open",
                   "physical": {"length": r(b, 2), "width": r(b, 2), "height": 3.55, "mass": r(sum(x["mass"] for x in built))}, "built_of": built,
                   "basis": [{"of": ["built_of"], "tier": "invented", "review": True, "note": "Plate and liner by the chute's faces, from memory."}]}
@@ -248,7 +248,7 @@ def belt(width, rate):
                   "support": {"spacing": 18.0, "mass": 300.0, "per_m_height": 75.0, "item": A36},
                   "repeat": [{"piece": "idler", "pitch": 1.2}, {"piece": "return_roll", "pitch": 3.0}],
                   "terminals": {"head": {"mass": 4500.0, "transition": 1.0, "note": "a 0.8 m lagged drive pulley, its bearings and frame, a gearbox and a motor of about 400 kW (from memory)"},
-                                "tail": {"mass": 2200.0, "transition": 1.0, "note": "a 0.63 m tail pulley on a screw take-up, its bearings and frame (from memory)"}},
+                                "tail": {"mass": 2230.0, "transition": 1.0, "note": "a 0.63 m tail pulley on a screw take-up, its bearings and frame, and the loading skirt (rubber, 3 m a side) where a chute drops onto it (from memory)"}},
                   "connector": belt_transfer(width), "carries": "bulk",
                   "basis": [{"of": ["per_m", "support"], "tier": "invented", "review": True, "note": "Belt, idlers and stringers from memory of 1.2 m belts; trestles every 18 m, a 300 kg cross beam and two 200 mm box legs (75 kg/m)."}]}
     return key

@@ -348,7 +348,7 @@ links:
   to: [0.0, 0.0, 43.0]
   length: 154.8
   item: material.silicone-rubber
-  mass: 46640.0
+  mass: 46610.0
   power: 111200.0
   fittings: {elbows: 0, tees: 0, supports: 9, connectors: 2}
   note: an open belt on trestles rising at 15.4 degrees, its head 3 m over the hopper's rim, up through the tower roof's framed opening; over the compressor its trestles are portals with legs at y -5.5 and 5.5, clear to z 9; its bearings and grease vacuum-rated
