@@ -11,4 +11,4 @@ fuel:
 mass:
   density: 1.25
 basis:
-  - { of: [mass.density], tier: sourced, note: "At 0 deg C and 1 bar, about 1.25 kg/m3 (from memory, the ideal gas at 28 g/mol)." }
+  - { of: [mass.density], tier: derived, note: "At 0 deg C and 1 bar, about 1.25 kg/m3: the ideal gas at 28 g/mol." }
