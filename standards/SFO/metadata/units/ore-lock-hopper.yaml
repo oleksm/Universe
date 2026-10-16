@@ -4,9 +4,12 @@ identity: {key: unit.ore-lock-hopper, name: Ore lock hopper, description: 'Takes
     to the hall''s nozzle; nitrogen from the hall in by a 50 mm stainless stub whose face is at (1.7, 0, 13.3) facing +x, 0.19 m out from the 10 mm shell; the 400 V supply at the frame''s foot, (3, 0, 0.5) facing +x.'}
 size_class: 1
 fits: plant-mount.bay-s1
-physical: {length: 6.0, width: 6.0, height: 18.0, mass: 19070.0}
+physical: {length: 6.0, width: 6.0, height: 18.0, mass: 23290.0}
 built_of:
-- {what: 'Hopper, frame and lock', item: material.structural-steel-a36, mass: 16070.0, note: 'the lock 10 mm; the hopper and its 10 m frame 12 t, from memory'}
+- {what: Lock, item: material.structural-steel-a36, mass: 4762.0, note: 'the 3 m barrel in 10 mm, its cone, head and stiffeners; measured on blender''s candidate (2026-10-16)'}
+- {what: Hopper, item: material.structural-steel-a36, mass: 1148.0, note: '8 mm, DN 1000 to 3.8 m; measured'}
+- {what: Frame and pump skid, item: material.structural-steel-a36, mass: 14210.0, note: 'four 300 mm square columns, 400 x 300 mm head and radial beams, the ring at the barrel''s base, side braces; measured'}
+- {what: Pipes, item: material.stainless-steel-304, mass: 170.4, note: the nitrogen fill and the pump's suction; measured}
 - {what: Valves and pump, item: good.pumps, mass: 3000.0, note: from memory}
 needs: {power: 15000.0, atmosphere: vacuum}
 life: 788940000
