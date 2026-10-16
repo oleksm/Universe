@@ -4,15 +4,18 @@ identity: {key: unit.offgas-cooler-sealed, name: 'Off-gas cooler, evaporative, 2
     bin, emptied by forklift; the lock''s drives fed at (2, -2, 1). Its bare walls radiate about 109 kW to the sky as well, not counted. On four box legs. For airless ground: on a world with air the shop''s duct burns the gas instead.'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 6.0, width: 4.0, height: 18.0, mass: 18490.0}
+physical: {length: 6.0, width: 4.0, height: 18.0, mass: 23890.0}
 built_of:
-- {what: Water walls, item: material.structural-steel-a36, mass: 4009.0, note: '66 tubes 60.3 x 5 mm, 8 m, with 5 mm bars between them; structural steel stands for boiler steel'}
-- {what: Ring headers, item: material.structural-steel-a36, mass: 662.0, note: a 219 x 12 mm ring at the walls' top and bottom}
-- {what: Steam drum, item: material.structural-steel-a36, mass: 1069.0, note: '1 m across, 3 m, 12 mm (about 100 MPa at 20 bar), and its heads'}
-- {what: Downcomers and risers, item: material.structural-steel-a36, mass: 1112.0, note: 'two 168 mm downcomers from the drum to the bottom ring, 12 m each, and four risers, 4 m'}
-- {what: 'Collector, hopper and outlet', item: material.structural-steel-a36, mass: 1553.0, note: 'the plain collecting section z 7 to 9, 10 mm, a 10 mm cone under it and the 1.2 m outlet stub'}
-- {what: Legs and bracing, item: material.structural-steel-a36, mass: 9288.0, note: 'four 300 x 300 x 10 mm box legs to z 17, their bracing half as much again'}
-- {what: 'Dust lock, bin and drives', item: good.pumps, mass: 800.0, note: 'two valves, a 1 m3 closed bin and their drives, from memory'}
+- {what: Water walls, item: material.structural-steel-a36, mass: 3956.0, note: '66 tubes 60.3 x 5 mm, 8 m, with 5 mm bars between them; structural steel stands for boiler steel; measured on blender''s model v1 (4,009 kg from their sizes)'}
+- {what: Ring headers, item: material.structural-steel-a36, mass: 621.8, note: a 219 x 12 mm ring at the walls' top and bottom; measured on blender's model v1}
+- {what: Steam drum, item: material.structural-steel-a36, mass: 810.6, note: '1 m across, 3 m, 12 mm (about 100 MPa at 20 bar), and its heads; measured on blender''s model v1'}
+- {what: Downcomers and risers, item: material.structural-steel-a36, mass: 651.9, note: two 168 mm downcomers from the drum to the bottom ring and four risers; measured on blender's model v1}
+- {what: 'Collector, hopper and outlet', item: material.structural-steel-a36, mass: 2922.0, note: 'the plain collecting section z 7 to 9, 10 mm, the cone under it and the 1.2 m outlet stub (9.5 mm, the run''s wall); measured on blender''s model v1'}
+- {what: Inlet lining, item: good.refractory-brick, mass: 657.9, note: refractory where the furnace's gas comes in on top; measured on blender's model v1}
+- {what: 'Legs, bracing and supports', item: material.structural-steel-a36, mass: 13330.0, note: 'four box legs to z 17 with their bracing, the drum''s and pipes'' supports; measured on blender''s model v1'}
+- {what: Dust lock and bin, item: material.structural-steel-a36, mass: 371.1, note: 'the lock''s chamber, the closed bin, its lid clamps and fork runners; measured on blender''s model v1'}
+- {what: Terminal box, item: material.structural-steel-a36, mass: 68.9, note: measured on blender's model v1}
+- {what: Dust lock drives and valves, item: good.pumps, mass: 500.0, note: 'two valves and their drives, from memory (drawn as proxies, not weighed)'}
 holds: 1893.0
 needs: {power: 10000.0, heat: 2218000.0, atmosphere: vacuum}
 ports:
@@ -64,13 +67,22 @@ ports:
   at: [2.0, -2.0, 1.0]
   facing: [0.0, -1.0, 0.0]
   note: the dust lock's drives
+envelope:
+- [-1.576, -1.726, -0.001, 1.576, 1.726, 18.001]
+- [-3.001, -1.51, 8.9, -1.2, 1.51, 17.5]
+- [1.2, -0.611, 7.14, 3.001, 0.611, 8.611]
+- [1.69, -2.001, -0.001, 2.31, -1.39, 1.401]
 life: 788940000
 basis:
 - of: [needs.heat]
   tier: derived
   review: true
   note: The CO from 2% carbon in the sponge iron (from memory), its mean heat 1200 J/kg K (from memory), from 1600 deg C (invented) to 250.
-- of: [physical, built_of, holds]
+- of: [built_of]
+  tier: derived
+  review: true
+  note: 'Measured on blender''s model v1 (2026-10-16): wall volumes at steel''s density, welded seats not subtracted; the pressure parts'' strength, the heat and the structure not qualified.'
+- of: [physical, holds]
   tier: invented
   review: true
   note: Sizes from memory of waste-heat boilers; the walls' heat flux not checked against the gas's radiation.

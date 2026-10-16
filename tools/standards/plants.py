@@ -2354,16 +2354,20 @@ def offgas_cooler_unit():
               f"the water in them boiling at about 485 K (20 bar) and rising to a steam drum 1 m across and 3 m long along y on the -x side (axis at local x -2, z 16.5). The steam goes to a radiator field and comes back as water by the field's pump. "
               f"Gas in on top at (0, 0, 18) from the furnace's lined duct; out of the collecting section's side at (3, 0, 8), straight, to the filter; steam out of the drum at (-3, 0.4, 16.5) and water back at (-3, -0.4, 16.5), both facing -x; the dust falls through a lock under the hopper into a closed bin, emptied by forklift; the lock's drives fed at (2, -2, 1). "
               f"Its bare walls radiate about {loss / 1e3:.0f} kW to the sky as well, not counted. On four box legs. For airless ground: on a world with air the shop's duct burns the gas instead."),
-        built_of=[part("Water walls", A36, tubes + fins, f"{n} tubes {tube_od * 1000:.1f} x {tube_t * 1000:.0f} mm, {Hs:g} m, with 5 mm bars between them; structural steel stands for boiler steel"),
-                  part("Ring headers", A36, headers, "a 219 x 12 mm ring at the walls' top and bottom"),
-                  part("Steam drum", A36, drum, "1 m across, 3 m, 12 mm (about 100 MPa at 20 bar), and its heads"),
-                  part("Downcomers and risers", A36, pipes, "two 168 mm downcomers from the drum to the bottom ring, 12 m each, and four risers, 4 m"),
-                  part("Collector, hopper and outlet", A36, hopper, "the plain collecting section z 7 to 9, 10 mm, a 10 mm cone under it and the 1.2 m outlet stub"),
-                  part("Legs and bracing", A36, legs, "four 300 x 300 x 10 mm box legs to z 17, their bracing half as much again"),
-                  part("Dust lock, bin and drives", "good.pumps", 800.0, "two valves, a 1 m3 closed bin and their drives, from memory")],
+        built_of=[part("Water walls", A36, 3956.2, f"{n} tubes {tube_od * 1000:.1f} x {tube_t * 1000:.0f} mm, {Hs:g} m, with 5 mm bars between them; structural steel stands for boiler steel; measured on blender's model v1 ({tubes + fins:,.0f} kg from their sizes)"),
+                  part("Ring headers", A36, 621.8, "a 219 x 12 mm ring at the walls' top and bottom; measured on blender's model v1"),
+                  part("Steam drum", A36, 810.6, "1 m across, 3 m, 12 mm (about 100 MPa at 20 bar), and its heads; measured on blender's model v1"),
+                  part("Downcomers and risers", A36, 651.9, "two 168 mm downcomers from the drum to the bottom ring and four risers; measured on blender's model v1"),
+                  part("Collector, hopper and outlet", A36, 2921.6, "the plain collecting section z 7 to 9, 10 mm, the cone under it and the 1.2 m outlet stub (9.5 mm, the run's wall); measured on blender's model v1"),
+                  part("Inlet lining", REF, 657.9, "refractory where the furnace's gas comes in on top; measured on blender's model v1"),
+                  part("Legs, bracing and supports", A36, 13327.0, "four box legs to z 17 with their bracing, the drum's and pipes' supports; measured on blender's model v1"),
+                  part("Dust lock and bin", A36, 371.1, "the lock's chamber, the closed bin, its lid clamps and fork runners; measured on blender's model v1"),
+                  part("Terminal box", A36, 68.9, "measured on blender's model v1"),
+                  part("Dust lock drives and valves", "good.pumps", 500.0, "two valves and their drives, from memory (drawn as proxies, not weighed)")],
         holds=water, needs={"power": 10e3, "heat": q, "atmosphere": "vacuum"},
         basis=[{"of": ["needs.heat"], "tier": "derived", "review": True, "note": f"The CO from {DRI_C:.0%} carbon in the sponge iron (from memory), its mean heat {CP_CO:.0f} J/kg K (from memory), from {SEALED_GAS_T:.0f} deg C (invented) to {FILTER_GAS_T:.0f}."},
-               {"of": ["physical", "built_of", "holds"], "tier": "invented", "review": True, "note": "Sizes from memory of waste-heat boilers; the walls' heat flux not checked against the gas's radiation."}])
+               {"of": ["built_of"], "tier": "derived", "review": True, "note": "Measured on blender's model v1 (2026-10-16): wall volumes at steel's density, welded seats not subtracted; the pressure parts' strength, the heat and the structure not qualified."},
+               {"of": ["physical", "holds"], "tier": "invented", "review": True, "note": "Sizes from memory of waste-heat boilers; the walls' heat flux not checked against the gas's radiation."}])
 
 
 def arc_sizes(hot):
