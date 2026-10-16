@@ -3541,8 +3541,9 @@ def yard_airless_units(us):
     c = bridge_crane_unit(10000.0, 22.8, 3000.0, kind="Ingot gantry", job="on its own legs over the cooling beds, the tipper and the saws: it lifts hot ingots off the ingot car onto the beds, later sets each on the tipper, lays it on a saw's table and the cropped ingot in a steel crate on the crating line", gear="scissor ingot tongs, about 1.5 t of the trolley's", g=g, h_min=0.6)
     legs = 4 * box_tube(0.5, 0.5, 0.012, 12.0) * RHO["steel"] + 2 * box_tube(0.5, 0.4, 0.012, 8.0) * RHO["steel"]
     c["built_of"].append(part("Legs and sill beams", A36, legs, "four box legs 0.5 x 0.5 m, 12 mm, 12 m, and two sill beams"))
+    c["built_of"].append(part("Knee braces, wheel seats and trolley rails", A36, 7651.1, "measured on blender's candidate (2026-10-16): the bracing between legs and girders, the bearing seats and the trolley's rails, which the sizing above left out"))
     c["dims"] = (8.0, 25.0, 14.0)
-    c["desc"] = c["desc"].replace("on the hall's runways", "on its own legs, running on two ground rails 24 m apart").replace("its origin on the runway's rail plane", "its origin on the ground rails' plane, its girders 12 m up").replace("the hook raised to 0.1 m under the rail plane", "the hook raised under the bridge") + f" Sized for {g:g} m/s2. Its scissor tongs as the ingot crane's (unit.ingot-crane-10t)."
+    c["desc"] = c["desc"].replace("on the hall's runways", "on its own legs, running on two ground rails 22.8 m apart").replace("its origin on the runway's rail plane", "its origin on the ground rails' plane, its girders 12 m up").replace("the hook raised to 0.1 m under the rail plane", "the hook raised under the bridge") + f" Sized for {g:g} m/s2. Its scissor tongs as the ingot crane's (unit.ingot-crane-10t)."
     out["ingot-gantry-10t-moon"] = c
     lab = dict(us["sampling-lab"])
     lab["name"] = "Sampling laboratory, sealed"
@@ -3631,7 +3632,7 @@ def ingot_yard_airless(us, recs):
         aisle_path += [(r(ends[0]), y, 0.0), (r(ends[1]), y, 0.0)]
     links = [
         link("rail", "ingot rail", (-40.0, 6.0, 0.0), (-28.0, 6.0, 0.0), A36, 2 * 50.0, None, "from the casting bay, its car stopping at x -34 by the beds' west end, under the gantry"),
-        link("rail", "gantry rails", (-36.0, 0.0, 0.0), (r(x_g), 0.0, 0.0), A36, 2 * 60.0, None, "the ingot gantry's two straight rails over the beds, the tipper, the saws and the crating line, at y -12 and 12; the link runs on their centre line"),
+        link("rail", "gantry rails", (-36.0, 0.0, 0.0), (r(x_g), 0.0, 0.0), A36, 2 * 60.0, None, "the ingot gantry's two straight rails over the beds, the tipper, the saws and the crating line, at y -11.4 and 11.4 (the gantry's wheels); the link runs on their centre line"),
         link("road", "yard aisles", aisle_path[0], aisle_path[-1], SINTER, 4.5 * 0.25 * RHO_SINTER, None, f"{rows} forklift aisles 4.5 m wide, {yard_L:.0f} m long, joined end to end, of sintered regolith 0.25 m", via=aisle_path[1:-1]),
         link("road", "truck lane", (r(x_g), -3.0, 0.0), (r(yx0 + yard_L + 20.0), -3.0, 0.0), SINTER, 7.0 * 0.3 * RHO_SINTER, None, "7 m wide, sintered regolith 0.3 m: trucks load crates at the yard's east end, beyond the layout"),
     ]
