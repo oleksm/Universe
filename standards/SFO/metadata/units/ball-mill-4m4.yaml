@@ -21,10 +21,10 @@ ports:
   medium: bulk
   item: good.iron-ore
   rate: 33.16
-  connector: connector.belt-transfer-1000
+  connector: connector.belt-transfer-1000-sealed
   at: [-8.0, 0.0, 4.0]
   facing: [0.0, 0.0, 1.0]
-  note: the feed chute's hopper at its -x trunnion
+  note: the feed chute's hopper at its -x trunnion, flanged for a sealed gallery's drop
 - id: water-in
   flow: in
   medium: liquid

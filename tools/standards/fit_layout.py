@@ -19,7 +19,7 @@ import yaml
 S = "standards/SFO/metadata/"
 STEP = 0.25        # m between the points a run is sampled at
 GAP = 0.05         # m kept clear between runs
-TOUCH = 0.02       # m: a run touching a unit's box closer than this is seated on it, not through it
+TOUCH = 0.03       # m: a run touching a unit's box closer than this is seated on it, not through it (a gallery's foil on a deck)
 DROP = 0.5         # m a belt's head stands over the belt it drops onto (plant_kit.TRANSFER_DROP)
 
 

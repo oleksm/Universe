@@ -150,8 +150,10 @@ def _by_width(table, width):
     return tuple(p + t * (q - p) for p, q in zip(a, b_))
 
 
-def belt_transfer(width):
-    key = f"connector.belt-transfer-{_tag(width)}"
+def belt_transfer(width, sealed=False):
+    """Where a belt's head drops into a hopper or onto another belt. sealed: from a gallery's sealed head box, the
+    drop chute closed and bolted at both ends, so the gas in the gallery stays in it."""
+    key = f"connector.belt-transfer-{_tag(width)}" + ("-sealed" if sealed else "")
     if key in _recs:
         return key
     b = width + 0.3
@@ -159,8 +161,12 @@ def belt_transfer(width):
     src = f"measured on blender's model v1 of the {width * 1000:.0f} mm transfer" if width in TRANSFER_MEASURED else "between the measured transfers, by the chute's width"
     built = [_part("Hood, drop chute and mounting tabs", A36, steel, f"a hood over the belt's head and a chute {b:.1f} m square, 3 m down, 10 mm plate, on four 12 mm tabs seated on the head frame's rails (not hung from the pulley's bearings); {src}"),
              _part("Wear liner", PE, liner, f"10 mm UHMW polyethylene; {src}")]
-    _recs[key] = {"identity": {"key": key, "name": f"Belt transfer, {width * 1000:.0f} mm", "description": f"Where a {width * 1000:.0f} mm belt's head drops into a hopper or onto another belt: the hood and the drop chute (3 m). A receiving belt's skirt is its tail's. Its origin is the head pulley's centre: the hood over it to 0.55 m up, inside the pulley's bearings, the chute flaring below it to its square and down to 3 m under the pulley, where the port is."},
-                  "kind": "belt-transfer", "size": width, "sealing": "open",
+    if sealed:
+        built += [_part("Seals and flanges", A36, 2 * 4 * (b + 0.1) * 0.15 * 0.02 * RHO[A36] + 20.0, "a bolted flange at the head box's outlet and at the port, with their seals; from memory")]
+    desc = (f"Where a {width * 1000:.0f} mm belt's head drops into a hopper or onto another belt: the hood and the drop chute (3 m). A receiving belt's skirt is its tail's. Its origin is the head pulley's centre: the hood over it to 0.55 m up, inside the pulley's bearings, the chute flaring below it to its square and down to 3 m under the pulley, where the port is."
+            if not sealed else f"Where a sealed gallery's {width * 1000:.0f} mm belt drops out of its head box: a closed chute from the box's bottom outlet (1.525 m under the head pulley's centre, the origin) down to 3 m under it, where the port is, bolted and sealed at both ends; the hood is the head box's.")
+    _recs[key] = {"identity": {"key": key, "name": f"Belt transfer, {width * 1000:.0f} mm" + (", sealed" if sealed else ""), "description": desc},
+                  "kind": "belt-transfer", "size": width, "sealing": "double" if sealed else "open",
                   "physical": {"length": r(b, 2), "width": r(width + 0.6, 2), "height": 3.55, "mass": r(sum(x["mass"] for x in built))}, "built_of": built,
                   "basis": [{"of": ["built_of"], "tier": "invented", "review": True, "note": "Plate and liner by the chute's faces, from memory."}]}
     return key
@@ -281,18 +287,19 @@ def belt(width, rate, sealed=False):
              _part("Idlers", A36, 39.0 / 1.2 + 20.0 / 3.0, "a three-roll troughing set every 1.2 m (39 kg) and a return roll every 3 m (20 kg), sealed bearings with vacuum grease; from memory"),
              _part("Stringers", A36, 2 * 18.0, "two 150 x 75 mm channels")]
     if sealed:
-        built += [_part("Gallery tube", A36, math.pi * 3.0 * 0.004 * RHO[A36] + 3 * 40.0 / 3.0, "a 3 m tube of 4 mm plate round the belt, stiffened by a ring every 3 m (40 kg), holding about 20 kPa of nitrogen"),
+        built += [_part("Gallery tube", A36, math.pi * 3.0 * 0.004 * RHO[A36], "a 3 m tube of 4 mm plate round the belt, holding about 20 kPa of nitrogen; its rings are a repeated piece"),
                   _part("Insulation", MLI, math.pi * 3.0 * 0.025 * RHO[MLI], "25 mm of multilayer foil over the tube, against the lunar day and night")]
     per_m = sum(b["mass"] for b in built)
-    out = [3.0, 3.0] if sealed else [r(width + 0.6, 2), r(max(0.8, width), 2)]     # (a belt's height by its width: 1.2 m for the 1.2 m belt)
+    BOX = (4 * 3.05 * 3.0 + 2 * 3.05 ** 2) * 0.006 * RHO[A36]          # kg: a gallery's sealed head or tail box
+    out = [3.05, 3.05] if sealed else [r(width + 0.6, 2), r(max(0.8, width), 2)]     # (a belt's height by its width: 1.2 m for the 1.2 m belt; a gallery's tube with its foil)
     _recs[key] = {"identity": {"key": key, "name": f"Belt conveyor, {width * 1000:.0f} mm" + (", in a sealed gallery" if sealed else ""), "description": f"An open troughed belt {width * 1000:.0f} mm wide on idlers and stringers, carried on trestles; it runs straight (a turn is a transfer to another belt). Its drive is at its head." + (" It runs in a sealed gallery tube 3 m across, its axis the tube's, at the hall's gas pressure; where the tube meets a hall's nozzle the joint is the nozzle's flange." if sealed else "")},
                   "kind": "belt", "size": width, "outside": out, "rating": {"rate": r(rate)},
                   "per_m": {"mass": r(per_m), "built_of": built},
-                  "support": {"spacing": 18.0, "mass": 300.0, "per_m_height": 75.0, "item": A36},
-                  "repeat": [{"piece": "idler", "pitch": 1.2}, {"piece": "return_roll", "pitch": 3.0}],
-                  "terminals": {"head": {"mass": 4500.0, "transition": 1.0, "note": "a 0.8 m lagged drive pulley, its bearings and frame, a gearbox and a motor of about 400 kW (from memory)"},
-                                "tail": {"mass": 2230.0, "transition": 1.0, "note": "a 0.63 m tail pulley on a screw take-up, its bearings and frame, and the loading skirt (rubber, 3 m a side) where a chute drops onto it (from memory)"}},
-                  "connector": belt_transfer(width), "carries": "bulk",
+                  "support": {"spacing": 9.0, "mass": 400.0, "per_m_height": 75.0, "item": A36} if sealed else {"spacing": 18.0, "mass": 300.0, "per_m_height": 75.0, "item": A36},
+                  "repeat": [{"piece": "idler", "pitch": 1.2}, {"piece": "return_roll", "pitch": 3.0}] + ([{"piece": "ring", "pitch": 3.0}] if sealed else []),
+                  "terminals": {"head": {"mass": 4500.0 + (BOX if sealed else 0.0), "transition": 1.0, "note": "a 0.8 m lagged drive pulley, its bearings and frame, a gearbox and a motor of about 400 kW (from memory)" + ("; in a sealed box the tube's size, 3 m long, 6 mm plate, the motor along x inside it, an outlet in its floor at the origin" if sealed else "")},
+                                "tail": {"mass": 2230.0 + (BOX if sealed else 0.0), "transition": 1.0, "note": "a 0.63 m tail pulley on a screw take-up, its bearings and frame, and the loading skirt (rubber, 3 m a side) where a chute drops onto it (from memory)" + ("; in a sealed box the tube's size, 3 m long, 6 mm plate, an inlet in its roof at the origin" if sealed else "")}},
+                  "connector": belt_transfer(width, sealed), "carries": "bulk",
                   "basis": [{"of": ["per_m", "support"], "tier": "invented", "review": True, "note": "Belt, idlers and stringers from memory of 1.2 m belts; trestles every 18 m, a 300 kg cross beam and two 200 mm box legs (75 kg/m)."}]}
     return key
 

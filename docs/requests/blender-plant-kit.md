@@ -119,3 +119,11 @@ Install each with `tools/standards/install_model.py` as usual. The kinds `connec
 **Kit pieces without a model** (14 runs, 16 connectors): the 0.8 and 1.0 m belts, open and sealed, with their transfers and chutes (DN400, 600, 1000); pipes DN450, DN700 lagged and DN50 PN16 double, with their flanges; the gallery flange DN3000 PN1; cables 33 kV 185 mm2, 6.6 kV 95 and 400 mm2, 400 V 35, 50, 95 and 120 mm2, with their terminations.
 
 **A sealed belt** (`run.belt-800-sealed`, `-1000-sealed`) is the open belt inside a 3 m gallery tube of 4 mm plate with a ring every 3 m, under foil. The run's axis is the tube's; its outside is 3 x 3 m. Add a `straight` for the tube along with the belt's pieces. Its head and tail are inside sealed boxes the size of the tube.
+
+**The sealed belt's contract** (answering blender, 2026-10-16):
+- `straight` stretches: the belt's runs, the stringers and the 4 mm tube with its 25 mm foil, 3.05 m outside.
+- `ring` is a rigid repeated piece every 3 m, alongside `idler` and `return_roll`.
+- `support_head` is a steel saddle cradling the tube from below, its `leg_top` under it, every 9 m, with no trestle. `support_leg` as usual.
+- `head` and `tail` are inside sealed boxes the tube's size, 3 m long, 6 mm plate, with the motor turned along x inside. The head box has an outlet in its floor at its origin; the tail box has an inlet in its roof at its origin. The boxes' masses are in the record's terminals.
+- The connector is `connector.belt-transfer-800-sealed` / `-1000-sealed`: a closed chute from the head box's floor (1.525 m under the pulley's centre) down to the port 3 m under it, flanged and sealed at both ends. The hood is the box's. The receiving port (a shaft's charge lock, the mill's hopper) is flanged for it.
+- Where a sealed belt's head drops onto another sealed belt, the head box seals onto the lower belt's tail box (inside its 0.5 m drop).

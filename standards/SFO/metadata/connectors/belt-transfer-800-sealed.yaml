@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: connector.belt-transfer-800-sealed, name: 'Belt transfer, 800 mm, sealed', description: 'Where a sealed gallery''s 800 mm belt drops out of its head box: a closed chute from the box''s bottom outlet (1.525 m under the head pulley''s centre, the origin) down to 3 m under it, where the port is, bolted and sealed at both ends; the hood is the head box''s.'}
+kind: belt-transfer
+size: 0.8
+sealing: double
+physical: {length: 1.1, width: 1.4, height: 3.55, mass: 1525.8}
+built_of:
+- {what: 'Hood, drop chute and mounting tabs', item: material.structural-steel-a36, mass: 1176.0, note: 'a hood over the belt''s head and a chute 1.1 m square, 3 m down, 10 mm plate, on four 12 mm tabs seated on the head frame''s rails (not hung from the pulley''s bearings); measured on blender''s model v1 of the 800 mm transfer'}
+- {what: Wear liner, item: material.polyethylene-uhmw, mass: 103.7, note: 10 mm UHMW polyethylene; measured on blender's model v1 of the 800 mm transfer}
+- {what: Seals and flanges, item: material.structural-steel-a36, mass: 246.1, note: 'a bolted flange at the head box''s outlet and at the port, with their seals; from memory'}
+basis:
+- of: [built_of]
+  tier: invented
+  review: true
+  note: Plate and liner by the chute's faces, from memory.

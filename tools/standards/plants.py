@@ -3293,7 +3293,7 @@ def pellet_ports(us):
     if "Feed hopper, seal and services" not in [x["what"] for x in ml["built_of"]]:
         ml["built_of"] = ml["built_of"] + [part("Feed hopper, seal and services", A36, 1080.9, "the 1.3 m receiving hopper and its chute into the trunnion, the seal's sleeve, the water and slurry stubs, the 6.6 kV terminal box and their supports; measured on blender's model v2 (2026-10-16)")]
     ml["ports"] = [
-        port("ore-in", "in", "bulk", kit.belt_transfer(1.0), (-8, 0, 4), (0, 0, 1), item=ORE, rate=P_ORE, note="the feed chute's hopper at its -x trunnion"),
+        port("ore-in", "in", "bulk", kit.belt_transfer(1.0, sealed=True), (-8, 0, 4), (0, 0, 1), item=ORE, rate=P_ORE, note="the feed chute's hopper at its -x trunnion, flanged for a sealed gallery's drop"),
         port("water-in", "in", "liquid", kit.flange(0.1, 10, kit.SS), (-8, 1.2, 4), (0, 0, 1), item=WATER, note="the presses' filtrate back, into the feed chute"),
         port("slurry-out", "out", "liquid", kit.flange(0.15, 10, temp=330.0), (8, 3, 0.5), (0, 1, 0), item=ORE, note="from the sump's pump"),
         port("power-in", "in", "power", mv(ml["needs"]["power"]), (6, -4.4, 0.5), (0, -1, 0), power=ml["needs"]["power"], voltage=6600, note="the motor's terminal box"),
@@ -3331,7 +3331,7 @@ def pellet_ports(us):
         port("firing-in-b", "in", "gas", kit.flange(0.25, 10, temp=T_LOOPC + K), (-5.55, 0, 12), (-1, 0, 0), item="material.nitrogen", note="the -x torch chamber"),
         port("water-in", "in", "liquid", kit.flange(0.15, 10, temp=330.0), (-0.6, -3.3, 13), (0, -1, 0), item=WATER, rate=q(sh["needs"]["heat"]), temperature=320.0),
         port("water-out", "out", "liquid", kit.flange(0.15, 10, temp=330.0), (0.6, -3.3, 13), (0, -1, 0), item=WATER, rate=q(sh["needs"]["heat"]), temperature=330.0),
-        port("charge-in", "in", "bulk", kit.belt_transfer(0.8), (0, 0, 29.5), (0, 0, 1), item=ORE, note="the charge lock hopper's rim"),
+        port("charge-in", "in", "bulk", kit.belt_transfer(0.8, sealed=True), (0, 0, 29.5), (0, 0, 1), item=ORE, note="the charge lock hopper's rim, flanged for a sealed gallery's drop"),
         port("discharge-out", "out", "bulk", kit.chute(0.8), (0, 0, 0.8), (0, 0, -1), item=PEL, rate=P_RATE / 2),
         port("power-in", "in", "power", mv(sh["needs"]["power"]), (0, 5.5, 8), (0, 1, 0), power=sh["needs"]["power"], voltage=6600, note="the torches' supplies"),
     ]

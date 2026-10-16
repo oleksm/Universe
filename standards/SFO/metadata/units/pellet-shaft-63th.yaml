@@ -82,10 +82,10 @@ ports:
   flow: in
   medium: bulk
   item: good.iron-ore
-  connector: connector.belt-transfer-800
+  connector: connector.belt-transfer-800-sealed
   at: [0.0, 0.0, 29.5]
   facing: [0.0, 0.0, 1.0]
-  note: the charge lock hopper's rim
+  note: the charge lock hopper's rim, flanged for a sealed gallery's drop
 - id: discharge-out
   flow: out
   medium: bulk
