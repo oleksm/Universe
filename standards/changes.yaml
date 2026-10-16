@@ -2881,7 +2881,7 @@
 - { record: unit.pellet-gas-loop, at: "2026-10-16T19:40:41Z", status: draft, summary: "changed", sha: "1edbe08557639e68" }
 - { record: unit.pellet-shaft-63th, at: "2026-10-16T19:40:41Z", status: draft, summary: "changed", sha: "aedfb2bd1d619ba3" }
 - { record: unit.plant-transformer-35mva, at: "2026-10-16T19:40:41Z", status: draft, summary: "changed", sha: "0a6366b63c501485" }
-- { record: unit.pressure-hall-30m, at: "2026-10-16T19:40:41Z", status: draft, summary: "changed", sha: "56e192b646d1f169" }
+- { record: unit.pressure-hall-30m, at: "2026-10-16T19:53:18Z", status: draft, summary: "changed: visual", sha: "49c1f0eba0bdfdac" }
 - { record: unit.pressure-hall-30m-end, at: "2026-10-16T19:48:27Z", status: draft, summary: "changed: visual", sha: "5763e534831f0303" }
 - { record: unit.radiator-field-330k, at: "2026-10-16T19:40:41Z", status: draft, summary: "changed", sha: "5c6a0850586c7716" }
 - { record: unit.radiator-field-345k, at: "2026-10-16T03:49:56Z", status: draft, summary: "changed", sha: "d286b5ded035bd4f" }
