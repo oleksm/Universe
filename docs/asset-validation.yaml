@@ -7016,3 +7016,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.radiator-field-330k
+    version: 2
+    manifest_sha256: "fc60eeb0d0a2e35cf4fc73e25b5dcd74458848ca2850f7f56ae045ac180f46f5"
+    installed: 9385136a
+    game: "the loader (world::assets) at fso 9385136a"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/radiator-field-330k/v2 (1955108 bytes, bounds [-23.61, 0.0, -23.11] to [23.11, 3.134, 24.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
