@@ -333,10 +333,10 @@ links:
   run: run.belt-800
   ends: [cap, 'onto:cake shuttle']
   from: [-3.0, 0.0, 14.3]
-  to: [4.84, 0.0, 16.4]
-  length: 8.116
+  to: [5.58, 0.0, 16.6]
+  length: 8.883
   item: material.silicone-rubber
-  mass: 9043.0
+  mass: 9132.0
   power: 15000.0
   fittings: {elbows: 0, tees: 0, supports: 1, connectors: 0}
   note: up at 15 degrees to the shuttle
@@ -344,11 +344,11 @@ links:
   name: cake shuttle
   run: run.belt-800
   ends: ['onto:south cake header', 'onto:north cake header']
-  from: [4.84, -8.0, 15.9]
-  to: [4.84, 8.0, 15.9]
-  length: 16.0
+  from: [5.58, -8.6, 16.1]
+  to: [5.58, 8.6, 16.1]
+  length: 17.2
   item: material.silicone-rubber
-  mass: 9922.0
+  mass: 10060.0
   reversible: true
   power: 7500.0
   fittings: {elbows: 0, tees: 0, supports: 1, connectors: 0}
@@ -357,24 +357,24 @@ links:
   name: south cake header
   run: run.belt-800
   ends: [cap, cap]
-  from: [4.0, -8.0, 15.4]
-  to: [26.5, -8.0, 15.4]
+  from: [4.0, -8.6, 15.6]
+  to: [26.5, -8.6, 15.6]
   length: 22.5
   item: material.silicone-rubber
-  mass: 12130.0
+  mass: 12160.0
   taps: ['B1:cake-in', 'B2:cake-in']
   power: 10000.0
   fittings: {elbows: 0, tees: 2, supports: 2, connectors: 2}
-  note: ploughs at x 12 and 24 into discs B1 and B2
+  note: ploughs at x 12 and 24 into discs B1 and B2, clear of their fines elevators' return chutes
 - kind: conveyor
   name: north cake header
   run: run.belt-800
   ends: [cap, cap]
-  from: [4.0, 8.0, 15.4]
-  to: [26.5, 8.0, 15.4]
+  from: [4.0, 8.6, 15.6]
+  to: [26.5, 8.6, 15.6]
   length: 22.5
   item: material.silicone-rubber
-  mass: 12130.0
+  mass: 12160.0
   taps: ['B3:cake-in', 'B4:cake-in']
   power: 10000.0
   fittings: {elbows: 0, tees: 2, supports: 2, connectors: 2}

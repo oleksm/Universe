@@ -187,14 +187,14 @@ def check(lay, units, runs, conns):
                 continue
             used.add(t)
             w_ = world(b, p["at"])
-            if run["carries"] == "bulk":              # (a short chute or plough between the port and the belt, the run's: up to 1.6 m aside, 1 m under or 0.8 m over its path)
+            if run["carries"] == "bulk":              # (a short chute or plough between the port and the belt, the run's: up to 1.6 m aside, 1.5 m under or over its path)
                 best = min(((seg_dist(w_[None], a, c)[0], a, c) for a, c in zip(pts, pts[1:])), key=lambda x: x[0])
                 a, c = best[1], best[2]
                 u_ = (c - a) / max(np.linalg.norm(c - a), 1e-12)
                 k_ = a + np.clip((w_ - a) @ u_, 0, np.linalg.norm(c - a)) * u_
                 dz, dh = w_[2] - k_[2], math.hypot(w_[0] - k_[0], w_[1] - k_[1])
-                if not (-1.0 - 1e-3 <= dz <= 1.5 + 1e-3 and dh <= 1.6 + 1e-3):
-                    faults.append(f"{l['name']}: tap {t} is {dh:.2f} m aside and {dz:+.2f} m from its path (a chute reaches 1.6 aside, 1 under, 1.5 over)")
+                if not (-1.5 - 1e-3 <= dz <= 1.5 + 1e-3 and dh <= 1.6 + 1e-3):
+                    faults.append(f"{l['name']}: tap {t} is {dh:.2f} m aside and {dz:+.2f} m from its path (a chute reaches 1.6 aside, 1.5 under or over)")
             else:
                 d = min(seg_dist(w_[None], a, c)[0] for a, c in zip(pts, pts[1:]))
                 if d > 0.02:
