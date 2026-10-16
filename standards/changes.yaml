@@ -1586,7 +1586,7 @@
 - { record: run.belt-1000, at: "2026-10-16T19:40:41Z", status: draft, summary: "first tracked", sha: "e5fae6e7b9fb291f" }
 - { record: run.belt-1000-sealed, at: "2026-10-16T19:40:41Z", status: draft, summary: "first tracked", sha: "8725ed5ad2476b15" }
 - { record: run.belt-1200, at: "2026-10-16T13:57:34Z", status: draft, summary: "changed", sha: "1f38dc7c62f3bc04" }
-- { record: run.belt-800, at: "2026-10-16T19:40:41Z", status: draft, summary: "first tracked", sha: "95a6f786e775c5da" }
+- { record: run.belt-800, at: "2026-10-16T20:58:49Z", status: draft, summary: "changed: visual", sha: "d16ee2060e7a620b" }
 - { record: run.belt-800-sealed, at: "2026-10-16T19:40:41Z", status: draft, summary: "first tracked", sha: "ad398f6db7f11a12" }
 - { record: run.busbar-dc-44ka, at: "2026-10-16T17:53:48Z", status: draft, summary: "changed", sha: "6023b472f070244d" }
 - { record: run.cable-132kv-240mm2, at: "2026-10-16T14:27:23Z", status: draft, summary: "changed", sha: "a9ec16eca6f7cb97" }
