@@ -6326,3 +6326,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.hydrogen-purifier-10bar
+    version: 1
+    manifest_sha256: "3a4b32250d40f452d691f715fcc37eba578c66eace1c0a863f30f9b266f588de"
+    installed: e15eeab4
+    game: "the loader (world::assets) at fso e15eeab4"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/hydrogen-purifier-10bar/v1 (2085452 bytes, bounds [-6.0, -0.0, -4.0] to [6.0, 8.74, 4.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
