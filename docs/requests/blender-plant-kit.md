@@ -79,7 +79,7 @@ Install each with `tools/standards/install_model.py` as usual. The kinds `connec
 2. **Kit pieces without a model** (15 runs, 15 connectors): the stainless pipes DN 50 to 250 (PN 10, and PN 16 double seal), the loop pipes DN 200, 250, 300 and 600, cables 33 kV 150 mm2 and 400 V 25, 185 and 500 mm2 with their terminations, and the new busbar kit with its joint.
 
 **The busbar** (run kind `busbar`, `run.busbar-dc-44ka`):
-- its axis is midway between its two poles, the poles 0.3 m apart across y, + at -y;
+- its axis is midway between its two poles across y, + at -y: each pole 0.30 m wide, their centres at y -0.3 and +0.3 (0.3 m clear between them). The units' pads match: centres at x -0.3 (+) and 0.3 (-) on the unit's face;
 - each pole is 7 hollow copper tubes 60 x 10 mm in two rows of four, 20 mm apart;
 - `straight` is the poles and their clamps;
 - `elbow` turns in plan at 0.6 m and `riser` turns up at 0.6 m;

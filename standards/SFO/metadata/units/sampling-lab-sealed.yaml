@@ -12,13 +12,8 @@ built_of:
 - {what: Life support and fit-out, item: material.structural-steel-a36, mass: 1500.0, note: 'air and heat, benches and cabinets, not drawn; from memory'}
 - {what: 'Cutter, grinder and spectrometer', item: good.electric-motors, mass: 3000.0, note: from memory}
 needs: {power: 80000.0, atmosphere: vacuum}
-visual:
-  format: "freefall-model/1"
-  path: "models/sampling-lab-sealed/v1"
-  manifest_sha256: "fdc5531029e125e8784b2fa081654711f18561d7ad1b42c3d0b42a6f402a629d"
-  version: 1
-  triangles: 8520
 life: 788940000
+visual: {format: freefall-model/1, path: models/sampling-lab-sealed/v1, manifest_sha256: fdc5531029e125e8784b2fa081654711f18561d7ad1b42c3d0b42a6f402a629d, version: 1, triangles: 8520}
 basis:
 - of: [physical, built_of, needs]
   tier: invented
