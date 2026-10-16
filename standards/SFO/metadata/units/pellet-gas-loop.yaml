@@ -4,14 +4,22 @@ identity: {key: unit.pellet-gas-loop, name: 'Pellet shaft gas loop, 4 bar', desc
     facing +x; the condensate out (50 mm, stainless) at (6, 6, 0.3) facing +y, the oxygen in (50 mm, stainless, double seal) at (9, 6, 1) facing +y; the radiator loop''s 300 mm pair at (-12, -2, 1) in and (-12, -1.4, 1) out, facing -x; the fan''s 400 V supply (185 mm2) at (10, -6, 0.5) facing -y. The dust: the cyclone''s cone and the filter''s hopper each end in a rotary lock, the unit''s, which lets it out by a 200 mm chute at (-9, 0, 3) and (-3, 0, 1.5), facing down onto the layout''s closed dust conveyor.'}
 size_class: 3
 fits: plant-mount.bay-s3
-physical: {length: 24.0, width: 12.0, height: 14.0, mass: 67540.0}
+physical: {length: 24.0, width: 12.0, height: 14.0, mass: 85300.0}
 built_of:
-- {what: Cyclone, item: material.structural-steel-a36, mass: 7213.0, note: '3 m across, 9 m, 10 mm (60 MPa)'}
-- {what: Candle filter, item: material.structural-steel-a36, mass: 21940.0, note: '4 m across, 10 m, 16 mm, lagged; the candles 3 t of silicon carbide, from memory'}
-- {what: Condenser, item: material.stainless-steel-304, mass: 21310.0, note: 'two shells 2.5 m across, 10 m, 12 mm, and 6,125 m of 25 mm tube (1.2 mm): 5.2 MW at 300 W/m2 K over a 36 K mean difference'}
+- {what: Cyclone, item: material.structural-steel-a36, mass: 6247.0, note: 'measured on blender''s candidate (2026-10-16); 3 m across, 9 m, 10 mm (60 MPa)'}
+- {what: Candle filter, item: material.structural-steel-a36, mass: 17850.0, note: '4 m across, 10 m, 16 mm, lagged: the shell measured (14.8 t); the candles 3 t of silicon carbide, from memory'}
+- {what: Condenser, item: material.stainless-steel-304, mass: 19950.0, note: 'two shells 2.5 m across, 10 m, 12 mm, and 6,125 m of 25 mm tube (1.2 mm): 5.2 MW at 300 W/m2 K over a 36 K mean difference; the shells measured (15.4 t), the tubes by their length'}
 - {what: Fan, item: good.electric-motors, mass: 5078.0, note: 'a centrifugal fan, 8 t a MW and its casing, from memory'}
-- {what: Pipework and pots, item: material.structural-steel-a36, mass: 12000.0, note: from memory}
+- {what: Pipework and pots, item: material.structural-steel-a36, mass: 7100.0, note: measured}
+- {what: 'Stands, skirts and supports', item: material.structural-steel-a36, mass: 29080.0, note: 'the cyclone''s braced stand and support ring, the filter''s and condenser''s skirts and base rings; measured'}
 needs: {power: 270600.0, heat: 5468000.0, atmosphere: vacuum}
+envelope:
+- [-11.1, -2.1, 0, -6.7, 2.1, 13.1]
+- [-7.6, -2.2, 0, 0.1, 2.2, 13.5]
+- [-0.1, -4.2, 0, 7.5, 3.65, 13.5]
+- [7.5, -6, 0, 12, 6, 3.55]
+- [-12, -4.2, 0, 1.2, -1.2, 1.2]
+- [5.9, 3.6, 0, 6.1, 6, 0.4]
 life: 788940000
 basis:
 - of: [physical, built_of]
