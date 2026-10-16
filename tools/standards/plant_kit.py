@@ -288,15 +288,15 @@ def belt(width, rate, sealed=False):
              _part("Stringers", A36, 2 * 18.0, "two 150 x 75 mm channels")]
     if sealed:
         built += [_part("Gallery tube", A36, math.pi * 3.0 * 0.004 * RHO[A36], "a 3 m tube of 4 mm plate round the belt, holding about 20 kPa of nitrogen"),
-                  _part("Gallery rings", A36, 40.0 / 3.0, "an inside stiffening ring every 3 m, 90 x 6 mm, about 40 kg (a repeated piece), its share a metre"),
+                  _part("Gallery rings", A36, 66.5 / 3.0, "an inside stiffening ring every 3 m, 90 x 6 mm, with the stringers' seats, 66.5 kg (a repeated piece; measured), its share a metre"),
                   _part("Insulation", MLI, math.pi * 3.0 * 0.025 * RHO[MLI], "25 mm of multilayer foil over the tube, against the lunar day and night")]
     per_m = sum(b["mass"] for b in built)
-    BOX = (4 * 3.05 * 3.0 + 2 * 3.05 ** 2) * 0.006 * RHO[A36]          # kg: a gallery's sealed head or tail box
+    BOX = 4069.5          # kg: a gallery's sealed head or tail box, 6 mm plate on 150 x 75 x 6 mm ribs at 0.5 m, its throat, posts and feet; measured on blender's 0.8 m candidate (the tube's the same for every width)
     out = [3.05, 3.05] if sealed else [r(width + 0.6, 2), r(max(0.8, width), 2)]     # (a belt's height by its width: 1.2 m for the 1.2 m belt; a gallery's tube with its foil)
     _recs[key] = {"identity": {"key": key, "name": f"Belt conveyor, {width * 1000:.0f} mm" + (", in a sealed gallery" if sealed else ""), "description": f"An open troughed belt {width * 1000:.0f} mm wide on idlers and stringers, carried on trestles; it runs straight (a turn is a transfer to another belt). Its drive is at its head." + (" It runs in a sealed gallery tube 3 m across, its axis the tube's, at the hall's gas pressure; where the tube meets a hall's nozzle the joint is the nozzle's flange." if sealed else "")},
                   "kind": "belt", "size": width, "outside": out, "rating": {"rate": r(rate)},
                   "per_m": {"mass": r(per_m), "built_of": built},
-                  "support": {"spacing": 9.0, "mass": 400.0, "per_m_height": 75.0, "item": A36} if sealed else {"spacing": 18.0, "mass": 300.0, "per_m_height": 75.0, "item": A36},
+                  "support": {"spacing": 9.0, "mass": 416.3, "per_m_height": 75.0, "item": A36} if sealed else {"spacing": 18.0, "mass": 300.0, "per_m_height": 75.0, "item": A36},
                   "repeat": [{"piece": "idler", "pitch": 1.2}, {"piece": "return_roll", "pitch": 3.0}] + ([{"piece": "ring", "pitch": 3.0}] if sealed else []),
                   "terminals": {"head": {"mass": 4500.0 + (BOX if sealed else 0.0), "transition": 1.0, "note": "a 0.8 m lagged drive pulley, its bearings and frame, a gearbox and a motor of about 400 kW (from memory)" + ("; in a sealed box the tube's size, 3 m long, 6 mm plate, the motor along x inside it, an outlet in its floor at the origin" if sealed else "")},
                                 "tail": {"mass": 2230.0 + (BOX if sealed else 0.0), "transition": 1.0, "note": "a 0.63 m tail pulley on a screw take-up, its bearings and frame, and the loading skirt (rubber, 3 m a side) where a chute drops onto it (from memory)" + ("; in a sealed box the tube's size, 3 m long, 6 mm plate, an inlet in its roof at the origin" if sealed else "")}},
