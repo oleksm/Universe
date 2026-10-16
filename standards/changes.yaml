@@ -1553,7 +1553,7 @@
 - { record: rule.plant-weights-from-memory, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "d4bff33987b75c18" }
 - { record: rule.shares-chosen, at: "2026-10-07T03:53:08Z", status: review, summary: "first tracked", sha: "2f29f0362d9d7f04" }
 - { record: run.belt-1200, at: "2026-10-16T13:57:34Z", status: draft, summary: "changed", sha: "1f38dc7c62f3bc04" }
-- { record: run.cable-132kv-240mm2, at: "2026-10-16T14:24:23Z", status: draft, summary: "changed: pitch, elbow, riser, basis", sha: "6b4ecf03d18366aa" }
+- { record: run.cable-132kv-240mm2, at: "2026-10-16T14:26:14Z", status: draft, summary: "changed: visual", sha: "6f47511dbf627b53" }
 - { record: run.cable-400v-16mm2, at: "2026-10-16T14:24:23Z", status: draft, summary: "changed: pitch, elbow, riser, basis", sha: "eecf212c2b572f5c" }
 - { record: run.cable-400v-300mm2, at: "2026-10-16T14:24:23Z", status: draft, summary: "changed: pitch, elbow, riser, basis", sha: "5902045c6093f4c6" }
 - { record: run.cable-400v-400mm2, at: "2026-10-16T14:24:23Z", status: draft, summary: "changed: pitch, elbow, riser, basis", sha: "1f3eb85a68eb5650" }
