@@ -6941,3 +6941,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.pressure-hall-30m
+    version: 2
+    manifest_sha256: "879bbe70c363b0cfbdf800600d52891fd07e4bd83cd0f93a6fc63d5654ea143b"
+    installed: 41fc3b8d
+    game: "the loader (world::assets) at fso 41fc3b8d"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/pressure-hall-30m/v2 (1810628 bytes, bounds [-15.0, -0.3, -15.2998] to [15.0, 30.3, 15.3]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
