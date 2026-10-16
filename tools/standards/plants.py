@@ -2712,8 +2712,8 @@ def shaft_airless_units(us):
         name=f"Recycle compressor, {HP_W_COMP / 1e6:.1f} MW, 8 bar", size_class=2, fits="bay-s2", dims=(12.0, 6.0, 5.0),
         desc=f"Raises {GAS:.1f} kg/s of hydrogen from {HP_SUCTION / 1e5:.1f} to {HP_SHAFT / 1e5:.1f} bar, the loop's pressure drop only: two centrifugal stages in one casing and a motor. At 8 bar the gas is dense enough that this is a small machine. Suction at local (6, 0, 1.5), discharge at (-6, 0, 1.5); the casing's axis along y at (0, 1.3, 2.5), the motor behind it (y -2.6 to -0.4); the motor's 6.6 kV terminal box on top, its cable entry at (0, -1.5, 5); its water cooler's flanges low on the -x face at (-6, -2.2, 0.6) and (-6, -1.6, 0.6), over the skid's end beam, for the motor's losses (about 4%) to the layout's loop.",
         built_of=[part("Casing, rotor and motor", "material.high-strength-steel-4340", 8000.0 * HP_W_COMP / 1e6, "8 t a MW of drive, from memory (the 13 t of casing and motor walls drawn on blender's model v1 are within it)"),
-                  part("Skid and supports", A36, 15591.7, "measured on blender's model v1"),
-                  part("Gas and coolant piping", A36, 7107.4, "the 1 m suction and discharge stubs and the 100 mm, 4 mm cooling pair to the motor's jacket; measured on model v1, the elbows' overlap counted twice")],
+                  part("Skid and supports", A36, 15631.2, "with two saddle pads; measured on blender's model v2"),
+                  part("Gas and coolant piping", A36, 6362.9, "the suction and discharge stubs and the 100 mm cooling pair to the motor's jacket, ending plain at the SFO 25 ports; measured on blender's model v2")],
         needs={"power": HP_W_COMP / 0.96, "atmosphere": "any"},
         basis=[{"of": ["physical", "built_of"], "tier": "invented", "review": True, "note": "From memory."},
                {"of": ["needs"], "tier": "derived", "note": f"Isentropic at {ETA_K:.0%}, a motor at 96%; its heat leaves by the condenser's aftercooler."}])
