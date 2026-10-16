@@ -157,16 +157,16 @@
 - { record: clock.system, at: "2026-10-06T22:07:52Z", status: review, summary: "first tracked", sha: "a1ce985910bb5ae9" }
 - { record: connector.belt-transfer-1200, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "38fae5feb755cd05" }
 - { record: connector.chute-dn800, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "f0664ba5ebb081dc" }
-- { record: connector.flange-dn100-pn10, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "b28f4776af3f7297" }
-- { record: connector.flange-dn1000-pn16-double, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "de5a761cd8a18e7b" }
-- { record: connector.flange-dn150-pn10, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "8b748dac79810743" }
-- { record: connector.flange-dn1600-pn16-double, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "9254b0c0f1e4b9a8" }
-- { record: connector.flange-dn200-pn10-ss, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "fbeec0c312584c0d" }
-- { record: connector.flange-dn2400-pn16-double, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "52eb5e6475ccfd48" }
-- { record: connector.flange-dn250-pn16-ss-double, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "6544adaf26cbd13b" }
-- { record: connector.flange-dn350-pn10, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "4728dddd48d3c971" }
-- { record: connector.flange-dn900-pn10, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "15aaaff8f4b7d354" }
-- { record: connector.lined-flange-dn2400-pn16-double, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "827b768c930f9b62" }
+- { record: connector.flange-dn100-pn10, at: "2026-10-16T03:49:56Z", status: draft, summary: "changed: physical, built_of", sha: "10ac3ad760e26163" }
+- { record: connector.flange-dn1000-pn16-double, at: "2026-10-16T03:49:56Z", status: draft, summary: "changed: physical, built_of", sha: "ae38a952c3b6b814" }
+- { record: connector.flange-dn150-pn10, at: "2026-10-16T03:49:56Z", status: draft, summary: "changed: physical, built_of", sha: "d690ca24492427ad" }
+- { record: connector.flange-dn1600-pn16-double, at: "2026-10-16T03:49:56Z", status: draft, summary: "changed: physical, built_of", sha: "f7d07544101bd3ca" }
+- { record: connector.flange-dn200-pn10-ss, at: "2026-10-16T03:49:56Z", status: draft, summary: "changed: physical, built_of", sha: "b2d96c3ec7ed4064" }
+- { record: connector.flange-dn2400-pn16-double, at: "2026-10-16T03:49:56Z", status: draft, summary: "changed: physical, built_of", sha: "01075ff42c132091" }
+- { record: connector.flange-dn250-pn16-ss-double, at: "2026-10-16T03:49:56Z", status: draft, summary: "changed: physical, built_of", sha: "4033967b41b903db" }
+- { record: connector.flange-dn350-pn10, at: "2026-10-16T03:49:56Z", status: draft, summary: "changed: physical, built_of", sha: "fe004262143b742f" }
+- { record: connector.flange-dn900-pn10, at: "2026-10-16T03:49:56Z", status: draft, summary: "changed: physical, built_of", sha: "5a7121ce11eeafad" }
+- { record: connector.lined-flange-dn2400-pn16-double, at: "2026-10-16T03:49:56Z", status: draft, summary: "changed: physical, built_of", sha: "3722d9a29c205499" }
 - { record: connector.termination-132kv-240mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "e9360fde90b4ed28" }
 - { record: connector.termination-400v-16mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "34bd7bf1e76a645c" }
 - { record: connector.termination-400v-300mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "64197b06c5a2379d" }
@@ -2824,7 +2824,7 @@
 - { record: unit.pressure-hall-30m, at: "2026-10-15T16:13:40Z", status: draft, summary: "first tracked", sha: "4a7bbfb54eda5ef5" }
 - { record: unit.pressure-hall-30m-end, at: "2026-10-15T16:13:40Z", status: draft, summary: "first tracked", sha: "059f108b220860d9" }
 - { record: unit.radiator-field-330k, at: "2026-10-15T20:00:30Z", status: draft, summary: "changed: built_of", sha: "cacc6559212d0505" }
-- { record: unit.radiator-field-345k, at: "2026-10-16T03:48:31Z", status: draft, summary: "changed: visual", sha: "0acdca7899210647" }
+- { record: unit.radiator-field-345k, at: "2026-10-16T03:49:56Z", status: draft, summary: "changed", sha: "d286b5ded035bd4f" }
 - { record: unit.radiator-field-485k, at: "2026-10-15T20:10:26Z", status: draft, summary: "changed", sha: "f642c1c225927653" }
 - { record: unit.rectifier-transformer-21mva, at: "2026-10-15T03:01:55Z", status: draft, summary: "changed", sha: "785569a9e884e75d" }
 - { record: unit.recuperator, at: "2026-10-16T03:35:46Z", status: draft, summary: "changed: envelope", sha: "95857803a2719b3c" }
