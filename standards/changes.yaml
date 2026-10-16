@@ -160,7 +160,7 @@
 - { record: connector.flange-dn100-pn10, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, built_of", sha: "15d96294c74e396c" }
 - { record: connector.flange-dn1000-pn16-double, at: "2026-10-16T12:39:27Z", status: draft, summary: "changed: physical, built_of", sha: "30a63c1475db2018" }
 - { record: connector.flange-dn150-pn10, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, built_of", sha: "d3ff30ecc19aa875" }
-- { record: connector.flange-dn1600-pn16-double, at: "2026-10-16T12:42:43Z", status: draft, summary: "changed: visual", sha: "3374174ac08383a4" }
+- { record: connector.flange-dn1600-pn16-double, at: "2026-10-16T12:44:20Z", status: draft, summary: "changed", sha: "6a07930380b824cd" }
 - { record: connector.flange-dn200-pn10-ss, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, built_of", sha: "116c6aaa6f670bfd" }
 - { record: connector.flange-dn2400-pn16-double, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, built_of", sha: "dc03bb7539904043" }
 - { record: connector.flange-dn250-pn16-ss-double, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, built_of", sha: "ba28964589898926" }
@@ -1561,7 +1561,7 @@
 - { record: run.cable-6p6kv-185mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "498484319d4af233" }
 - { record: run.cable-6p6kv-630mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "1aee0c17b0c22e19" }
 - { record: run.drag-conveyor-800, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "c7869288da8955c1" }
-- { record: run.lined-duct-dn2400-pn16-double, at: "2026-10-16T12:02:30Z", status: draft, summary: "changed: cap", sha: "47c7b5d1c22f4740" }
+- { record: run.lined-duct-dn2400-pn16-double, at: "2026-10-16T12:44:20Z", status: draft, summary: "changed: tee, cap", sha: "44521eeb605694e4" }
 - { record: run.pipe-dn100-pn10, at: "2026-10-16T12:02:30Z", status: draft, summary: "changed: cap", sha: "1a93b2ea91b1a18c" }
 - { record: run.pipe-dn1000-pn16-double, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed", sha: "546d0db4c6ae69f6" }
 - { record: run.pipe-dn1000-pn16-mli-double, at: "2026-10-16T12:39:27Z", status: draft, summary: "changed", sha: "542cf881d8ec0d8a" }

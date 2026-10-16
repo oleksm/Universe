@@ -225,9 +225,9 @@ def lined_duct(dn, pn, lining=0.2, temp=1173.0, sealing="single"):
                   "kind": "lined-duct", "size": dn, "bore": r(dn - 2 * lining, 3), "outside": [r(do, 3), r(do, 3)], "rating": {"pressure": PN[pn], "temperature": temp},
                   "per_m": {"mass": r(per_m), "built_of": built},
                   "elbow": {"radius": r(R, 3), "mass": r(per_m * math.pi / 2 * R * 1.1)},
-                  "tee": {"mass": r(per_m * max(0.0, 1.5 * dn - do / 2))},
+                  "tee": {"mass": r(per_m * max(0.0, 1.5 * (dn - 2 * lining) - do / 2))},
                   "support": {"spacing": r(span), "mass": r(30 + 80 * do), "per_m_height": r(4 * (0.1 + 0.1 * do) * 0.006 * RHO[A36]), "item": A36},
-                  "cap": cap(dn, PN[pn], A36, lined_flange(dn, pn, sealing=sealing)),
+                  "cap": (lambda c: dict(c, mass=r(c["mass"] + math.pi / 4 * (dn - 2 * lining) ** 2 * lining * RHO[REF])))(cap(dn, PN[pn], A36, lined_flange(dn, pn, sealing=sealing))),
                   "connector": lined_flange(dn, pn, sealing=sealing), "carries": "gas",
                   "basis": [{"of": ["per_m"], "tier": "derived", "note": "Shell from pressure, lining from its thickness; mass from material and dimensions."},
                             {"of": ["support", "elbow"], "tier": "derived", "review": True, "note": f"Spacing from the span it bears at 1 g, {span:.1f} m; mitred bends a tenth heavier than their arc. Stands from memory."}]}
