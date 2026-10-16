@@ -1537,7 +1537,10 @@ def hydrogen_units():
                                                            "Skid, skirts and supports": (A36, 24152.5, "the skid's beams and feet, the dryers' skirts and base rings, the exchangers' stands and saddles, the headers' posts"),
                                                            "Piping and valve bodies": ("material.stainless-steel-304", 3916.0, "the process, regeneration and water pipes and the valves' bodies")})
     out["hydrogen-purifier-10bar"] = hydrogen_purifier("Hydrogen purifier, 10 bar", 10e5, 80.0, 80.0, 2.0,
-                                                       f"For airless ground: its loop water comes back from the radiators at about {HP_T_LOOP - 273.15:.0f} deg C, so the after-cooler only takes the gas to 80 deg C and the chiller lifts all the rest to its condenser at about 85 deg C, at half the air plant's COP.")
+                                                       f"For airless ground: its loop water comes back from the radiators at about {HP_T_LOOP - 273.15:.0f} deg C, so the after-cooler only takes the gas to 80 deg C and the chiller lifts all the rest to its condenser at about 85 deg C, at half the air plant's COP.",
+                                                       measured={"Vessels": 9608.2, "Skid, supports and piping": None,
+                                                                 "Skid, skirts and supports": (A36, 23142.7, "the skid's beams and feet, the dryers' skirts and base rings, the exchangers' stands and saddles, the headers' posts"),
+                                                                 "Piping and valve bodies": ("material.stainless-steel-304", 3875.7, "the process, regeneration and water pipes and the valves' bodies")})
     out["water-treatment"] = water_treatment("Water treatment", measured={
         "Roof and columns": None, "Skid deck and rack": None,
         "Sand filters": (A36, 2854.0, "the two shells with their heads, seams, legs, feet and isolation valves"),

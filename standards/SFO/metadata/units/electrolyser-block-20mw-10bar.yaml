@@ -86,13 +86,8 @@ ports:
 envelope:
 - [-10.2, -6.0, 0.0, 7.2, 4.4, 4.18]
 - [-9.2, -4.95, 0.0, 11.6, 6.0, 8.0]
-visual:
-  format: "freefall-model/1"
-  path: "models/electrolyser-block-20mw-10bar/v1"
-  manifest_sha256: "369aa8203a8d1c9ca4411e8f488d6a92b78ffa0f79b0ff0293b01bd54f1ffc61"
-  version: 1
-  triangles: 33488
 life: 788940000
+visual: {format: freefall-model/1, path: models/electrolyser-block-20mw-10bar/v1, manifest_sha256: 369aa8203a8d1c9ca4411e8f488d6a92b78ffa0f79b0ff0293b01bd54f1ffc61, version: 1, triangles: 33488}
 basis:
 - of: [recipes]
   tier: derived

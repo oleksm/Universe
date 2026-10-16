@@ -4,15 +4,16 @@ identity: {key: unit.hydrogen-purifier-10bar, name: 'Hydrogen purifier, 10 bar',
     m tall) to 5 deg C with its cold separator; two dryers (1.9 m across, 4 m straight with dished heads, 13 mm wall, on skirts, centres (4, -2.2) and (4, 2.2)), one adsorbing for 8 hours while the other is heated 4 hours by a slip of dry gas and cooled; a regeneration heater cabinet (x -1.5 to 1.5, y 2.4 to 3.6, 2.2 m tall), its cooler (0.5 m across, 2 m, along x on the cabinet''s roof) and a knockout pot (0.6 m across, 2 m, centre (2, 3.4)); a dust filter (0.5 m, 2 m, centre (5.5, 0)) before the outlet. Gas in at local (-6, 0, 6), out at (6, 0, 2); the cooling water''s pair of 193 mm flanges on the -y face at (0, -4, 1) flow and (0.6, -4, 1) return (59 kg/s at a 10 K rise); condensate 50 mm out at (-6, 3, 0.3); 400 V supply at (6, -3.5, 0.5).'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 8.0, height: 9.0, mass: 38010.0}
+physical: {length: 12.0, width: 8.0, height: 9.0, mass: 53380.0}
 built_of:
-- {what: Vessels, item: material.stainless-steel-304, mass: 9256.0, note: 'two dryers 1.9 m by 4 m in 13 mm plate, the deoxidiser 1.6 m by 3.5 m in 12 mm, the drums and the filter, heads as 1.1 discs each'}
+- {what: Vessels, item: material.stainless-steel-304, mass: 9608.0, note: 'the dryers, deoxidiser, drums and filter shells with their heads and nozzles; measured on model v1'}
 - {what: Exchangers, item: material.stainless-steel-304, mass: 6000.0, note: 'feed/effluent exchanger, after-cooler and regeneration cooler, from memory'}
 - {what: Chiller package, item: good.pumps, mass: 4500.0, note: 'a 1113 kW screw chiller on its frame, from memory'}
 - {what: Regeneration heater, item: material.stainless-steel-304, mass: 1500.0, note: '74 kW of electric elements in a cabinet, from memory'}
 - {what: Adsorbent, item: material.fused-silica, mass: 2355.0, note: '1.2 t of 4A molecular sieve a bed (the water of an 8 hour turn at 10%), which the registry has not got: fused silica stands for it'}
 - {what: Catalyst, item: material.fused-silica, mass: 2402.0, note: 'palladium on alumina pellets at 800 kg/m3, 0.5% palladium, which the registry has not got: fused silica stands for it'}
-- {what: 'Skid, supports and piping', item: material.structural-steel-a36, mass: 12000.0, note: from memory}
+- {what: 'Skid, skirts and supports', item: material.structural-steel-a36, mass: 23140.0, note: 'the skid''s beams and feet, the dryers'' skirts and base rings, the exchangers'' stands and saddles, the headers'' posts; measured on model v1'}
+- {what: Piping and valve bodies, item: material.stainless-steel-304, mass: 3876.0, note: 'the process, regeneration and water pipes and the valves'' bodies; measured on model v1'}
 needs: {power: 650500.0, heat: 2451000.0}
 ports:
 - id: gas-in
@@ -69,6 +70,8 @@ ports:
   connector: connector.termination-400v-500mm2
   at: [6.0, -3.5, 0.5]
   facing: [1.0, 0.0, 0.0]
+envelope:
+- [-6.0, -4.0, 0.0, 6.0, 4.0, 8.74]
 life: 788940000
 basis:
 - of: [physical, built_of, needs]
