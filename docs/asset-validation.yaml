@@ -5470,3 +5470,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.radiator-field-345k
+    version: 2
+    manifest_sha256: "6c2983c5ad48842469d0724394824dbcdfb13bae026594ad7bea8a9b57eb197a"
+    installed: 7e911352
+    game: "the loader (world::assets) at fso 7e911352"
+    date: "2026-10-15"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): cargo:warning=../../../standards/SFO/metadata/units/radiator-field-345k.yaml: unit.radiator-field-345k: unknown field `envelope`, expected one of `identity`, `size_class`, `fits`, `physical`, `built_of`, `holds`, `needs`, `rejects`, `recipes`, `ports`, `life`, `visual`, `revision`, `basis` at line 45 column 1: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
