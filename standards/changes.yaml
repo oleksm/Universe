@@ -836,7 +836,7 @@
 - { record: layout.pellet-plant-air, at: "2026-10-15T16:01:43Z", status: draft, summary: "changed: physical", sha: "89e9d07d51ec2d4b" }
 - { record: layout.pellet-plant-airless, at: "2026-10-15T20:27:46Z", status: draft, summary: "changed: physical, ground, totals", sha: "4370552410830680" }
 - { record: layout.shaft-furnace-air, at: "2026-10-15T02:28:54Z", status: draft, summary: "changed: physical", sha: "8e973731966b75b2" }
-- { record: layout.shaft-furnace-airless, at: "2026-10-15T23:16:29Z", status: draft, summary: "changed: physical, links, totals", sha: "e46b7e244a3655f2" }
+- { record: layout.shaft-furnace-airless, at: "2026-10-16T01:00:17Z", status: draft, summary: "changed: physical, links, totals", sha: "85274d911eaabb75" }
 - { record: market.art, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "517671b6a46daee3" }
 - { record: market.artifacts, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "6b51c19897f56c1a" }
 - { record: market.biologics, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "003ee842af8f7674" }
