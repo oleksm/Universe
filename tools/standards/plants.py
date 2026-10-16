@@ -3309,7 +3309,8 @@ def pellet_ports(us):
     # The discs: the screen's fines kept on the disc.
     dk = us["balling-disc-7m5"]
     if "fines elevator" not in dk["desc"]:
-        dk["desc"] = dk["desc"].replace("the fines drop through into a tray and out at (0, -3.5, 0.65) to the layout's return belt,", "the fines drop through into a tray and a small fines elevator on the frame's -x side lifts them back into the cake chute,")
+        dk["desc"] = dk["desc"].replace("the fines drop through into a tray and out at (0, -3.5, 0.65) to the layout's return belt,", "the fines drop through into a tray and an enclosed feeder takes them to a small bucket elevator on the frame's -x side (its casing at (-4.3, -1.0), clear of the pan and of the cake header over the chute), whose head at 10.5 m drops them down a chute into the cake chute at (-0.4, 2, 6.8),")
+        dk["dims"] = (dk["dims"][0], dk["dims"][1], 11.0)
         dk["built_of"] = dk["built_of"] + [part("Fines elevator", A36, 1500.0, "a small bucket elevator from the screen's tray to the cake chute, from memory")]
     dk["ports"] = [
         port("cake-in", "in", "bulk", kit.chute(0.4), (0, 2, 7), (0, 0, 1), item=ORE, rate=P_ORE / 4, note="the cake chute, fed by a plough off the layout's header"),
