@@ -1,14 +1,16 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.heater-transformer-131mva, name: 'Heater transformer, 131 MVA', description: 'Steps the grid down for the hydrogen heater''s elements, through thyristor sets in its terminal house, with on-load taps. Oil-filled in a closed tank, HV bushings and conservator on top, cooled by oil to water. Three secondary terminals on one long face (+y), 4.5 m up; the oil-to-water cooler''s water ports on its -x end, 1 m up. Stands in a fire-walled vault.'}
+identity: {key: unit.heater-transformer-131mva, name: 'Heater transformer, 131 MVA', description: 'Steps the grid down for the hydrogen heater''s elements, through thyristor sets in its terminal house, with on-load taps. Oil-filled in a closed tank, HV bushings and conservator on top, cooled by oil to water. Three secondary terminals on one long face (+y), 4.5 m up; the oil-to-water cooler''s water ports on its -x end, 1 m up. Stands in a fire-walled vault. Cable boxes over its HV bushings (gland plate on top) and over its secondary pads (gland plate facing +y), so each three-phase circuit enters at one plate.'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 9.1, width: 5.7, height: 6.8, mass: 210200.0}
+physical: {length: 9.1, width: 5.7, height: 7.6, mass: 212000.0}
 built_of:
 - {what: Core, item: material.structural-steel-a36, mass: 84070.0, note: 'grain-oriented electrical steel, which the registry has not got: structural steel stands for it'}
 - {what: Windings, item: material.copper, mass: 52540.0}
 - {what: Tank and fittings, item: material.structural-steel-a36, mass: 31530.0}
 - {what: Oil, item: material.hydraulic-fluid, mass: 42030.0, note: 'transformer mineral oil, which the registry has not got: hydraulic fluid stands for it'}
+- {what: HV cable box, item: material.structural-steel-a36, mass: 996.6, note: 'over the three HV bushings on top (their ends at x -2.36, 0 and 2.36, y -0.96, z 6.75): 5.8 x 0.9 x 0.8 m, 6 mm, its gland plate on top at (0, -0.96, 7.55)'}
+- {what: LV cable box, item: material.structural-steel-a36, mass: 857.2, note: 'over the three secondary pads on the +y face, 4.5 m up: 5 x 0.5 x 1.2 m, 6 mm, its gland plate facing +y at (0, 3.35, 4.5)'}
 needs: {power: 656800.0, heat: 656800.0}
 ports:
 - id: hv-in
@@ -17,16 +19,16 @@ ports:
   power: 121900000.0
   voltage: 132000
   connector: connector.termination-132kv-240mm2
-  at: [0.0, 0.0, 6.8]
+  at: [0.0, -0.95625, 7.55]
   facing: [0.0, 0.0, 1.0]
-  note: the HV bushings on top; 132 kV chosen
+  note: the HV cable box's gland plate, over the three bushings; 132 kV chosen
 - id: lv-out
   flow: out
   medium: power
   power: 121300000.0
   voltage: 6600
   connector: connector.termination-6p6kv-630mm2
-  at: [0.0, 2.85, 4.5]
+  at: [0.0, 3.35, 4.5]
   facing: [0.0, 1.0, 0.0]
   note: the secondary terminals, 8 circuits
 - id: water-in

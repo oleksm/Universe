@@ -1083,6 +1083,13 @@ def shaft_units():
                {"of": ["needs"], "tier": "derived", "note": f"The gas's {GAS:.1f} kg/s at {CP_H2 / 1e3:.1f} kJ/kg K over {T_GAS - T_PRE:.0f} K, at 98% (from memory)."}])
     ht = transformer_unit(Q_HEATER / 0.98 / HEATER_PF, "the hydrogen heater's elements, through thyristor sets in its terminal house")
     ht["name"] = ht["name"].replace("Furnace", "Heater")
+    # Its cable boxes (SFO 25: a power port is the gland plate of the unit's cable box; the phases land inside it).
+    hv_box = 2 * (5.8 * 0.9 + 5.8 * 0.8 + 0.9 * 0.8) * 0.006 * RHO["steel"]
+    lv_box = 2 * (5.0 * 0.5 + 5.0 * 1.2 + 0.5 * 1.2) * 0.006 * RHO["steel"]
+    ht["built_of"] = ht["built_of"] + [part("HV cable box", A36, hv_box, "over the three HV bushings on top (their ends at x -2.36, 0 and 2.36, y -0.96, z 6.75): 5.8 x 0.9 x 0.8 m, 6 mm, its gland plate on top at (0, -0.96, 7.55)"),
+                                       part("LV cable box", A36, lv_box, "over the three secondary pads on the +y face, 4.5 m up: 5 x 0.5 x 1.2 m, 6 mm, its gland plate facing +y at (0, 3.35, 4.5)")]
+    ht["dims"] = (ht["dims"][0], ht["dims"][1], max(ht["dims"][2], 7.6))       # (the HV cable box's top)
+    ht["desc"] += " Cable boxes over its HV bushings (gland plate on top) and over its secondary pads (gland plate facing +y), so each three-phase circuit enters at one plate."
     out[f"heater-transformer-{Q_HEATER / 0.98 / HEATER_PF / 1e6:.0f}mva"] = ht
     # Recuperator: the top gas warms the cold recycle gas.
     A = Q_RECUP / (100.0 * 57.0)                       # m2 at 100 W/m2 K over a log mean of about 57 K
@@ -2812,8 +2819,8 @@ def trial_ports(us):
     ]
     tp = us["heater-transformer-131mva"]["needs"]["power"] + us["gas-heater-119mw-8bar"]["needs"]["power"]
     us["heater-transformer-131mva"]["ports"] = [
-        port("hv-in", "in", "power", kit.termination(132000, kit.area_for(amps(tp, 132000, 0.95))), (0, 0, 6.8), (0, 0, 1), power=tp, voltage=132000, note="the HV bushings on top; 132 kV chosen"),
-        port("lv-out", "out", "power", kit.termination(6600, 630), (0, 2.85, 4.5), (0, 1, 0), power=us["gas-heater-119mw-8bar"]["needs"]["power"], voltage=6600, note=f"the secondary terminals, {n_heater} circuits"),
+        port("hv-in", "in", "power", kit.termination(132000, kit.area_for(amps(tp, 132000, 0.95))), (0, -0.95625, 7.55), (0, 0, 1), power=tp, voltage=132000, note="the HV cable box's gland plate, over the three bushings; 132 kV chosen"),
+        port("lv-out", "out", "power", kit.termination(6600, 630), (0, 3.35, 4.5), (0, 1, 0), power=us["gas-heater-119mw-8bar"]["needs"]["power"], voltage=6600, note=f"the secondary terminals, {n_heater} circuits"),
         port("water-in", "in", "liquid", kit.flange(0.15, 10), (-4.55, -0.6, 1), (-1, 0, 0), item=WATER, rate=q_t, temperature=HP_T_LOOP - 10.0),
         port("water-out", "out", "liquid", kit.flange(0.15, 10), (-4.55, 0.6, 1), (-1, 0, 0), item=WATER, rate=q_t),
     ]
@@ -2966,7 +2973,7 @@ def shaft_furnace_airless(us, recs):
         port("h2-in", "in", "gas", kit.flange(0.25, 16, kit.SS, "double"), (100, 4, 1.5), (-1, 0, 0), item="material.hydrogen", rate=H2_USED, pressure=10e5, note="from the hydrogen plant's electrolysers at 10 bar"),
         port("condensate-out", "out", "liquid", kit.flange(0.2, 10, kit.SS), (100, 24, 0.5), (-1, 0, 0), item="good.water", rate=STEAM - _left, note="back to the electrolysers: on a moon every kilogram comes back"),
         port("mv-in", "in", "power", kit.termination(6600, kit.area_for(amps(HP_W_COMP / 0.96, 6600))), (100, -1.5, 6.0), (-1, 0, 0), power=HP_W_COMP / 0.96, voltage=6600, note="the site's 6.6 kV switchgear"),
-        port("hv-in", "in", "power", kit.termination(132000, kit.area_for(amps(recs["heater-transformer-131mva"]["needs"]["power"] + recs[heater]["needs"]["power"], 132000, 0.95))), (100, -24, 8.0), (-1, 0, 0), power=recs["heater-transformer-131mva"]["needs"]["power"] + recs[heater]["needs"]["power"], voltage=132000, note="the site's 132 kV substation"),
+        port("hv-in", "in", "power", kit.termination(132000, kit.area_for(amps(recs["heater-transformer-131mva"]["needs"]["power"] + recs[heater]["needs"]["power"], 132000, 0.95))), (100, -24.956, 8.8), (-1, 0, 0), power=recs["heater-transformer-131mva"]["needs"]["power"] + recs[heater]["needs"]["power"], voltage=132000, note="the site's 132 kV substation"),
         port("lv-fields", "in", "power", kit.termination(lvf, kit.area_for(amps(p_fields, lvf))), (-32.4, 30.0, 0.3), (0, 1, 0), power=p_fields, voltage=lvf, note="the site's 400 V distribution, for the radiator fields' pumps"),
         port("lv-furnace", "in", "power", kit.termination(lvf, kit.area_for(amps(recs[sh_key]["needs"]["power"], lvf))), (-40.0, 2.0, 4.0), (1, 0, 0), power=recs[sh_key]["needs"]["power"], voltage=lvf),
         port("lv-post", "in", "power", kit.termination(lvf, kit.area_for(amps(recs["crew-post"]["needs"]["power"], lvf))), (-16.0, -24.0, 0.3), (-1, 0, 0), power=recs["crew-post"]["needs"]["power"], voltage=lvf),
@@ -2996,7 +3003,7 @@ def shaft_furnace_airless(us, recs):
           f"{H2_USED:.2f} kg/s teed into the compressor's suction: the electrolysers run at 10 bar, so no make-up compressor"),
         L("condensate to the hydrogen plant", kit.pipe(0.2, 10, kit.SS, liquid=True), ("S:condensate-out", "edge:condensate-out"), [None, None]),
         L("compressor supply", kit.cable(6600, kit.area_for(amps(HP_W_COMP / 0.96, 6600))), ("edge:mv-in", "K:hv"), [None, (48.0, -1.5, 6.0), None]),
-        L("transformer supply", kit.cable(132000, kit.area_for(amps(recs["heater-transformer-131mva"]["needs"]["power"] + recs[heater]["needs"]["power"], 132000, 0.95))), ("edge:hv-in", "T:hv-in"), [None, (48.0, -24.0, 8.0), None]),
+        L("transformer supply", kit.cable(132000, kit.area_for(amps(recs["heater-transformer-131mva"]["needs"]["power"] + recs[heater]["needs"]["power"], 132000, 0.95))), ("edge:hv-in", "T:hv-in"), [None, (48.0, -24.956, 8.8), None]),
         L("heater supply", kit.cable(6600, 630), ("T:lv-out", "H:power-in"), [None, (48.0, -17.0, 4.5), (11.3, -17.0, 4.5), (11.3, -22.55, 4.5), (11.3, -22.55, 1.575), None], (), math.ceil(amps(recs[heater]["needs"]["power"], 6600, 0.95) / (630e-6 * kit.J_VACUUM))),
         L("furnace supply", kit.cable(lvf, kit.area_for(amps(recs[sh_key]["needs"]["power"], lvf))), ("edge:lv-furnace", "F:power-in"), [None, (-7.0, 2.0, 4.0), (-7.0, 2.0, 12.0), None], (), 1, None, "in through the tower's west opening and up inside the platforms' opening round the shaft to the ring girder"),
         L("crew post supply", kit.cable(lvf, kit.area_for(amps(recs["crew-post"]["needs"]["power"], lvf))), ("edge:lv-post", "P:power-in"), [None, None], (), 1, None, "through the berm"),
