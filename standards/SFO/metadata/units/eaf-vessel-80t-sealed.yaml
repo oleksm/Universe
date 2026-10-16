@@ -5,7 +5,7 @@ identity: {key: unit.eaf-vessel-80t-sealed, name: 'Arc furnace vessel, 80 t, sea
     so their flanges clear, and in front of the cradle''s deck, which tilts over them (v4: the manifold reduces from the hoses'' 300 mm, and keeps inside local y 5.3, clear of the airless shop''s gantry crane''s legs, whose inner faces pass at y 5.43).'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 11.74, height: 14.0, mass: 322400.0}
+physical: {length: 12.0, width: 11.74, height: 14.0, mass: 325800.0}
 built_of:
 - {what: Hearth shell, item: material.structural-steel-a36, mass: 33060.0, note: '6.6 m across, 2.0 m tall, 50 mm plate, its dished bottom 1.25 times the disc'}
 - {what: Hearth lining, item: good.refractory-brick, mass: 148400.0, note: '0.9 m under the bath, 0.45 m up the hearth wall'}
@@ -19,16 +19,20 @@ built_of:
 - {what: Slag spout, item: material.structural-steel-a36, mass: 648.4, note: 'a steel trough 0.8 m wide, 0.4 m deep, 30 mm plate, 1.79 m long, outside sizes (a clear channel 0.44 m wide and 0.22 m deep inside its wall and lining); its floor from the slag door''s sill (local x -3.32, 3.2 m up) sloping 20 degrees down to x -5.0, 2.59 m up, 0.5 m past the cradle deck, so the slag falls clear into the pot'}
 - {what: Slag spout lining, item: good.refractory-brick, mass: 949.3, note: 150 mm of refractory in the trough}
 - {what: Slag spout brackets, item: material.structural-steel-a36, mass: 169.8, note: 'four seated brackets of 120 x 120 x 6 mm tube and plate that carry the trough on the cradle; measured on blender''s model (eaf-vessel-80t candidate v02: tubes 83.4 kg, plates 86.4 kg)'}
-- {what: Water hoses, item: material.silicone-rubber, mass: 171.4, note: 'two flexible hoses, flow and return, 300 mm bore, 20 mm wall, 3.964 m each along their centreline (measured on blender''s model, v3), a supported dogleg from the vessel''s ports to the deck manifold; reinforced EPDM hose, which the registry has not got: silicone rubber (1,075 kg/m3) stands for it, the wire not counted. At rest only: pressure loss, bend radius and the tilt''s travel not checked'}
+- {what: Water hoses, item: material.silicone-rubber, mass: 182.8, note: 'two flexible hoses, flow and return, 300 mm bore, 4.71 and 4.31 m along their centrelines, to the deck manifold''s barrels; reinforced EPDM, silicone rubber standing for it; measured on blender''s model v2 (the registry''s v4, 2026-10-16)'}
 - {what: Tilt and mast hydraulics, item: good.pumps, mass: 15000.0, note: 'cylinders, pumps and valves; from memory'}
 - {what: Roof seal flanges, item: material.structural-steel-a36, mass: 2489.0, note: 'a clamped flange joint round the roof''s rim (a sand seal cannot hold 1 bar against vacuum): the shell''s and the roof''s rings, 250 mm wide and 30 mm thick, and the seal''s land; measured on model v3'}
 - {what: Roof hold-down clamps, item: material.structural-steel-a36, mass: 5978.0, note: 'twelve: 1 bar inside against vacuum lifts the 6.6 m roof with 3.4 MN, about 285 kN a clamp, each a 200 x 120 mm A36 bridge from the cage''s upright over 0.3 m (about 90 MPa at a 0.15 m lever) on 60 mm pins, with its anchor, base, brace and toe drawn solid; measured on model v3; the roof''s panels at 1 bar not checked'}
 - {what: Electrode glands, item: material.structural-steel-a36, mass: 1646.0, note: 'three water-cooled glands with their flanges, 20 mm jackets; measured on model v3'}
 - {what: Seals, item: material.silicone-rubber, mass: 60.0, note: 'the roof''s double O-ring, cooled by a tee off the vessel''s upper water header, and the glands'' packings, from memory; the gap between the O-rings needs no pump on airless ground: a 25 mm line from it, through a pressure gauge that shows a leak, ends at a capped vent beside the vessel''s external water ports, open to the vacuum outside'}
 - {what: Seal services, item: material.structural-steel-a36, mass: 35.9, note: 'the cooling tee, the gap''s line, gauge and cap; measured on model v3'}
-- {what: Feed lock, item: material.structural-steel-a36, mass: 3312.0, note: 'two gate valves and a chamber over the fifth hole, local z 8.3 to 10.1: bodies, housings and seats; measured on model v3'}
+- {what: Feed lock, item: material.structural-steel-a36, mass: 2948.0, note: 'two gate valves and a chamber over the fifth hole, the chamber shortened under a square-to-round catch hopper whose rim is the port at z 10.1: bodies, housings, seats and the hopper; measured on blender''s model v2 (the registry''s v4, 2026-10-16) (v3''s 3,311.5 kg less its chamber, 576.9, and top flange, 337.8; the new chamber 351.2 and hopper 199.6)'}
 - {what: Feed lock drives, item: good.electric-motors, mass: 500.0, note: from memory}
-- {what: Off-gas bellows and reducer, item: material.stainless-steel-304, mass: 1427.0, note: 'a bellows 2 m across from the fourth hole''s flange (local z 8.5 to 9.1), then a reducer to the layout''s 1.2 m duct at z 9.7, with their flanges; measured on model v3'}
+- {what: Off-gas bellows and reducer, item: material.stainless-steel-304, mass: 1147.0, note: 'the bellows 2 m across from the fourth hole''s flange, then a reducer to the 1.2 m lined flange at z 9.7; measured on blender''s model v2 (the registry''s v4, 2026-10-16) (v3''s 1,426.8 kg less its output flange, 260.6, and reducer, 238.6; the new reducer 219.7)'}
+- {what: Off-gas reducer lining, item: good.refractory-brick, mass: 1531.0, note: 'the reducer''s refractory; measured on blender''s model v2 (the registry''s v4, 2026-10-16)'}
+- {what: Deck manifold, item: material.structural-steel-a36, mass: 908.4, note: 'two DN 400 barrels standing on the deck, their closed bottoms, feet, hose reducers and saddles; measured on blender''s model v2 (the registry''s v4, 2026-10-16)'}
+- {what: Bus terminal necks, item: material.copper, mass: 601.2, note: 'three copper necks from the flexible cables'' fixed ends to the bus joint; measured on blender''s model v2 (the registry''s v4, 2026-10-16)'}
+- {what: Bus joint supports, item: material.structural-steel-a36, mass: 1060.0, note: 'the joint''s three supports and insulators, the insulators not mass-qualified; measured on blender''s model v2 (the registry''s v4, 2026-10-16)'}
 holds: 107100.0
 needs: {power: 72000000, heat: 10800000.0, gravity: 1.6, atmosphere: any}
 recipes:
@@ -98,7 +102,7 @@ envelope:
 - [-2.051, -6.245, 1.604, 2.051, 0.286, 11.722]
 - [-0.932, -0.732, 2.898, 0.932, 1.001, 14.001]
 - [-1.852, 0.288, 6.149, 3.101, 2.601, 10.102]
-- [-4.451, 2.089, 0.499, -2.22, 5.492, 5.952]
+- [-5.071, 2.089, -0.001, -2.22, 5.201, 5.952]
 life: 788940000
 visual: {format: freefall-model/1, path: models/eaf-vessel-80t-sealed/v1, manifest_sha256: c15d6a1e89561897e3ee2395b543ba04dbcc56996a058b1922a1952526ef889b, version: 1, triangles: 47382}
 basis:

@@ -2400,6 +2400,16 @@ def arc_ports(us):
     v["desc"] = v["desc"].replace("(the manifold itself is the layout's)", "(the manifold is the unit's: two DN 400 barrels standing on the deck, each taking its hose from the side)")
     v["desc"] += (f" Its ports (SFO 25): sponge iron in at the feed lock's top, local (0, 1.8, 10.1), a belt's head over it; off-gas out at the reducer's flange, (2, 1.5, 9.7), facing up, 1.2 m lined; the secondary bus's joint at the flexible cables' fixed ends, (0, -6.2, 2.3), facing -y; "
                   f"the deck manifold's water flanges, DN {dn_main * 1000:.0f} facing up, in at (-4.2, 4.95, 0.5) and out at (-3.4, 4.95, 0.5), side by side 0.8 m apart so their flanges clear, and in front of the cradle's deck, which tilts over them (v4: the manifold reduces from the hoses' 300 mm, and keeps inside local y 5.3, clear of the airless shop's gantry crane's legs, whose inner faces pass at y 5.43).")
+    m4 = "measured on blender's model v2 (the registry's v4, 2026-10-16)"
+    swap = {"Feed lock": part("Feed lock", A36, 3311.5 - 576.91 - 337.78 + 351.16 + 199.58, f"two gate valves and a chamber over the fifth hole, the chamber shortened under a square-to-round catch hopper whose rim is the port at z 10.1: bodies, housings, seats and the hopper; {m4} (v3's 3,311.5 kg less its chamber, 576.9, and top flange, 337.8; the new chamber 351.2 and hopper 199.6)"),
+            "Off-gas bellows and reducer": part("Off-gas bellows and reducer", "material.stainless-steel-304", 1426.8 - 260.63 - 238.63 + 219.71, f"the bellows 2 m across from the fourth hole's flange, then a reducer to the 1.2 m lined flange at z 9.7; {m4} (v3's 1,426.8 kg less its output flange, 260.6, and reducer, 238.6; the new reducer 219.7)"),
+            "Water hoses": part("Water hoses", "material.silicone-rubber", 182.8, f"two flexible hoses, flow and return, 300 mm bore, 4.71 and 4.31 m along their centrelines, to the deck manifold's barrels; reinforced EPDM, silicone rubber standing for it; {m4}")}
+    v["built_of"] = [swap.get(x["what"], x) for x in v["built_of"]]
+    if "Deck manifold" not in [x["what"] for x in v["built_of"]]:
+        v["built_of"] += [part("Off-gas reducer lining", REF, 1531.4, f"the reducer's refractory; {m4}"),
+                          part("Deck manifold", A36, 908.4, f"two DN 400 barrels standing on the deck, their closed bottoms, feet, hose reducers and saddles; {m4}"),
+                          part("Bus terminal necks", CU, 601.2, f"three copper necks from the flexible cables' fixed ends to the bus joint; {m4}"),
+                          part("Bus joint supports", A36, 1059.7, f"the joint's three supports and insulators, the insulators not mass-qualified; {m4}")]
     us["eaf-vessel-80t-sealed"]["ports"] = [
         port("dri-in", "in", "bulk", kit.belt_transfer(0.8), (0.0, 1.8, 10.1), (0, 0, 1), item="good.sponge-iron", rate=DRI, note="the feed lock's top; the belt's head 3 m over it"),
         port("offgas-out", "out", "gas", kit.lined_flange(1.2, 1), (2.0, 1.5, 9.7), (0, 0, 1), item="material.carbon-monoxide", rate=co, pressure=1e5, temperature=SEALED_GAS_T + K),
