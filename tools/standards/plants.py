@@ -2870,7 +2870,8 @@ def kit_link(name, run, ends, path, bays, recs, edge, taps=(), count=1, power=No
         i = 0 if which == 0 else -1
         if e.startswith("edge:"):
             pp = next(q for q in edge if q["id"] == e[5:])
-            at = tuple(pp["at"])
+            off = end_offset(kit._recs[pp["connector"]]["kind"], rr, which)
+            at = (pp["at"][0] + off[0], pp["at"][1] + off[1], round(pp["at"][2] + off[2], 3))
             n_port += 1
         elif ":" in e and not e.startswith("tee:"):
             bid, pid = e.split(":")

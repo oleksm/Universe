@@ -357,12 +357,12 @@ links:
   run: run.drag-conveyor-800
   ends: ['F:dri-out', 'edge:sponge-iron-out']
   from: [0.0, 0.0, 5.594]
-  to: [-60.0, 0.0, 5.188]
+  to: [-60.0, 0.0, 5.594]
   length: 60.0
   item: material.stainless-steel-304
-  mass: 30130.0
+  mass: 29970.0
   power: 150000.0
-  fittings: {elbows: 0, tees: 0, supports: 11, connectors: 2}
+  fittings: {elbows: 0, tees: 0, supports: 10, connectors: 2}
   note: 55.6 kg/s of sponge iron at about 650 deg C to the arc furnace shop's bin, beyond the layout; the hot charge saves the furnace about 24 MW
 - kind: pipe
   name: top gas main
