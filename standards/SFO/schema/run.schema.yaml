@@ -86,8 +86,8 @@ properties:
     additionalProperties: false
     description: "A conveyor's end machinery, once a run: its head (the delivering end: drive pulley, gearbox and motor) and its tail (the receiving end: tail pulley and take-up)."
     properties:
-      head: { type: object, additionalProperties: false, required: [mass], properties: { mass: { type: number, exclusiveMinimum: 0, x-unit: "kg" }, note: { type: string } } }
-      tail: { type: object, additionalProperties: false, required: [mass], properties: { mass: { type: number, exclusiveMinimum: 0, x-unit: "kg" }, note: { type: string } } }
+      head: { type: object, additionalProperties: false, required: [mass], properties: { mass: { type: number, exclusiveMinimum: 0, x-unit: "kg" }, transition: { type: number, minimum: 0, x-unit: "m", description: "m of the run before its end that the piece draws itself (a belt flattening out of its trough): the straight stops that far short" }, note: { type: string } } }
+      tail: { type: object, additionalProperties: false, required: [mass], properties: { mass: { type: number, exclusiveMinimum: 0, x-unit: "kg" }, transition: { type: number, minimum: 0, x-unit: "m", description: "m of the run after its start that the piece draws itself: the straight starts that far on" }, note: { type: string } } }
   repeat:
     type: array
     description: "Rigid pieces the game sets along a straight at a fixed pitch, not stretched with it (a belt's idlers and return rolls): each the model's piece by name and its pitch."
