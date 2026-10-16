@@ -3334,7 +3334,7 @@ def pellet_ports(us):
     if "dust bin" not in gl["desc"]:
         gl["desc"] = gl["desc"].replace("which lets it out by a 200 mm chute at (-9, 0, 3) and (-3, 0, 1.5), facing down onto the layout's closed dust conveyor.", "which holds the loop's 4 bar and lets the dust into a dust-tight 2 m3 bin on the slab under it (5 mm plate, fork runners, a small filtered vent to the vacuum for the lock's pocket gas), the loop's, changed by forklift about once a shift.")
         gl["desc"] = gl["desc"].replace("the cold gas out by a 700 mm flange at (12, 0, 1.5) facing +x;", "the cold gas out by a 600 mm flange at (12, 0, 1.5) facing +x, the shafts' bore;")
-        gl["built_of"] = gl["built_of"] + [part("Dust bins", A36, 2 * 800.0, "two sealed 2 m3 bins under the rotary locks, from memory")]
+        gl["built_of"] = gl["built_of"] + [part("Dust bins", A36, 1153.0, "two dust-tight 2 m3 floor bins of 5 mm plate with fork runners, and the cyclone's fill neck; measured on model v2")]
     gl["ports"] = [
         port("top-gas-in", "in", "gas", kit.flange(0.7, 10, temp=T_TOPG + K), (-9, 0, 13), (0, 0, 1), item="material.nitrogen", temperature=T_TOPG + K),
         port("cold-gas-out", "out", "gas", kit.flange(0.6, 10, temp=T_LOOPC + K), (12, 0, 1.5), (1, 0, 0), item="material.nitrogen", temperature=T_LOOPC + K),
@@ -3670,8 +3670,8 @@ def pellet_airless_units(us):
                   part("Candle filter", A36, 14846.7 + 3000.0, "4 m across, 10 m, 16 mm, lagged: the shell measured (14.8 t); the candles 3 t of silicon carbide, from memory"),
                   part("Condenser", "material.stainless-steel-304", 15391.9 + tubes * math.pi * 0.025 * 0.0012 * 7900, f"two shells 2.5 m across, 10 m, 12 mm, and {tubes:,.0f} m of 25 mm tube (1.2 mm): {q_cond / 1e6:.1f} MW at 300 W/m2 K over a {lmtd:.0f} K mean difference; the shells measured (15.4 t), the tubes by their length"),
                   part("Fan", "good.electric-motors", 8000.0 * w_fan / 1e6 + 3000.0, "a centrifugal fan, 8 t a MW and its casing, from memory"),
-                  part("Pipework and pots", A36, 7100.0, "measured"),
-                  part("Stands, skirts and supports", A36, 29082.1, "the cyclone's braced stand and support ring, the filter's and condenser's skirts and base rings; measured")],
+                  part("Pipework and pots", A36, 7062.7, "measured on model v2, the coolant mains raised to 3.4 m over the bins' lanes"),
+                  part("Stands, skirts and supports", A36, 29039.9, "the cyclone's braced stand and support ring, the filter's and condenser's skirts and base rings; measured")],
         needs={"power": w_fan / 0.96, "heat": q_cond + w_fan, "atmosphere": "vacuum"},
         basis=[{"of": ["physical", "built_of"], "tier": "derived", "review": True, "note": "Vessels by their pressure; the condenser by its duty; weights of the rest from memory."},
                {"of": ["needs"], "tier": "derived", "note": f"The top gas cooled {T_TOPG:.0f} to {T_LOOPC:.0f} deg C and its {steam:.1f} kg/s of water condensed (2.35 MJ/kg); the vapour left at {T_LOOPC:.0f} deg C from its {PS_SAT_65 / 1e3:.0f} kPa vapour pressure; the fan at 75%."}])
