@@ -7558,3 +7558,18 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: unit.offgas-cooler-sealed
+    version: 1
+    manifest_sha256: "323c10da14be614fd1d11b8ac5c61b12100e32ed4f0a83d9447d17f3bb801bec"
+    installed: 15ea9e10
+    game: "the loader (world::assets) at fso 15ea9e10"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/offgas-cooler-sealed/v1 (838504 bytes, bounds [-3.0, -0.0, -1.725] to [3.0, 18.0, 2.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
