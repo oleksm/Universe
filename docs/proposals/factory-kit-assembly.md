@@ -118,3 +118,8 @@ Laying the pellet plant from ports showed what the old drawn layout had hidden (
   - 6.6 kV from the transformer by a main with joint boxes, to the torches and the mill;
   - 400 V from the site for the fans, the lock, the post and the fields;
   - inside the hall, one 400 V main through the west head's panel, branched to the presses, the discs, the sections' fan coils and the heads' lock pumps.
+
+Open after the pellet plant:
+- **Roads.** Forklifts must reach the gas loops' dust bins, and crews must reach every unit. Laid as `road` links, a road needs the runs crossing it at 4.5 m or more (a pipe rack), or under it in a culvert. The fit check should test that. Most of the pellet plant's outdoor runs lie 0.3 to 2.5 m up today.
+- **The hall's joints:** their bolts and seals are not yet counted.
+
