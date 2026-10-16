@@ -17,12 +17,7 @@ cap: {thickness: 0.028, mass: 84.6}
 support: {spacing: 12.0, mass: 55.8, per_m_height: 27.7, item: material.structural-steel-a36}
 connector: connector.flange-dn700-pn10
 carries: gas
-visual:
-  format: "freefall-model/1"
-  path: "models/pipe-dn700-pn10-mli/v1"
-  manifest_sha256: "fbf76a3f9d20cfb07db54dcc6ddf6b9b8b271426f972c2fbcc9f4e5455da213a"
-  version: 1
-  triangles: 6552
+visual: {format: freefall-model/1, path: models/pipe-dn700-pn10-mli/v1, manifest_sha256: fbf76a3f9d20cfb07db54dcc6ddf6b9b8b271426f972c2fbcc9f4e5455da213a, version: 1, triangles: 6552}
 basis:
 - of: [per_m]
   tier: derived
