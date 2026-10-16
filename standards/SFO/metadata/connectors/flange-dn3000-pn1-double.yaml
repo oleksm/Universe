@@ -10,12 +10,7 @@ built_of:
 - {what: Flanges, item: material.structural-steel-a36, mass: 333.2, note: 'two weld-neck rings 3.196 m across, 20 mm thick, their necks tapering over 20 mm from 16 mm to the gallery''s 4 mm wall at 3 m outside, 2.992 m clear; measured on blender''s model v1'}
 - {what: Bolts and nuts, item: material.high-strength-steel-4340, mass: 16.8, note: '92 of M16, 78 mm, on a 3.148 m circle'}
 - {what: Gaskets, item: material.stainless-steel-304, mass: 18.4, note: 'spiral wound, stainless windings; two, the space between them piped to a leak watch'}
-visual:
-  format: "freefall-model/1"
-  path: "models/flange-dn3000-pn1-double/v1"
-  manifest_sha256: "8429f30c6d97e90461e3c7419d7cfa87d68b24330344a59eaf3936456a4105d7"
-  version: 1
-  triangles: 11890
+visual: {format: freefall-model/1, path: models/flange-dn3000-pn1-double/v1, manifest_sha256: 8429f30c6d97e90461e3c7419d7cfa87d68b24330344a59eaf3936456a4105d7, version: 1, triangles: 11890}
 basis:
 - of: [built_of, physical]
   tier: derived

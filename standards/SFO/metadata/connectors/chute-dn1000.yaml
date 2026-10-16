@@ -10,12 +10,7 @@ built_of:
 - {what: Flanges, item: material.stainless-steel-304, mass: 109.2, note: 'two plate rings 1.20 m across, 20 mm'}
 - {what: Bolts, item: material.high-strength-steel-4340, mass: 4.4, note: 24 of M16}
 - {what: Gasket, item: material.fused-silica, mass: 1.3, note: 'a 6 mm silica-fibre dust gasket, for the sponge iron''s 700 deg C (rubber would not take it); fused silica stands for it'}
-visual:
-  format: "freefall-model/1"
-  path: "models/chute-dn1000/v1"
-  manifest_sha256: "16a5fa74cd1a867186ffda1cd289c67b23085cf3f03f206026d5f61226cc3c15"
-  version: 1
-  triangles: 6200
+visual: {format: freefall-model/1, path: models/chute-dn1000/v1, manifest_sha256: 16a5fa74cd1a867186ffda1cd289c67b23085cf3f03f206026d5f61226cc3c15, version: 1, triangles: 6200}
 basis:
 - of: [built_of]
   tier: invented
