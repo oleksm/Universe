@@ -5,7 +5,7 @@ stands_for: module.ladle-station
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 68.29, width: 56.86, height: 27.11, mass: 3020000.0}
+physical: {length: 68.29, width: 56.86, height: 27.11, mass: 3021000.0}
 bays:
 - id: L
   mount: plant-mount.bay-s2
@@ -57,11 +57,11 @@ links:
   note: two 60 kg/m rails at 3 m gauge between the heads' inner faces, set in the floor with 40 mm flangeways, running plane the floor; in by the west door from the arc furnace shop's rail, out by the east door to the casting bay's; the car's centre stops at x -9 (the ladle furnace) and x 3 (the degasser's crane lift)
 - kind: busbar
   name: secondary bus
-  from: [-9.0, -7.65, 2.1333333333333333]
+  from: [-9.0, -7.65, 2.466666666666667]
   to: [-9.0, -5.0, 6.0]
-  length: 4.688
+  length: 4.417
   item: material.copper
-  mass: 828.5
+  mass: 780.6
   note: three water-cooled copper tube bars, 6575 mm2 each for 26 kA at 4 A/mm2, from the transformer's terminals through the vault's north wall to the ladle furnace's bus on its -y side
 - kind: conveyor
   name: alloy feed
@@ -140,7 +140,7 @@ ground:
 - {what: Cooling tower basin, item: good.concrete, volume: 114.66, note: 'sunk as the furnace shop''s: 0.3 m walls round its 12 x 12 m footprint, tops at z 0, floor top at z -2; eight pedestals, under the tower''s four feet and its skid''s four corners (blender); measured on blender''s model', mass: 275200.0}
 - {what: Rail beds, item: good.concrete, volume: 7.2, note: 'under the ladle rail, 0.125 m3 a metre as the furnace shop''s; measured on blender''s model', mass: 17280.0}
 - {what: Link supports, item: good.concrete, volume: 3.41, note: 'footings for the alloy gallery''s trestles, the duct''s supports and the pipes'' plinths; measured on blender''s model', mass: 8184.0}
-totals: {rate: 41.6666666666667, power: 8907000.0, heat: 1568000.0, water: 0.8674, mass: 3020000.0, against_module: 'module.ladle-station: one box 40 x 30 x 35 m, 7.5 MW. This layout: the same rate; 8.9 MW (the module''s figure is the arc''s average; the degasser''s pumps, the fan, the crane and the tower are on top); 0.9 kg/s of water the module did not name; 1047 t of plant and frame and 1973 t of concrete.'}
+totals: {rate: 41.6666666666667, power: 8907000.0, heat: 1568000.0, water: 0.8674, mass: 3021000.0, against_module: 'module.ladle-station: one box 40 x 30 x 35 m, 7.5 MW. This layout: the same rate; 8.9 MW (the module''s figure is the arc''s average; the degasser''s pumps, the fan, the crane and the tower are on top); 0.9 kg/s of water the module did not name; 1047 t of plant and frame and 1973 t of concrete.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}

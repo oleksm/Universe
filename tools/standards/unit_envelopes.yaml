@@ -196,7 +196,9 @@ unit.ladle-furnace-80t-sealed:
 - [-5.251, -5.001, 11.599, 5.251, 5.001, 12.801]
 - [4.499, -4.902, -0.001, 5.501, 4.902, 12.001]
 - [-5.251, -5.341, 4.599, 5.251, -3.058, 12.691]
-- [-2.301, -3.221, 3.798, 2.501, 3.301, 14.001]
+# (the masts-and-arms box split by the registry, 2026-10-16, from the description: the masts at the rear, the arms reaching the electrodes at the centre, the alloy chute alone in front; to be confirmed on the model)
+- [-2.301, -3.221, 3.798, 2.501, 0.9, 14.001]
+- [-0.4, 0.9, 3.798, 0.4, 3.301, 9.001]
 - [-5.001, -4.851, 0.798, -1.409, -0.687, 6.625]
 unit.stair-tower-12m:
 - [-1.578, -3.081, -0.137, 1.578, 3.081, 13.126]

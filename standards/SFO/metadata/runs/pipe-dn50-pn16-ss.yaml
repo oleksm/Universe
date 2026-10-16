@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/run.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: run.pipe-dn50-pn16-ss, name: 'Pipe DN 50 PN 16, stainless', description: 'Welded pipe, 50 mm bore, for up to 16 bar; welded between the units'' flanges, so a run has a flange pair only at its ends.'}
+kind: pipe
+size: 0.05
+bore: 0.05
+outside: [0.057, 0.057]
+rating: {pressure: 1600000.0, temperature: 373.0}
+per_m:
+  mass: 4.6
+  built_of:
+  - {what: Pipe, item: material.stainless-steel-304, mass: 4.6, note: '50 mm bore, 3.5 mm wall (Barlow at 16 bar, 115 MPa, weld factor 0.85)'}
+elbow: {radius: 0.075, mass: 0.5}
+tee: {mass: 0.2}
+cap: {thickness: 0.004, mass: 0.1}
+support: {spacing: 3.7, mass: 13.4, per_m_height: 16.6, item: material.structural-steel-a36}
+connector: connector.flange-dn50-pn16-ss
+carries: gas
+basis:
+- of: [per_m]
+  tier: derived
+  note: Wall from pressure; mass from material and dimensions.
+- of: [elbow, tee]
+  tier: derived
+  note: A long-radius elbow (1.5 bores) is its arc of straight; a tee is its branch stub over the straight it sits in, from the main's outside to 1.5 bores off its axis (checked on blender's DN 200 kit).
+- of: [support]
+  tier: derived
+  review: true
+  note: 'Spacing from the span it bears full at 1 g (2.5 mm sag, a third of yield), 3 to 12 m: 3.7 m. The stand''s head and its leg by the metre from memory.'

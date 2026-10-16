@@ -1,7 +1,8 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
 identity: {key: unit.ladle-furnace-80t-sealed, name: 'Ladle furnace, 80 t, sealed', description: 'The 80 t ladle furnace closed for airless ground: its roof''s skirt seals on the ladle''s rim with a soft ring, glands round the electrodes, the alloys in through a lock in the chute, and argon fed under the roof to about 50 kPa, so the arc burns as in air and the manganese it adds is not boiled off into the vacuum (open to vacuum, an 80 t heat at 1,600 deg C would lose about a fifth of its manganese in a quarter hour). Its fume, mostly argon, leaves by the roof''s elbow to the layout''s filter. Otherwise as unit.ladle-furnace-80t: Reheats and trims an 80 t heat in its ladle, the ladle standing on its car under the furnace: a steel gantry straddles the ladle rail (a lane 5 m wide left clear under it along x), carrying a water-cooled roof 4.6 m across that is lowered onto the ladle (an annular seat skirt, radius 1.45 to 1.70 m, sits on its rim), three graphite electrodes on masts with their arms,
-    and an alloy chute through the roof. Its arc, about 10.9 MW at full heat, comes from its own transformer by a bus on its -y side (local 0, -5, 6); its cooling water by a manifold at local (-4.5, -4.5, 1); the alloys by a chute whose top stands at local (0, 3, 9); its fume leaves by an elbow on the roof at local (2, 0, 7.5). Argon is blown through the ladle''s porous plug from the car. At rest: the roof''s rim on the ladle''s lip (z 4.4), its crown at 5.2; three 300 mm graphite electrodes on a 0.35 m pitch radius through the roof''s delta; the masts at the rear (y -3.8), their arms fanning forward, the centre arm 0.6 m higher; the gantry''s columns at x -5 and 5, y -4.4 and 4.4, 12 m tall, its two cross beams on top.'}
+    and an alloy chute through the roof. Its arc, about 10.9 MW at full heat, comes from its own transformer by a bus on its -y side (local 0, -5, 6); its cooling water by a manifold at local (-4.5, -4.5, 1); the alloys by a chute whose top stands at local (0, 3, 9); its fume leaves by an elbow on the roof at local (2, 0, 7.5). Argon is blown through the ladle''s porous plug from the car. At rest: the roof''s rim on the ladle''s lip (z 4.4), its crown at 5.2; three 300 mm graphite electrodes on a 0.35 m pitch radius through the roof''s delta; the masts at the rear (y -3.8), their arms fanning forward, the centre arm 0.6 m higher; the gantry''s columns at x -5 and 5, y -4.4 and 4.4, 12 m tall, its two cross beams on top. Its ports (SFO 25): the bus joint at the cables'' hanger, (0, -5.34, 6), facing -y; the manifold''s water, DN 150 facing -y, out at (-4.8, -4.85, 1) and in at (-4.2, -4.85, 1); the alloy chute''s mouth at (0, 3, 9), a belt''s head over it; the fume out of the roof''s elbow
+    at (2, 0, 7.5), facing up, DN 200 (the elbow water-cooled, so the gas leaves it under 400 deg C); argon in at (-5.5, -2.5, 1.5) on the west frame, facing -x.'}
 size_class: 2
 fits: plant-mount.bay-s2
 physical: {length: 12.0, width: 10.7, height: 14.0, mass: 79940.0}
@@ -57,12 +58,70 @@ recipes:
   rate: 41.6666666666667
   batch: 80000
   power: 7500000.0
+ports:
+- id: power-in
+  flow: in
+  medium: power
+  power: 7500000.0
+  voltage: 300.0
+  connector: connector.bus-joint-ac-27ka
+  at: [0.0, -5.34, 6.0]
+  facing: [0.0, -1.0, 0.0]
+  note: 26 kA a phase
+- id: water-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 35.83
+  temperature: 330.0
+  connector: connector.flange-dn150-pn10
+  at: [-4.8, -4.85, 1.0]
+  facing: [0.0, -1.0, 0.0]
+- id: water-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 35.83
+  temperature: 320.0
+  connector: connector.flange-dn150-pn10
+  at: [-4.2, -4.85, 1.0]
+  facing: [0.0, -1.0, 0.0]
+- id: alloy-in
+  flow: in
+  medium: bulk
+  rate: 0.6792
+  connector: connector.chute-dn400
+  at: [0.0, 3.0, 9.0]
+  facing: [0.0, 0.0, 1.0]
+  note: ferromanganese, ferrosilicon and copper (element.mn, si, cu); through the chute's lock
+- id: fume-out
+  flow: out
+  medium: gas
+  item: material.argon
+  rate: 0.02083
+  pressure: 50000.0
+  temperature: 673.0
+  connector: connector.flange-dn200-pn1-ss
+  at: [2.0, 0.0, 7.5]
+  facing: [0.0, 0.0, 1.0]
+  note: mostly argon, with the melt's CO
+- id: argon-in
+  flow: in
+  medium: gas
+  item: material.argon
+  rate: 0.02083
+  pressure: 1000000.0
+  connector: connector.flange-dn50-pn16-ss
+  at: [-5.5, -2.5, 1.5]
+  facing: [-1.0, 0.0, 0.0]
+  note: fed under the roof to about 50 kPa
 envelope:
 - [-5.501, -4.902, -0.001, -4.499, 4.902, 12.001]
 - [-5.251, -5.001, 11.599, 5.251, 5.001, 12.801]
 - [4.499, -4.902, -0.001, 5.501, 4.902, 12.001]
 - [-5.251, -5.341, 4.599, 5.251, -3.058, 12.691]
-- [-2.301, -3.221, 3.798, 2.501, 3.301, 14.001]
+- [-2.301, -3.221, 3.798, 2.501, 0.9, 14.001]
+- [-0.4, 0.9, 3.798, 0.4, 3.301, 9.001]
 - [-5.001, -4.851, 0.798, -1.409, -0.687, 6.625]
 life: 788940000
 visual: {format: freefall-model/1, path: models/ladle-furnace-80t-sealed/v1, manifest_sha256: 089a53bf2442adb3981bc188959b2d70cfc8f0373787db1e7baf0854f16ca8be, version: 1, triangles: 20702}

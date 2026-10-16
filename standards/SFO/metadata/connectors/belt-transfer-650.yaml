@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: connector.belt-transfer-650, name: 'Belt transfer, 650 mm', description: 'Where a 650 mm belt''s head drops into a hopper or onto another belt: the hood and the drop chute (3 m). A receiving belt''s skirt is its tail''s. Its origin is the head pulley''s centre: the hood over it to 0.55 m up, inside the pulley''s bearings, the chute flaring below it to its square and down to 3 m under the pulley, where the port is.'}
+kind: belt-transfer
+size: 0.65
+sealing: open
+physical: {length: 0.95, width: 1.25, height: 3.55, mass: 1100.8}
+built_of:
+- {what: 'Hood, drop chute and mounting tabs', item: material.structural-steel-a36, mass: 1011.6, note: 'a hood over the belt''s head and a chute 0.9 m square, 3 m down, 10 mm plate, on four 12 mm tabs seated on the head frame''s rails (not hung from the pulley''s bearings); between the measured transfers, by the chute''s width'}
+- {what: Wear liner, item: material.polyethylene-uhmw, mass: 89.2, note: '10 mm UHMW polyethylene; between the measured transfers, by the chute''s width'}
+basis:
+- of: [built_of]
+  tier: invented
+  review: true
+  note: Plate and liner by the chute's faces, from memory.

@@ -169,3 +169,31 @@ Install each with `tools/standards/install_model.py` as usual. The kinds `connec
 - the lined duct DN 1200 PN 1 and its lined flange;
 - pipes DN 1200 PN 1, DN 400 PN 10, DN 150 PN 25 lagged and DN 100 PN 25, with their flanges;
 - the 33 kV 630 mm2 cable and its termination.
+
+## 7. The airless ladle station (2026-10-16)
+
+`layout.ladle-station-airless` is now laid of runs (24 runs, 7 layout ports, 0 faults). The maintenance crane's legs sweep x -29 to 17 along y -11 and 13; nothing crosses them. Its rails moved 1 m north (y -11 and 13), so the alloy bins fit inside its span on a 2.8 m plinth with the stair tower. The filter moved inside the span too, east of the furnace. The cooling mains leave west, past the crane's reach.
+
+**Unit versions** (plain stubs at the ports; the records say where):
+1. `ladle-furnace-80t-sealed` v2:
+   - the bus joint at the cables' hanger, (0, -5.34, 6), facing -y;
+   - the manifold's water, DN 150 facing -y: out at (-4.8, -4.85, 1), in at (-4.2, -4.85, 1);
+   - the alloy chute's mouth at (0, 3, 9), facing up: a DN 400 chute flange; the belt's head drops into it through a hood, 0.4 m over;
+   - the roof elbow's fume flange, DN 200 stainless, at (2, 0, 7.5), facing up;
+   - argon in, DN 50, at (-5.5, -2.5, 1.5) on the west frame, facing -x.
+   - Envelope: the registry split your masts box in two from the description. The masts and arms are at y -3.22 to 0.9; the alloy chute alone is x ±0.4, y 0.9 to 3.3, up to z 9. The fume pipe runs north over the roof at x 2, z 9.5. Please confirm on the model.
+2. `furnace-transformer-14mva` v2:
+   - a 33 kV cable box over the HV bushings, 2 x 0.6 x 0.5 m, its gland plate at (0, -0.45, 3.7);
+   - the secondary bus joint at (0, 1.35, 2.13), the phases 0.6 m apart;
+   - the cooler's water at (-2.15, -0.3, 1) in and (-2.15, 0.3, 1) out, facing -x.
+3. `alloy-bins-8` v2:
+   - the transfer chute's foot kicked 1 m to +x at 45 degrees, to (1, 0, 7), DN 400, so the belt passes between the centre and east legs under the deck;
+   - its 400 V box at (6.3, 0, 1), facing +x.
+4. `degassing-stand`: on the argon cabinet's -x face, argon in DN 50 at (-3.3, -3.1, 0.6) and 400 V at (-3.3, -2.6, 1.2).
+5. `offgas-filter-sealed`: a second, small inlet, DN 200 stainless, at (-6, 1.4, 8), facing -x. Both inlets are spares a layout may blind: draw both open.
+
+**Kit pieces without a model** (5 runs, 5 connectors):
+- the 0.65 m belt and its transfer;
+- the AC busbar, 27 kA, with its joint;
+- pipes DN 200 PN 1 and DN 50 PN 16, both stainless, with their flanges;
+- the 33 kV 120 mm2 cable and its termination.

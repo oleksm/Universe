@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.offgas-filter-sealed, name: 'Off-gas filter, sealed', description: 'Takes the furnace''s 1.4 kg/s of CO with its dust from the steam-cooled duct at about 1 bar and 250 deg C, through ceramic candle filters in a closed vessel, and lets it out past the valve that holds the furnace''s pressure, up a short stack: on an airless world the gas simply leaves (or a later unit can compress it as fuel). The dust is let out through a lock into sealed bins. Gas in at local (-6, 0, 8).'}
+identity: {key: unit.offgas-filter-sealed, name: 'Off-gas filter, sealed', description: 'Takes the furnace''s 1.4 kg/s of CO with its dust from the steam-cooled duct at about 1 bar and 250 deg C, through ceramic candle filters in a closed vessel, and lets it out past the valve that holds the furnace''s pressure, up a short stack: on an airless world the gas simply leaves (or a later unit can compress it as fuel). The dust is let out through a lock into sealed bins. Gas in at local (-6, 0, 8). Two inlets (SFO 25), each blinded when unused: a DN 1200 flange at (-6, 0, 8) for an arc furnace''s gas and a DN 200 nozzle at (-6, 1.4, 8) for a ladle furnace''s fume; its 400 V box at (5, 0, 1), facing +x.'}
 size_class: 2
 fits: plant-mount.bay-s2
 physical: {length: 12.0, width: 6.0, height: 10.0, mass: 30480.0}
@@ -22,6 +22,19 @@ ports:
   connector: connector.flange-dn1200-pn1
   at: [-6.0, 0.0, 8.0]
   facing: [-1.0, 0.0, 0.0]
+  optional: true
+- id: fume-in
+  flow: in
+  medium: gas
+  item: material.argon
+  rate: 0.02083
+  pressure: 50000.0
+  temperature: 673.0
+  connector: connector.flange-dn200-pn1-ss
+  at: [-6.0, 1.4, 8.0]
+  facing: [-1.0, 0.0, 0.0]
+  note: a small nozzle beside the main inlet, for a ladle furnace's fume
+  optional: true
 - id: power-in
   flow: in
   medium: power

@@ -2644,6 +2644,59 @@ def arc_furnace_airless(us, recs):
     return layout, bays
 
 
+def ladle_ports(us):
+    """Ports on the units of the airless ladle station (SFO 25)."""
+    K = 273.15
+    WATER, AR = "good.water", "material.argon"
+    lv = lambda w: kit.termination(400, kit.area_for(amps(w, 400)))
+    ar_each = 0.5 * 0.001 * L_RATE                    # kg/s: the recipe's 1 kg of argon a tonne, half through the plug on the stand and half under the furnace's roof (the split invented)
+    alloys = sum(i["quantity"] for i in lmod["recipes"][0]["inputs"] if i["item"].startswith("element.") and i["item"] != "element.ar") * L_RATE
+    flow = (L_WATER * L_P + TRANSFORMER_LOSS * L_MVA) / (4186 * 10)
+    dn = kit.dn_for(math.sqrt(4 * flow / 1000 / 2.5 / math.pi))
+    lf = us["ladle-furnace-80t-sealed"]
+    lf["desc"] += (f" Its ports (SFO 25): the bus joint at the cables' hanger, (0, -5.34, 6), facing -y; the manifold's water, DN {dn * 1000:.0f} facing -y, out at (-4.8, -4.85, 1) and in at (-4.2, -4.85, 1); the alloy chute's mouth at (0, 3, 9), a belt's head over it; "
+                   "the fume out of the roof's elbow at (2, 0, 7.5), facing up, DN 200 (the elbow water-cooled, so the gas leaves it under 400 deg C); argon in at (-5.5, -2.5, 1.5) on the west frame, facing -x.")
+    lf["ports"] = [
+        port("power-in", "in", "power", kit.bus_joint(L_V2, L_I2, 3), (0.0, -5.34, 6.0), (0, -1, 0), power=L_P, voltage=L_V2, note=f"{L_I2 / 1000:.0f} kA a phase"),
+        port("water-out", "out", "liquid", kit.flange(dn, 10, temp=330.0), (-4.8, -4.85, 1.0), (0, -1, 0), item=WATER, rate=L_WATER * L_P / (4186 * 10), temperature=330.0),
+        port("water-in", "in", "liquid", kit.flange(dn, 10, temp=330.0), (-4.2, -4.85, 1.0), (0, -1, 0), item=WATER, rate=L_WATER * L_P / (4186 * 10), temperature=320.0),
+        port("alloy-in", "in", "bulk", kit.chute(0.4), (0.0, 3.0, 9.0), (0, 0, 1), rate=alloys, note="ferromanganese, ferrosilicon and copper (element.mn, si, cu); through the chute's lock"),
+        port("fume-out", "out", "gas", kit.flange(0.2, 1, kit.SS, temp=673.0), (2.0, 0.0, 7.5), (0, 0, 1), item=AR, rate=ar_each, pressure=0.5e5, temperature=673.0, note="mostly argon, with the melt's CO"),
+        port("argon-in", "in", "gas", kit.flange(0.05, 16, kit.SS), (-5.5, -2.5, 1.5), (-1, 0, 0), item=AR, rate=ar_each, pressure=10e5, note="fed under the roof to about 50 kPa"),
+    ]
+    t = us["furnace-transformer-14mva"]
+    L_, W_, H_ = t["dims"]
+    if "HV cable box" not in [x["what"] for x in t["built_of"]]:
+        t["built_of"] = t["built_of"] + [part("HV cable box", A36, 2 * (2.0 * 0.6 + 2.0 * 0.5 + 0.6 * 0.5) * 0.006 * RHO["steel"], "2 x 0.6 x 0.5 m, 6 mm, over the three HV bushings: from its dimensions (to be drawn, v2)")]
+        t["desc"] += (f" Fed at 33 kV through a cable box over its HV bushings, its gland plate on top at (0, -0.45, {H_ + 0.5:g}); the secondary's bus joint (SFO 25, the phases 0.6 m apart) at (0, {W_ / 2:g}, {H_ * 2 / 3:.2f}) facing +y; its cooler's water in at (-{L_ / 2:g}, -0.3, 1) and out at (-{L_ / 2:g}, 0.3, 1), facing -x.")
+        t["dims"] = (L_, W_, H_ + 0.5)
+    q_t = TRANSFORMER_LOSS * L_MVA / (4186 * 10)
+    t["ports"] = [
+        port("hv-in", "in", "power", kit.termination(33000, kit.area_for(amps(L_MVA * PF, 33e3, PF))), (0.0, -0.45, H_ + 0.5), (0, 0, 1), power=L_MVA * PF, voltage=33000, note="33 kV chosen"),
+        port("lv-out", "out", "power", kit.bus_joint(L_V2, L_I2, 3), (0.0, W_ / 2, round(H_ * 2 / 3, 2)), (0, 1, 0), power=L_P, voltage=L_V2),
+        port("water-in", "in", "liquid", kit.flange(kit.dn_for(math.sqrt(4 * q_t / 1000 / 2.5 / math.pi)), 10), (-L_ / 2, -0.3, 1.0), (-1, 0, 0), item=WATER, rate=q_t, temperature=320.0),
+        port("water-out", "out", "liquid", kit.flange(kit.dn_for(math.sqrt(4 * q_t / 1000 / 2.5 / math.pi)), 10), (-L_ / 2, 0.3, 1.0), (-1, 0, 0), item=WATER, rate=q_t),
+    ]
+    a = us["alloy-bins-8"]
+    a["desc"] += " Its ports (SFO 25): the transfer chute's foot kicked 1 m to +x at 45 degrees, to (1, 0, 7), so the layout's belt passes between the centre and east legs (v2); its 400 V box at (6.3, 0, 1) on the east end frame, facing +x."
+    a["ports"] = [
+        port("alloy-out", "out", "bulk", kit.chute(0.4), (1.0, 0.0, 7.0), (0, 0, -1), rate=alloys, note="onto a belt's tail"),
+        port("power-in", "in", "power", lv(a["needs"]["power"]), (6.3, 0.0, 1.0), (1, 0, 0), power=a["needs"]["power"], voltage=400),
+    ]
+    d = us["degassing-stand"]
+    d["desc"] += " Its ports (SFO 25), on the argon cabinet's -x face: argon in at (-3.3, -3.1, 0.6), DN 50; its 400 V at (-3.3, -2.6, 1.2)."
+    d["ports"] = [
+        port("argon-in", "in", "gas", kit.flange(0.05, 16, kit.SS), (-3.3, -3.1, 0.6), (-1, 0, 0), item=AR, rate=ar_each, pressure=10e5, note="to the ladle's porous plug by the stand's hose"),
+        port("power-in", "in", "power", lv(d["needs"]["power"]), (-3.3, -2.6, 1.2), (-1, 0, 0), power=d["needs"]["power"], voltage=400),
+    ]
+    g = us["offgas-filter-sealed"]
+    g["ports"][0]["optional"] = True
+    g["ports"].insert(1, dict(port("fume-in", "in", "gas", kit.flange(0.2, 1, kit.SS, temp=673.0), (-6.0, 1.4, 8.0), (-1, 0, 0), item=AR, rate=ar_each, pressure=0.5e5, temperature=673.0, note="a small nozzle beside the main inlet, for a ladle furnace's fume"), optional=True))
+    g["desc"] += " Two inlets (SFO 25), each blinded when unused: a DN 1200 flange at (-6, 0, 8) for an arc furnace's gas and a DN 200 nozzle at (-6, 1.4, 8) for a ladle furnace's fume; its 400 V box at (5, 0, 1), facing +x."
+
+
+
+
 def airless_ladle_units(us):
     """The airless ladle station's and casting bay's own units."""
     out = {}
@@ -2695,80 +2748,120 @@ def airless_ladle_units(us):
 
 def ladle_station_airless(us, recs):
     """The ladle station on airless ground: the ladle degasses on an open stand, then the sealed ladle furnace alloys and
-    reheats it under argon; no degasser, no hall, no ladle crane."""
-    lf_heat = recs["ladle-furnace-80t-sealed"]["needs"].get("heat", 0) + recs["furnace-transformer-14mva"]["needs"].get("heat", 0)
-    f_low = recs["radiator-field-330k"]["rejects"]["heat"]
+    reheats it under argon; no degasser, no hall, no ladle crane. Laid of runs from port to port (SFO 25)."""
+    rad = "radiator-field-330k"
+    bus = kit.busbar(L_V2, L_I2, 3)
+    bus_path = [None, (3.0, -6.5, round(recs["furnace-transformer-14mva"]["ports"][1]["at"][2], 3)), (3.0, -6.5, 6.0), None]
+    bus_loss = kit._recs[bus]["per_m"]["power"] * (0.65 + 3.87 + 1.16)
+    lf_heat = recs["ladle-furnace-80t-sealed"]["needs"].get("heat", 0) + recs["furnace-transformer-14mva"]["needs"].get("heat", 0) + bus_loss
+    f_low = recs[rad]["rejects"]["heat"]
     n_low = math.ceil(lf_heat / f_low)
+    PL = 2.8                                          # m: the alloy bins' plinth, so their chute's foot is level with the furnace's chute
+    rad_at = [(-60.0 - 48.0 * i, -32.0) for i in range(n_low)]
     bays = [
-        {"id": "D", "mount": "plant-mount.bay-s2", "unit": "unit.degassing-stand", "at": [-24.0 + 9.0, 0.0, 0.0], "note": "first on the rail from the arc furnace shop: degas before alloying"},
+        {"id": "D", "mount": "plant-mount.bay-s2", "unit": "unit.degassing-stand", "at": [-15.0, 0.0, 0.0], "note": "first on the rail from the arc furnace shop: degas before alloying"},
         {"id": "L", "mount": "plant-mount.bay-s2", "unit": "unit.ladle-furnace-80t-sealed", "at": [3.0, 0.0, 0.0], "note": "over the ladle rail"},
-        {"id": "T", "mount": "plant-mount.bay-s1", "unit": "unit.furnace-transformer-14mva", "at": [3.0, -9.0, 0.0], "note": "on its slab south of the ladle furnace, no fire walls"},
-        {"id": "A", "mount": "plant-mount.bay-s3", "unit": "unit.alloy-bins-8", "at": [3.0, 27.0, 0.0], "note": "north; open feeders and belt, vacuum-rated"},
-        {"id": "S", "mount": "plant-mount.bay-s1", "unit": "unit.stair-tower-12m", "at": [11.0, 27.0, 0.0], "note": "against the bins' east end, as in the station for air: its top landing at (9, 27, 12) gives onto the bins' deck"},
-        {"id": "G", "mount": "plant-mount.bay-s2", "unit": "unit.offgas-filter-sealed", "at": [21.0, 18.0, 0.0], "note": "north-east: the ladle furnace's argon and fume"},
+        {"id": "T", "mount": "plant-mount.bay-s1", "unit": "unit.furnace-transformer-14mva", "at": [3.0, -8.5, 0.0], "note": "on its slab south of the ladle furnace, inside the crane's legs, no fire walls"},
+        {"id": "A", "mount": "plant-mount.bay-s3", "unit": "unit.alloy-bins-8", "at": [2.0, 9.0, PL], "note": f"north of the furnace, inside the crane's legs (it passes over them), on a {PL:g} m plinth so a short level belt reaches the furnace's chute"},
+        {"id": "S", "mount": "plant-mount.bay-s1", "unit": "unit.stair-tower-12m", "at": [-6.0, 9.0, PL], "turn": 180.0, "note": "against the bins' west end, on their plinth: its top landing gives onto the bins' deck"},
+        {"id": "G", "mount": "plant-mount.bay-s2", "unit": "unit.offgas-filter-sealed", "at": [21.0, 5.5, 0.0], "note": "east, inside the crane's legs, north of the ladle rail: the ladle furnace's argon and fume"},
         {"id": "P", "mount": "plant-mount.bay-s1", "unit": "unit.crew-post", "at": [24.0, -18.0, 0.0], "note": "south-east, under its berm, which stays outside the crane's rails"},
     ]
-    bays += [{"id": f"RL{i + 1}", "mount": "plant-mount.bay-s4", "unit": "unit.radiator-field-330k", "at": [-24.0 - 48.0 * i, -42.0, 0.0], "note": "south-west"} for i in range(n_low)]
-    tr = us["furnace-transformer-14mva"]
-    tL, tW, tH = tr["dims"]
+    bays += [{"id": f"RL{i + 1}", "mount": "plant-mount.bay-s4", "unit": f"unit.{rad}", "at": [x, y, 0.0], "note": "south-west, past the crane's reach"} for i, (x, y) in enumerate(rad_at)]
+    lvf = 400
+    need = lambda k: recs[k]["needs"]["power"]
+    lv = lambda w: kit.termination(lvf, kit.area_for(amps(w, lvf)))
+    lc = lambda w: kit.cable(lvf, kit.area_for(amps(w, lvf)))
+    p_fields = n_low * need(rad)
+    ar = 0.001 * L_RATE
+    hv = recs["furnace-transformer-14mva"]["ports"][0]
+    edge = [
+        port("argon-in", "in", "gas", kit.flange(0.05, 16, kit.SS), (-30.0, -4.5, 0.6), (1, 0, 0), item="material.argon", rate=ar, pressure=10e5, note="the site's argon, at 10 bar"),
+        port("hv-in", "in", "power", hv["connector"], (18.0, -30.0, 0.3), (0, 1, 0), power=hv["power"], voltage=33000, note="the site's 33 kV substation"),
+        port("lv-stand", "in", "power", lv(need("degassing-stand")), (-24.0, -2.6, 1.2), (1, 0, 0), power=need("degassing-stand"), voltage=lvf),
+        port("lv-bins", "in", "power", lv(need("alloy-bins-8")), (13.0, 9.0, PL + 1.0), (-1, 0, 0), power=need("alloy-bins-8"), voltage=lvf),
+        port("lv-filter", "in", "power", lv(need("offgas-filter-sealed")), (31.0, 5.5, 1.0), (-1, 0, 0), power=need("offgas-filter-sealed"), voltage=lvf),
+        port("lv-post", "in", "power", lv(need("crew-post")), (32.0, -18.0, 2.3), (-1, 0, 0), power=need("crew-post"), voltage=lvf),
+        port("lv-fields", "in", "power", lv(p_fields), (-32.4, -8.5, 0.3), (0, -1, 0), power=p_fields, voltage=lvf, note="the site's 400 V distribution, for the fields' pumps"),
+    ]
+    flow = lf_heat / (4186 * 10)
+    w_main = kit.pipe(kit.dn_for(math.sqrt(4 * flow / 1000 / 2.5 / math.pi)), 10, liquid=True, temp=330.0)
+    assert kit._recs[w_main]["connector"] == recs["ladle-furnace-80t-sealed"]["ports"][1]["connector"], "the furnace's manifold is flanged for the loop's mains"
+    q_t = TRANSFORMER_LOSS * L_MVA / (4186 * 10)
+    wt = kit.pipe(kit.dn_for(math.sqrt(4 * q_t / 1000 / 2.5 / math.pi)), 10, liquid=True)
+    ar_pipe = kit.pipe(0.05, 16, kit.SS)
+    belt = kit.belt(0.65, recs["alloy-bins-8"]["ports"][0]["rate"] * 10)
+    L = lambda *a: kit_link(*a[:4], bays, recs, edge, *a[4:])
     links = [
+        L("alloy belt", belt, ("A:alloy-out", "L:alloy-in"), [None, None], (), 1, 20000.0,
+          "level, 6 m: from the bins' chute south between their centre and east legs, under their deck, to the furnace's alloy chute, its head through a hood into the chute's mouth; open, its bearings vacuum-rated"),
+        L("secondary bus", bus, ("T:lv-out", "L:power-in"), bus_path, (), 1, bus_loss,
+          f"three phases of water-cooled copper tube, {L_I2 / 1000:.0f} kA each, up from the transformer's joint to the furnace's cables; their loss, {bus_loss / 1e3:.1f} kW, to the cool loop"),
+        L("transformer supply", kit.cable(33000, kit.area_for(amps(L_MVA * PF, 33e3, PF))), ("edge:hv-in", "T:hv-in"),
+          [None, (18.0, -8.95, 0.3), (18.0, -8.95, 4.9), (3.0, -8.95, 4.9), None], (), 1, None, "north along x 18, east of the crane's reach, then west 4.9 m up into the cable box"),
+        L("fume to the filter", kit.pipe(0.2, 1, kit.SS, temp=673.0), ("L:fume-out", "G:fume-in"), [None, (5.0, 0.0, 9.5), (5.0, 6.9, 9.5), (13.0, 6.9, 9.5), (13.0, 6.9, 8.0), None], (), 1, None,
+          f"{ar / 2:.3f} kg/s of argon and the melt's CO at about 50 kPa: up from the roof's elbow, north out of the furnace's open side and east under the bins' deck to the filter's small inlet; the filter lets it go up its stack (argon is scarce on a moon: a later unit could take it back)"),
+        L("argon main", ar_pipe, ("edge:argon-in", "L:argon-in"), [None, (-4.0, -4.5, 0.6), (-4.0, -2.5, 0.6), (-4.0, -2.5, 1.5), None], (), 1, None, "along y -4.5, south of the ladle car's path, to the furnace's west frame"),
+        L("argon to the stand", ar_pipe, ("tee:argon main", "D:argon-in"), [(-19.5, -4.5, 0.6), (-19.5, -3.1, 0.6), None]),
+        L("stand supply", lc(need("degassing-stand")), ("edge:lv-stand", "D:power-in"), [None, None]),
+        L("bins supply", lc(need("alloy-bins-8")), ("edge:lv-bins", "A:power-in"), [None, None], (), 1, None, "along the plinth"),
+        L("filter supply", lc(need("offgas-filter-sealed")), ("edge:lv-filter", "G:power-in"), [None, None]),
+        L("crew post supply", lc(need("crew-post")), ("edge:lv-post", "P:power-in"), [None, None], (), 1, None, "through the berm"),
+    ]
+    # The cool loop, 330 K: flow (from the furnace) and return mains as a parallel pair, west inside the crane's legs
+    # past its reach, then south to the fields; the return on the flow's left all the way.
+    xf, xr, xl = -34.8, -33.6, -32.4
+    rows, yf, yr, yl, row_links = radiator_rows(L, bays, recs, rad, rad_at, xf, xr, xl, lvf)
+    links += [
+        L("loop flow main", w_main, ("L:water-out", "cap"), [None, (-1.8, -6.0, 1.0), (xf, -6.0, 1.0), (xf, yf(rows[0]) - 1.0, 1.0)], (), 1, None, f"{flow:,.1f} kg/s at about 330 K to the {n_low} fields"),
+        L("loop return main", w_main, ("cap", "L:water-in"), [(xr, yr(rows[0]) - 1.0, 1.0), (xr, -6.6, 1.0), (-1.2, -6.6, 1.0), None], (), 1, None, "back at about 10 K less"),
+        L("radiator pumps' supply", lc(p_fields), ("edge:lv-fields", "cap"), [None, (xl, yl(rows[0]) - 1.0, 0.3)], (), 1, None, "south along the fields' east side, beside the loop's mains"),
+    ]
+    links += row_links
+    links += [
+        L("transformer cooling in", wt, ("tee:loop return main", "T:water-in"), [(-4.2, -6.6, 1.0), (-4.2, -8.8, 1.0), None], (), 1, None, "off the return main, a balancing orifice in the main between this pair's tees"),
+        L("transformer cooling out", wt, ("T:water-out", "tee:loop return main"), [None, (-3.0, -8.2, 1.0), (-3.0, -6.6, 1.0)]),
         link("rail", "ladle rail", (-30.0, 0.0, 0.0), (30.0, 0.0, 0.0), A36, 2 * 60.0, None, "two 60 kg/m rails at 3 m gauge on sintered regolith sleepers, from the arc furnace shop to the casting bay; the car stops at x -15 (the stand) and 3 (the ladle furnace)"),
-        link("busbar", "secondary bus", (3.0, -9.0 + tW / 2, tH * 2 / 3), (3.0, -5.0, 6.0), CU, 3 * L_I2 / 4e6 * RHO["copper"], None, "as for air"),
-        link("conveyor", "alloy feed", (3.8, 27.0, 6.6), (3.0, 3.0, 9.4), A36, 100.0, 20000.0, "0.65 m belt, open (no gallery on airless ground), into the furnace's alloy lock; fed from the bins' outlet (3, 27, 7.4) by a short chute at 45 degrees, so the belt clears the bins' centre column"),
-        link("duct", "fume", (5.0, 0.0, 7.5), (15.0, 18.0, 8.0), A36, math.pi * 0.5 * 0.006 * RHO["steel"], None, "0.5 m: the argon and fume from under the sealed roof, a tenth of the air shop's flow; a reducer from the roof's 1 m neck to the duct at its start (z 7.5 to 8.5), and a widener to the filter's 1.2 m inlet at its end (x 13.5 to 15)", via=[(5.0, 0.0, 10.0), (5.0, 6.0, 10.0), (12.0, 10.0, 10.0), (13.5, 18.0, 8.0)]),
-        link("pipe", "cooling water to the radiators", (-24.0 - 48.0 * (n_low - 1) - 26.0, -18.0, 1.0), (-1.5, -4.5, 1.0), A36, math.pi * 0.25 * 0.006 * RHO["steel"] * 2, None, f"a pair of 250 mm pipes, flow and return, at about 330 K, as a trunk along y -18, north of the {n_low} radiator fields, to the furnace's ports at (-1.5, -4.7) and (-1.5, -4.3), 1 m up; flow 1 m up and return 0.65 above grade, both dipping (to z -0.6 and -0.95) in a covered trench under the crane's south rail from y -13.5 to -10.5", via=[(-1.5, -18.0, 1.0), (-1.5, -13.5, 1.0), (-1.5, -13.5, -0.6), (-1.5, -10.5, -0.6), (-1.5, -10.5, 1.0)]),
-        *[link("pipe", f"radiator branch {k + 1}", (-24.0 - 48.0 * k - 26.0, -18.0, 1.0), (-24.0 - 48.0 * k - 24.0, -42.0, 1.0), A36, math.pi * 0.15 * 0.004 * RHO["steel"] * 2, None, "a 150 mm pair from the trunk down outside the field's west edge to its ports (flow at y -42.6, return -41.4)", via=[(-24.0 - 48.0 * k - 26.0, -42.0, 1.0)]) for k in range(n_low)],
-        link("pipe", "transformer cooling", (-1.5, -9.0, 1.0), (3.0 - tL / 2, -9.0, 1.35), A36, 2 * math.pi * 0.1 * 0.005 * RHO["steel"], None, "a pair of 100 mm pipes teed off the main at y -9, east to the transformer's cooler on its -x face (flow at z 1.35, return above it, as the furnace transformers' ports)", via=[(3.0 - tL / 2 - 0.8, -9.0, 1.0), (3.0 - tL / 2 - 0.8, -9.0, 1.35)]),
-        link("rail", "crane rails", (-24.0, 0.0, 0.0), (12.0, 0.0, 0.0), A36, 2 * 50.0, None, "the maintenance gantry crane's two straight rails over the stand and the ladle furnace, at y -12 and 12 (24 m apart); the link runs on their centre line"),
+        link("rail", "crane rails", (-24.0, 1.0, 0.0), (12.0, 1.0, 0.0), A36, 2 * 50.0, None, "the maintenance gantry crane's two straight rails over the stand, the furnace and the bins, at y -11 and 13 (24 m apart); the link runs on their centre line. No run crosses them: the crane's legs sweep x -29 to 17 along both"),
     ]
     mobile = [{"unit": "unit.ladle-car-80t", "rides": "ladle rail", "at": [-15.0, 0.0, 0.0]},
-              {"unit": "unit.gantry-crane-20t-moon", "rides": "crane rails", "at": [-6.0, 0.0, 0.0]}]
+              {"unit": "unit.gantry-crane-20t-moon", "rides": "crane rails", "at": [-6.0, 1.0, 0.0]}]
+    plinth = 16.0 * 6.3 * PL
     ground = [
         {"what": "Ladle furnace foundation", "item": SINTER, "volume": 102.0, "note": "as for air, of sintered regolith; measured on blender's layout (candidate v01)"},
         {"what": "Stand and transformer pads", "item": SINTER, "volume": 41.6, "note": "the degassing stand's (20.0) and the transformer's (21.6); measured on blender's layout (candidate v01)"},
-        {"what": "Bins and filter pads", "item": SINTER, "volume": 146.98, "note": "the alloy bins' (84.48) and the off-gas filter's (62.5); measured on blender's layout (candidate v01)"},
-        {"what": "Stair pad", "item": SINTER, "volume": 16.63, "note": "under the stair tower; measured on blender's layout (candidate v01)"},
-        {"what": "Service trench", "item": SINTER, "volume": 2.67, "note": "the trench under the crane's south rail at x -1.5, for the cooling trunk: floor and walls (its cover is steel); measured on blender's layout (candidate v01)"},
+        {"what": "Bins' plinth", "item": SINTER, "volume": r(plinth), "note": f"16 x 6.3 m under the alloy bins and the stair tower, {PL:g} m high, sintered regolith blocks, with a ramp for the crews (not counted)"},
+        {"what": "Filter pad", "item": SINTER, "volume": 62.5, "note": "measured on blender's layout (candidate v01)"},
         {"what": "Crew post berm", "item": "material.regolith", "volume": 584.56, "note": "loose regolith at least 1 m over the post everywhere, lying at 35 degrees, its foot about 19 x 17 m, a cavity for the post, the ramp cut and the light wells; measured on blender's layout (candidate v01)"},
         {"what": "Crew post entry and light wells", "item": SINTER, "volume": 14.0, "note": "the landing, the ramp, the cut's retaining sides and the light wells' retainers, provisional; measured on blender's layout (candidate v01)"},
         {"what": "Rail sleepers", "item": SINTER, "volume": 12.77, "note": "under the ladle rail (8.0) and the crane's rails (4.8); measured on blender's layout (candidate v01)"},
-        {"what": "Radiator legs' pads", "item": SINTER, "volume": 6.91, "note": "a block under each leg; measured on blender's layout (candidate v01)"},
-        {"what": "Feet", "item": SINTER, "volume": 3.05, "note": "under the alloy belt's trestles, the fume duct's supports and the pipes' supports; measured on blender's layout (candidate v01)"},
-        {"what": "Pipe supports and trench cover", "item": A36, "volume": r(2912.3 / RHO["steel"]), "note": "the pipes' and duct's supports (1,507 kg) and the trench's steel cover (1,405 kg), hollow stock, provisional; measured on blender's layout (candidate v01), 2,912 kg"},
+        {"what": "Radiator legs' pads", "item": SINTER, "volume": r(6.91 / 2 * n_low), "note": "a block under each leg; 3.46 m3 a field, as measured on blender's layout (candidate v01)"},
+        {"what": "Feet", "item": SINTER, "volume": 3.05, "note": "under the belt, the pipes' and the cables' supports; as measured on blender's layout (candidate v01) before the runs were re-laid, to measure again"},
     ]
-    bus_cu = (1000.4 + 279.6) * RHO["copper"] / RHO["steel"]
-    measured = {"ladle rail": 8129.5, "crane rails": 4606.4 + 49.5, "secondary bus": bus_cu, "alloy feed": 5546.5 + 24.18 * 50.0, "fume": 4518.4,
-                "cooling water to the radiators": 10558.6, "radiator branch 1": 4729.9 * 2331.3 / 4819.4, "radiator branch 2": 4729.9 * 2488.1 / 4819.4, "transformer cooling": 166.7}
-    for l in links:
-        if l["name"] in measured:
-            l["mass"] = r(measured[l["name"]])
-            l["note"] = l.get("note", "") + "; its mass measured on blender's layout (candidate v01)" + (", the belt's stringers, trestles and hood with 50 kg/m of belt and idlers from memory" if l["name"] == "alloy feed" else "")
-            if l["name"].startswith("radiator branch"):
-                l["note"] = l["note"].replace("a 150 mm pair", "a 250 mm pair")
     for g in ground:
         g["mass"] = r(g["volume"] * (RHO_SINTER if g["item"] == SINTER else RHO["steel"] if g["item"] == A36 else 1500.0))
     used = [recs[b["unit"].split(".", 1)[1]] for b in bays] + [recs[m_["unit"].split(".", 1)[1]] for m_ in mobile]
     power = sum(u.get("needs", {}).get("power", 0) for u in used) + sum(l.get("power", 0) for l in links)
-    heat = sum(u.get("needs", {}).get("heat", 0) for u in used)
+    heat = sum(u.get("needs", {}).get("heat", 0) for u in used) + bus_loss
     mass_units = sum(u["physical"]["mass"] for u in used)
     mass_links = sum(l["mass"] for l in links)
     mass_ground = sum(g["mass"] for g in ground)
     total = mass_units + mass_links + mass_ground
-    against = (f"module.ladle-station: one box, the same on every world. This layout: the same rate; {power / 1e6:.1f} MW; {heat / 1e6:.1f} MW to {n_low} radiator fields at 330 K; no water used up. "
+    against = (f"module.ladle-station: one box, the same on every world. This layout: the same rate; {power / 1e6:.1f} MW; {heat / 1e6:.1f} MW to {n_low} radiator fields at 330 K; no water used up; {ar:.3f} kg/s of argon, let go. "
                f"No degasser: the vacuum degasses the ladle on an open stand, but must not see the alloys, which the sealed ladle furnace adds under argon; no ladle crane (nothing is lifted into a tank) and no hall. "
                f"{(mass_units + mass_links) / 1000:,.0f} t of plant, {mass_ground / 1000:,.0f} t of sintered regolith.")
     xs = [b["at"][0] + s * unit_dims(recs, b)[0] / 2 for b in bays for s in (-1, 1)] + [p[0] for l in links for p in (l["from"], l["to"], *l.get("via", []))]
     ys = [b["at"][1] + s * unit_dims(recs, b)[1] / 2 for b in bays for s in (-1, 1)] + [p[1] for l in links for p in (l["from"], l["to"], *l.get("via", []))]
     layout = {
         "identity": {"key": "layout.ladle-station-airless", "name": "Ladle station, airless",
-                     "description": "The ladle station on airless ground at about a moon's gravity: the heat comes on its car from the arc furnace shop, stands a quarter hour on an open degassing stand where the vacuum takes its gases, then goes under the sealed ladle furnace, which alloys and reheats it under argon, and on to the casting bay. Radiators for the tower, a maintenance gantry crane, a pressurised crew post. Built separately from the station for air."},
+                     "description": "The ladle station on airless ground at about a moon's gravity: the heat comes on its car from the arc furnace shop, stands a quarter hour on an open degassing stand where the vacuum takes its gases, then goes under the sealed ladle furnace, which alloys and reheats it under argon, and on to the casting bay. Radiators for the tower, a maintenance gantry crane that nothing crosses, a pressurised crew post. Built separately from the station for air."},
         "stands_for": "module.ladle-station",
         "site": {"atmosphere": "none", "gravity": list(MOON_G)},
         "physical": {"length": r(max(xs) - min(xs)), "width": r(max(ys) - min(ys)), "height": 27.0, "mass": r(total)},
-        "bays": bays, "mobile": mobile, "links": links, "ground": ground,
+        "bays": bays, "ports": edge, "mobile": mobile, "links": links, "ground": ground,
         "totals": {"rate": L_RATE, "power": r(power), "heat": r(heat), "water": 0.0, "mass": r(total), "against_module": against},
         "staff": lmod.get("staff"),
-        "basis": [{"of": ["bays", "links", "mobile"], "tier": "invented", "review": True, "note": "Laid out for airless ground."},
+        "basis": [{"of": ["bays", "links", "mobile"], "tier": "invented", "review": True, "note": "Laid out for airless ground, of runs from port to port (SFO 25). The crane's and the ladle car's feeds are not laid yet."},
                   {"of": ["ground"], "tier": "derived", "review": True, "note": "Volumes as for air, of sintered regolith at 2,500 kg/m3 and loose regolith at 1,500."},
                   {"of": ["totals", "physical"], "tier": "derived", "note": "Summed from the units, links and ground."},
                   {"of": ["staff"], "tier": "derived", "note": "The module's watch, unchanged; it works from the crew post."}],
@@ -4306,6 +4399,7 @@ def main():
     h2_ports(us)
     pellet_ports(us)
     arc_ports(us)
+    ladle_ports(us)
     recs = {slug: unit_record(slug, u) for slug, u in us.items()}
     layouts = {"arc-furnace-air": arc_furnace_air(us, recs), "ladle-station-air": ladle_station_air(us, recs), "casting-bay-air": casting_bay_air(us, recs), "shaft-furnace-air": shaft_furnace_air(us, recs), "hydrogen-plant-air": hydrogen_plant_air(us, recs), "pellet-plant-air": pellet_plant_air(us, recs), "ore-yard-air": ore_yard_air(us, recs), "ingot-yard-air": ingot_yard_air(us, recs), "arc-furnace-airless": arc_furnace_airless(us, recs),
                "ladle-station-airless": ladle_station_airless(us, recs), "casting-bay-airless": casting_bay_airless(us, recs),

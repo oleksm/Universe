@@ -143,3 +143,17 @@ Open after the pellet plant:
 Open after the arc furnace shop:
 - **Feeds to moving units.** The crane, the ladle car and the slag car are not fed yet.
 - **Hot panels.** Panels cooled by water at 20 bar and 485 K (pressurised hot-water cooling, as some furnaces have) would put all 13.6 MW on about 2 hot fields in place of 12 cool ones. That is about 10 fields' worth of aluminium and pads saved. It needs the vessel's panels rated for 20 bar.
+
+## The fifth layout: the airless ladle station (2026-10-16)
+
+`layout.ladle-station-airless` is laid of runs: 24 runs, 7 layout ports, 0 faults. It weighs 2,663 t, up from 2,221 t; the bins' plinth is most of that.
+
+- **The maintenance crane** had the same fault as the arc furnace shop's: the alloy belt, the fume duct and the cooling main crossed its legs.
+  - Its rails moved 1 m north, so the alloy bins stand inside its span, under its hook. They sit on a 2.8 m plinth of sintered regolith with the stair tower.
+  - The belt to the furnace's chute is now level and 6 m long.
+  - The filter stands inside the span too.
+  - The mains go west past the crane's reach before turning south.
+- **The furnace's alloy chute.** Its gantry's cross beams (z 11.6 to 12.8) leave no room for a belt's head 3 m over the chute. So the chute is a chute flange, and the belt's head drops into it through a hood, 0.4 m over, as blender drew it. The fit check now lets a belt's head meet a chute.
+- **The fume** is mostly argon at 50 kPa, about 0.02 kg/s: a DN 200 line, not the old 0.5 m duct sized from the station for air. It goes to a second, small inlet on the shared filter.
+- **Argon** comes from the site at 10 bar to the stand and the furnace: the recipe's 1 kg a tonne, 0.042 kg/s. It is let go. On a moon that is scarce argon, and a later unit could take it back.
+- **The bus** is the kit's AC busbar, 27 kA a phase. The transformer is fed at 33 kV through a cable box (v2).

@@ -1,15 +1,51 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.furnace-transformer-14mva, name: 'Furnace transformer, 14 MVA', description: 'Steps the grid down for the ladle furnace''s arc: 10.9 MW to heat 80 t at 4 degrees a minute, 40% of it reaching the steel, at a power factor of 0.8; about 300 V and 26 kA a phase, with on-load taps. Oil-filled in a closed tank, HV bushings and conservator on top, cooled by oil to water. Three secondary terminals on one long face (+y), 2.1 m up; the oil-to-water cooler''s water ports on its -x end, 1 m up. Stands in a fire-walled vault.'}
+identity: {key: unit.furnace-transformer-14mva, name: 'Furnace transformer, 14 MVA', description: 'Steps the grid down for the ladle furnace''s arc: 10.9 MW to heat 80 t at 4 degrees a minute, 40% of it reaching the steel, at a power factor of 0.8; about 300 V and 26 kA a phase, with on-load taps. Oil-filled in a closed tank, HV bushings and conservator on top, cooled by oil to water. Three secondary terminals on one long face (+y), 2.1 m up; the oil-to-water cooler''s water ports on its -x end, 1 m up. Stands in a fire-walled vault. Fed at 33 kV through a cable box over its HV bushings, its gland plate on top at (0, -0.45, 3.7); the secondary''s bus joint (SFO 25, the phases 0.6 m apart) at (0, 1.35, 2.13) facing +y; its cooler''s water in at (-2.15, -0.3, 1) and out at (-2.15, 0.3, 1), facing -x.'}
 size_class: 1
 fits: plant-mount.bay-s1
-physical: {length: 4.3, width: 2.7, height: 3.2, mass: 21870.0}
+physical: {length: 4.3, width: 2.7, height: 3.7, mass: 22100.0}
 built_of:
 - {what: Core, item: material.structural-steel-a36, mass: 8747.0, note: 'grain-oriented electrical steel, which the registry has not got: structural steel stands for it'}
 - {what: Windings, item: material.copper, mass: 5467.0}
 - {what: Tank and fittings, item: material.structural-steel-a36, mass: 3280.0}
 - {what: Oil, item: material.hydraulic-fluid, mass: 4373.0, note: 'transformer mineral oil, which the registry has not got: hydraulic fluid stands for it'}
+- {what: HV cable box, item: material.structural-steel-a36, mass: 235.5, note: '2 x 0.6 x 0.5 m, 6 mm, over the three HV bushings: from its dimensions (to be drawn, v2)'}
 needs: {power: 68330.0, heat: 68330.0}
+ports:
+- id: hv-in
+  flow: in
+  medium: power
+  power: 10930000.0
+  voltage: 33000
+  connector: connector.termination-33kv-120mm2
+  at: [0.0, -0.45, 3.7]
+  facing: [0.0, 0.0, 1.0]
+  note: 33 kV chosen
+- id: lv-out
+  flow: out
+  medium: power
+  power: 7500000.0
+  voltage: 300.0
+  connector: connector.bus-joint-ac-27ka
+  at: [0.0, 1.35, 2.13]
+  facing: [0.0, 1.0, 0.0]
+- id: water-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 1.632
+  temperature: 320.0
+  connector: connector.flange-dn100-pn10
+  at: [-2.15, -0.3, 1.0]
+  facing: [-1.0, 0.0, 0.0]
+- id: water-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 1.632
+  connector: connector.flange-dn100-pn10
+  at: [-2.15, 0.3, 1.0]
+  facing: [-1.0, 0.0, 0.0]
 envelope:
 - [-1.975, -1.175, -0.001, 2.142, 0.914, 2.564]
 - [-1.281, -0.615, 2.388, 1.281, -0.292, 3.202]
