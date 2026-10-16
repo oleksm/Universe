@@ -3,9 +3,9 @@
 identity: {key: unit.crew-post, name: 'Crew post, pressurised', description: 'The shift''s control room on airless ground: an aluminium cylinder 4 m across and 4 m long at 1 bar on two saddles, its axis along x 2.3 m up (the shell from x -1 to 3), with a 2 m airlock at its -x end (x -3 to -1), coaxial, its outer door''s threshold at (-3, 0, 1.35); both its round doors (1.9 m clear, 110 mm aluminium sandwich leaves) are plugs that open toward the higher pressure, the outer into the lock and the inner into the cabin, so the air holds them shut (about 280 kN) and their eight dogs are only latches; and closed windows on its +y side; air and water kept for its watch. The berm of loose regolith 1 m deep over it, against radiation and the cold, is the layout''s, with openings for the airlock and the windows. Drawn as its bare shell, saddles and airlock, closed.'}
 size_class: 1
 fits: plant-mount.bay-s1
-physical: {length: 6.0, width: 4.4, height: 4.6, mass: 7486.0}
+physical: {length: 6.0, width: 4.4, height: 4.6, mass: 7491.0}
 built_of:
-- {what: Shell and doors, item: material.aluminium-alloy-6061, mass: 995.8, note: 'the shell 4 m across and 4 m long, 6 mm (1 bar gives 33 MPa), and the two ribbed door leaves; measured on blender''s model v1'}
+- {what: Shell and doors, item: material.aluminium-alloy-6061, mass: 1001.0, note: 'the shell 4 m across and 4 m long, 6 mm (1 bar gives 33 MPa), the two ribbed door leaves and the power gland''s pad on the +x dome; measured on blender''s model v2'}
 - {what: 'Airlock, saddles and frames', item: material.structural-steel-a36, mass: 3490.0, note: 'the 6 mm lock, two 10 mm saddles on 400 x 400 x 20 mm foot plates (about 15 kN each under the post and its berm at 2 m/s2), door frames, viewport rings and hardware; measured on blender''s model v1'}
 - {what: Life support and fit-out, item: good.electric-motors, mass: 3000.0, note: from memory}
 needs: {power: 20000.0, atmosphere: vacuum}
