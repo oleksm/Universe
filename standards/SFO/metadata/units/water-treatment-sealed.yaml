@@ -56,6 +56,12 @@ ports:
   facing: [-1.0, 0.0, 0.0]
 envelope:
 - [-6.0, -4.0, 0.0, 6.0, 4.0, 5.02]
+visual:
+  format: "freefall-model/1"
+  path: "models/water-treatment-sealed/v1"
+  manifest_sha256: "b69d739dbefa18d9b0321f3a873720dc642d2ce36ef91c421d0b9e44fb39479e"
+  version: 1
+  triangles: 4380
 life: 788940000
 basis:
 - of: [physical, built_of, needs]
