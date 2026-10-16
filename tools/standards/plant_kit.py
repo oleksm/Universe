@@ -87,13 +87,13 @@ def flange(dn, pn, item=A36, sealing="single", temp=373.0):
     bolts = n * RHO[BOLT] * (math.pi / 4 * db ** 2 * lb + 2 * (0.866 * (1.5 * db) ** 2 - math.pi / 4 * db ** 2) * 0.8 * db)
     gw = 0.015 + 0.01 * dn
     gasket = (2 if sealing == "double" else 1) * math.pi * dg * gw * 0.0045 * 0.6 * RHO[SS]
-    built = [_part("Flanges", item, ring, f"two weld-neck rings {D:.3f} m across, {t * 1000:.0f} mm thick, their necks tapering over {t * 1000:.0f} mm from {4 * wp * 1000:.0f} mm to the pipe's wall; along the pipe the joint is {(2 * t + 0.006 + 4 * db) * 1000:.0f} mm with the necks and the bolts' and nuts' ends"),
+    built = [_part("Flanges", item, ring, f"two weld-neck rings {D:.3f} m across, {t * 1000:.0f} mm thick, their necks tapering over {t * 1000:.0f} mm from {4 * wp * 1000:.0f} mm to the pipe's wall; along the pipe the joint is {(2 * t + 0.006 + max(4 * db, 2 * t)) * 1000:.0f} mm with the necks and the bolts' and nuts' ends"),
              _part("Bolts and nuts", BOLT, bolts, f"{n} of M{db * 1000:.0f}, {lb * 1000:.0f} mm, on a {k:.3f} m circle"),
              _part("Gaskets" if sealing == "double" else "Gasket", SS, gasket, "spiral wound, stainless windings" + ("; two, the space between them piped to a leak watch" if sealing == "double" else ""))]
     _recs[key] = {"identity": {"key": key, "name": f"Flange DN {dn * 1000:.0f} PN {pn}" + (", stainless" if item == SS else "") + (", double seal" if sealing == "double" else ""),
                                "description": f"A bolted pair of weld-neck flanges for a pipe of {dn * 1000:.0f} mm nominal bore at up to {p / 1e5:.0f} bar inside (on airless ground, the whole of it against vacuum)."},
                   "kind": "flange", "size": dn, "rating": {"pressure": p, "temperature": temp}, "sealing": sealing,
-                  "physical": {"length": r(D, 3), "width": r(D, 3), "height": r(2 * t + 0.006 + 4 * db, 3), "mass": r(sum(b["mass"] for b in built))}, "built_of": built,
+                  "physical": {"length": r(D, 3), "width": r(D, 3), "height": r(2 * t + 0.006 + max(4 * db, 2 * t), 3), "mass": r(sum(b["mass"] for b in built))}, "built_of": built,
                   "basis": [{"of": ["built_of", "physical"], "tier": "derived", "review": True, "note": f"Sized by a simple rule, not to a flange code: the end force on the gasket's mean circle ({dg:.2f} m) at the class's pressure, bolts at 170 MPa, the ring's thickness from its bending about the bolt circle at 140 MPa."}]}
     return key
 

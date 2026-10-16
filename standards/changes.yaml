@@ -158,9 +158,9 @@
 - { record: connector.belt-transfer-1200, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "38fae5feb755cd05" }
 - { record: connector.chute-dn800, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "f0664ba5ebb081dc" }
 - { record: connector.flange-dn100-pn10, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, built_of", sha: "15d96294c74e396c" }
-- { record: connector.flange-dn1000-pn16-double, at: "2026-10-16T12:29:16Z", status: draft, summary: "changed: visual", sha: "d5349e35db28761a" }
+- { record: connector.flange-dn1000-pn16-double, at: "2026-10-16T12:39:27Z", status: draft, summary: "changed: physical, built_of", sha: "30a63c1475db2018" }
 - { record: connector.flange-dn150-pn10, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, built_of", sha: "d3ff30ecc19aa875" }
-- { record: connector.flange-dn1600-pn16-double, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, built_of", sha: "11e9729e13d0128c" }
+- { record: connector.flange-dn1600-pn16-double, at: "2026-10-16T12:39:27Z", status: draft, summary: "changed: physical, built_of", sha: "ea4bb8aeec15c19b" }
 - { record: connector.flange-dn200-pn10-ss, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, built_of", sha: "116c6aaa6f670bfd" }
 - { record: connector.flange-dn2400-pn16-double, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, built_of", sha: "dc03bb7539904043" }
 - { record: connector.flange-dn250-pn16-ss-double, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, built_of", sha: "ba28964589898926" }
@@ -1564,9 +1564,9 @@
 - { record: run.lined-duct-dn2400-pn16-double, at: "2026-10-16T12:02:30Z", status: draft, summary: "changed: cap", sha: "47c7b5d1c22f4740" }
 - { record: run.pipe-dn100-pn10, at: "2026-10-16T12:02:30Z", status: draft, summary: "changed: cap", sha: "1a93b2ea91b1a18c" }
 - { record: run.pipe-dn1000-pn16-double, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed", sha: "546d0db4c6ae69f6" }
-- { record: run.pipe-dn1000-pn16-mli-double, at: "2026-10-16T12:34:12Z", status: draft, summary: "changed: visual", sha: "1f87a03b0eca127b" }
+- { record: run.pipe-dn1000-pn16-mli-double, at: "2026-10-16T12:39:27Z", status: draft, summary: "changed", sha: "542cf881d8ec0d8a" }
 - { record: run.pipe-dn150-pn10, at: "2026-10-16T12:02:30Z", status: draft, summary: "changed: cap", sha: "0e7a09407e4c43d9" }
-- { record: run.pipe-dn1600-pn16-mli-double, at: "2026-10-16T12:38:03Z", status: draft, summary: "changed: visual", sha: "deafbf0c1cc3f6ac" }
+- { record: run.pipe-dn1600-pn16-mli-double, at: "2026-10-16T12:39:27Z", status: draft, summary: "changed", sha: "f8d2cfee1548b7f9" }
 - { record: run.pipe-dn200-pn10-ss, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed", sha: "bff1979818114fdd" }
 - { record: run.pipe-dn250-pn16-ss-double, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed", sha: "05352425674a7366" }
 - { record: run.pipe-dn350-pn10, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed", sha: "d41dada519023bf2" }
