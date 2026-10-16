@@ -4,13 +4,13 @@ identity: {key: unit.filter-press-2, name: 'Filter presses, 2', description: 'Tw
     (0, -3.25, 9.5), split in the stand to both presses'' feed eyes between the heads; each press''s cake leaves its own breaker through a 1.5 x 1.1 m opening at (-1.2, 0, 7.775) and (1.2, 0, 7.775), facing down onto the same belt; the filtrate (10.9 kg/s) collects in a tank in the stand and is pumped through a plate cooler, which takes the mill''s and presses'' heat out of the water (2.3 MW: the grinding''s power all ends as warm slurry) into the radiator loop, so the water stays under 50 deg C; every service on the -y face, 0.5 m up, facing -y: filtrate out (100 mm, stainless) at (5, -3.25, 0.5) to the mill, the radiator loop''s 200 mm pair at (-5, -3.25, 0.5) in and (-4.4, -3.25, 0.5) out, the condensate from the shafts in (50 mm, stainless) at (4, -3.25, 0.5), the 400 V supply (95 mm2) at (2.5, -3.25, 0.5).'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 6.5, height: 12.0, mass: 156600.0}
+physical: {length: 12.0, width: 6.5, height: 12.0, mass: 155900.0}
 built_of:
 - {what: Heads and followers, item: material.high-strength-steel-4340, mass: 49060.0, note: 'four plates 2.5 m square, 250 mm, which take the closing force in bending, from memory'}
 - {what: Rear crossheads, item: material.high-strength-steel-4340, mass: 24530.0, note: 'two 250 mm plates 2.5 m square at x -5.8 and 5.8, where the closing cylinders push from, tied to the heads by the side beams; measured on blender''s candidate (2026-10-16)'}
 - {what: Side beams, item: material.high-strength-steel-4340, mass: 9710.0, note: '600 x 400 x 25 mm boxes, 6 m, two a press: each 100 MPa in tension; with their seats, measured on blender''s candidate (2026-10-16)'}
 - {what: Plates and cloth, item: material.polyethylene-uhmw, mass: 9645.0, note: '28 recessed plates 100 mm thick, touching rim to rim, each face recessed 25 mm, with their membranes; polyethylene stands for polypropylene; measured'}
-- {what: 'Stand, supports and hoppers', item: material.structural-steel-a36, mass: 45850.0, note: 'the hollow stand, its longitudinals at y -0.9 and 0.9 that keep the cake belt''s corridor clear (y -0.75 to 0.75, z 6.9 to 7.75), the cylinders'' and pack''s seats, the breakers'' bearers, the cake hoppers, the pipes'' stands and saddles; measured'}
+- {what: 'Stand, supports and hoppers', item: material.structural-steel-a36, mass: 45130.0, note: 'the hollow stand, its longitudinals at y -0.9 and 0.9 that keep the cake belt''s corridor clear (y -0.75 to 0.75, z 6.9 to 7.75), the cylinders'' and pack''s seats, the breakers'' bearers, the cake hoppers, the pipes'' stands and saddles; measured'}
 - {what: Lump breakers, item: good.pumps, mass: 2000.0, note: 'two breakers'' rotors and drives, from memory'}
 - {what: Piping, item: material.structural-steel-a36, mass: 796.7, note: 'the feed split, the filtrate collectors and the cooling pipes inside the stand; measured'}
 - {what: Filtrate cooler, item: material.stainless-steel-304, mass: 3000.0, note: 'a plate exchanger, from memory'}
