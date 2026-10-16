@@ -20,6 +20,12 @@ terminals:
   tail: {mass: 2200.0, transition: 1.0, note: 'a 0.63 m tail pulley on a screw take-up, its bearings and frame (from memory)'}
 connector: connector.belt-transfer-1200
 carries: bulk
+visual:
+  format: "freefall-model/1"
+  path: "models/belt-1200/v1"
+  manifest_sha256: "da079e782142577598a46234a86efe7a730a848ac2e8890a6da1334c32cc9e6a"
+  version: 1
+  triangles: 2488
 basis:
 - of: [per_m, support]
   tier: invented
