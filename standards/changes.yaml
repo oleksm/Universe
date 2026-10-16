@@ -161,8 +161,8 @@
 - { record: connector.belt-transfer-650, at: "2026-10-16T23:10:29Z", status: draft, summary: "first tracked", sha: "7407190826df8008" }
 - { record: connector.belt-transfer-800, at: "2026-10-16T21:08:27Z", status: draft, summary: "changed", sha: "c77db1887011d319" }
 - { record: connector.belt-transfer-800-sealed, at: "2026-10-16T21:29:54Z", status: draft, summary: "changed", sha: "75625e6c93ee5bda" }
-- { record: connector.bus-joint-ac-27ka, at: "2026-10-16T23:10:29Z", status: draft, summary: "first tracked", sha: "fdc0f0dec3112730" }
-- { record: connector.bus-joint-ac-65ka, at: "2026-10-16T23:10:29Z", status: draft, summary: "first tracked", sha: "d63dfd7834818884" }
+- { record: connector.bus-joint-ac-27ka, at: "2026-10-16T23:54:33Z", status: draft, summary: "changed", sha: "a2897aac027dd901" }
+- { record: connector.bus-joint-ac-65ka, at: "2026-10-16T23:54:33Z", status: draft, summary: "changed: visual", sha: "9c2bc2ce338ba9a4" }
 - { record: connector.bus-joint-dc-44ka, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "2aa7fb48abaa51da" }
 - { record: connector.chute-dn1000, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "f8ce36f0bd5dba95" }
 - { record: connector.chute-dn400, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "13b5909fcd60b404" }
@@ -1606,7 +1606,7 @@
 - { record: run.belt-800, at: "2026-10-16T21:02:45Z", status: draft, summary: "changed", sha: "69869a61efe133e3" }
 - { record: run.belt-800-sealed, at: "2026-10-16T21:25:19Z", status: draft, summary: "changed", sha: "77e75e5a932a8b68" }
 - { record: run.busbar-ac-27ka, at: "2026-10-16T23:51:31Z", status: draft, summary: "changed", sha: "36a0664e58fe72c8" }
-- { record: run.busbar-ac-65ka, at: "2026-10-16T23:51:31Z", status: draft, summary: "changed: visual", sha: "8bf56659ecfd239e" }
+- { record: run.busbar-ac-65ka, at: "2026-10-16T23:54:33Z", status: draft, summary: "changed", sha: "7cf096505559f3c1" }
 - { record: run.busbar-dc-44ka, at: "2026-10-16T17:53:48Z", status: draft, summary: "changed", sha: "6023b472f070244d" }
 - { record: run.cable-132kv-240mm2, at: "2026-10-16T14:27:23Z", status: draft, summary: "changed", sha: "a9ec16eca6f7cb97" }
 - { record: run.cable-33kv-120mm2, at: "2026-10-16T23:10:29Z", status: draft, summary: "first tracked", sha: "65e6f7f342cf8b9e" }
