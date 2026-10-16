@@ -4,9 +4,10 @@ identity: {key: unit.filter-press-2, name: 'Filter presses, 2', description: 'Tw
     (0, -3.25, 9.5), split in the stand to both presses'' feed eyes between the heads; the cake leaves the breaker through a 1 x 0.8 m opening at the stand''s top (0, 0, 8) onto the belt; the filtrate (10.9 kg/s) collects in a tank in the stand and is pumped through a plate cooler, which takes the mill''s and presses'' heat out of the water (2.3 MW: the grinding''s power all ends as warm slurry) into the radiator loop, so the water stays under 50 deg C; every service on the -y face, 0.5 m up, facing -y: filtrate out (100 mm, stainless) at (5, -3.25, 0.5) to the mill, the radiator loop''s 200 mm pair at (-5, -3.25, 0.5) in and (-4.4, -3.25, 0.5) out, the condensate from the shafts in (50 mm, stainless) at (4, -3.25, 0.5), the 400 V supply (95 mm2) at (2.5, -3.25, 0.5).'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 6.5, height: 12.0, mass: 110900.0}
+physical: {length: 12.0, width: 6.5, height: 12.0, mass: 135400.0}
 built_of:
 - {what: Heads and followers, item: material.high-strength-steel-4340, mass: 49060.0, note: 'four plates 2.5 m square, 250 mm, which take the closing force in bending, from memory'}
+- {what: Rear crossheads, item: material.high-strength-steel-4340, mass: 24530.0, note: 'two 250 mm plates 2.5 m square at x -5.8 and 5.8, where the closing cylinders push from, tied to the heads by the side beams; measured on blender''s candidate (2026-10-16)'}
 - {what: Side beams, item: material.high-strength-steel-4340, mass: 8949.0, note: '600 x 400 x 25 mm boxes, 6 m, two a press: each 100 MPa in tension'}
 - {what: Plates and cloth, item: material.polyethylene-uhmw, mass: 7875.0, note: 'recessed plates 100 mm thick, half solid, with their membranes; polyethylene stands for polypropylene'}
 - {what: 'Stand, hoppers and lump breakers', item: material.structural-steel-a36, mass: 30000.0, note: from memory}
