@@ -8,12 +8,7 @@ physical: {length: 0.4, width: 0.4, height: 0.715, mass: 5.3}
 built_of:
 - {what: Lugs, item: material.copper, mass: 0.3, note: three crimped lugs}
 - {what: Gland plate, item: material.aluminium-alloy-6061, mass: 5.0, note: the box's gland plate and glands}
-visual:
-  format: "freefall-model/1"
-  path: "models/termination-400v-70mm2/v1"
-  manifest_sha256: "e35d7cdc568a1f4a27633afe26d85318697a64ac12b5fc30232bf5a10405cce9"
-  version: 1
-  triangles: 3644
+visual: {format: freefall-model/1, path: models/termination-400v-70mm2/v1, manifest_sha256: e35d7cdc568a1f4a27633afe26d85318697a64ac12b5fc30232bf5a10405cce9, version: 1, triangles: 3644}
 basis:
 - of: [built_of]
   tier: invented

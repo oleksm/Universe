@@ -102,7 +102,9 @@ def lined_flange(dn, pn, temp=473.0, sealing="single"):
     key = f"connector.lined-flange-dn{_tag(dn)}-pn{pn}" + ("-double" if sealing == "double" else "")
     if key in _recs:
         return key
-    base = _recs[flange(dn, pn, A36, sealing, temp)]
+    had = set(_recs)
+    plain = flange(dn, pn, A36, sealing, temp)
+    base = _recs[plain] if plain in had else _recs.pop(plain)  # the plain pair is its base, not a record unless asked for
     pack = math.pi * (dn - 0.2) * 0.2 * 0.05 * RHO[SILICA]
     built = [dict(b) for b in base["built_of"]] + [_part("Lining joint", SILICA, pack, "the refractory's joint packed with 50 mm of silica fibre; silica aerogel stands for it")]
     _recs[key] = {"identity": {"key": key, "name": f"Lined flange DN {dn * 1000:.0f} PN {pn}" + (", double seal" if sealing == "double" else ""), "description": f"The flange pair of a refractory-lined hot gas duct whose steel shell is {dn * 1000:.0f} mm nominal bore, the lining's joint packed; the shell kept cool by the lining."},
