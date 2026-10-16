@@ -1567,7 +1567,7 @@
 - { record: run.pipe-dn1000-pn16-mli-double, at: "2026-10-16T11:45:06Z", status: draft, summary: "changed: tee, basis", sha: "04a6d1d1bbf28ffd" }
 - { record: run.pipe-dn150-pn10, at: "2026-10-16T11:45:06Z", status: draft, summary: "changed: tee, basis", sha: "f7c07b531c9b2624" }
 - { record: run.pipe-dn1600-pn16-mli-double, at: "2026-10-16T11:45:06Z", status: draft, summary: "changed: tee, basis", sha: "dcceedebdd02ac38" }
-- { record: run.pipe-dn200-pn10-ss, at: "2026-10-16T11:45:06Z", status: draft, summary: "changed: tee, basis", sha: "15e977f097d2ba76" }
+- { record: run.pipe-dn200-pn10-ss, at: "2026-10-16T11:47:01Z", status: draft, summary: "changed: visual", sha: "2a7dff353901fa7b" }
 - { record: run.pipe-dn250-pn16-ss-double, at: "2026-10-16T11:45:06Z", status: draft, summary: "changed: tee, basis", sha: "90d78078b40da1a3" }
 - { record: run.pipe-dn350-pn10, at: "2026-10-16T11:45:06Z", status: draft, summary: "changed: tee, basis", sha: "7e2b170845b4ef9e" }
 - { record: run.pipe-dn900-pn10, at: "2026-10-16T11:45:06Z", status: draft, summary: "changed: tee, basis", sha: "ef76f0f365e382ae" }
