@@ -16,6 +16,12 @@ cap: {thickness: 0.01, mass: 3.9}
 support: {spacing: 6.2, mass: 25.5, per_m_height: 19.8, item: material.structural-steel-a36}
 connector: connector.flange-dn250-pn10
 carries: liquid
+visual:
+  format: "freefall-model/1"
+  path: "models/pipe-dn250-pn10/v1"
+  manifest_sha256: "ab69893f8dfce405927f6847ad9c275453902de11437895e1d0f2259222c4e76"
+  version: 1
+  triangles: 2320
 basis:
 - of: [per_m]
   tier: derived
