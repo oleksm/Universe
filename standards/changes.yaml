@@ -157,7 +157,7 @@
 - { record: clock.system, at: "2026-10-06T22:07:52Z", status: review, summary: "first tracked", sha: "a1ce985910bb5ae9" }
 - { record: connector.belt-transfer-1200, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "38fae5feb755cd05" }
 - { record: connector.chute-dn800, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "f0664ba5ebb081dc" }
-- { record: connector.flange-dn100-pn10, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, built_of", sha: "15d96294c74e396c" }
+- { record: connector.flange-dn100-pn10, at: "2026-10-16T13:13:02Z", status: draft, summary: "changed: visual", sha: "3d95f14b9170374e" }
 - { record: connector.flange-dn1000-pn16-double, at: "2026-10-16T12:39:27Z", status: draft, summary: "changed: physical, built_of", sha: "30a63c1475db2018" }
 - { record: connector.flange-dn150-pn10, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, built_of", sha: "d3ff30ecc19aa875" }
 - { record: connector.flange-dn1600-pn16-double, at: "2026-10-16T12:44:20Z", status: draft, summary: "changed", sha: "6a07930380b824cd" }
