@@ -5485,3 +5485,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: run.pipe-dn150-pn10
+    version: 1
+    manifest_sha256: "e07c0a3feee6d32693b544c63aae2aaca6fcbe3f154dcde94a310d2693d97418"
+    installed: ca1c71d4
+    game: "the loader (world::assets) at fso ca1c71d4"
+    date: "2026-10-15"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
