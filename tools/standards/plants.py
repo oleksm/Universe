@@ -1458,7 +1458,7 @@ def water_treatment(name, airless=False, measured=None):
               f"in a rack y 1.8 to 3.6, z 0.4 to 2.6 ({n_v1} first stage, {n_v - n_v1} second, {n_el} elements, {p_ro / 1e5:.0f} bar, {rec:.0%} recovery); "
               f"a closed cabinet west for the electrodeionisation stage (x -5.8 to -4.2, y -2.2 to 2.2, 2.2 m tall: {n_edi} modules and their DC supplies); "
               f"the pump skid south (x -3.6 to 3.4, y -3.8 to -1.6): the feed booster, high-pressure, product, backwash and cleaning pumps, the cleaning tank (1 m3) and the permeate break tank (2 m across, {H_bt:g} m tall, at (-2.4, -2.7)). "
-              f"Raw water in at local (6, 0, 0.5), clean water out at (-6, 0, 0.5); reject and backwash out by a 150 mm flange at (6, 3.4, 0.3) ({conc:.1f} m3/h of concentrate, {40 * A_f:.0f} m3/h while a filter backwashes). {reject} 400 V supply at (-6, -3.4, 0.5)."),
+              f"Raw water in at local {'(6, -1.6, 0.5), beside the crew door at the aisle\'s east end (y -0.6 to 0.6, at grade)' if airless else '(6, 0, 0.5)'}, clean water out at (-6, 0, 0.5); reject and backwash out by a 150 mm flange at (6, 3.4, 0.3) ({conc:.1f} m3/h of concentrate, {40 * A_f:.0f} m3/h while a filter backwashes). {reject} 400 V supply at (-6, -3.4, 0.5)."),
         built_of=[part("Sand filters", A36, 2 * cyl_shell(D_f, 2.5, t_f, bottom=2.2) * RHO["steel"] + 2 * 150, f"two shells {D_f:g} m by 2.5 m in {t_f * 1000:.0f} mm for 7 bar, heads as 1.1 discs, their legs and nozzle plates"),
                   part("Filter sand", "good.silica-sand", 2 * 1.2 * math.pi * D_f ** 2 / 4 * 1600, "1.2 m of graded sand and gravel in each, 1,600 kg/m3"),
                   part("Pressure tubes", "material.stainless-steel-304", n_v * (cyl_shell(0.21, 6.7, t_pv) * 7900 + 30), f"{n_v} tubes 0.21 m by 6.7 m in {t_pv * 1000:.0f} mm for {1.5 * p_ro / 1e5:.0f} bar, 30 kg of end caps each"),
@@ -3203,7 +3203,7 @@ def h2_ports(us):
     ]
     wt = us["water-treatment-sealed"]
     wt["ports"] = [
-        port("raw-in", "in", "liquid", kit.flange(0.2, 10, kit.SS), (6, 0, 0.5), (1, 0, 0), item=WATER, rate=20.3 / 3.6, note="the shaft furnace's condensate and melted ice"),
+        port("raw-in", "in", "liquid", kit.flange(0.2, 10, kit.SS), (6, -1.6, 0.5), (1, 0, 0), item=WATER, rate=20.3 / 3.6, note="the shaft furnace's condensate and melted ice"),
         port("clean-out", "out", "liquid", kit.flange(0.1, 10, kit.SS), (-6, 0, 0.5), (-1, 0, 0), item=WATER, rate=H_WATER),
         port("reject-out", "out", "liquid", kit.flange(0.15, 10, kit.SS), (6, 3.4, 0.3), (1, 0, 0), item=WATER, note="concentrate and backwash, kept"),
         port("power-in", "in", "power", kit.termination(400, kit.area_for(amps(wt["needs"]["power"], 400))), (-6, -3.4, 0.5), (-1, 0, 0), power=wt["needs"]["power"], voltage=400),
@@ -3239,7 +3239,7 @@ def hydrogen_plant_airless(us, recs):
     edge = [
         port("h2-out", "out", "gas", kit.flange(0.25, 16, kit.SS, "double"), (110, 0, 4), (-1, 0, 0), item="material.hydrogen", rate=H_RATE, pressure=10e5, note="to the shaft furnace's make-up at 10 bar"),
         port("o2-out", "out", "gas", kit.flange(0.2, 16, kit.SS, "double"), (110, 5.5, 9.5), (-1, 0, 0), item="material.oxygen", rate=H_O2, pressure=10e5, note="kept: crews' air, the pellet plant's firing"),
-        port("water-in", "in", "liquid", kit.flange(0.2, 10, kit.SS), (110, -24, 0.5), (-1, 0, 0), item="good.water", rate=20.3 / 3.6, note="the shaft furnace's condensate and the ice plant's make-up"),
+        port("water-in", "in", "liquid", kit.flange(0.2, 10, kit.SS), (110, -25.6, 0.5), (-1, 0, 0), item="good.water", rate=20.3 / 3.6, note="the shaft furnace's condensate and the ice plant's make-up"),
         port("reject-out", "out", "liquid", kit.flange(0.15, 10, kit.SS), (110, -20.6, 0.3), (-1, 0, 0), item="good.water", note="back to the ice plant's evaporator"),
     ]
     edge += [port(f"hv-{i + 1}", "in", "power", hv(), (110, lane(N_BLK - 1 - i), 0.3), (-1, 0, 0), power=p_in, voltage=RT_V, note=f"a feeder from the site's {RT_V / 1e3:g} kV switchgear") for i in range(N_BLK)]
@@ -3286,7 +3286,7 @@ def hydrogen_plant_airless(us, recs):
         L("raw water", kit.pipe(0.2, 10, kit.SS, liquid=True), ("edge:water-in", "W:raw-in"), [None, None]),
         L("reject", kit.pipe(0.15, 10, kit.SS, liquid=True), ("W:reject-out", "edge:reject-out"), [None, None]),
         L("demineralised water", kit.pipe(0.1, 10, kit.SS, liquid=True), ("W:clean-out", "cap"), [None, (62.0, -24.0, 0.5), (62.0, 7.6, 0.5), (xs_b[0] + 8.3, 7.6, 0.5)], (), 1, None, f"{H_WATER:.1f} kg/s to the blocks"),
-        L("purifier condensate", kit.pipe(0.05, 10, kit.SS, liquid=True), ("P:condensate-out", "tee:raw water"), [None, (64.5, 3.0, 0.3), (64.5, -18.0, 0.3), (90.0, -18.0, 0.3), (90.0, -18.0, 0.5), (90.0, -24.0, 0.5)]),
+        L("purifier condensate", kit.pipe(0.05, 10, kit.SS, liquid=True), ("P:condensate-out", "tee:raw water"), [None, (64.5, 3.0, 0.3), (64.5, -18.0, 0.3), (90.0, -18.0, 0.3), (90.0, -18.0, 0.5), (90.0, -25.6, 0.5)]),
     ]
     for i, x in enumerate(xs_b):
         links.append(L(f"E{i + 1} water", kit.pipe(0.05, 10, kit.SS, liquid=True), ("tee:demineralised water", f"E{i + 1}:water-in"), [(x + 9.8, 7.6, 0.5), (x + 9.8, 7.6, 1.0), None]))

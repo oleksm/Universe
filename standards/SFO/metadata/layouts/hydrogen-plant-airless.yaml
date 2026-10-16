@@ -194,7 +194,7 @@ ports:
   item: good.water
   rate: 5.639
   connector: connector.flange-dn200-pn10-ss
-  at: [110.0, -24.0, 0.5]
+  at: [110.0, -25.6, 0.5]
   facing: [-1.0, 0.0, 0.0]
   note: the shaft furnace's condensate and the ice plant's make-up
 - id: reject-out
@@ -625,8 +625,8 @@ links:
   name: raw water
   run: run.pipe-dn200-pn10-ss
   ends: ['edge:water-in', 'W:raw-in']
-  from: [110.0, -24.0, 0.5]
-  to: [78.0, -24.0, 0.5]
+  from: [110.0, -25.6, 0.5]
+  to: [78.0, -25.6, 0.5]
   length: 32.0
   item: material.stainless-steel-304
   mass: 897.4
@@ -660,16 +660,16 @@ links:
   run: run.pipe-dn50-pn10-ss
   ends: ['P:condensate-out', 'tee:raw water']
   from: [66.0, 3.0, 0.3]
-  to: [90.0, -24.0, 0.5]
-  length: 54.2
+  to: [90.0, -25.6, 0.5]
+  length: 55.8
   item: material.stainless-steel-304
-  mass: 621.0
+  mass: 650.1
   via:
   - [64.5, 3.0, 0.3]
   - [64.5, -18.0, 0.3]
   - [90.0, -18.0, 0.3]
   - [90.0, -18.0, 0.5]
-  fittings: {elbows: 4, tees: 1, supports: 19, connectors: 1}
+  fittings: {elbows: 4, tees: 1, supports: 20, connectors: 1}
 - kind: pipe
   name: E1 water
   run: run.pipe-dn50-pn10-ss

@@ -72,13 +72,8 @@ ports:
   facing: [1.0, 0.0, 0.0]
 envelope:
 - [-6.0, -4.0, 0.0, 6.0, 4.0, 8.74]
-visual:
-  format: "freefall-model/1"
-  path: "models/hydrogen-purifier-10bar/v1"
-  manifest_sha256: "3a4b32250d40f452d691f715fcc37eba578c66eace1c0a863f30f9b266f588de"
-  version: 1
-  triangles: 42892
 life: 788940000
+visual: {format: freefall-model/1, path: models/hydrogen-purifier-10bar/v1, manifest_sha256: 3a4b32250d40f452d691f715fcc37eba578c66eace1c0a863f30f9b266f588de, version: 1, triangles: 42892}
 basis:
 - of: [physical, built_of, needs]
   tier: derived
