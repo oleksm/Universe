@@ -2715,6 +2715,12 @@ def ladle_ports(us):
         port("power-in", "in", "power", lv(d["needs"]["power"]), (-3.3, -2.6, 1.2), (-1, 0, 0), power=d["needs"]["power"], voltage=400),
     ]
     g = us["offgas-filter-sealed"]
+    if "Fume branch" not in [x["what"] for x in g["built_of"]]:
+        m2 = "measured on blender's model v2 (2026-10-16)"
+        g["built_of"] = [part(x["what"], x["item"], 3195.3 - 1215.6 - 254.8 + 1158.5, f"{x['note']}; the main inlet now a plain 1.2 m stub, its old flange ring gone: {m2} (v1's 3,195.3 kg less its inlet, 1,215.6, and flange, 254.8; the new inlet 1,158.5)") if x["what"].startswith("Ducts") else x for x in g["built_of"]]
+        g["built_of"] += [part("Fume branch", "material.stainless-steel-304", 93.7, f"the 200 mm inlet into the vessel; {m2}"),
+                          part("Fume branch support", A36, 48.0, f"from the west post; {m2}"),
+                          part("Terminal box and its support", A36, 44.8, m2)]
     g["ports"][0]["optional"] = True
     g["ports"].insert(1, dict(port("fume-in", "in", "gas", kit.flange(0.2, 1, kit.SS, temp=673.0), (-6.0, 1.4, 8.0), (-1, 0, 0), item=AR, rate=ar_each, pressure=0.5e5, temperature=673.0, note="a small nozzle beside the main inlet, for a ladle furnace's fume"), optional=True))
     g["desc"] += " Two inlets (SFO 25), each blinded when unused: a DN 1200 flange at (-6, 0, 8) for an arc furnace's gas and a DN 200 nozzle at (-6, 1.4, 8) for a ladle furnace's fume; its 400 V box at (5, 0, 1), facing +x."

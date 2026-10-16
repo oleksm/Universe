@@ -48,13 +48,8 @@ envelope:
 - [-3.001, 2.299, -0.001, 3.001, 3.001, 11.302]
 - [-2.911, -2.701, 0.339, -2.539, 2.701, 11.301]
 - [2.389, -2.701, 0.339, 3.001, 2.701, 11.301]
-visual:
-  format: "freefall-model/1"
-  path: "models/dri-bin-200t/v2"
-  manifest_sha256: "99877b90f2395c45caac9aee11021fc5a1a83131f258fbd2db89dd76071f2bc1"
-  version: 2
-  triangles: 5136
 life: 788940000
+visual: {format: freefall-model/1, path: models/dri-bin-200t/v2, manifest_sha256: 99877b90f2395c45caac9aee11021fc5a1a83131f258fbd2db89dd76071f2bc1, version: 2, triangles: 5136}
 basis:
 - of: [physical, built_of, holds]
   tier: derived

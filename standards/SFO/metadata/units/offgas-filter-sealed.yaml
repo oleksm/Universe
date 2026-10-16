@@ -3,13 +3,16 @@
 identity: {key: unit.offgas-filter-sealed, name: 'Off-gas filter, sealed', description: 'Takes the furnace''s 1.4 kg/s of CO with its dust from the steam-cooled duct at about 1 bar and 250 deg C, through ceramic candle filters in a closed vessel, and lets it out past the valve that holds the furnace''s pressure, up a short stack: on an airless world the gas simply leaves (or a later unit can compress it as fuel). The dust is let out through a lock into sealed bins. Gas in at local (-6, 0, 8). Two inlets (SFO 25), each blinded when unused: a DN 1200 flange at (-6, 0, 8) for an arc furnace''s gas and a DN 200 nozzle at (-6, 1.4, 8) for a ladle furnace''s fume; its 400 V box at (5, 0, 1), facing +x.'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 6.0, height: 10.0, mass: 30480.0}
+physical: {length: 12.0, width: 6.0, height: 10.0, mass: 30350.0}
 built_of:
 - {what: Vessel, item: material.structural-steel-a36, mass: 11150.0, note: '4 m across, z 2 to 10: hopper, barrel and domed head with their rings, 12 mm (about 17 MPa at 1 bar); measured on model v1'}
 - {what: Supports, item: material.structural-steel-a36, mass: 11630.0, note: its frame (12 mm) and pipe posts (8 mm) with their feet; measured on model v1}
-- {what: 'Ducts, stack, dust lock and bin', item: material.structural-steel-a36, mass: 3195.0, note: 'the gas inlet and its flange, the clean gas outlet and short stack, the dust lock''s chamber and the closed bin; measured on model v1'}
+- {what: 'Ducts, stack, dust lock and bin', item: material.structural-steel-a36, mass: 2883.0, note: 'the gas inlet and its flange, the clean gas outlet and short stack, the dust lock''s chamber and the closed bin; measured on model v1; the main inlet now a plain 1.2 m stub, its old flange ring gone: measured on blender''s model v2 (2026-10-16) (v1''s 3,195.3 kg less its inlet, 1,215.6, and flange, 254.8; the new inlet 1,158.5)'}
 - {what: Candles, item: material.silicon-carbide, mass: 3000.0, note: from memory}
 - {what: Pressure valve and dust valves, item: good.pumps, mass: 1500.0, note: 'the valve that holds the furnace''s pressure and the dust lock''s two valves with their drives, from memory'}
+- {what: Fume branch, item: material.stainless-steel-304, mass: 93.7, note: the 200 mm inlet into the vessel; measured on blender's model v2 (2026-10-16)}
+- {what: Fume branch support, item: material.structural-steel-a36, mass: 48.0, note: from the west post; measured on blender's model v2 (2026-10-16)}
+- {what: Terminal box and its support, item: material.structural-steel-a36, mass: 44.8, note: measured on blender's model v2 (2026-10-16)}
 needs: {power: 50000.0, atmosphere: vacuum}
 ports:
 - id: gas-in
@@ -46,7 +49,7 @@ ports:
   note: on its frame's east post
 envelope:
 - [-2.577, -2.876, -0.001, 2.577, 2.876, 10.001]
-- [-6.001, -0.701, 7.299, -1.899, 0.701, 8.701]
+- [-6.001, -0.701, 7.149, -1.899, 1.505, 8.701]
 - [1.898, -0.481, 7.518, 5.362, 0.481, 10.001]
 - [-5.001, -0.552, -0.001, 5.001, 0.552, 7.761]
 life: 788940000
