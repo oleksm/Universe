@@ -1625,7 +1625,7 @@
 - { record: run.pipe-dn250-pn16-ss-double, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed", sha: "05352425674a7366" }
 - { record: run.pipe-dn300-pn10, at: "2026-10-16T17:53:48Z", status: draft, summary: "changed", sha: "c4efdd79c7259d67" }
 - { record: run.pipe-dn350-pn10, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed", sha: "d41dada519023bf2" }
-- { record: run.pipe-dn450-pn10, at: "2026-10-16T19:40:41Z", status: draft, summary: "first tracked", sha: "78c18f7b4557afba" }
+- { record: run.pipe-dn450-pn10, at: "2026-10-16T20:39:18Z", status: draft, summary: "changed: visual", sha: "fb9470f6ea98464e" }
 - { record: run.pipe-dn50-pn10-ss, at: "2026-10-16T17:53:48Z", status: draft, summary: "changed", sha: "8a47dd415373b2c5" }
 - { record: run.pipe-dn50-pn16-ss-double, at: "2026-10-16T19:40:41Z", status: draft, summary: "first tracked", sha: "951475b65fd1a986" }
 - { record: run.pipe-dn600-pn10, at: "2026-10-16T17:53:48Z", status: draft, summary: "changed", sha: "be8fbbca0e77add0" }
