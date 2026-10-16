@@ -7001,3 +7001,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.plant-transformer-35mva
+    version: 2
+    manifest_sha256: "5487e552837489da1b719ca888321daeda5d7ed11de8d2494ca9bc42687c46f1"
+    installed: ec86dbd5
+    game: "the loader (world::assets) at fso ec86dbd5"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/plant-transformer-35mva/v2 (702256 bytes, bounds [-2.9052, 0.0, -2.35] to [2.9102, 5.2, 1.595]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
