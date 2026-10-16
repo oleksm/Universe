@@ -6911,3 +6911,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.pellet-shaft-63th
+    version: 1
+    manifest_sha256: "f35e1075337710846bc10c637157c955b123bf09b38dc340ed7167dc265803fe"
+    installed: 2ec3b7e5
+    game: "the loader (world::assets) at fso 2ec3b7e5"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/pellet-shaft-63th/v1 (1443872 bytes, bounds [-5.75, -0.0, -5.5] to [5.75, 29.5, 3.4]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
