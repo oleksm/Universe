@@ -3311,7 +3311,8 @@ def pellet_ports(us):
     if "fines elevator" not in dk["desc"]:
         dk["desc"] = dk["desc"].replace("the fines drop through into a tray and out at (0, -3.5, 0.65) to the layout's return belt,", "the fines drop through into a tray and an enclosed feeder takes them to a small bucket elevator on the frame's -x side (its casing at (-4.3, -1.0), clear of the pan and of the cake header over the chute), whose head at 10.5 m drops them down a chute into the cake chute at (-0.4, 2, 6.8),")
         dk["dims"] = (dk["dims"][0], dk["dims"][1], 11.0)
-        dk["built_of"] = dk["built_of"] + [part("Fines elevator", A36, 1500.0, "a small bucket elevator from the screen's tray to the cake chute, from memory")]
+        dk["built_of"] = dk["built_of"] + [part("Fines elevator", A36, 1882.1, "its casing, the 6 mm return chute and feeder, the boot and braced posts; measured on blender's model v2"),
+                                           part("Fines elevator's machinery", "good.electric-motors", 600.0, "its buckets and chain, the feeder's screw and the drive, not drawn; from memory")]
     dk["ports"] = [
         port("cake-in", "in", "bulk", kit.chute(0.4), (0, 2, 7), (0, 0, 1), item=ORE, rate=P_ORE / 4, note="the cake chute, fed by a plough off the layout's header"),
         port("balls-out", "out", "bulk", kit.chute(0.6), (0, -4.5, 1), (0, -1, 0), item=ORE, rate=P_ORE / 4 / (1 - MOIST), note="the screen's end, onto the layout's collector"),
