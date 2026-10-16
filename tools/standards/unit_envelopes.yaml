@@ -56,3 +56,5 @@ unit.electrolyser-block-20mw-10bar:
 - [-9.2, -4.95, 0.0, 11.6, 6.0, 8.0]
 unit.hydrogen-purifier-10bar:
 - [-6.0, -4.0, 0.0, 6.0, 4.0, 8.74]
+unit.water-treatment-sealed:
+- [-6.0, -4.0, 0.0, 6.0, 4.0, 5.02]

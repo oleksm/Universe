@@ -4,7 +4,7 @@ identity: {key: unit.water-treatment-sealed, name: 'Water treatment, sealed', de
     recovery); a closed cabinet west for the electrodeionisation stage (x -5.8 to -4.2, y -2.2 to 2.2, 2.2 m tall: 6 modules and their DC supplies); the pump skid south (x -3.6 to 3.4, y -3.8 to -1.6): the feed booster, high-pressure, product, backwash and cleaning pumps, the cleaning tank (1 m3) and the permeate break tank (2 m across, 1.6 m tall, at (-2.4, -2.7)). Raw water in at local (6, -1.6, 0.5), beside the crew door at the aisle''s east end (y -0.6 to 0.6, at grade), clean water out at (-6, 0, 0.5); reject and backwash out by a 150 mm flange at (6, 3.4, 0.3) (3.3 m3/h of concentrate, 81 m3/h while a filter backwashes). Its reject is kept: back with the raw water''s return, beyond the layout, to the ice plant''s evaporator. 400 V supply at (-6, -3.4, 0.5).'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 8.0, height: 5.0, mass: 29790.0}
+physical: {length: 12.0, width: 8.0, height: 5.0, mass: 31790.0}
 built_of:
 - {what: Sand filters, item: material.structural-steel-a36, mass: 2316.0, note: 'two shells 1.7 m by 2.5 m in 7 mm for 7 bar, heads as 1.1 discs, their legs and nozzle plates'}
 - {what: Filter sand, item: good.silica-sand, mass: 8716.0, note: '1.2 m of graded sand and gravel in each, 1,600 kg/m3'}
@@ -15,9 +15,10 @@ built_of:
 - {what: Pumps and dosing, item: good.pumps, mass: 1643.0, note: 'five pump sets at 30 kg/kW and 100 kg each, the dosing skid, from memory'}
 - {what: Piping and valves, item: material.stainless-steel-304, mass: 1500.0, note: from memory}
 - {what: Skid deck and rack, item: material.structural-steel-a36, mass: 5340.0, note: 'a beam deck under the bay at 40 kg/m2 and the tube rack, from memory'}
-- {what: House frame, item: material.structural-steel-a36, mass: 3000.0, note: from memory}
-- {what: House panels, item: material.honeycomb-sandwich-panel, mass: 2664.0, note: '296 m2 of walls and roof, 60 mm panels'}
-- {what: Insulation, item: material.multi-layer-insulation, mass: 296.0, note: 20 mm of blanket over the house}
+- {what: House frame, item: material.structural-steel-a36, mass: 5009.0, note: 200 x 6 mm hollow mains and 120 x 5 mm posts; measured on blender's model v1 (2026-10-16)}
+- {what: House panels, item: material.honeycomb-sandwich-panel, mass: 2591.0, note: '287.9 m2 of walls and roof (measured), 60 mm panels'}
+- {what: Insulation, item: material.multi-layer-insulation, mass: 287.9, note: '20 mm of blanket over the house, 287.9 m2'}
+- {what: 'Stubs, seats and roof edges', item: material.stainless-steel-304, mass: 62.4, note: 'the ports'' plain stubs and their seats, the folded 1 mm roof edges; measured'}
 needs: {power: 35160.0, atmosphere: any}
 ports:
 - id: raw-in
@@ -53,6 +54,8 @@ ports:
   connector: connector.termination-400v-25mm2
   at: [-6.0, -3.4, 0.5]
   facing: [-1.0, 0.0, 0.0]
+envelope:
+- [-6.0, -4.0, 0.0, 6.0, 4.0, 5.02]
 life: 788940000
 basis:
 - of: [physical, built_of, needs]

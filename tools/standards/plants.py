@@ -1468,8 +1468,9 @@ def water_treatment(name, airless=False, measured=None):
                   part("Pumps and dosing", "good.pumps", pump_m, "five pump sets at 30 kg/kW and 100 kg each, the dosing skid, from memory"),
                   part("Piping and valves", "material.stainless-steel-304", 1500.0, "from memory"),
                   part("Skid deck and rack", A36, 96 * 40 + 1500, "a beam deck under the bay at 40 kg/m2 and the tube rack, from memory")]
-                 + ([part("House frame", A36, 3000.0, "from memory"), part("House panels", "material.honeycomb-sandwich-panel", 296 * 0.06 * 150, "296 m2 of walls and roof, 60 mm panels"),
-                     part("Insulation", "material.multi-layer-insulation", 296 * 0.02 * 50, "20 mm of blanket over the house")]
+                 + ([part("House frame", A36, 5008.8, "200 x 6 mm hollow mains and 120 x 5 mm posts; measured on blender's model v1 (2026-10-16)"), part("House panels", "material.honeycomb-sandwich-panel", 287.93 * 0.06 * 150, "287.9 m2 of walls and roof (measured), 60 mm panels"),
+                     part("Insulation", "material.multi-layer-insulation", 287.93 * 0.02 * 50, "20 mm of blanket over the house, 287.9 m2"),
+                     part("Stubs, seats and roof edges", "material.stainless-steel-304", 40.1 + 22.3, "the ports' plain stubs and their seats, the folded 1 mm roof edges; measured")]
                     if airless else [part("Roof and columns", A36, 6 * 5 * 60 + 96 * 20, "six columns at 60 kg/m and 96 m2 of roof at 20 kg/m2 with its purlins, from memory")]),
         needs=dict({"power": power}, **({"atmosphere": "any"} if airless else {})),
         basis=[{"of": ["physical", "built_of", "needs"], "tier": "derived", "review": True,
