@@ -15,6 +15,12 @@ tee: {mass: 7.0}
 support: {spacing: 8.0, mass: 25.5, per_m_height: 19.8, item: material.structural-steel-a36}
 connector: connector.flange-dn250-pn16-ss-double
 carries: gas
+visual:
+  format: "freefall-model/1"
+  path: "models/pipe-dn250-pn16-ss-double/v1"
+  manifest_sha256: "31e829e601b781ec2b9f047ebb692d730c830d45fe6110a20766465280064076"
+  version: 1
+  triangles: 2320
 basis:
 - of: [per_m]
   tier: derived
