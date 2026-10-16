@@ -7652,3 +7652,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "pressure, thermal and load acceptance (blender: static only)"
+  - key: run.busbar-ac-65ka
+    version: 1
+    manifest_sha256: "eabaad9fda02ccfd7ef30f358e6d63a396d9d8b1f2a3df8df3a3a4023f54772a"
+    installed: c66df7c7
+    game: "the loader (world::assets) at fso c66df7c7"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
