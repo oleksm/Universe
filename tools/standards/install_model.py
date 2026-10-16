@@ -48,7 +48,7 @@ def main(argv):
         die(f"no file {glb}")
     hit = [(k, kk, p, r) for k, kk, p, r in records() if kk == key]
     if not hit:
-        die(f"no record {key} of a kind that takes a model (equipment, module, building, structure, gate, hull)")
+        die(f"no record {key} of a kind that takes a model (equipment, module, unit, layout, building, structure, gate, hull, package, connector, run)")
     kind, _, rec_path, rec = hit[0]
     try:
         info = inspect_glb(glb)

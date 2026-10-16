@@ -21,6 +21,8 @@ KINDS = {
     "gate": ("SFO/metadata/gates", 400_000),
     "hull": ("SFO/metadata/hulls", 1_000_000),
     "package": ("SFO/metadata/packages", 20_000),
+    "connector": ("SFO/metadata/connectors", 8_000),
+    "run": ("SFO/metadata/runs", 12_000),
 }
 # A model's size against its record's, each of the three sorted dimensions: at least LOW and at most HIGH of the record's.
 LOW, HIGH = 0.85, 1.10
@@ -72,6 +74,10 @@ def size_of(kind, r):
 
 def required_nodes(kind, r):
     """Named nodes the model must have, as name prefixes: what the game attaches things to."""
+    if kind == "run":      # (SFO 25: the pieces the game lays a run from; docs/requests/blender-plant-kit.md)
+        return ["straight", "support_head", "support_leg"] + (["elbow"] if r.get("elbow") else []) + (["tee"] if r.get("tee") else []) + (["cap"] if r.get("kind") in ("pipe", "lined-duct") else [])
+    if kind == "connector":
+        return ["face"]
     if kind != "equipment":
         return []
     fk = (r.get("function") or {}).get("kind")
@@ -684,7 +690,15 @@ def check_model(kind, r, info):
     """What is wrong with a model against its record: a list of plain sentences (empty: it fits)."""
     bad = []
     size = size_of(kind, r)
-    if size is None:
+    if kind == "run":      # (a kit of pieces, not one thing: its straight's section is held to the record's outside instead)
+        size = None
+        sec = info.get("node_bounds", {}).get("straight") if isinstance(info.get("node_bounds"), dict) else None
+        if sec:
+            w, h = sorted(sec[1:], reverse=True)
+            o = sorted(r["outside"], reverse=True)
+            if not (LOW * o[0] - 0.05 <= w <= HIGH * o[0] + 0.05 and LOW * o[1] - 0.05 <= h <= HIGH * o[1] + 0.05):
+                bad.append(f"its straight's section is {w:.3g} x {h:.3g} m against the record's outside {o[0]:.3g} x {o[1]:.3g}")
+    elif size is None:
         bad.append("the record says no size (physical.length, width, height): ask the registry for one first")
     else:
         b = list(info["bounds"])
