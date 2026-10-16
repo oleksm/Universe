@@ -2738,6 +2738,7 @@ def shaft_airless_units(us):
     out[f"radiator-field-{HP_T_LOOP:.0f}k"] = radiator_unit(HP_T_LOOP, "the condenser's")
     rf = out[f"radiator-field-{HP_T_LOOP:.0f}k"]
     assert "its ports at local (-24, -0.6, 1) flow and (-24, 0.6, 1) return." in rf["desc"]
+    rf["built_of"] = [dict(q, mass=r(q["mass"] + 131.05, 6), note=q.get("note", "") + "; with the branch and posts to the south-west ports, 131 kg more, measured on blender's model v3") if q["what"].startswith("Headers") else q for q in rf["built_of"]]
     rf["desc"] = rf["desc"].replace("its ports at local (-24, -0.6, 1) flow and (-24, 0.6, 1) return.", "its ports on its south-west corner facing -y, at local (-23, -24, 1) flow and (-22.4, -24, 1) return, its pump's power entry at (-21.8, -24, 0.3), so a layout's mains run in an aisle beside the field, not under it.")
     return out
 

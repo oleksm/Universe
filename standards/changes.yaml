@@ -845,7 +845,7 @@
 - { record: layout.casting-bay-air, at: "2026-10-15T02:26:46Z", status: draft, summary: "changed: physical", sha: "64ae565ca9d653a2" }
 - { record: layout.casting-bay-airless, at: "2026-10-15T22:16:54Z", status: draft, summary: "changed", sha: "70b05194ba7c5ed0" }
 - { record: layout.hydrogen-plant-air, at: "2026-10-15T04:31:57Z", status: draft, summary: "changed: physical", sha: "6142a0437e383639" }
-- { record: layout.hydrogen-plant-airless, at: "2026-10-15T20:27:46Z", status: draft, summary: "changed: physical, ground, totals", sha: "17d2364d90afd386" }
+- { record: layout.hydrogen-plant-airless, at: "2026-10-16T03:46:16Z", status: draft, summary: "changed: physical, totals", sha: "af9c6b259e8f0c9e" }
 - { record: layout.ingot-yard-air, at: "2026-10-15T19:02:03Z", status: draft, summary: "changed: totals", sha: "92e4f7a88130bd7a" }
 - { record: layout.ingot-yard-airless, at: "2026-10-15T20:27:46Z", status: draft, summary: "changed: physical, ground, totals", sha: "fdf1e24a32bd8d4d" }
 - { record: layout.ladle-station-air, at: "2026-10-15T02:26:46Z", status: draft, summary: "changed: physical", sha: "31ea2691985163d3" }
@@ -855,7 +855,7 @@
 - { record: layout.pellet-plant-air, at: "2026-10-15T16:01:43Z", status: draft, summary: "changed: physical", sha: "89e9d07d51ec2d4b" }
 - { record: layout.pellet-plant-airless, at: "2026-10-15T20:27:46Z", status: draft, summary: "changed: physical, ground, totals", sha: "4370552410830680" }
 - { record: layout.shaft-furnace-air, at: "2026-10-16T03:20:47Z", status: draft, summary: "changed: totals", sha: "56b2d2168ab078d2" }
-- { record: layout.shaft-furnace-airless, at: "2026-10-16T03:38:26Z", status: draft, summary: "changed: physical, bays, links, totals", sha: "c75fb1643b5624b2" }
+- { record: layout.shaft-furnace-airless, at: "2026-10-16T03:46:16Z", status: draft, summary: "changed: physical, totals", sha: "e2f80b11b1c53c6d" }
 - { record: market.art, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "517671b6a46daee3" }
 - { record: market.artifacts, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "6b51c19897f56c1a" }
 - { record: market.biologics, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "003ee842af8f7674" }
@@ -1565,7 +1565,7 @@
 - { record: run.pipe-dn100-pn10, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "799d0e307b219763" }
 - { record: run.pipe-dn1000-pn16-double, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "dd627e3107f7b8a6" }
 - { record: run.pipe-dn1000-pn16-mli-double, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "7f238d655488ba98" }
-- { record: run.pipe-dn150-pn10, at: "2026-10-16T03:43:14Z", status: draft, summary: "changed: visual", sha: "7accd2f1dfcf4b83" }
+- { record: run.pipe-dn150-pn10, at: "2026-10-16T03:46:16Z", status: draft, summary: "changed", sha: "8bae253042687b6f" }
 - { record: run.pipe-dn1600-pn16-mli-double, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "db2244dfd2fcac29" }
 - { record: run.pipe-dn200-pn10-ss, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "0a0f6c73b3afd980" }
 - { record: run.pipe-dn250-pn16-ss-double, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "9dbd0ca89caed0bb" }
@@ -2824,7 +2824,7 @@
 - { record: unit.pressure-hall-30m, at: "2026-10-15T16:13:40Z", status: draft, summary: "first tracked", sha: "4a7bbfb54eda5ef5" }
 - { record: unit.pressure-hall-30m-end, at: "2026-10-15T16:13:40Z", status: draft, summary: "first tracked", sha: "059f108b220860d9" }
 - { record: unit.radiator-field-330k, at: "2026-10-15T20:00:30Z", status: draft, summary: "changed: built_of", sha: "cacc6559212d0505" }
-- { record: unit.radiator-field-345k, at: "2026-10-16T03:38:26Z", status: draft, summary: "changed: identity, ports", sha: "0eb69c664c10bcae" }
+- { record: unit.radiator-field-345k, at: "2026-10-16T03:46:16Z", status: draft, summary: "changed: physical, built_of, envelope", sha: "b0f46f142a1546cd" }
 - { record: unit.radiator-field-485k, at: "2026-10-15T20:10:26Z", status: draft, summary: "changed", sha: "f642c1c225927653" }
 - { record: unit.rectifier-transformer-21mva, at: "2026-10-15T03:01:55Z", status: draft, summary: "changed", sha: "785569a9e884e75d" }
 - { record: unit.recuperator, at: "2026-10-16T03:35:46Z", status: draft, summary: "changed: envelope", sha: "95857803a2719b3c" }
