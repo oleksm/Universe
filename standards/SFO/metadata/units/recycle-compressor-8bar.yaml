@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.recycle-compressor-8bar, name: 'Recycle compressor, 4.1 MW, 8 bar', description: 'Raises 14.3 kg/s of hydrogen from 7.3 to 8.5 bar, the loop''s pressure drop only: two centrifugal stages in one casing and a motor. At 8 bar the gas is dense enough that this is a small machine. Suction at local (6, 0, 1.5), discharge at (-6, 0, 1.5); the casing''s axis along y at (0, 1.3, 2.5), the motor behind it (y -2.6 to -0.4); the motor''s 6.6 kV terminal box on top, its cable entry at (0, -1.5, 5); its water cooler''s flanges low on the -x face at (-6, -2.2, 0.3) and (-6, -1.6, 0.3), for the motor''s losses (about 4%) to the layout''s loop.'}
+identity: {key: unit.recycle-compressor-8bar, name: 'Recycle compressor, 4.1 MW, 8 bar', description: 'Raises 14.3 kg/s of hydrogen from 7.3 to 8.5 bar, the loop''s pressure drop only: two centrifugal stages in one casing and a motor. At 8 bar the gas is dense enough that this is a small machine. Suction at local (6, 0, 1.5), discharge at (-6, 0, 1.5); the casing''s axis along y at (0, 1.3, 2.5), the motor behind it (y -2.6 to -0.4); the motor''s 6.6 kV terminal box on top, its cable entry at (0, -1.5, 5); its water cooler''s flanges low on the -x face at (-6, -2.2, 0.6) and (-6, -1.6, 0.6), over the skid''s end beam, for the motor''s losses (about 4%) to the layout''s loop.'}
 size_class: 2
 fits: plant-mount.bay-s2
 physical: {length: 12.0, width: 6.0, height: 5.0, mass: 55270.0}
@@ -45,7 +45,7 @@ ports:
   rate: 3.89
   temperature: 335.0
   connector: connector.flange-dn100-pn10
-  at: [-6.0, -2.2, 0.3]
+  at: [-6.0, -2.2, 0.6]
   facing: [-1.0, 0.0, 0.0]
 - id: cooling-out
   flow: out
@@ -53,7 +53,7 @@ ports:
   item: good.water
   rate: 3.89
   connector: connector.flange-dn100-pn10
-  at: [-6.0, -1.6, 0.3]
+  at: [-6.0, -1.6, 0.6]
   facing: [-1.0, 0.0, 0.0]
 life: 788940000
 visual: {format: freefall-model/1, path: models/recycle-compressor-8bar/v1, manifest_sha256: f440ad990ad711f11909111071341addefb919872611ad74fcde819e7a5c7aa0, version: 1, triangles: 23616}

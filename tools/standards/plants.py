@@ -2710,7 +2710,7 @@ def shaft_airless_units(us):
                {"of": ["needs.heat"], "tier": "derived", "note": f"The top gas cooled {T_REC_OUT:.0f} to {T_COND:.0f} deg C and its water condensed down to 6% of the recycle (2.33 MJ/kg); with the compressor's aftercooler."}])
     out["recycle-compressor-8bar"] = dict(
         name=f"Recycle compressor, {HP_W_COMP / 1e6:.1f} MW, 8 bar", size_class=2, fits="bay-s2", dims=(12.0, 6.0, 5.0),
-        desc=f"Raises {GAS:.1f} kg/s of hydrogen from {HP_SUCTION / 1e5:.1f} to {HP_SHAFT / 1e5:.1f} bar, the loop's pressure drop only: two centrifugal stages in one casing and a motor. At 8 bar the gas is dense enough that this is a small machine. Suction at local (6, 0, 1.5), discharge at (-6, 0, 1.5); the casing's axis along y at (0, 1.3, 2.5), the motor behind it (y -2.6 to -0.4); the motor's 6.6 kV terminal box on top, its cable entry at (0, -1.5, 5); its water cooler's flanges low on the -x face at (-6, -2.2, 0.3) and (-6, -1.6, 0.3), for the motor's losses (about 4%) to the layout's loop.",
+        desc=f"Raises {GAS:.1f} kg/s of hydrogen from {HP_SUCTION / 1e5:.1f} to {HP_SHAFT / 1e5:.1f} bar, the loop's pressure drop only: two centrifugal stages in one casing and a motor. At 8 bar the gas is dense enough that this is a small machine. Suction at local (6, 0, 1.5), discharge at (-6, 0, 1.5); the casing's axis along y at (0, 1.3, 2.5), the motor behind it (y -2.6 to -0.4); the motor's 6.6 kV terminal box on top, its cable entry at (0, -1.5, 5); its water cooler's flanges low on the -x face at (-6, -2.2, 0.6) and (-6, -1.6, 0.6), over the skid's end beam, for the motor's losses (about 4%) to the layout's loop.",
         built_of=[part("Casing, rotor and motor", "material.high-strength-steel-4340", 8000.0 * HP_W_COMP / 1e6, "8 t a MW of drive, from memory (the 13 t of casing and motor walls drawn on blender's model v1 are within it)"),
                   part("Skid and supports", A36, 15591.7, "measured on blender's model v1"),
                   part("Gas and coolant piping", A36, 7107.4, "the 1 m suction and discharge stubs and the 100 mm, 4 mm cooling pair to the motor's jacket; measured on model v1, the elbows' overlap counted twice")],
@@ -2799,8 +2799,8 @@ def trial_ports(us):
         port("suction", "in", "gas", g_wet, (6, 0, 1.5), (1, 0, 0), item=H2, rate=gas, pressure=HP_SUCTION, temperature=T_COND + K),
         port("discharge", "out", "gas", g_wet, (-6, 0, 1.5), (-1, 0, 0), item=H2, rate=gas, pressure=HP_SHAFT, temperature=T_DIS),
         port("hv", "in", "power", kit.termination(6600, kit.area_for(amps(HP_W_COMP / 0.96, 6600))), (0, -1.5, 5.0), (0, 0, 1), power=HP_W_COMP / 0.96, voltage=6600),
-        port("cooling-in", "in", "liquid", kit.flange(0.1, 10), (-6, -2.2, 0.3), (-1, 0, 0), item=WATER, rate=q_k, temperature=HP_T_LOOP - 10.0),
-        port("cooling-out", "out", "liquid", kit.flange(0.1, 10), (-6, -1.6, 0.3), (-1, 0, 0), item=WATER, rate=q_k),
+        port("cooling-in", "in", "liquid", kit.flange(0.1, 10), (-6, -2.2, 0.6), (-1, 0, 0), item=WATER, rate=q_k, temperature=HP_T_LOOP - 10.0),
+        port("cooling-out", "out", "liquid", kit.flange(0.1, 10), (-6, -1.6, 0.6), (-1, 0, 0), item=WATER, rate=q_k),
     ]
     us["gas-heater-119mw-8bar"]["ports"] = [
         port("gas-in", "in", "gas", g_wet, (-12, -3.3, 2), (-1, 0, 0), item=H2, rate=gas, pressure=HP_SHAFT, temperature=HP_T_PRE + K),
@@ -3053,8 +3053,8 @@ def shaft_furnace_airless(us, recs):
     links += [
         L("transformer cooling in", wt, ("tee:loop return main", "T:water-in"), l0[:-1] + [None]),
         L("transformer cooling out", wt, ("T:water-out", "tee:loop return main"), [None] + l1[::-1][1:]),
-        L("compressor cooling in", wk, ("tee:loop return main", "K:cooling-in"), l2 + [None]),
-        L("compressor cooling out", wk, ("K:cooling-out", "tee:loop return main"), [None] + l3[::-1]),
+        L("compressor cooling in", wk, ("tee:loop return main", "K:cooling-in"), l2 + [(l2[-1][0], -2.2, 0.6), None]),
+        L("compressor cooling out", wk, ("K:cooling-out", "tee:loop return main"), [None, (l3[-1][0], -1.6, 0.6)] + l3[::-1]),
     ]
     ground = [
         {"what": "Tower foundation", "item": SINTER, "volume": r(24 * 24 * 1.5), "note": "a mat of sintered regolith blocks 1.5 m thick (a fifth of the load of 1 g)"},

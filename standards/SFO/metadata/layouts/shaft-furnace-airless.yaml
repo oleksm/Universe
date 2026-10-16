@@ -927,31 +927,33 @@ links:
   run: run.pipe-dn100-pn10
   ends: ['tee:loop return main', 'K:cooling-in']
   from: [44.4, 18.4, 1.0]
-  to: [42.0, -2.2, 0.3]
-  length: 26.3
+  to: [42.0, -2.2, 0.6]
+  length: 26.6
   item: material.structural-steel-a36
-  mass: 465.2
+  mass: 499.4
   via:
   - [44.4, 18.4, 0.3]
   - [44.4, 4.0, 0.3]
   - [40.7, 4.0, 0.3]
   - [40.7, -2.2, 0.3]
-  fittings: {elbows: 4, tees: 1, supports: 9, connectors: 1}
+  - [40.7, -2.2, 0.6]
+  fittings: {elbows: 5, tees: 1, supports: 10, connectors: 1}
 - kind: pipe
   name: compressor cooling out
   run: run.pipe-dn100-pn10
   ends: ['K:cooling-out', 'tee:loop return main']
-  from: [42.0, -1.6, 0.3]
+  from: [42.0, -1.6, 0.6]
   to: [45.0, 18.4, 1.0]
-  length: 25.1
+  length: 25.4
   item: material.structural-steel-a36
-  mass: 454.6
+  mass: 488.7
   via:
+  - [41.3, -1.6, 0.6]
   - [41.3, -1.6, 0.3]
   - [41.3, 3.4, 0.3]
   - [45.0, 3.4, 0.3]
   - [45.0, 18.4, 0.3]
-  fittings: {elbows: 4, tees: 1, supports: 9, connectors: 1}
+  fittings: {elbows: 5, tees: 1, supports: 10, connectors: 1}
 frame:
   box: [-12.0, -12.0, 0.0, 12.0, 12.0, 45.0]
   cell: 3.0
