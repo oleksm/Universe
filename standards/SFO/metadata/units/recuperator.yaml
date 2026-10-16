@@ -11,6 +11,47 @@ built_of:
 - {what: Headers and branches, item: material.structural-steel-a36, mass: 46880.0, note: 'the top gas header, the 8.2 m wet, clean and warm headers, the warm outlet''s riser with its tee-back plate, and the branches; measured on model v1'}
 - {what: Header supports, item: material.structural-steel-a36, mass: 9834.0, note: measured on model v1}
 needs: {}
+ports:
+- id: top-gas-in
+  flow: in
+  medium: gas
+  item: material.hydrogen
+  rate: 38.14
+  pressure: 730000.0
+  temperature: 623.1
+  connector: connector.flange-dn1600-pn16-double
+  at: [0.0, 0.0, 18.0]
+  facing: [0.0, 0.0, 1.0]
+- id: wet-out
+  flow: out
+  medium: gas
+  item: material.hydrogen
+  rate: 38.14
+  pressure: 730000.0
+  temperature: 376.1
+  connector: connector.flange-dn1000-pn16-double
+  at: [0.0, 5.2, 1.5]
+  facing: [0.0, 1.0, 0.0]
+- id: clean-in
+  flow: in
+  medium: gas
+  item: material.hydrogen
+  rate: 20.67
+  pressure: 850000.0
+  temperature: 373.1
+  connector: connector.flange-dn1000-pn16-double
+  at: [0.0, -5.2, 1.0]
+  facing: [0.0, -1.0, 0.0]
+- id: warm-out
+  flow: out
+  medium: gas
+  item: material.hydrogen
+  rate: 20.67
+  pressure: 850000.0
+  temperature: 590.2
+  connector: connector.flange-dn1000-pn16-double
+  at: [0.0, -5.2, 16.75]
+  facing: [0.0, -1.0, 0.0]
 life: 788940000
 visual: {format: freefall-model/1, path: models/recuperator/v1, manifest_sha256: e6b1b44ca5d620ba75e5f4a31ee70c206bf041c137ca83b9f555b89c470b5082, version: 1, triangles: 21760}
 basis:

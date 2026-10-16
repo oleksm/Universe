@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/run.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: run.pipe-dn250-pn16-ss-double, name: 'Pipe DN 250 PN 16, stainless, double-sealed joints', description: 'Welded pipe, 250 mm bore, for up to 16 bar; welded between the units'' flanges, so a run has a flange pair only at its ends.'}
+kind: pipe
+size: 0.25
+bore: 0.25
+outside: [0.259, 0.259]
+rating: {pressure: 1600000.0, temperature: 300.0}
+per_m:
+  mass: 28.4
+  built_of:
+  - {what: Pipe, item: material.stainless-steel-304, mass: 28.4, note: '250 mm bore, 4.5 mm wall (Barlow at 16 bar, 115 MPa, weld factor 0.85)'}
+elbow: {radius: 0.375, mass: 16.7}
+tee: {mass: 15.6}
+support: {spacing: 8.0, mass: 25.5, per_m_height: 19.8, item: material.structural-steel-a36}
+connector: connector.flange-dn250-pn16-ss-double
+carries: gas
+basis:
+- of: [per_m]
+  tier: derived
+  note: Wall from pressure; mass from material and dimensions.
+- of: [elbow, tee]
+  tier: derived
+  note: A long-radius elbow (1.5 bores) is its arc of straight; a tee, a bore and a half of straight and its reducer.
+- of: [support]
+  tier: derived
+  review: true
+  note: 'Spacing from the span it bears full at 1 g (2.5 mm sag, a third of yield), 3 to 12 m: 8.0 m. The stand''s head and its leg by the metre from memory.'

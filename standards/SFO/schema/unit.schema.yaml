@@ -8,6 +8,26 @@ required: [identity, size_class, physical, built_of]
 allOf:
   - { $ref: "../../common.schema.yaml#/definitions/physical_object" }
   - { properties: { physical: { required: [length, width, height, mass] } } }
+definitions:
+  port:
+    type: object
+    additionalProperties: false
+    required: [id, flow, medium, connector, at, facing]
+    description: "One place where something goes in or comes out (SFO 25): a run's end joins it when both are built to the same connector."
+    properties:
+      id: { type: string, description: "Its name on the unit, unique there (gas-in, water-out, hv)." }
+      flow: { enum: [in, out, both], description: "Which way what it carries goes at full rate: in, out, or both (a power port feeding and fed)." }
+      medium: { enum: [gas, liquid, bulk, power] }
+      item: { type: string, x-ref: [material, stock, good], description: "What it carries, by key; none for power." }
+      rate: { type: number, minimum: 0, x-unit: "kg/s", description: "kg/s at the unit's rating" }
+      power: { type: number, minimum: 0, x-unit: "W", description: "W through it at the unit's rating (a power port)" }
+      pressure: { type: number, minimum: 0, x-unit: "Pa", description: "Pa inside it in service" }
+      temperature: { type: number, minimum: 0, x-unit: "K", description: "K of what it carries" }
+      voltage: { type: number, minimum: 0, x-unit: "V", description: "V between phases (a power port)" }
+      connector: { type: string, x-ref: [connector], description: "The connector it is built to, by key." }
+      at: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "m", description: "Its face's middle in the unit's frame (x along, y across from its middle, z up from its bay's floor)." }
+      facing: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "1", description: "The way out of its face, a unit vector in the unit's frame: a run leaves it this way." }
+      note: { type: string }
 properties:
   identity:
     type: object
@@ -50,6 +70,7 @@ properties:
       heat: { type: number, minimum: 0, x-unit: "W" }
       temperature: { type: number, minimum: 0, x-unit: "K", description: "The loop's temperature it is sized for." }
   recipes: { type: array, items: { $ref: "module.schema.yaml#/definitions/module_recipe" }, description: "What it can be set to make, as a module's recipes (SFO 10)." }
+  ports: { type: array, items: { $ref: "#/definitions/port" }, description: "Where what it takes comes in and what it gives goes out, each built to a connector (SFO 25)." }
   life: { type: number, x-unit: "s" }
   visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
   revision:

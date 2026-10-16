@@ -26,6 +26,57 @@ recipes:
   - {item: good.water, quantity: 0.484}
   rate: 55.5555555555556
   power: 22000000
+ports:
+- id: charge-in
+  flow: in
+  medium: bulk
+  item: good.iron-ore-pellets
+  rate: 79.44
+  connector: connector.belt-transfer-1200
+  at: [0.0, 0.0, 40.0]
+  facing: [0.0, 0.0, 1.0]
+  note: the charge lock's hopper rim; a belt's head stands 3 m over it
+- id: top-gas-out
+  flow: out
+  medium: gas
+  item: material.hydrogen
+  rate: 38.14
+  pressure: 730000.0
+  temperature: 623.1
+  connector: connector.flange-dn1600-pn16-double
+  at: [6.5, 0.0, 31.0]
+  facing: [1.0, 0.0, 0.0]
+  note: hydrogen with the reduction's steam
+- id: hot-gas-in
+  flow: in
+  medium: gas
+  item: material.hydrogen
+  rate: 14.25
+  pressure: 850000.0
+  temperature: 1173.0
+  connector: connector.lined-flange-dn2400-pn16-double
+  at: [0.0, -6.5, 16.0]
+  facing: [0.0, -1.0, 0.0]
+  note: the bustle main's inlet stub; the bustle itself 1.9 m clear, the stub's flange 2.0 m
+- id: dri-out
+  flow: out
+  medium: bulk
+  item: good.sponge-iron
+  rate: 55.56
+  temperature: 923.1
+  connector: connector.chute-dn800
+  at: [0.0, 0.0, 6.0]
+  facing: [0.0, 0.0, -1.0]
+  note: the discharge lock's outlet, onto a closed conveyor's tail under it
+- id: power-in
+  flow: in
+  medium: power
+  power: 400000.0
+  voltage: 400
+  connector: connector.termination-400v-300mm2
+  at: [-6.5, 2.0, 4.0]
+  facing: [-1.0, 0.0, 0.0]
+  note: the locks' and valves' drives
 life: 788940000
 visual: {format: freefall-model/1, path: models/shaft-furnace-200th-hp/v1, manifest_sha256: 3962dc1119298d6e9dda3b74d14384126fa35ea7ab1e13ce91fdf42ee3856a84, version: 1, triangles: 21200}
 basis:

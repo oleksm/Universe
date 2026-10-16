@@ -10,6 +10,42 @@ built_of:
 - {what: Tank and fittings, item: material.structural-steel-a36, mass: 31530.0}
 - {what: Oil, item: material.hydraulic-fluid, mass: 42030.0, note: 'transformer mineral oil, which the registry has not got: hydraulic fluid stands for it'}
 needs: {power: 656800.0, heat: 656800.0}
+ports:
+- id: hv-in
+  flow: in
+  medium: power
+  power: 121900000.0
+  voltage: 132000
+  connector: connector.termination-132kv-240mm2
+  at: [0.0, 0.0, 6.8]
+  facing: [0.0, 0.0, 1.0]
+  note: the HV bushings on top; 132 kV chosen
+- id: lv-out
+  flow: out
+  medium: power
+  power: 121300000.0
+  voltage: 6600
+  connector: connector.termination-6p6kv-630mm2
+  at: [0.0, 2.85, 4.5]
+  facing: [0.0, 1.0, 0.0]
+  note: the secondary terminals, 8 circuits
+- id: water-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 15.69
+  temperature: 335.0
+  connector: connector.flange-dn150-pn10
+  at: [-4.55, -0.6, 1.0]
+  facing: [-1.0, 0.0, 0.0]
+- id: water-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 15.69
+  connector: connector.flange-dn150-pn10
+  at: [-4.55, 0.6, 1.0]
+  facing: [-1.0, 0.0, 0.0]
 life: 788940000
 visual: {format: freefall-model/1, path: models/heater-transformer-131mva/v1, manifest_sha256: f819d7559dd216ea49ae536e13e2af8e70ea163ad600118e653aedc294254029, version: 1, triangles: 8336}
 basis:

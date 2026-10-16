@@ -63,3 +63,22 @@ A program `tools/standards/fit_layout.py` checks clashes from unit boxes (or eac
 3. Blender: the run-part kit models.
 4. Engine: the snap-together renderer on the trial layout.
 5. Then the rest of the layouts.
+
+## The trial, as built (2026-10-15)
+
+The owner approved the proposal; the trial is the airless shaft furnace.
+
+- **SFO 25** (`standards/SFO/metadata/0025-plant-connectors.yaml`) sets the ports, connectors and runs. There are new schemas `connector.schema.yaml` and `run.schema.yaml`. `unit.schema.yaml` gains `ports` (with the shared `#/definitions/port`), and `layout.schema.yaml` gains the layout's own `ports` and, on links, `run`, `ends`, `taps`, `count` and `fittings`.
+- **`tools/standards/plant_kit.py`** sizes connectors and runs from pressure, bore and material. Sizes come from the EN DN series, the next size up from what the flow needs. Walls come from Barlow at B31.3 stresses. Flanges use a simple bolt-and-ring rule, not a flange code. Supports are spaced by the span a full pipe bears at 1 g. Hydrogen lines on airless ground have double seals. Only the classes a layout asks for are written: 19 connectors and 19 runs.
+- **Ports** are on the layout's 8 unit kinds. A layout `ports` list holds its 9 own ports: pellets in, sponge iron out, hydrogen in, condensate out, and 6.6 kV, 132 kV and 400 V feeds.
+- **`layout.shaft-furnace-airless`** has 46 runs, each joining port to port. They include the radiator loop as flow and return mains (laid as a parallel pair that never crosses), a pair of row mains along each row with each field's ports tapped off, and power to every unit that draws it. The old layout had no cable to the furnace, the crew post or the 43 radiator pumps, and no 132 kV feed to the transformer.
+- **`tools/standards/fit_layout.py`** checks a layout in half a second. It finds ends that are not at their ports or that leave a port the wrong way, connector, flow and medium mismatches, tees off their main or inside its elbow, legs too short for their elbows, runs through units, other runs or the frame outside its openings, open ports, and power not fed. On its first run it found the pellet belt clipping the top of the furnace's box, so the head now stands 3 m over the hopper and the roof opening was widened one cell. It also found the heater's cables reaching its terminal house through the unit, so they now enter on the unit's west face. It reports no faults now.
+- **Mass:** 9,530 t, up from 9,288 t. The weight moved because the old links counted the loop mains only, while the runs count the row mains (8 rows × 2 × 290 m), the trestles and stands, the cable trays, and the flanges at every port.
+
+Not done yet:
+- the units' collision proxies (the checker uses each unit's box, so a manifold under radiator panels is let through by its taps);
+- rate balance along a branched network;
+- the frame's inner faces;
+- the other 15 layouts;
+- blender's run-part and connector models;
+- engine's snap-together renderer.

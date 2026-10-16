@@ -52,6 +52,10 @@ properties:
         unit: { type: string, x-ref: [unit] }
         rides: { type: string, description: "The link it runs on, by its name." }
         at: { $ref: "#/definitions/point" }
+  ports:
+    description: "The layout's own ports, at its edge: what comes in from and goes out to other layouts or the site (SFO 25). A layout is a unit one level up: two layouts join port to port."
+    type: array
+    items: { $ref: "unit.schema.yaml#/definitions/port" }
   links:
     description: "What joins the bays, laid by the layout: each a line from one point to another, its mass by length."
     type: array
@@ -61,6 +65,24 @@ properties:
       required: [kind, from, to, length, mass]
       properties:
         kind: { enum: [conveyor, duct, rail, busbar, pipe, cable, road], description: "road: a paved lane that wheeled units (forklifts, trucks) run on." }
+        run: { type: string, x-ref: [run], description: "The class of run it is laid of (SFO 25), by key: its straights, elbows, tees, supports and connectors. Its mass is then the run's, by length and fittings." }
+        ends:
+          type: array
+          items: { type: string }
+          minItems: 2
+          maxItems: 2
+          description: "What its two ends join, from and to: `<bay>:<port>` (a unit's port), `edge:<port>` (one of the layout's own ports) or `tee:<run name>` (it branches off that run, its end lying on that run's path). from, to and via are then where those are."
+        taps: { type: array, items: { type: string }, description: "Ports taken off it along its length by a tee (`<bay>:<port>`): each lies on its path." }
+        count: { type: integer, minimum: 1, description: "Circuits laid side by side on one path (cables)" }
+        fittings:
+          type: object
+          additionalProperties: false
+          description: "What it is laid of, counted from its path by the generator."
+          properties:
+            elbows: { type: integer, minimum: 0 }
+            tees: { type: integer, minimum: 0 }
+            supports: { type: integer, minimum: 0 }
+            connectors: { type: integer, minimum: 0 }
         name: { type: string }
         from: { $ref: "#/definitions/point" }
         to: { $ref: "#/definitions/point" }

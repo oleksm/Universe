@@ -1049,7 +1049,7 @@ for name in sorted(os.listdir(TREE)):
 # its schema (schema/element.schema.yaml, schema/material.schema.yaml).
 KINDS = {"elements": "element", "materials": "material", "modules": "module", "goods": "good", "hulls": "hull", "mill-stock": "mill-stock", "equipment": "equipment", "gates": "gate"}
 # (Parts are filed in folders of their own: read further down.)
-NESTED = {"parts", "mounts", "plant-mounts"}      # (folders whose records the page lists elsewhere, or not yet)
+NESTED = {"parts", "mounts", "plant-mounts", "connectors"}      # (folders whose records the page lists elsewhere, or not yet)
 SCHEMAS = {k: read_schema(os.path.join(TREE, "SFO", "schema", f"{v}.schema.yaml")) for k, v in KINDS.items()}
 elements, materials, processes, modules, goods, hulls, mill_stock, equipment, gates = [], [], [], [], [], [], [], [], []
 for s in standards:
@@ -2601,6 +2601,8 @@ _REG = [("mounts", "Mounts", "SFO", os.path.join("SFO", "metadata", "mounts"), "
         ("plant-mounts", "Plant mounts", "SFO", os.path.join("SFO", "metadata", "plant-mounts"), "SFO/schema/plant-mount.schema.yaml", "SFO 24"),
         ("units", "Plant units", "SFO", os.path.join("SFO", "metadata", "units"), "SFO/schema/unit.schema.yaml", "SFO 24"),
         ("layouts", "Plant layouts", "SFO", os.path.join("SFO", "metadata", "layouts"), "SFO/schema/layout.schema.yaml", "SFO 24"),
+        ("connectors", "Plant connectors", "SFO", os.path.join("SFO", "metadata", "connectors"), "SFO/schema/connector.schema.yaml", "SFO 25"),
+        ("runs", "Plant runs", "SFO", os.path.join("SFO", "metadata", "runs"), "SFO/schema/run.schema.yaml", "SFO 25"),
         ("buildings", "Buildings", "SFO", os.path.join("SFO", "metadata", "buildings"), "SFO/schema/building.schema.yaml", None),
         ("markets", "Markets", "SFO", os.path.join("SFO", "metadata", "markets"), "SFO/schema/market.schema.yaml", None),
         ("structures", "Structures", "SFO", os.path.join("SFO", "metadata", "structures"), "SFO/schema/structure.schema.yaml", None),

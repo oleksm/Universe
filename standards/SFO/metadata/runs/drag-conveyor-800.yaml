@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/run.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: run.drag-conveyor-800, name: 'Drag chain conveyor, 800 mm, hot', description: 'Flights on two chains drawn through a closed insulated casing 800 mm wide, for hot bulk up to 650 deg C; it bends gently in the vertical.'}
+kind: drag-conveyor
+size: 0.8
+outside: [1.012, 0.812]
+rating: {rate: 83.3, temperature: 923.0}
+per_m:
+  mass: 379.4
+  built_of:
+  - {what: Casing, item: material.stainless-steel-304, mass: 132.7, note: 'a closed box 0.80 x 0.60 m, 6 mm stainless'}
+  - {what: Insulation, item: material.silica-aerogel, mass: 80.0, note: 100 mm of microporous silica round it; silica aerogel stands for it}
+  - {what: Chain and flights, item: material.stainless-steel-304, mass: 166.7, note: 'two strands of forged chain, both runs (25 kg/m each), a flight every 0.6 m (40 kg)'}
+elbow: {radius: 6.0, mass: 3575.8}
+support: {spacing: 6.0, mass: 80.0, per_m_height: 25.0, item: material.structural-steel-a36}
+connector: connector.chute-dn800
+carries: bulk
+basis:
+- of: [per_m, support, elbow]
+  tier: invented
+  review: true
+  note: Casing and insulation from their dimensions; chain and flights, bends and stands from memory.

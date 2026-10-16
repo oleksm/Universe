@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: connector.termination-6p6kv-185mm2, name: 'Cable termination, 6.6 kV, 185 mm2', description: 'A three-phase cable''s end into a terminal box: lugs, stress control and the gland, for 185 mm2 conductors at 6.6 kV.'}
+kind: termination
+size: 0.000185
+rating: {voltage: 6600, current: 462.5}
+physical: {length: 0.4, width: 0.4, height: 0.6, mass: 15.9}
+built_of:
+- {what: Lugs, item: material.copper, mass: 0.9, note: three crimped lugs}
+- {what: Gland plate, item: material.aluminium-alloy-6061, mass: 5.0, note: the box's gland plate and glands}
+- {what: Stress cones, item: material.silicone-rubber, mass: 10.0, note: 'a stress cone on each core, sized with the voltage (from memory); silicone rubber'}
+basis:
+- of: [built_of]
+  tier: invented
+  review: true
+  note: From memory.
