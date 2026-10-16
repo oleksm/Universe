@@ -5948,3 +5948,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "world::assets has no run kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.belt-1200
+    version: 2
+    manifest_sha256: "116d9c590a890a5c0d7f6f69269006f199dd1d1dbecd44c782b0acb05c1f09ac"
+    installed: 4294bf21
+    game: "the loader (world::assets) at fso 4294bf21"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run kind yet (engine task 20261015T224523-registry-52e4)"
