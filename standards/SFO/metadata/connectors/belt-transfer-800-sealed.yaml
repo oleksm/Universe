@@ -8,6 +8,12 @@ physical: {length: 1.3, width: 1.3, height: 1.475, mass: 865.4}
 built_of:
 - {what: 'Chute, flanges and bolts', item: material.structural-steel-a36, mass: 806.4, note: 'a straight chute 1.1 m square, 10 mm, its four flange rings and 24 bolts; measured on blender''s model v1'}
 - {what: Wear liner, item: material.polyethylene-uhmw, mass: 59.0, note: 10 mm UHMW polyethylene; measured on blender's model v1}
+visual:
+  format: "freefall-model/1"
+  path: "models/belt-transfer-800-sealed/v1"
+  manifest_sha256: "ca1ba8acf6ef012cc86d08c194d4d4640091e224d4d67ca70a5c42ed3de7b352"
+  version: 1
+  triangles: 4816
 basis:
 - of: [built_of]
   tier: invented
