@@ -205,7 +205,7 @@
 - { record: connector.termination-6p6kv-185mm2, at: "2026-10-16T14:24:23Z", status: draft, summary: "changed", sha: "a32ec5e3bb6184d8" }
 - { record: connector.termination-6p6kv-400mm2, at: "2026-10-16T19:40:41Z", status: draft, summary: "first tracked", sha: "9f9c4c8f204e856e" }
 - { record: connector.termination-6p6kv-630mm2, at: "2026-10-16T15:00:44Z", status: draft, summary: "changed", sha: "f7e2a4150553a4d8" }
-- { record: connector.termination-6p6kv-95mm2, at: "2026-10-16T19:40:41Z", status: draft, summary: "first tracked", sha: "9bfcb71f2f0eacdf" }
+- { record: connector.termination-6p6kv-95mm2, at: "2026-10-16T21:49:12Z", status: draft, summary: "changed: visual", sha: "41834b7484de19f0" }
 - { record: deposit-type.bauxite, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "d94a18af510f0854" }
 - { record: deposit-type.beach-sands, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "45c5674677db6276" }
 - { record: deposit-type.carbonate-zinc-lead, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "96b202768287d1b7" }
