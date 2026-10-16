@@ -20,9 +20,24 @@ Units are already separate products with their own models (77 unit records). Wha
 
 No layout model at all. A layout's mass stays the sum of units, runs (length × mass per m, plus fittings) and ground, which the generator already works out.
 
-## Ports
+## Ports, inputs, outputs and connectors
 
-Every unit gets structured ports in place of the prose: `{id, kind (pipe, duct, belt, cable, rail), size, at [x,y,z], facing [x,y,z], medium}`. A run's ends name `bay:port`, not coordinates. Then the generator can check that sizes match and that the ends face each other.
+Every unit gets structured ports in place of the prose. A port is where something goes in or comes out:
+
+`{id, flow (in, out or both), carries (a stock or medium key: hydrogen at 8 bar, cooling water, sponge iron, 6.6 kV power), rate (kg/s or W at the unit's rating), connector (a standard's key), size, at [x,y,z], facing [x,y,z]}`
+
+So a unit's record says what it takes and what it gives, at what rate, through which connector. The layout's inputs and outputs are the ports left open at its edge (ore in, sponge iron out, hydrogen make-up, power): a layout is itself a unit one level up, and two layouts join the same way.
+
+**Connector standards** (a new SFO standard, like SFO 19 mounts for ship equipment): each standard fixes the mating faces, so that any vendor's part fits any vendor's port.
+- Pipe flanges by size and pressure class (for example DN 1000 PN 16), with gasket and bolting.
+- Vacuum and pressure couplings for airless sites, double O-ring and clamped.
+- Belt transfer points: a chute and skirt to a receiving belt's loading zone, by belt width.
+- Duct flanges, by size.
+- Power terminations by voltage and current: cable lugs and boxes, bus ducts.
+- Rail joints, by gauge and rail section.
+- Hose couplings, for units that move (a tilting furnace).
+
+**Connectors are made things.** Each connector is a part record with material and mass (a flange pair, a coupling, a cable termination, a chute), and a small model per size. The game snaps a run's end to a port only when they share a connector standard and size, and when one is an out and the other an in (or both carry the same medium). A run's ends name `bay:port`, never coordinates. The generator checks that the rates balance, that sizes and media match, and that ends face each other. A port left open where it should not be is a fault.
 
 ## Fit checks without blender
 
@@ -30,8 +45,8 @@ A program `tools/standards/fit_layout.py` checks clashes from unit boxes (or eac
 
 ## Who does what
 
-- **Registry:** ports on all 77 units; run parts and their size classes; layout runs from port to port; the fit checker.
-- **Blender:** unit models only, plus the run-part kit (about 10 parts × a few sizes) and a collision proxy per unit. No layout models.
+- **Registry:** ports (in, out, carries, rate, connector) on all 77 units; the connector standard and connector parts; run parts and their size classes; layout runs from port to port; the fit checker.
+- **Blender:** unit models only, plus the run-part kit (about 10 parts × a few sizes), the connector parts (flanges, couplings, terminations, chutes) and a collision proxy per unit. No layout models.
 - **Engine:** load the units' and parts' models, generate runs from the data, cut the ground, and instance radiators and struts. Its factory studio already places units from records, so it would move from boxes to these parts.
 
 ## What happens to what exists
@@ -43,7 +58,7 @@ A program `tools/standards/fit_layout.py` checks clashes from unit boxes (or eac
 
 ## Order
 
-1. Ports schema and ports on the airless shaft furnace's units, as the trial; runs from port to port in that one layout.
+1. Ports and connector schemas; the connector standard; ports on the airless shaft furnace's units, as the trial; runs from port to port in that one layout.
 2. Run-part records, size classes and the fit checker; the shaft furnace airless passes it.
 3. Blender: the run-part kit models.
 4. Engine: the snap-together renderer on the trial layout.
