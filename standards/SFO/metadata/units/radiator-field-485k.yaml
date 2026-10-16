@@ -4,15 +4,17 @@ identity: {key: unit.radiator-field-485k, name: 'Radiator field, 9.6 MW at 485 K
     white.'}
 size_class: 4
 fits: plant-mount.bay-s4
-physical: {length: 48.0, width: 48.0, height: 3.5, mass: 41500.0}
+physical: {length: 48.0, width: 48.0, height: 3.5, mass: 41380.0}
 built_of:
 - {what: Panel skins and edges, item: material.aluminium-alloy-6061, mass: 20910.0, note: 'two 2 mm face sheets a panel and their edges; measured on blender''s model of the 330 K field (v1), the same for every field'}
 - {what: Panel tubes, item: material.aluminium-alloy-6061, mass: 3284.0, note: 'tubes 20 mm across, 1.5 mm wall, at 150 mm, bonded between the sheets (not drawn)'}
 - {what: Legs, item: material.aluminium-alloy-6061, mass: 1592.0, note: 'four 100 mm box legs, 4 mm, 3 m, a panel; measured on model v1'}
 - {what: Panel rails, item: material.aluminium-alloy-6061, mass: 1639.0, note: '100 x 50 x 3 mm channel round each panel''s edge, carrying its skins between the legs; measured on model v1'}
-- {what: Headers and branches, item: material.stainless-steel-304, mass: 10760.0, note: 'steam at about 212 deg C and 20 bar is too hot and too high for aluminium pipe: stainless steel 304, the 400 mm mains 6 mm along the -x edge (about 67 MPa), a raised inlet crossover at z 1.6, 100 mm row pairs 3 mm along x, 50 mm stubs 2 mm; measured on blender''s model of the 485 K field (v1); the panels'' own 20 mm aluminium tubes see only about 13 MPa'}
+- {what: Headers and branches, item: material.stainless-steel-304, mass: 10620.0, note: 'steam at about 212 deg C and 20 bar is too hot and too high for aluminium pipe: stainless steel 304, the 400 mm mains 6 mm along the -x edge (about 67 MPa), a raised inlet crossover at z 1.6, 100 mm row pairs 3 mm along x, 50 mm stubs 2 mm; measured on blender''s model of the 485 K field (v1); the panels'' own 20 mm aluminium tubes see only about 13 MPa; at its ports reduced inside the field to DN 150 steam and DN 100 water, the old 400 mm caps gone: measured on blender''s model v2 (2026-10-16) (38.1 kg added, 177.8 removed)'}
 - {what: Pipe supports, item: material.aluminium-alloy-6061, mass: 1319.0, note: measured on model v1}
 - {what: Pumps, item: good.pumps, mass: 2000.0, note: from memory}
+- {what: Pump's terminal box, item: material.structural-steel-a36, mass: 17.59, note: measured on blender's model v2 (2026-10-16)}
+- {what: Terminal box feet, item: material.aluminium-alloy-6061, mass: 2.17, note: measured on blender's model v2 (2026-10-16)}
 holds: 2930.0
 needs: {power: 91790.0, atmosphere: vacuum}
 rejects: {heat: 9605000.0, temperature: 485.0}
@@ -50,7 +52,7 @@ ports:
 envelope:
 - [-23.509, -22.062, -0.001, 22.062, 22.062, 3.135]
 - [-23.652, -22.005, -0.001, -22.798, 22.005, 1.202]
-- [-24.131, -0.977, -0.001, -21.824, 0.832, 1.832]
+- [-24.131, -1.651, -0.001, -21.824, 0.832, 1.832]
 life: 788940000
 visual: {format: freefall-model/1, path: models/radiator-field-485k/v1, manifest_sha256: 863fbabebcfb4a37f019bcf1abc1fb3a2e7f126e9b71adad684b2470758cb995, version: 1, triangles: 43464}
 basis:

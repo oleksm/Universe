@@ -2395,6 +2395,10 @@ def arc_ports(us):
         port("water-out", "out", "liquid", kit.flange(dn_cond, 25, temp=485.0), (-24.0, 0.6, 1.0), (-1, 0, 0), item=WATER, rate=steam, temperature=480.0, note="the condensate, by its pump"),
         port("power-in", "in", "power", lv(hot["needs"]["power"]), (-24.0, -1.4, 0.3), (-1, 0, 0), power=hot["needs"]["power"], voltage=400, note="its pump's terminal box, beside the headers"),
     ]
+    if "Pump's terminal box" not in [x["what"] for x in hot["built_of"]]:
+        m2 = "measured on blender's model v2 (2026-10-16)"
+        hot["built_of"] = [part(x["what"], x["item"], 10763.8 + 38.07 - 177.80, f"{x['note']}; at its ports reduced inside the field to DN 150 steam and DN 100 water, the old 400 mm caps gone: {m2} (38.1 kg added, 177.8 removed)") if x["what"] == "Headers and branches" else x for x in hot["built_of"]]
+        hot["built_of"] += [part("Pump's terminal box", A36, 17.59, m2), part("Terminal box feet", "material.aluminium-alloy-6061", 2.17, m2)]
     hot["desc"] = hot["desc"].replace("its ports at local (-24, -0.6, 1) flow and (-24, 0.6, 1) return.", f"its ports at local (-24, -0.6, 1) steam in (DN {dn_steam * 1000:.0f}) and (-24, 0.6, 1) water out (DN {dn_cond * 1000:.0f}), facing -x, its pump's power entry at (-24, -1.4, 0.3).")
     v = us["eaf-vessel-80t-sealed"]
     v["desc"] = v["desc"].replace("(the manifold itself is the layout's)", "(the manifold is the unit's: two DN 400 barrels standing on the deck, each taking its hose from the side)")
