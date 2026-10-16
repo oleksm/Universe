@@ -87,3 +87,35 @@ Install each with `tools/standards/install_model.py` as usual. The kinds `connec
 - `support_head` is a steel cross-arm with two post insulators under the poles; `support_leg` is a steel post.
 
 **The bus joint** (`connector.bus-joint-dc-44ka`): at the plane, each pole's tubes are brazed into a pair of 30 mm copper plates, bolted with sixteen M20, with an insulating hose from each tube's end.
+
+## 5. The airless pellet plant (2026-10-16)
+
+`layout.pellet-plant-airless` is now laid of runs (135 runs, 0 faults). The fit check takes the hall's sections and heads as shells (`shells`, the registry's from their geometry), so their boxes are no longer needed.
+
+**Unit versions** (each to its ports in plain stubs; the records say where):
+1. `pressure-hall-30m-end` v2:
+   - a second, high nozzle at (7.5, 0, 14.5), 3 m, facing +x;
+   - the service panel: a boxed plate whose pass-throughs' outer faces are at x 6.5 and inner faces at x 5.0:
+     - water 200 mm at y -10.2 and -9.6, z 10;
+     - stainless 50 mm at y -9.0, z 10;
+     - cable glands for 6.6 kV at y -10.2 and for 400 V at y -9.4, z 10.8;
+     - outer only: nitrogen 50 mm at (6.5, -8.4, 10) and the lock pumps' 400 V at (6.5, -8.6, 10.8).
+   - Both nozzles and every pass-through are spares a layout may blind: draw them all open, with stubs.
+2. `pressure-hall-30m` v2: the fan coils' 400 V gland at (-12.4, -12), up through the deck.
+3. `ore-lock-hopper` v2: its -x face braced round a 3.2 m opening at z 6.9 to 10.1, where the ore gallery leaves (the layout turns the lock 180 degrees).
+4. `pellet-gas-loop` v2: a sealed 2 m3 dust bin under each rotary lock, no dust chutes; the cold gas outlet DN600, not 700.
+5. `balling-disc-7m5` v2: a small fines elevator on the frame's -x side, from the screen's tray to the cake chute; its 400 V entry at (4.5, 1.0, 0.5), facing +x.
+6. `plant-transformer-35mva` v2:
+   - an HV cable box on top (3 x 0.8 x 0.8 m, gland plate at (0, -0.9, 5.2));
+   - an LV box on its +y face (4 x 0.5 x 1.2 m, gland plate facing +y at (0, 2.35, 2.9));
+   - cooler ports at (-2.9, ±0.6, 1), facing -x.
+7. `radiator-field-330k` v2: ports to its south-west corner, as the 345 K field's v3.
+8. `ball-mill-4m4`: plain stubs at its new ports:
+   - the ore hopper at (-8, 0, 4);
+   - water 100 mm at (-8, 1.2, 4);
+   - slurry 150 mm at (8, 3, 0.5);
+   - the 6.6 kV box at (6, -4.4, 0.5).
+
+**Kit pieces without a model** (14 runs, 16 connectors): the 0.8 and 1.0 m belts, open and sealed, with their transfers and chutes (DN400, 600, 1000); pipes DN450, DN700 lagged and DN50 PN16 double, with their flanges; the gallery flange DN3000 PN1; cables 33 kV 185 mm2, 6.6 kV 95 and 400 mm2, 400 V 35, 50, 95 and 120 mm2, with their terminations.
+
+**A sealed belt** (`run.belt-800-sealed`, `-1000-sealed`) is the open belt inside a 3 m gallery tube of 4 mm plate with a ring every 3 m, under foil. The run's axis is the tube's; its outside is 3 x 3 m. Add a `straight` for the tube along with the belt's pieces. Its head and tail are inside sealed boxes the size of the tube.
