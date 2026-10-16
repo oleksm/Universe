@@ -3562,7 +3562,7 @@ def pellet_airless_units(us):
         built_of=[part("Lock", A36, 4761.8, "the 3 m barrel in 10 mm, its cone, head and stiffeners; measured on blender's candidate (2026-10-16)"),
                   part("Hopper", A36, 1147.8, "8 mm, DN 1000 to 3.8 m; measured"),
                   part("Frame and pump skid", A36, 17039.7, "four 300 mm square columns, 400 x 300 mm head and radial beams, the ring at the barrel's base, side braces; its -x face a portal (300 x 300 x 12 mm jambs, 400 x 300 x 16 mm headers at 6.7 and 10.3) round the gallery's opening; measured on model v2"),
-                  part("Pipes", "material.stainless-steel-304", 176.5, "the nitrogen fill and the pump's suction; measured"),
+                  part("Pipes", "material.stainless-steel-304", 170.4, "the nitrogen fill and the pump's suction; measured"),
                   part("Valves and pump", "good.pumps", 3000.0, "from memory")],
         needs={"power": 15e3, "atmosphere": "vacuum"},
         basis=[{"of": ["physical", "built_of", "needs"], "tier": "invented", "review": True, "note": "From memory; loads at 60% of the lock filled with ore at 2.3 t/m3."}])
