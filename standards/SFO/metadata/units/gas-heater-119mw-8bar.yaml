@@ -50,8 +50,13 @@ ports:
   at: [-12.0, 1.45, 1.575]
   facing: [-1.0, 0.0, 0.0]
   note: 8 circuits of 630 mm2 into the terminal house
+visual:
+  format: "freefall-model/1"
+  path: "models/gas-heater-119mw-8bar/v2"
+  manifest_sha256: "2f7280308e7dc16d493e72d1b033e97ec4045a1d68160bac67f5f2ddf3f7c6e2"
+  version: 2
+  triangles: 52450
 life: 788940000
-visual: {format: freefall-model/1, path: models/gas-heater-119mw-8bar/v1, manifest_sha256: 73f5139caf11ab96a7bb41bd7b1c013459cdb143f26d8811672c12ee251c3015, version: 1, triangles: 51550}
 basis:
 - of: [physical, built_of]
   tier: invented
