@@ -1,15 +1,51 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.furnace-transformer-90mva, name: 'Furnace transformer, 90 MVA', description: 'Steps the grid down to about 800 V and 65 kA a phase for the arcs, with on-load taps. Oil-filled in a closed tank, HV bushings and conservator on top, cooled by oil to water. Three secondary terminals on one long face (+y), 1.3 m apart, 4 m up. The oil-to-water cooler''s water ports on its -x end, 1 m up. Stands in a fire-walled vault beside the furnace so the secondary bus is short.'}
+identity: {key: unit.furnace-transformer-90mva, name: 'Furnace transformer, 90 MVA', description: 'Steps the grid down to about 800 V and 65 kA a phase for the arcs, with on-load taps. Oil-filled in a closed tank, HV bushings and conservator on top, cooled by oil to water. Three secondary terminals on one long face (+y), 1.3 m apart, 4 m up. The oil-to-water cooler''s water ports on its -x end, 1 m up. Stands in a fire-walled vault beside the furnace so the secondary bus is short. Fed at 33 kV through a cable box over its HV bushings, its gland plate on top at (0, -0.85, 6.8); the secondary''s bus joint (SFO 25, the three phases 0.6 m apart) at (0, 2.5, 4) facing +y; its cooler''s water in at (-3.76, -2.38, 1.35) and out at (-3.76, -2.38, 2.35), facing -x.'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 8.0, width: 5.0, height: 6.0, mass: 144000.0}
+physical: {length: 8.0, width: 5.0, height: 6.8, mass: 144500.0}
 built_of:
 - {what: Core, item: material.structural-steel-a36, mass: 57600.0, note: 'grain-oriented electrical steel, which the registry has not got: structural steel stands for it'}
 - {what: Windings, item: material.copper, mass: 36000.0}
 - {what: Tank and fittings, item: material.structural-steel-a36, mass: 21600.0}
 - {what: Oil, item: material.hydraulic-fluid, mass: 28800.0, note: 'transformer mineral oil, which the registry has not got: hydraulic fluid stands for it'}
+- {what: HV cable box, item: material.structural-steel-a36, mass: 512.4, note: '3 x 0.8 x 0.8 m, 6 mm, over the three HV bushings: from its dimensions (to be drawn, v2)'}
 needs: {power: 450000.0, heat: 450000.0}
+ports:
+- id: hv-in
+  flow: in
+  medium: power
+  power: 72450000.0
+  voltage: 33000
+  connector: connector.termination-33kv-630mm2
+  at: [0.0, -0.85, 6.8]
+  facing: [0.0, 0.0, 1.0]
+  note: 2 circuits of 630 mm2; 33 kV chosen
+- id: lv-out
+  flow: out
+  medium: power
+  power: 72000000
+  voltage: 800.0
+  connector: connector.bus-joint-ac-65ka
+  at: [0.0, 2.5, 4.0]
+  facing: [0.0, 1.0, 0.0]
+- id: water-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 10.75
+  temperature: 320.0
+  connector: connector.flange-dn100-pn10
+  at: [-3.76, -2.38, 1.35]
+  facing: [-1.0, 0.0, 0.0]
+- id: water-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 10.75
+  connector: connector.flange-dn100-pn10
+  at: [-3.76, -2.38, 2.35]
+  facing: [-1.0, 0.0, 0.0]
 envelope:
 - [-3.702, -2.202, -0.001, 4.015, 1.712, 4.806]
 - [-2.401, -1.152, 4.478, 2.401, -0.549, 6.001]

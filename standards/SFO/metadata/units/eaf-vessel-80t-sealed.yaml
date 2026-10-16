@@ -1,7 +1,8 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
 identity: {key: unit.eaf-vessel-80t-sealed, name: 'Arc furnace vessel, 80 t, sealed', description: 'The 80 t arc furnace closed for airless ground: its roof sealed to the shell, glands round the three electrodes, the sponge iron fed through a lock in the fifth hole, and the off-gas taken by a sealed bellows joint from the fourth, so the furnace holds its own gas (the CO its charge gives off, started with argon) at about 1 bar: the arc burns as in air, the melt neither boils nor loses its manganese to the vacuum, and the slag foams. It tilts only a few degrees to tap and 15 to deslag, through the bellows. Otherwise as unit.eaf-vessel-80t: An AC arc furnace that taps 80 t: a refractory hearth 6.6 m across, water-cooled upper shell and roof, three graphite electrodes on masts, a tilting cradle and an eccentric bottom tap. Fed sponge iron through a fifth hole in the roof. Stands on a platform 5 m up so a ladle car runs under its tap. Its cooling water comes by two flexible hoses of its own (it
-    tilts), 300 mm bore, flow and return, from its ports at local (-3.8, 3.2, 2.6) and (-3.8, 3.6, 2.6), clear of the tilt pin and its actuator, down to a fixed manifold on the deck whose two ports face up at local (-3.8, 4.9, 0.5) and (-3.8, 5.3, 0.5). Its box is not centred across: the arms'' tails and the secondary cables reach 6.25 m behind the furnace''s axis (toward the transformer), its water hoses'' couplings at the deck manifold 5.49 m in front (the manifold itself is the layout''s); 14 m tall with the masts at rest.'}
+    tilts), 300 mm bore, flow and return, from its ports at local (-3.8, 3.2, 2.6) and (-3.8, 3.6, 2.6), clear of the tilt pin and its actuator, down to a fixed manifold on the deck whose two ports face up at local (-3.8, 4.9, 0.5) and (-3.8, 5.3, 0.5). Its box is not centred across: the arms'' tails and the secondary cables reach 6.25 m behind the furnace''s axis (toward the transformer), its water hoses'' couplings at the deck manifold 5.49 m in front (the manifold itself is the layout''s); 14 m tall with the masts at rest. Its ports (SFO 25): sponge iron in at the feed lock''s top, local (0, 1.8, 10.1), a belt''s head over it; off-gas out at the reducer''s flange, (2, 1.5, 9.7), facing up, 1.2 m lined; the secondary bus''s joint at the flexible cables'' fixed ends, (0, -6.2, 2.3), facing -y; the deck manifold''s water flanges, DN 400 facing up, in at (-3.8, 4.0, 0.5) and out at (-3.8, 4.8, 0.5), 0.8 m apart so their flanges clear (v4: the manifold reduces from the hoses'' 300 mm, and
+    keeps inside local y 5.3, clear of the airless shop''s gantry crane''s legs, whose inner faces pass at y 5.43).'}
 size_class: 2
 fits: plant-mount.bay-s2
 physical: {length: 12.0, width: 11.74, height: 14.0, mass: 322400.0}
@@ -44,6 +45,53 @@ recipes:
   rate: 26.6666666666667
   batch: 80000
   power: 72000000
+ports:
+- id: dri-in
+  flow: in
+  medium: bulk
+  item: good.sponge-iron
+  rate: 29.33
+  connector: connector.belt-transfer-800
+  at: [0.0, 1.8, 10.1]
+  facing: [0.0, 0.0, 1.0]
+  note: the feed lock's top; the belt's head 3 m over it
+- id: offgas-out
+  flow: out
+  medium: gas
+  item: material.carbon-monoxide
+  rate: 1.369
+  pressure: 100000.0
+  temperature: 1873.0
+  connector: connector.lined-flange-dn1200-pn1
+  at: [2.0, 1.5, 9.7]
+  facing: [0.0, 0.0, 1.0]
+- id: power-in
+  flow: in
+  medium: power
+  power: 72000000
+  voltage: 800.0
+  connector: connector.bus-joint-ac-65ka
+  at: [0.0, -6.2, 2.3]
+  facing: [0.0, -1.0, 0.0]
+  note: 65 kA a phase
+- id: water-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 258.0
+  temperature: 320.0
+  connector: connector.flange-dn400-pn10
+  at: [-3.8, 4.0, 0.5]
+  facing: [0.0, 0.0, 1.0]
+- id: water-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 258.0
+  temperature: 330.0
+  connector: connector.flange-dn400-pn10
+  at: [-3.8, 4.8, 0.5]
+  facing: [0.0, 0.0, 1.0]
 envelope:
 - [-5.851, -4.501, -0.001, 5.851, 4.501, 2.512]
 - [-5.077, -3.743, 1.798, 4.802, 3.743, 7.302]

@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../schema/connector.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: connector.bus-joint-dc-44ka, name: 'Bus joint, DC, 44 kA', description: 'Where a 43.1 kA direct current bus meets a unit''s terminals: both poles'' tubes brazed into copper plates, bolted to the unit''s pads, the poles'' centres 0.6 m apart (0.3 m clear between them), and the tubes'' water handed by insulating hoses to the unit''s cooling manifold. At the plane: the poles side by side across y, + at -y, each pole 0.30 m wide and 0.14 m tall about the axis.'}
+identity: {key: connector.bus-joint-dc-44ka, name: 'Bus joint, DC, 44 kA', description: 'Where a 43.1 kA direct current bus meets a unit''s terminals: each pole''s tubes brazed into copper plates, bolted to the unit''s pads, the poles'' centres 0.6 m apart (0.3 m clear between them), and the tubes'' water handed by insulating hoses to the unit''s cooling manifold. At the plane: the poles side by side across y, + at -y, each pole 0.30 m wide and 0.14 m tall about the axis.'}
 kind: bus-joint
 size: 0.011
 rating: {voltage: 442.7, current: 43135.3}

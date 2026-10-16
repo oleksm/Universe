@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/run.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: run.lined-duct-dn1200-pn1, name: Lined duct DN 1200 PN 1, description: 'A steel shell 1200 mm nominal bore lined with 200 mm of refractory, for hot gas at up to 1600 deg C and 1 bar: 0.80 m clear. Its bends are mitred, one bore in radius.'}
+kind: lined-duct
+size: 1.2
+bore: 0.8
+outside: [1.219, 1.219]
+rating: {pressure: 100000.0, temperature: 1873.15}
+per_m:
+  mass: 2178.3
+  built_of:
+  - {what: Shell, item: material.structural-steel-a36, mass: 283.4, note: '1200 mm, 9.5 mm (Barlow at 1 bar, the shell kept under 200 deg C by its lining)'}
+  - {what: Lining, item: good.refractory-brick, mass: 1885.0, note: '200 mm of refractory, 0.80 m clear bore'}
+  - {what: Anchors, item: material.stainless-steel-304, mass: 9.9, note: 'stainless anchors holding the lining, about 0.2% of its volume'}
+elbow: {radius: 1.2, mass: 4516.6}
+tee: {mass: 1286.3}
+support: {spacing: 10.4, mass: 127.5, per_m_height: 41.8, item: material.structural-steel-a36}
+cap: {thickness: 0.016, mass: 443.7}
+connector: connector.lined-flange-dn1200-pn1
+carries: gas
+basis:
+- of: [per_m]
+  tier: derived
+  note: Shell from pressure, lining from its thickness; mass from material and dimensions.
+- of: [support, elbow]
+  tier: derived
+  review: true
+  note: Spacing from the span it bears at 1 g, 10.4 m; mitred bends a tenth heavier than their arc. Stands from memory.

@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: connector.flange-dn400-pn10, name: Flange DN 400 PN 10, description: 'A bolted pair of weld-neck flanges for a pipe of 400 mm nominal bore at up to 10 bar inside (on airless ground, the whole of it against vacuum).'}
+kind: flange
+size: 0.4
+rating: {pressure: 1000000.0, temperature: 330.0}
+sealing: single
+physical: {length: 0.566, width: 0.566, height: 0.11, mass: 48.2}
+built_of:
+- {what: Flanges, item: material.structural-steel-a36, mass: 44.7, note: 'two weld-neck rings 0.566 m across, 20 mm thick, their necks tapering over 20 mm from 20 mm to the pipe''s wall; along the pipe the joint is 110 mm with the necks and the bolts'' and nuts'' ends'}
+- {what: Bolts and nuts, item: material.high-strength-steel-4340, mass: 2.9, note: '16 of M16, 78 mm, on a 0.518 m circle'}
+- {what: Gasket, item: material.stainless-steel-304, mass: 0.6, note: 'spiral wound, stainless windings'}
+basis:
+- of: [built_of, physical]
+  tier: derived
+  review: true
+  note: 'Sized by a simple rule, not to a flange code: the end force on the gasket''s mean circle (0.45 m) at the class''s pressure, bolts at 170 MPa, the ring''s thickness from its bending about the bolt circle at 140 MPa.'

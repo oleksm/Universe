@@ -127,3 +127,44 @@ Install each with `tools/standards/install_model.py` as usual. The kinds `connec
 - `head` and `tail` are inside sealed boxes the tube's size, 3 m long, 6 mm plate, with the motor turned along x inside. The head box has an outlet in its floor at its origin; the tail box has an inlet in its roof at its origin. The boxes' masses are in the record's terminals.
 - The connector is `connector.belt-transfer-800-sealed` / `-1000-sealed`: a closed chute from the head box's floor (1.525 m under the pulley's centre) down to the port 3 m under it, flanged and sealed at both ends. The hood is the box's. The receiving port (a shaft's charge lock, the mill's hopper) is flanged for it.
 - Where a sealed belt's head drops onto another sealed belt, the head box seals onto the lower belt's tail box (inside its 0.5 m drop).
+
+## 6. The airless arc furnace shop (2026-10-16)
+
+`layout.arc-furnace-airless` is now laid of runs (63 runs, 8 layout ports, 0 faults). The gantry crane's legs sweep x -35 to 11 along y ±12, so no run crosses them: the feed belt comes in along x between the legs, and the off-gas duct goes east 19 m up and turns north past the crane's east end.
+
+**A new unit:** `offgas-cooler-sealed` (6 x 4 x 17 m, 17.2 t). The sealed furnace's gas is CO alone, 1.37 kg/s, so it gives 2.2 MW, not the 7.2 MW of the old jacketed duct.
+- A water-walled shaft 1.6 m across, z 8 to 16, on four box legs.
+- A steam drum 1 m across and 3 m long along y, axis at (-2, 0, 15.5).
+- A hopper under the shaft, with a dust lock and a closed bin.
+- Ports:
+  - gas in on top at (0, 0, 17), a 1.2 m lined flange;
+  - gas out of the hopper's side at (3, 0, 8), facing +x, DN 1200;
+  - steam out at (-3, 0.4, 15.5) and water in at (-3, -0.4, 15.5), facing -x;
+  - the lock drives' 400 V at (2, -2, 1), facing -y.
+
+**Unit versions** (plain stubs at the ports; the records say where):
+1. `eaf-vessel-80t-sealed` v4:
+   - the deck manifold's flanges are DN 400, facing up, at (-3.8, 4.0, 0.5) in and (-3.8, 4.8, 0.5) out, 0.8 m apart; the manifold reduces from the hoses' 300 mm;
+   - the manifold keeps inside local y 5.3. v3 reaches 5.49, and the crane's legs pass at 5.43;
+   - the bus joint at the flexible cables' fixed ends, (0, -6.2, 2.3), facing -y;
+   - the feed lock's top at (0, 1.8, 10.1);
+   - the off-gas reducer's flange at (2, 1.5, 9.7), facing up.
+2. `furnace-transformer-90mva` v2:
+   - a 33 kV cable box over the HV bushings, 3 x 0.8 x 0.8 m, its gland plate on top at (0, -0.85, 6.8);
+   - the secondary pads respaced to the bus joint's 0.6 m, at (0, 2.5, 4), facing +y;
+   - the cooler's water at (-3.76, -2.38, 1.35) in and 2.35 out, facing -x, as the v1 pipes met them.
+3. `dri-bin-200t`:
+   - a roof nozzle at (0, 0, 15.3), facing up, where the hot drag conveyor drops in;
+   - a terminal box at (3, 0, 1), facing +x.
+   - The layout turns the bin 90 degrees.
+4. `offgas-filter-sealed`: a DN 1200 flange on its inlet at (-6, 0, 8), and a 400 V box at (5, 0, 1), facing +x.
+5. `radiator-field-485k`:
+   - the ports stay at the middle of its -x edge (v1): steam in DN 150 at (-24, -0.6, 1), water out DN 100 at (-24, 0.6, 1);
+   - add the pump's box at (-24, -1.4, 0.3);
+   - the layout turns the field 180 degrees so they face the plant.
+
+**Kit pieces without a model** (7 runs, 7 connectors):
+- the AC busbar, 65 kA: three phases of 11 tubes, 0.6 m apart, `run.busbar-ac-65ka`, with `connector.bus-joint-ac-65ka`;
+- the lined duct DN 1200 PN 1 and its lined flange;
+- pipes DN 1200 PN 1, DN 400 PN 10, DN 150 PN 25 lagged and DN 100 PN 25, with their flanges;
+- the 33 kV 630 mm2 cable and its termination.

@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: connector.bus-joint-ac-65ka, name: 'Bus joint, AC, 65 kA', description: 'Where a 65.0 kA three-phase alternating current bus meets a unit''s terminals: each phase''s tubes brazed into copper plates, bolted to the unit''s pads, the phases'' centres 0.6 m apart (0.3 m clear between them), and the tubes'' water handed by insulating hoses to the unit''s cooling manifold. At the plane: the three phases side by side across y, each phase 0.30 m wide and 0.22 m tall about the axis.'}
+kind: bus-joint
+size: 0.01728
+rating: {voltage: 800.0, current: 64951.9}
+physical: {length: 0.3, width: 1.6, height: 0.34, mass: 239.1}
+built_of:
+- {what: Joint plates, item: material.copper, mass: 181.0, note: 'a pair of 30 mm copper plates a phase, 340 x 330 mm, the tubes brazed into one, bolted to the unit''s terminal pad'}
+- {what: Bolts, item: material.high-strength-steel-4340, mass: 19.2, note: 'sixteen M20 a phase in two rows of eight, above and below the tubes, with spring washers'}
+- {what: Braze lands, item: material.copper, mass: 22.4, note: 'a copper land round each tube where it is brazed into the plate; measured on blender''s model (9.5 kg for 14 tubes, 2026-10-16)'}
+- {what: Water couplings and hoses, item: material.silicone-rubber, mass: 16.5, note: an insulating hose from each tube's end to the unit's cooling manifold behind its pad}
+basis:
+- of: [built_of, physical]
+  tier: invented
+  review: true
+  note: Plates, bolting and hoses from memory of electrolysis and furnace bus joints; the bolts' edge distance 35 mm (1.6 bolt diameters).

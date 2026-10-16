@@ -123,3 +123,23 @@ Open after the pellet plant:
 - **Roads.** Forklifts must reach the gas loops' dust bins, and crews must reach every unit. Laid as `road` links, a road needs the runs crossing it at 4.5 m or more (a pipe rack), or under it in a culvert. The fit check should test that. Most of the pellet plant's outdoor runs lie 0.3 to 2.5 m up today.
 - **The hall's joints:** their bolts and seals are not yet counted.
 
+
+## The fourth layout: the airless arc furnace shop (2026-10-16)
+
+`layout.arc-furnace-airless` is laid of runs: 63 runs, 8 layout ports, 0 faults. It weighs 4,498 t, up from 4,405 t. Laying it from ports showed:
+
+- **The gantry crane's legs.** They sweep x -35 to 11 along y ±12, up to 22 m, and the old layout crossed them three times: the feed belt, the off-gas duct and the cooling main (in a trench). Now nothing crosses them.
+  - The sponge iron bin stands west of the crane's reach, turned so its feeder faces east. The belt comes in along x between the legs, under the bridge, rising 17 degrees.
+  - The duct goes east 19 m up and turns north past the crane's east end.
+  - The mains leave the platform's west edge.
+  - The fit check doesn't see moving units yet, so this was checked by hand. It should learn the sweep of a unit that rides a rail.
+- **The off-gas.** The sealed furnace's gas is CO alone, 1.37 kg/s: no air comes in to dilute it or burn it. Its heat is about 2.2 MW, not the 7.2 MW the shop for air's duct takes. It goes to a new unit, the evaporative cooler `offgas-cooler-sealed`, whose steam goes to the one 485 K field, used at 23%.
+- **The secondary bus** is AC, three-phase, 65 kA a phase. The kit's busbar and bus joint now take three phases (`run.busbar-ac-65ka`). Its 14.6 kW a metre goes into its water.
+- **The transformer** is fed at 33 kV, by two circuits of 630 mm2, through a cable box (v2).
+- **The vessel's deck manifold** is flanged DN 400, its flanges 0.8 m apart (v4). It is kept clear of the crane's legs.
+- **The kit** rates a belt or a drag conveyor for the most any layout asks of it.
+- **The fit check** lets a belt rise up to 20 degrees from under a chute.
+
+Open after the arc furnace shop:
+- **Feeds to moving units.** The crane, the ladle car and the slag car are not fed yet.
+- **Hot panels.** Panels cooled by water at 20 bar and 485 K (pressurised hot-water cooling, as some furnaces have) would put all 13.6 MW on about 2 hot fields in place of 12 cool ones. That is about 10 fields' worth of aluminium and pads saved. It needs the vessel's panels rated for 20 bar.

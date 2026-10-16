@@ -11,6 +11,26 @@ built_of:
 - {what: Candles, item: material.silicon-carbide, mass: 3000.0, note: from memory}
 - {what: Pressure valve and dust valves, item: good.pumps, mass: 1500.0, note: 'the valve that holds the furnace''s pressure and the dust lock''s two valves with their drives, from memory'}
 needs: {power: 50000.0, atmosphere: vacuum}
+ports:
+- id: gas-in
+  flow: in
+  medium: gas
+  item: material.carbon-monoxide
+  rate: 1.369
+  pressure: 100000.0
+  temperature: 523.1
+  connector: connector.flange-dn1200-pn1
+  at: [-6.0, 0.0, 8.0]
+  facing: [-1.0, 0.0, 0.0]
+- id: power-in
+  flow: in
+  medium: power
+  power: 50000.0
+  voltage: 400
+  connector: connector.termination-400v-35mm2
+  at: [5.0, 0.0, 1.0]
+  facing: [1.0, 0.0, 0.0]
+  note: on its frame's east post
 envelope:
 - [-2.577, -2.876, -0.001, 2.577, 2.876, 10.001]
 - [-6.001, -0.701, 7.299, -1.899, 0.701, 8.701]

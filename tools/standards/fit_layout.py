@@ -175,7 +175,7 @@ def check(lay, units, runs, conns):
                 faults.append(f"{l['name']}: carries {run['carries']}, {e} is {p['medium']}")
             items.append(p.get("item"))
             dot = float(leave @ face)
-            need = {"flange": 0.7, "lined-flange": 0.7, "chute": -0.1}.get(ck)
+            need = {"flange": 0.7, "lined-flange": 0.7, "chute": -0.35}.get(ck)     # (a belt may rise from under a chute at up to 20 degrees, its loading zone's limit; from memory)
             if need is not None and dot < need:
                 faults.append(f"{l['name']}: leaves {e} at {math.degrees(math.acos(max(-1, min(1, dot)))):.0f} deg from the way it faces")
         if len(items) == 2 and None not in items and items[0] != items[1]:

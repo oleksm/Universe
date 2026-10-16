@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/material.schema.yaml
+identity:
+  key: material.carbon-monoxide
+  name: "Carbon monoxide"
+  class: fluid
+  form:
+  - fluid
+  description: "The gas a sealed arc furnace gives off, from the carbon in its charge and the oxygen in the melt. Toxic; it burns in oxygen to carbon dioxide, so it is a fuel where oxygen is to hand, but it carries none of its own."
+fuel:
+  release: none
+mass:
+  density: 1.25
+basis:
+  - { of: [mass.density], tier: sourced, note: "At 0 deg C and 1 bar, about 1.25 kg/m3 (from memory, the ideal gas at 28 g/mol)." }

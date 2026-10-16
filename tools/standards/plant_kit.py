@@ -293,7 +293,8 @@ def belt(width, rate, sealed=False):
     """An open troughed belt; sealed: in a gallery tube 3 m across that holds a hall's gas round it (green balls or
     ore taken through vacuum from one sealed space to another)."""
     key = f"run.belt-{_tag(width)}" + ("-sealed" if sealed else "")
-    if key in _recs:
+    if key in _recs:            # (rated for the most any layout asks of it)
+        _recs[key]["rating"]["rate"] = max(_recs[key]["rating"]["rate"], r(rate))
         return key
     built = [_part("Belt", RUBBER, 2 * width * 0.018 * RHO[RUBBER], "both runs, 18 mm; a vacuum-rated belt, silicone rubber standing for it"),
              _part("Idlers", A36, 39.0 / 1.2 + 20.0 / 3.0, "a three-roll troughing set every 1.2 m (39 kg) and a return roll every 3 m (20 kg), sealed bearings with vacuum grease; from memory"),
@@ -320,6 +321,7 @@ def belt(width, rate, sealed=False):
 def drag(width, rate, temp=923.0):
     key = f"run.drag-conveyor-{_tag(width)}"
     if key in _recs:
+        _recs[key]["rating"]["rate"] = max(_recs[key]["rating"]["rate"], r(rate))
         return key
     h = 0.75 * width
     built = [_part("Casing", SS, 2 * (width + h) * 0.006 * RHO[SS], f"a closed box {width:.2f} x {h:.2f} m, 6 mm stainless"),
@@ -383,48 +385,58 @@ def _bus(amps):
     return n, a, rows, 4 * od + 3 * 0.02, rows * od + (rows - 1) * 0.02
 
 
-def bus_joint(v, amps):
-    key = f"connector.bus-joint-dc-{math.ceil(amps / 1000):d}ka"
+def bus_joint(v, amps, phases=2):
+    """phases 2: a direct current bus's two poles; 3: an alternating current bus's three phases."""
+    ac = phases == 3
+    key = f"connector.bus-joint-{'ac' if ac else 'dc'}-{math.ceil(amps / 1000):d}ka"
     if key in _recs:
         return key
     n, a, rows, w, h = _bus(amps)
     ph = h + 0.11                                   # the plate's height: two rows of M20 at 50 mm from the tubes' centres, 35 mm in from its edges
     pw = w + 0.04                                   # and wide enough for the outer bolt columns' 30 mm edge distance
     plate = pw * ph * 0.03 * RHO[CU]
-    built = [_part("Joint plates", CU, 2 * 2 * plate, f"a pair of 30 mm copper plates a pole, {pw * 1000:.0f} x {ph * 1000:.0f} mm, the tubes brazed into one, bolted to the unit's terminal pad"),
-             _part("Bolts", BOLT, 2 * 16 * 0.4, "sixteen M20 a pole in two rows of eight, above and below the tubes, with spring washers"),
-             _part("Braze lands", CU, 2 * n * 0.68, "a copper land round each tube where it is brazed into the plate; measured on blender's model (9.5 kg for 14 tubes, 2026-10-16)"),
-             _part("Water couplings and hoses", RUBBER, 2 * n * 0.5, "an insulating hose from each tube's end to the unit's cooling manifold behind its pad")]
-    _recs[key] = {"identity": {"key": key, "name": f"Bus joint, DC, {math.ceil(amps / 1000):d} kA", "description": f"Where a {amps / 1000:.1f} kA direct current bus meets a unit's terminals: both poles' tubes brazed into copper plates, bolted to the unit's pads, the poles' centres {w + 0.3:g} m apart ({0.3:g} m clear between them), and the tubes' water handed by insulating hoses to the unit's cooling manifold. At the plane: the poles side by side across y, + at -y, each pole {w:.2f} m wide and {h:.2f} m tall about the axis."},
+    pole = "phase" if ac else "pole"
+    built = [_part("Joint plates", CU, phases * 2 * plate, f"a pair of 30 mm copper plates a {pole}, {pw * 1000:.0f} x {ph * 1000:.0f} mm, the tubes brazed into one, bolted to the unit's terminal pad"),
+             _part("Bolts", BOLT, phases * 16 * 0.4, f"sixteen M20 a {pole} in two rows of eight, above and below the tubes, with spring washers"),
+             _part("Braze lands", CU, phases * n * 0.68, "a copper land round each tube where it is brazed into the plate; measured on blender's model (9.5 kg for 14 tubes, 2026-10-16)"),
+             _part("Water couplings and hoses", RUBBER, phases * n * 0.5, "an insulating hose from each tube's end to the unit's cooling manifold behind its pad")]
+    what = f"{amps / 1000:.1f} kA three-phase alternating current bus" if ac else f"{amps / 1000:.1f} kA direct current bus"
+    lay_ = "the three phases side by side across y" if ac else "the poles side by side across y, + at -y"
+    _recs[key] = {"identity": {"key": key, "name": f"Bus joint, {'AC' if ac else 'DC'}, {math.ceil(amps / 1000):d} kA", "description": f"Where a {what} meets a unit's terminals: each {pole}'s tubes brazed into copper plates, bolted to the unit's pads, the {pole}s' centres {w + 0.3:g} m apart ({0.3:g} m clear between them), and the tubes' water handed by insulating hoses to the unit's cooling manifold. At the plane: {lay_}, each {pole} {w:.2f} m wide and {h:.2f} m tall about the axis."},
                   "kind": "bus-joint", "size": r(n * a, 5), "rating": {"voltage": v, "current": r(amps)},
-                  "physical": {"length": 0.3, "width": r(2 * w + 0.3 + 0.1, 3), "height": r(ph + 0.01, 3), "mass": r(sum(x["mass"] for x in built))}, "built_of": built,
+                  "physical": {"length": 0.3, "width": r(phases * w + (phases - 1) * 0.3 + 0.1, 3), "height": r(ph + 0.01, 3), "mass": r(sum(x["mass"] for x in built))}, "built_of": built,
                   "basis": [{"of": ["built_of", "physical"], "tier": "invented", "review": True, "note": "Plates, bolting and hoses from memory of electrolysis and furnace bus joints; the bolts' edge distance 35 mm (1.6 bolt diameters)."}]}
     return key
 
 
-def busbar(v, amps):
-    """Two poles of water-cooled hollow copper on post insulators: the bus from a rectifier to its cells. In vacuum a
-    bare bus can only radiate, and 43 kA would need plates metres wide; water takes its heat to the unit's loop."""
-    key = f"run.busbar-dc-{math.ceil(amps / 1000):d}ka"
+def busbar(v, amps, phases=2):
+    """Water-cooled hollow copper on post insulators. phases 2: the two poles from a rectifier to its cells; 3: the
+    three phases of an arc furnace's secondary, from its transformer to its flexible cables. In vacuum a bare bus can
+    only radiate, and tens of kA would need plates metres wide; water takes its heat to the unit's loop."""
+    ac = phases == 3
+    key = f"run.busbar-{'ac' if ac else 'dc'}-{math.ceil(amps / 1000):d}ka"
     if key in _recs:
         return key
     od, t = TUBE
     n, a, rows, w, h = _bus(amps)
-    loss = 2 * amps ** 2 * RHO_E_CU / (n * a)
-    water = 2 * n * math.pi / 4 * (od - 2 * t) ** 2 * 1000
-    built = [_part("Conductors", CU, 2 * n * a * RHO[CU], f"two poles of {n} tubes {od * 1000:.0f} x {t * 1000:.0f} mm, {n * a * 1e6:,.0f} mm2 a pole, in {rows} rows of four"),
+    loss = phases * amps ** 2 * RHO_E_CU / (n * a)
+    water = phases * n * math.pi / 4 * (od - 2 * t) ** 2 * 1000
+    pole = "phase" if ac else "pole"
+    built = [_part("Conductors", CU, phases * n * a * RHO[CU], f"{'three phases' if ac else 'two poles'} of {n} tubes {od * 1000:.0f} x {t * 1000:.0f} mm, {n * a * 1e6:,.0f} mm2 a {pole}, in {rows} rows of four"),
              _part("Cooling water", "good.water", water, "inside the tubes, half of them flow and half return, turned at the far joint"),
-             _part("Clamps and spacers", A36, 2 * rows * 6.0, "a clamp a row every metre, from memory")]
+             _part("Clamps and spacers", A36, phases * rows * 6.0, "a clamp a row every metre, from memory")]
     per_m = sum(b["mass"] for b in built)
     R = 0.6
-    _recs[key] = {"identity": {"key": key, "name": f"Busbar, DC, {math.ceil(amps / 1000):d} kA", "description": f"A direct current bus of two poles, their centres {w + 0.3:g} m apart (0.3 m clear), each {n} hollow copper tubes {od * 1000:.0f} mm across, water-cooled, on post insulators: {amps / 1000:.1f} kA at {v:g} V; it loses {loss:,.0f} W a metre into its water, which the unit at its source carries away."},
-                  "kind": "busbar", "size": r(n * a, 5), "outside": [r(2 * w + 0.3 + 0.1, 3), r(h + 0.1, 3)], "rating": {"voltage": v, "current": r(amps)},
+    what = (f"A three-phase alternating current bus, its phases' centres {w + 0.3:g} m apart (0.3 m clear), each {n} hollow copper tubes {od * 1000:.0f} mm across, water-cooled, on post insulators: {amps / 1000:.1f} kA a phase at {v:g} V. The tubes' {t * 1000:.0f} mm wall is about the skin depth of copper at 50 Hz, so the current fills it" if ac else
+            f"A direct current bus of two poles, their centres {w + 0.3:g} m apart (0.3 m clear), each {n} hollow copper tubes {od * 1000:.0f} mm across, water-cooled, on post insulators: {amps / 1000:.1f} kA at {v:g} V")
+    _recs[key] = {"identity": {"key": key, "name": f"Busbar, {'AC' if ac else 'DC'}, {math.ceil(amps / 1000):d} kA", "description": f"{what}; it loses {loss:,.0f} W a metre into its water, which the unit at its source carries away."},
+                  "kind": "busbar", "size": r(n * a, 5), "outside": [r(phases * w + (phases - 1) * 0.3 + 0.1, 3), r(h + 0.1, 3)], "rating": {"voltage": v, "current": r(amps)},
                   "per_m": {"mass": r(per_m), "power": r(loss), "built_of": built},
                   "elbow": {"radius": R, "mass": r(per_m * math.pi / 2 * R)},
                   "riser": {"radius": R, "mass": r(per_m * math.pi / 2 * R)},
                   "support": {"spacing": 3.0, "mass": 60.0, "per_m_height": 25.0, "item": A36},
-                  "connector": bus_joint(v, amps), "carries": "power",
-                  "basis": [{"of": ["per_m"], "tier": "derived", "review": True, "note": f"Copper at {J_BUS / 1e6:g} A/mm2 water-cooled (from memory); its loss by its resistance at 60 deg C."},
+                  "connector": bus_joint(v, amps, phases), "carries": "power",
+                  "basis": [{"of": ["per_m"], "tier": "derived", "review": True, "note": f"Copper at {J_BUS / 1e6:g} A/mm2 water-cooled (from memory); its loss by its resistance at 60 deg C" + (" (the AC resistance taken as the DC's: the wall is about one skin depth)." if ac else ".")},
                             {"of": ["elbow", "riser", "support"], "tier": "invented", "review": True, "note": "Bent tubes at 0.6 m; a steel post with two insulators every 3 m (from memory)."}]}
     return key
 

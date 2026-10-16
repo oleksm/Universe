@@ -1,11 +1,11 @@
 # yaml-language-server: $schema=../../schema/layout.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: layout.arc-furnace-airless, name: 'Arc furnace shop, airless', description: 'The 80 t arc furnace on airless ground at about a moon''s gravity: sealed, holding its own gas at 1 bar; no hall (no weather to keep off) but a gantry crane on its own legs; its heat to fields of radiator panels instead of a cooling tower, one set cool for the panels'' water and one hot for the duct''s steam; its off-gas filtered and let go; the crew in a pressurised post under a berm; its platform of sintered regolith. Built separately from the shop for air, not reused.'}
+identity: {key: layout.arc-furnace-airless, name: 'Arc furnace shop, airless', description: 'The 80 t arc furnace on airless ground at about a moon''s gravity: sealed, holding its own gas at 1 bar; no hall (no weather to keep off) but a gantry crane on its own legs, which nothing crosses; its heat to fields of radiator panels instead of a cooling tower, one set cool for the panels'' water and one hot for the off-gas cooler''s steam; its off-gas cooled, filtered and let go; the crew in a pressurised post under a berm; its platform of sintered regolith. Built separately from the shop for air, not reused.'}
 stands_for: module.arc-furnace
 site:
   atmosphere: none
   gravity: [1.6, 2.0]
-physical: {length: 251.7, width: 190.8, height: 23.7, mass: 4405000.0}
+physical: {length: 288.0, width: 204.4, height: 23.7, mass: 4498000.0}
 bays:
 - id: V
   mount: plant-mount.bay-s2
@@ -20,13 +20,19 @@ bays:
 - id: F
   mount: plant-mount.bay-s1
   unit: unit.dri-bin-200t
-  at: [-12.0, 33.0, 0.0]
-  note: north, as for air
+  at: [-55.0, 7.8, 0.0]
+  turn: 90.0
+  note: 'west, beyond the gantry crane''s reach, turned so its feeder faces east: the feed belt comes in along x between the crane''s legs, never across them'
+- id: C
+  mount: plant-mount.bay-s2
+  unit: unit.offgas-cooler-sealed
+  at: [14.0, 24.0, 0.0]
+  note: north-east, past the crane's east end
 - id: G
   mount: plant-mount.bay-s2
   unit: unit.offgas-filter-sealed
-  at: [6.0, 24.0, 0.0]
-  note: north-east, where the baghouse stands for air
+  at: [26.0, 24.0, 0.0]
+  note: east of the cooler
 - id: P
   mount: plant-mount.bay-s1
   unit: unit.crew-post
@@ -35,68 +41,139 @@ bays:
 - id: RL1
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-330k
-  at: [-48.0, -6.0, 0.0]
-  note: west and south-west, in rows of 4
+  at: [-84.0, 0.0, 0.0]
+  note: south-west, in rows of 4
 - id: RL2
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-330k
-  at: [-96.0, -6.0, 0.0]
-  note: west and south-west, in rows of 4
+  at: [-132.0, 0.0, 0.0]
+  note: south-west, in rows of 4
 - id: RL3
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-330k
-  at: [-144.0, -6.0, 0.0]
-  note: west and south-west, in rows of 4
+  at: [-180.0, 0.0, 0.0]
+  note: south-west, in rows of 4
 - id: RL4
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-330k
-  at: [-192.0, -6.0, 0.0]
-  note: west and south-west, in rows of 4
+  at: [-228.0, 0.0, 0.0]
+  note: south-west, in rows of 4
 - id: RL5
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-330k
-  at: [-48.0, -54.0, 0.0]
-  note: west and south-west, in rows of 4
+  at: [-84.0, -51.0, 0.0]
+  note: south-west, in rows of 4
 - id: RL6
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-330k
-  at: [-96.0, -54.0, 0.0]
-  note: west and south-west, in rows of 4
+  at: [-132.0, -51.0, 0.0]
+  note: south-west, in rows of 4
 - id: RL7
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-330k
-  at: [-144.0, -54.0, 0.0]
-  note: west and south-west, in rows of 4
+  at: [-180.0, -51.0, 0.0]
+  note: south-west, in rows of 4
 - id: RL8
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-330k
-  at: [-192.0, -54.0, 0.0]
-  note: west and south-west, in rows of 4
+  at: [-228.0, -51.0, 0.0]
+  note: south-west, in rows of 4
 - id: RL9
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-330k
-  at: [-48.0, -102.0, 0.0]
-  note: west and south-west, in rows of 4
+  at: [-84.0, -102.0, 0.0]
+  note: south-west, in rows of 4
 - id: RL10
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-330k
-  at: [-96.0, -102.0, 0.0]
-  note: west and south-west, in rows of 4
+  at: [-132.0, -102.0, 0.0]
+  note: south-west, in rows of 4
 - id: RL11
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-330k
-  at: [-144.0, -102.0, 0.0]
-  note: west and south-west, in rows of 4
+  at: [-180.0, -102.0, 0.0]
+  note: south-west, in rows of 4
 - id: RL12
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-330k
-  at: [-192.0, -102.0, 0.0]
-  note: west and south-west, in rows of 4
+  at: [-228.0, -102.0, 0.0]
+  note: south-west, in rows of 4
 - id: RH1
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-485k
-  at: [-48.0, 42.0, 0.0]
-  note: north-west
+  at: [-84.0, 51.0, 0.0]
+  turn: 180.0
+  note: north-west, turned so its ports face the plant
+ports:
+- id: sponge-iron-in
+  flow: in
+  medium: bulk
+  item: good.sponge-iron
+  rate: 29.33
+  temperature: 923.1
+  connector: connector.chute-dn800
+  at: [-55.0, 70.0, 5.188]
+  facing: [0.0, -1.0, 0.0]
+  note: hot, from the shaft furnace's discharge (its sponge-iron-out), at its height
+- id: hv-in
+  flow: in
+  medium: power
+  power: 72450000.0
+  voltage: 33000
+  connector: connector.termination-33kv-630mm2
+  at: [-37.0, -40.0, 0.3]
+  facing: [0.0, 1.0, 0.0]
+  note: the site's 33 kV substation
+- id: lv-bin
+  flow: in
+  medium: power
+  power: 15000.0
+  voltage: 400
+  connector: connector.termination-400v-16mm2
+  at: [-55.0, 14.8, 1.0]
+  facing: [0.0, -1.0, 0.0]
+- id: lv-cooler
+  flow: in
+  medium: power
+  power: 10000.0
+  voltage: 400
+  connector: connector.termination-400v-16mm2
+  at: [16.0, 18.0, 1.0]
+  facing: [0.0, 1.0, 0.0]
+- id: lv-filter
+  flow: in
+  medium: power
+  power: 50000.0
+  voltage: 400
+  connector: connector.termination-400v-35mm2
+  at: [36.0, 24.0, 1.0]
+  facing: [-1.0, 0.0, 0.0]
+- id: lv-post
+  flow: in
+  medium: power
+  power: 20000.0
+  voltage: 400
+  connector: connector.termination-400v-16mm2
+  at: [26.0, -18.0, 2.3]
+  facing: [-1.0, 0.0, 0.0]
+- id: lv-fields
+  flow: in
+  medium: power
+  power: 116500.0
+  voltage: 400
+  connector: connector.termination-400v-95mm2
+  at: [-56.4, -3.5, 0.3]
+  facing: [0.0, -1.0, 0.0]
+  note: the site's 400 V distribution, for the cool fields' pumps
+- id: lv-hot
+  flow: in
+  medium: power
+  power: 91790.0
+  voltage: 400
+  connector: connector.termination-400v-70mm2
+  at: [-50.0, 52.4, 0.3]
+  facing: [-1.0, 0.0, 0.0]
+  note: for the hot field's pump
 mobile:
 - unit: unit.ladle-car-80t
   rides: ladle rail
@@ -109,36 +186,738 @@ mobile:
   at: [-12.0, 0.0, 0.0]
 links:
 - kind: conveyor
-  name: sponge iron feed
-  from: [-12.0, 30.0, 6.0]
-  to: [-12.0, 7.8, 15.5]
-  length: 24.15
-  item: material.structural-steel-a36
-  mass: 3622.0
-  power: 21110.0
-  note: '0.8 m chevron-cleated belt, as for air but open (no gallery), rising at about 23 degrees, its head over the feed lock (the lock on the roof''s neck from local z 8.3 to 10.1: two valves and a chamber between, the head 0.4 m above it); its bearings and grease vacuum-rated'
-- kind: duct
-  name: off-gas
-  from: [-10.0, 7.5, 14.7]
-  to: [0.0, 24.0, 8.0]
-  length: 25.64
-  item: material.structural-steel-a36
-  mass: 7523.0
+  name: sponge iron belt
+  run: run.belt-800
+  ends: ['F:dri-out', 'V:dri-in']
+  from: [-52.0, 7.8, 5.6]
+  to: [-12.0, 7.8, 18.1]
+  length: 41.91
+  item: material.silicone-rubber
+  mass: 17310.0
+  power: 21470.0
+  fittings: {elbows: 0, tees: 0, supports: 3, connectors: 2}
+  note: a chevron-cleated belt from the bin's feeder east along y 7.8, between the gantry crane's legs and under its bridge, rising 17 degrees to its head 3 m over the feed lock; open (no gallery), its bearings and grease vacuum-rated
+- kind: conveyor
+  name: hot sponge iron
+  run: run.drag-conveyor-800
+  ends: ['edge:sponge-iron-in', 'F:dri-in']
+  from: [-55.0, 70.0, 4.782]
+  to: [-55.0, 7.8, 15.706]
+  length: 65.12
+  item: material.stainless-steel-304
+  mass: 33940.0
   via:
-  - [-10.0, 7.5, 16.2]
-  - [-4.0, 13.5, 16.2]
-  - [-2.0, 20.0, 12.0]
-  - [-2.0, 24.0, 8.0]
-  heat: 7200000.0
-  note: '1.2 m across (the gas is not diluted with air, as it is for air: a fifth of the flow), 10 mm plate, evaporatively cooled: water boils in its jacket at about 485 K and the steam gives its heat to the hot radiators; from the bellows on the roof''s fourth hole to the filter; its mass from the lengths measured on blender''s layout (candidate v01)'
+  - [-55.0, 55.0, 4.782]
+  - [-55.0, 36.0, 15.706000000000001]
+  power: 30590.0
+  fittings: {elbows: 2, tees: 0, supports: 12, connectors: 2}
+  note: from the shaft furnace, south along x -55, up at 30 degrees and over the bin's roof
 - kind: busbar
   name: secondary bus
+  run: run.busbar-ac-65ka
+  ends: ['T:lv-out', 'V:power-in']
   from: [-12.0, -3.5, 4.0]
-  to: [-12.0, 0.8, 7.3]
-  length: 5.42
+  to: [-12.0, -0.2, 7.3]
+  length: 6.6
   item: material.copper
-  mass: 2589.0
-  note: three water-cooled copper tube bars, as for air; in vacuum their gaps hold no air to break down, but the gas a seal lets out can (Paschen), so the bars are wrapped and spaced as if in air; its mass from the lengths measured on blender's layout (candidate v01)
+  mass: 4531.0
+  via:
+  - [-12.0, -2.0, 4.0]
+  - [-12.0, -2.0, 7.3]
+  power: 96690.0
+  fittings: {elbows: 2, tees: 0, supports: 3, connectors: 2}
+  note: three phases of water-cooled copper tube, 65 kA each, up from the transformer's joint and north to the vessel's flexible cables; in vacuum their gaps hold no air to break down, but the gas a seal lets out can (Paschen), so the bars are spaced as if in air; their loss, 97 kW, goes into their water and so to the cool loop
+- kind: cable
+  name: transformer supply
+  run: run.cable-33kv-630mm2
+  ends: ['edge:hv-in', 'T:hv-in']
+  from: [-37.0, -40.0, 0.3]
+  to: [-12.0, -6.85, 6.8]
+  length: 67.05
+  item: material.copper
+  mass: 5238.0
+  via:
+  - [-37.0, -6.85, 0.3]
+  - [-37.0, -6.85, 8.0]
+  - [-12.0, -6.85, 8.0]
+  count: 2
+  fittings: {elbows: 3, tees: 0, supports: 23, connectors: 2}
+  note: north along x -37, west of the gantry crane's reach, then east 8 m up over the transformer cooling's lines into the cable box
+- kind: duct
+  name: off-gas
+  run: run.lined-duct-dn1200-pn1
+  ends: ['V:offgas-out', 'C:gas-in']
+  from: [-10.0, 7.5, 14.7]
+  to: [14.0, 24.0, 17.0]
+  length: 46.8
+  item: material.structural-steel-a36
+  mass: 106600.0
+  via:
+  - [-10.0, 7.5, 19.0]
+  - [14.0, 7.5, 19.0]
+  - [14.0, 24.0, 19.0]
+  fittings: {elbows: 3, tees: 0, supports: 7, connectors: 2}
+  note: 'the furnace''s 1.37 kg/s of CO at about 1600 deg C and 1 bar (no air dilutes it: a fifth of the shop for air''s flow), up from the roof''s reducer, east 19 m up between the crane''s legs and under its bridge, north past its east end at x 14 and down into the cooler'
+- kind: pipe
+  name: cooled off-gas
+  run: run.pipe-dn1200-pn1
+  ends: ['C:gas-out', 'G:gas-in']
+  from: [17.0, 24.0, 8.0]
+  to: [20.0, 24.0, 8.0]
+  length: 3.0
+  item: material.structural-steel-a36
+  mass: 1498.0
+  fittings: {elbows: 0, tees: 0, supports: 1, connectors: 2}
+  note: at 250 deg C; the filter lets the cleaned gas go up its stack
+- kind: pipe
+  name: steam to the hot field
+  run: run.pipe-dn150-pn25-mli
+  ends: ['C:steam-out', 'RH1:steam-in']
+  from: [11.0, 24.4, 15.5]
+  to: [-60.0, 51.6, 1.0]
+  length: 112.7
+  item: material.structural-steel-a36
+  mass: 3210.0
+  via:
+  - [9.0, 24.4, 15.5]
+  - [9.0, 24.4, 1.0]
+  - [9.0, 30.6, 1.0]
+  - [-56.0, 30.6, 1.0]
+  - [-56.0, 51.6, 1.0]
+  fittings: {elbows: 5, tees: 0, supports: 20, connectors: 2}
+  note: 1.17 kg/s of steam at 20 bar from the cooler's drum, down, north past the slag rail's end and west along y 30.6 to the hot field
+- kind: pipe
+  name: water from the hot field
+  run: run.pipe-dn100-pn25
+  ends: ['RH1:water-out', 'C:water-in']
+  from: [-60.0, 50.4, 1.0]
+  to: [11.0, 23.6, 15.5]
+  length: 112.3
+  item: material.structural-steel-a36
+  mass: 2415.0
+  via:
+  - [-57.0, 50.4, 1.0]
+  - [-57.0, 30.0, 1.0]
+  - [8.0, 30.0, 1.0]
+  - [8.0, 23.6, 1.0]
+  - [8.0, 23.6, 15.5]
+  fittings: {elbows: 5, tees: 0, supports: 26, connectors: 2}
+  note: the condensate back by the field's pump, on the steam line's left all the way
+- kind: cable
+  name: bin supply
+  run: run.cable-400v-16mm2
+  ends: ['edge:lv-bin', 'F:power-in']
+  from: [-55.0, 14.8, 1.0]
+  to: [-55.0, 10.8, 1.0]
+  length: 4.0
+  item: material.copper
+  mass: 57.0
+  fittings: {elbows: 0, tees: 0, supports: 2, connectors: 2}
+- kind: cable
+  name: cooler supply
+  run: run.cable-400v-16mm2
+  ends: ['edge:lv-cooler', 'C:power-in']
+  from: [16.0, 18.0, 1.0]
+  to: [16.0, 22.0, 1.0]
+  length: 4.0
+  item: material.copper
+  mass: 57.0
+  fittings: {elbows: 0, tees: 0, supports: 2, connectors: 2}
+- kind: cable
+  name: filter supply
+  run: run.cable-400v-35mm2
+  ends: ['edge:lv-filter', 'G:power-in']
+  from: [36.0, 24.0, 1.0]
+  to: [31.0, 24.0, 1.0]
+  length: 5.0
+  item: material.copper
+  mass: 64.9
+  fittings: {elbows: 0, tees: 0, supports: 2, connectors: 2}
+- kind: cable
+  name: crew post supply
+  run: run.cable-400v-16mm2
+  ends: ['edge:lv-post', 'P:power-in']
+  from: [26.0, -18.0, 2.3]
+  to: [21.0, -18.0, 2.3]
+  length: 5.0
+  item: material.copper
+  mass: 77.3
+  fittings: {elbows: 0, tees: 0, supports: 2, connectors: 2}
+  note: through the berm
+- kind: cable
+  name: hot field supply
+  run: run.cable-400v-70mm2
+  ends: ['edge:lv-hot', 'RH1:power-in']
+  from: [-50.0, 52.4, 0.3]
+  to: [-60.0, 52.4, 0.3]
+  length: 10.0
+  item: material.copper
+  mass: 113.8
+  fittings: {elbows: 0, tees: 0, supports: 4, connectors: 2}
+- kind: pipe
+  name: loop flow main
+  run: run.pipe-dn400-pn10
+  ends: ['V:water-out', cap]
+  from: [-15.8, 10.8, 5.5]
+  to: [-58.8, -128.65, 1.0]
+  length: 188.9
+  item: material.structural-steel-a36
+  mass: 11440.0
+  via:
+  - [-15.8, 10.8, 6.5]
+  - [-21.6, 10.8, 6.5]
+  - [-21.6, 10.8, 1.0]
+  - [-21.6, -1.0, 1.0]
+  - [-58.8, -1.0, 1.0]
+  fittings: {elbows: 5, tees: 0, supports: 29, connectors: 2}
+  note: 271 kg/s at about 330 K from the vessel's deck manifold to the 12 cool fields
+- kind: pipe
+  name: loop return main
+  run: run.pipe-dn400-pn10
+  ends: [cap, 'V:water-in']
+  from: [-57.6, -127.75, 1.0]
+  to: [-15.8, 10.0, 5.5]
+  length: 186.1
+  item: material.structural-steel-a36
+  mass: 11290.0
+  via:
+  - [-57.6, -1.8, 1.0]
+  - [-21.0, -1.8, 1.0]
+  - [-21.0, 10.0, 1.0]
+  - [-21.0, 10.0, 6.5]
+  - [-15.8, 10.0, 6.5]
+  fittings: {elbows: 5, tees: 0, supports: 29, connectors: 2}
+  note: back from the fields at about 10 K less
+- kind: cable
+  name: radiator pumps' supply
+  run: run.cable-400v-95mm2
+  ends: ['edge:lv-fields', cap]
+  from: [-56.4, -3.5, 0.3]
+  to: [-56.4, -129.4, 0.3]
+  length: 125.9
+  item: material.copper
+  mass: 1324.0
+  fittings: {elbows: 0, tees: 0, supports: 42, connectors: 1}
+  note: south along the fields' east side, beside the loop's mains
+- kind: pipe
+  name: row 1 flow
+  run: run.pipe-dn250-pn10
+  ends: ['tee:loop flow main', cap]
+  from: [-58.8, -127.65, 1.0]
+  to: [-252.0, -127.65, 1.0]
+  length: 193.2
+  item: material.structural-steel-a36
+  mass: 6909.0
+  fittings: {elbows: 0, tees: 1, supports: 32, connectors: 1}
+  note: in the aisle south of its row, 1 m up
+- kind: pipe
+  name: row 1 return
+  run: run.pipe-dn250-pn10
+  ends: [cap, 'tee:loop return main']
+  from: [-252.0, -126.75, 2.0]
+  to: [-57.6, -126.75, 1.0]
+  length: 195.4
+  item: material.structural-steel-a36
+  mass: 7665.0
+  via:
+  - [-57.6, -126.75, 2.0]
+  fittings: {elbows: 1, tees: 1, supports: 33, connectors: 1}
+  note: 'in the aisle, 2 m up: over the flow main and the fields'' flow branches'
+- kind: cable
+  name: row 1 pumps' supply
+  run: run.cable-400v-25mm2
+  ends: ['tee:radiator pumps'' supply', cap]
+  from: [-56.4, -128.4, 0.3]
+  to: [-252.0, -128.4, 0.3]
+  length: 195.6
+  item: material.copper
+  mass: 1650.0
+  fittings: {elbows: 0, tees: 1, supports: 66, connectors: 0}
+  note: in the aisle, 0.3 m up, under the water rows
+- kind: pipe
+  name: RL9 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 1 flow', 'RL9:water-in']
+  from: [-107.0, -127.65, 1.0]
+  to: [-107.0, -126.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL9 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL9:water-out', 'tee:row 1 return']
+  from: [-106.4, -126.0, 1.0]
+  to: [-106.4, -126.75, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-106.4, -126.75, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL9 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 1 pumps'' supply', 'RL9:power-in']
+  from: [-105.8, -128.4, 0.3]
+  to: [-105.8, -126.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL10 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 1 flow', 'RL10:water-in']
+  from: [-155.0, -127.65, 1.0]
+  to: [-155.0, -126.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL10 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL10:water-out', 'tee:row 1 return']
+  from: [-154.4, -126.0, 1.0]
+  to: [-154.4, -126.75, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-154.4, -126.75, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL10 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 1 pumps'' supply', 'RL10:power-in']
+  from: [-153.8, -128.4, 0.3]
+  to: [-153.8, -126.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL11 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 1 flow', 'RL11:water-in']
+  from: [-203.0, -127.65, 1.0]
+  to: [-203.0, -126.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL11 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL11:water-out', 'tee:row 1 return']
+  from: [-202.4, -126.0, 1.0]
+  to: [-202.4, -126.75, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-202.4, -126.75, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL11 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 1 pumps'' supply', 'RL11:power-in']
+  from: [-201.8, -128.4, 0.3]
+  to: [-201.8, -126.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL12 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 1 flow', 'RL12:water-in']
+  from: [-251.0, -127.65, 1.0]
+  to: [-251.0, -126.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL12 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL12:water-out', 'tee:row 1 return']
+  from: [-250.4, -126.0, 1.0]
+  to: [-250.4, -126.75, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-250.4, -126.75, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL12 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 1 pumps'' supply', 'RL12:power-in']
+  from: [-249.8, -128.4, 0.3]
+  to: [-249.8, -126.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: row 2 flow
+  run: run.pipe-dn250-pn10
+  ends: ['tee:loop flow main', cap]
+  from: [-58.8, -76.65, 1.0]
+  to: [-252.0, -76.65, 1.0]
+  length: 193.2
+  item: material.structural-steel-a36
+  mass: 6909.0
+  fittings: {elbows: 0, tees: 1, supports: 32, connectors: 1}
+  note: in the aisle south of its row, 1 m up
+- kind: pipe
+  name: row 2 return
+  run: run.pipe-dn250-pn10
+  ends: [cap, 'tee:loop return main']
+  from: [-252.0, -75.75, 2.0]
+  to: [-57.6, -75.75, 1.0]
+  length: 195.4
+  item: material.structural-steel-a36
+  mass: 7665.0
+  via:
+  - [-57.6, -75.75, 2.0]
+  fittings: {elbows: 1, tees: 1, supports: 33, connectors: 1}
+  note: 'in the aisle, 2 m up: over the flow main and the fields'' flow branches'
+- kind: cable
+  name: row 2 pumps' supply
+  run: run.cable-400v-25mm2
+  ends: ['tee:radiator pumps'' supply', cap]
+  from: [-56.4, -77.4, 0.3]
+  to: [-252.0, -77.4, 0.3]
+  length: 195.6
+  item: material.copper
+  mass: 1650.0
+  fittings: {elbows: 0, tees: 1, supports: 66, connectors: 0}
+  note: in the aisle, 0.3 m up, under the water rows
+- kind: pipe
+  name: RL5 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 2 flow', 'RL5:water-in']
+  from: [-107.0, -76.65, 1.0]
+  to: [-107.0, -75.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL5 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL5:water-out', 'tee:row 2 return']
+  from: [-106.4, -75.0, 1.0]
+  to: [-106.4, -75.75, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-106.4, -75.75, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL5 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 2 pumps'' supply', 'RL5:power-in']
+  from: [-105.8, -77.4, 0.3]
+  to: [-105.8, -75.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL6 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 2 flow', 'RL6:water-in']
+  from: [-155.0, -76.65, 1.0]
+  to: [-155.0, -75.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL6 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL6:water-out', 'tee:row 2 return']
+  from: [-154.4, -75.0, 1.0]
+  to: [-154.4, -75.75, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-154.4, -75.75, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL6 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 2 pumps'' supply', 'RL6:power-in']
+  from: [-153.8, -77.4, 0.3]
+  to: [-153.8, -75.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL7 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 2 flow', 'RL7:water-in']
+  from: [-203.0, -76.65, 1.0]
+  to: [-203.0, -75.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL7 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL7:water-out', 'tee:row 2 return']
+  from: [-202.4, -75.0, 1.0]
+  to: [-202.4, -75.75, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-202.4, -75.75, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL7 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 2 pumps'' supply', 'RL7:power-in']
+  from: [-201.8, -77.4, 0.3]
+  to: [-201.8, -75.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL8 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 2 flow', 'RL8:water-in']
+  from: [-251.0, -76.65, 1.0]
+  to: [-251.0, -75.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL8 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL8:water-out', 'tee:row 2 return']
+  from: [-250.4, -75.0, 1.0]
+  to: [-250.4, -75.75, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-250.4, -75.75, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL8 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 2 pumps'' supply', 'RL8:power-in']
+  from: [-249.8, -77.4, 0.3]
+  to: [-249.8, -75.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: row 3 flow
+  run: run.pipe-dn250-pn10
+  ends: ['tee:loop flow main', cap]
+  from: [-58.8, -25.65, 1.0]
+  to: [-252.0, -25.65, 1.0]
+  length: 193.2
+  item: material.structural-steel-a36
+  mass: 6909.0
+  fittings: {elbows: 0, tees: 1, supports: 32, connectors: 1}
+  note: in the aisle south of its row, 1 m up
+- kind: pipe
+  name: row 3 return
+  run: run.pipe-dn250-pn10
+  ends: [cap, 'tee:loop return main']
+  from: [-252.0, -24.75, 2.0]
+  to: [-57.6, -24.75, 1.0]
+  length: 195.4
+  item: material.structural-steel-a36
+  mass: 7665.0
+  via:
+  - [-57.6, -24.75, 2.0]
+  fittings: {elbows: 1, tees: 1, supports: 33, connectors: 1}
+  note: 'in the aisle, 2 m up: over the flow main and the fields'' flow branches'
+- kind: cable
+  name: row 3 pumps' supply
+  run: run.cable-400v-25mm2
+  ends: ['tee:radiator pumps'' supply', cap]
+  from: [-56.4, -26.4, 0.3]
+  to: [-252.0, -26.4, 0.3]
+  length: 195.6
+  item: material.copper
+  mass: 1650.0
+  fittings: {elbows: 0, tees: 1, supports: 66, connectors: 0}
+  note: in the aisle, 0.3 m up, under the water rows
+- kind: pipe
+  name: RL1 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 3 flow', 'RL1:water-in']
+  from: [-107.0, -25.65, 1.0]
+  to: [-107.0, -24.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL1 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL1:water-out', 'tee:row 3 return']
+  from: [-106.4, -24.0, 1.0]
+  to: [-106.4, -24.75, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-106.4, -24.75, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL1 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 3 pumps'' supply', 'RL1:power-in']
+  from: [-105.8, -26.4, 0.3]
+  to: [-105.8, -24.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL2 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 3 flow', 'RL2:water-in']
+  from: [-155.0, -25.65, 1.0]
+  to: [-155.0, -24.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL2 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL2:water-out', 'tee:row 3 return']
+  from: [-154.4, -24.0, 1.0]
+  to: [-154.4, -24.75, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-154.4, -24.75, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL2 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 3 pumps'' supply', 'RL2:power-in']
+  from: [-153.8, -26.4, 0.3]
+  to: [-153.8, -24.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL3 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 3 flow', 'RL3:water-in']
+  from: [-203.0, -25.65, 1.0]
+  to: [-203.0, -24.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL3 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL3:water-out', 'tee:row 3 return']
+  from: [-202.4, -24.0, 1.0]
+  to: [-202.4, -24.75, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-202.4, -24.75, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL3 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 3 pumps'' supply', 'RL3:power-in']
+  from: [-201.8, -26.4, 0.3]
+  to: [-201.8, -24.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL4 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 3 flow', 'RL4:water-in']
+  from: [-251.0, -25.65, 1.0]
+  to: [-251.0, -24.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL4 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL4:water-out', 'tee:row 3 return']
+  from: [-250.4, -24.0, 1.0]
+  to: [-250.4, -24.75, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-250.4, -24.75, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL4 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 3 pumps'' supply', 'RL4:power-in']
+  from: [-249.8, -26.4, 0.3]
+  to: [-249.8, -24.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: transformer cooling in
+  run: run.pipe-dn100-pn10
+  ends: ['tee:loop return main', 'T:water-in']
+  from: [-25.2, -1.8, 1.0]
+  to: [-15.76, -8.38, 1.35]
+  length: 16.37
+  item: material.structural-steel-a36
+  mass: 377.5
+  via:
+  - [-25.2, -8.38, 1.0]
+  - [-17.0, -8.38, 1.0]
+  - [-17.0, -8.38, 1.35]
+  fittings: {elbows: 3, tees: 1, supports: 6, connectors: 1}
+  note: off the return main, a balancing orifice in the main between this pair's tees
+- kind: pipe
+  name: transformer cooling out
+  run: run.pipe-dn100-pn10
+  ends: ['T:water-out', 'tee:loop return main']
+  from: [-15.76, -8.38, 2.35]
+  to: [-24.0, -1.8, 1.0]
+  length: 16.17
+  item: material.structural-steel-a36
+  mass: 537.7
+  via:
+  - [-18.5, -8.38, 2.35]
+  - [-18.5, -2.6, 2.35]
+  - [-24.0, -2.6, 2.35]
+  - [-24.0, -2.6, 1.0]
+  fittings: {elbows: 4, tees: 1, supports: 7, connectors: 1}
 - kind: rail
   name: ladle rail
   from: [-10.5, 6.0, 0.0]
@@ -162,65 +941,18 @@ links:
   length: 36.0
   item: material.structural-steel-a36
   mass: 3600.0
-  note: the gantry crane's two straight rails, 36 m long along x at y -12 and 12 (24 m apart); the link runs on their centre line
-- kind: pipe
-  name: cooling water to the radiators
-  from: [-218.0, -126.0, 1.0]
-  to: [-15.8, 11.1, 5.5]
-  length: 734.9
-  item: material.structural-steel-a36
-  mass: 151000.0
-  via:
-  - [-24.0, -126.0, 1.0]
-  - [-24.0, -78.0, 1.0]
-  - [-218.0, -78.0, 1.0]
-  - [-218.0, -30.0, 1.0]
-  - [-24.0, -30.0, 1.0]
-  - [-24.0, -30.0, 1.0]
-  - [-24.0, -14.0, 1.0]
-  - [-24.0, -14.0, -0.8]
-  - [-24.0, -10.0, -0.8]
-  - [-24.0, -10.0, 1.0]
-  - [-24.0, -0.5, 1.0]
-  - [-19.5, -0.5, 1.5]
-  - [-19.5, -0.5, 5.5]
-  - [-19.5, 11.1, 5.5]
-  note: 'a pair of 500 mm pipes, 8 mm wall, flow and return, at about 330 K: along the edges of the 12 low radiator fields'' rows (the pair 0.8 m apart, its west ends 2 m past the westernmost ports), each field''s ports joined by a 150 mm pair (the flow branch rising to z 1.8 over the return main), then north, dipping to z -0.8 in a covered trench under the crane''s south rail (y -14 to -10), and east to the furnace''s manifold (its flanges at (-15.8, 10.9) and (-15.8, 11.3), 5.5 m up); its mass from the lengths measured on blender''s layout (candidate v01)'
-- kind: pipe
-  name: transformer cooling
-  from: [-24.0, -8.38, 1.0]
-  to: [-15.76, -8.38, 1.35]
-  length: 8.59
-  item: material.structural-steel-a36
-  mass: 361.7
-  via:
-  - [-16.5, -8.38, 1.0]
-  - [-16.5, -8.38, 1.35]
-  note: 'a pair teed off the main north of the crane''s rail, east to the transformer''s cooler: flow into its port at z 1.35, return from 2.35; its mass from the lengths measured on blender''s layout (candidate v01)'
-- kind: pipe
-  name: steam to the hot radiators
-  from: [-4.0, 13.5, 15.6]
-  to: [-72.0, 42.0, 1.0]
-  length: 115.1
-  item: material.structural-steel-a36
-  mass: 26280.0
-  via:
-  - [-4.0, 13.5, 1.0]
-  - [-4.0, 18.0, 1.0]
-  - [-74.0, 18.0, 1.0]
-  - [-74.0, 42.0, 1.0]
-  note: 'a pair of 400 mm pipes, 12 mm wall: steam from the duct''s jacket at about 485 K (17 bar) to the hot radiator field''s ports (flow at y 41.4, return at 42.6, x -72), its water back; down, north to the corridor at y 18, west along it to x -74 and north to the ports; its mass from the lengths measured on blender''s layout (candidate v01)'
+  note: 'the gantry crane''s two straight rails, 36 m long along x at y -12 and 12 (24 m apart); the link runs on their centre line. No run crosses them: the crane''s legs sweep x -35 to 11 along both'
 ground:
 - {what: Furnace platform, item: material.regolith-sintered, volume: 612.06, note: 'as for air (the ladle slot, slag tunnel and well), of sintered regolith blocks: there is no water to make concrete; its blocks and top slab; measured on blender''s layout (candidate v01)', mass: 1530000.0}
 - {what: Transformer slab, item: material.regolith-sintered, volume: 86.4, note: no fire walls; measured on blender's layout (candidate v01), mass: 216000.0}
-- {what: Service trench, item: material.regolith-sintered, volume: 5.98, note: 'a covered trench of sintered regolith under the crane''s south rail at x -24, for the cooling main: floor, walls and cover; measured on blender''s layout (candidate v01)', mass: 14950.0}
 - {what: Crew post berm, item: material.regolith, volume: 584.56, note: 'loose regolith at least 1 m over the post everywhere (its top 4 x 2 m, 5.3 m up), lying at 35 degrees, its foot about 19 x 17 m, a cavity for the post, the ramp cut and the light wells; measured on blender''s layout (candidate v01)', mass: 876800.0}
 - {what: Crew post entry and light wells, item: material.regolith-sintered, volume: 14.0, note: 'the landing at the airlock''s threshold, its ramp, the cut''s retaining sides (200 mm) and the light wells'' retainers, provisional; measured on blender''s layout (candidate v01)', mass: 35000.0}
-- {what: Radiator legs' pads, item: material.regolith-sintered, volume: 44.93, note: a block under each leg; measured on blender's layout (candidate v01), mass: 112300.0}
+- {what: Radiator legs' pads, item: material.regolith-sintered, volume: 44.93, note: 'a block under each leg, 3.46 m3 a field as measured on blender''s layout (candidate v01)', mass: 112300.0}
 - {what: Rail beds, item: material.regolith-sintered, volume: 17.25, note: 'under the ladle, slag and crane rails; measured on blender''s layout (candidate v01)', mass: 43120.0}
-- {what: Unit pads, item: material.regolith-sintered, volume: 79.4, note: under the off-gas filter (62.5) and the dust bin (16.9); measured on blender's layout (candidate v01), mass: 198500.0}
-- {what: Pipe and trestle feet, item: material.regolith-sintered, volume: 21.35, note: 'under the cooling, steam and condensate pipes, the off-gas duct''s supports and the feed belt''s trestles; measured on blender''s layout (candidate v01)', mass: 53380.0}
-totals: {rate: 26.6666666666667, power: 72880000.0, heat: 18450000.0, water: 0.0, mass: 4405000.0, against_module: 'module.arc-furnace: one box, the same on every world. This layout: the same rate; 72.9 MW; 18.4 MW to 13 radiator fields (21.8 MW at lunar noon), 12 at 330 K for the panels and transformer and 1 at 485 K for the duct, in place of the tower; no water used up (closed loops); no hall, no baghouse (the furnace is sealed); 1,325 t of plant and 3,080 t of sintered regolith. The radiators cover 3.0 ha: the heat that went up a tower''s plume as steam must here leave as light, and at 330 K a panel in the noon sun sheds little. A heat pump lifting the panels'' heat to 485 K (at half Carnot''s) would need about 7 MW more power and 3 hot fields in place of all 13 (not fitted).'}
+- {what: Unit pads, item: material.regolith-sintered, volume: 91.4, note: 'under the off-gas filter (62.5) and the bin (16.9), measured on blender''s layout (candidate v01); the cooler''s 6 x 4 x 0.5 m, from its size', mass: 228500.0}
+- {what: Pipe and trestle feet, item: material.regolith-sintered, volume: 21.35, note: 'under the pipes, the duct''s stands and the belts'' trestles; as measured on blender''s layout (candidate v01) before the runs were re-laid, to measure again', mass: 53380.0}
+totals: {rate: 26.6666666666667, power: 73020000.0, heat: 13560000.0, water: 0.0, mass: 4498000.0, against_module: 'module.arc-furnace: one box, the same on every world. This layout: the same rate; 73.0 MW; 13.6 MW to 13 radiator fields (21.8 MW at lunar noon), 12 at 330 K for the panels, the transformer and the bus and 1 at 485 K for the off-gas cooler''s steam, in place of the tower; no water used up (closed loops); no hall, no baghouse (the furnace is sealed); 1,403 t of plant and 3,095 t of sintered regolith. The radiators cover 3.0 ha: the heat that went up a tower''s plume as steam must here leave as light, and at 330 K a panel in the noon sun sheds little. The sealed furnace''s gas is CO alone (1.37 kg/s), so its cooler takes 2.2 MW, not the 7.2 MW the shop for air''s duct does (that includes the gas burnt in the air drawn in); the hot field is used at 23%. A heat pump lifting the panels'' heat to 485 K (at half Carnot''s) would need about 7 MW more power and 3 hot fields in place
+    of all 13 (not fitted); panels cooled by water at 20 bar and 485 K, as some furnaces'' are, would need about 2 (not fitted).'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}
@@ -231,10 +963,10 @@ basis:
 - of: [bays, links, mobile]
   tier: invented
   review: true
-  note: 'Laid out from the shop for air: the platform, vault and rails where they were; the rest for airless ground.'
+  note: 'Laid out from the shop for air: the platform, vault and rails where they were; the rest for airless ground, of runs from port to port (SFO 25). The crane''s, the ladle car''s and the slag car''s feeds are not laid yet.'
 - of: [totals.heat]
   tier: derived
-  note: The units' and the duct's heat; the radiator fields from the rejection a field gives at lunar noon (unit.radiator-field-330k, -485k).
+  note: The units' and the bus's heat; the radiator fields from the rejection a field gives at lunar noon (unit.radiator-field-330k, -485k).
 - of: [ground]
   tier: derived
   review: true

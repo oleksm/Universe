@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/run.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: run.busbar-ac-65ka, name: 'Busbar, AC, 65 kA', description: 'A three-phase alternating current bus, its phases'' centres 0.6 m apart (0.3 m clear), each 11 hollow copper tubes 60 mm across, water-cooled, on post insulators: 65.0 kA a phase at 800 V. The tubes'' 10 mm wall is about the skin depth of copper at 50 Hz, so the current fills it; it loses 14,649 W a metre into its water, which the unit at its source carries away.'}
+kind: busbar
+size: 0.01728
+outside: [1.6, 0.32]
+rating: {voltage: 800.0, current: 64951.9}
+per_m:
+  mass: 560.0
+  power: 14649.5
+  built_of:
+  - {what: Conductors, item: material.copper, mass: 464.5, note: 'three phases of 11 tubes 60 x 10 mm, 17,279 mm2 a phase, in 3 rows of four'}
+  - {what: Cooling water, item: good.water, mass: 41.5, note: 'inside the tubes, half of them flow and half return, turned at the far joint'}
+  - {what: Clamps and spacers, item: material.structural-steel-a36, mass: 54.0, note: 'a clamp a row every metre, from memory'}
+elbow: {radius: 0.6, mass: 527.8}
+riser: {radius: 0.6, mass: 527.8}
+support: {spacing: 3.0, mass: 60.0, per_m_height: 25.0, item: material.structural-steel-a36}
+connector: connector.bus-joint-ac-65ka
+carries: power
+basis:
+- of: [per_m]
+  tier: derived
+  review: true
+  note: 'Copper at 4 A/mm2 water-cooled (from memory); its loss by its resistance at 60 deg C (the AC resistance taken as the DC''s: the wall is about one skin depth).'
+- of: [elbow, riser, support]
+  tier: invented
+  review: true
+  note: Bent tubes at 0.6 m; a steel post with two insulators every 3 m (from memory).

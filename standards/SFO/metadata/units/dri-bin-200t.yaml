@@ -10,6 +10,34 @@ built_of:
 - {what: Weigh feeder, item: good.electric-motors, mass: 1500.0, note: from memory}
 holds: 211200.0
 needs: {power: 15000.0}
+ports:
+- id: dri-in
+  flow: in
+  medium: bulk
+  item: good.sponge-iron
+  rate: 29.33
+  connector: connector.chute-dn800
+  at: [0.0, 0.0, 15.3]
+  facing: [0.0, 0.0, 1.0]
+  note: a nozzle in its roof's middle, a closed conveyor's head over it
+- id: dri-out
+  flow: out
+  medium: bulk
+  item: good.sponge-iron
+  rate: 29.33
+  connector: connector.chute-dn800
+  at: [0.0, -3.0, 6.0]
+  facing: [0.0, 0.0, -1.0]
+  note: the weigh feeder's outlet, onto a belt's tail
+- id: power-in
+  flow: in
+  medium: power
+  power: 15000.0
+  voltage: 400
+  connector: connector.termination-400v-16mm2
+  at: [3.0, 0.0, 1.0]
+  facing: [1.0, 0.0, 0.0]
+  note: a terminal box on its east legs' brace, the feeder's cable up the leg
 envelope:
 - [-2.781, -3.011, 5.749, 2.781, 2.827, 15.302]
 - [-3.001, -3.001, -0.001, 3.001, -2.299, 11.302]

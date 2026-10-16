@@ -1,0 +1,78 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.offgas-cooler-sealed, name: 'Off-gas cooler, evaporative, 2.2 MW', description: 'Cools the sealed arc furnace''s 1.37 kg/s of CO from about 1600 to 250 deg C, 2.2 MW, so its filter''s candles last: the gas comes down a shaft 1.6 m across whose walls are 66 boiler tubes 60 mm across welded edge to edge (8 m of them, z 8 to 16, about 55 kW a m2), the water in them boiling at about 485 K (20 bar) and rising to a steam drum 1 m across and 3 m long along y on the -x side (axis at local x -2, z 15.5). The steam goes to a radiator field and comes back as water by the field''s pump. Gas in on top at (0, 0, 17) from the furnace''s lined duct; out of the hopper''s side at (3, 0, 8) to the filter; steam out of the drum at (-3, 0.4, 15.5) and water back at (-3, -0.4, 15.5), both facing -x; the dust falls through a lock under the hopper into a closed bin, emptied by forklift; the lock''s drives fed at (2, -2, 1). Its bare walls radiate about 109 kW to the sky as well, not counted.
+    On four box legs. For airless ground: on a world with air the shop''s duct burns the gas instead.'}
+size_class: 2
+fits: plant-mount.bay-s2
+physical: {length: 6.0, width: 4.0, height: 17.0, mass: 17150.0}
+built_of:
+- {what: Water walls, item: material.structural-steel-a36, mass: 4009.0, note: '66 tubes 60.3 x 5 mm, 8 m, with 5 mm bars between them; structural steel stands for boiler steel'}
+- {what: Ring headers, item: material.structural-steel-a36, mass: 662.0, note: a 219 x 12 mm ring at the walls' top and bottom}
+- {what: Steam drum, item: material.structural-steel-a36, mass: 1069.0, note: '1 m across, 3 m, 12 mm (about 100 MPa at 20 bar), and its heads'}
+- {what: Downcomers and risers, item: material.structural-steel-a36, mass: 1112.0, note: 'two 168 mm downcomers from the drum to the bottom ring, 12 m each, and four risers, 4 m'}
+- {what: Hopper and outlet, item: material.structural-steel-a36, mass: 753.5, note: a 10 mm cone under the shaft and the 1.2 m outlet stub}
+- {what: Legs and bracing, item: material.structural-steel-a36, mass: 8742.0, note: 'four 300 x 300 x 10 mm box legs to z 16, their bracing half as much again'}
+- {what: 'Dust lock, bin and drives', item: good.pumps, mass: 800.0, note: 'two valves, a 1 m3 closed bin and their drives, from memory'}
+holds: 1893.0
+needs: {power: 10000.0, heat: 2218000.0, atmosphere: vacuum}
+ports:
+- id: gas-in
+  flow: in
+  medium: gas
+  item: material.carbon-monoxide
+  rate: 1.369
+  pressure: 100000.0
+  temperature: 1873.0
+  connector: connector.lined-flange-dn1200-pn1
+  at: [0.0, 0.0, 17.0]
+  facing: [0.0, 0.0, 1.0]
+- id: gas-out
+  flow: out
+  medium: gas
+  item: material.carbon-monoxide
+  rate: 1.369
+  pressure: 100000.0
+  temperature: 523.1
+  connector: connector.flange-dn1200-pn1
+  at: [3.0, 0.0, 8.0]
+  facing: [1.0, 0.0, 0.0]
+- id: steam-out
+  flow: out
+  medium: gas
+  item: good.water
+  rate: 1.173
+  pressure: 2000000.0
+  temperature: 485.0
+  connector: connector.flange-dn150-pn25
+  at: [-3.0, 0.4, 15.5]
+  facing: [-1.0, 0.0, 0.0]
+- id: water-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 1.173
+  temperature: 480.0
+  connector: connector.flange-dn100-pn25
+  at: [-3.0, -0.4, 15.5]
+  facing: [-1.0, 0.0, 0.0]
+- id: power-in
+  flow: in
+  medium: power
+  power: 10000.0
+  voltage: 400
+  connector: connector.termination-400v-16mm2
+  at: [2.0, -2.0, 1.0]
+  facing: [0.0, -1.0, 0.0]
+  note: the dust lock's drives
+life: 788940000
+basis:
+- of: [needs.heat]
+  tier: derived
+  review: true
+  note: The CO from 2% carbon in the sponge iron (from memory), its mean heat 1200 J/kg K (from memory), from 1600 deg C (invented) to 250.
+- of: [physical, built_of, holds]
+  tier: invented
+  review: true
+  note: Sizes from memory of waste-heat boilers; the walls' heat flux not checked against the gas's radiation.
+- of: [life]
+  rule: rule.life-plant
