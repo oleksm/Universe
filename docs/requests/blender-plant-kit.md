@@ -17,9 +17,9 @@ One model per run class, holding these named pieces, each in its own frame:
 - **`elbow`:** 90° at the record's `elbow.radius` to its centreline. It enters at the origin along +x and leaves along +y. A belt has none.
 - **`tee`:** the main along x from -1.5 bore to +1.5 bore, the branch out along +y.
 - **`cap`:** a blind end (pipes and ducts), its face at the origin facing +x.
-- **`support_head`:** what holds the run at its axis (the origin): a shoe and clamp, a trestle's cross beam, a tray post's arm.
+- **`support_head`:** what holds the run at its axis (the origin): a shoe and clamp, a trestle's cross beam, a tray post's arm. A child empty `leg_top` marks its underside, where the leg starts.
 - **`inlet` and `outlet`** (drag conveyors only): the tail piece with a round nozzle on the casing's top, its flange face at the casing's top at the origin, facing +z, of the connector's bore (chute-dn800: 0.8 m). The head piece has the same nozzle on the casing's bottom, facing -z. The casing stays rectangular; the round joint is the nozzle's.
-- **`support_leg`:** 1 m from the origin down to z = -1. The game stretches it to the ground.
+- **`support_leg`:** 1 m from the origin down to z = -1. The game places its origin at `leg_top` and stretches it to the ground. Every piece's root sits at identity at its own datum, the pieces overlapping in the file; previews may show them apart.
 
 Draw from each record's `per_m.built_of`, `support` and the class's description:
 - pipes: wall, MLI lagging where named;

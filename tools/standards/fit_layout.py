@@ -191,7 +191,7 @@ def check(lay, units, runs, conns):
         R_ = runs[l["run"]].get("elbow", {}).get("radius", 0.0)
         pts, rad = S_[l["name"]], radius[l["name"]]
         for b in lay["bays"]:
-            if b["id"] in taps:
+            if b["id"] in taps and not units[b["unit"]].get("envelope"):
                 continue
             q_ok = np.zeros(len(pts), bool)
             for e_at in joined.get(b["id"], []):
@@ -202,7 +202,13 @@ def check(lay, units, runs, conns):
             q = pts - np.array(b["at"], float)
             lx = q[:, 0] * math.cos(a) + q[:, 1] * math.sin(a)
             ly = -q[:, 0] * math.sin(a) + q[:, 1] * math.cos(a)
-            hit = (np.abs(lx) < Lb / 2 + rad) & (np.abs(ly) < Wb / 2 + rad) & (q[:, 2] > -rad) & (q[:, 2] < Hb + rad) & ~q_ok
+            if u.get("envelope"):          # (the boxes measured on its model; else its whole box)
+                hit = np.zeros(len(pts), bool)
+                for x0, y0, z0, x1, y1, z1 in u["envelope"]:
+                    hit |= (lx > x0 - rad) & (lx < x1 + rad) & (ly > y0 - rad) & (ly < y1 + rad) & (q[:, 2] > z0 - rad) & (q[:, 2] < z1 + rad)
+                hit &= ~q_ok
+            else:
+                hit = (np.abs(lx) < Lb / 2 + rad) & (np.abs(ly) < Wb / 2 + rad) & (q[:, 2] > -rad) & (q[:, 2] < Hb + rad) & ~q_ok
             if hit.any():
                 k = int(np.argmax(hit))
                 faults.append(f"{l['name']}: through {b['id']} ({b['unit']}) at {pts[k].round(2).tolist()}")

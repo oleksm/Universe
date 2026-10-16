@@ -14,6 +14,7 @@ import yaml
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import frames  # noqa: E402
 import plant_kit as kit  # noqa: E402
+ENVELOPES = yaml.safe_load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "unit_envelopes.yaml"))) or {}
 
 S = "standards/SFO/metadata/"
 G = 9.80665
@@ -507,6 +508,8 @@ def unit_record(slug, u):
         d["recipes"] = u["recipes"]
     if u.get("ports"):
         d["ports"] = u["ports"]
+    if f"unit.{slug}" in ENVELOPES:
+        d["envelope"] = ENVELOPES[f"unit.{slug}"]
     d["life"] = u.get("life") or mod.get("life")
     d["basis"] = u["basis"] + [{"of": ["life"], "rule": "rule.life-plant"}]
     return d
@@ -2733,6 +2736,9 @@ def shaft_airless_units(us):
     hh["needs"] = {"power": HP_Q_HEATER / 0.98}
     out[f"gas-heater-{HP_Q_HEATER / 1e6:.0f}mw-8bar"] = hh
     out[f"radiator-field-{HP_T_LOOP:.0f}k"] = radiator_unit(HP_T_LOOP, "the condenser's")
+    rf = out[f"radiator-field-{HP_T_LOOP:.0f}k"]
+    assert "its ports at local (-24, -0.6, 1) flow and (-24, 0.6, 1) return." in rf["desc"]
+    rf["desc"] = rf["desc"].replace("its ports at local (-24, -0.6, 1) flow and (-24, 0.6, 1) return.", "its ports on its south-west corner facing -y, at local (-23, -24, 1) flow and (-22.4, -24, 1) return, its pump's power entry at (-21.8, -24, 0.3), so a layout's mains run in an aisle beside the field, not under it.")
     return out
 
 
@@ -2825,9 +2831,9 @@ def trial_ports(us):
     ]
     us["crew-post"]["ports"] = [port("power-in", "in", "power", lv(us["crew-post"]["needs"]["power"]), (3, 0, 2.3), (1, 0, 0), power=us["crew-post"]["needs"]["power"], voltage=400, note="a gland on a pad on its +x end's dome, on the axis; the cable through the berm")]
     us[rad]["ports"] = [
-        port("water-in", "in", "liquid", kit.flange(0.15, 10), (-24, -0.6, 1), (-1, 0, 0), item=WATER, rate=q_rad, temperature=HP_T_LOOP),
-        port("water-out", "out", "liquid", kit.flange(0.15, 10), (-24, 0.6, 1), (-1, 0, 0), item=WATER, rate=q_rad, temperature=HP_T_LOOP - 10.0),
-        port("power-in", "in", "power", lv(us[rad]["needs"]["power"]), (-24, 1.8, 0.3), (-1, 0, 0), power=us[rad]["needs"]["power"], voltage=400, note="its circulating pump"),
+        port("water-in", "in", "liquid", kit.flange(0.15, 10), (-23.0, -24, 1), (0, -1, 0), item=WATER, rate=q_rad, temperature=HP_T_LOOP, note="its south-west corner, facing the aisle"),
+        port("water-out", "out", "liquid", kit.flange(0.15, 10), (-22.4, -24, 1), (0, -1, 0), item=WATER, rate=q_rad, temperature=HP_T_LOOP - 10.0),
+        port("power-in", "in", "power", lv(us[rad]["needs"]["power"]), (-21.8, -24, 0.3), (0, -1, 0), power=us[rad]["needs"]["power"], voltage=400, note="its circulating pump"),
     ]
     for k in ("recuperator",):
         us[k].pop("ports_note", None)
@@ -2946,7 +2952,7 @@ def shaft_furnace_airless(us, recs):
     loop_heat = recs["top-gas-condenser-8bar"]["needs"]["heat"] + recs["heater-transformer-131mva"]["needs"].get("heat", 0)
     n_rad = math.ceil(loop_heat / recs[rad]["rejects"]["heat"])
     cols = 6
-    rad_at = [(-60.0 - 48.0 * (i % cols), 60.0 + 48.0 * (i // cols)) for i in range(n_rad)]
+    rad_at = [(-60.0 - 48.0 * (i % cols), 66.0 + 51.0 * (i // cols)) for i in range(n_rad)]     # (a 3 m aisle south of each row, for its mains)
     bays = [
         {"id": "F", "mount": f"plant-mount.{sh['fits']}", "unit": f"unit.{sh_key}", "at": [0.0, 0.0, 0.0], "note": "in the tower, on its columns; the hot conveyor under its discharge lock"},
         {"id": "R", "mount": "plant-mount.bay-s2", "unit": "unit.recuperator", "at": [24.0, 24.0, 0.0], "note": "as for air; its shells hold 8 bar"},
@@ -3008,29 +3014,41 @@ def shaft_furnace_airless(us, recs):
         L("crew post supply", kit.cable(lvf, kit.area_for(amps(recs["crew-post"]["needs"]["power"], lvf))), ("edge:lv-post", "P:power-in"), [None, None], (), 1, None, "through the berm"),
     ]
     # The radiator loop: flow (hot, out of the condenser) and return mains as a parallel pair, the return on the right
-    # of the flow all the way, so they never cross; a pair along each row of fields under the panels, each field's
-    # ports taken off them by tees; the return rows jump over the flow main. The coolers' pairs are taken off the
-    # return main (62 deg C), a balancing orifice in the main between each pair's tees driving them.
+    # of the flow all the way, so they never cross. Each row of fields has a 3 m aisle on its south side carrying its
+    # flow row (1 m up), its return row (2 m up, so it crosses over the flow main) and its pumps' cable (0.3 m); each
+    # field's ports are on its south-west corner facing the aisle, a short branch to each. The coolers' pairs are
+    # taken off the return main (62 deg C), a balancing orifice in the main between each pair's tees driving them.
     rows = sorted({y for _, y in rad_at})
-    top_y = rows[-1]
-    f_main = [None, (48.6, 17.2, 1.0), (39.4, 17.2, 1.0), (39.4, 35.4, 1.0), (-34.8, 35.4, 1.0), (-34.8, top_y - 0.6 + 1.0, 1.0)]
-    r_main = [(-33.6, top_y + 0.6 + 1.0, 1.0), (-33.6, 36.6, 1.0), (40.6, 36.6, 1.0), (40.6, 18.4, 1.0), (47.4, 18.4, 1.0), None]
+    edge_y = lambda y: y - 24.0
+    yf, yr, yl = (lambda y: edge_y(y) - 1.65), (lambda y: edge_y(y) - 0.75), (lambda y: edge_y(y) - 2.4)
+    f_main = [None, (48.6, 17.2, 1.0), (39.4, 17.2, 1.0), (39.4, 35.4, 1.0), (-34.8, 35.4, 1.0), (-34.8, yf(rows[-1]) + 1.0, 1.0)]
+    r_main = [(-33.6, yr(rows[-1]) + 1.0, 1.0), (-33.6, 36.6, 1.0), (40.6, 36.6, 1.0), (40.6, 18.4, 1.0), (47.4, 18.4, 1.0), None]
     links += [
         L("loop flow main", w_main, ("S:water-out", "cap"), f_main, (), 1, None, f"{flow:,.0f} kg/s at about {HP_T_LOOP:.0f} K to the {n_rad} radiator fields; the return main on its right all the way"),
         L("loop return main", w_main, ("cap", "S:water-in"), r_main, (), 1, None, "back from the fields at about 10 K less"),
     ]
     lv_main = kit.cable(lvf, kit.area_for(amps(p_fields, lvf)))
-    links.append(L("radiator pumps' supply", lv_main, ("edge:lv-fields", "cap"), [None, (-32.4, top_y + 1.8 + 1.0, 0.3)], (), 1, None, "north along the fields' east side under the loop's mains"))
+    links.append(L("radiator pumps' supply", lv_main, ("edge:lv-fields", "cap"), [None, (-32.4, yl(rows[-1]) + 1.0, 0.3)], (), 1, None, "north along the fields' east side under the loop's mains"))
+    wb = kit.pipe(0.15, 10, liquid=True, temp=HP_T_LOOP)
+    cb = kit.cable(lvf, kit.area_for(amps(recs[rad]["needs"]["power"], lvf)))
     for k, y in enumerate(rows):
         here = [b for b in bays if b["id"].startswith("RL") and b["at"][1] == y]
-        xc = min(b["at"][0] for b in here) - 24.0 - 1.0
+        xc = min(b["at"][0] for b in here) - 23.0 - 1.0
         dn = kit.dn_for(math.sqrt(4 * len(here) * q_rad / 1000 / 2.5 / math.pi))
         wr = kit.pipe(dn, 10, liquid=True, temp=HP_T_LOOP)
+        e = edge_y(y)
         links += [
-            L(f"row {k + 1} flow", wr, ("tee:loop flow main", "cap"), [(-34.8, y - 0.6, 1.0), (xc, y - 0.6, 1.0)], tuple(f"{b['id']}:water-in" for b in here)),
-            L(f"row {k + 1} return", wr, ("cap", "tee:loop return main"), [(xc, y + 0.6, 1.0), (-36.4, y + 0.6, 1.0), (-36.4, y + 0.6, 2.4), (-33.6, y + 0.6, 2.4), (-33.6, y + 0.6, 1.0)], tuple(f"{b['id']}:water-out" for b in here), 1, None, "over the flow main"),
-            L(f"row {k + 1} pumps' supply", kit.cable(lvf, kit.area_for(amps(len(here) * recs[rad]["needs"]["power"], lvf))), ("tee:radiator pumps' supply", "cap"), [(-32.4, y + 1.8, 0.3), (xc, y + 1.8, 0.3)], tuple(f"{b['id']}:power-in" for b in here)),
+            L(f"row {k + 1} flow", wr, ("tee:loop flow main", "cap"), [(-34.8, yf(y), 1.0), (xc, yf(y), 1.0)], (), 1, None, "in the aisle south of its row, 1 m up"),
+            L(f"row {k + 1} return", wr, ("cap", "tee:loop return main"), [(xc, yr(y), 2.0), (-33.6, yr(y), 2.0), (-33.6, yr(y), 1.0)], (), 1, None, "in the aisle, 2 m up: over the flow main and the fields' flow branches"),
+            L(f"row {k + 1} pumps' supply", kit.cable(lvf, kit.area_for(amps(len(here) * recs[rad]["needs"]["power"], lvf))), ("tee:radiator pumps' supply", "cap"), [(-32.4, yl(y), 0.3), (xc, yl(y), 0.3)], (), 1, None, "in the aisle, 0.3 m up, under the water rows"),
         ]
+        for b in here:
+            x = b["at"][0]
+            links += [
+                L(f"{b['id']} flow branch", wb, (f"tee:row {k + 1} flow", f"{b['id']}:water-in"), [(x - 23.0, yf(y), 1.0), None]),
+                L(f"{b['id']} return branch", wb, (f"{b['id']}:water-out", f"tee:row {k + 1} return"), [None, (x - 22.4, e - 0.75, 1.0), (x - 22.4, e - 0.75, 2.0)]),
+                L(f"{b['id']} pump supply", cb, (f"tee:row {k + 1} pumps' supply", f"{b['id']}:power-in"), [(x - 21.8, yl(y), 0.3), None]),
+            ]
     # The coolers' four lines, side by side on the left of the transformer's flow (L0), down under the flow main,
     # round the compressor's west side; the compressor's pair turns off into its -x face.
     def side(path, d):

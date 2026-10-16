@@ -55,6 +55,13 @@ ports:
   connector: connector.flange-dn100-pn10
   at: [-6.0, -1.6, 0.6]
   facing: [-1.0, 0.0, 0.0]
+envelope:
+- [-1.551, -2.601, 0.949, 1.551, 2.402, 4.052]
+- [-6.001, -2.902, -0.001, 6.001, 2.902, 1.541]
+- [-6.001, -0.51, 0.989, -0.598, 1.602, 2.011]
+- [0.598, -0.51, 0.989, 6.001, 1.602, 2.011]
+- [-6.001, -2.271, 0.448, -0.999, -1.528, 2.555]
+- [-0.552, -2.101, 3.329, 0.552, -0.898, 5.001]
 life: 788940000
 visual: {format: freefall-model/1, path: models/recycle-compressor-8bar/v2, manifest_sha256: 69561d6adac4480abe9e6aa6c7feab8fb256ef896247ee9cb67741f0ae237866, version: 2, triangles: 18540}
 basis:

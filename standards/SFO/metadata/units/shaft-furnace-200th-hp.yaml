@@ -78,6 +78,13 @@ ports:
   at: [-4.7, 2.0, 12.0]
   facing: [-1.0, 0.0, 0.0]
   note: the drives' terminal box on the ring girder's west face
+envelope:
+- [-3.722, -3.722, 7.999, 3.722, 3.722, 32.001]
+- [-2.501, -2.501, 31.899, 2.501, 2.501, 40.001]
+- [-1.102, -1.102, 5.999, 1.652, 1.102, 8.201]
+- [-4.702, -4.501, 11.499, 4.501, 4.501, 13.201]
+- [-6.116, -6.501, 13.172, 6.116, 6.116, 17.22]
+- [2.999, -0.839, 30.161, 6.001, 0.84, 31.839]
 life: 788940000
 visual: {format: freefall-model/1, path: models/shaft-furnace-200th-hp/v2, manifest_sha256: 8ca9eaec0f90ee49d20ad12d2509d0bb162504a1fffc96c79eae959abc9442cc, version: 2, triangles: 20672}
 basis:
