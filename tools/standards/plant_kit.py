@@ -124,11 +124,11 @@ def chute(dn, item=SS):
     n = max(8, math.ceil(math.pi * (dn + 0.1) / 0.15 / 4) * 4)
     bolts = n * 0.6
     built = [_part("Flanges", item, ring, f"two plate rings {D:.2f} m across, 20 mm"), _part("Bolts", BOLT, bolts, f"{n} of M16"),
-             _part("Seal", RUBBER, math.pi * (dn + 0.05) * 0.03 * 0.01 * RHO[RUBBER], "a dust seal; silicone rubber, which takes the heat")]
+             _part("Gasket", "material.fused-silica", math.pi * (dn + 0.05) * 0.03 * 0.006 * 2200.0, "a 6 mm silica-fibre dust gasket, for the sponge iron's 700 deg C (rubber would not take it); fused silica stands for it")]
     _recs[key] = {"identity": {"key": key, "name": f"Chute flange DN {dn * 1000:.0f}", "description": f"A sealed bolted flange where bulk falls through a {dn * 1000:.0f} mm chute into a closed conveyor."},
                   "kind": "chute", "size": dn, "rating": {"pressure": 0.0, "temperature": 973.0}, "sealing": "single",
-                  "physical": {"length": r(D, 3), "width": r(D, 3), "height": 0.05, "mass": r(sum(b["mass"] for b in built))}, "built_of": built,
-                  "basis": [{"of": ["built_of"], "tier": "invented", "review": True, "note": "Plate rings and bolts at a 150 mm pitch, from memory."}]}
+                  "physical": {"length": r(D, 3), "width": r(D, 3), "height": r(2 * t + 0.006 + 4 * 0.016, 3), "mass": r(sum(b["mass"] for b in built))}, "built_of": built,
+                  "basis": [{"of": ["built_of"], "tier": "invented", "review": True, "note": "Plate rings and M16 bolts at a 150 mm pitch, from memory; along the chute the rings, gasket and the bolts' and nuts' ends, as for pipe flanges."}]}
     return key
 
 
