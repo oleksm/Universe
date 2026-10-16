@@ -15,8 +15,8 @@ properties:
       name: { type: string }
       description: { type: string }
   kind:
-    enum: [pipe, lined-duct, belt, drag-conveyor, cable]
-    description: "pipe: steel or stainless pipe, bare or lagged; lined-duct: a steel shell lined with refractory, for hot gas; belt: an open troughed belt on idlers and a stringer; drag-conveyor: a chain drawing flights through a closed casing, for hot or sealed bulk; cable: power cables on their tray."
+    enum: [pipe, lined-duct, belt, drag-conveyor, cable, busbar]
+    description: "pipe: steel or stainless pipe, bare or lagged; lined-duct: a steel shell lined with refractory, for hot gas; belt: an open troughed belt on idlers and a stringer; drag-conveyor: a chain drawing flights through a closed casing, for hot or sealed bulk; cable: power cables on their tray; busbar: a direct current bus of two poles, water-cooled hollow copper on insulators, where a cable would be too many circuits."
   size: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "Nominal bore (pipe: the steel's; lined duct: the steel shell's), belt width or casing width; for a cable, the conductor's cross-section in m2" }
   bore: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "The clear bore the flow has (inside the lining of a lined duct)" }
   outside: { type: array, items: { type: number, exclusiveMinimum: 0 }, minItems: 2, maxItems: 2, x-unit: "m", description: "Its outside across and up [width, height], lagging and casing included: what a fit check keeps clear (a pipe's diameter twice)." }
@@ -27,7 +27,7 @@ properties:
       pressure: { type: number, minimum: 0, x-unit: "Pa" }
       temperature: { type: number, minimum: 0, x-unit: "K", description: "K, the most at its wall" }
       voltage: { type: number, minimum: 0, x-unit: "V" }
-      current: { type: number, minimum: 0, x-unit: "A", description: "A per phase, one circuit" }
+      current: { type: number, minimum: 0, x-unit: "A", description: "A per phase, one circuit (a busbar: per pole)" }
       rate: { type: number, minimum: 0, x-unit: "kg/s", description: "kg/s of bulk at full speed" }
   per_m:
     type: object

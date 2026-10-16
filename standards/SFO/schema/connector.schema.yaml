@@ -18,8 +18,8 @@ properties:
       name: { type: string }
       description: { type: string }
   kind:
-    enum: [flange, lined-flange, chute, belt-transfer, termination]
-    description: "flange: a bolted pipe or duct flange pair; lined-flange: the same on a refractory-lined duct, the lining's joint packed; chute: a sealed bolted chute flange for bulk solids (a lock's outlet into a closed conveyor); belt-transfer: a receiving chute and skirt where a belt's head discharges into a hopper or onto another belt; termination: a power cable's end into a terminal box (lugs, stress cones, gland)."
+    enum: [flange, lined-flange, chute, belt-transfer, termination, bus-joint]
+    description: "flange: a bolted pipe or duct flange pair; lined-flange: the same on a refractory-lined duct, the lining's joint packed; chute: a sealed bolted chute flange for bulk solids (a lock's outlet into a closed conveyor); belt-transfer: a receiving chute and skirt where a belt's head discharges into a hopper or onto another belt; termination: a power cable's end into a terminal box (lugs, stress cones, gland); bus-joint: a direct current bus's bolted joint to a unit's terminals, both poles, with the joint's water couplings."
   size: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "Its nominal size: a pipe's or duct's nominal bore (the steel's, for a lined duct), a chute's bore, a belt's width. For a termination, the conductor's cross-section in m2." }
   rating:
     type: object
@@ -29,7 +29,7 @@ properties:
       pressure: { type: number, minimum: 0, x-unit: "Pa", description: "Pa across it, inside to outside (on airless ground the whole of the inside's pressure)" }
       temperature: { type: number, minimum: 0, x-unit: "K", description: "K at its faces" }
       voltage: { type: number, minimum: 0, x-unit: "V", description: "V between phases" }
-      current: { type: number, minimum: 0, x-unit: "A", description: "A per phase" }
+      current: { type: number, minimum: 0, x-unit: "A", description: "A per phase (a bus joint: per pole)" }
       rate: { type: number, minimum: 0, x-unit: "kg/s", description: "kg/s of bulk it passes" }
   sealing: { enum: [single, double, open], description: "single: one gasket; double: two seals with the space between them watched for leaks (hydrogen, or any line to vacuum where a leak is lost for good); open: no seal (a belt's transfer)." }
   physical: { $ref: "../../common.schema.yaml#/definitions/physical", description: "The joint as fitted: its outside diameter (length and width) and its length along the run (height); its mass, both halves." }

@@ -1343,6 +1343,7 @@ H_WATER = HREC["inputs"][0]["quantity"] * H_RATE
 H_O2 = HREC["outputs"][0]["quantity"] * H_RATE
 FARADAY = 96485.0
 N_BLK = 5                          # electrolyser blocks, 20 MW each: chosen
+RT_V = 33e3                        # V: the rectifier transformers' primary, chosen
 V_CELL, J_CELL = 1.9, 4000.0       # V a cell and A/m2 of active area: from memory of pressurised alkaline electrolysers
 V_TN = 1.48                        # V: the thermoneutral voltage; what a cell takes above it leaves as heat
 CELL_A, CELLS_STACK, STACKS = 2.7, None, 4   # m2 of active area a cell (1.85 m across): from memory
@@ -1350,6 +1351,7 @@ I_BLK = H_RATE / N_BLK / 2.016e-3 * 2 * FARADAY             # A summed over ever
 P_STACKS = I_BLK * V_CELL                                    # W into one block's cells
 N_CELLS = math.ceil(I_BLK / J_CELL / CELL_A)
 PER_STACK = math.ceil(N_CELLS / STACKS)
+V_STACK = PER_STACK * V_CELL                                 # V across a stack, and so on the block's bus
 I_DC = I_BLK / PER_STACK                                     # A of direct current into a block: its stacks in parallel, each its cells in series
 NI = "material.nickel-200"
 
@@ -1520,12 +1522,15 @@ def hydrogen_units():
     dc_cu = 2 * I_DC / 2e6 * 6.0 * RHO["copper"]          # two poles at 2 A/mm2, 6 m each inside the house
     rt["built_of"] += [part("Rectifier stacks and heat sinks", AL, 3000.0, "two 6-pulse thyristor bridges (12-pulse together) on water-cooled aluminium heat sinks, from memory"),
                        part("DC bus", CU, dc_cu, f"two copper poles inside the house, {I_DC / 2e6 * 1e4:.0f} cm2 each at 2 A/mm2"),
-                       part("Rectifier house", A36, 2500.0, "a closed steel house, its cabinets, doors and cooling manifold, from memory")]
+                       part("Rectifier house", A36, 2500.0, "a closed steel house, its cabinets, doors and cooling manifold, from memory"),
+                       part("HV cable box", A36, 2 * (3.0 * 0.8 + 3.0 * 0.8 + 0.8 * 0.8) * 0.006 * RHO["steel"], f"over the three HV bushings on the tank's top at y -1.5: 3 x 0.8 x 0.8 m, 6 mm, its gland plate on top at (0, -1.5, {H_t + 0.8:g})")]
+    rt["dims"] = (L_t, W_t + 3.0, H_t + 0.8)
     rt["needs"] = {"power": P_rect, "heat": P_rect}
     rt["desc"] = (rt["desc"].replace("Three secondary terminals on one long face (+y), 4.5 m up", "Its secondary bushings on its +y face into the rectifier house")
                   .replace("Three secondary terminals on one long face (+y)", "Its secondary bushings on its +y face into the rectifier house")
                   + f" Local frame: the transformer's tank on the -y side (y -{(W_t + 3.0) / 2:g} to {W_t - (W_t + 3.0) / 2:g}); the rectifier in a closed house on the +y side (x -2.1 to 2.1, y 0.6 to {(W_t + 3.0) / 2:g}, 2.8 m tall, three service doors), fed across the gap by a shielded AC bridge, its heat sinks' water joining the transformer cooler's pair, whose ports are on the -x end at (-{L_t / 2:g}, -1.86, 1) and (-{L_t / 2:g}, -1.14, 1); "
-                  f"the rectifier's two DC terminals on the house's +y face at x -0.45 and 0.45, 2.4 m up, toward the hall.")
+                  f"the rectifier's DC terminals on the house's +y face, 2.4 m up, toward the cells: one bus joint centred at (0, {(W_t + 3.0) / 2:g}, 2.4), its two poles' pads at x -0.3 (+) and 0.3 (-). "
+                  f"Fed at {RT_V / 1e3:g} kV through a cable box over its HV bushings, its gland plate on top at (0, -1.5, {H_t + 0.8:g}).")
     out["rectifier-transformer-21mva"] = rt
     out["hydrogen-purifier"] = hydrogen_purifier("Hydrogen purifier", 3e5, 40.0, 35.0, 4.0, "Cooled by the tower's water.",
                                                  measured={"Vessels": 7548.5, "Skid, supports and piping": None,
@@ -1613,7 +1618,7 @@ def hydrogen_plant_air(us, recs):
     d_rh = math.sqrt(4 * (q_r * N_BLK + q_p) / (4186 * 10) / 1000 / 2.5 / math.pi)
     d_pb = math.sqrt(4 * q_p / (4186 * 10) / 1000 / 2.0 / math.pi)
     d_rb = max(0.08, math.sqrt(4 * q_r / (4186 * 10) / 1000 / 2.5 / math.pi))
-    links = [link("busbar", f"DC bus {i + 1}", (x, -24.0 + rW / 2, rH * 2 / 3), (x, -6.0, 3.0), AL, 2 * bus_a * RHO["aluminium"], None, f"two aluminium bars, {bus_a * 1e4:.0f} cm2 each for {I_DC / 1e3:.0f} kA at 1.5 A/mm2: up to 3.6 m on a post south of the wall, level through the south wall's opening (z 3 to 6), down to the block's terminal", via=[(x, -17.0, 3.6), (x, -7.0, 3.6)]) for i, x in enumerate(xs_b)]
+    links = [link("busbar", f"DC bus {i + 1}", (x, -24.0 + rW / 2, 2.4), (x, -6.0, 3.0), AL, 2 * bus_a * RHO["aluminium"], None, f"two aluminium bars, {bus_a * 1e4:.0f} cm2 each for {I_DC / 1e3:.0f} kA at 1.5 A/mm2: up to 3.6 m on a post south of the wall, level through the south wall's opening (z 3 to 6), down to the block's terminal", via=[(x, -17.0, 3.6), (x, -7.0, 3.6)]) for i, x in enumerate(xs_b)]
     links += [
         link("pipe", "hydrogen header", (xs_b[0] + 10.5, -2.5, 8.0), (66.0, 0.0, 6.0), ss, pm(d_h2, 0.006), None, f"{d_h2:.2f} m stainless, 6 mm wall, at 3 bar: from each block's hydrogen separator along the hall at z 9, out by the east wall to the purifier", via=[(xs_b[0] + 10.5, -2.5, 9.0), (64.0, -2.5, 9.0), (64.0, 0.0, 6.0)]),
         link("pipe", "hydrogen to the shaft furnace", (78.0, 0.0, 2.0), (110.0, 0.0, 2.0), ss, pm(d_h2, 0.006), None, f"{H_RATE:.3f} kg/s of dry hydrogen at about 3 bar, on to the shaft furnace's make-up, beyond the layout"),
@@ -2856,7 +2861,7 @@ def end_offset(conn_kind, run_rec, which):
     return (0.0, 0.0, 0.0)
 
 
-KIND_OF_RUN = {"pipe": "pipe", "lined-duct": "duct", "belt": "conveyor", "drag-conveyor": "conveyor", "cable": "cable"}
+KIND_OF_RUN = {"pipe": "pipe", "lined-duct": "duct", "belt": "conveyor", "drag-conveyor": "conveyor", "cable": "cable", "busbar": "busbar"}
 
 
 def kit_link(name, run, ends, path, bays, recs, edge, taps=(), count=1, power=None, note=None):
@@ -2906,6 +2911,39 @@ def kit_link(name, run, ends, path, bays, recs, edge, taps=(), count=1, power=No
     if note:
         d["note"] = note
     return d
+
+
+def radiator_rows(L, bays, recs, rad, rad_at, xf, xr, xl, lvf):
+    """A radiator loop's rows (SFO 25), the fields west of the mains: the flow main at x xf, the return at xr and the
+    pumps' cable at xl, all going north. Each row of fields has a 3 m aisle on its south side carrying its flow row (1 m
+    up), its return row (2 m up, so it crosses over the flow main) and its pumps' cable (0.3 m); each field's ports are
+    on its south-west corner facing the aisle, a short branch to each. (rows, yf, yr, yl, links)"""
+    links = []
+    q_rad = recs[rad]["rejects"]["heat"] / (4186 * 10)
+    rows = sorted({y for _, y in rad_at})
+    edge_y = lambda y: y - 24.0
+    yf, yr, yl = (lambda y: edge_y(y) - 1.65), (lambda y: edge_y(y) - 0.75), (lambda y: edge_y(y) - 2.4)
+    wb = kit.pipe(0.15, 10, liquid=True, temp=HP_T_LOOP)
+    cb = kit.cable(lvf, kit.area_for(amps(recs[rad]["needs"]["power"], lvf)))
+    for k, y in enumerate(rows):
+        here = [b for b in bays if b["id"].startswith("RL") and b["at"][1] == y]
+        xc = min(b["at"][0] for b in here) - 23.0 - 1.0
+        dn = kit.dn_for(math.sqrt(4 * len(here) * q_rad / 1000 / 2.5 / math.pi))
+        wr = kit.pipe(dn, 10, liquid=True, temp=HP_T_LOOP)
+        e = edge_y(y)
+        links += [
+            L(f"row {k + 1} flow", wr, ("tee:loop flow main", "cap"), [(xf, yf(y), 1.0), (xc, yf(y), 1.0)], (), 1, None, "in the aisle south of its row, 1 m up"),
+            L(f"row {k + 1} return", wr, ("cap", "tee:loop return main"), [(xc, yr(y), 2.0), (xr, yr(y), 2.0), (xr, yr(y), 1.0)], (), 1, None, "in the aisle, 2 m up: over the flow main and the fields' flow branches"),
+            L(f"row {k + 1} pumps' supply", kit.cable(lvf, kit.area_for(amps(len(here) * recs[rad]["needs"]["power"], lvf))), ("tee:radiator pumps' supply", "cap"), [(xl, yl(y), 0.3), (xc, yl(y), 0.3)], (), 1, None, "in the aisle, 0.3 m up, under the water rows"),
+        ]
+        for b in here:
+            x = b["at"][0]
+            links += [
+                L(f"{b['id']} flow branch", wb, (f"tee:row {k + 1} flow", f"{b['id']}:water-in"), [(x - 23.0, yf(y), 1.0), None]),
+                L(f"{b['id']} return branch", wb, (f"{b['id']}:water-out", f"tee:row {k + 1} return"), [None, (x - 22.4, e - 0.75, 1.0), (x - 22.4, e - 0.75, 2.0)]),
+                L(f"{b['id']} pump supply", cb, (f"tee:row {k + 1} pumps' supply", f"{b['id']}:power-in"), [(x - 21.8, yl(y), 0.3), None]),
+            ]
+    return rows, yf, yr, yl, links
 
 
 def shaft_furnace_airless(us, recs):
@@ -3020,9 +3058,7 @@ def shaft_furnace_airless(us, recs):
     # flow row (1 m up), its return row (2 m up, so it crosses over the flow main) and its pumps' cable (0.3 m); each
     # field's ports are on its south-west corner facing the aisle, a short branch to each. The coolers' pairs are
     # taken off the return main (62 deg C), a balancing orifice in the main between each pair's tees driving them.
-    rows = sorted({y for _, y in rad_at})
-    edge_y = lambda y: y - 24.0
-    yf, yr, yl = (lambda y: edge_y(y) - 1.65), (lambda y: edge_y(y) - 0.75), (lambda y: edge_y(y) - 2.4)
+    rows, yf, yr, yl, row_links = radiator_rows(L, bays, recs, rad, rad_at, -34.8, -33.6, -32.4, lvf)
     f_main = [None, (48.6, 17.2, 1.0), (39.4, 17.2, 1.0), (39.4, 35.4, 1.0), (-34.8, 35.4, 1.0), (-34.8, yf(rows[-1]) + 1.0, 1.0)]
     r_main = [(-33.6, yr(rows[-1]) + 1.0, 1.0), (-33.6, 36.6, 1.0), (40.6, 36.6, 1.0), (40.6, 18.4, 1.0), (47.4, 18.4, 1.0), None]
     links += [
@@ -3031,26 +3067,7 @@ def shaft_furnace_airless(us, recs):
     ]
     lv_main = kit.cable(lvf, kit.area_for(amps(p_fields, lvf)))
     links.append(L("radiator pumps' supply", lv_main, ("edge:lv-fields", "cap"), [None, (-32.4, yl(rows[-1]) + 1.0, 0.3)], (), 1, None, "north along the fields' east side under the loop's mains"))
-    wb = kit.pipe(0.15, 10, liquid=True, temp=HP_T_LOOP)
-    cb = kit.cable(lvf, kit.area_for(amps(recs[rad]["needs"]["power"], lvf)))
-    for k, y in enumerate(rows):
-        here = [b for b in bays if b["id"].startswith("RL") and b["at"][1] == y]
-        xc = min(b["at"][0] for b in here) - 23.0 - 1.0
-        dn = kit.dn_for(math.sqrt(4 * len(here) * q_rad / 1000 / 2.5 / math.pi))
-        wr = kit.pipe(dn, 10, liquid=True, temp=HP_T_LOOP)
-        e = edge_y(y)
-        links += [
-            L(f"row {k + 1} flow", wr, ("tee:loop flow main", "cap"), [(-34.8, yf(y), 1.0), (xc, yf(y), 1.0)], (), 1, None, "in the aisle south of its row, 1 m up"),
-            L(f"row {k + 1} return", wr, ("cap", "tee:loop return main"), [(xc, yr(y), 2.0), (-33.6, yr(y), 2.0), (-33.6, yr(y), 1.0)], (), 1, None, "in the aisle, 2 m up: over the flow main and the fields' flow branches"),
-            L(f"row {k + 1} pumps' supply", kit.cable(lvf, kit.area_for(amps(len(here) * recs[rad]["needs"]["power"], lvf))), ("tee:radiator pumps' supply", "cap"), [(-32.4, yl(y), 0.3), (xc, yl(y), 0.3)], (), 1, None, "in the aisle, 0.3 m up, under the water rows"),
-        ]
-        for b in here:
-            x = b["at"][0]
-            links += [
-                L(f"{b['id']} flow branch", wb, (f"tee:row {k + 1} flow", f"{b['id']}:water-in"), [(x - 23.0, yf(y), 1.0), None]),
-                L(f"{b['id']} return branch", wb, (f"{b['id']}:water-out", f"tee:row {k + 1} return"), [None, (x - 22.4, e - 0.75, 1.0), (x - 22.4, e - 0.75, 2.0)]),
-                L(f"{b['id']} pump supply", cb, (f"tee:row {k + 1} pumps' supply", f"{b['id']}:power-in"), [(x - 21.8, yl(y), 0.3), None]),
-            ]
+    links += row_links
     # The coolers' four lines, side by side on the left of the transformer's flow (L0), down under the flow main,
     # round the compressor's west side; the compressor's pair turns off into its -x face.
     def side(path, d):
@@ -3139,82 +3156,200 @@ def hydrogen_airless_units(us):
     b["built_of"] = [dict(p_, note=p_["note"].replace("measured on model v1", "as the 3 bar block's, measured on its model v1")) for p_ in us["electrolyser-block-20mw"]["built_of"] if p_["what"] != "Separators"] + [part("Separators", A36, seps, "two vessels 2 m across, 6 m, 25 mm plate for 10 bar (40 MPa)")]
     b["desc"] = ("The electrolyser block built for airless ground: its stacks and separators held at about 10 bar, so the hydrogen goes to the shaft furnace's 8 bar loop with no compressor, standing in the open on a pad with no hall (in vacuum there is no air for a leak to burn in, but the oxygen side is kept apart and its lines are clean). "
                  "Its lye at about 80 deg C gives its heat to the layout's loop through its coolers. Otherwise as unit.electrolyser-block-20mw: " + us["electrolyser-block-20mw"]["desc"])
+    b["desc"] = b["desc"].replace("by a busbar to its terminals at local (0, -6, 3)", "by a busbar to its terminals at local (0, -6, 2.4) (one bus joint, + at x -0.3)")
     b["needs"] = dict(us["electrolyser-block-20mw"]["needs"], atmosphere="any")
     out["electrolyser-block-20mw-10bar"] = b
     return out
 
 
+def h2_ports(us):
+    """Ports on the airless hydrogen plant's units (SFO 25), in each unit's frame as its description gives them."""
+    K = 273.15
+    H2, O2, WATER = "material.hydrogen", "material.oxygen", "good.water"
+    blk = us["electrolyser-block-20mw-10bar"]
+    q_blk = blk["needs"]["heat"] / (4186 * 10)
+    bus = kit.bus_joint(V_STACK, I_DC)
+    blk["ports"] = [
+        port("dc-in", "in", "power", bus, (0, -6, 2.4), (0, -1, 0), power=P_STACKS, voltage=V_STACK, note=f"{I_DC / 1e3:.1f} kA direct, one bus joint"),
+        port("h2-out", "out", "gas", kit.flange(0.15, 16, kit.SS, "double"), (10.5, -2.5, 8), (0, 0, 1), item=H2, rate=H_RATE / N_BLK, pressure=10e5, temperature=80.0 + K, note="the hydrogen separator's top, wet with lye mist"),
+        port("o2-out", "out", "gas", kit.flange(0.1, 16, kit.SS, "double"), (10.5, 2.5, 8), (0, 0, 1), item=O2, rate=H_O2 / N_BLK, pressure=10e5, temperature=80.0 + K, note="the oxygen separator's top"),
+        port("water-in", "in", "liquid", kit.flange(0.05, 10, kit.SS), (9.8, 6, 1), (0, 1, 0), item=WATER, rate=H_WATER / N_BLK, note="demineralised water, the cells' feed"),
+        port("cooling-in", "in", "liquid", kit.flange(0.25, 10), (10.6, 6, 1), (0, 1, 0), item=WATER, rate=q_blk, temperature=HP_T_LOOP - 10.0),
+        port("cooling-out", "out", "liquid", kit.flange(0.25, 10), (11.4, 6, 1), (0, 1, 0), item=WATER, rate=q_blk, temperature=HP_T_LOOP),
+    ]
+    rt = us["rectifier-transformer-21mva"]
+    L_t, W_r, H_r = rt["dims"]
+    p_in = P_STACKS + rt["needs"]["power"]
+    q_rt = rt["needs"]["heat"] / (4186 * 10)
+    rt["ports"] = [
+        port("hv-in", "in", "power", kit.termination(RT_V, kit.area_for(amps(p_in, RT_V, 0.95))), (0, -1.5, H_r), (0, 0, 1), power=p_in, voltage=RT_V, note="the HV cable box's gland plate, over the three bushings"),
+        port("dc-out", "out", "power", bus, (0, W_r / 2, 2.4), (0, 1, 0), power=P_STACKS, voltage=V_STACK, note="the rectifier house's DC bus joint"),
+        port("cooling-in", "in", "liquid", kit.flange(0.1, 10), (-L_t / 2, -1.86, 1), (-1, 0, 0), item=WATER, rate=q_rt, temperature=HP_T_LOOP - 10.0, note="the oil cooler's and the heat sinks' pair, and the bus's water through the joint"),
+        port("cooling-out", "out", "liquid", kit.flange(0.1, 10), (-L_t / 2, -1.14, 1), (-1, 0, 0), item=WATER, rate=q_rt, temperature=HP_T_LOOP),
+    ]
+    pu = us["hydrogen-purifier-10bar"]
+    q_pu = pu["needs"]["heat"] / (4186 * 10)
+    g = kit.flange(0.25, 16, kit.SS, "double")
+    pu["ports"] = [
+        port("gas-in", "in", "gas", g, (-6, 0, 6), (-1, 0, 0), item=H2, rate=H_RATE, pressure=10e5, temperature=80.0 + K),
+        port("gas-out", "out", "gas", g, (6, 0, 2), (1, 0, 0), item=H2, rate=H_RATE, pressure=10e5, note="dry, oxygen-free"),
+        port("cooling-in", "in", "liquid", kit.flange(0.2, 10), (0, -4, 1), (0, -1, 0), item=WATER, rate=q_pu, temperature=HP_T_LOOP - 10.0),
+        port("cooling-out", "out", "liquid", kit.flange(0.2, 10), (0.6, -4, 1), (0, -1, 0), item=WATER, rate=q_pu, temperature=HP_T_LOOP),
+        port("condensate-out", "out", "liquid", kit.flange(0.05, 10, kit.SS), (-6, 3, 0.3), (-1, 0, 0), item=WATER, note="the deoxidiser's water and the knockouts'"),
+        port("power-in", "in", "power", kit.termination(400, kit.area_for(amps(pu["needs"]["power"], 400))), (6, -3.5, 0.5), (1, 0, 0), power=pu["needs"]["power"], voltage=400),
+    ]
+    wt = us["water-treatment-sealed"]
+    wt["ports"] = [
+        port("raw-in", "in", "liquid", kit.flange(0.2, 10, kit.SS), (6, 0, 0.5), (1, 0, 0), item=WATER, rate=20.3 / 3.6, note="the shaft furnace's condensate and melted ice"),
+        port("clean-out", "out", "liquid", kit.flange(0.1, 10, kit.SS), (-6, 0, 0.5), (-1, 0, 0), item=WATER, rate=H_WATER),
+        port("reject-out", "out", "liquid", kit.flange(0.15, 10, kit.SS), (6, 3.4, 0.3), (1, 0, 0), item=WATER, note="concentrate and backwash, kept"),
+        port("power-in", "in", "power", kit.termination(400, kit.area_for(amps(wt["needs"]["power"], 400))), (-6, -3.4, 0.5), (-1, 0, 0), power=wt["needs"]["power"], voltage=400),
+    ]
+
+
 def hydrogen_plant_airless(us, recs):
     """The hydrogen plant on airless ground: the blocks at 10 bar in the open, radiators for the tower, every kilogram
-    of water kept."""
+    of water kept. Laid of SFO 25 runs from port to port."""
+    K = 273.15
     xs_b = [-48.0, -24.0, 0.0, 24.0, 48.0]
     rad = f"radiator-field-{HP_T_LOOP:.0f}k"
-    loop = N_BLK * (recs["electrolyser-block-20mw-10bar"]["needs"]["heat"] + recs["rectifier-transformer-21mva"]["needs"]["heat"]) + recs["hydrogen-purifier-10bar"]["needs"]["heat"]
+    blk, rt, pu = recs["electrolyser-block-20mw-10bar"], recs["rectifier-transformer-21mva"], recs["hydrogen-purifier-10bar"]
+    bus = kit.busbar(V_STACK, I_DC)
+    bus_path = lambda x: [None, (x, -19.0, 2.4), (x, -19.0, -1.0), (x, -8.0, -1.0), (x, -8.0, 2.4), None]
+    bus_L = sum(math.dist(p_, q_) for p_, q_ in zip([(0, -21.0, 2.4)] + bus_path(0)[1:-1] + [(0, -6.0, 2.4)], bus_path(0)[1:-1] + [(0, -6.0, 2.4)]))
+    bus_loss = kit._recs[bus]["per_m"]["power"] * bus_L
+    loop = N_BLK * (blk["needs"]["heat"] + rt["needs"]["heat"] + bus_loss) + pu["needs"]["heat"]
     n_rad = math.ceil(loop / recs[rad]["rejects"]["heat"])
     cols = 6
-    rad_at = [(-120.0 + 48.0 * (i % cols), 48.0 + 48.0 * (i // cols)) for i in range(n_rad)]
+    rad_at = [(-120.0 + 48.0 * (i % cols), 48.0 + 51.0 * (i // cols)) for i in range(n_rad)]     # (a 3 m aisle south of each row, for its mains)
     bays = [{"id": f"E{i + 1}", "mount": "plant-mount.bay-s3", "unit": "unit.electrolyser-block-20mw-10bar", "at": [x, 0.0, 0.0], "note": "on its pad in the open"} for i, x in enumerate(xs_b)]
     bays += [{"id": f"R{i + 1}", "mount": "plant-mount.bay-s2", "unit": "unit.rectifier-transformer-21mva", "at": [x, -24.0, 0.0], "note": "south, no fire walls"} for i, x in enumerate(xs_b)]
     bays += [{"id": "P", "mount": "plant-mount.bay-s2", "unit": "unit.hydrogen-purifier-10bar", "at": [72.0, 0.0, 0.0], "note": "east"},
              {"id": "W", "mount": "plant-mount.bay-s2", "unit": "unit.water-treatment-sealed", "at": [72.0, -24.0, 0.0], "note": "south-east: polishes the shaft furnace's condensate and the ice miners' water"},
              {"id": "Q", "mount": "plant-mount.bay-s1", "unit": "unit.crew-post", "at": [-72.0, -24.0, 0.0], "note": "south-west, under its berm"}]
     bays += [{"id": f"RL{i + 1}", "mount": "plant-mount.bay-s4", "unit": f"unit.{rad}", "at": [x, y, 0.0], "note": f"north, in rows of {cols}"} for i, (x, y) in enumerate(rad_at)]
-    rt = us["rectifier-transformer-21mva"]
-    rW, rH = rt["dims"][1], rt["dims"][2]
-    bus_a = I_DC / 1.5e6
-    ss = "material.stainless-steel-304"
-    pm = lambda d, t: math.pi * d * t * 7900
-    d_h2 = main_dia(mol_flow(H_RATE), 40.0, 10e5) * math.sqrt(30.0 / 15.0)
+    lvf = 400
+    p_in = P_STACKS + rt["needs"]["power"]
+    p_fields = n_rad * recs[rad]["needs"]["power"]
+    hv = lambda: kit.termination(RT_V, kit.area_for(amps(p_in, RT_V, 0.95)))
+    lane = lambda k: -34.0 - 0.6 * k              # the 33 kV feeders' lanes, the nearest block's on the north
+    edge = [
+        port("h2-out", "out", "gas", kit.flange(0.25, 16, kit.SS, "double"), (110, 0, 4), (-1, 0, 0), item="material.hydrogen", rate=H_RATE, pressure=10e5, note="to the shaft furnace's make-up at 10 bar"),
+        port("o2-out", "out", "gas", kit.flange(0.2, 16, kit.SS, "double"), (110, 5.5, 9.5), (-1, 0, 0), item="material.oxygen", rate=H_O2, pressure=10e5, note="kept: crews' air, the pellet plant's firing"),
+        port("water-in", "in", "liquid", kit.flange(0.2, 10, kit.SS), (110, -24, 0.5), (-1, 0, 0), item="good.water", rate=20.3 / 3.6, note="the shaft furnace's condensate and the ice plant's make-up"),
+        port("reject-out", "out", "liquid", kit.flange(0.15, 10, kit.SS), (110, -20.6, 0.3), (-1, 0, 0), item="good.water", note="back to the ice plant's evaporator"),
+    ]
+    edge += [port(f"hv-{i + 1}", "in", "power", hv(), (110, lane(N_BLK - 1 - i), 0.3), (-1, 0, 0), power=p_in, voltage=RT_V, note=f"a feeder from the site's {RT_V / 1e3:g} kV switchgear") for i in range(N_BLK)]
+    edge += [
+        port("lv-purifier", "in", "power", kit.termination(lvf, kit.area_for(amps(pu["needs"]["power"], lvf))), (110, -3.5, 0.5), (-1, 0, 0), power=pu["needs"]["power"], voltage=lvf),
+        port("lv-water", "in", "power", kit.termination(lvf, kit.area_for(amps(recs["water-treatment-sealed"]["needs"]["power"], lvf))), (110, -29.5, 0.5), (-1, 0, 0), power=recs["water-treatment-sealed"]["needs"]["power"], voltage=lvf),
+        port("lv-post", "in", "power", kit.termination(lvf, kit.area_for(amps(recs["crew-post"]["needs"]["power"], lvf))), (-61.0, -24.0, 2.3), (-1, 0, 0), power=recs["crew-post"]["needs"]["power"], voltage=lvf),
+        port("lv-fields", "in", "power", kit.termination(lvf, kit.area_for(amps(p_fields, lvf))), (149.4, 15.0, 0.3), (0, 1, 0), power=p_fields, voltage=lvf, note="the site's 400 V distribution, for the radiator fields' pumps"),
+    ]
+    L = lambda *a: kit_link(*a[:4], bays, recs, edge, *a[4:])
     flow = loop / (4186 * 10)
-    d_cw = math.sqrt(4 * flow / 1000 / 2.5 / math.pi)
-    d_pw = math.sqrt(4 * recs["hydrogen-purifier-10bar"]["needs"]["heat"] / (4186 * 10) / 1000 / 2.0 / math.pi)
-    links = [link("busbar", f"DC bus {i + 1}", (x, -24.0 + rW / 2, rH * 2 / 3), (x, -6.0, 3.0), AL, 2 * bus_a * RHO["aluminium"], None, "as for air, its insulation spaced for vacuum") for i, x in enumerate(xs_b)]
+    q_s = N_BLK * (rt["needs"]["heat"] + bus_loss) / (4186 * 10) + pu["needs"]["heat"] / (4186 * 10)
+    w_main = kit.pipe(kit.dn_for(math.sqrt(4 * flow / 1000 / 2.5 / math.pi)), 10, liquid=True, temp=HP_T_LOOP)
+    w_south = kit.pipe(kit.dn_for(math.sqrt(4 * q_s / 1000 / 2.5 / math.pi)), 10, liquid=True, temp=HP_T_LOOP)
+    h2 = kit.pipe(0.25, 16, kit.SS, temp=353.0, sealing="double")
+    links = []
+    # Power: each block's DC bus from its rectifier, in a covered trench under the crane's south rail; a 33 kV feeder to
+    # each rectifier in its own lane from the east edge, up and over onto its cable box.
+    for i, x in enumerate(xs_b):
+        links.append(L(f"DC bus {i + 1}", bus, (f"R{i + 1}:dc-out", f"E{i + 1}:dc-in"), bus_path(x), (), 1, bus_loss,
+                       f"down into a covered trench 1.6 m deep under the gantry's south rail (y -12) and up to the block; {bus_loss / 1e3:.0f} kW lost into the bus's water, which the rectifier's cooling pair carries"))
+        k = N_BLK - 1 - i
+        links.append(L(f"feeder {i + 1}", kit.cable(RT_V, kit.area_for(amps(p_in, RT_V, 0.95))), (f"edge:hv-{i + 1}", f"R{i + 1}:hv-in"), [None, (x, lane(k), 0.3), (x, lane(k), 6.0), (x, -25.5, 6.0), None]))
     links += [
-        link("pipe", "hydrogen header", (xs_b[0] + 10.5, -2.5, 8.0), (66.0, 0.0, 6.0), ss, pm(d_h2, 0.006), None, f"{d_h2:.2f} m stainless at 10 bar, to the purifier", via=[(xs_b[0] + 10.5, -2.5, 9.0), (58.5, -2.5, 9.0), (58.5, 0.0, 6.0)]),
-        link("pipe", "hydrogen to the shaft furnace", (78.0, 0.0, 2.0), (110.0, 0.0, 2.0), ss, pm(d_h2, 0.006), None, f"{H_RATE:.3f} kg/s at 10 bar, beyond the layout"),
-        link("pipe", "oxygen header", (xs_b[0] + 10.5, 2.5, 8.0), (110.0, 6.0, 9.0), ss, pm(math.sqrt(4 * (H_O2 / 32e-3 * 8.314 * 353 / 10e5) / (math.pi * 15.0)), 0.006), None, f"the {H_O2:.1f} kg/s of oxygen, beyond the layout: on a moon it is worth keeping (crews' air, the pellet plant's firing)", via=[(xs_b[0] + 10.5, 2.5, 9.0), (58.5, 2.5, 9.0), (58.5, 6.0, 9.0)]),
-        link("pipe", "water in", (110.0, -24.0, 0.5), (78.0, -24.0, 0.5), ss, pm(0.15, 0.005), None, "150 mm: the shaft furnace's condensate and make-up from ice, beyond the layout"),
-        link("pipe", "reject back", (78.0, -20.6, 0.3), (110.0, -20.6, 0.3), ss, pm(0.15, 0.005), None, "150 mm: the concentrate and backwash kept, back to the ice plant's evaporator beyond the layout"),
-        link("pipe", "demineralised water", (66.0, -24.0, 0.5), (59.0, 6.0, 1.0), ss, pm(0.1, 0.004), None, f"{H_WATER:.1f} kg/s to the blocks", via=[(62.0, -24.0, 0.5), (62.0, 6.0, 0.5)]),
-        link("pipe", "loop water to the radiators", (rad_at[-1][0] + 24.0, rad_at[-1][1], 1.0), (-48.0 + 11.0, 6.0, 1.0), A36, 2 * math.pi * d_cw * 0.010 * RHO["steel"], None, f"a pair of {d_cw:.2f} m pipes at about {HP_T_LOOP:.0f} K: {flow:,.0f} kg/s along the {n_rad} radiator fields' rows to the blocks' coolers, a branch to the rectifiers", via=[(84.0, rad_at[-1][1], 1.0), (84.0, 20.0, 1.0), (-37.0, 20.0, 1.0)]),
-        link("pipe", "loop water to the purifier", (84.0, 20.0, 1.0), (72.3, -4.0, 1.0), A36, 2 * math.pi * d_pw * 0.004 * RHO["steel"], None, f"a pair of {d_pw * 1000:.0f} mm pipes teed off the radiator loop at x 84, south and west along y -6, level into the purifier's flanges on its -y face (x 72 flow, 72.6 return)", via=[(84.0, -6.0, 1.0), (72.3, -6.0, 1.0)]),
+        L("purifier supply", kit.cable(lvf, kit.area_for(amps(pu["needs"]["power"], lvf))), ("edge:lv-purifier", "P:power-in"), [None, None]),
+        L("water treatment supply", kit.cable(lvf, kit.area_for(amps(recs["water-treatment-sealed"]["needs"]["power"], lvf))), ("edge:lv-water", "W:power-in"), [None, (64.0, -29.5, 0.5), (64.0, -27.4, 0.5), None], (), 1, None, "round the house's south side to its west face"),
+        L("crew post supply", kit.cable(lvf, kit.area_for(amps(recs["crew-post"]["needs"]["power"], lvf))), ("edge:lv-post", "Q:power-in"), [None, None], (), 1, None, "through the berm"),
+    ]
+    # Gas: the hydrogen header over the blocks' separators to the purifier, and on to the shaft furnace; the oxygen
+    # header beside it out to the edge. Each block's outlet rises 1.5 m into its header.
+    links += [
+        L("hydrogen header", h2, ("cap", "P:gas-in"), [(xs_b[0] + 9.0, -2.5, 9.5), (62.0, -2.5, 9.5), (62.0, 0.0, 9.5), (62.0, 0.0, 6.0), None], (), 1, None, f"stainless at 10 bar, {H_RATE:.3f} kg/s at the purifier"),
+        L("hydrogen to the shaft furnace", h2, ("P:gas-out", "edge:h2-out"), [None, (80.0, 0.0, 2.0), (80.0, 0.0, 4.0), None], (), 1, None, "up over the southern loop's return main"),
+        L("oxygen header", kit.pipe(0.2, 16, kit.SS, temp=353.0, sealing="double"), ("cap", "edge:o2-out"), [(xs_b[0] + 9.0, 2.5, 9.5), (60.0, 2.5, 9.5), (60.0, 5.5, 9.5), None], (), 1, None, f"the {H_O2:.1f} kg/s of oxygen, past the purifier's north side"),
+    ]
+    for i, x in enumerate(xs_b):
+        links += [
+            L(f"E{i + 1} hydrogen", kit.pipe(0.15, 16, kit.SS, temp=353.0, sealing="double"), (f"E{i + 1}:h2-out", "tee:hydrogen header"), [None, (x + 10.5, -2.5, 9.5)]),
+            L(f"E{i + 1} oxygen", kit.pipe(0.1, 16, kit.SS, temp=353.0, sealing="double"), (f"E{i + 1}:o2-out", "tee:oxygen header"), [None, (x + 10.5, 2.5, 9.5)]),
+        ]
+    # Water: in from the edge to the treatment, its clean water west along the blocks' north side (0.5 m up, under their
+    # cooling branches), a 50 mm branch rising into each; the purifier's condensate back into the raw water.
+    links += [
+        L("raw water", kit.pipe(0.2, 10, kit.SS, liquid=True), ("edge:water-in", "W:raw-in"), [None, None]),
+        L("reject", kit.pipe(0.15, 10, kit.SS, liquid=True), ("W:reject-out", "edge:reject-out"), [None, None]),
+        L("demineralised water", kit.pipe(0.1, 10, kit.SS, liquid=True), ("W:clean-out", "cap"), [None, (62.0, -24.0, 0.5), (62.0, 7.6, 0.5), (xs_b[0] + 8.3, 7.6, 0.5)], (), 1, None, f"{H_WATER:.1f} kg/s to the blocks"),
+        L("purifier condensate", kit.pipe(0.05, 10, kit.SS, liquid=True), ("P:condensate-out", "tee:raw water"), [None, (64.5, 3.0, 0.3), (64.5, -18.0, 0.3), (90.0, -18.0, 0.3), (90.0, -18.0, 0.5), (90.0, -24.0, 0.5)]),
+    ]
+    for i, x in enumerate(xs_b):
+        links.append(L(f"E{i + 1} water", kit.pipe(0.05, 10, kit.SS, liquid=True), ("tee:demineralised water", f"E{i + 1}:water-in"), [(x + 9.8, 7.6, 0.5), (x + 9.8, 7.6, 1.0), None]))
+    # The radiator loop: the return (cold) main along the blocks' north side 1 m up, the flow (hot) main beside it 3 m up
+    # (its branches climb over the return main), both east past the purifier and north at x 147 and 148.2 to the fields,
+    # whose rows run west; a southern pair from x 86 for the rectifiers and the purifier.
+    xf, xr, xl = 147.0, 148.2, 149.4
+    rows, yf, yr, yl, row_links = radiator_rows(L, bays, recs, rad, rad_at, xf, xr, xl, lvf)
+    links += [
+        L("loop flow main", w_main, ("cap", "cap"), [(xs_b[0] + 9.4, 9.6, 3.0), (xf, 9.6, 3.0), (xf, 9.6, 1.0), (xf, yf(rows[-1]) + 1.0, 1.0)], (), 1, None, f"{flow:,.0f} kg/s at about {HP_T_LOOP:.0f} K from the coolers to the {n_rad} radiator fields"),
+        L("loop return main", w_main, ("cap", "cap"), [(xr, yr(rows[-1]) + 1.0, 1.0), (xr, 8.4, 1.0), (xs_b[0] + 8.6, 8.4, 1.0)], (), 1, None, "back from the fields at about 10 K less, to the coolers"),
+        L("south return", w_south, ("tee:loop return main", "cap"), [(86.0, 8.4, 1.0), (86.0, -31.0, 1.0), (xs_b[0] - 6.0, -31.0, 1.0)], (), 1, None, "cold water south to the purifier and along the rectifiers' south side"),
+        L("south flow", w_south, ("cap", "tee:loop flow main"), [(xs_b[0] - 6.0, -32.0, 3.0), (87.0, -32.0, 3.0), (87.0, 9.6, 3.0)], (), 1, None, "warm water back, 3 m up, over the return"),
+        L("radiator pumps' supply", kit.cable(lvf, kit.area_for(amps(p_fields, lvf))), ("edge:lv-fields", "cap"), [None, (xl, yl(rows[-1]) + 1.0, 0.3)], (), 1, None, "north along the fields' east side, under the loop's mains"),
+    ]
+    links += row_links
+    wb, wr_, wp = kit.pipe(0.25, 10, liquid=True, temp=HP_T_LOOP), kit.pipe(0.1, 10, liquid=True, temp=HP_T_LOOP), kit.pipe(0.2, 10, liquid=True, temp=HP_T_LOOP)
+    for i, x in enumerate(xs_b):
+        links += [
+            L(f"E{i + 1} cooling in", wb, ("tee:loop return main", f"E{i + 1}:cooling-in"), [(x + 10.6, 8.4, 1.0), None]),
+            L(f"E{i + 1} cooling out", wb, (f"E{i + 1}:cooling-out", "tee:loop flow main"), [None, (x + 11.4, 7.2, 1.0), (x + 11.4, 7.2, 3.0), (x + 11.4, 9.6, 3.0)]),
+            L(f"R{i + 1} cooling in", wr_, ("tee:south return", f"R{i + 1}:cooling-in"), [(x - 4.45, -31.0, 1.0), (x - 4.45, -25.86, 1.0), None]),
+            L(f"R{i + 1} cooling out", wr_, (f"R{i + 1}:cooling-out", "tee:south flow"), [None, (x - 3.45, -25.14, 1.0), (x - 3.45, -25.14, 3.0), (x - 3.45, -32.0, 3.0)]),
+        ]
+    links += [
+        L("purifier cooling in", wp, ("tee:south return", "P:cooling-in"), [(86.0, -7.0, 1.0), (72.0, -7.0, 1.0), None]),
+        L("purifier cooling out", wp, ("P:cooling-out", "tee:south flow"), [None, (72.6, -6.0, 1.0), (72.6, -6.0, 3.0), (87.0, -6.0, 3.0)]),
         link("rail", "crane rails", (-60.0, 0.0, 0.0), (60.0, 0.0, 0.0), A36, 2 * 50.0, None, "the maintenance gantry's two straight rails along the blocks, at y -12 and 12; the link runs on their centre line"),
     ]
     mobile = [{"unit": "unit.gantry-crane-20t-moon", "rides": "crane rails", "at": [0.0, 0.0, 0.0]}]
+    trench = N_BLK * (11.0 + 2 * 1.6) * (1.4 + 2 * 1.6) * 0.2
     ground = [
         {"what": "Block pads", "item": SINTER, "volume": r(N_BLK * 24 * 12 * 0.4), "note": "0.4 m of sintered regolith with lye-proof bunds"},
         {"what": "Rectifier and outside pads", "item": SINTER, "volume": r(N_BLK * 12 * 8 * 0.5 + 2 * 12 * 8 * 0.5)},
+        {"what": "Bus trenches", "item": SINTER, "volume": r(trench), "note": "a trench 1.4 m wide and 1.6 m deep for each block's bus, under the crane's south rail, lined with 0.2 m of sintered regolith and covered"},
         {"what": "Radiator legs' pads", "item": SINTER, "volume": r(n_rad * 4 * (44.0 * 44.0 / 72.0) * 0.027)},
-        {"what": "Crew post berm", "item": "material.regolith", "volume": BERM, "note": "loose regolith at least 1 m over the post everywhere (its top 4 x 2 m, 5.3 m up), lying at 35 degrees, its foot about 19 x 17 m, a cavity for the post; measured on blender's arc furnace shop; with openings for its windows (light wells on the north) and its airlock (a ramp cut on the west); with openings for its windows and airlock; at the airlock's door a landing of packed regolith 2 x 2 m, its top at the threshold (1.35 m up), and a ramp down to the ground at about 1 in 3"},
+        {"what": "Crew post berm", "item": "material.regolith", "volume": BERM, "note": "loose regolith at least 1 m over the post everywhere (its top 4 x 2 m, 5.3 m up), lying at 35 degrees, its foot about 19 x 17 m, a cavity for the post; measured on blender's arc furnace shop; with openings for its windows (light wells on the north) and its airlock (a ramp cut on the west); at the airlock's door a landing of packed regolith 2 x 2 m, its top at the threshold (1.35 m up), and a ramp down to the ground at about 1 in 3"},
     ]
     for g in ground:
         g["mass"] = r(g["volume"] * (RHO_SINTER if g["item"] == SINTER else 1500.0))
     used = [recs[b_["unit"].split(".", 1)[1]] for b_ in bays] + [recs[m_["unit"].split(".", 1)[1]] for m_ in mobile]
-    power = sum(u.get("needs", {}).get("power", 0) for u in used)
-    heat = sum(u.get("needs", {}).get("heat", 0) for u in used)
+    power = sum(u.get("needs", {}).get("power", 0) for u in used) + sum(l.get("power", 0) for l in links)
+    heat = sum(u.get("needs", {}).get("heat", 0) for u in used) + N_BLK * bus_loss
     mass_units = sum(u["physical"]["mass"] for u in used)
     mass_links = sum(l["mass"] for l in links)
     mass_ground = sum(g["mass"] for g in ground)
     total = mass_units + mass_links + mass_ground
     against = (f"module.hydrogen-plant: one box, {H_P / 1e6:.0f} MW. This layout: the same rate; {power / 1e6:.1f} MW; {heat / 1e6:.1f} MW to {n_rad} radiator fields at {HP_T_LOOP:.0f} K ({n_rad * 48 * 48 / 1e4:.1f} ha); "
                f"its {H_WATER:.1f} kg/s of water all comes back from the shaft furnace, none evaporated; no hall; the blocks at 10 bar feed the furnace's loop with no compressor. {(mass_units + mass_links) / 1000:,.0f} t of plant, {mass_ground / 1000:,.0f} t of sintered regolith.")
-    xs = [b_["at"][0] + s * BAY[int(b_["mount"][-1])] / 2 for b_ in bays for s in (-1, 1)] + [p[0] for l in links for p in (l["from"], l["to"], *l.get("via", []))]
-    ys = [b_["at"][1] + s * BAY[int(b_["mount"][-1])] / 2 for b_ in bays for s in (-1, 1)] + [p[1] for l in links for p in (l["from"], l["to"], *l.get("via", []))]
+    xs = [b_["at"][0] + s_ * unit_dims(recs, b_)[0] / 2 for b_ in bays for s_ in (-1, 1)] + [p[0] for l in links for p in (l["from"], l["to"], *l.get("via", []))]
+    ys = [b_["at"][1] + s_ * unit_dims(recs, b_)[1] / 2 for b_ in bays for s_ in (-1, 1)] + [p[1] for l in links for p in (l["from"], l["to"], *l.get("via", []))]
     layout = {
         "identity": {"key": "layout.hydrogen-plant-airless", "name": "Hydrogen plant, airless",
                      "description": f"Water split by electricity on airless ground at about a moon's gravity: {N_BLK} electrolyser blocks at 10 bar in the open, their rectifiers beside them, the heat to radiator fields; the water comes back from the shaft furnace, the hydrogen goes to it at its loop's pressure, the oxygen is kept. Built separately from the plant for air."},
         "stands_for": "module.hydrogen-plant",
         "site": {"atmosphere": "none", "gravity": list(MOON_G)},
         "physical": {"length": r(max(xs) - min(xs)), "width": r(max(ys) - min(ys)), "height": 25.0, "mass": r(total)},
-        "bays": bays, "mobile": mobile, "links": links, "ground": ground,
+        "bays": bays, "ports": edge, "mobile": mobile, "links": links, "ground": ground,
         "totals": {"rate": H_RATE, "power": r(power), "heat": r(heat), "water": 0.0, "mass": r(total), "against_module": against},
         "staff": hmod.get("staff"),
-        "basis": [{"of": ["bays", "links", "mobile"], "tier": "invented", "review": True, "note": "As the plant for air, for airless ground."},
-                  {"of": ["totals", "physical"], "tier": "derived", "note": "Summed from the units, links and ground."},
+        "basis": [{"of": ["bays", "links", "mobile"], "tier": "invented", "review": True, "note": "As the plant for air, for airless ground; laid of SFO 25 runs from port to port."},
+                  {"of": ["totals", "physical"], "tier": "derived", "note": "Summed from the units, runs and ground; the DC buses' loss counted as power and as heat."},
                   {"of": ["ground"], "tier": "derived", "review": True, "note": "Sintered regolith at 2,500 kg/m3, loose at 1,500."},
                   {"of": ["staff"], "tier": "derived", "note": "The module's watch, unchanged."}],
     }
-    print(f"layout.hydrogen-plant-airless: {total / 1000:,.0f} t, {power / 1e6:.1f} MW, {heat / 1e6:.1f} MW to {n_rad} fields")
+    print(f"layout.hydrogen-plant-airless: {total / 1000:,.0f} t, {power / 1e6:.1f} MW, {heat / 1e6:.1f} MW to {n_rad} fields, {len(links)} links")
     return layout, bays
 
 
@@ -3733,6 +3868,7 @@ def main():
     us.update(pellet_airless_units(us))
     us.update(yard_airless_units(us))
     trial_ports(us)
+    h2_ports(us)
     recs = {slug: unit_record(slug, u) for slug, u in us.items()}
     layouts = {"arc-furnace-air": arc_furnace_air(us, recs), "ladle-station-air": ladle_station_air(us, recs), "casting-bay-air": casting_bay_air(us, recs), "shaft-furnace-air": shaft_furnace_air(us, recs), "hydrogen-plant-air": hydrogen_plant_air(us, recs), "pellet-plant-air": pellet_plant_air(us, recs), "ore-yard-air": ore_yard_air(us, recs), "ingot-yard-air": ingot_yard_air(us, recs), "arc-furnace-airless": arc_furnace_airless(us, recs),
                "ladle-station-airless": ladle_station_airless(us, recs), "casting-bay-airless": casting_bay_airless(us, recs),

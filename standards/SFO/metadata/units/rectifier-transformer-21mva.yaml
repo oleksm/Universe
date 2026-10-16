@@ -1,9 +1,10 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.rectifier-transformer-21mva, name: 'Rectifier transformer, 20 MVA', description: 'Steps the grid down for one electrolyser block: a 12-pulse thyristor rectifier in the same skid gives 43 kA at 443 V direct, with on-load taps. Oil-filled in a closed tank, HV bushings and conservator on top, cooled by oil to water. Its secondary bushings on its +y face into the rectifier house, 2.4 m up; the oil-to-water cooler''s water ports on its -x end, 1 m up. Stands in a fire-walled vault. Local frame: the transformer''s tank on the -y side (y -3 to 0); the rectifier in a closed house on the +y side (x -2.1 to 2.1, y 0.6 to 3, 2.8 m tall, three service doors), fed across the gap by a shielded AC bridge, its heat sinks'' water joining the transformer cooler''s pair, whose ports are on the -x end at (-2.45, -1.86, 1) and (-2.45, -1.14, 1); the rectifier''s two DC terminals on the house''s +y face at x -0.45 and 0.45, 2.4 m up, toward the hall.'}
+identity: {key: unit.rectifier-transformer-21mva, name: 'Rectifier transformer, 20 MVA', description: 'Steps the grid down for one electrolyser block: a 12-pulse thyristor rectifier in the same skid gives 43 kA at 443 V direct, with on-load taps. Oil-filled in a closed tank, HV bushings and conservator on top, cooled by oil to water. Its secondary bushings on its +y face into the rectifier house, 2.4 m up; the oil-to-water cooler''s water ports on its -x end, 1 m up. Stands in a fire-walled vault. Local frame: the transformer''s tank on the -y side (y -3 to 0); the rectifier in a closed house on the +y side (x -2.1 to 2.1, y 0.6 to 3, 2.8 m tall, three service doors), fed across the gap by a shielded AC bridge, its heat sinks'' water joining the transformer cooler''s pair, whose ports are on the -x end at (-2.45, -1.86, 1) and (-2.45, -1.14, 1); the rectifier''s DC terminals on the house''s +y face, 2.4 m up, toward the cells: one bus joint centred at (0, 3, 2.4), its two poles'' pads at
+    x -0.3 (+) and 0.3 (-). Fed at 33 kV through a cable box over its HV bushings, its gland plate on top at (0, -1.5, 4.4).'}
 size_class: 1
 fits: plant-mount.bay-s1
-physical: {length: 4.9, width: 6.0, height: 3.6, mass: 39980.0}
+physical: {length: 4.9, width: 6.0, height: 4.4, mass: 40490.0}
 built_of:
 - {what: Core, item: material.structural-steel-a36, mass: 12860.0, note: 'grain-oriented electrical steel, which the registry has not got: structural steel stands for it'}
 - {what: Windings, item: material.copper, mass: 8040.0}
@@ -12,7 +13,46 @@ built_of:
 - {what: Rectifier stacks and heat sinks, item: material.aluminium-1350, mass: 3000.0, note: 'two 6-pulse thyristor bridges (12-pulse together) on water-cooled aluminium heat sinks, from memory'}
 - {what: DC bus, item: material.copper, mass: 2319.0, note: 'two copper poles inside the house, 216 cm2 each at 2 A/mm2'}
 - {what: Rectifier house, item: material.structural-steel-a36, mass: 2500.0, note: 'a closed steel house, its cabinets, doors and cooling manifold, from memory'}
+- {what: HV cable box, item: material.structural-steel-a36, mass: 512.4, note: 'over the three HV bushings on the tank''s top at y -1.5: 3 x 0.8 x 0.8 m, 6 mm, its gland plate on top at (0, -1.5, 4.4)'}
 needs: {power: 542400.0, heat: 542400.0}
+ports:
+- id: hv-in
+  flow: in
+  medium: power
+  power: 19640000.0
+  voltage: 33000.0
+  connector: connector.termination-33kv-150mm2
+  at: [0.0, -1.5, 4.4]
+  facing: [0.0, 0.0, 1.0]
+  note: the HV cable box's gland plate, over the three bushings
+- id: dc-out
+  flow: out
+  medium: power
+  power: 19100000.0
+  voltage: 442.7
+  connector: connector.bus-joint-dc-44ka
+  at: [0.0, 3.0, 2.4]
+  facing: [0.0, 1.0, 0.0]
+  note: the rectifier house's DC bus joint
+- id: cooling-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 12.96
+  temperature: 335.0
+  connector: connector.flange-dn100-pn10
+  at: [-2.45, -1.86, 1.0]
+  facing: [-1.0, 0.0, 0.0]
+  note: the oil cooler's and the heat sinks' pair, and the bus's water through the joint
+- id: cooling-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 12.96
+  temperature: 345.0
+  connector: connector.flange-dn100-pn10
+  at: [-2.45, -1.14, 1.0]
+  facing: [-1.0, 0.0, 0.0]
 life: 788940000
 visual: {format: freefall-model/1, path: models/rectifier-transformer-21mva/v1, manifest_sha256: 15205789a7dffd47743c70ec8a5be040748465790573340fabd5a4198062e937, version: 1, triangles: 7768}
 basis:

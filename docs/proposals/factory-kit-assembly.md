@@ -82,3 +82,8 @@ Not done yet:
 - the other 15 layouts;
 - blender's run-part and connector models;
 - engine's snap-together renderer.
+
+## The second layout (2026-10-16)
+
+`layout.hydrogen-plant-airless` is laid of runs too: 131 runs and 13 layout ports, 0 faults. Each electrolyser block takes 43 kA of direct current from its rectifier. On airless ground a bare bus can only radiate, and at lunar noon it would need plates about 4 m wide a pole. So SFO 25 gains the run kind `busbar` (two poles of water-cooled hollow copper, 7 tubes a pole, 6.8 kW lost a metre into its water) and the connector kind `bus-joint`. Each bus passes in a covered trench under the maintenance gantry's rail. The rectifier transformers gain a 33 kV cable box, a feeder each from the east edge. The radiator rows are shared with the shaft furnace (`radiator_rows`). The two layouts mate: the hydrogen plant's `h2-out` is the shaft furnace's `h2-in` flange (DN 250 PN 16, stainless, double seal).
+

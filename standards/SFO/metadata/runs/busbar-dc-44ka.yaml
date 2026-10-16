@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/run.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: run.busbar-dc-44ka, name: 'Busbar, DC, 44 kA', description: 'A direct current bus of two poles 0.3 m apart, each 7 hollow copper tubes 60 mm across, water-cooled, on post insulators: 43.1 kA at 442.7 V; it loses 6,769 W a metre into its water, which the unit at its source carries away.'}
+kind: busbar
+size: 0.011
+outside: [1.0, 0.24]
+rating: {voltage: 442.7, current: 43135.3}
+per_m:
+  mass: 238.6
+  power: 6768.7
+  built_of:
+  - {what: Conductors, item: material.copper, mass: 197.0, note: 'two poles of 7 tubes 60 x 10 mm, 10,996 mm2 a pole, in 2 rows of four'}
+  - {what: Cooling water, item: good.water, mass: 17.6, note: 'inside the tubes, half of them flow and half return, turned at the far joint'}
+  - {what: Clamps and spacers, item: material.structural-steel-a36, mass: 24.0, note: 'a clamp a row every metre, from memory'}
+elbow: {radius: 0.6, mass: 224.9}
+riser: {radius: 0.6, mass: 224.9}
+support: {spacing: 3.0, mass: 60.0, per_m_height: 25.0, item: material.structural-steel-a36}
+connector: connector.bus-joint-dc-44ka
+carries: power
+basis:
+- of: [per_m]
+  tier: derived
+  review: true
+  note: Copper at 4 A/mm2 water-cooled (from memory); its loss by its resistance at 60 deg C.
+- of: [elbow, riser, support]
+  tier: invented
+  review: true
+  note: Bent tubes at 0.6 m; a steel post with two insulators every 3 m (from memory).

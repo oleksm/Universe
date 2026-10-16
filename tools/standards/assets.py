@@ -75,7 +75,7 @@ def size_of(kind, r):
 def required_nodes(kind, r):
     """Named nodes the model must have, as name prefixes: what the game attaches things to."""
     if kind == "run":      # (SFO 25: the pieces the game lays a run from; docs/requests/blender-plant-kit.md)
-        return ["straight", "support_head", "support_leg"] + (["elbow"] if r.get("elbow") else []) + (["tee"] if r.get("tee") else []) + (["cap"] if r.get("kind") in ("pipe", "lined-duct") else [])  + [x["piece"] for x in r.get("repeat", [])] + list(r.get("terminals", {})) + (["riser"] if r.get("kind") == "cable" else [])
+        return ["straight", "support_head", "support_leg"] + (["elbow"] if r.get("elbow") else []) + (["tee"] if r.get("tee") else []) + (["cap"] if r.get("kind") in ("pipe", "lined-duct") else [])  + [x["piece"] for x in r.get("repeat", [])] + list(r.get("terminals", {})) + (["riser"] if r.get("riser") else [])
     if kind == "connector":
         return ["face"]
     if kind != "equipment":

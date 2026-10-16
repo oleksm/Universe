@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/material.schema.yaml
+identity:
+  key: material.oxygen
+  name: "Oxygen"
+  class: fluid
+  form:
+  - fluid
+  description: "The electrolysers' other gas: crews' air, an oxidiser, the pellet plant's firing. Stored liquid, at about 90 K."
+fuel:
+  release: none
+mass:
+  density: 1141
+basis:
+  - { of: [mass.density], tier: invented, review: true, note: "Liquid oxygen at its boiling point, about 1,141 kg/m3 (from memory), as stored." }

@@ -19,6 +19,40 @@ built_of:
 - {what: House panels, item: material.honeycomb-sandwich-panel, mass: 2664.0, note: '296 m2 of walls and roof, 60 mm panels'}
 - {what: Insulation, item: material.multi-layer-insulation, mass: 296.0, note: 20 mm of blanket over the house}
 needs: {power: 35160.0, atmosphere: any}
+ports:
+- id: raw-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 5.639
+  connector: connector.flange-dn200-pn10-ss
+  at: [6.0, 0.0, 0.5]
+  facing: [1.0, 0.0, 0.0]
+  note: the shaft furnace's condensate and melted ice
+- id: clean-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 4.725
+  connector: connector.flange-dn100-pn10-ss
+  at: [-6.0, 0.0, 0.5]
+  facing: [-1.0, 0.0, 0.0]
+- id: reject-out
+  flow: out
+  medium: liquid
+  item: good.water
+  connector: connector.flange-dn150-pn10-ss
+  at: [6.0, 3.4, 0.3]
+  facing: [1.0, 0.0, 0.0]
+  note: concentrate and backwash, kept
+- id: power-in
+  flow: in
+  medium: power
+  power: 35160.0
+  voltage: 400
+  connector: connector.termination-400v-25mm2
+  at: [-6.0, -3.4, 0.5]
+  facing: [-1.0, 0.0, 0.0]
 life: 788940000
 basis:
 - of: [physical, built_of, needs]

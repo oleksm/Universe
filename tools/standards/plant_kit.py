@@ -325,6 +325,63 @@ def cable(v, area_mm2):
     return key
 
 
+J_BUS = 4.0e6                           # A/m2 in a water-cooled copper bus (from memory: 3 to 6)
+RHO_E_CU = 2.0e-8                       # ohm m, copper at about 60 deg C
+TUBE = (0.060, 0.010)                   # m: the bus's hollow conductor, outside diameter and wall (from memory)
+
+
+def _bus(amps):
+    """A direct current bus's pole: hollow copper tubes in rows of four, 20 mm apart. (tubes, rows, width, height)."""
+    od, t = TUBE
+    a = math.pi / 4 * (od ** 2 - (od - 2 * t) ** 2)
+    n = math.ceil(amps / J_BUS / a)
+    rows = math.ceil(n / 4)
+    return n, a, rows, 4 * od + 3 * 0.02, rows * od + (rows - 1) * 0.02
+
+
+def bus_joint(v, amps):
+    key = f"connector.bus-joint-dc-{math.ceil(amps / 1000):d}ka"
+    if key in _recs:
+        return key
+    n, a, rows, w, h = _bus(amps)
+    plate = (w + 0.05) * (h + 0.05) * 0.03 * RHO[CU]
+    built = [_part("Joint plates", CU, 2 * 2 * plate, "a pair of 30 mm copper plates a pole, the tubes brazed into one, bolted to the unit's terminal pad"),
+             _part("Bolts", BOLT, 2 * 16 * 0.4, "sixteen M20 a pole, with spring washers"),
+             _part("Water couplings and hoses", RUBBER, 2 * n * 0.5, "an insulating hose from each tube's end to the unit's cooling manifold behind its pad")]
+    _recs[key] = {"identity": {"key": key, "name": f"Bus joint, DC, {math.ceil(amps / 1000):d} kA", "description": f"Where a {amps / 1000:.1f} kA direct current bus meets a unit's terminals: both poles' tubes brazed into copper plates, bolted to the unit's pads {0.3:g} m apart, and the tubes' water handed by insulating hoses to the unit's cooling manifold. At the plane: the poles side by side across y, + at -y."},
+                  "kind": "bus-joint", "size": r(n * a, 5), "rating": {"voltage": v, "current": r(amps)},
+                  "physical": {"length": 0.3, "width": r(2 * w + 0.3 + 0.1, 3), "height": r(h + 0.1, 3), "mass": r(sum(x["mass"] for x in built))}, "built_of": built,
+                  "basis": [{"of": ["built_of", "physical"], "tier": "invented", "review": True, "note": "Plates, bolting and hoses from memory of electrolysis and furnace bus joints."}]}
+    return key
+
+
+def busbar(v, amps):
+    """Two poles of water-cooled hollow copper on post insulators: the bus from a rectifier to its cells. In vacuum a
+    bare bus can only radiate, and 43 kA would need plates metres wide; water takes its heat to the unit's loop."""
+    key = f"run.busbar-dc-{math.ceil(amps / 1000):d}ka"
+    if key in _recs:
+        return key
+    od, t = TUBE
+    n, a, rows, w, h = _bus(amps)
+    loss = 2 * amps ** 2 * RHO_E_CU / (n * a)
+    water = 2 * n * math.pi / 4 * (od - 2 * t) ** 2 * 1000
+    built = [_part("Conductors", CU, 2 * n * a * RHO[CU], f"two poles of {n} tubes {od * 1000:.0f} x {t * 1000:.0f} mm, {n * a * 1e6:,.0f} mm2 a pole, in {rows} rows of four"),
+             _part("Cooling water", "good.water", water, "inside the tubes, half of them flow and half return, turned at the far joint"),
+             _part("Clamps and spacers", A36, 2 * rows * 6.0, "a clamp a row every metre, from memory")]
+    per_m = sum(b["mass"] for b in built)
+    R = 0.6
+    _recs[key] = {"identity": {"key": key, "name": f"Busbar, DC, {math.ceil(amps / 1000):d} kA", "description": f"A direct current bus of two poles 0.3 m apart, each {n} hollow copper tubes {od * 1000:.0f} mm across, water-cooled, on post insulators: {amps / 1000:.1f} kA at {v:g} V; it loses {loss:,.0f} W a metre into its water, which the unit at its source carries away."},
+                  "kind": "busbar", "size": r(n * a, 5), "outside": [r(2 * w + 0.3 + 0.1, 3), r(h + 0.1, 3)], "rating": {"voltage": v, "current": r(amps)},
+                  "per_m": {"mass": r(per_m), "power": r(loss), "built_of": built},
+                  "elbow": {"radius": R, "mass": r(per_m * math.pi / 2 * R)},
+                  "riser": {"radius": R, "mass": r(per_m * math.pi / 2 * R)},
+                  "support": {"spacing": 3.0, "mass": 60.0, "per_m_height": 25.0, "item": A36},
+                  "connector": bus_joint(v, amps), "carries": "power",
+                  "basis": [{"of": ["per_m"], "tier": "derived", "review": True, "note": f"Copper at {J_BUS / 1e6:g} A/mm2 water-cooled (from memory); its loss by its resistance at 60 deg C."},
+                            {"of": ["elbow", "riser", "support"], "tier": "invented", "review": True, "note": "Bent tubes at 0.6 m; a steel post with two insulators every 3 m (from memory)."}]}
+    return key
+
+
 def area_for(amps):
     return next(a for a in AREAS if a * 1e-6 * J_VACUUM >= amps)
 

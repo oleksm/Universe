@@ -14,6 +14,61 @@ built_of:
 - {what: Catalyst, item: material.fused-silica, mass: 2402.0, note: 'palladium on alumina pellets at 800 kg/m3, 0.5% palladium, which the registry has not got: fused silica stands for it'}
 - {what: 'Skid, supports and piping', item: material.structural-steel-a36, mass: 12000.0, note: from memory}
 needs: {power: 650500.0, heat: 2451000.0}
+ports:
+- id: gas-in
+  flow: in
+  medium: gas
+  item: material.hydrogen
+  rate: 0.525
+  pressure: 1000000.0
+  temperature: 353.1
+  connector: connector.flange-dn250-pn16-ss-double
+  at: [-6.0, 0.0, 6.0]
+  facing: [-1.0, 0.0, 0.0]
+- id: gas-out
+  flow: out
+  medium: gas
+  item: material.hydrogen
+  rate: 0.525
+  pressure: 1000000.0
+  connector: connector.flange-dn250-pn16-ss-double
+  at: [6.0, 0.0, 2.0]
+  facing: [1.0, 0.0, 0.0]
+  note: dry, oxygen-free
+- id: cooling-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 58.54
+  temperature: 335.0
+  connector: connector.flange-dn200-pn10
+  at: [0.0, -4.0, 1.0]
+  facing: [0.0, -1.0, 0.0]
+- id: cooling-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 58.54
+  temperature: 345.0
+  connector: connector.flange-dn200-pn10
+  at: [0.6, -4.0, 1.0]
+  facing: [0.0, -1.0, 0.0]
+- id: condensate-out
+  flow: out
+  medium: liquid
+  item: good.water
+  connector: connector.flange-dn50-pn10-ss
+  at: [-6.0, 3.0, 0.3]
+  facing: [-1.0, 0.0, 0.0]
+  note: the deoxidiser's water and the knockouts'
+- id: power-in
+  flow: in
+  medium: power
+  power: 650500.0
+  voltage: 400
+  connector: connector.termination-400v-500mm2
+  at: [6.0, -3.5, 0.5]
+  facing: [1.0, 0.0, 0.0]
 life: 788940000
 basis:
 - of: [physical, built_of, needs]
