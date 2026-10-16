@@ -1594,7 +1594,7 @@
 - { record: run.cable-132kv-240mm2, at: "2026-10-16T14:27:23Z", status: draft, summary: "changed", sha: "a9ec16eca6f7cb97" }
 - { record: run.cable-33kv-150mm2, at: "2026-10-16T17:53:48Z", status: draft, summary: "changed", sha: "a107ffd7a43e1034" }
 - { record: run.cable-33kv-185mm2, at: "2026-10-16T21:44:20Z", status: draft, summary: "changed: visual", sha: "e6c8ee01fb91a579" }
-- { record: run.cable-400v-120mm2, at: "2026-10-16T19:40:41Z", status: draft, summary: "first tracked", sha: "e45faab048397d71" }
+- { record: run.cable-400v-120mm2, at: "2026-10-16T22:03:11Z", status: draft, summary: "changed: visual", sha: "000e832f8804ac9e" }
 - { record: run.cable-400v-16mm2, at: "2026-10-16T15:00:44Z", status: draft, summary: "changed", sha: "cfb30272054f79df" }
 - { record: run.cable-400v-185mm2, at: "2026-10-16T17:53:48Z", status: draft, summary: "changed", sha: "86eceb2e9b76be21" }
 - { record: run.cable-400v-25mm2, at: "2026-10-16T17:53:48Z", status: draft, summary: "changed", sha: "64fe2966c62d3c4a" }
