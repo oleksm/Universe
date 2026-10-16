@@ -174,7 +174,7 @@
 - { record: connector.flange-dn300-pn10, at: "2026-10-16T17:25:15Z", status: draft, summary: "changed: visual", sha: "0786a9ed73601cd2" }
 - { record: connector.flange-dn350-pn10, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, built_of", sha: "16eac06e34a9631c" }
 - { record: connector.flange-dn50-pn10-ss, at: "2026-10-16T16:54:23Z", status: draft, summary: "changed: visual", sha: "3112352ae79f4ff8" }
-- { record: connector.flange-dn600-pn10, at: "2026-10-16T15:26:56Z", status: draft, summary: "first tracked", sha: "75800816da52d3cf" }
+- { record: connector.flange-dn600-pn10, at: "2026-10-16T17:28:42Z", status: draft, summary: "changed: visual", sha: "a5532b8f783239e6" }
 - { record: connector.flange-dn900-pn10, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, built_of", sha: "1d9d29c363fc2252" }
 - { record: connector.lined-flange-dn2400-pn16-double, at: "2026-10-16T13:14:09Z", status: draft, summary: "changed", sha: "3718f80746efea6c" }
 - { record: connector.termination-132kv-240mm2, at: "2026-10-16T15:00:44Z", status: draft, summary: "changed", sha: "a853f7385db64da5" }
