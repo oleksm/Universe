@@ -262,6 +262,9 @@ def pipe(dn, pn, item=A36, lagged=False, liquid=False, temp=373.0, sealing="sing
     return key
 
 
+LINED_SUPPORT_MEASURED = {1.2: (84.85, 42.42)}     # kg a stand's head and kg a metre of its legs, measured on blender's DN 1200 kit (2026-10-16)
+
+
 def lined_duct(dn, pn, lining=0.2, temp=1173.0, sealing="single"):
     key = f"run.lined-duct-dn{_tag(dn)}-pn{pn}" + ("-double" if sealing == "double" else "")
     if key in _recs:
@@ -281,7 +284,7 @@ def lined_duct(dn, pn, lining=0.2, temp=1173.0, sealing="single"):
                   "per_m": {"mass": r(per_m), "built_of": built},
                   "elbow": {"radius": r(R, 3), "mass": r(per_m * math.pi / 2 * R * 1.1)},
                   "tee": {"mass": r(per_m * max(0.0, 1.5 * (dn - 2 * lining) - do / 2))},
-                  "support": {"spacing": r(span), "mass": r(30 + 80 * do), "per_m_height": r(4 * (0.1 + 0.1 * do) * 0.006 * RHO[A36]), "item": A36},
+                  "support": {"spacing": r(span), "mass": LINED_SUPPORT_MEASURED.get(dn, (r(30 + 80 * do),))[0], "per_m_height": LINED_SUPPORT_MEASURED.get(dn, (0, r(4 * (0.1 + 0.1 * do) * 0.006 * RHO[A36])))[1], "item": A36},
                   "cap": (lambda c: dict(c, mass=r(c["mass"] + math.pi / 4 * (dn - 2 * lining) ** 2 * lining * RHO[REF])))(cap(dn, PN[pn], A36, lined_flange(dn, pn, sealing=sealing))),
                   "connector": lined_flange(dn, pn, sealing=sealing), "carries": "gas",
                   "basis": [{"of": ["per_m"], "tier": "derived", "note": "Shell from pressure, lining from its thickness; mass from material and dimensions."},
