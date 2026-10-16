@@ -3245,7 +3245,7 @@ def pellet_ports(us):
                                            part("LV cable box", A36, 677.9, f"measured on blender's model v2; over the three secondary pads on the +y face, 2.9 m up: 4 x 0.5 x 1.2 m, 6 mm, its gland plate facing +y at (0, {W_ / 2 + 0.5:g}, 2.9)"),
                                            part("Cable boxes' supports", A36, 259.2, "their brackets on the tank, and the bushings' insulated feed-throughs' frames; measured")]
         tp["desc"] += f" Fed at 33 kV through a cable box over its HV bushings (gland plate on top at (0, -0.9, {H_ + 0.8:g})); its 6.6 kV leaves through a box over its secondary pads (gland plate facing +y at (0, {W_ / 2 + 0.5:g}, 2.9)); its cooler's water ports at (-{L_ / 2:g}, -0.6, 1) and (-{L_ / 2:g}, 0.6, 1)."
-        tp["dims"] = (L_, W_ + 1.0, H_ + 0.8)
+        tp["dims"] = (5.82, 3.95, H_ + 0.8)          # (as drawn: the LV box makes it lopsided across, y -1.6 to 2.35; the box is its extent)
     p_mv = 2 * us["pellet-shaft-63th"]["needs"]["power"] + us["ball-mill-4m4"]["needs"]["power"]
     n_mv = math.ceil(amps(p_mv, 6600) / (630e-6 * kit.J_VACUUM))
     tp["ports"] = [

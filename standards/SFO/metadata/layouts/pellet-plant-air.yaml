@@ -224,11 +224,11 @@ links:
   note: 'a pair of 80 mm pipes: 4.2 kg/s from the tower''s ports at local y 4.5, west along y -19 and into the transformer''s cooler ports on its -x end'
 - kind: cable
   name: plant supply
-  from: [0.0, -21.65, 2.9]
+  from: [0.0, -22.025, 2.9]
   to: [0.0, -10.0, 3.0]
-  length: 11.65
+  length: 12.03
   item: material.copper
-  mass: 218.8
+  mass: 225.8
   note: three phases at 6.6 kV in a cable tray, copper at 4 A/mm2, through the south door to the hall's switchroom; the middle phase steps 0.3 m east round the green ball lift's post at (0, -10.7)
 frame:
   box: [-60.0, -15.0, 0.0, 69.0, 15.0, 27.0]
