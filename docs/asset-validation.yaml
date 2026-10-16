@@ -7126,3 +7126,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.flange-dn700-pn10
+    version: 1
+    manifest_sha256: "fbe46be2bfa6c4685a9700e07c822f5502327b4e64a599f354c64343a3f75823"
+    installed: c770d984
+    game: "the loader (world::assets) at fso c770d984"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
