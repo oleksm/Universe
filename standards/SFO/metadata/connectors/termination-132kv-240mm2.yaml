@@ -1,19 +1,17 @@
 # yaml-language-server: $schema=../../schema/connector.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: connector.termination-132kv-240mm2, name: 'Cable termination, 132 kV, 240 mm2', description: 'A three-phase cable''s end into a terminal box: lugs, stress control and the gland, for 240 mm2 conductors at 132 kV.'}
+identity: {key: connector.termination-132kv-240mm2, name: 'Cable termination, 132 kV, 240 mm2, plug-in', description: 'Three screened plug-in terminations for 240 mm2 cores at 132 kV, their phases 0.5 m apart on a 1.5 x 0.5 m gland plate, each 0.7 m into a socket of the unit''s box (the box''s sockets and its leads to the bushings are the unit''s); before the plate the cores fan out from the tray''s pitch to the phases'' over 1.2 m.'}
 kind: termination
 size: 0.00023999999999999998
 rating: {voltage: 132000, current: 600.0}
-physical: {length: 0.4, width: 0.4, height: 0.887, mass: 338.8}
+physical: {length: 1.5, width: 0.5, height: 1.89, mass: 137.2}
 built_of:
-- {what: Lugs, item: material.copper, mass: 1.2, note: three crimped lugs}
-- {what: Gland plate, item: material.aluminium-alloy-6061, mass: 5.0, note: the box's gland plate and glands}
-- {what: Stress cones, item: material.silicone-rubber, mass: 332.6, note: 'a stress cone on each core, sized with the voltage (from memory); silicone rubber'}
+- {what: Plug-in terminations, item: material.fused-silica, mass: 90.0, note: 'three screened plug-in terminations, 0.7 m into the box''s sockets, their epoxy insulators 30 kg each; fused silica stands for filled epoxy (from memory)'}
+- {what: Stress cones, item: material.silicone-rubber, mass: 18.0, note: a silicone stress cone on each core (from memory)}
+- {what: Connectors, item: material.copper, mass: 9.0, note: the plug's contact on each conductor}
+- {what: Gland plate, item: material.aluminium-alloy-6061, mass: 20.2, note: '1.5 x 0.5 m, 10 mm, the three entries 0.5 m apart'}
 basis:
-- of: [built_of]
+- of: [built_of, physical]
   tier: invented
   review: true
-  note: From memory.
-- of: [physical.height]
-  tier: derived
-  note: 'Along the cable: 0.5 m of cones and lugs inside the box, and the fan-out from the tray''s spacing to the box''s (0.04 m aside each way) in two arcs at the cable''s least bend radius (0.95 m): 0.39 m.'
+  note: 'Provisional: phase spacing, plug length and masses from memory of plug-in high-voltage terminations; dielectric design not checked.'

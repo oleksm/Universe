@@ -156,6 +156,18 @@ def termination(v, area_mm2):
     R = max(0.3, 15 * od)
     fan = math.sqrt(4 * R * 0.04 - 0.04 ** 2)
     lugs = 3 * a * 0.12 * RHO[CU] * 1.5
+    if v > 36000:          # (high voltage: three screened plug-in terminations into sockets in the unit's box, not open lugs)
+        phase = 0.5
+        fan = math.sqrt(4 * R * (phase - max(0.06, od + 0.017)) - (phase - max(0.06, od + 0.017)) ** 2)
+        built = [_part("Plug-in terminations", "material.fused-silica", 3 * 30.0, "three screened plug-in terminations, 0.7 m into the box's sockets, their epoxy insulators 30 kg each; fused silica stands for filled epoxy (from memory)"),
+                 _part("Stress cones", RUBBER, 3 * 6.0, "a silicone stress cone on each core (from memory)"),
+                 _part("Connectors", CU, 3 * 3.0, "the plug's contact on each conductor"),
+                 _part("Gland plate", AL, 1.5 * 0.5 * 0.01 * RHO[AL], "1.5 x 0.5 m, 10 mm, the three entries 0.5 m apart")]
+        _recs[key] = {"identity": {"key": key, "name": f"Cable termination, {v / 1000:g} kV, {area_mm2} mm2, plug-in", "description": f"Three screened plug-in terminations for {area_mm2} mm2 cores at {v / 1000:g} kV, their phases 0.5 m apart on a 1.5 x 0.5 m gland plate, each 0.7 m into a socket of the unit's box (the box's sockets and its leads to the bushings are the unit's); before the plate the cores fan out from the tray's pitch to the phases' over {fan:.1f} m."},
+                      "kind": "termination", "size": a, "rating": {"voltage": v, "current": r(a * J_VACUUM)},
+                      "physical": {"length": 1.5, "width": 0.5, "height": r(0.7 + fan, 3), "mass": r(sum(x["mass"] for x in built))}, "built_of": built,
+                      "basis": [{"of": ["built_of", "physical"], "tier": "invented", "review": True, "note": "Provisional: phase spacing, plug length and masses from memory of plug-in high-voltage terminations; dielectric design not checked."}]}
+        return key
     cones = 3 * (0.3 + 5.0 * (v / 1e4) ** 1.2) if v > 1000 else 0.0
     built = [_part("Lugs", CU, lugs, "three crimped lugs"), _part("Gland plate", AL, 5.0, "the box's gland plate and glands")]
     if cones:
