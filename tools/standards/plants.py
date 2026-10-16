@@ -2823,7 +2823,7 @@ def trial_ports(us):
         port("water-in", "in", "liquid", kit.flange(0.15, 10), (-4.55, -0.6, 1), (-1, 0, 0), item=WATER, rate=q_t, temperature=HP_T_LOOP - 10.0),
         port("water-out", "out", "liquid", kit.flange(0.15, 10), (-4.55, 0.6, 1), (-1, 0, 0), item=WATER, rate=q_t),
     ]
-    us["crew-post"]["ports"] = [port("power-in", "in", "power", lv(us["crew-post"]["needs"]["power"]), (3, 0, 0.3), (1, 0, 0), power=us["crew-post"]["needs"]["power"], voltage=400, note="through the berm to its +x end")]
+    us["crew-post"]["ports"] = [port("power-in", "in", "power", lv(us["crew-post"]["needs"]["power"]), (3, 0, 2.3), (1, 0, 0), power=us["crew-post"]["needs"]["power"], voltage=400, note="a gland on a pad on its +x end's dome, on the axis; the cable through the berm")]
     us[rad]["ports"] = [
         port("water-in", "in", "liquid", kit.flange(0.15, 10), (-24, -0.6, 1), (-1, 0, 0), item=WATER, rate=q_rad, temperature=HP_T_LOOP),
         port("water-out", "out", "liquid", kit.flange(0.15, 10), (-24, 0.6, 1), (-1, 0, 0), item=WATER, rate=q_rad, temperature=HP_T_LOOP - 10.0),
@@ -2975,7 +2975,7 @@ def shaft_furnace_airless(us, recs):
         port("hv-in", "in", "power", kit.termination(132000, kit.area_for(amps(recs["heater-transformer-131mva"]["needs"]["power"] + recs[heater]["needs"]["power"], 132000, 0.95))), (100, -24.956, 8.8), (-1, 0, 0), power=recs["heater-transformer-131mva"]["needs"]["power"] + recs[heater]["needs"]["power"], voltage=132000, note="the site's 132 kV substation"),
         port("lv-fields", "in", "power", kit.termination(lvf, kit.area_for(amps(p_fields, lvf))), (-32.4, 30.0, 0.3), (0, 1, 0), power=p_fields, voltage=lvf, note="the site's 400 V distribution, for the radiator fields' pumps"),
         port("lv-furnace", "in", "power", kit.termination(lvf, kit.area_for(amps(recs[sh_key]["needs"]["power"], lvf))), (-40.0, 2.0, 4.0), (1, 0, 0), power=recs[sh_key]["needs"]["power"], voltage=lvf),
-        port("lv-post", "in", "power", kit.termination(lvf, kit.area_for(amps(recs["crew-post"]["needs"]["power"], lvf))), (-16.0, -24.0, 0.3), (-1, 0, 0), power=recs["crew-post"]["needs"]["power"], voltage=lvf),
+        port("lv-post", "in", "power", kit.termination(lvf, kit.area_for(amps(recs["crew-post"]["needs"]["power"], lvf))), (-16.0, -24.0, 2.3), (-1, 0, 0), power=recs["crew-post"]["needs"]["power"], voltage=lvf),
     ]
     g_top = kit.pipe(z["top"], 16, lagged=True, temp=T_TOP + K, sealing="double")
     g_gas = kit.pipe(z["gas"], 16, temp=T_TOP + K, sealing="double")

@@ -337,7 +337,7 @@ ports:
   power: 20000.0
   voltage: 400
   connector: connector.termination-400v-16mm2
-  at: [-16.0, -24.0, 0.3]
+  at: [-16.0, -24.0, 2.3]
   facing: [-1.0, 0.0, 0.0]
 links:
 - kind: conveyor
@@ -534,11 +534,11 @@ links:
   name: crew post supply
   run: run.cable-400v-16mm2
   ends: ['edge:lv-post', 'P:power-in']
-  from: [-16.0, -24.0, 0.3]
-  to: [-21.0, -24.0, 0.3]
+  from: [-16.0, -24.0, 2.3]
+  to: [-21.0, -24.0, 2.3]
   length: 5.0
   item: material.copper
-  mass: 53.3
+  mass: 77.3
   fittings: {elbows: 0, tees: 0, supports: 2, connectors: 2}
   note: through the berm
 - kind: pipe
