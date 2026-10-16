@@ -173,9 +173,11 @@ def check(lay, units, runs, conns):
         legs = [float(np.linalg.norm(b - a)) for a, b in zip(pts, pts[1:])]
         if run["kind"] == "belt" and len(pts) > 2:
             faults.append(f"{l['name']}: a belt runs straight; it turns {len(pts) - 2} times")
+        vert = [abs(b[2] - a[2]) > 0.5 * max(np.linalg.norm(b - a), 1e-9) for a, b in zip(pts, pts[1:])]
+        Rc = [run.get("riser", {}).get("radius", R) if (vert[i - 1] or vert[i]) else R for i in range(1, len(pts) - 1)]    # (a cable's bend into a rise is a riser)
         for i, leg in enumerate(legs):
-            need = R * ((1 if i > 0 else 0) + (1 if i < len(legs) - 1 else 0))
-            if R and leg + 1e-6 < need:
+            need = (Rc[i - 1] if i > 0 else 0) + (Rc[i] if i < len(legs) - 1 else 0)
+            if R and leg + 1e-3 < need:
                 faults.append(f"{l['name']}: leg {i + 1} is {leg:.2f} m, its elbows need {need:.2f}")
 
     # Clashes: runs through units (other than those they join), through each other, through the frame's faces.

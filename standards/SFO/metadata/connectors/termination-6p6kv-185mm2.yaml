@@ -9,12 +9,7 @@ built_of:
 - {what: Lugs, item: material.copper, mass: 0.9, note: three crimped lugs}
 - {what: Gland plate, item: material.aluminium-alloy-6061, mass: 5.0, note: the box's gland plate and glands}
 - {what: Stress cones, item: material.silicone-rubber, mass: 10.0, note: 'a stress cone on each core, sized with the voltage (from memory); silicone rubber'}
-visual:
-  format: "freefall-model/1"
-  path: "models/termination-6p6kv-185mm2/v1"
-  manifest_sha256: "54463f6a408a20799df7beb7f5041daf7e0826c0e6b8edbcf58f93d58754641c"
-  version: 1
-  triangles: 4220
+visual: {format: freefall-model/1, path: models/termination-6p6kv-185mm2/v1, manifest_sha256: 54463f6a408a20799df7beb7f5041daf7e0826c0e6b8edbcf58f93d58754641c, version: 1, triangles: 4220}
 basis:
 - of: [built_of]
   tier: invented

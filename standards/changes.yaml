@@ -172,7 +172,7 @@
 - { record: connector.termination-400v-300mm2, at: "2026-10-16T14:13:36Z", status: draft, summary: "changed: physical, basis", sha: "1843720cf6d05e41" }
 - { record: connector.termination-400v-400mm2, at: "2026-10-16T14:13:36Z", status: draft, summary: "changed: physical, basis", sha: "aff736eaba01dbdb" }
 - { record: connector.termination-400v-70mm2, at: "2026-10-16T14:13:36Z", status: draft, summary: "changed: physical, basis", sha: "cfb87c7eb6185bfd" }
-- { record: connector.termination-6p6kv-185mm2, at: "2026-10-16T14:22:26Z", status: draft, summary: "changed: visual", sha: "9c9008ee1e84261e" }
+- { record: connector.termination-6p6kv-185mm2, at: "2026-10-16T14:24:23Z", status: draft, summary: "changed", sha: "a32ec5e3bb6184d8" }
 - { record: connector.termination-6p6kv-630mm2, at: "2026-10-16T14:13:36Z", status: draft, summary: "changed: physical, basis", sha: "f7c01e0bea0ea24f" }
 - { record: deposit-type.bauxite, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "d94a18af510f0854" }
 - { record: deposit-type.beach-sands, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "45c5674677db6276" }
@@ -855,7 +855,7 @@
 - { record: layout.pellet-plant-air, at: "2026-10-15T16:01:43Z", status: draft, summary: "changed: physical", sha: "89e9d07d51ec2d4b" }
 - { record: layout.pellet-plant-airless, at: "2026-10-15T20:27:46Z", status: draft, summary: "changed: physical, ground, totals", sha: "4370552410830680" }
 - { record: layout.shaft-furnace-air, at: "2026-10-16T03:20:47Z", status: draft, summary: "changed: totals", sha: "56b2d2168ab078d2" }
-- { record: layout.shaft-furnace-airless, at: "2026-10-16T13:59:21Z", status: draft, summary: "changed: links", sha: "2dc17952c489ff8f" }
+- { record: layout.shaft-furnace-airless, at: "2026-10-16T14:24:23Z", status: draft, summary: "changed: links", sha: "f719674d3982166b" }
 - { record: market.art, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "517671b6a46daee3" }
 - { record: market.artifacts, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "6b51c19897f56c1a" }
 - { record: market.biologics, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "003ee842af8f7674" }
@@ -1553,13 +1553,13 @@
 - { record: rule.plant-weights-from-memory, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "d4bff33987b75c18" }
 - { record: rule.shares-chosen, at: "2026-10-07T03:53:08Z", status: review, summary: "first tracked", sha: "2f29f0362d9d7f04" }
 - { record: run.belt-1200, at: "2026-10-16T13:57:34Z", status: draft, summary: "changed", sha: "1f38dc7c62f3bc04" }
-- { record: run.cable-132kv-240mm2, at: "2026-10-16T14:09:43Z", status: draft, summary: "changed: outside, per_m", sha: "1c87ddb4aac79796" }
-- { record: run.cable-400v-16mm2, at: "2026-10-16T14:09:43Z", status: draft, summary: "changed: outside, per_m", sha: "a38fce551178b547" }
-- { record: run.cable-400v-300mm2, at: "2026-10-16T14:09:43Z", status: draft, summary: "changed: outside, per_m", sha: "4e4fc0ad9419ded8" }
-- { record: run.cable-400v-400mm2, at: "2026-10-16T14:09:43Z", status: draft, summary: "changed: outside, per_m", sha: "023686def1b2711f" }
-- { record: run.cable-400v-70mm2, at: "2026-10-16T14:09:43Z", status: draft, summary: "changed: outside, per_m", sha: "2b4303ca7681ba82" }
-- { record: run.cable-6p6kv-185mm2, at: "2026-10-16T14:13:36Z", status: draft, summary: "changed", sha: "87aa8515ae2128a4" }
-- { record: run.cable-6p6kv-630mm2, at: "2026-10-16T14:09:43Z", status: draft, summary: "changed: outside, per_m", sha: "107a7fbeeef742c5" }
+- { record: run.cable-132kv-240mm2, at: "2026-10-16T14:24:23Z", status: draft, summary: "changed: pitch, elbow, riser, basis", sha: "6b4ecf03d18366aa" }
+- { record: run.cable-400v-16mm2, at: "2026-10-16T14:24:23Z", status: draft, summary: "changed: pitch, elbow, riser, basis", sha: "eecf212c2b572f5c" }
+- { record: run.cable-400v-300mm2, at: "2026-10-16T14:24:23Z", status: draft, summary: "changed: pitch, elbow, riser, basis", sha: "5902045c6093f4c6" }
+- { record: run.cable-400v-400mm2, at: "2026-10-16T14:24:23Z", status: draft, summary: "changed: pitch, elbow, riser, basis", sha: "1f3eb85a68eb5650" }
+- { record: run.cable-400v-70mm2, at: "2026-10-16T14:24:23Z", status: draft, summary: "changed: pitch, elbow, riser, basis", sha: "2a6d16f11dbb1ab1" }
+- { record: run.cable-6p6kv-185mm2, at: "2026-10-16T14:24:23Z", status: draft, summary: "changed: pitch, elbow, riser, basis", sha: "2df7e3ac8c7d02c5" }
+- { record: run.cable-6p6kv-630mm2, at: "2026-10-16T14:24:23Z", status: draft, summary: "changed: pitch, elbow, riser, basis", sha: "b17fe8fd156f72ff" }
 - { record: run.drag-conveyor-800, at: "2026-10-16T13:57:34Z", status: draft, summary: "changed", sha: "c95d3e66137c7600" }
 - { record: run.lined-duct-dn2400-pn16-double, at: "2026-10-16T13:14:09Z", status: draft, summary: "changed", sha: "e3c421ceed042c47" }
 - { record: run.pipe-dn100-pn10, at: "2026-10-16T13:14:09Z", status: draft, summary: "changed", sha: "f24cb5fb81e22a79" }

@@ -56,6 +56,15 @@ properties:
     properties:
       radius: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "m to its centreline, the least the run turns at" }
       mass: { type: number, exclusiveMinimum: 0, x-unit: "kg" }
+  riser:
+    type: object
+    additionalProperties: false
+    required: [radius, mass]
+    description: "A cable tray's bend up or down (on edge), its cores side by side at one radius; its elbow then turns in plan."
+    properties:
+      radius: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "m to the cores, their least bend radius" }
+      mass: { type: number, exclusiveMinimum: 0, x-unit: "kg" }
+  pitch: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "m between a cable run's cores, laid flat across it" }
   tee:
     type: object
     additionalProperties: false

@@ -299,13 +299,15 @@ def cable(v, area_mm2):
     _recs[key] = {"identity": {"key": key, "name": f"Cable, {v / 1000:g} kV, {area_mm2} mm2", "description": f"Three single-core cables of {area_mm2} mm2 at {v / 1000:g} kV on a ladder tray: {a * J_VACUUM:,.0f} A a circuit on airless ground, where only radiation cools them."},
                   "kind": "cable", "size": a, "outside": [r(max(0.3, 3 * od + 0.1), 3), r(0.1 + od + 0.004, 3)], "rating": {"voltage": v, "current": r(a * J_VACUUM)},
                   "per_m": {"mass": r(per_m), "built_of": built},
-                  "elbow": {"radius": r(max(0.3, 15 * od), 3), "mass": r(per_m * math.pi / 2 * max(0.3, 15 * od))},
+                  "pitch": r(max(0.06, od + 0.017), 3),
+                  "elbow": {"radius": r(max(0.3, 15 * od) + max(0.06, od + 0.017), 3), "mass": r(per_m * math.pi / 2 * (max(0.3, 15 * od) + max(0.06, od + 0.017)))},
+                  "riser": {"radius": r(max(0.3, 15 * od), 3), "mass": r(per_m * math.pi / 2 * max(0.3, 15 * od))},
                   "tee": {"mass": 25.0},
                   "support": {"spacing": 3.0, "mass": 8.0, "per_m_height": 6.0, "item": AL},
                   "repeat": [{"piece": "rung", "pitch": 0.3}],
                   "connector": termination(v, area_mm2), "carries": "power",
                   "basis": [{"of": ["per_m"], "tier": "derived", "review": True, "note": f"Copper from its area; insulation by the voltage's usual thickness (from memory); the rating at {J_VACUUM / 1e6:g} A/mm2, radiation only."},
-                            {"of": ["support", "tee", "elbow"], "tier": "invented", "review": True, "note": "Tray posts every 3 m; a tee is a joint box; bends at 15 cable diameters. From memory."}]}
+                            {"of": ["support", "tee", "elbow", "riser", "pitch"], "tier": "invented", "review": True, "note": "Tray posts every 3 m; a tee is a joint box; the cores' least bend radius 15 cable diameters (from memory): a riser bends all three at it, an elbow in plan has its axis one core's pitch further out so the inner core keeps it."}]}
     return key
 
 

@@ -496,7 +496,7 @@ links:
   to: [48.0, -24.956, 7.55]
   length: 53.25
   item: material.copper
-  mass: 2858.0
+  mass: 2857.0
   via:
   - [48.0, -24.956, 8.8]
   fittings: {elbows: 1, tees: 0, supports: 19, connectors: 2}
@@ -508,7 +508,7 @@ links:
   to: [12.0, -22.55, 1.575]
   length: 49.52
   item: material.copper
-  mass: 10120.0
+  mass: 10100.0
   via:
   - [48.0, -17.0, 4.5]
   - [11.3, -17.0, 4.5]
@@ -524,7 +524,7 @@ links:
   to: [-4.7, 2.0, 12.0]
   length: 43.3
   item: material.copper
-  mass: 1083.0
+  mass: 1082.0
   via:
   - [-7.0, 2.0, 4.0]
   - [-7.0, 2.0, 12.0]
