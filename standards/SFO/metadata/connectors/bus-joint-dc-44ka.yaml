@@ -4,9 +4,9 @@ identity: {key: connector.bus-joint-dc-44ka, name: 'Bus joint, DC, 44 kA', descr
 kind: bus-joint
 size: 0.011
 rating: {voltage: 442.7, current: 43135.3}
-physical: {length: 0.3, width: 1.0, height: 0.26, mass: 100.4}
+physical: {length: 0.3, width: 1.0, height: 0.26, mass: 111.2}
 built_of:
-- {what: Joint plates, item: material.copper, mass: 80.6, note: 'a pair of 30 mm copper plates a pole, 300 x 250 mm, the tubes brazed into one, bolted to the unit''s terminal pad'}
+- {what: Joint plates, item: material.copper, mass: 91.4, note: 'a pair of 30 mm copper plates a pole, 340 x 250 mm, the tubes brazed into one, bolted to the unit''s terminal pad'}
 - {what: Bolts, item: material.high-strength-steel-4340, mass: 12.8, note: 'sixteen M20 a pole in two rows of eight, above and below the tubes, with spring washers'}
 - {what: Water couplings and hoses, item: material.silicone-rubber, mass: 7.0, note: an insulating hose from each tube's end to the unit's cooling manifold behind its pad}
 basis:

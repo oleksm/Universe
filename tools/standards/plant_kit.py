@@ -345,8 +345,9 @@ def bus_joint(v, amps):
         return key
     n, a, rows, w, h = _bus(amps)
     ph = h + 0.11                                   # the plate's height: two rows of M20 at 50 mm from the tubes' centres, 35 mm in from its edges
-    plate = w * ph * 0.03 * RHO[CU]
-    built = [_part("Joint plates", CU, 2 * 2 * plate, f"a pair of 30 mm copper plates a pole, {w * 1000:.0f} x {ph * 1000:.0f} mm, the tubes brazed into one, bolted to the unit's terminal pad"),
+    pw = w + 0.04                                   # and wide enough for the outer bolt columns' 30 mm edge distance
+    plate = pw * ph * 0.03 * RHO[CU]
+    built = [_part("Joint plates", CU, 2 * 2 * plate, f"a pair of 30 mm copper plates a pole, {pw * 1000:.0f} x {ph * 1000:.0f} mm, the tubes brazed into one, bolted to the unit's terminal pad"),
              _part("Bolts", BOLT, 2 * 16 * 0.4, "sixteen M20 a pole in two rows of eight, above and below the tubes, with spring washers"),
              _part("Water couplings and hoses", RUBBER, 2 * n * 0.5, "an insulating hose from each tube's end to the unit's cooling manifold behind its pad")]
     _recs[key] = {"identity": {"key": key, "name": f"Bus joint, DC, {math.ceil(amps / 1000):d} kA", "description": f"Where a {amps / 1000:.1f} kA direct current bus meets a unit's terminals: both poles' tubes brazed into copper plates, bolted to the unit's pads, the poles' centres {w + 0.3:g} m apart ({0.3:g} m clear between them), and the tubes' water handed by insulating hoses to the unit's cooling manifold. At the plane: the poles side by side across y, + at -y, each pole {w:.2f} m wide and {h:.2f} m tall about the axis."},
