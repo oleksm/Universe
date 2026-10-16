@@ -1558,7 +1558,7 @@
 - { record: run.cable-400v-300mm2, at: "2026-10-16T14:09:43Z", status: draft, summary: "changed: outside, per_m", sha: "4e4fc0ad9419ded8" }
 - { record: run.cable-400v-400mm2, at: "2026-10-16T14:09:43Z", status: draft, summary: "changed: outside, per_m", sha: "023686def1b2711f" }
 - { record: run.cable-400v-70mm2, at: "2026-10-16T14:09:43Z", status: draft, summary: "changed: outside, per_m", sha: "2b4303ca7681ba82" }
-- { record: run.cable-6p6kv-185mm2, at: "2026-10-16T14:09:43Z", status: draft, summary: "changed: outside, per_m", sha: "1a1dd2c892cec671" }
+- { record: run.cable-6p6kv-185mm2, at: "2026-10-16T14:11:09Z", status: draft, summary: "changed: visual", sha: "56b7cb12da4a8a9d" }
 - { record: run.cable-6p6kv-630mm2, at: "2026-10-16T14:09:43Z", status: draft, summary: "changed: outside, per_m", sha: "107a7fbeeef742c5" }
 - { record: run.drag-conveyor-800, at: "2026-10-16T13:57:34Z", status: draft, summary: "changed", sha: "c95d3e66137c7600" }
 - { record: run.lined-duct-dn2400-pn16-double, at: "2026-10-16T13:14:09Z", status: draft, summary: "changed", sha: "e3c421ceed042c47" }
