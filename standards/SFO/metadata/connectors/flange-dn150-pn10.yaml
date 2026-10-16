@@ -10,6 +10,12 @@ built_of:
 - {what: Flanges, item: material.structural-steel-a36, mass: 23.8, note: 'two weld-neck rings 0.316 m across, 20 mm thick, a quarter more for the necks; along the pipe the joint is 110 mm with the necks and the bolts'' and nuts'' ends'}
 - {what: Bolts and nuts, item: material.high-strength-steel-4340, mass: 1.5, note: '8 of M16, 78 mm, on a 0.268 m circle'}
 - {what: Gasket, item: material.stainless-steel-304, mass: 0.2, note: 'spiral wound, stainless windings'}
+visual:
+  format: "freefall-model/1"
+  path: "models/flange-dn150-pn10/v1"
+  manifest_sha256: "c0d9199184d2b0e46ed03a0f0ac7b086fb4ba075ac1589ee038aa18175e81f3a"
+  version: 1
+  triangles: 3680
 basis:
 - of: [built_of, physical]
   tier: derived
