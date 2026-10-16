@@ -137,7 +137,7 @@ def chute(dn, item=SS):
     return key
 
 
-SEALED_TRANSFER_MEASURED = {0.8: (806.35, 59.02)}     # kg of steel and liner, the sealed transfers measured
+SEALED_TRANSFER_MEASURED = {0.8: (806.35, 59.02), 1.0: (948.71, 70.05)}     # kg of steel and liner, the sealed transfers measured
 TRANSFER_MEASURED = {1.2: (1652.31, 146.40), 1.0: (1395.23, 123.10), 0.8: (1176.03, 103.72)}     # kg of plate and liner, by belt width (blender's models)
 
 

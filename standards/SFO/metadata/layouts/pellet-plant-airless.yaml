@@ -310,7 +310,7 @@ links:
   to: [-41.0, 0.0, 14.5]
   length: 25.0
   item: material.silicone-rubber
-  mass: 32680.0
+  mass: 32980.0
   taps: ['EW:high-nozzle']
   power: 20000.0
   fittings: {elbows: 0, tees: 1, supports: 3, connectors: 3}
