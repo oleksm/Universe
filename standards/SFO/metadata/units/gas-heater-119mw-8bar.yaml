@@ -4,18 +4,18 @@ identity: {key: unit.gas-heater-119mw-8bar, name: 'Hydrogen heater, 119 MW, 8 ba
     from outside the unit. The headers'' supports are the unit''s own. Its vessels hold the loop''s 8 bar (25 mm plate at 4 m: 64 MPa, the shell kept cool by its lining).'}
 size_class: 3
 fits: plant-mount.bay-s3
-physical: {length: 24.0, width: 12.0, height: 18.0, mass: 1145000.0}
+physical: {length: 24.0, width: 12.0, height: 18.0, mass: 1141000.0}
 built_of:
 - {what: Vessels, item: material.structural-steel-a36, mass: 167600.0, note: '4 vessels 4 m across, 16 m, 25 mm plate, 1 m deep ellipsoidal heads, with their bands; measured on model v1 (by formula 177,563 kg)'}
 - {what: Skirts and base rings, item: material.structural-steel-a36, mass: 12230.0, note: 8 mm skirts from the floor to the vessels' bottoms; measured on model v1}
 - {what: Lining, item: good.refractory-brick, mass: 669500.0, note: 300 mm}
 - {what: Elements, item: material.stainless-steel-304, mass: 39450.0, note: 'FeCrAl strip, which the registry has not got: stainless steel stands for it; 39 t at 20 kW/m2 of surface'}
-- {what: Cold header, item: material.structural-steel-a36, mass: 14770.0, note: '22 m of 2.26 m pipe, 12 mm wall, with its inlet; measured on model v1 (by formula 14,791 kg)'}
-- {what: Hot header and outlet, item: material.structural-steel-a36, mass: 33750.0, note: '20.5 m of 3.63 m shell, 16 mm plate, and its 3 m outlet; measured on model v1'}
+- {what: Cold header, item: material.structural-steel-a36, mass: 14239.1, note: '22 m of 2.26 m pipe, 12 mm wall, with its inlet; measured on model v1 (by formula 14,791 kg); its inlet a reducer to the 1 m port, measured on blender''s model v2'}
+- {what: Hot header and outlet, item: material.structural-steel-a36, mass: 33240.8, note: '20.5 m of 3.63 m shell, 16 mm plate, and its 3 m outlet; measured on model v1; its outlet a lined reducer to the 2.4 m port, measured on blender''s model v2'}
 - {what: Hot header lining, item: good.refractory-brick, mass: 152100.0, note: '200 mm, in the header and its outlet'}
 - {what: Branches, item: material.structural-steel-a36, mass: 9598.0, note: 'a cold (1.2 m bore) and a hot (1.6 m bore, lined) branch to each vessel; measured on model v1'}
 - {what: Header supports, item: material.structural-steel-a36, mass: 29060.0, note: 'box columns 400 mm under the hot header, braced at 4, 8 and 12 m, with saddles; measured on model v1'}
-- {what: Flanges and blind ends, item: material.structural-steel-a36, mass: 4183.0, note: measured on model v1}
+- {what: Flanges and blind ends, item: material.structural-steel-a36, mass: 1297.4, note: 'measured on model v1; the inlet''s and outlet''s flanges and caps gone (the connector is the layout''s), measured on blender''s model v2'}
 - {what: Terminal house base, item: material.structural-steel-a36, mass: 2846.0, note: measured on model v1}
 - {what: 'Terminals, thyristor sets and controls', item: good.electric-motors, mass: 10000.0, note: from memory}
 needs: {power: 121300000.0}

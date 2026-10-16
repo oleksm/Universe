@@ -2721,6 +2721,9 @@ def shaft_airless_units(us):
     hh["name"] = f"Hydrogen heater, {HP_Q_HEATER / 1e6:.0f} MW, 8 bar"
     hh["desc"] = hh["desc"].replace(f"from {T_PRE:.0f} to", f"from {HP_T_PRE:.0f} to") + " Its vessels hold the loop's 8 bar (25 mm plate at 4 m: 64 MPa, the shell kept cool by its lining)."
     hh["desc"] = hh["desc"].replace("the cables entering the middle of its +y face at (-11.55, 2.6, 1.575)", "the cables entering the house's -x side, on the unit's face, at (-12, 1.45, 1.575), so they come to it from outside the unit")
+    # Its ends reduced to the SFO 25 ports, plain, flanges and caps gone: blender's model v2, the changed steel only.
+    v2 = {"Cold header": (1342.6, 811.7, "its inlet a reducer to the 1 m port"), "Hot header and outlet": (4309.0, 3799.8, "its outlet a lined reducer to the 2.4 m port"), "Flanges and blind ends": (2885.6, 0.0, "the inlet's and outlet's flanges and caps gone (the connector is the layout's)")}
+    hh["built_of"] = [dict(p, mass=r(p["mass"] - v2[p["what"]][0] + v2[p["what"]][1], 6), note=p.get("note", "") + f"; {v2[p['what']][2]}, measured on blender's model v2") if p["what"] in v2 else p for p in hh["built_of"]]
     hh["needs"] = {"power": HP_Q_HEATER / 0.98}
     out[f"gas-heater-{HP_Q_HEATER / 1e6:.0f}mw-8bar"] = hh
     out[f"radiator-field-{HP_T_LOOP:.0f}k"] = radiator_unit(HP_T_LOOP, "the condenser's")
