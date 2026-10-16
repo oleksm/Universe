@@ -172,7 +172,7 @@
 - { record: connector.termination-400v-300mm2, at: "2026-10-16T14:13:36Z", status: draft, summary: "changed: physical, basis", sha: "1843720cf6d05e41" }
 - { record: connector.termination-400v-400mm2, at: "2026-10-16T14:13:36Z", status: draft, summary: "changed: physical, basis", sha: "aff736eaba01dbdb" }
 - { record: connector.termination-400v-70mm2, at: "2026-10-16T14:13:36Z", status: draft, summary: "changed: physical, basis", sha: "cfb87c7eb6185bfd" }
-- { record: connector.termination-6p6kv-185mm2, at: "2026-10-16T14:13:36Z", status: draft, summary: "changed: physical, basis", sha: "8dceb481e66248ed" }
+- { record: connector.termination-6p6kv-185mm2, at: "2026-10-16T14:22:26Z", status: draft, summary: "changed: visual", sha: "9c9008ee1e84261e" }
 - { record: connector.termination-6p6kv-630mm2, at: "2026-10-16T14:13:36Z", status: draft, summary: "changed: physical, basis", sha: "f7c01e0bea0ea24f" }
 - { record: deposit-type.bauxite, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "d94a18af510f0854" }
 - { record: deposit-type.beach-sands, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "45c5674677db6276" }
