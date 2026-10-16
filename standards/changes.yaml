@@ -1563,7 +1563,7 @@
 - { record: run.drag-conveyor-800, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "c7869288da8955c1" }
 - { record: run.lined-duct-dn2400-pn16-double, at: "2026-10-16T12:48:24Z", status: draft, summary: "changed: visual", sha: "f9e9253e39c45abc" }
 - { record: run.pipe-dn100-pn10, at: "2026-10-16T12:02:30Z", status: draft, summary: "changed: cap", sha: "1a93b2ea91b1a18c" }
-- { record: run.pipe-dn1000-pn16-double, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed", sha: "546d0db4c6ae69f6" }
+- { record: run.pipe-dn1000-pn16-double, at: "2026-10-16T12:55:53Z", status: draft, summary: "changed: visual", sha: "0090bf88b39b1e7d" }
 - { record: run.pipe-dn1000-pn16-mli-double, at: "2026-10-16T12:53:16Z", status: draft, summary: "changed: visual", sha: "11000bf08bd0f6df" }
 - { record: run.pipe-dn150-pn10, at: "2026-10-16T12:02:30Z", status: draft, summary: "changed: cap", sha: "0e7a09407e4c43d9" }
 - { record: run.pipe-dn1600-pn16-mli-double, at: "2026-10-16T12:51:00Z", status: draft, summary: "changed: visual", sha: "707995e36f3a71df" }
