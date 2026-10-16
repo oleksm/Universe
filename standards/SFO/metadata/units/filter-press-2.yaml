@@ -16,6 +16,72 @@ built_of:
 - {what: Filtrate cooler, item: material.stainless-steel-304, mass: 3000.0, note: 'a plate exchanger, from memory'}
 - {what: 'Cylinders, power packs and pumps', item: good.pumps, mass: 12000.0, note: from memory}
 needs: {power: 122900.0, heat: 2272000.0, atmosphere: any}
+ports:
+- id: slurry-in
+  flow: in
+  medium: liquid
+  item: good.iron-ore
+  connector: connector.flange-dn150-pn10
+  at: [0.0, -3.25, 9.5]
+  facing: [0.0, -1.0, 0.0]
+- id: filtrate-out
+  flow: out
+  medium: liquid
+  item: good.water
+  connector: connector.flange-dn100-pn10-ss
+  at: [5.0, -3.25, 0.5]
+  facing: [0.0, -1.0, 0.0]
+- id: cooling-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 54.27
+  temperature: 320.0
+  connector: connector.flange-dn200-pn10
+  at: [-5.0, -3.25, 0.5]
+  facing: [0.0, -1.0, 0.0]
+- id: cooling-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 54.27
+  temperature: 330.0
+  connector: connector.flange-dn200-pn10
+  at: [-4.4, -3.25, 0.5]
+  facing: [0.0, -1.0, 0.0]
+- id: condensate-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 3.28
+  connector: connector.flange-dn50-pn10-ss
+  at: [4.0, -3.25, 0.5]
+  facing: [0.0, -1.0, 0.0]
+- id: power-in
+  flow: in
+  medium: power
+  power: 122900.0
+  voltage: 400
+  connector: connector.termination-400v-95mm2
+  at: [2.5, -3.25, 0.5]
+  facing: [0.0, -1.0, 0.0]
+- id: cake-1
+  flow: out
+  medium: bulk
+  item: good.iron-ore
+  rate: 16.58
+  connector: connector.chute-dn1000
+  at: [-1.2, 0.0, 7.775]
+  facing: [0.0, 0.0, -1.0]
+  note: a press's breaker's opening onto the cake belt
+- id: cake-2
+  flow: out
+  medium: bulk
+  item: good.iron-ore
+  rate: 16.58
+  connector: connector.chute-dn1000
+  at: [1.2, 0.0, 7.775]
+  facing: [0.0, 0.0, -1.0]
 envelope:
 - [-6.03, -3.25, 0, 6.03, 3.1, 6.89]
 - [-6.03, -3.25, 6.89, 6.03, -0.775, 7.751]

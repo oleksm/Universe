@@ -19,6 +19,7 @@ import yaml
 S = "standards/SFO/metadata/"
 STEP = 0.25        # m between the points a run is sampled at
 GAP = 0.05         # m kept clear between runs
+TOUCH = 0.02       # m: a run touching a unit's box closer than this is seated on it, not through it
 DROP = 0.5         # m a belt's head stands over the belt it drops onto (plant_kit.TRANSFER_DROP)
 
 
@@ -134,7 +135,7 @@ def check(lay, units, runs, conns):
                 if not main:
                     faults.append(f"{l['name']}: drops onto {e[5:]}, which is not a run here")
                     continue
-                if which != 1 or run["carries"] != "bulk" or runs[main["run"]]["carries"] != "bulk":
+                if (which != 1 and not l.get("reversible")) or run["carries"] != "bulk" or runs[main["run"]]["carries"] != "bulk":
                     faults.append(f"{l['name']}: only a bulk run's to end drops onto another bulk run")
                 mp = path_of(main)
                 d = min(seg_dist((at - np.array([0.0, 0.0, DROP]))[None], a, b)[0] for a, b in zip(mp, mp[1:]))
@@ -155,15 +156,15 @@ def check(lay, units, runs, conns):
                 pos, face, flow = world(b, p["at"]), turn_vec(b, p["facing"]), p["flow"]
             used.add(e)
             ck = conns[p["connector"]]["kind"] if p["connector"] in conns else None
-            pos = pos + end_offset(ck, run, which)
+            pos = pos + end_offset(ck, run, 1 if l.get("reversible") else which)
             if np.linalg.norm(pos - at) > 0.02:
                 faults.append(f"{l['name']}: its {'from' if which == 0 else 'to'} end {at.tolist()} is not at {e} ({pos.round(3).tolist()})")
-            if p["connector"] != run["connector"]:
+            if p["connector"] != run["connector"] and not (run["kind"] == "belt" and ck == "chute" and which == 0):     # (a chute drops onto a belt's tail, into its skirt)
                 faults.append(f"{l['name']}: {run['connector']} at its end, {e} is built to {p['connector']}")
-            want = "out" if which == 0 else "in"
+            want = "in" if l.get("reversible") else ("out" if which == 0 else "in")
             if flow not in (want, "both"):
                 faults.append(f"{l['name']}: its {'from' if which == 0 else 'to'} end is {e}, which flows {p['flow']}")
-            if p["medium"] != run["carries"]:
+            if p["medium"] != run["carries"] and not (run["kind"] == "pipe" and {p["medium"], run["carries"]} <= {"gas", "liquid"}):     # (a pipe class carries either; its supports are sized full of water)
                 faults.append(f"{l['name']}: carries {run['carries']}, {e} is {p['medium']}")
             items.append(p.get("item"))
             dot = float(leave @ face)
@@ -185,8 +186,8 @@ def check(lay, units, runs, conns):
                 u_ = (c - a) / max(np.linalg.norm(c - a), 1e-12)
                 k_ = a + np.clip((w_ - a) @ u_, 0, np.linalg.norm(c - a)) * u_
                 dz, dh = w_[2] - k_[2], math.hypot(w_[0] - k_[0], w_[1] - k_[1])
-                if not (-1.0 - 1e-3 <= dz <= 0.8 + 1e-3 and dh <= 1.6 + 1e-3):
-                    faults.append(f"{l['name']}: tap {t} is {dh:.2f} m aside and {dz:+.2f} m from its path (a chute reaches 1.6 aside, 1 under, 0.8 over)")
+                if not (-1.0 - 1e-3 <= dz <= 1.5 + 1e-3 and dh <= 1.6 + 1e-3):
+                    faults.append(f"{l['name']}: tap {t} is {dh:.2f} m aside and {dz:+.2f} m from its path (a chute reaches 1.6 aside, 1 under, 1.5 over)")
             else:
                 d = min(seg_dist(w_[None], a, c)[0] for a, c in zip(pts, pts[1:]))
                 if d > 0.02:
@@ -218,7 +219,7 @@ def check(lay, units, runs, conns):
         pts, rad = S_[l["name"]], radius[l["name"]]
         rw, rh = half[l["name"]]
         for b in lay["bays"]:
-            if b["id"] in taps and not units[b["unit"]].get("envelope"):
+            if b["id"] in taps and not (units[b["unit"]].get("envelope") or units[b["unit"]].get("shells")):
                 continue
             q_ok = np.zeros(len(pts), bool)
             for e_at in joined.get(b["id"], []):
@@ -229,10 +230,27 @@ def check(lay, units, runs, conns):
             q = pts - np.array(b["at"], float)
             lx = q[:, 0] * math.cos(a) + q[:, 1] * math.sin(a)
             ly = -q[:, 0] * math.sin(a) + q[:, 1] * math.cos(a)
-            if u.get("envelope"):          # (the boxes measured on its model; else its whole box)
+            for t in l.get("taps", []):          # (a run passing through a unit's nozzle or opening it taps: let through at the opening)
+                if t.split(":")[0] == b["id"]:
+                    tb, tp_ = port_of(t)
+                    if tp_:
+                        q_ok |= np.linalg.norm(pts - world(tb, tp_["at"]), axis=1) < rad + 2.0
+            if u.get("envelope") or u.get("shells"):          # (the boxes measured on its model, and a hollow unit's shells; else its whole box)
                 hit = np.zeros(len(pts), bool)
-                for x0, y0, z0, x1, y1, z1 in u["envelope"]:
-                    hit |= (lx > x0 - rw) & (lx < x1 + rw) & (ly > y0 - rw) & (ly < y1 + rw) & (q[:, 2] > z0 - rh) & (q[:, 2] < z1 + rh)
+                for e_ in (u.get("envelope") or []) + [{s_["kind"]: s_["at"]} for s_ in u.get("shells") or []]:
+                    if isinstance(e_, dict) and "tube" in e_:
+                        x0, x1, yc, zc, ri, ro = e_["tube"]
+                        rho = np.hypot(ly - yc, q[:, 2] - zc)
+                        hit |= (lx > x0 - rw) & (lx < x1 + rw) & (rho > ri - rad) & (rho < ro + rad)
+                    elif isinstance(e_, dict) and "dome" in e_:
+                        x0, dep, yc, zc, ri, ro = e_["dome"]
+                        rho = np.hypot(ly - yc, q[:, 2] - zc)
+                        f = np.hypot(np.maximum(lx - x0, 0.0) / dep, rho / ro)
+                        hit |= (lx > x0 - rad) & (f > (ri - rad) / ro) & (f < 1.0 + rad / ro)
+                    else:
+                        x0, y0, z0, x1, y1, z1 = e_
+                        rw_, rh_ = rw - TOUCH, rh - TOUCH        # (a face on a face, as a gallery sealed to a lock's outlet, is not a clash)
+                        hit |= (lx > x0 - rw_) & (lx < x1 + rw_) & (ly > y0 - rw_) & (ly < y1 + rw_) & (q[:, 2] > z0 - rh_) & (q[:, 2] < z1 + rh_)
                 hit &= ~q_ok
             else:
                 hit = (np.abs(lx) < Lb / 2 + rw) & (np.abs(ly) < Wb / 2 + rw) & (q[:, 2] > -rh) & (q[:, 2] < Hb + rh) & ~q_ok
@@ -244,15 +262,15 @@ def check(lay, units, runs, conns):
         la = by_name[na]
         for nb in names[i + 1:]:
             lb = by_name[nb]
-            tees = [(x, y) for x, y in ((la, lb), (lb, la)) if f"tee:{y['name']}" in x.get("ends", [])]
+            tees = [(x, y) for x, y in ((la, lb), (lb, la)) if f"tee:{y['name']}" in x.get("ends", []) or f"onto:{y['name']}" in x.get("ends", [])]
             pb = path_of(lb)
             d = np.full(len(S_[na]), np.inf)
             for a, b in zip(pb, pb[1:]):
                 d = np.minimum(d, seg_dist(S_[na], a, b))
             bad = d < radius[na] + radius[nb] + GAP
             for x, y in tees:
-                tp = path_of(x)[0] if x.get("ends", ["", ""])[0] == f"tee:{y['name']}" else path_of(x)[-1]
-                keep = radius[na] + radius[nb] + runs[y["run"]].get("elbow", {}).get("radius", 0.0) + runs[x["run"]].get("elbow", {}).get("radius", 0.0) + 0.5
+                tp = path_of(x)[0] if x.get("ends", ["", ""])[0] in (f"tee:{y['name']}", f"onto:{y['name']}") else path_of(x)[-1]
+                keep = radius[na] + radius[nb] + runs[y["run"]].get("elbow", {}).get("radius", 0.0) + runs[x["run"]].get("elbow", {}).get("radius", 0.0) + (3.0 if f"onto:{y['name']}" in x.get("ends", []) else 0.5)     # (a belt's head reaches into the receiving belt's hood)
                 bad &= np.linalg.norm(S_[na] - tp, axis=1) > keep
             if bad.any():
                 k = int(np.argmax(bad))

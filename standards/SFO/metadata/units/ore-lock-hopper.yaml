@@ -12,10 +12,48 @@ built_of:
 - {what: Pipes, item: material.stainless-steel-304, mass: 170.4, note: the nitrogen fill and the pump's suction; measured}
 - {what: Valves and pump, item: good.pumps, mass: 3000.0, note: from memory}
 needs: {power: 15000.0, atmosphere: vacuum}
+ports:
+- id: ore-in
+  flow: in
+  medium: bulk
+  item: good.iron-ore
+  rate: 33.16
+  connector: connector.belt-transfer-1000
+  at: [0.0, 0.0, 17.5]
+  facing: [0.0, 0.0, 1.0]
+  note: the hopper's rim; a belt's head stands 3 m over it
+- id: ore-out
+  flow: out
+  medium: bulk
+  item: good.iron-ore
+  rate: 33.16
+  connector: connector.chute-dn1000
+  at: [0.0, 0.0, 10.0]
+  facing: [0.0, 0.0, -1.0]
+  note: the bottom valve, onto a sealed gallery's belt
+- id: nitrogen-in
+  flow: in
+  medium: gas
+  item: material.nitrogen
+  connector: connector.flange-dn50-pn10-ss
+  at: [1.7, 0.0, 13.3]
+  facing: [1.0, 0.0, 0.0]
+  note: from the hall, to fill the lock
+- id: power-in
+  flow: in
+  medium: power
+  power: 15000.0
+  voltage: 400
+  connector: connector.termination-400v-16mm2
+  at: [3.0, 0.0, 0.5]
+  facing: [1.0, 0.0, 0.0]
 envelope:
 - [-2.81, -2.81, 0, 2.81, -2.19, 11.31]
 - [-2.81, 2.19, 0, 2.81, 2.81, 11.31]
-- [-2.81, -2.81, 0, -2.19, 2.81, 11.31]
+- [-2.81, -2.81, 0, -2.19, -1.6, 11.31]
+- [-2.81, 1.6, 0, -2.19, 2.81, 11.31]
+- [-2.81, -1.6, 0, -2.19, 1.6, 6.9]
+- [-2.81, -1.6, 10.1, -2.19, 1.6, 11.31]
 - [2.19, -2.81, 0, 2.81, 2.81, 11.31]
 - [-2.51, -2.51, 9.99, 2.51, 2.51, 17.51]
 - [-0.11, -0.31, 0, 3.01, 2.16, 13.06]

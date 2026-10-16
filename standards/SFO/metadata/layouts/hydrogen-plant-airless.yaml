@@ -791,8 +791,8 @@ links:
   to: [149.4, 175.6, 0.3]
   length: 160.6
   item: material.copper
-  mass: 2096.0
-  fittings: {elbows: 0, tees: 0, supports: 54, connectors: 2}
+  mass: 2093.0
+  fittings: {elbows: 0, tees: 0, supports: 54, connectors: 1}
   note: north along the fields' east side, under the loop's mains
 - kind: pipe
   name: row 1 flow
@@ -826,8 +826,8 @@ links:
   to: [-144.0, 21.6, 0.3]
   length: 293.4
   item: material.copper
-  mass: 2866.0
-  fittings: {elbows: 0, tees: 1, supports: 98, connectors: 1}
+  mass: 2863.0
+  fittings: {elbows: 0, tees: 1, supports: 98, connectors: 0}
   note: in the aisle, 0.3 m up, under the water rows
 - kind: pipe
   name: RL1 flow branch
@@ -1053,8 +1053,8 @@ links:
   to: [-144.0, 72.6, 0.3]
   length: 293.4
   item: material.copper
-  mass: 2866.0
-  fittings: {elbows: 0, tees: 1, supports: 98, connectors: 1}
+  mass: 2863.0
+  fittings: {elbows: 0, tees: 1, supports: 98, connectors: 0}
   note: in the aisle, 0.3 m up, under the water rows
 - kind: pipe
   name: RL7 flow branch
@@ -1280,8 +1280,8 @@ links:
   to: [-144.0, 123.6, 0.3]
   length: 293.4
   item: material.copper
-  mass: 2866.0
-  fittings: {elbows: 0, tees: 1, supports: 98, connectors: 1}
+  mass: 2863.0
+  fittings: {elbows: 0, tees: 1, supports: 98, connectors: 0}
   note: in the aisle, 0.3 m up, under the water rows
 - kind: pipe
   name: RL13 flow branch
@@ -1507,8 +1507,8 @@ links:
   to: [-144.0, 174.6, 0.3]
   length: 293.4
   item: material.copper
-  mass: 2367.0
-  fittings: {elbows: 0, tees: 1, supports: 98, connectors: 1}
+  mass: 2364.0
+  fittings: {elbows: 0, tees: 1, supports: 98, connectors: 0}
   note: in the aisle, 0.3 m up, under the water rows
 - kind: pipe
   name: RL19 flow branch

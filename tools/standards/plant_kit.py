@@ -66,6 +66,8 @@ def flange(dn, pn, item=A36, sealing="single", temp=373.0):
     (1.8 with two seals), the ring's thickness from bending about the bolt circle."""
     key = f"connector.flange-dn{_tag(dn)}-pn{pn}" + ("-ss" if item == SS else "") + ("-double" if sealing == "double" else "")
     if key in _recs:
+        rt = _recs[key]["rating"]
+        rt["temperature"] = max(rt["temperature"], temp)       # (rated for the hottest line that asks for it, whoever asks first)
         return key
     p = PN[pn]
     dg = dn + 0.05

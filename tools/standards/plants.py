@@ -509,7 +509,11 @@ def unit_record(slug, u):
     if u.get("ports"):
         d["ports"] = u["ports"]
     if f"unit.{slug}" in ENVELOPES:
-        d["envelope"] = ENVELOPES[f"unit.{slug}"]
+        env = ENVELOPES[f"unit.{slug}"]
+        if [e for e in env if isinstance(e, list)]:
+            d["envelope"] = [e for e in env if isinstance(e, list)]
+        if [e for e in env if isinstance(e, dict)]:
+            d["shells"] = [{"kind": k, "at": v} for e in env if isinstance(e, dict) for k, v in e.items()]
     d["life"] = u.get("life") or mod.get("life")
     d["basis"] = u["basis"] + [{"of": ["life"], "rule": "rule.life-plant"}]
     return d
@@ -2869,7 +2873,7 @@ def end_offset(conn_kind, run_rec, which):
 KIND_OF_RUN = {"pipe": "pipe", "lined-duct": "duct", "belt": "conveyor", "drag-conveyor": "conveyor", "cable": "cable", "busbar": "busbar"}
 
 
-def kit_link(name, run, ends, path, bays, recs, edge, taps=(), count=1, power=None, note=None):
+def kit_link(name, run, ends, path, bays, recs, edge, taps=(), count=1, power=None, note=None, reversible=False):
     """A layout's link laid of run class `run` (SFO 25). ends: `<bay>:<port>`, `edge:<port>`, `tee:<run>` or `cap`;
     path: its points from end to end, the ends given as None where a port fixes them."""
     rr = kit._recs[run]
@@ -2887,7 +2891,7 @@ def kit_link(name, run, ends, path, bays, recs, edge, taps=(), count=1, power=No
             bid, pid = e.split(":")
             b = by_id[bid]
             pp = next(q for q in recs[b["unit"].split(".", 1)[1]]["ports"] if q["id"] == pid)
-            off = end_offset(kit._recs[pp["connector"]]["kind"], rr, which)
+            off = end_offset(kit._recs[pp["connector"]]["kind"], rr, 1 if reversible else which)
             w = world(b, pp["at"])
             at = (w[0] + off[0], w[1] + off[1], round(w[2] + off[2], 3))
             n_port += 1
@@ -2901,13 +2905,16 @@ def kit_link(name, run, ends, path, bays, recs, edge, taps=(), count=1, power=No
     for t in taps:
         bid, pid = t.split(":")
         tap_conn.append(next(q for q in recs[by_id[bid]["unit"].split(".", 1)[1]]["ports"] if q["id"] == pid)["connector"])
-    mass, fit, L = kit.lay(run, pts, count, tees=sum(1 for e in ends if e.startswith("tee:")), taps=tap_conn, port_ends=n_port, caps=sum(1 for e in ends if e == "cap"))
+    caps = sum(1 for e in ends if e == "cap") if rr["kind"] in ("pipe", "lined-duct") else 0      # (a belt's or a cable's free end is its tail or its end box, no blind)
+    mass, fit, L = kit.lay(run, pts, count, tees=sum(1 for e in ends if e.startswith("tee:")), taps=tap_conn, port_ends=n_port, caps=caps)
     d = {"kind": KIND_OF_RUN[rr["kind"]], "name": name, "run": run, "ends": list(ends), "from": list(pts[0]), "to": list(pts[-1]), "length": r(L),
          "item": rr["per_m"]["built_of"][0]["item"], "mass": r(mass)}
     if len(pts) > 2:
         d["via"] = [list(q) for q in pts[1:-1]]
     if taps:
         d["taps"] = list(taps)
+    if reversible:
+        d["reversible"] = True
     if count > 1:
         d["count"] = count
     if power:
@@ -3212,6 +3219,133 @@ def h2_ports(us):
     ]
 
 
+def pellet_ports(us):
+    """Ports on the airless pellet plant's units (SFO 25), and the changes laying it from ports asked of them:
+    the radiator field's ports to its corner, the transformer's cable boxes, the hall heads' high nozzle and service
+    panel, the discs' fines kept, the gas loops' dust binned."""
+    K = 273.15
+    ORE, WATER, PEL = "good.iron-ore", "good.water", "good.iron-ore-pellets"
+    lv = lambda w: kit.termination(400, kit.area_for(amps(w, 400)))
+    mv = lambda w: kit.termination(6600, kit.area_for(amps(w, 6600)))
+    q = lambda w: w / (4186 * 10)
+    # The 330 K field: ports to its south-west corner, as the 345 K field's (radiator_rows).
+    rf = us["radiator-field-330k"]
+    rf["desc"] = rf["desc"].replace("its ports at local (-24, -0.6, 1) flow and (-24, 0.6, 1) return.", "its ports on its south-west corner facing -y, at local (-23, -24, 1) flow and (-22.4, -24, 1) return, its pump's power entry at (-21.8, -24, 0.3), so a layout's mains run in an aisle beside the field, not under it.")
+    rf["ports"] = [
+        port("water-in", "in", "liquid", kit.flange(0.15, 10, temp=330.0), (-23.0, -24, 1), (0, -1, 0), item=WATER, rate=q(rf["rejects"]["heat"]), temperature=330.0),
+        port("water-out", "out", "liquid", kit.flange(0.15, 10, temp=330.0), (-22.4, -24, 1), (0, -1, 0), item=WATER, rate=q(rf["rejects"]["heat"]), temperature=320.0),
+        port("power-in", "in", "power", lv(rf["needs"]["power"]), (-21.8, -24, 0.3), (0, -1, 0), power=rf["needs"]["power"], voltage=400, note="its circulating pump"),
+    ]
+    # The plant transformer: 33 kV in through a cable box on top, 6.6 kV out through a box on its +y face.
+    tkey = next(k for k in us if k.startswith("plant-transformer-"))
+    tp = us[tkey]
+    L_, W_, H_ = tp["dims"]
+    if "HV cable box" not in [x["what"] for x in tp["built_of"]]:
+        tp["built_of"] = tp["built_of"] + [part("HV cable box", A36, 2 * (3.0 * 0.8 * 2 + 0.8 * 0.8) * 0.006 * RHO["steel"], f"over the three HV bushings on top at y -0.9: 3 x 0.8 x 0.8 m, 6 mm, its gland plate on top at (0, -0.9, {H_ + 0.8:g})"),
+                                           part("LV cable box", A36, 2 * (4.0 * 0.5 + 4.0 * 1.2 + 0.5 * 1.2) * 0.006 * RHO["steel"], f"over the three secondary pads on the +y face, 2.9 m up: 4 x 0.5 x 1.2 m, 6 mm, its gland plate facing +y at (0, {W_ / 2 + 0.5:g}, 2.9)")]
+        tp["desc"] += f" Fed at 33 kV through a cable box over its HV bushings (gland plate on top at (0, -0.9, {H_ + 0.8:g})); its 6.6 kV leaves through a box over its secondary pads (gland plate facing +y at (0, {W_ / 2 + 0.5:g}, 2.9)); its cooler's water ports at (-{L_ / 2:g}, -0.6, 1) and (-{L_ / 2:g}, 0.6, 1)."
+        tp["dims"] = (L_, W_ + 1.0, H_ + 0.8)
+    p_mv = 2 * us["pellet-shaft-63th"]["needs"]["power"] + us["ball-mill-4m4"]["needs"]["power"]
+    n_mv = math.ceil(amps(p_mv, 6600) / (630e-6 * kit.J_VACUUM))
+    tp["ports"] = [
+        port("hv-in", "in", "power", kit.termination(33000, kit.area_for(amps(p_mv + tp["needs"]["power"], 33000, 0.95))), (0, -0.9, H_ + 0.8), (0, 0, 1), power=p_mv + tp["needs"]["power"], voltage=33000),
+        port("lv-out", "out", "power", kit.termination(6600, 630), (0, W_ / 2 + 0.5, 2.9), (0, 1, 0), power=p_mv, voltage=6600, note=f"{n_mv} circuits of 630 mm2"),
+        port("cooling-in", "in", "liquid", kit.flange(0.1, 10, temp=330.0), (-L_ / 2, -0.6, 1), (-1, 0, 0), item=WATER, rate=q(tp["needs"]["heat"]), temperature=320.0),
+        port("cooling-out", "out", "liquid", kit.flange(0.1, 10, temp=330.0), (-L_ / 2, 0.6, 1), (-1, 0, 0), item=WATER, rate=q(tp["needs"]["heat"]), temperature=330.0),
+    ]
+    # The hall's heads: a second nozzle high on the head, a service panel of pass-throughs (each an outer and an inner
+    # port, a spare blinded where a layout leaves it), and the lock pumps' supply.
+    hd = us["pressure-hall-30m-end"]
+    hall_lv = 4 * us["balling-disc-7m5"]["needs"]["power"] + us["filter-press-2"]["needs"]["power"] + N_SEC * us["pressure-hall-30m"]["needs"]["power"]
+    thru = [("w1", -10.2, 10.0, "liquid", kit.flange(0.2, 10, temp=330.0)), ("w2", -9.6, 10.0, "liquid", kit.flange(0.2, 10, temp=330.0)), ("k1", -9.0, 10.0, "liquid", kit.flange(0.05, 10, kit.SS)),
+            ("e1", -10.2, 10.8, "power", mv(us["ball-mill-4m4"]["needs"]["power"])), ("e2", -9.4, 10.8, "power", lv(hall_lv))]
+    if "high nozzle" not in hd["desc"]:
+        hd["desc"] = hd["desc"].replace("and a 3 m belt nozzle on its axis whose bottom is at the deck. ", "a 3 m belt nozzle whose bottom is at the deck, and a second, high nozzle near its crown, each blinded where a layout leaves it unused. ")
+        hd["desc"] = hd["desc"].replace("the belt nozzle at (6.9, 0, 9);", "the belt nozzle at (6.9, 0, 9), the high nozzle at (7.5, 0, 14.5);")
+        hd["desc"] = hd["desc"].replace("a service panel for pipes and cables at (6.5, -9, 10).", "a service panel for pipes and cables at (6.5, -9, 10): a boxed plate whose pass-throughs' outer faces are at x 6.5 facing +x and inner faces at x 5.0 facing -x, at y -10.2 and -9.6 (200 mm water), -9.0 (50 mm stainless), z 10, and the cables' glands at y -10.2 (6.6 kV) and -9.4 (400 V), z 10.8; the hall's nitrogen make-up in at (6.5, -8.4, 10) and the lock pumps' 400 V supply at (6.5, -8.6, 10.8), outer only.")
+    hd["ports"] = [port("nozzle", "both", "bulk", kit.flange(3.0, 1, sealing="double"), (6.9, 0, 9), (1, 0, 0), note="a sealed gallery's flange; the belt passes through", ).__or__({"optional": True}),
+                   port("high-nozzle", "both", "bulk", kit.flange(3.0, 1, sealing="double"), (7.5, 0, 14.5), (1, 0, 0), note="a sealed gallery's flange; the belt passes through").__or__({"optional": True})]
+    for pid, y, z, med, con in thru:
+        hd["ports"] += [port(f"{pid}-out", "both", med, con, (6.5, y, z), (1, 0, 0)).__or__({"optional": True}), port(f"{pid}-in", "both", med, con, (5.0, y, z), (-1, 0, 0)).__or__({"optional": True})]
+    hd["ports"] += [port("nitrogen-in", "in", "gas", kit.flange(0.05, 10, kit.SS), (6.5, -8.4, 10), (1, 0, 0), item="material.nitrogen", note="the hall's make-up, let into its gas").__or__({"optional": True}),
+                    port("power-in", "in", "power", lv(hd["needs"]["power"]), (6.5, -8.6, 10.8), (1, 0, 0), power=hd["needs"]["power"], voltage=400, note="the locks' pumps")]
+    # A hall section: its fan coils' water and their fans' supply.
+    hs = us["pressure-hall-30m"]
+    hs["ports"] = [
+        port("water-in", "in", "liquid", kit.flange(0.15, 10, temp=330.0), (-14, -12, HALL_DECK), (0, 0, 1), item=WATER, rate=q(hs["needs"]["heat"]), temperature=320.0),
+        port("water-out", "out", "liquid", kit.flange(0.15, 10, temp=330.0), (-13.2, -12, HALL_DECK), (0, 0, 1), item=WATER, rate=q(hs["needs"]["heat"]), temperature=330.0),
+        port("power-in", "in", "power", lv(hs["needs"]["power"]), (-12.4, -12, HALL_DECK), (0, 0, 1), power=hs["needs"]["power"], voltage=400, note="the fan coils' fans, a gland up through the deck"),
+    ]
+    if "power entry" not in hs["desc"]:
+        hs["desc"] = hs["desc"].replace("their faces facing up at the deck's plane", "and their fans' 400 V entry at (-12.4, -12), their faces facing up at the deck's plane")
+    # The ore lock: on a plinth in the layout; its ports in its own frame.
+    ol = us["ore-lock-hopper"]
+    ol["ports"] = [
+        port("ore-in", "in", "bulk", kit.belt_transfer(1.0), (0, 0, 17.5), (0, 0, 1), item=ORE, rate=P_ORE, note="the hopper's rim; a belt's head stands 3 m over it"),
+        port("ore-out", "out", "bulk", kit.chute(1.0), (0, 0, 10), (0, 0, -1), item=ORE, rate=P_ORE, note="the bottom valve, onto a sealed gallery's belt"),
+        port("nitrogen-in", "in", "gas", kit.flange(0.05, 10, kit.SS), (1.7, 0, 13.3), (1, 0, 0), item="material.nitrogen", note="from the hall, to fill the lock"),
+        port("power-in", "in", "power", lv(ol["needs"]["power"]), (3, 0, 0.5), (1, 0, 0), power=ol["needs"]["power"], voltage=400),
+    ]
+    # The mill.
+    ml = us["ball-mill-4m4"]
+    ml["ports"] = [
+        port("ore-in", "in", "bulk", kit.belt_transfer(1.0), (-8, 0, 4), (0, 0, 1), item=ORE, rate=P_ORE, note="the feed chute's hopper at its -x trunnion"),
+        port("water-in", "in", "liquid", kit.flange(0.1, 10, kit.SS), (-8, 1.2, 4), (0, 0, 1), item=WATER, note="the presses' filtrate back, into the feed chute"),
+        port("slurry-out", "out", "liquid", kit.flange(0.15, 10, temp=330.0), (8, 3, 0.5), (0, 1, 0), item=ORE, note="from the sump's pump"),
+        port("power-in", "in", "power", mv(ml["needs"]["power"]), (6, -4.4, 0.5), (0, -1, 0), power=ml["needs"]["power"], voltage=6600, note="the motor's terminal box"),
+    ]
+    # The presses.
+    fp = us["filter-press-2"]
+    fp["ports"] = [
+        port("slurry-in", "in", "liquid", kit.flange(0.15, 10, temp=330.0), (0, -3.25, 9.5), (0, -1, 0), item=ORE),
+        port("filtrate-out", "out", "liquid", kit.flange(0.1, 10, kit.SS), (5, -3.25, 0.5), (0, -1, 0), item=WATER),
+        port("cooling-in", "in", "liquid", kit.flange(0.2, 10, temp=330.0), (-5, -3.25, 0.5), (0, -1, 0), item=WATER, rate=q(fp["needs"]["heat"]), temperature=320.0),
+        port("cooling-out", "out", "liquid", kit.flange(0.2, 10, temp=330.0), (-4.4, -3.25, 0.5), (0, -1, 0), item=WATER, rate=q(fp["needs"]["heat"]), temperature=330.0),
+        port("condensate-in", "in", "liquid", kit.flange(0.05, 10, kit.SS), (4, -3.25, 0.5), (0, -1, 0), item=WATER, rate=P_WATER),
+        port("power-in", "in", "power", lv(fp["needs"]["power"]), (2.5, -3.25, 0.5), (0, -1, 0), power=fp["needs"]["power"], voltage=400),
+        port("cake-1", "out", "bulk", kit.chute(1.0), (-1.2, 0, 7.775), (0, 0, -1), item=ORE, rate=P_ORE / 2, note="a press's breaker's opening onto the cake belt"),
+        port("cake-2", "out", "bulk", kit.chute(1.0), (1.2, 0, 7.775), (0, 0, -1), item=ORE, rate=P_ORE / 2),
+    ]
+    # The discs: the screen's fines kept on the disc.
+    dk = us["balling-disc-7m5"]
+    if "fines elevator" not in dk["desc"]:
+        dk["desc"] = dk["desc"].replace("the fines drop through into a tray and out at (0, -3.5, 0.65) to the layout's return belt,", "the fines drop through into a tray and a small fines elevator on the frame's -x side lifts them back into the cake chute,")
+        dk["built_of"] = dk["built_of"] + [part("Fines elevator", A36, 1500.0, "a small bucket elevator from the screen's tray to the cake chute, from memory")]
+    dk["ports"] = [
+        port("cake-in", "in", "bulk", kit.chute(0.4), (0, 2, 7), (0, 0, 1), item=ORE, rate=P_ORE / 4, note="the cake chute, fed by a plough off the layout's header"),
+        port("balls-out", "out", "bulk", kit.chute(0.6), (0, -4.5, 1), (0, -1, 0), item=ORE, rate=P_ORE / 4 / (1 - MOIST), note="the screen's end, onto the layout's collector"),
+        port("power-in", "in", "power", lv(dk["needs"]["power"]), (4.5, 1.0, 0.5), (1, 0, 0), power=dk["needs"]["power"], voltage=400),
+    ]
+    # The shafts.
+    sh = us["pellet-shaft-63th"]
+    sh["ports"] = [
+        port("top-gas-out", "out", "gas", kit.flange(0.7, 10, temp=T_TOPG + K), (0, -3.3, 21.5), (0, -1, 0), item="material.nitrogen", temperature=T_TOPG + K),
+        port("cooling-gas-in", "in", "gas", kit.flange(0.6, 10, temp=T_LOOPC + K), (0, -3.3, 7), (0, -1, 0), item="material.nitrogen", temperature=T_LOOPC + K),
+        port("firing-in-a", "in", "gas", kit.flange(0.25, 10, temp=T_LOOPC + K), (5.55, 0, 12), (1, 0, 0), item="material.nitrogen", note="the +x torch chamber"),
+        port("firing-in-b", "in", "gas", kit.flange(0.25, 10, temp=T_LOOPC + K), (-5.55, 0, 12), (-1, 0, 0), item="material.nitrogen", note="the -x torch chamber"),
+        port("water-in", "in", "liquid", kit.flange(0.15, 10, temp=330.0), (-0.6, -3.3, 13), (0, -1, 0), item=WATER, rate=q(sh["needs"]["heat"]), temperature=320.0),
+        port("water-out", "out", "liquid", kit.flange(0.15, 10, temp=330.0), (0.6, -3.3, 13), (0, -1, 0), item=WATER, rate=q(sh["needs"]["heat"]), temperature=330.0),
+        port("charge-in", "in", "bulk", kit.belt_transfer(0.8), (0, 0, 29.5), (0, 0, 1), item=ORE, note="the charge lock hopper's rim"),
+        port("discharge-out", "out", "bulk", kit.chute(0.8), (0, 0, 0.8), (0, 0, -1), item=PEL, rate=P_RATE / 2),
+        port("power-in", "in", "power", mv(sh["needs"]["power"]), (0, 5.5, 8), (0, 1, 0), power=sh["needs"]["power"], voltage=6600, note="the torches' supplies"),
+    ]
+    # The gas loops: the dust into bins; the cold gas out at the shaft's bore.
+    gl = us["pellet-gas-loop"]
+    if "dust bin" not in gl["desc"]:
+        gl["desc"] = gl["desc"].replace("which lets it out by a 200 mm chute at (-9, 0, 3) and (-3, 0, 1.5), facing down onto the layout's closed dust conveyor.", "which lets it into a sealed 2 m3 dust bin under it, the loop's, changed by forklift about once a shift.")
+        gl["desc"] = gl["desc"].replace("the cold gas out by a 700 mm flange at (12, 0, 1.5) facing +x;", "the cold gas out by a 600 mm flange at (12, 0, 1.5) facing +x, the shafts' bore;")
+        gl["built_of"] = gl["built_of"] + [part("Dust bins", A36, 2 * 800.0, "two sealed 2 m3 bins under the rotary locks, from memory")]
+    gl["ports"] = [
+        port("top-gas-in", "in", "gas", kit.flange(0.7, 10, temp=T_TOPG + K), (-9, 0, 13), (0, 0, 1), item="material.nitrogen", temperature=T_TOPG + K),
+        port("cold-gas-out", "out", "gas", kit.flange(0.6, 10, temp=T_LOOPC + K), (12, 0, 1.5), (1, 0, 0), item="material.nitrogen", temperature=T_LOOPC + K),
+        port("condensate-out", "out", "liquid", kit.flange(0.05, 10, kit.SS), (6, 6, 0.3), (0, 1, 0), item=WATER, rate=P_WATER / 2),
+        port("oxygen-in", "in", "gas", kit.flange(0.05, 16, kit.SS, "double"), (9, 6, 1), (0, 1, 0), item="material.oxygen"),
+        port("cooling-in", "in", "liquid", kit.flange(0.3, 10, temp=330.0), (-12, -2, 1), (-1, 0, 0), item=WATER, rate=q(gl["needs"]["heat"]), temperature=320.0),
+        port("cooling-out", "out", "liquid", kit.flange(0.3, 10, temp=330.0), (-12, -1.4, 1), (-1, 0, 0), item=WATER, rate=q(gl["needs"]["heat"]), temperature=330.0),
+        port("power-in", "in", "power", lv(gl["needs"]["power"]), (10, -6, 0.5), (0, -1, 0), power=gl["needs"]["power"], voltage=400, note="the fan"),
+    ]
+
+
 def hydrogen_plant_airless(us, recs):
     """The hydrogen plant on airless ground: the blocks at 10 bar in the open, radiators for the tower, every kilogram
     of water kept. Laid of SFO 25 runs from port to port."""
@@ -3493,7 +3627,7 @@ def pellet_airless_units(us):
     col_a = 0.3 * 0.3 - 0.26 * 0.26
     shaft_m = cyl_shell(Do, bed + 3.0, t_s, bottom=2.0) * RHO["steel"]
     out["pellet-shaft-63th"] = dict(
-        name=f"Pellet shaft furnace, {rate * 3.6:.0f} t an hour, sealed", size_class=2, fits="bay-s2", dims=(11.5, 8.9, 29.5),
+        name=f"Pellet shaft furnace, {rate * 3.6:.0f} t an hour, sealed", size_class=2, fits="bay-s2", dims=(11.5, 11.0, 29.5),
         desc=(f"A vertical shaft {D:g} m across inside, sealed, that dries, fires and cools green balls in one bed as they sink through it against a closed loop of nitrogen at {PS_P / 1e5:.0f} bar (with the 4.5% oxygen the recipe takes, from the hydrogen plant's): "
               f"the oldest way of firing pellets, here with no air to draw and none to vent. From the bottom: cooling {PS_BED['cooling']:g} m (the loop's cold gas comes in under it and leaves it at about 1,150 deg C), soaking {PS_BED['soaking']:g}, firing {PS_BED['firing']:g} at about {T_FIRE:.0f} deg C, preheat {PS_BED['preheat']:g}, drying {PS_BED['drying']:g}; "
               f"about {burden / 1000:,.0f} t in the bed, some {burden / rate / 3600:.0f} hours from top to bottom. Two torch chambers on its ±x sides at the firing zone, {torches} plasma torches of 1.5 MW between them, heat a share of the loop's gas ({m_fire:.1f} of its {m_gas:.1f} kg/s) to about 1,350 deg C and blow it in through ports round the shaft; the gas that cooled the pellets carries their heat up into the firing zone, so the new heat is only the module's 0.5 GJ a tonne. "
@@ -3545,112 +3679,210 @@ def pellet_airless_units(us):
 
 
 def pellet_plant_airless(us, recs):
-    """The pellet plant on airless ground at about a moon's gravity: the wet hall, the shafts in their pit, radiators."""
+    """The pellet plant on airless ground at about a moon's gravity: the wet hall, the shafts in their pit, radiators.
+    Laid of SFO 25 runs from port to port (docs/proposals/factory-kit-assembly.md, the third layout)."""
     tkey = next(k for k in us if k.startswith("plant-transformer-"))
     zd = HALL_DECK
     xe = N_SEC * HALL_SEC / 2
-    S_X, S_Z = 113.0, -10.0
+    S_X, S_Y, S_Z = 113.0, 7.0, -10.5
+    L_Z = 6.0                                       # m: the ore lock's plinth, so its outlet feeds the gallery at the west head's high nozzle
     sh = recs["pellet-shaft-63th"]
     heat_in = (recs["filter-press-2"]["needs"]["heat"] + N_SEC * recs["pressure-hall-30m"]["needs"]["heat"] + 2 * sh["needs"]["heat"]
                + 2 * recs["pellet-gas-loop"]["needs"]["heat"] + recs[tkey]["needs"]["heat"])
     rad = "radiator-field-330k"
     n_rad = math.ceil(heat_in / recs[rad]["rejects"]["heat"])
     cols = 6
-    rad_at = [(-120.0 + 48.0 * (i % cols), 72.0 + 48.0 * (i // cols)) for i in range(n_rad)]
-    bays = [{"id": "EW", "mount": "plant-mount.bay-s4", "unit": "unit.pressure-hall-30m-end", "at": [-xe, 0.0, 0.0], "turn": 180.0, "note": "the hall's west head: the ore comes in through its nozzle"}]
+    rad_at = [(-120.0 + 48.0 * (i % cols), 72.0 + 51.0 * (i // cols)) for i in range(n_rad)]     # (a 3 m aisle south of each row, for its mains)
+    bays = [{"id": "EW", "mount": "plant-mount.bay-s4", "unit": "unit.pressure-hall-30m-end", "at": [-xe, 0.0, 0.0], "turn": 180.0, "note": "the hall's west head: the ore comes in through its high nozzle, the services through its panel"}]
     bays += [{"id": f"H{i + 1}", "mount": "plant-mount.bay-s4", "unit": "unit.pressure-hall-30m", "at": [-xe + HALL_SEC * (i + 0.5), 0.0, 0.0], "note": "on its cradle"} for i in range(N_SEC)]
-    bays += [{"id": "EE", "mount": "plant-mount.bay-s4", "unit": "unit.pressure-hall-30m-end", "at": [xe, 0.0, 0.0], "note": "the east head: the green ball gallery leaves through its nozzle"},
-             {"id": "M", "mount": "plant-mount.bay-s3", "unit": "unit.ball-mill-4m4", "at": [-33.0, 0.0, zd], "note": f"on the deck, in {HALL_P / 1e3:.0f} kPa of nitrogen; its motor water-cooled, for the thin gas cools a fifth as well"},
+    bays += [{"id": "EE", "mount": "plant-mount.bay-s4", "unit": "unit.pressure-hall-30m-end", "at": [xe, 0.0, 0.0], "note": "the east head: the green balls leave through its low nozzle, the condensate comes in through its panel"},
+             {"id": "M", "mount": "plant-mount.bay-s3", "unit": "unit.ball-mill-4m4", "at": [-33.0, 0.0, zd], "note": f"on the deck, in {HALL_P / 1e3:.0f} kPa of nitrogen"},
              {"id": "F", "mount": "plant-mount.bay-s2", "unit": "unit.filter-press-2", "at": [-12.0, 0.0, zd], "note": "on the deck"},
              {"id": "B1", "mount": "plant-mount.bay-s2", "unit": "unit.balling-disc-7m5", "at": [12.0, -6.0, zd], "turn": 180.0, "note": "two rows of two on the deck, the south pair turned so all four screens face the aisle at y 0"},
              {"id": "B2", "mount": "plant-mount.bay-s2", "unit": "unit.balling-disc-7m5", "at": [24.0, -6.0, zd], "turn": 180.0, "note": ""},
              {"id": "B3", "mount": "plant-mount.bay-s2", "unit": "unit.balling-disc-7m5", "at": [12.0, 6.0, zd], "note": ""},
              {"id": "B4", "mount": "plant-mount.bay-s2", "unit": "unit.balling-disc-7m5", "at": [24.0, 6.0, zd], "note": ""},
-             {"id": "L", "mount": "plant-mount.bay-s1", "unit": "unit.ore-lock-hopper", "at": [-xe - 21.0, 0.0, 0.0], "note": "outside the west head"},
-             {"id": "S1", "mount": "plant-mount.bay-s2", "unit": "unit.pellet-shaft-63th", "at": [S_X, -6.0, S_Z], "note": f"in a pit {-S_Z:g} m deep, so the green balls' gallery climbs less"},
-             {"id": "S2", "mount": "plant-mount.bay-s2", "unit": "unit.pellet-shaft-63th", "at": [S_X, 6.0, S_Z], "turn": 180.0, "note": "turned, its gas ports to the north"},
+             {"id": "L", "mount": "plant-mount.bay-s1", "unit": "unit.ore-lock-hopper", "at": [-xe - 21.0, 0.0, L_Z], "turn": 180.0, "note": f"outside the west head, on a plinth {L_Z:g} m high, turned so its services are on its far side from the gallery"},
+             {"id": "S1", "mount": "plant-mount.bay-s2", "unit": "unit.pellet-shaft-63th", "at": [S_X, -S_Y, S_Z], "note": f"in a pit {-S_Z:g} m deep, so the green balls' gallery climbs less"},
+             {"id": "S2", "mount": "plant-mount.bay-s2", "unit": "unit.pellet-shaft-63th", "at": [S_X, S_Y, S_Z], "turn": 180.0, "note": "turned, its gas ports to the north"},
              {"id": "G1", "mount": "plant-mount.bay-s3", "unit": "unit.pellet-gas-loop", "at": [S_X, -27.0, 0.0], "note": "south of the pit"},
              {"id": "G2", "mount": "plant-mount.bay-s3", "unit": "unit.pellet-gas-loop", "at": [S_X, 27.0, 0.0], "note": "north of the pit"},
              {"id": "T", "mount": "plant-mount.bay-s2", "unit": f"unit.{tkey}", "at": [60.0, -36.0, 0.0], "note": "on its slab, no fire walls (nothing to burn in)"},
              {"id": "P", "mount": "plant-mount.bay-s1", "unit": "unit.crew-post", "at": [-xe - 21.0, -24.0, 0.0], "note": "by the west head's crew lock, under its berm"}]
     bays += [{"id": f"RL{i + 1}", "mount": "plant-mount.bay-s4", "unit": f"unit.{rad}", "at": [x, y, 0.0], "note": f"north, in rows of {cols}"} for i, (x, y) in enumerate(rad_at)]
-    ss = "material.stainless-steel-304"
-    pm = lambda d, t: math.pi * d * t * RHO["steel"]
-    zs = lambda z: S_Z + z
-    ports = float(sh["identity"]["description"].split("top gas outlet (0.7 m) at (0, -")[1].split(",")[0])
-    z_top_gas = float(sh["identity"]["description"].split("top gas outlet (0.7 m) at (0, -")[1].split(", ")[1].split(")")[0])
-    n_n2 = recs["pellet-gas-loop"]["identity"]["description"]
-    m_gas = float(n_n2.split("one pellet shaft's ")[1].split(" kg/s")[0])
-    d_top = float(n_n2.split("about ")[1].split(" m pipe")[0])
-    d_cold = math.sqrt(4 * (m_gas / (PS_P * 0.028 / (8.314 * 338))) / (math.pi * 20.0))
-    flow = heat_in / (4186 * 10)
-    d_cw = math.sqrt(4 * flow / 1000 / 2.5 / math.pi)
-    d_br = lambda q: max(0.1, math.sqrt(4 * q / (4186 * 10) / 1000 / 2.0 / math.pi))
-    gallery = 100.0 + math.pi * 3.0 * 0.004 * RHO["steel"] + 40.0
-    z_nz = 9.0
-    x_nz = xe + 6.9
-    z_shut = zs(29.5) + 0.5
-    rise = 12.0
-    x_head = S_X
-    x_climb = x_head - (z_shut + 0.3 - z_nz) / math.tan(math.radians(rise))
-    assert x_climb > x_nz + 2
-    links = [
-        link("conveyor", "ore belt", (-xe - 85.0, 0.0, 2.0), (-xe - 21.0, 0.0, 17.5), A36, 150.0, 100000.0 * MOON_G[1] / G + 30000.0, f"a 1 m belt, open (dry ore in vacuum): {P_ORE:.1f} kg/s of ore fines from the ore yard, beyond the layout, up at about 13 degrees to the lock hopper"),
-        link("conveyor", "hall ore belt", (-xe - 21.0, 0.0, 9.6), (-41.0, 0.0, 11.5), A36, gallery, 20000.0, f"a 1 m belt from under the lock, in a sealed gallery tube 3 m across at the hall's {HALL_P / 1e3:.0f} kPa, through the west head's nozzle to the mill's chute", via=[(-xe - 6.9, 0.0, z_nz + 0.6)]),
-        link("pipe", "slurry", (-25.0, 3.0, zd + 0.5), (-12.0, 0.0, zd + 9.5), A36, math.pi * 0.25 * 0.010 * RHO["steel"], None, "250 mm rubber-lined, pumped from the mill's sump up between the presses' heads", via=[(-25.0, 3.0, zd + 12.0), (-12.0, 3.0, zd + 12.0), (-12.0, 0.0, zd + 12.0)]),
-        link("pipe", "filtrate", (-7.0, -2.5, zd + 0.5), (-40.5, 0.35, zd + 3.8), A36, math.pi * 0.15 * 0.006 * RHO["steel"], None, "150 mm: the cooled filtrate back to the mill's feed chute", via=[(-7.0, -5.0, zd + 0.5), (-40.5, -5.0, zd + 0.5), (-40.5, 0.35, zd + 0.5)]),
-        link("conveyor", "cake belt", (-18.0, 0.0, zd + 7.6), (0.0, 0.0, zd + 8.98), A36, 100.0, 30000.0, "a 0.8 m belt along x under both presses, rising at about 13 degrees to its head over the cake shuttle", via=[(-6.0, 0.0, zd + 7.6)]),
-        link("conveyor", "cake shuttle", (0.0, -8.0, zd + 8.6), (0.0, 8.0, zd + 8.6), A36, 100.0, 7500.0, "a 0.8 m reversible belt along x 0, 0.4 m under the cake belt's head"),
-        link("conveyor", "south cake header", (0.0, -8.0, zd + 8.2), (26.0, -8.0, zd + 8.2), A36, 100.0, 10000.0, "along y -8, ploughs at x 12 and 24 into discs B1 and B2"),
-        link("conveyor", "north cake header", (0.0, 8.0, zd + 8.2), (26.0, 8.0, zd + 8.2), A36, 100.0, 10000.0, "along y 8, ploughs at x 12 and 24 into discs B3 and B4"),
-        link("conveyor", "green ball gallery", (8.0, 0.0, zd + 0.6), (x_head, 0.0, z_shut + 0.3), A36, gallery, 60000.0,
-             f"a 0.8 m belt along the aisle under the discs' screens, east and out through the east head's nozzle, then up at {rise:g} degrees to the shafts: outside the hall in a sealed gallery tube 3 m across at {HALL_P / 1e3:.0f} kPa, because in vacuum the green balls' water would boil off and freeze in their skins; its head in a sealed box over the shuttle",
-             via=[(x_nz, 0.0, z_nz), (round(x_climb, 1), 0.0, z_nz)]),
-        link("conveyor", "green ball shuttle", (S_X, -6.0, z_shut), (S_X, 6.0, z_shut), A36, gallery, 7500.0, "a 0.8 m reversible belt in the gallery's head box, 0.3 m under its head, into either shaft's charge lock (0.5 m drop)"),
-        link("conveyor", "pellet collector", (S_X, -7.0, zs(0.5)), (S_X, 9.2, zs(0.5)), A36, 120.0, 15000.0, "a 1 m belt along the pit floor under both discharge locks, north"),
-        link("conveyor", "pellet belt", (S_X, 9.2, zs(0.2)), (S_X + 120.0, 9.2, 2.0), A36, 150.0, 100000.0 * MOON_G[1] / G + 30000.0, f"a 1 m belt, open: {P_RATE:.1f} kg/s of fired pellets east along the pit, up at 12 degrees out of its trench and on to the airless shaft furnace's pellet belt, beyond the layout", via=[(S_X + 12.0, 9.2, zs(0.2)), (S_X + 12.0 + (2.0 - zs(0.2)) / math.tan(math.radians(12.0)), 9.2, 2.0)]),
+    by = {b_["id"]: b_ for b_ in bays}
+    at = lambda bid, pid: world(by[bid], next(q_ for q_ in recs[by[bid]["unit"].split(".", 1)[1]]["ports"] if q_["id"] == pid)["at"])
+    lvf = 400
+    lvk = lambda w: kit.cable(lvf, kit.area_for(amps(w, lvf)))
+    lvt = lambda w: kit.termination(lvf, kit.area_for(amps(w, lvf)))
+    p_fields = n_rad * recs[rad]["needs"]["power"]
+    p_hall = 4 * recs["balling-disc-7m5"]["needs"]["power"] + recs["filter-press-2"]["needs"]["power"] + N_SEC * recs["pressure-hall-30m"]["needs"]["power"]
+    p_fans = 2 * recs["pellet-gas-loop"]["needs"]["power"]
+    tp = recs[tkey]
+    p_mv = 2 * sh["needs"]["power"] + recs["ball-mill-4m4"]["needs"]["power"]
+    ore_z = 2.0
+    x_ore = at("L", "ore-in")[0] - (at("L", "ore-in")[2] + 3.0 - ore_z) / math.tan(math.radians(13.0))
+    x_pel = S_X + (2.0 + 3.0 + S_Z + 1.0 - 0.6 - 0.5 - 0.5) * 0 + 78.0
+    # The layout's own ports (facing into it).
+    edge = [
+        port("ore-in", "in", "bulk", kit.belt_transfer(1.0), (round(x_ore, 1), 0, ore_z), (1, 0, 0), item="good.iron-ore", rate=P_ORE, note="dry ore fines from the ore yard, onto the ore belt's tail"),
+        port("pellets-out", "out", "bulk", kit.belt_transfer(1.0), (x_pel, S_Y + 7.5, 2.0), (-1, 0, 0), item="good.iron-ore-pellets", rate=P_RATE, note="fired pellets onto the airless shaft furnace's pellet belt or a stockpile"),
+        port("o2-in", "in", "gas", kit.flange(0.05, 16, kit.SS, "double"), (160.0, 36.0, 3.5), (-1, 0, 0), item="material.oxygen", note="from the hydrogen plant: the recipe's 4.5%"),
+        port("n2-in", "in", "gas", kit.flange(0.05, 10, kit.SS), (-100.0, 12.8, 1.0), (1, 0, 0), item="material.nitrogen", note="make-up for the hall's and the lock's losses"),
+        port("hv-in", "in", "power", kit.termination(33000, kit.area_for(amps(p_mv + tp["needs"]["power"], 33000, 0.95))), (60.0, -60.0, 0.3), (0, 1, 0), power=p_mv + tp["needs"]["power"], voltage=33000, note="the site's 33 kV"),
+        port("lv-hall", "in", "power", lvt(p_hall), (-100.0, 13.6, 0.3), (1, 0, 0), power=p_hall, voltage=lvf, note="the site's 400 V, for the hall's presses, discs and fan coils"),
+        port("lv-west-head", "in", "power", lvt(recs["pressure-hall-30m-end"]["needs"]["power"]), (-100.0, 15.2, 0.3), (1, 0, 0), power=recs["pressure-hall-30m-end"]["needs"]["power"], voltage=lvf),
+        port("lv-east-head", "in", "power", lvt(recs["pressure-hall-30m-end"]["needs"]["power"]), (56.0, -60.0, 0.3), (0, 1, 0), power=recs["pressure-hall-30m-end"]["needs"]["power"], voltage=lvf),
+        port("lv-lock", "in", "power", lvt(recs["ore-lock-hopper"]["needs"]["power"]), (-71.0, -30.0, 0.3), (0, 1, 0), power=recs["ore-lock-hopper"]["needs"]["power"], voltage=lvf),
+        port("lv-fans", "in", "power", lvt(p_fans), (140.0, -50.0, 0.5), (-1, 0, 0), power=p_fans, voltage=lvf, note="the gas loops' fans"),
+        port("lv-post", "in", "power", lvt(recs["crew-post"]["needs"]["power"]), (-56.0, -24.0, 4.5), (-1, 0, 0), power=recs["crew-post"]["needs"]["power"], voltage=lvf),
+        port("lv-fields", "in", "power", lvt(p_fields), (149.4, 35.0, 0.3), (0, 1, 0), power=p_fields, voltage=lvf, note="the radiator fields' pumps"),
     ]
-    for sgn, gid in ((-1, "1"), (1, "2")):
-        y_s, y_g = 6.0 * sgn, 27.0 * sgn
-        y_p = y_s + sgn * ports
-        y_q = y_p + sgn * 2.0
+    L = lambda *a, **k: kit_link(*a[:4], bays, recs, edge, *a[4:], **k)
+    b08, b10 = kit.belt(0.8, P_ORE * 1.5), kit.belt(1.0, P_ORE * 1.5)
+    g08, g10 = kit.belt(0.8, P_ORE * 1.5, sealed=True), kit.belt(1.0, P_ORE * 1.5, sealed=True)
+    links = []
+    # Bulk: the ore in by the high nozzle to the mill; the cake from the presses by a riser and a shuttle to the discs'
+    # headers; the green balls along the aisle, out by the low nozzle, up to the shafts' shuttle; the pellets out of the pit.
+    z_g = at("EE", "nozzle")[2]
+    x_g2 = at("EE", "nozzle")[0] + 7.0
+    z_sh = at("S1", "charge-in")[2] + 3.0
+    links += [
+        L("ore belt", b10, ("edge:ore-in", "L:ore-in"), [None, None], (), 1, 100000.0 * MOON_G[1] / G + 30000.0, f"an open belt (dry ore in vacuum), up at 13 degrees to its head 3 m over the lock hopper's rim on its plinth"),
+        L("ore gallery", g10, ("L:ore-out", "M:ore-in"), [None, None], ("EW:high-nozzle",), 1, 20000.0, f"sealed, at the hall's {HALL_P / 1e3:.0f} kPa: from under the lock, level through the west head's high nozzle to its head 3 m over the mill's feed hopper"),
+        L("cake belt", b08, ("cap", "onto:cake riser"), [(-19.0, 0.0, 14.8), (-3.0, 0.0, 14.8)], ("F:cake-1", "F:cake-2"), 1, 15000.0, "level along x through the presses' corridor, under both breakers' openings"),
+        L("cake riser", b08, ("cap", "onto:cake shuttle"), [(-3.0, 0.0, 14.3), (4.84, 0.0, 16.4)], (), 1, 15000.0, "up at 15 degrees to the shuttle"),
+        L("cake shuttle", b08, ("onto:south cake header", "onto:north cake header"), [(4.84, -8.0, 15.9), (4.84, 8.0, 15.9)], (), 1, 7500.0, "reversible, along y", reversible=True),
+        L("south cake header", b08, ("cap", "cap"), [(4.0, -8.0, 15.4), (26.5, -8.0, 15.4)], ("B1:cake-in", "B2:cake-in"), 1, 10000.0, "ploughs at x 12 and 24 into discs B1 and B2"),
+        L("north cake header", b08, ("cap", "cap"), [(4.0, 8.0, 15.4), (26.5, 8.0, 15.4)], ("B3:cake-in", "B4:cake-in"), 1, 10000.0, "ploughs at x 12 and 24 into discs B3 and B4"),
+        L("green ball collector", b08, ("cap", "onto:green gallery, hall"), [(7.0, 0.0, 7.95), (40.0, 0.0, z_g + 0.5)], ("B1:balls-out", "B2:balls-out", "B3:balls-out", "B4:balls-out"), 1, 15000.0, "along the aisle under the four screens' ends, rising gently"),
+        L("green gallery, hall", g08, ("cap", "onto:green gallery"), [(39.0, 0.0, z_g), (x_g2, 0.0, z_g)], ("EE:nozzle",), 1, 15000.0, "sealed, level out through the east head's low nozzle"),
+        L("green gallery", g08, ("cap", "onto:green ball shuttle"), [(x_g2, 0.0, z_g - 0.5), (S_X, 0.0, z_sh + 0.5)], (), 1, 60000.0, f"sealed, up at {math.degrees(math.atan2(z_sh + 1.0 - z_g, S_X - x_g2)):.1f} degrees to the shuttle over the shafts: in vacuum the green balls' water would boil off and freeze in their skins"),
+        L("green ball shuttle", g08, ("S1:charge-in", "S2:charge-in"), [None, None], (), 1, 7500.0, "sealed, reversible, its ends 3 m over either shaft's charge lock", reversible=True),
+        L("pellet collector", b10, ("cap", "onto:pellet belt"), [(S_X, -S_Y - 2.0, S_Z - 0.6), (S_X, S_Y + 7.5, S_Z - 0.6)], ("S1:discharge-out", "S2:discharge-out"), 1, 15000.0, "along the pit floor in a trench under both discharge locks"),
+        L("pellet belt", b10, ("cap", "edge:pellets-out"), [(S_X, S_Y + 7.5, S_Z - 1.1), None], (), 1, 100000.0 * MOON_G[1] / G + 30000.0, "open, east along the pit and up out of its trench"),
+    ]
+    # Gas: each shaft's loop.
+    top = kit.pipe(0.7, 10, lagged=True, temp=T_TOPG + 273.15)
+    cold = kit.pipe(0.6, 10, temp=T_LOOPC + 273.15)
+    fire = kit.pipe(0.25, 10, temp=T_LOOPC + 273.15)
+    for sg, k_ in ((-1, "1"), (1, "2")):
+        Sx, G_ = f"S{k_}", f"G{k_}"
+        a_, b_ = ("firing-in-a", "firing-in-b") if k_ == "1" else ("firing-in-b", "firing-in-a")     # (the east chamber's port, the west's: S2 is turned)
+        y1, y2, y3 = sg * 13.0, sg * 14.0, sg * 15.5
         links += [
-            link("pipe", f"top gas {gid}", (S_X, y_p, zs(z_top_gas)), (S_X - 9.0, y_g, 13.0), A36, pm(d_top, 0.010) + math.pi * (d_top + 0.2) * 0.1 * 150.0, None, f"{d_top:.1f} m, 10 mm for {PS_P / 1e5:.0f} bar, lagged to keep it over its dew point", via=[(S_X, y_p + sgn * 3.0, zs(z_top_gas)), (S_X - 9.0, y_p + sgn * 3.0, zs(z_top_gas))]),
-            link("pipe", f"cooling gas {gid}", (S_X + 12.0, y_g, 1.5), (S_X, y_p, zs(7.0)), A36, pm(d_cold, 0.010), None, f"{d_cold:.2f} m: the fan's gas back, down the pit's east side to under the cooling zone", via=[(S_X + 14.0, y_g, 1.5), (S_X + 14.0, y_q, 1.5), (S_X + 7.0, y_q, 1.5), (S_X + 7.0, y_q, zs(7.0)), (S_X, y_q, zs(7.0))]),
-            link("pipe", f"firing gas {gid}", (S_X + 7.0, y_q, zs(9.0)), (S_X + 4.5, y_s, zs(12.0)), A36, pm(d_cold * 0.55, 0.008), None, "a branch of the fan's gas teed off the cooling gas's drop into the +x torch chamber's bottom, and on round the shaft to the -x one", via=[(S_X + 4.5, y_q, zs(9.0)), (S_X + 4.5, y_s, zs(9.0))]),
-            link("pipe", f"oxygen {gid}", (S_X + 9.0, y_g + 6.0, 1.0), (S_X + 47.0, y_g + 6.0, 2.5), ss, pm(0.1, 0.004), None, "100 mm: oxygen make-up from the hydrogen plant, beyond the layout, over the radiator main", via=[(S_X + 9.0, y_g + 6.0, 2.5)]),
+            L(f"top gas {k_}", top, (f"{Sx}:top-gas-out", f"{G_}:top-gas-in"), [None, (S_X, y1, at(Sx, "top-gas-out")[2]), (S_X, y1, 17.0), (S_X - 9.0, y1, 17.0), (S_X - 9.0, sg * 27.0, 17.0), None], (), 1, None, "lagged in foil to keep it over its dew point; up over the pit's edge and down onto the cyclone"),
+            L(f"cold gas {k_}", cold, (f"{G_}:cold-gas-out", f"{Sx}:cooling-gas-in"), [None, (S_X + 14.0, sg * 27.0, 1.5), (S_X + 14.0, y2, 1.5), (S_X + 6.5, y2, 1.5), (S_X + 6.5, y2, at(Sx, "cooling-gas-in")[2]), (S_X, y2, at(Sx, "cooling-gas-in")[2]), None], (), 1, None, "the fan's gas back, down into the pit to under the cooling zone"),
+            L(f"firing gas {k_}, east", fire, (f"tee:cold gas {k_}", f"{Sx}:{a_}"), [(S_X + 9.0, y2, 1.5), (S_X + 9.0, sg * S_Y, 1.5), None]),
+            L(f"firing gas {k_}, west", fire, (f"tee:cold gas {k_}", f"{Sx}:{b_}"), [(S_X + 12.0, y2, 1.5), (S_X + 12.0, y3, 1.5), (S_X - 8.0, y3, 1.5), (S_X - 8.0, sg * S_Y, 1.5), None]),
         ]
-    x_ee = xe + 6.5
+    o2 = kit.pipe(0.05, 16, kit.SS, sealing="double")
     links += [
-        link("pipe", "condensate", (S_X + 6.0, -21.0, 0.3), (-8.0, -3.25, zd + 0.5), ss, pm(0.08, 0.004), None, f"80 mm: both loops' {P_WATER:.1f} kg/s of water west to the east head's service panel and inside along the deck's south edge to the presses' tank", via=[(xe + 11.0, -21.0, 0.3), (xe + 11.0, -9.0, 0.3), (xe + 11.0, -9.0, 10.0), (x_ee, -9.0, 10.0), (xe - 0.5, -12.0, zd + 0.5), (-8.0, -12.0, zd + 0.5)]),
-        link("pipe", "condensate, loop 2", (S_X + 6.0, 33.0, 0.3), (S_X + 6.0, -21.0, 0.3), ss, pm(0.08, 0.004), None, "80 mm round the pit's east end into loop 1's line", via=[(S_X + 15.0, 33.0, 0.3), (S_X + 15.0, -21.0, 0.3)]),
+        L("oxygen", o2, ("edge:o2-in", "G2:oxygen-in"), [None, (122.0, 36.0, 3.5), (122.0, 36.0, 1.0), None], (), 1, None, "the make-up, from the hydrogen plant"),
+        L("oxygen, loop 1", o2, ("tee:oxygen", "G1:oxygen-in"), [(140.0, 36.0, 3.5), (140.0, -17.0, 3.5), (122.0, -17.0, 3.5), (122.0, -17.0, 1.0), None]),
     ]
+    # Water kept: both loops' condensate in through the east head's panel to the presses' tank; the presses' filtrate
+    # back to the mill; the mill's slurry up to the presses.
+    k50 = kit.pipe(0.05, 10, kit.SS, liquid=True)
     links += [
-        link("pipe", "radiator loop", (rad_at[-1][0] + 24.0, rad_at[-1][1], 1.0), (S_X - 12.0, -29.0, 1.0), A36, 2 * pm(d_cw, 0.008), None, f"a pair of {d_cw:.2f} m pipes at about 330 K: {flow:,.0f} kg/s along the {n_rad} radiator fields' rows to the gas loops' condensers, the shafts' torches, the transformer and into the hall", via=[(150.0, rad_at[-1][1], 1.0), (150.0, -44.0, 1.0), (S_X - 12.0, -44.0, 1.0)]),
-        link("pipe", "radiator loop, north", (150.0, 44.0, 1.0), (S_X - 12.0, 25.0, 1.0), A36, 2 * pm(d_br(recs["pellet-gas-loop"]["needs"]["heat"]), 0.006), None, "the pair teed off at x 150 to loop 2's condenser", via=[(S_X - 12.0, 44.0, 1.0)]),
-        link("pipe", "radiator loop, hall", (S_X - 14.0, -44.0, 1.0), (-17.0, -3.25, zd + 0.5), A36, 2 * pm(d_br(recs["filter-press-2"]["needs"]["heat"] + N_SEC * recs["pressure-hall-30m"]["needs"]["heat"]), 0.006), None, "the pair west south of the hall, round the crew post and the ore lock and in by the west head's service panel (north side, the head being turned); inside along the deck's south edge to the presses' cooler, teed to each section's fan coils (local (-14, -12), up through the deck)", via=[(-xe - 30.0, -44.0, 1.0), (-xe - 30.0, 9.0, 1.0), (-xe - 15.0, 9.0, 1.0), (-xe - 15.0, 9.0, 10.0), (-xe - 6.5, 9.0, 10.0), (-xe + 0.5, 9.0, zd + 0.5), (-xe + 0.5, -12.0, zd + 0.5), (-17.0, -12.0, zd + 0.5)]),
-        link("pipe", "torch cooling", (S_X - 14.0, -44.0, 1.0), (S_X - 0.6, -6.0 - ports, zs(13.0)), A36, 2 * pm(d_br(2 * sh["needs"]["heat"]), 0.005), None, "the pair to S1's torch flanges over the pit's south edge, and on round the pit to S2's", via=[(S_X - 14.0, -16.0, 1.0), (S_X - 0.6, -16.0, 1.0), (S_X - 0.6, -16.0, zs(13.0))]),
-        link("pipe", "transformer cooling", (60.0, -44.0, 1.0), (60.0, -36.0 - us[tkey]["dims"][1] / 2, 1.0), A36, 2 * pm(d_br(recs[tkey]["needs"]["heat"]), 0.005), None, "the pair north to the transformer's cooler"),
-        link("cable", "hall supply", (60.0 - us[tkey]["dims"][0] / 2, -36.0, 2.9), (-xe - 6.5, 9.0, 10.5), CU, 3 * 3e6 / PF / (math.sqrt(3) * 6600) / 4e6 * RHO["copper"], None, "three phases at 6.6 kV in a tray, round the crew post and ore lock to the west head's service panel and the hall's switchroom", via=[(-xe - 31.0, -36.0, 2.9), (-xe - 31.0, 10.0, 2.9), (-xe - 15.0, 10.0, 2.9), (-xe - 15.0, 10.0, 10.5), (-xe - 6.5, 10.0, 10.5)]),
-        link("cable", "torch supply", (60.0 + us[tkey]["dims"][0] / 2, -36.0, 2.9), (S_X - 4.5, -6.0, zs(14.0)), CU, 3 * P_FIRE / 0.9 / PF / (math.sqrt(3) * 6600) / 4e6 * RHO["copper"], None, "three phases at 6.6 kV to both shafts' torch chambers and the gas loops' fans", via=[(S_X - 16.0, -36.0, 2.9), (S_X - 16.0, -14.0, 2.9), (S_X - 4.5, -14.0, 2.9)]),
-        link("pipe", "nitrogen make-up", (-xe - 60.0, 12.0, 1.0), (-xe - 6.5, 8.0, 10.0), ss, pm(0.05, 0.003), None, "50 mm: the hall's and the loops' leaks made up, from beyond the layout to the west head's service panel", via=[(-xe - 16.0, 12.0, 1.0), (-xe - 16.0, 12.0, 10.0), (-xe - 16.0, 8.0, 10.0)]),
+        L("condensate", k50, ("G2:condensate-out", "EE:k1-out"), [None, (119.0, 35.0, 0.3), (119.0, 35.0, 3.0), (135.0, 35.0, 3.0), (135.0, -19.0, 3.0), (55.0, -19.0, 3.0), (55.0, -9.0, 3.0), (55.0, -9.0, 10.0), None], (), 1, None, f"both loops' {P_WATER:.1f} kg/s, kept; 3 m up, over the cables"),
+        L("condensate, loop 1", k50, ("G1:condensate-out", "tee:condensate"), [None, (119.0, -19.0, 0.3), (119.0, -19.0, 3.0)]),
+        L("condensate, hall", k50, ("EE:k1-in", "F:condensate-in"), [None, (47.0, -9.0, 10.0), (47.0, -9.0, 12.0), (47.0, -12.0, 12.0), (-8.0, -12.0, 12.0), (-8.0, -12.0, 8.0), None], (), 1, None, "along the deck's south edge, high, to the presses' tank"),
+        L("filtrate", kit.pipe(0.1, 10, kit.SS, liquid=True), ("F:filtrate-out", "M:water-in"), [None, (-7.0, -5.5, 8.0), (-7.0, -5.5, 9.5), (-43.5, -5.5, 9.5), (-43.5, 1.2, 9.5), (-43.5, 1.2, 13.0), (-41.0, 1.2, 13.0), None], (), 1, None, "the cooled filtrate back into the mill's feed chute"),
+        L("slurry", kit.pipe(0.15, 10, liquid=True), ("M:slurry-out", "F:slurry-in"), [None, (-25.0, 5.5, 8.0), (-25.0, 5.5, 18.0), (-20.0, 5.5, 18.0), (-20.0, -5.0, 18.0), (-12.0, -5.0, 18.0), (-12.0, -5.0, 17.0), None], (), 1, None, "rubber-lined, pumped from the mill's sump up to the presses' feed"),
+        L("nitrogen", kit.pipe(0.05, 10, kit.SS), ("edge:n2-in", "EW:nitrogen-in"), [None, (-57.0, 12.8, 1.0), (-57.0, 12.8, 9.0), (-57.0, 8.4, 9.0), (-57.0, 8.4, 10.0), None], (), 1, None, "make-up into the hall's gas"),
+        L("nitrogen, lock", kit.pipe(0.05, 10, kit.SS), ("tee:nitrogen", "L:nitrogen-in"), [(-72.0, 12.8, 1.0), (-72.0, 12.8, 19.3), (-72.0, 0.0, 19.3), None], (), 1, None, "to fill the lock before its bottom valve opens"),
+    ]
+    # The radiator loop: the return (cold) main from the fields along y -44 and up the hall's west side into the west
+    # head's panel; the flow (warm) main beside it on its inside, 2.5 m up, back out of the panel to the fields.
+    xf, xr, xl = 147.0, 148.2, 149.4
+    rows, yf, yr, yl, row_links = radiator_rows(L, bays, recs, rad, rad_at, xf, xr, xl, lvf)
+    flow = heat_in / (4186 * 10)
+    w_main = kit.pipe(kit.dn_for(math.sqrt(4 * flow / 1000 / 2.5 / math.pi)), 10, liquid=True, temp=330.0)
+    w_hall = kit.pipe(0.2, 10, liquid=True, temp=330.0)
+    links += [
+        L("loop return main", w_main, ("cap", "cap"), [(xr, yr(rows[-1]) + 1.0, 1.0), (xr, -44.0, 1.0), (-62.0, -44.0, 1.0)], (), 1, None, f"{flow:,.0f} kg/s back from the {n_rad} radiator fields at about 320 K, along y -44 to the hall's west end"),
+        L("loop flow main", w_main, ("cap", "cap"), [(-61.0, -42.8, 2.5), (xf, -42.8, 2.5), (xf, -42.8, 1.0), (xf, yf(rows[-1]) + 1.0, 1.0)], (), 1, None, "warm water back out to the fields, on the return main's inside, 2.5 m up"),
+        L("hall supply", w_hall, ("tee:loop return main", "EW:w1-out"), [(-60.0, -44.0, 1.0), (-60.0, 10.2, 1.0), (-60.0, 10.2, 10.0), None], (), 1, None, "north up the hall's west side and in at the west head's panel"),
+        L("hall return", w_hall, ("EW:w2-out", "tee:loop flow main"), [None, (-58.8, 9.6, 10.0), (-58.8, 9.6, 2.5), (-58.8, -42.8, 2.5)]),
+        L("radiator pumps' supply", kit.cable(lvf, kit.area_for(amps(p_fields, lvf))), ("edge:lv-fields", "cap"), [None, (xl, yl(rows[-1]) + 1.0, 0.3)], (), 1, None, "north along the fields' east side, under the loop's mains"),
+    ]
+    links += row_links
+    br = lambda dn: kit.pipe(dn, 10, liquid=True, temp=330.0)
+    def pair(name, dn, cin, cout, x_c, x_h, y_in, y_out, x_port):
+        """A cooler's branch pair off the mains along y -44 (return, 1 m up) and y -42.8 (flow, 2.5 m up), north at
+        x_c and x_h to ports on a -x face."""
+        return [L(f"{name} cooling in", br(dn), ("tee:loop return main", cin), [(x_c, -44.0, 1.0), (x_c, y_in, 1.0), None]),
+                L(f"{name} cooling out", br(dn), (cout, "tee:loop flow main"), [None, (x_h, y_out, 1.0), (x_h, y_out, 2.5), (x_h, -42.8, 2.5)])]
+    links += pair("transformer", 0.1, "T:cooling-in", "T:cooling-out", 55.0, 54.4, at("T", "cooling-in")[1], at("T", "cooling-out")[1], None)
+    links += pair("gas loop 1", 0.3, "G1:cooling-in", "G1:cooling-out", 99.0, 98.4, at("G1", "cooling-in")[1], at("G1", "cooling-out")[1], None)
+    links += pair("gas loop 2", 0.3, "G2:cooling-in", "G2:cooling-out", 95.0, 94.4, at("G2", "cooling-in")[1], at("G2", "cooling-out")[1], None)
+    for sg, k_, xc, xh in ((-1, "1", 129.0, 130.2), (1, "2", 131.0, 132.2)):
+        Sx = f"S{k_}"
+        wi, wo = at(Sx, "water-in"), at(Sx, "water-out")
+        links += [L(f"torches {k_} cooling in", br(0.15), ("tee:loop return main", f"{Sx}:water-in"), [(xc, -44.0, 1.0), (xc, sg * 12.0, 1.0), (wi[0], sg * 12.0, 1.0), (wi[0], sg * 12.0, wi[2]), None]),
+                  L(f"torches {k_} cooling out", br(0.15), (f"{Sx}:water-out", "tee:loop flow main"), [None, (wo[0], sg * 12.6, wo[2]), (xh, sg * 12.6, wo[2]), (xh, -42.8, 2.5)])]
+    # Inside the hall: the pair from the panel along the deck's south edge to the presses' cooler and each section's
+    # fan coils, the return 8.5 m up, the flow 9.3 m up so its branches climb over it.
+    links += [
+        L("hall cold", w_hall, ("EW:w1-in", "cap"), [None, (-45.2, 10.2, 10.0), (-45.2, 10.2, 8.5), (-45.2, -11.4, 8.5), (18.0, -11.4, 8.5)], (), 1, None, "inside, east of the west head's vehicle lock, along the deck's south edge"),
+        L("hall warm", w_hall, ("cap", "EW:w2-in"), [(18.0, -10.8, 9.3), (-45.8, -10.8, 9.3), (-45.8, 9.6, 9.3), (-45.8, 9.6, 10.0), None]),
+        L("presses cooling in", w_hall, ("tee:hall cold", "F:cooling-in"), [(-17.0, -11.4, 8.5), (-17.0, -11.4, 8.0), None]),
+        L("presses cooling out", w_hall, ("F:cooling-out", "tee:hall warm"), [None, (-16.4, -10.8, 8.0), (-16.4, -10.8, 9.3)]),
+    ]
+    for i in range(N_SEC):
+        H = f"H{i + 1}"
+        xi, xo = at(H, "water-in")[0], at(H, "water-out")[0]
+        links += [L(f"{H} fan coils in", br(0.15), ("tee:hall cold", f"{H}:water-in"), [(xi, -11.4, 8.5), (xi, -12.0, 8.5), None]),
+                  L(f"{H} fan coils out", br(0.15), (f"{H}:water-out", "tee:hall warm"), [None, (xo, -12.0, 9.3), (xo, -10.8, 9.3)])]
+    # Power: 33 kV to the transformer; 6.6 kV from it by a main with joint boxes to the shafts' torches and, through the
+    # west head's panel, the mill; 400 V from the site: the hall (one main inside, branched), the heads, the lock, the fans,
+    # the post.
+    links += [L("transformer supply", kit.cable(33000, kit.area_for(amps(p_mv + tp["needs"]["power"], 33000, 0.95))), ("edge:hv-in", "T:hv-in"), [None, (60.0, -46.0, 0.3), (60.0, -46.0, 7.0), (at("T", "hv-in")[0], at("T", "hv-in")[1], 7.0), None])]
+    n_mv = math.ceil(amps(p_mv, 6600) / (630e-6 * kit.J_VACUUM))
+    lo = at("T", "lv-out")
+    links += [
+        L("6.6 kV main", kit.cable(6600, 630), ("T:lv-out", "cap"), [None, (lo[0], -30.0, lo[2]), (lo[0], -30.0, 5.0), (lo[0], -17.0, 5.0), (126.0, -17.0, 5.0), (126.0, 2.0, 5.0)], (), n_mv, None, "on trays 5 m up, over the loop's pipes"),
+        L("torches 1 supply", kit.cable(6600, kit.area_for(amps(sh["needs"]["power"], 6600))), ("tee:6.6 kV main", "S1:power-in"), [(126.0, -0.3, 5.0), (S_X, -0.3, 5.0), (S_X, -0.3, at("S1", "power-in")[2]), None]),
+        L("torches 2 supply", kit.cable(6600, kit.area_for(amps(sh["needs"]["power"], 6600))), ("tee:6.6 kV main", "S2:power-in"), [(126.0, 0.3, 5.0), (S_X, 0.3, 5.0), (S_X, 0.3, at("S2", "power-in")[2]), None]),
+        L("mill supply", kit.cable(6600, kit.area_for(amps(recs["ball-mill-4m4"]["needs"]["power"], 6600))), ("tee:6.6 kV main", "EW:e1-out"), [(lo[0], -20.0, 5.0), (-56.0, -20.0, 5.0), (-56.0, 12.0, 5.0), (-56.0, 12.0, 12.5), (-54.5, 12.0, 12.5), (-54.5, 10.2, 12.5), (-54.5, 10.2, 10.8), None], (), 1, None, "west past the hall to the west head's panel, down onto it from above the water"),
+        L("mill supply, hall", kit.cable(6600, kit.area_for(amps(recs["ball-mill-4m4"]["needs"]["power"], 6600))), ("EW:e1-in", "M:power-in"), [None, (-45.5, 10.2, 10.8), (-45.5, -6.5, 10.8), (-27.0, -6.5, 10.8), (-27.0, -6.5, 8.0), None]),
+        L("hall 400 V", lvk(p_hall), ("edge:lv-hall", "EW:e2-out"), [None, (-55.0, 13.6, 0.3), (-55.0, 13.6, 12.5), (-53.5, 13.6, 12.5), (-53.5, 9.4, 12.5), (-53.5, 9.4, 10.8), None]),
+        L("hall 400 V, inside", lvk(p_hall), ("EW:e2-in", "cap"), [None, (-46.5, 9.4, 10.8), (-46.5, -12.6, 10.8), (31.0, -12.6, 10.8)], (), 1, None, "along the shell's south side over the deck's edge, a joint box at each branch"),
+        L("presses supply", lvk(recs["filter-press-2"]["needs"]["power"]), ("tee:hall 400 V, inside", "F:power-in"), [(-9.5, -12.6, 10.8), (-9.5, -6.0, 10.8), (-9.5, -6.0, 8.0), None]),
+    ]
+    for i in range(N_SEC):
+        H = f"H{i + 1}"
+        xp = at(H, "power-in")[0]
+        links.append(L(f"{H} fans supply", lvk(recs["pressure-hall-30m"]["needs"]["power"]), ("tee:hall 400 V, inside", f"{H}:power-in"), [(xp, -12.6, 10.8), (xp, -12.0, 10.8), None]))
+    for bid, xt, yt in (("B1", 5.5, -7.0), ("B2", 18.5, -7.0), ("B3", 18.0, 7.0), ("B4", 30.0, 7.0)):
+        pp = at(bid, "power-in")
+        links.append(L(f"{bid} supply", lvk(recs["balling-disc-7m5"]["needs"]["power"]), ("tee:hall 400 V, inside", f"{bid}:power-in"), [(xt, -12.6, 10.8), (xt, yt, 10.8), (xt, yt, pp[2]), None]))
+    links += [
+        L("west head supply", lvk(recs["pressure-hall-30m-end"]["needs"]["power"]), ("edge:lv-west-head", "EW:power-in"), [None, (-58.0, 15.2, 0.3), (-58.0, 15.2, 12.5), (-52.5, 15.2, 12.5), (-52.5, 8.6, 12.5), (-52.5, 8.6, 10.8), None]),
+        L("east head supply", lvk(recs["pressure-hall-30m-end"]["needs"]["power"]), ("edge:lv-east-head", "EE:power-in"), [None, (56.0, -8.6, 0.3), (56.0, -8.6, 10.8), None]),
+        L("lock supply", lvk(recs["ore-lock-hopper"]["needs"]["power"]), ("edge:lv-lock", "L:power-in"), [None, (-71.0, 0.0, 0.3), (-71.0, 0.0, at("L", "power-in")[2]), None], (), 1, None, "up the plinth's side"),
+        L("fans supply", lvk(p_fans), ("edge:lv-fans", "cap"), [None, (121.0, -50.0, 0.5)], (), 1, None, "a joint box to each fan"),
+        L("fan 1 supply", lvk(recs["pellet-gas-loop"]["needs"]["power"]), ("tee:fans supply", "G1:power-in"), [(123.0, -50.0, 0.5), None]),
+        L("fan 2 supply", lvk(recs["pellet-gas-loop"]["needs"]["power"]), ("tee:fans supply", "G2:power-in"), [(133.5, -50.0, 0.5), (133.5, 18.0, 0.5), (123.0, 18.0, 0.5), None]),
+        L("crew post supply", lvk(recs["crew-post"]["needs"]["power"]), ("edge:lv-post", "P:power-in"), [None, (-62.0, -24.0, 4.5), (-62.0, -24.0, 2.3), None], (), 1, None, "through the berm"),
     ]
     mobile = [{"unit": "unit.mill-crane-30t", "rides": "crane rails", "at": [-30.0, 0.0, HALL_D / 2 + 9.0]}]
     links.append(link("rail", "crane rails", (-xe + 1.0, 0.0, HALL_D / 2 + 9.0), (xe - 1.0, 0.0, HALL_D / 2 + 9.0), A36, 2 * 50.0, None, "the crane's two straight rails on the sections' runways, at y -11.4 and 11.4 (22.8 m apart); the link runs on their centre line"))
     R = HALL_D / 2
     arc = 2 * math.pi * R / 3
     wedge = (HALL_D * (R / 2) - (R ** 2 * math.acos(0.5) - (R / 2) * math.sqrt(R ** 2 - (R / 2) ** 2))) - arc * 0.5
-    pit = (16.0, 28.0, -S_Z)
+    pit = (16.0, 2 * 17.0, -S_Z)
     ground = [
-        {"what": "Hall bedding", "item": SINTER, "volume": r(arc * 0.5 * N_SEC * HALL_SEC), "note": f"0.5 m of sintered regolith under the lower third of the tube, x -{xe:g} to {xe:g}: the tube bears on it all along"},
+        {"what": "Hall bedding", "item": SINTER, "volume": r(arc * 0.5 * N_SEC * HALL_SEC), "note": f"0.5 m of sintered regolith under the lower third of the tube, x -{xe:g} to {xe:g}: the tube bears on it all along, grooved under the sections' and heads' flange rings"},
         {"what": "Hall cradle", "item": "material.regolith", "volume": r(wedge * N_SEC * HALL_SEC), "note": f"loose regolith packed against both sides of the tube up to z {R / 2:g}"},
         {"what": "Head pads", "item": SINTER, "volume": r(2 * 14 * 20 * 0.5), "note": "under the two heads and their locks"},
-        {"what": "Shaft pit", "item": SINTER, "volume": r(2 * (pit[0] + pit[1]) * pit[2] * 1.0 + pit[0] * pit[1] * 1.0), "note": f"a pit {pit[0]:g} x {pit[1]:g} m and {pit[2]:g} deep, x {S_X - 8:g} to {S_X + 8:g}, y -14 to 14: walls and floor of sintered blocks 1 m thick"},
-        {"what": "Pellet belt trench", "item": SINTER, "volume": r(4.0 * 0.5 * 55.0 + 2 * 55.0 * 5.0 * 0.5), "note": "the belt's ramp out of the pit, east: floor and walls"},
-        {"what": "Unit pads", "item": SINTER, "volume": r(2 * 24 * 12 * 0.5 + 12 * 8 * 0.5 + 6 * 6 * 0.5), "note": "0.5 m under the gas loops, the transformer and the ore lock"},
+        {"what": "Lock plinth", "item": SINTER, "volume": r(8.0 * 8.0 * L_Z), "note": f"sintered blocks {L_Z:g} m high under the ore lock"},
+        {"what": "Shaft pit", "item": SINTER, "volume": r(2 * (pit[0] + pit[1]) * pit[2] * 1.0 + pit[0] * pit[1] * 1.0), "note": f"a pit {pit[0]:g} x {pit[1]:g} m and {pit[2]:g} deep, x {S_X - 8:g} to {S_X + 8:g}, y -17 to 17: walls and floor of sintered blocks 1 m thick, a trench in its floor for the pellet collector"},
+        {"what": "Pellet belt trench", "item": SINTER, "volume": r(4.0 * 0.5 * 60.0 + 2 * 60.0 * 5.0 * 0.5), "note": "the belt's ramp out of the pit, east: floor and walls"},
+        {"what": "Unit pads", "item": SINTER, "volume": r(2 * 24 * 12 * 0.5 + 12 * 8 * 0.5), "note": "0.5 m under the gas loops and the transformer"},
         {"what": "Radiator legs' pads", "item": SINTER, "volume": r(n_rad * 4 * (44.0 * 44.0 / 72.0) * 0.027)},
-        {"what": "Crew post berm", "item": "material.regolith", "volume": BERM, "note": "loose regolith at least 1 m over the post everywhere (its top 4 x 2 m, 5.3 m up), lying at 35 degrees, its foot about 19 x 17 m, a cavity for the post; measured on blender's arc furnace shop; with openings for its windows (light wells on the north) and its airlock (a ramp cut on the west); with openings for its windows and airlock; at the airlock's door a landing of packed regolith 2 x 2 m, its top at the threshold (1.35 m up), and a ramp down to the ground at about 1 in 3"},
-        {"what": "Gallery and belt trestles", "item": SINTER, "volume": r(math.ceil((x_head - x_nz) / 12) * 2.0 + math.ceil(85 / 18) * 2.0)},
+        {"what": "Crew post berm", "item": "material.regolith", "volume": BERM, "note": "loose regolith at least 1 m over the post everywhere (its top 4 x 2 m, 5.3 m up), lying at 35 degrees, its foot about 19 x 17 m, a cavity for the post; measured on blender's arc furnace shop; with openings for its windows (light wells on the north) and its airlock (a ramp cut on the west); at the airlock's door a landing of packed regolith 2 x 2 m, its top at the threshold (1.35 m up), and a ramp down to the ground at about 1 in 3"},
     ]
     for g_ in ground:
         g_["mass"] = r(g_["volume"] * (RHO_SINTER if g_["item"] == SINTER else 1500.0))
@@ -3672,20 +3904,20 @@ def pellet_plant_airless(us, recs):
     layout = {
         "identity": {"key": "layout.pellet-plant-airless", "name": "Pellet plant, airless",
                      "description": (f"Fine ore made into fired pellets on airless ground at about a moon's gravity: the wet section (ball mill, plate presses, four balling discs) in a steel tube hall {HALL_D:g} m across held at {HALL_P / 1e3:.0f} kPa of nitrogen so the water stays liquid; "
-                                     f"the green balls by a sealed gallery to two pellet shaft furnaces in a pit, sealed and fired by plasma torches on a closed gas loop at {PS_P / 1e5:.0f} bar, which keeps the balls' water; the heat to radiator fields. Built separately from the plant for air (docs/proposals/pellet-plant-airless.md).")},
+                                     f"the green balls by a sealed gallery to two pellet shaft furnaces in a pit, sealed and fired by plasma torches on a closed gas loop at {PS_P / 1e5:.0f} bar, which keeps the balls' water; the heat to radiator fields. Built separately from the plant for air (docs/proposals/pellet-plant-airless.md); laid of SFO 25 runs from port to port.")},
         "stands_for": "module.pellet-plant",
         "site": {"atmosphere": "none", "gravity": list(MOON_G)},
         "physical": {"length": r(max(xs) - min(xs)), "width": r(max(ys) - min(ys)), "height": HALL_D, "mass": r(total)},
-        "bays": bays, "mobile": mobile, "links": links, "ground": ground,
+        "bays": bays, "ports": edge, "mobile": mobile, "links": links, "ground": ground,
         "totals": {"rate": P_RATE, "power": r(power), "heat": r(heat), "water": 0.0, "mass": r(total), "against_module": against},
         "staff": pmod.get("staff"),
-        "basis": [{"of": ["bays", "links", "mobile"], "tier": "invented", "review": True, "note": "Laid out for airless ground from the proposal; the wet hall's contents as the plant for air."},
-                  {"of": ["totals"], "tier": "derived", "review": True, "note": "Summed from the units; the radiators from the heat the hall, shafts and gas loops reject."},
+        "basis": [{"of": ["bays", "links", "mobile"], "tier": "invented", "review": True, "note": "Laid out for airless ground from the proposal, of SFO 25 runs; the hall's joints' bolts and seals not yet counted (about half a tonne a joint, from memory)."},
+                  {"of": ["totals"], "tier": "derived", "review": True, "note": "Summed from the units and runs; the radiators from the heat the hall, shafts, gas loops and transformer reject."},
                   {"of": ["ground"], "tier": "derived", "review": True, "note": "Sintered regolith at 2,500 kg/m3, loose at 1,500; the shapes in the notes."},
-                  {"of": ["physical"], "tier": "derived", "note": "Summed from the units, links and ground."},
+                  {"of": ["physical"], "tier": "derived", "note": "Summed from the units, runs and ground."},
                   {"of": ["staff"], "tier": "derived", "note": "The module's watch, unchanged."}],
     }
-    print(f"layout.pellet-plant-airless: {total / 1000:,.0f} t, {power / 1e6:.1f} MW, {heat / 1e6:.1f} MW to {n_rad} fields")
+    print(f"layout.pellet-plant-airless: {total / 1000:,.0f} t, {power / 1e6:.1f} MW, {heat / 1e6:.1f} MW to {n_rad} fields, {len(links)} links")
     return layout, bays
 
 
@@ -3894,6 +4126,7 @@ def main():
     us.update(yard_airless_units(us))
     trial_ports(us)
     h2_ports(us)
+    pellet_ports(us)
     recs = {slug: unit_record(slug, u) for slug, u in us.items()}
     layouts = {"arc-furnace-air": arc_furnace_air(us, recs), "ladle-station-air": ladle_station_air(us, recs), "casting-bay-air": casting_bay_air(us, recs), "shaft-furnace-air": shaft_furnace_air(us, recs), "hydrogen-plant-air": hydrogen_plant_air(us, recs), "pellet-plant-air": pellet_plant_air(us, recs), "ore-yard-air": ore_yard_air(us, recs), "ingot-yard-air": ingot_yard_air(us, recs), "arc-furnace-airless": arc_furnace_airless(us, recs),
                "ladle-station-airless": ladle_station_airless(us, recs), "casting-bay-airless": casting_bay_airless(us, recs),

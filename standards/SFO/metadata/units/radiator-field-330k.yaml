@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.radiator-field-330k, name: 'Radiator field, 1.0 MW at 330 K', description: '32 aluminium panels 5.5 x 11 m (4 along x by 8 along y), each on a frame of 100 x 50 mm channel rails round its edge, raised 3 m on four legs and laid flat edge to edge over 44 x 44 m, carrying the panels'' and transformer''s loop''s water at about 330 K through tubes bonded between their two face sheets; the top face, white, radiates to the sky, the underside to the shaded ground. 525 W a m2 of panel at lunar noon, the worst case: the sun overhead on the top (0.2 of 1361 W/m2 absorbed), the ground under it at 300 K; more at night. The loop''s flow and return headers (150 mm) run round the edge in the 2 m margin, a branch to each row of panels; its ports at local (-24, -0.6, 1) flow and (-24, 0.6, 1) return.  For airless ground only: on a world with air a tower is lighter. Kept clean of dust, which darkens the white.'}
+identity: {key: unit.radiator-field-330k, name: 'Radiator field, 1.0 MW at 330 K', description: '32 aluminium panels 5.5 x 11 m (4 along x by 8 along y), each on a frame of 100 x 50 mm channel rails round its edge, raised 3 m on four legs and laid flat edge to edge over 44 x 44 m, carrying the panels'' and transformer''s loop''s water at about 330 K through tubes bonded between their two face sheets; the top face, white, radiates to the sky, the underside to the shaded ground. 525 W a m2 of panel at lunar noon, the worst case: the sun overhead on the top (0.2 of 1361 W/m2 absorbed), the ground under it at 300 K; more at night. The loop''s flow and return headers (150 mm) run round the edge in the 2 m margin, a branch to each row of panels; its ports on its south-west corner facing -y, at local (-23, -24, 1) flow and (-22.4, -24, 1) return, its pump''s power entry at (-21.8, -24, 0.3), so a layout''s mains run in an aisle beside the field, not under it.  For airless ground only: on a world
+    with air a tower is lighter. Kept clean of dust, which darkens the white.'}
 size_class: 4
 fits: plant-mount.bay-s4
 physical: {length: 48.0, width: 48.0, height: 3.5, mass: 32600.0}
@@ -14,6 +15,34 @@ built_of:
 holds: 2930.0
 needs: {power: 9709.0, atmosphere: vacuum}
 rejects: {heat: 1016000.0, temperature: 330.0}
+ports:
+- id: water-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 24.27
+  temperature: 330.0
+  connector: connector.flange-dn150-pn10
+  at: [-23.0, -24.0, 1.0]
+  facing: [0.0, -1.0, 0.0]
+- id: water-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 24.27
+  temperature: 320.0
+  connector: connector.flange-dn150-pn10
+  at: [-22.4, -24.0, 1.0]
+  facing: [0.0, -1.0, 0.0]
+- id: power-in
+  flow: in
+  medium: power
+  power: 9709.0
+  voltage: 400
+  connector: connector.termination-400v-16mm2
+  at: [-21.8, -24.0, 0.3]
+  facing: [0.0, -1.0, 0.0]
+  note: its circulating pump
 envelope:
 - [-22.65, -22.061, -0.001, 22.65, 22.061, 3.135]
 - [-24.016, -22.01, -0.001, -21.949, 23.111, 2.85]

@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/run.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: run.pipe-dn700-pn10-mli, name: 'Pipe DN 700 PN 10, lagged', description: 'Welded pipe, 700 mm bore, for up to 10 bar; welded between the units'' flanges, so a run has a flange pair only at its ends. Lagged in multi-layer insulation, 25 mm.'}
+kind: pipe
+size: 0.7
+bore: 0.7
+outside: [0.763, 0.763]
+rating: {pressure: 1000000.0, temperature: 393.15}
+per_m:
+  mass: 116.2
+  built_of:
+  - {what: Pipe, item: material.structural-steel-a36, mass: 113.3, note: '700 mm bore, 6.5 mm wall (Barlow at 10 bar, 133 MPa, weld factor 0.85, 1.5 mm for corrosion)'}
+  - {what: Lagging, item: material.multi-layer-insulation, mass: 2.9, note: 25 mm of multi-layer insulation}
+elbow: {radius: 1.05, mass: 191.7}
+tee: {mass: 77.7}
+cap: {thickness: 0.028, mass: 84.6}
+support: {spacing: 12.0, mass: 55.8, per_m_height: 27.7, item: material.structural-steel-a36}
+connector: connector.flange-dn700-pn10
+carries: gas
+basis:
+- of: [per_m]
+  tier: derived
+  note: Wall from pressure; mass from material and dimensions.
+- of: [elbow, tee]
+  tier: derived
+  note: A long-radius elbow (1.5 bores) is its arc of straight; a tee is its branch stub over the straight it sits in, from the main's outside to 1.5 bores off its axis (checked on blender's DN 200 kit).
+- of: [support]
+  tier: derived
+  review: true
+  note: 'Spacing from the span it bears full at 1 g (2.5 mm sag, a third of yield), 3 to 12 m: 12.0 m. The stand''s head and its leg by the metre from memory.'

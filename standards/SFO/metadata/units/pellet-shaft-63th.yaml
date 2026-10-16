@@ -5,7 +5,7 @@ identity: {key: unit.pellet-shaft-63th, name: 'Pellet shaft furnace, 62 t an hou
     each into the firing band. The shell runs from a discharge cone (z 4 to 6, the shell''s, over the table feeder and lock at z 0.8 to 4) up the bed to its roof (z 22 to 23). Its connections, plain stubs: the cooling gas 600 mm and each chamber''s firing gas 250 mm, facing out; the top gas 700 mm lagged in 25 mm of foil, facing -y (the gas loop''s inlet); the torches'' water a 150 mm pair facing -y; the charge at the lock hopper''s rim (0, 0, 29.5) facing up, where a belt''s head drops in; the discharge out at (0, 0, 0.8) through an 800 mm chute facing down; the torches'' 6.6 kV supply (400 mm2) into a terminal box at (0, 5.5, 8) facing +y.'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 11.5, width: 8.9, height: 29.5, mass: 517800.0}
+physical: {length: 11.5, width: 11.0, height: 29.5, mass: 517800.0}
 built_of:
 - {what: Shell, item: material.structural-steel-a36, mass: 49830.0, note: '5.54 m across, 19 m with its discharge cone and roof, 20 mm; measured on blender''s candidate (2026-10-16; by formula 54,021 kg over 17 m)'}
 - {what: Lining, item: good.refractory-brick, mass: 266900.0, note: '400 mm over the hot zones and the gas space (11 m), 200 mm and its backing over the cooling zone'}
@@ -27,6 +27,82 @@ recipes:
   - {item: element.o, quantity: 0.045}
   rate: 34.7222222222222
   power: 23000000
+ports:
+- id: top-gas-out
+  flow: out
+  medium: gas
+  item: material.nitrogen
+  temperature: 393.1
+  connector: connector.flange-dn700-pn10
+  at: [0.0, -3.3, 21.5]
+  facing: [0.0, -1.0, 0.0]
+- id: cooling-gas-in
+  flow: in
+  medium: gas
+  item: material.nitrogen
+  temperature: 338.1
+  connector: connector.flange-dn600-pn10
+  at: [0.0, -3.3, 7.0]
+  facing: [0.0, -1.0, 0.0]
+- id: firing-in-a
+  flow: in
+  medium: gas
+  item: material.nitrogen
+  connector: connector.flange-dn250-pn10
+  at: [5.55, 0.0, 12.0]
+  facing: [1.0, 0.0, 0.0]
+  note: the +x torch chamber
+- id: firing-in-b
+  flow: in
+  medium: gas
+  item: material.nitrogen
+  connector: connector.flange-dn250-pn10
+  at: [-5.55, 0.0, 12.0]
+  facing: [-1.0, 0.0, 0.0]
+  note: the -x torch chamber
+- id: water-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 23.04
+  temperature: 320.0
+  connector: connector.flange-dn150-pn10
+  at: [-0.6, -3.3, 13.0]
+  facing: [0.0, -1.0, 0.0]
+- id: water-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 23.04
+  temperature: 330.0
+  connector: connector.flange-dn150-pn10
+  at: [0.6, -3.3, 13.0]
+  facing: [0.0, -1.0, 0.0]
+- id: charge-in
+  flow: in
+  medium: bulk
+  item: good.iron-ore
+  connector: connector.belt-transfer-800
+  at: [0.0, 0.0, 29.5]
+  facing: [0.0, 0.0, 1.0]
+  note: the charge lock hopper's rim
+- id: discharge-out
+  flow: out
+  medium: bulk
+  item: good.iron-ore-pellets
+  rate: 17.36
+  connector: connector.chute-dn800
+  at: [0.0, 0.0, 0.8]
+  facing: [0.0, 0.0, -1.0]
+- id: power-in
+  flow: in
+  medium: power
+  power: 9695000.0
+  voltage: 6600
+  connector: connector.termination-6p6kv-400mm2
+  at: [0.0, 5.5, 8.0]
+  facing: [0.0, 1.0, 0.0]
+  note: the torches' supplies
 envelope:
 - [-3.4, -3.4, 0, 3.4, 3.4, 29.5]
 - [-5.75, -3.4, 0, -3.4, 3.5, 17.6]

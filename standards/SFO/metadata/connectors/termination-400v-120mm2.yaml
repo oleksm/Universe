@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: connector.termination-400v-120mm2, name: 'Cable termination, 0.4 kV, 120 mm2', description: 'A three-phase cable''s end into a terminal box: lugs, stress control and the gland, for 120 mm2 conductors at 0.4 kV.'}
+kind: termination
+size: 0.00011999999999999999
+rating: {voltage: 400, current: 300.0}
+physical: {length: 0.4, width: 0.4, height: 0.723, mass: 5.6}
+built_of:
+- {what: Lugs, item: material.copper, mass: 0.6, note: three crimped lugs}
+- {what: Gland plate, item: material.aluminium-alloy-6061, mass: 5.0, note: the box's gland plate and glands}
+basis:
+- of: [built_of]
+  tier: invented
+  review: true
+  note: From memory.
+- of: [physical.height]
+  tier: derived
+  note: 'Along the cable: 0.5 m of cones and lugs inside the box, and the fan-out from the tray''s spacing to the box''s (0.04 m aside each way) in two arcs at the cable''s least bend radius (0.32 m): 0.22 m.'

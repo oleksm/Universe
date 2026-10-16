@@ -1,10 +1,10 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.pellet-gas-loop, name: 'Pellet shaft gas loop, 4 bar', description: 'Cleans, dries and drives one pellet shaft''s 20.7 kg/s of nitrogen at 4 bar: the top gas (120 deg C, about 0.7 m pipe) through a cyclone and a candle filter kept above its dew point (about 90 deg C), then down through a condenser that keeps the 1.6 kg/s of water the green balls brought (to the presses, and on to the mill: on a moon every kilogram comes back), the gas out at 65 deg C still carrying 0.9 kg/s of vapour round the loop; then a fan (260 kW, for the bed''s 23 kPa and the loop''s 15) back to the shaft''s bottom and its torch chambers. Oxygen make-up joins before the fan. Local frame: the cyclone at x -9, the filter at x -3, the condenser''s two shells at x 3 and 6, the fan at x 10; Its connections, all plain stubs: the top gas in by a 700 mm lagged flange on the cyclone''s top at (-9, 0, 13) facing up (its tangential entry inside the barrel), the cold gas out by a 700 mm flange at (12, 0, 1.5)
-    facing +x; the condensate out (50 mm, stainless) at (6, 6, 0.3) facing +y, the oxygen in (50 mm, stainless, double seal) at (9, 6, 1) facing +y; the radiator loop''s 300 mm pair at (-12, -2, 1) in and (-12, -1.4, 1) out, facing -x; the fan''s 400 V supply (185 mm2) at (10, -6, 0.5) facing -y. The dust: the cyclone''s cone and the filter''s hopper each end in a rotary lock, the unit''s, which lets it out by a 200 mm chute at (-9, 0, 3) and (-3, 0, 1.5), facing down onto the layout''s closed dust conveyor.'}
+identity: {key: unit.pellet-gas-loop, name: 'Pellet shaft gas loop, 4 bar', description: 'Cleans, dries and drives one pellet shaft''s 20.7 kg/s of nitrogen at 4 bar: the top gas (120 deg C, about 0.7 m pipe) through a cyclone and a candle filter kept above its dew point (about 90 deg C), then down through a condenser that keeps the 1.6 kg/s of water the green balls brought (to the presses, and on to the mill: on a moon every kilogram comes back), the gas out at 65 deg C still carrying 0.9 kg/s of vapour round the loop; then a fan (260 kW, for the bed''s 23 kPa and the loop''s 15) back to the shaft''s bottom and its torch chambers. Oxygen make-up joins before the fan. Local frame: the cyclone at x -9, the filter at x -3, the condenser''s two shells at x 3 and 6, the fan at x 10; Its connections, all plain stubs: the top gas in by a 700 mm lagged flange on the cyclone''s top at (-9, 0, 13) facing up (its tangential entry inside the barrel), the cold gas out by a 600 mm flange at (12, 0, 1.5)
+    facing +x, the shafts'' bore; the condensate out (50 mm, stainless) at (6, 6, 0.3) facing +y, the oxygen in (50 mm, stainless, double seal) at (9, 6, 1) facing +y; the radiator loop''s 300 mm pair at (-12, -2, 1) in and (-12, -1.4, 1) out, facing -x; the fan''s 400 V supply (185 mm2) at (10, -6, 0.5) facing -y. The dust: the cyclone''s cone and the filter''s hopper each end in a rotary lock, the unit''s, which lets it into a sealed 2 m3 dust bin under it, the loop''s, changed by forklift about once a shift.'}
 size_class: 3
 fits: plant-mount.bay-s3
-physical: {length: 24.0, width: 12.0, height: 14.0, mass: 85300.0}
+physical: {length: 24.0, width: 12.0, height: 14.0, mass: 86900.0}
 built_of:
 - {what: Cyclone, item: material.structural-steel-a36, mass: 6247.0, note: 'measured on blender''s candidate (2026-10-16); 3 m across, 9 m, 10 mm (60 MPa)'}
 - {what: Candle filter, item: material.structural-steel-a36, mass: 17850.0, note: '4 m across, 10 m, 16 mm, lagged: the shell measured (14.8 t); the candles 3 t of silicon carbide, from memory'}
@@ -12,7 +12,67 @@ built_of:
 - {what: Fan, item: good.electric-motors, mass: 5078.0, note: 'a centrifugal fan, 8 t a MW and its casing, from memory'}
 - {what: Pipework and pots, item: material.structural-steel-a36, mass: 7100.0, note: measured}
 - {what: 'Stands, skirts and supports', item: material.structural-steel-a36, mass: 29080.0, note: 'the cyclone''s braced stand and support ring, the filter''s and condenser''s skirts and base rings; measured'}
+- {what: Dust bins, item: material.structural-steel-a36, mass: 1600.0, note: 'two sealed 2 m3 bins under the rotary locks, from memory'}
 needs: {power: 270600.0, heat: 5468000.0, atmosphere: vacuum}
+ports:
+- id: top-gas-in
+  flow: in
+  medium: gas
+  item: material.nitrogen
+  temperature: 393.1
+  connector: connector.flange-dn700-pn10
+  at: [-9.0, 0.0, 13.0]
+  facing: [0.0, 0.0, 1.0]
+- id: cold-gas-out
+  flow: out
+  medium: gas
+  item: material.nitrogen
+  temperature: 338.1
+  connector: connector.flange-dn600-pn10
+  at: [12.0, 0.0, 1.5]
+  facing: [1.0, 0.0, 0.0]
+- id: condensate-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 1.64
+  connector: connector.flange-dn50-pn10-ss
+  at: [6.0, 6.0, 0.3]
+  facing: [0.0, 1.0, 0.0]
+- id: oxygen-in
+  flow: in
+  medium: gas
+  item: material.oxygen
+  connector: connector.flange-dn50-pn16-ss-double
+  at: [9.0, 6.0, 1.0]
+  facing: [0.0, 1.0, 0.0]
+- id: cooling-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 130.6
+  temperature: 320.0
+  connector: connector.flange-dn300-pn10
+  at: [-12.0, -2.0, 1.0]
+  facing: [-1.0, 0.0, 0.0]
+- id: cooling-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 130.6
+  temperature: 330.0
+  connector: connector.flange-dn300-pn10
+  at: [-12.0, -1.4, 1.0]
+  facing: [-1.0, 0.0, 0.0]
+- id: power-in
+  flow: in
+  medium: power
+  power: 270600.0
+  voltage: 400
+  connector: connector.termination-400v-185mm2
+  at: [10.0, -6.0, 0.5]
+  facing: [0.0, -1.0, 0.0]
+  note: the fan
 envelope:
 - [-11.1, -2.1, 0, -6.7, 2.1, 13.1]
 - [-7.6, -2.2, 0, 0.1, 2.2, 13.5]
