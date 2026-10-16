@@ -3,14 +3,15 @@
 identity: {key: unit.plant-transformer-35mva, name: 'Plant transformer, 35 MVA', description: 'Steps the grid down for the pellet plant: its torches, mill, fans and drives, with on-load taps. Oil-filled in a closed tank, HV bushings and conservator on top, cooled by oil to water. Three secondary terminals on one long face (+y), 2.9 m up; the oil-to-water cooler''s water ports on its -x end, 1 m up. Stands in a fire-walled vault. Fed at 33 kV through a cable box over its HV bushings (gland plate on top at (0, -0.9, 5.2)); its 6.6 kV leaves through a box over its secondary pads (gland plate facing +y at (0, 2.35, 2.9)); its cooler''s water ports at (-2.9, -0.6, 1) and (-2.9, 0.6, 1).'}
 size_class: 1
 fits: plant-mount.bay-s1
-physical: {length: 5.8, width: 4.7, height: 5.2, mass: 57430.0}
+physical: {length: 5.8, width: 4.7, height: 5.2, mass: 57660.0}
 built_of:
 - {what: Core, item: material.structural-steel-a36, mass: 22490.0, note: 'grain-oriented electrical steel, which the registry has not got: structural steel stands for it'}
 - {what: Windings, item: material.copper, mass: 14060.0}
 - {what: Tank and fittings, item: material.structural-steel-a36, mass: 8433.0}
 - {what: Oil, item: material.hydraulic-fluid, mass: 11240.0, note: 'transformer mineral oil, which the registry has not got: hydraulic fluid stands for it'}
-- {what: HV cable box, item: material.structural-steel-a36, mass: 512.4, note: 'over the three HV bushings on top at y -0.9: 3 x 0.8 x 0.8 m, 6 mm, its gland plate on top at (0, -0.9, 5.2)'}
-- {what: LV cable box, item: material.structural-steel-a36, mass: 697.1, note: 'over the three secondary pads on the +y face, 2.9 m up: 4 x 0.5 x 1.2 m, 6 mm, its gland plate facing +y at (0, 2.35, 2.9)'}
+- {what: HV cable box, item: material.structural-steel-a36, mass: 503.3, note: 'measured on blender''s model v2; over the three HV bushings on top at x -1.15, 0 and 1.15, y -0.9: 3 x 0.8 x 0.8 m, 6 mm, its gland plate on top at (0, -0.9, 5.2)'}
+- {what: LV cable box, item: material.structural-steel-a36, mass: 677.9, note: 'measured on blender''s model v2; over the three secondary pads on the +y face, 2.9 m up: 4 x 0.5 x 1.2 m, 6 mm, its gland plate facing +y at (0, 2.35, 2.9)'}
+- {what: Cable boxes' supports, item: material.structural-steel-a36, mass: 259.2, note: 'their brackets on the tank, and the bushings'' insulated feed-throughs'' frames; measured'}
 needs: {power: 175700.0, heat: 175700.0}
 ports:
 - id: hv-in
@@ -49,12 +50,12 @@ ports:
   at: [-2.9, 0.6, 1.0]
   facing: [-1.0, 0.0, 0.0]
 envelope:
-- [-2.684, -1.241, -0.001, 2.684, 1.241, 3.485]
-- [-1.959, -0.835, 3.247, 2.013, 0.994, 4.351]
-- [-1.175, 1.145, 2.667, 1.175, 1.814, 3.133]
-- [-2.906, -0.867, 0.799, -2.362, 0.867, 1.884]
-- [2.399, -0.508, 0.543, 2.911, 0.508, 2.502]
-- [1.522, -1.596, 0.96, 2.321, -1.159, 1.868]
+- [-2.902, -1.597, 0.361, 2.912, 1.241, 4.149]
+- [-1.501, -1.301, 3.246, 1.501, -0.498, 5.202]
+- [-2.001, 1.138, 1.878, 2.001, 2.351, 3.501]
+- [-2.907, -0.868, 0.798, -2.362, 0.868, 1.884]
+- [-1.386, 0.434, 3.247, 1.839, 0.872, 3.656]
+- [-2.684, -1.161, -0.001, 2.684, 1.161, 0.364]
 life: 788940000
 visual: {format: freefall-model/1, path: models/plant-transformer-35mva/v1, manifest_sha256: b207efc9f77c507b6faa60312370a25e14f8b1b6477f4dceccb70dc726045ae2, version: 1, triangles: 8336}
 basis:

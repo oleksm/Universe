@@ -3241,8 +3241,9 @@ def pellet_ports(us):
     tp = us[tkey]
     L_, W_, H_ = tp["dims"]
     if "HV cable box" not in [x["what"] for x in tp["built_of"]]:
-        tp["built_of"] = tp["built_of"] + [part("HV cable box", A36, 2 * (3.0 * 0.8 * 2 + 0.8 * 0.8) * 0.006 * RHO["steel"], f"over the three HV bushings on top at y -0.9: 3 x 0.8 x 0.8 m, 6 mm, its gland plate on top at (0, -0.9, {H_ + 0.8:g})"),
-                                           part("LV cable box", A36, 2 * (4.0 * 0.5 + 4.0 * 1.2 + 0.5 * 1.2) * 0.006 * RHO["steel"], f"over the three secondary pads on the +y face, 2.9 m up: 4 x 0.5 x 1.2 m, 6 mm, its gland plate facing +y at (0, {W_ / 2 + 0.5:g}, 2.9)")]
+        tp["built_of"] = tp["built_of"] + [part("HV cable box", A36, 503.3, f"measured on blender's model v2; over the three HV bushings on top at x -1.15, 0 and 1.15, y -0.9: 3 x 0.8 x 0.8 m, 6 mm, its gland plate on top at (0, -0.9, {H_ + 0.8:g})"),
+                                           part("LV cable box", A36, 677.9, f"measured on blender's model v2; over the three secondary pads on the +y face, 2.9 m up: 4 x 0.5 x 1.2 m, 6 mm, its gland plate facing +y at (0, {W_ / 2 + 0.5:g}, 2.9)"),
+                                           part("Cable boxes' supports", A36, 259.2, "their brackets on the tank, and the bushings' insulated feed-throughs' frames; measured")]
         tp["desc"] += f" Fed at 33 kV through a cable box over its HV bushings (gland plate on top at (0, -0.9, {H_ + 0.8:g})); its 6.6 kV leaves through a box over its secondary pads (gland plate facing +y at (0, {W_ / 2 + 0.5:g}, 2.9)); its cooler's water ports at (-{L_ / 2:g}, -0.6, 1) and (-{L_ / 2:g}, 0.6, 1)."
         tp["dims"] = (L_, W_ + 1.0, H_ + 0.8)
     p_mv = 2 * us["pellet-shaft-63th"]["needs"]["power"] + us["ball-mill-4m4"]["needs"]["power"]
