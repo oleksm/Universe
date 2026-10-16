@@ -81,6 +81,16 @@ properties:
       mass: { type: number, exclusiveMinimum: 0, x-unit: "kg", description: "kg of one support's head and foot" }
       per_m_height: { type: number, minimum: 0, x-unit: "kg/m", description: "kg its leg weighs a metre of height to the run's centre" }
       item: { type: string, x-ref: [material, stock, good] }
+  repeat:
+    type: array
+    description: "Rigid pieces the game sets along a straight at a fixed pitch, not stretched with it (a belt's idlers and return rolls): each the model's piece by name and its pitch."
+    items:
+      type: object
+      additionalProperties: false
+      required: [piece, pitch]
+      properties:
+        piece: { type: string }
+        pitch: { type: number, exclusiveMinimum: 0, x-unit: "m" }
   connector: { type: string, x-ref: [connector], description: "The connector its ends are built to, by key: it joins a port built to the same connector, or another run of its class." }
   carries: { enum: [gas, liquid, bulk, power], description: "What it can carry." }
   visual: { $ref: "../../common.schema.yaml#/definitions/visual" }

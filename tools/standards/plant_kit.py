@@ -246,6 +246,7 @@ def belt(width, rate):
                   "kind": "belt", "size": width, "outside": [r(width + 0.6, 2), 1.2], "rating": {"rate": r(rate)},
                   "per_m": {"mass": r(per_m), "built_of": built},
                   "support": {"spacing": 18.0, "mass": 300.0, "per_m_height": 75.0, "item": A36},
+                  "repeat": [{"piece": "idler", "pitch": 1.2}, {"piece": "return_roll", "pitch": 3.0}],
                   "connector": belt_transfer(width), "carries": "bulk",
                   "basis": [{"of": ["per_m", "support"], "tier": "invented", "review": True, "note": "Belt, idlers and stringers from memory of 1.2 m belts; trestles every 18 m, a 300 kg cross beam and two 200 mm box legs (75 kg/m)."}]}
     return key

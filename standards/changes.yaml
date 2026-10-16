@@ -157,7 +157,7 @@
 - { record: clock.system, at: "2026-10-06T22:07:52Z", status: review, summary: "first tracked", sha: "a1ce985910bb5ae9" }
 - { record: connector.belt-transfer-1200, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "38fae5feb755cd05" }
 - { record: connector.chute-dn800, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "f0664ba5ebb081dc" }
-- { record: connector.flange-dn100-pn10, at: "2026-10-16T13:13:02Z", status: draft, summary: "changed: visual", sha: "3d95f14b9170374e" }
+- { record: connector.flange-dn100-pn10, at: "2026-10-16T13:14:09Z", status: draft, summary: "changed", sha: "0dd431cfd436f47f" }
 - { record: connector.flange-dn1000-pn16-double, at: "2026-10-16T12:39:27Z", status: draft, summary: "changed: physical, built_of", sha: "30a63c1475db2018" }
 - { record: connector.flange-dn150-pn10, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, built_of", sha: "d3ff30ecc19aa875" }
 - { record: connector.flange-dn1600-pn16-double, at: "2026-10-16T12:44:20Z", status: draft, summary: "changed", sha: "6a07930380b824cd" }
@@ -166,7 +166,7 @@
 - { record: connector.flange-dn250-pn16-ss-double, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, built_of", sha: "ba28964589898926" }
 - { record: connector.flange-dn350-pn10, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, built_of", sha: "16eac06e34a9631c" }
 - { record: connector.flange-dn900-pn10, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, built_of", sha: "1d9d29c363fc2252" }
-- { record: connector.lined-flange-dn2400-pn16-double, at: "2026-10-16T13:08:32Z", status: draft, summary: "changed: visual", sha: "bba6553926ede5cd" }
+- { record: connector.lined-flange-dn2400-pn16-double, at: "2026-10-16T13:14:09Z", status: draft, summary: "changed", sha: "3718f80746efea6c" }
 - { record: connector.termination-132kv-240mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "e9360fde90b4ed28" }
 - { record: connector.termination-400v-16mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "34bd7bf1e76a645c" }
 - { record: connector.termination-400v-300mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "64197b06c5a2379d" }
@@ -1552,7 +1552,7 @@
 - { record: rule.mounts-margin, at: "2026-10-13T05:32:00Z", status: review, summary: "changed: statement", sha: "88491f348e30a319" }
 - { record: rule.plant-weights-from-memory, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "d4bff33987b75c18" }
 - { record: rule.shares-chosen, at: "2026-10-07T03:53:08Z", status: review, summary: "first tracked", sha: "2f29f0362d9d7f04" }
-- { record: run.belt-1200, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "ec84964d8b7c2fca" }
+- { record: run.belt-1200, at: "2026-10-16T13:14:09Z", status: draft, summary: "changed: repeat", sha: "cbf4613585a734cb" }
 - { record: run.cable-132kv-240mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "a205054f19a5a0ea" }
 - { record: run.cable-400v-16mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "37934f60e4ebef0e" }
 - { record: run.cable-400v-300mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "981d84d4f08ca29f" }
@@ -1561,16 +1561,16 @@
 - { record: run.cable-6p6kv-185mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "498484319d4af233" }
 - { record: run.cable-6p6kv-630mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "1aee0c17b0c22e19" }
 - { record: run.drag-conveyor-800, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "c7869288da8955c1" }
-- { record: run.lined-duct-dn2400-pn16-double, at: "2026-10-16T12:48:24Z", status: draft, summary: "changed: visual", sha: "f9e9253e39c45abc" }
-- { record: run.pipe-dn100-pn10, at: "2026-10-16T13:10:55Z", status: draft, summary: "changed: visual", sha: "ac44ffcb2c7664d5" }
-- { record: run.pipe-dn1000-pn16-double, at: "2026-10-16T12:55:53Z", status: draft, summary: "changed: visual", sha: "0090bf88b39b1e7d" }
-- { record: run.pipe-dn1000-pn16-mli-double, at: "2026-10-16T12:53:16Z", status: draft, summary: "changed: visual", sha: "11000bf08bd0f6df" }
+- { record: run.lined-duct-dn2400-pn16-double, at: "2026-10-16T13:14:09Z", status: draft, summary: "changed", sha: "e3c421ceed042c47" }
+- { record: run.pipe-dn100-pn10, at: "2026-10-16T13:14:09Z", status: draft, summary: "changed", sha: "f24cb5fb81e22a79" }
+- { record: run.pipe-dn1000-pn16-double, at: "2026-10-16T13:14:09Z", status: draft, summary: "changed", sha: "1d99d19c14aa21b2" }
+- { record: run.pipe-dn1000-pn16-mli-double, at: "2026-10-16T13:14:09Z", status: draft, summary: "changed", sha: "56b4353e49794828" }
 - { record: run.pipe-dn150-pn10, at: "2026-10-16T12:02:30Z", status: draft, summary: "changed: cap", sha: "0e7a09407e4c43d9" }
-- { record: run.pipe-dn1600-pn16-mli-double, at: "2026-10-16T12:51:00Z", status: draft, summary: "changed: visual", sha: "707995e36f3a71df" }
+- { record: run.pipe-dn1600-pn16-mli-double, at: "2026-10-16T13:14:09Z", status: draft, summary: "changed", sha: "9a4ddf4444ce737f" }
 - { record: run.pipe-dn200-pn10-ss, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed", sha: "bff1979818114fdd" }
 - { record: run.pipe-dn250-pn16-ss-double, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed", sha: "05352425674a7366" }
 - { record: run.pipe-dn350-pn10, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed", sha: "d41dada519023bf2" }
-- { record: run.pipe-dn900-pn10, at: "2026-10-16T12:58:33Z", status: draft, summary: "changed: visual", sha: "1f76b3bc163d543c" }
+- { record: run.pipe-dn900-pn10, at: "2026-10-16T13:14:09Z", status: draft, summary: "changed", sha: "c78a99d081cfae5b" }
 - { record: seeding.asteroids, at: "2026-10-10T16:13:03Z", status: "", summary: "changed: basis", sha: "523d44e4bfa3af5f" }
 - { record: seeding.conditions, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "96e581fa4cb02009" }
 - { record: seeding.galaxy, at: "2026-10-10T16:13:03Z", status: "", summary: "changed", sha: "c3aeb429e01bf69f" }
