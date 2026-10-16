@@ -155,7 +155,7 @@
 - { record: clock.realtime, at: "2026-10-06T23:04:34Z", status: review, summary: "changed: runs", sha: "643b9d6698cc2d64" }
 - { record: clock.region, at: "2026-10-06T23:04:34Z", status: review, summary: "changed: runs", sha: "a76e6a037ad0a281" }
 - { record: clock.system, at: "2026-10-06T22:07:52Z", status: review, summary: "first tracked", sha: "a1ce985910bb5ae9" }
-- { record: connector.belt-transfer-1200, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "38fae5feb755cd05" }
+- { record: connector.belt-transfer-1200, at: "2026-10-16T13:30:25Z", status: draft, summary: "changed: identity, physical", sha: "af2ee9ba97921bcb" }
 - { record: connector.chute-dn800, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "f0664ba5ebb081dc" }
 - { record: connector.flange-dn100-pn10, at: "2026-10-16T13:14:09Z", status: draft, summary: "changed", sha: "0dd431cfd436f47f" }
 - { record: connector.flange-dn1000-pn16-double, at: "2026-10-16T12:39:27Z", status: draft, summary: "changed: physical, built_of", sha: "30a63c1475db2018" }
@@ -1552,7 +1552,7 @@
 - { record: rule.mounts-margin, at: "2026-10-13T05:32:00Z", status: review, summary: "changed: statement", sha: "88491f348e30a319" }
 - { record: rule.plant-weights-from-memory, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "d4bff33987b75c18" }
 - { record: rule.shares-chosen, at: "2026-10-07T03:53:08Z", status: review, summary: "first tracked", sha: "2f29f0362d9d7f04" }
-- { record: run.belt-1200, at: "2026-10-16T13:29:24Z", status: draft, summary: "changed: visual", sha: "b06659e20c3ab719" }
+- { record: run.belt-1200, at: "2026-10-16T13:30:25Z", status: draft, summary: "changed", sha: "38ea060ddf668825" }
 - { record: run.cable-132kv-240mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "a205054f19a5a0ea" }
 - { record: run.cable-400v-16mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "37934f60e4ebef0e" }
 - { record: run.cable-400v-300mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "981d84d4f08ca29f" }
