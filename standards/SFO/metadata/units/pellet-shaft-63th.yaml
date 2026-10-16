@@ -5,14 +5,18 @@ identity: {key: unit.pellet-shaft-63th, name: 'Pellet shaft furnace, 62 t an hou
     each into the firing band. The shell runs from a discharge cone (z 4 to 6, the shell''s, over the table feeder and lock at z 0.8 to 4) up the bed to its roof (z 22 to 23). Its connections, plain stubs: the cooling gas 600 mm and each chamber''s firing gas 250 mm, facing out; the top gas 700 mm lagged in 25 mm of foil, facing -y (the gas loop''s inlet); the torches'' water a 150 mm pair facing -y; the charge at the lock hopper''s rim (0, 0, 29.5) facing up, where a belt''s head drops in; the discharge out at (0, 0, 0.8) through an 800 mm chute facing down; the torches'' 6.6 kV supply (400 mm2) into a terminal box at (0, 5.5, 8) facing +y.'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 11.5, width: 8.9, height: 29.5, mass: 466000.0}
+physical: {length: 11.5, width: 8.9, height: 29.5, mass: 511400.0}
 built_of:
-- {what: Shell, item: material.structural-steel-a36, mass: 54020.0, note: '5.54 m across, 17 m with its heads, 20 mm'}
+- {what: Shell, item: material.structural-steel-a36, mass: 49830.0, note: '5.54 m across, 19 m with its discharge cone and roof, 20 mm; measured on blender''s candidate (2026-10-16; by formula 54,021 kg over 17 m)'}
 - {what: Lining, item: good.refractory-brick, mass: 266900.0, note: '400 mm over the hot zones and the gas space (11 m), 200 mm and its backing over the cooling zone'}
-- {what: Torch chambers, item: material.structural-steel-a36, mass: 60120.0, note: 'two 2.5 m chambers, 4 m long, 16 mm, lined 300 mm'}
+- {what: Torch chambers, item: material.structural-steel-a36, mass: 7948.0, note: 'two 2.5 m chambers upright, 4 m, 16 mm; measured'}
+- {what: Torch chambers' lining, item: good.refractory-brick, mass: 49760.0, note: 300 mm}
+- {what: Hot branches, item: material.structural-steel-a36, mass: 3447.0, note: 'two from each chamber into the firing band, 600 mm bore, 8 mm steel; measured'}
+- {what: Hot branches' lining, item: good.refractory-brick, mass: 36800.0, note: '300 mm, 12.27 m3 measured'}
+- {what: Supports and service pipes, item: material.structural-steel-a36, mass: 10420.0, note: 'the chambers'' legs and braces, the lower lock''s legs, the power and water posts and brackets, the service pipes; measured'}
 - {what: Plasma torches, item: good.electric-motors, mass: 14000.0, note: '7 torches of 1.5 MW, 2 t each with their supplies, from memory'}
 - {what: Charge and discharge locks, item: material.structural-steel-a36, mass: 50000.0, note: 'two lock hoppers with their valves, and the table feeder, from memory'}
-- {what: Ring girder and columns, item: material.high-strength-steel-4340, mass: 21010.0, note: 'a 600 x 800 x 30 mm box ring and eight 300 x 300 x 20 mm columns: 10 MPa each at 2 m/s2'}
+- {what: Ring girder and columns, item: material.high-strength-steel-4340, mass: 22330.0, note: 'measured, with the feet; a 600 x 800 x 30 mm box ring and eight 300 x 300 x 20 mm columns: 10 MPa each at 2 m/s2'}
 holds: 510100.0
 needs: {power: 9695000.0, heat: 964500.0, gravity: 1.6, atmosphere: any}
 recipes:
@@ -23,6 +27,12 @@ recipes:
   - {item: element.o, quantity: 0.045}
   rate: 34.7222222222222
   power: 23000000
+envelope:
+- [-3.4, -3.4, 0, 3.4, 3.4, 29.5]
+- [-5.75, -3.4, 0, -3.4, 3.5, 17.6]
+- [3.4, -3.4, 0, 5.75, 3.5, 17.6]
+- [-3.4, 3.4, 8, 3.4, 3.5, 17.6]
+- [-0.75, 3.4, 0, 0.75, 5.5, 9.3]
 life: 788940000
 basis:
 - of: [recipes]
