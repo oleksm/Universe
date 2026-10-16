@@ -14,6 +14,11 @@ built_of:
 holds: 2930.0
 needs: {power: 9709.0, atmosphere: vacuum}
 rejects: {heat: 1016000.0, temperature: 330.0}
+envelope:
+- [-22.65, -22.061, -0.001, 22.65, 22.061, 3.135]
+- [-24.016, -22.01, -0.001, -21.949, 23.111, 2.85]
+- [21.949, -22.01, -0.001, 23.111, 23.111, 2.85]
+- [-23.611, 22.889, -0.001, 23.111, 23.111, 1.1]
 life: 788940000
 visual: {format: freefall-model/1, path: models/radiator-field-330k/v1, manifest_sha256: 98e6b271749bafe82bc8ba6908048abb83a4bcdde422ee9a151f012e35aa02e7, version: 1, triangles: 30656}
 basis:

@@ -10,6 +10,13 @@ built_of:
 - {what: Tank and fittings, item: material.structural-steel-a36, mass: 8433.0}
 - {what: Oil, item: material.hydraulic-fluid, mass: 11240.0, note: 'transformer mineral oil, which the registry has not got: hydraulic fluid stands for it'}
 needs: {power: 175700.0, heat: 175700.0}
+envelope:
+- [-2.684, -1.241, -0.001, 2.684, 1.241, 3.485]
+- [-1.959, -0.835, 3.247, 2.013, 0.994, 4.351]
+- [-1.175, 1.145, 2.667, 1.175, 1.814, 3.133]
+- [-2.906, -0.867, 0.799, -2.362, 0.867, 1.884]
+- [2.399, -0.508, 0.543, 2.911, 0.508, 2.502]
+- [1.522, -1.596, 0.96, 2.321, -1.159, 1.868]
 life: 788940000
 visual: {format: freefall-model/1, path: models/plant-transformer-35mva/v1, manifest_sha256: b207efc9f77c507b6faa60312370a25e14f8b1b6477f4dceccb70dc726045ae2, version: 1, triangles: 8336}
 basis:
