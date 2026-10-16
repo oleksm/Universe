@@ -6281,3 +6281,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.crating-line-steel
+    version: 1
+    manifest_sha256: "05a3a04ae2f0b032f306d04ddb1a0ba4273bf23cf71e1d93b66d4a22dadf1a3f"
+    installed: 5106963c
+    game: "the loader (world::assets) at fso 5106963c"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/crating-line-steel/v1 (1143316 bytes, bounds [-6.0, 0.0, -2.0] to [6.0, 3.0, 2.02]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
