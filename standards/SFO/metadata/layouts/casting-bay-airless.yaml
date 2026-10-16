@@ -12,6 +12,16 @@ bays:
   unit: unit.crew-post
   at: [0.0, -24.0, 0.0]
   note: south, under its berm, which stays clear of the gantries' south rails at y -12
+ports:
+- id: lv-post
+  flow: in
+  medium: power
+  power: 20000.0
+  voltage: 400
+  connector: connector.termination-400v-16mm2
+  at: [8.0, -24.0, 2.3]
+  facing: [-1.0, 0.0, 0.0]
+  note: the site's 400 V distribution
 mobile:
 - unit: unit.ladle-car-80t
   rides: ladle rail
@@ -90,6 +100,17 @@ links:
   item: material.structural-steel-a36
   mass: 4539.0
   note: 'the stripper gantry''s two straight rails over the east half, at y -12 and 12, beside the ladle gantry''s ends; the link runs on their centre line; its mass measured on blender''s layout (candidate v01): 68.8 kg/m gantry rail'
+- kind: cable
+  name: crew post supply
+  run: run.cable-400v-16mm2
+  ends: ['edge:lv-post', 'P:power-in']
+  from: [8.0, -24.0, 2.3]
+  to: [3.0, -24.0, 2.3]
+  length: 5.0
+  item: material.copper
+  mass: 77.3
+  fittings: {elbows: 0, tees: 0, supports: 2, connectors: 2}
+  note: through the berm, south of the gantries' rails
 ground:
 - {what: Casting floor, item: material.regolith-sintered, volume: 560.09, note: '72 x 20 m, 0.4 m of sintered regolith at grade under the three rails (x -36 to 36, y -10 to 10), so spilt steel meets stone; its rails set in 0.4 m channels that take the cars'' treads and flanges; measured on blender''s layout (candidate v01)', mass: 1400000.0}
 - {what: Gantry rail sleepers, item: material.regolith-sintered, volume: 132.0, note: 88 bearing blocks under the gantries' rails; measured on blender's layout (candidate v01), mass: 330000.0}

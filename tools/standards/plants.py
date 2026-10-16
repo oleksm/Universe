@@ -2924,6 +2924,9 @@ def casting_bay_airless(us, recs):
                {"unit": "unit.gantry-crane-150t-moon", "rides": "ladle gantry rails", "at": [-15.0, 0.0, 0.0]},
                {"unit": "unit.stripper-gantry-20t-moon", "rides": "stripper gantry rails", "at": [15.0, 0.0, 0.0]}]
     bays = [{"id": "P", "mount": "plant-mount.bay-s1", "unit": "unit.crew-post", "at": [0.0, -24.0, 0.0], "note": "south, under its berm, which stays clear of the gantries' south rails at y -12"}]
+    w_post = recs["crew-post"]["needs"]["power"]
+    edge = [port("lv-post", "in", "power", kit.termination(400, kit.area_for(amps(w_post, 400))), (8.0, -24.0, 2.3), (-1, 0, 0), power=w_post, voltage=400, note="the site's 400 V distribution")]
+    links.append(kit_link("crew post supply", kit.cable(400, kit.area_for(amps(w_post, 400))), ("edge:lv-post", "P:power-in"), [None, None], bays, recs, edge, note="through the berm, south of the gantries' rails"))
     ground = [
         {"what": "Casting floor", "item": SINTER, "volume": 560.09, "note": "72 x 20 m, 0.4 m of sintered regolith at grade under the three rails (x -36 to 36, y -10 to 10), so spilt steel meets stone; its rails set in 0.4 m channels that take the cars' treads and flanges; measured on blender's layout (candidate v01)"},
         {"what": "Gantry rail sleepers", "item": SINTER, "volume": 132.0, "note": "88 bearing blocks under the gantries' rails; measured on blender's layout (candidate v01)"},
@@ -2952,7 +2955,7 @@ def casting_bay_airless(us, recs):
         "stands_for": "module.casting-bay",
         "site": {"atmosphere": "none", "gravity": list(MOON_G)},
         "physical": {"length": 72.0, "width": 48.0, "height": 27.0, "mass": r(total)},
-        "bays": bays, "mobile": mobile, "links": links, "ground": ground,
+        "bays": bays, "ports": edge, "mobile": mobile, "links": links, "ground": ground,
         "totals": {"rate": C_RATE, "power": r(power), "heat": 0.0, "water": 0.0, "mass": r(total), "against_module": against},
         "staff": cmod.get("staff"),
         "basis": [{"of": ["bays", "links", "mobile"], "tier": "invented", "review": True, "note": "As the bay for air, on airless ground."},
