@@ -145,7 +145,7 @@ Install each with `tools/standards/install_model.py` as usual. The kinds `connec
 
 **Unit versions** (plain stubs at the ports; the records say where):
 1. `eaf-vessel-80t-sealed` v4:
-   - the deck manifold's flanges are DN 400, facing up, at (-3.8, 4.0, 0.5) in and (-3.8, 4.8, 0.5) out, 0.8 m apart; the manifold reduces from the hoses' 300 mm;
+   - the deck manifold's flanges are DN 400, facing up, side by side at (-4.2, 4.95, 0.5) in and (-3.4, 4.95, 0.5) out, 0.8 m apart, in front of the cradle's deck (it tilts, so no opening through it); the manifold is the unit's and reduces from the hoses' 300 mm;
    - the manifold keeps inside local y 5.3. v3 reaches 5.49, and the crane's legs pass at 5.43;
    - the bus joint at the flexible cables' fixed ends, (0, -6.2, 2.3), facing -y;
    - the feed lock's top at (0, 1.8, 10.1);

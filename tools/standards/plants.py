@@ -2399,13 +2399,13 @@ def arc_ports(us):
     v = us["eaf-vessel-80t-sealed"]
     v["desc"] = v["desc"].replace("(the manifold itself is the layout's)", "(the manifold is the unit's: two DN 400 barrels standing on the deck, each taking its hose from the side)")
     v["desc"] += (f" Its ports (SFO 25): sponge iron in at the feed lock's top, local (0, 1.8, 10.1), a belt's head over it; off-gas out at the reducer's flange, (2, 1.5, 9.7), facing up, 1.2 m lined; the secondary bus's joint at the flexible cables' fixed ends, (0, -6.2, 2.3), facing -y; "
-                  f"the deck manifold's water flanges, DN {dn_main * 1000:.0f} facing up, in at (-3.8, 4.0, 0.5) and out at (-3.8, 4.8, 0.5), 0.8 m apart so their flanges clear (v4: the manifold reduces from the hoses' 300 mm, and keeps inside local y 5.3, clear of the airless shop's gantry crane's legs, whose inner faces pass at y 5.43).")
+                  f"the deck manifold's water flanges, DN {dn_main * 1000:.0f} facing up, in at (-4.2, 4.95, 0.5) and out at (-3.4, 4.95, 0.5), side by side 0.8 m apart so their flanges clear, and in front of the cradle's deck, which tilts over them (v4: the manifold reduces from the hoses' 300 mm, and keeps inside local y 5.3, clear of the airless shop's gantry crane's legs, whose inner faces pass at y 5.43).")
     us["eaf-vessel-80t-sealed"]["ports"] = [
         port("dri-in", "in", "bulk", kit.belt_transfer(0.8), (0.0, 1.8, 10.1), (0, 0, 1), item="good.sponge-iron", rate=DRI, note="the feed lock's top; the belt's head 3 m over it"),
         port("offgas-out", "out", "gas", kit.lined_flange(1.2, 1), (2.0, 1.5, 9.7), (0, 0, 1), item="material.carbon-monoxide", rate=co, pressure=1e5, temperature=SEALED_GAS_T + K),
         port("power-in", "in", "power", kit.bus_joint(V2, I2, 3), (0.0, -6.2, 2.3), (0, -1, 0), power=P, voltage=V2, note=f"{I2 / 1000:.0f} kA a phase"),
-        port("water-in", "in", "liquid", kit.flange(dn_main, 10, temp=330.0), (-3.8, 4.0, 0.5), (0, 0, 1), item=WATER, rate=low, temperature=320.0),
-        port("water-out", "out", "liquid", kit.flange(dn_main, 10, temp=330.0), (-3.8, 4.8, 0.5), (0, 0, 1), item=WATER, rate=low, temperature=330.0),
+        port("water-in", "in", "liquid", kit.flange(dn_main, 10, temp=330.0), (-4.2, 4.95, 0.5), (0, 0, 1), item=WATER, rate=low, temperature=320.0),
+        port("water-out", "out", "liquid", kit.flange(dn_main, 10, temp=330.0), (-3.4, 4.95, 0.5), (0, 0, 1), item=WATER, rate=low, temperature=330.0),
     ]
     t = us["furnace-transformer-90mva"]
     L_, W_, H_ = t["dims"]
@@ -2580,9 +2580,9 @@ def arc_furnace_airless(us, recs):
     xf, xr, xl = -58.8, -57.6, -56.4
     rows, yf, yr, yl, row_links = radiator_rows(L, bays, recs, rad, rad_at, xf, xr, xl, lvf)
     links += [
-        L("loop flow main", w_main, ("V:water-out", "cap"), [None, (-15.8, 10.8, 6.5), (-21.6, 10.8, 6.5), (-21.6, 10.8, 1.0), (-21.6, -1.0, 1.0), (xf, -1.0, 1.0), (xf, yf(rows[0]) - 1.0, 1.0)], (), 1, None,
+        L("loop flow main", w_main, ("V:water-out", "cap"), [None, (-15.4, 10.95, 7.5), (-21.6, 10.95, 7.5), (-21.6, 10.95, 1.0), (-21.6, -1.0, 1.0), (xf, -1.0, 1.0), (xf, yf(rows[0]) - 1.0, 1.0)], (), 1, None,
           f"{flow:,.0f} kg/s at about 330 K from the vessel's deck manifold to the {n_low} cool fields"),
-        L("loop return main", w_main, ("cap", "V:water-in"), [(xr, yr(rows[0]) - 1.0, 1.0), (xr, -1.8, 1.0), (-21.0, -1.8, 1.0), (-21.0, 10.0, 1.0), (-21.0, 10.0, 6.5), (-15.8, 10.0, 6.5), None], (), 1, None,
+        L("loop return main", w_main, ("cap", "V:water-in"), [(xr, yr(rows[0]) - 1.0, 1.0), (xr, -1.8, 1.0), (-21.0, -1.8, 1.0), (-21.0, 10.95, 1.0), (-21.0, 10.95, 6.5), (-16.2, 10.95, 6.5), None], (), 1, None,
           "back from the fields at about 10 K less"),
         L("radiator pumps' supply", lc(p_fields), ("edge:lv-fields", "cap"), [None, (xl, yl(rows[0]) - 1.0, 0.3)], (), 1, None, "south along the fields' east side, beside the loop's mains"),
     ]
