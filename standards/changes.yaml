@@ -854,7 +854,7 @@
 - { record: layout.ore-yard-airless, at: "2026-10-15T19:02:03Z", status: draft, summary: "first tracked", sha: "6b9f05ba1da5177d" }
 - { record: layout.pellet-plant-air, at: "2026-10-15T16:01:43Z", status: draft, summary: "changed: physical", sha: "89e9d07d51ec2d4b" }
 - { record: layout.pellet-plant-airless, at: "2026-10-15T20:27:46Z", status: draft, summary: "changed: physical, ground, totals", sha: "4370552410830680" }
-- { record: layout.shaft-furnace-air, at: "2026-10-16T02:15:54Z", status: draft, summary: "changed: physical, totals", sha: "ce73e9d445cfdd11" }
+- { record: layout.shaft-furnace-air, at: "2026-10-16T02:17:29Z", status: draft, summary: "changed: totals", sha: "b5afae704e949a75" }
 - { record: layout.shaft-furnace-airless, at: "2026-10-16T02:15:54Z", status: draft, summary: "changed: physical, totals", sha: "06a45693c35206df" }
 - { record: market.art, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "517671b6a46daee3" }
 - { record: market.artifacts, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "6b51c19897f56c1a" }
@@ -2827,7 +2827,7 @@
 - { record: unit.radiator-field-345k, at: "2026-10-16T01:32:32Z", status: draft, summary: "changed: ports", sha: "970076eeda3e01e8" }
 - { record: unit.radiator-field-485k, at: "2026-10-15T20:10:26Z", status: draft, summary: "changed", sha: "f642c1c225927653" }
 - { record: unit.rectifier-transformer-21mva, at: "2026-10-15T03:01:55Z", status: draft, summary: "changed", sha: "785569a9e884e75d" }
-- { record: unit.recuperator, at: "2026-10-16T02:15:54Z", status: draft, summary: "changed: physical, built_of", sha: "692e3b7296c93c89" }
+- { record: unit.recuperator, at: "2026-10-16T02:17:29Z", status: draft, summary: "changed: physical, built_of", sha: "f89be6fe0afa8c49" }
 - { record: unit.recycle-compressor, at: "2026-10-15T01:10:30Z", status: draft, summary: "changed: physical, built_of", sha: "944821761b1a4077" }
 - { record: unit.recycle-compressor-8bar, at: "2026-10-16T01:32:32Z", status: draft, summary: "changed: identity, ports", sha: "7dae9693db315944" }
 - { record: unit.sampling-lab, at: "2026-10-15T17:59:01Z", status: draft, summary: "changed", sha: "dfd15b1158ab752d" }

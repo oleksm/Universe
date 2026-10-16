@@ -3,12 +3,12 @@
 identity: {key: unit.recuperator, name: 'Recuperator, 53 MW', description: 'Two vertical shell-and-tube exchangers side by side (local x -3 and 3), shells 4.5 m across and 16 m tall: the top gas from the shaft, 350 deg C with its steam, down through the tubes to 103 deg C, above its dew point; the cleaned recycle gas up through the shells from 40 to 300 deg C. The manifolds run along x outside the 1.5 m gap between the shells: top gas in at the middle of the top (0, 0, 18) into a 3.5 m header across both tube sheets at z 16.2; out of the tubes'' bottoms into a 2.7 m wet header at y 3.8, z 1.5, its outlet flange on the +y face (0, 5.2, 1.5); recycle gas in by a 1.7 m clean header at y -3.3, z 1, flange on the -y face (0, -5.2, 1); out of the shells'' upper ends, below the tube sheets, by a 2.26 m warm header at y -3.5, z 13.5 (clear of the top gas header), its outlet a riser outside to a flange on the -y face (0, -5.2, 16.75), so the flange''s top stays under the unit''s top.'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 10.4, height: 18.0, mass: 351500.0}
+physical: {length: 12.0, width: 10.4, height: 18.0, mass: 351300.0}
 built_of:
 - {what: Tubes, item: material.stainless-steel-304, mass: 207100.0, note: '4,932 tubes 50 mm, 3 mm wall, 12 m: 9,297 m2'}
 - {what: 'Shells, heads and bands', item: material.structural-steel-a36, mass: 82640.0, note: 'two shells 4.5 m across, 16 m, 20 mm plate, with their bands; measured on model v1 (by formula 81,013 kg)'}
 - {what: Skirts and feet, item: material.structural-steel-a36, mass: 9164.0, note: measured on model v1}
-- {what: Headers and branches, item: material.structural-steel-a36, mass: 42750.0, note: 'the top gas header, the 8.2 m wet, clean and warm headers, the warm outlet''s riser with its tee-back plate, and the branches, their outlet stubs reduced to the 8 bar loop''s ports (SFO 25) and ending plain; measured on blender''s model v2'}
+- {what: Headers and branches, item: material.structural-steel-a36, mass: 42560.0, note: 'the top gas header, the 8.2 m wet, clean and warm headers, the warm outlet''s riser with its tee-back plate, and the branches, their outlet stubs reduced to the 8 bar loop''s ports (SFO 25) and ending plain; measured on blender''s model v2'}
 - {what: Header supports, item: material.structural-steel-a36, mass: 9834.0, note: measured on model v1}
 needs: {}
 ports:
