@@ -12,6 +12,13 @@ built_of:
 - {what: Pipes, item: material.stainless-steel-304, mass: 170.4, note: the nitrogen fill and the pump's suction; measured}
 - {what: Valves and pump, item: good.pumps, mass: 3000.0, note: from memory}
 needs: {power: 15000.0, atmosphere: vacuum}
+envelope:
+- [-2.81, -2.81, 0, 2.81, -2.34, 11.31]
+- [-2.81, 2.34, 0, 2.81, 2.81, 11.31]
+- [-2.81, -2.81, 0, -2.34, 2.81, 11.31]
+- [2.34, -2.81, 0, 2.81, 2.81, 11.31]
+- [-2.51, -2.51, 9.99, 2.51, 2.51, 17.51]
+- [-0.11, -0.31, 0, 3.01, 2.16, 13.06]
 life: 788940000
 basis:
 - of: [physical, built_of, needs]
