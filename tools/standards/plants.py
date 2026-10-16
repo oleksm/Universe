@@ -2335,7 +2335,7 @@ def sealed_offgas():
 def offgas_cooler_unit():
     """An evaporative cooler for the sealed arc furnace's gas: a water-walled shaft and its steam drum."""
     co, q = sealed_offgas()
-    D, Hs, pitch = 1.6, 8.0, 0.08                    # m: the shaft across inside its walls, their height, the tubes' pitch
+    D, Hs, pitch = 1.6, 8.0, 0.08                    # m: the shaft across inside its walls, their height (z 9 to 17), the tubes' pitch
     tube_od, tube_t = 0.0603, 0.005
     n = math.ceil(math.pi * (D + tube_od) / pitch)
     tubes = n * Hs * math.pi * (tube_od - tube_t) * tube_t * RHO["steel"]
@@ -2343,23 +2343,23 @@ def offgas_cooler_unit():
     headers = 2 * math.pi * (D + 0.12) * math.pi * (0.219 - 0.012) * 0.012 * RHO["steel"]
     drum = math.pi * 1.012 * 0.012 * 3.0 * RHO["steel"] + 2 * math.pi / 4 * 1.0 ** 2 * 1.15 * 0.012 * RHO["steel"]
     pipes = (2 * 12.0 + 4 * 4.0) * math.pi * (0.168 - 0.007) * 0.007 * RHO["steel"]
-    hopper = math.pi * (D / 2 + 0.2) * math.hypot(D / 2 - 0.2, 1.5) * 0.010 * RHO["steel"] + math.pi * 1.2 * 0.008 * 1.5 * RHO["steel"]
-    legs = 4 * box_tube(0.3, 0.3, 0.01, 16.0) * RHO["steel"] * 1.5
+    hopper = math.pi * (D / 2 + 0.2) * math.hypot(D / 2 - 0.2, 1.5) * 0.010 * RHO["steel"] + math.pi * 1.2 * 0.008 * 1.5 * RHO["steel"] + math.pi * (D + 0.02) * 0.010 * 2.0 * RHO["steel"]
+    legs = 4 * box_tube(0.3, 0.3, 0.01, 17.0) * RHO["steel"] * 1.5
     water = n * Hs * math.pi / 4 * (tube_od - 2 * tube_t) ** 2 * 850.0 + math.pi / 4 * 1.0 ** 2 * 3.0 / 2 * 850.0
     area = math.pi * D * Hs
     loss = math.pi * (D + 2 * tube_od) * Hs * 0.8 * SIGMA * 485.0 ** 4
     return dict(
-        name=f"Off-gas cooler, evaporative, {q / 1e6:.1f} MW", size_class=2, fits="bay-s2", dims=(6.0, 4.0, 17.0),
-        desc=(f"Cools the sealed arc furnace's {co:.2f} kg/s of CO from about {SEALED_GAS_T:.0f} to {FILTER_GAS_T:.0f} deg C, {q / 1e6:.1f} MW, so its filter's candles last: the gas comes down a shaft {D:g} m across whose walls are {n} boiler tubes {tube_od * 1000:.0f} mm across welded edge to edge ({Hs:g} m of them, z 8 to 16, about {q / area / 1e3:.0f} kW a m2), "
-              f"the water in them boiling at about 485 K (20 bar) and rising to a steam drum 1 m across and 3 m long along y on the -x side (axis at local x -2, z 15.5). The steam goes to a radiator field and comes back as water by the field's pump. "
-              f"Gas in on top at (0, 0, 17) from the furnace's lined duct; out of the hopper's side at (3, 0, 8) to the filter; steam out of the drum at (-3, 0.4, 15.5) and water back at (-3, -0.4, 15.5), both facing -x; the dust falls through a lock under the hopper into a closed bin, emptied by forklift; the lock's drives fed at (2, -2, 1). "
+        name=f"Off-gas cooler, evaporative, {q / 1e6:.1f} MW", size_class=2, fits="bay-s2", dims=(6.0, 4.0, 18.0),
+        desc=(f"Cools the sealed arc furnace's {co:.2f} kg/s of CO from about {SEALED_GAS_T:.0f} to {FILTER_GAS_T:.0f} deg C, {q / 1e6:.1f} MW, so its filter's candles last: the gas comes down a shaft {D:g} m across whose walls are {n} boiler tubes {tube_od * 1000:.0f} mm across welded edge to edge ({Hs:g} m of them, z 9 to 17, about {q / area / 1e3:.0f} kW a m2), then through a plain collecting section of 10 mm plate, the shaft's size, z 7 to 9, out of whose side it leaves; "
+              f"the water in them boiling at about 485 K (20 bar) and rising to a steam drum 1 m across and 3 m long along y on the -x side (axis at local x -2, z 16.5). The steam goes to a radiator field and comes back as water by the field's pump. "
+              f"Gas in on top at (0, 0, 18) from the furnace's lined duct; out of the collecting section's side at (3, 0, 8), straight, to the filter; steam out of the drum at (-3, 0.4, 16.5) and water back at (-3, -0.4, 16.5), both facing -x; the dust falls through a lock under the hopper into a closed bin, emptied by forklift; the lock's drives fed at (2, -2, 1). "
               f"Its bare walls radiate about {loss / 1e3:.0f} kW to the sky as well, not counted. On four box legs. For airless ground: on a world with air the shop's duct burns the gas instead."),
         built_of=[part("Water walls", A36, tubes + fins, f"{n} tubes {tube_od * 1000:.1f} x {tube_t * 1000:.0f} mm, {Hs:g} m, with 5 mm bars between them; structural steel stands for boiler steel"),
                   part("Ring headers", A36, headers, "a 219 x 12 mm ring at the walls' top and bottom"),
                   part("Steam drum", A36, drum, "1 m across, 3 m, 12 mm (about 100 MPa at 20 bar), and its heads"),
                   part("Downcomers and risers", A36, pipes, "two 168 mm downcomers from the drum to the bottom ring, 12 m each, and four risers, 4 m"),
-                  part("Hopper and outlet", A36, hopper, "a 10 mm cone under the shaft and the 1.2 m outlet stub"),
-                  part("Legs and bracing", A36, legs, "four 300 x 300 x 10 mm box legs to z 16, their bracing half as much again"),
+                  part("Collector, hopper and outlet", A36, hopper, "the plain collecting section z 7 to 9, 10 mm, a 10 mm cone under it and the 1.2 m outlet stub"),
+                  part("Legs and bracing", A36, legs, "four 300 x 300 x 10 mm box legs to z 17, their bracing half as much again"),
                   part("Dust lock, bin and drives", "good.pumps", 800.0, "two valves, a 1 m3 closed bin and their drives, from memory")],
         holds=water, needs={"power": 10e3, "heat": q, "atmosphere": "vacuum"},
         basis=[{"of": ["needs.heat"], "tier": "derived", "review": True, "note": f"The CO from {DRI_C:.0%} carbon in the sponge iron (from memory), its mean heat {CP_CO:.0f} J/kg K (from memory), from {SEALED_GAS_T:.0f} deg C (invented) to {FILTER_GAS_T:.0f}."},
@@ -2430,10 +2430,10 @@ def arc_ports(us):
     ]
     c = us["offgas-cooler-sealed"]
     c["ports"] = [
-        port("gas-in", "in", "gas", kit.lined_flange(1.2, 1), (0.0, 0.0, 17.0), (0, 0, 1), item="material.carbon-monoxide", rate=co, pressure=1e5, temperature=SEALED_GAS_T + K),
+        port("gas-in", "in", "gas", kit.lined_flange(1.2, 1), (0.0, 0.0, 18.0), (0, 0, 1), item="material.carbon-monoxide", rate=co, pressure=1e5, temperature=SEALED_GAS_T + K),
         port("gas-out", "out", "gas", kit.flange(1.2, 1, temp=FILTER_GAS_T + K), (3.0, 0.0, 8.0), (1, 0, 0), item="material.carbon-monoxide", rate=co, pressure=1e5, temperature=FILTER_GAS_T + K),
-        port("steam-out", "out", "gas", kit.flange(dn_steam, 25, temp=485.0), (-3.0, 0.4, 15.5), (-1, 0, 0), item=WATER, rate=q_gas / 1.89e6, pressure=20e5, temperature=485.0),
-        port("water-in", "in", "liquid", kit.flange(dn_cond, 25, temp=485.0), (-3.0, -0.4, 15.5), (-1, 0, 0), item=WATER, rate=q_gas / 1.89e6, temperature=480.0),
+        port("steam-out", "out", "gas", kit.flange(dn_steam, 25, temp=485.0), (-3.0, 0.4, 16.5), (-1, 0, 0), item=WATER, rate=q_gas / 1.89e6, pressure=20e5, temperature=485.0),
+        port("water-in", "in", "liquid", kit.flange(dn_cond, 25, temp=485.0), (-3.0, -0.4, 16.5), (-1, 0, 0), item=WATER, rate=q_gas / 1.89e6, temperature=480.0),
         port("power-in", "in", "power", lv(c["needs"]["power"]), (2.0, -2.0, 1.0), (0, -1, 0), power=c["needs"]["power"], voltage=400, note="the dust lock's drives"),
     ]
 
@@ -2555,14 +2555,14 @@ def arc_furnace_airless(us, recs):
           f"three phases of water-cooled copper tube, {I2 / 1000:.0f} kA each, up from the transformer's joint and north to the vessel's flexible cables; in vacuum their gaps hold no air to break down, but the gas a seal lets out can (Paschen), so the bars are spaced as if in air; their loss, {bus_loss / 1e3:.0f} kW, goes into their water and so to the cool loop"),
         L("transformer supply", kit.cable(33000, 630), ("edge:hv-in", "T:hv-in"), [None, (-37.0, -6.85, 0.3), (-37.0, -6.85, 8.0), (-12.0, -6.85, 8.0), None], (), math.ceil(i_hv / (630e-6 * kit.J_VACUUM)), None,
           "north along x -37, west of the gantry crane's reach, then east 8 m up over the transformer cooling's lines into the cable box"),
-        L("off-gas", kit.lined_duct(1.2, 1, temp=SEALED_GAS_T + K), ("V:offgas-out", "C:gas-in"), [None, (-10.0, 7.5, 19.0), (14.0, 7.5, 19.0), (14.0, 24.0, 19.0), None], (), 1, None,
-          f"the furnace's {co:.2f} kg/s of CO at about {SEALED_GAS_T:.0f} deg C and 1 bar (no air dilutes it: a fifth of the shop for air's flow), up from the roof's reducer, east 19 m up between the crane's legs and under its bridge, north past its east end at x 14 and down into the cooler"),
+        L("off-gas", kit.lined_duct(1.2, 1, temp=SEALED_GAS_T + K), ("V:offgas-out", "C:gas-in"), [None, (-10.0, 7.5, 20.0), (14.0, 7.5, 20.0), (14.0, 24.0, 20.0), None], (), 1, None,
+          f"the furnace's {co:.2f} kg/s of CO at about {SEALED_GAS_T:.0f} deg C and 1 bar (no air dilutes it: a fifth of the shop for air's flow), up from the roof's reducer, east 20 m up between the crane's legs and under its bridge, north past its east end at x 14 and down into the cooler"),
         L("cooled off-gas", kit.pipe(1.2, 1, temp=FILTER_GAS_T + K), ("C:gas-out", "G:gas-in"), [None, None], (), 1, None, f"at {FILTER_GAS_T:.0f} deg C; the filter lets the cleaned gas go up its stack"),
         L("steam to the hot field", kit.pipe(dn_steam, 25, lagged=True, temp=485.0), ("C:steam-out", f"RH1:steam-in"),
-          [None, (9.0, 24.4, 15.5), (9.0, 24.4, 1.0), (9.0, 30.6, 1.0), (-56.0, 30.6, 1.0), (-56.0, 51.6, 1.0), None], (), 1, None,
+          [None, (9.0, 24.4, 16.5), (9.0, 24.4, 1.0), (9.0, 30.6, 1.0), (-56.0, 30.6, 1.0), (-56.0, 51.6, 1.0), None], (), 1, None,
           f"{q_gas / 1.89e6:.2f} kg/s of steam at 20 bar from the cooler's drum, down, north past the slag rail's end and west along y 30.6 to the hot field"),
         L("water from the hot field", kit.pipe(dn_cond, 25, liquid=True, temp=485.0), ("RH1:water-out", "C:water-in"),
-          [None, (-57.0, 50.4, 1.0), (-57.0, 30.0, 1.0), (8.0, 30.0, 1.0), (8.0, 23.6, 1.0), (8.0, 23.6, 15.5), None], (), 1, None, "the condensate back by the field's pump, on the steam line's left all the way"),
+          [None, (-57.0, 50.4, 1.0), (-57.0, 30.0, 1.0), (8.0, 30.0, 1.0), (8.0, 23.6, 1.0), (8.0, 23.6, 16.5), None], (), 1, None, "the condensate back by the field's pump, on the steam line's left all the way"),
         L("bin supply", lc(need("dri-bin-200t")), ("edge:lv-bin", "F:power-in"), [None, None]),
         L("cooler supply", lc(need("offgas-cooler-sealed")), ("edge:lv-cooler", "C:power-in"), [None, None]),
         L("filter supply", lc(need("offgas-filter-sealed")), ("edge:lv-filter", "G:power-in"), [None, None]),

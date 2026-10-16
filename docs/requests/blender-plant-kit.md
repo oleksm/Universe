@@ -132,14 +132,15 @@ Install each with `tools/standards/install_model.py` as usual. The kinds `connec
 
 `layout.arc-furnace-airless` is now laid of runs (63 runs, 8 layout ports, 0 faults). The gantry crane's legs sweep x -35 to 11 along y ±12, so no run crosses them: the feed belt comes in along x between the legs, and the off-gas duct goes east 19 m up and turns north past the crane's east end.
 
-**A new unit:** `offgas-cooler-sealed` (6 x 4 x 17 m, 17.2 t). The sealed furnace's gas is CO alone, 1.37 kg/s, so it gives 2.2 MW, not the 7.2 MW of the old jacketed duct.
-- A water-walled shaft 1.6 m across, z 8 to 16, on four box legs.
-- A steam drum 1 m across and 3 m long along y, axis at (-2, 0, 15.5).
-- A hopper under the shaft, with a dust lock and a closed bin.
+**A new unit:** `offgas-cooler-sealed` (6 x 4 x 18 m). The sealed furnace's gas is CO alone, 1.37 kg/s, so it gives 2.2 MW, not the 7.2 MW of the old jacketed duct.
+- A water-walled shaft 1.6 m across, z 9 to 17, on four box legs (answering blender: the walls start above the outlet).
+- A plain collecting section, the shaft's size, 10 mm plate, z 7 to 9. The gas leaves straight out of its side.
+- A steam drum 1 m across and 3 m long along y, axis at (-2, 0, 16.5).
+- A hopper under the collector, with a dust lock and a closed bin.
 - Ports:
-  - gas in on top at (0, 0, 17), a 1.2 m lined flange;
-  - gas out of the hopper's side at (3, 0, 8), facing +x, DN 1200;
-  - steam out at (-3, 0.4, 15.5) and water in at (-3, -0.4, 15.5), facing -x;
+  - gas in on top at (0, 0, 18), a 1.2 m lined flange;
+  - gas out of the collector's side at (3, 0, 8), facing +x, DN 1200;
+  - steam out at (-3, 0.4, 16.5) and water in at (-3, -0.4, 16.5), facing -x;
   - the lock drives' 400 V at (2, -2, 1), facing -y.
 
 **Unit versions** (plain stubs at the ports; the records say where):
