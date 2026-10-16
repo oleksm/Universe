@@ -2420,7 +2420,10 @@ def arc_ports(us):
     t = us["furnace-transformer-90mva"]
     L_, W_, H_ = t["dims"]
     if "HV cable box" not in [x["what"] for x in t["built_of"]]:
-        t["built_of"] = t["built_of"] + [part("HV cable box", A36, 2 * (3.0 * 0.8 + 3.0 * 0.8 + 0.8 * 0.8) * 0.006 * RHO["steel"], "3 x 0.8 x 0.8 m, 6 mm, over the three HV bushings: from its dimensions (to be drawn, v2)")]
+        m2 = "measured on blender's model v2 (2026-10-16)"
+        t["built_of"] = t["built_of"] + [part("HV cable box", A36, 504.1, f"3 x 0.8 x 0.8 m, 6 mm, over the three HV bushings (moved to 0.9 m pitch under it); {m2}"),
+                                         part("Cable box supports", A36, 123.8, f"its hollow posts and feet on the tank lid; {m2}"),
+                                         part("Cooler water pipework", A36, 35.2 + 56.5, f"the DN 100 stubs turned to face -x (35.2 kg) and their supports (56.5); {m2}")]
         t["desc"] += (f" Fed at 33 kV through a cable box over its HV bushings, its gland plate on top at (0, -0.85, {H_ + 0.8:g}); the secondary's bus joint (SFO 25, the three phases 0.6 m apart) at (0, 2.5, 4) facing +y; its cooler's water in at (-3.76, -2.38, 1.35) and out at (-3.76, -2.38, 2.35), facing -x.")
         t["dims"] = (L_, W_, H_ + 0.8)
     q_t = TRANSFORMER_LOSS * S_MVA / (4186 * 10)
