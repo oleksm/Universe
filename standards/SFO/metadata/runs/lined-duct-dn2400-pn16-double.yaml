@@ -18,6 +18,12 @@ support: {spacing: 12.0, mass: 225.0, per_m_height: 64.8, item: material.structu
 cap: {thickness: 0.114, mass: 5933.4}
 connector: connector.lined-flange-dn2400-pn16-double
 carries: gas
+visual:
+  format: "freefall-model/1"
+  path: "models/lined-duct-dn2400-pn16-double/v1"
+  manifest_sha256: "ca1f5e74cf3746f689b08113b7cfb3ee08d8839462dc668caae972b7fc1a6784"
+  version: 1
+  triangles: 2704
 basis:
 - of: [per_m]
   tier: derived
