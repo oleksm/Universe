@@ -6851,3 +6851,18 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: unit.filter-press-2
+    version: 1
+    manifest_sha256: "481187cbfd7c76d63cd5f6584a2a3b6a4195ffde72cc558f1a0e2593f429f7d2"
+    installed: 4e158702
+    game: "the loader (world::assets) at fso 4e158702"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/filter-press-2/v1 (1244976 bytes, bounds [-6.025, -0.0, -3.1] to [6.025, 11.25, 3.25]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
