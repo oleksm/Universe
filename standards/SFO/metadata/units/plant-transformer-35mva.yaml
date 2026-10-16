@@ -56,13 +56,8 @@ envelope:
 - [-2.907, -0.868, 0.798, -2.362, 0.868, 1.884]
 - [-1.386, 0.434, 3.247, 1.839, 0.872, 3.656]
 - [-2.684, -1.161, -0.001, 2.684, 1.161, 0.364]
-visual:
-  format: "freefall-model/1"
-  path: "models/plant-transformer-35mva/v2"
-  manifest_sha256: "5487e552837489da1b719ca888321daeda5d7ed11de8d2494ca9bc42687c46f1"
-  version: 2
-  triangles: 11632
 life: 788940000
+visual: {format: freefall-model/1, path: models/plant-transformer-35mva/v2, manifest_sha256: 5487e552837489da1b719ca888321daeda5d7ed11de8d2494ca9bc42687c46f1, version: 2, triangles: 11632}
 basis:
 - of: [physical, built_of]
   tier: invented

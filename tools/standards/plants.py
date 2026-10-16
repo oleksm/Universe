@@ -3231,6 +3231,7 @@ def pellet_ports(us):
     # The 330 K field: ports to its south-west corner, as the 345 K field's (radiator_rows).
     rf = us["radiator-field-330k"]
     rf["desc"] = rf["desc"].replace("its ports at local (-24, -0.6, 1) flow and (-24, 0.6, 1) return.", "its ports on its south-west corner facing -y, at local (-23, -24, 1) flow and (-22.4, -24, 1) return, its pump's power entry at (-21.8, -24, 0.3), so a layout's mains run in an aisle beside the field, not under it.")
+    rf["built_of"] = [dict(q_, mass=3316.0, note=q_.get("note", "") + "; with the branch, posts and union housings to the south-west ports, 141 kg more, measured on blender's model v2") if q_["what"].startswith("Headers") and "south-west" not in q_.get("note", "") else q_ for q_ in rf["built_of"]]
     rf["ports"] = [
         port("water-in", "in", "liquid", kit.flange(0.15, 10, temp=330.0), (-23.0, -24, 1), (0, -1, 0), item=WATER, rate=q(rf["rejects"]["heat"]), temperature=330.0),
         port("water-out", "out", "liquid", kit.flange(0.15, 10, temp=330.0), (-22.4, -24, 1), (0, -1, 0), item=WATER, rate=q(rf["rejects"]["heat"]), temperature=320.0),

@@ -5,7 +5,7 @@ stands_for: module.arc-furnace
 site:
   atmosphere: none
   gravity: [1.6, 2.0]
-physical: {length: 251.7, width: 190.8, height: 23.7, mass: 4403000.0}
+physical: {length: 251.7, width: 190.8, height: 23.7, mass: 4405000.0}
 bays:
 - id: V
   mount: plant-mount.bay-s2
@@ -220,7 +220,7 @@ ground:
 - {what: Rail beds, item: material.regolith-sintered, volume: 17.25, note: 'under the ladle, slag and crane rails; measured on blender''s layout (candidate v01)', mass: 43120.0}
 - {what: Unit pads, item: material.regolith-sintered, volume: 79.4, note: under the off-gas filter (62.5) and the dust bin (16.9); measured on blender's layout (candidate v01), mass: 198500.0}
 - {what: Pipe and trestle feet, item: material.regolith-sintered, volume: 21.35, note: 'under the cooling, steam and condensate pipes, the off-gas duct''s supports and the feed belt''s trestles; measured on blender''s layout (candidate v01)', mass: 53380.0}
-totals: {rate: 26.6666666666667, power: 72880000.0, heat: 18450000.0, water: 0.0, mass: 4403000.0, against_module: 'module.arc-furnace: one box, the same on every world. This layout: the same rate; 72.9 MW; 18.4 MW to 13 radiator fields (21.8 MW at lunar noon), 12 at 330 K for the panels and transformer and 1 at 485 K for the duct, in place of the tower; no water used up (closed loops); no hall, no baghouse (the furnace is sealed); 1,323 t of plant and 3,080 t of sintered regolith. The radiators cover 3.0 ha: the heat that went up a tower''s plume as steam must here leave as light, and at 330 K a panel in the noon sun sheds little. A heat pump lifting the panels'' heat to 485 K (at half Carnot''s) would need about 7 MW more power and 3 hot fields in place of all 13 (not fitted).'}
+totals: {rate: 26.6666666666667, power: 72880000.0, heat: 18450000.0, water: 0.0, mass: 4405000.0, against_module: 'module.arc-furnace: one box, the same on every world. This layout: the same rate; 72.9 MW; 18.4 MW to 13 radiator fields (21.8 MW at lunar noon), 12 at 330 K for the panels and transformer and 1 at 485 K for the duct, in place of the tower; no water used up (closed loops); no hall, no baghouse (the furnace is sealed); 1,325 t of plant and 3,080 t of sintered regolith. The radiators cover 3.0 ha: the heat that went up a tower''s plume as steam must here leave as light, and at 330 K a panel in the noon sun sheds little. A heat pump lifting the panels'' heat to 485 K (at half Carnot''s) would need about 7 MW more power and 3 hot fields in place of all 13 (not fitted).'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}
