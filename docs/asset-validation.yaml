@@ -5365,3 +5365,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.shaft-furnace-200th-hp
+    version: 2
+    manifest_sha256: "8ca9eaec0f90ee49d20ad12d2509d0bb162504a1fffc96c79eae959abc9442cc"
+    installed: e46cb9f0
+    game: "the loader (world::assets) at fso e46cb9f0"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/shaft-furnace-200th-hp/v2 (1255760 bytes, bounds [-6.115, 6.0, -6.115] to [6.115, 40.0, 6.5]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
