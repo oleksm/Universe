@@ -2397,6 +2397,7 @@ def arc_ports(us):
     ]
     hot["desc"] = hot["desc"].replace("its ports at local (-24, -0.6, 1) flow and (-24, 0.6, 1) return.", f"its ports at local (-24, -0.6, 1) steam in (DN {dn_steam * 1000:.0f}) and (-24, 0.6, 1) water out (DN {dn_cond * 1000:.0f}), facing -x, its pump's power entry at (-24, -1.4, 0.3).")
     v = us["eaf-vessel-80t-sealed"]
+    v["desc"] = v["desc"].replace("(the manifold itself is the layout's)", "(the manifold is the unit's: two DN 400 barrels standing on the deck, each taking its hose from the side)")
     v["desc"] += (f" Its ports (SFO 25): sponge iron in at the feed lock's top, local (0, 1.8, 10.1), a belt's head over it; off-gas out at the reducer's flange, (2, 1.5, 9.7), facing up, 1.2 m lined; the secondary bus's joint at the flexible cables' fixed ends, (0, -6.2, 2.3), facing -y; "
                   f"the deck manifold's water flanges, DN {dn_main * 1000:.0f} facing up, in at (-3.8, 4.0, 0.5) and out at (-3.8, 4.8, 0.5), 0.8 m apart so their flanges clear (v4: the manifold reduces from the hoses' 300 mm, and keeps inside local y 5.3, clear of the airless shop's gantry crane's legs, whose inner faces pass at y 5.43).")
     us["eaf-vessel-80t-sealed"]["ports"] = [

@@ -72,13 +72,8 @@ envelope:
 - [-3.001, -1.51, 8.9, -1.2, 1.51, 17.5]
 - [1.2, -0.611, 7.14, 3.001, 0.611, 8.611]
 - [1.69, -2.001, -0.001, 2.31, -1.39, 1.401]
-visual:
-  format: "freefall-model/1"
-  path: "models/offgas-cooler-sealed/v1"
-  manifest_sha256: "323c10da14be614fd1d11b8ac5c61b12100e32ed4f0a83d9447d17f3bb801bec"
-  version: 1
-  triangles: 24508
 life: 788940000
+visual: {format: freefall-model/1, path: models/offgas-cooler-sealed/v1, manifest_sha256: 323c10da14be614fd1d11b8ac5c61b12100e32ed4f0a83d9447d17f3bb801bec, version: 1, triangles: 24508}
 basis:
 - of: [needs.heat]
   tier: derived
