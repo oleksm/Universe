@@ -264,6 +264,34 @@ def check(lay, units, runs, conns):
             if hit.any():
                 k = int(np.argmax(hit))
                 faults.append(f"{l['name']}: through {b['id']} ({b['unit']}) at {pts[k].round(2).tolist()}")
+    # Moving units: each one's boxes swept along the rail it rides, end to end; no run may stand in that path (a
+    # gantry crane's legs sweep the whole length of its rails). Rails are straight.
+    rails = {l["name"]: l for l in lay["links"] if l.get("kind") == "rail"}
+    for m_ in lay.get("mobile", []):
+        rl, u = rails.get(m_["rides"]), units.get(m_["unit"])
+        if not rl or not u:
+            continue
+        a_, b_ = np.array(rl["from"], float), np.array(rl["to"], float)
+        d_ = (b_ - a_) / np.linalg.norm(b_ - a_)
+        at_ = np.array(m_["at"], float)
+        off = at_ - a_ - ((at_ - a_) @ d_) * d_            # (where it stands across its rail)
+        Lm, Wm, Hm = u["physical"]["length"], u["physical"]["width"], u["physical"]["height"]
+        boxes = u.get("envelope") or [[-Lm / 2, -Wm / 2, 0.0, Lm / 2, Wm / 2, Hm]]
+        swept = []
+        for e_ in boxes:
+            lo, hi = np.array(e_[:3], float), np.array(e_[3:], float)
+            swept.append((np.minimum(a_ + off + lo, b_ + off + lo), np.maximum(a_ + off + hi, b_ + off + hi)))
+        for l in links:
+            if l["name"] not in radius:
+                continue
+            pts = S_[l["name"]]
+            rw, rh = half[l["name"]]
+            for lo, hi in swept:
+                pad = np.array([rw, rw, rh]) - TOUCH
+                inside = np.all((pts > lo - pad) & (pts < hi + pad), axis=1)
+                if inside.any():
+                    faults.append(f"{l['name']}: in the path of {m_['unit']} riding {m_['rides']}, at {pts[np.argmax(inside)].round(2).tolist()}")
+                    break
     names = [l["name"] for l in links if l["name"] in radius]
     for i, na in enumerate(names):
         la = by_name[na]

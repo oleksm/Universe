@@ -3710,8 +3710,8 @@ def hydrogen_plant_airless(us, recs):
     links += [
         L("raw water", kit.pipe(0.2, 10, kit.SS, liquid=True), ("edge:water-in", "W:raw-in"), [None, None]),
         L("reject", kit.pipe(0.15, 10, kit.SS, liquid=True), ("W:reject-out", "edge:reject-out"), [None, None]),
-        L("demineralised water", kit.pipe(0.1, 10, kit.SS, liquid=True), ("W:clean-out", "cap"), [None, (62.0, -24.0, 0.5), (62.0, 7.6, 0.5), (xs_b[0] + 8.3, 7.6, 0.5)], (), 1, None, f"{H_WATER:.1f} kg/s to the blocks"),
-        L("purifier condensate", kit.pipe(0.05, 10, kit.SS, liquid=True), ("P:condensate-out", "tee:raw water"), [None, (64.5, 3.0, 0.3), (64.5, -18.0, 0.3), (90.0, -18.0, 0.3), (90.0, -18.0, 0.5), (90.0, -25.6, 0.5)]),
+        L("demineralised water", kit.pipe(0.1, 10, kit.SS, liquid=True), ("W:clean-out", "cap"), [None, (62.0, -24.0, 0.5), (62.0, -13.5, 0.5), (62.0, -13.5, -0.8), (62.0, -10.5, -0.8), (62.0, -10.5, 0.5), (62.0, 7.6, 0.5), (xs_b[0] + 8.3, 7.6, 0.5)], (), 1, None, f"{H_WATER:.1f} kg/s to the blocks; under the crane's south rail in the covered trench"),
+        L("purifier condensate", kit.pipe(0.05, 10, kit.SS, liquid=True), ("P:condensate-out", "tee:raw water"), [None, (64.5, 3.0, 0.3), (64.5, -10.5, 0.3), (64.5, -10.5, -0.8), (64.5, -13.5, -0.8), (64.5, -13.5, 0.3), (64.5, -18.0, 0.3), (90.0, -18.0, 0.3), (90.0, -18.0, 0.5), (90.0, -25.6, 0.5)], (), 1, None, "under the crane's south rail in the covered trench"),
     ]
     for i, x in enumerate(xs_b):
         links.append(L(f"E{i + 1} water", kit.pipe(0.05, 10, kit.SS, liquid=True), ("tee:demineralised water", f"E{i + 1}:water-in"), [(x + 9.8, 7.6, 0.5), (x + 9.8, 7.6, 1.0), None]))
@@ -3747,6 +3747,7 @@ def hydrogen_plant_airless(us, recs):
         {"what": "Block pads", "item": SINTER, "volume": r(N_BLK * 24 * 12 * 0.4), "note": "0.4 m of sintered regolith with lye-proof bunds"},
         {"what": "Rectifier and outside pads", "item": SINTER, "volume": r(N_BLK * 12 * 8 * 0.5 + 2 * 12 * 8 * 0.5)},
         {"what": "Bus trenches", "item": SINTER, "volume": r(trench), "note": "a trench 1.4 m wide and 1.6 m deep for each block's bus, under the crane's south rail, lined with 0.2 m of sintered regolith and covered"},
+        {"what": "Water trench", "item": SINTER, "volume": 4.8, "note": "a covered trench across the crane's south rail at x 61 to 65, 3 m long and 1.2 m deep, for the demineralised water and the purifier's condensate: floor and walls 0.25 m, from its size; its cover steel"},
         {"what": "Radiator legs' pads", "item": SINTER, "volume": r(n_rad * 4 * (44.0 * 44.0 / 72.0) * 0.027)},
         {"what": "Crew post berm", "item": "material.regolith", "volume": BERM, "note": "loose regolith at least 1 m over the post everywhere (its top 4 x 2 m, 5.3 m up), lying at 35 degrees, its foot about 19 x 17 m, a cavity for the post; measured on blender's arc furnace shop; with openings for its windows (light wells on the north) and its airlock (a ramp cut on the west); at the airlock's door a landing of packed regolith 2 x 2 m, its top at the threshold (1.35 m up), and a ramp down to the ground at about 1 in 3"},
     ]

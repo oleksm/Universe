@@ -132,7 +132,7 @@ Open after the pellet plant:
   - The sponge iron bin stands west of the crane's reach, turned so its feeder faces east. The belt comes in along x between the legs, under the bridge, rising 17 degrees.
   - The duct goes east 19 m up and turns north past the crane's east end.
   - The mains leave the platform's west edge.
-  - The fit check doesn't see moving units yet, so this was checked by hand. It should learn the sweep of a unit that rides a rail.
+  - The fit check now sweeps each moving unit's boxes along the rail it rides, end to end, and faults any run in that path. Its first run found two pipes in the hydrogen plant crossing the maintenance crane's south rail; they now pass under it in a covered trench.
 - **The off-gas.** The sealed furnace's gas is CO alone, 1.37 kg/s: no air comes in to dilute it or burn it. Its heat is about 2.2 MW, not the 7.2 MW the shop for air's duct takes. It goes to a new unit, the evaporative cooler `offgas-cooler-sealed`, whose steam goes to the one 485 K field, used at 23%.
 - **The secondary bus** is AC, three-phase, 65 kA a phase. The kit's busbar and bus joint now take three phases (`run.busbar-ac-65ka`). Its 14.6 kW a metre goes into its water.
 - **The transformer** is fed at 33 kV, by two circuits of 630 mm2, through a cable box (v2).
