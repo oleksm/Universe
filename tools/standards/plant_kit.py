@@ -287,7 +287,8 @@ def belt(width, rate, sealed=False):
              _part("Idlers", A36, 39.0 / 1.2 + 20.0 / 3.0, "a three-roll troughing set every 1.2 m (39 kg) and a return roll every 3 m (20 kg), sealed bearings with vacuum grease; from memory"),
              _part("Stringers", A36, 2 * 18.0, "two 150 x 75 mm channels")]
     if sealed:
-        built += [_part("Gallery tube", A36, math.pi * 3.0 * 0.004 * RHO[A36], "a 3 m tube of 4 mm plate round the belt, holding about 20 kPa of nitrogen; its rings are a repeated piece"),
+        built += [_part("Gallery tube", A36, math.pi * 3.0 * 0.004 * RHO[A36], "a 3 m tube of 4 mm plate round the belt, holding about 20 kPa of nitrogen"),
+                  _part("Gallery rings", A36, 40.0 / 3.0, "an inside stiffening ring every 3 m, 90 x 6 mm, about 40 kg (a repeated piece), its share a metre"),
                   _part("Insulation", MLI, math.pi * 3.0 * 0.025 * RHO[MLI], "25 mm of multilayer foil over the tube, against the lunar day and night")]
     per_m = sum(b["mass"] for b in built)
     BOX = (4 * 3.05 * 3.0 + 2 * 3.05 ** 2) * 0.006 * RHO[A36]          # kg: a gallery's sealed head or tail box

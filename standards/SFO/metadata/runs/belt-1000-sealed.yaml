@@ -6,12 +6,13 @@ size: 1.0
 outside: [3.05, 3.05]
 rating: {rate: 49.7}
 per_m:
-  mass: 421.6
+  mass: 434.9
   built_of:
   - {what: Belt, item: material.silicone-rubber, mass: 38.7, note: 'both runs, 18 mm; a vacuum-rated belt, silicone rubber standing for it'}
   - {what: Idlers, item: material.structural-steel-a36, mass: 39.2, note: 'a three-roll troughing set every 1.2 m (39 kg) and a return roll every 3 m (20 kg), sealed bearings with vacuum grease; from memory'}
   - {what: Stringers, item: material.structural-steel-a36, mass: 36.0, note: two 150 x 75 mm channels}
-  - {what: Gallery tube, item: material.structural-steel-a36, mass: 295.9, note: 'a 3 m tube of 4 mm plate round the belt, holding about 20 kPa of nitrogen; its rings are a repeated piece'}
+  - {what: Gallery tube, item: material.structural-steel-a36, mass: 295.9, note: 'a 3 m tube of 4 mm plate round the belt, holding about 20 kPa of nitrogen'}
+  - {what: Gallery rings, item: material.structural-steel-a36, mass: 13.3, note: 'an inside stiffening ring every 3 m, 90 x 6 mm, about 40 kg (a repeated piece), its share a metre'}
   - {what: Insulation, item: material.multi-layer-insulation, mass: 11.8, note: '25 mm of multilayer foil over the tube, against the lunar day and night'}
 support: {spacing: 9.0, mass: 400.0, per_m_height: 75.0, item: material.structural-steel-a36}
 repeat:
