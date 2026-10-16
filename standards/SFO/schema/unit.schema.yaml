@@ -27,6 +27,7 @@ definitions:
       connector: { type: string, x-ref: [connector], description: "The connector it is built to, by key." }
       at: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "m", description: "Its face's middle in the unit's frame (x along, y across from its middle, z up from its bay's floor)." }
       facing: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "1", description: "The way out of its face, a unit vector in the unit's frame: a run leaves it this way." }
+      optional: { type: boolean, description: "A spare, blinded when nothing joins it: a pass-through a layout may leave unused." }
       note: { type: string }
 properties:
   identity:

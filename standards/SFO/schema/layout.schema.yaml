@@ -71,7 +71,7 @@ properties:
           items: { type: string }
           minItems: 2
           maxItems: 2
-          description: "What its two ends join, from and to: `<bay>:<port>` (a unit's port), `edge:<port>` (one of the layout's own ports) or `tee:<run name>` (it branches off that run, its end lying on that run's path). from, to and via are then where those are."
+          description: "What its two ends join, from and to: `<bay>:<port>` (a unit's port), `edge:<port>` (one of the layout's own ports) `tee:<run name>` (it branches off that run, its end lying on that run's path) or `onto:<run name>` (a belt's head dropping onto that belt or conveyor, 0.5 m over its path). from, to and via are then where those are."
         taps: { type: array, items: { type: string }, description: "Ports taken off it along its length by a tee (`<bay>:<port>`): each lies on its path." }
         count: { type: integer, minimum: 1, description: "Circuits laid side by side on one path (cables)" }
         fittings:

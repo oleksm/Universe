@@ -2883,7 +2883,7 @@ def kit_link(name, run, ends, path, bays, recs, edge, taps=(), count=1, power=No
             off = end_offset(kit._recs[pp["connector"]]["kind"], rr, which)
             at = (pp["at"][0] + off[0], pp["at"][1] + off[1], round(pp["at"][2] + off[2], 3))
             n_port += 1
-        elif ":" in e and not e.startswith("tee:"):
+        elif ":" in e and not e.startswith(("tee:", "onto:")):
             bid, pid = e.split(":")
             b = by_id[bid]
             pp = next(q for q in recs[b["unit"].split(".", 1)[1]]["ports"] if q["id"] == pid)

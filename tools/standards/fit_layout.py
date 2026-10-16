@@ -19,6 +19,7 @@ import yaml
 S = "standards/SFO/metadata/"
 STEP = 0.25        # m between the points a run is sampled at
 GAP = 0.05         # m kept clear between runs
+DROP = 0.5         # m a belt's head stands over the belt it drops onto (plant_kit.TRANSFER_DROP)
 
 
 def load(folder):
@@ -74,7 +75,7 @@ def check(lay, units, runs, conns):
     links = [l for l in lay["links"] if l.get("run")]
     by_name = {l["name"]: l for l in links}
     used = set()
-    radius = {}
+    radius, half = {}, {}
 
     def port_of(ref):
         bid, pid = ref.split(":")
@@ -103,6 +104,7 @@ def check(lay, units, runs, conns):
         pts = path_of(l)
         w = run["outside"][0] * (math.sqrt(l.get("count", 1)))
         radius[l["name"]] = max(w, run["outside"][1]) / 2
+        half[l["name"]] = (w / 2, run["outside"][1] / 2)          # (across and up: against units' boxes a run is its section, not its round)
         R = run.get("elbow", {}).get("radius", 0.0)
         items = []
         for which, e in enumerate(l.get("ends", [])):
@@ -126,6 +128,18 @@ def check(lay, units, runs, conns):
                         faults.append(f"{l['name']}: its tee on {main['name']} is in that run's elbow at {c.tolist()}")
                 if runs[main["run"]]["carries"] != run["carries"]:
                     faults.append(f"{l['name']}: carries {run['carries']}, tees off {main['name']} which carries {runs[main['run']]['carries']}")
+                continue
+            if e.startswith("onto:"):                 # (a belt's head over another belt, TRANSFER_DROP above its path)
+                main = by_name.get(e[5:])
+                if not main:
+                    faults.append(f"{l['name']}: drops onto {e[5:]}, which is not a run here")
+                    continue
+                if which != 1 or run["carries"] != "bulk" or runs[main["run"]]["carries"] != "bulk":
+                    faults.append(f"{l['name']}: only a bulk run's to end drops onto another bulk run")
+                mp = path_of(main)
+                d = min(seg_dist((at - np.array([0.0, 0.0, DROP]))[None], a, b)[0] for a, b in zip(mp, mp[1:]))
+                if d > 0.02:
+                    faults.append(f"{l['name']}: its head at {at.tolist()} is not {DROP:g} m over {main['name']} ({d:.2f} m off)")
                 continue
             if e.startswith("edge:"):
                 p = edge.get(e[5:])
@@ -164,9 +178,19 @@ def check(lay, units, runs, conns):
                 faults.append(f"{l['name']}: no tap port {t}")
                 continue
             used.add(t)
-            d = min(seg_dist(world(b, p["at"])[None], a, c)[0] for a, c in zip(pts, pts[1:]))
-            if d > 0.02:
-                faults.append(f"{l['name']}: tap {t} is {d:.2f} m off its path")
+            w_ = world(b, p["at"])
+            if run["carries"] == "bulk":              # (a short chute or plough between the port and the belt, the run's: up to 1.6 m aside, 1 m under or 0.8 m over its path)
+                best = min(((seg_dist(w_[None], a, c)[0], a, c) for a, c in zip(pts, pts[1:])), key=lambda x: x[0])
+                a, c = best[1], best[2]
+                u_ = (c - a) / max(np.linalg.norm(c - a), 1e-12)
+                k_ = a + np.clip((w_ - a) @ u_, 0, np.linalg.norm(c - a)) * u_
+                dz, dh = w_[2] - k_[2], math.hypot(w_[0] - k_[0], w_[1] - k_[1])
+                if not (-1.0 - 1e-3 <= dz <= 0.8 + 1e-3 and dh <= 1.6 + 1e-3):
+                    faults.append(f"{l['name']}: tap {t} is {dh:.2f} m aside and {dz:+.2f} m from its path (a chute reaches 1.6 aside, 1 under, 0.8 over)")
+            else:
+                d = min(seg_dist(w_[None], a, c)[0] for a, c in zip(pts, pts[1:]))
+                if d > 0.02:
+                    faults.append(f"{l['name']}: tap {t} is {d:.2f} m off its path")
             if p["medium"] != run["carries"]:
                 faults.append(f"{l['name']}: tap {t} is {p['medium']}, the run carries {run['carries']}")
         # Legs long enough for the elbows at their ends.
@@ -192,6 +216,7 @@ def check(lay, units, runs, conns):
                 joined.setdefault(e.split(":")[0], []).append(path_of(l)[0 if which == 0 else -1])
         R_ = runs[l["run"]].get("elbow", {}).get("radius", 0.0)
         pts, rad = S_[l["name"]], radius[l["name"]]
+        rw, rh = half[l["name"]]
         for b in lay["bays"]:
             if b["id"] in taps and not units[b["unit"]].get("envelope"):
                 continue
@@ -207,10 +232,10 @@ def check(lay, units, runs, conns):
             if u.get("envelope"):          # (the boxes measured on its model; else its whole box)
                 hit = np.zeros(len(pts), bool)
                 for x0, y0, z0, x1, y1, z1 in u["envelope"]:
-                    hit |= (lx > x0 - rad) & (lx < x1 + rad) & (ly > y0 - rad) & (ly < y1 + rad) & (q[:, 2] > z0 - rad) & (q[:, 2] < z1 + rad)
+                    hit |= (lx > x0 - rw) & (lx < x1 + rw) & (ly > y0 - rw) & (ly < y1 + rw) & (q[:, 2] > z0 - rh) & (q[:, 2] < z1 + rh)
                 hit &= ~q_ok
             else:
-                hit = (np.abs(lx) < Lb / 2 + rad) & (np.abs(ly) < Wb / 2 + rad) & (q[:, 2] > -rad) & (q[:, 2] < Hb + rad) & ~q_ok
+                hit = (np.abs(lx) < Lb / 2 + rw) & (np.abs(ly) < Wb / 2 + rw) & (q[:, 2] > -rh) & (q[:, 2] < Hb + rh) & ~q_ok
             if hit.any():
                 k = int(np.argmax(hit))
                 faults.append(f"{l['name']}: through {b['id']} ({b['unit']}) at {pts[k].round(2).tolist()}")
@@ -266,7 +291,7 @@ def check(lay, units, runs, conns):
             notes.append(f"{b['id']} ({b['unit']}): no ports yet")
             continue
         for p in ports:
-            if f"{b['id']}:{p['id']}" not in used:
+            if f"{b['id']}:{p['id']}" not in used and not p.get("optional"):
                 faults.append(f"{b['id']}:{p['id']} ({b['unit']}) is left open")
         if (u.get("needs") or {}).get("power") and not any(p["medium"] == "power" and f"{b['id']}:{p['id']}" in used for p in ports):
             faults.append(f"{b['id']} ({b['unit']}) needs {u['needs']['power'] / 1e3:,.0f} kW and nothing feeds it")

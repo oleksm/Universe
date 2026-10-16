@@ -13,7 +13,7 @@ import math
 
 G = 9.80665
 DN = [0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.6, 4.0]
-PN = {10: 1.0e6, 16: 1.6e6, 25: 2.5e6}
+PN = {1: 1.0e5, 10: 1.0e6, 16: 1.6e6, 25: 2.5e6}
 AREAS = [16, 25, 35, 50, 70, 95, 120, 150, 185, 240, 300, 400, 500, 630]      # mm2, cable conductors
 BOLTS = [0.016, 0.020, 0.024, 0.027, 0.030, 0.036, 0.042, 0.048, 0.056, 0.064]   # m, bolt diameters
 A36, SS, BOLT, CU, AL = "material.structural-steel-a36", "material.stainless-steel-304", "material.high-strength-steel-4340", "material.copper", "material.aluminium-alloy-6061"
@@ -21,6 +21,7 @@ REF, MLI, PE, RUBBER, SILICA = "good.refractory-brick", "material.multi-layer-in
 RHO = {A36: 7850, SS: 7900, BOLT: 7850, CU: 8960, AL: 2700, REF: 3000, MLI: 50, PE: 940, RUBBER: 1075, SILICA: 250}
 STRESS = {A36: 133e6, SS: 115e6}        # Pa allowable (B31.3, A36 and 304 to about 340 deg C; from memory)
 E_WELD = 0.85
+TRANSFER_DROP = 0.5                     # m: a belt's head over the belt it drops onto, in a hood (SFO 25 `onto:` ends)
 J_VACUUM = 2.5e6                        # A/m2 in a cable's copper on airless ground: radiation only, about half what air allows (from memory)
 
 _recs = {}
@@ -253,16 +254,22 @@ def lined_duct(dn, pn, lining=0.2, temp=1173.0, sealing="single"):
     return key
 
 
-def belt(width, rate):
-    key = f"run.belt-{_tag(width)}"
+def belt(width, rate, sealed=False):
+    """An open troughed belt; sealed: in a gallery tube 3 m across that holds a hall's gas round it (green balls or
+    ore taken through vacuum from one sealed space to another)."""
+    key = f"run.belt-{_tag(width)}" + ("-sealed" if sealed else "")
     if key in _recs:
         return key
     built = [_part("Belt", RUBBER, 2 * width * 0.018 * RHO[RUBBER], "both runs, 18 mm; a vacuum-rated belt, silicone rubber standing for it"),
              _part("Idlers", A36, 39.0 / 1.2 + 20.0 / 3.0, "a three-roll troughing set every 1.2 m (39 kg) and a return roll every 3 m (20 kg), sealed bearings with vacuum grease; from memory"),
              _part("Stringers", A36, 2 * 18.0, "two 150 x 75 mm channels")]
+    if sealed:
+        built += [_part("Gallery tube", A36, math.pi * 3.0 * 0.004 * RHO[A36] + 3 * 40.0 / 3.0, "a 3 m tube of 4 mm plate round the belt, stiffened by a ring every 3 m (40 kg), holding about 20 kPa of nitrogen"),
+                  _part("Insulation", MLI, math.pi * 3.0 * 0.025 * RHO[MLI], "25 mm of multilayer foil over the tube, against the lunar day and night")]
     per_m = sum(b["mass"] for b in built)
-    _recs[key] = {"identity": {"key": key, "name": f"Belt conveyor, {width * 1000:.0f} mm", "description": f"An open troughed belt {width * 1000:.0f} mm wide on idlers and stringers, carried on trestles; it runs straight (a turn is a transfer to another belt). Its drive is at its head."},
-                  "kind": "belt", "size": width, "outside": [r(width + 0.6, 2), 1.2], "rating": {"rate": r(rate)},
+    out = [3.0, 3.0] if sealed else [r(width + 0.6, 2), r(max(0.8, width), 2)]     # (a belt's height by its width: 1.2 m for the 1.2 m belt)
+    _recs[key] = {"identity": {"key": key, "name": f"Belt conveyor, {width * 1000:.0f} mm" + (", in a sealed gallery" if sealed else ""), "description": f"An open troughed belt {width * 1000:.0f} mm wide on idlers and stringers, carried on trestles; it runs straight (a turn is a transfer to another belt). Its drive is at its head." + (" It runs in a sealed gallery tube 3 m across, its axis the tube's, at the hall's gas pressure; where the tube meets a hall's nozzle the joint is the nozzle's flange." if sealed else "")},
+                  "kind": "belt", "size": width, "outside": out, "rating": {"rate": r(rate)},
                   "per_m": {"mass": r(per_m), "built_of": built},
                   "support": {"spacing": 18.0, "mass": 300.0, "per_m_height": 75.0, "item": A36},
                   "repeat": [{"piece": "idler", "pitch": 1.2}, {"piece": "return_roll", "pitch": 3.0}],
