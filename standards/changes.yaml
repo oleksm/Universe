@@ -199,7 +199,7 @@
 - { record: connector.termination-400v-35mm2, at: "2026-10-16T21:55:28Z", status: draft, summary: "changed: visual", sha: "da027ebe78570330" }
 - { record: connector.termination-400v-400mm2, at: "2026-10-16T15:07:27Z", status: draft, summary: "changed", sha: "e906d6e055d30309" }
 - { record: connector.termination-400v-500mm2, at: "2026-10-16T17:53:48Z", status: draft, summary: "changed", sha: "317e25ab819f216f" }
-- { record: connector.termination-400v-50mm2, at: "2026-10-16T19:40:41Z", status: draft, summary: "first tracked", sha: "2e9be7a262eed88a" }
+- { record: connector.termination-400v-50mm2, at: "2026-10-16T21:58:37Z", status: draft, summary: "changed: visual", sha: "74e71d4bc0ea37d9" }
 - { record: connector.termination-400v-70mm2, at: "2026-10-16T15:00:44Z", status: draft, summary: "changed", sha: "623472d9a9a9f918" }
 - { record: connector.termination-400v-95mm2, at: "2026-10-16T19:40:41Z", status: draft, summary: "first tracked", sha: "9da0052012126945" }
 - { record: connector.termination-6p6kv-185mm2, at: "2026-10-16T14:24:23Z", status: draft, summary: "changed", sha: "a32ec5e3bb6184d8" }
