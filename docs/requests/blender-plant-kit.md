@@ -8,7 +8,7 @@ One model per record, at the record's `physical` size (the installer checks it).
 - **Frame:** the joint's mating plane (gasket plane) at the origin, the run's axis along +x. A flange pair is symmetric about x = 0.
 - **Node `face`:** at the origin, +x along the axis.
 - **What to draw, from each record's `built_of` note:** both flanges with bolts and nuts at the stated count and circle; for a double seal, the leak-off tap. A lined flange shows the lining's joint ring. A chute flange is a plate pair. A belt transfer is the hood and the drop chute. Its origin is the head pulley's place, and the chute runs 3 m down along -z. A termination is the lugs and gland plate at a box face.
-- **Size:** low poly, under 8k triangles. Small terminations can be a few hundred.
+- **Size:** low poly, under 12k triangles (a large flange with 60 bolts may need it); small ones far less, terminations a few hundred.
 
 ## 2. Run kits (19, `standards/SFO/metadata/runs/`)
 
