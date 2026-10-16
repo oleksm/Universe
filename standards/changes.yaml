@@ -157,16 +157,16 @@
 - { record: clock.system, at: "2026-10-06T22:07:52Z", status: review, summary: "first tracked", sha: "a1ce985910bb5ae9" }
 - { record: connector.belt-transfer-1200, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "38fae5feb755cd05" }
 - { record: connector.chute-dn800, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "f0664ba5ebb081dc" }
-- { record: connector.flange-dn100-pn10, at: "2026-10-16T03:49:56Z", status: draft, summary: "changed: physical, built_of", sha: "10ac3ad760e26163" }
-- { record: connector.flange-dn1000-pn16-double, at: "2026-10-16T03:49:56Z", status: draft, summary: "changed: physical, built_of", sha: "ae38a952c3b6b814" }
-- { record: connector.flange-dn150-pn10, at: "2026-10-16T11:45:06Z", status: draft, summary: "changed", sha: "777342119eef7b52" }
-- { record: connector.flange-dn1600-pn16-double, at: "2026-10-16T03:49:56Z", status: draft, summary: "changed: physical, built_of", sha: "f7d07544101bd3ca" }
-- { record: connector.flange-dn200-pn10-ss, at: "2026-10-16T12:00:56Z", status: draft, summary: "changed", sha: "d7ed9a2498fab6eb" }
-- { record: connector.flange-dn2400-pn16-double, at: "2026-10-16T03:49:56Z", status: draft, summary: "changed: physical, built_of", sha: "01075ff42c132091" }
-- { record: connector.flange-dn250-pn16-ss-double, at: "2026-10-16T12:00:56Z", status: draft, summary: "changed", sha: "752de922487c4e4e" }
-- { record: connector.flange-dn350-pn10, at: "2026-10-16T12:10:24Z", status: draft, summary: "changed: visual", sha: "49e11a2eecbce711" }
-- { record: connector.flange-dn900-pn10, at: "2026-10-16T12:18:15Z", status: draft, summary: "changed: visual", sha: "8d9c766567614f00" }
-- { record: connector.lined-flange-dn2400-pn16-double, at: "2026-10-16T03:49:56Z", status: draft, summary: "changed: physical, built_of", sha: "3722d9a29c205499" }
+- { record: connector.flange-dn100-pn10, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, built_of", sha: "15d96294c74e396c" }
+- { record: connector.flange-dn1000-pn16-double, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, built_of", sha: "6c0caffb38f0cd22" }
+- { record: connector.flange-dn150-pn10, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, built_of", sha: "d3ff30ecc19aa875" }
+- { record: connector.flange-dn1600-pn16-double, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, built_of", sha: "11e9729e13d0128c" }
+- { record: connector.flange-dn200-pn10-ss, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, built_of", sha: "116c6aaa6f670bfd" }
+- { record: connector.flange-dn2400-pn16-double, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, built_of", sha: "dc03bb7539904043" }
+- { record: connector.flange-dn250-pn16-ss-double, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, built_of", sha: "ba28964589898926" }
+- { record: connector.flange-dn350-pn10, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, built_of", sha: "16eac06e34a9631c" }
+- { record: connector.flange-dn900-pn10, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, built_of", sha: "1d9d29c363fc2252" }
+- { record: connector.lined-flange-dn2400-pn16-double, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, built_of", sha: "2b3887cc3134e89b" }
 - { record: connector.termination-132kv-240mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "e9360fde90b4ed28" }
 - { record: connector.termination-400v-16mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "34bd7bf1e76a645c" }
 - { record: connector.termination-400v-300mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "64197b06c5a2379d" }
@@ -855,7 +855,7 @@
 - { record: layout.pellet-plant-air, at: "2026-10-15T16:01:43Z", status: draft, summary: "changed: physical", sha: "89e9d07d51ec2d4b" }
 - { record: layout.pellet-plant-airless, at: "2026-10-15T20:27:46Z", status: draft, summary: "changed: physical, ground, totals", sha: "4370552410830680" }
 - { record: layout.shaft-furnace-air, at: "2026-10-16T03:20:47Z", status: draft, summary: "changed: totals", sha: "56b2d2168ab078d2" }
-- { record: layout.shaft-furnace-airless, at: "2026-10-16T12:02:30Z", status: draft, summary: "changed: links", sha: "8eb36521ab5190b2" }
+- { record: layout.shaft-furnace-airless, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, links, totals", sha: "6b1cbf5e4df2d0a6" }
 - { record: market.art, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "517671b6a46daee3" }
 - { record: market.artifacts, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "6b51c19897f56c1a" }
 - { record: market.biologics, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "003ee842af8f7674" }
@@ -1563,14 +1563,14 @@
 - { record: run.drag-conveyor-800, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "c7869288da8955c1" }
 - { record: run.lined-duct-dn2400-pn16-double, at: "2026-10-16T12:02:30Z", status: draft, summary: "changed: cap", sha: "47c7b5d1c22f4740" }
 - { record: run.pipe-dn100-pn10, at: "2026-10-16T12:02:30Z", status: draft, summary: "changed: cap", sha: "1a93b2ea91b1a18c" }
-- { record: run.pipe-dn1000-pn16-double, at: "2026-10-16T12:21:05Z", status: draft, summary: "changed: visual", sha: "e472f105c1ac7cd6" }
+- { record: run.pipe-dn1000-pn16-double, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed", sha: "546d0db4c6ae69f6" }
 - { record: run.pipe-dn1000-pn16-mli-double, at: "2026-10-16T12:02:30Z", status: draft, summary: "changed: cap", sha: "0ffc81f6e93f1821" }
 - { record: run.pipe-dn150-pn10, at: "2026-10-16T12:02:30Z", status: draft, summary: "changed: cap", sha: "0e7a09407e4c43d9" }
 - { record: run.pipe-dn1600-pn16-mli-double, at: "2026-10-16T12:02:30Z", status: draft, summary: "changed: cap", sha: "a8cbaa48418fef98" }
-- { record: run.pipe-dn200-pn10-ss, at: "2026-10-16T12:08:03Z", status: draft, summary: "changed: visual", sha: "21edb988da82d0c9" }
-- { record: run.pipe-dn250-pn16-ss-double, at: "2026-10-16T12:06:05Z", status: draft, summary: "changed: visual", sha: "cc11d9c381980bb9" }
-- { record: run.pipe-dn350-pn10, at: "2026-10-16T12:03:39Z", status: draft, summary: "changed: visual", sha: "b8e17e1ed6ef4e62" }
-- { record: run.pipe-dn900-pn10, at: "2026-10-16T12:14:06Z", status: draft, summary: "changed: visual", sha: "fb40079455aa8e62" }
+- { record: run.pipe-dn200-pn10-ss, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed", sha: "bff1979818114fdd" }
+- { record: run.pipe-dn250-pn16-ss-double, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed", sha: "05352425674a7366" }
+- { record: run.pipe-dn350-pn10, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed", sha: "d41dada519023bf2" }
+- { record: run.pipe-dn900-pn10, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed", sha: "814098b0ccb874d1" }
 - { record: seeding.asteroids, at: "2026-10-10T16:13:03Z", status: "", summary: "changed: basis", sha: "523d44e4bfa3af5f" }
 - { record: seeding.conditions, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "96e581fa4cb02009" }
 - { record: seeding.galaxy, at: "2026-10-10T16:13:03Z", status: "", summary: "changed", sha: "c3aeb429e01bf69f" }

@@ -79,12 +79,15 @@ def flange(dn, pn, item=A36, sealing="single", temp=373.0):
     t = max(0.02, math.sqrt(6 * max(w, 1.0) * h / (math.pi * dg * 140e6)))
     t = math.ceil(t * 500) / 500
     D = k + 3 * db
-    ring = 2 * math.pi / 4 * (D ** 2 - dn ** 2) * t * 1.25 * RHO[item]
+    wp = wall(dn, p, item)
+    ri, ro, rh = dn / 2, dn / 2 + wp, dn / 2 + 4 * wp                     # (the neck: a hub one ring thick, tapering from 4 walls to the pipe's)
+    neck = math.pi * t * ((rh * rh + rh * ro + ro * ro) / 3 - ri * ri)
+    ring = 2 * (math.pi / 4 * (D ** 2 - dn ** 2) * t + neck) * RHO[item]
     lb = 2 * t + 0.006 + 2 * db
     bolts = n * RHO[BOLT] * (math.pi / 4 * db ** 2 * lb + 2 * (0.866 * (1.5 * db) ** 2 - math.pi / 4 * db ** 2) * 0.8 * db)
     gw = 0.015 + 0.01 * dn
     gasket = (2 if sealing == "double" else 1) * math.pi * dg * gw * 0.0045 * 0.6 * RHO[SS]
-    built = [_part("Flanges", item, ring, f"two weld-neck rings {D:.3f} m across, {t * 1000:.0f} mm thick, a quarter more for the necks; along the pipe the joint is {(2 * t + 0.006 + 4 * db) * 1000:.0f} mm with the necks and the bolts' and nuts' ends"),
+    built = [_part("Flanges", item, ring, f"two weld-neck rings {D:.3f} m across, {t * 1000:.0f} mm thick, their necks tapering over {t * 1000:.0f} mm from {4 * wp * 1000:.0f} mm to the pipe's wall; along the pipe the joint is {(2 * t + 0.006 + 4 * db) * 1000:.0f} mm with the necks and the bolts' and nuts' ends"),
              _part("Bolts and nuts", BOLT, bolts, f"{n} of M{db * 1000:.0f}, {lb * 1000:.0f} mm, on a {k:.3f} m circle"),
              _part("Gaskets" if sealing == "double" else "Gasket", SS, gasket, "spiral wound, stainless windings" + ("; two, the space between them piped to a leak watch" if sealing == "double" else ""))]
     _recs[key] = {"identity": {"key": key, "name": f"Flange DN {dn * 1000:.0f} PN {pn}" + (", stainless" if item == SS else "") + (", double seal" if sealing == "double" else ""),

@@ -5,9 +5,9 @@ kind: flange
 size: 1.6
 rating: {pressure: 1600000.0, temperature: 623.15}
 sealing: double
-physical: {length: 1.862, width: 1.862, height: 0.23, mass: 904.1}
+physical: {length: 1.862, width: 1.862, height: 0.23, mass: 894.0}
 built_of:
-- {what: Flanges, item: material.structural-steel-a36, mass: 810.9, note: 'two weld-neck rings 1.862 m across, 58 mm thick, a quarter more for the necks; along the pipe the joint is 230 mm with the necks and the bolts'' and nuts'' ends'}
+- {what: Flanges, item: material.structural-steel-a36, mass: 800.8, note: 'two weld-neck rings 1.862 m across, 58 mm thick, their necks tapering over 58 mm from 52 mm to the pipe''s wall; along the pipe the joint is 230 mm with the necks and the bolts'' and nuts'' ends'}
 - {what: Bolts and nuts, item: material.high-strength-steel-4340, mass: 86.3, note: '80 of M27, 176 mm, on a 1.781 m circle'}
 - {what: Gaskets, item: material.stainless-steel-304, mass: 6.9, note: 'spiral wound, stainless windings; two, the space between them piped to a leak watch'}
 basis:
