@@ -64,3 +64,26 @@ b. **Measure an envelope:** a few boxes (6 or fewer), in the unit's frame, that 
 2. The run kits and connectors that `layout.shaft-furnace-airless` uses.
 
 Install each with `tools/standards/install_model.py` as usual. The kinds `connector` and `run` are now accepted.
+
+## 4. The airless hydrogen plant (2026-10-16)
+
+`layout.hydrogen-plant-airless` is now laid of runs (131 runs, 0 faults). What it needs drawn:
+
+1. **Units:**
+   - `electrolyser-block-20mw-10bar` (new): as the 3 bar block's model, with 25 mm separators and its DC terminals at (0, -6, 2.4);
+   - `hydrogen-purifier-10bar` (new);
+   - `water-treatment-sealed` (new);
+   - `rectifier-transformer-21mva` v2: an HV cable box (3 x 0.8 x 0.8 m) over the bushings, its gland plate on top at (0, -1.5, 4.4); the DC terminals become one bus joint at (0, 3, 2.4), the poles' pads at x -0.3 (+) and 0.3 (-).
+
+   Each ends at its ports in plain stubs, as in section 3. Please send envelopes for them as before.
+2. **Kit pieces without a model** (15 runs, 15 connectors): the stainless pipes DN 50 to 250 (PN 10, and PN 16 double seal), the loop pipes DN 200, 250, 300 and 600, cables 33 kV 150 mm2 and 400 V 25, 185 and 500 mm2 with their terminations, and the new busbar kit with its joint.
+
+**The busbar** (run kind `busbar`, `run.busbar-dc-44ka`):
+- its axis is midway between its two poles, the poles 0.3 m apart across y, + at -y;
+- each pole is 7 hollow copper tubes 60 x 10 mm in two rows of four, 20 mm apart;
+- `straight` is the poles and their clamps;
+- `elbow` turns in plan at 0.6 m and `riser` turns up at 0.6 m;
+- no tee and no cap;
+- `support_head` is a steel cross-arm with two post insulators under the poles; `support_leg` is a steel post.
+
+**The bus joint** (`connector.bus-joint-dc-44ka`): at the plane, each pole's tubes are brazed into a pair of 30 mm copper plates, bolted with sixteen M20, with an insulating hose from each tube's end.
