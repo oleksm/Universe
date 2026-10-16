@@ -90,7 +90,10 @@ def flange(dn, pn, item=A36, sealing="single", temp=373.0):
     bolts = n * RHO[BOLT] * (math.pi / 4 * db ** 2 * lb + 2 * (0.866 * (1.5 * db) ** 2 - math.pi / 4 * db ** 2) * 0.8 * db)
     gw = 0.015 + 0.01 * dn
     gasket = (2 if sealing == "double" else 1) * math.pi * dg * gw * 0.0045 * 0.6 * RHO[SS]
-    built = [_part("Flanges", item, ring, f"two weld-neck rings {D:.3f} m across, {t * 1000:.0f} mm thick, their necks tapering over {t * 1000:.0f} mm from {4 * wp * 1000:.0f} mm to the pipe's wall; along the pipe the joint is {(2 * t + 0.006 + max(4 * db, 2 * t)) * 1000:.0f} mm with the necks and the bolts' and nuts' ends"),
+    ring_note = f"two weld-neck rings {D:.3f} m across, {t * 1000:.0f} mm thick, their necks tapering over {t * 1000:.0f} mm from {4 * wp * 1000:.0f} mm to the pipe's wall; along the pipe the joint is {(2 * t + 0.006 + max(4 * db, 2 * t)) * 1000:.0f} mm with the necks and the bolts' and nuts' ends"
+    if key in FLANGE_MEASURED:          # (a joint whose pipe is not the pipe rule's: a gallery's 4 mm tube)
+        ring, ring_note = FLANGE_MEASURED[key]
+    built = [_part("Flanges", item, ring, ring_note),
              _part("Bolts and nuts", BOLT, bolts, f"{n} of M{db * 1000:.0f}, {lb * 1000:.0f} mm, on a {k:.3f} m circle"),
              _part("Gaskets" if sealing == "double" else "Gasket", SS, gasket, "spiral wound, stainless windings" + ("; two, the space between them piped to a leak watch" if sealing == "double" else ""))]
     _recs[key] = {"identity": {"key": key, "name": f"Flange DN {dn * 1000:.0f} PN {pn}" + (", stainless" if item == SS else "") + (", double seal" if sealing == "double" else ""),
@@ -137,6 +140,7 @@ def chute(dn, item=SS):
     return key
 
 
+FLANGE_MEASURED = {"connector.flange-dn3000-pn1-double": (333.18, "two weld-neck rings 3.196 m across, 20 mm thick, their necks tapering over 20 mm from 16 mm to the gallery's 4 mm wall at 3 m outside, 2.992 m clear; measured on blender's model v1")}
 SEALED_TRANSFER_MEASURED = {0.8: (806.35, 59.02), 1.0: (948.71, 70.05)}     # kg of steel and liner, the sealed transfers measured
 TRANSFER_MEASURED = {1.2: (1652.31, 146.40), 1.0: (1395.23, 123.10), 0.8: (1176.03, 103.72)}     # kg of plate and liner, by belt width (blender's models)
 
