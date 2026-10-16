@@ -1583,7 +1583,7 @@
 - { record: rule.mounts-margin, at: "2026-10-13T05:32:00Z", status: review, summary: "changed: statement", sha: "88491f348e30a319" }
 - { record: rule.plant-weights-from-memory, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "d4bff33987b75c18" }
 - { record: rule.shares-chosen, at: "2026-10-07T03:53:08Z", status: review, summary: "first tracked", sha: "2f29f0362d9d7f04" }
-- { record: run.belt-1000, at: "2026-10-16T19:40:41Z", status: draft, summary: "first tracked", sha: "e5fae6e7b9fb291f" }
+- { record: run.belt-1000, at: "2026-10-16T21:05:05Z", status: draft, summary: "changed: visual", sha: "b3e462acc2c4bc69" }
 - { record: run.belt-1000-sealed, at: "2026-10-16T19:40:41Z", status: draft, summary: "first tracked", sha: "8725ed5ad2476b15" }
 - { record: run.belt-1200, at: "2026-10-16T13:57:34Z", status: draft, summary: "changed", sha: "1f38dc7c62f3bc04" }
 - { record: run.belt-800, at: "2026-10-16T21:02:45Z", status: draft, summary: "changed", sha: "69869a61efe133e3" }
