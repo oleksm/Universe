@@ -48,8 +48,13 @@ envelope:
 - [-24.016, -22.01, -0.001, -21.949, 23.111, 2.85]
 - [21.949, -22.01, -0.001, 23.111, 23.111, 2.85]
 - [-23.611, 22.889, -0.001, 23.111, 23.111, 1.1]
+visual:
+  format: "freefall-model/1"
+  path: "models/radiator-field-330k/v2"
+  manifest_sha256: "fc60eeb0d0a2e35cf4fc73e25b5dcd74458848ca2850f7f56ae045ac180f46f5"
+  version: 2
+  triangles: 32844
 life: 788940000
-visual: {format: freefall-model/1, path: models/radiator-field-330k/v1, manifest_sha256: 98e6b271749bafe82bc8ba6908048abb83a4bcdde422ee9a151f012e35aa02e7, version: 1, triangles: 30656}
 basis:
 - of: [rejects, physical]
   tier: derived
