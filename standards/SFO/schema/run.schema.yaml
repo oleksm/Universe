@@ -63,6 +63,14 @@ properties:
     description: "Where another run branches off it, or a port is taken off it along its length."
     properties:
       mass: { type: number, exclusiveMinimum: 0, x-unit: "kg", description: "kg over the straight it replaces, a reducer to the branch's size included" }
+  cap:
+    type: object
+    additionalProperties: false
+    required: [thickness, mass]
+    description: "A blind end: a flat plate on a flange, bolted to the run's last flange."
+    properties:
+      thickness: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "m of plate: a clamped flat plate at the class's pressure, 0.75 p r2 / t2 within the allowable stress" }
+      mass: { type: number, exclusiveMinimum: 0, x-unit: "kg", description: "kg of the plate and its flange ring (half the connector's)" }
   support:
     type: object
     additionalProperties: false

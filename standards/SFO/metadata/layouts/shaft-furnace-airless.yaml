@@ -549,7 +549,7 @@ links:
   to: [-34.8, 398.35, 1.0]
   length: 467.4
   item: material.structural-steel-a36
-  mass: 88050.0
+  mass: 88260.0
   via:
   - [48.6, 17.2, 1.0]
   - [39.4, 17.2, 1.0]
@@ -565,7 +565,7 @@ links:
   to: [47.4, 20.0, 1.0]
   length: 463.4
   item: material.structural-steel-a36
-  mass: 87350.0
+  mass: 87560.0
   via:
   - [-33.6, 36.6, 1.0]
   - [40.6, 36.6, 1.0]
@@ -592,7 +592,7 @@ links:
   to: [-324.0, 40.35, 1.0]
   length: 289.2
   item: material.structural-steel-a36
-  mass: 14930.0
+  mass: 14950.0
   fittings: {elbows: 0, tees: 1, supports: 42, connectors: 1}
   note: in the aisle south of its row, 1 m up
 - kind: pipe
@@ -603,7 +603,7 @@ links:
   to: [-33.6, 41.25, 1.0]
   length: 291.4
   item: material.structural-steel-a36
-  mass: 15990.0
+  mass: 16010.0
   via:
   - [-33.6, 41.25, 2.0]
   fittings: {elbows: 1, tees: 1, supports: 43, connectors: 1}
@@ -819,7 +819,7 @@ links:
   to: [-324.0, 91.35, 1.0]
   length: 289.2
   item: material.structural-steel-a36
-  mass: 14930.0
+  mass: 14950.0
   fittings: {elbows: 0, tees: 1, supports: 42, connectors: 1}
   note: in the aisle south of its row, 1 m up
 - kind: pipe
@@ -830,7 +830,7 @@ links:
   to: [-33.6, 92.25, 1.0]
   length: 291.4
   item: material.structural-steel-a36
-  mass: 15990.0
+  mass: 16010.0
   via:
   - [-33.6, 92.25, 2.0]
   fittings: {elbows: 1, tees: 1, supports: 43, connectors: 1}
@@ -1046,7 +1046,7 @@ links:
   to: [-324.0, 142.35, 1.0]
   length: 289.2
   item: material.structural-steel-a36
-  mass: 14930.0
+  mass: 14950.0
   fittings: {elbows: 0, tees: 1, supports: 42, connectors: 1}
   note: in the aisle south of its row, 1 m up
 - kind: pipe
@@ -1057,7 +1057,7 @@ links:
   to: [-33.6, 143.25, 1.0]
   length: 291.4
   item: material.structural-steel-a36
-  mass: 15990.0
+  mass: 16010.0
   via:
   - [-33.6, 143.25, 2.0]
   fittings: {elbows: 1, tees: 1, supports: 43, connectors: 1}
@@ -1273,7 +1273,7 @@ links:
   to: [-324.0, 193.35, 1.0]
   length: 289.2
   item: material.structural-steel-a36
-  mass: 14930.0
+  mass: 14950.0
   fittings: {elbows: 0, tees: 1, supports: 42, connectors: 1}
   note: in the aisle south of its row, 1 m up
 - kind: pipe
@@ -1284,7 +1284,7 @@ links:
   to: [-33.6, 194.25, 1.0]
   length: 291.4
   item: material.structural-steel-a36
-  mass: 15990.0
+  mass: 16010.0
   via:
   - [-33.6, 194.25, 2.0]
   fittings: {elbows: 1, tees: 1, supports: 43, connectors: 1}
@@ -1500,7 +1500,7 @@ links:
   to: [-324.0, 244.35, 1.0]
   length: 289.2
   item: material.structural-steel-a36
-  mass: 14930.0
+  mass: 14950.0
   fittings: {elbows: 0, tees: 1, supports: 42, connectors: 1}
   note: in the aisle south of its row, 1 m up
 - kind: pipe
@@ -1511,7 +1511,7 @@ links:
   to: [-33.6, 245.25, 1.0]
   length: 291.4
   item: material.structural-steel-a36
-  mass: 15990.0
+  mass: 16010.0
   via:
   - [-33.6, 245.25, 2.0]
   fittings: {elbows: 1, tees: 1, supports: 43, connectors: 1}
@@ -1727,7 +1727,7 @@ links:
   to: [-324.0, 295.35, 1.0]
   length: 289.2
   item: material.structural-steel-a36
-  mass: 14930.0
+  mass: 14950.0
   fittings: {elbows: 0, tees: 1, supports: 42, connectors: 1}
   note: in the aisle south of its row, 1 m up
 - kind: pipe
@@ -1738,7 +1738,7 @@ links:
   to: [-33.6, 296.25, 1.0]
   length: 291.4
   item: material.structural-steel-a36
-  mass: 15990.0
+  mass: 16010.0
   via:
   - [-33.6, 296.25, 2.0]
   fittings: {elbows: 1, tees: 1, supports: 43, connectors: 1}
@@ -1954,7 +1954,7 @@ links:
   to: [-324.0, 346.35, 1.0]
   length: 289.2
   item: material.structural-steel-a36
-  mass: 14930.0
+  mass: 14950.0
   fittings: {elbows: 0, tees: 1, supports: 42, connectors: 1}
   note: in the aisle south of its row, 1 m up
 - kind: pipe
@@ -1965,7 +1965,7 @@ links:
   to: [-33.6, 347.25, 1.0]
   length: 291.4
   item: material.structural-steel-a36
-  mass: 15990.0
+  mass: 16010.0
   via:
   - [-33.6, 347.25, 2.0]
   fittings: {elbows: 1, tees: 1, supports: 43, connectors: 1}
@@ -2181,7 +2181,7 @@ links:
   to: [-84.0, 397.35, 1.0]
   length: 49.2
   item: material.structural-steel-a36
-  mass: 1140.0
+  mass: 1142.0
   fittings: {elbows: 0, tees: 1, supports: 10, connectors: 1}
   note: in the aisle south of its row, 1 m up
 - kind: pipe
@@ -2192,7 +2192,7 @@ links:
   to: [-33.6, 398.25, 1.0]
   length: 51.4
   item: material.structural-steel-a36
-  mass: 1410.0
+  mass: 1412.0
   via:
   - [-33.6, 398.25, 2.0]
   fittings: {elbows: 1, tees: 1, supports: 11, connectors: 1}
@@ -2331,7 +2331,7 @@ ground:
 - {what: Radiator legs' pads, item: material.regolith-sintered, volume: 124.9, mass: 312200.0}
 - {what: Crew post berm, item: material.regolith, volume: 586.23, note: 'loose regolith at least 1 m over the post everywhere (its top 4 x 2 m, 5.3 m up), lying at 35 degrees, its foot about 19 x 17 m, a cavity for the post; measured on blender''s arc furnace shop; with openings for its windows (light wells on the north) and its airlock (a ramp cut on the west); with openings for its windows and airlock; at the airlock''s door a landing of packed regolith 2 x 2 m, its top at the threshold (1.35 m up), and a ramp down to the ground at about 1 in 3', mass: 879300.0}
 - {what: Trestle footings, item: material.regolith-sintered, volume: 39.0, mass: 97500.0}
-totals: {rate: 55.5555555555556, power: 127500000.0, heat: 62090000.0, water: 0.0, mass: 9551000.0, against_module: 'module.shaft-furnace: one box, 22 MW. The layout for air draws 152 MW and sends 130 MW up four towers. This layout: the same rate; 127 MW (heater 121, compressor 4.1: at 8 bar the compressor only makes up the loop''s pressure drop); 62 MW to 43 radiator fields at 345 K (10 ha), for the water must condense somewhere and only light can take the heat away; no cooling zone or loop (the sponge iron goes on hot); no water used up. 5,266 t of plant and frame, 4,284 t of sintered regolith.'}
+totals: {rate: 55.5555555555556, power: 127500000.0, heat: 62090000.0, water: 0.0, mass: 9551000.0, against_module: 'module.shaft-furnace: one box, 22 MW. The layout for air draws 152 MW and sends 130 MW up four towers. This layout: the same rate; 127 MW (heater 121, compressor 4.1: at 8 bar the compressor only makes up the loop''s pressure drop); 62 MW to 43 radiator fields at 345 K (10 ha), for the water must condense somewhere and only light can take the heat away; no cooling zone or loop (the sponge iron goes on hot); no water used up. 5,267 t of plant and frame, 4,284 t of sintered regolith.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}

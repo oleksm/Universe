@@ -195,6 +195,7 @@ def pipe(dn, pn, item=A36, lagged=False, liquid=False, temp=373.0, sealing="sing
                   "per_m": {"mass": r(per_m), "built_of": built},
                   "elbow": {"radius": r(R, 3), "mass": r(per_m * math.pi / 2 * R)},
                   "tee": {"mass": r(per_m * max(0.0, 1.5 * dn - out / 2))},
+                  "cap": cap(dn, PN[pn], item, flange(dn, pn, item, sealing, temp)),
                   "support": {"spacing": r(span), "mass": r(10 + 60 * out), "per_m_height": r(4 * (0.1 + 0.1 * out) * 0.005 * RHO[A36]), "item": A36},
                   "connector": flange(dn, pn, item, sealing, temp), "carries": "liquid" if liquid else "gas",
                   "basis": [{"of": ["per_m"], "tier": "derived", "note": "Wall from pressure; mass from material and dimensions."},
@@ -223,6 +224,7 @@ def lined_duct(dn, pn, lining=0.2, temp=1173.0, sealing="single"):
                   "elbow": {"radius": r(R, 3), "mass": r(per_m * math.pi / 2 * R * 1.1)},
                   "tee": {"mass": r(per_m * max(0.0, 1.5 * dn - do / 2))},
                   "support": {"spacing": r(span), "mass": r(30 + 80 * do), "per_m_height": r(4 * (0.1 + 0.1 * do) * 0.006 * RHO[A36]), "item": A36},
+                  "cap": cap(dn, PN[pn], A36, lined_flange(dn, pn, sealing=sealing)),
                   "connector": lined_flange(dn, pn, sealing=sealing), "carries": "gas",
                   "basis": [{"of": ["per_m"], "tier": "derived", "note": "Shell from pressure, lining from its thickness; mass from material and dimensions."},
                             {"of": ["support", "elbow"], "tier": "derived", "review": True, "note": f"Spacing from the span it bears at 1 g, {span:.1f} m; mitred bends a tenth heavier than their arc. Stands from memory."}]}
@@ -299,6 +301,12 @@ def area_for(amps):
 
 # ---------------------------------------------------------------- laying a run
 
+def cap(dn, p, item, conn_key):
+    """A blind end: a flat plate clamped at its flange, 0.75 p r2 / t2 within the allowable stress, rounded up to 2 mm."""
+    t = math.ceil(dn / 2 * math.sqrt(0.75 * p / STRESS[item]) * 500) / 500
+    return {"thickness": t, "mass": r(math.pi / 4 * (dn + 0.1) ** 2 * t * RHO[item] + _recs[conn_key]["physical"]["mass"] / 2)}
+
+
 def corners(pts):
     """The corners a path turns at: (index, angle in degrees)."""
     out = []
@@ -336,7 +344,7 @@ def lay(run_key, pts, count=1, tees=0, taps=(), port_ends=0, caps=0):
             n_sup += k
             m_sup += k * (sup["mass"] + sup["per_m_height"] * max(0.0, z))
     conn = _recs[rec["connector"]]["physical"]["mass"]
-    m = count * (rec["per_m"]["mass"] * L + m_elb + port_ends * conn + caps * conn / 2)
+    m = count * (rec["per_m"]["mass"] * L + m_elb + port_ends * conn + caps * rec.get("cap", {}).get("mass", conn / 2))
     m += (tees + len(taps)) * rec.get("tee", {}).get("mass", 0.0) * count
     m += sum(_recs[c]["physical"]["mass"] for c in taps) * count
     m += m_sup
