@@ -161,13 +161,16 @@ def belt_transfer(width, sealed=False):
     src = f"measured on blender's model v1 of the {width * 1000:.0f} mm transfer" if width in TRANSFER_MEASURED else "between the measured transfers, by the chute's width"
     built = [_part("Hood, drop chute and mounting tabs", A36, steel, f"a hood over the belt's head and a chute {b:.1f} m square, 3 m down, 10 mm plate, on four 12 mm tabs seated on the head frame's rails (not hung from the pulley's bearings); {src}"),
              _part("Wear liner", PE, liner, f"10 mm UHMW polyethylene; {src}")]
-    if sealed:
-        built += [_part("Seals and flanges", A36, 2 * 4 * (b + 0.1) * 0.15 * 0.02 * RHO[A36] + 20.0, "a bolted flange at the head box's outlet and at the port, with their seals; from memory")]
+    if sealed:          # (no hood: the head box is the hood; a straight closed chute from its floor down to the port)
+        h_ = 3.0 - 1.525
+        built = [_part("Chute", A36, 4 * b * h_ * 0.010 * RHO[A36], f"a straight chute {b:.1f} m square, {h_:.3f} m long, 10 mm plate"),
+                 _part("Wear liner", PE, 4 * b * h_ * 0.010 * RHO[PE], "10 mm UHMW polyethylene"),
+                 _part("Flanges and seals", A36, 2 * 4 * (b + 0.1) * 0.1 * 0.02 * RHO[A36] + 20.0, f"a bolted flange {b + 0.2:.1f} m outside at each end, with their seals; from memory")]
     desc = (f"Where a {width * 1000:.0f} mm belt's head drops into a hopper or onto another belt: the hood and the drop chute (3 m). A receiving belt's skirt is its tail's. Its origin is the head pulley's centre: the hood over it to 0.55 m up, inside the pulley's bearings, the chute flaring below it to its square and down to 3 m under the pulley, where the port is."
             if not sealed else f"Where a sealed gallery's {width * 1000:.0f} mm belt drops out of its head box: a closed chute from the box's bottom outlet (1.525 m under the head pulley's centre, the origin) down to 3 m under it, where the port is, bolted and sealed at both ends; the hood is the head box's.")
     _recs[key] = {"identity": {"key": key, "name": f"Belt transfer, {width * 1000:.0f} mm" + (", sealed" if sealed else ""), "description": desc},
                   "kind": "belt-transfer", "size": width, "sealing": "double" if sealed else "open",
-                  "physical": {"length": r(b, 2), "width": r(width + 0.6, 2), "height": 3.55, "mass": r(sum(x["mass"] for x in built))}, "built_of": built,
+                  "physical": ({"length": r(b + 0.2, 2), "width": r(b + 0.2, 2), "height": 1.475, "mass": r(sum(x["mass"] for x in built))} if sealed else {"length": r(b, 2), "width": r(width + 0.6, 2), "height": 3.55, "mass": r(sum(x["mass"] for x in built))}), "built_of": built,
                   "basis": [{"of": ["built_of"], "tier": "invented", "review": True, "note": "Plate and liner by the chute's faces, from memory."}]}
     return key
 
