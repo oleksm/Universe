@@ -4,13 +4,14 @@ identity: {key: unit.pressure-hall-30m-end, name: 'Pressure hall head, 30 m', de
     the outer into the lock; drawn closed. The locks'' gas is pumped back into the hall before their outer doors open. Its flange ring as a section''s, 300 x 30 mm drilled for M24 at 150 mm, reaching 0.3 m outside the shell; the bolts and seals are the layout''s.'}
 size_class: 4
 fits: plant-mount.bay-s4
-physical: {length: 14.0, width: 30.6, height: 30.6, mass: 86380.0}
+physical: {length: 14.0, width: 30.6, height: 30.6, mass: 128900.0}
 built_of:
-- {what: Head, item: material.structural-steel-a36, mass: 45950.0, note: '2:1 ellipsoidal, 6 mm'}
-- {what: Crew airlock, item: material.structural-steel-a36, mass: 4237.0, note: '10 mm, its two doors 1 t'}
-- {what: Vehicle lock, item: material.structural-steel-a36, mass: 25050.0, note: '8 mm, its two doors 8 t'}
-- {what: Flange, item: material.structural-steel-a36, mass: 6659.0, note: 'an outward ring 300 x 30 mm, as a section''s'}
-- {what: Belt nozzle and service panel, item: material.structural-steel-a36, mass: 2480.0, note: from memory}
+- {what: Head, item: material.structural-steel-a36, mass: 41610.0, note: '2:1 ellipsoidal, 6 mm, less the locks'' and nozzle''s openings; measured on blender''s candidate (2026-10-16; the plate by its area, 1.084 D2, is 46.0 t uncut)'}
+- {what: Flange, item: material.structural-steel-a36, mass: 6920.0, note: 'an outward ring 300 x 30 mm, as a section''s; measured'}
+- {what: Deck and its beams, item: material.structural-steel-a36, mass: 23900.0, note: '12 mm at z 7.5 from the flange to the shell, on three transverse hollow beams seated on the shell, the locks'' floors tied in; measured'}
+- {what: Crew airlock, item: material.structural-steel-a36, mass: 6980.0, note: '10 mm, its floor and two plug doors; measured'}
+- {what: Vehicle lock, item: material.structural-steel-a36, mass: 44690.0, note: '8 mm shell, 50 mm end diaphragms (a flat 7.2 m end at 20 kPa needs about 38 mm), 8 mm ribbed plug doors, its floor; measured'}
+- {what: 'Belt nozzle, service panel and feet', item: material.structural-steel-a36, mass: 2784.0, note: measured}
 - {what: Lock pumps, item: good.pumps, mass: 2000.0, note: from memory}
 needs: {power: 50000.0, atmosphere: vacuum}
 life: 788940000
@@ -18,6 +19,6 @@ basis:
 - of: [physical, built_of, needs]
   tier: derived
   review: true
-  note: The head's plate by its area (1.084 D2 for a 2:1 head); the locks from memory.
+  note: Measured on blender's candidate (2026-10-16), the lock pumps from memory; local strength provisional.
 - of: [life]
   rule: rule.life-plant

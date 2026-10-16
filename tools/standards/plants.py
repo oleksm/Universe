@@ -3406,14 +3406,15 @@ def pellet_airless_units(us):
               f"Local frame: the flange plane at x 0, its bottom at z 0, the head bulging to +x (its crown at x {R / 2:g}); the belt nozzle at (6.9, 0, 9); the locks' axes along x: the crew lock centred at (7, -6, 8.4), a flat floor across it at the deck's z 7.5 (1.7 m wide, 2.15 m under its crown), the vehicle lock centred at (8, 8, 10) reaching x 14, its doors' sills at the deck's z 7.5;  a service panel for pipes and cables at (6.5, -9, 10). "
               "Each lock's doors are pressure plugs, seated on their frames by the higher pressure: the inner door opens into the hall, the outer into the lock; drawn closed. The locks' gas is pumped back into the hall before their outer doors open. "
               f"Its flange ring as a section's, {0.3 * 1000:.0f} x {0.03 * 1000:.0f} mm drilled for M24 at 150 mm, reaching 0.3 m outside the shell; the bolts and seals are the layout's."),
-        built_of=[part("Head", A36, head, f"2:1 ellipsoidal, {t_sh * 1000:.0f} mm"),
-                  part("Crew airlock", A36, cyl_shell(2.5, 4.0, 0.010, bottom=2.0) * RHO["steel"] + 1000.0, "10 mm, its two doors 1 t"),
-                  part("Vehicle lock", A36, cyl_shell(7.2, 12.0, 0.008, bottom=0.0) * RHO["steel"] + 8000.0, "8 mm, its two doors 8 t"),
-                  part("Flange", A36, math.pi * HALL_D * 0.3 * 0.03 * RHO["steel"], "an outward ring 300 x 30 mm, as a section's"),
-                  part("Belt nozzle and service panel", A36, math.pi * 3.0 * 2.0 * 0.010 * RHO["steel"] + 1000.0, "from memory"),
+        built_of=[part("Head", A36, 41610.0, f"2:1 ellipsoidal, {t_sh * 1000:.0f} mm, less the locks' and nozzle's openings; measured on blender's candidate (2026-10-16; the plate by its area, 1.084 D2, is {head / 1000:.1f} t uncut)"),
+                  part("Flange", A36, 6920.0, "an outward ring 300 x 30 mm, as a section's; measured"),
+                  part("Deck and its beams", A36, 23900.0, "12 mm at z 7.5 from the flange to the shell, on three transverse hollow beams seated on the shell, the locks' floors tied in; measured"),
+                  part("Crew airlock", A36, 6980.0, "10 mm, its floor and two plug doors; measured"),
+                  part("Vehicle lock", A36, 44690.0, "8 mm shell, 50 mm end diaphragms (a flat 7.2 m end at 20 kPa needs about 38 mm), 8 mm ribbed plug doors, its floor; measured"),
+                  part("Belt nozzle, service panel and feet", A36, 2784.0, "measured"),
                   part("Lock pumps", "good.pumps", 2000.0, "from memory")],
         needs={"power": 50e3, "atmosphere": "vacuum"},
-        basis=[{"of": ["physical", "built_of", "needs"], "tier": "derived", "review": True, "note": "The head's plate by its area (1.084 D2 for a 2:1 head); the locks from memory."}])
+        basis=[{"of": ["physical", "built_of", "needs"], "tier": "derived", "review": True, "note": "Measured on blender's candidate (2026-10-16), the lock pumps from memory; local strength provisional."}])
     lock_v = math.pi / 4 * 3.0 ** 2 * 4.0
     out["ore-lock-hopper"] = dict(
         name="Ore lock hopper", size_class=1, fits="bay-s1", dims=(6.0, 6.0, 18.0),
