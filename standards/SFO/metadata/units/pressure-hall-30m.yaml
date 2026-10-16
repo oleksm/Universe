@@ -17,6 +17,12 @@ built_of:
 - {what: Fan coils, item: good.pumps, mass: 3000.0, note: from memory}
 holds: 4875.0
 needs: {power: 30000.0, heat: 173300.0, atmosphere: vacuum}
+visual:
+  format: "freefall-model/1"
+  path: "models/pressure-hall-30m/v1"
+  manifest_sha256: "e74d4dde6fcb1b3474de8dd30215ffa6cb2720eb3301f5425d3c4e4084039b1b"
+  version: 1
+  triangles: 56446
 life: 788940000
 basis:
 - of: [physical, built_of]

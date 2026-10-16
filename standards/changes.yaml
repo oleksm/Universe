@@ -867,7 +867,7 @@
 - { record: layout.ore-yard-air, at: "2026-10-15T17:42:59Z", status: draft, summary: "changed: physical", sha: "8bc46739c40587fb" }
 - { record: layout.ore-yard-airless, at: "2026-10-15T19:02:03Z", status: draft, summary: "first tracked", sha: "6b9f05ba1da5177d" }
 - { record: layout.pellet-plant-air, at: "2026-10-15T16:01:43Z", status: draft, summary: "changed: physical", sha: "89e9d07d51ec2d4b" }
-- { record: layout.pellet-plant-airless, at: "2026-10-16T15:26:56Z", status: draft, summary: "changed", sha: "853d37d5bd68bf7f" }
+- { record: layout.pellet-plant-airless, at: "2026-10-16T15:36:49Z", status: draft, summary: "changed", sha: "bac59614336bc00e" }
 - { record: layout.shaft-furnace-air, at: "2026-10-16T03:20:47Z", status: draft, summary: "changed: totals", sha: "56b2d2168ab078d2" }
 - { record: layout.shaft-furnace-airless, at: "2026-10-16T14:27:23Z", status: draft, summary: "changed: links, totals", sha: "4b467c753f8168cc" }
 - { record: market.art, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "517671b6a46daee3" }
@@ -2851,7 +2851,7 @@
 - { record: unit.pellet-gas-loop, at: "2026-10-15T16:13:40Z", status: draft, summary: "first tracked", sha: "9fc3e100a8189373" }
 - { record: unit.pellet-shaft-63th, at: "2026-10-15T16:13:40Z", status: draft, summary: "first tracked", sha: "f8e4de0601c6df8f" }
 - { record: unit.plant-transformer-35mva, at: "2026-10-15T12:04:36Z", status: draft, summary: "changed", sha: "f44a73b0e421c0ea" }
-- { record: unit.pressure-hall-30m, at: "2026-10-16T15:26:56Z", status: draft, summary: "changed", sha: "64513e1fd08e42ce" }
+- { record: unit.pressure-hall-30m, at: "2026-10-16T15:36:49Z", status: draft, summary: "changed: visual", sha: "8be7584ac764d258" }
 - { record: unit.pressure-hall-30m-end, at: "2026-10-15T16:13:40Z", status: draft, summary: "first tracked", sha: "059f108b220860d9" }
 - { record: unit.radiator-field-330k, at: "2026-10-15T20:00:30Z", status: draft, summary: "changed: built_of", sha: "cacc6559212d0505" }
 - { record: unit.radiator-field-345k, at: "2026-10-16T03:49:56Z", status: draft, summary: "changed", sha: "d286b5ded035bd4f" }
