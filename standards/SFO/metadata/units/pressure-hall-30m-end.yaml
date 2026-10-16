@@ -1,13 +1,15 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.pressure-hall-30m-end, name: 'Pressure hall head, 30 m', description: 'Closes a 30 m pressure hall: a 2:1 ellipsoidal head 7.5 m deep in 6 mm plate, flanged to the last section, with a crew airlock (a 2.5 m cylinder, 4 m long, for two in suits) and a vehicle lock (a 7 m cylinder, 12 m long, its doors 5 m square) through it at deck level, and a 3 m belt nozzle on its axis whose bottom is at the deck. Local frame: the flange plane at x 0, its bottom at z 0, the head bulging to +x (its crown at x 7.5); the belt nozzle at (6.9, 0, 9); the crew lock at (7, -6, 9), the vehicle lock at (8, 8, 10) reaching x 14; a service panel for pipes and cables at (6.5, -9, 10). The locks'' gas is pumped back into the hall before their outer doors open.'}
+identity: {key: unit.pressure-hall-30m-end, name: 'Pressure hall head, 30 m', description: 'Closes a 30 m pressure hall: a 2:1 ellipsoidal head 7.5 m deep in 6 mm plate, flanged to the last section, with a crew airlock (a 2.5 m cylinder, 4 m long, for two in suits) and a vehicle lock (a 7.2 m cylinder, 12 m long, its doors 5 m square, whose corners need 7.07 m) through it at deck level, and a 3 m belt nozzle on its axis whose bottom is at the deck. Local frame: the flange plane at x 0, its bottom at z 0, the head bulging to +x (its crown at x 7.5); the belt nozzle at (6.9, 0, 9); the locks'' axes along x: the crew lock centred at (7, -6, 8.4), a flat floor across it at the deck''s z 7.5 (1.7 m wide, 2.15 m under its crown), the vehicle lock centred at (8, 8, 10) reaching x 14, its doors'' sills at the deck''s z 7.5;  a service panel for pipes and cables at (6.5, -9, 10). Each lock''s doors are pressure plugs, seated on their frames by the higher pressure: the inner door opens into the hall,
+    the outer into the lock; drawn closed. The locks'' gas is pumped back into the hall before their outer doors open. Its flange ring as a section''s, 300 x 30 mm drilled for M24 at 150 mm, reaching 0.3 m outside the shell; the bolts and seals are the layout''s.'}
 size_class: 4
 fits: plant-mount.bay-s4
-physical: {length: 14.0, width: 30.0, height: 30.0, mass: 79240.0}
+physical: {length: 14.0, width: 30.6, height: 30.6, mass: 86380.0}
 built_of:
 - {what: Head, item: material.structural-steel-a36, mass: 45950.0, note: '2:1 ellipsoidal, 6 mm'}
 - {what: Crew airlock, item: material.structural-steel-a36, mass: 4237.0, note: '10 mm, its two doors 1 t'}
-- {what: Vehicle lock, item: material.structural-steel-a36, mass: 24570.0, note: '8 mm, its two doors 8 t'}
+- {what: Vehicle lock, item: material.structural-steel-a36, mass: 25050.0, note: '8 mm, its two doors 8 t'}
+- {what: Flange, item: material.structural-steel-a36, mass: 6659.0, note: 'an outward ring 300 x 30 mm, as a section''s'}
 - {what: Belt nozzle and service panel, item: material.structural-steel-a36, mass: 2480.0, note: from memory}
 - {what: Lock pumps, item: good.pumps, mass: 2000.0, note: from memory}
 needs: {power: 50000.0, atmosphere: vacuum}

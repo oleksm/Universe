@@ -3401,13 +3401,15 @@ def pellet_airless_units(us):
                {"of": ["needs.heat"], "tier": "derived", "note": "A third of the discs' drives (90 + 15 kW each) and 100 kW of crane, lights and fans; the mill's and presses' heat leaves in the filtrate instead."}])
     head = 1.084 * HALL_D ** 2 * t_sh * RHO["steel"]       # a 2:1 ellipsoidal head's plate
     out["pressure-hall-30m-end"] = dict(
-        name=f"Pressure hall head, {HALL_D:g} m", size_class=4, fits="bay-s4", dims=(14.0, HALL_D, HALL_D),
-        desc=(f"Closes a {HALL_D:g} m pressure hall: a 2:1 ellipsoidal head {R / 2:g} m deep in {t_sh * 1000:.0f} mm plate, flanged to the last section, with a crew airlock (a 2.5 m cylinder, 4 m long, for two in suits) and a vehicle lock (a 7 m cylinder, 12 m long, its doors 5 m square) through it at deck level, and a 3 m belt nozzle on its axis whose bottom is at the deck. "
-              f"Local frame: the flange plane at x 0, its bottom at z 0, the head bulging to +x (its crown at x {R / 2:g}); the belt nozzle at (6.9, 0, 9); the crew lock at (7, -6, 9), the vehicle lock at (8, 8, 10) reaching x 14; a service panel for pipes and cables at (6.5, -9, 10). "
-              "The locks' gas is pumped back into the hall before their outer doors open."),
+        name=f"Pressure hall head, {HALL_D:g} m", size_class=4, fits="bay-s4", dims=(14.0, HALL_D + 0.6, HALL_D + 0.6),
+        desc=(f"Closes a {HALL_D:g} m pressure hall: a 2:1 ellipsoidal head {R / 2:g} m deep in {t_sh * 1000:.0f} mm plate, flanged to the last section, with a crew airlock (a 2.5 m cylinder, 4 m long, for two in suits) and a vehicle lock (a 7.2 m cylinder, 12 m long, its doors 5 m square, whose corners need 7.07 m) through it at deck level, and a 3 m belt nozzle on its axis whose bottom is at the deck. "
+              f"Local frame: the flange plane at x 0, its bottom at z 0, the head bulging to +x (its crown at x {R / 2:g}); the belt nozzle at (6.9, 0, 9); the locks' axes along x: the crew lock centred at (7, -6, 8.4), a flat floor across it at the deck's z 7.5 (1.7 m wide, 2.15 m under its crown), the vehicle lock centred at (8, 8, 10) reaching x 14, its doors' sills at the deck's z 7.5;  a service panel for pipes and cables at (6.5, -9, 10). "
+              "Each lock's doors are pressure plugs, seated on their frames by the higher pressure: the inner door opens into the hall, the outer into the lock; drawn closed. The locks' gas is pumped back into the hall before their outer doors open. "
+              f"Its flange ring as a section's, {0.3 * 1000:.0f} x {0.03 * 1000:.0f} mm drilled for M24 at 150 mm, reaching 0.3 m outside the shell; the bolts and seals are the layout's."),
         built_of=[part("Head", A36, head, f"2:1 ellipsoidal, {t_sh * 1000:.0f} mm"),
                   part("Crew airlock", A36, cyl_shell(2.5, 4.0, 0.010, bottom=2.0) * RHO["steel"] + 1000.0, "10 mm, its two doors 1 t"),
-                  part("Vehicle lock", A36, cyl_shell(7.0, 12.0, 0.008, bottom=0.0) * RHO["steel"] + 8000.0, "8 mm, its two doors 8 t"),
+                  part("Vehicle lock", A36, cyl_shell(7.2, 12.0, 0.008, bottom=0.0) * RHO["steel"] + 8000.0, "8 mm, its two doors 8 t"),
+                  part("Flange", A36, math.pi * HALL_D * 0.3 * 0.03 * RHO["steel"], "an outward ring 300 x 30 mm, as a section's"),
                   part("Belt nozzle and service panel", A36, math.pi * 3.0 * 2.0 * 0.010 * RHO["steel"] + 1000.0, "from memory"),
                   part("Lock pumps", "good.pumps", 2000.0, "from memory")],
         needs={"power": 50e3, "atmosphere": "vacuum"},
