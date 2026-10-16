@@ -3,14 +3,15 @@
 identity: {key: unit.heater-transformer-131mva, name: 'Heater transformer, 131 MVA', description: 'Steps the grid down for the hydrogen heater''s elements, through thyristor sets in its terminal house, with on-load taps. Oil-filled in a closed tank, HV bushings and conservator on top, cooled by oil to water. Three secondary terminals on one long face (+y), 4.5 m up; the oil-to-water cooler''s water ports on its -x end, 1 m up. Stands in a fire-walled vault. Cable boxes over its HV bushings (gland plate on top) and over its secondary pads (gland plate facing +y), so each three-phase circuit enters at one plate.'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 9.1, width: 6.7, height: 7.6, mass: 212000.0}
+physical: {length: 9.1, width: 6.7, height: 7.6, mass: 212400.0}
 built_of:
 - {what: Core, item: material.structural-steel-a36, mass: 84070.0, note: 'grain-oriented electrical steel, which the registry has not got: structural steel stands for it'}
 - {what: Windings, item: material.copper, mass: 52540.0}
 - {what: Tank and fittings, item: material.structural-steel-a36, mass: 31530.0}
 - {what: Oil, item: material.hydraulic-fluid, mass: 42030.0, note: 'transformer mineral oil, which the registry has not got: hydraulic fluid stands for it'}
-- {what: HV cable box, item: material.structural-steel-a36, mass: 996.6, note: 'over the three HV bushings on top (their ends at x -2.36, 0 and 2.36, y -0.96, z 6.75): 5.8 x 0.9 x 0.8 m, 6 mm, its gland plate on top at (0, -0.96, 7.55)'}
-- {what: LV cable box, item: material.structural-steel-a36, mass: 857.2, note: 'over the three secondary pads on the +y face, 4.5 m up: 5 x 0.5 x 1.2 m, 6 mm, its gland plate facing +y at (0, 3.35, 4.5)'}
+- {what: HV cable box, item: material.structural-steel-a36, mass: 980.7, note: 'measured on blender''s model v2; over the three HV bushings on top (their ends at x -2.36, 0 and 2.36, y -0.96, z 6.75): 5.8 x 0.9 x 0.8 m, 6 mm, its gland plate on top at (0, -0.96, 7.55)'}
+- {what: LV cable box, item: material.structural-steel-a36, mass: 824.3, note: 'measured on blender''s model v2; over the three secondary pads on the +y face, 4.5 m up: 5 x 0.5 x 1.2 m, 6 mm, its gland plate facing +y at (0, 3.35, 4.5)'}
+- {what: Cable boxes' brackets, item: material.structural-steel-a36, mass: 381.6, note: 'on the tank and its lid, so the boxes do not bear on the conductors; measured on blender''s model v2'}
 needs: {power: 656800.0, heat: 656800.0}
 ports:
 - id: hv-in

@@ -1084,10 +1084,9 @@ def shaft_units():
     ht = transformer_unit(Q_HEATER / 0.98 / HEATER_PF, "the hydrogen heater's elements, through thyristor sets in its terminal house")
     ht["name"] = ht["name"].replace("Furnace", "Heater")
     # Its cable boxes (SFO 25: a power port is the gland plate of the unit's cable box; the phases land inside it).
-    hv_box = 2 * (5.8 * 0.9 + 5.8 * 0.8 + 0.9 * 0.8) * 0.006 * RHO["steel"]
-    lv_box = 2 * (5.0 * 0.5 + 5.0 * 1.2 + 0.5 * 1.2) * 0.006 * RHO["steel"]
-    ht["built_of"] = ht["built_of"] + [part("HV cable box", A36, hv_box, "over the three HV bushings on top (their ends at x -2.36, 0 and 2.36, y -0.96, z 6.75): 5.8 x 0.9 x 0.8 m, 6 mm, its gland plate on top at (0, -0.96, 7.55)"),
-                                       part("LV cable box", A36, lv_box, "over the three secondary pads on the +y face, 4.5 m up: 5 x 0.5 x 1.2 m, 6 mm, its gland plate facing +y at (0, 3.35, 4.5)")]
+    ht["built_of"] = ht["built_of"] + [part("HV cable box", A36, 980.7, "measured on blender's model v2; over the three HV bushings on top (their ends at x -2.36, 0 and 2.36, y -0.96, z 6.75): 5.8 x 0.9 x 0.8 m, 6 mm, its gland plate on top at (0, -0.96, 7.55)"),
+                                       part("LV cable box", A36, 824.3, "measured on blender's model v2; over the three secondary pads on the +y face, 4.5 m up: 5 x 0.5 x 1.2 m, 6 mm, its gland plate facing +y at (0, 3.35, 4.5)"),
+                                       part("Cable boxes' brackets", A36, 381.6, "on the tank and its lid, so the boxes do not bear on the conductors; measured on blender's model v2")]
     ht["dims"] = (ht["dims"][0], max(ht["dims"][1], 2 * 3.35), max(ht["dims"][2], 7.6))       # (the LV cable box's face, kept about the centre; the HV box's top)
     ht["desc"] += " Cable boxes over its HV bushings (gland plate on top) and over its secondary pads (gland plate facing +y), so each three-phase circuit enters at one plate."
     out[f"heater-transformer-{Q_HEATER / 0.98 / HEATER_PF / 1e6:.0f}mva"] = ht
