@@ -6956,3 +6956,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.ore-lock-hopper
+    version: 2
+    manifest_sha256: "eee35bfa39342dd1efe13bbd0826a52e506e53f9da3d9a1870a1a4e2cc619152"
+    installed: fd9d7114
+    game: "the loader (world::assets) at fso fd9d7114"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/ore-lock-hopper/v2 (795780 bytes, bounds [-2.8, 0.0, -2.8] to [3.0, 17.5, 2.8]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
