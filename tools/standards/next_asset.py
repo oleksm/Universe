@@ -64,7 +64,7 @@ def tier(kind, key, used):
         return 0
     if kind == "equipment":
         return 1
-    if kind in ("structure", "gate"):
+    if kind in ("structure", "gate", "unit", "run", "connector"):      # (works units and their kit: the owner, 2026-10-15)
         return 2
     if kind == "module":
         return 3
@@ -101,7 +101,7 @@ def brief(kind, key, path, r, used):
         b["mount"] = {"key": r["fits"], "envelope_m": m.get("envelope"), "attachment": m.get("attachment")}
     lst = (r.get("built_of") or {}).get("list") or [] if not isinstance(r.get("built_of"), list) else []
     if isinstance(r.get("built_of"), list):
-        b["made_of"] = [{"what": p["what"], "of": p["item"], "mass_kg": p["mass"], "note": p.get("note")} for p in r["built_of"]]
+        b["made_of"] = [{"what": p.get("what", p["item"]), "of": p["item"], "mass_kg": p.get("mass", p.get("quantity")), "note": p.get("note")} for p in r["built_of"]]   # (older records list {item, quantity})
     if kind == "layout":
         b["layout"] = {k: r.get(k) for k in ("site", "bays", "mobile", "links", "frame", "ground")}
         b["model_notes"] = "a layout is assembled from its units' models placed at their bays (x along, y across, z up, metres from its middle at ground level) on the frame and ground works it names; model the frame and the links, place the units"
@@ -128,7 +128,8 @@ def brief(kind, key, path, r, used):
 def queue(hulls=False):
     used = usage()
     q = [(kind, key, path, r) for kind, key, path, r in records()
-         if not r.get("visual") and stage(r) != "retired" and (hulls or kind != "hull")]
+         if not r.get("visual") and stage(r) != "retired" and (hulls or kind != "hull")
+         and kind not in ("module", "layout")]      # (no monolith works models: the owner, 2026-10-15; a works is units and runs snapped together)
     low = lambda r: (r.get("revision") or {}).get("priority") == "low"     # (a hold the user set: last of all)
     ds = designs()      # (the experimental designs' equipment ahead of the rest: the user, 2026-10-11)
     q.sort(key=lambda x: (low(x[3]), x[1] not in ds, tuple(-n for n in ds.get(x[1], (0, 0))), tier(x[0], x[1], used),
