@@ -6881,3 +6881,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.filter-press-2
+    version: 2
+    manifest_sha256: "d201849900f3286353b7aa805cb1d94bddef32f070aa409c9e71a891ea790043"
+    installed: d636d345
+    game: "the loader (world::assets) at fso d636d345"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/filter-press-2/v2 (1262384 bytes, bounds [-6.025, 0.0, -3.1] to [6.025, 11.25, 3.25]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
