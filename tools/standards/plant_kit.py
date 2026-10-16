@@ -268,6 +268,8 @@ def drag(width, rate, temp=923.0):
                   "per_m": {"mass": r(per_m), "built_of": built},
                   "elbow": {"radius": 6.0, "mass": r(per_m * math.pi / 2 * 6.0)},
                   "support": {"spacing": 6.0, "mass": 80.0, "per_m_height": 25.0, "item": A36},
+                  "terminals": {"head": {"mass": 3000.0, "transition": 1.2, "note": "the drive sprocket, its shaft seals, a gearbox and a motor of about 150 kW, and the outlet nozzle under the casing (from memory)"},
+                                "tail": {"mass": 1800.0, "transition": 1.2, "note": "the tail sprocket on a take-up, its shaft seals, and the inlet nozzle on top of the casing (from memory)"}},
                   "connector": chute(width), "carries": "bulk",
                   "basis": [{"of": ["per_m", "support", "elbow"], "tier": "invented", "review": True, "note": "Casing and insulation from their dimensions; chain and flights, bends and stands from memory."}]}
     return key

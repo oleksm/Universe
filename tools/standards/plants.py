@@ -2851,8 +2851,8 @@ def end_offset(conn_kind, run_rec, which):
     tail under the chute it takes from, by half its casing."""
     if conn_kind == "belt-transfer" and which == 1:
         return (0.0, 0.0, 3.0)
-    if conn_kind == "chute" and which == 0:
-        return (0.0, 0.0, -run_rec["outside"][1] / 2)
+    if conn_kind == "chute":            # (a closed conveyor's tail takes in on top, its head lets out underneath)
+        return (0.0, 0.0, -run_rec["outside"][1] / 2 if which == 0 else run_rec["outside"][1] / 2)
     return (0.0, 0.0, 0.0)
 
 
@@ -2975,7 +2975,7 @@ def shaft_furnace_airless(us, recs):
     # The layout's own ports: what it takes from the site and other layouts and gives them (facing into the layout).
     edge = [
         port("pellets-in", "in", "bulk", kit.belt_transfer(1.2), (round(belt_x, 1), 0, 2.0), (-1, 0, 0), item="good.iron-ore-pellets", rate=PELLETS, note="onto the charge belt's tail, from the pellet plant or its stockpile"),
-        port("sponge-iron-out", "out", "bulk", kit.chute(0.8), (-60, 0, 5.6), (1, 0, 0), item="good.sponge-iron", rate=S_RATE, temperature=T_HOT_DRI + K, note="hot, to the arc furnace shop's bin"),
+        port("sponge-iron-out", "out", "bulk", kit.chute(0.8), (-60, 0, 5.188), (1, 0, 0), item="good.sponge-iron", rate=S_RATE, temperature=T_HOT_DRI + K, note="hot, to the arc furnace shop's bin"),
         port("h2-in", "in", "gas", kit.flange(0.25, 16, kit.SS, "double"), (100, 4, 1.5), (-1, 0, 0), item="material.hydrogen", rate=H2_USED, pressure=10e5, note="from the hydrogen plant's electrolysers at 10 bar"),
         port("condensate-out", "out", "liquid", kit.flange(0.2, 10, kit.SS), (100, 24, 0.5), (-1, 0, 0), item="good.water", rate=STEAM - _left, note="back to the electrolysers: on a moon every kilogram comes back"),
         port("mv-in", "in", "power", kit.termination(6600, kit.area_for(amps(HP_W_COMP / 0.96, 6600))), (100, -1.5, 6.0), (-1, 0, 0), power=HP_W_COMP / 0.96, voltage=6600, note="the site's 6.6 kV switchgear"),

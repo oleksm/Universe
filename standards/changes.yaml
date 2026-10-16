@@ -155,7 +155,7 @@
 - { record: clock.realtime, at: "2026-10-06T23:04:34Z", status: review, summary: "changed: runs", sha: "643b9d6698cc2d64" }
 - { record: clock.region, at: "2026-10-06T23:04:34Z", status: review, summary: "changed: runs", sha: "a76e6a037ad0a281" }
 - { record: clock.system, at: "2026-10-06T22:07:52Z", status: review, summary: "first tracked", sha: "a1ce985910bb5ae9" }
-- { record: connector.belt-transfer-1200, at: "2026-10-16T13:41:58Z", status: draft, summary: "changed: visual", sha: "5494b16907aa0081" }
+- { record: connector.belt-transfer-1200, at: "2026-10-16T13:43:51Z", status: draft, summary: "changed", sha: "a8f5b97b15a47d15" }
 - { record: connector.chute-dn800, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "f0664ba5ebb081dc" }
 - { record: connector.flange-dn100-pn10, at: "2026-10-16T13:14:09Z", status: draft, summary: "changed", sha: "0dd431cfd436f47f" }
 - { record: connector.flange-dn1000-pn16-double, at: "2026-10-16T12:39:27Z", status: draft, summary: "changed: physical, built_of", sha: "30a63c1475db2018" }
@@ -855,7 +855,7 @@
 - { record: layout.pellet-plant-air, at: "2026-10-15T16:01:43Z", status: draft, summary: "changed: physical", sha: "89e9d07d51ec2d4b" }
 - { record: layout.pellet-plant-airless, at: "2026-10-15T20:27:46Z", status: draft, summary: "changed: physical, ground, totals", sha: "4370552410830680" }
 - { record: layout.shaft-furnace-air, at: "2026-10-16T03:20:47Z", status: draft, summary: "changed: totals", sha: "56b2d2168ab078d2" }
-- { record: layout.shaft-furnace-airless, at: "2026-10-16T13:37:45Z", status: draft, summary: "changed: links", sha: "0360503a6801775d" }
+- { record: layout.shaft-furnace-airless, at: "2026-10-16T13:43:51Z", status: draft, summary: "changed: physical, ports, links, totals", sha: "bd728293425abe5f" }
 - { record: market.art, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "517671b6a46daee3" }
 - { record: market.artifacts, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "6b51c19897f56c1a" }
 - { record: market.biologics, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "003ee842af8f7674" }
@@ -1560,7 +1560,7 @@
 - { record: run.cable-400v-70mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "26c467488ea36412" }
 - { record: run.cable-6p6kv-185mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "498484319d4af233" }
 - { record: run.cable-6p6kv-630mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "1aee0c17b0c22e19" }
-- { record: run.drag-conveyor-800, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "c7869288da8955c1" }
+- { record: run.drag-conveyor-800, at: "2026-10-16T13:43:51Z", status: draft, summary: "changed: terminals", sha: "f2b2a511589c9139" }
 - { record: run.lined-duct-dn2400-pn16-double, at: "2026-10-16T13:14:09Z", status: draft, summary: "changed", sha: "e3c421ceed042c47" }
 - { record: run.pipe-dn100-pn10, at: "2026-10-16T13:14:09Z", status: draft, summary: "changed", sha: "f24cb5fb81e22a79" }
 - { record: run.pipe-dn1000-pn16-double, at: "2026-10-16T13:14:09Z", status: draft, summary: "changed", sha: "1d99d19c14aa21b2" }

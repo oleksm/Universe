@@ -43,8 +43,8 @@ def turn_vec(bay, v):
 def end_offset(conn_kind, run, which):
     if conn_kind == "belt-transfer" and which == 1:
         return np.array([0.0, 0.0, 3.0])
-    if conn_kind == "chute" and which == 0:
-        return np.array([0.0, 0.0, -run["outside"][1] / 2])
+    if conn_kind == "chute":
+        return np.array([0.0, 0.0, -run["outside"][1] / 2 if which == 0 else run["outside"][1] / 2])
     return np.zeros(3)
 
 
