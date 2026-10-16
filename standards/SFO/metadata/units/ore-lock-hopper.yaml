@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
 identity: {key: unit.ore-lock-hopper, name: Ore lock hopper, description: 'Takes the dry ore fines from vacuum into the 20 kPa hall: a hopper on a frame over a lock 3 m across and 4 m tall (28 m3) between two dome valves; a load drops in from the hopper, the top valve shuts, nitrogen fills the lock from the hall, the bottom valve opens onto the hall''s ore belt, and the lock is pumped back down before the top opens again. About 3 loads an hour; the nitrogen lost each time is what is left at the pump''s 1 kPa, about 0.3 kg. Local frame, on the axis from the bottom up: the bottom dome valve z 10 to 10.3 (DN 1000), a 45 degree cone to the 3 m barrel (z 10.3 to 11.3), the barrel to z 15.3, its head to 15.8, the top valve to 16.1, the hopper flaring from DN 1000 to 3.8 m, its rim at z 17.5 (about 31 m3 of lock with its cone and head). Its connections: the ore belt''s head drops into the hopper at the rim (0, 0, 17.5); the lock''s outlet at (0, 0, 10) facing down onto the belt in a short gallery
-    to the hall''s nozzle; nitrogen from the hall in by a 50 mm stainless flange at (1.5, 0, 13.3) facing +x; the 400 V supply at the frame''s foot, (3, 0, 0.5) facing +x.'}
+    to the hall''s nozzle; nitrogen from the hall in by a 50 mm stainless stub whose face is at (1.7, 0, 13.3) facing +x, 0.19 m out from the 10 mm shell; the 400 V supply at the frame''s foot, (3, 0, 0.5) facing +x.'}
 size_class: 1
 fits: plant-mount.bay-s1
 physical: {length: 6.0, width: 6.0, height: 18.0, mass: 19070.0}
