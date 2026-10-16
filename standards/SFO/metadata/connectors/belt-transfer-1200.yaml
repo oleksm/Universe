@@ -4,10 +4,11 @@ identity: {key: connector.belt-transfer-1200, name: 'Belt transfer, 1200 mm', de
 kind: belt-transfer
 size: 1.2
 sealing: open
-physical: {length: 1.5, width: 1.5, height: 3.55, mass: 1582.2}
+physical: {length: 1.5, width: 1.8, height: 3.55, mass: 1602.5}
 built_of:
 - {what: Hood and drop chute, item: material.structural-steel-a36, mass: 1413.0, note: 'a hood over the belt''s head and a chute 1.5 m square, 3 m down, 10 mm plate'}
 - {what: Wear liner, item: material.polyethylene-uhmw, mass: 169.2, note: 10 mm UHMW polyethylene}
+- {what: Mounting tabs, item: material.structural-steel-a36, mass: 20.3, note: 'four 12 mm tabs seating the chute on the head frame''s rails, so it does not hang from the pulley''s bearings'}
 basis:
 - of: [built_of]
   tier: invented
