@@ -151,6 +151,10 @@ def termination(v, area_mm2):
     if key in _recs:
         return key
     a = area_mm2 * 1e-6
+    dc = 1.1 * math.sqrt(4 * a / math.pi)
+    od = dc + 2 * (0.0014 if v <= 1000 else 0.0034 if v <= 12000 else 0.018) + 2 * (0.0025 if v <= 12000 else 0.004)
+    R = max(0.3, 15 * od)
+    fan = math.sqrt(4 * R * 0.04 - 0.04 ** 2)
     lugs = 3 * a * 0.12 * RHO[CU] * 1.5
     cones = 3 * (0.3 + 5.0 * (v / 1e4) ** 1.2) if v > 1000 else 0.0
     built = [_part("Lugs", CU, lugs, "three crimped lugs"), _part("Gland plate", AL, 5.0, "the box's gland plate and glands")]
@@ -158,8 +162,9 @@ def termination(v, area_mm2):
         built.append(_part("Stress cones", RUBBER, cones, "a stress cone on each core, sized with the voltage (from memory); silicone rubber"))
     _recs[key] = {"identity": {"key": key, "name": f"Cable termination, {v / 1000:g} kV, {area_mm2} mm2", "description": f"A three-phase cable's end into a terminal box: lugs, stress control and the gland, for {area_mm2} mm2 conductors at {v / 1000:g} kV."},
                   "kind": "termination", "size": a, "rating": {"voltage": v, "current": r(a * J_VACUUM)},
-                  "physical": {"length": 0.4, "width": 0.4, "height": 0.6, "mass": r(sum(x["mass"] for x in built))}, "built_of": built,
-                  "basis": [{"of": ["built_of"], "tier": "invented", "review": True, "note": "From memory."}]}
+                  "physical": {"length": 0.4, "width": 0.4, "height": r(0.5 + fan, 3), "mass": r(sum(x["mass"] for x in built))}, "built_of": built,
+                  "basis": [{"of": ["built_of"], "tier": "invented", "review": True, "note": "From memory."},
+                            {"of": ["physical.height"], "tier": "derived", "note": f"Along the cable: 0.5 m of cones and lugs inside the box, and the fan-out from the tray's spacing to the box's (0.04 m aside each way) in two arcs at the cable's least bend radius ({R:.2f} m): {fan:.2f} m."}]}
     return key
 
 

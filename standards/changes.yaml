@@ -167,13 +167,13 @@
 - { record: connector.flange-dn350-pn10, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, built_of", sha: "16eac06e34a9631c" }
 - { record: connector.flange-dn900-pn10, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, built_of", sha: "1d9d29c363fc2252" }
 - { record: connector.lined-flange-dn2400-pn16-double, at: "2026-10-16T13:14:09Z", status: draft, summary: "changed", sha: "3718f80746efea6c" }
-- { record: connector.termination-132kv-240mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "e9360fde90b4ed28" }
-- { record: connector.termination-400v-16mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "34bd7bf1e76a645c" }
-- { record: connector.termination-400v-300mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "64197b06c5a2379d" }
-- { record: connector.termination-400v-400mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "e539f78bb0d14ad1" }
-- { record: connector.termination-400v-70mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "4d07f14ba9e4340a" }
-- { record: connector.termination-6p6kv-185mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "eb88025b97ab30fa" }
-- { record: connector.termination-6p6kv-630mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "f9d150b4ae96c3d7" }
+- { record: connector.termination-132kv-240mm2, at: "2026-10-16T14:13:36Z", status: draft, summary: "changed: physical, basis", sha: "22e7de667045e4d1" }
+- { record: connector.termination-400v-16mm2, at: "2026-10-16T14:13:36Z", status: draft, summary: "changed: physical, basis", sha: "19dea40afa49aeeb" }
+- { record: connector.termination-400v-300mm2, at: "2026-10-16T14:13:36Z", status: draft, summary: "changed: physical, basis", sha: "1843720cf6d05e41" }
+- { record: connector.termination-400v-400mm2, at: "2026-10-16T14:13:36Z", status: draft, summary: "changed: physical, basis", sha: "aff736eaba01dbdb" }
+- { record: connector.termination-400v-70mm2, at: "2026-10-16T14:13:36Z", status: draft, summary: "changed: physical, basis", sha: "cfb87c7eb6185bfd" }
+- { record: connector.termination-6p6kv-185mm2, at: "2026-10-16T14:13:36Z", status: draft, summary: "changed: physical, basis", sha: "8dceb481e66248ed" }
+- { record: connector.termination-6p6kv-630mm2, at: "2026-10-16T14:13:36Z", status: draft, summary: "changed: physical, basis", sha: "f7c01e0bea0ea24f" }
 - { record: deposit-type.bauxite, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "d94a18af510f0854" }
 - { record: deposit-type.beach-sands, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "45c5674677db6276" }
 - { record: deposit-type.carbonate-zinc-lead, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "96b202768287d1b7" }
@@ -1558,7 +1558,7 @@
 - { record: run.cable-400v-300mm2, at: "2026-10-16T14:09:43Z", status: draft, summary: "changed: outside, per_m", sha: "4e4fc0ad9419ded8" }
 - { record: run.cable-400v-400mm2, at: "2026-10-16T14:09:43Z", status: draft, summary: "changed: outside, per_m", sha: "023686def1b2711f" }
 - { record: run.cable-400v-70mm2, at: "2026-10-16T14:09:43Z", status: draft, summary: "changed: outside, per_m", sha: "2b4303ca7681ba82" }
-- { record: run.cable-6p6kv-185mm2, at: "2026-10-16T14:11:09Z", status: draft, summary: "changed: visual", sha: "56b7cb12da4a8a9d" }
+- { record: run.cable-6p6kv-185mm2, at: "2026-10-16T14:13:36Z", status: draft, summary: "changed", sha: "87aa8515ae2128a4" }
 - { record: run.cable-6p6kv-630mm2, at: "2026-10-16T14:09:43Z", status: draft, summary: "changed: outside, per_m", sha: "107a7fbeeef742c5" }
 - { record: run.drag-conveyor-800, at: "2026-10-16T13:57:34Z", status: draft, summary: "changed", sha: "c95d3e66137c7600" }
 - { record: run.lined-duct-dn2400-pn16-double, at: "2026-10-16T13:14:09Z", status: draft, summary: "changed", sha: "e3c421ceed042c47" }

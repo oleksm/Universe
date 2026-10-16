@@ -4,7 +4,7 @@ identity: {key: connector.termination-400v-70mm2, name: 'Cable termination, 0.4 
 kind: termination
 size: 7.0e-05
 rating: {voltage: 400, current: 175.0}
-physical: {length: 0.4, width: 0.4, height: 0.6, mass: 5.3}
+physical: {length: 0.4, width: 0.4, height: 0.715, mass: 5.3}
 built_of:
 - {what: Lugs, item: material.copper, mass: 0.3, note: three crimped lugs}
 - {what: Gland plate, item: material.aluminium-alloy-6061, mass: 5.0, note: the box's gland plate and glands}
@@ -13,3 +13,6 @@ basis:
   tier: invented
   review: true
   note: From memory.
+- of: [physical.height]
+  tier: derived
+  note: 'Along the cable: 0.5 m of cones and lugs inside the box, and the fan-out from the tray''s spacing to the box''s (0.04 m aside each way) in two arcs at the cable''s least bend radius (0.30 m): 0.22 m.'

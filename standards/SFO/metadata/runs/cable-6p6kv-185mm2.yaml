@@ -19,12 +19,7 @@ repeat:
 - {piece: rung, pitch: 0.3}
 connector: connector.termination-6p6kv-185mm2
 carries: power
-visual:
-  format: "freefall-model/1"
-  path: "models/cable-6p6kv-185mm2/v1"
-  manifest_sha256: "49a26c3692afda02ee2fd4ef52f324cb7c3f38264dd82473e6e7ae26d13b9ad0"
-  version: 1
-  triangles: 9244
+visual: {format: freefall-model/1, path: models/cable-6p6kv-185mm2/v1, manifest_sha256: 49a26c3692afda02ee2fd4ef52f324cb7c3f38264dd82473e6e7ae26d13b9ad0, version: 1, triangles: 9244}
 basis:
 - of: [per_m]
   tier: derived
