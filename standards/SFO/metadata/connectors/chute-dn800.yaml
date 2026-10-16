@@ -5,10 +5,10 @@ kind: chute
 size: 0.8
 rating: {pressure: 0.0, temperature: 973.0}
 sealing: single
-physical: {length: 1.0, width: 1.0, height: 0.11, mass: 102.4}
+physical: {length: 1.0, width: 1.0, height: 0.11, mass: 94.1}
 built_of:
 - {what: Flanges, item: material.stainless-steel-304, mass: 89.3, note: 'two plate rings 1.00 m across, 20 mm'}
-- {what: Bolts, item: material.high-strength-steel-4340, mass: 12.0, note: 20 of M16}
+- {what: Bolts, item: material.high-strength-steel-4340, mass: 3.7, note: 20 of M16}
 - {what: Gasket, item: material.fused-silica, mass: 1.1, note: 'a 6 mm silica-fibre dust gasket, for the sponge iron''s 700 deg C (rubber would not take it); fused silica stands for it'}
 basis:
 - of: [built_of]

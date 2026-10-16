@@ -122,7 +122,7 @@ def chute(dn, item=SS):
     D = dn + 0.2
     ring = 2 * math.pi / 4 * (D ** 2 - dn ** 2) * t * RHO[item]
     n = max(8, math.ceil(math.pi * (dn + 0.1) / 0.15 / 4) * 4)
-    bolts = n * 0.6
+    bolts = n * 0.185          # kg an M16 bolt and nut, measured on blender's DN 800 chute (20 of them, 3.7 kg)
     built = [_part("Flanges", item, ring, f"two plate rings {D:.2f} m across, 20 mm"), _part("Bolts", BOLT, bolts, f"{n} of M16"),
              _part("Gasket", "material.fused-silica", math.pi * (dn + 0.05) * 0.03 * 0.006 * 2200.0, "a 6 mm silica-fibre dust gasket, for the sponge iron's 700 deg C (rubber would not take it); fused silica stands for it")]
     _recs[key] = {"identity": {"key": key, "name": f"Chute flange DN {dn * 1000:.0f}", "description": f"A sealed bolted flange where bulk falls through a {dn * 1000:.0f} mm chute into a closed conveyor."},

@@ -360,7 +360,7 @@ links:
   to: [-60.0, 0.0, 5.594]
   length: 60.0
   item: material.stainless-steel-304
-  mass: 29970.0
+  mass: 29950.0
   power: 150000.0
   fittings: {elbows: 0, tees: 0, supports: 10, connectors: 2}
   note: 55.6 kg/s of sponge iron at about 650 deg C to the arc furnace shop's bin, beyond the layout; the hot charge saves the furnace about 24 MW
