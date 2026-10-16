@@ -14,6 +14,8 @@ per_m:
 elbow: {radius: 0.3, mass: 2.2}
 tee: {mass: 25.0}
 support: {spacing: 3.0, mass: 8.0, per_m_height: 6.0, item: material.aluminium-alloy-6061}
+repeat:
+- {piece: rung, pitch: 0.3}
 connector: connector.termination-400v-16mm2
 carries: power
 basis:

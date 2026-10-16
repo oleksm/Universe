@@ -297,6 +297,7 @@ def cable(v, area_mm2):
                   "elbow": {"radius": r(max(0.3, 15 * od), 3), "mass": r(per_m * math.pi / 2 * max(0.3, 15 * od))},
                   "tee": {"mass": 25.0},
                   "support": {"spacing": 3.0, "mass": 8.0, "per_m_height": 6.0, "item": AL},
+                  "repeat": [{"piece": "rung", "pitch": 0.3}],
                   "connector": termination(v, area_mm2), "carries": "power",
                   "basis": [{"of": ["per_m"], "tier": "derived", "review": True, "note": f"Copper from its area; insulation by the voltage's usual thickness (from memory); the rating at {J_VACUUM / 1e6:g} A/mm2, radiation only."},
                             {"of": ["support", "tee", "elbow"], "tier": "invented", "review": True, "note": "Tray posts every 3 m; a tee is a joint box; bends at 15 cable diameters. From memory."}]}
