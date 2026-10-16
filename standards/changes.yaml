@@ -855,7 +855,7 @@
 - { record: layout.pellet-plant-air, at: "2026-10-15T16:01:43Z", status: draft, summary: "changed: physical", sha: "89e9d07d51ec2d4b" }
 - { record: layout.pellet-plant-airless, at: "2026-10-15T20:27:46Z", status: draft, summary: "changed: physical, ground, totals", sha: "4370552410830680" }
 - { record: layout.shaft-furnace-air, at: "2026-10-16T03:20:47Z", status: draft, summary: "changed: totals", sha: "56b2d2168ab078d2" }
-- { record: layout.shaft-furnace-airless, at: "2026-10-16T12:00:56Z", status: draft, summary: "changed: links, totals", sha: "243106a4a4459c3d" }
+- { record: layout.shaft-furnace-airless, at: "2026-10-16T12:02:30Z", status: draft, summary: "changed: links", sha: "8eb36521ab5190b2" }
 - { record: market.art, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "517671b6a46daee3" }
 - { record: market.artifacts, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "6b51c19897f56c1a" }
 - { record: market.biologics, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "003ee842af8f7674" }
@@ -1561,16 +1561,16 @@
 - { record: run.cable-6p6kv-185mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "498484319d4af233" }
 - { record: run.cable-6p6kv-630mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "1aee0c17b0c22e19" }
 - { record: run.drag-conveyor-800, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "c7869288da8955c1" }
-- { record: run.lined-duct-dn2400-pn16-double, at: "2026-10-16T12:00:56Z", status: draft, summary: "changed: cap", sha: "dbd2109b3e4ca2b4" }
-- { record: run.pipe-dn100-pn10, at: "2026-10-16T12:00:56Z", status: draft, summary: "changed: cap", sha: "57cb2695ca05b5a4" }
-- { record: run.pipe-dn1000-pn16-double, at: "2026-10-16T12:00:56Z", status: draft, summary: "changed: cap", sha: "11a5fcea61efc536" }
-- { record: run.pipe-dn1000-pn16-mli-double, at: "2026-10-16T12:00:56Z", status: draft, summary: "changed: cap", sha: "59e61b715b2e765f" }
-- { record: run.pipe-dn150-pn10, at: "2026-10-16T12:00:56Z", status: draft, summary: "changed: cap", sha: "f401c9e7c74ae119" }
-- { record: run.pipe-dn1600-pn16-mli-double, at: "2026-10-16T12:00:56Z", status: draft, summary: "changed: cap", sha: "8219181b9d6261ca" }
-- { record: run.pipe-dn200-pn10-ss, at: "2026-10-16T12:00:56Z", status: draft, summary: "changed: cap", sha: "471160483d2eddc9" }
-- { record: run.pipe-dn250-pn16-ss-double, at: "2026-10-16T12:00:56Z", status: draft, summary: "changed: cap", sha: "2f3bd3034f8d38b6" }
-- { record: run.pipe-dn350-pn10, at: "2026-10-16T12:00:56Z", status: draft, summary: "changed: cap", sha: "305c4b0a51803b7d" }
-- { record: run.pipe-dn900-pn10, at: "2026-10-16T12:00:56Z", status: draft, summary: "changed: cap", sha: "c3203817771e71b8" }
+- { record: run.lined-duct-dn2400-pn16-double, at: "2026-10-16T12:02:30Z", status: draft, summary: "changed: cap", sha: "47c7b5d1c22f4740" }
+- { record: run.pipe-dn100-pn10, at: "2026-10-16T12:02:30Z", status: draft, summary: "changed: cap", sha: "1a93b2ea91b1a18c" }
+- { record: run.pipe-dn1000-pn16-double, at: "2026-10-16T12:02:30Z", status: draft, summary: "changed: cap", sha: "15c52153cd7f8a5c" }
+- { record: run.pipe-dn1000-pn16-mli-double, at: "2026-10-16T12:02:30Z", status: draft, summary: "changed: cap", sha: "0ffc81f6e93f1821" }
+- { record: run.pipe-dn150-pn10, at: "2026-10-16T12:02:30Z", status: draft, summary: "changed: cap", sha: "0e7a09407e4c43d9" }
+- { record: run.pipe-dn1600-pn16-mli-double, at: "2026-10-16T12:02:30Z", status: draft, summary: "changed: cap", sha: "a8cbaa48418fef98" }
+- { record: run.pipe-dn200-pn10-ss, at: "2026-10-16T12:02:30Z", status: draft, summary: "changed: cap", sha: "5740ac2261482205" }
+- { record: run.pipe-dn250-pn16-ss-double, at: "2026-10-16T12:02:30Z", status: draft, summary: "changed: cap", sha: "9a5adde98982be24" }
+- { record: run.pipe-dn350-pn10, at: "2026-10-16T12:02:30Z", status: draft, summary: "changed: cap", sha: "18a1b38cbbcef5af" }
+- { record: run.pipe-dn900-pn10, at: "2026-10-16T12:02:30Z", status: draft, summary: "changed: cap", sha: "1eeeb4b16a2b23c4" }
 - { record: seeding.asteroids, at: "2026-10-10T16:13:03Z", status: "", summary: "changed: basis", sha: "523d44e4bfa3af5f" }
 - { record: seeding.conditions, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "96e581fa4cb02009" }
 - { record: seeding.galaxy, at: "2026-10-10T16:13:03Z", status: "", summary: "changed", sha: "c3aeb429e01bf69f" }

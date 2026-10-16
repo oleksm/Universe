@@ -13,7 +13,7 @@ per_m:
   - {what: Lagging, item: material.multi-layer-insulation, mass: 4.1, note: 25 mm of multi-layer insulation}
 elbow: {radius: 1.5, mass: 537.4}
 tee: {mass: 220.3}
-cap: {thickness: 0.048, mass: 538.8}
+cap: {thickness: 0.048, mass: 295.9}
 support: {spacing: 12.0, mass: 74.1, per_m_height: 32.5, item: material.structural-steel-a36}
 connector: connector.flange-dn1000-pn16-double
 carries: gas

@@ -12,7 +12,7 @@ per_m:
   - {what: Pipe, item: material.structural-steel-a36, mass: 179.1, note: '900 mm bore, 8.0 mm wall (Barlow at 10 bar, 133 MPa, weld factor 0.85, 1.5 mm for corrosion)'}
 elbow: {radius: 1.35, mass: 379.8}
 tee: {mass: 159.8}
-cap: {thickness: 0.034, mass: 274.6}
+cap: {thickness: 0.034, mass: 169.8}
 support: {spacing: 10.3, mass: 65.0, per_m_height: 30.1, item: material.structural-steel-a36}
 connector: connector.flange-dn900-pn10
 carries: liquid

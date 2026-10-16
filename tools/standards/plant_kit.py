@@ -302,9 +302,10 @@ def area_for(amps):
 # ---------------------------------------------------------------- laying a run
 
 def cap(dn, p, item, conn_key):
-    """A blind end: a flat plate clamped at its flange, 0.75 p r2 / t2 within the allowable stress, rounded up to 2 mm."""
+    """A blind end: a flat plate welded into the pipe's end (runs are welded; no flange, nothing to leak), clamped at its
+    edge, 0.75 p r2 / t2 within the allowable stress, rounded up to 2 mm."""
     t = math.ceil(dn / 2 * math.sqrt(0.75 * p / STRESS[item]) * 500) / 500
-    return {"thickness": t, "mass": r(math.pi / 4 * (dn + 0.1) ** 2 * t * RHO[item] + _recs[conn_key]["physical"]["mass"] / 2)}
+    return {"thickness": t, "mass": r(math.pi / 4 * dn ** 2 * t * RHO[item])}
 
 
 def corners(pts):

@@ -549,7 +549,7 @@ links:
   to: [-34.8, 398.35, 1.0]
   length: 467.4
   item: material.structural-steel-a36
-  mass: 88260.0
+  mass: 88150.0
   via:
   - [48.6, 17.2, 1.0]
   - [39.4, 17.2, 1.0]
@@ -565,7 +565,7 @@ links:
   to: [47.4, 20.0, 1.0]
   length: 463.4
   item: material.structural-steel-a36
-  mass: 87560.0
+  mass: 87450.0
   via:
   - [-33.6, 36.6, 1.0]
   - [40.6, 36.6, 1.0]
@@ -592,7 +592,7 @@ links:
   to: [-324.0, 40.35, 1.0]
   length: 289.2
   item: material.structural-steel-a36
-  mass: 14950.0
+  mass: 14920.0
   fittings: {elbows: 0, tees: 1, supports: 42, connectors: 1}
   note: in the aisle south of its row, 1 m up
 - kind: pipe
@@ -603,7 +603,7 @@ links:
   to: [-33.6, 41.25, 1.0]
   length: 291.4
   item: material.structural-steel-a36
-  mass: 16010.0
+  mass: 15980.0
   via:
   - [-33.6, 41.25, 2.0]
   fittings: {elbows: 1, tees: 1, supports: 43, connectors: 1}
@@ -819,7 +819,7 @@ links:
   to: [-324.0, 91.35, 1.0]
   length: 289.2
   item: material.structural-steel-a36
-  mass: 14950.0
+  mass: 14920.0
   fittings: {elbows: 0, tees: 1, supports: 42, connectors: 1}
   note: in the aisle south of its row, 1 m up
 - kind: pipe
@@ -830,7 +830,7 @@ links:
   to: [-33.6, 92.25, 1.0]
   length: 291.4
   item: material.structural-steel-a36
-  mass: 16010.0
+  mass: 15980.0
   via:
   - [-33.6, 92.25, 2.0]
   fittings: {elbows: 1, tees: 1, supports: 43, connectors: 1}
@@ -1046,7 +1046,7 @@ links:
   to: [-324.0, 142.35, 1.0]
   length: 289.2
   item: material.structural-steel-a36
-  mass: 14950.0
+  mass: 14920.0
   fittings: {elbows: 0, tees: 1, supports: 42, connectors: 1}
   note: in the aisle south of its row, 1 m up
 - kind: pipe
@@ -1057,7 +1057,7 @@ links:
   to: [-33.6, 143.25, 1.0]
   length: 291.4
   item: material.structural-steel-a36
-  mass: 16010.0
+  mass: 15980.0
   via:
   - [-33.6, 143.25, 2.0]
   fittings: {elbows: 1, tees: 1, supports: 43, connectors: 1}
@@ -1273,7 +1273,7 @@ links:
   to: [-324.0, 193.35, 1.0]
   length: 289.2
   item: material.structural-steel-a36
-  mass: 14950.0
+  mass: 14920.0
   fittings: {elbows: 0, tees: 1, supports: 42, connectors: 1}
   note: in the aisle south of its row, 1 m up
 - kind: pipe
@@ -1284,7 +1284,7 @@ links:
   to: [-33.6, 194.25, 1.0]
   length: 291.4
   item: material.structural-steel-a36
-  mass: 16010.0
+  mass: 15980.0
   via:
   - [-33.6, 194.25, 2.0]
   fittings: {elbows: 1, tees: 1, supports: 43, connectors: 1}
@@ -1500,7 +1500,7 @@ links:
   to: [-324.0, 244.35, 1.0]
   length: 289.2
   item: material.structural-steel-a36
-  mass: 14950.0
+  mass: 14920.0
   fittings: {elbows: 0, tees: 1, supports: 42, connectors: 1}
   note: in the aisle south of its row, 1 m up
 - kind: pipe
@@ -1511,7 +1511,7 @@ links:
   to: [-33.6, 245.25, 1.0]
   length: 291.4
   item: material.structural-steel-a36
-  mass: 16010.0
+  mass: 15980.0
   via:
   - [-33.6, 245.25, 2.0]
   fittings: {elbows: 1, tees: 1, supports: 43, connectors: 1}
@@ -1727,7 +1727,7 @@ links:
   to: [-324.0, 295.35, 1.0]
   length: 289.2
   item: material.structural-steel-a36
-  mass: 14950.0
+  mass: 14920.0
   fittings: {elbows: 0, tees: 1, supports: 42, connectors: 1}
   note: in the aisle south of its row, 1 m up
 - kind: pipe
@@ -1738,7 +1738,7 @@ links:
   to: [-33.6, 296.25, 1.0]
   length: 291.4
   item: material.structural-steel-a36
-  mass: 16010.0
+  mass: 15980.0
   via:
   - [-33.6, 296.25, 2.0]
   fittings: {elbows: 1, tees: 1, supports: 43, connectors: 1}
@@ -1954,7 +1954,7 @@ links:
   to: [-324.0, 346.35, 1.0]
   length: 289.2
   item: material.structural-steel-a36
-  mass: 14950.0
+  mass: 14920.0
   fittings: {elbows: 0, tees: 1, supports: 42, connectors: 1}
   note: in the aisle south of its row, 1 m up
 - kind: pipe
@@ -1965,7 +1965,7 @@ links:
   to: [-33.6, 347.25, 1.0]
   length: 291.4
   item: material.structural-steel-a36
-  mass: 16010.0
+  mass: 15980.0
   via:
   - [-33.6, 347.25, 2.0]
   fittings: {elbows: 1, tees: 1, supports: 43, connectors: 1}
@@ -2181,7 +2181,7 @@ links:
   to: [-84.0, 397.35, 1.0]
   length: 49.2
   item: material.structural-steel-a36
-  mass: 1142.0
+  mass: 1128.0
   fittings: {elbows: 0, tees: 1, supports: 10, connectors: 1}
   note: in the aisle south of its row, 1 m up
 - kind: pipe
@@ -2192,7 +2192,7 @@ links:
   to: [-33.6, 398.25, 1.0]
   length: 51.4
   item: material.structural-steel-a36
-  mass: 1412.0
+  mass: 1398.0
   via:
   - [-33.6, 398.25, 2.0]
   fittings: {elbows: 1, tees: 1, supports: 11, connectors: 1}
