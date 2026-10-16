@@ -16,13 +16,8 @@ built_of:
 - {what: Filtrate cooler, item: material.stainless-steel-304, mass: 3000.0, note: 'a plate exchanger, from memory'}
 - {what: 'Cylinders, power packs and pumps', item: good.pumps, mass: 12000.0, note: from memory}
 needs: {power: 122900.0, heat: 2272000.0, atmosphere: any}
-visual:
-  format: "freefall-model/1"
-  path: "models/filter-press-2/v1"
-  manifest_sha256: "481187cbfd7c76d63cd5f6584a2a3b6a4195ffde72cc558f1a0e2593f429f7d2"
-  version: 1
-  triangles: 19648
 life: 788940000
+visual: {format: freefall-model/1, path: models/filter-press-2/v1, manifest_sha256: 481187cbfd7c76d63cd5f6584a2a3b6a4195ffde72cc558f1a0e2593f429f7d2, version: 1, triangles: 19648}
 basis:
 - of: [physical, built_of, needs.power]
   tier: derived
