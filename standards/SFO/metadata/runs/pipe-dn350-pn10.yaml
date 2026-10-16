@@ -11,7 +11,7 @@ per_m:
   built_of:
   - {what: Pipe, item: material.structural-steel-a36, mass: 43.8, note: '350 mm bore, 5.0 mm wall (Barlow at 10 bar, 133 MPa, weld factor 0.85, 1.5 mm for corrosion)'}
 elbow: {radius: 0.525, mass: 36.1}
-tee: {mass: 28.0}
+tee: {mass: 15.1}
 support: {spacing: 7.0, mass: 31.6, per_m_height: 21.4, item: material.structural-steel-a36}
 connector: connector.flange-dn350-pn10
 carries: liquid
@@ -21,7 +21,7 @@ basis:
   note: Wall from pressure; mass from material and dimensions.
 - of: [elbow, tee]
   tier: derived
-  note: A long-radius elbow (1.5 bores) is its arc of straight; a tee, a bore and a half of straight and its reducer.
+  note: A long-radius elbow (1.5 bores) is its arc of straight; a tee is its branch stub over the straight it sits in, from the main's outside to 1.5 bores off its axis (checked on blender's DN 200 kit).
 - of: [support]
   tier: derived
   review: true

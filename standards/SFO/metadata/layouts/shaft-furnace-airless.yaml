@@ -463,7 +463,7 @@ links:
   to: [57.0, 4.0, 1.583]
   length: 43.0
   item: material.stainless-steel-304
-  mass: 1623.0
+  mass: 1614.0
   fittings: {elbows: 0, tees: 1, supports: 6, connectors: 1}
   note: '3.00 kg/s teed into the compressor''s suction: the electrolysers run at 10 bar, so no make-up compressor'
 - kind: pipe
@@ -592,7 +592,7 @@ links:
   to: [-324.0, 40.35, 1.0]
   length: 289.2
   item: material.structural-steel-a36
-  mass: 14940.0
+  mass: 14930.0
   fittings: {elbows: 0, tees: 1, supports: 42, connectors: 1}
   note: in the aisle south of its row, 1 m up
 - kind: pipe
@@ -603,7 +603,7 @@ links:
   to: [-33.6, 41.25, 1.0]
   length: 291.4
   item: material.structural-steel-a36
-  mass: 16000.0
+  mass: 15990.0
   via:
   - [-33.6, 41.25, 2.0]
   fittings: {elbows: 1, tees: 1, supports: 43, connectors: 1}
@@ -627,7 +627,7 @@ links:
   to: [-83.0, 42.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL1 return branch
@@ -637,7 +637,7 @@ links:
   to: [-82.4, 41.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-82.4, 41.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -659,7 +659,7 @@ links:
   to: [-131.0, 42.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL2 return branch
@@ -669,7 +669,7 @@ links:
   to: [-130.4, 41.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-130.4, 41.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -691,7 +691,7 @@ links:
   to: [-179.0, 42.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL3 return branch
@@ -701,7 +701,7 @@ links:
   to: [-178.4, 41.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-178.4, 41.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -723,7 +723,7 @@ links:
   to: [-227.0, 42.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL4 return branch
@@ -733,7 +733,7 @@ links:
   to: [-226.4, 41.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-226.4, 41.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -755,7 +755,7 @@ links:
   to: [-275.0, 42.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL5 return branch
@@ -765,7 +765,7 @@ links:
   to: [-274.4, 41.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-274.4, 41.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -787,7 +787,7 @@ links:
   to: [-323.0, 42.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL6 return branch
@@ -797,7 +797,7 @@ links:
   to: [-322.4, 41.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-322.4, 41.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -819,7 +819,7 @@ links:
   to: [-324.0, 91.35, 1.0]
   length: 289.2
   item: material.structural-steel-a36
-  mass: 14940.0
+  mass: 14930.0
   fittings: {elbows: 0, tees: 1, supports: 42, connectors: 1}
   note: in the aisle south of its row, 1 m up
 - kind: pipe
@@ -830,7 +830,7 @@ links:
   to: [-33.6, 92.25, 1.0]
   length: 291.4
   item: material.structural-steel-a36
-  mass: 16000.0
+  mass: 15990.0
   via:
   - [-33.6, 92.25, 2.0]
   fittings: {elbows: 1, tees: 1, supports: 43, connectors: 1}
@@ -854,7 +854,7 @@ links:
   to: [-83.0, 93.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL7 return branch
@@ -864,7 +864,7 @@ links:
   to: [-82.4, 92.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-82.4, 92.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -886,7 +886,7 @@ links:
   to: [-131.0, 93.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL8 return branch
@@ -896,7 +896,7 @@ links:
   to: [-130.4, 92.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-130.4, 92.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -918,7 +918,7 @@ links:
   to: [-179.0, 93.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL9 return branch
@@ -928,7 +928,7 @@ links:
   to: [-178.4, 92.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-178.4, 92.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -950,7 +950,7 @@ links:
   to: [-227.0, 93.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL10 return branch
@@ -960,7 +960,7 @@ links:
   to: [-226.4, 92.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-226.4, 92.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -982,7 +982,7 @@ links:
   to: [-275.0, 93.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL11 return branch
@@ -992,7 +992,7 @@ links:
   to: [-274.4, 92.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-274.4, 92.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -1014,7 +1014,7 @@ links:
   to: [-323.0, 93.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL12 return branch
@@ -1024,7 +1024,7 @@ links:
   to: [-322.4, 92.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-322.4, 92.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -1046,7 +1046,7 @@ links:
   to: [-324.0, 142.35, 1.0]
   length: 289.2
   item: material.structural-steel-a36
-  mass: 14940.0
+  mass: 14930.0
   fittings: {elbows: 0, tees: 1, supports: 42, connectors: 1}
   note: in the aisle south of its row, 1 m up
 - kind: pipe
@@ -1057,7 +1057,7 @@ links:
   to: [-33.6, 143.25, 1.0]
   length: 291.4
   item: material.structural-steel-a36
-  mass: 16000.0
+  mass: 15990.0
   via:
   - [-33.6, 143.25, 2.0]
   fittings: {elbows: 1, tees: 1, supports: 43, connectors: 1}
@@ -1081,7 +1081,7 @@ links:
   to: [-83.0, 144.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL13 return branch
@@ -1091,7 +1091,7 @@ links:
   to: [-82.4, 143.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-82.4, 143.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -1113,7 +1113,7 @@ links:
   to: [-131.0, 144.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL14 return branch
@@ -1123,7 +1123,7 @@ links:
   to: [-130.4, 143.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-130.4, 143.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -1145,7 +1145,7 @@ links:
   to: [-179.0, 144.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL15 return branch
@@ -1155,7 +1155,7 @@ links:
   to: [-178.4, 143.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-178.4, 143.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -1177,7 +1177,7 @@ links:
   to: [-227.0, 144.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL16 return branch
@@ -1187,7 +1187,7 @@ links:
   to: [-226.4, 143.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-226.4, 143.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -1209,7 +1209,7 @@ links:
   to: [-275.0, 144.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL17 return branch
@@ -1219,7 +1219,7 @@ links:
   to: [-274.4, 143.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-274.4, 143.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -1241,7 +1241,7 @@ links:
   to: [-323.0, 144.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL18 return branch
@@ -1251,7 +1251,7 @@ links:
   to: [-322.4, 143.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-322.4, 143.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -1273,7 +1273,7 @@ links:
   to: [-324.0, 193.35, 1.0]
   length: 289.2
   item: material.structural-steel-a36
-  mass: 14940.0
+  mass: 14930.0
   fittings: {elbows: 0, tees: 1, supports: 42, connectors: 1}
   note: in the aisle south of its row, 1 m up
 - kind: pipe
@@ -1284,7 +1284,7 @@ links:
   to: [-33.6, 194.25, 1.0]
   length: 291.4
   item: material.structural-steel-a36
-  mass: 16000.0
+  mass: 15990.0
   via:
   - [-33.6, 194.25, 2.0]
   fittings: {elbows: 1, tees: 1, supports: 43, connectors: 1}
@@ -1308,7 +1308,7 @@ links:
   to: [-83.0, 195.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL19 return branch
@@ -1318,7 +1318,7 @@ links:
   to: [-82.4, 194.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-82.4, 194.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -1340,7 +1340,7 @@ links:
   to: [-131.0, 195.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL20 return branch
@@ -1350,7 +1350,7 @@ links:
   to: [-130.4, 194.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-130.4, 194.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -1372,7 +1372,7 @@ links:
   to: [-179.0, 195.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL21 return branch
@@ -1382,7 +1382,7 @@ links:
   to: [-178.4, 194.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-178.4, 194.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -1404,7 +1404,7 @@ links:
   to: [-227.0, 195.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL22 return branch
@@ -1414,7 +1414,7 @@ links:
   to: [-226.4, 194.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-226.4, 194.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -1436,7 +1436,7 @@ links:
   to: [-275.0, 195.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL23 return branch
@@ -1446,7 +1446,7 @@ links:
   to: [-274.4, 194.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-274.4, 194.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -1468,7 +1468,7 @@ links:
   to: [-323.0, 195.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL24 return branch
@@ -1478,7 +1478,7 @@ links:
   to: [-322.4, 194.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-322.4, 194.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -1500,7 +1500,7 @@ links:
   to: [-324.0, 244.35, 1.0]
   length: 289.2
   item: material.structural-steel-a36
-  mass: 14940.0
+  mass: 14930.0
   fittings: {elbows: 0, tees: 1, supports: 42, connectors: 1}
   note: in the aisle south of its row, 1 m up
 - kind: pipe
@@ -1511,7 +1511,7 @@ links:
   to: [-33.6, 245.25, 1.0]
   length: 291.4
   item: material.structural-steel-a36
-  mass: 16000.0
+  mass: 15990.0
   via:
   - [-33.6, 245.25, 2.0]
   fittings: {elbows: 1, tees: 1, supports: 43, connectors: 1}
@@ -1535,7 +1535,7 @@ links:
   to: [-83.0, 246.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL25 return branch
@@ -1545,7 +1545,7 @@ links:
   to: [-82.4, 245.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-82.4, 245.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -1567,7 +1567,7 @@ links:
   to: [-131.0, 246.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL26 return branch
@@ -1577,7 +1577,7 @@ links:
   to: [-130.4, 245.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-130.4, 245.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -1599,7 +1599,7 @@ links:
   to: [-179.0, 246.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL27 return branch
@@ -1609,7 +1609,7 @@ links:
   to: [-178.4, 245.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-178.4, 245.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -1631,7 +1631,7 @@ links:
   to: [-227.0, 246.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL28 return branch
@@ -1641,7 +1641,7 @@ links:
   to: [-226.4, 245.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-226.4, 245.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -1663,7 +1663,7 @@ links:
   to: [-275.0, 246.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL29 return branch
@@ -1673,7 +1673,7 @@ links:
   to: [-274.4, 245.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-274.4, 245.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -1695,7 +1695,7 @@ links:
   to: [-323.0, 246.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL30 return branch
@@ -1705,7 +1705,7 @@ links:
   to: [-322.4, 245.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-322.4, 245.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -1727,7 +1727,7 @@ links:
   to: [-324.0, 295.35, 1.0]
   length: 289.2
   item: material.structural-steel-a36
-  mass: 14940.0
+  mass: 14930.0
   fittings: {elbows: 0, tees: 1, supports: 42, connectors: 1}
   note: in the aisle south of its row, 1 m up
 - kind: pipe
@@ -1738,7 +1738,7 @@ links:
   to: [-33.6, 296.25, 1.0]
   length: 291.4
   item: material.structural-steel-a36
-  mass: 16000.0
+  mass: 15990.0
   via:
   - [-33.6, 296.25, 2.0]
   fittings: {elbows: 1, tees: 1, supports: 43, connectors: 1}
@@ -1762,7 +1762,7 @@ links:
   to: [-83.0, 297.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL31 return branch
@@ -1772,7 +1772,7 @@ links:
   to: [-82.4, 296.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-82.4, 296.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -1794,7 +1794,7 @@ links:
   to: [-131.0, 297.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL32 return branch
@@ -1804,7 +1804,7 @@ links:
   to: [-130.4, 296.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-130.4, 296.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -1826,7 +1826,7 @@ links:
   to: [-179.0, 297.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL33 return branch
@@ -1836,7 +1836,7 @@ links:
   to: [-178.4, 296.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-178.4, 296.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -1858,7 +1858,7 @@ links:
   to: [-227.0, 297.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL34 return branch
@@ -1868,7 +1868,7 @@ links:
   to: [-226.4, 296.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-226.4, 296.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -1890,7 +1890,7 @@ links:
   to: [-275.0, 297.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL35 return branch
@@ -1900,7 +1900,7 @@ links:
   to: [-274.4, 296.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-274.4, 296.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -1922,7 +1922,7 @@ links:
   to: [-323.0, 297.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL36 return branch
@@ -1932,7 +1932,7 @@ links:
   to: [-322.4, 296.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-322.4, 296.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -1954,7 +1954,7 @@ links:
   to: [-324.0, 346.35, 1.0]
   length: 289.2
   item: material.structural-steel-a36
-  mass: 14940.0
+  mass: 14930.0
   fittings: {elbows: 0, tees: 1, supports: 42, connectors: 1}
   note: in the aisle south of its row, 1 m up
 - kind: pipe
@@ -1965,7 +1965,7 @@ links:
   to: [-33.6, 347.25, 1.0]
   length: 291.4
   item: material.structural-steel-a36
-  mass: 16000.0
+  mass: 15990.0
   via:
   - [-33.6, 347.25, 2.0]
   fittings: {elbows: 1, tees: 1, supports: 43, connectors: 1}
@@ -1989,7 +1989,7 @@ links:
   to: [-83.0, 348.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL37 return branch
@@ -1999,7 +1999,7 @@ links:
   to: [-82.4, 347.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-82.4, 347.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -2021,7 +2021,7 @@ links:
   to: [-131.0, 348.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL38 return branch
@@ -2031,7 +2031,7 @@ links:
   to: [-130.4, 347.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-130.4, 347.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -2053,7 +2053,7 @@ links:
   to: [-179.0, 348.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL39 return branch
@@ -2063,7 +2063,7 @@ links:
   to: [-178.4, 347.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-178.4, 347.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -2085,7 +2085,7 @@ links:
   to: [-227.0, 348.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL40 return branch
@@ -2095,7 +2095,7 @@ links:
   to: [-226.4, 347.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-226.4, 347.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -2117,7 +2117,7 @@ links:
   to: [-275.0, 348.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL41 return branch
@@ -2127,7 +2127,7 @@ links:
   to: [-274.4, 347.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-274.4, 347.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -2149,7 +2149,7 @@ links:
   to: [-323.0, 348.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL42 return branch
@@ -2159,7 +2159,7 @@ links:
   to: [-322.4, 347.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-322.4, 347.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -2181,7 +2181,7 @@ links:
   to: [-84.0, 397.35, 1.0]
   length: 49.2
   item: material.structural-steel-a36
-  mass: 1146.0
+  mass: 1140.0
   fittings: {elbows: 0, tees: 1, supports: 10, connectors: 1}
   note: in the aisle south of its row, 1 m up
 - kind: pipe
@@ -2192,7 +2192,7 @@ links:
   to: [-33.6, 398.25, 1.0]
   length: 51.4
   item: material.structural-steel-a36
-  mass: 1416.0
+  mass: 1410.0
   via:
   - [-33.6, 398.25, 2.0]
   fittings: {elbows: 1, tees: 1, supports: 11, connectors: 1}
@@ -2216,7 +2216,7 @@ links:
   to: [-83.0, 399.0, 1.0]
   length: 1.65
   item: material.structural-steel-a36
-  mass: 96.68
+  mass: 90.48
   fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
 - kind: pipe
   name: RL43 return branch
@@ -2226,7 +2226,7 @@ links:
   to: [-82.4, 398.25, 2.0]
   length: 1.75
   item: material.structural-steel-a36
-  mass: 152.7
+  mass: 146.5
   via:
   - [-82.4, 398.25, 1.0]
   fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
@@ -2248,7 +2248,7 @@ links:
   to: [43.45, -24.6, 1.0]
   length: 52.65
   item: material.structural-steel-a36
-  mass: 1213.0
+  mass: 1207.0
   via:
   - [42.6, 18.4, 0.3]
   - [42.6, 5.8, 0.3]
@@ -2265,7 +2265,7 @@ links:
   to: [43.8, 18.4, 1.0]
   length: 50.25
   item: material.structural-steel-a36
-  mass: 1177.0
+  mass: 1171.0
   via:
   - [42.8, -23.4, 1.0]
   - [42.8, -23.4, 0.3]
@@ -2282,7 +2282,7 @@ links:
   to: [42.0, -2.2, 0.6]
   length: 26.6
   item: material.structural-steel-a36
-  mass: 499.4
+  mass: 494.0
   via:
   - [44.4, 18.4, 0.3]
   - [44.4, 4.0, 0.3]
@@ -2298,7 +2298,7 @@ links:
   to: [45.0, 18.4, 1.0]
   length: 25.4
   item: material.structural-steel-a36
-  mass: 488.7
+  mass: 483.3
   via:
   - [41.3, -1.6, 0.6]
   - [41.3, -1.6, 0.3]
@@ -2331,7 +2331,7 @@ ground:
 - {what: Radiator legs' pads, item: material.regolith-sintered, volume: 124.9, mass: 312200.0}
 - {what: Crew post berm, item: material.regolith, volume: 586.23, note: 'loose regolith at least 1 m over the post everywhere (its top 4 x 2 m, 5.3 m up), lying at 35 degrees, its foot about 19 x 17 m, a cavity for the post; measured on blender''s arc furnace shop; with openings for its windows (light wells on the north) and its airlock (a ramp cut on the west); with openings for its windows and airlock; at the airlock''s door a landing of packed regolith 2 x 2 m, its top at the threshold (1.35 m up), and a ramp down to the ground at about 1 in 3', mass: 879300.0}
 - {what: Trestle footings, item: material.regolith-sintered, volume: 39.0, mass: 97500.0}
-totals: {rate: 55.5555555555556, power: 127500000.0, heat: 62090000.0, water: 0.0, mass: 9551000.0, against_module: 'module.shaft-furnace: one box, 22 MW. The layout for air draws 152 MW and sends 130 MW up four towers. This layout: the same rate; 127 MW (heater 121, compressor 4.1: at 8 bar the compressor only makes up the loop''s pressure drop); 62 MW to 43 radiator fields at 345 K (10 ha), for the water must condense somewhere and only light can take the heat away; no cooling zone or loop (the sponge iron goes on hot); no water used up. 5,267 t of plant and frame, 4,284 t of sintered regolith.'}
+totals: {rate: 55.5555555555556, power: 127500000.0, heat: 62090000.0, water: 0.0, mass: 9551000.0, against_module: 'module.shaft-furnace: one box, 22 MW. The layout for air draws 152 MW and sends 130 MW up four towers. This layout: the same rate; 127 MW (heater 121, compressor 4.1: at 8 bar the compressor only makes up the loop''s pressure drop); 62 MW to 43 radiator fields at 345 K (10 ha), for the water must condense somewhere and only light can take the heat away; no cooling zone or loop (the sponge iron goes on hot); no water used up. 5,266 t of plant and frame, 4,284 t of sintered regolith.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}

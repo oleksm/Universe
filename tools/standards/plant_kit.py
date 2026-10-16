@@ -194,11 +194,11 @@ def pipe(dn, pn, item=A36, lagged=False, liquid=False, temp=373.0, sealing="sing
                   "kind": "pipe", "size": dn, "bore": dn, "outside": [r(out, 3), r(out, 3)], "rating": {"pressure": PN[pn], "temperature": temp},
                   "per_m": {"mass": r(per_m), "built_of": built},
                   "elbow": {"radius": r(R, 3), "mass": r(per_m * math.pi / 2 * R)},
-                  "tee": {"mass": r(per_m * 1.5 * dn + 5.0)},
+                  "tee": {"mass": r(per_m * max(0.0, 1.5 * dn - out / 2))},
                   "support": {"spacing": r(span), "mass": r(10 + 60 * out), "per_m_height": r(4 * (0.1 + 0.1 * out) * 0.005 * RHO[A36]), "item": A36},
                   "connector": flange(dn, pn, item, sealing, temp), "carries": "liquid" if liquid else "gas",
                   "basis": [{"of": ["per_m"], "tier": "derived", "note": "Wall from pressure; mass from material and dimensions."},
-                            {"of": ["elbow", "tee"], "tier": "derived", "note": "A long-radius elbow (1.5 bores) is its arc of straight; a tee, a bore and a half of straight and its reducer."},
+                            {"of": ["elbow", "tee"], "tier": "derived", "note": "A long-radius elbow (1.5 bores) is its arc of straight; a tee is its branch stub over the straight it sits in, from the main's outside to 1.5 bores off its axis (checked on blender's DN 200 kit)."},
                             {"of": ["support"], "tier": "derived", "review": True, "note": f"Spacing from the span it bears full at 1 g (2.5 mm sag, a third of yield), 3 to 12 m: {span:.1f} m. The stand's head and its leg by the metre from memory."}]}
     return key
 
@@ -221,7 +221,7 @@ def lined_duct(dn, pn, lining=0.2, temp=1173.0, sealing="single"):
                   "kind": "lined-duct", "size": dn, "bore": r(dn - 2 * lining, 3), "outside": [r(do, 3), r(do, 3)], "rating": {"pressure": PN[pn], "temperature": temp},
                   "per_m": {"mass": r(per_m), "built_of": built},
                   "elbow": {"radius": r(R, 3), "mass": r(per_m * math.pi / 2 * R * 1.1)},
-                  "tee": {"mass": r(per_m * 1.5 * dn)},
+                  "tee": {"mass": r(per_m * max(0.0, 1.5 * dn - do / 2))},
                   "support": {"spacing": r(span), "mass": r(30 + 80 * do), "per_m_height": r(4 * (0.1 + 0.1 * do) * 0.006 * RHO[A36]), "item": A36},
                   "connector": lined_flange(dn, pn, sealing=sealing), "carries": "gas",
                   "basis": [{"of": ["per_m"], "tier": "derived", "note": "Shell from pressure, lining from its thickness; mass from material and dimensions."},

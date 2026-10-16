@@ -13,7 +13,7 @@ per_m:
   - {what: Lining, item: good.refractory-brick, mass: 4146.9, note: '200 mm of refractory, 2.00 m clear bore'}
   - {what: Anchors, item: material.stainless-steel-304, mass: 21.8, note: 'stainless anchors holding the lining, about 0.2% of its volume'}
 elbow: {radius: 2.4, mass: 21862.9}
-tee: {mass: 18979.6}
+tee: {mass: 12555.5}
 support: {spacing: 12.0, mass: 225.0, per_m_height: 64.8, item: material.structural-steel-a36}
 connector: connector.lined-flange-dn2400-pn16-double
 carries: gas

@@ -159,7 +159,7 @@
 - { record: connector.chute-dn800, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "f0664ba5ebb081dc" }
 - { record: connector.flange-dn100-pn10, at: "2026-10-16T03:49:56Z", status: draft, summary: "changed: physical, built_of", sha: "10ac3ad760e26163" }
 - { record: connector.flange-dn1000-pn16-double, at: "2026-10-16T03:49:56Z", status: draft, summary: "changed: physical, built_of", sha: "ae38a952c3b6b814" }
-- { record: connector.flange-dn150-pn10, at: "2026-10-16T03:54:41Z", status: draft, summary: "changed: visual", sha: "5cc11f57698b9cd9" }
+- { record: connector.flange-dn150-pn10, at: "2026-10-16T11:45:06Z", status: draft, summary: "changed", sha: "777342119eef7b52" }
 - { record: connector.flange-dn1600-pn16-double, at: "2026-10-16T03:49:56Z", status: draft, summary: "changed: physical, built_of", sha: "f7d07544101bd3ca" }
 - { record: connector.flange-dn200-pn10-ss, at: "2026-10-16T03:49:56Z", status: draft, summary: "changed: physical, built_of", sha: "b2d96c3ec7ed4064" }
 - { record: connector.flange-dn2400-pn16-double, at: "2026-10-16T03:49:56Z", status: draft, summary: "changed: physical, built_of", sha: "01075ff42c132091" }
@@ -855,7 +855,7 @@
 - { record: layout.pellet-plant-air, at: "2026-10-15T16:01:43Z", status: draft, summary: "changed: physical", sha: "89e9d07d51ec2d4b" }
 - { record: layout.pellet-plant-airless, at: "2026-10-15T20:27:46Z", status: draft, summary: "changed: physical, ground, totals", sha: "4370552410830680" }
 - { record: layout.shaft-furnace-air, at: "2026-10-16T03:20:47Z", status: draft, summary: "changed: totals", sha: "56b2d2168ab078d2" }
-- { record: layout.shaft-furnace-airless, at: "2026-10-16T03:46:16Z", status: draft, summary: "changed: physical, totals", sha: "e2f80b11b1c53c6d" }
+- { record: layout.shaft-furnace-airless, at: "2026-10-16T11:45:06Z", status: draft, summary: "changed: links, totals", sha: "76d029707ca82447" }
 - { record: market.art, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "517671b6a46daee3" }
 - { record: market.artifacts, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "6b51c19897f56c1a" }
 - { record: market.biologics, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "003ee842af8f7674" }
@@ -1561,16 +1561,16 @@
 - { record: run.cable-6p6kv-185mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "498484319d4af233" }
 - { record: run.cable-6p6kv-630mm2, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "1aee0c17b0c22e19" }
 - { record: run.drag-conveyor-800, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "c7869288da8955c1" }
-- { record: run.lined-duct-dn2400-pn16-double, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "6815239db21ce195" }
-- { record: run.pipe-dn100-pn10, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "799d0e307b219763" }
-- { record: run.pipe-dn1000-pn16-double, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "dd627e3107f7b8a6" }
-- { record: run.pipe-dn1000-pn16-mli-double, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "7f238d655488ba98" }
-- { record: run.pipe-dn150-pn10, at: "2026-10-16T03:46:16Z", status: draft, summary: "changed", sha: "8bae253042687b6f" }
-- { record: run.pipe-dn1600-pn16-mli-double, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "db2244dfd2fcac29" }
-- { record: run.pipe-dn200-pn10-ss, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "0a0f6c73b3afd980" }
-- { record: run.pipe-dn250-pn16-ss-double, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "9dbd0ca89caed0bb" }
-- { record: run.pipe-dn350-pn10, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "7cea2d8537ae95a7" }
-- { record: run.pipe-dn900-pn10, at: "2026-10-16T01:32:32Z", status: draft, summary: "first tracked", sha: "6c9c50788649e12d" }
+- { record: run.lined-duct-dn2400-pn16-double, at: "2026-10-16T11:45:06Z", status: draft, summary: "changed: tee", sha: "3b3e225420591e2e" }
+- { record: run.pipe-dn100-pn10, at: "2026-10-16T11:45:06Z", status: draft, summary: "changed: tee, basis", sha: "b4969bc23fa351e6" }
+- { record: run.pipe-dn1000-pn16-double, at: "2026-10-16T11:45:06Z", status: draft, summary: "changed: tee, basis", sha: "98f1f5b6873a1bf2" }
+- { record: run.pipe-dn1000-pn16-mli-double, at: "2026-10-16T11:45:06Z", status: draft, summary: "changed: tee, basis", sha: "04a6d1d1bbf28ffd" }
+- { record: run.pipe-dn150-pn10, at: "2026-10-16T11:45:06Z", status: draft, summary: "changed: tee, basis", sha: "f7c07b531c9b2624" }
+- { record: run.pipe-dn1600-pn16-mli-double, at: "2026-10-16T11:45:06Z", status: draft, summary: "changed: tee, basis", sha: "dcceedebdd02ac38" }
+- { record: run.pipe-dn200-pn10-ss, at: "2026-10-16T11:45:06Z", status: draft, summary: "changed: tee, basis", sha: "15e977f097d2ba76" }
+- { record: run.pipe-dn250-pn16-ss-double, at: "2026-10-16T11:45:06Z", status: draft, summary: "changed: tee, basis", sha: "90d78078b40da1a3" }
+- { record: run.pipe-dn350-pn10, at: "2026-10-16T11:45:06Z", status: draft, summary: "changed: tee, basis", sha: "7e2b170845b4ef9e" }
+- { record: run.pipe-dn900-pn10, at: "2026-10-16T11:45:06Z", status: draft, summary: "changed: tee, basis", sha: "ef76f0f365e382ae" }
 - { record: seeding.asteroids, at: "2026-10-10T16:13:03Z", status: "", summary: "changed: basis", sha: "523d44e4bfa3af5f" }
 - { record: seeding.conditions, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "96e581fa4cb02009" }
 - { record: seeding.galaxy, at: "2026-10-10T16:13:03Z", status: "", summary: "changed", sha: "c3aeb429e01bf69f" }
