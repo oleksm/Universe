@@ -1553,13 +1553,13 @@
 - { record: rule.plant-weights-from-memory, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "d4bff33987b75c18" }
 - { record: rule.shares-chosen, at: "2026-10-07T03:53:08Z", status: review, summary: "first tracked", sha: "2f29f0362d9d7f04" }
 - { record: run.belt-1200, at: "2026-10-16T13:57:34Z", status: draft, summary: "changed", sha: "1f38dc7c62f3bc04" }
-- { record: run.cable-132kv-240mm2, at: "2026-10-16T14:03:01Z", status: draft, summary: "changed: repeat", sha: "4695457a377beb15" }
-- { record: run.cable-400v-16mm2, at: "2026-10-16T14:03:01Z", status: draft, summary: "changed: repeat", sha: "59324759f70c9f50" }
-- { record: run.cable-400v-300mm2, at: "2026-10-16T14:03:01Z", status: draft, summary: "changed: repeat", sha: "8e03ba6f9e31faa1" }
-- { record: run.cable-400v-400mm2, at: "2026-10-16T14:03:01Z", status: draft, summary: "changed: repeat", sha: "91a1c1f333a60a5d" }
-- { record: run.cable-400v-70mm2, at: "2026-10-16T14:03:01Z", status: draft, summary: "changed: repeat", sha: "2c9c423da8dff661" }
-- { record: run.cable-6p6kv-185mm2, at: "2026-10-16T14:03:01Z", status: draft, summary: "changed: repeat", sha: "7e3179e14b141448" }
-- { record: run.cable-6p6kv-630mm2, at: "2026-10-16T14:03:01Z", status: draft, summary: "changed: repeat", sha: "5cf9ccb4d1d16981" }
+- { record: run.cable-132kv-240mm2, at: "2026-10-16T14:09:43Z", status: draft, summary: "changed: outside, per_m", sha: "1c87ddb4aac79796" }
+- { record: run.cable-400v-16mm2, at: "2026-10-16T14:09:43Z", status: draft, summary: "changed: outside, per_m", sha: "a38fce551178b547" }
+- { record: run.cable-400v-300mm2, at: "2026-10-16T14:09:43Z", status: draft, summary: "changed: outside, per_m", sha: "4e4fc0ad9419ded8" }
+- { record: run.cable-400v-400mm2, at: "2026-10-16T14:09:43Z", status: draft, summary: "changed: outside, per_m", sha: "023686def1b2711f" }
+- { record: run.cable-400v-70mm2, at: "2026-10-16T14:09:43Z", status: draft, summary: "changed: outside, per_m", sha: "2b4303ca7681ba82" }
+- { record: run.cable-6p6kv-185mm2, at: "2026-10-16T14:09:43Z", status: draft, summary: "changed: outside, per_m", sha: "1a1dd2c892cec671" }
+- { record: run.cable-6p6kv-630mm2, at: "2026-10-16T14:09:43Z", status: draft, summary: "changed: outside, per_m", sha: "107a7fbeeef742c5" }
 - { record: run.drag-conveyor-800, at: "2026-10-16T13:57:34Z", status: draft, summary: "changed", sha: "c95d3e66137c7600" }
 - { record: run.lined-duct-dn2400-pn16-double, at: "2026-10-16T13:14:09Z", status: draft, summary: "changed", sha: "e3c421ceed042c47" }
 - { record: run.pipe-dn100-pn10, at: "2026-10-16T13:14:09Z", status: draft, summary: "changed", sha: "f24cb5fb81e22a79" }

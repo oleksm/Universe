@@ -3,7 +3,7 @@
 identity: {key: run.cable-6p6kv-185mm2, name: 'Cable, 6.6 kV, 185 mm2', description: 'Three single-core cables of 185 mm2 at 6.6 kV on a ladder tray: 462 A a circuit on airless ground, where only radiation cools them.'}
 kind: cable
 size: 0.000185
-outside: [0.3, 0.129]
+outside: [0.3, 0.133]
 rating: {voltage: 6600, current: 462.5}
 per_m:
   mass: 11.1
@@ -11,7 +11,7 @@ per_m:
   - {what: Conductors, item: material.copper, mass: 5.0, note: three cores of 185 mm2}
   - {what: Insulation and sheaths, item: material.polyethylene-uhmw, mass: 1.2, note: 3.4 mm of insulation and a 2.5 mm sheath on each core; UHMW polyethylene stands for XLPE}
   - {what: Screens, item: material.copper, mass: 0.9, note: a 35 mm2 copper screen on each core}
-  - {what: Tray, item: material.aluminium-alloy-6061, mass: 4.0, note: its share of a ladder tray}
+  - {what: Tray, item: material.aluminium-alloy-6061, mass: 4.0, note: 'its share of a ladder tray, with 4 mm bridges over the cores at each rung that hold them on risers'}
 elbow: {radius: 0.43, mass: 7.5}
 tee: {mass: 25.0}
 support: {spacing: 3.0, mass: 8.0, per_m_height: 6.0, item: material.aluminium-alloy-6061}

@@ -3,14 +3,14 @@
 identity: {key: run.cable-400v-300mm2, name: 'Cable, 0.4 kV, 300 mm2', description: 'Three single-core cables of 300 mm2 at 0.4 kV on a ladder tray: 750 A a circuit on airless ground, where only radiation cools them.'}
 kind: cable
 size: 0.0003
-outside: [0.3, 0.129]
+outside: [0.3, 0.133]
 rating: {voltage: 400, current: 750.0}
 per_m:
   mass: 13.0
   built_of:
   - {what: Conductors, item: material.copper, mass: 8.1, note: three cores of 300 mm2}
   - {what: Insulation and sheaths, item: material.polyethylene-uhmw, mass: 0.9, note: 1.4 mm of insulation and a 2.5 mm sheath on each core; UHMW polyethylene stands for XLPE}
-  - {what: Tray, item: material.aluminium-alloy-6061, mass: 4.0, note: its share of a ladder tray}
+  - {what: Tray, item: material.aluminium-alloy-6061, mass: 4.0, note: 'its share of a ladder tray, with 4 mm bridges over the cores at each rung that hold them on risers'}
 elbow: {radius: 0.439, mass: 9.0}
 tee: {mass: 25.0}
 support: {spacing: 3.0, mass: 8.0, per_m_height: 6.0, item: material.aluminium-alloy-6061}

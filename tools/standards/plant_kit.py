@@ -288,11 +288,11 @@ def cable(v, area_mm2):
              _part("Insulation and sheaths", PE, ins, f"{ti * 1000:.1f} mm of insulation and a {ts * 1000:.1f} mm sheath on each core; UHMW polyethylene stands for XLPE")]
     if v > 1000:
         built.append(_part("Screens", CU, 3 * 35e-6 * RHO[CU], "a 35 mm2 copper screen on each core"))
-    built.append(_part("Tray", AL, 4.0, "its share of a ladder tray"))
+    built.append(_part("Tray", AL, 4.0, "its share of a ladder tray, with 4 mm bridges over the cores at each rung that hold them on risers"))
     per_m = sum(b["mass"] for b in built)
     od = dc + 2 * ti + 2 * ts
     _recs[key] = {"identity": {"key": key, "name": f"Cable, {v / 1000:g} kV, {area_mm2} mm2", "description": f"Three single-core cables of {area_mm2} mm2 at {v / 1000:g} kV on a ladder tray: {a * J_VACUUM:,.0f} A a circuit on airless ground, where only radiation cools them."},
-                  "kind": "cable", "size": a, "outside": [r(max(0.3, 3 * od + 0.1), 3), r(0.1 + od, 3)], "rating": {"voltage": v, "current": r(a * J_VACUUM)},
+                  "kind": "cable", "size": a, "outside": [r(max(0.3, 3 * od + 0.1), 3), r(0.1 + od + 0.004, 3)], "rating": {"voltage": v, "current": r(a * J_VACUUM)},
                   "per_m": {"mass": r(per_m), "built_of": built},
                   "elbow": {"radius": r(max(0.3, 15 * od), 3), "mass": r(per_m * math.pi / 2 * max(0.3, 15 * od))},
                   "tee": {"mass": 25.0},
