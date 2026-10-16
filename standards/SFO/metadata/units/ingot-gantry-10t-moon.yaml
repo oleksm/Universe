@@ -10,13 +10,8 @@ built_of:
 - {what: Legs and sill beams, item: material.structural-steel-a36, mass: 11470.0, note: 'four box legs 0.5 x 0.5 m, 12 mm, 12 m, and two sill beams'}
 - {what: 'Knee braces, wheel seats and trolley rails', item: material.structural-steel-a36, mass: 7651.0, note: 'measured on blender''s candidate (2026-10-16): the bracing between legs and girders, the bearing seats and the trolley''s rails, which the sizing above left out'}
 needs: {power: 20000.0}
-visual:
-  format: "freefall-model/1"
-  path: "models/ingot-gantry-10t-moon/v1"
-  manifest_sha256: "5afd7128b51bef760f525654308d63138bf12bedd515c4f98d8f8e7f6bf6334c"
-  version: 1
-  triangles: 7164
 life: 788940000
+visual: {format: freefall-model/1, path: models/ingot-gantry-10t-moon/v1, manifest_sha256: 5afd7128b51bef760f525654308d63138bf12bedd515c4f98d8f8e7f6bf6334c, version: 1, triangles: 7164}
 basis:
 - of: [physical, built_of]
   tier: derived
