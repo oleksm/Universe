@@ -3261,10 +3261,10 @@ def pellet_ports(us):
             ("e1", -10.2, 10.8, "power", mv(us["ball-mill-4m4"]["needs"]["power"])), ("e2", -9.4, 10.8, "power", lv(hall_lv))]
     if "high nozzle" not in hd["desc"]:
         hd["desc"] = hd["desc"].replace("and a 3 m belt nozzle on its axis whose bottom is at the deck. ", "a 3 m belt nozzle whose bottom is at the deck, and a second, high nozzle near its crown, each blinded where a layout leaves it unused. ")
-        hd["desc"] = hd["desc"].replace("the belt nozzle at (6.9, 0, 9);", "the belt nozzle at (6.9, 0, 9), the high nozzle at (7.5, 0, 14.5);")
+        hd["desc"] = hd["desc"].replace("the belt nozzle at (6.9, 0, 9);", "the belt nozzle's face at (7.9, 0, 9), the high nozzle's at (8.0, 0, 14.5);")
         hd["desc"] = hd["desc"].replace("a service panel for pipes and cables at (6.5, -9, 10).", "a service panel for pipes and cables at (6.5, -9, 10): a boxed plate whose pass-throughs' outer faces are at x 6.5 facing +x and inner faces at x 5.0 facing -x, at y -10.2 and -9.6 (200 mm water), -9.0 (50 mm stainless), z 10, and the cables' glands at y -10.2 (6.6 kV) and -9.4 (400 V), z 10.8; the hall's nitrogen make-up in at (6.5, -8.4, 10) and the lock pumps' 400 V supply at (6.5, -8.6, 10.8), outer only.")
-    hd["ports"] = [port("nozzle", "both", "bulk", kit.flange(3.0, 1, sealing="double"), (6.9, 0, 9), (1, 0, 0), note="a sealed gallery's flange; the belt passes through", ).__or__({"optional": True}),
-                   port("high-nozzle", "both", "bulk", kit.flange(3.0, 1, sealing="double"), (7.5, 0, 14.5), (1, 0, 0), note="a sealed gallery's flange; the belt passes through").__or__({"optional": True})]
+    hd["ports"] = [port("nozzle", "both", "bulk", kit.flange(3.0, 1, sealing="double"), (7.9, 0, 9), (1, 0, 0), note="a sealed gallery's flange, 1 m out from the head; the belt passes through", ).__or__({"optional": True}),
+                   port("high-nozzle", "both", "bulk", kit.flange(3.0, 1, sealing="double"), (8.0, 0, 14.5), (1, 0, 0), note="a sealed gallery's flange, 0.5 m out from the crown; the belt passes through").__or__({"optional": True})]
     for pid, y, z, med, con in thru:
         hd["ports"] += [port(f"{pid}-out", "both", med, con, (6.5, y, z), (1, 0, 0)).__or__({"optional": True}), port(f"{pid}-in", "both", med, con, (5.0, y, z), (-1, 0, 0)).__or__({"optional": True})]
     hd["ports"] += [port("nitrogen-in", "in", "gas", kit.flange(0.05, 10, kit.SS), (6.5, -8.4, 10), (1, 0, 0), item="material.nitrogen", note="the hall's make-up, let into its gas").__or__({"optional": True}),

@@ -397,10 +397,10 @@ links:
   run: run.belt-800-sealed
   ends: [cap, 'onto:green gallery']
   from: [39.0, 0.0, 9.0]
-  to: [58.9, 0.0, 9.0]
-  length: 19.9
+  to: [59.9, 0.0, 9.0]
+  length: 20.9
   item: material.silicone-rubber
-  mass: 18180.0
+  mass: 18640.0
   taps: ['EE:nozzle']
   power: 15000.0
   fittings: {elbows: 0, tees: 1, supports: 2, connectors: 1}
@@ -409,14 +409,14 @@ links:
   name: green gallery
   run: run.belt-800-sealed
   ends: [cap, 'onto:green ball shuttle']
-  from: [58.9, 0.0, 8.5]
+  from: [59.9, 0.0, 8.5]
   to: [113.0, 0.0, 22.5]
-  length: 55.88
+  length: 54.91
   item: material.silicone-rubber
-  mass: 37940.0
+  mass: 37510.0
   power: 60000.0
   fittings: {elbows: 0, tees: 0, supports: 4, connectors: 0}
-  note: 'sealed, up at 14.5 degrees to the shuttle over the shafts: in vacuum the green balls'' water would boil off and freeze in their skins'
+  note: 'sealed, up at 14.8 degrees to the shuttle over the shafts: in vacuum the green balls'' water would boil off and freeze in their skins'
 - kind: conveyor
   name: green ball shuttle
   run: run.belt-800-sealed

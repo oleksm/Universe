@@ -90,9 +90,16 @@ def check(lay, units, runs, conns):
     for b in lay["bays"]:
         u = units[b["unit"]]
         L, W, H = u["physical"]["length"], u["physical"]["width"], u["physical"]["height"]
+        lo_, hi_ = np.array([-L / 2, -W / 2, 0.0]), np.array([L / 2, W / 2, H])
+        ext = [e_ for e_ in u.get("envelope") or []]
+        for s_ in u.get("shells") or []:           # (a unit whose frame is not centred, as a hall's head: its measured extent)
+            x0, x1_, yc, zc, ri, ro = s_["at"]
+            ext.append([x0, yc - ro, zc - ro, x1_ if s_["kind"] == "tube" else x0 + x1_, yc + ro, zc + ro])
+        if ext:
+            lo_, hi_ = np.minimum(lo_, np.min([e_[:3] for e_ in ext], axis=0)), np.maximum(hi_, np.max([e_[3:] for e_ in ext], axis=0))
         for p in u.get("ports", []):
             x, y, z = p["at"]
-            if abs(x) > L / 2 + 0.5 or abs(y) > W / 2 + 0.5 or z < -0.5 or z > H + 0.5:
+            if not all(lo_[k] - 0.5 <= v <= hi_[k] + 0.5 for k, v in enumerate((x, y, z))):
                 faults.append(f"{b['unit']}: port {p['id']} at {p['at']} is outside its box")
             if p["connector"] not in conns:
                 faults.append(f"{b['unit']}: port {p['id']}: no connector {p['connector']}")
