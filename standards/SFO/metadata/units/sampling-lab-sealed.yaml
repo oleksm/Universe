@@ -4,10 +4,12 @@ identity: {key: unit.sampling-lab-sealed, name: 'Sampling laboratory, sealed', d
     At a crop saw, one ingot of each heat has a second slice taken off its cut face, a coupon 0.48 m square and 25 mm thick (about 45 kg), which a worker brings on a hand cart to the lab''s pass-through hatch.'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 10.0, width: 6.0, height: 5.0, mass: 8036.0}
+physical: {length: 10.0, width: 6.0, height: 5.0, mass: 9615.0}
 built_of:
-- {what: Shell, item: material.aluminium-alloy-6061, mass: 2036.0, note: '4 m across, 8 m, 6 mm (1 bar gives 33 MPa)'}
-- {what: 'Locks, life support and fit-out', item: material.structural-steel-a36, mass: 3000.0, note: 'the staff airlock, the sample lock, air and heat, from memory'}
+- {what: Shell, item: material.aluminium-alloy-6061, mass: 1511.0, note: '4 m across, 8 m over its domed heads, 6 mm (1 bar gives 33 MPa), less its openings; measured on blender''s candidate (2026-10-16)'}
+- {what: Locks and floors, item: material.aluminium-alloy-6061, mass: 1246.0, note: 'the staff lock''s and sample lock''s 6 mm shells, the floors and the four ribbed plug doors'' skins; measured'}
+- {what: 'Saddles, floor webs and door hardware', item: material.structural-steel-a36, mass: 2358.0, note: '10 mm saddle webs on 12 mm sole plates, the floors'' 100 x 12 mm webs, the doors'' seats, hinges and latches; measured'}
+- {what: Life support and fit-out, item: material.structural-steel-a36, mass: 1500.0, note: 'air and heat, benches and cabinets, not drawn; from memory'}
 - {what: 'Cutter, grinder and spectrometer', item: good.electric-motors, mass: 3000.0, note: from memory}
 needs: {power: 80000.0, atmosphere: vacuum}
 life: 788940000

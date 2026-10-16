@@ -3694,8 +3694,10 @@ def yard_airless_units(us):
     lab["size_class"], lab["fits"] = 2, "bay-s2"
     lab["desc"] = ("The sampling laboratory for airless ground: an aluminium cylinder 4 m across and 8 m long at 1 bar under a berm of loose regolith, its staff airlock at -x; the coupon comes in through a small sample lock beside it instead of a hatch. Local frame: the shell's axis along x at z 2.3, from x -2 to 6; one floor at z 1.4 through shell and lock (3.57 m wide in the shell, 1.73 m in the lock); the staff lock a 2.5 m cylinder from x -4 to -2, its axis at y -0.2, z 2.3, its doors 0.8 x 1.9 m for a crew in suits; the sample lock through the -x end head beside it, centred at y 1.55, z 2.3, from x -2.5 to -0.8, 0.6 m square clear (0.7 outside), its sill at z 2.0, reached from the layout's step platform (a coupon 0.48 m long fits only square). Steps up to the lock's door are the layout's. "
                    "Inside as unit.sampling-lab: an abrasive cutter, a grinder and a spark emission spectrometer, its spark under argon as always. " + us["sampling-lab"]["desc"].split(": no ingot comes in. ")[1].split(" Inside,")[0])
-    lab["built_of"] = [part("Shell", "material.aluminium-alloy-6061", cyl_shell(4.0, 8.0, 0.006, bottom=2.0) * RHO["aluminium"], "4 m across, 8 m, 6 mm (1 bar gives 33 MPa)"),
-                       part("Locks, life support and fit-out", A36, 3000.0, "the staff airlock, the sample lock, air and heat, from memory"),
+    lab["built_of"] = [part("Shell", "material.aluminium-alloy-6061", 1510.7, "4 m across, 8 m over its domed heads, 6 mm (1 bar gives 33 MPa), less its openings; measured on blender's candidate (2026-10-16)"),
+                       part("Locks and floors", "material.aluminium-alloy-6061", 1245.5, "the staff lock's and sample lock's 6 mm shells, the floors and the four ribbed plug doors' skins; measured"),
+                       part("Saddles, floor webs and door hardware", A36, 2357.6, "10 mm saddle webs on 12 mm sole plates, the floors' 100 x 12 mm webs, the doors' seats, hinges and latches; measured"),
+                       part("Life support and fit-out", A36, 1500.0, "air and heat, benches and cabinets, not drawn; from memory"),
                        part("Cutter, grinder and spectrometer", "good.electric-motors", 3000.0, "from memory")]
     lab["needs"] = {"power": 80e3, "atmosphere": "vacuum"}
     out["sampling-lab-sealed"] = lab
