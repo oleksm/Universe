@@ -21,13 +21,8 @@ envelope:
 - [-6.03, -3.25, 6.89, 6.03, -0.775, 7.751]
 - [-6.03, 0.775, 6.89, 6.03, 3.1, 7.751]
 - [-6.03, -3.25, 7.751, 6.03, 3.1, 11.26]
-visual:
-  format: "freefall-model/1"
-  path: "models/filter-press-2/v2"
-  manifest_sha256: "d201849900f3286353b7aa805cb1d94bddef32f070aa409c9e71a891ea790043"
-  version: 2
-  triangles: 19824
 life: 788940000
+visual: {format: freefall-model/1, path: models/filter-press-2/v2, manifest_sha256: d201849900f3286353b7aa805cb1d94bddef32f070aa409c9e71a891ea790043, version: 2, triangles: 19824}
 basis:
 - of: [physical, built_of, needs.power]
   tier: derived
