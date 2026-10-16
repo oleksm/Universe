@@ -1088,7 +1088,7 @@ def shaft_units():
     lv_box = 2 * (5.0 * 0.5 + 5.0 * 1.2 + 0.5 * 1.2) * 0.006 * RHO["steel"]
     ht["built_of"] = ht["built_of"] + [part("HV cable box", A36, hv_box, "over the three HV bushings on top (their ends at x -2.36, 0 and 2.36, y -0.96, z 6.75): 5.8 x 0.9 x 0.8 m, 6 mm, its gland plate on top at (0, -0.96, 7.55)"),
                                        part("LV cable box", A36, lv_box, "over the three secondary pads on the +y face, 4.5 m up: 5 x 0.5 x 1.2 m, 6 mm, its gland plate facing +y at (0, 3.35, 4.5)")]
-    ht["dims"] = (ht["dims"][0], ht["dims"][1], max(ht["dims"][2], 7.6))       # (the HV cable box's top)
+    ht["dims"] = (ht["dims"][0], max(ht["dims"][1], 2 * 3.35), max(ht["dims"][2], 7.6))       # (the LV cable box's face, kept about the centre; the HV box's top)
     ht["desc"] += " Cable boxes over its HV bushings (gland plate on top) and over its secondary pads (gland plate facing +y), so each three-phase circuit enters at one plate."
     out[f"heater-transformer-{Q_HEATER / 0.98 / HEATER_PF / 1e6:.0f}mva"] = ht
     # Recuperator: the top gas warms the cold recycle gas.
