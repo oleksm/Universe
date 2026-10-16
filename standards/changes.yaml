@@ -884,7 +884,7 @@
 - { record: law.tube-mass, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "a2f143c80b1de3d3" }
 - { record: law.tube-time, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "934385090028c5e6" }
 - { record: law.year, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "29f1ef4424e5cc98" }
-- { record: layout.arc-furnace-air, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "3335026c4996ea7b" }
+- { record: layout.arc-furnace-air, at: "2026-10-16T23:29:49Z", status: draft, summary: "changed", sha: "99dfd3c7c060b482" }
 - { record: layout.arc-furnace-airless, at: "2026-10-16T23:24:57Z", status: draft, summary: "changed", sha: "cf80aecc70fc9543" }
 - { record: layout.casting-bay-air, at: "2026-10-15T02:26:46Z", status: draft, summary: "changed: physical", sha: "64ae565ca9d653a2" }
 - { record: layout.casting-bay-airless, at: "2026-10-15T22:16:54Z", status: draft, summary: "changed", sha: "70b05194ba7c5ed0" }
@@ -2878,13 +2878,13 @@
 - { record: unit.dri-bin-200t, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "607f6fdd3cd1cc5f" }
 - { record: unit.dri-cooling-loop, at: "2026-10-15T01:24:23Z", status: draft, summary: "changed", sha: "46962a5f5ae51829" }
 - { record: unit.eaf-vessel-80t, at: "2026-10-14T16:01:10Z", status: draft, summary: "changed: physical, built_of, visual", sha: "f948e3f34829ba7e" }
-- { record: unit.eaf-vessel-80t-sealed, at: "2026-10-16T23:24:57Z", status: draft, summary: "changed: visual", sha: "9bd5bfba672b4fb9" }
+- { record: unit.eaf-vessel-80t-sealed, at: "2026-10-16T23:29:49Z", status: draft, summary: "changed", sha: "ac7db191c4e71e27" }
 - { record: unit.electrolyser-block-20mw, at: "2026-10-15T02:45:51Z", status: draft, summary: "changed", sha: "af9b2af95ad77993" }
 - { record: unit.electrolyser-block-20mw-10bar, at: "2026-10-16T16:30:34Z", status: draft, summary: "changed", sha: "74ed70e350c64105" }
 - { record: unit.filter-press-2, at: "2026-10-16T19:40:41Z", status: draft, summary: "changed", sha: "0657631bfbde06c3" }
 - { record: unit.forklift-2t5, at: "2026-10-15T18:36:43Z", status: draft, summary: "changed", sha: "060854c588a349b1" }
 - { record: unit.furnace-transformer-14mva, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "0877d13561ca6bee" }
-- { record: unit.furnace-transformer-90mva, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "dd21dd20c9483119" }
+- { record: unit.furnace-transformer-90mva, at: "2026-10-16T23:29:49Z", status: draft, summary: "changed: visual", sha: "bb5d25770b9699a9" }
 - { record: unit.gantry-crane-150t-moon, at: "2026-10-15T21:28:29Z", status: draft, summary: "changed: identity", sha: "e4182122c78d1dea" }
 - { record: unit.gantry-crane-20t-moon, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "1a51031d62b17cf9" }
 - { record: unit.gas-heater-119mw-8bar, at: "2026-10-16T03:35:46Z", status: draft, summary: "changed: envelope", sha: "8b3c2132996214b3" }
