@@ -14,6 +14,12 @@ built_of:
 - {what: 'Belt nozzle, service panel and feet', item: material.structural-steel-a36, mass: 2784.0, note: measured}
 - {what: Lock pumps, item: good.pumps, mass: 2000.0, note: from memory}
 needs: {power: 50000.0, atmosphere: vacuum}
+visual:
+  format: "freefall-model/1"
+  path: "models/pressure-hall-30m-end/v1"
+  manifest_sha256: "240398f70c352d0b8c1936b9ad642d2c6ad168ae6a009f1e02b98fc5163beda4"
+  version: 1
+  triangles: 34418
 life: 788940000
 basis:
 - of: [physical, built_of, needs]
