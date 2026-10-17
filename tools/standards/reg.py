@@ -6,6 +6,7 @@
     python3 tools/standards/reg.py set <key> <dotted.path> <yaml value>              # change one field of a hand-written record
     python3 tools/standards/reg.py check [--engine] [--page <key>...]                # every check, in order; exit 1 on any failure
     python3 tools/standards/reg.py ship "<message>"            # commit here, merge into fso, refresh the page there; prints the real hashes
+    python3 tools/standards/reg.py validate <key>...            # an installed model: its record's model path, the gap check, the engine's registry reader
     python3 tools/standards/reg.py page [<key>]                 # open the registry page (at a record)
     python3 tools/standards/reg.py mail                         # the registry's unread mail (agentmsg --as registry)
 
@@ -224,6 +225,26 @@ def cmd_ship(message):
     print("quote hashes from these lines only")
 
 
+def cmd_validate(keys):
+    import json
+    bad = 0
+    for key in keys:
+        k, n, f, d = find_key(key)
+        path = (d.get("visual") or {}).get("path")
+        r = sh([sys.executable, "tools/standards/next_asset.py", "--gap", key])
+        try:
+            g = json.loads(r.stdout[r.stdout.find("{"):])
+        except Exception:
+            g = {}
+        ok = bool(path) and g.get("verdict") == "none" and not g.get("gaps")
+        print(f"{'ok  ' if ok else 'FAIL'} {key}: model {path or 'none'}, installed v{g.get('installed')}, verdict {g.get('verdict')}, gaps {len(g.get('gaps') or [])}")
+        bad += not ok
+    r = sh("timeout 1500 ~/bin/capped cargo check -q", cwd=os.path.join(ROOT, "crates/core/world"))
+    errs = [l for l in (r.stdout + r.stderr).splitlines() if "panicked" in l or l.startswith("error")]
+    print(f"{'FAIL' if errs or r.returncode else 'ok  '} engine registry reader" + (": " + errs[0][:200] if errs else ""))
+    sys.exit(1 if bad or errs or r.returncode else 0)
+
+
 def main(argv):
     if len(argv) < 2:
         sys.exit(__doc__)
@@ -243,6 +264,8 @@ def main(argv):
         cmd_check(opt, [p for p in pages if not p.startswith("--")])
     elif c == "ship":
         cmd_ship(" ".join(pos))
+    elif c == "validate":
+        cmd_validate(pos)
     elif c == "page":
         target = os.path.join(TREE, "index.html") + (f"#{pos[0]}" if pos else "")
         subprocess.Popen(["xdg-open", "file://" + target], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
