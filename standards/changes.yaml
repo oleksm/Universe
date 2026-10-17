@@ -197,7 +197,7 @@
 - { record: connector.flange-dn600-pn10, at: "2026-10-16T17:53:48Z", status: draft, summary: "changed", sha: "22b2ddaaa3ef604c" }
 - { record: connector.flange-dn700-pn10, at: "2026-10-16T21:02:45Z", status: draft, summary: "changed", sha: "d58bbd346aad7fa7" }
 - { record: connector.flange-dn900-pn10, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed: physical, built_of", sha: "1d9d29c363fc2252" }
-- { record: connector.hood-dn2000, at: "2026-10-17T02:21:58Z", status: draft, summary: "first tracked", sha: "44c73afbb35091cd" }
+- { record: connector.hood-dn2000, at: "2026-10-17T02:27:58Z", status: draft, summary: "changed: visual", sha: "ae36362b021300ab" }
 - { record: connector.lined-flange-dn1200-pn1, at: "2026-10-17T00:03:48Z", status: draft, summary: "changed", sha: "587ae243c5151756" }
 - { record: connector.lined-flange-dn2400-pn16-double, at: "2026-10-16T13:14:09Z", status: draft, summary: "changed", sha: "3718f80746efea6c" }
 - { record: connector.termination-132kv-240mm2, at: "2026-10-16T15:00:44Z", status: draft, summary: "changed", sha: "a853f7385db64da5" }
@@ -887,7 +887,7 @@
 - { record: law.tube-mass, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "a2f143c80b1de3d3" }
 - { record: law.tube-time, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "934385090028c5e6" }
 - { record: law.year, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "29f1ef4424e5cc98" }
-- { record: layout.arc-furnace-air, at: "2026-10-17T02:21:58Z", status: draft, summary: "changed", sha: "b8e825c86dd24430" }
+- { record: layout.arc-furnace-air, at: "2026-10-17T02:27:58Z", status: draft, summary: "changed", sha: "d57eb582cc3733b6" }
 - { record: layout.arc-furnace-airless, at: "2026-10-17T00:13:10Z", status: draft, summary: "changed", sha: "cba354298d6ebf55" }
 - { record: layout.casting-bay-air, at: "2026-10-15T02:26:46Z", status: draft, summary: "changed: physical", sha: "64ae565ca9d653a2" }
 - { record: layout.casting-bay-airless, at: "2026-10-16T23:51:31Z", status: draft, summary: "changed", sha: "28a43036290ae877" }
