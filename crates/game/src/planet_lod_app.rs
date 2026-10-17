@@ -20,7 +20,7 @@ use crate::hud_kit::{self, Hit, Panel};
 
 use universe_engine::apps::{App, Next};
 use universe_engine::glam::{DVec3, Quat, Vec2, Vec3};
-use universe_engine::{Camera, Color, Context, Frame, KeyCode, Light, Mesh, MouseButton, PoolModel, PooledMesh, Transform, WireModel};
+use universe_engine::{Camera, Color, Context, Frame, KeyCode, Light, Mesh, Morph, MouseButton, PoolModel, PooledMesh, Transform, WireModel};
 
 /// Chunk edge (m): a chunk is one mesh.
 /// Chunks hold about this many finest triangles (their edge from the pattern's density: about 15 km on the 3x3
@@ -290,9 +290,13 @@ struct Clusters {
     row: Vec<[f32; 10]>,
     ptr: Arc<Vec<[u32; 2]>>,
     tris: Arc<Vec<[u32; 3]>>,
+    /// Per corner (as `tris`): metres its parent's surface stands above it (none: no morph).
+    morph: Vec<f32>,
     level: Vec<u8>,
     meshes: Vec<Option<(View, PooledMesh, bool)>>,
     shown: Vec<u32>,
+    /// The clusters whose meshes go to the GPU before any other's.
+    upload_first: Vec<u32>,
     /// The last frame each was wanted (shown, chosen or coming), for evicting the longest unwanted past RESIDENT.
     used: Vec<u64>,
     frame: u64,
@@ -312,9 +316,11 @@ impl Clusters {
             row: f.chunks_exact(10).map(|c| std::array::from_fn(|i| c[i])).collect(),
             ptr: Arc::new(pt.chunks_exact(2).map(|c| [c[0], c[1]]).collect()),
             tris: Arc::new(t.chunks_exact(3).map(|c| [c[0], c[1], c[2]]).collect()),
+            morph: read(dir, "cluster_morph.f32").unwrap_or_default(),
             level,
             meshes: (0..n).map(|_| None).collect(),
             shown: vec![],
+            upload_first: vec![],
             used: vec![0; n],
             frame: 0,
             px: 2.0 * 25f64.to_radians().tan() / 1080.0,
@@ -349,16 +355,26 @@ fn cluster_mesh(cl: &Clusters, i: usize, pos: &[DVec3], col: &[[u8; 3]], view: V
     let tris = &cl.tris[a as usize..(a + n) as usize];
     let origin = cl.origin(i);
     let mut m = PoolModel::default();
+    // Morph (the smooth swap): each corner slides up or down to its parent's surface, all the way at the distance
+    // its parent takes over (its error a pixel there), none at half of it; so the swap finds the same shape.
+    let r = cl.row[i];
+    let far = if r[5] >= 0.0 { (r[5] as f64 / cl.px) as f32 } else { 0.0 };
+    let morph_on = far > 0.0 && cl.morph.len() == cl.tris.len() * 3;
     let mut local: std::collections::HashMap<u32, u32> = std::collections::HashMap::with_capacity(tris.len() * 2);
-    let mut at = |v: u32, m: &mut PoolModel| -> u32 {
+    let mut at = |v: u32, corner: usize, m: &mut PoolModel| -> u32 {
         *local.entry(v).or_insert_with(|| {
             m.positions.push((pos[v as usize] - origin).as_vec3());
+            if morph_on {
+                let dz = cl.morph[corner] as f64;
+                m.morph.push(Morph { offset: (pos[v as usize].normalize() * dz).as_vec3(), near: 0.5 * far, far });
+            }
             m.positions.len() as u32 - 1
         })
     };
     let mut seen = std::collections::HashSet::with_capacity(tris.len() * 3);
-    for t in tris {
-        let f = [at(t[0], &mut m), at(t[1], &mut m), at(t[2], &mut m)];
+    for (k, t) in tris.iter().enumerate() {
+        let c0 = (a as usize + k) * 3;
+        let f = [at(t[0], c0, &mut m), at(t[1], c0 + 1, &mut m), at(t[2], c0 + 2, &mut m)];
         m.faces.push(f);
         if view == View::Real {
             let c = col[t[2] as usize];
@@ -366,7 +382,8 @@ fn cluster_mesh(cl: &Clusters, i: usize, pos: &[DVec3], col: &[[u8; 3]], view: V
         } else {
             for (x, y) in [(t[0], t[1]), (t[1], t[2]), (t[2], t[0])] {
                 if seen.insert((x.min(y), x.max(y))) {
-                    let e = [at(x, &mut m), at(y, &mut m)];
+                    // (both ends are corners of this triangle: already placed)
+                    let e = [at(x, 0, &mut m), at(y, 0, &mut m)];
                     m.edges.push(e);
                 }
             }
@@ -1031,8 +1048,6 @@ impl PlanetLodApp {
     fn update_clusters(&mut self, eye: DVec3, _dt: f64) {
         use rayon::prelude::*;
         let t0 = Instant::now();
-        let cam = self.camera();
-        let aspect = match self.ui.lock().unwrap().aspect { a if a > 0.0 => a, _ => 16.0 / 9.0 };
         let view = self.view;
         let ahead = {
             let mut step = self.vel * 1.0;
@@ -1045,7 +1060,6 @@ impl PlanetLodApp {
         let mut cl = self.clusters.as_ref().unwrap().lock().unwrap();
         let want = cl.select(eye);
         let pre = cl.select(ahead);
-        let visible = |cl: &Clusters, i: usize| Self::in_view(&cam, cl.origin(i), cl.row[i][4] as f64, aspect);
         // build what is wanted or coming and not built (in this view), in parallel, at most 4,000 a frame
         let mut need: Vec<usize> = want.iter().chain(pre.iter()).map(|&i| i as usize).filter(|&i| cl.meshes[i].as_ref().is_none_or(|(v, _, _)| *v != view)).collect();
         need.sort_unstable();
@@ -1056,11 +1070,9 @@ impl PlanetLodApp {
         for (i, m) in built {
             cl.meshes[i] = Some((view, m, false));
         }
-        // shown: the wanted cut once its clusters in view are all on the GPU
-        let ready = want.iter().all(|&i| {
-            let i = i as usize;
-            !visible(&cl, i) || cl.meshes[i].as_ref().is_some_and(|(v, m, _)| *v == view && m.gpu_resident())
-        });
+        // shown: the wanted cut once all its clusters are on the GPU. (Only those in view, before: flying or turning
+        // brought the rest into view before they were uploaded, and they were skipped: black holes in the ground.)
+        let ready = want.iter().all(|&i| cl.meshes[i as usize].as_ref().is_some_and(|(v, m, _)| *v == view && m.gpu_resident()));
         if ready {
             cl.shown = want.clone();
         }
@@ -1068,6 +1080,8 @@ impl PlanetLodApp {
         // Kept at most RESIDENT cluster meshes: the longest unwanted dropped (their GPU copies go with them).
         cl.frame += 1;
         let now = cl.frame;
+        // uploads first for what is shown, wanted, then coming
+        cl.upload_first = cl.shown.iter().chain(want.iter()).chain(pre.iter()).copied().collect();
         let marks: Vec<u32> = cl.shown.iter().chain(want.iter()).chain(pre.iter()).copied().collect();
         for i in marks {
             cl.used[i as usize] = now;
@@ -1490,13 +1504,18 @@ impl App for PlanetLodApp {
             // (Asked again every frame until on the GPU: a frame the render thread skips loses its requests, and
             // asking once left meshes never uploaded. The engine skips those it has.)
             let mut handed = 0;
-            for m in cl.meshes.iter_mut().flatten() {
-                if !m.1.gpu_resident() && handed < 3000 {
+            let first = std::mem::take(&mut cl.upload_first);
+            for i in first.iter().map(|&i| i as usize).chain(0..cl.meshes.len()) {
+                if handed >= 3000 {
+                    break;
+                }
+                if let Some(m) = cl.meshes[i].as_mut().filter(|m| !m.1.gpu_resident()) {
                     frame.prepare_pooled(&m.1);
                     m.2 = true;
                     handed += 1;
                 }
             }
+            cl.upload_first = first;
             let mut tris_shown = 0;
             // (One group for every cluster drawn: the engine draws them all in one call for faces, one for edges.)
             let group = frame.pool_group(&Transform { position: DVec3::ZERO, rotation: Quat::IDENTITY, scale: 1.0 }, pat_line, fill_of(land), if edges { 1.0 } else { 0.0 }, true);
@@ -1506,6 +1525,10 @@ impl App for PlanetLodApp {
                 let o = cl.origin(i);
                 if !Self::in_view(&cam, o, cl.row[i][4] as f64, aspect) {
                     continue;
+                }
+                if !mesh.gpu_resident() {
+                    // (a cluster in view with nothing on the GPU yet: a hole this frame; should never happen)
+                    log::warn!("PLANETLOD hole: cluster {i} in view not on the GPU");
                 }
                 frame.pooled(group, mesh, o);
                 drawn_clusters.push(i as u32);
