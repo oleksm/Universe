@@ -279,10 +279,12 @@ mod tests {
         fly(&mut f, 10.0);
         assert!(f.events.iter().any(|e| matches!(e, ShipEvent::LegGaveWay { .. })));
         assert!(f.ship.hull < 1.0, "the hull struck the ground");
-        // From 30 cm the legs hold and the hull is untouched.
-        let mut f = dropped(0.3, 0.0);
-        fly(&mut f, 6.0);
+        // From 30 cm, set down tilted, the legs hold, the hull is untouched and
+        // it comes to rest by itself, not stood up.
+        let mut f = dropped(0.3, 0.15);
+        fly(&mut f, 12.0);
         assert_eq!((f.ship.broken_legs, f.ship.hull), (0, 1.0));
+        assert!(matches!(f.ship.state, ShipState::Landed { .. }) && f.ship.angular_velocity == DVec3::ZERO);
     }
 
     #[test]
@@ -304,5 +306,13 @@ mod tests {
         assert!(matches!(f.ship.state, ShipState::Landed { .. }), "landed, not {:?}", f.ship.state);
         assert_eq!(f.ship.broken_legs, 0);
         assert!(!f.events.iter().any(|e| matches!(e, ShipEvent::HardLanding { .. } | ShipEvent::Crashed { .. })), "{:?}", f.events);
+        // At rest and powered up with nothing commanded, it stays put: it never
+        // turns in place (the old weld spun a powered landed ship about its centre).
+        let (p, q) = (f.ship.position, f.ship.orientation);
+        f.commands.rcs = DVec3::ZERO;
+        f.commands.power = Some(true);
+        fly(&mut f, 3.0);
+        assert!(f.ship.powered && matches!(f.ship.state, ShipState::Landed { .. }));
+        assert!(f.ship.position.distance(p) < 1e-6 && f.ship.orientation.angle_between(q) < 1e-9, "never turned in place");
     }
 }
