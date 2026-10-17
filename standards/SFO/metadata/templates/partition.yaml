@@ -10,6 +10,12 @@ scales_by:
 - physical
 reference: panel.partition-3x3
 members: 1
+visual:
+  format: "freefall-model/1"
+  path: "models/partition/v1"
+  manifest_sha256: "d576bcc7241f7ee8bb07a1b54d502340f898611e0005c09a0f1de3db8231d59f"
+  version: 1
+  triangles: 180
 basis:
 - of:
   - draws
