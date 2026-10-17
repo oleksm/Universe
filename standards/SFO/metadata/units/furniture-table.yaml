@@ -17,6 +17,12 @@ built_of:
 - what: Top
   item: material.polyethylene-uhmw
   mass: 22.7
+visual:
+  format: "freefall-model/1"
+  path: "models/furniture-table/v1"
+  manifest_sha256: "3146388a2c1ace82105bebccea3b527ac54b08188a9e5b706e2aeeb3da4e87ae"
+  version: 1
+  triangles: 396
 basis:
 - of:
   - built_of
