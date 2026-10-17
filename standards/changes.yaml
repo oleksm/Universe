@@ -1612,7 +1612,7 @@
 - { record: run.cable-33kv-120mm2, at: "2026-10-16T23:10:29Z", status: draft, summary: "first tracked", sha: "65e6f7f342cf8b9e" }
 - { record: run.cable-33kv-150mm2, at: "2026-10-16T17:53:48Z", status: draft, summary: "changed", sha: "a107ffd7a43e1034" }
 - { record: run.cable-33kv-185mm2, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "b061102d1be239ea" }
-- { record: run.cable-33kv-630mm2, at: "2026-10-16T23:10:29Z", status: draft, summary: "first tracked", sha: "49cbced43e4d822b" }
+- { record: run.cable-33kv-630mm2, at: "2026-10-17T00:19:54Z", status: draft, summary: "changed: visual", sha: "bc772fc5b3d5f1bf" }
 - { record: run.cable-400v-120mm2, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "6959dc201aa7f158" }
 - { record: run.cable-400v-16mm2, at: "2026-10-16T15:00:44Z", status: draft, summary: "changed", sha: "cfb30272054f79df" }
 - { record: run.cable-400v-185mm2, at: "2026-10-16T17:53:48Z", status: draft, summary: "changed", sha: "86eceb2e9b76be21" }
