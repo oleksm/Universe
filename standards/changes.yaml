@@ -4357,7 +4357,7 @@
 - { record: template.lined-duct, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "4f0e1dffeb3819a1" }
 - { record: template.lined-flange, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "566901f48b56a274" }
 - { record: template.partition, at: "2026-10-17T23:03:05Z", status: "", summary: "changed: visual", sha: "3e71a757ebd8b215" }
-- { record: template.partition-door, at: "2026-10-17T21:45:11Z", status: "", summary: "first tracked", sha: "f9d512e1a30adfde" }
+- { record: template.partition-door, at: "2026-10-17T23:12:05Z", status: "", summary: "changed: visual", sha: "77e8c93e645193bd" }
 - { record: template.pipe, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "9a17ec7ddd415223" }
 - { record: template.pipe-lagged, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "ee12031c045d334f" }
 - { record: template.plug-socket, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "3dfe5b5f0345ce4a" }
