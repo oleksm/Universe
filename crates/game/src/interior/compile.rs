@@ -504,6 +504,8 @@ pub(super) fn devices(
                 stroke,
                 efficiency,
                 sink_rate,
+                spring: None,
+                damper: None,
             });
         }
     }

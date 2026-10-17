@@ -807,7 +807,9 @@
 - { record: law.field-cost, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "322900c43e7bb6de" }
 - { record: law.foot-friction, at: "2026-10-17T14:18:54Z", status: "", summary: "first tracked", sha: "b10c35b816aa581a" }
 - { record: law.gravitation, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "3369764605992d2b" }
+- { record: law.hull-crumple-speed, at: "2026-10-17T17:46:40Z", status: "", summary: "first tracked", sha: "84a070af2a25bc2d" }
 - { record: law.hull-friction, at: "2026-10-17T14:18:54Z", status: "", summary: "first tracked", sha: "d83508a0f13015b8" }
+- { record: law.hull-rest-speed, at: "2026-10-17T17:46:40Z", status: "", summary: "first tracked", sha: "ca5a8ab9e6cbf488" }
 - { record: law.hull-restitution, at: "2026-10-17T14:18:54Z", status: "", summary: "first tracked", sha: "76b07ef433d280a5" }
 - { record: law.lapse-rate, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "c917d658af3ff5f3" }
 - { record: law.light-year, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "ddc68793f0c5e54f" }

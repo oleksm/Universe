@@ -20,27 +20,30 @@
 use glam::{DMat3, DQuat, DVec3};
 
 use crate::body::RigidBody;
-use crate::laws::{FOOT_FRICTION, HULL_FRICTION, HULL_RESTITUTION};
+use crate::laws::{FOOT_FRICTION, HULL_FRICTION, HULL_REST_SPEED, HULL_RESTITUTION};
 
 /// A landing leg: where its pad is (body frame, fully extended), what it holds
-/// before it gives way (N), its stroke (m) and the sink rate it's designed for (m/s).
+/// before it gives way (N), its stroke (m), the sink rate it's designed for
+/// (m/s), and its spring (N/m) and damper (N s/m) where its record gives them.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Strut {
     pub foot: DVec3,
     pub holds: f64,
     pub stroke: f64,
     pub sink_rate: f64,
+    pub spring: Option<f64>,
+    pub damper: Option<f64>,
 }
 
 impl Strut {
-    /// Its spring (N/m): `holds` at the end of the stroke.
+    /// Its spring (N/m): its record's, else `holds` at the end of the stroke.
     pub fn stiffness(&self) -> f64 {
-        self.holds / self.stroke.max(1e-3)
+        self.spring.unwrap_or(self.holds / self.stroke.max(1e-3))
     }
 
-    /// Its damper (N s/m): half of `holds` at the design sink rate.
+    /// Its damper (N s/m): its record's, else half of `holds` at the design sink rate.
     pub fn damping(&self) -> f64 {
-        0.5 * self.holds / self.sink_rate.max(0.1)
+        self.damper.unwrap_or(0.5 * self.holds / self.sink_rate.max(0.1))
     }
 }
 
@@ -85,8 +88,6 @@ const SETTLE: f64 = 0.2;
 const SETTLE_SPEED: f64 = 1.0;
 /// Clear of the ground by this much (m), beyond what it moves in a step: not touching.
 const CLEAR: f64 = 0.5;
-/// Below this speed into the ground (m/s), a hull doesn't rebound.
-const REST_SPEED: f64 = 0.5;
 
 /// The contacts of `body` (with `mass`), its `struts` (those whose bit is
 /// set in `broken` have given way) and its `hull` (spheres in its frame; a
@@ -192,7 +193,7 @@ pub fn forces(ground: &dyn Fn(DVec3) -> Option<Ground>, body: &RigidBody, mass: 
             None => {
                 out.strike = out.strike.max(into);
                 // To this speed out of the ground by the step's end.
-                let bounce = if into > REST_SPEED { HULL_RESTITUTION * into } else { 0.0 };
+                let bounce = if into > HULL_REST_SPEED { HULL_RESTITUTION * into } else { 0.0 };
                 let want = bounce.max((SETTLE * t.depth / h).min(SETTLE_SPEED));
                 (felt(t.arm, n) * (want + into) / h / shared).max(0.0)
             }
@@ -297,7 +298,7 @@ mod tests {
     fn legs(spread: f64) -> Vec<Strut> {
         [(1., 1.), (1., -1.), (-1., 1.), (-1., -1.)]
             .iter()
-            .map(|&(x, z)| Strut { foot: DVec3::new(x * spread, -6.0, z * spread), holds: 1.0e6, stroke: 0.8, sink_rate: 3.05 })
+            .map(|&(x, z)| Strut { foot: DVec3::new(x * spread, -6.0, z * spread), holds: 1.0e6, stroke: 0.8, sink_rate: 3.05, spring: None, damper: None })
             .collect()
     }
 

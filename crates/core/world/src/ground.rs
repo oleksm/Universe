@@ -26,8 +26,8 @@ pub const SETTLE_TIME: f64 = 1.0;
 /// Still: slower than this over the ground (m/s) and turning slower than this (rad/s).
 const STILL_SPEED: f64 = 0.05;
 const STILL_SPIN: f64 = 0.01;
-/// The hull strikes the ground faster than this (m/s): it is damaged.
-const STRIKE: f64 = 1.0;
+/// The hull strikes the ground faster than this (m/s): it is damaged (Dogma's law).
+const STRIKE: f64 = universe_physics::laws::HULL_CRUMPLE_SPEED;
 /// Off the ground this long (s): lifted off (told).
 const LIFTED: f64 = 0.3;
 /// Off the ground longer than this (s): flown, so coming down again is a landing.
@@ -65,7 +65,7 @@ pub fn struts(ship: &Ship) -> Vec<Strut> {
     if let Some(d) = &ship.devices
         && !d.fit.legs.is_empty()
     {
-        return d.fit.legs.iter().map(|l| Strut { foot: l.foot, holds: l.holds, stroke: l.stroke, sink_rate: l.sink_rate }).collect();
+        return d.fit.legs.iter().map(|l| Strut { foot: l.foot, holds: l.holds, stroke: l.stroke, sink_rate: l.sink_rate, spring: l.spring, damper: l.damper }).collect();
     }
     let spec = ship.spec();
     let legs = crate::legs::of_spec(spec);
@@ -89,7 +89,7 @@ pub fn struts(ship: &Ship) -> Vec<Strut> {
         Some(l) => (l.force / n, l.stroke * l.efficiency, l.designed),
         None => (3.0 * full / n, 0.5, 3.05),
     };
-    feet.into_iter().map(|foot| Strut { foot, holds, stroke, sink_rate: sink }).collect()
+    feet.into_iter().map(|foot| Strut { foot, holds, stroke, sink_rate: sink, spring: None, damper: None }).collect()
 }
 
 /// Its hull's contact points: the corners of its convex parts (its true
@@ -403,7 +403,7 @@ pub fn profile_of(ship: &Ship) -> std::sync::Arc<Profile> {
 fn profile_key(ship: &Ship) -> (usize, u64) {
     let spec = ship.spec() as *const crate::ship::ClassSpec as usize;
     let legs = ship.devices.as_ref().map_or(0u64, |d| {
-        d.fit.legs.iter().fold(d.fit.legs.len() as u64, |h, l| (h ^ l.foot.x.to_bits() ^ l.foot.y.to_bits().rotate_left(21) ^ l.foot.z.to_bits().rotate_left(42) ^ l.holds.to_bits()).wrapping_mul(0x100_0000_01b3))
+        d.fit.legs.iter().fold(d.fit.legs.len() as u64, |h, l| (h ^ l.foot.x.to_bits() ^ l.foot.y.to_bits().rotate_left(21) ^ l.foot.z.to_bits().rotate_left(42) ^ l.holds.to_bits() ^ l.spring.unwrap_or(0.0).to_bits().rotate_left(7) ^ l.damper.unwrap_or(0.0).to_bits().rotate_left(13)).wrapping_mul(0x100_0000_01b3))
     });
     (spec, legs)
 }

@@ -108,7 +108,7 @@ for a few seconds, at 10 ms substeps and a handful of points. That is small next
 | Piece | Where |
 |---|---|
 | Contact forces: struts (spring `holds`/`stroke`, damper ½`holds`/`sink_rate`), hull points, friction, slope normals, turn about the centre of mass | `crates/core/physics/src/contact.rs` |
-| Laws `FOOT_FRICTION` 0.6, `HULL_FRICTION` 0.4, `HULL_RESTITUTION` 0.3 (simplified, invented, to review) | `standards/Dogma/metadata/contact/` |
+| Laws `FOOT_FRICTION` 0.6, `HULL_FRICTION` 0.4, `HULL_RESTITUTION` 0.3, `HULL_REST_SPEED` 0.5 m/s, `HULL_CRUMPLE_SPEED` 1.0 m/s (simplified, invented, to review) | `standards/Dogma/metadata/contact/` |
 | A ship's legs and hull points (fitted legs; a modelled hull's gear; unmodelled stock hulls' four legs drawn 12 m down; a draft with no gear lies on its hull); the contact substep (10 ms); sleep after 1 s still; per-leg breaking; hard landing per foot; hull strikes crumple the hull | `crates/core/world/src/ground.rs` |
 | Flight step runs contact near landing ground; landed ships never turn in place and wake on real thrust; rest welds the pose it lies in | `crates/core/world/src/world.rs`, `rules::rest` |
 | The landing autopilot cuts its engines once down | `crates/core/avionics/src/landing.rs` |
@@ -138,3 +138,8 @@ looks things up:
 The step itself culls: the whole ship clear of the ground under it (taken as a plane), nothing to
 do; a point clear of it by more than the ground could rise across its distance (one in two), not
 looked at. Answers are memoised per load (mass within a thousandth, centre within 10 cm).
+
+Leg springs and dampers: a `LandingLeg` takes `spring` (N/m) and `damper` (N s/m) where its record
+gives them; until the registry's landing-gear schema has them (asked 2026-10-17) they are worked
+out as above. Sleep thresholds, the contact step and the push-out rate stay in code: they are the
+simulation's numerics, not laws.
