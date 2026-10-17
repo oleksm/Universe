@@ -4367,7 +4367,7 @@
 - { record: unit.electrolyser-block-20mw, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "7610f0ca7cdcf0b0" }
 - { record: unit.electrolyser-block-20mw-10bar, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "a1140c4fec571d83" }
 - { record: unit.filter-press-2, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "c3b8f03bc662d6ab" }
-- { record: unit.fitout-cell, at: "2026-10-17T22:06:25Z", status: draft, summary: "changed: identity, physical, built_of", sha: "4b4ea5f4227a2821" }
+- { record: unit.fitout-cell, at: "2026-10-17T22:10:09Z", status: draft, summary: "changed: visual", sha: "d908d9884c33feae" }
 - { record: unit.fitout-classroom, at: "2026-10-17T22:04:30Z", status: draft, summary: "changed: basis", sha: "eda12dd25a9539e0" }
 - { record: unit.fitout-counter, at: "2026-10-17T22:04:30Z", status: draft, summary: "changed: basis", sha: "8975b2d74f9b4d43" }
 - { record: unit.fitout-court, at: "2026-10-17T22:04:30Z", status: draft, summary: "changed: basis", sha: "e97457c55819df9d" }

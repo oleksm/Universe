@@ -20,6 +20,12 @@ built_of:
   item: material.stainless-steel-304
   mass: 224.7
   note: 'stainless, vandal-proof: blender''s model'
+visual:
+  format: "freefall-model/1"
+  path: "models/fitout-cell/v1"
+  manifest_sha256: "1f5f301b48e218392a31292a2258f21115bff4afb4118147108def4a6c48eab7"
+  version: 1
+  triangles: 14488
 basis:
 - of:
   - built_of
