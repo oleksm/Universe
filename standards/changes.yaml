@@ -3073,7 +3073,7 @@
 - { record: unit.heater-transformer-131mva, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "11e27b4ec8146004" }
 - { record: unit.hydrogen-purifier, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "d1d588633bfb0798" }
 - { record: unit.hydrogen-purifier-10bar, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "3b00fd69c2c8c7d7" }
-- { record: unit.induration-grate-125th, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed: model_requests", sha: "d6f04cebbe048dfa" }
+- { record: unit.induration-grate-125th, at: "2026-10-17T15:30:24Z", status: draft, summary: "changed: envelope, model_requests", sha: "66e79544df6a597b" }
 - { record: unit.ingot-car-40t, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "e523477322c9c8c9" }
 - { record: unit.ingot-crane-10t, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "0716d9177da4f4d3" }
 - { record: unit.ingot-gantry-10t-moon, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "cb09723a565f6e02" }
