@@ -2519,7 +2519,8 @@ def arc_ports(us):
         v["holds"] = v.get("holds", 0) + 3169.3
         v["built_of"] += [part("Off-gas elbow", A36, 2418.87 + 1575.30 + 2 * 66.50 + 86.81, f"water-jacketed, from the fourth hole horizontal past the roof's edge to its mouth; {m_air}"),
                           part("Elbow posts and saddle", A36, 2 * 191.27 + 2 * 14.13 + 66.32 + 2 * 6.88, f"two posts on the cradle's deck, the saddle and webs; {m_air}"),
-                          part("Off-gas gate and reducer", A36, 2500.0, "the sealing kit's end of the elbow: a reducer from 2 m to the 1.2 m coupling with a water-cooled slide gate and its drive; from memory"),
+                          part("Off-gas gate and reducer", A36, 218.0 + 527.4 + 201.7 + 14.3, "the sealing kit's end of the elbow, inside its jacket: a cone from 2 m to 1.2 m (218.0 kg), the slide gate's blade (201.7) and its sealed pocket through the jacket on +x (527.4), the neck (14.3); measured on blender's sealed v3 (2026-10-16)"),
+                          part("Off-gas gate drive", "good.electric-motors", 500.0, "from memory (drawn as a proxy)"),
                           part("Deck manifold", A36, 908.4, f"two DN 400 barrels standing on the deck, their closed bottoms, feet, hose reducers and saddles; {m4}"),
                           part("Bus terminal necks", CU, 601.2, f"three copper necks from the flexible cables' fixed ends to the bus joint; {m4}"),
                           part("Bus joint supports", A36, 1059.7, f"the joint's three supports and insulators, the insulators not mass-qualified; {m4}")]
@@ -2694,8 +2695,8 @@ def arc_furnace_airless(us, recs):
           f"three phases of water-cooled copper tube, {I2 / 1000:.0f} kA each, up from the transformer's joint and north to the vessel's flexible cables; in vacuum their gaps hold no air to break down, but the gas a seal lets out can (Paschen), so the bars are spaced as if in air; their loss, {bus_loss / 1e3:.0f} kW, goes into their water and so to the cool loop"),
         L("transformer supply", kit.cable(33000, 630), ("edge:hv-in", "T:hv-in"), [None, (-37.0, -6.85, 0.3), (-37.0, -6.85, 8.0), (-12.0, -6.85, 8.0), None], (), math.ceil(i_hv / (630e-6 * kit.J_VACUUM)), None,
           "north along x -37, west of the gantry crane's reach, then east 8 m up over the transformer cooling's lines into the cable box"),
-        L("off-gas", kit.lined_duct(1.2, 1, temp=SEALED_GAS_T + K), ("V:offgas-out", "C:gas-in"), [None, (-9.0, 11.7, 13.5), (-9.0, 11.7, 20.0), (14.0, 11.7, 20.0), (14.0, 24.0, 20.0), None], (), 1, None,
-          f"the furnace's {co:.2f} kg/s of CO at about {SEALED_GAS_T:.0f} deg C and 1 bar (no air dilutes it: a fifth of the shop for air's flow), from the clamp coupling at the elbow's mouth north 1.2 m, up to 20 m, east between the crane's legs and under its bridge, north past its east end at x 14 and down into the cooler"),
+        L("off-gas", kit.lined_duct(1.2, 1, temp=SEALED_GAS_T + K), ("V:offgas-out", "C:gas-in"), [None, (-9.0, 12.0, 13.5), (-9.0, 12.0, 20.0), (14.0, 12.0, 20.0), (14.0, 24.0, 20.0), None], (), 1, None,
+          f"the furnace's {co:.2f} kg/s of CO at about {SEALED_GAS_T:.0f} deg C and 1 bar (no air dilutes it: a fifth of the shop for air's flow), from the clamp coupling at the elbow's mouth north 1.5 m (a straight 0.3 m for the coupling's spool and its stroke, then a bend of 1.2 m radius), up to 20 m, east between the crane's legs and under its bridge, north past its east end at x 14 and down into the cooler"),
         L("cooled off-gas", kit.pipe(1.2, 1, temp=FILTER_GAS_T + K), ("C:gas-out", "G:gas-in"), [None, None], (), 1, None, f"at {FILTER_GAS_T:.0f} deg C; the filter lets the cleaned gas go up its stack"),
         L("steam to the hot field", kit.pipe(dn_steam, 25, lagged=True, temp=485.0), ("C:steam-out", f"RH1:steam-in"),
           [None, (9.0, 24.4, 16.5), (9.0, 24.4, 1.0), (9.0, 30.6, 1.0), (-56.0, 30.6, 1.0), (-56.0, 51.6, 1.0), None], (), 1, None,

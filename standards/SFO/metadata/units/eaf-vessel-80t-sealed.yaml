@@ -5,7 +5,7 @@ identity: {key: unit.eaf-vessel-80t-sealed, name: 'Arc furnace vessel, 80 t, sea
     m at 15 degrees, so the gate shuts, the clamp opens and the furnace''s mouth slides across the duct''s face to tilt); the secondary bus''s joint at the flexible cables'' fixed ends, (0, -6.2, 2.3), facing -y; the deck manifold''s water flanges, DN 400 facing up, in at (-4.2, 4.95, 0.5) and out at (-3.4, 4.95, 0.5), side by side 0.8 m apart so their flanges clear, and in front of the cradle''s deck, which tilts over them (v4: the manifold reduces from the hoses'' 300 mm, and keeps inside local y 5.3, clear of the airless shop''s gantry crane''s legs, whose inner faces pass at y 5.43).'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 11.74, height: 14.0, mass: 330400.0}
+physical: {length: 12.0, width: 11.74, height: 14.0, mass: 329300.0}
 built_of:
 - {what: Hearth shell, item: material.structural-steel-a36, mass: 33060.0, note: '6.6 m across, 2.0 m tall, 50 mm plate, its dished bottom 1.25 times the disc'}
 - {what: Hearth lining, item: good.refractory-brick, mass: 148400.0, note: '0.9 m under the bath, 0.45 m up the hearth wall'}
@@ -30,7 +30,8 @@ built_of:
 - {what: Feed lock drives, item: good.electric-motors, mass: 500.0, note: from memory}
 - {what: Off-gas elbow, item: material.structural-steel-a36, mass: 4214.0, note: 'water-jacketed, from the fourth hole horizontal past the roof''s edge to its mouth; measured on the furnace for air''s model v4, the same body (2026-10-16)'}
 - {what: Elbow posts and saddle, item: material.structural-steel-a36, mass: 490.9, note: 'two posts on the cradle''s deck, the saddle and webs; measured on the furnace for air''s model v4, the same body (2026-10-16)'}
-- {what: Off-gas gate and reducer, item: material.structural-steel-a36, mass: 2500.0, note: 'the sealing kit''s end of the elbow: a reducer from 2 m to the 1.2 m coupling with a water-cooled slide gate and its drive; from memory'}
+- {what: Off-gas gate and reducer, item: material.structural-steel-a36, mass: 961.4, note: 'the sealing kit''s end of the elbow, inside its jacket: a cone from 2 m to 1.2 m (218.0 kg), the slide gate''s blade (201.7) and its sealed pocket through the jacket on +x (527.4), the neck (14.3); measured on blender''s sealed v3 (2026-10-16)'}
+- {what: Off-gas gate drive, item: good.electric-motors, mass: 500.0, note: from memory (drawn as a proxy)}
 - {what: Deck manifold, item: material.structural-steel-a36, mass: 908.4, note: 'two DN 400 barrels standing on the deck, their closed bottoms, feet, hose reducers and saddles; measured on blender''s model v2 (the registry''s v4, 2026-10-16)'}
 - {what: Bus terminal necks, item: material.copper, mass: 601.2, note: 'three copper necks from the flexible cables'' fixed ends to the bus joint; measured on blender''s model v2 (the registry''s v4, 2026-10-16)'}
 - {what: Bus joint supports, item: material.structural-steel-a36, mass: 1060.0, note: 'the joint''s three supports and insulators, the insulators not mass-qualified; measured on blender''s model v2 (the registry''s v4, 2026-10-16)'}
