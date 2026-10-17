@@ -47,6 +47,8 @@ visual:
   manifest_sha256: "5653ef7ae2208fdd8d3c84040fb2a043318b89445ef88c4834348eff9db5deb8"
   version: 1
   triangles: 14580
+model_requests:
+- {work: rebuild, of_version: 1, asked: '2026-10-17', by: registry, because: "Blender's review (2026-10-17): the model lacks the radiator wings (two wings of 3 mm carbon-carbon, 234 m2, stowed folded along the engine and swung out edge-on to the jet) and the hinged booms, heat pipes and manifolds. Add them, stowed and deployed (the booms' hinges want nodes)."}
 life: 473364000
 basis:
   - { of: [function.exhaust, function.efficiency, function.thrust], tier: sourced, review: true, source: "standards/sources/research_ship_equipment.json", note: "Discovery II (NASA/TM-2005-213559): exhaust 347 km/s at the nozzle exit, 4.83 GW of jet from 7.9 GW of fusion (0.61), 6,250 lbf = 27.8 kN, 0.08 kg/s. The S3 is that engine; the others scale." }

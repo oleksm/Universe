@@ -134,7 +134,12 @@ def gap(kind, key, path, r):
         add("measure", "envelope", "no envelope boxes: measure them from the installed model (model_measure.py)")
     if now["budget"] and m.get("triangles", 0) > now["budget"]:
         add("optimise", "triangles", f"{m['triangles']:,} triangles against a budget of {now['budget']:,}")
+    if any(q["work"] == "keep" for q in open_requests(r)):          # (a review found the model right: its review gaps close)
+        out = [x for x in out if x["verdict"] != "review"]
     for q in open_requests(r):
+        if q["work"] == "keep":
+            add("none", "kept", q["because"])
+            continue
         add(q["work"], "asked", f"{q['because']} (asked {q['asked']}{' by ' + q['by'] if q.get('by') else ''}, of v{q['of_version']})")
     worst = max((x["verdict"] for x in out), key=RANK.get, default="none")
     return {"key": key, "kind": kind, "installed": (r.get("visual") or {}).get("version"), "spec_from": source, "verdict": worst, "gaps": out}

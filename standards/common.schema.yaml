@@ -202,7 +202,7 @@ definitions:
     additionalProperties: false
     required: [work, because, asked, of_version]
     properties:
-      work: { enum: [rebuild, rig, measure, optimise], description: "What is asked of the model." }
+      work: { enum: [rebuild, rig, measure, optimise, keep], description: "What is asked of the model; keep: a review found the model shows the record as it is, no work (closes the review for that version)." }
       because: { type: string, description: "What changed or is wrong, and what the new model must do: plainly, so a modeller can act on it." }
       asked: { type: string, format: date, description: "When it was asked (YYYY-MM-DD)." }
       of_version: { type: integer, minimum: 0, description: "The installed version it is asked of; a version above it answers it." }

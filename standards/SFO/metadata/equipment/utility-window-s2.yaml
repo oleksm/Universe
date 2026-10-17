@@ -32,6 +32,8 @@ visual:
   manifest_sha256: "285e836e683ca68b42e68c3b397fd2ad32b110f5d84826e590bb8326000c550c"
   version: 1
   triangles: 9812
+model_requests:
+- {work: keep, of_version: 1, asked: '2026-10-17', by: registry, because: "Blender's review (2026-10-17): the model already has the 54, 54 and 12 mm panes; the record only split its panes into named parts."}
 life: 473364000
 basis:
   - { of: [physical.volume, physical.length, physical.width, physical.height, function, size_class], tier: invented, review: true, note: "Two square metres: a bridge window. Chosen." }
