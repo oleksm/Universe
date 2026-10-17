@@ -158,7 +158,7 @@
 - { record: connector.belt-transfer-1000, at: "2026-10-16T21:20:35Z", status: draft, summary: "changed", sha: "b1cbaf21d0ec57df" }
 - { record: connector.belt-transfer-1000-sealed, at: "2026-10-16T21:35:43Z", status: draft, summary: "changed", sha: "d57ff45724c6365e" }
 - { record: connector.belt-transfer-1200, at: "2026-10-16T21:02:45Z", status: draft, summary: "changed", sha: "d5339e2363444a50" }
-- { record: connector.belt-transfer-650, at: "2026-10-16T23:10:29Z", status: draft, summary: "first tracked", sha: "7407190826df8008" }
+- { record: connector.belt-transfer-650, at: "2026-10-17T00:57:55Z", status: draft, summary: "changed: visual", sha: "1b5648d671478d9f" }
 - { record: connector.belt-transfer-800, at: "2026-10-16T21:08:27Z", status: draft, summary: "changed", sha: "c77db1887011d319" }
 - { record: connector.belt-transfer-800-sealed, at: "2026-10-16T21:29:54Z", status: draft, summary: "changed", sha: "75625e6c93ee5bda" }
 - { record: connector.bus-joint-ac-27ka, at: "2026-10-16T23:54:33Z", status: draft, summary: "changed", sha: "a2897aac027dd901" }
@@ -893,7 +893,7 @@
 - { record: layout.ingot-yard-air, at: "2026-10-17T00:03:48Z", status: draft, summary: "changed", sha: "423fd5c4b6c2a57f" }
 - { record: layout.ingot-yard-airless, at: "2026-10-17T00:03:48Z", status: draft, summary: "changed", sha: "9cf378d6072292a2" }
 - { record: layout.ladle-station-air, at: "2026-10-17T00:45:07Z", status: draft, summary: "changed", sha: "33846a2469f78cea" }
-- { record: layout.ladle-station-airless, at: "2026-10-17T00:55:31Z", status: draft, summary: "changed", sha: "54068d13829717ed" }
+- { record: layout.ladle-station-airless, at: "2026-10-17T00:57:55Z", status: draft, summary: "changed", sha: "e81863b9d3ddee41" }
 - { record: layout.ore-yard-air, at: "2026-10-17T00:03:48Z", status: draft, summary: "changed", sha: "c5084a0ab636cfeb" }
 - { record: layout.ore-yard-airless, at: "2026-10-17T00:03:48Z", status: draft, summary: "changed", sha: "5cb35f82f3a4d85c" }
 - { record: layout.pellet-plant-air, at: "2026-10-16T20:37:01Z", status: draft, summary: "changed", sha: "be9a770950a42984" }

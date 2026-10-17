@@ -8,6 +8,12 @@ physical: {length: 0.95, width: 1.25, height: 3.55, mass: 1044.0}
 built_of:
 - {what: 'Hood, drop chute and mounting tabs', item: material.structural-steel-a36, mass: 959.3, note: 'a hood over the belt''s head and a chute 0.9 m square, 3 m down, 10 mm plate, on four 12 mm tabs seated on the head frame''s rails (not hung from the pulley''s bearings); measured on blender''s model v1 of the 650 mm transfer'}
 - {what: Wear liner, item: material.polyethylene-uhmw, mass: 84.7, note: 10 mm UHMW polyethylene; measured on blender's model v1 of the 650 mm transfer}
+visual:
+  format: "freefall-model/1"
+  path: "models/belt-transfer-650/v1"
+  manifest_sha256: "1330139058b781af9c5306c17635cd2da5b2059f235d4d82417120427eb84f76"
+  version: 1
+  triangles: 528
 basis:
 - of: [built_of]
   tier: invented
