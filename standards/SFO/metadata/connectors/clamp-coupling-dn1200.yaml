@@ -12,6 +12,12 @@ built_of:
 - {what: Sliding spool, item: material.structural-steel-a36, mass: 53.8, note: 'a 0.15 m spool on the duct''s side, its stroke 0.15 m, sliding over the duct''s end'}
 - {what: Spool lining, item: good.refractory-brick, mass: 167.6, note: 'the refractory tapering from the furnace''s clear bore to the lined duct''s within the spool, measured on blender''s model'}
 - {what: Seals, item: material.silicone-rubber, mass: 0.9, note: the O-rings; silicone rubber stands for them}
+visual:
+  format: "freefall-model/1"
+  path: "models/clamp-coupling-dn1200/v1"
+  manifest_sha256: "1e5da038a201382caa349c6620a1f92162d26d33e38ce0e915d3438bb8d4ca40"
+  version: 1
+  triangles: 6328
 basis:
 - of: [built_of, physical]
   tier: invented

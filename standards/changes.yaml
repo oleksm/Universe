@@ -168,7 +168,7 @@
 - { record: connector.chute-dn400, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "13b5909fcd60b404" }
 - { record: connector.chute-dn600, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "9d83335e62a859be" }
 - { record: connector.chute-dn800, at: "2026-10-16T14:03:01Z", status: draft, summary: "changed", sha: "81c88d0c893c5bd3" }
-- { record: connector.clamp-coupling-dn1200, at: "2026-10-17T04:08:21Z", status: draft, summary: "first tracked", sha: "e1ace51d6c2fe689" }
+- { record: connector.clamp-coupling-dn1200, at: "2026-10-17T04:16:08Z", status: draft, summary: "changed: visual", sha: "22ee335dd81d3a5a" }
 - { record: connector.flange-dn100-pn10, at: "2026-10-16T13:14:09Z", status: draft, summary: "changed", sha: "0dd431cfd436f47f" }
 - { record: connector.flange-dn100-pn10-ss, at: "2026-10-16T17:53:48Z", status: draft, summary: "changed", sha: "dce853f82f84fc5e" }
 - { record: connector.flange-dn100-pn16-ss-double, at: "2026-10-16T17:53:48Z", status: draft, summary: "changed", sha: "132f1a9c05992855" }
@@ -2927,7 +2927,7 @@
 - { record: unit.dri-bin-200t, at: "2026-10-17T03:13:04Z", status: draft, summary: "changed: product", sha: "86bc82e873a4c45f" }
 - { record: unit.dri-cooling-loop, at: "2026-10-17T04:08:21Z", status: draft, summary: "changed", sha: "92887c9436e3ebf7" }
 - { record: unit.eaf-vessel-80t, at: "2026-10-17T04:08:21Z", status: draft, summary: "changed", sha: "f40e954f8646ce8a" }
-- { record: unit.eaf-vessel-80t-sealed, at: "2026-10-17T04:08:21Z", status: draft, summary: "changed: visual", sha: "bdb3956d7b27ec6e" }
+- { record: unit.eaf-vessel-80t-sealed, at: "2026-10-17T04:16:08Z", status: draft, summary: "changed", sha: "07b4aaaf50235fa9" }
 - { record: unit.electrolyser-block-20mw, at: "2026-10-17T04:08:21Z", status: draft, summary: "changed", sha: "f25dd77e81cc19d0" }
 - { record: unit.electrolyser-block-20mw-10bar, at: "2026-10-17T03:13:04Z", status: draft, summary: "changed: product", sha: "f1c4fa061c91155b" }
 - { record: unit.filter-press-2, at: "2026-10-17T03:13:04Z", status: draft, summary: "changed: product", sha: "6804b051019d88dc" }
