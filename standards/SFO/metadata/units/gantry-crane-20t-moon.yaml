@@ -12,6 +12,23 @@ built_of:
 needs: {power: 40000.0}
 product: product.overhead-crane
 options: [gantry-legs]
+motion:
+- id: travel
+  kind: travel
+  direction: [1.0, 0.0, 0.0]
+  moves: [the whole crane]
+  note: along its rails or runways; its range is the layout's
+- id: traverse
+  kind: travel
+  direction: [0.0, 1.0, 0.0]
+  distance: [-10.6, 10.6]
+  moves: [the trolley and its hook]
+  note: across the bridge, about 1.5 m short of each end (invented)
+- id: hoist
+  kind: lift
+  direction: [0.0, 0.0, 1.0]
+  moves: [the hook and what it carries]
+  note: from parked down to the floor or the load; its depth is the layout's
 envelope:
 - [-2.202, -12.501, 21.9, 2.202, 12.501, 23.701]
 - [-4.902, -12.571, -0.041, 4.902, -11.429, 22.001]

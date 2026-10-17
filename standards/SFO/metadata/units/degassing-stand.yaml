@@ -49,6 +49,15 @@ ports:
   facing: [0.0, 0.0, -1.0]
   note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.degassing-stand
+motion:
+- id: swing
+  kind: rotate
+  point: [0.0, -3.5, 0.0]
+  direction: [0.0, 0.0, 1.0]
+  angle: [0.0, 1.571]
+  moves: [the arm and the heat shield]
+  boxes: [1]
+  note: swung off the ladle to let the car pass (a quarter turn, invented); only its arm and shield box moves
 envelope:
 - [-0.602, -4.101, -0.001, 0.947, -2.899, 6.302]
 - [-1.822, -3.501, 5.399, 1.822, 1.822, 6.452]

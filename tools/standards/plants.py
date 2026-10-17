@@ -519,7 +519,7 @@ def unit_record(slug, u):
         d["ports"] = list(d.get("ports", [])) + [{"id": "base", "flow": "out", "medium": "load", "interface": f"interface.plant-{u['fits']}", "half": "male", "make": "bolted",
                                                     "mass": r(mass + (u.get("holds") or 0)), "at": [0.0, 0.0, 0.0], "facing": [0.0, 0.0, -1.0],
                                                     "note": "its feet on its bay's seats: its weight is this mass times the site's gravity"}]
-    for k in ("product", "options"):
+    for k in ("product", "options", "motion"):
         if u.get(k):
             d[k] = u[k]
     if f"unit.{slug}" in ENVELOPES:
@@ -653,7 +653,7 @@ def arc_furnace_air(us, recs):
     bays = [
         {"id": "V", "mount": "plant-mount.bay-s2", "unit": "unit.eaf-vessel-80t", "at": [-12.0, 6.0, 5.0], "note": "on the furnace platform, 5 m up; the tap faces +x over the ladle rail, the slag door -x over the slag rail"},
         {"id": "T", "mount": "plant-mount.bay-s2", "unit": "unit.furnace-transformer-90mva", "at": [-12.0, -6.0, 0.0], "note": "in the fire-walled vault beside the platform"},
-        {"id": "F", "mount": "plant-mount.bay-s1", "unit": "unit.dri-bin-200t", "at": [-12.0, 41.0, 0.0], "note": "outside, north, far enough for the belt to climb at a cleated belt's slope to its head 3 m over the feed hole"},
+        {"id": "F", "mount": "plant-mount.bay-s1", "unit": "unit.dri-bin-200t", "at": [-12.0, 41.0, 6.0], "note": "outside, north, on a 6 m plinth: the belt to the furnace is then flat enough (about 8 degrees) to pass clear over the elbow as the furnace tilts"},
         {"id": "B", "mount": "plant-mount.bay-s3", "unit": "unit.baghouse-800k", "at": [6.0, 30.0, 0.0], "note": "outside, north-east"},
         {"id": "C", "mount": "plant-mount.bay-s3", "unit": "unit.cooling-tower", "at": [-39.0, -6.0, 0.0], "note": "outside, west, 3 m from the hall"},
     ]
@@ -670,9 +670,9 @@ def arc_furnace_air(us, recs):
     w_b = need("baghouse-800k")
     mv_b = kit.area_for(amps(w_b, 6600))
     edge = [
-        port("sponge-iron-in", "in", "bulk", kit.belt_transfer(0.8), (-12.0, 85.0, 2.0), (0, -1, 0), item="good.sponge-iron", rate=DRI, note="onto the bin belt's tail, from the shaft furnace or the stockpile"),
+        port("sponge-iron-in", "in", "bulk", kit.belt_transfer(0.8), (-12.0, 95.0, 2.0), (0, -1, 0), item="good.sponge-iron", rate=DRI, note="onto the bin belt's tail, from the shaft furnace or the stockpile"),
         port("hv-in", "in", "power", kit.termination(33000, 630), (-12.0, -30.0, 0.3), (0, 1, 0), power=P + TRANSFORMER_LOSS * S_MVA, voltage=33000, note="the site's 33 kV substation"),
-        port("lv-bin", "in", "power", lv(need("dri-bin-200t")), (-7.5, 41.0, 1.0), (-1, 0, 0), power=need("dri-bin-200t"), voltage=lvf),
+        port("lv-bin", "in", "power", lv(need("dri-bin-200t")), (-7.5, 41.0, 7.0), (-1, 0, 0), power=need("dri-bin-200t"), voltage=lvf),
         port("mv-baghouse", "in", "power", kit.termination(6600, mv_b), (22.0, 33.0, 1.0), (-1, 0, 0), power=w_b, voltage=6600, note="the site's 6.6 kV switchgear"),
         port("lv-tower", "in", "power", lv(need("cooling-tower")), (-55.0, -9.0, 1.0), (1, 0, 0), power=need("cooling-tower"), voltage=lvf),
         port("water-in", "in", "liquid", kit.flange(0.1, 10), (-55.0, -6.0, 0.75), (1, 0, 0), item="good.water", rate=recs["cooling-tower"]["needs"]["water"], note="the site's water, for the tower's make-up"),
@@ -683,11 +683,11 @@ def arc_furnace_air(us, recs):
     wt = kit.pipe(kit.dn_for(math.sqrt(4 * q_t / 1000 / 2.5 / math.pi)), 10, liquid=True)
     jd = kit.jacketed_duct(2.0, duct_heat)
     L = lambda *a: kit_link(*a[:4], bays, recs, edge, *a[4:])
-    belt_rise = (5.0 + 8.3 + 3.0) - (6.0 - kit._recs[kit.belt(0.8, DRI * 1.5)]["outside"][1] / 2)
+    belt_rise = (5.0 + 8.3 + 3.0) - (6.0 + 6.0 - kit._recs[kit.belt(0.8, DRI * 1.5)]["outside"][1] / 2)
     links = [
         L("sponge iron belt", kit.belt(0.8, DRI * 1.5), ("F:dri-out", "V:dri-in"), [None, None], (), 1, DRI * G * belt_rise / 0.5 + 20000,
           f"a chevron-cleated belt in a covered gallery from the bin's feeder south through the north wall's opening, rising {math.degrees(math.atan2(belt_rise, 30.2)):.0f} degrees (steeper than plain belts carry sponge iron, which rolls back above about 15), its head 3 m over the fifth hole, its transfer chute telescoping"),
-        L("bin belt", kit.belt(0.8, DRI * 1.5), ("edge:sponge-iron-in", "F:dri-in-belt"), [None, None], (), 1, DRI * G * 16.3 / 0.5 + 20000, "cleated, in a covered gallery, from the stockpile's reclaim south, rising 20 degrees to its head 3 m over the bin's roof"),
+        L("bin belt", kit.belt(0.8, DRI * 1.5), ("edge:sponge-iron-in", "F:dri-in-belt"), [None, None], (), 1, DRI * G * 16.3 / 0.5 + 20000, "cleated, in a covered gallery, from the stockpile's reclaim south, rising about 21 degrees to its head 3 m over the bin's roof on its plinth"),
         L("off-gas", jd, ("V:offgas-out", "B:gas-in"), [None, (-9.0, 18.4, 13.5), (6.0, 18.4, 13.5), None], (), 1, None,
           f"2 m, water-jacketed for {duct_heat / 1e6:.1f} MW (about {OFFGAS_SHARE:.0%} of the arc's power, from memory): from its sliding sleeve {kit.GAP_HOOD:g} m beyond the furnace's elbow (the gap draws in the air that burns the CO; drawn back 1 m to tilt), north out through the north wall's opening, east along y 18.4 and up to the baghouse's inlet"),
         L("secondary bus", bus, ("T:lv-out", "V:power-in"), bus_path, (), 1, bus_loss, f"three phases of water-cooled copper tube, {I2 / 1000:.0f} kA each, through the vault's wall to the furnace's flexible cables; its loss, {bus_loss / 1e3:.0f} kW, to the transformer's cooler"),
@@ -733,6 +733,7 @@ def arc_furnace_air(us, recs):
         {"what": "Cooling tower basin", "item": CONC, "volume": r((tw + 0.6) * (12.6) * 0.5 + 2 * (tw + 0.3 + 12.3) * 2.0 * 0.3 + 10 * 0.6 * 0.6 * 2.0),
          "note": f"sunk, so the tower's lower louvres and ports stay clear: 0.3 m walls round its {tw:.0f} x 12 m footprint, their tops at z 0, the floor's top at z -2 (0.5 m thick); ten 0.6 x 0.6 m pedestals, six under the tower's feet and four under its pump skid's corners, at z 0 (blender)"},
         {"what": "Bin footing", "item": CONC, "volume": 36.0},
+        {"what": "Bin plinth", "item": CONC, "volume": r(6.0 * 6.45 * 6.0), "note": "6 m under the bin, so its belt to the furnace passes clear over the tilting elbow (the fit check's sweep, 2026-10-17)"},
         {"what": "Rail beds", "item": CONC, "volume": 8.27, "note": "under the ladle and slag rails, with their 40 mm flangeways; measured on blender's model"},
         {"what": "Pipe trench", "item": CONC, "volume": 11.23 + 11.80, "note": "floor and covers of the 1 m trench the jacket's water pair runs in, as measured on blender's model before the runs were re-laid (round the hall's west end and along y 18), to measure again"},
         {"what": "Link supports", "item": CONC, "volume": 2.16 + 1.44 + 1.20 + 3.85, "note": "footings for the belts' trestles, the duct's supports, the risers and the pipes' plinths; as measured on blender's model before the runs were re-laid, to measure again"},
@@ -4667,6 +4668,45 @@ def products(us):
     return out
 
 
+def set_motions(us):
+    """SFO 26: how each unit, or a part of it, moves in service, as data a fit check can sweep. A range the layout sets (a
+    crane's travel along its rails) is left to the layout; the axis is the unit's."""
+    d15 = r(math.radians(15.0), 4)
+    tilt_eaf = {"id": "tilt", "kind": "tilt", "point": [0.0, 0.0, 1.0], "direction": [0.0, 1.0, 0.0], "angle": [-d15, d15], "moves": ["the vessel on its cradle, its roof, masts, elbow and feed"],
+                "note": "rocker tilt: about 15 degrees each way, toward +x to tap and -x to deslag (from memory of furnaces with an eccentric bottom tap); a rocker rolls, so the axis through the rockers' centres is assumed (blender's sweeps, 2026-10-16). The arc is off while it tilts."}
+    for k in ("eaf-vessel-80t", "eaf-vessel-80t-sealed"):
+        env = [e for e in ENVELOPES.get(f"unit.{k}", []) if isinstance(e, list)]
+        fixed = [i for i, e in enumerate(env) if e[3] < -2.0 and e[1] > 2.0]       # (the deck manifold's box: its barrels stand on the fixed platform, the hoses to them flex)
+        us[k]["motion"] = [dict(tilt_eaf, boxes=[i for i in range(len(env)) if i not in fixed])]
+    for k, u in us.items():
+        if "crane" in k or "gantry" in k:
+            span = u["dims"][1] - 1.0
+            u["motion"] = [{"id": "travel", "kind": "travel", "direction": [1.0, 0.0, 0.0], "moves": ["the whole crane"], "note": "along its rails or runways; its range is the layout's"},
+                           {"id": "traverse", "kind": "travel", "direction": [0.0, 1.0, 0.0], "distance": [-r(span / 2 - 1.5), r(span / 2 - 1.5)], "moves": ["the trolley and its hook"], "note": "across the bridge, about 1.5 m short of each end (invented)"},
+                           {"id": "hoist", "kind": "lift", "direction": [0.0, 0.0, 1.0], "moves": ["the hook and what it carries"], "note": "from parked down to the floor or the load; its depth is the layout's"}]
+        elif k in ("ladle-car-80t", "slag-pot-car", "mould-car-12", "ingot-car-40t"):
+            u["motion"] = [{"id": "travel", "kind": "travel", "direction": [1.0, 0.0, 0.0], "moves": ["the whole car"], "note": "along its rails; its range is the layout's"}]
+        elif k == "forklift-2t5":
+            u["motion"] = [{"id": "drive", "kind": "travel", "moves": ["the whole truck"], "note": "free on roads and lanes"}, {"id": "mast", "kind": "lift", "direction": [0.0, 0.0, 1.0], "distance": [0.0, 3.0], "moves": ["the forks"], "note": "a 3 m mast (invented)"}]
+        elif k == "stacker-reclaimer-1500th":
+            u["motion"] = [{"id": "travel", "kind": "travel", "direction": [1.0, 0.0, 0.0], "moves": ["the whole machine"], "note": "along its rails; its range is the layout's"},
+                           {"id": "slew", "kind": "rotate", "point": [0.0, 0.0, 0.0], "direction": [0.0, 0.0, 1.0], "angle": [-r(math.radians(110), 4), r(math.radians(110), 4)], "moves": ["the boom and its bucket wheel"], "note": "about 110 degrees each way (invented)"},
+                           {"id": "luff", "kind": "tilt", "direction": [0.0, 1.0, 0.0], "angle": [-r(math.radians(12), 4), r(math.radians(12), 4)], "moves": ["the boom"], "note": "about 12 degrees up and down (invented)"}]
+        elif k == "yard-tripper-1500th":
+            u["motion"] = [{"id": "travel", "kind": "travel", "direction": [1.0, 0.0, 0.0], "moves": ["the tripper on the yard belt's rails"], "note": "its range is the layout's"}]
+        elif k.startswith("ladle-furnace-80t"):
+            u["motion"] = [{"id": "roof", "kind": "lift", "direction": [0.0, 0.0, 1.0], "distance": [0.0, 1.5], "moves": ["the roof, its masts and arms, the alloy chute and the fume elbow"], "note": "raised about 1.5 m to let the ladle car pass (invented)"},
+                           {"id": "electrodes", "kind": "lift", "direction": [0.0, 0.0, 1.0], "distance": [-1.0, 2.0], "moves": ["the three electrodes on their masts"], "note": "regulating the arc and raised clear (invented)"}]
+        elif k == "ingot-tipper":
+            u["motion"] = [{"id": "tip", "kind": "tilt", "direction": [1.0, 0.0, 0.0], "angle": [0.0, r(math.pi / 2, 4)], "moves": ["the cradle and the ingot in it"], "note": "a quarter turn, upright to lying (from its job)"}]
+        elif k == "balling-disc-7m5":
+            u["motion"] = [{"id": "spin", "kind": "rotate", "moves": ["the disc"], "boxes": [], "note": "turning continuously about its own tilted axis: it sweeps nothing beyond itself"}]
+        elif k == "ball-mill-4m4":
+            u["motion"] = [{"id": "spin", "kind": "rotate", "point": [0.0, 0.0, 3.2], "direction": [1.0, 0.0, 0.0], "moves": ["the shell and its charge"], "boxes": [], "note": "turning continuously on its trunnions, sweeping nothing beyond itself; its feed and discharge stay still"}]
+        elif k == "degassing-stand":
+            u["motion"] = [{"id": "swing", "kind": "rotate", "point": [0.0, -3.5, 0.0], "direction": [0.0, 0.0, 1.0], "angle": [0.0, r(math.pi / 2, 4)], "moves": ["the arm and the heat shield"], "boxes": [1], "note": "swung off the ladle to let the car pass (a quarter turn, invented); only its arm and shield box moves"}]
+
+
 def complete_duties(us):
     """SFO 26: every port states its duty. Where a unit's design gives none, a labelled rule does, and the unit's
     basis says which: power ports' current from their power and voltage (three-phase at 0.9, or direct current);
@@ -4767,6 +4807,7 @@ def main():
     arc_ports(us)
     ladle_ports(us)
     air_ports(us)
+    set_motions(us)
     complete_duties(us)
     prods = products(us)
     recs = {slug: unit_record(slug, u) for slug, u in us.items()}

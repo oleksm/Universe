@@ -80,6 +80,14 @@ ports:
   facing: [0.0, 0.0, -1.0]
   note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.ball-mill-4m4
+motion:
+- id: spin
+  kind: rotate
+  point: [0.0, 0.0, 3.2]
+  direction: [1.0, 0.0, 0.0]
+  moves: [the shell and its charge]
+  boxes: []
+  note: turning continuously on its trunnions, sweeping nothing beyond itself; its feed and discharge stay still
 envelope:
 - [-5.351, -2.242, -0.001, 5.351, 2.242, 5.241]
 - [2.199, -3.751, -0.202, 2.857, 3.202, 6.201]

@@ -8,6 +8,17 @@ built_of:
 - {what: 'Mast, motors and battery', item: good.electric-motors, mass: 1000.0, note: from memory}
 needs: {power: 8000.0}
 product: product.forklift-2t5
+motion:
+- id: drive
+  kind: travel
+  moves: [the whole truck]
+  note: free on roads and lanes
+- id: mast
+  kind: lift
+  direction: [0.0, 0.0, 1.0]
+  distance: [0.0, 3.0]
+  moves: [the forks]
+  note: a 3 m mast (invented)
 envelope:
 - [-1.816, -0.636, -0.001, 1.801, 0.636, 2.202]
 life: 788940000

@@ -11,6 +11,12 @@ holds: 38780.0
 needs: {power: 40000.0}
 product: product.rail-car
 options: [ingot-deck]
+motion:
+- id: travel
+  kind: travel
+  direction: [1.0, 0.0, 0.0]
+  moves: [the whole car]
+  note: along its rails; its range is the layout's
 envelope:
 - [-4.001, -1.501, -0.042, 4.001, 1.501, 1.201]
 life: 788940000

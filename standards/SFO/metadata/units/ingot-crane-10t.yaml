@@ -11,6 +11,23 @@ built_of:
 needs: {power: 20000.0}
 product: product.overhead-crane
 options: [ingot-tongs]
+motion:
+- id: travel
+  kind: travel
+  direction: [1.0, 0.0, 0.0]
+  moves: [the whole crane]
+  note: along its rails or runways; its range is the layout's
+- id: traverse
+  kind: travel
+  direction: [0.0, 1.0, 0.0]
+  distance: [-9.7, 9.7]
+  moves: [the trolley and its hook]
+  note: across the bridge, about 1.5 m short of each end (invented)
+- id: hoist
+  kind: lift
+  direction: [0.0, 0.0, 1.0]
+  moves: [the hook and what it carries]
+  note: from parked down to the floor or the load; its depth is the layout's
 envelope:
 - [-4.001, -11.702, -0.041, 4.001, -10.698, 2.421]
 - [-4.001, 10.698, -0.041, 4.001, 11.701, 2.422]

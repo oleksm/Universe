@@ -20,6 +20,13 @@ ports:
   facing: [0.0, 0.0, -1.0]
   note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.ingot-tipper
+motion:
+- id: tip
+  kind: tilt
+  direction: [1.0, 0.0, 0.0]
+  angle: [0.0, 1.571]
+  moves: [the cradle and the ingot in it]
+  note: a quarter turn, upright to lying (from its job)
 envelope:
 - [-2.851, -1.501, -0.001, 2.551, 1.501, 2.101]
 life: 788940000

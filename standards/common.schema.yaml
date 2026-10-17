@@ -228,6 +228,7 @@ definitions:
       angle: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "rad", description: "rad from rest it turns, least and most (a tilt or a rotation)" }
       distance: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "m", description: "m from rest it moves, least and most (a travel or a lift)" }
       moves: { type: array, items: { type: string }, description: "What moves: the whole thing, or its named parts" }
+      boxes: { type: array, items: { type: integer, minimum: 0 }, description: "Which of the thing's envelope boxes move with it, by index; none given: all of them; an empty list: none sweeps beyond itself (a drum spinning on its own axis)." }
       note: { type: string }
   physical_object:
     description: "A thing that exists in the world: it has physical figures. A kind of record that is one derives from this (allOf), and adds the figures its kind must have. A company, a law or a need does not."

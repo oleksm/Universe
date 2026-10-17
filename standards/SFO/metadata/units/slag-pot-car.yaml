@@ -12,6 +12,12 @@ holds: 12000.0
 needs: {power: 30000.0}
 product: product.rail-car
 options: [slag-pot]
+motion:
+- id: travel
+  kind: travel
+  direction: [1.0, 0.0, 0.0]
+  moves: [the whole car]
+  note: along its rails; its range is the layout's
 envelope:
 - [-1.541, -1.742, 1.575, 1.541, 1.742, 3.402]
 - [-2.501, -1.751, -0.042, 2.501, 1.751, 2.011]

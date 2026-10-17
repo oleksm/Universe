@@ -64,6 +64,12 @@ ports:
   facing: [0.0, 0.0, -1.0]
   note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.balling-disc-7m5
+motion:
+- id: spin
+  kind: rotate
+  moves: [the disc]
+  boxes: []
+  note: 'turning continuously about its own tilted axis: it sweeps nothing beyond itself'
 envelope:
 - [-4.501, -4.551, -0.001, 4.501, 3.901, 6.51]
 - [-1.051, -0.181, 0.48, 0.751, 3.571, 7.001]

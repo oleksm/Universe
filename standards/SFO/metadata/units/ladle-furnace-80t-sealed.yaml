@@ -151,6 +151,19 @@ ports:
   note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.ladle-furnace-80t
 options: [sealing]
+motion:
+- id: roof
+  kind: lift
+  direction: [0.0, 0.0, 1.0]
+  distance: [0.0, 1.5]
+  moves: ['the roof, its masts and arms, the alloy chute and the fume elbow']
+  note: raised about 1.5 m to let the ladle car pass (invented)
+- id: electrodes
+  kind: lift
+  direction: [0.0, 0.0, 1.0]
+  distance: [-1.0, 2.0]
+  moves: [the three electrodes on their masts]
+  note: regulating the arc and raised clear (invented)
 envelope:
 - [-5.501, -4.902, -0.001, -4.499, 4.902, 12.001]
 - [-5.251, -5.001, 11.599, 5.251, 5.001, 12.801]

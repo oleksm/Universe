@@ -5,7 +5,7 @@ stands_for: module.arc-furnace
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 88.0, width: 115.0, height: 27.08, mass: 4819000.0}
+physical: {length: 88.0, width: 125.0, height: 27.08, mass: 5380000.0}
 bays:
 - id: V
   mount: plant-mount.bay-s2
@@ -20,8 +20,8 @@ bays:
 - id: F
   mount: plant-mount.bay-s1
   unit: unit.dri-bin-200t
-  at: [-12.0, 41.0, 0.0]
-  note: outside, north, far enough for the belt to climb at a cleated belt's slope to its head 3 m over the feed hole
+  at: [-12.0, 41.0, 6.0]
+  note: 'outside, north, on a 6 m plinth: the belt to the furnace is then flat enough (about 8 degrees) to pass clear over the elbow as the furnace tilts'
 - id: B
   mount: plant-mount.bay-s3
   unit: unit.baghouse-800k
@@ -42,7 +42,7 @@ ports:
   half: female
   make: open
   connector: connector.belt-transfer-800
-  at: [-12.0, 85.0, 2.0]
+  at: [-12.0, 95.0, 2.0]
   facing: [0.0, -1.0, 0.0]
   note: onto the bin belt's tail, from the shaft furnace or the stockpile
 - id: hv-in
@@ -66,7 +66,7 @@ ports:
   half: female
   make: bolted
   connector: connector.termination-400v-16mm2
-  at: [-7.5, 41.0, 1.0]
+  at: [-7.5, 41.0, 7.0]
   facing: [-1.0, 0.0, 0.0]
 - id: mv-baghouse
   flow: in
@@ -115,26 +115,26 @@ links:
   name: sponge iron belt
   run: run.belt-800
   ends: ['F:dri-out', 'V:dri-in']
-  from: [-12.0, 38.0, 5.6]
+  from: [-12.0, 38.0, 11.6]
   to: [-12.0, 7.8, 16.3]
-  length: 32.04
+  length: 30.56
   item: material.silicone-rubber
-  mass: 14930.0
-  power: 26160.0
+  mass: 15230.0
+  power: 22700.0
   fittings: {elbows: 0, tees: 0, supports: 2, connectors: 2}
-  note: a chevron-cleated belt in a covered gallery from the bin's feeder south through the north wall's opening, rising 20 degrees (steeper than plain belts carry sponge iron, which rolls back above about 15), its head 3 m over the fifth hole, its transfer chute telescoping
+  note: a chevron-cleated belt in a covered gallery from the bin's feeder south through the north wall's opening, rising 9 degrees (steeper than plain belts carry sponge iron, which rolls back above about 15), its head 3 m over the fifth hole, its transfer chute telescoping
 - kind: conveyor
   name: bin belt
   run: run.belt-800
   ends: ['edge:sponge-iron-in', 'F:dri-in-belt']
-  from: [-12.0, 85.0, 2.0]
-  to: [-12.0, 41.0, 18.3]
-  length: 46.92
+  from: [-12.0, 95.0, 2.0]
+  to: [-12.0, 41.0, 24.3]
+  length: 58.42
   item: material.silicone-rubber
-  mass: 17460.0
+  mass: 20640.0
   power: 29380.0
-  fittings: {elbows: 0, tees: 0, supports: 3, connectors: 2}
-  note: cleated, in a covered gallery, from the stockpile's reclaim south, rising 20 degrees to its head 3 m over the bin's roof
+  fittings: {elbows: 0, tees: 0, supports: 4, connectors: 2}
+  note: cleated, in a covered gallery, from the stockpile's reclaim south, rising about 21 degrees to its head 3 m over the bin's roof on its plinth
 - kind: duct
   name: off-gas
   run: run.jacketed-duct-dn2000
@@ -185,11 +185,11 @@ links:
   name: bin supply
   run: run.cable-400v-16mm2
   ends: ['edge:lv-bin', 'F:power-in']
-  from: [-7.5, 41.0, 1.0]
-  to: [-9.0, 41.0, 1.0]
+  from: [-7.5, 41.0, 7.0]
+  to: [-9.0, 41.0, 7.0]
   length: 1.5
   item: material.copper
-  mass: 31.25
+  mass: 67.25
   fittings: {elbows: 0, tees: 0, supports: 1, connectors: 2}
 - kind: cable
   name: baghouse supply
@@ -370,10 +370,11 @@ ground:
 - {what: Baghouse slab, item: good.concrete, volume: 172.8, mass: 414700.0}
 - {what: Cooling tower basin, item: good.concrete, volume: 206.1, note: 'sunk, so the tower''s lower louvres and ports stay clear: 0.3 m walls round its 24 x 12 m footprint, their tops at z 0, the floor''s top at z -2 (0.5 m thick); ten 0.6 x 0.6 m pedestals, six under the tower''s feet and four under its pump skid''s corners, at z 0 (blender)', mass: 494600.0}
 - {what: Bin footing, item: good.concrete, volume: 36.0, mass: 86400.0}
+- {what: Bin plinth, item: good.concrete, volume: 232.2, note: '6 m under the bin, so its belt to the furnace passes clear over the tilting elbow (the fit check''s sweep, 2026-10-17)', mass: 557300.0}
 - {what: Rail beds, item: good.concrete, volume: 8.27, note: 'under the ladle and slag rails, with their 40 mm flangeways; measured on blender''s model', mass: 19850.0}
 - {what: Pipe trench, item: good.concrete, volume: 23.03, note: 'floor and covers of the 1 m trench the jacket''s water pair runs in, as measured on blender''s model before the runs were re-laid (round the hall''s west end and along y 18), to measure again', mass: 55270.0}
 - {what: Link supports, item: good.concrete, volume: 8.65, note: 'footings for the belts'' trestles, the duct''s supports, the risers and the pipes'' plinths; as measured on blender''s model before the runs were re-laid, to measure again', mass: 20760.0}
-totals: {rate: 26.6666666666667, power: 74320000.0, heat: 18550000.0, water: 10.2, mass: 4819000.0, against_module: 'module.arc-furnace: one box 100 x 40 x 35 m, 72 MW, its parts 930 t. This layout: the same rate; 74.3 MW (the module left out the transformer''s losses, the fans and pumps); 10.2 kg/s of water the module did not name (the tower''s evaporation); 1404 t of plant and frame and 3416 t of concrete.'}
+totals: {rate: 26.6666666666667, power: 74320000.0, heat: 18550000.0, water: 10.2, mass: 5380000.0, against_module: 'module.arc-furnace: one box 100 x 40 x 35 m, 72 MW, its parts 930 t. This layout: the same rate; 74.3 MW (the module left out the transformer''s losses, the fans and pumps); 10.2 kg/s of water the module did not name (the tower''s evaporation); 1407 t of plant and frame and 3973 t of concrete.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}

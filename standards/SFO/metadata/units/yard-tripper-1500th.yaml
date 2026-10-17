@@ -11,6 +11,12 @@ built_of:
 - {what: Travel drives, item: good.electric-motors, mass: 2000.0, note: 'two, from memory; the belt is the yard belt''s'}
 needs: {power: 30000.0}
 product: product.yard-tripper-1500th
+motion:
+- id: travel
+  kind: travel
+  direction: [1.0, 0.0, 0.0]
+  moves: [the tripper on the yard belt's rails]
+  note: its range is the layout's
 envelope:
 - [-33.724, -5.561, -0.002, -0.976, 5.561, 10.189]
 - [-33.724, -5.561, -0.002, -0.976, 5.561, 10.189]

@@ -17,6 +17,25 @@ built_of:
 - {what: 'Drives, belts and machinery house', item: good.electric-motors, mass: 50000.0, note: 'the wheel''s 8 t drive, travel, slew and luff drives, the boom''s belts and drums and the house''s electrics, from memory'}
 needs: {power: 900000.0}
 product: product.stacker-reclaimer-1500th
+motion:
+- id: travel
+  kind: travel
+  direction: [1.0, 0.0, 0.0]
+  moves: [the whole machine]
+  note: along its rails; its range is the layout's
+- id: slew
+  kind: rotate
+  point: [0.0, 0.0, 0.0]
+  direction: [0.0, 0.0, 1.0]
+  angle: [-1.92, 1.92]
+  moves: [the boom and its bucket wheel]
+  note: about 110 degrees each way (invented)
+- id: luff
+  kind: tilt
+  direction: [0.0, 1.0, 0.0]
+  angle: [-0.2094, 0.2094]
+  moves: [the boom]
+  note: about 12 degrees up and down (invented)
 envelope:
 - [23.965, -1.271, 4.848, 34.651, 3.601, 11.152]
 - [-16.001, -5.688, -0.062, 4.501, 5.688, 19.939]

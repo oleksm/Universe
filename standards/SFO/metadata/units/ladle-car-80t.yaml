@@ -12,6 +12,12 @@ holds: 88000.0
 needs: {power: 50000.0}
 product: product.rail-car
 options: [ladle-seat]
+motion:
+- id: travel
+  kind: travel
+  direction: [1.0, 0.0, 0.0]
+  moves: [the whole car]
+  note: along its rails; its range is the layout's
 envelope:
 - [-1.791, -1.992, 1.459, 1.791, 1.992, 4.402]
 - [-3.001, -2.001, -0.042, 3.001, 2.001, 1.801]

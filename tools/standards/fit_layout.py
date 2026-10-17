@@ -309,6 +309,50 @@ def check(lay, units, runs, conns):
                 if inside.any():
                     faults.append(f"{l['name']}: in the path of {m_['unit']} riding {m_['rides']}, at {pts[np.argmax(inside)].round(2).tolist()}")
                     break
+    # Motions (SFO 26): a unit that tilts or rotates sweeps its boxes through its range; no run but its own may stand in
+    # what it sweeps (a run ending at the unit is joined to it, and its joint is the one that lets it move).
+    for b in lay["bays"]:
+        u = units[b["unit"]]
+        for mo in u.get("motion") or []:
+            if mo["kind"] not in ("tilt", "rotate") or not (mo.get("point") and mo.get("direction") and mo.get("angle")):
+                continue
+            boxes = u.get("envelope") or []
+            if "boxes" in mo:
+                boxes = [boxes[i] for i in mo["boxes"] if i < len(boxes)]
+            if not boxes:
+                continue
+            pnt, axis = np.array(mo["point"], float), np.array(mo["direction"], float)
+            axis = axis / np.linalg.norm(axis)
+            a_t = math.radians(b.get("turn", 0.0))
+            to_world = lambda q: np.c_[b["at"][0] + q[:, 0] * math.cos(a_t) - q[:, 1] * math.sin(a_t), b["at"][1] + q[:, 0] * math.sin(a_t) + q[:, 1] * math.cos(a_t), b["at"][2] + q[:, 2]]
+            def rot(q, th):
+                v = q - pnt
+                c_, s_ = math.cos(th), math.sin(th)
+                return pnt + v * c_ + np.cross(axis, v) * s_ + np.outer(v @ axis, axis) * (1 - c_)
+            to_local = lambda q: np.c_[(q[:, 0] - b["at"][0]) * math.cos(a_t) + (q[:, 1] - b["at"][1]) * math.sin(a_t), -(q[:, 0] - b["at"][0]) * math.sin(a_t) + (q[:, 1] - b["at"][1]) * math.cos(a_t), q[:, 2] - b["at"][2]]
+            for l in links:
+                if l["name"] not in radius:
+                    continue
+                pts = S_[l["name"]]
+                near = np.zeros(len(pts), bool)          # (a run ending at the unit: its last 3 m are its joint's to let move)
+                for which, e in enumerate(l.get("ends", [])):
+                    if e.split(":")[0] == b["id"]:
+                        near |= np.linalg.norm(pts - path_of(l)[0 if which == 0 else -1], axis=1) < 3.0
+                rw, rh = half[l["name"]]
+                rr = max(rw, rh) - TOUCH                 # (the run's section as a ball: a tilted box's faces meet it at any angle)
+                q = to_local(pts)
+                hit = None
+                for th in np.linspace(mo["angle"][0], mo["angle"][1], 13):
+                    qr = rot(q, -th)                      # (the run seen from the unit tilted by th: test it against the boxes at rest)
+                    for x0, y0, z0, x1, y1, z1 in boxes:
+                        inside = (qr[:, 0] > x0 - rr) & (qr[:, 0] < x1 + rr) & (qr[:, 1] > y0 - rr) & (qr[:, 1] < y1 + rr) & (qr[:, 2] > z0 - rr) & (qr[:, 2] < z1 + rr) & ~near
+                        if inside.any():
+                            hit = (pts[np.argmax(inside)], th)
+                            break
+                    if hit:
+                        break
+                if hit:
+                    faults.append(f"{l['name']}: in the sweep of {b['id']} ({b['unit']}) as it {mo['kind']}s ({mo['id']}) to {math.degrees(hit[1]):.0f} deg, at {hit[0].round(2).tolist()}")
     # Roads: a run over one keeps HEADROOM clear above it, or passes under it in a culvert; no unit stands on it.
     for rd in [l for l in lay["links"] if l.get("kind") == "road" and l.get("width")]:
         P = path_of(rd)
