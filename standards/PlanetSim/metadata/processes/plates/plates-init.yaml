@@ -87,6 +87,15 @@ writes:
   field: planet-field.hotspot-position
   unit: '1'
   meaning: fixed in the mantle frame
+- name: w.xtop
+  field: planet-field.particle-rock-top
+  unit: '1'
+- name: w.xbase
+  field: planet-field.particle-rock-base
+  unit: '1'
+- name: w.xcover
+  field: planet-field.particle-rock-cover
+  unit: m
 params:
 - name: PLATES
   env: SIM_PLATES

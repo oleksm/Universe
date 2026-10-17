@@ -1,14 +1,10 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.ore-fertility
   name: Mineral-system fertility and ore depth
-  about: 'Per crust particle and per mineral system (geology.SYSTEMS, 22 of them), a fertility (0-1: chance the forming event
-    acted) and the depth of the ore top below the surface. `fertilise` adds an independent chance g: f = 1 − (1 − f0)(1 −
-    g), and the depth becomes the chance-weighted mean of the old depth and the system''s formation depth (or a given depth).
-    Called by every plate event that makes ore (see `events`). Survival is then a window: burial deepens ore, erosion raises
-    it and destroys it once eroded past its body height — why porphyries are young and greenstone gold old (Kesler & Wilkinson
-    2008).'
+  about: 'Per crust particle and per mineral system (geology.SYSTEMS, 22 of them), a fertility (0-1: chance the forming event acted) and the depth of the ore top below the surface. `fertilise` adds an independent chance g: f = 1 − (1
+    − f0)(1 − g), and the depth becomes the chance-weighted mean of the old depth and the system''s formation depth (or a given depth). Called by every plate event that makes ore (see `events`). Survival is then a window: burial deepens
+    ore, erosion raises it and destroys it once eroded past its body height — why porphyries are young and greenstone gold old (Kesler & Wilkinson 2008).'
 area: geology
 clock:
   when: at each plate event (plate step, default 5 Myr); kimberlites once at the end of plates.run
@@ -42,20 +38,18 @@ params:
 - name: KOMATIITE_MANTLE_K
   value: 1648.0
   unit: K
-  meaning: 'new crust is greenstone (komatiite) while the interior''s mantle is above this (calibrated: model Earth crosses
-    it 2.5 Gyr ago)'
+  meaning: 'new crust is greenstone (komatiite) while the interior''s mantle is above this (calibrated: model Earth crosses it 2.5 Gyr ago)'
   source: src/planet_sim/stages/geology.py:112
 - name: OXYGENATION_GYR
-  value: 2.15
-  unit: '1'
+  value: 6.78488e+16
+  unit: s
   said_as:
-    unit: 's: 6.78488e+16 (code: Gyr after formation)'
-    factor: 1.0
+    unit: Gyr after formation
+    factor: 2.15
   open: true
   meaning: 'time the air oxygenates (ASSUMED, Earth''s GOE ~2.4 Ga; life not simulated): before, shelf sediment is iron formation'
   source: src/planet_sim/stages/geology.py:115
-  note: 'assumed constant, not from a biosphere; unit as the code says it: ''s: 6.78488e+16 (code: Gyr after formation)'';
-    SI conversion unverified'
+  note: 'assumed constant, not from a biosphere; unit as the code says it: ''s: 6.78488e+16 (code: Gyr after formation)''; SI conversion unverified'
 - name: CARBONATE_LAT
   value: 32.0
   unit: deg
@@ -74,8 +68,7 @@ params:
 - name: COLLISION_GOLD_SOURCE
   value: 0.6
   unit: '1'
-  meaning: orogenic gold chance where the top unit is mafic/sedimentary (greenstone, arc volcanics, ophiolite, clastic, BIF,
-    rift, MORB)
+  meaning: orogenic gold chance where the top unit is mafic/sedimentary (greenstone, arc volcanics, ophiolite, clastic, BIF, rift, MORB)
   source: src/planet_sim/stages/geology.py:124
 - name: TIN_THICK
   value: 48000.0
@@ -221,8 +214,7 @@ depends_on:
 backends:
 - cpu
 implementations:
-- where: planet-sim-landform src/planet_sim/stages/geology.py:mix (161-163), fertilise (200-210); applied in stages/plates.py
-    lines 620-693, 1059, 1073-1093, 1144-1158, 1181-1187, 1240-1254, 1460-1461
+- where: planet-sim-landform src/planet_sim/stages/geology.py:mix (161-163), fertilise (200-210); applied in stages/plates.py lines 620-693, 1059, 1073-1093, 1144-1158, 1181-1187, 1240-1254, 1460-1461
   state: reference
 status: draft
 basis:
@@ -232,5 +224,4 @@ basis:
   - reads
   - writes
   tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
-    from the code at planet-sim-landform 9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read from the code at planet-sim-landform 9747f0d-c437724.'

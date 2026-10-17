@@ -40,6 +40,19 @@ reads:
   unit: '1'
 - name: h.column('t_mantle_k')
   meaning: 'geology: new crust''s rock (not ported)'
+- name: w.xtop
+  field: planet-field.particle-rock-top
+  unit: '1'
+- name: w.xbase
+  field: planet-field.particle-rock-base
+  unit: '1'
+- name: w.xcover
+  field: planet-field.particle-rock-cover
+  unit: m
+- name: h.column('t_mantle_k')
+  field: planet-field.mantle-temperature
+  unit: K
+  meaning: new crust greenstone while the mantle is hot
 writes:
 - name: w.xfloor
   field: planet-field.particle-floor-thickness
@@ -54,6 +67,15 @@ writes:
 - name: w.volc['arc_last']
   field: planet-field.arc-last-active
   unit: s
+- name: w.xtop
+  field: planet-field.particle-rock-top
+  unit: '1'
+- name: w.xbase
+  field: planet-field.particle-rock-base
+  unit: '1'
+- name: w.xcover
+  field: planet-field.particle-rock-cover
+  unit: m
 params:
 - name: ARC_WIDTH
   value: 250000.0

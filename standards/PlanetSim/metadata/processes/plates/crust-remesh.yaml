@@ -126,6 +126,8 @@ writes:
 events_emitted:
 - event: planet-event.relief-reanchor
   where: stages/plates.py:941
+- event: planet-event.ledger-row
+  where: 'forge: the continental volume this process made or removed this step (the Python''s ledger rows)'
 params:
 - name: REMESH_MYR
   value: 1577880000000000.0

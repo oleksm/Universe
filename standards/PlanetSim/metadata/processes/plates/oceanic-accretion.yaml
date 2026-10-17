@@ -13,6 +13,15 @@ reads:
 - name: w.xcont
   field: planet-field.particle-continental
   unit: '1'
+- name: w.xtop
+  field: planet-field.particle-rock-top
+  unit: '1'
+- name: w.xbase
+  field: planet-field.particle-rock-base
+  unit: '1'
+- name: w.xcover
+  field: planet-field.particle-rock-cover
+  unit: m
 writes:
 - name: w.xcont
   field: planet-field.particle-continental
@@ -22,6 +31,15 @@ writes:
   unit: m3
 - name: w.xbase
   meaning: geology (not ported)
+- name: w.xtop
+  field: planet-field.particle-rock-top
+  unit: '1'
+- name: w.xbase
+  field: planet-field.particle-rock-base
+  unit: '1'
+- name: w.xcover
+  field: planet-field.particle-rock-cover
+  unit: m
 params:
 - name: ACCRETE
   env: SIM_ACCRETE
@@ -51,3 +69,6 @@ basis:
   - writes
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'
+events_emitted:
+- event: planet-event.ledger-row
+  where: 'forge: the continental volume this process made or removed this step (the Python''s ledger rows)'

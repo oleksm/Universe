@@ -33,6 +33,15 @@ reads:
 - name: sank
   field: planet-field.particle-sunk
   unit: '1'
+- name: w.xtop
+  field: planet-field.particle-rock-top
+  unit: '1'
+- name: w.xbase
+  field: planet-field.particle-rock-base
+  unit: '1'
+- name: w.xcover
+  field: planet-field.particle-rock-cover
+  unit: m
 writes:
 - name: w.x
   field: planet-field.particle-position
@@ -77,6 +86,15 @@ writes:
 - name: sank (cleared)
   field: planet-field.particle-sunk
   unit: '1'
+- name: w.xtop
+  field: planet-field.particle-rock-top
+  unit: '1'
+- name: w.xbase
+  field: planet-field.particle-rock-base
+  unit: '1'
+- name: w.xcover
+  field: planet-field.particle-rock-cover
+  unit: m
 params:
 - name: GAP
   value: 0.75
@@ -152,3 +170,6 @@ basis:
   - writes
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'
+events_emitted:
+- event: planet-event.ledger-row
+  where: 'forge: the continental volume this process made or removed this step (the Python''s ledger rows)'

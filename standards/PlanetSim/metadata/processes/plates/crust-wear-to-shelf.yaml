@@ -27,6 +27,15 @@ reads:
   unit: m
 - name: w.xtop, w.xbase, w.xcover
   meaning: 'erodibility (geology; not ported: mean erodibility)'
+- name: w.xtop
+  field: planet-field.particle-rock-top
+  unit: '1'
+- name: w.xbase
+  field: planet-field.particle-rock-base
+  unit: '1'
+- name: w.xcover
+  field: planet-field.particle-rock-cover
+  unit: m
 writes:
 - name: w.xvol
   field: planet-field.particle-volume
@@ -36,6 +45,15 @@ writes:
   unit: m
 - name: geology/organics
   meaning: not ported
+- name: w.xtop
+  field: planet-field.particle-rock-top
+  unit: '1'
+- name: w.xbase
+  field: planet-field.particle-rock-base
+  unit: '1'
+- name: w.xcover
+  field: planet-field.particle-rock-cover
+  unit: m
 params:
 - name: ERODE_ABOVE
   env: SIM_ERODE_ABOVE

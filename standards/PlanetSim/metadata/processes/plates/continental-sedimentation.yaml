@@ -1,23 +1,58 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.continental-sedimentation
   name: Platform and basin sediment on continents (record only)
-  about: 'Flooded continent lays PLATFORM_M_PER_MYR*every*dt*clip(depth/200 m, 0, 1). Land basins: coupled era - the rivers''
-    deposits; else the eroded supply smoothed BASIN_REACH times over neighbours, BASIN_SHARE of it laid on low land (< BASIN_BELOW
-    above sea) x (1-above/BASIN_BELOW). Limited to room: 2.5 x sea depth ((rho_m-rho_w)/(rho_m-rho_s)) or BASIN_FILL on land,
-    minus existing sediment cover. _deposit lays units (iron formation / carbonate in warm marine within 100 m of sea / clastic),
-    evaporites in the arid band, manganese in the oxygenation window. A rock-unit record only: it adds no crust volume. Organics
-    are buried and heated.'
+  about: 'Flooded continent lays PLATFORM_M_PER_MYR*every*dt*clip(depth/200 m, 0, 1). Land basins: coupled era - the rivers'' deposits; else the eroded supply smoothed BASIN_REACH times over neighbours, BASIN_SHARE of it laid on low
+    land (< BASIN_BELOW above sea) x (1-above/BASIN_BELOW). Limited to room: 2.5 x sea depth ((rho_m-rho_w)/(rho_m-rho_s)) or BASIN_FILL on land, minus existing sediment cover. _deposit lays units (iron formation / carbonate in warm
+    marine within 100 m of sea / clastic), evaporites in the arid band, manganese in the oxygenation window. A rock-unit record only: it adds no crust volume. Organics are buried and heated.'
 area: plates
 clock:
   when: with each denudation pass
 reads:
 - name: lost, z_, sea_
   unit: m
+- name: w.xtop
+  field: planet-field.particle-rock-top
+  unit: '1'
+- name: w.xbase
+  field: planet-field.particle-rock-base
+  unit: '1'
+- name: w.xcover
+  field: planet-field.particle-rock-cover
+  unit: m
+- name: lost
+  field: planet-field.denuded
+  unit: m
+- name: z_
+  field: planet-field.height-above-ridge
+  unit: m
+- name: sea_
+  field: planet-field.sea-level
+  unit: m
+- name: w.kind
+  field: planet-field.crust-kind
+  unit: '1'
+- name: w.x
+  field: planet-field.particle-position
+  unit: '1'
+- name: w.xcont
+  field: planet-field.particle-continental
+  unit: '1'
+- name: (coupled era) the rivers' deposits
+  field: planet-field.laid
+  unit: m
 writes:
 - name: w.xtop, w.xcover, w.xfert, w.xdep, w.xorg...
   field: planet-field.organic-carbon
+- name: w.xtop
+  field: planet-field.particle-rock-top
+  unit: '1'
+- name: w.xbase
+  field: planet-field.particle-rock-base
+  unit: '1'
+- name: w.xcover
+  field: planet-field.particle-rock-cover
+  unit: m
 params:
 - name: PLATFORM_M_PER_MYR
   value: 6.33761756280579e-13
@@ -73,6 +108,22 @@ params:
   unit: m
   meaning: 'unverified: the code names it evaporite e-fold without saying what it is'
   source: stages/plates.py:687
+- name: COUPLED
+  env: SIM_COUPLED
+  setting: 'False'
+  meaning: 'landform line: run the coupled surface step (stages/coupled.py) in the last COUPLE_FROM_MYR'
+  source: stages/plates.py:136
+  note: 'env ''1'' -> True; default ''0''; unit: bool'
+- name: COUPLE_FROM_MYR
+  env: SIM_COUPLE_FROM_MYR
+  value: 2.209032e+16
+  unit: s
+  said_as:
+    unit: Myr before the end
+    factor: 700.0
+  meaning: the coupled era starts when (end - t) <= this; also gates SIM_LAND_SHARE (late) and the snapshot save
+  source: stages/plates.py:139
+  note: 'owner 16 Oct: weathering, rivers and history from the fifth checkpoint (700 Ma) on'
 random_draws:
 - none
 invariants:
@@ -92,5 +143,7 @@ basis:
   - reads
   - writes
   tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
-    code at planet-sim-landform 9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'
+events_emitted:
+- event: planet-event.ledger-row
+  where: 'forge: what the step laid (a rock record, no volume)'

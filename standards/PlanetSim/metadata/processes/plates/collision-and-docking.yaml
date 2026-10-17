@@ -48,6 +48,15 @@ reads:
   field: planet-field.particle-sunk
   unit: '1'
   meaning: obduction leaves the sunk out
+- name: w.xtop
+  field: planet-field.particle-rock-top
+  unit: '1'
+- name: w.xbase
+  field: planet-field.particle-rock-base
+  unit: '1'
+- name: w.xcover
+  field: planet-field.particle-rock-cover
+  unit: m
 writes:
 - name: w.xcont
   field: planet-field.particle-continental
@@ -78,6 +87,15 @@ writes:
   unit: s
 - name: geology fields
   meaning: not ported
+- name: w.xtop
+  field: planet-field.particle-rock-top
+  unit: '1'
+- name: w.xbase
+  field: planet-field.particle-rock-base
+  unit: '1'
+- name: w.xcover
+  field: planet-field.particle-rock-cover
+  unit: m
 events_emitted:
 - event: planet-event.relief-collision
   where: stages/plates.py:1107

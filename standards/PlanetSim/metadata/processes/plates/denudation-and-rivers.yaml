@@ -56,6 +56,15 @@ reads:
   field: planet-field.river-change-time
 - name: cs[...] (the memory on the samples)
   field: planet-field.lake-mark
+- name: w.xtop
+  field: planet-field.particle-rock-top
+  unit: '1'
+- name: w.xbase
+  field: planet-field.particle-rock-base
+  unit: '1'
+- name: w.xcover
+  field: planet-field.particle-rock-cover
+  unit: m
 writes:
 - name: w.xvol
   field: planet-field.particle-volume
@@ -90,6 +99,19 @@ writes:
 - name: w.xmem (each particle takes its sample's)
   field: planet-field.particle-lake-mark
   unit: '1'
+- name: w.xtop
+  field: planet-field.particle-rock-top
+  unit: '1'
+- name: w.xbase
+  field: planet-field.particle-rock-base
+  unit: '1'
+- name: w.xcover
+  field: planet-field.particle-rock-cover
+  unit: m
+- name: lost
+  field: planet-field.denuded
+  unit: m
+  meaning: for the basins (continental-sedimentation)
 params:
 - name: SEA_EVERY
   value: 20.0

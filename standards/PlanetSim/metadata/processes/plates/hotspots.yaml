@@ -20,6 +20,15 @@ reads:
   unit: '1'
 - name: dt
   unit: s
+- name: w.xtop
+  field: planet-field.particle-rock-top
+  unit: '1'
+- name: w.xbase
+  field: planet-field.particle-rock-base
+  unit: '1'
+- name: w.xcover
+  field: planet-field.particle-rock-cover
+  unit: m
 writes:
 - name: w.xfloor
   field: planet-field.particle-floor-thickness
@@ -33,9 +42,20 @@ writes:
   unit: s
 - name: w.xtop, w.xcover, w.xfert, w.xdep
   meaning: geology (not ported)
+- name: w.xtop
+  field: planet-field.particle-rock-top
+  unit: '1'
+- name: w.xbase
+  field: planet-field.particle-rock-base
+  unit: '1'
+- name: w.xcover
+  field: planet-field.particle-rock-cover
+  unit: m
 events_emitted:
 - event: planet-event.relief-hotspots
   where: stages/plates.py:1189
+- event: planet-event.ledger-row
+  where: 'forge: the continental volume this process made or removed this step (the Python''s ledger rows)'
 params:
 - name: HOTSPOT_RATE
   value: 6.33761756280579e-12
