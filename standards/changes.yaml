@@ -123,7 +123,7 @@
 - { record: building.builders-yard, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "33a4ad3ff540eed3" }
 - { record: building.bunkhouse, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "999765a01d81fa23" }
 - { record: building.care-home, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "c938f3ff23a867f6" }
-- { record: building.clinic, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "f2af397f5157d52e" }
+- { record: building.clinic, at: "2026-10-17T21:04:25Z", status: draft, summary: "changed: visual", sha: "3525d89e9f388b8c" }
 - { record: building.college, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "2512828c1ef20ccd" }
 - { record: building.courthouse, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "280ce7d4ce927369" }
 - { record: building.depot, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "7a0e9e2057aab87d" }

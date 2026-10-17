@@ -20,6 +20,12 @@ staff:
 built_of:
   - { item: good.concrete, quantity: 623760 }
   - { item: material.structural-steel-a36, quantity: 34740 }
+visual:
+  format: "freefall-model/1"
+  path: "models/clinic/v1"
+  manifest_sha256: "dd3ce7064baecefd3b49a514526f390d1e38bb2c7e7b2d15590238eb2bd2e41c"
+  version: 1
+  triangles: 5184
 life: 1577880000
 basis:
   - { of: [meets, staff], tier: derived, source: "standards/sources/research_people_needs.json", note: "Four doctors at one to 290 people, with nurses in the same measure (one to 106): the rich countries' average." }
