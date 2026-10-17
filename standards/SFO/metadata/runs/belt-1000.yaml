@@ -4,7 +4,7 @@ identity: {key: run.belt-1000, name: 'Belt conveyor, 1000 mm', description: 'An 
 kind: belt
 size: 1.0
 outside: [1.6, 1.0]
-rating: {rate: 49.7}
+rating: {rate: 416.7}
 per_m:
   mass: 113.9
   built_of:

@@ -52,6 +52,8 @@ properties:
         unit: { type: string, x-ref: [unit] }
         rides: { type: string, description: "The link it runs on, by its name." }
         at: { $ref: "#/definitions/point" }
+        range: { type: array, minItems: 2, maxItems: 2, items: { $ref: "#/definitions/point" }, description: "The two farthest places it stands along its link (its `at` reference point), when it does not run the link's whole length. A fit check sweeps it between them." }
+        straddles: { type: array, items: { type: string }, description: "Runs that pass through it by design, by name (the yard belt through a stacker's tripper, which rides on it)." }
   ports:
     description: "The layout's own ports, at its edge: what comes in from and goes out to other layouts or the site (SFO 25). A layout is a unit one level up: two layouts join port to port."
     type: array

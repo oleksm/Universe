@@ -13,6 +13,31 @@ built_of:
 holds: 100000.0
 needs: {power: 150000.0}
 ports:
+- id: ore-out
+  flow: out
+  medium: bulk
+  item: good.iron-ore
+  rate: 416.7
+  interface: interface.belt-transfer-1400
+  half: male
+  make: open
+  connector: connector.belt-transfer-1400
+  at: [0.0, 0.0, -4.4]
+  facing: [0.0, 0.0, -1.0]
+  note: the apron feeder's discharge in the pit, onto the hopper belt's tail 0.4 m under it
+- id: power-in
+  flow: in
+  medium: power
+  power: 150000.0
+  voltage: 400
+  interface: interface.termination-400v-120mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-120mm2
+  at: [-6.0, 3.0, 1.0]
+  facing: [-1.0, 0.0, 0.0]
+  note: the feeder's drive, on the deck's west edge, clear of the trucks' lane from -y
+  current: 240.6
 - id: base
   flow: out
   medium: load
@@ -25,7 +50,10 @@ ports:
   note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.truck-dump-hopper
 envelope:
-- [-6.052, -5.152, -6.001, 6.052, 5.152, 2.001]
+- [-6.052, -5.152, -6.001, 0.0, 5.152, 2.001]
+- [0.0, -5.152, -1.2, 6.052, 5.152, 2.001]
+- [0.0, -5.152, -6.001, 6.052, -1.45, -1.2]
+- [0.0, 1.45, -6.001, 6.052, 5.152, -1.2]
 life: 788940000
 visual: {format: freefall-model/1, path: models/truck-dump-hopper/v2, manifest_sha256: 8b26fae88ef7ef55e55cf8410f67efe360e4bc962ba1dd66808f93404b1947c4, version: 2, triangles: 6952}
 basis:
@@ -37,5 +65,9 @@ basis:
   tier: invented
   review: true
   note: From memory.
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage.'
 - of: [life]
   rule: rule.life-plant

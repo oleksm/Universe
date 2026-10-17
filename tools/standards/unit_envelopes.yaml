@@ -323,8 +323,11 @@ unit.top-gas-scrubber:
 - [-4.302, -4.302, 17.919, 4.302, 4.302, 23.001]
 - [-6.002, -4.451, -0.001, 6.001, 6.002, 21.602]
 - [-4.302, -4.302, 0.398, 4.302, 4.302, 21.602]
-unit.truck-dump-hopper:
-- [-6.052, -5.152, -6.001, 6.052, 5.152, 2.001]
+unit.truck-dump-hopper:     # (its east half's underside open for the belt through the east portal, as blender's yard belt fit found it, candidate v02: to measure)
+- [-6.052, -5.152, -6.001, 0.0, 5.152, 2.001]
+- [0.0, -5.152, -1.2, 6.052, 5.152, 2.001]
+- [0.0, -5.152, -6.001, 6.052, -1.45, -1.2]
+- [0.0, 1.45, -6.001, 6.052, 5.152, -1.2]
 unit.vacuum-degasser-80t:
 - [-6.001, -4.652, -6.001, 5.902, 4.976, 2.702]
 unit.water-treatment:

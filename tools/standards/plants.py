@@ -2181,6 +2181,16 @@ def yard_units():
     return out
 
 
+def yard_ports(us):
+    """Ports on the yards' fixed units (SFO 25)."""
+    lv = lambda w: kit.termination(400, kit.area_for(amps(w, 400)))
+    h = us["truck-dump-hopper"]
+    h["ports"] = [
+        port("ore-out", "out", "bulk", kit.belt_transfer(1.4), (0.0, 0.0, -4.4), (0, 0, -1), item="good.iron-ore", rate=1500e3 / 3600, note="the apron feeder's discharge in the pit, onto the hopper belt's tail 0.4 m under it"),
+        port("power-in", "in", "power", lv(h["needs"]["power"]), (-6.0, 3.0, 1.0), (-1, 0, 0), power=h["needs"]["power"], voltage=400, note="the feeder's drive, on the deck's west edge, clear of the trucks' lane from -y"),
+    ]
+
+
 def ore_yard_air(us, recs):
     """The ore yard on a world with air: two stockpile beds either side of a stacker-reclaimer's rail."""
     hold = omod["capacity"]["holds"]
@@ -2193,28 +2203,44 @@ def ore_yard_air(us, recs):
     tail = xm - (recs["yard-tripper-1500th"]["physical"]["length"] - 2.0)
     x_lv = tail - 2.0
     z_tail, ramp = -4.4, 14.0
-    x_h = r(x_lv - (1.0 - z_tail) / math.tan(math.radians(ramp)), 3)
+    x_h = r(x_lv - (1.5 - z_tail) / math.tan(math.radians(ramp)), 3)      # (the hopper belt's head 0.5 m over the level yard belt)
     x_rail = r(xm - 32.0)
     bays = [{"id": "H", "mount": "plant-mount.bay-s2", "unit": "unit.truck-dump-hopper", "at": [x_h, 0.0, 0.0], "note": "west of the rail, its feeder in a pit onto the yard belt; trucks back onto its deck from -y"}]
     gauge_y = 0.0
     beds_y = (base / 2 + 8.0)
     links = [
         link("rail", "machine rail", (x_rail, 0.0, 0.0), (r(-x0 + 10), 0.0, 0.0), A36, 33840.3 / 144.7, None, "two A120 crane rails (120 mm head, about 117 kg/m as measured on blender's layout) at 10 m gauge on a concrete bed: each of the machine's 16 wheels of 1.2 m puts about 290 kN on its rail, against about 640 kN a 120 mm head takes under a 1.2 m wheel (5.6 N/mm2 times its 96 mm of flat head times the diameter, from memory)"),
-        link("conveyor", "yard belt", (x_h, 0.0, z_tail), (r(-x0 + 20), 0.0, 1.0), A36, 110.0, 400000.0, f"a 1.4 m reversible belt (its mass a metre the belt's two strands and idlers, from memory; its stringers and stands are in the ground) between the rails, with the machine's tripper on it: ore from the hopper to the machine stacking, from the machine to the out belt reclaiming. Its tail 0.4 m under the feeder's outlet, out of the pit through an opening in its east wall and up at {ramp:g} degrees to 1 m, then level from x {x_lv:.1f}, where the tripper's tail lies with the machine at its west limit (x {xm:.1f})", via=[(r(x_lv), 0.0, 1.0)]),
-        link("conveyor", "out belt", (r(-x0 + 20.7), 0.0, 0.6), (r(-x0 + 80), 0.0, 1.0), A36, 80.0, 100000.0, "a 1 m belt (belt and idlers a metre, from memory) to the pellet plant's ore belt, beyond the layout: its tail 0.4 m under the yard belt's head, fed by a short chute narrowing 1.4 m to 1 m, then up to 1 m", via=[(r(-x0 + 24.7), 0.0, 1.0)]),
-        link("pipe", "dust sprays, north", (r(x0 - 2), beds_y + base / 2 + 2, 1.0), (r(-x0), beds_y + base / 2 + 2, 1.0), A36, math.pi * 0.1 * 0.004 * RHO["steel"], None, "100 mm along the north bed's outer edge, spraying water to keep the dust down, fed at its west end from the yard's water, beyond the layout"),
-        link("pipe", "dust sprays, south", (r(x0 - 2), -(beds_y + base / 2 + 2), 1.0), (r(-x0), -(beds_y + base / 2 + 2), 1.0), A36, math.pi * 0.1 * 0.004 * RHO["steel"], None, "100 mm along the south bed's outer edge, the same; neither crosses the rails or the belt"),
+    ]
+    ore = 1500e3 / 3600
+    w_spray = kit.pipe(0.1, 10, liquid=True, temp=303.0)
+    x_e = r(-x0 + 80)
+    edge = [port("ore-out", "out", "bulk", kit.belt_transfer(1.0), (x_e, 0.0, 1.0), (0, 0, 1), item="good.iron-ore", rate=ore, note="the pellet plant's ore belt, beyond the layout: the out belt's head 3 m over its hopper"),
+            port("lv-hopper", "in", "power", recs["truck-dump-hopper"]["ports"][1]["connector"], (r(x_h - 12.0), 3.0, 1.0), (1, 0, 0), power=recs["truck-dump-hopper"]["needs"]["power"], voltage=400, note="the site's 400 V distribution")]
+    edge += [port(f"water-{sd}", "in", "liquid", kit._recs[w_spray]["connector"], (r(x0 - 4), sg * (beds_y + base / 2 + 2), 1.0), (1, 0, 0), item="good.water", rate=0.1, pressure=4e5, temperature=293.0, note="the yard's water, for the dust sprays (invented)") for sd, sg in (("north", 1), ("south", -1))]
+    L = lambda *a: kit_link(*a[:4], bays, recs, edge, *a[4:])
+    links += [
+        L("hopper belt", kit.belt(1.4, ore), ("H:ore-out", "onto:yard belt"), [None, (r(x_lv), 0.0, 1.5)], (), 1, 150000.0,
+          f"1.4 m, from the feeder in the pit east up its trench at about {math.degrees(math.atan2(1.5 - z_tail, x_lv - x_h)):.0f} degrees (iron ore's steepest on a plain belt, from memory) to its head over the yard belt's tail"),
+        L("yard belt", kit.belt(1.4, ore), ("cap", "onto:out belt"), [(r(x_lv - 2.0), 0.0, 1.0), (r(-x0 + 20), 0.0, 1.0)], (), 1, 250000.0,
+          "1.4 m, level between the rails, the machine's tripper riding on it: the hopper's ore to the machine stacking, the machine's to the out belt reclaiming; its tail under the hopper belt's head"),
+        L("out belt", kit.belt(1.0, ore), ("cap", "edge:ore-out"), [(r(-x0 + 20), 0.0, 0.5), None], (), 1, 100000.0, "1 m, rising gently from under the yard belt's head to the pellet plant's"),
+        L("hopper supply", kit.cable(400, kit.area_for(amps(recs["truck-dump-hopper"]["needs"]["power"], 400))), ("edge:lv-hopper", "H:power-in"), [None, None]),
+        L("dust sprays, north", w_spray, ("edge:water-north", "cap"), [None, (r(-x0), beds_y + base / 2 + 2, 1.0)], (), 1, None, "100 mm along the north bed's outer edge, spraying water to keep the dust down; it crosses neither the rails nor the belt"),
+        L("dust sprays, south", w_spray, ("edge:water-south", "cap"), [None, (r(-x0), -(beds_y + base / 2 + 2), 1.0)], (), 1, None, "the same, along the south bed"),
+    ]
+    links += [
         link("road", "truck approach", (x_h - 2.0, -(beds_y + base / 2 + 2), 0.0), (x_h - 2.0, -5.6, 0.0), CONC, 7.0 * 0.3 * RHO["concrete"], None, "7 m wide, paved 0.3 m: trucks from the port turn and back north onto the hopper's deck, centred on its mouth (local x -2, between the wheel stops at -4.5 and 0.5); it ends at the pit's south edge and covers the gap there", width=7.0),
     ]
-    mobile = [{"unit": "unit.stacker-reclaimer-1500th", "rides": "machine rail", "at": [0.0, 0.0, 0.0]},
-              {"unit": "unit.yard-tripper-1500th", "rides": "machine rail", "at": [0.0, 0.0, 0.0]}]
+    reach = [[r(xm), 0.0, 0.0], [r(-x0 - 2.0), 0.0, 0.0]]       # (from stacking the bed's west end to its east end)
+    mobile = [{"unit": "unit.stacker-reclaimer-1500th", "rides": "machine rail", "at": [0.0, 0.0, 0.0], "range": reach, "straddles": ["yard belt"]},
+              {"unit": "unit.yard-tripper-1500th", "rides": "machine rail", "at": [0.0, 0.0, 0.0], "range": reach, "straddles": ["yard belt"]}]
     ground = [
         {"what": "Rail bed", "item": CONC, "volume": 231.46, "note": "two strips 1 m wide and 0.8 m deep under the rails; measured on blender's layout (candidate v01)"},
         {"what": "Hopper pit", "item": CONC, "volume": 200.36, "note": "6 m deep under the hopper, 13 x 11.2 m inside (the hopper's feet reach y -5.15 and 5.15), 0.4 m walls, the east wall open 2 x 2 m for the yard belt; the hopper's deck bridges its top; measured on blender's layout (candidate v01)"},
         {"what": "Pit apron", "item": CONC, "volume": 7.68, "note": "a 0.3 m slab, its top at grade, bridging the 0.5 to 0.6 m between the pit's walls and the hopper's 12 x 10 m deck on the west, north and east, reinforcement not checked; a strip under the truck approach's end closes the south; measured on blender's layout (candidate v01)"},
         {"what": "Belt ramp trench", "item": CONC, "volume": 30.31, "note": "the yard belt's trench from the pit's east wall up to grade: floor 2.4 m wide, walls about 2.5 m deep on average, 0.3 m; measured on blender's layout (candidate v01)"},
         {"what": "Support footings", "item": CONC, "volume": 6.08, "note": "feet under the belts' stands, the return's seats, the spray posts and the transfer; measured on blender's layout (candidate v01)"},
-        {"what": "Belt and spray steel", "item": A36, "volume": r(32157.5 / RHO["steel"]), "note": "the belts' stringers, legs and crossbars, the return's stands under the tripper, roller and drum seats, the transfer hood, the trench guards and the spray posts; the belts, idlers' rolls, drums and drives are the links'; measured on blender's layout (candidate v01), 32,158 kg"},
+        {"what": "Tripper return stands, trench guards and spray posts", "item": A36, "volume": r(6000.0 / RHO["steel"]), "note": "what is left of the 32,158 kg of belt and spray steel measured on blender's layout (candidate v01) once the belts are runs (their stringers, trestles and transfers the runs'): about 6 t, invented, to measure again"},
         {"what": "Bed pads", "item": CONC, "volume": 1680.0, "note": f"two pads {bed_L:.0f} x {base:.0f} m, 0.2 m, at y -{beds_y:.0f} and {beds_y:.0f}, sloped to drains; measured on blender's layout (candidate v01)"},
     ]
     for g in ground:
@@ -2238,7 +2264,7 @@ def ore_yard_air(us, recs):
         "stands_for": "module.ore-yard",
         "site": {"atmosphere": "air", "gravity": [8.0, 11.0]},
         "physical": {"length": L, "width": W, "height": 20.0, "mass": r(total)},
-        "bays": bays, "mobile": mobile, "links": links, "ground": ground,
+        "bays": bays, "ports": edge, "mobile": mobile, "links": links, "ground": ground,
         "totals": {"rate": 0.0, "power": r(power), "heat": 0.0, "water": water, "mass": r(total), "against_module": against},
         "staff": omod.get("staff"),
         "basis": [{"of": ["bays", "links", "mobile"], "tier": "invented", "review": True, "note": "Laid out from memory of ore yards."},
@@ -4436,6 +4462,7 @@ def ore_yard_airless(us, recs):
     air, _ = ore_yard_air(us, recs)
     d = yaml.safe_load(yaml.safe_dump(air))
     d["links"] = [l for l in d["links"] if not l["name"].startswith("dust sprays")]
+    d["ports"] = [q for q in d["ports"] if not q["id"].startswith("water-")]
     for l in d["links"]:
         if l["item"] == CONC:
             l["item"], l["mass"] = SINTER, r(l["mass"] * RHO_SINTER / RHO["concrete"])
@@ -4807,6 +4834,7 @@ def main():
     arc_ports(us)
     ladle_ports(us)
     air_ports(us)
+    yard_ports(us)
     set_motions(us)
     complete_duties(us)
     prods = products(us)

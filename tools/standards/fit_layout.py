@@ -292,6 +292,9 @@ def check(lay, units, runs, conns):
         d_ = (b_ - a_) / np.linalg.norm(b_ - a_)
         at_ = np.array(m_["at"], float)
         off = at_ - a_ - ((at_ - a_) @ d_) * d_            # (where it stands across its rail)
+        if m_.get("range"):                                # (its reference point's farthest places along the rail, in place of the rail's ends)
+            ra, rb = (np.array(q, float) for q in m_["range"])
+            a_, b_ = a_ + ((ra - a_) @ d_) * d_, a_ + ((rb - a_) @ d_) * d_
         Lm, Wm, Hm = u["physical"]["length"], u["physical"]["width"], u["physical"]["height"]
         boxes = u.get("envelope") or [[-Lm / 2, -Wm / 2, 0.0, Lm / 2, Wm / 2, Hm]]
         swept = []
@@ -299,7 +302,7 @@ def check(lay, units, runs, conns):
             lo, hi = np.array(e_[:3], float), np.array(e_[3:], float)
             swept.append((np.minimum(a_ + off + lo, b_ + off + lo), np.maximum(a_ + off + hi, b_ + off + hi)))
         for l in links:
-            if l["name"] not in radius:
+            if l["name"] not in radius or l["name"] in m_.get("straddles", []):
                 continue
             pts = S_[l["name"]]
             rw, rh = half[l["name"]]
@@ -360,7 +363,16 @@ def check(lay, units, runs, conns):
         zr = float(P[:, 2].max())
         flat = lambda q: np.c_[q[:, :2], np.zeros(len(q))]
         Pf = flat(P)
-        plan = lambda q: np.min([seg_dist(flat(q), a, b) for a, b in zip(Pf, Pf[1:])], axis=0)
+        def plan(q):                                       # (across the road, square at its two ends: a road stops at its end, it is not rounded)
+            q = flat(q)
+            out = []
+            for k_, (a, b) in enumerate(zip(Pf, Pf[1:])):
+                ab = b - a
+                t = ((q - a) @ ab) / max(ab @ ab, 1e-12)
+                lo_, hi_ = (-np.inf if k_ > 0 else 0.0), (np.inf if k_ < len(Pf) - 2 else 1.0)
+                d = np.linalg.norm(q - (a + np.clip(t, 0.0, 1.0)[:, None] * ab), axis=1)
+                out.append(np.where((t >= lo_) & (t <= hi_), d, np.inf))
+            return np.min(out, axis=0)
         for l in links:
             if l["name"] not in radius:
                 continue
