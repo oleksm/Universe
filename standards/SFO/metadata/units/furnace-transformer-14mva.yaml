@@ -12,7 +12,7 @@ built_of:
 - {what: HV cable box, item: material.structural-steel-a36, mass: 230.3, note: '2 x 0.6 x 0.5 m, 6 mm, and its gland plate, over the three HV bushings (moved to 0.6 m pitch under it); measured on blender''s model v2 (2026-10-16)'}
 - {what: Cable box supports, item: material.structural-steel-a36, mass: 45.12, note: four hollow posts on the tank lid with their feet and heads; measured on blender's model v2 (2026-10-16)}
 - {what: Terminal extensions, item: material.structural-steel-a36, mass: 10.22, note: 'the HV terminals'' extensions through the box''s floor, drawn as steel; measured on blender''s model v2 (2026-10-16)'}
-- {what: Terminal sleeves, item: material.silicone-rubber, mass: 2.11, note: their insulating sleeves; measured on blender's model v2 (2026-10-16)}
+- {what: Terminal sleeves, item: material.silicon-carbide, mass: 2.11, note: 'their porcelain sleeves through the box''s floor, 0.000704 m3 at 3,000 kg/m3 (silicon carbide stands for the ceramic); measured on blender''s model v2 (2026-10-16)'}
 - {what: Cooler water stubs, item: material.structural-steel-a36, mass: 6.91, note: plain DN 100 stubs facing -x; measured on blender's model v2 (2026-10-16)}
 needs: {power: 68330.0, heat: 68330.0}
 ports:

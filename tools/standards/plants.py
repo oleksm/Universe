@@ -2716,7 +2716,7 @@ def ladle_ports(us):
         t["built_of"] = t["built_of"] + [part("HV cable box", A36, 230.35, f"2 x 0.6 x 0.5 m, 6 mm, and its gland plate, over the three HV bushings (moved to 0.6 m pitch under it); {m2}"),
                                          part("Cable box supports", A36, 45.12, f"four hollow posts on the tank lid with their feet and heads; {m2}"),
                                          part("Terminal extensions", A36, 10.22, f"the HV terminals' extensions through the box's floor, drawn as steel; {m2}"),
-                                         part("Terminal sleeves", "material.silicone-rubber", 2.11, f"their insulating sleeves; {m2}"),
+                                         part("Terminal sleeves", "material.silicon-carbide", 2.11, f"their porcelain sleeves through the box's floor, 0.000704 m3 at 3,000 kg/m3 (silicon carbide stands for the ceramic); {m2}"),
                                          part("Cooler water stubs", A36, 6.91, f"plain DN 100 stubs facing -x; {m2}")]
         t["desc"] += (f" Fed at 33 kV through a cable box over its HV bushings, its gland plate on top at (0, -0.45, {H_ + 0.5:g}); the secondary's bus joint (SFO 25, the phases 0.6 m apart) at (0, {W_ / 2:g}, {H_ * 2 / 3:.2f}) facing +y; its cooler's water in at (-{L_ / 2:g}, -0.3, 1) and out at (-{L_ / 2:g}, 0.3, 1), facing -x.")
         t["dims"] = (L_, W_, H_ + 0.5)
