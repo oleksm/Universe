@@ -4243,7 +4243,7 @@
 - { record: template.cable, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "882fe2318fed000e" }
 - { record: template.cable-flexible, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "e0eb15fead7d9f0d" }
 - { record: template.cable-reel, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "ef4c126e52c4de94" }
-- { record: template.camlock, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "f100a1c872c33703" }
+- { record: template.camlock, at: "2026-10-17T21:44:00Z", status: "", summary: "changed: visual", sha: "22bbade25d81925b" }
 - { record: template.chute, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "e667824e0f7b7e6c" }
 - { record: template.clamp-coupling, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "56041bc040721ee0" }
 - { record: template.collector, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "13c03b72d1e3930c" }
