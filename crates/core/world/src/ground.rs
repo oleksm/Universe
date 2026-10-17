@@ -11,6 +11,7 @@
 
 use glam::DVec3;
 use universe_physics::contact::{self, Contacts, Ground, MassProps, Strut};
+use universe_physics::laws::{FOOT_FRICTION, HULL_FRICTION};
 use universe_physics::{surface_radius_at, Collider, OnRails, RigidBody, Weld};
 
 use crate::events::ShipEvent;
@@ -25,8 +26,8 @@ pub const SETTLE_TIME: f64 = 1.0;
 /// Still: slower than this over the ground (m/s) and turning slower than this (rad/s).
 const STILL_SPEED: f64 = 0.05;
 const STILL_SPIN: f64 = 0.01;
-/// The hull strikes the ground faster than this (m/s): it is damaged.
-const STRIKE: f64 = 1.0;
+/// The hull strikes the ground faster than this (m/s): it is damaged (Dogma's law).
+const STRIKE: f64 = universe_physics::laws::HULL_CRUMPLE_SPEED;
 /// Off the ground this long (s): lifted off (told).
 const LIFTED: f64 = 0.3;
 /// Off the ground longer than this (s): flown, so coming down again is a landing.
@@ -64,7 +65,7 @@ pub fn struts(ship: &Ship) -> Vec<Strut> {
     if let Some(d) = &ship.devices
         && !d.fit.legs.is_empty()
     {
-        return d.fit.legs.iter().map(|l| Strut { foot: l.foot, holds: l.holds, stroke: l.stroke, sink_rate: l.sink_rate }).collect();
+        return d.fit.legs.iter().map(|l| Strut { foot: l.foot, holds: l.holds, stroke: l.stroke, sink_rate: l.sink_rate, spring: l.spring, damper: l.damper }).collect();
     }
     let spec = ship.spec();
     let legs = crate::legs::of_spec(spec);
@@ -88,7 +89,7 @@ pub fn struts(ship: &Ship) -> Vec<Strut> {
         Some(l) => (l.force / n, l.stroke * l.efficiency, l.designed),
         None => (3.0 * full / n, 0.5, 3.05),
     };
-    feet.into_iter().map(|foot| Strut { foot, holds, stroke, sink_rate: sink }).collect()
+    feet.into_iter().map(|foot| Strut { foot, holds, stroke, sink_rate: sink, spring: None, damper: None }).collect()
 }
 
 /// Its hull's contact points: the corners of its convex parts (its true
@@ -133,6 +134,280 @@ pub fn hull(ship: &Ship) -> std::sync::Arc<Vec<universe_physics::Sphere>> {
     h
 }
 
+/// What a ship is on the ground, worked out once for its design and fit
+/// (kept on the ship, made again when either changes): its legs and hull
+/// points, how far it reaches, the footprint it stands on. From it, without
+/// flying anything: the slope it tips over on, the slope it slides on, the
+/// hardest landing its legs take (see `Profile::max_sink`).
+#[derive(Debug)]
+pub struct Profile {
+    /// What it was made for: the design's address and its legs' fingerprint.
+    key: (usize, u64),
+    pub struts: Vec<Strut>,
+    pub hull: std::sync::Arc<Vec<universe_physics::Sphere>>,
+    /// The farthest any contact point is from its origin (m).
+    pub reach: f64,
+    /// How far below its origin it stands, upright on level ground (its feet, else its belly; m).
+    pub stand: f64,
+    /// What it stands on, seen from below (body x, z): its feet, else its
+    /// lowest hull corners; a convex polygon, anticlockwise.
+    pub footprint: Vec<glam::DVec2>,
+    /// Hardest landings already worked out, by (mass in thousandths, centre in 10 cm, gravity cm/s², broken legs).
+    sinks: std::sync::Mutex<Vec<(SinkKey, f64)>>,
+    /// Rest poses already worked out, by centre (10 cm).
+    rests: std::sync::Mutex<Vec<([i64; 3], Rest)>>,
+}
+
+/// (Mass in thousandths, centre in 10 cm, gravity cm/s², broken legs.)
+type SinkKey = (i64, [i64; 3], i64, u64);
+
+/// How a ship comes to rest on level ground, its centre of mass where it is
+/// (see `Profile::rest`): its tilt, how high its centre stands, and what it
+/// stands on then (ground x, z under its centre: a convex polygon).
+#[derive(Clone, Debug)]
+pub struct Rest {
+    pub tilt: glam::DQuat,
+    pub height: f64,
+    pub footprint: Vec<glam::DVec2>,
+}
+
+impl Profile {
+    fn of(ship: &Ship, key: (usize, u64)) -> Self {
+        let struts = struts(ship);
+        let hull = hull(ship);
+        let reach = struts.iter().map(|s| s.foot.length()).chain(hull.iter().map(|p| p.at.length() + p.radius)).fold(0.0, f64::max);
+        let (stand, feet): (f64, Vec<glam::DVec2>) = if struts.is_empty() {
+            // On its hull: its lowest corners, within a band widened (0.3 m,
+            // doubling) until they make a footprint of some size: a hull rests
+            // on its lowest face, near enough level.
+            let low = hull.iter().map(|p| p.radius - p.at.y).fold(0.0, f64::max);
+            let mut band = 0.3;
+            let lowest = |band: f64| convex(hull.iter().filter(|p| p.radius - p.at.y > low - band).map(|p| glam::DVec2::new(p.at.x, p.at.z)).collect());
+            while area(&lowest(band)) < 1.0 && band < reach {
+                band *= 2.0;
+            }
+            (low, lowest(band))
+        } else {
+            (struts.iter().map(|s| -s.foot.y).fold(0.0, f64::max), struts.iter().map(|s| glam::DVec2::new(s.foot.x, s.foot.z)).collect())
+        };
+        Self { key, struts, hull, reach, stand, footprint: convex(feet), sinks: Default::default(), rests: Default::default() }
+    }
+
+    /// How it comes to rest on level ground, its centre of mass at `com`
+    /// (body frame), on what it stands on (its feet, else its hull, taken as
+    /// rigid): the tilt, within 30 degrees of upright, that brings its centre
+    /// lowest, as a body settles. Worked out without flying; kept.
+    pub fn rest(&self, com: DVec3) -> Rest {
+        let key = [(com.x * 10.0).round() as i64, (com.y * 10.0).round() as i64, (com.z * 10.0).round() as i64];
+        if let Some((_, r)) = self.rests.lock().unwrap_or_else(|e| e.into_inner()).iter().find(|(k, _)| *k == key) {
+            return r.clone();
+        }
+        let points: Vec<DVec3> = if self.struts.is_empty() { self.hull.iter().map(|p| p.at - DVec3::Y * p.radius).collect() } else { self.struts.iter().map(|s| s.foot).collect() };
+        // Its centre's height over the ground, tilted by `q`: its lowest point on the ground.
+        let height = |q: glam::DQuat| -> f64 {
+            let low = points.iter().map(|p| (q * *p).y).fold(f64::INFINITY, f64::min);
+            (q * com).y - low
+        };
+        let tilt = |pitch: f64, roll: f64| glam::DQuat::from_rotation_x(pitch.to_radians()) * glam::DQuat::from_rotation_z(roll.to_radians());
+        // (By the degree, then by the tenth round the best.)
+        let mut best = (height(glam::DQuat::IDENTITY), 0.0, 0.0);
+        for pitch in (-30..=30).map(f64::from) {
+            for roll in (-30..=30).map(f64::from) {
+                let h = height(tilt(pitch, roll));
+                if h < best.0 - 1e-9 {
+                    best = (h, pitch, roll);
+                }
+            }
+        }
+        let (_, p0, r0) = best;
+        for dp in -10..=10 {
+            for dr in -10..=10 {
+                let (pitch, roll) = (p0 + f64::from(dp) * 0.1, r0 + f64::from(dr) * 0.1);
+                let h = height(tilt(pitch, roll));
+                if h < best.0 - 1e-9 {
+                    best = (h, pitch, roll);
+                }
+            }
+        }
+        let (h, q) = (best.0, tilt(best.1, best.2));
+        let low = points.iter().map(|p| (q * *p).y).fold(f64::INFINITY, f64::min);
+        let c = q * com;
+        let footprint = convex(points.iter().map(|p| q * *p).filter(|p| p.y < low + 0.05).map(|p| glam::DVec2::new(p.x - c.x, p.z - c.z)).collect());
+        let rest = Rest { tilt: q, height: h, footprint };
+        let mut memo = self.rests.lock().unwrap_or_else(|e| e.into_inner());
+        if memo.len() >= 8 {
+            memo.remove(0);
+        }
+        memo.push((key, rest.clone()));
+        rest
+    }
+
+    /// The steepest slope (rad) it stands on as it rests (`rest`), its centre
+    /// of mass at `com`, without tipping over what it stands on: the angle at
+    /// which its centre comes over the nearest edge.
+    pub fn tip_slope(&self, com: DVec3) -> f64 {
+        let r = self.rest(com);
+        let n = r.footprint.len();
+        if n < 3 {
+            return 0.0;
+        }
+        let mut inside = f64::INFINITY;
+        for k in 0..n {
+            let (a, b) = (r.footprint[k], r.footprint[(k + 1) % n]);
+            let edge = b - a;
+            inside = inside.min(edge.perp_dot(-a) / edge.length().max(1e-9));
+        }
+        if inside <= 0.0 || r.height <= 0.0 { 0.0 } else { (inside / r.height).atan() }
+    }
+
+    /// The steepest slope (rad) it stands on without sliding: its feet's grip (or its hull's).
+    pub fn slide_slope(&self) -> f64 {
+        if self.struts.is_empty() { HULL_FRICTION.atan() } else { FOOT_FRICTION.atan() }
+    }
+
+    /// The fastest it may come down (m/s) on ground of gravity `g` (m/s²),
+    /// `mass` kg with its centre at `com`, without a leg giving way: each
+    /// leg's spring and damper stopping its share (as the legs share its
+    /// weight standing: nearer the centre, more) before the force passes what
+    /// it holds or the leg runs out of stroke. Without legs, the hull's strike.
+    /// On the safe side: coming down, the body's pitch spreads the blow a
+    /// little (the flight finds legs holding up to about a tenth more).
+    pub fn max_sink(&self, mass: f64, com: DVec3, g: f64, broken: u64) -> f64 {
+        let legs: Vec<&Strut> = self.struts.iter().enumerate().filter(|(k, _)| *k >= 64 || broken & (1 << k) == 0).map(|(_, s)| s).collect();
+        if legs.is_empty() {
+            return STRIKE;
+        }
+        // (Within a thousandth of its mass and 10 cm of its centre: the same answer, near enough.)
+        let key = ((mass.max(1.0).ln() * 1000.0).round() as i64, [(com.x * 10.0).round() as i64, (com.y * 10.0).round() as i64, (com.z * 10.0).round() as i64], (g * 100.0).round() as i64, broken);
+        let mut memo = self.sinks.lock().unwrap_or_else(|e| e.into_inner());
+        if let Some((_, v)) = memo.iter().find(|(k, _)| *k == key) {
+            return *v;
+        }
+        let v = shares(&legs, com).iter().zip(&legs).map(|(share, s)| if *share <= 0.0 { f64::INFINITY } else { strut_limit(s, mass * share, g) }).fold(f64::INFINITY, f64::min);
+        // (A few kept: fuel burns and cargo shifts slowly.)
+        if memo.len() >= 8 {
+            memo.remove(0);
+        }
+        memo.push((key, v));
+        v
+    }
+
+    /// Will it come to rest standing, set down on ground of slope `slope`
+    /// (rad) and gravity `g` at `sink` m/s, its centre of mass at `com`?
+    pub fn stands(&self, mass: f64, com: DVec3, g: f64, slope: f64, sink: f64, broken: u64) -> bool {
+        sink <= self.max_sink(mass, com, g, broken) && slope <= self.tip_slope(com).min(self.slide_slope())
+    }
+}
+
+/// How `legs` (alike springs under a rigid body) share a weight whose
+/// centre is at `com`, standing level: each its fraction, the fractions
+/// summing to one and balancing about the centre (the least-squares plane
+/// of their loads; fewer than three legs, or in a line, alike).
+fn shares(legs: &[&Strut], com: DVec3) -> Vec<f64> {
+    let n = legs.len() as f64;
+    let (mut sx, mut sz, mut sxx, mut szz, mut sxz) = (0.0, 0.0, 0.0, 0.0, 0.0);
+    for s in legs {
+        let (x, z) = (s.foot.x, s.foot.z);
+        (sx, sz, sxx, szz, sxz) = (sx + x, sz + z, sxx + x * x, szz + z * z, sxz + x * z);
+    }
+    let m = glam::DMat3::from_cols(DVec3::new(n, sx, sz), DVec3::new(sx, sxx, sxz), DVec3::new(sz, sxz, szz));
+    if legs.len() < 3 || m.determinant().abs() < 1e-9 {
+        return vec![1.0 / n; legs.len()];
+    }
+    let abc = m.inverse() * DVec3::new(1.0, com.x, com.z);
+    legs.iter().map(|s| abc.x + abc.y * s.foot.x + abc.z * s.foot.z).collect()
+}
+
+/// The fastest a strut carrying `share` kg under `g` stops its share
+/// without passing what it holds or its stroke (m/s): its spring and damper
+/// run over the stroke, the speed found by halving.
+fn strut_limit(s: &Strut, share: f64, g: f64) -> f64 {
+    let (k, c) = (s.stiffness(), s.damping());
+    let holds_at = |v0: f64| -> bool {
+        let (mut x, mut v, h) = (0.0f64, v0, 1e-3);
+        for _ in 0..20_000 {
+            let f = k * x + c * v.max(0.0);
+            if f > s.holds || x > s.stroke {
+                return false;
+            }
+            v += (g - f / share) * h;
+            x += v * h;
+            if v <= 0.0 {
+                return true;
+            }
+        }
+        true
+    };
+    if !holds_at(0.0) {
+        return 0.0;
+    }
+    let (mut lo, mut hi) = (0.0, 50.0);
+    for _ in 0..30 {
+        let mid = 0.5 * (lo + hi);
+        if holds_at(mid) { lo = mid } else { hi = mid }
+    }
+    lo
+}
+
+/// The area of a convex polygon (m²).
+fn area(poly: &[glam::DVec2]) -> f64 {
+    (0..poly.len()).map(|k| poly[k].perp_dot(poly[(k + 1) % poly.len()])).sum::<f64>().abs() * 0.5
+}
+
+/// The convex hull of `points`, anticlockwise (Andrew's monotone chain).
+fn convex(mut points: Vec<glam::DVec2>) -> Vec<glam::DVec2> {
+    points.sort_by(|a, b| a.x.total_cmp(&b.x).then(a.y.total_cmp(&b.y)));
+    points.dedup_by(|a, b| a.distance_squared(*b) < 1e-6);
+    if points.len() < 3 {
+        return points;
+    }
+    let cross = |o: glam::DVec2, a: glam::DVec2, b: glam::DVec2| (a - o).perp_dot(b - o);
+    let mut hull: Vec<glam::DVec2> = Vec::new();
+    for pass in 0..2 {
+        let start = hull.len();
+        let it: Box<dyn Iterator<Item = &glam::DVec2>> = if pass == 0 { Box::new(points.iter()) } else { Box::new(points.iter().rev()) };
+        for &p in it {
+            while hull.len() >= start + 2 && cross(hull[hull.len() - 2], hull[hull.len() - 1], p) <= 0.0 {
+                hull.pop();
+            }
+            hull.push(p);
+        }
+        hull.pop();
+    }
+    hull
+}
+
+/// The ship's ground profile: kept on it, made again when its design or legs change.
+pub fn profile(ship: &mut Ship) -> std::sync::Arc<Profile> {
+    let key = profile_key(ship);
+    if let Some(p) = &ship.contact
+        && p.key == key
+    {
+        return p.clone();
+    }
+    let p = std::sync::Arc::new(Profile::of(ship, key));
+    ship.contact = Some(p.clone());
+    p
+}
+
+/// The ship's ground profile as it has it, or worked out now (not kept: a
+/// ship looked at, not flown).
+pub fn profile_of(ship: &Ship) -> std::sync::Arc<Profile> {
+    let key = profile_key(ship);
+    match &ship.contact {
+        Some(p) if p.key == key => p.clone(),
+        _ => std::sync::Arc::new(Profile::of(ship, key)),
+    }
+}
+
+fn profile_key(ship: &Ship) -> (usize, u64) {
+    let spec = ship.spec() as *const crate::ship::ClassSpec as usize;
+    let legs = ship.devices.as_ref().map_or(0u64, |d| {
+        d.fit.legs.iter().fold(d.fit.legs.len() as u64, |h, l| (h ^ l.foot.x.to_bits() ^ l.foot.y.to_bits().rotate_left(21) ^ l.foot.z.to_bits().rotate_left(42) ^ l.holds.to_bits() ^ l.spring.unwrap_or(0.0).to_bits().rotate_left(7) ^ l.damper.unwrap_or(0.0).to_bits().rotate_left(13)).wrapping_mul(0x100_0000_01b3))
+    });
+    (spec, legs)
+}
+
 /// What Dogma needs of the ship's mass.
 pub fn mass_props(ship: &Ship) -> MassProps {
     MassProps { mass: ship.mass(), com: ship.centre_of_mass(), inertia: ship.inertia() }
@@ -168,9 +443,8 @@ pub fn lands(rules: &Rules, i: usize) -> bool {
 pub struct Step {
     pub body: usize,
     pub mass: MassProps,
-    pub struts: Vec<Strut>,
-    /// Its hull's contact points (see `hull`).
-    pub hull: std::sync::Arc<Vec<universe_physics::Sphere>>,
+    /// Its ground profile (legs, hull points, reach).
+    pub profile: std::sync::Arc<Profile>,
     /// The spin the flight computer turned the ship by over the whole step
     /// (already taken): contact turns it by the rest.
     pub spin0: DVec3,
@@ -178,9 +452,9 @@ pub struct Step {
 }
 
 impl Step {
-    pub fn new(ship: &Ship, body: usize) -> Self {
+    pub fn new(ship: &mut Ship, body: usize) -> Self {
         let touching = ship.ground.clone().filter(|t| t.body == body).unwrap_or(Touching { body, ..Default::default() });
-        Self { body, mass: mass_props(ship), struts: struts(ship), hull: hull(ship), spin0: ship.angular_velocity, touching }
+        Self { body, mass: mass_props(ship), profile: profile(ship), spin0: ship.angular_velocity, touching }
     }
 
     /// One substep of `h` at `t`: the contacts' acceleration (world frame);
@@ -188,9 +462,9 @@ impl Step {
     pub fn apply(&mut self, bodies: &[Body], t: f64, positions: &[DVec3], rigid: &mut RigidBody, ship: &mut Ship, events: &mut Vec<ShipEvent>) -> DVec3 {
         let h = CONTACT_STEP;
         let i = self.body;
-        let c = contact::forces(&|p| Some(ground_at(bodies, i, t, positions, p)), rigid, &self.mass, &self.struts, &self.hull, ship.broken_legs, h);
+        let c = contact::forces(&|p| Some(ground_at(bodies, i, t, positions, p)), rigid, &self.mass, &self.profile.struts, &self.profile.hull, ship.broken_legs, h);
         // Legs pushed past what they hold give way: the ship comes down on that corner.
-        for (k, (&f, s)) in c.struts.iter().zip(&self.struts).enumerate() {
+        for (k, (&f, s)) in c.struts.iter().zip(&self.profile.struts).enumerate() {
             if f > s.holds && k < 64 && ship.broken_legs & (1 << k) == 0 {
                 ship.broken_legs |= 1 << k;
                 events.push(ShipEvent::LegGaveWay { leg: k, force: f, holds: s.holds });
@@ -200,7 +474,7 @@ impl Step {
         let down = c.feet > 0;
         if down
             && !self.touching.feet_down
-            && let Some((s, sink)) = self.struts.iter().zip(&c.sinks).filter(|(_, v)| **v > 0.0).max_by(|a, b| a.1.total_cmp(b.1))
+            && let Some((s, sink)) = self.profile.struts.iter().zip(&c.sinks).filter(|(_, v)| **v > 0.0).max_by(|a, b| a.1.total_cmp(b.1))
             && *sink > s.sink_rate
         {
             let jolt = sink * sink / (2.0 * s.stroke) / universe_physics::laws::STANDARD_GRAVITY;
@@ -270,4 +544,21 @@ impl Step {
 /// thrusters really give)?
 pub fn pushed(ship: &Ship) -> bool {
     ship.powered && (ship.applied.0.length_squared() > 0.0 || ship.applied.1.length_squared() > 0.0)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn the_hardest_landing_lies_between_what_the_legs_hold_and_what_breaks_them() {
+        let mut ship = Ship::new(DVec3::ZERO, DVec3::ZERO, glam::DQuat::IDENTITY);
+        let p = profile(&mut ship);
+        let com = ship.centre_of_mass();
+        let v = p.max_sink(ship.mass(), com, 9.81, 0);
+        // (The sandbox drops: 2.4 m/s holds, 6.3 m/s breaks them.)
+        assert!(v > 2.4 && v < 6.3, "{v}");
+        assert!(p.max_sink(ship.mass(), com, 9.81, 0b1111) == STRIKE, "no legs left: the hull's");
+        assert!(p.max_sink(ship.mass(), com, 25.0, 0) < v, "heavier ground, softer landing");
+    }
 }

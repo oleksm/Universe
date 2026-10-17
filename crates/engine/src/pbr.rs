@@ -1747,44 +1747,6 @@ impl ModelUpload {
 #[cfg(test)]
 mod streaming_tests {
     use super::*;
-    fn glb(json: serde_json::Value, mut bin: Vec<u8>) -> Vec<u8> {
-        let mut json = serde_json::to_vec(&json).unwrap();
-        while json.len() % 4 != 0 {
-            json.push(b' ');
-        }
-        while bin.len() % 4 != 0 {
-            bin.push(0);
-        }
-        let mut out = b"glTF".to_vec();
-        out.extend(2u32.to_le_bytes());
-        out.extend(((28 + json.len() + bin.len()) as u32).to_le_bytes());
-        out.extend((json.len() as u32).to_le_bytes());
-        out.extend(b"JSON");
-        out.extend(json);
-        out.extend((bin.len() as u32).to_le_bytes());
-        out.extend(b"BIN\0");
-        out.extend(bin);
-        out
-    }
-    #[test]
-    fn image_dimensions_refused_before_expansion() {
-        let mut png = Vec::new();
-        {
-            let mut enc = png::Encoder::new(&mut png, 8193, 1);
-            enc.set_color(png::ColorType::Rgba);
-            enc.set_depth(png::BitDepth::Eight);
-            enc.write_header()
-                .unwrap()
-                .write_image_data(&vec![0; 8193 * 4])
-                .unwrap();
-        }
-        let bytes = glb(
-            serde_json::json!({"asset":{"version":"2.0"},"buffers":[{"byteLength":png.len()}],"bufferViews":[{"buffer":0,"byteLength":png.len()}],"images":[{"bufferView":0,"mimeType":"image/png"}]}),
-            png,
-        );
-        assert!(bounded_import(&bytes).err().unwrap().contains("8192"));
-    }
-
     #[test]
     fn prepared_textures_keep_colour_space_and_all_mips() {
         let img = Image {

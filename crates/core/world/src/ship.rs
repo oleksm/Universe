@@ -1008,6 +1008,9 @@ pub struct Ship {
     /// On the ground and awake: its contacts (see `ground`). (Not saved.)
     #[serde(skip)]
     pub ground: Option<crate::ground::Touching>,
+    /// What it is on the ground, worked out once for its design and legs (see `ground::profile`). (Not saved.)
+    #[serde(skip)]
+    pub contact: Option<std::sync::Arc<crate::ground::Profile>>,
 }
 
 fn boresight() -> DVec3 {
@@ -1073,6 +1076,7 @@ impl Ship {
             applied: (DVec3::ZERO, DVec3::ZERO),
             broken_legs: 0,
             ground: None,
+            contact: None,
         }
     }
 

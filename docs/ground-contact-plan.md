@@ -108,7 +108,7 @@ for a few seconds, at 10 ms substeps and a handful of points. That is small next
 | Piece | Where |
 |---|---|
 | Contact forces: struts (spring `holds`/`stroke`, damper ½`holds`/`sink_rate`), hull points, friction, slope normals, turn about the centre of mass | `crates/core/physics/src/contact.rs` |
-| Laws `FOOT_FRICTION` 0.6, `HULL_FRICTION` 0.4, `HULL_RESTITUTION` 0.3 (simplified, invented, to review) | `standards/Dogma/metadata/contact/` |
+| Laws `FOOT_FRICTION` 0.6, `HULL_FRICTION` 0.4, `HULL_RESTITUTION` 0.3, `HULL_REST_SPEED` 0.5 m/s, `HULL_CRUMPLE_SPEED` 1.0 m/s (simplified, invented, to review) | `standards/Dogma/metadata/contact/` |
 | A ship's legs and hull points (fitted legs; a modelled hull's gear; unmodelled stock hulls' four legs drawn 12 m down; a draft with no gear lies on its hull); the contact substep (10 ms); sleep after 1 s still; per-leg breaking; hard landing per foot; hull strikes crumple the hull | `crates/core/world/src/ground.rs` |
 | Flight step runs contact near landing ground; landed ships never turn in place and wake on real thrust; rest welds the pose it lies in | `crates/core/world/src/world.rs`, `rules::rest` |
 | The landing autopilot cuts its engines once down | `crates/core/avionics/src/landing.rs` |
@@ -120,3 +120,26 @@ Differences from the plan: rotation from contact is integrated in the world's dr
 inertia tensor rather than moving all flight rotation into Dogma (P2); station decks and rigs keep
 their lock (P6). Still open: decks on the same contact, wheels and taxi, terrain mesh contact
 (`crates/terrain-contact`), friction per ground.
+
+## The ship's ground profile (2026-10-17)
+
+What a ship is on the ground is worked out once for its design and legs (`ground::Profile`, kept on
+the ship as `Ship::contact`, made again when the design or legs change), so the world step only
+looks things up:
+
+| Figure | How | Used by |
+|---|---|---|
+| Legs (foot, spring, damper, holds), hull points, reach | from the fit, gear nodes or hull corners | the contact step |
+| Rest pose | the tilt within 30 deg of upright that brings the centre of mass lowest (1 deg grid, then 0.1 deg) | test drive; matches the flight (MC-07 draft: 10 deg) |
+| Tip slope | the centre's distance to the nearest edge of what it rests on, over its height | landing checks, test drive |
+| Slide slope | atan of the feet's (or hull's) friction | landing checks, test drive |
+| Hardest landing | each leg's spring and damper stopping its standing share of the weight (by where the centre is), by halving; on the safe side (the flight holds up to about a tenth more) | the planner's landing prediction (`rules::apply`), the landing autopilot (sinks at no more than 0.7 of it), test drive |
+
+The step itself culls: the whole ship clear of the ground under it (taken as a plane), nothing to
+do; a point clear of it by more than the ground could rise across its distance (one in two), not
+looked at. Answers are memoised per load (mass within a thousandth, centre within 10 cm).
+
+Leg springs and dampers: a `LandingLeg` takes `spring` (N/m) and `damper` (N s/m) where its record
+gives them; until the registry's landing-gear schema has them (asked 2026-10-17) they are worked
+out as above. Sleep thresholds, the contact step and the push-out rate stay in code: they are the
+simulation's numerics, not laws.

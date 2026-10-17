@@ -20,27 +20,30 @@
 use glam::{DMat3, DQuat, DVec3};
 
 use crate::body::RigidBody;
-use crate::laws::{FOOT_FRICTION, HULL_FRICTION, HULL_RESTITUTION};
+use crate::laws::{FOOT_FRICTION, HULL_FRICTION, HULL_REST_SPEED, HULL_RESTITUTION};
 
 /// A landing leg: where its pad is (body frame, fully extended), what it holds
-/// before it gives way (N), its stroke (m) and the sink rate it's designed for (m/s).
+/// before it gives way (N), its stroke (m), the sink rate it's designed for
+/// (m/s), and its spring (N/m) and damper (N s/m) where its record gives them.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Strut {
     pub foot: DVec3,
     pub holds: f64,
     pub stroke: f64,
     pub sink_rate: f64,
+    pub spring: Option<f64>,
+    pub damper: Option<f64>,
 }
 
 impl Strut {
-    /// Its spring (N/m): `holds` at the end of the stroke.
+    /// Its spring (N/m): its record's, else `holds` at the end of the stroke.
     pub fn stiffness(&self) -> f64 {
-        self.holds / self.stroke.max(1e-3)
+        self.spring.unwrap_or(self.holds / self.stroke.max(1e-3))
     }
 
-    /// Its damper (N s/m): half of `holds` at the design sink rate.
+    /// Its damper (N s/m): its record's, else half of `holds` at the design sink rate.
     pub fn damping(&self) -> f64 {
-        0.5 * self.holds / self.sink_rate.max(0.1)
+        self.damper.unwrap_or(0.5 * self.holds / self.sink_rate.max(0.1))
     }
 }
 
@@ -83,8 +86,8 @@ pub struct Contacts {
 const SETTLE: f64 = 0.2;
 /// And no faster than this (m/s): a deep overlap eases out instead of springing.
 const SETTLE_SPEED: f64 = 1.0;
-/// Below this speed into the ground (m/s), a hull doesn't rebound.
-const REST_SPEED: f64 = 0.5;
+/// Clear of the ground by this much (m), beyond what it moves in a step: not touching.
+const CLEAR: f64 = 0.5;
 
 /// The contacts of `body` (with `mass`), its `struts` (those whose bit is
 /// set in `broken` have given way) and its `hull` (spheres in its frame; a
@@ -108,6 +111,25 @@ pub fn forces(ground: &dyn Fn(DVec3) -> Option<Ground>, body: &RigidBody, mass: 
         (world, arm, body.velocity + spin.cross(arm))
     };
     let mut out = Contacts { struts: vec![0.0; struts.len()], compression: vec![0.0; struts.len()], sinks: vec![0.0; struts.len()], ..Default::default() };
+    // The ground under its origin, taken as a plane: the whole body clear of
+    // it, nothing to do; a point clear of it by more than the ground could
+    // rise in its distance across (a slope of one in two) is not looked at.
+    let reach = struts.iter().map(|s| s.foot.length()).chain(hull.iter().map(|s| s.at.length() + s.radius)).fold(0.0, f64::max);
+    let sweep = (body.velocity.length() + spin.length() * reach) * h;
+    let plane = ground(body.position);
+    if let Some(g0) = plane
+        && -g0.depth > reach + CLEAR + sweep
+    {
+        return out;
+    }
+    let clear = |world: DVec3, radius: f64| -> bool {
+        plane.is_some_and(|g0| {
+            let off = world - body.position;
+            let up = off.dot(g0.normal);
+            let across = (off - g0.normal * up).length();
+            -g0.depth + up - radius > CLEAR + sweep + 0.5 * across
+        })
+    };
     // (Gathered first: every touching point shares the body, so each hard push
     // is divided among them.)
     struct Touch {
@@ -126,6 +148,9 @@ pub fn forces(ground: &dyn Fn(DVec3) -> Option<Ground>, body: &RigidBody, mass: 
             continue;
         }
         let (world, arm, vel) = point(s.foot);
+        if clear(world, 0.0) {
+            continue;
+        }
         let Some(g) = ground(world).filter(|g| g.depth > 0.0) else { continue };
         let rel = vel - g.velocity;
         let into = -rel.dot(g.normal);
@@ -145,6 +170,9 @@ pub fn forces(ground: &dyn Fn(DVec3) -> Option<Ground>, body: &RigidBody, mass: 
     }
     for s in hull {
         let (centre, arm0, _) = point(s.at);
+        if clear(centre, s.radius) {
+            continue;
+        }
         let Some(g) = ground(centre) else { continue };
         let depth = g.depth + s.radius;
         if depth <= 0.0 {
@@ -165,7 +193,7 @@ pub fn forces(ground: &dyn Fn(DVec3) -> Option<Ground>, body: &RigidBody, mass: 
             None => {
                 out.strike = out.strike.max(into);
                 // To this speed out of the ground by the step's end.
-                let bounce = if into > REST_SPEED { HULL_RESTITUTION * into } else { 0.0 };
+                let bounce = if into > HULL_REST_SPEED { HULL_RESTITUTION * into } else { 0.0 };
                 let want = bounce.max((SETTLE * t.depth / h).min(SETTLE_SPEED));
                 (felt(t.arm, n) * (want + into) / h / shared).max(0.0)
             }
@@ -270,7 +298,7 @@ mod tests {
     fn legs(spread: f64) -> Vec<Strut> {
         [(1., 1.), (1., -1.), (-1., 1.), (-1., -1.)]
             .iter()
-            .map(|&(x, z)| Strut { foot: DVec3::new(x * spread, -6.0, z * spread), holds: 1.0e6, stroke: 0.8, sink_rate: 3.05 })
+            .map(|&(x, z)| Strut { foot: DVec3::new(x * spread, -6.0, z * spread), holds: 1.0e6, stroke: 0.8, sink_rate: 3.05, spring: None, damper: None })
             .collect()
     }
 

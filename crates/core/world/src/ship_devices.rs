@@ -29,6 +29,12 @@ pub struct LandingLeg {
     pub stroke: f64,
     pub efficiency: f64,
     pub sink_rate: f64,
+    /// Its spring (N/m) and damper (N s/m), where its record gives them
+    /// (else worked out from the rest: see `universe_physics::contact::Strut`).
+    #[serde(default)]
+    pub spring: Option<f64>,
+    #[serde(default)]
+    pub damper: Option<f64>,
 }
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
 pub struct Fit {

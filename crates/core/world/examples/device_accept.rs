@@ -108,6 +108,8 @@ fn craft() -> Ship {
                 stroke: 0.5,
                 efficiency: 0.8,
                 sink_rate: 2.,
+                spring: None,
+                damper: None,
             }],
         },
         1.,

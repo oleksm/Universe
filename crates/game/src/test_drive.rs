@@ -943,6 +943,7 @@ pub fn draw(frame: &mut Frame, d: &Drive) {
         ),
         bus,
         ground_line(d),
+        profile_line(d),
     ];
     let panel = Color([0.02, 0.06, 0.13, 0.85]);
     frame.hud_rect(
@@ -1192,7 +1193,7 @@ fn ground_line(d: &Drive) -> String {
     let ship = &f.ship;
     let asleep = matches!(ship.state, universe_sim::ShipState::Landed { .. });
     let Some(g) = &ship.ground else {
-        return if asleep { "ON THE GROUND, AT REST".into() } else { "OFF THE GROUND".into() };
+        return (if asleep { "ON THE GROUND, AT REST" } else { "OFF THE GROUND" }).into();
     };
     let c = &g.last;
     let legs: Vec<String> = c
@@ -1207,6 +1208,23 @@ fn ground_line(d: &Drive) -> String {
         c.feet,
         c.touching - c.feet,
         if legs.is_empty() { "-".into() } else { legs.join("/") }
+    )
+}
+
+/// What its ground profile says before it lands (worked out once for the
+/// design): the tilt it rests at, the slopes it stands and slides on, the
+/// hardest landing its legs take here.
+fn profile_line(d: &Drive) -> String {
+    let Some(f) = &d.flight else { return String::new() };
+    let ship = &f.ship;
+    let p = universe_sim::world::ground::profile_of(ship);
+    let com = ship.centre_of_mass();
+    format!(
+        "RESTS {:.0} DEG OFF LEVEL   STANDS TO {:.0} DEG   SLIDES AT {:.0} DEG   LEGS TAKE {:.1} M/S",
+        (p.rest(com).tilt * universe_engine::glam::DVec3::Y).angle_between(universe_engine::glam::DVec3::Y).to_degrees(),
+        p.tip_slope(com).min(p.slide_slope()).to_degrees(),
+        p.slide_slope().to_degrees(),
+        p.max_sink(ship.mass(), com, d.craft.gravity, ship.broken_legs)
     )
 }
 
