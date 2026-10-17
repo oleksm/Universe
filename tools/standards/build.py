@@ -2631,6 +2631,8 @@ _REG = [("mounts", "Mounts", "SFO", os.path.join("SFO", "metadata", "mounts"), "
         ("professions", "Professions", "People", os.path.join("People", "metadata", "professions"), "People/schema/profession.schema.yaml", None),
         ("clocks", "Clocks", "Engine", os.path.join("Engine", "metadata", "scheduling"), "Engine/schema/clock.schema.yaml", None),
         ("sights", "Sights", "Celestial", os.path.join("Celestial", "metadata", "sights"), "Celestial/schema/sight.schema.yaml", None),
+        ("rock-units", "Rock units", "Celestial", os.path.join("Celestial", "metadata", "rock-units"), "Celestial/schema/rock-unit.schema.yaml", None),
+        ("ground-vocabularies", "Ground vocabularies", "Celestial", os.path.join("Celestial", "metadata", "ground-vocabularies"), "Celestial/schema/ground-vocabulary.schema.yaml", None),
         ("planet-levels", "Levels", "PlanetSim", os.path.join("PlanetSim", "metadata", "levels"), "PlanetSim/schema/planet-level.schema.yaml", None),
         ("planet-fields", "Fields", "PlanetSim", os.path.join("PlanetSim", "metadata", "fields"), "PlanetSim/schema/planet-field.schema.yaml", None),
         ("planet-layers", "Layers", "PlanetSim", os.path.join("PlanetSim", "metadata", "layers"), "PlanetSim/schema/planet-layer.schema.yaml", None),
