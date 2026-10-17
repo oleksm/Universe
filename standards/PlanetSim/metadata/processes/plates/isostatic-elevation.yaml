@@ -25,9 +25,15 @@ reads:
   field: planet-field.plate
   unit: '1'
   meaning: 'trenches: on the sunk particle''s plate'
-- name: w.sunk_at, w.sunk_plate
-  unit: unit vec, id
-  meaning: where floor sank at the last step (subduction)
+- name: w.sunk_at
+  field: planet-field.trench-position
+  unit: '1'
+- name: w.sunk_plate
+  field: planet-field.trench-plate
+  unit: '1'
+- name: (forge) the latest substep's
+  field: planet-field.trench-time
+  unit: s
 writes:
 - name: z
   field: planet-field.height-above-ridge

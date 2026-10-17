@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.radiogenic-heat-mantle
+  name: Radiogenic heat, mantle
+  about: Heat made by decay in the mantle.
+unit: W
+per: global
+producer:
+  where: planet-forge crates/forge-core/src/models/interior (planet-process.radiogenic-heating)
+amount: snapshot
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: what the forge interior port writes (interior branch, merged as forge 3019766).'

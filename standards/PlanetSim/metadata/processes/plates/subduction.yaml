@@ -92,6 +92,9 @@ writes:
   field: planet-field.particle-sunk
   unit: '1'
   meaning: sinkers and foundered floor, removed by seafloor-spreading before the gaps
+- name: (substep time)
+  field: planet-field.trench-time
+  unit: s
 events_emitted:
 - event: planet-event.relief-arcs
   where: stages/plates.py:1040

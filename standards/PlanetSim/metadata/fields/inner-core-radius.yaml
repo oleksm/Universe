@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.inner-core-radius
+  name: Inner core radius
+  about: 'The inner core''s radius now (0: none).'
+unit: m
+per: global
+producer:
+  where: planet-forge crates/forge-core/src/models/interior (planet-process.core-melting-and-inner-core)
+amount: snapshot
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: what the forge interior port writes (interior branch, merged as forge 3019766).'

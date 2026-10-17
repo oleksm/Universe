@@ -2,9 +2,12 @@
 identity:
   key: planet-process.thermal-evolution
   name: Mantle and core thermal evolution
-  about: 'Parameterised two-reservoir cooling (Stevenson, Spohn & Schubert 1983): dT_m/dt = (H_mantle + q_cmb − q_mantle)/(Mm c_m ε_m); dT_c/dt = −q_cmb/(Mc c_c ε_c + grow), grow = −(L + E_G)·4π r_ic² ρc·dr_ic/dT_c (latent and gravitational
-    heat of inner-core growth, Labrosse 2003). Started from a just-solidified mantle at 1900 K and a core 1300 K above the mantle base, integrated by LSODA (rtol 1e-6, atol 1e-3) from 0 to the star''s age with output every step_myr
-    (default 10 Myr). Produces the interior history table that plates and organics read (mantle temperature for komatiite/greenstone era, mantle heat flow for geotherm scaling).'
+  about: 'Parameterised two-reservoir cooling (Stevenson, Spohn & Schubert 1983): dT_m/dt = (H_mantle + q_cmb − q_mantle)/(Mm
+    c_m ε_m); dT_c/dt = −q_cmb/(Mc c_c ε_c + grow), grow = −(L + E_G)·4π r_ic² ρc·dr_ic/dT_c (latent and gravitational heat
+    of inner-core growth, Labrosse 2003). Started from a just-solidified mantle at 1900 K and a core 1300 K above the mantle
+    base, integrated by LSODA (rtol 1e-6, atol 1e-3) from 0 to the star''s age with output every step_myr (default 10 Myr).
+    Produces the interior history table that plates and organics read (mantle temperature for komatiite/greenstone era, mantle
+    heat flow for geotherm scaling).'
 area: interior
 clock:
   when: once per world; internal output every step_myr = 10 Myr (3.15576e14 s) from 0 to age
@@ -59,7 +62,8 @@ params:
   open: true
   meaning: output spacing (run() argument)
   source: src/planet_sim/stages/interior.py:272
-  note: 'unit as the code says it: ''s: 3.15576e14 (code: Myr)''; SI conversion unverified'
+  note: 'unit as the code says it: ''s: 3.15576e14 (code: Myr)''; SI conversion unverified; the Python only: planet-forge
+    steps by its manifest'
 - name: LSODA rtol/atol
   values:
   - 1.0e-06
@@ -94,4 +98,5 @@ basis:
   - reads
   - writes
   tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read from the code at planet-sim-landform 9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'
