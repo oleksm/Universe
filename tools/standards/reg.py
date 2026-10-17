@@ -2,7 +2,7 @@
 
     python3 tools/standards/reg.py find <words>                 # records whose key or name has the words
     python3 tools/standards/reg.py show <key>                   # its file, whether it is generated, its YAML
-    python3 tools/standards/reg.py new <kind> <slug> [--root=SFO] [--folder=<dir>]   # a record from its schema's required fields
+    python3 tools/standards/reg.py new <kind> <slug> [--root=SFO] [--folder=<dir>]   # a record from its schema's required fields; --folder a subfolder of the kind's (hydrology) or a path from a root
     python3 tools/standards/reg.py set <key> <dotted.path> <yaml value>              # change one field of a hand-written record
     python3 tools/standards/reg.py check [--engine] [--page <key>...]                # every check, in order; exit 1 on any failure
     python3 tools/standards/reg.py ship "<message>"            # commit here, merge into fso, refresh the page there; prints the real hashes
@@ -82,13 +82,19 @@ def schema_for(kind):
 def cmd_new(kind, slug, opt):
     spath, sch = schema_for(kind)
     folder = opt.get("folder")
-    if not folder:      # (where records of that kind already lie)
+    m = re.match(r"standards/([^<]+?)/<", sch.get("description", ""))      # (the schema says where its records lie)
+    home = os.path.join(TREE, m.group(1)) if m else None
+    if not folder:
         f = next((f for k, _, f, _ in records() if k.split(".")[0] == kind), None)
-        if not f:
-            sys.exit(f"no {kind} record yet to tell its folder: pass --folder=<dir under standards/>")
-        folder = os.path.dirname(f)
+        folder = home or (os.path.dirname(f) if f else None)
+        if not folder:
+            sys.exit(f"no {kind} record yet to tell its folder: pass --folder=<dir>")
+    elif os.path.isdir(os.path.join(TREE, folder.split("/")[0])) and folder.split("/")[0][:1].isupper():
+        folder = os.path.join(TREE, folder)        # (a path from a root: PlanetSim/metadata/...)
+    elif home:
+        folder = os.path.join(home, folder)        # (a subfolder of the kind's own: hydrology)
     else:
-        folder = os.path.join(TREE, folder)
+        sys.exit(f"--folder={folder}: give it from a root (PlanetSim/metadata/...)")
     path = os.path.join(folder, slug + ".yaml")
     if os.path.exists(path):
         sys.exit(f"{os.path.relpath(path, ROOT)} exists")
