@@ -7892,3 +7892,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "pressure, electrical and load acceptance (blender: static only)"
+  - key: unit.furnace-transformer-14mva
+    version: 2
+    manifest_sha256: "86b9770bc35b9d2e4ba77c21c733021353d890c3070d18af1252c252c8fc604d"
+    installed: e8c2823b
+    game: "the loader (world::assets) at fso e8c2823b"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/furnace-transformer-14mva/v2 (439704 bytes, bounds [-2.15, 0.0, -1.35] to [2.1408, 3.7, 1.1733]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "dielectric, pressure and load acceptance (blender: static only)"
