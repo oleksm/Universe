@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.vacuum-degasser-80t, name: 'Vacuum tank degasser, 80 t', description: 'Takes the dissolved hydrogen and nitrogen out of an 80 t heat: the crane lowers the ladle into a steel tank standing in a pit, a lid on a car closes it, and pumps take it down to about 67 Pa while argon stirs the melt. Local frame: the tank''s centre at (-3, 2), 4.5 m inside and 5.5 m deep, its rim at the floor; the lid car on its own rails parks at (3, 2); the pump set fills the strip y -5 to -2 along the unit, its vacuum line to a flange on the tank''s side. 3 m above the floor and 6 m below it (the pit is the layout''s).'}
+identity: {key: unit.vacuum-degasser-80t, name: 'Vacuum tank degasser, 80 t', description: 'Takes the dissolved hydrogen and nitrogen out of an 80 t heat: the crane lowers the ladle into a steel tank standing in a pit, a lid on a car closes it, and pumps take it down to about 67 Pa while argon stirs the melt. Local frame: the tank''s centre at (-3, 2), 4.5 m inside and 5.5 m deep, its rim at the floor; the lid car on its own rails parks at (3, 2); the pump set fills the strip y -5 to -2 along the unit, its vacuum line to a flange on the tank''s side. 3 m above the floor and 6 m below it (the pit is the layout''s). Its ports (SFO 25), on the pump set''s +x end: argon in at (5.9, -4.4, 0.6), DN 50, for the stirring lance; its 400 V at (5.9, -3.5, 1). The pumps'' exhaust goes to the air at the set.'}
 size_class: 2
 fits: plant-mount.bay-s2
 physical: {length: 12.0, width: 10.0, height: 9.0, mass: 98030.0}
@@ -14,6 +14,33 @@ built_of:
 - {what: Vacuum line, item: material.structural-steel-a36, mass: 3061.0, note: '1 m across, 10 mm, 11.04 m of main, header and branches (measured centreline) with flanges, run at z -1.2 under the rail bridge; measured'}
 needs: {power: 600000.0}
 ports:
+- id: argon-in
+  flow: in
+  medium: gas
+  item: material.argon
+  rate: 0.02083
+  pressure: 1000000.0
+  interface: interface.flange-dn50-pn16
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn50-pn16-ss
+  at: [5.9, -4.4, 0.6]
+  facing: [1.0, 0.0, 0.0]
+  note: half the recipe's argon, the other half through the ladle's plug from its car (the split invented)
+  temperature: 293.0
+- id: power-in
+  flow: in
+  medium: power
+  power: 600000.0
+  voltage: 400
+  interface: interface.termination-400v-400mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-400mm2
+  at: [5.9, -3.5, 1.0]
+  facing: [1.0, 0.0, 0.0]
+  note: the vacuum pumps
+  current: 962.3
 - id: base
   flow: out
   medium: load
@@ -34,5 +61,9 @@ basis:
   tier: invented
   review: true
   note: Sizes and the pumps' power from memory of tank degassers for 80 to 100 t ladles.
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): bottled gas at 20 deg C; power ports'' current from their power and voltage.'
 - of: [life]
   rule: rule.life-plant

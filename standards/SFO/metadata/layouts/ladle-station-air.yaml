@@ -5,7 +5,7 @@ stands_for: module.ladle-station
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 68.29, width: 56.86, height: 27.11, mass: 3021000.0}
+physical: {length: 68.29, width: 56.86, height: 27.11, mass: 3037000.0}
 bays:
 - id: L
   mount: plant-mount.bay-s2
@@ -30,8 +30,9 @@ bays:
 - id: S
   mount: plant-mount.bay-s1
   unit: unit.stair-tower-12m
-  at: [-1.0, 27.0, 0.0]
-  note: 'against the bins'' east end, 0.22 m clear of their feet: its top landing''s -x face at x -2.5, a 0.5 m grating bridge to the walkway''s access (-3, 27, 12); its 6 m square overlaps the bins'' bay at its edge, not the bins'
+  at: [-17.0, 27.0, 0.0]
+  turn: 180.0
+  note: 'against the bins'' west end, as on airless ground: its top landing gives onto the bins'' deck, and the bins'' 400 V box on their east end stays clear (moved there 2026-10-17)'
 - id: B
   mount: plant-mount.bay-s2
   unit: unit.baghouse-200k
@@ -40,13 +41,272 @@ bays:
 - id: C
   mount: plant-mount.bay-s3
   unit: unit.cooling-tower-1cell
-  at: [-33.0, -9.0, 0.0]
-  note: outside, west of the hall and south of the rail
+  at: [-33.0, -10.0, 0.0]
+  note: outside, west of the hall and south of the rail, its loop's flanges facing the west wall's lowest opening
+ports:
+- id: hv-in
+  flow: in
+  medium: power
+  power: 10930000.0
+  voltage: 33000
+  interface: interface.termination-33kv-120mm2
+  half: female
+  make: bolted
+  connector: connector.termination-33kv-120mm2
+  at: [-9.0, -11.7, 8.0]
+  facing: [0.0, 1.0, 0.0]
+  note: the site's 33 kV, in over the vault's south wall
+- id: argon-in
+  flow: in
+  medium: gas
+  item: material.argon
+  rate: 0.02083
+  pressure: 1000000.0
+  interface: interface.flange-dn50-pn16
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn50-pn16-ss
+  at: [17.5, -11.4, 0.6]
+  facing: [-1.0, 0.0, 0.0]
+  note: the site's argon, at 10 bar
+- id: lv-degasser
+  flow: in
+  medium: power
+  power: 600000.0
+  voltage: 400
+  interface: interface.termination-400v-400mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-400mm2
+  at: [17.5, -10.5, 1.0]
+  facing: [-1.0, 0.0, 0.0]
+  note: the site's 400 V distribution
+- id: lv-baghouse
+  flow: in
+  medium: power
+  power: 296300.0
+  voltage: 400
+  interface: interface.termination-400v-240mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-240mm2
+  at: [19.0, 24.0, 1.0]
+  facing: [-1.0, 0.0, 0.0]
+- id: lv-bins
+  flow: in
+  medium: power
+  power: 40000.0
+  voltage: 400
+  interface: interface.termination-400v-35mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-35mm2
+  at: [1.0, 27.0, 1.0]
+  facing: [-1.0, 0.0, 0.0]
+- id: lv-tower
+  flow: in
+  medium: power
+  power: 32530.0
+  voltage: 400
+  interface: interface.termination-400v-25mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-25mm2
+  at: [-42.0, -13.0, 1.0]
+  facing: [1.0, 0.0, 0.0]
+- id: makeup-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 0.8674
+  pressure: 400000.0
+  temperature: 293.0
+  interface: interface.flange-dn100-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn100-pn10
+  at: [-42.0, -10.0, 0.75]
+  facing: [1.0, 0.0, 0.0]
+  note: the site's water
 mobile:
 - unit: unit.ladle-car-80t
   rides: ladle rail
   at: [-9.0, 0.0, 0.0]
 links:
+- kind: busbar
+  name: secondary bus
+  run: run.busbar-ac-27ka
+  ends: ['T:lv-out', 'L:power-in']
+  from: [-9.0, -7.65, 2.13]
+  to: [-9.0, -5.34, 6.0]
+  length: 6.18
+  item: material.copper
+  mass: 2206.0
+  via:
+  - [-9.0, -6.8, 2.13]
+  - [-9.0, -6.8, 6.0]
+  power: 32660.0
+  fittings: {elbows: 2, tees: 0, supports: 3, connectors: 2}
+  note: three phases of water-cooled copper tube, 26 kA each, from the transformer's joint through the vault's north wall and up to the furnace's cables; their loss, 32.7 kW, to the loop
+- kind: cable
+  name: transformer supply
+  run: run.cable-33kv-120mm2
+  ends: ['edge:hv-in', 'T:hv-in']
+  from: [-9.0, -11.7, 8.0]
+  to: [-9.0, -9.45, 3.7]
+  length: 6.55
+  item: material.copper
+  mass: 343.0
+  via:
+  - [-9.0, -9.45, 8.0]
+  fittings: {elbows: 1, tees: 0, supports: 2, connectors: 2}
+  note: over the vault's south wall and down into the cable box
+- kind: conveyor
+  name: alloy belt
+  run: run.belt-650
+  ends: ['A:alloy-out', 'L:alloy-in']
+  from: [-8.0, 27.0, 6.245]
+  to: [-9.0, 3.0, 9.455]
+  length: 24.23
+  item: material.silicone-rubber
+  mass: 13030.0
+  power: 20000.0
+  fittings: {elbows: 0, tees: 0, supports: 2, connectors: 2}
+  note: from the bins' chute south through the north wall's opening, rising about 8 degrees to the furnace's alloy chute; hooded against the weather outside (the hood not counted)
+- kind: pipe
+  name: fume duct
+  run: run.pipe-dn1000-pn1
+  ends: ['L:fume-out', 'B:gas-in']
+  from: [-7.0, 0.0, 7.5]
+  to: [9.0, 20.0, 10.0]
+  length: 38.5
+  item: material.structural-steel-a36
+  mass: 9578.0
+  via:
+  - [-7.0, 0.0, 10.0]
+  - [-7.0, 7.0, 10.0]
+  - [0.0, 7.0, 10.0]
+  - [0.0, 16.0, 10.0]
+  - [9.0, 16.0, 10.0]
+  fittings: {elbows: 5, tees: 0, supports: 6, connectors: 2}
+  note: up from the roof's elbow, a sleeve taking its lift, north out of the furnace's open side, through the north wall's opening and east to the baghouse's inlet
+- kind: pipe
+  name: loop flow main
+  run: run.pipe-dn150-pn10
+  ends: ['C:loop-out', 'L:water-in']
+  from: [-27.0, -10.6, 0.75]
+  to: [-13.2, -4.85, 1.0]
+  length: 19.57
+  item: material.structural-steel-a36
+  mass: 539.1
+  via:
+  - [-16.4, -10.6, 0.75]
+  - [-16.4, -6.3, 0.75]
+  - [-13.2, -6.3, 0.75]
+  fittings: {elbows: 3, tees: 0, supports: 6, connectors: 2}
+  note: 37.5 kg/s at about 30 deg C from the tower, east through the west wall's lowest opening, then north and east under the transformer vault's north-west corner to the furnace's manifold; the outer of the pair
+- kind: pipe
+  name: loop return main
+  run: run.pipe-dn150-pn10
+  ends: ['L:water-out', 'C:loop-in']
+  from: [-13.8, -4.85, 1.0]
+  to: [-27.0, -9.4, 0.75]
+  length: 17.79
+  item: material.structural-steel-a36
+  mass: 478.9
+  via:
+  - [-13.8, -5.7, 0.75]
+  - [-17.0, -5.7, 0.75]
+  - [-17.0, -9.4, 0.75]
+  fittings: {elbows: 3, tees: 0, supports: 5, connectors: 2}
+  note: back at about 10 K more, the inner of the pair
+- kind: pipe
+  name: transformer cooling in
+  run: run.pipe-dn100-pn10
+  ends: ['tee:loop flow main', 'T:water-in']
+  from: [-16.4, -9.3, 0.75]
+  to: [-11.15, -9.3, 1.0]
+  length: 5.256
+  item: material.structural-steel-a36
+  mass: 128.5
+  fittings: {elbows: 0, tees: 1, supports: 2, connectors: 1}
+  note: off the flow main, through a sleeve in the vault's west wall
+- kind: pipe
+  name: transformer cooling out
+  run: run.pipe-dn100-pn10
+  ends: ['T:water-out', 'tee:loop return main']
+  from: [-11.15, -8.7, 1.0]
+  to: [-17.0, -8.0, 0.75]
+  length: 9.2
+  item: material.structural-steel-a36
+  mass: 329.7
+  via:
+  - [-13.5, -8.7, 1.0]
+  - [-13.5, -8.0, 1.0]
+  - [-13.5, -8.0, 2.2]
+  - [-17.0, -8.0, 2.2]
+  fittings: {elbows: 4, tees: 1, supports: 5, connectors: 1}
+  note: out of the vault and over the flow main, down into the return main (the one crossing the pair forces)
+- kind: pipe
+  name: argon to the degasser
+  run: run.pipe-dn50-pn16-ss
+  ends: ['edge:argon-in', 'D:argon-in']
+  from: [17.5, -11.4, 0.6]
+  to: [11.9, -11.4, 0.6]
+  length: 5.6
+  item: material.stainless-steel-304
+  mass: 98.68
+  fittings: {elbows: 0, tees: 0, supports: 2, connectors: 2}
+- kind: cable
+  name: degasser supply
+  run: run.cable-400v-400mm2
+  ends: ['edge:lv-degasser', 'D:power-in']
+  from: [17.5, -10.5, 1.0]
+  to: [11.9, -10.5, 1.0]
+  length: 5.6
+  item: material.copper
+  mass: 130.3
+  fittings: {elbows: 0, tees: 0, supports: 2, connectors: 2}
+- kind: cable
+  name: baghouse supply
+  run: run.cable-400v-240mm2
+  ends: ['edge:lv-baghouse', 'B:power-in']
+  from: [19.0, 24.0, 1.0]
+  to: [14.75, 24.0, 1.0]
+  length: 4.25
+  item: material.copper
+  mass: 88.43
+  fittings: {elbows: 0, tees: 0, supports: 2, connectors: 2}
+- kind: cable
+  name: bins supply
+  run: run.cable-400v-35mm2
+  ends: ['edge:lv-bins', 'A:power-in']
+  from: [1.0, 27.0, 1.0]
+  to: [-2.7, 27.0, 1.0]
+  length: 3.7
+  item: material.copper
+  mass: 58.01
+  fittings: {elbows: 0, tees: 0, supports: 2, connectors: 2}
+- kind: cable
+  name: tower supply
+  run: run.cable-400v-25mm2
+  ends: ['edge:lv-tower', 'C:power-in']
+  from: [-42.0, -13.0, 1.0]
+  to: [-39.0, -13.0, 1.0]
+  length: 3.0
+  item: material.copper
+  mass: 39.2
+  fittings: {elbows: 0, tees: 0, supports: 1, connectors: 2}
+- kind: pipe
+  name: tower make-up
+  run: run.pipe-dn100-pn10
+  ends: ['edge:makeup-in', 'C:makeup-in']
+  from: [-42.0, -10.0, 0.75]
+  to: [-39.0, -10.0, 0.75]
+  length: 3.0
+  item: material.structural-steel-a36
+  mass: 91.35
+  fittings: {elbows: 0, tees: 0, supports: 1, connectors: 2}
 - kind: rail
   name: ladle rail
   from: [-24.0, 0.0, 0.0]
@@ -55,59 +315,6 @@ links:
   item: material.structural-steel-a36
   mass: 5760.0
   note: two 60 kg/m rails at 3 m gauge between the heads' inner faces, set in the floor with 40 mm flangeways, running plane the floor; in by the west door from the arc furnace shop's rail, out by the east door to the casting bay's; the car's centre stops at x -9 (the ladle furnace) and x 3 (the degasser's crane lift)
-- kind: busbar
-  name: secondary bus
-  from: [-9.0, -7.65, 2.466666666666667]
-  to: [-9.0, -5.0, 6.0]
-  length: 4.417
-  item: material.copper
-  mass: 780.6
-  note: three water-cooled copper tube bars, 6575 mm2 each for 26 kA at 4 A/mm2, from the transformer's terminals through the vault's north wall to the ladle furnace's bus on its -y side
-- kind: conveyor
-  name: alloy feed
-  from: [-9.9, 27.0, 6.2]
-  to: [-9.0, 3.0, 9.4]
-  length: 24.23
-  item: material.structural-steel-a36
-  mass: 2907.0
-  power: 20000.0
-  note: 0.65 m belt in a covered gallery, 120 kg/m with the gallery (from memory), its tail 0.9 m west of the bins' centre (clear of their middle leg at x -9, y 25.5) under a steep 1.2 m drop chute from the transfer chute's foot; rising 3.2 m (7.6 degrees) to 0.4 m over the ladle furnace's chute, through the north wall
-- kind: duct
-  name: fume
-  from: [-7.0, 0.0, 7.5]
-  to: [9.0, 20.0, 10.0]
-  length: 35.98
-  item: material.structural-steel-a36
-  mass: 5325.0
-  via:
-  - [-7.0, 0.0, 11.0]
-  - [0.0, 6.0, 11.0]
-  - [0.0, 17.0, 12.0]
-  - [9.0, 17.0, 10.0]
-  note: '1 m across, 6 mm plate: up from the ladle furnace''s roof elbow, through the north wall''s opening, to the baghouse''s inlet, at z 11 under the gantry''s north tie (its top 0.1 m below the tie at 11.6); the roof''s fume is cooler than an arc furnace''s, so the duct is not water-cooled'
-- kind: pipe
-  name: cooling water to the ladle furnace
-  from: [-27.0, -9.0, 0.75]
-  to: [-13.5, -4.5, 1.0]
-  length: 22.03
-  item: material.structural-steel-a36
-  mass: 1630.0
-  via:
-  - [-25.5, -9.0, 0.75]
-  - [-25.5, -10.5, 2.4]
-  - [-16.0, -10.5, 2.4]
-  - [-16.0, -9.0, 1.5]
-  - [-16.0, -5.3, 1.5]
-  - [-13.5, -5.3, 1.0]
-  note: 'a pair of 250 mm pipes, 6 mm wall, flow and return, from the tower''s first port pair: east through a sleeve in the west wall at y -10.5, z 2.4, between the lattice''s struts (blender), north west of the vault, then east just south of the ladle furnace''s south-west column (x -14, y -4.4) and up into its manifold'
-- kind: pipe
-  name: cooling water to the transformer
-  from: [-16.0, -9.0, 1.5]
-  to: [-11.15, -9.0, 1.0]
-  length: 4.876
-  item: material.structural-steel-a36
-  mass: 96.19
-  note: a pair of 100 mm pipes, 4 mm wall, teed off the furnace pair, through the vault's west wall to the transformer's cooler ports
 frame:
   box: [-21.0, -15.0, 0.0, 21.0, 15.0, 27.0]
   cell: 3.0
@@ -117,16 +324,17 @@ frame:
   - [18.0, -3.0, 0.0, 21.0, 3.0, 6.0]
   - [-12.0, 12.0, 6.0, -6.0, 15.0, 15.0]
   - [-3.0, 12.0, 9.0, 3.0, 15.0, 15.0]
+  - [-21.0, -12.0, 0.0, -18.0, -9.0, 3.0]
   members:
-  - {item: stock.st4340-tb-160x8-s3000, count: 1839, where: wall}
-  - {item: stock.st4340-tb-160x8-d3000, count: 1393, where: wall}
+  - {item: stock.st4340-tb-160x8-s3000, count: 1837, where: wall}
+  - {item: stock.st4340-tb-160x8-d3000, count: 1390, where: wall}
   - {item: stock.st4340-tb-100x3-s3000, count: 641, where: roof}
   - {item: stock.st4340-tb-100x3-d3000, count: 540, where: roof}
   - {item: stock.st4340-node-220b, count: 1020, where: nodes}
   - {item: stock.st4340-box-400x400x25, count: 4, where: 'crane runways, two a side, 18 m lengths, along x on the inside of the long walls: their rail plane 18 m up at y -11.4 and +11.4'}
   cladding: {item: stock.al6061-sh-2, area: 5300.0, mass: 28620.0}
   carries: [unit.ladle-crane-150t]
-  mass: 460600.0
+  mass: 460000.0
   sized: 'At 1 g: roof 1249 Pa (2 mm aluminium, the frame about 20 kg/m2, 1 kPa of snow and wind, the last invented) over a 24 m span in 3 m deep strips puts 90 kN in a chord: st4340-tb-100x3 takes 242 kN. A wheel of the 150 t crane with a full ladle at the runway''s end puts 1070 kN on a wall node, with the roof''s share 1115 kN: st4340-tb-160x8 takes 1795 kN. Each the kit''s lightest section with half again to spare. A wheel between two nodes bends the runway to 182 MPa, against 470 MPa for 4340 with half again to spare. Wind on the walls and the footings'' loads not yet checked.'
 ground:
 - {what: Ladle furnace foundation, item: good.concrete, volume: 102.0, note: 'x -15 to -3, y -5 to 5, 1 m, a 0.3 m recess along the car''s lane for the rails', mass: 244800.0}
@@ -140,7 +348,7 @@ ground:
 - {what: Cooling tower basin, item: good.concrete, volume: 114.66, note: 'sunk as the furnace shop''s: 0.3 m walls round its 12 x 12 m footprint, tops at z 0, floor top at z -2; eight pedestals, under the tower''s four feet and its skid''s four corners (blender); measured on blender''s model', mass: 275200.0}
 - {what: Rail beds, item: good.concrete, volume: 7.2, note: 'under the ladle rail, 0.125 m3 a metre as the furnace shop''s; measured on blender''s model', mass: 17280.0}
 - {what: Link supports, item: good.concrete, volume: 3.41, note: 'footings for the alloy gallery''s trestles, the duct''s supports and the pipes'' plinths; measured on blender''s model', mass: 8184.0}
-totals: {rate: 41.6666666666667, power: 8907000.0, heat: 1568000.0, water: 0.8674, mass: 3021000.0, against_module: 'module.ladle-station: one box 40 x 30 x 35 m, 7.5 MW. This layout: the same rate; 8.9 MW (the module''s figure is the arc''s average; the degasser''s pumps, the fan, the crane and the tower are on top); 0.9 kg/s of water the module did not name; 1048 t of plant and frame and 1973 t of concrete.'}
+totals: {rate: 41.6666666666667, power: 8940000.0, heat: 1568000.0, water: 0.8674, mass: 3037000.0, against_module: 'module.ladle-station: one box 40 x 30 x 35 m, 7.5 MW. This layout: the same rate; 8.9 MW (the module''s figure is the arc''s average; the degasser''s pumps, the fan, the crane and the tower are on top); 0.9 kg/s of water the module did not name; 1063 t of plant and frame and 1973 t of concrete.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}

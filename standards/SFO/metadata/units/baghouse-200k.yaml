@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.baghouse-200k, name: 'Fume baghouse, 200,000 m3/h', description: 'Cleans a furnace''s fume before it goes to the air: filter bags in a closed steel casing over hoppers, the dust shaken down and let out through sealed valves; a fan and its stack at one end draw the gas through. The gas comes in at the top of one long side (local 0, -4, 10).'}
+identity: {key: unit.baghouse-200k, name: 'Fume baghouse, 200,000 m3/h', description: 'Cleans a furnace''s fume before it goes to the air: filter bags in a closed steel casing over hoppers, the dust shaken down and let out through sealed valves; a fan and its stack at one end draw the gas through. The gas comes in at the top of one long side (local 0, -4, 10). Its ports (SFO 25): the gas in through a DN 1000 flange at (0, -4, 10), facing -y; the fan''s 400 V at (5.75, 0, 1), facing +x.'}
 size_class: 2
 fits: plant-mount.bay-s2
 physical: {length: 12.0, width: 8.0, height: 12.0, mass: 68690.0}
@@ -11,6 +11,33 @@ built_of:
 - {what: Fan and motor, item: good.electric-motors, mass: 4000.0, note: 'an induced-draught fan, 8 t for 400,000 m3/h, in proportion; from memory'}
 needs: {power: 296300.0}
 ports:
+- id: gas-in
+  flow: in
+  medium: gas
+  item: material.air
+  rate: 40.97
+  pressure: 98000.0
+  temperature: 473.0
+  interface: interface.flange-dn1000-pn1
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn1000-pn1
+  at: [0.0, -4.0, 10.0]
+  facing: [0.0, -1.0, 0.0]
+  note: 200,000 m3/h at about 200 deg C (invented)
+- id: power-in
+  flow: in
+  medium: power
+  power: 296300.0
+  voltage: 400
+  interface: interface.termination-400v-240mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-240mm2
+  at: [5.75, 0.0, 1.0]
+  facing: [1.0, 0.0, 0.0]
+  note: the fan
+  current: 475.2
 - id: base
   flow: out
   medium: load
@@ -31,5 +58,9 @@ basis:
   tier: invented
   review: true
   note: '200,000 m3/h, 1.2 m/min through the cloth, the fan at 4 kPa and 75%: from memory. Fan power 296 kW.'
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage.'
 - of: [life]
   rule: rule.life-plant

@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.cooling-tower-1cell, name: 'Cooling tower, 1 cells', description: 'An induced-draught wet tower: the ladle station''s closed water loop gives up its heat through a plate exchanger to tower water, which sprays down through fill against a fan''s draught and evaporates. The loop''s pumps and exchanger stand on a skid inside its footprint; the loop leaves by two pairs of 500 mm ports on its east end (local x +6, 0.75 m up, at y 0 and +4.5), and the layout''s pipes and concrete basin are not the unit''s. On a world with air only; airless ground needs radiators instead.'}
+identity: {key: unit.cooling-tower-1cell, name: 'Cooling tower, 1 cells', description: 'An induced-draught wet tower: the ladle station''s closed water loop gives up its heat through a plate exchanger to tower water, which sprays down through fill against a fan''s draught and evaporates. The loop''s pumps and exchanger stand on a skid inside its footprint; the loop leaves by flanges on its east end (local x +6, 0.75 m up), facing +x, DN 150: out at y -0.6 and back at 0.6; its make-up water at (-6, 0, 0.75) and its 400 V at (-6, -3, 1), facing -x, and the layout''s pipes and concrete basin are not the unit''s. On a world with air only; airless ground needs radiators instead.'}
 size_class: 3
 fits: plant-mount.bay-s3
 physical: {length: 12.0, width: 12.0, height: 14.0, mass: 91000.0}
@@ -10,6 +10,59 @@ built_of:
 - {what: Loop pumps and exchanger, item: good.pumps, mass: 25000.0, note: from memory}
 needs: {power: 32530.0, water: 0.8674}
 ports:
+- id: loop-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 37.47
+  temperature: 303.0
+  interface: interface.flange-dn150-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn150-pn10
+  at: [6.0, -0.6, 0.75]
+  facing: [1.0, 0.0, 0.0]
+  pressure: 400000.0
+- id: loop-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 37.47
+  temperature: 313.0
+  interface: interface.flange-dn150-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn150-pn10
+  at: [6.0, 0.6, 0.75]
+  facing: [1.0, 0.0, 0.0]
+  pressure: 400000.0
+- id: makeup-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 0.8674
+  interface: interface.flange-dn100-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn100-pn10
+  at: [-6.0, 0.0, 0.75]
+  facing: [-1.0, 0.0, 0.0]
+  note: the evaporation, blowdown and drift made up
+  pressure: 400000.0
+  temperature: 303.0
+- id: power-in
+  flow: in
+  medium: power
+  power: 32530.0
+  voltage: 400
+  interface: interface.termination-400v-25mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-25mm2
+  at: [-6.0, -3.0, 1.0]
+  facing: [-1.0, 0.0, 0.0]
+  note: the fan and the loop's pumps
+  current: 52.17
 - id: base
   flow: out
   medium: load
@@ -34,5 +87,9 @@ basis:
   tier: derived
   review: true
   note: 'The loop''s 1.6 MW at a 10 K rise is 37 kg/s, pumped at 4 bar and 75%: 20 kW; fans 0.8% of the heat (from memory). Evaporating it all takes 0.7 kg/s of water (2.26 MJ/kg); blowdown and drift a quarter more (from memory).'
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage; water at 30 deg C in and 40 out; water at the pumps'' 4 bar.'
 - of: [life]
   rule: rule.life-plant
