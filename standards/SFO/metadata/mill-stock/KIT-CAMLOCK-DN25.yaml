@@ -17,7 +17,7 @@ size:
 supplies:
   item: connector.camlock-dn25
 physical:
-  mass: 0.45
+  mass: 0.6
 basis:
 - of:
   - size

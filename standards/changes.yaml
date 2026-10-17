@@ -168,10 +168,10 @@
 - { record: connector.cable-reel-11kv-3x95-300m, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "5562dbc414ed124a" }
 - { record: connector.cable-reel-690v-4x35-100m, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "3932ae0e58e6cd7c" }
 - { record: connector.cable-reel-690v-4x95-200m, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "0d3a8ec876de3e0f" }
-- { record: connector.camlock-dn100, at: "2026-10-17T21:37:29Z", status: draft, summary: "changed: physical", sha: "5a0a81c75462c4e1" }
-- { record: connector.camlock-dn150, at: "2026-10-17T21:37:29Z", status: draft, summary: "changed: physical", sha: "4f2cc16146f13cfb" }
-- { record: connector.camlock-dn25, at: "2026-10-17T21:37:29Z", status: draft, summary: "changed: physical", sha: "d31213d1f80c7a95" }
-- { record: connector.camlock-dn50, at: "2026-10-17T21:37:29Z", status: draft, summary: "changed: physical", sha: "a59823f27342acc6" }
+- { record: connector.camlock-dn100, at: "2026-10-17T21:39:33Z", status: draft, summary: "changed: physical, built_of", sha: "fd343167fe1480ad" }
+- { record: connector.camlock-dn150, at: "2026-10-17T21:39:33Z", status: draft, summary: "changed: physical, built_of", sha: "9d177caa5734adbe" }
+- { record: connector.camlock-dn25, at: "2026-10-17T21:39:33Z", status: draft, summary: "changed: physical, built_of", sha: "e812478a2129e41e" }
+- { record: connector.camlock-dn50, at: "2026-10-17T21:39:33Z", status: draft, summary: "changed: physical, built_of", sha: "6a85611152f457ce" }
 - { record: connector.chute-dn1000, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "3b3c6afd93ffc24e" }
 - { record: connector.chute-dn400, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "249eeb811c9dc969" }
 - { record: connector.chute-dn600, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "239672a4c8f7692d" }
@@ -3382,10 +3382,10 @@
 - { record: stock.kit-cable-reel-11kv-3x95-300m, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "b6ce05304ecd800e" }
 - { record: stock.kit-cable-reel-690v-4x35-100m, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "0bb77ed59e9154bf" }
 - { record: stock.kit-cable-reel-690v-4x95-200m, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "ca019dfe60612a13" }
-- { record: stock.kit-camlock-dn100, at: "2026-10-17T21:37:29Z", status: review, summary: "changed: size", sha: "e22bfb5698269a25" }
-- { record: stock.kit-camlock-dn150, at: "2026-10-17T21:37:29Z", status: review, summary: "changed: size", sha: "a7b9a24de2f50328" }
-- { record: stock.kit-camlock-dn25, at: "2026-10-17T21:37:29Z", status: review, summary: "changed: size", sha: "03c1aed529c1ee0c" }
-- { record: stock.kit-camlock-dn50, at: "2026-10-17T21:37:29Z", status: review, summary: "changed: size", sha: "4e6d9de91d185eca" }
+- { record: stock.kit-camlock-dn100, at: "2026-10-17T21:39:33Z", status: review, summary: "changed: physical", sha: "e9bb2880d4afae50" }
+- { record: stock.kit-camlock-dn150, at: "2026-10-17T21:39:33Z", status: review, summary: "changed: physical", sha: "d62c7d443bb5d9ad" }
+- { record: stock.kit-camlock-dn25, at: "2026-10-17T21:39:33Z", status: review, summary: "changed: physical", sha: "a8e7f6ebc15c498f" }
+- { record: stock.kit-camlock-dn50, at: "2026-10-17T21:39:33Z", status: review, summary: "changed: physical", sha: "630ba428b5edd0ad" }
 - { record: stock.kit-chute-dn1000, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "8aabad2f1c994c8c" }
 - { record: stock.kit-chute-dn400, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "ac9b49d425629cd2" }
 - { record: stock.kit-chute-dn600, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "3ea9ad4e7fb75ada" }

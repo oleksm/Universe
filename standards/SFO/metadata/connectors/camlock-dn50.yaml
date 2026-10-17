@@ -13,15 +13,15 @@ physical:
   length: 0.13
   width: 0.086
   height: 0.155
-  mass: 0.95
+  mass: 1.27
 built_of:
 - what: Adapter and coupler
   item: material.aluminium-alloy-6061
-  mass: 0.902
+  mass: 1.21
   note: cast aluminium; stainless pins
 - what: Gasket
   item: material.epdm-rubber
-  mass: 0.048
+  mass: 0.064
 provides: both
 template: template.camlock
 basis:

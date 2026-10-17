@@ -75,7 +75,7 @@ def conn(slug, d, iface):
 
 
 # ------------------------------------------------------------------ hoses and their couplings
-CAM = {0.025: 0.45, 0.05: 0.95, 0.1: 2.7, 0.15: 5.6}           # kg a cam-lock pair (A and D), aluminium, by DN (from memory)
+CAM = {0.025: 0.6, 0.05: 1.27, 0.1: 3.6, 0.15: 7.5}            # kg a cam-lock pair (A and D): DN 50 as blender modelled it (1.166 kg of cast aluminium, about 0.1 kg of pins and gasket, 2026-10-17), the others scaled by it from memory
 CAM_P = {0.025: 1.7e6, 0.05: 1.7e6, 0.1: 1.0e6, 0.15: 0.7e6}   # Pa they are rated for (EN 14420-7, falling with size; from memory)
 for dn in (0.025, 0.05, 0.1, 0.15):
     t = {0.025: 0.006, 0.05: 0.008, 0.1: 0.012, 0.15: 0.015}[dn]
