@@ -4386,7 +4386,7 @@
 - { record: unit.fitout-cell, at: "2026-10-17T22:28:14Z", status: draft, summary: "changed: visual", sha: "91810022fb49f599" }
 - { record: unit.fitout-classroom, at: "2026-10-17T22:28:14Z", status: draft, summary: "changed: visual", sha: "044b607bd19296dc" }
 - { record: unit.fitout-counter, at: "2026-10-17T22:28:14Z", status: draft, summary: "changed", sha: "e65d3ae0a56c5aba" }
-- { record: unit.fitout-court, at: "2026-10-17T22:31:00Z", status: draft, summary: "changed: physical, built_of", sha: "e5cf4abd71a9d3cd" }
+- { record: unit.fitout-court, at: "2026-10-17T22:33:53Z", status: draft, summary: "changed: visual", sha: "6f729e63f207c931" }
 - { record: unit.fitout-dining, at: "2026-10-17T22:04:30Z", status: draft, summary: "changed: basis", sha: "fccdca1658435a77" }
 - { record: unit.fitout-dorm, at: "2026-10-17T22:04:30Z", status: draft, summary: "changed: basis", sha: "395d8b4fd7f181d6" }
 - { record: unit.fitout-flat, at: "2026-10-17T22:04:30Z", status: draft, summary: "changed: basis", sha: "69d0fe4a6d1966be" }
