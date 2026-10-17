@@ -133,7 +133,7 @@
 - { record: building.hospital, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "6fe3a3d2005f41ad" }
 - { record: building.inn, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "b2be77c718fd8a67" }
 - { record: building.market-hall, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "30f77ef3eb17e626" }
-- { record: building.offices, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "471333ce15ff11d1" }
+- { record: building.offices, at: "2026-10-17T21:01:38Z", status: draft, summary: "changed: visual", sha: "caa24111c3505ec7" }
 - { record: building.park, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "e78ff8ee91a35ec0" }
 - { record: building.press, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "f1eefaff12f89aa9" }
 - { record: building.repair-shop, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "42d55d3166f91da5" }
