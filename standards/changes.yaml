@@ -140,7 +140,7 @@
 - { record: building.school, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "290f6e9e3f8cd12a" }
 - { record: building.shop, at: "2026-10-17T20:50:25Z", status: draft, summary: "changed: visual", sha: "2505887c30ea5b37" }
 - { record: building.studio, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "b6e0b919868f7c1f" }
-- { record: building.tavern, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "0155b2c0308f01cb" }
+- { record: building.tavern, at: "2026-10-17T20:54:30Z", status: draft, summary: "changed: visual", sha: "7e551b3f3d248ae6" }
 - { record: building.theatre, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "5971d2a526ff3360" }
 - { record: building.watch-house, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "b0b589573e455e25" }
 - { record: clock.administration, at: "2026-10-06T23:43:45Z", status: review, summary: "changed: identity, trigger, runs, rule, basis", sha: "1caebf34400532fc" }
