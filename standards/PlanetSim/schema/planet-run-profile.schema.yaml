@@ -27,6 +27,13 @@ properties:
       water_mass_fraction: { type: number, minimum: 0, maximum: 1, x-unit: "1" }
       star_age: { type: number, minimum: 0, x-unit: s, description: "The star's age at the run's end (today)." }
       preset: { type: string, description: "The sim's preset it comes from (presets.earth())." }
+      core_mass_fraction: { type: number, minimum: 0, maximum: 1, x-unit: "1", description: "Earth 0.325" }
+      core_radius: { type: number, exclusiveMinimum: 0, x-unit: m, description: "Earth 3.48e6 m" }
+      core_light: { type: number, minimum: 0, maximum: 1, x-unit: "1", description: "The core's light-element mass fraction (Earth about 0.08)" }
+      surface_temp: { type: number, exclusiveMinimum: 0, x-unit: K, description: "Earth 288 K" }
+      regime: { enum: [plates, stagnant_lid], description: "Plate tectonics or a stagnant lid" }
+      radiogenic: { type: number, minimum: 0, x-unit: "1", description: "Its K, Th and U as a multiple of Earth's" }
+      core_stratified: { type: boolean, description: "A stably stratified core (no thermal convection at its top)" }
       note: { type: string }
   start: { type: number, x-unit: s, description: "Before present." }
   end: { type: number, x-unit: s, description: "Before present (0: today)." }
