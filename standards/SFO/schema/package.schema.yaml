@@ -49,5 +49,6 @@ properties:
         size: { type: array, items: { type: number, exclusiveMinimum: 0 }, minItems: 2, maxItems: 2, x-unit: "m", description: "m, width and height of the plate (2:1)" }
   keeps: { type: string, description: "what it keeps its contents from, or at: cold, dry, sealed, ventilated" }
   visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
+  model_requests: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/model_request" }, description: "Work asked of its installed model, open until a later version answers it." }
   revision: { $ref: "../../common.schema.yaml#/definitions/record_revision" }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

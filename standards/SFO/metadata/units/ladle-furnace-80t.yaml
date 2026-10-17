@@ -151,6 +151,8 @@ envelope:
 - [-2.301, -3.221, 3.798, 2.501, 0.9, 14.001]
 - [-2.301, 0.9, 3.798, 2.301, 3.301, 9.001]
 - [-5.501, -4.951, -0.001, -1.409, -0.687, 6.625]
+model_requests:
+- {do: measure, of_version: 1, asked: '2026-10-17', by: registry, because: 'Measure its own envelope boxes from v1: it carries the sealed furnace''s measured boxes for now (the same gantry), but the air furnace''s roof elbow and chute differ. The fume duct leaves the roof elbow at (2, 0, 7.5) up to z 10 and north out of the open side.'}
 life: 788940000
 visual: {format: freefall-model/1, path: models/ladle-furnace-80t/v1, manifest_sha256: 798a06197c33e9638f0472ab6f552f02f59f935abf73bc1d0fe9f92fcb43d2bc, version: 1, triangles: 12662}
 basis:

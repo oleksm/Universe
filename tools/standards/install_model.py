@@ -9,6 +9,7 @@ Options: --source=<file.blend> (the source it was exported from: its path and sh
 optionally stats and evidence; it goes in the manifest as `about`, beside the stats the installer measures itself),
 --thumb=<thumb.png> and --icon=<icon.png> (previews, required with --push: square PNG with a transparent background,
 512 and 128 px; written into the package as thumb.png and icon.png),
+The manifest keeps the record's model spec as it stood (model_spec.py): later gaps (next_asset.py --rework) are measured from it.
 --motion=<file.json> (freefall-motion/1, docs/formats/freefall-motion-1.schema.yaml: how its parts move; checked against
 the model and the record, then written into the package as motion.json).
 
@@ -26,6 +27,7 @@ import datetime, json, os, re, shutil, subprocess, sys
 import yaml
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import model_spec  # noqa: E402  (the spec it is made to, kept in the manifest: next_asset.py --rework compares against it)
 from assets import FORMAT, MOTION_FORMAT, PREVIEWS, ROOT, check_model, check_motion, check_png, inspect_glb, read_about, records, sha, size_of, store, tail  # noqa: E402
 
 
@@ -121,6 +123,7 @@ def main(argv):
         manifest = {"format": FORMAT, "key": key, "kind": kind, "version": version, "file": "model.glb",
                     "bounds_m": [info["lo"], info["hi"]], "size_m": info["bounds"], "record_size_m": size, "nodes": info["nodes"], "triangles": info["triangles"],
                     "measured": info["stats"], **({"about": about} if about else {}),
+                    "spec": model_spec.spec(kind, rec), "spec_sha256": model_spec.sha(model_spec.spec(kind, rec)),
                     "source": {"file": src and os.path.abspath(src), "sha256": sha(src) if src and os.path.exists(src) else None, "commit": repo, "exported": os.path.basename(glb)},
                     "date": datetime.date.today().isoformat(), **({"note": opt["note"]} if isinstance(opt.get("note"), str) else {}),
                     **({"motion": {"format": MOTION_FORMAT, "file": "motion.json"}} if motion else {}),

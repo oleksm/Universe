@@ -54,6 +54,8 @@ envelope:
 - [0.0, -5.152, -1.2, 6.052, 5.152, 2.001]
 - [0.0, -5.152, -6.001, 6.052, -1.45, -1.2]
 - [0.0, 1.45, -6.001, 6.052, 5.152, -1.2]
+model_requests:
+- {do: measure, of_version: 2, asked: '2026-10-17', by: registry, because: 'Measure its envelope boxes from v2: its east half''s underside is open for the hopper belt through the east portal (your yard belt fit, candidate v02, found it clear), but the registry''s boxes were cut by hand (y -1.45 to 1.45 under z -1.2) for the fit check. Send the boxes the belt''s way really has.'}
 life: 788940000
 visual: {format: freefall-model/1, path: models/truck-dump-hopper/v2, manifest_sha256: 8b26fae88ef7ef55e55cf8410f67efe360e4bc962ba1dd66808f93404b1947c4, version: 2, triangles: 6952}
 basis:

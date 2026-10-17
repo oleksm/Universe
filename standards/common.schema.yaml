@@ -174,6 +174,17 @@ definitions:
       properties:
         profession: { type: string, x-ref: [profession], description: "The trade, by its key." }
         count: { type: integer, minimum: 0, description: "how many of them" }
+  model_request:
+    description: "Work the registry asks of a record's model (tools/standards/model_spec.py, docs/asset-contract.md): rebuild (its body changed: a part moved, was added or turned out wrong), rig (its moving parts want pivots, nodes or a motion file), measure (its envelope boxes are to be measured from the installed model), optimise (over its triangle budget). Asked of one installed version: a later version answers it. A port moving is never a request (the game draws the joint at the port)."
+    type: object
+    additionalProperties: false
+    required: [do, because, asked, of_version]
+    properties:
+      do: { enum: [rebuild, rig, measure, optimise] }
+      because: { type: string, description: "What changed or is wrong, and what the new model must do: plainly, so a modeller can act on it." }
+      asked: { type: string, format: date, description: "When it was asked (YYYY-MM-DD)." }
+      of_version: { type: integer, minimum: 0, description: "The installed version it is asked of; a version above it answers it." }
+      by: { type: string, description: "Who asks: the session or agent." }
   visual:
     description: "A made thing's model (the asset contract, docs/asset-contract.md): a package in the assets store (UNIVERSE_ASSETS, else ~/git/freefall-assets) written once per version by tools/standards/install_model.py, which checks the model against this record (its size, its required nodes, its budget) and the package's files against their hashes. Without one the game draws the record as a translucent box of its size with its name on the edges."
     type: object

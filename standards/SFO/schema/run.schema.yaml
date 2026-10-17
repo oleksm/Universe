@@ -114,6 +114,7 @@ properties:
   jacket_end: { type: object, additionalProperties: false, properties: { mass: { type: number, x-unit: "kg" } }, description: "The annular plate closing a jacketed duct's water gap at each end, where it meets a flange or hood." }
   triangle_budget: { type: integer, minimum: 1000, description: "Triangles its kit may have, where the kind's default (12,000) is too few: a bus of many tubes." }
   visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
+  model_requests: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/model_request" }, description: "Work asked of its installed model, open until a later version answers it." }
   looks_as: { type: string, x-ref: [run], description: "Another run of the same look (kind, size, material) whose model this one is drawn with; it wants no model of its own. Mass, rating and connector stay this record's." }
   revision:
     $ref: "../../common.schema.yaml#/definitions/record_revision"

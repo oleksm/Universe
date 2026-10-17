@@ -84,6 +84,7 @@ properties:
   product: { type: string, x-ref: [product], description: "The product this unit is, as fitted: its model is the product's (or its family's generator's), sized as this unit is, with these options." }
   options: { type: array, items: { type: string }, description: "The product's option kits this unit carries, by their ids." }
   visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
+  model_requests: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/model_request" }, description: "Work asked of its installed model, open until a later version answers it." }
   revision:
     $ref: "../../common.schema.yaml#/definitions/record_revision"
     default: { status: draft, owner: registry, on_conflict: propose, because: "A trial unit (SFO 24): sized from material and dimensions, many of them from memory, marked in its basis.", ask: docs/proposals/modular-factories.md }

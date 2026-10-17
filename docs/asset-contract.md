@@ -142,6 +142,37 @@ model loader, every reference pose, a 513-pose sweep), then writes `review/regis
 Exit 0 is a pass: no registry review is needed before the owner's acceptance. Exit 1: send the registry a task with the
 report. The first build takes a few minutes; later runs are quick.
 
+## Rework: what an installed model lacks, and redoing it
+
+A record changes after its model is made. The rework tools say what that change asks of the model, so only real body
+changes are remade (the owner, 2026-10-16: never the same model again without a good need).
+
+    python3 tools/standards/next_asset.py --rework [--json]     # installed models with work to do, worst first
+    python3 tools/standards/next_asset.py --gap <key>           # one model's gap: the spec it was made to, the spec now, what to do
+    python3 tools/standards/next_asset.py --key <key>           # the full brief: size, parts, ports, motion, envelope, requests
+    python3 tools/standards/model_measure.py <model.glb> --as=unit.<slug> [--list] [--nodes=a,b] [--apply]   # a unit's envelope boxes from its model
+
+- **The spec** (`tools/standards/model_spec.py`): what a record sets for its model: size, part names, required nodes,
+  ports (position, facing, connector), motion, envelope, triangle budget. Masses, prose and duties are not in it.
+  Every install keeps the spec it was made to in its manifest (`spec`, `spec_sha256`); older installs are read from
+  the record in git at the commit that installed them.
+- **The verdicts**, worst first:
+
+| Verdict | When | What to do |
+|---|---|---|
+| rebuild | the record's size left the model's tolerance, or the registry asks it by name | remake the body; install a new version |
+| rig | parts of it move (a motion not of the whole unit) and the package has no `motion.json`, or a required node is missing | separate the moving parts, pivot them on the record's axes, install with `--motion` |
+| review | the record's parts changed since (added, removed, renamed) | look: if the model shows them, nothing; if not, say so and remake |
+| measure | a unit without envelope boxes, or the registry asks them measured | `model_measure.py`, its groups named so open space stays open |
+| optimise | over its triangle budget | reduce, install a new version |
+| none | a port moved or was added; a mass changed | nothing: the game draws the joint at each port, the model ends at the mating plane |
+
+- **Requests by name**: a record's `model_requests` (`do`, `because`, `asked`, `of_version`, `by`). For plant units they
+  are written from `tools/standards/unit_requests.yaml`. A request is open until a version above `of_version` is
+  installed; a `measure` request closes when `model_measure.py --apply` writes the boxes.
+- **What the registry does not ask**: a new model because a port moved, or a size within tolerance. A body conflict a
+  layout can't route round comes as a request with its reason.
+
 ## Game validation
 
 The registry validates installed models in the game. After `--push`, the modeller sends the registry a `task` naming the

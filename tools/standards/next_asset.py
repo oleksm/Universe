@@ -7,6 +7,13 @@
     python3 tools/standards/next_asset.py --report        # done and left as a page (out/model-report.html), opened; --no-open to only write it
     python3 tools/standards/next_asset.py --key equipment.power.battery.s1   # the brief of one record
     python3 tools/standards/next_asset.py --hulls         # include hulls (the ships session's designs)
+    python3 tools/standards/next_asset.py --rework        # installed models with work to do, worst first (--json for an agent)
+    python3 tools/standards/next_asset.py --gap unit.ball-mill-4m4   # one model's gap: the spec it was made to, the spec now, what to do
+
+Rework (model_spec.py): a model's spec is what its record sets for it (size, parts, required nodes, ports, motion,
+envelope, budget). Each install keeps the spec it was made to; the gap against the record now gives a verdict:
+rebuild, rig, review, measure, optimise, or none (a port moving is never model work). The registry can also ask by
+name (a record's model_requests). Answer by installing a new version: a version above the one asked of closes it.
 
 The queue is every record of a kind that takes a model (equipment, modules, buildings, structures, gates; hulls on
 asking) with no `visual` yet and not retired, in the order the player sees them most: equipment the experimental ship
@@ -21,6 +28,7 @@ import yaml
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from assets import KINDS, TREE, LOW, HIGH, records, required_nodes, size_of, store, tail  # noqa: E402
+import model_spec  # noqa: E402
 
 
 def usage():
@@ -112,6 +120,19 @@ def brief(kind, key, path, r, used):
         b["parts"] = [{"code": d["identity"]["code"], "name": d["identity"]["name"], "mass_kg": (d.get("physical") or {}).get("mass"),
                        "box_m": [(d.get("physical") or {}).get(k) for k in ("length", "width", "height")]}
                       for d in (yaml.safe_load(open(f)) for f in sorted(glob.glob(folder + "/*.yaml")))]
+    sp = model_spec.spec(kind, r)
+    if sp["ports"]:
+        b["ports"] = [{**p, "note": "the joint is the game's: the model ends at the mating plane, no stub (SFO 26)"} if i == 0 else p for i, p in enumerate(sp["ports"])]
+    if sp["motion"]:
+        b["motion"] = sp["motion"]
+        b["motion_notes"] = "separate each moving part, its pivot on the motion's point and axis (record frame: x along, y across, z up), and install with --motion"
+    if sp["envelope"]:
+        b["envelope_m"] = sp["envelope"]
+    if r.get("model_requests"):
+        b["model_requests"] = model_spec.open_requests(r)
+    if r.get("visual"):
+        b["installed"] = r["visual"].get("version")
+        b["rework"] = model_spec.gap(kind, key, path, r)
     if r.get("basis"):
         b["basis"] = [{"of": x.get("of"), "tier": x.get("tier"), "rule": x.get("rule"), "note": x.get("note")} for x in r["basis"]]
     if kind == "package":
@@ -170,6 +191,12 @@ def report(q, used):
     h.append("</table></div><h2>Left, in queue order</h2><div class=wrap><table><tr><th class=n>#</th><th>Kind</th><th>Key</th><th>Name</th><th>Stage</th><th class=n>Used</th></tr>")
     for n, (kind, key, path, r) in enumerate(q, 1):
         h.append(f"<tr><td class=n>{n}</td><td>{kind}</td><td><code>{key}</code></td><td>{name(r)}</td><td>{stage(r) or 'draft'}</td><td class=n>{used.get(key, 0)}</td></tr>")
+    work = model_spec.rework()
+    h.append(f"</table></div><h2>Rework</h2><p>{len(work)} installed models with work to do, from <code>next_asset.py --rework</code>; each one's brief from <code>--gap &lt;key&gt;</code>.</p>"
+             "<div class=wrap><table><tr><th>Verdict</th><th>Kind</th><th>Key</th><th class=n>Version</th><th>What</th></tr>")
+    for g in work:
+        what = "; ".join(x["what"] + ": " + x["detail"][:220] for x in g["gaps"] if x["verdict"] != "none")
+        h.append(f"<tr><td>{g['verdict']}</td><td>{g['kind']}</td><td><code>{g['key']}</code></td><td class=n>{g['installed']}</td><td>{e(what)}</td></tr>")
     h.append("</table></div><h2>Done</h2><div class=wrap><table><tr><th></th><th>Kind</th><th>Key</th><th>Name</th><th class=n>Size, m</th><th class=n>Mass</th><th class=n>Version</th><th class=n>Triangles</th></tr>")
     for kind, key, r in sorted(done, key=lambda x: (x[0], x[1])):
         v = r["visual"]
@@ -197,6 +224,32 @@ def main(argv):
         print(f"{'kind':<10} {'records':>7} {'modelled':>8} {'retired':>7}")
         for kind, (n, m, x) in rows.items():
             print(f"{kind:<10} {n:>7} {m:>8} {x:>7}")
+        return
+    if opt.get("rework"):
+        work = model_spec.rework()
+        if opt.get("json"):
+            print(json.dumps(work, indent=1, ensure_ascii=False))
+            return
+        print(f"{'verdict':<9} {'kind':<10} {'v':>2} key: what")
+        for g in work:
+            print(f"{g['verdict']:<9} {g['kind']:<10} {g['installed'] or 0:>2} {g['key']}: " + "; ".join(x["what"] for x in g["gaps"] if x["verdict"] != "none"))
+        print(f"{len(work)} installed models with work to do; one's brief: --gap <key>")
+        return
+    if opt.get("gap"):
+        key = argv[argv.index("--gap") + 1] if opt["gap"] is True else opt["gap"]
+        hit = [(k, kk, p, r) for k, kk, p, r in records() if kk == key]
+        if not hit:
+            sys.exit(f"no record {key} of a kind that takes a model")
+        kind, key, path, r = hit[0]
+        if not r.get("visual"):
+            sys.exit(f"{key} has no model yet: its brief is --key {key}")
+        g = model_spec.gap(kind, key, path, r)
+        old, source = model_spec.installed_spec(kind, path, r)
+        g["spec_installed"], g["spec_now"] = old, model_spec.spec(kind, r)
+        g["package"] = os.path.join(store(), r["visual"]["path"])
+        g["install"] = f"python3 tools/standards/install_model.py <model.glb> --as={key} --source=<file.blend> --push" + (" --motion=<motion.json>" if any(x["verdict"] == "rig" for x in g["gaps"]) else "")
+        g["measure"] = f"python3 tools/standards/model_measure.py <model.glb> --as={key}" if kind == "unit" else None
+        print(json.dumps(g, indent=1, ensure_ascii=False))
         return
     q, used = queue(bool(opt.get("hulls")))
     if opt.get("report"):

@@ -135,6 +135,8 @@ envelope:
 - [-18.001, 2.0, 9.0, -14.5, 8.302, 17.661]
 - [-14.5, -6.011, -0.002, 18.001, 8.302, 17.661]
 - [-4.762, -4.251, -0.001, 14.915, 6.001, 17.661]
+model_requests:
+- {do: measure, of_version: 3, asked: '2026-10-17', by: registry, because: 'Measure its envelope boxes from v3 at the loading end: the green ball belt comes in from -y at z 9.2 to 10 over the roller feeder at (-20, 0, 9), and the boxes were split by hand (open for x under -14.5, y under 2, z over 9; the duct''s down-leg taken on +y). Say where the duct leg and the feeder''s frame really are.'}
 life: 788940000
 visual: {format: freefall-model/1, path: models/induration-grate-125th/v3, manifest_sha256: 1b8cdff70fb214652d97d0f4b1b0f9991b746f45fdc4f830963b9f7b91531fdc, version: 3, triangles: 40852}
 basis:

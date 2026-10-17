@@ -15,6 +15,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import frames  # noqa: E402
 import plant_kit as kit  # noqa: E402
 ENVELOPES = yaml.safe_load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "unit_envelopes.yaml"))) or {}
+REQUESTS = yaml.safe_load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "unit_requests.yaml"))) or {}
 
 S = "standards/SFO/metadata/"
 G = 9.80665
@@ -528,6 +529,8 @@ def unit_record(slug, u):
             d["envelope"] = [e for e in env if isinstance(e, list)]
         if [e for e in env if isinstance(e, dict)]:
             d["shells"] = [{"kind": k, "at": v} for e in env if isinstance(e, dict) for k, v in e.items()]
+    if REQUESTS.get(f"unit.{slug}"):
+        d["model_requests"] = REQUESTS[f"unit.{slug}"]
     d["life"] = u.get("life") or mod.get("life")
     d["basis"] = u["basis"] + [{"of": ["life"], "rule": "rule.life-plant"}]
     return d

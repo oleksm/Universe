@@ -140,6 +140,7 @@ properties:
       against_module: { type: string, description: "How it compares with the module it stands for." }
   staff: { $ref: "../../common.schema.yaml#/definitions/staff" }
   visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
+  model_requests: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/model_request" }, description: "Work asked of its installed model, open until a later version answers it." }
   revision:
     $ref: "../../common.schema.yaml#/definitions/record_revision"
     default: { status: draft, owner: registry, on_conflict: propose, because: "A trial layout (SFO 24), worked out by tools/standards/plants.py.", ask: docs/proposals/modular-factories.md }
