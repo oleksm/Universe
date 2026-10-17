@@ -4367,27 +4367,27 @@
 - { record: unit.electrolyser-block-20mw, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "7610f0ca7cdcf0b0" }
 - { record: unit.electrolyser-block-20mw-10bar, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "a1140c4fec571d83" }
 - { record: unit.filter-press-2, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "c3b8f03bc662d6ab" }
-- { record: unit.fitout-cell, at: "2026-10-17T21:52:53Z", status: draft, summary: "first tracked", sha: "d28ddc0a4b3ca03f" }
-- { record: unit.fitout-classroom, at: "2026-10-17T21:52:53Z", status: draft, summary: "first tracked", sha: "0e2df639bd6971f8" }
-- { record: unit.fitout-counter, at: "2026-10-17T21:52:53Z", status: draft, summary: "first tracked", sha: "f4a4ce43d9ad736c" }
-- { record: unit.fitout-court, at: "2026-10-17T21:52:53Z", status: draft, summary: "first tracked", sha: "2cc05d8844a46744" }
-- { record: unit.fitout-dining, at: "2026-10-17T21:52:53Z", status: draft, summary: "first tracked", sha: "d74ab4a09d059b8b" }
-- { record: unit.fitout-dorm, at: "2026-10-17T21:52:53Z", status: draft, summary: "first tracked", sha: "63c7ffdb596e5110" }
-- { record: unit.fitout-flat, at: "2026-10-17T21:52:53Z", status: draft, summary: "first tracked", sha: "dc6856d6d3606454" }
-- { record: unit.fitout-garage, at: "2026-10-17T21:52:53Z", status: draft, summary: "first tracked", sha: "c33ceb79c4c940b5" }
-- { record: unit.fitout-garden, at: "2026-10-17T21:52:53Z", status: draft, summary: "first tracked", sha: "cb91235f74693e85" }
-- { record: unit.fitout-kitchen, at: "2026-10-17T21:52:53Z", status: draft, summary: "first tracked", sha: "6a32fcf6fa9841f9" }
-- { record: unit.fitout-office, at: "2026-10-17T21:52:53Z", status: draft, summary: "first tracked", sha: "a4eefb47e65a1fef" }
-- { record: unit.fitout-press-room, at: "2026-10-17T21:52:53Z", status: draft, summary: "first tracked", sha: "1b43dc9ddf95ffde" }
-- { record: unit.fitout-reception, at: "2026-10-17T21:52:53Z", status: draft, summary: "first tracked", sha: "fdecae6b74d9b015" }
-- { record: unit.fitout-sales-floor, at: "2026-10-17T21:52:53Z", status: draft, summary: "first tracked", sha: "c558dd1a002d0adf" }
-- { record: unit.fitout-seating, at: "2026-10-17T21:52:53Z", status: draft, summary: "first tracked", sha: "2abe4cd6824b39ea" }
-- { record: unit.fitout-stage, at: "2026-10-17T21:52:53Z", status: draft, summary: "first tracked", sha: "e0244ed330f46d00" }
-- { record: unit.fitout-store, at: "2026-10-17T21:52:53Z", status: draft, summary: "first tracked", sha: "954f4bcd165265ba" }
-- { record: unit.fitout-treatment, at: "2026-10-17T21:52:53Z", status: draft, summary: "first tracked", sha: "758863bc86d611f7" }
-- { record: unit.fitout-ward, at: "2026-10-17T21:52:53Z", status: draft, summary: "first tracked", sha: "c929906839c1772f" }
-- { record: unit.fitout-washroom, at: "2026-10-17T21:52:53Z", status: draft, summary: "first tracked", sha: "ba727f0151513fcc" }
-- { record: unit.fitout-workshop, at: "2026-10-17T21:52:53Z", status: draft, summary: "first tracked", sha: "60f864827a1b279c" }
+- { record: unit.fitout-cell, at: "2026-10-17T22:04:30Z", status: draft, summary: "changed: physical, basis", sha: "60c9a7eb9ef94aa1" }
+- { record: unit.fitout-classroom, at: "2026-10-17T22:04:30Z", status: draft, summary: "changed: basis", sha: "eda12dd25a9539e0" }
+- { record: unit.fitout-counter, at: "2026-10-17T22:04:30Z", status: draft, summary: "changed: basis", sha: "8975b2d74f9b4d43" }
+- { record: unit.fitout-court, at: "2026-10-17T22:04:30Z", status: draft, summary: "changed: basis", sha: "e97457c55819df9d" }
+- { record: unit.fitout-dining, at: "2026-10-17T22:04:30Z", status: draft, summary: "changed: basis", sha: "fccdca1658435a77" }
+- { record: unit.fitout-dorm, at: "2026-10-17T22:04:30Z", status: draft, summary: "changed: basis", sha: "395d8b4fd7f181d6" }
+- { record: unit.fitout-flat, at: "2026-10-17T22:04:30Z", status: draft, summary: "changed: basis", sha: "69d0fe4a6d1966be" }
+- { record: unit.fitout-garage, at: "2026-10-17T22:04:30Z", status: draft, summary: "changed: basis", sha: "a973ebf681d4b30f" }
+- { record: unit.fitout-garden, at: "2026-10-17T22:04:30Z", status: draft, summary: "changed: basis", sha: "1dbb815e8063f32b" }
+- { record: unit.fitout-kitchen, at: "2026-10-17T22:04:30Z", status: draft, summary: "changed: basis", sha: "e5847e492b7efbb2" }
+- { record: unit.fitout-office, at: "2026-10-17T22:04:30Z", status: draft, summary: "changed: basis", sha: "bfb41a38a1a1b92f" }
+- { record: unit.fitout-press-room, at: "2026-10-17T22:04:30Z", status: draft, summary: "changed: basis", sha: "5bb0013261ce08c9" }
+- { record: unit.fitout-reception, at: "2026-10-17T22:04:30Z", status: draft, summary: "changed: basis", sha: "f2e09aa9aaef5fae" }
+- { record: unit.fitout-sales-floor, at: "2026-10-17T22:04:30Z", status: draft, summary: "changed: basis", sha: "2ddd0bbb3bfe2ca6" }
+- { record: unit.fitout-seating, at: "2026-10-17T22:04:30Z", status: draft, summary: "changed: basis", sha: "8c9dfa7e316581a3" }
+- { record: unit.fitout-stage, at: "2026-10-17T22:04:30Z", status: draft, summary: "changed: basis", sha: "1a2066317286e53d" }
+- { record: unit.fitout-store, at: "2026-10-17T22:04:30Z", status: draft, summary: "changed: basis", sha: "3e847521ad836138" }
+- { record: unit.fitout-treatment, at: "2026-10-17T22:04:30Z", status: draft, summary: "changed: basis", sha: "bbc61f37711faa5b" }
+- { record: unit.fitout-ward, at: "2026-10-17T22:04:30Z", status: draft, summary: "changed: basis", sha: "f317c38b6e030c99" }
+- { record: unit.fitout-washroom, at: "2026-10-17T22:04:30Z", status: draft, summary: "changed: basis", sha: "6506e73344e26b9e" }
+- { record: unit.fitout-workshop, at: "2026-10-17T22:04:30Z", status: draft, summary: "changed: basis", sha: "b07ef449a1a3b684" }
 - { record: unit.forklift-2t5, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "ff3d76813084adac" }
 - { record: unit.furnace-transformer-14mva, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "c16dea6a1f79fcf2" }
 - { record: unit.furnace-transformer-90mva, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "3d66e024078d6eba" }

@@ -71,17 +71,21 @@ FITOUT = {  # slug: (name, description, [(what, item, kg, note)], people it serv
 }
 
 
+EXTENT = {"cell": (6.0, 4.0)}       # m the fitted unit covers, where it is less than its 6 m bay (the rest is the bay's free floor): blender's models
+
+
 def fitout_records():
     for slug, (name, desc, parts, people, staff) in FITOUT.items():
         mass = sum(p[2] for p in parts)
         height = {"store": 4.5, "seating": 2.4, "stage": 3.0, "press-room": 3.0}.get(slug, 2.2)
+        length, width = EXTENT.get(slug, (BAY, BAY))
         yield slug, {
             "identity": {"key": f"unit.fitout-{slug}", "name": name, "description": desc},
             "size_class": 1, "fits": "plant-mount.bay-s1",
-            "physical": {"length": BAY, "width": BAY, "height": height, "mass": r(mass)},
+            "physical": {"length": length, "width": width, "height": height, "mass": r(mass)},
             "built_of": [{"what": w, "item": i, "mass": float(m), **({"note": n} if n else {})} for w, i, m, n in parts],
             "basis": [{"of": ["built_of", "physical"], "tier": "invented", "review": True,
-                       "note": f"A furnished 6 m bay: {people} people served or seated, {staff} at work in it; masses from memory of such furniture, to be sourced."}]}
+                       "note": f"A furnished 6 m bay (its size is what is fitted; the bay, plant-mount.bay-s1, is what it is given): {people} people served or seated, {staff} at work in it; masses from memory of such furniture, to be sourced."}]}
 
 
 # ------------------------------------------------------------------ what each building type is laid of
