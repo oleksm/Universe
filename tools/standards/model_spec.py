@@ -130,7 +130,7 @@ def gap(kind, key, path, r):
     lacking = [n for n in now["nodes"] if not any(h.startswith(n) for h in have)]
     if m and lacking:
         add("rig", "nodes", "the record wants nodes the model lacks: " + ", ".join(n + "*" for n in lacking))
-    if kind == "unit" and not now["envelope"] and not now["shells"] and not key.startswith("unit.fitout-"):      # (a fit-out bay: no runs pass through it, its fitted box is enough)
+    if kind == "unit" and not now["envelope"] and not now["shells"] and not key.startswith(("unit.fitout-", "unit.furniture-")):      # (furniture: no runs pass through it, its box is enough)
         add("measure", "envelope", "no envelope boxes: measure them from the installed model (model_measure.py)")
     if now["budget"] and m.get("triangles", 0) > now["budget"]:
         add("optimise", "triangles", f"{m['triangles']:,} triangles against a budget of {now['budget']:,}")
