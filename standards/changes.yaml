@@ -202,7 +202,7 @@
 - { record: connector.termination-33kv-120mm2, at: "2026-10-16T23:10:29Z", status: draft, summary: "first tracked", sha: "d27940dad059f431" }
 - { record: connector.termination-33kv-150mm2, at: "2026-10-16T17:53:48Z", status: draft, summary: "changed", sha: "f4f7c89e5af4e2ce" }
 - { record: connector.termination-33kv-185mm2, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "5a93fe916d14a8cd" }
-- { record: connector.termination-33kv-630mm2, at: "2026-10-16T23:10:29Z", status: draft, summary: "first tracked", sha: "bcd8b8ed5172e375" }
+- { record: connector.termination-33kv-630mm2, at: "2026-10-17T00:21:12Z", status: draft, summary: "changed: visual", sha: "4a6e1d33186277c3" }
 - { record: connector.termination-400v-120mm2, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "0aea4eca8ac59c53" }
 - { record: connector.termination-400v-16mm2, at: "2026-10-16T15:00:44Z", status: draft, summary: "changed", sha: "e6e1620d74528d26" }
 - { record: connector.termination-400v-185mm2, at: "2026-10-16T17:53:48Z", status: draft, summary: "changed", sha: "f9e836ab6af32a8a" }
