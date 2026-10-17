@@ -3,7 +3,8 @@
 identity:
   key: layout.building-arena
   name: Arena, world with air
-  description: 'A hall with tiers round a floor: games, matches, races on the track outside. Laid of the kit: a strut frame on the 3 m grid, panels, and 130 furnished 6 m bays (78 seating, 26 stage, 7 counter, 6 reception, 13 washroom).'
+  description: 'A hall with tiers round a floor: games, matches, races on the track outside. Laid of the kit: a strut frame on the 3 m grid, panels, and 130 rooms of 6 m furnished piece by piece (78 seating, 26 stage, 7 counter, 6 reception,
+    13 washroom).'
 stands_for: building.arena
 site:
   atmosphere: air
@@ -14,914 +15,785 @@ physical:
   length: 78.0
   width: 60.0
   height: 6.15
-  mass: 2400281.4
-bays:
+  mass: 2259545.5
+bays: []
+rooms:
 - id: SEA1
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -36.0
   - -27.0
   - 0.0
 - id: SEA2
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -30.0
   - -27.0
   - 0.0
 - id: SEA3
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -24.0
   - -27.0
   - 0.0
 - id: SEA4
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -18.0
   - -27.0
   - 0.0
 - id: SEA5
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -12.0
   - -27.0
   - 0.0
 - id: SEA6
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -6.0
   - -27.0
   - 0.0
 - id: SEA7
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 0.0
   - -27.0
   - 0.0
 - id: SEA8
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 6.0
   - -27.0
   - 0.0
 - id: SEA9
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 12.0
   - -27.0
   - 0.0
 - id: SEA10
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 18.0
   - -27.0
   - 0.0
 - id: SEA11
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 24.0
   - -27.0
   - 0.0
 - id: SEA12
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 30.0
   - -27.0
   - 0.0
 - id: SEA13
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 36.0
   - -27.0
   - 0.0
 - id: SEA14
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -36.0
   - -21.0
   - 0.0
 - id: SEA15
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -30.0
   - -21.0
   - 0.0
 - id: SEA16
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -24.0
   - -21.0
   - 0.0
 - id: SEA17
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -18.0
   - -21.0
   - 0.0
 - id: SEA18
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -12.0
   - -21.0
   - 0.0
 - id: SEA19
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -6.0
   - -21.0
   - 0.0
 - id: SEA20
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 0.0
   - -21.0
   - 0.0
 - id: SEA21
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 6.0
   - -21.0
   - 0.0
 - id: SEA22
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 12.0
   - -21.0
   - 0.0
 - id: SEA23
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 18.0
   - -21.0
   - 0.0
 - id: SEA24
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 24.0
   - -21.0
   - 0.0
 - id: SEA25
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 30.0
   - -21.0
   - 0.0
 - id: SEA26
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 36.0
   - -21.0
   - 0.0
 - id: SEA27
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -36.0
   - -15.0
   - 0.0
 - id: SEA28
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -30.0
   - -15.0
   - 0.0
 - id: SEA29
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -24.0
   - -15.0
   - 0.0
 - id: SEA30
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -18.0
   - -15.0
   - 0.0
 - id: SEA31
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -12.0
   - -15.0
   - 0.0
 - id: SEA32
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -6.0
   - -15.0
   - 0.0
 - id: SEA33
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 0.0
   - -15.0
   - 0.0
 - id: SEA34
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 6.0
   - -15.0
   - 0.0
 - id: SEA35
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 12.0
   - -15.0
   - 0.0
 - id: SEA36
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 18.0
   - -15.0
   - 0.0
 - id: SEA37
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 24.0
   - -15.0
   - 0.0
 - id: SEA38
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 30.0
   - -15.0
   - 0.0
 - id: SEA39
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 36.0
   - -15.0
   - 0.0
 - id: SEA40
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -36.0
   - -9.0
   - 0.0
 - id: SEA41
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -30.0
   - -9.0
   - 0.0
 - id: SEA42
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -24.0
   - -9.0
   - 0.0
 - id: SEA43
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -18.0
   - -9.0
   - 0.0
 - id: SEA44
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -12.0
   - -9.0
   - 0.0
 - id: SEA45
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -6.0
   - -9.0
   - 0.0
 - id: SEA46
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 0.0
   - -9.0
   - 0.0
 - id: SEA47
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 6.0
   - -9.0
   - 0.0
 - id: SEA48
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 12.0
   - -9.0
   - 0.0
 - id: SEA49
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 18.0
   - -9.0
   - 0.0
 - id: SEA50
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 24.0
   - -9.0
   - 0.0
 - id: SEA51
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 30.0
   - -9.0
   - 0.0
 - id: SEA52
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 36.0
   - -9.0
   - 0.0
 - id: SEA53
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -36.0
   - -3.0
   - 0.0
 - id: SEA54
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -30.0
   - -3.0
   - 0.0
 - id: SEA55
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -24.0
   - -3.0
   - 0.0
 - id: SEA56
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -18.0
   - -3.0
   - 0.0
 - id: SEA57
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -12.0
   - -3.0
   - 0.0
 - id: SEA58
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -6.0
   - -3.0
   - 0.0
 - id: SEA59
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 0.0
   - -3.0
   - 0.0
 - id: SEA60
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 6.0
   - -3.0
   - 0.0
 - id: SEA61
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 12.0
   - -3.0
   - 0.0
 - id: SEA62
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 18.0
   - -3.0
   - 0.0
 - id: SEA63
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 24.0
   - -3.0
   - 0.0
 - id: SEA64
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 30.0
   - -3.0
   - 0.0
 - id: SEA65
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 36.0
   - -3.0
   - 0.0
 - id: SEA66
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -36.0
   - 3.0
   - 0.0
 - id: SEA67
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -30.0
   - 3.0
   - 0.0
 - id: SEA68
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -24.0
   - 3.0
   - 0.0
 - id: SEA69
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -18.0
   - 3.0
   - 0.0
 - id: SEA70
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -12.0
   - 3.0
   - 0.0
 - id: SEA71
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - -6.0
   - 3.0
   - 0.0
 - id: SEA72
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 0.0
   - 3.0
   - 0.0
 - id: SEA73
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 6.0
   - 3.0
   - 0.0
 - id: SEA74
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 12.0
   - 3.0
   - 0.0
 - id: SEA75
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 18.0
   - 3.0
   - 0.0
 - id: SEA76
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 24.0
   - 3.0
   - 0.0
 - id: SEA77
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 30.0
   - 3.0
   - 0.0
 - id: SEA78
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-seating
+  arrangement: arrangement.seating
   at:
   - 36.0
   - 3.0
   - 0.0
 - id: STA79
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-stage
+  arrangement: arrangement.stage
   at:
   - -36.0
   - 9.0
   - 0.0
 - id: STA80
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-stage
+  arrangement: arrangement.stage
   at:
   - -30.0
   - 9.0
   - 0.0
 - id: STA81
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-stage
+  arrangement: arrangement.stage
   at:
   - -24.0
   - 9.0
   - 0.0
 - id: STA82
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-stage
+  arrangement: arrangement.stage
   at:
   - -18.0
   - 9.0
   - 0.0
 - id: STA83
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-stage
+  arrangement: arrangement.stage
   at:
   - -12.0
   - 9.0
   - 0.0
 - id: STA84
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-stage
+  arrangement: arrangement.stage
   at:
   - -6.0
   - 9.0
   - 0.0
 - id: STA85
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-stage
+  arrangement: arrangement.stage
   at:
   - 0.0
   - 9.0
   - 0.0
 - id: STA86
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-stage
+  arrangement: arrangement.stage
   at:
   - 6.0
   - 9.0
   - 0.0
 - id: STA87
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-stage
+  arrangement: arrangement.stage
   at:
   - 12.0
   - 9.0
   - 0.0
 - id: STA88
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-stage
+  arrangement: arrangement.stage
   at:
   - 18.0
   - 9.0
   - 0.0
 - id: STA89
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-stage
+  arrangement: arrangement.stage
   at:
   - 24.0
   - 9.0
   - 0.0
 - id: STA90
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-stage
+  arrangement: arrangement.stage
   at:
   - 30.0
   - 9.0
   - 0.0
 - id: STA91
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-stage
+  arrangement: arrangement.stage
   at:
   - 36.0
   - 9.0
   - 0.0
 - id: STA92
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-stage
+  arrangement: arrangement.stage
   at:
   - -36.0
   - 15.0
   - 0.0
 - id: STA93
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-stage
+  arrangement: arrangement.stage
   at:
   - -30.0
   - 15.0
   - 0.0
 - id: STA94
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-stage
+  arrangement: arrangement.stage
   at:
   - -24.0
   - 15.0
   - 0.0
 - id: STA95
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-stage
+  arrangement: arrangement.stage
   at:
   - -18.0
   - 15.0
   - 0.0
 - id: STA96
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-stage
+  arrangement: arrangement.stage
   at:
   - -12.0
   - 15.0
   - 0.0
 - id: STA97
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-stage
+  arrangement: arrangement.stage
   at:
   - -6.0
   - 15.0
   - 0.0
 - id: STA98
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-stage
+  arrangement: arrangement.stage
   at:
   - 0.0
   - 15.0
   - 0.0
 - id: STA99
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-stage
+  arrangement: arrangement.stage
   at:
   - 6.0
   - 15.0
   - 0.0
 - id: STA100
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-stage
+  arrangement: arrangement.stage
   at:
   - 12.0
   - 15.0
   - 0.0
 - id: STA101
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-stage
+  arrangement: arrangement.stage
   at:
   - 18.0
   - 15.0
   - 0.0
 - id: STA102
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-stage
+  arrangement: arrangement.stage
   at:
   - 24.0
   - 15.0
   - 0.0
 - id: STA103
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-stage
+  arrangement: arrangement.stage
   at:
   - 30.0
   - 15.0
   - 0.0
 - id: STA104
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-stage
+  arrangement: arrangement.stage
   at:
   - 36.0
   - 15.0
   - 0.0
 - id: COU105
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - -36.0
   - 21.0
   - 0.0
 - id: COU106
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - -30.0
   - 21.0
   - 0.0
 - id: COU107
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - -24.0
   - 21.0
   - 0.0
 - id: COU108
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - -18.0
   - 21.0
   - 0.0
 - id: COU109
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - -12.0
   - 21.0
   - 0.0
 - id: COU110
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - -6.0
   - 21.0
   - 0.0
 - id: COU111
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - 0.0
   - 21.0
   - 0.0
 - id: REC112
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-reception
+  arrangement: arrangement.reception
   at:
   - 6.0
   - 21.0
   - 0.0
 - id: REC113
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-reception
+  arrangement: arrangement.reception
   at:
   - 12.0
   - 21.0
   - 0.0
 - id: REC114
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-reception
+  arrangement: arrangement.reception
   at:
   - 18.0
   - 21.0
   - 0.0
 - id: REC115
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-reception
+  arrangement: arrangement.reception
   at:
   - 24.0
   - 21.0
   - 0.0
 - id: REC116
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-reception
+  arrangement: arrangement.reception
   at:
   - 30.0
   - 21.0
   - 0.0
 - id: REC117
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-reception
+  arrangement: arrangement.reception
   at:
   - 36.0
   - 21.0
   - 0.0
 - id: WAS118
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -36.0
   - 27.0
   - 0.0
 - id: WAS119
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -30.0
   - 27.0
   - 0.0
 - id: WAS120
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -24.0
   - 27.0
   - 0.0
 - id: WAS121
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -18.0
   - 27.0
   - 0.0
 - id: WAS122
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -12.0
   - 27.0
   - 0.0
 - id: WAS123
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -6.0
   - 27.0
   - 0.0
 - id: WAS124
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 0.0
   - 27.0
   - 0.0
 - id: WAS125
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 6.0
   - 27.0
   - 0.0
 - id: WAS126
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 12.0
   - 27.0
   - 0.0
 - id: WAS127
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 18.0
   - 27.0
   - 0.0
 - id: WAS128
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 24.0
   - 27.0
   - 0.0
 - id: WAS129
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 30.0
   - 27.0
   - 0.0
 - id: WAS130
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 36.0
   - 27.0
@@ -980,9 +852,9 @@ ground:
   mass: 238464.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 2400281.4
-  against_module: 'building.arena (deprecated): one box 80 x 60 x 20 m of 5,294 t, from the average of 538 concrete buildings. This layout: 78 x 60 x 6 m, 2,400 t (81 t frame, 108 t panels, 288 t fit-out, 1,923 t ground), for 2922 people
-    served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
+  mass: 2259545.5
+  against_module: 'building.arena (deprecated): one box 80 x 60 x 20 m of 5,294 t, from the average of 538 concrete buildings. This layout: 78 x 60 x 6 m, 2,260 t (81 t frame, 108 t panels, 147 t furniture, 1,923 t ground), for 2922
+    people served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:
 - profession: profession.performer
   count: 5
@@ -995,7 +867,7 @@ basis:
   - bays
   tier: invented
   review: true
-  note: The mix of bays for a arena is chosen (seating 0.6, stage 0.2, counter 0.05, reception 0.05, washroom 0.1), shared over the record's floor (4800 m2 in 1 storeys, laid as 13 x 10 bays of 6 m).
+  note: The mix of rooms for a arena is chosen (seating 0.6, stage 0.2, counter 0.05, reception 0.05, washroom 0.1), shared over the record's floor (4800 m2 in 1 storeys, laid as 13 x 10 rooms of 6 m a storey).
 - of:
   - frame
   - ground

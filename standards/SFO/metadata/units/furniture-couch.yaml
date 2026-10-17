@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: unit.furniture-couch
+  name: Treatment couch
+  description: An adjustable treatment couch.
+size_class: 1
+physical:
+  length: 1.9
+  width: 0.7
+  height: 0.75
+  mass: 80.0
+built_of:
+- what: Frame
+  item: material.structural-steel-a36
+  mass: 70.0
+- what: Pad
+  item: material.polyethylene-uhmw
+  mass: 10.0
+basis:
+- of:
+  - built_of
+  - physical
+  tier: invented
+  review: true
+  note: From memory of such furniture; to be sourced.

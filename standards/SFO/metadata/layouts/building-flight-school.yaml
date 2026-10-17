@@ -3,8 +3,8 @@
 identity:
   key: layout.building-flight-school
   name: Flight school, world with air
-  description: 'Simulators, classrooms and a pad with two training hulls: where pilots are made, three years from first lesson to a licence. Laid of the kit: a strut frame on the 3 m grid, panels, and 182 furnished 6 m bays (55 classroom,
-    36 workshop, 64 vehicle, 9 office, 18 washroom).'
+  description: 'Simulators, classrooms and a pad with two training hulls: where pilots are made, three years from first lesson to a licence. Laid of the kit: a strut frame on the 3 m grid, panels, and 182 rooms of 6 m furnished piece
+    by piece (55 classroom, 36 workshop, 64 vehicle bay, 9 office, 18 washroom).'
 stands_for: building.flight-school
 site:
   atmosphere: air
@@ -15,1278 +15,1097 @@ physical:
   length: 78.0
   width: 42.0
   height: 9.15
-  mass: 2262443.2
-bays:
+  mass: 2205855.2
+bays: []
+rooms:
 - id: CLA1
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -36.0
   - -18.0
   - 0.0
 - id: CLA2
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -30.0
   - -18.0
   - 0.0
 - id: CLA3
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -24.0
   - -18.0
   - 0.0
 - id: CLA4
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -18.0
   - -18.0
   - 0.0
 - id: CLA5
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -12.0
   - -18.0
   - 0.0
 - id: CLA6
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -6.0
   - -18.0
   - 0.0
 - id: CLA7
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 0.0
   - -18.0
   - 0.0
 - id: CLA8
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 6.0
   - -18.0
   - 0.0
 - id: CLA9
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 12.0
   - -18.0
   - 0.0
 - id: CLA10
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 18.0
   - -18.0
   - 0.0
 - id: CLA11
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 24.0
   - -18.0
   - 0.0
 - id: CLA12
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 30.0
   - -18.0
   - 0.0
 - id: CLA13
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 36.0
   - -18.0
   - 0.0
 - id: CLA14
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -36.0
   - -12.0
   - 0.0
 - id: CLA15
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -30.0
   - -12.0
   - 0.0
 - id: CLA16
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -24.0
   - -12.0
   - 0.0
 - id: CLA17
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -18.0
   - -12.0
   - 0.0
 - id: CLA18
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -12.0
   - -12.0
   - 0.0
 - id: CLA19
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -6.0
   - -12.0
   - 0.0
 - id: CLA20
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 0.0
   - -12.0
   - 0.0
 - id: CLA21
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 6.0
   - -12.0
   - 0.0
 - id: CLA22
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 12.0
   - -12.0
   - 0.0
 - id: CLA23
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 18.0
   - -12.0
   - 0.0
 - id: CLA24
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 24.0
   - -12.0
   - 0.0
 - id: CLA25
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 30.0
   - -12.0
   - 0.0
 - id: CLA26
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 36.0
   - -12.0
   - 0.0
 - id: CLA27
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -36.0
   - -6.0
   - 0.0
 - id: CLA28
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -30.0
   - -6.0
   - 0.0
 - id: CLA29
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -24.0
   - -6.0
   - 0.0
 - id: CLA30
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -18.0
   - -6.0
   - 0.0
 - id: CLA31
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -12.0
   - -6.0
   - 0.0
 - id: CLA32
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -6.0
   - -6.0
   - 0.0
 - id: CLA33
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 0.0
   - -6.0
   - 0.0
 - id: CLA34
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 6.0
   - -6.0
   - 0.0
 - id: CLA35
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 12.0
   - -6.0
   - 0.0
 - id: CLA36
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 18.0
   - -6.0
   - 0.0
 - id: CLA37
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 24.0
   - -6.0
   - 0.0
 - id: CLA38
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 30.0
   - -6.0
   - 0.0
 - id: CLA39
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 36.0
   - -6.0
   - 0.0
 - id: CLA40
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -36.0
   - 0.0
   - 0.0
 - id: CLA41
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -30.0
   - 0.0
   - 0.0
 - id: CLA42
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -24.0
   - 0.0
   - 0.0
 - id: CLA43
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -18.0
   - 0.0
   - 0.0
 - id: CLA44
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -12.0
   - 0.0
   - 0.0
 - id: CLA45
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -6.0
   - 0.0
   - 0.0
 - id: CLA46
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 0.0
   - 0.0
   - 0.0
 - id: CLA47
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 6.0
   - 0.0
   - 0.0
 - id: CLA48
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 12.0
   - 0.0
   - 0.0
 - id: CLA49
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 18.0
   - 0.0
   - 0.0
 - id: CLA50
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 24.0
   - 0.0
   - 0.0
 - id: CLA51
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 30.0
   - 0.0
   - 0.0
 - id: CLA52
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 36.0
   - 0.0
   - 0.0
 - id: CLA53
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -36.0
   - 6.0
   - 0.0
 - id: CLA54
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -30.0
   - 6.0
   - 0.0
 - id: CLA55
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -24.0
   - 6.0
   - 0.0
 - id: WOR56
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -18.0
   - 6.0
   - 0.0
 - id: WOR57
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -12.0
   - 6.0
   - 0.0
 - id: WOR58
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -6.0
   - 6.0
   - 0.0
 - id: WOR59
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 0.0
   - 6.0
   - 0.0
 - id: WOR60
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 6.0
   - 6.0
   - 0.0
 - id: WOR61
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 12.0
   - 6.0
   - 0.0
 - id: WOR62
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 18.0
   - 6.0
   - 0.0
 - id: WOR63
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 24.0
   - 6.0
   - 0.0
 - id: WOR64
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 30.0
   - 6.0
   - 0.0
 - id: WOR65
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 36.0
   - 6.0
   - 0.0
 - id: WOR66
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -36.0
   - 12.0
   - 0.0
 - id: WOR67
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -30.0
   - 12.0
   - 0.0
 - id: WOR68
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -24.0
   - 12.0
   - 0.0
 - id: WOR69
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -18.0
   - 12.0
   - 0.0
 - id: WOR70
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -12.0
   - 12.0
   - 0.0
 - id: WOR71
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -6.0
   - 12.0
   - 0.0
 - id: WOR72
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 0.0
   - 12.0
   - 0.0
 - id: WOR73
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 6.0
   - 12.0
   - 0.0
 - id: WOR74
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 12.0
   - 12.0
   - 0.0
 - id: WOR75
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 18.0
   - 12.0
   - 0.0
 - id: WOR76
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 24.0
   - 12.0
   - 0.0
 - id: WOR77
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 30.0
   - 12.0
   - 0.0
 - id: WOR78
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 36.0
   - 12.0
   - 0.0
 - id: WOR79
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -36.0
   - 18.0
   - 0.0
 - id: WOR80
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -30.0
   - 18.0
   - 0.0
 - id: WOR81
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -24.0
   - 18.0
   - 0.0
 - id: WOR82
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -18.0
   - 18.0
   - 0.0
 - id: WOR83
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -12.0
   - 18.0
   - 0.0
 - id: WOR84
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -6.0
   - 18.0
   - 0.0
 - id: WOR85
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 0.0
   - 18.0
   - 0.0
 - id: WOR86
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 6.0
   - 18.0
   - 0.0
 - id: WOR87
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 12.0
   - 18.0
   - 0.0
 - id: WOR88
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 18.0
   - 18.0
   - 0.0
 - id: WOR89
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 24.0
   - 18.0
   - 0.0
 - id: WOR90
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 30.0
   - 18.0
   - 0.0
 - id: WOR91
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 36.0
   - 18.0
   - 0.0
 - id: GAR92
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - -36.0
   - -18.0
   - 4.5
 - id: GAR93
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - -30.0
   - -18.0
   - 4.5
 - id: GAR94
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - -24.0
   - -18.0
   - 4.5
 - id: GAR95
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - -18.0
   - -18.0
   - 4.5
 - id: GAR96
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - -12.0
   - -18.0
   - 4.5
 - id: GAR97
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - -6.0
   - -18.0
   - 4.5
 - id: GAR98
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 0.0
   - -18.0
   - 4.5
 - id: GAR99
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 6.0
   - -18.0
   - 4.5
 - id: GAR100
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 12.0
   - -18.0
   - 4.5
 - id: GAR101
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 18.0
   - -18.0
   - 4.5
 - id: GAR102
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 24.0
   - -18.0
   - 4.5
 - id: GAR103
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 30.0
   - -18.0
   - 4.5
 - id: GAR104
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 36.0
   - -18.0
   - 4.5
 - id: GAR105
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - -36.0
   - -12.0
   - 4.5
 - id: GAR106
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - -30.0
   - -12.0
   - 4.5
 - id: GAR107
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - -24.0
   - -12.0
   - 4.5
 - id: GAR108
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - -18.0
   - -12.0
   - 4.5
 - id: GAR109
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - -12.0
   - -12.0
   - 4.5
 - id: GAR110
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - -6.0
   - -12.0
   - 4.5
 - id: GAR111
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 0.0
   - -12.0
   - 4.5
 - id: GAR112
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 6.0
   - -12.0
   - 4.5
 - id: GAR113
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 12.0
   - -12.0
   - 4.5
 - id: GAR114
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 18.0
   - -12.0
   - 4.5
 - id: GAR115
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 24.0
   - -12.0
   - 4.5
 - id: GAR116
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 30.0
   - -12.0
   - 4.5
 - id: GAR117
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 36.0
   - -12.0
   - 4.5
 - id: GAR118
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - -36.0
   - -6.0
   - 4.5
 - id: GAR119
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - -30.0
   - -6.0
   - 4.5
 - id: GAR120
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - -24.0
   - -6.0
   - 4.5
 - id: GAR121
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - -18.0
   - -6.0
   - 4.5
 - id: GAR122
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - -12.0
   - -6.0
   - 4.5
 - id: GAR123
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - -6.0
   - -6.0
   - 4.5
 - id: GAR124
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 0.0
   - -6.0
   - 4.5
 - id: GAR125
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 6.0
   - -6.0
   - 4.5
 - id: GAR126
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 12.0
   - -6.0
   - 4.5
 - id: GAR127
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 18.0
   - -6.0
   - 4.5
 - id: GAR128
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 24.0
   - -6.0
   - 4.5
 - id: GAR129
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 30.0
   - -6.0
   - 4.5
 - id: GAR130
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 36.0
   - -6.0
   - 4.5
 - id: GAR131
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - -36.0
   - 0.0
   - 4.5
 - id: GAR132
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - -30.0
   - 0.0
   - 4.5
 - id: GAR133
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - -24.0
   - 0.0
   - 4.5
 - id: GAR134
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - -18.0
   - 0.0
   - 4.5
 - id: GAR135
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - -12.0
   - 0.0
   - 4.5
 - id: GAR136
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - -6.0
   - 0.0
   - 4.5
 - id: GAR137
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 0.0
   - 0.0
   - 4.5
 - id: GAR138
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 6.0
   - 0.0
   - 4.5
 - id: GAR139
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 12.0
   - 0.0
   - 4.5
 - id: GAR140
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 18.0
   - 0.0
   - 4.5
 - id: GAR141
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 24.0
   - 0.0
   - 4.5
 - id: GAR142
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 30.0
   - 0.0
   - 4.5
 - id: GAR143
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 36.0
   - 0.0
   - 4.5
 - id: GAR144
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - -36.0
   - 6.0
   - 4.5
 - id: GAR145
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - -30.0
   - 6.0
   - 4.5
 - id: GAR146
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - -24.0
   - 6.0
   - 4.5
 - id: GAR147
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - -18.0
   - 6.0
   - 4.5
 - id: GAR148
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - -12.0
   - 6.0
   - 4.5
 - id: GAR149
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - -6.0
   - 6.0
   - 4.5
 - id: GAR150
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 0.0
   - 6.0
   - 4.5
 - id: GAR151
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 6.0
   - 6.0
   - 4.5
 - id: GAR152
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 12.0
   - 6.0
   - 4.5
 - id: GAR153
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 18.0
   - 6.0
   - 4.5
 - id: GAR154
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 24.0
   - 6.0
   - 4.5
 - id: GAR155
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 30.0
   - 6.0
   - 4.5
 - id: OFF156
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 36.0
   - 6.0
   - 4.5
 - id: OFF157
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -36.0
   - 12.0
   - 4.5
 - id: OFF158
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -30.0
   - 12.0
   - 4.5
 - id: OFF159
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -24.0
   - 12.0
   - 4.5
 - id: OFF160
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -18.0
   - 12.0
   - 4.5
 - id: OFF161
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -12.0
   - 12.0
   - 4.5
 - id: OFF162
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -6.0
   - 12.0
   - 4.5
 - id: OFF163
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 0.0
   - 12.0
   - 4.5
 - id: OFF164
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 6.0
   - 12.0
   - 4.5
 - id: WAS165
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 12.0
   - 12.0
   - 4.5
 - id: WAS166
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 18.0
   - 12.0
   - 4.5
 - id: WAS167
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 24.0
   - 12.0
   - 4.5
 - id: WAS168
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 30.0
   - 12.0
   - 4.5
 - id: WAS169
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 36.0
   - 12.0
   - 4.5
 - id: WAS170
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -36.0
   - 18.0
   - 4.5
 - id: WAS171
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -30.0
   - 18.0
   - 4.5
 - id: WAS172
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -24.0
   - 18.0
   - 4.5
 - id: WAS173
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -18.0
   - 18.0
   - 4.5
 - id: WAS174
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -12.0
   - 18.0
   - 4.5
 - id: WAS175
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -6.0
   - 18.0
   - 4.5
 - id: WAS176
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 0.0
   - 18.0
   - 4.5
 - id: WAS177
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 6.0
   - 18.0
   - 4.5
 - id: WAS178
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 12.0
   - 18.0
   - 4.5
 - id: WAS179
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 18.0
   - 18.0
   - 4.5
 - id: WAS180
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 24.0
   - 18.0
   - 4.5
 - id: WAS181
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 30.0
   - 18.0
   - 4.5
 - id: WAS182
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 36.0
   - 18.0
@@ -1351,9 +1170,9 @@ ground:
   mass: 207360.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 2262443.2
-  against_module: 'building.flight-school (deprecated): one box 80 x 40 x 10 m of 7,059 t, from the average of 538 concrete buildings. This layout: 78 x 42 x 9 m, 2,262 t (123 t frame, 640 t panels, 112 t fit-out, 1,387 t ground), for
-    934 people served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
+  mass: 2205855.2
+  against_module: 'building.flight-school (deprecated): one box 80 x 40 x 10 m of 7,059 t, from the average of 538 concrete buildings. This layout: 78 x 42 x 9 m, 2,206 t (123 t frame, 640 t panels, 55 t furniture, 1,387 t ground),
+    for 934 people served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:
 - profession: profession.teacher
   count: 12
@@ -1366,7 +1185,7 @@ basis:
   - bays
   tier: invented
   review: true
-  note: The mix of bays for a flight school is chosen (classroom 0.3, workshop 0.2, garage 0.35, office 0.05, washroom 0.1), shared over the record's floor (6400 m2 in 2 storeys, laid as 13 x 7 bays of 6 m).
+  note: The mix of rooms for a flight school is chosen (classroom 0.3, workshop 0.2, garage 0.35, office 0.05, washroom 0.1), shared over the record's floor (6400 m2 in 2 storeys, laid as 13 x 7 rooms of 6 m a storey).
 - of:
   - frame
   - ground

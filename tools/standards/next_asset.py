@@ -53,6 +53,23 @@ def usage():
                 add(x.get("module"), x.get("count", 1))
         for x in d.get("buildings") or []:
             add(x.get("building"), x.get("count", 1))
+    arr = {}
+    for f in glob.glob(os.path.join(TREE, "SFO/metadata/arrangements/*.yaml")):
+        d = yaml.safe_load(open(f)) or {}
+        arr[d["identity"]["key"]] = [x["unit"] for x in d.get("items") or []]
+    for f in glob.glob(os.path.join(TREE, "SFO/metadata/layouts/*.yaml")):       # (a building's pieces: every room's arrangement, as often as the building stands)
+        d = yaml.safe_load(open(f)) or {}
+        n = used.get(d.get("stands_for"), 0)
+        for room in d.get("rooms") or []:
+            for u in arr.get(room["arrangement"], []):
+                add(u, n)
+        for p_ in (d.get("frame") or {}).get("panels") or []:
+            add(p_["panel"], n * p_["count"])
+    for folder in ("panels", "runs", "connectors"):      # (a template is used wherever its members are)
+        for f in glob.glob(os.path.join(TREE, f"SFO/metadata/{folder}/*.yaml")):
+            d = yaml.safe_load(open(f)) or {}
+            if d.get("template"):
+                add(d["template"], used.get(d["identity"]["key"], 0))
     return used
 
 
@@ -72,7 +89,7 @@ def tier(kind, key, used):
         return 0
     if kind == "equipment":
         return 1
-    if kind in ("structure", "gate", "unit", "run", "connector"):      # (works units and their kit: the owner, 2026-10-15)
+    if kind in ("structure", "gate", "unit", "run", "connector", "template"):      # (works units and their kit: the owner, 2026-10-15; kit templates)
         return 2
     if kind == "module":
         return 3

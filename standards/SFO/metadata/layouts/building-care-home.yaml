@@ -3,7 +3,8 @@
 identity:
   key: layout.building-care-home
   name: Care home, world with air
-  description: 'Rooms, nurses and a kitchen for the old and the long sick. Laid of the kit: a strut frame on the 3 m grid, panels, and 48 furnished 6 m bays (24 ward, 7 dining, 3 kitchen, 2 reception, 7 washroom, 5 office).'
+  description: 'Rooms, nurses and a kitchen for the old and the long sick. Laid of the kit: a strut frame on the 3 m grid, panels, and 48 rooms of 6 m furnished piece by piece (24 ward, 7 dining room, 3 kitchen, 2 reception, 7 washroom,
+    5 office).'
 stands_for: building.care-home
 site:
   atmosphere: air
@@ -14,340 +15,293 @@ physical:
   length: 48.0
   width: 18.0
   height: 6.15
-  mass: 662917.5
-bays:
+  mass: 653648.9
+bays: []
+rooms:
 - id: WAR1
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-ward
+  arrangement: arrangement.ward
   at:
   - -21.0
   - -6.0
   - 0.0
 - id: WAR2
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-ward
+  arrangement: arrangement.ward
   at:
   - -15.0
   - -6.0
   - 0.0
 - id: WAR3
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-ward
+  arrangement: arrangement.ward
   at:
   - -9.0
   - -6.0
   - 0.0
 - id: WAR4
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-ward
+  arrangement: arrangement.ward
   at:
   - -3.0
   - -6.0
   - 0.0
 - id: WAR5
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-ward
+  arrangement: arrangement.ward
   at:
   - 3.0
   - -6.0
   - 0.0
 - id: WAR6
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-ward
+  arrangement: arrangement.ward
   at:
   - 9.0
   - -6.0
   - 0.0
 - id: WAR7
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-ward
+  arrangement: arrangement.ward
   at:
   - 15.0
   - -6.0
   - 0.0
 - id: WAR8
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-ward
+  arrangement: arrangement.ward
   at:
   - 21.0
   - -6.0
   - 0.0
 - id: WAR9
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-ward
+  arrangement: arrangement.ward
   at:
   - -21.0
   - 0.0
   - 0.0
 - id: WAR10
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-ward
+  arrangement: arrangement.ward
   at:
   - -15.0
   - 0.0
   - 0.0
 - id: WAR11
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-ward
+  arrangement: arrangement.ward
   at:
   - -9.0
   - 0.0
   - 0.0
 - id: WAR12
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-ward
+  arrangement: arrangement.ward
   at:
   - -3.0
   - 0.0
   - 0.0
 - id: WAR13
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-ward
+  arrangement: arrangement.ward
   at:
   - 3.0
   - 0.0
   - 0.0
 - id: WAR14
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-ward
+  arrangement: arrangement.ward
   at:
   - 9.0
   - 0.0
   - 0.0
 - id: WAR15
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-ward
+  arrangement: arrangement.ward
   at:
   - 15.0
   - 0.0
   - 0.0
 - id: WAR16
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-ward
+  arrangement: arrangement.ward
   at:
   - 21.0
   - 0.0
   - 0.0
 - id: WAR17
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-ward
+  arrangement: arrangement.ward
   at:
   - -21.0
   - 6.0
   - 0.0
 - id: WAR18
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-ward
+  arrangement: arrangement.ward
   at:
   - -15.0
   - 6.0
   - 0.0
 - id: WAR19
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-ward
+  arrangement: arrangement.ward
   at:
   - -9.0
   - 6.0
   - 0.0
 - id: WAR20
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-ward
+  arrangement: arrangement.ward
   at:
   - -3.0
   - 6.0
   - 0.0
 - id: WAR21
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-ward
+  arrangement: arrangement.ward
   at:
   - 3.0
   - 6.0
   - 0.0
 - id: WAR22
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-ward
+  arrangement: arrangement.ward
   at:
   - 9.0
   - 6.0
   - 0.0
 - id: WAR23
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-ward
+  arrangement: arrangement.ward
   at:
   - 15.0
   - 6.0
   - 0.0
 - id: WAR24
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-ward
+  arrangement: arrangement.ward
   at:
   - 21.0
   - 6.0
   - 0.0
 - id: DIN25
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - -21.0
   - -6.0
   - 3.0
 - id: DIN26
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - -15.0
   - -6.0
   - 3.0
 - id: DIN27
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - -9.0
   - -6.0
   - 3.0
 - id: DIN28
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - -3.0
   - -6.0
   - 3.0
 - id: DIN29
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - 3.0
   - -6.0
   - 3.0
 - id: DIN30
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - 9.0
   - -6.0
   - 3.0
 - id: DIN31
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - 15.0
   - -6.0
   - 3.0
 - id: KIT32
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - 21.0
   - -6.0
   - 3.0
 - id: KIT33
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - -21.0
   - 0.0
   - 3.0
 - id: KIT34
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - -15.0
   - 0.0
   - 3.0
 - id: REC35
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-reception
+  arrangement: arrangement.reception
   at:
   - -9.0
   - 0.0
   - 3.0
 - id: REC36
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-reception
+  arrangement: arrangement.reception
   at:
   - -3.0
   - 0.0
   - 3.0
 - id: WAS37
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 3.0
   - 0.0
   - 3.0
 - id: WAS38
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 9.0
   - 0.0
   - 3.0
 - id: WAS39
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 15.0
   - 0.0
   - 3.0
 - id: WAS40
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 21.0
   - 0.0
   - 3.0
 - id: WAS41
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -21.0
   - 6.0
   - 3.0
 - id: WAS42
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -15.0
   - 6.0
   - 3.0
 - id: WAS43
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -9.0
   - 6.0
   - 3.0
 - id: OFF44
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -3.0
   - 6.0
   - 3.0
 - id: OFF45
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 3.0
   - 6.0
   - 3.0
 - id: OFF46
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 9.0
   - 6.0
   - 3.0
 - id: OFF47
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 15.0
   - 6.0
   - 3.0
 - id: OFF48
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 21.0
   - 6.0
@@ -410,8 +364,8 @@ ground:
   mass: 114048.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 662917.5
-  against_module: 'building.care-home (deprecated): one box 50 x 20 x 8 m of 2,206 t, from the average of 538 concrete buildings. This layout: 48 x 18 x 6 m, 663 t (23 t frame, 181 t panels, 34 t fit-out, 425 t ground), for 262 people
+  mass: 653648.9
+  against_module: 'building.care-home (deprecated): one box 50 x 20 x 8 m of 2,206 t, from the average of 538 concrete buildings. This layout: 48 x 18 x 6 m, 654 t (23 t frame, 181 t panels, 25 t furniture, 425 t ground), for 262 people
     served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:
 - profession: profession.nurse
@@ -425,7 +379,7 @@ basis:
   - bays
   tier: invented
   review: true
-  note: The mix of bays for a care home is chosen (ward 0.5, dining 0.15, kitchen 0.05, reception 0.05, washroom 0.15, office 0.1), shared over the record's floor (2000 m2 in 2 storeys, laid as 8 x 3 bays of 6 m).
+  note: The mix of rooms for a care home is chosen (ward 0.5, dining 0.15, kitchen 0.05, reception 0.05, washroom 0.15, office 0.1), shared over the record's floor (2000 m2 in 2 storeys, laid as 8 x 3 rooms of 6 m a storey).
 - of:
   - frame
   - ground

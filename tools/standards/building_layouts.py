@@ -20,6 +20,7 @@ import yaml
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import frames  # noqa: E402
+import furniture  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(HERE))
 M = os.path.join(ROOT, "standards/SFO/metadata")
@@ -172,7 +173,7 @@ def layout(slug, b):
     bays_n = nbx * nby * storeys
     name = b["identity"]["name"]
     mixc = counts(bays_n, mix)
-    bays, placed = [], []
+    bays, rooms = [], []
     order = [k for k in mixc for _ in range(mixc[k])]
     i = 0
     for s in range(storeys):
@@ -182,18 +183,17 @@ def layout(slug, b):
                     break
                 k = order[i]
                 i += 1
-                bays.append({"id": f"{k[:3].upper()}{i}", "mount": "plant-mount.bay-s1", "unit": f"unit.fitout-{k}",
-                             "at": [r(ix * BAY + BAY / 2 - L / 2, 2), r(jy * BAY + BAY / 2 - W / 2, 2), r(s * (sh or 0), 2)]})
-    units = {k: load(os.path.join(M, "units", f"fitout-{k}.yaml")) for k in mixc}
-    fit_mass = sum(units[k]["physical"]["mass"] * n for k, n in mixc.items())
-    people = sum(FITOUT[k][3] * n for k, n in mixc.items())
+                rooms.append({"id": f"{k[:3].upper()}{i}", "arrangement": f"arrangement.{k}",
+                              "at": [r(ix * BAY + BAY / 2 - L / 2, 2), r(jy * BAY + BAY / 2 - W / 2, 2), r(s * (sh or 0), 2)]})
+    fit_mass = sum(furniture.arrangement_mass(k) * n for k, n in mixc.items())
+    people = sum(furniture.ARRANGEMENTS[k][2] * n for k, n in mixc.items())
     rec = {"identity": {"key": f"layout.building-{slug}", "name": f"{name}, world with air",
-                        "description": f"{b['identity']['description']} Laid of the kit: a strut frame on the 3 m grid, panels, and {bays_n} furnished 6 m bays ({', '.join(f'{n} {FITOUT[k][0].lower().replace(' bay', '')}' for k, n in mixc.items())})."},
+                        "description": f"{b['identity']['description']} Laid of the kit: a strut frame on the 3 m grid, panels, and {bays_n} rooms of 6 m furnished piece by piece ({', '.join(f'{n} {furniture.ARRANGEMENTS[k][0].lower()}' for k, n in mixc.items())})."},
            "stands_for": b["identity"]["key"], "site": {"atmosphere": "air", "gravity": [8.0, 11.0]}}
     if sh is None:          # (a park: ground, no frame)
         ground = [{"what": "Paths and beds", "item": CONC, "volume": r(L * W * 0.05 * 0.5), "mass": r(L * W * 0.05 * 0.5 * 2400), "note": "paving on half the park's ground, 50 mm"}]
         total = fit_mass + ground[0]["mass"]
-        rec.update({"physical": {"length": L, "width": W, "height": 2.2, "mass": r(total)}, "bays": bays, "ground": ground,
+        rec.update({"physical": {"length": L, "width": W, "height": 2.2, "mass": r(total)}, "bays": bays, "rooms": rooms, "ground": ground,
                     "totals": {"mass": r(total), "against_module": f"{b['identity']['key']} (deprecated): one box {ph['length']:g} x {ph['width']:g} m. This layout: {L:g} x {W:g} m of gardens."},
                     "staff": b.get("staff") or [],
                     "basis": [{"of": ["bays"], "tier": "invented", "review": True, "note": "A park is its ground and gardens: no frame or panels."}]})
@@ -278,6 +278,7 @@ def layout(slug, b):
     rec.update({
         "physical": {"length": L, "width": W, "height": r(H + 0.15, 2), "mass": r(total)},
         "bays": bays,
+        "rooms": rooms,
         "frame": {"box": [-L / 2, -W / 2, 0.0, L / 2, W / 2, r(H, 2)], "cell": CELL,
                   "shape": f"A skeleton frame on the 3 m grid: {nx} x {ny} cells, {storeys} storey(s) of {sh:g} m; columns at every node, beams on every cell edge at each floor and the roof, one diagonal in every other outside face. Panels on its faces (frame.panels).",
                   "members": members, "mass": r(fmass),
@@ -285,9 +286,9 @@ def layout(slug, b):
                   "panels_mass": r(panel_mass),
                   "sized": f"At 1 g: floors {dead:.0f} Pa dead and {live:.0f} Pa imposed, the roof {roof:.0f} Pa; a ground column carries {col_force / 1e3:.0f} kN ({sec_col} takes it with half again to spare); a 3 m beam bends with {beam_moment / 1e3:.1f} kN m ({sec_beam}, under 470 MPa with half again to spare). Wind, the tall halls' columns between floors and the footings' loads not yet checked."},
         "ground": ground,
-        "totals": {"mass": r(total), "against_module": f"{b['identity']['key']} (deprecated): one box {ph['length']:g} x {ph['width']:g} x {ph['height']:g} m of {old / 1e3:,.0f} t, from the average of 538 concrete buildings. This layout: {L:g} x {W:g} x {H:g} m, {total / 1e3:,.0f} t ({fmass / 1e3:,.0f} t frame, {panel_mass / 1e3:,.0f} t panels, {fit_mass / 1e3:,.0f} t fit-out, {gmass / 1e3:,.0f} t ground), for {people} people served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet."},
+        "totals": {"mass": r(total), "against_module": f"{b['identity']['key']} (deprecated): one box {ph['length']:g} x {ph['width']:g} x {ph['height']:g} m of {old / 1e3:,.0f} t, from the average of 538 concrete buildings. This layout: {L:g} x {W:g} x {H:g} m, {total / 1e3:,.0f} t ({fmass / 1e3:,.0f} t frame, {panel_mass / 1e3:,.0f} t panels, {fit_mass / 1e3:,.0f} t furniture, {gmass / 1e3:,.0f} t ground), for {people} people served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet."},
         "staff": b.get("staff") or [],
-        "basis": [{"of": ["bays"], "tier": "invented", "review": True, "note": f"The mix of bays for a {name.lower()} is chosen ({', '.join(f'{k} {v:g}' for k, v in mix.items() if v)}), shared over the record's floor ({floor:g} m2 in {storeys} storeys, laid as {nbx} x {nby} bays of 6 m)."},
+        "basis": [{"of": ["bays"], "tier": "invented", "review": True, "note": f"The mix of rooms for a {name.lower()} is chosen ({', '.join(f'{k} {v:g}' for k, v in mix.items() if v)}), shared over the record's floor ({floor:g} m2 in {storeys} storeys, laid as {nbx} x {nby} rooms of 6 m a storey)."},
                   {"of": ["frame", "ground"], "tier": "derived", "review": True, "note": "Counted from the grid (tools/standards/building_layouts.py); sections by the loads in frame.sized; masses from the strut, node and panel records."}]})
     return rec
 
@@ -309,8 +310,14 @@ def write(folder, slug, d, schema):
 
 def main():
     n = 0
-    for slug, d in fitout_records():
+    for slug, d in fitout_records():          # (the furnished-bay units, retired: one model a piece now)
+        d["revision"] = {"status": "deprecated", "owner": "registry", "on_conflict": "propose", "replaced_by": f"arrangement.{slug}",
+                         "because": "The owner, 2026-10-17: one model a piece (a table, a chair); the layout places pieces by an arrangement, never a furnished set as one model."}
         n += write("units", f"fitout-{slug}", d, "unit")
+    for name in furniture.FURNITURE:
+        n += write("units", f"furniture-{name}", furniture.unit_record(name), "unit")
+    for name in furniture.ARRANGEMENTS:
+        n += write("arrangements", name, furniture.arrangement_record(name), "arrangement")
     rows = []
     for f in sorted(glob.glob(os.path.join(M, "buildings", "*.yaml"))):
         slug = os.path.basename(f)[:-5]

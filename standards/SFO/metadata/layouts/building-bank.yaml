@@ -3,7 +3,7 @@
 identity:
   key: layout.building-bank
   name: Bank, world with air
-  description: 'A banking hall and its vault: accounts, lending, the insurer''s counter. Laid of the kit: a strut frame on the 3 m grid, panels, and 30 furnished 6 m bays (6 counter, 3 reception, 18 office, 3 washroom).'
+  description: 'A banking hall and its vault: accounts, lending, the insurer''s counter. Laid of the kit: a strut frame on the 3 m grid, panels, and 30 rooms of 6 m furnished piece by piece (6 counter, 3 reception, 18 office, 3 washroom).'
 stands_for: building.bank
 site:
   atmosphere: air
@@ -14,214 +14,185 @@ physical:
   length: 30.0
   width: 18.0
   height: 6.15
-  mass: 429824.3
-bays:
+  mass: 424735.1
+bays: []
+rooms:
 - id: COU1
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - -12.0
   - -6.0
   - 0.0
 - id: COU2
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - -6.0
   - -6.0
   - 0.0
 - id: COU3
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - 0.0
   - -6.0
   - 0.0
 - id: COU4
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - 6.0
   - -6.0
   - 0.0
 - id: COU5
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - 12.0
   - -6.0
   - 0.0
 - id: COU6
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - -12.0
   - 0.0
   - 0.0
 - id: REC7
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-reception
+  arrangement: arrangement.reception
   at:
   - -6.0
   - 0.0
   - 0.0
 - id: REC8
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-reception
+  arrangement: arrangement.reception
   at:
   - 0.0
   - 0.0
   - 0.0
 - id: REC9
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-reception
+  arrangement: arrangement.reception
   at:
   - 6.0
   - 0.0
   - 0.0
 - id: OFF10
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 12.0
   - 0.0
   - 0.0
 - id: OFF11
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -12.0
   - 6.0
   - 0.0
 - id: OFF12
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -6.0
   - 6.0
   - 0.0
 - id: OFF13
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 0.0
   - 6.0
   - 0.0
 - id: OFF14
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 6.0
   - 6.0
   - 0.0
 - id: OFF15
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 12.0
   - 6.0
   - 0.0
 - id: OFF16
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -12.0
   - -6.0
   - 3.0
 - id: OFF17
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -6.0
   - -6.0
   - 3.0
 - id: OFF18
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 0.0
   - -6.0
   - 3.0
 - id: OFF19
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 6.0
   - -6.0
   - 3.0
 - id: OFF20
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 12.0
   - -6.0
   - 3.0
 - id: OFF21
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -12.0
   - 0.0
   - 3.0
 - id: OFF22
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -6.0
   - 0.0
   - 3.0
 - id: OFF23
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 0.0
   - 0.0
   - 3.0
 - id: OFF24
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 6.0
   - 0.0
   - 3.0
 - id: OFF25
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 12.0
   - 0.0
   - 3.0
 - id: OFF26
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -12.0
   - 6.0
   - 3.0
 - id: OFF27
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -6.0
   - 6.0
   - 3.0
 - id: WAS28
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 0.0
   - 6.0
   - 3.0
 - id: WAS29
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 6.0
   - 6.0
   - 3.0
 - id: WAS30
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 12.0
   - 6.0
@@ -286,9 +257,9 @@ ground:
   mass: 82944.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 429824.3
-  against_module: 'building.bank (deprecated): one box 30 x 20 x 8 m of 1,324 t, from the average of 538 concrete buildings. This layout: 30 x 18 x 6 m, 430 t (21 t frame, 114 t panels, 17 t fit-out, 277 t ground), for 180 people served
-    or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
+  mass: 424735.1
+  against_module: 'building.bank (deprecated): one box 30 x 20 x 8 m of 1,324 t, from the average of 538 concrete buildings. This layout: 30 x 18 x 6 m, 425 t (21 t frame, 114 t panels, 12 t furniture, 277 t ground), for 180 people
+    served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:
 - profession: profession.banker
   count: 10
@@ -299,7 +270,7 @@ basis:
   - bays
   tier: invented
   review: true
-  note: The mix of bays for a bank is chosen (counter 0.2, reception 0.1, office 0.6, washroom 0.1), shared over the record's floor (1200 m2 in 2 storeys, laid as 5 x 3 bays of 6 m).
+  note: The mix of rooms for a bank is chosen (counter 0.2, reception 0.1, office 0.6, washroom 0.1), shared over the record's floor (1200 m2 in 2 storeys, laid as 5 x 3 rooms of 6 m a storey).
 - of:
   - frame
   - ground

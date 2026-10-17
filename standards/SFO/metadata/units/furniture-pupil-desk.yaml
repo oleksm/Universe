@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: unit.furniture-pupil-desk
+  name: Pupil desk
+  description: A single pupil's desk.
+size_class: 1
+physical:
+  length: 0.7
+  width: 0.5
+  height: 0.75
+  mass: 13.5
+built_of:
+- what: Frame
+  item: material.structural-steel-a36
+  mass: 9.0
+- what: Top
+  item: material.polyethylene-uhmw
+  mass: 4.5
+basis:
+- of:
+  - built_of
+  - physical
+  tier: derived
+  review: true
+  note: 'From of the order of blender''s classroom: 300 kg of steel for sixteen sets and the teacher''s.'

@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: unit.furniture-kitchen-bench
+  name: Kitchen bench
+  description: A stainless kitchen bench with a shelf under it.
+size_class: 1
+physical:
+  length: 1.8
+  width: 0.7
+  height: 0.9
+  mass: 60.0
+built_of:
+- what: Bench
+  item: material.stainless-steel-304
+  mass: 60.0
+basis:
+- of:
+  - built_of
+  - physical
+  tier: invented
+  review: true
+  note: From memory of such furniture; to be sourced.

@@ -3,7 +3,7 @@
 identity:
   key: layout.building-park
   name: Park, world with air
-  description: 'Open ground kept green under a sky or a dome: paths, trees, water and a field to play on. Laid of the kit: a strut frame on the 3 m grid, panels, and 561 furnished 6 m bays (561 garden).'
+  description: 'Open ground kept green under a sky or a dome: paths, trees, water and a field to play on. Laid of the kit: a strut frame on the 3 m grid, panels, and 561 rooms of 6 m furnished piece by piece (561 garden).'
 stands_for: building.park
 site:
   atmosphere: air
@@ -14,3931 +14,3371 @@ physical:
   length: 198.0
   width: 102.0
   height: 2.2
-  mass: 2647920.0
-bays:
+  mass: 2266440.0
+bays: []
+rooms:
 - id: GAR1
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -96.0
   - -48.0
   - 0.0
 - id: GAR2
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -90.0
   - -48.0
   - 0.0
 - id: GAR3
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -84.0
   - -48.0
   - 0.0
 - id: GAR4
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -78.0
   - -48.0
   - 0.0
 - id: GAR5
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -72.0
   - -48.0
   - 0.0
 - id: GAR6
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -66.0
   - -48.0
   - 0.0
 - id: GAR7
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -60.0
   - -48.0
   - 0.0
 - id: GAR8
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -54.0
   - -48.0
   - 0.0
 - id: GAR9
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -48.0
   - -48.0
   - 0.0
 - id: GAR10
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -42.0
   - -48.0
   - 0.0
 - id: GAR11
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -36.0
   - -48.0
   - 0.0
 - id: GAR12
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -30.0
   - -48.0
   - 0.0
 - id: GAR13
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -24.0
   - -48.0
   - 0.0
 - id: GAR14
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -18.0
   - -48.0
   - 0.0
 - id: GAR15
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -12.0
   - -48.0
   - 0.0
 - id: GAR16
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -6.0
   - -48.0
   - 0.0
 - id: GAR17
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 0.0
   - -48.0
   - 0.0
 - id: GAR18
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 6.0
   - -48.0
   - 0.0
 - id: GAR19
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 12.0
   - -48.0
   - 0.0
 - id: GAR20
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 18.0
   - -48.0
   - 0.0
 - id: GAR21
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 24.0
   - -48.0
   - 0.0
 - id: GAR22
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 30.0
   - -48.0
   - 0.0
 - id: GAR23
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 36.0
   - -48.0
   - 0.0
 - id: GAR24
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 42.0
   - -48.0
   - 0.0
 - id: GAR25
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 48.0
   - -48.0
   - 0.0
 - id: GAR26
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 54.0
   - -48.0
   - 0.0
 - id: GAR27
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 60.0
   - -48.0
   - 0.0
 - id: GAR28
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 66.0
   - -48.0
   - 0.0
 - id: GAR29
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 72.0
   - -48.0
   - 0.0
 - id: GAR30
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 78.0
   - -48.0
   - 0.0
 - id: GAR31
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 84.0
   - -48.0
   - 0.0
 - id: GAR32
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 90.0
   - -48.0
   - 0.0
 - id: GAR33
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 96.0
   - -48.0
   - 0.0
 - id: GAR34
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -96.0
   - -42.0
   - 0.0
 - id: GAR35
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -90.0
   - -42.0
   - 0.0
 - id: GAR36
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -84.0
   - -42.0
   - 0.0
 - id: GAR37
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -78.0
   - -42.0
   - 0.0
 - id: GAR38
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -72.0
   - -42.0
   - 0.0
 - id: GAR39
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -66.0
   - -42.0
   - 0.0
 - id: GAR40
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -60.0
   - -42.0
   - 0.0
 - id: GAR41
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -54.0
   - -42.0
   - 0.0
 - id: GAR42
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -48.0
   - -42.0
   - 0.0
 - id: GAR43
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -42.0
   - -42.0
   - 0.0
 - id: GAR44
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -36.0
   - -42.0
   - 0.0
 - id: GAR45
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -30.0
   - -42.0
   - 0.0
 - id: GAR46
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -24.0
   - -42.0
   - 0.0
 - id: GAR47
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -18.0
   - -42.0
   - 0.0
 - id: GAR48
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -12.0
   - -42.0
   - 0.0
 - id: GAR49
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -6.0
   - -42.0
   - 0.0
 - id: GAR50
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 0.0
   - -42.0
   - 0.0
 - id: GAR51
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 6.0
   - -42.0
   - 0.0
 - id: GAR52
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 12.0
   - -42.0
   - 0.0
 - id: GAR53
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 18.0
   - -42.0
   - 0.0
 - id: GAR54
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 24.0
   - -42.0
   - 0.0
 - id: GAR55
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 30.0
   - -42.0
   - 0.0
 - id: GAR56
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 36.0
   - -42.0
   - 0.0
 - id: GAR57
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 42.0
   - -42.0
   - 0.0
 - id: GAR58
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 48.0
   - -42.0
   - 0.0
 - id: GAR59
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 54.0
   - -42.0
   - 0.0
 - id: GAR60
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 60.0
   - -42.0
   - 0.0
 - id: GAR61
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 66.0
   - -42.0
   - 0.0
 - id: GAR62
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 72.0
   - -42.0
   - 0.0
 - id: GAR63
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 78.0
   - -42.0
   - 0.0
 - id: GAR64
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 84.0
   - -42.0
   - 0.0
 - id: GAR65
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 90.0
   - -42.0
   - 0.0
 - id: GAR66
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 96.0
   - -42.0
   - 0.0
 - id: GAR67
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -96.0
   - -36.0
   - 0.0
 - id: GAR68
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -90.0
   - -36.0
   - 0.0
 - id: GAR69
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -84.0
   - -36.0
   - 0.0
 - id: GAR70
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -78.0
   - -36.0
   - 0.0
 - id: GAR71
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -72.0
   - -36.0
   - 0.0
 - id: GAR72
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -66.0
   - -36.0
   - 0.0
 - id: GAR73
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -60.0
   - -36.0
   - 0.0
 - id: GAR74
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -54.0
   - -36.0
   - 0.0
 - id: GAR75
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -48.0
   - -36.0
   - 0.0
 - id: GAR76
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -42.0
   - -36.0
   - 0.0
 - id: GAR77
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -36.0
   - -36.0
   - 0.0
 - id: GAR78
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -30.0
   - -36.0
   - 0.0
 - id: GAR79
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -24.0
   - -36.0
   - 0.0
 - id: GAR80
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -18.0
   - -36.0
   - 0.0
 - id: GAR81
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -12.0
   - -36.0
   - 0.0
 - id: GAR82
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -6.0
   - -36.0
   - 0.0
 - id: GAR83
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 0.0
   - -36.0
   - 0.0
 - id: GAR84
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 6.0
   - -36.0
   - 0.0
 - id: GAR85
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 12.0
   - -36.0
   - 0.0
 - id: GAR86
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 18.0
   - -36.0
   - 0.0
 - id: GAR87
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 24.0
   - -36.0
   - 0.0
 - id: GAR88
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 30.0
   - -36.0
   - 0.0
 - id: GAR89
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 36.0
   - -36.0
   - 0.0
 - id: GAR90
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 42.0
   - -36.0
   - 0.0
 - id: GAR91
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 48.0
   - -36.0
   - 0.0
 - id: GAR92
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 54.0
   - -36.0
   - 0.0
 - id: GAR93
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 60.0
   - -36.0
   - 0.0
 - id: GAR94
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 66.0
   - -36.0
   - 0.0
 - id: GAR95
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 72.0
   - -36.0
   - 0.0
 - id: GAR96
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 78.0
   - -36.0
   - 0.0
 - id: GAR97
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 84.0
   - -36.0
   - 0.0
 - id: GAR98
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 90.0
   - -36.0
   - 0.0
 - id: GAR99
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 96.0
   - -36.0
   - 0.0
 - id: GAR100
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -96.0
   - -30.0
   - 0.0
 - id: GAR101
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -90.0
   - -30.0
   - 0.0
 - id: GAR102
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -84.0
   - -30.0
   - 0.0
 - id: GAR103
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -78.0
   - -30.0
   - 0.0
 - id: GAR104
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -72.0
   - -30.0
   - 0.0
 - id: GAR105
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -66.0
   - -30.0
   - 0.0
 - id: GAR106
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -60.0
   - -30.0
   - 0.0
 - id: GAR107
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -54.0
   - -30.0
   - 0.0
 - id: GAR108
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -48.0
   - -30.0
   - 0.0
 - id: GAR109
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -42.0
   - -30.0
   - 0.0
 - id: GAR110
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -36.0
   - -30.0
   - 0.0
 - id: GAR111
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -30.0
   - -30.0
   - 0.0
 - id: GAR112
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -24.0
   - -30.0
   - 0.0
 - id: GAR113
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -18.0
   - -30.0
   - 0.0
 - id: GAR114
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -12.0
   - -30.0
   - 0.0
 - id: GAR115
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -6.0
   - -30.0
   - 0.0
 - id: GAR116
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 0.0
   - -30.0
   - 0.0
 - id: GAR117
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 6.0
   - -30.0
   - 0.0
 - id: GAR118
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 12.0
   - -30.0
   - 0.0
 - id: GAR119
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 18.0
   - -30.0
   - 0.0
 - id: GAR120
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 24.0
   - -30.0
   - 0.0
 - id: GAR121
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 30.0
   - -30.0
   - 0.0
 - id: GAR122
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 36.0
   - -30.0
   - 0.0
 - id: GAR123
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 42.0
   - -30.0
   - 0.0
 - id: GAR124
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 48.0
   - -30.0
   - 0.0
 - id: GAR125
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 54.0
   - -30.0
   - 0.0
 - id: GAR126
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 60.0
   - -30.0
   - 0.0
 - id: GAR127
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 66.0
   - -30.0
   - 0.0
 - id: GAR128
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 72.0
   - -30.0
   - 0.0
 - id: GAR129
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 78.0
   - -30.0
   - 0.0
 - id: GAR130
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 84.0
   - -30.0
   - 0.0
 - id: GAR131
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 90.0
   - -30.0
   - 0.0
 - id: GAR132
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 96.0
   - -30.0
   - 0.0
 - id: GAR133
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -96.0
   - -24.0
   - 0.0
 - id: GAR134
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -90.0
   - -24.0
   - 0.0
 - id: GAR135
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -84.0
   - -24.0
   - 0.0
 - id: GAR136
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -78.0
   - -24.0
   - 0.0
 - id: GAR137
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -72.0
   - -24.0
   - 0.0
 - id: GAR138
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -66.0
   - -24.0
   - 0.0
 - id: GAR139
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -60.0
   - -24.0
   - 0.0
 - id: GAR140
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -54.0
   - -24.0
   - 0.0
 - id: GAR141
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -48.0
   - -24.0
   - 0.0
 - id: GAR142
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -42.0
   - -24.0
   - 0.0
 - id: GAR143
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -36.0
   - -24.0
   - 0.0
 - id: GAR144
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -30.0
   - -24.0
   - 0.0
 - id: GAR145
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -24.0
   - -24.0
   - 0.0
 - id: GAR146
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -18.0
   - -24.0
   - 0.0
 - id: GAR147
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -12.0
   - -24.0
   - 0.0
 - id: GAR148
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -6.0
   - -24.0
   - 0.0
 - id: GAR149
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 0.0
   - -24.0
   - 0.0
 - id: GAR150
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 6.0
   - -24.0
   - 0.0
 - id: GAR151
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 12.0
   - -24.0
   - 0.0
 - id: GAR152
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 18.0
   - -24.0
   - 0.0
 - id: GAR153
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 24.0
   - -24.0
   - 0.0
 - id: GAR154
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 30.0
   - -24.0
   - 0.0
 - id: GAR155
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 36.0
   - -24.0
   - 0.0
 - id: GAR156
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 42.0
   - -24.0
   - 0.0
 - id: GAR157
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 48.0
   - -24.0
   - 0.0
 - id: GAR158
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 54.0
   - -24.0
   - 0.0
 - id: GAR159
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 60.0
   - -24.0
   - 0.0
 - id: GAR160
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 66.0
   - -24.0
   - 0.0
 - id: GAR161
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 72.0
   - -24.0
   - 0.0
 - id: GAR162
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 78.0
   - -24.0
   - 0.0
 - id: GAR163
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 84.0
   - -24.0
   - 0.0
 - id: GAR164
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 90.0
   - -24.0
   - 0.0
 - id: GAR165
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 96.0
   - -24.0
   - 0.0
 - id: GAR166
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -96.0
   - -18.0
   - 0.0
 - id: GAR167
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -90.0
   - -18.0
   - 0.0
 - id: GAR168
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -84.0
   - -18.0
   - 0.0
 - id: GAR169
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -78.0
   - -18.0
   - 0.0
 - id: GAR170
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -72.0
   - -18.0
   - 0.0
 - id: GAR171
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -66.0
   - -18.0
   - 0.0
 - id: GAR172
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -60.0
   - -18.0
   - 0.0
 - id: GAR173
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -54.0
   - -18.0
   - 0.0
 - id: GAR174
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -48.0
   - -18.0
   - 0.0
 - id: GAR175
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -42.0
   - -18.0
   - 0.0
 - id: GAR176
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -36.0
   - -18.0
   - 0.0
 - id: GAR177
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -30.0
   - -18.0
   - 0.0
 - id: GAR178
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -24.0
   - -18.0
   - 0.0
 - id: GAR179
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -18.0
   - -18.0
   - 0.0
 - id: GAR180
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -12.0
   - -18.0
   - 0.0
 - id: GAR181
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -6.0
   - -18.0
   - 0.0
 - id: GAR182
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 0.0
   - -18.0
   - 0.0
 - id: GAR183
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 6.0
   - -18.0
   - 0.0
 - id: GAR184
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 12.0
   - -18.0
   - 0.0
 - id: GAR185
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 18.0
   - -18.0
   - 0.0
 - id: GAR186
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 24.0
   - -18.0
   - 0.0
 - id: GAR187
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 30.0
   - -18.0
   - 0.0
 - id: GAR188
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 36.0
   - -18.0
   - 0.0
 - id: GAR189
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 42.0
   - -18.0
   - 0.0
 - id: GAR190
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 48.0
   - -18.0
   - 0.0
 - id: GAR191
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 54.0
   - -18.0
   - 0.0
 - id: GAR192
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 60.0
   - -18.0
   - 0.0
 - id: GAR193
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 66.0
   - -18.0
   - 0.0
 - id: GAR194
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 72.0
   - -18.0
   - 0.0
 - id: GAR195
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 78.0
   - -18.0
   - 0.0
 - id: GAR196
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 84.0
   - -18.0
   - 0.0
 - id: GAR197
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 90.0
   - -18.0
   - 0.0
 - id: GAR198
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 96.0
   - -18.0
   - 0.0
 - id: GAR199
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -96.0
   - -12.0
   - 0.0
 - id: GAR200
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -90.0
   - -12.0
   - 0.0
 - id: GAR201
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -84.0
   - -12.0
   - 0.0
 - id: GAR202
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -78.0
   - -12.0
   - 0.0
 - id: GAR203
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -72.0
   - -12.0
   - 0.0
 - id: GAR204
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -66.0
   - -12.0
   - 0.0
 - id: GAR205
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -60.0
   - -12.0
   - 0.0
 - id: GAR206
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -54.0
   - -12.0
   - 0.0
 - id: GAR207
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -48.0
   - -12.0
   - 0.0
 - id: GAR208
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -42.0
   - -12.0
   - 0.0
 - id: GAR209
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -36.0
   - -12.0
   - 0.0
 - id: GAR210
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -30.0
   - -12.0
   - 0.0
 - id: GAR211
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -24.0
   - -12.0
   - 0.0
 - id: GAR212
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -18.0
   - -12.0
   - 0.0
 - id: GAR213
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -12.0
   - -12.0
   - 0.0
 - id: GAR214
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -6.0
   - -12.0
   - 0.0
 - id: GAR215
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 0.0
   - -12.0
   - 0.0
 - id: GAR216
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 6.0
   - -12.0
   - 0.0
 - id: GAR217
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 12.0
   - -12.0
   - 0.0
 - id: GAR218
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 18.0
   - -12.0
   - 0.0
 - id: GAR219
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 24.0
   - -12.0
   - 0.0
 - id: GAR220
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 30.0
   - -12.0
   - 0.0
 - id: GAR221
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 36.0
   - -12.0
   - 0.0
 - id: GAR222
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 42.0
   - -12.0
   - 0.0
 - id: GAR223
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 48.0
   - -12.0
   - 0.0
 - id: GAR224
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 54.0
   - -12.0
   - 0.0
 - id: GAR225
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 60.0
   - -12.0
   - 0.0
 - id: GAR226
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 66.0
   - -12.0
   - 0.0
 - id: GAR227
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 72.0
   - -12.0
   - 0.0
 - id: GAR228
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 78.0
   - -12.0
   - 0.0
 - id: GAR229
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 84.0
   - -12.0
   - 0.0
 - id: GAR230
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 90.0
   - -12.0
   - 0.0
 - id: GAR231
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 96.0
   - -12.0
   - 0.0
 - id: GAR232
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -96.0
   - -6.0
   - 0.0
 - id: GAR233
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -90.0
   - -6.0
   - 0.0
 - id: GAR234
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -84.0
   - -6.0
   - 0.0
 - id: GAR235
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -78.0
   - -6.0
   - 0.0
 - id: GAR236
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -72.0
   - -6.0
   - 0.0
 - id: GAR237
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -66.0
   - -6.0
   - 0.0
 - id: GAR238
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -60.0
   - -6.0
   - 0.0
 - id: GAR239
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -54.0
   - -6.0
   - 0.0
 - id: GAR240
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -48.0
   - -6.0
   - 0.0
 - id: GAR241
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -42.0
   - -6.0
   - 0.0
 - id: GAR242
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -36.0
   - -6.0
   - 0.0
 - id: GAR243
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -30.0
   - -6.0
   - 0.0
 - id: GAR244
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -24.0
   - -6.0
   - 0.0
 - id: GAR245
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -18.0
   - -6.0
   - 0.0
 - id: GAR246
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -12.0
   - -6.0
   - 0.0
 - id: GAR247
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -6.0
   - -6.0
   - 0.0
 - id: GAR248
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 0.0
   - -6.0
   - 0.0
 - id: GAR249
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 6.0
   - -6.0
   - 0.0
 - id: GAR250
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 12.0
   - -6.0
   - 0.0
 - id: GAR251
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 18.0
   - -6.0
   - 0.0
 - id: GAR252
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 24.0
   - -6.0
   - 0.0
 - id: GAR253
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 30.0
   - -6.0
   - 0.0
 - id: GAR254
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 36.0
   - -6.0
   - 0.0
 - id: GAR255
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 42.0
   - -6.0
   - 0.0
 - id: GAR256
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 48.0
   - -6.0
   - 0.0
 - id: GAR257
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 54.0
   - -6.0
   - 0.0
 - id: GAR258
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 60.0
   - -6.0
   - 0.0
 - id: GAR259
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 66.0
   - -6.0
   - 0.0
 - id: GAR260
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 72.0
   - -6.0
   - 0.0
 - id: GAR261
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 78.0
   - -6.0
   - 0.0
 - id: GAR262
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 84.0
   - -6.0
   - 0.0
 - id: GAR263
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 90.0
   - -6.0
   - 0.0
 - id: GAR264
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 96.0
   - -6.0
   - 0.0
 - id: GAR265
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -96.0
   - 0.0
   - 0.0
 - id: GAR266
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -90.0
   - 0.0
   - 0.0
 - id: GAR267
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -84.0
   - 0.0
   - 0.0
 - id: GAR268
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -78.0
   - 0.0
   - 0.0
 - id: GAR269
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -72.0
   - 0.0
   - 0.0
 - id: GAR270
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -66.0
   - 0.0
   - 0.0
 - id: GAR271
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -60.0
   - 0.0
   - 0.0
 - id: GAR272
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -54.0
   - 0.0
   - 0.0
 - id: GAR273
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -48.0
   - 0.0
   - 0.0
 - id: GAR274
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -42.0
   - 0.0
   - 0.0
 - id: GAR275
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -36.0
   - 0.0
   - 0.0
 - id: GAR276
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -30.0
   - 0.0
   - 0.0
 - id: GAR277
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -24.0
   - 0.0
   - 0.0
 - id: GAR278
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -18.0
   - 0.0
   - 0.0
 - id: GAR279
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -12.0
   - 0.0
   - 0.0
 - id: GAR280
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -6.0
   - 0.0
   - 0.0
 - id: GAR281
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 0.0
   - 0.0
   - 0.0
 - id: GAR282
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 6.0
   - 0.0
   - 0.0
 - id: GAR283
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 12.0
   - 0.0
   - 0.0
 - id: GAR284
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 18.0
   - 0.0
   - 0.0
 - id: GAR285
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 24.0
   - 0.0
   - 0.0
 - id: GAR286
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 30.0
   - 0.0
   - 0.0
 - id: GAR287
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 36.0
   - 0.0
   - 0.0
 - id: GAR288
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 42.0
   - 0.0
   - 0.0
 - id: GAR289
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 48.0
   - 0.0
   - 0.0
 - id: GAR290
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 54.0
   - 0.0
   - 0.0
 - id: GAR291
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 60.0
   - 0.0
   - 0.0
 - id: GAR292
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 66.0
   - 0.0
   - 0.0
 - id: GAR293
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 72.0
   - 0.0
   - 0.0
 - id: GAR294
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 78.0
   - 0.0
   - 0.0
 - id: GAR295
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 84.0
   - 0.0
   - 0.0
 - id: GAR296
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 90.0
   - 0.0
   - 0.0
 - id: GAR297
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 96.0
   - 0.0
   - 0.0
 - id: GAR298
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -96.0
   - 6.0
   - 0.0
 - id: GAR299
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -90.0
   - 6.0
   - 0.0
 - id: GAR300
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -84.0
   - 6.0
   - 0.0
 - id: GAR301
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -78.0
   - 6.0
   - 0.0
 - id: GAR302
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -72.0
   - 6.0
   - 0.0
 - id: GAR303
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -66.0
   - 6.0
   - 0.0
 - id: GAR304
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -60.0
   - 6.0
   - 0.0
 - id: GAR305
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -54.0
   - 6.0
   - 0.0
 - id: GAR306
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -48.0
   - 6.0
   - 0.0
 - id: GAR307
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -42.0
   - 6.0
   - 0.0
 - id: GAR308
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -36.0
   - 6.0
   - 0.0
 - id: GAR309
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -30.0
   - 6.0
   - 0.0
 - id: GAR310
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -24.0
   - 6.0
   - 0.0
 - id: GAR311
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -18.0
   - 6.0
   - 0.0
 - id: GAR312
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -12.0
   - 6.0
   - 0.0
 - id: GAR313
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -6.0
   - 6.0
   - 0.0
 - id: GAR314
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 0.0
   - 6.0
   - 0.0
 - id: GAR315
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 6.0
   - 6.0
   - 0.0
 - id: GAR316
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 12.0
   - 6.0
   - 0.0
 - id: GAR317
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 18.0
   - 6.0
   - 0.0
 - id: GAR318
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 24.0
   - 6.0
   - 0.0
 - id: GAR319
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 30.0
   - 6.0
   - 0.0
 - id: GAR320
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 36.0
   - 6.0
   - 0.0
 - id: GAR321
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 42.0
   - 6.0
   - 0.0
 - id: GAR322
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 48.0
   - 6.0
   - 0.0
 - id: GAR323
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 54.0
   - 6.0
   - 0.0
 - id: GAR324
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 60.0
   - 6.0
   - 0.0
 - id: GAR325
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 66.0
   - 6.0
   - 0.0
 - id: GAR326
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 72.0
   - 6.0
   - 0.0
 - id: GAR327
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 78.0
   - 6.0
   - 0.0
 - id: GAR328
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 84.0
   - 6.0
   - 0.0
 - id: GAR329
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 90.0
   - 6.0
   - 0.0
 - id: GAR330
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 96.0
   - 6.0
   - 0.0
 - id: GAR331
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -96.0
   - 12.0
   - 0.0
 - id: GAR332
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -90.0
   - 12.0
   - 0.0
 - id: GAR333
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -84.0
   - 12.0
   - 0.0
 - id: GAR334
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -78.0
   - 12.0
   - 0.0
 - id: GAR335
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -72.0
   - 12.0
   - 0.0
 - id: GAR336
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -66.0
   - 12.0
   - 0.0
 - id: GAR337
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -60.0
   - 12.0
   - 0.0
 - id: GAR338
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -54.0
   - 12.0
   - 0.0
 - id: GAR339
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -48.0
   - 12.0
   - 0.0
 - id: GAR340
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -42.0
   - 12.0
   - 0.0
 - id: GAR341
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -36.0
   - 12.0
   - 0.0
 - id: GAR342
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -30.0
   - 12.0
   - 0.0
 - id: GAR343
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -24.0
   - 12.0
   - 0.0
 - id: GAR344
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -18.0
   - 12.0
   - 0.0
 - id: GAR345
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -12.0
   - 12.0
   - 0.0
 - id: GAR346
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -6.0
   - 12.0
   - 0.0
 - id: GAR347
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 0.0
   - 12.0
   - 0.0
 - id: GAR348
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 6.0
   - 12.0
   - 0.0
 - id: GAR349
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 12.0
   - 12.0
   - 0.0
 - id: GAR350
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 18.0
   - 12.0
   - 0.0
 - id: GAR351
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 24.0
   - 12.0
   - 0.0
 - id: GAR352
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 30.0
   - 12.0
   - 0.0
 - id: GAR353
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 36.0
   - 12.0
   - 0.0
 - id: GAR354
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 42.0
   - 12.0
   - 0.0
 - id: GAR355
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 48.0
   - 12.0
   - 0.0
 - id: GAR356
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 54.0
   - 12.0
   - 0.0
 - id: GAR357
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 60.0
   - 12.0
   - 0.0
 - id: GAR358
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 66.0
   - 12.0
   - 0.0
 - id: GAR359
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 72.0
   - 12.0
   - 0.0
 - id: GAR360
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 78.0
   - 12.0
   - 0.0
 - id: GAR361
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 84.0
   - 12.0
   - 0.0
 - id: GAR362
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 90.0
   - 12.0
   - 0.0
 - id: GAR363
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 96.0
   - 12.0
   - 0.0
 - id: GAR364
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -96.0
   - 18.0
   - 0.0
 - id: GAR365
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -90.0
   - 18.0
   - 0.0
 - id: GAR366
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -84.0
   - 18.0
   - 0.0
 - id: GAR367
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -78.0
   - 18.0
   - 0.0
 - id: GAR368
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -72.0
   - 18.0
   - 0.0
 - id: GAR369
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -66.0
   - 18.0
   - 0.0
 - id: GAR370
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -60.0
   - 18.0
   - 0.0
 - id: GAR371
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -54.0
   - 18.0
   - 0.0
 - id: GAR372
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -48.0
   - 18.0
   - 0.0
 - id: GAR373
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -42.0
   - 18.0
   - 0.0
 - id: GAR374
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -36.0
   - 18.0
   - 0.0
 - id: GAR375
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -30.0
   - 18.0
   - 0.0
 - id: GAR376
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -24.0
   - 18.0
   - 0.0
 - id: GAR377
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -18.0
   - 18.0
   - 0.0
 - id: GAR378
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -12.0
   - 18.0
   - 0.0
 - id: GAR379
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -6.0
   - 18.0
   - 0.0
 - id: GAR380
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 0.0
   - 18.0
   - 0.0
 - id: GAR381
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 6.0
   - 18.0
   - 0.0
 - id: GAR382
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 12.0
   - 18.0
   - 0.0
 - id: GAR383
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 18.0
   - 18.0
   - 0.0
 - id: GAR384
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 24.0
   - 18.0
   - 0.0
 - id: GAR385
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 30.0
   - 18.0
   - 0.0
 - id: GAR386
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 36.0
   - 18.0
   - 0.0
 - id: GAR387
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 42.0
   - 18.0
   - 0.0
 - id: GAR388
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 48.0
   - 18.0
   - 0.0
 - id: GAR389
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 54.0
   - 18.0
   - 0.0
 - id: GAR390
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 60.0
   - 18.0
   - 0.0
 - id: GAR391
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 66.0
   - 18.0
   - 0.0
 - id: GAR392
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 72.0
   - 18.0
   - 0.0
 - id: GAR393
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 78.0
   - 18.0
   - 0.0
 - id: GAR394
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 84.0
   - 18.0
   - 0.0
 - id: GAR395
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 90.0
   - 18.0
   - 0.0
 - id: GAR396
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 96.0
   - 18.0
   - 0.0
 - id: GAR397
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -96.0
   - 24.0
   - 0.0
 - id: GAR398
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -90.0
   - 24.0
   - 0.0
 - id: GAR399
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -84.0
   - 24.0
   - 0.0
 - id: GAR400
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -78.0
   - 24.0
   - 0.0
 - id: GAR401
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -72.0
   - 24.0
   - 0.0
 - id: GAR402
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -66.0
   - 24.0
   - 0.0
 - id: GAR403
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -60.0
   - 24.0
   - 0.0
 - id: GAR404
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -54.0
   - 24.0
   - 0.0
 - id: GAR405
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -48.0
   - 24.0
   - 0.0
 - id: GAR406
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -42.0
   - 24.0
   - 0.0
 - id: GAR407
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -36.0
   - 24.0
   - 0.0
 - id: GAR408
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -30.0
   - 24.0
   - 0.0
 - id: GAR409
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -24.0
   - 24.0
   - 0.0
 - id: GAR410
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -18.0
   - 24.0
   - 0.0
 - id: GAR411
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -12.0
   - 24.0
   - 0.0
 - id: GAR412
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -6.0
   - 24.0
   - 0.0
 - id: GAR413
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 0.0
   - 24.0
   - 0.0
 - id: GAR414
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 6.0
   - 24.0
   - 0.0
 - id: GAR415
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 12.0
   - 24.0
   - 0.0
 - id: GAR416
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 18.0
   - 24.0
   - 0.0
 - id: GAR417
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 24.0
   - 24.0
   - 0.0
 - id: GAR418
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 30.0
   - 24.0
   - 0.0
 - id: GAR419
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 36.0
   - 24.0
   - 0.0
 - id: GAR420
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 42.0
   - 24.0
   - 0.0
 - id: GAR421
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 48.0
   - 24.0
   - 0.0
 - id: GAR422
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 54.0
   - 24.0
   - 0.0
 - id: GAR423
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 60.0
   - 24.0
   - 0.0
 - id: GAR424
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 66.0
   - 24.0
   - 0.0
 - id: GAR425
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 72.0
   - 24.0
   - 0.0
 - id: GAR426
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 78.0
   - 24.0
   - 0.0
 - id: GAR427
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 84.0
   - 24.0
   - 0.0
 - id: GAR428
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 90.0
   - 24.0
   - 0.0
 - id: GAR429
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 96.0
   - 24.0
   - 0.0
 - id: GAR430
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -96.0
   - 30.0
   - 0.0
 - id: GAR431
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -90.0
   - 30.0
   - 0.0
 - id: GAR432
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -84.0
   - 30.0
   - 0.0
 - id: GAR433
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -78.0
   - 30.0
   - 0.0
 - id: GAR434
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -72.0
   - 30.0
   - 0.0
 - id: GAR435
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -66.0
   - 30.0
   - 0.0
 - id: GAR436
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -60.0
   - 30.0
   - 0.0
 - id: GAR437
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -54.0
   - 30.0
   - 0.0
 - id: GAR438
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -48.0
   - 30.0
   - 0.0
 - id: GAR439
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -42.0
   - 30.0
   - 0.0
 - id: GAR440
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -36.0
   - 30.0
   - 0.0
 - id: GAR441
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -30.0
   - 30.0
   - 0.0
 - id: GAR442
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -24.0
   - 30.0
   - 0.0
 - id: GAR443
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -18.0
   - 30.0
   - 0.0
 - id: GAR444
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -12.0
   - 30.0
   - 0.0
 - id: GAR445
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -6.0
   - 30.0
   - 0.0
 - id: GAR446
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 0.0
   - 30.0
   - 0.0
 - id: GAR447
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 6.0
   - 30.0
   - 0.0
 - id: GAR448
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 12.0
   - 30.0
   - 0.0
 - id: GAR449
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 18.0
   - 30.0
   - 0.0
 - id: GAR450
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 24.0
   - 30.0
   - 0.0
 - id: GAR451
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 30.0
   - 30.0
   - 0.0
 - id: GAR452
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 36.0
   - 30.0
   - 0.0
 - id: GAR453
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 42.0
   - 30.0
   - 0.0
 - id: GAR454
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 48.0
   - 30.0
   - 0.0
 - id: GAR455
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 54.0
   - 30.0
   - 0.0
 - id: GAR456
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 60.0
   - 30.0
   - 0.0
 - id: GAR457
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 66.0
   - 30.0
   - 0.0
 - id: GAR458
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 72.0
   - 30.0
   - 0.0
 - id: GAR459
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 78.0
   - 30.0
   - 0.0
 - id: GAR460
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 84.0
   - 30.0
   - 0.0
 - id: GAR461
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 90.0
   - 30.0
   - 0.0
 - id: GAR462
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 96.0
   - 30.0
   - 0.0
 - id: GAR463
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -96.0
   - 36.0
   - 0.0
 - id: GAR464
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -90.0
   - 36.0
   - 0.0
 - id: GAR465
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -84.0
   - 36.0
   - 0.0
 - id: GAR466
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -78.0
   - 36.0
   - 0.0
 - id: GAR467
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -72.0
   - 36.0
   - 0.0
 - id: GAR468
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -66.0
   - 36.0
   - 0.0
 - id: GAR469
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -60.0
   - 36.0
   - 0.0
 - id: GAR470
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -54.0
   - 36.0
   - 0.0
 - id: GAR471
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -48.0
   - 36.0
   - 0.0
 - id: GAR472
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -42.0
   - 36.0
   - 0.0
 - id: GAR473
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -36.0
   - 36.0
   - 0.0
 - id: GAR474
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -30.0
   - 36.0
   - 0.0
 - id: GAR475
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -24.0
   - 36.0
   - 0.0
 - id: GAR476
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -18.0
   - 36.0
   - 0.0
 - id: GAR477
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -12.0
   - 36.0
   - 0.0
 - id: GAR478
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -6.0
   - 36.0
   - 0.0
 - id: GAR479
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 0.0
   - 36.0
   - 0.0
 - id: GAR480
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 6.0
   - 36.0
   - 0.0
 - id: GAR481
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 12.0
   - 36.0
   - 0.0
 - id: GAR482
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 18.0
   - 36.0
   - 0.0
 - id: GAR483
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 24.0
   - 36.0
   - 0.0
 - id: GAR484
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 30.0
   - 36.0
   - 0.0
 - id: GAR485
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 36.0
   - 36.0
   - 0.0
 - id: GAR486
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 42.0
   - 36.0
   - 0.0
 - id: GAR487
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 48.0
   - 36.0
   - 0.0
 - id: GAR488
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 54.0
   - 36.0
   - 0.0
 - id: GAR489
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 60.0
   - 36.0
   - 0.0
 - id: GAR490
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 66.0
   - 36.0
   - 0.0
 - id: GAR491
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 72.0
   - 36.0
   - 0.0
 - id: GAR492
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 78.0
   - 36.0
   - 0.0
 - id: GAR493
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 84.0
   - 36.0
   - 0.0
 - id: GAR494
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 90.0
   - 36.0
   - 0.0
 - id: GAR495
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 96.0
   - 36.0
   - 0.0
 - id: GAR496
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -96.0
   - 42.0
   - 0.0
 - id: GAR497
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -90.0
   - 42.0
   - 0.0
 - id: GAR498
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -84.0
   - 42.0
   - 0.0
 - id: GAR499
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -78.0
   - 42.0
   - 0.0
 - id: GAR500
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -72.0
   - 42.0
   - 0.0
 - id: GAR501
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -66.0
   - 42.0
   - 0.0
 - id: GAR502
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -60.0
   - 42.0
   - 0.0
 - id: GAR503
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -54.0
   - 42.0
   - 0.0
 - id: GAR504
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -48.0
   - 42.0
   - 0.0
 - id: GAR505
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -42.0
   - 42.0
   - 0.0
 - id: GAR506
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -36.0
   - 42.0
   - 0.0
 - id: GAR507
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -30.0
   - 42.0
   - 0.0
 - id: GAR508
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -24.0
   - 42.0
   - 0.0
 - id: GAR509
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -18.0
   - 42.0
   - 0.0
 - id: GAR510
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -12.0
   - 42.0
   - 0.0
 - id: GAR511
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -6.0
   - 42.0
   - 0.0
 - id: GAR512
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 0.0
   - 42.0
   - 0.0
 - id: GAR513
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 6.0
   - 42.0
   - 0.0
 - id: GAR514
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 12.0
   - 42.0
   - 0.0
 - id: GAR515
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 18.0
   - 42.0
   - 0.0
 - id: GAR516
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 24.0
   - 42.0
   - 0.0
 - id: GAR517
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 30.0
   - 42.0
   - 0.0
 - id: GAR518
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 36.0
   - 42.0
   - 0.0
 - id: GAR519
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 42.0
   - 42.0
   - 0.0
 - id: GAR520
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 48.0
   - 42.0
   - 0.0
 - id: GAR521
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 54.0
   - 42.0
   - 0.0
 - id: GAR522
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 60.0
   - 42.0
   - 0.0
 - id: GAR523
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 66.0
   - 42.0
   - 0.0
 - id: GAR524
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 72.0
   - 42.0
   - 0.0
 - id: GAR525
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 78.0
   - 42.0
   - 0.0
 - id: GAR526
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 84.0
   - 42.0
   - 0.0
 - id: GAR527
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 90.0
   - 42.0
   - 0.0
 - id: GAR528
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 96.0
   - 42.0
   - 0.0
 - id: GAR529
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -96.0
   - 48.0
   - 0.0
 - id: GAR530
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -90.0
   - 48.0
   - 0.0
 - id: GAR531
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -84.0
   - 48.0
   - 0.0
 - id: GAR532
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -78.0
   - 48.0
   - 0.0
 - id: GAR533
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -72.0
   - 48.0
   - 0.0
 - id: GAR534
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -66.0
   - 48.0
   - 0.0
 - id: GAR535
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -60.0
   - 48.0
   - 0.0
 - id: GAR536
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -54.0
   - 48.0
   - 0.0
 - id: GAR537
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -48.0
   - 48.0
   - 0.0
 - id: GAR538
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -42.0
   - 48.0
   - 0.0
 - id: GAR539
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -36.0
   - 48.0
   - 0.0
 - id: GAR540
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -30.0
   - 48.0
   - 0.0
 - id: GAR541
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -24.0
   - 48.0
   - 0.0
 - id: GAR542
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -18.0
   - 48.0
   - 0.0
 - id: GAR543
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -12.0
   - 48.0
   - 0.0
 - id: GAR544
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - -6.0
   - 48.0
   - 0.0
 - id: GAR545
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 0.0
   - 48.0
   - 0.0
 - id: GAR546
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 6.0
   - 48.0
   - 0.0
 - id: GAR547
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 12.0
   - 48.0
   - 0.0
 - id: GAR548
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 18.0
   - 48.0
   - 0.0
 - id: GAR549
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 24.0
   - 48.0
   - 0.0
 - id: GAR550
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 30.0
   - 48.0
   - 0.0
 - id: GAR551
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 36.0
   - 48.0
   - 0.0
 - id: GAR552
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 42.0
   - 48.0
   - 0.0
 - id: GAR553
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 48.0
   - 48.0
   - 0.0
 - id: GAR554
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 54.0
   - 48.0
   - 0.0
 - id: GAR555
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 60.0
   - 48.0
   - 0.0
 - id: GAR556
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 66.0
   - 48.0
   - 0.0
 - id: GAR557
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 72.0
   - 48.0
   - 0.0
 - id: GAR558
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 78.0
   - 48.0
   - 0.0
 - id: GAR559
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 84.0
   - 48.0
   - 0.0
 - id: GAR560
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 90.0
   - 48.0
   - 0.0
 - id: GAR561
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garden
+  arrangement: arrangement.garden
   at:
   - 96.0
   - 48.0
@@ -3950,7 +3390,7 @@ ground:
   mass: 1211760.0
   note: paving on half the park's ground, 50 mm
 totals:
-  mass: 2647920.0
+  mass: 2266440.0
   against_module: 'building.park (deprecated): one box 200 x 100 m. This layout: 198 x 102 m of gardens.'
 staff:
 - profession: profession.farmer

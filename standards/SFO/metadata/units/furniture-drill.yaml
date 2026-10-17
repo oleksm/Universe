@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: unit.furniture-drill
+  name: Pillar drill
+  description: A pillar drill.
+size_class: 1
+physical:
+  length: 0.6
+  width: 0.5
+  height: 1.8
+  mass: 150.0
+built_of:
+- what: Drill
+  item: material.cast-iron-grey
+  mass: 150.0
+basis:
+- of:
+  - built_of
+  - physical
+  tier: invented
+  review: true
+  note: From memory of such furniture; to be sourced.

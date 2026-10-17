@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: unit.furniture-cabinet
+  name: Cabinet
+  description: A steel filing or storage cabinet.
+size_class: 1
+physical:
+  length: 0.8
+  width: 0.45
+  height: 1.2
+  mass: 40.0
+built_of:
+- what: Carcass and drawers
+  item: material.structural-steel-a36
+  mass: 40.0
+basis:
+- of:
+  - built_of
+  - physical
+  tier: invented
+  review: true
+  note: From memory of such furniture; to be sourced.

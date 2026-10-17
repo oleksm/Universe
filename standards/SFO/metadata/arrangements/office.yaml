@@ -1,0 +1,97 @@
+# yaml-language-server: $schema=../../schema/arrangement.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: arrangement.office
+  name: Office
+  description: 'How a 6 m room is furnished as a office: 6 desks, 6 office chairs, 2 cabinets.'
+room:
+- 6.0
+- 6.0
+people: 6
+staff: 0
+items:
+- unit: unit.furniture-desk
+  at:
+  - -1.9
+  - -1.6
+  - 0.0
+- unit: unit.furniture-office-chair
+  at:
+  - -1.9
+  - -0.9
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-desk
+  at:
+  - -1.9
+  - 1.2
+  - 0.0
+- unit: unit.furniture-office-chair
+  at:
+  - -1.9
+  - 1.9
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-desk
+  at:
+  - 0.0
+  - -1.6
+  - 0.0
+- unit: unit.furniture-office-chair
+  at:
+  - 0.0
+  - -0.9
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-desk
+  at:
+  - 0.0
+  - 1.2
+  - 0.0
+- unit: unit.furniture-office-chair
+  at:
+  - 0.0
+  - 1.9
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-desk
+  at:
+  - 1.9
+  - -1.6
+  - 0.0
+- unit: unit.furniture-office-chair
+  at:
+  - 1.9
+  - -0.9
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-desk
+  at:
+  - 1.9
+  - 1.2
+  - 0.0
+- unit: unit.furniture-office-chair
+  at:
+  - 1.9
+  - 1.9
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-cabinet
+  at:
+  - -2.4
+  - 2.7
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-cabinet
+  at:
+  - 2.4
+  - 2.7
+  - 0.0
+  turn: 180.0
+mass: 380.0
+basis:
+- of:
+  - items
+  tier: invented
+  review: true
+  note: Laid out by hand on the 6 m room (tools/standards/furniture.py); each piece is modelled once and placed here.

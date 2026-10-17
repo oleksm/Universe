@@ -3,8 +3,8 @@
 identity:
   key: layout.building-market-hall
   name: Market hall, world with air
-  description: 'A covered market and wholesale floor: where farm goods and stock change hands by the lot, and the shops buy. Laid of the kit: a strut frame on the 3 m grid, panels, and 91 furnished 6 m bays (50 sales floor, 18 counter,
-    14 store, 9 washroom).'
+  description: 'A covered market and wholesale floor: where farm goods and stock change hands by the lot, and the shops buy. Laid of the kit: a strut frame on the 3 m grid, panels, and 91 rooms of 6 m furnished piece by piece (50 sales
+    floor, 18 counter, 14 store room, 9 washroom).'
 stands_for: building.market-hall
 site:
   atmosphere: air
@@ -15,641 +15,551 @@ physical:
   length: 78.0
   width: 42.0
   height: 6.15
-  mass: 1608548.1
-bays:
+  mass: 1577236.7
+bays: []
+rooms:
 - id: SAL1
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - -36.0
   - -18.0
   - 0.0
 - id: SAL2
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - -30.0
   - -18.0
   - 0.0
 - id: SAL3
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - -24.0
   - -18.0
   - 0.0
 - id: SAL4
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - -18.0
   - -18.0
   - 0.0
 - id: SAL5
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - -12.0
   - -18.0
   - 0.0
 - id: SAL6
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - -6.0
   - -18.0
   - 0.0
 - id: SAL7
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - 0.0
   - -18.0
   - 0.0
 - id: SAL8
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - 6.0
   - -18.0
   - 0.0
 - id: SAL9
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - 12.0
   - -18.0
   - 0.0
 - id: SAL10
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - 18.0
   - -18.0
   - 0.0
 - id: SAL11
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - 24.0
   - -18.0
   - 0.0
 - id: SAL12
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - 30.0
   - -18.0
   - 0.0
 - id: SAL13
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - 36.0
   - -18.0
   - 0.0
 - id: SAL14
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - -36.0
   - -12.0
   - 0.0
 - id: SAL15
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - -30.0
   - -12.0
   - 0.0
 - id: SAL16
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - -24.0
   - -12.0
   - 0.0
 - id: SAL17
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - -18.0
   - -12.0
   - 0.0
 - id: SAL18
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - -12.0
   - -12.0
   - 0.0
 - id: SAL19
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - -6.0
   - -12.0
   - 0.0
 - id: SAL20
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - 0.0
   - -12.0
   - 0.0
 - id: SAL21
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - 6.0
   - -12.0
   - 0.0
 - id: SAL22
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - 12.0
   - -12.0
   - 0.0
 - id: SAL23
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - 18.0
   - -12.0
   - 0.0
 - id: SAL24
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - 24.0
   - -12.0
   - 0.0
 - id: SAL25
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - 30.0
   - -12.0
   - 0.0
 - id: SAL26
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - 36.0
   - -12.0
   - 0.0
 - id: SAL27
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - -36.0
   - -6.0
   - 0.0
 - id: SAL28
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - -30.0
   - -6.0
   - 0.0
 - id: SAL29
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - -24.0
   - -6.0
   - 0.0
 - id: SAL30
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - -18.0
   - -6.0
   - 0.0
 - id: SAL31
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - -12.0
   - -6.0
   - 0.0
 - id: SAL32
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - -6.0
   - -6.0
   - 0.0
 - id: SAL33
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - 0.0
   - -6.0
   - 0.0
 - id: SAL34
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - 6.0
   - -6.0
   - 0.0
 - id: SAL35
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - 12.0
   - -6.0
   - 0.0
 - id: SAL36
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - 18.0
   - -6.0
   - 0.0
 - id: SAL37
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - 24.0
   - -6.0
   - 0.0
 - id: SAL38
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - 30.0
   - -6.0
   - 0.0
 - id: SAL39
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - 36.0
   - -6.0
   - 0.0
 - id: SAL40
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - -36.0
   - 0.0
   - 0.0
 - id: SAL41
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - -30.0
   - 0.0
   - 0.0
 - id: SAL42
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - -24.0
   - 0.0
   - 0.0
 - id: SAL43
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - -18.0
   - 0.0
   - 0.0
 - id: SAL44
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - -12.0
   - 0.0
   - 0.0
 - id: SAL45
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - -6.0
   - 0.0
   - 0.0
 - id: SAL46
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - 0.0
   - 0.0
   - 0.0
 - id: SAL47
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - 6.0
   - 0.0
   - 0.0
 - id: SAL48
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - 12.0
   - 0.0
   - 0.0
 - id: SAL49
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - 18.0
   - 0.0
   - 0.0
 - id: SAL50
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-sales-floor
+  arrangement: arrangement.sales-floor
   at:
   - 24.0
   - 0.0
   - 0.0
 - id: COU51
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - 30.0
   - 0.0
   - 0.0
 - id: COU52
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - 36.0
   - 0.0
   - 0.0
 - id: COU53
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - -36.0
   - 6.0
   - 0.0
 - id: COU54
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - -30.0
   - 6.0
   - 0.0
 - id: COU55
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - -24.0
   - 6.0
   - 0.0
 - id: COU56
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - -18.0
   - 6.0
   - 0.0
 - id: COU57
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - -12.0
   - 6.0
   - 0.0
 - id: COU58
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - -6.0
   - 6.0
   - 0.0
 - id: COU59
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - 0.0
   - 6.0
   - 0.0
 - id: COU60
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - 6.0
   - 6.0
   - 0.0
 - id: COU61
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - 12.0
   - 6.0
   - 0.0
 - id: COU62
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - 18.0
   - 6.0
   - 0.0
 - id: COU63
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - 24.0
   - 6.0
   - 0.0
 - id: COU64
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - 30.0
   - 6.0
   - 0.0
 - id: COU65
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - 36.0
   - 6.0
   - 0.0
 - id: COU66
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - -36.0
   - 12.0
   - 0.0
 - id: COU67
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - -30.0
   - 12.0
   - 0.0
 - id: COU68
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - -24.0
   - 12.0
   - 0.0
 - id: STO69
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-store
+  arrangement: arrangement.store
   at:
   - -18.0
   - 12.0
   - 0.0
 - id: STO70
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-store
+  arrangement: arrangement.store
   at:
   - -12.0
   - 12.0
   - 0.0
 - id: STO71
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-store
+  arrangement: arrangement.store
   at:
   - -6.0
   - 12.0
   - 0.0
 - id: STO72
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-store
+  arrangement: arrangement.store
   at:
   - 0.0
   - 12.0
   - 0.0
 - id: STO73
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-store
+  arrangement: arrangement.store
   at:
   - 6.0
   - 12.0
   - 0.0
 - id: STO74
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-store
+  arrangement: arrangement.store
   at:
   - 12.0
   - 12.0
   - 0.0
 - id: STO75
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-store
+  arrangement: arrangement.store
   at:
   - 18.0
   - 12.0
   - 0.0
 - id: STO76
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-store
+  arrangement: arrangement.store
   at:
   - 24.0
   - 12.0
   - 0.0
 - id: STO77
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-store
+  arrangement: arrangement.store
   at:
   - 30.0
   - 12.0
   - 0.0
 - id: STO78
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-store
+  arrangement: arrangement.store
   at:
   - 36.0
   - 12.0
   - 0.0
 - id: STO79
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-store
+  arrangement: arrangement.store
   at:
   - -36.0
   - 18.0
   - 0.0
 - id: STO80
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-store
+  arrangement: arrangement.store
   at:
   - -30.0
   - 18.0
   - 0.0
 - id: STO81
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-store
+  arrangement: arrangement.store
   at:
   - -24.0
   - 18.0
   - 0.0
 - id: STO82
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-store
+  arrangement: arrangement.store
   at:
   - -18.0
   - 18.0
   - 0.0
 - id: WAS83
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -12.0
   - 18.0
   - 0.0
 - id: WAS84
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -6.0
   - 18.0
   - 0.0
 - id: WAS85
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 0.0
   - 18.0
   - 0.0
 - id: WAS86
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 6.0
   - 18.0
   - 0.0
 - id: WAS87
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 12.0
   - 18.0
   - 0.0
 - id: WAS88
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 18.0
   - 18.0
   - 0.0
 - id: WAS89
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 24.0
   - 18.0
   - 0.0
 - id: WAS90
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 30.0
   - 18.0
   - 0.0
 - id: WAS91
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 36.0
   - 18.0
@@ -710,9 +620,9 @@ ground:
   mass: 207360.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 1608548.1
-  against_module: 'building.market-hall (deprecated): one box 80 x 40 x 10 m of 3,530 t, from the average of 538 concrete buildings. This layout: 78 x 42 x 6 m, 1,609 t (58 t frame, 86 t panels, 78 t fit-out, 1,387 t ground), for 708
-    people served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
+  mass: 1577236.7
+  against_module: 'building.market-hall (deprecated): one box 80 x 40 x 10 m of 3,530 t, from the average of 538 concrete buildings. This layout: 78 x 42 x 6 m, 1,577 t (58 t frame, 86 t panels, 47 t furniture, 1,387 t ground), for
+    708 people served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:
 - profession: profession.merchant
   count: 10
@@ -725,7 +635,7 @@ basis:
   - bays
   tier: invented
   review: true
-  note: The mix of bays for a market hall is chosen (sales-floor 0.55, counter 0.2, store 0.15, washroom 0.1), shared over the record's floor (3200 m2 in 1 storeys, laid as 13 x 7 bays of 6 m).
+  note: The mix of rooms for a market hall is chosen (sales-floor 0.55, counter 0.2, store 0.15, washroom 0.1), shared over the record's floor (3200 m2 in 1 storeys, laid as 13 x 7 rooms of 6 m a storey).
 - of:
   - frame
   - ground

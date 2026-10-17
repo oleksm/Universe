@@ -3,8 +3,8 @@
 identity:
   key: layout.building-tavern
   name: Tavern, world with air
-  description: 'A room with a bar and tables, beer and wine from the warehouse, a kitchen: where people meet after work. Laid of the kit: a strut frame on the 3 m grid, panels, and 9 furnished 6 m bays (5 dining, 2 counter, 1 kitchen,
-    1 washroom).'
+  description: 'A room with a bar and tables, beer and wine from the warehouse, a kitchen: where people meet after work. Laid of the kit: a strut frame on the 3 m grid, panels, and 9 rooms of 6 m furnished piece by piece (5 dining room,
+    2 counter, 1 kitchen, 1 washroom).'
 stands_for: building.tavern
 site:
   atmosphere: air
@@ -15,67 +15,59 @@ physical:
   length: 18.0
   width: 18.0
   height: 3.15
-  mass: 201309.6
-bays:
+  mass: 199540.0
+bays: []
+rooms:
 - id: DIN1
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - -6.0
   - -6.0
   - 0.0
 - id: DIN2
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - 0.0
   - -6.0
   - 0.0
 - id: DIN3
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - 6.0
   - -6.0
   - 0.0
 - id: DIN4
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - -6.0
   - 0.0
   - 0.0
 - id: DIN5
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - 0.0
   - 0.0
   - 0.0
 - id: COU6
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - 6.0
   - 0.0
   - 0.0
 - id: COU7
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-counter
+  arrangement: arrangement.counter
   at:
   - -6.0
   - 6.0
   - 0.0
 - id: KIT8
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - 0.0
   - 6.0
   - 0.0
 - id: WAS9
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 6.0
   - 6.0
@@ -136,8 +128,8 @@ ground:
   mass: 62208.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 201309.6
-  against_module: 'building.tavern (deprecated): one box 20 x 15 x 4 m of 331 t, from the average of 538 concrete buildings. This layout: 18 x 18 x 3 m, 201 t (6 t frame, 11 t panels, 6 t fit-out, 179 t ground), for 92 people served
+  mass: 199540.0
+  against_module: 'building.tavern (deprecated): one box 20 x 15 x 4 m of 331 t, from the average of 538 concrete buildings. This layout: 18 x 18 x 3 m, 200 t (6 t frame, 11 t panels, 4 t furniture, 179 t ground), for 92 people served
     or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:
 - profession: profession.innkeeper
@@ -149,7 +141,7 @@ basis:
   - bays
   tier: invented
   review: true
-  note: The mix of bays for a tavern is chosen (dining 0.6, counter 0.1, kitchen 0.2, washroom 0.1), shared over the record's floor (300 m2 in 1 storeys, laid as 3 x 3 bays of 6 m).
+  note: The mix of rooms for a tavern is chosen (dining 0.6, counter 0.1, kitchen 0.2, washroom 0.1), shared over the record's floor (300 m2 in 1 storeys, laid as 3 x 3 rooms of 6 m a storey).
 - of:
   - frame
   - ground

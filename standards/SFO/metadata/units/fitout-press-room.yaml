@@ -25,3 +25,9 @@ basis:
   tier: invented
   review: true
   note: 'A furnished 6 m bay (its size is what is fitted; the bay, plant-mount.bay-s1, is what it is given): 0 people served or seated, 3 at work in it; masses from memory of such furniture, to be sourced.'
+revision:
+  status: deprecated
+  owner: registry
+  on_conflict: propose
+  replaced_by: arrangement.press-room
+  because: 'The owner, 2026-10-17: one model a piece (a table, a chair); the layout places pieces by an arrangement, never a furnished set as one model.'

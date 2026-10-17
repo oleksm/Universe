@@ -3,8 +3,8 @@
 identity:
   key: layout.building-watch-house
   name: Watch house, world with air
-  description: 'A constabulary''s station: a front desk, a few cells for the night, a yard for its craft''s crews. Laid of the kit: a strut frame on the 3 m grid, panels, and 15 furnished 6 m bays (6 office, 2 reception, 3 cell, 2 vehicle,
-    2 washroom).'
+  description: 'A constabulary''s station: a front desk, a few cells for the night, a yard for its craft''s crews. Laid of the kit: a strut frame on the 3 m grid, panels, and 15 rooms of 6 m furnished piece by piece (6 office, 2 reception,
+    3 cells, 2 vehicle bay, 2 washroom).'
 stands_for: building.watch-house
 site:
   atmosphere: air
@@ -15,109 +15,95 @@ physical:
   length: 30.0
   width: 18.0
   height: 3.15
-  mass: 314361.9
-bays:
+  mass: 310186.2
+bays: []
+rooms:
 - id: OFF1
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -12.0
   - -6.0
   - 0.0
 - id: OFF2
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -6.0
   - -6.0
   - 0.0
 - id: OFF3
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 0.0
   - -6.0
   - 0.0
 - id: OFF4
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 6.0
   - -6.0
   - 0.0
 - id: OFF5
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 12.0
   - -6.0
   - 0.0
 - id: OFF6
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -12.0
   - 0.0
   - 0.0
 - id: REC7
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-reception
+  arrangement: arrangement.reception
   at:
   - -6.0
   - 0.0
   - 0.0
 - id: REC8
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-reception
+  arrangement: arrangement.reception
   at:
   - 0.0
   - 0.0
   - 0.0
 - id: CEL9
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 6.0
   - 0.0
   - 0.0
 - id: CEL10
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 12.0
   - 0.0
   - 0.0
 - id: CEL11
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -12.0
   - 6.0
   - 0.0
 - id: GAR12
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - -6.0
   - 6.0
   - 0.0
 - id: GAR13
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-garage
+  arrangement: arrangement.garage
   at:
   - 0.0
   - 6.0
   - 0.0
 - id: WAS14
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 6.0
   - 6.0
   - 0.0
 - id: WAS15
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 12.0
   - 6.0
@@ -176,8 +162,8 @@ ground:
   mass: 82944.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 314361.9
-  against_module: 'building.watch-house (deprecated): one box 30 x 20 x 4 m of 662 t, from the average of 538 concrete buildings. This layout: 30 x 18 x 3 m, 314 t (10 t frame, 16 t panels, 11 t fit-out, 277 t ground), for 66 people
+  mass: 310186.2
+  against_module: 'building.watch-house (deprecated): one box 30 x 20 x 4 m of 662 t, from the average of 538 concrete buildings. This layout: 30 x 18 x 3 m, 310 t (10 t frame, 16 t panels, 7 t furniture, 277 t ground), for 66 people
     served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:
 - profession: profession.constable
@@ -189,7 +175,7 @@ basis:
   - bays
   tier: invented
   review: true
-  note: The mix of bays for a watch house is chosen (office 0.4, reception 0.15, cell 0.2, garage 0.15, washroom 0.1), shared over the record's floor (600 m2 in 1 storeys, laid as 5 x 3 bays of 6 m).
+  note: The mix of rooms for a watch house is chosen (office 0.4, reception 0.15, cell 0.2, garage 0.15, washroom 0.1), shared over the record's floor (600 m2 in 1 storeys, laid as 5 x 3 rooms of 6 m a storey).
 - of:
   - frame
   - ground

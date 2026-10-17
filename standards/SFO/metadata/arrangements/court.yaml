@@ -1,0 +1,179 @@
+# yaml-language-server: $schema=../../schema/arrangement.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: arrangement.court
+  name: Court room
+  description: 'How a 6 m room is furnished as a court room: 1 judge''s bench, 1 dock, 1 witness box, 24 chairs.'
+room:
+- 6.0
+- 6.0
+people: 24
+staff: 0
+items:
+- unit: unit.furniture-judge-bench
+  at:
+  - 0.0
+  - -2.3
+  - 0.0
+- unit: unit.furniture-dock
+  at:
+  - -2.0
+  - 0.0
+  - 0.0
+  turn: 90.0
+- unit: unit.furniture-witness-box
+  at:
+  - 2.2
+  - -0.6
+  - 0.0
+  turn: 270.0
+- unit: unit.furniture-chair
+  at:
+  - -2.5
+  - 1.6
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-chair
+  at:
+  - -2.0
+  - 1.6
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-chair
+  at:
+  - -1.5
+  - 1.6
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-chair
+  at:
+  - -1.0
+  - 1.6
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-chair
+  at:
+  - -0.5
+  - 1.6
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-chair
+  at:
+  - 0.0
+  - 1.6
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-chair
+  at:
+  - 0.5
+  - 1.6
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-chair
+  at:
+  - 1.0
+  - 1.6
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-chair
+  at:
+  - 1.5
+  - 1.6
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-chair
+  at:
+  - 2.0
+  - 1.6
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-chair
+  at:
+  - 2.5
+  - 1.6
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-chair
+  at:
+  - -2.5
+  - 2.4
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-chair
+  at:
+  - -2.0
+  - 2.4
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-chair
+  at:
+  - -1.5
+  - 2.4
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-chair
+  at:
+  - -1.0
+  - 2.4
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-chair
+  at:
+  - -0.5
+  - 2.4
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-chair
+  at:
+  - 0.0
+  - 2.4
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-chair
+  at:
+  - 0.5
+  - 2.4
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-chair
+  at:
+  - 1.0
+  - 2.4
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-chair
+  at:
+  - 1.5
+  - 2.4
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-chair
+  at:
+  - 2.0
+  - 2.4
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-chair
+  at:
+  - 2.5
+  - 2.4
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-chair
+  at:
+  - -0.6
+  - -2.6
+  - 0.0
+- unit: unit.furniture-chair
+  at:
+  - 2.2
+  - -0.2
+  - 0.0
+  turn: 270.0
+mass: 641.4
+basis:
+- of:
+  - items
+  tier: invented
+  review: true
+  note: Laid out by hand on the 6 m room (tools/standards/furniture.py); each piece is modelled once and placed here.

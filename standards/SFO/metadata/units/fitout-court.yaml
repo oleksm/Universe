@@ -20,12 +20,6 @@ built_of:
   item: material.aluminium-alloy-6061
   mass: 212.1
   note: 'twenty-four: blender''s model'
-visual:
-  format: "freefall-model/1"
-  path: "models/fitout-court/v1"
-  manifest_sha256: "cad42168a6b7500775de4bd8a7b01a447f72092e3e31a54015988ac55cafab7a"
-  version: 1
-  triangles: 13800
 basis:
 - of:
   - built_of
@@ -33,3 +27,15 @@ basis:
   tier: invented
   review: true
   note: 'A furnished 6 m bay (its size is what is fitted; the bay, plant-mount.bay-s1, is what it is given): 24 people served or seated, 0 at work in it; masses from memory of such furniture, to be sourced.'
+revision:
+  status: deprecated
+  owner: registry
+  on_conflict: propose
+  replaced_by: arrangement.court
+  because: 'The owner, 2026-10-17: one model a piece (a table, a chair); the layout places pieces by an arrangement, never a furnished set as one model.'
+visual:
+  format: freefall-model/1
+  path: models/fitout-court/v1
+  manifest_sha256: cad42168a6b7500775de4bd8a7b01a447f72092e3e31a54015988ac55cafab7a
+  version: 1
+  triangles: 13800

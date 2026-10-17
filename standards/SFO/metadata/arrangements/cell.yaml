@@ -1,0 +1,59 @@
+# yaml-language-server: $schema=../../schema/arrangement.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: arrangement.cell
+  name: Cells
+  description: 'How a 6 m room is furnished as a cells: 2 cell fronts, 1 cell wall, 2 beds, 2 steel toilets.'
+room:
+- 6.0
+- 6.0
+people: 2
+staff: 0
+items:
+- unit: unit.furniture-cell-front
+  at:
+  - -1.5
+  - -1.0
+  - 0.0
+- unit: unit.furniture-cell-front
+  at:
+  - 1.5
+  - -1.0
+  - 0.0
+- unit: unit.furniture-cell-wall
+  at:
+  - 0.0
+  - 1.0
+  - 0.0
+  turn: 90.0
+- unit: unit.furniture-bed
+  at:
+  - -2.0
+  - 1.5
+  - 0.0
+  turn: 90.0
+- unit: unit.furniture-bed
+  at:
+  - 2.0
+  - 1.5
+  - 0.0
+  turn: 90.0
+- unit: unit.furniture-steel-wc
+  at:
+  - -0.5
+  - 2.5
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-steel-wc
+  at:
+  - 0.5
+  - 2.5
+  - 0.0
+  turn: 180.0
+mass: 1170.0
+basis:
+- of:
+  - items
+  tier: invented
+  review: true
+  note: Laid out by hand on the 6 m room (tools/standards/furniture.py); each piece is modelled once and placed here.

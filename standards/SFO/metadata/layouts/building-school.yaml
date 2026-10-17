@@ -3,8 +3,8 @@
 identity:
   key: layout.building-school
   name: School, world with air
-  description: 'Classrooms and a hall: where children learn, and the first years of every trade that is learned at school. Laid of the kit: a strut frame on the 3 m grid, panels, and 60 furnished 6 m bays (39 classroom, 6 office, 6
-    dining, 3 kitchen, 6 washroom).'
+  description: 'Classrooms and a hall: where children learn, and the first years of every trade that is learned at school. Laid of the kit: a strut frame on the 3 m grid, panels, and 60 rooms of 6 m furnished piece by piece (39 classroom,
+    6 office, 6 dining room, 3 kitchen, 6 washroom).'
 stands_for: building.school
 site:
   atmosphere: air
@@ -15,424 +15,365 @@ physical:
   length: 60.0
   width: 18.0
   height: 6.15
-  mass: 819918.5
-bays:
+  mass: 808019.9
+bays: []
+rooms:
 - id: CLA1
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -27.0
   - -6.0
   - 0.0
 - id: CLA2
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -21.0
   - -6.0
   - 0.0
 - id: CLA3
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -15.0
   - -6.0
   - 0.0
 - id: CLA4
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -9.0
   - -6.0
   - 0.0
 - id: CLA5
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -3.0
   - -6.0
   - 0.0
 - id: CLA6
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 3.0
   - -6.0
   - 0.0
 - id: CLA7
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 9.0
   - -6.0
   - 0.0
 - id: CLA8
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 15.0
   - -6.0
   - 0.0
 - id: CLA9
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 21.0
   - -6.0
   - 0.0
 - id: CLA10
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 27.0
   - -6.0
   - 0.0
 - id: CLA11
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -27.0
   - 0.0
   - 0.0
 - id: CLA12
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -21.0
   - 0.0
   - 0.0
 - id: CLA13
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -15.0
   - 0.0
   - 0.0
 - id: CLA14
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -9.0
   - 0.0
   - 0.0
 - id: CLA15
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -3.0
   - 0.0
   - 0.0
 - id: CLA16
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 3.0
   - 0.0
   - 0.0
 - id: CLA17
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 9.0
   - 0.0
   - 0.0
 - id: CLA18
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 15.0
   - 0.0
   - 0.0
 - id: CLA19
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 21.0
   - 0.0
   - 0.0
 - id: CLA20
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 27.0
   - 0.0
   - 0.0
 - id: CLA21
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -27.0
   - 6.0
   - 0.0
 - id: CLA22
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -21.0
   - 6.0
   - 0.0
 - id: CLA23
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -15.0
   - 6.0
   - 0.0
 - id: CLA24
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -9.0
   - 6.0
   - 0.0
 - id: CLA25
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -3.0
   - 6.0
   - 0.0
 - id: CLA26
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 3.0
   - 6.0
   - 0.0
 - id: CLA27
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 9.0
   - 6.0
   - 0.0
 - id: CLA28
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 15.0
   - 6.0
   - 0.0
 - id: CLA29
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 21.0
   - 6.0
   - 0.0
 - id: CLA30
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 27.0
   - 6.0
   - 0.0
 - id: CLA31
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -27.0
   - -6.0
   - 3.0
 - id: CLA32
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -21.0
   - -6.0
   - 3.0
 - id: CLA33
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -15.0
   - -6.0
   - 3.0
 - id: CLA34
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -9.0
   - -6.0
   - 3.0
 - id: CLA35
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -3.0
   - -6.0
   - 3.0
 - id: CLA36
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 3.0
   - -6.0
   - 3.0
 - id: CLA37
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 9.0
   - -6.0
   - 3.0
 - id: CLA38
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 15.0
   - -6.0
   - 3.0
 - id: CLA39
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 21.0
   - -6.0
   - 3.0
 - id: OFF40
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 27.0
   - -6.0
   - 3.0
 - id: OFF41
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -27.0
   - 0.0
   - 3.0
 - id: OFF42
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -21.0
   - 0.0
   - 3.0
 - id: OFF43
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -15.0
   - 0.0
   - 3.0
 - id: OFF44
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -9.0
   - 0.0
   - 3.0
 - id: OFF45
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -3.0
   - 0.0
   - 3.0
 - id: DIN46
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - 3.0
   - 0.0
   - 3.0
 - id: DIN47
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - 9.0
   - 0.0
   - 3.0
 - id: DIN48
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - 15.0
   - 0.0
   - 3.0
 - id: DIN49
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - 21.0
   - 0.0
   - 3.0
 - id: DIN50
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - 27.0
   - 0.0
   - 3.0
 - id: DIN51
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - -27.0
   - 6.0
   - 3.0
 - id: KIT52
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - -21.0
   - 6.0
   - 3.0
 - id: KIT53
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - -15.0
   - 6.0
   - 3.0
 - id: KIT54
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - -9.0
   - 6.0
   - 3.0
 - id: WAS55
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -3.0
   - 6.0
   - 3.0
 - id: WAS56
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 3.0
   - 6.0
   - 3.0
 - id: WAS57
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 9.0
   - 6.0
   - 3.0
 - id: WAS58
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 15.0
   - 6.0
   - 3.0
 - id: WAS59
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 21.0
   - 6.0
   - 3.0
 - id: WAS60
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 27.0
   - 6.0
@@ -495,8 +436,8 @@ ground:
   mass: 134784.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 819918.5
-  against_module: 'building.school (deprecated): one box 60 x 20 x 8 m of 2,647 t, from the average of 538 concrete buildings. This layout: 60 x 18 x 6 m, 820 t (40 t frame, 220 t panels, 36 t fit-out, 524 t ground), for 756 people
+  mass: 808019.9
+  against_module: 'building.school (deprecated): one box 60 x 20 x 8 m of 2,647 t, from the average of 538 concrete buildings. This layout: 60 x 18 x 6 m, 808 t (40 t frame, 220 t panels, 24 t furniture, 524 t ground), for 756 people
     served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:
 - profession: profession.teacher
@@ -508,7 +449,7 @@ basis:
   - bays
   tier: invented
   review: true
-  note: The mix of bays for a school is chosen (classroom 0.65, office 0.1, dining 0.1, kitchen 0.05, washroom 0.1), shared over the record's floor (2400 m2 in 2 storeys, laid as 10 x 3 bays of 6 m).
+  note: The mix of rooms for a school is chosen (classroom 0.65, office 0.1, dining 0.1, kitchen 0.05, washroom 0.1), shared over the record's floor (2400 m2 in 2 storeys, laid as 10 x 3 rooms of 6 m a storey).
 - of:
   - frame
   - ground

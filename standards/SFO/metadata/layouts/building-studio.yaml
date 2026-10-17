@@ -3,8 +3,8 @@
 identity:
   key: layout.building-studio
   name: Studios, world with air
-  description: 'Workrooms with north light: where painters, makers and writers work and show, and anyone may come and look. Laid of the kit: a strut frame on the 3 m grid, panels, and 20 furnished 6 m bays (6 stage, 6 office, 4 workshop,
-    2 store, 2 washroom).'
+  description: 'Workrooms with north light: where painters, makers and writers work and show, and anyone may come and look. Laid of the kit: a strut frame on the 3 m grid, panels, and 20 rooms of 6 m furnished piece by piece (6 stage,
+    6 office, 4 workshop, 2 store room, 2 washroom).'
 stands_for: building.studio
 site:
   atmosphere: air
@@ -15,144 +15,125 @@ physical:
   length: 30.0
   width: 12.0
   height: 9.15
-  mass: 326330.3
-bays:
+  mass: 308686.3
+bays: []
+rooms:
 - id: STA1
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-stage
+  arrangement: arrangement.stage
   at:
   - -12.0
   - -3.0
   - 0.0
 - id: STA2
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-stage
+  arrangement: arrangement.stage
   at:
   - -6.0
   - -3.0
   - 0.0
 - id: STA3
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-stage
+  arrangement: arrangement.stage
   at:
   - 0.0
   - -3.0
   - 0.0
 - id: STA4
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-stage
+  arrangement: arrangement.stage
   at:
   - 6.0
   - -3.0
   - 0.0
 - id: STA5
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-stage
+  arrangement: arrangement.stage
   at:
   - 12.0
   - -3.0
   - 0.0
 - id: STA6
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-stage
+  arrangement: arrangement.stage
   at:
   - -12.0
   - 3.0
   - 0.0
 - id: OFF7
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -6.0
   - 3.0
   - 0.0
 - id: OFF8
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 0.0
   - 3.0
   - 0.0
 - id: OFF9
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 6.0
   - 3.0
   - 0.0
 - id: OFF10
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 12.0
   - 3.0
   - 0.0
 - id: OFF11
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -12.0
   - -3.0
   - 4.5
 - id: OFF12
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -6.0
   - -3.0
   - 4.5
 - id: WOR13
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 0.0
   - -3.0
   - 4.5
 - id: WOR14
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 6.0
   - -3.0
   - 4.5
 - id: WOR15
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 12.0
   - -3.0
   - 4.5
 - id: WOR16
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -12.0
   - 3.0
   - 4.5
 - id: STO17
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-store
+  arrangement: arrangement.store
   at:
   - -6.0
   - 3.0
   - 4.5
 - id: STO18
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-store
+  arrangement: arrangement.store
   at:
   - 0.0
   - 3.0
   - 4.5
 - id: WAS19
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 6.0
   - 3.0
   - 4.5
 - id: WAS20
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 12.0
   - 3.0
@@ -217,8 +198,8 @@ ground:
   mass: 72576.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 326330.3
-  against_module: 'building.studio (deprecated): one box 30 x 15 x 8 m of 993 t, from the average of 538 concrete buildings. This layout: 30 x 12 x 9 m, 326 t (16 t frame, 77 t panels, 31 t fit-out, 202 t ground), for 36 people served
+  mass: 308686.3
+  against_module: 'building.studio (deprecated): one box 30 x 15 x 8 m of 993 t, from the average of 538 concrete buildings. This layout: 30 x 12 x 9 m, 309 t (16 t frame, 77 t panels, 14 t furniture, 202 t ground), for 36 people served
     or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:
 - profession: profession.artist
@@ -230,7 +211,7 @@ basis:
   - bays
   tier: invented
   review: true
-  note: The mix of bays for a studios is chosen (stage 0.3, office 0.3, workshop 0.2, store 0.1, washroom 0.1), shared over the record's floor (900 m2 in 2 storeys, laid as 5 x 2 bays of 6 m).
+  note: The mix of rooms for a studios is chosen (stage 0.3, office 0.3, workshop 0.2, store 0.1, washroom 0.1), shared over the record's floor (900 m2 in 2 storeys, laid as 5 x 2 rooms of 6 m a storey).
 - of:
   - frame
   - ground

@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: unit.furniture-range
+  name: Range
+  description: A commercial cooking range with its oven.
+size_class: 1
+physical:
+  length: 1.2
+  width: 0.9
+  height: 0.9
+  mass: 250.0
+built_of:
+- what: Range and oven
+  item: material.stainless-steel-304
+  mass: 250.0
+basis:
+- of:
+  - built_of
+  - physical
+  tier: invented
+  review: true
+  note: From memory of such furniture; to be sourced.

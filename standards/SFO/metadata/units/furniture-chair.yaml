@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: unit.furniture-chair
+  name: Chair
+  description: A stacking chair.
+size_class: 1
+physical:
+  length: 0.45
+  width: 0.5
+  height: 0.85
+  mass: 6.1
+built_of:
+- what: Frame
+  item: material.aluminium-alloy-6061
+  mass: 2.6
+- what: Seat and back
+  item: material.polyethylene-uhmw
+  mass: 3.5
+basis:
+- of:
+  - built_of
+  - physical
+  tier: derived
+  review: true
+  note: 'From blender''s dining set: sixteen chairs 41.2 kg of aluminium, 10 mm seats.'

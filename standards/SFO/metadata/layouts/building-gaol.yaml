@@ -3,7 +3,7 @@
 identity:
   key: layout.building-gaol
   name: Gaol, world with air
-  description: 'Cells, a yard and a kitchen: where a term is served. Laid of the kit: a strut frame on the 3 m grid, panels, and 100 furnished 6 m bays (70 cell, 10 office, 5 dining, 5 kitchen, 10 washroom).'
+  description: 'Cells, a yard and a kitchen: where a term is served. Laid of the kit: a strut frame on the 3 m grid, panels, and 100 rooms of 6 m furnished piece by piece (70 cells, 10 office, 5 dining room, 5 kitchen, 10 washroom).'
 stands_for: building.gaol
 site:
   atmosphere: air
@@ -14,704 +14,605 @@ physical:
   length: 60.0
   width: 30.0
   height: 6.15
-  mass: 1375102.9
-bays:
+  mass: 1324858.9
+bays: []
+rooms:
 - id: CEL1
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -27.0
   - -12.0
   - 0.0
 - id: CEL2
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -21.0
   - -12.0
   - 0.0
 - id: CEL3
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -15.0
   - -12.0
   - 0.0
 - id: CEL4
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -9.0
   - -12.0
   - 0.0
 - id: CEL5
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -3.0
   - -12.0
   - 0.0
 - id: CEL6
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 3.0
   - -12.0
   - 0.0
 - id: CEL7
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 9.0
   - -12.0
   - 0.0
 - id: CEL8
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 15.0
   - -12.0
   - 0.0
 - id: CEL9
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 21.0
   - -12.0
   - 0.0
 - id: CEL10
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 27.0
   - -12.0
   - 0.0
 - id: CEL11
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -27.0
   - -6.0
   - 0.0
 - id: CEL12
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -21.0
   - -6.0
   - 0.0
 - id: CEL13
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -15.0
   - -6.0
   - 0.0
 - id: CEL14
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -9.0
   - -6.0
   - 0.0
 - id: CEL15
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -3.0
   - -6.0
   - 0.0
 - id: CEL16
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 3.0
   - -6.0
   - 0.0
 - id: CEL17
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 9.0
   - -6.0
   - 0.0
 - id: CEL18
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 15.0
   - -6.0
   - 0.0
 - id: CEL19
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 21.0
   - -6.0
   - 0.0
 - id: CEL20
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 27.0
   - -6.0
   - 0.0
 - id: CEL21
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -27.0
   - 0.0
   - 0.0
 - id: CEL22
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -21.0
   - 0.0
   - 0.0
 - id: CEL23
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -15.0
   - 0.0
   - 0.0
 - id: CEL24
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -9.0
   - 0.0
   - 0.0
 - id: CEL25
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -3.0
   - 0.0
   - 0.0
 - id: CEL26
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 3.0
   - 0.0
   - 0.0
 - id: CEL27
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 9.0
   - 0.0
   - 0.0
 - id: CEL28
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 15.0
   - 0.0
   - 0.0
 - id: CEL29
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 21.0
   - 0.0
   - 0.0
 - id: CEL30
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 27.0
   - 0.0
   - 0.0
 - id: CEL31
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -27.0
   - 6.0
   - 0.0
 - id: CEL32
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -21.0
   - 6.0
   - 0.0
 - id: CEL33
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -15.0
   - 6.0
   - 0.0
 - id: CEL34
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -9.0
   - 6.0
   - 0.0
 - id: CEL35
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -3.0
   - 6.0
   - 0.0
 - id: CEL36
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 3.0
   - 6.0
   - 0.0
 - id: CEL37
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 9.0
   - 6.0
   - 0.0
 - id: CEL38
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 15.0
   - 6.0
   - 0.0
 - id: CEL39
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 21.0
   - 6.0
   - 0.0
 - id: CEL40
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 27.0
   - 6.0
   - 0.0
 - id: CEL41
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -27.0
   - 12.0
   - 0.0
 - id: CEL42
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -21.0
   - 12.0
   - 0.0
 - id: CEL43
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -15.0
   - 12.0
   - 0.0
 - id: CEL44
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -9.0
   - 12.0
   - 0.0
 - id: CEL45
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -3.0
   - 12.0
   - 0.0
 - id: CEL46
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 3.0
   - 12.0
   - 0.0
 - id: CEL47
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 9.0
   - 12.0
   - 0.0
 - id: CEL48
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 15.0
   - 12.0
   - 0.0
 - id: CEL49
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 21.0
   - 12.0
   - 0.0
 - id: CEL50
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 27.0
   - 12.0
   - 0.0
 - id: CEL51
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -27.0
   - -12.0
   - 3.0
 - id: CEL52
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -21.0
   - -12.0
   - 3.0
 - id: CEL53
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -15.0
   - -12.0
   - 3.0
 - id: CEL54
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -9.0
   - -12.0
   - 3.0
 - id: CEL55
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -3.0
   - -12.0
   - 3.0
 - id: CEL56
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 3.0
   - -12.0
   - 3.0
 - id: CEL57
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 9.0
   - -12.0
   - 3.0
 - id: CEL58
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 15.0
   - -12.0
   - 3.0
 - id: CEL59
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 21.0
   - -12.0
   - 3.0
 - id: CEL60
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 27.0
   - -12.0
   - 3.0
 - id: CEL61
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -27.0
   - -6.0
   - 3.0
 - id: CEL62
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -21.0
   - -6.0
   - 3.0
 - id: CEL63
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -15.0
   - -6.0
   - 3.0
 - id: CEL64
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -9.0
   - -6.0
   - 3.0
 - id: CEL65
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - -3.0
   - -6.0
   - 3.0
 - id: CEL66
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 3.0
   - -6.0
   - 3.0
 - id: CEL67
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 9.0
   - -6.0
   - 3.0
 - id: CEL68
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 15.0
   - -6.0
   - 3.0
 - id: CEL69
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 21.0
   - -6.0
   - 3.0
 - id: CEL70
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-cell
+  arrangement: arrangement.cell
   at:
   - 27.0
   - -6.0
   - 3.0
 - id: OFF71
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -27.0
   - 0.0
   - 3.0
 - id: OFF72
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -21.0
   - 0.0
   - 3.0
 - id: OFF73
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -15.0
   - 0.0
   - 3.0
 - id: OFF74
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -9.0
   - 0.0
   - 3.0
 - id: OFF75
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -3.0
   - 0.0
   - 3.0
 - id: OFF76
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 3.0
   - 0.0
   - 3.0
 - id: OFF77
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 9.0
   - 0.0
   - 3.0
 - id: OFF78
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 15.0
   - 0.0
   - 3.0
 - id: OFF79
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 21.0
   - 0.0
   - 3.0
 - id: OFF80
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 27.0
   - 0.0
   - 3.0
 - id: DIN81
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - -27.0
   - 6.0
   - 3.0
 - id: DIN82
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - -21.0
   - 6.0
   - 3.0
 - id: DIN83
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - -15.0
   - 6.0
   - 3.0
 - id: DIN84
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - -9.0
   - 6.0
   - 3.0
 - id: DIN85
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - -3.0
   - 6.0
   - 3.0
 - id: KIT86
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - 3.0
   - 6.0
   - 3.0
 - id: KIT87
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - 9.0
   - 6.0
   - 3.0
 - id: KIT88
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - 15.0
   - 6.0
   - 3.0
 - id: KIT89
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - 21.0
   - 6.0
   - 3.0
 - id: KIT90
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - 27.0
   - 6.0
   - 3.0
 - id: WAS91
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -27.0
   - 12.0
   - 3.0
 - id: WAS92
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -21.0
   - 12.0
   - 3.0
 - id: WAS93
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -15.0
   - 12.0
   - 3.0
 - id: WAS94
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -9.0
   - 12.0
   - 3.0
 - id: WAS95
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -3.0
   - 12.0
   - 3.0
 - id: WAS96
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 3.0
   - 12.0
   - 3.0
 - id: WAS97
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 9.0
   - 12.0
   - 3.0
 - id: WAS98
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 15.0
   - 12.0
   - 3.0
 - id: WAS99
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 21.0
   - 12.0
   - 3.0
 - id: WAS100
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 27.0
   - 12.0
@@ -772,8 +673,8 @@ ground:
   mass: 155520.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 1375102.9
-  against_module: 'building.gaol (deprecated): one box 60 x 30 x 8 m of 3,971 t, from the average of 538 concrete buildings. This layout: 60 x 30 x 6 m, 1,375 t (64 t frame, 361 t panels, 147 t fit-out, 804 t ground), for 280 people
+  mass: 1324858.9
+  against_module: 'building.gaol (deprecated): one box 60 x 30 x 8 m of 3,971 t, from the average of 538 concrete buildings. This layout: 60 x 30 x 6 m, 1,325 t (64 t frame, 361 t panels, 97 t furniture, 804 t ground), for 280 people
     served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:
 - profession: profession.constable
@@ -785,7 +686,7 @@ basis:
   - bays
   tier: invented
   review: true
-  note: The mix of bays for a gaol is chosen (cell 0.7, office 0.1, dining 0.05, kitchen 0.05, washroom 0.1), shared over the record's floor (3600 m2 in 2 storeys, laid as 10 x 5 bays of 6 m).
+  note: The mix of rooms for a gaol is chosen (cell 0.7, office 0.1, dining 0.05, kitchen 0.05, washroom 0.1), shared over the record's floor (3600 m2 in 2 storeys, laid as 10 x 5 rooms of 6 m a storey).
 - of:
   - frame
   - ground

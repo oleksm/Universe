@@ -3,8 +3,8 @@
 identity:
   key: layout.building-college
   name: College, world with air
-  description: 'Lecture halls, laboratories and a library: where the trades learned at college are taught, and where scholars work. Laid of the kit: a strut frame on the 3 m grid, panels, and 476 furnished 6 m bays (262 classroom, 71
-    office, 48 workshop, 24 dining, 24 kitchen, 47 washroom).'
+  description: 'Lecture halls, laboratories and a library: where the trades learned at college are taught, and where scholars work. Laid of the kit: a strut frame on the 3 m grid, panels, and 476 rooms of 6 m furnished piece by piece
+    (262 classroom, 71 office, 48 workshop, 24 dining room, 24 kitchen, 47 washroom).'
 stands_for: building.college
 site:
   atmosphere: air
@@ -15,3336 +15,2861 @@ physical:
   length: 102.0
   width: 42.0
   height: 12.15
-  mass: 4799714.1
-bays:
+  mass: 4668885.3
+bays: []
+rooms:
 - id: CLA1
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -48.0
   - -18.0
   - 0.0
 - id: CLA2
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -42.0
   - -18.0
   - 0.0
 - id: CLA3
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -36.0
   - -18.0
   - 0.0
 - id: CLA4
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -30.0
   - -18.0
   - 0.0
 - id: CLA5
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -24.0
   - -18.0
   - 0.0
 - id: CLA6
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -18.0
   - -18.0
   - 0.0
 - id: CLA7
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -12.0
   - -18.0
   - 0.0
 - id: CLA8
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -6.0
   - -18.0
   - 0.0
 - id: CLA9
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 0.0
   - -18.0
   - 0.0
 - id: CLA10
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 6.0
   - -18.0
   - 0.0
 - id: CLA11
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 12.0
   - -18.0
   - 0.0
 - id: CLA12
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 18.0
   - -18.0
   - 0.0
 - id: CLA13
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 24.0
   - -18.0
   - 0.0
 - id: CLA14
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 30.0
   - -18.0
   - 0.0
 - id: CLA15
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 36.0
   - -18.0
   - 0.0
 - id: CLA16
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 42.0
   - -18.0
   - 0.0
 - id: CLA17
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 48.0
   - -18.0
   - 0.0
 - id: CLA18
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -48.0
   - -12.0
   - 0.0
 - id: CLA19
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -42.0
   - -12.0
   - 0.0
 - id: CLA20
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -36.0
   - -12.0
   - 0.0
 - id: CLA21
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -30.0
   - -12.0
   - 0.0
 - id: CLA22
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -24.0
   - -12.0
   - 0.0
 - id: CLA23
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -18.0
   - -12.0
   - 0.0
 - id: CLA24
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -12.0
   - -12.0
   - 0.0
 - id: CLA25
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -6.0
   - -12.0
   - 0.0
 - id: CLA26
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 0.0
   - -12.0
   - 0.0
 - id: CLA27
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 6.0
   - -12.0
   - 0.0
 - id: CLA28
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 12.0
   - -12.0
   - 0.0
 - id: CLA29
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 18.0
   - -12.0
   - 0.0
 - id: CLA30
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 24.0
   - -12.0
   - 0.0
 - id: CLA31
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 30.0
   - -12.0
   - 0.0
 - id: CLA32
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 36.0
   - -12.0
   - 0.0
 - id: CLA33
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 42.0
   - -12.0
   - 0.0
 - id: CLA34
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 48.0
   - -12.0
   - 0.0
 - id: CLA35
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -48.0
   - -6.0
   - 0.0
 - id: CLA36
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -42.0
   - -6.0
   - 0.0
 - id: CLA37
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -36.0
   - -6.0
   - 0.0
 - id: CLA38
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -30.0
   - -6.0
   - 0.0
 - id: CLA39
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -24.0
   - -6.0
   - 0.0
 - id: CLA40
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -18.0
   - -6.0
   - 0.0
 - id: CLA41
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -12.0
   - -6.0
   - 0.0
 - id: CLA42
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -6.0
   - -6.0
   - 0.0
 - id: CLA43
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 0.0
   - -6.0
   - 0.0
 - id: CLA44
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 6.0
   - -6.0
   - 0.0
 - id: CLA45
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 12.0
   - -6.0
   - 0.0
 - id: CLA46
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 18.0
   - -6.0
   - 0.0
 - id: CLA47
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 24.0
   - -6.0
   - 0.0
 - id: CLA48
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 30.0
   - -6.0
   - 0.0
 - id: CLA49
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 36.0
   - -6.0
   - 0.0
 - id: CLA50
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 42.0
   - -6.0
   - 0.0
 - id: CLA51
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 48.0
   - -6.0
   - 0.0
 - id: CLA52
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -48.0
   - 0.0
   - 0.0
 - id: CLA53
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -42.0
   - 0.0
   - 0.0
 - id: CLA54
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -36.0
   - 0.0
   - 0.0
 - id: CLA55
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -30.0
   - 0.0
   - 0.0
 - id: CLA56
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -24.0
   - 0.0
   - 0.0
 - id: CLA57
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -18.0
   - 0.0
   - 0.0
 - id: CLA58
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -12.0
   - 0.0
   - 0.0
 - id: CLA59
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -6.0
   - 0.0
   - 0.0
 - id: CLA60
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 0.0
   - 0.0
   - 0.0
 - id: CLA61
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 6.0
   - 0.0
   - 0.0
 - id: CLA62
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 12.0
   - 0.0
   - 0.0
 - id: CLA63
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 18.0
   - 0.0
   - 0.0
 - id: CLA64
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 24.0
   - 0.0
   - 0.0
 - id: CLA65
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 30.0
   - 0.0
   - 0.0
 - id: CLA66
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 36.0
   - 0.0
   - 0.0
 - id: CLA67
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 42.0
   - 0.0
   - 0.0
 - id: CLA68
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 48.0
   - 0.0
   - 0.0
 - id: CLA69
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -48.0
   - 6.0
   - 0.0
 - id: CLA70
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -42.0
   - 6.0
   - 0.0
 - id: CLA71
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -36.0
   - 6.0
   - 0.0
 - id: CLA72
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -30.0
   - 6.0
   - 0.0
 - id: CLA73
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -24.0
   - 6.0
   - 0.0
 - id: CLA74
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -18.0
   - 6.0
   - 0.0
 - id: CLA75
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -12.0
   - 6.0
   - 0.0
 - id: CLA76
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -6.0
   - 6.0
   - 0.0
 - id: CLA77
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 0.0
   - 6.0
   - 0.0
 - id: CLA78
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 6.0
   - 6.0
   - 0.0
 - id: CLA79
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 12.0
   - 6.0
   - 0.0
 - id: CLA80
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 18.0
   - 6.0
   - 0.0
 - id: CLA81
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 24.0
   - 6.0
   - 0.0
 - id: CLA82
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 30.0
   - 6.0
   - 0.0
 - id: CLA83
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 36.0
   - 6.0
   - 0.0
 - id: CLA84
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 42.0
   - 6.0
   - 0.0
 - id: CLA85
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 48.0
   - 6.0
   - 0.0
 - id: CLA86
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -48.0
   - 12.0
   - 0.0
 - id: CLA87
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -42.0
   - 12.0
   - 0.0
 - id: CLA88
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -36.0
   - 12.0
   - 0.0
 - id: CLA89
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -30.0
   - 12.0
   - 0.0
 - id: CLA90
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -24.0
   - 12.0
   - 0.0
 - id: CLA91
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -18.0
   - 12.0
   - 0.0
 - id: CLA92
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -12.0
   - 12.0
   - 0.0
 - id: CLA93
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -6.0
   - 12.0
   - 0.0
 - id: CLA94
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 0.0
   - 12.0
   - 0.0
 - id: CLA95
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 6.0
   - 12.0
   - 0.0
 - id: CLA96
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 12.0
   - 12.0
   - 0.0
 - id: CLA97
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 18.0
   - 12.0
   - 0.0
 - id: CLA98
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 24.0
   - 12.0
   - 0.0
 - id: CLA99
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 30.0
   - 12.0
   - 0.0
 - id: CLA100
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 36.0
   - 12.0
   - 0.0
 - id: CLA101
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 42.0
   - 12.0
   - 0.0
 - id: CLA102
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 48.0
   - 12.0
   - 0.0
 - id: CLA103
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -48.0
   - 18.0
   - 0.0
 - id: CLA104
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -42.0
   - 18.0
   - 0.0
 - id: CLA105
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -36.0
   - 18.0
   - 0.0
 - id: CLA106
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -30.0
   - 18.0
   - 0.0
 - id: CLA107
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -24.0
   - 18.0
   - 0.0
 - id: CLA108
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -18.0
   - 18.0
   - 0.0
 - id: CLA109
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -12.0
   - 18.0
   - 0.0
 - id: CLA110
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -6.0
   - 18.0
   - 0.0
 - id: CLA111
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 0.0
   - 18.0
   - 0.0
 - id: CLA112
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 6.0
   - 18.0
   - 0.0
 - id: CLA113
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 12.0
   - 18.0
   - 0.0
 - id: CLA114
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 18.0
   - 18.0
   - 0.0
 - id: CLA115
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 24.0
   - 18.0
   - 0.0
 - id: CLA116
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 30.0
   - 18.0
   - 0.0
 - id: CLA117
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 36.0
   - 18.0
   - 0.0
 - id: CLA118
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 42.0
   - 18.0
   - 0.0
 - id: CLA119
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 48.0
   - 18.0
   - 0.0
 - id: CLA120
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -48.0
   - -18.0
   - 3.0
 - id: CLA121
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -42.0
   - -18.0
   - 3.0
 - id: CLA122
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -36.0
   - -18.0
   - 3.0
 - id: CLA123
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -30.0
   - -18.0
   - 3.0
 - id: CLA124
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -24.0
   - -18.0
   - 3.0
 - id: CLA125
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -18.0
   - -18.0
   - 3.0
 - id: CLA126
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -12.0
   - -18.0
   - 3.0
 - id: CLA127
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -6.0
   - -18.0
   - 3.0
 - id: CLA128
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 0.0
   - -18.0
   - 3.0
 - id: CLA129
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 6.0
   - -18.0
   - 3.0
 - id: CLA130
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 12.0
   - -18.0
   - 3.0
 - id: CLA131
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 18.0
   - -18.0
   - 3.0
 - id: CLA132
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 24.0
   - -18.0
   - 3.0
 - id: CLA133
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 30.0
   - -18.0
   - 3.0
 - id: CLA134
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 36.0
   - -18.0
   - 3.0
 - id: CLA135
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 42.0
   - -18.0
   - 3.0
 - id: CLA136
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 48.0
   - -18.0
   - 3.0
 - id: CLA137
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -48.0
   - -12.0
   - 3.0
 - id: CLA138
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -42.0
   - -12.0
   - 3.0
 - id: CLA139
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -36.0
   - -12.0
   - 3.0
 - id: CLA140
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -30.0
   - -12.0
   - 3.0
 - id: CLA141
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -24.0
   - -12.0
   - 3.0
 - id: CLA142
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -18.0
   - -12.0
   - 3.0
 - id: CLA143
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -12.0
   - -12.0
   - 3.0
 - id: CLA144
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -6.0
   - -12.0
   - 3.0
 - id: CLA145
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 0.0
   - -12.0
   - 3.0
 - id: CLA146
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 6.0
   - -12.0
   - 3.0
 - id: CLA147
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 12.0
   - -12.0
   - 3.0
 - id: CLA148
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 18.0
   - -12.0
   - 3.0
 - id: CLA149
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 24.0
   - -12.0
   - 3.0
 - id: CLA150
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 30.0
   - -12.0
   - 3.0
 - id: CLA151
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 36.0
   - -12.0
   - 3.0
 - id: CLA152
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 42.0
   - -12.0
   - 3.0
 - id: CLA153
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 48.0
   - -12.0
   - 3.0
 - id: CLA154
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -48.0
   - -6.0
   - 3.0
 - id: CLA155
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -42.0
   - -6.0
   - 3.0
 - id: CLA156
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -36.0
   - -6.0
   - 3.0
 - id: CLA157
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -30.0
   - -6.0
   - 3.0
 - id: CLA158
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -24.0
   - -6.0
   - 3.0
 - id: CLA159
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -18.0
   - -6.0
   - 3.0
 - id: CLA160
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -12.0
   - -6.0
   - 3.0
 - id: CLA161
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -6.0
   - -6.0
   - 3.0
 - id: CLA162
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 0.0
   - -6.0
   - 3.0
 - id: CLA163
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 6.0
   - -6.0
   - 3.0
 - id: CLA164
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 12.0
   - -6.0
   - 3.0
 - id: CLA165
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 18.0
   - -6.0
   - 3.0
 - id: CLA166
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 24.0
   - -6.0
   - 3.0
 - id: CLA167
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 30.0
   - -6.0
   - 3.0
 - id: CLA168
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 36.0
   - -6.0
   - 3.0
 - id: CLA169
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 42.0
   - -6.0
   - 3.0
 - id: CLA170
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 48.0
   - -6.0
   - 3.0
 - id: CLA171
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -48.0
   - 0.0
   - 3.0
 - id: CLA172
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -42.0
   - 0.0
   - 3.0
 - id: CLA173
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -36.0
   - 0.0
   - 3.0
 - id: CLA174
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -30.0
   - 0.0
   - 3.0
 - id: CLA175
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -24.0
   - 0.0
   - 3.0
 - id: CLA176
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -18.0
   - 0.0
   - 3.0
 - id: CLA177
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -12.0
   - 0.0
   - 3.0
 - id: CLA178
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -6.0
   - 0.0
   - 3.0
 - id: CLA179
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 0.0
   - 0.0
   - 3.0
 - id: CLA180
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 6.0
   - 0.0
   - 3.0
 - id: CLA181
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 12.0
   - 0.0
   - 3.0
 - id: CLA182
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 18.0
   - 0.0
   - 3.0
 - id: CLA183
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 24.0
   - 0.0
   - 3.0
 - id: CLA184
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 30.0
   - 0.0
   - 3.0
 - id: CLA185
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 36.0
   - 0.0
   - 3.0
 - id: CLA186
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 42.0
   - 0.0
   - 3.0
 - id: CLA187
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 48.0
   - 0.0
   - 3.0
 - id: CLA188
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -48.0
   - 6.0
   - 3.0
 - id: CLA189
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -42.0
   - 6.0
   - 3.0
 - id: CLA190
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -36.0
   - 6.0
   - 3.0
 - id: CLA191
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -30.0
   - 6.0
   - 3.0
 - id: CLA192
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -24.0
   - 6.0
   - 3.0
 - id: CLA193
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -18.0
   - 6.0
   - 3.0
 - id: CLA194
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -12.0
   - 6.0
   - 3.0
 - id: CLA195
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -6.0
   - 6.0
   - 3.0
 - id: CLA196
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 0.0
   - 6.0
   - 3.0
 - id: CLA197
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 6.0
   - 6.0
   - 3.0
 - id: CLA198
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 12.0
   - 6.0
   - 3.0
 - id: CLA199
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 18.0
   - 6.0
   - 3.0
 - id: CLA200
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 24.0
   - 6.0
   - 3.0
 - id: CLA201
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 30.0
   - 6.0
   - 3.0
 - id: CLA202
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 36.0
   - 6.0
   - 3.0
 - id: CLA203
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 42.0
   - 6.0
   - 3.0
 - id: CLA204
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 48.0
   - 6.0
   - 3.0
 - id: CLA205
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -48.0
   - 12.0
   - 3.0
 - id: CLA206
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -42.0
   - 12.0
   - 3.0
 - id: CLA207
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -36.0
   - 12.0
   - 3.0
 - id: CLA208
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -30.0
   - 12.0
   - 3.0
 - id: CLA209
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -24.0
   - 12.0
   - 3.0
 - id: CLA210
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -18.0
   - 12.0
   - 3.0
 - id: CLA211
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -12.0
   - 12.0
   - 3.0
 - id: CLA212
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -6.0
   - 12.0
   - 3.0
 - id: CLA213
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 0.0
   - 12.0
   - 3.0
 - id: CLA214
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 6.0
   - 12.0
   - 3.0
 - id: CLA215
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 12.0
   - 12.0
   - 3.0
 - id: CLA216
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 18.0
   - 12.0
   - 3.0
 - id: CLA217
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 24.0
   - 12.0
   - 3.0
 - id: CLA218
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 30.0
   - 12.0
   - 3.0
 - id: CLA219
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 36.0
   - 12.0
   - 3.0
 - id: CLA220
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 42.0
   - 12.0
   - 3.0
 - id: CLA221
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 48.0
   - 12.0
   - 3.0
 - id: CLA222
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -48.0
   - 18.0
   - 3.0
 - id: CLA223
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -42.0
   - 18.0
   - 3.0
 - id: CLA224
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -36.0
   - 18.0
   - 3.0
 - id: CLA225
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -30.0
   - 18.0
   - 3.0
 - id: CLA226
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -24.0
   - 18.0
   - 3.0
 - id: CLA227
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -18.0
   - 18.0
   - 3.0
 - id: CLA228
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -12.0
   - 18.0
   - 3.0
 - id: CLA229
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -6.0
   - 18.0
   - 3.0
 - id: CLA230
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 0.0
   - 18.0
   - 3.0
 - id: CLA231
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 6.0
   - 18.0
   - 3.0
 - id: CLA232
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 12.0
   - 18.0
   - 3.0
 - id: CLA233
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 18.0
   - 18.0
   - 3.0
 - id: CLA234
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 24.0
   - 18.0
   - 3.0
 - id: CLA235
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 30.0
   - 18.0
   - 3.0
 - id: CLA236
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 36.0
   - 18.0
   - 3.0
 - id: CLA237
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 42.0
   - 18.0
   - 3.0
 - id: CLA238
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 48.0
   - 18.0
   - 3.0
 - id: CLA239
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -48.0
   - -18.0
   - 6.0
 - id: CLA240
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -42.0
   - -18.0
   - 6.0
 - id: CLA241
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -36.0
   - -18.0
   - 6.0
 - id: CLA242
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -30.0
   - -18.0
   - 6.0
 - id: CLA243
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -24.0
   - -18.0
   - 6.0
 - id: CLA244
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -18.0
   - -18.0
   - 6.0
 - id: CLA245
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -12.0
   - -18.0
   - 6.0
 - id: CLA246
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -6.0
   - -18.0
   - 6.0
 - id: CLA247
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 0.0
   - -18.0
   - 6.0
 - id: CLA248
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 6.0
   - -18.0
   - 6.0
 - id: CLA249
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 12.0
   - -18.0
   - 6.0
 - id: CLA250
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 18.0
   - -18.0
   - 6.0
 - id: CLA251
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 24.0
   - -18.0
   - 6.0
 - id: CLA252
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 30.0
   - -18.0
   - 6.0
 - id: CLA253
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 36.0
   - -18.0
   - 6.0
 - id: CLA254
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 42.0
   - -18.0
   - 6.0
 - id: CLA255
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - 48.0
   - -18.0
   - 6.0
 - id: CLA256
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -48.0
   - -12.0
   - 6.0
 - id: CLA257
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -42.0
   - -12.0
   - 6.0
 - id: CLA258
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -36.0
   - -12.0
   - 6.0
 - id: CLA259
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -30.0
   - -12.0
   - 6.0
 - id: CLA260
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -24.0
   - -12.0
   - 6.0
 - id: CLA261
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -18.0
   - -12.0
   - 6.0
 - id: CLA262
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-classroom
+  arrangement: arrangement.classroom
   at:
   - -12.0
   - -12.0
   - 6.0
 - id: OFF263
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -6.0
   - -12.0
   - 6.0
 - id: OFF264
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 0.0
   - -12.0
   - 6.0
 - id: OFF265
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 6.0
   - -12.0
   - 6.0
 - id: OFF266
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 12.0
   - -12.0
   - 6.0
 - id: OFF267
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 18.0
   - -12.0
   - 6.0
 - id: OFF268
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 24.0
   - -12.0
   - 6.0
 - id: OFF269
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 30.0
   - -12.0
   - 6.0
 - id: OFF270
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 36.0
   - -12.0
   - 6.0
 - id: OFF271
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 42.0
   - -12.0
   - 6.0
 - id: OFF272
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 48.0
   - -12.0
   - 6.0
 - id: OFF273
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -48.0
   - -6.0
   - 6.0
 - id: OFF274
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -42.0
   - -6.0
   - 6.0
 - id: OFF275
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -36.0
   - -6.0
   - 6.0
 - id: OFF276
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -30.0
   - -6.0
   - 6.0
 - id: OFF277
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -24.0
   - -6.0
   - 6.0
 - id: OFF278
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -18.0
   - -6.0
   - 6.0
 - id: OFF279
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -12.0
   - -6.0
   - 6.0
 - id: OFF280
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -6.0
   - -6.0
   - 6.0
 - id: OFF281
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 0.0
   - -6.0
   - 6.0
 - id: OFF282
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 6.0
   - -6.0
   - 6.0
 - id: OFF283
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 12.0
   - -6.0
   - 6.0
 - id: OFF284
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 18.0
   - -6.0
   - 6.0
 - id: OFF285
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 24.0
   - -6.0
   - 6.0
 - id: OFF286
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 30.0
   - -6.0
   - 6.0
 - id: OFF287
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 36.0
   - -6.0
   - 6.0
 - id: OFF288
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 42.0
   - -6.0
   - 6.0
 - id: OFF289
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 48.0
   - -6.0
   - 6.0
 - id: OFF290
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -48.0
   - 0.0
   - 6.0
 - id: OFF291
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -42.0
   - 0.0
   - 6.0
 - id: OFF292
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -36.0
   - 0.0
   - 6.0
 - id: OFF293
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -30.0
   - 0.0
   - 6.0
 - id: OFF294
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -24.0
   - 0.0
   - 6.0
 - id: OFF295
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -18.0
   - 0.0
   - 6.0
 - id: OFF296
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -12.0
   - 0.0
   - 6.0
 - id: OFF297
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -6.0
   - 0.0
   - 6.0
 - id: OFF298
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 0.0
   - 0.0
   - 6.0
 - id: OFF299
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 6.0
   - 0.0
   - 6.0
 - id: OFF300
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 12.0
   - 0.0
   - 6.0
 - id: OFF301
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 18.0
   - 0.0
   - 6.0
 - id: OFF302
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 24.0
   - 0.0
   - 6.0
 - id: OFF303
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 30.0
   - 0.0
   - 6.0
 - id: OFF304
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 36.0
   - 0.0
   - 6.0
 - id: OFF305
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 42.0
   - 0.0
   - 6.0
 - id: OFF306
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 48.0
   - 0.0
   - 6.0
 - id: OFF307
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -48.0
   - 6.0
   - 6.0
 - id: OFF308
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -42.0
   - 6.0
   - 6.0
 - id: OFF309
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -36.0
   - 6.0
   - 6.0
 - id: OFF310
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -30.0
   - 6.0
   - 6.0
 - id: OFF311
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -24.0
   - 6.0
   - 6.0
 - id: OFF312
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -18.0
   - 6.0
   - 6.0
 - id: OFF313
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -12.0
   - 6.0
   - 6.0
 - id: OFF314
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -6.0
   - 6.0
   - 6.0
 - id: OFF315
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 0.0
   - 6.0
   - 6.0
 - id: OFF316
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 6.0
   - 6.0
   - 6.0
 - id: OFF317
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 12.0
   - 6.0
   - 6.0
 - id: OFF318
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 18.0
   - 6.0
   - 6.0
 - id: OFF319
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 24.0
   - 6.0
   - 6.0
 - id: OFF320
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 30.0
   - 6.0
   - 6.0
 - id: OFF321
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 36.0
   - 6.0
   - 6.0
 - id: OFF322
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 42.0
   - 6.0
   - 6.0
 - id: OFF323
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 48.0
   - 6.0
   - 6.0
 - id: OFF324
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -48.0
   - 12.0
   - 6.0
 - id: OFF325
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -42.0
   - 12.0
   - 6.0
 - id: OFF326
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -36.0
   - 12.0
   - 6.0
 - id: OFF327
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -30.0
   - 12.0
   - 6.0
 - id: OFF328
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -24.0
   - 12.0
   - 6.0
 - id: OFF329
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -18.0
   - 12.0
   - 6.0
 - id: OFF330
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -12.0
   - 12.0
   - 6.0
 - id: OFF331
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -6.0
   - 12.0
   - 6.0
 - id: OFF332
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 0.0
   - 12.0
   - 6.0
 - id: OFF333
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 6.0
   - 12.0
   - 6.0
 - id: WOR334
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 12.0
   - 12.0
   - 6.0
 - id: WOR335
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 18.0
   - 12.0
   - 6.0
 - id: WOR336
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 24.0
   - 12.0
   - 6.0
 - id: WOR337
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 30.0
   - 12.0
   - 6.0
 - id: WOR338
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 36.0
   - 12.0
   - 6.0
 - id: WOR339
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 42.0
   - 12.0
   - 6.0
 - id: WOR340
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 48.0
   - 12.0
   - 6.0
 - id: WOR341
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -48.0
   - 18.0
   - 6.0
 - id: WOR342
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -42.0
   - 18.0
   - 6.0
 - id: WOR343
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -36.0
   - 18.0
   - 6.0
 - id: WOR344
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -30.0
   - 18.0
   - 6.0
 - id: WOR345
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -24.0
   - 18.0
   - 6.0
 - id: WOR346
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -18.0
   - 18.0
   - 6.0
 - id: WOR347
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -12.0
   - 18.0
   - 6.0
 - id: WOR348
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -6.0
   - 18.0
   - 6.0
 - id: WOR349
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 0.0
   - 18.0
   - 6.0
 - id: WOR350
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 6.0
   - 18.0
   - 6.0
 - id: WOR351
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 12.0
   - 18.0
   - 6.0
 - id: WOR352
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 18.0
   - 18.0
   - 6.0
 - id: WOR353
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 24.0
   - 18.0
   - 6.0
 - id: WOR354
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 30.0
   - 18.0
   - 6.0
 - id: WOR355
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 36.0
   - 18.0
   - 6.0
 - id: WOR356
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 42.0
   - 18.0
   - 6.0
 - id: WOR357
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 48.0
   - 18.0
   - 6.0
 - id: WOR358
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -48.0
   - -18.0
   - 9.0
 - id: WOR359
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -42.0
   - -18.0
   - 9.0
 - id: WOR360
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -36.0
   - -18.0
   - 9.0
 - id: WOR361
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -30.0
   - -18.0
   - 9.0
 - id: WOR362
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -24.0
   - -18.0
   - 9.0
 - id: WOR363
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -18.0
   - -18.0
   - 9.0
 - id: WOR364
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -12.0
   - -18.0
   - 9.0
 - id: WOR365
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -6.0
   - -18.0
   - 9.0
 - id: WOR366
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 0.0
   - -18.0
   - 9.0
 - id: WOR367
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 6.0
   - -18.0
   - 9.0
 - id: WOR368
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 12.0
   - -18.0
   - 9.0
 - id: WOR369
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 18.0
   - -18.0
   - 9.0
 - id: WOR370
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 24.0
   - -18.0
   - 9.0
 - id: WOR371
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 30.0
   - -18.0
   - 9.0
 - id: WOR372
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 36.0
   - -18.0
   - 9.0
 - id: WOR373
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 42.0
   - -18.0
   - 9.0
 - id: WOR374
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - 48.0
   - -18.0
   - 9.0
 - id: WOR375
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -48.0
   - -12.0
   - 9.0
 - id: WOR376
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -42.0
   - -12.0
   - 9.0
 - id: WOR377
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -36.0
   - -12.0
   - 9.0
 - id: WOR378
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -30.0
   - -12.0
   - 9.0
 - id: WOR379
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -24.0
   - -12.0
   - 9.0
 - id: WOR380
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -18.0
   - -12.0
   - 9.0
 - id: WOR381
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-workshop
+  arrangement: arrangement.workshop
   at:
   - -12.0
   - -12.0
   - 9.0
 - id: DIN382
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - -6.0
   - -12.0
   - 9.0
 - id: DIN383
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - 0.0
   - -12.0
   - 9.0
 - id: DIN384
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - 6.0
   - -12.0
   - 9.0
 - id: DIN385
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - 12.0
   - -12.0
   - 9.0
 - id: DIN386
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - 18.0
   - -12.0
   - 9.0
 - id: DIN387
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - 24.0
   - -12.0
   - 9.0
 - id: DIN388
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - 30.0
   - -12.0
   - 9.0
 - id: DIN389
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - 36.0
   - -12.0
   - 9.0
 - id: DIN390
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - 42.0
   - -12.0
   - 9.0
 - id: DIN391
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - 48.0
   - -12.0
   - 9.0
 - id: DIN392
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - -48.0
   - -6.0
   - 9.0
 - id: DIN393
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - -42.0
   - -6.0
   - 9.0
 - id: DIN394
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - -36.0
   - -6.0
   - 9.0
 - id: DIN395
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - -30.0
   - -6.0
   - 9.0
 - id: DIN396
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - -24.0
   - -6.0
   - 9.0
 - id: DIN397
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - -18.0
   - -6.0
   - 9.0
 - id: DIN398
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - -12.0
   - -6.0
   - 9.0
 - id: DIN399
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - -6.0
   - -6.0
   - 9.0
 - id: DIN400
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - 0.0
   - -6.0
   - 9.0
 - id: DIN401
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - 6.0
   - -6.0
   - 9.0
 - id: DIN402
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - 12.0
   - -6.0
   - 9.0
 - id: DIN403
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - 18.0
   - -6.0
   - 9.0
 - id: DIN404
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - 24.0
   - -6.0
   - 9.0
 - id: DIN405
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - 30.0
   - -6.0
   - 9.0
 - id: KIT406
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - 36.0
   - -6.0
   - 9.0
 - id: KIT407
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - 42.0
   - -6.0
   - 9.0
 - id: KIT408
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - 48.0
   - -6.0
   - 9.0
 - id: KIT409
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - -48.0
   - 0.0
   - 9.0
 - id: KIT410
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - -42.0
   - 0.0
   - 9.0
 - id: KIT411
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - -36.0
   - 0.0
   - 9.0
 - id: KIT412
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - -30.0
   - 0.0
   - 9.0
 - id: KIT413
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - -24.0
   - 0.0
   - 9.0
 - id: KIT414
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - -18.0
   - 0.0
   - 9.0
 - id: KIT415
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - -12.0
   - 0.0
   - 9.0
 - id: KIT416
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - -6.0
   - 0.0
   - 9.0
 - id: KIT417
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - 0.0
   - 0.0
   - 9.0
 - id: KIT418
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - 6.0
   - 0.0
   - 9.0
 - id: KIT419
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - 12.0
   - 0.0
   - 9.0
 - id: KIT420
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - 18.0
   - 0.0
   - 9.0
 - id: KIT421
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - 24.0
   - 0.0
   - 9.0
 - id: KIT422
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - 30.0
   - 0.0
   - 9.0
 - id: KIT423
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - 36.0
   - 0.0
   - 9.0
 - id: KIT424
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - 42.0
   - 0.0
   - 9.0
 - id: KIT425
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - 48.0
   - 0.0
   - 9.0
 - id: KIT426
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - -48.0
   - 6.0
   - 9.0
 - id: KIT427
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - -42.0
   - 6.0
   - 9.0
 - id: KIT428
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - -36.0
   - 6.0
   - 9.0
 - id: KIT429
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - -30.0
   - 6.0
   - 9.0
 - id: WAS430
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -24.0
   - 6.0
   - 9.0
 - id: WAS431
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -18.0
   - 6.0
   - 9.0
 - id: WAS432
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -12.0
   - 6.0
   - 9.0
 - id: WAS433
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -6.0
   - 6.0
   - 9.0
 - id: WAS434
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 0.0
   - 6.0
   - 9.0
 - id: WAS435
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 6.0
   - 6.0
   - 9.0
 - id: WAS436
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 12.0
   - 6.0
   - 9.0
 - id: WAS437
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 18.0
   - 6.0
   - 9.0
 - id: WAS438
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 24.0
   - 6.0
   - 9.0
 - id: WAS439
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 30.0
   - 6.0
   - 9.0
 - id: WAS440
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 36.0
   - 6.0
   - 9.0
 - id: WAS441
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 42.0
   - 6.0
   - 9.0
 - id: WAS442
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 48.0
   - 6.0
   - 9.0
 - id: WAS443
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -48.0
   - 12.0
   - 9.0
 - id: WAS444
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -42.0
   - 12.0
   - 9.0
 - id: WAS445
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -36.0
   - 12.0
   - 9.0
 - id: WAS446
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -30.0
   - 12.0
   - 9.0
 - id: WAS447
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -24.0
   - 12.0
   - 9.0
 - id: WAS448
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -18.0
   - 12.0
   - 9.0
 - id: WAS449
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -12.0
   - 12.0
   - 9.0
 - id: WAS450
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -6.0
   - 12.0
   - 9.0
 - id: WAS451
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 0.0
   - 12.0
   - 9.0
 - id: WAS452
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 6.0
   - 12.0
   - 9.0
 - id: WAS453
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 12.0
   - 12.0
   - 9.0
 - id: WAS454
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 18.0
   - 12.0
   - 9.0
 - id: WAS455
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 24.0
   - 12.0
   - 9.0
 - id: WAS456
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 30.0
   - 12.0
   - 9.0
 - id: WAS457
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 36.0
   - 12.0
   - 9.0
 - id: WAS458
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 42.0
   - 12.0
   - 9.0
 - id: WAS459
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 48.0
   - 12.0
   - 9.0
 - id: WAS460
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -48.0
   - 18.0
   - 9.0
 - id: WAS461
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -42.0
   - 18.0
   - 9.0
 - id: WAS462
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -36.0
   - 18.0
   - 9.0
 - id: WAS463
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -30.0
   - 18.0
   - 9.0
 - id: WAS464
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -24.0
   - 18.0
   - 9.0
 - id: WAS465
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -18.0
   - 18.0
   - 9.0
 - id: WAS466
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -12.0
   - 18.0
   - 9.0
 - id: WAS467
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -6.0
   - 18.0
   - 9.0
 - id: WAS468
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 0.0
   - 18.0
   - 9.0
 - id: WAS469
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 6.0
   - 18.0
   - 9.0
 - id: WAS470
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 12.0
   - 18.0
   - 9.0
 - id: WAS471
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 18.0
   - 18.0
   - 9.0
 - id: WAS472
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 24.0
   - 18.0
   - 9.0
 - id: WAS473
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 30.0
   - 18.0
   - 9.0
 - id: WAS474
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 36.0
   - 18.0
   - 9.0
 - id: WAS475
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 42.0
   - 18.0
   - 9.0
 - id: WAS476
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 48.0
   - 18.0
@@ -3407,9 +2932,9 @@ ground:
   mass: 248832.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 4799714.1
-  against_module: 'building.college (deprecated): one box 100 x 40 x 16 m of 17,648 t, from the average of 538 concrete buildings. This layout: 102 x 42 x 12 m, 4,800 t (346 t frame, 2,326 t panels, 337 t fit-out, 1,791 t ground), for
-    5002 people served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
+  mass: 4668885.3
+  against_module: 'building.college (deprecated): one box 100 x 40 x 16 m of 17,648 t, from the average of 538 concrete buildings. This layout: 102 x 42 x 12 m, 4,669 t (346 t frame, 2,326 t panels, 206 t furniture, 1,791 t ground),
+    for 5002 people served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:
 - profession: profession.teacher
   count: 100
@@ -3422,7 +2947,7 @@ basis:
   - bays
   tier: invented
   review: true
-  note: The mix of bays for a college is chosen (classroom 0.55, office 0.15, workshop 0.1, dining 0.05, kitchen 0.05, washroom 0.1), shared over the record's floor (16000 m2 in 4 storeys, laid as 17 x 7 bays of 6 m).
+  note: The mix of rooms for a college is chosen (classroom 0.55, office 0.15, workshop 0.1, dining 0.05, kitchen 0.05, washroom 0.1), shared over the record's floor (16000 m2 in 4 storeys, laid as 17 x 7 rooms of 6 m a storey).
 - of:
   - frame
   - ground

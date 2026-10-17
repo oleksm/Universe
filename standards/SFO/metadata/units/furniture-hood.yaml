@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: unit.furniture-hood
+  name: Kitchen hood
+  description: An extract hood over a cooking line.
+size_class: 1
+physical:
+  length: 3.0
+  width: 1.2
+  height: 0.6
+  mass: 120.0
+built_of:
+- what: Hood and filters
+  item: material.stainless-steel-304
+  mass: 120.0
+basis:
+- of:
+  - built_of
+  - physical
+  tier: invented
+  review: true
+  note: From memory of such furniture; to be sourced.

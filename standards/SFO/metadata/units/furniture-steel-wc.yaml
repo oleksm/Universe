@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: unit.furniture-steel-wc
+  name: Steel toilet
+  description: A stainless vandal-proof toilet and basin in one.
+size_class: 1
+physical:
+  length: 0.6
+  width: 0.6
+  height: 0.9
+  mass: 55.0
+built_of:
+- what: Toilet and basin
+  item: material.stainless-steel-304
+  mass: 55.0
+basis:
+- of:
+  - built_of
+  - physical
+  tier: derived
+  review: true
+  note: 'From blender''s cell bay: 225 kg of stainless for two cells.'

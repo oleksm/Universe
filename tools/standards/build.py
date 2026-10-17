@@ -2626,6 +2626,7 @@ _REG = [("mounts", "Mounts", "SFO", os.path.join("SFO", "metadata", "mounts"), "
         ("products", "Plant products", "SFO", os.path.join("SFO", "metadata", "products"), "SFO/schema/product.schema.yaml", "SFO 24"),
         ("templates", "Kit templates", "SFO", os.path.join("SFO", "metadata", "templates"), "SFO/schema/template.schema.yaml", "SFO 25"),
         ("panels", "Building panels", "SFO", os.path.join("SFO", "metadata", "panels"), "SFO/schema/panel.schema.yaml", "SFO 25"),
+        ("arrangements", "Room arrangements", "SFO", os.path.join("SFO", "metadata", "arrangements"), "SFO/schema/arrangement.schema.yaml", "SFO 25"),
         ("interfaces", "Interfaces", "SFO", os.path.join("SFO", "metadata", "interfaces"), "SFO/schema/interface.schema.yaml", "SFO 26"),
         ("buildings", "Buildings", "SFO", os.path.join("SFO", "metadata", "buildings"), "SFO/schema/building.schema.yaml", None),
         ("markets", "Markets", "SFO", os.path.join("SFO", "metadata", "markets"), "SFO/schema/market.schema.yaml", None),

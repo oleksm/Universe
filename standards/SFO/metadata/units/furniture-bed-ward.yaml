@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: unit.furniture-bed-ward
+  name: Ward bed
+  description: A powered hospital bed with rails.
+size_class: 1
+physical:
+  length: 2.2
+  width: 1.0
+  height: 0.7
+  mass: 123.0
+built_of:
+- what: Frame, rails and motors
+  item: material.structural-steel-a36
+  mass: 105.0
+- what: Mattress
+  item: material.polyethylene-uhmw
+  mass: 18.0
+basis:
+- of:
+  - built_of
+  - physical
+  tier: invented
+  review: true
+  note: From memory of such furniture; to be sourced.

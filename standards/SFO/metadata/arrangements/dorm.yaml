@@ -1,0 +1,70 @@
+# yaml-language-server: $schema=../../schema/arrangement.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: arrangement.dorm
+  name: Dormitory
+  description: 'How a 6 m room is furnished as a dormitory: 3 bunks, 6 lockers.'
+room:
+- 6.0
+- 6.0
+people: 6
+staff: 0
+items:
+- unit: unit.furniture-bunk
+  at:
+  - -1.9
+  - -1.8
+  - 0.0
+- unit: unit.furniture-bunk
+  at:
+  - 0.0
+  - -1.8
+  - 0.0
+- unit: unit.furniture-bunk
+  at:
+  - 1.9
+  - -1.8
+  - 0.0
+- unit: unit.furniture-locker
+  at:
+  - -2.0
+  - 2.6
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-locker
+  at:
+  - -1.5
+  - 2.6
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-locker
+  at:
+  - -1.0
+  - 2.6
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-locker
+  at:
+  - -0.5
+  - 2.6
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-locker
+  at:
+  - 0.0
+  - 2.6
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-locker
+  at:
+  - 0.5
+  - 2.6
+  - 0.0
+  turn: 180.0
+mass: 420.0
+basis:
+- of:
+  - items
+  tier: invented
+  review: true
+  note: Laid out by hand on the 6 m room (tools/standards/furniture.py); each piece is modelled once and placed here.

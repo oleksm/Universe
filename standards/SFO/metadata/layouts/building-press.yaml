@@ -3,8 +3,8 @@
 identity:
   key: layout.building-press
   name: Press, world with air
-  description: 'The newsroom and the hypernet desk: where the settlement''s news is gathered, written and sent. Laid of the kit: a strut frame on the 3 m grid, panels, and 30 furnished 6 m bays (12 press room, 11 office, 4 store, 3
-    washroom).'
+  description: 'The newsroom and the hypernet desk: where the settlement''s news is gathered, written and sent. Laid of the kit: a strut frame on the 3 m grid, panels, and 30 rooms of 6 m furnished piece by piece (12 press room, 11
+    office, 4 store room, 3 washroom).'
 stands_for: building.press
 site:
   atmosphere: air
@@ -15,214 +15,185 @@ physical:
   length: 30.0
   width: 18.0
   height: 9.15
-  mass: 480138.4
-bays:
+  mass: 475562.4
+bays: []
+rooms:
 - id: PRE1
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-press-room
+  arrangement: arrangement.press-room
   at:
   - -12.0
   - -6.0
   - 0.0
 - id: PRE2
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-press-room
+  arrangement: arrangement.press-room
   at:
   - -6.0
   - -6.0
   - 0.0
 - id: PRE3
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-press-room
+  arrangement: arrangement.press-room
   at:
   - 0.0
   - -6.0
   - 0.0
 - id: PRE4
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-press-room
+  arrangement: arrangement.press-room
   at:
   - 6.0
   - -6.0
   - 0.0
 - id: PRE5
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-press-room
+  arrangement: arrangement.press-room
   at:
   - 12.0
   - -6.0
   - 0.0
 - id: PRE6
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-press-room
+  arrangement: arrangement.press-room
   at:
   - -12.0
   - 0.0
   - 0.0
 - id: PRE7
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-press-room
+  arrangement: arrangement.press-room
   at:
   - -6.0
   - 0.0
   - 0.0
 - id: PRE8
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-press-room
+  arrangement: arrangement.press-room
   at:
   - 0.0
   - 0.0
   - 0.0
 - id: PRE9
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-press-room
+  arrangement: arrangement.press-room
   at:
   - 6.0
   - 0.0
   - 0.0
 - id: PRE10
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-press-room
+  arrangement: arrangement.press-room
   at:
   - 12.0
   - 0.0
   - 0.0
 - id: PRE11
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-press-room
+  arrangement: arrangement.press-room
   at:
   - -12.0
   - 6.0
   - 0.0
 - id: PRE12
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-press-room
+  arrangement: arrangement.press-room
   at:
   - -6.0
   - 6.0
   - 0.0
 - id: OFF13
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 0.0
   - 6.0
   - 0.0
 - id: OFF14
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 6.0
   - 6.0
   - 0.0
 - id: OFF15
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 12.0
   - 6.0
   - 0.0
 - id: OFF16
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -12.0
   - -6.0
   - 4.5
 - id: OFF17
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -6.0
   - -6.0
   - 4.5
 - id: OFF18
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 0.0
   - -6.0
   - 4.5
 - id: OFF19
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 6.0
   - -6.0
   - 4.5
 - id: OFF20
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 12.0
   - -6.0
   - 4.5
 - id: OFF21
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -12.0
   - 0.0
   - 4.5
 - id: OFF22
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -6.0
   - 0.0
   - 4.5
 - id: OFF23
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 0.0
   - 0.0
   - 4.5
 - id: STO24
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-store
+  arrangement: arrangement.store
   at:
   - 6.0
   - 0.0
   - 4.5
 - id: STO25
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-store
+  arrangement: arrangement.store
   at:
   - 12.0
   - 0.0
   - 4.5
 - id: STO26
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-store
+  arrangement: arrangement.store
   at:
   - -12.0
   - 6.0
   - 4.5
 - id: STO27
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-store
+  arrangement: arrangement.store
   at:
   - -6.0
   - 6.0
   - 4.5
 - id: WAS28
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 0.0
   - 6.0
   - 4.5
 - id: WAS29
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 6.0
   - 6.0
   - 4.5
 - id: WAS30
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 12.0
   - 6.0
@@ -287,9 +258,9 @@ ground:
   mass: 82944.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 480138.4
-  against_module: 'building.press (deprecated): one box 30 x 20 x 8 m of 1,324 t, from the average of 538 concrete buildings. This layout: 30 x 18 x 9 m, 480 t (23 t frame, 113 t panels, 67 t fit-out, 277 t ground), for 66 people served
-    or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
+  mass: 475562.4
+  against_module: 'building.press (deprecated): one box 30 x 20 x 8 m of 1,324 t, from the average of 538 concrete buildings. This layout: 30 x 18 x 9 m, 476 t (23 t frame, 113 t panels, 63 t furniture, 277 t ground), for 66 people
+    served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:
 - profession: profession.reporter
   count: 10
@@ -302,7 +273,7 @@ basis:
   - bays
   tier: invented
   review: true
-  note: The mix of bays for a press is chosen (press-room 0.4, office 0.35, store 0.15, washroom 0.1), shared over the record's floor (1200 m2 in 2 storeys, laid as 5 x 3 bays of 6 m).
+  note: The mix of rooms for a press is chosen (press-room 0.4, office 0.35, store 0.15, washroom 0.1), shared over the record's floor (1200 m2 in 2 storeys, laid as 5 x 3 rooms of 6 m a storey).
 - of:
   - frame
   - ground

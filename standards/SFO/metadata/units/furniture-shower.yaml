@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: unit.furniture-shower
+  name: Shower
+  description: A shower tray, screen and mixer.
+size_class: 1
+physical:
+  length: 0.9
+  width: 0.9
+  height: 2.1
+  mass: 50.0
+built_of:
+- what: Tray, screen and mixer
+  item: material.stainless-steel-304
+  mass: 50.0
+basis:
+- of:
+  - built_of
+  - physical
+  tier: invented
+  review: true
+  note: From memory of such furniture; to be sourced.

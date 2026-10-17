@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: unit.furniture-office-chair
+  name: Office chair
+  description: A swivel chair on castors.
+size_class: 1
+physical:
+  length: 0.65
+  width: 0.65
+  height: 1.0
+  mass: 15.0
+built_of:
+- what: Base and frame
+  item: material.structural-steel-a36
+  mass: 9.0
+- what: Seat and back
+  item: material.polyethylene-uhmw
+  mass: 6.0
+basis:
+- of:
+  - built_of
+  - physical
+  tier: invented
+  review: true
+  note: From memory of such furniture; to be sourced.

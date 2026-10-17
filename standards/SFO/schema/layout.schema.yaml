@@ -41,6 +41,18 @@ properties:
         at: { $ref: "#/definitions/point", description: "The middle of the bay on its floor." }
         turn: { type: number, x-unit: "deg", description: "The unit's turn about z from the layout's x, degrees." }
         note: { type: string }
+  rooms:
+    description: "A building layout's rooms: each a 6 m room furnished by an arrangement of single pieces."
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [id, arrangement, at]
+      properties:
+        id: { type: string }
+        arrangement: { type: string, x-ref: [arrangement] }
+        at: { $ref: "#/definitions/point", description: "The middle of the room on its floor." }
+        turn: { type: number, x-unit: "deg" }
   mobile:
     description: "Units that move on a link (a ladle car on its rail): where each stands at rest."
     type: array

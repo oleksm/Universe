@@ -3,8 +3,8 @@
 identity:
   key: layout.building-bunkhouse
   name: Bunkhouse, world with air
-  description: 'Rooms and bunks, a wash room and a mess: a roof for those who have come to work and not yet to stay. Laid of the kit: a strut frame on the 3 m grid, panels, and 100 furnished 6 m bays (75 dormitory, 15 washroom, 5 dining,
-    5 kitchen).'
+  description: 'Rooms and bunks, a wash room and a mess: a roof for those who have come to work and not yet to stay. Laid of the kit: a strut frame on the 3 m grid, panels, and 100 rooms of 6 m furnished piece by piece (75 dormitory,
+    15 washroom, 5 dining room, 5 kitchen).'
 stands_for: building.bunkhouse
 site:
   atmosphere: air
@@ -15,704 +15,605 @@ physical:
   length: 60.0
   width: 12.0
   height: 15.15
-  mass: 1409500.9
-bays:
+  mass: 1380285.9
+bays: []
+rooms:
 - id: DOR1
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -27.0
   - -3.0
   - 0.0
 - id: DOR2
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -21.0
   - -3.0
   - 0.0
 - id: DOR3
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -15.0
   - -3.0
   - 0.0
 - id: DOR4
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -9.0
   - -3.0
   - 0.0
 - id: DOR5
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -3.0
   - -3.0
   - 0.0
 - id: DOR6
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 3.0
   - -3.0
   - 0.0
 - id: DOR7
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 9.0
   - -3.0
   - 0.0
 - id: DOR8
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 15.0
   - -3.0
   - 0.0
 - id: DOR9
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 21.0
   - -3.0
   - 0.0
 - id: DOR10
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 27.0
   - -3.0
   - 0.0
 - id: DOR11
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -27.0
   - 3.0
   - 0.0
 - id: DOR12
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -21.0
   - 3.0
   - 0.0
 - id: DOR13
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -15.0
   - 3.0
   - 0.0
 - id: DOR14
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -9.0
   - 3.0
   - 0.0
 - id: DOR15
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -3.0
   - 3.0
   - 0.0
 - id: DOR16
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 3.0
   - 3.0
   - 0.0
 - id: DOR17
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 9.0
   - 3.0
   - 0.0
 - id: DOR18
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 15.0
   - 3.0
   - 0.0
 - id: DOR19
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 21.0
   - 3.0
   - 0.0
 - id: DOR20
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 27.0
   - 3.0
   - 0.0
 - id: DOR21
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -27.0
   - -3.0
   - 3.0
 - id: DOR22
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -21.0
   - -3.0
   - 3.0
 - id: DOR23
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -15.0
   - -3.0
   - 3.0
 - id: DOR24
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -9.0
   - -3.0
   - 3.0
 - id: DOR25
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -3.0
   - -3.0
   - 3.0
 - id: DOR26
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 3.0
   - -3.0
   - 3.0
 - id: DOR27
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 9.0
   - -3.0
   - 3.0
 - id: DOR28
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 15.0
   - -3.0
   - 3.0
 - id: DOR29
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 21.0
   - -3.0
   - 3.0
 - id: DOR30
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 27.0
   - -3.0
   - 3.0
 - id: DOR31
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -27.0
   - 3.0
   - 3.0
 - id: DOR32
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -21.0
   - 3.0
   - 3.0
 - id: DOR33
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -15.0
   - 3.0
   - 3.0
 - id: DOR34
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -9.0
   - 3.0
   - 3.0
 - id: DOR35
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -3.0
   - 3.0
   - 3.0
 - id: DOR36
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 3.0
   - 3.0
   - 3.0
 - id: DOR37
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 9.0
   - 3.0
   - 3.0
 - id: DOR38
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 15.0
   - 3.0
   - 3.0
 - id: DOR39
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 21.0
   - 3.0
   - 3.0
 - id: DOR40
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 27.0
   - 3.0
   - 3.0
 - id: DOR41
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -27.0
   - -3.0
   - 6.0
 - id: DOR42
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -21.0
   - -3.0
   - 6.0
 - id: DOR43
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -15.0
   - -3.0
   - 6.0
 - id: DOR44
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -9.0
   - -3.0
   - 6.0
 - id: DOR45
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -3.0
   - -3.0
   - 6.0
 - id: DOR46
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 3.0
   - -3.0
   - 6.0
 - id: DOR47
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 9.0
   - -3.0
   - 6.0
 - id: DOR48
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 15.0
   - -3.0
   - 6.0
 - id: DOR49
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 21.0
   - -3.0
   - 6.0
 - id: DOR50
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 27.0
   - -3.0
   - 6.0
 - id: DOR51
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -27.0
   - 3.0
   - 6.0
 - id: DOR52
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -21.0
   - 3.0
   - 6.0
 - id: DOR53
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -15.0
   - 3.0
   - 6.0
 - id: DOR54
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -9.0
   - 3.0
   - 6.0
 - id: DOR55
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -3.0
   - 3.0
   - 6.0
 - id: DOR56
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 3.0
   - 3.0
   - 6.0
 - id: DOR57
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 9.0
   - 3.0
   - 6.0
 - id: DOR58
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 15.0
   - 3.0
   - 6.0
 - id: DOR59
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 21.0
   - 3.0
   - 6.0
 - id: DOR60
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 27.0
   - 3.0
   - 6.0
 - id: DOR61
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -27.0
   - -3.0
   - 9.0
 - id: DOR62
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -21.0
   - -3.0
   - 9.0
 - id: DOR63
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -15.0
   - -3.0
   - 9.0
 - id: DOR64
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -9.0
   - -3.0
   - 9.0
 - id: DOR65
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -3.0
   - -3.0
   - 9.0
 - id: DOR66
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 3.0
   - -3.0
   - 9.0
 - id: DOR67
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 9.0
   - -3.0
   - 9.0
 - id: DOR68
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 15.0
   - -3.0
   - 9.0
 - id: DOR69
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 21.0
   - -3.0
   - 9.0
 - id: DOR70
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - 27.0
   - -3.0
   - 9.0
 - id: DOR71
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -27.0
   - 3.0
   - 9.0
 - id: DOR72
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -21.0
   - 3.0
   - 9.0
 - id: DOR73
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -15.0
   - 3.0
   - 9.0
 - id: DOR74
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -9.0
   - 3.0
   - 9.0
 - id: DOR75
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dorm
+  arrangement: arrangement.dorm
   at:
   - -3.0
   - 3.0
   - 9.0
 - id: WAS76
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 3.0
   - 3.0
   - 9.0
 - id: WAS77
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 9.0
   - 3.0
   - 9.0
 - id: WAS78
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 15.0
   - 3.0
   - 9.0
 - id: WAS79
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 21.0
   - 3.0
   - 9.0
 - id: WAS80
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 27.0
   - 3.0
   - 9.0
 - id: WAS81
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -27.0
   - -3.0
   - 12.0
 - id: WAS82
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -21.0
   - -3.0
   - 12.0
 - id: WAS83
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -15.0
   - -3.0
   - 12.0
 - id: WAS84
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -9.0
   - -3.0
   - 12.0
 - id: WAS85
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -3.0
   - -3.0
   - 12.0
 - id: WAS86
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 3.0
   - -3.0
   - 12.0
 - id: WAS87
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 9.0
   - -3.0
   - 12.0
 - id: WAS88
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 15.0
   - -3.0
   - 12.0
 - id: WAS89
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 21.0
   - -3.0
   - 12.0
 - id: WAS90
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 27.0
   - -3.0
   - 12.0
 - id: DIN91
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - -27.0
   - 3.0
   - 12.0
 - id: DIN92
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - -21.0
   - 3.0
   - 12.0
 - id: DIN93
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - -15.0
   - 3.0
   - 12.0
 - id: DIN94
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - -9.0
   - 3.0
   - 12.0
 - id: DIN95
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-dining
+  arrangement: arrangement.dining
   at:
   - -3.0
   - 3.0
   - 12.0
 - id: KIT96
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - 3.0
   - 3.0
   - 12.0
 - id: KIT97
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - 9.0
   - 3.0
   - 12.0
 - id: KIT98
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - 15.0
   - 3.0
   - 12.0
 - id: KIT99
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - 21.0
   - 3.0
   - 12.0
 - id: KIT100
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - 27.0
   - 3.0
@@ -780,8 +681,8 @@ ground:
   mass: 340200.0
   note: a pad under each column, 1.5 m square, 0.6 m deep (sized by the storeys, invented)
 totals:
-  mass: 1409500.9
-  against_module: 'building.bunkhouse (deprecated): one box 60 x 12 x 15 m of 3,971 t, from the average of 538 concrete buildings. This layout: 60 x 12 x 15 m, 1,410 t (63 t frame, 549 t panels, 74 t fit-out, 724 t ground), for 530
+  mass: 1380285.9
+  against_module: 'building.bunkhouse (deprecated): one box 60 x 12 x 15 m of 3,971 t, from the average of 538 concrete buildings. This layout: 60 x 12 x 15 m, 1,380 t (63 t frame, 549 t panels, 45 t furniture, 724 t ground), for 530
     people served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff: []
 basis:
@@ -789,7 +690,7 @@ basis:
   - bays
   tier: invented
   review: true
-  note: The mix of bays for a bunkhouse is chosen (dorm 0.75, washroom 0.15, dining 0.05, kitchen 0.05), shared over the record's floor (3600 m2 in 5 storeys, laid as 10 x 2 bays of 6 m).
+  note: The mix of rooms for a bunkhouse is chosen (dorm 0.75, washroom 0.15, dining 0.05, kitchen 0.05), shared over the record's floor (3600 m2 in 5 storeys, laid as 10 x 2 rooms of 6 m a storey).
 - of:
   - frame
   - ground

@@ -3,8 +3,8 @@
 identity:
   key: layout.building-offices
   name: Offices, world with air
-  description: 'Floors of desks: the administration''s offices of record, the companies'' books, the lawyers, the engineers who draw, the scholars who count. Laid of the kit: a strut frame on the 3 m grid, panels, and 84 furnished 6
-    m bays (63 office, 4 reception, 9 washroom, 8 kitchen).'
+  description: 'Floors of desks: the administration''s offices of record, the companies'' books, the lawyers, the engineers who draw, the scholars who count. Laid of the kit: a strut frame on the 3 m grid, panels, and 84 rooms of 6
+    m furnished piece by piece (63 office, 4 reception, 9 washroom, 8 kitchen).'
 stands_for: building.offices
 site:
   atmosphere: air
@@ -15,592 +15,509 @@ physical:
   length: 42.0
   width: 18.0
   height: 12.15
-  mass: 926886.9
-bays:
+  mass: 905591.7
+bays: []
+rooms:
 - id: OFF1
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -18.0
   - -6.0
   - 0.0
 - id: OFF2
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -12.0
   - -6.0
   - 0.0
 - id: OFF3
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -6.0
   - -6.0
   - 0.0
 - id: OFF4
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 0.0
   - -6.0
   - 0.0
 - id: OFF5
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 6.0
   - -6.0
   - 0.0
 - id: OFF6
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 12.0
   - -6.0
   - 0.0
 - id: OFF7
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 18.0
   - -6.0
   - 0.0
 - id: OFF8
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -18.0
   - 0.0
   - 0.0
 - id: OFF9
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -12.0
   - 0.0
   - 0.0
 - id: OFF10
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -6.0
   - 0.0
   - 0.0
 - id: OFF11
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 0.0
   - 0.0
   - 0.0
 - id: OFF12
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 6.0
   - 0.0
   - 0.0
 - id: OFF13
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 12.0
   - 0.0
   - 0.0
 - id: OFF14
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 18.0
   - 0.0
   - 0.0
 - id: OFF15
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -18.0
   - 6.0
   - 0.0
 - id: OFF16
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -12.0
   - 6.0
   - 0.0
 - id: OFF17
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -6.0
   - 6.0
   - 0.0
 - id: OFF18
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 0.0
   - 6.0
   - 0.0
 - id: OFF19
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 6.0
   - 6.0
   - 0.0
 - id: OFF20
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 12.0
   - 6.0
   - 0.0
 - id: OFF21
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 18.0
   - 6.0
   - 0.0
 - id: OFF22
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -18.0
   - -6.0
   - 3.0
 - id: OFF23
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -12.0
   - -6.0
   - 3.0
 - id: OFF24
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -6.0
   - -6.0
   - 3.0
 - id: OFF25
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 0.0
   - -6.0
   - 3.0
 - id: OFF26
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 6.0
   - -6.0
   - 3.0
 - id: OFF27
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 12.0
   - -6.0
   - 3.0
 - id: OFF28
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 18.0
   - -6.0
   - 3.0
 - id: OFF29
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -18.0
   - 0.0
   - 3.0
 - id: OFF30
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -12.0
   - 0.0
   - 3.0
 - id: OFF31
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -6.0
   - 0.0
   - 3.0
 - id: OFF32
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 0.0
   - 0.0
   - 3.0
 - id: OFF33
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 6.0
   - 0.0
   - 3.0
 - id: OFF34
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 12.0
   - 0.0
   - 3.0
 - id: OFF35
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 18.0
   - 0.0
   - 3.0
 - id: OFF36
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -18.0
   - 6.0
   - 3.0
 - id: OFF37
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -12.0
   - 6.0
   - 3.0
 - id: OFF38
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -6.0
   - 6.0
   - 3.0
 - id: OFF39
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 0.0
   - 6.0
   - 3.0
 - id: OFF40
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 6.0
   - 6.0
   - 3.0
 - id: OFF41
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 12.0
   - 6.0
   - 3.0
 - id: OFF42
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 18.0
   - 6.0
   - 3.0
 - id: OFF43
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -18.0
   - -6.0
   - 6.0
 - id: OFF44
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -12.0
   - -6.0
   - 6.0
 - id: OFF45
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -6.0
   - -6.0
   - 6.0
 - id: OFF46
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 0.0
   - -6.0
   - 6.0
 - id: OFF47
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 6.0
   - -6.0
   - 6.0
 - id: OFF48
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 12.0
   - -6.0
   - 6.0
 - id: OFF49
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 18.0
   - -6.0
   - 6.0
 - id: OFF50
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -18.0
   - 0.0
   - 6.0
 - id: OFF51
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -12.0
   - 0.0
   - 6.0
 - id: OFF52
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -6.0
   - 0.0
   - 6.0
 - id: OFF53
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 0.0
   - 0.0
   - 6.0
 - id: OFF54
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 6.0
   - 0.0
   - 6.0
 - id: OFF55
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 12.0
   - 0.0
   - 6.0
 - id: OFF56
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 18.0
   - 0.0
   - 6.0
 - id: OFF57
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -18.0
   - 6.0
   - 6.0
 - id: OFF58
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -12.0
   - 6.0
   - 6.0
 - id: OFF59
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - -6.0
   - 6.0
   - 6.0
 - id: OFF60
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 0.0
   - 6.0
   - 6.0
 - id: OFF61
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 6.0
   - 6.0
   - 6.0
 - id: OFF62
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 12.0
   - 6.0
   - 6.0
 - id: OFF63
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-office
+  arrangement: arrangement.office
   at:
   - 18.0
   - 6.0
   - 6.0
 - id: REC64
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-reception
+  arrangement: arrangement.reception
   at:
   - -18.0
   - -6.0
   - 9.0
 - id: REC65
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-reception
+  arrangement: arrangement.reception
   at:
   - -12.0
   - -6.0
   - 9.0
 - id: REC66
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-reception
+  arrangement: arrangement.reception
   at:
   - -6.0
   - -6.0
   - 9.0
 - id: REC67
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-reception
+  arrangement: arrangement.reception
   at:
   - 0.0
   - -6.0
   - 9.0
 - id: WAS68
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 6.0
   - -6.0
   - 9.0
 - id: WAS69
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 12.0
   - -6.0
   - 9.0
 - id: WAS70
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 18.0
   - -6.0
   - 9.0
 - id: WAS71
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -18.0
   - 0.0
   - 9.0
 - id: WAS72
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -12.0
   - 0.0
   - 9.0
 - id: WAS73
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - -6.0
   - 0.0
   - 9.0
 - id: WAS74
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 0.0
   - 0.0
   - 9.0
 - id: WAS75
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 6.0
   - 0.0
   - 9.0
 - id: WAS76
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-washroom
+  arrangement: arrangement.washroom
   at:
   - 12.0
   - 0.0
   - 9.0
 - id: KIT77
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - 18.0
   - 0.0
   - 9.0
 - id: KIT78
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - -18.0
   - 6.0
   - 9.0
 - id: KIT79
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - -12.0
   - 6.0
   - 9.0
 - id: KIT80
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - -6.0
   - 6.0
   - 9.0
 - id: KIT81
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - 0.0
   - 6.0
   - 9.0
 - id: KIT82
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - 6.0
   - 6.0
   - 9.0
 - id: KIT83
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - 12.0
   - 6.0
   - 9.0
 - id: KIT84
-  mount: plant-mount.bay-s1
-  unit: unit.fitout-kitchen
+  arrangement: arrangement.kitchen
   at:
   - 18.0
   - 6.0
@@ -663,8 +580,8 @@ ground:
   mass: 103680.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 926886.9
-  against_module: 'building.offices (deprecated): one box 40 x 20 x 16 m of 3,530 t, from the average of 538 concrete buildings. This layout: 42 x 18 x 12 m, 927 t (67 t frame, 425 t panels, 59 t fit-out, 376 t ground), for 426 people
+  mass: 905591.7
+  against_module: 'building.offices (deprecated): one box 40 x 20 x 16 m of 3,530 t, from the average of 538 concrete buildings. This layout: 42 x 18 x 12 m, 906 t (67 t frame, 425 t panels, 38 t furniture, 376 t ground), for 426 people
     served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:
 - profession: profession.clerk
@@ -682,7 +599,7 @@ basis:
   - bays
   tier: invented
   review: true
-  note: The mix of bays for a offices is chosen (office 0.75, reception 0.05, washroom 0.1, kitchen 0.1), shared over the record's floor (3200 m2 in 4 storeys, laid as 7 x 3 bays of 6 m).
+  note: The mix of rooms for a offices is chosen (office 0.75, reception 0.05, washroom 0.1, kitchen 0.1), shared over the record's floor (3200 m2 in 4 storeys, laid as 7 x 3 rooms of 6 m a storey).
 - of:
   - frame
   - ground
