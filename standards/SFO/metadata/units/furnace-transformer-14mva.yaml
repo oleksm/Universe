@@ -3,13 +3,17 @@
 identity: {key: unit.furnace-transformer-14mva, name: 'Furnace transformer, 14 MVA', description: 'Steps the grid down for the ladle furnace''s arc: 10.9 MW to heat 80 t at 4 degrees a minute, 40% of it reaching the steel, at a power factor of 0.8; about 300 V and 26 kA a phase, with on-load taps. Oil-filled in a closed tank, HV bushings and conservator on top, cooled by oil to water. Three secondary terminals on one long face (+y), 2.1 m up; the oil-to-water cooler''s water ports on its -x end, 1 m up. Stands in a fire-walled vault. Fed at 33 kV through a cable box over its HV bushings, its gland plate on top at (0, -0.45, 3.7); the secondary''s bus joint (SFO 25, the phases 0.6 m apart) at (0, 1.35, 2.13) facing +y; its cooler''s water in at (-2.15, -0.3, 1) and out at (-2.15, 0.3, 1), facing -x.'}
 size_class: 1
 fits: plant-mount.bay-s1
-physical: {length: 4.3, width: 2.7, height: 3.7, mass: 22100.0}
+physical: {length: 4.3, width: 2.7, height: 3.7, mass: 22160.0}
 built_of:
 - {what: Core, item: material.structural-steel-a36, mass: 8747.0, note: 'grain-oriented electrical steel, which the registry has not got: structural steel stands for it'}
 - {what: Windings, item: material.copper, mass: 5467.0}
 - {what: Tank and fittings, item: material.structural-steel-a36, mass: 3280.0}
 - {what: Oil, item: material.hydraulic-fluid, mass: 4373.0, note: 'transformer mineral oil, which the registry has not got: hydraulic fluid stands for it'}
-- {what: HV cable box, item: material.structural-steel-a36, mass: 235.5, note: '2 x 0.6 x 0.5 m, 6 mm, over the three HV bushings: from its dimensions (to be drawn, v2)'}
+- {what: HV cable box, item: material.structural-steel-a36, mass: 230.3, note: '2 x 0.6 x 0.5 m, 6 mm, and its gland plate, over the three HV bushings (moved to 0.6 m pitch under it); measured on blender''s model v2 (2026-10-16)'}
+- {what: Cable box supports, item: material.structural-steel-a36, mass: 45.12, note: four hollow posts on the tank lid with their feet and heads; measured on blender's model v2 (2026-10-16)}
+- {what: Terminal extensions, item: material.structural-steel-a36, mass: 10.22, note: 'the HV terminals'' extensions through the box''s floor, drawn as steel; measured on blender''s model v2 (2026-10-16)'}
+- {what: Terminal sleeves, item: material.silicone-rubber, mass: 2.11, note: their insulating sleeves; measured on blender's model v2 (2026-10-16)}
+- {what: Cooler water stubs, item: material.structural-steel-a36, mass: 6.91, note: plain DN 100 stubs facing -x; measured on blender's model v2 (2026-10-16)}
 needs: {power: 68330.0, heat: 68330.0}
 ports:
 - id: hv-in
@@ -47,11 +51,10 @@ ports:
   at: [-2.15, 0.3, 1.0]
   facing: [-1.0, 0.0, 0.0]
 envelope:
-- [-1.975, -1.175, -0.001, 2.142, 0.914, 2.564]
-- [-1.281, -0.615, 2.388, 1.281, -0.292, 3.202]
-- [-0.866, 0.841, 1.961, 0.866, 1.352, 2.306]
-- [-1.442, 0.228, 2.388, 1.482, 0.732, 3.052]
+- [-1.975, -1.175, -0.001, 2.142, 0.914, 3.052]
 - [-2.152, -0.639, 0.59, -1.737, 0.639, 1.383]
+- [-1.001, -0.751, 2.388, 1.001, -0.148, 3.702]
+- [-0.772, 0.841, 1.958, 0.772, 1.352, 2.302]
 life: 788940000
 visual: {format: freefall-model/1, path: models/furnace-transformer-14mva/v1, manifest_sha256: 00d3e40f27f25b6ca4afd5e0fc71e025156f8fd9d07031ac093b81cefb03d043, version: 1, triangles: 8336}
 basis:
