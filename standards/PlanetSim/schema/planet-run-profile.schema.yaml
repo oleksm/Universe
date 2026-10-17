@@ -16,6 +16,18 @@ properties:
       key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
       about: { type: string }
+  planet:
+    description: "The planet the run makes: its figures as the sim reads them (today's manifest stands in), and the world it is, when one in the registry."
+    type: object
+    additionalProperties: false
+    properties:
+      body: { type: string, x-ref: [body], description: "The registry's world it is, when one." }
+      radius: { type: number, exclusiveMinimum: 0, x-unit: m }
+      mass: { type: number, exclusiveMinimum: 0, x-unit: kg }
+      water_mass_fraction: { type: number, minimum: 0, maximum: 1, x-unit: "1" }
+      star_age: { type: number, minimum: 0, x-unit: s, description: "The star's age at the run's end (today)." }
+      preset: { type: string, description: "The sim's preset it comes from (presets.earth())." }
+      note: { type: string }
   start: { type: number, x-unit: s, description: "Before present." }
   end: { type: number, x-unit: s, description: "Before present (0: today)." }
   times_said: { $ref: "../../common.schema.yaml#/definitions/said_as" }
