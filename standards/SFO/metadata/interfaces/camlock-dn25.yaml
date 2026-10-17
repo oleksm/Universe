@@ -17,7 +17,7 @@ halves: male-female
 make: manual
 face:
   length: 0.107
-  width: 0.078
+  width: 0.061
   height: 0.1
 size: 0.025
 standard: EN 14420-7 (cam-lock) sizes

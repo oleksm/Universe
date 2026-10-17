@@ -9,6 +9,7 @@ draws: model
 scales_by:
 - physical
 members: 4
+reference: connector.plug-iec60309-32a
 basis:
 - of:
   - draws

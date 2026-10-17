@@ -9,6 +9,7 @@ draws: sweep-and-pieces
 scales_by:
 - outside
 members: 3
+reference: run.festoon-690v-4x35
 profile: the C-track swept; trolleys every 1.5 m, the cable hung in loops between them
 pieces:
 - name: support

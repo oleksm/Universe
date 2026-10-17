@@ -9,6 +9,7 @@ draws: model
 scales_by:
 - physical
 members: 4
+reference: connector.camlock-dn50
 basis:
 - of:
   - draws

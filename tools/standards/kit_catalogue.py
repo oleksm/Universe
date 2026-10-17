@@ -95,7 +95,7 @@ for dn in (0.025, 0.05, 0.1, 0.15):
     conn(ck, {
         "identity": {"key": f"connector.{ck}", "name": f"Cam-lock coupling, DN {tag(dn)}", "description": "A hose coupling made and broken by hand: a grooved adapter (male) and a coupler (female) whose two cam arms pull it home on its gasket."},
         "kind": "quick-coupling", "size": dn, "rating": {"pressure": CAM_P[dn], "temperature": 373.0},
-        "physical": {"length": r(dn * 1.9 + 0.06, 3), "width": r(dn * 1.5 + 0.04, 3), "height": r(dn * 1.2 + 0.07, 3), "mass": CAM[dn]},
+        "physical": {"length": r(dn * 1.9 + 0.06, 3), "width": r(dn + 0.036, 3), "height": r(dn * 1.2 + 0.07, 3), "mass": CAM[dn]},
         "built_of": [part("Adapter and coupler", AL, CAM[dn] * 0.95, "cast aluminium; stainless pins"), part("Gasket", RUB, CAM[dn] * 0.05)],
         "provides": "both", "template": "template.camlock",
         "basis": [{"of": ["physical", "rating"], "tier": "invented", "review": True, "note": MEMORY}]},
@@ -322,8 +322,11 @@ def templates():
             members.setdefault(d["template"], []).append(d["identity"]["key"])
     for t, (fam, draws, profile, scales, name) in TEMPLATES.items():
         ms = members.get(f"template.{t}", [])
+        sized = sorted(ms, key=lambda k: next((d.get("size") or 0) for _, _, d in OUT if d["identity"]["key"] == k))
         d = {"identity": {"key": f"template.{t}", "name": name, "description": f"{name}: one look for every size of the family, scaled to each record's figures (the owner, 2026-10-17: never one model per size)."},
              "family": fam, "draws": draws, "scales_by": scales, "members": len(ms)}
+        if draws != "sweep" and sized:
+            d["reference"] = sized[(len(sized) - 1) // 2]
         if profile:
             d["profile"] = profile
         if draws == "sweep-and-pieces":

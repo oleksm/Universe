@@ -11,7 +11,7 @@ rating:
   temperature: 373.0
 physical:
   length: 0.107
-  width: 0.078
+  width: 0.061
   height: 0.1
   mass: 0.45
 built_of:

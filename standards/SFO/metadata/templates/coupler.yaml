@@ -9,6 +9,7 @@ draws: model
 scales_by:
 - physical
 members: 2
+reference: connector.powerlock-400a
 basis:
 - of:
   - draws

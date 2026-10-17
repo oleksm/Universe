@@ -9,6 +9,7 @@ draws: sweep-and-pieces
 scales_by:
 - outside
 members: 4
+reference: run.conductor-rail-250a
 profile: the housing's section, its width and height the record's outside
 pieces:
 - name: support

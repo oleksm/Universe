@@ -20,6 +20,7 @@ properties:
   scales_by: { type: array, items: { type: string }, description: "The record's figures that size it (outside, size, physical.length...)." }
   pieces: { type: array, items: { type: object, additionalProperties: false, required: [name, how], properties: { name: { type: string }, how: { type: string } } }, description: "The modelled pieces and how each is placed and scaled." }
   model_of: { type: string, x-ref: [run, connector], description: "An installed size whose model serves as the template's, scaled, until the template has its own." }
+  reference: { type: string, x-ref: [run, connector], description: "The member its model is built at (docs/asset-contract.md, Templates): the game scales the model per axis by each record's figures over this one's." }
   members: { type: integer, minimum: 0, description: "How many records of the family name it." }
   visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
   model_requests: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/model_request" } }

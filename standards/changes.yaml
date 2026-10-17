@@ -168,10 +168,10 @@
 - { record: connector.cable-reel-11kv-3x95-300m, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "5562dbc414ed124a" }
 - { record: connector.cable-reel-690v-4x35-100m, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "3932ae0e58e6cd7c" }
 - { record: connector.cable-reel-690v-4x95-200m, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "0d3a8ec876de3e0f" }
-- { record: connector.camlock-dn100, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "2cfb17162cc11552" }
-- { record: connector.camlock-dn150, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "0a6553c60873d235" }
-- { record: connector.camlock-dn25, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "d715269a8ad7c5ac" }
-- { record: connector.camlock-dn50, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "bc76b9b60910d56e" }
+- { record: connector.camlock-dn100, at: "2026-10-17T21:34:29Z", status: draft, summary: "changed: physical", sha: "3d60e91ab87b04bb" }
+- { record: connector.camlock-dn150, at: "2026-10-17T21:34:29Z", status: draft, summary: "changed: physical", sha: "06cd7dc0df0bc2bf" }
+- { record: connector.camlock-dn25, at: "2026-10-17T21:34:29Z", status: draft, summary: "changed: physical", sha: "b904d57031fb6775" }
+- { record: connector.camlock-dn50, at: "2026-10-17T21:34:29Z", status: draft, summary: "changed: physical", sha: "f2f58d4557c989ba" }
 - { record: connector.chute-dn1000, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "3b3c6afd93ffc24e" }
 - { record: connector.chute-dn400, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "249eeb811c9dc969" }
 - { record: connector.chute-dn600, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "239672a4c8f7692d" }
@@ -936,10 +936,10 @@
 - { record: interface.cable-reel-11kv-3x95, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "24e9a8bb24fb28e6" }
 - { record: interface.cable-reel-690v-4x35, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "c8e363988077ec66" }
 - { record: interface.cable-reel-690v-4x95, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "2b3b913941ce2813" }
-- { record: interface.camlock-dn100, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "570f65fc2577b03c" }
-- { record: interface.camlock-dn150, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "c5745153822d430b" }
-- { record: interface.camlock-dn25, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "94fa8f4e67d8c778" }
-- { record: interface.camlock-dn50, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "6a2e09e4589b44e1" }
+- { record: interface.camlock-dn100, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: face", sha: "b815a4fd20389095" }
+- { record: interface.camlock-dn150, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: face", sha: "aef6b473bdd68f01" }
+- { record: interface.camlock-dn25, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: face", sha: "4044c4e17446071a" }
+- { record: interface.camlock-dn50, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: face", sha: "a8bf9a1497cf3c42" }
 - { record: interface.chute-dn1000, at: "2026-10-17T13:40:50Z", status: "", summary: "changed", sha: "c0abe1d385f5224a" }
 - { record: interface.chute-dn400, at: "2026-10-17T13:40:50Z", status: "", summary: "changed", sha: "e8523d02ea8e66b6" }
 - { record: interface.chute-dn600, at: "2026-10-17T13:40:50Z", status: "", summary: "changed", sha: "6eff0b7f20aca05e" }
@@ -3382,10 +3382,10 @@
 - { record: stock.kit-cable-reel-11kv-3x95-300m, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "b6ce05304ecd800e" }
 - { record: stock.kit-cable-reel-690v-4x35-100m, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "0bb77ed59e9154bf" }
 - { record: stock.kit-cable-reel-690v-4x95-200m, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "ca019dfe60612a13" }
-- { record: stock.kit-camlock-dn100, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "3c7f634eadec06b8" }
-- { record: stock.kit-camlock-dn150, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "bae9d05ac36cd142" }
-- { record: stock.kit-camlock-dn25, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "414c4a1836eaa5d3" }
-- { record: stock.kit-camlock-dn50, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "90362b133092cceb" }
+- { record: stock.kit-camlock-dn100, at: "2026-10-17T21:34:29Z", status: review, summary: "changed: size", sha: "ceec1b94f99a407e" }
+- { record: stock.kit-camlock-dn150, at: "2026-10-17T21:34:29Z", status: review, summary: "changed: size", sha: "dce30b7deb344f9d" }
+- { record: stock.kit-camlock-dn25, at: "2026-10-17T21:34:29Z", status: review, summary: "changed: size", sha: "6f830de0c24c9304" }
+- { record: stock.kit-camlock-dn50, at: "2026-10-17T21:34:29Z", status: review, summary: "changed: size", sha: "846fff34e0452a43" }
 - { record: stock.kit-chute-dn1000, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "8aabad2f1c994c8c" }
 - { record: stock.kit-chute-dn400, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "ac9b49d425629cd2" }
 - { record: stock.kit-chute-dn600, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "3ea9ad4e7fb75ada" }
@@ -4213,20 +4213,20 @@
 - { record: template.busbar, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "ebc39150ae6f28bf" }
 - { record: template.cable, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "882fe2318fed000e" }
 - { record: template.cable-flexible, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "e0eb15fead7d9f0d" }
-- { record: template.cable-reel, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "37f0c0c7b0b5b40c" }
-- { record: template.camlock, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "51db12e7be1e998a" }
+- { record: template.cable-reel, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "ef4c126e52c4de94" }
+- { record: template.camlock, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "f100a1c872c33703" }
 - { record: template.chute, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "e667824e0f7b7e6c" }
 - { record: template.clamp-coupling, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "56041bc040721ee0" }
-- { record: template.collector, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "4f917775e5428112" }
-- { record: template.conductor-rail, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "313e8b7ac7af9172" }
-- { record: template.corner-casting, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "3637c373e3de24e6" }
-- { record: template.coupler, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "42823b64ca0d65ab" }
+- { record: template.collector, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "13c03b72d1e3930c" }
+- { record: template.conductor-rail, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "4d9bd117533433fe" }
+- { record: template.corner-casting, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "60bd55a1c9ae01b7" }
+- { record: template.coupler, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "9f203fcd8163538d" }
 - { record: template.drag-conveyor, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "da78b5e8e253b112" }
-- { record: template.expansion-joint, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "52a5030e1131eca9" }
-- { record: template.festoon, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "96f6d49ca4bbf854" }
+- { record: template.expansion-joint, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "b40d4515cf6b4c83" }
+- { record: template.festoon, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "d64b223260ef067b" }
 - { record: template.flange, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "df7d790e5b79a704" }
 - { record: template.flange-double, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "1587eb01caf04022" }
-- { record: template.flat-face, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "6a66ac6920a0b68a" }
+- { record: template.flat-face, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "1b798aa986e5491c" }
 - { record: template.hood, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "2bd0f63963dc39e7" }
 - { record: template.hose, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "76521a9d59aafaae" }
 - { record: template.hose-hydraulic, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "1bdc07615e11b940" }
@@ -4236,17 +4236,17 @@
 - { record: template.lined-flange, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "566901f48b56a274" }
 - { record: template.pipe, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "9a17ec7ddd415223" }
 - { record: template.pipe-lagged, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "ee12031c045d334f" }
-- { record: template.plug-socket, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "7e3c4712b2b9b316" }
+- { record: template.plug-socket, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "3dfe5b5f0345ce4a" }
 - { record: template.termination-hv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "b0398bafc880c882" }
 - { record: template.termination-lv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "b3fff31e02cd79e5" }
 - { record: template.termination-mv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "5098fcf4fe0ded80" }
-- { record: template.twistlock, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "22d656f8214ff0d9" }
-- { record: template.union, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "21a59ba20839467f" }
-- { record: template.valve-ball, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "df3599bd9768cc26" }
-- { record: template.valve-butterfly, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "0fe2450317aed811" }
-- { record: template.valve-check, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "b47d6e8fe740a72f" }
-- { record: template.valve-gate, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "7c70a3e170a3302d" }
-- { record: template.valve-relief, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "1447b7ff8d3b3b75" }
+- { record: template.twistlock, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "cbd4a644b8b3677d" }
+- { record: template.union, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "c1676128c6be1767" }
+- { record: template.valve-ball, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "c7aa276338bc7083" }
+- { record: template.valve-butterfly, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "910ee70eb7366890" }
+- { record: template.valve-check, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "db1774a554f80df0" }
+- { record: template.valve-gate, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "f6e8abb14d71c0ab" }
+- { record: template.valve-relief, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "d49ebff915dfb3f2" }
 - { record: unit.alloy-bins-8, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "f164893e2dc287ed" }
 - { record: unit.baghouse-200k, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "abfebdff23b38d30" }
 - { record: unit.baghouse-450k, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "4b73a94e4d25edcf" }

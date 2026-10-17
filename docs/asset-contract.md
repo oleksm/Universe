@@ -142,6 +142,24 @@ model loader, every reference pose, a 513-pose sweep), then writes `review/regis
 Exit 0 is a pass: no registry review is needed before the owner's acceptance. Exit 1: send the registry a task with the
 report. The first build takes a few minutes; later runs are quick.
 
+## Templates (kit families, 2026-10-17)
+
+One model draws every size of a kit family (`standards/SFO/metadata/templates/`). Its brief is its **reference** record
+(`reference:`, a member; `model_of` on the older templates is the installed size that serves as theirs).
+
+- Build the model at the reference record's `physical` (a connector) or its pieces' sizes (a run's pieces), in metres,
+  +Y up as every model. The size check is the usual one against that record.
+- **Axes:** a connector's joint axis (the line its flow or current crosses) is +Y; the record's `height` lies along it,
+  `length` along X, `width` along Z. The mating plane is y = 0, the model centred on the axis in X and Z.
+- **Halves:** the two halves are named root nodes: `male` and `female` (a plug and its socket, a cam-lock's adapter and
+  coupler), or `half-a` and `half-b` for androgynous ones; mated in the static pose. A valve or an expansion joint is one
+  node, `body`, its flange faces at y = 0 and y = height. No motion.
+- **Scaling:** the game draws each member at its own figures: X by length / reference length, Y by height / reference
+  height, Z by width / reference width. A run's pieces (supports, trolleys) scale by its `outside` the same way.
+- **Real shape first:** if the reference's figures are not what the real part measures, model the real part and send the
+  measured sides; the registry changes the family's rule, never the model.
+- A sweep template (hose, cable, conductor rail's housing) has no model: the game sweeps its profile.
+
 ## Rework: what an installed model lacks, and redoing it
 
 A record changes after its model is made. The rework tools say what that change asks of the model, so only real body

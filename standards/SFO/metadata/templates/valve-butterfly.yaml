@@ -9,6 +9,7 @@ draws: model
 scales_by:
 - physical
 members: 4
+reference: connector.valve-butterfly-dn300-pn10
 basis:
 - of:
   - draws

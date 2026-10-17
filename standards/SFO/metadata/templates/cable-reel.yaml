@@ -9,6 +9,7 @@ draws: model
 scales_by:
 - physical
 members: 3
+reference: connector.cable-reel-690v-4x95-200m
 basis:
 - of:
   - draws

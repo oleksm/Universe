@@ -12,7 +12,7 @@ made_from:
 - item: material.epdm-rubber
 size:
   length: 0.107
-  width: 0.078
+  width: 0.061
   height: 0.1
 supplies:
   item: connector.camlock-dn25

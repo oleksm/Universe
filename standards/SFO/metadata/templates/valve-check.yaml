@@ -9,6 +9,7 @@ draws: model
 scales_by:
 - physical
 members: 2
+reference: connector.valve-check-dn100-pn10
 basis:
 - of:
   - draws

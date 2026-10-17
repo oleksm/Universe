@@ -9,6 +9,7 @@ draws: model
 scales_by:
 - physical
 members: 1
+reference: connector.twistlock-iso1161
 basis:
 - of:
   - draws
