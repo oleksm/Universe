@@ -45,6 +45,9 @@ const ID_MESH: u32 = 10;
 const ID_EDGES: u32 = 20;
 const ID_FACES: u32 = 21;
 const ID_FEAT: u32 = 22;
+const ID_PEAKS: u32 = 23;
+/// Peak and dip pins: labels on at most this many, the nearest to the eye (posts on all).
+const PEAK_LABELS: usize = 300;
 const ID_EX: u32 = 30;
 const ID_KEYS: u32 = 40;
 const ID_VIS: u32 = 50;
@@ -529,6 +532,9 @@ pub struct PlanetLodApp {
     show_edges: bool,
     show_faces: bool,
     show_feat: bool,
+    /// Pins on every peak and dip with its height (peaks.json beside the view: [{lon, lat, z, kind}]).
+    show_peaks: bool,
+    peak_pins: Vec<(DVec3, f64, String, bool)>,
     keys_open: bool,
     /// The slider being dragged, a drag over the ground (its button), the ground under the eye (m, drawn).
     sliding: bool,
@@ -896,6 +902,13 @@ impl PlanetLodApp {
         for l in json(&dir, "labels.json").ok().and_then(|l| l.as_array().cloned()).unwrap_or_default() {
             pins.push((unit(num(&l["lon"]), num(&l["lat"])), num(&l["z"]), l["text"].as_str().unwrap_or("").to_string(), true));
         }
+        // Every peak and dip of the anchor model with its height (peaks.json beside the view, optional).
+        let peak_pins: Vec<(DVec3, f64, String, bool)> = json(&dir, "peaks.json").ok().and_then(|a| a.as_array().cloned()).unwrap_or_default().iter()
+            .map(|a| {
+                let (z, peak) = (num(&a["z"]), a["kind"].as_str() != Some("dip"));
+                (unit(num(&a["lon"]), num(&a["lat"])), z, format!("{} {} m", if peak { "^" } else { "v" }, thousands(z.round())), peak)
+            })
+            .collect();
         let queued = vec![false; cells.len()];
         let bd = Arc::new(BuildData {
             pos: d.pos.clone(),
@@ -988,6 +1001,8 @@ impl PlanetLodApp {
             show_edges: true,
             show_faces: true,
             show_feat: false,
+            show_peaks: false,
+            peak_pins,
             keys_open: false,
             sliding: false,
             drag: None,
@@ -1013,6 +1028,7 @@ impl PlanetLodApp {
                     ("heading", Some(v)) => app.heading = v,
                     ("ex", Some(v)) => app.ex = v.clamp(1.0, 50.0),
                     ("feat", Some(v)) => app.show_feat = v > 0.0,
+                    ("peaks", Some(v)) => app.show_peaks = v > 0.0,
                     ("view", _) if kv.ends_with("real") => app.view = View::Real,
                     ("layers", _) => {
                         // (layers=0,2 or layers=none: which layer meshes are on)
@@ -1354,6 +1370,7 @@ impl App for PlanetLodApp {
                 Some(ID_EDGES) => self.show_edges = !self.show_edges,
                 Some(ID_FACES) => self.show_faces = !self.show_faces,
                 Some(ID_FEAT) => self.show_feat = !self.show_feat,
+                Some(ID_PEAKS) => self.show_peaks = !self.show_peaks,
                 Some(ID_KEYS) => self.keys_open = !self.keys_open,
                 Some(ID_VIS) => self.ui.lock().unwrap().vis_note = true,
                 Some(ID_EX) => self.sliding = true,
@@ -1749,6 +1766,31 @@ impl App for PlanetLodApp {
                 frame.text_boxed(p - Vec2::new(w * 0.5, universe_engine::GLYPH + 6.0), label, Color::hex(0x111111), c);
             }
         }
+        // Peak and dip pins: a post on each one facing the eye, its height on the nearest PEAK_LABELS on screen.
+        if self.show_peaks {
+            let mut shown: Vec<(f64, Vec2, usize)> = vec![];
+            for (i, (dir, z, _, peak)) in self.peak_pins.iter().enumerate() {
+                let base = *dir * (self.d.r + self.ex * z);
+                if dir.dot(eye - base) <= 0.0 {
+                    continue;
+                }
+                let top = base + *dir * post;
+                let c = if *peak { Color::rgb(1.0, 0.45, 0.31) } else { Color::rgb(0.45, 0.85, 1.0) };
+                frame.line(base, top, c);
+                if let Some(p) = frame.project(top)
+                    && p.x > 0.0 && p.y > 0.0 && p.x < size.x && p.y < size.y
+                {
+                    shown.push(((eye - top).length(), p, i));
+                }
+            }
+            shown.sort_by(|a, b| a.0.total_cmp(&b.0));
+            for (_, p, i) in shown.into_iter().take(PEAK_LABELS) {
+                let (_, _, label, peak) = &self.peak_pins[i];
+                let c = if *peak { Color::rgb(1.0, 0.45, 0.31) } else { Color::rgb(0.45, 0.85, 1.0) };
+                let w = label.len() as f32 * universe_engine::GLYPH;
+                frame.text_boxed(p - Vec2::new(w * 0.5, universe_engine::GLYPH + 6.0), label, Color::hex(0x111111), c);
+            }
+        }
         // The built job's meshes handed to the engine to upload (not drawn yet), within the frame's budget.
         if let Some(b) = self.built.lock().unwrap().as_mut() {
             let mut tris = 0;
@@ -1952,7 +1994,7 @@ impl PlanetLodApp {
         p.section("VIEW", &[]);
         p.seg(&["Mesh", "Real"], if self.view == View::Mesh { 0 } else { 1 }, ID_MESH);
         let real = self.view == View::Real;
-        p.chips(&[("edges", self.show_edges && !real, !real, ID_EDGES), ("faces", self.show_faces, true, ID_FACES), ("crest & valleys", self.show_feat, !m.features.is_empty(), ID_FEAT)]);
+        p.chips(&[("edges", self.show_edges && !real, !real, ID_EDGES), ("faces", self.show_faces, true, ID_FACES), ("crest & valleys", self.show_feat, !m.features.is_empty(), ID_FEAT), ("peaks", self.show_peaks, !self.peak_pins.is_empty(), ID_PEAKS)]);
         p.slider("height ×", self.ex as f32, 1.0, 50.0, &format!("{:.0}", self.ex), ID_EX);
         if let Some(l) = &self.layers {
             p.section("LAYERS", &[]);
