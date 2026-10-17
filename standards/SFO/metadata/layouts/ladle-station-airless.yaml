@@ -142,7 +142,7 @@ links:
   to: [3.0, -5.34, 6.0]
   length: 5.68
   item: material.copper
-  mass: 2135.0
+  mass: 2073.0
   via:
   - [3.0, -6.3, 2.13]
   - [3.0, -6.3, 6.0]

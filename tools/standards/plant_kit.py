@@ -394,6 +394,9 @@ def _bus(amps):
     return n, a, rows, 4 * od + 3 * 0.02, rows * od + (rows - 1) * 0.02
 
 
+BUS_PLATES_MEASURED = {"connector.bus-joint-ac-27ka": 106.16}     # kg of a joint's copper plates, holes cut, measured on blender's family generator (2026-10-16)
+
+
 def bus_joint(v, amps, phases=2):
     """phases 2: a direct current bus's two poles; 3: an alternating current bus's three phases."""
     ac = phases == 3
@@ -405,7 +408,8 @@ def bus_joint(v, amps, phases=2):
     pw = w + 0.04                                   # and wide enough for the outer bolt columns' 30 mm edge distance
     plate = pw * ph * 0.03 * RHO[CU]
     pole = "phase" if ac else "pole"
-    built = [_part("Joint plates", CU, phases * 2 * plate, f"a pair of 30 mm copper plates a {pole}, {pw * 1000:.0f} x {ph * 1000:.0f} mm, the tubes brazed into one, bolted to the unit's terminal pad"),
+    plates = BUS_PLATES_MEASURED.get(key, phases * 2 * plate)
+    built = [_part("Joint plates", CU, plates, f"a pair of 30 mm copper plates a {pole}, {pw * 1000:.0f} x {ph * 1000:.0f} mm, the tubes brazed into one, bolted to the unit's terminal pad" + ("; measured on blender's model with its tube bores and bolt holes cut, " + f"{phases * 2 * plate:,.1f} kg as solid plates" if key in BUS_PLATES_MEASURED else "")),
              _part("Bolts", BOLT, phases * 16 * 0.4, f"sixteen M20 a {pole} in two rows of eight, above and below the tubes, with spring washers"),
              _part("Braze lands", CU, phases * n * 0.68, "a copper land round each tube where it is brazed into the plate; measured on blender's model (9.5 kg for 14 tubes, 2026-10-16)"),
              _part("Water couplings and hoses", RUBBER, phases * n * 0.5, "an insulating hose from each tube's end to the unit's cooling manifold behind its pad")]
