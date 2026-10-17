@@ -1011,6 +1011,7 @@
 - { record: layout.pellet-plant-airless, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: ports", sha: "77c25c70e2b03c03" }
 - { record: layout.shaft-furnace-air, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "2c28d988a6909720" }
 - { record: layout.shaft-furnace-airless, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: ports", sha: "8eae14421a5ea76a" }
+- { record: lod-model.anchor, at: "2026-10-17T17:32:25Z", status: "", summary: "first tracked", sha: "9a8e85021c04ef8c" }
 - { record: market.art, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "517671b6a46daee3" }
 - { record: market.artifacts, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "6b51c19897f56c1a" }
 - { record: market.biologics, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "003ee842af8f7674" }
@@ -1710,7 +1711,7 @@
 - { record: planet-measure.rms-against-samples, at: "2026-10-17T16:00:56Z", status: "", summary: "changed: ours", sha: "7d2c757550ce871a" }
 - { record: planet-measure.spectrum-slope, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "e7c2087911571642" }
 - { record: planet-measure.valley-spacing, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "d4dde745cde03b3f" }
-- { record: planet-model.anchor, at: "2026-10-17T17:13:52Z", status: "", summary: "changed", sha: "f12ff32b33b5a98c" }
+- { record: planet-model.anchor, at: "2026-10-17T17:32:25Z", status: "", summary: "changed", sha: "c9adae30021bdde6" }
 - { record: planet-pattern.aeolian.dune.barchan, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "4fed3f7652690758" }
 - { record: planet-pattern.aeolian.dune.carbonate-eolianite, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "57787d270a7efd13" }
 - { record: planet-pattern.aeolian.dune.coastal-foredune, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "11531b3670b62a25" }
@@ -2093,8 +2094,8 @@
 - { record: root.engine, at: "2026-10-06T22:07:52Z", status: "", summary: "first tracked", sha: "c924407d8278643f" }
 - { record: root.local-administration, at: "2026-10-05T18:39:55Z", status: "", summary: "changed: identity, name", sha: "44ac9a3a3dfb6d34" }
 - { record: root.maker-house, at: "2026-10-05T18:39:55Z", status: "", summary: "changed: identity, name", sha: "99987243a02e746e" }
-- { record: root.planet-lod, at: "2026-10-17T17:13:52Z", status: "", summary: "first tracked", sha: "677daa5161021f7a" }
-- { record: root.planet-sim, at: "2026-10-17T17:14:44Z", status: "", summary: "changed: note", sha: "9533ae0beaaefb67" }
+- { record: root.planet-lod, at: "2026-10-17T17:32:25Z", status: "", summary: "changed: note", sha: "a38f7bd1bd5d7953" }
+- { record: root.planet-sim, at: "2026-10-17T17:32:25Z", status: "", summary: "changed: note", sha: "f01bc36a1ab8aaf2" }
 - { record: rule.built-in-whole, at: "2026-10-07T03:53:08Z", status: review, summary: "first tracked", sha: "573c1e6d6c81a1ac" }
 - { record: rule.bulk-density-typical, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "bbd6cee7ed89e978" }
 - { record: rule.cut-loss, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "93cd4014464ec2ae" }

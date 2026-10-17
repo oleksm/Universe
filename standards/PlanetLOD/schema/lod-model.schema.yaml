@@ -1,10 +1,10 @@
 $schema: http://json-schema.org/draft-07/schema#
-title: Planet model
-x-kind: [planet-model]
-description: "standards/PlanetLOD/metadata/models/<name>.yaml: a model that meshes a planet's ground (the owner, 17 Oct 2026): the owner's definition, its anchors, the rule every vertex height comes from, the lines kept as mesh edges, the vertex pattern by zone, the triangulation and its face rules, its parameters, what it guarantees, the owner's rules for it, its results and its implementation. Its words are the Planet Simulator's."
+title: Planet LOD model
+x-kind: [lod-model]
+description: "standards/PlanetLOD/metadata/models/<name>.yaml: how a Planet Simulator model is meshed (the owner, 17 Oct 2026): the model it meshes (its anchors and rings are on that page), the rule every vertex height comes from, the lines kept as mesh edges, the vertex pattern by zone, the triangulation and its face rules, its parameters, what it guarantees, the owner's rules for it, its results and its implementation. Its words are the Planet Simulator's."
 type: object
 additionalProperties: false
-required: [identity, purpose, anchors, height_rule]
+required: [identity, model, height_rule]
 allOf:
   - { $ref: "../../common.schema.yaml#/definitions/planet_context" }
 properties:
@@ -18,28 +18,7 @@ properties:
       about: { type: string }
       words: { type: string, description: "The owner's definition, verbatim, with the date." }
   purpose: { type: string, description: "What it is for, and what it is not (a height and coastline model says nothing of colour)." }
-  anchors:
-    type: array
-    minItems: 1
-    items:
-      type: object
-      additionalProperties: false
-      required: [name, kind, found_by]
-      properties:
-        name: { type: string }
-        kind: { enum: [line, point] }
-        found_by: { type: string, description: "How it is found from the field." }
-        exact: { type: boolean, description: "true: an exact mesh vertex or line at its true height." }
-        line: { type: string, x-ref: [planet-line] }
-        field: { type: string, x-ref: [planet-field] }
-  rings:
-    type: object
-    additionalProperties: false
-    description: "The contour lines woven round the anchors."
-    properties:
-      formula: { type: string, description: "A ring's height from its anchor's." }
-      nearest: { type: string, description: "Which anchor a point belongs to." }
-      meshed: { type: boolean, description: "false: rings are a height source only, not mesh lines." }
+  model: { type: string, x-ref: [planet-model], description: "The Planet Simulator model it meshes: its definition, anchors and rings are on that page." }
   height_rule:
     type: object
     additionalProperties: false

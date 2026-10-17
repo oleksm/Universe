@@ -1,28 +1,10 @@
-# yaml-language-server: $schema=../../schema/planet-model.schema.yaml
+# yaml-language-server: $schema=../../schema/lod-model.schema.yaml
 identity:
-  key: planet-model.anchor
+  key: lod-model.anchor
   name: Anchor model
-  about: 'The planet''s height and coastline mesh: the coast and every peak and dip are exact; contour rings round them at an exponential step are the height source; every other vertex takes its height from the two nearest
-    lines, below and above. Nothing else is in it.'
-  words: 'The owner, 17 Oct 2026: "The coast is exact at every level - is one anchor. The peak / dip is another anchor. Around those we weave the detail of contour lines with an exponential step. Nothing else is there."'
-purpose: 'To mesh a planet''s ground from its sim with the fewest exact things: the coast and the anchors true at every level, every other height read from the model''s own lines. A height and coastline model: it says nothing
-  of colour.'
-anchors:
-- name: coast
-  kind: line
-  found_by: The field's 0 m loops.
-  exact: true
-  line: planet-line.coast
-  field: planet-field.height
-- name: peaks and dips
-  kind: point
-  found_by: 'The roots of steepest ascent and descent on the field, land and sea: every one an exact mesh vertex at its height.'
-  exact: true
-  field: planet-field.height
-rings:
-  formula: 'ring_k = h_anchor -/+ d0 (2^k - 1), k = 1, 2, ...: 50, 150, 350, 750, 1,550, 3,150 m from the anchor with d0 50 m'
-  nearest: 'A point belongs to the nearer of its two anchors in height: the peak above it by steepest ascent, or the coast or dip below it by steepest descent.'
-  meshed: false
+  about: 'How the Planet Simulator''s anchor model is meshed: rings are the height source only, every vertex takes its height from the two nearest lines, the coast band is kept as mesh edges, a graded vertex pattern, one spherical
+    Delaunay triangulation.'
+model: planet-model.anchor
 height_rule:
   formula: 'h = L1 + (L2 - L1) d1 / (d1 + d2): L1 and L2 the heights of the nearest line below the vertex and the nearest above, d1 and d2 the shortest distances to them'
   lines: Any anchor's rings, the coast at 0 m, and the anchor points at their own heights.
@@ -61,16 +43,6 @@ source_field:
 - planet-field.height
 - planet-field.recent-height
 params:
-- name: d0
-  value: 50.0
-  unit: m
-  note: The first ring's step from its anchor.
-- name: ring ratio
-  value: 2.0
-  unit: '1'
-  note: Each step twice the last.
-- name: smoothing
-  note: 'The sim''s samples (30,000, about 130 km apart) as a smooth field: the sample mesh subdivided twice (butterfly positions, linear heights), one relaxation pass at lambda 0.5.'
 - name: source field
   open: true
   note: 'height (z), provisional: which height is present is open (z against r_z).'
@@ -234,9 +206,6 @@ measured_by:
 status: draft
 basis:
 - of:
-  - identity
-  - anchors
-  - rings
   - height_rule
   - meshed_lines
   - vertex_pattern
@@ -244,10 +213,10 @@ basis:
   - face_rules
   - rules
   tier: derived
-  note: planet-trees-pgs2 docs/anchor-mesher.md (dd97098), the owner's words and rules, 17 Oct 2026.
+  note: planet-trees-pgs2 docs/anchor-mesher.md (dd97098), the owner's rules, 17 Oct 2026.
 - of:
   - params
   - results
   tier: derived
   review: true
-  note: As built and run on earth_s30 (anchor_mesher.py 9de220d), all draft; the source field open.
+  note: As built and run on earth_s30 (anchor_mesher.py 9de220d), all draft; the source field open. The model's own figures (d0, ratio, smoothing) are on planet-model.anchor.

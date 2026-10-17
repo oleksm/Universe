@@ -1747,7 +1747,7 @@ REPORT_GROUPS = {"ships": ["equipment-parts", "equipment", "mounts", "members", 
                  "quality": ["confidence", "invented", "review", "revisions", "dictionary"]}
 REPORT_DOCS = {"mounts": ["docs/ships/registry-note-for-ships.md"], "members": ["docs/ships/registry-note-for-ships.md"], "budgets": ["docs/ships/registry-note-for-ships.md", "docs/ships/equipment-review.md"],
                "needs": ["docs/registry-people.md", "docs/registry-spirit.md"], "work": ["docs/registry-people.md"], "buildings": ["docs/registry-people.md"], "census": ["docs/registry-people.md", "docs/registry-order.md"],
-               "traffic": ["docs/registry-people.md", "docs/registry-stocking.md"], "worlds": ["docs/survey-contract.md"], "celestial": ["docs/survey-contract.md"], "clocks": ["docs/tick-tree.md"], "planet-models": ["standards/PlanetLOD/metadata/PlanetLOD.yaml"], "planet-lod": ["standards/PlanetSim/metadata/PlanetSim.yaml"],
+               "traffic": ["docs/registry-people.md", "docs/registry-stocking.md"], "worlds": ["docs/survey-contract.md"], "celestial": ["docs/survey-contract.md"], "clocks": ["docs/tick-tree.md"], "planet-models": ["standards/PlanetSim/metadata/PlanetSim.yaml"], "planet-lod": ["standards/PlanetSim/metadata/PlanetSim.yaml"],
                "balance": ["docs/registry-recipes.md"], "materials": ["docs/registry-recipes.md"], "goods": ["docs/registry-recipes.md"], "takers": ["docs/registry-recipes.md"],
                "confidence": ["docs/registry-audit.md"], "invented": ["docs/registry-audit.md"], "review": ["docs/registry-audit.md"], "revisions": ["docs/registry-integration.md"], "dictionary": ["standards/README.md"],
                "equipment-parts": ["docs/registry-recipes.md"], "chains": ["docs/registry-recipes.md"], "plant": ["docs/registry-recipes.md"], "hulls": ["docs/registry-integration.md"], "gates": ["docs/standards.md"]}
@@ -2386,13 +2386,13 @@ for _k, _m in sorted(_PL["planet-model"].items()):
     _open = [p_["name"] for p_ in _m.get("params") or [] if p_.get("open")]
     _mrows.append(row("gap" if _open else "ok", _m["identity"]["name"],
                       "; ".join(f"{a['name']} ({a['kind']}{', exact' if a.get('exact') else ''}): {a['found_by']}" for a in _m["anchors"]),
-                      _m["height_rule"]["formula"] + (f" | rings: {_m['rings']['formula']}" if (_m.get("rings") or {}).get("formula") else ""),
+                      (_m["detail"].get("formula") or _m["detail"]["rule"]) + (f" | nearest: {_m['detail']['nearest']}" if _m["detail"].get("nearest") else ""),
                       "; ".join(_m.get("guarantees") or []), "; ".join(_m.get("leaves_out") or []),
                       "; ".join(f"{p_['name']} {p_.get('value', '')}{(' ' + p_['unit']) if p_.get('unit') and p_.get('value') is not None else ''}{' (open)' if p_.get('open') else ''}" for p_ in _m.get("params") or []),
                       "; ".join(f"{x['where']} ({x['state']})" for x in _m.get("implementations") or []),
                       ", ".join(x.split(".", 1)[1] for x in _m.get("measured_by") or [])))
-report("planet-models", "Planet Models: how a planet is meshed", "standards/PlanetLOD/metadata/models: each model that meshes a planet, its anchors and how they are found, the rule every height comes from, what it guarantees and leaves out, its parameters (open ones mark it a gap), its implementations and the measures that judge it. Its rules and the owner's words are on the record.",
-       ["Model", "Anchors", "Heights", "Guarantees", "Leaves out", "Parameters", "Implementations", "Measured by"], _mrows)
+report("planet-models", "Planet models: how a planet is described and meshed", "standards/PlanetSim/metadata/models: each model used to describe or mesh a planet, its anchors and how they are found, the rule that weaves detail round them, what it guarantees and leaves out, its parameters (open ones mark it a gap), its implementations and the measures that judge it. Its rules and the owner's words are on the record.",
+       ["Model", "Anchors", "Detail", "Guarantees", "Leaves out", "Parameters", "Implementations", "Measured by"], _mrows)
 
 # 3d'''. Members (SFO 13): the tubes a frame is cut from, read as an engineer sizes: weight a metre, the load
 # at which each yields (with the safety factor 1.5), and the pinned length at which it buckles under 50 and 200 kN (Euler).
@@ -2643,7 +2643,8 @@ _REG = [("mounts", "Mounts", "SFO", os.path.join("SFO", "metadata", "mounts"), "
         ("planet-measures", "Measures", "PlanetSim", os.path.join("PlanetSim", "metadata", "measures"), "PlanetSim/schema/planet-measure.schema.yaml", None),
         ("planet-factors", "Deciding factors", "PlanetSim", os.path.join("PlanetSim", "metadata", "factors"), "PlanetSim/schema/planet-factor.schema.yaml", None),
         ("planet-patterns", "Landform patterns", "PlanetSim", os.path.join("PlanetSim", "metadata", "patterns"), "PlanetSim/schema/planet-pattern.schema.yaml", None),
-        ("planet-models", "Planet Models", "PlanetLOD", os.path.join("PlanetLOD", "metadata", "models"), "PlanetLOD/schema/planet-model.schema.yaml", None),
+        ("planet-models", "Planet Models", "PlanetSim", os.path.join("PlanetSim", "metadata", "models"), "PlanetSim/schema/planet-model.schema.yaml", None),
+        ("lod-models", "Planet Models", "PlanetLOD", os.path.join("PlanetLOD", "metadata", "models"), "PlanetLOD/schema/lod-model.schema.yaml", None),
         ("planet-files", "Sim files", "PlanetSim", os.path.join("PlanetSim", "metadata", "files"), "PlanetSim/schema/planet-file.schema.yaml", None)]
 for _kind, _title, _root, _dir, _schema, _std in _REG:
     _recs = []
