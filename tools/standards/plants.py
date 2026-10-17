@@ -2739,6 +2739,10 @@ def ladle_ports(us):
         port("power-in", "in", "power", lv(a["needs"]["power"]), (6.3, 0.0, 1.0), (1, 0, 0), power=a["needs"]["power"], voltage=400),
     ]
     d = us["degassing-stand"]
+    if "Service annex" not in [x["what"] for x in d["built_of"]]:
+        m2 = "measured on blender's model v2 (2026-10-16)"
+        d["built_of"] = [part(x["what"], x["item"], x["mass"] - 8.65, f"{x['note']}; less the argon coupling's old cap, 8.65 kg, {m2}") if x["what"].startswith("Post, arm") else x for x in d["built_of"]]
+        d["built_of"] += [part("Service annex", A36, 62.81 + 0.35, f"a hollow box on the argon cabinet's -x face carrying the argon and 400 V entries, on a footed post, with its plate and the argon stub; {m2}")]
     d["desc"] += " Its ports (SFO 25), on the argon cabinet's -x face: argon in at (-3.3, -3.1, 0.6), DN 50; its 400 V at (-3.3, -2.6, 1.2)."
     d["ports"] = [
         port("argon-in", "in", "gas", kit.flange(0.05, 16, kit.SS), (-3.3, -3.1, 0.6), (-1, 0, 0), item=AR, rate=ar_each, pressure=10e5, note="to the ladle's porous plug by the stand's hose"),

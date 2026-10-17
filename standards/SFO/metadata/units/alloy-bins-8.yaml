@@ -37,13 +37,13 @@ envelope:
 - [-6.081, -1.577, 0.273, -5.759, 1.577, 9.427]
 - [5.769, -1.577, 0.273, 6.301, 1.577, 9.427]
 - [-0.274, -0.354, 6.699, 1.207, 0.354, 8.101]
+life: 788940000
 visual:
   format: "freefall-model/1"
   path: "models/alloy-bins-8/v2"
   manifest_sha256: "a21ddf6253d3abff6ff1c5fe4a5508cec0a9b205bacbccae85fa6a6dc310a376"
   version: 2
   triangles: 26672
-life: 788940000
 basis:
 - of: [physical, built_of, holds]
   tier: derived

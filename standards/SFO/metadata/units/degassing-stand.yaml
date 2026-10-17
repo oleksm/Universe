@@ -4,11 +4,12 @@ identity: {key: unit.degassing-stand, name: Degassing stand, description: 'Where
     hose parked with a capped coupling at (-2, -2.3, 1). The porous plug and its line are the ladle''s (package.ladle), coupled to the hose at the stand; that connection is not yet drawn on the ladle or its car. Its ports (SFO 25), on the argon cabinet''s -x face: argon in at (-3.3, -3.1, 0.6), DN 50; its 400 V at (-3.3, -2.6, 1.2).'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 5.2, width: 6.0, height: 8.0, mass: 16740.0}
+physical: {length: 5.2, width: 6.0, height: 8.0, mass: 16800.0}
 built_of:
-- {what: 'Post, arm, shield frame, lance and argon stand', item: material.structural-steel-a36, mass: 11170.0, note: 'the swing post on a 1.2 m square, 50 mm baseplate with eight M36 anchors (the shield and arm, about 7 t at 3.5 m, put about 50 kN m on it at 2 m/s2), the arm, the shield''s frame, the lance''s carriage and the argon cabinet, other baseplates 30 mm; measured on blender''s model v1'}
+- {what: 'Post, arm, shield frame, lance and argon stand', item: material.structural-steel-a36, mass: 11160.0, note: 'the swing post on a 1.2 m square, 50 mm baseplate with eight M36 anchors (the shield and arm, about 7 t at 3.5 m, put about 50 kN m on it at 2 m/s2), the arm, the shield''s frame, the lance''s carriage and the argon cabinet, other baseplates 30 mm; measured on blender''s model v1; less the argon coupling''s old cap, 8.65 kg, measured on blender''s model v2 (2026-10-16)'}
 - {what: Heat shield, item: good.refractory-brick, mass: 4573.0, note: '3.6 m across, its refractory; measured on model v1'}
 - {what: 'Slew drive, bearings and valves', item: good.electric-motors, mass: 1000.0, note: from memory}
+- {what: Service annex, item: material.structural-steel-a36, mass: 63.16, note: 'a hollow box on the argon cabinet''s -x face carrying the argon and 400 V entries, on a footed post, with its plate and the argon stub; measured on blender''s model v2 (2026-10-16)'}
 needs: {power: 30000.0, atmosphere: vacuum}
 ports:
 - id: argon-in
