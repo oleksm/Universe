@@ -43,7 +43,8 @@ built_of:
     module: module.machining-centre
   - code: RAH1-04
     name: Root headers
-    description: The supply and the return header along the root edge, DN 250 molybdenum, 5 mm wall, 7.65 m each, on the hinge line; each crosses the hinge in one molybdenum-rhenium bellows loop.
+    description: The supply and the return header along the root edge, DN 250 molybdenum, 5 mm wall, 7.65 m each, side by side (x 0.15 and 0.45, z 0.15), on the hinge line; their ports at their -y ends, facing -y, where each crosses
+      the hinge in one molybdenum-rhenium bellows loop, the loops within 0.6 m beyond the root's -y end (inside the mount's margin).
     mass: 630
     length: 7.65
     width: 0.6
@@ -90,14 +91,14 @@ ports:
   pressure: 500000.0
   temperature: 1600.0
   at:
-  - 0.0
-  - -3.53
+  - 0.15
+  - -3.825
   - 0.15
   facing:
+  - 0.0
   - -1.0
   - 0.0
-  - 0.0
-  note: hot lithium from the engine
+  note: 'hot lithium from the engine: the supply header''s end, facing -y'
 - id: coolant-out
   flow: out
   medium: liquid
@@ -109,14 +110,14 @@ ports:
   pressure: 500000.0
   temperature: 1400.0
   at:
-  - 0.0
-  - -3.18
+  - 0.45
+  - -3.825
   - 0.15
   facing:
+  - 0.0
   - -1.0
   - 0.0
-  - 0.0
-  note: back to the engine
+  note: 'back to the engine: the return header''s end, facing -y'
 life: 473364000
 basis:
 - of:
