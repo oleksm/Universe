@@ -3333,6 +3333,14 @@ def kit_link(name, run, ends, path, bays, recs, edge, taps=(), count=1, power=No
         tap_conn.append(next(q for q in recs[by_id[bid]["unit"].split(".", 1)[1]]["ports"] if q["id"] == pid)["connector"])
     caps = sum(1 for e in ends if e == "cap") if rr["kind"] in ("pipe", "lined-duct") else 0      # (a belt's or a cable's free end is its tail or its end box, no blind)
     mass, fit, L = kit.lay(run, pts, count, tees=sum(1 for e in ends if e.startswith(("tee:", "jacket:"))), taps=tap_conn, port_ends=n_port, caps=caps)
+    if rr.get("jacket_end"):          # (where a jacketed duct meets a hood, the hood's plenum takes its water: no end plate there)
+        hoods = 0
+        for e in ends:
+            if ":" in e and not e.startswith(("tee:", "onto:", "jacket:", "edge:", "cap")):
+                bid, pid = e.split(":")
+                pp = next(q for q in recs[by_id[bid]["unit"].split(".", 1)[1]]["ports"] if q["id"] == pid)
+                hoods += kit._recs[pp["connector"]]["kind"] == "hood"
+        mass -= hoods * rr["jacket_end"]["mass"] * count
     d = {"kind": KIND_OF_RUN[rr["kind"]], "name": name, "run": run, "ends": list(ends), "from": list(pts[0]), "to": list(pts[-1]), "length": r(L),
          "item": rr["per_m"]["built_of"][0]["item"], "mass": r(mass)}
     if len(pts) > 2:

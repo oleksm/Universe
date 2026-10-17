@@ -140,6 +140,9 @@ def chute(dn, item=SS):
     return key
 
 
+HOOD_WATER_MEASURED = {2.0: 175.68}     # kg in a hood's ring and plenum, measured on blender's DN 2000 hood (2026-10-16)
+
+
 def hood(dn):
     """A catch hood: a fixed water-cooled ring over a moving outlet (a tilting furnace's elbow), not touching it: the
     gap draws in air, which burns the outlet's CO, and lets the outlet move. No pressure across it."""
@@ -150,7 +153,7 @@ def hood(dn):
     ring = math.pi * D * h * t * RHO[A36] * 2 + math.pi / 4 * (D ** 2 - dn ** 2) * t * RHO[A36]
     water = math.pi * D * h * 0.05 * 1000.0
     built = [_part("Hood ring", A36, ring, f"a double-walled ring {D:.2f} m across and {h:g} m deep, 10 mm, its water jacket 50 mm, and its top plate"),
-             _part("Jacket water", "good.water", water, "in the ring's jacket, fed with the duct's")]
+             _part("Jacket water", "good.water", HOOD_WATER_MEASURED.get(dn, water), "in the ring's jacket and the plenum in its top 100 mm, open to the duct's jacket: no feed of its own" + (", measured on blender's model" if dn in HOOD_WATER_MEASURED else ""))]
     _recs[key] = {"identity": {"key": key, "name": f"Catch hood DN {dn * 1000:.0f}", "description": f"The fixed, water-cooled mouth of a {dn * 1000:.0f} mm duct over a moving outlet, {GAP_HOOD:g} m clear of it: air drawn in through the gap burns the gas's CO, and the outlet (a tilting furnace's elbow) moves free. The port it serves is the outlet's mouth; the duct's end stands {GAP_HOOD:g} m above it."},
                   "kind": "hood", "size": dn, "rating": {"pressure": 0.0, "temperature": 1873.0}, "sealing": "single",
                   "physical": {"length": r(D, 3), "width": r(D, 3), "height": h, "mass": r(sum(b["mass"] for b in built))}, "built_of": built,
