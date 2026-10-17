@@ -475,7 +475,7 @@
 - { record: equipment.engine.fan.s1, at: "2026-10-13T00:40:35Z", status: draft, summary: "changed: visual", sha: "8571271370838a45" }
 - { record: equipment.engine.fan.s2, at: "2026-10-13T00:46:03Z", status: draft, summary: "changed: visual", sha: "131081299755298f" }
 - { record: equipment.engine.fan.s3, at: "2026-10-12T01:31:44Z", status: draft, summary: "changed: visual", sha: "cc49eb09dba4218d" }
-- { record: equipment.engine.ft.s1, at: "2026-10-17T15:56:09Z", status: draft, summary: "changed", sha: "e1f1e0d74d7553e4" }
+- { record: equipment.engine.ft.s1, at: "2026-10-17T16:00:56Z", status: draft, summary: "changed: built_of", sha: "9fb001e94bac098a" }
 - { record: equipment.engine.ft.s2, at: "2026-10-17T15:56:09Z", status: draft, summary: "changed", sha: "8a0d7cf7b2a7418c" }
 - { record: equipment.engine.ft.s3, at: "2026-10-17T15:56:09Z", status: draft, summary: "changed", sha: "7966f326e30f78bc" }
 - { record: equipment.engine.nt.s1, at: "2026-10-13T01:51:30Z", status: draft, summary: "changed: visual", sha: "110a68ce2e357997" }
@@ -1707,10 +1707,10 @@
 - { record: planet-measure.hypsometric-integral, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "0f80f0612644b163" }
 - { record: planet-measure.local-relief-1km, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "a6b787b14ce91b28" }
 - { record: planet-measure.median-slope, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "2409937c99a38559" }
-- { record: planet-measure.rms-against-samples, at: "2026-10-17T15:56:09Z", status: "", summary: "first tracked", sha: "1b47bc79cd87aa38" }
+- { record: planet-measure.rms-against-samples, at: "2026-10-17T16:00:56Z", status: "", summary: "changed: ours", sha: "7d2c757550ce871a" }
 - { record: planet-measure.spectrum-slope, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "e7c2087911571642" }
 - { record: planet-measure.valley-spacing, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "d4dde745cde03b3f" }
-- { record: planet-model.anchor, at: "2026-10-17T15:56:09Z", status: "", summary: "first tracked", sha: "084556f4a0e6c5b1" }
+- { record: planet-model.anchor, at: "2026-10-17T16:00:56Z", status: "", summary: "changed: params, mesh, implementations, basis", sha: "c9adae30021bdde6" }
 - { record: planet-pattern.aeolian.dune.barchan, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "4fed3f7652690758" }
 - { record: planet-pattern.aeolian.dune.carbonate-eolianite, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "57787d270a7efd13" }
 - { record: planet-pattern.aeolian.dune.coastal-foredune, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "11531b3670b62a25" }
