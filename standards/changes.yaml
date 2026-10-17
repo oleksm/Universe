@@ -161,7 +161,7 @@
 - { record: connector.belt-transfer-650, at: "2026-10-17T00:57:55Z", status: draft, summary: "changed: visual", sha: "1b5648d671478d9f" }
 - { record: connector.belt-transfer-800, at: "2026-10-16T21:08:27Z", status: draft, summary: "changed", sha: "c77db1887011d319" }
 - { record: connector.belt-transfer-800-sealed, at: "2026-10-16T21:29:54Z", status: draft, summary: "changed", sha: "75625e6c93ee5bda" }
-- { record: connector.bus-joint-ac-27ka, at: "2026-10-16T23:54:33Z", status: draft, summary: "changed", sha: "a2897aac027dd901" }
+- { record: connector.bus-joint-ac-27ka, at: "2026-10-17T01:01:09Z", status: draft, summary: "changed: visual", sha: "9c108d4eeeb10698" }
 - { record: connector.bus-joint-ac-65ka, at: "2026-10-16T23:57:37Z", status: draft, summary: "changed", sha: "6d4e1704c820d26c" }
 - { record: connector.bus-joint-dc-44ka, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "2aa7fb48abaa51da" }
 - { record: connector.chute-dn1000, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "f8ce36f0bd5dba95" }
