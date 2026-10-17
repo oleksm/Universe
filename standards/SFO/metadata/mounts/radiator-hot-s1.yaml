@@ -8,7 +8,7 @@ identity:
   description: 'What a hull offers a hot radiator panel: the hull area it lies against stowed, the root hinge''s seats, and the engine''s coolant run to it.'
 envelope:
   length: 16.83
-  width: 8.42
+  width: 9.42
   height: 0.33
 bears:
   mass: 4465.0
