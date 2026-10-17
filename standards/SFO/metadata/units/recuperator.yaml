@@ -52,6 +52,7 @@ ports:
   connector: connector.flange-dn1000-pn16-double
   at: [0.0, -5.2, 16.75]
   facing: [0.0, -1.0, 0.0]
+product: product.recuperator
 envelope:
 - [-5.422, -2.422, -0.001, -0.578, 2.422, 16.501]
 - [0.578, -2.422, -0.001, 5.422, 2.422, 16.501]

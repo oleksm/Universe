@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../schema/product.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: product.radiator-field, name: Radiator field, description: 'Raised horizontal radiator panels filling a 48 m bay on airless ground, the loop''s headers round its edge.'}
+kind: family
+params:
+- {name: temperature, unit: K, description: the loop's water; at 400 K or more the headers are stainless}
+pieces:
+- {id: panel, description: one 5.5 x 11 m panel on its legs and rails}
+- {id: headers, description: 'the flow and return headers, branches and supports, by metal'}
+units: [unit.radiator-field-330k, unit.radiator-field-345k, unit.radiator-field-485k]
+basis:
+- of: [kind, params, pieces, options]
+  tier: invented
+  review: true
+  note: Grouped from the units the layouts use (docs/proposals/plant-products.md, 2026-10-16).

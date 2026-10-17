@@ -8,6 +8,7 @@ built_of:
 - {what: Band saws, item: good.electric-motors, mass: 81000.0, note: 'about 9 t a saw for a 0.5 m section, from memory'}
 - {what: Roller tables and scrap bins, item: material.structural-steel-a36, mass: 13500.0, note: from memory}
 needs: {power: 135000.0}
+product: product.crop-saws
 life: 788940000
 visual: {format: freefall-model/1, path: models/crop-saws/v1, manifest_sha256: a49ddbf3d07a5d7238142f67f465575aca4a1bbc12d454c9d46cd15805fc723a, version: 1, triangles: 34308}
 basis:

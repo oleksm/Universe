@@ -60,6 +60,7 @@ ports:
   connector: connector.flange-dn900-pn10
   at: [0.6, -4.0, 1.0]
   facing: [0.0, -1.0, 0.0]
+product: product.top-gas-condenser-8bar
 envelope:
 - [-3.951, 0.148, -0.001, -0.648, 3.451, 13.001]
 - [0.648, 0.148, -0.001, 3.951, 3.451, 13.001]

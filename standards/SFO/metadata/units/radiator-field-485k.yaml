@@ -49,6 +49,7 @@ ports:
   at: [-24.0, -1.4, 0.3]
   facing: [-1.0, 0.0, 0.0]
   note: its pump's terminal box, beside the headers
+product: product.radiator-field
 envelope:
 - [-23.509, -22.062, -0.001, 22.062, 22.062, 3.135]
 - [-23.652, -22.005, -0.001, -22.798, 22.005, 1.202]

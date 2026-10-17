@@ -67,6 +67,7 @@ ports:
   at: [2.0, -2.0, 1.0]
   facing: [0.0, -1.0, 0.0]
   note: the dust lock's drives
+product: product.offgas-cooler-sealed
 envelope:
 - [-1.576, -1.726, -0.001, 1.576, 1.726, 18.001]
 - [-3.001, -1.51, 8.9, -1.2, 1.51, 17.5]

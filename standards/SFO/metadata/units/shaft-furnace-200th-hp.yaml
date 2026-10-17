@@ -78,6 +78,7 @@ ports:
   at: [-4.7, 2.0, 12.0]
   facing: [-1.0, 0.0, 0.0]
   note: the drives' terminal box on the ring girder's west face
+product: product.shaft-furnace-200th
 envelope:
 - [-3.722, -3.722, 7.999, 3.722, 3.722, 32.001]
 - [-2.501, -2.501, 31.899, 2.501, 2.501, 40.001]

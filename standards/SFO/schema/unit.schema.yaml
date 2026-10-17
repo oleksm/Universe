@@ -84,6 +84,8 @@ properties:
         at: { type: array, items: { type: number }, minItems: 6, maxItems: 6, x-unit: "m" }
   ports: { type: array, items: { $ref: "#/definitions/port" }, description: "Where what it takes comes in and what it gives goes out, each built to a connector (SFO 25)." }
   life: { type: number, x-unit: "s" }
+  product: { type: string, x-ref: [product], description: "The product this unit is, as fitted: its model is the product's (or its family's generator's), sized as this unit is, with these options." }
+  options: { type: array, items: { type: string }, description: "The product's option kits this unit carries, by their ids." }
   visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
   revision:
     $ref: "../../common.schema.yaml#/definitions/record_revision"

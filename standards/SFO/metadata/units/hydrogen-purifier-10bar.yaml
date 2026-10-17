@@ -70,6 +70,7 @@ ports:
   connector: connector.termination-400v-500mm2
   at: [6.0, -3.5, 0.5]
   facing: [1.0, 0.0, 0.0]
+product: product.hydrogen-purifier
 envelope:
 - [-6.0, -4.0, 0.0, 6.0, 4.0, 8.74]
 life: 788940000

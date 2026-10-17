@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/product.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: product.eaf-vessel-80t, name: 'Arc furnace vessel, 80 t', description: 'An AC arc furnace tapping 80 t, on a tilting cradle.'}
+kind: product
+options:
+- {id: sealing, name: Sealing kit, description: 'roof clamps and flanges, electrode glands, a feed lock and a bellows off-gas joint, for airless ground'}
+units: [unit.eaf-vessel-80t, unit.eaf-vessel-80t-sealed]
+basis:
+- of: [kind, params, pieces, options]
+  tier: invented
+  review: true
+  note: Grouped from the units the layouts use (docs/proposals/plant-products.md, 2026-10-16).

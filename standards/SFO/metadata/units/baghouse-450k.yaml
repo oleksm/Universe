@@ -12,6 +12,7 @@ built_of:
 - {what: Stack, item: material.structural-steel-a36, mass: 51880.0, note: 'the tapered shell (12 to 8 mm) with its side entry, rim, base ring, closure and eight anchor chairs; measured on model v1; its wind loads not yet checked'}
 - {what: Stack ladder and platforms, item: material.structural-steel-a36, mass: 2000.0, note: 'a caged ladder and two rest platforms, from memory'}
 needs: {power: 666700.0}
+product: product.baghouse
 life: 788940000
 visual: {format: freefall-model/1, path: models/baghouse-450k/v1, manifest_sha256: 6ffe5db4255320ddfb83aaaf7b3bbdd63d7e3be915be9ebe9871e118dea43173, version: 1, triangles: 6988}
 basis:

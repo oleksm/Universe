@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/product.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: product.offgas-filter-sealed, name: 'Off-gas filter, sealed'}
+kind: product
+units: [unit.offgas-filter-sealed]
+basis:
+- of: [kind, params, pieces, options]
+  tier: invented
+  review: true
+  note: Grouped from the units the layouts use (docs/proposals/plant-products.md, 2026-10-16).

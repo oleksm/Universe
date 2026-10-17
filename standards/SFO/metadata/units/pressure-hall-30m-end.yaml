@@ -119,6 +119,7 @@ ports:
   at: [6.5, -8.6, 10.8]
   facing: [1.0, 0.0, 0.0]
   note: the locks' pumps
+product: product.pressure-hall
 envelope:
 - [0.0, -12.5, 0.0, 5.5, 12.5, 7.5]
 - [5.0, -7.25, 7.15, 9.0, -4.75, 9.65]

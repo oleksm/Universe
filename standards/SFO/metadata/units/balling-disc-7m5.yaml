@@ -43,6 +43,7 @@ ports:
   connector: connector.termination-400v-70mm2
   at: [4.5, 1.0, 0.5]
   facing: [1.0, 0.0, 0.0]
+product: product.balling-disc-7m5
 envelope:
 - [-4.501, -4.551, -0.001, 4.501, 3.901, 6.51]
 - [-1.051, -0.181, 0.48, 0.751, 3.571, 7.001]

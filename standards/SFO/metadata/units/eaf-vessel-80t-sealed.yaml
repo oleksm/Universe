@@ -96,6 +96,8 @@ ports:
   connector: connector.flange-dn400-pn10
   at: [-3.4, 4.95, 0.5]
   facing: [0.0, 0.0, 1.0]
+product: product.eaf-vessel-80t
+options: [sealing]
 envelope:
 - [-5.851, -4.501, -0.001, 5.851, 4.501, 2.512]
 - [-5.077, -3.743, 1.798, 4.802, 3.743, 7.302]

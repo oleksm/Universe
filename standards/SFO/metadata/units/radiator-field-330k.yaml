@@ -43,6 +43,7 @@ ports:
   at: [-21.8, -24.0, 0.3]
   facing: [0.0, -1.0, 0.0]
   note: its circulating pump
+product: product.radiator-field
 envelope:
 - [-22.65, -22.061, -0.001, 22.65, 22.061, 3.135]
 - [-24.016, -22.01, -0.001, -21.949, 23.111, 2.85]

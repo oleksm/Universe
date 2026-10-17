@@ -467,7 +467,7 @@ def write(path, d):
         if m:
             vis = m.group(0)
             d = {k: v for k, v in d.items() if k != "visual"}
-    head = {"plant-mounts": "plant-mount", "units": "unit", "layouts": "layout", "connectors": "connector", "runs": "run"}[path.split("/")[-2]]
+    head = {"plant-mounts": "plant-mount", "units": "unit", "layouts": "layout", "connectors": "connector", "runs": "run", "products": "product"}[path.split("/")[-2]]
     dump = lambda x: yaml.safe_dump(x, sort_keys=False, width=1000, allow_unicode=True, default_flow_style=None) if x else ""
     with open(path, "w", encoding="utf-8") as f:
         f.write(f"# yaml-language-server: $schema=../../schema/{head}.schema.yaml\n# Written by tools/standards/plants.py: change it there.\n")
@@ -515,6 +515,9 @@ def unit_record(slug, u):
         d["recipes"] = u["recipes"]
     if u.get("ports"):
         d["ports"] = u["ports"]
+    for k in ("product", "options"):
+        if u.get(k):
+            d[k] = u[k]
     if f"unit.{slug}" in ENVELOPES:
         env = ENVELOPES[f"unit.{slug}"]
         if [e for e in env if isinstance(e, list)]:
@@ -4540,6 +4543,104 @@ def mounts_for(bays, recs):
     return mounts
 
 
+# The plant products (docs/proposals/plant-products.md): each unit is a product at its params with its options. A family is
+# one generator sized by its params; a product one model, its variants set by params or option kits.
+PRODUCTS = {
+    "cooling-tower": ("family", "Cooling tower", "An induced-draught wet tower of 12 m cells over a sunk basin, the loop's pumps and plate exchanger on a skid within it.",
+                      [("cells", "count", "12 m cells side by side"), ("heat", "W", "the loop's heat at a 10 K rise")],
+                      [("cell", "one 12 m cell: frame, fill, eliminators, fan deck, fan"), ("pump-skid", "the loop's pumps and plate exchanger")], []),
+    "radiator-field": ("family", "Radiator field", "Raised horizontal radiator panels filling a 48 m bay on airless ground, the loop's headers round its edge.",
+                       [("temperature", "K", "the loop's water; at 400 K or more the headers are stainless")],
+                       [("panel", "one 5.5 x 11 m panel on its legs and rails"), ("headers", "the flow and return headers, branches and supports, by metal")], []),
+    "transformer": ("family", "Power transformer", "An oil-filled transformer in a closed tank, its size by its rating, cooled by oil to water.",
+                    [("rating", "VA", ""), ("primary", "V", ""), ("secondary", "V", "")],
+                    [("tank", "the tank, core and windings, scaled by rating"), ("bushings", "a set of HV or LV bushings")],
+                    [("hv-cable-box", "HV cable box", "a box over the HV bushings with a gland plate on top"), ("lv-cable-box", "LV cable box", "a box over the secondary pads with a gland plate"), ("bus-pads", "Bus joint pads", "secondary pads at a bus joint's phase pitch")]),
+    "baghouse": ("family", "Fume baghouse", "Filter bags in closed compartments over hoppers, fans and stacks at one end.",
+                 [("flow", "m3/s", "")], [("compartment", "a compartment of bags over its hopper"), ("fan-end", "the fans, stacks and their bay")], []),
+    "overhead-crane": ("family", "Overhead crane", "A double-girder bridge with end carriages and a trolley; on a hall's runways, or on its own legs as a gantry.",
+                       [("capacity", "kg", ""), ("span", "m", ""), ("gravity", "m/s2", "the site's it is sized for")],
+                       [("bridge", "the girder pair and end carriages, by span and capacity"), ("trolley", "the trolley and hoist, by capacity")],
+                       [("gantry-legs", "Gantry legs", "four box legs and two sill beams on ground rails"), ("ladle-beam", "Ladle beam", ""), ("stripping-tongs", "Stripping tongs", "pads that hold a mould down and a hook for the hot top's eye"), ("ingot-tongs", "Ingot tongs", "")]),
+    "rail-car": ("family", "Rail car", "A self-propelled flat car on bogies, its frame by its load and length, with a payload fixture.",
+                 [("load", "kg", ""), ("length", "m", ""), ("gauge", "m", "")],
+                 [("chassis", "the frame, deck and bogies")],
+                 [("ladle-seat", "Ladle seat", ""), ("slag-pot", "Slag pot", "a 10 m3 pot on its seat"), ("mould-set", "Mould set", "twelve moulds on their stools"), ("ingot-deck", "Ingot deck", "")]),
+    "electrolyser-block": ("product", "Electrolyser block", "Alkaline electrolysis stacks with their separators in a block.", [("pressure", "Pa", "its class")], [], []),
+    "pressure-hall": ("family", "Pressure hall", "A tube hall of welded rings holding a gas at pressure on airless ground, built of sections and two heads.",
+                      [("diameter", "m", ""), ("sections", "count", "")], [("section", "a 30 m section"), ("head", "a domed head with its nozzles and service panel")], []),
+    "eaf-vessel-80t": ("product", "Arc furnace vessel, 80 t", "An AC arc furnace tapping 80 t, on a tilting cradle.", [],
+                       [], [("sealing", "Sealing kit", "roof clamps and flanges, electrode glands, a feed lock and a bellows off-gas joint, for airless ground")]),
+    "ladle-furnace-80t": ("product", "Ladle furnace, 80 t", "A gantry over the ladle rail with a water-cooled roof and three electrodes.", [], [], [("sealing", "Sealing kit", "a rim seal, electrode glands, roof locks and an alloy lock, for argon under the roof")]),
+    "shaft-furnace-200th": ("product", "Hydrogen shaft furnace, 200 t an hour", "A refractory-lined shaft reducing pellets by hydrogen.", [("pressure", "Pa", "its loop's class"), ("discharge", "", "cold or hot")], [], []),
+    "recycle-compressor": ("product", "Recycle compressor", "A hydrogen loop's compressor.", [("power", "W", ""), ("pressure", "Pa", "")], [], []),
+    "gas-heater": ("product", "Hydrogen heater", "An electric heater for a reducing gas loop.", [("power", "W", ""), ("pressure", "Pa", "")], [], []),
+    "hydrogen-purifier": ("product", "Hydrogen purifier", "Drying and deoxidising the electrolysers' hydrogen.", [("pressure", "Pa", "")], [], []),
+    "water-treatment": ("product", "Water treatment", "Polishing water for the electrolysers.", [], [], [("sealing", "Sealing kit", "closed tanks and vents, for airless ground")]),
+    "sampling-lab": ("product", "Sampling laboratory", "A small laboratory testing ingots' chemistry.", [], [], [("pressure-shell", "Pressurised shell", "a sealed shell at 1 bar with an airlock, for airless ground")]),
+    "crating-line": ("product", "Crating line", "Packing ingots into crates.", [("crate", "", "the crate it packs")], [], []),
+}
+MEMBERS = {   # unit slug: (product, params, options)
+    "cooling-tower": ("cooling-tower", {"cells": 2}, []), "cooling-tower-1cell": ("cooling-tower", {"cells": 1}, []), "cooling-tower-pellet": ("cooling-tower", {"cells": 1}, []),
+    "cooling-tower-h2": ("cooling-tower", {"cells": 3}, []), "cooling-tower-shaft": ("cooling-tower", {"cells": 4}, []),
+    "radiator-field-330k": ("radiator-field", {"temperature": 330.0}, []), "radiator-field-345k": ("radiator-field", {"temperature": 345.0}, []), "radiator-field-485k": ("radiator-field", {"temperature": 485.0}, []),
+    "furnace-transformer-14mva": ("transformer", {"rating": 14e6}, ["hv-cable-box", "bus-pads"]), "furnace-transformer-90mva": ("transformer", {"rating": 90e6}, ["hv-cable-box", "bus-pads"]),
+    "heater-transformer-131mva": ("transformer", {"rating": 131e6}, ["hv-cable-box"]), "rectifier-transformer-21mva": ("transformer", {"rating": 21e6}, ["hv-cable-box"]),
+    "plant-transformer-35mva": ("transformer", {"rating": 35e6}, ["hv-cable-box", "lv-cable-box"]),
+    "baghouse-200k": ("baghouse", {"flow": 200000 / 3600}, []), "baghouse-450k": ("baghouse", {"flow": 450000 / 3600}, []), "baghouse-800k": ("baghouse", {"flow": 800000 / 3600}, []),
+    "hall-crane-20t": ("overhead-crane", {"capacity": 20000.0, "span": 22.8}, []), "ladle-crane-150t": ("overhead-crane", {"capacity": 150000.0, "span": 22.8}, ["ladle-beam"]),
+    "mill-crane-30t": ("overhead-crane", {"capacity": 30000.0, "span": 22.8}, []), "stack-crane-20t": ("overhead-crane", {"capacity": 20000.0, "span": 22.8}, []),
+    "stripper-crane-20t": ("overhead-crane", {"capacity": 20000.0, "span": 22.8}, ["stripping-tongs"]), "ingot-crane-10t": ("overhead-crane", {"capacity": 10000.0, "span": 22.8}, ["ingot-tongs"]),
+    "gantry-crane-20t-moon": ("overhead-crane", {"capacity": 20000.0, "span": 24.0, "gravity": 2.0}, ["gantry-legs"]), "gantry-crane-150t-moon": ("overhead-crane", {"capacity": 150000.0, "span": 24.0, "gravity": 2.0}, ["gantry-legs", "ladle-beam"]),
+    "stripper-gantry-20t-moon": ("overhead-crane", {"capacity": 20000.0, "span": 24.0, "gravity": 2.0}, ["gantry-legs", "stripping-tongs"]), "ingot-gantry-10t-moon": ("overhead-crane", {"capacity": 10000.0, "span": 24.0, "gravity": 2.0}, ["gantry-legs", "ingot-tongs"]),
+    "ladle-car-80t": ("rail-car", {"load": 80000.0, "length": 6.0, "gauge": 3.0}, ["ladle-seat"]), "slag-pot-car": ("rail-car", {"length": 5.0, "gauge": 2.5}, ["slag-pot"]),
+    "mould-car-12": ("rail-car", {"length": 6.0}, ["mould-set"]), "ingot-car-40t": ("rail-car", {"load": 40000.0, "length": 8.0, "gauge": 2.0}, ["ingot-deck"]),
+    "electrolyser-block-20mw": ("electrolyser-block", {"pressure": 1e5}, []), "electrolyser-block-20mw-10bar": ("electrolyser-block", {"pressure": 10e5}, []),
+    "pressure-hall-30m": ("pressure-hall", {"diameter": 30.0}, []), "pressure-hall-30m-end": ("pressure-hall", {"diameter": 30.0}, []),
+    "eaf-vessel-80t": ("eaf-vessel-80t", {}, []), "eaf-vessel-80t-sealed": ("eaf-vessel-80t", {}, ["sealing"]),
+    "ladle-furnace-80t": ("ladle-furnace-80t", {}, []), "ladle-furnace-80t-sealed": ("ladle-furnace-80t", {}, ["sealing"]),
+    "shaft-furnace-200th": ("shaft-furnace-200th", {"pressure": 1e5, "discharge": "cold"}, []), "shaft-furnace-200th-hp": ("shaft-furnace-200th", {"pressure": 8.5e5, "discharge": "hot"}, []),
+    "recycle-compressor": ("recycle-compressor", {"pressure": 1e5}, []), "recycle-compressor-8bar": ("recycle-compressor", {"pressure": 8.5e5}, []),
+    "gas-heater-122mw": ("gas-heater", {"power": 122e6, "pressure": 1e5}, []), "gas-heater-119mw-8bar": ("gas-heater", {"power": 119e6, "pressure": 8.5e5}, []),
+    "hydrogen-purifier": ("hydrogen-purifier", {"pressure": 1e5}, []), "hydrogen-purifier-10bar": ("hydrogen-purifier", {"pressure": 10e5}, []),
+    "water-treatment": ("water-treatment", {}, []), "water-treatment-sealed": ("water-treatment", {}, ["sealing"]),
+    "sampling-lab": ("sampling-lab", {}, []), "sampling-lab-sealed": ("sampling-lab", {}, ["pressure-shell"]),
+    "crating-line": ("crating-line", {"crate": "timber"}, []), "crating-line-steel": ("crating-line", {"crate": "steel"}, []),
+}
+
+
+def products(us):
+    """Product records, and each unit's product, params and options (set on `us`). Units not in a family or a
+    shared product are each their own product."""
+    out = {}
+    for slug, u in us.items():
+        if slug not in MEMBERS:
+            MEMBERS[slug] = (slug, {}, [])
+            if slug not in PRODUCTS:
+                PRODUCTS[slug] = ("product", u["name"], "", [], [], [])
+    for slug, (pk, params, opts) in MEMBERS.items():
+        if slug not in us:
+            continue
+        us[slug]["product"] = f"product.{pk}"
+        if opts:
+            us[slug]["options"] = list(opts)
+    for pk, (kind, name, desc, params, pieces, opts) in PRODUCTS.items():
+        members = sorted(f"unit.{s}" for s, (p, _, _) in MEMBERS.items() if p == pk and s in us)
+        if not members:
+            continue
+        d = {"identity": {"key": f"product.{pk}", "name": name} | ({"description": desc} if desc else {}), "kind": kind}
+        if params:
+            d["params"] = [{"name": n} | ({"unit": un} if un else {}) | ({"description": de} if de else {}) for n, un, de in params]
+        if pieces:
+            d["pieces"] = [{"id": i, "description": de} for i, de in pieces]
+        if opts:
+            d["options"] = [{"id": i, "name": n} | ({"description": de} if de else {}) for i, n, de in opts]
+        d["units"] = members
+        d["basis"] = [{"of": ["kind", "params", "pieces", "options"], "tier": "invented", "review": True, "note": "Grouped from the units the layouts use (docs/proposals/plant-products.md, 2026-10-16)."}]
+        out[pk] = d
+    return out
+
+
 def looks_alike(recs):
     """Kit records that look the same share one model: a run by its kind, outside and material, a connector by its kind,
     size and material. Each group's model is the one a member already has (else the first by key); the others point at
@@ -4605,6 +4706,7 @@ def main():
     arc_ports(us)
     ladle_ports(us)
     air_ports(us)
+    prods = products(us)
     recs = {slug: unit_record(slug, u) for slug, u in us.items()}
     layouts = {"arc-furnace-air": arc_furnace_air(us, recs), "ladle-station-air": ladle_station_air(us, recs), "casting-bay-air": casting_bay_air(us, recs), "shaft-furnace-air": shaft_furnace_air(us, recs), "hydrogen-plant-air": hydrogen_plant_air(us, recs), "pellet-plant-air": pellet_plant_air(us, recs), "ore-yard-air": ore_yard_air(us, recs), "ingot-yard-air": ingot_yard_air(us, recs), "arc-furnace-airless": arc_furnace_airless(us, recs),
                "ladle-station-airless": ladle_station_airless(us, recs), "casting-bay-airless": casting_bay_airless(us, recs),
@@ -4618,6 +4720,8 @@ def main():
     for slug, (d, _) in layouts.items():
         cover_model(S + f"layouts/{slug}.yaml", d)
         write(S + f"layouts/{slug}.yaml", d)
+    for slug, d in prods.items():
+        write(S + f"products/{slug}.yaml", d)
     for folder, slug, d in looks_alike(list(kit.records())):
         write(S + f"{folder}/{slug}.yaml", d)
     print(f"{len(mounts)} mounts, {len(recs)} units, {len(layouts)} layouts")

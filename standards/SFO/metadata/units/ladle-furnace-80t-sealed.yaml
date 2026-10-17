@@ -117,6 +117,8 @@ ports:
   at: [-5.5, -2.5, 1.5]
   facing: [-1.0, 0.0, 0.0]
   note: fed under the roof to about 50 kPa
+product: product.ladle-furnace-80t
+options: [sealing]
 envelope:
 - [-5.501, -4.902, -0.001, -4.499, 4.902, 12.001]
 - [-5.251, -5.001, 11.599, 5.251, 5.001, 12.801]

@@ -2603,6 +2603,7 @@ _REG = [("mounts", "Mounts", "SFO", os.path.join("SFO", "metadata", "mounts"), "
         ("layouts", "Plant layouts", "SFO", os.path.join("SFO", "metadata", "layouts"), "SFO/schema/layout.schema.yaml", "SFO 24"),
         ("connectors", "Plant connectors", "SFO", os.path.join("SFO", "metadata", "connectors"), "SFO/schema/connector.schema.yaml", "SFO 25"),
         ("runs", "Plant runs", "SFO", os.path.join("SFO", "metadata", "runs"), "SFO/schema/run.schema.yaml", "SFO 25"),
+        ("products", "Plant products", "SFO", os.path.join("SFO", "metadata", "products"), "SFO/schema/product.schema.yaml", "SFO 24"),
         ("buildings", "Buildings", "SFO", os.path.join("SFO", "metadata", "buildings"), "SFO/schema/building.schema.yaml", None),
         ("markets", "Markets", "SFO", os.path.join("SFO", "metadata", "markets"), "SFO/schema/market.schema.yaml", None),
         ("structures", "Structures", "SFO", os.path.join("SFO", "metadata", "structures"), "SFO/schema/structure.schema.yaml", None),

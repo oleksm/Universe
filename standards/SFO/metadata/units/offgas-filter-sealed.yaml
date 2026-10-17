@@ -47,6 +47,7 @@ ports:
   at: [5.0, 0.0, 1.0]
   facing: [1.0, 0.0, 0.0]
   note: on its frame's east post
+product: product.offgas-filter-sealed
 envelope:
 - [-2.577, -2.876, -0.001, 2.577, 2.876, 10.001]
 - [-6.001, -0.701, 7.149, -1.899, 1.505, 8.701]

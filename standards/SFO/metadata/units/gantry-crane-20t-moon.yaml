@@ -10,6 +10,8 @@ built_of:
 - {what: Legs and sill beams, item: material.structural-steel-a36, mass: 50800.0, note: 'four box legs 0.8 x 0.8 m, 20 mm, from the sills'' tops at z 1 to 22, and two sill beams 9.8 m; measured on model v1'}
 - {what: 'Rails, stops, plates, braces and hangers', item: material.structural-steel-a36, mass: 11330.0, note: 'the trolley''s rails and stops, the end plates, the legs'' braces and the festoon hangers; measured on model v1'}
 needs: {power: 40000.0}
+product: product.overhead-crane
+options: [gantry-legs]
 envelope:
 - [-2.202, -12.501, 21.9, 2.202, 12.501, 23.701]
 - [-4.902, -12.571, -0.041, 4.902, -11.429, 22.001]

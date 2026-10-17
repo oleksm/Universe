@@ -50,6 +50,7 @@ ports:
   at: [6.0, -4.4, 0.5]
   facing: [0.0, -1.0, 0.0]
   note: the motor's terminal box
+product: product.ball-mill-4m4
 envelope:
 - [-5.351, -2.242, -0.001, 5.351, 2.242, 5.241]
 - [2.199, -3.751, -0.202, 2.857, 3.202, 6.201]

@@ -48,6 +48,8 @@ ports:
   connector: connector.flange-dn100-pn10
   at: [-3.76, -2.38, 2.35]
   facing: [-1.0, 0.0, 0.0]
+product: product.transformer
+options: [hv-cable-box, bus-pads]
 envelope:
 - [-3.702, -2.202, -0.001, 4.015, 1.712, 4.806]
 - [-1.501, -1.252, 4.478, 1.501, -0.448, 6.801]

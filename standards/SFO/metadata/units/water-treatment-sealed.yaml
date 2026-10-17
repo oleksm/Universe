@@ -54,6 +54,8 @@ ports:
   connector: connector.termination-400v-25mm2
   at: [-6.0, -3.4, 0.5]
   facing: [-1.0, 0.0, 0.0]
+product: product.water-treatment
+options: [sealing]
 envelope:
 - [-6.0, -4.0, 0.0, 6.0, 4.0, 5.02]
 life: 788940000

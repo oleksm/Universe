@@ -53,6 +53,7 @@ ports:
   at: [3.0, 0.0, 1.0]
   facing: [1.0, 0.0, 0.0]
   note: a terminal box on its east legs' brace, the feeder's cable up the leg
+product: product.dri-bin-200t
 envelope:
 - [-2.781, -3.451, 5.749, 2.781, 2.827, 15.302]
 - [-3.001, -3.001, -0.001, 3.001, -2.299, 11.302]

@@ -103,6 +103,7 @@ ports:
   at: [0.0, 5.5, 8.0]
   facing: [0.0, 1.0, 0.0]
   note: the torches' supplies
+product: product.pellet-shaft-63th
 envelope:
 - [-3.4, -3.4, 0, 3.4, 3.4, 29.5]
 - [-5.75, -3.4, 0, -3.4, 3.5, 17.6]

@@ -18,6 +18,7 @@ built_of:
 - {what: Terminal house base, item: material.structural-steel-a36, mass: 2846.0, note: measured on model v1}
 - {what: 'Terminals, thyristor sets and controls', item: good.electric-motors, mass: 10000.0, note: from memory}
 needs: {power: 124800000.0}
+product: product.gas-heater
 life: 788940000
 visual: {format: freefall-model/1, path: models/gas-heater-122mw/v1, manifest_sha256: 273834c6e66616924fda57b296b0ec4a6f062351267a470ebca9ab29d10e6427, version: 1, triangles: 51550}
 basis:

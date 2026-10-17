@@ -30,6 +30,7 @@ ports:
   connector: connector.termination-400v-25mm2
   at: [-3.3, -2.6, 1.2]
   facing: [-1.0, 0.0, 0.0]
+product: product.degassing-stand
 envelope:
 - [-0.602, -4.101, -0.001, 0.947, -2.899, 6.302]
 - [-1.822, -3.501, 5.399, 1.822, 1.822, 6.452]

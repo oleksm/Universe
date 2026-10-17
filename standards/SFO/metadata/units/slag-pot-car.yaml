@@ -10,6 +10,8 @@ built_of:
 - {what: Drives, item: good.electric-motors, mass: 1500.0, note: from memory}
 holds: 12000.0
 needs: {power: 30000.0}
+product: product.rail-car
+options: [slag-pot]
 envelope:
 - [-1.541, -1.742, 1.575, 1.541, 1.742, 3.402]
 - [-2.501, -1.751, -0.042, 2.501, 1.751, 2.011]

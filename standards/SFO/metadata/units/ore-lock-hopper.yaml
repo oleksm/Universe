@@ -47,6 +47,7 @@ ports:
   connector: connector.termination-400v-16mm2
   at: [3.0, 0.0, 0.5]
   facing: [1.0, 0.0, 0.0]
+product: product.ore-lock-hopper
 envelope:
 - [-2.81, -2.81, 0, 2.81, -2.19, 11.31]
 - [-2.81, 2.19, 0, 2.81, 2.81, 11.31]

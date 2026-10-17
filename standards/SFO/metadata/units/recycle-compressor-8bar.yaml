@@ -55,6 +55,7 @@ ports:
   connector: connector.flange-dn100-pn10
   at: [-6.0, -1.6, 0.6]
   facing: [-1.0, 0.0, 0.0]
+product: product.recycle-compressor
 envelope:
 - [-1.551, -2.601, 0.949, 1.551, 2.402, 4.052]
 - [-6.001, -2.902, -0.001, 6.001, 2.902, 1.541]

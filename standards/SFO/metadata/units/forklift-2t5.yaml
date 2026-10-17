@@ -7,6 +7,7 @@ built_of:
 - {what: Chassis and counterweight, item: material.structural-steel-a36, mass: 3200.0, note: from memory}
 - {what: 'Mast, motors and battery', item: good.electric-motors, mass: 1000.0, note: from memory}
 needs: {power: 8000.0}
+product: product.forklift-2t5
 life: 788940000
 visual: {format: freefall-model/1, path: models/forklift-2t5/v1, manifest_sha256: 1d5dce1a9e5c1c83b21b90416975f8769826867e830c1afb9909546bdf8fe50e, version: 1, triangles: 4644}
 basis:

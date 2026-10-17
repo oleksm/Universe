@@ -19,6 +19,7 @@ ports:
   at: [3.0, 0.0, 2.3]
   facing: [1.0, 0.0, 0.0]
   note: a gland on a pad on its +x end's dome, on the axis; the cable through the berm
+product: product.crew-post
 envelope:
 - [-0.799, -2.001, 0.298, 3.001, 2.001, 4.302]
 - [-3.022, -1.202, 1.098, -0.549, 1.202, 3.501]

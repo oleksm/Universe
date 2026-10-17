@@ -30,6 +30,7 @@ ports:
   connector: connector.termination-400v-35mm2
   at: [6.3, 0.0, 1.0]
   facing: [1.0, 0.0, 0.0]
+product: product.alloy-bins-8
 envelope:
 - [-6.282, -1.781, -0.001, 6.282, -1.219, 12.001]
 - [-6.282, 1.219, -0.001, 6.282, 1.781, 12.001]

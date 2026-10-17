@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/product.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: product.overhead-crane, name: Overhead crane, description: 'A double-girder bridge with end carriages and a trolley; on a hall''s runways, or on its own legs as a gantry.'}
+kind: family
+params:
+- {name: capacity, unit: kg}
+- {name: span, unit: m}
+- {name: gravity, unit: m/s2, description: the site's it is sized for}
+pieces:
+- {id: bridge, description: 'the girder pair and end carriages, by span and capacity'}
+- {id: trolley, description: 'the trolley and hoist, by capacity'}
+options:
+- {id: gantry-legs, name: Gantry legs, description: four box legs and two sill beams on ground rails}
+- {id: ladle-beam, name: Ladle beam}
+- {id: stripping-tongs, name: Stripping tongs, description: pads that hold a mould down and a hook for the hot top's eye}
+- {id: ingot-tongs, name: Ingot tongs}
+units: [unit.gantry-crane-150t-moon, unit.gantry-crane-20t-moon, unit.hall-crane-20t, unit.ingot-crane-10t, unit.ingot-gantry-10t-moon, unit.ladle-crane-150t, unit.mill-crane-30t, unit.stack-crane-20t, unit.stripper-crane-20t, unit.stripper-gantry-20t-moon]
+basis:
+- of: [kind, params, pieces, options]
+  tier: invented
+  review: true
+  note: Grouped from the units the layouts use (docs/proposals/plant-products.md, 2026-10-16).

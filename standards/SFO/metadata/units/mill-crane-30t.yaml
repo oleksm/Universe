@@ -8,6 +8,7 @@ built_of:
 - {what: Trolley and hoist, item: material.structural-steel-a36, mass: 9000.0, note: 'with a main hoist: 30% of the load, from memory'}
 - {what: End carriages and drives, item: good.electric-motors, mass: 4500.0, note: '15% of the load, from memory'}
 needs: {power: 60000.0}
+product: product.overhead-crane
 envelope:
 - [-2.201, -11.701, 0.599, -1.399, 11.701, 2.421]
 - [1.399, -11.701, 0.599, 2.201, 11.701, 2.421]

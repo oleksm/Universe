@@ -73,6 +73,7 @@ ports:
   at: [10.0, -6.0, 0.5]
   facing: [0.0, -1.0, 0.0]
   note: the fan
+product: product.pellet-gas-loop
 envelope:
 - [-11.1, -2.1, 0, -6.7, 2.1, 13.1]
 - [-7.6, -2.2, 0, 0.1, 2.2, 13.5]

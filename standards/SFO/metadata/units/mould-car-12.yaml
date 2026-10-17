@@ -12,6 +12,8 @@ built_of:
 - {what: Bogies and drive, item: good.electric-motors, mass: 3000.0, note: from memory}
 holds: 22160.0
 needs: {power: 30000.0}
+product: product.rail-car
+options: [mould-set]
 life: 788940000
 visual: {format: freefall-model/1, path: models/mould-car-12/v1, manifest_sha256: 3ed158435a215e553246ff91bc0a073b7d0c12fcf9c3bdb1c6e311f7829cf210, version: 1, triangles: 10192}
 basis:

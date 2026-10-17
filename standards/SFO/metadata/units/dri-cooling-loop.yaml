@@ -12,6 +12,7 @@ built_of:
 - {what: 'Supports, skids and seats', item: material.structural-steel-a36, mass: 17100.0, note: 'the cooler''s legs, the machine skid and seats, the pipes'' feet and braces; measured on model v1'}
 - {what: Compressor and motor, item: good.electric-motors, mass: 18790.0, note: from memory}
 needs: {power: 1796000.0, heat: 32840000.0}
+product: product.dri-cooling-loop
 life: 788940000
 visual: {format: freefall-model/1, path: models/dri-cooling-loop/v1, manifest_sha256: 173747509218d3e143bc3b3f90eda330ac4ae768f71b49ab2022f0d1fc2249ff, version: 1, triangles: 8764}
 basis:

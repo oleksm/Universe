@@ -9,6 +9,7 @@ built_of:
 - {what: Fans and motors, item: good.electric-motors, mass: 24000.0, note: 'one 10 m fan a cell, from memory'}
 - {what: Loop pumps and exchanger, item: good.pumps, mass: 25000.0, note: from memory}
 needs: {power: 675400.0, water: 18.01}
+product: product.cooling-tower
 life: 788940000
 visual: {format: freefall-model/1, path: models/cooling-tower-shaft-1/v1, manifest_sha256: 35be38a48538288af3957fa9984642961abfdd1e88e8d4841e4ae92d3cbf6833, version: 1, triangles: 16768}
 basis:
