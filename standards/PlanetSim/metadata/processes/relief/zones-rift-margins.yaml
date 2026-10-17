@@ -2,14 +2,11 @@
 identity:
   key: planet-process.zones-rift-margins
   name: Rift margins when a plate breaks
-  about: 'When a plate is cut in two: the continental particles within 0.6 gap of the cut (|f| < 0.6 gap); if at least 3,
-    one ''rift'' event and, for each half with >= 3 such particles, one ''rift margin'' line (sides [this half''s plate, the
-    other]) made from them and finished at once (Store.finish, LINK, smooth 0.7 gap); then relief.rift_features on the finished
-    margins.'
+  about: 'When a plate is cut in two: the continental particles within 0.6 gap of the cut (|f| < 0.6 gap); if at least 3, one ''rift'' event and, for each half with >= 3 such particles, one ''rift margin'' line (sides [this half''s
+    plate, the other]) made from them and finished at once (Store.finish, LINK, smooth 0.7 gap); then relief.rift_features on the finished margins.'
 area: relief
 clock:
-  when: on each plate break, plates.py:457-458 (rift()); t is sim time in Gyr since formation (code converts with *1e3 to
-    Myr)
+  when: on each plate break, plates.py:457-458 (rift()); t is sim time in Gyr since formation (code converts with *1e3 to Myr)
 reads:
 - name: 'rift events (planet-event.rift: plate, new)'
 - name: particle positions
@@ -25,6 +22,10 @@ reads:
   field: planet-field.plate-rotation
   unit: '1'
   meaning: 'each plate''s rotation: where the features'' pins stand'
+- name: w.plate
+  field: planet-field.plate
+  unit: '1'
+  meaning: the plate each sample reads (forge main's code reads it)
 writes:
 - name: features (planet-feature.rift-margin)
   meaning: one per half (and linked group), ended at once, the rift's key in the trigger
@@ -101,15 +102,13 @@ basis:
   - reads
   - writes
   tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
-    from the code at planet-sim-landform 9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read from the code at planet-sim-landform 9747f0d-c437724.'
 - of:
   - reads
   - writes
   - params
   tier: derived
-  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
-    9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform 9747f0d-c437724.'
 cautions:
-- 'the Python''s reads were its line store''s internals: f (signed distance of each sel particle to the cut, rad); w.xcont;
-  gap = sphere.spacing(n) of the current lattice, radians on the unit sphere (x R = metres); refined as the present nears'
+- 'the Python''s reads were its line store''s internals: f (signed distance of each sel particle to the cut, rad); w.xcont; gap = sphere.spacing(n) of the current lattice, radians on the unit sphere (x R = metres); refined as the present
+  nears'
