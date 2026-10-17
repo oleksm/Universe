@@ -159,6 +159,11 @@ One model draws every size of a kit family (`standards/SFO/metadata/templates/`)
 - **Real shape first:** if the reference's figures are not what the real part measures, model the real part and send the
   measured sides; the registry changes the family's rule, never the model.
 - A sweep template (hose, cable, conductor rail's housing) has no model: the game sweeps its profile.
+- **Panels** (building panels' templates): one root node `body`, static. A wall or partition stands with its foot at
+  y = 0, its face along X centred on x = 0, its thickness along Z centred on the frame's grid line (z = 0), outside
+  face toward +Z. A floor's walking plane is y = 0, the cassette below it; a roof sits on the frame's top, its underside
+  at y = 0. A stair's foot is y = 0 at the lower floor, rising along +X. Doors and windows closed.
+- **Furniture** (unit.furniture-*): one root node `body`, its feet at y = 0, centred in X and Z, its front toward -Z.
 
 ## Rework: what an installed model lacks, and redoing it
 
