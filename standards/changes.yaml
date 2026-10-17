@@ -885,7 +885,7 @@
 - { record: law.tube-time, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "934385090028c5e6" }
 - { record: law.year, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "29f1ef4424e5cc98" }
 - { record: layout.arc-furnace-air, at: "2026-10-16T23:29:49Z", status: draft, summary: "changed", sha: "99dfd3c7c060b482" }
-- { record: layout.arc-furnace-airless, at: "2026-10-17T00:03:48Z", status: draft, summary: "changed", sha: "28b2c81e7772372b" }
+- { record: layout.arc-furnace-airless, at: "2026-10-17T00:13:10Z", status: draft, summary: "changed", sha: "cba354298d6ebf55" }
 - { record: layout.casting-bay-air, at: "2026-10-15T02:26:46Z", status: draft, summary: "changed: physical", sha: "64ae565ca9d653a2" }
 - { record: layout.casting-bay-airless, at: "2026-10-16T23:51:31Z", status: draft, summary: "changed", sha: "28a43036290ae877" }
 - { record: layout.hydrogen-plant-air, at: "2026-10-16T15:26:56Z", status: draft, summary: "changed: physical, totals", sha: "3c89fd0fb0567a1c" }
@@ -1641,7 +1641,7 @@
 - { record: run.pipe-dn150-pn10, at: "2026-10-16T12:02:30Z", status: draft, summary: "changed: cap", sha: "0e7a09407e4c43d9" }
 - { record: run.pipe-dn150-pn10-ss, at: "2026-10-16T17:53:48Z", status: draft, summary: "changed", sha: "e59e7d60370c7cc4" }
 - { record: run.pipe-dn150-pn16-ss-double, at: "2026-10-16T17:53:48Z", status: draft, summary: "changed", sha: "95b720d8f0de6741" }
-- { record: run.pipe-dn150-pn25-mli, at: "2026-10-16T23:10:29Z", status: draft, summary: "first tracked", sha: "70517d7cd97c898f" }
+- { record: run.pipe-dn150-pn25-mli, at: "2026-10-17T00:13:10Z", status: draft, summary: "changed: visual", sha: "e5d35f2c436a5316" }
 - { record: run.pipe-dn1600-pn16-mli-double, at: "2026-10-16T13:14:09Z", status: draft, summary: "changed", sha: "9a4ddf4444ce737f" }
 - { record: run.pipe-dn200-pn1-ss, at: "2026-10-16T23:10:29Z", status: draft, summary: "first tracked", sha: "4680034a985482f6" }
 - { record: run.pipe-dn200-pn10, at: "2026-10-16T17:53:48Z", status: draft, summary: "changed", sha: "0cb7a6a824b84207" }
