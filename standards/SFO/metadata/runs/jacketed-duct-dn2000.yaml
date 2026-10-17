@@ -20,6 +20,12 @@ support: {spacing: 12.0, mass: 208.6, per_m_height: 60.9, item: material.structu
 cap: {thickness: 0.024, mass: 591.9}
 connector: connector.flange-dn2000-pn1
 carries: gas
+visual:
+  format: "freefall-model/1"
+  path: "models/jacketed-duct-dn2000/v1"
+  manifest_sha256: "19094b81a25f6b408de23b460c05fa395563ec3e39e1f3c76d7afa02c7394713"
+  version: 1
+  triangles: 6124
 basis:
 - of: [per_m]
   tier: derived
