@@ -48,7 +48,7 @@ def pmass(slug):
 # ------------------------------------------------------------------ fit-out units: furnished 6 m bays
 FITOUT = {  # slug: (name, description, [(what, item, kg, note)], people it serves or seats, staff it needs)
     "sales-floor": ("Sales floor bay", "A 6 m bay of shelving gondolas and their aisles: stock laid out for people to take.", [("Gondolas", STEEL, 820, "six double-sided runs 1.8 m high"), ("Shelf edges and signs", PE, 80, "")], 12, 0),
-    "counter": ("Counter bay", "A serving counter with its tills, back shelving and a queue's room.", [("Counter and back shelving", STEEL, 300, ""), ("Worktop and screens", PE, 60, ""), ("Tills", AL, 40, "two")], 6, 2),
+    "counter": ("Counter bay", "A serving counter with its tills, back shelving and a queue's room.", [("Counter and back shelving", STEEL, 426.9, "hollow frame and 2 mm cabinet and shelf sheet: blender's model (2026-10-17)"), ("Worktop", PE, 96.4, "24 mm: blender's model"), ("Tills", AL, 40, "two")], 6, 2),
     "store": ("Store bay", "Pallet racking three levels high and its forklift aisle: the stock room.", [("Racking", STEEL, 1250, "two runs, three beam levels")], 0, 0),
     "dining": ("Dining bay", "Four tables of four and their chairs: a tavern's, an inn's or a canteen's room to eat.", [("Tables", AL, 160, "four"), ("Chairs", AL, 170, "sixteen"), ("Tops and seats", PE, 90, "")], 16, 0),
     "kitchen": ("Kitchen bay", "A commercial kitchen line: ranges, ovens, fryers, a cold room door, sinks and the hood over them.", [("Line, sinks and benches", SS, 1450, ""), ("Hood and duct", SS, 250, "")], 0, 3),
@@ -71,7 +71,7 @@ FITOUT = {  # slug: (name, description, [(what, item, kg, note)], people it serv
 }
 
 
-EXTENT = {"cell": (6.0, 4.0), "counter": (5.4, 2.35)}       # m the fitted unit covers, where it is less than its 6 m bay (the rest is the bay's free floor): blender's models
+EXTENT = {"cell": (6.0, 4.0), "counter": (5.4, 2.375)}       # m the fitted unit covers, where it is less than its 6 m bay (the rest is the bay's free floor): blender's models
 
 
 def fitout_records():

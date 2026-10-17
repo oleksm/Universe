@@ -8,16 +8,18 @@ size_class: 1
 fits: plant-mount.bay-s1
 physical:
   length: 5.4
-  width: 2.35
+  width: 2.375
   height: 2.2
-  mass: 400.0
+  mass: 563.3
 built_of:
 - what: Counter and back shelving
   item: material.structural-steel-a36
-  mass: 300.0
-- what: Worktop and screens
+  mass: 426.9
+  note: 'hollow frame and 2 mm cabinet and shelf sheet: blender''s model (2026-10-17)'
+- what: Worktop
   item: material.polyethylene-uhmw
-  mass: 60.0
+  mass: 96.4
+  note: '24 mm: blender''s model'
 - what: Tills
   item: material.aluminium-alloy-6061
   mass: 40.0
