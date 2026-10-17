@@ -13,6 +13,19 @@ built_of:
 - {what: 'Cutter, grinder and spectrometer', item: good.electric-motors, mass: 3000.0, note: from memory}
 needs: {power: 80000.0, atmosphere: vacuum}
 ports:
+- id: power-in
+  flow: in
+  medium: power
+  power: 80000.0
+  voltage: 400
+  interface: interface.termination-400v-70mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-70mm2
+  at: [-5.1, 0.0, 1.0]
+  facing: [-1.0, 0.0, 0.0]
+  note: a gland on its west end; the cable through the berm
+  current: 128.3
 - id: base
   flow: out
   medium: load
@@ -34,5 +47,9 @@ basis:
   tier: invented
   review: true
   note: From memory.
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage.'
 - of: [life]
   rule: rule.life-plant

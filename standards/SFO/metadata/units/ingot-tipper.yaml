@@ -9,6 +9,19 @@ built_of:
 - {what: Cylinder and power pack, item: good.pumps, mass: 800.0, note: from memory}
 needs: {power: 11000.0}
 ports:
+- id: power-in
+  flow: in
+  medium: power
+  power: 11000.0
+  voltage: 400
+  interface: interface.termination-400v-16mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-16mm2
+  at: [2.0, -1.5, 0.3]
+  facing: [0.0, -1.0, 0.0]
+  note: its power pack, on the south side
+  current: 17.64
 - id: base
   flow: out
   medium: load
@@ -36,5 +49,9 @@ basis:
   tier: invented
   review: true
   note: From memory.
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage.'
 - of: [life]
   rule: rule.life-plant

@@ -27,6 +27,55 @@ bays:
   unit: unit.ingot-tipper
   at: [-6.0, -6.0, 0.0]
   note: 'west of the saws: a cooled ingot, standing, is laid down here before the saws'
+ports:
+- id: lv-lab
+  flow: in
+  medium: power
+  power: 60000.0
+  voltage: 400
+  interface: interface.termination-400v-50mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-50mm2
+  at: [-27.0, -6.0, 0.5]
+  facing: [1.0, 0.0, 0.0]
+  note: the site's 400 V distribution, at the hall's wall
+- id: lv-tipper
+  flow: in
+  medium: power
+  power: 11000.0
+  voltage: 400
+  interface: interface.termination-400v-16mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-16mm2
+  at: [-4.0, -11.7, 0.3]
+  facing: [0.0, 1.0, 0.0]
+  note: the site's 400 V distribution, at the hall's wall
+- id: lv-saws
+  flow: in
+  medium: power
+  power: 135000.0
+  voltage: 400
+  interface: interface.termination-400v-95mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-95mm2
+  at: [7.0, -11.7, 0.5]
+  facing: [0.0, 1.0, 0.0]
+  note: the site's 400 V distribution, at the hall's wall
+- id: lv-crating
+  flow: in
+  medium: power
+  power: 40000.0
+  voltage: 400
+  interface: interface.termination-400v-35mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-35mm2
+  at: [10.5, -11.7, 0.4]
+  facing: [0.0, 1.0, 0.0]
+  note: the site's 400 V distribution, at the hall's wall
 mobile:
 - unit: unit.forklift-2t5
   rides: yard aisles
@@ -92,6 +141,49 @@ links:
   item: material.copper
   mass: 21.6
   note: 400 V along the north wall to four axial fans 2 m across on floor stands inside the north wall at x -18, -6, 6 and 18, their axes 1.5 m up, blowing south across the beds; the air leaves through the walls' open lowest 3 m and the roof's vents; 22 kW each, from memory (their mass with the stands about 1.2 t each, counted in the frame)
+- kind: cable
+  name: lab supply
+  run: run.cable-400v-50mm2
+  ends: ['edge:lv-lab', 'S:power-in']
+  from: [-27.0, -6.0, 0.5]
+  to: [-24.0, -6.0, 0.5]
+  length: 3.0
+  item: material.copper
+  mass: 38.5
+  fittings: {elbows: 0, tees: 0, supports: 1, connectors: 2}
+- kind: cable
+  name: tipper supply
+  run: run.cable-400v-16mm2
+  ends: ['edge:lv-tipper', 'T:power-in']
+  from: [-4.0, -11.7, 0.3]
+  to: [-4.0, -7.5, 0.3]
+  length: 4.2
+  item: material.copper
+  mass: 49.54
+  fittings: {elbows: 0, tees: 0, supports: 2, connectors: 2}
+- kind: cable
+  name: saws supply
+  run: run.cable-400v-95mm2
+  ends: ['edge:lv-saws', 'C:power-in']
+  from: [7.0, -11.7, 0.5]
+  to: [7.0, -11.0, 0.5]
+  length: 0.7
+  item: material.copper
+  mass: 27.04
+  fittings: {elbows: 0, tees: 0, supports: 1, connectors: 2}
+- kind: cable
+  name: crating supply
+  run: run.cable-400v-35mm2
+  ends: ['edge:lv-crating', 'K:power-in']
+  from: [10.5, -11.7, 0.4]
+  to: [12.0, -4.5, 0.4]
+  length: 8.7
+  item: material.copper
+  mass: 97.29
+  via:
+  - [10.5, -4.5, 0.4]
+  fittings: {elbows: 1, tees: 0, supports: 4, connectors: 2}
+  note: north between the saws and the south-east bed, then into the line's in end
 frame:
   box: [-30.0, -15.0, 0.0, 30.0, 15.0, 15.0]
   cell: 3.0

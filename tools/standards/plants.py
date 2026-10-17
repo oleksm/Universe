@@ -2184,6 +2184,15 @@ def yard_units():
 def yard_ports(us):
     """Ports on the yards' fixed units (SFO 25)."""
     lv = lambda w: kit.termination(400, kit.area_for(amps(w, 400)))
+    feeds = {"ingot-tipper": ((2.0, -1.5, 0.3), (0, -1, 0), "its power pack, on the south side"),
+             "crop-saws": ((4.0, -5.0, 0.5), (0, -1, 0), "the saws' distribution board, on the south side"),
+             "crating-line": ((-6.0, -1.5, 0.4), (-1, 0, 0), "low on the in end's frame, under the rollers"),
+             "crating-line-steel": ((-6.0, -1.5, 0.4), (-1, 0, 0), "low on the in end's frame, under the rollers"),
+             "sampling-lab": ((-3.0, 1.5, 0.5), (-1, 0, 0), "on the west wall"),
+             "sampling-lab-sealed": ((-5.1, 0.0, 1.0), (-1, 0, 0), "a gland on its west end; the cable through the berm")}
+    for k, (at, fc, note) in feeds.items():
+        w = us[k]["needs"]["power"]
+        us[k]["ports"] = [port("power-in", "in", "power", lv(w), at, fc, power=w, voltage=400, note=note)]
     h = us["truck-dump-hopper"]
     h["ports"] = [
         port("ore-out", "out", "bulk", kit.belt_transfer(1.4), (0.0, 0.0, -4.4), (0, 0, -1), item="good.iron-ore", rate=1500e3 / 3600, note="the apron feeder's discharge in the pit, onto the hopper belt's tail 0.4 m under it"),
@@ -2362,6 +2371,16 @@ def ingot_yard_air(us, recs):
     fans = 4 * 22e3                                        # W: four wall fans blowing through the beds, from memory
     links.append(link("cable", "cooling fans' supply", (-18.0, 11.0, 1.5), (18.0, 11.0, 1.5), CU, 0.6, None, "400 V along the north wall to four axial fans 2 m across on floor stands inside the north wall at x -18, -6, 6 and 18, their axes 1.5 m up, blowing south across the beds; the air leaves through the walls' open lowest 3 m and the roof's vents; 22 kW each, from memory (their mass with the stands about 1.2 t each, counted in the frame)"))
     fmass += 4 * 1200.0 + 96.8 * 0.002 * RHO['aluminium']   # the fans and stands (from memory); the vent's louvre caps, 96.8 m2 measured
+    need = lambda k: recs[k]["needs"]["power"]
+    lvp = lambda pid, k, at, fc: port(pid, "in", "power", recs[k]["ports"][0]["connector"], at, fc, power=need(k), voltage=400, note="the site's 400 V distribution, at the hall's wall")
+    edge = [lvp("lv-lab", "sampling-lab", (-27.0, -6.0, 0.5), (1, 0, 0)), lvp("lv-tipper", "ingot-tipper", (-4.0, -11.7, 0.3), (0, 1, 0)),
+            lvp("lv-saws", "crop-saws", (7.0, -11.7, 0.5), (0, 1, 0)), lvp("lv-crating", "crating-line", (10.5, -11.7, 0.4), (0, 1, 0))]
+    lc = lambda k: kit.cable(400, kit.area_for(amps(need(k), 400)))
+    L = lambda *a: kit_link(*a[:4], bays, recs, edge, *a[4:])
+    links += [L("lab supply", lc("sampling-lab"), ("edge:lv-lab", "S:power-in"), [None, None]),
+              L("tipper supply", lc("ingot-tipper"), ("edge:lv-tipper", "T:power-in"), [None, None]),
+              L("saws supply", lc("crop-saws"), ("edge:lv-saws", "C:power-in"), [None, None]),
+              L("crating supply", lc("crating-line"), ("edge:lv-crating", "K:power-in"), [None, (10.5, -4.5, 0.4), None], (), 1, None, "north between the saws and the south-east bed, then into the line's in end")]
     used = [recs[b["unit"].split(".", 1)[1]] for b in bays] + [recs[m_["unit"].split(".", 1)[1]] for m_ in mobile] + [crane]
     power = sum(u.get("needs", {}).get("power", 0) for u in used) + fans
     mass_units = sum(u["physical"]["mass"] for u in used)
@@ -2382,7 +2401,7 @@ def ingot_yard_air(us, recs):
         "stands_for": "module.ingot-yard",
         "site": {"atmosphere": "air", "gravity": [8.0, 11.0]},
         "physical": {"length": L, "width": W, "height": z1 + 0.45, "mass": r(total)},
-        "bays": bays, "mobile": mobile, "links": links,
+        "bays": bays, "ports": edge, "mobile": mobile, "links": links,
         "frame": {"box": list(box), "cell": cell, "shape": f"Walls one cell thick, 12 m tall; a roof one cell deep over a {x_in:.0f} x {span_in:.0f} m floor; doors 6 m wide for the ingot rail (west) and the crates (east). Its walls' lowest 3 m left unclad for the cooling air; a vent strip 1.2 m wide along the roof (y 0.9 to 2.1, x -24 to 24) under aluminium louvre caps standing 0.45 m above it, the chords kept.",
                   "openings": [list(d) for d in doors], "members": members,
                   "cladding": {"item": "stock.al6061-sh-2", "area": r(clad_area), "mass": r(clad)},
@@ -4540,6 +4559,23 @@ def ingot_yard_airless(us, recs):
                {"what": "Berms", "item": "material.regolith", "volume": r(2 * BERM), "note": "over the crew post and the sealed lab, each as a crew post's: 1 m over the crest at 35 degrees (the lab's a little longer, not counted)"}]
     for g_ in ground:
         g_["mass"] = r(g_["volume"] * (7200.0 if g_["item"] == CAST_IRON else RHO_SINTER if g_["item"] == SINTER else 1500.0))
+    need = lambda k: recs[k]["needs"]["power"]
+    lvp = lambda pid, k, at, fc: port(pid, "in", "power", recs[k]["ports"][0]["connector"], at, fc, power=need(k), voltage=400, note="the site's 400 V distribution, in a covered trench south of the gantry's rails")
+    yt = -15.0                                            # (the trench, outside the gantry's south legs; each cable goes under the rail at 0.6 m deep)
+    feeds = [("tipper", "T", "ingot-tipper", r(x_e + 6.5), None), ("saws 1", "C1", "crop-saws", r(x_e + 20.0), None), ("saws 2", "C2", "crop-saws", r(x_e + 34.0), None),
+             ("crating", "K", "crating-line-steel", r(x_e + 23.0), (r(x_e + 23.0), 5.5))]
+    edge = [lvp(f"lv-{n.replace(' ', '-')}", k, (x, yt, -0.6), (0, 1, 0)) for n, _, k, x, _ in feeds]
+    edge += [lvp("lv-lab", "sampling-lab-sealed", (r(x_e - 3.0), -20.0, 1.0), (1, 0, 0)), lvp("lv-post", "crew-post", (r(x_e + 25.0), -20.0, 2.3), (-1, 0, 0))]
+    lc = lambda k: kit.cable(400, kit.area_for(amps(need(k), 400)))
+    L = lambda *a: kit_link(*a[:4], bays, recs, edge, *a[4:])
+    for n, bid, k, x, turn in feeds:
+        pp = recs[k]["ports"][0]
+        w = world(next(b for b in bays if b["id"] == bid), pp["at"])
+        via = [(x, w[1], -0.6), (x, w[1], w[2])] if turn is None else [(x, turn[1], -0.6), (x, turn[1], w[2])]
+        links.append(L(f"{n} supply", lc(k), (f"edge:lv-{n.replace(' ', '-')}", f"{bid}:power-in"), [None, *via, None] if turn else [None, via[0], None], (), 1, None,
+                       "north from the trench, buried 0.6 m under the gantry's south rail, then up into the unit" + (": between the two saws" if turn else "")))
+    links += [L("lab supply", lc("sampling-lab-sealed"), ("edge:lv-lab", "S:power-in"), [None, None], (), 1, None, "through the berm"),
+              L("crew post supply", lc("crew-post"), ("edge:lv-post", "P:power-in"), [None, None], (), 1, None, "through the berm")]
     used = [recs[b["unit"].split(".", 1)[1]] for b in bays] + [recs[m_["unit"].split(".", 1)[1]] for m_ in mobile]
     power = sum(u.get("needs", {}).get("power", 0) for u in used)
     mass_units = sum(u["physical"]["mass"] for u in used)
@@ -4557,7 +4593,7 @@ def ingot_yard_airless(us, recs):
         "stands_for": "module.ingot-yard",
         "site": {"atmosphere": "none", "gravity": list(MOON_G)},
         "physical": {"length": r(max(xs) - min(xs)), "width": r(max(yard_W, 48.0)), "height": 14.0, "mass": r(total)},
-        "bays": bays, "mobile": mobile, "links": links, "ground": ground,
+        "bays": bays, "ports": edge, "mobile": mobile, "links": links, "ground": ground,
         "totals": {"rate": 0.0, "power": r(power), "heat": 0.0, "water": 0.0, "mass": r(total), "against_module": against},
         "staff": imod.get("staff"),
         "basis": [{"of": ["bays", "links", "mobile"], "tier": "invented", "review": True, "note": "Laid out for airless ground from the yard for air."},

@@ -9,6 +9,19 @@ built_of:
 - {what: 'Roller table, scale, lid arm and latching portal', item: material.structural-steel-a36, mass: 12000.0, note: from memory}
 needs: {power: 40000.0, atmosphere: vacuum}
 ports:
+- id: power-in
+  flow: in
+  medium: power
+  power: 40000.0
+  voltage: 400
+  interface: interface.termination-400v-35mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-35mm2
+  at: [-6.0, -1.5, 0.4]
+  facing: [-1.0, 0.0, 0.0]
+  note: low on the in end's frame, under the rollers
+  current: 64.15
 - id: base
   flow: out
   medium: load
@@ -29,5 +42,9 @@ basis:
   tier: invented
   review: true
   note: From memory.
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage.'
 - of: [life]
   rule: rule.life-plant

@@ -9,6 +9,19 @@ built_of:
 - {what: Roller tables and scrap bins, item: material.structural-steel-a36, mass: 13500.0, note: from memory}
 needs: {power: 135000.0}
 ports:
+- id: power-in
+  flow: in
+  medium: power
+  power: 135000.0
+  voltage: 400
+  interface: interface.termination-400v-95mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-95mm2
+  at: [4.0, -5.0, 0.5]
+  facing: [0.0, -1.0, 0.0]
+  note: the saws' distribution board, on the south side
+  current: 216.5
 - id: base
   flow: out
   medium: load
@@ -29,5 +42,9 @@ basis:
   tier: invented
   review: true
   note: The count from the casting bay's rate and a cut of 300 cm2 a minute (a large band saw in carbon steel, from memory); saw mass and power from memory.
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage.'
 - of: [life]
   rule: rule.life-plant
