@@ -4,11 +4,13 @@ identity: {key: unit.alloy-bins-8, name: 'Alloy bins, 8', description: 'Eight st
     on six legs at x -6, 0, 6, y -1.5, 1.5, braced across. A 10 mm walkway deck at z 12 round the collars. Its ports (SFO 25): the transfer chute''s intake narrowed to 0.42 m between the collecting belts'' drums, dropped below them to z 7.7, then kicked 1 m to +x at 45 degrees, to its foot at (1, 0, 6.7), so the layout''s belt passes between the centre and east legs (v2); its 400 V box at (6.3, 0, 1) on the east end frame, facing +x.'}
 size_class: 3
 fits: plant-mount.bay-s3
-physical: {length: 12.56, width: 6.3, height: 15.14, mass: 66100.0}
+physical: {length: 12.56, width: 6.3, height: 15.14, mass: 66340.0}
 built_of:
 - {what: Bins, item: material.structural-steel-a36, mass: 14340.0, note: '8 bins 2.5 m across, 3.0 m of cylinder over a 1.5 m cone, 6 mm plate, with roofs, fill necks, caps and gates; measured (11767 kg as plain shells)'}
 - {what: Stand, item: stock.st4340-box-300x300x20, mass: 45760.0, note: 'six legs 9.7 m and ten uprights 2.1 m of 300 x 300 x 20 mm box, two 12 m row beams of 400 x 400 x 25 mm box (a full bin at mid-span of 6 m: 730 kN m, 165 MPa), braces, collars, feet, guards and a holed 12 x 6 m walkway deck of 10 mm plate (its access at local 6, 0, 12); measured (26644 kg in the main members alone)'}
-- {what: 'Feeders, weigh hoppers and collecting belts', item: good.electric-motors, mass: 6000.0, note: 'eight vibrating feeders, four weigh hoppers on load cells, two short belts and a transfer chute, from memory'}
+- {what: 'Feeders, weigh hoppers and collecting belts', item: good.electric-motors, mass: 5931.0, note: 'eight vibrating feeders, four weigh hoppers on load cells, two short belts and a transfer chute, from memory; less the old transfer chute''s four walls, 68.58 kg, measured on blender''s model v2 (2026-10-16)'}
+- {what: Offset transfer chute, item: material.structural-steel-a36, mass: 144.7, note: 'the chute from between the collecting drums to its foot at (1, 0, 6.7), and its two seats; measured on blender''s model v2 (2026-10-16) (the old chute''s walls, in the feeders'' allowance, removed)'}
+- {what: Terminal box and its crossbar, item: material.structural-steel-a36, mass: 168.5, note: 'the 400 V box, its gland plate, the crossbar on the east end frame and its seats; measured on blender''s model v2 (2026-10-16)'}
 holds: 384800.0
 needs: {power: 40000.0}
 ports:
@@ -33,7 +35,8 @@ envelope:
 - [-6.282, 1.219, -0.001, 6.282, 1.781, 12.001]
 - [-6.251, -3.152, 7.399, 6.251, 3.152, 15.142]
 - [-6.081, -1.577, 0.273, -5.759, 1.577, 9.427]
-- [5.919, -1.577, 0.273, 6.241, 1.577, 9.427]
+- [5.769, -1.577, 0.273, 6.301, 1.577, 9.427]
+- [-0.274, -0.354, 6.699, 1.207, 0.354, 8.101]
 life: 788940000
 visual: {format: freefall-model/1, path: models/alloy-bins-8/v1, manifest_sha256: 7ebfccfbf3e6feb46fbdcadf82126b9a4b7f784075906326e6d1968d940b0c30, version: 1, triangles: 26220}
 basis:

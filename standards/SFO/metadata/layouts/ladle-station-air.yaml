@@ -140,7 +140,7 @@ ground:
 - {what: Cooling tower basin, item: good.concrete, volume: 114.66, note: 'sunk as the furnace shop''s: 0.3 m walls round its 12 x 12 m footprint, tops at z 0, floor top at z -2; eight pedestals, under the tower''s four feet and its skid''s four corners (blender); measured on blender''s model', mass: 275200.0}
 - {what: Rail beds, item: good.concrete, volume: 7.2, note: 'under the ladle rail, 0.125 m3 a metre as the furnace shop''s; measured on blender''s model', mass: 17280.0}
 - {what: Link supports, item: good.concrete, volume: 3.41, note: 'footings for the alloy gallery''s trestles, the duct''s supports and the pipes'' plinths; measured on blender''s model', mass: 8184.0}
-totals: {rate: 41.6666666666667, power: 8907000.0, heat: 1568000.0, water: 0.8674, mass: 3021000.0, against_module: 'module.ladle-station: one box 40 x 30 x 35 m, 7.5 MW. This layout: the same rate; 8.9 MW (the module''s figure is the arc''s average; the degasser''s pumps, the fan, the crane and the tower are on top); 0.9 kg/s of water the module did not name; 1047 t of plant and frame and 1973 t of concrete.'}
+totals: {rate: 41.6666666666667, power: 8907000.0, heat: 1568000.0, water: 0.8674, mass: 3021000.0, against_module: 'module.ladle-station: one box 40 x 30 x 35 m, 7.5 MW. This layout: the same rate; 8.9 MW (the module''s figure is the arc''s average; the degasser''s pumps, the fan, the crane and the tower are on top); 0.9 kg/s of water the module did not name; 1048 t of plant and frame and 1973 t of concrete.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}

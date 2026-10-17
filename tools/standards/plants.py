@@ -2728,6 +2728,11 @@ def ladle_ports(us):
         port("water-out", "out", "liquid", kit.flange(kit.dn_for(math.sqrt(4 * q_t / 1000 / 2.5 / math.pi)), 10), (-L_ / 2, 0.3, 1.0), (-1, 0, 0), item=WATER, rate=q_t),
     ]
     a = us["alloy-bins-8"]
+    if "Offset transfer chute" not in [x["what"] for x in a["built_of"]]:
+        m2 = "measured on blender's model v2 (2026-10-16)"
+        a["built_of"] = [part(x["what"], x["item"], x["mass"] - 68.58, f"{x['note']}; less the old transfer chute's four walls, 68.58 kg, {m2}") if x["what"].startswith("Feeders") else x for x in a["built_of"]]
+        a["built_of"] = a["built_of"] + [part("Offset transfer chute", A36, 123.47 + 2 * 10.60, f"the chute from between the collecting drums to its foot at (1, 0, 6.7), and its two seats; {m2} (the old chute's walls, in the feeders' allowance, removed)"),
+                                         part("Terminal box and its crossbar", A36, 95.16 + 53.13 + 12.72 + 2 * 3.77, f"the 400 V box, its gland plate, the crossbar on the east end frame and its seats; {m2}")]
     a["desc"] += " Its ports (SFO 25): the transfer chute's intake narrowed to 0.42 m between the collecting belts' drums, dropped below them to z 7.7, then kicked 1 m to +x at 45 degrees, to its foot at (1, 0, 6.7), so the layout's belt passes between the centre and east legs (v2); its 400 V box at (6.3, 0, 1) on the east end frame, facing +x."
     a["ports"] = [
         port("alloy-out", "out", "bulk", kit.chute(0.4), (1.0, 0.0, 6.7), (0, 0, -1), rate=alloys, note="onto a belt's tail"),
