@@ -17,6 +17,12 @@ built_of:
 - what: Tap and trap
   item: material.stainless-steel-304
   mass: 2.0
+visual:
+  format: "freefall-model/1"
+  path: "models/furniture-basin/v1"
+  manifest_sha256: "ee59ae42954ef90081ecf1a5031c538de13a2999f36acc91e943586f53da5f1e"
+  version: 1
+  triangles: 4100
 basis:
 - of:
   - built_of
