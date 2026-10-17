@@ -5,7 +5,7 @@ stands_for: module.shaft-furnace
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 313.1, width: 96.0, height: 54.08, mass: 15900000.0}
+physical: {length: 316.3, width: 98.0, height: 54.08, mass: 16060000.0}
 bays:
 - id: F
   mount: plant-mount.bay-s3
@@ -62,302 +62,910 @@ bays:
   unit: unit.cooling-tower-shaft
   at: [60.0, 60.0, 0.0]
   note: north, in a row 6 m apart, each with its own basin, its ports on its east end facing the gap
+ports:
+- id: pellets-in
+  flow: in
+  medium: bulk
+  item: good.iron-ore-pellets
+  rate: 79.44
+  interface: interface.belt-transfer-1200
+  half: female
+  make: open
+  connector: connector.belt-transfer-1200
+  at: [190.3, 0.0, 2.0]
+  facing: [-1.0, 0.0, 0.0]
+  note: from the pellet plant's out belt, onto the pellet belt's tail
+- id: dri-out
+  flow: out
+  medium: bulk
+  item: good.sponge-iron
+  rate: 55.56
+  interface: interface.belt-transfer-1000
+  half: male
+  make: open
+  connector: connector.belt-transfer-1000
+  at: [-60.0, 0.0, 3.5]
+  facing: [1.0, 0.0, 0.0]
+  note: 'to the arc furnace shop''s sponge iron belt: the product belt''s head 3 m over it'
+- id: h2-in
+  flow: in
+  medium: gas
+  item: material.hydrogen
+  rate: 3.0
+  pressure: 130000.0
+  temperature: 313.1
+  interface: interface.flange-dn1200-pn10-double
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn1200-pn10-double
+  at: [100.0, 8.0, 7.0]
+  facing: [-1.0, 0.0, 0.0]
+  note: the hydrogen plant's make-up
+- id: condensate-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 26.89
+  interface: interface.flange-dn200-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn200-pn10-ss
+  at: [100.0, 29.3, 0.5]
+  facing: [-1.0, 0.0, 0.0]
+  note: back to the hydrogen plant's electrolysers
+- id: hv-in
+  flow: in
+  medium: power
+  power: 121900000.0
+  voltage: 132000
+  interface: interface.termination-132kv-240mm2
+  half: female
+  make: bolted
+  connector: connector.termination-132kv-240mm2
+  at: [48.0, -32.0, 10.0]
+  facing: [0.0, 1.0, 0.0]
+  note: the site's 132 kV
+- id: mv-compressor
+  flow: in
+  medium: power
+  power: 20770000.0
+  voltage: 11000
+  interface: interface.termination-11kv-500mm2
+  half: female
+  make: bolted
+  connector: connector.termination-11kv-500mm2
+  at: [51.25, 12.0, 1.0]
+  facing: [0.0, -1.0, 0.0]
+  note: the site's 11 kV
+- id: mv-loop
+  flow: in
+  medium: power
+  power: 1796000.0
+  voltage: 6600
+  interface: interface.termination-6p6kv-70mm2
+  half: female
+  make: bolted
+  connector: connector.termination-6p6kv-70mm2
+  at: [-21.0, -32.0, 1.0]
+  facing: [0.0, 1.0, 0.0]
+  note: the site's 6.6 kV
+- id: lv-shaft
+  flow: in
+  medium: power
+  power: 334000.0
+  voltage: 400
+  interface: interface.termination-400v-240mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-240mm2
+  at: [-16.0, 2.5, 11.0]
+  facing: [1.0, 0.0, 0.0]
+  note: the site's 400 V
+- id: lv-scrubber
+  flow: in
+  medium: power
+  power: 727800.0
+  voltage: 400
+  interface: interface.termination-400v-500mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-500mm2
+  at: [38.0, 29.0, 1.0]
+  facing: [1.0, 0.0, 0.0]
+- id: blowdown-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 0.5
+  interface: interface.flange-dn100-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn100-pn10-ss
+  at: [-34.0, -27.0, 0.5]
+  facing: [1.0, 0.0, 0.0]
+  note: the cooling loop's dust slurry, to the site's settling pond
+- id: makeup-C1
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 18.01
+  pressure: 400000.0
+  temperature: 293.0
+  interface: interface.flange-dn150-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn150-pn10
+  at: [-122.0, 51.0, 1.0]
+  facing: [0.0, 1.0, 0.0]
+  note: the site's water
+- id: lv-C1
+  flow: in
+  medium: power
+  power: 675400.0
+  voltage: 400
+  interface: interface.termination-400v-500mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-500mm2
+  at: [-120.0, 51.0, 1.0]
+  facing: [0.0, 1.0, 0.0]
+- id: makeup-C2
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 18.01
+  pressure: 400000.0
+  temperature: 293.0
+  interface: interface.flange-dn150-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn150-pn10
+  at: [-68.0, 51.0, 1.0]
+  facing: [0.0, 1.0, 0.0]
+  note: the site's water
+- id: lv-C2
+  flow: in
+  medium: power
+  power: 675400.0
+  voltage: 400
+  interface: interface.termination-400v-500mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-500mm2
+  at: [-66.0, 51.0, 1.0]
+  facing: [0.0, 1.0, 0.0]
+- id: makeup-C3
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 18.01
+  pressure: 400000.0
+  temperature: 293.0
+  interface: interface.flange-dn150-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn150-pn10
+  at: [-14.0, 51.0, 1.0]
+  facing: [0.0, 1.0, 0.0]
+  note: the site's water
+- id: lv-C3
+  flow: in
+  medium: power
+  power: 675400.0
+  voltage: 400
+  interface: interface.termination-400v-500mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-500mm2
+  at: [-12.0, 51.0, 1.0]
+  facing: [0.0, 1.0, 0.0]
+- id: makeup-C4
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 18.01
+  pressure: 400000.0
+  temperature: 293.0
+  interface: interface.flange-dn150-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn150-pn10
+  at: [40.0, 51.0, 1.0]
+  facing: [0.0, 1.0, 0.0]
+  note: the site's water
+- id: lv-C4
+  flow: in
+  medium: power
+  power: 675400.0
+  voltage: 400
+  interface: interface.termination-400v-500mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-500mm2
+  at: [42.0, 51.0, 1.0]
+  facing: [0.0, 1.0, 0.0]
 links:
 - kind: conveyor
   name: pellet belt
-  from: [186.6, 0.0, 2.0]
-  to: [0.0, 0.0, 52.0]
-  length: 193.2
-  item: material.structural-steel-a36
-  mass: 34770.0
+  run: run.belt-1200
+  ends: ['edge:pellets-in', 'F:charge-in']
+  from: [190.3, 0.0, 2.0]
+  to: [0.0, 0.0, 53.0]
+  length: 197.0
+  item: material.silicone-rubber
+  mass: 60270.0
   power: 300000.0
-  note: a 1.2 m belt in a covered gallery on trestles every 18 m, 180 kg/m with the gallery (from memory), rising at 15 degrees from the pellet plant's transfer house to a head house on the tower's roof over the charge hopper, the belt's head 2 m above the hopper's rim (z 50) dropping into it by a closed hood and chute, flanged to the rim; 79 kg/s of pellets; over the recycle compressor its trestles are portals straddling it (legs at y -5.5 and 5.5, clear to z 9, braced above)
+  fittings: {elbows: 0, tees: 0, supports: 11, connectors: 2}
+  note: in a covered gallery, rising at 15 degrees from the pellet plant's transfer house through the tower's roof to its head 3 m over the charge hopper; 79 kg/s of pellets
 - kind: conveyor
   name: product belt
-  from: [0.0, 0.0, 5.0]
-  to: [-60.0, 0.0, 5.0]
+  run: run.belt-1000
+  ends: ['F:dri-out', 'edge:dri-out']
+  from: [0.0, 0.0, 6.5]
+  to: [-60.0, 0.0, 6.5]
   length: 60.0
-  item: material.structural-steel-a36
-  mass: 9000.0
+  item: material.silicone-rubber
+  mass: 19750.0
   power: 150000.0
-  note: a 1 m belt in a gallery 5 m up, from under the discharge lock (its bottom at z 7) west to the arc furnace shop's sponge iron bin, beyond the layout; the lock drops onto it by a closed chute flanged to its bottom, loading the belt 1 m west of the axis, through an opening in the gallery's cover
-- kind: duct
+  fittings: {elbows: 0, tees: 0, supports: 4, connectors: 2}
+  note: in a gallery 6.5 m up, from under the discharge lock west out of the tower to the arc furnace shop
+- kind: pipe
   name: top gas main
+  run: run.pipe-dn3600-pn10-double
+  ends: ['F:top-gas-out', 'R:top-gas-in']
   from: [7.0, 0.0, 41.0]
   to: [24.0, 24.0, 18.0]
-  length: 56.63
+  length: 64.0
   item: material.structural-steel-a36
-  mass: 57970.0
+  mass: 137100.0
+  reducers:
+  - {end: 1, to: connector.flange-dn1600-pn16-double, length: 3.73, mass: 2163.3}
   via:
-  - [15.0, 0.0, 41.0]
+  - [24.0, 0.0, 41.0]
   - [24.0, 24.0, 41.0]
-  note: '3.5 m across, 12 mm plate, insulated: 350 deg C top gas with its steam, out of the tower''s east wall and down to the recuperator'
-- kind: duct
-  name: wet gas to the scrubber
+  fittings: {elbows: 2, tees: 0, supports: 5, connectors: 2}
+  note: 'insulated: 350 deg C top gas with its steam, out of the tower''s east wall and down to the recuperator, reduced to its 8 bar flange'
+- kind: pipe
+  name: wet gas
+  run: run.pipe-dn2800-pn10-double
+  ends: ['R:wet-out', 'S:gas-in']
   from: [24.0, 29.2, 1.5]
   to: [42.0, 24.0, 2.0]
-  length: 28.82
+  length: 32.81
   item: material.structural-steel-a36
-  mass: 22920.0
+  mass: 38400.0
+  reducers:
+  - {end: 0, to: connector.flange-dn1000-pn16-double, length: 3.36, mass: 1162.9}
   via:
-  - [24.0, 32.0, 1.5]
-  - [40.0, 32.0, 1.5]
-  - [40.0, 24.0, 2.0]
-  note: 2.7 m across, 12 mm plate
-- kind: duct
-  name: clean gas to the compressor
+  - [24.0, 34.0, 1.5]
+  - [36.0, 34.0, 1.5]
+  - [36.0, 24.0, 2.0]
+  fittings: {elbows: 3, tees: 0, supports: 4, connectors: 2}
+  note: from the recuperator's 8 bar flange, widened, to the scrubber
+- kind: pipe
+  name: clean gas
+  run: run.pipe-dn2200-pn10-double
+  ends: ['S:gas-out', 'K:suction']
   from: [48.0, 24.0, 23.0]
   to: [68.0, 4.0, 1.5]
-  length: 67.5
+  length: 69.5
   item: material.structural-steel-a36
-  mass: 43510.0
+  mass: 61920.0
   via:
-  - [48.0, 24.0, 26.0]
-  - [68.0, 24.0, 26.0]
-  - [68.0, 7.0, 26.0]
-  - [68.0, 7.0, 1.5]
-  note: 2.2 m across, 12 mm plate; the hydrogen plant's make-up joins it here
+  - [48.0, 24.0, 27.0]
+  - [68.0, 24.0, 27.0]
+  - [68.0, 8.0, 27.0]
+  - [68.0, 8.0, 1.5]
+  fittings: {elbows: 4, tees: 0, supports: 7, connectors: 2}
+  note: up from the scrubber's top, over and down to the compressor's suction; the make-up joins it on its way down
 - kind: pipe
-  name: compressed gas to the recuperator
+  name: compressed gas
+  run: run.pipe-dn1800-pn10-double
+  ends: ['K:discharge', 'R:clean-in']
   from: [50.0, -4.0, 1.5]
   to: [24.0, 18.8, 1.0]
-  length: 52.81
+  length: 56.81
   item: material.structural-steel-a36
-  mass: 26110.0
+  mass: 31050.0
+  reducers:
+  - {end: 1, to: connector.flange-dn1000-pn16-double, length: 1.49, mass: 307.0}
   via:
-  - [50.0, -6.0, 1.5]
-  - [36.0, -6.0, 1.5]
+  - [50.0, -8.0, 1.5]
+  - [36.0, -8.0, 1.5]
   - [36.0, 14.0, 1.5]
   - [24.0, 14.0, 1.0]
-  note: 1.7 m across, 12 mm wall, 2.8 bar
+  fittings: {elbows: 4, tees: 0, supports: 8, connectors: 2}
+  note: 2.8 bar, reduced to the recuperator's flange
 - kind: pipe
-  name: warm gas to the heater
+  name: warm gas
+  run: run.pipe-dn2400-pn10-double
+  ends: ['R:warm-out', 'H:gas-in']
   from: [24.0, 18.8, 16.75]
   to: [12.0, -27.3, 2.0]
-  length: 76.85
+  length: 84.85
   item: material.structural-steel-a36
-  mass: 51390.0
+  mass: 79020.0
+  reducers:
+  - {end: 0, to: connector.flange-dn1000-pn16-double, length: 2.61, mass: 702.5}
   via:
   - [24.0, 14.0, 16.75]
   - [14.0, 14.0, 16.75]
   - [14.0, -15.0, 16.75]
-  - [10.0, -15.0, 16.75]
-  - [10.0, -15.0, 2.0]
-  - [10.0, -27.3, 2.0]
-  note: '2.3 m across, 12 mm wall, insulated, 300 deg C: down the tower''s east side and in at the heater''s west end, into its cold header'
+  - [6.0, -15.0, 16.75]
+  - [6.0, -15.0, 2.0]
+  - [6.0, -27.3, 2.0]
+  fittings: {elbows: 6, tees: 0, supports: 10, connectors: 2}
+  note: 'insulated, 300 deg C: from the recuperator''s flange, widened, past the tower''s east and south sides into the heater''s cold header'
 - kind: duct
-  name: hot gas to the bustle
+  name: hot gas
+  run: run.lined-duct-dn3600-pn10-double
+  ends: ['H:gas-out', 'F:hot-gas-in']
   from: [24.0, -20.0, 18.0]
   to: [0.0, -7.5, 26.0]
   length: 44.5
   item: material.structural-steel-a36
-  mass: 351800.0
+  mass: 374500.0
   via:
   - [24.0, -20.0, 26.0]
   - [0.0, -20.0, 26.0]
-  note: '3.2 m inside 200 mm of refractory, 16 mm shell: hydrogen at 900 deg C, in through the tower''s south wall to the bustle''s inlet; its shell runs warm, so it is the hydrogen-tight steel of the loop that matters (not yet specified); its support beside the heater stands outside the heater''s footprint, carrying the duct on a head beam'
-- kind: pipe
-  name: hydrogen make-up
-  from: [100.0, 4.0, 1.5]
-  to: [68.0, 7.0, 1.5]
-  length: 37.0
-  item: material.structural-steel-a36
-  mass: 8210.0
-  via:
-  - [91.0, 4.0, 1.5]
-  - [91.0, 4.0, 2.5]
-  - [83.0, 4.0, 2.5]
-  - [83.0, 4.0, 1.5]
-  - [73.0, 4.0, 1.5]
-  - [73.0, 7.0, 1.5]
-  note: '1.1 m across, 8 mm wall: 3.00 kg/s from the hydrogen plant, beyond the layout, bridging over the water mains at z 2.5, teeing into the suction duct at (68, 7, 1.5)'
-- kind: pipe
-  name: condensate to the hydrogen plant
-  from: [54.0, 29.3, 0.5]
-  to: [100.0, 29.3, 0.5]
-  length: 48.5
-  item: material.structural-steel-a36
-  mass: 1435.0
-  via:
-  - [83.0, 29.3, 0.5]
-  - [83.0, 29.3, 1.75]
-  - [91.0, 29.3, 1.75]
-  - [91.0, 29.3, 0.5]
-  note: '200 mm, 6 mm wall: the 26.9 kg/s of water the reduction made, back to the electrolysers, beyond the layout'
-- kind: pipe
-  name: tower loop to the scrubber
-  from: [84.0, 31.5, 0.75]
-  to: [51.5, 30.0, 1.0]
-  length: 34.25
-  item: material.structural-steel-a36
-  mass: 19510.0
-  via:
-  - [51.5, 31.5, 0.75]
-  - [51.5, 31.5, 1.0]
-  note: a pair of 1.0 m pipes, 12 mm wall, flow and return, off the mains on the plant's east side, west along y 31.5 and up to the scrubber's flanges on its +y face
-- kind: pipe
-  name: cooler water to the compressor
-  from: [66.25, -12.0, 0.75]
-  to: [66.25, -4.0, 1.0]
-  length: 8.25
-  item: material.structural-steel-a36
-  mass: 2004.0
-  via:
-  - [66.25, -5.0, 0.75]
-  - [66.25, -5.0, 1.0]
-  note: a pair of 0.5 m pipes, 10 mm wall, off the mains' end, north to the compressor's flanges on its -y face
-- kind: pipe
-  name: cooling water to the sponge iron cooling loop
-  from: [-34.0, 42.0, 0.75]
-  to: [-30.0, -24.0, 1.0]
-  length: 70.25
-  item: material.structural-steel-a36
-  mass: 21900.0
-  via:
-  - [-34.0, -24.0, 0.75]
-  - [-31.0, -24.0, 0.75]
-  - [-31.0, -24.0, 1.0]
-  note: a pair of 0.63 m pipes, 10 mm wall, off the mains at the west end, south in a trench clear of the tower to the loop's flanges on its -x face
-- kind: pipe
-  name: tower water to C1, pair 1
-  from: [-77.15, 42.0, 0.75]
-  to: [-78.0, 60.0, 0.75]
-  length: 18.85
-  item: material.structural-steel-a36
-  mass: 3719.0
-  via:
-  - [-77.15, 60.0, 0.75]
-  note: a pair of 500 mm pipes, 8 mm wall, flow and return, off the mains north up the gap between the towers to the port pair on the tower's east end; the gap's four lanes at 0.5, 1.2, 1.9 and 2.6 m east of the ports, this pair in the first two; the flow bridges over the return main at z 1.8
-- kind: pipe
-  name: tower water to C1, pair 2
-  from: [-75.75, 42.0, 0.75]
-  to: [-78.0, 64.5, 0.75]
-  length: 24.75
-  item: material.structural-steel-a36
-  mass: 4883.0
-  via:
-  - [-75.75, 64.5, 0.75]
-  note: a pair of 500 mm pipes, 8 mm wall, flow and return, off the mains north up the gap between the towers to the port pair on the tower's east end; the gap's four lanes at 0.5, 1.2, 1.9 and 2.6 m east of the ports, this pair in the last two; the flow bridges over the return main at z 1.8
-- kind: pipe
-  name: tower water to C2, pair 1
-  from: [-23.150000000000006, 42.0, 0.75]
-  to: [-24.0, 60.0, 0.75]
-  length: 18.85
-  item: material.structural-steel-a36
-  mass: 3719.0
-  via:
-  - [-23.150000000000006, 60.0, 0.75]
-  note: a pair of 500 mm pipes, 8 mm wall, flow and return, off the mains north up the gap between the towers to the port pair on the tower's east end; the gap's four lanes at 0.5, 1.2, 1.9 and 2.6 m east of the ports, this pair in the first two; the flow bridges over the return main at z 1.8
-- kind: pipe
-  name: tower water to C2, pair 2
-  from: [-21.75, 42.0, 0.75]
-  to: [-24.0, 64.5, 0.75]
-  length: 24.75
-  item: material.structural-steel-a36
-  mass: 4883.0
-  via:
-  - [-21.75, 64.5, 0.75]
-  note: a pair of 500 mm pipes, 8 mm wall, flow and return, off the mains north up the gap between the towers to the port pair on the tower's east end; the gap's four lanes at 0.5, 1.2, 1.9 and 2.6 m east of the ports, this pair in the last two; the flow bridges over the return main at z 1.8
-- kind: pipe
-  name: tower water to C3, pair 1
-  from: [30.849999999999994, 42.0, 0.75]
-  to: [30.0, 60.0, 0.75]
-  length: 18.85
-  item: material.structural-steel-a36
-  mass: 3719.0
-  via:
-  - [30.849999999999994, 60.0, 0.75]
-  note: a pair of 500 mm pipes, 8 mm wall, flow and return, off the mains north up the gap between the towers to the port pair on the tower's east end; the gap's four lanes at 0.5, 1.2, 1.9 and 2.6 m east of the ports, this pair in the first two; the flow bridges over the return main at z 1.8
-- kind: pipe
-  name: tower water to C3, pair 2
-  from: [32.25, 42.0, 0.75]
-  to: [30.0, 64.5, 0.75]
-  length: 24.75
-  item: material.structural-steel-a36
-  mass: 4883.0
-  via:
-  - [32.25, 64.5, 0.75]
-  note: a pair of 500 mm pipes, 8 mm wall, flow and return, off the mains north up the gap between the towers to the port pair on the tower's east end; the gap's four lanes at 0.5, 1.2, 1.9 and 2.6 m east of the ports, this pair in the last two; the flow bridges over the return main at z 1.8
-- kind: pipe
-  name: tower water to C4, pair 1
-  from: [84.85, 42.0, 0.75]
-  to: [84.0, 60.0, 0.75]
-  length: 18.85
-  item: material.structural-steel-a36
-  mass: 3719.0
-  via:
-  - [84.85, 60.0, 0.75]
-  note: a pair of 500 mm pipes, 8 mm wall, flow and return, off the mains north up the gap between the towers to the port pair on the tower's east end; the gap's four lanes at 0.5, 1.2, 1.9 and 2.6 m east of the ports, this pair in the first two; the flow bridges over the return main at z 1.8
-- kind: pipe
-  name: tower water to C4, pair 2
-  from: [86.25, 42.0, 0.75]
-  to: [84.0, 64.5, 0.75]
-  length: 24.75
-  item: material.structural-steel-a36
-  mass: 4883.0
-  via:
-  - [86.25, 64.5, 0.75]
-  note: a pair of 500 mm pipes, 8 mm wall, flow and return, off the mains north up the gap between the towers to the port pair on the tower's east end; the gap's four lanes at 0.5, 1.2, 1.9 and 2.6 m east of the ports, this pair in the last two; the flow bridges over the return main at z 1.8
-- kind: pipe
-  name: cooling water to the heater transformer
-  from: [60.0, -12.0, 0.75]
-  to: [43.45, -24.0, 1.0]
-  length: 34.7
-  item: material.structural-steel-a36
-  mass: 1284.0
-  via:
-  - [60.0, -12.0, -0.75]
-  - [42.0, -12.0, -0.75]
-  - [42.0, -24.0, -0.75]
-  - [42.0, -24.0, 1.0]
-  note: 'a pair of 150 mm pipes, 5 mm wall, flow and return: 16 kg/s at a 10 K rise for its oil-to-water coolers, off the mains'' end, west in a trench to x 42, south, in under the vault''s wall to the water ports on its -x end, 1 m up, at y -24.6 and -23.4 (the pair''s centre here); in a trench 0.8 m wide, its floor at z -1.3, the pipes'' centres at z -0.6 and -0.9 under the mains and crossings, rising at x 42 through bored openings in the vault''s wall (the return''s west leg and riser at x 41.45, the flow''s at 41.7, so they do not cross)'
-- kind: pipe
-  name: cooling water mains
-  from: [-79.0, 42.0, 0.75]
-  to: [60.0, -12.0, 0.75]
-  length: 247.0
-  item: material.structural-steel-a36
-  mass: 183600.0
-  via:
-  - [87.0, 42.0, 0.75]
-  - [87.0, -12.0, 0.75]
-  note: 'a pair of 1.3 m pipes, 12 mm wall, flow and return (at y 41 and 43 along the row, x 86 and 88 down the east leg, capped at x -79): 3,096 kg/s at a 10 K rise, along the towers'' row and down the plant to the scrubber, compressor, cooling loop and transformer'
+  fittings: {elbows: 2, tees: 0, supports: 5, connectors: 2}
+  note: hydrogen at 900 deg C inside 200 mm of refractory, in through the tower's south wall to the bustle
 - kind: pipe
   name: cold gas to the cooling zone
+  run: run.pipe-dn1200-pn10-double
+  ends: ['L:cold-out', 'F:cool-gas-in']
   from: [-26.0, -20.0, 2.0]
   to: [-7.0, 0.0, 14.0]
   length: 51.0
   item: material.structural-steel-a36
-  mass: 11990.0
+  mass: 17400.0
   via:
   - [-26.0, -17.0, 2.0]
   - [-26.0, -17.0, 14.0]
   - [-26.0, 0.0, 14.0]
-  note: '1.2 m, 8 mm wall: 3.9 kg/s of hydrogen at 40 deg C, through the tower''s west wall'
+  fittings: {elbows: 3, tees: 0, supports: 6, connectors: 2}
+  note: through the tower's west wall
 - kind: pipe
   name: hot gas from the cooling zone
+  run: run.pipe-dn2000-pn10-double
+  ends: ['F:cool-gas-out', 'L:hot-in']
   from: [-7.0, 0.0, 19.0]
   to: [-22.0, -20.0, 2.0]
   length: 52.0
   item: material.structural-steel-a36
-  mass: 38270.0
+  mass: 39450.0
   via:
   - [-22.0, 0.0, 19.0]
-  - [-22.0, -17.0, 19.0]
-  - [-22.0, -17.0, 2.0]
-  note: '2.0 m, 10 mm wall, insulated (half as much again): about 600 deg C, back to the loop''s cooler'
+  - [-22.0, -16.5, 19.0]
+  - [-22.0, -16.5, 2.0]
+  fittings: {elbows: 3, tees: 0, supports: 6, connectors: 2}
+  note: insulated, about 600 deg C, back to the loop's cooler
+- kind: pipe
+  name: hydrogen make-up
+  run: run.pipe-dn1200-pn10-double
+  ends: ['edge:h2-in', 'tee:clean gas']
+  from: [100.0, 8.0, 7.0]
+  to: [68.0, 8.0, 7.0]
+  length: 32.0
+  item: material.structural-steel-a36
+  mass: 10690.0
+  fittings: {elbows: 0, tees: 1, supports: 3, connectors: 1}
+  note: 3.00 kg/s from the hydrogen plant, over the water mains, into the suction line
+- kind: pipe
+  name: condensate
+  run: run.pipe-dn200-pn10-ss
+  ends: ['S:condensate-out', 'edge:condensate-out']
+  from: [54.0, 29.3, 0.5]
+  to: [100.0, 29.3, 0.5]
+  length: 58.0
+  item: material.stainless-steel-304
+  mass: 2747.0
+  via:
+  - [56.0, 29.3, 0.5]
+  - [56.0, 29.3, 6.5]
+  - [98.0, 29.3, 6.5]
+  - [98.0, 29.3, 0.5]
+  fittings: {elbows: 4, tees: 0, supports: 12, connectors: 2}
+  note: the 26.9 kg/s of water the reduction made, over the water mains
 - kind: cable
   name: heater supply
-  from: [48.0, -21.1875, 4.5]
+  run: run.cable-6p6kv-630mm2
+  ends: ['T:lv-out', 'H:power-in']
+  from: [48.0, -20.65, 4.5]
   to: [12.45, -21.4, 1.575]
-  length: 47.06
+  length: 51.42
   item: material.copper
-  mass: 3561.0
+  mass: 10420.0
   via:
   - [48.0, -17.0, 4.5]
-  - [12.45, -17.0, 4.5]
-  - [12.45, -17.0, 1.575]
-  note: 'three phases at 6.6 kV in a cable tray, copper at 4 A/mm2: from the transformer''s secondary terminals on its +y face, north to y -17, west along the heater''s north side, down at its west end and south into its terminal house''s +y face'
+  - [10.0, -17.0, 4.5]
+  - [10.0, -17.0, 1.575]
+  - [10.0, -21.4, 1.575]
+  count: 8
+  fittings: {elbows: 4, tees: 0, supports: 19, connectors: 2}
+  note: on a tray 4.5 m up along the heater's north side, down past its west end and east into its terminal house
+- kind: cable
+  name: heater transformer supply
+  run: run.cable-132kv-240mm2
+  ends: ['edge:hv-in', 'T:hv-in']
+  from: [48.0, -32.0, 10.0]
+  to: [48.0, -24.956, 7.55]
+  length: 9.49
+  item: material.copper
+  mass: 721.9
+  via:
+  - [48.0, -24.96, 10.0]
+  fittings: {elbows: 1, tees: 0, supports: 4, connectors: 2}
+  note: over the vault's wall and down into the cable box
+- kind: cable
+  name: compressor supply
+  run: run.cable-11kv-500mm2
+  ends: ['edge:mv-compressor', 'K:power-in']
+  from: [51.25, 12.0, 1.0]
+  to: [51.25, 4.0, 1.0]
+  length: 8.0
+  item: material.copper
+  mass: 253.0
+  fittings: {elbows: 0, tees: 0, supports: 3, connectors: 2}
+- kind: cable
+  name: cooling loop supply
+  run: run.cable-6p6kv-70mm2
+  ends: ['edge:mv-loop', 'L:power-in']
+  from: [-21.0, -32.0, 1.0]
+  to: [-21.0, -28.0, 1.0]
+  length: 4.0
+  item: material.copper
+  mass: 89.4
+  fittings: {elbows: 0, tees: 0, supports: 2, connectors: 2}
+- kind: cable
+  name: shaft supply
+  run: run.cable-400v-240mm2
+  ends: ['edge:lv-shaft', 'F:power-in']
+  from: [-16.0, 2.5, 11.0]
+  to: [-7.0, 2.5, 11.0]
+  length: 9.0
+  item: material.copper
+  mass: 336.1
+  fittings: {elbows: 0, tees: 0, supports: 3, connectors: 2}
+  note: in through the tower's west wall opening
+- kind: cable
+  name: scrubber supply
+  run: run.cable-400v-500mm2
+  ends: ['edge:lv-scrubber', 'S:power-in']
+  from: [38.0, 29.0, 1.0]
+  to: [42.0, 29.0, 1.0]
+  length: 4.0
+  item: material.copper
+  mass: 116.8
+  fittings: {elbows: 0, tees: 0, supports: 2, connectors: 2}
+- kind: pipe
+  name: loop blowdown
+  run: run.pipe-dn100-pn10-ss
+  ends: ['L:blowdown-out', 'edge:blowdown-out']
+  from: [-30.0, -27.0, 0.5]
+  to: [-34.0, -27.0, 0.5]
+  length: 4.0
+  item: material.stainless-steel-304
+  mass: 96.5
+  fittings: {elbows: 0, tees: 0, supports: 1, connectors: 2}
+- kind: pipe
+  name: tower flow main
+  run: run.pipe-dn1400-pn10
+  ends: [cap, cap]
+  from: [-80.0, 42.0, 1.0]
+  to: [91.5, -30.0, 1.0]
+  length: 243.5
+  item: material.structural-steel-a36
+  mass: 88450.0
+  via:
+  - [91.5, 42.0, 1.0]
+  fittings: {elbows: 1, tees: 0, supports: 21, connectors: 2}
+  note: '3,096 kg/s at a 10 K rise from the four towers, on a rack under the return: along their row, then south down the plant''s east side'
+- kind: pipe
+  name: tower return main
+  run: run.pipe-dn1400-pn10
+  ends: [cap, cap]
+  from: [-80.0, 42.0, 4.5]
+  to: [91.5, -30.0, 4.5]
+  length: 243.5
+  item: material.structural-steel-a36
+  mass: 91250.0
+  via:
+  - [91.5, 42.0, 4.5]
+  fittings: {elbows: 1, tees: 0, supports: 21, connectors: 2}
+  note: on the rack 3.5 m over the flow
+- kind: pipe
+  name: scrubber cooling in
+  run: run.pipe-dn1000-pn10
+  ends: ['tee:tower flow main', 'S:water-in']
+  from: [91.5, 34.0, 1.0]
+  to: [50.75, 30.0, 1.0]
+  length: 44.75
+  item: material.structural-steel-a36
+  mass: 9625.0
+  via:
+  - [50.75, 34.0, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 5, connectors: 1}
+- kind: pipe
+  name: scrubber cooling out
+  run: run.pipe-dn1000-pn10
+  ends: ['S:water-out', 'tee:tower return main']
+  from: [52.25, 30.0, 1.0]
+  to: [91.5, 32.0, 4.5]
+  length: 44.75
+  item: material.structural-steel-a36
+  mass: 10150.0
+  via:
+  - [52.25, 32.0, 1.0]
+  - [52.25, 32.0, 4.5]
+  fittings: {elbows: 2, tees: 1, supports: 6, connectors: 1}
+- kind: pipe
+  name: compressor cooling in
+  run: run.pipe-dn500-pn10
+  ends: ['tee:tower flow main', 'K:water-in']
+  from: [91.5, -8.0, 1.0]
+  to: [65.5, -4.0, 1.0]
+  length: 30.0
+  item: material.structural-steel-a36
+  mass: 2451.0
+  via:
+  - [65.5, -8.0, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 5, connectors: 1}
+- kind: pipe
+  name: compressor cooling out
+  run: run.pipe-dn500-pn10
+  ends: ['K:water-out', 'tee:tower return main']
+  from: [67.0, -4.0, 1.0]
+  to: [91.5, -6.0, 4.5]
+  length: 30.0
+  item: material.structural-steel-a36
+  mass: 2908.0
+  via:
+  - [67.0, -6.0, 1.0]
+  - [67.0, -6.0, 4.5]
+  fittings: {elbows: 2, tees: 1, supports: 6, connectors: 1}
+- kind: pipe
+  name: transformer cooling in
+  run: run.pipe-dn150-pn10
+  ends: ['tee:tower flow main', 'T:water-in']
+  from: [91.5, -29.0, 1.0]
+  to: [43.45, -24.6, 1.0]
+  length: 57.35
+  item: material.structural-steel-a36
+  mass: 1346.0
+  via:
+  - [41.0, -29.0, 1.0]
+  - [41.0, -24.6, 1.0]
+  fittings: {elbows: 2, tees: 1, supports: 12, connectors: 1}
+- kind: pipe
+  name: transformer cooling out
+  run: run.pipe-dn150-pn10
+  ends: ['T:water-out', 'tee:tower return main']
+  from: [43.45, -23.4, 1.0]
+  to: [91.5, -18.5, 4.5]
+  length: 59.35
+  item: material.structural-steel-a36
+  mass: 1640.0
+  via:
+  - [42.0, -23.4, 1.0]
+  - [42.0, -18.5, 1.0]
+  - [85.0, -18.5, 1.0]
+  - [85.0, -18.5, 4.5]
+  fittings: {elbows: 4, tees: 1, supports: 14, connectors: 1}
+- kind: pipe
+  name: cooling loop water in
+  run: run.pipe-dn700-pn10
+  ends: ['tee:tower flow main', 'L:water-in']
+  from: [-35.0, 42.0, 1.0]
+  to: [-30.0, -25.0, 1.0]
+  length: 72.0
+  item: material.structural-steel-a36
+  mass: 8991.0
+  via:
+  - [-35.0, -25.0, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 9, connectors: 1}
+- kind: pipe
+  name: cooling loop water out
+  run: run.pipe-dn700-pn10
+  ends: ['L:water-out', 'tee:tower return main']
+  from: [-30.0, -23.0, 1.0]
+  to: [-33.0, 42.0, 4.5]
+  length: 71.5
+  item: material.structural-steel-a36
+  mass: 9101.0
+  via:
+  - [-33.0, -23.0, 1.0]
+  - [-33.0, 38.0, 1.0]
+  - [-33.0, 38.0, 4.5]
+  fittings: {elbows: 3, tees: 1, supports: 10, connectors: 1}
+- kind: pipe
+  name: C1 pair 1 out
+  run: run.pipe-dn500-pn10
+  ends: ['C1:out-1', 'tee:tower flow main']
+  from: [-78.0, 59.4, 1.0]
+  to: [-77.2, 42.0, 1.0]
+  length: 18.2
+  item: material.structural-steel-a36
+  mass: 1577.0
+  via:
+  - [-77.2, 59.4, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 4, connectors: 1}
+- kind: pipe
+  name: C1 pair 1 back
+  run: run.pipe-dn500-pn10
+  ends: ['tee:tower return main', 'C1:in-1']
+  from: [-76.4, 42.0, 4.5]
+  to: [-78.0, 60.6, 1.0]
+  length: 23.7
+  item: material.structural-steel-a36
+  mass: 2140.0
+  via:
+  - [-76.4, 46.0, 4.5]
+  - [-76.4, 46.0, 1.0]
+  - [-76.4, 60.6, 1.0]
+  fittings: {elbows: 3, tees: 1, supports: 5, connectors: 1}
+- kind: pipe
+  name: C1 pair 2 out
+  run: run.pipe-dn500-pn10
+  ends: ['C1:out-2', 'tee:tower flow main']
+  from: [-78.0, 63.9, 1.0]
+  to: [-75.6, 42.0, 1.0]
+  length: 24.3
+  item: material.structural-steel-a36
+  mass: 1995.0
+  via:
+  - [-75.6, 63.9, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 4, connectors: 1}
+- kind: pipe
+  name: C1 pair 2 back
+  run: run.pipe-dn500-pn10
+  ends: ['tee:tower return main', 'C1:in-2']
+  from: [-74.8, 42.0, 4.5]
+  to: [-78.0, 65.1, 1.0]
+  length: 29.8
+  item: material.structural-steel-a36
+  mass: 2623.0
+  via:
+  - [-74.8, 46.0, 4.5]
+  - [-74.8, 46.0, 1.0]
+  - [-74.8, 65.1, 1.0]
+  fittings: {elbows: 3, tees: 1, supports: 6, connectors: 1}
+- kind: pipe
+  name: C1 make-up
+  run: run.pipe-dn150-pn10
+  ends: ['edge:makeup-C1', 'C1:makeup-in']
+  from: [-122.0, 51.0, 1.0]
+  to: [-122.0, 54.0, 1.0]
+  length: 3.0
+  item: material.structural-steel-a36
+  mass: 128.1
+  fittings: {elbows: 0, tees: 0, supports: 1, connectors: 2}
+- kind: cable
+  name: C1 supply
+  run: run.cable-400v-500mm2
+  ends: ['edge:lv-C1', 'C1:power-in']
+  from: [-120.0, 51.0, 1.0]
+  to: [-120.0, 54.0, 1.0]
+  length: 3.0
+  item: material.copper
+  mass: 84.3
+  fittings: {elbows: 0, tees: 0, supports: 1, connectors: 2}
+- kind: pipe
+  name: C2 pair 1 out
+  run: run.pipe-dn500-pn10
+  ends: ['C2:out-1', 'tee:tower flow main']
+  from: [-24.0, 59.4, 1.0]
+  to: [-23.2, 42.0, 1.0]
+  length: 18.2
+  item: material.structural-steel-a36
+  mass: 1577.0
+  via:
+  - [-23.2, 59.4, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 4, connectors: 1}
+- kind: pipe
+  name: C2 pair 1 back
+  run: run.pipe-dn500-pn10
+  ends: ['tee:tower return main', 'C2:in-1']
+  from: [-22.4, 42.0, 4.5]
+  to: [-24.0, 60.6, 1.0]
+  length: 23.7
+  item: material.structural-steel-a36
+  mass: 2140.0
+  via:
+  - [-22.4, 46.0, 4.5]
+  - [-22.4, 46.0, 1.0]
+  - [-22.4, 60.6, 1.0]
+  fittings: {elbows: 3, tees: 1, supports: 5, connectors: 1}
+- kind: pipe
+  name: C2 pair 2 out
+  run: run.pipe-dn500-pn10
+  ends: ['C2:out-2', 'tee:tower flow main']
+  from: [-24.0, 63.9, 1.0]
+  to: [-21.6, 42.0, 1.0]
+  length: 24.3
+  item: material.structural-steel-a36
+  mass: 1995.0
+  via:
+  - [-21.6, 63.9, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 4, connectors: 1}
+- kind: pipe
+  name: C2 pair 2 back
+  run: run.pipe-dn500-pn10
+  ends: ['tee:tower return main', 'C2:in-2']
+  from: [-20.8, 42.0, 4.5]
+  to: [-24.0, 65.1, 1.0]
+  length: 29.8
+  item: material.structural-steel-a36
+  mass: 2623.0
+  via:
+  - [-20.8, 46.0, 4.5]
+  - [-20.8, 46.0, 1.0]
+  - [-20.8, 65.1, 1.0]
+  fittings: {elbows: 3, tees: 1, supports: 6, connectors: 1}
+- kind: pipe
+  name: C2 make-up
+  run: run.pipe-dn150-pn10
+  ends: ['edge:makeup-C2', 'C2:makeup-in']
+  from: [-68.0, 51.0, 1.0]
+  to: [-68.0, 54.0, 1.0]
+  length: 3.0
+  item: material.structural-steel-a36
+  mass: 128.1
+  fittings: {elbows: 0, tees: 0, supports: 1, connectors: 2}
+- kind: cable
+  name: C2 supply
+  run: run.cable-400v-500mm2
+  ends: ['edge:lv-C2', 'C2:power-in']
+  from: [-66.0, 51.0, 1.0]
+  to: [-66.0, 54.0, 1.0]
+  length: 3.0
+  item: material.copper
+  mass: 84.3
+  fittings: {elbows: 0, tees: 0, supports: 1, connectors: 2}
+- kind: pipe
+  name: C3 pair 1 out
+  run: run.pipe-dn500-pn10
+  ends: ['C3:out-1', 'tee:tower flow main']
+  from: [30.0, 59.4, 1.0]
+  to: [30.8, 42.0, 1.0]
+  length: 18.2
+  item: material.structural-steel-a36
+  mass: 1577.0
+  via:
+  - [30.8, 59.4, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 4, connectors: 1}
+- kind: pipe
+  name: C3 pair 1 back
+  run: run.pipe-dn500-pn10
+  ends: ['tee:tower return main', 'C3:in-1']
+  from: [31.6, 42.0, 4.5]
+  to: [30.0, 60.6, 1.0]
+  length: 23.7
+  item: material.structural-steel-a36
+  mass: 2140.0
+  via:
+  - [31.6, 46.0, 4.5]
+  - [31.6, 46.0, 1.0]
+  - [31.6, 60.6, 1.0]
+  fittings: {elbows: 3, tees: 1, supports: 5, connectors: 1}
+- kind: pipe
+  name: C3 pair 2 out
+  run: run.pipe-dn500-pn10
+  ends: ['C3:out-2', 'tee:tower flow main']
+  from: [30.0, 63.9, 1.0]
+  to: [32.4, 42.0, 1.0]
+  length: 24.3
+  item: material.structural-steel-a36
+  mass: 1995.0
+  via:
+  - [32.4, 63.9, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 4, connectors: 1}
+- kind: pipe
+  name: C3 pair 2 back
+  run: run.pipe-dn500-pn10
+  ends: ['tee:tower return main', 'C3:in-2']
+  from: [33.2, 42.0, 4.5]
+  to: [30.0, 65.1, 1.0]
+  length: 29.8
+  item: material.structural-steel-a36
+  mass: 2623.0
+  via:
+  - [33.2, 46.0, 4.5]
+  - [33.2, 46.0, 1.0]
+  - [33.2, 65.1, 1.0]
+  fittings: {elbows: 3, tees: 1, supports: 6, connectors: 1}
+- kind: pipe
+  name: C3 make-up
+  run: run.pipe-dn150-pn10
+  ends: ['edge:makeup-C3', 'C3:makeup-in']
+  from: [-14.0, 51.0, 1.0]
+  to: [-14.0, 54.0, 1.0]
+  length: 3.0
+  item: material.structural-steel-a36
+  mass: 128.1
+  fittings: {elbows: 0, tees: 0, supports: 1, connectors: 2}
+- kind: cable
+  name: C3 supply
+  run: run.cable-400v-500mm2
+  ends: ['edge:lv-C3', 'C3:power-in']
+  from: [-12.0, 51.0, 1.0]
+  to: [-12.0, 54.0, 1.0]
+  length: 3.0
+  item: material.copper
+  mass: 84.3
+  fittings: {elbows: 0, tees: 0, supports: 1, connectors: 2}
+- kind: pipe
+  name: C4 pair 1 out
+  run: run.pipe-dn500-pn10
+  ends: ['C4:out-1', 'tee:tower flow main']
+  from: [84.0, 59.4, 1.0]
+  to: [84.8, 42.0, 1.0]
+  length: 18.2
+  item: material.structural-steel-a36
+  mass: 1577.0
+  via:
+  - [84.8, 59.4, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 4, connectors: 1}
+- kind: pipe
+  name: C4 pair 1 back
+  run: run.pipe-dn500-pn10
+  ends: ['tee:tower return main', 'C4:in-1']
+  from: [85.6, 42.0, 4.5]
+  to: [84.0, 60.6, 1.0]
+  length: 23.7
+  item: material.structural-steel-a36
+  mass: 2140.0
+  via:
+  - [85.6, 46.0, 4.5]
+  - [85.6, 46.0, 1.0]
+  - [85.6, 60.6, 1.0]
+  fittings: {elbows: 3, tees: 1, supports: 5, connectors: 1}
+- kind: pipe
+  name: C4 pair 2 out
+  run: run.pipe-dn500-pn10
+  ends: ['C4:out-2', 'tee:tower flow main']
+  from: [84.0, 63.9, 1.0]
+  to: [86.4, 42.0, 1.0]
+  length: 24.3
+  item: material.structural-steel-a36
+  mass: 1995.0
+  via:
+  - [86.4, 63.9, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 4, connectors: 1}
+- kind: pipe
+  name: C4 pair 2 back
+  run: run.pipe-dn500-pn10
+  ends: ['tee:tower return main', 'C4:in-2']
+  from: [87.2, 42.0, 4.5]
+  to: [84.0, 65.1, 1.0]
+  length: 29.8
+  item: material.structural-steel-a36
+  mass: 2623.0
+  via:
+  - [87.2, 46.0, 4.5]
+  - [87.2, 46.0, 1.0]
+  - [87.2, 65.1, 1.0]
+  fittings: {elbows: 3, tees: 1, supports: 6, connectors: 1}
+- kind: pipe
+  name: C4 make-up
+  run: run.pipe-dn150-pn10
+  ends: ['edge:makeup-C4', 'C4:makeup-in']
+  from: [40.0, 51.0, 1.0]
+  to: [40.0, 54.0, 1.0]
+  length: 3.0
+  item: material.structural-steel-a36
+  mass: 128.1
+  fittings: {elbows: 0, tees: 0, supports: 1, connectors: 2}
+- kind: cable
+  name: C4 supply
+  run: run.cable-400v-500mm2
+  ends: ['edge:lv-C4', 'C4:power-in']
+  from: [42.0, 51.0, 1.0]
+  to: [42.0, 54.0, 1.0]
+  length: 3.0
+  item: material.copper
+  mass: 84.3
+  fittings: {elbows: 0, tees: 0, supports: 1, connectors: 2}
 frame:
   box: [-12.0, -12.0, 0.0, 12.0, 12.0, 54.0]
   cell: 3.0
@@ -391,9 +999,8 @@ ground:
 - {what: Transformer vault, item: good.concrete, volume: 128.7, note: fire walls 7 m tall round the heater's transformer; measured on blender's layout (candidate v01), mass: 308900.0}
 - {what: Cooling tower basins, item: good.concrete, volume: 1587.28, note: 'one under each tower, sunk as the furnace shop''s: 0.3 m walls, floor top at z -2; 6 m apart, no shared walls; measured on blender''s layout (candidate v01)', mass: 3809000.0}
 - {what: Gallery trestle footings, item: good.concrete, volume: 92.0, note: '8 m3 under each of the pellet belt''s trestles, 4 m3 under the product belt''s; measured on blender''s layout (candidate v01)', mass: 220800.0}
-- {what: Pipe supports, item: good.concrete, volume: 56.46, note: plinths and feet under the ground-level pipes and the duct supports; measured on blender's layout (candidate v01), mass: 135500.0}
-- {what: Coolant trench, item: good.concrete, volume: 24.98, note: 'the transformer''s water pair''s trench, 0.8 m wide, floor at z -1.3; measured on blender''s layout (candidate v01)', mass: 59950.0}
-totals: {rate: 55.5555555555556, power: 152200000.0, heat: 129600000.0, water: 72.04, mass: 15900000.0, against_module: 'module.shaft-furnace: one box 150 x 100 x 137 m, 22 MW, which leaves out heating the gas. This layout: the same 200 t of sponge iron an hour; 152 MW, of which the hydrogen heater is 125: hydrogen brings no heat of its own, so the shaft''s 112 MW comes from 14.3 kg/s of gas (4.8 times what the reduction uses) heated by electricity; 130 MW to the towers, 72 kg/s of water evaporated; the 26.9 kg/s of water made goes back to the hydrogen plant. 6,016 t of plant and frame, 9,880 t of concrete.'}
+- {what: Pipe supports, item: good.concrete, volume: 56.46, note: 'plinths and feet under the ground-level pipes and the duct supports; measured on blender''s layout (candidate v01) before the runs were re-laid, to measure again', mass: 135500.0}
+totals: {rate: 55.5555555555556, power: 152200000.0, heat: 129600000.0, water: 72.04, mass: 16060000.0, against_module: 'module.shaft-furnace: one box 150 x 100 x 137 m, 22 MW, which leaves out heating the gas. This layout: the same 200 t of sponge iron an hour; 152 MW, of which the hydrogen heater is 125: hydrogen brings no heat of its own, so the shaft''s 112 MW comes from 14.3 kg/s of gas (4.8 times what the reduction uses) heated by electricity; 130 MW to the towers, 72 kg/s of water evaporated; the 26.9 kg/s of water made goes back to the hydrogen plant. 6,236 t of plant and frame, 9,820 t of concrete.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}

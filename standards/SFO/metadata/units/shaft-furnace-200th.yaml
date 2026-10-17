@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
 identity: {key: unit.shaft-furnace-200th, name: 'Hydrogen shaft furnace, 200 t an hour', description: 'A refractory-lined steel shaft 6.6 m across inside, through which iron ore pellets sink by their own weight for about 10 hours against hot hydrogen rising, coming out at the bottom as cold sponge iron. Local frame: the shaft''s axis at (0, 0). From the top down: a charge hopper and seal leg (z 42 to 50) with the pellet belt''s head over it; the top gas outlet at z 41 on +x; the reduction zone (12 m); the bustle main, a ring 3.2 m across round the shaft at z 26, through whose ports hydrogen at 900 deg C enters, its inlet on -y; the transition; the cooling zone (9 m), cooled by a loop of cold hydrogen in at z 14 and out at z 19 (ports on -x); a discharge cone to burden feeders and a lock at z 8, over the layout''s product belt. Hung from a ring girder whose underside is at z 22 (radius 4.1 m to its centre, the cooling zone''s top, under the bustle), seated on the layout''s columns'' tops.
-    The bustle''s inlet is a short stub out of the ring on -y, its flange on the unit''s face at y -7.5. About 1,993 t of burden inside.'}
+    The bustle''s inlet is a short stub out of the ring on -y, its flange on the unit''s face at y -7.5. About 1,993 t of burden inside. Its ports (SFO 25): the charge hopper''s rim at (0, 0, 50), a belt''s head 3 m over it; the top gas out at (7, 0, 41), facing +x, DN 3600; the bustle''s stub at (0, -7.5, 26), facing -y, lined DN 3600; the cooling zone''s gas in at (-7, 0, 14), DN 1200, and out at (-7, 0, 19), DN 2000, facing -x; the lock''s chute at (0, 0, 7) onto a belt''s tail; the drives'' 400 V at (-7, 2.5, 11), facing -x.'}
 size_class: 3
 fits: plant-mount.bay-s3
 physical: {length: 15, width: 15, height: 50.0, mass: 1239000.0}
@@ -28,6 +28,99 @@ recipes:
   rate: 55.5555555555556
   power: 22000000
 ports:
+- id: charge-in
+  flow: in
+  medium: bulk
+  item: good.iron-ore-pellets
+  rate: 79.44
+  interface: interface.belt-transfer-1200
+  half: female
+  make: open
+  connector: connector.belt-transfer-1200
+  at: [0.0, 0.0, 50.0]
+  facing: [0.0, 0.0, 1.0]
+  note: the charge hopper's rim; a belt's head 3 m over it
+- id: top-gas-out
+  flow: out
+  medium: gas
+  item: material.hydrogen
+  rate: 38.14
+  pressure: 130000.0
+  temperature: 623.1
+  interface: interface.flange-dn3600-pn10-double
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn3600-pn10-double
+  at: [7.0, 0.0, 41.0]
+  facing: [1.0, 0.0, 0.0]
+  note: hydrogen with the reduction's steam
+- id: hot-gas-in
+  flow: in
+  medium: gas
+  item: material.hydrogen
+  rate: 14.25
+  pressure: 280000.0
+  temperature: 1173.0
+  interface: interface.lined-flange-dn3600-pn10-double
+  half: androgynous
+  make: bolted
+  connector: connector.lined-flange-dn3600-pn10-double
+  at: [0.0, -7.5, 26.0]
+  facing: [0.0, -1.0, 0.0]
+  note: the bustle main's inlet stub
+- id: cool-gas-in
+  flow: in
+  medium: gas
+  item: material.hydrogen
+  rate: 3.885
+  pressure: 150000.0
+  temperature: 313.1
+  interface: interface.flange-dn1200-pn10-double
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn1200-pn10-double
+  at: [-7.0, 0.0, 14.0]
+  facing: [-1.0, 0.0, 0.0]
+  note: cold hydrogen up through the cooling zone
+- id: cool-gas-out
+  flow: out
+  medium: gas
+  item: material.hydrogen
+  rate: 3.885
+  pressure: 130000.0
+  temperature: 873.1
+  interface: interface.flange-dn2000-pn10-double
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn2000-pn10-double
+  at: [-7.0, 0.0, 19.0]
+  facing: [-1.0, 0.0, 0.0]
+- id: dri-out
+  flow: out
+  medium: bulk
+  item: good.sponge-iron
+  rate: 55.56
+  temperature: 323.1
+  interface: interface.chute-dn800
+  half: androgynous
+  make: bolted
+  connector: connector.chute-dn800
+  at: [0.0, 0.0, 7.0]
+  facing: [0.0, 0.0, -1.0]
+  note: the discharge lock's outlet, onto a belt's tail under it
+- id: power-in
+  flow: in
+  medium: power
+  power: 334000.0
+  voltage: 400
+  interface: interface.termination-400v-240mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-240mm2
+  at: [-7.0, 2.5, 11.0]
+  facing: [-1.0, 0.0, 0.0]
+  note: the burden feeders' and locks' drives
+  current: 535.7
 - id: base
   flow: out
   medium: load
@@ -60,5 +153,9 @@ basis:
   tier: invented
   review: true
   note: The burden sinks by its own weight against the gas's drag; at low g the gas must be slowed or the bed lifts. Not checked below 1 m/s2.
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage.'
 - of: [life]
   rule: rule.life-plant

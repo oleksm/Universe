@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/interface.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: interface.flange-dn2800-pn10-double, name: 'Flange DN 2800 PN 10, double seal', description: 'The mating face of the Flange DN 2800 PN 10, double seal joint: any maker''s half built to it mates with any other''s, whatever its metal.'}
+domain: fluid
+kind: flange
+envelope: {pressure: 1000000.0, temperature: 376.3227555701661}
+media: [gas, liquid]
+sealing: double
+halves: androgynous
+make: bolted
+face: {length: 3.08, width: 3.08, height: 0.262}
+size: 2.8
+standard: EN 1092-1 bores and pressure classes (its faces and bolting the registry's)
+basis:
+- of: [envelope, face]
+  tier: derived
+  note: The most the connection products built to it are rated for, and their joint's outside (SFO 25's connectors).

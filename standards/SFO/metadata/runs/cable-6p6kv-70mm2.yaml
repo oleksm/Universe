@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schema/run.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: run.cable-6p6kv-70mm2, name: 'Cable, 6.6 kV, 70 mm2', description: 'Three single-core cables of 70 mm2 at 6.6 kV on a ladder tray: 175 A a circuit on airless ground, where only radiation cools them.'}
+kind: cable
+size: 7.0e-05
+outside: [0.3, 0.126]
+rating: {voltage: 6600, current: 175.0}
+per_m:
+  mass: 7.7
+  built_of:
+  - {what: Conductors, item: material.copper, mass: 1.9, note: three cores of 70 mm2}
+  - {what: Insulation and sheaths, item: material.polyethylene-uhmw, mass: 0.9, note: 3.4 mm of insulation and a 2.5 mm sheath on each core; UHMW polyethylene stands for XLPE}
+  - {what: Screens, item: material.copper, mass: 0.9, note: a 35 mm2 copper screen on each core}
+  - {what: Tray, item: material.aluminium-alloy-6061, mass: 4.0, note: 'its share of a ladder tray, with 4 mm bridges over the cores at each rung that hold them on risers'}
+pitch: 0.06
+elbow: {radius: 0.393, mass: 4.8}
+riser: {radius: 0.333, mass: 4.0}
+tee: {mass: 25.0}
+support: {spacing: 3.0, mass: 8.0, per_m_height: 6.0, item: material.aluminium-alloy-6061}
+repeat:
+- {piece: rung, pitch: 0.3}
+connector: connector.termination-6p6kv-70mm2
+carries: power
+looks_as: run.cable-400v-185mm2
+basis:
+- of: [per_m]
+  tier: derived
+  review: true
+  note: Copper from its area; insulation by the voltage's usual thickness (from memory); the rating at 2.5 A/mm2, radiation only.
+- of: [support, tee, elbow, riser, pitch]
+  tier: invented
+  review: true
+  note: 'Tray posts every 3 m; a tee is a joint box; the cores'' least bend radius 15 cable diameters (from memory): a riser bends all three at it, an elbow in plan has its axis one core''s pitch further out so the inner core keeps it.'

@@ -183,7 +183,7 @@ def check(lay, units, runs, conns):
             pos = pos + end_offset(ck, run, 1 if l.get("reversible") else which, face)
             if np.linalg.norm(pos - at) > 0.02:
                 faults.append(f"{l['name']}: its {'from' if which == 0 else 'to'} end {at.tolist()} is not at {e} ({pos.round(3).tolist()})")
-            if p["connector"] != run["connector"] and not (run["kind"] == "belt" and ck == "chute") and not (run["kind"] == "belt" and p["connector"] == run["connector"] + "-sealed") and not (run["kind"] == "jacketed-duct" and ck == "hood") and not (run["kind"] == "lined-duct" and ck == "clamp-coupling"):     # (a chute drops onto a belt's tail, into its skirt; a belt's head drops through its hood into a chute's mouth)
+            if p["connector"] != run["connector"] and not (run["kind"] == "belt" and ck == "chute") and not (run["kind"] == "belt" and p["connector"] == run["connector"] + "-sealed") and not any(rd["end"] == which and rd["to"] == p["connector"] for rd in l.get("reducers", [])) and not (run["kind"] == "jacketed-duct" and ck == "hood") and not (run["kind"] == "lined-duct" and ck == "clamp-coupling"):     # (a chute drops onto a belt's tail, into its skirt; a belt's head drops through its hood into a chute's mouth)
                 faults.append(f"{l['name']}: {run['connector']} at its end, {e} is built to {p['connector']}")
             want = "in" if l.get("reversible") else ("out" if which == 0 else "in")
             if flow not in (want, "both"):

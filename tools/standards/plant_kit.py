@@ -606,6 +606,19 @@ def lay(run_key, pts, count=1, tees=0, taps=(), port_ends=0, caps=0):
     return m, fit, L
 
 
+def reducer(run_key, conn_key):
+    """A concentric reducer at a run's end, from its bore to a smaller port's flange of the same class (SFO 26: an
+    adapter): a cone at 15 degrees a side of the run's wall, its mass less the run's own connector it replaces."""
+    rec, c = _recs[run_key], _recs[conn_key]
+    D1, D2 = rec["size"], c["size"]
+    assert D2 < D1, (run_key, conn_key)
+    shell = rec["per_m"]["built_of"][0]
+    t = shell["mass"] / (math.pi * D1 * RHO.get(shell["item"], 7850))
+    L = (D1 - D2) / 2 / math.tan(math.radians(15.0))
+    cone = math.pi * (D1 + D2) / 2 * L * t * RHO.get(shell["item"], 7850)
+    return r(cone + c["physical"]["mass"] - _recs[rec["connector"]]["physical"]["mass"], 1), r(L, 2)
+
+
 # ---------------------------------------------------------------- interfaces (SFO 26)
 
 IFACE = {    # connector kind: (domain, halves, make, sealing by default)

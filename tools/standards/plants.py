@@ -702,6 +702,86 @@ def pellet_air_ports(us):
     ]
 
 
+def shaft_air_ports(us):
+    """Ports on the units of the shaft furnace for air (SFO 25), at the places their descriptions give; the loop's lines
+    at 1.3 to 2.8 bar, PN 10 with double seals for hydrogen. The recuperator keeps its 8 bar flanges: the layout reduces to them."""
+    K = 273.15
+    H2, WATER = "material.hydrogen", "good.water"
+    dn = lambda d: kit.dn_for(d)
+    top, gas = H2_TOP + STEAM, GAS
+    g = lambda d, T: kit.flange(dn(d), 10, sealing="double", temp=T + K)
+    d_top = main_dia(mol_flow(H2_TOP, STEAM), T_TOP, P_SUCTION)
+    d_wet = main_dia(mol_flow(H2_TOP, STEAM), T_RECUP_OUT, P_SUCTION)
+    d_dry = main_dia(mol_flow(H2_TOP), T_COLD, P_SUCTION)
+    d_cmp = main_dia(mol_flow(GAS), T_COLD, P_SHAFT)
+    d_pre = main_dia(mol_flow(GAS), T_PRE, P_SHAFT)
+    d_cg = main_dia(mol_flow(COOL_GAS), T_COLD, 1.5e5)
+    d_cgh = main_dia(mol_flow(COOL_GAS), 600.0, 1.5e5)
+    hot = kit.lined_flange(3.6, 10, sealing="double")
+    q = lambda heat: heat / (4186 * 10)
+    wdn = lambda heat: kit.dn_for(math.sqrt(4 * q(heat) / 1000 / 2.5 / math.pi))
+    lv = lambda w: kit.termination(400, kit.area_for(amps(w, 400)))
+    T_DIS = (T_COLD + K) * (1 + ((P_SHAFT / P_SUCTION) ** ((GAMMA - 1) / GAMMA) - 1) / ETA_K)
+    f = us["shaft-furnace-200th"]
+    if "Its ports (SFO 25)" not in f["desc"]:
+        f["desc"] += (f" Its ports (SFO 25): the charge hopper's rim at (0, 0, 50), a belt's head 3 m over it; the top gas out at (7, 0, 41), facing +x, DN {dn(d_top) * 1000:.0f}; the bustle's stub at (0, -7.5, 26), facing -y, lined DN 3600; "
+                      f"the cooling zone's gas in at (-7, 0, 14), DN {dn(d_cg) * 1000:.0f}, and out at (-7, 0, 19), DN {dn(d_cgh) * 1000:.0f}, facing -x; the lock's chute at (0, 0, 7) onto a belt's tail; the drives' 400 V at (-7, 2.5, 11), facing -x.")
+    f["ports"] = [
+        port("charge-in", "in", "bulk", kit.belt_transfer(1.2), (0.0, 0.0, 50.0), (0, 0, 1), item="good.iron-ore-pellets", rate=PELLETS, note="the charge hopper's rim; a belt's head 3 m over it"),
+        port("top-gas-out", "out", "gas", g(d_top, T_TOP), (7.0, 0.0, 41.0), (1, 0, 0), item=H2, rate=top, pressure=P_SUCTION, temperature=T_TOP + K, note="hydrogen with the reduction's steam"),
+        port("hot-gas-in", "in", "gas", hot, (0.0, -7.5, 26.0), (0, -1, 0), item=H2, rate=gas, pressure=P_SHAFT, temperature=T_GAS + K, note="the bustle main's inlet stub"),
+        port("cool-gas-in", "in", "gas", g(d_cg, T_COLD), (-7.0, 0.0, 14.0), (-1, 0, 0), item=H2, rate=COOL_GAS, pressure=1.5e5, temperature=T_COLD + K, note="cold hydrogen up through the cooling zone"),
+        port("cool-gas-out", "out", "gas", g(d_cgh, 600.0), (-7.0, 0.0, 19.0), (-1, 0, 0), item=H2, rate=COOL_GAS, pressure=1.3e5, temperature=600.0 + K),
+        port("dri-out", "out", "bulk", kit.chute(0.8), (0.0, 0.0, 7.0), (0, 0, -1), item="good.sponge-iron", rate=S_RATE, temperature=T_OUT + K, note="the discharge lock's outlet, onto a belt's tail under it"),
+        port("power-in", "in", "power", lv(f["needs"]["power"]), (-7.0, 2.5, 11.0), (-1, 0, 0), power=f["needs"]["power"], voltage=400, note="the burden feeders' and locks' drives"),
+    ]
+    sc = us["top-gas-scrubber"]
+    if "Its ports (SFO 25)" not in sc["desc"]:
+        sc["desc"] += f" Its ports (SFO 25): gas in DN {dn(d_wet) * 1000:.0f}, out DN {dn(d_dry) * 1000:.0f}; the tower loop's flanges DN {wdn(sc['needs']['heat']) * 1000:.0f}; the pumps' 400 V at (-6, 5, 1), facing -x."
+    sc["ports"] = [
+        port("gas-in", "in", "gas", g(d_wet, T_RECUP_OUT), (-6.0, 0.0, 2.0), (-1, 0, 0), item=H2, rate=top, pressure=P_SUCTION, temperature=T_RECUP_OUT + K),
+        port("gas-out", "out", "gas", g(d_dry, T_COLD), (0.0, 0.0, 23.0), (0, 0, 1), item=H2, rate=H2_TOP, pressure=P_SUCTION, temperature=T_COLD + K, note="dry and washed, to the compressor"),
+        port("water-in", "in", "liquid", kit.flange(wdn(sc["needs"]["heat"]), 10), (2.75, 6.0, 1.0), (0, 1, 0), item=WATER, rate=q(sc["needs"]["heat"]), temperature=303.0, note="the tower loop's flow"),
+        port("water-out", "out", "liquid", kit.flange(wdn(sc["needs"]["heat"]), 10), (4.25, 6.0, 1.0), (0, 1, 0), item=WATER, rate=q(sc["needs"]["heat"]), temperature=313.0),
+        port("condensate-out", "out", "liquid", kit.flange(0.2, 10, kit.SS), (6.0, 5.3, 0.5), (1, 0, 0), item=WATER, rate=STEAM, temperature=T_COLD + K, note="the water the reduction made, to the hydrogen plant"),
+        port("power-in", "in", "power", lv(sc["needs"]["power"]), (-6.0, 5.0, 1.0), (-1, 0, 0), power=sc["needs"]["power"], voltage=400, note="the spray pumps"),
+    ]
+    k = us["recycle-compressor"]
+    k["ports"] = [
+        port("suction", "in", "gas", g(d_dry, T_COLD), (8.0, 4.0, 1.5), (0, 1, 0), item=H2, rate=gas, pressure=P_SUCTION, temperature=T_COLD + K, note="the recycle with the hydrogen plant's make-up"),
+        port("discharge", "out", "gas", g(d_cmp, T_COLD), (-10.0, -4.0, 1.5), (0, -1, 0), item=H2, rate=gas, pressure=P_SHAFT, temperature=T_COLD + K, note="after the aftercooler"),
+        port("water-in", "in", "liquid", kit.flange(wdn(k["needs"]["heat"]), 10), (5.5, -4.0, 1.0), (0, -1, 0), item=WATER, rate=q(k["needs"]["heat"]), temperature=303.0, note="the coolers' flow"),
+        port("water-out", "out", "liquid", kit.flange(wdn(k["needs"]["heat"]), 10), (7.0, -4.0, 1.0), (0, -1, 0), item=WATER, rate=q(k["needs"]["heat"]), temperature=313.0),
+        port("power-in", "in", "power", kit.termination(11000, kit.area_for(amps(k["needs"]["power"], 11000))), (-8.75, 4.0, 1.0), (0, 1, 0), power=k["needs"]["power"], voltage=11000, note="the motor's terminal box"),
+    ]
+    h = us["gas-heater-122mw"]
+    n_h = math.ceil(amps(h["needs"]["power"], 6600, HEATER_PF) / (630e-6 * kit.J_VACUUM))
+    h["ports"] = [
+        port("gas-in", "in", "gas", g(d_pre, T_PRE), (-12.0, -3.3, 2.0), (-1, 0, 0), item=H2, rate=gas, pressure=P_SHAFT, temperature=T_PRE + K, note="the cold header's inlet"),
+        port("gas-out", "out", "gas", hot, (0.0, 4.0, 18.0), (0, 0, 1), item=H2, rate=gas, pressure=P_SHAFT, temperature=T_GAS + K, note="the hot header's stub, lined DN 3600"),
+        port("power-in", "in", "power", kit.termination(6600, 630), (-11.55, 2.6, 1.575), (0, 1, 0), power=h["needs"]["power"], voltage=6600, note=f"{n_h} circuits of 630 mm2 into the terminal house"),
+    ]
+    lp = us["dri-cooling-loop"]
+    lp["ports"] = [
+        port("hot-in", "in", "gas", g(d_cgh, 600.0), (2.0, 4.0, 2.0), (0, 1, 0), item=H2, rate=COOL_GAS, pressure=1.3e5, temperature=600.0 + K, note="from the shaft's cooling zone, insulated"),
+        port("cold-out", "out", "gas", g(d_cg, T_COLD), (-2.0, 4.0, 2.0), (0, 1, 0), item=H2, rate=COOL_GAS, pressure=1.5e5, temperature=T_COLD + K),
+        port("water-in", "in", "liquid", kit.flange(wdn(lp["needs"]["heat"]), 10), (-6.0, -1.0, 1.0), (-1, 0, 0), item=WATER, rate=q(lp["needs"]["heat"]), temperature=303.0),
+        port("water-out", "out", "liquid", kit.flange(wdn(lp["needs"]["heat"]), 10), (-6.0, 1.0, 1.0), (-1, 0, 0), item=WATER, rate=q(lp["needs"]["heat"]), temperature=313.0),
+        port("blowdown-out", "out", "liquid", kit.flange(0.1, 10, kit.SS), (-6.0, -3.0, 0.5), (-1, 0, 0), item=WATER, rate=0.5, temperature=T_COLD + K, note="the scrubber's dust slurry (rate invented)"),
+        port("power-in", "in", "power", kit.termination(6600, kit.area_for(amps(lp["needs"]["power"], 6600))), (3.0, -4.0, 1.0), (0, -1, 0), power=lp["needs"]["power"], voltage=6600, note="the compressor's motor"),
+    ]
+    t = us["cooling-tower-shaft"]
+    L_ = t["dims"][0] / 2
+    loads = sum(us[x]["needs"].get("heat", 0) for x in ("top-gas-scrubber", "recycle-compressor", "dri-cooling-loop", "heater-transformer-131mva"))
+    q_pair = q(loads) / t["count"] / 2
+    t["desc"] = t["desc"].replace("the loop leaves by two pairs of 500 mm ports on its east end (local x +24, 0.75 m up, at y 0 and +4.5)",
+                                  f"its loop leaves by two pairs of DN 500 flanges on its east end (local x +{L_:g}, 1 m up), facing +x: out at y -0.6 and 3.9, back at 0.6 and 5.1; its make-up water at (-20, -6, 1) and its 400 V at (-18, -6, 1), facing -y")
+    t["ports"] = [port(f"{w}-{j}", fl, "liquid", kit.flange(0.5, 10), (L_, y, 1.0), (1, 0, 0), item=WATER, rate=q_pair, temperature=T)
+                  for j, (yo, yi) in ((1, (-0.6, 0.6)), (2, (3.9, 5.1))) for w, fl, y, T in (("out", "out", yo, 303.0), ("in", "in", yi, 313.0))]
+    t["ports"] += [port("makeup-in", "in", "liquid", kit.flange(0.15, 10), (-20.0, -6.0, 1.0), (0, -1, 0), item=WATER, rate=t["needs"]["water"], note="the evaporation, blowdown and drift made up"),
+                   port("power-in", "in", "power", lv(t["needs"]["power"]), (-18.0, -6.0, 1.0), (0, -1, 0), power=t["needs"]["power"], voltage=400, note="the fans and the loop's pumps")]
+
+
 def arc_furnace_air(us, recs):
     """The trial: the arc furnace shop on a world with air at 1 g, laid of runs from port to port (SFO 25). Returns the
     layout and its bays."""
@@ -1506,27 +1586,77 @@ def shaft_furnace_air(us, recs):
     d_scr = math.sqrt(4 * Q_SCRUB / (4186 * 10) / 1000 / 2.5 / math.pi)
     d_kc = math.sqrt(4 * W_COMP / (4186 * 10) / 1000 / 2.5 / math.pi)
     d_lc = math.sqrt(4 * (Q_COOLZONE + W_COOL) / (4186 * 10) / 1000 / 2.5 / math.pi)
-    links = [
-        link("conveyor", "pellet belt", (round(belt_x, 1), 0.0, 2.0), (0.0, 0.0, round(H + 2.0, 1)), A36, 180.0, 300000.0, f"a 1.2 m belt in a covered gallery on trestles every 18 m, 180 kg/m with the gallery (from memory), rising at {rise:g} degrees from the pellet plant's transfer house to a head house on the tower's roof over the charge hopper, the belt's head 2 m above the hopper's rim (z 50) dropping into it by a closed hood and chute, flanged to the rim; {PELLETS:.0f} kg/s of pellets; over the recycle compressor its trestles are portals straddling it (legs at y -5.5 and 5.5, clear to z 9, braced above)"),
-        link("conveyor", "product belt", (0.0, 0.0, 5.0), (-60.0, 0.0, 5.0), A36, 150.0, 150000.0, "a 1 m belt in a gallery 5 m up, from under the discharge lock (its bottom at z 7) west to the arc furnace shop's sponge iron bin, beyond the layout; the lock drops onto it by a closed chute flanged to its bottom, loading the belt 1 m west of the axis, through an opening in the gallery's cover"),
-        link("duct", "top gas main", (sh["dims"][0] / 2 - 0.5, 0.0, z_top_gas), (24.0, 24.0, 18.0), A36, pm(d_top), None, f"{d_top:.1f} m across, 12 mm plate, insulated: {T_TOP:.0f} deg C top gas with its steam, out of the tower's east wall and down to the recuperator", via=[(15.0, 0.0, z_top_gas), (24.0, 24.0, z_top_gas)]),
-        link("duct", "wet gas to the scrubber", (24.0, 29.2, 1.5), (42.0, 24.0, 2.0), A36, pm(d_wet), None, f"{d_wet:.1f} m across, 12 mm plate", via=[(24.0, 32.0, 1.5), (40.0, 32.0, 1.5), (40.0, 24.0, 2.0)]),
-        link("duct", "clean gas to the compressor", (48.0, 24.0, 23.0), (68.0, 4.0, 1.5), A36, pm(d_dry), None, f"{d_dry:.1f} m across, 12 mm plate; the hydrogen plant's make-up joins it here", via=[(48.0, 24.0, 26.0), (68.0, 24.0, 26.0), (68.0, 7.0, 26.0), (68.0, 7.0, 1.5)]),
-        link("pipe", "compressed gas to the recuperator", (50.0, -4.0, 1.5), (24.0, 18.8, 1.0), A36, pm(d_cmp), None, f"{d_cmp:.1f} m across, 12 mm wall, {P_SHAFT / 1e5:.1f} bar", via=[(50.0, -6.0, 1.5), (36.0, -6.0, 1.5), (36.0, 14.0, 1.5), (24.0, 14.0, 1.0)]),
-        link("pipe", "warm gas to the heater", (24.0, 18.8, 16.75), (12.0, -27.3, 2.0), A36, pm(d_pre), None, f"{d_pre:.1f} m across, 12 mm wall, insulated, {T_PRE:.0f} deg C: down the tower's east side and in at the heater's west end, into its cold header", via=[(24.0, 14.0, 16.75), (14.0, 14.0, 16.75), (14.0, -15.0, 16.75), (10.0, -15.0, 16.75), (10.0, -15.0, 2.0), (10.0, -27.3, 2.0)]),
-        link("duct", "hot gas to the bustle", (24.0, -20.0, 18.0), (0.0, -side / 2, z_bustle), A36, lined(d_hot), None, f"{d_hot:.1f} m inside 200 mm of refractory, 16 mm shell: hydrogen at {T_GAS:.0f} deg C, in through the tower's south wall to the bustle's inlet; its shell runs warm, so it is the hydrogen-tight steel of the loop that matters (not yet specified); its support beside the heater stands outside the heater's footprint, carrying the duct on a head beam", via=[(24.0, -20.0, z_bustle), (0.0, -20.0, z_bustle)]),
-        link("pipe", "hydrogen make-up", (100.0, 4.0, 1.5), (68.0, 7.0, 1.5), A36, pm(d_mk, 0.008), None, f"{d_mk:.1f} m across, 8 mm wall: {H2_USED:.2f} kg/s from the hydrogen plant, beyond the layout, bridging over the water mains at z 2.5, teeing into the suction duct at (68, 7, 1.5)", via=[(91.0, 4.0, 1.5), (91.0, 4.0, 2.5), (83.0, 4.0, 2.5), (83.0, 4.0, 1.5), (73.0, 4.0, 1.5), (73.0, 7.0, 1.5)]),
-        link("pipe", "condensate to the hydrogen plant", (54.0, 29.3, 0.5), (100.0, 29.3, 0.5), A36, math.pi * 0.2 * 0.006 * RHO["steel"], None, f"200 mm, 6 mm wall: the {STEAM:.1f} kg/s of water the reduction made, back to the electrolysers, beyond the layout", via=[(83.0, 29.3, 0.5), (83.0, 29.3, 1.75), (91.0, 29.3, 1.75), (91.0, 29.3, 0.5)]),
-        link("pipe", "tower loop to the scrubber", (84.0, 31.5, 0.75), (51.5, 30.0, 1.0), A36, 2 * pm(d_scr, 0.012), None, f"a pair of {d_scr:.1f} m pipes, 12 mm wall, flow and return, off the mains on the plant's east side, west along y 31.5 and up to the scrubber's flanges on its +y face", via=[(51.5, 31.5, 0.75), (51.5, 31.5, 1.0)]),
-        link("pipe", "cooler water to the compressor", (66.25, -12.0, 0.75), (66.25, -4.0, 1.0), A36, 2 * pm(d_kc, 0.010), None, f"a pair of {d_kc:.1f} m pipes, 10 mm wall, off the mains' end, north to the compressor's flanges on its -y face", via=[(66.25, -5.0, 0.75), (66.25, -5.0, 1.0)]),
-        link("pipe", "cooling water to the sponge iron cooling loop", (-34.0, 42.0, 0.75), (-30.0, -24.0, 1.0), A36, 2 * pm(d_lc, 0.010), None, f"a pair of {d_lc:.2f} m pipes, 10 mm wall, off the mains at the west end, south in a trench clear of the tower to the loop's flanges on its -x face", via=[(-34.0, -24.0, 0.75), (-31.0, -24.0, 0.75), (-31.0, -24.0, 1.0)]),
-        *[link("pipe", f"tower water to C{i + 1}, pair {j + 1}", (-77.15 + 1.4 * j + 54.0 * i, 42.0, 0.75), (-78.0 + 54.0 * i, 60.0 + 4.5 * j, 0.75), A36, 2 * pm(0.5, 0.008), None, f"a pair of 500 mm pipes, 8 mm wall, flow and return, off the mains north up the gap between the towers to the port pair on the tower's east end; the gap's four lanes at 0.5, 1.2, 1.9 and 2.6 m east of the ports, this pair in the {('first two', 'last two')[j]}; the flow bridges over the return main at z 1.8", via=[(-77.15 + 1.4 * j + 54.0 * i, 60.0 + 4.5 * j, 0.75)]) for i in range(len(towers)) for j in range(2)],
-        link("pipe", "cooling water to the heater transformer", (60.0, -12.0, 0.75), (48.0 - recs[htr]["physical"]["length"] / 2, -24.0, 1.0), A36, 2 * math.pi * 0.15 * 0.005 * RHO["steel"], None, f"a pair of 150 mm pipes, 5 mm wall, flow and return: {recs[htr]['needs']['heat'] / (4186 * 10):.0f} kg/s at a 10 K rise for its oil-to-water coolers, off the mains' end, west in a trench to x 42, south, in under the vault's wall to the water ports on its -x end, 1 m up, at y -24.6 and -23.4 (the pair's centre here); in a trench 0.8 m wide, its floor at z -1.3, the pipes' centres at z -0.6 and -0.9 under the mains and crossings, rising at x 42 through bored openings in the vault's wall (the return's west leg and riser at x 41.45, the flow's at 41.7, so they do not cross)", via=[(60.0, -12.0, -0.75), (42.0, -12.0, -0.75), (42.0, -24.0, -0.75), (42.0, -24.0, 1.0)]),
-        link("pipe", "cooling water mains", (-79.0, 42.0, 0.75), (60.0, -12.0, 0.75), A36, 2 * pm(d_cw, 0.012), None, f"a pair of {d_cw:.1f} m pipes, 12 mm wall, flow and return (at y 41 and 43 along the row, x 86 and 88 down the east leg, capped at x -79): {flow:,.0f} kg/s at a 10 K rise, along the towers' row and down the plant to the scrubber, compressor, cooling loop and transformer", via=[(87.0, 42.0, 0.75), (87.0, -12.0, 0.75)]),
-        link("pipe", "cold gas to the cooling zone", (-26.0, -20.0, 2.0), (-(side / 2 - 0.5), 0.0, z_ring - 8.0), A36, pm(d_cg, 0.008), None, f"{d_cg:.1f} m, 8 mm wall: {COOL_GAS:.1f} kg/s of hydrogen at {T_COLD:.0f} deg C, through the tower's west wall", via=[(-26.0, -17.0, 2.0), (-26.0, -17.0, z_ring - 8.0), (-26.0, 0.0, z_ring - 8.0)]),
-        link("pipe", "hot gas from the cooling zone", (-(side / 2 - 0.5), 0.0, z_ring - 3.0), (-22.0, -20.0, 2.0), A36, pm(d_cg_hot, 0.010) * 1.5, None, f"{d_cg_hot:.1f} m, 10 mm wall, insulated (half as much again): about 600 deg C, back to the loop's cooler", via=[(-22.0, 0.0, z_ring - 3.0), (-22.0, -17.0, z_ring - 3.0), (-22.0, -17.0, 2.0)]),
-        link("cable", "heater supply", (48.0, -21.1875, 4.5), (12.45, -21.4, 1.575), CU, 3 * Q_HEATER / HEATER_PF / (math.sqrt(3) * 6600) / 3 / 4e6 * RHO["copper"] * 3, None, "three phases at 6.6 kV in a cable tray, copper at 4 A/mm2: from the transformer's secondary terminals on its +y face, north to y -17, west along the heater's north side, down at its west end and south into its terminal house's +y face", via=[(48.0, -17.0, 4.5), (12.45, -17.0, 4.5), (12.45, -17.0, 1.575)]),
+    K_ = 273.15
+    rp = lambda d, T, lined=False: kit.pipe(kit.dn_for(d), 10, temp=T + K_, sealing="double")
+    w = lambda heat: kit.pipe(kit.dn_for(math.sqrt(4 * heat / (4186 * 10) / 1000 / 2.5 / math.pi)), 10, liquid=True)
+    need = lambda k: recs[k]["needs"]["power"]
+    lvt = lambda w_: kit.termination(400, kit.area_for(amps(w_, 400)))
+    lvk = lambda w_: kit.cable(400, kit.area_for(amps(w_, 400)))
+    at = lambda bid, pid: world(next(b for b in bays if b["id"] == bid), next(q for q in recs[next(b for b in bays if b["id"] == bid)["unit"].split(".", 1)[1]]["ports"] if q["id"] == pid)["at"])
+    belt_tail = round((H + 3.0 - 2.0) / math.tan(math.radians(rise)), 1)
+    n_h = math.ceil(amps(need(heater), 6600, HEATER_PF) / (630e-6 * kit.J_VACUUM))
+    trs = recs[htr]
+    x_e = 91.5                                           # the water mains' east leg
+    edge = [
+        port("pellets-in", "in", "bulk", kit.belt_transfer(1.2), (belt_tail, 0.0, 2.0), (-1, 0, 0), item="good.iron-ore-pellets", rate=PELLETS, note="from the pellet plant's out belt, onto the pellet belt's tail"),
+        port("dri-out", "out", "bulk", kit.belt_transfer(1.0), (-60.0, 0.0, 3.5), (1, 0, 0), item="good.sponge-iron", rate=S_RATE, note="to the arc furnace shop's sponge iron belt: the product belt's head 3 m over it"),
+        port("h2-in", "in", "gas", kit._recs[rp(d_mk, T_COLD)]["connector"], (100.0, 8.0, 7.0), (-1, 0, 0), item="material.hydrogen", rate=H2_USED, pressure=P_SUCTION, temperature=T_COLD + K_, note="the hydrogen plant's make-up"),
+        port("condensate-out", "out", "liquid", kit.flange(0.2, 10, kit.SS), (100.0, 29.3, 0.5), (-1, 0, 0), item="good.water", rate=STEAM, note="back to the hydrogen plant's electrolysers"),
+        port("hv-in", "in", "power", trs["ports"][0]["connector"], (48.0, -32.0, 10.0), (0, 1, 0), power=trs["ports"][0]["power"], voltage=132000, note="the site's 132 kV"),
+        port("mv-compressor", "in", "power", recs["recycle-compressor"]["ports"][4]["connector"], (51.25, 12.0, 1.0), (0, -1, 0), power=need("recycle-compressor"), voltage=11000, note="the site's 11 kV"),
+        port("mv-loop", "in", "power", recs["dri-cooling-loop"]["ports"][5]["connector"], (-21.0, -32.0, 1.0), (0, 1, 0), power=need("dri-cooling-loop"), voltage=6600, note="the site's 6.6 kV"),
+        port("lv-shaft", "in", "power", lvt(need(sh_key)), (-16.0, 2.5, 11.0), (1, 0, 0), power=need(sh_key), voltage=400, note="the site's 400 V"),
+        port("lv-scrubber", "in", "power", lvt(need("top-gas-scrubber")), (38.0, 29.0, 1.0), (1, 0, 0), power=need("top-gas-scrubber"), voltage=400),
+        port("blowdown-out", "out", "liquid", kit.flange(0.1, 10, kit.SS), (-34.0, -27.0, 0.5), (1, 0, 0), item="good.water", rate=0.5, note="the cooling loop's dust slurry, to the site's settling pond"),
     ]
+    for i_, b in enumerate([b for b in bays if b["id"].startswith("C")]):
+        edge += [port(f"makeup-{b['id']}", "in", "liquid", kit.flange(0.15, 10), (b["at"][0] - 20.0, 51.0, 1.0), (0, 1, 0), item="good.water", rate=recs["cooling-tower-shaft"]["needs"]["water"], pressure=4e5, temperature=293.0, note="the site's water"),
+                 port(f"lv-{b['id']}", "in", "power", lvt(need("cooling-tower-shaft")), (b["at"][0] - 18.0, 51.0, 1.0), (0, 1, 0), power=need("cooling-tower-shaft"), voltage=400)]
+    L = lambda *a, **k: kit_link(*a[:4], bays, recs, edge, *a[4:], **k)
+    w_main = kit.pipe(kit.dn_for(d_cw), 10, liquid=True)
+    zf, zr = 1.0, 4.5                                    # the mains on a rack: flow under, return over
+    main_path = [(-80.0, 42.0), (x_e, 42.0), (x_e, -30.0)]
+    links = [
+        L("pellet belt", kit.belt(1.2, PELLETS * 1.5), ("edge:pellets-in", "F:charge-in"), [None, None], (), 1, 300000.0, f"in a covered gallery, rising at {rise:g} degrees from the pellet plant's transfer house through the tower's roof to its head 3 m over the charge hopper; {PELLETS:.0f} kg/s of pellets"),
+        L("product belt", kit.belt(1.0, S_RATE * 1.5), ("F:dri-out", "edge:dri-out"), [None, None], (), 1, 150000.0, "in a gallery 6.5 m up, from under the discharge lock west out of the tower to the arc furnace shop"),
+        L("top gas main", rp(d_top, T_TOP), ("F:top-gas-out", "R:top-gas-in"), [None, (24.0, 0.0, 41.0), (24.0, 24.0, 41.0), None], (), 1, None,
+          f"insulated: {T_TOP:.0f} deg C top gas with its steam, out of the tower's east wall and down to the recuperator, reduced to its 8 bar flange", reducers=(1,)),
+        L("wet gas", rp(d_wet, T_RECUP_OUT), ("R:wet-out", "S:gas-in"), [None, (24.0, 34.0, 1.5), (36.0, 34.0, 1.5), (36.0, 24.0, 2.0), None], (), 1, None, "from the recuperator's 8 bar flange, widened, to the scrubber", reducers=(0,)),
+        L("clean gas", rp(d_dry, T_COLD), ("S:gas-out", "K:suction"), [None, (48.0, 24.0, 27.0), (68.0, 24.0, 27.0), (68.0, 8.0, 27.0), (68.0, 8.0, 1.5), None], (), 1, None, "up from the scrubber's top, over and down to the compressor's suction; the make-up joins it on its way down"),
+        L("compressed gas", rp(d_cmp, T_COLD), ("K:discharge", "R:clean-in"), [None, (50.0, -8.0, 1.5), (36.0, -8.0, 1.5), (36.0, 14.0, 1.5), (24.0, 14.0, 1.0), None], (), 1, None, f"{P_SHAFT / 1e5:.1f} bar, reduced to the recuperator's flange", reducers=(1,)),
+        L("warm gas", rp(d_pre, T_PRE), ("R:warm-out", "H:gas-in"), [None, (24.0, 14.0, 16.75), (14.0, 14.0, 16.75), (14.0, -15.0, 16.75), (6.0, -15.0, 16.75), (6.0, -15.0, 2.0), (6.0, -27.3, 2.0), None], (), 1, None,
+          f"insulated, {T_PRE:.0f} deg C: from the recuperator's flange, widened, past the tower's east and south sides into the heater's cold header", reducers=(0,)),
+        L("hot gas", kit.lined_duct(3.6, 10, sealing="double"), ("H:gas-out", "F:hot-gas-in"), [None, (24.0, -20.0, 26.0), (0.0, -20.0, 26.0), None], (), 1, None, f"hydrogen at {T_GAS:.0f} deg C inside 200 mm of refractory, in through the tower's south wall to the bustle"),
+        L("cold gas to the cooling zone", rp(d_cg, T_COLD), ("L:cold-out", "F:cool-gas-in"), [None, (-26.0, -17.0, 2.0), (-26.0, -17.0, 14.0), (-26.0, 0.0, 14.0), None], (), 1, None, "through the tower's west wall"),
+        L("hot gas from the cooling zone", rp(d_cg_hot, 600.0), ("F:cool-gas-out", "L:hot-in"), [None, (-22.0, 0.0, 19.0), (-22.0, -16.5, 19.0), (-22.0, -16.5, 2.0), None], (), 1, None, "insulated, about 600 deg C, back to the loop's cooler"),
+        L("hydrogen make-up", rp(d_mk, T_COLD), ("edge:h2-in", "tee:clean gas"), [None, (68.0, 8.0, 7.0)], (), 1, None, f"{H2_USED:.2f} kg/s from the hydrogen plant, over the water mains, into the suction line"),
+        L("condensate", kit.pipe(0.2, 10, kit.SS, liquid=True), ("S:condensate-out", "edge:condensate-out"), [None, (56.0, 29.3, 0.5), (56.0, 29.3, 6.5), (98.0, 29.3, 6.5), (98.0, 29.3, 0.5), None], (), 1, None, f"the {STEAM:.1f} kg/s of water the reduction made, over the water mains"),
+        L("heater supply", kit.cable(6600, 630), ("T:lv-out", "H:power-in"), [None, (48.0, -17.0, 4.5), (10.0, -17.0, 4.5), (10.0, -17.0, 1.575), (10.0, -21.4, 1.575), None], (), n_h, None, "on a tray 4.5 m up along the heater's north side, down past its west end and east into its terminal house"),
+        L("heater transformer supply", kit.cable(132000, kit.area_for(amps(trs["ports"][0]["power"], 132000, 0.95))), ("edge:hv-in", "T:hv-in"), [None, (48.0, -24.96, 10.0), None], (), 1, None, "over the vault's wall and down into the cable box"),
+        L("compressor supply", kit.cable(11000, kit.area_for(amps(need("recycle-compressor"), 11000))), ("edge:mv-compressor", "K:power-in"), [None, None]),
+        L("cooling loop supply", kit.cable(6600, kit.area_for(amps(need("dri-cooling-loop"), 6600))), ("edge:mv-loop", "L:power-in"), [None, None]),
+        L("shaft supply", lvk(need(sh_key)), ("edge:lv-shaft", "F:power-in"), [None, None], (), 1, None, "in through the tower's west wall opening"),
+        L("scrubber supply", lvk(need("top-gas-scrubber")), ("edge:lv-scrubber", "S:power-in"), [None, None]),
+        L("loop blowdown", kit.pipe(0.1, 10, kit.SS, liquid=True), ("L:blowdown-out", "edge:blowdown-out"), [None, None]),
+        L("tower flow main", w_main, ("cap", "cap"), [(x, y, zf) for x, y in main_path], (), 1, None, f"{flow:,.0f} kg/s at a 10 K rise from the four towers, on a rack under the return: along their row, then south down the plant's east side"),
+        L("tower return main", w_main, ("cap", "cap"), [(x, y, zr) for x, y in main_path], (), 1, None, "on the rack 3.5 m over the flow"),
+        L("scrubber cooling in", w(recs["top-gas-scrubber"]["needs"]["heat"]), ("tee:tower flow main", "S:water-in"), [(x_e, 34.0, zf), (50.75, 34.0, zf), None]),
+        L("scrubber cooling out", w(recs["top-gas-scrubber"]["needs"]["heat"]), ("S:water-out", "tee:tower return main"), [None, (52.25, 32.0, 1.0), (52.25, 32.0, zr), (x_e, 32.0, zr)]),
+        L("compressor cooling in", w(recs["recycle-compressor"]["needs"]["heat"]), ("tee:tower flow main", "K:water-in"), [(x_e, -8.0, zf), (65.5, -8.0, zf), None]),
+        L("compressor cooling out", w(recs["recycle-compressor"]["needs"]["heat"]), ("K:water-out", "tee:tower return main"), [None, (67.0, -6.0, 1.0), (67.0, -6.0, zr), (x_e, -6.0, zr)]),
+        L("transformer cooling in", kit.pipe(0.15, 10, liquid=True), ("tee:tower flow main", "T:water-in"), [(x_e, -29.0, zf), (41.0, -29.0, zf), (41.0, -24.6, zf), None]),
+        L("transformer cooling out", kit.pipe(0.15, 10, liquid=True), ("T:water-out", "tee:tower return main"), [None, (42.0, -23.4, 1.0), (42.0, -18.5, 1.0), (85.0, -18.5, 1.0), (85.0, -18.5, zr), (x_e, -18.5, zr)]),
+        L("cooling loop water in", w(recs["dri-cooling-loop"]["needs"]["heat"]), ("tee:tower flow main", "L:water-in"), [(-35.0, 42.0, zf), (-35.0, -25.0, zf), None]),
+        L("cooling loop water out", w(recs["dri-cooling-loop"]["needs"]["heat"]), ("L:water-out", "tee:tower return main"), [None, (-33.0, -23.0, 1.0), (-33.0, 38.0, 1.0), (-33.0, 38.0, zr), (-33.0, 42.0, zr)]),
+    ]
+    for b in [b for b in bays if b["id"].startswith("C")]:
+        E = b["at"][0] + recs["cooling-tower-shaft"]["physical"]["length"] / 2
+        for j_, (d_o, d_i) in enumerate(((0.8, 1.6), (2.4, 3.2))):
+            yo, yi = at(b["id"], f"out-{j_ + 1}")[1], at(b["id"], f"in-{j_ + 1}")[1]
+            links += [L(f"{b['id']} pair {j_ + 1} out", kit.pipe(0.5, 10, liquid=True), (f"{b['id']}:out-{j_ + 1}", "tee:tower flow main"), [None, (E + d_o, yo, 1.0), (E + d_o, 42.0, zf)]),
+                      L(f"{b['id']} pair {j_ + 1} back", kit.pipe(0.5, 10, liquid=True), ("tee:tower return main", f"{b['id']}:in-{j_ + 1}"), [(E + d_i, 42.0, zr), (E + d_i, 46.0, zr), (E + d_i, 46.0, 1.0), (E + d_i, yi, 1.0), None])]
+        links += [L(f"{b['id']} make-up", kit.pipe(0.15, 10, liquid=True), (f"edge:makeup-{b['id']}", f"{b['id']}:makeup-in"), [None, None]),
+                  L(f"{b['id']} supply", lvk(need("cooling-tower-shaft")), (f"edge:lv-{b['id']}", f"{b['id']}:power-in"), [None, None])]
     tower_units = [recs[t] for t in towers]
     ground = [
         {"what": "Tower foundation", "item": CONC, "volume": r((x1 - x0) * (y1 - y0) * 2.5), "note": f"a mat {x1 - x0:.0f} x {y1 - y0:.0f} m, 2.5 m thick, under the tower and the shaft's columns"},
@@ -1535,8 +1665,7 @@ def shaft_furnace_air(us, recs):
         {"what": "Transformer vault", "item": CONC, "volume": r(12 * 8 * 0.5 + 40 * 7 * 0.3), "note": "fire walls 7 m tall round the heater's transformer"},
         {"what": "Cooling tower basins", "item": CONC, "volume": r(sum((t["physical"]["length"] + 0.6) * 12.6 * 0.5 + 2 * (t["physical"]["length"] + 0.3 + 12.3) * 2.0 * 0.3 for t in tower_units)), "note": "one under each tower, sunk as the furnace shop's: 0.3 m walls, floor top at z -2; 6 m apart, no shared walls"},
         {"what": "Gallery trestle footings", "item": CONC, "volume": r(math.ceil(belt_x / 18) * 8.0 + 4 * 4.0), "note": "8 m3 under each of the pellet belt's trestles, 4 m3 under the product belt's"},
-        {"what": "Pipe supports", "item": CONC, "volume": 56.46, "note": "plinths and feet under the ground-level pipes and the duct supports; measured on blender's layout (candidate v01)"},
-        {"what": "Coolant trench", "item": CONC, "volume": 24.98, "note": "the transformer's water pair's trench, 0.8 m wide, floor at z -1.3; measured on blender's layout (candidate v01)"},
+        {"what": "Pipe supports", "item": CONC, "volume": 56.46, "note": "plinths and feet under the ground-level pipes and the duct supports; measured on blender's layout (candidate v01) before the runs were re-laid, to measure again"},
     ]
     measured = {"Cooling tower basins": 1587.28, "Tower foundation": 1440.0, "Unit slabs": 683.36, "Transformer vault": 128.70, "Compressor crane hardstanding": 104.0, "Gallery trestle footings": 92.0}   # m3 on blender's layout (candidate v01)
     for g in ground:
@@ -1566,7 +1695,7 @@ def shaft_furnace_air(us, recs):
         "stands_for": "module.shaft-furnace",
         "site": {"atmosphere": "air", "gravity": [8.0, 11.0]},
         "physical": {"length": r(max(xs) - min(xs)), "width": r(max(ys) - min(ys)), "height": z1, "mass": r(total)},
-        "bays": bays, "links": links,
+        "bays": bays, "ports": edge, "links": links,
         "frame": {"box": list(box), "cell": cell, "shape": f"An open braced tower {x1 - x0:.0f} x {y1 - y0:.0f} m and {top:.0f} m tall round the shaft: walls one cell thick, a roof one cell deep carrying the belt's head house, six grating platforms at z {', '.join(str(z) for z in decks)} (the lock and feeders, the cooling zone's ports, round the bustle, the reduction zone, 3 m under the top gas main, the seal leg), each 18 x 18 m inside the walls with a 10 m hole round the shaft, but at z 24 the tower's full 24 x 24 m plan (out over the wall cells) with a 17 m hole round the bustle (about 15 m across); grating seated on the frame's nodes; "
                            f"stairs in switchback flights 1.2 m wide inside the north-west corner of the walls (x -12 to -6, y 9 to 12; the members inside that prism left out, its faces' posts and bracing kept), landing beams on the 3 m nodes, landing on each platform through a doorway 3 m wide and 3 m high in the stair's inner face (x -9 to -6, y 9) and the roof at z {top - cell:.0f}; no cladding.",
                   "openings": [list(o) for o in openings + cuts], "members": members, "carries": [f"unit.{sh_key}"], "mass": r(frame_mass), "sized": sized},
@@ -3540,7 +3669,7 @@ def end_offset(conn_kind, run_rec, which, facing=(0.0, 0.0, 1.0)):
 KIND_OF_RUN = {"pipe": "pipe", "lined-duct": "duct", "jacketed-duct": "duct", "belt": "conveyor", "drag-conveyor": "conveyor", "cable": "cable", "busbar": "busbar"}
 
 
-def kit_link(name, run, ends, path, bays, recs, edge, taps=(), count=1, power=None, note=None, reversible=False):
+def kit_link(name, run, ends, path, bays, recs, edge, taps=(), count=1, power=None, note=None, reversible=False, reducers=()):
     """A layout's link laid of run class `run` (SFO 25). ends: `<bay>:<port>`, `edge:<port>`, `tee:<run>` or `cap`;
     path: its points from end to end, the ends given as None where a port fixes them."""
     rr = kit._recs[run]
@@ -3584,8 +3713,20 @@ def kit_link(name, run, ends, path, bays, recs, edge, taps=(), count=1, power=No
                 pp = next(q for q in recs[by_id[bid]["unit"].split(".", 1)[1]]["ports"] if q["id"] == pid)
                 hoods += kit._recs[pp["connector"]]["kind"] == "hood"
         mass -= hoods * rr["jacket_end"]["mass"] * count
+    red = []
+    for which in reducers:            # (a concentric reducer down to a smaller port of the same class, SFO 26's adapter)
+        bid, pid = ends[which].split(":")
+        if bid == "edge":
+            pc = next(q for q in edge if q["id"] == pid)["connector"]
+        else:
+            pc = next(q for q in recs[by_id[bid]["unit"].split(".", 1)[1]]["ports"] if q["id"] == pid)["connector"]
+        m_r, l_r = kit.reducer(run, pc)
+        mass += m_r * count
+        red.append({"end": which, "to": pc, "length": l_r, "mass": m_r})
     d = {"kind": KIND_OF_RUN[rr["kind"]], "name": name, "run": run, "ends": list(ends), "from": list(pts[0]), "to": list(pts[-1]), "length": r(L),
          "item": rr["per_m"]["built_of"][0]["item"], "mass": r(mass)}
+    if red:
+        d["reducers"] = red
     if len(pts) > 2:
         d["via"] = [list(q) for q in pts[1:-1]]
     if taps:
@@ -5050,6 +5191,7 @@ def main():
     yard_ports(us)
     ladle_air_ports(us)
     pellet_air_ports(us)
+    shaft_air_ports(us)
     set_motions(us)
     complete_duties(us)
     prods = products(us)

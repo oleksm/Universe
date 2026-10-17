@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/run.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: run.pipe-dn2800-pn10-double, name: 'Pipe DN 2800 PN 10, double-sealed joints', description: 'Welded pipe, 2800 mm bore, for up to 10 bar; welded between the units'' flanges, so a run has a flange pair only at its ends.'}
+kind: pipe
+size: 2.8
+bore: 2.8
+outside: [2.834, 2.834]
+rating: {pressure: 1000000.0, temperature: 376.3227555701661}
+per_m:
+  mass: 1181.0
+  built_of:
+  - {what: Pipe, item: material.structural-steel-a36, mass: 1181.0, note: '2800 mm bore, 17.0 mm wall (Barlow at 10 bar, 133 MPa, weld factor 0.85, 1.5 mm for corrosion)'}
+elbow: {radius: 4.2, mass: 7791.5}
+tee: {mass: 3286.7}
+cap: {thickness: 0.106, mass: 5123.7}
+support: {spacing: 12.0, mass: 180.0, per_m_height: 60.2, item: material.structural-steel-a36}
+connector: connector.flange-dn2800-pn10-double
+carries: gas
+basis:
+- of: [per_m]
+  tier: derived
+  note: Wall from pressure; mass from material and dimensions.
+- of: [elbow, tee]
+  tier: derived
+  note: A long-radius elbow (1.5 bores) is its arc of straight; a tee is its branch stub over the straight it sits in, from the main's outside to 1.5 bores off its axis (checked on blender's DN 200 kit).
+- of: [support]
+  tier: derived
+  review: true
+  note: 'Spacing from the span it bears full at 1 g (2.5 mm sag, a third of yield), 3 to 12 m: 12.0 m. The stand''s head and its leg by the metre from memory.'

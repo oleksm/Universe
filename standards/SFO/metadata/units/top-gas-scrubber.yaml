@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.top-gas-scrubber, name: Top gas scrubber, description: 'A packed tower 8.5 m across and 22 m tall: the top gas up through it against sprayed water, which cools it to 40 deg C, condenses the 26.9 kg/s of water the reduction made and washes out the dust. Gas in at the bottom on -x by a 2.7 m flange at (-6, 0, 2), out at the top by a 2.2 m flange at (0, 0, 23) to the compressor. The condensate and spray water drain from its sump to a skid along x at y 5.3 (7 x 1.4 m, x -3.5 to 3.5): plate exchangers and spray pumps, the cooled water back up a riser to the sprays. The exchangers give the heat to the tower loop, 1,819 kg/s at a 10 K rise, by a pair of 1.0 m flanges on the +y face at z 1 (flow x 2.75, return x 4.25); the condensate overflows by a 200 mm pipe from the skid''s +x end to a flange on the +x face at (6, 5.3, 0.5), to the hydrogen plant.'}
+identity: {key: unit.top-gas-scrubber, name: Top gas scrubber, description: 'A packed tower 8.5 m across and 22 m tall: the top gas up through it against sprayed water, which cools it to 40 deg C, condenses the 26.9 kg/s of water the reduction made and washes out the dust. Gas in at the bottom on -x by a 2.7 m flange at (-6, 0, 2), out at the top by a 2.2 m flange at (0, 0, 23) to the compressor. The condensate and spray water drain from its sump to a skid along x at y 5.3 (7 x 1.4 m, x -3.5 to 3.5): plate exchangers and spray pumps, the cooled water back up a riser to the sprays. The exchangers give the heat to the tower loop, 1,819 kg/s at a 10 K rise, by a pair of 1.0 m flanges on the +y face at z 1 (flow x 2.75, return x 4.25); the condensate overflows by a 200 mm pipe from the skid''s +x end to a flange on the +x face at (6, 5.3, 0.5), to the hydrogen plant. Its ports (SFO 25): gas in DN 2800, out DN 2200; the tower loop''s flanges DN 1000; the pumps'' 400 V at (-6, 5, 1), facing -x.'}
 size_class: 2
 fits: plant-mount.bay-s2
 physical: {length: 12.0, width: 12.0, height: 24.0, mass: 289300.0}
@@ -13,6 +13,87 @@ built_of:
 - {what: Spray pumps and motors, item: good.pumps, mass: 8733.0, note: 'three pumps for 1,819 kg/s at 3 bar, 728 kW in all, at 12 kg/kW with their motors (from memory)'}
 needs: {power: 727800.0, heat: 76160000.0}
 ports:
+- id: gas-in
+  flow: in
+  medium: gas
+  item: material.hydrogen
+  rate: 38.14
+  pressure: 130000.0
+  temperature: 376.3
+  interface: interface.flange-dn2800-pn10-double
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn2800-pn10-double
+  at: [-6.0, 0.0, 2.0]
+  facing: [-1.0, 0.0, 0.0]
+- id: gas-out
+  flow: out
+  medium: gas
+  item: material.hydrogen
+  rate: 11.25
+  pressure: 130000.0
+  temperature: 313.1
+  interface: interface.flange-dn2200-pn10-double
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn2200-pn10-double
+  at: [0.0, 0.0, 23.0]
+  facing: [0.0, 0.0, 1.0]
+  note: dry and washed, to the compressor
+- id: water-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 1819.0
+  temperature: 303.0
+  interface: interface.flange-dn1000-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn1000-pn10
+  at: [2.75, 6.0, 1.0]
+  facing: [0.0, 1.0, 0.0]
+  note: the tower loop's flow
+  pressure: 400000.0
+- id: water-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 1819.0
+  temperature: 313.0
+  interface: interface.flange-dn1000-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn1000-pn10
+  at: [4.25, 6.0, 1.0]
+  facing: [0.0, 1.0, 0.0]
+  pressure: 400000.0
+- id: condensate-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 26.89
+  temperature: 313.1
+  interface: interface.flange-dn200-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn200-pn10-ss
+  at: [6.0, 5.3, 0.5]
+  facing: [1.0, 0.0, 0.0]
+  note: the water the reduction made, to the hydrogen plant
+  pressure: 400000.0
+- id: power-in
+  flow: in
+  medium: power
+  power: 727800.0
+  voltage: 400
+  interface: interface.termination-400v-500mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-500mm2
+  at: [-6.0, 5.0, 1.0]
+  facing: [-1.0, 0.0, 0.0]
+  note: the spray pumps
+  current: 1167.0
 - id: base
   flow: out
   medium: load
@@ -38,5 +119,9 @@ basis:
 - of: [needs]
   tier: derived
   note: 'The gas cooled from 103 to 40 deg C and 97% of its steam condensed at 2.4 MJ/kg: 76 MW to the tower; its spray water pumped at 3 bar and 75%.'
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage; water at the pumps'' 4 bar.'
 - of: [life]
   rule: rule.life-plant

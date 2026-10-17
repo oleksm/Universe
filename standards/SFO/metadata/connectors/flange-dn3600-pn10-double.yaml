@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: connector.flange-dn3600-pn10-double, name: 'Flange DN 3600 PN 10, double seal', description: 'A bolted pair of weld-neck flanges for a pipe of 3600 mm nominal bore at up to 10 bar inside (on airless ground, the whole of it against vacuum).'}
+kind: flange
+size: 3.6
+rating: {pressure: 1000000.0, temperature: 623.15}
+sealing: double
+physical: {length: 3.952, width: 3.952, height: 0.334, mass: 3785.3}
+built_of:
+- {what: Flanges, item: material.structural-steel-a36, mass: 3380.3, note: 'two weld-neck rings 3.952 m across, 80 mm thick, their necks tapering over 80 mm from 84 mm to the pipe''s wall; along the pipe the joint is 334 mm with the necks and the bolts'' and nuts'' ends'}
+- {what: Bolts and nuts, item: material.high-strength-steel-4340, mass: 380.1, note: '100 of M42, 250 mm, on a 3.826 m circle'}
+- {what: Gaskets, item: material.stainless-steel-304, mass: 24.9, note: 'spiral wound, stainless windings; two, the space between them piped to a leak watch'}
+basis:
+- of: [built_of, physical]
+  tier: derived
+  review: true
+  note: 'Sized by a simple rule, not to a flange code: the end force on the gasket''s mean circle (3.65 m) at the class''s pressure, bolts at 170 MPa, the ring''s thickness from its bending about the bolt circle at 140 MPa.'
+interface: interface.flange-dn3600-pn10-double
+provides: both

@@ -19,6 +19,47 @@ built_of:
 - {what: 'Terminals, thyristor sets and controls', item: good.electric-motors, mass: 10000.0, note: from memory}
 needs: {power: 124800000.0}
 ports:
+- id: gas-in
+  flow: in
+  medium: gas
+  item: material.hydrogen
+  rate: 14.25
+  pressure: 280000.0
+  temperature: 573.1
+  interface: interface.flange-dn2400-pn10-double
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn2400-pn10-double
+  at: [-12.0, -3.3, 2.0]
+  facing: [-1.0, 0.0, 0.0]
+  note: the cold header's inlet
+- id: gas-out
+  flow: out
+  medium: gas
+  item: material.hydrogen
+  rate: 14.25
+  pressure: 280000.0
+  temperature: 1173.0
+  interface: interface.lined-flange-dn3600-pn10-double
+  half: androgynous
+  make: bolted
+  connector: connector.lined-flange-dn3600-pn10-double
+  at: [0.0, 4.0, 18.0]
+  facing: [0.0, 0.0, 1.0]
+  note: the hot header's stub, lined DN 3600
+- id: power-in
+  flow: in
+  medium: power
+  power: 124800000.0
+  voltage: 6600
+  interface: interface.termination-6p6kv-630mm2
+  half: female
+  make: bolted
+  connector: connector.termination-6p6kv-630mm2
+  at: [-11.55, 2.6, 1.575]
+  facing: [0.0, 1.0, 0.0]
+  note: 8 circuits of 630 mm2 into the terminal house
+  current: 12130.0
 - id: base
   flow: out
   medium: load
@@ -47,5 +88,9 @@ basis:
 - of: [needs]
   tier: derived
   note: The gas's 14.3 kg/s at 14.3 kJ/kg K over 600 K, at 98% (from memory).
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage.'
 - of: [life]
   rule: rule.life-plant
