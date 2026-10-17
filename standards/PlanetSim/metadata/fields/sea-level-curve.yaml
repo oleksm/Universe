@@ -13,6 +13,8 @@ producer:
 time_base: before-present
 cautions:
 - 'rows [kyr before present, ice, m]: not per sample'
+- 'forge keeps it as a table of the same name: columns time-before-present (s), glaciality (1), sea-offset (m), a row per
+  recent-epoch step.'
 status: draft
 basis:
 - of:

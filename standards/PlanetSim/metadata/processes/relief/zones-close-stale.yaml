@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.zones-close-stale
   name: Forming sutures and arc fronts ended and chained
@@ -11,15 +10,19 @@ clock:
   when: end of every plate step, plates.py:1408-1409 (after lines.settle); t is sim time in Gyr since formation (code converts
     with *1e3 to Myr)
 reads:
-- name: S.open
-- name: line['last'], line['forming']
-- name: gap = sphere.spacing(n) of the current lattice, radians on the unit sphere (x R = metres); refined as the present
-    nears
-- name: w.x (re-anchoring after smoothing)
+- name: features (planet-feature.suture)
+  meaning: forming, with their contacts
+- name: features (planet-feature.arc-front)
+  meaning: forming
+- name: plate rotation
+  field: planet-field.plate-rotation
+  unit: '1'
+  meaning: 'each plate''s rotation: where the features'' pins stand'
 writes:
-- name: finished lines (forming False, ended=t, chained vertex order K)
-- name: line['state']='ended' on the line and lines whose parent is it
-- name: S.open entries removed
+- name: features (planet-feature.suture)
+  meaning: 'ended: span line, layout forming 0'
+- name: features (planet-feature.arc-front)
+  meaning: ended
 note: 'Emits: calls relief.orogen for finished sutures (spawns its features)'
 params:
 - name: CLOSE_MYR
@@ -53,6 +56,11 @@ params:
   note: 'no caller passes final=True (grep, 17 Oct): lines still forming at a checkpoint are not chained; Store.arrays is
     called without link in planet_form.py:232 so forming lines are NOT written to <ck>_store.npz (unverified intent); unit:
     bool'
+- name: min points
+  value: 3.0
+  unit: '1'
+  meaning: a linked group of fewer contacts is left out
+  source: stages/lines.py finish min_pts
 invariants:
 - only non-forming lines are drawn/saved (polylines without link)
 - chaining keeps the longest path of each linked group; the rest of the group is dropped; groups < 3 points dropped
@@ -66,6 +74,9 @@ backends:
 implementations:
 - where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:close_stale (154-170)
   state: reference
+- where: planet-forge crates/forge-core/src/models/tectonic/close_stale.rs
+  state: current
+  note: planet-forge port (relief-tectonic line, merged in forge main fc8f460)
 status: draft
 basis:
 - of:
@@ -76,3 +87,14 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
     from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
+    9747f0d-c437724.'
+cautions:
+- 'the Python''s reads were its line store''s internals: S.open; line[''last''], line[''forming'']; gap = sphere.spacing(n)
+  of the current lattice, radians on the unit sphere (x R = metres); refined as the present nears; w.x (re-anchoring after
+  smoothing)'

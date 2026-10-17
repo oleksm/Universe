@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.relief-rift-scarps
   name: Normal fault scarps (tilted blocks)
@@ -8,9 +7,19 @@ area: relief
 clock:
   when: with relief-rift-floor-axis
 reads:
-- name: margin lines
+- name: features (planet-feature.rift-margin)
+  meaning: the rift's
+- name: crust thickness
+  field: planet-field.crust-thickness
+  unit: m
+  meaning: the belt, the sides of a margin
+- name: plate rotation
+  field: planet-field.plate-rotation
+  unit: '1'
+  meaning: 'each plate''s rotation: where the features'' pins stand'
 writes:
-- name: lines 'normal fault scarp' parent=margin, meta {throw_m 600, relief0_m 600, facing 'rift axis', block_km 13}
+- name: features (planet-feature.normal-fault-scarp)
+  meaning: child of its margin
 note: 'Emits: trace spawn rule ''relief.rift.scarps'' trigger + {margin, block}'
 params:
 - name: RIFT_SCARPS_M
@@ -25,13 +34,26 @@ params:
   unit: m
   meaning: scarp throw and relief0
   source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:293
+- name: side probe
+  value: 30000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 1000.0
+  meaning: offset where the two sides are compared (which side is the rift)
+  source: stages/relief.py:281
+  note: as relief-rift-shoulders' (the Python computes the side once for both)
 depends_on:
 - planet-process.zones-rift-margins
+- planet-process.relief-rift-shoulders
 backends:
 - cpu
 implementations:
 - where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:rift_features (291-293)
   state: reference
+- where: planet-forge crates/forge-core/src/models/tectonic/rift_scarps.rs
+  state: current
+  note: planet-forge port (relief-tectonic line, merged in forge main fc8f460)
 status: draft
 basis:
 - of:
@@ -42,3 +64,12 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
     from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
+    9747f0d-c437724.'
+cautions:
+- 'the Python''s reads were its line store''s internals: margin lines'

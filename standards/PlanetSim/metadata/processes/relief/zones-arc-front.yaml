@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.zones-arc-front
   name: Volcanic arc front on a continent over a trench
@@ -12,17 +11,29 @@ clock:
   when: every plate step in the subduction pass, plates.py:1040; t is sim time in Gyr since formation (code converts with
     *1e3 to Myr)
 reads:
-- name: sinker positions w.x[sinker]
-- name: rider particle ids
-- name: w.xcont[rider] (only continental riders)
-- name: w.xplate[rider]
-- name: R (planet radius, m)
-- name: gap = sphere.spacing(n) of the current lattice, radians on the unit sphere (x R = metres); refined as the present
-    nears
+- name: trench points
+  field: planet-field.trench-position
+  unit: '1'
+- name: rider plate
+  field: planet-field.trench-rider-plate
+  unit: '1'
+- name: rider continental
+  field: planet-field.trench-rider-continental
+  unit: '1'
+- name: particle positions
+  field: planet-field.particle-position
+  unit: '1'
+  meaning: 'the rider plate''s nearest particle: which way its crust lies'
+- name: particle plates
+  field: planet-field.particle-plate
+  unit: '1'
+- name: plate rotation
+  field: planet-field.plate-rotation
+  unit: '1'
+  meaning: 'each plate''s rotation: where the features'' pins stand'
 writes:
-- name: forming line type 'arc front' per riding plate, causes {plates:0.6, history:0.4}
-  field: planet-field.plate
-- name: S.accepted (points accepted this call)
+- name: features (planet-feature.arc-front)
+  meaning: one forming arc front per riding plate, its active points this step
 note: 'Emits: store event ''subduction'' (plates=[rider plate])'
 events_emitted:
 - event: planet-event.trace-spawn-rule-zones-subduction
@@ -48,6 +59,12 @@ params:
     factor: 1.0
   meaning: grow-along-length gate
   source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:23
+- name: rider search
+  value: 24.0
+  unit: '1'
+  meaning: how many nearest particles are searched for the rider plate's (the trench table has no rider position)
+  source: planet-forge models/tectonic/arc_front.rs
+  note: 'forge: the trench table names the rider plate, not its particle'
 invariants:
 - one forming arc per riding plate (sinking plates under it may change)
 - front point = cos(a)*s + sin(a)*d, a = ARC_FRONT_M/R, d = direction from sinker toward rider tangent at sinker
@@ -59,6 +76,9 @@ backends:
 implementations:
 - where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:arcs (50-69)
   state: reference
+- where: planet-forge crates/forge-core/src/models/tectonic/arc_front.rs
+  state: current
+  note: planet-forge port (relief-tectonic line, merged in forge main fc8f460)
 status: draft
 basis:
 - of:
@@ -69,3 +89,14 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
     from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
+    9747f0d-c437724.'
+cautions:
+- 'the Python''s reads were its line store''s internals: sinker positions w.x[sinker]; rider particle ids; w.xcont[rider]
+  (only continental riders); w.xplate[rider]; R (planet radius, m); gap = sphere.spacing(n) of the current lattice, radians
+  on the unit sphere (x R = metres); refined as the present nears'

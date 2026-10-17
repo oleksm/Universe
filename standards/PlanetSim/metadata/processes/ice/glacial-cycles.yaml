@@ -13,41 +13,61 @@ clock:
   when: 'recent epoch: once, after the plates reach the present, 260 steps of DT_KYR = 10 kyr from 2,600 kyr to 10 kyr ago
     on the final relief zr with sea0 = 0; run by planet-trees-pgs2/tools/planet_form.py:561-574 when SIM_RECENT=1 (default:
     SIM_COUPLED); outputs written as r_<key> into the last ck_??_*kyr_ctx.npz (needs CONTEXT=1)'
+  step: 315576000000.0
+  step_said:
+    unit: kyr
+    factor: 31557600000.0
 reads:
 - name: t_kyr
   unit: kyr before present
+  field: planet-field.time-before-present
 - name: lat
   unit: rad
 writes:
 - name: g
   unit: 0-1
   meaning: glaciality
+  field: planet-field.glaciality
 - name: sea
   unit: m
   meaning: shifted sea level
+  field: planet-field.glacial-sea-offset
 - name: T
   unit: degC
   meaning: climate + dT
+  field: planet-field.glacial-cooling
 - name: sea_curve (r_sea_curve)
   unit: rows [kyr ago, g, m]
   meaning: sea-level curve
   field: planet-field.sea-level-curve
+- name: g_prev
+  field: planet-field.glaciality-previous
+  unit: '1'
+  meaning: last step's glaciality
+- name: T (polar)
+  field: planet-field.glacial-cooling-polar
+  unit: K
+  meaning: the polar part of the cooling (x sin^2 lat)
+- name: time before present
+  field: planet-field.time-before-present
+  unit: s
+  meaning: the run profile's star_age less the clock
 params:
 - name: DT_KYR
-  value: 315600000000.0
+  value: 315576000000.0
   unit: s
   said_as:
     unit: kyr
-    factor: 31560000000.0
+    factor: 31557600000.0
   meaning: recent step
   source: stages/recent.py:22
   note: 'docstring says ~20,000-year steps: stale'
 - name: SPAN_KYR
-  value: 82056000000000.0
+  value: 82049760000000.0
   unit: s
   said_as:
     unit: kyr
-    factor: 31560000000.0
+    factor: 31557600000.0
   meaning: recent epoch span (Quaternary)
   source: stages/recent.py:23
 - name: SEA_DROP
@@ -72,20 +92,19 @@ params:
   source: stages/recent.py:26
   note: 'unit as the code says it: ''dimensionless''; SI conversion unverified'
 - name: HOLO_KYR
-  value: 315600000000.0
+  value: 315576000000.0
   unit: s
   said_as:
     unit: kyr
-    factor: 31560000000.0
+    factor: 31557600000.0
   meaning: warm present since the last termination
   source: stages/recent.py:29
 - name: 'inline: MPT'
-  value: 1000.0
-  unit: '1'
+  value: 31557600000000.0
+  unit: s
   said_as:
     unit: kyr before present
-    factor: 1.0
-  open: true
+    factor: 31557600000.0
   meaning: switch from 41-kyr to 100-kyr cycles
   source: stages/recent.py:44
   note: 'unit as the code says it: ''kyr before present''; SI conversion unverified'
@@ -141,80 +160,8 @@ tables:
   - kyr before present
   - glaciality
   - sea offset (m)
-  rows:
-  - - '2'
-  - - '6'
-  - - '0'
-  - - ' '
-  - - r
-  - - o
-  - - w
-  - - s
-  - - ','
-  - - ' '
-  - - t
-  - - ' '
-  - - '='
-  - - ' '
-  - - '2'
-  - - '6'
-  - - '0'
-  - - '0'
-  - - ','
-  - - ' '
-  - - '2'
-  - - '5'
-  - - '9'
-  - - '0'
-  - - ','
-  - - ' '
-  - - .
-  - - .
-  - - .
-  - - ','
-  - - ' '
-  - - '1'
-  - - '0'
-  - - ' '
-  - - k
-  - - y
-  - - r
-  - - ' '
-  - - (
-  - - c
-  - - o
-  - - m
-  - - p
-  - - u
-  - - t
-  - - e
-  - - d
-  - - ' '
-  - - a
-  - - t
-  - - ' '
-  - - r
-  - - u
-  - - n
-  - - ' '
-  - - t
-  - - i
-  - - m
-  - - e
-  - - ;
-  - - ' '
-  - - r
-  - - _
-  - - s
-  - - e
-  - - a
-  - - _
-  - - c
-  - - u
-  - - r
-  - - v
-  - - e
-  - - )
+  rows: []
+  note: 'computed at run time: 260 rows, t = 2600, 2590, ..., 10 kyr (r_sea_curve; forge: the table planet-field.sea-level-curve)'
 random_draws:
 - none
 invariants:
@@ -230,6 +177,9 @@ backends:
 implementations:
 - where: planet-sim-landform stages/recent.py:glaciality (lines 40-51); stages/recent.py:run (61-69)
   state: reference
+- where: planet-forge crates/forge-core/src/models/ice/cycles.rs
+  state: current
+  note: planet-forge port (climate line, merged in forge main 736031c)
 status: draft
 basis:
 - of:
@@ -240,3 +190,11 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
     the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  - tables
+  - clock
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge climate port (models/climate, models/ice), read from planet-sim-landform 1df4daf.'

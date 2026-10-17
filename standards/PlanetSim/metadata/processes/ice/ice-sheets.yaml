@@ -15,18 +15,41 @@ clock:
   when: 'recent epoch: once, after the plates reach the present, 260 steps of DT_KYR = 10 kyr from 2,600 kyr to 10 kyr ago
     on the final relief zr with sea0 = 0; run by planet-trees-pgs2/tools/planet_form.py:561-574 when SIM_RECENT=1 (default:
     SIM_COUPLED); outputs written as r_<key> into the last ck_??_*kyr_ctx.npz (needs CONTEXT=1)'
+  step: 315576000000.0
+  step_said:
+    unit: kyr
+    factor: 31557600000.0
 reads:
-- name: T, P
-  unit: degC, m/yr
-  meaning: shifted climate
-- name: g, g_prev
-  unit: 0-1
 - name: z
   field: planet-field.height
   unit: m
   meaning: evolving relief
 - name: nbr
   unit: index
+- name: T
+  field: planet-field.temperature
+  unit: K
+  meaning: 'the climate (uncooled: the cycle''s cooling is applied here)'
+- name: P
+  field: planet-field.rain
+  unit: m/s
+  meaning: rain
+- name: g
+  field: planet-field.glaciality
+- name: g_prev
+  field: planet-field.glaciality-previous
+- name: cooling
+  field: planet-field.glacial-cooling
+- name: cooling, polar
+  field: planet-field.glacial-cooling-polar
+- name: sea
+  field: planet-field.glacial-sea-offset
+- name: t_kyr
+  field: planet-field.time-before-present
+- name: z (recent)
+  field: planet-field.recent-height
+  unit: m
+  meaning: the recent epoch's relief (the height until it is first lowered)
 writes:
 - name: H (r_ice_now)
   unit: m
@@ -43,19 +66,24 @@ writes:
 - name: melt
   unit: m/yr
   meaning: internal, feeds runoff
+  field: planet-field.ice-melt
+- name: best_g
+  field: planet-field.ice-lgm-glaciality
+  unit: '1'
+  meaning: the LGM's glaciality so far
 params:
 - name: ICE_T
   env: SIM_ICE_T
-  value: -10.0
-  unit: '1'
+  value: 263.15
+  unit: K
   said_as:
-    unit: 'degC (SI: 263.15 K)'
+    unit: degC
     factor: 1.0
-  open: true
+    note: plus 273.15
   meaning: annual mean at which snow outlasts summers
   source: stages/recent.py:28
   note: 'owner 16 Oct: less ice; ELA temperatures -2 (maritime) to -10 degC (continental), Ohmura et al. 1992; unit as the
-    code says it: ''degC (SI: 263.15 K)''; SI conversion unverified'
+    code says it: ''degC (SI: 263.15 K)''; SI conversion unverified In K (was degC with unit 1).'
 - name: ICE_GROW
   env: SIM_ICE_GROW
   value: 5.0
@@ -64,27 +92,27 @@ params:
   source: stages/recent.py:30
   note: 's21: LGM held 16 % of land vs Earth ~25 %'
 - name: MELT_PER_C
-  value: 1.9011406844106463e-08
+  value: 1.9012852688417368e-08
   unit: m/s per K
   said_as:
     unit: m/yr per K
-    factor: 3.1685678073510773e-08
+    factor: 3.168808781402895e-08
   meaning: degree-day melt above the threshold
   source: stages/recent.py:27
 - name: MELT_BASE
-  value: 1.5842839036755388e-09
+  value: 1.5844043907014474e-09
   unit: m/s
   said_as:
     unit: m/yr
-    factor: 3.1685678073510773e-08
+    factor: 3.168808781402895e-08
   meaning: summer melt and sublimation where colder
   source: stages/recent.py:32
 - name: MELT_MARGIN
-  value: 4.7528517110266157e-08
+  value: 4.753213172104342e-08
   unit: m/s
   said_as:
     unit: m/yr
-    factor: 3.1685678073510773e-08
+    factor: 3.168808781402895e-08
   meaning: extra margin melt in a warming phase
   source: stages/recent.py:31
   note: Laurentide margins retreated ~100-300 m/yr
@@ -155,7 +183,7 @@ params:
 random_draws:
 - none
 invariants:
-- 0 <= H <= 4000 m
+- '0 <= H (the 4,000 m cap binds the mass balance only: the flow can pile ice over it, in the Python too)'
 - ice flow conserves volume (np.add.at); only melt and calving remove ice
 - no ice-volume / sea-level coupling (sea level is prescribed by g)
 depends_on:
@@ -166,6 +194,9 @@ backends:
 implementations:
 - where: planet-sim-landform stages/recent.py:run (lines 70-95)
   state: reference
+- where: planet-forge crates/forge-core/src/models/ice/sheets.rs
+  state: current
+  note: planet-forge port (climate line, merged in forge main 736031c)
 status: draft
 basis:
 - of:
@@ -176,3 +207,11 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
     the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  - invariants
+  - clock
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge climate port (models/climate, models/ice), read from planet-sim-landform 1df4daf.'

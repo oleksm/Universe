@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.relief-hotspot-chain
   name: Hotspot chain lines from hotspot volcano records
@@ -9,9 +8,15 @@ area: relief
 clock:
   when: every EVERY_MYR (25 Myr)
 reads:
-- name: '''hotspot volcano'' records with ''hotspot'' key'
+- name: features (planet-feature.hotspot-volcano-centre)
+  meaning: recent, by plume
+- name: plate rotation
+  field: planet-field.plate-rotation
+  unit: '1'
+  meaning: 'each plate''s rotation: where the features'' pins stand'
 writes:
-- name: lines 'hotspot chain' meta {centres, spacing_km, progression_km_myr}
+- name: features (planet-feature.hotspot-chain)
+  meaning: regrown in place
 note: 'Emits: trace spawn / replaced rule ''relief.chains'''
 params:
 - name: CHAIN_MYR
@@ -32,6 +37,11 @@ params:
   meaning: chain cut
   source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:349
   note: 'unit as the code says it: ''x median spacing''; SI conversion unverified'
+- name: min records
+  value: 3.0
+  unit: '1'
+  meaning: smaller groups give no chain
+  source: stages/relief.py:322 (len(idx) < 3, shared with the arc chains)
 depends_on:
 - planet-process.zones-hotspot-volcano
 backends:
@@ -39,6 +49,9 @@ backends:
 implementations:
 - where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:at_checkpoint (314-352)
   state: reference
+- where: planet-forge crates/forge-core/src/models/tectonic/hotspot_chain.rs
+  state: current
+  note: planet-forge port (relief-tectonic line, merged in forge main fc8f460)
 status: draft
 basis:
 - of:
@@ -49,3 +62,12 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
     from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
+    9747f0d-c437724.'
+cautions:
+- 'the Python''s reads were its line store''s internals: ''hotspot volcano'' records with ''hotspot'' key'

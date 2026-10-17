@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.relief-orogen-axis
   name: Orogen axis from an ended suture
@@ -11,12 +10,19 @@ area: relief
 clock:
   when: when a suture is ended (zones.close_stale)
 reads:
-- name: suture vertices
-- name: w.thick (crust thickness, m) at nearest sample (w.p)
+- name: features (planet-feature.suture)
+  meaning: ended
+- name: crust thickness
   field: planet-field.crust-thickness
-- name: line born/ended
+  unit: m
+  meaning: the belt, the sides of a margin
+- name: plate rotation
+  field: planet-field.plate-rotation
+  unit: '1'
+  meaning: 'each plate''s rotation: where the features'' pins stand'
 writes:
-- name: line 'orogen axis' parent=suture, meta {width_km, relief_m, relief0_m, thick_side, facing 'both', shape_stats}
+- name: features (planet-feature.orogen-axis)
+  meaning: child of its suture
 note: 'Emits: trace spawn rule ''relief.orogen'' trigger {suture: L<id>, collision_myr, belt_km_p50, thick_km_max, event}'
 params:
 - name: THICK_BELT_M
@@ -72,6 +78,9 @@ backends:
 implementations:
 - where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:orogen (206-238)
   state: reference
+- where: planet-forge crates/forge-core/src/models/tectonic/orogen_axis.rs
+  state: current
+  note: planet-forge port (relief-tectonic line, merged in forge main fc8f460)
 status: draft
 basis:
 - of:
@@ -82,3 +91,12 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
     from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
+    9747f0d-c437724.'
+cautions:
+- 'the Python''s reads were its line store''s internals: suture vertices; line born/ended'

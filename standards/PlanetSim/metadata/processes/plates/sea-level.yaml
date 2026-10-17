@@ -2,8 +2,9 @@
 identity:
   key: planet-process.sea-level
   name: Sea level from ocean volume, or from a held land share
-  about: 'water_m3 = water_mass_fraction*mass/1025*SIM_WATER_SCALE. sea_level(): bisection (60 iterations) for the level holding water_m3 above the solid surface on equal-area cells. If SIM_LAND_SHARE is set and late (coupled era) or
-    SIM_LAND_SHARE_ALWAYS=1: the level is the (1-share) percentile of z, so the water follows the land.'
+  about: 'water_m3 = water_mass_fraction*mass/1025*SIM_WATER_SCALE. sea_level(): bisection (60 iterations) for the level holding
+    water_m3 above the solid surface on equal-area cells. If SIM_LAND_SHARE is set and late (coupled era) or SIM_LAND_SHARE_ALWAYS=1:
+    the level is the (1-share) percentile of z, so the water follows the land.'
 area: plates
 clock:
   when: with each denudation pass
@@ -14,6 +15,9 @@ reads:
 - name: water_m3
   unit: m3
   meaning: water_mass_fraction*mass/1025*water scale (the run profile's planet)
+- name: star_age
+  unit: s
+  meaning: 'the present (the run profile''s planet.star_age): late = (star_age - t) <= couple_from'
 writes:
 - name: sea_
   field: planet-field.sea-level
@@ -67,15 +71,6 @@ params:
   meaning: 'the coupled era is the last couple_from of the planet''s age: there (late) the held land share applies'
   source: stages/plates.py:138, 1310
   note: the same as crust-wear-to-shelf and coupled-surface-hook's COUPLE_FROM_MYR
-- name: planet age
-  value: 1.44218232e+17
-  unit: s
-  said_as:
-    unit: Gyr
-    factor: 4.57
-  meaning: 'the planet''s age at the run''s end (today): late = (planet age - t) <= couple_from'
-  source: stages/plates.py:888 (end = spec.star.age_gyr)
-  note: 'Earth preset (presets.earth(): sun() age 4.57 Gyr); the run profile''s planet.star_age'
 random_draws:
 - none
 invariants:
@@ -95,4 +90,11 @@ basis:
   - reads
   - writes
   tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
+    code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - params
+  - reads
+  tier: derived
+  note: 'planets, 17 Oct 2026: forge reads the present from the run profile (one clock from formation); the duplicate param
+    is gone.'

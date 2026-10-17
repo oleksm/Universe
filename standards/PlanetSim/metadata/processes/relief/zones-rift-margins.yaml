@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.zones-rift-margins
   name: Rift margins when a plate breaks
@@ -12,16 +11,23 @@ clock:
   when: on each plate break, plates.py:457-458 (rift()); t is sim time in Gyr since formation (code converts with *1e3 to
     Myr)
 reads:
-- name: pid (old plate), new (new plate id)
-  field: planet-field.plate
-- name: 'sel (particles of the plate), side (bool: which half goes to new)'
-  field: planet-field.plate
-- name: f (signed distance of each sel particle to the cut, rad)
-- name: w.xcont
-- name: gap = sphere.spacing(n) of the current lattice, radians on the unit sphere (x R = metres); refined as the present
-    nears
+- name: 'rift events (planet-event.rift: plate, new)'
+- name: particle positions
+  field: planet-field.particle-position
+  unit: '1'
+- name: particle plates
+  field: planet-field.particle-plate
+  unit: '1'
+- name: particle continental
+  field: planet-field.particle-continental
+  unit: '1'
+- name: plate rotation
+  field: planet-field.plate-rotation
+  unit: '1'
+  meaning: 'each plate''s rotation: where the features'' pins stand'
 writes:
-- name: finished lines type 'rift margin', causes {plates:0.6, history:0.4}
+- name: features (planet-feature.rift-margin)
+  meaning: one per half (and linked group), ended at once, the rift's key in the trigger
 note: 'Emits: trace spawn rule ''zones.rift'' trigger {event, plates, continental_points}'
 events_emitted:
 - event: planet-event.store-event-rift-plates-pid-new
@@ -67,6 +73,12 @@ params:
     factor: 1.0
   meaning: smoothing sigma
   source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:148
+- name: cut reach
+  value: 2.0
+  unit: '1'
+  meaning: 'the event has no cut: a half''s particle is near it when within this x `near cut` gaps of the other half'
+  source: planet-forge models/tectonic/rift_margins.rs
+  note: the Python had the cut (|f| < near cut gaps)
 invariants:
 - one rift event per break with continental crust on the cut
 - margin lines finished immediately (never forming)
@@ -78,6 +90,9 @@ backends:
 implementations:
 - where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:rift (134-151)
   state: reference
+- where: planet-forge crates/forge-core/src/models/tectonic/rift_margins.rs
+  state: current
+  note: planet-forge port (relief-tectonic line, merged in forge main fc8f460)
 status: draft
 basis:
 - of:
@@ -88,3 +103,13 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
     from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
+    9747f0d-c437724.'
+cautions:
+- 'the Python''s reads were its line store''s internals: f (signed distance of each sel particle to the cut, rad); w.xcont;
+  gap = sphere.spacing(n) of the current lattice, radians on the unit sphere (x R = metres); refined as the present nears'

@@ -11,41 +11,63 @@ clock:
   when: 'recent epoch: once, after the plates reach the present, 260 steps of DT_KYR = 10 kyr from 2,600 kyr to 10 kyr ago
     on the final relief zr with sea0 = 0; run by planet-trees-pgs2/tools/planet_form.py:561-574 when SIM_RECENT=1 (default:
     SIM_COUPLED); outputs written as r_<key> into the last ck_??_*kyr_ctx.npz (needs CONTEXT=1)'
+  step: 315576000000.0
+  step_said:
+    unit: kyr
+    factor: 31557600000.0
 reads:
 - name: H
   unit: m
+  field: planet-field.ice
 - name: z
   field: planet-field.height
   unit: m
 - name: cell
   unit: m^2
+- name: z (recent)
+  field: planet-field.recent-height
 writes:
 - name: r_glacial_erosion
   field: planet-field.glacial-erosion
   unit: m
   meaning: cumulative over 2.6 Myr
 - name: z (r_z)
-  field: planet-field.height
+  field: planet-field.recent-height
   unit: m
   meaning: lowered relief
 params:
 - name: K_GLACIAL
-  value: 6.337135614702155e-11
+  value: 6.33761756280579e-11
   unit: m/s per (km x slope x 100)
   said_as:
     unit: m/yr per
-    factor: 3.1685678073510773e-08
+    factor: 3.168808781402895e-08
   meaning: glacial erosion coefficient
   source: stages/recent.py:34
 - name: MAX_GLACIAL
-  value: 1.5842839036755387e-11
+  value: 1.5844043907014474e-11
   unit: m/s
   said_as:
     unit: m/yr
-    factor: 3.1685678073510773e-08
+    factor: 3.168808781402895e-08
   meaning: cap averaged over a ~100 km sample
   source: stages/recent.py:35
   note: troughs cut 1-2 km in the Quaternary, the ground between far less
+- name: ice threshold
+  value: 50.0
+  unit: m
+  meaning: 'a glaciated sample: ice over this (as ice-sheets)'
+  source: stages/recent.py:92
+- name: 'inline: thickness scale'
+  value: 1000.0
+  unit: m
+  meaning: H in units of this in the rate (K_GLACIAL's per km)
+  source: stages/recent.py:98
+- name: 'inline: slope scale'
+  value: 100.0
+  unit: '1'
+  meaning: the slope times this in the rate (K_GLACIAL's x 100)
+  source: stages/recent.py:98
 random_draws:
 - none
 invariants:
@@ -58,6 +80,9 @@ backends:
 implementations:
 - where: planet-sim-landform stages/recent.py:run (lines 96-98, 118)
   state: reference
+- where: planet-forge crates/forge-core/src/models/ice/erosion.rs
+  state: current
+  note: planet-forge port (climate line, merged in forge main 736031c)
 status: draft
 basis:
 - of:
@@ -68,3 +93,10 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
     the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  - clock
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge climate port (models/climate, models/ice), read from planet-sim-landform 1df4daf.'

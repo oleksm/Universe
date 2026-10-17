@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.relief-volcanic-arc-chain
   name: Volcanic arc lines from arc volcano records
@@ -11,11 +10,15 @@ area: relief
 clock:
   when: every EVERY_MYR (25 Myr), as relief-great-escarpment
 reads:
-- name: S.marks alive, S.P
+- name: features (planet-feature.arc-volcano-centre)
+  meaning: recent, by arc front
+- name: plate rotation
+  field: planet-field.plate-rotation
+  unit: '1'
+  meaning: 'each plate''s rotation: where the features'' pins stand'
 writes:
-- name: lines 'volcanic arc' meta {centres, spacing_km, progression_km_myr None}
-- name: S.chains[(kind,key)] = (line ids, count)
-  field: planet-field.crust-kind
+- name: features (planet-feature.volcanic-arc-chain)
+  meaning: regrown in place as centres come
 note: 'Emits: trace spawn rule ''relief.chains'' trigger {records, key, pieces}'
 events_emitted:
 - event: planet-event.trace-replaced-rule-relief-chains
@@ -57,6 +60,9 @@ implementations:
 - where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:at_checkpoint (314-352), Relief.drop_line
     (156-160)
   state: reference
+- where: planet-forge crates/forge-core/src/models/tectonic/arc_chain.rs
+  state: current
+  note: planet-forge port (relief-tectonic line, merged in forge main fc8f460)
 status: draft
 basis:
 - of:
@@ -67,3 +73,12 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
     from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
+    9747f0d-c437724.'
+cautions:
+- 'the Python''s reads were its line store''s internals: S.marks alive, S.P'

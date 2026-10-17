@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.relief-rift-floor-axis
   name: Rift floor axis
@@ -9,10 +8,15 @@ area: relief
 clock:
   when: when zones.rift finishes margins
 reads:
-- name: margin lines (>= 3 vertices)
+- name: features (planet-feature.rift-margin)
+  meaning: a rift's two
+- name: plate rotation
+  field: planet-field.plate-rotation
+  unit: '1'
+  meaning: 'each plate''s rotation: where the features'' pins stand'
 writes:
-- name: line 'rift floor axis' meta {width_km, depth_m 1500, relief0_m 1500}
-  field: planet-field.ocean-floor-thickness
+- name: features (planet-feature.rift-floor-axis)
+  meaning: one per rift of two margins
 note: 'Emits: trace spawn rule ''relief.rift'' trigger {margins, event, width_km}'
 params:
 - name: depth_m
@@ -29,6 +33,9 @@ backends:
 implementations:
 - where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:rift_features (267-281)
   state: reference
+- where: planet-forge crates/forge-core/src/models/tectonic/rift_floor.rs
+  state: current
+  note: planet-forge port (relief-tectonic line, merged in forge main fc8f460)
 status: draft
 basis:
 - of:
@@ -39,3 +46,12 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
     from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
+    9747f0d-c437724.'
+cautions:
+- 'the Python''s reads were its line store''s internals: margin lines (>= 3 vertices)'

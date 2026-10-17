@@ -14,28 +14,46 @@ clock:
   when: each coupled step (only when the caller passes struct['outgas'], which plates always does in the coupled era); the
     solved dT is used one step later
 reads:
-- name: cl.P, cl.T
-  unit: m/yr, degC
-  meaning: this step's climate
 - name: pts
   unit: unit vector
   meaning: for cos(lat)
 - name: struct.outgas
   unit: dimensionless
   meaning: heat-flow ratio to the first coupled step
+  field: planet-field.mantle-heat-flux
 - name: state.dT, state.W_ref
   unit: K, arbitrary
   meaning: previous offset and reference weathering
+  field: planet-field.thermostat-state
+- name: cl.P
+  field: planet-field.rain
+  unit: m/s
+  meaning: this step's rain
+- name: cl.T
+  field: planet-field.temperature
+  unit: K
+  meaning: this step's temperature
+- name: land
+  field: planet-field.height
+  unit: m
+  meaning: 'land: height above 0'
 writes:
 - name: state.dT
   unit: K
   meaning: offset for the next step
+  field: planet-field.thermostat-state
 - name: state.W_ref
   unit: m/yr-weighted sum (arbitrary)
   meaning: set once
+  field: planet-field.weathering-reference
 - name: hydro.dT_global
   unit: K
   meaning: offset used this step, broadcast per sample
+  field: planet-field.thermostat-offset
+- name: w.hf_ref
+  field: planet-field.outgassing-reference-heat-flux
+  unit: W/m2
+  meaning: the heat flux at the first coupled step
 params:
 - name: 'inline: weathering e-fold'
   value: 17.0
@@ -44,15 +62,15 @@ params:
   source: stages/coupled.py:244-245
   note: Walker et al. 1981
 - name: 'inline: weathering reference T'
-  value: 15.0
-  unit: '1'
+  value: 288.15
+  unit: K
   said_as:
     unit: degC
     factor: 1.0
-  open: true
+    note: plus 273.15
   meaning: reference temperature in exp((T-15)/17)
   source: stages/coupled.py:244
-  note: 'unit as the code says it: ''degC''; SI conversion unverified'
+  note: 'unit as the code says it: ''degC''; SI conversion unverified In K (was degC with unit 1).'
 - name: 'inline: rain sensitivity'
   value: 0.03
   unit: '1'
@@ -77,6 +95,11 @@ params:
     factor: 1.0
   meaning: 'unverified: the code names it inline: bisection iterations without saying what it is'
   source: stages/coupled.py:251
+- name: 'inline: rain factor floor'
+  value: 0.1
+  unit: '1'
+  meaning: f(d) = exp(d/17) max(1 + 0.03 d, this)
+  source: stages/coupled.py:245
 tables:
 - name: river-states
   source: stages/coupled.py:27, 70-96
@@ -173,6 +196,9 @@ backends:
 implementations:
 - where: planet-sim-landform stages/coupled.py:step (lines 239-255)
   state: reference
+- where: planet-forge crates/forge-core/src/models/climate/thermostat.rs
+  state: current
+  note: planet-forge port (climate line, merged in forge main 736031c)
 status: draft
 basis:
 - of:
@@ -183,3 +209,9 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
     the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge climate port (models/climate, models/ice), read from planet-sim-landform 1df4daf.'

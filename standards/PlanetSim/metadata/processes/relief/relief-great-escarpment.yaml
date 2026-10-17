@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.relief-great-escarpment
   name: Great escarpment on an old passive margin
@@ -12,12 +11,19 @@ clock:
   when: 'relief timed generators: every EVERY_MYR (25 Myr) of sim time, run in plates.run''s history hook (every 5 Myr) on
     the real world before the history copy (plates.py:949-955); not tied to the checkpoint list despite the name'
 reads:
-- name: rift margin lines, born
-- name: w.thick
+- name: features (planet-feature.rift-margin)
+  meaning: aged
+- name: crust thickness
   field: planet-field.crust-thickness
+  unit: m
+  meaning: the belt, the sides of a margin
+- name: plate rotation
+  field: planet-field.plate-rotation
+  unit: '1'
+  meaning: 'each plate''s rotation: where the features'' pins stand'
 writes:
-- name: line 'great escarpment' parent=margin, meta {height_m 1000, relief0_m 1000, facing 'ocean', retreat_km}
-- name: margin record 'escarpment' = new line id
+- name: features (planet-feature.great-escarpment)
+  meaning: child of its margin
 note: 'Emits: trace spawn rule ''relief.passive_margin'' trigger {margin, margin_age_myr}'
 params:
 - name: ESCARP_AGE_MYR
@@ -83,6 +89,9 @@ backends:
 implementations:
 - where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:at_checkpoint (302-313)
   state: reference
+- where: planet-forge crates/forge-core/src/models/tectonic/escarpment.rs
+  state: current
+  note: planet-forge port (relief-tectonic line, merged in forge main fc8f460)
 status: draft
 basis:
 - of:
@@ -93,3 +102,12 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
     from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
+    9747f0d-c437724.'
+cautions:
+- 'the Python''s reads were its line store''s internals: rift margin lines, born'

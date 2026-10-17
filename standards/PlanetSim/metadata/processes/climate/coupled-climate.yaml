@@ -30,6 +30,7 @@ reads:
 - name: sea
   unit: m
   meaning: sea level in the same reference
+  field: planet-field.glacial-sea-offset
 - name: nbr
   unit: index (n, 6)
   meaning: 6 nearest neighbours of each sample (cKDTree k=7 minus self)
@@ -39,28 +40,48 @@ reads:
 - name: dT
   unit: K
   meaning: global temperature offset (carbon thermostat, or 0)
+  field: planet-field.thermostat-state
+- name: H (recent epoch)
+  field: planet-field.ice
+  unit: m
+  meaning: 'the ice: the recent epoch runs the climate on height + ice x the cycle''s ice height feedback (glacial-cycles)'
+- name: recent relief
+  field: planet-field.recent-height
+  unit: m
+  meaning: the recent epoch's relief (the height until it is first lowered)
 writes:
 - name: T
   unit: 'degC (SI: K - 273.15)'
   meaning: annual-mean surface air temperature
+  field: planet-field.temperature
 - name: P
   unit: 'm/yr water (SI: m/s = /3.156e7)'
   meaning: precipitation
+  field: planet-field.rain
 - name: PET
   unit: m/yr (SI m/s)
   meaning: potential evapotranspiration (evaporation demand)
+  field: planet-field.potential-evaporation
 - name: runoff
   unit: m/yr (SI m/s)
   meaning: P - ET on land, >= 0; 0 at sea
+  field: planet-field.runoff
 - name: aridity
   unit: dimensionless
   meaning: phi = PET/P (Budyko dryness index; NOTE the inverse of UNEP's AI = P/PET)
-- name: wind_e, wind_n
-  unit: dimensionless unit components
-  meaning: surface wind direction (east, north); no speed
+  field: planet-field.aridity
 - name: moist
   unit: dimensionless (fraction of saturation at 25 degC)
   meaning: column moisture after the last sweep
+  field: planet-field.column-moisture
+- name: wind_e
+  field: planet-field.wind
+  unit: '1'
+  meaning: surface wind, east component
+- name: wind_n
+  field: planet-field.wind-north
+  unit: '1'
+  meaning: surface wind, north component
 params:
 - name: LAPSE
   value: 0.0065
@@ -68,11 +89,11 @@ params:
   meaning: temperature fall with height above sea
   source: stages/coupled_climate.py:19
 - name: PRECIP_MAX
-  value: 9.505703422053231e-08
+  value: 9.506426344208684e-08
   unit: m/s
   said_as:
     unit: m/yr
-    factor: 3.1685678073510773e-08
+    factor: 3.168808781402895e-08
   meaning: rain rate of a saturated column under full rising air
   source: stages/coupled_climate.py:20
   note: 'calibrated 16 Oct with recycling, flank and PET_K 0.05 on three checkpoints: land rain 0.79 m/yr (Earth 0.75), runoff
@@ -108,11 +129,11 @@ params:
   note: 'world catchments'' median ~2.6; unit as the code says it: ''dimensionless''; SI conversion unverified'
 - name: PET_K
   env: SIM_PET_K
-  value: 1.901140684410646e-09
+  value: 1.9012852688417366e-09
   unit: m/s per degC^1.15
   said_as:
     unit: m/yr per degC^1.15
-    factor: 3.1685678073510773e-08
+    factor: 3.168808781402895e-08
   meaning: PET = PET_K * max(T,0)^1.15
   source: stages/coupled_climate.py:24
   note: '16 Oct: 0.05 left s22 12 % dry; 0.06 on five checkpoints of s19-s22: drylands 15-33 %, runoff 31 % of rain'
@@ -189,18 +210,18 @@ params:
     SI conversion unverified'
 - name: 'inline: t_lat coefficients'
   values:
-  - 28.0
+  - 301.15
   - -22.0
   - -22.0
-  unit: '1'
+  unit: K
   said_as:
     unit: degC
     factor: 1.0
-  open: true
+    note: plus 273.15
   meaning: T_sea(lat) = 28 - 22 s2 - 22 s2^2, s2 = sin^2(lat)
   source: stages/coupled_climate.py:36
   note: '~28 degC equator, ~21 at 30, ~7.5 at 50, ~-1 at 60, ~-16 at the poles (Earth zonal annual means); unit as the code
-    says it: ''degC''; SI conversion unverified'
+    says it: ''degC''; SI conversion unverified In K (was degC with unit 1).'
 - name: 'inline: belts()'
   setting: clip(0.95 exp(-(d/9)^2) + 0.75 exp(-((d-50)/12)^2) + 0.12 - 0.35 exp(-((d-27)/7)^2), 0.05, 1)
   meaning: 'rising-air index: ITCZ, storm tracks, subtropical highs'
@@ -245,15 +266,15 @@ params:
   source: stages/coupled_climate.py:80
   note: ~7 %/K
 - name: 'inline: hold reference'
-  value: 25.0
-  unit: '1'
+  value: 298.15
+  unit: K
   said_as:
     unit: degC
     factor: 1.0
-  open: true
+    note: plus 273.15
   meaning: moisture is relative to what air holds at 25 degC
   source: stages/coupled_climate.py:80
-  note: 'unit as the code says it: ''degC''; SI conversion unverified'
+  note: 'unit as the code says it: ''degC''; SI conversion unverified In K (was degC with unit 1).'
 - name: 'inline: flat-ground rain-out factor'
   values:
   - 0.6
@@ -279,11 +300,11 @@ params:
   source: stages/coupled_climate.py:91
   note: 'unit as the code says it: ''dimensionless''; SI conversion unverified'
 - name: 'inline: orographic condensate weight'
-  value: 9.505703422053231e-08
+  value: 9.506426344208684e-08
   unit: m/s
   said_as:
     unit: m/yr per unit relative moisture
-    factor: 3.1685678073510773e-08
+    factor: 3.168808781402895e-08
   meaning: rain from condensed excess moisture
   source: stages/coupled_climate.py:91
 - name: 'inline: PET exponent'
@@ -304,6 +325,25 @@ params:
     factor: 1.0
   meaning: downwind moisture sweeps (moisture travels at most 60 hops)
   source: stages/coupled_climate.py:53
+- name: 'inline: rain floor'
+  value: 3.168808781402895e-14
+  unit: m/s
+  said_as:
+    unit: m/yr
+    factor: 3.168808781402895e-08
+  meaning: phi = PET / max(P, this) and the recycling share ET / max(P, this)
+  source: stages/coupled_climate.py:94, 109
+- name: 'inline: hold clip'
+  values:
+  - 233.14999999999998
+  - 313.15
+  unit: K
+  said_as:
+    unit: degC
+    factor: 1.0
+    note: plus 273.15
+  meaning: what the air holds is computed on T clipped to this range
+  source: stages/coupled_climate.py:80
 tables:
 - name: wind-belts
   source: stages/coupled_climate.py:45-50
@@ -391,6 +431,9 @@ implementations:
 - where: planet-sim-landform stages/coupled_climate.py:run (lines 53-112); helpers t_lat (34-36), belts (39-42), wind_dir
     (45-50)
   state: reference
+- where: planet-forge crates/forge-core/src/models/climate/coupled.rs
+  state: current
+  note: planet-forge port (climate line, merged in forge main 736031c)
 status: draft
 basis:
 - of:
@@ -401,3 +444,9 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
     the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge climate port (models/climate, models/ice), read from planet-sim-landform 1df4daf.'

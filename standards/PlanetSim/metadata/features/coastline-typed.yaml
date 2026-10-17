@@ -45,6 +45,12 @@ basis:
   source: Inman and Nordstrom 1971, On the tectonic and morphologic classification of coasts, Journal of Geology 79(1) (the
     classes); reach and closing_min invented
   review: true
+- of:
+  - layout
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
+    9747f0d-c437724. frame and record from: proposed (the schema has no fields for them yet).'
+  review: true
 pinned_to: 'the run''s first pin, walking with the land on the left (a closed loop of one class: any of its pins, the lowest
   crossing)'
 spans:
@@ -86,3 +92,15 @@ layout:
 - name: closed
   unit: '1'
   meaning: 1 when the run is a whole loop of one class (the chain closes on its first pin)
+- name: frame
+  unit: '1'
+  meaning: '1: its pins sit in its plate''s frame (integer cm) and ride the crust, placed by planet-field.plate-rotation;
+    0: a body-frame snapshot, remade from the present state each pass'
+  rule: it is the present state of an agent (water, sea, wind, the plates' meeting), remade each pass
+  params:
+  - name: rides
+    value: 0.0
+    unit: '1'
+    meaning: 1 rides, 0 snapshot
+    source: 'planet-forge src/ride.rs (from the Python: stages/lines.py Store vs its rivers and coast)'
+    open: true

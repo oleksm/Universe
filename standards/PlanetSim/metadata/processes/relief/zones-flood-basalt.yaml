@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.zones-flood-basalt
   name: Flood basalt province record
@@ -9,10 +8,18 @@ area: relief
 clock:
   when: every plate step, from hotspots(); once per plume for the whole run (S.plume_flood)
 reads:
-- name: on_continent of plume k
+- name: plumes
+  field: planet-field.hotspot-position
+  unit: '1'
+- name: plate
+  field: planet-field.plate
+  unit: '1'
+- name: crust kind
+  field: planet-field.crust-kind
+  unit: '1'
 writes:
-- name: landmark 'flood basalt province' size 1.0 ring_km 500, causes {activity:0.7, crust:0.3}
-- name: S.plume_flood
+- name: features (planet-feature.flood-basalt-plateau)
+  meaning: once per plume
 note: 'Emits: store event ''flood basalt'' (hotspot=k) Emits: trace spawn rule ''zones.flood_basalt'' trigger {hotspot, first_under_continent:
   True} meta {ring_km: 500, relief0_m: 500}'
 params:
@@ -40,6 +47,9 @@ backends:
 implementations:
 - where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:hotspots (127-131)
   state: reference
+- where: planet-forge crates/forge-core/src/models/tectonic/flood_basalt.rs
+  state: current
+  note: planet-forge port (relief-tectonic line, merged in forge main fc8f460)
 status: draft
 basis:
 - of:
@@ -50,3 +60,12 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
     from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
+    9747f0d-c437724.'
+cautions:
+- 'the Python''s reads were its line store''s internals: on_continent of plume k'

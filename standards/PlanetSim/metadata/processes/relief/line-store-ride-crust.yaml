@@ -1,19 +1,28 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.line-store-ride-crust
   name: Store vertices and landmarks ride the plates
-  about: After each plate's turn, every vertex and landmark whose anchor particle is on that plate is rotated by the same
-    axis and angle.
+  about: 'Every feature of a crust-riding kind (its kind''s layout `frame` 1) keeps its pins in its plate''s frame (integer
+    cm), placed by planet-field.plate-rotation: a step moves nothing. Each step, after the plates and before the features''
+    models: a weld moves the removed plate''s features to the kept plate (re-expressed: the removed plate''s rotation now
+    is its last seen turned by the kept plate''s turn since), a rift moves the parent plate''s features whose pins lie mostly
+    on the new plate to it (pins unchanged: it starts with its parent''s rotation); then each plate''s rotation is remembered.'
 area: relief
 clock:
-  when: every plate step, per plate, plates.py:997 (angle = rate*dt*1e6)
+  when: every step, after plate-welding and plate-rifting, before the features' models
 reads:
-- name: w.xplate
-- name: plate axis, angle (rad)
+- name: plate
   field: planet-field.plate
+  unit: '1'
+  meaning: which plate a rift's features now lie on
+- name: plate rotation
+  field: planet-field.plate-rotation
+  unit: '1'
+  meaning: 'each plate''s rotation: where the features'' pins stand'
+- name: rift and weld events (planet-event.rift, planet-event.weld)
 writes:
-- name: S.V, S.P rotated
+- name: 'features: plate (and contacts.plate), pins re-expressed at a weld; table ride-plate-frames (each plate''s rotation
+    as last seen)'
 invariants:
 - a vertex moves exactly as its anchor particle
 backends:
@@ -21,6 +30,9 @@ backends:
 implementations:
 - where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/lines.py:Store.move (178-186)
   state: reference
+- where: planet-forge crates/forge-core/src/ride.rs, models/ride.rs
+  state: current
+  note: planet-forge port (relief-tectonic line, merged in forge main fc8f460)
 status: draft
 basis:
 - of:
@@ -31,3 +43,13 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
     from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
+    9747f0d-c437724.'
+params: []
+cautions:
+- 'the Python''s reads were its line store''s internals: w.xplate'

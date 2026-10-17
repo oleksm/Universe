@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.relief-folds
   name: Fold axes (anticline / syncline)
@@ -11,12 +10,25 @@ area: relief
 clock:
   when: with relief-orogen-axis
 reads:
-- name: w.rock at nearest sample (geology.UNITS index)
+- name: features (planet-feature.orogen-axis)
+  meaning: and its suture's belt
+- name: crust thickness
+  field: planet-field.crust-thickness
+  unit: m
+  meaning: the belt, the sides of a margin
+- name: rock
   field: planet-field.rock
+  unit: '1'
+  meaning: sedimentary units fold
+- name: plate rotation
+  field: planet-field.plate-rotation
+  unit: '1'
+  meaning: 'each plate''s rotation: where the features'' pins stand'
 writes:
-- name: lines 'anticline axis' / 'syncline axis' parent=axis, meta {wavelength_km, amplitude_m = 0.3 relief, relief0_m, vergence
-    'foreland', plunge 'both ends'}
-  field: planet-field.local-relief
+- name: features (planet-feature.anticline-axis)
+  meaning: child of its axis
+- name: features (planet-feature.syncline-axis)
+  meaning: child of its axis
 note: 'Emits: trace spawn rule ''relief.orogen.folds'' trigger + {offset_km, rock ''sedimentary''}'
 params:
 - name: FOLD_MIN_M
@@ -29,10 +41,6 @@ params:
   unit: m
   meaning: fold wavelength ceiling
   source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:45
-- name: wavelength rule
-  setting: belt width / 6
-  meaning: fold wavelength
-  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:246
 - name: FOLD_REACH_M
   value: 250000.0
   unit: m
@@ -79,6 +87,12 @@ params:
   meaning: fold amplitude and relief0
   source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:256
   note: 'unit as the code says it: ''x orogen relief''; SI conversion unverified'
+- name: wavelength rule
+  value: 6.0
+  unit: '1'
+  meaning: the fold wavelength is the median belt over this
+  source: stages/relief.py:246
+  note: was a setting in words ('belt width / 6')
 depends_on:
 - planet-process.relief-orogen-axis
 - planet-process.relief-thrust-front
@@ -87,6 +101,9 @@ backends:
 implementations:
 - where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:orogen (245-257), _cut_runs (192-201)
   state: reference
+- where: planet-forge crates/forge-core/src/models/tectonic/folds.rs
+  state: current
+  note: planet-forge port (relief-tectonic line, merged in forge main fc8f460)
 status: draft
 basis:
 - of:
@@ -97,3 +114,11 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
     from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
+    9747f0d-c437724.'
+cautions: []
