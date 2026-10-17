@@ -140,8 +140,31 @@ pub fn apply(rules: &Rules, sys: &StarSystem, system: usize, ship: &mut Ship, fa
             let Fact::Contact(c) = fact else { return };
             let b = &sys.bodies[body];
             let rot = b.rotation(t);
-            // On legs: what they take, for this ship as it is (cargo and all) on this ground.
-            if let Some(legs) = ship.devices.as_ref().and_then(|d| d.fit.landing()).or_else(|| crate::legs::of_spec(ship.spec())) {
+            // On a world's ground: what its profile says it stands, legs one by
+            // one (the same contact the world runs: see `ground`), on this slope.
+            if matches!(pose, Pose::Ground) {
+                let sink = (-c.relative_velocity.dot(c.normal)).max(0.0);
+                let g = b.surface_gravity();
+                let profile = crate::ground::profile(ship);
+                let hardest = profile.max_sink(ship.mass(), ship.centre_of_mass(), g, ship.broken_legs);
+                if sink > hardest {
+                    fired(events, name, "refused: a leg gave way");
+                    damage::destroy(ship, &format!("A LEG GAVE WAY AT {sink:.1} M/S (IT TAKES {hardest:.1})"), events);
+                    return;
+                }
+                let ground = crate::ground::ground_at(&sys.bodies, body, t, positions, ship.position);
+                let slope = ground.normal.angle_between(c.normal);
+                if slope > profile.tip_slope(ship.centre_of_mass()).min(profile.slide_slope()) {
+                    fired(events, name, "refused: too steep to stand");
+                    return;
+                }
+                if let Some(design) = profile.struts.iter().map(|s| s.sink_rate).reduce(f64::min)
+                    && sink > design
+                {
+                    let stroke = profile.struts.iter().map(|s| s.stroke).fold(f64::INFINITY, f64::min);
+                    events.push(ShipEvent::HardLanding { sink, jolt: sink * sink / (2.0 * stroke) / universe_physics::laws::STANDARD_GRAVITY });
+                }
+            } else if let Some(legs) = ship.devices.as_ref().and_then(|d| d.fit.landing()).or_else(|| crate::legs::of_spec(ship.spec())) {
                 let sink = (-c.relative_velocity.dot(c.normal)).max(0.0);
                 let g = b.surface_gravity();
                 let hardest = legs.hardest(ship.mass(), g);

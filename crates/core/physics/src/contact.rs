@@ -83,6 +83,8 @@ pub struct Contacts {
 const SETTLE: f64 = 0.2;
 /// And no faster than this (m/s): a deep overlap eases out instead of springing.
 const SETTLE_SPEED: f64 = 1.0;
+/// Clear of the ground by this much (m), beyond what it moves in a step: not touching.
+const CLEAR: f64 = 0.5;
 /// Below this speed into the ground (m/s), a hull doesn't rebound.
 const REST_SPEED: f64 = 0.5;
 
@@ -108,6 +110,25 @@ pub fn forces(ground: &dyn Fn(DVec3) -> Option<Ground>, body: &RigidBody, mass: 
         (world, arm, body.velocity + spin.cross(arm))
     };
     let mut out = Contacts { struts: vec![0.0; struts.len()], compression: vec![0.0; struts.len()], sinks: vec![0.0; struts.len()], ..Default::default() };
+    // The ground under its origin, taken as a plane: the whole body clear of
+    // it, nothing to do; a point clear of it by more than the ground could
+    // rise in its distance across (a slope of one in two) is not looked at.
+    let reach = struts.iter().map(|s| s.foot.length()).chain(hull.iter().map(|s| s.at.length() + s.radius)).fold(0.0, f64::max);
+    let sweep = (body.velocity.length() + spin.length() * reach) * h;
+    let plane = ground(body.position);
+    if let Some(g0) = plane
+        && -g0.depth > reach + CLEAR + sweep
+    {
+        return out;
+    }
+    let clear = |world: DVec3, radius: f64| -> bool {
+        plane.is_some_and(|g0| {
+            let off = world - body.position;
+            let up = off.dot(g0.normal);
+            let across = (off - g0.normal * up).length();
+            -g0.depth + up - radius > CLEAR + sweep + 0.5 * across
+        })
+    };
     // (Gathered first: every touching point shares the body, so each hard push
     // is divided among them.)
     struct Touch {
@@ -126,6 +147,9 @@ pub fn forces(ground: &dyn Fn(DVec3) -> Option<Ground>, body: &RigidBody, mass: 
             continue;
         }
         let (world, arm, vel) = point(s.foot);
+        if clear(world, 0.0) {
+            continue;
+        }
         let Some(g) = ground(world).filter(|g| g.depth > 0.0) else { continue };
         let rel = vel - g.velocity;
         let into = -rel.dot(g.normal);
@@ -145,6 +169,9 @@ pub fn forces(ground: &dyn Fn(DVec3) -> Option<Ground>, body: &RigidBody, mass: 
     }
     for s in hull {
         let (centre, arm0, _) = point(s.at);
+        if clear(centre, s.radius) {
+            continue;
+        }
         let Some(g) = ground(centre) else { continue };
         let depth = g.depth + s.radius;
         if depth <= 0.0 {

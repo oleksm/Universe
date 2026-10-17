@@ -120,3 +120,21 @@ Differences from the plan: rotation from contact is integrated in the world's dr
 inertia tensor rather than moving all flight rotation into Dogma (P2); station decks and rigs keep
 their lock (P6). Still open: decks on the same contact, wheels and taxi, terrain mesh contact
 (`crates/terrain-contact`), friction per ground.
+
+## The ship's ground profile (2026-10-17)
+
+What a ship is on the ground is worked out once for its design and legs (`ground::Profile`, kept on
+the ship as `Ship::contact`, made again when the design or legs change), so the world step only
+looks things up:
+
+| Figure | How | Used by |
+|---|---|---|
+| Legs (foot, spring, damper, holds), hull points, reach | from the fit, gear nodes or hull corners | the contact step |
+| Rest pose | the tilt within 30 deg of upright that brings the centre of mass lowest (1 deg grid, then 0.1 deg) | test drive; matches the flight (MC-07 draft: 10 deg) |
+| Tip slope | the centre's distance to the nearest edge of what it rests on, over its height | landing checks, test drive |
+| Slide slope | atan of the feet's (or hull's) friction | landing checks, test drive |
+| Hardest landing | each leg's spring and damper stopping its standing share of the weight (by where the centre is), by halving; on the safe side (the flight holds up to about a tenth more) | the planner's landing prediction (`rules::apply`), the landing autopilot (sinks at no more than 0.7 of it), test drive |
+
+The step itself culls: the whole ship clear of the ground under it (taken as a plane), nothing to
+do; a point clear of it by more than the ground could rise across its distance (one in two), not
+looked at. Answers are memoised per load (mass within a thousandth, centre within 10 cm).

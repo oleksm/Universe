@@ -357,6 +357,21 @@ mod tests {
     }
 
     #[test]
+    fn the_profiles_hardest_landing_is_what_the_flight_finds() {
+        // Worked out once from the ship's legs, without flying, and on the safe
+        // side (each leg's standing share; landing, the body's pitch spreads the
+        // blow a little): at it the legs hold; three tenths over, one gives way.
+        let limit = |f: &mut LocalFlight| { let com = f.ship.centre_of_mass(); universe_sim::world::ground::profile(&mut f.ship).max_sink(f.ship.mass(), com, 9.81, 0) };
+        for (share, holds) in [(1.0, true), (1.3, false)] {
+            let mut f = dropped(0.01, 0.0);
+            let v = limit(&mut f) * share;
+            f.ship.velocity = -f.ship.position.normalize() * v;
+            fly(&mut f, 4.0);
+            assert_eq!(f.ship.broken_legs == 0, holds, "at {v:.2} m/s ({share} of the limit)");
+        }
+    }
+
+    #[test]
     fn a_ship_set_down_tilted_comes_to_rest_without_being_stood_up() {
         let mut f = dropped(0.3, 0.15);
         fly(&mut f, 12.0);
