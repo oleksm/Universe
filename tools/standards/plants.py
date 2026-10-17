@@ -2693,6 +2693,12 @@ def ladle_ports(us):
     flow = (L_WATER * L_P + TRANSFORMER_LOSS * L_MVA) / (4186 * 10)
     dn = kit.dn_for(math.sqrt(4 * flow / 1000 / 2.5 / math.pi))
     lf = us["ladle-furnace-80t-sealed"]
+    if "Bus insulators" not in [x["what"] for x in lf["built_of"]]:
+        m2 = "blender's model v2 (2026-10-16)"
+        dm = {"Roof panels": (-1210.9, "the fume neck's 1 m mouth narrowed to DN 200 by z 5.1 and the alloy chute to DN 400"), "Secondary cables": (-162.3, "their lower tails moved to the bus joint's phases at 0.6 m"), "Gantry": (377.8, "seats and feet for the coolant stubs, the argon stand and the bus pads")}
+        lf["built_of"] = [part(x["what"], x["item"], x["mass"] + dm[x["what"]][0], f"{x['note']}; v2: {dm[x['what']][1]}, {dm[x['what']][0]:+,.1f} kg on {m2}") if x["what"] in dm else x for x in lf["built_of"]]
+        lf["built_of"] += [part("Fume riser and argon piping", "material.stainless-steel-304", 92.75, f"the DN 200 fume riser to its flange and the argon feed to the roof; measured on {m2}"),
+                           part("Bus insulators", "material.silicon-carbide", 0.03717 * 3000.0, f"the bus pads' insulators, alumina at 3,000 kg/m3 (silicon carbide stands for it); measured on {m2}")]
     lf["desc"] += (f" Its ports (SFO 25): the bus joint at the cables' hanger, (0, -5.34, 6), facing -y; the manifold's water, DN {dn * 1000:.0f} facing -y, out at (-4.8, -4.85, 1) and in at (-4.2, -4.85, 1); the alloy chute's mouth at (0, 3, 9), a belt's head over it; "
                    "the fume out of the roof's elbow at (2, 0, 7.5), facing up, DN 200 (the elbow water-cooled, so the gas leaves it under 400 deg C); argon in at (-5.5, -2.5, 1.5) on the west frame, facing -x.")
     lf["ports"] = [

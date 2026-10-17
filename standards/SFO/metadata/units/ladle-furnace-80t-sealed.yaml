@@ -5,20 +5,22 @@ identity: {key: unit.ladle-furnace-80t-sealed, name: 'Ladle furnace, 80 t, seale
     at (2, 0, 7.5), facing up, DN 200 (the elbow water-cooled, so the gas leaves it under 400 deg C); argon in at (-5.5, -2.5, 1.5) on the west frame, facing -x.'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 10.7, height: 14.0, mass: 79940.0}
+physical: {length: 12.0, width: 10.7, height: 14.0, mass: 79150.0}
 built_of:
-- {what: Roof panels, item: material.structural-steel-a36, mass: 5010.0, note: 'water-cooled pipe panels over a dome 4.6 m across, 1.15 times the disc, the lifting frame half as much again'}
+- {what: Roof panels, item: material.structural-steel-a36, mass: 3799.0, note: 'water-cooled pipe panels over a dome 4.6 m across, 1.15 times the disc, the lifting frame half as much again; v2: the fume neck''s 1 m mouth narrowed to DN 200 by z 5.1 and the alloy chute to DN 400, -1,210.9 kg on blender''s model v2 (2026-10-16)'}
 - {what: Roof delta, item: good.refractory-brick, mass: 771.6, note: 'the refractory centre round the electrode ports, 1.2 m across, 0.3 m thick, less its electrode, feed and fume bores: 0.257 m3 as measured on blender''s model (candidate v01)'}
-- {what: Gantry, item: material.structural-steel-a36, mass: 53900.0, note: 'four box columns 0.6 m, 25 mm wall, 12 m tall, two cross beams 0.8 x 0.5 m, 10 m, longitudinal ties, the mast bench, the roof-lift heads, a grounded hanger beam over the mast bank for the cables and 200 mm baseplates (these provisional, not load-sized): measured on blender''s model (candidate v01); columns and beams alone 31,479 kg'}
+- {what: Gantry, item: material.structural-steel-a36, mass: 54280.0, note: 'four box columns 0.6 m, 25 mm wall, 12 m tall, two cross beams 0.8 x 0.5 m, 10 m, longitudinal ties, the mast bench, the roof-lift heads, a grounded hanger beam over the mast bank for the cables and 200 mm baseplates (these provisional, not load-sized): measured on blender''s model (candidate v01); columns and beams alone 31,479 kg; v2: seats and feet for the coolant stubs, the argon stand and the bus pads, +377.8 kg on blender''s model v2 (2026-10-16)'}
 - {what: Electrode masts, item: material.structural-steel-a36, mass: 7830.0, note: 'three box masts 0.5 m, 25 mm wall, 7 m'}
 - {what: Current-conducting arms, item: material.aluminium-1350, mass: 843.0, note: 'three box arms 0.5 x 0.35 m, 20 mm wall, trimmed at their insulated carriages: measured on blender''s model (candidate v01)'}
-- {what: Secondary cables, item: material.copper, mass: 1528.0, note: 'two water-cooled copper cables a phase, each 2630 mm2 for half of 26 kA at 5 A/mm2, run behind the steel and over the top on six insulators: measured on blender''s model (1,414 kg for 10 m each)'}
+- {what: Secondary cables, item: material.copper, mass: 1366.0, note: 'two water-cooled copper cables a phase, each 2630 mm2 for half of 26 kA at 5 A/mm2, run behind the steel and over the top on six insulators: measured on blender''s model (1,414 kg for 10 m each); v2: their lower tails moved to the bus joint''s phases at 0.6 m, -162.3 kg on blender''s model v2 (2026-10-16)'}
 - {what: Roof lift and mast hydraulics, item: good.pumps, mass: 6000.0, note: from memory}
 - {what: Electrode glands, item: material.structural-steel-a36, mass: 368.7, note: insulated water-cooled glands round the electrodes; measured on blender's model v1}
 - {what: Rim seal and gland packing, item: material.silicon-carbide, mass: 150.0, note: 'a soft ring of ceramic fibre rope on the roof''s skirt (a hot rim burns elastomers), which leaks some argon that the feed makes up, and the glands'' packing; silicon carbide stands for the ceramic fibre, from memory'}
 - {what: Roof locks, item: material.structural-steel-a36, mass: 1023.0, note: '50 kPa under the roof over the ladle''s 2.9 m mouth lifts it with about 330 kN; the roof''s own weight (about 5.8 t, 9 kN at 1.6 m/s2) barely counts against it, so lock collars on the two lift rods take about 165 kN each through twin 40 x 100 mm straps (about 21 MPa) to the cylinders'' fixed heads on the gantry; measured on model v1'}
 - {what: Alloy lock, item: material.structural-steel-a36, mass: 2014.0, note: two valves and a chamber in the chute; measured on model v1}
 - {what: Lock drives, item: good.electric-motors, mass: 500.0, note: 'the locks'' actuators, from memory'}
+- {what: Fume riser and argon piping, item: material.stainless-steel-304, mass: 92.75, note: the DN 200 fume riser to its flange and the argon feed to the roof; measured on blender's model v2 (2026-10-16)}
+- {what: Bus insulators, item: material.silicon-carbide, mass: 111.5, note: 'the bus pads'' insulators, alumina at 3,000 kg/m3 (silicon carbide stands for it); measured on blender''s model v2 (2026-10-16)'}
 holds: 625.3
 needs: {power: 7500000.0, heat: 1500000.0, gravity: 1.6, atmosphere: any}
 recipes:
@@ -121,8 +123,8 @@ envelope:
 - [4.499, -4.902, -0.001, 5.501, 4.902, 12.001]
 - [-5.251, -5.341, 4.599, 5.251, -3.058, 12.691]
 - [-2.301, -3.221, 3.798, 2.501, 0.9, 14.001]
-- [-0.4, 0.9, 3.798, 0.4, 3.301, 9.001]
-- [-5.001, -4.851, 0.798, -1.409, -0.687, 6.625]
+- [-2.301, 0.9, 3.798, 2.301, 3.301, 9.001]
+- [-5.501, -4.951, -0.001, -1.409, -0.687, 6.625]
 life: 788940000
 visual: {format: freefall-model/1, path: models/ladle-furnace-80t-sealed/v1, manifest_sha256: 089a53bf2442adb3981bc188959b2d70cfc8f0373787db1e7baf0854f16ca8be, version: 1, triangles: 20702}
 basis:
