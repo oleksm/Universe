@@ -236,6 +236,8 @@ def cmd_validate(keys):
             g = json.loads(r.stdout[r.stdout.find("{"):])
         except Exception:
             g = {}
+        if g.get("gaps"):
+            print("     " + "; ".join(f"{x['verdict']} {x['what']}: {x['detail']}" for x in g["gaps"])[:400])
         ok = bool(path) and g.get("verdict") == "none" and not g.get("gaps")
         print(f"{'ok  ' if ok else 'FAIL'} {key}: model {path or 'none'}, installed v{g.get('installed')}, verdict {g.get('verdict')}, gaps {len(g.get('gaps') or [])}")
         bad += not ok
