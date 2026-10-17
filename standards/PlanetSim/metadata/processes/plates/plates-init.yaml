@@ -83,6 +83,10 @@ writes:
   field: planet-field.plate-rotation
   unit: '1'
   meaning: unit quaternion since the run's start
+- name: hotspots
+  field: planet-field.hotspot-position
+  unit: '1'
+  meaning: fixed in the mantle frame
 params:
 - name: PLATES
   env: SIM_PLATES

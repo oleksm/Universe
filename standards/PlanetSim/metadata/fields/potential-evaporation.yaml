@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.potential-evaporation
+  name: Potential evaporation
+  about: 'What the air could evaporate from open water or wet ground in a year (PET): PET_K max(T, 0)^1.15, more in continental
+    interiors; aridity is PET / P.'
+unit: m/s
+said_as:
+  unit: m/yr
+  factor: 3.168808781402895e-08
+per: sample
+producer:
+  where: stages/coupled_climate.py moisture
+  file: climate
+  key: PET
+levels:
+- planet-level.planet
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge surface port (models/surface), read from planet-sim-landform 9747f0d-c437724.'

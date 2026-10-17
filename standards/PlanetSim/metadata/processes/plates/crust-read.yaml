@@ -30,6 +30,21 @@ reads:
   unit: m
 - name: w.xtop, w.xbase, w.xcover, w.xgrain, w.xfert, w.xdep
   meaning: particle geology (rock, grain, ores)
+- name: w.xmem
+  field: planet-field.particle-peak-discharge
+  unit: m3/s
+- name: w.xmem
+  field: planet-field.particle-incision
+  unit: m
+- name: w.xmem
+  field: planet-field.particle-river-state
+  unit: '1'
+- name: w.xmem
+  field: planet-field.particle-river-change-time
+  unit: s
+- name: w.xmem
+  field: planet-field.particle-lake-mark
+  unit: '1'
 writes:
 - name: w.thick
   field: planet-field.crust-thickness
@@ -48,6 +63,16 @@ writes:
   unit: m
 - name: w.rock, w.grain, w.fert, w.dep
   field: planet-field.rock
+- name: cs[...] = xmem[nearest particle]
+  field: planet-field.peak-discharge
+- name: cs[...] = xmem[nearest particle]
+  field: planet-field.incision
+- name: cs[...] = xmem[nearest particle]
+  field: planet-field.river-state
+- name: cs[...] = xmem[nearest particle]
+  field: planet-field.river-change-time
+- name: cs[...] = xmem[nearest particle]
+  field: planet-field.lake-mark
 params:
 - name: KERNEL
   value: 0.8

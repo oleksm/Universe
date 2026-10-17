@@ -2,7 +2,8 @@
 identity:
   key: planet-run-profile.standard
   name: Standard run
-  about: 'The planet sim''s standard run as the Python run tool (planet_form.py) makes it: checkpoints, settings, gates and targets.'
+  about: 'The planet sim''s standard run as the Python run tool (planet_form.py) makes it: checkpoints, settings, gates and
+    targets.'
 start: 1.420092e+17
 end: 0.0
 times_said:
@@ -125,7 +126,8 @@ settings:
   source: ~/git/planet-trees-pgs2/tools/planet_form.py:87
 - name: SIM_SNAPSHOT_LOAD
   setting: none
-  meaning: pickle of the whole run state to resume from (plates.py:901-916); planet_form then skips checkpoints older than the resume time
+  meaning: pickle of the whole run state to resume from (plates.py:901-916); planet_form then skips checkpoints older than
+    the resume time
   source: ~/git/planet-trees-pgs2/tools/planet_form.py:92; ~/git/planet-sim-landform/src/planet_sim/stages/plates.py:901
 - name: SIM_SNAPSHOT_SAVE
   setting: none
@@ -161,8 +163,8 @@ settings:
   source: ~/git/planet-trees-pgs2/tools/planet_form.py:561-574
 - name: CONTEXT
   setting: '0'
-  meaning: write <ck>_ctx.npz (age, thick, floor, grain, sunk_at, plate axes, events, hotspots, h_* hydro, river_events, c_* causes, v_* volc, hotspot_xyz); at the end run landform_graph.py on the last 3 checkpoints and context_view.py
-    --page-only
+  meaning: write <ck>_ctx.npz (age, thick, floor, grain, sunk_at, plate axes, events, hotspots, h_* hydro, river_events, c_*
+    causes, v_* volc, hotspot_xyz); at the end run landform_graph.py on the last 3 checkpoints and context_view.py --page-only
   source: ~/git/planet-trees-pgs2/tools/planet_form.py:201,616
 - name: FAST
   setting: '0'
@@ -194,7 +196,8 @@ settings:
   source: ~/git/planet-trees-pgs2/tools/planet_form.py:101-119
 - name: FRACTAL_EDGES
   setting: '1'
-  meaning: replace plates._bumps with a 4-octave field (n*4^k centres, width/2^k, amplitude 0.5^k, /3, reach 3w) plus a fixed seeded rift fabric (12000 Fibonacci points, octaves k=1..3 of 40*4^k bumps, width 0.25/2^k)
+  meaning: replace plates._bumps with a 4-octave field (n*4^k centres, width/2^k, amplitude 0.5^k, /3, reach 3w) plus a fixed
+    seeded rift fabric (12000 Fibonacci points, octaves k=1..3 of 40*4^k bumps, width 0.25/2^k)
   source: ~/git/planet-trees-pgs2/tools/planet_form.py:318-368
 - name: INVERT_AT_END
   setting: '0'
@@ -209,7 +212,8 @@ settings:
   meaning: named in the docstring only; not read in planet_form.py (unverified where)
   source: ~/git/planet-trees-pgs2/tools/planet_form.py:19
 - name: STORY_KM2, SP1, HEAD1, J1, SPACING, HEAD, JITTER
-  setting: '{"STORY_KM2": "4000", "SP1": "10*px", "HEAD1": "STORY_KM2/8", "J1": "60", "SPACING": "2*px", "HEAD": "STORY_KM2/50", "JITTER": "8"}'
+  setting: '{"STORY_KM2": "4000", "SP1": "10*px", "HEAD1": "STORY_KM2/8", "J1": "60", "SPACING": "2*px", "HEAD": "STORY_KM2/50",
+    "JITTER": "8"}'
   meaning: part 2 tree-growth knobs (run_growth, px 2000 m, window 400 km); run_growth is not called from main (retired, unverified)
   source: ~/git/planet-trees-pgs2/tools/planet_form.py:411-455
 - name: PEAK_GAIN
@@ -260,7 +264,15 @@ planet:
   water_mass_fraction: 0.00023
   star_age: 1.44218232e+17
   preset: presets.earth()
-  note: 'Earth: radius 1 R_earth, mass 1 M_earth, water 2.3e-4 of its mass (oceans and ice), the Sun''s age 4.57 Gyr at the run''s end (the Python preset)'
+  note: 'Earth: radius 1 R_earth, mass 1 M_earth, water 2.3e-4 of its mass (oceans and ice), the Sun''s age 4.57 Gyr at the
+    run''s end (the Python preset)'
+  core_mass_fraction: 0.325
+  core_radius: 3480000.0
+  core_light: 0.08
+  surface_temp: 288.0
+  regime: plates
+  radiogenic: 1.0
+  core_stratified: false
 basis:
 - of:
   - planet.radius
@@ -283,3 +295,14 @@ basis:
   - planet.note
   tier: derived
   note: 'planets, 17 Oct 2026: planet-sim-landform presets.earth()'
+- of:
+  - planet.core_mass_fraction
+  - planet.core_radius
+  - planet.core_light
+  - planet.surface_temp
+  - planet.regime
+  - planet.radiogenic
+  - planet.core_stratified
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-sim-landform presets.earth() (core mass fraction 0.325 and radius 3,480 km as PREM gives
+    them; core light elements 8 % by mass; surface 288 K; Earth''s K, Th, U)'

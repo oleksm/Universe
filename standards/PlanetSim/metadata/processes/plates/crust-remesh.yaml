@@ -1,20 +1,128 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.crust-remesh
   name: 'Remesh: re-laying particles on the sample lattice'
-  about: 'Every REMESH_MYR: particles are replaced by one per sample; plate, floor, age, suture from the nearest particle;
-    geology from the nearest continental particle where the sample reads continent but its nearest particle is ocean; continent
-    where spread thickness >= CONTINENT_EDGE, volumes fitted to the read thickness (_set_continents) and rescaled to the exact
-    previous total. Relief layer re-anchored.'
+  about: 'Every REMESH_MYR: particles are replaced by one per sample; plate, floor, age, suture from the nearest particle; geology from the nearest continental particle where the sample reads continent but its nearest particle is ocean;
+    continent where spread thickness >= CONTINENT_EDGE, volumes fitted to the read thickness (_set_continents) and rescaled to the exact previous total. Relief layer re-anchored.'
 area: plates
 clock:
   when: every REMESH_MYR (50 Myr), checked at the step start
 reads:
-- name: particles
+- name: w.x
+  field: planet-field.particle-position
+  unit: '1'
+- name: w.xplate
+  field: planet-field.particle-plate
+  unit: '1'
+- name: w.xcont
+  field: planet-field.particle-continental
+  unit: '1'
+- name: w.xvol
+  field: planet-field.particle-volume
+  unit: m3
+- name: w.xfloor
+  field: planet-field.particle-floor-thickness
+  unit: m
+- name: w.xage
+  field: planet-field.particle-age
+  unit: s
+- name: w.xsuture
+  field: planet-field.particle-suture
+  unit: s
+- name: (forge) id
+  field: planet-field.particle-id
+  unit: '1'
+- name: fronts
+  field: planet-field.particle-front-low
+  unit: '1'
+- name: fronts
+  field: planet-field.particle-front-high
+  unit: '1'
+- name: fronts
+  field: planet-field.particle-front-time
+  unit: s
+- name: sank
+  field: planet-field.particle-sunk
+  unit: '1'
+- name: w.xmem
+  field: planet-field.particle-peak-discharge
+  unit: m3/s
+- name: w.xmem
+  field: planet-field.particle-incision
+  unit: m
+- name: w.xmem
+  field: planet-field.particle-river-state
+  unit: '1'
+- name: w.xmem
+  field: planet-field.particle-river-change-time
+  unit: s
+- name: w.xmem
+  field: planet-field.particle-lake-mark
+  unit: '1'
+- name: next_remesh
+  field: planet-field.next-remesh
+  unit: s
+- name: (forge) next id
+  field: planet-field.particle-id-next
+  unit: '1'
 writes:
-- name: all particle arrays
-  meaning: replaced
+- name: w.x
+  field: planet-field.particle-position
+  unit: '1'
+- name: w.xplate
+  field: planet-field.particle-plate
+  unit: '1'
+- name: w.xcont
+  field: planet-field.particle-continental
+  unit: '1'
+- name: w.xvol
+  field: planet-field.particle-volume
+  unit: m3
+- name: w.xfloor
+  field: planet-field.particle-floor-thickness
+  unit: m
+- name: w.xage
+  field: planet-field.particle-age
+  unit: s
+- name: w.xsuture
+  field: planet-field.particle-suture
+  unit: s
+- name: (forge) id
+  field: planet-field.particle-id
+  unit: '1'
+- name: fronts
+  field: planet-field.particle-front-low
+  unit: '1'
+- name: fronts
+  field: planet-field.particle-front-high
+  unit: '1'
+- name: fronts
+  field: planet-field.particle-front-time
+  unit: s
+- name: sank
+  field: planet-field.particle-sunk
+  unit: '1'
+- name: w.xmem
+  field: planet-field.particle-peak-discharge
+  unit: m3/s
+- name: w.xmem
+  field: planet-field.particle-incision
+  unit: m
+- name: w.xmem
+  field: planet-field.particle-river-state
+  unit: '1'
+- name: w.xmem
+  field: planet-field.particle-river-change-time
+  unit: s
+- name: w.xmem
+  field: planet-field.particle-lake-mark
+  unit: '1'
+- name: next_remesh
+  field: planet-field.next-remesh
+  unit: s
+- name: (forge) next id
+  field: planet-field.particle-id-next
+  unit: '1'
 events_emitted:
 - event: planet-event.relief-reanchor
   where: stages/plates.py:941
@@ -33,6 +141,18 @@ params:
   meaning: a sample whose spread continental thickness is below this reads as ocean
   source: stages/plates.py:213
   note: 'Continental crust is thinner than this (m) where only a particle''s edge reaches: ocean'
+- name: KERNEL
+  value: 0.8
+  unit: '1'
+  meaning: Gaussian width h = KERNEL*gap for spreading continental particle volume onto samples (cut at 3h)
+  source: stages/plates.py:215
+  note: the continents' spread (_continental), as crust-read's
+- name: kernel cutoff
+  value: 3.0
+  unit: '1'
+  meaning: 'unverified: the code names it kernel cutoff without saying what it is'
+  source: stages/plates.py:483
+  note: the continents' spread (_continental), as crust-read's
 random_draws:
 - none
 invariants:
@@ -55,5 +175,4 @@ basis:
   - reads
   - writes
   tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
-    code at planet-sim-landform 9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'

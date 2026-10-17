@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.next-remesh
+  name: Next crust remesh
+  about: When the crust is next re-laid on the sample lattice, on the planet's clock.
+unit: s
+producer:
+  where: planet-forge crates/forge-core/src/models/plates/remesh.rs
+  file: checkpoint
+  key: scalars/planet-field.next-remesh
+per: global
+time_base: planet-age
+said_as:
+  unit: Myr
+  factor: 31557600000000.0
+also_from:
+- where: stages/plates.py
+  key: next_remesh
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: forge''s plates port (branch plates-foundation), read from the Python''s run loop.'

@@ -1,36 +1,95 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.denudation-and-rivers
   name: Denudation of land above sea, with stream-power redistribution
-  about: Every SEA_EVERY steps (CP.COUPLE_EVERY in the coupled era), the crust is read, elevation and sea level found; land
-    above sea loses above*(1-exp(-every*dt/DENUDE_MYR)). Outside the coupled era a FLUVIAL share of this is redistributed
-    by stream power sqrt(A/cell)*S from drain() (D8 steepest descent on the 6-neighbour graph after Planchon-Darboux depression
-    filling, with seeded roughness), total kept, capped at the height above sea. The loss is passed through _wear (erodibility)
-    and exhumed, then continental volume is scaled down by (H-lost)/H. Outside the coupled era the lost volume leaves the
-    system (sediment subducted); in the coupled era it goes to the shelf. Zone statistics (land share, sea, flooded, mean
-    height, share above 3 km) are recorded.
+  about: Every SEA_EVERY steps (CP.COUPLE_EVERY in the coupled era), the crust is read, elevation and sea level found; land above sea loses above*(1-exp(-every*dt/DENUDE_MYR)). Outside the coupled era a FLUVIAL share of this is redistributed
+    by stream power sqrt(A/cell)*S from drain() (D8 steepest descent on the 6-neighbour graph after Planchon-Darboux depression filling, with seeded roughness), total kept, capped at the height above sea. The loss is passed through
+    _wear (erodibility) and exhumed, then continental volume is scaled down by (H-lost)/H. Outside the coupled era the lost volume leaves the system (sediment subducted); in the coupled era it goes to the shelf. Zone statistics (land
+    share, sea, flooded, mean height, share above 3 km) are recorded.
 area: plates
 clock:
   when: every SEA_EVERY (20) steps; in the coupled era every CP.COUPLE_EVERY (default 1, env SIM_COUPLE_EVERY) steps
 reads:
 - name: z_ (elevation)
+  field: planet-field.height-above-ridge
   unit: m
 - name: sea_
+  field: planet-field.sea-level
   unit: m
-- name: w.thick, w.kind
-  unit: m, code
+- name: w.kind
+  field: planet-field.crust-kind
+  unit: '1'
+- name: w.thick
   field: planet-field.crust-thickness
+  unit: m
+- name: (coupled era) the coupled erosion's wear
+  field: planet-field.wear-total
+  unit: m
+- name: w.x
+  field: planet-field.particle-position
+  unit: '1'
+- name: w.xcont
+  field: planet-field.particle-continental
+  unit: '1'
+- name: w.xvol
+  field: planet-field.particle-volume
+  unit: m3
+- name: w.xplate
+  field: planet-field.particle-plate
+  unit: '1'
+- name: w.xfloor
+  field: planet-field.particle-floor-thickness
+  unit: m
+- name: w.xsuture
+  field: planet-field.particle-suture
+  unit: s
+- name: w.plate
+  field: planet-field.plate
+  unit: '1'
+- name: cs[...] (the memory on the samples)
+  field: planet-field.peak-discharge
+- name: cs[...] (the memory on the samples)
+  field: planet-field.incision
+- name: cs[...] (the memory on the samples)
+  field: planet-field.river-state
+- name: cs[...] (the memory on the samples)
+  field: planet-field.river-change-time
+- name: cs[...] (the memory on the samples)
+  field: planet-field.lake-mark
 writes:
 - name: w.xvol
+  field: planet-field.particle-volume
   unit: m3
-  meaning: scaled down
-- name: w._zstats
-  unit: dict
-  meaning: land, sea, cont_area, cont_mean_z, flooded, cont_thick, above_3km
-- name: w.cause['climate']
+  meaning: the continents thinned by the loss
+- name: _to_shelf (coupled era)
+  field: planet-field.particle-floor-thickness
   unit: m
-  meaning: coupled era
+  meaning: the eroded volume laid on the shelves
+- name: struct fold
+  field: planet-field.fold
+  unit: '1'
+  meaning: 'fold belts: thick'' exp(-since suture / 300 Myr), at least 0.5 thick'''
+- name: struct fault
+  field: planet-field.fault
+  unit: '1'
+  meaning: plate boundary 1, next to one 0.5
+- name: w._zstats
+  meaning: land, sea, flooded ... (forge stats)
+- name: w.xmem (each particle takes its sample's)
+  field: planet-field.particle-peak-discharge
+  unit: m3/s
+- name: w.xmem (each particle takes its sample's)
+  field: planet-field.particle-incision
+  unit: m
+- name: w.xmem (each particle takes its sample's)
+  field: planet-field.particle-river-state
+  unit: '1'
+- name: w.xmem (each particle takes its sample's)
+  field: planet-field.particle-river-change-time
+  unit: s
+- name: w.xmem (each particle takes its sample's)
+  field: planet-field.particle-lake-mark
+  unit: '1'
 params:
 - name: SEA_EVERY
   value: 20.0
@@ -77,8 +136,7 @@ params:
   open: true
   meaning: 'ablation switches, comma separated: flow, cap, roots, crustwear, climate, shelf'
   source: stages/plates.py:143
-  note: '16 Oct tooling (comment also lists ''shelf''; ''climate'' and ''shelf'' only matter in coupled era); unit as the
-    code says it: ''set of process names''; SI conversion unverified'
+  note: '16 Oct tooling (comment also lists ''shelf''; ''climate'' and ''shelf'' only matter in coupled era); unit as the code says it: ''set of process names''; SI conversion unverified'
 - name: fill epsilon
   value: 0.1
   unit: m
@@ -90,9 +148,78 @@ params:
   unit: '1'
   meaning: coupled.py:22, env SIM_COUPLE_EVERY
   source: stages/plates.py:1311
+- name: SHELF
+  value: 1.6
+  unit: '1'
+  meaning: eroded crust is laid on ocean floor particles within SHELF*gap of a continental particle of the same plate
+  source: stages/plates.py:167
+  note: no comment in code
+- name: WEDGE
+  env: SIM_WEDGE
+  value: 0.35
+  unit: '1'
+  meaning: e-folding distance of the shelf wedge weight exp(-d/(WEDGE*gap))
+  source: stages/plates.py:168
+  note: spacings over which a shelf wedge thins away from the coast (16 Oct, s22)
+- name: COUPLED
+  env: SIM_COUPLED
+  setting: 'False'
+  meaning: 'landform line: run the coupled surface step (stages/coupled.py) in the last COUPLE_FROM_MYR'
+  source: stages/plates.py:136
+  note: 'env ''1'' -> True; default ''0''; unit: bool'
+- name: COUPLE_FROM_MYR
+  env: SIM_COUPLE_FROM_MYR
+  value: 2.209032e+16
+  unit: s
+  said_as:
+    unit: Myr before the end
+    factor: 700.0
+  meaning: the coupled era starts when (end - t) <= this; also gates SIM_LAND_SHARE (late) and the snapshot save
+  source: stages/plates.py:139
+  note: 'owner 16 Oct: weathering, rivers and history from the fifth checkpoint (700 Ma) on'
+- name: KERNEL
+  value: 0.8
+  unit: '1'
+  meaning: Gaussian width h = KERNEL*gap for spreading continental particle volume onto samples (cut at 3h)
+  source: stages/plates.py:215
+  note: the continents' spread (_continental), as crust-read's
+- name: kernel cutoff
+  value: 3.0
+  unit: '1'
+  meaning: 'unverified: the code names it kernel cutoff without saying what it is'
+  source: stages/plates.py:483
+  note: the continents' spread (_continental), as crust-read's
+- name: fold thickness ramp
+  value: 15000.0
+  unit: m
+  meaning: thick' = clip((thick - CONTINENT_MEAN) / this, 0, 1)
+  source: stages/plates.py:1339
+- name: fold suture e-fold
+  value: 9467280000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 300.0
+  meaning: fold = max(thick' exp(-since suture / this), 0.5 thick')
+  source: stages/plates.py:1340
+- name: fold floor share
+  value: 0.5
+  unit: '1'
+  meaning: fold never below this share of thick'
+  source: stages/plates.py:1340
+- name: fault neighbour share
+  value: 0.5
+  unit: '1'
+  meaning: fault next to a plate boundary
+  source: stages/plates.py:1342
+- name: CONTINENT_MEAN
+  value: 39000.0
+  unit: m
+  meaning: reference continental thickness for isostasy; also fold-belt index base in coupled struct
+  source: stages/plates.py:86
+  note: Christensen & Mooney 1995 (real)
 random_draws:
-- 'drain(): roughness from np.random.default_rng(n) (n = sample count), a fresh generator each call, independent of the run''s
-  seed; same roughness every call at a resolution.'
+- 'drain(): roughness from np.random.default_rng(n) (n = sample count), a fresh generator each call, independent of the run''s seed; same roughness every call at a resolution.'
 invariants:
 - redistribution keeps the total denudation
 - removal never exceeds height above sea per sample
@@ -113,5 +240,7 @@ basis:
   - reads
   - writes
   tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
-    code at planet-sim-landform 9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'
+events_emitted:
+- event: planet-event.ledger-row
+  where: 'forge: the step''s volume moved, shed, worn, denuded or laid on the shelf (the Python''s ledger rows)'

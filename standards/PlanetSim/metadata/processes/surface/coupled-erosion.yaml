@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.coupled-erosion
   name: 'Coupled erosion: river incision by unit stream power, hillslope wear (Langbein-Schumm, frost, relief), landslides,
@@ -21,15 +20,29 @@ reads:
   field: planet-field.height
 - name: Q
   unit: m3/yr
+  field: planet-field.discharge
 - name: slope
   unit: m/m
   meaning: on the routing surface
-- name: cl.aridity, cl.P, cl.T
-  unit: -, m/yr, degC
+  field: planet-field.routing-slope
 - name: lake
   unit: code
+  field: planet-field.lake
 - name: fault
   unit: 0-1
+  field: planet-field.fault
+- name: cl.aridity
+  field: planet-field.aridity
+  unit: '1'
+  meaning: climate
+- name: cl.P
+  field: planet-field.rain
+  unit: m/yr
+  meaning: climate
+- name: cl.T
+  field: planet-field.temperature
+  unit: degC
+  meaning: climate
 writes:
 - name: wear (returned)
   unit: m per step
@@ -37,23 +50,22 @@ writes:
   field: planet-field.wear-total
 - name: wear_river
   unit: m per step
+  field: planet-field.wear-river
 - name: wear_hill
   unit: m per step
   meaning: includes landslides
+  field: planet-field.wear-hill
 - name: wear_wind
   unit: m per step
   meaning: deflation (its rock becomes dust)
+  field: planet-field.wear-wind
 params:
 - name: RHO_G
   value: 9810.0
-  unit: '1'
-  said_as:
-    unit: N/m3 (kg m^-2 s^-2)
-    factor: 1.0
+  unit: N/m3
   open: true
-  meaning: water density x gravity
+  meaning: water density x gravity (1000 kg/m3 x 9.81 m/s2)
   source: stages/coupled.py:38
-  note: 'unit as the code says it: ''N/m3 (kg m^-2 s^-2)''; SI conversion unverified'
 - name: K_RIVER
   env: SIM_K_RIVER
   value: 1.5842839036755385e-15
@@ -154,21 +166,11 @@ params:
   meaning: rock in a fault zone cuts up to 1 + this times faster
   source: stages/coupled.py:31
   note: 'unit as the code says it: ''dimensionless''; SI conversion unverified'
-- name: 'inline: flash flood factor'
-  setting: clip(1 + 0.5*(aridity - 1), 1, 3)
-  meaning: discharge multiplier in dry land
-  source: stages/coupled.py:291
-  note: 'unit: dimensionless'
 - name: 'inline: min channel width'
   value: 1.0
   unit: m
   meaning: omega denominator floor
   source: stages/coupled.py:293
-- name: 'inline: Langbein-Schumm'
-  setting: x = P/0.25; LS = (x^2/(1+x^3))/0.5291
-  meaning: sediment yield vs rain, peak 1 at P ~0.315 m/yr
-  source: stages/coupled.py:187-188
-  note: 'Langbein & Schumm 1958; unit: dimensionless, P in m/yr'
 - name: 'inline: hillslope gravity floor'
   value: 0.3
   unit: '1'
@@ -179,16 +181,6 @@ params:
   meaning: added to LS (gravity wear without rain)
   source: stages/coupled.py:305
   note: 'unit as the code says it: ''dimensionless''; SI conversion unverified'
-- name: 'inline: frost window'
-  setting: clip(1 - |T + 2|/12, 0, 1)
-  meaning: freeze-thaw intensity, peak at -2 degC, zero beyond -14/+10 degC
-  source: stages/coupled.py:296
-  note: 'unit: dimensionless, T in degC'
-- name: 'inline: relief formula'
-  setting: max(z - mean(z_nbr), 0) + 0.5 max(z - min(z_nbr), 0)
-  meaning: local relief (sea floored to sea level)
-  source: stages/coupled.py:300
-  note: 'unit: m'
 - name: 'inline: landslide share'
   value: 0.5
   unit: '1'
@@ -199,16 +191,84 @@ params:
   meaning: half the relief excess over RELIEF_MAX removed each step
   source: stages/coupled.py:314
   note: 'unit as the code says it: ''per step''; SI conversion unverified'
-- name: 'inline: plant cover'
-  setting: V = 1 - exp(-P/0.4)
-  meaning: vegetation proxy
+- name: 'inline: flash gain'
+  value: 0.5
+  unit: '1'
+  meaning: 'flood factor = clip(1 + gain (aridity - offset), range): rarer, bigger floods in dry land'
+  source: stages/coupled.py:291
+- name: 'inline: flash aridity offset'
+  value: 1.0
+  unit: '1'
+  meaning: the aridity at which the flood factor starts to grow
+  source: stages/coupled.py:291
+- name: 'inline: flash range'
+  values:
+  - 1.0
+  - 3.0
+  unit: '1'
+  meaning: the flood factor's clip
+  source: stages/coupled.py:291
+- name: 'inline: width coefficient'
+  value: 2.7
+  unit: s^0.5/m^0.5
+  meaning: channel width w = max(a Q^b, min channel width) (Q in m3/s)
+  source: stages/coupled.py:293
+  note: w in m for Q in m3/s
+- name: 'inline: width exponent'
+  value: 0.5
+  unit: '1'
+  meaning: b in w = a Q^b
+  source: stages/coupled.py:293
+- name: 'inline: Langbein-Schumm rain scale'
+  value: 7.922021953507237e-09
+  unit: m/s
+  said_as:
+    unit: m/yr
+    factor: 3.168808781402895e-08
+  meaning: x = P / this; yield LS = (x^2 / (1 + x^3)) / norm, peak 1 near 0.315 m/yr (Langbein & Schumm 1958)
+  source: stages/coupled.py:187
+- name: 'inline: Langbein-Schumm norm'
+  value: 0.5291
+  unit: '1'
+  meaning: the curve's peak value, so that LS peaks at 1
+  source: stages/coupled.py:188
+- name: 'inline: frost peak'
+  value: 271.15
+  unit: K
+  said_as:
+    unit: degC
+    factor: 1.0
+  meaning: freeze-thaw is strongest at this temperature (-2 degC)
+  source: stages/coupled.py:296
+  note: said as -2 degC (plus 273.15)
+- name: 'inline: frost half-width'
+  value: 12.0
+  unit: K
+  meaning: 'frost = clip(1 - |T - peak| / this, 0, 1): none beyond -14 / +10 degC'
+  source: stages/coupled.py:296
+- name: 'inline: plant cover rain scale'
+  value: 1.2675235125611581e-08
+  unit: m/s
+  said_as:
+    unit: m/yr
+    factor: 3.168808781402895e-08
+  meaning: plant cover V = 1 - exp(-P / this)
   source: stages/coupled.py:307
-  note: 'unit: dimensionless, P in m/yr'
-- name: 'inline: wind dryness'
-  setting: clip((aridity - 2)/4, 0, 1)
-  meaning: deflation starts at PET/P = 2, full at 6
+- name: 'inline: wind dryness from'
+  value: 2.0
+  unit: '1'
+  meaning: 'dryness = clip((aridity - from) / span, 0, 1): deflation starts here'
   source: stages/coupled.py:308
-  note: 'unit: dimensionless'
+- name: 'inline: wind dryness span'
+  value: 4.0
+  unit: '1'
+  meaning: full deflation at from + span (aridity 6)
+  source: stages/coupled.py:308
+- name: 'inline: relief drop share'
+  value: 0.5
+  unit: '1'
+  meaning: local relief = max(z - mean(z_nbr), 0) + this x max(z - min(z_nbr), 0) (the sea floored at its level)
+  source: stages/coupled.py:300
 random_draws:
 - none
 invariants:
@@ -226,6 +286,9 @@ backends:
 implementations:
 - where: planet-sim-landform stages/coupled.py:step (lines 288-327), stages/coupled.py:langbein_schumm (184-188)
   state: reference
+- where: planet-forge crates/forge-core/src/models/surface/erosion.rs
+  state: current
+  note: planet-forge port (surface line, merged in forge main 370ab83)
 status: draft
 basis:
 - of:
@@ -236,3 +299,9 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
     the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge surface port (models/surface), read from planet-sim-landform 9747f0d-c437724.'

@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.recent-shorelines
   name: Recent epoch shoreline extremes
@@ -14,8 +13,18 @@ reads:
 - name: land
   unit: bool
   meaning: ice surface > shifted sea
+  field: planet-field.recent-height
 - name: g
   unit: 0-1
+  field: planet-field.glaciality
+- name: sea
+  field: planet-field.glacial-sea-offset
+  unit: m
+  meaning: the sea of the moment against the present's
+- name: H
+  field: planet-field.ice
+  unit: m
+  meaning: ice thickness
 writes:
 - name: r_lowstand_shore
   field: planet-field.lowstand-shore
@@ -51,6 +60,9 @@ backends:
 implementations:
 - where: planet-sim-landform stages/recent.py:run (lines 120-121)
   state: reference
+- where: planet-forge crates/forge-core/src/models/surface/recent.rs
+  state: current
+  note: planet-forge port (surface line, merged in forge main 370ab83)
 status: draft
 basis:
 - of:
@@ -61,3 +73,8 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
     the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge surface port (models/surface), read from planet-sim-landform 9747f0d-c437724.'

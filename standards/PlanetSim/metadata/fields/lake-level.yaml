@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/planet-field.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry_extra.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-field.lake-level
   name: Lake level
@@ -20,3 +19,6 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: from the Python sim''s inventory (planet-forge docs/registry-migration/surface.json), read
     from the code.'
+cautions:
+- 'The coupled step''s lake surface above the sea (one value per lake; NaN off lakes and on playas): what forge''s river-discharge
+  writes. planet-field.lake-surface is the checkpoint''s water surface derived from it.'

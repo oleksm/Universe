@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.zones-water-history
   name: 'Water-history records: capture, dry valley, misfit river, former lake bed, water-carved land'
@@ -15,9 +14,24 @@ reads:
 - name: hydro['incision'] (m)
 - name: hydro['lake'] (0 none, 1 open, 2 closed salt, 3 playa)
 - name: hydro['lake_mem'] (0-1)
+- name: river_state
+  field: planet-field.river-state
+- name: peakQ
+  field: planet-field.peak-discharge
+- name: Q
+  field: planet-field.discharge
+- name: incision
+  field: planet-field.incision
+- name: lake
+  field: planet-field.lake
+- name: lake_mem
+  field: planet-field.lake-mark
+- name: down
+  field: planet-field.receiver
+- name: z
+  field: planet-field.height
 writes:
 - name: landmarks 'river capture', 'dry valley', 'misfit river', 'former lake bed', 'water-carved land'
-  field: planet-field.lake-surface
 events_emitted:
 - event: planet-event.trace-spawn-rule-zones-water
 params:
@@ -42,6 +56,11 @@ params:
   unit: m
   meaning: river incision for canyon and badland country
   source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:177
+- name: dry valley share
+  value: 0.3333333333333333
+  unit: '1'
+  meaning: a dry valley's peak discharge must reach BIG_Q x this
+  source: stages/zones.py:203
 invariants:
 - records only on land (z > sea)
 depends_on:
@@ -51,6 +70,9 @@ backends:
 implementations:
 - where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:rivers (195-209), _record (234-252)
   state: reference
+- where: planet-forge crates/forge-core/src/models/water.rs
+  state: current
+  note: planet-forge port (surface line, merged in forge main 370ab83)
 status: draft
 basis:
 - of:
@@ -61,3 +83,9 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
     from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge surface port (models/surface), read from planet-sim-landform 9747f0d-c437724.'

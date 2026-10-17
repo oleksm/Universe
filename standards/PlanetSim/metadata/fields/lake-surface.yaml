@@ -27,3 +27,9 @@ basis:
   tier: derived
   note: 'planet-trees-pgs2 docs/sim-arrays.md (planets, 17 Oct 2026: checked against the code at aab9f6a, run earth_s25).'
 status: draft
+cautions:
+- 'The checkpoint''s water surface (tools/planet_form.py: max(lake level, height + 1 m) on open and closed lakes, NaN elsewhere),
+  derived from planet-field.lake-level: use lake-level for the sim''s lakes.'
+derived_from:
+- planet-field.lake-level
+- planet-field.height

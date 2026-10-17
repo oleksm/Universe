@@ -1,20 +1,121 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.resolution-refine
   name: Progressive resolution schedule
-  about: 'progressive(): (START_GYR, max(n/16, 10000)), (age-1 Gyr, max(n/4, 10000)), (age-0.3 Gyr, n), each min n. At each
-    scheduled time _refine re-lays particles on a new Fibonacci lattice: each new point copies its nearest particle, volumes
-    shared among a particle''s children, childless particles give their volume to the nearest point. Samples, KD tree, gap,
-    cell and neighbours rebuilt; relief re-anchored.'
+  about: 'progressive(): (START_GYR, max(n/16, 10000)), (age-1 Gyr, max(n/4, 10000)), (age-0.3 Gyr, n), each min n. At each scheduled time _refine re-lays particles on a new Fibonacci lattice: each new point copies its nearest particle,
+    volumes shared among a particle''s children, childless particles give their volume to the nearest point. Samples, KD tree, gap, cell and neighbours rebuilt; relief re-anchored.'
 area: plates
 clock:
   when: at schedule times (by default only if run() is given a schedule)
 reads:
-- name: schedule
-  unit: '[(Gyr, n)]'
+- name: w.x
+  field: planet-field.particle-position
+  unit: '1'
+- name: w.xplate
+  field: planet-field.particle-plate
+  unit: '1'
+- name: w.xcont
+  field: planet-field.particle-continental
+  unit: '1'
+- name: w.xvol
+  field: planet-field.particle-volume
+  unit: m3
+- name: w.xfloor
+  field: planet-field.particle-floor-thickness
+  unit: m
+- name: w.xage
+  field: planet-field.particle-age
+  unit: s
+- name: w.xsuture
+  field: planet-field.particle-suture
+  unit: s
+- name: (forge) id
+  field: planet-field.particle-id
+  unit: '1'
+- name: fronts
+  field: planet-field.particle-front-low
+  unit: '1'
+- name: fronts
+  field: planet-field.particle-front-high
+  unit: '1'
+- name: fronts
+  field: planet-field.particle-front-time
+  unit: s
+- name: sank
+  field: planet-field.particle-sunk
+  unit: '1'
+- name: w.xmem
+  field: planet-field.particle-peak-discharge
+  unit: m3/s
+- name: w.xmem
+  field: planet-field.particle-incision
+  unit: m
+- name: w.xmem
+  field: planet-field.particle-river-state
+  unit: '1'
+- name: w.xmem
+  field: planet-field.particle-river-change-time
+  unit: s
+- name: w.xmem
+  field: planet-field.particle-lake-mark
+  unit: '1'
 writes:
-- name: particles, pts, stree, gap, cell, nbr
+- name: w.x
+  field: planet-field.particle-position
+  unit: '1'
+- name: w.xplate
+  field: planet-field.particle-plate
+  unit: '1'
+- name: w.xcont
+  field: planet-field.particle-continental
+  unit: '1'
+- name: w.xvol
+  field: planet-field.particle-volume
+  unit: m3
+- name: w.xfloor
+  field: planet-field.particle-floor-thickness
+  unit: m
+- name: w.xage
+  field: planet-field.particle-age
+  unit: s
+- name: w.xsuture
+  field: planet-field.particle-suture
+  unit: s
+- name: (forge) id
+  field: planet-field.particle-id
+  unit: '1'
+- name: fronts
+  field: planet-field.particle-front-low
+  unit: '1'
+- name: fronts
+  field: planet-field.particle-front-high
+  unit: '1'
+- name: fronts
+  field: planet-field.particle-front-time
+  unit: s
+- name: sank
+  field: planet-field.particle-sunk
+  unit: '1'
+- name: w.xmem
+  field: planet-field.particle-peak-discharge
+  unit: m3/s
+- name: w.xmem
+  field: planet-field.particle-incision
+  unit: m
+- name: w.xmem
+  field: planet-field.particle-river-state
+  unit: '1'
+- name: w.xmem
+  field: planet-field.particle-river-change-time
+  unit: s
+- name: w.xmem
+  field: planet-field.particle-lake-mark
+  unit: '1'
+- name: pts, stree, gap, cell, nbr
+  meaning: the samples (every per-sample field resampled from the nearest old sample)
+- name: (forge) next id
+  field: planet-field.particle-id-next
+  unit: '1'
 events_emitted:
 - event: planet-event.resolution-change
   where: stages/plates.py:937 (log)
@@ -71,5 +172,4 @@ basis:
   - reads
   - writes
   tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
-    code at planet-sim-landform 9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'

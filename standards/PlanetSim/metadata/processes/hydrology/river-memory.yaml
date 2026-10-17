@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.river-memory
   name: 'River memory: channel states (active, misfit, dry valley, captured, reversed, reborn), peak discharge, incision'
@@ -26,9 +25,11 @@ reads:
 - name: Q
   unit: m3/yr
   meaning: discharge
+  field: planet-field.discharge
 - name: land & lake == 0
   unit: bool
   meaning: river-capable samples
+  field: planet-field.lake
 - name: pts
   unit: unit vector
   meaning: for direction change
@@ -38,25 +39,39 @@ reads:
 - name: t_gyr
   unit: Gyr
   meaning: 'time stamp (plates: planet age; recent: -kyr/1e6, i.e. negative before present)'
+- name: land
+  field: planet-field.height
+  unit: m
+  meaning: z > sea
+- name: wear
+  field: planet-field.wear-total
+  unit: m
+  meaning: the step's wear, added to the incision where a channel runs
 writes:
 - name: river_state
   unit: code 0-6
   meaning: see table river-states
+  field: planet-field.river-state
 - name: peakQ
   unit: m3/yr
   meaning: decaying peak discharge
+  field: planet-field.peak-discharge
 - name: t_change
   unit: Gyr
   meaning: time of last state change (NaN never)
+  field: planet-field.river-change-time
 - name: incision
   unit: m
   meaning: decaying river-cut depth
+  field: planet-field.incision
 - name: state.events
   unit: count per state
   meaning: cumulative transitions
+  field: planet-field.river-transitions
 - name: w.xmem
   unit: per particle x5
   meaning: '[peakQ, incision, state, t_change, lake_mem]'
+  field: planet-field.river-memory
 note: A channel whose receiver turned by < 60 deg keeps state 1. recent.py adds river erosion to incision without decay.
 params:
 - name: CHANNEL_Q
@@ -146,6 +161,9 @@ implementations:
 - where: planet-sim-landform stages/coupled.py:classify (lines 70-96); stages/coupled.py:step incision (328, 352); host copy
     stages/plates.py:run (1324-1332, 1354)
   state: reference
+- where: planet-forge crates/forge-core/src/models/surface/memory.rs
+  state: current
+  note: planet-forge port (surface line, merged in forge main 370ab83)
 status: draft
 basis:
 - of:
@@ -156,3 +174,11 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
     the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge surface port (models/surface), read from planet-sim-landform 9747f0d-c437724.'
+cautions:
+- 'Incision grows where Q >= CHANNEL_Q (coupled.py:287 chan), not where the hysteresis keeps a channel (classify''s chan):
+  the about''s ''where a channel runs'' is the stricter one.'

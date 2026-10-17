@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.filled-surface
+  name: Filled surface
+  about: 'The routing surface with every depression on land filled to its spill level, rising 0.1 m a hop: where it stands
+    above the routing surface by more than LAKE_TOL, a depression (a lake when the water balance fills it).'
+unit: m
+per: sample
+producer:
+  where: planet-forge crates/forge-core/src/models/surface/routing.rs
+  file: checkpoint
+  key: planet-field.filled-surface
+amount: snapshot
+levels:
+- planet-level.planet
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge surface port (models/surface), read from planet-sim-landform 9747f0d-c437724.'

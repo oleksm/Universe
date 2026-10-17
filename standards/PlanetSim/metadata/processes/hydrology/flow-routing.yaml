@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.flow-routing
   name: 'Flow routing: routing surface, depression filling, steepest descent with structural grain'
@@ -22,12 +21,15 @@ reads:
 - name: state.incision
   unit: m
   meaning: river incision memory
+  field: planet-field.incision
 - name: struct.fault
   unit: 0-1
   meaning: fault-zone index
+  field: planet-field.fault
 - name: struct.fold
   unit: 0-1
   meaning: fold-belt index
+  field: planet-field.fold
 - name: struct.grain
   field: planet-field.grain
   unit: unit 3-vector per sample
@@ -50,12 +52,18 @@ writes:
 - name: slope
   unit: m/m
   meaning: drop to receiver over its distance, on zr
+  field: planet-field.routing-slope
 - name: zf
   unit: m
   meaning: filled routing surface (internal)
+  field: planet-field.filled-surface
 - name: order
   unit: index
   meaning: samples by descending zf (internal; reused by lakes, water and sediment routing)
+- name: zr_
+  field: planet-field.routing-surface
+  unit: m
+  meaning: 'the routing surface (on land: height less the valleys and faults, floored)'
 params:
 - name: VALLEY_HOLD
   value: 1.0
@@ -83,11 +91,6 @@ params:
   meaning: extra weight of a drop along the strike in a fold belt
   source: stages/coupled.py:30
   note: '(G8) trellis drainage; unit as the code says it: ''dimensionless''; SI conversion unverified'
-- name: 'inline: land floor of routing surface'
-  setting: sea + 0.5 m + 1e-3*(z - sea)
-  meaning: keeps the routing surface on land above the sea
-  source: stages/coupled.py:259
-  note: 'unit: m'
 - name: FILL_ROUNDS
   value: 400.0
   unit: '1'
@@ -112,6 +115,16 @@ params:
   unit: m
   meaning: distance floor in slope
   source: stages/coupled.py:212,221
+- name: 'inline: land floor offset'
+  value: 0.5
+  unit: m
+  meaning: the routing surface on land stands at least this far above the sea
+  source: stages/coupled.py:259
+- name: 'inline: land floor slope'
+  value: 0.001
+  unit: '1'
+  meaning: plus this share of the height above the sea
+  source: stages/coupled.py:259
 tables:
 - name: xmem-columns
   source: stages/plates.py:1327, 1331-1332, 1354
@@ -150,6 +163,9 @@ implementations:
 - where: planet-sim-landform stages/coupled.py:drain_structured (lines 206-226); stages/coupled.py:step (256-266); stages/plates.py:fill_depressions
     (1477-1487); stages/plates.py:drain (1490-1512, recent epoch only)
   state: reference
+- where: planet-forge crates/forge-core/src/models/surface/routing.rs
+  state: current
+  note: planet-forge port (surface line, merged in forge main 370ab83)
 status: draft
 basis:
 - of:
@@ -160,3 +176,9 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
     the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge surface port (models/surface), read from planet-sim-landform 9747f0d-c437724.'

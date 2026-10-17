@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.recent-rivers
   name: 'Recent epoch rivers: runoff with meltwater, routing on relief + ice, lakes (pluvial), river erosion, river memory'
@@ -17,14 +16,48 @@ clock:
     on the final relief zr with sea0 = 0; run by planet-trees-pgs2/tools/planet_form.py:561-574 when SIM_RECENT=1 (default:
     SIM_COUPLED); outputs written as r_<key> into the last ck_??_*kyr_ctx.npz (needs CONTEXT=1)'
 reads:
-- name: cl.runoff, PET, P, aridity
-  unit: m/yr, -
-- name: melt, H
-  unit: m/yr, m
 - name: g
   unit: 0-1
+  field: planet-field.glaciality
 - name: state.incision
   unit: m
+  field: planet-field.recent-incision
+- name: cl.runoff
+  field: planet-field.runoff
+  unit: m/yr
+  meaning: climate
+- name: PET
+  field: planet-field.potential-evaporation
+  unit: m/yr
+  meaning: climate
+- name: P
+  field: planet-field.rain
+  unit: m/yr
+  meaning: climate
+- name: aridity
+  field: planet-field.aridity
+  unit: '1'
+  meaning: climate
+- name: melt
+  field: planet-field.ice-melt
+  unit: m/yr
+  meaning: ice melt
+- name: H
+  field: planet-field.ice
+  unit: m
+  meaning: ice thickness
+- name: sea
+  field: planet-field.glacial-sea-offset
+  unit: m
+  meaning: the sea of the moment against the present's
+- name: z
+  field: planet-field.recent-height
+  unit: m
+  meaning: the recent relief (the present height at the first step)
+- name: Qm
+  field: planet-field.recent-mean-discharge
+  unit: m3/yr
+  meaning: the running mean discharge
 writes:
 - name: r_river_erosion
   field: planet-field.river-erosion
@@ -33,23 +66,35 @@ writes:
 - name: r_lake_now
   unit: 0/1
   meaning: lake (open or closed) at the last step
-  field: planet-field.lake
+  field: planet-field.recent-lake
 - name: r_lake_max
   field: planet-field.pluvial-lake
   unit: 0/1
   meaning: lake at any step
 - name: r_river_state
   unit: code 0-6
-  field: planet-field.river-state
+  field: planet-field.recent-river-state
 - name: r_peakQ
   unit: m3/yr
-  field: planet-field.peak-discharge
+  field: planet-field.recent-peak-discharge
 - name: r_river_t_change
   unit: Gyr (negative = before present)
   field: planet-field.recent-river-change-time
 - name: r_river_events
   unit: JSON counts
   field: planet-field.recent-river-transitions
+- name: z (r_z)
+  field: planet-field.recent-height
+  unit: m
+  meaning: lowered by the river erosion
+- name: state.incision
+  field: planet-field.recent-incision
+  unit: m
+  meaning: grown by the river erosion
+- name: Qm
+  field: planet-field.recent-mean-discharge
+  unit: m3/yr
+  meaning: the running mean discharge
 note: 'Emits: river state transition (misfit | dry valley | captured | reversed | reborn)'
 params:
 - name: K_RIVER (recent)
@@ -75,11 +120,6 @@ params:
   unit: m
   meaning: frac = clip(H/200, 0, 1)
   source: stages/recent.py:101
-- name: 'inline: glacial rain reduction'
-  setting: clip(1 - 0.5 g, 0.3, 1)
-  meaning: drier glacials
-  source: stages/recent.py:102
-  note: 'unit: dimensionless'
 - name: 'inline: melt runoff cap'
   value: 9.505703422053231e-08
   unit: m/s
@@ -96,6 +136,18 @@ params:
     factor: 3.1685678073510773e-08
   meaning: 'unverified: the code names it inline: river erosion cap without saying what it is'
   source: stages/recent.py:114
+- name: 'inline: glacial rain cut'
+  value: 0.5
+  unit: '1'
+  meaning: 'runoff off the ice x clip(1 - this x g, range): drier glacials'
+  source: stages/recent.py:102
+- name: 'inline: glacial rain range'
+  values:
+  - 0.3
+  - 1.0
+  unit: '1'
+  meaning: the factor's clip
+  source: stages/recent.py:102
 random_draws:
 - 'plates.drain roughness: rng(n).normal * 30 m, identical each step'
 invariants:
@@ -113,6 +165,9 @@ backends:
 implementations:
 - where: planet-sim-landform stages/recent.py:run (lines 99-119)
   state: reference
+- where: planet-forge crates/forge-core/src/models/surface/recent.rs
+  state: current
+  note: planet-forge port (surface line, merged in forge main 370ab83)
 status: draft
 basis:
 - of:
@@ -123,3 +178,13 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
     the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge surface port (models/surface), read from planet-sim-landform 9747f0d-c437724.'
+cautions:
+- 'plates.drain routes on the rough surface (ROUGH_M) but the order and the lakes come from fill(rs), the smooth one (recent.py:105-106):
+  a sample can be visited after its receiver and its water is dropped. forge orders by the rough surface the receivers come
+  from, the lakes by the smooth one.'

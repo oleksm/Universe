@@ -1,32 +1,41 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.crust-wear-to-shelf
   name: Crust-level wear of highlands, debris to the shelf wedge
-  about: 'In the same pass, continental thickness above ERODE_ABOVE (COUPLED_ERODE_ABOVE in the coupled era) is worn by (H-above)*(1-exp(-SPREAD_EVERY*dt/e_myr))
-    (e_myr = ERODE_MYR or COUPLED_ERODE_MYR), modulated by rock erodibility (_wear: top unit at its rate while its cover lasts,
-    then basement; geology ERODIBILITY / MEAN_ERODIBILITY). The particles are fitted to H2 (_set_continents), exhumed (cover/ore
-    depth reduced, organics exhumed), and the worn volume is laid on ocean floor particles within SHELF*gap of a same-plate
-    continental particle, weighted exp(-d/(WEDGE*gap)) (shelf wedge), with era sediment: iron formation before G.OXYGENATION_GYR,
-    then carbonate within G.CARBONATE_LAT, else clastic; phosphorite within G.PHOSPHORITE_LAT. Thick shelves later accrete.
-    Nothing lost.'
+  about: 'In the same pass, continental thickness above ERODE_ABOVE (COUPLED_ERODE_ABOVE in the coupled era) is worn by (H-above)*(1-exp(-SPREAD_EVERY*dt/e_myr)) (e_myr = ERODE_MYR or COUPLED_ERODE_MYR), modulated by rock erodibility
+    (_wear: top unit at its rate while its cover lasts, then basement; geology ERODIBILITY / MEAN_ERODIBILITY). The particles are fitted to H2 (_set_continents), exhumed (cover/ore depth reduced, organics exhumed), and the worn volume
+    is laid on ocean floor particles within SHELF*gap of a same-plate continental particle, weighted exp(-d/(WEDGE*gap)) (shelf wedge), with era sediment: iron formation before G.OXYGENATION_GYR, then carbonate within G.CARBONATE_LAT,
+    else clastic; phosphorite within G.PHOSPHORITE_LAT. Thick shelves later accrete. Nothing lost.'
 area: plates
 clock:
   when: every SPREAD_EVERY steps
 reads:
-- name: H2
-  unit: m per sample
-  meaning: after flow/cap/roots
+- name: w.x
+  field: planet-field.particle-position
+  unit: '1'
+- name: w.xcont
+  field: planet-field.particle-continental
+  unit: '1'
+- name: w.xvol
+  field: planet-field.particle-volume
+  unit: m3
+- name: w.xplate
+  field: planet-field.particle-plate
+  unit: '1'
+- name: w.xfloor
+  field: planet-field.particle-floor-thickness
+  unit: m
 - name: w.xtop, w.xbase, w.xcover
-  meaning: erodibility
+  meaning: 'erodibility (geology; not ported: mean erodibility)'
 writes:
 - name: w.xvol
+  field: planet-field.particle-volume
   unit: m3
-  meaning: continental loss
 - name: w.xfloor (shelf)
+  field: planet-field.particle-floor-thickness
   unit: m
-  meaning: gain
 - name: geology/organics
+  meaning: not ported
 params:
 - name: ERODE_ABOVE
   env: SIM_ERODE_ABOVE
@@ -101,25 +110,34 @@ params:
   open: true
   meaning: 'ablation switches, comma separated: flow, cap, roots, crustwear, climate, shelf'
   source: stages/plates.py:143
-  note: '16 Oct tooling (comment also lists ''shelf''; ''climate'' and ''shelf'' only matter in coupled era); unit as the
-    code says it: ''set of process names''; SI conversion unverified'
+  note: '16 Oct tooling (comment also lists ''shelf''; ''climate'' and ''shelf'' only matter in coupled era); unit as the code says it: ''set of process names''; SI conversion unverified'
 - name: fertility e-fold
   value: 500.0
   unit: m
   meaning: sediment thickness per e-fold of shelf ore fertility
   source: stages/plates.py:620
+- name: KERNEL
+  value: 0.8
+  unit: '1'
+  meaning: Gaussian width h = KERNEL*gap for spreading continental particle volume onto samples (cut at 3h)
+  source: stages/plates.py:215
+  note: the continents' spread (_continental), as crust-read's
+- name: kernel cutoff
+  value: 3.0
+  unit: '1'
+  meaning: 'unverified: the code names it kernel cutoff without saying what it is'
+  source: stages/plates.py:483
+  note: the continents' spread (_continental), as crust-read's
 random_draws:
 - none
 invariants:
-- worn volume removed from continent == volume laid on shelf floor (if any shelf particle exists; else the volume is lost
-  - code drops it silently when no shelf is found)
+- worn volume removed from continent == volume laid on shelf floor (if any shelf particle exists; else the volume is lost - code drops it silently when no shelf is found)
 depends_on:
 - planet-process.crust-flow-cap-delamination
 backends:
 - cpu
 implementations:
-- where: planet-sim-landform stages/plates.py:run (lines 1285-1305), _wear (631-645), _exhume (704-713), _to_shelf (593-628),
-    _bury (696-701)
+- where: planet-sim-landform stages/plates.py:run (lines 1285-1305), _wear (631-645), _exhume (704-713), _to_shelf (593-628), _bury (696-701)
   state: reference
 status: draft
 basis:
@@ -129,5 +147,7 @@ basis:
   - reads
   - writes
   tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
-    code at planet-sim-landform 9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'
+events_emitted:
+- event: planet-event.ledger-row
+  where: 'forge: the step''s volume moved, shed, worn, denuded or laid on the shelf (the Python''s ledger rows)'

@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.zones-water-gap
   name: Water gap records
@@ -14,9 +13,14 @@ reads:
 - name: store vertices S.V/S.L/S.K of non-forming suture / arc front lines
 - name: pts, hydro['down'], hydro['Q']
   field: planet-field.receiver
+- name: Q
+  field: planet-field.discharge
+- name: z
+  field: planet-field.height
+- name: suture and arc-front features
+  meaning: 'planet-feature.suture and planet-feature.arc-front chains (forge: the features in the state)'
 writes:
 - name: landmark 'water gap' with 'crosses'
-  field: planet-field.lake-surface
 events_emitted:
 - event: planet-event.trace-spawn-rule-zones-water
 params:
@@ -44,6 +48,9 @@ implementations:
 - where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:rivers (210-231); ~/git/planet-sim-landform/src/planet_sim/stages/lines.py:cross_many
     (353-363)
   state: reference
+- where: planet-forge crates/forge-core/src/models/water.rs
+  state: current
+  note: planet-forge port (surface line, merged in forge main 370ab83)
 status: draft
 basis:
 - of:
@@ -54,3 +61,9 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
     from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge surface port (models/surface), read from planet-sim-landform 9747f0d-c437724.'

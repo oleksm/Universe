@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.zones-water-mouths
   name: River mouth and delta records
@@ -19,9 +18,10 @@ reads:
   field: planet-field.height
 - name: gap = sphere.spacing(n) of the current lattice, radians on the unit sphere (x R = metres); refined as the present
     nears
+- name: Q
+  field: planet-field.discharge
 writes:
 - name: landmarks 'delta' / 'river mouth', size = Q/3.156e7 (m3/s), causes {water:0.6, relief:0.3, history:0.1}
-  field: planet-field.lake-surface
 note: 'Emits: one store event ''rivers'' for the whole run (S.water_event) Emits: trace spawn rule ''zones.water'' trigger
   {event, size}'
 params:
@@ -66,6 +66,9 @@ backends:
 implementations:
 - where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:rivers (180-194), _record (234-252)
   state: reference
+- where: planet-forge crates/forge-core/src/models/water.rs
+  state: current
+  note: planet-forge port (surface line, merged in forge main 370ab83)
 status: draft
 basis:
 - of:
@@ -76,3 +79,9 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
     from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge surface port (models/surface), read from planet-sim-landform 9747f0d-c437724.'

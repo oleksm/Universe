@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.lakes
   name: Lakes from the water balance (open, closed/salt, playa), level and lake-bed memory
@@ -19,41 +18,55 @@ reads:
 - name: zr_
   unit: m
   meaning: routing surface
+  field: planet-field.routing-surface
 - name: zf
   unit: m
   meaning: filled surface
+  field: planet-field.filled-surface
 - name: down, order
   unit: index
   meaning: routing
   field: planet-field.receiver
-- name: PET, P
-  unit: m/yr
-  meaning: climate
 - name: cell
   unit: m^2
   meaning: sample area
 - name: state.lake_mem
   unit: 0-1
   meaning: previous memory
+  field: planet-field.lake-mark
+- name: PET
+  field: planet-field.potential-evaporation
+  unit: m/yr
+  meaning: climate
+- name: P
+  field: planet-field.rain
+  unit: m/yr
+  meaning: climate
 writes:
 - name: lid
   unit: lake id per sample, -1 none
   meaning: internal
+  field: planet-field.lake-id
 - name: lake
   unit: code 0-3
   meaning: 0 none, 1 open, 2 closed (salt), 3 playa
+  field: planet-field.lake
 - name: lake_share
   unit: 0-1
   meaning: share of the sample under water
+  field: planet-field.lake-share
 - name: lake_level
   unit: m above sea, NaN off-lake
   meaning: lake surface
+  field: planet-field.lake-level
 - name: lakes
   unit: per lake [m3/yr, m3/yr, m^2, 0/1]
   meaning: inflow, evaporation capacity, area, open
+  field: planet-field.lake-budget
 - name: lake_mem
   unit: 0-1
   meaning: lake-bed mark
+  field: planet-field.lake-mark
 params:
 - name: LAKE_TOL
   value: 0.05
@@ -105,6 +118,9 @@ implementations:
 - where: planet-sim-landform stages/coupled.py:lakes (lines 104-129), stages/coupled.py:lake_cover (132-147), stages/coupled.py:route_water
     lake branch (161-174), stages/coupled.py:step lake level and memory (269-285)
   state: reference
+- where: planet-forge crates/forge-core/src/models/surface/lakes.rs
+  state: current
+  note: planet-forge port (surface line, merged in forge main 370ab83)
 status: draft
 basis:
 - of:
@@ -115,3 +131,8 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
     the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge surface port (models/surface), read from planet-sim-landform 9747f0d-c437724.'

@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.sediment-routing
   name: River sediment transport and deposition (lakes, alluvial fans, slow reaches, deltas)
@@ -14,22 +13,44 @@ area: hydrology
 clock:
   when: each coupled step
 reads:
-- name: wear, wear_wind
-  unit: m
-  field: planet-field.wear-total
 - name: order, down
   unit: index
   field: planet-field.receiver
 - name: lake
   unit: code
-- name: water_lost, Q
-  unit: m3/yr
+  field: planet-field.lake
 - name: slope
   unit: m/m
+  field: planet-field.routing-slope
+- name: wear
+  field: planet-field.wear-total
+  unit: m
+  meaning: all wear
+- name: wear_wind
+  field: planet-field.wear-wind
+  unit: m
+  meaning: wind wear (not water-borne)
+- name: water_lost
+  field: planet-field.water-lost
+  unit: m3/yr
+  meaning: losses
+- name: Q
+  field: planet-field.discharge
+  unit: m3/yr
+  meaning: discharge
+- name: dust
+  field: planet-field.dust
+  unit: m
+  meaning: dust laid this step (part of laid)
+- name: land
+  field: planet-field.height
+  unit: m
+  meaning: z > sea
 writes:
 - name: laid
   unit: m per step
   meaning: sediment + dust laid on land (returned and in hydro)
+  field: planet-field.laid
 params:
 - name: SLOW_SLOPE
   value: 0.0002
@@ -73,6 +94,14 @@ params:
     factor: 1.0
   meaning: minimum drop where slope < SLOW_SLOPE
   source: stages/coupled.py:348
+- name: 'inline: lost-share floor'
+  value: 3.168808781402895e-17
+  unit: m3/s
+  said_as:
+    unit: m3/yr
+    factor: 3.168808781402895e-08
+  meaning: share of water lost = lost / max(Q + lost, this)
+  source: stages/coupled.py:333
 random_draws:
 - none
 invariants:
@@ -90,6 +119,9 @@ backends:
 implementations:
 - where: planet-sim-landform stages/coupled.py:step (lines 329-352)
   state: reference
+- where: planet-forge crates/forge-core/src/models/surface/sediment.rs
+  state: current
+  note: planet-forge port (surface line, merged in forge main 370ab83)
 status: draft
 basis:
 - of:
@@ -100,3 +132,9 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
     the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge surface port (models/surface), read from planet-sim-landform 9747f0d-c437724.'
