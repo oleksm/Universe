@@ -893,7 +893,7 @@
 - { record: layout.ingot-yard-air, at: "2026-10-17T00:03:48Z", status: draft, summary: "changed", sha: "423fd5c4b6c2a57f" }
 - { record: layout.ingot-yard-airless, at: "2026-10-17T00:03:48Z", status: draft, summary: "changed", sha: "9cf378d6072292a2" }
 - { record: layout.ladle-station-air, at: "2026-10-17T00:45:07Z", status: draft, summary: "changed", sha: "33846a2469f78cea" }
-- { record: layout.ladle-station-airless, at: "2026-10-17T00:45:07Z", status: draft, summary: "changed", sha: "80dc826fb2fe4faf" }
+- { record: layout.ladle-station-airless, at: "2026-10-17T00:55:31Z", status: draft, summary: "changed", sha: "54068d13829717ed" }
 - { record: layout.ore-yard-air, at: "2026-10-17T00:03:48Z", status: draft, summary: "changed", sha: "c5084a0ab636cfeb" }
 - { record: layout.ore-yard-airless, at: "2026-10-17T00:03:48Z", status: draft, summary: "changed", sha: "5cb35f82f3a4d85c" }
 - { record: layout.pellet-plant-air, at: "2026-10-16T20:37:01Z", status: draft, summary: "changed", sha: "be9a770950a42984" }
@@ -1602,7 +1602,7 @@
 - { record: run.belt-1000, at: "2026-10-16T21:08:27Z", status: draft, summary: "changed", sha: "3b23d5db860cfc4e" }
 - { record: run.belt-1000-sealed, at: "2026-10-16T21:29:54Z", status: draft, summary: "changed", sha: "22f6658a75ed8293" }
 - { record: run.belt-1200, at: "2026-10-16T13:57:34Z", status: draft, summary: "changed", sha: "1f38dc7c62f3bc04" }
-- { record: run.belt-650, at: "2026-10-16T23:10:29Z", status: draft, summary: "first tracked", sha: "883d72b3f24393ed" }
+- { record: run.belt-650, at: "2026-10-17T00:55:31Z", status: draft, summary: "changed: visual", sha: "f6e1b1c6142fbb48" }
 - { record: run.belt-800, at: "2026-10-16T21:02:45Z", status: draft, summary: "changed", sha: "69869a61efe133e3" }
 - { record: run.belt-800-sealed, at: "2026-10-16T21:25:19Z", status: draft, summary: "changed", sha: "77e75e5a932a8b68" }
 - { record: run.busbar-ac-27ka, at: "2026-10-16T23:51:31Z", status: draft, summary: "changed", sha: "36a0664e58fe72c8" }
@@ -2873,7 +2873,7 @@
 - { record: unit.crating-line-steel, at: "2026-10-16T16:13:12Z", status: draft, summary: "changed", sha: "856efb0cfc40113d" }
 - { record: unit.crew-post, at: "2026-10-16T03:35:46Z", status: draft, summary: "changed: envelope", sha: "c57b09c1c3bfb2d1" }
 - { record: unit.crop-saws, at: "2026-10-15T18:20:39Z", status: draft, summary: "changed", sha: "57aeb9a5c2d969ec" }
-- { record: unit.degassing-stand, at: "2026-10-17T00:50:30Z", status: draft, summary: "changed: visual", sha: "7c5c18ef0e3e1c44" }
+- { record: unit.degassing-stand, at: "2026-10-17T00:55:31Z", status: draft, summary: "changed", sha: "1a5a4a3235670a8e" }
 - { record: unit.disc-filter-2, at: "2026-10-15T05:01:04Z", status: draft, summary: "changed", sha: "52719317d0ef0afd" }
 - { record: unit.dri-bin-200t, at: "2026-10-16T23:40:53Z", status: draft, summary: "changed", sha: "43cf3f13a1465eb2" }
 - { record: unit.dri-cooling-loop, at: "2026-10-15T01:24:23Z", status: draft, summary: "changed", sha: "46962a5f5ae51829" }
