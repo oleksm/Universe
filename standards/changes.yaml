@@ -1805,7 +1805,7 @@
 - { record: planet-measure.spectrum-slope, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "e7c2087911571642" }
 - { record: planet-measure.valley-spacing, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "d4dde745cde03b3f" }
 - { record: planet-model.anchor, at: "2026-10-17T17:32:25Z", status: "", summary: "changed", sha: "c9adae30021bdde6" }
-- { record: planet-model.relief, at: "2026-10-17T18:12:09Z", status: "", summary: "changed: identity, purpose, registers, feature_kinds, record_fields, trace, overrides, erosion, tools, not_yet, results, implementations, basis", sha: "fcc66b5ad8648385" }
+- { record: planet-model.relief, at: "2026-10-17T18:14:58Z", status: "", summary: "changed: identity, purpose, detail, inputs, steps, params, guarantees, references, erosion, not_yet, results, basis", sha: "4a66bdbe77807faf" }
 - { record: planet-pattern.aeolian.dune.barchan, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "4fed3f7652690758" }
 - { record: planet-pattern.aeolian.dune.carbonate-eolianite, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "57787d270a7efd13" }
 - { record: planet-pattern.aeolian.dune.coastal-foredune, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "11531b3670b62a25" }

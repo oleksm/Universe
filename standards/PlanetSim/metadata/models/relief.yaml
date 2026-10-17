@@ -2,20 +2,22 @@
 identity:
   key: planet-model.relief
   name: Relief model
-  about: 'The planet''s relief layer: first the relief inside each land sample (a cell about 130 km across, whose height is its mean), Earth''s amounts placed by the sim''s causes, with its classes and summits; then every land-forming
-    feature the sim generates as vectors with metadata, pinned to the crust (the relief store, the former line store), with the trigger and rule that made it, its later overrides and erosion, traced so what, why, where and when can
-    be asked.'
+  about: 'The planet''s relief layer, on a continuous planet: first the local relief R, a continuous field the sim samples at points about 130 km apart and read anywhere between them as the heights are, Earth''s amounts placed by the
+    sim''s causes, with its classes and summits; then every land-forming feature the sim generates as vectors with metadata, pinned to the crust (the relief store, the former line store), each with its own scale (spacing, wavelength,
+    width) below the sample spacing, with the trigger and rule that made it, its later overrides and erosion, traced so what, why, where and when can be asked.'
   words: 'The owner, 17 Oct 2026: "Move that stuff [the line store] on the relief layer. Run through every feature and find a way for our sim to generate it. Create tracing and debugging tools and stats so we can later trace what and
     why and where is spawned, what is their trigger, geo pattern, dimensions, length, curvature pattern, segmentation, later overrides, erosion based on zones and formations."'
-purpose: To give the sim's land the relief it does not carry (only cell means), and the skeleton of land-forming features the mesher meshes round, each with the history that made it.
+purpose: 'To give the sim''s land its relief, a continuous local-relief field and, below the sample spacing, the land-forming features that carry that relief at their own scales: the skeleton the mesher meshes round, each feature with
+  the history that made it.'
 detail:
-  rule: Rank the land samples by a weighted score of causes; take Earth's inner relief at the same quantile; class each sample by its relief and height; raise its highest summit from both.
+  rule: Rank the land samples by a weighted score of causes; take Earth's local relief at the same quantile; read R anywhere between the samples as a continuous field; class each place by its relief and height; raise the summits from
+    both. Below the sample spacing the relief features carry the relief, each at its scale.
 inputs:
 - name: z
   unit: m
   field: planet-field.height
   source: checkpoint z
-  meaning: mean height of the cell above sea level
+  meaning: height above sea level at the sample
 - name: thick
   unit: m
   field: planet-field.crust-thickness
@@ -38,7 +40,7 @@ inputs:
   unit: m
   field: planet-field.local-relief
   source: z less the lowest neighbour's z
-  meaning: the drop to the next cell
+  meaning: the drop to the lowest neighbouring sample
 - name: up
   unit: m/s
   source: z change since the previous checkpoint (or thickened crust at converging plates when there is none)
@@ -60,17 +62,20 @@ inputs:
   meaning: crust age since formed, said in Myr
 steps:
 - name: ranking score g
-  rule: A weighted sum of the causes, then two smoothing passes over the land neighbours (g = 0.5 g + 0.5 their mean), so ranges, not single cells, carry relief; ties broken by a fixed seed. ramp(x, a, b) is 0 below a, 1 above b, linear
-    between.
+  rule: A weighted sum of the causes, then two smoothing passes over the land neighbours (g = 0.5 g + 0.5 their mean), so ranges, not single samples, carry relief; ties broken by a fixed seed. ramp(x, a, b) is 0 below a, 1 above b,
+    linear between.
   formula: g = 0.35 ramp(thick, 38 km, 60 km) + 0.25 hfold + 0.20 conv + 0.15 ramp(relief to neighbours, 200 m, 2,000 m) + 0.15 ramp(up, 3, 40 m/Myr) + 0.10 volcanic rock + 0.10 ramp(ice cycles, 0.5, 6) + 0.20 ramp(z, 300 m, 3,000 m)
     + 0.05 trans + 0.05 div - 0.15 ramp(age, 500, 2,000 Myr) (1 - anyb)
 - name: Earth's amounts
-  rule: 'Quantile matching: the land samples ranked by g take Earth''s inner relief at the same quantile, so the planet''s relief distribution is Earth''s by construction and the sim decides only where.'
+  rule: 'Quantile matching: the land samples ranked by g take Earth''s local relief at the same quantile, so the planet''s relief distribution is Earth''s by construction and the sim decides only where. R is then a continuous field,
+    interpolated between the samples, never a value per area. First draft: Earth''s amounts as one statistic, p95 - p5 of the heights within about 130 km of each of 30,000 points (the old per-sample statistic); agreed (17 Oct 2026):
+    Earth''s local relief within radii of about 2, 10 and 50 km, per relief class (ETOPO, USGS 3DEP), as the target instead (open until measured).'
   formula: R = Earth[q(g)]
 - name: relief classes
-  rule: 'Each land sample''s class from R and z, the first rule that holds from high mountains down (the legend: planet-layer.relief).'
+  rule: 'Each place''s class from R and z, the first rule that holds from high mountains down (the legend: planet-layer.relief).'
 - name: summits
-  rule: 'The highest summit inside each land sample, u uniform 0 to 1 seeded by the sample index; Earth on 30,000 cells: the summit stands 1.03 x (p95 - p5) over the cell mean at the median, 1.69 x at the 90th percentile.'
+  rule: 'The highest summit near each land sample, u uniform 0 to 1 seeded by the sample index; first draft from Earth at 30,000 points: the summit stands 1.03 x (p95 - p5) over the mean height within about 130 km at the median, 1.69
+    x at the 90th percentile (the old per-sample statistic).'
   formula: summit = z + R (1.03 + 0.66 u) PEAK_GAIN
 - name: lines
   rule: 'The relief layer as lines (layers as curved lines, never patches): land contours of the smoothed height at 500, 1,000, 2,000, 3,000, 4,000 and 5,000 m, and the boundaries between relief classes, each point''s class the leader
@@ -100,18 +105,27 @@ params:
   value: 40.0
   unit: '1'
   note: K nearest samples, sigma 1.4 sample spacings
+- name: local relief targets
+  open: true
+  note: 'Earth''s local relief within radii of about 2, 10 and 50 km, per relief class (ETOPO, USGS 3DEP): agreed 17 Oct 2026 as the target, not yet measured.'
 guarantees:
-- The planet's land relief distribution is Earth's (by construction).
-- Mountains (low and high) about 22 % of land, hills about 30 %, as Earth's.
+- 'The planet''s land relief distribution is Earth''s by construction (first draft: against the old per-sample statistic).'
+- 'R is a continuous field: read anywhere, never a value per area.'
+- 'The check (agreed): the mesh''s local relief at radii of about 2, 10 and 50 km, measured anywhere, against Earth''s for its class and scale.'
 references:
 - name: ETOPO 2022
   by: NOAA NCEI
-  used_for: 'Earth''s inner relief: p95 - p5 of the heights inside each of 30,000 equal-area cells, ice sheets left out (7,827 land cells): median 320 m; 33 % above 600 m; 22 % above 900 m; 9 % above 1,500 m'
+  used_for: 'Earth''s local relief. First draft (the old per-sample statistic): p95 - p5 of the heights within about 130 km of each of 30,000 equal-area points, ice sheets left out (7,827 on land): median 320 m; 33 % above 600 m; 22
+    % above 900 m; 9 % above 1,500 m. Agreed next: the local relief within radii of about 2, 10 and 50 km, per relief class (open).'
   path: ~/planet-data/scratch/earth_cell_relief_30k.npy
   url: https://www.ncei.noaa.gov/products/etopo-global-relief-model
 - name: UNEP-WCMC mountain extent
   by: UN Environment Programme World Conservation Monitoring Centre
   used_for: 'The check on the mountain share: about 24 % of land, against the model''s 22 %'
+- name: USGS 3DEP
+  by: U.S. Geological Survey
+  used_for: 'Earth''s local relief at the small radii (about 2 and 10 km), per relief class: the agreed target, open until measured'
+  url: https://www.usgs.gov/3d-elevation-program
 registers:
 - name: provinces
   what: Where a kind of relief holds; bounded by lines.
@@ -274,7 +288,7 @@ erosion:
     source: TAU0_MYR
     value: 1893456000000000.0
     unit: s
-    note: '60 Myr in the code, about 50 in the design: Earth''s ranges lose most relief in 100 to 300 Myr (Appalachians, Urals)'
+    note: '60 Myr (the code; the design doc fixed to match at pgs2 6374530): Earth''s ranges lose most relief in 100 to 300 Myr (Appalachians, Urals)'
   - name: worn share
     source: WORN_SHARE
     value: 0.25
@@ -300,10 +314,11 @@ feeds:
 - planet-model.anchor
 - lod-model.anchor
 not_yet:
-- 'Where the relief stands inside a sample: only how much (p95 - p5 over about 130 km).'
 - Its grain (the fold direction is in planet-field.grain) and its wavelength.
 - 'Applying it to the anchor model''s heights: the owner''s next design step.'
 - 'Waves 2 and 3: fluvial, glacial, coastal, karst, arid and aeolian kinds, and the level 2-3 detail (designed, not built).'
+- 'Where the relief stands between the samples: only how much (R), not its shape; below the sample spacing the relief features are to carry it, each at its scale.'
+- 'The local relief targets at about 2, 10 and 50 km per relief class: agreed, not yet measured.'
 results:
 - what: land samples
   value: 8304.0
@@ -313,46 +328,52 @@ results:
   value: 50.0
   unit: m
   run: earth_s30
+  note: first draft, against the old per-sample statistic
 - what: R, median
   value: 319.0
   unit: m
   run: earth_s30
+  note: first draft, against the old per-sample statistic
 - what: R, 95th percentile
   value: 2014.0
   unit: m
   run: earth_s30
+  note: first draft, against the old per-sample statistic
 - what: share of land, high mountains
   value: 0.094
   unit: '1'
   run: earth_s30
-  note: Earth 9 % above 1,500 m
+  note: Earth 9 % above 1,500 m; first draft, against the old per-sample statistic
 - what: share of land, low mountains
   value: 0.124
   unit: '1'
   run: earth_s30
-  note: mountains together about 22 %, as Earth
+  note: mountains together about 22 %, as Earth; first draft, against the old per-sample statistic
 - what: share of land, hills
   value: 0.297
   unit: '1'
   run: earth_s30
-  note: Earth about 30 %
+  note: Earth about 30 %; first draft, against the old per-sample statistic
 - what: share of land, plateau
   value: 0.215
   unit: '1'
   run: earth_s30
+  note: first draft, against the old per-sample statistic
 - what: share of land, plain
   value: 0.184
   unit: '1'
   run: earth_s30
+  note: first draft, against the old per-sample statistic
 - what: share of land, lowland plain
   value: 0.085
   unit: '1'
   run: earth_s30
+  note: first draft, against the old per-sample statistic
 - what: highest summit
   value: 14632.0
   unit: m
   run: earth_s30
-  note: on a highest cell mean of 5,888 m
+  note: on a highest sample height of 5,888 m; first draft
 - what: orogen axes spawned
   value: 98.0
   unit: '1'
@@ -430,3 +451,12 @@ basis:
   tier: derived
   review: true
   note: 'planet-trees-pgs2 docs/relief-features.md and docs/relief-generation.md (b4b0edf), the sim at 54430a6, planets, 17 Oct 2026: all draft.'
+- of:
+  - identity
+  - detail
+  - steps
+  - references
+  - guarantees
+  - not_yet
+  tier: derived
+  note: 'The owner, via planets, 17 Oct 2026: no cells, the planet is continuous; R a continuous field; local relief at about 2, 10 and 50 km per class as the target and the check (docs/relief-model.md, Changes agreed).'
