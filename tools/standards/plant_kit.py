@@ -344,12 +344,12 @@ def jacketed_duct(dn, heat, temp=1873.0):
                   "jacket": {"heat": r(heat), "rise": 10.0},
                   "jacket_stub": {"bore": stub, "mass": r(math.pi * (stub + 0.01) * 0.01 * 0.4 * RHO[A36] + math.pi / 4 * ((stub + 0.2) ** 2 - stub ** 2) * 0.012 * RHO[A36])},
                   "jacket_end": {"mass": r(math.pi / 4 * ((dn + 2 * t + 2 * gap) ** 2 - (dn + 2 * t) ** 2) * 0.012 * RHO[A36])},
-                  "elbow": {"radius": r(R, 3), "mass": r(per_m * math.pi / 2 * R * 1.1)},
+                  "elbow": {"radius": r(R, 3), "mass": r(per_m * math.pi / 2 * R * 1.0132)},
                   "support": {"spacing": r(span), "mass": r(30 + 80 * do), "per_m_height": r(4 * (0.1 + 0.1 * do) * 0.006 * RHO[A36]), "item": A36},
                   "cap": cap(dn, 1.0e5, A36, flange(dn, 1, temp=523.0)),
                   "connector": flange(dn, 1, temp=523.0), "carries": "gas",
                   "basis": [{"of": ["per_m"], "tier": "derived", "review": True, "note": "Shells and water from their dimensions; the plate and gap from memory of furnace off-gas ducts."},
-                            {"of": ["support", "elbow", "jacket", "jacket_stub", "jacket_end"], "tier": "derived", "review": True, "note": f"Spacing from the span it bears full at 1 g, {span:.1f} m; mitred bends a tenth heavier than their arc; the jacket's water 10 K warmer out than in. A jacket stub is a 10 mm nozzle 0.4 m long through the outer shell, its bore the water pipe's, on a 12 mm pad 0.1 m wider; a jacket end the 12 mm annular plate closing the water gap where the duct meets a flange or hood. Stands from memory."}]}
+                            {"of": ["support", "elbow", "jacket", "jacket_stub", "jacket_end"], "tier": "derived", "review": True, "note": f"Spacing from the span it bears full at 1 g, {span:.1f} m; a bend of four mitres 1.3% longer along its centreline than the arc (3.183 m for the DN 2000's, measured on blender's kit); the jacket's water 10 K warmer out than in. A jacket stub is a 10 mm nozzle 0.4 m long through the outer shell, its bore the water pipe's, on a 12 mm pad 0.1 m wider; a jacket end the 12 mm annular plate closing the water gap where the duct meets a flange or hood. Stands from memory."}]}
     return key
 
 

@@ -5,7 +5,7 @@ stands_for: module.arc-furnace
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 88.0, width: 105.0, height: 27.08, mass: 4817000.0}
+physical: {length: 88.0, width: 105.0, height: 27.08, mass: 4816000.0}
 bays:
 - id: V
   mount: plant-mount.bay-s2
@@ -125,7 +125,7 @@ links:
   to: [6.0, 24.0, 15.0]
   length: 27.56
   item: material.structural-steel-a36
-  mass: 45610.0
+  mass: 44800.0
   via:
   - [-10.0, 7.5, 16.0]
   - [-3.0, 15.0, 16.0]
@@ -355,7 +355,7 @@ ground:
 - {what: Rail beds, item: good.concrete, volume: 8.27, note: 'under the ladle and slag rails, with their 40 mm flangeways; measured on blender''s model', mass: 19850.0}
 - {what: Pipe trench, item: good.concrete, volume: 23.03, note: 'floor and covers of the 1 m trench the jacket''s water pair runs in, as measured on blender''s model before the runs were re-laid (round the hall''s west end and along y 18), to measure again', mass: 55270.0}
 - {what: Link supports, item: good.concrete, volume: 8.65, note: 'footings for the belts'' trestles, the duct''s supports, the risers and the pipes'' plinths; as measured on blender''s model before the runs were re-laid, to measure again', mass: 20760.0}
-totals: {rate: 26.6666666666667, power: 74320000.0, heat: 18550000.0, water: 10.2, mass: 4817000.0, against_module: 'module.arc-furnace: one box 100 x 40 x 35 m, 72 MW, its parts 930 t. This layout: the same rate; 74.3 MW (the module left out the transformer''s losses, the fans and pumps); 10.2 kg/s of water the module did not name (the tower''s evaporation); 1401 t of plant and frame and 3416 t of concrete.'}
+totals: {rate: 26.6666666666667, power: 74320000.0, heat: 18550000.0, water: 10.2, mass: 4816000.0, against_module: 'module.arc-furnace: one box 100 x 40 x 35 m, 72 MW, its parts 930 t. This layout: the same rate; 74.3 MW (the module left out the transformer''s losses, the fans and pumps); 10.2 kg/s of water the module did not name (the tower''s evaporation); 1400 t of plant and frame and 3416 t of concrete.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}
