@@ -893,7 +893,7 @@
 - { record: layout.ingot-yard-air, at: "2026-10-17T00:03:48Z", status: draft, summary: "changed", sha: "423fd5c4b6c2a57f" }
 - { record: layout.ingot-yard-airless, at: "2026-10-17T00:03:48Z", status: draft, summary: "changed", sha: "9cf378d6072292a2" }
 - { record: layout.ladle-station-air, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "8b1ef49613308ec5" }
-- { record: layout.ladle-station-airless, at: "2026-10-17T00:06:45Z", status: draft, summary: "changed", sha: "1e34bb7509bf912e" }
+- { record: layout.ladle-station-airless, at: "2026-10-17T00:33:52Z", status: draft, summary: "changed", sha: "3d5bf4a970be704d" }
 - { record: layout.ore-yard-air, at: "2026-10-17T00:03:48Z", status: draft, summary: "changed", sha: "c5084a0ab636cfeb" }
 - { record: layout.ore-yard-airless, at: "2026-10-17T00:03:48Z", status: draft, summary: "changed", sha: "5cb35f82f3a4d85c" }
 - { record: layout.pellet-plant-air, at: "2026-10-16T20:37:01Z", status: draft, summary: "changed", sha: "be9a770950a42984" }
@@ -2901,7 +2901,7 @@
 - { record: unit.ladle-car-80t, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "a5cc73933513cb7b" }
 - { record: unit.ladle-crane-150t, at: "2026-10-14T19:55:55Z", status: draft, summary: "changed", sha: "aa767b9adc1f891a" }
 - { record: unit.ladle-furnace-80t, at: "2026-10-14T18:15:58Z", status: draft, summary: "changed", sha: "9cf8dd025ee54189" }
-- { record: unit.ladle-furnace-80t-sealed, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "5b33d1da6593ca86" }
+- { record: unit.ladle-furnace-80t-sealed, at: "2026-10-17T00:33:52Z", status: draft, summary: "changed: visual", sha: "2e322296ba28df9f" }
 - { record: unit.mill-crane-30t, at: "2026-10-16T19:40:41Z", status: draft, summary: "changed", sha: "8ec4bb60e1974d04" }
 - { record: unit.mould-car-12, at: "2026-10-14T20:49:23Z", status: draft, summary: "changed: identity", sha: "30b4c1cb9c96fef7" }
 - { record: unit.offgas-cooler-sealed, at: "2026-10-16T23:24:57Z", status: draft, summary: "changed", sha: "37dbfe7fe05fb2bf" }
