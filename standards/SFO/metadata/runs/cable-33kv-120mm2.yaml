@@ -21,6 +21,12 @@ repeat:
 - {piece: rung, pitch: 0.3}
 connector: connector.termination-33kv-120mm2
 carries: power
+visual:
+  format: "freefall-model/1"
+  path: "models/cable-33kv-120mm2/v1"
+  manifest_sha256: "465756142daf40b6ccb2a3d874ac7032d948ca80a625478f0b8470516f9df4c5"
+  version: 1
+  triangles: 9212
 basis:
 - of: [per_m]
   tier: derived
