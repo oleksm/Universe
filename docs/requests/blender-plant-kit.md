@@ -252,3 +252,25 @@ The owner: reuse what is built and fill only the gaps (docs/proposals/plant-prod
 2. Envelopes measured from the installed models, no rebuild: `eaf-vessel-80t` (from v4), `cooling-tower` v1, `baghouse-800k` v2, `hall-crane-20t` v2.
 
 Nothing else until the registry asks, with the reason.
+
+## 11. Measure, don't build (2026-10-16)
+
+The owner approved two checks. Neither builds a model.
+
+1. **Envelopes for 37 units, measured from their installed models.** These are the units of the 9 layouts the registry converts next, and the fit check needs their boxes:
+   - baghouse-200k, baghouse-450k;
+   - cooling-tower-1cell, -h2, -pellet, -shaft;
+   - crating-line, crating-line-steel, crop-saws, disc-filter-2, dri-cooling-loop, electrolyser-block-20mw, forklift-2t5, gas-heater-122mw, hydrogen-purifier, induration-grate-125th;
+   - ingot-car-40t, ingot-crane-10t, ingot-gantry-10t-moon, ingot-tipper;
+   - ladle-crane-150t, ladle-furnace-80t, mould-car-12, recycle-compressor;
+   - sampling-lab, sampling-lab-sealed, shaft-furnace-200th;
+   - gantry-crane-150t-moon, stack-crane-20t, stripper-crane-20t, stripper-gantry-20t-moon;
+   - stacker-reclaimer-1500th, top-gas-scrubber, truck-dump-hopper, vacuum-degasser-80t, water-treatment, yard-tripper-1500th.
+
+   One JSON for the batch, as section 10's.
+2. **A tilt sweep of `eaf-vessel-80t-sealed`** (v2), as the air furnace's:
+   - the y axis through the rockers' centres (0, 0, 1.0), rest and +/-15 degrees;
+   - its bellows joint and off-gas reducer against the fixed duct as the airless shop lays it: the lined DN 1200 rising from the reducer's flange at (2, 1.5, 9.7) to z 20;
+   - the feed belt's head 3 m over the lock, and the masts and arms.
+
+   Report clearances only. A rebuild follows only if something collides, and the registry decides it.
