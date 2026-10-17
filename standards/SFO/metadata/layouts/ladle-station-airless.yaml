@@ -5,7 +5,7 @@ stands_for: module.ladle-station
 site:
   atmosphere: none
   gravity: [1.6, 2.0]
-physical: {length: 164.0, width: 94.4, height: 27.0, mass: 2767000.0}
+physical: {length: 164.0, width: 94.4, height: 27.0, mass: 2843000.0}
 bays:
 - id: D
   mount: plant-mount.bay-s2
@@ -25,12 +25,12 @@ bays:
 - id: A
   mount: plant-mount.bay-s3
   unit: unit.alloy-bins-8
-  at: [2.0, 9.0, 2.8]
-  note: north of the furnace, inside the crane's legs (it passes over them), on a 2.8 m plinth so a short level belt reaches the furnace's chute
+  at: [2.0, 9.0, 3.1]
+  note: north of the furnace, inside the crane's legs (it passes over them), on a 3.1 m plinth so a short level belt reaches the furnace's chute
 - id: S
   mount: plant-mount.bay-s1
   unit: unit.stair-tower-12m
-  at: [-6.0, 9.0, 2.8]
+  at: [-6.0, 9.0, 3.1]
   turn: 180.0
   note: 'against the bins'' west end, on their plinth: its top landing gives onto the bins'' deck'
 - id: G
@@ -87,7 +87,7 @@ ports:
   power: 40000.0
   voltage: 400
   connector: connector.termination-400v-35mm2
-  at: [13.0, 9.0, 3.8]
+  at: [13.0, 9.0, 4.1]
   facing: [-1.0, 0.0, 0.0]
 - id: lv-filter
   flow: in
@@ -221,11 +221,11 @@ links:
   name: bins supply
   run: run.cable-400v-35mm2
   ends: ['edge:lv-bins', 'A:power-in']
-  from: [13.0, 9.0, 3.8]
-  to: [8.3, 9.0, 3.8]
+  from: [13.0, 9.0, 4.1]
+  to: [8.3, 9.0, 4.1]
   length: 4.7
   item: material.copper
-  mass: 96.91
+  mass: 100.5
   fittings: {elbows: 0, tees: 0, supports: 2, connectors: 2}
   note: along the plinth
 - kind: cable
@@ -449,14 +449,14 @@ links:
 ground:
 - {what: Ladle furnace foundation, item: material.regolith-sintered, volume: 102.0, note: 'as for air, of sintered regolith; measured on blender''s layout (candidate v01)', mass: 255000.0}
 - {what: Stand and transformer pads, item: material.regolith-sintered, volume: 41.6, note: the degassing stand's (20.0) and the transformer's (21.6); measured on blender's layout (candidate v01), mass: 104000.0}
-- {what: Bins' plinth, item: material.regolith-sintered, volume: 282.2, note: '16 x 6.3 m under the alloy bins and the stair tower, 2.8 m high, sintered regolith blocks, with a ramp for the crews (not counted)', mass: 705500.0}
+- {what: Bins' plinth, item: material.regolith-sintered, volume: 312.5, note: '16 x 6.3 m under the alloy bins and the stair tower, 3.1 m high, sintered regolith blocks, with a ramp for the crews (not counted)', mass: 781200.0}
 - {what: Filter pad, item: material.regolith-sintered, volume: 62.5, note: measured on blender's layout (candidate v01), mass: 156200.0}
 - {what: Crew post berm, item: material.regolith, volume: 584.56, note: 'loose regolith at least 1 m over the post everywhere, lying at 35 degrees, its foot about 19 x 17 m, a cavity for the post, the ramp cut and the light wells; measured on blender''s layout (candidate v01)', mass: 876800.0}
 - {what: Crew post entry and light wells, item: material.regolith-sintered, volume: 14.0, note: 'the landing, the ramp, the cut''s retaining sides and the light wells'' retainers, provisional; measured on blender''s layout (candidate v01)', mass: 35000.0}
 - {what: Rail sleepers, item: material.regolith-sintered, volume: 12.77, note: under the ladle rail (8.0) and the crane's rails (4.8); measured on blender's layout (candidate v01), mass: 31920.0}
 - {what: Radiator legs' pads, item: material.regolith-sintered, volume: 6.91, note: 'a block under each leg; 3.46 m3 a field, as measured on blender''s layout (candidate v01)', mass: 17280.0}
 - {what: Feet, item: material.regolith-sintered, volume: 3.05, note: 'under the belt, the pipes'' and the cables'' supports; as measured on blender''s layout (candidate v01) before the runs were re-laid, to measure again', mass: 7625.0}
-totals: {rate: 41.6666666666667, power: 7868000.0, heat: 1598000.0, water: 0.0, mass: 2767000.0, against_module: 'module.ladle-station: one box, the same on every world. This layout: the same rate; 7.9 MW; 1.6 MW to 2 radiator fields at 330 K; no water used up; 0.042 kg/s of argon, let go. No degasser: the vacuum degasses the ladle on an open stand, but must not see the alloys, which the sealed ladle furnace adds under argon; no ladle crane (nothing is lifted into a tank) and no hall. 578 t of plant, 2,189 t of sintered regolith.'}
+totals: {rate: 41.6666666666667, power: 7868000.0, heat: 1598000.0, water: 0.0, mass: 2843000.0, against_module: 'module.ladle-station: one box, the same on every world. This layout: the same rate; 7.9 MW; 1.6 MW to 2 radiator fields at 330 K; no water used up; 0.042 kg/s of argon, let go. No degasser: the vacuum degasses the ladle on an open stand, but must not see the alloys, which the sealed ladle furnace adds under argon; no ladle crane (nothing is lifted into a tank) and no hall. 578 t of plant, 2,265 t of sintered regolith.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}

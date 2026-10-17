@@ -2728,9 +2728,9 @@ def ladle_ports(us):
         port("water-out", "out", "liquid", kit.flange(kit.dn_for(math.sqrt(4 * q_t / 1000 / 2.5 / math.pi)), 10), (-L_ / 2, 0.3, 1.0), (-1, 0, 0), item=WATER, rate=q_t),
     ]
     a = us["alloy-bins-8"]
-    a["desc"] += " Its ports (SFO 25): the transfer chute's foot kicked 1 m to +x at 45 degrees, to (1, 0, 7), so the layout's belt passes between the centre and east legs (v2); its 400 V box at (6.3, 0, 1) on the east end frame, facing +x."
+    a["desc"] += " Its ports (SFO 25): the transfer chute's intake narrowed to 0.42 m between the collecting belts' drums, dropped below them to z 7.7, then kicked 1 m to +x at 45 degrees, to its foot at (1, 0, 6.7), so the layout's belt passes between the centre and east legs (v2); its 400 V box at (6.3, 0, 1) on the east end frame, facing +x."
     a["ports"] = [
-        port("alloy-out", "out", "bulk", kit.chute(0.4), (1.0, 0.0, 7.0), (0, 0, -1), rate=alloys, note="onto a belt's tail"),
+        port("alloy-out", "out", "bulk", kit.chute(0.4), (1.0, 0.0, 6.7), (0, 0, -1), rate=alloys, note="onto a belt's tail"),
         port("power-in", "in", "power", lv(a["needs"]["power"]), (6.3, 0.0, 1.0), (1, 0, 0), power=a["needs"]["power"], voltage=400),
     ]
     d = us["degassing-stand"]
@@ -2812,7 +2812,7 @@ def ladle_station_airless(us, recs):
     lf_heat = recs["ladle-furnace-80t-sealed"]["needs"].get("heat", 0) + recs["furnace-transformer-14mva"]["needs"].get("heat", 0) + bus_loss
     f_low = recs[rad]["rejects"]["heat"]
     n_low = math.ceil(lf_heat / f_low)
-    PL = 2.8                                          # m: the alloy bins' plinth, so their chute's foot is level with the furnace's chute
+    PL = 3.1                                          # m: the alloy bins' plinth, so their chute's foot is level with the furnace's chute
     rad_at = [(-60.0 - 48.0 * i, -32.0) for i in range(n_low)]
     bays = [
         {"id": "D", "mount": "plant-mount.bay-s2", "unit": "unit.degassing-stand", "at": [-15.0, 0.0, 0.0], "note": "first on the rail from the arc furnace shop: degas before alloying"},

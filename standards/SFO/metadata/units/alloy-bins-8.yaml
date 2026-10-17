@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
 identity: {key: unit.alloy-bins-8, name: 'Alloy bins, 8', description: 'Eight steel bins of ferroalloys and fluxes hung in a deck 12 m up, two rows of four at local x -4.5, -1.5, 1.5, 4.5 and y -1.5, 1.5: each 2.5 m across, its cylinder z 12 to 15, its cone down to an outlet at z 10.5. Under each outlet a vibrating feeder (z 10 to 10.5) sends its alloy inward to a weigh hopper shared by the pair across y, four hoppers on load cells at x -4.5, -1.5, 1.5, 4.5, y 0, z 8.6 to 9.8, each weighing up to 2 t. The hoppers empty onto two collecting belts at z 8, the west two running east and the east two running west, both into a transfer chute at x 0, y 0, whose foot at local (0, 0, 7.4) drops onto the layout''s belt to the ladle furnace''s chute. Load path: each bin hangs by a bearing collar (radius about 1.5 m) on uprights at x -6, -3, 0, 3, 6, each upright shared by two bins; the uprights stand on two row beams under the bins'' centrelines (y -1.5, 1.5, top z 9.9, below the feeders); the row beams
-    on six legs at x -6, 0, 6, y -1.5, 1.5, braced across. A 10 mm walkway deck at z 12 round the collars. Its ports (SFO 25): the transfer chute''s foot kicked 1 m to +x at 45 degrees, to (1, 0, 7), so the layout''s belt passes between the centre and east legs (v2); its 400 V box at (6.3, 0, 1) on the east end frame, facing +x.'}
+    on six legs at x -6, 0, 6, y -1.5, 1.5, braced across. A 10 mm walkway deck at z 12 round the collars. Its ports (SFO 25): the transfer chute''s intake narrowed to 0.42 m between the collecting belts'' drums, dropped below them to z 7.7, then kicked 1 m to +x at 45 degrees, to its foot at (1, 0, 6.7), so the layout''s belt passes between the centre and east legs (v2); its 400 V box at (6.3, 0, 1) on the east end frame, facing +x.'}
 size_class: 3
 fits: plant-mount.bay-s3
 physical: {length: 12.56, width: 6.3, height: 15.14, mass: 66100.0}
@@ -17,7 +17,7 @@ ports:
   medium: bulk
   rate: 0.6792
   connector: connector.chute-dn400
-  at: [1.0, 0.0, 7.0]
+  at: [1.0, 0.0, 6.7]
   facing: [0.0, 0.0, -1.0]
   note: onto a belt's tail
 - id: power-in

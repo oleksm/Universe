@@ -55,13 +55,13 @@ envelope:
 - [-2.152, -0.639, 0.59, -1.737, 0.639, 1.383]
 - [-1.001, -0.751, 2.388, 1.001, -0.148, 3.702]
 - [-0.772, 0.841, 1.958, 0.772, 1.352, 2.302]
+life: 788940000
 visual:
   format: "freefall-model/1"
   path: "models/furnace-transformer-14mva/v2"
   manifest_sha256: "86b9770bc35b9d2e4ba77c21c733021353d890c3070d18af1252c252c8fc604d"
   version: 2
   triangles: 10360
-life: 788940000
 basis:
 - of: [physical, built_of]
   tier: invented
