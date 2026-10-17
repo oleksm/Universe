@@ -475,9 +475,9 @@
 - { record: equipment.engine.fan.s1, at: "2026-10-13T00:40:35Z", status: draft, summary: "changed: visual", sha: "8571271370838a45" }
 - { record: equipment.engine.fan.s2, at: "2026-10-13T00:46:03Z", status: draft, summary: "changed: visual", sha: "131081299755298f" }
 - { record: equipment.engine.fan.s3, at: "2026-10-12T01:31:44Z", status: draft, summary: "changed: visual", sha: "cc49eb09dba4218d" }
-- { record: equipment.engine.ft.s1, at: "2026-10-17T17:51:05Z", status: draft, summary: "changed: identity, physical, built_of, ports, basis, model_requests", sha: "e591b8d4b3263ef5" }
-- { record: equipment.engine.ft.s2, at: "2026-10-17T17:51:05Z", status: draft, summary: "changed: identity, physical, built_of, ports, basis, model_requests", sha: "22aa6b8ec5f09245" }
-- { record: equipment.engine.ft.s3, at: "2026-10-17T17:51:05Z", status: draft, summary: "changed: identity, physical, built_of, ports, basis, model_requests", sha: "b533f80e1657bf30" }
+- { record: equipment.engine.ft.s1, at: "2026-10-17T17:55:24Z", status: draft, summary: "changed: ports", sha: "cc7a9907c1c72beb" }
+- { record: equipment.engine.ft.s2, at: "2026-10-17T17:55:24Z", status: draft, summary: "changed: ports", sha: "d1d4c438de8540d7" }
+- { record: equipment.engine.ft.s3, at: "2026-10-17T17:55:24Z", status: draft, summary: "changed: ports", sha: "338b3bb8bd988f57" }
 - { record: equipment.engine.nt.s1, at: "2026-10-13T01:51:30Z", status: draft, summary: "changed: visual", sha: "110a68ce2e357997" }
 - { record: equipment.engine.nt.s2, at: "2026-10-13T02:06:07Z", status: draft, summary: "changed: visual", sha: "d485b3df704248eb" }
 - { record: equipment.engine.nt.s3, at: "2026-10-13T02:50:46Z", status: draft, summary: "changed: visual", sha: "cb5d8c594580a6b6" }
@@ -575,9 +575,9 @@
 - { record: equipment.thermal.coolant-loop.s2, at: "2026-10-11T02:46:30Z", status: draft, summary: "changed: visual", sha: "ee98e3c0e9eb3051" }
 - { record: equipment.thermal.heat.exchanger, at: "2026-10-13T17:50:25Z", status: draft, summary: "changed: visual", sha: "a4ac2793c3ff1dee" }
 - { record: equipment.thermal.heat.sink, at: "2026-10-13T18:12:52Z", status: draft, summary: "changed: visual", sha: "343fbececea099dd" }
-- { record: equipment.thermal.radiator-hot.s1, at: "2026-10-17T17:51:05Z", status: draft, summary: "first tracked", sha: "11b334128611e568" }
-- { record: equipment.thermal.radiator-hot.s2, at: "2026-10-17T17:51:05Z", status: draft, summary: "first tracked", sha: "ef06604aa48af116" }
-- { record: equipment.thermal.radiator-hot.s3, at: "2026-10-17T17:51:05Z", status: draft, summary: "first tracked", sha: "e1d53f0ad3cf113b" }
+- { record: equipment.thermal.radiator-hot.s1, at: "2026-10-17T17:55:24Z", status: draft, summary: "changed: built_of, ports", sha: "e79ff73877bb0ced" }
+- { record: equipment.thermal.radiator-hot.s2, at: "2026-10-17T17:55:24Z", status: draft, summary: "changed: built_of, ports", sha: "02801ac26aef0505" }
+- { record: equipment.thermal.radiator-hot.s3, at: "2026-10-17T17:55:24Z", status: draft, summary: "changed: built_of, ports", sha: "ea2f0bdb153026f4" }
 - { record: equipment.thermal.radiator.s0, at: "2026-10-12T04:15:48Z", status: draft, summary: "changed: visual", sha: "48f9aef49a6b859e" }
 - { record: equipment.thermal.radiator.s1, at: "2026-10-12T17:36:00Z", status: draft, summary: "changed: visual", sha: "42af60e8122c5192" }
 - { record: equipment.thermal.radiator.s2, at: "2026-10-11T02:48:17Z", status: draft, summary: "changed: visual", sha: "bfbfc35087f0be28" }
@@ -1064,6 +1064,7 @@
 - { record: material.hydrolox, at: "2026-10-07T01:45:03Z", status: review, summary: "changed: identity", sha: "f127863648f4b0cb" }
 - { record: material.kerolox, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "a89067f18adc3c4e" }
 - { record: material.lead, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "7c000bf7e6d32043" }
+- { record: material.lithium, at: "2026-10-17T17:55:24Z", status: review, summary: "first tracked", sha: "5dac486888151c19" }
 - { record: material.methalox, at: "2026-10-07T01:45:03Z", status: review, summary: "changed: identity", sha: "3e3a93123f4f38da" }
 - { record: material.molybdenum, at: "2026-10-14T01:51:31Z", status: review, summary: "changed", sha: "ea610c770f90eaec" }
 - { record: material.molybdenum-disulphide, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "73f997d94032fa1e" }

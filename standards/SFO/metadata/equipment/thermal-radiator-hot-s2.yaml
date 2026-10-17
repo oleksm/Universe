@@ -32,7 +32,7 @@ built_of:
     module: module.assembly-shop
   - code: RAH2-02
     name: Headers and tubes
-    description: 'A supply and a return header side by side along the root edge, DN 600, and the U-tubes through the panel: about 315 kg/s of lithium at a 200 K drop, about 3 m/s.'
+    description: 'A supply and a return header side by side along the root edge, DN 600, and the U-tubes through the panel: about 315 kg/s of lithium at a 200 K drop, about 3.5 m/s; the loop held at 5 bar so the lithium stays liquid at its hot end (it boils at 1,615 K at one atmosphere).'
     mass: 3112
     length: 16.5
     width: 1.3
@@ -61,6 +61,7 @@ ports:
 - id: coolant-in
   flow: in
   medium: liquid
+  item: material.lithium
   interface: interface.lm-flange-dn600
   half: androgynous
   make: bolted
@@ -75,10 +76,11 @@ ports:
   - -1.0
   - 0.0
   - 0.0
-  note: liquid lithium from the engine, hot (no lithium metal record yet)
+  note: hot lithium from the engine
 - id: coolant-out
   flow: out
   medium: liquid
+  item: material.lithium
   interface: interface.lm-flange-dn600
   half: androgynous
   make: bolted

@@ -43,6 +43,7 @@ ports:
 - id: coolant-out-1
   flow: out
   medium: liquid
+  item: material.lithium
   interface: interface.lm-flange-dn1200
   half: androgynous
   make: bolted
@@ -61,6 +62,7 @@ ports:
 - id: coolant-in-1
   flow: in
   medium: liquid
+  item: material.lithium
   interface: interface.lm-flange-dn1200
   half: androgynous
   make: bolted
@@ -79,6 +81,7 @@ ports:
 - id: coolant-out-2
   flow: out
   medium: liquid
+  item: material.lithium
   interface: interface.lm-flange-dn1200
   half: androgynous
   make: bolted
@@ -97,6 +100,7 @@ ports:
 - id: coolant-in-2
   flow: in
   medium: liquid
+  item: material.lithium
   interface: interface.lm-flange-dn1200
   half: androgynous
   make: bolted
