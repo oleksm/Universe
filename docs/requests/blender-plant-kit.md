@@ -217,7 +217,7 @@ The owner noticed the kit took most of a day: 129 of the 162 models installed on
 
 **Kit, one batch per family** (section 8):
 - New family `jacketed-duct`: `run.jacketed-duct-dn2000`. A 2 m inner shell (10 mm), a 100 mm water gap and a 6 mm outer shell, 2.232 m outside, mitred bends one bore in radius. Pipes end on its jacket's underside: draw a stub per `jacket:` end where the layout puts it, as tees are.
-- New family `hood`: `connector.hood-dn2000`. A double-walled, water-cooled ring 2.4 m across and 0.5 m deep, its mouth 0.15 m over the port it serves (never touching it).
+- New family `hood`: `connector.hood-dn2000`. A double-walled, water-cooled ring 2.4 m across and 0.5 m deep, its mouth 0.15 m from the port it serves, the way the port faces (never touching it). It is a sleeve on the duct's end, with a 1 m stroke along its axis.
 - Flange family: `connector.flange-dn2000-pn1`.
 - Nothing else: the 6.6 kV 50 mm2 cable and its termination carry `looks_as` (the 400 V 120 mm2 pieces).
 
@@ -225,9 +225,10 @@ The owner noticed the kit took most of a day: 129 of the 162 models installed on
 1. `eaf-vessel-80t` v4: the sealed furnace's port changes, without its lock and bellows:
    - the deck manifold's DN 400 barrels at (-4.2, 4.95, 0.5) in and (-3.4, 4.95, 0.5) out;
    - the bus joint at (0, -6.2, 2.3);
-   - the elbow's mouth at (2, 1.5, 8.5) facing up;
-   - the fifth hole's mouth at (0, 1.8, 8.3).
-   - Measure its envelope: the registry lends it the sealed furnace's boxes until then.
+   - the off-gas elbow (revised after your tilt sweep, 2026-10-16) turns horizontal from the fourth hole and runs north past the roof's edge to a vertical mouth at (3, 4.5, 8.5), facing +y. The duct's water-cooled sleeve stands 0.15 m beyond it. Before the furnace tilts (arc off, to tap or deslag), the sleeve is drawn back 1 m along +y, parking its mouth in the plane y 5.65. A tilt about y then slides the elbow's mouth across the sleeve's plane, never into it;
+   - the fifth hole's mouth at (0, 1.8, 8.3), now a belt's transfer: the belt's head 3 m over it. Before the furnace tilts, its chute telescopes up so its bottom parks at z 10.8;
+   - for your diagnostic sweep: the y axis through the rockers' centres (0, 0, 1.0), at rest and +/-15 degrees, with the sleeve and the chute parked;
+   - measure its envelope: the registry lends it the sealed furnace's boxes until then.
 2. `cooling-tower` v2:
    - flanges on its east end (x 12, z 0.75) facing +x: the hall loop DN 400 out at y -0.6 and in at 0.6, the duct jacket's DN 300 out at 3.9 and in at 5.1;
    - make-up water DN 100 at (-12, 0, 0.75) and a 400 V box at (-12, -3, 1), facing -x.

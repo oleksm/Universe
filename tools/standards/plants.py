@@ -559,11 +559,11 @@ def air_ports(us):
     v = us["eaf-vessel-80t"]
     v["desc"] = v["desc"].replace("(the manifold itself is the layout's)", "(the manifold is the unit's: two barrels standing on the deck, each taking its hose from the side)")
     if "Its ports (SFO 25)" not in v["desc"]:
-        v["desc"] += (f" Its ports (SFO 25): sponge iron in through the fifth hole's mouth, local (0, 1.8, 8.3), a belt's head dropping into it; the off-gas elbow's mouth on the fourth hole at (2, 1.5, 8.5), facing up, a fixed catch hood {kit.GAP_HOOD:g} m over it (the gap draws in the air that burns the CO, and lets the furnace tilt); "
+        v["desc"] += (f" Its ports (SFO 25): sponge iron in through the fifth hole's mouth, local (0, 1.8, 8.3), a belt's transfer chute 3 m over it that telescopes up to z 10.8 before the furnace tilts; the off-gas elbow from the fourth hole turns horizontal and runs north past the roof's edge to a vertical mouth at (3, 4.5, 8.5) facing +y, the duct's water-cooled sleeve {kit.GAP_HOOD:g} m beyond it (the gap draws in the air that burns the CO), drawn back 1 m to the plane y 5.65 before the furnace tilts: a tilt about y slides the mouth across the sleeve's, never into it (the arc is off to tap and deslag); "
                       f"the secondary bus's joint at the flexible cables' fixed ends, (0, -6.2, 2.3), facing -y; the deck manifold's water flanges, DN {dn_hall * 1000:.0f} facing up, in at (-4.2, 4.95, 0.5) and out at (-3.4, 4.95, 0.5), in front of the tilting cradle's deck (v4, as the sealed furnace's).")
     v["ports"] = [
-        port("dri-in", "in", "bulk", kit.chute(0.8), (0.0, 1.8, 8.3), (0, 0, 1), item="good.sponge-iron", rate=DRI, note="the fifth hole's mouth; a belt's head 0.4 m over it"),
-        port("offgas-out", "out", "gas", kit.hood(2.0), (2.0, 1.5, 8.5), (0, 0, 1), note="the elbow's mouth; it moves as the furnace tilts"),
+        port("dri-in", "in", "bulk", kit.belt_transfer(0.8), (0.0, 1.8, 8.3), (0, 0, 1), item="good.sponge-iron", rate=DRI, note="the fifth hole's mouth; the belt's head 3 m over it, its chute telescoping up 2.5 m before the furnace tilts"),
+        port("offgas-out", "out", "gas", kit.hood(2.0), (3.0, 4.5, 8.5), (0, 1, 0), note="the elbow's vertical mouth past the roof's edge; it moves as the furnace tilts, across the sleeve's mouth"),
         port("power-in", "in", "power", kit.bus_joint(V2, I2, 3), (0.0, -6.2, 2.3), (0, -1, 0), power=P, voltage=V2, note=f"{I2 / 1000:.0f} kA a phase"),
         port("water-in", "in", "liquid", kit.flange(dn_hall, 10), (-4.2, 4.95, 0.5), (0, 0, 1), item=WATER, rate=WATER_SHARE * P / (4186 * 10), temperature=303.0),
         port("water-out", "out", "liquid", kit.flange(dn_hall, 10), (-3.4, 4.95, 0.5), (0, 0, 1), item=WATER, rate=WATER_SHARE * P / (4186 * 10), temperature=313.0),
@@ -598,8 +598,7 @@ def arc_furnace_air(us, recs):
     cell, box = 3.0, (-24.0, -15.0, 0.0, 9.0, 15.0, 27.0)
     doors = [(6.0, 3.0, 0.0, 9.0, 9.0, 6.0),          # ladle rail, east
              (-21.0, 12.0, 0.0, -12.0, 15.0, 6.0),    # slag rail, north: 9 m, centred on the rail
-             (-15.0, 12.0, 9.0, -9.0, 15.0, 15.0),    # sponge iron belt through the north wall
-             (-9.0, 12.0, 12.0, 0.0, 15.0, 18.0),     # off-gas duct through the north wall
+             (-15.0, 12.0, 9.0, 0.0, 15.0, 18.0),     # sponge iron belt and off-gas duct through the north wall, one framed opening
              (-24.0, -9.0, 0.0, -21.0, -3.0, 3.0),    # the hall loop's pipes through the west wall, low
              (-15.0, -15.0, 6.0, -9.0, -12.0, 9.0)]   # the transformer's 33 kV cable through the south wall
     groups, ground_nodes, n_nodes, cells = lattice(box, cell, 8, None, doors)
@@ -642,7 +641,7 @@ def arc_furnace_air(us, recs):
     bays = [
         {"id": "V", "mount": "plant-mount.bay-s2", "unit": "unit.eaf-vessel-80t", "at": [-12.0, 6.0, 5.0], "note": "on the furnace platform, 5 m up; the tap faces +x over the ladle rail, the slag door -x over the slag rail"},
         {"id": "T", "mount": "plant-mount.bay-s2", "unit": "unit.furnace-transformer-90mva", "at": [-12.0, -6.0, 0.0], "note": "in the fire-walled vault beside the platform"},
-        {"id": "F", "mount": "plant-mount.bay-s1", "unit": "unit.dri-bin-200t", "at": [-12.0, 33.0, 0.0], "note": "outside, north, far enough for the belt to climb at a cleated belt's slope"},
+        {"id": "F", "mount": "plant-mount.bay-s1", "unit": "unit.dri-bin-200t", "at": [-12.0, 41.0, 0.0], "note": "outside, north, far enough for the belt to climb at a cleated belt's slope to its head 3 m over the feed hole"},
         {"id": "B", "mount": "plant-mount.bay-s3", "unit": "unit.baghouse-800k", "at": [6.0, 30.0, 0.0], "note": "outside, north-east"},
         {"id": "C", "mount": "plant-mount.bay-s3", "unit": "unit.cooling-tower", "at": [-39.0, -6.0, 0.0], "note": "outside, west, 3 m from the hall"},
     ]
@@ -659,9 +658,9 @@ def arc_furnace_air(us, recs):
     w_b = need("baghouse-800k")
     mv_b = kit.area_for(amps(w_b, 6600))
     edge = [
-        port("sponge-iron-in", "in", "bulk", kit.belt_transfer(0.8), (-12.0, 75.0, 2.0), (0, -1, 0), item="good.sponge-iron", rate=DRI, note="onto the bin belt's tail, from the shaft furnace or the stockpile"),
+        port("sponge-iron-in", "in", "bulk", kit.belt_transfer(0.8), (-12.0, 85.0, 2.0), (0, -1, 0), item="good.sponge-iron", rate=DRI, note="onto the bin belt's tail, from the shaft furnace or the stockpile"),
         port("hv-in", "in", "power", kit.termination(33000, 630), (-12.0, -30.0, 0.3), (0, 1, 0), power=P + TRANSFORMER_LOSS * S_MVA, voltage=33000, note="the site's 33 kV substation"),
-        port("lv-bin", "in", "power", lv(need("dri-bin-200t")), (-7.5, 33.0, 1.0), (-1, 0, 0), power=need("dri-bin-200t"), voltage=lvf),
+        port("lv-bin", "in", "power", lv(need("dri-bin-200t")), (-7.5, 41.0, 1.0), (-1, 0, 0), power=need("dri-bin-200t"), voltage=lvf),
         port("mv-baghouse", "in", "power", kit.termination(6600, mv_b), (22.0, 33.0, 1.0), (-1, 0, 0), power=w_b, voltage=6600, note="the site's 6.6 kV switchgear"),
         port("lv-tower", "in", "power", lv(need("cooling-tower")), (-55.0, -9.0, 1.0), (1, 0, 0), power=need("cooling-tower"), voltage=lvf),
         port("water-in", "in", "liquid", kit.flange(0.1, 10), (-55.0, -6.0, 0.75), (1, 0, 0), item="good.water", rate=recs["cooling-tower"]["needs"]["water"], note="the site's water, for the tower's make-up"),
@@ -672,13 +671,13 @@ def arc_furnace_air(us, recs):
     wt = kit.pipe(kit.dn_for(math.sqrt(4 * q_t / 1000 / 2.5 / math.pi)), 10, liquid=True)
     jd = kit.jacketed_duct(2.0, duct_heat)
     L = lambda *a: kit_link(*a[:4], bays, recs, edge, *a[4:])
-    belt_rise = (5.0 + 8.3 + kit._recs[kit.belt(0.8, DRI * 1.5)]["outside"][1] / 2) - (6.0 - kit._recs[kit.belt(0.8, DRI * 1.5)]["outside"][1] / 2)
+    belt_rise = (5.0 + 8.3 + 3.0) - (6.0 - kit._recs[kit.belt(0.8, DRI * 1.5)]["outside"][1] / 2)
     links = [
         L("sponge iron belt", kit.belt(0.8, DRI * 1.5), ("F:dri-out", "V:dri-in"), [None, None], (), 1, DRI * G * belt_rise / 0.5 + 20000,
-          f"a chevron-cleated belt in a covered gallery from the bin's feeder south through the north wall's opening, rising {math.degrees(math.atan2(belt_rise, 22.2)):.0f} degrees (steeper than plain belts carry sponge iron, which rolls back above about 15), its head through a hood into the fifth hole's mouth"),
-        L("bin belt", kit.belt(0.8, DRI * 1.5), ("edge:sponge-iron-in", "F:dri-in-belt"), [None, None], (), 1, DRI * G * 16.3 / 0.5 + 20000, "cleated, in a covered gallery, from the stockpile's reclaim south, rising 21 degrees to its head 3 m over the bin's roof"),
-        L("off-gas", jd, ("V:offgas-out", "B:gas-in"), [None, (-10.0, 7.5, 16.0), (-3.0, 15.0, 16.0), (6.0, 19.0, 16.0), None], (), 1, None,
-          f"2 m, water-jacketed for {duct_heat / 1e6:.1f} MW (about {OFFGAS_SHARE:.0%} of the arc's power, from memory): from its catch hood {kit.GAP_HOOD:g} m over the furnace's elbow (the gap draws in the air that burns the CO, and lets the furnace tilt), up to 16 m, out through the north wall's opening and down to the baghouse's inlet"),
+          f"a chevron-cleated belt in a covered gallery from the bin's feeder south through the north wall's opening, rising {math.degrees(math.atan2(belt_rise, 30.2)):.0f} degrees (steeper than plain belts carry sponge iron, which rolls back above about 15), its head 3 m over the fifth hole, its transfer chute telescoping"),
+        L("bin belt", kit.belt(0.8, DRI * 1.5), ("edge:sponge-iron-in", "F:dri-in-belt"), [None, None], (), 1, DRI * G * 16.3 / 0.5 + 20000, "cleated, in a covered gallery, from the stockpile's reclaim south, rising 20 degrees to its head 3 m over the bin's roof"),
+        L("off-gas", jd, ("V:offgas-out", "B:gas-in"), [None, (-9.0, 18.4, 13.5), (6.0, 18.4, 13.5), None], (), 1, None,
+          f"2 m, water-jacketed for {duct_heat / 1e6:.1f} MW (about {OFFGAS_SHARE:.0%} of the arc's power, from memory): from its sliding sleeve {kit.GAP_HOOD:g} m beyond the furnace's elbow (the gap draws in the air that burns the CO; drawn back 1 m to tilt), north out through the north wall's opening, east along y 18.4 and up to the baghouse's inlet"),
         L("secondary bus", bus, ("T:lv-out", "V:power-in"), bus_path, (), 1, bus_loss, f"three phases of water-cooled copper tube, {I2 / 1000:.0f} kA each, through the vault's wall to the furnace's flexible cables; its loss, {bus_loss / 1e3:.0f} kW, to the transformer's cooler"),
         L("transformer supply", kit.cable(33000, 630), ("edge:hv-in", "T:hv-in"), [None, (-12.0, -17.0, 0.3), (-12.0, -17.0, 8.5), (-12.0, -6.85, 8.5), None], (), math.ceil(i_hv / (630e-6 * kit.J_VACUUM)), None,
           "north, up outside the hall's south wall and in through its opening at 8.5 m, over the vault's wall and down into the transformer's cable box"),
@@ -694,15 +693,15 @@ def arc_furnace_air(us, recs):
         L("transformer cooling in", wt, ("tee:hall flow", "T:water-in"), [(-22.5, -6.6, 0.75), (-22.5, -8.38, 0.75), (-17.0, -8.38, 0.75), (-17.0, -8.38, 1.35), None], (), 1, None, "teed off the flow in the wall's opening, through the vault's west wall"),
         L("transformer cooling out", wt, ("T:water-out", "tee:hall return"), [None, (-23.5, -8.38, 2.35), (-23.5, -5.4, 2.35)]),
         # The duct jacket's loop: in a covered trench round the hall's west end and along y 18, up risers to the jacket.
-        L("jacket flow", w_duct, ("C:duct-out", "jacket:off-gas"), [None, (-25.2, -2.1, 0.75), (-25.2, -2.1, -1.0), (-25.2, 18.0, -1.0), (3.75, 18.0, -1.0), (3.75, 18.0, 16.0)], (), 1, None,
-          f"{duct_q:,.0f} kg/s: down into a covered trench 1 m deep, north past the hall's west end, east along y 18 under the slag rail, up a riser to the jacket's underside"),
-        L("jacket return", w_duct, ("jacket:off-gas", "C:duct-in"), [(5.55, 18.8, 16.0), (5.55, 18.8, -1.0), (-26.0, 18.8, -1.0), (-26.0, -0.9, -1.0), (-26.0, -0.9, 0.75), None], (), 1, None, "beside the flow in the trench, on its left all the way"),
+        L("jacket flow", w_duct, ("C:duct-out", "jacket:off-gas"), [None, (-25.2, -2.1, 0.75), (-25.2, -2.1, -1.0), (-25.2, 18.4, -1.0), (0.0, 18.4, -1.0), (0.0, 18.4, 13.5)], (), 1, None,
+          f"{duct_q:,.0f} kg/s: down into a covered trench 1 m deep, north past the hall's west end, east along y 18.4 under the slag rail and the duct, up a riser to the jacket's underside"),
+        L("jacket return", w_duct, ("jacket:off-gas", "C:duct-in"), [(2.0, 18.4, 13.5), (2.0, 18.4, 11.0), (2.0, 19.4, 11.0), (2.0, 19.4, -1.0), (-26.0, 19.4, -1.0), (-26.0, -0.9, -1.0), (-26.0, -0.9, 0.75), None], (), 1, None, "beside the flow in the trench, on its left all the way"),
     ]
     links[2]["heat"] = r(duct_heat)
     links += [
         link("rail", "ladle rail", (-10.5, 6.0, 0.0), (33.0, 6.0, 0.0), A36, 2 * 60.0, None, "two 60 kg/m rails (heads 72 mm wide) at 3 m gauge between the heads' inner faces, as railways measure it; set in the floor, their running plane the floor (z 0), with flangeways 40 mm deep beside the heads, under the tap, out of the hall's east door to the ladle station; from and to are the rails' ends, with buffers: the car's centre stops between x -7.5 (under the tap) and 30"),
         link("rail", "slag rail", (-16.5, 0.5, 0.0), (-16.5, 23.25, 0.0), A36, 2 * 60.0, None, "two 60 kg/m rails at 2.5 m gauge between the heads' inner faces, set in the floor with 40 mm flangeways, running plane the floor; under the slag door, out of the north door; from and to are the rails' ends, with buffers, the south end 0.5 m clear of the vault's wall: the car's centre stops between y 2.75 and 21, under the spout at y 6"),
-        link("road", "dust road", (-20.0, 39.5, 0.0), (30.0, 39.5, 0.0), CONC, 4.5 * 0.25 * RHO["concrete"], None, "a forklift lane 4.5 m wide, concrete 0.25 m, along the baghouse's north side, where its hoppers' dust bins come out; the bin belt crosses it 13.6 m up", width=4.5),
+        link("road", "dust road", (-20.0, 48.5, 0.0), (30.0, 48.5, 0.0), CONC, 4.5 * 0.25 * RHO["concrete"], None, "a forklift lane 4.5 m wide, concrete 0.25 m, north of the baghouse, where its hoppers' dust bins come out, and past the bin; the bin belt crosses it 15.5 m up", width=4.5),
     ]
     mobile = [{"unit": "unit.ladle-car-80t", "rides": "ladle rail", "at": [-7.5, 6.0, 0.0]},
               {"unit": "unit.slag-pot-car", "rides": "slag rail", "at": [-16.5, 6.0, 0.0]}]
@@ -756,7 +755,7 @@ def arc_furnace_air(us, recs):
         "site": {"atmosphere": "air", "gravity": [8.0, 11.0]},
         "physical": {"length": r(max(xs) - min(xs)), "width": r(max(ys) - min(ys)), "height": z1, "mass": r(total)},
         "bays": bays, "ports": edge, "mobile": mobile, "links": links,
-        "frame": {"box": list(box), "cell": cell, "shape": f"Walls one cell thick, 24 m tall; a roof one cell deep over a {x1_in:.0f} x 24 m floor; doors 6 m tall for the ladle rail (east, 6 m wide) and the slag rail (north, 9 m wide); framed service openings in the north wall for the sponge iron belt (6 x 6 m) and the off-gas duct (9 x 6 m), in the west wall low for the hall loop's pipes (6 x 3 m) and in the south wall for the 33 kV cable (6 x 3 m), the lattice's cells there left out.",
+        "frame": {"box": list(box), "cell": cell, "shape": f"Walls one cell thick, 24 m tall; a roof one cell deep over a {x1_in:.0f} x 24 m floor; doors 6 m tall for the ladle rail (east, 6 m wide) and the slag rail (north, 9 m wide); one framed service opening in the north wall for the sponge iron belt and the off-gas duct (15 x 9 m), in the west wall low for the hall loop's pipes (6 x 3 m) and in the south wall for the 33 kV cable (6 x 3 m), the lattice's cells there left out.",
                   "openings": [list(d) for d in doors], "members": members,
                   "cladding": {"item": "stock.al6061-sh-2", "area": r(clad_area), "mass": r(clad)},
                   "carries": ["unit.hall-crane-20t"], "mass": r(frame_mass), "sized": sized},
@@ -3284,13 +3283,13 @@ def world(bay, local):
     return (round(bay["at"][0] + x * math.cos(a) - y * math.sin(a), 3), round(bay["at"][1] + x * math.sin(a) + y * math.cos(a), 3), round(bay["at"][2] + zz, 3))
 
 
-def end_offset(conn_kind, run_rec, which):
+def end_offset(conn_kind, run_rec, which, facing=(0.0, 0.0, 1.0)):
     """Where a run's end stands from its port: a belt's head 2 m over the hopper it drops into; a closed conveyor's
     tail under the chute it takes from, by half its casing."""
     if conn_kind == "belt-transfer" and which == 1:
         return (0.0, 0.0, 3.0)
-    if conn_kind == "hood":             # (the duct's fixed mouth stands the gap above the moving outlet)
-        return (0.0, 0.0, kit.GAP_HOOD)
+    if conn_kind == "hood":             # (the duct's fixed mouth stands the gap out from the moving outlet, the way it faces)
+        return tuple(kit.GAP_HOOD * f for f in facing)
     if conn_kind == "chute":            # (a closed conveyor's tail takes in on top, its head lets out underneath)
         return (0.0, 0.0, -run_rec["outside"][1] / 2 if which == 0 else run_rec["outside"][1] / 2)
     return (0.0, 0.0, 0.0)
@@ -3317,7 +3316,9 @@ def kit_link(name, run, ends, path, bays, recs, edge, taps=(), count=1, power=No
             bid, pid = e.split(":")
             b = by_id[bid]
             pp = next(q for q in recs[b["unit"].split(".", 1)[1]]["ports"] if q["id"] == pid)
-            off = end_offset(kit._recs[pp["connector"]]["kind"], rr, 1 if reversible else which)
+            fa = math.radians(b.get("turn", 0.0))
+            fw = (pp["facing"][0] * math.cos(fa) - pp["facing"][1] * math.sin(fa), pp["facing"][0] * math.sin(fa) + pp["facing"][1] * math.cos(fa), pp["facing"][2])
+            off = end_offset(kit._recs[pp["connector"]]["kind"], rr, 1 if reversible else which, fw)
             w = world(b, pp["at"])
             at = (w[0] + off[0], w[1] + off[1], round(w[2] + off[2], 3))
             n_port += 1

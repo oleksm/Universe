@@ -5,7 +5,7 @@ stands_for: module.arc-furnace
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 88.0, width: 105.0, height: 27.08, mass: 4816000.0}
+physical: {length: 88.0, width: 115.0, height: 27.08, mass: 4815000.0}
 bays:
 - id: V
   mount: plant-mount.bay-s2
@@ -20,8 +20,8 @@ bays:
 - id: F
   mount: plant-mount.bay-s1
   unit: unit.dri-bin-200t
-  at: [-12.0, 33.0, 0.0]
-  note: outside, north, far enough for the belt to climb at a cleated belt's slope
+  at: [-12.0, 41.0, 0.0]
+  note: outside, north, far enough for the belt to climb at a cleated belt's slope to its head 3 m over the feed hole
 - id: B
   mount: plant-mount.bay-s3
   unit: unit.baghouse-800k
@@ -39,7 +39,7 @@ ports:
   item: good.sponge-iron
   rate: 29.33
   connector: connector.belt-transfer-800
-  at: [-12.0, 75.0, 2.0]
+  at: [-12.0, 85.0, 2.0]
   facing: [0.0, -1.0, 0.0]
   note: onto the bin belt's tail, from the shaft furnace or the stockpile
 - id: hv-in
@@ -57,7 +57,7 @@ ports:
   power: 15000.0
   voltage: 400
   connector: connector.termination-400v-16mm2
-  at: [-7.5, 33.0, 1.0]
+  at: [-7.5, 41.0, 1.0]
   facing: [-1.0, 0.0, 0.0]
 - id: mv-baghouse
   flow: in
@@ -97,41 +97,40 @@ links:
   name: sponge iron belt
   run: run.belt-800
   ends: ['F:dri-out', 'V:dri-in']
-  from: [-12.0, 30.0, 5.6]
-  to: [-12.0, 7.8, 13.7]
-  length: 23.63
+  from: [-12.0, 38.0, 5.6]
+  to: [-12.0, 7.8, 16.3]
+  length: 32.04
   item: material.silicone-rubber
-  mass: 13850.0
-  power: 24660.0
+  mass: 14930.0
+  power: 26160.0
   fittings: {elbows: 0, tees: 0, supports: 2, connectors: 2}
-  note: a chevron-cleated belt in a covered gallery from the bin's feeder south through the north wall's opening, rising 20 degrees (steeper than plain belts carry sponge iron, which rolls back above about 15), its head through a hood into the fifth hole's mouth
+  note: a chevron-cleated belt in a covered gallery from the bin's feeder south through the north wall's opening, rising 20 degrees (steeper than plain belts carry sponge iron, which rolls back above about 15), its head 3 m over the fifth hole, its transfer chute telescoping
 - kind: conveyor
   name: bin belt
   run: run.belt-800
   ends: ['edge:sponge-iron-in', 'F:dri-in-belt']
-  from: [-12.0, 75.0, 2.0]
-  to: [-12.0, 33.0, 18.3]
-  length: 45.05
+  from: [-12.0, 85.0, 2.0]
+  to: [-12.0, 41.0, 18.3]
+  length: 46.92
   item: material.silicone-rubber
-  mass: 17260.0
+  mass: 17460.0
   power: 29380.0
   fittings: {elbows: 0, tees: 0, supports: 3, connectors: 2}
-  note: cleated, in a covered gallery, from the stockpile's reclaim south, rising 21 degrees to its head 3 m over the bin's roof
+  note: cleated, in a covered gallery, from the stockpile's reclaim south, rising 20 degrees to its head 3 m over the bin's roof
 - kind: duct
   name: off-gas
   run: run.jacketed-duct-dn2000
   ends: ['V:offgas-out', 'B:gas-in']
-  from: [-10.0, 7.5, 13.65]
+  from: [-9.0, 10.65, 13.5]
   to: [6.0, 24.0, 15.0]
-  length: 27.56
+  length: 28.55
   item: material.structural-steel-a36
-  mass: 44740.0
+  mass: 44870.0
   via:
-  - [-10.0, 7.5, 16.0]
-  - [-3.0, 15.0, 16.0]
-  - [6.0, 19.0, 16.0]
-  fittings: {elbows: 3, tees: 0, supports: 4, connectors: 2}
-  note: '2 m, water-jacketed for 7.2 MW (about 10% of the arc''s power, from memory): from its catch hood 0.15 m over the furnace''s elbow (the gap draws in the air that burns the CO, and lets the furnace tilt), up to 16 m, out through the north wall''s opening and down to the baghouse''s inlet'
+  - [-9.0, 18.4, 13.5]
+  - [6.0, 18.4, 13.5]
+  fittings: {elbows: 2, tees: 0, supports: 4, connectors: 2}
+  note: '2 m, water-jacketed for 7.2 MW (about 10% of the arc''s power, from memory): from its sliding sleeve 0.15 m beyond the furnace''s elbow (the gap draws in the air that burns the CO; drawn back 1 m to tilt), north out through the north wall''s opening, east along y 18.4 and up to the baghouse''s inlet'
   heat: 7200000.0
 - kind: busbar
   name: secondary bus
@@ -168,8 +167,8 @@ links:
   name: bin supply
   run: run.cable-400v-16mm2
   ends: ['edge:lv-bin', 'F:power-in']
-  from: [-7.5, 33.0, 1.0]
-  to: [-9.0, 33.0, 1.0]
+  from: [-7.5, 41.0, 1.0]
+  to: [-9.0, 41.0, 1.0]
   length: 1.5
   item: material.copper
   mass: 31.25
@@ -271,32 +270,34 @@ links:
   run: run.pipe-dn300-pn10
   ends: ['C:duct-out', 'jacket:off-gas']
   from: [-27.0, -2.1, 0.75]
-  to: [3.75, 18.0, 16.0]
-  length: 69.6
+  to: [0.0, 18.4, 13.5]
+  length: 63.75
   item: material.structural-steel-a36
-  mass: 3312.0
+  mass: 3041.0
   via:
   - [-25.2, -2.1, 0.75]
   - [-25.2, -2.1, -1.0]
-  - [-25.2, 18.0, -1.0]
-  - [3.75, 18.0, -1.0]
+  - [-25.2, 18.4, -1.0]
+  - [0.0, 18.4, -1.0]
   fittings: {elbows: 4, tees: 1, supports: 11, connectors: 1}
-  note: '172 kg/s: down into a covered trench 1 m deep, north past the hall''s west end, east along y 18 under the slag rail, up a riser to the jacket''s underside'
+  note: '172 kg/s: down into a covered trench 1 m deep, north past the hall''s west end, east along y 18.4 under the slag rail and the duct, up a riser to the jacket''s underside'
 - kind: pipe
   name: jacket return
   run: run.pipe-dn300-pn10
   ends: ['jacket:off-gas', 'C:duct-in']
-  from: [5.55, 18.8, 16.0]
+  from: [2.0, 18.4, 13.5]
   to: [-27.0, -0.9, 0.75]
-  length: 71.0
+  length: 66.55
   item: material.structural-steel-a36
-  mass: 3365.0
+  mass: 3670.0
   via:
-  - [5.55, 18.8, -1.0]
-  - [-26.0, 18.8, -1.0]
+  - [2.0, 18.4, 11.0]
+  - [2.0, 19.4, 11.0]
+  - [2.0, 19.4, -1.0]
+  - [-26.0, 19.4, -1.0]
   - [-26.0, -0.9, -1.0]
   - [-26.0, -0.9, 0.75]
-  fittings: {elbows: 4, tees: 1, supports: 11, connectors: 1}
+  fittings: {elbows: 6, tees: 1, supports: 14, connectors: 1}
   note: beside the flow in the trench, on its left all the way
 - kind: rail
   name: ladle rail
@@ -316,34 +317,33 @@ links:
   note: 'two 60 kg/m rails at 2.5 m gauge between the heads'' inner faces, set in the floor with 40 mm flangeways, running plane the floor; under the slag door, out of the north door; from and to are the rails'' ends, with buffers, the south end 0.5 m clear of the vault''s wall: the car''s centre stops between y 2.75 and 21, under the spout at y 6'
 - kind: road
   name: dust road
-  from: [-20.0, 39.5, 0.0]
-  to: [30.0, 39.5, 0.0]
+  from: [-20.0, 48.5, 0.0]
+  to: [30.0, 48.5, 0.0]
   length: 50.0
   item: good.concrete
   mass: 135000.0
   width: 4.5
-  note: a forklift lane 4.5 m wide, concrete 0.25 m, along the baghouse's north side, where its hoppers' dust bins come out; the bin belt crosses it 13.6 m up
+  note: a forklift lane 4.5 m wide, concrete 0.25 m, north of the baghouse, where its hoppers' dust bins come out, and past the bin; the bin belt crosses it 15.5 m up
 frame:
   box: [-24.0, -15.0, 0.0, 9.0, 15.0, 27.0]
   cell: 3.0
-  shape: Walls one cell thick, 24 m tall; a roof one cell deep over a 27 x 24 m floor; doors 6 m tall for the ladle rail (east, 6 m wide) and the slag rail (north, 9 m wide); framed service openings in the north wall for the sponge iron belt (6 x 6 m) and the off-gas duct (9 x 6 m), in the west wall low for the hall loop's pipes (6 x 3 m) and in the south wall for the 33 kV cable (6 x 3 m), the lattice's cells there left out.
+  shape: Walls one cell thick, 24 m tall; a roof one cell deep over a 27 x 24 m floor; doors 6 m tall for the ladle rail (east, 6 m wide) and the slag rail (north, 9 m wide); one framed service opening in the north wall for the sponge iron belt and the off-gas duct (15 x 9 m), in the west wall low for the hall loop's pipes (6 x 3 m) and in the south wall for the 33 kV cable (6 x 3 m), the lattice's cells there left out.
   openings:
   - [6.0, 3.0, 0.0, 9.0, 9.0, 6.0]
   - [-21.0, 12.0, 0.0, -12.0, 15.0, 6.0]
-  - [-15.0, 12.0, 9.0, -9.0, 15.0, 15.0]
-  - [-9.0, 12.0, 12.0, 0.0, 15.0, 18.0]
+  - [-15.0, 12.0, 9.0, 0.0, 15.0, 18.0]
   - [-24.0, -9.0, 0.0, -21.0, -3.0, 3.0]
   - [-15.0, -15.0, 6.0, -9.0, -12.0, 9.0]
   members:
-  - {item: stock.st4340-tb-120x5-s3000, count: 1560, where: wall}
-  - {item: stock.st4340-tb-120x5-d3000, count: 1174, where: wall}
+  - {item: stock.st4340-tb-120x5-s3000, count: 1535, where: wall}
+  - {item: stock.st4340-tb-120x5-d3000, count: 1154, where: wall}
   - {item: stock.st4340-tb-100x5-s3000, count: 500, where: roof}
   - {item: stock.st4340-tb-100x5-d3000, count: 423, where: roof}
-  - {item: stock.st4340-node-160b, count: 852, where: nodes}
+  - {item: stock.st4340-node-160b, count: 842, where: nodes}
   - {item: stock.st4340-box-400x400x25, count: 4, where: 'crane runways, two a side, 13.5 m lengths, along x on the inside of the long walls: their rail plane 20.5 m up at y -11.4 and +11.4, 3.5 m under the roof''s bottom chord'}
-  cladding: {item: stock.al6061-sh-2, area: 4310.0, mass: 23270.0}
+  cladding: {item: stock.al6061-sh-2, area: 4265.0, mass: 23030.0}
   carries: [unit.hall-crane-20t]
-  mass: 227800.0
+  mass: 225100.0
   sized: 'At 1 g: roof 1249 Pa (2 mm aluminium, the frame about 20 kg/m2, 1 kPa of snow and wind, the last invented) over a 24 m span in 3 m deep strips puts 90 kN in a chord; a st4340-tb-100x5 strut takes 380 kN over 3 m. A crane wheel at the runway''s end puts 187 kN on a wall node, with the roof''s share 232 kN; a st4340-tb-120x5 strut takes 673 kN. Both with half again to spare. Wind on the walls and the footings'' loads not yet checked.'
 ground:
 - {what: Furnace platform, item: good.concrete, volume: 613.6, note: 'x -20 to -6, y 0 to 12, top 5 m, on a 1 m slab; a ladle slot open above between the rockers (x -11 to -6, y 3.5 to 8.5, the tap over it); a slag tunnel along y (x -19 to -14, 4.4 m clear under a 0.6 m deck) with a 3 x 3 m well in the deck (x -18.5 to -15.5, y 4.5 to 7.5) under the spout', mass: 1473000.0}
@@ -355,7 +355,7 @@ ground:
 - {what: Rail beds, item: good.concrete, volume: 8.27, note: 'under the ladle and slag rails, with their 40 mm flangeways; measured on blender''s model', mass: 19850.0}
 - {what: Pipe trench, item: good.concrete, volume: 23.03, note: 'floor and covers of the 1 m trench the jacket''s water pair runs in, as measured on blender''s model before the runs were re-laid (round the hall''s west end and along y 18), to measure again', mass: 55270.0}
 - {what: Link supports, item: good.concrete, volume: 8.65, note: 'footings for the belts'' trestles, the duct''s supports, the risers and the pipes'' plinths; as measured on blender''s model before the runs were re-laid, to measure again', mass: 20760.0}
-totals: {rate: 26.6666666666667, power: 74320000.0, heat: 18550000.0, water: 10.2, mass: 4816000.0, against_module: 'module.arc-furnace: one box 100 x 40 x 35 m, 72 MW, its parts 930 t. This layout: the same rate; 74.3 MW (the module left out the transformer''s losses, the fans and pumps); 10.2 kg/s of water the module did not name (the tower''s evaporation); 1400 t of plant and frame and 3416 t of concrete.'}
+totals: {rate: 26.6666666666667, power: 74320000.0, heat: 18550000.0, water: 10.2, mass: 4815000.0, against_module: 'module.arc-furnace: one box 100 x 40 x 35 m, 72 MW, its parts 930 t. This layout: the same rate; 74.3 MW (the module left out the transformer''s losses, the fans and pumps); 10.2 kg/s of water the module did not name (the tower''s evaporation); 1399 t of plant and frame and 3416 t of concrete.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}
@@ -370,7 +370,7 @@ basis:
 - of: [frame.members, frame.mass, frame.cladding]
   tier: derived
   review: true
-  note: 'Counted from the lattice (tools/standards/plants.py): every cell edge a straight strut, every square face one diagonal, a node at every corner; masses from the strut and node records. Cladding: the walls and roof less the openings (4176 m2; blender''s hall measured 4,222 m2), with 134 m2 of returns and flashings as measured on blender''s hall (candidate v01, 2026-10-14).'
+  note: 'Counted from the lattice (tools/standards/plants.py): every cell edge a straight strut, every square face one diagonal, a node at every corner; masses from the strut and node records. Cladding: the walls and roof less the openings (4131 m2; blender''s hall measured 4,222 m2), with 134 m2 of returns and flashings as measured on blender''s hall (candidate v01, 2026-10-14).'
 - of: [ground]
   tier: derived
   review: true

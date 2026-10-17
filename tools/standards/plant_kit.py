@@ -154,14 +154,15 @@ def hood(dn):
     water = math.pi * D * h * 0.05 * 1000.0
     built = [_part("Hood ring", A36, ring, f"a double-walled ring {D:.2f} m across and {h:g} m deep, 10 mm, its water jacket 50 mm, and its top plate"),
              _part("Jacket water", "good.water", HOOD_WATER_MEASURED.get(dn, water), "in the ring's jacket and the plenum in its top 100 mm, open to the duct's jacket: no feed of its own" + (", measured on blender's model" if dn in HOOD_WATER_MEASURED else ""))]
-    _recs[key] = {"identity": {"key": key, "name": f"Catch hood DN {dn * 1000:.0f}", "description": f"The fixed, water-cooled mouth of a {dn * 1000:.0f} mm duct over a moving outlet, {GAP_HOOD:g} m clear of it: air drawn in through the gap burns the gas's CO, and the outlet (a tilting furnace's elbow) moves free. The port it serves is the outlet's mouth; the duct's end stands {GAP_HOOD:g} m above it."},
+    _recs[key] = {"identity": {"key": key, "name": f"Catch hood DN {dn * 1000:.0f}", "description": f"The water-cooled mouth of a {dn * 1000:.0f} mm duct facing a moving outlet's, {GAP_HOOD:g} m clear of it: air drawn in through the gap burns the gas's CO. It is a sleeve on the duct's end, drawn back {HOOD_STROKE:g} m along its axis before the outlet moves (a furnace tilting to tap or deslag, its arc off), the outlet's mouth then sliding across its plane. The port it serves is the outlet's mouth; the duct's end stands {GAP_HOOD:g} m from it, the way it faces."},
                   "kind": "hood", "size": dn, "rating": {"pressure": 0.0, "temperature": 1873.0}, "sealing": "single",
                   "physical": {"length": r(D, 3), "width": r(D, 3), "height": h, "mass": r(sum(b["mass"] for b in built))}, "built_of": built,
                   "basis": [{"of": ["built_of", "physical"], "tier": "invented", "review": True, "note": "Sizes from memory of arc furnace off-gas hoods; the gap from memory, adjustable on real plant."}]}
     return key
 
 
-GAP_HOOD = 0.15                  # m between a moving outlet's mouth and the fixed hood over it (from memory of arc furnace ducts)
+GAP_HOOD = 0.15                  # m between a moving outlet's mouth and the hood facing it (from memory of arc furnace ducts)
+HOOD_STROKE = 1.0                # m the hood's sleeve is drawn back before the outlet moves (invented)
 
 
 FLANGE_MEASURED = {"connector.flange-dn3000-pn1-double": (333.18, "two weld-neck rings 3.196 m across, 20 mm thick, their necks tapering over 20 mm from 16 mm to the gallery's 4 mm wall at 3 m outside, 2.992 m clear; measured on blender's model v1")}

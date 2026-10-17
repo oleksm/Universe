@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
 identity: {key: unit.eaf-vessel-80t, name: 'Arc furnace vessel, 80 t', description: 'An AC arc furnace that taps 80 t: a refractory hearth 6.6 m across, water-cooled upper shell and roof, three graphite electrodes on masts, a tilting cradle and an eccentric bottom tap. Fed sponge iron through a fifth hole in the roof. Stands on a platform 5 m up so a ladle car runs under its tap. Its cooling water comes by two flexible hoses of its own (it tilts), 300 mm bore, flow and return, from its ports at local (-3.8, 3.2, 2.6) and (-3.8, 3.6, 2.6), clear of the tilt pin and its actuator, down to a fixed manifold on the deck whose two ports face up at local (-3.8, 4.9, 0.5) and (-3.8, 5.3, 0.5). Its box is not centred across: the arms'' tails and the secondary cables reach 6.25 m behind the furnace''s axis (toward the transformer), its water hoses'' couplings at the deck manifold 5.49 m in front (the manifold is the unit''s: two barrels standing on the deck, each taking its hose from the side); 14
-    m tall with the masts at rest. Its ports (SFO 25): sponge iron in through the fifth hole''s mouth, local (0, 1.8, 8.3), a belt''s head dropping into it; the off-gas elbow''s mouth on the fourth hole at (2, 1.5, 8.5), facing up, a fixed catch hood 0.15 m over it (the gap draws in the air that burns the CO, and lets the furnace tilt); the secondary bus''s joint at the flexible cables'' fixed ends, (0, -6.2, 2.3), facing -y; the deck manifold''s water flanges, DN 400 facing up, in at (-4.2, 4.95, 0.5) and out at (-3.4, 4.95, 0.5), in front of the tilting cradle''s deck (v4, as the sealed furnace''s).'}
+    m tall with the masts at rest. Its ports (SFO 25): sponge iron in through the fifth hole''s mouth, local (0, 1.8, 8.3), a belt''s transfer chute 3 m over it that telescopes up to z 10.8 before the furnace tilts; the off-gas elbow from the fourth hole turns horizontal and runs north past the roof''s edge to a vertical mouth at (3, 4.5, 8.5) facing +y, the duct''s water-cooled sleeve 0.15 m beyond it (the gap draws in the air that burns the CO), drawn back 1 m to the plane y 5.65 before the furnace tilts: a tilt about y slides the mouth across the sleeve''s, never into it (the arc is off to tap and deslag); the secondary bus''s joint at the flexible cables'' fixed ends, (0, -6.2, 2.3), facing -y; the deck manifold''s water flanges, DN 400 facing up, in at (-4.2, 4.95, 0.5) and out at (-3.4, 4.95, 0.5), in front of the tilting cradle''s deck (v4, as the sealed furnace''s).'}
 size_class: 2
 fits: plant-mount.bay-s2
 physical: {length: 12.0, width: 11.74, height: 14.0, mass: 306900.0}
@@ -42,17 +42,17 @@ ports:
   medium: bulk
   item: good.sponge-iron
   rate: 29.33
-  connector: connector.chute-dn800
+  connector: connector.belt-transfer-800
   at: [0.0, 1.8, 8.3]
   facing: [0.0, 0.0, 1.0]
-  note: the fifth hole's mouth; a belt's head 0.4 m over it
+  note: the fifth hole's mouth; the belt's head 3 m over it, its chute telescoping up 2.5 m before the furnace tilts
 - id: offgas-out
   flow: out
   medium: gas
   connector: connector.hood-dn2000
-  at: [2.0, 1.5, 8.5]
-  facing: [0.0, 0.0, 1.0]
-  note: the elbow's mouth; it moves as the furnace tilts
+  at: [3.0, 4.5, 8.5]
+  facing: [0.0, 1.0, 0.0]
+  note: the elbow's vertical mouth past the roof's edge; it moves as the furnace tilts, across the sleeve's mouth
 - id: power-in
   flow: in
   medium: power

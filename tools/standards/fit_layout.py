@@ -45,11 +45,11 @@ def turn_vec(bay, v):
     return np.array([v[0] * math.cos(a) - v[1] * math.sin(a), v[0] * math.sin(a) + v[1] * math.cos(a), v[2]])
 
 
-def end_offset(conn_kind, run, which):
+def end_offset(conn_kind, run, which, face=(0.0, 0.0, 1.0)):
     if conn_kind == "belt-transfer" and which == 1:
         return np.array([0.0, 0.0, 3.0])
     if conn_kind == "hood":
-        return np.array([0.0, 0.0, HOOD_GAP])
+        return HOOD_GAP * np.asarray(face, float)
     if conn_kind == "chute":
         return np.array([0.0, 0.0, -run["outside"][1] / 2 if which == 0 else run["outside"][1] / 2])
     return np.zeros(3)
@@ -180,7 +180,7 @@ def check(lay, units, runs, conns):
                 pos, face, flow = world(b, p["at"]), turn_vec(b, p["facing"]), p["flow"]
             used.add(e)
             ck = conns[p["connector"]]["kind"] if p["connector"] in conns else None
-            pos = pos + end_offset(ck, run, 1 if l.get("reversible") else which)
+            pos = pos + end_offset(ck, run, 1 if l.get("reversible") else which, face)
             if np.linalg.norm(pos - at) > 0.02:
                 faults.append(f"{l['name']}: its {'from' if which == 0 else 'to'} end {at.tolist()} is not at {e} ({pos.round(3).tolist()})")
             if p["connector"] != run["connector"] and not (run["kind"] == "belt" and ck == "chute") and not (run["kind"] == "jacketed-duct" and ck == "hood"):     # (a chute drops onto a belt's tail, into its skirt; a belt's head drops through its hood into a chute's mouth)
