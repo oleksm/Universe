@@ -4348,7 +4348,7 @@
 - { record: template.flange, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "df7d790e5b79a704" }
 - { record: template.flange-double, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "1587eb01caf04022" }
 - { record: template.flat-face, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "1b798aa986e5491c" }
-- { record: template.floor, at: "2026-10-17T21:45:11Z", status: "", summary: "first tracked", sha: "1c9954fc14360ec6" }
+- { record: template.floor, at: "2026-10-17T22:52:55Z", status: "", summary: "changed: visual", sha: "c9ec449bd0490100" }
 - { record: template.hood, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "2bd0f63963dc39e7" }
 - { record: template.hose, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "76521a9d59aafaae" }
 - { record: template.hose-hydraulic, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "1bdc07615e11b940" }
