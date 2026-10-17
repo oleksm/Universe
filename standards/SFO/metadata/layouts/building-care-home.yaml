@@ -15,7 +15,7 @@ physical:
   length: 48.0
   width: 18.0
   height: 6.15
-  mass: 653956.9
+  mass: 653916.4
 bays: []
 rooms:
 - id: WAR1
@@ -364,7 +364,7 @@ ground:
   mass: 114048.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 653956.9
+  mass: 653916.4
   against_module: 'building.care-home (deprecated): one box 50 x 20 x 8 m of 2,206 t, from the average of 538 concrete buildings. This layout: 48 x 18 x 6 m, 654 t (23 t frame, 181 t panels, 25 t furniture, 425 t ground), for 262 people
     served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:

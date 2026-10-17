@@ -17,12 +17,6 @@ built_of:
 - what: Seat and lid
   item: material.polyethylene-uhmw
   mass: 1.3
-visual:
-  format: "freefall-model/1"
-  path: "models/furniture-wc/v1"
-  manifest_sha256: "b858b8b7ec1dce99c3b036b9cd432888536adbbb8d6203785d9e60b2a00b390c"
-  version: 1
-  triangles: 3112
 basis:
 - of:
   - built_of
@@ -30,3 +24,9 @@ basis:
   tier: derived
   review: true
   note: 'From blender''s model (2026-10-17): hollow bowl and pedestal, 8 mm cistern, 10 mm lid.'
+visual:
+  format: freefall-model/1
+  path: models/furniture-wc/v1
+  manifest_sha256: b858b8b7ec1dce99c3b036b9cd432888536adbbb8d6203785d9e60b2a00b390c
+  version: 1
+  triangles: 3112

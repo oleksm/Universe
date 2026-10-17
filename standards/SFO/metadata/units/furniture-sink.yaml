@@ -9,15 +9,15 @@ physical:
   length: 1.2
   width: 0.7
   height: 0.9
-  mass: 45.0
+  mass: 31.5
 built_of:
 - what: Sink and stand
   item: material.stainless-steel-304
-  mass: 45.0
+  mass: 31.5
 basis:
 - of:
   - built_of
   - physical
-  tier: invented
+  tier: derived
   review: true
-  note: From memory of such furniture; to be sourced.
+  note: 'From blender''s model (2026-10-17): two 1.2 mm bowls and top, a 30 x 30 x 1.5 mm stand.'

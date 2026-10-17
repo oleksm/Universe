@@ -33,7 +33,7 @@ FURNITURE = {  # name: (title, description, (length, width, height), [(what, ite
     "rack": ("Pallet rack bay", "One bay of pallet racking, 2.7 m long, three beam levels.", (2.7, 1.1, 4.5), [("Uprights and beams", STEEL, 210.0)], None),
     "range": ("Range", "A commercial cooking range with its oven.", (1.2, 0.9, 0.9), [("Range and oven", SS, 250.0)], None),
     "kitchen-bench": ("Kitchen bench", "A stainless kitchen bench with a shelf under it.", (1.8, 0.7, 0.9), [("Bench", SS, 60.0)], None),
-    "sink": ("Sink unit", "A double stainless sink on its stand.", (1.2, 0.7, 0.9), [("Sink and stand", SS, 45.0)], None),
+    "sink": ("Sink unit", "A double stainless sink on its stand.", (1.2, 0.7, 0.9), [("Sink and stand", SS, 31.5)], "blender's model (2026-10-17): two 1.2 mm bowls and top, a 30 x 30 x 1.5 mm stand"),
     "hood": ("Kitchen hood", "An extract hood over a cooking line.", (3.0, 1.2, 0.6), [("Hood and filters", SS, 120.0)], None),
     "fridge": ("Fridge", "An upright commercial fridge.", (0.7, 0.8, 2.0), [("Cabinet", SS, 110.0)], None),
     "wc": ("Toilet", "A toilet pan with its cistern and seat.", (0.4, 0.7, 0.8), [("Pan and cistern", SILICA, 34.7), ("Seat and lid", PE, 1.3)], "blender's model (2026-10-17): hollow bowl and pedestal, 8 mm cistern, 10 mm lid"),

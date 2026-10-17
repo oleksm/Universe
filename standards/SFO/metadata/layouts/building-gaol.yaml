@@ -14,7 +14,7 @@ physical:
   length: 60.0
   width: 30.0
   height: 6.15
-  mass: 1325298.9
+  mass: 1325231.4
 bays: []
 rooms:
 - id: CEL1
@@ -673,7 +673,7 @@ ground:
   mass: 155520.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 1325298.9
+  mass: 1325231.4
   against_module: 'building.gaol (deprecated): one box 60 x 30 x 8 m of 3,971 t, from the average of 538 concrete buildings. This layout: 60 x 30 x 6 m, 1,325 t (64 t frame, 361 t panels, 97 t furniture, 804 t ground), for 280 people
     served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:
