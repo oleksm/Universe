@@ -125,8 +125,14 @@ TEMPLATES = {"wall-insulated": "Insulated wall panels", "wall-glazed": "Glazed w
              "floor": "Floor panels", "roof": "Roof panels", "stair": "Stairs"}
 
 
+KEEP = ("visual", "model_requests")      # (what the model installer and the asset tools write into a record: kept across a rerun)
+
+
 def write(folder, slug, d, schema):
     path = os.path.join(M, folder, slug + ".yaml")
+    if os.path.exists(path):
+        old = yaml.safe_load(open(path, encoding="utf-8")) or {}
+        d = dict(d, **{k: old[k] for k in KEEP if k in old and k not in d})
     os.makedirs(os.path.dirname(path), exist_ok=True)
     text = f"# yaml-language-server: $schema=../../schema/{schema}.schema.yaml\n" + HEAD + yaml.safe_dump(d, sort_keys=False, allow_unicode=True, width=230)
     if not os.path.exists(path) or open(path).read() != text:

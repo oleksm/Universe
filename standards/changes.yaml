@@ -4313,8 +4313,8 @@
 - { record: template.busbar, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "ebc39150ae6f28bf" }
 - { record: template.cable, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "882fe2318fed000e" }
 - { record: template.cable-flexible, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "e0eb15fead7d9f0d" }
-- { record: template.cable-reel, at: "2026-10-17T22:00:21Z", status: "", summary: "changed: visual", sha: "3fb6611df1a353c1" }
-- { record: template.camlock, at: "2026-10-17T21:52:53Z", status: "", summary: "changed: visual", sha: "f100a1c872c33703" }
+- { record: template.cable-reel, at: "2026-10-17T22:28:14Z", status: "", summary: "changed", sha: "ef1cf9b4de2f7b1b" }
+- { record: template.camlock, at: "2026-10-17T22:28:14Z", status: "", summary: "changed: visual", sha: "2f9b6f2f5893ebf8" }
 - { record: template.chute, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "e667824e0f7b7e6c" }
 - { record: template.clamp-coupling, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "56041bc040721ee0" }
 - { record: template.collector, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "13c03b72d1e3930c" }
@@ -4383,9 +4383,9 @@
 - { record: unit.electrolyser-block-20mw, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "7610f0ca7cdcf0b0" }
 - { record: unit.electrolyser-block-20mw-10bar, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "a1140c4fec571d83" }
 - { record: unit.filter-press-2, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "c3b8f03bc662d6ab" }
-- { record: unit.fitout-cell, at: "2026-10-17T22:18:53Z", status: draft, summary: "changed: visual", sha: "4b4ea5f4227a2821" }
-- { record: unit.fitout-classroom, at: "2026-10-17T22:18:53Z", status: draft, summary: "changed: visual", sha: "eda12dd25a9539e0" }
-- { record: unit.fitout-counter, at: "2026-10-17T22:23:33Z", status: draft, summary: "changed: visual", sha: "4a15a866c9e8c97e" }
+- { record: unit.fitout-cell, at: "2026-10-17T22:28:14Z", status: draft, summary: "changed: visual", sha: "91810022fb49f599" }
+- { record: unit.fitout-classroom, at: "2026-10-17T22:28:14Z", status: draft, summary: "changed: visual", sha: "044b607bd19296dc" }
+- { record: unit.fitout-counter, at: "2026-10-17T22:28:14Z", status: draft, summary: "changed", sha: "e65d3ae0a56c5aba" }
 - { record: unit.fitout-court, at: "2026-10-17T22:04:30Z", status: draft, summary: "changed: basis", sha: "e97457c55819df9d" }
 - { record: unit.fitout-dining, at: "2026-10-17T22:04:30Z", status: draft, summary: "changed: basis", sha: "fccdca1658435a77" }
 - { record: unit.fitout-dorm, at: "2026-10-17T22:04:30Z", status: draft, summary: "changed: basis", sha: "395d8b4fd7f181d6" }

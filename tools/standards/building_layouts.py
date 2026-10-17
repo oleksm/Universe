@@ -292,8 +292,14 @@ def layout(slug, b):
     return rec
 
 
+KEEP = ("visual", "model_requests")      # (what the model installer and the asset tools write into a record: kept across a rerun)
+
+
 def write(folder, slug, d, schema):
     path = os.path.join(M, folder, slug + ".yaml")
+    if os.path.exists(path):
+        old = yaml.safe_load(open(path, encoding="utf-8")) or {}
+        d = dict(d, **{k: old[k] for k in KEEP if k in old and k not in d})
     text = f"# yaml-language-server: $schema=../../schema/{schema}.schema.yaml\n" + HEAD + yaml.safe_dump(d, sort_keys=False, allow_unicode=True, width=230)
     if not os.path.exists(path) or open(path).read() != text:
         open(path, "w").write(text)

@@ -10,15 +10,15 @@ scales_by:
 - physical
 members: 3
 reference: connector.cable-reel-690v-4x95-200m
-visual:
-  format: "freefall-model/1"
-  path: "models/cable-reel/v1"
-  manifest_sha256: "e70527c0562017da727c87797e23549148f1e1f4cef2ae5b12b621b6731528bf"
-  version: 1
-  triangles: 7924
 basis:
 - of:
   - draws
   - scales_by
   tier: derived
   note: 'The owner, 2026-10-17: one template a family, scaled; the catalogue families (kit_catalogue.py).'
+visual:
+  format: freefall-model/1
+  path: models/cable-reel/v1
+  manifest_sha256: e70527c0562017da727c87797e23549148f1e1f4cef2ae5b12b621b6731528bf
+  version: 1
+  triangles: 7924
