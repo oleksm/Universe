@@ -107,7 +107,7 @@ for a few seconds, at 10 ms substeps and a handful of points. That is small next
 
 | Piece | Where |
 |---|---|
-| Contact forces: struts (spring `holds`/`stroke`, damper ½`holds`/`sink_rate`), hull points, friction, slope normals, turn about the centre of mass | `crates/core/physics/src/contact.rs` |
+| Contact forces: struts (spring `holds`/`stroke`, damper 0.7 `holds`/`sink_rate`, the registry's rule), hull points, friction, slope normals, turn about the centre of mass | `crates/core/physics/src/contact.rs` |
 | Laws `FOOT_FRICTION` 0.6, `HULL_FRICTION` 0.4, `HULL_RESTITUTION` 0.3, `HULL_REST_SPEED` 0.5 m/s, `HULL_CRUMPLE_SPEED` 1.0 m/s (simplified, invented, to review) | `standards/Dogma/metadata/contact/` |
 | A ship's legs and hull points (fitted legs; a modelled hull's gear; unmodelled stock hulls' four legs drawn 12 m down; a draft with no gear lies on its hull); the contact substep (10 ms); sleep after 1 s still; per-leg breaking; hard landing per foot; hull strikes crumple the hull | `crates/core/world/src/ground.rs` |
 | Flight step runs contact near landing ground; landed ships never turn in place and wake on real thrust; rest welds the pose it lies in | `crates/core/world/src/world.rs`, `rules::rest` |

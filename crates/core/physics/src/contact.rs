@@ -11,8 +11,9 @@
 //! belly.
 //!
 //! The strut, from the figures a leg carries (`holds`, `stroke`, `sink_rate`):
-//! its spring reaches `holds` at the end of its stroke; its damper takes half
-//! of `holds` at its design sink rate. Past its stroke it is bottomed: the
+//! its spring reaches `holds` at the end of its stroke; its damper takes 0.7
+//! of `holds` at its design sink rate (the registry's rule, where a leg's
+//! record doesn't give its own). Past its stroke it is bottomed: the
 //! hull's hard contact. Hard contacts (the hull, a bottomed strut) and
 //! friction are worked out as the push that brings the point's speed to what
 //! it should be by the end of the step, so a step of any size stays stable.
@@ -41,9 +42,11 @@ impl Strut {
         self.spring.unwrap_or(self.holds / self.stroke.max(1e-3))
     }
 
-    /// Its damper (N s/m): its record's, else half of `holds` at the design sink rate.
+    /// Its damper (N s/m): its record's, else 0.7 of `holds` at the design
+    /// sink rate (the registry's rule for landing gear: dropped at its sink
+    /// rate it peaks near `holds` and uses most of its stroke).
     pub fn damping(&self) -> f64 {
-        self.damper.unwrap_or(0.5 * self.holds / self.sink_rate.max(0.1))
+        self.damper.unwrap_or(0.7 * self.holds / self.sink_rate.max(0.1))
     }
 }
 
