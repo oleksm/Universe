@@ -14,6 +14,12 @@ built_of:
 - what: Tray, screen and mixer
   item: material.stainless-steel-304
   mass: 50.0
+visual:
+  format: "freefall-model/1"
+  path: "models/furniture-shower/v1"
+  manifest_sha256: "772abc1f43f9144919f8d0d0f4324ca985231269e1512a8c992130aee9af4287"
+  version: 1
+  triangles: 1084
 basis:
 - of:
   - built_of

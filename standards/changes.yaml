@@ -4473,7 +4473,7 @@
 - { record: unit.furniture-reception-desk, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "2c88bdb2d8241095" }
 - { record: unit.furniture-seat-row, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "6c43da2555446d84" }
 - { record: unit.furniture-shelf, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "71d2d077b645fb2c" }
-- { record: unit.furniture-shower, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "01a9146b36407f2d" }
+- { record: unit.furniture-shower, at: "2026-10-17T23:46:13Z", status: draft, summary: "changed: visual", sha: "dfc0b683faf7e535" }
 - { record: unit.furniture-sink, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "2570490da52ec5cc" }
 - { record: unit.furniture-stage-deck, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "1faae75c71d1c948" }
 - { record: unit.furniture-steel-wc, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "cc0a9e03df3ae71d" }
