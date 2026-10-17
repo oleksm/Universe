@@ -4,7 +4,7 @@ identity: {key: run.cable-33kv-150mm2, name: 'Cable, 33 kV, 150 mm2', descriptio
 kind: cable
 size: 0.00015
 outside: [0.3, 0.163]
-rating: {voltage: 33000.0, current: 375.0}
+rating: {voltage: 33000, current: 375.0}
 per_m:
   mass: 16.2
   built_of:

@@ -3,7 +3,7 @@
 identity: {key: interface.flange-dn350-pn10, name: Flange DN 350 PN 10, description: 'The mating face of the Flange DN 350 PN 10 joint: any maker''s half built to it mates with any other''s, whatever its metal.'}
 domain: fluid
 kind: flange
-envelope: {pressure: 1000000.0, temperature: 345.0}
+envelope: {pressure: 1000000.0, temperature: 373.0}
 media: [gas, liquid]
 sealing: air
 halves: androgynous

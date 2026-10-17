@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.cooling-tower-h2, name: 'Cooling tower, 3 cells', description: 'An induced-draught wet tower: the electrolysers'', rectifiers'' and purifier''s closed water loop gives up its heat through a plate exchanger to tower water, which sprays down through fill against a fan''s draught and evaporates. The loop''s pumps and exchanger stand on a skid inside its footprint; the loop leaves by two pairs of 500 mm ports on its east end (local x +18, 0.75 m up, at y 0 and +4.5), and the layout''s pipes and concrete basin are not the unit''s. On a world with air only; airless ground needs radiators instead.'}
+identity: {key: unit.cooling-tower-h2, name: 'Cooling tower, 3 cells', description: 'An induced-draught wet tower: the electrolysers'', rectifiers'' and purifier''s closed water loop gives up its heat through a plate exchanger to tower water, which sprays down through fill against a fan''s draught and evaporates. The loop''s pumps and exchanger stand on a skid inside its footprint; its two loops leave by flanges on its east end (local x +18, 1 m up), facing +x: the electrolysers'', DN 500, out at y -0.6 and back at 0.6; the rectifiers'' and the purifier''s, DN 250, out at 3.9 and back at 5.1; its make-up water at (-14, -6, 1) and its 400 V at (-12, -6, 1), facing -y, and the layout''s pipes and concrete basin are not the unit''s. On a world with air only; airless ground needs radiators instead.'}
 size_class: 4
 fits: plant-mount.bay-s4
 physical: {length: 36.0, width: 12.0, height: 14.0, mass: 223000.0}
@@ -10,6 +10,87 @@ built_of:
 - {what: Loop pumps and exchanger, item: good.pumps, mass: 25000.0, note: from memory}
 needs: {power: 524000.0, water: 13.97}
 ports:
+- id: out-1
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 504.2
+  temperature: 303.0
+  interface: interface.flange-dn500-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn500-pn10
+  at: [18.0, -0.6, 1.0]
+  facing: [1.0, 0.0, 0.0]
+  note: the electrolysers' loop
+  pressure: 400000.0
+- id: in-1
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 504.2
+  temperature: 313.0
+  interface: interface.flange-dn500-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn500-pn10
+  at: [18.0, 0.6, 1.0]
+  facing: [1.0, 0.0, 0.0]
+  pressure: 400000.0
+- id: out-2
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 99.38
+  temperature: 303.0
+  interface: interface.flange-dn250-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn250-pn10
+  at: [18.0, 3.9, 1.0]
+  facing: [1.0, 0.0, 0.0]
+  note: the rectifiers' and the purifier's loop
+  pressure: 400000.0
+- id: in-2
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 99.38
+  temperature: 313.0
+  interface: interface.flange-dn250-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn250-pn10
+  at: [18.0, 5.1, 1.0]
+  facing: [1.0, 0.0, 0.0]
+  pressure: 400000.0
+- id: makeup-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 13.97
+  interface: interface.flange-dn150-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn150-pn10
+  at: [-14.0, -6.0, 1.0]
+  facing: [0.0, -1.0, 0.0]
+  note: the evaporation, blowdown and drift made up
+  pressure: 400000.0
+  temperature: 303.0
+- id: power-in
+  flow: in
+  medium: power
+  power: 524000.0
+  voltage: 400
+  interface: interface.termination-400v-400mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-400mm2
+  at: [-12.0, -6.0, 1.0]
+  facing: [0.0, -1.0, 0.0]
+  note: the fans and the loops' pumps
+  current: 840.4
 - id: base
   flow: out
   medium: load
@@ -34,5 +115,9 @@ basis:
   tier: derived
   review: true
   note: 'The loop''s 25.3 MW at a 10 K rise is 604 kg/s, pumped at 4 bar and 75%: 322 kW; fans 0.8% of the heat (from memory). Evaporating it all takes 11.2 kg/s of water (2.26 MJ/kg); blowdown and drift a quarter more (from memory).'
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage; water at 30 deg C in and 40 out; water at the pumps'' 4 bar.'
 - of: [life]
   rule: rule.life-plant

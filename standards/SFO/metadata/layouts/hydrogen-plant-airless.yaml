@@ -678,8 +678,8 @@ links:
   to: [110.0, -20.6, 0.3]
   length: 32.0
   item: material.stainless-steel-304
-  mass: 709.3
-  fittings: {elbows: 0, tees: 0, supports: 7, connectors: 2}
+  mass: 684.4
+  fittings: {elbows: 0, tees: 0, supports: 6, connectors: 2}
 - kind: pipe
   name: demineralised water
   run: run.pipe-dn100-pn10-ss
