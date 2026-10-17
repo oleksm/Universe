@@ -323,6 +323,7 @@
 - { key: standard.sfo.23, game: "SFO 23", in: "formerly standards.ron" }
 - { key: standard.sfo.24, game: "SFO 24", in: "formerly standards.ron" }
 - { key: standard.sfo.25, game: "SFO 25", in: "formerly standards.ron" }
+- { key: standard.sfo.26, game: "SFO 26", in: "formerly standards.ron" }
 - { key: standard.sfo.3, game: "SFO 3", in: "formerly standards.ron" }
 - { key: standard.sfo.4, game: "SFO 4", in: "formerly standards.ron" }
 - { key: standard.sfo.5, game: "SFO 5", in: "formerly standards.ron" }
