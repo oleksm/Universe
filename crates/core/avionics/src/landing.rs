@@ -327,7 +327,17 @@ pub fn autopilot(pad: &PadFrame, ship: &Ship, gravity: DVec3, phase: Phase, h: f
         _ if in_descent_zone(pad, pos) && v.length() < 80.0 => Phase::Descent,
         _ => Phase::Approach,
     };
-    let g = guidance(pad, pos, phase == Phase::Descent, ship.main_accel());
+    let mut g = guidance(pad, pos, phase == Phase::Descent, ship.main_accel());
+    // Coming down no faster than its legs safely take (its ground profile),
+    // with room to spare.
+    if g.final_run {
+        let up = (pos - pad.body_center).normalize();
+        let sink = -g.desired_velocity.dot(up);
+        let safe = 0.7 * universe_world::ground::profile_of(ship).max_sink(ship.mass(), ship.centre_of_mass(), gravity.length(), ship.broken_legs);
+        if sink > safe && sink > 0.0 && (pos - pad.pad).dot(up) < 50.0 {
+            g.desired_velocity += up * (sink - safe);
+        }
+    }
     // Thrust needed: close the velocity error, and hold the ship up against gravity.
     let accel = (g.desired_velocity - v) * gain(0.8, h) - gravity;
 
