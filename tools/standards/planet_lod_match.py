@@ -1,5 +1,5 @@
 """Landform patterns for a place: its signature (fields in SI, layer classes, nearby landmarks, factor strengths) against
-the PlanetLOD patterns' matching rules (tools/standards/planet_lod.py match).
+the Planet Simulator patterns' matching rules (tools/standards/planet_lod.py match).
 
     python3 tools/standards/planet_lod_match.py <signature.json> [--top=10] [--family=glacial] [--json]
     python3 tools/standards/planet_lod_match.py --example           # a signature to start from

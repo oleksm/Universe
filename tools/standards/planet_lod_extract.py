@@ -1,4 +1,4 @@
-"""The PlanetLOD extractor: what the planet sim says, against what the registry's PlanetLOD root holds.
+"""The Planet Simulator extractor: what the planet sim says, against what the registry's Planet Simulator root holds.
 
     python3 tools/standards/planet_lod_extract.py <sim tree> <run dir> [--tools=<dir>] [--package=<dir>] [--json]
 
@@ -21,7 +21,7 @@ MYR = 3.15576e13
 
 def registry():
     out = {}
-    for f in glob.glob(os.path.join(TREE, "PlanetLOD", "metadata", "**", "*.yaml"), recursive=True):
+    for f in glob.glob(os.path.join(TREE, "PlanetSim", "metadata", "**", "*.yaml"), recursive=True):
         d = yaml.safe_load(open(f)) or {}
         k = (d.get("identity") or {}).get("key", "")
         if "." in k and not k.startswith("root."):
@@ -193,7 +193,7 @@ def main(argv):
     if opt.get("json"):
         print(json.dumps(found, indent=1, ensure_ascii=False, default=str))
         return
-    print(f"PlanetLOD extract: sim {sim}, run {os.path.basename(os.path.normpath(run))}")
+    print(f"Planet Simulator extract: sim {sim}, run {os.path.basename(os.path.normpath(run))}")
     print(f"  registry: " + ", ".join(f"{len(v)} {k}" for k, v in sorted(R.items())))
     for title, rows, fmt in (("words the registry lacks", found["lacks"], lambda x: f"{x['what']}: {x['word']}  ({x['where']})"),
                              ("figures that disagree", found["disagrees"], lambda x: f"{x['what']}: {x['detail']}"),

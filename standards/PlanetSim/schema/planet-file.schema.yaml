@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Planet file
 x-kind: [planet-file]
-description: "standards/PlanetLOD/metadata/files/<name>.yaml: a file the planet sim or its tools write: where it lies, who writes it, and the arrays in it that are bookkeeping (indexes, caches, run metadata) rather than words. Its words are planet-field records naming it as their producer's file."
+description: "standards/PlanetSim/metadata/files/<name>.yaml: a file the planet sim or its tools write: where it lies, who writes it, and the arrays in it that are bookkeeping (indexes, caches, run metadata) rather than words. Its words are planet-field records naming it as their producer's file."
 type: object
 additionalProperties: false
 required: [identity, path, written_by]

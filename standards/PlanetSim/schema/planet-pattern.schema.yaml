@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Planet landform pattern
 x-kind: [planet-pattern]
-description: "standards/PlanetLOD/metadata/patterns/<family>/<name>.yaml: a landform pattern of the library (planet-trees docs/landforms): its family, its deciding factors with their weights (the matching rules), any hard conditions, its id in the ground's pattern vocabulary, and its sources. tools/standards/planet_lod_match.py ranks patterns for a place's signature by these."
+description: "standards/PlanetSim/metadata/patterns/<family>/<name>.yaml: a landform pattern of the library (planet-trees docs/landforms): its family, its deciding factors with their weights (the matching rules), any hard conditions, its id in the ground's pattern vocabulary, and its sources. tools/standards/planet_lod_match.py ranks patterns for a place's signature by these."
 type: object
 additionalProperties: false
 required: [identity, family, factors]

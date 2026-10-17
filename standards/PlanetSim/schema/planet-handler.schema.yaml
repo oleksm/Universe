@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Planet mesher handler
 x-kind: [planet-handler]
-description: "standards/PlanetLOD/metadata/handlers/<name>.yaml: a law or rule the mesher draws ground by: its form, its parameters with units, when it applies."
+description: "standards/PlanetSim/metadata/handlers/<name>.yaml: a law or rule the mesher draws ground by: its form, its parameters with units, when it applies."
 type: object
 additionalProperties: false
 required: [identity, law]

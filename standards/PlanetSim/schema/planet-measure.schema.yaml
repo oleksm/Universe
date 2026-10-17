@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Planet measure
 x-kind: [planet-measure]
-description: "standards/PlanetLOD/metadata/measures/<name>.yaml: a figure that judges generated ground against real ground: what it is, its unit, how it is taken, and the reference range with its source."
+description: "standards/PlanetSim/metadata/measures/<name>.yaml: a figure that judges generated ground against real ground: what it is, its unit, how it is taken, and the reference range with its source."
 type: object
 additionalProperties: false
 required: [identity, unit]

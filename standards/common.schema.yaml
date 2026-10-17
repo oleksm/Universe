@@ -175,7 +175,7 @@ definitions:
         profession: { type: string, x-ref: [profession], description: "The trade, by its key." }
         count: { type: integer, minimum: 0, description: "how many of them" }
   planet_context:
-    description: "Where a PlanetLOD word sits in the context tree (standards/PlanetLOD): the levels it means something at, and its links, so a tool working at one level takes that level's words and its parent's frozen anchors. A shape: each PlanetLOD kind derives from it (allOf)."
+    description: "Where a Planet Simulator word sits in the context tree (standards/PlanetSim): the levels it means something at, and its links, so a tool working at one level takes that level's words and its parent's frozen anchors. A shape: each Planet Simulator kind derives from it (allOf)."
     type: object
     additionalProperties: false
     properties:

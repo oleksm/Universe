@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Planet line kind
 x-kind: [planet-line]
-description: "standards/PlanetLOD/metadata/lines/<name>.yaml: a kind of line the sim keeps (the line store) or draws (a layer's lines): what makes one, how it ends, which level first shows it, what it expands into."
+description: "standards/PlanetSim/metadata/lines/<name>.yaml: a kind of line the sim keeps (the line store) or draws (a layer's lines): what makes one, how it ends, which level first shows it, what it expands into."
 type: object
 additionalProperties: false
 required: [identity]

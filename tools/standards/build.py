@@ -993,7 +993,7 @@ for ad in administrations:
 bodies, standards = [], []
 for name in sorted(os.listdir(TREE)):
     folder = os.path.join(TREE, name)
-    if not os.path.isdir(folder) or name in ("schema", "sources", HOUSE, LOCAL, "Celestial", "Dogma", "People", "Engine", "PlanetLOD", "PlanetSim"):
+    if not os.path.isdir(folder) or name in ("schema", "sources", HOUSE, LOCAL, "Celestial", "Dogma", "People", "Engine", "PlanetSim"):
         continue
     # (The body's own file: named after its folder, SFO/metadata/SFO.yaml.)
     meta_path = os.path.join(folder, "metadata", name + ".yaml")
@@ -1747,7 +1747,7 @@ REPORT_GROUPS = {"ships": ["equipment-parts", "equipment", "mounts", "members", 
                  "quality": ["confidence", "invented", "review", "revisions", "dictionary"]}
 REPORT_DOCS = {"mounts": ["docs/ships/registry-note-for-ships.md"], "members": ["docs/ships/registry-note-for-ships.md"], "budgets": ["docs/ships/registry-note-for-ships.md", "docs/ships/equipment-review.md"],
                "needs": ["docs/registry-people.md", "docs/registry-spirit.md"], "work": ["docs/registry-people.md"], "buildings": ["docs/registry-people.md"], "census": ["docs/registry-people.md", "docs/registry-order.md"],
-               "traffic": ["docs/registry-people.md", "docs/registry-stocking.md"], "worlds": ["docs/survey-contract.md"], "celestial": ["docs/survey-contract.md"], "clocks": ["docs/tick-tree.md"], "planet-models": ["standards/PlanetSim/metadata/PlanetSim.yaml"], "planet-lod": ["standards/PlanetLOD/metadata/PlanetLOD.yaml"],
+               "traffic": ["docs/registry-people.md", "docs/registry-stocking.md"], "worlds": ["docs/survey-contract.md"], "celestial": ["docs/survey-contract.md"], "clocks": ["docs/tick-tree.md"], "planet-models": ["standards/PlanetSim/metadata/PlanetSim.yaml"], "planet-lod": ["standards/PlanetSim/metadata/PlanetSim.yaml"],
                "balance": ["docs/registry-recipes.md"], "materials": ["docs/registry-recipes.md"], "goods": ["docs/registry-recipes.md"], "takers": ["docs/registry-recipes.md"],
                "confidence": ["docs/registry-audit.md"], "invented": ["docs/registry-audit.md"], "review": ["docs/registry-audit.md"], "revisions": ["docs/registry-integration.md"], "dictionary": ["standards/README.md"],
                "equipment-parts": ["docs/registry-recipes.md"], "chains": ["docs/registry-recipes.md"], "plant": ["docs/registry-recipes.md"], "hulls": ["docs/registry-integration.md"], "gates": ["docs/standards.md"]}
@@ -2376,10 +2376,10 @@ for k__, c__ in _clocks.items():
 if _crows:
     report("clocks", "Clocks: the engine's tree of time", "standards/Engine: each clock, under the clock whose due time makes it step, with how many of it there are (scope), how tightly it exchanges data (coupling, which decides the thread, process or machine it runs on) and when it steps. Every period must be a whole number of the realtime tick, so every input is stamped by the same tick numbers and replay works per layer.", ["Clock", "One per", "Coupling", "Steps", "Rule, or what is wrong"], _crows)
 
-# 3d. PlanetLOD: the planet sim's language (standards/PlanetLOD), its words by kind, and its models.
+# 3d. The Planet Simulator (standards/PlanetSim): its words by kind, and its models.
 import planet_lod as _pl
 _PL = _pl.load(TREE)
-report("planet-lod", "PlanetLOD: the planet sim's words", "standards/PlanetLOD: the language the planet sim, its mesher, the LOD app and the agents share, by kind: how many words of each, how many still draft, and the tools that use them (planet_lod_extract.py checks the sim against them; planet_lod_match.py, planet_lod_context.py; the module standards/PlanetLOD/generated/planet_lod_words.py).",
+report("planet-lod", "Planet Simulator: its words", "standards/PlanetSim: the language the planet sim, its mesher, the LOD app and the agents share, by kind: how many words of each, how many still draft, and the tools that use them (planet_lod_extract.py checks the sim against them; planet_lod_match.py, planet_lod_context.py; the module standards/PlanetSim/generated/planet_lod_words.py).",
        ["Kind", "Words", "Draft", "Examples"], [row("ok", k, len(v), sum(1 for d in v.values() if d.get("status") == "draft"), ", ".join(x.split(".", 1)[1] for x in list(v)[:6])) for k, v in _PL.items() if v])
 _mrows = []
 for _k, _m in sorted(_PL["planet-model"].items()):
@@ -2631,24 +2631,24 @@ _REG = [("mounts", "Mounts", "SFO", os.path.join("SFO", "metadata", "mounts"), "
         ("professions", "Professions", "People", os.path.join("People", "metadata", "professions"), "People/schema/profession.schema.yaml", None),
         ("clocks", "Clocks", "Engine", os.path.join("Engine", "metadata", "scheduling"), "Engine/schema/clock.schema.yaml", None),
         ("sights", "Sights", "Celestial", os.path.join("Celestial", "metadata", "sights"), "Celestial/schema/sight.schema.yaml", None),
-        ("planet-levels", "Levels", "PlanetLOD", os.path.join("PlanetLOD", "metadata", "levels"), "PlanetLOD/schema/planet-level.schema.yaml", None),
-        ("planet-fields", "Fields", "PlanetLOD", os.path.join("PlanetLOD", "metadata", "fields"), "PlanetLOD/schema/planet-field.schema.yaml", None),
-        ("planet-layers", "Layers", "PlanetLOD", os.path.join("PlanetLOD", "metadata", "layers"), "PlanetLOD/schema/planet-layer.schema.yaml", None),
-        ("planet-lines", "Line kinds", "PlanetLOD", os.path.join("PlanetLOD", "metadata", "lines"), "PlanetLOD/schema/planet-line.schema.yaml", None),
-        ("planet-landmarks", "Landmark types", "PlanetLOD", os.path.join("PlanetLOD", "metadata", "landmarks"), "PlanetLOD/schema/planet-landmark.schema.yaml", None),
-        ("planet-events", "Events", "PlanetLOD", os.path.join("PlanetLOD", "metadata", "events"), "PlanetLOD/schema/planet-event.schema.yaml", None),
-        ("planet-handlers", "Mesher handlers", "PlanetLOD", os.path.join("PlanetLOD", "metadata", "handlers"), "PlanetLOD/schema/planet-handler.schema.yaml", None),
-        ("planet-measures", "Measures", "PlanetLOD", os.path.join("PlanetLOD", "metadata", "measures"), "PlanetLOD/schema/planet-measure.schema.yaml", None),
-        ("planet-factors", "Deciding factors", "PlanetLOD", os.path.join("PlanetLOD", "metadata", "factors"), "PlanetLOD/schema/planet-factor.schema.yaml", None),
-        ("planet-patterns", "Landform patterns", "PlanetLOD", os.path.join("PlanetLOD", "metadata", "patterns"), "PlanetLOD/schema/planet-pattern.schema.yaml", None),
+        ("planet-levels", "Levels", "PlanetSim", os.path.join("PlanetSim", "metadata", "levels"), "PlanetSim/schema/planet-level.schema.yaml", None),
+        ("planet-fields", "Fields", "PlanetSim", os.path.join("PlanetSim", "metadata", "fields"), "PlanetSim/schema/planet-field.schema.yaml", None),
+        ("planet-layers", "Layers", "PlanetSim", os.path.join("PlanetSim", "metadata", "layers"), "PlanetSim/schema/planet-layer.schema.yaml", None),
+        ("planet-lines", "Line kinds", "PlanetSim", os.path.join("PlanetSim", "metadata", "lines"), "PlanetSim/schema/planet-line.schema.yaml", None),
+        ("planet-landmarks", "Landmark types", "PlanetSim", os.path.join("PlanetSim", "metadata", "landmarks"), "PlanetSim/schema/planet-landmark.schema.yaml", None),
+        ("planet-events", "Events", "PlanetSim", os.path.join("PlanetSim", "metadata", "events"), "PlanetSim/schema/planet-event.schema.yaml", None),
+        ("planet-handlers", "Mesher handlers", "PlanetSim", os.path.join("PlanetSim", "metadata", "handlers"), "PlanetSim/schema/planet-handler.schema.yaml", None),
+        ("planet-measures", "Measures", "PlanetSim", os.path.join("PlanetSim", "metadata", "measures"), "PlanetSim/schema/planet-measure.schema.yaml", None),
+        ("planet-factors", "Deciding factors", "PlanetSim", os.path.join("PlanetSim", "metadata", "factors"), "PlanetSim/schema/planet-factor.schema.yaml", None),
+        ("planet-patterns", "Landform patterns", "PlanetSim", os.path.join("PlanetSim", "metadata", "patterns"), "PlanetSim/schema/planet-pattern.schema.yaml", None),
         ("planet-models", "Planet models", "PlanetSim", os.path.join("PlanetSim", "metadata", "models"), "PlanetSim/schema/planet-model.schema.yaml", None),
-        ("planet-files", "Sim files", "PlanetLOD", os.path.join("PlanetLOD", "metadata", "files"), "PlanetLOD/schema/planet-file.schema.yaml", None)]
+        ("planet-files", "Sim files", "PlanetSim", os.path.join("PlanetSim", "metadata", "files"), "PlanetSim/schema/planet-file.schema.yaml", None)]
 for _kind, _title, _root, _dir, _schema, _std in _REG:
     _recs = []
-    for _f in sorted(glob.glob(os.path.join(TREE, _dir, "**", "*.yaml"), recursive=True)):      # (PlanetLOD's patterns lie in a folder a family)
+    for _f in sorted(glob.glob(os.path.join(TREE, _dir, "**", "*.yaml"), recursive=True)):      # (the Planet Simulator's patterns lie in a folder a family)
         _r = yaml.safe_load(open(_f, encoding="utf-8")) or {}
         _idn = _r.get("identity") if isinstance(_r.get("identity"), dict) else _r
-        _slug = _idn.get("key", "").split(".", 1)[1] if _root in ("PlanetLOD", "PlanetSim") and "." in _idn.get("key", "") else os.path.basename(_f)[:-5]
+        _slug = _idn.get("key", "").split(".", 1)[1] if _root == "PlanetSim" and "." in _idn.get("key", "") else os.path.basename(_f)[:-5]
         _r["slug"], _r["key"], _r["name"], _r["file"] = _slug, _idn.get("key", ""), _idn.get("name", os.path.basename(_f)[:-5]), os.path.relpath(_f, TREE)
         _recs.append(_r)
         if _r["key"]:
@@ -3175,7 +3175,7 @@ def write_html():
         # (Each property's unit or note, from the schemas.)
         "element_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["elements"]["properties"].items() if "properties" in d},
         "material_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["materials"]["properties"].items() if "properties" in d},
-        "registers": REGISTERS, "roots": {r_: {"name": (yaml.safe_load(open(os.path.join(TREE, r_, "metadata", r_ + ".yaml"))) or {})["identity"]["name"], "note": (yaml.safe_load(open(os.path.join(TREE, r_, "metadata", r_ + ".yaml"))) or {}).get("note", "")} for r_ in ("PlanetLOD", "PlanetSim")},
+        "registers": REGISTERS, "roots": {r_: {"name": (yaml.safe_load(open(os.path.join(TREE, r_, "metadata", r_ + ".yaml"))) or {})["identity"]["name"], "note": (yaml.safe_load(open(os.path.join(TREE, r_, "metadata", r_ + ".yaml"))) or {}).get("note", "")} for r_ in ("PlanetSim",)},
         "register_groups": REGISTER_GROUPS,
         "key_pages": KEY_PAGES,
         "standards": sorted(standards, key=lambda s: (s["body"], s["number"])),
@@ -3209,6 +3209,6 @@ if problems:
 _renames = write_game_keys()
 print(f"{len(makers)} makers, {len(bodies)} bodies, {len(standards)} standards, {len(elements)} elements, {len(materials)} materials, {len(processes)} processes, {len(modules)} modules, {len(goods)} goods, {len(hulls)} hulls")
 print(f"  reports: " + ", ".join(f"{r['key']} {r['gaps']} gaps" for r in reports))
-import planet_lod_module as _plm      # (the PlanetLOD module the sim imports, written from the records like the page)
+import planet_lod_module as _plm      # (the Planet Simulator module the sim imports, written from the records like the page)
 open(_plm.OUT, "w", encoding="utf-8").write(_plm.render())
-print("  standards/index.html, standards/game-keys.yaml, standards/changes.yaml, standards/PlanetLOD/generated/planet_lod_words.py")
+print("  standards/index.html, standards/game-keys.yaml, standards/changes.yaml, standards/PlanetSim/generated/planet_lod_words.py")

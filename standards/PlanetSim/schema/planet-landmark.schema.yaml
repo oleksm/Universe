@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Planet landmark type
 x-kind: [planet-landmark]
-description: "standards/PlanetLOD/metadata/landmarks/<name>.yaml: a kind of landmark record the sim writes, anchored to a crust particle: when it is made, how it ages (active, former, worn), and the anchors it expands into one level down."
+description: "standards/PlanetSim/metadata/landmarks/<name>.yaml: a kind of landmark record the sim writes, anchored to a crust particle: when it is made, how it ages (active, former, worn), and the anchors it expands into one level down."
 type: object
 additionalProperties: false
 required: [identity, made_when]

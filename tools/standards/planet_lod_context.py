@@ -1,4 +1,4 @@
-"""The context of a level or a PlanetLOD record (tools/standards/planet_lod.py context): for a level, what is
+"""The context of a level or a Planet Simulator record (tools/standards/planet_lod.py context): for a level, what is
 meaningful there, by kind, and what its parent hands down frozen; for a record, what it names and what names it.
 
     python3 tools/standards/planet_lod_context.py pattern            # a level, by slug or key

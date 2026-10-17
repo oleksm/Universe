@@ -365,8 +365,8 @@ function rows(q) {
     };
     under(null, 2);
   }
-  // Roots shown as their own trees (PlanetLOD, the Planet Simulator): their registers under them.
-  const ROOT_NAMES = { PlanetLOD: "PlanetLOD", PlanetSim: "Planet Simulator" };
+  // Roots shown as their own trees (the Planet Simulator): their registers under them.
+  const ROOT_NAMES = { PlanetSim: "Planet Simulator" };
   for (const [root, label] of Object.entries(ROOT_NAMES)) {
     const regs = (DATA.registers || []).filter(r => r.root === root);
     if (!regs.length) continue;
@@ -484,7 +484,7 @@ function reveal(k) {
   if (k.startsWith("rep:") || k === "chains") { open.add("rp0"); keepOpen(); return; }
   if (k.startsWith("x:") || k.startsWith("rg:")) {      // (a register under its root's own tree, or under Registers)
     const reg = (DATA.registers || []).find(r => r.kind === k.split(":")[1]);
-    open.add(reg && ["PlanetLOD", "PlanetSim"].includes(reg.root) ? "root:" + reg.root : "rg");
+    open.add(reg && reg.root in ROOT_NAMES ? "root:" + reg.root : "rg");
     if (k.startsWith("x:")) open.add("rg:" + k.split(":")[1]);
     keepOpen(); return;
   }

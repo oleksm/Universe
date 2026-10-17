@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Planet layer
 x-kind: [planet-layer]
-description: "standards/PlanetLOD/metadata/layers/<name>.yaml: a layer the planet is read in: its classes (u16 ids, frozen and append-only, 0 none) and the lines between them (the owner, 16 Oct 2026: layers as lines, never patches). A layer whose classes are a registry vocabulary names it instead of listing them."
+description: "standards/PlanetSim/metadata/layers/<name>.yaml: a layer the planet is read in: its classes (u16 ids, frozen and append-only, 0 none) and the lines between them (the owner, 16 Oct 2026: layers as lines, never patches). A layer whose classes are a registry vocabulary names it instead of listing them."
 type: object
 additionalProperties: false
 required: [identity]

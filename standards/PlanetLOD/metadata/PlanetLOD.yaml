@@ -1,5 +1,0 @@
-# yaml-language-server: $schema=../../root.schema.yaml
-identity:
-  key: root.planet-lod
-  name: "PlanetLOD"
-note: "The language of the planet sim and its mesher (the owner, 17 Oct 2026): the levels of context from the whole planet down to detail, the fields with their units, the layers with their frozen class ids, the line kinds, the landmark types and how they age, the mesher's laws, and the measures against real ground. The sim owns instances (where each line, landmark and river is on one planet, and every value); this root owns the words, units and rules, so the sim, the mesher, the LOD app and the agents speak one language. Rock is the Celestial root's (rock units, ground vocabularies), not repeated here. tools/standards/planet_lod_extract.py checks the sim against it."

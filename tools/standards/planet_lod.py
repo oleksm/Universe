@@ -1,4 +1,4 @@
-"""PlanetLOD's logic, once: read the root, classify a sample into a layer, give a deciding factor its strength from a
+"""Planet Simulator's logic, once: read the root, classify a sample into a layer, give a deciding factor its strength from a
 place's signature, rank landform patterns, and say a level's or a record's context. The matcher, the context lookup
 and the generated module (planet_lod_module.py copies these functions into it) all use these, so the sim, the mesher,
 the LOD app and the agents get one answer.
@@ -16,10 +16,10 @@ ORDER = ("planet-level", "planet-field", "planet-layer", "planet-line", "planet-
 
 
 def load(tree):
-    """Every PlanetLOD record, by kind, then by key."""
+    """Every Planet Simulator record, by kind, then by key."""
     import yaml
     out = {k: {} for k in ORDER}
-    for f in sorted(glob.glob(os.path.join(tree, "PlanetLOD", "metadata", "**", "*.yaml"), recursive=True) + glob.glob(os.path.join(tree, "PlanetSim", "metadata", "**", "*.yaml"), recursive=True)):      # (the sim's models are PlanetSim's, their words PlanetLOD's)
+    for f in sorted(glob.glob(os.path.join(tree, "PlanetSim", "metadata", "**", "*.yaml"), recursive=True)):
         d = yaml.safe_load(open(f, encoding="utf-8")) or {}
         k = (d.get("identity") or {}).get("key", "")
         if k.split(".")[0] in out:

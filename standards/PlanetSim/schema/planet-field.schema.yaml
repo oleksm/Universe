@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Planet field
 x-kind: [planet-field]
-description: "standards/PlanetLOD/metadata/fields/<name>.yaml: a value the sim holds per sample or node: its unit (SI), its range, where it is produced and under which key."
+description: "standards/PlanetSim/metadata/fields/<name>.yaml: a value the sim holds per sample or node: its unit (SI), its range, where it is produced and under which key."
 type: object
 additionalProperties: false
 required: [identity, unit, producer]
