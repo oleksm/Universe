@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.plate-spin
+  name: Plate spin
+  about: 'A plate''s angular velocity vector: its axis times its turning rate.'
+unit: rad/s
+producer:
+  where: planet-forge crates/forge-core/src/models/plates/motion.rs
+  file: checkpoint
+  key: tables/plates/planet-field.plate-spin
+per: plate
+said_as:
+  unit: rad/yr
+  factor: 3.168808781402895e-08
+also_from:
+- where: stages/plates.py
+  key: w.spin
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: forge''s plates foundation (branch plates-foundation) and the Python sim''s World (stages/plates.py:247-393), read from the code.'

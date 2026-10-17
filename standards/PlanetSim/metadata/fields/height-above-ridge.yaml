@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.height-above-ridge
+  name: Height above the ridge reference
+  about: 'The solid surface''s height by isostasy, above the ridge reference (Earth''s mid-ocean ridges, 2600 m below its sea): before the sea level is known.'
+unit: m
+producer:
+  where: planet-forge crates/forge-core/src/models/plates/elevation.rs
+  file: checkpoint
+  key: fields/planet-field.height-above-ridge
+per: sample
+also_from:
+- where: stages/plates.py
+  key: z = elevation(w, R)
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: forge''s plates foundation (branch plates-foundation) and the Python sim''s World (stages/plates.py:247-393), read from the code.'

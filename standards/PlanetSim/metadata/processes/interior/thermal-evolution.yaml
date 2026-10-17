@@ -1,14 +1,10 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.thermal-evolution
   name: Mantle and core thermal evolution
-  about: 'Parameterised two-reservoir cooling (Stevenson, Spohn & Schubert 1983): dT_m/dt = (H_mantle + q_cmb − q_mantle)/(Mm
-    c_m ε_m); dT_c/dt = −q_cmb/(Mc c_c ε_c + grow), grow = −(L + E_G)·4π r_ic² ρc·dr_ic/dT_c (latent and gravitational heat
-    of inner-core growth, Labrosse 2003). Started from a just-solidified mantle at 1900 K and a core 1300 K above the mantle
-    base, integrated by LSODA (rtol 1e-6, atol 1e-3) from 0 to the star''s age with output every step_myr (default 10 Myr).
-    Produces the interior history table that plates and organics read (mantle temperature for komatiite/greenstone era, mantle
-    heat flow for geotherm scaling).'
+  about: 'Parameterised two-reservoir cooling (Stevenson, Spohn & Schubert 1983): dT_m/dt = (H_mantle + q_cmb − q_mantle)/(Mm c_m ε_m); dT_c/dt = −q_cmb/(Mc c_c ε_c + grow), grow = −(L + E_G)·4π r_ic² ρc·dr_ic/dT_c (latent and gravitational
+    heat of inner-core growth, Labrosse 2003). Started from a just-solidified mantle at 1900 K and a core 1300 K above the mantle base, integrated by LSODA (rtol 1e-6, atol 1e-3) from 0 to the star''s age with output every step_myr
+    (default 10 Myr). Produces the interior history table that plates and organics read (mantle temperature for komatiite/greenstone era, mantle heat flow for geotherm scaling).'
 area: interior
 clock:
   when: once per world; internal output every step_myr = 10 Myr (3.15576e14 s) from 0 to age
@@ -29,6 +25,10 @@ writes:
 - name: t_cmb_k(t)
   unit: K
   meaning: core top temperature history
+- name: heat_flow_mantle_tw(t) * 1e12 / area
+  field: planet-field.mantle-heat-flux
+  unit: W/m2
+  meaning: mantle heat flux per area history (read by plate motion)
 params:
 - name: T_MANTLE_START
   value: 1900.0
@@ -94,5 +94,4 @@ basis:
   - reads
   - writes
   tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
-    from the code at planet-sim-landform 9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read from the code at planet-sim-landform 9747f0d-c437724.'

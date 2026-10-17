@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.particle-plate
+  name: Particle plate
+  about: 'The plate a crust particle rides on: a plate id (bookkeeping, changing at rifts).'
+unit: '1'
+producer:
+  where: planet-forge crates/forge-core/src/models/plates/init.rs
+  file: checkpoint
+  key: tables/particles/planet-field.particle-plate
+per: particle
+also_from:
+- where: stages/plates.py
+  key: xplate
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: forge''s plates foundation (branch plates-foundation) and the Python sim''s World (stages/plates.py:247-393), read from the code.'

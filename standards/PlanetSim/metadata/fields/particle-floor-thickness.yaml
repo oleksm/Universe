@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.particle-floor-thickness
+  name: Particle ocean floor thickness
+  about: 'The ocean floor crust a particle carries: 7 km new, thicker under arcs and plateaus.'
+unit: m
+producer:
+  where: planet-forge crates/forge-core/src/models/plates/init.rs
+  file: checkpoint
+  key: tables/particles/planet-field.particle-floor-thickness
+per: particle
+also_from:
+- where: stages/plates.py
+  key: xfloor
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: forge''s plates foundation (branch plates-foundation) and the Python sim''s World (stages/plates.py:247-393), read from the code.'

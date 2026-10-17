@@ -1,20 +1,35 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.crust-read
   name: Reading the particle crust onto the samples
-  about: 'read(): continental thickness = Gaussian (h = KERNEL*gap, cut 3h, weights normalised per particle so each particle''s
-    volume is spread exactly) sum / cell; kind = continent where >= CONTINENT_EDGE. Plate from the nearest particle; age by
-    inverse-distance weighting over the 4 nearest, replaced on ocean samples by the nearest ocean particle''s age; floor thickness
-    from the nearest ocean particle. Geology from the nearest continental particle on continent, nearest ocean particle elsewhere;
-    arc_plutonic older than G.SHIELD_MYR shows as basement; rock unit by majority vote of each sample and its 6 neighbours
-    (own vote counted twice), two passes. Note: read() writes World fields used later in the step (thick, kind), so snapshot
-    cadence changes the run (docstring).'
+  about: 'read(): continental thickness = Gaussian (h = KERNEL*gap, cut 3h, weights normalised per particle so each particle''s volume is spread exactly) sum / cell; kind = continent where >= CONTINENT_EDGE. Plate from the nearest particle;
+    age by inverse-distance weighting over the 4 nearest, replaced on ocean samples by the nearest ocean particle''s age; floor thickness from the nearest ocean particle. Geology from the nearest continental particle on continent, nearest
+    ocean particle elsewhere; arc_plutonic older than G.SHIELD_MYR shows as basement; rock unit by majority vote of each sample and its 6 neighbours (own vote counted twice), two passes. Note: read() writes World fields used later in
+    the step (thick, kind), so snapshot cadence changes the run (docstring).'
 area: plates
 clock:
   when: every denudation pass, every snapshot/history call, final; _continental also in spread passes and remesh
 reads:
-- name: particles
+- name: w.x
+  field: planet-field.particle-position
+  unit: '1'
+- name: w.xcont
+  field: planet-field.particle-continental
+  unit: '1'
+- name: w.xvol
+  field: planet-field.particle-volume
+  unit: m3
+- name: w.xplate
+  field: planet-field.particle-plate
+  unit: '1'
+- name: w.xage
+  field: planet-field.particle-age
+  unit: s
+- name: w.xfloor
+  field: planet-field.particle-floor-thickness
+  unit: m
+- name: w.xtop, w.xbase, w.xcover, w.xgrain, w.xfert, w.xdep
+  meaning: particle geology (rock, grain, ores)
 writes:
 - name: w.thick
   field: planet-field.crust-thickness
@@ -108,5 +123,4 @@ basis:
   - reads
   - writes
   tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
-    code at planet-sim-landform 9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'

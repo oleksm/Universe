@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.land-share
+  name: Land share
+  about: The share of the planet's surface above the sea (equal-area samples).
+unit: '1'
+producer:
+  where: planet-forge crates/forge-core/src/models/plates/sea.rs
+  file: checkpoint
+  key: 'scalars: planet-field.land-share'
+per: global
+range:
+- 0
+- 1
+also_from:
+- where: stages/plates.py
+  key: (z > sea).mean()
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: forge''s plates foundation (branch plates-foundation) and the Python sim''s World (stages/plates.py:247-393), read from the code.'

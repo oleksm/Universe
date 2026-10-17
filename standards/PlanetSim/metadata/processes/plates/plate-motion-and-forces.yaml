@@ -1,45 +1,77 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.plate-motion-and-forces
   name: Plate motion (Euler rotation) driven by remembered boundary forces
-  about: 'Each step the reference speed follows the mantle heat flux from the interior history: speed = min(EARTH_SPEED*(q/EARTH_MANTLE_FLUX)^SPEED_POWER,
-    MAX_SPEED). Each plate''s torque vector (decaying memory of slab pull, trench suction and ridge push forces, each a unit
-    tangent force at a particle, crossed with position) sets its axis (torque direction) and a speed multiplier |torque|/particle_count
-    relative to the median over driven plates, clipped to 0.15-2.0; a plate with zero torque keeps its axis and gets DRIFT.
-    The multiplier is then times the plate''s rate (collision stall) and (1 - CONTINENT_DRAG*continental particle share).
-    dt = min(step_myr, STEP*gap*R/(speed*fastest), time left). Every plate rotates its particles exactly by Rodrigues rotation
-    about its axis by speed*mult/R*dt, and its particles'' structural grain vectors too, and the relief layer''s anchored
-    vectors. After the step: torque <- torque*exp(-dt/FORCE_MYR) + force (this step''s force sum is NOT scaled by dt), and
-    plates not stalled this step recover rate toward base on RECOVER_MYR. w.spin records each plate''s angular velocity vector
-    (rad/yr).'
+  about: 'Each step the reference speed follows the mantle heat flux from the interior history: speed = min(EARTH_SPEED*(q/EARTH_MANTLE_FLUX)^SPEED_POWER, MAX_SPEED). Each plate''s torque vector (decaying memory of slab pull, trench
+    suction and ridge push forces, each a unit tangent force at a particle, crossed with position) sets its axis (torque direction) and a speed multiplier |torque|/particle_count relative to the median over driven plates, clipped to
+    0.15-2.0; a plate with zero torque keeps its axis and gets DRIFT. The multiplier is then times the plate''s rate (collision stall) and (1 - CONTINENT_DRAG*continental particle share). dt = min(step_myr, STEP*gap*R/(speed*fastest),
+    time left). Every plate rotates its particles exactly by Rodrigues rotation about its axis by speed*mult/R*dt, and its particles'' structural grain vectors too, and the relief layer''s anchored vectors. After the step: torque <-
+    torque*exp(-dt/FORCE_MYR) + force (this step''s force sum is NOT scaled by dt), and plates not stalled this step recover rate toward base on RECOVER_MYR. w.spin records each plate''s angular velocity vector (rad/yr).'
 area: plates
 clock:
   when: every step; dt <= step_myr (default 5 Myr) and <= STEP spacing for the fastest plate
 reads:
-- name: h.time_gyr, h.column('heat_flow_mantle_tw')
-  unit: Gyr, TW (code)
-  meaning: interior history, flux = TW*1e12/area -> W/m2
-- name: w.plates[pid].torque, rate, base, axis
-  unit: 1, 1, 1, unit vec
-  meaning: plate state
-- name: w.xplate, w.xcont
-  unit: id, bool
-  meaning: particle ownership and kind
+- name: h.column('heat_flow_mantle_tw')
+  field: planet-field.mantle-heat-flux
+  unit: W/m2
+  meaning: interior history, flux = TW*1e12/area
+- name: w.plates[pid].torque
+  field: planet-field.plate-torque
+  unit: '1'
+- name: w.plates[pid].rate
+  field: planet-field.plate-rate
+  unit: '1'
+- name: w.plates[pid].base
+  field: planet-field.plate-base
+  unit: '1'
+- name: w.plates[pid].axis
+  field: planet-field.plate-axis
+  unit: '1'
+- name: w.plates keys
+  field: planet-field.plate-id
+  unit: '1'
+- name: w.xplate
+  field: planet-field.particle-plate
+  unit: '1'
+- name: w.xcont
+  field: planet-field.particle-continental
+  unit: '1'
+- name: w.xvol
+  field: planet-field.particle-volume
+  unit: m3
+  meaning: continental volume total (diagnostic)
 - name: force (per-step accumulator)
-  unit: 1 (torque units)
+  field: planet-field.plate-force
+  unit: '1'
   meaning: slab pull, suction, ridge push from subduction and gap processes
 writes:
 - name: w.x
-  unit: unit vector
+  field: planet-field.particle-position
+  unit: '1'
   meaning: rotated particle positions
 - name: w.xgrain
   unit: unit tangent
   meaning: rotated grain
-- name: w.plates[pid].axis, torque, rate
-  meaning: updated plate state
+- name: w.xage
+  field: planet-field.particle-age
+  unit: s
+  meaning: ages grow by dt
+- name: w.plates[pid].axis
+  field: planet-field.plate-axis
+  unit: '1'
+- name: w.plates[pid].torque
+  field: planet-field.plate-torque
+  unit: '1'
+- name: w.plates[pid].rate
+  field: planet-field.plate-rate
+  unit: '1'
+- name: force
+  field: planet-field.plate-force
+  unit: '1'
+  meaning: cleared once added to the torque
 - name: w.spin
-  unit: rad/yr per plate (code)
+  field: planet-field.plate-spin
+  unit: rad/s
   meaning: angular velocity vector
 - name: speed
   unit: m/yr (code)
@@ -84,8 +116,7 @@ params:
 - name: SLAB_PULL
   value: 1.0
   unit: '1'
-  meaning: 'weight of slab pull: unit tangent force at each sinking particle toward its rider, added to the sinking plate''s
-    torque'
+  meaning: 'weight of slab pull: unit tangent force at each sinking particle toward its rider, added to the sinking plate''s torque'
   source: stages/plates.py:53
   note: Forsyth & Uyeda 1975; Conrad & Lithgow-Bertelloni 2002
 - name: TRENCH_SUCTION
@@ -97,8 +128,7 @@ params:
 - name: RIDGE_PUSH
   value: 0.15
   unit: '1'
-  meaning: 'weight of ridge push: at each opened sample, a unit tangent force from the new point toward the source particle,
-    on the source plate'
+  meaning: 'weight of ridge push: at each opened sample, a unit tangent force from the new point toward the source particle, on the source plate'
   source: stages/plates.py:55
   note: Forsyth & Uyeda 1975
 - name: FORCE_MYR
@@ -165,8 +195,7 @@ depends_on:
 backends:
 - cpu
 implementations:
-- where: planet-sim-landform stages/plates.py:run (lines 963-999 speed/axis/dt/rotation, 1000-1008 tangent_torque, 1044-1045
-    slab pull and suction, 1227 ridge push, 1410-1416 torque memory and recovery); sphere.py:rotate (lines 29-32)
+- where: planet-sim-landform stages/plates.py:run (lines 963-999 speed/axis/dt/rotation, 1000-1008 tangent_torque, 1044-1045 slab pull and suction, 1227 ridge push, 1410-1416 torque memory and recovery); sphere.py:rotate (lines 29-32)
   state: reference
 status: draft
 basis:
@@ -176,5 +205,4 @@ basis:
   - reads
   - writes
   tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
-    code at planet-sim-landform 9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'

@@ -1,10 +1,8 @@
 # yaml-language-server: $schema=../../schema/planet-run-profile.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-run-profile.standard
   name: Standard run
-  about: 'The planet sim''s standard run as the Python run tool (planet_form.py) makes it: checkpoints, settings, gates and
-    targets.'
+  about: 'The planet sim''s standard run as the Python run tool (planet_form.py) makes it: checkpoints, settings, gates and targets.'
 start: 1.420092e+17
 end: 0.0
 times_said:
@@ -127,8 +125,7 @@ settings:
   source: ~/git/planet-trees-pgs2/tools/planet_form.py:87
 - name: SIM_SNAPSHOT_LOAD
   setting: none
-  meaning: pickle of the whole run state to resume from (plates.py:901-916); planet_form then skips checkpoints older than
-    the resume time
+  meaning: pickle of the whole run state to resume from (plates.py:901-916); planet_form then skips checkpoints older than the resume time
   source: ~/git/planet-trees-pgs2/tools/planet_form.py:92; ~/git/planet-sim-landform/src/planet_sim/stages/plates.py:901
 - name: SIM_SNAPSHOT_SAVE
   setting: none
@@ -164,8 +161,8 @@ settings:
   source: ~/git/planet-trees-pgs2/tools/planet_form.py:561-574
 - name: CONTEXT
   setting: '0'
-  meaning: write <ck>_ctx.npz (age, thick, floor, grain, sunk_at, plate axes, events, hotspots, h_* hydro, river_events, c_*
-    causes, v_* volc, hotspot_xyz); at the end run landform_graph.py on the last 3 checkpoints and context_view.py --page-only
+  meaning: write <ck>_ctx.npz (age, thick, floor, grain, sunk_at, plate axes, events, hotspots, h_* hydro, river_events, c_* causes, v_* volc, hotspot_xyz); at the end run landform_graph.py on the last 3 checkpoints and context_view.py
+    --page-only
   source: ~/git/planet-trees-pgs2/tools/planet_form.py:201,616
 - name: FAST
   setting: '0'
@@ -197,8 +194,7 @@ settings:
   source: ~/git/planet-trees-pgs2/tools/planet_form.py:101-119
 - name: FRACTAL_EDGES
   setting: '1'
-  meaning: replace plates._bumps with a 4-octave field (n*4^k centres, width/2^k, amplitude 0.5^k, /3, reach 3w) plus a fixed
-    seeded rift fabric (12000 Fibonacci points, octaves k=1..3 of 40*4^k bumps, width 0.25/2^k)
+  meaning: replace plates._bumps with a 4-octave field (n*4^k centres, width/2^k, amplitude 0.5^k, /3, reach 3w) plus a fixed seeded rift fabric (12000 Fibonacci points, octaves k=1..3 of 40*4^k bumps, width 0.25/2^k)
   source: ~/git/planet-trees-pgs2/tools/planet_form.py:318-368
 - name: INVERT_AT_END
   setting: '0'
@@ -213,8 +209,7 @@ settings:
   meaning: named in the docstring only; not read in planet_form.py (unverified where)
   source: ~/git/planet-trees-pgs2/tools/planet_form.py:19
 - name: STORY_KM2, SP1, HEAD1, J1, SPACING, HEAD, JITTER
-  setting: '{"STORY_KM2": "4000", "SP1": "10*px", "HEAD1": "STORY_KM2/8", "J1": "60", "SPACING": "2*px", "HEAD": "STORY_KM2/50",
-    "JITTER": "8"}'
+  setting: '{"STORY_KM2": "4000", "SP1": "10*px", "HEAD1": "STORY_KM2/8", "J1": "60", "SPACING": "2*px", "HEAD": "STORY_KM2/50", "JITTER": "8"}'
   meaning: part 2 tree-growth knobs (run_growth, px 2000 m, window 400 km); run_growth is not called from main (retired, unverified)
   source: ~/git/planet-trees-pgs2/tools/planet_form.py:411-455
 - name: PEAK_GAIN
@@ -259,3 +254,32 @@ status: draft
 implementations:
 - where: planet-trees-pgs2 tools/planet_form.py
   state: reference
+planet:
+  radius: 6371000.0
+  mass: 5.9722e+24
+  water_mass_fraction: 0.00023
+  star_age: 1.44218232e+17
+  preset: presets.earth()
+  note: 'Earth: radius 1 R_earth, mass 1 M_earth, water 2.3e-4 of its mass (oceans and ice), the Sun''s age 4.57 Gyr at the run''s end (the Python preset)'
+basis:
+- of:
+  - planet.radius
+  tier: sourced
+  source: 'IUGG: the Earth''s mean radius, 6,371.0 km'
+- of:
+  - planet.mass
+  tier: sourced
+  source: 'IAU 2015 Resolution B3 with CODATA''s G: 5.9722e24 kg'
+- of:
+  - planet.water_mass_fraction
+  tier: sourced
+  source: 'Charette & Smith 2010: the oceans 1.335e21 kg (2.3e-4 of the Earth''s mass)'
+- of:
+  - planet.star_age
+  tier: sourced
+  source: 'the Sun''s age, 4.57 Gyr (Bouvier & Wadhwa 2010: 4.568 Gyr), as presets.sun()'
+- of:
+  - planet.preset
+  - planet.note
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-sim-landform presets.earth()'

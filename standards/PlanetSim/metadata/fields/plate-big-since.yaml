@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.plate-big-since
+  name: Plate big since
+  about: Since when a plate has carried more than BIG_SHARE of the planet's continent (heat building beneath it), on the planet's clock; NaN when it does not.
+unit: s
+producer:
+  where: planet-forge crates/forge-core/src/models/plates/init.rs
+  file: checkpoint
+  key: tables/plates/planet-field.plate-big-since
+per: plate
+time_base: planet-age
+missing: 'NaN: not carrying a big share'
+also_from:
+- where: stages/plates.py
+  key: Plate.big_since
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: forge''s plates foundation (branch plates-foundation) and the Python sim''s World (stages/plates.py:247-393), read from the code.'

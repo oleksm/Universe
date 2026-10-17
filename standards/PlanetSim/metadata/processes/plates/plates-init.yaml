@@ -1,15 +1,11 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.plates-init
   name: Initial plates, protocontinents and hotspots
-  about: 'Sets up the lithosphere at START_GYR. Samples are a Fibonacci lattice of n points (the first entry of the resolution
-    schedule). Plates are Voronoi cells of PLATES random centres, with edges made irregular by warping each sample by three
-    _bumps fields (sum of 60 Gaussian bumps, width 0.35, random amplitudes) times WANDER before choosing the nearest centre.
-    Each sample becomes one particle (ocean floor, 7 km, age uniform 0-100 Myr, never sutured). Each plate gets a random Euler
-    axis, rate=base=1, and torque = axis*1e-3. n_seeds protocontinents are the max(3, SEED_CONTINENT*n/n_seeds) samples nearest
-    random points: continental, volume CONTINENT_CRUST*cell, greenstone over basement, 3 km cover. Hotspots: max(4, round(40*area/5.1e14))
-    random unit vectors fixed in the mantle frame for the whole run (they never move).'
+  about: 'Sets up the lithosphere at START_GYR. Samples are a Fibonacci lattice of n points (the first entry of the resolution schedule). Plates are Voronoi cells of PLATES random centres, with edges made irregular by warping each sample
+    by three _bumps fields (sum of 60 Gaussian bumps, width 0.35, random amplitudes) times WANDER before choosing the nearest centre. Each sample becomes one particle (ocean floor, 7 km, age uniform 0-100 Myr, never sutured). Each plate
+    gets a random Euler axis, rate=base=1, and torque = axis*1e-3. n_seeds protocontinents are the max(3, SEED_CONTINENT*n/n_seeds) samples nearest random points: continental, volume CONTINENT_CRUST*cell, greenstone over basement, 3
+    km cover. Hotspots: max(4, round(40*area/5.1e14)) random unit vectors fixed in the mantle frame for the whole run (they never move).'
 area: plates
 clock:
   when: once, at START_GYR (not run when resuming from SIM_SNAPSHOT_LOAD)
@@ -27,15 +23,50 @@ reads:
   unit: '1'
   meaning: sample counts by time
 writes:
-- name: w.x, w.xplate, w.xcont, w.xvol, w.xfloor, w.xage, w.xsuture
-  unit: unit vec, id, bool, m3, m, Myr, Myr
-  meaning: initial particles
+- name: w.x
+  field: planet-field.particle-position
+  unit: '1'
+  meaning: 'initial particles: one per sample'
+- name: w.xplate
+  field: planet-field.particle-plate
+  unit: '1'
+- name: w.xcont
+  field: planet-field.particle-continental
+  unit: '1'
+  meaning: protocontinent seeds
+- name: w.xvol
+  field: planet-field.particle-volume
+  unit: m3
+- name: w.xfloor
+  field: planet-field.particle-floor-thickness
+  unit: m
+- name: w.xage
+  field: planet-field.particle-age
+  unit: s
+- name: w.xsuture
+  field: planet-field.particle-suture
+  unit: s
+- name: w.plates keys
+  field: planet-field.plate-id
+  unit: '1'
+- name: Plate.axis
+  field: planet-field.plate-axis
+  unit: '1'
+- name: Plate.rate
+  field: planet-field.plate-rate
+  unit: '1'
+- name: Plate.base
+  field: planet-field.plate-base
+  unit: '1'
+- name: Plate.torque
+  field: planet-field.plate-torque
+  unit: '1'
+- name: Plate.big_since
+  field: planet-field.plate-big-since
+  unit: s
 - name: w.xtop, w.xbase, w.xcover
   unit: unit code, unit code, m
   meaning: geology of particles (morb by default; seeds greenstone/basement, cover 3000 m)
-- name: w.plates[pid]
-  unit: Plate
-  meaning: axis, rate, base, torque, big_since
 - name: hotspots / w.hotspots
   unit: unit vec / count
   meaning: plume positions and count
@@ -53,8 +84,7 @@ params:
 - name: WANDER
   value: 0.35
   unit: '1'
-  meaning: amplitude of the smooth random field (_bumps) that warps initial Voronoi plate cells and rift cut surfaces away
-    from great circles
+  meaning: amplitude of the smooth random field (_bumps) that warps initial Voronoi plate cells and rift cut surfaces away from great circles
   source: stages/plates.py:74
   note: Vauchez et al. 1997 (chosen)
 - name: OCEAN_CRUST
@@ -304,11 +334,9 @@ tables:
     - Myr or None
     - since when carrying > BIG_SHARE of continent
 random_draws:
-- 'rng = np.random.default_rng(seed), one stream for the whole run. Order of draws: 3 x _bumps (each: random_unit(60) = normal(60,3),
-  then normal(60)); random_unit(PLATES) centres; per plate random_unit (normal(3)) for axis, PLATES times; random_unit(n_seeds)
-  seeds; random_unit(n_hotspots); uniform(0,100,n) ages comes BEFORE the plates'' axes (it is in the World(...) constructor
-  call, line 828, after the centres); then next_reorg = uniform(100,250). Exact order: bumps x3, centres, ages, plate axes,
-  seeds, hotspots, first reorg interval.'
+- 'rng = np.random.default_rng(seed), one stream for the whole run. Order of draws: 3 x _bumps (each: random_unit(60) = normal(60,3), then normal(60)); random_unit(PLATES) centres; per plate random_unit (normal(3)) for axis, PLATES
+  times; random_unit(n_seeds) seeds; random_unit(n_hotspots); uniform(0,100,n) ages comes BEFORE the plates'' axes (it is in the World(...) constructor call, line 828, after the centres); then next_reorg = uniform(100,250). Exact order:
+  bumps x3, centres, ages, plate axes, seeds, hotspots, first reorg interval.'
 invariants:
 - one particle per sample at start
 - every particle's plate id is a key of w.plates
@@ -316,8 +344,7 @@ invariants:
 backends:
 - cpu
 implementations:
-- where: planet-sim-landform stages/plates.py:run (lines 785-866), _bumps (lines 396-403), Plate/World dataclasses (lines
-    247-393)
+- where: planet-sim-landform stages/plates.py:run (lines 785-866), _bumps (lines 396-403), Plate/World dataclasses (lines 247-393)
   state: reference
 status: draft
 basis:
@@ -327,5 +354,4 @@ basis:
   - reads
   - writes
   tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
-    code at planet-sim-landform 9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'

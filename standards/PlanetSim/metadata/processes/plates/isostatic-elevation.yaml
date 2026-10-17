@@ -1,23 +1,38 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.isostatic-elevation
   name: Surface height by isostasy, ocean age-depth and trenches
-  about: 'elevation(): continent: CONTINENT_ABOVE_RIDGE + BUOYANCY*(thick - CONTINENT_MEAN); ocean: 2600 - ocean_depth(age)
-    + BUOYANCY*(floor - OCEAN_CRUST), ocean_depth by Stein & Stein 1992 GDH1: 2600 + 365*sqrt(age) for age < 20 Myr, else
-    5651 - 2473*exp(-0.0278*age). Heights relative to the ridge reference (2600 m below Earth''s sea). Trenches: ocean samples
-    within 3 gap of a sunk particle and on its plate drop by (2000 + 3500*clip(age/150 Myr, 0, 1))*exp(-(d/gap)^2) (Grellet
-    & Dubois 1982).'
+  about: 'elevation(): continent: CONTINENT_ABOVE_RIDGE + BUOYANCY*(thick - CONTINENT_MEAN); ocean: 2600 - ocean_depth(age) + BUOYANCY*(floor - OCEAN_CRUST), ocean_depth by Stein & Stein 1992 GDH1: 2600 + 365*sqrt(age) for age < 20
+    Myr, else 5651 - 2473*exp(-0.0278*age). Heights relative to the ridge reference (2600 m below Earth''s sea). Trenches: ocean samples within 3 gap of a sunk particle and on its plate drop by (2000 + 3500*clip(age/150 Myr, 0, 1))*exp(-(d/gap)^2)
+    (Grellet & Dubois 1982).'
 area: plates
 clock:
   when: with each denudation pass (and by callers outside, e.g. reports)
 reads:
-- name: w.kind, w.thick, w.floor, w.age, w.sunk_at, w.sunk_plate, w.plate
+- name: w.kind
   field: planet-field.crust-kind
+  unit: '1'
+- name: w.thick
+  field: planet-field.crust-thickness
+  unit: m
+- name: w.floor
+  field: planet-field.ocean-floor-thickness
+  unit: m
+- name: w.age
+  field: planet-field.crust-age
+  unit: s
+- name: w.plate
+  field: planet-field.plate
+  unit: '1'
+  meaning: 'trenches: on the sunk particle''s plate'
+- name: w.sunk_at, w.sunk_plate
+  unit: unit vec, id
+  meaning: where floor sank at the last step (subduction)
 writes:
 - name: z
-  field: planet-field.height
-  unit: m above ridge reference
+  field: planet-field.height-above-ridge
+  unit: m
+  meaning: solid surface above the ridge reference
 params:
 - name: BUOYANCY
   value: 0.1515151515151515
@@ -28,8 +43,7 @@ params:
 - name: CONTINENT_ABOVE_RIDGE
   value: 3440.0
   unit: m
-  meaning: continental surface above the ridge reference at CONTINENT_MEAN thickness (840 m mean land height + 2600 m ridge
-    depth)
+  meaning: continental surface above the ridge reference at CONTINENT_MEAN thickness (840 m mean land height + 2600 m ridge depth)
   source: stages/plates.py:85
   note: Cogley 1984 (real)
 - name: CONTINENT_MEAN
@@ -119,5 +133,4 @@ basis:
   - reads
   - writes
   tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
-    code at planet-sim-landform 9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'
