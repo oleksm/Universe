@@ -4,11 +4,12 @@ description: 'standards/dictionary.schema.yaml: the registry''s shared words. Ea
 definitions:
   revision_status:
     description: "How firm a record is, for anyone building on it or against it. Only the user makes a record complete, and only the user reopens one."
-    enum: [draft, review, complete]
+    enum: [draft, review, complete, deprecated]
     x-values:
       draft: "A rough guess, there so the record exists. Do not balance against it; expect it to move; propose freely."
       review: "Worked out, and open. Build against it, and propose a change with a reason."
       complete: "A hard limit: other work is built on it. Fit your work to it. Validation fails if its record changes (standards/changes.yaml)."
+      deprecated: "On its way out: the game may still read it until its replacement exists (replaced_by), but nothing new is built on it and it wants no model work."
   on_conflict:
     description: "What another agent does when a record does not fit its own work."
     enum: [adjust, propose, escalate, conform]

@@ -149,7 +149,7 @@ def brief(kind, key, path, r, used):
 def queue(hulls=False):
     used = usage()
     q = [(kind, key, path, r) for kind, key, path, r in records()
-         if not r.get("visual") and not r.get("looks_as") and not r.get("template") and not r.get("model_of") and stage(r) != "retired" and (hulls or kind != "hull")      # (a kit record its family template draws, or a template an installed model serves, wants none of its own)
+         if not r.get("visual") and not r.get("looks_as") and not r.get("template") and not r.get("model_of") and stage(r) != "retired" and (r.get("revision") or {}).get("status") != "deprecated" and (hulls or kind != "hull")      # (a kit record its family template draws, or a template an installed model serves, wants none of its own)
          and not (kind == "template" and r.get("draws") == "sweep")
          and kind not in ("module", "layout")]      # (no monolith works models: the owner, 2026-10-15; a works is units and runs snapped together)
     low = lambda r: (r.get("revision") or {}).get("priority") == "low"     # (a hold the user set: last of all)

@@ -1,8 +1,8 @@
 # yaml-language-server: $schema=../../schema/building.schema.yaml
 identity:
   key: building.tavern
-  name: "Tavern"
-  description: "A room with a bar and tables, beer and wine from the warehouse, a kitchen: where people meet after work."
+  name: Tavern
+  description: 'A room with a bar and tables, beer and wine from the warehouse, a kitchen: where people meet after work.'
 physical:
   length: 20
   width: 15
@@ -12,23 +12,56 @@ per_people: 500
 floor: 300
 storeys: 1
 meets:
-  - { need: need.company, people: 500 }
+- need: need.company
+  people: 500
 staff:
-  - { profession: profession.innkeeper, count: 2 }
-  - { profession: profession.food-worker, count: 8 }
+- profession: profession.innkeeper
+  count: 2
+- profession: profession.food-worker
+  count: 8
 built_of:
-  - { item: good.concrete, quantity: 312000 }
-  - { item: material.structural-steel-a36, quantity: 17400 }
+- item: good.concrete
+  quantity: 312000
+- item: material.structural-steel-a36
+  quantity: 17400
 visual:
-  format: "freefall-model/1"
-  path: "models/tavern/v1"
-  manifest_sha256: "4522e4a399393913c54c8a4332c7a5453b6a1bda15bc11e4a0288282c8b8b0b6"
+  format: freefall-model/1
+  path: models/tavern/v1
+  manifest_sha256: 4522e4a399393913c54c8a4332c7a5453b6a1bda15bc11e4a0288282c8b8b0b6
   version: 1
   triangles: 1856
 life: 1577880000
 basis:
-  - { of: [per_people, staff], tier: invented, review: true, note: "One to 500 people, with the need's one innkeeper to 250; its 300 m2 is the need's square metre for each of the 500 at once, near enough. The share of a people this gives work to is set so that a settlement's trades together come to about what a rich country's do (about half its people at work; from memory of employment by sector: retail 7%, construction 3-4%, offices and business services 6%, transport 2-3%, hospitality 3%, repair 1-2%). Review." }
-  - { of: [physical, floor, storeys], tier: invented, review: true, note: "Chosen. To be reviewed." }
-  - { of: [built_of], tier: sourced, source: "standards/sources/research_people_plant.json", note: "1,040 kg of concrete and 58 kg of steel for each m2 of floor: the average of 538 residential buildings in China." }
-  - { of: [physical.mass], tier: derived, source: "standards/sources/research_people_plant.json", note: "1,103 kg for each m2 of floor, all materials." }
-  - { of: [life], rule: rule.life-building }
+- of:
+  - per_people
+  - staff
+  tier: invented
+  review: true
+  note: 'One to 500 people, with the need''s one innkeeper to 250; its 300 m2 is the need''s square metre for each of the 500 at once, near enough. The share of a people this gives work to is set so that a settlement''s trades together
+    come to about what a rich country''s do (about half its people at work; from memory of employment by sector: retail 7%, construction 3-4%, offices and business services 6%, transport 2-3%, hospitality 3%, repair 1-2%). Review.'
+- of:
+  - physical
+  - floor
+  - storeys
+  tier: invented
+  review: true
+  note: Chosen. To be reviewed.
+- of:
+  - built_of
+  tier: sourced
+  source: standards/sources/research_people_plant.json
+  note: '1,040 kg of concrete and 58 kg of steel for each m2 of floor: the average of 538 residential buildings in China.'
+- of:
+  - physical.mass
+  tier: derived
+  source: standards/sources/research_people_plant.json
+  note: 1,103 kg for each m2 of floor, all materials.
+- of:
+  - life
+  rule: rule.life-building
+revision:
+  status: deprecated
+  owner: registry
+  on_conflict: propose
+  replaced_by: layout.building-tavern
+  because: 'The owner, 2026-10-17: a building is a layout, laid of units, structure and kit on its site like the factories, not one model. This record stands for the game until its layout exists; no new model work on it.'
