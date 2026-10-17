@@ -4481,7 +4481,7 @@
 - { record: unit.furniture-till, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "0a157018956f11a0" }
 - { record: unit.furniture-tool-rack, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "548097e688e9ee1f" }
 - { record: unit.furniture-trolley, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "a17e76c052fac46f" }
-- { record: unit.furniture-wc, at: "2026-10-17T23:26:42Z", status: draft, summary: "changed: physical, built_of, basis", sha: "4f6290fe309553cd" }
+- { record: unit.furniture-wc, at: "2026-10-17T23:32:10Z", status: draft, summary: "changed: visual", sha: "15505faadfc021b7" }
 - { record: unit.furniture-web-press, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "6e0efa657b117d4d" }
 - { record: unit.furniture-witness-box, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "c6f76789e7ef3fcb" }
 - { record: unit.furniture-workbench, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "b6f32f8e67521d5f" }
