@@ -1,0 +1,120 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.recent-rivers
+  name: 'Recent epoch rivers: runoff with meltwater, routing on relief + ice, lakes (pluvial), river erosion, river memory'
+  about: 'Ice cover as a share frac = clip(H/200, 0, 1): runoff = (1 - frac) x climate runoff x clip(1 - 0.5 g, 0.3, 1) +
+    frac x min(melt, 3 m/yr). Routing surface = ice surface minus VALLEY_HOLD x incision on land (floored at sea + 0.5 m),
+    routed with plates.drain (seeded roughness) and plates.fill_depressions; lakes and discharge by coupled.lakes / route_water
+    / lake_cover; lake_max records any sample that held an open or closed lake at any step (pluvial lakes); lake_now the last
+    step''s. River erosion = min(K_RIVER max(omega - OMEGA_C, 0), 3 mm/yr) x 10 kyr off ice (x (1 - frac)), omega with the
+    same flash factor and hydraulic geometry as the coupled step; no WEAR_SCALE, no base-level fade, no hillslope or wind
+    wear, no sediment deposition. River memory (coupled.classify) runs on a 30-kyr running mean of Q from a fresh state (not
+    the deep-time one).'
+area: hydrology
+clock:
+  when: 'recent epoch: once, after the plates reach the present, 260 steps of DT_KYR = 10 kyr from 2,600 kyr to 10 kyr ago
+    on the final relief zr with sea0 = 0; run by planet-trees-pgs2/tools/planet_form.py:561-574 when SIM_RECENT=1 (default:
+    SIM_COUPLED); outputs written as r_<key> into the last ck_??_*kyr_ctx.npz (needs CONTEXT=1)'
+reads:
+- name: cl.runoff, PET, P, aridity
+  unit: m/yr, -
+- name: melt, H
+  unit: m/yr, m
+- name: g
+  unit: 0-1
+- name: state.incision
+  unit: m
+writes:
+- name: r_river_erosion
+  field: planet-field.river-erosion
+  unit: m
+  meaning: cumulative
+- name: r_lake_now
+  unit: 0/1
+  meaning: lake (open or closed) at the last step
+- name: r_lake_max
+  field: planet-field.pluvial-lake
+  unit: 0/1
+  meaning: lake at any step
+- name: r_river_state
+  unit: code 0-6
+- name: r_peakQ
+  unit: m3/yr
+- name: r_river_t_change
+  unit: Gyr (negative = before present)
+- name: r_river_events
+  unit: JSON counts
+note: 'Emits: river state transition (misfit | dry valley | captured | reversed | reborn)'
+params:
+- name: K_RIVER (recent)
+  value: 9.505703422053232e-15
+  unit: m/s per W/m2
+  said_as:
+    unit: m/yr per W/m2
+    factor: 3.1685678073510773e-08
+  meaning: river incision coefficient in the recent epoch
+  source: stages/recent.py:37
+  note: real rates (big valleys ~0.1-0.5 mm/yr), not the deep-time calibration; 6x the coupled K_RIVER, 15x after its WEAR_SCALE
+    0.4; no base-level fade
+- name: CHANNEL_TAU_KYR
+  value: 946800000000.0
+  unit: s
+  said_as:
+    unit: kyr
+    factor: 31560000000.0
+  meaning: channel adjusts to mean flow over this
+  source: stages/recent.py:36
+- name: 'inline: ice share thickness'
+  value: 200.0
+  unit: m
+  meaning: frac = clip(H/200, 0, 1)
+  source: stages/recent.py:101
+- name: 'inline: glacial rain reduction'
+  setting: clip(1 - 0.5 g, 0.3, 1)
+  meaning: drier glacials
+  source: stages/recent.py:102
+  note: 'unit: dimensionless'
+- name: 'inline: melt runoff cap'
+  value: 9.505703422053231e-08
+  unit: m/s
+  said_as:
+    unit: m/yr
+    factor: 3.1685678073510773e-08
+  meaning: 'unverified: the code names it inline: melt runoff cap without saying what it is'
+  source: stages/recent.py:102
+- name: 'inline: river erosion cap'
+  value: 9.505703422053232e-11
+  unit: m/s
+  said_as:
+    unit: m/yr
+    factor: 3.1685678073510773e-08
+  meaning: 'unverified: the code names it inline: river erosion cap without saying what it is'
+  source: stages/recent.py:114
+random_draws:
+- 'plates.drain roughness: rng(n).normal * 30 m, identical each step'
+invariants:
+- as planet-process.river-discharge
+- river erosion only off ice-covered share
+depends_on:
+- planet-process.ice-sheets
+- planet-process.glacial-cycles
+- planet-process.flow-routing
+- planet-process.lakes
+- planet-process.river-discharge
+- planet-process.river-memory
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/recent.py:run (lines 99-119)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
+    the code at planet-sim-landform 9747f0d-c437724.'

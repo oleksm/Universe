@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.context-basins
+  name: Basins and connections
+  about: each drainage basin to the sea in a random colour, closed basins hatched brown, water layer on top
+title: Basins and connections
+row: landform
+file_suffix: _context_basins.png (+ .legend.json)
+draws:
+  words: each drainage basin to the sea in a random colour, closed basins hatched brown, water layer on top
+shown: true
+implementations:
+- where: planet-trees-pgs2 ~/git/planet-trees-pgs2/tools/context_view.py:view_basins (278)
+  state: reference
+status: draft

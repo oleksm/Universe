@@ -1,0 +1,78 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.zones-close-stale
+  name: Forming sutures and arc fronts ended and chained
+  about: 'End of every plate step, after Store.settle: each forming line with no new points for CLOSE_MYR is finished (chained
+    into polylines by Store.finish with LINK and smoothing 0.7 gap); for sutures relief.orogen is called on the resulting
+    lines; the line and its children are marked state ''ended''.'
+area: relief
+clock:
+  when: end of every plate step, plates.py:1408-1409 (after lines.settle); t is sim time in Gyr since formation (code converts
+    with *1e3 to Myr)
+reads:
+- name: S.open
+- name: line['last'], line['forming']
+- name: gap = sphere.spacing(n) of the current lattice, radians on the unit sphere (x R = metres); refined as the present
+    nears
+- name: w.x (re-anchoring after smoothing)
+writes:
+- name: finished lines (forming False, ended=t, chained vertex order K)
+- name: line['state']='ended' on the line and lines whose parent is it
+- name: S.open entries removed
+note: 'Emits: calls relief.orogen for finished sutures (spawns its features)'
+params:
+- name: CLOSE_MYR
+  value: 946728000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+  meaning: a suture or arc with no new points for this long is ended and chained
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:18
+- name: LINK
+  value: 2.5
+  unit: '1'
+  said_as:
+    unit: x gap (rad)
+    factor: 1.0
+  meaning: points of a forming line linked when chaining (spanning tree radius)
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:22
+- name: smooth
+  value: 0.7
+  unit: '1'
+  said_as:
+    unit: x gap (rad)
+    factor: 1.0
+  meaning: Gaussian smoothing sigma along the chained line (ends kept)
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:163
+- name: final
+  setting: 'False'
+  meaning: close every forming line regardless of age
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:154
+  note: 'no caller passes final=True (grep, 17 Oct): lines still forming at a checkpoint are not chained; Store.arrays is
+    called without link in planet_form.py:232 so forming lines are NOT written to <ck>_store.npz (unverified intent); unit:
+    bool'
+invariants:
+- only non-forming lines are drawn/saved (polylines without link)
+- chaining keeps the longest path of each linked group; the rest of the group is dropped; groups < 3 points dropped
+depends_on:
+- planet-process.zones-suture-forming
+- planet-process.zones-arc-front
+- planet-process.line-store-finish
+- planet-process.relief-orogen-axis
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:close_stale (154-170)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

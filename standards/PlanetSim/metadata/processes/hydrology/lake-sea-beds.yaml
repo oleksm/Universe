@@ -1,0 +1,175 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.lake-sea-beds
+  name: Lake and sea bed shapes at tile resolution (Dean profile, deltas)
+  about: 'The beds of lakes and seas at the fine tiles'' resolution: what lies under the water, so the water''s optics (water_optics.py)
+    has a real floor to show. The coarse (5 km) heights know a basin''s depth; its shape near the shore, where the water is
+    shallow enough to see through, they don''t. From the processes that make it (each approximate, documented): NOT INVENTORIED
+    IN DETAIL: neither plates.py nor coupled.py imports bed.py (directly or through another module); it is used by tools/landcover_tiles.py.'
+area: hydrology
+clock:
+  when: not part of the coupled planet run (offline tools / bakes)
+params:
+- name: DEAN_A
+  value: 0.1
+  unit: '1'
+  said_as:
+    unit: m^(1/3)
+    factor: 1.0
+  open: true
+  meaning: 'm^(1/3): medium sand'
+  source: stages/bed.py:25
+  note: 'unit as the code says it: ''m^(1/3)''; SI conversion unverified'
+- name: CLOSURE_M
+  value: 8.0
+  unit: m
+  meaning: 'm: waves move sand to here (a lake''s or sheltered coast''s; open ocean ~15-20)'
+  source: stages/bed.py:26
+- name: FADE_M
+  value: 2500.0
+  unit: m
+  meaning: 'm: drowned relief buried by sediment over this distance from shore'
+  source: stages/bed.py:27
+- name: SIDE_MIN
+  value: 0.0015
+  unit: '1'
+  said_as:
+    unit: the side's slope (from the code comment; SI conversion not done, unverified)
+    factor: 1.0
+  open: true
+  meaning: 'the side''s slope, from the land''s beside it: a coastal'
+  source: stages/bed.py:28
+  note: 'unit as the code says it: "the side''s slope (from the code comment; SI conversion not done, unverified)"; SI conversion
+    unverified'
+- name: SIDE_MAX
+  value: 0.45
+  unit: '1'
+  said_as:
+    unit: the side's slope (from the code comment; SI conversion not done, unverified)
+    factor: 1.0
+  open: true
+  meaning: 'the side''s slope, from the land''s beside it: a coastal'
+  source: stages/bed.py:28
+  note: 'unit as the code says it: "the side''s slope (from the code comment; SI conversion not done, unverified)"; SI conversion
+    unverified'
+- name: REGIONAL_PX
+  value: 16.0
+  unit: '1'
+  said_as:
+    unit: pixels (from the name, unverified)
+    factor: 1.0
+  open: true
+  meaning: the land's regional gradient over ~ this (samples)
+  source: stages/bed.py:31
+  note: 'plain''s shelf ~1:700 (shelves average ~0.1°: Shepard 1963), a mountain coast''s steep; unit as the code says it:
+    ''pixels (from the name, unverified)''; SI conversion unverified'
+- name: SHELF_SLOPE
+  value: 0.001
+  unit: '1'
+  said_as:
+    unit: m/m
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/bed.py:32
+  note: 'unit as the code says it: ''m/m''; SI conversion unverified'
+- name: CONT_SLOPE
+  value: 0.06
+  unit: '1'
+  said_as:
+    unit: m/m
+    factor: 1.0
+  open: true
+  meaning: the slope from the shelf's edge to the deep floor (~3.5°)
+  source: stages/bed.py:33
+  note: 'unit as the code says it: ''m/m''; SI conversion unverified'
+- name: CHANNEL_M
+  value: 0.0
+  unit: m
+  meaning: 'a drowned river valley''s depth across the shelf at Q = 100 m³/s (off: drawn as straight rays'
+  source: stages/bed.py:34
+- name: CHANNEL_W_M
+  value: 1500.0
+  unit: m
+  meaning: they read as spokes; wants the rivers' lowstand courses)
+  source: stages/bed.py:36
+- name: TOPSET_M
+  value: 1.5
+  unit: m
+  meaning: 'm: a delta''s top under the water'
+  source: stages/bed.py:37
+- name: FORESET
+  value: 0.25
+  unit: '1'
+  said_as:
+    unit: m/m
+    factor: 1.0
+  open: true
+  meaning: its front's slope (~14°)
+  source: stages/bed.py:38
+  note: 'unit as the code says it: ''m/m''; SI conversion unverified'
+- name: DELTA_KM_AT_Q100
+  value: 1.5
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/bed.py:39
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: NEAR_M
+  value: 8000.0
+  unit: m
+  meaning: unverified (no comment)
+  source: stages/bed.py:40
+- name: COARSE_BLUR_PX
+  value: 4.0
+  unit: '1'
+  said_as:
+    unit: pixels (from the name, unverified)
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/bed.py:41
+  note: 'unit as the code says it: ''pixels (from the name, unverified)''; SI conversion unverified'
+- name: FLOOR_FROM_M
+  value: 20.0
+  unit: m
+  meaning: the coarse map's depths trusted from here
+  source: stages/bed.py:42
+- name: ROCK_SLOPE
+  value: 0.35
+  unit: '1'
+  said_as:
+    unit: m/m
+    factor: 1.0
+  open: true
+  meaning: the bed's slope beyond which sediment won't stay
+  source: stages/bed.py:43
+  note: 'unit as the code says it: ''m/m''; SI conversion unverified'
+- name: DEBUG
+  setting: '{}'
+  meaning: unverified (no comment)
+  source: stages/bed.py:46
+  note: 'unit: unverified'
+random_draws:
+- not inventoried
+used: false
+note: 'unused by plates.py / coupled.py; users: tools/landcover_tiles.py'
+backends:
+- cpu
+implementations:
+- where: 'planet-sim-landform stages/bed.py: deltas (49-60), shape (63-160)'
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
+    the code at planet-sim-landform 9747f0d-c437724.'

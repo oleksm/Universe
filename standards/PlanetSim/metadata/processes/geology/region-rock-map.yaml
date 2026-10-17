@@ -1,0 +1,155 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.region-rock-map
+  name: Regional rock map with folded and flat beds
+  about: 'The rock map of a tangent-plane window for regional erosion and survey: contacts warped by fBm (CONTACT_WARP, 60-2
+    km), unit and grain from the nearest plate sample; grain angle smoothed as an axis (doubled angle, Gaussian ~40 km); layered
+    units (schist, greenstone, rift, BIF) banded across the grain with fold wobble, beds b = tanh(3 sin(2π(across + fold)/λ))
+    and erodibility × exp(0.7 b); all rock × exp(0.15 fBm 20-1 km); platform sediment (carbonate, clastic) flagged flat, its
+    erodibility later set by height via flat_beds: tanh(3 sin(2π(h − datum)/250 m)) with contrast 0.9 (erosion.run).'
+area: geology
+clock:
+  when: on demand per region bake (tools/region.py; flat_beds in stages/erosion.py:370 each erosion step)
+reads:
+- name: p, rock, grain
+  unit: unit vector, index, tangent
+  meaning: plate-stage maps
+- name: c, e1, e2
+  unit: unit vectors
+  meaning: region centre, east, north
+- name: x, y
+  unit: m
+  meaning: plane coordinates
+- name: R
+  unit: m
+  meaning: radius
+- name: h, datum
+  unit: m
+  meaning: height and bed datum (flat_beds)
+writes:
+- name: unit
+  unit: index
+  meaning: unit per point
+- name: erod
+  unit: 1 (relative to MEAN_ERODIBILITY)
+  meaning: erodibility
+- name: bed
+  unit: −1..1
+  meaning: soft..hard bed
+- name: ang
+  unit: rad from east
+  meaning: grain angle
+- name: flat
+  unit: bool
+  meaning: flat-lying sediment
+params:
+- name: LAYERED
+  setting: '{"schist": 4000.0, "greenstone": 5000.0, "rift": 6000.0, "iron_formation": 3000.0}'
+  meaning: ridge spacing across the grain per folded unit (real belts ~3-15 km)
+  source: src/planet_sim/stages/geology.py:738
+  note: 'unit: m'
+- name: FLAT
+  setting: '["carbonate", "clastic"]'
+  meaning: flat-lying platform sediment units
+  source: src/planet_sim/stages/geology.py:745
+  note: 'unit: unit keys'
+- name: FLAT_BED_M
+  value: 250.0
+  unit: m
+  meaning: 'flat bed thickness (chosen: formations 50-300 m)'
+  source: src/planet_sim/stages/geology.py:746
+- name: FLAT_CONTRAST
+  value: 0.9
+  unit: '1'
+  meaning: erodibility × exp(±0.9) between flat beds
+  source: src/planet_sim/stages/geology.py:747
+- name: FOLD
+  value: 0.45
+  unit: '1'
+  said_as:
+    unit: bed spacings
+    factor: 1.0
+  open: true
+  meaning: fold amplitude
+  source: src/planet_sim/stages/geology.py:753
+  note: 'unit as the code says it: ''bed spacings''; SI conversion unverified'
+- name: FOLD_SCALE
+  value: 25.0
+  unit: '1'
+  said_as:
+    unit: bed spacings
+    factor: 1.0
+  open: true
+  meaning: fold wavelength scale
+  source: src/planet_sim/stages/geology.py:754
+  note: 'unit as the code says it: ''bed spacings''; SI conversion unverified'
+- name: BED_CONTRAST
+  value: 0.7
+  unit: '1'
+  meaning: soft vs hard bed erodibility × exp(±0.7) (~4×)
+  source: src/planet_sim/stages/geology.py:755
+- name: CONTACT_WARP
+  value: 18000.0
+  unit: m
+  meaning: how far contacts wander from plate-stage samples (~80 km apart)
+  source: src/planet_sim/stages/geology.py:756
+- name: fbm persistence
+  value: 0.55
+  unit: '1'
+  meaning: octave amplitude ratio; normalised by sqrt(Σa²) and single-octave spread 0.33
+  source: src/planet_sim/stages/geology.py:782
+- name: hash constants
+  values:
+  - 73856093.0
+  - 19349663.0
+  - 83492791.0
+  - 1274126177.0
+  unit: '1'
+  said_as:
+    unit: int
+    factor: 1.0
+  open: true
+  meaning: value-noise lattice hash (bit-exact port needed)
+  source: src/planet_sim/stages/geology.py:767-769
+  note: 'unit as the code says it: ''int''; SI conversion unverified'
+- name: noise seeds
+  setting: '{"warp_x": 1, "warp_y": 2, "fold": 7, "massive": 11}'
+  meaning: fbm seeds
+  source: src/planet_sim/stages/geology.py:793-819
+  note: 'unit: int'
+- name: massive-rock variation
+  setting: '{"amp": 0.15, "longest_m": 20000.0, "shortest_m": 1000.0}'
+  meaning: erod × exp(0.15 fbm)
+  source: src/planet_sim/stages/geology.py:819
+  note: 'unit: 1, m'
+- name: grain smoothing
+  value: 40000.0
+  unit: m
+  meaning: Gaussian σ for the grain angle
+  source: src/planet_sim/stages/geology.py:803
+random_draws:
+- none (hash value noise; deterministic in position)
+invariants:
+- 'function of position only: region and nested valley agree'
+depends_on:
+- planet-process.rock-unit-stack
+- planet-process.structural-grain
+note: Raster/patch-style noise in a tangent plane; per the owner's 'layers as lines' rule this may be redesigned rather than
+  ported (unverified decision).
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform src/planet_sim/stages/geology.py:region_rock (787-821), flat_beds (750-752), fbm (775-784), _hash_noise
+    (759-772)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

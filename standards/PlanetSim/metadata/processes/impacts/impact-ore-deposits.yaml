@@ -1,0 +1,64 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.impact-ore-deposits
+  name: Impact ore deposits from the crater catalogue
+  about: 'For each land crater still found: for each impact ore type it qualifies for (diameter ≥ d_min, host unit in list
+    if any), with chance (× IMPACT_DRY multiplier on a never-wet world) drawn from crc32(world/type/crater_id): ore level
+    = depth_frac × D; skipped if eroded > level + 1 km; else max(1, Poisson(per)) deposits at radius U(r_lo, r_hi) × D/2,
+    random azimuth, strike tangential to the basin, tonnage lognormal capped, grades × lognormal(0.4). District ''<world>-<SHORT>-<crater
+    num:06d>A''.'
+area: impacts
+clock:
+  when: once per world (tools/deposits.py --impacts=...)
+reads:
+- name: craters[]
+  unit: lat/lon deg, d_km (m ×1e3), eroded_m (m), sea, id
+  meaning: crater catalogue (tools/impacts.py)
+- name: host
+  unit: unit index
+  meaning: surface unit at each crater
+- name: wet
+  unit: bool
+  meaning: world ever had water
+writes:
+- name: deposits[]
+  unit: dict
+  meaning: as deposit-draw plus crater_id
+events_emitted:
+- event: planet-event.geology-deposit-found
+params:
+- name: IMPACT_DRY
+  setting: '{"impact_melt_nickel": 0.05, "impact_diamond": 0.0, "impact_hydrothermal": 0.0}'
+  meaning: chance multipliers on a dry world (chosen)
+  source: src/planet_sim/stages/geology.py:628
+  note: 'unit: 1'
+- name: erosion grace
+  value: 1000.0
+  unit: m
+  meaning: skip if eroded more than level + this
+  source: src/planet_sim/stages/geology.py:655
+random_draws:
+- 'default_rng(crc32(''world/type/crater_id'')): uniform gate, Poisson count, uniform radius and azimuth, normal tonnage,
+  normal depth (σ 150 m), uniform dip, normal grades/footprint'
+invariants:
+- sea craters skipped
+- deterministic per crater id
+depends_on:
+- planet-process.crater-preservation
+- planet-process.rock-unit-stack
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform src/planet_sim/stages/geology.py:impact_deposits (631-685)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

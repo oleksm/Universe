@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.rings-relief
+  name: 'Relief: classes and features'
+  about: 'view_relief on smoothed relief classes, then relief_overlay: every alive relief feature from <ck>_store.npz in its
+    family colour (RELIEF_FAM, worn faint), a pin with #id per line, landmark dots; legend adds coverage and every kind with
+    counts and id ranges'
+title: 'Relief: classes and features'
+row: line rings
+file_suffix: _rings_relief.png (+ .legend.json)
+draws:
+  words: 'view_relief on smoothed relief classes, then relief_overlay: every alive relief feature from <ck>_store.npz in its
+    family colour (RELIEF_FAM, worn faint), a pin with #id per line, landmark dots; legend adds coverage and every kind with
+    counts and id ranges'
+shown: true
+implementations:
+- where: planet-trees-pgs2 ~/git/planet-trees-pgs2/tools/layer_lines.py:rings (355-356 (+ relief_overlay 384-444))
+  state: reference
+status: draft

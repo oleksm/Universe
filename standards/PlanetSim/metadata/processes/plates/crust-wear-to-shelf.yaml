@@ -1,0 +1,133 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.crust-wear-to-shelf
+  name: Crust-level wear of highlands, debris to the shelf wedge
+  about: 'In the same pass, continental thickness above ERODE_ABOVE (COUPLED_ERODE_ABOVE in the coupled era) is worn by (H-above)*(1-exp(-SPREAD_EVERY*dt/e_myr))
+    (e_myr = ERODE_MYR or COUPLED_ERODE_MYR), modulated by rock erodibility (_wear: top unit at its rate while its cover lasts,
+    then basement; geology ERODIBILITY / MEAN_ERODIBILITY). The particles are fitted to H2 (_set_continents), exhumed (cover/ore
+    depth reduced, organics exhumed), and the worn volume is laid on ocean floor particles within SHELF*gap of a same-plate
+    continental particle, weighted exp(-d/(WEDGE*gap)) (shelf wedge), with era sediment: iron formation before G.OXYGENATION_GYR,
+    then carbonate within G.CARBONATE_LAT, else clastic; phosphorite within G.PHOSPHORITE_LAT. Thick shelves later accrete.
+    Nothing lost.'
+area: plates
+clock:
+  when: every SPREAD_EVERY steps
+reads:
+- name: H2
+  unit: m per sample
+  meaning: after flow/cap/roots
+- name: w.xtop, w.xbase, w.xcover
+  meaning: erodibility
+writes:
+- name: w.xvol
+  unit: m3
+  meaning: continental loss
+- name: w.xfloor (shelf)
+  unit: m
+  meaning: gain
+- name: geology/organics
+params:
+- name: ERODE_ABOVE
+  env: SIM_ERODE_ABOVE
+  value: 38000.0
+  unit: m
+  meaning: continental thickness above which crust-level wear removes the excess (pre-coupled era)
+  source: stages/plates.py:161, stages/plates.py:162
+  note: Appalachians, Urals; Watts 1982 (chosen)
+- name: ERODE_MYR
+  env: SIM_ERODE_MYR
+  value: 4733640000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 150.0
+  meaning: e-folding time of crust-level wear of the excess above ERODE_ABOVE (pre-coupled era)
+  source: stages/plates.py:163, stages/plates.py:164
+  note: 'chosen: mountain belts fall to plains in a few hundred Myr'
+- name: COUPLED_ERODE_ABOVE
+  env: SIM_COUPLED_ERODE_ABOVE
+  value: 38000.0
+  unit: m
+  meaning: threshold for crust-level wear in the coupled era (default = ERODE_ABOVE after its own env override)
+  source: stages/plates.py:166
+  note: (and from what thickness; 45 km built 2-3 km high plains on s19, 14-24 % of land above 2 km)
+- name: COUPLED_ERODE_MYR
+  env: SIM_COUPLED_ERODE_MYR
+  value: 7889400000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 250.0
+  meaning: 'the same crust-level wear in the coupled era (slower: climate erosion shares the work)'
+  source: stages/plates.py:165
+  note: '(the same wear once the climate''s erosion runs: slower, it shares the work)'
+- name: SHELF
+  value: 1.6
+  unit: '1'
+  meaning: eroded crust is laid on ocean floor particles within SHELF*gap of a continental particle of the same plate
+  source: stages/plates.py:167
+  note: no comment in code
+- name: WEDGE
+  env: SIM_WEDGE
+  value: 0.35
+  unit: '1'
+  meaning: e-folding distance of the shelf wedge weight exp(-d/(WEDGE*gap))
+  source: stages/plates.py:168
+  note: spacings over which a shelf wedge thins away from the coast (16 Oct, s22)
+- name: COUPLED
+  env: SIM_COUPLED
+  setting: 'False'
+  meaning: 'landform line: run the coupled surface step (stages/coupled.py) in the last COUPLE_FROM_MYR'
+  source: stages/plates.py:136
+  note: 'env ''1'' -> True; default ''0''; unit: bool'
+- name: COUPLE_FROM_MYR
+  env: SIM_COUPLE_FROM_MYR
+  value: 2.209032e+16
+  unit: s
+  said_as:
+    unit: Myr before the end
+    factor: 700.0
+  meaning: the coupled era starts when (end - t) <= this; also gates SIM_LAND_SHARE (late) and the snapshot save
+  source: stages/plates.py:139
+  note: 'owner 16 Oct: weathering, rivers and history from the fifth checkpoint (700 Ma) on'
+- name: 'OFF'
+  env: SIM_OFF
+  values: []
+  unit: '1'
+  said_as:
+    unit: set of process names
+    factor: 1.0
+  open: true
+  meaning: 'ablation switches, comma separated: flow, cap, roots, crustwear, climate, shelf'
+  source: stages/plates.py:143
+  note: '16 Oct tooling (comment also lists ''shelf''; ''climate'' and ''shelf'' only matter in coupled era); unit as the
+    code says it: ''set of process names''; SI conversion unverified'
+- name: fertility e-fold
+  value: 500.0
+  unit: m
+  meaning: sediment thickness per e-fold of shelf ore fertility
+  source: stages/plates.py:620
+random_draws:
+- none
+invariants:
+- worn volume removed from continent == volume laid on shelf floor (if any shelf particle exists; else the volume is lost
+  - code drops it silently when no shelf is found)
+depends_on:
+- planet-process.crust-flow-cap-delamination
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/plates.py:run (lines 1285-1305), _wear (631-645), _exhume (704-713), _to_shelf (593-628),
+    _bury (696-701)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
+    code at planet-sim-landform 9747f0d-c437724.'

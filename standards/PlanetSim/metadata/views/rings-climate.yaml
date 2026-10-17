@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.rings-climate
+  name: Climate
+  about: view_climate with P, T, aridity, ice fields smoothed per pixel and z from inverse-distance over 3 samples
+title: Climate
+row: line rings
+file_suffix: _rings_climate.png (+ .legend.json)
+draws:
+  words: view_climate with P, T, aridity, ice fields smoothed per pixel and z from inverse-distance over 3 samples
+shown: true
+implementations:
+- where: planet-trees-pgs2 ~/git/planet-trees-pgs2/tools/layer_lines.py:rings (375)
+  state: reference
+status: draft

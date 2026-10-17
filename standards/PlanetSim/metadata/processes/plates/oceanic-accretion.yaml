@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.oceanic-accretion
+  name: Thick ocean crust becomes continent
+  about: Ocean particles with xfloor >= ACCRETE become continental with xvol = xfloor*cell; their MORB basement becomes 'basement'.
+area: plates
+clock:
+  when: every step
+reads:
+- name: w.xfloor
+  unit: m
+writes:
+- name: w.xcont, w.xvol, w.xbase
+params:
+- name: ACCRETE
+  env: SIM_ACCRETE
+  value: 25000.0
+  unit: m
+  meaning: ocean floor (xfloor) at or above this becomes continent (accretion of arcs/plateaus)
+  source: stages/plates.py:89
+  note: 'chosen: island arcs reach 20-35 km, Calvert 2011'
+random_draws:
+- none
+invariants:
+- crust volume created here equals sum(xfloor*cell) of converted particles (budget 'accreted')
+depends_on:
+- planet-process.arcs-and-margin-erosion
+- planet-process.hotspots
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/plates.py:run (lines 1192-1198)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
+    code at planet-sim-landform 9747f0d-c437724.'

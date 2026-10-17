@@ -1,0 +1,71 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.sea-level
+  name: Sea level from ocean volume, or from a held land share
+  about: 'water_m3 = water_mass_fraction*mass/1025*SIM_WATER_SCALE. sea_level(): bisection (60 iterations) for the level holding
+    water_m3 above the solid surface on equal-area cells. If SIM_LAND_SHARE is set and late (coupled era) or SIM_LAND_SHARE_ALWAYS=1:
+    the level is the (1-share) percentile of z, so the water follows the land.'
+area: plates
+clock:
+  when: with each denudation pass
+reads:
+- name: z
+  field: planet-field.height
+  unit: m
+- name: water_m3
+  unit: m3
+writes:
+- name: sea_
+  unit: m
+params:
+- name: water scale
+  env: SIM_WATER_SCALE
+  value: 0.975
+  unit: '1'
+  meaning: ocean volume = water_mass_fraction * planet mass / 1025 kg/m3 * this
+  source: stages/plates.py:896
+  note: '16 Oct owner: halfway between Earth''s and 5% less'
+- name: share
+  env: SIM_LAND_SHARE
+  setting: none
+  meaning: sea level set to the percentile leaving this share of samples above sea (only when late=coupled era, unless SIM_LAND_SHARE_ALWAYS)
+  source: stages/plates.py:1544
+  note: 'owner 2026-10-09 / 17 Oct targets land 30%+; unit: 1 (share of surface)'
+- name: SIM_LAND_SHARE_ALWAYS
+  env: SIM_LAND_SHARE_ALWAYS
+  setting: '0'
+  meaning: apply SIM_LAND_SHARE in every era (old behaviour)
+  source: stages/plates.py:1545
+  note: 'unit: bool'
+- name: sea water density
+  value: 1025.0
+  unit: kg/m3
+  meaning: 'unverified: the code names it sea water density without saying what it is'
+  source: stages/plates.py:896
+- name: bisection iterations
+  value: 60.0
+  unit: '1'
+  meaning: 'unverified: the code names it bisection iterations without saying what it is'
+  source: stages/plates.py:1551
+random_draws:
+- none
+invariants:
+- water volume above surface == water_m3 (unless land share mode)
+depends_on:
+- planet-process.isostatic-elevation
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/plates.py:sea_level (1537-1557), run (896)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
+    code at planet-sim-landform 9747f0d-c437724.'

@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.relief-rift-shoulders
+  name: Rift shoulders
+  about: 'Each margin offset RIFT_SHOULDER_M to the side away from the rift: the side farther from the other margin (mean
+    distance at 30 km offsets), else (one margin) the side of thicker crust.'
+area: relief
+clock:
+  when: with relief-rift-floor-axis
+reads:
+- name: other margin
+- name: w.thick
+  field: planet-field.crust-thickness
+writes:
+- name: line 'rift shoulder' parent=margin, meta {uplift_m 800, relief0_m 800, facing 'rift'}
+note: 'Emits: trace spawn rule ''relief.rift'' trigger + {margin}'
+params:
+- name: RIFT_SHOULDER_M
+  value: 40000.0
+  unit: m
+  meaning: shoulders this far outside a rift's margins
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:47
+- name: side probe
+  value: 30000.0
+  unit: m
+  meaning: offset used to decide which side is the rift
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:286
+- name: uplift_m
+  value: 800.0
+  unit: m
+  meaning: shoulder uplift and relief0
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:290
+depends_on:
+- planet-process.zones-rift-margins
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:rift_features (282-290)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

@@ -1,0 +1,210 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.interior-structure
+  name: Two-layer interior structure
+  about: 'Builds the world''s interior as an iron core and a rock mantle, each of uniform density: core mass from the core
+    mass fraction, densities from the masses and radii, the pressure at the core-mantle boundary by integrating ρm·g(r) over
+    400 radial steps through the mantle, the centre pressure adding the core''s self-compression (2/3 π G ρc² Rc²), gravity
+    at surface and CMB, the core adiabat''s length scale D = sqrt(3 c_core / (2π α_core,mean ρc G)) (Labrosse 2003), the mantle
+    adiabat (T_base = T_top·exp(α_mean·ḡ·(R−Rc)/c_mantle)) and the mass-weighted mean-temperature factors of mantle and core.'
+area: interior
+clock:
+  when: once per world (before the thermal ODE)
+reads:
+- name: planet.mass
+  unit: kg
+  meaning: mass
+- name: planet.radius
+  unit: m
+  meaning: radius
+- name: planet.core_radius
+  unit: m
+  meaning: core radius (spec)
+- name: planet.core_mass_fraction
+  unit: '1'
+  meaning: core share
+- name: planet.core_light
+  unit: 1 (mass fraction)
+  meaning: light elements in the core
+writes:
+- name: R, Rc
+  unit: m
+  meaning: radii
+- name: Mc, Mm
+  unit: kg
+  meaning: core, mantle masses
+- name: rho_c, rho_m
+  unit: kg/m³
+  meaning: densities
+- name: g_surface, g_cmb
+  unit: m/s²
+  meaning: gravity
+- name: p_cmb, p_centre
+  unit: Pa
+  meaning: pressures
+- name: adiabat_scale D
+  unit: m
+  meaning: core adiabat T(r)=T_cmb·exp((Rc²−r²)/D²)
+- name: eps_m
+  unit: '1'
+  meaning: mantle mean T / top T = 0.5(1 + mantle_base(1))
+- name: eps_c
+  unit: '1'
+  meaning: core mass-weighted mean T / T_cmb
+params:
+- name: C_MANTLE
+  value: 1250.0
+  unit: '1'
+  said_as:
+    unit: J/(kg K)
+    factor: 1.0
+  open: true
+  meaning: mantle heat capacity (real, Turcotte & Schubert)
+  source: src/planet_sim/stages/interior.py:42
+  note: 'unit as the code says it: ''J/(kg K)''; SI conversion unverified'
+- name: ALPHA_MEAN
+  value: 2.0e-05
+  unit: '1'
+  said_as:
+    unit: 1/K
+    factor: 1.0
+  meaning: whole-mantle thermal expansion (real, Katsura et al. 2010)
+  source: src/planet_sim/stages/interior.py:41
+- name: C_CORE
+  value: 800.0
+  unit: '1'
+  said_as:
+    unit: J/(kg K)
+    factor: 1.0
+  open: true
+  meaning: core heat capacity (real, Stacey & Davis 2008)
+  source: src/planet_sim/stages/interior.py:59
+  note: 'unit as the code says it: ''J/(kg K)''; SI conversion unverified'
+- name: ALPHA_CORE_MEAN
+  value: 1.0e-05
+  unit: '1'
+  said_as:
+    unit: 1/K
+    factor: 1.0
+  meaning: mean core thermal expansion; shapes the core adiabat (real, Gubbins et al. 2003)
+  source: src/planet_sim/stages/interior.py:63
+- name: mantle pressure integration steps
+  value: 400.0
+  unit: '1'
+  said_as:
+    unit: count
+    factor: 1.0
+  meaning: radial samples for p_cmb (trapezoid)
+  source: src/planet_sim/stages/interior.py:121
+- name: core mean-factor steps
+  value: 200.0
+  unit: '1'
+  said_as:
+    unit: count
+    factor: 1.0
+  meaning: radial samples for eps_c
+  source: src/planet_sim/stages/interior.py:235
+tables:
+- name: interior.ISOTOPES (radiogenic heat today, bulk silicate Earth)
+  source: src/planet_sim/stages/interior.py:88-94
+  columns:
+  - isotope
+  - heat today (W per kg mantle)
+  - heat_si (W/kg)
+  - half-life (Gyr)
+  - half-life (s)
+  rows:
+  - - 238U
+    - '1.8783775999999997e-12'
+    - '1.8783775999999997e-12'
+    - '4.468'
+    - '1.409993568e+17'
+  - - 235U
+    - '8.193599999999999e-14'
+    - '8.193599999999999e-14'
+    - '0.7038'
+    - '2.221023888e+16'
+  - - 232Th
+    - '2.1120000000000003e-12'
+    - '2.1120000000000003e-12'
+    - '14.05'
+    - '4.4338428e+17'
+  - - 40K
+    - '8.339520000000001e-13'
+    - '8.339520000000001e-13'
+    - '1.248'
+    - '3.93838848e+16'
+- name: interior.COLUMNS (interior history output)
+  source: src/planet_sim/stages/interior.py:253-269
+  columns:
+  - column
+  - code unit
+  - SI unit
+  rows:
+  - - time_gyr
+    - Gyr
+    - s (×3.15576e16)
+  - - t_mantle_k
+    - K
+    - K
+  - - t_mantle_base_k
+    - K
+    - K
+  - - t_cmb_k
+    - K
+    - K
+  - - t_centre_k
+    - K
+    - K
+  - - heat_flow_surface_tw
+    - TW
+    - W (×1e12)
+  - - heat_flow_mantle_tw
+    - TW
+    - W (×1e12)
+  - - heat_flow_cmb_tw
+    - TW
+    - W (×1e12)
+  - - heat_flow_core_adiabat_tw
+    - TW
+    - W (×1e12)
+  - - radiogenic_tw
+    - TW
+    - W (×1e12)
+  - - urey_ratio
+    - ''
+    - '1'
+  - - inner_core_km
+    - km
+    - m (×1e3)
+  - - dynamo
+    - 0/1
+    - 0/1
+  - - dipole_moment_am2
+    - A m²
+    - A m²
+random_draws:
+- none
+invariants:
+- 0 < Rc < R
+- p_centre > p_cmb > 0
+- uniform density per layer (no PREM profile)
+depends_on:
+- planet-process.world-spec-derived
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform src/planet_sim/stages/interior.py:Structure.of, core_pressure, adiabat_scale, mantle_base, mantle_mean_factor,
+    core_mean_factor (lines 97-137, 227-237)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

@@ -1,0 +1,116 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.denudation-and-rivers
+  name: Denudation of land above sea, with stream-power redistribution
+  about: Every SEA_EVERY steps (CP.COUPLE_EVERY in the coupled era), the crust is read, elevation and sea level found; land
+    above sea loses above*(1-exp(-every*dt/DENUDE_MYR)). Outside the coupled era a FLUVIAL share of this is redistributed
+    by stream power sqrt(A/cell)*S from drain() (D8 steepest descent on the 6-neighbour graph after Planchon-Darboux depression
+    filling, with seeded roughness), total kept, capped at the height above sea. The loss is passed through _wear (erodibility)
+    and exhumed, then continental volume is scaled down by (H-lost)/H. Outside the coupled era the lost volume leaves the
+    system (sediment subducted); in the coupled era it goes to the shelf. Zone statistics (land share, sea, flooded, mean
+    height, share above 3 km) are recorded.
+area: plates
+clock:
+  when: every SEA_EVERY (20) steps; in the coupled era every CP.COUPLE_EVERY (default 1, env SIM_COUPLE_EVERY) steps
+reads:
+- name: z_ (elevation)
+  unit: m
+- name: sea_
+  unit: m
+- name: w.thick, w.kind
+  unit: m, code
+writes:
+- name: w.xvol
+  unit: m3
+  meaning: scaled down
+- name: w._zstats
+  unit: dict
+  meaning: land, sea, cont_area, cont_mean_z, flooded, cont_thick, above_3km
+- name: w.cause['climate']
+  unit: m
+  meaning: coupled era
+params:
+- name: SEA_EVERY
+  value: 20.0
+  unit: '1'
+  meaning: steps between denudation passes (and sea-level re-find) outside the coupled era
+  source: stages/plates.py:130
+  note: Sea level is re-found this often (steps) for the denudation
+- name: DENUDE_MYR
+  env: SIM_DENUDE_MYR
+  value: 2524608000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 80.0
+  meaning: 'e-folding turnover of land above sea: base removal = above*(1-exp(-every*dt/DENUDE_MYR))'
+  source: stages/plates.py:119, stages/plates.py:120
+  note: Ahnert 1970; Clift et al. 2009; override for A/B grows, 2026-10-09
+- name: FLUVIAL
+  env: SIM_FLUVIAL
+  value: 0.5
+  unit: '1'
+  meaning: share of the (non-coupled) denudation redistributed by stream power sqrt(A/cell)*S; total kept
+  source: stages/plates.py:135
+  note: Howard 1994 E ~ A^m S^n, m=0.5, n=1; owner 2026-10-09
+- name: FILL_ROUNDS
+  value: 400.0
+  unit: '1'
+  meaning: max Planchon-Darboux iterations in fill_depressions
+  source: stages/plates.py:145
+- name: ROUGH_M
+  env: SIM_ROUGH_M
+  value: 30.0
+  unit: m
+  meaning: std of seeded Gaussian roughness added to land heights before routing in drain()
+  source: stages/plates.py:1474
+  note: courses over a plain don't follow the sample lattice
+- name: 'OFF'
+  env: SIM_OFF
+  values: []
+  unit: '1'
+  said_as:
+    unit: set of process names
+    factor: 1.0
+  open: true
+  meaning: 'ablation switches, comma separated: flow, cap, roots, crustwear, climate, shelf'
+  source: stages/plates.py:143
+  note: '16 Oct tooling (comment also lists ''shelf''; ''climate'' and ''shelf'' only matter in coupled era); unit as the
+    code says it: ''set of process names''; SI conversion unverified'
+- name: fill epsilon
+  value: 0.1
+  unit: m
+  meaning: min drop enforced by fill_depressions
+  source: stages/plates.py:1482
+- name: CP.COUPLE_EVERY
+  env: SIM_COUPLE_EVERY
+  value: 1.0
+  unit: '1'
+  meaning: coupled.py:22, env SIM_COUPLE_EVERY
+  source: stages/plates.py:1311
+random_draws:
+- 'drain(): roughness from np.random.default_rng(n) (n = sample count), a fresh generator each call, independent of the run''s
+  seed; same roughness every call at a resolution.'
+invariants:
+- redistribution keeps the total denudation
+- removal never exceeds height above sea per sample
+depends_on:
+- planet-process.crust-read
+- planet-process.isostatic-elevation
+- planet-process.sea-level
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/plates.py:run (lines 1307-1372, 1403-1405), drain (1490-1511), fill_depressions (1477-1487)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
+    code at planet-sim-landform 9747f0d-c437724.'

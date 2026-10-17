@@ -1,0 +1,104 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.crater-shape
+  name: Fresh crater morphology
+  about: 'Fresh crater proportions by D/D_t: simple bowl (depth 0.2 D, rim 0.036 D; Pike 1977); complex (depth 200 m·D_t·q^0.3,
+    rim 36 m·D_t·q^0.4, floor share min(0.65, 0.3 + 0.06 log2 q), central peak min(6 m·D^1.28·(D_t/15)^0.3, 0.8 depth)) up
+    to 8 D_t; peak ring (ring 0.3 depth) up to max(20 D_t, 150 km); basin (depth ×0.5, rim ×0.6, floor 0.7, ring 0.15 depth).
+    Radial profile: parabolic bowl softening as it degrades, terraced walls with azimuthal slump, central-peak cluster of
+    4 Gaussian summits, peak ring, ejecta r⁻³ out to 3 radii, two outer basin rings at 1.45 and 2.1 radii.'
+area: impacts
+clock:
+  when: per crater, on demand
+reads:
+- name: d_km
+  unit: 'm (code: km)'
+  meaning: diameter
+- name: d_t
+  unit: 'm (code: km)'
+  meaning: transition
+- name: left
+  unit: '1'
+  meaning: share of depth surviving
+writes:
+- name: shape
+  unit: dict kind/depth/rim/floor/peak/ring (m; floor share)
+  meaning: fresh proportions
+- name: profile height
+  unit: m
+  meaning: relief at radius r (crater radii)
+params:
+- name: simple depth/rim
+  values:
+  - 200.0
+  - 36.0
+  unit: '1'
+  said_as:
+    unit: m per km of D (0.2, 0.036)
+    factor: 1.0
+  open: true
+  meaning: Pike 1977
+  source: src/planet_sim/stages/impacts.py:162
+  note: 'unit as the code says it: ''m per km of D (0.2, 0.036)''; SI conversion unverified'
+- name: complex exponents
+  setting: '{"depth": 0.3, "rim": 0.4, "peak": 1.28}'
+  meaning: Hale & Grieve 1982
+  source: src/planet_sim/stages/impacts.py:164-172
+  note: 'unit: 1'
+- name: peak-ring threshold
+  value: 8.0
+  unit: '1'
+  said_as:
+    unit: × D_t
+    factor: 1.0
+  open: true
+  meaning: Melosh 1989
+  source: src/planet_sim/stages/impacts.py:170
+  note: 'unit as the code says it: ''× D_t''; SI conversion unverified'
+- name: basin threshold
+  values:
+  - 20.0
+  - 150.0
+  unit: '1'
+  said_as:
+    unit: × D_t, km
+    factor: 1.0
+  open: true
+  meaning: multi-ring basins above max(20 D_t, 150 km)
+  source: src/planet_sim/stages/impacts.py:173
+  note: 'unit as the code says it: ''× D_t, km''; SI conversion unverified'
+- name: ejecta
+  setting: '{"power": -3.0, "reach_radii": 3.0}'
+  meaning: McGetchin et al. 1973
+  source: src/planet_sim/stages/impacts.py:216
+  note: 'unit: 1'
+- name: basin rings
+  setting: '[[1.45, 0.35], [2.1, 0.2]]'
+  meaning: outer rings
+  source: src/planet_sim/stages/impacts.py:218
+  note: 'unit: radii, × rim'
+- name: terrace amplitude
+  value: 0.035
+  unit: '1'
+  meaning: slump amplitude
+  source: src/planet_sim/stages/impacts.py:201
+random_draws:
+- 'profile: rng for 4 peak summits (uniform angle, offset ≤ 0.07, height 0.4-0.8, width 0.003-0.01)'
+depends_on:
+- planet-process.impactor-scaling
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform src/planet_sim/stages/impacts.py:shape (159-176), profile (179-220)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

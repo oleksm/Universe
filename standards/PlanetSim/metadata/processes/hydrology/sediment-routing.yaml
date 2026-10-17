@@ -1,0 +1,100 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.sediment-routing
+  name: River sediment transport and deposition (lakes, alluvial fans, slow reaches, deltas)
+  about: 'Water-borne load = (wear - wear_wind) x cell per sample, routed highest-first along the receivers. In a lake: a
+    closed lake (or an open one whose water is fully lost) keeps all, an open lake 90 %. At a river mouth (receiver is sea
+    or none) half is laid as a delta, half goes to sea. Elsewhere a share is laid equal to the share of water lost at that
+    sample (soaking/evaporation: fans, inland deltas), at least half on reaches flatter than SLOW_SLOPE. laid = dust + river
+    deposits (m). On the host, laid counts only on continent above sea, clipped to the room (BASIN_FILL minus existing sediment
+    cover) and becomes clastic units in geology._deposit; the sea part is not returned (the host sends all eroded volume to
+    the shelves instead).'
+area: hydrology
+clock:
+  when: each coupled step
+reads:
+- name: wear, wear_wind
+  unit: m
+- name: order, down
+  unit: index
+- name: lake
+  unit: code
+- name: water_lost, Q
+  unit: m3/yr
+- name: slope
+  unit: m/m
+writes:
+- name: laid
+  unit: m per step
+  meaning: sediment + dust laid on land (returned and in hydro)
+params:
+- name: SLOW_SLOPE
+  value: 0.0002
+  unit: '1'
+  said_as:
+    unit: m/m
+    factor: 1.0
+  open: true
+  meaning: rivers this flat drop at least half their load
+  source: stages/coupled.py:26
+  note: 'unit as the code says it: ''m/m''; SI conversion unverified'
+- name: 'inline: open-lake trap'
+  value: 0.9
+  unit: '1'
+  said_as:
+    unit: share
+    factor: 1.0
+  meaning: 'unverified: the code names it inline: open-lake trap without saying what it is'
+  source: stages/coupled.py:340
+- name: 'inline: closed-lake trap'
+  value: 1.0
+  unit: '1'
+  said_as:
+    unit: share
+    factor: 1.0
+  meaning: 'unverified: the code names it inline: closed-lake trap without saying what it is'
+  source: stages/coupled.py:340
+- name: 'inline: delta share'
+  value: 0.5
+  unit: '1'
+  said_as:
+    unit: share
+    factor: 1.0
+  meaning: laid at a river mouth
+  source: stages/coupled.py:344
+- name: 'inline: slow-reach drop'
+  value: 0.5
+  unit: '1'
+  said_as:
+    unit: share
+    factor: 1.0
+  meaning: minimum drop where slope < SLOW_SLOPE
+  source: stages/coupled.py:348
+random_draws:
+- none
+invariants:
+- 'water-borne mass: sum(laid_river*cell) + to_sea = sum((wear - wear_wind)*cell)'
+- laid >= 0
+depends_on:
+- planet-process.coupled-erosion
+- planet-process.river-discharge
+- planet-process.lakes
+- planet-process.dust
+note: 'Samples with lake code 3 (playa) take the river branch, not the lake branch. Mass is not conserved across the host:
+  laid on land adds no crust, all eroded volume also goes to the shelves (plates.py:1373-1379).'
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/coupled.py:step (lines 329-352)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
+    the code at planet-sim-landform 9747f0d-c437724.'

@@ -1,0 +1,224 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.context-plains-shores
+  name: Plains and shores
+  about: plain type fill on flat samples (PLAINS), faded relief classes elsewhere, shore type dots on coastal samples (SHORES);
+    writes <ck>_surface.json/.npz
+title: Plains and shores
+row: landform
+file_suffix: _context_plains_shores.png (+ .legend.json)
+draws:
+  words: plain type fill on flat samples (PLAINS), faded relief classes elsewhere, shore type dots on coastal samples (SHORES);
+    writes <ck>_surface.json/.npz
+legend:
+  title: Plains and shores
+  rows:
+  - kind: head
+    label: Plains ({flat} % of land is flat), share of the flat land
+    shown_when: always
+  - kind: fill
+    label: 'delta plain: {pct} %'
+    colour:
+    - 60
+    - 140
+    - 90
+    shown_when: always
+  - kind: fill
+    label: 'intermontane valley fill: {pct} %'
+    colour:
+    - 150
+    - 190
+    - 110
+    shown_when: always
+  - kind: fill
+    label: 'floodplain: {pct} %'
+    colour:
+    - 90
+    - 170
+    - 120
+    shown_when: always
+  - kind: fill
+    label: 'coastal plain: {pct} %'
+    colour:
+    - 190
+    - 220
+    - 170
+    shown_when: always
+  - kind: fill
+    label: 'lake plain: {pct} %'
+    colour:
+    - 120
+    - 180
+    - 200
+    shown_when: always
+  - kind: fill
+    label: 'till plain: {pct} %'
+    colour:
+    - 200
+    - 210
+    - 230
+    shown_when: always
+  - kind: fill
+    label: 'outwash plain: {pct} %'
+    colour:
+    - 170
+    - 190
+    - 210
+    shown_when: always
+  - kind: fill
+    label: 'loess plain: {pct} %'
+    colour:
+    - 225
+    - 200
+    - 150
+    shown_when: always
+  - kind: fill
+    label: 'sand sea: {pct} %'
+    colour:
+    - 245
+    - 215
+    - 140
+    shown_when: always
+  - kind: fill
+    label: 'lava plateau: {pct} %'
+    colour:
+    - 130
+    - 70
+    - 70
+    shown_when: always
+  - kind: fill
+    label: 'pediplain (desert plain): {pct} %'
+    colour:
+    - 220
+    - 185
+    - 130
+    shown_when: always
+  - kind: fill
+    label: 'peneplain (old shield): {pct} %'
+    colour:
+    - 180
+    - 170
+    - 140
+    shown_when: always
+  - kind: fill
+    label: 'high plateau: {pct} %'
+    colour:
+    - 190
+    - 150
+    - 110
+    shown_when: always
+  - kind: fill
+    label: 'interior plain: {pct} %'
+    colour:
+    - 205
+    - 205
+    - 160
+    shown_when: always
+  - kind: head
+    label: Shores ({n} coastal samples), share of the coast
+    shown_when: always
+  - kind: dot
+    label: 'ice coast: {pct} %'
+    colour:
+    - 235
+    - 245
+    - 255
+    shown_when: always
+  - kind: dot
+    label: 'fjord coast: {pct} %'
+    colour:
+    - 90
+    - 110
+    - 160
+    shown_when: always
+  - kind: dot
+    label: 'delta: {pct} %'
+    colour:
+    - 60
+    - 140
+    - 90
+    shown_when: always
+  - kind: dot
+    label: 'estuary: {pct} %'
+    colour:
+    - 120
+    - 170
+    - 140
+    shown_when: always
+  - kind: dot
+    label: 'coral reef coast: {pct} %'
+    colour:
+    - 250
+    - 130
+    - 120
+    shown_when: always
+  - kind: dot
+    label: 'mangrove coast: {pct} %'
+    colour:
+    - 40
+    - 110
+    - 60
+    shown_when: always
+  - kind: dot
+    label: 'tidal flat / salt marsh: {pct} %'
+    colour:
+    - 150
+    - 130
+    - 90
+    shown_when: always
+  - kind: dot
+    label: 'ria (drowned valleys): {pct} %'
+    colour:
+    - 110
+    - 90
+    - 150
+    shown_when: always
+  - kind: dot
+    label: 'sea cliffs: {pct} %'
+    colour:
+    - 120
+    - 60
+    - 50
+    shown_when: always
+  - kind: dot
+    label: 'rocky shore: {pct} %'
+    colour:
+    - 150
+    - 120
+    - 110
+    shown_when: always
+  - kind: dot
+    label: 'dune coast: {pct} %'
+    colour:
+    - 235
+    - 210
+    - 140
+    shown_when: always
+  - kind: dot
+    label: 'barrier coast, lagoons: {pct} %'
+    colour:
+    - 240
+    - 200
+    - 90
+    shown_when: always
+  - kind: dot
+    label: 'sandy beach: {pct} %'
+    colour:
+    - 245
+    - 230
+    - 170
+    shown_when: always
+  - kind: fill
+    label: 'hills and mountains (faded: see relief and patterns)'
+    colour:
+    - 200
+    - 190
+    - 170
+    shown_when: always
+  source: ~/git/planet-trees-pgs2/tools/context_view.py:445-449
+shown: true
+implementations:
+- where: planet-trees-pgs2 ~/git/planet-trees-pgs2/tools/context_view.py:view_plains_shores (430)
+  state: reference
+status: draft

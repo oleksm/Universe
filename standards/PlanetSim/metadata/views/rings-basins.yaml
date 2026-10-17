@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.rings-basins
+  name: Basins and connections
+  about: view_basins with smoothed basin x lake classes
+title: Basins and connections
+row: line rings
+file_suffix: _rings_basins.png (+ .legend.json)
+draws:
+  words: view_basins with smoothed basin x lake classes
+shown: true
+implementations:
+- where: planet-trees-pgs2 ~/git/planet-trees-pgs2/tools/layer_lines.py:rings (351)
+  state: reference
+status: draft

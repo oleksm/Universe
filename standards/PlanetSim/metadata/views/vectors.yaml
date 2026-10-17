@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.vectors
+  name: all views
+  about: the 'all views' vector sheet (plates, samples, lines, globe, materials stacked 520 px apart)
+title: all views
+row: top (history views)
+file_suffix: _vectors.png
+draws:
+  words: the 'all views' vector sheet (plates, samples, lines, globe, materials stacked 520 px apart)
+shown: true
+implementations:
+- where: planet-trees-pgs2 tools/planet_vectors.py / planet_anchors.py sheet() (not inventoried; unverified which writes which)
+  state: reference
+status: draft

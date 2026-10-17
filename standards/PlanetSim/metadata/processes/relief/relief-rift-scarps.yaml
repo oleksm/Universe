@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.relief-rift-scarps
+  name: Normal fault scarps (tilted blocks)
+  about: 'Each margin offset into the rift by each of RIFT_SCARPS_M: one scarp per distance, facing the rift axis.'
+area: relief
+clock:
+  when: with relief-rift-floor-axis
+reads:
+- name: margin lines
+writes:
+- name: lines 'normal fault scarp' parent=margin, meta {throw_m 600, relief0_m 600, facing 'rift axis', block_km 13}
+note: 'Emits: trace spawn rule ''relief.rift.scarps'' trigger + {margin, block}'
+params:
+- name: RIFT_SCARPS_M
+  values:
+  - 12000.0
+  - 25000.0
+  unit: m
+  meaning: normal fault scarps this far inside the margins
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:48
+- name: throw_m
+  value: 600.0
+  unit: m
+  meaning: scarp throw and relief0
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:293
+depends_on:
+- planet-process.zones-rift-margins
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:rift_features (291-293)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

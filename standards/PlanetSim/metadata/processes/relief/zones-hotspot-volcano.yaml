@@ -1,0 +1,62 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.zones-hotspot-volcano
+  name: Hotspot volcano records (chains as the plate moves)
+  about: 'Each plate step, for every plume k: a ''plume'' event is made once per hotspot; if the plume''s last record is alive
+    and within VOLC_SEP*gap it is kept active, else a new ''hotspot volcano'' record is made where the plume stands (the plate
+    carries old ones away: chains older along the plate''s path). on_continent = nearest particle continental and within one
+    gap.'
+area: relief
+clock:
+  when: every plate step, plates.py:1189 (after hotspot fertilisation); t is sim time in Gyr since formation (code converts
+    with *1e3 to Myr)
+reads:
+- name: hotspot positions (spots, unit vectors)
+- name: w.x, w.xcont
+- name: S.plume_last, S._rows
+- name: gap = sphere.spacing(n) of the current lattice, radians on the unit sphere (x R = metres); refined as the present
+    nears
+- name: cell (area per sample, m2; unused here)
+writes:
+- name: landmark 'hotspot volcano' size 0 with hotspot=k, on_continent, causes {activity:0.7, crust:0.2, land:0.1}
+- name: S.plume_event[k], S.plume_last[k]
+note: 'Emits: store event ''plume'' (hotspot=k) once per plume Emits: trace spawn rule ''zones.hotspot'' trigger {hotspot,
+  on_continent}'
+params:
+- name: VOLC_SEP
+  value: 0.5
+  unit: '1'
+  said_as:
+    unit: x gap (rad)
+    factor: 1.0
+  meaning: a plume's last record within this is kept active instead of a new one
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:19
+- name: on_continent distance
+  value: 1.0
+  unit: '1'
+  said_as:
+    unit: x gap (rad)
+    factor: 1.0
+  meaning: plume counts as under a continent when its nearest particle is continental and closer than gap
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:115
+invariants:
+- at most one new hotspot record per plume per step
+- the hotspot index k is the record's chain key
+depends_on:
+- planet-process.relief-hotspot-chain
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:hotspots (106-126)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

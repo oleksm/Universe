@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/planet-event.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-event.log-vertices-lost
+  name: Log 'vertices lost'
+  about: log 'vertices lost'
+source: log 'vertices lost'
+emitted_by:
+- planet-process.line-store-reindex
+status: draft

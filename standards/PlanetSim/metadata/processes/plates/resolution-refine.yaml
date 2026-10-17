@@ -1,0 +1,75 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.resolution-refine
+  name: Progressive resolution schedule
+  about: 'progressive(): (START_GYR, max(n/16, 10000)), (age-1 Gyr, max(n/4, 10000)), (age-0.3 Gyr, n), each min n. At each
+    scheduled time _refine re-lays particles on a new Fibonacci lattice: each new point copies its nearest particle, volumes
+    shared among a particle''s children, childless particles give their volume to the nearest point. Samples, KD tree, gap,
+    cell and neighbours rebuilt; relief re-anchored.'
+area: plates
+clock:
+  when: at schedule times (by default only if run() is given a schedule)
+reads:
+- name: schedule
+  unit: '[(Gyr, n)]'
+writes:
+- name: particles, pts, stree, gap, cell, nbr
+events_emitted:
+- event: planet-event.resolution-change
+  where: stages/plates.py:937 (log)
+- event: planet-event.relief-reanchor
+  where: stages/plates.py:934
+params:
+- name: min samples
+  value: 10000.0
+  unit: '1'
+  meaning: never coarser than this
+  source: stages/plates.py:723
+- name: deep past fraction
+  value: 0.0625
+  unit: '1'
+  meaning: 'unverified: the code names it deep past fraction without saying what it is'
+  source: stages/plates.py:723
+- name: last Gyr fraction
+  value: 0.25
+  unit: '1'
+  meaning: 'unverified: the code names it last Gyr fraction without saying what it is'
+  source: stages/plates.py:723
+- name: schedule times
+  values:
+  - 3.15576e+16
+  - 9467280000000000.0
+  unit: '1'
+  said_as:
+    unit: 's before the end (code: Gyr)'
+    factor: 1.0
+  open: true
+  meaning: 'unverified: the code names it schedule times without saying what it is'
+  source: stages/plates.py:724
+  note: 'unit as the code says it: ''s before the end (code: Gyr)''; SI conversion unverified'
+- name: n
+  value: 40000.0
+  unit: '1'
+  meaning: run() default samples
+  source: stages/plates.py:776
+random_draws:
+- _refine takes rng but draws nothing.
+invariants:
+- continental volume conserved
+- every old particle's volume lands somewhere
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/plates.py:progressive (716-724), _refine (727-744), run (929-937, 793-797)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
+    code at planet-sim-landform 9747f0d-c437724.'

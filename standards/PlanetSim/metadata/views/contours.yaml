@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.contours
+  name: contours
+  about: unverified (producer outside this inventory)
+title: contours
+row: top (history views)
+file_suffix: _contours.png
+draws:
+  words: unverified (producer outside this inventory)
+shown: true
+implementations:
+- where: planet-trees-pgs2 tools/planet_vectors.py / planet_anchors.py sheet() (not inventoried; unverified which writes which)
+  state: reference
+status: draft

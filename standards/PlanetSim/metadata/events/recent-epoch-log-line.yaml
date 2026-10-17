@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/planet-event.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-event.recent-epoch-log-line
+  name: Recent epoch log line
+  about: recent epoch log line
+source: recent epoch log line
+emitted_by:
+- planet-process.glacial-cycles
+payload:
+- name: kyr ago
+  meaning: kyr ago
+- name: glaciality
+  meaning: glaciality
+- name: sea offset m
+  meaning: sea offset m
+- name: ice samples
+  meaning: ice samples
+- name: active river samples
+  meaning: active river samples
+status: draft

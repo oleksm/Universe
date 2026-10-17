@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.line-store-finish
+  name: Chaining a forming line
+  about: Points linked within `link` form a graph; its minimum spanning tree's components with >= min_pts points each give
+    one line = the longest path (double sweep); the rest dropped. Optional Gaussian smoothing along arc length (sigma `smooth`,
+    ends kept) and re-anchoring to the crust as it is now (fix 17 Oct, s31 crash).
+area: relief
+clock:
+  when: called by zones.close_stale and zones.rift
+reads:
+- name: forming line's vertices
+writes:
+- name: line ids (first component keeps lid, others new records with parent=lid)
+- name: ended=t
+params:
+- name: min_pts
+  value: 3.0
+  unit: '1'
+  said_as:
+    unit: count
+    factor: 1.0
+  meaning: smaller linked groups dropped
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/lines.py:104
+invariants:
+- a line with no component left is alive False
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/lines.py:Store.finish (104-157), chained (159-163)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

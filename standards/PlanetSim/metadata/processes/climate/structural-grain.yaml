@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.structural-grain
+  name: Structural grain of belts
+  about: 'Each crust particle carries a unit tangent vector, the trend of the belt it formed in (strike of folds, faults,
+    veins). Set when a belt forms: the tangent at right angles to the convergence/opening direction from the particle toward
+    the other side: g = normalize(x × (d − (d·x)x)), d = toward − x; zero where undefined. Carried as the plate turns.'
+area: climate
+clock:
+  when: at the plate event that forms the belt (ridge, rift, arc, collision, docking)
+reads:
+- name: x
+  unit: unit vector
+  meaning: particle position
+- name: toward
+  unit: unit vector
+  meaning: the other side of the belt
+writes:
+- name: xgrain
+  unit: unit tangent vector
+  meaning: belt trend
+random_draws:
+- none
+invariants:
+- '|g| = 1 or 0'
+- g ⟂ x
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform src/planet_sim/stages/geology.py:tangent_grain (171-178)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

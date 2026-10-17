@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.rings-zones
+  name: Zones
+  about: context view_zones with each pixel's class (rock x plate key) from the smoothed leading class among the K nearest
+    samples on its side of the coast; laid at alpha 0.88 over a pale relief
+title: Zones
+row: line rings
+file_suffix: _rings_zones.png (+ .legend.json)
+draws:
+  words: context view_zones with each pixel's class (rock x plate key) from the smoothed leading class among the K nearest
+    samples on its side of the coast; laid at alpha 0.88 over a pale relief
+shown: true
+implementations:
+- where: planet-trees-pgs2 ~/git/planet-trees-pgs2/tools/layer_lines.py:rings (348)
+  state: reference
+status: draft

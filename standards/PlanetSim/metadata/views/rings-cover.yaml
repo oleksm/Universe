@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.rings-cover
+  name: Land cover
+  about: view_cover on smoothed cover classes
+title: Land cover
+row: line rings
+file_suffix: _rings_cover.png (+ .legend.json)
+draws:
+  words: view_cover on smoothed cover classes
+shown: true
+implementations:
+- where: planet-trees-pgs2 ~/git/planet-trees-pgs2/tools/layer_lines.py:rings (358)
+  state: reference
+status: draft

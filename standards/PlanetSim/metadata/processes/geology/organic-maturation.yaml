@@ -1,0 +1,86 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.organic-maturation
+  name: Organic maturation (Lopatin TTI)
+  about: 'Each buried layer''s heat dose as Lopatin''s time-temperature index: TTI += Δt·2^((T − 105 °C)/10 °C), T = 15 °C
+    + 0.026 °C/m × (heat-flow ratio) × depth, the ratio being the interior''s mantle heat flow then over today''s. Oil from
+    TTI ~15, peak ~75, oil window ends ~160, gas after, overmature past ~1500 (Waples 1980); the conversion to fields is in
+    tools/hydrocarbons.py.'
+area: geology
+clock:
+  when: every plate denudation pass (every_ × dt Myr) when organics are on
+reads:
+- name: xodep
+  unit: m
+  meaning: layer depth
+- name: span_myr
+  unit: 's (code: Myr)'
+  meaning: time span
+- name: heat_rel
+  unit: '1'
+  meaning: mantle heat flow (interior history) / today's
+writes:
+- name: xotti
+  unit: Myr (TTI index)
+  meaning: accumulated dose
+params:
+- name: SURFACE_C
+  value: 15.0
+  unit: '1'
+  said_as:
+    unit: °C (288.15 K)
+    factor: 1.0
+  open: true
+  meaning: surface temperature for the geotherm (world mean; not spec.surface_temp_k)
+  source: src/planet_sim/stages/organics.py:36
+  note: 'ignores planet.surface_temp_k (unverified intent); unit as the code says it: ''°C (288.15 K)''; SI conversion unverified'
+- name: GRADIENT_NOW
+  value: 0.026
+  unit: '1'
+  said_as:
+    unit: °C/m = K/m
+    factor: 1.0
+  open: true
+  meaning: continental geotherm today (~65 mW/m² / 2.5 W/m/K)
+  source: src/planet_sim/stages/organics.py:37
+  note: 'unit as the code says it: ''°C/m = K/m''; SI conversion unverified'
+- name: TTI reference
+  values:
+  - 105.0
+  - 10.0
+  unit: '1'
+  said_as:
+    unit: °C, °C
+    factor: 1.0
+  open: true
+  meaning: 'Lopatin: doubling every 10 °C above 105 °C'
+  source: src/planet_sim/stages/organics.py:109
+  note: 'unit as the code says it: ''°C, °C''; SI conversion unverified'
+- name: TTI windows
+  setting: '{"oil_start": 15, "oil_peak": 75, "oil_end": 160, "overmature": 1500}'
+  meaning: Waples 1980 (documented, used by tools/hydrocarbons.py)
+  source: src/planet_sim/stages/organics.py:15-16
+  note: 'unit: TTI'
+random_draws:
+- none
+invariants:
+- TTI non-decreasing
+depends_on:
+- planet-process.organic-burial
+- planet-process.thermal-evolution
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform src/planet_sim/stages/organics.py:heat (100-109); called from stages/plates.py:1402
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

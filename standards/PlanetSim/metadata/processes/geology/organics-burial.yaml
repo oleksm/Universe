@@ -1,0 +1,172 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.organics-burial
+  name: 'Buried organic matter: laying, burial, exhumation/oxidation, heat dose (TTI)'
+  about: 'Per crust particle, cohorts of COHORT_MYR by laying time, two kinds (marine type II, peat type III). lay: new sediment
+    brings density x laid kg C/m2 into the current cohort at mid-bed depth (weighted mean depth and dose). bury: sediment
+    over a particle deepens all its cohorts. exhume: erosion brings them up; those reaching the surface are oxidised (carbon
+    zeroed). reset: crust remade. heat: TTI += span x 2^((T - 105)/10), T = 15 degC + 0.026 K/m x heat_rel x depth (Lopatin
+    1971, Waples 1980). Called from plates._bury/_exhume/heat in the denudation step, but only active when plates.run gets
+    organics= (tools/demo_frames.py --organics=PALEO.npz); the planet_form landform runs pass none, so w.xorg is None and
+    every call returns at once.'
+area: geology
+clock:
+  when: each denudation step (every plate step in the coupled era) when active
+reads:
+- name: laid, removed
+  unit: m
+  meaning: from the host
+- name: org_fn(t, x)
+  unit: kg C/m3 per kind
+  meaning: organic content, from the paleo maps
+- name: heat_rel
+  unit: dimensionless
+  meaning: heat flow / today's
+writes:
+- name: xorg
+  unit: kg C/m2
+  meaning: per particle x (cohort x kind)
+- name: xodep
+  unit: m
+  meaning: depth
+- name: xotti
+  unit: TTI (Myr-weighted)
+  meaning: Lopatin time-temperature index
+params:
+- name: COHORT_MYR
+  value: 7890000000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31560000000000.0
+  meaning: cohort width
+  source: stages/organics.py:24
+- name: MARINE
+  value: 0.0
+  unit: '1'
+  said_as:
+    unit: code
+    factor: 1.0
+  open: true
+  meaning: 'kind index: marine (type II kerogen, oil-prone)'
+  source: stages/organics.py:25
+  note: 'unit as the code says it: ''code''; SI conversion unverified'
+- name: PEAT
+  value: 1.0
+  unit: '1'
+  said_as:
+    unit: code
+    factor: 1.0
+  open: true
+  meaning: 'kind index: peat (type III, coal and gas)'
+  source: stages/organics.py:25
+  note: 'unit as the code says it: ''code''; SI conversion unverified'
+- name: KINDS
+  value: 2.0
+  unit: '1'
+  said_as:
+    unit: count
+    factor: 1.0
+  meaning: 'unverified: the code names it KINDS without saying what it is'
+  source: stages/organics.py:26
+- name: ROCK_KG_M3
+  value: 2400.0
+  unit: kg/m3
+  meaning: sediment density
+  source: stages/organics.py:31
+  note: used by tools/demo_frames.py
+- name: TOC_SHELF_NOW
+  value: 0.01
+  unit: '1'
+  said_as:
+    unit: mass fraction
+    factor: 1.0
+  open: true
+  meaning: ordinary shelf mud ~1 % TOC (Premuzic et al. 1982)
+  source: stages/organics.py:32
+  note: 'unit as the code says it: ''mass fraction''; SI conversion unverified'
+- name: TOC_MAX
+  value: 0.12
+  unit: '1'
+  said_as:
+    unit: mass fraction
+    factor: 1.0
+  open: true
+  meaning: source rocks to ~10 %+ (Tissot & Welte 1984)
+  source: stages/organics.py:33
+  note: 'unit as the code says it: ''mass fraction''; SI conversion unverified'
+- name: COAL_SHARE_MAX
+  value: 0.04
+  unit: '1'
+  said_as:
+    unit: volume fraction
+    factor: 1.0
+  open: true
+  meaning: coal share of coal measures at their richest (Ruhr ~3 %; Thomas 2002)
+  source: stages/organics.py:34
+  note: 'unit as the code says it: ''volume fraction''; SI conversion unverified'
+- name: COAL_C_KG_M3
+  value: 975.0
+  unit: '1'
+  said_as:
+    unit: kg C/m3
+    factor: 1.0
+  open: true
+  meaning: coal ~75 % carbon at ~1,300 kg/m3
+  source: stages/organics.py:35
+  note: 'unit as the code says it: ''kg C/m3''; SI conversion unverified'
+- name: SURFACE_C
+  value: 15.0
+  unit: '1'
+  said_as:
+    unit: degC (SI 288.15 K)
+    factor: 1.0
+  open: true
+  meaning: surface temperature for burial heating
+  source: stages/organics.py:36
+  note: 'unit as the code says it: ''degC (SI 288.15 K)''; SI conversion unverified'
+- name: GRADIENT_NOW
+  value: 0.026
+  unit: K/m
+  meaning: continental mean geotherm today (~65 mW/m2 / 2.5 W/m/K)
+  source: stages/organics.py:37
+- name: 'inline: TTI base and doubling'
+  values:
+  - 105.0
+  - 10.0
+  unit: '1'
+  said_as:
+    unit: degC, K
+    factor: 1.0
+  open: true
+  meaning: TTI += dt x 2^((T-105)/10)
+  source: stages/organics.py:109
+  note: 'Lopatin 1971; Waples 1980: oil from TTI ~15, peak ~75, window end ~160, overmature ~1,500; unit as the code says
+    it: ''degC, K''; SI conversion unverified'
+random_draws:
+- none
+invariants:
+- xorg >= 0, xodep >= 0
+- carbon reaching depth <= 0 is oxidised
+- 'passive: the crust''s history is the same with or without it'
+depends_on:
+- planet-process.coupled-host
+used: false
+note: imported by plates.py and wired in, but inactive in the landform planet_form runs (organics=None)
+backends:
+- cpu
+implementations:
+- where: 'planet-sim-landform stages/organics.py: cohorts (40-41), empty (44-46), bury (49-53), exhume (56-66), reset (69-75),
+    lay (78-97), heat (100-109)'
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
+    the code at planet-sim-landform 9747f0d-c437724.'

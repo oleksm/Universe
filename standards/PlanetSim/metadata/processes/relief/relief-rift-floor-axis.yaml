@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.relief-rift-floor-axis
+  name: Rift floor axis
+  about: 'With two margins: each vertex of the first paired to the nearest of the second; the axis is their normalised midpoints;
+    width = their chord.'
+area: relief
+clock:
+  when: when zones.rift finishes margins
+reads:
+- name: margin lines (>= 3 vertices)
+writes:
+- name: line 'rift floor axis' meta {width_km, depth_m 1500, relief0_m 1500}
+note: 'Emits: trace spawn rule ''relief.rift'' trigger {margins, event, width_km}'
+params:
+- name: depth_m
+  value: 1500.0
+  unit: m
+  meaning: rift floor depth and relief0
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:281
+invariants:
+- only when exactly two margins
+depends_on:
+- planet-process.zones-rift-margins
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:rift_features (267-281)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

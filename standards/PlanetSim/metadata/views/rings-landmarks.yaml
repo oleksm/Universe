@@ -1,0 +1,112 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.rings-landmarks
+  name: Landmarks
+  about: coast from <ck>_lines.npz and every alive non-worn landmark record from <ck>_store.npz by MARK_STYLE (solid active,
+    faint former)
+title: Landmarks
+row: line rings
+file_suffix: _rings_landmarks.png (+ .legend.json)
+draws:
+  words: coast from <ck>_lines.npz and every alive non-worn landmark record from <ck>_store.npz by MARK_STYLE (solid active,
+    faint former)
+legend:
+  title: Landmarks
+  rows:
+  - kind: head
+    label: 'Records ({n}): point events; solid active, faint former; worn away not drawn'
+    shown_when: always
+  - kind: head
+    label: 'Sutures, rift margins, arc fronts and the other relief features: see relief'
+    shown_when: always
+  - kind: dot
+    label: 'arc volcano: {a} active, {f} former'
+    colour:
+    - 200
+    - 60
+    - 20
+    shown_when: present
+  - kind: dot
+    label: 'hotspot volcano: {a} active, {f} former'
+    colour:
+    - 40
+    - 40
+    - 160
+    shown_when: present
+  - kind: dot
+    label: 'flood basalt province: {a} active, {f} former'
+    colour:
+    - 60
+    - 60
+    - 60
+    shown_when: present
+  - kind: dot
+    label: 'river mouth: {a} active, {f} former'
+    colour:
+    - 0
+    - 90
+    - 200
+    shown_when: present
+  - kind: dot
+    label: 'delta: {a} active, {f} former'
+    colour:
+    - 0
+    - 60
+    - 160
+    shown_when: present
+  - kind: dot
+    label: 'water gap: {a} active, {f} former'
+    colour:
+    - 0
+    - 150
+    - 200
+    shown_when: present
+  - kind: dot
+    label: 'river capture: {a} active, {f} former'
+    colour:
+    - 0
+    - 120
+    - 120
+    shown_when: present
+  - kind: dot
+    label: 'dry valley: {a} active, {f} former'
+    colour:
+    - 150
+    - 120
+    - 80
+    shown_when: present
+  - kind: dot
+    label: 'misfit river: {a} active, {f} former'
+    colour:
+    - 100
+    - 140
+    - 180
+    shown_when: present
+  - kind: dot
+    label: 'former lake bed: {a} active, {f} former'
+    colour:
+    - 150
+    - 150
+    - 150
+    shown_when: present
+  - kind: dot
+    label: 'water-carved land: {a} active, {f} former'
+    colour:
+    - 170
+    - 90
+    - 40
+    shown_when: present
+  - kind: line
+    label: coastline
+    colour:
+    - 0
+    - 0
+    - 0
+    shown_when: always
+  source: ~/git/planet-trees-pgs2/tools/layer_lines.py:490-495
+shown: true
+implementations:
+- where: planet-trees-pgs2 ~/git/planet-trees-pgs2/tools/layer_lines.py:rings (376 (landmarks 452-497))
+  state: reference
+status: draft

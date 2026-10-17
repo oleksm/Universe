@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/planet-event.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-event.ledger-cause-climate
+  name: Ledger cause 'climate'
+  about: ledger cause 'climate'
+source: ledger cause 'climate'
+emitted_by:
+- planet-process.coupled-host
+payload:
+- name: per-sample height change -lost (m)
+status: draft

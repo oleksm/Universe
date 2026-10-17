@@ -1,0 +1,95 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.hotspots
+  name: Mantle plumes (hotspots) building volcanic chains
+  about: Every particle within HOTSPOT_RADIUS of a fixed hotspot gains HOTSPOT_RATE*dt metres (floor thickness or continental
+    volume). It is floored with flood basalt (top unit, cover += the same), continental ones get nickel sulphide fertility,
+    and old (> CRATON_MYR) thick (> G.LAYERED_THICK) continent gets layered-intrusion chromite/PGE and V-Ti. Since the plates
+    move over fixed plumes, chains form. Recorded in w.volc['hotspot']. After arcs and hotspots, ocean floor is capped at
+    MAX_CRUST.
+area: plates
+clock:
+  when: every step
+reads:
+- name: hotspots
+  unit: unit vec
+  meaning: fixed plume positions
+- name: dt
+  unit: Myr (code)
+writes:
+- name: w.xfloor, w.xvol
+  unit: m, m3
+  meaning: plume crust
+- name: w.xtop, w.xcover, w.xfert, w.xdep
+  meaning: flood basalt, ores
+- name: w.volc['hotspot'], w.hotspot_xyz
+events_emitted:
+- event: planet-event.relief-hotspots
+  where: stages/plates.py:1189
+params:
+- name: HOTSPOT_RATE
+  value: 6.33761756280579e-12
+  unit: m/s
+  said_as:
+    unit: m/Myr
+    factor: 200.0
+  meaning: crust thickness added per time to every particle within HOTSPOT_RADIUS of a hotspot
+  source: stages/plates.py:202
+  note: 'about 0.35 km3/yr over 40 hotspots: Crisp 1984 measures 0.3-0.5 intraplate'
+- name: HOTSPOT_RADIUS
+  value: 120000.0
+  unit: m
+  meaning: plume reach (as HOTSPOT_RADIUS/R chord on the unit sphere)
+  source: stages/plates.py:203
+- name: CRATON_MYR
+  value: 4.73364e+16
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 1500.0
+  meaning: 'continental particles older than this are craton: rift strength CRATON_STRENGTH; also gates layered intrusions
+    under hotspots'
+  source: stages/plates.py:64
+  note: chosen
+- name: MAX_CRUST
+  value: 75000.0
+  unit: m
+  meaning: cap on OCEAN FLOOR particle thickness xfloor after arcs/hotspots each step (not on continent; see CRUST_MAX)
+  source: stages/plates.py:78
+  note: m, about the thickest measured (Tibet; real) Nabelek et al. 2009
+- name: G.LAYERED_THICK
+  value: 40000.0
+  unit: m
+  meaning: geology.py:135
+  source: stages/plates.py:1184
+- name: G.PLUME_FERTILE_MYR
+  value: 631152000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 20.0
+  meaning: geology.py:127
+  source: stages/plates.py:1181
+random_draws:
+- none
+invariants:
+- hotspots never move
+- xfloor <= MAX_CRUST after this step
+depends_on:
+- planet-process.plate-motion-and-forces
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/plates.py:run (lines 1171-1190)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
+    code at planet-sim-landform 9747f0d-c437724.'

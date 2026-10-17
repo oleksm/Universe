@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.line-store-ride-crust
+  name: Store vertices and landmarks ride the plates
+  about: After each plate's turn, every vertex and landmark whose anchor particle is on that plate is rotated by the same
+    axis and angle.
+area: relief
+clock:
+  when: every plate step, per plate, plates.py:997 (angle = rate*dt*1e6)
+reads:
+- name: w.xplate
+- name: plate axis, angle (rad)
+  field: planet-field.plate
+writes:
+- name: S.V, S.P rotated
+invariants:
+- a vertex moves exactly as its anchor particle
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/lines.py:Store.move (178-186)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

@@ -1,17 +1,34 @@
 # yaml-language-server: $schema=../../schema/rock-unit.schema.yaml
-# Brought in by tools/standards/geology_import.py from the planet simulation's vocabulary.
 identity:
   key: rock-unit.sandstone-shale
-  name: "Sandstone and shale"
-  about: "Sand and mud laid down in seas and basins."
-sim: { key: clastic }
-made_by: [sea]
+  name: Sandstone and shale
+  about: Sand and mud laid down in seas and basins.
+sim:
+  key: clastic
+  index: 9
+  colour:
+  - 230
+  - 200
+  - 120
+  erodibility: 2.0
+  written_by: other sediment after oxygenation (plates.py:622,677)
+made_by:
+- sea
 physical:
   density: 2400.0
   magnetic_susceptibility: 0.0001
   erodibility: 2.0
 yields:
-  - { item: good.silica-sand, quality: "85 to 99.5 SiO2 %" }
-  - { item: good.clay, quality: "15 to 35 Al2O3 %" }
+- item: good.silica-sand
+  quality: 85 to 99.5 SiO2 %
+- item: good.clay
+  quality: 15 to 35 Al2O3 %
 basis:
-  - { of: [sim, physical, yields], tier: sourced, review: true, source: "the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)", note: "As the simulation has it." }
+- of:
+  - sim
+  - physical
+  - yields
+  tier: sourced
+  review: true
+  source: 'the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)'
+  note: As the simulation has it.

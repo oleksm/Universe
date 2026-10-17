@@ -1,0 +1,148 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.plate-rifting
+  name: 'Rifting: breaking a plate along the weakest wandering cut'
+  about: '_rift(pid): needs >= 20 particles. Per particle strength: ocean 0.1, continent 1.0, craton (age > CRATON_MYR) CRATON_STRENGTH,
+    ever-sutured continent SUTURE_STRENGTH (overrides craton). Up to RIFT_CANDIDATES (x4 for ocean-only) candidates: a great-circle
+    plane through the plate centroid (or, ocean-only, through a random ocean particle of the plate) with random normal cross(through,
+    random_unit), warped by a _bumps(40, 0.25) field x WANDER. Rejected if a side has < 20% or > 80% of particles; if RIFT_MIN_CONT
+    > 0 and either side has a nonzero continental volume below RIFT_MIN_CONT of the world''s; if ocean-only and its band crosses
+    more than max(2, RIFT_OCEAN_EDGE*plate''s continental count) continental particles. Cost = summed strength in the band
+    |f| < 0.6*gap; cheapest wins. No valid ocean cut -> retry any cut; none at all -> rifts_refused. The side f > 0 becomes
+    a new plate (id max+1); both halves get axes spinning away from each other (axis = c x (tangent from the other''s centroid)),
+    torque = axis*1e-3; the new plate''s rate=base=1, the old keeps its rate/base and loses big_since.'
+area: plates
+clock:
+  when: called by reorganisation (see plate-reorganisation)
+reads:
+- name: w.xplate, w.xcont, w.xvol, w.xage, w.xsuture, w.x
+writes:
+- name: w.xplate, w.plates
+  meaning: new plate
+- name: w.events['rifts'|'rifts_refused']
+events_emitted:
+- event: planet-event.rift
+  where: stages/plates.py:458 (zones.rift), counter stages/plates.py:474
+- event: planet-event.rift-refused
+  where: stages/plates.py:449
+params:
+- name: RIFT_CANDIDATES
+  value: 12.0
+  unit: '1'
+  meaning: candidate cuts tried per rift (x4 for ocean-only cuts)
+  source: stages/plates.py:63
+  note: chosen
+- name: CRATON_MYR
+  value: 4.73364e+16
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 1500.0
+  meaning: 'continental particles older than this are craton: rift strength CRATON_STRENGTH; also gates layered intrusions
+    under hotspots'
+  source: stages/plates.py:64
+  note: chosen
+- name: CRATON_STRENGTH
+  value: 3.0
+  unit: '1'
+  meaning: rift cost weight of a craton particle near a candidate cut (plain continent 1.0, ocean 0.1)
+  source: stages/plates.py:65
+  note: chosen
+- name: SUTURE_STRENGTH
+  value: 0.3
+  unit: '1'
+  meaning: rift cost weight of a continental particle that has ever been sutured (xsuture > -1e8); overrides craton
+  source: stages/plates.py:66
+  note: 'chosen: oceans reopen along old seams (Wilson cycle)'
+- name: WANDER
+  value: 0.35
+  unit: '1'
+  meaning: amplitude of the smooth random field (_bumps) that warps initial Voronoi plate cells and rift cut surfaces away
+    from great circles
+  source: stages/plates.py:74
+  note: Vauchez et al. 1997 (chosen)
+- name: RIFT_MIN_CONT
+  env: SIM_RIFT_MIN_CONT
+  value: 0.05
+  unit: '1'
+  meaning: a candidate cut is rejected if either side keeps a nonzero continental volume below this share of the world's (no
+    slivers); 0 = off
+  source: stages/plates.py:192
+  note: '17 Oct: s33-s35 ended with 8-10 landmasses; Australia ~5% of land'
+- name: RIFT_OCEAN_EDGE
+  env: SIM_RIFT_OCEAN_EDGE
+  value: 0.05
+  unit: '1'
+  meaning: an ocean-only cut may graze at most max(2, this share) continental particles within its band
+  source: stages/plates.py:198
+  note: (share of the plate's continental particles an ocean cut may graze)
+- name: min plate particles
+  value: 20.0
+  unit: '1'
+  meaning: plates with fewer particles are not rifted (also min ocean points for ocean-only)
+  source: stages/plates.py:411
+- name: ocean strength
+  value: 0.1
+  unit: '1'
+  meaning: rift cost of ocean particles
+  source: stages/plates.py:416
+- name: side balance
+  values:
+  - 0.2
+  - 0.8
+  unit: '1'
+  meaning: 'unverified: the code names it side balance without saying what it is'
+  source: stages/plates.py:433
+- name: band half width
+  value: 0.6
+  unit: '1'
+  meaning: 'unverified: the code names it band half width without saying what it is'
+  source: stages/plates.py:439
+- name: rift bumps
+  values:
+  - 40.0
+  - 0.25
+  unit: '1'
+  said_as:
+    unit: '[count, width]'
+    factor: 1.0
+  open: true
+  meaning: _bumps for the cut
+  source: stages/plates.py:430
+  note: 'unit as the code says it: ''[count, width]''; SI conversion unverified'
+- name: ocean-only candidate factor
+  value: 4.0
+  unit: '1'
+  meaning: 'unverified: the code names it ocean-only candidate factor without saying what it is'
+  source: stages/plates.py:424
+- name: new torque scale
+  value: 0.001
+  unit: '1'
+  meaning: 'unverified: the code names it new torque scale without saying what it is'
+  source: stages/plates.py:472
+random_draws:
+- 'Per candidate: (ocean-only) rng.integers(len(ocean_pts)); random_unit = normal(3); _bumps(40) = normal(40,3) + normal(40).
+  Rejected candidates still consume draws. If a fallback recursion happens, it draws again. apart() draws random_unit only
+  if a degenerate axis. Draws happen even for candidates rejected by balance.'
+invariants:
+- both halves have 20-80% of the plate's particles
+- no half with 0 < continental volume < RIFT_MIN_CONT x world's
+- continental volume unchanged by rifting
+depends_on:
+- planet-process.plate-reorganisation
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/plates.py:_rift (lines 406-474)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
+    code at planet-sim-landform 9747f0d-c437724.'

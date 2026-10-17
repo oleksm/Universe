@@ -1,0 +1,89 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.layer-lines-sheet
+  name: '<layer>: N lines, N points (N closed)'
+  about: one map per LAYERS entry (8 tiles, 2x4) with the coast and that layer's lines coloured by kind index (palette below)
+title: '<layer>: N lines, N points (N closed)'
+file_suffix: _lines.png
+draws:
+  words: one map per LAYERS entry (8 tiles, 2x4) with the coast and that layer's lines coloured by kind index (palette below)
+legend:
+  title: '<layer>: {lines} lines, {points} points ({closed} closed)'
+  rows:
+  - kind: fill
+    label: kind index k with k % 10 == 0 (label = meta.kinds[layer][k])
+    colour:
+    - 150
+    - 30
+    - 20
+    shown_when: kind present
+  - kind: fill
+    label: kind index k with k % 10 == 1 (label = meta.kinds[layer][k])
+    colour:
+    - 40
+    - 100
+    - 200
+    shown_when: kind present
+  - kind: fill
+    label: kind index k with k % 10 == 2 (label = meta.kinds[layer][k])
+    colour:
+    - 230
+    - 140
+    - 20
+    shown_when: kind present
+  - kind: fill
+    label: kind index k with k % 10 == 3 (label = meta.kinds[layer][k])
+    colour:
+    - 20
+    - 140
+    - 70
+    shown_when: kind present
+  - kind: fill
+    label: kind index k with k % 10 == 4 (label = meta.kinds[layer][k])
+    colour:
+    - 130
+    - 60
+    - 170
+    shown_when: kind present
+  - kind: fill
+    label: kind index k with k % 10 == 5 (label = meta.kinds[layer][k])
+    colour:
+    - 200
+    - 60
+    - 120
+    shown_when: kind present
+  - kind: fill
+    label: kind index k with k % 10 == 6 (label = meta.kinds[layer][k])
+    colour:
+    - 30
+    - 30
+    - 30
+    shown_when: kind present
+  - kind: fill
+    label: kind index k with k % 10 == 7 (label = meta.kinds[layer][k])
+    colour:
+    - 120
+    - 120
+    - 120
+    shown_when: kind present
+  - kind: fill
+    label: kind index k with k % 10 == 8 (label = meta.kinds[layer][k])
+    colour:
+    - 0
+    - 150
+    - 160
+    shown_when: kind present
+  - kind: fill
+    label: kind index k with k % 10 == 9 (label = meta.kinds[layer][k])
+    colour:
+    - 160
+    - 120
+    - 40
+    shown_when: kind present
+  source: ~/git/planet-trees-pgs2/tools/layer_lines.py:254,269-274
+shown: false
+implementations:
+- where: planet-trees-pgs2 ~/git/planet-trees-pgs2/tools/layer_lines.py:sheet (245-278)
+  state: reference
+status: draft

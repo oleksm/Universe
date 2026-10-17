@@ -1,0 +1,331 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.plates-init
+  name: Initial plates, protocontinents and hotspots
+  about: 'Sets up the lithosphere at START_GYR. Samples are a Fibonacci lattice of n points (the first entry of the resolution
+    schedule). Plates are Voronoi cells of PLATES random centres, with edges made irregular by warping each sample by three
+    _bumps fields (sum of 60 Gaussian bumps, width 0.35, random amplitudes) times WANDER before choosing the nearest centre.
+    Each sample becomes one particle (ocean floor, 7 km, age uniform 0-100 Myr, never sutured). Each plate gets a random Euler
+    axis, rate=base=1, and torque = axis*1e-3. n_seeds protocontinents are the max(3, SEED_CONTINENT*n/n_seeds) samples nearest
+    random points: continental, volume CONTINENT_CRUST*cell, greenstone over basement, 3 km cover. Hotspots: max(4, round(40*area/5.1e14))
+    random unit vectors fixed in the mantle frame for the whole run (they never move).'
+area: plates
+clock:
+  when: once, at START_GYR (not run when resuming from SIM_SNAPSHOT_LOAD)
+reads:
+- name: spec.planet.radius()
+  unit: m
+  meaning: planet radius R
+- name: spec.planet.water_mass_fraction, spec.planet.mass()
+  unit: 1, kg
+  meaning: for water_m3
+- name: spec.star.age_gyr
+  unit: Gyr (code)
+  meaning: end time of the run
+- name: schedule / n
+  unit: '1'
+  meaning: sample counts by time
+writes:
+- name: w.x, w.xplate, w.xcont, w.xvol, w.xfloor, w.xage, w.xsuture
+  unit: unit vec, id, bool, m3, m, Myr, Myr
+  meaning: initial particles
+- name: w.xtop, w.xbase, w.xcover
+  unit: unit code, unit code, m
+  meaning: geology of particles (morb by default; seeds greenstone/basement, cover 3000 m)
+- name: w.plates[pid]
+  unit: Plate
+  meaning: axis, rate, base, torque, big_since
+- name: hotspots / w.hotspots
+  unit: unit vec / count
+  meaning: plume positions and count
+- name: w.lines
+  unit: Relief|None
+  meaning: relief layer store
+params:
+- name: PLATES
+  env: SIM_PLATES
+  value: 12.0
+  unit: '1'
+  meaning: initial plate count and target count for reorganisation top-ups; < 0.75*PLATES forces an immediate reorganisation
+  source: stages/plates.py:185
+  note: Earth has 7 large plates and some dozen more
+- name: WANDER
+  value: 0.35
+  unit: '1'
+  meaning: amplitude of the smooth random field (_bumps) that warps initial Voronoi plate cells and rift cut surfaces away
+    from great circles
+  source: stages/plates.py:74
+  note: Vauchez et al. 1997 (chosen)
+- name: OCEAN_CRUST
+  value: 7000.0
+  unit: m
+  meaning: new ocean floor thickness (also reference thickness in elevation, and read() fallback)
+  source: stages/plates.py:76
+  note: m, (real) White et al. 1992
+- name: CONTINENT_CRUST
+  value: 35000.0
+  unit: m
+  meaning: seed protocontinent thickness (xvol = CONTINENT_CRUST*cell)
+  source: stages/plates.py:77
+  note: m, the stable continent's (real) Christensen & Mooney 1995
+- name: SEED_CONTINENT
+  value: 0.04
+  unit: '1'
+  meaning: 'protocontinent area at start: each of n_seeds seeds takes max(3, SEED_CONTINENT*n/n_seeds) nearest samples'
+  source: stages/plates.py:209
+  note: Hawkesworth et al. 2010 (chosen)
+- name: HOTSPOTS_PER_EARTH_AREA
+  value: 40.0
+  unit: '1'
+  meaning: 'hotspot count scaled by planet area: max(4, round(40*area/5.10e14))'
+  source: stages/plates.py:201
+  note: Courtillot et al. 2003
+- name: START_GYR
+  value: 1.57788e+16
+  unit: s
+  said_as:
+    unit: Gyr after formation
+    factor: 0.5
+  meaning: plates start at this planet age
+  source: stages/plates.py:206
+  note: ~0.5 Gyr after formation; Hopkins et al. 2008 (chosen)
+- name: n_seeds
+  env: SIM_SEEDS
+  value: 6.0
+  unit: '1'
+  meaning: number of protocontinent seeds
+  source: stages/plates.py:846
+  note: fewer -> larger, more clustered continents; 2026-10-09
+- name: SIM_LINES
+  env: SIM_LINES
+  setting: '1'
+  meaning: create the relief layer (RF.Relief) on w.lines; else None and every relief hook is skipped
+  source: stages/plates.py:836
+  note: 'unit: bool (''1'' on)'
+- name: bumps n
+  value: 60.0
+  unit: '1'
+  meaning: Gaussian bumps per _bumps field (plate warp)
+  source: stages/plates.py:396
+- name: bumps width
+  value: 0.35
+  unit: '1'
+  meaning: Gaussian width of bumps
+  source: stages/plates.py:396
+- name: bumps scale
+  value: 0.3333333333333333
+  unit: '1'
+  meaning: _bumps sum divided by 3 (about -1..1)
+  source: stages/plates.py:402
+- name: initial floor age
+  values:
+  - 0.0
+  - 3155760000000000.0
+  unit: s
+  meaning: initial particle ages
+  source: stages/plates.py:828
+- name: initial xsuture
+  value: -3.15576e+22
+  unit: s
+  said_as:
+    unit: Myr
+    factor: -1000000000.0
+  meaning: sentinel for never sutured
+  source: stages/plates.py:828
+- name: initial torque scale
+  value: 0.001
+  unit: '1'
+  meaning: torque = axis*1e-3 for new plates
+  source: stages/plates.py:841
+- name: seed cover
+  value: 3000.0
+  unit: m
+  meaning: sediment cover of seed continents
+  source: stages/plates.py:852
+- name: Earth area
+  value: 510000000000000.0
+  unit: m2
+  meaning: reference area for hotspot count
+  source: stages/plates.py:853
+tables:
+- name: rift strength by crust
+  source: stages/plates.py:416-418
+  columns:
+  - crust
+  - condition
+  - strength
+  rows:
+  - - ocean floor
+    - not xcont
+    - '0.1'
+  - - continent
+    - xcont
+    - '1.0'
+  - - craton
+    - xcont and xage > CRATON_MYR (1500 Myr)
+    - '3.0'
+  - - sutured continent
+    - xcont and xsuture > -1e8 (ever sutured; overrides craton)
+    - '0.3'
+- name: subduction polarity
+  source: stages/plates.py:1027-1034
+  columns:
+  - a buoyant
+  - b buoyant
+  - outcome
+  rows:
+  - - 'true'
+    - 'false'
+    - b sinks under a
+  - - 'false'
+    - 'true'
+    - a sinks under b
+  - - 'false'
+    - 'false'
+    - older floor sinks (a if age_a >= age_b)
+  - - 'true'
+    - 'true'
+    - collision/docking (no sinking)
+- name: volume budget steps (note names)
+  source: stages/plates.py:1123, 1191, 1198, 1255, 1305, 1405
+  columns:
+  - budget key
+  - what changes continental volume
+  rows:
+  - - collisions and docking
+    - docking, obduction (+), collision loss (-)
+  - - arcs, margins, hotspots
+    - arc gain, plume gain (+), margin erosion (-)
+  - - accreted
+    - thick floor to continent (+)
+  - - sunk, gaps and stretching
+    - dropped worn particles (-); stretching conserves
+  - - spread, delaminated, eroded
+    - delamination and crust wear (-); shelf gain only counts when shelf accretes
+  - - denuded (sediment subducted)
+    - denudation (-)
+- name: _step diagnostic keys
+  source: stages/plates.py:1284, 1300, 1367, 1379
+  columns:
+  - key
+  - unit
+  rows:
+  - - roots shed (crust)
+    - m3
+  - - crust-level wear to shelves
+    - m3
+  - - climate erosion
+    - m3 (negative)
+  - - climate erosion to shelves
+    - m3
+- name: SIM_OFF switches
+  source: stages/plates.py:143, 1267, 1274, 1282, 1295, 1362, 1373
+  columns:
+  - name
+  - turns off
+  rows:
+  - - flow
+    - lateral crust diffusion
+  - - cap
+    - CRUST_MAX redistribution
+  - - roots
+    - delamination
+  - - crustwear
+    - crust-level highland wear
+  - - climate
+    - coupled-era denudation (base set to 0)
+  - - shelf
+    - coupled-era erosion to shelves
+- name: progressive resolution schedule
+  source: stages/plates.py:716-724
+  columns:
+  - from (Gyr)
+  - samples
+  rows:
+  - - START_GYR (0.5)
+    - min(n, max(n//16, 10000))
+  - - age - 1.0
+    - min(n, max(n//4, 10000))
+  - - age - 0.3
+    - n
+- name: ocean depth by age (GDH1)
+  source: stages/plates.py:1467-1471
+  columns:
+  - age range (Myr)
+  - depth below sea (m)
+  rows:
+  - - < 20
+    - 2600 + 365*sqrt(age)
+  - - '>= 20'
+    - 5651 - 2473*exp(-0.0278*age)
+- name: xmem columns
+  source: stages/plates.py:286-288, 1327, 1354
+  columns:
+  - column
+  - meaning
+  - unit
+  rows:
+  - - '0'
+    - peak river discharge
+    - m3/yr
+  - - '1'
+    - river incision
+    - m
+  - - '2'
+    - river state code (coupled.py)
+    - code
+  - - '3'
+    - time of last change
+    - Gyr (NaN never)
+  - - '4'
+    - lake memory
+    - unverified
+- name: Plate dataclass
+  source: stages/plates.py:247-257
+  columns:
+  - field
+  - type
+  - meaning
+  rows:
+  - - axis
+    - unit vec
+    - Euler axis
+  - - rate
+    - '1'
+    - freedom (stall)
+  - - base
+    - '1'
+    - rate regained after collision
+  - - torque
+    - vec3
+    - remembered force torque
+  - - big_since
+    - Myr or None
+    - since when carrying > BIG_SHARE of continent
+random_draws:
+- 'rng = np.random.default_rng(seed), one stream for the whole run. Order of draws: 3 x _bumps (each: random_unit(60) = normal(60,3),
+  then normal(60)); random_unit(PLATES) centres; per plate random_unit (normal(3)) for axis, PLATES times; random_unit(n_seeds)
+  seeds; random_unit(n_hotspots); uniform(0,100,n) ages comes BEFORE the plates'' axes (it is in the World(...) constructor
+  call, line 828, after the centres); then next_reorg = uniform(100,250). Exact order: bumps x3, centres, ages, plate axes,
+  seeds, hotspots, first reorg interval.'
+invariants:
+- one particle per sample at start
+- every particle's plate id is a key of w.plates
+- hotspot positions constant over the run
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/plates.py:run (lines 785-866), _bumps (lines 396-403), Plate/World dataclasses (lines
+    247-393)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
+    code at planet-sim-landform 9747f0d-c437724.'

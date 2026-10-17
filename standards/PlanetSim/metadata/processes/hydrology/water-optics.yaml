@@ -1,0 +1,142 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.water-optics
+  name: Water column and bed optics for the renderer
+  about: 'Light through water onto the bed and back: what water looks like from above, from what''s in it, how deep it is,
+    and what lies on the bed. The reference (truth) for the renderer''s water, as world::ground_detail is for its ground:
+    one set of physics for a tile''s colour (looking straight down) and the renderer''s per-pixel view (any angle). NOT INVENTORIED
+    IN DETAIL: neither plates.py nor coupled.py imports water_optics.py (directly or through another module); it is used by
+    tools/landcover_tiles.py, iss_view.py, water_test.py.'
+area: hydrology
+clock:
+  when: not part of the coupled planet run (offline tools / bakes)
+params:
+- name: N_WATER
+  value: 1.34
+  unit: '1'
+  said_as:
+    unit: dimensionless
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/water_optics.py:26
+  note: 'unit as the code says it: ''dimensionless''; SI conversion unverified'
+- name: A_W
+  values:
+  - 0.34
+  - 0.0565
+  - 0.0145
+  unit: '1'
+  said_as:
+    unit: 1/m
+    factor: 1.0
+  meaning: 'Pure water (m⁻¹): absorption (Pope & Fry 1997), backscatter (half of Morel 1974''s scattering).'
+  source: stages/water_optics.py:28
+- name: BB_W
+  values:
+  - 0.0004
+  - 0.00095
+  - 0.0024
+  unit: '1'
+  said_as:
+    unit: 1/m
+    factor: 1.0
+  meaning: unverified (no comment)
+  source: stages/water_optics.py:29
+- name: CDOM_SHAPE
+  values:
+  - 0.04285212686704018
+  - 0.19204990862075413
+  - 0.8607079764250578
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: × a_g(440), m⁻¹
+  source: stages/water_optics.py:31
+  note: 'Spectral shapes, per unit of each constituent.; unit as the code says it: ''unverified''; SI conversion unverified'
+- name: NAP_SHAPE
+  values:
+  - 0.07838677908233523
+  - 0.2681791638510988
+  - 0.9175024763848472
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: × a_nap(443)
+  source: stages/water_optics.py:32
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: PH_A
+  values:
+  - 0.0181
+  - 0.011
+  - 0.0654
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: Phytoplankton absorption a_ph = A·C^E (C chlorophyll, mg/m³; Bricaud et al. 1998, at 665/555/443).
+  source: stages/water_optics.py:34
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: PH_E
+  values:
+  - 0.85
+  - 0.6
+  - 0.728
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/water_optics.py:35
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: WATERS
+  setting: '{"clear ocean": [0.05, 0.005, 0.05, 0.03], "tropical lagoon": [0.2, 0.02, 0.5, 0.005], "coastal": [2.0, 0.15,
+    3.0, 0.03], "clear lake": [0.5, 0.05, 0.3, 0.02], "glacial lake": [0.2, 0.05, 15.0, 0.008], "tea lake": [3.0, 3.0, 1.0,
+    0.04], "turbid river mouth": [5.0, 0.8, 80.0, 0.04]}'
+  meaning: 'the gyres: Jerlov I, Secchi ~40 m Bahamas banks, reef lagoons temperate shelf seas: Jerlov coastal 3-5 Tahoe,
+    Baikal: Secchi ~20-30 m rock flour: milky turquoise, Secchi ~1 m boreal, peat: brown, Secchi ~1-2 m estuary plume'
+  source: stages/water_optics.py:42
+  note: 'What''s in the water, by kind of water (chlorophyll mg/m³, CDOM a_g(440) m⁻¹, mineral sediment g/m³, and the sediment''s
+    own absorption a*_nap(443) m²/g: iron-stained river mud ~0.04, pale glacial rock flour and carbonate mud ~0.005-0.01,
+    so they scatter without darkening: milky turquoise; Babin et al. 2003, Bowers & Binding 2006). Typical values: Jerlov''s
+    classes, Kirk 2011, Morel & Maritorena 2001.; unit: the gyres (from the code comment; SI conversion not done, unverified)'
+- name: BEDS_DRY
+  setting: '{"carbonate sand": [0.5, 0.47, 0.4], "quartz sand": [0.42, 0.35, 0.25], "basalt sand": [0.07, 0.065, 0.06], "mud":
+    [0.17, 0.15, 0.12]}'
+  meaning: ooids, coral and shell sand (Bahamas, reefs) from granite, sandstone volcanic islands' black sand silt and clay,
+    organic-rich
+  source: stages/water_optics.py:54
+  note: 'Beds, dry reflectance (linear R, G, B), approximate class means: USGS splib07 (Kokaly et al. 2017), benthic spectra
+    (Hochberg et al. 2003, Dekker et al. 2011).; unit: ooids (from the code comment; SI conversion not done, unverified)'
+- name: BEDS_WET
+  setting: '{"seagrass": [0.025, 0.055, 0.022], "coral": [0.06, 0.05, 0.03], "algae turf": [0.03, 0.04, 0.02]}'
+  meaning: Living beds, their reflectance as measured under water already.
+  source: stages/water_optics.py:61
+  note: 'unit: unverified'
+random_draws:
+- not inventoried
+used: false
+note: 'unused by plates.py / coupled.py; users: tools/landcover_tiles.py, iss_view.py, water_test.py'
+backends:
+- cpu
+implementations:
+- where: 'planet-sim-landform stages/water_optics.py: wet (68-72), iops (75-82), refract_cos (85-88), fresnel (91-97), reflectance
+    (100-119), constituents (122-152), k_diffuse (155-158)'
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
+    the code at planet-sim-landform 9747f0d-c437724.'

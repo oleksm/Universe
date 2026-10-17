@@ -1,0 +1,236 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.coupled-erosion
+  name: 'Coupled erosion: river incision by unit stream power, hillslope wear (Langbein-Schumm, frost, relief), landslides,
+    wind deflation, base level'
+  about: 'Each sample''s own wear rate, no global budget. River: unit stream power omega = rho g Qs S / w (W/m2), Qs = Q x
+    flash / yr, flash = clip(1 + 0.5 (aridity - 1), 1, 3) (rarer, bigger floods in dry land), w = max(2.7 Qs^0.5, 1); rate
+    = K_RIVER max(omega - OMEGA_C, 0) (1 + FAULT_SOFT fault) off lakes. Hillslope: local relief = height above the neighbours''
+    mean + 0.5 drop to the lowest (sea floored at sea level); rate = ((1-hs) K_HILL relief (1 + RELIEF_NONLIN (relief/1 km)^2)
+    + hs K_HILL_H height) x (0.3 + LangbeinSchumm(P)) x (1 + frost), frost = clip(1 - |T + 2|/12, 0, 1) (freeze-thaw near
+    0 degC). Landslides: relief above RELIEF_MAX goes at half per step. Wind: K_WIND x dry x (1 - V), dry = clip((aridity
+    - 2)/4, 0, 1), plant cover V = 1 - exp(-P/0.4). River and hill rates fade to 0 toward sea level over BASE_M (base level);
+    all three scaled by WEAR_SCALE. Wear = min(sum x dt, height above sea); the per-process parts are scaled by the same share.'
+area: surface
+clock:
+  when: each coupled step; wear integrated over dt = plate step (Myr x 1e6 yr)
+reads:
+- name: z, sea
+  unit: m
+- name: Q
+  unit: m3/yr
+- name: slope
+  unit: m/m
+  meaning: on the routing surface
+- name: cl.aridity, cl.P, cl.T
+  unit: -, m/yr, degC
+- name: lake
+  unit: code
+- name: fault
+  unit: 0-1
+writes:
+- name: wear (returned)
+  unit: m per step
+  meaning: total rock removed, <= height above sea
+- name: wear_river
+  unit: m per step
+- name: wear_hill
+  unit: m per step
+  meaning: includes landslides
+- name: wear_wind
+  unit: m per step
+  meaning: deflation (its rock becomes dust)
+params:
+- name: RHO_G
+  value: 9810.0
+  unit: '1'
+  said_as:
+    unit: N/m3 (kg m^-2 s^-2)
+    factor: 1.0
+  open: true
+  meaning: water density x gravity
+  source: stages/coupled.py:38
+  note: 'unit as the code says it: ''N/m3 (kg m^-2 s^-2)''; SI conversion unverified'
+- name: K_RIVER
+  env: SIM_K_RIVER
+  value: 1.5842839036755385e-15
+  unit: m/s per W/m2
+  said_as:
+    unit: m/yr per W/m2
+    factor: 3.1685678073510773e-08
+  meaning: river incision per unit stream power above threshold
+  source: stages/coupled.py:39
+  note: 'calibrated once against the old height rule on S15 at 50 Ma: planet total 0.013-0.020 mm/yr over land, 60 % by rivers
+    (comment 33-37)'
+- name: OMEGA_C
+  value: 5.0
+  unit: W/m2
+  meaning: threshold unit stream power (coarse-slope scale)
+  source: stages/coupled.py:40
+- name: K_HILL
+  env: SIM_K_HILL
+  value: 6.337135614702155e-16
+  unit: 1/s
+  said_as:
+    unit: 1/yr
+    factor: 3.1685678073510773e-08
+  meaning: hillslope wear per metre of local relief
+  source: stages/coupled.py:41
+- name: K_HILL_H
+  value: 1.4258555133079846e-16
+  unit: 1/s
+  said_as:
+    unit: 1/yr
+    factor: 3.1685678073510773e-08
+  meaning: height-driven weathering (the earlier rule)
+  source: stages/coupled.py:46
+- name: HILL_HEIGHT_SHARE
+  env: SIM_HILL_HEIGHT_SHARE
+  value: 0.5
+  unit: '1'
+  said_as:
+    unit: dimensionless
+    factor: 1.0
+  open: true
+  meaning: 'mix: share of the height rule vs the relief rule'
+  source: stages/coupled.py:47
+  note: 'unit as the code says it: ''dimensionless''; SI conversion unverified'
+- name: RELIEF_NONLIN
+  env: SIM_RELIEF_NONLIN
+  value: 2.0
+  unit: '1'
+  said_as:
+    unit: dimensionless (per km^2 of relief)
+    factor: 1.0
+  open: true
+  meaning: steepen = 1 + RELIEF_NONLIN (relief/1000 m)^2
+  source: stages/coupled.py:44
+  note: 'Montgomery & Brandon 2002, Ahnert 1970; test t5; unit as the code says it: ''dimensionless (per km^2 of relief)'';
+    SI conversion unverified'
+- name: RELIEF_MAX
+  value: 3500.0
+  unit: m
+  meaning: local relief a sample can hold; excess fails in landslides
+  source: stages/coupled.py:45
+  note: 'Himalayan front ~5 km over ~100 km; s19 audit: single samples stacked to 10-15 km'
+- name: K_WIND
+  env: SIM_K_WIND
+  value: 3.1685678073510777e-13
+  unit: m/s
+  said_as:
+    unit: m/yr
+    factor: 3.1685678073510773e-08
+  meaning: deflation on fully dry bare ground
+  source: stages/coupled.py:48
+- name: BASE_M
+  env: SIM_BASE_M
+  value: 400.0
+  unit: m
+  meaning: height above sea over which wear fades in from 0
+  source: stages/coupled.py:42
+  note: Davis peneplain; before, lowlands under 300 m wore 0.01-0.015 mm/yr and continents sank
+- name: WEAR_SCALE
+  env: SIM_WEAR_SCALE
+  value: 0.4
+  unit: '1'
+  said_as:
+    unit: dimensionless
+    factor: 1.0
+  open: true
+  meaning: global multiplier on all three rates
+  source: stages/coupled.py:43
+  note: 'owner 16 Oct: kept at 0.4; 0.6 sank s23 at 30k (land 24 %); 0.4 holds land 28-30 % from s23''s 700 Ma state; 0 rises
+    to 32 %; unit as the code says it: ''dimensionless''; SI conversion unverified'
+- name: FAULT_SOFT
+  value: 1.0
+  unit: '1'
+  said_as:
+    unit: dimensionless
+    factor: 1.0
+  open: true
+  meaning: rock in a fault zone cuts up to 1 + this times faster
+  source: stages/coupled.py:31
+  note: 'unit as the code says it: ''dimensionless''; SI conversion unverified'
+- name: 'inline: flash flood factor'
+  setting: clip(1 + 0.5*(aridity - 1), 1, 3)
+  meaning: discharge multiplier in dry land
+  source: stages/coupled.py:291
+  note: 'unit: dimensionless'
+- name: 'inline: min channel width'
+  value: 1.0
+  unit: m
+  meaning: omega denominator floor
+  source: stages/coupled.py:293
+- name: 'inline: Langbein-Schumm'
+  setting: x = P/0.25; LS = (x^2/(1+x^3))/0.5291
+  meaning: sediment yield vs rain, peak 1 at P ~0.315 m/yr
+  source: stages/coupled.py:187-188
+  note: 'Langbein & Schumm 1958; unit: dimensionless, P in m/yr'
+- name: 'inline: hillslope gravity floor'
+  value: 0.3
+  unit: '1'
+  said_as:
+    unit: dimensionless
+    factor: 1.0
+  open: true
+  meaning: added to LS (gravity wear without rain)
+  source: stages/coupled.py:305
+  note: 'unit as the code says it: ''dimensionless''; SI conversion unverified'
+- name: 'inline: frost window'
+  setting: clip(1 - |T + 2|/12, 0, 1)
+  meaning: freeze-thaw intensity, peak at -2 degC, zero beyond -14/+10 degC
+  source: stages/coupled.py:296
+  note: 'unit: dimensionless, T in degC'
+- name: 'inline: relief formula'
+  setting: max(z - mean(z_nbr), 0) + 0.5 max(z - min(z_nbr), 0)
+  meaning: local relief (sea floored to sea level)
+  source: stages/coupled.py:300
+  note: 'unit: m'
+- name: 'inline: landslide share'
+  value: 0.5
+  unit: '1'
+  said_as:
+    unit: per step
+    factor: 1.0
+  open: true
+  meaning: half the relief excess over RELIEF_MAX removed each step
+  source: stages/coupled.py:314
+  note: 'unit as the code says it: ''per step''; SI conversion unverified'
+- name: 'inline: plant cover'
+  setting: V = 1 - exp(-P/0.4)
+  meaning: vegetation proxy
+  source: stages/coupled.py:307
+  note: 'unit: dimensionless, P in m/yr'
+- name: 'inline: wind dryness'
+  setting: clip((aridity - 2)/4, 0, 1)
+  meaning: deflation starts at PET/P = 2, full at 6
+  source: stages/coupled.py:308
+  note: 'unit: dimensionless'
+random_draws:
+- none
+invariants:
+- 0 <= wear <= max(z - sea, 0)
+- wear_river + wear_hill + wear_wind = wear
+- no wear at or below sea level
+depends_on:
+- planet-process.coupled-climate
+- planet-process.river-discharge
+- planet-process.flow-routing
+- planet-process.lakes
+note: There is no ice/glacial erosion in the deep-time coupled step; it exists only in the recent epoch.
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/coupled.py:step (lines 288-327), stages/coupled.py:langbein_schumm (184-188)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
+    the code at planet-sim-landform 9747f0d-c437724.'

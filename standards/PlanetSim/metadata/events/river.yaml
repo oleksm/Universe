@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/planet-event.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-event.river
+  name: River
+  about: coupled-era hydrology to the relief layer
+source: river
+payload:
+- name: t
+  meaning: Gyr
+- name: pts
+  meaning: routing samples
+- name: hydro
+  meaning: coupled hydrology
+- name: sea
+  meaning: m
+- name: z
+  meaning: m
+- name: gap
+  meaning: rad
+- name: step_no
+  meaning: '1'
+status: draft

@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.rings-formations
+  name: Formations
+  about: view_formations on smoothed province labels
+title: Formations
+row: line rings
+file_suffix: _rings_formations.png (+ .legend.json)
+draws:
+  words: view_formations on smoothed province labels
+shown: true
+implementations:
+- where: planet-trees-pgs2 ~/git/planet-trees-pgs2/tools/layer_lines.py:rings (362)
+  state: reference
+status: draft

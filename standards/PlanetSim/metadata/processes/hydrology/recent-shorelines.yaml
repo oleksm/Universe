@@ -1,0 +1,63 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.recent-shorelines
+  name: Recent epoch shoreline extremes
+  about: Shore = land sample with a non-land neighbour. lowstand_shore marks samples that were shore at any step with g >
+    0.8. coast_hi (shore at g < 0.1 cleared) is computed but NOT returned.
+area: hydrology
+clock:
+  when: 'recent epoch: once, after the plates reach the present, 260 steps of DT_KYR = 10 kyr from 2,600 kyr to 10 kyr ago
+    on the final relief zr with sea0 = 0; run by planet-trees-pgs2/tools/planet_form.py:561-574 when SIM_RECENT=1 (default:
+    SIM_COUPLED); outputs written as r_<key> into the last ck_??_*kyr_ctx.npz (needs CONTEXT=1)'
+reads:
+- name: land
+  unit: bool
+  meaning: ice surface > shifted sea
+- name: g
+  unit: 0-1
+writes:
+- name: r_lowstand_shore
+  field: planet-field.lowstand-shore
+  unit: bool
+  meaning: glacial lowstand shoreline
+params:
+- name: 'inline: lowstand g'
+  value: 0.8
+  unit: '1'
+  said_as:
+    unit: glaciality
+    factor: 1.0
+  open: true
+  meaning: 'unverified: the code names it inline: lowstand g without saying what it is'
+  source: stages/recent.py:121
+  note: 'unit as the code says it: ''glaciality''; SI conversion unverified'
+- name: 'inline: highstand g'
+  value: 0.1
+  unit: '1'
+  said_as:
+    unit: glaciality
+    factor: 1.0
+  open: true
+  meaning: unused output
+  source: stages/recent.py:121
+  note: 'unit as the code says it: ''glaciality''; SI conversion unverified'
+random_draws:
+- none
+depends_on:
+- planet-process.glacial-cycles
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/recent.py:run (lines 120-121)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
+    the code at planet-sim-landform 9747f0d-c437724.'

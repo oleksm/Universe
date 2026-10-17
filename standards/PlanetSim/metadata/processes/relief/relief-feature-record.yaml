@@ -1,0 +1,53 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.relief-feature-record
+  name: Feature records and trace (the relief layer's bookkeeping)
+  about: 'Relief subclasses Store: every line/landmark gets kind, family and level (from KINDS), rule, trigger, meta, history;
+    spawn_line adds shape_stats (length_km, sinuosity, turn_deg_100km, straight_share) to meta; every spawn/segment/replace/wear/erosion
+    is one trace row {what, t, step, rule, kind, id ''L<n>''|''M<n>'', lonlat, trigger, meta}; rule_stats counts per rule.
+    Saved per checkpoint in <ck>_store.npz (trace emptied after each save, rule_stats cumulative). Relief.upgrade turns an
+    older snapshot''s Store into a Relief with rule ''legacy.line_store''.'
+area: relief
+clock:
+  when: on every record change; saved each checkpoint
+writes:
+- name: '<ck>_store.npz keys: line_pts f32, line_range i64, line_meta json, mark_pts f32, mark_meta json, marks_ended json,
+    events json, line_log json (last 5000), trace json, rule_stats json'
+note: 'Emits: trace what: spawn, segmented, replaced, worn, eroded'
+params:
+- name: R_EARTH_M
+  value: 6371000.0
+  unit: m
+  meaning: radius used for km conversions in relief.py (not the planet's own R)
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:27
+- name: straight step
+  value: 5.0
+  unit: deg
+  meaning: turn under this counts as straight in straight_share
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:82
+- name: SIM_LINES
+  env: SIM_LINES
+  setting: '1'
+  meaning: store on (Relief) or off (None)
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/plates.py:836
+  note: 'unit: flag'
+invariants:
+- every record names its event, rule and trigger
+- ids are stable indices into lines/marks lists
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:Relief (88-171), shape_stats (72-85),
+    offset (60-69)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

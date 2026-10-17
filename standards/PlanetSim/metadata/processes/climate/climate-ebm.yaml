@@ -1,0 +1,188 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.climate-ebm
+  name: Stage 8 energy-balance climate on a lat-lon grid (seasonal EBM, winds, rain, snow, biomes)
+  about: 'Stage 8, climate: a world''s temperatures, winds, rain, clouds, snow and ice, and the living cover they allow, through
+    the year, on a latitude–longitude grid over its grown surface. NOT INVENTORIED IN DETAIL: neither plates.py nor coupled.py
+    imports climate.py (directly or through another module); it is used by tools/climate_run.py, tools/from_record.py, tools/world_report.py,
+    tools/paleo.py; stages/clouds.py and stages/paleo.py.'
+area: climate
+clock:
+  when: not part of the coupled planet run (offline tools / bakes)
+params:
+- name: S0
+  value: 1361.0
+  unit: W/m2
+  meaning: W/m², the solar constant at 1 AU (real; Kopp & Lean 2011)
+  source: stages/climate.py:36
+- name: DAY
+  value: 86400.0
+  unit: s
+  meaning: unverified (no comment)
+  source: stages/climate.py:37
+- name: OLR_A
+  value: 203.3
+  unit: '1'
+  said_as:
+    unit: W/m^2
+    factor: 1.0
+  open: true
+  meaning: W/m²
+  source: stages/climate.py:39
+  note: 'Outgoing long-wave radiation A + B·(T − 273.15) (real: North & Coakley 1979''s fit to Earth).; unit as the code says
+    it: ''W/m^2''; SI conversion unverified'
+- name: OLR_B
+  value: 2.09
+  unit: '1'
+  said_as:
+    unit: W/(m^2 K)
+    factor: 1.0
+  open: true
+  meaning: W/(m² K)
+  source: stages/climate.py:40
+  note: 'unit as the code says it: ''W/(m^2 K)''; SI conversion unverified'
+- name: CO2_REF
+  value: 0.00028
+  unit: '1'
+  said_as:
+    unit: ppm
+    factor: 1.0e-06
+  meaning: ppm, pre-industrial
+  source: stages/climate.py:41
+- name: ALBEDO_0
+  value: 0.3
+  unit: '1'
+  said_as:
+    unit: dimensionless
+    factor: 1.0
+  open: true
+  meaning: 'Albedo: Earth''s ice-free planetary albedo, clouds included, falling off from the poles (North 1975: 0.30 + 0.09·P2(sin
+    φ)); snow and ice (chosen 0.62, North & Coakley).'
+  source: stages/climate.py:44
+  note: 'unit as the code says it: ''dimensionless''; SI conversion unverified'
+- name: ALBEDO_2
+  value: 0.09
+  unit: '1'
+  said_as:
+    unit: dimensionless
+    factor: 1.0
+  open: true
+  meaning: 'Albedo: Earth''s ice-free planetary albedo, clouds included, falling off from the poles (North 1975: 0.30 + 0.09·P2(sin
+    φ)); snow and ice (chosen 0.62, North & Coakley).'
+  source: stages/climate.py:44
+  note: 'unit as the code says it: ''dimensionless''; SI conversion unverified'
+- name: ALBEDO_ICE
+  value: 0.62
+  unit: '1'
+  said_as:
+    unit: dimensionless
+    factor: 1.0
+  open: true
+  meaning: 'Albedo: Earth''s ice-free planetary albedo, clouds included, falling off from the poles (North 1975: 0.30 + 0.09·P2(sin
+    φ)); snow and ice (chosen 0.62, North & Coakley).'
+  source: stages/climate.py:44
+  note: 'unit as the code says it: ''dimensionless''; SI conversion unverified'
+- name: ICE_BELOW
+  value: -10.0
+  unit: '1'
+  said_as:
+    unit: °C (from the code comment; SI conversion not done, unverified)
+    factor: 1.0
+  open: true
+  meaning: '°C: annual-mean temperature under which the surface stays icy (North 1975)'
+  source: stages/climate.py:45
+  note: 'unit as the code says it: ''°C (from the code comment; SI conversion not done, unverified)''; SI conversion unverified'
+- name: C_OCEAN
+  value: 240000000.0
+  unit: '1'
+  said_as:
+    unit: J/(m^2 K)
+    factor: 1.0
+  open: true
+  meaning: 'Heat capacity: the ocean''s ~60 m mixed layer, land''s ~2 m of soil (J/(m² K)).'
+  source: stages/climate.py:47
+  note: 'unit as the code says it: ''J/(m^2 K)''; SI conversion unverified'
+- name: C_LAND
+  value: 4000000.0
+  unit: '1'
+  said_as:
+    unit: J/(m^2 K)
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/climate.py:48
+  note: 'unit as the code says it: ''J/(m^2 K)''; SI conversion unverified'
+- name: DIFFUSION
+  value: 0.45
+  unit: '1'
+  said_as:
+    unit: W/(m^2 K)
+    factor: 1.0
+  open: true
+  meaning: 'Heat spread poleward (W/(m² K)): a diffusion, chosen so Earth''s equator–pole contrast comes out about right (~40
+    K annual mean; North 1975 uses D ≈ 0.38–0.65 W/m²K).'
+  source: stages/climate.py:51
+  note: 'unit as the code says it: ''W/(m^2 K)''; SI conversion unverified'
+- name: EDDY_MIX
+  value: 0.05
+  unit: '1'
+  said_as:
+    unit: share per pass
+    factor: 1.0
+  open: true
+  meaning: 'The share of a cell''s moisture traded with each neighbour north and south a pass (a quarter day): eddy mixing,
+    ~2×10⁶ m²/s at 2° (Earth''s meridional eddy diffusivity of moisture ~10⁶–10⁷).'
+  source: stages/climate.py:54
+  note: 'unit as the code says it: ''share per pass''; SI conversion unverified'
+- name: LAPSE
+  value: 0.0065
+  unit: K/m
+  meaning: K/m, the standard atmosphere's lapse rate (real)
+  source: stages/climate.py:55
+- name: HADLEY_EARTH
+  value: 30.0
+  unit: '1'
+  said_as:
+    unit: degrees (from the code comment; SI conversion not done, unverified)
+    factor: 1.0
+  open: true
+  meaning: degrees, Earth's Hadley cell edge (real)
+  source: stages/climate.py:56
+  note: 'unit as the code says it: ''degrees (from the code comment; SI conversion not done, unverified)''; SI conversion
+    unverified'
+- name: DESERT_P
+  value: 7.922021953507237e-09
+  unit: m/s
+  said_as:
+    unit: m/yr
+    factor: 3.168808781402895e-08
+  meaning: 'm/yr: drier than this is desert (approximately the arid threshold)'
+  source: stages/climate.py:57
+- name: BIOMES
+  setting: '["ocean", "ice", "tundra", "taiga", "temperate forest", "temperate grassland", "desert", "savanna", "tropical
+    forest", "sea ice"]'
+  meaning: unverified (no comment)
+  source: stages/climate.py:59
+  note: 'unit: unverified'
+random_draws:
+- not inventoried
+used: false
+note: 'unused by plates.py / coupled.py; users: tools/climate_run.py, tools/from_record.py, tools/world_report.py, tools/paleo.py;
+  stages/clouds.py and stages/paleo.py'
+backends:
+- cpu
+implementations:
+- where: 'planet-sim-landform stages/climate.py: insolation (85-96), _laplacian (99-122), hadley_edge (125-135), winds (138-147),
+    rising (150-157), qsat (160-163), month_air (166-210), co2_forcing (213-219), run (222-320), summary (323-338)'
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
+    the code at planet-sim-landform 9747f0d-c437724.'

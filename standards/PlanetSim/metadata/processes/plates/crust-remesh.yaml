@@ -1,0 +1,59 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.crust-remesh
+  name: 'Remesh: re-laying particles on the sample lattice'
+  about: 'Every REMESH_MYR: particles are replaced by one per sample; plate, floor, age, suture from the nearest particle;
+    geology from the nearest continental particle where the sample reads continent but its nearest particle is ocean; continent
+    where spread thickness >= CONTINENT_EDGE, volumes fitted to the read thickness (_set_continents) and rescaled to the exact
+    previous total. Relief layer re-anchored.'
+area: plates
+clock:
+  when: every REMESH_MYR (50 Myr), checked at the step start
+reads:
+- name: particles
+writes:
+- name: all particle arrays
+  meaning: replaced
+events_emitted:
+- event: planet-event.relief-reanchor
+  where: stages/plates.py:941
+params:
+- name: REMESH_MYR
+  value: 1577880000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 50.0
+  meaning: interval between remeshes (particles re-laid on the sample lattice)
+  source: stages/plates.py:217
+- name: CONTINENT_EDGE
+  value: 15000.0
+  unit: m
+  meaning: a sample whose spread continental thickness is below this reads as ocean
+  source: stages/plates.py:213
+  note: 'Continental crust is thinner than this (m) where only a particle''s edge reaches: ocean'
+random_draws:
+- none
+invariants:
+- continental volume conserved exactly
+- particle count == sample count after remesh
+- continental crust thinner than CONTINENT_EDGE as read is turned to ocean (its volume redistributed to the rest by the rescale)
+depends_on:
+- planet-process.crust-read
+- planet-process.crust-fit
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/plates.py:_remesh (747-773), run (938-942)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
+    code at planet-sim-landform 9747f0d-c437724.'

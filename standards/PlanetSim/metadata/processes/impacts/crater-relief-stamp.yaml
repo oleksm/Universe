@@ -1,0 +1,79 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.crater-relief-stamp
+  name: Crater relief on the height field
+  about: 'Builds a crater''s relief on its own grid (12-48 cells per radius, out to 3.2 + 3σ radii): rim wobble 1 + 0.18 sin(kθ
+    + φ1) + 0.08 sin((k+3)θ + φ2), k ∈ 3..6, the fresh profile, then a Gaussian blur of σ (from the share of depth left, inverted
+    from the depth-kept table, capped at 2 radii), read bilinearly at the target directions. `stamp` adds craters oldest first
+    to an equirectangular height map so younger cut through older; details seeded from the crater id, so the same crater at
+    any resolution.'
+area: impacts
+clock:
+  when: per bake (equirect or per-direction), on demand
+reads:
+- name: crater
+  unit: lat/lon deg, d_km, shape, left, age_myr, id
+  meaning: crater record
+- name: dirs
+  unit: unit vectors
+  meaning: sample directions
+- name: r_km
+  unit: 'm (code: km)'
+  meaning: radius
+- name: z
+  field: planet-field.height
+  unit: m
+  meaning: height map
+writes:
+- name: z += crater relief
+  field: planet-field.height
+  unit: m
+  meaning: height
+params:
+- name: CELLS_PER_R
+  value: 48.0
+  unit: '1'
+  said_as:
+    unit: cells per crater radius
+    factor: 1.0
+  open: true
+  meaning: crater grid resolution (min 12)
+  source: src/planet_sim/stages/impacts.py:294
+  note: 'unit as the code says it: ''cells per crater radius''; SI conversion unverified'
+- name: sigma cap
+  value: 2.0
+  unit: '1'
+  said_as:
+    unit: radii
+    factor: 1.0
+  meaning: max wear σ
+  source: src/planet_sim/stages/impacts.py:328
+- name: skip below
+  value: 0.01
+  unit: '1'
+  meaning: craters with left ≤ 0.01 not stamped
+  source: src/planet_sim/stages/impacts.py:379
+random_draws:
+- 'default_rng(crc32(crater id)): k, two phases, then profile''s peak draws; anonymous craters id from lat/lon/d'
+invariants:
+- oldest first
+- same crater id → same relief at any resolution
+depends_on:
+- planet-process.crater-preservation
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform src/planet_sim/stages/impacts.py:wear_sigma (314-323), crater_sigma (326-328), crater_dz (331-368),
+    stamp (371-400), crater_rng (290-291)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

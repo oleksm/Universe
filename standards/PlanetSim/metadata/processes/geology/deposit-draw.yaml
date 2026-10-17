@@ -1,0 +1,130 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.deposit-draw
+  name: Ore districts and deposits
+  about: 'Turns surviving chances into concrete deposits. For every type, λ = RATE[type] × chance × reachable (land/shelf,
+    ore top ≤ MINE_DEPTH and not eroded past body; surface ores: chance > 0); districts per sample ~ Poisson(λ / per) from
+    a generator seeded by crc32(world_id/type); belts = connected regions (6-NN graph) with chance > 0.2. Each district: centre
+    uniform in the sample cell, axis along the grain, 1 + Poisson(per − 1) deposits scattered N(0, along km) along and N(0,
+    across km) across; ore top = depth + N(0, 150 m); tonnage lognormal(median, σ) redrawn up to 20× above TONNAGE_CAP (then
+    capped) and scaled by the share of body left; grades × lognormal(0.4); strike from the grain ± N(0, 10°); dip uniform
+    in the shape''s range; footprint × lognormal(0.4); blind below 300 m; survey methods that see it by REACH. IDs ''<world>-<SHORT>-<sample:06d><A..>-<nn>''
+    are stable across re-runs.'
+area: geology
+clock:
+  when: once per world (tools/deposits.py)
+reads:
+- name: p
+  unit: unit vector
+  meaning: samples
+- name: rock, grain
+  unit: unit index, tangent
+  meaning: surface unit and grain
+- name: fert, dep
+  unit: 1, m
+  meaning: plate-carried chances and depths
+- name: land
+  unit: bool
+  meaning: reachable (land and shallow shelf)
+- name: R
+  unit: m
+  meaning: radius
+- name: extra_fert
+  unit: '1'
+  meaning: surface-ore chances
+- name: z
+  field: planet-field.height
+  unit: m
+  meaning: height (water depth)
+- name: world_id
+  unit: string
+  meaning: ID seed
+writes:
+- name: deposits[]
+  unit: dict
+  meaning: id, district_id, belt_id, kind, name, lat/lon (deg), tonnage_mt (Mt = 1e9 kg), grades (%, g/t, ct/t), depth_m,
+    blind, strike_deg, dip_deg, length_m, width_m, shape, host, chance, seen_by, water_depth_m
+note: 'Emits: geology.deposit-found (one per deposit record)'
+params:
+- name: MINE_DEPTH
+  value: 2000.0
+  unit: m
+  meaning: deepest ore top that still counts
+  source: src/planet_sim/stages/geology.py:220
+- name: BLIND_BELOW
+  value: 300.0
+  unit: m
+  meaning: deeper than this a deposit is blind (geophysics/drilling only)
+  source: src/planet_sim/stages/geology.py:221
+- name: surface-ore body height
+  value: 30.0
+  unit: m
+  meaning: body height assumed for WEATHER types
+  source: src/planet_sim/stages/geology.py:565
+- name: depth scatter
+  value: 150.0
+  unit: m
+  meaning: σ of the ore top about the carried depth
+  source: src/planet_sim/stages/geology.py:597
+- name: lognormal scatter
+  value: 0.4
+  unit: '1'
+  meaning: grade and footprint scatter
+  source: src/planet_sim/stages/geology.py:612
+- name: strike scatter
+  value: 10.0
+  unit: deg
+  meaning: σ about the grain
+  source: src/planet_sim/stages/geology.py:614
+- name: belt threshold
+  value: 0.2
+  unit: '1'
+  meaning: chance above which samples join a belt
+  source: src/planet_sim/stages/geology.py:575
+- name: tonnage redraws
+  value: 20.0
+  unit: '1'
+  said_as:
+    unit: count
+    factor: 1.0
+  meaning: max redraws above cap
+  source: src/planet_sim/stages/geology.py:599
+- name: partly eroded floor
+  value: 0.05
+  unit: '1'
+  meaning: minimum tonnage share left for a partly eroded body
+  source: src/planet_sim/stages/geology.py:598
+- name: RATE
+  setting: table geology.RATE
+  meaning: calibrated on grown Earth E4 (tools/deposits.py --calibrate)
+  source: src/planet_sim/stages/geology.py:265
+  note: 'see tables; unit: deposits per unit chance'
+random_draws:
+- 'numpy default_rng seeded by zlib.crc32(''/''.join(parts)): per type (''world_id/type'') for Poisson district counts; per
+  district (''world_id/district_id'') for position, deposit count, scatter, depth, tonnage, grades, strike, dip, footprint.
+  Order of draws is part of the contract for ID/value stability.'
+invariants:
+- same world_id + inputs → same IDs and values on any machine
+- changing one type leaves others unchanged (own seeds)
+- tonnage ≤ TONNAGE_CAP
+depends_on:
+- planet-process.ore-fertility
+- planet-process.surface-ore-chances
+- planet-process.structural-grain
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform src/planet_sim/stages/geology.py:deposits (547-621), _belts (508-526), _rng (529-532), _azimuth
+    (451-458)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

@@ -1,0 +1,88 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.zones-rift-margins
+  name: Rift margins when a plate breaks
+  about: 'When a plate is cut in two: the continental particles within 0.6 gap of the cut (|f| < 0.6 gap); if at least 3,
+    one ''rift'' event and, for each half with >= 3 such particles, one ''rift margin'' line (sides [this half''s plate, the
+    other]) made from them and finished at once (Store.finish, LINK, smooth 0.7 gap); then relief.rift_features on the finished
+    margins.'
+area: relief
+clock:
+  when: on each plate break, plates.py:457-458 (rift()); t is sim time in Gyr since formation (code converts with *1e3 to
+    Myr)
+reads:
+- name: pid (old plate), new (new plate id)
+- name: 'sel (particles of the plate), side (bool: which half goes to new)'
+- name: f (signed distance of each sel particle to the cut, rad)
+- name: w.xcont
+- name: gap = sphere.spacing(n) of the current lattice, radians on the unit sphere (x R = metres); refined as the present
+    nears
+writes:
+- name: finished lines type 'rift margin', causes {plates:0.6, history:0.4}
+note: 'Emits: trace spawn rule ''zones.rift'' trigger {event, plates, continental_points}'
+events_emitted:
+- event: planet-event.store-event-rift-plates-pid-new
+- event: planet-event.calls-relief-rift-features
+params:
+- name: near cut
+  value: 0.6
+  unit: '1'
+  said_as:
+    unit: x gap (rad)
+    factor: 1.0
+  meaning: particles this close to the cut make the margins
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:138
+- name: min points
+  value: 3.0
+  unit: '1'
+  said_as:
+    unit: count
+    factor: 1.0
+  meaning: 'fewer continental points: no rift event / no margin for that half'
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:139
+- name: POINT_SEP
+  value: 0.6
+  unit: '1'
+  said_as:
+    unit: x gap
+    factor: 1.0
+  meaning: point merge distance (no reach)
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:147
+- name: LINK
+  value: 2.5
+  unit: '1'
+  said_as:
+    unit: x gap
+    factor: 1.0
+  meaning: chaining radius
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:148
+- name: smooth
+  value: 0.7
+  unit: '1'
+  said_as:
+    unit: x gap
+    factor: 1.0
+  meaning: smoothing sigma
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:148
+invariants:
+- one rift event per break with continental crust on the cut
+- margin lines finished immediately (never forming)
+depends_on:
+- planet-process.line-store-finish
+- planet-process.relief-rift-floor-axis
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:rift (134-151)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

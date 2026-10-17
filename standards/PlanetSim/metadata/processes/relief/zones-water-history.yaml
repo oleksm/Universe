@@ -1,0 +1,62 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.zones-water-history
+  name: 'Water-history records: capture, dry valley, misfit river, former lake bed, water-carved land'
+  about: 'Same look as mouths. ''river capture'': land, river_state 4, Q >= BIG_Q (size Q m3/s). ''dry valley'': state 3 and
+    peakQ >= BIG_Q/3 (size peakQ m3/s). ''misfit river'': state 2 and peakQ >= BIG_Q. ''former lake bed'': lake == 0 and lake_mem
+    > 0.3 (size lake_mem). ''water-carved land'': incision >= CARVED_M (size incision m).'
+area: relief
+clock:
+  when: as planet-process.zones-water-mouths
+reads:
+- name: hydro['river_state'] (2 misfit, 3 dry, 4 captured; 5 reversed, 6 reborn per context_view)
+- name: hydro['peakQ'] (m3/yr)
+- name: hydro['incision'] (m)
+- name: hydro['lake'] (0 none, 1 open, 2 closed salt, 3 playa)
+- name: hydro['lake_mem'] (0-1)
+writes:
+- name: landmarks 'river capture', 'dry valley', 'misfit river', 'former lake bed', 'water-carved land'
+events_emitted:
+- event: planet-event.trace-spawn-rule-zones-water
+params:
+- name: BIG_Q
+  value: 1000.0760514107536
+  unit: m3/s
+  said_as:
+    unit: m3/yr
+    factor: 3.168808781402895e-08
+  meaning: big-river threshold (dry valley uses BIG_Q/3)
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:174
+- name: lake_mem threshold
+  value: 0.3
+  unit: '1'
+  said_as:
+    unit: share
+    factor: 1.0
+  meaning: former lake memory needed
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:206
+- name: CARVED_M
+  value: 800.0
+  unit: m
+  meaning: river incision for canyon and badland country
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:177
+invariants:
+- records only on land (z > sea)
+depends_on:
+- planet-process.zones-water-mouths
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:rivers (195-209), _record (234-252)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

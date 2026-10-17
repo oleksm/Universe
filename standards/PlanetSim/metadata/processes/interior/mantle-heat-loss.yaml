@@ -1,0 +1,130 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.mantle-heat-loss
+  name: Mantle convective heat loss
+  about: 'Heat out of the mantle''s top by boundary-layer theory. Plates: Ra = α_upper ρm g ΔT d³ / (κ η(T_m)), q = k ΔT /
+    d · (Ra/Ra_crit)^(1/3), ΔT = max(T_m − T_surf, 1 K), d = R − Rc. Stagnant lid: q = 0.53 k (R T_m²/E)^(4/3) (α_upper ρm
+    g / (κ η(T_m)))^(1/3) (Solomatov & Moresi 2000). Viscosity η = η_ref·exp(E/R (1/T − 1/T_ref) + P V/(R T)) (Karato & Wu
+    1993; P=0 at the top). Total = q × 4πR².'
+area: interior
+clock:
+  when: every ODE evaluation
+reads:
+- name: t_mantle
+  unit: K
+  meaning: upper-mantle (potential) temperature
+- name: planet.surface_temp_k
+  unit: K
+  meaning: upper boundary T
+- name: planet.regime
+  unit: enum plates|stagnant_lid
+  meaning: heat-loss mode
+- name: rho_m, g_surface, R, Rc
+  unit: SI
+  meaning: structure
+writes:
+- name: q_mantle
+  unit: W
+  meaning: heat flow out of the mantle's top
+params:
+- name: K_MANTLE
+  value: 4.0
+  unit: '1'
+  said_as:
+    unit: W/(m K)
+    factor: 1.0
+  open: true
+  meaning: 'mantle conductivity (real, Hofmeister 1999: 3-5)'
+  source: src/planet_sim/stages/interior.py:38
+  note: 'unit as the code says it: ''W/(m K)''; SI conversion unverified'
+- name: KAPPA
+  value: 1.0e-06
+  unit: m2/s
+  meaning: thermal diffusivity (real)
+  source: src/planet_sim/stages/interior.py:39
+- name: ALPHA_UPPER
+  value: 3.0e-05
+  unit: '1'
+  said_as:
+    unit: 1/K
+    factor: 1.0
+  meaning: upper-mantle thermal expansion (real)
+  source: src/planet_sim/stages/interior.py:40
+- name: RA_CRIT
+  value: 660.0
+  unit: '1'
+  meaning: critical Rayleigh number (Turcotte & Schubert §6.21)
+  source: src/planet_sim/stages/interior.py:43
+- name: ETA_REF
+  value: 1.0e+21
+  unit: '1'
+  said_as:
+    unit: Pa s
+    factor: 1.0
+  open: true
+  meaning: 'reference viscosity at T_REF, P=0 (chosen: sets Earth''s heat loss)'
+  source: src/planet_sim/stages/interior.py:45
+  note: 'unit as the code says it: ''Pa s''; SI conversion unverified'
+- name: T_REF
+  value: 1600.0
+  unit: K
+  meaning: viscosity reference temperature
+  source: src/planet_sim/stages/interior.py:46
+- name: E_ACT
+  value: 300000.0
+  unit: '1'
+  said_as:
+    unit: J/mol
+    factor: 1.0
+  open: true
+  meaning: activation energy, dry olivine diffusion creep (Karato & Wu 1993)
+  source: src/planet_sim/stages/interior.py:47
+  note: 'unit as the code says it: ''J/mol''; SI conversion unverified'
+- name: V_ACT
+  value: 2.2e-06
+  unit: '1'
+  said_as:
+    unit: m³/mol
+    factor: 1.0
+  open: true
+  meaning: activation volume (chosen within 0-6e-6; sets core heat loss)
+  source: src/planet_sim/stages/interior.py:48
+  note: 'unit as the code says it: ''m³/mol''; SI conversion unverified'
+- name: R_GAS
+  value: 8.314462618
+  unit: '1'
+  said_as:
+    unit: J/(mol K)
+    factor: 1.0
+  open: true
+  meaning: gas constant
+  source: src/planet_sim/stages/interior.py:34
+  note: 'unit as the code says it: ''J/(mol K)''; SI conversion unverified'
+- name: LID_FACTOR
+  value: 0.53
+  unit: '1'
+  meaning: stagnant-lid flux prefactor (Solomatov & Moresi 2000)
+  source: src/planet_sim/stages/interior.py:53
+random_draws:
+- none
+invariants:
+- q_mantle > 0
+- regime chosen from spec, not computed (no regime model yet)
+depends_on:
+- planet-process.interior-structure
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform src/planet_sim/stages/interior.py:fluxes (201-212, 224), viscosity (147-148)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

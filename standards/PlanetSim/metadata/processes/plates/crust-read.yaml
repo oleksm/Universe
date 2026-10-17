@@ -1,0 +1,111 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.crust-read
+  name: Reading the particle crust onto the samples
+  about: 'read(): continental thickness = Gaussian (h = KERNEL*gap, cut 3h, weights normalised per particle so each particle''s
+    volume is spread exactly) sum / cell; kind = continent where >= CONTINENT_EDGE. Plate from the nearest particle; age by
+    inverse-distance weighting over the 4 nearest, replaced on ocean samples by the nearest ocean particle''s age; floor thickness
+    from the nearest ocean particle. Geology from the nearest continental particle on continent, nearest ocean particle elsewhere;
+    arc_plutonic older than G.SHIELD_MYR shows as basement; rock unit by majority vote of each sample and its 6 neighbours
+    (own vote counted twice), two passes. Note: read() writes World fields used later in the step (thick, kind), so snapshot
+    cadence changes the run (docstring).'
+area: plates
+clock:
+  when: every denudation pass, every snapshot/history call, final; _continental also in spread passes and remesh
+reads:
+- name: particles
+writes:
+- name: w.thick
+  field: planet-field.crust-thickness
+  unit: m
+- name: w.kind
+  field: planet-field.crust-kind
+  unit: code
+- name: w.plate
+  field: planet-field.plate
+  unit: id
+- name: w.age
+  field: planet-field.crust-age
+  unit: Myr
+- name: w.floor
+  field: planet-field.ocean-floor-thickness
+  unit: m
+- name: w.rock, w.grain, w.fert, w.dep
+params:
+- name: KERNEL
+  value: 0.8
+  unit: '1'
+  meaning: Gaussian width h = KERNEL*gap for spreading continental particle volume onto samples (cut at 3h)
+  source: stages/plates.py:215
+- name: CONTINENT_EDGE
+  value: 15000.0
+  unit: m
+  meaning: a sample whose spread continental thickness is below this reads as ocean
+  source: stages/plates.py:213
+  note: 'Continental crust is thinner than this (m) where only a particle''s edge reaches: ocean'
+- name: OCEAN_CRUST
+  value: 7000.0
+  unit: m
+  meaning: new ocean floor thickness (also reference thickness in elevation, and read() fallback)
+  source: stages/plates.py:76
+  note: m, (real) White et al. 1992
+- name: OCEAN
+  value: 0.0
+  unit: '1'
+  meaning: kind code of ocean floor (w.kind, OCEAN/CONTINENT)
+  source: stages/plates.py:38
+  note: OCEAN, CONTINENT = 0, 1
+- name: CONTINENT
+  value: 1.0
+  unit: '1'
+  meaning: kind code of continental crust
+  source: stages/plates.py:38
+  note: OCEAN, CONTINENT = 0, 1
+- name: kernel cutoff
+  value: 3.0
+  unit: '1'
+  meaning: 'unverified: the code names it kernel cutoff without saying what it is'
+  source: stages/plates.py:483
+- name: age IDW neighbours
+  value: 4.0
+  unit: '1'
+  meaning: 'unverified: the code names it age IDW neighbours without saying what it is'
+  source: stages/plates.py:503
+- name: vote neighbours
+  value: 7.0
+  unit: '1'
+  meaning: 'unverified: the code names it vote neighbours without saying what it is'
+  source: stages/plates.py:533
+- name: vote passes
+  value: 2.0
+  unit: '1'
+  meaning: 'unverified: the code names it vote passes without saying what it is'
+  source: stages/plates.py:534
+- name: G.SHIELD_MYR
+  value: 4.73364e+16
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 1500.0
+  meaning: geology.py:730
+  source: stages/plates.py:529
+random_draws:
+- none
+invariants:
+- sum(thick*cell) == continental volume (kernel normalised per particle)
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/plates.py:read (lines 493-540), _continental (477-490)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
+    code at planet-sim-landform 9747f0d-c437724.'

@@ -1,0 +1,161 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.flow-routing
+  name: 'Flow routing: routing surface, depression filling, steepest descent with structural grain'
+  about: 'Water is routed on a routing surface, not the bare relief: on land zr = max(z - VALLEY_HOLD x incision - FAULT_DROP
+    x fault, sea + 0.5 + 1e-3 (z - sea)), so rivers stay in the valleys they have cut and follow fault zones, but a cut valley
+    never drops below the sea inland. Depressions on land are filled to their spill level (Planchon & Darboux 2002, iterated
+    up to FILL_ROUNDS = 400 passes, 0.1 m epsilon per hop). Each land sample drains to the neighbour with the steepest drop
+    on the filled surface; in fold belts a drop along the structural grain (strike) counts up to (1 + GRAIN_PULL x fold x
+    |cos|) more, giving trellis drainage. Down = -1 at sea and for unreachable sinks. Accumulated area acc (m^2) is summed
+    highest-first. Slope is measured on the routing surface, not the filled one. In the recent epoch plates.drain is used
+    instead (no grain, with a seeded 30 m roughness).'
+area: hydrology
+clock:
+  when: each coupled step; each 10-kyr recent-epoch step
+reads:
+- name: z
+  field: planet-field.height
+  unit: m
+  meaning: relief
+- name: state.incision
+  unit: m
+  meaning: river incision memory
+- name: struct.fault
+  unit: 0-1
+  meaning: fault-zone index
+- name: struct.fold
+  unit: 0-1
+  meaning: fold-belt index
+- name: struct.grain
+  field: planet-field.grain
+  unit: unit 3-vector per sample
+  meaning: strike of folded rock (w.grain)
+- name: sea
+  unit: m
+  meaning: sea level
+- name: cell
+  unit: m^2
+  meaning: sample area 4 pi R^2 / n
+writes:
+- name: down
+  unit: sample index, -1 none
+  meaning: receiver
+- name: acc
+  field: planet-field.drainage-area
+  unit: m^2
+  meaning: drainage area (not returned in hydro)
+- name: slope
+  unit: m/m
+  meaning: drop to receiver over its distance, on zr
+- name: zf
+  unit: m
+  meaning: filled routing surface (internal)
+- name: order
+  unit: index
+  meaning: samples by descending zf (internal; reused by lakes, water and sediment routing)
+params:
+- name: VALLEY_HOLD
+  value: 1.0
+  unit: '1'
+  said_as:
+    unit: dimensionless
+    factor: 1.0
+  open: true
+  meaning: share of incision subtracted from the routing surface
+  source: stages/coupled.py:53
+  note: 'unit as the code says it: ''dimensionless''; SI conversion unverified'
+- name: FAULT_DROP
+  value: 40.0
+  unit: m
+  meaning: routing surface lowered this much at fault index 1
+  source: stages/coupled.py:32
+- name: GRAIN_PULL
+  env: SIM_GRAIN_PULL
+  value: 1.5
+  unit: '1'
+  said_as:
+    unit: dimensionless
+    factor: 1.0
+  open: true
+  meaning: extra weight of a drop along the strike in a fold belt
+  source: stages/coupled.py:30
+  note: '(G8) trellis drainage; unit as the code says it: ''dimensionless''; SI conversion unverified'
+- name: 'inline: land floor of routing surface'
+  setting: sea + 0.5 m + 1e-3*(z - sea)
+  meaning: keeps the routing surface on land above the sea
+  source: stages/coupled.py:259
+  note: 'unit: m'
+- name: FILL_ROUNDS
+  value: 400.0
+  unit: '1'
+  said_as:
+    unit: count
+    factor: 1.0
+  meaning: max Planchon-Darboux passes; depressions wider than ~400 hops are left partly unfilled
+  source: stages/plates.py:145
+- name: 'inline: fill epsilon'
+  value: 0.1
+  unit: m
+  meaning: filled surface rises 0.1 m per hop
+  source: stages/plates.py:1482
+- name: ROUGH_M
+  env: SIM_ROUGH_M
+  value: 30.0
+  unit: m
+  meaning: std of a seeded normal roughness added in plates.drain (recent epoch only; drain_structured has none)
+  source: stages/plates.py:1474
+- name: 'inline: min reach length'
+  value: 1.0
+  unit: m
+  meaning: distance floor in slope
+  source: stages/coupled.py:212,221
+tables:
+- name: xmem-columns
+  source: stages/plates.py:1327, 1331-1332, 1354
+  columns:
+  - column
+  - field
+  - unit
+  rows:
+  - - '0'
+    - peakQ
+    - m3/yr
+  - - '1'
+    - incision
+    - m
+  - - '2'
+    - river state
+    - code
+  - - '3'
+    - t_change
+    - Gyr
+  - - '4'
+    - lake_mem
+    - 0-1
+random_draws:
+- 'plates.drain (recent epoch): np.random.default_rng(n).normal(size=n) * ROUGH_M on land, the same field every call (seeded
+  by sample count). drain_structured (deep-time coupled step): none.'
+invariants:
+- down[i] = -1 at sea
+- zf >= zr on land; zf = zr at sea
+- acc[i] >= cell
+- following down from any land sample ends at the sea or a sink without cycles (drops are > 0 on zf; unverified where a depression
+  exceeds FILL_ROUNDS hops)
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/coupled.py:drain_structured (lines 206-226); stages/coupled.py:step (256-266); stages/plates.py:fill_depressions
+    (1477-1487); stages/plates.py:drain (1490-1512, recent epoch only)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
+    the code at planet-sim-landform 9747f0d-c437724.'

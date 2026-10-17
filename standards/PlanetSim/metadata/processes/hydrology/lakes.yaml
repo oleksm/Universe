@@ -1,0 +1,116 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.lakes
+  name: Lakes from the water balance (open, closed/salt, playa), level and lake-bed memory
+  about: 'Depression samples are land samples whose filled surface stands > LAKE_TOL above the routing surface. They are joined
+    along the routing into depressions (union by receiver, processed highest-first). In route_water each depression''s exit
+    (the first sample whose receiver leaves it) receives all its inflow qin; its evaporation capacity is cap = sum over the
+    depression of (PET - P) x cell. If cap <= 0 or qin >= cap the lake fills to its spill point and overflows: open lake,
+    outflow qin - cap. Otherwise it closes: area = qin / ((PET-P) mean), nothing leaves. lake_cover marks open lakes over
+    the whole depression (share 1), closed lakes over the lowest samples first up to that area (share per sample), and a closed
+    lake under 0.1 cell as a playa on its lowest sample. Lake level above sea: open = max filled surface in the depression,
+    closed = highest covered routing height. lake_mem builds by lake_share x dt / LAKE_FORM_MYR and fades over LAKE_MEM_MYR
+    (shorelines, lake beds, salt).'
+area: hydrology
+clock:
+  when: each coupled step; each 10-kyr recent-epoch step (no lake_mem there; lake_max instead)
+reads:
+- name: zr_
+  unit: m
+  meaning: routing surface
+- name: zf
+  unit: m
+  meaning: filled surface
+- name: down, order
+  unit: index
+  meaning: routing
+- name: PET, P
+  unit: m/yr
+  meaning: climate
+- name: cell
+  unit: m^2
+  meaning: sample area
+- name: state.lake_mem
+  unit: 0-1
+  meaning: previous memory
+writes:
+- name: lid
+  unit: lake id per sample, -1 none
+  meaning: internal
+- name: lake
+  unit: code 0-3
+  meaning: 0 none, 1 open, 2 closed (salt), 3 playa
+- name: lake_share
+  unit: 0-1
+  meaning: share of the sample under water
+- name: lake_level
+  unit: m above sea, NaN off-lake
+  meaning: lake surface
+- name: lakes
+  unit: per lake [m3/yr, m3/yr, m^2, 0/1]
+  meaning: inflow, evaporation capacity, area, open
+- name: lake_mem
+  unit: 0-1
+  meaning: lake-bed mark
+params:
+- name: LAKE_TOL
+  value: 0.05
+  unit: m
+  meaning: filled surface this much above ground marks a depression
+  source: stages/coupled.py:99
+- name: LAKE_FORM_MYR
+  value: 631200000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31560000000000.0
+  meaning: a lake leaves a clear bed after standing this long
+  source: stages/coupled.py:100
+  note: '16 Oct s20 review: one-step lakes left full bed marks on 15 % of land'
+- name: LAKE_MEM_MYR
+  value: 946800000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31560000000000.0
+  meaning: a lake's mark on its basin floor fades over this
+  source: stages/coupled.py:101
+- name: 'inline: playa threshold'
+  value: 0.1
+  unit: '1'
+  said_as:
+    unit: cell areas
+    factor: 1.0
+  open: true
+  meaning: closed lake smaller than 0.1 cell -> playa on its lowest sample
+  source: stages/coupled.py:141
+  note: 'unit as the code says it: ''cell areas''; SI conversion unverified'
+random_draws:
+- none
+invariants:
+- 'open lake: outflow = qin - max(cap,0) >= 0'
+- 'closed lake: outflow = 0, all inflow counted lost (evaporated)'
+- closed-lake area <= depression area
+- 0 <= lake_share <= 1; 0 <= lake_mem <= 1
+- lake level is one value per lake
+depends_on:
+- planet-process.flow-routing
+- planet-process.coupled-climate
+note: lakes() ignores its inflow_q, PET, P and cell arguments; depressions only, the balance is done in route_water.
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/coupled.py:lakes (lines 104-129), stages/coupled.py:lake_cover (132-147), stages/coupled.py:route_water
+    lake branch (161-174), stages/coupled.py:step lake level and memory (269-285)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
+    the code at planet-sim-landform 9747f0d-c437724.'

@@ -1,0 +1,1140 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.rock-unit-stack
+  name: Rock unit stack on crust particles (lay, strip, surface)
+  about: 'Each crust particle carries a top unit, a basement unit and the top''s thickness (cover, m). `bury` lays a new top
+    unit of thickness `laid` over chosen particles (the new unit replaces the top; cover = old cover (if any) + laid) and
+    deepens every ore body by `laid`. `erode` takes `removed` m off: cover thins (floored at 0) and ore rises; ore eroded
+    past its own body height is gone (fertility 0). `surface` reads the unit at the ground: the top while cover > 0, else
+    the basement. At read-out (plates.read), arc batholiths older than SHIELD_MYR show as gneiss basement, and the per-sample
+    unit map is a twice-repeated 7-neighbour majority vote. Erodibility for plate-scale denudation goes through the top at
+    its rate, then the basement at its own (plates._wear), both divided by MEAN_ERODIBILITY.'
+area: geology
+clock:
+  when: every plate step (plates.run, step_myr default 5 Myr) on deposition/denudation; read-out at snapshots and the end
+reads:
+- name: xtop, xbase
+  unit: index into geology.UNITS
+  meaning: per-particle units
+- name: xcover
+  unit: m
+  meaning: top unit thickness
+- name: xdep
+  unit: m below surface
+  meaning: ore-top depth per system
+- name: laid / removed
+  unit: m
+  meaning: sediment laid / rock removed
+- name: xage
+  unit: 's (code: Myr)'
+  meaning: crust age
+writes:
+- name: xtop, xcover, xdep, xfert
+  unit: index, m, m, 1
+  meaning: updated stack
+- name: rock
+  field: planet-field.rock
+  unit: unit index
+  meaning: surface unit per sample (after shield relabel and majority vote)
+params:
+- name: MEAN_ERODIBILITY
+  value: 0.9
+  unit: '1'
+  meaning: mean erodibility of continental surface rock (measured on grown Earth); erodibility is used as ERODIBILITY[u]/MEAN_ERODIBILITY
+  source: src/planet_sim/stages/geology.py:214
+- name: SHIELD_MYR
+  value: 1500.0
+  unit: '1'
+  said_as:
+    unit: 's: 4.73364e+16 (code: Myr)'
+    factor: 1.0
+  open: true
+  meaning: batholiths older than this display as basement gneiss (chosen)
+  source: src/planet_sim/stages/geology.py:730
+  note: 'unit as the code says it: ''s: 4.73364e+16 (code: Myr)''; SI conversion unverified'
+- name: ARC_COVER
+  value: 2500.0
+  unit: m
+  meaning: max arc volcanic cover over its batholith
+  source: src/planet_sim/stages/geology.py:155
+- name: SCHIST_COVER
+  value: 6000.0
+  unit: m
+  meaning: schist cover laid by a collision over its granite core (minimum after collision)
+  source: src/planet_sim/stages/geology.py:156
+- name: FLOOD_COVER
+  value: 1500.0
+  unit: m
+  meaning: flood basalt cover (defined; plates.py adds HOTSPOT_RATE·dt instead; FLOOD_COVER is referenced nowhere (dead constant))
+  source: src/planet_sim/stages/geology.py:157
+- name: RIFT_COVER
+  value: 2000.0
+  unit: m
+  meaning: rift fill (minimum cover after rifting)
+  source: src/planet_sim/stages/geology.py:158
+tables:
+- name: geology.SYSTEMS (plate-carried mineral systems)
+  source: src/planet_sim/stages/geology.py:61-103
+  columns:
+  - index
+  - key
+  - name
+  - form_depth (m below surface)
+  - body_height (m)
+  - median_tonnage (Mt; ×1e9 kg)
+  - tonnage_sigma (ln)
+  - median_grades (%, g/t, ct/t)
+  - footprint (length m, width m)
+  - shape
+  - short_id
+  - district (mean deposits, along km, across km)
+  - earth_count
+  - rate (deposits per unit chance)
+  - tonnage_cap (Mt)
+  - signatures (survey methods)
+  - pge_split / ree_split
+  rows:
+  - - '0'
+    - porphyry
+    - porphyry copper–molybdenum–gold
+    - '2500'
+    - '1500'
+    - '250.0'
+    - '1.4'
+    - '{"Cu %": 0.44, "Mo %": 0.015, "Au g/t": 0.1, "S %": 1.5}'
+    - '[2500, 2000]'
+    - stock
+    - PCU
+    - '[3, 20, 8]'
+    - '420'
+    - '0.09'
+    - '20000'
+    - '["geochemistry", "ip", "magnetics"]'
+    - 'null'
+  - - '1'
+    - epithermal
+    - epithermal gold–silver veins
+    - '400'
+    - '600'
+    - '0.8'
+    - '1.6'
+    - '{"Au g/t": 7.5, "Ag g/t": 110}'
+    - '[2000, 8]'
+    - veins
+    - EPI
+    - '[4, 15, 5]'
+    - '300'
+    - '0.11'
+    - '500'
+    - '["geochemistry", "ip"]'
+    - 'null'
+  - - '2'
+    - vms
+    - volcanogenic massive sulphide
+    - '0'
+    - '300'
+    - '1.5'
+    - '1.7'
+    - '{"Cu %": 1.3, "Zn %": 2.0, "Pb %": 0.3, "Ag g/t": 30, "S %": 30.0}'
+    - '[600, 200]'
+    - lens
+    - VMS
+    - '[5, 10, 5]'
+    - '1090'
+    - '3.17'
+    - '500'
+    - '["geochemistry", "em", "gravity"]'
+    - 'null'
+  - - '3'
+    - orogenic_gold
+    - orogenic gold–quartz veins
+    - '8000'
+    - '4000'
+    - '0.1'
+    - '1.8'
+    - '{"Au g/t": 10.0}'
+    - '[3000, 3]'
+    - veins
+    - OAU
+    - '[6, 40, 5]'
+    - '500'
+    - '0.12'
+    - '700'
+    - '["geochemistry"]'
+    - 'null'
+  - - '4'
+    - tin_tungsten
+    - tin–tungsten greisen and veins
+    - '5500'
+    - '1500'
+    - '7.0'
+    - '1.5'
+    - '{"Sn %": 0.28, "W %": 0.1}'
+    - '[1500, 20]'
+    - veins
+    - SNW
+    - '[4, 20, 8]'
+    - '200'
+    - '1.76'
+    - '300'
+    - '["geochemistry", "radiometrics"]'
+    - 'null'
+  - - '5'
+    - nickel_sulphide
+    - magmatic nickel–copper–PGE
+    - '1000'
+    - '1500'
+    - '2.1'
+    - '1.5'
+    - '{"Ni %": 0.8, "Cu %": 0.5, "PGE g/t": 1.0, "S %": 10.0}'
+    - '[1000, 100]'
+    - lens
+    - NIS
+    - '[3, 15, 5]'
+    - '150'
+    - '0.11'
+    - '1500'
+    - '["geochemistry", "em", "magnetics"]'
+    - '{"Pd": 0.62, "Pt": 0.28, "Rh": 0.04, "Ru": 0.03, "Ir": 0.02, "Os": 0.01}'
+  - - '6'
+    - chromite
+    - podiform chromite
+    - '1000'
+    - '5000'
+    - '0.02'
+    - '1.5'
+    - '{"Cr2O3 %": 45.0}'
+    - '[200, 30]'
+    - lens
+    - CHR
+    - '[8, 5, 3]'
+    - '430'
+    - '22.34'
+    - '10'
+    - '["gravity", "magnetics"]'
+    - 'null'
+  - - '7'
+    - iron_formation
+    - banded iron formation
+    - '0'
+    - '2000'
+    - '170.0'
+    - '1.2'
+    - '{"Fe %": 53.0}'
+    - '[15000, 400]'
+    - strata
+    - BIF
+    - '[2, 30, 3]'
+    - '130'
+    - '1.33'
+    - '5000'
+    - '["magnetics", "gravity", "geochemistry"]'
+    - 'null'
+  - - '8'
+    - mvt
+    - carbonate-hosted lead–zinc (MVT)
+    - '500'
+    - '300'
+    - '7.0'
+    - '1.4'
+    - '{"Zn %": 3.5, "Pb %": 1.2, "S %": 5.0}'
+    - '[1500, 500]'
+    - strata
+    - MVT
+    - '[6, 20, 10]'
+    - '120'
+    - '0.09'
+    - '300'
+    - '["geochemistry", "ip"]'
+    - 'null'
+  - - '9'
+    - sedex
+    - shale-hosted zinc–lead (SEDEX)
+    - '1000'
+    - '300'
+    - '15.0'
+    - '1.4'
+    - '{"Zn %": 5.6, "Pb %": 2.8, "Ag g/t": 50, "S %": 15.0}'
+    - '[2000, 800]'
+    - strata
+    - SDX
+    - '[2, 15, 5]'
+    - '70'
+    - '0.08'
+    - '600'
+    - '["geochemistry", "em", "gravity"]'
+    - 'null'
+  - - '10'
+    - sediment_copper
+    - sediment-hosted copper
+    - '1000'
+    - '200'
+    - '22.0'
+    - '1.5'
+    - '{"Cu %": 2.1, "Ag g/t": 20, "S %": 2.0}'
+    - '[8000, 2000]'
+    - strata
+    - SCU
+    - '[3, 40, 10]'
+    - '60'
+    - '0.07'
+    - '3000'
+    - '["geochemistry", "ip"]'
+    - 'null'
+  - - '11'
+    - diamond
+    - kimberlite diamonds
+    - '0'
+    - '3000'
+    - '25.0'
+    - '1.3'
+    - '{"diamond ct/t": 0.5}'
+    - '[500, 500]'
+    - pipe
+    - KIM
+    - '[6, 15, 15]'
+    - '70'
+    - '0.06'
+    - '1000'
+    - '["magnetics", "geochemistry"]'
+    - 'null'
+  - - '12'
+    - layered_cr_pge
+    - layered intrusion chromite and platinum reefs
+    - '3000'
+    - '4000'
+    - '400.0'
+    - '1.4'
+    - '{"Cr2O3 %": 42.0, "PGE g/t": 5.0, "Ni %": 0.15}'
+    - '[40000, 3]'
+    - strata
+    - LCR
+    - '[6, 40, 5]'
+    - '25'
+    - '0.411'
+    - '10000'
+    - '["gravity", "magnetics"]'
+    - '{"Pt": 0.58, "Pd": 0.26, "Ru": 0.08, "Rh": 0.05, "Ir": 0.02, "Os": 0.01}'
+  - - '13'
+    - layered_vti
+    - vanadium–titanium magnetite seams
+    - '3000'
+    - '4000'
+    - '300.0'
+    - '1.3'
+    - '{"Fe %": 55.0, "TiO2 %": 13.0, "V2O5 %": 1.5}'
+    - '[30000, 2]'
+    - strata
+    - LVT
+    - '[4, 30, 5]'
+    - '60'
+    - '0.986'
+    - '5000'
+    - '["magnetics", "gravity"]'
+    - 'null'
+  - - '14'
+    - sed_manganese
+    - sedimentary manganese
+    - '0'
+    - '300'
+    - '50.0'
+    - '1.6'
+    - '{"Mn %": 38.0, "Fe %": 8.0}'
+    - '[10000, 30]'
+    - strata
+    - SMN
+    - '[4, 25, 10]'
+    - '40'
+    - '0.754'
+    - '5000'
+    - '["geochemistry", "gravity"]'
+    - 'null'
+  - - '15'
+    - magnesite
+    - magnesite in altered ultramafics
+    - '500'
+    - '800'
+    - '5.0'
+    - '1.5'
+    - '{"MgO %": 45.0}'
+    - '[1000, 30]'
+    - veins
+    - MGS
+    - '[5, 10, 5]'
+    - '120'
+    - '133.0'
+    - '300'
+    - '["geochemistry"]'
+    - 'null'
+  - - '16'
+    - volcanic_sulphur
+    - volcanic native sulphur
+    - '0'
+    - '100'
+    - '1.0'
+    - '1.5'
+    - '{"S %": 30.0}'
+    - '[1000, 200]'
+    - lens
+    - VSU
+    - '[3, 5, 5]'
+    - '60'
+    - '0.0493'
+    - '50'
+    - '["geochemistry"]'
+    - 'null'
+  - - '17'
+    - halite
+    - rock salt (bedded and domes)
+    - '0'
+    - '1500'
+    - '1000.0'
+    - '1.5'
+    - '{"NaCl %": 95.0}'
+    - '[20000, 5000]'
+    - strata
+    - HAL
+    - '[4, 60, 30]'
+    - '120'
+    - '0.042'
+    - '50000'
+    - '["gravity"]'
+    - 'null'
+  - - '18'
+    - potash
+    - potash salts (sylvite, carnallite)
+    - '0'
+    - '300'
+    - '400.0'
+    - '1.4'
+    - '{"K2O %": 15.0, "MgO %": 3.0}'
+    - '[15000, 10000]'
+    - strata
+    - POT
+    - '[3, 50, 30]'
+    - '40'
+    - '0.0465'
+    - '10000'
+    - '["gravity", "radiometrics"]'
+    - 'null'
+  - - '19'
+    - evaporite_sulphur
+    - salt-dome native sulphur
+    - '500'
+    - '300'
+    - '10.0'
+    - '1.4'
+    - '{"S %": 25.0}'
+    - '[2000, 2000]'
+    - pipe
+    - ESU
+    - '[4, 30, 30]'
+    - '20'
+    - '0.0532'
+    - '300'
+    - '["gravity"]'
+    - 'null'
+  - - '20'
+    - phosphorite
+    - sedimentary phosphate (phosphorite)
+    - '0'
+    - '400'
+    - '300.0'
+    - '1.5'
+    - '{"P2O5 %": 25.0}'
+    - '[20000, 5000]'
+    - strata
+    - PHO
+    - '[4, 60, 20]'
+    - '80'
+    - '0.709'
+    - '30000'
+    - '["radiometrics", "geochemistry"]'
+    - 'null'
+  - - '21'
+    - carbonatite
+    - carbonatite (phosphate, rare earths, niobium)
+    - '2000'
+    - '3000'
+    - '50.0'
+    - '1.5'
+    - '{"P2O5 %": 8.0, "REO %": 2.0, "Nb2O5 %": 0.5}'
+    - '[2000, 2000]'
+    - pipe
+    - CBT
+    - '[2, 10, 10]'
+    - '50'
+    - '0.116'
+    - '1500'
+    - '["radiometrics", "magnetics", "geochemistry"]'
+    - '{"Ce": 0.49, "La": 0.33, "Nd": 0.12, "Pr": 0.04, "Sm": 0.008, "Gd": 0.002, "Eu": 0.001, "Y": 0.001, "others": 0.008}'
+- name: geology.WEATHER (surface, weathering and setting ore types)
+  source: src/planet_sim/stages/geology.py:281-314
+  columns:
+  - key
+  - name
+  - median_tonnage (Mt)
+  - tonnage_sigma (ln)
+  - median_grades
+  - footprint (length m, width m)
+  - shape
+  - host_units
+  - setting (geology.SETTING)
+  - short_id
+  - district (mean, along km, across km)
+  - earth_count
+  - rate
+  - tonnage_cap (Mt)
+  - signatures
+  rows:
+  - - laterite_nickel
+    - lateritic nickel
+    - '39.0'
+    - '1.0'
+    - '{"Ni %": 1.3, "Co %": 0.08}'
+    - '[8000, 4000]'
+    - blanket
+    - '["ophiolite", "greenstone"]'
+    - 'null'
+    - LNI
+    - '[3, 15, 15]'
+    - '70'
+    - '4.53'
+    - '500'
+    - '["geochemistry"]'
+  - - bauxite
+    - lateritic bauxite
+    - '30.0'
+    - '1.0'
+    - '{"Al2O3 %": 45.0}'
+    - '[10000, 5000]'
+    - blanket
+    - '["arc_plutonic", "granite", "basement", "flood_basalt", "schist", "arc_volcanic"]'
+    - 'null'
+    - BXT
+    - '[4, 20, 20]'
+    - '100'
+    - '0.1'
+    - '3000'
+    - '["geochemistry"]'
+  - - heavy_mineral_sands
+    - heavy-mineral beach sands
+    - '100.0'
+    - '1.3'
+    - '{"TiO2 %": 1.6, "ZrO2 %": 0.35}'
+    - '[15000, 1500]'
+    - strata
+    - '["granite", "basement", "arc_plutonic", "schist"]'
+    - 'null'
+    - HMS
+    - '[4, 60, 5]'
+    - '200'
+    - '3.37'
+    - '3000'
+    - '["radiometrics", "magnetics"]'
+  - - lithium_brine
+    - lithium–potassium–magnesium salt-flat brine
+    - '500.0'
+    - '1.2'
+    - '{"Li %": 0.07, "K %": 1.5, "Mg %": 1.0}'
+    - '[30000, 20000]'
+    - blanket
+    - '["arc_volcanic"]'
+    - 'null'
+    - LIB
+    - '[2, 40, 30]'
+    - '30'
+    - '0.497'
+    - '5000'
+    - '["geochemistry", "em"]'
+  - - mn_nodules
+    - manganese nodule field
+    - '50.0'
+    - '1.0'
+    - '{"Mn %": 25.0, "Ni %": 1.3, "Cu %": 1.1, "Co %": 0.2}'
+    - '[150000, 80000]'
+    - blanket
+    - '[]'
+    - 'null'
+    - MNN
+    - '[3, 150, 100]'
+    - '6'
+    - '0.00103'
+    - '2000'
+    - '["sonar"]'
+  - - skarn_copper
+    - copper skarn
+    - '0.56'
+    - '2.0'
+    - '{"Cu %": 1.7, "Au g/t": 0.5, "Ag g/t": 15.0, "S %": 4.0}'
+    - '[800, 100]'
+    - lens
+    - '[]'
+    - rock contacts
+    - SKC
+    - '[4, 15, 5]'
+    - '120'
+    - '0.878'
+    - '300'
+    - '["magnetics", "geochemistry", "ip"]'
+  - - skarn_tungsten
+    - tungsten skarn
+    - '1.1'
+    - '1.8'
+    - '{"WO3 %": 0.67, "Mo %": 0.02}'
+    - '[600, 50]'
+    - lens
+    - '[]'
+    - rock contacts
+    - SKW
+    - '[3, 10, 5]'
+    - '40'
+    - '1.07'
+    - '100'
+    - '["geochemistry"]'
+  - - lithium_pegmatite
+    - lithium pegmatite (LCT)
+    - '10.0'
+    - '1.8'
+    - '{"Li2O %": 1.4, "Ta2O5 %": 0.02, "Sn %": 0.05}'
+    - '[1500, 30]'
+    - veins
+    - '[]'
+    - rock contacts
+    - LIP
+    - '[5, 20, 10]'
+    - '60'
+    - '0.21'
+    - '400'
+    - '["geochemistry", "radiometrics"]'
+  - - iocg
+    - iron oxide–copper–gold (IOCG)
+    - '50.0'
+    - '2.0'
+    - '{"Cu %": 1.0, "Au g/t": 0.5, "U3O8 %": 0.02, "Fe %": 30.0}'
+    - '[3000, 1000]'
+    - stock
+    - '[]'
+    - old crust and magma
+    - IOC
+    - '[3, 40, 20]'
+    - '30'
+    - '0.102'
+    - '10000'
+    - '["gravity", "magnetics", "radiometrics"]'
+  - - carlin_gold
+    - Carlin-type gold
+    - '5.0'
+    - '1.5'
+    - '{"Au g/t": 2.5, "As %": 0.3}'
+    - '[2000, 300]'
+    - strata
+    - '[]'
+    - rock contacts
+    - CAU
+    - '[8, 40, 10]'
+    - '50'
+    - '120.0'
+    - '300'
+    - '["geochemistry"]'
+  - - paleoplacer_gold
+    - fossil-river gold–uranium (Witwatersrand type)
+    - '30.0'
+    - '1.5'
+    - '{"Au g/t": 8.0, "U3O8 %": 0.03}'
+    - '[30000, 2]'
+    - strata
+    - '[]'
+    - old basins
+    - PAU
+    - '[6, 80, 30]'
+    - '10'
+    - '0.0457'
+    - '5000'
+    - '["radiometrics", "geochemistry"]'
+  - - uranium_unconformity
+    - unconformity uranium
+    - '0.5'
+    - '1.6'
+    - '{"U3O8 %": 2.0, "Ni %": 0.3}'
+    - '[1000, 100]'
+    - lens
+    - '[]'
+    - old basins
+    - UUN
+    - '[4, 40, 15]'
+    - '20'
+    - '1.32'
+    - '50'
+    - '["radiometrics", "em", "gravity"]'
+  - - uranium_sandstone
+    - sandstone uranium (roll front)
+    - '2.0'
+    - '1.5'
+    - '{"U3O8 %": 0.1, "V2O5 %": 0.1}'
+    - '[3000, 300]'
+    - strata
+    - '[]'
+    - young basins and climate
+    - USS
+    - '[5, 40, 15]'
+    - '60'
+    - '8.23'
+    - '100'
+    - '["radiometrics", "geochemistry"]'
+  - - ree_ion_clay
+    - ion-adsorption rare-earth clay
+    - '1.0'
+    - '1.2'
+    - '{"TREO %": 0.08}'
+    - '[2000, 1000]'
+    - blanket
+    - '[]'
+    - climate (weathering)
+    - REC
+    - '[6, 30, 30]'
+    - '40'
+    - '0.107'
+    - '50'
+    - '["radiometrics", "geochemistry"]'
+  - - graphite
+    - flake graphite
+    - '5.0'
+    - '1.5'
+    - '{"graphite %": 10.0}'
+    - '[1500, 100]'
+    - strata
+    - '[]'
+    - old crust
+    - GRA
+    - '[3, 20, 10]'
+    - '50'
+    - '0.0235'
+    - '300'
+    - '["em", "ip"]'
+  - - placer_gold
+    - river placer gold
+    - '1.0'
+    - '1.8'
+    - '{"Au g/t": 0.3}'
+    - '[10000, 300]'
+    - strata
+    - '[]'
+    - rivers from gold country
+    - PLG
+    - '[5, 50, 10]'
+    - '100'
+    - '7.59'
+    - '200'
+    - '["geochemistry"]'
+- name: geology.IMPACT + IMPACT_RULES (impact ore types)
+  source: src/planet_sim/stages/geology.py:330-345, 628
+  columns:
+  - key
+  - name
+  - median_tonnage (Mt)
+  - tonnage_sigma
+  - median_grades
+  - footprint (m)
+  - shape
+  - d_min (km; ×1e3 m)
+  - chance per qualifying crater
+  - 'host_units (empty: any land)'
+  - ore_depth (share of D)
+  - deposits per crater (Poisson mean)
+  - radial range (share of crater radius)
+  - dry_world_multiplier
+  - short_id
+  - earth_count
+  - tonnage_cap (Mt)
+  - signatures
+  rows:
+  - - impact_melt_nickel
+    - impact melt-sheet nickel–copper–PGE (Sudbury type)
+    - '60.0'
+    - '1.2'
+    - '{"Ni %": 1.2, "Cu %": 1.1, "Co %": 0.04, "PGE g/t": 1.5, "S %": 12.0}'
+    - '[3000, 200]'
+    - lens
+    - '100.0'
+    - '0.15'
+    - '[]'
+    - '0.012'
+    - '12'
+    - '[0.45, 0.65]'
+    - '0.05'
+    - INI
+    - '30'
+    - '600'
+    - '["gravity", "magnetics", "em", "geochemistry"]'
+  - - impact_diamond
+    - impact diamonds in crater melt rock (Popigai type)
+    - '2000.0'
+    - '1.0'
+    - '{"diamond ct/t": 10.0}'
+    - '[20000, 5000]'
+    - blanket
+    - '40.0'
+    - '0.3'
+    - '["basement", "schist", "greenstone", "granite"]'
+    - '0.006'
+    - '3'
+    - '[0.0, 0.45]'
+    - '0.0'
+    - IDM
+    - '2'
+    - '100000'
+    - '["gravity", "geochemistry"]'
+  - - impact_hydrothermal
+    - impact hydrothermal zinc–lead–copper veins
+    - '3.0'
+    - '1.3'
+    - '{"Zn %": 4.0, "Pb %": 1.5, "Cu %": 0.5, "S %": 6.0}'
+    - '[1500, 300]'
+    - veins
+    - '20.0'
+    - '0.08'
+    - '[]'
+    - '0.02'
+    - '3'
+    - '[0.0, 0.95]'
+    - '0.0'
+    - IHY
+    - '6'
+    - '60'
+    - '["geochemistry", "ip"]'
+- name: geology.REACH (survey method depth reach)
+  source: src/planet_sim/stages/geology.py:351-352
+  columns:
+  - method
+  - reach (m)
+  rows:
+  - - geochemistry
+    - '50.0'
+  - - em
+    - '300.0'
+  - - ip
+    - '500.0'
+  - - magnetics
+    - '800.0'
+  - - gravity
+    - '800.0'
+  - - radiometrics
+    - '1.0'
+  - - sonar
+    - '1.0'
+- name: geology.BULK (bulk industrial yields per unit)
+  source: src/planet_sim/stages/geology.py:481-505
+  columns:
+  - unit
+  - material
+  - use
+  - measure
+  - range_lo
+  - range_hi
+  rows:
+  - - carbonate
+    - limestone
+    - cement and lime
+    - CaCO3 %
+    - '75'
+    - '98'
+  - - carbonate
+    - dolomite
+    - refractory, flux, magnesium
+    - MgCO3 %
+    - '20'
+    - '45'
+  - - clastic
+    - quartz sand
+    - glass, foundry, silicon
+    - SiO2 %
+    - '85'
+    - '99.5'
+  - - clastic
+    - clay
+    - brick, ceramics, cement blend
+    - Al2O3 %
+    - '15'
+    - '35'
+  - - granite
+    - aggregate
+    - concrete and road stone
+    - strength MPa
+    - '150'
+    - '250'
+  - - granite
+    - dimension stone
+    - building stone
+    - block m
+    - '1'
+    - '4'
+  - - granite
+    - feldspar
+    - glass and ceramics
+    - K2O+Na2O %
+    - '8'
+    - '14'
+  - - arc_plutonic
+    - aggregate
+    - concrete and road stone
+    - strength MPa
+    - '130'
+    - '220'
+  - - arc_plutonic
+    - dimension stone
+    - building stone
+    - block m
+    - '1'
+    - '4'
+  - - basement
+    - aggregate
+    - concrete and road stone
+    - strength MPa
+    - '120'
+    - '220'
+  - - arc_volcanic
+    - aggregate
+    - road stone, lightweight aggregate
+    - strength MPa
+    - '80'
+    - '200'
+  - - arc_volcanic
+    - pozzolan
+    - cement additive
+    - reactive SiO2 %
+    - '25'
+    - '45'
+  - - flood_basalt
+    - aggregate
+    - concrete and road stone
+    - strength MPa
+    - '150'
+    - '300'
+  - - flood_basalt
+    - basalt fibre stock
+    - mineral fibre
+    - SiO2 %
+    - '45'
+    - '52'
+  - - schist
+    - aggregate
+    - fill and road base
+    - strength MPa
+    - '60'
+    - '150'
+  - - schist
+    - slate
+    - roofing and flooring
+    - block m
+    - '0.5'
+    - '2'
+  - - greenstone
+    - aggregate
+    - road stone
+    - strength MPa
+    - '120'
+    - '250'
+  - - ophiolite
+    - olivine
+    - refractory, slag conditioner
+    - MgO %
+    - '40'
+    - '49'
+  - - ophiolite
+    - serpentine
+    - magnesium source
+    - MgO %
+    - '34'
+    - '40'
+  - - rift
+    - aggregate
+    - fill
+    - strength MPa
+    - '50'
+    - '150'
+  - - rift
+    - clay
+    - brick
+    - Al2O3 %
+    - '12'
+    - '25'
+  - - iron_formation
+    - aggregate
+    - heavy aggregate
+    - density kg/m3
+    - '3200'
+    - '3600'
+  - - primary_crust
+    - aggregate
+    - regolith fill, sintered blocks
+    - strength MPa
+    - '50'
+    - '150'
+  - - primary_crust
+    - regolith oxygen
+    - oxygen by reduction
+    - O %
+    - '40'
+    - '44'
+  - - intercrater_plains
+    - aggregate
+    - regolith fill, sintered blocks
+    - strength MPa
+    - '50'
+    - '150'
+  - - intercrater_plains
+    - regolith oxygen
+    - oxygen by reduction
+    - O %
+    - '40'
+    - '44'
+  - - high_ti_basalt
+    - ilmenite
+    - titanium, iron and oxygen (hydrogen reduction)
+    - TiO2 %
+    - '7'
+    - '13'
+  - - high_ti_basalt
+    - regolith oxygen
+    - oxygen by reduction
+    - O %
+    - '40'
+    - '43'
+  - - impact_melt
+    - aggregate
+    - dense block, sintered
+    - strength MPa
+    - '100'
+    - '250'
+  - - impact_breccia
+    - aggregate
+    - loose fill
+    - strength MPa
+    - '20'
+    - '80'
+  - - anorthosite
+    - plagioclase
+    - aluminium, glass
+    - Al2O3 %
+    - '26'
+    - '35'
+  - - anorthosite
+    - regolith oxygen
+    - oxygen by reduction
+    - O %
+    - '44'
+    - '46'
+  - - kreep
+    - KREEP
+    - rare earths, thorium, phosphorus
+    - Th ppm
+    - '5'
+    - '20'
+- name: geology.PGE_SPLIT (platinum-group shares by mass)
+  source: src/planet_sim/stages/geology.py:827-831
+  columns:
+  - type
+  - Pt
+  - Pd
+  - Ru
+  - Rh
+  - Ir
+  - Os
+  rows:
+  - - layered_cr_pge
+    - '0.58'
+    - '0.26'
+    - '0.08'
+    - '0.05'
+    - '0.02'
+    - '0.01'
+  - - nickel_sulphide
+    - '0.28'
+    - '0.62'
+    - '0.03'
+    - '0.04'
+    - '0.02'
+    - '0.01'
+  - - default
+    - '0.45'
+    - '0.4'
+    - '0.06'
+    - '0.05'
+    - '0.02'
+    - '0.02'
+- name: geology.REE_SPLIT (rare-earth oxide shares by mass)
+  source: src/planet_sim/stages/geology.py:836-843
+  columns:
+  - type
+  - Ce
+  - Dy
+  - Er
+  - Eu
+  - Gd
+  - La
+  - Nd
+  - Pr
+  - Sm
+  - Tb
+  - Y
+  - Yb
+  - others
+  rows:
+  - - carbonatite
+    - '0.49'
+    - 'null'
+    - 'null'
+    - '0.001'
+    - '0.002'
+    - '0.33'
+    - '0.12'
+    - '0.04'
+    - '0.008'
+    - 'null'
+    - '0.001'
+    - 'null'
+    - '0.008'
+  - - ree_ion_clay
+    - '0.03'
+    - '0.06'
+    - '0.04'
+    - '0.005'
+    - '0.06'
+    - '0.06'
+    - '0.08'
+    - '0.02'
+    - '0.03'
+    - '0.01'
+    - '0.55'
+    - '0.03'
+    - '0.025'
+random_draws:
+- none
+invariants:
+- cover ≥ 0
+- a deposit with dep < −BODY_HEIGHT is removed (fert=dep=0)
+- 'UNITS order is append-only: indices are stored in worlds'
+depends_on:
+- planet-process.world-spec-derived
+note: Unit-writing events themselves (ridge→morb, arc→arc_volcanic/greenstone over arc_plutonic, collision→schist over granite,
+  docking/obduction→ophiolite, hotspot→flood_basalt, rift→rift, accretion basement, shelf→iron_formation/carbonate/clastic)
+  live in stages/plates.py and belong to the plates area; listed under `events`.
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform src/planet_sim/stages/geology.py:surface (166-168), erode (181-189), bury (192-197); used in
+    stages/plates.py:_wear (631-645), _deposit (658-693), _bury (696-701), _exhume (704-713), read (493-540, unit read-out
+    527-540)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

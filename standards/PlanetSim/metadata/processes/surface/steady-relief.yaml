@@ -1,0 +1,90 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.steady-relief
+  name: Sub-grid relief from the stream-power steady state
+  about: 'Relief finer than a landscape''s grid, from the stream power''s steady state (Cordonnier et al. 2016; Whipple &
+    Tucker 1999): where uplift and erosion balance, a channel''s slope and the area draining to it are tied, S = k_s · A^(−θ),
+    θ = m/n (the erosion stage''s M_AREA, n = 1), its steepness k_s set by the uplift against the rock''s erodibility. So
+    the coarse ground already holds what the fine one needs: its own channels'' steepness, measured on it, says how steep
+    every finer channel is; heights then follow from each cell''s receiver, outlets first, in one pass; hillslopes stand at
+    their threshold angle (the rock''s strength), above the channels'' reach. Branching comes from routing the drainage over
+    the coarse ground perturbed a little (as every such model does: on a perfectly smooth slope, flow lines run parallel).
+    NOT INVENTORIED IN DETAIL: neither plates.py nor coupled.py imports steady.py (directly or through another module); it
+    is used by stages/mountains.py, tools/region_bake.py.'
+area: surface
+clock:
+  when: not part of the coupled planet run (offline tools / bakes)
+params:
+- name: THETA
+  setting: 'expr: E.M_AREA'
+  meaning: 'concavity: m/n with n = 1'
+  source: stages/steady.py:21
+  note: 'unit: unverified'
+- name: A_CHANNEL_KM2
+  value: 2000000.0
+  unit: m2
+  said_as:
+    unit: km^2
+    factor: 1000000.0
+  meaning: 'where the coarse ground''s steepness is read: its channels (area above this)'
+  source: stages/steady.py:22
+- name: A_ANCHOR_KM2
+  value: 50000.0
+  unit: m2
+  said_as:
+    unit: km^2
+    factor: 1000000.0
+  meaning: 'channels this big or bigger keep the coarse ground''s height: the hillslopes'
+  source: stages/steady.py:23
+- name: S_THRESHOLD
+  value: 0.7
+  unit: '1'
+  said_as:
+    unit: m/m
+    factor: 1.0
+  open: true
+  meaning: 'hillslopes'' threshold gradient (~35°: Montgomery 2001; Roering et al. 1999)'
+  source: stages/steady.py:26
+  note: 'between them are what the fine grid adds (their length, and so their relief, bounded by the channels'' spacing);
+    unit as the code says it: ''m/m''; SI conversion unverified'
+- name: PERTURB
+  value: 1.5
+  unit: '1'
+  said_as:
+    unit: routing perturbation (from the code comment; SI conversion not done, unverified)
+    factor: 1.0
+  open: true
+  meaning: routing perturbation, as a share of the coarse cell's typical relief
+  source: stages/steady.py:27
+  note: 'unit as the code says it: ''routing perturbation (from the code comment; SI conversion not done, unverified)''; SI
+    conversion unverified'
+- name: SPREAD
+  value: 1.5
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: (coarse cells) how far the channels' steepness is spread to the ground between
+  source: stages/steady.py:28
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+random_draws:
+- not inventoried
+used: false
+note: 'unused by plates.py / coupled.py; users: stages/mountains.py, tools/region_bake.py'
+backends:
+- cpu
+implementations:
+- where: 'planet-sim-landform stages/steady.py: steepness (31-48), detail (51-88), _climb (91-100)'
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
+    the code at planet-sim-landform 9747f0d-c437724.'

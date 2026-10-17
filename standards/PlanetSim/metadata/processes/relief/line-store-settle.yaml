@@ -1,0 +1,56 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.line-store-settle
+  name: Lines torn by diverging plates and cut at suture overthrusts
+  about: 'End of each plate step: (1) a finished line is cut between consecutive vertices riding different plates (and more
+    than TEAR_GAPS*gap apart) - a line lies on one plate; (2) where vertices whose crust changed plate this step lie on segments
+    crossing a segment of another line of the same type on the same plate, the moved segment''s vertices are removed (stacked
+    at the suture).'
+area: relief
+clock:
+  when: end of every plate step, plates.py:1408
+reads:
+- name: w.x, w.xplate
+- name: VP (plate at last settle)
+- name: gap = sphere.spacing(n) of the current lattice, radians on the unit sphere (x R = metres); refined as the present
+    nears
+writes:
+- name: K bumped and lines split
+- name: vertices removed
+- name: VP = current plate
+note: 'Emits: trace ''segmented'' (why ''torn by plates moving apart'' / ''overthrust at suture'')'
+events_emitted:
+- event: planet-event.log-torn
+- event: planet-event.log-overthrust-at-suture
+params:
+- name: TEAR_GAPS
+  value: 0.0
+  unit: '1'
+  said_as:
+    unit: x gap
+    factor: 1.0
+  meaning: minimum spacing of the two vertices for a tear
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/lines.py:26
+  note: 'comment says ''3 spacings apart first'' but the value is 0.0: every plate change between consecutive vertices tears'
+invariants:
+- a finished line lies on one plate
+- lines of the same type on the same plate do not cross after settle
+depends_on:
+- planet-process.line-store-ride-crust
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/lines.py:Store.settle (215-251), cut_crossings
+    (366-391)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.kimberlite-diamonds
+  name: Diamond fertility on old cratons
+  about: At the end of the run, continental particles older than G.DIAMOND_CRATON_MYR get diamond fertility G.DIAMOND_FERTILE
+    (Clifford's rule).
+area: plates
+clock:
+  when: once, at the end
+reads:
+- name: w.xcont, w.xage
+writes:
+- name: w.xfert, w.xdep
+params:
+- name: G.DIAMOND_CRATON_MYR
+  value: 6.31152e+16
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 2000.0
+  meaning: geology.py:150
+  source: stages/plates.py:1460
+- name: G.DIAMOND_FERTILE
+  value: 0.15
+  unit: '1'
+  meaning: geology.py:151
+  source: stages/plates.py:1461
+random_draws:
+- none
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/plates.py:run (1458-1461)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
+    code at planet-sim-landform 9747f0d-c437724.'

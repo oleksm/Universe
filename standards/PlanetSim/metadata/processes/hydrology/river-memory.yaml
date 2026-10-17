@@ -1,0 +1,156 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.river-memory
+  name: 'River memory: channel states (active, misfit, dry valley, captured, reversed, reborn), peak discharge, incision'
+  about: 'A land, non-lake sample carries a channel if Q >= CHANNEL_Q, or if it already had one (state > 0 and not dry valley)
+    and Q >= DRY_FRAC x CHANNEL_Q (hysteresis: cutting a channel takes more water than keeping it). peakQ = max(Q, peakQ x
+    exp(-dt/PEAK_MYR)). States: active 1; misfit 2 when Q < 0.3 peak; dry valley 3 where no channel but peak >= CHANNEL_Q
+    and incision >= DRY_CUT; for a channel whose receiver changed, the angle between old and new flow direction gives reversed
+    5 (cos < -0.5) or captured 4 (-0.5 <= cos < 0.5); reborn 6 = channel back on a dry valley (overrides). t_change stamps
+    the time of the last state change; a counter per state counts transitions into it. Incision memory: incision = incision
+    x exp(-dt/PEAK_MYR) + wear where a channel runs (all wear, not only river wear). On the plates host this memory rides
+    the crust: before the step each sample takes its nearest particle''s xmem; after it each particle takes its nearest sample''s.'
+area: hydrology
+clock:
+  when: each coupled step (dt = plate step, Myr); each 10-kyr recent step on the 30-kyr running mean of Q (dt = 0.01 Myr)
+reads:
+- name: state.{down,peakQ,state,t_change,incision}
+  unit: mixed
+  meaning: previous memory
+- name: down
+  unit: index
+  meaning: this step's receivers
+- name: Q
+  unit: m3/yr
+  meaning: discharge
+- name: land & lake == 0
+  unit: bool
+  meaning: river-capable samples
+- name: pts
+  unit: unit vector
+  meaning: for direction change
+- name: dt_myr
+  unit: Myr
+  meaning: step length
+- name: t_gyr
+  unit: Gyr
+  meaning: 'time stamp (plates: planet age; recent: -kyr/1e6, i.e. negative before present)'
+writes:
+- name: river_state
+  unit: code 0-6
+  meaning: see table river-states
+- name: peakQ
+  unit: m3/yr
+  meaning: decaying peak discharge
+- name: t_change
+  unit: Gyr
+  meaning: time of last state change (NaN never)
+- name: incision
+  unit: m
+  meaning: decaying river-cut depth
+- name: state.events
+  unit: count per state
+  meaning: cumulative transitions
+- name: w.xmem
+  unit: per particle x5
+  meaning: '[peakQ, incision, state, t_change, lake_mem]'
+note: A channel whose receiver turned by < 60 deg keeps state 1. recent.py adds river erosion to incision without decay.
+params:
+- name: CHANNEL_Q
+  env: SIM_CHANNEL_Q
+  value: 316.85678073510775
+  unit: m3/s
+  said_as:
+    unit: m3/yr
+    factor: 3.1685678073510773e-08
+  meaning: discharge at which a sample carries a river
+  source: stages/coupled.py:24
+- name: DRY_FRAC
+  value: 0.3
+  unit: '1'
+  said_as:
+    unit: dimensionless
+    factor: 1.0
+  open: true
+  meaning: an existing channel runs dry only below this share of CHANNEL_Q
+  source: stages/coupled.py:29
+  note: 'owner 16 Oct: rivers change by conditions, not steps; unit as the code says it: ''dimensionless''; SI conversion
+    unverified'
+- name: PEAK_MYR
+  value: 1578000000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31560000000000.0
+  meaning: e-folding of peak discharge and of incision memory
+  source: stages/coupled.py:25
+- name: DRY_CUT
+  value: 100.0
+  unit: m
+  meaning: incision needed for a dry valley
+  source: stages/coupled.py:28
+  note: '16 Oct: before, one step of flow marked 20 % of land'
+- name: STATES
+  setting: '["none", "active", "misfit", "dry valley", "captured", "reversed", "reborn"]'
+  meaning: river state names
+  source: stages/coupled.py:27
+  note: 'unit: codes 0-6'
+- name: 'inline: misfit ratio'
+  value: 0.3
+  unit: '1'
+  said_as:
+    unit: dimensionless
+    factor: 1.0
+  open: true
+  meaning: channel with Q < 0.3 peakQ is a misfit
+  source: stages/coupled.py:80
+  note: 'unit as the code says it: ''dimensionless''; SI conversion unverified'
+- name: 'inline: reversed cosine'
+  value: -0.5
+  unit: '1'
+  said_as:
+    unit: cosine
+    factor: 1.0
+  open: true
+  meaning: flow direction turned > 120 deg
+  source: stages/coupled.py:88
+  note: 'unit as the code says it: ''cosine''; SI conversion unverified'
+- name: 'inline: captured cosine'
+  values:
+  - -0.5
+  - 0.5
+  unit: '1'
+  said_as:
+    unit: cosine
+    factor: 1.0
+  open: true
+  meaning: flow direction turned 60-120 deg
+  source: stages/coupled.py:89
+  note: 'unit as the code says it: ''cosine''; SI conversion unverified'
+random_draws:
+- none
+invariants:
+- river_state in 0..6
+- peakQ >= Q
+- incision >= 0
+- a dry valley needs peakQ >= CHANNEL_Q and incision >= DRY_CUT
+depends_on:
+- planet-process.river-discharge
+- planet-process.flow-routing
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/coupled.py:classify (lines 70-96); stages/coupled.py:step incision (328, 352); host copy
+    stages/plates.py:run (1324-1332, 1354)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
+    the code at planet-sim-landform 9747f0d-c437724.'

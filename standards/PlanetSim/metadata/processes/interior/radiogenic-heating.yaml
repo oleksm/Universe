@@ -1,0 +1,79 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.radiogenic-heating
+  name: Radiogenic heat production
+  about: 'Heat per kg of mantle from 238U, 235U, 232Th and 40K at bulk-silicate-Earth concentrations (McDonough & Sun 1995:
+    U 20 ppb, Th 80 ppb, K 240 ppm) and Turcotte & Schubert''s heat per kg isotope and half-lives, scaled back in time by
+    each isotope''s decay (H(t) = Σ H_i,today · 2^((age − t)/t½)) and by the world''s radiogenic multiple. Total ~20 TW for
+    Earth today. 35 % of it is placed in the crust (counts toward surface heat flow but not the mantle''s energy balance).'
+area: interior
+clock:
+  when: every ODE evaluation (continuous in time)
+reads:
+- name: t
+  unit: s (code converts to Gyr)
+  meaning: time since formation
+- name: star.age_gyr
+  unit: 's (code: Gyr, ×3.15576e16)'
+  meaning: world age today
+- name: planet.radiogenic
+  unit: '1'
+  meaning: K/Th/U abundance as multiple of Earth's
+- name: Mm
+  unit: kg
+  meaning: mantle mass
+writes:
+- name: heat
+  unit: W
+  meaning: radioactive heat in the mantle (65 %)
+- name: heat_crust
+  unit: W
+  meaning: radioactive heat in the crust (35 %)
+params:
+- name: ISOTOPES
+  setting: '{"238U": {"w_per_kg_mantle_today": 1.8783775999999997e-12, "half_life_gyr": 4.468, "half_life_s": 1.409993568e+17},
+    "235U": {"w_per_kg_mantle_today": 8.193599999999999e-14, "half_life_gyr": 0.7038, "half_life_s": 2.221023888e+16}, "232Th":
+    {"w_per_kg_mantle_today": 2.1120000000000003e-12, "half_life_gyr": 14.05, "half_life_s": 4.4338428e+17}, "40K": {"w_per_kg_mantle_today":
+    8.339520000000001e-13,'
+  meaning: today's specific heat production per kg mantle and half-life per isotope (concentration × isotope share × W/kg
+    isotope)
+  source: src/planet_sim/stages/interior.py:88
+  note: 'unit: W/kg; half-life s (code: Gyr)'
+- name: CRUST_SHARE
+  value: 0.35
+  unit: '1'
+  meaning: 'share of radiogenic heat in the crust (real: ~7 of 20 TW, Jaupart et al. 2015)'
+  source: src/planet_sim/stages/interior.py:56
+- name: YEAR
+  value: 31557600.0
+  unit: s
+  meaning: Julian year
+  source: src/planet_sim/stages/interior.py:32
+- name: GYR
+  value: 3.15576e+16
+  unit: s
+  meaning: 1e9 Julian years
+  source: src/planet_sim/stages/interior.py:33
+random_draws:
+- none
+invariants:
+- heat + heat_crust = radiogenic(t)·Mm
+- monotone decreasing in t
+depends_on:
+- planet-process.interior-structure
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform src/planet_sim/stages/interior.py:radiogenic (151-155); split in fluxes (223-224)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

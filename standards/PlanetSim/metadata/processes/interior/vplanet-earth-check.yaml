@@ -1,0 +1,132 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.vplanet-earth-check
+  name: VPLanet ThermInt cross-check (Earth only)
+  about: 'Writes VPLanet input files (stellar, radheat, thermint modules) from the spec, runs the external `vplanet` binary
+    in a scratch directory and reads its forward series and units back. Kept only as an independent check on Earth: ThermInt
+    hard-codes Earth''s geometry, so it cannot model another world. Not called by any pipeline or tool in this repo.'
+area: interior
+clock:
+  when: once, on demand (validation only)
+reads:
+- name: spec (star mass, luminosity, age; planet mass, radius, rotation, obliquity, eccentricity, semi-major axis, radiogenic,
+    surface T, regime)
+  unit: code units passed to VPLanet (negative = Earth/solar units)
+  meaning: inputs
+writes:
+- name: Time
+  unit: VPLanet-reported unit (from its log)
+  meaning: VPLanet output column
+- name: TMan
+  unit: VPLanet-reported unit (from its log)
+  meaning: VPLanet output column
+- name: TUMan
+  unit: VPLanet-reported unit (from its log)
+  meaning: VPLanet output column
+- name: TCMB
+  unit: VPLanet-reported unit (from its log)
+  meaning: VPLanet output column
+- name: TCore
+  unit: VPLanet-reported unit (from its log)
+  meaning: VPLanet output column
+- name: HflowUMan
+  unit: VPLanet-reported unit (from its log)
+  meaning: VPLanet output column
+- name: HflowMeltMan
+  unit: VPLanet-reported unit (from its log)
+  meaning: VPLanet output column
+- name: HflowCMB
+  unit: VPLanet-reported unit (from its log)
+  meaning: VPLanet output column
+- name: RadPowerTotal
+  unit: VPLanet-reported unit (from its log)
+  meaning: VPLanet output column
+- name: SurfEnFluxTotal
+  unit: VPLanet-reported unit (from its log)
+  meaning: VPLanet output column
+- name: RIC
+  unit: VPLanet-reported unit (from its log)
+  meaning: VPLanet output column
+- name: MagMom
+  unit: VPLanet-reported unit (from its log)
+  meaning: VPLanet output column
+- name: MagPauseRad
+  unit: VPLanet-reported unit (from its log)
+  meaning: VPLanet output column
+- name: CoreBuoyTotal
+  unit: VPLanet-reported unit (from its log)
+  meaning: VPLanet output column
+- name: FMeltUMan
+  unit: VPLanet-reported unit (from its log)
+  meaning: VPLanet output column
+- name: MeltMassFluxMan
+  unit: VPLanet-reported unit (from its log)
+  meaning: VPLanet output column
+- name: ViscUMan
+  unit: VPLanet-reported unit (from its log)
+  meaning: VPLanet output column
+params:
+- name: T_MANTLE_START
+  value: 3000.0
+  unit: K
+  meaning: VPLanet mantle start (Driscoll & Bercovici 2014)
+  source: src/planet_sim/stages/vplanet_earth.py:28
+- name: T_CORE_START
+  value: 6000.0
+  unit: K
+  meaning: VPLanet core start
+  source: src/planet_sim/stages/vplanet_earth.py:29
+- name: OUTPUT_YEARS
+  value: 10000000.0
+  unit: '1'
+  said_as:
+    unit: 's: 3.15576e14 (code: yr)'
+    factor: 1.0
+  open: true
+  meaning: output interval
+  source: src/planet_sim/stages/vplanet_earth.py:31
+  note: 'unit as the code says it: ''s: 3.15576e14 (code: yr)''; SI conversion unverified'
+- name: star dRadius
+  value: 0.00465
+  unit: '1'
+  said_as:
+    unit: AU (6.96e8 m)
+    factor: 1.0
+  open: true
+  meaning: star radius passed to VPLanet (≈ 1 R_sun)
+  source: src/planet_sim/stages/vplanet_earth.py:293
+  note: 'unit as the code says it: ''AU (6.96e8 m)''; SI conversion unverified'
+- name: dRadGyra
+  value: 0.5
+  unit: '1'
+  meaning: radius of gyration
+  source: src/planet_sim/stages/vplanet_earth.py:309
+- name: dEta
+  value: 0.1
+  unit: '1'
+  meaning: VPLanet timestep factor
+  source: src/planet_sim/stages/vplanet_earth.py:333
+random_draws:
+- none
+invariants:
+- Earth geometry only
+depends_on:
+- planet-process.world-spec-derived
+used: false
+note: External dependency (vplanet binary). Do not port to Rust; keep as a validation reference if at all.
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform src/planet_sim/stages/vplanet_earth.py:_inputs (288-337), _units (340-344), run (347-367)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

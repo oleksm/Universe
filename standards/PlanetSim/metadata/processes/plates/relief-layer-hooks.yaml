@@ -1,0 +1,64 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.relief-layer-hooks
+  name: Hooks into the relief layer (stages/relief.py, zones.py, lines.py)
+  about: 'When SIM_LINES=1 (default), w.lines is an RF.Relief store of lines and landmarks pinned to particles. plates.py
+    calls: new_step and move (per plate rotation), reindex (World.keep, with sank fates), reanchor (after refine/remesh),
+    settle (end of step), zones.arcs (subduction contacts), zones.collision (continental contacts), zones.hotspots, zones.rift
+    (rift margins), zones.rivers (coupled era), zones.close_stale (end of step), and RF.at_checkpoint every RF.EVERY_MYR (25
+    Myr) on the real world - but only inside the history branch, i.e. only when run() is given a history callback and history_myr.'
+area: plates
+clock:
+  when: per step / per event as listed
+reads:
+- name: world particles and events
+writes:
+- name: w.lines
+  unit: Relief
+events_emitted:
+- event: planet-event.relief-at-checkpoint
+  where: stages/plates.py:954
+- event: planet-event.relief-settle
+  where: stages/plates.py:1408
+- event: planet-event.relief-close-stale
+  where: stages/plates.py:1409
+params:
+- name: SIM_LINES
+  env: SIM_LINES
+  setting: '1'
+  meaning: create the relief layer (RF.Relief) on w.lines; else None and every relief hook is skipped
+  source: stages/plates.py:836
+  note: 'unit: bool (''1'' on)'
+- name: RF.EVERY_MYR
+  value: 788940000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 25.0
+  meaning: relief.py:53
+  source: stages/plates.py:955
+random_draws:
+- none (in plates.py)
+depends_on:
+- planet-process.plate-motion-and-forces
+- planet-process.subduction
+- planet-process.collision-and-docking
+- planet-process.hotspots
+- planet-process.plate-rifting
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/plates.py:run (833-836, 985-997, 1040, 1107, 1189, 1351, 1407-1409, 947-955), World.keep
+    (342-347), _rift (456-458)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
+    code at planet-sim-landform 9747f0d-c437724.'

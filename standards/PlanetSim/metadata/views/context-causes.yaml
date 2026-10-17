@@ -1,0 +1,74 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.context-causes
+  name: What changed the crust
+  about: per continent/land sample the process with the largest thickness change since the last checkpoint (CAUSE_COL), light
+    thickened, dark thinned, faded under 200 m
+title: What changed the crust
+row: landform
+file_suffix: _context_causes.png (+ .legend.json)
+draws:
+  words: per continent/land sample the process with the largest thickness change since the last checkpoint (CAUSE_COL), light
+    thickened, dark thinned, faded under 200 m
+legend:
+  title: What changed the crust
+  rows:
+  - kind: head
+    label: needs a run with the tooling (c_* fields) and an earlier checkpoint
+    shown_when: no c_* fields
+  - kind: head
+    label: Crust thickness change since the last checkpoint, by process (continents)
+    shown_when: c_* fields
+  - kind: fill
+    label: 'thick crust flowing outward: +{up} / -{dn} million km³; leads on {pct} %'
+    colour:
+    - 230
+    - 150
+    - 40
+    shown_when: c_* fields
+  - kind: fill
+    label: 'crust over 80 km spread out: +{up} / -{dn} million km³; leads on {pct} %'
+    colour:
+    - 150
+    - 60
+    - 190
+    shown_when: c_* fields
+  - kind: fill
+    label: 'roots shedding (thick roots sinking): +{up} / -{dn} million km³; leads on {pct} %'
+    colour:
+    - 90
+    - 90
+    - 90
+    shown_when: c_* fields
+  - kind: fill
+    label: 'crust-level wear (to shelves): +{up} / -{dn} million km³; leads on {pct} %'
+    colour:
+    - 60
+    - 140
+    - 200
+    shown_when: c_* fields
+  - kind: fill
+    label: 'climate erosion (rivers, slopes, wind): +{up} / -{dn} million km³; leads on {pct} %'
+    colour:
+    - 40
+    - 160
+    - 90
+    shown_when: c_* fields
+  - kind: fill
+    label: 'tectonics and plate motion (collisions, arcs, rifting, crust moving past): +{up} / -{dn} million km³; leads on
+      {pct} %'
+    colour:
+    - 200
+    - 60
+    - 50
+    shown_when: c_* fields
+  - kind: head
+    label: 'light: thickened; dark: thinned; faded: under 200 m of change. Surface moves ~1/6 of it (isostasy)'
+    shown_when: c_* fields
+  source: ~/git/planet-trees-pgs2/tools/context_view.py:480,493-497
+shown: true
+implementations:
+- where: planet-trees-pgs2 ~/git/planet-trees-pgs2/tools/context_view.py:view_causes (473)
+  state: reference
+status: draft

@@ -1,0 +1,112 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.stagnant-lid-crust
+  name: Airless stagnant-lid crust and giant basins
+  about: 'A stagnant-lid world''s crust (the airless path): one rigid shell, no plates. NOT INVENTORIED IN DETAIL: neither
+    plates.py nor coupled.py imports lid.py (directly or through another module); it is used by tools/lid_world.py.'
+area: surface
+clock:
+  when: not part of the coupled planet run (offline tools / bakes)
+params:
+- name: T0_M
+  value: 40000.0
+  unit: m
+  meaning: 'mean crust (m): Moon ~34–43 km, Mercury ~35 km'
+  source: stages/lid.py:24
+- name: RHO_C
+  value: 2850.0
+  unit: '1'
+  said_as:
+    unit: kg/m^3
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/lid.py:25
+  note: 'unit as the code says it: ''kg/m^3''; SI conversion unverified'
+- name: RHO_M
+  value: 3300.0
+  unit: '1'
+  said_as:
+    unit: kg/m^3
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/lid.py:25
+  note: 'unit as the code says it: ''kg/m^3''; SI conversion unverified'
+- name: BASIN_D_MIN
+  value: 300000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 1000.0
+  meaning: 'km: where the crater catalogue stops'
+  source: stages/lid.py:26
+- name: BASIN_DENSITY
+  value: 8.5e-07
+  unit: '1'
+  said_as:
+    unit: 1/km^2
+    factor: 1.0
+  meaning: basins ≥ 300 km per km² on ground as old as the crust (Moon 1.1, Mercury 0.6)
+  source: stages/lid.py:27
+- name: BASIN_SLOPE
+  value: 2.2
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: cumulative N(>D) ∝ D^−2.2 above 300 km
+  source: stages/lid.py:28
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: BASIN_MAX_FRAC
+  value: 0.7
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: 'largest basin, as a share of the planet''s radius (South Pole–Aitken: 2,500 km on 1,737)'
+  source: stages/lid.py:29
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: THIN
+  value: 0.65
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: crust thinned at a ~1,000 km basin's centre (share), over ~0.6 of its radius
+  source: stages/lid.py:30
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: HIGH_TI_SHARE
+  value: 0.25
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/lid.py:38
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+random_draws:
+- not inventoried
+used: false
+note: 'unused by plates.py / coupled.py; users: tools/lid_world.py'
+backends:
+- cpu
+implementations:
+- where: 'planet-sim-landform stages/lid.py: thinning (36-37), basin_ages (41-47), basins (50-64), unit (67-69), thickness
+    (72-75), thin (78-85), isostatic (88-90)'
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
+    the code at planet-sim-landform 9747f0d-c437724.'

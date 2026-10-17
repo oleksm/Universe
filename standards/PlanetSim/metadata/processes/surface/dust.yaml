@@ -1,0 +1,66 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.dust
+  name: Wind-blown dust (loess) transport and deposition
+  about: 'The deflated volume (wear_wind x cell) is carried downwind sample to sample: each sample''s downwind neighbour is
+    the one most aligned with the climate''s wind direction. Over DUST_HOPS hops, each hop drops trap x load: on land trap
+    = 0.15 + 0.6 V (plants and wet ground trap dust), at sea 0.05 (dropped at sea and lost from the record). What is still
+    airborne after 12 hops is lost. Laid depth = laid volume / cell.'
+area: surface
+clock:
+  when: each coupled step
+reads:
+- name: wear_wind
+  unit: m
+- name: wind_e, wind_n
+  unit: unit
+  meaning: from climate
+- name: P
+  unit: m/yr
+  meaning: for V
+- name: land
+  unit: bool
+writes:
+- name: dust
+  unit: m per step
+  meaning: dust laid on land (also included in laid)
+params:
+- name: DUST_HOPS
+  value: 12.0
+  unit: '1'
+  said_as:
+    unit: samples
+    factor: 1.0
+  open: true
+  meaning: max downwind hops
+  source: stages/coupled.py:52
+  note: 'unit as the code says it: ''samples''; SI conversion unverified'
+- name: 'inline: dust trap'
+  setting: '{"land": "0.15 + 0.6*V", "sea": 0.05}'
+  meaning: deposition share
+  source: stages/coupled.py:198
+  note: 'unit: share per hop'
+random_draws:
+- none
+invariants:
+- sum(dust*cell) <= sum(wear_wind*cell)
+- dust laid only on land
+depends_on:
+- planet-process.coupled-erosion
+- planet-process.coupled-climate
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/coupled.py:dust (lines 191-203); called in stages/coupled.py:step (325-327)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
+    the code at planet-sim-landform 9747f0d-c437724.'

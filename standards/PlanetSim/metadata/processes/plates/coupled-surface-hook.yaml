@@ -1,0 +1,95 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.coupled-surface-hook
+  name: Coupled surface step (landform line) and the structure the plates pass it
+  about: 'In the coupled era (COUPLED and the last COUPLE_FROM_MYR), the denudation pass calls CP.step (stages/coupled.py)
+    with the routing grid, elevation, sea level, the base denudation and a structure dict: fold = for continent max(thick_*exp(-since_suture/300
+    Myr), 0.5*thick_) with thick_ = clip((thick-CONTINENT_MEAN)/15 km, 0, 1); fault = plate-boundary samples (1) and their
+    neighbours (0.5); grain; outgas = heat flow / heat flow at the first coupled step. River memory (peak discharge, incision,
+    state, time of change, lake memory) rides the crust in w.xmem: read from the particle under each sample, written back
+    to every particle from its sample. Returns the denudation field, sediment laid on land, and hydrology; rivers are given
+    to the relief layer.'
+area: plates
+clock:
+  when: every CP.COUPLE_EVERY steps in the coupled era
+reads:
+- name: w.xsuture, w.thick, w.plate, w.grain
+  meaning: structure
+- name: w.xmem
+  unit: '[m3/yr, m, code, Gyr, ?]'
+  meaning: surface memory per particle (5 columns)
+writes:
+- name: w.coupled_state, w.hydro, w.xmem, w.p_route, w.nbr_route, w.hf_ref
+events_emitted:
+- event: planet-event.relief-rivers
+  where: stages/plates.py:1351
+params:
+- name: COUPLED
+  env: SIM_COUPLED
+  setting: 'False'
+  meaning: 'landform line: run the coupled surface step (stages/coupled.py) in the last COUPLE_FROM_MYR'
+  source: stages/plates.py:136
+  note: 'env ''1'' -> True; default ''0''; unit: bool'
+- name: COUPLE_FROM_MYR
+  env: SIM_COUPLE_FROM_MYR
+  value: 2.209032e+16
+  unit: s
+  said_as:
+    unit: Myr before the end
+    factor: 700.0
+  meaning: the coupled era starts when (end - t) <= this; also gates SIM_LAND_SHARE (late) and the snapshot save
+  source: stages/plates.py:139
+  note: 'owner 16 Oct: weathering, rivers and history from the fifth checkpoint (700 Ma) on'
+- name: CONTINENT_MEAN
+  value: 39000.0
+  unit: m
+  meaning: reference continental thickness for isostasy; also fold-belt index base in coupled struct
+  source: stages/plates.py:86
+  note: Christensen & Mooney 1995 (real)
+- name: SIM_JITTER
+  env: SIM_JITTER
+  value: 0.0
+  unit: '1'
+  meaning: 'route_grid: jitter of the routing/climate sample positions; 0 = off (kept only to reproduce old runs)'
+  source: stages/plates.py:808
+  note: '16 Oct evening: OFF'
+- name: fold thickness scale
+  value: 15000.0
+  unit: m
+  meaning: 'unverified: the code names it fold thickness scale without saying what it is'
+  source: stages/plates.py:1339
+- name: fold suture decay
+  value: 9467280000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 300.0
+  meaning: 'unverified: the code names it fold suture decay without saying what it is'
+  source: stages/plates.py:1340
+- name: fault neighbour weight
+  value: 0.5
+  unit: '1'
+  meaning: 'unverified: the code names it fault neighbour weight without saying what it is'
+  source: stages/plates.py:1342
+random_draws:
+- route_grid jitter (off by default) uses np.random.default_rng(n + 7919).
+invariants:
+- xmem rows match particles
+depends_on:
+- planet-process.denudation-and-rivers
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/plates.py:run (lines 1323-1354, 1362-1367, 1373-1379), route_grid (799-816)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
+    code at planet-sim-landform 9747f0d-c437724.'

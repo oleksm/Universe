@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.checkpoint-stamp
+  name: CHECKPOINT k/20 + age title
+  about: stamps title, subtitle and 'CHECKPOINT k/N' on the checkpoint image and its _plates/_samples/_lines/_globe/_materials
+    companions
+title: CHECKPOINT k/20 + age title
+row: strip / fallback image
+file_suffix: .png (ck_NN_<ago>kyr.png)
+draws:
+  words: stamps title, subtitle and 'CHECKPOINT k/N' on the checkpoint image and its _plates/_samples/_lines/_globe/_materials
+    companions
+shown: true
+implementations:
+- where: planet-trees-pgs2 ~/git/planet-trees-pgs2/tools/planet_form.py:stamp (56-69), save_checkpoint (244-249)
+  state: reference
+status: draft

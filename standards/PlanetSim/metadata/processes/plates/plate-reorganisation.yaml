@@ -1,0 +1,107 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.plate-reorganisation
+  name: Reorganisation clock, supercontinent insulation and plate count keeping
+  about: 'After each step: a plate whose continental particle share (counts from the start of the step, over the current total)
+    exceeds BIG_SHARE starts/keeps big_since; past INSULATE_MYR it is ''insulated''. If plates < 0.75*PLATES the reorganisation
+    is brought forward to now. At reorganisation time (next_reorg, redrawn uniform in REORGANISE_MYR, counted) or if any plate
+    is insulated: empty plates are deleted; insulated plates are rifted (any cut). Only when none is insulated, extra top-up
+    rifts = int(uniform < RIFT_CHANCE) + max(0, PLATES - #plates - 2), each on the plate with most ocean particles (RIFT_TOPUP_OCEAN)
+    or most particles, rifted ocean-only if RIFT_TOPUP_OCEAN.'
+area: plates
+clock:
+  when: every step check; reorganisations every 100-250 Myr (uniform), or immediately when plates < 0.75*PLATES, or when a
+    plate is insulated
+reads:
+- name: conts (start-of-step per-plate continental counts)
+  unit: '1'
+- name: w.plates[pid].big_since
+  unit: Myr (code)
+writes:
+- name: next_reorg
+  unit: Gyr (code)
+- name: w.events['reorganisations']
+- name: w.plates
+events_emitted:
+- event: planet-event.reorganisation
+  where: stages/plates.py:1438
+params:
+- name: BIG_SHARE
+  value: 0.35
+  unit: '1'
+  meaning: a plate carrying more than this share of the world's continental particles (by count, not volume) is 'big' (insulating)
+  source: stages/plates.py:67
+  note: Gurnis 1988 (chosen)
+- name: INSULATE_MYR
+  value: 6311520000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 200.0
+  meaning: a big plate that stays big this long is rifted (supercontinent breakup)
+  source: stages/plates.py:68
+  note: Gurnis 1988 (chosen)
+- name: REORGANISE_MYR
+  values:
+  - 3155760000000000.0
+  - 7889400000000000.0
+  unit: s
+  meaning: interval to the next reorganisation, drawn uniform in this range
+  source: stages/plates.py:186
+  note: reorganisations every ~100-200 Myr; Nance et al. 2014 (chosen)
+- name: PLATES
+  env: SIM_PLATES
+  value: 12.0
+  unit: '1'
+  meaning: initial plate count and target count for reorganisation top-ups; < 0.75*PLATES forces an immediate reorganisation
+  source: stages/plates.py:185
+  note: Earth has 7 large plates and some dozen more
+- name: RIFT_CHANCE
+  env: SIM_RIFT_CHANCE
+  value: 0.35
+  unit: '1'
+  meaning: at each reorganisation (if no insulated plate), probability of one extra top-up rift
+  source: stages/plates.py:187
+  note: (override for A/B grows, 2026-10-09)
+- name: RIFT_TOPUP_OCEAN
+  env: SIM_RIFT_TOPUP_OCEAN
+  setting: 'True'
+  meaning: top-up rifts (count keeping) cut the plate with the most ocean-floor particles, through ocean floor only; falls
+    back to any cut if none found
+  source: stages/plates.py:197
+  note: 'env ''1'' default; 17 Oct: top-ups cut continents ~8 times in 160 Myr after 700 Ma; unit: bool'
+- name: min plate fraction
+  value: 0.75
+  unit: '1'
+  meaning: below this many plates a reorganisation happens now
+  source: stages/plates.py:1433
+- name: topup slack
+  value: 2.0
+  unit: '1'
+  meaning: 'top-ups = PLATES - #plates - 2 (plus chance)'
+  source: stages/plates.py:1442
+random_draws:
+- 'next_reorg = t + rng.uniform(100,250)/1e3 at each scheduled reorganisation; rng.uniform() for RIFT_CHANCE drawn only when
+  no plate is insulated (conditional expression evaluated lazily); then each rift''s draws in order: insulated targets first,
+  then top-ups.'
+invariants:
+- plate count is kept near PLATES (soft floor 0.75*PLATES)
+- an insulated reorganisation adds no top-ups
+depends_on:
+- planet-process.plate-rifting
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/plates.py:run (lines 1423-1454)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
+    code at planet-sim-landform 9747f0d-c437724.'

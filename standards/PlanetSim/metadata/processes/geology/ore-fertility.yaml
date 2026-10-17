@@ -1,0 +1,236 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.ore-fertility
+  name: Mineral-system fertility and ore depth
+  about: 'Per crust particle and per mineral system (geology.SYSTEMS, 22 of them), a fertility (0-1: chance the forming event
+    acted) and the depth of the ore top below the surface. `fertilise` adds an independent chance g: f = 1 − (1 − f0)(1 −
+    g), and the depth becomes the chance-weighted mean of the old depth and the system''s formation depth (or a given depth).
+    Called by every plate event that makes ore (see `events`). Survival is then a window: burial deepens ore, erosion raises
+    it and destroys it once eroded past its body height — why porphyries are young and greenstone gold old (Kesler & Wilkinson
+    2008).'
+area: geology
+clock:
+  when: at each plate event (plate step, default 5 Myr); kimberlites once at the end of plates.run
+reads:
+- name: event selection
+  unit: particle indices
+  meaning: where the event acted
+- name: g
+  unit: '1'
+  meaning: chance added
+- name: t
+  unit: 's (code: Gyr)'
+  meaning: time, for oxygenation windows
+- name: latitude
+  unit: 'rad (code: from y)'
+  meaning: carbonate, arid, phosphorite bands
+- name: interior.t_mantle_k(t)
+  unit: K
+  meaning: for greenstone era (komatiite)
+- name: xage, xvol/cell
+  unit: s, m
+  meaning: craton age and crust thickness
+writes:
+- name: xfert[:, system]
+  unit: '1'
+  meaning: fertility
+- name: xdep[:, system]
+  unit: m
+  meaning: ore-top depth below surface
+params:
+- name: KOMATIITE_MANTLE_K
+  value: 1648.0
+  unit: K
+  meaning: 'new crust is greenstone (komatiite) while the interior''s mantle is above this (calibrated: model Earth crosses
+    it 2.5 Gyr ago)'
+  source: src/planet_sim/stages/geology.py:112
+- name: OXYGENATION_GYR
+  value: 2.15
+  unit: '1'
+  said_as:
+    unit: 's: 6.78488e+16 (code: Gyr after formation)'
+    factor: 1.0
+  open: true
+  meaning: 'time the air oxygenates (ASSUMED, Earth''s GOE ~2.4 Ga; life not simulated): before, shelf sediment is iron formation'
+  source: src/planet_sim/stages/geology.py:115
+  note: 'assumed constant, not from a biosphere; unit as the code says it: ''s: 6.78488e+16 (code: Gyr after formation)'';
+    SI conversion unverified'
+- name: CARBONATE_LAT
+  value: 32.0
+  unit: deg
+  meaning: carbonate platforms only within this latitude
+  source: src/planet_sim/stages/geology.py:118
+- name: ARC_FERTILE_M
+  value: 6000.0
+  unit: m
+  meaning: 'arc crust added for one e-fold of porphyry/epithermal fertility: g = 1 − exp(−gain/ARC_FERTILE_M)'
+  source: src/planet_sim/stages/geology.py:122
+- name: COLLISION_GOLD
+  value: 0.35
+  unit: '1'
+  meaning: orogenic gold chance per fresh collision
+  source: src/planet_sim/stages/geology.py:123
+- name: COLLISION_GOLD_SOURCE
+  value: 0.6
+  unit: '1'
+  meaning: orogenic gold chance where the top unit is mafic/sedimentary (greenstone, arc volcanics, ophiolite, clastic, BIF,
+    rift, MORB)
+  source: src/planet_sim/stages/geology.py:124
+- name: TIN_THICK
+  value: 48000.0
+  unit: m
+  meaning: 'crust at least this thick melts its base in a collision: basement becomes S-type granite, tin-tungsten fertile'
+  source: src/planet_sim/stages/geology.py:125
+- name: TIN_FERTILE
+  value: 0.4
+  unit: '1'
+  meaning: tin-tungsten chance where TIN_THICK is reached
+  source: src/planet_sim/stages/geology.py:126
+- name: PLUME_FERTILE_MYR
+  value: 20.0
+  unit: '1'
+  said_as:
+    unit: 's: 6.31152e+14 (code: Myr)'
+    factor: 1.0
+  open: true
+  meaning: 'e-fold contact time for magmatic Ni-Cu-PGE under a continental hotspot: g = 1 − exp(−dt/PLUME_FERTILE_MYR)'
+  source: src/planet_sim/stages/geology.py:127
+  note: 'unit as the code says it: ''s: 6.31152e+14 (code: Myr)''; SI conversion unverified'
+- name: CHROMITE_DOCK
+  value: 0.35
+  unit: '1'
+  meaning: podiform chromite chance when ocean floor docks or is obducted (ophiolite)
+  source: src/planet_sim/stages/geology.py:128
+- name: VMS_RIDGE
+  value: 0.05
+  unit: '1'
+  meaning: VMS chance on new ridge floor (×4 on obducted floor)
+  source: src/planet_sim/stages/geology.py:129
+- name: VMS_ARC
+  value: 0.5
+  unit: '1'
+  meaning: VMS chance factor on island-arc floor (× arc g)
+  source: src/planet_sim/stages/geology.py:130
+- name: RIFT_FERTILE
+  value: 0.3
+  unit: '1'
+  meaning: sediment copper and SEDEX chance in rifted crust
+  source: src/planet_sim/stages/geology.py:131
+- name: SHELF_FERTILE
+  value: 0.25
+  unit: '1'
+  meaning: 'shelf sediment ore chance scale (BIF, MVT, sed. Mn): × (1 − exp(−laid/500 m))'
+  source: src/planet_sim/stages/geology.py:132
+- name: LAYERED_THICK
+  value: 40000.0
+  unit: m
+  meaning: plume under crust older than CRATON_MYR (plates.py, 1500 Myr) and thicker than this makes layered intrusions
+  source: src/planet_sim/stages/geology.py:135
+- name: LAYERED_MYR
+  value: 150.0
+  unit: '1'
+  said_as:
+    unit: 's: 4.73364e+15 (code: Myr)'
+    factor: 1.0
+  open: true
+  meaning: e-fold contact time for layered Cr-PGE and V-Ti
+  source: src/planet_sim/stages/geology.py:136
+  note: 'unit as the code says it: ''s: 4.73364e+15 (code: Myr)''; SI conversion unverified'
+- name: MN_WINDOW_GYR
+  value: 0.4
+  unit: '1'
+  said_as:
+    unit: 's: 1.2623e+16 (code: Gyr)'
+    factor: 1.0
+  open: true
+  meaning: sedimentary Mn laid on shelves from OXYGENATION_GYR for this long
+  source: src/planet_sim/stages/geology.py:137
+  note: 'unit as the code says it: ''s: 1.2623e+16 (code: Gyr)''; SI conversion unverified'
+- name: MAGNESITE_OBDUCT
+  value: 0.3
+  unit: '1'
+  meaning: magnesite chance on obducted ophiolite
+  source: src/planet_sim/stages/geology.py:138
+- name: SULPHUR_ARC
+  value: 0.4
+  unit: '1'
+  meaning: volcanic sulphur chance factor in continental arcs (× arc g)
+  source: src/planet_sim/stages/geology.py:139
+- name: ARID_BAND
+  values:
+  - 12.0
+  - 35.0
+  unit: deg
+  meaning: dry subtropical latitude band for evaporites
+  source: src/planet_sim/stages/geology.py:143
+  note: static band, not from the climate stage
+- name: EVAPORITE_FERTILE
+  value: 0.3
+  unit: '1'
+  meaning: 'halite chance scale: × (1 − exp(−laid/300 m)) for shelf; flat in arid young rifts'
+  source: src/planet_sim/stages/geology.py:144
+- name: POTASH_SHARE
+  value: 0.35
+  unit: '1'
+  meaning: potash chance as share of halite's
+  source: src/planet_sim/stages/geology.py:145
+- name: DOME_SULPHUR_SHARE
+  value: 0.15
+  unit: '1'
+  meaning: salt-dome sulphur chance as share of halite's (formed 500 m down)
+  source: src/planet_sim/stages/geology.py:146
+- name: PHOSPHORITE_FERTILE
+  value: 0.15
+  unit: '1'
+  meaning: 'phosphorite chance scale: × (1 − exp(−laid/500 m))'
+  source: src/planet_sim/stages/geology.py:147
+- name: PHOSPHORITE_LAT
+  value: 40.0
+  unit: deg
+  meaning: phosphorite only within this latitude (after oxygenation)
+  source: src/planet_sim/stages/geology.py:148
+- name: CARBONATITE_RIFT
+  value: 0.04
+  unit: '1'
+  meaning: carbonatite chance in rifted crust
+  source: src/planet_sim/stages/geology.py:149
+- name: DIAMOND_CRATON_MYR
+  value: 2000.0
+  unit: '1'
+  said_as:
+    unit: 's: 6.31152e+16 (code: Myr)'
+    factor: 1.0
+  open: true
+  meaning: continental crust older than this gets kimberlite diamond chance at the end of the run (Clifford's rule)
+  source: src/planet_sim/stages/geology.py:150
+  note: 'unit as the code says it: ''s: 6.31152e+16 (code: Myr)''; SI conversion unverified'
+- name: DIAMOND_FERTILE
+  value: 0.15
+  unit: '1'
+  meaning: kimberlite diamond chance
+  source: src/planet_sim/stages/geology.py:151
+random_draws:
+- none (deterministic given the plate history)
+invariants:
+- 0 ≤ fert ≤ 1
+- fertility only rises by fertilise; falls only by erosion past body height or crust reset
+depends_on:
+- planet-process.rock-unit-stack
+- planet-process.thermal-evolution
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform src/planet_sim/stages/geology.py:mix (161-163), fertilise (200-210); applied in stages/plates.py
+    lines 620-693, 1059, 1073-1093, 1144-1158, 1181-1187, 1240-1254, 1460-1461
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

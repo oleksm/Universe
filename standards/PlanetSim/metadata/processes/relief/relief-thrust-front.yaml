@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.relief-thrust-front
+  name: Thrust front
+  about: 'The foreland edge: offset from the suture to the thin side by the thin side''s belt width (at least one station
+    step).'
+area: relief
+clock:
+  when: with relief-orogen-axis
+reads:
+- name: thin-side belt width per station
+writes:
+- name: line 'thrust front' parent=orogen axis, meta {throw_m = relief/2, relief0_m, facing 'foreland', distance_km}
+events_emitted:
+- event: planet-event.trace-spawn-rule-relief-orogen
+params:
+- name: min distance
+  setting: 1 station (0.5 gap)
+  meaning: front at least this far out
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:240
+  note: 'comment says ''at least 30 km out'' but code uses max(w_f,1)*step; unit: rad'
+depends_on:
+- planet-process.relief-orogen-axis
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:orogen (239-244)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

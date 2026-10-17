@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/planet-event.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-event.river-state-transition
+  name: River state transition
+  about: river state transition
+source: river state transition
+emitted_by:
+- planet-process.river-memory
+- planet-process.recent-rivers
+payload:
+- name: cumulative count per subkind (state['events'] -> ck ctx river_events JSON, recen
+  meaning: 'cumulative count per subkind (state[''events''] -> ck ctx river_events JSON, recent: r_river_events)'
+- name: 'per sample: river_state code and t_change (Gyr) carried in hydro / xmem'
+  meaning: 'per sample: river_state code and t_change (Gyr) carried in hydro / xmem'
+status: draft
