@@ -3,22 +3,23 @@
 identity:
   key: unit.fitout-cell
   name: Cell bay
-  description: Two locked cells, each a bed, a toilet and a basin, and the passage outside them.
+  description: Two locked cells, each a bed, a toilet and a basin, caged all round in bars, and the passage outside them.
 size_class: 1
 fits: plant-mount.bay-s1
 physical:
   length: 6.0
   width: 4.0
   height: 2.2
-  mass: 880.0
+  mass: 1772.7
 built_of:
-- what: Doors, bars and fittings
+- what: Bars, rails, doors and beds
   item: material.structural-steel-a36
-  mass: 760.0
-- what: Sanitaryware
+  mass: 1548.0
+  note: '20 mm solid bars at about 140 mm, 60 x 60 x 4 mm rails and posts: blender''s model (2026-10-17)'
+- what: Sanitaryware and hardware
   item: material.stainless-steel-304
-  mass: 120.0
-  note: stainless, vandal-proof
+  mass: 224.7
+  note: 'stainless, vandal-proof: blender''s model'
 basis:
 - of:
   - built_of

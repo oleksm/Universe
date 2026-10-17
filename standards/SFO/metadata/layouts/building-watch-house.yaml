@@ -15,7 +15,7 @@ physical:
   length: 30.0
   width: 18.0
   height: 3.15
-  mass: 311683.8
+  mass: 314361.9
 bays:
 - id: OFF1
   mount: plant-mount.bay-s1
@@ -176,8 +176,8 @@ ground:
   mass: 82944.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 311683.8
-  against_module: 'building.watch-house (deprecated): one box 30 x 20 x 4 m of 662 t, from the average of 538 concrete buildings. This layout: 30 x 18 x 3 m, 312 t (10 t frame, 16 t panels, 9 t fit-out, 277 t ground), for 66 people
+  mass: 314361.9
+  against_module: 'building.watch-house (deprecated): one box 30 x 20 x 4 m of 662 t, from the average of 538 concrete buildings. This layout: 30 x 18 x 3 m, 314 t (10 t frame, 16 t panels, 11 t fit-out, 277 t ground), for 66 people
     served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:
 - profession: profession.constable
