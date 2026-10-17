@@ -13,6 +13,8 @@ pub enum ShipEvent {
     /// Set down harder than its legs are designed for (`sink`, m/s): the jolt
     /// everything aboard took (g).
     HardLanding { sink: f64, jolt: f64 },
+    /// Landing leg `leg` gave way under `force` (N), over the `holds` it takes.
+    LegGaveWay { leg: usize, force: f64, holds: f64 },
     /// What was in the hold of `item` (`units` of it) broke under a jolt
     /// harder than it takes.
     CargoBroken { item: usize, units: u32 },

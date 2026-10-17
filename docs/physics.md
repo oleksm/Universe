@@ -27,7 +27,7 @@ dodge a design problem.
 | Propellant | mass falls as fuel burns, at an exhaust velocity | real (rocket equation) |
 | Orbits | every body on a Kepler orbit about its parent: planets about the star; moons, stations and gates about theirs | real (exact two-body) |
 | Gravity on ships | every massive body pulls on every ship | real |
-| Contact | landing speeds, collisions, ground and sea; the terrain's heights are what you land on | real (materials simplified) |
+| Contact | on the ground a ship rests on its legs (oleo struts: spring and damper over their stroke) and its hull, every point that touches pushing back along the ground's slope with Coulomb friction (Dogma's `contact` laws), so it rocks, tips, slides and rests where it comes to rest; a leg past what it holds gives way; collisions, sea; the terrain's heights are what you land on (`docs/ground-contact-plan.md`) | real (one friction for every ground) |
 | Air and heat | aerodynamic heating of the skin (Sutton–Graves), radiation away (Stefan–Boltzmann) | real, coarse |
 | Light | starlight falling with distance; shadows, eclipses, planetshine | real |
 | Sensing | radar and sight at light speed, limited by range | real |

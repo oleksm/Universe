@@ -140,6 +140,15 @@ impl Drive {
         } else {
             None
         };
+        // (Dev: UNIVERSE_DRIVE_DROP=<m> starts it that high, falling, to watch it land.)
+        let mut flight = flight;
+        if let (Some(f), Some(h)) = (&mut flight, crate::devenv::num("UNIVERSE_DRIVE_DROP")) {
+            f.ship.state = universe_sim::ShipState::Flying;
+            f.ship.position += f.ship.position.normalize() * h;
+            if let Some(tilt) = crate::devenv::num("UNIVERSE_DRIVE_TILT") {
+                f.ship.orientation = universe_engine::glam::DQuat::from_rotation_z(tilt.to_radians());
+            }
+        }
         if let Some(f) = &flight {
             if !craft.legs.is_empty()
                 && f.ship
@@ -148,11 +157,9 @@ impl Drive {
                     .is_none_or(|d| d.fit.legs.is_empty())
                 && universe_sim::world::legs::of_spec(f.ship.spec()).is_none()
             {
-                events.push("DRAFT LEG LOADS UNAVAILABLE: SHARED GROUND CONTACT RULES ONLY".into());
-            } else if !craft.legs.is_empty() {
-                events.push(
-                    "SHARED LEG LANDING LIMITS; INDIVIDUAL SPRING LOADS ARE NOT REPORTED".into(),
-                );
+                events.push("NO RECORD OF WHAT THE LEGS HOLD: EACH TAKEN AS 3 G OF ITS SHARE".into());
+            } else if craft.legs.is_empty() {
+                events.push("NO LANDING GEAR PLACED: IT RESTS ON ITS HULL".into());
             }
         }
         let mut d = Self {
@@ -935,6 +942,7 @@ pub fn draw(frame: &mut Frame, d: &Drive) {
             d.flight.as_ref().map_or(0.0, LocalFlight::pending)
         ),
         bus,
+        ground_line(d),
     ];
     let panel = Color([0.02, 0.06, 0.13, 0.85]);
     frame.hud_rect(
@@ -1177,6 +1185,31 @@ pub fn draw(frame: &mut Frame, d: &Drive) {
 }
 
 // The instructions must describe the fitted controller, including ships without one.
+/// What touches the ground: asleep or awake, its feet and hull points, each
+/// leg pushed in (m) and the ones that gave way.
+fn ground_line(d: &Drive) -> String {
+    let Some(f) = &d.flight else { return String::new() };
+    let ship = &f.ship;
+    let asleep = matches!(ship.state, universe_sim::ShipState::Landed { .. });
+    let Some(g) = &ship.ground else {
+        return if asleep { "ON THE GROUND, AT REST".into() } else { "OFF THE GROUND".into() };
+    };
+    let c = &g.last;
+    let legs: Vec<String> = c
+        .compression
+        .iter()
+        .enumerate()
+        .map(|(k, x)| if k < 64 && ship.broken_legs & (1 << k) != 0 { "GONE".into() } else { format!("{x:.2}") })
+        .collect();
+    format!(
+        "{}   FEET {}   HULL POINTS {}   LEGS IN {} M",
+        if asleep { "ON THE GROUND, AT REST" } else if c.touching > 0 { "ON THE GROUND" } else { "OFF THE GROUND" },
+        c.feet,
+        c.touching - c.feet,
+        if legs.is_empty() { "-".into() } else { legs.join("/") }
+    )
+}
+
 fn control_status(d: &Drive) -> String {
     if d.flight.is_none() {
         return "DRIVE UNAVAILABLE - COMPILER ERRORS BELOW - ESC BACK".into();

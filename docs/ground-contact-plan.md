@@ -1,6 +1,6 @@
 # Ground contact: closing the gap
 
-Status: plan, 2026-10-17. Found in a test drive of the MC-07 draft: the ship hung 12.0 m over the
+Status: built, 2026-10-17 (see "What was built" at the end). Found in a test drive of the MC-07 draft: the ship hung 12.0 m over the
 ground at pitch +64, roll +22, still turning, climb and speed 0. Nothing touches the ground; the
 ship is welded to a point.
 
@@ -102,3 +102,21 @@ for a few seconds, at 10 ms substeps and a handful of points. That is small next
 1. Ground first and station decks after, or both at once?
 2. Wheels and rolling taxi: later, as their own module?
 3. Who builds P1–P6: engine session, or ships-claude with the engine's review?
+
+## What was built (2026-10-17)
+
+| Piece | Where |
+|---|---|
+| Contact forces: struts (spring `holds`/`stroke`, damper ½`holds`/`sink_rate`), hull points, friction, slope normals, turn about the centre of mass | `crates/core/physics/src/contact.rs` |
+| Laws `FOOT_FRICTION` 0.6, `HULL_FRICTION` 0.4, `HULL_RESTITUTION` 0.3 (simplified, invented, to review) | `standards/Dogma/metadata/contact/` |
+| A ship's legs and hull points (fitted legs; a modelled hull's gear; unmodelled stock hulls' four legs drawn 12 m down; a draft with no gear lies on its hull); the contact substep (10 ms); sleep after 1 s still; per-leg breaking; hard landing per foot; hull strikes crumple the hull | `crates/core/world/src/ground.rs` |
+| Flight step runs contact near landing ground; landed ships never turn in place and wake on real thrust; rest welds the pose it lies in | `crates/core/world/src/world.rs`, `rules::rest` |
+| The landing autopilot cuts its engines once down | `crates/core/avionics/src/landing.rs` |
+| Drafts stand on their gear or their lowest hull corner, not 12 m | `ClassSpec::rest_height` |
+| Test drive: ground line (feet, hull points, each leg's compression), no-gear note; dev hook `UNIVERSE_DRIVE_DROP=<m>` (+`UNIVERSE_DRIVE_TILT=<deg>`) | `crates/game/src/test_drive.rs` |
+
+Hull points are the corners of the shape's convex parts (240 for the MC-07 draft; 15 µs a substep).
+Differences from the plan: rotation from contact is integrated in the world's driver with the
+inertia tensor rather than moving all flight rotation into Dogma (P2); station decks and rigs keep
+their lock (P6). Still open: decks on the same contact, wheels and taxi, terrain mesh contact
+(`crates/terrain-contact`), friction per ground.

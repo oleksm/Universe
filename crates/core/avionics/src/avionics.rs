@@ -133,6 +133,7 @@ impl Avionics {
             | ShipEvent::Bumped
             | ShipEvent::StruckRock { .. }
             | ShipEvent::HardLanding { .. }
+            | ShipEvent::LegGaveWay { .. }
             | ShipEvent::TubeToll { .. }
             | ShipEvent::CargoBroken { .. }
             | ShipEvent::AnchorFailed { .. }

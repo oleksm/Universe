@@ -10,7 +10,7 @@
 use glam::{DQuat, DVec3};
 use universe_physics::{leapfrog, pull, segment_distance};
 use universe_world::ship::{facing, upright};
-use universe_world::{spaceport, Ship, StarSystem, Terrain};
+use universe_world::{spaceport, Controls, Ship, StarSystem, Terrain};
 
 use crate::docking::{attitude, gain, Command, Guidance};
 use crate::nav::{Clearance, PadSlot, Phase};
@@ -335,6 +335,11 @@ pub fn autopilot(pad: &PadFrame, ship: &Ship, gravity: DVec3, phase: Phase, h: f
         // Belly down (lift thrusters toward the ground), keep the current heading.
         let up = (pos - pad.body_center).normalize();
         let target = upright(up, ship.forward());
+        // Down on its feet (or its hull): engines off, let it settle; it comes
+        // to rest on its own and the landing is done.
+        if ship.ground.as_ref().is_some_and(|g| g.last.touching > 0) {
+            return Command { controls: Controls::default(), throttle: 0.0, rcs: DVec3::ZERO, phase, attitude: target };
+        }
         let controls = attitude(ship, target, pad.angular_velocity, h);
         let rcs = ship.thruster_command(ship.orientation.inverse() * accel);
         return Command { controls, throttle: 0.0, rcs, phase, attitude: target };

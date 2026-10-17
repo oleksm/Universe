@@ -756,11 +756,17 @@ impl ClassSpec {
     }
 
     /// How high its centre stands over the ground when it's set down: on a
-    /// modelled hull, the depth of its lowest landing contact (its footpads);
-    /// otherwise `SHIP_RADIUS` (legs drawn down from the hull).
+    /// modelled hull or a design of its own, the depth of its lowest landing
+    /// contact (its footpads); a design with no gear, on its hull (its lowest
+    /// hull corner); otherwise `SHIP_RADIUS` (legs drawn down from the hull).
     pub fn rest_height(&self) -> f64 {
         let feet = self.shape().nodes(crate::shape::Role::Gear).map(|g| -g.at.y).fold(f64::NAN, f64::max);
-        if self.visual.is_some() && feet > 0.0 { feet } else { SHIP_RADIUS }
+        if (self.visual.is_some() || self.shape_own.is_some()) && feet > 0.0 {
+            return feet;
+        }
+        let shape = self.shape();
+        let belly = shape.part_points.iter().flat_map(|r| &shape.mesh.points[r.clone()]).map(|p| -p.y).fold(f64::NAN, f64::max);
+        if self.shape_own.is_some() && belly > 0.0 { belly } else { SHIP_RADIUS }
     }
 }
 
@@ -996,6 +1002,12 @@ pub struct Ship {
     /// Seconds the hyperdrive stays jammed (hits disrupt it: see `damage::HYPER_JAM`).
     #[serde(skip)]
     pub hyper_jam: f64,
+    /// Its landing legs that have given way, a bit each (in `ground::struts` order).
+    #[serde(default)]
+    pub broken_legs: u64,
+    /// On the ground and awake: its contacts (see `ground`). (Not saved.)
+    #[serde(skip)]
+    pub ground: Option<crate::ground::Touching>,
 }
 
 fn boresight() -> DVec3 {
@@ -1059,6 +1071,8 @@ impl Ship {
             hyper_engaged: None,
             jets: Vec::new(),
             applied: (DVec3::ZERO, DVec3::ZERO),
+            broken_legs: 0,
+            ground: None,
         }
     }
 
