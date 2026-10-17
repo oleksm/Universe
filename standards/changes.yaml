@@ -1692,7 +1692,7 @@
 - { record: planet-layer.crust-kind, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "ac581fdaba9dfc8b" }
 - { record: planet-layer.formations, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "f851b9203d8f032c" }
 - { record: planet-layer.lake, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "bc13abfd28be9a04" }
-- { record: planet-layer.relief, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "ba516e1cfd40669d" }
+- { record: planet-layer.relief, at: "2026-10-17T18:03:23Z", status: "", summary: "changed: classes, basis", sha: "40c198b778d298f4" }
 - { record: planet-layer.river-state, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "0abee7cff38d04d7" }
 - { record: planet-layer.zones, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "a2873fe3ded90b9f" }
 - { record: planet-level.cluster, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "ecc3c3ef98ccd81c" }
@@ -1722,6 +1722,7 @@
 - { record: planet-measure.spectrum-slope, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "e7c2087911571642" }
 - { record: planet-measure.valley-spacing, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "d4dde745cde03b3f" }
 - { record: planet-model.anchor, at: "2026-10-17T17:32:25Z", status: "", summary: "changed", sha: "c9adae30021bdde6" }
+- { record: planet-model.relief, at: "2026-10-17T18:03:23Z", status: "", summary: "first tracked", sha: "131c2cfd546cc26a" }
 - { record: planet-pattern.aeolian.dune.barchan, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "4fed3f7652690758" }
 - { record: planet-pattern.aeolian.dune.carbonate-eolianite, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "57787d270a7efd13" }
 - { record: planet-pattern.aeolian.dune.coastal-foredune, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "11531b3670b62a25" }

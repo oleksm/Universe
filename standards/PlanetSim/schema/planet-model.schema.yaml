@@ -4,7 +4,7 @@ x-kind: [planet-model]
 description: "standards/PlanetSim/metadata/models/<name>.yaml: a model used to describe or mesh a planet (the owner, 17 Oct 2026): its anchors and how they are found, the rule that weaves detail around them, its parameters, what it guarantees and what it leaves out, the rules it carries, the levels it serves, its implementations and the measures that judge it."
 type: object
 additionalProperties: false
-required: [identity, purpose, anchors, detail]
+required: [identity, purpose, detail]
 allOf:
   - { $ref: "../../common.schema.yaml#/definitions/planet_context" }
 properties:
@@ -67,6 +67,57 @@ properties:
       properties:
         where: { type: string, description: "Repository and file." }
         state: { enum: [predecessor, current, building, retired] }
+        note: { type: string }
+  inputs:
+    type: array
+    description: "What it reads, per sample: each input's unit and where it comes from."
+    items:
+      type: object
+      additionalProperties: false
+      required: [name, unit]
+      properties:
+        name: { type: string }
+        unit: { type: string, description: "SI, 1 for a 0-1 index or a count, or class." }
+        field: { type: string, x-ref: [planet-field], description: "The Planet Simulator field it is, where there is one." }
+        source: { type: string, description: "The file and key, or how it is made." }
+        meaning: { type: string }
+  steps:
+    type: array
+    description: "Its approach, in order."
+    items:
+      type: object
+      additionalProperties: false
+      required: [name, rule]
+      properties:
+        name: { type: string }
+        rule: { type: string }
+        formula: { type: string }
+  legend: { type: string, x-ref: [planet-layer], description: "The layer whose classes are its legend (ids, rules, colours there)." }
+  references:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [name, used_for]
+      properties:
+        name: { type: string }
+        by: { type: string, description: "Who publishes it." }
+        used_for: { type: string }
+        path: { type: string, description: "Where a copy lies, when one does." }
+        url: { type: string }
+  feeds: { type: array, items: { type: string, x-ref: [planet-model, lod-model] }, description: "The models it is to feed." }
+  not_yet: { type: array, items: { type: string }, description: "What it does not say yet." }
+  results:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [what, value, unit]
+      properties:
+        what: { type: string }
+        value: { type: number, x-unit-from: unit }
+        unit: { type: string }
+        run: { type: string }
         note: { type: string }
   status: { enum: [draft, published, retired] }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

@@ -18,6 +18,10 @@ classes:
   - field: planet-field.height
     op: '>'
     value: 0.0
+  rgb:
+  - 205
+  - 225
+  - 160
 - id: 2
   name: plain
   source: '1'
@@ -34,6 +38,10 @@ classes:
   - field: planet-field.height
     op: '>'
     value: 0.0
+  rgb:
+  - 225
+  - 220
+  - 170
 - id: 3
   name: plateau
   source: '2'
@@ -47,6 +55,10 @@ classes:
   - field: planet-field.height
     op: '>'
     value: 0.0
+  rgb:
+  - 215
+  - 190
+  - 140
 - id: 4
   name: hills
   source: '3'
@@ -60,6 +72,10 @@ classes:
   - field: planet-field.height
     op: '>'
     value: 0.0
+  rgb:
+  - 180
+  - 160
+  - 110
 - id: 5
   name: low mountains
   source: '4'
@@ -73,6 +89,10 @@ classes:
   - field: planet-field.height
     op: '>'
     value: 0.0
+  rgb:
+  - 140
+  - 105
+  - 80
 - id: 6
   name: high mountains
   source: '5'
@@ -83,6 +103,10 @@ classes:
   - field: planet-field.height
     op: '>'
     value: 0.0
+  rgb:
+  - 95
+  - 70
+  - 60
 lines:
 - name: 500 m contour
   field: planet-field.height
@@ -117,4 +141,8 @@ basis:
   - classes
   tier: derived
   note: 'planet-trees-pgs2 tools/formations.py relief_class: ids its classes plus 1 (its -1 sea is none).'
+- of:
+  - classes
+  tier: derived
+  note: Colours from docs/relief-model.md (planets, 17 Oct 2026); the sim's ids 0 to 5 are these ids less 1, its -1 sea none here.
 status: draft

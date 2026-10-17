@@ -2385,7 +2385,7 @@ _mrows = []
 for _k, _m in sorted(_PL["planet-model"].items()):
     _open = [p_["name"] for p_ in _m.get("params") or [] if p_.get("open")]
     _mrows.append(row("gap" if _open else "ok", _m["identity"]["name"],
-                      "; ".join(f"{a['name']} ({a['kind']}{', exact' if a.get('exact') else ''}): {a['found_by']}" for a in _m["anchors"]),
+                      "; ".join(f"{a['name']} ({a['kind']}{', exact' if a.get('exact') else ''}): {a['found_by']}" for a in _m.get("anchors") or []),
                       (_m["detail"].get("formula") or _m["detail"]["rule"]) + (f" | nearest: {_m['detail']['nearest']}" if _m["detail"].get("nearest") else ""),
                       "; ".join(_m.get("guarantees") or []), "; ".join(_m.get("leaves_out") or []),
                       "; ".join(f"{p_['name']} {p_.get('value', '')}{(' ' + p_['unit']) if p_.get('unit') and p_.get('value') is not None else ''}{' (open)' if p_.get('open') else ''}" for p_ in _m.get("params") or []),

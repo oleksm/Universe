@@ -1,0 +1,191 @@
+# yaml-language-server: $schema=../../schema/planet-model.schema.yaml
+identity:
+  key: planet-model.relief
+  name: Relief model
+  about: 'The relief inside each land sample (a cell about 130 km across, whose height is its mean): Earth''s amounts placed by the sim''s causes. The sim ranks the samples by how much relief their causes would build; Earth''s measured
+    distribution supplies the amounts. From the relief and the height, each land sample gets a relief class and a highest summit.'
+purpose: To give the sim's land the relief it does not carry (only cell means), so that land looks as mountainous as Earth's where its causes say it should.
+detail:
+  rule: Rank the land samples by a weighted score of causes; take Earth's inner relief at the same quantile; class each sample by its relief and height; raise its highest summit from both.
+inputs:
+- name: z
+  unit: m
+  field: planet-field.height
+  source: checkpoint z
+  meaning: mean height of the cell above sea level
+- name: thick
+  unit: m
+  field: planet-field.crust-thickness
+  source: ctx thick
+  meaning: crust thickness
+- name: hfold
+  unit: '1'
+  field: planet-field.fold
+  source: ctx h_fold
+  meaning: the sim's fold belts, 0 to 1
+- name: conv, div, trans
+  unit: '1'
+  source: plate boundaries from plate and the plates' spin axes (ctx axes)
+  meaning: 'nearness to a converging, diverging or transform boundary: 1 on it, falling to 0 four samples away'
+- name: anyb
+  unit: '1'
+  source: as above
+  meaning: nearness to any boundary (five samples)
+- name: relief to neighbours
+  unit: m
+  field: planet-field.local-relief
+  source: z less the lowest neighbour's z
+  meaning: the drop to the next cell
+- name: up
+  unit: m/s
+  source: z change since the previous checkpoint (or thickened crust at converging plates when there is none)
+  meaning: uplift, said in m/Myr
+- name: rock
+  unit: class
+  field: planet-field.rock
+  source: checkpoint rock
+  meaning: 'volcanic units: arc volcanics, flood basalt, rift basalt'
+- name: ice cycles
+  unit: '1'
+  field: planet-field.ice-cycles
+  source: ctx r_ice_cycles
+  meaning: glaciations in the recent epoch
+- name: age
+  unit: s
+  field: planet-field.crust-age
+  source: ctx age
+  meaning: crust age since formed, said in Myr
+steps:
+- name: ranking score g
+  rule: A weighted sum of the causes, then two smoothing passes over the land neighbours (g = 0.5 g + 0.5 their mean), so ranges, not single cells, carry relief; ties broken by a fixed seed. ramp(x, a, b) is 0 below a, 1 above b, linear
+    between.
+  formula: g = 0.35 ramp(thick, 38 km, 60 km) + 0.25 hfold + 0.20 conv + 0.15 ramp(relief to neighbours, 200 m, 2,000 m) + 0.15 ramp(up, 3, 40 m/Myr) + 0.10 volcanic rock + 0.10 ramp(ice cycles, 0.5, 6) + 0.20 ramp(z, 300 m, 3,000 m)
+    + 0.05 trans + 0.05 div - 0.15 ramp(age, 500, 2,000 Myr) (1 - anyb)
+- name: Earth's amounts
+  rule: 'Quantile matching: the land samples ranked by g take Earth''s inner relief at the same quantile, so the planet''s relief distribution is Earth''s by construction and the sim decides only where.'
+  formula: R = Earth[q(g)]
+- name: relief classes
+  rule: 'Each land sample''s class from R and z, the first rule that holds from high mountains down (the legend: planet-layer.relief).'
+- name: summits
+  rule: 'The highest summit inside each land sample, u uniform 0 to 1 seeded by the sample index; Earth on 30,000 cells: the summit stands 1.03 x (p95 - p5) over the cell mean at the median, 1.69 x at the 90th percentile.'
+  formula: summit = z + R (1.03 + 0.66 u) PEAK_GAIN
+- name: lines
+  rule: 'The relief layer as lines (layers as curved lines, never patches): land contours of the smoothed height at 500, 1,000, 2,000, 3,000, 4,000 and 5,000 m, and the boundaries between relief classes, each point''s class the leader
+    among its nearest 40 samples (Gaussian weights, sigma 1.4 sample spacings) on its side of the coast.'
+legend: planet-layer.relief
+source_field:
+- planet-field.height
+- planet-field.recent-height
+params:
+- name: weights
+  note: as in the ranking score; first drafts, judged only by the class shares against Earth
+- name: ramps
+  note: thick 38 to 60 km; relief 200 to 2,000 m; up 3 to 40 m/Myr; ice 0.5 to 6 cycles; z 300 to 3,000 m; age 500 to 2,000 Myr; first drafts
+- name: smoothing
+  note: 2 passes, 0.5 / 0.5
+- name: class thresholds
+  note: R 300, 900 and 1,500 m; z 200 and 600 m (on planet-layer.relief)
+- name: summit ratio
+  note: 1.03 + 0.66 u
+- name: PEAK_GAIN
+  value: 1.1
+  unit: '1'
+  note: 'the owner, 16 Oct 2026: giants a bit higher than Earth''s'
+- name: relief contours
+  note: 500, 1,000, 2,000, 3,000, 4,000, 5,000 m
+- name: ring smoothing
+  value: 40.0
+  unit: '1'
+  note: K nearest samples, sigma 1.4 sample spacings
+guarantees:
+- The planet's land relief distribution is Earth's (by construction).
+- Mountains (low and high) about 22 % of land, hills about 30 %, as Earth's.
+references:
+- name: ETOPO 2022
+  by: NOAA NCEI
+  used_for: 'Earth''s inner relief: p95 - p5 of the heights inside each of 30,000 equal-area cells, ice sheets left out (7,827 land cells): median 320 m; 33 % above 600 m; 22 % above 900 m; 9 % above 1,500 m'
+  path: ~/planet-data/scratch/earth_cell_relief_30k.npy
+  url: https://www.ncei.noaa.gov/products/etopo-global-relief-model
+- name: UNEP-WCMC mountain extent
+  by: UN Environment Programme World Conservation Monitoring Centre
+  used_for: 'The check on the mountain share: about 24 % of land, against the model''s 22 %'
+feeds:
+- planet-model.anchor
+- lod-model.anchor
+not_yet:
+- 'Where the relief stands inside a sample: only how much (p95 - p5 over about 130 km).'
+- Its grain (the fold direction is in planet-field.grain) and its wavelength.
+- 'Applying it to the anchor model''s heights: the owner''s next design step.'
+results:
+- what: land samples
+  value: 8304.0
+  unit: '1'
+  run: earth_s30
+- what: R, 5th percentile
+  value: 50.0
+  unit: m
+  run: earth_s30
+- what: R, median
+  value: 319.0
+  unit: m
+  run: earth_s30
+- what: R, 95th percentile
+  value: 2014.0
+  unit: m
+  run: earth_s30
+- what: share of land, high mountains
+  value: 0.094
+  unit: '1'
+  run: earth_s30
+  note: Earth 9 % above 1,500 m
+- what: share of land, low mountains
+  value: 0.124
+  unit: '1'
+  run: earth_s30
+  note: mountains together about 22 %, as Earth
+- what: share of land, hills
+  value: 0.297
+  unit: '1'
+  run: earth_s30
+  note: Earth about 30 %
+- what: share of land, plateau
+  value: 0.215
+  unit: '1'
+  run: earth_s30
+- what: share of land, plain
+  value: 0.184
+  unit: '1'
+  run: earth_s30
+- what: share of land, lowland plain
+  value: 0.085
+  unit: '1'
+  run: earth_s30
+- what: highest summit
+  value: 14632.0
+  unit: m
+  run: earth_s30
+  note: on a highest cell mean of 5,888 m
+implementations:
+- where: planet-trees-pgs2 tools/formations.py (features, rugged, relief_class, summits)
+  state: current
+  note: 'at 01abf7f: per checkpoint, saved in <ck>_patterns.npz (rugged, rclass, summit); drawn by tools/context_view.py view_relief and tools/layer_lines.py (the relief rings)'
+levels:
+- planet-level.planet
+- planet-level.cluster
+status: draft
+basis:
+- of:
+  - identity
+  - inputs
+  - steps
+  - references
+  - not_yet
+  - results
+  - implementations
+  tier: derived
+  note: planet-trees-pgs2 docs/relief-model.md (01abf7f), planets, 17 Oct 2026.
+- of:
+  - params
+  tier: invented
+  review: true
+  note: The weights and ramps are first drafts, judged only by the class shares against Earth.
