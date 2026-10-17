@@ -14,6 +14,12 @@ built_of:
 - what: Carcass and drawers
   item: material.structural-steel-a36
   mass: 40.0
+visual:
+  format: "freefall-model/1"
+  path: "models/furniture-cabinet/v1"
+  manifest_sha256: "c21a1dfe447877b4e4e1eda7cac37a2a6985549f42b5da51c5ba5c3132bc53ef"
+  version: 1
+  triangles: 900
 basis:
 - of:
   - built_of
