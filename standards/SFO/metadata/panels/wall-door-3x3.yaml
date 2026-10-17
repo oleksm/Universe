@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=../../schema/panel.schema.yaml
+# Written by tools/standards/building_kit.py: change it there.
+identity:
+  key: panel.wall-door-3x3
+  name: Wall panel with a door, 3 x 3 m
+  description: 'An insulated wall panel with a 1.0 x 2.1 m steel door: a way in for people.'
+kind: wall
+site: air
+cell:
+- 3.0
+- 3.0
+thickness: 0.1
+opening:
+  kind: door
+  width: 1.0
+  height: 2.1
+  sill: 0.0
+  people: true
+u_value: 0.52
+physical:
+  length: 3.0
+  width: 0.1
+  height: 3.0
+  mass: 139.2
+built_of:
+- what: Steel faces
+  item: material.structural-steel-a36
+  mass: 54.2
+  note: two 0.5 mm coated steel skins
+- what: Insulation core
+  item: material.pir-foam
+  mass: 22.1
+  note: 100 mm of PIR
+- what: Door leaf and frame
+  item: material.structural-steel-a36
+  mass: 45.0
+  note: an insulated steel door, its frame, lock and closer
+- what: Edge frame and fixings
+  item: material.structural-steel-a36
+  mass: 18.0
+  note: its edge channel and the bolts to the frame's nodes
+template: template.wall-door
+basis:
+- of:
+  - built_of
+  - physical
+  - u_value
+  - load
+  tier: invented
+  review: true
+  note: From memory of modular building practice; to be sourced.

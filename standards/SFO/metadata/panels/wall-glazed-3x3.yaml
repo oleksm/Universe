@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=../../schema/panel.schema.yaml
+# Written by tools/standards/building_kit.py: change it there.
+identity:
+  key: panel.wall-glazed-3x3
+  name: Wall panel, glazed, 3 x 3 m
+  description: 'A cell face of aluminium curtain walling and double glazing: a shop front, an office''s daylight.'
+kind: wall
+site: air
+cell:
+- 3.0
+- 3.0
+thickness: 0.15
+opening:
+  kind: glazing
+  width: 2.8
+  height: 2.8
+  sill: 0.1
+u_value: 1.4
+physical:
+  length: 3.0
+  width: 0.15
+  height: 3.0
+  mass: 401.4
+built_of:
+- what: Glazing
+  item: material.soda-lime-glass
+  mass: 270.0
+  note: double glazing, two 6 mm panes
+- what: Mullions and transoms
+  item: material.aluminium-alloy-6061
+  mass: 108.0
+  note: aluminium curtain wall frame
+- what: Seals
+  item: material.epdm-rubber
+  mass: 5.4
+  note: EPDM gaskets
+- what: Edge frame and fixings
+  item: material.structural-steel-a36
+  mass: 18.0
+  note: its edge channel and the bolts to the frame's nodes
+template: template.wall-glazed
+basis:
+- of:
+  - built_of
+  - physical
+  - u_value
+  - load
+  tier: invented
+  review: true
+  note: From memory of modular building practice; to be sourced.

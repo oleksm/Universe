@@ -63,7 +63,7 @@ def records():
 
 def _reference(key):
     """A template's reference member (a run or a connector), by its key."""
-    folder = {"connector": "connectors", "run": "runs"}.get(key.split(".", 1)[0])
+    folder = {"connector": "connectors", "run": "runs", "panel": "panels"}.get(key.split(".", 1)[0])
     f = os.path.join(TREE, "SFO", "metadata", folder or "", key.split(".", 1)[1] + ".yaml")
     return yaml.safe_load(open(f, encoding="utf-8")) if folder and os.path.exists(f) else None
 

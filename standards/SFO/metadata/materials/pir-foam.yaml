@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/material.schema.yaml
+identity:
+  key: material.pir-foam
+  name: Polyisocyanurate foam
+  class: polymer
+mass:
+  density: 32.0
+thermal:
+  max_service_temperature: 393.15
+  min_service_temperature: 223.15
+  thermal_conductivity: 0.022
+basis:
+  - { of: [mass, thermal], tier: invented, review: true, note: "Rigid PIR insulation as sandwich panels use it, from memory: about 32 kg/m3, thermal conductivity about 0.022 W/(m K)." }

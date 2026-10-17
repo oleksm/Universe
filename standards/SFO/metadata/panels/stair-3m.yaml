@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=../../schema/panel.schema.yaml
+# Written by tools/standards/building_kit.py: change it there.
+identity:
+  key: panel.stair-3m
+  name: Stair, 3 m rise
+  description: A steel stair between floors 3 m apart, in a stair well of two cells (3 x 6 m).
+kind: stair
+site: air
+cell:
+- 3.0
+- 6.0
+thickness: 0.3
+physical:
+  length: 3.0
+  width: 6.0
+  height: 3.0
+  mass: 650.0
+built_of:
+- what: Stringers, treads and landing
+  item: material.structural-steel-a36
+  mass: 560.0
+  note: two flights of 1.2 m with a half landing
+- what: Handrails
+  item: material.structural-steel-a36
+  mass: 90.0
+template: template.stair
+basis:
+- of:
+  - built_of
+  - physical
+  - u_value
+  - load
+  tier: invented
+  review: true
+  note: From memory of modular building practice; to be sourced.

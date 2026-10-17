@@ -1146,6 +1146,7 @@
 - { record: material.nickel-200, at: "2026-10-14T19:01:11Z", status: review, summary: "first tracked", sha: "1d7411afd4a034a2" }
 - { record: material.nitrogen, at: "2026-10-07T01:45:03Z", status: review, summary: "changed", sha: "979738c8be4e54b9" }
 - { record: material.oxygen, at: "2026-10-16T15:26:56Z", status: review, summary: "first tracked", sha: "bb4f001220f42d11" }
+- { record: material.pir-foam, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "b7c6ebfc45975d95" }
 - { record: material.polyethylene-uhmw, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "26af8bdb2f507c81" }
 - { record: material.polyimide-film, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "287b8c5cff16eee0" }
 - { record: material.ptfe, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "11facd796d3868ff" }
@@ -1155,6 +1156,7 @@
 - { record: material.silica-tile-li-900, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "f42183a9650011b5" }
 - { record: material.silicon-carbide, at: "2026-10-06T18:50:34Z", status: review, summary: "changed: identity", sha: "ce704c88879358d7" }
 - { record: material.silicone-rubber, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "7db825244b00a914" }
+- { record: material.soda-lime-glass, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "d1f4a0a9fae7c1a5" }
 - { record: material.stainless-steel-304, at: "2026-10-06T18:50:34Z", status: review, summary: "changed: identity", sha: "dcc7c00c7de38cca" }
 - { record: material.structural-steel-a36, at: "2026-10-06T18:50:34Z", status: review, summary: "changed: identity", sha: "f5bc613714cf1f95" }
 - { record: material.titanium-alloy-ti-6al-4v, at: "2026-10-14T01:29:44Z", status: review, summary: "changed: identity", sha: "edb9cedc2daaa6ac" }
@@ -1397,6 +1399,20 @@
 - { record: package.produce-crate, at: "2026-10-11T16:19:35Z", status: "", summary: "changed: visual", sha: "f0cab56c9bde0cbb" }
 - { record: package.skip, at: "2026-10-11T15:49:48Z", status: "", summary: "changed: visual", sha: "fdd5513503fc0f8c" }
 - { record: package.tote, at: "2026-10-11T16:12:54Z", status: "", summary: "changed: visual", sha: "b2a5f3077bb1d0cb" }
+- { record: panel.floor-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "0cf3e722c971ed0f" }
+- { record: panel.partition-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "52bad398a3b62283" }
+- { record: panel.partition-door-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "58796602b82db5e0" }
+- { record: panel.roof-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "da24091c503ae16b" }
+- { record: panel.stair-3m, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "d39e27c54193e87d" }
+- { record: panel.wall-door-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "483f3d2946a9f8c3" }
+- { record: panel.wall-double-door-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "bb78c6d4f7f947e2" }
+- { record: panel.wall-glazed-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "3ac92dbf3aa79894" }
+- { record: panel.wall-insulated-1p5x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "69865dd7db610153" }
+- { record: panel.wall-insulated-3x1p5, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "5a7f10b33fb57c63" }
+- { record: panel.wall-insulated-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "a0e9865c323478c5" }
+- { record: panel.wall-roller-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "227e957c4569f763" }
+- { record: panel.wall-shopfront-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "9ebd2722ce66e0b6" }
+- { record: panel.wall-window-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "f87480f511bff347" }
 - { record: parcel.treistun.ashfall-camp.1, at: "2026-10-06T18:38:56Z", status: "", summary: "changed: outline", sha: "42f17141996df99c" }
 - { record: parcel.treistun.ashfall-camp.2, at: "2026-10-06T18:25:49Z", status: "", summary: "first tracked", sha: "38fe80aeecce0011" }
 - { record: parcel.treistun.ashfall-camp.3, at: "2026-10-06T18:25:49Z", status: "", summary: "first tracked", sha: "73a99a528497fd07" }
@@ -3509,6 +3525,20 @@
 - { record: stock.kit-lined-flange-dn1200-pn1, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "417740e7a2a9fde9" }
 - { record: stock.kit-lined-flange-dn2400-pn16-double, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "b247dda01da460ad" }
 - { record: stock.kit-lined-flange-dn3600-pn10-double, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "7b5b4f9c15e3a167" }
+- { record: stock.kit-panel-floor-3x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "2e60cfdc00345137" }
+- { record: stock.kit-panel-partition-3x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "c5b5e648ef91ff2e" }
+- { record: stock.kit-panel-partition-door-3x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "e06b60d6b9e7d95c" }
+- { record: stock.kit-panel-roof-3x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "804eed560cd5171e" }
+- { record: stock.kit-panel-stair-3m, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "a874b5c8504cf676" }
+- { record: stock.kit-panel-wall-door-3x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "3be92634e77b794b" }
+- { record: stock.kit-panel-wall-double-door-3x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "7b5cf72ce9e4a514" }
+- { record: stock.kit-panel-wall-glazed-3x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "b8dee276df05eaf0" }
+- { record: stock.kit-panel-wall-insulated-1p5x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "e5cf9780cfaed40e" }
+- { record: stock.kit-panel-wall-insulated-3x1p5, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "fb022e375f0b9746" }
+- { record: stock.kit-panel-wall-insulated-3x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "b2f638b97863d6b8" }
+- { record: stock.kit-panel-wall-roller-3x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "836a4bee1144d681" }
+- { record: stock.kit-panel-wall-shopfront-3x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "a2209874e188f70a" }
+- { record: stock.kit-panel-wall-window-3x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "43dce171212e3fc7" }
 - { record: stock.kit-pipe-dn100-pn10, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "8df242d5e942f7e7" }
 - { record: stock.kit-pipe-dn100-pn10-ss, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "9b2ab8eb5ba4f9fa" }
 - { record: stock.kit-pipe-dn100-pn16-ss-double, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "d61021b44ddacf6b" }
@@ -4256,6 +4286,7 @@
 - { record: template.flange, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "df7d790e5b79a704" }
 - { record: template.flange-double, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "1587eb01caf04022" }
 - { record: template.flat-face, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "1b798aa986e5491c" }
+- { record: template.floor, at: "2026-10-17T21:45:11Z", status: "", summary: "first tracked", sha: "1c9954fc14360ec6" }
 - { record: template.hood, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "2bd0f63963dc39e7" }
 - { record: template.hose, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "76521a9d59aafaae" }
 - { record: template.hose-hydraulic, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "1bdc07615e11b940" }
@@ -4263,9 +4294,13 @@
 - { record: template.jacketed-duct, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "f735abc971d05f0e" }
 - { record: template.lined-duct, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "4f0e1dffeb3819a1" }
 - { record: template.lined-flange, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "566901f48b56a274" }
+- { record: template.partition, at: "2026-10-17T21:45:11Z", status: "", summary: "first tracked", sha: "400291bfdecdf6d0" }
+- { record: template.partition-door, at: "2026-10-17T21:45:11Z", status: "", summary: "first tracked", sha: "f9d512e1a30adfde" }
 - { record: template.pipe, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "9a17ec7ddd415223" }
 - { record: template.pipe-lagged, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "ee12031c045d334f" }
 - { record: template.plug-socket, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "3dfe5b5f0345ce4a" }
+- { record: template.roof, at: "2026-10-17T21:45:11Z", status: "", summary: "first tracked", sha: "981dbc3dd17c3762" }
+- { record: template.stair, at: "2026-10-17T21:45:11Z", status: "", summary: "first tracked", sha: "03e5a6967a203093" }
 - { record: template.termination-hv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "b0398bafc880c882" }
 - { record: template.termination-lv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "b3fff31e02cd79e5" }
 - { record: template.termination-mv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "5098fcf4fe0ded80" }
@@ -4276,6 +4311,13 @@
 - { record: template.valve-check, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "db1774a554f80df0" }
 - { record: template.valve-gate, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "f6e8abb14d71c0ab" }
 - { record: template.valve-relief, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "d49ebff915dfb3f2" }
+- { record: template.wall-door, at: "2026-10-17T21:45:11Z", status: "", summary: "first tracked", sha: "5beb0a001571bf86" }
+- { record: template.wall-double-door, at: "2026-10-17T21:45:11Z", status: "", summary: "first tracked", sha: "2e13cecc785d47ab" }
+- { record: template.wall-glazed, at: "2026-10-17T21:45:11Z", status: "", summary: "first tracked", sha: "aba60bebf44f4ef6" }
+- { record: template.wall-insulated, at: "2026-10-17T21:45:11Z", status: "", summary: "first tracked", sha: "15a78436389b00be" }
+- { record: template.wall-roller, at: "2026-10-17T21:45:11Z", status: "", summary: "first tracked", sha: "300ff4cdf302d4e7" }
+- { record: template.wall-shopfront, at: "2026-10-17T21:45:11Z", status: "", summary: "first tracked", sha: "b6486dd1306087e5" }
+- { record: template.wall-window, at: "2026-10-17T21:45:11Z", status: "", summary: "first tracked", sha: "393a28673200baa9" }
 - { record: unit.alloy-bins-8, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "f164893e2dc287ed" }
 - { record: unit.baghouse-200k, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "abfebdff23b38d30" }
 - { record: unit.baghouse-450k, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "4b73a94e4d25edcf" }

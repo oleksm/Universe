@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=../../schema/panel.schema.yaml
+# Written by tools/standards/building_kit.py: change it there.
+identity:
+  key: panel.partition-door-3x3
+  name: Partition panel with a door, 3 x 3 m
+  description: A partition panel with a 1.0 x 2.1 m door between rooms.
+kind: partition
+site: air
+cell:
+- 3.0
+- 3.0
+thickness: 0.05
+opening:
+  kind: door
+  width: 1.0
+  height: 2.1
+  sill: 0.0
+  people: true
+physical:
+  length: 3.0
+  width: 0.05
+  height: 3.0
+  mass: 104.2
+built_of:
+- what: Steel faces
+  item: material.structural-steel-a36
+  mass: 54.2
+  note: two 0.5 mm coated steel skins
+- what: Insulation core
+  item: material.pir-foam
+  mass: 11.0
+  note: 50 mm of PIR
+- what: Door leaf and frame
+  item: material.structural-steel-a36
+  mass: 30.0
+  note: a light steel door
+- what: Edge frame and fixings
+  item: material.structural-steel-a36
+  mass: 9.0
+  note: its edge channel and the bolts to the frame's nodes
+template: template.partition-door
+basis:
+- of:
+  - built_of
+  - physical
+  - u_value
+  - load
+  tier: invented
+  review: true
+  note: From memory of modular building practice; to be sourced.

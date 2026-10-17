@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=../../schema/panel.schema.yaml
+# Written by tools/standards/building_kit.py: change it there.
+identity:
+  key: panel.wall-double-door-3x3
+  name: Wall panel with double doors, 3 x 3 m
+  description: 'An insulated wall panel with a 2.0 x 2.4 m pair of steel doors: a public way in, or stock by hand truck.'
+kind: wall
+site: air
+cell:
+- 3.0
+- 3.0
+thickness: 0.1
+opening:
+  kind: double-door
+  width: 2.0
+  height: 2.4
+  sill: 0.0
+  people: true
+u_value: 0.9
+physical:
+  length: 3.0
+  width: 0.1
+  height: 3.0
+  mass: 159.4
+built_of:
+- what: Steel faces
+  item: material.structural-steel-a36
+  mass: 33.0
+  note: two 0.5 mm coated steel skins
+- what: Insulation core
+  item: material.pir-foam
+  mass: 13.4
+  note: 100 mm of PIR
+- what: Door leaves and frame
+  item: material.structural-steel-a36
+  mass: 95.0
+  note: a pair of insulated steel leaves, frame and panic bar
+- what: Edge frame and fixings
+  item: material.structural-steel-a36
+  mass: 18.0
+  note: its edge channel and the bolts to the frame's nodes
+template: template.wall-double-door
+basis:
+- of:
+  - built_of
+  - physical
+  - u_value
+  - load
+  tier: invented
+  review: true
+  note: From memory of modular building practice; to be sourced.

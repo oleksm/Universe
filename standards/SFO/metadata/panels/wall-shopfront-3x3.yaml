@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=../../schema/panel.schema.yaml
+# Written by tools/standards/building_kit.py: change it there.
+identity:
+  key: panel.wall-shopfront-3x3
+  name: Shop front, 3 x 3 m
+  description: 'Curtain walling round a 2.0 x 2.4 m pair of automatic sliding doors: a shop''s or a clinic''s public front.'
+kind: wall
+site: air
+cell:
+- 3.0
+- 3.0
+thickness: 0.15
+opening:
+  kind: sliding-door
+  width: 2.0
+  height: 2.4
+  sill: 0.0
+  people: true
+u_value: 1.6
+physical:
+  length: 3.0
+  width: 0.15
+  height: 3.0
+  mass: 376.9
+built_of:
+- what: Glazing
+  item: material.soda-lime-glass
+  mass: 126.0
+  note: double glazing, two 6 mm panes
+- what: Mullions and transoms
+  item: material.aluminium-alloy-6061
+  mass: 50.4
+  note: aluminium curtain wall frame
+- what: Seals
+  item: material.epdm-rubber
+  mass: 2.5
+  note: EPDM gaskets
+- what: Sliding doors and operator
+  item: material.aluminium-alloy-6061
+  mass: 180.0
+  note: a pair of glazed sliding leaves, its track and motor
+- what: Edge frame and fixings
+  item: material.structural-steel-a36
+  mass: 18.0
+  note: its edge channel and the bolts to the frame's nodes
+template: template.wall-shopfront
+basis:
+- of:
+  - built_of
+  - physical
+  - u_value
+  - load
+  tier: invented
+  review: true
+  note: From memory of modular building practice; to be sourced.

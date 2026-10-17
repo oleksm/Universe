@@ -73,7 +73,7 @@ properties:
     required: [item]
     description: "The kit it is (a run sold by the length on a coil, drum or in lengths; a connector by the piece): the stock a ship hauls and a market sells for that run or connector."
     properties:
-      item: { type: string, x-ref: [run, connector] }
+      item: { type: string, x-ref: [run, connector, panel] }
       length: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "m of the run in one" }
   physical: { $ref: "../../common.schema.yaml#/definitions/physical" }
   revision:
