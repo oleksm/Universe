@@ -175,6 +175,26 @@ def fso_worktree():
     sys.exit("no worktree has branch fso checked out")
 
 
+GENERATED = ("standards/index.html", "standards/changes.yaml", "standards/game-keys.yaml", "standards/PlanetSim/generated/")
+
+
+def resolve_generated():
+    """A rebase stopped on conflicts: when they are all in generated files, take fso's copies, rebuild, continue."""
+    for _ in range(50):
+        bad = sh("git diff --name-only --diff-filter=U").stdout.split()
+        if not bad:
+            return True
+        if any(not f.startswith(GENERATED) for f in bad):
+            return False
+        sh(["git", "checkout", "--ours", "--"] + bad)
+        sh([sys.executable, "tools/standards/build.py"])
+        sh("git add -A")
+        r = subprocess.run("git rebase --continue", cwd=ROOT, shell=True, capture_output=True, text=True, env={**os.environ, "GIT_EDITOR": "true"})
+        if r.returncode == 0 and not sh("git diff --name-only --diff-filter=U").stdout.strip():
+            return True
+    return False
+
+
 def cmd_ship(message):
     branch = sh("git rev-parse --abbrev-ref HEAD").stdout.strip()
     fso = fso_worktree()
@@ -184,8 +204,8 @@ def cmd_ship(message):
     if os.path.realpath(fso) != os.path.realpath(ROOT):
         sh("git pull -q --rebase --autostash", cwd=fso)
         if sh(["git", "merge", "-q", "--ff-only", branch], cwd=fso).returncode:
-            if sh("git rebase -q fso").returncode:
-                sys.exit("rebase onto fso stopped on a conflict: resolve it (a generated page: take fso's and rebuild), git rebase --continue, ship again")
+            if sh("git rebase -q fso").returncode and not resolve_generated():
+                sys.exit("rebase onto fso stopped on a conflict in a hand-written file: resolve it, git rebase --continue, ship again")
             sh(["git", "merge", "-q", "--ff-only", branch], cwd=fso, check=True)
     sh([sys.executable, "tools/standards/build.py"], cwd=fso)
     sh("git add standards/index.html standards/changes.yaml standards/game-keys.yaml standards/PlanetSim/generated", cwd=fso)
