@@ -66,8 +66,9 @@ built_of:
     name: Hinge, drive and root joints
     description: 'Root hinge brackets on the hull, the deploy drive, tip latches that hold it stowed, and the hinge crossings: each header splits at its moving -y end into three DN125 molybdenum-rhenium corrugated hoses (about 0.15
       m outside, 4.5 m/s of lithium), each wound about half a turn round the hinge axis in a plane across it, at a bend radius of at least 0.6 m (4 x its outside; deploys are few, under 1,000 in its life), so the 90 degree swing winds
-      and unwinds them like a clock spring and stretches none; about 2.5 m of hose each from the moving end to its fixed seat. They stand in a root pod beyond the panel''s -y end about 1.3 m across round the hinge axis, taller than
-      the 0.3 m panel; the mount grows to the pod as measured.'
+      and unwinds them like a clock spring and stretches none; about 3.4 m of hose each (blender''s route study 2026-10-17: a 2.5 m planar loop fails past 30 degrees; a 3.4 m clock-spring holds R >= 0.6 m through the swing) from the
+      moving end to its fixed seat. They stand in a root pod beyond the panel''s -y end the six hoses sweeping x -0.73 to 0.90, y -5.23 to -4.18, z -1.27 to 0.88 (the part below the hull line goes into a recess the hull gives), taller
+      than the 0.3 m panel; the mount grows to the pod as measured.'
     mass: 325
     length: 7.65
     width: 0.5
