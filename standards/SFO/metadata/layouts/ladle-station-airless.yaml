@@ -130,7 +130,7 @@ links:
   to: [3.0, 3.0, 9.455]
   length: 6.001
   item: material.silicone-rubber
-  mass: 10540.0
+  mass: 10430.0
   power: 20000.0
   fittings: {elbows: 0, tees: 0, supports: 1, connectors: 2}
   note: 'level, 6 m: from the bins'' chute south between their centre and east legs, under their deck, to the furnace''s alloy chute, its head through a hood into the chute''s mouth; open, its bearings vacuum-rated'

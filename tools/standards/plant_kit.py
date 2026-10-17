@@ -142,7 +142,7 @@ def chute(dn, item=SS):
 
 FLANGE_MEASURED = {"connector.flange-dn3000-pn1-double": (333.18, "two weld-neck rings 3.196 m across, 20 mm thick, their necks tapering over 20 mm from 16 mm to the gallery's 4 mm wall at 3 m outside, 2.992 m clear; measured on blender's model v1")}
 SEALED_TRANSFER_MEASURED = {0.8: (806.35, 59.02), 1.0: (948.71, 70.05)}     # kg of steel and liner, the sealed transfers measured
-TRANSFER_MEASURED = {1.2: (1652.31, 146.40), 1.0: (1395.23, 123.10), 0.8: (1176.03, 103.72)}     # kg of plate and liner, by belt width (blender's models)
+TRANSFER_MEASURED = {1.2: (1652.31, 146.40), 1.0: (1395.23, 123.10), 0.8: (1176.03, 103.72), 0.65: (959.32, 84.67)}     # kg of plate and liner, by belt width (blender's models)
 
 
 def _by_width(table, width):

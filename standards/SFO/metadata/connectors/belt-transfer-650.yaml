@@ -4,10 +4,10 @@ identity: {key: connector.belt-transfer-650, name: 'Belt transfer, 650 mm', desc
 kind: belt-transfer
 size: 0.65
 sealing: open
-physical: {length: 0.95, width: 1.25, height: 3.55, mass: 1100.8}
+physical: {length: 0.95, width: 1.25, height: 3.55, mass: 1044.0}
 built_of:
-- {what: 'Hood, drop chute and mounting tabs', item: material.structural-steel-a36, mass: 1011.6, note: 'a hood over the belt''s head and a chute 0.9 m square, 3 m down, 10 mm plate, on four 12 mm tabs seated on the head frame''s rails (not hung from the pulley''s bearings); between the measured transfers, by the chute''s width'}
-- {what: Wear liner, item: material.polyethylene-uhmw, mass: 89.2, note: '10 mm UHMW polyethylene; between the measured transfers, by the chute''s width'}
+- {what: 'Hood, drop chute and mounting tabs', item: material.structural-steel-a36, mass: 959.3, note: 'a hood over the belt''s head and a chute 0.9 m square, 3 m down, 10 mm plate, on four 12 mm tabs seated on the head frame''s rails (not hung from the pulley''s bearings); measured on blender''s model v1 of the 650 mm transfer'}
+- {what: Wear liner, item: material.polyethylene-uhmw, mass: 84.7, note: 10 mm UHMW polyethylene; measured on blender's model v1 of the 650 mm transfer}
 basis:
 - of: [built_of]
   tier: invented
