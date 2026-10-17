@@ -2,8 +2,17 @@
 identity:
   key: planet-layer.climate
   name: Climate
-  about: The climate belt of a land sample; classes tested in order, the first that holds.
+  about: 'The climate belt of a land sample: it starts temperate, then each rule in order that holds replaces it (tropical seasonal, tropical wet, steppe, desert, cold, polar, ice sheet).'
 version: 1
+default: 6
+order:
+- 7
+- 8
+- 5
+- 4
+- 3
+- 2
+- 1
 classes:
 - id: 1
   name: ice sheet
@@ -11,7 +20,7 @@ classes:
   when:
   - field: planet-field.ice
     op: '>'
-    value: 0.0
+    value: 50.0
 - id: 2
   name: polar
   source: polar
@@ -38,11 +47,8 @@ classes:
   source: steppe
   when:
   - field: planet-field.aridity
-    op: '>='
+    op: '>'
     value: 2.0
-  - field: planet-field.aridity
-    op: <=
-    value: 5.0
 - id: 6
   name: temperate
   source: temperate
@@ -53,6 +59,9 @@ classes:
   - field: planet-field.temperature
     op: '>='
     value: 291.15
+  - field: planet-field.aridity
+    op: <
+    value: 2.0
 - id: 8
   name: tropical wet
   source: tropical wet
@@ -60,6 +69,9 @@ classes:
   - field: planet-field.temperature
     op: '>='
     value: 291.15
+  - field: planet-field.aridity
+    op: <
+    value: 1.0
 lines:
 - name: freezing line
   field: planet-field.temperature
@@ -99,6 +111,6 @@ basis:
 - of:
   - classes
   tier: derived
-  review: true
-  note: planet-trees-pgs2 tools/planet_query.py CLIMATE and layer_lines.py; the split of temperate, tropical seasonal and wet by rain is the sim's, not yet written here.
+  note: 'planet-trees-pgs2 tools/planet_query.py _query, as planets gave it 17 Oct 2026: temperate, then T >= 18 C and aridity < 2 tropical seasonal, < 1 tropical wet, aridity > 2 steppe, > 5 desert, T
+    < 0 cold, < -6 polar, ice > 50 m ice sheet; later rules override.'
 status: draft

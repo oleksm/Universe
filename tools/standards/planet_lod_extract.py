@@ -109,9 +109,10 @@ def main(argv):
     dic = yaml.safe_load(open(os.path.join(TREE, "dictionary.schema.yaml")))["definitions"]["geological_event"]["enum"]
     evs = calls_with_string(stages, {"event"}, {"event": 0})
     found["seen"]["events"] = sorted(evs)
+    words = {d.get("source"): d.get("is") for d in R.get("planet-event", {}).values()}
     for e in sorted(evs):
-        if e not in dic:
-            lack("event", e, "the sim's event log (S.event)")
+        if e not in dic and e not in words:
+            lack("event", e, "the sim's event log (S.event): a planet-event record maps it")
 
     # Constants a record names: present in the sim, and the figure where the record carries it.
     for kind in ("planet-line", "planet-handler"):

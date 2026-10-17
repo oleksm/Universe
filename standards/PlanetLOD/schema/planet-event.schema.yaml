@@ -1,0 +1,21 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Planet event
+x-kind: [planet-event]
+description: "standards/PlanetLOD/metadata/events/<name>.yaml: an event the planet sim logs (its event log, S.event), by its own word, and the dictionary's geological event it is (made_by everywhere names those)."
+type: object
+additionalProperties: false
+required: [identity, source, is]
+allOf:
+  - { $ref: "../../common.schema.yaml#/definitions/planet_context" }
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name, about]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      about: { type: string }
+  is: { $ref: "../../dictionary.schema.yaml#/definitions/geological_event", description: "The geological event it is." }
+  status: { enum: [draft, published, retired] }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }
