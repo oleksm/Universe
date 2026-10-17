@@ -15,7 +15,7 @@ physical:
   length: 42.0
   width: 18.0
   height: 12.15
-  mass: 905663.7
+  mass: 905987.7
 bays: []
 rooms:
 - id: OFF1
@@ -580,7 +580,7 @@ ground:
   mass: 103680.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 905663.7
+  mass: 905987.7
   against_module: 'building.offices (deprecated): one box 40 x 20 x 16 m of 3,530 t, from the average of 538 concrete buildings. This layout: 42 x 18 x 12 m, 906 t (67 t frame, 425 t panels, 38 t furniture, 376 t ground), for 426 people
     served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:

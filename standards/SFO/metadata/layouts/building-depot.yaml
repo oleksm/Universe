@@ -15,7 +15,7 @@ physical:
   length: 120.0
   width: 60.0
   height: 6.15
-  mass: 3306646.2
+  mass: 3307006.2
 bays: []
 rooms:
 - id: STO1
@@ -1272,8 +1272,8 @@ ground:
   mass: 311040.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 3306646.2
-  against_module: 'building.depot (deprecated): one box 120 x 60 x 8 m of 7,942 t, from the average of 538 concrete buildings. This layout: 120 x 60 x 6 m, 3,307 t (124 t frame, 153 t panels, 127 t furniture, 2,903 t ground), for 60
+  mass: 3307006.2
+  against_module: 'building.depot (deprecated): one box 120 x 60 x 8 m of 7,942 t, from the average of 538 concrete buildings. This layout: 120 x 60 x 6 m, 3,307 t (124 t frame, 153 t panels, 128 t furniture, 2,903 t ground), for 60
     people served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:
 - profession: profession.driver

@@ -15,7 +15,7 @@ physical:
   length: 60.0
   width: 12.0
   height: 15.15
-  mass: 1380405.9
+  mass: 1380945.9
 bays: []
 rooms:
 - id: DOR1
@@ -681,8 +681,8 @@ ground:
   mass: 340200.0
   note: a pad under each column, 1.5 m square, 0.6 m deep (sized by the storeys, invented)
 totals:
-  mass: 1380405.9
-  against_module: 'building.bunkhouse (deprecated): one box 60 x 12 x 15 m of 3,971 t, from the average of 538 concrete buildings. This layout: 60 x 12 x 15 m, 1,380 t (63 t frame, 549 t panels, 45 t furniture, 724 t ground), for 530
+  mass: 1380945.9
+  against_module: 'building.bunkhouse (deprecated): one box 60 x 12 x 15 m of 3,971 t, from the average of 538 concrete buildings. This layout: 60 x 12 x 15 m, 1,381 t (63 t frame, 549 t panels, 45 t furniture, 724 t ground), for 530
     people served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff: []
 basis:

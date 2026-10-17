@@ -9,18 +9,18 @@ physical:
   length: 0.4
   width: 0.7
   height: 0.8
-  mass: 27.0
+  mass: 36.0
 built_of:
 - what: Pan and cistern
   item: material.fused-silica
-  mass: 25.0
-- what: Seat and flush
+  mass: 34.7
+- what: Seat and lid
   item: material.polyethylene-uhmw
-  mass: 2.0
+  mass: 1.3
 basis:
 - of:
   - built_of
   - physical
-  tier: invented
+  tier: derived
   review: true
-  note: From memory of such furniture; to be sourced.
+  note: 'From blender''s model (2026-10-17): hollow bowl and pedestal, 8 mm cistern, 10 mm lid.'

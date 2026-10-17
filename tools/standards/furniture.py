@@ -36,7 +36,7 @@ FURNITURE = {  # name: (title, description, (length, width, height), [(what, ite
     "sink": ("Sink unit", "A double stainless sink on its stand.", (1.2, 0.7, 0.9), [("Sink and stand", SS, 45.0)], None),
     "hood": ("Kitchen hood", "An extract hood over a cooking line.", (3.0, 1.2, 0.6), [("Hood and filters", SS, 120.0)], None),
     "fridge": ("Fridge", "An upright commercial fridge.", (0.7, 0.8, 2.0), [("Cabinet", SS, 110.0)], None),
-    "wc": ("Toilet", "A toilet pan with its cistern and seat.", (0.4, 0.7, 0.8), [("Pan and cistern", SILICA, 25.0), ("Seat and flush", PE, 2.0)], None),
+    "wc": ("Toilet", "A toilet pan with its cistern and seat.", (0.4, 0.7, 0.8), [("Pan and cistern", SILICA, 34.7), ("Seat and lid", PE, 1.3)], "blender's model (2026-10-17): hollow bowl and pedestal, 8 mm cistern, 10 mm lid"),
     "cubicle": ("Toilet cubicle", "A cubicle's three walls and door round one toilet.", (0.9, 1.5, 2.0), [("Panels, door and posts", STEEL, 60.0)], None),
     "basin": ("Basin", "A wash basin with its tap.", (0.6, 0.45, 0.85), [("Basin", SILICA, 15.0), ("Tap and trap", SS, 2.0)], None),
     "shower": ("Shower", "A shower tray, screen and mixer.", (0.9, 0.9, 2.1), [("Tray, screen and mixer", SS, 50.0)], None),

@@ -15,7 +15,7 @@ physical:
   length: 60.0
   width: 42.0
   height: 12.15
-  mass: 1847040.6
+  mass: 1847544.6
 bays: []
 rooms:
 - id: SEA1
@@ -918,8 +918,8 @@ ground:
   mass: 176256.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 1847040.6
-  against_module: 'building.theatre (deprecated): one box 60 x 40 x 16 m of 5,294 t, from the average of 538 concrete buildings. This layout: 60 x 42 x 12 m, 1,847 t (103 t frame, 510 t panels, 150 t furniture, 1,083 t ground), for
+  mass: 1847544.6
+  against_module: 'building.theatre (deprecated): one box 60 x 40 x 16 m of 5,294 t, from the average of 538 concrete buildings. This layout: 60 x 42 x 12 m, 1,848 t (103 t frame, 510 t panels, 151 t furniture, 1,083 t ground), for
     2982 people served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:
 - profession: profession.performer
