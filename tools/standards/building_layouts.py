@@ -71,7 +71,7 @@ FITOUT = {  # slug: (name, description, [(what, item, kg, note)], people it serv
 }
 
 
-EXTENT = {"cell": (6.0, 4.0)}       # m the fitted unit covers, where it is less than its 6 m bay (the rest is the bay's free floor): blender's models
+EXTENT = {"cell": (6.0, 4.0), "counter": (5.4, 2.35)}       # m the fitted unit covers, where it is less than its 6 m bay (the rest is the bay's free floor): blender's models
 
 
 def fitout_records():

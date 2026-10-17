@@ -7,8 +7,8 @@ identity:
 size_class: 1
 fits: plant-mount.bay-s1
 physical:
-  length: 6.0
-  width: 6.0
+  length: 5.4
+  width: 2.35
   height: 2.2
   mass: 400.0
 built_of:
