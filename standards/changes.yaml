@@ -533,7 +533,7 @@
 - { record: equipment.power.fuelcell.s1, at: "2026-10-13T13:32:36Z", status: draft, summary: "changed: visual", sha: "45d1aee343bd0a5c" }
 - { record: equipment.power.fusion.s1, at: "2026-10-17T19:39:34Z", status: draft, summary: "changed: visual", sha: "aee18b581bd8417f" }
 - { record: equipment.power.fusion.s2, at: "2026-10-17T20:39:43Z", status: draft, summary: "changed: visual", sha: "5703c179592945ef" }
-- { record: equipment.power.fusion.s3, at: "2026-10-17T15:56:09Z", status: draft, summary: "changed", sha: "3824e2974e35b2a2" }
+- { record: equipment.power.fusion.s3, at: "2026-10-17T20:42:58Z", status: draft, summary: "changed: visual", sha: "fa39f1f0fac3f5fe" }
 - { record: equipment.power.solar-array.s2, at: "2026-10-13T14:11:52Z", status: draft, summary: "changed: visual", sha: "f72449f6041078d2" }
 - { record: equipment.power.switchgear.s1, at: "2026-10-12T15:43:34Z", status: draft, summary: "changed: visual", sha: "9918c6813669d603" }
 - { record: equipment.sensors.altimeter.s1, at: "2026-10-12T00:41:34Z", status: draft, summary: "changed: visual", sha: "ac5a015c7002afad" }
