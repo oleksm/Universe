@@ -226,6 +226,31 @@ pub fn apply(rules: &Rules, sys: &StarSystem, system: usize, ship: &mut Ship, fa
     }
 }
 
+/// A ship come to rest on the ground of `weld.body` (by contact, not by a
+/// lock: see `ground`): welded where and as it lies, its flight systems
+/// powered down, and told as the ground's lock tells (where on the body it is).
+/// (`landed`: come down from flight, so its systems power down as on any
+/// landing; else, woken on the ground, they are left as they are.)
+pub fn rest(rules: &Rules, sys: &StarSystem, ship: &mut Ship, weld: universe_physics::Weld, landed: bool, t: f64, events: &mut Vec<ShipEvent>) {
+    let Some(Rule::Lock { name, says, .. }) = rules.get(weld.body, Part::Ground) else { return };
+    let _ = sys;
+    ship.throttle = 0.0;
+    ship.rcs = DVec3::ZERO;
+    ship.angular_velocity = DVec3::ZERO;
+    ship.state = ShipState::Landed { body: weld.body, local_position: weld.local_position, local_orientation: weld.local_orientation };
+    ship.locked_at = t;
+    if landed {
+        ship.powered = false;
+        events.push(ShipEvent::SystemsOff);
+    }
+    events.push(ShipEvent::RuleFired { rule: name.clone(), outcome: "at rest".to_string() });
+    let local = weld.local_position.normalize_or_zero();
+    events.push(match says {
+        Says::Always(e) => e.clone(),
+        Says::Zones { zones, otherwise } => zones.iter().find(|(d, a, _)| d.angle_between(local) < *a).map_or_else(|| otherwise.clone(), |z| z.2.clone()),
+    });
+}
+
 /// A body locked to `body` (at `local_position` in its frame) with its
 /// devices as set: let go, if its release says so. Returns whether it did.
 #[allow(clippy::too_many_arguments)]

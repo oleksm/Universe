@@ -10,6 +10,7 @@
 pub mod atmosphere;
 pub mod body;
 pub mod collide;
+pub mod contact;
 pub mod hyper;
 pub mod integrate;
 pub mod laws;

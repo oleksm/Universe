@@ -678,6 +678,32 @@ impl World {
         let mut rigid = ship.rigid();
         weld.place(&sys.bodies, t, &positions, &mut rigid);
         ship.set_rigid(&rigid);
+        // On ground that takes ships by contact (a world's): asleep where it
+        // lies, never turned in place; any push or turn commanded wakes it,
+        // to fly from there under the ground's push (see `ground`).
+        let rules = self.rules_of(system);
+        if crate::ground::lands(&rules, weld.body) && ship.hangar.is_none() && ship.taxi.is_none() {
+            // (What the commands really give, after allocation and device
+            // limits: a fan in vacuum or an empty tank wakes nothing.)
+            let (orientation, spin) = (ship.orientation, ship.angular_velocity);
+            if ship.powered {
+                ship.drive(turn.as_ref(), real_dt, true);
+            }
+            (ship.orientation, ship.angular_velocity) = (orientation, spin);
+            if crate::ground::pushed(ship) {
+                ship.angular_velocity = DVec3::ZERO;
+                ship.state = ShipState::Flying;
+                let mut touching = ship.ground.take().unwrap_or_default();
+                (touching.body, touching.woken, touching.still, touching.touched) = (weld.body, true, 0.0, true);
+                ship.ground = Some(touching);
+                events.push(ShipEvent::RuleFired { rule: "ground".to_string(), outcome: "woken".to_string() });
+            } else {
+                ship.applied = (DVec3::ZERO, DVec3::ZERO);
+                ship.jets.clear();
+            }
+            if ship.powered { ship.burn(real_dt); }
+            return result;
+        }
         // Allocate actual commands while the landing constraint holds position.
         // Manual jets and assisted translation use the same resource limits as flight.
         if !ship.powered {
@@ -691,7 +717,6 @@ impl World {
         let local_orientation = rot.inverse() * ship.orientation;
         ship.state = ShipState::Landed { body: weld.body, local_position: weld.local_position, local_orientation };
         // Let go, if the structure's release says so (its owner's rule).
-        let rules = self.rules_of(system);
         crate::rules::release(&rules, sys, weld.body, weld.local_position, ship, t, events);
         if ship.powered { ship.burn(real_dt); }
         result
@@ -736,16 +761,49 @@ impl World {
         // is flying. Dogma also takes small steps near any station or
         // gate, for contact.
         let powered = ship.throttle > 0.0 || ship.rcs != DVec3::ZERO;
-        let physics = if powered { FINE_STEP } else { f64::INFINITY };
-        let span = Span { t: *clock, dt, max_h: physics, contact_step: FINE_STEP };
         let mut rigid = ship.rigid();
         let rules = self.rules_of(system);
+        // Within reach of ground that takes ships by contact: its contacts,
+        // in substeps short enough for a leg's spring.
+        let ground = {
+            let mut now = Vec::with_capacity(bodies.len());
+            match &ephemeris {
+                Some(e) => e.positions(*clock, &mut now),
+                None => universe_physics::positions(bodies, *clock, &mut now),
+            }
+            let reach = 2.0 + rigid.velocity.length() * dt * 2.0;
+            crate::ground::near(bodies, &rules, &now, &rigid, reach)
+        };
+        let physics = if ground.is_some() { crate::ground::CONTACT_STEP } else if powered { FINE_STEP } else { f64::INFINITY };
+        let span = Span { t: *clock, dt, max_h: physics, contact_step: FINE_STEP };
         let mut devices = Devices::new(&mut *ship, &rules, &mut *events).among(bodies);
+        if let Some(g) = ground {
+            devices = devices.on_ground(g);
+        }
         let mut positions = Vec::with_capacity(bodies.len());
         let out = integrate(bodies, ephemeris.as_deref(), &mut positions, &mut rigid, span, &mut devices);
+        let step = devices.into_ground();
         ship.set_rigid(&rigid);
         *clock = out.time;
+        if step.is_none() {
+            ship.ground = None;
+        }
         let rock = |f: &Fact| matches!(f, Fact::Contact(c) if bodies[c.body].kind.is_rock());
+        // Struck the ground too hard to stand: wrecked, by its rule.
+        if let (Some(g), Some(Fact::Contact(c))) = (&step, &out.fact)
+            && c.body == g.body
+            && crate::rules::Part::of(c.feature) == crate::rules::Part::Ground
+        {
+            if let Some(crate::rules::Rule::Lock { name, otherwise, .. }) = rules.get(c.body, crate::rules::Part::Ground) {
+                events.push(ShipEvent::RuleFired { rule: name.clone(), outcome: "struck too hard: wrecked".to_string() });
+                crate::damage::destroy(ship, otherwise, events);
+            }
+            ship.ground = None;
+            return StepResult { simulated: out.simulated, warp_limited: out.limited };
+        }
+        if let Some(g) = step {
+            g.finish(sys, &rules, ship, out.time, &positions, out.simulated, events);
+        }
         if let Some(fact) = out.fact.filter(|f| !rock(f)) {
             // What it touched decides, by its owner's rule.
             crate::rules::apply(&rules, sys, system, ship, &fact, out.time, &positions, events);
@@ -902,6 +960,8 @@ pub struct Devices<'a> {
     events: &'a mut Vec<ShipEvent>,
     /// The bodies flown among (for what an asteroid is: see `among`).
     bodies: &'a [crate::system::Body],
+    /// Near ground that takes ships by contact: its contacts, each substep (see `ground`).
+    ground: Option<crate::ground::Step>,
 }
 
 impl<'a> Devices<'a> {
@@ -909,7 +969,19 @@ impl<'a> Devices<'a> {
     /// `events`. Dogma's body stands for the ship's motion (see
     /// `Ship::rigid`/`set_rigid`); the ship keeps the device settings.
     pub fn new(ship: &'a mut Ship, rules: &'a crate::rules::Rules, events: &'a mut Vec<ShipEvent>) -> Self {
-        Self { ship, rules, events, bodies: &[] }
+        Self { ship, rules, events, bodies: &[], ground: None }
+    }
+
+    /// Near the ground of `body` (among `among`'s bodies): touching it pushes
+    /// back at every point (see `ground`).
+    pub fn on_ground(self, body: usize) -> Self {
+        let step = crate::ground::Step::new(self.ship, body);
+        Self { ground: Some(step), ..self }
+    }
+
+    /// The ground contact's state after the step.
+    pub fn into_ground(self) -> Option<crate::ground::Step> {
+        self.ground
     }
 
     /// Flying among `bodies`: touching an asteroid among them is a
@@ -920,16 +992,34 @@ impl<'a> Devices<'a> {
 }
 
 impl Driver for Devices<'_> {
-    fn applied(&mut self, body: &mut RigidBody, _t: f64, h: f64, _positions: &[DVec3]) -> DVec3 {
+    fn applied(&mut self, body: &mut RigidBody, t: f64, h: f64, positions: &[DVec3]) -> DVec3 {
         let ship = &mut *self.ship;
         ship.position = body.position;
         ship.velocity = body.velocity;
+        ship.orientation = body.orientation;
         let thrust = ship.thrust();
         ship.burn(h);
-        thrust
+        let pushed = match &mut self.ground {
+            Some(g) => g.apply(self.bodies, t, positions, body, ship, self.events),
+            None => DVec3::ZERO,
+        };
+        thrust + pushed
     }
 
     fn respond(&mut self, fact: &Fact, _: &RigidBody) -> Response {
+        // Ground that takes ships by contact: its push holds the ship (see
+        // `applied`), unless it struck too hard (its rule's limit: wrecked).
+        if let (Some(g), Fact::Contact(c)) = (&self.ground, fact)
+            && c.body == g.body
+            && crate::rules::Part::of(c.feature) == crate::rules::Part::Ground
+        {
+            let limit = match self.rules.get(c.body, crate::rules::Part::Ground) {
+                Some(crate::rules::Rule::Lock { max_speed, .. }) => *max_speed,
+                _ => 0.0,
+            };
+            let into = (-c.relative_velocity.dot(c.normal)).max(g.touching.last.strike);
+            return if into < limit { Response::Continue } else { Response::Stop };
+        }
         match fact {
             Fact::Contact(c) if self.bodies.get(c.body).is_some_and(|b| b.kind.is_rock()) => {
                 if crate::mining::strike(self.ship, &self.bodies[c.body], c, self.events) {

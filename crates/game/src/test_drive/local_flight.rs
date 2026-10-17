@@ -292,6 +292,91 @@ mod tests {
         assert!(zero_g.ship.position.is_finite() && zero_g.ship.velocity.is_finite());
         assert!(zero_g.ship.orientation.is_finite());
     }
+    /// Flying `secs` seconds in realtime ticks, with no commands.
+    fn fly(f: &mut LocalFlight, secs: f64) {
+        let dt = universe_sim::clocks::tick();
+        for _ in 0..(secs / dt) as usize {
+            f.advance(dt).unwrap();
+        }
+    }
+
+    fn dropped(height: f64, tilt: f64) -> LocalFlight {
+        let mut f = LocalFlight::new(fixture(), None, 9.81, 0, false).unwrap();
+        f.ship.state = ShipState::Flying;
+        f.ship.position += DVec3::Y * height;
+        f.ship.orientation = DQuat::from_rotation_x(tilt);
+        f
+    }
+
+    #[test]
+    fn a_dropped_ship_settles_on_its_legs_and_sleeps_where_it_lies() {
+        // (From 30 cm: 2.4 m/s down, inside the legs' 3.05 m/s.)
+        let mut f = dropped(0.3, 0.0);
+        let rest = f.ship.rest_height();
+        fly(&mut f, 8.0);
+        assert!(matches!(f.ship.state, ShipState::Landed { .. }), "asleep on the ground, not {:?}", f.ship.state);
+        let height = f.ship.position.length() - EARTH_RADIUS;
+        assert!(height < rest && height > rest - 1.0, "on its legs, pushed in: {height:.2} m against {rest:.2}");
+        assert!(f.events.iter().any(|e| matches!(e, ShipEvent::RuleFired { outcome, .. } if outcome == "at rest")));
+        assert!(!f.events.iter().any(|e| matches!(e, ShipEvent::Crashed { .. } | ShipEvent::LegGaveWay { .. })));
+    }
+
+    #[test]
+    fn dropped_too_hard_its_legs_give_way_and_the_hull_takes_the_fall() {
+        // (From 2 m: 6.3 m/s down, twice what its legs are made for; then the
+        // rest of their 12 m onto its belly.)
+        let mut f = dropped(2.0, 0.0);
+        fly(&mut f, 10.0);
+        assert!(f.events.iter().any(|e| matches!(e, ShipEvent::LegGaveWay { .. })));
+        assert!(f.ship.hull < 1.0, "the hull struck the ground");
+        // From 30 cm the legs hold and the hull is untouched.
+        let mut f = dropped(0.3, 0.0);
+        fly(&mut f, 6.0);
+        assert_eq!((f.ship.broken_legs, f.ship.hull), (0, 1.0));
+    }
+
+    #[test]
+    fn a_descent_like_the_autopilots_touches_down_and_comes_to_rest() {
+        // Sinking at 1.5 m/s on the lift thrusters, engines off once down (as
+        // `avionics::landing` does): landed, no leg lost, no hard landing.
+        let mut f = dropped(20.0, 0.0);
+        f.commands.power = Some(true);
+        let dt = universe_sim::clocks::tick();
+        for _ in 0..(40.0 / dt) as usize {
+            if f.ship.is_flying() {
+                let down = f.ship.ground.as_ref().is_some_and(|g| g.last.touching > 0);
+                let up = f.ship.position.normalize();
+                let accel = (up * -1.5 - f.ship.velocity) * 2.0 + up * 9.81;
+                f.commands.rcs = if down { DVec3::ZERO } else { f.ship.thruster_command(f.ship.orientation.inverse() * accel) };
+            }
+            f.advance(dt).unwrap();
+        }
+        assert!(matches!(f.ship.state, ShipState::Landed { .. }), "landed, not {:?}", f.ship.state);
+        assert_eq!(f.ship.broken_legs, 0);
+        assert!(!f.events.iter().any(|e| matches!(e, ShipEvent::HardLanding { .. } | ShipEvent::Crashed { .. })), "{:?}", f.events);
+    }
+
+    #[test]
+    fn a_ship_set_down_tilted_comes_to_rest_without_being_stood_up() {
+        let mut f = dropped(0.3, 0.15);
+        fly(&mut f, 12.0);
+        assert!(matches!(f.ship.state, ShipState::Landed { .. }), "at rest, not {:?}", f.ship.state);
+        assert_eq!(f.ship.angular_velocity, DVec3::ZERO);
+        assert!(f.ship.position.is_finite() && f.ship.orientation.is_finite());
+    }
+
+    #[test]
+    fn a_powered_ship_at_rest_with_nothing_commanded_stays_put() {
+        let mut f = dropped(0.2, 0.0);
+        fly(&mut f, 8.0);
+        assert!(matches!(f.ship.state, ShipState::Landed { .. }));
+        let (p, q) = (f.ship.position, f.ship.orientation);
+        f.commands.power = Some(true);
+        fly(&mut f, 3.0);
+        assert!(f.ship.powered && matches!(f.ship.state, ShipState::Landed { .. }));
+        assert!(f.ship.position.distance(p) < 1e-6 && f.ship.orientation.angle_between(q) < 1e-9, "never turned in place");
+    }
+
     #[test]
     fn battery_fan_manual_takeoff_uses_shared_devices_and_cannot_lift_in_vacuum() {
         use universe_sim::world::{

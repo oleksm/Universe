@@ -2008,29 +2008,6 @@ const KIT_CELL: f32 = 1.0;
 /// sizing would choose (a figure chosen).
 const KIT_SEAT: f32 = 0.1;
 
-/// The standard strut offsets from a node, `KIT_GRID` steps each way (x, y, z):
-/// along an axis, or across a square (a face diagonal), up to `most` steps.
-fn kit_steps(most: i32) -> Vec<IVec3> {
-    let mut out = Vec::new();
-    for n in 1..=most {
-        for axis in 0..3 {
-            for sign in [-1, 1] {
-                let mut v = IVec3::ZERO;
-                v[axis] = n * sign;
-                out.push(v);
-                for (other, s2) in [((axis + 1) % 3, 1), ((axis + 1) % 3, -1)] {
-                    let mut d = v;
-                    d[other] = n * s2;
-                    out.push(d);
-                }
-            }
-        }
-    }
-    out.sort_by_key(|v| v.length_squared());
-    out.dedup();
-    out
-}
-
 /// A kit frame's grid: its origin (a deck's frame level, else level 0) and the
 /// point of grid step `i`.
 #[derive(Clone, Copy)]
@@ -2163,204 +2140,314 @@ fn kit_snap(plan: &mut Plan, fit: &[Fitted], stock: &str) -> (usize, usize) {
     (moved, stuck)
 }
 
-/// A frame of standard struts only, of `stock`, on the kit grid: a lattice of
-/// `KIT_CELL` cells, the layer under each deck its spine, and from each module the
-/// frame holds an arm of cells to the rest, the shortest way through cells clear
-/// of every module; each module's mount node joined to the lattice by a box of
-/// half cells (a grid step each way it's off the lattice); each box's edges and a
-/// diagonal across each face, less what would run into a module, a room or a deck;
-/// and the pieces joined, each to the rest by the shortest strut that runs clear.
-/// The members, and how many pieces couldn't be joined.
+/// A kit frame's bays (m): the keel's panels are squares this size where the keel
+/// is as big, and no member of it is longer.
+const KIT_BAY: f32 = 2.0;
+
+/// How wide a tube a kit frame is kept clear for (m): as wide as sizing is
+/// likely to make one.
+const KIT_FAT: f64 = 0.16;
+
+/// How far a bracket reaches in one strut (m).
+const KIT_REACH: f32 = 3.0;
+
+/// The pieces a gap between a keel's stations is split into (m, a whole number of
+/// grid steps): as few as can be, none longer than `KIT_BAY`, as even as the grid
+/// lets them be.
+fn kit_split(gap: f32) -> Vec<f32> {
+    let steps = (gap / KIT_GRID).round() as i32;
+    let most = (KIT_BAY / KIT_GRID).round() as i32;
+    let n = (steps + most - 1) / most;
+    (0..n.max(0)).map(|k| (steps / n + i32::from(k < steps % n)) as f32 * KIT_GRID).collect()
+}
+
+/// A keel's stations along one axis from `lo` to `hi` (on the grid): the ship's
+/// lattice there (as `lattice` has it, so it meets the decks' lines) with `also`
+/// (the decks' own lines) between, each gap longer than `KIT_BAY` split as
+/// `kit_split` has it.
+fn kit_stations(lo: f32, hi: f32, also: &[f32]) -> Vec<f32> {
+    // (A deck's line first: the lattice's within half a metre of one left out.)
+    let also: Vec<f32> = also.iter().copied().filter(|v| *v > lo + 0.01 && *v < hi - 0.01).collect();
+    let ship = lattice(lo, hi).into_iter().enumerate().filter(|&(k, v)| k == 0 || v >= hi - 0.01 || also.iter().all(|a| (a - v).abs() > KIT_GRID + 0.01) || also.iter().any(|a| (a - v).abs() < 0.01)).map(|(_, v)| v);
+    let mut at: Vec<f32> = ship.chain(also.iter().copied()).collect();
+    at.sort_by(f32::total_cmp);
+    at.dedup_by(|a, b| (*a - *b).abs() < 0.01);
+    let mut out = vec![at[0]];
+    for w in at.windows(2) {
+        for p in kit_split(w[1] - w[0]) {
+            out.push(out.last().expect("a start") + p);
+        }
+    }
+    out
+}
+
+/// A frame of standard struts only, of `stock`, on the kit grid, along the paths
+/// the loads take: a keel under the decks round the modules hanging under them (a
+/// box of `KIT_BAY` square panels on its six faces, each square panel crossed by a
+/// diagonal, the other way from its neighbours'), and from each other module the
+/// frame holds a bracket to it: the shortest run of whole struts that runs clear,
+/// and a second from the module the other way, so the two make a triangle. The
+/// members, and how many modules no bracket could reach.
 fn kit_frame(plan: &Plan, fit: &[Fitted], stock: &str) -> (Vec<Beam>, usize) {
-    use std::collections::{HashMap, HashSet};
+    use std::collections::{BinaryHeap, HashMap, HashSet};
     let grid = KitGrid::of(plan, stock);
-    let r = tube_radius(stock);
-    let cell = (KIT_CELL / KIT_GRID).round() as i32;
-    // (Strictly clear: no point along it inside a module, whatever it ends at.)
+    // (Kept clear as a fat tube: sizing may fatten any member.)
+    let fat = stocks().iter().find(|s| (s.section.diameter - KIT_FAT).abs() < 0.001).map_or(stock, |s| s.key.as_str());
+    let r = tube_radius(fat);
+    let legal = |len: f32| struts().iter().any(|s| s.section == stock && (s.module - len).abs() <= STRUT_FIT * 2.0);
+    let beam = |a: Vec3, b: Vec3| Beam { uid: Id::default(), a, b, stock: stock.to_string(), pinned: [false; 2] };
+    // (Strictly clear: no point along it inside a module, whatever it ends at; nor
+    // through a room, a deck or a member, nor a joint it doesn't end at. A member it
+    // ends partway along is split there, so isn't in its way.)
     let bare = Plan { blocks: Vec::new(), ..plan.clone() };
-    let clear = |a: Vec3, b: Vec3, others: &[Beam]| {
-        let m = Beam { uid: Id::default(), a, b, stock: stock.to_string(), pinned: [false; 2] };
+    let on = |p: Vec3, o: &Beam| {
+        let d = o.b - o.a;
+        let t = (p - o.a).dot(d) / d.length_squared().max(1e-6);
+        (0.0..=1.0).contains(&t) && (o.a + d * t).distance(p) < 0.05
+    };
+    let clear = |a: Vec3, b: Vec3, frame: &[Beam]| {
         let len = a.distance(b);
         let n = ((len / 0.05).ceil() as usize).max(2);
         let inside = (1..n).map(|k| a.lerp(b, k as f32 / n as f32)).any(|p| plan.blocks.iter().any(|blk| {
             let (lo, hi) = blk.bounds();
             p.clamp(lo, hi).distance(p) < r - TOUCH
         }));
-        !inside && passes(&bare, &m, others).is_none()
-    };
-    // (Cells by their least corner, in cells; a cell's span in the ship.)
-    let mut cells: HashSet<IVec3> = HashSet::new();
-    let span = |c: IVec3| {
-        let lo = grid.at(c * cell);
-        (lo, lo + Vec3::splat(KIT_CELL))
-    };
-    let rooms: Vec<(Vec3, Vec3)> = room_boxes(plan).into_iter().map(|r| r.1).collect();
-    let free = |c: IVec3| !plan.blocks.iter().any(|b| overlap(b.bounds(), span(c))) && !rooms.iter().any(|r| overlap(*r, span(c)));
-    for pl in &plan.plates {
-        let lo = grid.step(Vec3::new(pl.lo.x.min(pl.hi.x), grid.y0, pl.lo.y.min(pl.hi.y)));
-        let hi = grid.step(Vec3::new(pl.lo.x.max(pl.hi.x), grid.y0, pl.lo.y.max(pl.hi.y)));
-        for x in lo.x.div_euclid(cell)..(hi.x + cell - 1).div_euclid(cell) {
-            for z in lo.z.div_euclid(cell)..(hi.z + cell - 1).div_euclid(cell) {
-                cells.insert(IVec3::new(x, lo.y.div_euclid(cell) - 1, z));
-            }
+        if inside {
+            return false;
         }
-    }
-    // (A box's edges, and a diagonal across each face: the same way on every face,
-    // so neighbours share none.)
-    let pairs_of = |o: IVec3, size: IVec3| -> Vec<(IVec3, IVec3)> {
-        let corners: Vec<IVec3> = (0..8).map(|k| o + IVec3::new(k & 1, (k >> 1) & 1, (k >> 2) & 1) * size).collect();
-        let mut pairs: Vec<(IVec3, IVec3)> = Vec::new();
-        for a in &corners {
-            for b in &corners {
-                let d = *b - *a;
-                let across = (d.x != 0) as i32 + (d.y != 0) as i32 + (d.z != 0) as i32;
-                if (1..=2).contains(&across) && d.cmpge(IVec3::ZERO).all() && !pairs.contains(&(*a, *b)) {
-                    pairs.push((*a, *b));
-                }
-            }
-        }
-        pairs
+        let through = frame.iter().flat_map(|o| [o.a, o.b]).any(|p| p.distance(a) > 0.05 && p.distance(b) > 0.05 && on(p, &beam(a, b)));
+        // (Partway along a member: only where both its pieces are struts.)
+        let splits = frame.iter().any(|o| [a, b].iter().any(|&p| on(p, o) && p.distance(o.a) > 0.05 && p.distance(o.b) > 0.05 && !(legal(p.distance(o.a)) && legal(p.distance(o.b)))));
+        let others: Vec<Beam> = frame.iter().filter(|o| !on(a, o) && !on(b, o)).cloned().collect();
+        let fat_one = Beam { stock: fat.to_string(), ..beam(a, b) };
+        !through && !splits && passes(&bare, &fat_one, &others).is_none()
     };
-    // (Each module's mount node, the lattice node its half-cell box reaches, and the
-    // cell its arm starts from: under that node (a landing leg's: over it), on the
-    // ship's middle side; that way blocked, whichever way leaves most of the box
-    // clear.)
-    let mut boxes: Vec<(IVec3, IVec3)> = Vec::new();
     let full = |b: &Block| fit.iter().find(|f| f.id == kind(&b.id)).map_or(0.0, |f| f.mass + f.load);
     let mut held: Vec<&Block> = plan.blocks.iter().filter(|b| !on_deck(plan, b, fit)).collect();
     held.sort_by(|a, b| full(b).total_cmp(&full(a)));
-    for b in held {
-        let leg = fit.iter().find(|f| f.id == kind(&b.id)).is_some_and(|f| f.gear.is_some());
-        let m = grid.step(mount_of(b, fit));
-        let toward = |v: i32| if v > 0 { -1 } else { 1 };
-        let off = IVec3::new(m.x.rem_euclid(cell), m.y.rem_euclid(cell), m.z.rem_euclid(cell));
-        let (fx, fy, fz) = (toward(m.x), if leg { 1 } else { -1 }, toward(m.z));
-        let dirs = [(fx, fy, fz), (-fx, fy, fz), (fx, fy, -fz), (-fx, fy, -fz), (fx, -fy, fz), (-fx, -fy, fz), (fx, -fy, -fz), (-fx, -fy, -fz)].map(|(x, y, z)| IVec3::new(x, y, z));
-        // (Off the lattice by a step: a step the way it goes.)
-        let reach_of = |dir: IVec3| m + IVec3::new(if off.x != 0 { dir.x * off.x.min(cell - off.x) } else { 0 }, if off.y != 0 { dir.y * off.y.min(cell - off.y) } else { 0 }, if off.z != 0 { dir.z * off.z.min(cell - off.z) } else { 0 });
-        let blocked = |dir: IVec3| {
-            let reach = reach_of(dir);
-            pairs_of(m.min(reach), (reach - m).abs()).into_iter().filter(|(a, b)| a != b && !clear(grid.at(*a), grid.at(*b), &[])).count()
-        };
-        let dir = *dirs.iter().min_by_key(|d| blocked(**d)).expect("eight ways");
-        let reach = reach_of(dir);
-        if reach != m {
-            boxes.push((m.min(reach), (reach - m).abs()));
-        }
-        let start = IVec3::new(reach.x.div_euclid(cell) - i32::from(dir.x < 0), reach.y.div_euclid(cell) - i32::from(dir.y < 0), reach.z.div_euclid(cell) - i32::from(dir.z < 0));
-        // (The layer of cells under its whole foot (a leg's: over its top), what it
-        // rests on, with the one its box reaches.)
-        let (lo, hi) = b.bounds();
-        let (c0, c1) = (grid.step(lo).div_euclid(IVec3::splat(cell)), (grid.step(hi) + IVec3::splat(cell - 1)).div_euclid(IVec3::splat(cell)));
-        let mut feet: Vec<IVec3> = (c0.x..c1.x.max(c0.x + 1)).flat_map(|x| (c0.z..c1.z.max(c0.z + 1)).map(move |z| IVec3::new(x, start.y, z))).collect();
-        if !feet.contains(&start) {
-            feet.push(start);
-        }
-        if cells.is_empty() {
-            cells.extend(feet);
-            continue;
-        }
-        // (Breadth first through clear cells to one already in.)
-        let mut from: HashMap<IVec3, IVec3> = feet.iter().map(|c| (*c, *c)).collect();
-        let mut front = feet.clone();
-        let mut reached = None;
-        'search: for _ in 0..40 {
-            let mut next = Vec::new();
-            for c in front {
-                if cells.contains(&c) {
-                    reached = Some(c);
-                    break 'search;
+    let snap = |v: f32, up: bool| if up { (v / KIT_GRID).ceil() * KIT_GRID } else { (v / KIT_GRID).floor() * KIT_GRID };
+    // The keel: under the decks' footprint and round the modules hanging under it
+    // (none: round the heaviest module), clear of them by its tubes.
+    let deck = plan.plates.iter().map(|pl| (pl.lo.min(pl.hi), pl.lo.max(pl.hi), pl.y)).reduce(|a, b| (a.0.min(b.0), a.1.max(b.1), a.2.min(b.2)));
+    let body: Vec<&Block> = match deck {
+        Some((lo, hi, y)) => held.iter().copied().filter(|b| {
+            let (bl, bh) = b.bounds();
+            bl.x < hi.x && bh.x > lo.x && bl.z < hi.y && bh.z > lo.y && bh.y <= y + 0.05
+        }).collect(),
+        None => held.first().copied().into_iter().collect(),
+    };
+    let margin = r + 0.02;
+    let (mut lo, mut hi) = match deck {
+        Some((l, h, _)) => (Vec3::new(l.x, f32::MAX, l.y), Vec3::new(h.x, grid.y0, h.y)),
+        None => (Vec3::splat(f32::MAX), Vec3::splat(f32::MIN)),
+    };
+    for b in &body {
+        let (bl, bh) = b.bounds();
+        lo = lo.min(bl - margin);
+        hi = hi.max(Vec3::new(bh.x + margin, if deck.is_some() { hi.y } else { bh.y + margin }, bh.z + margin));
+        lo.y = lo.y.min(mount_of(b, fit).y);
+    }
+    if lo.y == f32::MAX {
+        lo.y = hi.y - KIT_CELL;
+    }
+    let (y0, y1) = (grid.y0 + snap(lo.y - grid.y0, false), grid.y0 + snap(hi.y - grid.y0, true));
+    let lines = |along: fn(&Plate) -> (f32, f32)| -> Vec<f32> { plan.plates.iter().flat_map(|pl| { let (a, b) = along(pl); lattice(a, b) }).collect() };
+    let xs = kit_stations(snap(lo.x, false), snap(hi.x, true), &lines(|pl| (pl.lo.x, pl.hi.x)));
+    let zs = kit_stations(snap(lo.z, false), snap(hi.z, true), &lines(|pl| (pl.lo.y, pl.hi.y)));
+    let mut ys = vec![y0];
+    for p in kit_split(y1.max(y0 + KIT_GRID) - y0) {
+        ys.push(ys.last().expect("a start") + p);
+    }
+    ys.reverse();
+    let mut out: Vec<Beam> = Vec::new();
+    // (Each face: the grid of its stations, and a diagonal across each square panel.)
+    let face = |at: &dyn Fn(f32, f32) -> Vec3, us: &[f32], vs: &[f32], out: &mut Vec<Beam>| {
+        for (i, u) in us.iter().enumerate() {
+            for (j, v) in vs.iter().enumerate() {
+                let mut add = |a: Vec3, b: Vec3| {
+                    let dup = out.iter().any(|o| (o.a.distance(a) < 0.01 && o.b.distance(b) < 0.01) || (o.a.distance(b) < 0.01 && o.b.distance(a) < 0.01));
+                    if !dup && clear(a, b, &[]) {
+                        out.push(beam(a, b));
+                    }
+                };
+                if let Some(u1) = us.get(i + 1) {
+                    add(at(*u, *v), at(*u1, *v));
                 }
-                for d in [IVec3::X, IVec3::NEG_X, IVec3::Y, IVec3::NEG_Y, IVec3::Z, IVec3::NEG_Z] {
-                    let n = c + d;
-                    if !from.contains_key(&n) && (cells.contains(&n) || free(n)) {
-                        from.insert(n, c);
-                        next.push(n);
+                if let Some(v1) = vs.get(j + 1) {
+                    add(at(*u, *v), at(*u, *v1));
+                }
+                if let (Some(u1), Some(v1)) = (us.get(i + 1), vs.get(j + 1))
+                    && ((u1 - u) - (v1 - v)).abs() < 0.01
+                {
+                    if (i + j) % 2 == 0 { add(at(*u, *v), at(*u1, *v1)) } else { add(at(*u, *v1), at(*u1, *v)) }
+                }
+            }
+        }
+    };
+    let (yt, yb) = (ys[0], *ys.last().expect("a station"));
+    let (x0, x1, z0, z1) = (xs[0], *xs.last().expect("a station"), zs[0], *zs.last().expect("a station"));
+    face(&|u, v| Vec3::new(u, yt, v), &xs, &zs, &mut out);
+    face(&|u, v| Vec3::new(u, yb, v), &xs, &zs, &mut out);
+    for x in [x0, x1] {
+        face(&|u, v| Vec3::new(x, v, u), &zs, &ys, &mut out);
+    }
+    for z in [z0, z1] {
+        face(&|u, v| Vec3::new(u, v, z), &xs, &ys, &mut out);
+    }
+    // The brackets: from each module the frame doesn't reach (within 0.3 m of its
+    // box), heaviest first, the cheapest run of whole struts to a joint of the frame
+    // (where its members meet; none: partway along a straight one) (each strut a cost of its length
+    // and a little more, more again if it runs aslant all three ways), searched over
+    // the grid near it; then a second, leaving the module another way.
+    let steps: Vec<(IVec3, f32)> = {
+        let most = (KIT_REACH / KIT_GRID).round() as i32;
+        let mut v = Vec::new();
+        for x in -most..=most {
+            for y in -most..=most {
+                for z in -most..=most {
+                    let d = IVec3::new(x, y, z);
+                    let len = d.as_vec3().length() * KIT_GRID;
+                    if d != IVec3::ZERO && len <= KIT_REACH + 0.01 && legal(len) {
+                        let aslant = d.x != 0 && d.y != 0 && d.z != 0;
+                        v.push((d, len + 0.5 + if aslant { 0.2 } else { 0.0 }));
                     }
                 }
             }
-            front = next;
         }
-        cells.extend(feet);
-        let mut c = reached.unwrap_or(start);
-        loop {
-            cells.insert(c);
-            let p = from[&c];
-            if p == c {
-                break;
-            }
-            c = p;
-        }
-    }
-    let mut sorted: Vec<IVec3> = cells.into_iter().collect();
-    sorted.sort_by_key(|c| (c.y, c.z, c.x));
-    boxes.extend(sorted.into_iter().map(|c| (c * cell, IVec3::splat(cell))));
-    // (Each box's edges and face diagonals, once each.)
-    let mut seen: HashSet<(IVec3, IVec3)> = HashSet::new();
-    let mut out: Vec<Beam> = Vec::new();
-    for (o, size) in boxes {
-        for (a, b) in pairs_of(o, size) {
-            if a != b && seen.insert((a, b)) && clear(grid.at(a), grid.at(b), &[]) {
-                out.push(Beam { uid: Id::default(), a: grid.at(a), b: grid.at(b), stock: stock.to_string(), pinned: [false; 2] });
+        v
+    };
+    // (Where its members meet; `along`: and grid points along its straight ones.)
+    let goals = |frame: &[Beam], along: bool| -> HashSet<IVec3> {
+        let mut g = HashSet::new();
+        for o in frame {
+            let (a, b) = (grid.step(o.a), grid.step(o.b));
+            let d = b - a;
+            let straight = (d.x != 0) as i32 + (d.y != 0) as i32 + (d.z != 0) as i32 == 1;
+            let n = if along && straight { d.abs().max_element() } else { 1 };
+            for k in 0..=n {
+                g.insert(a + d / n * k);
             }
         }
-    }
-    // (A half-cell box's edges along a cell's: the cell's split there, once each.)
-    let (mut out, _) = knit(out);
-    // (The pieces joined: each smaller one to the rest by its shortest clear strut.)
-    let far = kit_steps(12);
+        g
+    };
+    let route = |from: IVec3, frame: &[Beam], not: &[IVec3], along: bool| -> Option<Vec<IVec3>> {
+        let goal = goals(frame, along);
+        let mut best: HashMap<IVec3, f32> = HashMap::new();
+        let mut came: HashMap<IVec3, IVec3> = HashMap::new();
+        let mut heap = BinaryHeap::new();
+        // (Costs in millimetres, for the heap's order.)
+        heap.push((std::cmp::Reverse(0_i64), from.to_array(), from.to_array()));
+        let mut pops = 0;
+        while let Some((std::cmp::Reverse(c), at, prev)) = heap.pop() {
+            let (at, prev) = (IVec3::from_array(at), IVec3::from_array(prev));
+            if came.contains_key(&at) {
+                continue;
+            }
+            pops += 1;
+            if pops > 6000 {
+                return None;
+            }
+            if at != from && (not.contains(&at) || !clear(grid.at(prev), grid.at(at), frame)) {
+                continue;
+            }
+            came.insert(at, prev);
+            if at != from && goal.contains(&at) {
+                let mut path = vec![at];
+                let mut p = at;
+                while p != from {
+                    p = came[&p];
+                    path.push(p);
+                }
+                path.reverse();
+                return Some(path);
+            }
+            for (d, cost) in &steps {
+                let n = at + *d;
+                let nc = c + (cost * 1000.0) as i64;
+                if !came.contains_key(&n) && best.get(&n).is_none_or(|b| (nc as f32) < *b) && n.distance_squared(from) <= 144 {
+                    best.insert(n, nc as f32);
+                    heap.push((std::cmp::Reverse(nc), n.to_array(), at.to_array()));
+                }
+            }
+        }
+        None
+    };
     let mut lost = 0;
-    loop {
-        let mut piece: HashMap<IVec3, usize> = HashMap::new();
-        let mut parent: Vec<usize> = Vec::new();
-        fn root(p: &mut [usize], mut k: usize) -> usize {
-            while p[k] != k {
-                p[k] = p[p[k]];
-                k = p[k];
+    let touched = |b: &Block, frame: &[Beam]| {
+        let (lo, hi) = b.bounds();
+        frame.iter().flat_map(|o| [o.a, o.b]).any(|p| p.cmpge(lo - 0.3).all() && p.cmple(hi + 0.3).all())
+    };
+    for b in held {
+        if touched(b, &out) {
+            continue;
+        }
+        // (Its mount node; off the grid (moved with a heavier one it touches), the
+        // nearest grid point by it that still holds it: within 0.3 m of its box,
+        // clear of it.)
+        let at = mount_of(b, fit);
+        let (lo, hi) = b.bounds();
+        let m = if grid.at(grid.step(at)).distance(at) < 0.02 {
+            grid.step(at)
+        } else {
+            let (a, z) = (grid.step(lo - 0.3), grid.step(hi + 0.3));
+            let mut near: Vec<IVec3> = (a.x..=z.x).flat_map(|x| (a.y..=z.y).flat_map(move |y| (a.z..=z.z).map(move |z| IVec3::new(x, y, z)))).filter(|&p| {
+                let q = grid.at(p);
+                q.cmpge(lo - 0.3).all() && q.cmple(hi + 0.3).all() && q.clamp(lo, hi).distance(q) >= r
+            }).collect();
+            near.sort_by(|p, q| grid.at(*p).distance(at).total_cmp(&grid.at(*q).distance(at)));
+            match near.first() {
+                Some(p) => *p,
+                None => {
+                    lost += 1;
+                    continue;
+                }
             }
-            k
-        }
-        for x in &out {
-            let ids: Vec<usize> = [grid.step(x.a), grid.step(x.b)].iter().map(|s| *piece.entry(*s).or_insert_with(|| {
-                parent.push(parent.len());
-                parent.len() - 1
-            })).collect();
-            let (a, b) = (root(&mut parent, ids[0]), root(&mut parent, ids[1]));
-            parent[a] = b;
-        }
-        let mut groups: HashMap<usize, Vec<IVec3>> = HashMap::new();
-        for (s, k) in &piece {
-            let r = root(&mut parent, *k);
-            groups.entry(r).or_default().push(*s);
-        }
-        if groups.len() <= 1 {
-            break;
-        }
-        let mut gs: Vec<Vec<IVec3>> = groups.into_values().collect();
-        gs.sort_by_key(|g| std::cmp::Reverse(g.len()));
-        let main: HashSet<IVec3> = gs[0].iter().copied().collect();
-        let mut joined = false;
-        for g in &gs[1..] {
-            let link = far.iter().find_map(|d| g.iter().find(|s| main.contains(&(**s + *d)) && clear(grid.at(**s), grid.at(**s + *d), &out)).map(|s| (*s, *s + *d)));
-            if let Some((a, b)) = link {
-                out.push(Beam { uid: Id::default(), a: grid.at(a), b: grid.at(b), stock: stock.to_string(), pinned: [false; 2] });
-                joined = true;
-                break;
+        };
+        // (Single struts to the frame first, up to three, no two in line: a tripod.)
+        let goal = goals(&out, false);
+        let mut direct: Vec<(IVec3, f32)> = steps.iter().filter(|(d, _)| goal.contains(&(m + *d))).copied().collect();
+        direct.sort_by(|a, b| a.1.total_cmp(&b.1));
+        let mut legs: Vec<IVec3> = Vec::new();
+        for (d, _) in direct {
+            let dir = d.as_vec3().normalize();
+            if legs.len() < 3 && legs.iter().all(|l| l.as_vec3().normalize().dot(dir) < 0.9) && clear(grid.at(m), grid.at(m + d), &out) {
+                out.push(beam(grid.at(m), grid.at(m + d)));
+                legs.push(d);
             }
         }
-        if !joined {
-            lost = gs.len() - 1;
-            break;
+        if legs.len() >= 2 {
+            continue;
+        }
+        // (None to a joint: to partway along a member.)
+        let Some(first) = route(m, &out, &[], false).or_else(|| route(m, &out, &[], true)) else {
+            lost += 1;
+            continue;
+        };
+        let lay = |path: &[IVec3], out: &mut Vec<Beam>| {
+            for w in path.windows(2) {
+                out.push(beam(grid.at(w[0]), grid.at(w[1])));
+            }
+        };
+        lay(&first, &mut out);
+        // (The second leaves it another way: not along the first, nor to its end.)
+        let along = first[1] - first[0];
+        let ahead: Vec<IVec3> = (1..=12).map(|k| m + along * k).chain(first[1..].iter().copied()).collect();
+        if let Some(second) = route(m, &out, &ahead, false)
+            && second.len() <= first.len() + 1
+        {
+            lay(&second, &mut out);
         }
     }
+    // (A bracket ending partway along a member: the member split there.)
+    let (out, _) = knit(out);
     (out, lost)
 }
 
 /// The lightest section struts come in for every length a kit frame takes (a
-/// grid step to `KIT_CELL`, straight and across a square), of `of`'s material if
+/// grid step to `KIT_BAY`, straight and across a square), of `of`'s material if
 /// it has one.
 fn kit_stock(of: &str) -> Option<String> {
-    let lengths: Vec<f32> = (1..=(KIT_CELL / KIT_GRID).round() as i32).flat_map(|n| [n as f32 * KIT_GRID, n as f32 * KIT_GRID * std::f32::consts::SQRT_2]).collect();
+    let lengths: Vec<f32> = (1..=(KIT_BAY / KIT_GRID).round() as i32).flat_map(|n| [n as f32 * KIT_GRID, n as f32 * KIT_GRID * std::f32::consts::SQRT_2]).collect();
     let whole = |s: &&Stock| lengths.iter().all(|l| struts().iter().any(|t| t.section == s.key && (t.module - l).abs() <= 0.002));
     let material = stocks().iter().find(|s| s.key == of).map(|s| s.of.clone());
     stocks().iter().filter(whole).find(|s| material.as_ref().is_none_or(|m| *m == s.of)).or_else(|| stocks().iter().filter(whole).min_by(|a, b| a.per_metre.total_cmp(&b.per_metre))).map(|s| s.key.clone())
@@ -2405,7 +2492,7 @@ fn fit_frame(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::shi
         return None;
     }
     let (beams, lost) = kit_frame(&plan, fit, &stock);
-    say(Fitting::Step(format!("{} STANDARD STRUTS ON A {KIT_CELL} M LATTICE{}", beams.len(), if lost > 0 { format!(", {lost} PIECES LEFT UNJOINED") } else { String::new() })));
+    say(Fitting::Step(format!("{} STANDARD STRUTS: A KEEL OF {KIT_BAY} M BAYS, BRACKETS TO THE REST{}", beams.len(), if lost > 0 { format!(", {lost} MODULES NO BRACKET REACHED") } else { String::new() })));
     plan.beams = beams;
     if stop.load(Ordering::Relaxed) {
         return None;
@@ -9007,9 +9094,10 @@ mod tests {
     #[test]
     fn a_kit_frame_has_a_section_in_every_length() {
         let key = kit_stock("").expect("a section in every kit length");
+        assert_eq!(kit_split(5.0), vec![2.0, 1.5, 1.5], "as few as can be, none over a bay, even");
+        assert_eq!(kit_stations(-2.5, 2.5, &[-1.5, 1.5]), vec![-2.5, -1.5, 0.0, 1.5, 2.5], "the decks' lines kept, the lattice's by them left out");
         for l in [0.5, 1.0, 0.5 * std::f32::consts::SQRT_2, std::f32::consts::SQRT_2] {
             assert!(struts().iter().any(|t| t.section == key && (t.module - l).abs() <= 0.002), "{key} at {l} m");
         }
-        assert_eq!(kit_steps(1).len(), 18, "six straight and twelve across a square");
     }
 }

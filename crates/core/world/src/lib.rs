@@ -26,6 +26,7 @@ pub mod frame;
 pub mod flight_control;
 pub mod galaxy;
 pub mod goods;
+pub mod ground;
 pub mod recipes;
 pub mod gate;
 pub mod ground_detail;

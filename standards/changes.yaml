@@ -201,6 +201,7 @@
 - { record: deposit-type.volcanic-sulphur, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "e508f5dc99dbe6ef" }
 - { record: dogma.air, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "b5d27529086ebefc" }
 - { record: dogma.climate, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "762d9412cc862e45" }
+- { record: dogma.contact, at: "2026-10-17T14:18:54Z", status: "", summary: "first tracked", sha: "9daff7129dfa56c2" }
 - { record: dogma.field, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "4133f56bd10f2ae8" }
 - { record: dogma.measures, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "0e1f99f5793dc255" }
 - { record: dogma.nature, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "62a682ffbe6fa7fb" }
@@ -804,7 +805,10 @@
 - { record: law.earth-radius, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "4c20848d9cf75561" }
 - { record: law.earth-scale-height, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "b2ca24ece1296c65" }
 - { record: law.field-cost, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "322900c43e7bb6de" }
+- { record: law.foot-friction, at: "2026-10-17T14:18:54Z", status: "", summary: "first tracked", sha: "b10c35b816aa581a" }
 - { record: law.gravitation, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "3369764605992d2b" }
+- { record: law.hull-friction, at: "2026-10-17T14:18:54Z", status: "", summary: "first tracked", sha: "d83508a0f13015b8" }
+- { record: law.hull-restitution, at: "2026-10-17T14:18:54Z", status: "", summary: "first tracked", sha: "76b07ef433d280a5" }
 - { record: law.lapse-rate, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "c917d658af3ff5f3" }
 - { record: law.light-year, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "ddc68793f0c5e54f" }
 - { record: law.speed-of-light, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "da911f54cac8faf6" }
