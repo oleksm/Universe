@@ -8,7 +8,7 @@ details:
   text:
     - "Ports (SFO 25) name the interface they are built to; the game draws the halves and the conduit at the port, and a unit's own model ends at the mating plane with no stub. A port moving is never a reason to remake a unit."
     - "Two halves mate only when they are built to the same interface, of opposite gender (or both androgynous), and the media and ratings agree. Where they don't, an adapter joins them: a reducer, a plug adapter, a flange adapter. An adapter is a made thing with its own mass and a fitting's place in the run."
-    - "Draft, set 2026-10-17 from the survey in docs/proposals/connectables.md. What exists today is the connectors and runs of SFO 25, the mounts of SFO 19 and SFO 24 and the struts of SFO 13; the rest is to be added by family."
+    - "Draft, set 2026-10-17 from the survey in docs/proposals/connectables.md. In the registry now: an interface for every SFO 25 connector and every plant bay (interfaces/), each connector naming its own; every plant unit's ports naming their interface, half and make and stating their duty (from the unit's design, or by a rule its basis names); a load port on every unit that stands in a bay; and the motion of the 25 units that move, which the fit check sweeps (no run may stand in what a unit tilts or turns through, but for the last 3 m at its own joint). Ship equipment and industrial modules have the fields, not yet the ports; the rest is to be added by family."
 sections:
   - title: The shape of a connection
     table:
