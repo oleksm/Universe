@@ -229,12 +229,26 @@ The owner noticed the kit took most of a day: 129 of the 162 models installed on
    - the fifth hole's mouth at (0, 1.8, 8.3), now a belt's transfer: the belt's head 3 m over it. Before the furnace tilts, its chute telescopes up so its bottom parks at z 10.8;
    - for your diagnostic sweep: the y axis through the rockers' centres (0, 0, 1.0), at rest and +/-15 degrees, with the sleeve and the chute parked;
    - measure its envelope: the registry lends it the sealed furnace's boxes until then.
-2. `cooling-tower` v2:
+2. CANCELLED 2026-10-16 (ports only; the game draws connectors at ports, so no rebuild): `cooling-tower` v2:
    - flanges on its east end (x 12, z 0.75) facing +x: the hall loop DN 400 out at y -0.6 and in at 0.6, the duct jacket's DN 300 out at 3.9 and in at 5.1;
    - make-up water DN 100 at (-12, 0, 0.75) and a 400 V box at (-12, -3, 1), facing -x.
    - Measure its envelope.
-3. `baghouse-800k` v2:
+3. CANCELLED 2026-10-16 (ports only): `baghouse-800k` v2:
    - a DN 2000 inlet flange at (0, -6, 15), facing -y;
    - a 6.6 kV box at (12, 3, 1), facing +x.
    - Measure its envelope.
 4. `hall-crane-20t`: its envelope only.
+
+## 10. Reuse what is built (2026-10-16)
+
+The owner: reuse what is built and fill only the gaps (docs/proposals/plant-products.md, "What is built, and what is reused"). 71 of the 78 unit models and 125 of the 126 kit models match their records. A port alone is never a reason to rebuild: the game draws the connector at the port.
+
+**The whole list:**
+1. `eaf-vessel-80t` v4, held since the tilt sweep: build it. Its body changed:
+   - the horizontal water-jacketed elbow to the mouth at (3, 4.5, 8.5), carried on its two posts;
+   - the feed belt's head 3 m over the fifth hole.
+
+   Then the hood sweep with the sleeve and chute parked. No port stubs are needed.
+2. Envelopes measured from the installed models, no rebuild: `eaf-vessel-80t` (from v4), `cooling-tower` v1, `baghouse-800k` v2, `hall-crane-20t` v2.
+
+Nothing else until the registry asks, with the reason.

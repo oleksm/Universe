@@ -74,3 +74,26 @@ alloy-bins-8, ball-mill-4m4, balling-disc-7m5, crew-post, crop-saws, degassing-s
 1. Schema: a `product` record (params, pieces, option kits, port rules); `unit` gains `product`, `params` and `options`; `next_asset` asks models of products and pieces, not units.
 2. Convert the 9 remaining layouts to runs, without modelling, so every product's ports are known.
 3. Freeze the interfaces. Then one brief to blender: the family generators and the products still without a model, each once.
+
+## What is built, and what is reused (inventory, 2026-10-16)
+
+Every unit model was checked against its record today: the ports and size the record held when the model was installed, against those it holds now.
+
+- **Units: 71 of 78 models match their records.** The other 7 differ only in their ports, except one:
+  - baghouse-800k, cooling-tower, dri-bin-200t, filter-press-2, ball-mill-4m4: ports added or resized since; their bodies are unchanged.
+  - pellet-shaft-63th: its record's width became a centred box round the same model (it reaches 5.5 m on one side for its power box); the model is right.
+  - eaf-vessel-80t (air, v3): the one real gap. Its off-gas elbow points up, and the tilt sweep showed that design collides. The record now has a horizontal elbow and a sliding sleeve, which is a different body.
+- **Kit: 125 of 126 models match.** flange-dn1000-pn16-double is 8 mm thicker in its record than in its model, which is not worth a rebuild. The 2 newest pieces are drawn by `looks_as` with no model of their own.
+- **Layouts:** the 12 old monolith models stay reference pictures only.
+
+**Rules from now on:**
+1. **A port is not a reason to rebuild.** The game draws the run's connector (flange, termination, chute, hood) at every port a run ends on, from the kit's models. A unit's model needs no stub there. A unit is rebuilt only when its body changes: a part moves, is added, or turns out wrong, as the furnace's elbow did.
+2. **An envelope is measured, not built.** Units without one (cooling-tower, baghouse-800k, hall-crane-20t, eaf-vessel-80t) get their boxes measured from their installed models.
+3. **Converting the 9 remaining layouts makes no model work.** Their units all have models already. Only a body conflict a layout can't route round goes to blender, with the reason.
+4. **The product families' generators are built only when a new size is needed.** Today's units all have their models.
+
+**So blender's whole list today:**
+- the air furnace's v4 (the horizontal elbow, its posts and the telescoping feed chute: a body change);
+- four envelopes measured from installed models.
+
+The section 9 unit versions for cooling-tower and baghouse-800k are cancelled: they were ports only.
