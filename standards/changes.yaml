@@ -892,8 +892,8 @@
 - { record: layout.hydrogen-plant-airless, at: "2026-10-16T23:35:55Z", status: draft, summary: "changed", sha: "43c50e0d30969e4f" }
 - { record: layout.ingot-yard-air, at: "2026-10-17T00:03:48Z", status: draft, summary: "changed", sha: "423fd5c4b6c2a57f" }
 - { record: layout.ingot-yard-airless, at: "2026-10-17T00:03:48Z", status: draft, summary: "changed", sha: "9cf378d6072292a2" }
-- { record: layout.ladle-station-air, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "8b1ef49613308ec5" }
-- { record: layout.ladle-station-airless, at: "2026-10-17T00:33:52Z", status: draft, summary: "changed", sha: "3d5bf4a970be704d" }
+- { record: layout.ladle-station-air, at: "2026-10-17T00:45:07Z", status: draft, summary: "changed", sha: "33846a2469f78cea" }
+- { record: layout.ladle-station-airless, at: "2026-10-17T00:45:07Z", status: draft, summary: "changed", sha: "80dc826fb2fe4faf" }
 - { record: layout.ore-yard-air, at: "2026-10-17T00:03:48Z", status: draft, summary: "changed", sha: "c5084a0ab636cfeb" }
 - { record: layout.ore-yard-airless, at: "2026-10-17T00:03:48Z", status: draft, summary: "changed", sha: "5cb35f82f3a4d85c" }
 - { record: layout.pellet-plant-air, at: "2026-10-16T20:37:01Z", status: draft, summary: "changed", sha: "be9a770950a42984" }
@@ -2858,7 +2858,7 @@
 - { record: system.liham, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "891572eaa9c2ef46" }
 - { record: system.moryemzai, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "f8e4fd33ee4cf599" }
 - { record: system.treistun, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "dd9719e496514353" }
-- { record: unit.alloy-bins-8, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "12c1047c55ede9f2" }
+- { record: unit.alloy-bins-8, at: "2026-10-17T00:45:07Z", status: draft, summary: "changed: visual", sha: "f14e3e662e7b8095" }
 - { record: unit.baghouse-200k, at: "2026-10-14T19:55:55Z", status: draft, summary: "changed", sha: "cb7954ca19170a07" }
 - { record: unit.baghouse-450k, at: "2026-10-15T12:22:41Z", status: draft, summary: "changed", sha: "6fdb9b7fb2def8a2" }
 - { record: unit.baghouse-800k, at: "2026-10-14T14:37:56Z", status: draft, summary: "changed", sha: "ab9ba06de66e8e3c" }
@@ -2883,7 +2883,7 @@
 - { record: unit.electrolyser-block-20mw-10bar, at: "2026-10-16T16:30:34Z", status: draft, summary: "changed", sha: "74ed70e350c64105" }
 - { record: unit.filter-press-2, at: "2026-10-16T19:40:41Z", status: draft, summary: "changed", sha: "0657631bfbde06c3" }
 - { record: unit.forklift-2t5, at: "2026-10-15T18:36:43Z", status: draft, summary: "changed", sha: "060854c588a349b1" }
-- { record: unit.furnace-transformer-14mva, at: "2026-10-17T00:38:27Z", status: draft, summary: "changed: visual", sha: "fca543cb8da236a0" }
+- { record: unit.furnace-transformer-14mva, at: "2026-10-17T00:45:07Z", status: draft, summary: "changed", sha: "ffcddaeeda1da621" }
 - { record: unit.furnace-transformer-90mva, at: "2026-10-16T23:35:55Z", status: draft, summary: "changed", sha: "f58d6b4bb2179aad" }
 - { record: unit.gantry-crane-150t-moon, at: "2026-10-15T21:28:29Z", status: draft, summary: "changed: identity", sha: "e4182122c78d1dea" }
 - { record: unit.gantry-crane-20t-moon, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "1a51031d62b17cf9" }
