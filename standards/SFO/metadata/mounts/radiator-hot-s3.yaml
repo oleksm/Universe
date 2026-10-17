@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/mount.schema.yaml
+# SFO 19. Set round the hot radiator panel of this class, with a quarter to spare.
+identity:
+  key: mount.radiator-hot-s3
+  name: Hot radiator mount, class 3
+  slot: thermal
+  size_class: 3
+  description: 'What a hull offers a hot radiator panel: the hull area it lies against stowed, the root hinge''s seats, and the engine''s coolant run to it.'
+envelope:
+  length: 81.84
+  width: 40.92
+  height: 1.375
+bears:
+  mass: 41842.0
+attachment:
+  points: 4
+  pattern: corners
+  each:
+    tension: 308400.0
+    compression: 308400.0
+    shear: 154000.0
+basis:
+- of:
+  - envelope
+  - bears
+  - attachment
+  rule: rule.mounts-margin

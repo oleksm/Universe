@@ -1,0 +1,117 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.thermal.radiator-hot.s3
+  name: Hot radiator panel S3
+  maker: org.kestrel
+  revision: draft
+  slot: thermal
+  description: 'A deployable radiator panel for a fusion thermal engine S3, two to an engine: carbon-carbon with liquid lithium through it, stowed flat against the hull and swung out on its root hinge to stand edge-on to the jet, both
+    faces to space, where it throws off 1,350 MW at 1500 K. Its coolant comes from the engine''s ports by a supply and a return header along the root edge, on the hinge line, each crossing the hinge in one molybdenum-rhenium bellows
+    loop. It was part of the engine until 2026-10-17: a radiator this hot and large cannot fold inside an engine mount with its plumbing live (blender''s packing traces), so it is its own equipment on its own mount, and the ship must
+    give it hull to lie against.'
+size_class: 3
+fits: mount.radiator-hot-s3
+physical:
+  mass: 33474
+  volume: 196.5
+  length: 74.4
+  width: 37.2
+  height: 1.25
+built_of:
+  parts: thermal-radiator-hot-s3
+  list:
+  - code: RAH3-01
+    name: Panel
+    description: 3 mm carbon-carbon, 2,767 m2, 74.4 m out from the hinge by 37.2 m along it; both faces dark; tubes 12 mm across (0.5 mm molybdenum) out from the root and back.
+    mass: 14524
+    length: 74.4
+    width: 37.2
+    height: 0.03
+    item: stock.cc-pl-3
+    quantity: 16702.0
+    module: module.assembly-shop
+  - code: RAH3-02
+    name: Headers and tubes
+    description: 'A supply and a return header side by side along the root edge, DN 1200, and the U-tubes through the panel: about 1,607 kg/s of lithium at a 200 K drop, about 3 m/s.'
+    mass: 15907
+    length: 37.2
+    width: 2.5
+    height: 1.25
+    item: stock.mo-tb-12x0p5
+    quantity: 18293.0
+    module: module.machining-centre
+  - code: RAH3-03
+    name: Hinge, drive and root joints
+    description: Root hinge brackets on the hull, the deploy drive, tip latches that hold it stowed, and the two bellows loops where the headers cross the hinge.
+    mass: 3043
+    length: 37.2
+    width: 0.5
+    height: 1.25
+    item: stock.mo-tb-12x0p5
+    quantity: 3499.4
+    module: module.machining-centre
+making:
+  module: module.assembly-shop
+function:
+  kind: radiator
+  rejects: 1350107982
+  temperature: 1500.0
+  area: 2766.8
+ports:
+- id: coolant-in
+  flow: in
+  medium: liquid
+  interface: interface.lm-flange-dn1200
+  half: androgynous
+  make: bolted
+  rate: 1607.3
+  pressure: 500000.0
+  temperature: 1600.0
+  at:
+  - 0.0
+  - -18.3
+  - 0.625
+  facing:
+  - -1.0
+  - 0.0
+  - 0.0
+  note: liquid lithium from the engine, hot (no lithium metal record yet)
+- id: coolant-out
+  flow: out
+  medium: liquid
+  interface: interface.lm-flange-dn1200
+  half: androgynous
+  make: bolted
+  rate: 1607.3
+  pressure: 500000.0
+  temperature: 1400.0
+  at:
+  - 0.0
+  - -17.0
+  - 0.625
+  facing:
+  - -1.0
+  - 0.0
+  - 0.0
+  note: back to the engine
+life: 473364000
+basis:
+- of:
+  - function
+  - physical
+  tier: derived
+  review: true
+  note: 'Its share of the engine''s heat (half its 5,534 m2 at 1500 K, both faces, emissivity 0.85): 1,350 MW. Twice as long as wide, as the other radiator panels. Lithium cp 4.2 kJ/kg K, 480 kg/m3 hot (from memory), a 200 K drop, 3
+    m/s in the headers.'
+- of:
+  - built_of.list
+  tier: derived
+  review: true
+  note: Half the engine's former radiator parts (FTE3-07, FTE3-08), the booms replaced by a root hinge; hinge, drive and joints a tenth more (invented).
+- of:
+  - built_of
+  - making
+  rule: rule.first-design-parts
+- of:
+  - life
+  rule: rule.life-ship-system
