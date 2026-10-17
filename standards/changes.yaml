@@ -475,9 +475,9 @@
 - { record: equipment.engine.fan.s1, at: "2026-10-13T00:40:35Z", status: draft, summary: "changed: visual", sha: "8571271370838a45" }
 - { record: equipment.engine.fan.s2, at: "2026-10-13T00:46:03Z", status: draft, summary: "changed: visual", sha: "131081299755298f" }
 - { record: equipment.engine.fan.s3, at: "2026-10-12T01:31:44Z", status: draft, summary: "changed: visual", sha: "cc49eb09dba4218d" }
-- { record: equipment.engine.ft.s1, at: "2026-10-14T01:51:31Z", status: draft, summary: "changed: physical, built_of, basis", sha: "73ded0be9c4688a3" }
-- { record: equipment.engine.ft.s2, at: "2026-10-14T01:51:31Z", status: draft, summary: "changed: physical, built_of, basis", sha: "d0cc1d885805d9bf" }
-- { record: equipment.engine.ft.s3, at: "2026-10-14T01:51:31Z", status: draft, summary: "changed: physical, built_of, basis", sha: "cceabfddba9813c6" }
+- { record: equipment.engine.ft.s1, at: "2026-10-17T15:56:09Z", status: draft, summary: "changed", sha: "e1f1e0d74d7553e4" }
+- { record: equipment.engine.ft.s2, at: "2026-10-17T15:56:09Z", status: draft, summary: "changed", sha: "8a0d7cf7b2a7418c" }
+- { record: equipment.engine.ft.s3, at: "2026-10-17T15:56:09Z", status: draft, summary: "changed", sha: "7966f326e30f78bc" }
 - { record: equipment.engine.nt.s1, at: "2026-10-13T01:51:30Z", status: draft, summary: "changed: visual", sha: "110a68ce2e357997" }
 - { record: equipment.engine.nt.s2, at: "2026-10-13T02:06:07Z", status: draft, summary: "changed: visual", sha: "d485b3df704248eb" }
 - { record: equipment.engine.nt.s3, at: "2026-10-13T02:50:46Z", status: draft, summary: "changed: visual", sha: "cb5d8c594580a6b6" }
@@ -530,9 +530,9 @@
 - { record: equipment.power.battery.s0, at: "2026-10-13T06:41:10Z", status: draft, summary: "changed: visual", sha: "4d3bfd92acb08d32" }
 - { record: equipment.power.battery.s1, at: "2026-10-12T02:10:45Z", status: draft, summary: "changed: visual", sha: "8e06eecd1ef3a586" }
 - { record: equipment.power.fuelcell.s1, at: "2026-10-13T13:32:36Z", status: draft, summary: "changed: visual", sha: "45d1aee343bd0a5c" }
-- { record: equipment.power.fusion.s1, at: "2026-10-14T01:52:22Z", status: draft, summary: "changed: basis", sha: "dcd41ca17bc6d0fd" }
-- { record: equipment.power.fusion.s2, at: "2026-10-14T01:52:22Z", status: draft, summary: "changed: basis", sha: "e88946b53bc4a7ef" }
-- { record: equipment.power.fusion.s3, at: "2026-10-14T01:52:22Z", status: draft, summary: "changed: basis", sha: "9ea6b7acd214ad13" }
+- { record: equipment.power.fusion.s1, at: "2026-10-17T15:56:09Z", status: draft, summary: "changed", sha: "c63bf69416456db8" }
+- { record: equipment.power.fusion.s2, at: "2026-10-17T15:56:09Z", status: draft, summary: "changed", sha: "9e942d093db8b848" }
+- { record: equipment.power.fusion.s3, at: "2026-10-17T15:56:09Z", status: draft, summary: "changed", sha: "3824e2974e35b2a2" }
 - { record: equipment.power.solar-array.s2, at: "2026-10-13T14:11:52Z", status: draft, summary: "changed: visual", sha: "f72449f6041078d2" }
 - { record: equipment.power.switchgear.s1, at: "2026-10-12T15:43:34Z", status: draft, summary: "changed: visual", sha: "9918c6813669d603" }
 - { record: equipment.sensors.altimeter.s1, at: "2026-10-12T00:41:34Z", status: draft, summary: "changed: visual", sha: "ac5a015c7002afad" }
@@ -591,8 +591,8 @@
 - { record: equipment.utility.refuelling-port.s1, at: "2026-10-13T18:47:21Z", status: draft, summary: "changed: visual", sha: "3c30b51453242ef5" }
 - { record: equipment.utility.suits.s1, at: "2026-10-12T00:52:18Z", status: draft, summary: "changed: visual", sha: "2410dcd4ec4f928c" }
 - { record: equipment.utility.transfer.boom, at: "2026-10-13T19:14:06Z", status: draft, summary: "changed: visual", sha: "b390569c732891a4" }
-- { record: equipment.utility.window.s1, at: "2026-10-14T01:47:58Z", status: draft, summary: "changed: built_of, basis", sha: "9730a7473504e93d" }
-- { record: equipment.utility.window.s2, at: "2026-10-14T01:47:58Z", status: draft, summary: "changed: physical, built_of, basis", sha: "5f3d9382050291f3" }
+- { record: equipment.utility.window.s1, at: "2026-10-17T15:56:09Z", status: draft, summary: "changed", sha: "603752fe0b9a3c32" }
+- { record: equipment.utility.window.s2, at: "2026-10-17T15:56:09Z", status: draft, summary: "changed", sha: "0b8b54c1939fcabc" }
 - { record: facility.treistun.ashfall-camp.ashfall-life-support, at: "2026-10-06T18:25:49Z", status: "", summary: "first tracked", sha: "0b27523c1caa4f00" }
 - { record: facility.treistun.ashfall-camp.ashfall-mine, at: "2026-10-06T18:38:56Z", status: "", summary: "changed: modules", sha: "fa007901d7ff41a3" }
 - { record: facility.treistun.ashfall-camp.ashfall-power-station, at: "2026-10-06T18:25:49Z", status: "", summary: "first tracked", sha: "b86cf193f2405fbb" }
@@ -1673,7 +1673,7 @@
 - { record: planet-landmark.river-capture, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "3cf77849becb36a9" }
 - { record: planet-landmark.river-mouth, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "f1d56abe5da30b68" }
 - { record: planet-landmark.water-carved-land, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "38875031f88ab213" }
-- { record: planet-landmark.water-gap, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "6f0b26f953bd07b3" }
+- { record: planet-landmark.water-gap, at: "2026-10-17T15:56:09Z", status: "", summary: "changed", sha: "b50b346b31502217" }
 - { record: planet-layer.basins, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "da6aef9e96dcab69" }
 - { record: planet-layer.climate, at: "2026-10-17T15:44:28Z", status: "", summary: "changed", sha: "ac0e49a0ffac049c" }
 - { record: planet-layer.coast, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "2eebe72874a25b34" }
@@ -1701,13 +1701,16 @@
 - { record: planet-line.river, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "39a7b7f1f78beada" }
 - { record: planet-line.suture, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "e13e23397b82a349" }
 - { record: planet-measure.channel-heads, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "23c3a8bbdf043d15" }
+- { record: planet-measure.coast-fidelity, at: "2026-10-17T15:56:09Z", status: "", summary: "first tracked", sha: "6ae925dcbbea57a4" }
 - { record: planet-measure.concavity, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "fe71e2f984ceb8c3" }
 - { record: planet-measure.drainage-density, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "c400c25425682fc7" }
 - { record: planet-measure.hypsometric-integral, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "0f80f0612644b163" }
 - { record: planet-measure.local-relief-1km, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "a6b787b14ce91b28" }
 - { record: planet-measure.median-slope, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "2409937c99a38559" }
+- { record: planet-measure.rms-against-samples, at: "2026-10-17T15:56:09Z", status: "", summary: "first tracked", sha: "1b47bc79cd87aa38" }
 - { record: planet-measure.spectrum-slope, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "e7c2087911571642" }
 - { record: planet-measure.valley-spacing, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "d4dde745cde03b3f" }
+- { record: planet-model.anchor, at: "2026-10-17T15:56:09Z", status: "", summary: "first tracked", sha: "084556f4a0e6c5b1" }
 - { record: planet-pattern.aeolian.dune.barchan, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "4fed3f7652690758" }
 - { record: planet-pattern.aeolian.dune.carbonate-eolianite, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "57787d270a7efd13" }
 - { record: planet-pattern.aeolian.dune.coastal-foredune, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "11531b3670b62a25" }
@@ -1765,7 +1768,7 @@
 - { record: planet-pattern.fluvial.estuary.fluvial-reach, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "5a1a3670149e27ce" }
 - { record: planet-pattern.fluvial.fan.alluvial-fan, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "fad0e7366c9fed3d" }
 - { record: planet-pattern.fluvial.fan.bajada, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "7f794e60627ebd79" }
-- { record: planet-pattern.fluvial.gap.water-gap, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "d314c807528a8f37" }
+- { record: planet-pattern.fluvial.gap.water-gap, at: "2026-10-17T15:56:09Z", status: "", summary: "changed", sha: "59c7acae7dddfc60" }
 - { record: planet-pattern.fluvial.gap.wind-gap, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "d778a88b292973a3" }
 - { record: planet-pattern.fluvial.landscape.peneplain-etchplain, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "78eb5c9dda86521f" }
 - { record: planet-pattern.fluvial.network.dendritic, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "1cd965e8373267e2" }

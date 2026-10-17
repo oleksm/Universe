@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../schema/planet-model.schema.yaml
+identity:
+  key: planet-model.anchor
+  name: Anchor model
+  about: "A planet's ground as anchors and the contour rings woven round them: the coast, exact at every level, and each enclosed ring's peak or dip, with rings at an exponential height step from each anchor. Nothing else is in it; everything else is refinement on top. The same principles mesh the planet."
+  words: "The owner, 17 Oct 2026: \"The coast is exact at every level, is one anchor. The peak / dip is another anchor. Around those we weave the detail of contour lines with an exponential step. Nothing else is there. The same principles are used when meshing planets.\""
+purpose: "To describe and mesh a planet's ground from its sim with the fewest exact things: anchors kept true at every level, and detail that is dense next to each anchor and sparse halfway between them."
+anchors:
+  - name: coast
+    kind: line
+    found_by: "The 0 m line of the source field."
+    exact: true
+    line: planet-line.coast
+    field: planet-field.height
+  - name: peak or dip
+    kind: point
+    found_by: "The field's extremum inside each enclosed contour ring: a maximum (peak) or a minimum (dip); each a real sim sample with its real height."
+    exact: true
+    field: planet-field.height
+detail:
+  rule: "Contour rings round each anchor at an exponentially growing height step: down from a peak, up from a dip, up from the coast on land and down from it at sea. Detail is dense next to each anchor and sparse halfway between anchors."
+  formula: "ring_k = h_anchor -/+ d0 (r^k - 1), k = 1, 2, 3, ...; r = 2 (the ring ratio), so the first ring is d0 from its anchor"
+  nearest: "A point takes its rings from its nearest anchor in height: the peak above it reached by steepest ascent, or the coast or dip below it reached by steepest descent."
+source_field: [planet-field.height, planet-field.recent-height]
+params:
+  - { name: d0, unit: m, open: true, note: "The first step: the first ring's height from its anchor. Not chosen yet." }
+  - { name: ring ratio, value: 2.0, unit: "1", note: "r: each step this many times the last." }
+  - { name: source field, open: true, note: "Which height: height (z) or recent-height (r_z); open until planets have checked r_z." }
+  - { name: sample smoothing, open: true, note: "How the samples are smoothed before contouring; not chosen yet." }
+guarantees:
+  - "The coast exact at every level: 0 m on the 0 m line."
+  - "Every anchor exact: its own sample's height, at its own place."
+  - "Every mesh vertex's height exact: its ring's level, 0 at the coast, or its anchor's height."
+leaves_out:
+  - "Separate rivers, ridges or reducers: refinements on top, never part of the base."
+  - "Anything between rings but the interpolation between neighbouring rings."
+rules:
+  - "One graph, refined in depth."
+  - "A refinement only adds, as residuals over its parent."
+  - "Parent anchors stay exact."
+  - "The graph is rendered exactly: interpolated between neighbouring rings, anchors as apexes."
+  - "No rasters inside construction."
+mesh: "The anchors plus vertices on the rings, triangulated on the sphere."
+implementations:
+  - { where: "planet-trees-pgs2 tools/planet_anchors.py", state: predecessor, note: "the contour model of 9 Oct 2026, a uniform 200 m step" }
+  - { where: "planet-trees-pgs2 tools/anchor_mesher.py", state: building, note: "the mesher planets is building now" }
+levels: [planet-level.planet, planet-level.cluster, planet-level.pattern, planet-level.square, planet-level.detail]
+measured_by: [planet-measure.rms-against-samples, planet-measure.coast-fidelity]
+status: draft
+basis:
+  - { of: [identity, anchors, detail, rules, mesh], tier: derived, note: "The owner's words and planets' principles, 17 Oct 2026." }
+  - { of: [params], tier: invented, review: true, note: "Draft: d0, the source field and the smoothing are open." }
