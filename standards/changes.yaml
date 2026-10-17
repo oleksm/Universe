@@ -1654,7 +1654,7 @@
 - { record: run.pipe-dn400-pn10, at: "2026-10-17T00:05:30Z", status: draft, summary: "changed: visual", sha: "3ef71b84a9f923b3" }
 - { record: run.pipe-dn450-pn10, at: "2026-10-16T21:02:45Z", status: draft, summary: "changed", sha: "eac6b8b7fceab723" }
 - { record: run.pipe-dn50-pn10-ss, at: "2026-10-16T17:53:48Z", status: draft, summary: "changed", sha: "8a47dd415373b2c5" }
-- { record: run.pipe-dn50-pn16-ss, at: "2026-10-16T23:10:29Z", status: draft, summary: "first tracked", sha: "2827361fe05f9b1e" }
+- { record: run.pipe-dn50-pn16-ss, at: "2026-10-17T01:05:40Z", status: draft, summary: "changed: visual", sha: "12d9470be9155930" }
 - { record: run.pipe-dn50-pn16-ss-double, at: "2026-10-16T21:02:45Z", status: draft, summary: "changed", sha: "e9bd3a8da7fb0aee" }
 - { record: run.pipe-dn600-pn10, at: "2026-10-16T17:53:48Z", status: draft, summary: "changed", sha: "be8fbbca0e77add0" }
 - { record: run.pipe-dn700-pn10-mli, at: "2026-10-16T21:02:45Z", status: draft, summary: "changed", sha: "edbd33cada679ef5" }
