@@ -197,3 +197,13 @@ Install each with `tools/standards/install_model.py` as usual. The kinds `connec
 - the AC busbar, 27 kA, with its joint;
 - pipes DN 200 PN 1 and DN 50 PN 16, both stainless, with their flanges;
 - the 33 kV 120 mm2 cable and its termination.
+
+## 8. Kit families, not pieces (2026-10-16)
+
+The owner noticed the kit took most of a day: 129 of the 162 models installed on 2026-10-16 were pipes, flanges, cables, terminations, belts and transfers. Each was built by its own copied script, whose numbers differ only where the record already gives them, and each went through its own round of QC, install, validation and two messages. From now on:
+
+1. **One generator per family.** Write one script per family: pipe, flange, lined duct, lined flange, cable, termination, belt, belt transfer, chute, busbar, bus joint. It reads the run or connector record (`outside`, `bore`, `elbow`/`riser` radius, `pitch`, `repeat`, `support`, `physical`, `built_of`) and builds the model from it. A new size is then a run of the script, not a new script.
+   - Measure each family's archetype once. Bind a size's masses only where they differ from the formula by more than 5%.
+2. **Batches.** Install a family's new sizes together. Send one QC report and one message per batch, listing the keys and their install commits. The registry records the batch's loader validation as one entry per key, in one run and one commit (`validate_model.py <key> <key>...`).
+3. **Shared looks.** A kit record whose kind, outside size and material match another's carries `looks_as: <that record's key>`. It is drawn with that model and wants none of its own (next_asset skips it). Mass, rating and connector stay its own. Today every kit record has its own model, so none carries `looks_as` yet; new sizes will, where they match.
+4. **Existing models stay.** Nothing is rebuilt. Bring the old pieces under the generators only when a family next changes.

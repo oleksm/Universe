@@ -4440,6 +4440,39 @@ def mounts_for(bays, recs):
     return mounts
 
 
+def looks_alike(recs):
+    """Kit records that look the same share one model: a run by its kind, outside and material, a connector by its kind,
+    size and material. Each group's model is the one a member already has (else the first by key); the others point at
+    it by `looks_as` and want no model of their own. Mass, rating and connector stay each record's."""
+    def material(d):
+        parts = (d.get("per_m") or {}).get("built_of") or d.get("built_of") or [{}]
+        return parts[0].get("item")
+    def look(folder, d):
+        if folder == "runs":
+            return ("run", d["kind"], tuple(round(x, 2) for x in d["outside"]), material(d))
+        ph = d.get("physical") or {}
+        return ("connector", d["kind"], round(ph.get("length", 0), 2), round(ph.get("width", 0), 2), round(ph.get("height", 0), 2), material(d))
+    has = {}
+    for folder, slug, d in recs:
+        path = S + f"{folder}/{slug}.yaml"
+        has[d["identity"]["key"]] = os.path.exists(path) and "\nvisual:" in open(path, encoding="utf-8").read()
+    groups = {}
+    for folder, slug, d in recs:
+        groups.setdefault(look(folder, d), []).append(d["identity"]["key"])
+    rep = {}
+    for g, keys in groups.items():
+        first = next((k for k in sorted(keys) if has[k]), sorted(keys)[0])
+        for k in keys:
+            rep[k] = first
+    out = []
+    for folder, slug, d in recs:
+        k = d["identity"]["key"]
+        if rep[k] != k and not has[k]:
+            d = {**{x: v for x, v in d.items() if x != "basis"}, "looks_as": rep[k], "basis": d.get("basis")}
+        out.append((folder, slug, d))
+    return out
+
+
 def main():
     us = units()
     loop_heat = sum(u["needs"].get("heat", 0) for u in us.values()) + OFFGAS_SHARE * P   # the units and the layout's water-cooled duct
@@ -4484,7 +4517,7 @@ def main():
     for slug, (d, _) in layouts.items():
         cover_model(S + f"layouts/{slug}.yaml", d)
         write(S + f"layouts/{slug}.yaml", d)
-    for folder, slug, d in kit.records():
+    for folder, slug, d in looks_alike(list(kit.records())):
         write(S + f"{folder}/{slug}.yaml", d)
     print(f"{len(mounts)} mounts, {len(recs)} units, {len(layouts)} layouts")
 

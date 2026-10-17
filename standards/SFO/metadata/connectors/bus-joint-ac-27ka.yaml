@@ -10,6 +10,7 @@ built_of:
 - {what: Bolts, item: material.high-strength-steel-4340, mass: 19.2, note: 'sixteen M20 a phase in two rows of eight, above and below the tubes, with spring washers'}
 - {what: Braze lands, item: material.copper, mass: 10.2, note: 'a copper land round each tube where it is brazed into the plate; measured on blender''s model (9.5 kg for 14 tubes, 2026-10-16)'}
 - {what: Water couplings and hoses, item: material.silicone-rubber, mass: 7.5, note: an insulating hose from each tube's end to the unit's cooling manifold behind its pad}
+triangle_budget: 22000
 visual:
   format: "freefall-model/1"
   path: "models/bus-joint-ac-27ka/v1"
@@ -21,4 +22,3 @@ basis:
   tier: invented
   review: true
   note: Plates, bolting and hoses from memory of electrolysis and furnace bus joints; the bolts' edge distance 35 mm (1.6 bolt diameters).
-triangle_budget: 22000

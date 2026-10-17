@@ -111,6 +111,7 @@ properties:
   carries: { enum: [gas, liquid, bulk, power], description: "What it can carry." }
   triangle_budget: { type: integer, minimum: 1000, description: "Triangles its kit may have, where the kind's default (12,000) is too few: a bus of many tubes." }
   visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
+  looks_as: { type: string, x-ref: [run], description: "Another run of the same look (kind, size, material) whose model this one is drawn with; it wants no model of its own. Mass, rating and connector stay this record's." }
   revision:
     $ref: "../../common.schema.yaml#/definitions/record_revision"
     default: { status: draft, owner: registry, on_conflict: propose, because: "A trial standard (SFO 25): walls from pressure (Barlow), supports from the span a pipe full of its fluid bears, many figures from memory and marked in the basis.", ask: docs/proposals/factory-kit-assembly.md }

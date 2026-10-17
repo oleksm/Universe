@@ -46,6 +46,7 @@ properties:
         note: { type: string }
   triangle_budget: { type: integer, minimum: 1000, description: "Triangles its model may have, where the kind's default (12,000) is too few: a joint of many tubes and bolts." }
   visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
+  looks_as: { type: string, x-ref: [connector], description: "Another connector of the same look (kind, size, material) whose model this one is drawn with; it wants no model of its own. Mass, rating and connector stay this record's." }
   revision:
     $ref: "../../common.schema.yaml#/definitions/record_revision"
     default: { status: draft, owner: registry, on_conflict: propose, because: "A trial standard (SFO 25): connectors sized by simple rules from pressure, size and material, not to a flange code.", ask: docs/proposals/factory-kit-assembly.md }
