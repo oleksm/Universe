@@ -7876,3 +7876,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: unit.ladle-furnace-80t-sealed
+    version: 2
+    manifest_sha256: "6933dc1923a20d3607e2b4dd5f23899ac216ced008d727b9681e2204bf73bfc5"
+    installed: ebe68575
+    game: "the loader (world::assets) at fso ebe68575"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/ladle-furnace-80t-sealed/v2 (1288340 bytes, bounds [-5.5, 0.0, -5.0] to [5.5, 14.0, 5.34]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "pressure, electrical and load acceptance (blender: static only)"
