@@ -2858,7 +2858,7 @@
 - { record: system.liham, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "891572eaa9c2ef46" }
 - { record: system.moryemzai, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "f8e4fd33ee4cf599" }
 - { record: system.treistun, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "dd9719e496514353" }
-- { record: unit.alloy-bins-8, at: "2026-10-17T00:45:07Z", status: draft, summary: "changed: visual", sha: "f14e3e662e7b8095" }
+- { record: unit.alloy-bins-8, at: "2026-10-17T00:50:30Z", status: draft, summary: "changed", sha: "1f43394303ea1476" }
 - { record: unit.baghouse-200k, at: "2026-10-14T19:55:55Z", status: draft, summary: "changed", sha: "cb7954ca19170a07" }
 - { record: unit.baghouse-450k, at: "2026-10-15T12:22:41Z", status: draft, summary: "changed", sha: "6fdb9b7fb2def8a2" }
 - { record: unit.baghouse-800k, at: "2026-10-14T14:37:56Z", status: draft, summary: "changed", sha: "ab9ba06de66e8e3c" }
@@ -2873,7 +2873,7 @@
 - { record: unit.crating-line-steel, at: "2026-10-16T16:13:12Z", status: draft, summary: "changed", sha: "856efb0cfc40113d" }
 - { record: unit.crew-post, at: "2026-10-16T03:35:46Z", status: draft, summary: "changed: envelope", sha: "c57b09c1c3bfb2d1" }
 - { record: unit.crop-saws, at: "2026-10-15T18:20:39Z", status: draft, summary: "changed", sha: "57aeb9a5c2d969ec" }
-- { record: unit.degassing-stand, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "edb40c23673aafe7" }
+- { record: unit.degassing-stand, at: "2026-10-17T00:50:30Z", status: draft, summary: "changed: visual", sha: "7c5c18ef0e3e1c44" }
 - { record: unit.disc-filter-2, at: "2026-10-15T05:01:04Z", status: draft, summary: "changed", sha: "52719317d0ef0afd" }
 - { record: unit.dri-bin-200t, at: "2026-10-16T23:40:53Z", status: draft, summary: "changed", sha: "43cf3f13a1465eb2" }
 - { record: unit.dri-cooling-loop, at: "2026-10-15T01:24:23Z", status: draft, summary: "changed", sha: "46962a5f5ae51829" }
