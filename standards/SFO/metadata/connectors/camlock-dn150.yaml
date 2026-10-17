@@ -10,9 +10,9 @@ rating:
   pressure: 700000.0
   temperature: 373.0
 physical:
-  length: 0.345
+  length: 0.25
   width: 0.186
-  height: 0.25
+  height: 0.345
   mass: 5.6
 built_of:
 - what: Adapter and coupler

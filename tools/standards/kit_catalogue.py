@@ -95,7 +95,7 @@ for dn in (0.025, 0.05, 0.1, 0.15):
     conn(ck, {
         "identity": {"key": f"connector.{ck}", "name": f"Cam-lock coupling, DN {tag(dn)}", "description": "A hose coupling made and broken by hand: a grooved adapter (male) and a coupler (female) whose two cam arms pull it home on its gasket."},
         "kind": "quick-coupling", "size": dn, "rating": {"pressure": CAM_P[dn], "temperature": 373.0},
-        "physical": {"length": r(dn * 1.9 + 0.06, 3), "width": r(dn + 0.036, 3), "height": r(dn * 1.2 + 0.07, 3), "mass": CAM[dn]},
+        "physical": {"length": r(dn * 1.2 + 0.07, 3), "width": r(dn + 0.036, 3), "height": r(dn * 1.9 + 0.06, 3), "mass": CAM[dn]},
         "built_of": [part("Adapter and coupler", AL, CAM[dn] * 0.95, "cast aluminium; stainless pins"), part("Gasket", RUB, CAM[dn] * 0.05)],
         "provides": "both", "template": "template.camlock",
         "basis": [{"of": ["physical", "rating"], "tier": "invented", "review": True, "note": MEMORY}]},

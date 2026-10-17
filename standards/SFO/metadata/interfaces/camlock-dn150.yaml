@@ -16,9 +16,9 @@ sealing: air
 halves: male-female
 make: manual
 face:
-  length: 0.345
+  length: 0.25
   width: 0.186
-  height: 0.25
+  height: 0.345
 size: 0.15
 standard: EN 14420-7 (cam-lock) sizes
 basis:

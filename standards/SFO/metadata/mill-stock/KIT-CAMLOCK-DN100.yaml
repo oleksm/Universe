@@ -11,9 +11,9 @@ made_from:
 - item: material.aluminium-alloy-6061
 - item: material.epdm-rubber
 size:
-  length: 0.25
+  length: 0.19
   width: 0.136
-  height: 0.19
+  height: 0.25
 supplies:
   item: connector.camlock-dn100
 physical:
