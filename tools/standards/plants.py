@@ -8,7 +8,7 @@ struts (SFO 13) checked against its loads; the bays' mounts are set round the un
 ship mounts are (rule.mounts-margin). Writes standards/SFO/metadata/{plant-mounts,units,layouts}/. Idempotent. Run from the
 repository root. Figures marked "from memory" are not sourced: each unit's basis says so.
 """
-import math, os, sys
+import math, re, os, sys
 import yaml
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -460,14 +460,21 @@ def euler(section_stock, L):
 
 def write(path, d):
     os.makedirs(os.path.dirname(path), exist_ok=True)
-    if os.path.exists(path):                       # (an installed model's visual, written by install_model.py, stays)
-        old = yaml.safe_load(open(path, encoding="utf-8")) or {}
-        if old.get("visual"):
-            d = {k: v for k, v in d.items() if k not in ("basis",)} | {"visual": old["visual"], "basis": d.get("basis")}
+    vis = ""
+    if os.path.exists(path):                       # (an installed model's visual, written by install_model.py, stays, as it wrote it)
+        text = open(path, encoding="utf-8").read()
+        m = re.search(r"^visual:.*?(?=^\S)", text, re.S | re.M)
+        if m:
+            vis = m.group(0)
+            d = {k: v for k, v in d.items() if k != "visual"}
     head = {"plant-mounts": "plant-mount", "units": "unit", "layouts": "layout", "connectors": "connector", "runs": "run"}[path.split("/")[-2]]
+    dump = lambda x: yaml.safe_dump(x, sort_keys=False, width=1000, allow_unicode=True, default_flow_style=None) if x else ""
     with open(path, "w", encoding="utf-8") as f:
         f.write(f"# yaml-language-server: $schema=../../schema/{head}.schema.yaml\n# Written by tools/standards/plants.py: change it there.\n")
-        yaml.safe_dump(d, f, sort_keys=False, width=1000, allow_unicode=True, default_flow_style=None)
+        if vis:
+            f.write(dump({k: v for k, v in d.items() if k != "basis"}) + vis + dump({"basis": d["basis"]} if "basis" in d else {}))
+        else:
+            f.write(dump(d))
 
 
 def cover_model(path, d):
