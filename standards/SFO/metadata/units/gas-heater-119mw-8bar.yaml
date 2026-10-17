@@ -59,6 +59,7 @@ ports:
   at: [-12.0, 1.45, 1.575]
   facing: [-1.0, 0.0, 0.0]
   note: 8 circuits of 630 mm2 into the terminal house
+  current: 11790.0
 - id: base
   flow: out
   medium: load
@@ -87,5 +88,9 @@ basis:
 - of: [needs]
   tier: derived
   note: The gas's 14.3 kg/s at 14.3 kJ/kg K over 600 K, at 98% (from memory).
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage.'
 - of: [life]
   rule: rule.life-plant

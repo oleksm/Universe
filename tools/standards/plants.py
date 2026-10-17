@@ -575,7 +575,7 @@ def air_ports(us):
                       f"the secondary bus's joint at the flexible cables' fixed ends, (0, -6.2, 2.3), facing -y; the deck manifold's water flanges, DN {dn_hall * 1000:.0f} facing up, in at (-4.2, 4.95, 0.5) and out at (-3.4, 4.95, 0.5), in front of the tilting cradle's deck (v4, as the sealed furnace's).")
     v["ports"] = [
         port("dri-in", "in", "bulk", kit.belt_transfer(0.8), (0.0, 1.8, 8.3), (0, 0, 1), item="good.sponge-iron", rate=DRI, note="the fifth hole's mouth; the belt's head 3 m over it, its chute telescoping up 2.5 m before the furnace tilts"),
-        port("offgas-out", "out", "gas", kit.hood(2.0), (3.0, 4.5, 8.5), (0, 1, 0), note="the elbow's vertical mouth past the roof's edge; it moves as the furnace tilts, across the sleeve's mouth"),
+        port("offgas-out", "out", "gas", kit.hood(2.0), (3.0, 4.5, 8.5), (0, 1, 0), rate=6.0, pressure=1e5, temperature=1873.0, moves_with="tilt", note="the elbow's vertical mouth past the roof's edge; it moves as the furnace tilts, across the sleeve's mouth: about 6 kg/s of the furnace's own gas at 1,600 deg C (invented), before the air drawn in at the gap"),
         port("power-in", "in", "power", kit.bus_joint(V2, I2, 3), (0.0, -6.2, 2.3), (0, -1, 0), power=P, voltage=V2, note=f"{I2 / 1000:.0f} kA a phase"),
         port("water-in", "in", "liquid", kit.flange(dn_hall, 10), (-4.2, 4.95, 0.5), (0, 0, 1), item=WATER, rate=WATER_SHARE * P / (4186 * 10), temperature=303.0),
         port("water-out", "out", "liquid", kit.flange(dn_hall, 10), (-3.4, 4.95, 0.5), (0, 0, 1), item=WATER, rate=WATER_SHARE * P / (4186 * 10), temperature=313.0),
@@ -597,7 +597,7 @@ def air_ports(us):
     b["desc"] = b["desc"].replace("The gas comes in at the top of one long side (local 0, -6, 15) from the layout's water-cooled duct and burn-out gap.",
                                   "The gas comes in at the top of one long side through a DN 2000 flange at (0, -6, 15), facing -y, from the layout's water-cooled duct; the fans' 6.6 kV box at (12, 3, 1), facing +x; the hoppers' closed dust bins come out on the +y side.")
     b["ports"] = [
-        port("gas-in", "in", "gas", kit.flange(2.0, 1, temp=523.0), (0.0, -6.0, 15.0), (0, -1, 0), note="the furnace's gas burnt in the air drawn in at the hood, and diluted"),
+        port("gas-in", "in", "gas", kit.flange(2.0, 1, temp=523.0), (0.0, -6.0, 15.0), (0, -1, 0), item="material.air", rate=800000 / 3600 * 1e5 * 0.029 / (8.314 * 423.0), pressure=0.98e5, temperature=423.0, note="the furnace's gas burnt in the air drawn in at the hood, and diluted: 800,000 m3/h at about 150 deg C (invented), drawn a little under the air's pressure"),
         port("power-in", "in", "power", kit.termination(6600, kit.area_for(amps(w_b, 6600))), (12.0, 3.0, 1.0), (1, 0, 0), power=w_b, voltage=6600, note="the two fans"),
     ]
 
@@ -3200,9 +3200,9 @@ def shaft_airless_units(us):
 
 # ---------------------------------------------------------------- ports (SFO 25), the trial: the airless shaft furnace's units
 
-def port(pid, flow, medium, connector, at, facing, item=None, rate=None, power=None, pressure=None, temperature=None, voltage=None, note=None):
+def port(pid, flow, medium, connector, at, facing, item=None, rate=None, power=None, pressure=None, temperature=None, voltage=None, note=None, current=None, moves_with=None):
     d = {"id": pid, "flow": flow, "medium": medium}
-    for k, v in (("item", item), ("rate", rate), ("power", power), ("pressure", pressure), ("temperature", temperature), ("voltage", voltage)):
+    for k, v in (("item", item), ("rate", rate), ("power", power), ("pressure", pressure), ("temperature", temperature), ("voltage", voltage), ("current", current), ("moves_with", moves_with)):
         if v is not None:
             d[k] = r(v) if isinstance(v, float) else v
     d |= {"interface": kit.interface_key(connector), "half": kit.half(connector, flow), "make": kit.IFACE[kit._recs[connector]["kind"]][2],
@@ -3658,17 +3658,17 @@ def h2_ports(us):
     g = kit.flange(0.25, 16, kit.SS, "double")
     pu["ports"] = [
         port("gas-in", "in", "gas", g, (-6, 0, 6), (-1, 0, 0), item=H2, rate=H_RATE, pressure=10e5, temperature=80.0 + K),
-        port("gas-out", "out", "gas", g, (6, 0, 2), (1, 0, 0), item=H2, rate=H_RATE, pressure=10e5, note="dry, oxygen-free"),
+        port("gas-out", "out", "gas", g, (6, 0, 2), (1, 0, 0), item=H2, rate=H_RATE, pressure=10e5, temperature=313.0, note="dry, oxygen-free, at about 40 deg C (invented)"),
         port("cooling-in", "in", "liquid", kit.flange(0.2, 10), (0, -4, 1), (0, -1, 0), item=WATER, rate=q_pu, temperature=HP_T_LOOP - 10.0),
         port("cooling-out", "out", "liquid", kit.flange(0.2, 10), (0.6, -4, 1), (0, -1, 0), item=WATER, rate=q_pu, temperature=HP_T_LOOP),
-        port("condensate-out", "out", "liquid", kit.flange(0.05, 10, kit.SS), (-6, 3, 0.3), (-1, 0, 0), item=WATER, note="the deoxidiser's water and the knockouts'"),
+        port("condensate-out", "out", "liquid", kit.flange(0.05, 10, kit.SS), (-6, 3, 0.3), (-1, 0, 0), item=WATER, rate=H_RATE * 47.4e3 / (10e5 - 47.4e3) * 18.015 / 2.016, pressure=1e5, temperature=313.0, note="the knockouts' and the deoxidiser's water: the hydrogen comes in saturated at 80 deg C and 10 bar (water's vapour pressure there about 47 kPa, from memory), so about 0.44 kg of water a kg of hydrogen"),
         port("power-in", "in", "power", kit.termination(400, kit.area_for(amps(pu["needs"]["power"], 400))), (6, -3.5, 0.5), (1, 0, 0), power=pu["needs"]["power"], voltage=400),
     ]
     wt = us["water-treatment-sealed"]
     wt["ports"] = [
         port("raw-in", "in", "liquid", kit.flange(0.2, 10, kit.SS), (6, -1.6, 0.5), (1, 0, 0), item=WATER, rate=20.3 / 3.6, note="the shaft furnace's condensate and melted ice"),
         port("clean-out", "out", "liquid", kit.flange(0.1, 10, kit.SS), (-6, 0, 0.5), (-1, 0, 0), item=WATER, rate=H_WATER),
-        port("reject-out", "out", "liquid", kit.flange(0.15, 10, kit.SS), (6, 3.4, 0.3), (1, 0, 0), item=WATER, note="concentrate and backwash, kept"),
+        port("reject-out", "out", "liquid", kit.flange(0.15, 10, kit.SS), (6, 3.4, 0.3), (1, 0, 0), item=WATER, rate=20.3 / 3.6 - H_WATER, note="concentrate and backwash, kept: what comes in less what goes out clean"),
         port("power-in", "in", "power", kit.termination(400, kit.area_for(amps(wt["needs"]["power"], 400))), (-6, -3.4, 0.5), (-1, 0, 0), power=wt["needs"]["power"], voltage=400),
     ]
 
@@ -3739,7 +3739,7 @@ def pellet_ports(us):
     ol["ports"] = [
         port("ore-in", "in", "bulk", kit.belt_transfer(1.0), (0, 0, 17.5), (0, 0, 1), item=ORE, rate=P_ORE, note="the hopper's rim; a belt's head stands 3 m over it"),
         port("ore-out", "out", "bulk", kit.chute(1.0), (0, 0, 10), (0, 0, -1), item=ORE, rate=P_ORE, note="the bottom valve, onto a sealed gallery's belt"),
-        port("nitrogen-in", "in", "gas", kit.flange(0.05, 10, kit.SS), (1.7, 0, 13.3), (1, 0, 0), item="material.nitrogen", note="from the hall, to fill the lock"),
+        port("nitrogen-in", "in", "gas", kit.flange(0.05, 10, kit.SS), (1.7, 0, 13.3), (1, 0, 0), item="material.nitrogen", rate=0.02, pressure=2e5, temperature=293.0, note="from the hall, to fill the lock: about 0.02 kg/s at 2 bar (invented)"),
         port("power-in", "in", "power", lv(ol["needs"]["power"]), (3, 0, 0.5), (1, 0, 0), power=ol["needs"]["power"], voltage=400),
     ]
     # The mill.
@@ -3748,15 +3748,15 @@ def pellet_ports(us):
         ml["built_of"] = ml["built_of"] + [part("Feed hopper, seal and services", A36, 1080.9, "the 1.3 m receiving hopper and its chute into the trunnion, the seal's sleeve, the water and slurry stubs, the 6.6 kV terminal box and their supports; measured on blender's model v2 (2026-10-16)")]
     ml["ports"] = [
         port("ore-in", "in", "bulk", kit.belt_transfer(1.0, sealed=True), (-8, 0, 4), (0, 0, 1), item=ORE, rate=P_ORE, note="the feed chute's hopper at its -x trunnion, flanged for a sealed gallery's drop"),
-        port("water-in", "in", "liquid", kit.flange(0.1, 10, kit.SS), (-8, 1.2, 4), (0, 0, 1), item=WATER, note="the presses' filtrate back, into the feed chute"),
-        port("slurry-out", "out", "liquid", kit.flange(0.15, 10, temp=330.0), (8, 3, 0.5), (0, 1, 0), item=ORE, note="from the sump's pump"),
+        port("water-in", "in", "liquid", kit.flange(0.1, 10, kit.SS), (-8, 1.2, 4), (0, 0, 1), item=WATER, rate=P_ORE * (1 - SLURRY_SOLIDS) / SLURRY_SOLIDS, pressure=2e5, temperature=303.0, note="the presses' filtrate back, with the condensate's make-up, into the feed chute: the slurry's water"),
+        port("slurry-out", "out", "liquid", kit.flange(0.15, 10, temp=330.0), (8, 3, 0.5), (0, 1, 0), item=ORE, rate=P_ORE / SLURRY_SOLIDS, pressure=3e5, temperature=303.0, note="from the sump's pump: ore and water"),
         port("power-in", "in", "power", mv(ml["needs"]["power"]), (6, -4.4, 0.5), (0, -1, 0), power=ml["needs"]["power"], voltage=6600, note="the motor's terminal box"),
     ]
     # The presses.
     fp = us["filter-press-2"]
     fp["ports"] = [
-        port("slurry-in", "in", "liquid", kit.flange(0.15, 10, temp=330.0), (0, -3.25, 9.5), (0, -1, 0), item=ORE),
-        port("filtrate-out", "out", "liquid", kit.flange(0.1, 10, kit.SS), (5, -3.25, 0.5), (0, -1, 0), item=WATER),
+        port("slurry-in", "in", "liquid", kit.flange(0.15, 10, temp=330.0), (0, -3.25, 9.5), (0, -1, 0), item=ORE, rate=P_ORE / SLURRY_SOLIDS, pressure=3e5, temperature=303.0),
+        port("filtrate-out", "out", "liquid", kit.flange(0.1, 10, kit.SS), (5, -3.25, 0.5), (0, -1, 0), item=WATER, rate=P_ORE * (1 - SLURRY_SOLIDS) / SLURRY_SOLIDS - P_WATER, pressure=2e5, temperature=303.0, note="the slurry's water less the cake's"),
         port("cooling-in", "in", "liquid", kit.flange(0.2, 10, temp=330.0), (-5, -3.25, 0.5), (0, -1, 0), item=WATER, rate=q(fp["needs"]["heat"]), temperature=320.0),
         port("cooling-out", "out", "liquid", kit.flange(0.2, 10, temp=330.0), (-4.4, -3.25, 0.5), (0, -1, 0), item=WATER, rate=q(fp["needs"]["heat"]), temperature=330.0),
         port("condensate-in", "in", "liquid", kit.flange(0.05, 10, kit.SS), (4, -3.25, 0.5), (0, -1, 0), item=WATER, rate=P_WATER),
@@ -3778,14 +3778,15 @@ def pellet_ports(us):
     ]
     # The shafts.
     sh = us["pellet-shaft-63th"]
+    m_cool, m_fire, m_gas = pellet_gas()
     sh["ports"] = [
-        port("top-gas-out", "out", "gas", kit.flange(0.7, 10, temp=T_TOPG + K), (0, -3.3, 21.5), (0, -1, 0), item="material.nitrogen", temperature=T_TOPG + K),
-        port("cooling-gas-in", "in", "gas", kit.flange(0.6, 10, temp=T_LOOPC + K), (0, -3.3, 7), (0, -1, 0), item="material.nitrogen", temperature=T_LOOPC + K),
-        port("firing-in-a", "in", "gas", kit.flange(0.25, 10, temp=T_LOOPC + K), (5.55, 0, 12), (1, 0, 0), item="material.nitrogen", note="the +x torch chamber"),
-        port("firing-in-b", "in", "gas", kit.flange(0.25, 10, temp=T_LOOPC + K), (-5.55, 0, 12), (-1, 0, 0), item="material.nitrogen", note="the -x torch chamber"),
+        port("top-gas-out", "out", "gas", kit.flange(0.7, 10, temp=T_TOPG + K), (0, -3.3, 21.5), (0, -1, 0), item="material.nitrogen", rate=m_gas + P_WATER / 2, pressure=PS_P, temperature=T_TOPG + K, note="the loop's nitrogen with the green balls' steam"),
+        port("cooling-gas-in", "in", "gas", kit.flange(0.6, 10, temp=T_LOOPC + K), (0, -3.3, 7), (0, -1, 0), item="material.nitrogen", rate=m_cool, pressure=PS_P, temperature=T_LOOPC + K),
+        port("firing-in-a", "in", "gas", kit.flange(0.25, 10, temp=T_LOOPC + K), (5.55, 0, 12), (1, 0, 0), item="material.nitrogen", rate=m_fire / 2, pressure=PS_P, temperature=T_LOOPC + K, note="the +x torch chamber"),
+        port("firing-in-b", "in", "gas", kit.flange(0.25, 10, temp=T_LOOPC + K), (-5.55, 0, 12), (-1, 0, 0), item="material.nitrogen", rate=m_fire / 2, pressure=PS_P, temperature=T_LOOPC + K, note="the -x torch chamber"),
         port("water-in", "in", "liquid", kit.flange(0.15, 10, temp=330.0), (-0.6, -3.3, 13), (0, -1, 0), item=WATER, rate=q(sh["needs"]["heat"]), temperature=320.0),
         port("water-out", "out", "liquid", kit.flange(0.15, 10, temp=330.0), (0.6, -3.3, 13), (0, -1, 0), item=WATER, rate=q(sh["needs"]["heat"]), temperature=330.0),
-        port("charge-in", "in", "bulk", kit.belt_transfer(0.8, sealed=True), (0, 0, 29.5), (0, 0, 1), item=ORE, note="the charge lock hopper's rim, flanged for a sealed gallery's drop"),
+        port("charge-in", "in", "bulk", kit.belt_transfer(0.8, sealed=True), (0, 0, 29.5), (0, 0, 1), item=ORE, rate=P_ORE / 2 / (1 - MOIST), note="the charge lock hopper's rim, flanged for a sealed gallery's drop: the green balls, their water in"),
         port("discharge-out", "out", "bulk", kit.chute(0.8), (0, 0, 0.8), (0, 0, -1), item=PEL, rate=P_RATE / 2),
         port("power-in", "in", "power", mv(sh["needs"]["power"]), (0, 5.5, 8), (0, 1, 0), power=sh["needs"]["power"], voltage=6600, note="the torches' supplies"),
     ]
@@ -3796,10 +3797,10 @@ def pellet_ports(us):
         gl["desc"] = gl["desc"].replace("the cold gas out by a 700 mm flange at (12, 0, 1.5) facing +x;", "the cold gas out by a 600 mm flange at (12, 0, 1.5) facing +x, the shafts' bore;")
         gl["built_of"] = gl["built_of"] + [part("Dust bins", A36, 1153.0, "two dust-tight 2 m3 floor bins of 5 mm plate with fork runners, and the cyclone's fill neck; measured on model v2")]
     gl["ports"] = [
-        port("top-gas-in", "in", "gas", kit.flange(0.7, 10, temp=T_TOPG + K), (-9, 0, 13), (0, 0, 1), item="material.nitrogen", temperature=T_TOPG + K),
-        port("cold-gas-out", "out", "gas", kit.flange(0.6, 10, temp=T_LOOPC + K), (12, 0, 1.5), (1, 0, 0), item="material.nitrogen", temperature=T_LOOPC + K),
+        port("top-gas-in", "in", "gas", kit.flange(0.7, 10, temp=T_TOPG + K), (-9, 0, 13), (0, 0, 1), item="material.nitrogen", rate=pellet_gas()[2] + P_WATER / 2, pressure=PS_P, temperature=T_TOPG + K),
+        port("cold-gas-out", "out", "gas", kit.flange(0.6, 10, temp=T_LOOPC + K), (12, 0, 1.5), (1, 0, 0), item="material.nitrogen", rate=pellet_gas()[2], pressure=PS_P, temperature=T_LOOPC + K),
         port("condensate-out", "out", "liquid", kit.flange(0.05, 10, kit.SS), (6, 6, 0.3), (0, 1, 0), item=WATER, rate=P_WATER / 2),
-        port("oxygen-in", "in", "gas", kit.flange(0.05, 16, kit.SS, "double"), (9, 6, 1), (0, 1, 0), item="material.oxygen"),
+        dict(port("oxygen-in", "in", "gas", kit.flange(0.05, 16, kit.SS, "double"), (9, 6, 1), (0, 1, 0), item="material.oxygen", rate=0.0, pressure=10e5, temperature=293.0, note="a spare for the hydrogen plant's oxygen, should the loop burn anything; its design takes none"), optional=True),
         port("cooling-in", "in", "liquid", kit.flange(0.3, 10, temp=330.0), (-12, -2, 1), (-1, 0, 0), item=WATER, rate=q(gl["needs"]["heat"]), temperature=320.0),
         port("cooling-out", "out", "liquid", kit.flange(0.3, 10, temp=330.0), (-12, -1.4, 1), (-1, 0, 0), item=WATER, rate=q(gl["needs"]["heat"]), temperature=330.0),
         port("power-in", "in", "power", lv(gl["needs"]["power"]), (10, -6, 0.5), (0, -1, 0), power=gl["needs"]["power"], voltage=400, note="the fan"),
@@ -3962,6 +3963,15 @@ PS_P = 4e5                        # Pa: the shafts' gas loop (see the drag check
 PS_FLUX = 85.0                    # t a m2 a day through a pellet shaft's section, from memory (they ran 80 to 100)
 PS_BED = {"cooling": 6.0, "soaking": 1.0, "firing": 3.0, "preheat": 2.0, "drying": 2.0}   # m of bed, from memory
 CP_PEL_P, CP_N2 = 900.0, 1150.0   # J/kg K: fired pellets, nitrogen hot (from memory)
+SLURRY_SOLIDS = 0.70              # share of ore in the mill's slurry by mass (from memory)
+
+
+def pellet_gas():
+    """One pellet shaft's loop: (kg/s of cooling gas, kg/s through the torch chambers, kg/s in all)."""
+    rate = P_RATE / 2
+    m_cool = rate * CP_PEL_P * (T_FIRE - 100.0) / (CP_N2 * (1150.0 - 50.0))
+    m_fire = P_FIRE / 2 / (CP_N2 * (1350.0 - T_LOOPC))
+    return m_cool, m_fire, m_cool + m_fire
 T_FIRE, T_TOPG, T_LOOPC = 1300.0, 120.0, 65.0   # deg C: firing, the top gas, the gas out of the condenser
 PS_SAT_65 = 25.0e3                # Pa: water's vapour pressure at 65 deg C (steam tables)
 
@@ -4657,6 +4667,41 @@ def products(us):
     return out
 
 
+def complete_duties(us):
+    """SFO 26: every port states its duty. Where a unit's design gives none, a labelled rule does, and the unit's
+    basis says which: power ports' current from their power and voltage (three-phase at 0.9, or direct current);
+    cooling and process water at the pumps' 4 bar, 30 deg C in and 40 out; a spare's duty its interface's envelope."""
+    for slug, u in us.items():
+        ruled = set()
+        for p in u.get("ports", []):
+            env = kit._recs.get(p.get("connector"), {}).get("rating", {})
+            if p["medium"] == "power" and "current" not in p:
+                if p.get("power") and p.get("voltage"):
+                    dc = kit._recs[p["connector"]]["kind"] == "bus-joint" and "-dc-" in p["connector"]
+                    p["current"] = r(p["power"] / p["voltage"] if dc else amps(p["power"], p["voltage"]))
+                    ruled.add("power ports' current from their power and voltage")
+                elif env.get("voltage") and env.get("current"):
+                    p["voltage"], p["current"] = env["voltage"], env["current"]
+                    ruled.add("a spare power port's voltage and current: its interface's")
+            if p["medium"] in ("gas", "liquid"):
+                if p.get("optional") and "pressure" not in p and env.get("pressure"):
+                    p["pressure"] = env["pressure"]
+                    ruled.add("a spare's pressure and temperature: its interface's")
+                if p.get("optional") and "temperature" not in p and env.get("temperature"):
+                    p["temperature"] = env["temperature"]
+                if p.get("item") == "good.water" and "pressure" not in p:
+                    p["pressure"] = 4e5
+                    ruled.add("water at the pumps' 4 bar")
+                if p.get("item") == "good.water" and "temperature" not in p:
+                    p["temperature"] = 303.0 if p["flow"] == "in" else 313.0
+                    ruled.add("water at 30 deg C in and 40 out")
+                if p.get("item") in ("material.argon", "material.nitrogen", "material.oxygen") and "temperature" not in p:
+                    p["temperature"] = 293.0
+                    ruled.add("bottled gas at 20 deg C")
+        if ruled:
+            u["basis"] = list(u.get("basis", [])) + [{"of": ["ports"], "tier": "invented", "review": True, "note": "Duties by rule where the design gives none (SFO 26): " + "; ".join(sorted(ruled)) + "."}]
+
+
 def looks_alike(recs):
     """Kit records that look the same share one model: a run by its kind, outside and material, a connector by its kind,
     size and material. Each group's model is the one a member already has (else the first by key); the others point at
@@ -4722,6 +4767,7 @@ def main():
     arc_ports(us)
     ladle_ports(us)
     air_ports(us)
+    complete_duties(us)
     prods = products(us)
     recs = {slug: unit_record(slug, u) for slug, u in us.items()}
     layouts = {"arc-furnace-air": arc_furnace_air(us, recs), "ladle-station-air": ladle_station_air(us, recs), "casting-bay-air": casting_bay_air(us, recs), "shaft-furnace-air": shaft_furnace_air(us, recs), "hydrogen-plant-air": hydrogen_plant_air(us, recs), "pellet-plant-air": pellet_plant_air(us, recs), "ore-yard-air": ore_yard_air(us, recs), "ingot-yard-air": ingot_yard_air(us, recs), "arc-furnace-airless": arc_furnace_airless(us, recs),

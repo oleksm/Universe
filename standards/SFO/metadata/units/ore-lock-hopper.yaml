@@ -41,13 +41,16 @@ ports:
   flow: in
   medium: gas
   item: material.nitrogen
+  rate: 0.02
+  pressure: 200000.0
+  temperature: 293.0
   interface: interface.flange-dn50-pn10
   half: androgynous
   make: bolted
   connector: connector.flange-dn50-pn10-ss
   at: [1.7, 0.0, 13.3]
   facing: [1.0, 0.0, 0.0]
-  note: from the hall, to fill the lock
+  note: 'from the hall, to fill the lock: about 0.02 kg/s at 2 bar (invented)'
 - id: power-in
   flow: in
   medium: power
@@ -59,6 +62,7 @@ ports:
   connector: connector.termination-400v-16mm2
   at: [3.0, 0.0, 0.5]
   facing: [1.0, 0.0, 0.0]
+  current: 24.06
 - id: base
   flow: out
   medium: load
@@ -87,5 +91,9 @@ basis:
   tier: invented
   review: true
   note: From memory; loads at 60% of the lock filled with ore at 2.3 t/m3.
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage.'
 - of: [life]
   rule: rule.life-plant

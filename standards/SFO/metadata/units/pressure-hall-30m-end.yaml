@@ -47,6 +47,8 @@ ports:
   at: [6.5, -10.2, 10.0]
   facing: [1.0, 0.0, 0.0]
   optional: true
+  pressure: 1000000.0
+  temperature: 373.0
 - id: w1-in
   flow: both
   medium: liquid
@@ -57,6 +59,8 @@ ports:
   at: [5.0, -10.2, 10.0]
   facing: [-1.0, 0.0, 0.0]
   optional: true
+  pressure: 1000000.0
+  temperature: 373.0
 - id: w2-out
   flow: both
   medium: liquid
@@ -67,6 +71,8 @@ ports:
   at: [6.5, -9.6, 10.0]
   facing: [1.0, 0.0, 0.0]
   optional: true
+  pressure: 1000000.0
+  temperature: 373.0
 - id: w2-in
   flow: both
   medium: liquid
@@ -77,6 +83,8 @@ ports:
   at: [5.0, -9.6, 10.0]
   facing: [-1.0, 0.0, 0.0]
   optional: true
+  pressure: 1000000.0
+  temperature: 373.0
 - id: k1-out
   flow: both
   medium: liquid
@@ -87,6 +95,8 @@ ports:
   at: [6.5, -9.0, 10.0]
   facing: [1.0, 0.0, 0.0]
   optional: true
+  pressure: 1000000.0
+  temperature: 373.0
 - id: k1-in
   flow: both
   medium: liquid
@@ -97,6 +107,8 @@ ports:
   at: [5.0, -9.0, 10.0]
   facing: [-1.0, 0.0, 0.0]
   optional: true
+  pressure: 1000000.0
+  temperature: 373.0
 - id: e1-out
   flow: both
   medium: power
@@ -107,6 +119,8 @@ ports:
   at: [6.5, -10.2, 10.8]
   facing: [1.0, 0.0, 0.0]
   optional: true
+  voltage: 6600
+  current: 237.5
 - id: e1-in
   flow: both
   medium: power
@@ -117,6 +131,8 @@ ports:
   at: [5.0, -10.2, 10.8]
   facing: [-1.0, 0.0, 0.0]
   optional: true
+  voltage: 6600
+  current: 237.5
 - id: e2-out
   flow: both
   medium: power
@@ -127,6 +143,8 @@ ports:
   at: [6.5, -9.4, 10.8]
   facing: [1.0, 0.0, 0.0]
   optional: true
+  voltage: 400
+  current: 1250.0
 - id: e2-in
   flow: both
   medium: power
@@ -137,6 +155,8 @@ ports:
   at: [5.0, -9.4, 10.8]
   facing: [-1.0, 0.0, 0.0]
   optional: true
+  voltage: 400
+  current: 1250.0
 - id: nitrogen-in
   flow: in
   medium: gas
@@ -149,6 +169,8 @@ ports:
   facing: [1.0, 0.0, 0.0]
   note: the hall's make-up, let into its gas
   optional: true
+  pressure: 1000000.0
+  temperature: 373.0
 - id: power-in
   flow: in
   medium: power
@@ -161,6 +183,7 @@ ports:
   at: [6.5, -8.6, 10.8]
   facing: [1.0, 0.0, 0.0]
   note: the locks' pumps
+  current: 80.19
 - id: base
   flow: out
   medium: load
@@ -188,5 +211,9 @@ basis:
   tier: derived
   review: true
   note: Measured on blender's candidate (2026-10-16), the lock pumps from memory; local strength provisional.
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): a spare power port''s voltage and current: its interface''s; a spare''s pressure and temperature: its interface''s; power ports'' current from their power and voltage.'
 - of: [life]
   rule: rule.life-plant

@@ -93,6 +93,7 @@ ports:
   at: [-4.7, 2.0, 12.0]
   facing: [-1.0, 0.0, 0.0]
   note: the drives' terminal box on the ring girder's west face
+  current: 641.5
 - id: base
   flow: out
   medium: load
@@ -125,5 +126,9 @@ basis:
   tier: invented
   review: true
   note: 'At 1.6 m/s2 the burden weighs about 3 kPa a metre of bed against the gas''s drag of about 1 (from memory): it still sinks; at 8 bar the gas is slower.'
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage.'
 - of: [life]
   rule: rule.life-plant

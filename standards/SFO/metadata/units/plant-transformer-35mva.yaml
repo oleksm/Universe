@@ -25,6 +25,7 @@ ports:
   connector: connector.termination-33kv-185mm2
   at: [0.0, -0.9, 5.2]
   facing: [0.0, 0.0, 1.0]
+  current: 422.0
 - id: lv-out
   flow: out
   medium: power
@@ -37,6 +38,7 @@ ports:
   at: [0.0, 2.35, 2.9]
   facing: [0.0, 1.0, 0.0]
   note: 2 circuits of 630 mm2
+  current: 2094.0
 - id: cooling-in
   flow: in
   medium: liquid
@@ -49,6 +51,7 @@ ports:
   connector: connector.flange-dn100-pn10
   at: [-2.9, -0.6, 1.0]
   facing: [-1.0, 0.0, 0.0]
+  pressure: 400000.0
 - id: cooling-out
   flow: out
   medium: liquid
@@ -61,6 +64,7 @@ ports:
   connector: connector.flange-dn100-pn10
   at: [-2.9, 0.6, 1.0]
   facing: [-1.0, 0.0, 0.0]
+  pressure: 400000.0
 - id: base
   flow: out
   medium: load
@@ -91,5 +95,9 @@ basis:
   tier: invented
   review: true
   note: Losses 0.5% of its rating, carried off by the cooling loop; from memory.
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage; water at the pumps'' 4 bar.'
 - of: [life]
   rule: rule.life-plant

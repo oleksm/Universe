@@ -33,6 +33,8 @@ ports:
   at: [6.0, -1.6, 0.5]
   facing: [1.0, 0.0, 0.0]
   note: the shaft furnace's condensate and melted ice
+  pressure: 400000.0
+  temperature: 303.0
 - id: clean-out
   flow: out
   medium: liquid
@@ -44,17 +46,22 @@ ports:
   connector: connector.flange-dn100-pn10-ss
   at: [-6.0, 0.0, 0.5]
   facing: [-1.0, 0.0, 0.0]
+  pressure: 400000.0
+  temperature: 313.0
 - id: reject-out
   flow: out
   medium: liquid
   item: good.water
+  rate: 0.9139
   interface: interface.flange-dn150-pn10
   half: androgynous
   make: bolted
   connector: connector.flange-dn150-pn10-ss
   at: [6.0, 3.4, 0.3]
   facing: [1.0, 0.0, 0.0]
-  note: concentrate and backwash, kept
+  note: 'concentrate and backwash, kept: what comes in less what goes out clean'
+  pressure: 400000.0
+  temperature: 313.0
 - id: power-in
   flow: in
   medium: power
@@ -66,6 +73,7 @@ ports:
   connector: connector.termination-400v-25mm2
   at: [-6.0, -3.4, 0.5]
   facing: [-1.0, 0.0, 0.0]
+  current: 56.39
 - id: base
   flow: out
   medium: load
@@ -87,5 +95,9 @@ basis:
   tier: derived
   review: true
   note: 'From the cells'' 17.0 m3/h: the EDI keeps 90%, the bank 85% at 20 L/m2/h on 37.2 m2 elements, six to a tube; the sand filters at 10 m/h, their shells for 7 bar in A36 at 138 MPa (85% joints, 1.5 mm allowance); pumps at 70-75% (feed booster 2.4 kW, high-pressure 8.2 kW, product 2.7 kW), the EDI at 0.4 kWh/m3, 5 kW of controls; backwash 8 kW ten minutes a day, not counted. Fluxes, recoveries and equipment weights from memory.'
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage; water at 30 deg C in and 40 out; water at the pumps'' 4 bar.'
 - of: [life]
   rule: rule.life-plant

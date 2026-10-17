@@ -89,6 +89,7 @@ ports:
   at: [0.0, -6.2, 2.3]
   facing: [0.0, -1.0, 0.0]
   note: 65 kA a phase
+  current: 57740.0
 - id: water-in
   flow: in
   medium: liquid
@@ -101,6 +102,7 @@ ports:
   connector: connector.flange-dn400-pn10
   at: [-4.2, 4.95, 0.5]
   facing: [0.0, 0.0, 1.0]
+  pressure: 400000.0
 - id: water-out
   flow: out
   medium: liquid
@@ -113,6 +115,7 @@ ports:
   connector: connector.flange-dn400-pn10
   at: [-3.4, 4.95, 0.5]
   facing: [0.0, 0.0, 1.0]
+  pressure: 400000.0
 - id: base
   flow: out
   medium: load
@@ -159,5 +162,9 @@ basis:
   tier: invented
   review: true
   note: Sealed as closed ferroalloy furnaces are; not a design that has been built for vacuum.
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage; water at the pumps'' 4 bar.'
 - of: [life]
   rule: rule.life-plant

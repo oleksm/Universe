@@ -22,6 +22,7 @@ ports:
   connector: connector.flange-dn400-pn10
   at: [12.0, -0.6, 0.75]
   facing: [1.0, 0.0, 0.0]
+  pressure: 400000.0
 - id: hall-in
   flow: in
   medium: liquid
@@ -34,6 +35,7 @@ ports:
   connector: connector.flange-dn400-pn10
   at: [12.0, 0.6, 0.75]
   facing: [1.0, 0.0, 0.0]
+  pressure: 400000.0
 - id: duct-out
   flow: out
   medium: liquid
@@ -46,6 +48,7 @@ ports:
   connector: connector.flange-dn300-pn10
   at: [12.0, 3.9, 0.75]
   facing: [1.0, 0.0, 0.0]
+  pressure: 400000.0
 - id: duct-in
   flow: in
   medium: liquid
@@ -58,6 +61,7 @@ ports:
   connector: connector.flange-dn300-pn10
   at: [12.0, 5.1, 0.75]
   facing: [1.0, 0.0, 0.0]
+  pressure: 400000.0
 - id: makeup-in
   flow: in
   medium: liquid
@@ -70,6 +74,8 @@ ports:
   at: [-12.0, 0.0, 0.75]
   facing: [-1.0, 0.0, 0.0]
   note: the evaporation, blowdown and drift made up
+  pressure: 400000.0
+  temperature: 303.0
 - id: power-in
   flow: in
   medium: power
@@ -82,6 +88,7 @@ ports:
   at: [-12.0, -3.0, 1.0]
   facing: [-1.0, 0.0, 0.0]
   note: the fans and the loop's pumps
+  current: 613.8
 - id: base
   flow: out
   medium: load
@@ -106,5 +113,9 @@ basis:
   tier: derived
   review: true
   note: 'The loop''s 18.4 MW at a 10 K rise is 441 kg/s, pumped at 4 bar and 75%: 235 kW; fans 0.8% of the heat (from memory). Evaporating it all takes 8.2 kg/s of water (2.26 MJ/kg); blowdown and drift a quarter more (from memory).'
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage; water at 30 deg C in and 40 out; water at the pumps'' 4 bar.'
 - of: [life]
   rule: rule.life-plant

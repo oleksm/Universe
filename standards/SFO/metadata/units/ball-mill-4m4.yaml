@@ -32,24 +32,30 @@ ports:
   flow: in
   medium: liquid
   item: good.water
+  rate: 14.21
+  pressure: 200000.0
+  temperature: 303.0
   interface: interface.flange-dn100-pn10
   half: androgynous
   make: bolted
   connector: connector.flange-dn100-pn10-ss
   at: [-8.0, 1.2, 4.0]
   facing: [0.0, 0.0, 1.0]
-  note: the presses' filtrate back, into the feed chute
+  note: 'the presses'' filtrate back, with the condensate''s make-up, into the feed chute: the slurry''s water'
 - id: slurry-out
   flow: out
   medium: liquid
   item: good.iron-ore
+  rate: 47.37
+  pressure: 300000.0
+  temperature: 303.0
   interface: interface.flange-dn150-pn10
   half: androgynous
   make: bolted
   connector: connector.flange-dn150-pn10
   at: [8.0, 3.0, 0.5]
   facing: [0.0, 1.0, 0.0]
-  note: from the sump's pump
+  note: 'from the sump''s pump: ore and water'
 - id: power-in
   flow: in
   medium: power
@@ -62,6 +68,7 @@ ports:
   at: [6.0, -4.4, 0.5]
   facing: [0.0, -1.0, 0.0]
   note: the motor's terminal box
+  current: 208.9
 - id: base
   flow: out
   medium: load
@@ -90,5 +97,9 @@ basis:
 - of: [needs.water]
   tier: derived
   note: 'The water the plant loses: the green balls hold 9%, dried off on the grate; the rest of the grinding water comes back from the filters.'
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage.'
 - of: [life]
   rule: rule.life-plant

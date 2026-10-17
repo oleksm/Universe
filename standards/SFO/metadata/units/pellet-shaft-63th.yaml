@@ -32,6 +32,8 @@ ports:
   flow: out
   medium: gas
   item: material.nitrogen
+  rate: 22.34
+  pressure: 400000.0
   temperature: 393.1
   interface: interface.flange-dn700-pn10
   half: androgynous
@@ -39,10 +41,13 @@ ports:
   connector: connector.flange-dn700-pn10
   at: [0.0, -3.3, 21.5]
   facing: [0.0, -1.0, 0.0]
+  note: the loop's nitrogen with the green balls' steam
 - id: cooling-gas-in
   flow: in
   medium: gas
   item: material.nitrogen
+  rate: 14.82
+  pressure: 400000.0
   temperature: 338.1
   interface: interface.flange-dn600-pn10
   half: androgynous
@@ -54,6 +59,9 @@ ports:
   flow: in
   medium: gas
   item: material.nitrogen
+  rate: 2.937
+  pressure: 400000.0
+  temperature: 338.1
   interface: interface.flange-dn250-pn10
   half: androgynous
   make: bolted
@@ -65,6 +73,9 @@ ports:
   flow: in
   medium: gas
   item: material.nitrogen
+  rate: 2.937
+  pressure: 400000.0
+  temperature: 338.1
   interface: interface.flange-dn250-pn10
   half: androgynous
   make: bolted
@@ -84,6 +95,7 @@ ports:
   connector: connector.flange-dn150-pn10
   at: [-0.6, -3.3, 13.0]
   facing: [0.0, -1.0, 0.0]
+  pressure: 400000.0
 - id: water-out
   flow: out
   medium: liquid
@@ -96,17 +108,19 @@ ports:
   connector: connector.flange-dn150-pn10
   at: [0.6, -3.3, 13.0]
   facing: [0.0, -1.0, 0.0]
+  pressure: 400000.0
 - id: charge-in
   flow: in
   medium: bulk
   item: good.iron-ore
+  rate: 18.22
   interface: interface.belt-transfer-800-sealed
   half: female
   make: open
   connector: connector.belt-transfer-800-sealed
   at: [0.0, 0.0, 29.5]
   facing: [0.0, 0.0, 1.0]
-  note: the charge lock hopper's rim, flanged for a sealed gallery's drop
+  note: 'the charge lock hopper''s rim, flanged for a sealed gallery''s drop: the green balls, their water in'
 - id: discharge-out
   flow: out
   medium: bulk
@@ -130,6 +144,7 @@ ports:
   at: [0.0, 5.5, 8.0]
   facing: [0.0, 1.0, 0.0]
   note: the torches' supplies
+  current: 942.3
 - id: base
   flow: out
   medium: load
@@ -161,5 +176,9 @@ basis:
   tier: derived
   review: true
   note: 'Ergun''s equation for 12 mm pellets, voids 0.4, gas at 700 deg C: drag 1607 Pa/m against the bed''s weight 3360 at 1.6 m/s2, with half again to spare. The gas flow from the heat balance: the pellets cooled from 1300 to 100 deg C by gas warmed from 50 to 1,150, and the torches'' share heated from 65 to 1,350.'
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage; water at the pumps'' 4 bar.'
 - of: [life]
   rule: rule.life-plant

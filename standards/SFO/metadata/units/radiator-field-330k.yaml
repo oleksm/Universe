@@ -28,6 +28,7 @@ ports:
   connector: connector.flange-dn150-pn10
   at: [-23.0, -24.0, 1.0]
   facing: [0.0, -1.0, 0.0]
+  pressure: 400000.0
 - id: water-out
   flow: out
   medium: liquid
@@ -40,6 +41,7 @@ ports:
   connector: connector.flange-dn150-pn10
   at: [-22.4, -24.0, 1.0]
   facing: [0.0, -1.0, 0.0]
+  pressure: 400000.0
 - id: power-in
   flow: in
   medium: power
@@ -52,6 +54,7 @@ ports:
   at: [-21.8, -24.0, 0.3]
   facing: [0.0, -1.0, 0.0]
   note: its circulating pump
+  current: 15.57
 - id: base
   flow: out
   medium: load
@@ -79,5 +82,9 @@ basis:
   tier: derived
   review: true
   note: From the panel's sheets and tubes; pumps at 3 bar and 75%.
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage; water at the pumps'' 4 bar.'
 - of: [life]
   rule: rule.life-plant

@@ -65,6 +65,7 @@ ports:
   at: [3.0, 0.0, 1.0]
   facing: [1.0, 0.0, 0.0]
   note: a terminal box on its east legs' brace, the feeder's cable up the leg
+  current: 24.06
 - id: base
   flow: out
   medium: load
@@ -89,5 +90,9 @@ basis:
   tier: derived
   review: true
   note: Two hours of the furnace's sponge iron (29.3 kg/s) at about 1,700 kg/m3 in bulk (from memory). The feeder's outlet 6 m up for the conveyor, the feeder 0.8 m under the cone (blender, 2026-10-14). Legs in compression about 25 MPa full; their bracing and the wind on the bin not checked.
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage.'
 - of: [life]
   rule: rule.life-plant

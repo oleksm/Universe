@@ -26,6 +26,7 @@ ports:
   at: [0.0, -0.95625, 7.55]
   facing: [0.0, 0.0, 1.0]
   note: the HV cable box's gland plate, over the three bushings; 132 kV chosen
+  current: 592.4
 - id: lv-out
   flow: out
   medium: power
@@ -38,6 +39,7 @@ ports:
   at: [0.0, 3.35, 4.5]
   facing: [0.0, 1.0, 0.0]
   note: the secondary terminals, 8 circuits
+  current: 11790.0
 - id: water-in
   flow: in
   medium: liquid
@@ -50,6 +52,7 @@ ports:
   connector: connector.flange-dn150-pn10
   at: [-4.55, -0.6, 1.0]
   facing: [-1.0, 0.0, 0.0]
+  pressure: 400000.0
 - id: water-out
   flow: out
   medium: liquid
@@ -61,6 +64,8 @@ ports:
   connector: connector.flange-dn150-pn10
   at: [-4.55, 0.6, 1.0]
   facing: [-1.0, 0.0, 0.0]
+  pressure: 400000.0
+  temperature: 313.0
 - id: base
   flow: out
   medium: load
@@ -91,5 +96,9 @@ basis:
   tier: invented
   review: true
   note: Losses 0.5% of its rating, carried off by the cooling loop; from memory.
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage; water at 30 deg C in and 40 out; water at the pumps'' 4 bar.'
 - of: [life]
   rule: rule.life-plant

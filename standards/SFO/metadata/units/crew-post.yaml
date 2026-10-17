@@ -22,6 +22,7 @@ ports:
   at: [3.0, 0.0, 2.3]
   facing: [1.0, 0.0, 0.0]
   note: a gland on a pad on its +x end's dome, on the axis; the cable through the berm
+  current: 32.08
 - id: base
   flow: out
   medium: load
@@ -44,5 +45,9 @@ basis:
   tier: invented
   review: true
   note: From memory.
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage.'
 - of: [life]
   rule: rule.life-plant

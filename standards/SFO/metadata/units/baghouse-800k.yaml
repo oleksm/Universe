@@ -15,13 +15,17 @@ ports:
 - id: gas-in
   flow: in
   medium: gas
+  item: material.air
+  rate: 183.2
+  pressure: 98000.0
+  temperature: 423.0
   interface: interface.flange-dn2000-pn1
   half: androgynous
   make: bolted
   connector: connector.flange-dn2000-pn1
   at: [0.0, -6.0, 15.0]
   facing: [0.0, -1.0, 0.0]
-  note: the furnace's gas burnt in the air drawn in at the hood, and diluted
+  note: 'the furnace''s gas burnt in the air drawn in at the hood, and diluted: 800,000 m3/h at about 150 deg C (invented), drawn a little under the air''s pressure'
 - id: power-in
   flow: in
   medium: power
@@ -34,6 +38,7 @@ ports:
   at: [12.0, 3.0, 1.0]
   facing: [1.0, 0.0, 0.0]
   note: the two fans
+  current: 115.2
 - id: base
   flow: out
   medium: load
@@ -58,5 +63,9 @@ basis:
 - of: [holds]
   tier: derived
   note: Four hours of the recipe's dust in the hoppers.
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage.'
 - of: [life]
   rule: rule.life-plant

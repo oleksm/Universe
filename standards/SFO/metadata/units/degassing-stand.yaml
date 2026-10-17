@@ -25,6 +25,7 @@ ports:
   at: [-3.3, -3.1, 0.6]
   facing: [-1.0, 0.0, 0.0]
   note: to the ladle's porous plug by the stand's hose
+  temperature: 293.0
 - id: power-in
   flow: in
   medium: power
@@ -36,6 +37,7 @@ ports:
   connector: connector.termination-400v-25mm2
   at: [-3.3, -2.6, 1.2]
   facing: [-1.0, 0.0, 0.0]
+  current: 48.11
 - id: base
   flow: out
   medium: load
@@ -68,5 +70,9 @@ basis:
   tier: derived
   review: true
   note: Radiation from 7 m2 of melt at 1,873 K at emissivity 0.9; 80 t at 820 J/kg K.
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): bottled gas at 20 deg C; power ports'' current from their power and voltage.'
 - of: [life]
   rule: rule.life-plant
