@@ -12,7 +12,7 @@ identity:
 size_class: 2
 fits: mount.radiator-hot-s2
 physical:
-  mass: 24264.2
+  mass: 27604.2
   volume: 34.2
   length: 35.925
   width: 23.575
@@ -64,13 +64,15 @@ built_of:
   - code: RAH2-03
     name: Hinge, drive and root joints
     description: 'Root hinge brackets on the hull, the deploy drive, tip latches that hold it stowed, and the hinge crossings: each header splits at its moving end into six DN200 molybdenum-rhenium corrugated hoses (about 0.23 m outside,
-      4.1 m/s of lithium), wound round the hinge axis like S1''s (clock-spring), bend radius at least 0.95 m (4 x outside), about 5.4 m of hose each, in a root pod beyond the panel''s -y end.'
-    mass: 1500
+      4.1 m/s of lithium), wound round the hinge axis like S1''s (clock-spring), bend radius at least 0.95 m (4 x outside), about 5.4 m of hose each, in a root pod beyond the panel''s -y end. Mass: the supports and pins as modelled,
+      2,769.6 kg (blender, 8 mm hollow Mo pod members); the twelve hoses about 1,770 kg (DN200 Mo-Re corrugated, about 1 mm wall doubled by the corrugation, with braid: about 27 kg/m x 5.4 m); the drive, gearbox and tip latches 300
+      kg (invented).'
+    mass: 4840
     length: 16.5
     width: 0.5
     height: 0.65
     item: stock.mo-tb-12x0p5
-    quantity: 1725.0
+    quantity: 5566.0
     module: module.machining-centre
   - code: RAH2-06
     name: Collectors, drops and hose cuffs
@@ -158,3 +160,8 @@ basis:
   tier: derived
   note: 'Rest bounds and part masses of blender''s S2 model (2026-10-17): x -2.90 to 33.025, y -14.6 to 8.975, z -1.924 to 2.108 with the hose pod and collectors; the panel itself 33 x 16.5 x 0.65. Tubes, headers, frame and collectors
     as modelled; 24,264.2 kg in all.'
+- of:
+  - built_of.list
+  tier: derived
+  review: true
+  note: Hinge and root joints from blender's hardware audit (2026-10-17) plus the hoses (Mo-Re about 13,500 kg/m3, from memory) and an invented drive allowance.
