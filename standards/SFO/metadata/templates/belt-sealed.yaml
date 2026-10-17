@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/template.schema.yaml
+identity:
+  key: template.belt-sealed
+  name: Belt conveyor in a sealed gallery
+  description: Belts in a gas-tight gallery. Its straight is swept along the run's path; every size of the family is this template at the record's figures.
+family: belt
+draws: sweep-and-pieces
+profile: the 3 m gallery tube with its belt inside
+scales_by:
+- outside
+- size
+pieces:
+- name: ring
+  how: a stiffening ring every 3 m
+- name: head and tail boxes
+  how: the sealed boxes
+- name: support
+  how: every 9 m
+model_of: run.belt-1000-sealed
+members: 2
+basis:
+- of:
+  - draws
+  - scales_by
+  - pieces
+  - model_of
+  tier: derived
+  note: 'The owner, 2026-10-17: one template a family, scaled, instead of a model a size; model_of is an installed size''s model, the middle one of those installed, until the template has its own.'

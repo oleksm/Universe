@@ -13,6 +13,7 @@ built_of:
 - {what: Lining joint, item: material.silica-aerogel, mass: 17.3, note: the refractory's joint packed with 50 mm of silica fibre; silica aerogel stands for it}
 interface: interface.lined-flange-dn2400-pn16-double
 provides: both
+template: template.lined-flange
 visual: {format: freefall-model/1, path: models/lined-flange-dn2400-pn16-double/v1, manifest_sha256: 121089bc5f42784391a0802935702ea514624ca6d5dba5d5c21f3d868f3b2a5c, version: 1, triangles: 11898}
 basis:
 - of: [built_of, physical]

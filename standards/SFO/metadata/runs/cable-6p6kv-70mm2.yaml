@@ -21,7 +21,6 @@ repeat:
 - {piece: rung, pitch: 0.3}
 connector: connector.termination-6p6kv-70mm2
 carries: power
-looks_as: run.cable-400v-185mm2
 basis:
 - of: [per_m]
   tier: derived
@@ -31,3 +30,4 @@ basis:
   tier: invented
   review: true
   note: 'Tray posts every 3 m; a tee is a joint box; the cores'' least bend radius 15 cable diameters (from memory): a riser bends all three at it, an elbow in plan has its axis one core''s pitch further out so the inner core keeps it.'
+template: template.cable

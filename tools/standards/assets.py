@@ -23,6 +23,7 @@ KINDS = {
     "package": ("SFO/metadata/packages", 20_000),
     "connector": ("SFO/metadata/connectors", 12_000),
     "run": ("SFO/metadata/runs", 12_000),
+    "template": ("SFO/metadata/templates", 12_000),
 }
 # A model's size against its record's, each of the three sorted dimensions: at least LOW and at most HIGH of the record's.
 LOW, HIGH = 0.85, 1.10

@@ -22,3 +22,4 @@ basis:
   note: The lining's joint from memory.
 interface: interface.lined-flange-dn3600-pn10-double
 provides: both
+template: template.lined-flange

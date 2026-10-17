@@ -155,93 +155,93 @@
 - { record: clock.realtime, at: "2026-10-06T23:04:34Z", status: review, summary: "changed: runs", sha: "643b9d6698cc2d64" }
 - { record: clock.region, at: "2026-10-06T23:04:34Z", status: review, summary: "changed: runs", sha: "a76e6a037ad0a281" }
 - { record: clock.system, at: "2026-10-06T22:07:52Z", status: review, summary: "first tracked", sha: "a1ce985910bb5ae9" }
-- { record: connector.belt-transfer-1000, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "29d08f7f499704f3" }
-- { record: connector.belt-transfer-1000-sealed, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "ead091adfcee3c7a" }
-- { record: connector.belt-transfer-1200, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "c280f94c32978fbb" }
-- { record: connector.belt-transfer-1400, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "a7f1225b13692498" }
-- { record: connector.belt-transfer-650, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "f680450db1ff081f" }
-- { record: connector.belt-transfer-800, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "4501704e778a6875" }
-- { record: connector.belt-transfer-800-sealed, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "b58e5934f792b40b" }
-- { record: connector.bus-joint-ac-27ka, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "df6bc962a6f214fa" }
-- { record: connector.bus-joint-ac-65ka, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "fbf0548999dc2993" }
-- { record: connector.bus-joint-dc-44ka, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "adc8f5e15ab7fc02" }
-- { record: connector.chute-dn1000, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "cc55f3541f664bfa" }
-- { record: connector.chute-dn400, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "afebb98325f95b1b" }
-- { record: connector.chute-dn600, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "10e2efde93edec43" }
-- { record: connector.chute-dn800, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "276a0ca0fb0d32a4" }
-- { record: connector.clamp-coupling-dn1200, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "d05e2fd873da6549" }
-- { record: connector.flange-dn100-pn10, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "e9ddd5038df915c2" }
-- { record: connector.flange-dn100-pn10-ss, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "91bec422ada45625" }
-- { record: connector.flange-dn100-pn16-ss-double, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "9ec9772e50fa14ea" }
-- { record: connector.flange-dn100-pn25, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "8b1ea7f13fca8846" }
-- { record: connector.flange-dn1000-pn1, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "911e7f3814fc19ef" }
-- { record: connector.flange-dn1000-pn10, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "220cc93181401838" }
-- { record: connector.flange-dn1000-pn16-double, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "03ece4c3e6abd261" }
-- { record: connector.flange-dn1200-pn1, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "dc6eb2895590a2ff" }
-- { record: connector.flange-dn1200-pn10-double, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "d6b2cac290cb249c" }
-- { record: connector.flange-dn1400-pn10, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "b921b496991d5fad" }
-- { record: connector.flange-dn150-pn10, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "704079262e8c187e" }
-- { record: connector.flange-dn150-pn10-ss, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "d66826590856a81f" }
-- { record: connector.flange-dn150-pn16-ss-double, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "f30dcc96457bb5f8" }
-- { record: connector.flange-dn150-pn25, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "4a0cf2a5dae7085e" }
-- { record: connector.flange-dn1600-pn16-double, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "ff7d0b52262cbbab" }
-- { record: connector.flange-dn1800-pn10-double, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "44b53e9093551d14" }
-- { record: connector.flange-dn200-pn1-ss, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "1b512e604e38b52e" }
-- { record: connector.flange-dn200-pn10, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "ba84e3d3fcad652d" }
-- { record: connector.flange-dn200-pn10-ss, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "148d5eeee35f4add" }
-- { record: connector.flange-dn200-pn16-ss-double, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "7cb8ec06e1328476" }
-- { record: connector.flange-dn2000-pn1, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "ac7e1f058773df7c" }
-- { record: connector.flange-dn2000-pn10-double, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "1d9ea095dfb98a9d" }
-- { record: connector.flange-dn2200-pn10-double, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "e15c0c7d5a147e56" }
-- { record: connector.flange-dn2400-pn10-double, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "ff6f555361cc8127" }
-- { record: connector.flange-dn250-pn10, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "1502f3d9ead0a023" }
-- { record: connector.flange-dn250-pn10-ss-double, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "d9ede1343c80f269" }
-- { record: connector.flange-dn250-pn16-ss-double, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "284c77e504408f3d" }
-- { record: connector.flange-dn2800-pn10-double, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "f161b59e1b25105a" }
-- { record: connector.flange-dn300-pn10, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "61ac41e752bf82d3" }
-- { record: connector.flange-dn3000-pn1-double, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "fca6a21603baeb0f" }
-- { record: connector.flange-dn350-pn10, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "2c9257bf11be7088" }
-- { record: connector.flange-dn350-pn10-ss, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "737f57687c322a06" }
-- { record: connector.flange-dn3600-pn10-double, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "05a151812ee093c1" }
-- { record: connector.flange-dn400-pn10, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "65a7f22b9ccd59db" }
-- { record: connector.flange-dn450-pn10, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "da6332b756259f08" }
-- { record: connector.flange-dn450-pn10-ss-double, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "8ba46e4a3cfcdf8e" }
-- { record: connector.flange-dn50-pn10-ss, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "f8d13baae1ee845b" }
-- { record: connector.flange-dn50-pn16-ss, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "7d6f6ab57092aad1" }
-- { record: connector.flange-dn50-pn16-ss-double, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "02158be413c6c361" }
-- { record: connector.flange-dn500-pn10, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "64495900ba155f63" }
-- { record: connector.flange-dn600-pn10, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "719f6adc0f516066" }
-- { record: connector.flange-dn700-pn10, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "bc150bb156c5c8d2" }
-- { record: connector.flange-dn900-pn10, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "722a74ba84d2d805" }
-- { record: connector.hood-dn2000, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "72cff984be1f3149" }
-- { record: connector.lined-flange-dn1200-pn1, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "8ccd44b7b5f92bfc" }
-- { record: connector.lined-flange-dn2400-pn16-double, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "61bf66a8c271bdb0" }
-- { record: connector.lined-flange-dn3600-pn10-double, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "79d9ce5b05ba49ff" }
-- { record: connector.termination-11kv-500mm2, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "247426466c6fb95e" }
-- { record: connector.termination-132kv-240mm2, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "9335da3fea000f85" }
-- { record: connector.termination-33kv-120mm2, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "87f64c9449255627" }
-- { record: connector.termination-33kv-150mm2, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "a9afc35353ffa2c2" }
-- { record: connector.termination-33kv-185mm2, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "fc671284360b4545" }
-- { record: connector.termination-33kv-630mm2, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "f9db8daeb831ba57" }
-- { record: connector.termination-400v-120mm2, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "d668a96b332b191c" }
-- { record: connector.termination-400v-16mm2, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "a656f7401f2d9d9e" }
-- { record: connector.termination-400v-185mm2, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "72108d9f6161d361" }
-- { record: connector.termination-400v-240mm2, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "8a226a3854018a67" }
-- { record: connector.termination-400v-25mm2, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "78bbe9b9122570a5" }
-- { record: connector.termination-400v-300mm2, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "88b930c9feae51fc" }
-- { record: connector.termination-400v-35mm2, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "a5d33d67d50ed55e" }
-- { record: connector.termination-400v-400mm2, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "6236519c1f1e7401" }
-- { record: connector.termination-400v-500mm2, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "5d64ded65124d999" }
-- { record: connector.termination-400v-50mm2, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "ab0103e7d0879513" }
-- { record: connector.termination-400v-630mm2, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "7cf160752b0fa144" }
-- { record: connector.termination-400v-70mm2, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "8979c2a73819ec60" }
-- { record: connector.termination-400v-95mm2, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "340523cc656bafb1" }
-- { record: connector.termination-6p6kv-185mm2, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "f0c5f7fed78fe01d" }
-- { record: connector.termination-6p6kv-400mm2, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "f960f1e3de4a4807" }
-- { record: connector.termination-6p6kv-50mm2, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "76de5cf7456d715d" }
-- { record: connector.termination-6p6kv-630mm2, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "c8d33c038d273e2e" }
-- { record: connector.termination-6p6kv-70mm2, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "fe48018dec3a8267" }
-- { record: connector.termination-6p6kv-95mm2, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: interface, provides", sha: "211b02df10716409" }
+- { record: connector.belt-transfer-1000, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "d789f2fafe348745" }
+- { record: connector.belt-transfer-1000-sealed, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "9c71d9ac532ad106" }
+- { record: connector.belt-transfer-1200, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "799c2387880c73e4" }
+- { record: connector.belt-transfer-1400, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "8d9875e6244ea076" }
+- { record: connector.belt-transfer-650, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "7527e28fcce95f17" }
+- { record: connector.belt-transfer-800, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "6c6cc076f926825d" }
+- { record: connector.belt-transfer-800-sealed, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "a21a8c8e808ce5d5" }
+- { record: connector.bus-joint-ac-27ka, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "2de9d9b166b8f93e" }
+- { record: connector.bus-joint-ac-65ka, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "d82644892316fabe" }
+- { record: connector.bus-joint-dc-44ka, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "c8075f22abdbf3e7" }
+- { record: connector.chute-dn1000, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "3b3c6afd93ffc24e" }
+- { record: connector.chute-dn400, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "249eeb811c9dc969" }
+- { record: connector.chute-dn600, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "239672a4c8f7692d" }
+- { record: connector.chute-dn800, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "3321a89a50168059" }
+- { record: connector.clamp-coupling-dn1200, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "0de77f5f98016bdf" }
+- { record: connector.flange-dn100-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "8620055f6fd1811b" }
+- { record: connector.flange-dn100-pn10-ss, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "f4fea09af5e95a9b" }
+- { record: connector.flange-dn100-pn16-ss-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "2330bc07e88f41d3" }
+- { record: connector.flange-dn100-pn25, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "c023130d7d929904" }
+- { record: connector.flange-dn1000-pn1, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "a7730fc86b3dd660" }
+- { record: connector.flange-dn1000-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "68760b14fcef7700" }
+- { record: connector.flange-dn1000-pn16-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "60506074133bc610" }
+- { record: connector.flange-dn1200-pn1, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "a729c5ba09d1c63c" }
+- { record: connector.flange-dn1200-pn10-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "c05d92053c9e5558" }
+- { record: connector.flange-dn1400-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "588d47fcb1d3077f" }
+- { record: connector.flange-dn150-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "e2953724a063211b" }
+- { record: connector.flange-dn150-pn10-ss, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "0670d47a7a0bee17" }
+- { record: connector.flange-dn150-pn16-ss-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "cdf462a59467f88b" }
+- { record: connector.flange-dn150-pn25, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "2c0f708a61454656" }
+- { record: connector.flange-dn1600-pn16-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "0f53e2769d83ca31" }
+- { record: connector.flange-dn1800-pn10-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "e3a1d18b9f393532" }
+- { record: connector.flange-dn200-pn1-ss, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "c33f56318292ea83" }
+- { record: connector.flange-dn200-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "1d7c0e71bc111089" }
+- { record: connector.flange-dn200-pn10-ss, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "2eb1747a7e12a6d3" }
+- { record: connector.flange-dn200-pn16-ss-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "3f120798decaa75b" }
+- { record: connector.flange-dn2000-pn1, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "562d1ae43d058178" }
+- { record: connector.flange-dn2000-pn10-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "ae457df6a0105a3e" }
+- { record: connector.flange-dn2200-pn10-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "67f59904001142ca" }
+- { record: connector.flange-dn2400-pn10-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "c200df3d22fee4a8" }
+- { record: connector.flange-dn250-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "b2083d0a79af87ed" }
+- { record: connector.flange-dn250-pn10-ss-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template, looks_as", sha: "8100c3decf502e68" }
+- { record: connector.flange-dn250-pn16-ss-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "7703fed47ec569d8" }
+- { record: connector.flange-dn2800-pn10-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "084d45309b91311f" }
+- { record: connector.flange-dn300-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "3645a7ab786b0bc0" }
+- { record: connector.flange-dn3000-pn1-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "0e4dc14efc5244d5" }
+- { record: connector.flange-dn350-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "51f24f4c8263d095" }
+- { record: connector.flange-dn350-pn10-ss, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "46fa6a2c55656add" }
+- { record: connector.flange-dn3600-pn10-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "f43a13e2e14ba050" }
+- { record: connector.flange-dn400-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "f5232b246aa6bed6" }
+- { record: connector.flange-dn450-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "85e124504d2a0cb6" }
+- { record: connector.flange-dn450-pn10-ss-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "68f069409930c9e6" }
+- { record: connector.flange-dn50-pn10-ss, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "81ef207c994a06e8" }
+- { record: connector.flange-dn50-pn16-ss, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "267c64f03281e489" }
+- { record: connector.flange-dn50-pn16-ss-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "d8021d872823aa18" }
+- { record: connector.flange-dn500-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "24c80907033aa327" }
+- { record: connector.flange-dn600-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "0b731818b1ee1180" }
+- { record: connector.flange-dn700-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "e6a4835702872c76" }
+- { record: connector.flange-dn900-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "43e5d4d96ca89c2f" }
+- { record: connector.hood-dn2000, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "e034527157c4a0bc" }
+- { record: connector.lined-flange-dn1200-pn1, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "a3508423bbfa95b2" }
+- { record: connector.lined-flange-dn2400-pn16-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "250ee52b4dee6fc9" }
+- { record: connector.lined-flange-dn3600-pn10-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "eaf49c50b35ba4b3" }
+- { record: connector.termination-11kv-500mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "8b2c1633ea36234b" }
+- { record: connector.termination-132kv-240mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "f05b65d2e83b93c4" }
+- { record: connector.termination-33kv-120mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "749c2fe74fadb727" }
+- { record: connector.termination-33kv-150mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "f7510739e1935c10" }
+- { record: connector.termination-33kv-185mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "e99ba6884d794a42" }
+- { record: connector.termination-33kv-630mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "e4bd089a94c4e820" }
+- { record: connector.termination-400v-120mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "03df84697428528d" }
+- { record: connector.termination-400v-16mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "5662b438dcf535f6" }
+- { record: connector.termination-400v-185mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "6cafe376d9e11c2d" }
+- { record: connector.termination-400v-240mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "6dee4c7ad1560699" }
+- { record: connector.termination-400v-25mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "b23fe16ebde37ade" }
+- { record: connector.termination-400v-300mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "f615fb83fb7e5635" }
+- { record: connector.termination-400v-35mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "01a49ae3af5a16fe" }
+- { record: connector.termination-400v-400mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "bf3ed6f7ba7d8b98" }
+- { record: connector.termination-400v-500mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "24d1ddedee3aa676" }
+- { record: connector.termination-400v-50mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "216635d3cc88cf47" }
+- { record: connector.termination-400v-630mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "c72234770e3210a0" }
+- { record: connector.termination-400v-70mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "1782601e0579cf23" }
+- { record: connector.termination-400v-95mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "925f71c6626db27e" }
+- { record: connector.termination-6p6kv-185mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "fae912c01436323a" }
+- { record: connector.termination-6p6kv-400mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "cc7db5f20e6aa81e" }
+- { record: connector.termination-6p6kv-50mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template, looks_as", sha: "09a7014c91264c6a" }
+- { record: connector.termination-6p6kv-630mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "8f4b2d93afe67c6f" }
+- { record: connector.termination-6p6kv-70mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "6808ecca95e1a764" }
+- { record: connector.termination-6p6kv-95mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "3c36ff1d41d6a876" }
 - { record: deposit-type.bauxite, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "d94a18af510f0854" }
 - { record: deposit-type.beach-sands, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "45c5674677db6276" }
 - { record: deposit-type.carbonate-zinc-lead, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "96b202768287d1b7" }
@@ -2298,90 +2298,90 @@
 - { record: rule.mounts-margin, at: "2026-10-13T05:32:00Z", status: review, summary: "changed: statement", sha: "88491f348e30a319" }
 - { record: rule.plant-weights-from-memory, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "d4bff33987b75c18" }
 - { record: rule.shares-chosen, at: "2026-10-07T03:53:08Z", status: review, summary: "first tracked", sha: "2f29f0362d9d7f04" }
-- { record: run.belt-1000, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "626e34eb98eabed0" }
-- { record: run.belt-1000-sealed, at: "2026-10-16T21:29:54Z", status: draft, summary: "changed", sha: "22f6658a75ed8293" }
-- { record: run.belt-1200, at: "2026-10-16T13:57:34Z", status: draft, summary: "changed", sha: "1f38dc7c62f3bc04" }
-- { record: run.belt-1400, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "864797af24a5a9c1" }
-- { record: run.belt-650, at: "2026-10-17T00:55:31Z", status: draft, summary: "changed: visual", sha: "f6e1b1c6142fbb48" }
-- { record: run.belt-800, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "9a0ed5cfa818f651" }
-- { record: run.belt-800-sealed, at: "2026-10-16T21:25:19Z", status: draft, summary: "changed", sha: "77e75e5a932a8b68" }
-- { record: run.busbar-ac-27ka, at: "2026-10-17T02:21:58Z", status: draft, summary: "changed", sha: "f6a6e8ed2505dd01" }
-- { record: run.busbar-ac-65ka, at: "2026-10-16T23:54:33Z", status: draft, summary: "changed", sha: "7cf096505559f3c1" }
-- { record: run.busbar-dc-44ka, at: "2026-10-16T17:53:48Z", status: draft, summary: "changed", sha: "6023b472f070244d" }
-- { record: run.cable-11kv-500mm2, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "47b54678a8f93fa5" }
-- { record: run.cable-132kv-240mm2, at: "2026-10-16T14:27:23Z", status: draft, summary: "changed", sha: "a9ec16eca6f7cb97" }
-- { record: run.cable-33kv-120mm2, at: "2026-10-17T01:10:16Z", status: draft, summary: "changed: visual", sha: "043b34ea018d20da" }
-- { record: run.cable-33kv-150mm2, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "79c7d7b4785a7e8c" }
-- { record: run.cable-33kv-185mm2, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "b061102d1be239ea" }
-- { record: run.cable-33kv-630mm2, at: "2026-10-17T00:19:54Z", status: draft, summary: "changed: visual", sha: "bc772fc5b3d5f1bf" }
-- { record: run.cable-400v-120mm2, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "6959dc201aa7f158" }
-- { record: run.cable-400v-16mm2, at: "2026-10-16T15:00:44Z", status: draft, summary: "changed", sha: "cfb30272054f79df" }
-- { record: run.cable-400v-185mm2, at: "2026-10-16T17:53:48Z", status: draft, summary: "changed", sha: "86eceb2e9b76be21" }
-- { record: run.cable-400v-240mm2, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "dc4eafaacdbc150d" }
-- { record: run.cable-400v-25mm2, at: "2026-10-16T17:53:48Z", status: draft, summary: "changed", sha: "64fe2966c62d3c4a" }
-- { record: run.cable-400v-300mm2, at: "2026-10-16T15:00:44Z", status: draft, summary: "changed", sha: "5cebac78985498fb" }
-- { record: run.cable-400v-35mm2, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "9ebef5e297096e7c" }
-- { record: run.cable-400v-400mm2, at: "2026-10-16T15:00:44Z", status: draft, summary: "changed", sha: "4328451b6693e2b9" }
-- { record: run.cable-400v-500mm2, at: "2026-10-16T17:53:48Z", status: draft, summary: "changed", sha: "ba88c3730204417f" }
-- { record: run.cable-400v-50mm2, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "e85661596ded03fc" }
-- { record: run.cable-400v-630mm2, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "3082ce64204c59c6" }
-- { record: run.cable-400v-70mm2, at: "2026-10-16T15:00:44Z", status: draft, summary: "changed", sha: "b6b7663469ba5005" }
-- { record: run.cable-400v-95mm2, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "8f862bd39bded747" }
-- { record: run.cable-6p6kv-185mm2, at: "2026-10-16T15:00:44Z", status: draft, summary: "changed", sha: "9b4aa85b44f0a228" }
-- { record: run.cable-6p6kv-400mm2, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "01c27684673b0aa5" }
-- { record: run.cable-6p6kv-50mm2, at: "2026-10-17T02:21:58Z", status: draft, summary: "first tracked", sha: "4bc514af86ee1855" }
-- { record: run.cable-6p6kv-630mm2, at: "2026-10-16T15:00:44Z", status: draft, summary: "changed", sha: "4cc50b993ad87b52" }
-- { record: run.cable-6p6kv-70mm2, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "b53087f04d2786b5" }
-- { record: run.cable-6p6kv-95mm2, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "c646f4aefb7084ce" }
-- { record: run.drag-conveyor-800, at: "2026-10-16T13:57:34Z", status: draft, summary: "changed", sha: "c95d3e66137c7600" }
-- { record: run.jacketed-duct-dn2000, at: "2026-10-17T02:21:58Z", status: draft, summary: "first tracked", sha: "0c332eb590b283a2" }
-- { record: run.lined-duct-dn1200-pn1, at: "2026-10-17T00:03:48Z", status: draft, summary: "changed", sha: "adb9d99e07b06782" }
-- { record: run.lined-duct-dn2400-pn16-double, at: "2026-10-16T13:14:09Z", status: draft, summary: "changed", sha: "e3c421ceed042c47" }
-- { record: run.lined-duct-dn3600-pn10-double, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "9fad72a1880bd9f6" }
-- { record: run.pipe-dn100-pn10, at: "2026-10-16T13:14:09Z", status: draft, summary: "changed", sha: "f24cb5fb81e22a79" }
-- { record: run.pipe-dn100-pn10-ss, at: "2026-10-16T17:53:48Z", status: draft, summary: "changed", sha: "1c0ee7297a82f35f" }
-- { record: run.pipe-dn100-pn16-ss-double, at: "2026-10-16T17:53:48Z", status: draft, summary: "changed", sha: "8810abdb44081751" }
-- { record: run.pipe-dn100-pn25, at: "2026-10-17T00:16:57Z", status: draft, summary: "changed: visual", sha: "542804e973f730a6" }
-- { record: run.pipe-dn1000-pn1, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "ee459a377f16ef8a" }
-- { record: run.pipe-dn1000-pn10, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "6c0c4d432b3d8471" }
-- { record: run.pipe-dn1000-pn16-double, at: "2026-10-16T13:14:09Z", status: draft, summary: "changed", sha: "1d99d19c14aa21b2" }
-- { record: run.pipe-dn1000-pn16-mli-double, at: "2026-10-16T13:14:09Z", status: draft, summary: "changed", sha: "56b4353e49794828" }
-- { record: run.pipe-dn1200-pn1, at: "2026-10-17T00:06:45Z", status: draft, summary: "changed", sha: "a1f1f62eb5d099ca" }
-- { record: run.pipe-dn1200-pn10-double, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "0419b32f7dbe87f9" }
-- { record: run.pipe-dn1400-pn10, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "4e9adaeb148dd28d" }
-- { record: run.pipe-dn150-pn10, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "c3e5f675c6a24e48" }
-- { record: run.pipe-dn150-pn10-ss, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "15cc83b7910588dd" }
-- { record: run.pipe-dn150-pn16-ss-double, at: "2026-10-16T17:53:48Z", status: draft, summary: "changed", sha: "95b720d8f0de6741" }
-- { record: run.pipe-dn150-pn25-mli, at: "2026-10-17T00:13:10Z", status: draft, summary: "changed: visual", sha: "e5d35f2c436a5316" }
-- { record: run.pipe-dn1600-pn16-mli-double, at: "2026-10-16T13:14:09Z", status: draft, summary: "changed", sha: "9a4ddf4444ce737f" }
-- { record: run.pipe-dn1800-pn10-double, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "32241d2996ccf685" }
-- { record: run.pipe-dn200-pn1-ss, at: "2026-10-17T01:02:41Z", status: draft, summary: "changed: visual", sha: "5225d0bcd7e196a8" }
-- { record: run.pipe-dn200-pn10, at: "2026-10-16T17:53:48Z", status: draft, summary: "changed", sha: "0cb7a6a824b84207" }
-- { record: run.pipe-dn200-pn10-ss, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed", sha: "bff1979818114fdd" }
-- { record: run.pipe-dn200-pn16-ss-double, at: "2026-10-16T17:53:48Z", status: draft, summary: "changed", sha: "0241dc37863b0b22" }
-- { record: run.pipe-dn2000-pn1, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "eae90b305896285d" }
-- { record: run.pipe-dn2000-pn10-double, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "5919ebf5c3aa5b6a" }
-- { record: run.pipe-dn2200-pn10-double, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "a868841601d72377" }
-- { record: run.pipe-dn2400-pn10-double, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "de46182c3a6f18a0" }
-- { record: run.pipe-dn250-pn10, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "483c187dbbe6b890" }
-- { record: run.pipe-dn250-pn10-ss-double, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "74180431759e828c" }
-- { record: run.pipe-dn250-pn16-ss-double, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed", sha: "05352425674a7366" }
-- { record: run.pipe-dn2800-pn10-double, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "36295ef03ec120e6" }
-- { record: run.pipe-dn300-pn10, at: "2026-10-17T02:21:58Z", status: draft, summary: "changed", sha: "ae212c50a441fec2" }
-- { record: run.pipe-dn350-pn10, at: "2026-10-16T12:26:00Z", status: draft, summary: "changed", sha: "d41dada519023bf2" }
-- { record: run.pipe-dn350-pn10-ss, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "e1982e28ae826721" }
-- { record: run.pipe-dn3600-pn10-double, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "458fcf86f13a0ef8" }
-- { record: run.pipe-dn400-pn10, at: "2026-10-17T02:21:58Z", status: draft, summary: "changed", sha: "83656626066dd15e" }
-- { record: run.pipe-dn450-pn10, at: "2026-10-16T21:02:45Z", status: draft, summary: "changed", sha: "eac6b8b7fceab723" }
-- { record: run.pipe-dn450-pn10-ss-double, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "c3ef3d83276852f5" }
-- { record: run.pipe-dn50-pn10-ss, at: "2026-10-16T17:53:48Z", status: draft, summary: "changed", sha: "8a47dd415373b2c5" }
-- { record: run.pipe-dn50-pn16-ss, at: "2026-10-17T01:05:40Z", status: draft, summary: "changed: visual", sha: "12d9470be9155930" }
-- { record: run.pipe-dn50-pn16-ss-double, at: "2026-10-16T21:02:45Z", status: draft, summary: "changed", sha: "e9bd3a8da7fb0aee" }
-- { record: run.pipe-dn500-pn10, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "e67b3eaf510402cd" }
-- { record: run.pipe-dn600-pn10, at: "2026-10-16T17:53:48Z", status: draft, summary: "changed", sha: "be8fbbca0e77add0" }
-- { record: run.pipe-dn700-pn10, at: "2026-10-17T15:19:33Z", status: draft, summary: "first tracked", sha: "31872b3dea6fd62e" }
-- { record: run.pipe-dn700-pn10-mli, at: "2026-10-16T21:02:45Z", status: draft, summary: "changed", sha: "edbd33cada679ef5" }
-- { record: run.pipe-dn900-pn10, at: "2026-10-16T13:14:09Z", status: draft, summary: "changed", sha: "c78a99d081cfae5b" }
+- { record: run.belt-1000, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "40889b04ac1de050" }
+- { record: run.belt-1000-sealed, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "8b452eaa08f47e8f" }
+- { record: run.belt-1200, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "ca62efa0a9d87958" }
+- { record: run.belt-1400, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "b8137a4b56695a1c" }
+- { record: run.belt-650, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "c6354a8c0d472a71" }
+- { record: run.belt-800, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "348120cfee412a4d" }
+- { record: run.belt-800-sealed, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "2db514e4975d2945" }
+- { record: run.busbar-ac-27ka, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "d47bf0c2971cac9f" }
+- { record: run.busbar-ac-65ka, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "9f011e68e2d0c0a4" }
+- { record: run.busbar-dc-44ka, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "10051ea8e3a138d9" }
+- { record: run.cable-11kv-500mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template, looks_as", sha: "7cd5daef167c7844" }
+- { record: run.cable-132kv-240mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "95b667698b0bc2d3" }
+- { record: run.cable-33kv-120mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "1508c61145fb5a25" }
+- { record: run.cable-33kv-150mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "3fc39d8e68f1b8ee" }
+- { record: run.cable-33kv-185mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "cc7b2baa170c739e" }
+- { record: run.cable-33kv-630mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "a3d0e93ddcc07d5f" }
+- { record: run.cable-400v-120mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "57f07e90fcc29648" }
+- { record: run.cable-400v-16mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "402252556fa67b62" }
+- { record: run.cable-400v-185mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "050d4188daa1a4aa" }
+- { record: run.cable-400v-240mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template, looks_as", sha: "35a47e343bb3ae29" }
+- { record: run.cable-400v-25mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "9ade99e0e59a1838" }
+- { record: run.cable-400v-300mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "e5f7b393a11f3f14" }
+- { record: run.cable-400v-35mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "54941ba70b427c69" }
+- { record: run.cable-400v-400mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "d396ff6ba92e8d6f" }
+- { record: run.cable-400v-500mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "9f79e826102a4539" }
+- { record: run.cable-400v-50mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "d219118371d08cbc" }
+- { record: run.cable-400v-630mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template, looks_as", sha: "dc9c7fc86ea43cef" }
+- { record: run.cable-400v-70mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "ea25842006019b2f" }
+- { record: run.cable-400v-95mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "77098d8186307e8b" }
+- { record: run.cable-6p6kv-185mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "754a13f2f4873d65" }
+- { record: run.cable-6p6kv-400mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "aeb2709acf90e727" }
+- { record: run.cable-6p6kv-50mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template, looks_as", sha: "d7db68a430b83385" }
+- { record: run.cable-6p6kv-630mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "91dba21d5cec7cb5" }
+- { record: run.cable-6p6kv-70mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template, looks_as", sha: "30e1cb5d9658c8f0" }
+- { record: run.cable-6p6kv-95mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "92a8b7319d1a70e1" }
+- { record: run.drag-conveyor-800, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "14f1c129b476f57f" }
+- { record: run.jacketed-duct-dn2000, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "17709bb4b99fbdf7" }
+- { record: run.lined-duct-dn1200-pn1, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "f5a4d16cd95931c1" }
+- { record: run.lined-duct-dn2400-pn16-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "986af13a36e314d3" }
+- { record: run.lined-duct-dn3600-pn10-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "878409fdc38aff75" }
+- { record: run.pipe-dn100-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "6684a5b023770234" }
+- { record: run.pipe-dn100-pn10-ss, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "c034c1565489b05e" }
+- { record: run.pipe-dn100-pn16-ss-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "d5034adf5ee4386b" }
+- { record: run.pipe-dn100-pn25, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "a34d2bfd2af6536f" }
+- { record: run.pipe-dn1000-pn1, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template, looks_as", sha: "a183ced440298aef" }
+- { record: run.pipe-dn1000-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template, looks_as", sha: "3a929014f88745eb" }
+- { record: run.pipe-dn1000-pn16-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "56bdbeff803be243" }
+- { record: run.pipe-dn1000-pn16-mli-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "51d2d5cd52258465" }
+- { record: run.pipe-dn1200-pn1, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "ba6fd32de84ee8ea" }
+- { record: run.pipe-dn1200-pn10-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template, looks_as", sha: "5e97c66b1acc41c8" }
+- { record: run.pipe-dn1400-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "aacb0f175134ebf9" }
+- { record: run.pipe-dn150-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "0da50515f8d557f9" }
+- { record: run.pipe-dn150-pn10-ss, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "63c7f9f963f33809" }
+- { record: run.pipe-dn150-pn16-ss-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "7a6e892e9ac519ec" }
+- { record: run.pipe-dn150-pn25-mli, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "0e9fdc75aebdddc6" }
+- { record: run.pipe-dn1600-pn16-mli-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "85fc36754b66f90a" }
+- { record: run.pipe-dn1800-pn10-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "5dba3788f94cec0e" }
+- { record: run.pipe-dn200-pn1-ss, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "ee483a23faf6629d" }
+- { record: run.pipe-dn200-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "d5328af1a105fbe2" }
+- { record: run.pipe-dn200-pn10-ss, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "274a80ae4bdd6a83" }
+- { record: run.pipe-dn200-pn16-ss-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "ad28daa4b358d908" }
+- { record: run.pipe-dn2000-pn1, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "a208a1e6806f2265" }
+- { record: run.pipe-dn2000-pn10-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template, looks_as", sha: "9010565c21b762ea" }
+- { record: run.pipe-dn2200-pn10-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "e065f271e476f373" }
+- { record: run.pipe-dn2400-pn10-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "f6a16e88444dc12e" }
+- { record: run.pipe-dn250-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "2542aba1f48867a2" }
+- { record: run.pipe-dn250-pn10-ss-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template, looks_as", sha: "62b9ad51bad00a63" }
+- { record: run.pipe-dn250-pn16-ss-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "66d589a88b88c0f8" }
+- { record: run.pipe-dn2800-pn10-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "d1b478dcfab3efa1" }
+- { record: run.pipe-dn300-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "324941bf4da3097b" }
+- { record: run.pipe-dn350-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "9253d7abf980cbde" }
+- { record: run.pipe-dn350-pn10-ss, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "1f388ff4d48b89aa" }
+- { record: run.pipe-dn3600-pn10-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "2361f43b0096e8f6" }
+- { record: run.pipe-dn400-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "a80fa096c0cfe419" }
+- { record: run.pipe-dn450-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "71d2d832d98e6240" }
+- { record: run.pipe-dn450-pn10-ss-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "1dfdfeb656479113" }
+- { record: run.pipe-dn50-pn10-ss, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "0a9c925eae6d9033" }
+- { record: run.pipe-dn50-pn16-ss, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "d3eaee7d25499de0" }
+- { record: run.pipe-dn50-pn16-ss-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "0b81dc8679ec79a7" }
+- { record: run.pipe-dn500-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "7849de09696841fc" }
+- { record: run.pipe-dn600-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "66d31af1c07d2abd" }
+- { record: run.pipe-dn700-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "29a23419f3a3f11f" }
+- { record: run.pipe-dn700-pn10-mli, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "8dbbcccfcb4a3df2" }
+- { record: run.pipe-dn900-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "4cdb010f133a14cb" }
 - { record: seeding.asteroids, at: "2026-10-10T16:13:03Z", status: "", summary: "changed: basis", sha: "523d44e4bfa3af5f" }
 - { record: seeding.conditions, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "96e581fa4cb02009" }
 - { record: seeding.galaxy, at: "2026-10-10T16:13:03Z", status: "", summary: "changed", sha: "c3aeb429e01bf69f" }
@@ -3582,6 +3582,27 @@
 - { record: system.liham, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "891572eaa9c2ef46" }
 - { record: system.moryemzai, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "f8e4fd33ee4cf599" }
 - { record: system.treistun, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "dd9719e496514353" }
+- { record: template.belt, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "eff331661ee60c4b" }
+- { record: template.belt-sealed, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "808211fe6c5c8bc0" }
+- { record: template.belt-transfer, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "f59b92de01d4b70c" }
+- { record: template.belt-transfer-sealed, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "e0fa5e23c2ec8740" }
+- { record: template.bus-joint, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "dc9cede6ab98210e" }
+- { record: template.busbar, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "ebc39150ae6f28bf" }
+- { record: template.cable, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "882fe2318fed000e" }
+- { record: template.chute, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "e667824e0f7b7e6c" }
+- { record: template.clamp-coupling, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "56041bc040721ee0" }
+- { record: template.drag-conveyor, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "da78b5e8e253b112" }
+- { record: template.flange, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "df7d790e5b79a704" }
+- { record: template.flange-double, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "1587eb01caf04022" }
+- { record: template.hood, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "2bd0f63963dc39e7" }
+- { record: template.jacketed-duct, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "f735abc971d05f0e" }
+- { record: template.lined-duct, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "4f0e1dffeb3819a1" }
+- { record: template.lined-flange, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "566901f48b56a274" }
+- { record: template.pipe, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "9a17ec7ddd415223" }
+- { record: template.pipe-lagged, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "ee12031c045d334f" }
+- { record: template.termination-hv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "b0398bafc880c882" }
+- { record: template.termination-lv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "b3fff31e02cd79e5" }
+- { record: template.termination-mv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "5098fcf4fe0ded80" }
 - { record: unit.alloy-bins-8, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "f164893e2dc287ed" }
 - { record: unit.baghouse-200k, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "abfebdff23b38d30" }
 - { record: unit.baghouse-450k, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "4b73a94e4d25edcf" }

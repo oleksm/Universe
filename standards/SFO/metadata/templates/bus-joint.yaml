@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/template.schema.yaml
+identity:
+  key: template.bus-joint
+  name: Bus joint
+  description: The bolted plates joining a busbar's phases to a terminal. every size of the family is this template at the record's figures.
+family: bus-joint
+draws: model
+scales_by:
+- size
+- physical.length
+- physical.width
+- physical.height
+model_of: connector.bus-joint-dc-44ka
+members: 3
+basis:
+- of:
+  - draws
+  - scales_by
+  - pieces
+  - model_of
+  tier: derived
+  note: 'The owner, 2026-10-17: one template a family, scaled, instead of a model a size; model_of is an installed size''s model, the middle one of those installed, until the template has its own.'

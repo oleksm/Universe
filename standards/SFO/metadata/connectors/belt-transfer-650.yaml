@@ -10,6 +10,7 @@ built_of:
 - {what: Wear liner, item: material.polyethylene-uhmw, mass: 84.7, note: 10 mm UHMW polyethylene; measured on blender's model v1 of the 650 mm transfer}
 interface: interface.belt-transfer-650
 provides: both
+template: template.belt-transfer
 visual:
   format: "freefall-model/1"
   path: "models/belt-transfer-650/v1"

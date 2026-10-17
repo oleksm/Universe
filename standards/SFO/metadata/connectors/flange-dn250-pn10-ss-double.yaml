@@ -10,11 +10,11 @@ built_of:
 - {what: Flanges, item: material.stainless-steel-304, mass: 36.8, note: 'two weld-neck rings 0.446 m across, 20 mm thick, their necks tapering over 20 mm from 18 mm to the pipe''s wall; along the pipe the joint is 110 mm with the necks and the bolts'' and nuts'' ends'}
 - {what: Bolts and nuts, item: material.high-strength-steel-4340, mass: 2.2, note: '12 of M16, 78 mm, on a 0.398 m circle'}
 - {what: Gaskets, item: material.stainless-steel-304, mass: 0.7, note: 'spiral wound, stainless windings; two, the space between them piped to a leak watch'}
-interface: interface.flange-dn250-pn10-double
-provides: both
-looks_as: connector.flange-dn250-pn16-ss-double
 basis:
 - of: [built_of, physical]
   tier: derived
   review: true
   note: 'Sized by a simple rule, not to a flange code: the end force on the gasket''s mean circle (0.30 m) at the class''s pressure, bolts at 170 MPa, the ring''s thickness from its bending about the bolt circle at 140 MPa.'
+interface: interface.flange-dn250-pn10-double
+provides: both
+template: template.flange-double

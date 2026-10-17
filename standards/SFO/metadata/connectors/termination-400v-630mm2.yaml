@@ -18,3 +18,4 @@ basis:
   note: 'Along the cable: 0.5 m of cones and lugs inside the box, and the fan-out from the tray''s spacing to the box''s (0.04 m aside each way) in two arcs at the cable''s least bend radius (0.58 m): 0.30 m.'
 interface: interface.termination-400v-630mm2
 provides: both
+template: template.termination-lv

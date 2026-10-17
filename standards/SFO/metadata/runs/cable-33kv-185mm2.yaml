@@ -21,6 +21,7 @@ repeat:
 - {piece: rung, pitch: 0.3}
 connector: connector.termination-33kv-185mm2
 carries: power
+template: template.cable
 visual: {format: freefall-model/1, path: models/cable-33kv-185mm2/v1, manifest_sha256: f6e71a6495729e4d4a5ad48b7aa4c1d9299f40deb98fec8a52aa464140fc910f, version: 1, triangles: 9204}
 basis:
 - of: [per_m]

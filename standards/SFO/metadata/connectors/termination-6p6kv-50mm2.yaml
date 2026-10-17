@@ -9,9 +9,6 @@ built_of:
 - {what: Lugs, item: material.copper, mass: 0.2, note: three crimped lugs}
 - {what: Gland plate, item: material.aluminium-alloy-6061, mass: 5.0, note: the box's gland plate and glands}
 - {what: Stress cones, item: material.silicone-rubber, mass: 10.0, note: 'a stress cone on each core, sized with the voltage (from memory); silicone rubber'}
-interface: interface.termination-6p6kv-50mm2
-provides: both
-looks_as: connector.termination-400v-120mm2
 basis:
 - of: [built_of]
   tier: invented
@@ -20,3 +17,6 @@ basis:
 - of: [physical.height]
   tier: derived
   note: 'Along the cable: 0.5 m of cones and lugs inside the box, and the fan-out from the tray''s spacing to the box''s (0.04 m aside each way) in two arcs at the cable''s least bend radius (0.31 m): 0.22 m.'
+interface: interface.termination-6p6kv-50mm2
+provides: both
+template: template.termination-mv

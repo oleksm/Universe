@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/template.schema.yaml
+identity:
+  key: template.termination-hv
+  name: Cable termination, high voltage
+  description: A cable's sealing end above 36 kV. every size of the family is this template at the record's figures.
+family: termination
+draws: model
+scales_by:
+- size
+- physical.length
+- physical.height
+model_of: connector.termination-132kv-240mm2
+members: 1
+basis:
+- of:
+  - draws
+  - scales_by
+  - pieces
+  - model_of
+  tier: derived
+  note: 'The owner, 2026-10-17: one template a family, scaled, instead of a model a size; model_of is an installed size''s model, the middle one of those installed, until the template has its own.'

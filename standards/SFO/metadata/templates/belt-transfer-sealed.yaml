@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/template.schema.yaml
+identity:
+  key: template.belt-transfer-sealed
+  name: Belt transfer, sealed
+  description: A sealed transfer between galleries. every size of the family is this template at the record's figures.
+family: belt-transfer
+draws: model
+scales_by:
+- size
+- physical.length
+- physical.width
+- physical.height
+model_of: connector.belt-transfer-1000-sealed
+members: 2
+basis:
+- of:
+  - draws
+  - scales_by
+  - pieces
+  - model_of
+  tier: derived
+  note: 'The owner, 2026-10-17: one template a family, scaled, instead of a model a size; model_of is an installed size''s model, the middle one of those installed, until the template has its own.'

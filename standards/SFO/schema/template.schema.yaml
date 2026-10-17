@@ -1,0 +1,26 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Kit template
+x-kind: [template]
+description: "standards/SFO/metadata/templates/<name>.yaml: one look for a whole kit family (the owner, 2026-10-17: never one model per size). Every run or connector of the family names it (`template`) and carries the figures that scale it; the game draws the template at each record's size, sweeping a run's straight along its path. A template's model is built once; an installed size's model may serve as it (`model_of`)."
+type: object
+additionalProperties: false
+required: [identity, family, draws, scales_by]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name, description]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      description: { type: string }
+  family: { enum: [cable, pipe, lined-duct, jacketed-duct, belt, drag-conveyor, busbar, flange, lined-flange, termination, belt-transfer, chute, bus-joint, hood, clamp-coupling], description: "The kit kind it draws." }
+  draws: { enum: [sweep, model, sweep-and-pieces], description: "sweep: a profile swept along the run's path, no model; model: one model scaled to the record; sweep-and-pieces: the straight swept, its elbows, supports and ends from pieces." }
+  profile: { type: string, description: "What is swept: its cross-section, from the record's figures." }
+  scales_by: { type: array, items: { type: string }, description: "The record's figures that size it (outside, size, physical.length...)." }
+  pieces: { type: array, items: { type: object, additionalProperties: false, required: [name, how], properties: { name: { type: string }, how: { type: string } } }, description: "The modelled pieces and how each is placed and scaled." }
+  model_of: { type: string, x-ref: [run, connector], description: "An installed size whose model serves as the template's, scaled, until the template has its own." }
+  members: { type: integer, minimum: 0, description: "How many records of the family name it." }
+  visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
+  model_requests: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/model_request" } }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

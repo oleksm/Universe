@@ -14,6 +14,7 @@ built_of:
 - {what: Seals, item: material.silicone-rubber, mass: 0.9, note: the O-rings; silicone rubber stands for them}
 interface: interface.clamp-coupling-dn1200
 provides: both
+template: template.clamp-coupling
 visual:
   format: "freefall-model/1"
   path: "models/clamp-coupling-dn1200/v1"

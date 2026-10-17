@@ -12,6 +12,7 @@ built_of:
 - {what: Gaskets, item: material.stainless-steel-304, mass: 0.6, note: 'spiral wound, stainless windings; two, the space between them piped to a leak watch'}
 interface: interface.flange-dn200-pn16-double
 provides: both
+template: template.flange-double
 visual: {format: freefall-model/1, path: models/flange-dn200-pn16-ss-double/v1, manifest_sha256: 832d7f92a75c05ca5e1d888bca7d4e0e6f0ac39bd2f9597ebb0211b3f0b88156, version: 1, triangles: 5280}
 basis:
 - of: [built_of, physical]

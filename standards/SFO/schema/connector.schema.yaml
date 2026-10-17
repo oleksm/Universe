@@ -47,6 +47,7 @@ properties:
   triangle_budget: { type: integer, minimum: 1000, description: "Triangles its model may have, where the kind's default (12,000) is too few: a joint of many tubes and bolts." }
   interface: { type: string, x-ref: [interface], description: "The interface it is built to (SFO 26): it fits any port built to the same, its rating covering the port's duty." }
   provides: { enum: [both, male, female, adapter], description: "Which halves it is: both (a flange pair, a termination with its box's gland), one half, or an adapter between two interfaces." }
+  template: { type: string, x-ref: [template], description: "The family template that draws it, scaled by its figures (SFO 25, 2026-10-17): it needs no model of its own." }
   visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
   model_requests: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/model_request" }, description: "Work asked of its installed model, open until a later version answers it." }
   looks_as: { type: string, x-ref: [connector], description: "Another connector of the same look (kind, size, material) whose model this one is drawn with; it wants no model of its own. Mass, rating and connector stay this record's." }

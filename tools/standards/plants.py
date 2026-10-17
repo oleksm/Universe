@@ -5320,7 +5320,7 @@ def main():
     for slug, d in prods.items():
         write(S + f"products/{slug}.yaml", d)
     kit_recs = list(kit.records())
-    for folder, slug, d in looks_alike([x for x in kit_recs if x[0] != "interfaces"]) + [x for x in kit_recs if x[0] == "interfaces"]:
+    for folder, slug, d in kit_recs:          # (a family template draws every size now: looks_as retired, 2026-10-17)
         write(S + f"{folder}/{slug}.yaml", d)
     print(f"{len(mounts)} mounts, {len(recs)} units, {len(layouts)} layouts")
 

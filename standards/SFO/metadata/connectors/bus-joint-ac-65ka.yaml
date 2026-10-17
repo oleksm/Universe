@@ -13,6 +13,7 @@ built_of:
 triangle_budget: 22000
 interface: interface.bus-joint-ac-65ka
 provides: both
+template: template.bus-joint
 visual: {format: freefall-model/1, path: models/bus-joint-ac-65ka/v1, manifest_sha256: 64bd623f97fe87fed19f776237df5de85d4e8921088ecf678cd81ea63427c9fb, version: 1, triangles: 21398}
 basis:
 - of: [built_of, physical]

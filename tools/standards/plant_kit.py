@@ -683,11 +683,29 @@ def interfaces():
     return out
 
 
+def template_of(key, d):
+    """The family template that draws a kit record (one look a family, scaled by the record's figures)."""
+    k = d["kind"]
+    if k == "pipe":
+        return "template.pipe-lagged" if ("lagged" in key or "-mli" in key) else "template.pipe"
+    if k == "belt":
+        return "template.belt-sealed" if key.endswith("-sealed") else "template.belt"
+    if k == "belt-transfer":
+        return "template.belt-transfer-sealed" if key.endswith("-sealed") else "template.belt-transfer"
+    if k == "flange":
+        return "template.flange-double" if d.get("sealing") == "double" else "template.flange"
+    if k == "termination":
+        v = d.get("rating", {}).get("voltage") or 0
+        return "template.termination-lv" if v <= 1000 else "template.termination-mv" if v <= 36000 else "template.termination-hv"
+    return "template." + k
+
+
 def records():
     """Every connector, run and interface asked for: (folder, slug, record)."""
     ifs = interfaces()
     for key, d in sorted(_recs.items()):
         kind, slug = key.split(".", 1)
+        d = dict(d, template=template_of(key, d))
         yield {"connector": "connectors", "run": "runs"}[kind], slug, d
     for key, d in sorted(ifs.items()):
         yield "interfaces", key.split(".", 1)[1], d

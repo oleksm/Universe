@@ -12,6 +12,7 @@ built_of:
 - {what: Gasket, item: material.stainless-steel-304, mass: 0.3, note: 'spiral wound, stainless windings'}
 interface: interface.flange-dn200-pn1
 provides: both
+template: template.flange
 visual:
   format: "freefall-model/1"
   path: "models/flange-dn200-pn1-ss/v1"

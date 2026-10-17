@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/template.schema.yaml
+identity:
+  key: template.belt
+  name: Belt conveyor
+  description: Open troughed belts of every width. Its straight is swept along the run's path; every size of the family is this template at the record's figures.
+family: belt
+draws: sweep-and-pieces
+profile: the troughed belt on its idlers and stringers, the record's outside width and height
+scales_by:
+- outside
+- size
+pieces:
+- name: idler
+  how: a troughing set every 1.2 m, scaled to the belt width
+- name: return roll
+  how: every 3 m
+- name: head and tail
+  how: the drive and tail pulleys, scaled
+- name: trestle
+  how: every 18 m, legs to the ground
+model_of: run.belt-1000
+members: 5
+basis:
+- of:
+  - draws
+  - scales_by
+  - pieces
+  - model_of
+  tier: derived
+  note: 'The owner, 2026-10-17: one template a family, scaled, instead of a model a size; model_of is an installed size''s model, the middle one of those installed, until the template has its own.'

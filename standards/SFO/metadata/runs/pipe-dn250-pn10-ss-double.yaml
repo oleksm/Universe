@@ -16,7 +16,6 @@ cap: {thickness: 0.012, mass: 4.7}
 support: {spacing: 8.0, mass: 25.5, per_m_height: 19.8, item: material.structural-steel-a36}
 connector: connector.flange-dn250-pn10-ss-double
 carries: gas
-looks_as: run.pipe-dn250-pn16-ss-double
 basis:
 - of: [per_m]
   tier: derived
@@ -28,3 +27,4 @@ basis:
   tier: derived
   review: true
   note: 'Spacing from the span it bears full at 1 g (2.5 mm sag, a third of yield), 3 to 12 m: 8.0 m. The stand''s head and its leg by the metre from memory.'
+template: template.pipe

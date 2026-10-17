@@ -18,6 +18,7 @@ terminals:
   tail: {mass: 1800.0, transition: 1.2, note: 'the tail sprocket on a take-up, its shaft seals, and the inlet nozzle on top of the casing (from memory)'}
 connector: connector.chute-dn800
 carries: bulk
+template: template.drag-conveyor
 visual: {format: freefall-model/1, path: models/drag-conveyor-800/v1, manifest_sha256: 7677f340565202ffa6f80d4564616b4b9b5b85175c8dfa44a3f4eee6b7cb33c5, version: 1, triangles: 3664}
 basis:
 - of: [per_m, support, elbow]

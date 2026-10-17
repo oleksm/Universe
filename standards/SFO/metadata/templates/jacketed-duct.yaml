@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/template.schema.yaml
+identity:
+  key: template.jacketed-duct
+  name: Water-jacketed duct
+  description: Water-cooled duct for furnace gas. Its straight is swept along the run's path; every size of the family is this template at the record's figures.
+family: jacketed-duct
+draws: sweep-and-pieces
+profile: a double steel shell of the record's outside diameter
+scales_by:
+- outside
+- size
+pieces:
+- name: elbow
+  how: the jacketed elbow scaled
+- name: jacket stub
+  how: the water stub, scaled to the jacket's flange
+- name: jacket end
+  how: the end plate
+model_of: run.jacketed-duct-dn2000
+members: 1
+basis:
+- of:
+  - draws
+  - scales_by
+  - pieces
+  - model_of
+  tier: derived
+  note: 'The owner, 2026-10-17: one template a family, scaled, instead of a model a size; model_of is an installed size''s model, the middle one of those installed, until the template has its own.'

@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/template.schema.yaml
+identity:
+  key: template.pipe-lagged
+  name: Pipe, lagged
+  description: Pipe under insulation (multilayer foil). Its straight is swept along the run's path; every size of the family is this template at the record's figures.
+family: pipe
+draws: sweep-and-pieces
+profile: a tube of the record's outside diameter over its lagging
+scales_by:
+- outside
+- elbow.radius
+- support.spacing
+pieces:
+- name: elbow
+  how: as the pipe's, over the lagging
+- name: support
+  how: the pipe stand with its insulating pad
+model_of: run.pipe-dn1000-pn16-mli-double
+members: 4
+basis:
+- of:
+  - draws
+  - scales_by
+  - pieces
+  - model_of
+  tier: derived
+  note: 'The owner, 2026-10-17: one template a family, scaled, instead of a model a size; model_of is an installed size''s model, the middle one of those installed, until the template has its own.'

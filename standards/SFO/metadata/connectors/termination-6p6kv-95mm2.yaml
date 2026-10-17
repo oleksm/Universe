@@ -11,6 +11,7 @@ built_of:
 - {what: Stress cones, item: material.silicone-rubber, mass: 10.0, note: 'a stress cone on each core, sized with the voltage (from memory); silicone rubber'}
 interface: interface.termination-6p6kv-95mm2
 provides: both
+template: template.termination-mv
 visual: {format: freefall-model/1, path: models/termination-6p6kv-95mm2/v1, manifest_sha256: 6049bcec98b349b8fd868748e77a0dded05fa7fc721e1a433a607637f945bd97, version: 1, triangles: 4220}
 basis:
 - of: [built_of]

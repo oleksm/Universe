@@ -17,3 +17,4 @@ basis:
   note: 'Sized by a simple rule, not to a flange code: the end force on the gasket''s mean circle (2.25 m) at the class''s pressure, bolts at 170 MPa, the ring''s thickness from its bending about the bolt circle at 140 MPa.'
 interface: interface.flange-dn2200-pn10-double
 provides: both
+template: template.flange-double

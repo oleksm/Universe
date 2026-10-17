@@ -17,6 +17,7 @@ cap: {thickness: 0.048, mass: 295.9}
 support: {spacing: 12.0, mass: 74.1, per_m_height: 32.5, item: material.structural-steel-a36}
 connector: connector.flange-dn1000-pn16-double
 carries: gas
+template: template.pipe-lagged
 visual: {format: freefall-model/1, path: models/pipe-dn1000-pn16-mli-double/v2, manifest_sha256: 40b9fc0261c60684be8ee0ceb5006ceccaaddb0469442ea43d836c395e0b4e96, version: 2, triangles: 4344}
 basis:
 - of: [per_m]

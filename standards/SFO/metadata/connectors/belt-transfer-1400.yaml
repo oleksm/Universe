@@ -15,3 +15,4 @@ basis:
   note: Plate and liner by the chute's faces, from memory.
 interface: interface.belt-transfer-1400
 provides: both
+template: template.belt-transfer
