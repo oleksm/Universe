@@ -18,6 +18,17 @@ built_of:
 - {what: Tube rack, item: material.structural-steel-a36, mass: 842.9, note: the reverse osmosis bank's rack; measured on model v1}
 - {what: Pump skid, item: material.structural-steel-a36, mass: 3791.0, note: 'the pump skid''s frame, base and the bearers under the pumps'' feet; the other groups stand on the pad on their own feet; measured on model v1'}
 needs: {power: 28480.0}
+ports:
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 32160.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.water-treatment
 envelope:
 - [-6.025, -4.001, -0.002, 6.002, 4.001, 4.771]

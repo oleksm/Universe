@@ -18,6 +18,9 @@ ports:
   flow: out
   medium: bulk
   rate: 0.6792
+  interface: interface.chute-dn400
+  half: androgynous
+  make: bolted
   connector: connector.chute-dn400
   at: [1.0, 0.0, 6.7]
   facing: [0.0, 0.0, -1.0]
@@ -27,9 +30,22 @@ ports:
   medium: power
   power: 40000.0
   voltage: 400
+  interface: interface.termination-400v-35mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-35mm2
   at: [6.3, 0.0, 1.0]
   facing: [1.0, 0.0, 0.0]
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s3
+  half: male
+  make: bolted
+  mass: 451200.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.alloy-bins-8
 envelope:
 - [-6.282, -1.781, -0.001, 6.282, -1.219, 12.001]

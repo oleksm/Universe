@@ -12,6 +12,17 @@ built_of:
 - {what: Life support and fit-out, item: material.structural-steel-a36, mass: 1500.0, note: 'air and heat, benches and cabinets, not drawn; from memory'}
 - {what: 'Cutter, grinder and spectrometer', item: good.electric-motors, mass: 3000.0, note: from memory}
 needs: {power: 80000.0, atmosphere: vacuum}
+ports:
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 9615.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.sampling-lab
 options: [pressure-shell]
 envelope:

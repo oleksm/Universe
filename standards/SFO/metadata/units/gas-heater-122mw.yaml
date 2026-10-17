@@ -18,6 +18,17 @@ built_of:
 - {what: Terminal house base, item: material.structural-steel-a36, mass: 2846.0, note: measured on model v1}
 - {what: 'Terminals, thyristor sets and controls', item: good.electric-motors, mass: 10000.0, note: from memory}
 needs: {power: 124800000.0}
+ports:
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s3
+  half: male
+  make: bolted
+  mass: 1145000.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.gas-heater
 envelope:
 - [-12.032, -4.544, -0.002, -8.016, 5.832, 16.833]

@@ -8,6 +8,17 @@ built_of:
 - {what: 'Cradle, pivot and table', item: material.structural-steel-a36, mass: 3500.0, note: from memory}
 - {what: Cylinder and power pack, item: good.pumps, mass: 800.0, note: from memory}
 needs: {power: 11000.0}
+ports:
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s1
+  half: male
+  make: bolted
+  mass: 4300.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.ingot-tipper
 envelope:
 - [-2.851, -1.501, -0.001, 2.551, 1.501, 2.101]

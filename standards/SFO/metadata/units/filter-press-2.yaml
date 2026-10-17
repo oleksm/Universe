@@ -21,6 +21,9 @@ ports:
   flow: in
   medium: liquid
   item: good.iron-ore
+  interface: interface.flange-dn150-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn150-pn10
   at: [0.0, -3.25, 9.5]
   facing: [0.0, -1.0, 0.0]
@@ -28,6 +31,9 @@ ports:
   flow: out
   medium: liquid
   item: good.water
+  interface: interface.flange-dn100-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn100-pn10-ss
   at: [5.0, -3.25, 0.5]
   facing: [0.0, -1.0, 0.0]
@@ -37,6 +43,9 @@ ports:
   item: good.water
   rate: 54.27
   temperature: 320.0
+  interface: interface.flange-dn200-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn200-pn10
   at: [-5.0, -3.25, 0.5]
   facing: [0.0, -1.0, 0.0]
@@ -46,6 +55,9 @@ ports:
   item: good.water
   rate: 54.27
   temperature: 330.0
+  interface: interface.flange-dn200-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn200-pn10
   at: [-4.4, -3.25, 0.5]
   facing: [0.0, -1.0, 0.0]
@@ -54,6 +66,9 @@ ports:
   medium: liquid
   item: good.water
   rate: 3.28
+  interface: interface.flange-dn50-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn50-pn10-ss
   at: [4.0, -3.25, 0.5]
   facing: [0.0, -1.0, 0.0]
@@ -62,6 +77,9 @@ ports:
   medium: power
   power: 122900.0
   voltage: 400
+  interface: interface.termination-400v-95mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-95mm2
   at: [2.5, -3.25, 0.5]
   facing: [0.0, -1.0, 0.0]
@@ -70,6 +88,9 @@ ports:
   medium: bulk
   item: good.iron-ore
   rate: 16.58
+  interface: interface.chute-dn1000
+  half: androgynous
+  make: bolted
   connector: connector.chute-dn1000
   at: [-1.2, 0.0, 7.775]
   facing: [0.0, 0.0, -1.0]
@@ -79,9 +100,22 @@ ports:
   medium: bulk
   item: good.iron-ore
   rate: 16.58
+  interface: interface.chute-dn1000
+  half: androgynous
+  make: bolted
   connector: connector.chute-dn1000
   at: [1.2, 0.0, 7.775]
   facing: [0.0, 0.0, -1.0]
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 155900.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.filter-press-2
 envelope:
 - [-6.03, -3.25, 0, 6.03, 3.1, 6.89]

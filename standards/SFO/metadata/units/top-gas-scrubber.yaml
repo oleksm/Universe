@@ -12,6 +12,17 @@ built_of:
 - {what: Exchanger plates, item: material.stainless-steel-304, mass: 20760.0, note: '3,808 m2 of 0.6 mm plate (and 15% for ports and edges): the 76 MW at 4,000 W/m2 K over a 5 K mean difference, from memory'}
 - {what: Spray pumps and motors, item: good.pumps, mass: 8733.0, note: 'three pumps for 1,819 kg/s at 3 bar, 728 kW in all, at 12 kg/kW with their motors (from memory)'}
 needs: {power: 727800.0, heat: 76160000.0}
+ports:
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 289300.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.top-gas-scrubber
 envelope:
 - [-4.302, -4.302, 17.919, 4.302, 4.302, 23.001]

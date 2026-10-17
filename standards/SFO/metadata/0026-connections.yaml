@@ -19,6 +19,18 @@ sections:
         - ["Conduit", "What carries the flow from one interface to another", "Pipe, hose, tube, cable, busbar, belt, rail, road"]
         - ["Fittings", "What changes the conduit along its way", "Bend, branch, reducer, valve, expansion joint, adapter, splice"]
         - ["Support", "What holds the conduit up", "Pipe stand, cable tray, idler, rail bed, hanger"]
+  - title: The code - what a made thing declares
+    text:
+      - "Every made thing that joins others (a plant unit, a piece of ship equipment, an industrial module, a layout) declares its ports, and moves as it says (records: units/, equipment/, modules/, layouts/; the shape: common.schema.yaml port and motion)."
+      - "A port declares: its id; which way it flows (in, out, both); what crosses it (gas, liquid, bulk, power, signal, heat, load, carrier, people) and the item; the interface it is built to (interfaces/<name>.yaml); which half the thing carries (male, female, androgynous); how the joint is made and broken (permanent, bolted, by hand, automatic, open); the duty it needs (rate, power, pressure, temperature, voltage, current; for a load, the mass it bears and its working force and moment; for a carrier, a batch's mass and its cycle); where its face is and which way it faces in the thing's frame; and, if it moves with a part of the thing, which motion."
+      - "A thing that bears on something declares a load port: its feet on its mount, the mass it bears down through them (its weight is that times the site's gravity) and its working forces. Load is a connection like any other: the load path runs from the thing through its mount, the frame or rails, the footings and the ground, each part rated for what it bears."
+      - "A thing that moves declares its motions: tilt, rotate, travel, lift or dock, the axis, the range, and what moves. A fit check sweeps them, and a port that moves needs a joint that lets it (a hose, a festoon, a cable reel, a sleeve, a clamp coupling)."
+  - title: The code - when a product fits
+    text:
+      - "An interface (interfaces/<name>.yaml) is the standard: its domain, its family, its size, its envelope (the most a product built to it is made for), the media it takes, its sealing, whether its halves differ or are the same, and how a joint to it is made."
+      - "A connection product (a connector, a run's ends, a hose, a cable, a plug, a coupler: connectors/, runs/) names the interface it is built to and which halves it provides (both, one, or an adapter between two)."
+      - "A product fits a port when it is built to the port's interface, brings the half the port lacks, and its rating covers the port's duty: its pressure, temperature, voltage and current at least the port's, the media agreeing. Any maker may build to an interface, so a vendor's product is judged by these, not by who made the port."
+      - "Where two interfaces differ, an adapter joins them (a reducer, a plug adapter, a flange adapter): a product with its own mass and a fitting's place."
   - title: The inventory, by what flows
     text:
       - "Have: in the registry now. Lack: to be added, by family, in the preferred sizes."

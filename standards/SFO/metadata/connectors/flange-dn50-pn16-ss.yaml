@@ -10,6 +10,8 @@ built_of:
 - {what: Flanges, item: material.stainless-steel-304, mass: 11.5, note: 'two weld-neck rings 0.216 m across, 20 mm thick, their necks tapering over 20 mm from 14 mm to the pipe''s wall; along the pipe the joint is 110 mm with the necks and the bolts'' and nuts'' ends'}
 - {what: Bolts and nuts, item: material.high-strength-steel-4340, mass: 1.5, note: '8 of M16, 78 mm, on a 0.168 m circle'}
 - {what: Gasket, item: material.stainless-steel-304, mass: 0.1, note: 'spiral wound, stainless windings'}
+interface: interface.flange-dn50-pn16
+provides: both
 visual:
   format: "freefall-model/1"
   path: "models/flange-dn50-pn16-ss/v1"

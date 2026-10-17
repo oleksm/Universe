@@ -9,6 +9,17 @@ built_of:
 - {what: Fans and motors, item: good.electric-motors, mass: 6000.0, note: 'one 10 m fan a cell, from memory'}
 - {what: Loop pumps and exchanger, item: good.pumps, mass: 25000.0, note: from memory}
 needs: {power: 43650.0, water: 1.164}
+ports:
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s3
+  half: male
+  make: bolted
+  mass: 91000.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.cooling-tower
 envelope:
 - [-5.976, -5.951, -0.001, 6.002, 5.952, 14.001]

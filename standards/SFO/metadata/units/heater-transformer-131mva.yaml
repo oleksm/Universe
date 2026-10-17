@@ -19,6 +19,9 @@ ports:
   medium: power
   power: 121900000.0
   voltage: 132000
+  interface: interface.termination-132kv-240mm2
+  half: female
+  make: bolted
   connector: connector.termination-132kv-240mm2
   at: [0.0, -0.95625, 7.55]
   facing: [0.0, 0.0, 1.0]
@@ -28,6 +31,9 @@ ports:
   medium: power
   power: 121300000.0
   voltage: 6600
+  interface: interface.termination-6p6kv-630mm2
+  half: female
+  make: bolted
   connector: connector.termination-6p6kv-630mm2
   at: [0.0, 3.35, 4.5]
   facing: [0.0, 1.0, 0.0]
@@ -38,6 +44,9 @@ ports:
   item: good.water
   rate: 15.69
   temperature: 335.0
+  interface: interface.flange-dn150-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn150-pn10
   at: [-4.55, -0.6, 1.0]
   facing: [-1.0, 0.0, 0.0]
@@ -46,9 +55,22 @@ ports:
   medium: liquid
   item: good.water
   rate: 15.69
+  interface: interface.flange-dn150-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn150-pn10
   at: [-4.55, 0.6, 1.0]
   facing: [-1.0, 0.0, 0.0]
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 212400.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.transformer
 options: [hv-cable-box]
 envelope:

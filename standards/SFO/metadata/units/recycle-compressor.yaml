@@ -11,6 +11,17 @@ built_of:
 - {what: Intercoolers and aftercooler, item: material.stainless-steel-304, mass: 15000.0, note: from memory}
 - {what: 'Skid, feet and cooler frame', item: material.structural-steel-a36, mass: 48470.0, note: 'measured on model v1 (fabricated square tubes and feet, sized provisionally)'}
 needs: {power: 20770000.0, heat: 19940000.0}
+ports:
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s3
+  half: male
+  make: bolted
+  mass: 223000.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.recycle-compressor
 envelope:
 - [-11.001, -4.001, -0.001, 11.001, 4.001, 6.762]

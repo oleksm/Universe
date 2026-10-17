@@ -26,6 +26,9 @@ ports:
   rate: 5.082
   pressure: 2000000.0
   temperature: 485.0
+  interface: interface.flange-dn150-pn25
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn150-pn25
   at: [-24.0, -0.6, 1.0]
   facing: [-1.0, 0.0, 0.0]
@@ -36,6 +39,9 @@ ports:
   item: good.water
   rate: 5.082
   temperature: 480.0
+  interface: interface.flange-dn100-pn25
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn100-pn25
   at: [-24.0, 0.6, 1.0]
   facing: [-1.0, 0.0, 0.0]
@@ -45,10 +51,23 @@ ports:
   medium: power
   power: 91790.0
   voltage: 400
+  interface: interface.termination-400v-70mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-70mm2
   at: [-24.0, -1.4, 0.3]
   facing: [-1.0, 0.0, 0.0]
   note: its pump's terminal box, beside the headers
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s4
+  half: male
+  make: bolted
+  mass: 44310.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.radiator-field
 envelope:
 - [-23.509, -22.062, -0.001, 22.062, 22.062, 3.135]

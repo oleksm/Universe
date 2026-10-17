@@ -29,6 +29,17 @@ recipes:
   - {item: element.o, quantity: 0.045}
   rate: 34.7222222222222
   power: 23000000
+ports:
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s4
+  half: male
+  make: bolted
+  mass: 1149000.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.induration-grate-125th
 envelope:
 - [-22.452, -3.501, -0.001, -11.049, 5.501, 16.251]

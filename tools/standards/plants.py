@@ -467,7 +467,7 @@ def write(path, d):
         if m:
             vis = m.group(0)
             d = {k: v for k, v in d.items() if k != "visual"}
-    head = {"plant-mounts": "plant-mount", "units": "unit", "layouts": "layout", "connectors": "connector", "runs": "run", "products": "product"}[path.split("/")[-2]]
+    head = {"plant-mounts": "plant-mount", "units": "unit", "layouts": "layout", "connectors": "connector", "runs": "run", "products": "product", "interfaces": "interface"}[path.split("/")[-2]]
     dump = lambda x: yaml.safe_dump(x, sort_keys=False, width=1000, allow_unicode=True, default_flow_style=None) if x else ""
     with open(path, "w", encoding="utf-8") as f:
         f.write(f"# yaml-language-server: $schema=../../schema/{head}.schema.yaml\n# Written by tools/standards/plants.py: change it there.\n")
@@ -515,6 +515,10 @@ def unit_record(slug, u):
         d["recipes"] = u["recipes"]
     if u.get("ports"):
         d["ports"] = u["ports"]
+    if u.get("fits"):                 # (where it bears on its bay: its weight and what it holds, down through its feet)
+        d["ports"] = list(d.get("ports", [])) + [{"id": "base", "flow": "out", "medium": "load", "interface": f"interface.plant-{u['fits']}", "half": "male", "make": "bolted",
+                                                    "mass": r(mass + (u.get("holds") or 0)), "at": [0.0, 0.0, 0.0], "facing": [0.0, 0.0, -1.0],
+                                                    "note": "its feet on its bay's seats: its weight is this mass times the site's gravity"}]
     for k in ("product", "options"):
         if u.get(k):
             d[k] = u[k]
@@ -3201,7 +3205,8 @@ def port(pid, flow, medium, connector, at, facing, item=None, rate=None, power=N
     for k, v in (("item", item), ("rate", rate), ("power", power), ("pressure", pressure), ("temperature", temperature), ("voltage", voltage)):
         if v is not None:
             d[k] = r(v) if isinstance(v, float) else v
-    d |= {"connector": connector, "at": [float(x) for x in at], "facing": [float(x) for x in facing]}
+    d |= {"interface": kit.interface_key(connector), "half": kit.half(connector, flow), "make": kit.IFACE[kit._recs[connector]["kind"]][2],
+          "connector": connector, "at": [float(x) for x in at], "facing": [float(x) for x in facing]}
     if note:
         d["note"] = note
     return d
@@ -4726,6 +4731,11 @@ def main():
     mounts = mounts_for([b for _, bays in layouts.values() for b in bays], recs)
     for slug, d in mounts.items():
         write(S + f"plant-mounts/{slug}.yaml", d)
+        write(S + f"interfaces/plant-{slug}.yaml", {"identity": {"key": f"interface.plant-{slug}", "name": f"Plant bay seat, class {d['identity']['size_class']}",
+                                                                  "description": f"Where a unit's feet bear on a class {d['identity']['size_class']} bay ({d['footprint']['length']:g} m square): its seats and anchor bolts. The unit brings its feet, the bay its seats."},
+                                                     "domain": "load", "kind": "mount", "size": d["footprint"]["length"], "envelope": {"mass": r(d["bears"]["load"] / 9.81)},
+                                                     "media": ["load"], "sealing": "open", "halves": "male-female", "make": "bolted",
+                                                     "basis": [{"of": ["envelope"], "tier": "derived", "note": f"The bay's bearing ({d['identity']['key']}), at 1 g."}]})
     for slug, d in recs.items():
         write(S + f"units/{slug}.yaml", d)
     for slug, (d, _) in layouts.items():
@@ -4733,7 +4743,8 @@ def main():
         write(S + f"layouts/{slug}.yaml", d)
     for slug, d in prods.items():
         write(S + f"products/{slug}.yaml", d)
-    for folder, slug, d in looks_alike(list(kit.records())):
+    kit_recs = list(kit.records())
+    for folder, slug, d in looks_alike([x for x in kit_recs if x[0] != "interfaces"]) + [x for x in kit_recs if x[0] == "interfaces"]:
         write(S + f"{folder}/{slug}.yaml", d)
     print(f"{len(mounts)} mounts, {len(recs)} units, {len(layouts)} layouts")
 

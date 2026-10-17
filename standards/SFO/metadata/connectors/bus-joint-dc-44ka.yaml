@@ -10,6 +10,8 @@ built_of:
 - {what: Bolts, item: material.high-strength-steel-4340, mass: 12.8, note: 'sixteen M20 a pole in two rows of eight, above and below the tubes, with spring washers'}
 - {what: Braze lands, item: material.copper, mass: 9.5, note: 'a copper land round each tube where it is brazed into the plate; measured on blender''s model (9.5 kg for 14 tubes, 2026-10-16)'}
 - {what: Water couplings and hoses, item: material.silicone-rubber, mass: 7.0, note: an insulating hose from each tube's end to the unit's cooling manifold behind its pad}
+interface: interface.bus-joint-dc-44ka
+provides: both
 visual: {format: freefall-model/1, path: models/bus-joint-dc-44ka/v1, manifest_sha256: c4f6fbff9b5870b9442ac652ea20b26cfc198e72ca84d280f7b018f3421d9ed0, version: 1, triangles: 11804}
 basis:
 - of: [built_of, physical]

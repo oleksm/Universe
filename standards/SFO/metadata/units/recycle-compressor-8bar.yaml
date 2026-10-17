@@ -17,6 +17,9 @@ ports:
   rate: 20.67
   pressure: 730000.0
   temperature: 353.1
+  interface: interface.flange-dn1000-pn16-double
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn1000-pn16-double
   at: [6.0, 0.0, 1.5]
   facing: [1.0, 0.0, 0.0]
@@ -27,6 +30,9 @@ ports:
   rate: 20.67
   pressure: 850000.0
   temperature: 373.1
+  interface: interface.flange-dn1000-pn16-double
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn1000-pn16-double
   at: [-6.0, 0.0, 1.5]
   facing: [-1.0, 0.0, 0.0]
@@ -35,6 +41,9 @@ ports:
   medium: power
   power: 4241000.0
   voltage: 6600
+  interface: interface.termination-6p6kv-185mm2
+  half: female
+  make: bolted
   connector: connector.termination-6p6kv-185mm2
   at: [0.0, -1.5, 5.0]
   facing: [0.0, 0.0, 1.0]
@@ -44,6 +53,9 @@ ports:
   item: good.water
   rate: 3.89
   temperature: 335.0
+  interface: interface.flange-dn100-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn100-pn10
   at: [-6.0, -2.2, 0.6]
   facing: [-1.0, 0.0, 0.0]
@@ -52,9 +64,22 @@ ports:
   medium: liquid
   item: good.water
   rate: 3.89
+  interface: interface.flange-dn100-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn100-pn10
   at: [-6.0, -1.6, 0.6]
   facing: [-1.0, 0.0, 0.0]
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 54560.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.recycle-compressor
 envelope:
 - [-1.551, -2.601, 0.949, 1.551, 2.402, 4.052]

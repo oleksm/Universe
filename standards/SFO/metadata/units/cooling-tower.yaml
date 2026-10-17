@@ -16,6 +16,9 @@ ports:
   item: good.water
   rate: 268.8
   temperature: 303.0
+  interface: interface.flange-dn400-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn400-pn10
   at: [12.0, -0.6, 0.75]
   facing: [1.0, 0.0, 0.0]
@@ -25,6 +28,9 @@ ports:
   item: good.water
   rate: 268.8
   temperature: 313.0
+  interface: interface.flange-dn400-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn400-pn10
   at: [12.0, 0.6, 0.75]
   facing: [1.0, 0.0, 0.0]
@@ -34,6 +40,9 @@ ports:
   item: good.water
   rate: 172.0
   temperature: 303.0
+  interface: interface.flange-dn300-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn300-pn10
   at: [12.0, 3.9, 0.75]
   facing: [1.0, 0.0, 0.0]
@@ -43,6 +52,9 @@ ports:
   item: good.water
   rate: 172.0
   temperature: 313.0
+  interface: interface.flange-dn300-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn300-pn10
   at: [12.0, 5.1, 0.75]
   facing: [1.0, 0.0, 0.0]
@@ -51,6 +63,9 @@ ports:
   medium: liquid
   item: good.water
   rate: 10.2
+  interface: interface.flange-dn100-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn100-pn10
   at: [-12.0, 0.0, 0.75]
   facing: [-1.0, 0.0, 0.0]
@@ -60,10 +75,23 @@ ports:
   medium: power
   power: 382700.0
   voltage: 400
+  interface: interface.termination-400v-300mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-300mm2
   at: [-12.0, -3.0, 1.0]
   facing: [-1.0, 0.0, 0.0]
   note: the fans and the loop's pumps
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s3
+  half: male
+  make: bolted
+  mass: 157000.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.cooling-tower
 envelope:
 - [-11.977, -5.951, -0.001, 12.001, 5.952, 14.001]

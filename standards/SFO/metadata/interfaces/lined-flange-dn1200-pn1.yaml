@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/interface.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: interface.lined-flange-dn1200-pn1, name: Lined flange DN 1200 PN 1, description: 'The mating face of the Lined flange DN 1200 PN 1 joint: any maker''s half built to it mates with any other''s, whatever its metal.'}
+domain: fluid
+kind: lined-flange
+envelope: {pressure: 100000.0, temperature: 473.0}
+media: [gas, liquid]
+sealing: air
+halves: androgynous
+make: bolted
+face: {length: 1.366, width: 1.366, height: 0.11}
+size: 1.2
+basis:
+- of: [envelope, face]
+  tier: derived
+  note: The most the connection products built to it are rated for, and their joint's outside (SFO 25's connectors).

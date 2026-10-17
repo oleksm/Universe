@@ -27,6 +27,9 @@ ports:
   rate: 20.67
   pressure: 850000.0
   temperature: 590.2
+  interface: interface.flange-dn1000-pn16-double
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn1000-pn16-double
   at: [-12.0, -3.3, 2.0]
   facing: [-1.0, 0.0, 0.0]
@@ -37,6 +40,9 @@ ports:
   rate: 20.67
   pressure: 850000.0
   temperature: 1173.0
+  interface: interface.lined-flange-dn2400-pn16-double
+  half: androgynous
+  make: bolted
   connector: connector.lined-flange-dn2400-pn16-double
   at: [0.0, 4.0, 18.0]
   facing: [0.0, 0.0, 1.0]
@@ -46,10 +52,23 @@ ports:
   medium: power
   power: 121300000.0
   voltage: 6600
+  interface: interface.termination-6p6kv-630mm2
+  half: female
+  make: bolted
   connector: connector.termination-6p6kv-630mm2
   at: [-12.0, 1.45, 1.575]
   facing: [-1.0, 0.0, 0.0]
   note: 8 circuits of 630 mm2 into the terminal house
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s3
+  half: male
+  make: bolted
+  mass: 1141000.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.gas-heater
 envelope:
 - [-11.121, -2.351, -0.001, -6.879, 2.121, 16.501]

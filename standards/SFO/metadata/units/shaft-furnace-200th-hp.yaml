@@ -33,6 +33,9 @@ ports:
   medium: bulk
   item: good.iron-ore-pellets
   rate: 79.44
+  interface: interface.belt-transfer-1200
+  half: female
+  make: open
   connector: connector.belt-transfer-1200
   at: [0.0, 0.0, 40.0]
   facing: [0.0, 0.0, 1.0]
@@ -44,6 +47,9 @@ ports:
   rate: 38.14
   pressure: 730000.0
   temperature: 623.1
+  interface: interface.flange-dn1600-pn16-double
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn1600-pn16-double
   at: [6.0, 0.0, 31.0]
   facing: [1.0, 0.0, 0.0]
@@ -55,6 +61,9 @@ ports:
   rate: 14.25
   pressure: 850000.0
   temperature: 1173.0
+  interface: interface.lined-flange-dn2400-pn16-double
+  half: androgynous
+  make: bolted
   connector: connector.lined-flange-dn2400-pn16-double
   at: [0.0, -6.5, 16.0]
   facing: [0.0, -1.0, 0.0]
@@ -65,6 +74,9 @@ ports:
   item: good.sponge-iron
   rate: 55.56
   temperature: 923.1
+  interface: interface.chute-dn800
+  half: androgynous
+  make: bolted
   connector: connector.chute-dn800
   at: [0.0, 0.0, 6.0]
   facing: [0.0, 0.0, -1.0]
@@ -74,10 +86,23 @@ ports:
   medium: power
   power: 400000.0
   voltage: 400
+  interface: interface.termination-400v-300mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-300mm2
   at: [-4.7, 2.0, 12.0]
   facing: [-1.0, 0.0, 0.0]
   note: the drives' terminal box on the ring girder's west face
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s3
+  half: male
+  make: bolted
+  mass: 2435000.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.shaft-furnace-200th
 envelope:
 - [-3.722, -3.722, 7.999, 3.722, 3.722, 32.001]

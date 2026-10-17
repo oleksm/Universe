@@ -22,6 +22,9 @@ ports:
   medium: power
   power: 19640000.0
   voltage: 33000.0
+  interface: interface.termination-33kv-150mm2
+  half: female
+  make: bolted
   connector: connector.termination-33kv-150mm2
   at: [0.0, -1.5, 4.4]
   facing: [0.0, 0.0, 1.0]
@@ -31,6 +34,9 @@ ports:
   medium: power
   power: 19100000.0
   voltage: 442.7
+  interface: interface.bus-joint-dc-44ka
+  half: androgynous
+  make: bolted
   connector: connector.bus-joint-dc-44ka
   at: [0.0, 3.0, 2.4]
   facing: [0.0, 1.0, 0.0]
@@ -41,6 +47,9 @@ ports:
   item: good.water
   rate: 12.96
   temperature: 335.0
+  interface: interface.flange-dn100-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn100-pn10
   at: [-2.45, -1.86, 1.0]
   facing: [-1.0, 0.0, 0.0]
@@ -51,9 +60,22 @@ ports:
   item: good.water
   rate: 12.96
   temperature: 345.0
+  interface: interface.flange-dn100-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn100-pn10
   at: [-2.45, -1.14, 1.0]
   facing: [-1.0, 0.0, 0.0]
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s1
+  half: male
+  make: bolted
+  mass: 40540.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.transformer
 options: [hv-cable-box]
 envelope:

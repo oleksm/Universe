@@ -11,6 +11,8 @@ built_of:
 - {what: Bolts and nuts, item: material.high-strength-steel-4340, mass: 276.8, note: '72 of M42, 254 mm, on a 2.626 m circle'}
 - {what: Gaskets, item: material.stainless-steel-304, mass: 12.8, note: 'spiral wound, stainless windings; two, the space between them piped to a leak watch'}
 - {what: Lining joint, item: material.silica-aerogel, mass: 17.3, note: the refractory's joint packed with 50 mm of silica fibre; silica aerogel stands for it}
+interface: interface.lined-flange-dn2400-pn16-double
+provides: both
 visual: {format: freefall-model/1, path: models/lined-flange-dn2400-pn16-double/v1, manifest_sha256: 121089bc5f42784391a0802935702ea514624ca6d5dba5d5c21f3d868f3b2a5c, version: 1, triangles: 11898}
 basis:
 - of: [built_of, physical]

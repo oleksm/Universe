@@ -106,7 +106,7 @@ def check(lay, units, runs, conns):
             x, y, z = p["at"]
             if not all(lo_[k] - 0.5 <= v <= hi_[k] + 0.5 for k, v in enumerate((x, y, z))):
                 faults.append(f"{b['unit']}: port {p['id']} at {p['at']} is outside its box")
-            if p["connector"] not in conns:
+            if p.get("connector") and p["connector"] not in conns:
                 faults.append(f"{b['unit']}: port {p['id']}: no connector {p['connector']}")
 
     for l in links:
@@ -386,7 +386,7 @@ def check(lay, units, runs, conns):
             notes.append(f"{b['id']} ({b['unit']}): no ports yet")
             continue
         for p in ports:
-            if f"{b['id']}:{p['id']}" not in used and not p.get("optional"):
+            if f"{b['id']}:{p['id']}" not in used and not p.get("optional") and p["medium"] != "load":      # (a load port is joined by the bay it stands in)
                 faults.append(f"{b['id']}:{p['id']} ({b['unit']}) is left open")
         if (u.get("needs") or {}).get("power") and not any(p["medium"] == "power" and f"{b['id']}:{p['id']}" in used for p in ports):
             faults.append(f"{b['id']} ({b['unit']}) needs {u['needs']['power'] / 1e3:,.0f} kW and nothing feeds it")

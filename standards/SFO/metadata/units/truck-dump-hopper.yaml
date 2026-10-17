@@ -12,6 +12,17 @@ built_of:
 - {what: Feeder drive, item: good.electric-motors, mass: 4000.0, note: 'motor and gearbox for 150 kW, from memory'}
 holds: 100000.0
 needs: {power: 150000.0}
+ports:
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 218400.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.truck-dump-hopper
 envelope:
 - [-6.052, -5.152, -6.001, 6.052, 5.152, 2.001]

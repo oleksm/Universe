@@ -52,6 +52,17 @@ recipes:
   rate: 41.6666666666667
   batch: 80000
   power: 7500000.0
+ports:
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 76510.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.ladle-furnace-80t
 envelope:
 - [-5.501, -5.341, -0.001, 5.501, 5.001, 14.001]

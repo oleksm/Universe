@@ -22,6 +22,9 @@ ports:
   medium: bulk
   item: good.iron-ore
   rate: 8.29
+  interface: interface.chute-dn400
+  half: androgynous
+  make: bolted
   connector: connector.chute-dn400
   at: [0.0, 2.0, 7.0]
   facing: [0.0, 0.0, 1.0]
@@ -31,6 +34,9 @@ ports:
   medium: bulk
   item: good.iron-ore
   rate: 9.11
+  interface: interface.chute-dn600
+  half: androgynous
+  make: bolted
   connector: connector.chute-dn600
   at: [0.0, -4.5, 1.0]
   facing: [0.0, -1.0, 0.0]
@@ -40,9 +46,22 @@ ports:
   medium: power
   power: 105000.0
   voltage: 400
+  interface: interface.termination-400v-70mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-70mm2
   at: [4.5, 1.0, 0.5]
   facing: [1.0, 0.0, 0.0]
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 41460.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.balling-disc-7m5
 envelope:
 - [-4.501, -4.551, -0.001, 4.501, 3.901, 6.51]

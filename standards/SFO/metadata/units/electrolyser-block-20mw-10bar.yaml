@@ -30,6 +30,9 @@ ports:
   medium: power
   power: 19100000.0
   voltage: 442.7
+  interface: interface.bus-joint-dc-44ka
+  half: androgynous
+  make: bolted
   connector: connector.bus-joint-dc-44ka
   at: [0.0, -6.0, 2.4]
   facing: [0.0, -1.0, 0.0]
@@ -41,6 +44,9 @@ ports:
   rate: 0.105
   pressure: 1000000.0
   temperature: 353.1
+  interface: interface.flange-dn150-pn16-double
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn150-pn16-ss-double
   at: [10.5, -2.5, 8.0]
   facing: [0.0, 0.0, 1.0]
@@ -52,6 +58,9 @@ ports:
   rate: 0.84
   pressure: 1000000.0
   temperature: 353.1
+  interface: interface.flange-dn100-pn16-double
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn100-pn16-ss-double
   at: [10.5, 2.5, 8.0]
   facing: [0.0, 0.0, 1.0]
@@ -61,6 +70,9 @@ ports:
   medium: liquid
   item: good.water
   rate: 0.945
+  interface: interface.flange-dn50-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn50-pn10-ss
   at: [9.8, 6.0, 1.0]
   facing: [0.0, 1.0, 0.0]
@@ -71,6 +83,9 @@ ports:
   item: good.water
   rate: 100.8
   temperature: 335.0
+  interface: interface.flange-dn250-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn250-pn10
   at: [10.6, 6.0, 1.0]
   facing: [0.0, 1.0, 0.0]
@@ -80,9 +95,22 @@ ports:
   item: good.water
   rate: 100.8
   temperature: 345.0
+  interface: interface.flange-dn250-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn250-pn10
   at: [11.4, 6.0, 1.0]
   facing: [0.0, 1.0, 0.0]
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s3
+  half: male
+  make: bolted
+  mass: 237900.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.electrolyser-block
 envelope:
 - [-10.2, -6.0, 0.0, 7.2, 4.4, 4.18]

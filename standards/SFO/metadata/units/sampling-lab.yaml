@@ -8,6 +8,17 @@ built_of:
 - {what: Cabin, item: material.structural-steel-a36, mass: 8000.0, note: from memory}
 - {what: 'Cutter, grinder and spectrometer', item: good.electric-motors, mass: 3000.0, note: from memory}
 needs: {power: 60000.0}
+ports:
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s1
+  half: male
+  make: bolted
+  mass: 11000.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.sampling-lab
 envelope:
 - [-3.001, -3.201, -0.001, 3.002, 3.146, 3.501]

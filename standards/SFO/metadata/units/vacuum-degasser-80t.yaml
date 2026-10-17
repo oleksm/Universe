@@ -13,6 +13,17 @@ built_of:
 - {what: Vacuum pump set, item: good.pumps, mass: 25000.0, note: 'dry screw pumps behind Roots boosters, from memory'}
 - {what: Vacuum line, item: material.structural-steel-a36, mass: 3061.0, note: '1 m across, 10 mm, 11.04 m of main, header and branches (measured centreline) with flanges, run at z -1.2 under the rail bridge; measured'}
 needs: {power: 600000.0}
+ports:
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 98030.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.vacuum-degasser-80t
 envelope:
 - [-6.001, -4.652, -6.001, 5.902, 4.976, 2.702]

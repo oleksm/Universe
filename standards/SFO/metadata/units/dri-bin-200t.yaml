@@ -20,6 +20,9 @@ ports:
   medium: bulk
   item: good.sponge-iron
   rate: 29.33
+  interface: interface.chute-dn800
+  half: androgynous
+  make: bolted
   connector: connector.chute-dn800
   at: [0.0, 0.0, 15.3]
   facing: [0.0, 0.0, 1.0]
@@ -30,6 +33,9 @@ ports:
   medium: bulk
   item: good.sponge-iron
   rate: 29.33
+  interface: interface.belt-transfer-800
+  half: female
+  make: open
   connector: connector.belt-transfer-800
   at: [0.0, 0.0, 15.3]
   facing: [0.0, 0.0, 1.0]
@@ -40,6 +46,9 @@ ports:
   medium: bulk
   item: good.sponge-iron
   rate: 29.33
+  interface: interface.chute-dn800
+  half: androgynous
+  make: bolted
   connector: connector.chute-dn800
   at: [0.0, -3.0, 6.0]
   facing: [0.0, 0.0, -1.0]
@@ -49,10 +58,23 @@ ports:
   medium: power
   power: 15000.0
   voltage: 400
+  interface: interface.termination-400v-16mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-16mm2
   at: [3.0, 0.0, 1.0]
   facing: [1.0, 0.0, 0.0]
   note: a terminal box on its east legs' brace, the feeder's cable up the leg
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s1
+  half: male
+  make: bolted
+  mass: 228200.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.dri-bin-200t
 envelope:
 - [-2.781, -3.451, 5.749, 2.781, 2.827, 15.302]

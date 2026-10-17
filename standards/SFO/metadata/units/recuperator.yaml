@@ -19,6 +19,9 @@ ports:
   rate: 38.14
   pressure: 730000.0
   temperature: 623.1
+  interface: interface.flange-dn1600-pn16-double
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn1600-pn16-double
   at: [0.0, 0.0, 18.0]
   facing: [0.0, 0.0, 1.0]
@@ -29,6 +32,9 @@ ports:
   rate: 38.14
   pressure: 730000.0
   temperature: 376.1
+  interface: interface.flange-dn1000-pn16-double
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn1000-pn16-double
   at: [0.0, 5.2, 1.5]
   facing: [0.0, 1.0, 0.0]
@@ -39,6 +45,9 @@ ports:
   rate: 20.67
   pressure: 850000.0
   temperature: 373.1
+  interface: interface.flange-dn1000-pn16-double
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn1000-pn16-double
   at: [0.0, -5.2, 1.0]
   facing: [0.0, -1.0, 0.0]
@@ -49,9 +58,22 @@ ports:
   rate: 20.67
   pressure: 850000.0
   temperature: 590.2
+  interface: interface.flange-dn1000-pn16-double
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn1000-pn16-double
   at: [0.0, -5.2, 16.75]
   facing: [0.0, -1.0, 0.0]
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 351300.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.recuperator
 envelope:
 - [-5.422, -2.422, -0.001, -0.578, 2.422, 16.501]

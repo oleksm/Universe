@@ -18,6 +18,9 @@ ports:
 - id: nozzle
   flow: both
   medium: bulk
+  interface: interface.flange-dn3000-pn1-double
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn3000-pn1-double
   at: [7.9, 0.0, 9.0]
   facing: [1.0, 0.0, 0.0]
@@ -26,6 +29,9 @@ ports:
 - id: high-nozzle
   flow: both
   medium: bulk
+  interface: interface.flange-dn3000-pn1-double
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn3000-pn1-double
   at: [8.0, 0.0, 14.5]
   facing: [1.0, 0.0, 0.0]
@@ -34,6 +40,9 @@ ports:
 - id: w1-out
   flow: both
   medium: liquid
+  interface: interface.flange-dn200-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn200-pn10
   at: [6.5, -10.2, 10.0]
   facing: [1.0, 0.0, 0.0]
@@ -41,6 +50,9 @@ ports:
 - id: w1-in
   flow: both
   medium: liquid
+  interface: interface.flange-dn200-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn200-pn10
   at: [5.0, -10.2, 10.0]
   facing: [-1.0, 0.0, 0.0]
@@ -48,6 +60,9 @@ ports:
 - id: w2-out
   flow: both
   medium: liquid
+  interface: interface.flange-dn200-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn200-pn10
   at: [6.5, -9.6, 10.0]
   facing: [1.0, 0.0, 0.0]
@@ -55,6 +70,9 @@ ports:
 - id: w2-in
   flow: both
   medium: liquid
+  interface: interface.flange-dn200-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn200-pn10
   at: [5.0, -9.6, 10.0]
   facing: [-1.0, 0.0, 0.0]
@@ -62,6 +80,9 @@ ports:
 - id: k1-out
   flow: both
   medium: liquid
+  interface: interface.flange-dn50-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn50-pn10-ss
   at: [6.5, -9.0, 10.0]
   facing: [1.0, 0.0, 0.0]
@@ -69,6 +90,9 @@ ports:
 - id: k1-in
   flow: both
   medium: liquid
+  interface: interface.flange-dn50-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn50-pn10-ss
   at: [5.0, -9.0, 10.0]
   facing: [-1.0, 0.0, 0.0]
@@ -76,6 +100,9 @@ ports:
 - id: e1-out
   flow: both
   medium: power
+  interface: interface.termination-6p6kv-95mm2
+  half: female
+  make: bolted
   connector: connector.termination-6p6kv-95mm2
   at: [6.5, -10.2, 10.8]
   facing: [1.0, 0.0, 0.0]
@@ -83,6 +110,9 @@ ports:
 - id: e1-in
   flow: both
   medium: power
+  interface: interface.termination-6p6kv-95mm2
+  half: female
+  make: bolted
   connector: connector.termination-6p6kv-95mm2
   at: [5.0, -10.2, 10.8]
   facing: [-1.0, 0.0, 0.0]
@@ -90,6 +120,9 @@ ports:
 - id: e2-out
   flow: both
   medium: power
+  interface: interface.termination-400v-500mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-500mm2
   at: [6.5, -9.4, 10.8]
   facing: [1.0, 0.0, 0.0]
@@ -97,6 +130,9 @@ ports:
 - id: e2-in
   flow: both
   medium: power
+  interface: interface.termination-400v-500mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-500mm2
   at: [5.0, -9.4, 10.8]
   facing: [-1.0, 0.0, 0.0]
@@ -105,6 +141,9 @@ ports:
   flow: in
   medium: gas
   item: material.nitrogen
+  interface: interface.flange-dn50-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn50-pn10-ss
   at: [6.5, -8.4, 10.0]
   facing: [1.0, 0.0, 0.0]
@@ -115,10 +154,23 @@ ports:
   medium: power
   power: 50000.0
   voltage: 400
+  interface: interface.termination-400v-35mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-35mm2
   at: [6.5, -8.6, 10.8]
   facing: [1.0, 0.0, 0.0]
   note: the locks' pumps
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s4
+  half: male
+  make: bolted
+  mass: 130000.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.pressure-hall
 envelope:
 - [0.0, -12.5, 0.0, 5.5, 12.5, 7.5]

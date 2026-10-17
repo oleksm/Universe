@@ -38,6 +38,9 @@ ports:
   medium: bulk
   item: good.sponge-iron
   rate: 29.33
+  interface: interface.belt-transfer-800
+  half: female
+  make: open
   connector: connector.belt-transfer-800
   at: [-12.0, 85.0, 2.0]
   facing: [0.0, -1.0, 0.0]
@@ -47,6 +50,9 @@ ports:
   medium: power
   power: 72450000.0
   voltage: 33000
+  interface: interface.termination-33kv-630mm2
+  half: female
+  make: bolted
   connector: connector.termination-33kv-630mm2
   at: [-12.0, -30.0, 0.3]
   facing: [0.0, 1.0, 0.0]
@@ -56,6 +62,9 @@ ports:
   medium: power
   power: 15000.0
   voltage: 400
+  interface: interface.termination-400v-16mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-16mm2
   at: [-7.5, 41.0, 1.0]
   facing: [-1.0, 0.0, 0.0]
@@ -64,6 +73,9 @@ ports:
   medium: power
   power: 1185000.0
   voltage: 6600
+  interface: interface.termination-6p6kv-50mm2
+  half: female
+  make: bolted
   connector: connector.termination-6p6kv-50mm2
   at: [22.0, 33.0, 1.0]
   facing: [-1.0, 0.0, 0.0]
@@ -73,6 +85,9 @@ ports:
   medium: power
   power: 382700.0
   voltage: 400
+  interface: interface.termination-400v-300mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-300mm2
   at: [-55.0, -9.0, 1.0]
   facing: [1.0, 0.0, 0.0]
@@ -81,6 +96,9 @@ ports:
   medium: liquid
   item: good.water
   rate: 10.2
+  interface: interface.flange-dn100-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn100-pn10
   at: [-55.0, -6.0, 0.75]
   facing: [1.0, 0.0, 0.0]

@@ -24,6 +24,9 @@ ports:
   item: good.water
   rate: 4.141
   temperature: 320.0
+  interface: interface.flange-dn150-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn150-pn10
   at: [-14.0, -12.0, 7.5]
   facing: [0.0, 0.0, 1.0]
@@ -33,6 +36,9 @@ ports:
   item: good.water
   rate: 4.141
   temperature: 330.0
+  interface: interface.flange-dn150-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn150-pn10
   at: [-13.2, -12.0, 7.5]
   facing: [0.0, 0.0, 1.0]
@@ -41,10 +47,23 @@ ports:
   medium: power
   power: 30000.0
   voltage: 400
+  interface: interface.termination-400v-25mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-25mm2
   at: [-12.4, -12.0, 7.5]
   facing: [0.0, 0.0, 1.0]
   note: the fan coils' fans, a gland up through the deck
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s4
+  half: male
+  make: bolted
+  mass: 374100.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.pressure-hall
 envelope:
 - [-15.0, -12.5, 0.0, 15.0, 12.5, 7.5]

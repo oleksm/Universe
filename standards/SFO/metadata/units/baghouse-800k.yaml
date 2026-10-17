@@ -15,6 +15,9 @@ ports:
 - id: gas-in
   flow: in
   medium: gas
+  interface: interface.flange-dn2000-pn1
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn2000-pn1
   at: [0.0, -6.0, 15.0]
   facing: [0.0, -1.0, 0.0]
@@ -24,10 +27,23 @@ ports:
   medium: power
   power: 1185000.0
   voltage: 6600
+  interface: interface.termination-6p6kv-50mm2
+  half: female
+  make: bolted
   connector: connector.termination-6p6kv-50mm2
   at: [12.0, 3.0, 1.0]
   facing: [1.0, 0.0, 0.0]
   note: the two fans
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s3
+  half: male
+  make: bolted
+  mass: 203700.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.baghouse
 envelope:
 - [5.913, -4.402, -0.001, 10.777, 4.402, 18.001]

@@ -606,8 +606,75 @@ def lay(run_key, pts, count=1, tees=0, taps=(), port_ends=0, caps=0):
     return m, fit, L
 
 
+# ---------------------------------------------------------------- interfaces (SFO 26)
+
+IFACE = {    # connector kind: (domain, halves, make, sealing by default)
+    "flange": ("fluid", "androgynous", "bolted", "air"), "lined-flange": ("fluid", "androgynous", "bolted", "air"),
+    "chute": ("bulk", "androgynous", "bolted", "air"), "belt-transfer": ("bulk", "male-female", "open", "open"),
+    "termination": ("power", "male-female", "bolted", "air"), "bus-joint": ("power", "androgynous", "bolted", "open"),
+    "hood": ("fluid", "male-female", "open", "open"), "clamp-coupling": ("fluid", "androgynous", "automatic", "double"),
+}
+STANDARD = {"flange": "EN 1092-1 bores and pressure classes (its faces and bolting the registry's)", "termination": "IEC 60038 voltages"}
+
+
+def interface_key(conn_key):
+    """The interface a connector is built to: its mating face, whatever its maker's metal (a stainless flange pair and a
+    carbon steel one of the same bore, class and sealing mate)."""
+    slug = conn_key.split(".", 1)[1]
+    if slug.startswith("flange-"):
+        slug = slug.replace("-ss", "")
+    return "interface." + slug
+
+
+def half(conn_key, flow):
+    """Which half of its interface a port built to this connector carries."""
+    kind = _recs[conn_key]["kind"]
+    if IFACE[kind][1] == "androgynous":
+        return "androgynous"
+    if kind == "belt-transfer":
+        return "female" if flow == "in" else "male"
+    if kind == "termination":
+        return "female"            # (the unit's box and terminals; the cable brings its lugs)
+    return "male"                  # (a hood serves the outlet's mouth, which is the port)
+
+
+def interfaces():
+    """An interface record for every connector's mating face; each connector names its own."""
+    out = {}
+    for key, d in sorted(_recs.items()):
+        if not key.startswith("connector."):
+            continue
+        kind = d["kind"]
+        ik = interface_key(key)
+        dom, halves, make, seal = IFACE[kind]
+        d["interface"] = ik
+        d["provides"] = "both"
+        rt = d.get("rating") or {}
+        rec = out.get(ik) or {"identity": {"key": ik, "name": d["identity"]["name"].replace(", stainless", ""),
+                                           "description": f"The mating face of the {d['identity']['name'].replace(', stainless', '')} joint: any maker's half built to it mates with any other's, whatever its metal."},
+                              "domain": dom, "kind": kind, "envelope": {}, "media": [], "sealing": "double" if d.get("sealing") == "double" else seal,
+                              "halves": halves, "make": make, "face": {k: d["physical"][k] for k in ("length", "width", "height")}}
+        if kind == "termination":
+            rec["area"] = d["size"]
+        elif d.get("size"):
+            rec["size"] = d["size"]
+        for k in ("pressure", "temperature", "voltage", "current"):
+            if rt.get(k) is not None:
+                rec["envelope"][k] = max(rec["envelope"].get(k, 0), rt[k])
+        med = {"fluid": ["gas", "liquid"], "bulk": ["bulk"], "power": ["power"]}[dom]
+        rec["media"] = sorted(set(rec["media"]) | set(med))
+        if kind in STANDARD:
+            rec["standard"] = STANDARD[kind]
+        rec["basis"] = [{"of": ["envelope", "face"], "tier": "derived", "note": "The most the connection products built to it are rated for, and their joint's outside (SFO 25's connectors)."}]
+        out[ik] = rec
+    return out
+
+
 def records():
-    """Every connector and run asked for: (folder, slug, record)."""
+    """Every connector, run and interface asked for: (folder, slug, record)."""
+    ifs = interfaces()
     for key, d in sorted(_recs.items()):
         kind, slug = key.split(".", 1)
         yield {"connector": "connectors", "run": "runs"}[kind], slug, d
+    for key, d in sorted(ifs.items()):
+        yield "interfaces", key.split(".", 1)[1], d

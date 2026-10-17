@@ -15,6 +15,17 @@ built_of:
 - {what: 'Skid, skirts and supports', item: material.structural-steel-a36, mass: 24150.0, note: 'the skid''s beams and feet, the dryers'' skirts and base rings, the exchangers'' stands and saddles, the headers'' posts; measured on model v1'}
 - {what: Piping and valve bodies, item: material.stainless-steel-304, mass: 3916.0, note: 'the process, regeneration and water pipes and the valves'' bodies; measured on model v1'}
 needs: {power: 296100.0, heat: 1448000.0}
+ports:
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 57870.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.hydrogen-purifier
 envelope:
 - [-6.002, -4.001, -0.002, 6.002, 4.002, 8.742]

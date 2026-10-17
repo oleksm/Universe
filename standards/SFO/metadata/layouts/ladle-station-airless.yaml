@@ -60,6 +60,9 @@ ports:
   item: material.argon
   rate: 0.04167
   pressure: 1000000.0
+  interface: interface.flange-dn50-pn16
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn50-pn16-ss
   at: [-30.0, -4.5, 0.6]
   facing: [1.0, 0.0, 0.0]
@@ -69,6 +72,9 @@ ports:
   medium: power
   power: 10930000.0
   voltage: 33000
+  interface: interface.termination-33kv-120mm2
+  half: female
+  make: bolted
   connector: connector.termination-33kv-120mm2
   at: [18.0, -30.0, 0.3]
   facing: [0.0, 1.0, 0.0]
@@ -78,6 +84,9 @@ ports:
   medium: power
   power: 30000.0
   voltage: 400
+  interface: interface.termination-400v-25mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-25mm2
   at: [-24.0, -2.6, 1.2]
   facing: [1.0, 0.0, 0.0]
@@ -86,6 +95,9 @@ ports:
   medium: power
   power: 40000.0
   voltage: 400
+  interface: interface.termination-400v-35mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-35mm2
   at: [13.0, 9.0, 4.1]
   facing: [-1.0, 0.0, 0.0]
@@ -94,6 +106,9 @@ ports:
   medium: power
   power: 50000.0
   voltage: 400
+  interface: interface.termination-400v-35mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-35mm2
   at: [31.0, 5.5, 1.0]
   facing: [-1.0, 0.0, 0.0]
@@ -102,6 +117,9 @@ ports:
   medium: power
   power: 20000.0
   voltage: 400
+  interface: interface.termination-400v-16mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-16mm2
   at: [32.0, -18.0, 2.3]
   facing: [-1.0, 0.0, 0.0]
@@ -110,6 +128,9 @@ ports:
   medium: power
   power: 19420.0
   voltage: 400
+  interface: interface.termination-400v-16mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-16mm2
   at: [-32.4, -8.5, 0.3]
   facing: [0.0, -1.0, 0.0]

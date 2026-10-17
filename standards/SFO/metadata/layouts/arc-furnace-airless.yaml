@@ -111,6 +111,9 @@ ports:
   item: good.sponge-iron
   rate: 29.33
   temperature: 923.1
+  interface: interface.chute-dn800
+  half: androgynous
+  make: bolted
   connector: connector.chute-dn800
   at: [-55.0, 70.0, 5.188]
   facing: [0.0, -1.0, 0.0]
@@ -120,6 +123,9 @@ ports:
   medium: power
   power: 72450000.0
   voltage: 33000
+  interface: interface.termination-33kv-630mm2
+  half: female
+  make: bolted
   connector: connector.termination-33kv-630mm2
   at: [-37.0, -40.0, 0.3]
   facing: [0.0, 1.0, 0.0]
@@ -129,6 +135,9 @@ ports:
   medium: power
   power: 15000.0
   voltage: 400
+  interface: interface.termination-400v-16mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-16mm2
   at: [-55.0, 14.8, 1.0]
   facing: [0.0, -1.0, 0.0]
@@ -137,6 +146,9 @@ ports:
   medium: power
   power: 10000.0
   voltage: 400
+  interface: interface.termination-400v-16mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-16mm2
   at: [19.0, 21.5, 1.0]
   facing: [-1.0, 0.0, 0.0]
@@ -145,6 +157,9 @@ ports:
   medium: power
   power: 50000.0
   voltage: 400
+  interface: interface.termination-400v-35mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-35mm2
   at: [36.0, 24.0, 1.0]
   facing: [-1.0, 0.0, 0.0]
@@ -153,6 +168,9 @@ ports:
   medium: power
   power: 20000.0
   voltage: 400
+  interface: interface.termination-400v-16mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-16mm2
   at: [26.0, -18.0, 2.3]
   facing: [-1.0, 0.0, 0.0]
@@ -161,6 +179,9 @@ ports:
   medium: power
   power: 116500.0
   voltage: 400
+  interface: interface.termination-400v-95mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-95mm2
   at: [-56.4, -3.5, 0.3]
   facing: [0.0, -1.0, 0.0]
@@ -170,6 +191,9 @@ ports:
   medium: power
   power: 91790.0
   voltage: 400
+  interface: interface.termination-400v-70mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-70mm2
   at: [-50.0, 52.4, 0.3]
   facing: [-1.0, 0.0, 0.0]

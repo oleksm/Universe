@@ -21,6 +21,9 @@ ports:
   medium: bulk
   item: good.iron-ore
   rate: 33.16
+  interface: interface.belt-transfer-1000-sealed
+  half: female
+  make: open
   connector: connector.belt-transfer-1000-sealed
   at: [-8.0, 0.0, 4.0]
   facing: [0.0, 0.0, 1.0]
@@ -29,6 +32,9 @@ ports:
   flow: in
   medium: liquid
   item: good.water
+  interface: interface.flange-dn100-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn100-pn10-ss
   at: [-8.0, 1.2, 4.0]
   facing: [0.0, 0.0, 1.0]
@@ -37,6 +43,9 @@ ports:
   flow: out
   medium: liquid
   item: good.iron-ore
+  interface: interface.flange-dn150-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn150-pn10
   at: [8.0, 3.0, 0.5]
   facing: [0.0, 1.0, 0.0]
@@ -46,10 +55,23 @@ ports:
   medium: power
   power: 2149000.0
   voltage: 6600
+  interface: interface.termination-6p6kv-95mm2
+  half: female
+  make: bolted
   connector: connector.termination-6p6kv-95mm2
   at: [6.0, -4.4, 0.5]
   facing: [0.0, -1.0, 0.0]
   note: the motor's terminal box
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s3
+  half: male
+  make: bolted
+  mass: 311400.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.ball-mill-4m4
 envelope:
 - [-5.351, -2.242, -0.001, 5.351, 2.242, 5.241]

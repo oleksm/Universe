@@ -26,6 +26,9 @@ ports:
   medium: liquid
   item: good.water
   rate: 5.639
+  interface: interface.flange-dn200-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn200-pn10-ss
   at: [6.0, -1.6, 0.5]
   facing: [1.0, 0.0, 0.0]
@@ -35,6 +38,9 @@ ports:
   medium: liquid
   item: good.water
   rate: 4.725
+  interface: interface.flange-dn100-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn100-pn10-ss
   at: [-6.0, 0.0, 0.5]
   facing: [-1.0, 0.0, 0.0]
@@ -42,6 +48,9 @@ ports:
   flow: out
   medium: liquid
   item: good.water
+  interface: interface.flange-dn150-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn150-pn10-ss
   at: [6.0, 3.4, 0.3]
   facing: [1.0, 0.0, 0.0]
@@ -51,9 +60,22 @@ ports:
   medium: power
   power: 35160.0
   voltage: 400
+  interface: interface.termination-400v-25mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-25mm2
   at: [-6.0, -3.4, 0.5]
   facing: [-1.0, 0.0, 0.0]
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 31790.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.water-treatment
 options: [sealing]
 envelope:

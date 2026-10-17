@@ -66,6 +66,9 @@ ports:
   medium: power
   power: 7500000.0
   voltage: 300.0
+  interface: interface.bus-joint-ac-27ka
+  half: androgynous
+  make: bolted
   connector: connector.bus-joint-ac-27ka
   at: [0.0, -5.34, 6.0]
   facing: [0.0, -1.0, 0.0]
@@ -76,6 +79,9 @@ ports:
   item: good.water
   rate: 35.83
   temperature: 330.0
+  interface: interface.flange-dn150-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn150-pn10
   at: [-4.8, -4.85, 1.0]
   facing: [0.0, -1.0, 0.0]
@@ -85,6 +91,9 @@ ports:
   item: good.water
   rate: 35.83
   temperature: 320.0
+  interface: interface.flange-dn150-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn150-pn10
   at: [-4.2, -4.85, 1.0]
   facing: [0.0, -1.0, 0.0]
@@ -92,6 +101,9 @@ ports:
   flow: in
   medium: bulk
   rate: 0.6792
+  interface: interface.chute-dn400
+  half: androgynous
+  make: bolted
   connector: connector.chute-dn400
   at: [0.0, 3.0, 9.0]
   facing: [0.0, 0.0, 1.0]
@@ -103,6 +115,9 @@ ports:
   rate: 0.02083
   pressure: 50000.0
   temperature: 673.0
+  interface: interface.flange-dn200-pn1
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn200-pn1-ss
   at: [2.0, 0.0, 7.5]
   facing: [0.0, 0.0, 1.0]
@@ -113,10 +128,23 @@ ports:
   item: material.argon
   rate: 0.02083
   pressure: 1000000.0
+  interface: interface.flange-dn50-pn16
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn50-pn16-ss
   at: [-5.5, -2.5, 1.5]
   facing: [-1.0, 0.0, 0.0]
   note: fed under the roof to about 50 kPa
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 79770.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.ladle-furnace-80t
 options: [sealing]
 envelope:

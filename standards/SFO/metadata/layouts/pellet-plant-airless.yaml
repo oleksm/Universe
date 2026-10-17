@@ -188,6 +188,9 @@ ports:
   medium: bulk
   item: good.iron-ore
   rate: 33.16
+  interface: interface.belt-transfer-1000
+  half: female
+  make: open
   connector: connector.belt-transfer-1000
   at: [-172.1, 0.0, 2.0]
   facing: [1.0, 0.0, 0.0]
@@ -197,6 +200,9 @@ ports:
   medium: bulk
   item: good.iron-ore-pellets
   rate: 34.72
+  interface: interface.belt-transfer-1000
+  half: male
+  make: open
   connector: connector.belt-transfer-1000
   at: [191.0, 14.5, 2.0]
   facing: [-1.0, 0.0, 0.0]
@@ -205,6 +211,9 @@ ports:
   flow: in
   medium: gas
   item: material.oxygen
+  interface: interface.flange-dn50-pn16-double
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn50-pn16-ss-double
   at: [160.0, 36.0, 3.5]
   facing: [-1.0, 0.0, 0.0]
@@ -213,6 +222,9 @@ ports:
   flow: in
   medium: gas
   item: material.nitrogen
+  interface: interface.flange-dn50-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn50-pn10-ss
   at: [-100.0, 12.8, 1.0]
   facing: [1.0, 0.0, 0.0]
@@ -222,6 +234,9 @@ ports:
   medium: power
   power: 21710000.0
   voltage: 33000
+  interface: interface.termination-33kv-185mm2
+  half: female
+  make: bolted
   connector: connector.termination-33kv-185mm2
   at: [60.0, -60.0, 0.3]
   facing: [0.0, 1.0, 0.0]
@@ -231,6 +246,9 @@ ports:
   medium: power
   power: 632900.0
   voltage: 400
+  interface: interface.termination-400v-500mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-500mm2
   at: [-100.0, 13.6, 0.3]
   facing: [1.0, 0.0, 0.0]
@@ -240,6 +258,9 @@ ports:
   medium: power
   power: 50000.0
   voltage: 400
+  interface: interface.termination-400v-35mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-35mm2
   at: [-100.0, 15.2, 0.3]
   facing: [1.0, 0.0, 0.0]
@@ -248,6 +269,9 @@ ports:
   medium: power
   power: 50000.0
   voltage: 400
+  interface: interface.termination-400v-35mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-35mm2
   at: [56.0, -60.0, 0.3]
   facing: [0.0, 1.0, 0.0]
@@ -256,6 +280,9 @@ ports:
   medium: power
   power: 15000.0
   voltage: 400
+  interface: interface.termination-400v-16mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-16mm2
   at: [-71.0, -30.0, 0.3]
   facing: [0.0, 1.0, 0.0]
@@ -264,6 +291,9 @@ ports:
   medium: power
   power: 541200.0
   voltage: 400
+  interface: interface.termination-400v-400mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-400mm2
   at: [140.0, -50.0, 0.5]
   facing: [-1.0, 0.0, 0.0]
@@ -273,6 +303,9 @@ ports:
   medium: power
   power: 20000.0
   voltage: 400
+  interface: interface.termination-400v-16mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-16mm2
   at: [-56.0, -24.0, 4.5]
   facing: [-1.0, 0.0, 0.0]
@@ -281,6 +314,9 @@ ports:
   medium: power
   power: 155300.0
   voltage: 400
+  interface: interface.termination-400v-120mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-120mm2
   at: [149.4, 35.0, 0.3]
   facing: [0.0, 1.0, 0.0]

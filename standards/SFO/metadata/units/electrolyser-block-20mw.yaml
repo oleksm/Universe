@@ -23,6 +23,17 @@ recipes:
   - {item: element.o, quantity: 8}
   rate: 0.10500000000000001
   power: 19095989.583333332
+ports:
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s3
+  half: male
+  make: bolted
+  mass: 228900.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.electrolyser-block
 envelope:
 - [-10.202, -6.001, -0.001, 11.602, 6.001, 8.002]

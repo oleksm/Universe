@@ -10,6 +10,17 @@ built_of:
 - {what: Filter bags, item: material.ptfe, mass: 1389.0, note: '737 bags 150 mm across and 8 m long, 2778 m2 of PTFE-membrane cloth at 0.5 kg/m2'}
 - {what: Fan and motor, item: good.electric-motors, mass: 4000.0, note: 'an induced-draught fan, 8 t for 400,000 m3/h, in proportion; from memory'}
 needs: {power: 296300.0}
+ports:
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 68690.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.baghouse
 envelope:
 - [-6.001, -4.001, -0.001, 5.751, 3.501, 12.001]

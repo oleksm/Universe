@@ -9,12 +9,8 @@ allOf:
   - { $ref: "../../common.schema.yaml#/definitions/physical_object" }
   - { properties: { physical: { required: [length, width, height, mass] } } }
 definitions:
-  port:
-    type: object
-    additionalProperties: false
-    required: [id, flow, medium, connector, at, facing]
-    description: "One place where something goes in or comes out (SFO 25): a run's end joins it when both are built to the same connector."
-    properties:
+  port: { $ref: "../../common.schema.yaml#/definitions/port" }
+properties:
       id: { type: string, description: "Its name on the unit, unique there (gas-in, water-out, hv)." }
       flow: { enum: [in, out, both], description: "Which way what it carries goes at full rate: in, out, or both (a power port feeding and fed)." }
       medium: { enum: [gas, liquid, bulk, power] }
@@ -82,7 +78,8 @@ properties:
       properties:
         kind: { enum: [tube, dome], description: "tube: a shell along x, at [x0, x1, yc, zc, r_in, r_out]; dome: a head bulging toward +x from x0, at [x0, depth, yc, zc, r_in, r_out], `depth` deep on its axis." }
         at: { type: array, items: { type: number }, minItems: 6, maxItems: 6, x-unit: "m" }
-  ports: { type: array, items: { $ref: "#/definitions/port" }, description: "Where what it takes comes in and what it gives goes out, each built to a connector (SFO 25)." }
+  ports: { type: array, items: { $ref: "#/definitions/port" }, description: "Where what it takes comes in and what it gives goes out, and where it bears on its mount, each built to an interface (SFO 25, SFO 26)." }
+  motion: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/motion" }, description: "How it, or a part of it, moves in service." }
   life: { type: number, x-unit: "s" }
   product: { type: string, x-ref: [product], description: "The product this unit is, as fitted: its model is the product's (or its family's generator's), sized as this unit is, with these options." }
   options: { type: array, items: { type: string }, description: "The product's option kits this unit carries, by their ids." }

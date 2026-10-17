@@ -10,6 +10,8 @@ built_of:
 - {what: Stress cones, item: material.silicone-rubber, mass: 18.0, note: a silicone stress cone on each core (from memory)}
 - {what: Connectors, item: material.copper, mass: 9.0, note: the plug's contact on each conductor}
 - {what: Gland plate, item: material.aluminium-alloy-6061, mass: 20.2, note: '1.5 x 0.5 m, 10 mm, the three entries 0.5 m apart'}
+interface: interface.termination-132kv-240mm2
+provides: both
 visual: {format: freefall-model/1, path: models/termination-132kv-240mm2/v1, manifest_sha256: cb91214429904d331099c3d43b94e3db0ea63e5b674e9b1ec01d26331d438e08, version: 1, triangles: 4432}
 basis:
 - of: [built_of, physical]

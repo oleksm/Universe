@@ -45,6 +45,9 @@ ports:
   medium: bulk
   item: good.sponge-iron
   rate: 29.33
+  interface: interface.belt-transfer-800
+  half: female
+  make: open
   connector: connector.belt-transfer-800
   at: [0.0, 1.8, 8.3]
   facing: [0.0, 0.0, 1.0]
@@ -52,6 +55,9 @@ ports:
 - id: offgas-out
   flow: out
   medium: gas
+  interface: interface.hood-dn2000
+  half: male
+  make: open
   connector: connector.hood-dn2000
   at: [3.0, 4.5, 8.5]
   facing: [0.0, 1.0, 0.0]
@@ -61,6 +67,9 @@ ports:
   medium: power
   power: 72000000
   voltage: 800.0
+  interface: interface.bus-joint-ac-65ka
+  half: androgynous
+  make: bolted
   connector: connector.bus-joint-ac-65ka
   at: [0.0, -6.2, 2.3]
   facing: [0.0, -1.0, 0.0]
@@ -71,6 +80,9 @@ ports:
   item: good.water
   rate: 258.0
   temperature: 303.0
+  interface: interface.flange-dn400-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn400-pn10
   at: [-4.2, 4.95, 0.5]
   facing: [0.0, 0.0, 1.0]
@@ -80,9 +92,22 @@ ports:
   item: good.water
   rate: 258.0
   temperature: 313.0
+  interface: interface.flange-dn400-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn400-pn10
   at: [-3.4, 4.95, 0.5]
   facing: [0.0, 0.0, 1.0]
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 421900.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.eaf-vessel-80t
 envelope:
 - [-5.851, -4.501, -0.001, 5.851, 4.501, 2.512]

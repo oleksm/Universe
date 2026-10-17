@@ -12,6 +12,17 @@ built_of:
 - {what: Stack, item: material.structural-steel-a36, mass: 51880.0, note: 'the tapered shell (12 to 8 mm) with its side entry, rim, base ring, closure and eight anchor chairs; measured on model v1; its wind loads not yet checked'}
 - {what: Stack ladder and platforms, item: material.structural-steel-a36, mass: 2000.0, note: 'a caged ladder and two rest platforms, from memory'}
 needs: {power: 666700.0}
+ports:
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s3
+  half: male
+  make: bolted
+  mass: 215200.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.baghouse
 envelope:
 - [-11.991, -6.001, -0.001, 11.851, 4.527, 13.612]

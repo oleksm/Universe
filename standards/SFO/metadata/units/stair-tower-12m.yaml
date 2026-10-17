@@ -8,6 +8,17 @@ built_of:
 - {what: Stairs and landings, item: material.structural-steel-a36, mass: 3000.0, note: 'four flights with treads and rails and their landings, 750 kg each, from memory'}
 - {what: Frame, item: stock.st4340-tb-120x3-s3000, mass: 3384.0, note: 'the lattice in st4340-tb-120x3 with its nodes, the kit''s lightest for its own weight and 5 kPa on its landings with half again to spare'}
 needs: {}
+ports:
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s1
+  half: male
+  make: bolted
+  mass: 6384.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.stair-tower-12m
 envelope:
 - [-1.578, -3.081, -0.137, 1.578, 3.081, 13.126]

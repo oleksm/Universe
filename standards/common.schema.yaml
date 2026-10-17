@@ -186,6 +186,49 @@ definitions:
       version: { type: integer, minimum: 1 }
       triangles: { type: integer, description: "triangles drawn, from the model" }
       note: { type: string }
+  port:
+    type: object
+    additionalProperties: false
+    required: [id, flow, medium, interface, at, facing]
+    description: "One place where something goes in or comes out of a made thing (SFO 25, SFO 26): a unit, a piece of equipment, a module or a layout. It is built to an interface (a standard's mating face) and carries one half of it; it states the duty it needs, so any maker's connection product built to that interface and rated for that duty fits it. The game draws the joint at the port, and the thing's own model ends at the mating plane."
+    properties:
+      id: { type: string, description: "Its name on the thing, unique there (gas-in, water-out, hv, base)." }
+      flow: { enum: [in, out, both], description: "Which way what it carries goes at full rate: in, out, or both (a power port feeding and fed). For a load port: out, the thing's weight going down into what bears it." }
+      medium: { enum: [gas, liquid, bulk, power, signal, heat, load, carrier, people], description: "What crosses it: gas, liquid or bulk solids; power; signal (control and data); heat (by a heat pipe or a contact); load (weight and working forces into what bears it); carrier (a batch on a car, a crane's hook, a container's lock); people (an airlock, a docking ring)." }
+      interface: { type: string, x-ref: [interface], description: "The interface it is built to (SFO 26), by key: its mating face and the envelope a product built to it must meet." }
+      half: { enum: [male, female, androgynous], description: "Which half of the interface the thing itself carries; the joining product brings the other (androgynous: both halves are the same)." }
+      make: { enum: [permanent, bolted, manual, automatic, open], description: "How the joint is made and broken here: welded once; bolted; by hand (a plug, a quick coupling, a crew's work, a game action); automatically (a clamp, a docking ring, a coupler); open (nothing mates: a belt's head over a hopper, a hood over an outlet)." }
+      connector: { type: string, x-ref: [connector], description: "The connection product the registry's own layouts join it with, by key; any other product built to the same interface and rated for the duty fits as well." }
+      item: { type: string, x-ref: [material, stock, good, package], description: "What it carries, by key; none for power, signal or load." }
+      rate: { type: number, minimum: 0, x-unit: "kg/s", description: "kg/s at the thing's rating: the duty a product must carry" }
+      power: { type: number, minimum: 0, x-unit: "W", description: "W through it at the thing's rating (power or heat)" }
+      pressure: { type: number, minimum: 0, x-unit: "Pa", description: "Pa inside it in service" }
+      temperature: { type: number, minimum: 0, x-unit: "K", description: "K of what it carries" }
+      voltage: { type: number, minimum: 0, x-unit: "V", description: "V between phases (a power port)" }
+      current: { type: number, minimum: 0, x-unit: "A", description: "A a phase through it at the thing's rating" }
+      mass: { type: number, minimum: 0, x-unit: "kg", description: "A load port: kg it bears down through it, the thing and what it holds (its weight is this times the site's gravity). A carrier port: kg a batch weighs." }
+      force: { type: number, minimum: 0, x-unit: "N", description: "A load port: N of working force on top of its weight, at its worst (a crane wheel's reaction, a tilt, a thrust)" }
+      moment: { type: number, minimum: 0, x-unit: "N m", description: "A load port: N m of working moment at its worst" }
+      cycle: { type: number, exclusiveMinimum: 0, x-unit: "s", description: "A carrier port: s between batches" }
+      moves_with: { type: string, description: "The id of the thing's motion this port moves with (a tilting furnace's outlet): its joint must let it move." }
+      at: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "m", description: "Its face's middle in the thing's frame (x along, y across from its middle, z up from its base)." }
+      facing: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "1", description: "The way out of its face, a unit vector in the thing's frame: a run leaves it this way." }
+      optional: { type: boolean, description: "A spare, blinded when nothing joins it." }
+      note: { type: string }
+  motion:
+    type: object
+    additionalProperties: false
+    required: [id, kind]
+    description: "A way a made thing or a part of it moves in service (SFO 26): a fit check sweeps what moves through its range, and its moving ports need joints that let them."
+    properties:
+      id: { type: string }
+      kind: { enum: [tilt, rotate, travel, lift, dock], description: "tilt or rotate: about an axis; travel or lift: along one; dock: coming to rest against a mating face." }
+      point: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "m", description: "A point on its axis, in the thing's frame" }
+      direction: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "1", description: "Its axis, a unit vector" }
+      angle: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "rad", description: "rad from rest it turns, least and most (a tilt or a rotation)" }
+      distance: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "m", description: "m from rest it moves, least and most (a travel or a lift)" }
+      moves: { type: array, items: { type: string }, description: "What moves: the whole thing, or its named parts" }
+      note: { type: string }
   physical_object:
     description: "A thing that exists in the world: it has physical figures. A kind of record that is one derives from this (allOf), and adds the figures its kind must have. A company, a law or a need does not."
     required: [physical]

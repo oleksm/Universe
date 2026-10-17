@@ -18,6 +18,9 @@ ports:
   medium: power
   power: 20000.0
   voltage: 400
+  interface: interface.termination-400v-16mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-16mm2
   at: [8.0, -24.0, 2.3]
   facing: [-1.0, 0.0, 0.0]

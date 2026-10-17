@@ -27,6 +27,17 @@ recipes:
   - {item: good.water, quantity: 0.484}
   rate: 55.5555555555556
   power: 22000000
+ports:
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s3
+  half: male
+  make: bolted
+  mass: 3233000.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.shaft-furnace-200th
 envelope:
 - [-7.001, -3.722, 6.999, 3.722, 3.722, 20.102]

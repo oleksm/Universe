@@ -12,6 +12,17 @@ built_of:
 - {what: 'Supports, skids and seats', item: material.structural-steel-a36, mass: 17100.0, note: 'the cooler''s legs, the machine skid and seats, the pipes'' feet and braces; measured on model v1'}
 - {what: Compressor and motor, item: good.electric-motors, mass: 18790.0, note: from memory}
 needs: {power: 1796000.0, heat: 32840000.0}
+ports:
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 83280.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.dri-cooling-loop
 envelope:
 - [-6.001, -4.001, -0.002, 5.531, 4.002, 15.191]

@@ -23,6 +23,9 @@ ports:
   rate: 0.525
   pressure: 1000000.0
   temperature: 353.1
+  interface: interface.flange-dn250-pn16-double
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn250-pn16-ss-double
   at: [-6.0, 0.0, 6.0]
   facing: [-1.0, 0.0, 0.0]
@@ -32,6 +35,9 @@ ports:
   item: material.hydrogen
   rate: 0.525
   pressure: 1000000.0
+  interface: interface.flange-dn250-pn16-double
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn250-pn16-ss-double
   at: [6.0, 0.0, 2.0]
   facing: [1.0, 0.0, 0.0]
@@ -42,6 +48,9 @@ ports:
   item: good.water
   rate: 58.54
   temperature: 335.0
+  interface: interface.flange-dn200-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn200-pn10
   at: [0.0, -4.0, 1.0]
   facing: [0.0, -1.0, 0.0]
@@ -51,6 +60,9 @@ ports:
   item: good.water
   rate: 58.54
   temperature: 345.0
+  interface: interface.flange-dn200-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn200-pn10
   at: [0.6, -4.0, 1.0]
   facing: [0.0, -1.0, 0.0]
@@ -58,6 +70,9 @@ ports:
   flow: out
   medium: liquid
   item: good.water
+  interface: interface.flange-dn50-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn50-pn10-ss
   at: [-6.0, 3.0, 0.3]
   facing: [-1.0, 0.0, 0.0]
@@ -67,9 +82,22 @@ ports:
   medium: power
   power: 650500.0
   voltage: 400
+  interface: interface.termination-400v-500mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-500mm2
   at: [6.0, -3.5, 0.5]
   facing: [1.0, 0.0, 0.0]
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 53380.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.hydrogen-purifier
 envelope:
 - [-6.0, -4.0, 0.0, 6.0, 4.0, 8.74]

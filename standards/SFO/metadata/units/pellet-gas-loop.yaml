@@ -20,6 +20,9 @@ ports:
   medium: gas
   item: material.nitrogen
   temperature: 393.1
+  interface: interface.flange-dn700-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn700-pn10
   at: [-9.0, 0.0, 13.0]
   facing: [0.0, 0.0, 1.0]
@@ -28,6 +31,9 @@ ports:
   medium: gas
   item: material.nitrogen
   temperature: 338.1
+  interface: interface.flange-dn600-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn600-pn10
   at: [12.0, 0.0, 1.5]
   facing: [1.0, 0.0, 0.0]
@@ -36,6 +42,9 @@ ports:
   medium: liquid
   item: good.water
   rate: 1.64
+  interface: interface.flange-dn50-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn50-pn10-ss
   at: [6.0, 6.0, 0.3]
   facing: [0.0, 1.0, 0.0]
@@ -43,6 +52,9 @@ ports:
   flow: in
   medium: gas
   item: material.oxygen
+  interface: interface.flange-dn50-pn16-double
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn50-pn16-ss-double
   at: [9.0, 6.0, 1.0]
   facing: [0.0, 1.0, 0.0]
@@ -52,6 +64,9 @@ ports:
   item: good.water
   rate: 130.6
   temperature: 320.0
+  interface: interface.flange-dn300-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn300-pn10
   at: [-12.0, -2.0, 1.0]
   facing: [-1.0, 0.0, 0.0]
@@ -61,6 +76,9 @@ ports:
   item: good.water
   rate: 130.6
   temperature: 330.0
+  interface: interface.flange-dn300-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn300-pn10
   at: [-12.0, -1.4, 1.0]
   facing: [-1.0, 0.0, 0.0]
@@ -69,10 +87,23 @@ ports:
   medium: power
   power: 270600.0
   voltage: 400
+  interface: interface.termination-400v-185mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-185mm2
   at: [10.0, -6.0, 0.5]
   facing: [0.0, -1.0, 0.0]
   note: the fan
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s3
+  half: male
+  make: bolted
+  mass: 86380.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.pellet-gas-loop
 envelope:
 - [-11.1, -2.1, 0, -6.7, 2.1, 13.1]

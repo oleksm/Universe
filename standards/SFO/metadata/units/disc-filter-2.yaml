@@ -12,6 +12,17 @@ built_of:
 - {what: Drives and agitators, item: material.structural-steel-a36, mass: 5000.0, note: 'a drive and an agitator for each filter, from memory'}
 - {what: Vacuum pumps and compressor, item: good.pumps, mass: 8210.0, note: 'liquid ring pumps at 25 kg/kW, the blow-back compressor and the filtrate pump, from memory'}
 needs: {power: 368100.0}
+ports:
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 29810.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.disc-filter-2
 envelope:
 - [-6.001, -2.549, -0.001, 6.001, 4.001, 5.501]

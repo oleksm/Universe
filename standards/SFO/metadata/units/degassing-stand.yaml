@@ -18,6 +18,9 @@ ports:
   item: material.argon
   rate: 0.02083
   pressure: 1000000.0
+  interface: interface.flange-dn50-pn16
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn50-pn16-ss
   at: [-3.3, -3.1, 0.6]
   facing: [-1.0, 0.0, 0.0]
@@ -27,9 +30,22 @@ ports:
   medium: power
   power: 30000.0
   voltage: 400
+  interface: interface.termination-400v-25mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-25mm2
   at: [-3.3, -2.6, 1.2]
   facing: [-1.0, 0.0, 0.0]
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 16800.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.degassing-stand
 envelope:
 - [-0.602, -4.101, -0.001, 0.947, -2.899, 6.302]

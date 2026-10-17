@@ -33,6 +33,9 @@ ports:
   medium: gas
   item: material.nitrogen
   temperature: 393.1
+  interface: interface.flange-dn700-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn700-pn10
   at: [0.0, -3.3, 21.5]
   facing: [0.0, -1.0, 0.0]
@@ -41,6 +44,9 @@ ports:
   medium: gas
   item: material.nitrogen
   temperature: 338.1
+  interface: interface.flange-dn600-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn600-pn10
   at: [0.0, -3.3, 7.0]
   facing: [0.0, -1.0, 0.0]
@@ -48,6 +54,9 @@ ports:
   flow: in
   medium: gas
   item: material.nitrogen
+  interface: interface.flange-dn250-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn250-pn10
   at: [5.55, 0.0, 12.0]
   facing: [1.0, 0.0, 0.0]
@@ -56,6 +65,9 @@ ports:
   flow: in
   medium: gas
   item: material.nitrogen
+  interface: interface.flange-dn250-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn250-pn10
   at: [-5.55, 0.0, 12.0]
   facing: [-1.0, 0.0, 0.0]
@@ -66,6 +78,9 @@ ports:
   item: good.water
   rate: 23.04
   temperature: 320.0
+  interface: interface.flange-dn150-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn150-pn10
   at: [-0.6, -3.3, 13.0]
   facing: [0.0, -1.0, 0.0]
@@ -75,6 +90,9 @@ ports:
   item: good.water
   rate: 23.04
   temperature: 330.0
+  interface: interface.flange-dn150-pn10
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn150-pn10
   at: [0.6, -3.3, 13.0]
   facing: [0.0, -1.0, 0.0]
@@ -82,6 +100,9 @@ ports:
   flow: in
   medium: bulk
   item: good.iron-ore
+  interface: interface.belt-transfer-800-sealed
+  half: female
+  make: open
   connector: connector.belt-transfer-800-sealed
   at: [0.0, 0.0, 29.5]
   facing: [0.0, 0.0, 1.0]
@@ -91,6 +112,9 @@ ports:
   medium: bulk
   item: good.iron-ore-pellets
   rate: 17.36
+  interface: interface.chute-dn800
+  half: androgynous
+  make: bolted
   connector: connector.chute-dn800
   at: [0.0, 0.0, 0.8]
   facing: [0.0, 0.0, -1.0]
@@ -99,10 +123,23 @@ ports:
   medium: power
   power: 9695000.0
   voltage: 6600
+  interface: interface.termination-6p6kv-400mm2
+  half: female
+  make: bolted
   connector: connector.termination-6p6kv-400mm2
   at: [0.0, 5.5, 8.0]
   facing: [0.0, 1.0, 0.0]
   note: the torches' supplies
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 1028000.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.pellet-shaft-63th
 envelope:
 - [-3.4, -3.4, 0, 3.4, 3.4, 29.5]

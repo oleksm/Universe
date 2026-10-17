@@ -15,10 +15,23 @@ ports:
   medium: power
   power: 20000.0
   voltage: 400
+  interface: interface.termination-400v-16mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-16mm2
   at: [3.0, 0.0, 2.3]
   facing: [1.0, 0.0, 0.0]
   note: a gland on a pad on its +x end's dome, on the axis; the cable through the berm
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s1
+  half: male
+  make: bolted
+  mass: 7491.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.crew-post
 envelope:
 - [-0.799, -2.001, 0.298, 3.001, 2.001, 4.302]

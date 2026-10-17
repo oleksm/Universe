@@ -26,6 +26,9 @@ ports:
   rate: 1.369
   pressure: 100000.0
   temperature: 1873.0
+  interface: interface.lined-flange-dn1200-pn1
+  half: androgynous
+  make: bolted
   connector: connector.lined-flange-dn1200-pn1
   at: [0.0, 0.0, 18.0]
   facing: [0.0, 0.0, 1.0]
@@ -36,6 +39,9 @@ ports:
   rate: 1.369
   pressure: 100000.0
   temperature: 523.1
+  interface: interface.flange-dn1200-pn1
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn1200-pn1
   at: [3.0, 0.0, 8.0]
   facing: [1.0, 0.0, 0.0]
@@ -46,6 +52,9 @@ ports:
   rate: 1.173
   pressure: 2000000.0
   temperature: 485.0
+  interface: interface.flange-dn150-pn25
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn150-pn25
   at: [-3.0, 0.4, 16.5]
   facing: [-1.0, 0.0, 0.0]
@@ -55,6 +64,9 @@ ports:
   item: good.water
   rate: 1.173
   temperature: 480.0
+  interface: interface.flange-dn100-pn25
+  half: androgynous
+  make: bolted
   connector: connector.flange-dn100-pn25
   at: [-3.0, -0.4, 16.5]
   facing: [-1.0, 0.0, 0.0]
@@ -63,10 +75,23 @@ ports:
   medium: power
   power: 10000.0
   voltage: 400
+  interface: interface.termination-400v-16mm2
+  half: female
+  make: bolted
   connector: connector.termination-400v-16mm2
   at: [2.0, -2.0, 1.0]
   facing: [0.0, -1.0, 0.0]
   note: the dust lock's drives
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 25780.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.offgas-cooler-sealed
 envelope:
 - [-1.576, -1.726, -0.001, 1.576, 1.726, 18.001]
