@@ -274,3 +274,15 @@ The owner approved two checks. Neither builds a model.
    - the feed belt's head 3 m over the lock, and the masts and arms.
 
    Report clearances only. A rebuild follows only if something collides, and the registry decides it.
+
+## 12. The sealed furnace's off-gas joint (2026-10-16, from your section 11 sweep)
+
+The sweep showed a rigid bellows joint can't tilt: the reducer and riser collide from -9 to -1 degrees, and the face moves 2.33 m at 15. The sealed furnace now takes the furnace for air's body. **This is the one rebuild, and it reuses the air furnace's work:**
+
+1. `eaf-vessel-80t-sealed` v3 is `eaf-vessel-80t` v4's body with the sealing kit on it:
+   - keep v2's roof seal flanges, hold-down clamps, electrode glands, feed lock and catch hopper, the deck manifold and the bus necks;
+   - remove the bellows and its reducer on the fourth hole;
+   - take v4's horizontal water-jacketed elbow and its two posts unchanged;
+   - the kit's end of the elbow is a reducer from 2 m to 1.2 m with a water-cooled slide gate. Its mouth face is at (3, 4.5, 8.5), facing +y: the clamp coupling's plane.
+2. **A new kit family `clamp-coupling`:** `connector.clamp-coupling-dn1200`. It is two 1.6 m flange rings, 40 mm, with a double O-ring, a segmented clamp ring with two actuators, and a 0.15 m sliding spool on the duct's side. The game draws it at the port, so the unit needs no stub.
+3. Then the same diagnostic sweep: y axis (0, 0, 1.0), rest and +/-15 degrees, the clamp open and the spool drawn back 0.15 m, against the airless shop's duct. The duct now leaves the mouth north 1.2 m, rises to layout z 20 and runs east. The crane's rails moved 1.25 m north, to y -10.75 and 13.25.

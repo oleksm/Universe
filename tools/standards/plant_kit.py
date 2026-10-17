@@ -165,6 +165,28 @@ GAP_HOOD = 0.15                  # m between a moving outlet's mouth and the hoo
 HOOD_STROKE = 1.0                # m the hood's sleeve is drawn back before the outlet moves (invented)
 
 
+def clamp_coupling(dn):
+    """A sealed clamped coupling between a moving outlet and a fixed duct: a flange pair held by a quick clamp ring,
+    a slide gate on the outlet's side, and a 0.15 m spool on the duct's side that draws back to open the joint before
+    the outlet moves (a sealed furnace tilting; its gate shut, so it stays sealed)."""
+    key = f"connector.clamp-coupling-dn{_tag(dn)}"
+    if key in _recs:
+        return key
+    D, t = dn + 0.4, 0.04
+    rings = 2 * math.pi / 4 * (D ** 2 - dn ** 2) * t * RHO[A36]
+    clamp = math.pi * D * 0.15 * 0.02 * RHO[A36]
+    spool = math.pi * (dn + 0.012) * 0.012 * 0.15 * RHO[A36]
+    built = [_part("Flange rings", A36, rings, f"two rings {D:.2f} m across, {t * 1000:.0f} mm, with a double O-ring seal"),
+             _part("Clamp ring and its drives", A36, clamp + 150.0, "a segmented clamp ring round the rings and two actuators (150 kg, from memory)"),
+             _part("Sliding spool", A36, spool, f"a 0.15 m spool on the duct's side, its stroke {GAP_HOOD:g} m"),
+             _part("Seals", RUBBER, math.pi * (dn + 0.1) * 2 * 0.01 * 0.01 * RHO[RUBBER], "the O-rings; silicone rubber stands for them")]
+    _recs[key] = {"identity": {"key": key, "name": f"Clamp coupling DN {dn * 1000:.0f}", "description": f"A sealed, clamped joint between a moving outlet and a fixed {dn * 1000:.0f} mm duct. To let the outlet move (a sealed furnace tilting to tap or deslag), its slide gate shuts, the clamp opens and the duct's spool draws back {GAP_HOOD:g} m. The outlet's face then slides across the duct's, never into it. The gate is the outlet's; its mass is the unit's."},
+                  "kind": "clamp-coupling", "size": dn, "rating": {"pressure": 1.0e5, "temperature": 773.0}, "sealing": "double",
+                  "physical": {"length": r(D, 3), "width": r(D, 3), "height": r(2 * t + 0.15, 3), "mass": r(sum(b["mass"] for b in built))}, "built_of": built,
+                  "basis": [{"of": ["built_of", "physical"], "tier": "invented", "review": True, "note": "Sizes and the clamp's drives from memory of furnace off-gas couplings."}]}
+    return key
+
+
 FLANGE_MEASURED = {"connector.flange-dn3000-pn1-double": (333.18, "two weld-neck rings 3.196 m across, 20 mm thick, their necks tapering over 20 mm from 16 mm to the gallery's 4 mm wall at 3 m outside, 2.992 m clear; measured on blender's model v1")}
 SEALED_TRANSFER_MEASURED = {0.8: (806.35, 59.02), 1.0: (948.71, 70.05)}     # kg of steel and liner, the sealed transfers measured
 TRANSFER_MEASURED = {1.2: (1652.31, 146.40), 1.0: (1395.23, 123.10), 0.8: (1176.03, 103.72), 0.65: (959.32, 84.67)}     # kg of plate and liner, by belt width (blender's models)

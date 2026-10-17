@@ -2506,21 +2506,26 @@ def arc_ports(us):
     hot["desc"] = hot["desc"].replace("its ports at local (-24, -0.6, 1) flow and (-24, 0.6, 1) return.", f"its ports at local (-24, -0.6, 1) steam in (DN {dn_steam * 1000:.0f}) and (-24, 0.6, 1) water out (DN {dn_cond * 1000:.0f}), facing -x, its pump's power entry at (-24, -1.4, 0.3).")
     v = us["eaf-vessel-80t-sealed"]
     v["desc"] = v["desc"].replace("(the manifold itself is the layout's)", "(the manifold is the unit's: two DN 400 barrels standing on the deck, each taking its hose from the side)")
-    v["desc"] += (f" Its ports (SFO 25): sponge iron in at the feed lock's top, local (0, 1.8, 10.1), a belt's head over it; off-gas out at the reducer's flange, (2, 1.5, 9.7), facing up, 1.2 m lined; the secondary bus's joint at the flexible cables' fixed ends, (0, -6.2, 2.3), facing -y; "
+    v["desc"] = v["desc"].split(", and the off-gas taken by a sealed bellows joint from the fourth")[0] + (", and the off-gas taken by the furnace's horizontal elbow (the same as the furnace for air's, v4) to a sealed clamp coupling: so the furnace holds its own gas" + v["desc"].split("so the furnace holds its own gas", 1)[1]) if "sealed bellows joint" in v["desc"] else v["desc"]
+    v["desc"] += (f" Its ports (SFO 25): sponge iron in at the feed lock's top, local (0, 1.8, 10.1), a belt's head over it; off-gas out at the elbow's mouth past the roof's edge, (3, 4.5, 8.5), facing +y, where the sealing kit narrows it to 1.2 m with a slide gate before a clamp coupling (the tilt sweep, 2026-10-16: a bellows joint would have to take 2.3 m at 15 degrees, so the gate shuts, the clamp opens and the furnace's mouth slides across the duct's face to tilt); the secondary bus's joint at the flexible cables' fixed ends, (0, -6.2, 2.3), facing -y; "
                   f"the deck manifold's water flanges, DN {dn_main * 1000:.0f} facing up, in at (-4.2, 4.95, 0.5) and out at (-3.4, 4.95, 0.5), side by side 0.8 m apart so their flanges clear, and in front of the cradle's deck, which tilts over them (v4: the manifold reduces from the hoses' 300 mm, and keeps inside local y 5.3, clear of the airless shop's gantry crane's legs, whose inner faces pass at y 5.43).")
     m4 = "measured on blender's model v2 (the registry's v4, 2026-10-16)"
     swap = {"Feed lock": part("Feed lock", A36, 3311.5 - 576.91 - 337.78 + 351.16 + 199.58, f"two gate valves and a chamber over the fifth hole, the chamber shortened under a square-to-round catch hopper whose rim is the port at z 10.1: bodies, housings, seats and the hopper; {m4} (v3's 3,311.5 kg less its chamber, 576.9, and top flange, 337.8; the new chamber 351.2 and hopper 199.6)"),
             "Off-gas bellows and reducer": part("Off-gas bellows and reducer", "material.stainless-steel-304", 1426.8 - 260.63 - 238.63 + 219.71, f"the bellows 2 m across from the fourth hole's flange, then a reducer to the 1.2 m lined flange at z 9.7; {m4} (v3's 1,426.8 kg less its output flange, 260.6, and reducer, 238.6; the new reducer 219.7)"),
             "Water hoses": part("Water hoses", "material.silicone-rubber", 182.8, f"two flexible hoses, flow and return, 300 mm bore, 4.71 and 4.31 m along their centrelines, to the deck manifold's barrels; reinforced EPDM, silicone rubber standing for it; {m4}")}
-    v["built_of"] = [swap.get(x["what"], x) for x in v["built_of"]]
+    v["built_of"] = [swap.get(x["what"], x) for x in v["built_of"] if x["what"] != "Off-gas bellows and reducer"]
     if "Deck manifold" not in [x["what"] for x in v["built_of"]]:
-        v["built_of"] += [part("Off-gas reducer lining", REF, 1531.4, f"the reducer's refractory; {m4}"),
+        m_air = "measured on the furnace for air's model v4, the same body (2026-10-16)"
+        v["holds"] = v.get("holds", 0) + 3169.3
+        v["built_of"] += [part("Off-gas elbow", A36, 2418.87 + 1575.30 + 2 * 66.50 + 86.81, f"water-jacketed, from the fourth hole horizontal past the roof's edge to its mouth; {m_air}"),
+                          part("Elbow posts and saddle", A36, 2 * 191.27 + 2 * 14.13 + 66.32 + 2 * 6.88, f"two posts on the cradle's deck, the saddle and webs; {m_air}"),
+                          part("Off-gas gate and reducer", A36, 2500.0, "the sealing kit's end of the elbow: a reducer from 2 m to the 1.2 m coupling with a water-cooled slide gate and its drive; from memory"),
                           part("Deck manifold", A36, 908.4, f"two DN 400 barrels standing on the deck, their closed bottoms, feet, hose reducers and saddles; {m4}"),
                           part("Bus terminal necks", CU, 601.2, f"three copper necks from the flexible cables' fixed ends to the bus joint; {m4}"),
                           part("Bus joint supports", A36, 1059.7, f"the joint's three supports and insulators, the insulators not mass-qualified; {m4}")]
     us["eaf-vessel-80t-sealed"]["ports"] = [
         port("dri-in", "in", "bulk", kit.belt_transfer(0.8), (0.0, 1.8, 10.1), (0, 0, 1), item="good.sponge-iron", rate=DRI, note="the feed lock's top; the belt's head 3 m over it"),
-        port("offgas-out", "out", "gas", kit.lined_flange(1.2, 1), (2.0, 1.5, 9.7), (0, 0, 1), item="material.carbon-monoxide", rate=co, pressure=1e5, temperature=SEALED_GAS_T + K),
+        port("offgas-out", "out", "gas", kit.clamp_coupling(1.2), (3.0, 4.5, 8.5), (0, 1, 0), item="material.carbon-monoxide", rate=co, pressure=1e5, temperature=SEALED_GAS_T + K),
         port("power-in", "in", "power", kit.bus_joint(V2, I2, 3), (0.0, -6.2, 2.3), (0, -1, 0), power=P, voltage=V2, note=f"{I2 / 1000:.0f} kA a phase"),
         port("water-in", "in", "liquid", kit.flange(dn_main, 10, temp=330.0), (-4.2, 4.95, 0.5), (0, 0, 1), item=WATER, rate=low, temperature=320.0),
         port("water-out", "out", "liquid", kit.flange(dn_main, 10, temp=330.0), (-3.4, 4.95, 0.5), (0, 0, 1), item=WATER, rate=low, temperature=330.0),
@@ -2689,8 +2694,8 @@ def arc_furnace_airless(us, recs):
           f"three phases of water-cooled copper tube, {I2 / 1000:.0f} kA each, up from the transformer's joint and north to the vessel's flexible cables; in vacuum their gaps hold no air to break down, but the gas a seal lets out can (Paschen), so the bars are spaced as if in air; their loss, {bus_loss / 1e3:.0f} kW, goes into their water and so to the cool loop"),
         L("transformer supply", kit.cable(33000, 630), ("edge:hv-in", "T:hv-in"), [None, (-37.0, -6.85, 0.3), (-37.0, -6.85, 8.0), (-12.0, -6.85, 8.0), None], (), math.ceil(i_hv / (630e-6 * kit.J_VACUUM)), None,
           "north along x -37, west of the gantry crane's reach, then east 8 m up over the transformer cooling's lines into the cable box"),
-        L("off-gas", kit.lined_duct(1.2, 1, temp=SEALED_GAS_T + K), ("V:offgas-out", "C:gas-in"), [None, (-10.0, 7.5, 20.0), (14.0, 7.5, 20.0), (14.0, 24.0, 20.0), None], (), 1, None,
-          f"the furnace's {co:.2f} kg/s of CO at about {SEALED_GAS_T:.0f} deg C and 1 bar (no air dilutes it: a fifth of the shop for air's flow), up from the roof's reducer, east 20 m up between the crane's legs and under its bridge, north past its east end at x 14 and down into the cooler"),
+        L("off-gas", kit.lined_duct(1.2, 1, temp=SEALED_GAS_T + K), ("V:offgas-out", "C:gas-in"), [None, (-9.0, 11.7, 13.5), (-9.0, 11.7, 20.0), (14.0, 11.7, 20.0), (14.0, 24.0, 20.0), None], (), 1, None,
+          f"the furnace's {co:.2f} kg/s of CO at about {SEALED_GAS_T:.0f} deg C and 1 bar (no air dilutes it: a fifth of the shop for air's flow), from the clamp coupling at the elbow's mouth north 1.2 m, up to 20 m, east between the crane's legs and under its bridge, north past its east end at x 14 and down into the cooler"),
         L("cooled off-gas", kit.pipe(1.2, 1, temp=FILTER_GAS_T + K), ("C:gas-out", "G:gas-in"), [None, None], (), 1, None, f"at {FILTER_GAS_T:.0f} deg C; the filter lets the cleaned gas go up its stack"),
         L("steam to the hot field", kit.pipe(dn_steam, 25, lagged=True, temp=485.0), ("C:steam-out", f"RH1:steam-in"),
           [None, (9.0, 24.4, 16.5), (9.0, 24.4, 1.0), (9.0, 30.6, 1.0), (-56.0, 30.6, 1.0), (-56.0, 51.6, 1.0), None], (), 1, None,
@@ -2723,12 +2728,12 @@ def arc_furnace_airless(us, recs):
     links += [
         link("rail", "ladle rail", (-10.5, 6.0, 0.0), (33.0, 6.0, 0.0), A36, 2 * 60.0, None, "as for air: two 60 kg/m rails at 3 m gauge, on sintered regolith sleepers; on to the ladle station. A ladle standing in vacuum loses its hydrogen: the degasser's work begins here"),
         link("rail", "slag rail", (-16.5, 0.5, 0.0), (-16.5, 23.25, 0.0), A36, 2 * 60.0, None, "as for air: 2.5 m gauge, on sintered regolith sleepers"),
-        link("rail", "crane rails", (-30.0, 0.0, 0.0), (6.0, 0.0, 0.0), A36, 2 * 50.0, None, "the gantry crane's two straight rails, 36 m long along x at y -12 and 12 (24 m apart); the link runs on their centre line. No run crosses them: the crane's legs sweep x -35 to 11 along both"),
+        link("rail", "crane rails", (-30.0, 1.25, 0.0), (6.0, 1.25, 0.0), A36, 2 * 50.0, None, "the gantry crane's two straight rails, 36 m long along x at y -10.75 and 13.25 (24 m apart, 1.25 m north of the furnace's axis so the off-gas duct leaves north inside them); the link runs on their centre line. No run crosses them: the crane's legs sweep x -35 to 11 along both"),
         link("road", "service road", (40.0, 18.5, 0.0), (8.0, 18.5, 0.0), SINTER, 4.5 * 0.25 * RHO_SINTER, None, "a forklift lane 4.5 m wide, sintered regolith 0.25 m, from the site's east road along the cooler's and the filter's south faces, where their closed dust bins come out; the off-gas duct crosses it 20 m up, its nearest stand a portal over the lane", width=4.5),
     ]
     mobile = [{"unit": "unit.ladle-car-80t", "rides": "ladle rail", "at": [-7.5, 6.0, 0.0]},
               {"unit": "unit.slag-pot-car", "rides": "slag rail", "at": [-16.5, 6.0, 0.0]},
-              {"unit": "unit.gantry-crane-20t-moon", "rides": "crane rails", "at": [-12.0, 0.0, 0.0]}]
+              {"unit": "unit.gantry-crane-20t-moon", "rides": "crane rails", "at": [-12.0, 1.25, 0.0]}]
     pads = 44.93 / 13
     ground = [
         {"what": "Furnace platform", "item": SINTER, "volume": 612.06, "note": "as for air (the ladle slot, slag tunnel and well), of sintered regolith blocks: there is no water to make concrete; its blocks and top slab; measured on blender's layout (candidate v01)"},

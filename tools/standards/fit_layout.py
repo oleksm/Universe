@@ -183,7 +183,7 @@ def check(lay, units, runs, conns):
             pos = pos + end_offset(ck, run, 1 if l.get("reversible") else which, face)
             if np.linalg.norm(pos - at) > 0.02:
                 faults.append(f"{l['name']}: its {'from' if which == 0 else 'to'} end {at.tolist()} is not at {e} ({pos.round(3).tolist()})")
-            if p["connector"] != run["connector"] and not (run["kind"] == "belt" and ck == "chute") and not (run["kind"] == "jacketed-duct" and ck == "hood"):     # (a chute drops onto a belt's tail, into its skirt; a belt's head drops through its hood into a chute's mouth)
+            if p["connector"] != run["connector"] and not (run["kind"] == "belt" and ck == "chute") and not (run["kind"] == "jacketed-duct" and ck == "hood") and not (run["kind"] == "lined-duct" and ck == "clamp-coupling"):     # (a chute drops onto a belt's tail, into its skirt; a belt's head drops through its hood into a chute's mouth)
                 faults.append(f"{l['name']}: {run['connector']} at its end, {e} is built to {p['connector']}")
             want = "in" if l.get("reversible") else ("out" if which == 0 else "in")
             if flow not in (want, "both"):
@@ -192,7 +192,7 @@ def check(lay, units, runs, conns):
                 faults.append(f"{l['name']}: carries {run['carries']}, {e} is {p['medium']}")
             items.append(p.get("item"))
             dot = float(leave @ face)
-            need = {"flange": 0.7, "lined-flange": 0.7, "hood": 0.7, "chute": -0.35}.get(ck)     # (a belt may rise from under a chute at up to 20 degrees, its loading zone's limit; from memory)
+            need = {"flange": 0.7, "lined-flange": 0.7, "hood": 0.7, "clamp-coupling": 0.7, "chute": -0.35}.get(ck)     # (a belt may rise from under a chute at up to 20 degrees, its loading zone's limit; from memory)
             if need is not None and dot < need:
                 faults.append(f"{l['name']}: leaves {e} at {math.degrees(math.acos(max(-1, min(1, dot)))):.0f} deg from the way it faces")
         if len(items) == 2 and None not in items and items[0] != items[1]:

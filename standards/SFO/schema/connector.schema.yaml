@@ -18,8 +18,8 @@ properties:
       name: { type: string }
       description: { type: string }
   kind:
-    enum: [flange, lined-flange, chute, belt-transfer, termination, bus-joint, hood]
-    description: "flange: a bolted pipe or duct flange pair; lined-flange: the same on a refractory-lined duct, the lining's joint packed; chute: a sealed bolted chute flange for bulk solids (a lock's outlet into a closed conveyor); belt-transfer: a receiving chute and skirt where a belt's head discharges into a hopper or onto another belt; termination: a power cable's end into a terminal box (lugs, stress cones, gland); hood: a fixed water-cooled catch hood over a moving outlet, a gap between them (no contact, no pressure); bus-joint: a bus's bolted joint to a unit's terminals, both poles, with the joint's water couplings."
+    enum: [flange, lined-flange, chute, belt-transfer, termination, bus-joint, hood, clamp-coupling]
+    description: "flange: a bolted pipe or duct flange pair; lined-flange: the same on a refractory-lined duct, the lining's joint packed; chute: a sealed bolted chute flange for bulk solids (a lock's outlet into a closed conveyor); belt-transfer: a receiving chute and skirt where a belt's head discharges into a hopper or onto another belt; termination: a power cable's end into a terminal box (lugs, stress cones, gland); clamp-coupling: a sealed clamped joint whose duct side draws back to let its outlet move; hood: a fixed water-cooled catch hood over a moving outlet, a gap between them (no contact, no pressure); bus-joint: a bus's bolted joint to a unit's terminals, both poles, with the joint's water couplings."
   size: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "Its nominal size: a pipe's or duct's nominal bore (the steel's, for a lined duct), a chute's bore, a belt's width. For a termination, the conductor's cross-section in m2." }
   rating:
     type: object
