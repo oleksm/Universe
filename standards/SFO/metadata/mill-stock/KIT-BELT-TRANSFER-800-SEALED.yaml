@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-belt-transfer-800-sealed
+  code: KIT-BELT-TRANSFER-800-SEALED
+  name: Belt transfer, 800 mm, sealed
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.structural-steel-a36
+- item: material.polyethylene-uhmw
+size:
+  length: 1.3
+  width: 1.3
+  height: 1.475
+supplies:
+  item: connector.belt-transfer-800-sealed
+physical:
+  mass: 865.4
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.belt-transfer-800-sealed, as made.

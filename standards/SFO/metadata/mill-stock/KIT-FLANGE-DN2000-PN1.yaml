@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-flange-dn2000-pn1
+  code: KIT-FLANGE-DN2000-PN1
+  name: Flange DN 2000 PN 1
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.structural-steel-a36
+- item: material.high-strength-steel-4340
+- item: material.stainless-steel-304
+size:
+  length: 2.166
+  width: 2.166
+  height: 0.11
+supplies:
+  item: connector.flange-dn2000-pn1
+physical:
+  mass: 254.2
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.flange-dn2000-pn1, as made.

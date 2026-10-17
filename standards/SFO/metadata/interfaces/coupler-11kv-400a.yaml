@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/interface.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: interface.coupler-11kv-400a
+  name: Coupler 11 kV 400 A
+  description: 'The mating face of the Coupler 11 kV 400 A: any maker''s half built to it mates with any other''s.'
+domain: power
+kind: plug-socket
+envelope:
+  voltage: 11000
+  current: 400
+media:
+- power
+sealing: air
+halves: male-female
+make: manual
+face:
+  length: 0.22
+  width: 0.22
+  height: 0.6
+size: 0.0004
+standard: a mining-type 11 kV plug coupler (the registry's)
+basis:
+- of:
+  - envelope
+  - face
+  tier: derived
+  note: The most the products built to it are rated for, and their joint's outside.

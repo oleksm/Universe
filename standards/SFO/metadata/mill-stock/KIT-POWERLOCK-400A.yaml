@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-powerlock-400a
+  code: KIT-POWERLOCK-400A
+  name: Single-pole connectors, 400 A, set of five
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.copper
+- item: material.epdm-rubber
+size:
+  length: 0.3
+  width: 0.12
+  height: 0.25
+supplies:
+  item: connector.powerlock-400a
+physical:
+  mass: 6.5
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.powerlock-400a, as made.

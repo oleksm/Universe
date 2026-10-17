@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/template.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: template.corner-casting
+  name: ISO 1161 corner castings
+  description: 'ISO 1161 corner castings: one look for every size of the family, scaled to each record''s figures (the owner, 2026-10-17: never one model per size).'
+family: twistlock
+draws: model
+scales_by:
+- physical
+members: 1
+basis:
+- of:
+  - draws
+  - scales_by
+  tier: derived
+  note: 'The owner, 2026-10-17: one template a family, scaled; the catalogue families (kit_catalogue.py).'

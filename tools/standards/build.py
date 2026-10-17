@@ -1570,6 +1570,8 @@ import math
 stock_of = {}
 for ms in mill_stock:
     where = os.path.join(TREE, ms["file"])
+    if ms.get("supplies"):       # (kit stock: a made run or connector sold as it is; its mass is the kit record's, not a form of one material)
+        continue
     mf, size = ms.get("made_from") or {}, ms.get("size") or {}
     mat = next((m for m in materials if m.get("slug") == mf.get("material")), None)
     if mat is None:

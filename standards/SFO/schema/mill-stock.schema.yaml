@@ -67,6 +67,14 @@ properties:
       bolt: { type: string, x-ref: [stock], description: "The bolt in each END, by its key." }
       module: { type: number, x-unit: "m", description: "m, node centre to node centre: its standard length." }
       cut: { type: number, x-unit: "m", description: "m of its section: the module less the node's diameter and the two ENDs." }
+  supplies:
+    type: object
+    additionalProperties: false
+    required: [item]
+    description: "The kit it is (a run sold by the length on a coil, drum or in lengths; a connector by the piece): the stock a ship hauls and a market sells for that run or connector."
+    properties:
+      item: { type: string, x-ref: [run, connector] }
+      length: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "m of the run in one" }
   physical: { $ref: "../../common.schema.yaml#/definitions/physical" }
   revision:
     $ref: "../../common.schema.yaml#/definitions/record_revision"

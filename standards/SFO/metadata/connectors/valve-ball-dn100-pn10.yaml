@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: connector.valve-ball-dn100-pn10
+  name: Ball valve, DN 100, PN 10
+  description: 'A flanged ball valve set in a line between two flange joints: a bored ball turned a quarter by its gearbox.'
+kind: valve
+size: 0.1
+valve: ball
+rating:
+  pressure: 1000000.0
+  temperature: 473.0
+physical:
+  length: 0.22
+  width: 0.22
+  height: 0.23
+  mass: 28.0
+built_of:
+- what: Body and bonnet
+  item: material.structural-steel-a36
+  mass: 21.0
+  note: cast carbon steel
+- what: Trim
+  item: material.stainless-steel-304
+  mass: 5.6
+  note: stainless seats, stem, disc or ball
+- what: Packing and seats
+  item: material.epdm-rubber
+  mass: 1.4
+provides: both
+template: template.valve-ball
+basis:
+- of:
+  - physical
+  - built_of
+  tier: invented
+  review: true
+  note: Face to face as the EN 558 series run (from memory); its height along the line; the actuator stands off it 0.3 m; From memory of makers' catalogues; to be sourced.
+interface: interface.flange-dn100-pn10

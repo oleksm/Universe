@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: connector.valve-relief-dn50-pn10
+  name: Relief valve, DN 50, PN 10
+  description: 'A flanged relief valve set in a line between two flange joints: a spring-held disc that lifts when the pressure passes its set.'
+kind: valve
+size: 0.05
+valve: relief
+rating:
+  pressure: 1000000.0
+  temperature: 473.0
+physical:
+  length: 0.165
+  width: 0.165
+  height: 0.25
+  mass: 20.0
+built_of:
+- what: Body and bonnet
+  item: material.structural-steel-a36
+  mass: 15.0
+  note: cast carbon steel
+- what: Trim
+  item: material.stainless-steel-304
+  mass: 4.0
+  note: stainless seats, stem, disc or ball
+- what: Packing and seats
+  item: material.epdm-rubber
+  mass: 1.0
+provides: both
+template: template.valve-relief
+basis:
+- of:
+  - physical
+  - built_of
+  tier: invented
+  review: true
+  note: Face to face as the EN 558 series run (from memory); its height along the line; the actuator stands off it 0.45 m; From memory of makers' catalogues; to be sourced.
+interface: interface.flange-dn50-pn10

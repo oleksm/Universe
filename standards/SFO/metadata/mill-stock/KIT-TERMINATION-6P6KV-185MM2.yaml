@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-termination-6p6kv-185mm2
+  code: KIT-TERMINATION-6P6KV-185MM2
+  name: Cable termination, 6.6 kV, 185 mm2
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.copper
+- item: material.aluminium-alloy-6061
+- item: material.silicone-rubber
+size:
+  length: 0.4
+  width: 0.4
+  height: 0.759
+supplies:
+  item: connector.termination-6p6kv-185mm2
+physical:
+  mass: 15.9
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.termination-6p6kv-185mm2, as made.

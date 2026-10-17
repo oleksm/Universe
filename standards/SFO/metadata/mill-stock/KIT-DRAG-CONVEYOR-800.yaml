@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-drag-conveyor-800
+  code: KIT-DRAG-CONVEYOR-800
+  name: Drag chain conveyor, 800 mm, hot, a 6 m length
+  traded_as: market.machinery
+  form: length
+package: package.bar-bundle
+made_from:
+- item: material.stainless-steel-304
+- item: material.silica-aerogel
+size:
+  length: 6.0
+  width: 1.012
+  height: 0.812
+supplies:
+  item: run.drag-conveyor-800
+  length: 6.0
+physical:
+  mass: 2276.4
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: 'a 6 m length of run.drag-conveyor-800: its mass a metre times the length sold.'

@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-valve-butterfly-dn1000-pn10
+  code: KIT-VALVE-BUTTERFLY-DN1000-PN10
+  name: Butterfly valve, DN 1000, PN 10
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.structural-steel-a36
+- item: material.stainless-steel-304
+- item: material.epdm-rubber
+size:
+  length: 1.23
+  width: 1.23
+  height: 0.216
+supplies:
+  item: connector.valve-butterfly-dn1000-pn10
+physical:
+  mass: 900.0
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.valve-butterfly-dn1000-pn10, as made.

@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-termination-132kv-240mm2
+  code: KIT-TERMINATION-132KV-240MM2
+  name: Cable termination, 132 kV, 240 mm2, plug-in
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.fused-silica
+- item: material.silicone-rubber
+- item: material.copper
+- item: material.aluminium-alloy-6061
+size:
+  length: 1.5
+  width: 0.5
+  height: 1.89
+supplies:
+  item: connector.termination-132kv-240mm2
+physical:
+  mass: 137.2
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.termination-132kv-240mm2, as made.

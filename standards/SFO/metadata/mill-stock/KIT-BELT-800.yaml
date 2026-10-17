@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-belt-800
+  code: KIT-BELT-800
+  name: Belt conveyor, 800 mm, a 6 m length
+  traded_as: market.machinery
+  form: length
+package: package.bar-bundle
+made_from:
+- item: material.silicone-rubber
+- item: material.structural-steel-a36
+size:
+  length: 6.0
+  width: 1.4
+  height: 0.8
+supplies:
+  item: run.belt-800
+  length: 6.0
+physical:
+  mass: 637.2
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: 'a 6 m length of run.belt-800: its mass a metre times the length sold.'

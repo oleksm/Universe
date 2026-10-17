@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: connector.hose-union-dn25
+  name: Hose union, DN 25
+  description: 'A screwed union with a metal seat: a small metal hose''s end, made with spanners.'
+kind: union
+size: 0.025
+rating:
+  pressure: 2500000.0
+  temperature: 823.0
+physical:
+  length: 0.085
+  width: 0.085
+  height: 0.09
+  mass: 0.6
+built_of:
+- what: Union nut, tail and seat
+  item: material.stainless-steel-304
+  mass: 0.6
+provides: both
+template: template.union
+basis:
+- of:
+  - physical
+  tier: invented
+  review: true
+  note: From memory of makers' catalogues; to be sourced.
+interface: interface.hose-union-dn25

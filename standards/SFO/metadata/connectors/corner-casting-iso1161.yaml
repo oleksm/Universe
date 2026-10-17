@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: connector.corner-casting-iso1161
+  name: Corner casting, ISO 1161
+  description: 'The cast steel box at each of a container''s eight corners, an oval hole in three faces: the female half every lock, lashing and spreader takes hold of.'
+kind: twistlock
+size: 0.178
+rating:
+  force: 250000.0
+physical:
+  length: 0.178
+  width: 0.162
+  height: 0.118
+  mass: 10.5
+built_of:
+- what: Casting
+  item: material.structural-steel-a36
+  mass: 10.5
+  note: cast steel
+provides: female
+template: template.corner-casting
+basis:
+- of:
+  - physical
+  tier: sourced
+  review: true
+  source: ISO 1161 outside (178 x 162 x 118 mm), from memory
+  note: Mass and the 250 kN a lock from memory of the standard's lift and lashing loads.
+interface: interface.twistlock-iso1161

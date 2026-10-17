@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=../../schema/run.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: run.hose-metal-dn100
+  name: Metal hose, DN 100, PN 25
+  description: 'A corrugated stainless hose in a stainless braid: where rubber will not do (hot, cold, vacuum, airless ground, gas that rubber lets through). Its ends weld-neck flanges.'
+kind: hose
+size: 0.1
+bore: 0.1
+outside:
+- 0.138
+- 0.138
+rating:
+  pressure: 2500000.0
+  temperature: 823.0
+per_m:
+  mass: 8.42
+  built_of:
+  - what: Corrugated tube
+    item: material.stainless-steel-304
+    mass: 4.43
+  - what: Braid
+    item: material.stainless-steel-304
+    mass: 3.99
+elbow:
+  radius: 0.69
+  mass: 9.12
+connector: connector.flange-dn100-pn25-ss
+carries: gas
+template: template.hose-metal
+basis:
+- of:
+  - per_m
+  - elbow
+  tier: invented
+  review: true
+  note: '0.4 mm stainless corrugation (0.6 mm from DN 100) and a braid of nine tenths its weight; least bend radius five outsides for a hose that flexes now and then (static: about two); From memory of makers'' catalogues; to be sourced.'

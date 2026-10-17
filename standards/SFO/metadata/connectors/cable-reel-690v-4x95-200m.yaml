@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: connector.cable-reel-690v-4x95-200m
+  name: Cable reel, 4 x 95 mm2, 200 m
+  description: 'A motor-driven monospiral reel on a moving machine, holding 200 m of its flexible cable: it pays out and winds in as the machine travels, its slip rings passing the power from the turning drum. For long travels.'
+kind: cable-reel
+size: 9.499999999999999e-05
+rating:
+  voltage: 690
+  current: 240
+physical:
+  length: 3.87
+  width: 0.4
+  height: 4.07
+  mass: 1648.6
+built_of:
+- what: Drum, frame, drive and slip rings
+  item: material.structural-steel-a36
+  mass: 719.3
+  note: a 3.87 m drum on a 1.50 m core
+- what: Its cable
+  item: material.copper
+  mass: 929.3
+  note: 200 m of the flexible cable, wound
+provides: both
+template: template.cable-reel
+basis:
+- of:
+  - physical
+  tier: derived
+  review: true
+  note: 'A monospiral drum: D^2 = core^2 + 4 L outside / pi; core thirty cable outsides, at least 1 m; drum and drive 120 kg + 40 kg/m2 of D^2 (invented).'
+interface: interface.cable-reel-690v-4x95

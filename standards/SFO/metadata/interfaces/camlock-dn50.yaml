@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/interface.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: interface.camlock-dn50
+  name: Cam-lock DN 50
+  description: 'The mating face of the Cam-lock DN 50: any maker''s half built to it mates with any other''s.'
+domain: fluid
+kind: quick-coupling
+envelope:
+  pressure: 1700000.0
+  temperature: 373.0
+media:
+- gas
+- liquid
+sealing: air
+halves: male-female
+make: manual
+face:
+  length: 0.155
+  width: 0.115
+  height: 0.13
+size: 0.05
+standard: EN 14420-7 (cam-lock) sizes
+basis:
+- of:
+  - envelope
+  - face
+  tier: derived
+  note: The most the products built to it are rated for, and their joint's outside.

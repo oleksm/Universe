@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-pipe-dn900-pn10
+  code: KIT-PIPE-DN900-PN10
+  name: Pipe DN 900 PN 10, a 6 m length
+  traded_as: market.machinery
+  form: length
+package: package.bar-bundle
+made_from:
+- item: material.structural-steel-a36
+size:
+  length: 6.0
+  diameter: 0.916
+supplies:
+  item: run.pipe-dn900-pn10
+  length: 6.0
+physical:
+  mass: 1074.6
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: 'a 6 m length of run.pipe-dn900-pn10: its mass a metre times the length sold.'

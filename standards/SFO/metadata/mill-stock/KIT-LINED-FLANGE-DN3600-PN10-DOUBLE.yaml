@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-lined-flange-dn3600-pn10-double
+  code: KIT-LINED-FLANGE-DN3600-PN10-DOUBLE
+  name: Lined flange DN 3600 PN 10, double seal
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.structural-steel-a36
+- item: material.high-strength-steel-4340
+- item: material.stainless-steel-304
+- item: material.silica-aerogel
+size:
+  length: 3.952
+  width: 3.952
+  height: 0.334
+supplies:
+  item: connector.lined-flange-dn3600-pn10-double
+physical:
+  mass: 3812.0
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.lined-flange-dn3600-pn10-double, as made.

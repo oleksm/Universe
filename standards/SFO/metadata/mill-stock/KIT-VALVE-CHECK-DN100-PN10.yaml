@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-valve-check-dn100-pn10
+  code: KIT-VALVE-CHECK-DN100-PN10
+  name: Check valve, DN 100, PN 10
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.structural-steel-a36
+- item: material.stainless-steel-304
+- item: material.epdm-rubber
+size:
+  length: 0.22
+  width: 0.22
+  height: 0.3
+supplies:
+  item: connector.valve-check-dn100-pn10
+physical:
+  mass: 30.0
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.valve-check-dn100-pn10, as made.

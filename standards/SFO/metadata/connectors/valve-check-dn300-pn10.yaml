@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: connector.valve-check-dn300-pn10
+  name: Check valve, DN 300, PN 10
+  description: 'A flanged check valve set in a line between two flange joints: a swing disc that lets flow one way only.'
+kind: valve
+size: 0.3
+valve: check
+rating:
+  pressure: 1000000.0
+  temperature: 473.0
+physical:
+  length: 0.445
+  width: 0.445
+  height: 0.5
+  mass: 220.0
+built_of:
+- what: Body and bonnet
+  item: material.structural-steel-a36
+  mass: 165.0
+  note: cast carbon steel
+- what: Trim
+  item: material.stainless-steel-304
+  mass: 44.0
+  note: stainless seats, stem, disc or ball
+- what: Packing and seats
+  item: material.epdm-rubber
+  mass: 11.0
+provides: both
+template: template.valve-check
+basis:
+- of:
+  - physical
+  - built_of
+  tier: invented
+  review: true
+  note: Face to face as the EN 558 series run (from memory); its height along the line; the actuator stands off it 0.55 m; From memory of makers' catalogues; to be sourced.
+interface: interface.flange-dn300-pn10

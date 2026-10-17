@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-bus-joint-dc-44ka
+  code: KIT-BUS-JOINT-DC-44KA
+  name: Bus joint, DC, 44 kA
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.copper
+- item: material.high-strength-steel-4340
+- item: material.silicone-rubber
+size:
+  length: 0.3
+  width: 1.0
+  height: 0.26
+supplies:
+  item: connector.bus-joint-dc-44ka
+physical:
+  mass: 120.7
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.bus-joint-dc-44ka, as made.

@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: connector.expansion-joint-dn1000-pn10
+  name: Expansion joint, DN 1000, PN 10
+  description: 'A stainless bellows between two flanges, set in a line to take its growth as it heats: 80 mm each way along the line, a little sideways, tie rods holding the pressure''s end load.'
+kind: expansion-joint
+size: 1.0
+rating:
+  pressure: 1000000.0
+  temperature: 673.0
+movement: 0.08
+physical:
+  length: 1.23
+  width: 1.23
+  height: 0.55
+  mass: 560.0
+built_of:
+- what: Bellows
+  item: material.stainless-steel-304
+  mass: 168.0
+  note: multi-ply 304
+- what: Flanges and tie rods
+  item: material.structural-steel-a36
+  mass: 392.0
+provides: both
+template: template.expansion-joint
+basis:
+- of:
+  - physical
+  - movement
+  tier: invented
+  review: true
+  note: From memory of makers' catalogues; to be sourced.
+interface: interface.flange-dn1000-pn10

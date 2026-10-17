@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-pipe-dn3600-pn10-double
+  code: KIT-PIPE-DN3600-PN10-DOUBLE
+  name: Pipe DN 3600 PN 10, double-sealed joints, a 6 m length
+  traded_as: market.machinery
+  form: length
+package: package.bar-bundle
+made_from:
+- item: material.structural-steel-a36
+size:
+  length: 6.0
+  diameter: 3.642
+supplies:
+  item: run.pipe-dn3600-pn10-double
+  length: 6.0
+physical:
+  mass: 11251.8
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: 'a 6 m length of run.pipe-dn3600-pn10-double: its mass a metre times the length sold.'

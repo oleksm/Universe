@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/interface.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: interface.flange-dn200-pn25
+  name: Flange DN 200 PN 25
+  description: 'The mating face of the Flange DN 200 PN 25: any maker''s half built to it mates with any other''s.'
+domain: fluid
+kind: flange
+envelope:
+  pressure: 2500000.0
+  temperature: 823.0
+media:
+- gas
+- liquid
+sealing: air
+halves: androgynous
+make: bolted
+face:
+  length: 0.366
+  width: 0.366
+  height: 0.11
+size: 0.2
+standard: EN 1092-1 bores and pressure classes (its faces and bolting the registry's)
+basis:
+- of:
+  - envelope
+  - face
+  tier: derived
+  note: The most the products built to it are rated for, and their joint's outside.

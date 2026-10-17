@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-valve-relief-dn50-pn10
+  code: KIT-VALVE-RELIEF-DN50-PN10
+  name: Relief valve, DN 50, PN 10
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.structural-steel-a36
+- item: material.stainless-steel-304
+- item: material.epdm-rubber
+size:
+  length: 0.165
+  width: 0.165
+  height: 0.25
+supplies:
+  item: connector.valve-relief-dn50-pn10
+physical:
+  mass: 20.0
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.valve-relief-dn50-pn10, as made.

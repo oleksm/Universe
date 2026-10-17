@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: connector.flat-face-dn25
+  name: Flat-face coupling, DN 25.4
+  description: 'A hydraulic quick coupling with flat valve faces: made and broken by hand under no load, spilling next to nothing.'
+kind: quick-coupling
+size: 0.0254
+rating:
+  pressure: 25000000.0
+  temperature: 373.0
+physical:
+  length: 0.091
+  width: 0.091
+  height: 0.172
+  mass: 1.8
+built_of:
+- what: Male and female halves
+  item: material.structural-steel-a36
+  mass: 1.75
+  note: plated steel
+- what: Seals
+  item: material.epdm-rubber
+  mass: 0.054
+provides: both
+template: template.flat-face
+basis:
+- of:
+  - physical
+  - rating
+  tier: invented
+  review: true
+  note: From memory of makers' catalogues; to be sourced.
+interface: interface.flat-face-dn25

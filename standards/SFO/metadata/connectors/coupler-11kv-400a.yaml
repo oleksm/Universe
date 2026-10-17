@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: connector.coupler-11kv-400a
+  name: Coupler, 11 kV, 400 A
+  description: 'The plug and receiver a crew or a player hooks a machine up with: made and broken by hand, keyed so that only its own rating mates, the earth pin first in and last out.'
+kind: plug-socket
+size: 0.0004
+rating:
+  voltage: 11000
+  current: 400
+physical:
+  length: 0.22
+  width: 0.22
+  height: 0.6
+  mass: 28.0
+built_of:
+- what: Contacts
+  item: material.copper
+  mass: 3.49
+  note: silver-plated brass, as copper here
+- what: Housings and seals
+  item: material.epdm-rubber
+  mass: 24.5
+  note: rubber-moulded body
+provides: both
+template: template.coupler
+basis:
+- of:
+  - physical
+  tier: invented
+  review: true
+  note: From memory of makers' catalogues; to be sourced.
+interface: interface.coupler-11kv-400a

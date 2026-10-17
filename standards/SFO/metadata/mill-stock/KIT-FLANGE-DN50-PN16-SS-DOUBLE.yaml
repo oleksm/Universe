@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-flange-dn50-pn16-ss-double
+  code: KIT-FLANGE-DN50-PN16-SS-DOUBLE
+  name: Flange DN 50 PN 16, stainless, double seal
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.stainless-steel-304
+- item: material.high-strength-steel-4340
+size:
+  length: 0.246
+  width: 0.246
+  height: 0.11
+supplies:
+  item: connector.flange-dn50-pn16-ss-double
+physical:
+  mass: 16.6
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.flange-dn50-pn16-ss-double, as made.

@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/template.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: template.festoon
+  name: Cable festoons on C-track
+  description: 'Cable festoons on C-track: one look for every size of the family, scaled to each record''s figures (the owner, 2026-10-17: never one model per size).'
+family: festoon
+draws: sweep-and-pieces
+scales_by:
+- outside
+members: 3
+profile: the C-track swept; trolleys every 1.5 m, the cable hung in loops between them
+pieces:
+- name: support
+  how: at each support.spacing along the run, scaled to its outside
+basis:
+- of:
+  - draws
+  - scales_by
+  tier: derived
+  note: 'The owner, 2026-10-17: one template a family, scaled; the catalogue families (kit_catalogue.py).'

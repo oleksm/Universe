@@ -1,0 +1,43 @@
+# yaml-language-server: $schema=../../schema/run.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: run.conductor-rail-250a
+  name: Conductor rail, 250 A, 690 V
+  description: Four copper conductors in an insulating housing hung along a crane's or a car's path; a collector trolley on the machine slides along them. For tight spaces and many machines on one track.
+kind: conductor-rail
+size: 0.00025
+outside:
+- 0.09
+- 0.16
+rating:
+  voltage: 690
+  current: 250
+per_m:
+  mass: 4.3
+  built_of:
+  - what: Conductors
+    item: material.copper
+    mass: 2.15
+    note: four poles of 60 mm2
+  - what: Housing
+    item: material.polyethylene-uhmw
+    mass: 1.65
+    note: PVC, as UHMW polyethylene here
+  - what: Hangers' share
+    item: material.structural-steel-a36
+    mass: 0.5
+support:
+  spacing: 1.5
+  mass: 1.2
+  per_m_height: 2.0
+  item: material.structural-steel-a36
+connector: connector.collector-250a
+carries: power
+template: template.conductor-rail
+basis:
+- of:
+  - per_m
+  - support
+  tier: invented
+  review: true
+  note: About 1 to 4 A/mm2 in the housing; hangers every 1.5 m; From memory of makers' catalogues; to be sourced.

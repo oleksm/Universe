@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: connector.valve-butterfly-dn1000-pn10
+  name: Butterfly valve, DN 1000, PN 10
+  description: 'A flanged butterfly valve set in a line between two flange joints: a double-offset disc, actuated.'
+kind: valve
+size: 1.0
+valve: butterfly
+rating:
+  pressure: 1000000.0
+  temperature: 473.0
+physical:
+  length: 1.23
+  width: 1.23
+  height: 0.216
+  mass: 900.0
+built_of:
+- what: Body and bonnet
+  item: material.structural-steel-a36
+  mass: 675.0
+  note: cast carbon steel
+- what: Trim
+  item: material.stainless-steel-304
+  mass: 180.0
+  note: stainless seats, stem, disc or ball
+- what: Packing and seats
+  item: material.epdm-rubber
+  mass: 45.0
+provides: both
+template: template.valve-butterfly
+basis:
+- of:
+  - physical
+  - built_of
+  tier: invented
+  review: true
+  note: Face to face as the EN 558 series run (from memory); its height along the line; the actuator stands off it 1.95 m; From memory of makers' catalogues; to be sourced.
+interface: interface.flange-dn1000-pn10

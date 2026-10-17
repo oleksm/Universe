@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-termination-33kv-185mm2
+  code: KIT-TERMINATION-33KV-185MM2
+  name: Cable termination, 33 kV, 185 mm2
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.copper
+- item: material.aluminium-alloy-6061
+- item: material.silicone-rubber
+size:
+  length: 0.4
+  width: 0.4
+  height: 0.88
+supplies:
+  item: connector.termination-33kv-185mm2
+physical:
+  mass: 69.7
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.termination-33kv-185mm2, as made.

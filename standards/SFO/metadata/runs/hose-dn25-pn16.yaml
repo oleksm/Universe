@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=../../schema/run.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: run.hose-dn25-pn16
+  name: Hose, DN 25, PN 16
+  description: 'A rubber hose for water, air and oils, a steel wire spiral in its wall: laid loose or on the ground, bent by hand, its ends cam-lock couplings.'
+kind: hose
+size: 0.025
+bore: 0.025
+outside:
+- 0.037
+- 0.037
+rating:
+  pressure: 1600000.0
+  temperature: 373.0
+per_m:
+  mass: 0.71
+  built_of:
+  - what: Liner, cover and plies
+    item: material.epdm-rubber
+    mass: 0.538
+    note: EPDM rubber
+  - what: Wire spiral
+    item: material.structural-steel-a36
+    mass: 0.168
+    note: a steel helix against kinking and vacuum
+elbow:
+  radius: 0.222
+  mass: 0.25
+connector: connector.camlock-dn25
+carries: liquid
+template: template.hose
+basis:
+- of:
+  - per_m
+  - elbow
+  - rating
+  tier: invented
+  review: true
+  note: Wall 6 mm, rubber at 1,150 kg/m3 and a quarter as much steel spiral; least bend six outsides; From memory of makers' catalogues; to be sourced.

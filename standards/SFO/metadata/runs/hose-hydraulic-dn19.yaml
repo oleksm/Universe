@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../../schema/run.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: run.hose-hydraulic-dn19
+  name: Hydraulic hose, DN 19.05
+  description: 'A two-braid hydraulic hose (SAE 100R2 class): oil at working pressure to cylinders and motors that move, its ends flat-face quick couplings.'
+kind: hose
+size: 0.01905
+bore: 0.01905
+outside:
+- 0.0293
+- 0.0293
+rating:
+  pressure: 27500000.0
+  temperature: 373.0
+per_m:
+  mass: 0.83
+  built_of:
+  - what: Tube and cover
+    item: material.epdm-rubber
+    mass: 0.373
+    note: nitrile, as EPDM here
+  - what: Two steel braids
+    item: material.structural-steel-a36
+    mass: 0.457
+elbow:
+  radius: 0.205
+  mass: 0.267
+connector: connector.flat-face-dn19
+carries: liquid
+template: template.hose-hydraulic
+basis:
+- of:
+  - per_m
+  - outside
+  - rating
+  tier: invented
+  review: true
+  note: Two-braid hose figures; From memory of makers' catalogues; to be sourced.

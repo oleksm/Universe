@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/template.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: template.conductor-rail
+  name: Enclosed conductor rails
+  description: 'Enclosed conductor rails: one look for every size of the family, scaled to each record''s figures (the owner, 2026-10-17: never one model per size).'
+family: conductor-rail
+draws: sweep-and-pieces
+scales_by:
+- outside
+members: 4
+profile: the housing's section, its width and height the record's outside
+pieces:
+- name: support
+  how: at each support.spacing along the run, scaled to its outside
+basis:
+- of:
+  - draws
+  - scales_by
+  tier: derived
+  note: 'The owner, 2026-10-17: one template a family, scaled; the catalogue families (kit_catalogue.py).'

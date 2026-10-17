@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/interface.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: interface.hose-union-dn25
+  name: Union DN 25
+  description: 'The mating face of the Union DN 25: any maker''s half built to it mates with any other''s.'
+domain: fluid
+kind: union
+envelope:
+  pressure: 2500000.0
+  temperature: 823.0
+media:
+- gas
+- liquid
+sealing: air
+halves: male-female
+make: bolted
+face:
+  length: 0.085
+  width: 0.085
+  height: 0.09
+size: 0.025
+basis:
+- of:
+  - envelope
+  - face
+  tier: derived
+  note: The most the products built to it are rated for, and their joint's outside.

@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-hood-dn2000
+  code: KIT-HOOD-DN2000
+  name: Catch hood DN 2000
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.structural-steel-a36
+size:
+  length: 2.4
+  width: 2.4
+  height: 0.5
+supplies:
+  item: connector.hood-dn2000
+physical:
+  mass: 961.8
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.hood-dn2000, as made.
