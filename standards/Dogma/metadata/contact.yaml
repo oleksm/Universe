@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../schema/section.schema.yaml
+identity:
+  key: dogma.contact
+  name: Contact
+  order: 7
+  about: "A body resting on or sliding over solid ground: friction at its feet and its hull, and how a hull rebounds. One figure for every ground for now (simplified), until grounds carry their own."
+  see: [docs/ground-contact-plan.md]

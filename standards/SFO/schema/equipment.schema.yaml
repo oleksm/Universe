@@ -452,6 +452,8 @@ properties:
           efficiency: { type: number, x-unit: "1", description: "the share of the stroke that does work (an oleo strut: about 0.8)" }
           sink_rate: { type: number, x-unit: "m/s", description: "m/s, the touchdown it is designed for, at its design load" }
           extended: { type: number, x-unit: "m", description: "m from its mount to its pad, gear down" }
+          spring: { type: number, exclusiveMinimum: 0, x-unit: "N/m", description: "N/m, the strut's stiffness as a linear spring (the game's contact model): holds over its stroke" }
+          damper: { type: number, exclusiveMinimum: 0, x-unit: "N s/m", description: "N s/m, its damping as a linear damper" }
       - description: "Holds a gate's tube: one to a segment of a ring. Not in the game yet."
         type: object
         x-in-game: "not made"
