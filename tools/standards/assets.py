@@ -61,8 +61,19 @@ def records():
     return out
 
 
+def _reference(key):
+    """A template's reference member (a run or a connector), by its key."""
+    folder = {"connector": "connectors", "run": "runs"}.get(key.split(".", 1)[0])
+    f = os.path.join(TREE, "SFO", "metadata", folder or "", key.split(".", 1)[1] + ".yaml")
+    return yaml.safe_load(open(f, encoding="utf-8")) if folder and os.path.exists(f) else None
+
+
 def size_of(kind, r):
-    """The record's size, length by width by height (m), or None where it says none."""
+    """The record's size, length by width by height (m), or None where it says none (a template's: its reference
+    member's, docs/asset-contract.md, Templates)."""
+    if kind == "template" and r.get("reference"):
+        ref = _reference(r["reference"])
+        return size_of(r["reference"].split(".", 1)[0], ref) if ref else None
     ph = r.get("physical") or {}
     if all(ph.get(k) for k in ("length", "width", "height")):
         return [float(ph["length"]), float(ph["width"]), float(ph["height"])]
