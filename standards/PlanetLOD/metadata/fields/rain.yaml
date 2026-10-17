@@ -2,11 +2,12 @@
 identity:
   key: planet-field.rain
   name: Rain
-  about: Annual precipitation.
+  about: 'Annual precipitation: moisture carried downwind, orographic rain, belts, recycling.'
 unit: m/s
 said_as:
   unit: m/yr
   factor: 3.168808781402895e-08
+  note: of water depth; times 1000 kg/m3 for kg m-2 s-1
 per: sample
 producer:
   where: stages/coupled_climate.py
@@ -19,6 +20,8 @@ levels:
 basis:
 - of:
   - identity
+  - producer
+  - said_as
   tier: derived
-  note: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+  note: 'planet-trees-pgs2 docs/sim-arrays.md (planets, 17 Oct 2026: checked against the code at aab9f6a, run earth_s25).'
 status: draft

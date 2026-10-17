@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../../schema/planet-layer.schema.yaml
+identity:
+  key: planet-layer.river-state
+  name: River state
+  about: 'A river''s memory (0 none: no channel).'
+version: 1
+classes:
+- id: 1
+  name: active
+  source: '1'
+- id: 2
+  name: misfit
+  source: '2'
+- id: 3
+  name: dry valley
+  source: '3'
+- id: 4
+  name: captured
+  source: '4'
+- id: 5
+  name: reversed
+  source: '5'
+- id: 6
+  name: reborn
+  source: '6'
+levels:
+- planet-level.planet
+- planet-level.cluster
+basis:
+- of:
+  - classes
+  tier: derived
+  note: 'docs/sim-arrays.md: the sim''s ids; the registry''s are the same where the sim''s 0 is none, its own plus 1 otherwise.'
+- of:
+  - identity
+  tier: derived
+  note: 'active: Q at least 1e10 m3/yr; an existing channel lasts down to 0.3 of that; misfit: a channel with Q under 0.3 of its peak; dry valley: no channel now, but its peak at least the channel threshold
+    and incision at least 100 m; captured: the channel turned 60 to 120 degrees from its last course; reversed: the channel turned more than 120 degrees; reborn: water back in a dry valley'
+status: draft

@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.lake-surface
+  name: Lake surface
+  about: Lake surface height above sea level on open or closed lakes.
+unit: m
+per: sample
+producer:
+  where: planet_form save_checkpoint
+  file: checkpoint
+  key: water
+also_from:
+- where: stages/coupled.py
+  file: ctx
+  key: h_lake_level
+  note: the spill level of open lakes, the highest covered sample of closed ones
+missing: NaN off lakes
+source: water
+levels:
+- planet-level.planet
+- planet-level.cluster
+basis:
+- of:
+  - identity
+  - producer
+  - said_as
+  tier: derived
+  note: 'planet-trees-pgs2 docs/sim-arrays.md (planets, 17 Oct 2026: checked against the code at aab9f6a, run earth_s25).'
+status: draft

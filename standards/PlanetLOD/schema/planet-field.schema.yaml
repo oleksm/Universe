@@ -21,14 +21,26 @@ properties:
   range: { type: array, minItems: 2, maxItems: 2, items: { type: number, x-unit-from: unit }, description: "Least and most it takes, in its unit." }
   per: { enum: [sample, node, segment, line, point], description: "What carries it." }
   vector: { type: boolean, description: "true: a unit vector, not a number." }
+  producer: { $ref: "#/definitions/producer" }
+  also_from: { type: array, items: { $ref: "#/definitions/producer" }, description: "Other arrays that hold the same word: a duplicate (h_Q for wacc), the other component of a vector, the same word at another epoch (r_ for the recent epoch)." }
+  class_of: { type: string, x-ref: [planet-layer], description: "A class id field: its values are this layer's ids (the sim's own ids, mapped by the layer's classes' source)." }
+  amount: { enum: [snapshot, per-step, running-total, history-total], description: "snapshot: the value now. per-step: an amount over the last plate step (up to 5 Myr), not a rate. running-total: summed and decaying (e_fold). history-total: summed over the whole run at a fixed place while the crust moved under it." }
+  e_fold: { type: number, exclusiveMinimum: 0, x-unit: s, description: "A running total's decay time." }
+  time_base: { enum: [planet-age, before-present, since-formed], description: "For a time: what it counts from. planet-age: the planet's age then (present 4.5699 Gyr); before-present: how long ago; since-formed: since the crust formed." }
+  missing: { type: string, description: "What a value means where there is none (NaN off lakes; -1 never): use nanmin and nanmax." }
+  cautions: { type: array, items: { type: string }, description: "What trips a reader up: unbounded values, duplicates, not what its name suggests." }
+  derived_from: { type: array, items: { type: string, x-ref: [planet-field] }, description: "The fields it is computed from." }
+  status: { enum: [draft, published, retired], description: "draft: the sim builds against the word, not yet the figures" }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }
+definitions:
   producer:
     type: object
     additionalProperties: false
     required: [where]
     properties:
       where: { type: string, description: "The stage or tool that makes it (stages/plates.py, tools/planet_query.py)." }
-      file: { type: string, description: "The file it is kept in (checkpoint, ctx, store, query)." }
+      file: { type: string, description: "The file it is kept in: a planet-file record's source (checkpoint, ctx, store, lines) or a tool's output." }
       key: { type: string, description: "Its array or attribute key there (z, h_T, wacc)." }
-  derived_from: { type: array, items: { type: string, x-ref: [planet-field] }, description: "The fields it is computed from." }
-  status: { enum: [draft, published, retired], description: "draft: the sim builds against the word, not yet the figures" }
-  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }
+      epoch: { type: string, description: "When it is of, where that differs: the last coupled step, the end of the recent epoch." }
+      said_as: { $ref: "../../common.schema.yaml#/definitions/said_as" }
+      note: { type: string }

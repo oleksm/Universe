@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.recent-height
+  name: Recent height
+  about: Height above present sea level after the recent epoch's glacial and river erosion (the last 2.6 Myr).
+unit: m
+per: sample
+producer:
+  where: stages/recent.py
+  file: ctx
+  key: r_z
+cautions:
+- 'differs from height (z) by up to 2,367 m: which is the present height is open'
+- 2.4 km of river erosion in 2.6 Myr (0.9 mm/yr) looks high (planets)
+source: r_z
+levels:
+- planet-level.planet
+- planet-level.cluster
+- planet-level.pattern
+basis:
+- of:
+  - identity
+  - producer
+  - said_as
+  tier: derived
+  note: 'planet-trees-pgs2 docs/sim-arrays.md (planets, 17 Oct 2026: checked against the code at aab9f6a, run earth_s25).'
+status: draft

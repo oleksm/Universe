@@ -137,7 +137,14 @@ def main(argv):
 
     # The run's files: every array key, against the fields that claim them.
     cks = sorted(glob.glob(os.path.join(run, "ck_*_ctx.npz")))
-    claimed = {(d["producer"].get("file"), d["producer"].get("key")): k for k, d in R.get("planet-field", {}).items() if d.get("producer", {}).get("key")}
+    claimed = {}
+    for k, d in R.get("planet-field", {}).items():
+        for pr in [d.get("producer") or {}] + (d.get("also_from") or []):
+            if pr.get("key"):
+                claimed[(pr.get("file"), pr["key"])] = k
+    for d in R.get("planet-file", {}).values():          # (a file's bookkeeping arrays: known, not words)
+        for b in d.get("bookkeeping") or []:
+            claimed.setdefault((d.get("source"), b["key"]), d["identity"]["key"])
     if cks:
         last = cks[-1]
         base = last[:-len("_ctx.npz")]

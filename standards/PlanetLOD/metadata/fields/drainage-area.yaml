@@ -2,25 +2,30 @@
 identity:
   key: planet-field.drainage-area
   name: Drainage area
-  about: The area upstream of a node.
+  about: 'Upstream area: one sample''s area (1.7e10 m2) accumulated down the routing; on a mesh, a node''s upstream area.'
 unit: m2
-said_as:
-  unit: km2
-  factor: 1000000.0
-per: node
+per: sample
 producer:
-  where: tools/anchored_mesh.py
+  where: planet_form save_checkpoint
+  file: checkpoint
+  key: acc
+also_from:
+- where: tools/anchored_mesh.py
   file: segments/<run>/<seg>/anchored.npz
   key: areas
-derived_from:
-- planet-field.discharge
-source: areas
+  said_as:
+    unit: km2
+    factor: 1000000.0
+  note: per mesh node
+source: acc
 levels:
 - planet-level.pattern
 - planet-level.square
 basis:
 - of:
   - identity
+  - producer
+  - said_as
   tier: derived
-  note: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+  note: 'planet-trees-pgs2 docs/sim-arrays.md (planets, 17 Oct 2026: checked against the code at aab9f6a, run earth_s25).'
 status: draft
