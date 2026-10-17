@@ -93,6 +93,7 @@ properties:
         mass: { type: number, exclusiveMinimum: 0, x-unit: "kg" }
         power: { type: number, minimum: 0, x-unit: "W" }
         heat: { type: number, minimum: 0, x-unit: "W", description: "W this link gives the cooling loop (a water-cooled duct)" }
+        width: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "A road's paved width. A run crossing it keeps 4.5 m clear over it, or passes under it in a culvert; no unit stands on it." }
         note: { type: string }
   frame:
     description: "The hall or open frame, of standard struts (SFO 13) on its grid, and what clads it."

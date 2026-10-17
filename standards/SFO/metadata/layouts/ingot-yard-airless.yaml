@@ -80,6 +80,7 @@ links:
   length: 477.1
   item: material.regolith-sintered
   mass: 1342000.0
+  width: 4.5
   via:
   - [215.9, -42.75, 0.0]
   - [215.9, -14.25, 0.0]
@@ -95,6 +96,7 @@ links:
   length: 127.9
   item: material.regolith-sintered
   mass: 671500.0
+  width: 7.0
   note: '7 m wide, sintered regolith 0.3 m: trucks load crates at the yard''s east end, beyond the layout'
 ground:
 - {what: Cooling bed 1, item: material.cast-iron-grey, volume: 19.8, note: 'cast iron floor plates 50 mm thick over x -26 to -4, y -9 to 9, on sintered regolith: 270 places, the ingots standing big end up at 1.2 m each way, open to the sky', mass: 142600.0}

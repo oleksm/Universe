@@ -519,10 +519,12 @@ def unit_record(slug, u):
     return d
 
 
-def link(kind, name, a, b, item, per_m, power=None, note=None, heat=None, via=()):
+def link(kind, name, a, b, item, per_m, power=None, note=None, heat=None, via=(), width=None):
     pts = [a, *via, b]
     L = sum(math.dist(p, q) for p, q in zip(pts, pts[1:]))
     d = {"kind": kind, "name": name, "from": list(a), "to": list(b), "length": r(L), "item": item, "mass": r(per_m * L)}
+    if width:
+        d["width"] = width
     if via:
         d["via"] = [list(v) for v in via]
     if power:
@@ -2095,7 +2097,7 @@ def ore_yard_air(us, recs):
         link("conveyor", "out belt", (r(-x0 + 20.7), 0.0, 0.6), (r(-x0 + 80), 0.0, 1.0), A36, 80.0, 100000.0, "a 1 m belt (belt and idlers a metre, from memory) to the pellet plant's ore belt, beyond the layout: its tail 0.4 m under the yard belt's head, fed by a short chute narrowing 1.4 m to 1 m, then up to 1 m", via=[(r(-x0 + 24.7), 0.0, 1.0)]),
         link("pipe", "dust sprays, north", (r(x0 - 2), beds_y + base / 2 + 2, 1.0), (r(-x0), beds_y + base / 2 + 2, 1.0), A36, math.pi * 0.1 * 0.004 * RHO["steel"], None, "100 mm along the north bed's outer edge, spraying water to keep the dust down, fed at its west end from the yard's water, beyond the layout"),
         link("pipe", "dust sprays, south", (r(x0 - 2), -(beds_y + base / 2 + 2), 1.0), (r(-x0), -(beds_y + base / 2 + 2), 1.0), A36, math.pi * 0.1 * 0.004 * RHO["steel"], None, "100 mm along the south bed's outer edge, the same; neither crosses the rails or the belt"),
-        link("road", "truck approach", (x_h - 2.0, -(beds_y + base / 2 + 2), 0.0), (x_h - 2.0, -5.6, 0.0), CONC, 7.0 * 0.3 * RHO["concrete"], None, "7 m wide, paved 0.3 m: trucks from the port turn and back north onto the hopper's deck, centred on its mouth (local x -2, between the wheel stops at -4.5 and 0.5); it ends at the pit's south edge and covers the gap there"),
+        link("road", "truck approach", (x_h - 2.0, -(beds_y + base / 2 + 2), 0.0), (x_h - 2.0, -5.6, 0.0), CONC, 7.0 * 0.3 * RHO["concrete"], None, "7 m wide, paved 0.3 m: trucks from the port turn and back north onto the hopper's deck, centred on its mouth (local x -2, between the wheel stops at -4.5 and 0.5); it ends at the pit's south edge and covers the gap there", width=7.0),
     ]
     mobile = [{"unit": "unit.stacker-reclaimer-1500th", "rides": "machine rail", "at": [0.0, 0.0, 0.0]},
               {"unit": "unit.yard-tripper-1500th", "rides": "machine rail", "at": [0.0, 0.0, 0.0]}]
@@ -2210,8 +2212,8 @@ def ingot_yard_air(us, recs):
     assert places >= on_racks, (places, on_racks)
     links = [
         link("rail", "ingot rail", (-36.0, 6.0, 0.0), (-6.0, 6.0, 0.0), A36, 2 * 50.0, None, "two 50 kg/m rails at 2 m gauge, set in the floor: in by the west door from the casting bay; the car stops at x -15 under the crane"),
-        link("road", "yard aisles", aisle_path[0], aisle_path[-1], CONC, 4.5 * 0.25 * RHO["concrete"], None, f"{rows} forklift aisles 4.5 m wide, {yard_L:.0f} m long, joined end to end, paved 0.25 m (the rest of the yard is the ground's)", via=aisle_path[1:-1]),
-        link("road", "truck lane", (x1, -3.0, 0.0), (yx0 + yard_L + 20.0, -3.0, 0.0), CONC, 7.0 * 0.3 * RHO["concrete"], None, "7 m wide, paved 0.3 m: trucks load crates at the yard's east end for the port, beyond the layout"),
+        link("road", "yard aisles", aisle_path[0], aisle_path[-1], CONC, 4.5 * 0.25 * RHO["concrete"], None, f"{rows} forklift aisles 4.5 m wide, {yard_L:.0f} m long, joined end to end, paved 0.25 m (the rest of the yard is the ground's)", via=aisle_path[1:-1], width=4.5),
+        link("road", "truck lane", (x1, -3.0, 0.0), (yx0 + yard_L + 20.0, -3.0, 0.0), CONC, 7.0 * 0.3 * RHO["concrete"], None, "7 m wide, paved 0.3 m: trucks load crates at the yard's east end for the port, beyond the layout", width=7.0),
     ]
     mobile = [{"unit": "unit.forklift-2t5", "rides": "yard aisles", "at": [r(yx0 + 10.0 + 20.0 * i), aisle_y[i % rows], 0.0]} for i in range(6)]
     ground = [
@@ -2562,7 +2564,7 @@ def arc_furnace_airless(us, recs):
         port("sponge-iron-in", "in", "bulk", kit.chute(0.8), (-55.0, 70.0, 5.188), (0, -1, 0), item="good.sponge-iron", rate=DRI, temperature=T_HOT_DRI + K, note="hot, from the shaft furnace's discharge (its sponge-iron-out), at its height"),
         port("hv-in", "in", "power", kit.termination(33000, 630), (-37.0, -40.0, 0.3), (0, 1, 0), power=P + TRANSFORMER_LOSS * S_MVA, voltage=33000, note="the site's 33 kV substation"),
         port("lv-bin", "in", "power", lv(need("dri-bin-200t")), (-55.0, 14.8, 1.0), (0, -1, 0), power=need("dri-bin-200t"), voltage=lvf),
-        port("lv-cooler", "in", "power", lv(need("offgas-cooler-sealed")), (16.0, 18.0, 1.0), (0, 1, 0), power=need("offgas-cooler-sealed"), voltage=lvf),
+        port("lv-cooler", "in", "power", lv(need("offgas-cooler-sealed")), (19.0, 21.5, 1.0), (-1, 0, 0), power=need("offgas-cooler-sealed"), voltage=lvf),
         port("lv-filter", "in", "power", lv(need("offgas-filter-sealed")), (36.0, 24.0, 1.0), (-1, 0, 0), power=need("offgas-filter-sealed"), voltage=lvf),
         port("lv-post", "in", "power", lv(need("crew-post")), (26.0, -18.0, 2.3), (-1, 0, 0), power=need("crew-post"), voltage=lvf),
         port("lv-fields", "in", "power", lv(p_fields), (-56.4, -3.5, 0.3), (0, -1, 0), power=p_fields, voltage=lvf, note="the site's 400 V distribution, for the cool fields' pumps"),
@@ -2593,7 +2595,7 @@ def arc_furnace_airless(us, recs):
         L("water from the hot field", kit.pipe(dn_cond, 25, liquid=True, temp=485.0), ("RH1:water-out", "C:water-in"),
           [None, (-57.0, 50.4, 1.0), (-57.0, 30.0, 1.0), (8.0, 30.0, 1.0), (8.0, 23.6, 1.0), (8.0, 23.6, 16.5), None], (), 1, None, "the condensate back by the field's pump, on the steam line's left all the way"),
         L("bin supply", lc(need("dri-bin-200t")), ("edge:lv-bin", "F:power-in"), [None, None]),
-        L("cooler supply", lc(need("offgas-cooler-sealed")), ("edge:lv-cooler", "C:power-in"), [None, None]),
+        L("cooler supply", lc(need("offgas-cooler-sealed")), ("edge:lv-cooler", "C:power-in"), [None, (16.0, 21.5, 1.0), None], (), 1, None, "from the east along the cooler's south face, north of the service road"),
         L("filter supply", lc(need("offgas-filter-sealed")), ("edge:lv-filter", "G:power-in"), [None, None]),
         L("crew post supply", lc(need("crew-post")), ("edge:lv-post", "P:power-in"), [None, None], (), 1, None, "through the berm"),
         L("hot field supply", lc(n_hot * need(hot_rad)), ("edge:lv-hot", "RH1:power-in"), [None, None]),
@@ -2619,6 +2621,7 @@ def arc_furnace_airless(us, recs):
         link("rail", "ladle rail", (-10.5, 6.0, 0.0), (33.0, 6.0, 0.0), A36, 2 * 60.0, None, "as for air: two 60 kg/m rails at 3 m gauge, on sintered regolith sleepers; on to the ladle station. A ladle standing in vacuum loses its hydrogen: the degasser's work begins here"),
         link("rail", "slag rail", (-16.5, 0.5, 0.0), (-16.5, 23.25, 0.0), A36, 2 * 60.0, None, "as for air: 2.5 m gauge, on sintered regolith sleepers"),
         link("rail", "crane rails", (-30.0, 0.0, 0.0), (6.0, 0.0, 0.0), A36, 2 * 50.0, None, "the gantry crane's two straight rails, 36 m long along x at y -12 and 12 (24 m apart); the link runs on their centre line. No run crosses them: the crane's legs sweep x -35 to 11 along both"),
+        link("road", "service road", (40.0, 18.5, 0.0), (8.0, 18.5, 0.0), SINTER, 4.5 * 0.25 * RHO_SINTER, None, "a forklift lane 4.5 m wide, sintered regolith 0.25 m, from the site's east road along the cooler's and the filter's south faces, where their closed dust bins come out; the off-gas duct crosses it 20 m up, its nearest stand a portal over the lane", width=4.5),
     ]
     mobile = [{"unit": "unit.ladle-car-80t", "rides": "ladle rail", "at": [-7.5, 6.0, 0.0]},
               {"unit": "unit.slag-pot-car", "rides": "slag rail", "at": [-16.5, 6.0, 0.0]},
@@ -2663,7 +2666,7 @@ def arc_furnace_airless(us, recs):
         "ground": ground,
         "totals": {"rate": RATE, "power": r(power), "heat": r(heat), "water": 0.0, "mass": r(total), "against_module": against},
         "staff": mod.get("staff"),
-        "basis": [{"of": ["bays", "links", "mobile"], "tier": "invented", "review": True, "note": "Laid out from the shop for air: the platform, vault and rails where they were; the rest for airless ground, of runs from port to port (SFO 25). The crane's, the ladle car's and the slag car's feeds are not laid yet."},
+        "basis": [{"of": ["bays", "links", "mobile"], "tier": "invented", "review": True, "note": "Laid out from the shop for air: the platform, vault and rails where they were; the rest for airless ground, of runs from port to port (SFO 25). The crane's, the ladle car's and the slag car's feeds, and a crew road to the post, are not laid yet."},
                   {"of": ["totals.heat"], "tier": "derived", "note": "The units' and the bus's heat; the radiator fields from the rejection a field gives at lunar noon (unit.radiator-field-330k, -485k)."},
                   {"of": ["ground"], "tier": "derived", "review": True, "note": "Volumes as for air, of sintered regolith at 2,500 kg/m3 and loose regolith at 1,500."},
                   {"of": ["physical"], "tier": "derived", "note": "Summed from the units, links and ground."},
@@ -4338,8 +4341,8 @@ def ingot_yard_airless(us, recs):
     links = [
         link("rail", "ingot rail", (-40.0, 6.0, 0.0), (-28.0, 6.0, 0.0), A36, 2 * 50.0, None, "from the casting bay, its car stopping at x -34 by the beds' west end, under the gantry"),
         link("rail", "gantry rails", (-36.0, 0.0, 0.0), (r(x_g), 0.0, 0.0), A36, 2 * 60.0, None, "the ingot gantry's two straight rails over the beds, the tipper, the saws and the crating line, at y -11.4 and 11.4 (the gantry's wheels); the link runs on their centre line"),
-        link("road", "yard aisles", aisle_path[0], aisle_path[-1], SINTER, 4.5 * 0.25 * RHO_SINTER, None, f"{rows} forklift aisles 4.5 m wide, {yard_L:.0f} m long, joined end to end, of sintered regolith 0.25 m", via=aisle_path[1:-1]),
-        link("road", "truck lane", (r(x_g), -3.0, 0.0), (r(yx0 + yard_L + 20.0), -3.0, 0.0), SINTER, 7.0 * 0.3 * RHO_SINTER, None, "7 m wide, sintered regolith 0.3 m: trucks load crates at the yard's east end, beyond the layout"),
+        link("road", "yard aisles", aisle_path[0], aisle_path[-1], SINTER, 4.5 * 0.25 * RHO_SINTER, None, f"{rows} forklift aisles 4.5 m wide, {yard_L:.0f} m long, joined end to end, of sintered regolith 0.25 m", via=aisle_path[1:-1], width=4.5),
+        link("road", "truck lane", (r(x_g), -3.0, 0.0), (r(yx0 + yard_L + 20.0), -3.0, 0.0), SINTER, 7.0 * 0.3 * RHO_SINTER, None, "7 m wide, sintered regolith 0.3 m: trucks load crates at the yard's east end, beyond the layout", width=7.0),
     ]
     mobile = [{"unit": "unit.ingot-car-40t", "rides": "ingot rail", "at": [-34.0, 6.0, 0.0]},
               {"unit": "unit.ingot-gantry-10t-moon", "rides": "gantry rails", "at": [0.0, 0.0, 0.0]}]

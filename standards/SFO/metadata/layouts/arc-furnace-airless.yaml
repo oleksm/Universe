@@ -5,7 +5,7 @@ stands_for: module.arc-furnace
 site:
   atmosphere: none
   gravity: [1.6, 2.0]
-physical: {length: 288.0, width: 204.4, height: 23.7, mass: 4511000.0}
+physical: {length: 292.0, width: 204.4, height: 23.7, mass: 4601000.0}
 bays:
 - id: V
   mount: plant-mount.bay-s2
@@ -138,8 +138,8 @@ ports:
   power: 10000.0
   voltage: 400
   connector: connector.termination-400v-16mm2
-  at: [16.0, 18.0, 1.0]
-  facing: [0.0, 1.0, 0.0]
+  at: [19.0, 21.5, 1.0]
+  facing: [-1.0, 0.0, 0.0]
 - id: lv-filter
   flow: in
   medium: power
@@ -317,12 +317,15 @@ links:
   name: cooler supply
   run: run.cable-400v-16mm2
   ends: ['edge:lv-cooler', 'C:power-in']
-  from: [16.0, 18.0, 1.0]
+  from: [19.0, 21.5, 1.0]
   to: [16.0, 22.0, 1.0]
-  length: 4.0
+  length: 3.5
   item: material.copper
-  mass: 57.0
-  fittings: {elbows: 0, tees: 0, supports: 2, connectors: 2}
+  mass: 53.97
+  via:
+  - [16.0, 21.5, 1.0]
+  fittings: {elbows: 1, tees: 0, supports: 2, connectors: 2}
+  note: from the east along the cooler's south face, north of the service road
 - kind: cable
   name: filter supply
   run: run.cable-400v-35mm2
@@ -942,6 +945,15 @@ links:
   item: material.structural-steel-a36
   mass: 3600.0
   note: 'the gantry crane''s two straight rails, 36 m long along x at y -12 and 12 (24 m apart); the link runs on their centre line. No run crosses them: the crane''s legs sweep x -35 to 11 along both'
+- kind: road
+  name: service road
+  from: [40.0, 18.5, 0.0]
+  to: [8.0, 18.5, 0.0]
+  length: 32.0
+  item: material.regolith-sintered
+  mass: 90000.0
+  width: 4.5
+  note: a forklift lane 4.5 m wide, sintered regolith 0.25 m, from the site's east road along the cooler's and the filter's south faces, where their closed dust bins come out; the off-gas duct crosses it 20 m up, its nearest stand a portal over the lane
 ground:
 - {what: Furnace platform, item: material.regolith-sintered, volume: 612.06, note: 'as for air (the ladle slot, slag tunnel and well), of sintered regolith blocks: there is no water to make concrete; its blocks and top slab; measured on blender''s layout (candidate v01)', mass: 1530000.0}
 - {what: Transformer slab, item: material.regolith-sintered, volume: 86.4, note: no fire walls; measured on blender's layout (candidate v01), mass: 216000.0}
@@ -951,7 +963,7 @@ ground:
 - {what: Rail beds, item: material.regolith-sintered, volume: 17.25, note: 'under the ladle, slag and crane rails; measured on blender''s layout (candidate v01)', mass: 43120.0}
 - {what: Unit pads, item: material.regolith-sintered, volume: 91.4, note: 'under the off-gas filter (62.5) and the bin (16.9), measured on blender''s layout (candidate v01); the cooler''s 6 x 4 x 0.5 m, from its size', mass: 228500.0}
 - {what: Pipe and trestle feet, item: material.regolith-sintered, volume: 21.35, note: 'under the pipes, the duct''s stands and the belts'' trestles; as measured on blender''s layout (candidate v01) before the runs were re-laid, to measure again', mass: 53380.0}
-totals: {rate: 26.6666666666667, power: 73020000.0, heat: 13560000.0, water: 0.0, mass: 4511000.0, against_module: 'module.arc-furnace: one box, the same on every world. This layout: the same rate; 73.0 MW; 13.6 MW to 13 radiator fields (21.8 MW at lunar noon), 12 at 330 K for the panels, the transformer and the bus and 1 at 485 K for the off-gas cooler''s steam, in place of the tower; no water used up (closed loops); no hall, no baghouse (the furnace is sealed); 1,416 t of plant and 3,095 t of sintered regolith. The radiators cover 3.0 ha: the heat that went up a tower''s plume as steam must here leave as light, and at 330 K a panel in the noon sun sheds little. The sealed furnace''s gas is CO alone (1.37 kg/s), so its cooler takes 2.2 MW, not the 7.2 MW the shop for air''s duct does (that includes the gas burnt in the air drawn in); the hot field is used at 23%. A heat pump lifting the panels'' heat to 485 K (at half Carnot''s) would need about 7 MW more power and 3 hot fields in place
+totals: {rate: 26.6666666666667, power: 73020000.0, heat: 13560000.0, water: 0.0, mass: 4601000.0, against_module: 'module.arc-furnace: one box, the same on every world. This layout: the same rate; 73.0 MW; 13.6 MW to 13 radiator fields (21.8 MW at lunar noon), 12 at 330 K for the panels, the transformer and the bus and 1 at 485 K for the off-gas cooler''s steam, in place of the tower; no water used up (closed loops); no hall, no baghouse (the furnace is sealed); 1,506 t of plant and 3,095 t of sintered regolith. The radiators cover 3.0 ha: the heat that went up a tower''s plume as steam must here leave as light, and at 330 K a panel in the noon sun sheds little. The sealed furnace''s gas is CO alone (1.37 kg/s), so its cooler takes 2.2 MW, not the 7.2 MW the shop for air''s duct does (that includes the gas burnt in the air drawn in); the hot field is used at 23%. A heat pump lifting the panels'' heat to 485 K (at half Carnot''s) would need about 7 MW more power and 3 hot fields in place
     of all 13 (not fitted); panels cooled by water at 20 bar and 485 K, as some furnaces'' are, would need about 2 (not fitted).'}
 staff:
 - {profession: profession.plant-operator, count: 6}
@@ -963,7 +975,7 @@ basis:
 - of: [bays, links, mobile]
   tier: invented
   review: true
-  note: 'Laid out from the shop for air: the platform, vault and rails where they were; the rest for airless ground, of runs from port to port (SFO 25). The crane''s, the ladle car''s and the slag car''s feeds are not laid yet.'
+  note: 'Laid out from the shop for air: the platform, vault and rails where they were; the rest for airless ground, of runs from port to port (SFO 25). The crane''s, the ladle car''s and the slag car''s feeds, and a crew road to the post, are not laid yet.'
 - of: [totals.heat]
   tier: derived
   note: The units' and the bus's heat; the radiator fields from the rejection a field gives at lunar noon (unit.radiator-field-330k, -485k).

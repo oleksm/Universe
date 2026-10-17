@@ -62,6 +62,7 @@ links:
   length: 980.7
   item: good.concrete
   mass: 2648000.0
+  width: 4.5
   via:
   - [179.7, -71.25, 0.0]
   - [179.7, -42.75, 0.0]
@@ -81,6 +82,7 @@ links:
   length: 169.7
   item: good.concrete
   mass: 855300.0
+  width: 7.0
   note: '7 m wide, paved 0.3 m: trucks load crates at the yard''s east end for the port, beyond the layout'
 - kind: cable
   name: cooling fans' supply

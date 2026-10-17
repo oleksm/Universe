@@ -19,6 +19,8 @@ import yaml
 S = "standards/SFO/metadata/"
 STEP = 0.25        # m between the points a run is sampled at
 GAP = 0.05         # m kept clear between runs
+HEADROOM = 4.5     # m a run keeps clear over a road (a forklift's mast, a truck: from memory)
+CULVERT = 0.3      # m of cover a run under a road keeps between its top and the road's surface
 TOUCH = 0.03       # m: a run touching a unit's box closer than this is seated on it, not through it (a gallery's foil on a deck)
 DROP = 0.5         # m a belt's head stands over the belt it drops onto (plant_kit.TRANSFER_DROP)
 
@@ -292,6 +294,31 @@ def check(lay, units, runs, conns):
                 if inside.any():
                     faults.append(f"{l['name']}: in the path of {m_['unit']} riding {m_['rides']}, at {pts[np.argmax(inside)].round(2).tolist()}")
                     break
+    # Roads: a run over one keeps HEADROOM clear above it, or passes under it in a culvert; no unit stands on it.
+    for rd in [l for l in lay["links"] if l.get("kind") == "road" and l.get("width")]:
+        P = path_of(rd)
+        hw = rd["width"] / 2
+        zr = float(P[:, 2].max())
+        flat = lambda q: np.c_[q[:, :2], np.zeros(len(q))]
+        Pf = flat(P)
+        plan = lambda q: np.min([seg_dist(flat(q), a, b) for a, b in zip(Pf, Pf[1:])], axis=0)
+        for l in links:
+            if l["name"] not in radius:
+                continue
+            pts = S_[l["name"]]
+            rw, rh = half[l["name"]]
+            bad = (plan(pts) < hw + rw - TOUCH) & (pts[:, 2] - rh < zr + HEADROOM) & (pts[:, 2] + rh > zr - CULVERT)
+            if bad.any():
+                q = pts[np.argmax(bad)]
+                faults.append(f"{l['name']}: over {rd['name']} at {q.round(2).tolist()}, {q[2] - rh - zr:.2f} m clear (a road wants {HEADROOM:g} m, or a culvert under it)")
+        for b in lay["bays"]:
+            u = units[b["unit"]]
+            Lb, Wb = u["physical"]["length"], u["physical"]["width"]
+            a = math.radians(b.get("turn", 0.0))
+            g = np.array([(x, y) for x in np.linspace(-Lb / 2, Lb / 2, max(2, int(Lb / 0.5) + 1)) for y in np.linspace(-Wb / 2, Wb / 2, max(2, int(Wb / 0.5) + 1))])
+            wpts = np.c_[b["at"][0] + g[:, 0] * math.cos(a) - g[:, 1] * math.sin(a), b["at"][1] + g[:, 0] * math.sin(a) + g[:, 1] * math.cos(a), np.zeros(len(g))]
+            if b["at"][2] < zr + HEADROOM and (plan(wpts) < hw - TOUCH).any():
+                faults.append(f"{b['id']} ({b['unit']}) stands on {rd['name']}")
     names = [l["name"] for l in links if l["name"] in radius]
     for i, na in enumerate(names):
         la = by_name[na]

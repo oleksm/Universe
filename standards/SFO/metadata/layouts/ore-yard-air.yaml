@@ -73,6 +73,7 @@ links:
   length: 44.21
   item: good.concrete
   mass: 222800.0
+  width: 7.0
   note: '7 m wide, paved 0.3 m: trucks from the port turn and back north onto the hopper''s deck, centred on its mouth (local x -2, between the wheel stops at -4.5 and 0.5); it ends at the pit''s south edge and covers the gap there'
 ground:
 - {what: Rail bed, item: good.concrete, volume: 231.46, note: two strips 1 m wide and 0.8 m deep under the rails; measured on blender's layout (candidate v01), mass: 555500.0}
