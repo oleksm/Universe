@@ -132,6 +132,12 @@ ports:
   - -1.0
   - 0.0
   note: 'back to the engine: the fixed DN250 return manifold beyond the hose pod, facing -y; three DN125 drops to the fixed hose cuffs at x -0.65'
+visual:
+  format: "freefall-model/1"
+  path: "models/thermal-radiator-hot-s1/v1"
+  manifest_sha256: "42642e7a02ec69feb956578b110ceea8b1859546e86cea3924b9652be4298866"
+  version: 1
+  triangles: 59958
 life: 473364000
 basis:
 - of:
