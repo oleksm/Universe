@@ -12,7 +12,7 @@ identity:
 size_class: 2
 fits: mount.radiator-hot-s2
 physical:
-  mass: 6550
+  mass: 26348
   volume: 34.2
   length: 33.0
   width: 16.5
@@ -22,7 +22,7 @@ built_of:
   list:
   - code: RAH2-01
     name: Panel
-    description: 3 mm carbon-carbon, 543 m2, 33.0 m out from the hinge by 16.5 m along it; both faces dark; tubes 12 mm across (0.5 mm molybdenum) out from the root and back.
+    description: 3 mm carbon-carbon, 543 m2, 33.0 m out from the hinge by 16.5 m along it; both faces dark; bonded between the tubes as fins, 25.5 mm between tubes as on S1.
     mass: 2842
     length: 33.0
     width: 16.5
@@ -31,24 +31,56 @@ built_of:
     quantity: 3268.3
     module: module.assembly-shop
   - code: RAH2-02
-    name: Headers and tubes
-    description: 'A supply and a return header side by side along the root edge, DN 600, and the U-tubes through the panel: about 315 kg/s of lithium at a 200 K drop, about 3.5 m/s; the loop held at 5 bar so the lithium stays liquid at its hot end (it boils at 1,615 K at one atmosphere).'
-    mass: 3112
+    name: Tubes
+    description: '272 U-tubes of molybdenum, 35 mm across with a 0.5 mm wall, each 33 m out from the root header and back (66 m), on a 60.5 mm pitch along the 16.5 m root (S1''s 25.5 mm fin gap kept: fin efficiency about 0.91): 315
+      kg/s of lithium at about 3.1 m/s in their 34 mm bores, about 0.6 bar lost across them (Blasius). 18 km of tube.'
+    mass: 10086
+    length: 33.0
+    width: 16.5
+    height: 0.035
+    item: stock.mo-tb-12x0p5
+    quantity: 11598.9
+    module: module.machining-centre
+  - code: RAH2-04
+    name: Root headers
+    description: The supply and the return header along the root edge, DN 600 molybdenum, 8 mm wall (hoop stress 19 MPa at 5 bar, kept low for creep at 1,600 K), 16.5 m each, on the hinge line, swinging with the panel.
+    mass: 5220
     length: 16.5
     width: 1.3
-    height: 0.65
+    height: 0.62
     item: stock.mo-tb-12x0p5
-    quantity: 3579.3
+    quantity: 6003.0
     module: module.machining-centre
+  - code: RAH2-05
+    name: Backing frame
+    description: Carbon-carbon box ribs 550 x 120 mm with a 4 mm wall, twelve running out from the root every 1.5 m, and a mid and a tip spar across; within the panel's 0.65 m.
+    mass: 4020
+    length: 33.0
+    width: 16.5
+    height: 0.55
+    item: stock.cc-pl-3
+    quantity: 4623.0
+    module: module.assembly-shop
   - code: RAH2-03
     name: Hinge, drive and root joints
-    description: Root hinge brackets on the hull, the deploy drive, tip latches that hold it stowed, and the two bellows loops where the headers cross the hinge.
-    mass: 595
+    description: 'Root hinge brackets on the hull, the deploy drive, tip latches that hold it stowed, and the hinge crossings: each header splits at its moving end into six DN200 molybdenum-rhenium corrugated hoses (about 0.23 m outside,
+      4.1 m/s of lithium), wound round the hinge axis like S1''s (clock-spring), bend radius at least 0.95 m (4 x outside), about 5.4 m of hose each, in a root pod beyond the panel''s -y end.'
+    mass: 1500
     length: 16.5
     width: 0.5
     height: 0.65
     item: stock.mo-tb-12x0p5
-    quantity: 684.2
+    quantity: 1725.0
+    module: module.machining-centre
+  - code: RAH2-06
+    name: Fixed manifolds, drops and hose cuffs
+    description: The fixed DN600 supply and return collectors beyond the hose pod, each with six DN200 drops to the fixed hose cuffs; molybdenum. S1's 575 kg scaled by the flow (x 4.65), until blender's model gives its own figure.
+    mass: 2680
+    length: 2.5
+    width: 2.0
+    height: 2.0
+    item: stock.mo-tb-12x0p5
+    quantity: 3082.0
     module: module.machining-centre
 making:
   module: module.assembly-shop
@@ -103,13 +135,8 @@ basis:
   - physical
   tier: derived
   review: true
-  note: 'Its share of the engine''s heat (half its 1,086 m2 at 1500 K, both faces, emissivity 0.85): 265 MW. Twice as long as wide, as the other radiator panels. Lithium (material.lithium) about 4.2 kJ/kg K and 410 kg/m3 near 1,500 K (from memory), a 200 K drop, about 3.5 m/s
-    in the headers.'
-- of:
-  - built_of.list
-  tier: derived
-  review: true
-  note: Half the engine's former radiator parts (FTE2-07, FTE2-08), the booms replaced by a root hinge; hinge, drive and joints a tenth more (invented).
+  note: 'Its share of the engine''s heat (half its 1,086 m2 at 1500 K, both faces, emissivity 0.85): 265 MW. Twice as long as wide, as the other radiator panels. Lithium (material.lithium) about 4.2 kJ/kg K and 410 kg/m3 near 1,500
+    K (from memory), a 200 K drop, about 3.5 m/s in the headers.'
 - of:
   - built_of
   - making
@@ -117,3 +144,11 @@ basis:
 - of:
   - life
   rule: rule.life-ship-system
+- of:
+  - built_of.list
+  - physical.mass
+  tier: derived
+  review: true
+  note: 'Sized as S1''s family (2026-10-17, after blender''s S2 feasibility check: the old 6,550 kg could not carry the tubes): tubes chosen for under 1 bar over 66 m at S1''s fin gap (35 mm: 0.6 bar, fin 0.91; blender''s 40 mm at 83
+    mm pitch: 0.54 bar but fin 0.79), lithium viscosity 0.25 mPa s near 1,500 K from memory; Mo 10,220 kg/m3, C-C 1,750 kg/m3. Ribs scaled from S1''s for a panel twice as long (invented). 26,348 kg in all: 10.0 kW/kg against S1''s 13.7,
+    the longer tubes'' price.'
