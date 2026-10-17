@@ -576,8 +576,8 @@
 - { record: equipment.thermal.coolant-loop.s2, at: "2026-10-11T02:46:30Z", status: draft, summary: "changed: visual", sha: "ee98e3c0e9eb3051" }
 - { record: equipment.thermal.heat.exchanger, at: "2026-10-13T17:50:25Z", status: draft, summary: "changed: visual", sha: "a4ac2793c3ff1dee" }
 - { record: equipment.thermal.heat.sink, at: "2026-10-13T18:12:52Z", status: draft, summary: "changed: visual", sha: "343fbececea099dd" }
-- { record: equipment.thermal.radiator-hot.s1, at: "2026-10-17T20:00:12Z", status: draft, summary: "changed: visual", sha: "eb0af920062b3685" }
-- { record: equipment.thermal.radiator-hot.s2, at: "2026-10-17T20:03:41Z", status: draft, summary: "changed: physical, built_of, basis", sha: "08293936c9af0400" }
+- { record: equipment.thermal.radiator-hot.s1, at: "2026-10-17T20:07:08Z", status: draft, summary: "changed: built_of", sha: "ff83d47ee877a2ed" }
+- { record: equipment.thermal.radiator-hot.s2, at: "2026-10-17T20:08:14Z", status: draft, summary: "changed: physical, built_of, ports, basis", sha: "550ff74daecdf08a" }
 - { record: equipment.thermal.radiator-hot.s3, at: "2026-10-17T17:58:23Z", status: draft, summary: "changed: basis", sha: "478f39a455e86aaa" }
 - { record: equipment.thermal.radiator.s0, at: "2026-10-12T04:15:48Z", status: draft, summary: "changed: visual", sha: "48f9aef49a6b859e" }
 - { record: equipment.thermal.radiator.s1, at: "2026-10-12T17:36:00Z", status: draft, summary: "changed: visual", sha: "42af60e8122c5192" }
@@ -1247,7 +1247,7 @@
 - { record: mount.power-s2, at: "2026-10-14T01:25:20Z", status: draft, summary: "changed: envelope, bears, attachment", sha: "be79c012d8c24a97" }
 - { record: mount.power-s3, at: "2026-10-14T01:25:20Z", status: draft, summary: "changed: envelope, bears, attachment", sha: "e1c52bce146287fe" }
 - { record: mount.radiator-hot-s1, at: "2026-10-17T19:57:08Z", status: draft, summary: "changed: envelope, bears, attachment", sha: "b33d3f8ef24829a4" }
-- { record: mount.radiator-hot-s2, at: "2026-10-17T20:03:41Z", status: draft, summary: "changed: bears, attachment", sha: "4ab5c4bf8090fddd" }
+- { record: mount.radiator-hot-s2, at: "2026-10-17T20:07:08Z", status: draft, summary: "changed: bears, attachment", sha: "b58e7c821e650352" }
 - { record: mount.radiator-hot-s3, at: "2026-10-17T17:51:05Z", status: draft, summary: "first tracked", sha: "056fea72891ecabc" }
 - { record: mount.sensors-s1, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "1000e803e3158c1b" }
 - { record: mount.tank-s1, at: "2026-10-11T01:40:20Z", status: draft, summary: "changed: bears, attachment", sha: "1246333c6709598d" }

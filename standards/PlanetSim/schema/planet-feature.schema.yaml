@@ -25,6 +25,14 @@ properties:
     type: array
     description: "What its features carry beyond the common fields every feature fills (planet-model.relief record_fields): each property and its unit."
     items: { type: object, additionalProperties: false, required: [field], properties: { field: { type: string }, unit: { type: string, description: "As the catalogue says it (mm/yr, m, deg, class, 1...)." } } }
+  pinned_to: { type: string, description: "What an instance's pin marks (the river mouth, a reach's start, a cliff stretch's midpoint). Every instance has a pin: an anchor point in integer centimetres in the planet's body-fixed frame (on its plate's frame while its crust moves), and gives its spans, dimensions and layout relative to it (owner, 2026-10-17: so it always renders the same)." }
+  dimensions: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/feature_quantity" }, description: "The dimensions every instance must carry, each with its law." }
+  spans:
+    type: array
+    description: "The polylines every instance must carry, in cm offsets east/north/up of its pin."
+    items: { type: object, additionalProperties: false, required: [name, meaning], properties: { name: { type: string }, meaning: { type: string } } }
+  layout: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/feature_quantity" }, description: "How its parts sit (a meander's wavelength as a multiple of the width), each with its law." }
+  parent_kinds: { type: array, items: { type: string, x-ref: [planet-feature] }, description: "The kinds an instance can hang from (its pin then given in its parent's frame)." }
   trigger: { type: string, description: "What in the sim makes one." }
   generator: { type: string, description: "How its geometry is made." }
   metadata_from: { type: string, description: "Where its metadata come from." }

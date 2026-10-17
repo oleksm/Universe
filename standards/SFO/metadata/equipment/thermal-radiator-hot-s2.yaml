@@ -12,7 +12,7 @@ identity:
 size_class: 2
 fits: mount.radiator-hot-s2
 physical:
-  mass: 26348
+  mass: 21719
   volume: 34.2
   length: 33.0
   width: 16.5
@@ -22,7 +22,7 @@ built_of:
   list:
   - code: RAH2-01
     name: Panel
-    description: 3 mm carbon-carbon, 543 m2, 33.0 m out from the hinge by 16.5 m along it; both faces dark; bonded between the tubes as fins, 25.5 mm between tubes as on S1.
+    description: 3 mm carbon-carbon, 543 m2, 33.0 m out from the hinge by 16.5 m along it; both faces dark; bonded between the tube legs as 30 mm fins.
     mass: 2842
     length: 33.0
     width: 16.5
@@ -32,14 +32,14 @@ built_of:
     module: module.assembly-shop
   - code: RAH2-02
     name: Tubes
-    description: '272 U-tubes of molybdenum, 35 mm across with a 0.5 mm wall, each 33 m out from the root header and back (66 m), on a 60.5 mm pitch along the 16.5 m root (S1''s 25.5 mm fin gap kept: fin efficiency about 0.91): 315
-      kg/s of lithium at about 3.1 m/s in their 34 mm bores, about 0.6 bar lost across them (Blasius). 18 km of tube.'
-    mass: 10086
+    description: '103 U-tubes of molybdenum, 50 mm across with a 0.5 mm wall, each 33 m out from the root header and back (66 m): 206 legs on an 80 mm leg pitch (160 mm a U) along the 16.5 m root, 30 mm of fin between legs (fin efficiency
+      about 0.88): 315 kg/s of lithium at about 4.0 m/s in their 49 mm bores, about 0.6 bar lost across them (Blasius). 6.8 km of tube.'
+    mass: 5457
     length: 33.0
     width: 16.5
-    height: 0.035
+    height: 0.05
     item: stock.mo-tb-12x0p5
-    quantity: 11598.9
+    quantity: 6275.5
     module: module.machining-centre
   - code: RAH2-04
     name: Root headers
@@ -101,14 +101,14 @@ ports:
   pressure: 500000.0
   temperature: 1600.0
   at:
-  - 0.0
-  - -7.95
-  - 0.325
+  - -1.8
+  - -14.6
+  - 1.0
   facing:
+  - 0.0
   - -1.0
   - 0.0
-  - 0.0
-  note: hot lithium from the engine
+  note: 'hot lithium from the engine: the fixed DN600 supply manifold beyond the hose pod, facing -y; six DN200 drops to the fixed hose cuffs at x -1.03 (blender 2026-10-17)'
 - id: coolant-out
   flow: out
   medium: liquid
@@ -120,14 +120,14 @@ ports:
   pressure: 500000.0
   temperature: 1400.0
   at:
-  - 0.0
-  - -7.25
-  - 0.325
+  - -2.5
+  - -14.6
+  - 1.8
   facing:
+  - 0.0
   - -1.0
   - 0.0
-  - 0.0
-  note: back to the engine
+  note: 'back to the engine: the fixed DN600 return manifold beyond the hose pod, facing -y; six DN200 drops to the fixed hose cuffs at x -1.03'
 life: 473364000
 basis:
 - of:
@@ -149,6 +149,6 @@ basis:
   - physical.mass
   tier: derived
   review: true
-  note: 'Sized as S1''s family (2026-10-17, after blender''s S2 feasibility check: the old 6,550 kg could not carry the tubes): tubes chosen for under 1 bar over 66 m at S1''s fin gap (35 mm: 0.6 bar, fin 0.91; blender''s 40 mm at 83
-    mm pitch: 0.54 bar but fin 0.79), lithium viscosity 0.25 mPa s near 1,500 K from memory; Mo 10,220 kg/m3, C-C 1,750 kg/m3. Ribs scaled from S1''s for a panel twice as long (invented). 26,348 kg in all: 10.0 kW/kg against S1''s 13.7,
-    the longer tubes'' price.'
+  note: 'Sized as S1''s family (2026-10-17, after blender''s S2 feasibility and packing checks: the old 6,550 kg could not carry the tubes, and a U has two legs): legs 50 mm on an 80 mm pitch, under 1 bar over 66 m (0.6 bar), fin 0.88
+    (radiating share of the width (50 + 0.88 x 30)/80 = 0.96); blender''s 136 U of 50 mm at a 60.5 mm leg pitch fins better (0.98) but weighs 1.7 t more for a 4 % gain. Lithium viscosity 0.25 mPa s near 1,500 K from memory; Mo 10,220
+    kg/m3, C-C 1,750 kg/m3. Ribs scaled from S1''s for a panel twice as long (invented). 21,719 kg in all: 12.2 kW/kg against S1''s 13.7.'

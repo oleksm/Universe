@@ -11,14 +11,14 @@ envelope:
   width: 18.15
   height: 0.715
 bears:
-  mass: 32935.0
+  mass: 27149.0
 attachment:
   points: 4
   pattern: corners
   each:
-    tension: 242500.0
-    compression: 242500.0
-    shear: 121100.0
+    tension: 199900.0
+    compression: 199900.0
+    shear: 99800.0
 basis:
 - of:
   - envelope

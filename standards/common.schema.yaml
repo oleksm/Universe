@@ -206,6 +206,18 @@ definitions:
       note: { type: string }
       open: { type: boolean, description: "true: a draft, not settled." }
       used: { type: boolean, description: "false: set but read nowhere in the code." }
+  feature_quantity:
+    description: "A figure every instance of a relief feature kind carries (a dimension, or a layout parameter): its name, its SI unit, what it means, the law that sets it in words, its formula and its parameters."
+    type: object
+    additionalProperties: false
+    required: [name, meaning]
+    properties:
+      name: { type: string }
+      unit: { type: string, description: "SI, 1, or deg." }
+      meaning: { type: string }
+      rule: { type: string, description: "The scaling law in words, with its source (width grows as the square root of discharge, Leopold and Maddock 1953)." }
+      formula: { type: string, description: "The law as a formula in the names of its parameters (a * Q^b)." }
+      params: { type: array, items: { $ref: "#/definitions/sim_param" } }
   sim_io:
     description: "A value a planet process reads or writes: the code's name, the Planet Simulator field it is (when there is one), its unit and meaning."
     type: object

@@ -32,7 +32,7 @@ built_of:
     module: module.assembly-shop
   - code: RAH1-02
     name: Tubes
-    description: '168 U-tubes of molybdenum, 20 mm across with a 0.5 mm wall, each 15.3 m out from the root header and back (30.6 m), on a 45.5 mm pitch along the 7.65 m root: 68 kg/s of lithium at about 3.5 m/s in their 19 mm bores,
+    description: '168 U-tubes of molybdenum, 20 mm across with a 0.5 mm wall, each 15.3 m out from the root header and back (30.6 m), on a 45.5 mm pitch a U along the 7.65 m root (336 legs at 22.75 mm, 2.75 mm of sheet between them: the tubes themselves do most of the radiating): 68 kg/s of lithium at about 3.5 m/s in their 19 mm bores,
       about 81 kPa lost across them; the 3 mm sheet bonded between them as fins. 5.1 km of tube.'
     mass: 1619
     length: 15.3
