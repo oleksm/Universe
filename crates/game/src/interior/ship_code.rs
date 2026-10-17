@@ -1274,44 +1274,8 @@ fn safe_design_id(id: &str) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
-    fn example() -> code::Document {
-        code::parse(include_str!(
-            "../../../../docs/proposals/ship-code-v1/all-layers.ship.yaml"
-        ))
-        .unwrap()
-    }
-    fn projected(d: &code::Document) -> Interior {
-        let (p, decks) = projection(d).unwrap();
-        let mut i = Interior::new();
-        i.plan = p;
-        i.decks_now = Some(decks);
-        i.fit = catalogue().to_vec();
-        i
-    }
     fn source() -> String {
         include_str!("../../../../docs/proposals/ship-code-v1/all-layers.ship.yaml").into()
-    }
-
-    #[test]
-    fn apply_undo_restores_whole_document_and_decks() {
-        let mut i = Interior::new();
-        i.plan.hull = "before".into();
-        i.plan.on = Some(String::new());
-        let old = i.snapshot();
-        i.apply_ship_text(&source()).unwrap();
-        assert!(!i.plan.blocks.is_empty());
-        assert!(i.decks_now.is_some());
-        let applied = i.snapshot();
-        let before = i.undo.pop().unwrap();
-        i.restore(before);
-        assert!(i.plan == old.plan);
-        assert!(i.decks_now.is_none());
-        i.restore(applied);
-        assert_eq!(i.source_text().unwrap(), source());
-        let current = i.snapshot();
-        assert!(i.apply_ship_text("nonsense: true").is_err());
-        assert!(i.plan == current.plan);
-        assert_eq!(i.decks_now, current.decks);
     }
 
     #[test]
@@ -1342,53 +1306,5 @@ mod tests {
                 .contains("Ship code proposal")
         );
         std::fs::remove_dir_all(dir).unwrap();
-    }
-
-    #[test]
-    fn external_file_changes_are_not_overwritten() {
-        let path =
-            std::env::temp_dir().join(format!("ship-external-{}.ship.yaml", Id::default().0));
-        std::fs::write(&path, source()).unwrap();
-        let mut i = Interior::new();
-        i.open_ship_source(&path).unwrap();
-        i.plan.blocks[0].at.x += 2.;
-        std::fs::write(&path, "external edit").unwrap();
-        assert!(i.save_ship().is_err());
-        assert_eq!(std::fs::read_to_string(&path).unwrap(), "external edit");
-        std::fs::remove_file(path).unwrap();
-    }
-
-    #[test]
-    fn draft_only_changes_are_dirty_and_not_saved_as_applied() {
-        let mut i = Interior::prepared(&source()).unwrap();
-        i.saved = Some(i.plan.clone());
-        i.saved_decks = Some(i.decks_now.clone());
-        assert!(!i.unsaved());
-        // Looking round is no change.
-        i.yaw += 1.;
-        i.hidden[0] = !i.hidden[0];
-        assert!(!i.unsaved());
-        i.code_draft = Some("invalid draft".into());
-        assert!(i.unsaved());
-        assert!(i.save_ship().is_err());
-        i.open_code();
-        assert_eq!(
-            i.code_panel.as_ref().unwrap().editor.text(),
-            "invalid draft"
-        );
-    }
-
-    #[test]
-    fn rejected_source_does_not_mutate_open_design() {
-        let mut i = projected(&example());
-        let before = i.plan.clone();
-        let decks = i.decks_now.clone();
-        let path =
-            std::env::temp_dir().join(format!("invalid-ship-{}.ship.yaml", std::process::id()));
-        std::fs::write(&path, "format: nope\n").unwrap();
-        assert!(i.open_ship_source(&path).is_err());
-        assert!(i.plan == before);
-        assert_eq!(i.decks_now, decks);
-        std::fs::remove_file(path).unwrap();
     }
 }

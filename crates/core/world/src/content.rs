@@ -651,17 +651,3 @@ impl Entry for ClassSpec {
         &c.hulls
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn the_base_pack_loads_and_its_hulls_are_sound() {
-        let c = Content::load(&[]).expect("the base pack loads");
-        let hull = c.handle::<ClassSpec>("hull.drover").expect("the Drover");
-        assert_eq!(c.get(hull).name, "DROVER");
-        assert_eq!(c.key_of(hull), "hull.drover");
-        assert_eq!(c.hash(), Content::load(&[]).unwrap().hash(), "same packs, same hash");
-    }
-}

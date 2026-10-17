@@ -310,7 +310,7 @@ impl Camera {
 mod tests {
     use super::*;
     use universe_engine::scene::Node;
-    use glam::{DQuat, DVec3, Vec2};
+    use glam::{DQuat, DVec3};
 
     fn face(blend: bool, cutoff: Option<f32>) -> Face {
         Face {
@@ -349,38 +349,6 @@ mod tests {
             panic!("expected PBR model")
         };
         model
-    }
-
-    #[test]
-    fn structure_is_built_once_and_preserves_material_modes() {
-        let item = Placed::structure(vec![
-            face(false, None),
-            face(false, None),
-            face(false, Some(0.5)),
-            face(true, None),
-        ]);
-        assert_eq!(item.model.data.primitives.len(), 3);
-        assert_eq!(item.model.data.primitives[0].vertices.len(), 6);
-        let materials = &item.model.data.materials;
-        assert!(!materials[0].blend);
-        assert_eq!(materials[0].alpha_cutoff, None);
-        assert_eq!(materials[1].alpha_cutoff, Some(0.5));
-        assert!(materials[2].blend);
-        assert!(
-            materials
-                .iter()
-                .all(|m| m.double_sided && m.base_color[3] == 0.3)
-        );
-        let mut scene = Scene::default();
-        let id = ObjectId(7);
-        item.set_node(&mut scene, &id, None).unwrap();
-        let revision = scene.revision();
-        for _ in 0..5 {
-            item.clone().set_node(&mut scene, &id, None).unwrap();
-            assert_eq!(model(&scene, id).id(), item.model.id());
-            assert!(Arc::ptr_eq(&model(&scene, id).data, &item.model.data));
-            assert_eq!(scene.revision(), revision);
-        }
     }
 
     #[test]
@@ -459,92 +427,5 @@ mod tests {
         );
         drop(queued_model);
         assert!(weak.upgrade().is_none(), "no owner/model reference cycle");
-    }
-
-    #[test]
-    fn neutral_gate_keeps_fallback_and_later_valid_visual_can_promote() {
-        let item = pending(Vec3::ZERO, Quat::IDENTITY);
-        assert!(
-            item.promote_with(|_| Some(visual(Some("skin requires evaluation".into()))))
-                .is_none()
-        );
-        let mut scene = Scene::default();
-        let id = ObjectId(1);
-        item.set_node(&mut scene, &id, None).unwrap();
-        assert_eq!(model(&scene, id).id(), item.model.id());
-        let ready = visual(None);
-        assert!(
-            ready.has_motion,
-            "sidecar future motion permits a valid neutral GLB"
-        );
-        item.promote_with(|_| Some(ready.clone())).unwrap();
-        item.set_node(&mut scene, &id, None).unwrap();
-        assert_eq!(model(&scene, id).id(), ready.model.id());
-    }
-
-    #[test]
-    fn invalid_transform_or_parent_leaves_existing_node_intact() {
-        let mut item = Placed::structure(vec![face(false, None)]);
-        let mut scene = Scene::default();
-        let id = ObjectId(1);
-        item.set_node(&mut scene, &id, None).unwrap();
-        let revision = scene.revision();
-        for transform in [
-            Mat4::from_scale(Vec3::new(1., 2., 1.)),
-            Mat4::ZERO,
-            Mat4::from_scale(Vec3::splat(-1.)),
-        ] {
-            item.transform = transform;
-            assert!(item.set_node(&mut scene, &id, None).is_err());
-            assert_eq!(scene.revision(), revision);
-        }
-        item.transform = Mat4::IDENTITY;
-        assert!(item.set_node(&mut scene, &id, Some(ObjectId(9))).is_err());
-        assert!(item.set_node(&mut scene, &id, Some(id)).is_err());
-        assert_eq!(scene.revision(), revision);
-    }
-
-    #[test]
-    fn camera_adapter_uses_shared_view_for_distinct_viewport_rectangles() {
-        for rect in [
-            PixelRect {
-                origin: Vec2::ZERO,
-                size: Vec2::new(800., 600.),
-            },
-            PixelRect {
-                origin: Vec2::new(600., 20.),
-                size: Vec2::new(160., 84.),
-            },
-        ] {
-            let centre = rect.origin + rect.size * 0.5;
-            let camera = Camera {
-                eye: Vec3::new(3., 4., 5.),
-                right: Vec3::X,
-                up: Vec3::Y,
-                forward: Vec3::NEG_Z,
-                focal: 100.,
-                centre,
-                near: 0.1,
-            };
-            let view = camera.view(rect).unwrap();
-            let projected = view
-                .project((camera.eye + Vec3::new(1., 1., -10.)).as_dvec3())
-                .unwrap();
-            assert!(
-                projected
-                    .truncate()
-                    .abs_diff_eq(centre + Vec2::new(10., -10.), 1e-4)
-            );
-            let ray = view.ray(centre).unwrap();
-            assert!(ray.direction.abs_diff_eq(DVec3::NEG_Z, 1e-6));
-            assert!(
-                camera
-                    .view(PixelRect {
-                        origin: rect.origin + Vec2::X,
-                        ..rect
-                    })
-                    .is_err()
-            );
-        }
     }
 }

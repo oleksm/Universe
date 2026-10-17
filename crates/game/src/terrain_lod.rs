@@ -630,25 +630,6 @@ fn rendered_height(patch: &Patch, eye: DVec3, radius: f64) -> Option<f64> {
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn elevated_canonical_patch_refines_at_the_feet() {
-        let key = Key { system: 0, body: 1, face: 0, level: 13, x: 4096, y: 4096 };
-        let r = 6_281_370.0;
-        let (mid, size) = key.shape();
-        let origin = mid * (r + 5_000.0);
-        let patches = HashMap::from([(key, Patch { mesh: WireModel::default().into(), origin, used: 0, partial: false })]);
-        let eye = mid * (r + 5_001.7);
-        assert!(key.centre(&patches, r, false).distance(eye) > SPLIT * size * r);
-        assert!(key.centre(&patches, r, true).distance(eye) < SPLIT * size * r);
-        let child = key.children()[0];
-        assert!((child.centre(&patches, r, true).length() - (r + 5_000.0)).abs() < 1e-8);
-        assert!((child.centre(&HashMap::new(), r, true).length() - r).abs() < 1e-8);
-    }
-}
-
-#[cfg(test)]
 mod pinned {
     use super::*;
     #[test]

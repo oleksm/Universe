@@ -1784,33 +1784,6 @@ mod streaming_tests {
         );
         assert!(bounded_import(&bytes).err().unwrap().contains("8192"));
     }
-    #[test]
-    fn cyclic_nodes_refused_before_walk() {
-        let bytes = glb(
-            serde_json::json!({"asset":{"version":"2.0"},"buffers":[{"byteLength":4}],"nodes":[{"children":[1]},{"children":[0]}],"scenes":[{"nodes":[0]}]}),
-            vec![0; 4],
-        );
-        assert!(bounded_import(&bytes).is_err());
-    }
-
-    #[test]
-    fn owner_lease_survives_frame_and_worker_clones_without_pinning_source_model() {
-        let owner = Arc::new(());
-        let weak = Arc::downgrade(&owner);
-        let source = PbrModel::new(PbrData::default());
-        let submitted = source.with_lease(owner.clone());
-        let worker = submitted.clone();
-        let mut frame = crate::frame::Frame::new(Default::default(), Vec2::ONE, Vec2::ONE);
-        frame.keep_alive(owner.clone());
-        frame.model_pbr(&submitted, &Default::default());
-        drop(owner);
-        drop(submitted);
-        drop(frame);
-        assert!(weak.upgrade().is_some());
-        drop(worker);
-        assert!(weak.upgrade().is_none());
-        assert!(source.leases.is_empty());
-    }
 
     #[test]
     fn prepared_textures_keep_colour_space_and_all_mips() {

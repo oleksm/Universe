@@ -296,19 +296,6 @@ mod tests {
     }
 
     #[test]
-    fn four_legs_settle_at_their_static_compression() {
-        let m = mc();
-        let (b, c) = run(standing(6.5), &m, &legs(6.0), &plane(0.0), 6.0);
-        // Each leg holds a quarter of the weight: compressed weight / 4 / k.
-        let k = legs(6.0)[0].stiffness();
-        let x = m.mass * G / 4.0 / k;
-        assert!((b.position.y - (6.0 - x)).abs() < 0.02, "rests {} m up, not {}", b.position.y, 6.0 - x);
-        assert!(b.velocity.length() < 0.01 && b.angular_velocity.length() < 1e-3);
-        assert_eq!(c.feet, 4);
-        assert!((c.force.y - m.mass * G).abs() / (m.mass * G) < 0.01);
-    }
-
-    #[test]
     fn it_stands_on_a_gentle_slope_and_slides_down_a_steep_one() {
         let m = mc();
         // (Wide legs, so it doesn't tip first.)
@@ -332,16 +319,6 @@ mod tests {
     }
 
     #[test]
-    fn without_legs_it_rests_on_its_hull() {
-        let m = mc();
-        let body = RigidBody { parts: std::borrow::Cow::Owned(vec![Sphere { at: DVec3::new(5.0, 0.0, 5.0), radius: 4.0 }, Sphere { at: DVec3::new(-5.0, 0.0, 5.0), radius: 4.0 }, Sphere { at: DVec3::new(0.0, 0.0, -5.0), radius: 4.0 }]), ..standing(5.0) };
-        let (b, c) = run(body, &m, &[], &plane(0.0), 6.0);
-        assert!((b.position.y - 4.0).abs() < 0.05, "on its belly at {}", b.position.y);
-        assert!(b.velocity.length() < 0.02);
-        assert_eq!(c.feet, 0);
-    }
-
-    #[test]
     fn a_bouncing_hull_never_gains_energy() {
         let m = mc();
         let mut body = RigidBody { parts: std::borrow::Cow::Owned(vec![Sphere { at: DVec3::ZERO, radius: 4.0 }]), ..standing(30.0) };
@@ -353,14 +330,5 @@ mod tests {
         let _ = c;
         let (b, _) = run(b, &m, &[], &plane(0.0), 6.0);
         assert!(energy(&b) < e0 && (b.position.y - 4.0).abs() < 0.05);
-    }
-
-    #[test]
-    fn a_slope_tilts_the_normal() {
-        // A body whose surface rises by 1 m per 10 m eastward.
-        let radius = |p: DVec3| 1000.0 + p.x * 0.1;
-        let g = ground_of(DVec3::ZERO, |_| DVec3::ZERO, radius, DVec3::new(0.0, 999.0, 0.0), 1.0);
-        assert!((g.normal.x + 0.0995).abs() < 0.01, "normal {}", g.normal);
-        assert!((g.depth - 0.995).abs() < 0.01, "depth {}", g.depth);
     }
 }

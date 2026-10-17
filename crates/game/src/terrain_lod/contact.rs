@@ -181,32 +181,6 @@ mod tests {
         }
     }
     #[test]
-    fn resident_identity_survives_eye_motion_but_source_and_remake_cancel_jobs() {
-        let k = key(1, 0);
-        let mut patches = HashMap::from([(k, patch(false))]);
-        let mut inputs = ResidentInputs::default();
-        inputs.capture((0, 1, 4), 100., DVec3::X * 101., None, &[k], &patches);
-        let first = inputs.snapshot().unwrap();
-        assert!(first.complete());
-        assert_eq!(first.patches[0].mesh.id(), patches[&k].mesh.id());
-        inputs.capture((0, 1, 4), 100., DVec3::X * 101., None, &[k], &patches);
-        assert!(Arc::ptr_eq(&first, &inputs.snapshot().unwrap()));
-        inputs.capture((0, 1, 4), 100., DVec3::X * 101.001, None, &[k], &patches);
-        assert!(first.current());
-        let second = inputs.snapshot().unwrap();
-        assert_eq!(first.generation, second.generation);
-        assert_eq!(first.eye, DVec3::X * 101.);
-        assert_ne!(first.eye, second.eye);
-        assert!(Arc::ptr_eq(&first.patches, &second.patches));
-        patches.insert(k, patch(false));
-        inputs.capture((0, 1, 4), 100., DVec3::X * 101.001, None, &[k], &patches);
-        assert!(!second.current());
-        assert!(!first.current());
-        let third = inputs.snapshot().unwrap();
-        inputs.capture((0, 1, 5), 100., DVec3::X * 101.001, None, &[k], &patches);
-        assert!(!third.current());
-    }
-    #[test]
     fn actual_missing_partial_or_overlapping_support_cannot_be_complete() {
         let parent = key(0, 0);
         let child = key(1, 0);

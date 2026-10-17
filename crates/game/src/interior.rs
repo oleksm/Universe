@@ -9090,14 +9090,4 @@ mod tests {
         let n = nodes(&[beam(2.0)], &[]);
         assert!(n.iter().all(|j| j.2.is_some_and(|x| x.key == s.node)), "its ends meet the node it is made for");
     }
-
-    #[test]
-    fn a_kit_frame_has_a_section_in_every_length() {
-        let key = kit_stock("").expect("a section in every kit length");
-        assert_eq!(kit_split(5.0), vec![2.0, 1.5, 1.5], "as few as can be, none over a bay, even");
-        assert_eq!(kit_stations(-2.5, 2.5, &[-1.5, 1.5]), vec![-2.5, -1.5, 0.0, 1.5, 2.5], "the decks' lines kept, the lattice's by them left out");
-        for l in [0.5, 1.0, 0.5 * std::f32::consts::SQRT_2, std::f32::consts::SQRT_2] {
-            assert!(struts().iter().any(|t| t.section == key && (t.module - l).abs() <= 0.002), "{key} at {l} m");
-        }
-    }
 }

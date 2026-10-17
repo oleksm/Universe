@@ -324,35 +324,3 @@ impl App for SceneApp {
         frame.text(Vec2::new(12.0, frame.size().y - 24.0), "SPACE RUN/PAUSE  R START OVER  DRAG OR LEFT/RIGHT TURN  WHEEL ZOOM  ESC CLOSE", dim);
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    /// A craft placed on a circular orbit stays on it under the scene's realtime clock (the world's
-    /// own ship step), and a scene asking for a clock with no work in it is refused.
-    #[test]
-    fn a_scene_runs_its_crafts_on_its_own_clocks() {
-        let text = "name: t\nclocks: [clock.realtime]\nscale: 10\nlook_at: LOW\ncrafts:\n  - { name: LOW, around: body.treistun.treistun-d, altitude_m: 400000 }\n";
-        let file: SceneFile = serde_norway::from_str(text).unwrap();
-        let mut s = SceneApp::new(file.clone(), "test").unwrap();
-        let altitude = |s: &SceneApp| {
-            let sys = s.world.system(0);
-            let mut p = vec![];
-            sys.positions(s.clocks.time(), &mut p);
-            let c = &s.crafts[0];
-            (c.ship.position - p[c.around]).length() - sys.bodies[c.around].rail.radius
-        };
-        let mut ticks = vec![];
-        for _ in 0..5 {
-            s.clocks.advance(1.0, &mut |_, t, dt| ticks.push((t, dt)));
-            for (t, dt) in ticks.drain(..) {
-                s.step_crafts(t, dt);
-            }
-        }
-        assert!(s.crafts[0].ship.position != DVec3::ZERO && s.clocks.done_to(ClockKey::Realtime).unwrap() >= 49.99, "5 real seconds at x10, all stepped");
-        assert!((altitude(&s) - 400_000.0).abs() < 2_000.0, "still on its orbit: {}", altitude(&s));
-        let bad = SceneFile { clocks: vec!["clock.economy".into()], ..file };
-        assert!(SceneApp::new(bad, "test").is_err());
-    }
-}

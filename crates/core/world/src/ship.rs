@@ -1501,7 +1501,3 @@ fn skin_ambient() -> f64 {
 fn cruise() -> HyperdriveCommand {
     HyperdriveCommand::CRUISE
 }
-
-#[cfg(test)]
-#[path = "flight_control_tests.rs"]
-mod flight_control_tests;

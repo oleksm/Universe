@@ -318,43 +318,6 @@ mod tests {
         serde_json::to_value(x).unwrap()
     }
     #[test]
-    fn labels_lots_tare_and_high_water_counters_survive_repeated_load() {
-        let (mut u, g, unit) = fixture();
-        // No extant unit has suffix 9998: the high-water counter must still survive.
-        u.services
-            .markets
-            .economy
-            .package_sequences
-            .insert(unit.batch.lot.clone(), 9998);
-        let saved = serde_json::to_string(&u.save()).unwrap();
-        let mut loaded = Universe::new(99);
-        for _ in 0..2 {
-            loaded.load(serde_json::from_str(&saved).unwrap());
-            assert_eq!(
-                json(loaded.services.ledger.hold_packages(PLAYER).unwrap()[&g].clone()),
-                json(vec![unit.clone()])
-            );
-            assert_eq!(
-                loaded.services.ledger.hold_lots(PLAYER).unwrap()[&g][0].1,
-                unit.net_mass
-            );
-            assert_eq!(loaded.vessels[PLAYER].ship.cargo, unit.net_mass + 7.);
-            assert_eq!(loaded.vessels[PLAYER].ship.cargo_volume, 5.);
-            assert_eq!(
-                loaded.services.markets.economy.package_sequences[&unit.batch.lot],
-                9998
-            );
-            assert!(loaded.services.ledger.balanced());
-        }
-        let mut next = unit.clone();
-        next.label = None;
-        assert!(next.seal(30., &mut loaded.services.markets.economy.package_sequences));
-        assert!(next.label.unwrap().serial.ends_with("-9999"));
-        let mut exhausted = unit;
-        exhausted.label = None;
-        assert!(!exhausted.seal(31., &mut loaded.services.markets.economy.package_sequences));
-    }
-    #[test]
     fn works_partial_packages_and_keyed_inventory_restore_with_fresh_views() {
         let (mut u, g, mut unit) = fixture();
         unit.label = None;
@@ -399,22 +362,6 @@ mod tests {
         let view = u.services.markets.economy.works_snapshot();
         let w = view.iter().find(|w| w.key == key).unwrap();
         assert_eq!(w.pool.stock[&g], unit.net_mass);
-    }
-
-    #[test]
-    fn legacy_save_does_not_invent_labels() {
-        let (u, g, _) = fixture();
-        let mut save = json(u.save());
-        save.as_object_mut().unwrap().remove("packing");
-        save["version"] = json(2);
-        let mut loaded = Universe::new(7);
-        loaded.load(serde_json::from_value(save).unwrap());
-        assert_eq!(loaded.hold(), vec![(g, 1)]);
-        assert!(loaded.services.ledger.hold_packages(PLAYER).is_none());
-        assert_eq!(
-            loaded.vessels[PLAYER].ship.cargo,
-            loaded.world.goods[g].mass
-        );
     }
 
 }

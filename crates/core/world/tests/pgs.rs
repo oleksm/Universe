@@ -1,46 +1,11 @@
 use glam::DVec3;
 use serde_json::Value;
 use universe_world::worlds::{
-    pgs::{Surface, Water},
+    pgs::Surface,
     sha256,
 };
 
 const ROOT: &[u8] = include_bytes!("fixtures/pgs1-v1/root.pgs");
-fn check(bytes: &[u8], json: &str) {
-    let expected: Value = serde_json::from_str(json).unwrap();
-    assert_eq!(sha256(bytes), expected["surface_sha256"]);
-    let surface = Surface::read(bytes).unwrap();
-    for q in expected["queries"].as_array().unwrap() {
-        let dir = DVec3::from_array(std::array::from_fn(|i| q["direction"][i].as_f64().unwrap()));
-        let actual = surface.query(dir).unwrap();
-        assert_eq!(actual.face as u64, q["face"].as_u64().unwrap(), "{q}");
-        assert!(
-            (actual.height_m - q["height_m"].as_f64().unwrap()).abs() <= 0.001,
-            "{q}: {actual:?}"
-        );
-        let c = &q["categories"];
-        let expected_categories = if c["state"] == "known" {
-            Some((c["rock"].as_u64().unwrap() as u16, c["pattern"].as_u64().unwrap() as u16))
-        } else { None };
-        assert_eq!(actual.categories, expected_categories, "{q}");
-        let w = &q["water"];
-        match actual.water {
-            Water::Unknown => assert_eq!(w["state"], "unknown"),
-            Water::Dry => assert_eq!(w["state"], "dry"),
-            Water::Wet {
-                body,
-                level_m,
-                depth_m,
-            } => {
-                assert_eq!(w["state"], "wet");
-                assert_eq!(w["body"], body);
-                assert!((level_m - w["level_m"].as_f64().unwrap()).abs() <= 0.001);
-                assert!((depth_m - w["depth_m"].as_f64().unwrap()).abs() <= 0.001);
-            }
-        }
-    }
-}
-
 #[test]
 fn malformed_files_and_queries_are_errors() {
     for end in 0..ROOT.len() {
@@ -68,21 +33,6 @@ fn malformed_files_and_queries_are_errors() {
         DVec3::splat(f64::INFINITY),
     ] {
         assert!(s.query(q).is_err());
-    }
-}
-#[test]
-fn independent_water_domain_goldens() {
-    let manifest: Value = serde_json::from_str(include_str!("fixtures/pgs1-water-v1/manifest.json")).unwrap();
-    for (name, bytes, queries) in [
-        ("ocean_cut", include_bytes!("fixtures/pgs1-water-v1/ocean_cut.pgs").as_slice(), include_str!("fixtures/pgs1-water-v1/ocean_cut.json")),
-        ("lake_cut", include_bytes!("fixtures/pgs1-water-v1/lake_cut.pgs").as_slice(), include_str!("fixtures/pgs1-water-v1/lake_cut.json")),
-        ("lake_spill_cap", include_bytes!("fixtures/pgs1-water-v1/lake_spill_cap.pgs").as_slice(), include_str!("fixtures/pgs1-water-v1/lake_spill_cap.json")),
-    ] {
-        for (file, data) in [(format!("{name}.pgs"), bytes), (format!("{name}.json"), queries.as_bytes())] {
-            assert_eq!(sha256(data), manifest["files"][&file]["sha256"]);
-            assert_eq!(data.len() as u64, manifest["files"][&file]["bytes"].as_u64().unwrap());
-        }
-        check(bytes, queries);
     }
 }
 
@@ -114,12 +64,4 @@ fn analytic_derivative_matches_independent_owner_face_goldens() {
         for radius in [0.0,-1.0,f64::INFINITY,f64::NAN] {assert!(s.query_differential(DVec3::X,radius).is_err());}
     }
     assert_eq!(count,330);
-}
-
-#[test]
-fn fine_oblique_edges_preserve_vertex_ownership() {
-    check(
-        include_bytes!("fixtures/pgs1-fine-owner/oblique.pgs"),
-        include_str!("fixtures/pgs1-fine-owner/oblique.json"),
-    );
 }

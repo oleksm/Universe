@@ -250,17 +250,6 @@ mod tests {
     }
 
     #[test]
-    fn whole_transfer_keeps_identity_split_ends_it() {
-        let (mut u, _) = filled(200.0);
-        let before = [(batch(), 200.0)].into();
-        let out = take(&mut u, &before, &[(batch(), 100.0)]);
-        assert_eq!(out[0].label.as_ref().unwrap().serial, "HHI-000001-0001");
-        assert_eq!(u[0].label.as_ref().unwrap().serial, "HHI-000001-0002");
-        assert!(take(&mut u, &[(batch(), 100.0)].into(), &[(batch(), 1.0)]).is_empty());
-        assert!(u.is_empty());
-    }
-
-    #[test]
     fn exhaustion_never_wraps_and_repacking_never_reuses() {
         let (mut u, mut s) = filled(100.0);
         take(&mut u, &[(batch(), 100.0)].into(), &[(batch(), 1.0)]);

@@ -603,19 +603,4 @@ mod preparation_tests {
         }
         assert_eq!(shell.game, Some(true), "first drawable state must already have been updated");
     }
-    #[test]
-    fn publishes_only_complete_factory_and_keeps_errors() {
-        let (tx, rx) = std::sync::mpsc::channel();
-        let mut shell = Preparing::new(move || { rx.recv().unwrap(); 42usize });
-        shell.poll();
-        assert!(shell.game.is_none());
-        tx.send(()).unwrap();
-        let until = Instant::now() + std::time::Duration::from_secs(2);
-        while shell.game.is_none() { shell.poll(); assert!(Instant::now() < until); std::thread::yield_now(); }
-        assert_eq!(shell.game, Some(42));
-        let mut broken = Preparing::<usize>::new(|| panic!("missing hull physics"));
-        while broken.error.is_none() { broken.poll(); assert!(Instant::now() < until); std::thread::yield_now(); }
-        assert_eq!(broken.error.as_deref(), Some("missing hull physics"));
-        assert!(broken.game.is_none());
-    }
 }

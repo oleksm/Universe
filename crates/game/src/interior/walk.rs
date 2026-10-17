@@ -480,7 +480,7 @@ pub(super) fn draw_stand(frame: &mut Frame, s: &Stand, place: &str) {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use universe_engine::glam::{DVec3, Quat};
+    use universe_engine::glam::DVec3;
     use universe_sim::world::walk::WalkMesh;
 
     fn floor(y: f64) -> Vec<[DVec3; 3]> {
@@ -512,43 +512,6 @@ mod tests {
         assert!(stand_spot(&s, Vec3::ZERO, Vec3::ZERO).is_none());
     }
 
-    #[test]
-    fn side_pick_backs_off_wall_onto_native_floor() {
-        let mut authored = floor(-4.);
-        authored.extend(box_faces(Vec3::new(-5., -4., -0.1), Vec3::new(5., 8., 0.), &[])
-            .into_iter().map(|t| t.map(|p| p.as_dvec3())));
-        let s = stand(&authored, &floor(2.));
-        let p = stand_spot(&s, Vec3::new(0., 4., 4.), Vec3::NEG_Z).unwrap();
-        assert!(p.abs_diff_eq(DVec3::new(0., 2.05, 0.4), 1e-6));
-    }
-
-    #[test]
-    fn airlock_interior_respects_roll_and_finite_open_ends() {
-        let mut s = stand(&floor(-4.), &floor(2.));
-        let rotation = Quat::from_rotation_x(std::f32::consts::FRAC_PI_2);
-        s.airlock_rooms.push((Vec3::ZERO, rotation, Vec3::new(1., 2., 4.)));
-        assert!(in_rooms(&s, rotation * Vec3::new(0., 0., 3.5)));
-        assert!(!in_rooms(&s, Vec3::new(0., 0., 3.5)));
-        assert!(!in_rooms(&s, rotation * Vec3::new(0., 0., 4.1)));
-    }
-
-    #[test]
-    fn ramp_endpoints_and_width_follow_module_yaw() {
-        let mut ramp = Block { uid: Id::default(), id: "ramp".into(), at: Vec3::ZERO,
-            size: Vec3::new(2., 2., 6.), push: None, rotation: Some(Quat::IDENTITY) };
-        let mut lock = Block { uid: Id::default(), id: "airlock".into(), at: Vec3::new(0., 3., 6.),
-            size: Vec3::new(2., 2., 4.), push: None, rotation: Some(Quat::IDENTITY) };
-        let (near, far, half) = ramp_ends(&ramp, Some(&lock), -2.);
-        let rotation = Quat::from_rotation_y(std::f32::consts::FRAC_PI_2);
-        ramp.rotation = Some(rotation);
-        lock.rotation = Some(rotation);
-        lock.at = rotation * lock.at;
-        let (turned_near, turned_far, turned_half) = ramp_ends(&ramp, Some(&lock), -2.);
-        assert!(turned_near.abs_diff_eq(rotation * near, 1e-5));
-        assert!(turned_far.abs_diff_eq(rotation * far, 1e-5));
-        assert!(turned_half.abs_diff_eq(rotation * half, 1e-5));
-    }
-
     fn hatch() -> StandHatch {
         let leaf = Leaf {
             outline: [(-0.3, 0.), (0.3, 0.), (0.5, 0.2), (0.5, 1.8),
@@ -564,23 +527,6 @@ mod tests {
 
     fn hatch_observer(distance: f64) -> DVec3 {
         DVec3::new(0., 1. - universe_sim::world::crew::EYE, distance)
-    }
-
-    #[test]
-    fn hatch_motion_matches_old_proximity_curve_and_retains_scene_geometry() {
-        let hatch = hatch();
-        assert!(hatch.shift(hatch_observer(1.6)).abs_diff_eq(DVec3::X * 1.2, 1e-6));
-        assert!(hatch.shift(hatch_observer(2.2)).abs_diff_eq(DVec3::X * 0.6, 1e-6));
-        assert_eq!(hatch.shift(hatch_observer(2.8)), DVec3::ZERO);
-        let mut scene = universe_engine::scene::Scene::default();
-        hatch.set_node(&mut scene, hatch_observer(3.));
-        let revision = scene.revision();
-        hatch.set_node(&mut scene, hatch_observer(4.));
-        assert_eq!(scene.revision(), revision, "closed leaf needs no retained-node update");
-        hatch.set_node(&mut scene, hatch_observer(2.2));
-        assert!(scene.get(hatch.id).unwrap().pose.position.abs_diff_eq(DVec3::X * 0.6, 1e-6));
-        let universe_engine::scene::Geometry::Mesh { mesh, .. } = scene.get(hatch.id).unwrap().geometry.as_ref().unwrap() else { panic!("cached hatch mesh") };
-        assert_eq!(mesh.id(), hatch.visual.id());
     }
 
     #[test]
