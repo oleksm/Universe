@@ -577,7 +577,7 @@
 - { record: equipment.thermal.heat.sink, at: "2026-10-13T18:12:52Z", status: draft, summary: "changed: visual", sha: "343fbececea099dd" }
 - { record: equipment.thermal.radiator-hot.s1, at: "2026-10-17T17:57:06Z", status: draft, summary: "changed: basis", sha: "3009f8598baea823" }
 - { record: equipment.thermal.radiator-hot.s2, at: "2026-10-17T17:57:06Z", status: draft, summary: "changed: basis", sha: "c9ddf43506bf5d86" }
-- { record: equipment.thermal.radiator-hot.s3, at: "2026-10-17T17:55:24Z", status: draft, summary: "changed: built_of, ports", sha: "ea2f0bdb153026f4" }
+- { record: equipment.thermal.radiator-hot.s3, at: "2026-10-17T17:58:23Z", status: draft, summary: "changed: basis", sha: "478f39a455e86aaa" }
 - { record: equipment.thermal.radiator.s0, at: "2026-10-12T04:15:48Z", status: draft, summary: "changed: visual", sha: "48f9aef49a6b859e" }
 - { record: equipment.thermal.radiator.s1, at: "2026-10-12T17:36:00Z", status: draft, summary: "changed: visual", sha: "42af60e8122c5192" }
 - { record: equipment.thermal.radiator.s2, at: "2026-10-11T02:48:17Z", status: draft, summary: "changed: visual", sha: "bfbfc35087f0be28" }
