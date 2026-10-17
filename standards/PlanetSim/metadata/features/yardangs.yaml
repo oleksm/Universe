@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.yardangs
+  name: Yardangs
+  about: 'A relief feature of the aeolian family: yardangs.'
+register: feature
+family: aeolian
+level:
+- 3
+geometry: polylines
+properties:
+- field: length
+  unit: m
+- field: wind direction
+  unit: deg
+trigger: wind wear on soft rock
+generator: lines along the wind
+wave: 2
+built: false
+levels:
+- planet-level.square
+- planet-level.detail
+status: draft
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
+  - trigger
+  - generator
+  - overrides
+  - wave
+  - built
+  tier: derived
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

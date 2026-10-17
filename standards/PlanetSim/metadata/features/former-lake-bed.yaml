@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.former-lake-bed
+  name: Former lake bed
+  about: 'A relief landmark of the lacustrine family: former lake bed.'
+register: landmark
+family: lacustrine
+level:
+- 1
+geometry: polygon
+properties:
+- field: shore height
+  unit: m
+trigger: a lake dried
+generator: record + floor
+wave: 1
+built: true
+landmark: planet-landmark.former-lake-bed
+levels:
+- planet-level.planet
+- planet-level.cluster
+status: draft
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
+  - trigger
+  - generator
+  - overrides
+  - wave
+  - built
+  tier: derived
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

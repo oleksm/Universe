@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.erg-sand-sea
+  name: Erg (sand sea)
+  about: 'A relief province of the aeolian family: erg (sand sea).'
+register: province
+family: aeolian
+level:
+- 2
+geometry: polygon
+properties:
+- field: area
+  unit: m2
+trigger: aridity > 5 + sand supply
+generator: area
+wave: 2
+built: false
+levels:
+- planet-level.pattern
+status: draft
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
+  - trigger
+  - generator
+  - overrides
+  - wave
+  - built
+  tier: derived
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

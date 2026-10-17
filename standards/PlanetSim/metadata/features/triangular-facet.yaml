@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.triangular-facet
+  name: Triangular facet
+  about: 'A relief feature of the tectonic family: triangular facet.'
+register: feature
+family: tectonic
+level:
+- 3
+geometry: point set
+properties:
+- field: facet height
+  unit: m
+trigger: normal fault front
+generator: spur ends along the scarp
+overrides: erosion
+wave: 3
+built: false
+levels:
+- planet-level.square
+- planet-level.detail
+status: draft
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
+  - trigger
+  - generator
+  - overrides
+  - wave
+  - built
+  tier: derived
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

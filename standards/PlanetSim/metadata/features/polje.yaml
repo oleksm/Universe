@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.polje
+  name: Polje
+  about: 'A relief feature of the karst family: polje.'
+register: feature
+family: karst
+level:
+- 2
+geometry: polygon
+properties:
+- field: area
+  unit: m2
+- field: depth
+  unit: m
+trigger: limestone + faults
+generator: flat-floored basin
+wave: 2
+built: false
+levels:
+- planet-level.pattern
+status: draft
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
+  - trigger
+  - generator
+  - overrides
+  - wave
+  - built
+  tier: derived
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

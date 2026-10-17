@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.shutter-ridge
+  name: Shutter ridge
+  about: 'A relief feature of the tectonic family: shutter ridge.'
+register: feature
+family: tectonic
+level:
+- 3
+geometry: polyline
+properties:
+- field: length
+  unit: m
+trigger: transform
+generator: ridge moved across a valley mouth
+wave: 3
+built: false
+levels:
+- planet-level.square
+- planet-level.detail
+status: draft
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
+  - trigger
+  - generator
+  - overrides
+  - wave
+  - built
+  tier: derived
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

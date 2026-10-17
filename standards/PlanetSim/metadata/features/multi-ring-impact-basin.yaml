@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.multi-ring-impact-basin
+  name: Multi-ring impact basin
+  about: 'A relief landmark of the impact family: multi-ring impact basin.'
+register: landmark
+family: impact
+level:
+- 1
+geometry: rings
+properties:
+- field: rings
+  unit: count
+- field: diameter
+  unit: m
+trigger: giant impact
+generator: concentric rings
+overrides: erosion
+wave: 2
+built: false
+levels:
+- planet-level.planet
+- planet-level.cluster
+status: draft
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
+  - trigger
+  - generator
+  - overrides
+  - wave
+  - built
+  tier: derived
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

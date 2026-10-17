@@ -2,17 +2,18 @@
 identity:
   key: planet-feature.range-crest-main-divide
   name: Range crest (main divide)
-  about: 'A relief feature kind: range crest (main divide).'
+  about: 'A relief feature of the tectonic family: range crest (main divide).'
 register: feature
 family: tectonic
 level:
 - 1
 geometry: polyline
-metadata: height profile, relief, steep side
+properties:
+- field: height profile
+  unit: m
 trigger: orogen axis + routing divides
-generator: the divide line nearest the orogen axis
-metadata_from: height profile from z + relief model R
-overrides: erosion (crest lowers, rounds)
+generator: the divide nearest the orogen axis
+overrides: erosion (relief decays by rock and rain), tear at plate edges, sink with its crust
 wave: 1
 built: false
 levels:
@@ -21,23 +22,16 @@ levels:
 status: draft
 basis:
 - of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
   - trigger
   - generator
-  - metadata_from
   - overrides
   - wave
-  - level
-  tier: derived
-  note: planet-trees-pgs2 docs/relief-generation.md (b4b0edf), planets, 17 Oct 2026.
-- of:
-  - geometry
-  - metadata
-  - register
-  tier: derived
-  review: true
-  note: docs/relief-features.md (b4b0edf), matched by name; the register by the kind's footprint.
-- of:
   - built
-  - sim_kinds
   tier: derived
-  note: 'planet-sim-landform stages/relief.py KINDS (54430a6): wave 1, first draft.'
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

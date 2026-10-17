@@ -2,44 +2,38 @@
 identity:
   key: planet-feature.great-escarpment
   name: Great escarpment
-  about: 'A relief feature kind: great escarpment.'
+  about: 'A relief feature of the tectonic family: great escarpment.'
 register: feature
 family: tectonic
 level:
 - 1
 geometry: polyline
-metadata: height, retreat distance, facing
-trigger: rift margin older than 30 Myr, continental side
-generator: line inland 50-200 km parallel to the margin, facing the ocean, retreating with age
-metadata_from: height from shoulder uplift; retreat rate by climate
-overrides: retreat, erosion
+properties:
+- field: height
+  unit: m
+- field: retreat
+  unit: m
+trigger: passive margin older than 30 Myr with ocean in front
+generator: inland of the margin 80 km + 500 m/Myr (max 300 km), facing the ocean
+overrides: erosion (relief decays by rock and rain), tear at plate edges, sink with its crust; retreat
 wave: 1
 built: true
-sim_kinds:
-- great escarpment
 levels:
 - planet-level.planet
 - planet-level.cluster
 status: draft
 basis:
 - of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
   - trigger
   - generator
-  - metadata_from
   - overrides
   - wave
-  - level
-  tier: derived
-  note: planet-trees-pgs2 docs/relief-generation.md (b4b0edf), planets, 17 Oct 2026.
-- of:
-  - geometry
-  - metadata
-  - register
-  tier: derived
-  review: true
-  note: docs/relief-features.md (b4b0edf), matched by name; the register by the kind's footprint.
-- of:
   - built
-  - sim_kinds
   tier: derived
-  note: 'planet-sim-landform stages/relief.py KINDS (54430a6): wave 1, first draft.'
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

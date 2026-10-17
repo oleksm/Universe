@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.sag-pond
+  name: Sag pond
+  about: 'A relief feature of the tectonic family: sag pond.'
+register: feature
+family: tectonic
+level:
+- 3
+geometry: polygon
+properties:
+- field: area
+  unit: m2
+trigger: transform step-over
+generator: depression at the bend
+wave: 3
+built: false
+levels:
+- planet-level.square
+- planet-level.detail
+status: draft
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
+  - trigger
+  - generator
+  - overrides
+  - wave
+  - built
+  tier: derived
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

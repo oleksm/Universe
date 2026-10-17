@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.shelf-edge
+  name: Shelf edge
+  about: 'A relief feature of the coastal family: shelf edge.'
+register: feature
+family: coastal
+level:
+- 1
+geometry: polyline
+properties:
+- field: depth
+  unit: m
+trigger: margin type
+generator: the shelf break
+wave: 1
+built: false
+levels:
+- planet-level.planet
+- planet-level.cluster
+status: draft
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
+  - trigger
+  - generator
+  - overrides
+  - wave
+  - built
+  tier: derived
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

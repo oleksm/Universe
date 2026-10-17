@@ -2,16 +2,17 @@
 identity:
   key: planet-feature.volcanic-rift-zone
   name: Volcanic rift zone
-  about: 'A relief feature kind: volcanic rift zone.'
+  about: 'A relief feature of the volcanic family: volcanic rift zone.'
 register: feature
 family: volcanic
 level:
 - 2
 geometry: polyline
-metadata: length, fissures
-trigger: hotspot centre on a rift
-generator: line through the centre
-metadata_from: length
+properties:
+- field: length
+  unit: m
+trigger: hotspot on a rift
+generator: through the centre
 wave: 2
 built: false
 levels:
@@ -19,23 +20,16 @@ levels:
 status: draft
 basis:
 - of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
   - trigger
   - generator
-  - metadata_from
   - overrides
   - wave
-  - level
-  tier: derived
-  note: planet-trees-pgs2 docs/relief-generation.md (b4b0edf), planets, 17 Oct 2026.
-- of:
-  - geometry
-  - metadata
-  - register
-  tier: derived
-  review: true
-  note: docs/relief-features.md (b4b0edf), matched by name; the register by the kind's footprint.
-- of:
   - built
-  - sim_kinds
   tier: derived
-  note: 'planet-sim-landform stages/relief.py KINDS (54430a6): wave 1, first draft.'
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

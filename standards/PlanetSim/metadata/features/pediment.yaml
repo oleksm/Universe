@@ -2,16 +2,17 @@
 identity:
   key: planet-feature.pediment
   name: Pediment
-  about: 'A relief feature kind: pediment.'
+  about: 'A relief feature of the arid family: pediment.'
 register: feature
-family: fluvial
+family: arid
 level:
 - 2
 geometry: polygon
-metadata: slope, extent
-trigger: arid + range front retreat
-generator: polygon at the range foot
-metadata_from: slope
+properties:
+- field: slope
+  unit: deg
+trigger: arid range-front retreat
+generator: band at the range foot
 wave: 2
 built: false
 levels:
@@ -19,23 +20,16 @@ levels:
 status: draft
 basis:
 - of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
   - trigger
   - generator
-  - metadata_from
   - overrides
   - wave
-  - level
-  tier: derived
-  note: planet-trees-pgs2 docs/relief-generation.md (b4b0edf), planets, 17 Oct 2026.
-- of:
-  - geometry
-  - metadata
-  - register
-  tier: derived
-  review: true
-  note: docs/relief-features.md (b4b0edf), matched by name; the register by the kind's footprint.
-- of:
   - built
-  - sim_kinds
   tier: derived
-  note: 'planet-sim-landform stages/relief.py KINDS (54430a6): wave 1, first draft.'
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

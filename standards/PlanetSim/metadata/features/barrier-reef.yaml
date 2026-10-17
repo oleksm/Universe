@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.barrier-reef
+  name: Barrier reef
+  about: 'A relief feature of the coastal family: barrier reef.'
+register: feature
+family: coastal
+level:
+- 1
+geometry: polyline
+properties:
+- field: distance offshore
+  unit: m
+trigger: warm sea, subsiding margin
+generator: offshore line
+overrides: drowning
+wave: 2
+built: false
+levels:
+- planet-level.planet
+- planet-level.cluster
+status: draft
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
+  - trigger
+  - generator
+  - overrides
+  - wave
+  - built
+  tier: derived
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

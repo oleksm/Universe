@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.resurgent-dome
+  name: Resurgent dome
+  about: 'A relief landmark of the volcanic family: resurgent dome.'
+register: landmark
+family: volcanic
+level:
+- 2
+geometry: point
+properties:
+- field: height
+  unit: m
+trigger: caldera
+generator: dome in the caldera
+wave: 3
+built: false
+levels:
+- planet-level.pattern
+status: draft
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
+  - trigger
+  - generator
+  - overrides
+  - wave
+  - built
+  tier: derived
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

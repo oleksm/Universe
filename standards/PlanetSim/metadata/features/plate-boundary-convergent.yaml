@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.plate-boundary-convergent
+  name: Plate boundary, convergent
+  about: 'A relief feature of the tectonic family: plate boundary, convergent.'
+register: feature
+family: tectonic
+level:
+- 1
+geometry: polyline
+properties:
+- field: rate
+  unit: mm/yr
+trigger: two plates closing
+generator: boundary between their particles
+overrides: moves each step
+wave: 1
+built: true
+levels:
+- planet-level.planet
+- planet-level.cluster
+status: draft
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
+  - trigger
+  - generator
+  - overrides
+  - wave
+  - built
+  tier: derived
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

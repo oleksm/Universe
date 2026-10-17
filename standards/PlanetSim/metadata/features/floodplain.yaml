@@ -2,44 +2,36 @@
 identity:
   key: planet-feature.floodplain
   name: Floodplain
-  about: 'A relief feature kind: floodplain.'
+  about: 'A relief feature of the fluvial family: floodplain.'
 register: feature
 family: fluvial
 level:
 - 1
-- 2
 geometry: polygon
-metadata: width, sinuosity of channel
-trigger: low gradient + Q large + laid sediment
-generator: polygon along the river, width from Q
-metadata_from: width, sinuosity
+properties:
+- field: width
+  unit: m
+trigger: low gradient + big Q + laid sediment
+generator: band along the river
 overrides: burial, drowning
 wave: 1
 built: false
 levels:
 - planet-level.planet
 - planet-level.cluster
-- planet-level.pattern
 status: draft
 basis:
 - of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
   - trigger
   - generator
-  - metadata_from
   - overrides
   - wave
-  - level
-  tier: derived
-  note: planet-trees-pgs2 docs/relief-generation.md (b4b0edf), planets, 17 Oct 2026.
-- of:
-  - geometry
-  - metadata
-  - register
-  tier: derived
-  review: true
-  note: docs/relief-features.md (b4b0edf), matched by name; the register by the kind's footprint.
-- of:
   - built
-  - sim_kinds
   tier: derived
-  note: 'planet-sim-landform stages/relief.py KINDS (54430a6): wave 1, first draft.'
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.fringing-reef
+  name: Fringing reef
+  about: 'A relief feature of the coastal family: fringing reef.'
+register: feature
+family: coastal
+level:
+- 2
+geometry: polyline
+properties:
+- field: width
+  unit: m
+trigger: warm shallow sea
+generator: along the coast
+overrides: drowning
+wave: 2
+built: false
+levels:
+- planet-level.pattern
+status: draft
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
+  - trigger
+  - generator
+  - overrides
+  - wave
+  - built
+  tier: derived
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

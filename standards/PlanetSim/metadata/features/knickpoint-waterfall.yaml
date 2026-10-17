@@ -2,44 +2,37 @@
 identity:
   key: planet-feature.knickpoint-waterfall
   name: Knickpoint / waterfall
-  about: 'A relief feature kind: knickpoint / waterfall.'
+  about: 'A relief feature of the fluvial family: knickpoint / waterfall.'
 register: feature
 family: fluvial
 level:
 - 2
-- 3
 geometry: point
-metadata: height, retreat rate
-trigger: uplift on a river; a rock-contrast crossing; a hanging junction
+properties:
+- field: height
+  unit: m
+- field: retreat rate
+  unit: m/Myr
+trigger: uplift or rock contrast on a river
 generator: point on the river
-metadata_from: height, retreat rate
-overrides: retreat upstream with age
+overrides: retreats upstream
 wave: 2
 built: false
 levels:
 - planet-level.pattern
-- planet-level.square
-- planet-level.detail
 status: draft
 basis:
 - of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
   - trigger
   - generator
-  - metadata_from
   - overrides
   - wave
-  - level
-  tier: derived
-  note: planet-trees-pgs2 docs/relief-generation.md (b4b0edf), planets, 17 Oct 2026.
-- of:
-  - geometry
-  - metadata
-  - register
-  tier: derived
-  review: true
-  note: docs/relief-features.md (b4b0edf), matched by name; the register by the kind's footprint.
-- of:
   - built
-  - sim_kinds
   tier: derived
-  note: 'planet-sim-landform stages/relief.py KINDS (54430a6): wave 1, first draft.'
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

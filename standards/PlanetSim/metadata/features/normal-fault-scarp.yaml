@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.normal-fault-scarp
+  name: Normal fault scarp
+  about: 'A relief feature of the tectonic family: normal fault scarp.'
+register: feature
+family: tectonic
+level:
+- 1
+geometry: polyline
+properties:
+- field: throw
+  unit: m
+- field: segment length
+  unit: m
+- field: block width
+  unit: m
+trigger: rift; extension on continent
+generator: lines 12 and 25 km inside the margins, facing the axis
+overrides: erosion (relief decays by rock and rain), tear at plate edges, sink with its crust; triangular facets
+wave: 1
+built: true
+levels:
+- planet-level.planet
+- planet-level.cluster
+status: draft
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
+  - trigger
+  - generator
+  - overrides
+  - wave
+  - built
+  tier: derived
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

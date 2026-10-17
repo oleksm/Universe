@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.butte
+  name: Butte
+  about: 'A relief feature of the structural family: butte.'
+register: feature
+family: structural
+level:
+- 3
+geometry: polygon
+properties:
+- field: height
+  unit: m
+trigger: mesa worn small
+generator: remnant
+overrides: shrink
+wave: 3
+built: false
+levels:
+- planet-level.square
+- planet-level.detail
+status: draft
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
+  - trigger
+  - generator
+  - overrides
+  - wave
+  - built
+  tier: derived
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

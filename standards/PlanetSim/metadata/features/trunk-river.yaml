@@ -2,16 +2,21 @@
 identity:
   key: planet-feature.trunk-river
   name: Trunk river
-  about: 'A relief feature kind: trunk river.'
+  about: 'A relief feature of the fluvial family: trunk river.'
 register: feature
 family: fluvial
 level:
 - 1
 geometry: polyline
-metadata: discharge profile (m3/s), width, gradient, sinuosity
+properties:
+- field: discharge profile
+  unit: m3/s
+- field: channel width
+  unit: m
+- field: gradient
+  unit: m/m
 trigger: routing, Q > 1,000 m3/s
-generator: as the package's rivers, now recorded in the store
-metadata_from: discharge profile, width, gradient, sinuosity
+generator: down the routing
 overrides: capture, drowning, glacial overprint
 wave: 1
 built: false
@@ -21,23 +26,16 @@ levels:
 status: draft
 basis:
 - of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
   - trigger
   - generator
-  - metadata_from
   - overrides
   - wave
-  - level
-  tier: derived
-  note: planet-trees-pgs2 docs/relief-generation.md (b4b0edf), planets, 17 Oct 2026.
-- of:
-  - geometry
-  - metadata
-  - register
-  tier: derived
-  review: true
-  note: docs/relief-features.md (b4b0edf), matched by name; the register by the kind's footprint.
-- of:
   - built
-  - sim_kinds
   tier: derived
-  note: 'planet-sim-landform stages/relief.py KINDS (54430a6): wave 1, first draft.'
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

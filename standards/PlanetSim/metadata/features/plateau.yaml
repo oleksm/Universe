@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.plateau
+  name: Plateau
+  about: 'A relief province of the tectonic family: plateau.'
+register: province
+family: tectonic
+level:
+- 1
+geometry: polygon
+properties:
+- field: height
+  unit: m
+trigger: wide high ground with low relief
+generator: the area where z > 600 m and R < 300 m
+overrides: dissection
+wave: 2
+built: false
+levels:
+- planet-level.planet
+- planet-level.cluster
+status: draft
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
+  - trigger
+  - generator
+  - overrides
+  - wave
+  - built
+  tier: derived
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

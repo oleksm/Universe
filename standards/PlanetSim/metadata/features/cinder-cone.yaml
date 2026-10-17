@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.cinder-cone
+  name: Cinder cone
+  about: 'A relief landmark of the volcanic family: cinder cone.'
+register: landmark
+family: volcanic
+level:
+- 3
+geometry: point
+properties:
+- field: height
+  unit: m
+trigger: monogenetic field
+generator: cone
+wave: 3
+built: false
+levels:
+- planet-level.square
+- planet-level.detail
+status: draft
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
+  - trigger
+  - generator
+  - overrides
+  - wave
+  - built
+  tier: derived
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

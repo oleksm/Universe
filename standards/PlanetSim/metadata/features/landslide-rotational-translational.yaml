@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.landslide-rotational-translational
+  name: Landslide (rotational / translational)
+  about: 'A relief feature of the hillslope family: landslide (rotational / translational).'
+register: feature
+family: hillslope
+level:
+- 3
+geometry: polygon
+properties:
+- field: volume
+  unit: m3
+- field: runout
+  unit: m
+trigger: steep + weak rock + wet / quakes
+generator: scar + deposit
+wave: 3
+built: false
+levels:
+- planet-level.square
+- planet-level.detail
+status: draft
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
+  - trigger
+  - generator
+  - overrides
+  - wave
+  - built
+  tier: derived
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

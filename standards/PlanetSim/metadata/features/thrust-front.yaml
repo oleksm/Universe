@@ -2,44 +2,38 @@
 identity:
   key: planet-feature.thrust-front
   name: Thrust front
-  about: 'A relief feature kind: thrust front.'
+  about: 'A relief feature of the tectonic family: thrust front.'
 register: feature
 family: tectonic
 level:
 - 1
 geometry: polyline
-metadata: throw (m), facing, age
+properties:
+- field: throw
+  unit: m
+- field: distance from suture
+  unit: m
 trigger: collision
-generator: line at the foreland edge of the belt (belt width from convergence x time)
-metadata_from: throw from thickening; facing foreland
-overrides: erosion; buried by foreland basin fill
+generator: the belt's foreland edge
+overrides: erosion (relief decays by rock and rain), tear at plate edges, sink with its crust; burial by foreland basin
 wave: 1
 built: true
-sim_kinds:
-- thrust front
 levels:
 - planet-level.planet
 - planet-level.cluster
 status: draft
 basis:
 - of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
   - trigger
   - generator
-  - metadata_from
   - overrides
   - wave
-  - level
-  tier: derived
-  note: planet-trees-pgs2 docs/relief-generation.md (b4b0edf), planets, 17 Oct 2026.
-- of:
-  - geometry
-  - metadata
-  - register
-  tier: derived
-  review: true
-  note: docs/relief-features.md (b4b0edf), matched by name; the register by the kind's footprint.
-- of:
   - built
-  - sim_kinds
   tier: derived
-  note: 'planet-sim-landform stages/relief.py KINDS (54430a6): wave 1, first draft.'
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

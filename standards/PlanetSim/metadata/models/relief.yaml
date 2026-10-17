@@ -81,6 +81,225 @@ steps:
   rule: 'The relief layer as lines (layers as curved lines, never patches): land contours of the smoothed height at 500, 1,000, 2,000, 3,000, 4,000 and 5,000 m, and the boundaries between relief classes, each point''s class the leader
     among its nearest 40 samples (Gaussian weights, sigma 1.4 sample spacings) on its side of the coast.'
 legend: planet-layer.relief
+legends:
+- name: context_relief
+  title: Relief and patterns
+  sub: earth_s30 · today
+  source: out/planet/earth_s30/ck_20_00000000kyr_context_relief.legend.json
+  rows:
+  - kind: head
+    label: Relief inside each sample (Earth's amounts, placed by the sim)
+    shown: true
+  - kind: fill
+    colour:
+    - 205
+    - 225
+    - 160
+    label: 'lowland plain: 8 % of land'
+    shown: true
+  - kind: fill
+    colour:
+    - 225
+    - 220
+    - 170
+    label: 'plain: 18 % of land'
+    shown: true
+  - kind: fill
+    colour:
+    - 215
+    - 190
+    - 140
+    label: 'plateau: 22 % of land'
+    shown: true
+  - kind: fill
+    colour:
+    - 180
+    - 160
+    - 110
+    label: 'hills: 30 % of land'
+    shown: true
+  - kind: fill
+    colour:
+    - 140
+    - 105
+    - 80
+    label: 'low mountains: 12 % of land'
+    shown: true
+  - kind: fill
+    colour:
+    - 95
+    - 70
+    - 60
+    label: 'high mountains: 9 % of land'
+    shown: true
+  - kind: head
+    label: Mountains 22 % of land (Earth ~22 %); hills 30 % (Earth ~30 %)
+    shown: true
+  - kind: head
+    label: 'Patterns on 100 % of land, 3.0 per sample, 96 patterns in use; labels: leading pattern'
+    shown: true
+- name: rings_relief
+  title: Relief and patterns
+  sub: earth_s30 · today
+  source: out/planet/earth_s30/ck_20_00000000kyr_rings_relief.legend.json
+  rows:
+  - kind: head
+    label: Relief inside each sample (Earth's amounts, placed by the sim)
+    shown: true
+  - kind: fill
+    colour:
+    - 205
+    - 225
+    - 160
+    label: 'lowland plain: 9 % of land'
+    shown: true
+  - kind: fill
+    colour:
+    - 225
+    - 220
+    - 170
+    label: 'plain: 18 % of land'
+    shown: true
+  - kind: fill
+    colour:
+    - 215
+    - 190
+    - 140
+    label: 'plateau: 21 % of land'
+    shown: true
+  - kind: fill
+    colour:
+    - 180
+    - 160
+    - 110
+    label: 'hills: 30 % of land'
+    shown: true
+  - kind: fill
+    colour:
+    - 140
+    - 105
+    - 80
+    label: 'low mountains: 12 % of land'
+    shown: true
+  - kind: fill
+    colour:
+    - 95
+    - 70
+    - 60
+    label: 'high mountains: 9 % of land'
+    shown: true
+  - kind: head
+    label: Mountains 22 % of land (Earth ~22 %); hills 30 % (Earth ~30 %)
+    shown: true
+  - kind: head
+    label: 'Patterns on 100 % of land, 3.0 per sample, 93 patterns in use; labels: leading pattern'
+    shown: true
+- name: rings_relief_lines
+  title: 'Relief: lines (the relief line rings)'
+  source: tools/layer_lines.py RELIEF_M
+  rows:
+  - kind: line
+    label: contour 500 m
+  - kind: line
+    label: contour 1000 m
+  - kind: line
+    label: contour 2000 m
+  - kind: line
+    label: contour 3000 m
+  - kind: line
+    label: contour 4000 m
+  - kind: line
+    label: contour 5000 m
+  - kind: line
+    label: relief class boundary (classes on its two sides)
+- name: relief_features_map
+  title: Relief features (tools/relief_trace.py --map)
+  source: tools/relief_trace.py
+  rows:
+  - kind: line
+    colour:
+    - 200
+    - 60
+    - 50
+    label: tectonic
+  - kind: line
+    colour:
+    - 200
+    - 120
+    - 50
+    label: structural
+  - kind: line
+    colour:
+    - 150
+    - 40
+    - 40
+    label: volcanic
+  - kind: line
+    colour:
+    - 40
+    - 110
+    - 210
+    label: fluvial
+  - kind: line
+    colour:
+    - 120
+    - 200
+    - 230
+    label: glacial
+  - kind: line
+    colour:
+    - 160
+    - 190
+    - 210
+    label: periglacial
+  - kind: line
+    colour:
+    - 40
+    - 190
+    - 200
+    label: coastal
+  - kind: line
+    colour:
+    - 120
+    - 90
+    - 200
+    label: karst
+  - kind: line
+    colour:
+    - 220
+    - 190
+    - 110
+    label: arid
+  - kind: line
+    colour:
+    - 230
+    - 210
+    - 150
+    label: aeolian
+  - kind: line
+    colour:
+    - 30
+    - 80
+    - 140
+    label: lacustrine
+  - kind: line
+    colour:
+    - 130
+    - 170
+    - 90
+    label: hillslope
+  - kind: line
+    colour:
+    - 90
+    - 90
+    - 90
+    label: impact
+  - kind: line
+    colour:
+    - 230
+    - 120
+    - 20
+    label: landmark
 source_field:
 - planet-field.height
 - planet-field.recent-height
@@ -140,117 +359,238 @@ registers:
   geometry: points and small areas with a record
   example: Shasta, Crater Lake caldera, an impact crater, a flood
 feature_kinds:
-- planet-feature.alluvial-fan-bajada
+- planet-feature.alluvial-fan
+- planet-feature.anastomosing-reach
+- planet-feature.anticline-axis
 - planet-feature.arc-front
-- planet-feature.arete-horn-col
-- planet-feature.badlands-gullies
-- planet-feature.beach-barrier-spit-tombolo
+- planet-feature.arc-volcano-centre
+- planet-feature.arete
+- planet-feature.atoll
+- planet-feature.badlands
+- planet-feature.bajada
+- planet-feature.barchan-dunes
+- planet-feature.barrier-island
+- planet-feature.barrier-reef
+- planet-feature.beach-ridge-plain
+- planet-feature.blockfield-felsenmeer
 - planet-feature.braided-reach
+- planet-feature.breached-anticline
+- planet-feature.butte
 - planet-feature.caldera-crater-lake
 - planet-feature.canyon-gorge
+- planet-feature.carbonate-platform
+- planet-feature.cinder-cone
 - planet-feature.cirque
+- planet-feature.coastal-foredune
 - planet-feature.coastline-typed
-- planet-feature.cuesta-hogback-homoclinal-ridge
-- planet-feature.delta
+- planet-feature.cockpit-cone-karst
+- planet-feature.col
+- planet-feature.collapse-doline-tiankeng
+- planet-feature.colluvial-hollow
+- planet-feature.consequent-subsequent-obsequent-valley
+- planet-feature.cuesta
+- planet-feature.debris-flow-fan
+- planet-feature.deflation-hollow
+- planet-feature.delta-river-dominated
+- planet-feature.delta-tide-dominated
+- planet-feature.delta-wave-dominated
 - planet-feature.desert-basin-bolson
-- planet-feature.dike-ridge-neck
-- planet-feature.dome-basin
+- planet-feature.desert-pavement
+- planet-feature.dike-ridge
+- planet-feature.doline-field
 - planet-feature.drainage-divide
-- planet-feature.drumlin-field-lineations
-- planet-feature.dry-valley-misfit-river
-- planet-feature.erg-dune-fields
+- planet-feature.drumlin-field
+- planet-feature.dry-valley
+- planet-feature.erg-sand-sea
 - planet-feature.esker
-- planet-feature.estuary-ria
-- planet-feature.flatirons-triangular-facets
+- planet-feature.estuary
+- planet-feature.fjord
+- planet-feature.flatiron
 - planet-feature.flood-basalt-plateau
 - planet-feature.floodplain
-- planet-feature.fold-axes-anticline-syncline
 - planet-feature.foreland-basin
-- planet-feature.giant-landslide
-- planet-feature.glacial-trough-fjord
+- planet-feature.former-lake-bed
+- planet-feature.free-face-cliff
+- planet-feature.fringing-reef
+- planet-feature.giant-landslide-sector-collapse
+- planet-feature.glacial-horn
+- planet-feature.glacial-trough-u-valley
+- planet-feature.graben
 - planet-feature.great-escarpment
 - planet-feature.hanging-valley
-- planet-feature.horst-and-graben
+- planet-feature.hogback
+- planet-feature.homoclinal-ridge
+- planet-feature.horst
 - planet-feature.hotspot-chain
+- planet-feature.hotspot-volcano-centre
 - planet-feature.ice-dammed-lake-shorelines
-- planet-feature.ice-sheet-extent-now-lgm
+- planet-feature.ice-sheet-extent
+- planet-feature.ice-wedge-polygons
 - planet-feature.ignimbrite-plateau
-- planet-feature.impact-crater
-- planet-feature.inselbergs
-- planet-feature.interfluves-hillslopes-hollows
-- planet-feature.kame-kettle-till-and-outwash-plains
-- planet-feature.karst-plateau-polje-dolines-tower-karst
+- planet-feature.impact-crater-complex
+- planet-feature.impact-crater-simple
+- planet-feature.inselberg
+- planet-feature.interfluve-ridge-crest
+- planet-feature.kame-and-kettle-terrain
+- planet-feature.karst-plateau
 - planet-feature.knickpoint-waterfall
+- planet-feature.lagoon
 - planet-feature.lahar-plain
-- planet-feature.lake-basins-and-shorelines
-- planet-feature.landslides-talus-debris-cones
+- planet-feature.lake-basin-rift-glacial-volcanic-dammed
+- planet-feature.lake-shoreline-terraces
+- planet-feature.landslide-rotational-translational
+- planet-feature.lateral-moraine
 - planet-feature.lava-flow-field
-- planet-feature.maar-cinder-cone-tuff-ring
-- planet-feature.marine-terraces
-- planet-feature.meander-belt-oxbows
+- planet-feature.linear-seif-dunes
+- planet-feature.loess-plateau
+- planet-feature.maar
+- planet-feature.mangrove-coast
+- planet-feature.marine-terrace
+- planet-feature.meander-belt
+- planet-feature.medial-moraine
+- planet-feature.mega-scale-glacial-lineations
 - planet-feature.megaflood-scabland
-- planet-feature.mesa-butte
-- planet-feature.monogenetic-field
-- planet-feature.moraines-terminal-lateral-medial
-- planet-feature.normal-fault-scarp-range-front
+- planet-feature.mesa
+- planet-feature.misfit-river
+- planet-feature.monogenetic-volcanic-field
+- planet-feature.multi-ring-impact-basin
+- planet-feature.nivation-hollow
+- planet-feature.normal-fault-scarp
+- planet-feature.offset-stream
 - planet-feature.orogen-axis
+- planet-feature.outwash-plain-sandur
+- planet-feature.overdeepening-and-riegel
+- planet-feature.oxbow-lake
+- planet-feature.palsa-peat-plateau
 - planet-feature.pediment
-- planet-feature.peneplain
-- planet-feature.periglacial-ground
-- planet-feature.plate-boundary
+- planet-feature.peneplain-etchplain
+- planet-feature.pingo
+- planet-feature.plate-boundary-convergent
+- planet-feature.plate-boundary-divergent
+- planet-feature.plate-boundary-transform
+- planet-feature.plateau
 - planet-feature.plateau-edge
 - planet-feature.playa-salt-pan
-- planet-feature.raised-shorelines
+- planet-feature.polje
+- planet-feature.proglacial-lake
+- planet-feature.raised-shoreline-rebound
 - planet-feature.range-crest-main-divide
-- planet-feature.reef-atoll-platform
+- planet-feature.range-front-fault-bounded
+- planet-feature.recessional-moraine
+- planet-feature.resurgent-dome
+- planet-feature.ria
+- planet-feature.rift-floor-axis
 - planet-feature.rift-margin
-- planet-feature.rift-valley-floor-shoulders
-- planet-feature.river-terraces
-- planet-feature.sea-cliff-shore-platform
-- planet-feature.shelf-shelf-edge
+- planet-feature.rift-shoulder
+- planet-feature.rill-and-gully-system
+- planet-feature.river-capture
+- planet-feature.river-mouth
+- planet-feature.river-terrace
+- planet-feature.roche-moutonnee-whaleback
+- planet-feature.rock-glacier
+- planet-feature.sag-pond
+- planet-feature.salt-marsh
+- planet-feature.sandy-beach
+- planet-feature.sea-cliff
+- planet-feature.sea-stacks-and-arches
+- planet-feature.shelf
+- planet-feature.shelf-edge
 - planet-feature.shield-craton
 - planet-feature.shield-volcano
+- planet-feature.shore-platform
+- planet-feature.shutter-ridge
+- planet-feature.slot-canyon
+- planet-feature.soil-mantled-hillslope
+- planet-feature.solifluction-lobes
+- planet-feature.sorted-patterned-ground
+- planet-feature.spit
+- planet-feature.star-dunes
 - planet-feature.stratovolcano-shasta-rainier
-- planet-feature.subsidiary-ridges
+- planet-feature.structural-basin
+- planet-feature.structural-dome
+- planet-feature.subsidiary-ridge
 - planet-feature.suture
+- planet-feature.syncline-axis
+- planet-feature.talus-slope
+- planet-feature.terminal-moraine
+- planet-feature.thermokarst-lakes
 - planet-feature.thrust-front
-- planet-feature.tidal-flat-marsh
-- planet-feature.transform-valley-offset-streams
+- planet-feature.tidal-flat
+- planet-feature.till-plain
+- planet-feature.tombolo
+- planet-feature.tower-karst
+- planet-feature.transform-valley
+- planet-feature.transverse-dunes
+- planet-feature.triangular-facet
 - planet-feature.tributary-network
 - planet-feature.trunk-river
-- planet-feature.valley-v
+- planet-feature.tuff-ring
+- planet-feature.v-valley
 - planet-feature.volcanic-arc-chain
+- planet-feature.volcanic-neck
 - planet-feature.volcanic-rift-zone
-- planet-feature.water-gap-wind-gap
-- planet-feature.yardangs-deflation-hollows-loess
+- planet-feature.wadi
+- planet-feature.water-carved-land
+- planet-feature.water-gap
+- planet-feature.wind-gap
+- planet-feature.yardangs
 record_fields:
-- name: id, kind, family, level
-  meaning: its feature kind, group, and level 1, 2 or 3
+- name: id
+  meaning: stable id (L12 a line, M5 a record)
+- name: kind
+  meaning: the feature kind (this catalogue)
 - name: geometry
-  meaning: 'polyline, polygon, ring, point or network, its vertices anchored to crust particles: it rides its plate, is cut where plates part, dies when its crust sinks'
-- name: born, last active, state
-  meaning: when, and active, former, worn, buried, drowned or overprinted
+  meaning: polyline / polygon / ring / point / point set / network, on the sphere, riding the crust
+- name: level
+  meaning: '1: 10-50 km, 2: 2-10 km, 3: under 2 km (the coarsest it appears at)'
+  unit: 1-3
+- name: length
+  meaning: along the feature
+  unit: m
+- name: width
+  meaning: its footprint across
+  unit: m
+- name: relief
+  meaning: height above (ridge, scarp) or depth below (valley, basin) its surroundings; relief0 at birth
+  unit: m
+- name: profile
+  meaning: 'cross-section: V, U, flat-floored, box, asymmetric, stepped, convex, concave; side slopes deg'
+  unit: class
+- name: direction
+  meaning: 'trend / strike / flow direction; facing: which side is steep or down'
+  unit: deg
+- name: pattern
+  meaning: dendritic, trellis, radial, parallel, rectangular, en-echelon, braided, alternating ...
+  unit: class
+- name: spacing
+  meaning: between repeats (ridges, folds, scarps, centres, dunes)
+  unit: m
+- name: spread
+  meaning: how far its influence reaches
+  unit: m
+- name: curvature
+  meaning: turning per 100 km; sinuosity (path / chord); straight share
+  unit: deg/100 km, 1
+- name: born, last active
+  meaning: 'and state: active / former / worn / buried / drowned / overprinted / dead'
   unit: Myr
 - name: cause
-  meaning: the event id (collision 412, rift 88) and the process
+  meaning: the sim event id and process
 - name: rule, trigger
-  meaning: 'the generator rule that fired and the values that fired it ({conv_rate_mm_yr: 41, belt_km: 260})'
-- name: meta
-  meaning: width, relief, profile, direction, facing, pattern, spacing, spread, rock and climate at birth
-- name: length, width, relief, spread
-  meaning: along and across it, above or below its surroundings, and how far its influence reaches
-  unit: m
-- name: profile, pattern
-  meaning: its cross-section (V, U, flat-floored, box, asymmetric, stepped; side slopes) and its pattern (dendritic, trellis, radial, en-echelon...; spacing, branching, sinuosity)
-- name: direction
-  meaning: strike, trend, flow direction, facing, dip
-  unit: deg
+  meaning: the generator that fired and the values that fired it
+- name: rock, climate
+  meaning: at forming
+  unit: class
 - name: parent, children
-  meaning: the feature it was generated inside and those it spawned (the anchor hierarchy)
-- name: confidence, seed
-  meaning: how sure the sim is (0 to 1), and the seed of its deterministic detail
+  meaning: what it sits in / what it expands into
+  unit: ids
 - name: history
-  meaning: every later change, grown, segmented, overridden, eroded, with the rule and the values
+  meaning: 'every change: grown, segmented, overridden, eroded (rule and values)'
+- name: confidence
+  meaning: measured vs inferred
+  unit: 0-1
+- name: seed
+  meaning: its deterministic detail
 trace:
   row: 'One row for every spawn and every change: step, t (Myr), rule, kind, feature id, lon and lat, the trigger values, the metadata set or changed.'
   saved: <ck>_relief_trace.jsonl beside the store, per checkpoint
@@ -450,7 +790,8 @@ basis:
   - tools
   tier: derived
   review: true
-  note: 'planet-trees-pgs2 docs/relief-features.md and docs/relief-generation.md (b4b0edf), the sim at 54430a6, planets, 17 Oct 2026: all draft.'
+  note: 'planet-trees-pgs2 docs/relief-features.md and docs/relief-generation.md (b4b0edf), the sim at 54430a6, planets, 17 Oct 2026: all draft. The feature kinds, their common fields and the legends from docs/relief-catalogue.json
+    (ff4f859), the canonical catalogue.'
 - of:
   - identity
   - detail

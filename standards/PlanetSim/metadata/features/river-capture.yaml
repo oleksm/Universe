@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.river-capture
+  name: River capture
+  about: 'A relief landmark of the fluvial family: river capture.'
+register: landmark
+family: fluvial
+level:
+- 1
+geometry: point
+properties:
+- field: captured discharge
+  unit: m3/s
+trigger: a river switches basin
+generator: record
+wave: 1
+built: true
+landmark: planet-landmark.river-capture
+levels:
+- planet-level.planet
+- planet-level.cluster
+status: draft
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
+  - trigger
+  - generator
+  - overrides
+  - wave
+  - built
+  tier: derived
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

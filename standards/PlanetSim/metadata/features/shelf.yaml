@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.shelf
+  name: Shelf
+  about: 'A relief province of the coastal family: shelf.'
+register: province
+family: coastal
+level:
+- 1
+geometry: polygon
+properties:
+- field: width
+  unit: m
+- field: depth
+  unit: m
+trigger: margin type + sea level
+generator: area to the shelf break
+wave: 1
+built: false
+levels:
+- planet-level.planet
+- planet-level.cluster
+status: draft
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
+  - trigger
+  - generator
+  - overrides
+  - wave
+  - built
+  tier: derived
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

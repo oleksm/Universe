@@ -658,6 +658,11 @@ function detail(k) {
     for (const [g, v] of Object.entries(e)) {
       if (skip.has(g) || v === null || v === undefined) continue;
       const gd = G[g] || {}, props = gd.props || {};
+      if (g === "legends" && Array.isArray(v)) {      // (a legend drawn as its page draws it: swatches and labels)
+        const sw = r => r.colour ? `<span style="display:inline-block;width:${r.kind === "line" ? 26 : 16}px;height:${r.kind === "line" ? 3 : 12}px;background:rgb(${r.colour.join(",")});border-radius:2px;vertical-align:middle"></span>` : "";
+        h += `<h3>legends</h3>` + v.map(L => `<h4 style="margin:14px 0 4px">${esc(L.title)}${L.sub ? ` <span class="meta">· ${esc(L.sub)}</span>` : ""}</h4><table>` + (L.rows || []).map(r => `<tr><td style="width:34px">${sw(r)}</td><td${r.kind === "head" ? ' class="meta"' : ""}>${esc(r.label)}</td></tr>`).join("") + `</table>` + (L.source ? `<div class="meta">${esc(L.source)}</div>` : "")).join("");
+        continue;
+      }
       h += `<h3>${esc(g.replace(/_/g, " "))}</h3>` + (gd.description ? `<p class="meta">${esc(gd.description)}</p>` : "");
       if (Array.isArray(v) && v.length && typeof v[0] === "object" && v[0] !== null) {
         const cols = [...new Set(v.flatMap(x => Object.keys(x)))];

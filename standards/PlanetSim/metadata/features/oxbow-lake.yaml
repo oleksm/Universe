@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.oxbow-lake
+  name: Oxbow lake
+  about: 'A relief feature of the fluvial family: oxbow lake.'
+register: feature
+family: fluvial
+level:
+- 3
+geometry: polygon
+properties:
+- field: area
+  unit: m2
+trigger: meander cut off
+generator: abandoned loop
+overrides: infill
+wave: 3
+built: false
+levels:
+- planet-level.square
+- planet-level.detail
+status: draft
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
+  - trigger
+  - generator
+  - overrides
+  - wave
+  - built
+  tier: derived
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

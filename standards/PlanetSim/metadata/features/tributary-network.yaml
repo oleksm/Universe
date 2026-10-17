@@ -2,44 +2,37 @@
 identity:
   key: planet-feature.tributary-network
   name: Tributary network
-  about: 'A relief feature kind: tributary network.'
+  about: 'A relief feature of the fluvial family: tributary network.'
 register: feature
 family: fluvial
 level:
 - 1
-- 2
 geometry: network
-metadata: order (Strahler), spacing, junction angles, pattern
+properties:
+- field: Strahler order
+- field: junction angle
+  unit: deg
 trigger: routing, Q > 100 m3/s
-generator: river lines down the routing with Strahler order
-metadata_from: 'order, junction angles, pattern (dendritic / trellis: angle to grain)'
+generator: river lines with order
 overrides: capture
 wave: 1
 built: false
 levels:
 - planet-level.planet
 - planet-level.cluster
-- planet-level.pattern
 status: draft
 basis:
 - of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
   - trigger
   - generator
-  - metadata_from
   - overrides
   - wave
-  - level
-  tier: derived
-  note: planet-trees-pgs2 docs/relief-generation.md (b4b0edf), planets, 17 Oct 2026.
-- of:
-  - geometry
-  - metadata
-  - register
-  tier: derived
-  review: true
-  note: docs/relief-features.md (b4b0edf), matched by name; the register by the kind's footprint.
-- of:
   - built
-  - sim_kinds
   tier: derived
-  note: 'planet-sim-landform stages/relief.py KINDS (54430a6): wave 1, first draft.'
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

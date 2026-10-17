@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.palsa-peat-plateau
+  name: Palsa / peat plateau
+  about: 'A relief feature of the periglacial family: palsa / peat plateau.'
+register: feature
+family: periglacial
+level:
+- 3
+geometry: polygon
+properties:
+- field: height
+  unit: m
+trigger: discontinuous permafrost, wet
+generator: area
+wave: 3
+built: false
+levels:
+- planet-level.square
+- planet-level.detail
+status: draft
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
+  - trigger
+  - generator
+  - overrides
+  - wave
+  - built
+  tier: derived
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.karst-plateau
+  name: Karst plateau
+  about: 'A relief province of the karst family: karst plateau.'
+register: province
+family: karst
+level:
+- 2
+geometry: polygon
+properties:
+- field: doline density
+  unit: 1/km2
+trigger: limestone + rain > 0.8 m/yr
+generator: area
+wave: 2
+built: false
+levels:
+- planet-level.pattern
+status: draft
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
+  - trigger
+  - generator
+  - overrides
+  - wave
+  - built
+  tier: derived
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

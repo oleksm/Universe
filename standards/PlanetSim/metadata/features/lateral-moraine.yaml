@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.lateral-moraine
+  name: Lateral moraine
+  about: 'A relief feature of the glacial family: lateral moraine.'
+register: feature
+family: glacial
+level:
+- 2
+geometry: polyline
+properties:
+- field: height
+  unit: m
+trigger: valley glacier sides
+generator: along trough sides
+overrides: erosion
+wave: 2
+built: false
+levels:
+- planet-level.pattern
+status: draft
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
+  - trigger
+  - generator
+  - overrides
+  - wave
+  - built
+  tier: derived
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'

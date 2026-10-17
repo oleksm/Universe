@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.impact-crater-simple
+  name: Impact crater, simple
+  about: 'A relief landmark of the impact family: impact crater, simple.'
+register: landmark
+family: impact
+level:
+- 2
+geometry: rings
+properties:
+- field: diameter
+  unit: m
+- field: depth
+  unit: m
+- field: rim height
+  unit: m
+- field: age
+  unit: Myr
+trigger: impact event (Earth rate by size)
+generator: rim + bowl
+overrides: erosion by age and climate
+wave: 2
+built: false
+levels:
+- planet-level.pattern
+status: draft
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
+  - trigger
+  - generator
+  - overrides
+  - wave
+  - built
+  tier: derived
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'
