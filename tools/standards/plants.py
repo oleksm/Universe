@@ -658,12 +658,12 @@ def pellet_air_ports(us):
     ORE, WATER, PEL = "good.iron-ore", "good.water", "good.iron-ore-pellets"
     lv = lambda w: kit.termination(400, kit.area_for(amps(w, 400)))
     f = us["disc-filter-2"]
-    f["desc"] = f["desc"].replace("400 V supply at (6, 3.5, 0.5).", "400 V supply at (6, 3.5, 0.5). Its ports (SFO 25): slurry in at the box's top, DN 150; the filtrate out at (-6, 3, 0.5), DN 100, facing -x; the cake at the chutes' feet over the belt, (-3, -2.4, 1.9) and (3, -2.4, 1.9); the 400 V box facing +x.")
+    f["desc"] = f["desc"].replace("400 V supply at (6, 3.5, 0.5).", "400 V supply at (6, 3.5, 0.5). Its ports (SFO 25): slurry in at the box's top, DN 150; the filtrate out at (-6, 3, 0.5), DN 100, facing -x; the cake at the chutes' feet over the belt, (-3, -2.4, 1) and (3, -2.4, 1) (blender's measure: the chutes end at z 1.0); the 400 V box facing +x.")
     f["ports"] = [
         port("slurry-in", "in", "liquid", kit.flange(0.15, 10, temp=330.0), (0.0, 0.0, 3.0), (0, 0, 1), item=ORE, rate=P_ORE / SLURRY_SOLIDS, pressure=3e5, temperature=303.0, note="ore and water, into the distribution box"),
         port("filtrate-out", "out", "liquid", kit.flange(0.1, 10, kit.SS), (-6.0, 3.0, 0.5), (-1, 0, 0), item=WATER, rate=10.9, pressure=2e5, temperature=303.0, note="from the filtrate pump, back to the mill"),
-        port("cake-1", "out", "bulk", kit.chute(0.4), (-3.0, -2.4, 1.9), (0, 0, -1), item=ORE, rate=P_ORE / 2, note="the west filter's four chutes, onto the layout's cake belt"),
-        port("cake-2", "out", "bulk", kit.chute(0.4), (3.0, -2.4, 1.9), (0, 0, -1), item=ORE, rate=P_ORE / 2, note="the east filter's four"),
+        port("cake-1", "out", "bulk", kit.chute(0.4), (-3.0, -2.4, 1.0), (0, 0, -1), item=ORE, rate=P_ORE / 2, note="the west filter's four chutes, onto the layout's cake belt"),
+        port("cake-2", "out", "bulk", kit.chute(0.4), (3.0, -2.4, 1.0), (0, 0, -1), item=ORE, rate=P_ORE / 2, note="the east filter's four"),
         port("power-in", "in", "power", lv(f["needs"]["power"]), (6.0, 3.5, 0.5), (1, 0, 0), power=f["needs"]["power"], voltage=400, note="the vacuum pumps, drives and agitators"),
     ]
     g = us["induration-grate-125th"]
@@ -2393,11 +2393,11 @@ def pellet_plant_air(us, recs):
           "pumped from the mill's sump up over the filters' receivers and down into the distribution box (rubber-lined)"),
         L("filtrate", kit.pipe(0.1, 10, kit.SS, liquid=True), ("F:filtrate-out", "M:water-in"), [None, (-53.0, 3.0, 6.5), (-53.0, 1.2, 6.5), None], (), 1, None, "back over the mill's drum to its feed chute"),
         L("mill make-up", kit.pipe(0.05, 10, kit.SS, liquid=True), ("edge:water-in", "tee:filtrate"), [None, (-51.0, 3.0, 6.5)]),
-        L("cake belt", b08, ("cap", "onto:cake riser"), [(-30.5, -2.4, 6.98), (-20.1, -2.4, 6.98)], ("F:cake-1", "F:cake-2"), 1, 15000.0, "level along x on the filters' deck under all eight discs' chutes"),
-        L("cake riser", b08, ("cap", "onto:cake shuttle"), [(-20.1, -2.4, 6.48), (-12.0, -2.4, 8.9)], (), 1, 15000.0, "up at about 16 degrees to the shuttle"),
-        L("cake shuttle", b08, ("onto:south cake header", "onto:north cake header"), [(-12.0, -8.4, 8.4), (-12.0, 8.4, 8.4)], (), 1, 7500.0, "reversible, along y", reversible=True),
-        L("south cake header", b08, ("cap", "cap"), [(-12.5, -8.4, 7.9), (8.0, -8.4, 7.9)], ("B1:cake-in", "B2:cake-in"), 1, 10000.0, "along y -8.4, 0.4 m outside the discs' chutes and clear of their fines elevators' heads, ploughs dropping into B1 and B2's chutes"),
-        L("north cake header", b08, ("cap", "cap"), [(-12.5, 8.4, 7.9), (8.0, 8.4, 7.9)], ("B3:cake-in", "B4:cake-in"), 1, 10000.0, "along y 8.4, ploughs into B3 and B4"),
+        L("cake belt", b08, ("cap", "onto:cake riser"), [(-30.5, -2.4, 6.55), (-20.1, -2.4, 6.55)], ("F:cake-1", "F:cake-2"), 1, 15000.0, "level along x on the filters' deck under all eight discs' chutes, its top just under their feet (z 7.0)"),
+        L("cake riser", b08, ("cap", "onto:cake shuttle"), [(-20.1, -2.4, 6.05), (-12.0, -2.4, 8.3)], (), 1, 15000.0, "up at about 16 degrees to the shuttle, its tail in a slot through the filter deck"),
+        L("cake shuttle", b08, ("onto:south cake header", "onto:north cake header"), [(-12.0, -8.4, 7.8), (-12.0, 8.4, 7.8)], (), 1, 7500.0, "reversible, along y", reversible=True),
+        L("south cake header", b08, ("cap", "cap"), [(-12.5, -8.4, 7.3), (8.0, -8.4, 7.3)], ("B1:cake-in", "B2:cake-in"), 1, 10000.0, "along y -8.4, 0.4 m outside the discs' chutes and clear of their fines elevators' heads, ploughs dropping into B1 and B2's chutes"),
+        L("north cake header", b08, ("cap", "cap"), [(-12.5, 8.4, 7.3), (8.0, 8.4, 7.3)], ("B3:cake-in", "B4:cake-in"), 1, 10000.0, "along y 8.4, ploughs into B3 and B4"),
         L("green ball collector", b08, ("cap", "onto:green ball cross belt"), [(7.5, 0.0, 0.6), (-16.5, 0.0, 0.6)], ("B1:balls-out", "B2:balls-out", "B3:balls-out", "B4:balls-out"), 1, 15000.0, "level along the aisle, west, under the four screens' ends"),
         L("green ball cross belt", b08, ("cap", "onto:green ball lift"), [(-16.5, 0.0, 0.1), (-16.5, -11.0, 1.3)], (), 1, 6000.0, "south along x -16.5, its tail in a shallow pit under the collector's head"),
         L("green ball lift", b08, ("cap", "onto:green ball feed"), [(-16.5, -11.0, 0.8), (21.0, -11.0, 10.1)], (), 1, 30000.0, "along the south wall rising east at under 14 degrees (green balls roll back on a steeper belt); over the south door"),
@@ -2425,7 +2425,7 @@ def pellet_plant_air(us, recs):
     ground = [
         {"what": "Hall floor", "item": CONC, "volume": 904.8, "note": f"0.4 m, {x_in:.0f} x {span_in:.0f} m, less the machines' foundations it stops at; measured on blender's layout (candidate v01)"},
         {"what": "Mill foundation", "item": CONC, "volume": 480.37, "note": "two piers under the trunnions on a 3 m block, sized to the drum's dynamic load (not yet checked), with a pit 0.4 m deep under the girth gear's guard (x -41.8 to -40.6, y -3.2 to 3.2, its floor at z -0.4); measured on blender's layout (candidate v01), net of the pit"},
-        {"what": "Filter deck", "item": CONC, "volume": 89.0, "note": "a 14 x 8 x 0.5 m deck 6 m up on six 1 m square columns (two rows of three, 6 m apart along x); the green ball lift passes south of it; measured on blender's layout (candidate v01)"},
+        {"what": "Filter deck", "item": CONC, "volume": r(89.0 - 1.6 * 3.0 * 0.5), "note": "a 14 x 8 x 0.5 m deck 6 m up on six 1 m square columns (two rows of three, 6 m apart along x); the green ball lift passes south of it; measured on blender's layout (candidate v01), less a 1.6 x 3 m slot at its east end for the cake riser's tail (2026-10-17)"},
         {"what": "Grate foundations", "item": CONC, "volume": 528.0, "note": "under the machine's frame; measured on blender's layout (candidate v01)"},
         {"what": "Frame footings", "item": CONC, "volume": r(ground_nodes * 2.25), "note": f"a 1.5 x 1.5 x 1 m pad under each of the lattice's {ground_nodes} ground nodes; 445.5 m3 measured on blender's layout (candidate v01)"},
         {"what": "Pellet hopper", "item": A36, "volume": r(909.5 / RHO["steel"]), "note": "the 4 m to 1 m hopper under the grate's discharge chute at x 62, 10 mm wear plate, with its seats; measured on blender's layout (candidate v01), 910 kg"},
@@ -2620,7 +2620,7 @@ def ore_yard_air(us, recs):
     xm = x0 + 2.0
     tail = xm - (recs["yard-tripper-1500th"]["physical"]["length"] - 2.0)
     x_lv = tail - 2.0
-    z_tail, ramp = -4.4, 14.0
+    z_tail, ramp = -4.4, 12.0      # (12 degrees: the belt clears the deck's underside, z -2.2, as it leaves the east portal: blender's measure, 2026-10-17)
     x_h = r(x_lv - (1.5 - z_tail) / math.tan(math.radians(ramp)), 3)      # (the hopper belt's head 0.5 m over the level yard belt)
     x_rail = r(xm - 32.0)
     bays = [{"id": "H", "mount": "plant-mount.bay-s2", "unit": "unit.truck-dump-hopper", "at": [x_h, 0.0, 0.0], "note": "west of the rail, its feeder in a pit onto the yard belt; trucks back onto its deck from -y"}]
@@ -2638,7 +2638,7 @@ def ore_yard_air(us, recs):
     L = lambda *a: kit_link(*a[:4], bays, recs, edge, *a[4:])
     links += [
         L("hopper belt", kit.belt(1.4, ore), ("H:ore-out", "onto:yard belt"), [None, (r(x_lv), 0.0, 1.5)], (), 1, 150000.0,
-          f"1.4 m, from the feeder in the pit east up its trench at about {math.degrees(math.atan2(1.5 - z_tail, x_lv - x_h)):.0f} degrees (iron ore's steepest on a plain belt, from memory) to its head over the yard belt's tail"),
+          f"1.4 m, from the feeder in the pit east through the hopper's east portal and up its trench at about {math.degrees(math.atan2(1.5 - z_tail, x_lv - x_h)):.0f} degrees (low enough to clear the deck's underside in the portal) to its head over the yard belt's tail"),
         L("yard belt", kit.belt(1.4, ore), ("cap", "onto:out belt"), [(r(x_lv - 2.0), 0.0, 1.0), (r(-x0 + 20), 0.0, 1.0)], (), 1, 250000.0,
           "1.4 m, level between the rails, the machine's tripper riding on it: the hopper's ore to the machine stacking, the machine's to the out belt reclaiming; its tail under the hopper belt's head"),
         L("out belt", kit.belt(1.0, ore), ("cap", "edge:ore-out"), [(r(-x0 + 20), 0.0, 0.5), None], (), 1, 100000.0, "1 m, rising gently from under the yard belt's head to the pellet plant's"),

@@ -5,12 +5,12 @@ stands_for: module.ore-yard
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 248.3, width: 101.6, height: 20.0, mass: 6199000.0}
+physical: {length: 252.3, width: 101.6, height: 20.0, mass: 6200000.0}
 bays:
 - id: H
   mount: plant-mount.bay-s2
   unit: unit.truck-dump-hopper
-  at: [-110.0, 0.0, 0.0]
+  at: [-114.0, 0.0, 0.0]
   note: west of the rail, its feeder in a pit onto the yard belt; trucks back onto its deck from -y
 ports:
 - id: ore-out
@@ -34,7 +34,7 @@ ports:
   half: female
   make: bolted
   connector: connector.termination-400v-120mm2
-  at: [-122.0, 3.0, 1.0]
+  at: [-126.0, 3.0, 1.0]
   facing: [1.0, 0.0, 0.0]
   note: the site's 400 V distribution
 - id: water-north
@@ -91,14 +91,14 @@ links:
   name: hopper belt
   run: run.belt-1400
   ends: ['H:ore-out', 'onto:yard belt']
-  from: [-110.0, 0.0, -4.4]
+  from: [-114.0, 0.0, -4.4]
   to: [-86.03, 0.0, 1.5]
-  length: 24.69
+  length: 28.59
   item: material.silicone-rubber
-  mass: 12600.0
+  mass: 13110.0
   power: 150000.0
   fittings: {elbows: 0, tees: 0, supports: 2, connectors: 1}
-  note: 1.4 m, from the feeder in the pit east up its trench at about 14 degrees (iron ore's steepest on a plain belt, from memory) to its head over the yard belt's tail
+  note: 1.4 m, from the feeder in the pit east through the hopper's east portal and up its trench at about 12 degrees (low enough to clear the deck's underside in the portal) to its head over the yard belt's tail
 - kind: conveyor
   name: yard belt
   run: run.belt-1400
@@ -127,8 +127,8 @@ links:
   name: hopper supply
   run: run.cable-400v-120mm2
   ends: ['edge:lv-hopper', 'H:power-in']
-  from: [-122.0, 3.0, 1.0]
-  to: [-116.0, 3.0, 1.0]
+  from: [-126.0, 3.0, 1.0]
+  to: [-120.0, 3.0, 1.0]
   length: 6.0
   item: material.copper
   mass: 86.0
@@ -157,8 +157,8 @@ links:
   note: the same, along the south bed
 - kind: road
   name: truck approach
-  from: [-112.0, -49.8113446486123, 0.0]
-  to: [-112.0, -5.6, 0.0]
+  from: [-116.0, -49.8113446486123, 0.0]
+  to: [-116.0, -5.6, 0.0]
   length: 44.21
   item: good.concrete
   mass: 222800.0
@@ -172,7 +172,7 @@ ground:
 - {what: Support footings, item: good.concrete, volume: 6.08, note: 'feet under the belts'' stands, the return''s seats, the spray posts and the transfer; measured on blender''s layout (candidate v01)', mass: 14590.0}
 - {what: 'Tripper return stands, trench guards and spray posts', item: material.structural-steel-a36, volume: 0.7643, note: 'what is left of the 32,158 kg of belt and spray steel measured on blender''s layout (candidate v01) once the belts are runs (their stringers, trestles and transfers the runs''): about 6 t, invented, to measure again', mass: 6000.0}
 - {what: Bed pads, item: good.concrete, volume: 1680.0, note: 'two pads 105 x 40 m, 0.2 m, at y -28 and 28, sloped to drains; measured on blender''s layout (candidate v01)', mass: 4032000.0}
-totals: {rate: 0.0, power: 1580000.0, heat: 0.0, water: 0.2, mass: 6199000.0, against_module: 'module.ore-yard: one box 200 x 100 x 15 m, holding 150 kt. This layout: two beds 105 m long, 40 m across and 15 m high (iron ore at 2400 kg/m3 lying at 37 degrees) hold the same; 1.58 MW with every drive running, against the module''s 0.5; 1,025 t of plant and supports, 5,174 t of concrete.'}
+totals: {rate: 0.0, power: 1580000.0, heat: 0.0, water: 0.2, mass: 6200000.0, against_module: 'module.ore-yard: one box 200 x 100 x 15 m, holding 150 kt. This layout: two beds 105 m long, 40 m across and 15 m high (iron ore at 2400 kg/m3 lying at 37 degrees) hold the same; 1.58 MW with every drive running, against the module''s 0.5; 1,025 t of plant and supports, 5,174 t of concrete.'}
 staff:
 - {profession: profession.docker, count: 3}
 - {profession: profession.clerk, count: 1}

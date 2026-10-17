@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
 identity: {key: unit.disc-filter-2, name: 'Disc filters, 2', description: 'Two vacuum disc filters end to end take the water out of the mill''s slurry (70% solids, 33.2 kg/s of ore) down to 9%: each has 4 discs 3.15 m across on a 0.6 m hollow shaft (60 m2, both faces), both shafts on one line along x at y 0, 3.7 m up, turning about once a minute in open U troughs (3.40 m wide, 4 m long: x -5 to -1 and 1 to 5) with agitators, each driven from its outer end (x -6 to -5, 5 to 6). The discs rise on the +y side and fall on the -y side, where the cake is blown off into a short steep chute beside each disc, straight down onto the layout''s cake belt, which runs along x under them all at y -2.4, 1 m up (x -6 to 6); no transfer inside the unit. Slurry in by a distribution box between the troughs (local 0, 0, 3) that splits it between them; on the +y side two filtrate receivers (1.6 m across, 3 m tall, at (-3, 3) and (3, 3)), the vacuum pumps between them (288 kW, x -1.5 to 1.5, y 2.5 to 4) and the
-    filtrate pump; the filtrate (10.9 kg/s) out at (-6, 3, 0.5) back to the mill; the pumps'' air out of a vent at (0, 3.5, 5.5); 400 V supply at (6, 3.5, 0.5). Its ports (SFO 25): slurry in at the box''s top, DN 150; the filtrate out at (-6, 3, 0.5), DN 100, facing -x; the cake at the chutes'' feet over the belt, (-3, -2.4, 1.9) and (3, -2.4, 1.9); the 400 V box facing +x. Its parts span y -2.55 to 4 about the local origin (the chutes to the pump skid): its width is that extent, not centred.'}
+    filtrate pump; the filtrate (10.9 kg/s) out at (-6, 3, 0.5) back to the mill; the pumps'' air out of a vent at (0, 3.5, 5.5); 400 V supply at (6, 3.5, 0.5). Its ports (SFO 25): slurry in at the box''s top, DN 150; the filtrate out at (-6, 3, 0.5), DN 100, facing -x; the cake at the chutes'' feet over the belt, (-3, -2.4, 1) and (3, -2.4, 1) (blender''s measure: the chutes end at z 1.0); the 400 V box facing +x. Its parts span y -2.55 to 4 about the local origin (the chutes to the pump skid): its width is that extent, not centred.'}
 size_class: 2
 fits: plant-mount.bay-s2
 physical: {length: 12.0, width: 6.6, height: 6.0, mass: 29810.0}
@@ -50,7 +50,7 @@ ports:
   half: androgynous
   make: bolted
   connector: connector.chute-dn400
-  at: [-3.0, -2.4, 1.9]
+  at: [-3.0, -2.4, 1.0]
   facing: [0.0, 0.0, -1.0]
   note: the west filter's four chutes, onto the layout's cake belt
 - id: cake-2
@@ -62,7 +62,7 @@ ports:
   half: androgynous
   make: bolted
   connector: connector.chute-dn400
-  at: [3.0, -2.4, 1.9]
+  at: [3.0, -2.4, 1.0]
   facing: [0.0, 0.0, -1.0]
   note: the east filter's four
 - id: power-in
@@ -90,11 +90,10 @@ ports:
   note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
 product: product.disc-filter-2
 envelope:
-- [-6.001, -1.6, 1.6, 6.001, 4.001, 5.501]
-- [-6.001, -2.549, 1.9, 6.001, -1.6, 5.501]
-- [-6.001, 2.0, -0.001, 6.001, 4.001, 1.6]
-model_requests:
-- {work: measure, of_version: 1, asked: '2026-10-17', by: registry, because: 'Measure its envelope boxes from v1: the cake belt runs along x under the chutes at y -2.4, its top 1.4 m up, and the boxes were cut by hand to leave it a channel (y -2.55 to -1.6 below the chutes'' feet at 1.9 m). Say where the trough legs and chutes really stand.'}
+- [-6.0, -1.6, 0.0, 6.0, 4.0, 5.5]
+- [-5.025, -2.01, 2.0, 5.025, 1.7, 3.7]
+- [-5.125, -2.547, 1.0, -0.875, -1.828, 3.929]
+- [0.875, -2.547, 1.0, 5.125, -1.828, 3.929]
 life: 788940000
 visual: {format: freefall-model/1, path: models/disc-filter-2/v1, manifest_sha256: 5c5e751207d166c8c9627c818b4c2c5ebc3b8ed0f8fbaeea3568e100894aeefc, version: 1, triangles: 26756}
 basis:

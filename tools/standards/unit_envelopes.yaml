@@ -242,10 +242,11 @@ unit.crating-line-steel:
 - [-6.002, -2.021, -0.001, 6.001, 2.001, 3.002]
 unit.crop-saws:
 - [-5.852, -4.501, -0.001, 5.792, 4.641, 2.842]
-unit.disc-filter-2:     # (the cake belt's way left open under the chutes, y -2.55 to -1.6 below the chutes' feet at 1.9 m, as the unit's description sets it; the trough legs to measure)
-- [-6.001, -1.6, 1.6, 6.001, 4.001, 5.501]
-- [-6.001, -2.549, 1.9, 6.001, -1.6, 5.501]
-- [-6.001, 2.0, -0.001, 6.001, 4.001, 1.6]
+unit.disc-filter-2:     # (measured from v1 by blender, 2026-10-17, on a named copy of the installed model: central_and_rear_structure, upper_troughs_and_brackets, chutes_west, chutes_east; plant-kit-audit/rework-20261017/disc-measurement-report.json)
+- [-6.0, -1.6, 0.0, 6.0, 4.0, 5.5]
+- [-5.025, -2.01, 2.0, 5.025, 1.7, 3.7]
+- [-5.125, -2.547, 1.0, -0.875, -1.828, 3.929]
+- [0.875, -2.547, 1.0, 5.125, -1.828, 3.929]
 unit.dri-cooling-loop:
 - [-6.001, -4.001, -0.002, 5.531, 4.002, 15.191]
 unit.electrolyser-block-20mw:
@@ -333,11 +334,12 @@ unit.top-gas-scrubber:
 - [-4.302, -4.302, 17.919, 4.302, 4.302, 23.001]
 - [-6.002, -4.451, -0.001, 6.001, 6.002, 21.602]
 - [-4.302, -4.302, 0.398, 4.302, 4.302, 21.602]
-unit.truck-dump-hopper:     # (its east half's underside open for the belt through the east portal, as blender's yard belt fit found it, candidate v02: to measure)
-- [-6.052, -5.152, -6.001, 0.0, 5.152, 2.001]
-- [0.0, -5.152, -1.2, 6.052, 5.152, 2.001]
-- [0.0, -5.152, -6.001, 6.052, -1.45, -1.2]
-- [0.0, 1.45, -6.001, 6.052, 5.152, -1.2]
+unit.truck-dump-hopper:     # (measured from v2 by model_measure.py, 2026-10-17, blender: bottom_feet_and_sill, north_supports, south_supports, upper_hopper_and_deck, west_feeder_and_body)
+- [0.71, -5.15, -6.0, 5.925, 5.15, -4.8]
+- [1.3, 1.2, -4.8, 5.7, 4.95, -2.2]
+- [1.3, -4.95, -4.8, 5.7, -1.2, -2.2]
+- [-6.05, -5.025, -2.2, 6.05, 5.025, 2.0]
+- [-5.925, -5.15, -6.0, 0.71, 5.15, -2.2]
 unit.vacuum-degasser-80t:
 - [-6.001, -4.652, -6.001, 5.902, 4.976, 2.702]
 unit.water-treatment:
