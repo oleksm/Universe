@@ -2883,7 +2883,7 @@
 - { record: unit.electrolyser-block-20mw-10bar, at: "2026-10-16T16:30:34Z", status: draft, summary: "changed", sha: "74ed70e350c64105" }
 - { record: unit.filter-press-2, at: "2026-10-16T19:40:41Z", status: draft, summary: "changed", sha: "0657631bfbde06c3" }
 - { record: unit.forklift-2t5, at: "2026-10-15T18:36:43Z", status: draft, summary: "changed", sha: "060854c588a349b1" }
-- { record: unit.furnace-transformer-14mva, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "0877d13561ca6bee" }
+- { record: unit.furnace-transformer-14mva, at: "2026-10-17T00:38:27Z", status: draft, summary: "changed: visual", sha: "fca543cb8da236a0" }
 - { record: unit.furnace-transformer-90mva, at: "2026-10-16T23:35:55Z", status: draft, summary: "changed", sha: "f58d6b4bb2179aad" }
 - { record: unit.gantry-crane-150t-moon, at: "2026-10-15T21:28:29Z", status: draft, summary: "changed: identity", sha: "e4182122c78d1dea" }
 - { record: unit.gantry-crane-20t-moon, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "1a51031d62b17cf9" }
@@ -2901,7 +2901,7 @@
 - { record: unit.ladle-car-80t, at: "2026-10-16T23:10:29Z", status: draft, summary: "changed", sha: "a5cc73933513cb7b" }
 - { record: unit.ladle-crane-150t, at: "2026-10-14T19:55:55Z", status: draft, summary: "changed", sha: "aa767b9adc1f891a" }
 - { record: unit.ladle-furnace-80t, at: "2026-10-14T18:15:58Z", status: draft, summary: "changed", sha: "9cf8dd025ee54189" }
-- { record: unit.ladle-furnace-80t-sealed, at: "2026-10-17T00:33:52Z", status: draft, summary: "changed: visual", sha: "2e322296ba28df9f" }
+- { record: unit.ladle-furnace-80t-sealed, at: "2026-10-17T00:38:27Z", status: draft, summary: "changed", sha: "7f9de18690b684b6" }
 - { record: unit.mill-crane-30t, at: "2026-10-16T19:40:41Z", status: draft, summary: "changed", sha: "8ec4bb60e1974d04" }
 - { record: unit.mould-car-12, at: "2026-10-14T20:49:23Z", status: draft, summary: "changed: identity", sha: "30b4c1cb9c96fef7" }
 - { record: unit.offgas-cooler-sealed, at: "2026-10-16T23:24:57Z", status: draft, summary: "changed", sha: "37dbfe7fe05fb2bf" }
