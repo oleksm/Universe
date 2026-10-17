@@ -7,18 +7,18 @@ identity:
   size_class: 2
   description: 'What a hull offers a hot radiator panel: the hull area it lies against stowed, the root hinge''s seats, and the engine''s coolant run to it.'
 envelope:
-  length: 36.3
-  width: 18.15
-  height: 0.715
+  length: 39.52
+  width: 25.93
+  height: 4.44
 bears:
-  mass: 27149.0
+  mass: 30330.0
 attachment:
   points: 4
   pattern: corners
   each:
-    tension: 199900.0
-    compression: 199900.0
-    shear: 99800.0
+    tension: 223400.0
+    compression: 223400.0
+    shear: 111500.0
 basis:
 - of:
   - envelope
