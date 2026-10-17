@@ -8165,3 +8165,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "operational tilt acceptance (blender: 31 diagnostic poses clear, the sleeve and chute parked; the axis assumed)"
+  - key: unit.eaf-vessel-80t-sealed
+    version: 3
+    manifest_sha256: "0f93f757a87cf1a87c6c95a0414dc3cf3394ee5764ce88f8682db9a22d0c9f34"
+    installed: 008ca0fe
+    game: "the loader (world::assets) at fso 008ca0fe"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/eaf-vessel-80t-sealed/v3 (2271108 bytes, bounds [-5.85, 0.0, -5.2] to [5.85, 14.0, 6.2433]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "operational tilt acceptance (blender: 31 diagnostic poses clear with the clamp open; the axis assumed)"
