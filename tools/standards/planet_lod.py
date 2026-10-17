@@ -19,7 +19,7 @@ def load(tree):
     """Every Planet Simulator record, by kind, then by key."""
     import yaml
     out = {k: {} for k in ORDER}
-    for f in sorted(glob.glob(os.path.join(tree, "PlanetSim", "metadata", "**", "*.yaml"), recursive=True)):
+    for f in sorted(glob.glob(os.path.join(tree, "PlanetSim", "metadata", "**", "*.yaml"), recursive=True) + glob.glob(os.path.join(tree, "PlanetLOD", "metadata", "**", "*.yaml"), recursive=True)):      # (the meshing models are Planet LOD's)
         d = yaml.safe_load(open(f, encoding="utf-8")) or {}
         k = (d.get("identity") or {}).get("key", "")
         if k.split(".")[0] in out:

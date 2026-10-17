@@ -1,0 +1,253 @@
+# yaml-language-server: $schema=../../schema/planet-model.schema.yaml
+identity:
+  key: planet-model.anchor
+  name: Anchor model
+  about: 'The planet''s height and coastline mesh: the coast and every peak and dip are exact; contour rings round them at an exponential step are the height source; every other vertex takes its height from the two nearest
+    lines, below and above. Nothing else is in it.'
+  words: 'The owner, 17 Oct 2026: "The coast is exact at every level - is one anchor. The peak / dip is another anchor. Around those we weave the detail of contour lines with an exponential step. Nothing else is there."'
+purpose: 'To mesh a planet''s ground from its sim with the fewest exact things: the coast and the anchors true at every level, every other height read from the model''s own lines. A height and coastline model: it says nothing
+  of colour.'
+anchors:
+- name: coast
+  kind: line
+  found_by: The field's 0 m loops.
+  exact: true
+  line: planet-line.coast
+  field: planet-field.height
+- name: peaks and dips
+  kind: point
+  found_by: 'The roots of steepest ascent and descent on the field, land and sea: every one an exact mesh vertex at its height.'
+  exact: true
+  field: planet-field.height
+rings:
+  formula: 'ring_k = h_anchor -/+ d0 (2^k - 1), k = 1, 2, ...: 50, 150, 350, 750, 1,550, 3,150 m from the anchor with d0 50 m'
+  nearest: 'A point belongs to the nearer of its two anchors in height: the peak above it by steepest ascent, or the coast or dip below it by steepest descent.'
+  meshed: false
+height_rule:
+  formula: 'h = L1 + (L2 - L1) d1 / (d1 + d2): L1 and L2 the heights of the nearest line below the vertex and the nearest above, d1 and d2 the shortest distances to them'
+  lines: Any anchor's rings, the coast at 0 m, and the anchor points at their own heights.
+  fallback: 'None: no fallback to the sim''s field (100 % of heights from the lines on earth_s30).'
+meshed_lines:
+- name: coast band
+  what: 'The coastline and the coast''s own first 3 rings each side (+-50, 150, 350 m): their segments are mesh edges.'
+  step: 5000.0
+  clear: No other vertex within 0.6 of the coast step of a coast or band vertex; the sea-side band rings at a 30 km step.
+vertex_pattern:
+- zone: land, from the coast band and the land anchors
+  spacing:
+  - 15000.0
+  - 30000.0
+  note: graded outward
+- zone: open land
+  spacing:
+  - 60000.0
+- zone: sea, from the band and the sea anchors
+  spacing:
+  - 120000.0
+  - 240000.0
+  note: graded outward
+- zone: shelf (above -200 m)
+  spacing:
+  - 480000.0
+- zone: deep floor
+  spacing:
+  - 1600000.0
+triangulation: 'One spherical Delaunay triangulation of every vertex: watertight by construction.'
+face_rules:
+- A face whose three corners all lie on the coast and that spans water or land (a side longer than 2.5 coast steps) gets a vertex at the model's height.
+- Faces are drawn in their last corner's colour, so each triangle is turned (its winding kept) to put its deepest corner last if any corner is below sea level, else its highest.
+colour: Grey land and blue sea only; it invents no colours.
+source_field:
+- planet-field.height
+- planet-field.recent-height
+params:
+- name: d0
+  value: 50.0
+  unit: m
+  note: The first ring's step from its anchor.
+- name: ring ratio
+  value: 2.0
+  unit: '1'
+  note: Each step twice the last.
+- name: smoothing
+  note: 'The sim''s samples (30,000, about 130 km apart) as a smooth field: the sample mesh subdivided twice (butterfly positions, linear heights), one relaxation pass at lambda 0.5.'
+- name: source field
+  open: true
+  note: 'height (z), provisional: which height is present is open (z against r_z).'
+- name: band rings
+  source: BAND_K
+  value: 3.0
+  unit: '1'
+  note: The coast's rings meshed as lines, each side.
+- name: coast step
+  source: COAST_KM
+  value: 5000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 1000.0
+  note: Vertex step along the coast and the land-side band rings.
+- name: sea band step
+  source: SEA_BAND_KM
+  value: 30000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 1000.0
+  note: Vertex step along the sea-side band rings.
+- name: clearance
+  source: CLEAR
+  value: 0.6
+  unit: '1'
+  note: 'Times the coast step: no pattern vertex nearer a coast or band vertex, so the lines stay mesh edges.'
+- name: ring sampling
+  source: RING_SAMPLE_KM
+  value: 2000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 1000.0
+  note: Rings resampled this fine for distances; never vertices.
+- name: land grades
+  source: GRADE_KM
+  values:
+  - 15000.0
+  - 30000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 1000.0
+- name: open land
+  source: LAND_KM
+  value: 60000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 1000.0
+- name: sea grades
+  source: SEA_GRADE_KM
+  values:
+  - 120000.0
+  - 240000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 1000.0
+- name: shelf fill
+  source: SEA_FILL_KM
+  value: 480000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 1000.0
+- name: deep fill
+  source: DEEP_FILL_KM
+  value: 1600000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 1000.0
+- name: workers
+  value: 12.0
+  unit: '1'
+  note: Processes for the height pass.
+guarantees:
+- 'The coast exact at every level: 0 m on the field''s 0 m loops, its segments mesh edges.'
+- Every peak and dip, land and sea, an exact vertex at its own height.
+- Every other vertex's height strictly from the model's lines (rings, coast, anchors), never from the sim's field.
+- Watertight.
+leaves_out:
+- 'Contour rings as mesh lines (but the coast band): they are the height source only.'
+- 'Rivers, ridges and reducers: refinements on top.'
+- Colour beyond grey land and blue sea.
+rules:
+- Grey land, blue sea; never invent colours.
+- Contours are the height source, not mesh lines (except the coast band).
+- Every peak and dip, land and sea, is a vertex.
+- Don't drop a part of the spec when changing another.
+- One graph, refined in depth; a refinement only adds, as residuals over its parent; parent anchors stay exact; no rasters inside construction.
+results:
+- what: vertices
+  value: 238000.0
+  unit: '1'
+- what: triangles
+  value: 476000.0
+  unit: '1'
+  note: 358k land, 118k sea-only
+- what: peaks
+  value: 3350.0
+  unit: '1'
+  note: 255 on land
+- what: dips
+  value: 3246.0
+  unit: '1'
+  note: 67 on land
+- what: sea vertices
+  value: 34000.0
+  unit: '1'
+  note: band 18k, pattern 8k, anchors 6k
+- what: coast segments kept as mesh edges
+  value: 0.9995
+  unit: '1'
+  note: 48,255 of 48,280
+- what: band ring segments kept as mesh edges
+  value: 0.993
+  unit: '1'
+  note: 103,088 of 103,789
+- what: pattern heights from the model's lines
+  value: 1.0
+  unit: '1'
+- what: rms against the smoothed field, land
+  value: 61.0
+  unit: m
+  note: information, not the model's measure; p95 123 m
+- what: rms against the smoothed field, shelf
+  value: 37.0
+  unit: m
+  note: information, not the model's measure
+- what: time, whole planet
+  value: 38.0
+  unit: s
+  note: and about 2 s for the LOD view
+outputs:
+- path: ~/planet-data/meshes/<run>/anchor_base.npz
+  holds: v, z, tri, kind
+- path: ~/planet-data/views/<run>-anchor-base/
+  holds: 'the LOD app''s view, with peaks.json: every peak and dip with its height'
+app: The planetlod app's "peaks" chip reads peaks.json beside the view (planetlod-layers 41fdd5b9).
+implementations:
+- where: planet-trees-pgs2 tools/planet_anchors.py
+  state: predecessor
+  note: the contour model of 9 Oct 2026, a uniform 200 m step
+- where: planet-trees-pgs2 tools/anchor_mesher.py
+  state: current
+  note: 'at 9de220d: anchor_mesher.py RUN [--d0 50] [--workers 12] [--lod]'
+levels:
+- planet-level.planet
+- planet-level.cluster
+- planet-level.pattern
+- planet-level.square
+- planet-level.detail
+measured_by:
+- planet-measure.coast-fidelity
+- planet-measure.rms-against-samples
+status: draft
+basis:
+- of:
+  - identity
+  - anchors
+  - rings
+  - height_rule
+  - meshed_lines
+  - vertex_pattern
+  - triangulation
+  - face_rules
+  - rules
+  tier: derived
+  note: planet-trees-pgs2 docs/anchor-mesher.md (dd97098), the owner's words and rules, 17 Oct 2026.
+- of:
+  - params
+  - results
+  tier: derived
+  review: true
+  note: As built and run on earth_s30 (anchor_mesher.py 9de220d), all draft; the source field open.
