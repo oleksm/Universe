@@ -4376,7 +4376,7 @@
 - { record: template.wall-door, at: "2026-10-17T21:45:11Z", status: "", summary: "first tracked", sha: "5beb0a001571bf86" }
 - { record: template.wall-double-door, at: "2026-10-17T21:45:11Z", status: "", summary: "first tracked", sha: "2e13cecc785d47ab" }
 - { record: template.wall-glazed, at: "2026-10-17T21:45:11Z", status: "", summary: "first tracked", sha: "aba60bebf44f4ef6" }
-- { record: template.wall-insulated, at: "2026-10-17T21:45:11Z", status: "", summary: "first tracked", sha: "15a78436389b00be" }
+- { record: template.wall-insulated, at: "2026-10-17T23:15:00Z", status: "", summary: "changed: visual", sha: "bbe21ff7d2410107" }
 - { record: template.wall-roller, at: "2026-10-17T21:45:11Z", status: "", summary: "first tracked", sha: "300ff4cdf302d4e7" }
 - { record: template.wall-shopfront, at: "2026-10-17T21:45:11Z", status: "", summary: "first tracked", sha: "b6486dd1306087e5" }
 - { record: template.wall-window, at: "2026-10-17T21:45:11Z", status: "", summary: "first tracked", sha: "393a28673200baa9" }
