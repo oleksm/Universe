@@ -34,4 +34,55 @@ basis:
   - wave
   - built
   tier: derived
-  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical
+    feature catalogue.'
+- of:
+  - pinned_to
+  - spans
+  - dimensions
+  - layout
+  tier: sourced
+  source: Inman and Nordstrom 1971, On the tectonic and morphologic classification of coasts, Journal of Geology 79(1) (the
+    classes); reach and closing_min invented
+  review: true
+pinned_to: 'the run''s first pin, walking with the land on the left (a closed loop of one class: any of its pins, the lowest
+  crossing)'
+spans:
+- name: shore
+  meaning: 'the coast as a chain of pins, one at each exact crossing of the sea level between a land and a sea sample, land
+    on the left; profiles: onshore slope (1), offshore slope (1)'
+dimensions:
+- name: length
+  unit: m
+  meaning: along the shore chain
+  rule: measured on the span
+layout:
+- name: setting
+  unit: '1'
+  meaning: '1 collision (leading-edge) coast, 2 trailing-edge coast, 3 marginal-sea coast (not assigned yet: needs island
+    arcs)'
+  rule: a coast is a collision coast where a converging plate boundary lies within reach of it, else trailing-edge (Inman
+    and Nordstrom 1971, On the tectonic and morphologic classification of coasts, Journal of Geology 79(1))
+  formula: collision if a boundary closing at closing_min or faster lies within reach
+  params:
+  - name: reach
+    value: 300000.0
+    unit: m
+    said_as:
+      unit: km
+      factor: 1000.0
+    meaning: how far inland or offshore a converging boundary makes a coast a collision coast
+    open: true
+    note: 'invented, to review: collision coasts lie within a few hundred km of their trench or suture'
+  - name: closing_min
+    value: 3.168808781402895e-10
+    unit: m/s
+    said_as:
+      unit: cm/yr
+      factor: 3.168808781402895e-10
+    meaning: the slowest closing that counts as converging
+    open: true
+    note: invented, to review
+- name: closed
+  unit: '1'
+  meaning: 1 when the run is a whole loop of one class (the chain closes on its first pin)

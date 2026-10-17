@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.particle-id
+  name: Particle id
+  about: 'A crust particle''s identity: unique, never reused, kept while the particle lives (so a collision front can count each particle once).'
+unit: '1'
+producer:
+  where: planet-forge crates/forge-core/src/models/plates/init.rs, spreading.rs
+  file: checkpoint
+  key: tables/particles/planet-field.particle-id
+per: particle
+also_from:
+- where: stages/plates.py
+  key: '(none: the Python keys fronts by array index, which shifts as particles are removed)'
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: forge''s plates port (branch plates-foundation) and the Python sim (stages/plates.py), read from the code.'

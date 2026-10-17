@@ -1,29 +1,68 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.plate-reorganisation
   name: Reorganisation clock, supercontinent insulation and plate count keeping
-  about: 'After each step: a plate whose continental particle share (counts from the start of the step, over the current total)
-    exceeds BIG_SHARE starts/keeps big_since; past INSULATE_MYR it is ''insulated''. If plates < 0.75*PLATES the reorganisation
-    is brought forward to now. At reorganisation time (next_reorg, redrawn uniform in REORGANISE_MYR, counted) or if any plate
-    is insulated: empty plates are deleted; insulated plates are rifted (any cut). Only when none is insulated, extra top-up
-    rifts = int(uniform < RIFT_CHANCE) + max(0, PLATES - #plates - 2), each on the plate with most ocean particles (RIFT_TOPUP_OCEAN)
-    or most particles, rifted ocean-only if RIFT_TOPUP_OCEAN.'
+  about: 'After each step: a plate whose continental particle share (counts from the start of the step, over the current total) exceeds BIG_SHARE starts/keeps big_since; past INSULATE_MYR it is ''insulated''. If plates < 0.75*PLATES
+    the reorganisation is brought forward to now. At reorganisation time (next_reorg, redrawn uniform in REORGANISE_MYR, counted) or if any plate is insulated: empty plates are deleted; insulated plates are rifted (any cut). Only when
+    none is insulated, extra top-up rifts = int(uniform < RIFT_CHANCE) + max(0, PLATES - #plates - 2), each on the plate with most ocean particles (RIFT_TOPUP_OCEAN) or most particles, rifted ocean-only if RIFT_TOPUP_OCEAN.'
 area: plates
 clock:
-  when: every step check; reorganisations every 100-250 Myr (uniform), or immediately when plates < 0.75*PLATES, or when a
-    plate is insulated
+  when: every step check; reorganisations every 100-250 Myr (uniform), or immediately when plates < 0.75*PLATES, or when a plate is insulated
 reads:
-- name: conts (start-of-step per-plate continental counts)
+- name: w.xplate
+  field: planet-field.particle-plate
   unit: '1'
-  field: planet-field.plate
+- name: w.xcont
+  field: planet-field.particle-continental
+  unit: '1'
+- name: w.plates keys
+  field: planet-field.plate-id
+  unit: '1'
 - name: w.plates[pid].big_since
-  unit: Myr (code)
+  field: planet-field.plate-big-since
+  unit: s
+- name: next_reorg
+  field: planet-field.next-reorganisation
+  unit: s
 writes:
 - name: next_reorg
-  unit: Gyr (code)
-- name: w.events['reorganisations']
-- name: w.plates
+  field: planet-field.next-reorganisation
+  unit: s
+- name: w.plates[pid].big_since
+  field: planet-field.plate-big-since
+  unit: s
+- name: w.plates (empty deleted)
+  field: planet-field.plate-id
+  unit: '1'
+- name: w.plates (empty deleted)
+  field: planet-field.plate-axis
+  unit: '1'
+- name: w.plates (empty deleted)
+  field: planet-field.plate-rate
+  unit: '1'
+- name: w.plates (empty deleted)
+  field: planet-field.plate-base
+  unit: '1'
+- name: w.plates (empty deleted)
+  field: planet-field.plate-torque
+  unit: '1'
+- name: w.plates (empty deleted)
+  field: planet-field.plate-force
+  unit: '1'
+- name: w.plates (empty deleted)
+  field: planet-field.plate-spin
+  unit: rad/s
+- name: w.plates (empty deleted)
+  field: planet-field.plate-collided
+  unit: '1'
+- name: targets, topup
+  field: planet-field.plate-rift-request
+  unit: '1'
+  meaning: 1 any cut, 2 ocean-only
+- name: (forge) plate rotation
+  field: planet-field.plate-rotation
+  unit: '1'
+  meaning: unit quaternion since the run's start
 events_emitted:
 - event: planet-event.reorganisation
   where: stages/plates.py:1438
@@ -68,8 +107,7 @@ params:
 - name: RIFT_TOPUP_OCEAN
   env: SIM_RIFT_TOPUP_OCEAN
   setting: 'True'
-  meaning: top-up rifts (count keeping) cut the plate with the most ocean-floor particles, through ocean floor only; falls
-    back to any cut if none found
+  meaning: top-up rifts (count keeping) cut the plate with the most ocean-floor particles, through ocean floor only; falls back to any cut if none found
   source: stages/plates.py:197
   note: 'env ''1'' default; 17 Oct: top-ups cut continents ~8 times in 160 Myr after 700 Ma; unit: bool'
 - name: min plate fraction
@@ -83,9 +121,8 @@ params:
   meaning: 'top-ups = PLATES - #plates - 2 (plus chance)'
   source: stages/plates.py:1442
 random_draws:
-- 'next_reorg = t + rng.uniform(100,250)/1e3 at each scheduled reorganisation; rng.uniform() for RIFT_CHANCE drawn only when
-  no plate is insulated (conditional expression evaluated lazily); then each rift''s draws in order: insulated targets first,
-  then top-ups.'
+- 'next_reorg = t + rng.uniform(100,250)/1e3 at each scheduled reorganisation; rng.uniform() for RIFT_CHANCE drawn only when no plate is insulated (conditional expression evaluated lazily); then each rift''s draws in order: insulated
+  targets first, then top-ups.'
 invariants:
 - plate count is kept near PLATES (soft floor 0.75*PLATES)
 - an insulated reorganisation adds no top-ups
@@ -104,5 +141,4 @@ basis:
   - reads
   - writes
   tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
-    code at planet-sim-landform 9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'

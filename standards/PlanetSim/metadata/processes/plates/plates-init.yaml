@@ -46,6 +46,12 @@ writes:
 - name: w.xsuture
   field: planet-field.particle-suture
   unit: s
+- name: (forge) particle id
+  field: planet-field.particle-id
+  unit: '1'
+- name: (forge) next particle id
+  field: planet-field.particle-id-next
+  unit: '1'
 - name: w.plates keys
   field: planet-field.plate-id
   unit: '1'
@@ -73,6 +79,10 @@ writes:
 - name: w.lines
   unit: Relief|None
   meaning: relief layer store
+- name: (forge) plate rotation
+  field: planet-field.plate-rotation
+  unit: '1'
+  meaning: unit quaternion since the run's start
 params:
 - name: PLATES
   env: SIM_PLATES

@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.particle-id-next
+  name: Next particle id
+  about: The id the next new particle gets.
+unit: '1'
+producer:
+  where: planet-forge crates/forge-core/src/models/plates/init.rs, spreading.rs
+  file: checkpoint
+  key: scalars/planet-field.particle-id-next
+per: global
+also_from:
+- where: stages/plates.py
+  key: (none)
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: forge''s plates port (branch plates-foundation) and the Python sim (stages/plates.py), read from the code.'

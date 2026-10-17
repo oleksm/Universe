@@ -1,23 +1,74 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.plate-welding
   name: Welding of colliding plates into one
-  about: For each plate pair with a collision front, the loser particles seen within the last WELD_MYR are kept; if their
-    count*cell >= WELD_AREA and both plates exist, the higher plate id is merged into the lower (all its particles relabelled,
-    plate deleted) and a weld is counted. Fronts with nothing recent are dropped.
+  about: For each plate pair with a collision front, the loser particles seen within the last WELD_MYR are kept; if their count*cell >= WELD_AREA and both plates exist, the higher plate id is merged into the lower (all its particles
+    relabelled, plate deleted) and a weld is counted. Fronts with nothing recent are dropped.
 area: plates
 clock:
   when: every step, after collisions
 reads:
 - name: fronts
-  unit: 'dict (u,v)->{particle: Myr}'
-  meaning: collision fronts
+  field: planet-field.particle-front-low
+  unit: '1'
+- name: fronts
+  field: planet-field.particle-front-high
+  unit: '1'
+- name: fronts
+  field: planet-field.particle-front-time
+  unit: s
+- name: w.plates keys
+  field: planet-field.plate-id
+  unit: '1'
+- name: w.xplate
+  field: planet-field.particle-plate
+  unit: '1'
 writes:
-- name: w.xplate, w.plates
-  meaning: merged plate
-- name: w.events['welds']
-  unit: count
+- name: w.xplate
+  field: planet-field.particle-plate
+  unit: '1'
+- name: w.plates
+  meaning: the higher plate removed
+- name: w.plates[v] removed
+  field: planet-field.plate-id
+  unit: '1'
+- name: w.plates[v] removed
+  field: planet-field.plate-axis
+  unit: '1'
+- name: w.plates[v] removed
+  field: planet-field.plate-rate
+  unit: '1'
+- name: w.plates[v] removed
+  field: planet-field.plate-base
+  unit: '1'
+- name: w.plates[v] removed
+  field: planet-field.plate-torque
+  unit: '1'
+- name: w.plates[v] removed
+  field: planet-field.plate-force
+  unit: '1'
+- name: w.plates[v] removed
+  field: planet-field.plate-spin
+  unit: rad/s
+- name: w.plates[v] removed
+  field: planet-field.plate-big-since
+  unit: s
+- name: w.plates[v] removed
+  field: planet-field.plate-collided
+  unit: '1'
+- name: fronts popped
+  field: planet-field.particle-front-low
+  unit: '1'
+- name: fronts popped
+  field: planet-field.particle-front-high
+  unit: '1'
+- name: fronts popped
+  field: planet-field.particle-front-time
+  unit: s
+- name: (forge) plate rotation
+  field: planet-field.plate-rotation
+  unit: '1'
+  meaning: unit quaternion since the run's start
 events_emitted:
 - event: planet-event.weld
   where: stages/plates.py:1117
@@ -25,8 +76,7 @@ params:
 - name: WELD_AREA
   value: 3000000000000.0
   unit: m2
-  meaning: two plates weld when the distinct losing continental particles of their collision within WELD_MYR, x cell, reach
-    this
+  meaning: two plates weld when the distinct losing continental particles of their collision within WELD_MYR, x cell, reach this
   source: stages/plates.py:241
   note: about 120 cells of 160 km (chosen)
 - name: WELD_MYR
@@ -41,8 +91,7 @@ random_draws:
 - none
 invariants:
 - after a weld the merged plate keeps the lower id and its own axis/torque/rate
-- particle indices in fronts are NOT updated on keep/remesh (unverified whether they then point at other particles; they are
-  only counted, so only the count matters)
+- particle indices in fronts are NOT updated on keep/remesh (unverified whether they then point at other particles; they are only counted, so only the count matters)
 depends_on:
 - planet-process.collision-and-docking
 backends:
@@ -58,5 +107,4 @@ basis:
   - reads
   - writes
   tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
-    code at planet-sim-landform 9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'

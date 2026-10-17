@@ -1,26 +1,78 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-process.plate-rifting
   name: 'Rifting: breaking a plate along the weakest wandering cut'
-  about: '_rift(pid): needs >= 20 particles. Per particle strength: ocean 0.1, continent 1.0, craton (age > CRATON_MYR) CRATON_STRENGTH,
-    ever-sutured continent SUTURE_STRENGTH (overrides craton). Up to RIFT_CANDIDATES (x4 for ocean-only) candidates: a great-circle
-    plane through the plate centroid (or, ocean-only, through a random ocean particle of the plate) with random normal cross(through,
-    random_unit), warped by a _bumps(40, 0.25) field x WANDER. Rejected if a side has < 20% or > 80% of particles; if RIFT_MIN_CONT
-    > 0 and either side has a nonzero continental volume below RIFT_MIN_CONT of the world''s; if ocean-only and its band crosses
-    more than max(2, RIFT_OCEAN_EDGE*plate''s continental count) continental particles. Cost = summed strength in the band
-    |f| < 0.6*gap; cheapest wins. No valid ocean cut -> retry any cut; none at all -> rifts_refused. The side f > 0 becomes
-    a new plate (id max+1); both halves get axes spinning away from each other (axis = c x (tangent from the other''s centroid)),
-    torque = axis*1e-3; the new plate''s rate=base=1, the old keeps its rate/base and loses big_since.'
+  about: '_rift(pid): needs >= 20 particles. Per particle strength: ocean 0.1, continent 1.0, craton (age > CRATON_MYR) CRATON_STRENGTH, ever-sutured continent SUTURE_STRENGTH (overrides craton). Up to RIFT_CANDIDATES (x4 for ocean-only)
+    candidates: a great-circle plane through the plate centroid (or, ocean-only, through a random ocean particle of the plate) with random normal cross(through, random_unit), warped by a _bumps(40, 0.25) field x WANDER. Rejected if
+    a side has < 20% or > 80% of particles; if RIFT_MIN_CONT > 0 and either side has a nonzero continental volume below RIFT_MIN_CONT of the world''s; if ocean-only and its band crosses more than max(2, RIFT_OCEAN_EDGE*plate''s continental
+    count) continental particles. Cost = summed strength in the band |f| < 0.6*gap; cheapest wins. No valid ocean cut -> retry any cut; none at all -> rifts_refused. The side f > 0 becomes a new plate (id max+1); both halves get axes
+    spinning away from each other (axis = c x (tangent from the other''s centroid)), torque = axis*1e-3; the new plate''s rate=base=1, the old keeps its rate/base and loses big_since.'
 area: plates
 clock:
   when: called by reorganisation (see plate-reorganisation)
 reads:
-- name: w.xplate, w.xcont, w.xvol, w.xage, w.xsuture, w.x
+- name: w.x
+  field: planet-field.particle-position
+  unit: '1'
+- name: w.xplate
+  field: planet-field.particle-plate
+  unit: '1'
+- name: w.xcont
+  field: planet-field.particle-continental
+  unit: '1'
+- name: w.xvol
+  field: planet-field.particle-volume
+  unit: m3
+- name: w.xage
+  field: planet-field.particle-age
+  unit: s
+- name: w.xsuture
+  field: planet-field.particle-suture
+  unit: s
+- name: w.plates keys
+  field: planet-field.plate-id
+  unit: '1'
+- name: (called with pid, ocean_only)
+  field: planet-field.plate-rift-request
+  unit: '1'
 writes:
-- name: w.xplate, w.plates
-  meaning: new plate
-- name: w.events['rifts'|'rifts_refused']
+- name: w.xplate
+  field: planet-field.particle-plate
+  unit: '1'
+- name: w.plates[new], w.plates[pid]
+  field: planet-field.plate-id
+  unit: '1'
+- name: w.plates[new], w.plates[pid]
+  field: planet-field.plate-axis
+  unit: '1'
+- name: w.plates[new], w.plates[pid]
+  field: planet-field.plate-rate
+  unit: '1'
+- name: w.plates[new], w.plates[pid]
+  field: planet-field.plate-base
+  unit: '1'
+- name: w.plates[new], w.plates[pid]
+  field: planet-field.plate-torque
+  unit: '1'
+- name: w.plates[new], w.plates[pid]
+  field: planet-field.plate-force
+  unit: '1'
+- name: w.plates[new], w.plates[pid]
+  field: planet-field.plate-spin
+  unit: rad/s
+- name: w.plates[new], w.plates[pid]
+  field: planet-field.plate-big-since
+  unit: s
+- name: w.plates[new], w.plates[pid]
+  field: planet-field.plate-collided
+  unit: '1'
+- name: (request done)
+  field: planet-field.plate-rift-request
+  unit: '1'
+- name: (forge) plate rotation
+  field: planet-field.plate-rotation
+  unit: '1'
+  meaning: unit quaternion since the run's start
 events_emitted:
 - event: planet-event.rift
   where: stages/plates.py:458 (zones.rift), counter stages/plates.py:474
@@ -39,8 +91,7 @@ params:
   said_as:
     unit: Myr
     factor: 1500.0
-  meaning: 'continental particles older than this are craton: rift strength CRATON_STRENGTH; also gates layered intrusions
-    under hotspots'
+  meaning: 'continental particles older than this are craton: rift strength CRATON_STRENGTH; also gates layered intrusions under hotspots'
   source: stages/plates.py:64
   note: chosen
 - name: CRATON_STRENGTH
@@ -58,16 +109,14 @@ params:
 - name: WANDER
   value: 0.35
   unit: '1'
-  meaning: amplitude of the smooth random field (_bumps) that warps initial Voronoi plate cells and rift cut surfaces away
-    from great circles
+  meaning: amplitude of the smooth random field (_bumps) that warps initial Voronoi plate cells and rift cut surfaces away from great circles
   source: stages/plates.py:74
   note: Vauchez et al. 1997 (chosen)
 - name: RIFT_MIN_CONT
   env: SIM_RIFT_MIN_CONT
   value: 0.05
   unit: '1'
-  meaning: a candidate cut is rejected if either side keeps a nonzero continental volume below this share of the world's (no
-    slivers); 0 = off
+  meaning: a candidate cut is rejected if either side keeps a nonzero continental volume below this share of the world's (no slivers); 0 = off
   source: stages/plates.py:192
   note: '17 Oct: s33-s35 ended with 8-10 landmasses; Australia ~5% of land'
 - name: RIFT_OCEAN_EDGE
@@ -121,10 +170,14 @@ params:
   unit: '1'
   meaning: 'unverified: the code names it new torque scale without saying what it is'
   source: stages/plates.py:472
+- name: rift bumps scale
+  value: 0.3333333333333333
+  unit: '1'
+  meaning: the cut's _bumps sum divided by 3 (about -1..1), as the plates' warp
+  source: stages/plates.py:402
 random_draws:
-- 'Per candidate: (ocean-only) rng.integers(len(ocean_pts)); random_unit = normal(3); _bumps(40) = normal(40,3) + normal(40).
-  Rejected candidates still consume draws. If a fallback recursion happens, it draws again. apart() draws random_unit only
-  if a degenerate axis. Draws happen even for candidates rejected by balance.'
+- 'Per candidate: (ocean-only) rng.integers(len(ocean_pts)); random_unit = normal(3); _bumps(40) = normal(40,3) + normal(40). Rejected candidates still consume draws. If a fallback recursion happens, it draws again. apart() draws random_unit
+  only if a degenerate axis. Draws happen even for candidates rejected by balance.'
 invariants:
 - both halves have 20-80% of the plate's particles
 - no half with 0 < continental volume < RIFT_MIN_CONT x world's
@@ -144,5 +197,4 @@ basis:
   - reads
   - writes
   tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
-    code at planet-sim-landform 9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'

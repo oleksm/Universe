@@ -44,6 +44,13 @@ reads:
   field: planet-field.plate-force
   unit: '1'
   meaning: slab pull, suction, ridge push from subduction and gap processes
+- name: collided
+  field: planet-field.plate-collided
+  unit: '1'
+  meaning: plates stalled by a collision in the last substep do not recover
+- name: (forge) plate rotation
+  field: planet-field.plate-rotation
+  unit: '1'
 writes:
 - name: w.x
   field: planet-field.particle-position
@@ -79,6 +86,14 @@ writes:
 - name: dt
   unit: Myr (code)
   meaning: this step's length
+- name: collided
+  field: planet-field.plate-collided
+  unit: '1'
+  meaning: cleared once read
+- name: (forge) plate rotation
+  field: planet-field.plate-rotation
+  unit: '1'
+  meaning: unit quaternion since the run's start
 events_emitted:
 - event: planet-event.relief-move
   where: stages/plates.py:997

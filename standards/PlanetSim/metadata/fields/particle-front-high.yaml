@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.particle-front-high
+  name: Particle collision front, higher plate
+  about: The higher plate id of that plate pair; 4294967295 when none.
+unit: '1'
+producer:
+  where: planet-forge crates/forge-core/src/models/plates/collision.rs
+  file: checkpoint
+  key: tables/particles/planet-field.particle-front-high
+per: particle
+missing: '4294967295: in no collision front'
+also_from:
+- where: stages/plates.py
+  key: fronts[(u, v)] keys
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: forge''s plates port (branch plates-foundation) and the Python sim (stages/plates.py), read from the code.'
