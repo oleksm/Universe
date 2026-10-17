@@ -12,11 +12,11 @@ identity:
 size_class: 1
 fits: mount.radiator-hot-s1
 physical:
-  mass: 3572
+  mass: 4147
   volume: 6.5
-  length: 15.3
-  width: 8.565
-  height: 0.3
+  length: 16.76
+  width: 9.64
+  height: 2.349
 built_of:
   parts: thermal-radiator-hot-s1
   list:
@@ -75,6 +75,16 @@ built_of:
     height: 0.3
     item: stock.mo-tb-12x0p5
     quantity: 373.7
+    module: module.machining-centre
+  - code: RAH1-06
+    name: Fixed manifolds, drops and hose cuffs
+    description: The fixed DN250 supply and return collectors beyond the hose pod (ports at y -5.5), each with three DN125 drops to the fixed hose cuffs at x -0.65; molybdenum. Mass as blender's analytic figure from the model (2026-10-17).
+    mass: 575.33
+    length: 1.46
+    width: 1.0
+    height: 1.0
+    item: stock.mo-tb-12x0p5
+    quantity: 661.4
     module: module.machining-centre
 making:
   module: module.assembly-shop
@@ -156,3 +166,8 @@ basis:
   review: true
   note: 'The hinge crossing (2026-10-17, after blender''s reach check: a 90 degree swing stretches a straight 0.6 m bellows 6 to 46 %): three DN125 Mo-Re corrugated hoses per header wound round the hinge axis. Bend radius 0.6 m is 4
     x outside, a low-cycle allowance from memory of metal-hose practice (static about 2-3 x, dynamic about 10 x); to be checked against a Mo-Re hose''s fatigue at 1,600 K.'
+- of:
+  - physical
+  tier: derived
+  note: 'Rest bounds of blender''s final S1 draft (2026-10-17): x -1.46 to 15.3, y -5.5 to 4.14, z -1.269 to 1.08: 16.76 x 9.64 x 2.35 m with the hose pod and manifolds; the panel itself stays 15.3 x 7.65 x 0.3. Mass 3,572 + 575 kg
+    of fixed manifolds and drops.'
