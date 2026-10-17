@@ -17,6 +17,13 @@ built_of:
 - {what: 'Drives, belts and machinery house', item: good.electric-motors, mass: 50000.0, note: 'the wheel''s 8 t drive, travel, slew and luff drives, the boom''s belts and drums and the house''s electrics, from memory'}
 needs: {power: 900000.0}
 product: product.stacker-reclaimer-1500th
+envelope:
+- [23.965, -1.271, 4.848, 34.651, 3.601, 11.152]
+- [-16.001, -5.688, -0.062, 4.501, 5.688, 19.939]
+- [0.007, -1.272, 7.078, 32.001, 1.272, 19.664]
+- [0.007, -1.272, 7.078, 32.001, 1.272, 9.422]
+- [-4.501, -5.688, -0.062, 11.972, 5.688, 20.001]
+- [-16.001, -2.001, 11.799, 3.462, 2.001, 19.939]
 life: 788940000
 visual: {format: freefall-model/1, path: models/stacker-reclaimer-1500th/v2, manifest_sha256: 486e11f161b99293de9fc4ded7a926f6631e5eb27203d496aa3029d2d6f3a134, version: 2, triangles: 20492}
 basis:

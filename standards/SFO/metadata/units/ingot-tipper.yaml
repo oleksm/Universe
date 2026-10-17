@@ -9,6 +9,8 @@ built_of:
 - {what: Cylinder and power pack, item: good.pumps, mass: 800.0, note: from memory}
 needs: {power: 11000.0}
 product: product.ingot-tipper
+envelope:
+- [-2.851, -1.501, -0.001, 2.551, 1.501, 2.101]
 life: 788940000
 visual: {format: freefall-model/1, path: models/ingot-tipper/v1, manifest_sha256: 67d9cd587fc04cae1634b6c443a34520b966bd13bca31b1d19ac354ab4657a9a, version: 1, triangles: 1768}
 basis:

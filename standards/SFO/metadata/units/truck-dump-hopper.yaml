@@ -13,6 +13,8 @@ built_of:
 holds: 100000.0
 needs: {power: 150000.0}
 product: product.truck-dump-hopper
+envelope:
+- [-6.052, -5.152, -6.001, 6.052, 5.152, 2.001]
 life: 788940000
 visual: {format: freefall-model/1, path: models/truck-dump-hopper/v2, manifest_sha256: 8b26fae88ef7ef55e55cf8410f67efe360e4bc962ba1dd66808f93404b1947c4, version: 2, triangles: 6952}
 basis:

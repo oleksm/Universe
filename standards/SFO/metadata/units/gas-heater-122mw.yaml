@@ -19,6 +19,13 @@ built_of:
 - {what: 'Terminals, thyristor sets and controls', item: good.electric-motors, mass: 10000.0, note: from memory}
 needs: {power: 124800000.0}
 product: product.gas-heater
+envelope:
+- [-12.032, -4.544, -0.002, -8.016, 5.832, 16.833]
+- [-11.602, -2.476, -0.002, 9.001, 4.062, 16.425]
+- [-10.252, -4.443, -0.002, 10.252, 5.895, 18.002]
+- [-10.252, -3.801, -0.001, 10.252, 5.833, 16.833]
+- [-11.602, -4.443, -0.001, 10.002, 5.932, 18.002]
+- [7.183, -4.443, -0.001, 11.122, 5.833, 16.833]
 life: 788940000
 visual: {format: freefall-model/1, path: models/gas-heater-122mw/v1, manifest_sha256: 273834c6e66616924fda57b296b0ec4a6f062351267a470ebca9ab29d10e6427, version: 1, triangles: 51550}
 basis:

@@ -28,6 +28,10 @@ recipes:
   rate: 55.5555555555556
   power: 22000000
 product: product.shaft-furnace-200th
+envelope:
+- [-7.001, -3.722, 6.999, 3.722, 3.722, 20.102]
+- [-7.401, -7.502, 12.999, 7.401, 7.401, 42.001]
+- [-3.722, -3.722, 39.149, 7.001, 3.722, 50.001]
 life: 788940000
 visual: {format: freefall-model/1, path: models/shaft-furnace-200th/v1, manifest_sha256: 5a75d52c57308ce4769f62194fdfda56fa2656469c869d0ed4a1fc8ed3d6de86, version: 1, triangles: 22392}
 basis:

@@ -14,6 +14,8 @@ built_of:
 - {what: Vacuum line, item: material.structural-steel-a36, mass: 3061.0, note: '1 m across, 10 mm, 11.04 m of main, header and branches (measured centreline) with flanges, run at z -1.2 under the rail bridge; measured'}
 needs: {power: 600000.0}
 product: product.vacuum-degasser-80t
+envelope:
+- [-6.001, -4.652, -6.001, 5.902, 4.976, 2.702]
 life: 788940000
 visual: {format: freefall-model/1, path: models/vacuum-degasser-80t/v1, manifest_sha256: 6c9ff58be0366a24c0f3c71096b72d95ee06c68f9913180f72a43d62b9200f8d, version: 1, triangles: 12308}
 basis:

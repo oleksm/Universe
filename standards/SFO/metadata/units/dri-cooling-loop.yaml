@@ -13,6 +13,8 @@ built_of:
 - {what: Compressor and motor, item: good.electric-motors, mass: 18790.0, note: from memory}
 needs: {power: 1796000.0, heat: 32840000.0}
 product: product.dri-cooling-loop
+envelope:
+- [-6.001, -4.001, -0.002, 5.531, 4.002, 15.191]
 life: 788940000
 visual: {format: freefall-model/1, path: models/dri-cooling-loop/v1, manifest_sha256: 173747509218d3e143bc3b3f90eda330ac4ae768f71b49ab2022f0d1fc2249ff, version: 1, triangles: 8764}
 basis:
