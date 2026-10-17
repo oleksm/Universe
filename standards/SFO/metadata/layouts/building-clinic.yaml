@@ -1,0 +1,202 @@
+# yaml-language-server: $schema=../../schema/layout.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: layout.building-clinic
+  name: Clinic, world with air
+  description: 'A few doctors and nurses, a dispensary and a room to stitch in: where most sickness is seen and most of it ends. Laid of the kit: a strut frame on the 3 m grid, panels, and 15 furnished 6 m bays (3 reception, 8 treatment,
+    2 ward, 2 washroom).'
+stands_for: building.clinic
+site:
+  atmosphere: air
+  gravity:
+  - 8.0
+  - 11.0
+physical:
+  length: 30.0
+  width: 18.0
+  height: 3.15
+  mass: 316517.0
+bays:
+- id: REC1
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-reception
+  at:
+  - -12.0
+  - -6.0
+  - 0.0
+- id: REC2
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-reception
+  at:
+  - -6.0
+  - -6.0
+  - 0.0
+- id: REC3
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-reception
+  at:
+  - 0.0
+  - -6.0
+  - 0.0
+- id: TRE4
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-treatment
+  at:
+  - 6.0
+  - -6.0
+  - 0.0
+- id: TRE5
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-treatment
+  at:
+  - 12.0
+  - -6.0
+  - 0.0
+- id: TRE6
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-treatment
+  at:
+  - -12.0
+  - 0.0
+  - 0.0
+- id: TRE7
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-treatment
+  at:
+  - -6.0
+  - 0.0
+  - 0.0
+- id: TRE8
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-treatment
+  at:
+  - 0.0
+  - 0.0
+  - 0.0
+- id: TRE9
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-treatment
+  at:
+  - 6.0
+  - 0.0
+  - 0.0
+- id: TRE10
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-treatment
+  at:
+  - 12.0
+  - 0.0
+  - 0.0
+- id: TRE11
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-treatment
+  at:
+  - -12.0
+  - 6.0
+  - 0.0
+- id: WAR12
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-ward
+  at:
+  - -6.0
+  - 6.0
+  - 0.0
+- id: WAR13
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-ward
+  at:
+  - 0.0
+  - 6.0
+  - 0.0
+- id: WAS14
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-washroom
+  at:
+  - 6.0
+  - 6.0
+  - 0.0
+- id: WAS15
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-washroom
+  at:
+  - 12.0
+  - 6.0
+  - 0.0
+frame:
+  box:
+  - -15.0
+  - -9.0
+  - 0.0
+  - 15.0
+  - 9.0
+  - 3.0
+  cell: 3.0
+  shape: 'A skeleton frame on the 3 m grid: 10 x 6 cells, 1 storey(s) of 3 m; columns at every node, beams on every cell edge at each floor and the roof, one diagonal in every other outside face. Panels on its faces (frame.panels).'
+  members:
+  - item: stock.st4340-tb-60x2-s3000
+    count: 77
+    where: columns
+  - item: stock.st4340-tb-160x5-s3000
+    count: 136
+    where: beams
+  - item: stock.st4340-tb-80x2-d3000
+    count: 16
+    where: bracing
+  - item: stock.st4340-node-90b
+    count: 154
+    where: nodes
+  mass: 9502.0
+  panels:
+  - panel: panel.partition-3x3
+    count: 23
+  - panel: panel.partition-door-3x3
+    count: 22
+  - panel: panel.roof-3x3
+    count: 60
+  - panel: panel.wall-door-3x3
+    count: 1
+  - panel: panel.wall-glazed-3x3
+    count: 9
+  - panel: panel.wall-insulated-3x3
+    count: 15
+  - panel: panel.wall-shopfront-3x3
+    count: 1
+  - panel: panel.wall-window-3x3
+    count: 6
+  panels_mass: 20031.0
+  sized: 'At 1 g: floors 1893 Pa dead and 5000 Pa imposed, the roof 1155 Pa; a ground column carries 12 kN (st4340-tb-60x2 takes it with half again to spare); a 3 m beam bends with 23.3 kN m (st4340-tb-160x5, under 470 MPa with half
+    again to spare). Wind, the tall halls'' columns between floors and the footings'' loads not yet checked.'
+ground:
+- what: Ground slab
+  item: good.concrete
+  volume: 81.0
+  mass: 194400.0
+  note: 0.15 m over the 30 x 18 m plan
+- what: Edge footings
+  item: good.concrete
+  volume: 34.6
+  mass: 82944.0
+  note: 0.6 x 0.6 m strips under the outside walls
+totals:
+  mass: 316517.0
+  against_module: 'building.clinic (deprecated): one box 30 x 20 x 4 m of 662 t, from the average of 538 concrete buildings. This layout: 30 x 18 x 3 m, 317 t (10 t frame, 20 t panels, 10 t fit-out, 277 t ground), for 76 people served
+    or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
+staff:
+- profession: profession.doctor
+  count: 4
+- profession: profession.nurse
+  count: 11
+- profession: profession.clerk
+  count: 2
+basis:
+- of:
+  - bays
+  tier: invented
+  review: true
+  note: The mix of bays for a clinic is chosen (reception 0.15, treatment 0.55, ward 0.15, washroom 0.15), shared over the record's floor (600 m2 in 1 storeys, laid as 5 x 3 bays of 6 m).
+- of:
+  - frame
+  - ground
+  tier: derived
+  review: true
+  note: Counted from the grid (tools/standards/building_layouts.py); sections by the loads in frame.sized; masses from the strut, node and panel records.

@@ -1,0 +1,204 @@
+# yaml-language-server: $schema=../../schema/layout.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: layout.building-repair-shop
+  name: Repair shop, world with air
+  description: 'Benches, a hoist and spares: where machines, vehicles and the things of the home are mended. Laid of the kit: a strut frame on the 3 m grid, panels, and 15 furnished 6 m bays (9 workshop, 3 vehicle, 1 store, 1 reception,
+    1 washroom).'
+stands_for: building.repair-shop
+site:
+  atmosphere: air
+  gravity:
+  - 8.0
+  - 11.0
+physical:
+  length: 30.0
+  width: 18.0
+  height: 4.65
+  mass: 320198.1
+bays:
+- id: WOR1
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - -12.0
+  - -6.0
+  - 0.0
+- id: WOR2
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - -6.0
+  - -6.0
+  - 0.0
+- id: WOR3
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - 0.0
+  - -6.0
+  - 0.0
+- id: WOR4
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - 6.0
+  - -6.0
+  - 0.0
+- id: WOR5
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - 12.0
+  - -6.0
+  - 0.0
+- id: WOR6
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - -12.0
+  - 0.0
+  - 0.0
+- id: WOR7
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - -6.0
+  - 0.0
+  - 0.0
+- id: WOR8
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - 0.0
+  - 0.0
+  - 0.0
+- id: WOR9
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - 6.0
+  - 0.0
+  - 0.0
+- id: GAR10
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - 12.0
+  - 0.0
+  - 0.0
+- id: GAR11
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - -12.0
+  - 6.0
+  - 0.0
+- id: GAR12
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - -6.0
+  - 6.0
+  - 0.0
+- id: STO13
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - 0.0
+  - 6.0
+  - 0.0
+- id: REC14
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-reception
+  at:
+  - 6.0
+  - 6.0
+  - 0.0
+- id: WAS15
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-washroom
+  at:
+  - 12.0
+  - 6.0
+  - 0.0
+frame:
+  box:
+  - -15.0
+  - -9.0
+  - 0.0
+  - 15.0
+  - 9.0
+  - 4.5
+  cell: 3.0
+  shape: 'A skeleton frame on the 3 m grid: 10 x 6 cells, 1 storey(s) of 4.5 m; columns at every node, beams on every cell edge at each floor and the roof, one diagonal in every other outside face. Panels on its faces (frame.panels).'
+  members:
+  - item: stock.st4340-tb-60x2-s3000
+    count: 154
+    where: columns
+  - item: stock.st4340-tb-160x5-s3000
+    count: 136
+    where: beams
+  - item: stock.st4340-tb-80x2-d3000
+    count: 32
+    where: bracing
+  - item: stock.st4340-node-90b
+    count: 231
+    where: nodes
+  mass: 10675.5
+  panels:
+  - panel: panel.partition-3x3
+    count: 5
+  - panel: panel.partition-door-3x3
+    count: 4
+  - panel: panel.roof-3x3
+    count: 60
+  - panel: panel.wall-double-door-3x3
+    count: 1
+  - panel: panel.wall-insulated-3x1p5
+    count: 32
+  - panel: panel.wall-insulated-3x3
+    count: 20
+  - panel: panel.wall-roller-3x3
+    count: 1
+  - panel: panel.wall-window-3x3
+    count: 10
+  panels_mass: 15818.6
+  sized: 'At 1 g: floors 1893 Pa dead and 5000 Pa imposed, the roof 1155 Pa; a ground column carries 12 kN (st4340-tb-60x2 takes it with half again to spare); a 3 m beam bends with 23.3 kN m (st4340-tb-160x5, under 470 MPa with half
+    again to spare). Wind, the tall halls'' columns between floors and the footings'' loads not yet checked.'
+ground:
+- what: Ground slab
+  item: good.concrete
+  volume: 81.0
+  mass: 194400.0
+  note: 0.15 m over the 30 x 18 m plan
+- what: Edge footings
+  item: good.concrete
+  volume: 34.6
+  mass: 82944.0
+  note: 0.6 x 0.6 m strips under the outside walls
+totals:
+  mass: 320198.1
+  against_module: 'building.repair-shop (deprecated): one box 30 x 20 x 6 m of 662 t, from the average of 538 concrete buildings. This layout: 30 x 18 x 4.5 m, 320 t (11 t frame, 16 t panels, 16 t fit-out, 277 t ground), for 12 people
+    served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
+staff:
+- profession: profession.technician
+  count: 12
+- profession: profession.fitter
+  count: 8
+- profession: profession.electrician
+  count: 6
+- profession: profession.machinist
+  count: 4
+basis:
+- of:
+  - bays
+  tier: invented
+  review: true
+  note: The mix of bays for a repair shop is chosen (workshop 0.6, garage 0.2, store 0.1, reception 0.05, washroom 0.05), shared over the record's floor (600 m2 in 1 storeys, laid as 5 x 3 bays of 6 m).
+- of:
+  - frame
+  - ground
+  tier: derived
+  review: true
+  note: Counted from the grid (tools/standards/building_layouts.py); sections by the loads in frame.sized; masses from the strut, node and panel records.

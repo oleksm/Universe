@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: unit.fitout-workshop
+  name: Workshop bay
+  description: 'A workbench, a vice, tool racks and a pillar drill: where things are mended.'
+size_class: 1
+fits: plant-mount.bay-s1
+physical:
+  length: 6.0
+  width: 6.0
+  height: 2.2
+  mass: 1500.0
+built_of:
+- what: Bench, racks and drill
+  item: material.structural-steel-a36
+  mass: 1200.0
+- what: Tools
+  item: material.high-strength-steel-4340
+  mass: 300.0
+basis:
+- of:
+  - built_of
+  - physical
+  tier: invented
+  review: true
+  note: 'A furnished 6 m bay: 0 people served or seated, 2 at work in it; masses from memory of such furniture, to be sourced.'

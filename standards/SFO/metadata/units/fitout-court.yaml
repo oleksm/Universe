@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: unit.fitout-court
+  name: Court bay
+  description: 'A bench, a dock, a witness box and seats: a court''s room.'
+size_class: 1
+fits: plant-mount.bay-s1
+physical:
+  length: 6.0
+  width: 6.0
+  height: 2.2
+  mass: 1200.0
+built_of:
+- what: Bench, dock and box
+  item: material.structural-steel-a36
+  mass: 900.0
+- what: Seats
+  item: material.aluminium-alloy-6061
+  mass: 300.0
+  note: twenty-four
+basis:
+- of:
+  - built_of
+  - physical
+  tier: invented
+  review: true
+  note: 'A furnished 6 m bay: 24 people served or seated, 0 at work in it; masses from memory of such furniture, to be sourced.'

@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: unit.fitout-cell
+  name: Cell bay
+  description: Two locked cells, each a bed, a toilet and a basin, and the passage outside them.
+size_class: 1
+fits: plant-mount.bay-s1
+physical:
+  length: 6.0
+  width: 6.0
+  height: 2.2
+  mass: 880.0
+built_of:
+- what: Doors, bars and fittings
+  item: material.structural-steel-a36
+  mass: 760.0
+- what: Sanitaryware
+  item: material.stainless-steel-304
+  mass: 120.0
+  note: stainless, vandal-proof
+basis:
+- of:
+  - built_of
+  - physical
+  tier: invented
+  review: true
+  note: 'A furnished 6 m bay: 2 people served or seated, 0 at work in it; masses from memory of such furniture, to be sourced.'

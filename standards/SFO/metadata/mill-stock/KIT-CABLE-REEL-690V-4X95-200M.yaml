@@ -17,7 +17,7 @@ size:
 supplies:
   item: connector.cable-reel-690v-4x95-200m
 physical:
-  mass: 1648.6
+  mass: 1865.9
 basis:
 - of:
   - size

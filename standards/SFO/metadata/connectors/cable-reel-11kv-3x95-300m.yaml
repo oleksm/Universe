@@ -13,11 +13,11 @@ physical:
   length: 5.21
   width: 0.41
   height: 5.41
-  mass: 2544.6
+  mass: 2913.9
 built_of:
 - what: Drum, frame, drive and slip rings
   item: material.structural-steel-a36
-  mass: 1205.7
+  mass: 1574.9
   note: a 5.21 m drum on a 1.86 m core
 - what: Its cable
   item: material.copper
@@ -30,5 +30,5 @@ basis:
   - physical
   tier: derived
   review: true
-  note: 'A monospiral drum: D^2 = core^2 + 4 L outside / pi; core thirty cable outsides, at least 1 m; drum and drive 120 kg + 40 kg/m2 of D^2 (invented).'
+  note: 'A monospiral drum: D^2 = core^2 + 4 L outside / pi; core thirty cable outsides, at least 1 m; structure 52.5 kg/m2 of D^2 (blender''s measured reel), drive, bearings and slip rings 150 kg (invented).'
 interface: interface.cable-reel-11kv-3x95

@@ -1,0 +1,539 @@
+# yaml-language-server: $schema=../../schema/layout.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: layout.building-inn
+  name: Inn, world with air
+  description: 'Rooms for travellers and crews between ships, a dining room, a bar. Laid of the kit: a strut frame on the 3 m grid, panels, and 63 furnished 6 m bays (13 dining, 6 kitchen, 3 counter, 35 flat, 6 washroom).'
+stands_for: building.inn
+site:
+  atmosphere: air
+  gravity:
+  - 8.0
+  - 11.0
+physical:
+  length: 42.0
+  width: 18.0
+  height: 9.15
+  mass: 775653.5
+bays:
+- id: DIN1
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-dining
+  at:
+  - -18.0
+  - -6.0
+  - 0.0
+- id: DIN2
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-dining
+  at:
+  - -12.0
+  - -6.0
+  - 0.0
+- id: DIN3
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-dining
+  at:
+  - -6.0
+  - -6.0
+  - 0.0
+- id: DIN4
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-dining
+  at:
+  - 0.0
+  - -6.0
+  - 0.0
+- id: DIN5
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-dining
+  at:
+  - 6.0
+  - -6.0
+  - 0.0
+- id: DIN6
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-dining
+  at:
+  - 12.0
+  - -6.0
+  - 0.0
+- id: DIN7
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-dining
+  at:
+  - 18.0
+  - -6.0
+  - 0.0
+- id: DIN8
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-dining
+  at:
+  - -18.0
+  - 0.0
+  - 0.0
+- id: DIN9
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-dining
+  at:
+  - -12.0
+  - 0.0
+  - 0.0
+- id: DIN10
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-dining
+  at:
+  - -6.0
+  - 0.0
+  - 0.0
+- id: DIN11
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-dining
+  at:
+  - 0.0
+  - 0.0
+  - 0.0
+- id: DIN12
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-dining
+  at:
+  - 6.0
+  - 0.0
+  - 0.0
+- id: DIN13
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-dining
+  at:
+  - 12.0
+  - 0.0
+  - 0.0
+- id: KIT14
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-kitchen
+  at:
+  - 18.0
+  - 0.0
+  - 0.0
+- id: KIT15
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-kitchen
+  at:
+  - -18.0
+  - 6.0
+  - 0.0
+- id: KIT16
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-kitchen
+  at:
+  - -12.0
+  - 6.0
+  - 0.0
+- id: KIT17
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-kitchen
+  at:
+  - -6.0
+  - 6.0
+  - 0.0
+- id: KIT18
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-kitchen
+  at:
+  - 0.0
+  - 6.0
+  - 0.0
+- id: KIT19
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-kitchen
+  at:
+  - 6.0
+  - 6.0
+  - 0.0
+- id: COU20
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-counter
+  at:
+  - 12.0
+  - 6.0
+  - 0.0
+- id: COU21
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-counter
+  at:
+  - 18.0
+  - 6.0
+  - 0.0
+- id: COU22
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-counter
+  at:
+  - -18.0
+  - -6.0
+  - 3.0
+- id: FLA23
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - -12.0
+  - -6.0
+  - 3.0
+- id: FLA24
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - -6.0
+  - -6.0
+  - 3.0
+- id: FLA25
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - 0.0
+  - -6.0
+  - 3.0
+- id: FLA26
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - 6.0
+  - -6.0
+  - 3.0
+- id: FLA27
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - 12.0
+  - -6.0
+  - 3.0
+- id: FLA28
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - 18.0
+  - -6.0
+  - 3.0
+- id: FLA29
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - -18.0
+  - 0.0
+  - 3.0
+- id: FLA30
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - -12.0
+  - 0.0
+  - 3.0
+- id: FLA31
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - -6.0
+  - 0.0
+  - 3.0
+- id: FLA32
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - 0.0
+  - 0.0
+  - 3.0
+- id: FLA33
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - 6.0
+  - 0.0
+  - 3.0
+- id: FLA34
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - 12.0
+  - 0.0
+  - 3.0
+- id: FLA35
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - 18.0
+  - 0.0
+  - 3.0
+- id: FLA36
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - -18.0
+  - 6.0
+  - 3.0
+- id: FLA37
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - -12.0
+  - 6.0
+  - 3.0
+- id: FLA38
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - -6.0
+  - 6.0
+  - 3.0
+- id: FLA39
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - 0.0
+  - 6.0
+  - 3.0
+- id: FLA40
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - 6.0
+  - 6.0
+  - 3.0
+- id: FLA41
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - 12.0
+  - 6.0
+  - 3.0
+- id: FLA42
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - 18.0
+  - 6.0
+  - 3.0
+- id: FLA43
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - -18.0
+  - -6.0
+  - 6.0
+- id: FLA44
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - -12.0
+  - -6.0
+  - 6.0
+- id: FLA45
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - -6.0
+  - -6.0
+  - 6.0
+- id: FLA46
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - 0.0
+  - -6.0
+  - 6.0
+- id: FLA47
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - 6.0
+  - -6.0
+  - 6.0
+- id: FLA48
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - 12.0
+  - -6.0
+  - 6.0
+- id: FLA49
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - 18.0
+  - -6.0
+  - 6.0
+- id: FLA50
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - -18.0
+  - 0.0
+  - 6.0
+- id: FLA51
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - -12.0
+  - 0.0
+  - 6.0
+- id: FLA52
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - -6.0
+  - 0.0
+  - 6.0
+- id: FLA53
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - 0.0
+  - 0.0
+  - 6.0
+- id: FLA54
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - 6.0
+  - 0.0
+  - 6.0
+- id: FLA55
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - 12.0
+  - 0.0
+  - 6.0
+- id: FLA56
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - 18.0
+  - 0.0
+  - 6.0
+- id: FLA57
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-flat
+  at:
+  - -18.0
+  - 6.0
+  - 6.0
+- id: WAS58
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-washroom
+  at:
+  - -12.0
+  - 6.0
+  - 6.0
+- id: WAS59
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-washroom
+  at:
+  - -6.0
+  - 6.0
+  - 6.0
+- id: WAS60
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-washroom
+  at:
+  - 0.0
+  - 6.0
+  - 6.0
+- id: WAS61
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-washroom
+  at:
+  - 6.0
+  - 6.0
+  - 6.0
+- id: WAS62
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-washroom
+  at:
+  - 12.0
+  - 6.0
+  - 6.0
+- id: WAS63
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-washroom
+  at:
+  - 18.0
+  - 6.0
+  - 6.0
+frame:
+  box:
+  - -21.0
+  - -9.0
+  - 0.0
+  - 21.0
+  - 9.0
+  - 9.0
+  cell: 3.0
+  shape: 'A skeleton frame on the 3 m grid: 14 x 6 cells, 3 storey(s) of 3 m; columns at every node, beams on every cell edge at each floor and the roof, one diagonal in every other outside face. Panels on its faces (frame.panels).'
+  members:
+  - item: stock.st4340-tb-100x3-s3000
+    count: 315
+    where: columns
+  - item: stock.st4340-tb-160x3-s3000
+    count: 564
+    where: beams
+  - item: stock.st4340-tb-80x2-d3000
+    count: 60
+    where: bracing
+  - item: stock.st4340-node-160b
+    count: 420
+    where: nodes
+  mass: 38871.6
+  panels:
+  - panel: panel.floor-3x3
+    count: 164
+  - panel: panel.partition-3x3
+    count: 95
+  - panel: panel.partition-door-3x3
+    count: 94
+  - panel: panel.roof-3x3
+    count: 84
+  - panel: panel.stair-3m
+    count: 2
+  - panel: panel.wall-door-3x3
+    count: 1
+  - panel: panel.wall-double-door-3x3
+    count: 2
+  - panel: panel.wall-insulated-3x3
+    count: 79
+  - panel: panel.wall-window-3x3
+    count: 38
+  panels_mass: 296901.9
+  sized: 'At 1 g: floors 1893 Pa dead and 2000 Pa imposed, the roof 1155 Pa; a ground column carries 84 kN (st4340-tb-100x3 takes it with half again to spare); a 3 m beam bends with 13.1 kN m (st4340-tb-160x3, under 470 MPa with half
+    again to spare). Wind, the tall halls'' columns between floors and the footings'' loads not yet checked.'
+ground:
+- what: Ground slab
+  item: good.concrete
+  volume: 113.4
+  mass: 272160.0
+  note: 0.15 m over the 42 x 18 m plan
+- what: Edge footings
+  item: good.concrete
+  volume: 43.2
+  mass: 103680.0
+  note: 0.6 x 0.6 m strips under the outside walls
+totals:
+  mass: 775653.5
+  against_module: 'building.inn (deprecated): one box 40 x 20 x 12 m of 2,647 t, from the average of 538 concrete buildings. This layout: 42 x 18 x 9 m, 776 t (39 t frame, 297 t panels, 64 t fit-out, 376 t ground), for 296 people served
+    or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
+staff:
+- profession: profession.innkeeper
+  count: 5
+- profession: profession.food-worker
+  count: 20
+- profession: profession.clerk
+  count: 5
+basis:
+- of:
+  - bays
+  tier: invented
+  review: true
+  note: The mix of bays for a inn is chosen (dining 0.2, kitchen 0.1, counter 0.05, flat 0.55, washroom 0.1), shared over the record's floor (2400 m2 in 3 storeys, laid as 7 x 3 bays of 6 m).
+- of:
+  - frame
+  - ground
+  tier: derived
+  review: true
+  note: Counted from the grid (tools/standards/building_layouts.py); sections by the loads in frame.sized; masses from the strut, node and panel records.

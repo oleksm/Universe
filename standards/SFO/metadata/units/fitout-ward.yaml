@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: unit.fitout-ward
+  name: Ward bay
+  description: Four beds with their lockers, screens and the gases and call points at their heads.
+size_class: 1
+fits: plant-mount.bay-s1
+physical:
+  length: 6.0
+  width: 6.0
+  height: 2.2
+  mass: 730.0
+built_of:
+- what: Beds
+  item: material.structural-steel-a36
+  mass: 480.0
+  note: four, powered
+- what: Lockers and screens
+  item: material.aluminium-alloy-6061
+  mass: 160.0
+- what: Bed head trunking
+  item: material.aluminium-alloy-6061
+  mass: 90.0
+basis:
+- of:
+  - built_of
+  - physical
+  tier: invented
+  review: true
+  note: 'A furnished 6 m bay: 4 people served or seated, 1 at work in it; masses from memory of such furniture, to be sourced.'

@@ -1,0 +1,493 @@
+# yaml-language-server: $schema=../../schema/layout.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: layout.building-courthouse
+  name: Courthouse, world with air
+  description: 'Courtrooms, chambers and the record office: where breaches of the code are heard and the registers are kept. Laid of the kit: a strut frame on the 3 m grid, panels, and 56 furnished 6 m bays (22 court, 19 office, 6 reception,
+    3 cell, 6 washroom).'
+stands_for: building.courthouse
+site:
+  atmosphere: air
+  gravity:
+  - 8.0
+  - 11.0
+physical:
+  length: 42.0
+  width: 24.0
+  height: 9.15
+  mass: 773354.5
+bays:
+- id: COU1
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-court
+  at:
+  - -18.0
+  - -9.0
+  - 0.0
+- id: COU2
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-court
+  at:
+  - -12.0
+  - -9.0
+  - 0.0
+- id: COU3
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-court
+  at:
+  - -6.0
+  - -9.0
+  - 0.0
+- id: COU4
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-court
+  at:
+  - 0.0
+  - -9.0
+  - 0.0
+- id: COU5
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-court
+  at:
+  - 6.0
+  - -9.0
+  - 0.0
+- id: COU6
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-court
+  at:
+  - 12.0
+  - -9.0
+  - 0.0
+- id: COU7
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-court
+  at:
+  - 18.0
+  - -9.0
+  - 0.0
+- id: COU8
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-court
+  at:
+  - -18.0
+  - -3.0
+  - 0.0
+- id: COU9
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-court
+  at:
+  - -12.0
+  - -3.0
+  - 0.0
+- id: COU10
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-court
+  at:
+  - -6.0
+  - -3.0
+  - 0.0
+- id: COU11
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-court
+  at:
+  - 0.0
+  - -3.0
+  - 0.0
+- id: COU12
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-court
+  at:
+  - 6.0
+  - -3.0
+  - 0.0
+- id: COU13
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-court
+  at:
+  - 12.0
+  - -3.0
+  - 0.0
+- id: COU14
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-court
+  at:
+  - 18.0
+  - -3.0
+  - 0.0
+- id: COU15
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-court
+  at:
+  - -18.0
+  - 3.0
+  - 0.0
+- id: COU16
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-court
+  at:
+  - -12.0
+  - 3.0
+  - 0.0
+- id: COU17
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-court
+  at:
+  - -6.0
+  - 3.0
+  - 0.0
+- id: COU18
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-court
+  at:
+  - 0.0
+  - 3.0
+  - 0.0
+- id: COU19
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-court
+  at:
+  - 6.0
+  - 3.0
+  - 0.0
+- id: COU20
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-court
+  at:
+  - 12.0
+  - 3.0
+  - 0.0
+- id: COU21
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-court
+  at:
+  - 18.0
+  - 3.0
+  - 0.0
+- id: COU22
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-court
+  at:
+  - -18.0
+  - 9.0
+  - 0.0
+- id: OFF23
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-office
+  at:
+  - -12.0
+  - 9.0
+  - 0.0
+- id: OFF24
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-office
+  at:
+  - -6.0
+  - 9.0
+  - 0.0
+- id: OFF25
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-office
+  at:
+  - 0.0
+  - 9.0
+  - 0.0
+- id: OFF26
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-office
+  at:
+  - 6.0
+  - 9.0
+  - 0.0
+- id: OFF27
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-office
+  at:
+  - 12.0
+  - 9.0
+  - 0.0
+- id: OFF28
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-office
+  at:
+  - 18.0
+  - 9.0
+  - 0.0
+- id: OFF29
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-office
+  at:
+  - -18.0
+  - -9.0
+  - 4.5
+- id: OFF30
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-office
+  at:
+  - -12.0
+  - -9.0
+  - 4.5
+- id: OFF31
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-office
+  at:
+  - -6.0
+  - -9.0
+  - 4.5
+- id: OFF32
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-office
+  at:
+  - 0.0
+  - -9.0
+  - 4.5
+- id: OFF33
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-office
+  at:
+  - 6.0
+  - -9.0
+  - 4.5
+- id: OFF34
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-office
+  at:
+  - 12.0
+  - -9.0
+  - 4.5
+- id: OFF35
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-office
+  at:
+  - 18.0
+  - -9.0
+  - 4.5
+- id: OFF36
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-office
+  at:
+  - -18.0
+  - -3.0
+  - 4.5
+- id: OFF37
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-office
+  at:
+  - -12.0
+  - -3.0
+  - 4.5
+- id: OFF38
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-office
+  at:
+  - -6.0
+  - -3.0
+  - 4.5
+- id: OFF39
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-office
+  at:
+  - 0.0
+  - -3.0
+  - 4.5
+- id: OFF40
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-office
+  at:
+  - 6.0
+  - -3.0
+  - 4.5
+- id: OFF41
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-office
+  at:
+  - 12.0
+  - -3.0
+  - 4.5
+- id: REC42
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-reception
+  at:
+  - 18.0
+  - -3.0
+  - 4.5
+- id: REC43
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-reception
+  at:
+  - -18.0
+  - 3.0
+  - 4.5
+- id: REC44
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-reception
+  at:
+  - -12.0
+  - 3.0
+  - 4.5
+- id: REC45
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-reception
+  at:
+  - -6.0
+  - 3.0
+  - 4.5
+- id: REC46
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-reception
+  at:
+  - 0.0
+  - 3.0
+  - 4.5
+- id: REC47
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-reception
+  at:
+  - 6.0
+  - 3.0
+  - 4.5
+- id: CEL48
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-cell
+  at:
+  - 12.0
+  - 3.0
+  - 4.5
+- id: CEL49
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-cell
+  at:
+  - 18.0
+  - 3.0
+  - 4.5
+- id: CEL50
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-cell
+  at:
+  - -18.0
+  - 9.0
+  - 4.5
+- id: WAS51
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-washroom
+  at:
+  - -12.0
+  - 9.0
+  - 4.5
+- id: WAS52
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-washroom
+  at:
+  - -6.0
+  - 9.0
+  - 4.5
+- id: WAS53
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-washroom
+  at:
+  - 0.0
+  - 9.0
+  - 4.5
+- id: WAS54
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-washroom
+  at:
+  - 6.0
+  - 9.0
+  - 4.5
+- id: WAS55
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-washroom
+  at:
+  - 12.0
+  - 9.0
+  - 4.5
+- id: WAS56
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-washroom
+  at:
+  - 18.0
+  - 9.0
+  - 4.5
+frame:
+  box:
+  - -21.0
+  - -12.0
+  - 0.0
+  - 21.0
+  - 12.0
+  - 9.0
+  cell: 3.0
+  shape: 'A skeleton frame on the 3 m grid: 14 x 8 cells, 2 storey(s) of 4.5 m; columns at every node, beams on every cell edge at each floor and the roof, one diagonal in every other outside face. Panels on its faces (frame.panels).'
+  members:
+  - item: stock.st4340-tb-80x3-s3000
+    count: 405
+    where: columns
+  - item: stock.st4340-tb-160x5-s3000
+    count: 492
+    where: beams
+  - item: stock.st4340-tb-80x2-d3000
+    count: 66
+    where: bracing
+  - item: stock.st4340-node-110b
+    count: 540
+    where: nodes
+  mass: 40380.4
+  panels:
+  - panel: panel.floor-3x3
+    count: 108
+  - panel: panel.partition-3x3
+    count: 56
+  - panel: panel.partition-door-3x3
+    count: 56
+  - panel: panel.roof-3x3
+    count: 112
+  - panel: panel.stair-3m
+    count: 2
+  - panel: panel.wall-door-3x3
+    count: 1
+  - panel: panel.wall-double-door-3x3
+    count: 2
+  - panel: panel.wall-insulated-3x1p5
+    count: 88
+  - panel: panel.wall-insulated-3x3
+    count: 56
+  - panel: panel.wall-window-3x3
+    count: 29
+  panels_mass: 209186.1
+  sized: 'At 1 g: floors 1893 Pa dead and 5000 Pa imposed, the roof 1155 Pa; a ground column carries 76 kN (st4340-tb-80x3 takes it with half again to spare); a 3 m beam bends with 23.3 kN m (st4340-tb-160x5, under 470 MPa with half
+    again to spare). Wind, the tall halls'' columns between floors and the footings'' loads not yet checked.'
+ground:
+- what: Ground slab
+  item: good.concrete
+  volume: 151.2
+  mass: 362880.0
+  note: 0.15 m over the 42 x 24 m plan
+- what: Edge footings
+  item: good.concrete
+  volume: 47.5
+  mass: 114048.0
+  note: 0.6 x 0.6 m strips under the outside walls
+totals:
+  mass: 773354.5
+  against_module: 'building.courthouse (deprecated): one box 40 x 25 x 8 m of 2,206 t, from the average of 538 concrete buildings. This layout: 42 x 24 x 9 m, 773 t (40 t frame, 209 t panels, 47 t fit-out, 477 t ground), for 720 people
+    served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
+staff:
+- profession: profession.judge
+  count: 5
+- profession: profession.lawyer
+  count: 15
+- profession: profession.clerk
+  count: 12
+basis:
+- of:
+  - bays
+  tier: invented
+  review: true
+  note: The mix of bays for a courthouse is chosen (court 0.4, office 0.35, reception 0.1, cell 0.05, washroom 0.1), shared over the record's floor (2000 m2 in 2 storeys, laid as 7 x 4 bays of 6 m).
+- of:
+  - frame
+  - ground
+  tier: derived
+  review: true
+  note: Counted from the grid (tools/standards/building_layouts.py); sections by the loads in frame.sized; masses from the strut, node and panel records.

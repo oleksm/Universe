@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: unit.fitout-garage
+  name: Vehicle bay
+  description: An open bay a vehicle stands in, its floor drained and its charge point.
+size_class: 1
+fits: plant-mount.bay-s1
+physical:
+  length: 6.0
+  width: 6.0
+  height: 2.2
+  mass: 180.0
+built_of:
+- what: Charge point and drain
+  item: material.structural-steel-a36
+  mass: 180.0
+basis:
+- of:
+  - built_of
+  - physical
+  tier: invented
+  review: true
+  note: 'A furnished 6 m bay: 0 people served or seated, 0 at work in it; masses from memory of such furniture, to be sourced.'

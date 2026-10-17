@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: unit.fitout-flat
+  name: Flat bay
+  description: 'A furnished 36 m2 flat: a bed, a kitchenette, a shower room and a table.'
+size_class: 1
+fits: plant-mount.bay-s1
+physical:
+  length: 6.0
+  width: 6.0
+  height: 2.2
+  mass: 1240.0
+built_of:
+- what: Kitchenette and shower
+  item: material.stainless-steel-304
+  mass: 420.0
+- what: Bed, table and storage
+  item: material.structural-steel-a36
+  mass: 520.0
+- what: Sanitaryware
+  item: material.fused-silica
+  mass: 120.0
+  note: vitreous china, as fused silica here
+- what: Tops and soft goods
+  item: material.polyethylene-uhmw
+  mass: 180.0
+basis:
+- of:
+  - built_of
+  - physical
+  tier: invented
+  review: true
+  note: 'A furnished 6 m bay: 2 people served or seated, 0 at work in it; masses from memory of such furniture, to be sourced.'

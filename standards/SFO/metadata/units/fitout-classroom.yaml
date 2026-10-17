@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: unit.fitout-classroom
+  name: Classroom bay
+  description: Sixteen desks and chairs, a teacher's desk and a board.
+size_class: 1
+fits: plant-mount.bay-s1
+physical:
+  length: 6.0
+  width: 6.0
+  height: 2.2
+  mass: 540.0
+built_of:
+- what: Desks and chairs
+  item: material.structural-steel-a36
+  mass: 380.0
+  note: sixteen of each
+- what: Teacher's desk and board
+  item: material.aluminium-alloy-6061
+  mass: 90.0
+- what: Tops and seats
+  item: material.polyethylene-uhmw
+  mass: 70.0
+basis:
+- of:
+  - built_of
+  - physical
+  tier: invented
+  review: true
+  note: 'A furnished 6 m bay: 16 people served or seated, 1 at work in it; masses from memory of such furniture, to be sourced.'

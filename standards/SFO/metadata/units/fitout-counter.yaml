@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: unit.fitout-counter
+  name: Counter bay
+  description: A serving counter with its tills, back shelving and a queue's room.
+size_class: 1
+fits: plant-mount.bay-s1
+physical:
+  length: 6.0
+  width: 6.0
+  height: 2.2
+  mass: 400.0
+built_of:
+- what: Counter and back shelving
+  item: material.structural-steel-a36
+  mass: 300.0
+- what: Worktop and screens
+  item: material.polyethylene-uhmw
+  mass: 60.0
+- what: Tills
+  item: material.aluminium-alloy-6061
+  mass: 40.0
+  note: two
+basis:
+- of:
+  - built_of
+  - physical
+  tier: invented
+  review: true
+  note: 'A furnished 6 m bay: 6 people served or seated, 2 at work in it; masses from memory of such furniture, to be sourced.'

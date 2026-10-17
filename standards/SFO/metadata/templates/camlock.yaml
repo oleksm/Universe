@@ -10,12 +10,6 @@ scales_by:
 - physical
 members: 4
 reference: connector.camlock-dn50
-visual:
-  format: "freefall-model/1"
-  path: "models/camlock/v1"
-  manifest_sha256: "61b58c5fb5ff5bb12c30cf9dc048f2576827f84ac68172562918b49d7f148750"
-  version: 1
-  triangles: 4224
 basis:
 - of:
   - draws

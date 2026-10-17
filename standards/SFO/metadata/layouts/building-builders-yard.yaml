@@ -1,0 +1,1289 @@
+# yaml-language-server: $schema=../../schema/layout.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: layout.building-builders-yard
+  name: Builders' yard, world with air
+  description: 'A yard of cranes, mixers and stores: the firm that builds and repairs the settlement''s buildings, streets and ways, and keeps them standing. Laid of the kit: a strut frame on the 3 m grid, panels, and 170 furnished
+    6 m bays (59 store, 43 workshop, 51 vehicle, 9 office, 8 washroom).'
+stands_for: building.builders-yard
+site:
+  atmosphere: air
+  gravity:
+  - 8.0
+  - 11.0
+physical:
+  length: 102.0
+  width: 60.0
+  height: 6.15
+  mass: 2884390.0
+bays:
+- id: STO1
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - -48.0
+  - -27.0
+  - 0.0
+- id: STO2
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - -42.0
+  - -27.0
+  - 0.0
+- id: STO3
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - -36.0
+  - -27.0
+  - 0.0
+- id: STO4
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - -30.0
+  - -27.0
+  - 0.0
+- id: STO5
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - -24.0
+  - -27.0
+  - 0.0
+- id: STO6
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - -18.0
+  - -27.0
+  - 0.0
+- id: STO7
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - -12.0
+  - -27.0
+  - 0.0
+- id: STO8
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - -6.0
+  - -27.0
+  - 0.0
+- id: STO9
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - 0.0
+  - -27.0
+  - 0.0
+- id: STO10
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - 6.0
+  - -27.0
+  - 0.0
+- id: STO11
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - 12.0
+  - -27.0
+  - 0.0
+- id: STO12
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - 18.0
+  - -27.0
+  - 0.0
+- id: STO13
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - 24.0
+  - -27.0
+  - 0.0
+- id: STO14
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - 30.0
+  - -27.0
+  - 0.0
+- id: STO15
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - 36.0
+  - -27.0
+  - 0.0
+- id: STO16
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - 42.0
+  - -27.0
+  - 0.0
+- id: STO17
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - 48.0
+  - -27.0
+  - 0.0
+- id: STO18
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - -48.0
+  - -21.0
+  - 0.0
+- id: STO19
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - -42.0
+  - -21.0
+  - 0.0
+- id: STO20
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - -36.0
+  - -21.0
+  - 0.0
+- id: STO21
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - -30.0
+  - -21.0
+  - 0.0
+- id: STO22
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - -24.0
+  - -21.0
+  - 0.0
+- id: STO23
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - -18.0
+  - -21.0
+  - 0.0
+- id: STO24
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - -12.0
+  - -21.0
+  - 0.0
+- id: STO25
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - -6.0
+  - -21.0
+  - 0.0
+- id: STO26
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - 0.0
+  - -21.0
+  - 0.0
+- id: STO27
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - 6.0
+  - -21.0
+  - 0.0
+- id: STO28
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - 12.0
+  - -21.0
+  - 0.0
+- id: STO29
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - 18.0
+  - -21.0
+  - 0.0
+- id: STO30
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - 24.0
+  - -21.0
+  - 0.0
+- id: STO31
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - 30.0
+  - -21.0
+  - 0.0
+- id: STO32
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - 36.0
+  - -21.0
+  - 0.0
+- id: STO33
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - 42.0
+  - -21.0
+  - 0.0
+- id: STO34
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - 48.0
+  - -21.0
+  - 0.0
+- id: STO35
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - -48.0
+  - -15.0
+  - 0.0
+- id: STO36
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - -42.0
+  - -15.0
+  - 0.0
+- id: STO37
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - -36.0
+  - -15.0
+  - 0.0
+- id: STO38
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - -30.0
+  - -15.0
+  - 0.0
+- id: STO39
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - -24.0
+  - -15.0
+  - 0.0
+- id: STO40
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - -18.0
+  - -15.0
+  - 0.0
+- id: STO41
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - -12.0
+  - -15.0
+  - 0.0
+- id: STO42
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - -6.0
+  - -15.0
+  - 0.0
+- id: STO43
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - 0.0
+  - -15.0
+  - 0.0
+- id: STO44
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - 6.0
+  - -15.0
+  - 0.0
+- id: STO45
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - 12.0
+  - -15.0
+  - 0.0
+- id: STO46
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - 18.0
+  - -15.0
+  - 0.0
+- id: STO47
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - 24.0
+  - -15.0
+  - 0.0
+- id: STO48
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - 30.0
+  - -15.0
+  - 0.0
+- id: STO49
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - 36.0
+  - -15.0
+  - 0.0
+- id: STO50
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - 42.0
+  - -15.0
+  - 0.0
+- id: STO51
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - 48.0
+  - -15.0
+  - 0.0
+- id: STO52
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - -48.0
+  - -9.0
+  - 0.0
+- id: STO53
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - -42.0
+  - -9.0
+  - 0.0
+- id: STO54
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - -36.0
+  - -9.0
+  - 0.0
+- id: STO55
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - -30.0
+  - -9.0
+  - 0.0
+- id: STO56
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - -24.0
+  - -9.0
+  - 0.0
+- id: STO57
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - -18.0
+  - -9.0
+  - 0.0
+- id: STO58
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - -12.0
+  - -9.0
+  - 0.0
+- id: STO59
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-store
+  at:
+  - -6.0
+  - -9.0
+  - 0.0
+- id: WOR60
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - 0.0
+  - -9.0
+  - 0.0
+- id: WOR61
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - 6.0
+  - -9.0
+  - 0.0
+- id: WOR62
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - 12.0
+  - -9.0
+  - 0.0
+- id: WOR63
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - 18.0
+  - -9.0
+  - 0.0
+- id: WOR64
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - 24.0
+  - -9.0
+  - 0.0
+- id: WOR65
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - 30.0
+  - -9.0
+  - 0.0
+- id: WOR66
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - 36.0
+  - -9.0
+  - 0.0
+- id: WOR67
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - 42.0
+  - -9.0
+  - 0.0
+- id: WOR68
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - 48.0
+  - -9.0
+  - 0.0
+- id: WOR69
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - -48.0
+  - -3.0
+  - 0.0
+- id: WOR70
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - -42.0
+  - -3.0
+  - 0.0
+- id: WOR71
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - -36.0
+  - -3.0
+  - 0.0
+- id: WOR72
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - -30.0
+  - -3.0
+  - 0.0
+- id: WOR73
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - -24.0
+  - -3.0
+  - 0.0
+- id: WOR74
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - -18.0
+  - -3.0
+  - 0.0
+- id: WOR75
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - -12.0
+  - -3.0
+  - 0.0
+- id: WOR76
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - -6.0
+  - -3.0
+  - 0.0
+- id: WOR77
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - 0.0
+  - -3.0
+  - 0.0
+- id: WOR78
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - 6.0
+  - -3.0
+  - 0.0
+- id: WOR79
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - 12.0
+  - -3.0
+  - 0.0
+- id: WOR80
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - 18.0
+  - -3.0
+  - 0.0
+- id: WOR81
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - 24.0
+  - -3.0
+  - 0.0
+- id: WOR82
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - 30.0
+  - -3.0
+  - 0.0
+- id: WOR83
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - 36.0
+  - -3.0
+  - 0.0
+- id: WOR84
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - 42.0
+  - -3.0
+  - 0.0
+- id: WOR85
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - 48.0
+  - -3.0
+  - 0.0
+- id: WOR86
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - -48.0
+  - 3.0
+  - 0.0
+- id: WOR87
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - -42.0
+  - 3.0
+  - 0.0
+- id: WOR88
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - -36.0
+  - 3.0
+  - 0.0
+- id: WOR89
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - -30.0
+  - 3.0
+  - 0.0
+- id: WOR90
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - -24.0
+  - 3.0
+  - 0.0
+- id: WOR91
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - -18.0
+  - 3.0
+  - 0.0
+- id: WOR92
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - -12.0
+  - 3.0
+  - 0.0
+- id: WOR93
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - -6.0
+  - 3.0
+  - 0.0
+- id: WOR94
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - 0.0
+  - 3.0
+  - 0.0
+- id: WOR95
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - 6.0
+  - 3.0
+  - 0.0
+- id: WOR96
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - 12.0
+  - 3.0
+  - 0.0
+- id: WOR97
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - 18.0
+  - 3.0
+  - 0.0
+- id: WOR98
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - 24.0
+  - 3.0
+  - 0.0
+- id: WOR99
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - 30.0
+  - 3.0
+  - 0.0
+- id: WOR100
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - 36.0
+  - 3.0
+  - 0.0
+- id: WOR101
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - 42.0
+  - 3.0
+  - 0.0
+- id: WOR102
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-workshop
+  at:
+  - 48.0
+  - 3.0
+  - 0.0
+- id: GAR103
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - -48.0
+  - 9.0
+  - 0.0
+- id: GAR104
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - -42.0
+  - 9.0
+  - 0.0
+- id: GAR105
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - -36.0
+  - 9.0
+  - 0.0
+- id: GAR106
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - -30.0
+  - 9.0
+  - 0.0
+- id: GAR107
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - -24.0
+  - 9.0
+  - 0.0
+- id: GAR108
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - -18.0
+  - 9.0
+  - 0.0
+- id: GAR109
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - -12.0
+  - 9.0
+  - 0.0
+- id: GAR110
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - -6.0
+  - 9.0
+  - 0.0
+- id: GAR111
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - 0.0
+  - 9.0
+  - 0.0
+- id: GAR112
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - 6.0
+  - 9.0
+  - 0.0
+- id: GAR113
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - 12.0
+  - 9.0
+  - 0.0
+- id: GAR114
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - 18.0
+  - 9.0
+  - 0.0
+- id: GAR115
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - 24.0
+  - 9.0
+  - 0.0
+- id: GAR116
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - 30.0
+  - 9.0
+  - 0.0
+- id: GAR117
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - 36.0
+  - 9.0
+  - 0.0
+- id: GAR118
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - 42.0
+  - 9.0
+  - 0.0
+- id: GAR119
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - 48.0
+  - 9.0
+  - 0.0
+- id: GAR120
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - -48.0
+  - 15.0
+  - 0.0
+- id: GAR121
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - -42.0
+  - 15.0
+  - 0.0
+- id: GAR122
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - -36.0
+  - 15.0
+  - 0.0
+- id: GAR123
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - -30.0
+  - 15.0
+  - 0.0
+- id: GAR124
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - -24.0
+  - 15.0
+  - 0.0
+- id: GAR125
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - -18.0
+  - 15.0
+  - 0.0
+- id: GAR126
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - -12.0
+  - 15.0
+  - 0.0
+- id: GAR127
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - -6.0
+  - 15.0
+  - 0.0
+- id: GAR128
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - 0.0
+  - 15.0
+  - 0.0
+- id: GAR129
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - 6.0
+  - 15.0
+  - 0.0
+- id: GAR130
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - 12.0
+  - 15.0
+  - 0.0
+- id: GAR131
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - 18.0
+  - 15.0
+  - 0.0
+- id: GAR132
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - 24.0
+  - 15.0
+  - 0.0
+- id: GAR133
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - 30.0
+  - 15.0
+  - 0.0
+- id: GAR134
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - 36.0
+  - 15.0
+  - 0.0
+- id: GAR135
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - 42.0
+  - 15.0
+  - 0.0
+- id: GAR136
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - 48.0
+  - 15.0
+  - 0.0
+- id: GAR137
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - -48.0
+  - 21.0
+  - 0.0
+- id: GAR138
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - -42.0
+  - 21.0
+  - 0.0
+- id: GAR139
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - -36.0
+  - 21.0
+  - 0.0
+- id: GAR140
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - -30.0
+  - 21.0
+  - 0.0
+- id: GAR141
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - -24.0
+  - 21.0
+  - 0.0
+- id: GAR142
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - -18.0
+  - 21.0
+  - 0.0
+- id: GAR143
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - -12.0
+  - 21.0
+  - 0.0
+- id: GAR144
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - -6.0
+  - 21.0
+  - 0.0
+- id: GAR145
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - 0.0
+  - 21.0
+  - 0.0
+- id: GAR146
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - 6.0
+  - 21.0
+  - 0.0
+- id: GAR147
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - 12.0
+  - 21.0
+  - 0.0
+- id: GAR148
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - 18.0
+  - 21.0
+  - 0.0
+- id: GAR149
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - 24.0
+  - 21.0
+  - 0.0
+- id: GAR150
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - 30.0
+  - 21.0
+  - 0.0
+- id: GAR151
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - 36.0
+  - 21.0
+  - 0.0
+- id: GAR152
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - 42.0
+  - 21.0
+  - 0.0
+- id: GAR153
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-garage
+  at:
+  - 48.0
+  - 21.0
+  - 0.0
+- id: OFF154
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-office
+  at:
+  - -48.0
+  - 27.0
+  - 0.0
+- id: OFF155
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-office
+  at:
+  - -42.0
+  - 27.0
+  - 0.0
+- id: OFF156
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-office
+  at:
+  - -36.0
+  - 27.0
+  - 0.0
+- id: OFF157
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-office
+  at:
+  - -30.0
+  - 27.0
+  - 0.0
+- id: OFF158
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-office
+  at:
+  - -24.0
+  - 27.0
+  - 0.0
+- id: OFF159
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-office
+  at:
+  - -18.0
+  - 27.0
+  - 0.0
+- id: OFF160
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-office
+  at:
+  - -12.0
+  - 27.0
+  - 0.0
+- id: OFF161
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-office
+  at:
+  - -6.0
+  - 27.0
+  - 0.0
+- id: OFF162
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-office
+  at:
+  - 0.0
+  - 27.0
+  - 0.0
+- id: WAS163
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-washroom
+  at:
+  - 6.0
+  - 27.0
+  - 0.0
+- id: WAS164
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-washroom
+  at:
+  - 12.0
+  - 27.0
+  - 0.0
+- id: WAS165
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-washroom
+  at:
+  - 18.0
+  - 27.0
+  - 0.0
+- id: WAS166
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-washroom
+  at:
+  - 24.0
+  - 27.0
+  - 0.0
+- id: WAS167
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-washroom
+  at:
+  - 30.0
+  - 27.0
+  - 0.0
+- id: WAS168
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-washroom
+  at:
+  - 36.0
+  - 27.0
+  - 0.0
+- id: WAS169
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-washroom
+  at:
+  - 42.0
+  - 27.0
+  - 0.0
+- id: WAS170
+  mount: plant-mount.bay-s1
+  unit: unit.fitout-washroom
+  at:
+  - 48.0
+  - 27.0
+  - 0.0
+frame:
+  box:
+  - -51.0
+  - -30.0
+  - 0.0
+  - 51.0
+  - 30.0
+  - 6.0
+  cell: 3.0
+  shape: 'A skeleton frame on the 3 m grid: 34 x 20 cells, 1 storey(s) of 6 m; columns at every node, beams on every cell edge at each floor and the roof, one diagonal in every other outside face. Panels on its faces (frame.panels).'
+  members:
+  - item: stock.st4340-tb-60x2-s3000
+    count: 1470
+    where: columns
+  - item: stock.st4340-tb-160x5-s3000
+    count: 1414
+    where: beams
+  - item: stock.st4340-tb-80x2-d3000
+    count: 108
+    where: bracing
+  - item: stock.st4340-node-90b
+    count: 2205
+    where: nodes
+  mass: 105482.0
+  panels:
+  - panel: panel.partition-3x3
+    count: 102
+  - panel: panel.partition-door-3x3
+    count: 34
+  - panel: panel.roof-3x3
+    count: 680
+  - panel: panel.wall-double-door-3x3
+    count: 5
+  - panel: panel.wall-insulated-3x3
+    count: 173
+  - panel: panel.wall-roller-3x3
+    count: 4
+  - panel: panel.wall-window-3x3
+    count: 34
+  panels_mass: 137902.0
+  sized: 'At 1 g: floors 1893 Pa dead and 5000 Pa imposed, the roof 1155 Pa; a ground column carries 13 kN (st4340-tb-60x2 takes it with half again to spare); a 3 m beam bends with 23.3 kN m (st4340-tb-160x5, under 470 MPa with half
+    again to spare). Wind, the tall halls'' columns between floors and the footings'' loads not yet checked.'
+ground:
+- what: Ground slab
+  item: good.concrete
+  volume: 918.0
+  mass: 2203200.0
+  note: 0.15 m over the 102 x 60 m plan
+- what: Edge footings
+  item: good.concrete
+  volume: 116.6
+  mass: 279936.0
+  note: 0.6 x 0.6 m strips under the outside walls
+totals:
+  mass: 2884390.0
+  against_module: 'building.builders-yard (deprecated): one box 100 x 60 x 8 m of 6,618 t, from the average of 538 concrete buildings. This layout: 102 x 60 x 6 m, 2,884 t (105 t frame, 138 t panels, 158 t fit-out, 2,483 t ground),
+    for 54 people served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
+staff:
+- profession: profession.builder
+  count: 35
+- profession: profession.driver
+  count: 8
+- profession: profession.machinist
+  count: 3
+- profession: profession.electrician
+  count: 3
+- profession: profession.engineer
+  count: 1
+basis:
+- of:
+  - bays
+  tier: invented
+  review: true
+  note: The mix of bays for a builders' yard is chosen (store 0.35, workshop 0.25, garage 0.3, office 0.05, washroom 0.05), shared over the record's floor (6000 m2 in 1 storeys, laid as 17 x 10 bays of 6 m).
+- of:
+  - frame
+  - ground
+  tier: derived
+  review: true
+  note: Counted from the grid (tools/standards/building_layouts.py); sections by the loads in frame.sized; masses from the strut, node and panel records.

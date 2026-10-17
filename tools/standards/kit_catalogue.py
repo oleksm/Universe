@@ -226,7 +226,7 @@ for slug, v, n, mm2, amps, od, ck in FLEX[1:]:
     D = math.sqrt(d0 * d0 + 4 * L * od / math.pi)
     cu = n * mm2 * 1e-6 * RHO[CU]
     cable = (cu + math.pi / 4 * od * od * RHO[RUB] * 0.55) * L
-    frame = 120 + 40 * D * D
+    frame = 150 + 52.5 * D * D          # (blender's 690 V 4 x 95 reel, 2026-10-17: 786 kg of cheeks, core, A-frames, shaft and stiffeners on a 3.87 m drum; 150 kg of drive, bearings and slip rings invented)
     rk = f"cable-reel-{slug}-{L}m"
     conn(rk, {
         "identity": {"key": f"connector.{rk}", "name": f"Cable reel, {n} x {mm2} mm2, {L} m", "description": f"A motor-driven monospiral reel on a moving machine, holding {L} m of its flexible cable: it pays out and winds in as the machine travels, its slip rings passing the power from the turning drum. For long travels."},
@@ -234,7 +234,7 @@ for slug, v, n, mm2, amps, od, ck in FLEX[1:]:
         "physical": {"length": r(D, 2), "width": r(od + 0.35, 2), "height": r(D + 0.2, 2), "mass": r(frame + cable)},
         "built_of": [part("Drum, frame, drive and slip rings", A36, frame, f"a {D:.2f} m drum on a {d0:.2f} m core"), part("Its cable", CU, cable, f"{L} m of the flexible cable, wound")],
         "provides": "both", "template": "template.cable-reel",
-        "basis": [{"of": ["physical"], "tier": "derived", "review": True, "note": f"A monospiral drum: D^2 = core^2 + 4 L outside / pi; core thirty cable outsides, at least 1 m; drum and drive 120 kg + 40 kg/m2 of D^2 (invented)."}]},
+        "basis": [{"of": ["physical"], "tier": "derived", "review": True, "note": f"A monospiral drum: D^2 = core^2 + 4 L outside / pi; core thirty cable outsides, at least 1 m; structure 52.5 kg/m2 of D^2 (blender's measured reel), drive, bearings and slip rings 150 kg (invented)."}]},
         {"slug": f"cable-reel-{slug}", "name": f"Reel feed {n} x {mm2} mm2", "description": "The fixed feed point a cable reel's cable is plugged into at the travel's centre.", "domain": "power", "kind": "cable-reel", "media": ["power"], "halves": "male-female", "make": "bolted"})
 
 # ------------------------------------------------------------------ valves and expansion joints (between the plant kit's PN 10 flanges)

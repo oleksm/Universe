@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: unit.fitout-seating
+  name: Seating bay
+  description: Tiered seating, three rows of twelve, and its stair.
+size_class: 1
+fits: plant-mount.bay-s1
+physical:
+  length: 6.0
+  width: 6.0
+  height: 2.4
+  mass: 2500.0
+built_of:
+- what: Tiers and frames
+  item: material.structural-steel-a36
+  mass: 2200.0
+- what: Seats
+  item: material.polyethylene-uhmw
+  mass: 300.0
+  note: thirty-six
+basis:
+- of:
+  - built_of
+  - physical
+  tier: invented
+  review: true
+  note: 'A furnished 6 m bay: 36 people served or seated, 0 at work in it; masses from memory of such furniture, to be sourced.'

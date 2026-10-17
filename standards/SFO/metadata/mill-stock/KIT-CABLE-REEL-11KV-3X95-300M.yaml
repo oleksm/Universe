@@ -17,7 +17,7 @@ size:
 supplies:
   item: connector.cable-reel-11kv-3x95-300m
 physical:
-  mass: 2544.6
+  mass: 2913.9
 basis:
 - of:
   - size

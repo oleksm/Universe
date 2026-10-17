@@ -19,7 +19,7 @@ properties:
       key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
       description: { type: string }
-  stands_for: { type: string, x-ref: [module], description: "The industrial module (SFO 10) it builds; its rate is the module's where the site is the one the module was set for." }
+  stands_for: { type: string, x-ref: [module, building], description: "The industrial module (SFO 10) it builds, or the building it is (a building laid of the kit); its rate is the module's where the site is the one the module was set for." }
   site:
     type: object
     additionalProperties: false
@@ -119,6 +119,8 @@ properties:
       shape: { type: string, description: "Which cells are filled: walls one cell thick and a roof one cell deep, and the openings." }
       openings: { type: array, items: { type: array, items: { type: number, x-unit: "m" }, minItems: 6, maxItems: 6 }, description: "[x0, y0, z0, x1, y1, z1] of each door left open in the lattice" }
       members: { type: array, items: { type: object, additionalProperties: false, required: [item, count], properties: { item: { type: string, x-ref: [stock] }, count: { type: integer, minimum: 1 }, where: { type: string } } } }
+      panels: { type: array, items: { type: object, additionalProperties: false, required: [panel, count], properties: { panel: { type: string, x-ref: [panel] }, count: { type: integer, minimum: 1 }, where: { type: string } } }, description: "The building panels on its faces (a building layout)." }
+      panels_mass: { type: number, x-unit: "kg" }
       cladding: { type: object, additionalProperties: false, properties: { item: { type: string, x-ref: [stock] }, area: { type: number, x-unit: "m2" }, mass: { type: number, x-unit: "kg" } } }
       carries: { type: array, items: { type: string }, description: "Plant hung on the frame (a crane), by unit key." }
       mass: { type: number, x-unit: "kg" }
