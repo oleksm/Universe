@@ -3,32 +3,52 @@
 identity:
   key: arrangement.washroom
   name: Washroom
-  description: 'How a 6 m room is furnished as a washroom: 4 toilet cubicles, 4 basins, 1 shower.'
+  description: 'How a 6 m room is furnished as a washroom: 4 toilet cubicles, 4 toilets, 4 basins, 1 shower.'
 room:
 - 6.0
 - 6.0
 people: 0
 staff: 0
 items:
-- unit: unit.furniture-wc
+- unit: unit.furniture-cubicle
   at:
   - -1.35
   - -2.2
   - 0.0
-- unit: unit.furniture-wc
+- unit: unit.furniture-cubicle
   at:
   - -0.45
   - -2.2
   - 0.0
-- unit: unit.furniture-wc
+- unit: unit.furniture-cubicle
   at:
   - 0.45
   - -2.2
   - 0.0
-- unit: unit.furniture-wc
+- unit: unit.furniture-cubicle
   at:
   - 1.35
   - -2.2
+  - 0.0
+- unit: unit.furniture-wc
+  at:
+  - -1.35
+  - -2.4
+  - 0.0
+- unit: unit.furniture-wc
+  at:
+  - -0.45
+  - -2.4
+  - 0.0
+- unit: unit.furniture-wc
+  at:
+  - 0.45
+  - -2.4
+  - 0.0
+- unit: unit.furniture-wc
+  at:
+  - 1.35
+  - -2.4
   - 0.0
 - unit: unit.furniture-basin
   at:
@@ -60,7 +80,7 @@ items:
   - 2.4
   - 0.0
   turn: 180.0
-mass: 458.0
+mass: 466.0
 basis:
 - of:
   - items

@@ -15,7 +15,7 @@ physical:
   length: 102.0
   width: 60.0
   height: 6.15
-  mass: 2810064.0
+  mass: 2810128.0
 bays: []
 rooms:
 - id: STO1
@@ -1092,7 +1092,7 @@ ground:
   mass: 279936.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 2810064.0
+  mass: 2810128.0
   against_module: 'building.builders-yard (deprecated): one box 100 x 60 x 8 m of 6,618 t, from the average of 538 concrete buildings. This layout: 102 x 60 x 6 m, 2,810 t (105 t frame, 138 t panels, 84 t furniture, 2,483 t ground),
     for 54 people served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:

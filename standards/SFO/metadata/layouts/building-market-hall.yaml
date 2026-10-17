@@ -15,7 +15,7 @@ physical:
   length: 78.0
   width: 42.0
   height: 6.15
-  mass: 1577236.7
+  mass: 1577308.7
 bays: []
 rooms:
 - id: SAL1
@@ -620,7 +620,7 @@ ground:
   mass: 207360.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 1577236.7
+  mass: 1577308.7
   against_module: 'building.market-hall (deprecated): one box 80 x 40 x 10 m of 3,530 t, from the average of 538 concrete buildings. This layout: 78 x 42 x 6 m, 1,577 t (58 t frame, 86 t panels, 47 t furniture, 1,387 t ground), for
     708 people served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:
