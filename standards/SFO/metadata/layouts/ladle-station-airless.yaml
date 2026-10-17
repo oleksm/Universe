@@ -5,7 +5,7 @@ stands_for: module.ladle-station
 site:
   atmosphere: none
   gravity: [1.6, 2.0]
-physical: {length: 164.0, width: 94.4, height: 27.0, mass: 2663000.0}
+physical: {length: 164.0, width: 94.4, height: 27.0, mass: 2768000.0}
 bays:
 - id: D
   mount: plant-mount.bay-s2
@@ -428,6 +428,24 @@ links:
   item: material.structural-steel-a36
   mass: 3600.0
   note: 'the maintenance gantry crane''s two straight rails over the stand, the furnace and the bins, at y -11 and 13 (24 m apart); the link runs on their centre line. No run crosses them: the crane''s legs sweep x -29 to 17 along both'
+- kind: road
+  name: alloy road
+  from: [11.0, 30.0, 0.0]
+  to: [11.0, 11.7, 0.0]
+  length: 18.3
+  item: material.regolith-sintered
+  mass: 51470.0
+  width: 4.5
+  note: 'a forklift lane 4.5 m wide, sintered regolith 0.25 m, from the site''s road south across the crane''s north rail (a level crossing: the crane stands west while it is used) to a laydown east of the bins, where the crane takes the alloy skips up to their fill caps'
+- kind: road
+  name: filter road
+  from: [22.0, 30.0, 0.0]
+  to: [22.0, 11.0, 0.0]
+  length: 19.0
+  item: material.regolith-sintered
+  mass: 53440.0
+  width: 4.5
+  note: a forklift lane 4.5 m wide to the off-gas filter's north face, where its closed dust bins come out; east of the crane's reach
 ground:
 - {what: Ladle furnace foundation, item: material.regolith-sintered, volume: 102.0, note: 'as for air, of sintered regolith; measured on blender''s layout (candidate v01)', mass: 255000.0}
 - {what: Stand and transformer pads, item: material.regolith-sintered, volume: 41.6, note: the degassing stand's (20.0) and the transformer's (21.6); measured on blender's layout (candidate v01), mass: 104000.0}
@@ -438,7 +456,7 @@ ground:
 - {what: Rail sleepers, item: material.regolith-sintered, volume: 12.77, note: under the ladle rail (8.0) and the crane's rails (4.8); measured on blender's layout (candidate v01), mass: 31920.0}
 - {what: Radiator legs' pads, item: material.regolith-sintered, volume: 6.91, note: 'a block under each leg; 3.46 m3 a field, as measured on blender''s layout (candidate v01)', mass: 17280.0}
 - {what: Feet, item: material.regolith-sintered, volume: 3.05, note: 'under the belt, the pipes'' and the cables'' supports; as measured on blender''s layout (candidate v01) before the runs were re-laid, to measure again', mass: 7625.0}
-totals: {rate: 41.6666666666667, power: 7868000.0, heat: 1598000.0, water: 0.0, mass: 2663000.0, against_module: 'module.ladle-station: one box, the same on every world. This layout: the same rate; 7.9 MW; 1.6 MW to 2 radiator fields at 330 K; no water used up; 0.042 kg/s of argon, let go. No degasser: the vacuum degasses the ladle on an open stand, but must not see the alloys, which the sealed ladle furnace adds under argon; no ladle crane (nothing is lifted into a tank) and no hall. 473 t of plant, 2,189 t of sintered regolith.'}
+totals: {rate: 41.6666666666667, power: 7868000.0, heat: 1598000.0, water: 0.0, mass: 2768000.0, against_module: 'module.ladle-station: one box, the same on every world. This layout: the same rate; 7.9 MW; 1.6 MW to 2 radiator fields at 330 K; no water used up; 0.042 kg/s of argon, let go. No degasser: the vacuum degasses the ladle on an open stand, but must not see the alloys, which the sealed ladle furnace adds under argon; no ladle crane (nothing is lifted into a tank) and no hall. 578 t of plant, 2,189 t of sintered regolith.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}

@@ -378,7 +378,7 @@ def check(lay, units, runs, conns):
     for pid in edge:
         if f"edge:{pid}" not in used:
             faults.append(f"edge:{pid} is left open")
-    old = [l["name"] for l in lay["links"] if not l.get("run")]
+    old = [l["name"] for l in lay["links"] if not l.get("run") and l.get("kind") not in ("rail", "road")]     # (rails and roads are laid as they are, not of runs)
     if old:
         notes.append(f"{len(old)} links not laid of runs yet: {', '.join(old[:6])}{'...' if len(old) > 6 else ''}")
     return faults, notes

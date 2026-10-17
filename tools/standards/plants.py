@@ -2861,6 +2861,8 @@ def ladle_station_airless(us, recs):
         L("transformer cooling out", wt, ("T:water-out", "tee:loop return main"), [None, (-3.0, -8.2, 1.0), (-3.0, -6.6, 1.0)]),
         link("rail", "ladle rail", (-30.0, 0.0, 0.0), (30.0, 0.0, 0.0), A36, 2 * 60.0, None, "two 60 kg/m rails at 3 m gauge on sintered regolith sleepers, from the arc furnace shop to the casting bay; the car stops at x -15 (the stand) and 3 (the ladle furnace)"),
         link("rail", "crane rails", (-24.0, 1.0, 0.0), (12.0, 1.0, 0.0), A36, 2 * 50.0, None, "the maintenance gantry crane's two straight rails over the stand, the furnace and the bins, at y -11 and 13 (24 m apart); the link runs on their centre line. No run crosses them: the crane's legs sweep x -29 to 17 along both"),
+        link("road", "alloy road", (11.0, 30.0, 0.0), (11.0, 11.7, 0.0), SINTER, 4.5 * 0.25 * RHO_SINTER, None, "a forklift lane 4.5 m wide, sintered regolith 0.25 m, from the site's road south across the crane's north rail (a level crossing: the crane stands west while it is used) to a laydown east of the bins, where the crane takes the alloy skips up to their fill caps", width=4.5),
+        link("road", "filter road", (22.0, 30.0, 0.0), (22.0, 11.0, 0.0), SINTER, 4.5 * 0.25 * RHO_SINTER, None, "a forklift lane 4.5 m wide to the off-gas filter's north face, where its closed dust bins come out; east of the crane's reach", width=4.5),
     ]
     mobile = [{"unit": "unit.ladle-car-80t", "rides": "ladle rail", "at": [-15.0, 0.0, 0.0]},
               {"unit": "unit.gantry-crane-20t-moon", "rides": "crane rails", "at": [-6.0, 1.0, 0.0]}]
