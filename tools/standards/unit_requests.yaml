@@ -1,4 +1,2 @@
 # Work the registry asks of plant units' installed models (common.schema.yaml model_request), written onto the unit
 # records by plants.py. A request is open until a version above of_version is installed (model_spec.py, next_asset.py --rework).
-unit.ladle-furnace-80t:
-- {work: measure, of_version: 1, asked: "2026-10-17", by: registry, because: "Measure its own envelope boxes from v1: it carries the sealed furnace's measured boxes for now (the same gantry), but the air furnace's roof elbow and chute differ. The fume duct leaves the roof elbow at (2, 0, 7.5) up to z 10 and north out of the open side."}

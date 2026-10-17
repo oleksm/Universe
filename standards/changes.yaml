@@ -869,7 +869,7 @@
 - { record: good.woollen-cloth, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "397d6fdb6b006816" }
 - { record: good.woollens, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "ab28b570ffd2246a" }
 - { record: good.zinc-concentrate, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "1065a96e13f241ed" }
-- { record: ground-vocabulary.pattern, at: "2026-10-10T22:11:43Z", status: "", summary: "first tracked", sha: "011b65eb9982c559" }
+- { record: ground-vocabulary.pattern, at: "2026-10-17T15:44:28Z", status: "", summary: "changed", sha: "45bab9119969759f" }
 - { record: ground-vocabulary.rock, at: "2026-10-10T22:11:43Z", status: "", summary: "first tracked", sha: "7d3835cbcfa04d13" }
 - { record: hull.drover, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "43e4088fcb8c1351" }
 - { record: hull.hauler, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "bb65478e558da977" }
@@ -1005,9 +1005,9 @@
 - { record: layout.ingot-yard-airless, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "edaf596ade5c1bb2" }
 - { record: layout.ladle-station-air, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "a419234ded543994" }
 - { record: layout.ladle-station-airless, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: ports", sha: "05bd7418814e334b" }
-- { record: layout.ore-yard-air, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "8fb2e896c6d72971" }
-- { record: layout.ore-yard-airless, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "467f36d9fd123d28" }
-- { record: layout.pellet-plant-air, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "804eea5a3ec51ca9" }
+- { record: layout.ore-yard-air, at: "2026-10-17T15:44:28Z", status: draft, summary: "changed", sha: "ff4451d78c0c864a" }
+- { record: layout.ore-yard-airless, at: "2026-10-17T15:44:28Z", status: draft, summary: "changed", sha: "d7768b5e39d157bf" }
+- { record: layout.pellet-plant-air, at: "2026-10-17T15:44:28Z", status: draft, summary: "changed", sha: "0065e7a348763033" }
 - { record: layout.pellet-plant-airless, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: ports", sha: "77c25c70e2b03c03" }
 - { record: layout.shaft-furnace-air, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "2c28d988a6909720" }
 - { record: layout.shaft-furnace-airless, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: ports", sha: "8eae14421a5ea76a" }
@@ -1541,9 +1541,13 @@
 - { record: part.wb-02, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "3796f49a5bc8fa2e" }
 - { record: part.wb-03, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "fc9231a50b47acd4" }
 - { record: part.wb-04, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "63ae488f7cfc4f5a" }
+- { record: planet-event.flood-basalt, at: "2026-10-17T15:44:28Z", status: "", summary: "first tracked", sha: "22881bb1ae6f2e64" }
+- { record: planet-event.plume, at: "2026-10-17T15:44:28Z", status: "", summary: "first tracked", sha: "edf6159edc3ae991" }
+- { record: planet-event.rift, at: "2026-10-17T15:44:28Z", status: "", summary: "first tracked", sha: "45011624f084e5cc" }
+- { record: planet-event.rivers, at: "2026-10-17T15:44:28Z", status: "", summary: "first tracked", sha: "78e4599fe2d10698" }
 - { record: planet-field.aridity, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "3f9403694c046e63" }
-- { record: planet-field.crust-age, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "7cede8bb636195bf" }
-- { record: planet-field.crust-thickness, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "99acc36b2a947821" }
+- { record: planet-field.crust-age, at: "2026-10-17T15:44:28Z", status: "", summary: "changed", sha: "cce67834702ec7d2" }
+- { record: planet-field.crust-thickness, at: "2026-10-17T15:44:28Z", status: "", summary: "changed", sha: "b269b87ec00bae46" }
 - { record: planet-field.discharge, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "4c744c53ee6e801e" }
 - { record: planet-field.down, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "6fc5197df4a5ac93" }
 - { record: planet-field.drainage-area, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "e601777ae03c720e" }
@@ -1564,7 +1568,7 @@
 - { record: planet-handler.u-valley, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "51a416a79ab21f4f" }
 - { record: planet-handler.water-gap, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "57be9ef856466081" }
 - { record: planet-landmark.arc-volcano, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "f4d8c84a687c7cc9" }
-- { record: planet-landmark.delta, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "b6fe4a5ff8671d5b" }
+- { record: planet-landmark.delta, at: "2026-10-17T15:44:28Z", status: "", summary: "changed", sha: "ee24f6d54688ecc8" }
 - { record: planet-landmark.dry-valley, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "f4c10328a72c7dc5" }
 - { record: planet-landmark.flood-basalt-province, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "09d91dc76c29a5fb" }
 - { record: planet-landmark.former-lake-bed, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "122f9c0ec0724c50" }
@@ -1575,7 +1579,7 @@
 - { record: planet-landmark.water-carved-land, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "38875031f88ab213" }
 - { record: planet-landmark.water-gap, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "6f0b26f953bd07b3" }
 - { record: planet-layer.basins, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "da6aef9e96dcab69" }
-- { record: planet-layer.climate, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "4f632e6cd1b346ce" }
+- { record: planet-layer.climate, at: "2026-10-17T15:44:28Z", status: "", summary: "changed", sha: "ac0e49a0ffac049c" }
 - { record: planet-layer.coast, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "2eebe72874a25b34" }
 - { record: planet-layer.cover, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "33b82278c77919d6" }
 - { record: planet-layer.formations, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "f851b9203d8f032c" }
@@ -3119,7 +3123,7 @@
 - { record: unit.crew-post, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "90471f28dccbfd2b" }
 - { record: unit.crop-saws, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "c58aed45477a29e3" }
 - { record: unit.degassing-stand, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "28616bb1f7c1152d" }
-- { record: unit.disc-filter-2, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed: model_requests", sha: "9503b8987fa82d8e" }
+- { record: unit.disc-filter-2, at: "2026-10-17T15:44:28Z", status: draft, summary: "changed", sha: "d756b402862ee86f" }
 - { record: unit.dri-bin-200t, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "1406b4d852320fbc" }
 - { record: unit.dri-cooling-loop, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "cd280a71276e9df4" }
 - { record: unit.eaf-vessel-80t, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "02c88dd035aaa9b8" }
@@ -3145,7 +3149,7 @@
 - { record: unit.ingot-tipper, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "d947c8a488a62412" }
 - { record: unit.ladle-car-80t, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "1d6463f997b73110" }
 - { record: unit.ladle-crane-150t, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "ba112509cc38694b" }
-- { record: unit.ladle-furnace-80t, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed: model_requests", sha: "6e074ea350c9506f" }
+- { record: unit.ladle-furnace-80t, at: "2026-10-17T15:44:28Z", status: draft, summary: "changed: envelope, model_requests", sha: "962e5bb7f838e935" }
 - { record: unit.ladle-furnace-80t-sealed, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "2c94a26365aaabda" }
 - { record: unit.mill-crane-30t, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "e0067c9b9bf91396" }
 - { record: unit.mould-car-12, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "1612fedfe2241d7a" }
@@ -3176,7 +3180,7 @@
 - { record: unit.stripper-gantry-20t-moon, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "865c6a3f1cff9952" }
 - { record: unit.top-gas-condenser-8bar, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "b85a3301f5340364" }
 - { record: unit.top-gas-scrubber, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "cd0ec91f709a508d" }
-- { record: unit.truck-dump-hopper, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed: model_requests", sha: "bb2bf9c00ab24b8d" }
+- { record: unit.truck-dump-hopper, at: "2026-10-17T15:44:28Z", status: draft, summary: "changed", sha: "820349243a51d3e8" }
 - { record: unit.vacuum-degasser-80t, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "e7abb39a1fb0ed34" }
 - { record: unit.water-treatment, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "c606ad601fce9c61" }
 - { record: unit.water-treatment-sealed, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "ea74f4a4cb13de92" }
