@@ -295,6 +295,9 @@ def lined_duct(dn, pn, lining=0.2, temp=1173.0, sealing="single"):
     return key
 
 
+BELT_HEIGHT_MEASURED = {0.65: 0.91}     # m: an open belt's full height about its axis, the rigid return roll under it included (0.454 below, 0.426 above), measured on blender's 650 kit (2026-10-16)
+
+
 def belt(width, rate, sealed=False):
     """An open troughed belt; sealed: in a gallery tube 3 m across that holds a hall's gas round it (green balls or
     ore taken through vacuum from one sealed space to another)."""
@@ -311,7 +314,7 @@ def belt(width, rate, sealed=False):
                   _part("Insulation", MLI, math.pi * 3.0 * 0.025 * RHO[MLI], "25 mm of multilayer foil over the tube, against the lunar day and night")]
     per_m = sum(b["mass"] for b in built)
     BOX = 4069.5          # kg: a gallery's sealed head or tail box, 6 mm plate on 150 x 75 x 6 mm ribs at 0.5 m, its throat, posts and feet; measured on blender's 0.8 m candidate (the tube's the same for every width)
-    out = [3.05, 3.05] if sealed else [r(width + 0.6, 2), r(max(0.8, width), 2)]     # (a belt's height by its width: 1.2 m for the 1.2 m belt; a gallery's tube with its foil)
+    out = [3.05, 3.05] if sealed else [r(width + 0.6, 2), BELT_HEIGHT_MEASURED.get(width, r(max(0.8, width), 2))]     # (a belt's height by its width: 1.2 m for the 1.2 m belt; a gallery's tube with its foil)
     _recs[key] = {"identity": {"key": key, "name": f"Belt conveyor, {width * 1000:.0f} mm" + (", in a sealed gallery" if sealed else ""), "description": f"An open troughed belt {width * 1000:.0f} mm wide on idlers and stringers, carried on trestles; it runs straight (a turn is a transfer to another belt). Its drive is at its head." + (" It runs in a sealed gallery tube 3 m across, its axis the tube's, at the hall's gas pressure; where the tube meets a hall's nozzle the joint is the nozzle's flange." if sealed else "")},
                   "kind": "belt", "size": width, "outside": out, "rating": {"rate": r(rate)},
                   "per_m": {"mass": r(per_m), "built_of": built},

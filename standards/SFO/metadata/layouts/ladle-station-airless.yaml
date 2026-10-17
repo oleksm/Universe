@@ -126,9 +126,9 @@ links:
   name: alloy belt
   run: run.belt-650
   ends: ['A:alloy-out', 'L:alloy-in']
-  from: [3.0, 9.0, 9.4]
-  to: [3.0, 3.0, 9.4]
-  length: 6.0
+  from: [3.0, 9.0, 9.345]
+  to: [3.0, 3.0, 9.455]
+  length: 6.001
   item: material.silicone-rubber
   mass: 10540.0
   power: 20000.0
