@@ -560,6 +560,11 @@ def air_ports(us):
     lv = lambda w: kit.termination(400, kit.area_for(amps(w, 400)))
     hall, dn_hall, duct, dn_duct = air_sizes()
     v = us["eaf-vessel-80t"]
+    if "Off-gas elbow" not in [x["what"] for x in v["built_of"]]:
+        m4 = "measured on blender's model v4 (2026-10-16)"
+        v["built_of"] = v["built_of"] + [part("Off-gas elbow", A36, 2418.87 + 1575.30 + 2 * 66.50 + 86.81, f"water-jacketed, from the fourth hole horizontal past the roof's edge to its mouth: inner shell 2,418.9 kg, jacket 1,575.3, two annular closures and the head; {m4}"),
+                                         part("Elbow posts and saddle", A36, 2 * 191.27 + 2 * 14.13 + 66.32 + 2 * 6.88, f"two 150 x 150 x 8 mm posts on the cradle's deck with their feet, the saddle and webs; {m4}")]
+        v["holds"] = v["holds"] + 3169.3       # (the elbow jacket's water, 3.17 m3)
     v["desc"] = v["desc"].replace("(the manifold itself is the layout's)", "(the manifold is the unit's: two barrels standing on the deck, each taking its hose from the side)")
     if "Its ports (SFO 25)" not in v["desc"]:
         v["desc"] += (f" Its ports (SFO 25): sponge iron in through the fifth hole's mouth, local (0, 1.8, 8.3), a belt's transfer chute 3 m over it that telescopes up to z 10.8 before the furnace tilts; the off-gas elbow from the fourth hole turns horizontal and runs north past the roof's edge to a vertical mouth at (3, 4.5, 8.5) facing +y (the elbow water-jacketed like the duct, 2.232 m outside, fed from the roof's coolant circuit, carried on two posts from the cradle's deck), the duct's water-cooled sleeve {kit.GAP_HOOD:g} m beyond it (the gap draws in the air that burns the CO), drawn back 1 m to the plane y 5.65 before the furnace tilts: a tilt about y slides the mouth across the sleeve's, never into it (the arc is off to tap and deslag); "

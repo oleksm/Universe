@@ -5,7 +5,7 @@ identity: {key: unit.eaf-vessel-80t, name: 'Arc furnace vessel, 80 t', descripti
     as the sealed furnace''s).'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 11.74, height: 14.0, mass: 306900.0}
+physical: {length: 12.0, width: 11.74, height: 14.0, mass: 311600.0}
 built_of:
 - {what: Hearth shell, item: material.structural-steel-a36, mass: 33060.0, note: '6.6 m across, 2.0 m tall, 50 mm plate, its dished bottom 1.25 times the disc'}
 - {what: Hearth lining, item: good.refractory-brick, mass: 148400.0, note: '0.9 m under the bath, 0.45 m up the hearth wall'}
@@ -21,7 +21,9 @@ built_of:
 - {what: Slag spout brackets, item: material.structural-steel-a36, mass: 169.8, note: 'four seated brackets of 120 x 120 x 6 mm tube and plate that carry the trough on the cradle; measured on blender''s model (eaf-vessel-80t candidate v02: tubes 83.4 kg, plates 86.4 kg)'}
 - {what: Water hoses, item: material.silicone-rubber, mass: 171.4, note: 'two flexible hoses, flow and return, 300 mm bore, 20 mm wall, 3.964 m each along their centreline (measured on blender''s model, v3), a supported dogleg from the vessel''s ports to the deck manifold; reinforced EPDM hose, which the registry has not got: silicone rubber (1,075 kg/m3) stands for it, the wire not counted. At rest only: pressure loss, bend radius and the tilt''s travel not checked'}
 - {what: Tilt and mast hydraulics, item: good.pumps, mass: 15000.0, note: 'cylinders, pumps and valves; from memory'}
-holds: 107100.0
+- {what: Off-gas elbow, item: material.structural-steel-a36, mass: 4214.0, note: 'water-jacketed, from the fourth hole horizontal past the roof''s edge to its mouth: inner shell 2,418.9 kg, jacket 1,575.3, two annular closures and the head; measured on blender''s model v4 (2026-10-16)'}
+- {what: Elbow posts and saddle, item: material.structural-steel-a36, mass: 490.9, note: 'two 150 x 150 x 8 mm posts on the cradle''s deck with their feet, the saddle and webs; measured on blender''s model v4 (2026-10-16)'}
+holds: 110200.0
 needs: {power: 72000000, heat: 10800000.0, gravity: 1.6, atmosphere: any}
 recipes:
 - makes: good.liquid-steel
