@@ -140,7 +140,7 @@ def chute(dn, item=SS):
     return key
 
 
-HOOD_WATER_MEASURED = {2.0: 175.68}     # kg in a hood's ring and plenum, measured on blender's DN 2000 hood (2026-10-16)
+HOOD_WATER_MEASURED = {2.0: 261.36}     # kg in a hood's ring and plenum, measured on blender's DN 2000 hood (2026-10-16)
 
 
 def hood(dn):

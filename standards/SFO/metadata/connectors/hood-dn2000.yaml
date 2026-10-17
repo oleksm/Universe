@@ -5,10 +5,10 @@ kind: hood
 size: 2.0
 rating: {pressure: 0.0, temperature: 1873.0}
 sealing: single
-physical: {length: 2.4, width: 2.4, height: 0.5, mass: 876.1}
+physical: {length: 2.4, width: 2.4, height: 0.5, mass: 961.8}
 built_of:
 - {what: Hood ring, item: material.structural-steel-a36, mass: 700.4, note: 'a double-walled ring 2.40 m across and 0.5 m deep, 10 mm, its water jacket 50 mm, and its top plate'}
-- {what: Jacket water, item: good.water, mass: 175.7, note: 'in the ring''s jacket and the plenum in its top 100 mm, open to the duct''s jacket: no feed of its own, measured on blender''s model'}
+- {what: Jacket water, item: good.water, mass: 261.4, note: 'in the ring''s jacket and the plenum in its top 100 mm, open to the duct''s jacket: no feed of its own, measured on blender''s model'}
 basis:
 - of: [built_of, physical]
   tier: invented
