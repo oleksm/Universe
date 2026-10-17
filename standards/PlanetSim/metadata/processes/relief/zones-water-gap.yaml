@@ -13,8 +13,10 @@ clock:
 reads:
 - name: store vertices S.V/S.L/S.K of non-forming suture / arc front lines
 - name: pts, hydro['down'], hydro['Q']
+  field: planet-field.receiver
 writes:
 - name: landmark 'water gap' with 'crosses'
+  field: planet-field.lake-surface
 events_emitted:
 - event: planet-event.trace-spawn-rule-zones-water
 params:

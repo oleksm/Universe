@@ -14,11 +14,14 @@ reads:
 - name: w.p_route (routing positions)
 - name: hydro['Q'] (m3/yr)
 - name: hydro['down'] (receiver index, -1 none)
+  field: planet-field.receiver
 - name: z, sea (m)
+  field: planet-field.height
 - name: gap = sphere.spacing(n) of the current lattice, radians on the unit sphere (x R = metres); refined as the present
     nears
 writes:
 - name: landmarks 'delta' / 'river mouth', size = Q/3.156e7 (m3/s), causes {water:0.6, relief:0.3, history:0.1}
+  field: planet-field.lake-surface
 note: 'Emits: one store event ''rivers'' for the whole run (S.water_event) Emits: trace spawn rule ''zones.water'' trigger
   {event, size}'
 params:

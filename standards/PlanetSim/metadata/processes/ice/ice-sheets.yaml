@@ -31,6 +31,7 @@ writes:
 - name: H (r_ice_now)
   unit: m
   meaning: ice thickness at the end (present)
+  field: planet-field.ice
 - name: r_ice_lgm
   field: planet-field.ice-lgm
   unit: m

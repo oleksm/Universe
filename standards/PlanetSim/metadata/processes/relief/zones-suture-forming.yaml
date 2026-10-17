@@ -18,6 +18,7 @@ reads:
     nears
 writes:
 - name: 'line store: forming line type ''suture'', sides [plate u, plate v], causes {plates:0.6, history:0.4}'
+  field: planet-field.plate
 - name: S.open[('suture',u,v)] -> line id
 - name: vertices V/A/L/K/VP (anchored to nearest particle)
 - name: line['last'] = t when points accepted

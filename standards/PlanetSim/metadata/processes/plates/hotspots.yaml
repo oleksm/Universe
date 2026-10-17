@@ -24,6 +24,7 @@ writes:
 - name: w.xtop, w.xcover, w.xfert, w.xdep
   meaning: flood basalt, ores
 - name: w.volc['hotspot'], w.hotspot_xyz
+  field: planet-field.hotspot-position
 events_emitted:
 - event: planet-event.relief-hotspots
   where: stages/plates.py:1189

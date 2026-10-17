@@ -16,6 +16,7 @@ clock:
 reads:
 - name: w.xsuture, w.thick, w.plate, w.grain
   meaning: structure
+  field: planet-field.crust-thickness
 - name: w.xmem
   unit: '[m3/yr, m, code, Gyr, ?]'
   meaning: surface memory per particle (5 columns)

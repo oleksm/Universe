@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry_extra.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-field.recent-peak-discharge
+  name: Peak discharge (recent epoch)
+  about: The running peak discharge a river remembers at the end of the recent epoch.
+unit: m3/s
+said_as:
+  unit: m3/yr
+  factor: 3.168808781402895e-08
+per: sample
+producer:
+  where: tools/recent.py
+  file: ctx
+  key: r_peakQ
+status: draft
+basis:
+- of:
+  - identity
+  - producer
+  - unit
+  tier: derived
+  note: 'planets, 17 Oct 2026: from the Python sim''s inventory (planet-forge docs/registry-migration/surface.json), read
+    from the code.'

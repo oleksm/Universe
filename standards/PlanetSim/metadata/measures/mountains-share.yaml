@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/planet-measure.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry_extra.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-measure.mountains-share
+  name: mountains share (relief view legend)
+  about: relief classes 4+5 share; hills (class 3) against Earth ~30 %
+unit: '1'
+said_as:
+  unit: '%'
+  factor: 0.01
+how: 'relief classes 4+5 share; hills (class 3) against Earth ~30 %; Earth: 22 (% of land)'
+tool: ~/git/planet-trees-pgs2/tools/context_view.py:425
+status: draft
+basis:
+- of:
+  - scorecard
+  tier: sourced
+  source: Earth values as the Python sim cites them (scorecard.py TARGETS and legends)
+  review: true

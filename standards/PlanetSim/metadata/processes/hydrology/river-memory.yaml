@@ -18,9 +18,11 @@ reads:
 - name: state.{down,peakQ,state,t_change,incision}
   unit: mixed
   meaning: previous memory
+  field: planet-field.receiver
 - name: down
   unit: index
   meaning: this step's receivers
+  field: planet-field.receiver
 - name: Q
   unit: m3/yr
   meaning: discharge

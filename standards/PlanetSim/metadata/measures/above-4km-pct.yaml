@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/planet-measure.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry_extra.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-measure.above-4km-pct
+  name: above_4km_pct
+  about: samples with z > 4000 m over land samples
+unit: '1'
+said_as:
+  unit: '%'
+  factor: 0.01
+how: samples with z > 4000 m over land samples
+tool: ~/git/planet-trees-pgs2/tools/scorecard.py:15-29 (TARGETS), 32-55 (measure)
+scorecard:
+  earth: 0.017
+  ok:
+  - 0.01
+  - 0.035
+  warn:
+  - 0.004
+  - 0.05
+  era: all
+  grade: pass inside ok, warn inside warn, else fail (inclusive)
+  source: ~/git/planet-trees-pgs2/tools/scorecard.py:15-29 (TARGETS), 32-55 (measure)
+status: draft
+basis:
+- of:
+  - scorecard
+  tier: sourced
+  source: Earth values as the Python sim cites them (scorecard.py TARGETS and legends)
+  review: true

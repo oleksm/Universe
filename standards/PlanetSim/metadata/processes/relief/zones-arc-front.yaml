@@ -21,6 +21,7 @@ reads:
     nears
 writes:
 - name: forming line type 'arc front' per riding plate, causes {plates:0.6, history:0.4}
+  field: planet-field.plate
 - name: S.accepted (points accepted this call)
 note: 'Emits: store event ''subduction'' (plates=[rider plate])'
 events_emitted:

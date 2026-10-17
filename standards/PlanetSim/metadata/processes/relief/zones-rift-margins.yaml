@@ -13,7 +13,9 @@ clock:
     Myr)
 reads:
 - name: pid (old plate), new (new plate id)
+  field: planet-field.plate
 - name: 'sel (particles of the plate), side (bool: which half goes to new)'
+  field: planet-field.plate
 - name: f (signed distance of each sel particle to the cut, rad)
 - name: w.xcont
 - name: gap = sphere.spacing(n) of the current lattice, radians on the unit sphere (x R = metres); refined as the present

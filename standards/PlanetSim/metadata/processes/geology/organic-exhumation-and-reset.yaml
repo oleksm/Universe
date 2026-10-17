@@ -17,6 +17,7 @@ writes:
 - name: xorg, xodep, xotti
   unit: kg C/m², m, Myr
   meaning: updated or zeroed
+  field: planet-field.organic-carbon
 random_draws:
 - none
 invariants:

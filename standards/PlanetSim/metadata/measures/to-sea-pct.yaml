@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/planet-measure.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry_extra.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-measure.to-sea-pct
+  name: to_sea_pct
+  about: 100 x sum of wacc at land samples draining to sea / total runoff (h_runoff x cell area; cell uses 6.371e6 m radius,
+    not the planet's R)
+unit: '1'
+said_as:
+  unit: '%'
+  factor: 0.01
+how: 100 x sum of wacc at land samples draining to sea / total runoff (h_runoff x cell area; cell uses 6.371e6 m radius, not
+  the planet's R)
+tool: ~/git/planet-trees-pgs2/tools/scorecard.py:15-29 (TARGETS), 32-55 (measure)
+scorecard:
+  earth: 0.9
+  ok:
+  - 0.85
+  - 0.99
+  warn:
+  - 0.78
+  - 1.0
+  era: climate
+  grade: pass inside ok, warn inside warn, else fail (inclusive)
+  source: ~/git/planet-trees-pgs2/tools/scorecard.py:15-29 (TARGETS), 32-55 (measure)
+status: draft
+basis:
+- of:
+  - scorecard
+  tier: sourced
+  source: Earth values as the Python sim cites them (scorecard.py TARGETS and legends)
+  review: true

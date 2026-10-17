@@ -17,6 +17,7 @@ reads:
 - name: hydro['lake_mem'] (0-1)
 writes:
 - name: landmarks 'river capture', 'dry valley', 'misfit river', 'former lake bed', 'water-carved land'
+  field: planet-field.lake-surface
 events_emitted:
 - event: planet-event.trace-spawn-rule-zones-water
 params:

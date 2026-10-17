@@ -33,18 +33,23 @@ writes:
 - name: r_lake_now
   unit: 0/1
   meaning: lake (open or closed) at the last step
+  field: planet-field.lake
 - name: r_lake_max
   field: planet-field.pluvial-lake
   unit: 0/1
   meaning: lake at any step
 - name: r_river_state
   unit: code 0-6
+  field: planet-field.river-state
 - name: r_peakQ
   unit: m3/yr
+  field: planet-field.peak-discharge
 - name: r_river_t_change
   unit: Gyr (negative = before present)
+  field: planet-field.recent-river-change-time
 - name: r_river_events
   unit: JSON counts
+  field: planet-field.recent-river-transitions
 note: 'Emits: river state transition (misfit | dry valley | captured | reversed | reborn)'
 params:
 - name: K_RIVER (recent)

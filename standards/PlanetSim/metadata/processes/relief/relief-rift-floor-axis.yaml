@@ -12,6 +12,7 @@ reads:
 - name: margin lines (>= 3 vertices)
 writes:
 - name: line 'rift floor axis' meta {width_km, depth_m 1500, relief0_m 1500}
+  field: planet-field.ocean-floor-thickness
 note: 'Emits: trace spawn rule ''relief.rift'' trigger {margins, event, width_km}'
 params:
 - name: depth_m

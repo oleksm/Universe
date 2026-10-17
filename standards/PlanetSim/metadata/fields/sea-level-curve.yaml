@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry_extra.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-field.sea-level-curve
+  name: Sea level curve
+  about: 'The recent epoch''s sea level through the glacial cycles: rows of time, ice volume, sea level.'
+unit: m
+per: global
+producer:
+  where: tools/recent.py
+  file: ctx
+  key: r_sea_curve
+time_base: before-present
+cautions:
+- 'rows [kyr before present, ice, m]: not per sample'
+status: draft
+basis:
+- of:
+  - identity
+  - producer
+  - unit
+  tier: derived
+  note: 'planets, 17 Oct 2026: from the Python sim''s inventory (planet-forge docs/registry-migration/surface.json), read
+    from the code.'

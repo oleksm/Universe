@@ -24,12 +24,15 @@ writes:
 - name: xorg
   unit: kg C / m²
   meaning: carbon per cohort×kind
+  field: planet-field.organic-carbon
 - name: xodep
   unit: m
   meaning: depth below surface
+  field: planet-field.organic-depth
 - name: xotti
   unit: Myr (TTI index units)
   meaning: heat dose
+  field: planet-field.organic-heat-dose
 params:
 - name: COHORT_MYR
   value: 7889400000000000.0

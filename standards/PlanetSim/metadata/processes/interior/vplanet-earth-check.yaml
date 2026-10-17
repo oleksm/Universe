@@ -14,6 +14,7 @@ reads:
     surface T, regime)
   unit: code units passed to VPLanet (negative = Earth/solar units)
   meaning: inputs
+  field: planet-field.crust-age
 writes:
 - name: Time
   unit: VPLanet-reported unit (from its log)

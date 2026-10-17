@@ -18,6 +18,7 @@ clock:
 reads:
 - name: z, sea
   unit: m
+  field: planet-field.height
 - name: Q
   unit: m3/yr
 - name: slope
@@ -33,6 +34,7 @@ writes:
 - name: wear (returned)
   unit: m per step
   meaning: total rock removed, <= height above sea
+  field: planet-field.wear-total
 - name: wear_river
   unit: m per step
 - name: wear_hill

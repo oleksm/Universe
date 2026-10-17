@@ -31,6 +31,7 @@ writes:
 - name: sea_curve (r_sea_curve)
   unit: rows [kyr ago, g, m]
   meaning: sea-level curve
+  field: planet-field.sea-level-curve
 params:
 - name: DT_KYR
   value: 315600000000.0

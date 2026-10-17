@@ -16,8 +16,10 @@ clock:
 reads:
 - name: wear, wear_wind
   unit: m
+  field: planet-field.wear-total
 - name: order, down
   unit: index
+  field: planet-field.receiver
 - name: lake
   unit: code
 - name: water_lost, Q

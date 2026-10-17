@@ -17,6 +17,7 @@ reads:
   unit: m
 writes:
 - name: w.xtop, w.xcover, w.xfert, w.xdep, w.xorg...
+  field: planet-field.organic-carbon
 params:
 - name: PLATFORM_M_PER_MYR
   value: 6.33761756280579e-13

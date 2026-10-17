@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry_extra.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-field.lake-budget
+  name: Lake budget
+  about: Each lake's inflow, capacity to lose water, area and whether it overflows (one row per lake, not per sample).
+unit: '1'
+per: lake
+producer:
+  where: stages/coupled.py
+  file: ctx
+  key: h_lakes
+cautions:
+- 'columns: inflow (m3/yr), loss capacity (m3/yr), area (m2), open (0/1); the per-sample lake id is not saved, so rows cannot
+  be tied to samples'
+status: draft
+basis:
+- of:
+  - identity
+  - producer
+  - unit
+  tier: derived
+  note: 'planets, 17 Oct 2026: from the Python sim''s inventory (planet-forge docs/registry-migration/surface.json), read
+    from the code.'

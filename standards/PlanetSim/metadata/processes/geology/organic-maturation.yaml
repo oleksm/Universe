@@ -14,6 +14,7 @@ reads:
 - name: xodep
   unit: m
   meaning: layer depth
+  field: planet-field.organic-depth
 - name: span_myr
   unit: 's (code: Myr)'
   meaning: time span
@@ -24,6 +25,7 @@ writes:
 - name: xotti
   unit: Myr (TTI index)
   meaning: accumulated dose
+  field: planet-field.organic-heat-dose
 params:
 - name: SURFACE_C
   value: 15.0

@@ -48,6 +48,7 @@ writes:
 - name: 'crust: xcover, xtop, xdep, xfert, thick'
   unit: m, codes
   meaning: via _wear/_exhume/_deposit/_scale_continents
+  field: planet-field.crust-thickness
 note: 'Emits: step ledger ''climate erosion'' / ''climate erosion to shelves'' Emits: line-store water records via zones.rivers
   (delta, river mouth, river capture, dry valley, misfit river, former lake bed, water-carved land, water gap)'
 events_emitted:

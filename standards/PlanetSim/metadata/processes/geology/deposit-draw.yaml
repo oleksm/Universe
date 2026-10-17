@@ -21,6 +21,7 @@ reads:
 - name: rock, grain
   unit: unit index, tangent
   meaning: surface unit and grain
+  field: planet-field.rock
 - name: fert, dep
   unit: 1, m
   meaning: plate-carried chances and depths

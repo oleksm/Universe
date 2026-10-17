@@ -22,6 +22,7 @@ reads:
 - name: down, order
   unit: index
   meaning: routing
+  field: planet-field.receiver
 - name: lid, nlake
   unit: index
   meaning: lakes

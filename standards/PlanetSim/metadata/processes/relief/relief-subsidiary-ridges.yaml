@@ -12,6 +12,7 @@ reads:
   field: planet-field.crust-thickness
 writes:
 - name: lines 'subsidiary ridge' parent=axis, meta {relief0_m = 0.6 relief, spacing_km 25}
+  field: planet-field.local-relief
 note: 'Emits: trace spawn rule ''relief.orogen.ridges'' trigger + {offset_km}'
 params:
 - name: offsets

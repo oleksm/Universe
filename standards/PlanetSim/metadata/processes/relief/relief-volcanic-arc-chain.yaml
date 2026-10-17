@@ -15,6 +15,7 @@ reads:
 writes:
 - name: lines 'volcanic arc' meta {centres, spacing_km, progression_km_myr None}
 - name: S.chains[(kind,key)] = (line ids, count)
+  field: planet-field.crust-kind
 note: 'Emits: trace spawn rule ''relief.chains'' trigger {records, key, pieces}'
 events_emitted:
 - event: planet-event.trace-replaced-rule-relief-chains

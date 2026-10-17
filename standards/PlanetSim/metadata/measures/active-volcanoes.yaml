@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/planet-measure.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry_extra.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-measure.active-volcanoes
+  name: active volcanoes (volcanoes legend)
+  about: tools/volcanoes.py place() states; Earth ~1,350 active in the last 10,000 yr
+unit: '1'
+how: 'tools/volcanoes.py place() states; Earth ~1,350 active in the last 10,000 yr; Earth: 1350 (count)'
+tool: ~/git/planet-trees-pgs2/tools/context_view.py:547
+status: draft
+basis:
+- of:
+  - scorecard
+  tier: sourced
+  source: Earth values as the Python sim cites them (scorecard.py TARGETS and legends)
+  review: true

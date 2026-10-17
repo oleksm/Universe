@@ -42,6 +42,7 @@ writes:
 - name: down
   unit: sample index, -1 none
   meaning: receiver
+  field: planet-field.receiver
 - name: acc
   field: planet-field.drainage-area
   unit: m^2

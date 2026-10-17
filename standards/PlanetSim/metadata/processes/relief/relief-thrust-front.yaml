@@ -12,6 +12,7 @@ reads:
 - name: thin-side belt width per station
 writes:
 - name: line 'thrust front' parent=orogen axis, meta {throw_m = relief/2, relief0_m, facing 'foreland', distance_km}
+  field: planet-field.local-relief
 events_emitted:
 - event: planet-event.trace-spawn-rule-relief-orogen
 params:

@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry_extra.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-field.organic-carbon
+  name: Buried organic carbon
+  about: Organic carbon buried in the crust, per particle, by cohort and kind.
+unit: kg/m2
+per: particle
+producer:
+  where: stages/organics.py
+  file: run
+  key: xorg
+cautions:
+- inert in planet_form runs (no organics callback)
+status: draft
+basis:
+- of:
+  - identity
+  - producer
+  - unit
+  tier: derived
+  note: 'planets, 17 Oct 2026: from the Python sim''s inventory (planet-forge docs/registry-migration/surface.json), read
+    from the code.'

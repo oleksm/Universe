@@ -16,6 +16,7 @@ reads:
 writes:
 - name: lines 'anticline axis' / 'syncline axis' parent=axis, meta {wavelength_km, amplitude_m = 0.3 relief, relief0_m, vergence
     'foreland', plunge 'both ends'}
+  field: planet-field.local-relief
 note: 'Emits: trace spawn rule ''relief.orogen.folds'' trigger + {offset_km, rock ''sedimentary''}'
 params:
 - name: FOLD_MIN_M

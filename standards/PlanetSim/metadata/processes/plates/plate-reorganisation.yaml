@@ -16,6 +16,7 @@ clock:
 reads:
 - name: conts (start-of-step per-plate continental counts)
   unit: '1'
+  field: planet-field.plate
 - name: w.plates[pid].big_since
   unit: Myr (code)
 writes:

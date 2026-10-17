@@ -32,6 +32,7 @@ writes:
   field: planet-field.ocean-floor-thickness
   unit: m
 - name: w.rock, w.grain, w.fert, w.dep
+  field: planet-field.rock
 params:
 - name: KERNEL
   value: 0.8

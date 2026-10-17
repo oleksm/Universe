@@ -20,6 +20,7 @@ reads:
   unit: m
 - name: w.thick, w.kind
   unit: m, code
+  field: planet-field.crust-thickness
 writes:
 - name: w.xvol
   unit: m3

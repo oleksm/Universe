@@ -15,6 +15,7 @@ reads:
 - name: p, rock, grain
   unit: unit vector, index, tangent
   meaning: plate-stage maps
+  field: planet-field.rock
 - name: c, e1, e2
   unit: unit vectors
   meaning: region centre, east, north

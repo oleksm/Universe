@@ -13,6 +13,7 @@ clock:
   when: with each denudation pass (and by callers outside, e.g. reports)
 reads:
 - name: w.kind, w.thick, w.floor, w.age, w.sunk_at, w.sunk_plate, w.plate
+  field: planet-field.crust-kind
 writes:
 - name: z
   field: planet-field.height

@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry_extra.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-field.organic-depth
+  name: Organic burial depth
+  about: Each organic cohort's burial depth.
+unit: m
+per: particle
+producer:
+  where: stages/organics.py
+  file: run
+  key: xodep
+status: draft
+basis:
+- of:
+  - identity
+  - producer
+  - unit
+  tier: derived
+  note: 'planets, 17 Oct 2026: from the Python sim''s inventory (planet-forge docs/registry-migration/surface.json), read
+    from the code.'
