@@ -103,7 +103,7 @@ basis:
   - physical
   tier: derived
   review: true
-  note: 'Its share of the engine''s heat (half its 1,086 m2 at 1500 K, both faces, emissivity 0.85): 265 MW. Twice as long as wide, as the other radiator panels. Lithium cp 4.2 kJ/kg K, 480 kg/m3 hot (from memory), a 200 K drop, 3 m/s
+  note: 'Its share of the engine''s heat (half its 1,086 m2 at 1500 K, both faces, emissivity 0.85): 265 MW. Twice as long as wide, as the other radiator panels. Lithium (material.lithium) about 4.2 kJ/kg K and 410 kg/m3 near 1,500 K (from memory), a 200 K drop, about 3.5 m/s
     in the headers.'
 - of:
   - built_of.list

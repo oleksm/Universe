@@ -575,8 +575,8 @@
 - { record: equipment.thermal.coolant-loop.s2, at: "2026-10-11T02:46:30Z", status: draft, summary: "changed: visual", sha: "ee98e3c0e9eb3051" }
 - { record: equipment.thermal.heat.exchanger, at: "2026-10-13T17:50:25Z", status: draft, summary: "changed: visual", sha: "a4ac2793c3ff1dee" }
 - { record: equipment.thermal.heat.sink, at: "2026-10-13T18:12:52Z", status: draft, summary: "changed: visual", sha: "343fbececea099dd" }
-- { record: equipment.thermal.radiator-hot.s1, at: "2026-10-17T17:55:24Z", status: draft, summary: "changed: built_of, ports", sha: "e79ff73877bb0ced" }
-- { record: equipment.thermal.radiator-hot.s2, at: "2026-10-17T17:55:24Z", status: draft, summary: "changed: built_of, ports", sha: "02801ac26aef0505" }
+- { record: equipment.thermal.radiator-hot.s1, at: "2026-10-17T17:57:06Z", status: draft, summary: "changed: basis", sha: "3009f8598baea823" }
+- { record: equipment.thermal.radiator-hot.s2, at: "2026-10-17T17:57:06Z", status: draft, summary: "changed: basis", sha: "c9ddf43506bf5d86" }
 - { record: equipment.thermal.radiator-hot.s3, at: "2026-10-17T17:55:24Z", status: draft, summary: "changed: built_of, ports", sha: "ea2f0bdb153026f4" }
 - { record: equipment.thermal.radiator.s0, at: "2026-10-12T04:15:48Z", status: draft, summary: "changed: visual", sha: "48f9aef49a6b859e" }
 - { record: equipment.thermal.radiator.s1, at: "2026-10-12T17:36:00Z", status: draft, summary: "changed: visual", sha: "42af60e8122c5192" }
