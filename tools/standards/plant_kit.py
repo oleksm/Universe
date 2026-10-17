@@ -165,6 +165,10 @@ GAP_HOOD = 0.15                  # m between a moving outlet's mouth and the hoo
 HOOD_STROKE = 1.0                # m the hood's sleeve is drawn back before the outlet moves (invented)
 
 
+CLAMP_JAWS_MEASURED = {1.2: 173.0}       # kg of a clamp coupling's C jaws, measured on blender's DN 1200 (2026-10-16)
+CLAMP_LINING_MEASURED = {1.2: 167.6}     # kg of its spool's refractory taper, 1.2 to 0.8 m clear
+
+
 def clamp_coupling(dn):
     """A sealed clamped coupling between a moving outlet and a fixed duct: a flange pair held by a quick clamp ring,
     a slide gate on the outlet's side, and a 0.15 m spool on the duct's side that draws back to open the joint before
@@ -177,8 +181,9 @@ def clamp_coupling(dn):
     clamp = math.pi * D * 0.15 * 0.02 * RHO[A36]
     spool = math.pi * (dn + 0.012) * 0.012 * 0.15 * RHO[A36]
     built = [_part("Flange rings", A36, rings, f"two rings {D:.2f} m across, {t * 1000:.0f} mm, with a double O-ring seal"),
-             _part("Clamp ring and its drives", A36, clamp + 150.0, "a segmented clamp ring round the rings and two actuators (150 kg, from memory)"),
-             _part("Sliding spool", A36, spool, f"a 0.15 m spool on the duct's side, its stroke {GAP_HOOD:g} m"),
+             _part("Clamp ring and its drives", A36, CLAMP_JAWS_MEASURED.get(dn, clamp) + 150.0, "a segmented clamp ring of C jaws round the rings" + (f" ({CLAMP_JAWS_MEASURED[dn]:g} kg measured on blender's model)" if dn in CLAMP_JAWS_MEASURED else "") + " and two actuators (150 kg, from memory); it opens in two steps, the jaws out and then the spool back"),
+             _part("Sliding spool", A36, spool, f"a 0.15 m spool on the duct's side, its stroke {GAP_HOOD:g} m, sliding over the duct's end"),
+             _part("Spool lining", REF, math.pi / 4 * (dn ** 2 - (dn - 0.4) ** 2) * 0.15 / 2 * RHO[REF] if dn not in CLAMP_LINING_MEASURED else CLAMP_LINING_MEASURED[dn], "the refractory tapering from the furnace's clear bore to the lined duct's within the spool" + (", measured on blender's model" if dn in CLAMP_LINING_MEASURED else "")),
              _part("Seals", RUBBER, math.pi * (dn + 0.1) * 2 * 0.01 * 0.01 * RHO[RUBBER], "the O-rings; silicone rubber stands for them")]
     _recs[key] = {"identity": {"key": key, "name": f"Clamp coupling DN {dn * 1000:.0f}", "description": f"A sealed, clamped joint between a moving outlet and a fixed {dn * 1000:.0f} mm duct. To let the outlet move (a sealed furnace tilting to tap or deslag), its slide gate shuts, the clamp opens and the duct's spool draws back {GAP_HOOD:g} m. The outlet's face then slides across the duct's, never into it. The gate is the outlet's; its mass is the unit's."},
                   "kind": "clamp-coupling", "size": dn, "rating": {"pressure": 1.0e5, "temperature": 773.0}, "sealing": "double",

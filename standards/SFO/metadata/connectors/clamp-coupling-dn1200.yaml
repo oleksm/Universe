@@ -5,11 +5,12 @@ kind: clamp-coupling
 size: 1.2
 rating: {pressure: 100000.0, temperature: 773.0}
 sealing: double
-physical: {length: 1.6, width: 1.6, height: 0.23, mass: 875.5}
+physical: {length: 1.6, width: 1.6, height: 0.23, mass: 1097.7}
 built_of:
 - {what: Flange rings, item: material.structural-steel-a36, mass: 552.4, note: 'two rings 1.60 m across, 40 mm, with a double O-ring seal'}
-- {what: Clamp ring and its drives, item: material.structural-steel-a36, mass: 268.4, note: 'a segmented clamp ring round the rings and two actuators (150 kg, from memory)'}
-- {what: Sliding spool, item: material.structural-steel-a36, mass: 53.8, note: 'a 0.15 m spool on the duct''s side, its stroke 0.15 m'}
+- {what: Clamp ring and its drives, item: material.structural-steel-a36, mass: 323.0, note: 'a segmented clamp ring of C jaws round the rings (173 kg measured on blender''s model) and two actuators (150 kg, from memory); it opens in two steps, the jaws out and then the spool back'}
+- {what: Sliding spool, item: material.structural-steel-a36, mass: 53.8, note: 'a 0.15 m spool on the duct''s side, its stroke 0.15 m, sliding over the duct''s end'}
+- {what: Spool lining, item: good.refractory-brick, mass: 167.6, note: 'the refractory tapering from the furnace''s clear bore to the lined duct''s within the spool, measured on blender''s model'}
 - {what: Seals, item: material.silicone-rubber, mass: 0.9, note: the O-rings; silicone rubber stands for them}
 basis:
 - of: [built_of, physical]
