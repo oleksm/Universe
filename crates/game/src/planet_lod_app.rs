@@ -1775,11 +1775,11 @@ impl App for PlanetLodApp {
                     continue;
                 }
                 let top = base + *dir * post;
-                let c = if *peak { Color::rgb(1.0, 0.45, 0.31) } else { Color::rgb(0.45, 0.85, 1.0) };
-                frame.line(base, top, c);
-                if let Some(p) = frame.project(top)
-                    && p.x > 0.0 && p.y > 0.0 && p.x < size.x && p.y < size.y
-                {
+                // (only those in view: the post's foot and top both on screen; owner 17 Oct)
+                let on = |q: Option<Vec2>| q.filter(|p| p.x > 0.0 && p.y > 0.0 && p.x < size.x && p.y < size.y);
+                if let (Some(_), Some(p)) = (on(frame.project(base)), on(frame.project(top))) {
+                    let c = if *peak { Color::rgb(1.0, 0.45, 0.31) } else { Color::rgb(0.45, 0.85, 1.0) };
+                    frame.line(base, top, c);
                     shown.push(((eye - top).length(), p, i));
                 }
             }
