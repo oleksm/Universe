@@ -277,7 +277,7 @@ links:
   to: [-60.0, 51.6, 1.0]
   length: 113.7
   item: material.structural-steel-a36
-  mass: 3264.0
+  mass: 3398.0
   via:
   - [9.0, 24.4, 16.5]
   - [9.0, 24.4, 1.0]

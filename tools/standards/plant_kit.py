@@ -229,6 +229,9 @@ def _span(do, di, w):
     return max(3.0, min(12.0, by_defl, by_stress))
 
 
+PIPE_SUPPORT_MEASURED = {"run.pipe-dn150-pn25-mli": 29.19}     # kg a stand's head (its split saddle and base, the silica pad apart), measured on blender's kits (2026-10-16)
+
+
 def pipe(dn, pn, item=A36, lagged=False, liquid=False, temp=373.0, sealing="single"):
     """A welded pipe of nominal bore dn, class pn; lagged in multi-layer insulation (25 mm), which in vacuum is the
     lagging that works; liquid: full of water when its supports are sized."""
@@ -254,7 +257,7 @@ def pipe(dn, pn, item=A36, lagged=False, liquid=False, temp=373.0, sealing="sing
                   "elbow": {"radius": r(R, 3), "mass": r(per_m * math.pi / 2 * R)},
                   "tee": {"mass": r(per_m * max(0.0, 1.5 * dn - out / 2))},
                   "cap": cap(dn, PN[pn], item, flange(dn, pn, item, sealing, temp)),
-                  "support": {"spacing": r(span), "mass": r(10 + 60 * out), "per_m_height": r(4 * (0.1 + 0.1 * out) * 0.005 * RHO[A36]), "item": A36},
+                  "support": {"spacing": r(span), "mass": PIPE_SUPPORT_MEASURED.get(key, r(10 + 60 * out)), "per_m_height": r(4 * (0.1 + 0.1 * out) * 0.005 * RHO[A36]), "item": A36},
                   "connector": flange(dn, pn, item, sealing, temp), "carries": "liquid" if liquid else "gas",
                   "basis": [{"of": ["per_m"], "tier": "derived", "note": "Wall from pressure; mass from material and dimensions."},
                             {"of": ["elbow", "tee"], "tier": "derived", "note": "A long-radius elbow (1.5 bores) is its arc of straight; a tee is its branch stub over the straight it sits in, from the main's outside to 1.5 bores off its axis (checked on blender's DN 200 kit)."},
