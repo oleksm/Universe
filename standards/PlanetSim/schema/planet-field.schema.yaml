@@ -19,7 +19,7 @@ properties:
   unit: { type: string, description: "SI, as Dogma and every x-unit: m, K, m3/s, 1 (a pure number), deg (the registry's one angle exception)." }
   said_as: { $ref: "../../common.schema.yaml#/definitions/said_as" }
   range: { type: array, minItems: 2, maxItems: 2, items: { type: number, x-unit-from: unit }, description: "Least and most it takes, in its unit." }
-  per: { enum: [sample, node, segment, line, point], description: "What carries it." }
+  per: { enum: [sample, node, segment, line, point, particle, plate, lake, global], description: "What carries it." }
   vector: { type: boolean, description: "true: a unit vector, not a number." }
   producer: { $ref: "#/definitions/producer" }
   also_from: { type: array, items: { $ref: "#/definitions/producer" }, description: "Other arrays that hold the same word: a duplicate (h_Q for wacc), the other component of a vector, the same word at another epoch (r_ for the recent epoch)." }

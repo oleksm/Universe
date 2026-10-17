@@ -20,6 +20,10 @@ properties:
     additionalProperties: false
     properties:
       key: { type: string, description: "Its key there." }
+      index: { type: integer, minimum: 0, description: "Its index in the sim's unit table (geology.UNITS): the number the rock arrays hold. Frozen." }
+      colour: { type: array, minItems: 3, maxItems: 3, items: { type: integer, minimum: 0, maximum: 255, x-unit: "1" }, description: "RGB on the sim's maps." }
+      erodibility: { type: number, x-unit: "1", description: "The sim's relative erodibility (x MEAN_ERODIBILITY 0.9 is Earth's continental mean)." }
+      written_by: { type: string, description: "Where the code lays it down (file:line)." }
   made_by: { type: array, items: { $ref: "../../dictionary.schema.yaml#/definitions/geological_event" }, description: "The events that lay it down." }
   physical:
     type: object

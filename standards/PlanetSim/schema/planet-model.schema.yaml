@@ -139,27 +139,8 @@ properties:
     items: { type: object, additionalProperties: false, required: [name, does], properties: { name: { type: string }, does: { type: string } } }
   legends:
     type: array
-    description: "The planet page's legends for it, as the page shows them: each a title, a subtitle and its rows (a heading, a filled swatch, a line), each row's colour and label."
-    items:
-      type: object
-      additionalProperties: false
-      required: [name, title, rows]
-      properties:
-        name: { type: string }
-        title: { type: string }
-        sub: { type: string }
-        source: { type: string, description: "The legend file it was read from." }
-        rows:
-          type: array
-          items:
-            type: object
-            additionalProperties: false
-            required: [kind, label]
-            properties:
-              kind: { type: string, description: "head, fill, line, dot..." }
-              colour: { type: array, items: { type: integer, minimum: 0, maximum: 255, x-unit: "1" }, description: "RGB" }
-              label: { type: string }
-              shown: { type: boolean }
+    description: "The planet page's legends for it, as the page shows them."
+    items: { $ref: "../../common.schema.yaml#/definitions/planet_legend" }
   feeds: { type: array, items: { type: string, x-ref: [planet-model, lod-model] }, description: "The models it is to feed." }
   not_yet: { type: array, items: { type: string }, description: "What it does not say yet." }
   results:

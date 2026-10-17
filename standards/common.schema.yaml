@@ -187,6 +187,57 @@ definitions:
       handled_by: { type: array, items: { type: string, x-ref: [planet-handler] }, description: "The mesher handlers that draw it." }
       measured_by: { type: array, items: { type: string, x-ref: [planet-measure] }, description: "The measures that judge it against real ground." }
       source: { type: string, description: "The sim's own word for it, exactly as its code or files write it (a constant, a type string, an array key): what the extractor matches." }
+  sim_param:
+    description: "One parameter of the planet sim (Planet Simulator): its name in the code, the old environment setting that set it, its value in SI with how the code says it, its range, what it means, where it is set (file:line), and whether it is still open."
+    type: object
+    additionalProperties: false
+    required: [name, meaning]
+    properties:
+      name: { type: string, description: "Its name in the code (EARTH_SPEED)." }
+      env: { type: string, description: "The old environment setting (SIM_*), when one set it." }
+      value: { type: number, x-unit-from: unit, description: "In SI (or 1)." }
+      values: { type: array, items: { type: number, x-unit-from: unit }, description: "When it is a list or a schedule." }
+      setting: { type: string, description: "When it is not a number: a flag, a choice, a name." }
+      unit: { type: string, description: "SI, 1, or deg." }
+      said_as: { $ref: "#/definitions/said_as" }
+      range: { type: array, minItems: 2, maxItems: 2, items: { type: number, x-unit-from: unit } }
+      meaning: { type: string }
+      source: { type: string, description: "Where the code sets it: file:line." }
+      note: { type: string }
+      open: { type: boolean, description: "true: a draft, not settled." }
+      used: { type: boolean, description: "false: set but read nowhere in the code." }
+  sim_io:
+    description: "A value a planet process reads or writes: the code's name, the Planet Simulator field it is (when there is one), its unit and meaning."
+    type: object
+    additionalProperties: false
+    required: [name]
+    properties:
+      name: { type: string, description: "The code's name (w.x, h.column('heat_flow_mantle_tw'))." }
+      field: { type: string, x-ref: [planet-field], description: "The Planet Simulator field it is." }
+      unit: { type: string }
+      meaning: { type: string }
+  planet_legend:
+    description: "A legend as a page draws it: a title, a subtitle, and its rows, each a kind (head, fill, line, dot), a colour and a label (a template may hold {placeholders} the view fills)."
+    type: object
+    additionalProperties: false
+    required: [title, rows]
+    properties:
+      name: { type: string }
+      title: { type: string }
+      sub: { type: string }
+      source: { type: string }
+      rows:
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          required: [kind, label]
+          properties:
+            kind: { type: string, description: "head, fill, line, dot..." }
+            colour: { type: array, items: { type: integer, minimum: 0, maximum: 255, x-unit: "1" }, description: "RGB" }
+            label: { type: string }
+            shown: { type: boolean }
+            shown_when: { type: string, description: "When the page shows the row (always, ctx...)." }
   said_as:
     description: "How the sim or its people say a figure, beside the registry's SI value: their unit and the factor from it to SI (SI = value x factor)."
     type: object

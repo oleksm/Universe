@@ -12,7 +12,8 @@ A signature (what a place is, for the matcher):
 import glob, os
 
 ORDER = ("planet-level", "planet-field", "planet-layer", "planet-line", "planet-landmark", "planet-event", "planet-handler",
-         "planet-measure", "planet-factor", "planet-pattern", "planet-file", "planet-model", "lod-model", "planet-feature")
+         "planet-measure", "planet-factor", "planet-pattern", "planet-file", "planet-model", "lod-model", "planet-feature",
+         "planet-process", "planet-view", "planet-target", "planet-gate", "planet-run-profile")
 
 
 def load(tree):

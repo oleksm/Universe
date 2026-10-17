@@ -2647,7 +2647,12 @@ _REG = [("mounts", "Mounts", "SFO", os.path.join("SFO", "metadata", "mounts"), "
         ("planet-patterns", "Landform patterns", "PlanetSim", os.path.join("PlanetSim", "metadata", "patterns"), "PlanetSim/schema/planet-pattern.schema.yaml", None),
         ("planet-models", "Planet Models", "PlanetSim", os.path.join("PlanetSim", "metadata", "models"), "PlanetSim/schema/planet-model.schema.yaml", None),
         ("lod-models", "Planet Models", "PlanetLOD", os.path.join("PlanetLOD", "metadata", "models"), "PlanetLOD/schema/lod-model.schema.yaml", None),
-        ("planet-files", "Sim files", "PlanetSim", os.path.join("PlanetSim", "metadata", "files"), "PlanetSim/schema/planet-file.schema.yaml", None)]
+        ("planet-files", "Sim files", "PlanetSim", os.path.join("PlanetSim", "metadata", "files"), "PlanetSim/schema/planet-file.schema.yaml", None),
+        ("planet-processes", "Processes", "PlanetSim", os.path.join("PlanetSim", "metadata", "processes"), "PlanetSim/schema/planet-process.schema.yaml", None),
+        ("planet-views", "Views", "PlanetSim", os.path.join("PlanetSim", "metadata", "views"), "PlanetSim/schema/planet-view.schema.yaml", None),
+        ("planet-targets", "Targets", "PlanetSim", os.path.join("PlanetSim", "metadata", "targets"), "PlanetSim/schema/planet-target.schema.yaml", None),
+        ("planet-gates", "Run gates", "PlanetSim", os.path.join("PlanetSim", "metadata", "gates"), "PlanetSim/schema/planet-gate.schema.yaml", None),
+        ("planet-run-profiles", "Run profiles", "PlanetSim", os.path.join("PlanetSim", "metadata", "run-profiles"), "PlanetSim/schema/planet-run-profile.schema.yaml", None)]
 for _kind, _title, _root, _dir, _schema, _std in _REG:
     _recs = []
     for _f in sorted(glob.glob(os.path.join(TREE, _dir, "**", "*.yaml"), recursive=True)):      # (the Planet Simulator's patterns lie in a folder a family)

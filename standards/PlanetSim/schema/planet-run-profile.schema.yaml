@@ -1,0 +1,42 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Planet run profile
+x-kind: [planet-run-profile]
+description: "standards/PlanetSim/metadata/run-profiles/<name>.yaml: how a planet run is set up: its start and end, its samples and resolution schedule, its checkpoints, its seed, its settings, the gates and targets it runs under, and what it writes."
+type: object
+additionalProperties: false
+required: [identity]
+allOf:
+  - { $ref: "../../common.schema.yaml#/definitions/planet_context" }
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name, about]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      about: { type: string }
+  start: { type: number, x-unit: s, description: "Before present." }
+  end: { type: number, x-unit: s, description: "Before present (0: today)." }
+  times_said: { $ref: "../../common.schema.yaml#/definitions/said_as" }
+  samples: { type: integer, minimum: 1, description: "Samples on the sphere." }
+  resolution:
+    type: array
+    description: "The resolution schedule: from when, how many samples."
+    items: { type: object, additionalProperties: false, required: [from, samples], properties: { from: { type: number, x-unit: s }, samples: { type: integer, minimum: 1 } } }
+  checkpoints:
+    type: array
+    description: "When it saves, before present."
+    items: { type: object, additionalProperties: false, required: [at], properties: { at: { type: number, x-unit: s }, label: { type: string } } }
+  seed: { type: integer }
+  settings: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/sim_param" }, description: "The run's own settings (the old SIM_* environment)." }
+  gates: { type: array, items: { type: string, x-ref: [planet-gate] } }
+  targets: { type: array, items: { type: string, x-ref: [planet-target] } }
+  files: { type: string, description: "What it writes and where, in words (the checkpoint names and their keys)." }
+  outputs: { type: array, items: { type: string, x-ref: [planet-file] } }
+  implementations:
+    type: array
+    items: { type: object, additionalProperties: false, required: [where, state], properties: { where: { type: string, description: "repository and file:function, or a forge module" }, state: { enum: [reference, current, building, retired] }, note: { type: string } } }
+  cautions: { type: array, items: { type: string }, description: "Findings on it: bugs, comments that disagree with the code, what trips a reader up." }
+  status: { enum: [draft, published, retired] }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }
