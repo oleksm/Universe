@@ -993,7 +993,7 @@ for ad in administrations:
 bodies, standards = [], []
 for name in sorted(os.listdir(TREE)):
     folder = os.path.join(TREE, name)
-    if not os.path.isdir(folder) or name in ("schema", "sources", HOUSE, LOCAL, "Celestial", "Dogma", "People", "Engine", "PlanetLOD"):
+    if not os.path.isdir(folder) or name in ("schema", "sources", HOUSE, LOCAL, "Celestial", "Dogma", "People", "Engine", "PlanetLOD", "PlanetSim"):
         continue
     # (The body's own file: named after its folder, SFO/metadata/SFO.yaml.)
     meta_path = os.path.join(folder, "metadata", name + ".yaml")
@@ -1747,7 +1747,7 @@ REPORT_GROUPS = {"ships": ["equipment-parts", "equipment", "mounts", "members", 
                  "quality": ["confidence", "invented", "review", "revisions", "dictionary"]}
 REPORT_DOCS = {"mounts": ["docs/ships/registry-note-for-ships.md"], "members": ["docs/ships/registry-note-for-ships.md"], "budgets": ["docs/ships/registry-note-for-ships.md", "docs/ships/equipment-review.md"],
                "needs": ["docs/registry-people.md", "docs/registry-spirit.md"], "work": ["docs/registry-people.md"], "buildings": ["docs/registry-people.md"], "census": ["docs/registry-people.md", "docs/registry-order.md"],
-               "traffic": ["docs/registry-people.md", "docs/registry-stocking.md"], "worlds": ["docs/survey-contract.md"], "celestial": ["docs/survey-contract.md"], "clocks": ["docs/tick-tree.md"], "planet-models": ["standards/PlanetLOD/metadata/PlanetLOD.yaml"], "planet-lod": ["standards/PlanetLOD/metadata/PlanetLOD.yaml"],
+               "traffic": ["docs/registry-people.md", "docs/registry-stocking.md"], "worlds": ["docs/survey-contract.md"], "celestial": ["docs/survey-contract.md"], "clocks": ["docs/tick-tree.md"], "planet-models": ["standards/PlanetSim/metadata/PlanetSim.yaml"], "planet-lod": ["standards/PlanetLOD/metadata/PlanetLOD.yaml"],
                "balance": ["docs/registry-recipes.md"], "materials": ["docs/registry-recipes.md"], "goods": ["docs/registry-recipes.md"], "takers": ["docs/registry-recipes.md"],
                "confidence": ["docs/registry-audit.md"], "invented": ["docs/registry-audit.md"], "review": ["docs/registry-audit.md"], "revisions": ["docs/registry-integration.md"], "dictionary": ["standards/README.md"],
                "equipment-parts": ["docs/registry-recipes.md"], "chains": ["docs/registry-recipes.md"], "plant": ["docs/registry-recipes.md"], "hulls": ["docs/registry-integration.md"], "gates": ["docs/standards.md"]}
@@ -2391,7 +2391,7 @@ for _k, _m in sorted(_PL["planet-model"].items()):
                       "; ".join(f"{p_['name']} {p_.get('value', '')}{(' ' + p_['unit']) if p_.get('unit') and p_.get('value') is not None else ''}{' (open)' if p_.get('open') else ''}" for p_ in _m.get("params") or []),
                       "; ".join(f"{x['where']} ({x['state']})" for x in _m.get("implementations") or []),
                       ", ".join(x.split(".", 1)[1] for x in _m.get("measured_by") or [])))
-report("planet-models", "Planet models: how a planet is described and meshed", "standards/PlanetLOD/metadata/models: each model used to describe or mesh a planet, its anchors and how they are found, the rule that weaves detail round them, what it guarantees and leaves out, its parameters (open ones mark it a gap), its implementations and the measures that judge it. Its rules and the owner's words are on the record.",
+report("planet-models", "Planet models: how a planet is described and meshed", "standards/PlanetSim/metadata/models: each model used to describe or mesh a planet, its anchors and how they are found, the rule that weaves detail round them, what it guarantees and leaves out, its parameters (open ones mark it a gap), its implementations and the measures that judge it. Its rules and the owner's words are on the record.",
        ["Model", "Anchors", "Detail", "Guarantees", "Leaves out", "Parameters", "Implementations", "Measured by"], _mrows)
 
 # 3d'''. Members (SFO 13): the tubes a frame is cut from, read as an engineer sizes: weight a metre, the load
@@ -2630,13 +2630,26 @@ _REG = [("mounts", "Mounts", "SFO", os.path.join("SFO", "metadata", "mounts"), "
         ("needs", "Needs", "People", os.path.join("People", "metadata", "needs"), "People/schema/need.schema.yaml", None),
         ("professions", "Professions", "People", os.path.join("People", "metadata", "professions"), "People/schema/profession.schema.yaml", None),
         ("clocks", "Clocks", "Engine", os.path.join("Engine", "metadata", "scheduling"), "Engine/schema/clock.schema.yaml", None),
-        ("sights", "Sights", "Celestial", os.path.join("Celestial", "metadata", "sights"), "Celestial/schema/sight.schema.yaml", None)]
+        ("sights", "Sights", "Celestial", os.path.join("Celestial", "metadata", "sights"), "Celestial/schema/sight.schema.yaml", None),
+        ("planet-levels", "Levels", "PlanetLOD", os.path.join("PlanetLOD", "metadata", "levels"), "PlanetLOD/schema/planet-level.schema.yaml", None),
+        ("planet-fields", "Fields", "PlanetLOD", os.path.join("PlanetLOD", "metadata", "fields"), "PlanetLOD/schema/planet-field.schema.yaml", None),
+        ("planet-layers", "Layers", "PlanetLOD", os.path.join("PlanetLOD", "metadata", "layers"), "PlanetLOD/schema/planet-layer.schema.yaml", None),
+        ("planet-lines", "Line kinds", "PlanetLOD", os.path.join("PlanetLOD", "metadata", "lines"), "PlanetLOD/schema/planet-line.schema.yaml", None),
+        ("planet-landmarks", "Landmark types", "PlanetLOD", os.path.join("PlanetLOD", "metadata", "landmarks"), "PlanetLOD/schema/planet-landmark.schema.yaml", None),
+        ("planet-events", "Events", "PlanetLOD", os.path.join("PlanetLOD", "metadata", "events"), "PlanetLOD/schema/planet-event.schema.yaml", None),
+        ("planet-handlers", "Mesher handlers", "PlanetLOD", os.path.join("PlanetLOD", "metadata", "handlers"), "PlanetLOD/schema/planet-handler.schema.yaml", None),
+        ("planet-measures", "Measures", "PlanetLOD", os.path.join("PlanetLOD", "metadata", "measures"), "PlanetLOD/schema/planet-measure.schema.yaml", None),
+        ("planet-factors", "Deciding factors", "PlanetLOD", os.path.join("PlanetLOD", "metadata", "factors"), "PlanetLOD/schema/planet-factor.schema.yaml", None),
+        ("planet-patterns", "Landform patterns", "PlanetLOD", os.path.join("PlanetLOD", "metadata", "patterns"), "PlanetLOD/schema/planet-pattern.schema.yaml", None),
+        ("planet-models", "Planet models", "PlanetSim", os.path.join("PlanetSim", "metadata", "models"), "PlanetSim/schema/planet-model.schema.yaml", None),
+        ("planet-files", "Sim files", "PlanetLOD", os.path.join("PlanetLOD", "metadata", "files"), "PlanetLOD/schema/planet-file.schema.yaml", None)]
 for _kind, _title, _root, _dir, _schema, _std in _REG:
     _recs = []
-    for _f in sorted(glob.glob(os.path.join(TREE, _dir, "*.yaml"))):
+    for _f in sorted(glob.glob(os.path.join(TREE, _dir, "**", "*.yaml"), recursive=True)):      # (PlanetLOD's patterns lie in a folder a family)
         _r = yaml.safe_load(open(_f, encoding="utf-8")) or {}
         _idn = _r.get("identity") if isinstance(_r.get("identity"), dict) else _r
-        _r["slug"], _r["key"], _r["name"], _r["file"] = os.path.basename(_f)[:-5], _idn.get("key", ""), _idn.get("name", os.path.basename(_f)[:-5]), os.path.relpath(_f, TREE)
+        _slug = _idn.get("key", "").split(".", 1)[1] if _root in ("PlanetLOD", "PlanetSim") and "." in _idn.get("key", "") else os.path.basename(_f)[:-5]
+        _r["slug"], _r["key"], _r["name"], _r["file"] = _slug, _idn.get("key", ""), _idn.get("name", os.path.basename(_f)[:-5]), os.path.relpath(_f, TREE)
         _recs.append(_r)
         if _r["key"]:
             KEY_PAGES[_r["key"]] = f"x:{_kind}:{_r['slug']}"
@@ -3162,7 +3175,7 @@ def write_html():
         # (Each property's unit or note, from the schemas.)
         "element_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["elements"]["properties"].items() if "properties" in d},
         "material_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["materials"]["properties"].items() if "properties" in d},
-        "registers": REGISTERS,
+        "registers": REGISTERS, "roots": {r_: {"name": (yaml.safe_load(open(os.path.join(TREE, r_, "metadata", r_ + ".yaml"))) or {})["identity"]["name"], "note": (yaml.safe_load(open(os.path.join(TREE, r_, "metadata", r_ + ".yaml"))) or {}).get("note", "")} for r_ in ("PlanetLOD", "PlanetSim")},
         "register_groups": REGISTER_GROUPS,
         "key_pages": KEY_PAGES,
         "standards": sorted(standards, key=lambda s: (s["body"], s["number"])),

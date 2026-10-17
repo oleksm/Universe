@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../../root.schema.yaml
+identity:
+  key: root.planet-sim
+  name: "Planet Simulator"
+note: "The planet simulator's models (the owner, 17 Oct 2026): each model used to describe or mesh a planet, its anchors, the rule that weaves detail round them, its parameters, what it guarantees and leaves out, its implementations and the measures that judge it. Its words, units and measures are PlanetLOD's (standards/PlanetLOD); the planets' data stay the sim's."

@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Planet model
 x-kind: [planet-model]
-description: "standards/PlanetLOD/metadata/models/<name>.yaml: a model used to describe or mesh a planet (the owner, 17 Oct 2026): its anchors and how they are found, the rule that weaves detail around them, its parameters, what it guarantees and what it leaves out, the rules it carries, the levels it serves, its implementations and the measures that judge it."
+description: "standards/PlanetSim/metadata/models/<name>.yaml: a model used to describe or mesh a planet (the owner, 17 Oct 2026): its anchors and how they are found, the rule that weaves detail around them, its parameters, what it guarantees and what it leaves out, the rules it carries, the levels it serves, its implementations and the measures that judge it."
 type: object
 additionalProperties: false
 required: [identity, purpose, anchors, detail]
