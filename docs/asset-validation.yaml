@@ -8181,3 +8181,20 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "operational tilt acceptance (blender: 31 diagnostic poses clear with the clamp open; the axis assumed)"
+  - key: connector.clamp-coupling-dn1200
+    version: 1
+    manifest_sha256: "1e5da038a201382caa349c6620a1f92162d26d33e38ce0e915d3438bb8d4ca40"
+    installed: 458dfe80
+    game: "the loader (world::assets) at fso 458dfe80"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+      - "its two-step opening (moving and fixed groups) for the game to drive"
