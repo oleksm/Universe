@@ -8101,3 +8101,19 @@ validations:
       - "GPU look and cost, placement on a real hull"
       - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
       - "dielectric review (blender)"
+  - key: run.jacketed-duct-dn2000
+    version: 1
+    manifest_sha256: "19094b81a25f6b408de23b460c05fa395563ec3e39e1f3c76d7afa02c7394713"
+    installed: ab661600
+    game: "the loader (world::assets) at fso ab661600"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
