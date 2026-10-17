@@ -64,7 +64,10 @@ built_of:
     module: module.assembly-shop
   - code: RAH1-03
     name: Hinge, drive and root joints
-    description: Root hinge brackets on the hull, the deploy drive, tip latches that hold it stowed, and the two bellows loops where the headers cross the hinge.
+    description: 'Root hinge brackets on the hull, the deploy drive, tip latches that hold it stowed, and the hinge crossings: each header splits at its moving -y end into three DN125 molybdenum-rhenium corrugated hoses (about 0.15
+      m outside, 4.5 m/s of lithium), each wound about half a turn round the hinge axis in a plane across it, at a bend radius of at least 0.6 m (4 x its outside; deploys are few, under 1,000 in its life), so the 90 degree swing winds
+      and unwinds them like a clock spring and stretches none; about 2.5 m of hose each from the moving end to its fixed seat. They stand in a root pod beyond the panel''s -y end about 1.3 m across round the hinge axis, taller than
+      the 0.3 m panel; the mount grows to the pod as measured.'
     mass: 325
     length: 7.65
     width: 0.5
@@ -146,3 +149,9 @@ basis:
   tier: derived
   note: 'Width over the root bracket, bellows loops and drive, y -4.425 to 4.14 (blender''s candidate-v01 measure, 2026-10-17): 8.565 m; the panel itself is 7.65 m. The engine''s lines are fixed to the hull, so the ports sit on the
     loops'' fixed seats, not on the swinging header ends; mount.radiator-hot-s1 widened to 9.42 m by rule.mounts-margin.'
+- of:
+  - built_of.list
+  tier: invented
+  review: true
+  note: 'The hinge crossing (2026-10-17, after blender''s reach check: a 90 degree swing stretches a straight 0.6 m bellows 6 to 46 %): three DN125 Mo-Re corrugated hoses per header wound round the hinge axis. Bend radius 0.6 m is 4
+    x outside, a low-cycle allowance from memory of metal-hose practice (static about 2-3 x, dynamic about 10 x); to be checked against a Mo-Re hose''s fatigue at 1,600 K.'
