@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.volcanic.edifice.cinder-cone
+  name: Cinder (scoria) cone
+  about: Cinder (scoria) cone.
+family: volcanic
+factors:
+- factor: planet-factor.volc-magma
+  weight: 3
+  why: 'gas-rich basalt/basaltic andesite, Strombolian: ballistic scoria piles at repose 30-40 deg'
+- factor: planet-factor.volc-vent
+  weight: 3
+  why: single short eruption (days-years); fissure vents give elongate cones or chains
+- factor: planet-factor.clim-wind
+  weight: 1
+  why: prevailing wind during eruption skews cone and tephra blanket downwind
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: cone on slope is elongated and breached downslope
+- factor: planet-factor.events
+  weight: 1
+  why: 'waning lava flow from base rafts away cone sector: horseshoe breach'
+- factor: planet-factor.groundwater
+  weight: 1
+  why: 'abundant water turns eruption phreatomagmatic: maar/tuff ring instead of cone'
+- factor: planet-factor.time
+  weight: 3
+  why: age lowers H/W from 0.18 and slope 26 to 20 deg over ~0.7 Myr
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: wetter climate degrades cone faster and gullies flanks; arid preserves form
+- factor: planet-factor.other-gravity-atmosphere
+  weight: 1
+  why: 'lower gravity/air pressure widens ballistic range: wider, lower cones (Mars)'
+vocabulary_id: 134
+sources:
+- https://en.wikipedia.org/wiki/Cinder_cone
+- https://en.wikipedia.org/wiki/Volcanic_field
+library_status: written
+source: volcanic.edifice.cinder_cone
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

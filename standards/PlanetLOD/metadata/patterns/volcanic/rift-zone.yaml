@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.volcanic.rift-zone
+  name: Volcanic rift zone
+  about: Volcanic rift zone.
+family: volcanic
+factors:
+- factor: planet-factor.other-stress-field
+  weight: 3
+  why: edifice load and flank spreading open dikes perpendicular to least stress
+- factor: planet-factor.volc-magma
+  weight: 1
+  why: basaltic fluid magma for repeated dike intrusion
+- factor: planet-factor.tect-setting
+  weight: 1
+  why: ocean-island shields (Hawaii, Canaries, Galapagos), some continental shields
+- factor: planet-factor.volc-vent
+  weight: 3
+  why: repeated fissure eruptions build linear ridges of cones and elongate the edifice
+- factor: planet-factor.tect-fault
+  weight: 1
+  why: normal faults, grabens and pit craters along rift
+- factor: planet-factor.events
+  weight: 1
+  why: flank slip and earthquakes widen rift; large landslides
+- factor: planet-factor.time
+  weight: 1
+  why: long-lived over 100s kyr; Mauna Loa eruptions mostly rift-fed last 700 yr
+- factor: planet-factor.relief-inherited
+  weight: 3
+  why: neighbouring volcanoes buttress flanks, orient rifts (ideal ~120 deg between two)
+vocabulary_id: 185
+sources:
+- https://en.wikipedia.org/wiki/Rift_zone
+- https://www.usgs.gov/volcanoes/mauna-loa/geology-and-history
+library_status: planned
+source: volcanic.rift_zone
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

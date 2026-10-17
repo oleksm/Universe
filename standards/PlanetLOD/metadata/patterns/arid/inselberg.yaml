@@ -1,0 +1,56 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.arid.residual.inselberg
+  name: Inselberg (bornhardt, castle koppie)
+  about: Inselberg (bornhardt, castle koppie).
+family: arid
+factors:
+- factor: planet-factor.rock-type
+  weight: 1
+  why: Massive resistant granite, gneiss, gabbro, arkose amid weaker or more weathered rock
+- factor: planet-factor.rock-fracture
+  weight: 3
+  why: Sparse joints keep compartment fresh; dense joints weather deep. Sheeting joints shape domes
+- factor: planet-factor.clim-history
+  weight: 3
+  why: Deep weathering in humid phase then stripping in drier phase (two-stage etching)
+- factor: planet-factor.clim-arid
+  weight: 1
+  why: Savanna (40%) and arid (32%) most common; aridity preserves exposed domes
+- factor: planet-factor.regolith
+  weight: 1
+  why: Thick saprolite around the core; stripping exposes the weathering front
+- factor: planet-factor.tect-setting
+  weight: 1
+  why: Stable cratons/shields; long tectonic quiet
+- factor: planet-factor.base-level
+  weight: 1
+  why: Base-level fall triggers regolith stripping and exposure
+- factor: planet-factor.relief-inherited
+  weight: 1
+  why: Remnants of eroded etchplains/planation surfaces
+- factor: planet-factor.time
+  weight: 3
+  why: 1-100 Myr; marginal collapse later yields tors and castle koppies
+vocabulary_id: 13
+sources:
+- https://en.wikipedia.org/wiki/Inselberg
+- https://en.wikipedia.org/wiki/Etchplain
+- https://www.nps.gov/subjects/geology/arid-landforms.htm
+library_status: written
+source: arid.residual.inselberg
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

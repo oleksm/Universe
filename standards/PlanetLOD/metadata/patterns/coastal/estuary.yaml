@@ -1,0 +1,53 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.coastal.drowned.estuary
+  name: Estuary (wave- or tide-dominated)
+  about: Estuary (wave- or tide-dominated).
+family: coastal
+factors:
+- factor: planet-factor.sea-level
+  weight: 3
+  why: Holocene transgression flooded incised valleys; estuaries fill and are short-lived
+- factor: planet-factor.waves-tides
+  weight: 3
+  why: microtidal <2 m wave-dominated barrier/lagoon; macrotidal >4 m funnel with sand bars, flats
+- factor: planet-factor.water-discharge
+  weight: 1
+  why: river discharge sets salinity, stratification, fluvial delta at head
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: river + marine sediment rate decides infilling to delta
+- factor: planet-factor.relief-inherited
+  weight: 1
+  why: incised valley at coast from lowstand incision
+- factor: planet-factor.base-level
+  weight: 1
+  why: lowstand base-level fall cut the valley first
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: salt marsh or mangrove stabilises margins
+- factor: planet-factor.time
+  weight: 1
+  why: 7-20 kyr since flooding
+vocabulary_id: 21
+sources:
+- https://www.nps.gov/articles/estuary-landforms.htm
+- https://www.coastalwiki.org/wiki/Estuaries
+- https://www.coastalwiki.org/wiki/Morphology_of_estuaries
+library_status: written
+source: coastal.drowned.estuary
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

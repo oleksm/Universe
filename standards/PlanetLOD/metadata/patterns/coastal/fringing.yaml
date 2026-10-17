@@ -1,0 +1,56 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.coastal.reef.fringing
+  name: Fringing coral reef
+  about: Fringing coral reef.
+family: coastal
+factors:
+- factor: planet-factor.clim-temp
+  weight: 3
+  why: sea surface >~18 C, optimum 26-27 C; roughly 30N-30S
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: coral and coralline algae framework growth 1-25 cm/yr
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: clear water; river mud and freshwater block reefs (gaps at river mouths)
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: hard substrate at shallow depth near shore (light to ~60 m)
+- factor: planet-factor.sea-level
+  weight: 3
+  why: 'accommodation space: keep-up, catch-up or give-up reefs'
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: uplift strands reef terraces; subsidence moves toward barrier reef
+- factor: planet-factor.waves-tides
+  weight: 1
+  why: wave exposure sets zonation and reef-flat width
+- factor: planet-factor.other-ocean-chemistry
+  weight: 1
+  why: aragonite saturation and low nutrients needed
+- factor: planet-factor.time
+  weight: 1
+  why: 1-10 kyr for Holocene reef flats
+vocabulary_id: 26
+sources:
+- https://www.coastalwiki.org/wiki/Coral_reefs
+- https://en.wikipedia.org/wiki/Fringing_reef
+- https://www.nps.gov/articles/tropical-coast-landforms.htm
+library_status: written
+source: coastal.reef.fringing
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

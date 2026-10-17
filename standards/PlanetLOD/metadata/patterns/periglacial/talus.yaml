@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.periglacial.slope.talus
+  name: Talus slope (periglacial scree)
+  about: Talus slope (periglacial scree).
+family: periglacial
+factors:
+- factor: planet-factor.slope-relief
+  weight: 3
+  why: Beneath steep walls of troughs/cirques; straight slopes ~32-38 deg
+- factor: planet-factor.rock-fracture
+  weight: 3
+  why: Jointed walls supply rockfall
+- factor: planet-factor.clim-temp
+  weight: 1
+  why: Frost weathering raises rockfall
+- factor: planet-factor.ice-extent
+  weight: 3
+  why: 'Paraglacial: glacial debuttressing after deglaciation'
+- factor: planet-factor.permafrost
+  weight: 1
+  why: Permafrost in talus can turn it into rock glaciers
+- factor: planet-factor.events
+  weight: 1
+  why: Avalanches and debris flows rework the slope
+- factor: planet-factor.time
+  weight: 1
+  why: 1-15 kyr since deglaciation
+vocabulary_id: 114
+sources:
+- https://en.wikipedia.org/wiki/Scree
+- https://pubs.usgs.gov/fs/2004/3072/fs-2004-3072.html
+library_status: written
+source: periglacial.slope.talus
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

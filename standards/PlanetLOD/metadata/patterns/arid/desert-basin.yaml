@@ -1,0 +1,56 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.arid.landscape.desert-basin
+  name: Desert basin (bolson; basin-and-range style)
+  about: Desert basin (bolson; basin-and-range style).
+family: arid
+factors:
+- factor: planet-factor.tect-setting
+  weight: 1
+  why: Extensional provinces (horst/graben) or intermontane/foreland basins
+- factor: planet-factor.tect-fault
+  weight: 3
+  why: Listric/normal faults create alternating ranges and basins at ~20-40 km spacing
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: Range uplift vs basin subsidence sets relief and fill thickness
+- factor: planet-factor.clim-arid
+  weight: 3
+  why: 'Arid (<250 mm/yr) closes drainage: endorheic basins'
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: 'Range erosion fills basin: fans, bajadas, basin floor'
+- factor: planet-factor.base-level
+  weight: 1
+  why: Closed (bolson + playa) vs open (through river) drainage
+- factor: planet-factor.clim-history
+  weight: 1
+  why: Pluvial lakes left shorelines, lake beds
+- factor: planet-factor.clim-storm
+  weight: 1
+  why: Flash floods move sediment
+- factor: planet-factor.time
+  weight: 1
+  why: Myr since extension began (Basin and Range ~17 Myr)
+vocabulary_id: 146
+sources:
+- https://en.wikipedia.org/wiki/Basin_and_Range_Province
+- https://www.nps.gov/subjects/geology/arid-landforms.htm
+- https://en.wikipedia.org/wiki/Dry_lake
+library_status: planned
+source: arid.landscape.desert_basin
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

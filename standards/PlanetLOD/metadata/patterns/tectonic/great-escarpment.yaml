@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.tectonic.margin.great-escarpment
+  name: Great escarpment (passive margin)
+  about: Great escarpment (passive margin).
+family: tectonic
+factors:
+- factor: planet-factor.tect-setting
+  weight: 3
+  why: rifted passive margin with high interior plateau
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: rift-flank and flexural isostatic uplift from denudation keep scarp high
+- factor: planet-factor.base-level
+  weight: 3
+  why: rift-generated low coastal base level drives headward erosion
+- factor: planet-factor.relief-inherited
+  weight: 3
+  why: inland drainage divide position pins or allows retreat
+- factor: planet-factor.rock-type
+  weight: 1
+  why: flood-basalt cap (up to 2.5 km) or hard shield gives sharp scarp
+- factor: planet-factor.rock-layers
+  weight: 1
+  why: flat-lying hard caprock over weaker rock gives steep face
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: windward orographic rain speeds retreat; retreat 0.17-2.4 km/Myr
+- factor: planet-factor.time
+  weight: 1
+  why: 10-200 Myr since breakup; total retreat <25 km to >100 km
+vocabulary_id: 126
+sources:
+- https://esurf.copernicus.org/articles/9/1301/2021/
+- https://en.wikipedia.org/wiki/Passive_margin
+library_status: written
+source: tectonic.margin.great_escarpment
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

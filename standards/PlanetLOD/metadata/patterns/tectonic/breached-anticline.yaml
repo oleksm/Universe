@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.tectonic.fold.breached-anticline
+  name: Breached anticline (anticlinal valley)
+  about: Breached anticline (anticlinal valley).
+family: tectonic
+factors:
+- factor: planet-factor.tect-fold
+  weight: 3
+  why: pre-existing anticline; fold amplitude decides depth of breach
+- factor: planet-factor.rock-layers
+  weight: 3
+  why: hard carapace over weak core; once cap cut core erodes, inward-facing scarps
+- factor: planet-factor.rock-fracture
+  weight: 1
+  why: hinge extension fractures focus crest erosion
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: uplift slowing/stopping lets erosion outrun fold growth
+- factor: planet-factor.water-discharge
+  weight: 1
+  why: streams via water gaps excavate core into anticlinal valley
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: humid climate breaches faster than arid
+- factor: planet-factor.time
+  weight: 3
+  why: long exposure (Myr); age sets breach depth and ring scarps
+vocabulary_id: 169
+sources:
+- https://en.wikipedia.org/wiki/Anticline
+library_status: planned
+source: tectonic.fold.breached_anticline
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

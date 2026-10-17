@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.structural.flat.mesa-butte
+  name: Mesa and butte (structural, caprock-controlled)
+  about: Mesa and butte (structural, caprock-controlled).
+family: structural
+factors:
+- factor: planet-factor.rock-layers
+  weight: 3
+  why: Horizontal resistant caprock (sandstone, basalt flow) over weak shale/siltstone
+- factor: planet-factor.tect-fold
+  weight: 1
+  why: Near-horizontal strata
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: Uplift drives incision dissecting plateau
+- factor: planet-factor.volc-vent
+  weight: 1
+  why: Lava flow caps (flood basalts) can form caprock and inverted relief
+- factor: planet-factor.rock-fracture
+  weight: 1
+  why: Caprock joints control block fall and remnant outline
+- factor: planet-factor.groundwater
+  weight: 1
+  why: Basal sapping undermines caprock
+- factor: planet-factor.clim-arid
+  weight: 3
+  why: Arid/semi-arid preserves free faces
+- factor: planet-factor.base-level
+  weight: 1
+  why: Valley-floor level sets relief (to ~300 m)
+- factor: planet-factor.time
+  weight: 1
+  why: 0.1-10 Myr; mesa to butte to pinnacle
+vocabulary_id: 115
+sources:
+- https://en.wikipedia.org/wiki/Mesa
+- https://en.wikipedia.org/wiki/Monument_Valley
+library_status: written
+source: structural.flat.mesa_butte
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

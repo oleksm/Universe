@@ -1,0 +1,59 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.karst.depression.doline
+  name: Doline (sinkhole) field
+  about: Doline (sinkhole) field.
+family: karst
+factors:
+- factor: planet-factor.rock-soluble
+  weight: 3
+  why: Limestone, dolomite, gypsum or salt at or below surface; required
+- factor: planet-factor.rock-fracture
+  weight: 3
+  why: Dissolution concentrates at joint intersections; sets position, alignment and spacing
+- factor: planet-factor.regolith
+  weight: 3
+  why: 'Cover type picks the kind: bare = solution; sandy = cover-subsidence; clayey = cover-collapse'
+- factor: planet-factor.rock-perm
+  weight: 1
+  why: Secondary permeability via epikarst lets water drain vertically and focuses solution
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: Humid recharge drives solution; high groundwater flow allows giant dolines
+- factor: planet-factor.groundwater
+  weight: 1
+  why: Water-table fluctuation zone dissolves fastest; falling water table triggers cover collapse
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: Gentle surfaces keep water infiltrating; densities up to ~500/km2 on levelled surfaces
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: Soil CO2 from vegetation raises aggressiveness of percolating water
+- factor: planet-factor.events
+  weight: 1
+  why: Collapse dolines appear in hours after cave-roof failure, floods or water-table drawdown
+- factor: planet-factor.time
+  weight: 1
+  why: 10 kyr to 1 Myr; mature fields become polygonal and merge into uvalas
+vocabulary_id: 94
+sources:
+- https://www.usgs.gov/special-topics/water-science-school/science/sinkholes
+- https://en.wikipedia.org/wiki/Sinkhole
+- https://www.nps.gov/subjects/caves/karst-landscapes.htm
+library_status: written
+source: karst.depression.doline
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

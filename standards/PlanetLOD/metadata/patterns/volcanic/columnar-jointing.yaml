@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.volcanic.material.columnar-jointing
+  name: Columnar jointing field (material feature)
+  about: Columnar jointing field (material feature).
+family: volcanic
+factors:
+- factor: planet-factor.other-cooling-rate
+  weight: 3
+  why: column width ~1/cooling rate (0.03-3 m); needs thick ponded flow or sill
+- factor: planet-factor.volc-magma
+  weight: 1
+  why: basalt mainly; also welded tuff, andesite
+- factor: planet-factor.groundwater
+  weight: 3
+  why: 'water flooding flow top cools fast: thin chaotic entablature'
+- factor: planet-factor.relief-inherited
+  weight: 3
+  why: lava ponding in valleys or depressions makes thick bodies
+- factor: planet-factor.time
+  weight: 1
+  why: erosion exposes columns in cliffs; forms in decades of cooling
+vocabulary_id: 141
+sources:
+- https://en.wikipedia.org/wiki/Columnar_jointing
+library_status: written
+source: volcanic.material.columnar_jointing
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

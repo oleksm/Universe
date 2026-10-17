@@ -1,0 +1,72 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.karst.landscape.plateau
+  name: Karst plateau (holokarst with dolines, uvalas, poljes)
+  about: Karst plateau (holokarst with dolines, uvalas, poljes).
+family: karst
+factors:
+- factor: planet-factor.rock-soluble
+  weight: 3
+  why: Thick pure limestone/dolomite (>~90% CaCO3) needed; impure or thin carbonate gives fluviokarst instead
+- factor: planet-factor.rock-type
+  weight: 1
+  why: Massive, low-porosity carbonate platform rock (Mesozoic platform hundreds to thousands of m thick)
+- factor: planet-factor.rock-fracture
+  weight: 1
+  why: Joint and fault density sets doline spacing and conduit routes; faults guide poljes and gorges
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: Uplift creates deep vadose zone and underground drainage; staged uplift leaves stepped planation surfaces
+- factor: planet-factor.tect-setting
+  weight: 1
+  why: Fold-thrust belts over carbonate platforms (Dinarides) or stable carbonate platforms
+- factor: planet-factor.tect-fault
+  weight: 1
+  why: Faults step the plateau and bound poljes; active thrusting keeps uplift going
+- factor: planet-factor.clim-precip
+  weight: 3
+  why: Humid climate; denudation rate rises roughly linearly with runoff (tens of mm/kyr at ~1000 mm runoff)
+- factor: planet-factor.clim-temp
+  weight: 1
+  why: Cold raises CO2 solubility, warmth raises soil CO2; net rate driven by runoff and soil CO2
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: Soil and vegetation supply CO2 that drives dissolution; soil loss leaves bare karren
+- factor: planet-factor.groundwater
+  weight: 1
+  why: Deep water table and karst springs at margins; almost no surface streams
+- factor: planet-factor.base-level
+  weight: 1
+  why: Spring/sea level sets depth of karstification; base-level falls (e.g. Messinian) deepen it
+- factor: planet-factor.relief-inherited
+  weight: 1
+  why: Older planation surfaces and relict valley networks become blind/dry valleys
+- factor: planet-factor.ice-extent
+  weight: 1
+  why: Glaciation on high plateaus scours and fills dolines (glaciokarst)
+- factor: planet-factor.time
+  weight: 1
+  why: 100 kyr to 10 Myr for full holokarst
+vocabulary_id: 97
+sources:
+- https://en.wikipedia.org/wiki/Dinaric_Alps
+- https://www.nps.gov/subjects/caves/karst-landscapes.htm
+- https://en.wikipedia.org/wiki/Sinkhole
+- https://en.wikipedia.org/wiki/Polje
+library_status: written
+source: karst.landscape.plateau
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.channel.bedrock-long-profile
+  name: River longitudinal profile (bedrock)
+  about: River longitudinal profile (bedrock).
+family: fluvial
+factors:
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: rock uplift rate sets steepness ksn (20-600 m^0.9) at steady state
+- factor: planet-factor.rock-type
+  weight: 3
+  why: erodibility sets ksn and knickzones at contacts
+- factor: planet-factor.rock-fracture
+  weight: 1
+  why: jointing controls plucking vs abrasion efficiency
+- factor: planet-factor.water-discharge
+  weight: 1
+  why: discharge scales with area; concavity theta 0.4-0.6
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: runoff sets erosional efficiency
+- factor: planet-factor.clim-storm
+  weight: 1
+  why: flood variability and incision thresholds set rate-steepness nonlinearity
+- factor: planet-factor.sed-supply
+  weight: 1
+  why: sediment acts as tools vs cover; high supply raises concavity/alluvial reaches
+- factor: planet-factor.base-level
+  weight: 3
+  why: base-level falls launch knickpoints; profile grades to outlet
+- factor: planet-factor.time
+  weight: 1
+  why: response time 10 kyr-10 Myr to reach steady state
+vocabulary_id: 35
+sources:
+- https://en.wikipedia.org/wiki/Knickpoint
+- https://en.wikipedia.org/wiki/Canyon
+library_status: written
+source: fluvial.channel.bedrock_long_profile
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

@@ -1,0 +1,56 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.coastal.reef.barrier
+  name: Barrier reef and reef lagoon
+  about: Barrier reef and reef lagoon.
+family: coastal
+factors:
+- factor: planet-factor.clim-temp
+  weight: 3
+  why: tropical warm water, >18 C
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: reef growth must match relative sea-level rise
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: subsidence of shelf or volcano (Darwin) separates reef from shore
+- factor: planet-factor.tect-setting
+  weight: 1
+  why: wide passive-margin shelf or subsiding volcanic island
+- factor: planet-factor.relief-inherited
+  weight: 3
+  why: antecedent platforms/karst at shelf edge set reef line
+- factor: planet-factor.sea-level
+  weight: 1
+  why: glacial-interglacial cycles expose and re-flood; Holocene reef on Pleistocene base
+- factor: planet-factor.sed-supply
+  weight: 1
+  why: low terrigenous input; lagoon 35-50 m fills slowly
+- factor: planet-factor.waves-tides
+  weight: 1
+  why: trade-wind waves on outer edge build reef front
+- factor: planet-factor.time
+  weight: 1
+  why: longer than fringing reefs; 10-1000 kyr
+vocabulary_id: 25
+sources:
+- https://en.wikipedia.org/wiki/Barrier_reef
+- https://www.coastalwiki.org/wiki/Coral_reefs
+- https://www.nps.gov/articles/tropical-coast-landforms.htm
+library_status: written
+source: coastal.reef.barrier
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

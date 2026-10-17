@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/planet-factor.schema.yaml
+identity:
+  key: planet-factor.tect-setting
+  name: TECT_SETTING
+  about: plate setting, crust type (passive margin, orogen, craton, rift, hotspot)
+source: TECT_SETTING
+reads:
+  layers:
+  - planet-layer.crust-kind
+  - planet-layer.zones
+  lines:
+  - planet-line.plate-edge
+  - planet-line.suture
+  - planet-line.arc-front
+  - planet-line.rift-margin
+levels:
+- planet-level.cluster
+- planet-level.pattern
+basis:
+- of:
+  - identity
+  tier: derived
+  note: planet-trees-pgs2 docs/landforms/deciding_factors_vocab.md.
+- of:
+  - reads
+  - signal
+  tier: invented
+  review: true
+  note: 'The registry''s first guess at which of the sim''s words a factor reads and how its strength ramps (2026-10-17): for planets to correct.'
+status: draft

@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.structural.homocline.homoclinal-ridge
+  name: Homoclinal (strike) ridge
+  about: Homoclinal (strike) ridge.
+family: structural
+factors:
+- factor: planet-factor.tect-fold
+  weight: 3
+  why: Moderate dip ~10-30 deg on fold limbs or monoclines
+- factor: planet-factor.rock-layers
+  weight: 3
+  why: Resistant bed between weak beds; thickness sets ridge width
+- factor: planet-factor.tect-setting
+  weight: 3
+  why: Fold-thrust belts, dome flanks
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: Uplift drives erosion of weak beds
+- factor: planet-factor.water-discharge
+  weight: 1
+  why: Transverse rivers cut water gaps
+- factor: planet-factor.clim-arid
+  weight: 1
+  why: Any
+- factor: planet-factor.time
+  weight: 1
+  why: 1-50 Myr
+vocabulary_id: 118
+sources:
+- https://en.wikipedia.org/wiki/Cuesta
+- https://en.wikipedia.org/wiki/Hogback_(geology)
+library_status: written
+source: structural.homocline.homoclinal_ridge
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

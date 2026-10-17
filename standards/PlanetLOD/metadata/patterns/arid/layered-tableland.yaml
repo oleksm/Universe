@@ -1,0 +1,56 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.arid.plateau.layered-tableland
+  name: Layered tableland (arid dissected plateau of flat strata)
+  about: Layered tableland (arid dissected plateau of flat strata).
+family: arid
+factors:
+- factor: planet-factor.rock-layers
+  weight: 3
+  why: 'Flat alternating strong/weak strata: cliff-and-bench stairs'
+- factor: planet-factor.tect-fold
+  weight: 1
+  why: Near-horizontal beds
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: Epeirogenic plateau uplift (Colorado Plateau) drives canyon incision
+- factor: planet-factor.tect-setting
+  weight: 1
+  why: Stable block beside orogens or rifts
+- factor: planet-factor.base-level
+  weight: 3
+  why: Trunk-river incision sets canyon depth
+- factor: planet-factor.clim-arid
+  weight: 1
+  why: 'Arid: sharp cliffs, little soil'
+- factor: planet-factor.rock-fracture
+  weight: 1
+  why: Joints guide canyons, fins, scarp outlines
+- factor: planet-factor.water-discharge
+  weight: 1
+  why: Exotic rivers from wetter highlands cut through
+- factor: planet-factor.time
+  weight: 1
+  why: Myr
+vocabulary_id: 149
+sources:
+- https://en.wikipedia.org/wiki/Mesa
+- https://en.wikipedia.org/wiki/Monument_Valley
+- https://www.nps.gov/subjects/geology/arid-landforms.htm
+library_status: planned
+source: arid.plateau.layered_tableland
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

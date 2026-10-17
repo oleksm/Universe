@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.tectonic.margin.passive
+  name: Passive (rifted) continental margin
+  about: Passive (rifted) continental margin.
+family: tectonic
+factors:
+- factor: planet-factor.tect-setting
+  weight: 3
+  why: post-rift trailing edge, no plate boundary; volcanic vs non-volcanic rifting
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: thermal subsidence decaying with age; rift-flank uplift makes escarpment
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: fluvial supply (deltas) or carbonate builds shelf, progrades shelf break
+- factor: planet-factor.sea-level
+  weight: 1
+  why: sea-level history sets shelf flooding, coastal plain width
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: reefs/carbonate factories build rimmed shelves in warm water
+- factor: planet-factor.other-salt-tectonics
+  weight: 1
+  why: rift salt forms diapirs, minibasins on slope (Gulf of Mexico)
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: onshore rain drives escarpment retreat and supply
+- factor: planet-factor.time
+  weight: 1
+  why: heat flow and subsidence decline with age since breakup (10-200 Myr)
+vocabulary_id: 171
+sources:
+- https://en.wikipedia.org/wiki/Passive_margin
+- https://esurf.copernicus.org/articles/9/1301/2021/
+library_status: planned
+source: tectonic.margin.passive
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

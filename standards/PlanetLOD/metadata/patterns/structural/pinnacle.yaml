@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.structural.flat.pinnacle
+  name: Pinnacle / spire / hoodoo (caprock remnant)
+  about: Pinnacle / spire / hoodoo (caprock remnant).
+family: structural
+factors:
+- factor: planet-factor.rock-layers
+  weight: 3
+  why: Thin hard cap over thick soft rock; cap shields column
+- factor: planet-factor.rock-fracture
+  weight: 3
+  why: Joint grid sets fins then spires; spacing sets width
+- factor: planet-factor.clim-temp
+  weight: 3
+  why: Frost wedging; Bryce Canyon >200 freeze-thaw cycles/yr
+- factor: planet-factor.clim-storm
+  weight: 1
+  why: Monsoon-type storms wash soft rock
+- factor: planet-factor.clim-arid
+  weight: 1
+  why: Semi-arid; sparse vegetation leaves rock bare
+- factor: planet-factor.rock-soluble
+  weight: 1
+  why: Carbonate cement dissolves grain by grain, rounding forms
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: Uplift and rim retreat expose layers
+- factor: planet-factor.time
+  weight: 1
+  why: Short-lived (kyr-100 kyr) final stage of scarp retreat
+vocabulary_id: 165
+sources:
+- https://en.wikipedia.org/wiki/Hoodoo_(geology)
+- https://en.wikipedia.org/wiki/Mesa
+library_status: planned
+source: structural.flat.pinnacle
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

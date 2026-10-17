@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.network.rectangular
+  name: Rectangular drainage pattern
+  about: Rectangular drainage pattern.
+family: fluvial
+factors:
+- factor: planet-factor.rock-fracture
+  weight: 3
+  why: orthogonal joints/faults at ~90 deg; channels follow them, right-angle bends
+- factor: planet-factor.rock-type
+  weight: 3
+  why: uniformly resistant crystalline or massive sedimentary rock
+- factor: planet-factor.tect-fault
+  weight: 3
+  why: fault sets supply the weak zones; non-orthogonal sets give angular pattern
+- factor: planet-factor.rock-soluble
+  weight: 1
+  why: solution along joints in limestone accentuates grid
+- factor: planet-factor.regolith
+  weight: 1
+  why: thin cover so fractures control incision
+- factor: planet-factor.time
+  weight: 1
+  why: 10 kyr-100 Myr exploitation of fractures
+vocabulary_id: 54
+sources:
+- https://ebooks.inflibnet.ac.in/geop11/chapter/drainage-pattern
+- https://en.wikipedia.org/wiki/Drainage_system_(geomorphology)
+library_status: written
+source: fluvial.network.rectangular
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

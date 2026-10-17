@@ -1,0 +1,53 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.tectonic.strike-slip.transform-valley
+  name: Strike-slip / transform fault valley with offset streams
+  about: Strike-slip / transform fault valley with offset streams.
+family: tectonic
+factors:
+- factor: planet-factor.tect-setting
+  weight: 3
+  why: transform plate boundary or major transcurrent fault
+- factor: planet-factor.tect-fault
+  weight: 3
+  why: slip rate (e.g. ~34 mm/yr San Andreas), bends/stepovers make pull-aparts and pressure ridges
+- factor: planet-factor.rock-fracture
+  weight: 3
+  why: crushed gouge zone (1-1000 m) eroded preferentially into linear valley
+- factor: planet-factor.events
+  weight: 1
+  why: great earthquakes, ~10 m slip per event
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: vertical component (transpression/transtension) sets valley vs ridge
+- factor: planet-factor.relief-inherited
+  weight: 1
+  why: ridge-valley grain across fault creates offset streams, shutter ridges
+- factor: planet-factor.clim-arid
+  weight: 1
+  why: arid climates preserve offsets
+- factor: planet-factor.time
+  weight: 1
+  why: 1 kyr-10 Myr; cumulative offset grows with age
+vocabulary_id: 129
+sources:
+- https://en.wikipedia.org/wiki/Transform_fault
+- https://csdms.colorado.edu/wiki/CSDMS_2016_annual_meeting_poster_SarahHarbert
+- https://gotbooks.miracosta.edu/fieldtrips/Elsinore_Fault/interpretation.html
+library_status: written
+source: tectonic.strike_slip.transform_valley
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

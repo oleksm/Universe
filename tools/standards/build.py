@@ -3178,4 +3178,6 @@ if problems:
 _renames = write_game_keys()
 print(f"{len(makers)} makers, {len(bodies)} bodies, {len(standards)} standards, {len(elements)} elements, {len(materials)} materials, {len(processes)} processes, {len(modules)} modules, {len(goods)} goods, {len(hulls)} hulls")
 print(f"  reports: " + ", ".join(f"{r['key']} {r['gaps']} gaps" for r in reports))
-print("  standards/index.html, standards/game-keys.yaml, standards/changes.yaml")
+import planet_lod_module as _plm      # (the PlanetLOD module the sim imports, written from the records like the page)
+open(_plm.OUT, "w", encoding="utf-8").write(_plm.render())
+print("  standards/index.html, standards/game-keys.yaml, standards/changes.yaml, standards/PlanetLOD/generated/planet_lod_words.py")

@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.hillslope.ridge.interfluve
+  name: Interfluve / ridge crest
+  about: Interfluve / ridge crest.
+family: hillslope
+factors:
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: 'Uplift/incision rate vs creep sets ridge sharpness: sharp under fast incision, rounded when slow'
+- factor: planet-factor.clim-precip
+  weight: 3
+  why: Sets fluvial incision vs soil diffusion ratio, hence ridge-valley spacing (~30-320 m)
+- factor: planet-factor.regolith
+  weight: 3
+  why: Soil-mantled crests round by creep; bare rock crests stay sharp
+- factor: planet-factor.rock-type
+  weight: 1
+  why: Resistant rock holds narrow crests; weak rock gives broad low interfluves
+- factor: planet-factor.rock-fracture
+  weight: 1
+  why: Joint and structural trends orient ridges and set spacing in places
+- factor: planet-factor.relief-inherited
+  weight: 1
+  why: Initial surface and drainage network decide divide positions
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: Bioturbation sets diffusivity, rounding crests
+- factor: planet-factor.time
+  weight: 1
+  why: 10 kyr-10 Myr; divides migrate toward the slower-eroding side over time
+vocabulary_id: 91
+sources:
+- https://en.wikipedia.org/wiki/Hillslope_evolution
+library_status: written
+source: hillslope.ridge.interfluve
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

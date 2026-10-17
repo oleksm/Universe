@@ -1,0 +1,56 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.volcanic.edifice.shield-volcano
+  name: Shield volcano
+  about: Shield volcano.
+family: volcanic
+factors:
+- factor: planet-factor.volc-magma
+  weight: 3
+  why: 'low-viscosity basalt, effusive Hawaiian style: slopes 2-12 deg, H/W 0.01-0.1'
+- factor: planet-factor.tect-setting
+  weight: 1
+  why: oceanic hotspot (giant shields), rift or monogenetic field (small lava shields)
+- factor: planet-factor.volc-vent
+  weight: 3
+  why: 'summit vs rift-zone feeding: central gives circular, rift zones give elongate plan'
+- factor: planet-factor.other-magma-supply
+  weight: 3
+  why: long-term magma flux sets size, 0.1 to >75,000 km3 (Mauna Loa)
+- factor: planet-factor.sea-level
+  weight: 1
+  why: submarine growth steeper (10-14 deg); subaerial above sea gives low slopes; breaking surface changes style
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: lithospheric flexure subsides the edifice km-scale as it grows and drifts off hotspot
+- factor: planet-factor.events
+  weight: 1
+  why: summit caldera collapse truncates top; giant flank landslides remove sectors
+- factor: planet-factor.time
+  weight: 1
+  why: 'growth stage: shield stage ~95% volume, then post-shield capping, erosion'
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: windward rain carves deep valleys on old shields, dry side stays smooth
+vocabulary_id: 135
+sources:
+- https://en.wikipedia.org/wiki/Shield_volcano
+- https://www.usgs.gov/volcanoes/mauna-loa/geology-and-history
+- https://pubs.usgs.gov/gip/dynamic/hotspots.html
+library_status: written
+source: volcanic.edifice.shield_volcano
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

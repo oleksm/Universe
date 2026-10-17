@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.volcanic.intrusion.dike-ridge
+  name: Dike ridge (wall)
+  about: Dike ridge (wall).
+family: volcanic
+factors:
+- factor: planet-factor.rock-type
+  weight: 3
+  why: 'dike harder than host: weathers into wall; softer dike gives trench instead'
+- factor: planet-factor.tect-setting
+  weight: 1
+  why: rifts/LIPs give parallel swarms; volcanic centres give radial swarms
+- factor: planet-factor.other-stress-field
+  weight: 3
+  why: regional least stress sets dike orientation; central load gives radial pattern
+- factor: planet-factor.time
+  weight: 3
+  why: Myr of erosion to strip host rock
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: exhumation depth sets how much dike is exposed
+- factor: planet-factor.clim-arid
+  weight: 1
+  why: arid to semi-arid keeps walls standing
+- factor: planet-factor.volc-magma
+  weight: 1
+  why: magma pressure and supply set dike width 0.5-30 m and length
+vocabulary_id: 139
+sources:
+- https://en.wikipedia.org/wiki/Dike_(geology)
+library_status: written
+source: volcanic.intrusion.dike_ridge
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

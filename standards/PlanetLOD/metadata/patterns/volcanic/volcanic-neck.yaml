@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.volcanic.intrusion.volcanic-neck
+  name: Volcanic neck / plug
+  about: Volcanic neck / plug.
+family: volcanic
+factors:
+- factor: planet-factor.rock-type
+  weight: 3
+  why: 'strong contrast: resistant conduit fill vs soft host/tephra decides standing spire'
+- factor: planet-factor.time
+  weight: 3
+  why: Myr of erosion needed to strip cone and host (1-30 Myr)
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: regional uplift drives incision that exhumes the neck
+- factor: planet-factor.clim-arid
+  weight: 1
+  why: arid climate keeps steep sides and sharp spires
+- factor: planet-factor.ice-flow
+  weight: 1
+  why: glacial flow over plug makes crag-and-tail
+- factor: planet-factor.rock-fracture
+  weight: 1
+  why: columnar joints in plug control spire faces and talus
+- factor: planet-factor.volc-vent
+  weight: 1
+  why: conduit diameter and radial dikes set plan
+vocabulary_id: 140
+sources:
+- https://en.wikipedia.org/wiki/Volcanic_plug
+library_status: written
+source: volcanic.intrusion.volcanic_neck
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

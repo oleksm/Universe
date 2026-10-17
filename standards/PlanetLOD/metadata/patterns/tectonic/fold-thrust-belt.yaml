@@ -1,0 +1,59 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.tectonic.province.fold-thrust-belt
+  name: Fold-and-thrust belt
+  about: Fold-and-thrust belt.
+family: tectonic
+factors:
+- factor: planet-factor.tect-setting
+  weight: 3
+  why: foreland of collisional or subduction orogen; needs ongoing horizontal shortening
+- factor: planet-factor.rock-layers
+  weight: 3
+  why: thick layered cover over weak basal detachment (salt/shale); detachment strength sets taper, fold style
+- factor: planet-factor.rock-type
+  weight: 1
+  why: competent carbonates/sandstones form ridges; weak salt allows low taper, wide belt
+- factor: planet-factor.tect-fold
+  weight: 1
+  why: detachment vs fault-propagation folding; wavelength 3.5-10 km scales with competent-layer thickness
+- factor: planet-factor.tect-fault
+  weight: 1
+  why: basement fault segmentation sets fold segment length 20-40 km
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: shortening/accretion flux sets wedge size; taper alpha+beta ~9 deg (Taiwan)
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: higher erosional efficiency narrows wedge, raises rock uplift rate (Whipple 2009)
+- factor: planet-factor.clim-arid
+  weight: 1
+  why: arid belts (Zagros) keep relief following structure; humid belts erode into ridge-valley
+- factor: planet-factor.sed-supply
+  weight: 1
+  why: syntectonic foreland sedimentation buries deformation front, changes wedge taper
+- factor: planet-factor.time
+  weight: 1
+  why: 1-30 Myr; old belts become deeply eroded ridge-and-valley (Appalachians)
+vocabulary_id: 127
+sources:
+- https://wpg.forestry.oregonstate.edu/sites/default/files/seminars/2009_Whipple.pdf
+- https://earthweb.ess.washington.edu/roe/Publications/RoeEtal_ClimateWedge_08.pdf
+- https://en.wikipedia.org/wiki/Orogeny
+library_status: written
+source: tectonic.province.fold_thrust_belt
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

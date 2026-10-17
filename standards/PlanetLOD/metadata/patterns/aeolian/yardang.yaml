@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.aeolian.erosion.yardang
+  name: Yardangs (incl. mega-yardangs)
+  about: Yardangs (incl. mega-yardangs).
+family: aeolian
+factors:
+- factor: planet-factor.clim-wind
+  weight: 3
+  why: strong persistent unidirectional wind; axis parallel; length:width ~3-4:1
+- factor: planet-factor.clim-arid
+  weight: 3
+  why: hyper-arid, no vegetation
+- factor: planet-factor.rock-type
+  weight: 3
+  why: soft lake beds, siltstone, sandstone, ignimbrite; harder rock for mega-yardangs
+- factor: planet-factor.rock-fracture
+  weight: 1
+  why: joints aligned with wind guide corridors
+- factor: planet-factor.sed-supply
+  weight: 1
+  why: some sand/dust as abrasive but little sand cover
+- factor: planet-factor.lake-level
+  weight: 1
+  why: dried lake beds (former wetter phases) provide erodible sediment
+- factor: planet-factor.time
+  weight: 1
+  why: 1-1000 kyr
+vocabulary_id: 6
+sources:
+- https://en.wikipedia.org/wiki/Yardang
+- https://pubs.usgs.gov/gip/deserts/eolian/
+library_status: written
+source: aeolian.erosion.yardang
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

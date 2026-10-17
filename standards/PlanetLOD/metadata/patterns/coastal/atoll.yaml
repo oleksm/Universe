@@ -1,0 +1,56 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.coastal.reef.atoll
+  name: Atoll
+  about: Atoll.
+family: coastal
+factors:
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: thermal subsidence of volcanic island on cooling plate; reef growth must match it
+- factor: planet-factor.tect-setting
+  weight: 3
+  why: intraplate hotspot volcano on oceanic plate moving away from ridge/hotspot
+- factor: planet-factor.volc-vent
+  weight: 1
+  why: extinct volcanic edifice as foundation
+- factor: planet-factor.clim-temp
+  weight: 3
+  why: tropical; poleward of Darwin point growth fails and atoll drowns (guyot)
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: coral/algal reef growth on rim
+- factor: planet-factor.sea-level
+  weight: 1
+  why: glacial lowstands karstify rim (antecedent saucer); highstands regrow reef
+- factor: planet-factor.rock-soluble
+  weight: 1
+  why: lowstand dissolution of carbonate cap deepens lagoon
+- factor: planet-factor.waves-tides
+  weight: 1
+  why: storms pile motu islands on rim; windward rim wider
+- factor: planet-factor.time
+  weight: 1
+  why: 1-60 Myr; caps 1.3-1.4 km thick
+vocabulary_id: 24
+sources:
+- https://en.wikipedia.org/wiki/Atoll
+- https://www.coastalwiki.org/wiki/Coral_reefs
+- https://www.nps.gov/articles/tropical-coast-landforms.htm
+library_status: written
+source: coastal.reef.atoll
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

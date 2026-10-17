@@ -1,0 +1,54 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.erosion.badlands
+  name: Badlands
+  about: Badlands.
+family: fluvial
+factors:
+- factor: planet-factor.rock-type
+  weight: 3
+  why: weak poorly consolidated mudstone, shale, bentonite/smectite clays
+- factor: planet-factor.rock-perm
+  weight: 1
+  why: impermeable surface concentrates runoff
+- factor: planet-factor.clim-storm
+  weight: 3
+  why: infrequent heavy rainfall
+- factor: planet-factor.clim-arid
+  weight: 1
+  why: semi-arid to arid
+- factor: planet-factor.bio-veg
+  weight: 3
+  why: sparse cover; overgrazing makes anthropogenic badlands
+- factor: planet-factor.base-level
+  weight: 1
+  why: uplift/base-level fall rejuvenates dissection
+- factor: planet-factor.rock-layers
+  weight: 1
+  why: occasional resistant sandstone caps form pinnacles
+- factor: planet-factor.other-piping
+  weight: 1
+  why: dispersive clays piping collapses into gullies
+- factor: planet-factor.time
+  weight: 1
+  why: 0.1-100 kyr; erosion ~25 mm/kyr scale
+vocabulary_id: 44
+sources:
+- https://en.wikipedia.org/wiki/Badlands
+library_status: written
+source: fluvial.erosion.badlands
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

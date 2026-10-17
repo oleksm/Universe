@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.lacustrine.basin.seasonal-karst-lake
+  name: Seasonal karst lake (turlough)
+  about: Seasonal karst lake (turlough).
+family: lacustrine
+factors:
+- factor: planet-factor.rock-soluble
+  weight: 3
+  why: Karst limestone with closed depressions
+- factor: planet-factor.groundwater
+  weight: 3
+  why: Water table rises into basin seasonally
+- factor: planet-factor.clim-season
+  weight: 3
+  why: Winter wet season fills, summer empties
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: Rainfall exceeds sink capacity
+- factor: planet-factor.rock-perm
+  weight: 1
+  why: Conduits and swallow holes drain basin
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: Lowland karst with no surface outlet
+- factor: planet-factor.ice-extent
+  weight: 1
+  why: Glacially scoured lowland karst (Ireland)
+- factor: planet-factor.time
+  weight: 1
+  why: Basin formed over Quaternary
+vocabulary_id: 163
+sources:
+- https://en.wikipedia.org/wiki/Turlough_(lake)
+- https://www2.habitas.org.uk/escr/summary.php?item=437
+library_status: planned
+source: lacustrine.basin.seasonal_karst_lake
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

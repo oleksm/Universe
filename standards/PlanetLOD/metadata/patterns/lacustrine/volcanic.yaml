@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.lacustrine.basin.volcanic
+  name: Volcanic lake basin
+  about: Volcanic lake basin.
+family: lacustrine
+factors:
+- factor: planet-factor.volc-magma
+  weight: 3
+  why: Caldera collapse (silicic) or phreatomagmatic maar
+- factor: planet-factor.groundwater
+  weight: 3
+  why: 'Shallow water table: magma-water explosions make maars'
+- factor: planet-factor.volc-vent
+  weight: 1
+  why: Vent location and eruption frequency
+- factor: planet-factor.rock-perm
+  weight: 1
+  why: Porous rock gives dry maars
+- factor: planet-factor.clim-precip
+  weight: 3
+  why: Precipitation must exceed evaporation and seepage to fill
+- factor: planet-factor.events
+  weight: 1
+  why: Lava flows dam rivers
+- factor: planet-factor.time
+  weight: 1
+  why: 1-1000 kyr
+vocabulary_id: 102
+sources:
+- https://en.wikipedia.org/wiki/Maar
+library_status: written
+source: lacustrine.basin.volcanic
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

@@ -1,0 +1,58 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.karst.landscape.tower
+  name: Tower karst (fenglin)
+  about: Tower karst (fenglin).
+family: karst
+factors:
+- factor: planet-factor.clim-temp
+  weight: 3
+  why: Tropical to subtropical; tower and cone karst limited to warm zones
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: Humid; high runoff for dissolution and floodplain aggradation
+- factor: planet-factor.rock-soluble
+  weight: 1
+  why: Massive pure limestone; impurities give rounded hills instead
+- factor: planet-factor.rock-fracture
+  weight: 1
+  why: Near-vertical joints dissolved downward isolate towers; sets tower spacing
+- factor: planet-factor.groundwater
+  weight: 3
+  why: Shallow water table at plain level undercuts tower feet (foot caves, notches)
+- factor: planet-factor.sed-supply
+  weight: 1
+  why: Allogenic rivers aggrade alluvial plains between towers, sustaining lateral corrosion
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: 'Balance of uplift and dissolution: too slow erases towers, too fast rejuvenates to cockpits'
+- factor: planet-factor.base-level
+  weight: 1
+  why: Stable base level lets plain widen; falls convert fenglin to fengcong
+- factor: planet-factor.relief-inherited
+  weight: 1
+  why: Grows from earlier cone/cockpit karst
+- factor: planet-factor.time
+  weight: 1
+  why: 1 to 10 Myr; towers 30-300 m tall
+vocabulary_id: 98
+sources:
+- https://showcaves.com/english/explain/Karst/TowerKarst.html
+- https://en.wikipedia.org/wiki/Tower_karst
+library_status: written
+source: karst.landscape.tower
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.glacial.valley.overdeepening
+  name: Overdeepening and riegel
+  about: Overdeepening and riegel.
+family: glacial
+factors:
+- factor: planet-factor.ice-flow
+  weight: 3
+  why: convergence at confluences, below icefalls, at narrowings raises erosion; depths 10-100s m
+- factor: planet-factor.ice-thermal
+  weight: 3
+  why: warm-based ice and pressurised meltwater for quarrying
+- factor: planet-factor.rock-fracture
+  weight: 3
+  why: weak or fractured zones become basins; massive rock forms riegels
+- factor: planet-factor.rock-type
+  weight: 1
+  why: lithologic contrasts set basin/bar alternation
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: valley steps and constrictions localise basins
+- factor: planet-factor.ice-extent
+  weight: 1
+  why: repeat glaciations deepen basins; Loch Morar ~310 m
+- factor: planet-factor.sea-level
+  weight: 1
+  why: tidewater termini allow basins far below sea level
+- factor: planet-factor.time
+  weight: 1
+  why: 10-1000 kyr
+- factor: planet-factor.sed-supply
+  weight: 1
+  why: post-glacial fill and deltas infill the basin
+vocabulary_id: 84
+sources:
+- https://en.wikipedia.org/wiki/Cirque
+- https://en.wikipedia.org/wiki/Fjord
+library_status: written
+source: glacial.valley.overdeepening
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.hillslope.fan.debris-flow
+  name: Debris-flow fan / cone
+  about: Debris-flow fan / cone.
+family: hillslope
+factors:
+- factor: planet-factor.slope-relief
+  weight: 3
+  why: Small steep basins, Melton ratio >0.6 gives debris flow; 0.3-0.6 debris flood; channel >25 deg
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: Abundant loose debris (fractured rock, till, volcaniclastics) needed in source basin
+- factor: planet-factor.clim-storm
+  weight: 3
+  why: Intense rainfall bursts or rapid snowmelt mobilise saturated debris
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: Wildfire removing cover sharply raises debris-flow frequency
+- factor: planet-factor.ice-extent
+  weight: 1
+  why: 'Paraglacial: recently deglaciated valleys supply till; glacial outbursts trigger flows'
+- factor: planet-factor.volc-vent
+  weight: 1
+  why: Volcanoes supply lahars onto cones
+- factor: planet-factor.events
+  weight: 1
+  why: Earthquakes, landslides and outbursts trigger flows
+- factor: planet-factor.base-level
+  weight: 1
+  why: Trunk river trims fan toe; sets fan extent
+- factor: planet-factor.time
+  weight: 1
+  why: Fans build 0.1-15 kyr; slope 4-15 deg
+vocabulary_id: 86
+sources:
+- https://en.wikipedia.org/wiki/Debris_flow
+- https://pubs.usgs.gov/fs/2004/3072/fs-2004-3072.html
+library_status: written
+source: hillslope.fan.debris_flow
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

@@ -1,0 +1,53 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.aeolian.landscape.erg
+  name: Sand sea (erg)
+  about: Sand sea (erg).
+family: aeolian
+factors:
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: 'large sand source upwind: rivers, deltas, lakes, glacial plains; >125 km2, >20% sand'
+- factor: planet-factor.clim-arid
+  weight: 3
+  why: rain < ~150 mm/yr keeps sand active
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: sparse vegetation; plant cover fixes dunes
+- factor: planet-factor.clim-wind
+  weight: 3
+  why: wind regime convergence; directional variability sets dune types; trade-wind belts 20-40 deg
+- factor: planet-factor.relief-inherited
+  weight: 1
+  why: topographic basins and lee of uplands trap sand
+- factor: planet-factor.tect-setting
+  weight: 1
+  why: subsiding basins preserve thick sand stacks
+- factor: planet-factor.clim-history
+  weight: 1
+  why: glacial-arid phases supply sand; wetter phases stabilise
+- factor: planet-factor.time
+  weight: 1
+  why: 10 kyr-10 Myr; dune size grows with age
+vocabulary_id: 7
+sources:
+- https://en.wikipedia.org/wiki/Erg_(landform)
+- https://pubs.usgs.gov/gip/deserts/dunes/
+- https://pubs.usgs.gov/gip/deserts/eolian/
+library_status: written
+source: aeolian.landscape.erg
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

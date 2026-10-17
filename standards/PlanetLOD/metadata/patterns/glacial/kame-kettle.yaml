@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.glacial.deposit.kame-kettle
+  name: Kame and kettle terrain
+  about: Kame and kettle terrain.
+family: glacial
+factors:
+- factor: planet-factor.ice-flow
+  weight: 3
+  why: stagnant/dead ice at margin
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: debris-rich ice and glaciofluvial sand/gravel bury ice
+- factor: planet-factor.water-discharge
+  weight: 1
+  why: meltwater streams deposit kames against/on ice
+- factor: planet-factor.ice-extent
+  weight: 3
+  why: rapid retreat leaves ice blocks; kettles <2 km, rarely >10 km
+- factor: planet-factor.permafrost
+  weight: 1
+  why: permafrost delays dead-ice melt, prolonging hummock formation
+- factor: planet-factor.groundwater
+  weight: 1
+  why: water table decides kettle lake, pond, wetland or dry hollow
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: kettles infill to bogs
+- factor: planet-factor.time
+  weight: 1
+  why: melt-out 0.1-several kyr
+vocabulary_id: 65
+sources:
+- https://en.wikipedia.org/wiki/Kettle_(landform)
+- https://www.antarcticglaciers.org/glacial-geology/glacial-landforms/glacial-depositional-landforms/
+library_status: written
+source: glacial.deposit.kame_kettle
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

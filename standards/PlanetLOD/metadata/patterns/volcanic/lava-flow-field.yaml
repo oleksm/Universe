@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.volcanic.flow.lava-flow-field
+  name: Lava flow field (pahoehoe / aa)
+  about: Lava flow field (pahoehoe / aa).
+family: volcanic
+factors:
+- factor: planet-factor.volc-magma
+  weight: 3
+  why: basalt; viscosity and temperature (~1170-1200 C) decide pahoehoe vs aa
+- factor: planet-factor.other-effusion-rate
+  weight: 3
+  why: low effusion gives inflated tube-fed pahoehoe; high gives channelised aa
+- factor: planet-factor.slope-relief
+  weight: 3
+  why: <~2 deg favours inflation and pahoehoe; steep slopes turn flows to aa
+- factor: planet-factor.volc-vent
+  weight: 1
+  why: point vent vs fissure decides sheet vs lobate plan; eruption duration sets area
+- factor: planet-factor.relief-inherited
+  weight: 1
+  why: pre-existing valleys channel flows; high ground left as kipukas
+- factor: planet-factor.sea-level
+  weight: 1
+  why: ocean entry builds lava deltas and pillow fronts
+- factor: planet-factor.time
+  weight: 1
+  why: weathering and soil cover with age; fresh flows barren
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: vegetation colonisation rate marks flow age, tree moulds in forest
+vocabulary_id: 138
+sources:
+- https://en.wikipedia.org/wiki/Lava
+- https://en.wikipedia.org/wiki/Lava_tube
+library_status: written
+source: volcanic.flow.lava_flow_field
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

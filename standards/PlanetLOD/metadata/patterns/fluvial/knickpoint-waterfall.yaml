@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.channel.knickpoint-waterfall
+  name: Knickpoint / waterfall
+  about: Knickpoint / waterfall.
+family: fluvial
+factors:
+- factor: planet-factor.base-level
+  weight: 3
+  why: base-level fall magnitude sets knickpoint height (Waipaoa 50-100 m)
+- factor: planet-factor.rock-layers
+  weight: 3
+  why: caprock over weak rock gives vertical falls and undercut
+- factor: planet-factor.rock-type
+  weight: 1
+  why: homogeneous rock gives diffuse knickzones
+- factor: planet-factor.tect-fault
+  weight: 1
+  why: fault slip creates knickzones
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: uplift rate change launches transient knickpoints
+- factor: planet-factor.ice-extent
+  weight: 1
+  why: glacial overdeepening leaves hanging valleys with falls
+- factor: planet-factor.water-discharge
+  weight: 3
+  why: drainage area sets retreat rate (1 mm-10 cm/yr typical)
+- factor: planet-factor.time
+  weight: 1
+  why: 0.1 kyr-10 Myr while transient persists
+vocabulary_id: 37
+sources:
+- https://en.wikipedia.org/wiki/Knickpoint
+library_status: written
+source: fluvial.channel.knickpoint_waterfall
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

@@ -1,0 +1,53 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.hillslope.hollow.colluvial
+  name: Colluvial hollow (zero-order basin)
+  about: Colluvial hollow (zero-order basin).
+family: hillslope
+factors:
+- factor: planet-factor.regolith
+  weight: 3
+  why: Thick creep-supplied colluvium (1-5 m) fills the bedrock hollow between failures
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: Steep convergent unchanneled valleys above channel heads; side slopes near threshold
+- factor: planet-factor.clim-storm
+  weight: 3
+  why: Intense rainstorms saturate fill, trigger shallow landslide/debris flow that empties hollow
+- factor: planet-factor.groundwater
+  weight: 1
+  why: Convergent subsurface flow builds pore pressure in the fill axis
+- factor: planet-factor.bio-veg
+  weight: 3
+  why: Root strength holds fill; fire or logging loss of roots triggers evacuation
+- factor: planet-factor.events
+  weight: 1
+  why: Earthquakes and fires reset hollows
+- factor: planet-factor.rock-type
+  weight: 1
+  why: Bedrock below must be stronger than fill to keep the scoured hollow form
+- factor: planet-factor.time
+  weight: 1
+  why: Refill cycle ~1-20 kyr (basal ages 9-15 ka in California)
+vocabulary_id: 87
+sources:
+- https://en.wikipedia.org/wiki/Colluvium
+- https://pubs.usgs.gov/fs/2004/3072/fs-2004-3072.html
+- https://en.wikipedia.org/wiki/Debris_flow
+library_status: written
+source: hillslope.hollow.colluvial
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

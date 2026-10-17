@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.coastal.depositional.tombolo
+  name: Tombolo and barrier beach tied to island
+  about: Tombolo and barrier beach tied to island.
+family: coastal
+factors:
+- factor: planet-factor.relief-inherited
+  weight: 3
+  why: offshore island or rock near shore; island length/distance ratio decides tombolo vs salient
+- factor: planet-factor.waves-tides
+  weight: 3
+  why: wave refraction/diffraction behind island converges drift into shadow zone; high tidal range favours salients
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: enough sand/shingle in littoral cell to fill gap
+- factor: planet-factor.rock-type
+  weight: 1
+  why: island of resistant rock that survives as anchor
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: shallow gap between island and mainland
+- factor: planet-factor.sea-level
+  weight: 1
+  why: Holocene rise can roll gravel barriers landward onto islands (Chesil type)
+- factor: planet-factor.time
+  weight: 1
+  why: 0.1-7 kyr to connect
+vocabulary_id: 20
+sources:
+- https://www.coastalwiki.org/wiki/Tombolo
+- https://www.nps.gov/articles/sandy-coast-landforms.htm
+library_status: written
+source: coastal.depositional.tombolo
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

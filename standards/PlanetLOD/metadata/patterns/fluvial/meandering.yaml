@@ -1,0 +1,53 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.channel.meandering
+  name: Meandering channel
+  about: Meandering channel.
+family: fluvial
+factors:
+- factor: planet-factor.slope-relief
+  weight: 3
+  why: slope below braiding threshold (S < 0.06 Q^-0.44)
+- factor: planet-factor.water-discharge
+  weight: 1
+  why: bankfull discharge sets width; wavelength 10-14 widths
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: high suspended:bed load ratio, mixed load favours meanders
+- factor: planet-factor.bio-veg
+  weight: 3
+  why: bank vegetation adds cohesion, narrow deep sinuous channel
+- factor: planet-factor.regolith
+  weight: 1
+  why: cohesive muddy bank alluvium resists widening
+- factor: planet-factor.base-level
+  weight: 1
+  why: base-level fall entrenches meanders into bedrock (incised meanders)
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: uplift/tilt locally changes sinuosity
+- factor: planet-factor.time
+  weight: 1
+  why: 0.1 kyr-1 Myr; sinuosity self-organizes near 3
+vocabulary_id: 38
+sources:
+- https://en.wikipedia.org/wiki/Incised_meander
+- https://en.wikipedia.org/wiki/Braided_river
+- https://www.nps.gov/subjects/geology/fluvial-landforms.htm
+library_status: written
+source: fluvial.channel.meandering
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

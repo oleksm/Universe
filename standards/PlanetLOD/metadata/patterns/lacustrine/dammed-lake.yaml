@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.lacustrine.lake.dammed-lake
+  name: Dammed lake
+  about: Dammed lake.
+family: lacustrine
+factors:
+- factor: planet-factor.events
+  weight: 3
+  why: Landslides from rain and earthquakes (84%)
+- factor: planet-factor.slope-relief
+  weight: 3
+  why: Narrow steep valleys favour dams
+- factor: planet-factor.rock-type
+  weight: 1
+  why: Clay-rich low-porosity dam lasts longer
+- factor: planet-factor.water-discharge
+  weight: 3
+  why: Inflow rate sets overtopping time
+- factor: planet-factor.ice-extent
+  weight: 1
+  why: Ice and moraine dams in glaciated valleys
+- factor: planet-factor.volc-vent
+  weight: 1
+  why: Lava or volcanic debris dams
+- factor: planet-factor.time
+  weight: 1
+  why: Half fail in 10 days; some last 10 kyr
+vocabulary_id: 164
+sources:
+- https://en.wikipedia.org/wiki/Landslide_dam
+- https://pubs.usgs.gov/bul/b2130/Chapter6.html
+library_status: planned
+source: lacustrine.lake.dammed_lake
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

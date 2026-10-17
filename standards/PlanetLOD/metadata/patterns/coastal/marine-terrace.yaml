@@ -1,0 +1,56 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.coastal.emergent.marine-terrace
+  name: Raised beaches and marine terraces
+  about: Raised beaches and marine terraces.
+family: coastal
+factors:
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: tectonic uplift (e.g. 3.3 mm/yr Huon) or glacio-isostatic rebound (to ~10 mm/yr) lifts shorelines; >1 mm/yr separates terraces
+- factor: planet-factor.sea-level
+  weight: 3
+  why: each interglacial highstand (MIS 5e ~+3 m) cuts one terrace; staircase records cycles
+- factor: planet-factor.ice-extent
+  weight: 1
+  why: former ice-sheet loading drives rebound beaches
+- factor: planet-factor.tect-setting
+  weight: 1
+  why: convergent margins, fault-bounded coasts, formerly glaciated shields
+- factor: planet-factor.rock-type
+  weight: 3
+  why: rock resistance sets platform width and preservation
+- factor: planet-factor.waves-tides
+  weight: 1
+  why: wave energy cuts platform; tidal range sets its gradient
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: steeper hinterland gives narrower, more distinct terraces
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: tropical reefs build reef-tract terraces instead of cut platforms
+- factor: planet-factor.time
+  weight: 1
+  why: 5-1000 kyr; older terraces degraded by weathering and erosion
+vocabulary_id: 23
+sources:
+- https://en.wikipedia.org/wiki/Raised_beach
+- https://en.wikipedia.org/wiki/Marine_terrace
+- https://en.wikipedia.org/wiki/Cliffed_coast
+library_status: written
+source: coastal.emergent.marine_terrace
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

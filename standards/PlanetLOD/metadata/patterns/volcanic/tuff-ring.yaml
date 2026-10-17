@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.volcanic.edifice.tuff-ring
+  name: Tuff ring
+  about: Tuff ring.
+family: volcanic
+factors:
+- factor: planet-factor.groundwater
+  weight: 3
+  why: abundant shallow groundwater, marsh, coast or lake at vent drives explosions
+- factor: planet-factor.other-water-magma-ratio
+  weight: 3
+  why: 'water/magma ratio and explosion depth: surge-built low ring vs fallout tuff cone vs scoria cone'
+- factor: planet-factor.volc-magma
+  weight: 3
+  why: small-volume basaltic magma
+- factor: planet-factor.sea-level
+  weight: 1
+  why: shallow sea or coastal vents produce rings and tuff cones (Diamond Head)
+- factor: planet-factor.clim-wind
+  weight: 1
+  why: wind skews rim height downwind
+- factor: planet-factor.waves-tides
+  weight: 1
+  why: wave erosion breaches seaward rim of coastal rings
+- factor: planet-factor.time
+  weight: 1
+  why: weak tephra erodes fast unless palagonitised
+vocabulary_id: 179
+sources:
+- https://en.wikipedia.org/wiki/Phreatomagmatic_eruption
+- https://en.wikipedia.org/wiki/Maar
+library_status: planned
+source: volcanic.edifice.tuff_ring
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

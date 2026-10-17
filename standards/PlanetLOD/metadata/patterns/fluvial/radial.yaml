@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.network.radial
+  name: Radial drainage pattern
+  about: Radial drainage pattern.
+family: fluvial
+factors:
+- factor: planet-factor.relief-inherited
+  weight: 3
+  why: central conical or domal high; streams flow outward down initial slope
+- factor: planet-factor.volc-vent
+  weight: 3
+  why: volcanic cone edifices are the main source; young cones least dissected
+- factor: planet-factor.tect-fold
+  weight: 3
+  why: structural domes (intrusive, salt) give radial plus annular on eroded rings
+- factor: planet-factor.rock-perm
+  weight: 1
+  why: permeable fresh lavas/tephra delay channel incision on cones
+- factor: planet-factor.rock-layers
+  weight: 1
+  why: eroded dome strata give annular subsequents around the radial set
+- factor: planet-factor.time
+  weight: 1
+  why: dissection deepens with cone/dome age, 1 kyr-10 Myr
+vocabulary_id: 53
+sources:
+- https://ebooks.inflibnet.ac.in/geop11/chapter/drainage-pattern
+- https://en.wikipedia.org/wiki/Drainage_system_(geomorphology)
+library_status: written
+source: fluvial.network.radial
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

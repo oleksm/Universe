@@ -1,0 +1,56 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.glacial.valley.trough
+  name: Glacial trough (U-shaped valley)
+  about: Glacial trough (U-shaped valley).
+family: glacial
+factors:
+- factor: planet-factor.relief-inherited
+  weight: 3
+  why: pre-existing fluvial valley is widened and deepened into the trough
+- factor: planet-factor.ice-flow
+  weight: 3
+  why: ice discharge sets cross-section area; ~80% larger than fluvial of same drainage
+- factor: planet-factor.ice-thermal
+  weight: 1
+  why: warm-based sliding needed for abrasion/quarrying
+- factor: planet-factor.ice-extent
+  weight: 3
+  why: ELA below valley heads; duration and cycle count set U-shape maturity (b 1.5-2)
+- factor: planet-factor.rock-type
+  weight: 1
+  why: crystalline rock holds steep walls; weak rock gives wider gentler troughs
+- factor: planet-factor.rock-fracture
+  weight: 1
+  why: fracture zones guide trough path and steps
+- factor: planet-factor.time
+  weight: 1
+  why: 10-1000 kyr; parabolic shape develops over ~100 kyr of ice occupation
+- factor: planet-factor.sed-supply
+  weight: 1
+  why: post-glacial fill (0-300 m) flattens floor
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: uplift sustains relief and ice catchment height
+vocabulary_id: 85
+sources:
+- https://en.wikipedia.org/wiki/Hanging_valley
+- https://en.wikipedia.org/wiki/Fjord
+- https://en.wikipedia.org/wiki/Cirque
+library_status: written
+source: glacial.valley.trough
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

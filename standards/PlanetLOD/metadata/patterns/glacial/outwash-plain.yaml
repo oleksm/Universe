@@ -1,0 +1,58 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.glacial.deposit.outwash-plain
+  name: Outwash plain (sandur)
+  about: Outwash plain (sandur).
+family: glacial
+factors:
+- factor: planet-factor.water-discharge
+  weight: 3
+  why: high seasonal meltwater discharge in braided channels
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: coarse glacial debris supply; fines downstream (boulders to sand)
+- factor: planet-factor.events
+  weight: 3
+  why: jökulhlaups dump huge sediment loads (e.g. Skeiðarársandur 1996)
+- factor: planet-factor.volc-vent
+  weight: 1
+  why: subglacial volcanism/geothermal triggers outbursts (Iceland)
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: unconfined lowland gives fan sandur; valleys give valley train
+- factor: planet-factor.ice-extent
+  weight: 1
+  why: glacier margin position; retreat organises/incises channels
+- factor: planet-factor.clim-season
+  weight: 1
+  why: melt-season regime
+- factor: planet-factor.base-level
+  weight: 1
+  why: sea/lake level sets distal gradient and incision
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: sparse vegetation keeps channels mobile
+- factor: planet-factor.time
+  weight: 1
+  why: 0.1-100 kyr
+vocabulary_id: 69
+sources:
+- https://en.wikipedia.org/wiki/Outwash_plain
+- https://en.wikipedia.org/wiki/Kettle_(landform)
+library_status: written
+source: glacial.deposit.outwash_plain
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

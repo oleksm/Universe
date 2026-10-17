@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.tectonic.strike-slip.offset-stream
+  name: Offset (deflected) stream channel
+  about: Offset (deflected) stream channel.
+family: tectonic
+factors:
+- factor: planet-factor.tect-fault
+  weight: 3
+  why: lateral slip rate and sense set offset direction and size (10-130 m)
+- factor: planet-factor.events
+  weight: 3
+  why: each earthquake adds ~1-10 m; offsets cluster at multiples of event slip
+- factor: planet-factor.relief-inherited
+  weight: 3
+  why: downhill-side relief/shutter ridge length controls max offset before capture
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: vertical motion component changes capture frequency
+- factor: planet-factor.rock-type
+  weight: 1
+  why: 'erodibility: weak alluvium favours capture and reset'
+- factor: planet-factor.water-discharge
+  weight: 1
+  why: large streams cut straight across, only small channels keep offsets
+- factor: planet-factor.clim-arid
+  weight: 1
+  why: arid/semi-arid preserves offsets
+- factor: planet-factor.time
+  weight: 1
+  why: 0.1-50 kyr; offset = slip rate x age until capture
+vocabulary_id: 128
+sources:
+- https://csdms.colorado.edu/wiki/CSDMS_2016_annual_meeting_poster_SarahHarbert
+library_status: written
+source: tectonic.strike_slip.offset_stream
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

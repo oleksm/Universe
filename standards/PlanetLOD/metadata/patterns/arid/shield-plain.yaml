@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.arid.landscape.shield-plain
+  name: Shield plain (etchplain/pediplain with inselbergs)
+  about: Shield plain (etchplain/pediplain with inselbergs).
+family: arid
+factors:
+- factor: planet-factor.tect-setting
+  weight: 3
+  why: Stable craton or shield, crystalline basement
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: Very low uplift; epeirogenic pulses start new stripping cycles
+- factor: planet-factor.rock-type
+  weight: 1
+  why: 'Granite, gneiss: deep weathering; resistant compartments stay as inselbergs'
+- factor: planet-factor.rock-fracture
+  weight: 1
+  why: Joint density decides where weathering penetrates and what stands up
+- factor: planet-factor.clim-history
+  weight: 3
+  why: Humid deep-weathering phases then drier stripping (stripping rate > regolith production)
+- factor: planet-factor.clim-season
+  weight: 1
+  why: Wet season weathers, dry season strips
+- factor: planet-factor.regolith
+  weight: 1
+  why: Thick saprolite, duricrusts (laterite, silcrete)
+- factor: planet-factor.base-level
+  weight: 1
+  why: Base-level falls trigger stripping to the weathering front
+- factor: planet-factor.time
+  weight: 3
+  why: 10-100 Myr (African Surface 70-40 Ma)
+vocabulary_id: 148
+sources:
+- https://en.wikipedia.org/wiki/Etchplain
+- https://en.wikipedia.org/wiki/Inselberg
+library_status: planned
+source: arid.landscape.shield_plain
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

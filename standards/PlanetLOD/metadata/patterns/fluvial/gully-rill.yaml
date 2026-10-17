@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.erosion.gully-rill
+  name: Rill and gully system
+  about: Rill and gully system.
+family: fluvial
+factors:
+- factor: planet-factor.clim-storm
+  weight: 3
+  why: intense or protracted rainfall/snowmelt exceeds soil shear resistance
+- factor: planet-factor.bio-veg
+  weight: 3
+  why: cleared cover (deforestation, grazing) triggers gullying
+- factor: planet-factor.slope-relief
+  weight: 3
+  why: above area-slope threshold S=aA^-b; slope dominant factor
+- factor: planet-factor.regolith
+  weight: 1
+  why: loess, colluvium, weak soils; depth 0.5-30 m
+- factor: planet-factor.other-piping
+  weight: 1
+  why: dispersive soils collapse pipes into gullies
+- factor: planet-factor.groundwater
+  weight: 1
+  why: seepage sapping at headcuts
+- factor: planet-factor.events
+  weight: 1
+  why: single storms initiate; land-use change
+- factor: planet-factor.time
+  weight: 1
+  why: years to 10 kyr
+vocabulary_id: 45
+sources:
+- https://en.wikipedia.org/wiki/Gully
+- https://en.wikipedia.org/wiki/Badlands
+library_status: written
+source: fluvial.erosion.gully_rill
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

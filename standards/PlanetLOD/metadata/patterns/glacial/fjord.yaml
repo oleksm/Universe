@@ -1,0 +1,62 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.glacial.erosion.fjord
+  name: Fjord
+  about: Fjord.
+family: glacial
+factors:
+- factor: planet-factor.sea-level
+  weight: 3
+  why: glacially overdeepened trough flooded by postglacial sea-level rise
+- factor: planet-factor.ice-flow
+  weight: 3
+  why: outlet glaciers/ice streams concentrate flow; selective linear erosion below sea level
+- factor: planet-factor.ice-extent
+  weight: 1
+  why: ice must reach the coast at lowered glacial sea level; repeated cycles
+- factor: planet-factor.rock-fracture
+  weight: 3
+  why: fracture and fault zones guide fjord path (e.g. Hardangerfjord Caledonian structures)
+- factor: planet-factor.rock-type
+  weight: 1
+  why: resistant crystalline rock keeps steep walls
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: high-latitude westerly coasts with orographic snowfall feed big outlet glaciers
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: uplifted passive-margin/orogen coastal mountains give ice catchments
+- factor: planet-factor.relief-inherited
+  weight: 1
+  why: pre-glacial coastal valleys localise fjords
+- factor: planet-factor.time
+  weight: 1
+  why: 100-2600 kyr; depths up to ~1300 m
+- factor: planet-factor.waves-tides
+  weight: 1
+  why: tidal exchange over sill; sill depth ~100 m sets basin circulation
+- factor: planet-factor.ice-thermal
+  weight: 1
+  why: warm-based outlets erode; cold-based interfluves preserved
+vocabulary_id: 74
+sources:
+- https://en.wikipedia.org/wiki/Fjord
+- https://en.wikipedia.org/wiki/Post-glacial_rebound
+- https://en.wikipedia.org/wiki/Ice_stream
+library_status: written
+source: glacial.erosion.fjord
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

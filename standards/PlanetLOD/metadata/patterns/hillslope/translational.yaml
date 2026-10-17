@@ -1,0 +1,54 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.hillslope.landslide.translational
+  name: Translational slide (planar / soil slip / rockslide)
+  about: Translational slide (planar / soil slip / rockslide).
+family: hillslope
+factors:
+- factor: planet-factor.tect-fold
+  weight: 3
+  why: Bedding dipping out of slope (dip slope) gives sliding planes; dip near slope angle
+- factor: planet-factor.rock-fracture
+  weight: 3
+  why: Joints, foliation, sheared zones define planar failure surfaces
+- factor: planet-factor.regolith
+  weight: 1
+  why: Thin soil on bedrock fails at the soil-rock contact
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: Threshold slopes ~30-45 deg; depth/length < 0.1
+- factor: planet-factor.clim-storm
+  weight: 3
+  why: Intense rain or snowmelt raises pore pressure; triggers shallow slips
+- factor: planet-factor.groundwater
+  weight: 1
+  why: Perched water at the contact lowers effective stress
+- factor: planet-factor.events
+  weight: 1
+  why: Earthquakes trigger rockslides in active ranges
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: Fast uplift keeps slopes at threshold, raising slide frequency
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: Root loss (fire, logging) raises shallow-slip frequency
+vocabulary_id: 89
+sources:
+- https://pubs.usgs.gov/fs/2004/3072/fs-2004-3072.html
+library_status: written
+source: hillslope.landslide.translational
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

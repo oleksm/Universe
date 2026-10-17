@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.tectonic.province.transform-boundary
+  name: Transform boundary province
+  about: Transform boundary province.
+family: tectonic
+factors:
+- factor: planet-factor.tect-setting
+  weight: 3
+  why: conservative boundary; oceanic ridge-ridge transform or continental (San Andreas)
+- factor: planet-factor.tect-fault
+  weight: 3
+  why: slip rate, fault straightness; bends and stepovers
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: transpression builds pressure ridges/ranges; transtension pull-aparts
+- factor: planet-factor.events
+  weight: 1
+  why: large earthquakes with metres of slip
+- factor: planet-factor.rock-fracture
+  weight: 1
+  why: wide damage zone eroded into linear valleys
+- factor: planet-factor.relief-inherited
+  weight: 1
+  why: inherited grain offset gives shutter ridges, offset drainage
+- factor: planet-factor.time
+  weight: 1
+  why: cumulative offset 100s km over Myr
+vocabulary_id: 175
+sources:
+- https://en.wikipedia.org/wiki/Transform_fault
+- https://gotbooks.miracosta.edu/fieldtrips/Elsinore_Fault/interpretation.html
+library_status: planned
+source: tectonic.province.transform_boundary
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

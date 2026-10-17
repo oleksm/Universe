@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.valley.obsequent
+  name: Obsequent valley
+  about: Obsequent valley.
+family: fluvial
+factors:
+- factor: planet-factor.tect-fold
+  weight: 3
+  why: flows against dip, down scarp face of cuesta/hogback
+- factor: planet-factor.rock-layers
+  weight: 3
+  why: short steep valley on resistant scarp joining subsequent strike valley
+- factor: planet-factor.relief-inherited
+  weight: 3
+  why: requires developed subsequent valley
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: steep scarp, short length
+- factor: planet-factor.time
+  weight: 1
+  why: late stage in structural drainage
+vocabulary_id: 157
+sources:
+- https://ebooks.inflibnet.ac.in/geop11/chapter/drainage-pattern
+library_status: planned
+source: fluvial.valley.obsequent
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

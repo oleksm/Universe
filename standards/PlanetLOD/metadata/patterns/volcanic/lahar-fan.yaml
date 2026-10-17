@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.volcanic.deposit.lahar-fan
+  name: Lahar fan / lahar-filled valley plain
+  about: Lahar fan / lahar-filled valley plain.
+family: volcanic
+factors:
+- factor: planet-factor.events
+  weight: 3
+  why: 'trigger: eruption melting snow/ice, crater-lake ejection, flank collapse, dam breakout'
+- factor: planet-factor.ice-extent
+  weight: 1
+  why: summit snow and glaciers supply water for eruption-triggered lahars
+- factor: planet-factor.clim-storm
+  weight: 1
+  why: heavy or long rain on loose tephra triggers rain lahars
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: fresh loose tephra on steep slopes sets lahar volume and frequency
+- factor: planet-factor.rock-type
+  weight: 1
+  why: hydrothermally altered clay-rich edifice gives cohesive, long-runout lahars
+- factor: planet-factor.slope-relief
+  weight: 3
+  why: steep valleys accelerate; flattening lowland slows and spreads fan
+- factor: planet-factor.relief-inherited
+  weight: 1
+  why: valley network confines flows, fan where valleys exit
+- factor: planet-factor.time
+  weight: 1
+  why: recurrence builds ring plain; rivers rework into braided plain
+vocabulary_id: 131
+sources:
+- https://www.usgs.gov/programs/VHP/lahars-move-rapidly-down-valleys-rivers-concrete
+- https://en.wikipedia.org/wiki/Stratovolcano
+library_status: written
+source: volcanic.deposit.lahar_fan
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

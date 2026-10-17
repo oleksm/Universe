@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.tectonic.strike-slip.shutter-ridge
+  name: Shutter ridge
+  about: Shutter ridge.
+family: tectonic
+factors:
+- factor: planet-factor.tect-fault
+  weight: 3
+  why: lateral or oblique slip moves ridge across valley mouth
+- factor: planet-factor.relief-inherited
+  weight: 3
+  why: ridge-and-valley grain crossing fault; downhill-side relief sets ridge size
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: vertical component adds ridge height
+- factor: planet-factor.rock-type
+  weight: 1
+  why: bedrock erodibility controls ridge persistence
+- factor: planet-factor.water-discharge
+  weight: 1
+  why: blocked stream ponds or is diverted; captures once offset large
+- factor: planet-factor.time
+  weight: 1
+  why: exists until stream capture; slip 3-20 mm/yr examples
+vocabulary_id: 177
+sources:
+- https://csdms.colorado.edu/wiki/CSDMS_2016_annual_meeting_poster_SarahHarbert
+- https://gotbooks.miracosta.edu/fieldtrips/Elsinore_Fault/interpretation.html
+library_status: planned
+source: tectonic.strike_slip.shutter_ridge
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

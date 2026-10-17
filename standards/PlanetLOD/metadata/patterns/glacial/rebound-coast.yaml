@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.glacial.isostatic.rebound-coast
+  name: Isostatic rebound coast (raised shorelines)
+  about: Isostatic rebound coast (raised shorelines).
+family: glacial
+factors:
+- factor: planet-factor.ice-extent
+  weight: 3
+  why: 'ice load thickness sets total uplift: up to several hundred m near centre'
+- factor: planet-factor.other-mantle-viscosity
+  weight: 3
+  why: mantle rheology sets uplift rate and decay time (exponential, >10 kyr)
+- factor: planet-factor.sea-level
+  weight: 3
+  why: eustatic rise competes with uplift; shorelines rise only where uplift wins
+- factor: planet-factor.waves-tides
+  weight: 1
+  why: wave energy cuts/builds beach ridges at each level
+- factor: planet-factor.sed-supply
+  weight: 1
+  why: gravel/sand supply builds flights of beach ridges
+- factor: planet-factor.time
+  weight: 1
+  why: since deglaciation; present peak ~11 mm/yr (Gulf of Bothnia)
+- factor: planet-factor.tect-setting
+  weight: 1
+  why: former ice-sheet centre vs peripheral bulge (subsiding coast)
+- factor: planet-factor.clim-history
+  weight: 1
+  why: readvances add load, causing transgressive phases
+vocabulary_id: 158
+sources:
+- https://en.wikipedia.org/wiki/Post-glacial_rebound
+- https://en.wikipedia.org/wiki/Fjord
+library_status: planned
+source: glacial.isostatic.rebound_coast
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

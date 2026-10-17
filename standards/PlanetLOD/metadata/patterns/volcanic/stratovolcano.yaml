@@ -1,0 +1,59 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.volcanic.edifice.stratovolcano
+  name: Stratovolcano (composite volcano)
+  about: Stratovolcano (composite volcano).
+family: volcanic
+factors:
+- factor: planet-factor.tect-setting
+  weight: 3
+  why: subduction arc above slab ~100-120 km deep; some continental rifts; sets spacing along arc
+- factor: planet-factor.volc-magma
+  weight: 3
+  why: 'andesite-dacite, viscous and gas-rich: short lavas plus tephra give steep concave cone, H/W 0.1-0.33'
+- factor: planet-factor.volc-vent
+  weight: 1
+  why: long-lived central vent, polygenetic over 10-1000 kyr; vent migration gives twin or elongate edifice
+- factor: planet-factor.events
+  weight: 3
+  why: sector collapse leaves amphitheatre and debris-avalanche hummocks; Plinian eruptions strip summit
+- factor: planet-factor.rock-type
+  weight: 1
+  why: interbedded lavas, breccias, tephra; hydrothermal alteration weakens edifice toward collapse
+- factor: planet-factor.ice-extent
+  weight: 1
+  why: glaciated summits carve cirques and troughs into flanks, supply meltwater lahars
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: high rainfall erodes radial gullies, remobilises tephra as lahars
+- factor: planet-factor.tect-fault
+  weight: 1
+  why: regional faults guide flank vents, elongation and collapse direction
+- factor: planet-factor.relief-inherited
+  weight: 1
+  why: basement slope biases spreading and collapse direction
+- factor: planet-factor.time
+  weight: 1
+  why: 'age since last cone-building decides dissection: fresh cone vs eroded radial ridges'
+vocabulary_id: 136
+sources:
+- https://en.wikipedia.org/wiki/Stratovolcano
+- https://en.wikipedia.org/wiki/Volcanic_arc
+- https://pubs.usgs.gov/gip/dynamic/understanding.html
+library_status: written
+source: volcanic.edifice.stratovolcano
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

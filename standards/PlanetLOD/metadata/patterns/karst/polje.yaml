@@ -1,0 +1,61 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.karst.depression.polje
+  name: Polje (large flat-floored closed karst depression)
+  about: Polje (large flat-floored closed karst depression).
+family: karst
+factors:
+- factor: planet-factor.rock-soluble
+  weight: 1
+  why: Limestone surroundings needed for karst drainage via ponors
+- factor: planet-factor.rock-layers
+  weight: 3
+  why: Impervious inliers (flysch, dolomite) on floor or border make structural/border poljes
+- factor: planet-factor.tect-fault
+  weight: 3
+  why: Grabens and fault-angle depressions host structural poljes; long axis follows fault trend
+- factor: planet-factor.tect-fold
+  weight: 1
+  why: Synclines can hold poljes along structural strike (NW-SE in Dinarides)
+- factor: planet-factor.groundwater
+  weight: 3
+  why: 'Floor at the epiphreatic zone: water table fluctuation does lateral planation (baselevel polje)'
+- factor: planet-factor.clim-season
+  weight: 1
+  why: 'Wet-season rise exceeds ponor capacity: seasonal lakes; Mediterranean seasonality typical'
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: Humid recharge needed for flooding and lateral corrosion
+- factor: planet-factor.sed-supply
+  weight: 1
+  why: Alluvium/terra rossa fill flattens floor and seals it; inflow from non-karst catchments
+- factor: planet-factor.base-level
+  weight: 1
+  why: Regional karst base level sets floor height; lowered base level converts to dry poljes
+- factor: planet-factor.relief-inherited
+  weight: 1
+  why: Relict valleys or coalesced collapse dolines can seed baselevel poljes
+- factor: planet-factor.time
+  weight: 1
+  why: 100 kyr to 5 Myr
+vocabulary_id: 95
+sources:
+- https://en.wikipedia.org/wiki/Polje
+- https://en.wikipedia.org/wiki/Dinaric_Alps
+library_status: written
+source: karst.depression.polje
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

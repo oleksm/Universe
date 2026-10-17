@@ -1,0 +1,56 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.arid.plateau.mesa-butte
+  name: Mesa-and-butte desert (layered plateau remnants)
+  about: Mesa-and-butte desert (layered plateau remnants).
+family: arid
+factors:
+- factor: planet-factor.rock-layers
+  weight: 3
+  why: Resistant caprock (sandstone, conglomerate) over weak shale/siltstone (De Chelly over Organ Rock)
+- factor: planet-factor.tect-fold
+  weight: 1
+  why: Near-horizontal strata (dip < ~5 deg); steeper dips give cuestas
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: Plateau uplift drives river incision and dissection
+- factor: planet-factor.rock-fracture
+  weight: 1
+  why: Joints in caprock localise retreat and set butte/spire outlines
+- factor: planet-factor.clim-arid
+  weight: 3
+  why: 'Arid to semi-arid: sparse vegetation keeps free faces sharp'
+- factor: planet-factor.groundwater
+  weight: 1
+  why: Basal sapping at caprock/shale contact undermines cliffs
+- factor: planet-factor.clim-storm
+  weight: 1
+  why: Flash floods remove talus from weak slopes
+- factor: planet-factor.base-level
+  weight: 1
+  why: River incision sets valley-floor height and remnant relief (up to ~300 m)
+- factor: planet-factor.time
+  weight: 1
+  why: '1-30 Myr of scarp retreat: plateau, mesa, butte, spire'
+vocabulary_id: 12
+sources:
+- https://en.wikipedia.org/wiki/Mesa
+- https://en.wikipedia.org/wiki/Monument_Valley
+- https://www.nps.gov/subjects/geology/arid-landforms.htm
+library_status: written
+source: arid.plateau.mesa_butte
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft
