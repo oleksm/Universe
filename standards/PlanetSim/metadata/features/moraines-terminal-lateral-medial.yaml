@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.moraines-terminal-lateral-medial
+  name: Moraines (terminal, lateral, medial)
+  about: 'A relief feature kind: moraines (terminal, lateral, medial).'
+register: feature
+family: glacial
+level:
+- 2
+geometry: polylines
+metadata: height, ice-margin age
+trigger: ice margins at LGM and retreat stages
+generator: lines along the ice margin at each stage; laterals along trough sides
+metadata_from: height, age
+overrides: erosion
+wave: 2
+built: false
+levels:
+- planet-level.pattern
+status: draft
+basis:
+- of:
+  - trigger
+  - generator
+  - metadata_from
+  - overrides
+  - wave
+  - level
+  tier: derived
+  note: planet-trees-pgs2 docs/relief-generation.md (b4b0edf), planets, 17 Oct 2026.
+- of:
+  - geometry
+  - metadata
+  - register
+  tier: derived
+  review: true
+  note: docs/relief-features.md (b4b0edf), matched by name; the register by the kind's footprint.
+- of:
+  - built
+  - sim_kinds
+  tier: derived
+  note: 'planet-sim-landform stages/relief.py KINDS (54430a6): wave 1, first draft.'

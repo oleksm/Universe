@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.dry-valley-misfit-river
+  name: Dry valley, misfit river
+  about: 'A relief feature kind: dry valley, misfit river.'
+register: feature
+family: fluvial
+level:
+- 1
+- 2
+geometry: polyline
+metadata: valley size vs river
+trigger: records (exist)
+generator: the valley line
+metadata_from: valley vs river size
+wave: 1
+built: true
+sim_kinds:
+- dry valley
+- misfit river
+landmark: planet-landmark.dry-valley
+levels:
+- planet-level.planet
+- planet-level.cluster
+- planet-level.pattern
+status: draft
+basis:
+- of:
+  - trigger
+  - generator
+  - metadata_from
+  - overrides
+  - wave
+  - level
+  tier: derived
+  note: planet-trees-pgs2 docs/relief-generation.md (b4b0edf), planets, 17 Oct 2026.
+- of:
+  - geometry
+  - metadata
+  - register
+  tier: derived
+  review: true
+  note: docs/relief-features.md (b4b0edf), matched by name; the register by the kind's footprint.
+- of:
+  - built
+  - sim_kinds
+  tier: derived
+  note: 'planet-sim-landform stages/relief.py KINDS (54430a6): wave 1, first draft.'

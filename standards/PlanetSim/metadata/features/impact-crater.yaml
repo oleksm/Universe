@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.impact-crater
+  name: Impact crater
+  about: 'A relief landmark kind: impact crater.'
+register: landmark
+family: landmark
+level:
+- 1
+geometry: rings
+metadata: diameter, depth, rim height, central peak, ejecta radius, age
+trigger: impact events (the sim has an impacts stage; Earth rate by size, age)
+generator: 'rings: rim, floor, central peak, ejecta'
+metadata_from: diameter, depth, rim height, age; erosion by age and climate
+wave: 2
+built: false
+levels:
+- planet-level.planet
+- planet-level.cluster
+status: draft
+basis:
+- of:
+  - trigger
+  - generator
+  - metadata_from
+  - overrides
+  - wave
+  - level
+  tier: derived
+  note: planet-trees-pgs2 docs/relief-generation.md (b4b0edf), planets, 17 Oct 2026.
+- of:
+  - geometry
+  - metadata
+  - register
+  tier: derived
+  review: true
+  note: docs/relief-features.md (b4b0edf), matched by name; the register by the kind's footprint.
+- of:
+  - built
+  - sim_kinds
+  tier: derived
+  note: 'planet-sim-landform stages/relief.py KINDS (54430a6): wave 1, first draft.'

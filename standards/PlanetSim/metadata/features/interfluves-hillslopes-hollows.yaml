@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.interfluves-hillslopes-hollows
+  name: Interfluves, hillslopes, hollows
+  about: 'A relief feature kind: interfluves, hillslopes, hollows.'
+register: feature
+family: karst-arid-aeolian
+level:
+- 3
+geometry: lines / polygons
+metadata: slope, length, convexity
+trigger: everywhere at small scale
+generator: the mesher's level 3 (anchored_mesh)
+metadata_from: slope, length
+wave: 3
+built: false
+levels:
+- planet-level.square
+- planet-level.detail
+status: draft
+basis:
+- of:
+  - trigger
+  - generator
+  - metadata_from
+  - overrides
+  - wave
+  - level
+  tier: derived
+  note: planet-trees-pgs2 docs/relief-generation.md (b4b0edf), planets, 17 Oct 2026.
+- of:
+  - geometry
+  - metadata
+  - register
+  tier: derived
+  review: true
+  note: docs/relief-features.md (b4b0edf), matched by name; the register by the kind's footprint.
+- of:
+  - built
+  - sim_kinds
+  tier: derived
+  note: 'planet-sim-landform stages/relief.py KINDS (54430a6): wave 1, first draft.'

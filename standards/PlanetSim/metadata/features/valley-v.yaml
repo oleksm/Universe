@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.valley-v
+  name: Valley (V)
+  about: 'A relief feature kind: valley (V).'
+register: feature
+family: fluvial
+level:
+- 1
+- 2
+geometry: polyline axis + width
+metadata: depth, side slopes, floor width
+trigger: incision > 50 m along a river
+generator: 'the river line''s valley: axis = river, width from incision and hill wear'
+metadata_from: depth (incision), side slope, floor width
+overrides: widening, glacial overprint (U)
+wave: 1
+built: false
+levels:
+- planet-level.planet
+- planet-level.cluster
+- planet-level.pattern
+status: draft
+basis:
+- of:
+  - trigger
+  - generator
+  - metadata_from
+  - overrides
+  - wave
+  - level
+  tier: derived
+  note: planet-trees-pgs2 docs/relief-generation.md (b4b0edf), planets, 17 Oct 2026.
+- of:
+  - geometry
+  - metadata
+  - register
+  tier: derived
+  review: true
+  note: docs/relief-features.md (b4b0edf), matched by name; the register by the kind's footprint.
+- of:
+  - built
+  - sim_kinds
+  tier: derived
+  note: 'planet-sim-landform stages/relief.py KINDS (54430a6): wave 1, first draft.'

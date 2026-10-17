@@ -2642,6 +2642,7 @@ _REG = [("mounts", "Mounts", "SFO", os.path.join("SFO", "metadata", "mounts"), "
         ("planet-handlers", "Mesher handlers", "PlanetSim", os.path.join("PlanetSim", "metadata", "handlers"), "PlanetSim/schema/planet-handler.schema.yaml", None),
         ("planet-measures", "Measures", "PlanetSim", os.path.join("PlanetSim", "metadata", "measures"), "PlanetSim/schema/planet-measure.schema.yaml", None),
         ("planet-factors", "Deciding factors", "PlanetSim", os.path.join("PlanetSim", "metadata", "factors"), "PlanetSim/schema/planet-factor.schema.yaml", None),
+        ("planet-features", "Relief features", "PlanetSim", os.path.join("PlanetSim", "metadata", "features"), "PlanetSim/schema/planet-feature.schema.yaml", None),
         ("planet-patterns", "Landform patterns", "PlanetSim", os.path.join("PlanetSim", "metadata", "patterns"), "PlanetSim/schema/planet-pattern.schema.yaml", None),
         ("planet-models", "Planet Models", "PlanetSim", os.path.join("PlanetSim", "metadata", "models"), "PlanetSim/schema/planet-model.schema.yaml", None),
         ("lod-models", "Planet Models", "PlanetLOD", os.path.join("PlanetLOD", "metadata", "models"), "PlanetLOD/schema/lod-model.schema.yaml", None),

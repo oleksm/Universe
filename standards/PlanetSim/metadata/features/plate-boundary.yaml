@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.plate-boundary
+  name: Plate boundary
+  about: 'A relief feature kind: plate boundary.'
+register: feature
+family: tectonic
+level:
+- 1
+geometry: polyline
+metadata: type, rate (mm/yr), age
+trigger: each step, between plates
+generator: the boundary between particles of two plates (as the zones do)
+metadata_from: type, rate from the spin axes
+overrides: moves every step
+wave: 1
+built: true
+sim_kinds:
+- plate boundary
+levels:
+- planet-level.planet
+- planet-level.cluster
+status: draft
+basis:
+- of:
+  - trigger
+  - generator
+  - metadata_from
+  - overrides
+  - wave
+  - level
+  tier: derived
+  note: planet-trees-pgs2 docs/relief-generation.md (b4b0edf), planets, 17 Oct 2026.
+- of:
+  - geometry
+  - metadata
+  - register
+  tier: derived
+  review: true
+  note: docs/relief-features.md (b4b0edf), matched by name; the register by the kind's footprint.
+- of:
+  - built
+  - sim_kinds
+  tier: derived
+  note: 'planet-sim-landform stages/relief.py KINDS (54430a6): wave 1, first draft.'

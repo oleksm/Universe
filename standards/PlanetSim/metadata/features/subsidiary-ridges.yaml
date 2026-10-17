@@ -1,0 +1,47 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.subsidiary-ridges
+  name: Subsidiary ridges
+  about: 'A relief feature kind: subsidiary ridges.'
+register: feature
+family: tectonic
+level:
+- 1
+- 2
+geometry: polylines, en-echelon
+metadata: spacing, trend vs strike
+trigger: orogen with h_fold
+generator: lines parallel to the axis, en-echelon, spacing 20-40 km
+metadata_from: spacing by belt width; offset angle 5-15 deg
+overrides: erosion
+wave: 1
+built: true
+sim_kinds:
+- subsidiary ridge
+levels:
+- planet-level.planet
+- planet-level.cluster
+- planet-level.pattern
+status: draft
+basis:
+- of:
+  - trigger
+  - generator
+  - metadata_from
+  - overrides
+  - wave
+  - level
+  tier: derived
+  note: planet-trees-pgs2 docs/relief-generation.md (b4b0edf), planets, 17 Oct 2026.
+- of:
+  - geometry
+  - metadata
+  - register
+  tier: derived
+  review: true
+  note: docs/relief-features.md (b4b0edf), matched by name; the register by the kind's footprint.
+- of:
+  - built
+  - sim_kinds
+  tier: derived
+  note: 'planet-sim-landform stages/relief.py KINDS (54430a6): wave 1, first draft.'

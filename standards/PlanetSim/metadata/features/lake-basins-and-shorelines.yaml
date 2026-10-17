@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.lake-basins-and-shorelines
+  name: Lake basins and shorelines
+  about: 'A relief feature kind: lake basins and shorelines.'
+register: feature
+family: karst-arid-aeolian
+level:
+- 1
+- 2
+geometry: rings
+metadata: level, depth, ages
+trigger: lake records (exist)
+generator: rings at each level
+metadata_from: level, depth, ages
+overrides: drying -> former lake bed
+wave: 1
+built: true
+sim_kinds:
+- former lake bed
+landmark: planet-landmark.former-lake-bed
+levels:
+- planet-level.planet
+- planet-level.cluster
+- planet-level.pattern
+status: draft
+basis:
+- of:
+  - trigger
+  - generator
+  - metadata_from
+  - overrides
+  - wave
+  - level
+  tier: derived
+  note: planet-trees-pgs2 docs/relief-generation.md (b4b0edf), planets, 17 Oct 2026.
+- of:
+  - geometry
+  - metadata
+  - register
+  tier: derived
+  review: true
+  note: docs/relief-features.md (b4b0edf), matched by name; the register by the kind's footprint.
+- of:
+  - built
+  - sim_kinds
+  tier: derived
+  note: 'planet-sim-landform stages/relief.py KINDS (54430a6): wave 1, first draft.'

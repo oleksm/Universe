@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.volcanic-arc-chain
+  name: Volcanic arc (chain)
+  about: 'A relief feature kind: volcanic arc (chain).'
+register: feature
+family: volcanic
+level:
+- 1
+geometry: polyline of centres
+metadata: spacing, age range
+trigger: arc volcano records
+generator: polyline through the arc's centres in order along the front
+metadata_from: spacing, age range
+overrides: ends with the arc
+wave: 1
+built: true
+sim_kinds:
+- volcanic arc
+landmark: planet-landmark.arc-volcano
+levels:
+- planet-level.planet
+- planet-level.cluster
+status: draft
+basis:
+- of:
+  - trigger
+  - generator
+  - metadata_from
+  - overrides
+  - wave
+  - level
+  tier: derived
+  note: planet-trees-pgs2 docs/relief-generation.md (b4b0edf), planets, 17 Oct 2026.
+- of:
+  - geometry
+  - metadata
+  - register
+  tier: derived
+  review: true
+  note: docs/relief-features.md (b4b0edf), matched by name; the register by the kind's footprint.
+- of:
+  - built
+  - sim_kinds
+  tier: derived
+  note: 'planet-sim-landform stages/relief.py KINDS (54430a6): wave 1, first draft.'

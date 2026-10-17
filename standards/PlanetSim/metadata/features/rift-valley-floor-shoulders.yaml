@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.rift-valley-floor-shoulders
+  name: Rift valley floor + shoulders
+  about: 'A relief feature kind: rift valley floor + shoulders.'
+register: feature
+family: tectonic
+level:
+- 1
+geometry: polygon + axis
+metadata: width, depth, shoulders
+trigger: rift
+generator: axis line between the margins; shoulder lines 30-60 km outside
+metadata_from: depth, width, shoulder uplift
+overrides: becomes ocean (margins) or failed rift (filled)
+wave: 1
+built: true
+sim_kinds:
+- rift floor axis
+- rift shoulder
+levels:
+- planet-level.planet
+- planet-level.cluster
+status: draft
+basis:
+- of:
+  - trigger
+  - generator
+  - metadata_from
+  - overrides
+  - wave
+  - level
+  tier: derived
+  note: planet-trees-pgs2 docs/relief-generation.md (b4b0edf), planets, 17 Oct 2026.
+- of:
+  - geometry
+  - metadata
+  - register
+  tier: derived
+  review: true
+  note: docs/relief-features.md (b4b0edf), matched by name; the register by the kind's footprint.
+- of:
+  - built
+  - sim_kinds
+  tier: derived
+  note: 'planet-sim-landform stages/relief.py KINDS (54430a6): wave 1, first draft.'

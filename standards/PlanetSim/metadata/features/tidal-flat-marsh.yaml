@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.tidal-flat-marsh
+  name: Tidal flat, marsh
+  about: 'A relief feature kind: tidal flat, marsh.'
+register: feature
+family: coastal
+level:
+- 2
+- 3
+geometry: polygons
+metadata: width, channel density
+trigger: low coast + wide shelf (tidal amplification)
+generator: polygons
+metadata_from: width
+wave: 2
+built: false
+levels:
+- planet-level.pattern
+- planet-level.square
+- planet-level.detail
+status: draft
+basis:
+- of:
+  - trigger
+  - generator
+  - metadata_from
+  - overrides
+  - wave
+  - level
+  tier: derived
+  note: planet-trees-pgs2 docs/relief-generation.md (b4b0edf), planets, 17 Oct 2026.
+- of:
+  - geometry
+  - metadata
+  - register
+  tier: derived
+  review: true
+  note: docs/relief-features.md (b4b0edf), matched by name; the register by the kind's footprint.
+- of:
+  - built
+  - sim_kinds
+  tier: derived
+  note: 'planet-sim-landform stages/relief.py KINDS (54430a6): wave 1, first draft.'

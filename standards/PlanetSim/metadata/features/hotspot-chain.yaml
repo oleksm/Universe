@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.hotspot-chain
+  name: Hotspot chain
+  about: 'A relief feature kind: hotspot chain.'
+register: feature
+family: volcanic
+level:
+- 1
+geometry: polyline of centres
+metadata: age progression, plate motion
+trigger: hotspot volcano records of one plume
+generator: polyline in age order
+metadata_from: age progression (Myr/100 km), direction = plate motion
+overrides: old end drowned (seamounts, guyots)
+wave: 1
+built: true
+sim_kinds:
+- hotspot chain
+landmark: planet-landmark.hotspot-volcano
+levels:
+- planet-level.planet
+- planet-level.cluster
+status: draft
+basis:
+- of:
+  - trigger
+  - generator
+  - metadata_from
+  - overrides
+  - wave
+  - level
+  tier: derived
+  note: planet-trees-pgs2 docs/relief-generation.md (b4b0edf), planets, 17 Oct 2026.
+- of:
+  - geometry
+  - metadata
+  - register
+  tier: derived
+  review: true
+  note: docs/relief-features.md (b4b0edf), matched by name; the register by the kind's footprint.
+- of:
+  - built
+  - sim_kinds
+  tier: derived
+  note: 'planet-sim-landform stages/relief.py KINDS (54430a6): wave 1, first draft.'

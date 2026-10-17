@@ -105,6 +105,38 @@ properties:
         used_for: { type: string }
         path: { type: string, description: "Where a copy lies, when one does." }
         url: { type: string }
+  registers:
+    type: array
+    description: "The registers of what it generates."
+    items: { type: object, additionalProperties: false, required: [name, what], properties: { name: { type: string }, what: { type: string }, geometry: { type: string }, example: { type: string } } }
+  feature_kinds: { type: array, items: { type: string, x-ref: [planet-feature] }, description: "The relief feature kinds it generates or will (the Relief features register)." }
+  record_fields:
+    type: array
+    description: "The fields every generated feature's record carries."
+    items: { type: object, additionalProperties: false, required: [name, meaning], properties: { name: { type: string }, meaning: { type: string }, unit: { type: string } } }
+  trace:
+    type: object
+    additionalProperties: false
+    description: "How what it generates is traced: what, why, where, when."
+    properties:
+      row: { type: string, description: "What one trace row holds." }
+      saved: { type: string, description: "Where the rows are kept." }
+      log: { type: string, description: "What the run log prints." }
+  overrides:
+    type: array
+    description: "What happens to a generated feature after it is born."
+    items: { type: object, additionalProperties: false, required: [name, trigger, effect], properties: { name: { type: string }, trigger: { type: string }, effect: { type: string } } }
+  erosion:
+    type: object
+    additionalProperties: false
+    properties:
+      formula: { type: string }
+      params:
+        type: array
+        items: { type: object, additionalProperties: false, required: [name], properties: { name: { type: string }, source: { type: string }, value: { type: number, x-unit-from: unit }, unit: { type: string }, note: { type: string } } }
+  tools:
+    type: array
+    items: { type: object, additionalProperties: false, required: [name, does], properties: { name: { type: string }, does: { type: string } } }
   feeds: { type: array, items: { type: string, x-ref: [planet-model, lod-model] }, description: "The models it is to feed." }
   not_yet: { type: array, items: { type: string }, description: "What it does not say yet." }
   results:
