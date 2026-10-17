@@ -65,19 +65,19 @@ FITOUT = {  # slug: (name, description, [(what, item, kg, note)], people it serv
     "seating": ("Seating bay", "Tiered seating, three rows of twelve, and its stair.", [("Tiers and frames", STEEL, 2200, ""), ("Seats", PE, 300, "thirty-six")], 36, 0),
     "stage": ("Stage bay", "A raised stage deck with its rigging bar and lights.", [("Deck and frame", STEEL, 2400, "1 m high"), ("Rigging and lights", AL, 600, "")], 0, 2),
     "garage": ("Vehicle bay", "An open bay a vehicle stands in, its floor drained and its charge point.", [("Charge point and drain", STEEL, 180, "")], 0, 0),
-    "court": ("Court bay", "A bench, a dock, a witness box and seats: a court's room.", [("Bench, dock and box", STEEL, 900, ""), ("Seats", AL, 300, "twenty-four")], 24, 0),
+    "court": ("Court bay", "A bench, a dock, a witness box and seats: a court's room.", [("Bench, dock and box", STEEL, 494.9, "hollow frames, 3 to 4 mm sheet: blender's model (2026-10-17)"), ("Seats", AL, 212.1, "twenty-four: blender's model")], 24, 0),
     "press-room": ("Press room bay", "A small web press, its folder and its paper stand.", [("Press, folder and stand", STEEL, 4200, ""), ("Rollers and plates", AL, 300, "")], 0, 3),
     "garden": ("Garden bay", "A 6 m square of planting, paths and a bench.", [("Bench and edging", STEEL, 160, ""), ("Paths", CONC, 2400, "50 mm of paving on the bay's half")], 8, 0),
 }
 
 
-EXTENT = {"cell": (6.0, 4.0), "counter": (5.4, 2.375)}       # m the fitted unit covers, where it is less than its 6 m bay (the rest is the bay's free floor): blender's models
+EXTENT = {"cell": (6.0, 4.0), "counter": (5.4, 2.375), "court": (5.67, 5.63)}       # m the fitted unit covers, where it is less than its 6 m bay (the rest is the bay's free floor): blender's models
 
 
 def fitout_records():
     for slug, (name, desc, parts, people, staff) in FITOUT.items():
         mass = sum(p[2] for p in parts)
-        height = {"store": 4.5, "seating": 2.4, "stage": 3.0, "press-room": 3.0}.get(slug, 2.2)
+        height = {"store": 4.5, "seating": 2.4, "stage": 3.0, "press-room": 3.0, "court": 1.2}.get(slug, 2.2)
         length, width = EXTENT.get(slug, (BAY, BAY))
         yield slug, {
             "identity": {"key": f"unit.fitout-{slug}", "name": name, "description": desc},

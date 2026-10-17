@@ -7,18 +7,19 @@ identity:
 size_class: 1
 fits: plant-mount.bay-s1
 physical:
-  length: 6.0
-  width: 6.0
-  height: 2.2
-  mass: 1200.0
+  length: 5.67
+  width: 5.63
+  height: 1.2
+  mass: 707.0
 built_of:
 - what: Bench, dock and box
   item: material.structural-steel-a36
-  mass: 900.0
+  mass: 494.9
+  note: 'hollow frames, 3 to 4 mm sheet: blender''s model (2026-10-17)'
 - what: Seats
   item: material.aluminium-alloy-6061
-  mass: 300.0
-  note: twenty-four
+  mass: 212.1
+  note: 'twenty-four: blender''s model'
 basis:
 - of:
   - built_of
