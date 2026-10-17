@@ -14,6 +14,12 @@ built_of:
 - what: Sink and stand
   item: material.stainless-steel-304
   mass: 31.5
+visual:
+  format: "freefall-model/1"
+  path: "models/furniture-sink/v1"
+  manifest_sha256: "232edfb26d0f88d7613a2e630ee7c3b3df7b4fb293f95a6b4474d76dca880bef"
+  version: 1
+  triangles: 2932
 basis:
 - of:
   - built_of
