@@ -21,7 +21,8 @@ levels:
 - planet-level.cluster
 status: draft
 basis:
-- of:
+- note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'
+  of:
   - identity
   - register
   - family
@@ -34,4 +35,31 @@ basis:
   - wave
   - built
   tier: derived
-  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'
+- of:
+  - pinned_to
+  - spans
+  - dimensions
+  - layout
+  - parent_kinds
+  review: true
+  source: 'the laws'' notes: Moody and Troutman 2002; Leopold and Wolman 1957, 1960 (coefficients recalled, to check against the papers); figures marked open are invented'
+  tier: sourced
+pinned_to: the downstream end of its reach, on its river's centreline (a child of that river)
+spans:
+- meaning: 'the reach''s centreline, in cm east/north/up of the pin; profile along it: width (m)'
+  name: axis
+dimensions:
+- formula: m * belt width
+  meaning: across the floodplain at each axis vertex
+  name: width
+  params:
+  - meaning: floodplain over meander belt width
+    name: m
+    note: invented, to review
+    open: true
+    unit: '1'
+    value: 3.0
+  rule: a multiple of the meander belt (a placeholder until the sim lays sediment widths)
+  unit: m
+parent_kinds:
+- planet-feature.trunk-river

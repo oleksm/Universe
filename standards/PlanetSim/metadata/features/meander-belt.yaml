@@ -22,7 +22,8 @@ levels:
 - planet-level.pattern
 status: draft
 basis:
-- of:
+- note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'
+  of:
   - identity
   - register
   - family
@@ -35,4 +36,61 @@ basis:
   - wave
   - built
   tier: derived
-  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical feature catalogue.'
+- of:
+  - pinned_to
+  - spans
+  - dimensions
+  - layout
+  - parent_kinds
+  review: true
+  source: 'the laws'' notes: Moody and Troutman 2002; Leopold and Wolman 1957, 1960 (coefficients recalled, to check against the papers); figures marked open are invented'
+  tier: sourced
+pinned_to: the downstream end of its reach, on its river's centreline (a child of the floodplain or the river)
+spans:
+- meaning: the reach's valley axis, in cm east/north/up of the pin (the loops are drawn from the layout, seeded by the feature's seed)
+  name: axis
+dimensions:
+- formula: n * channel width
+  meaning: across the swept loops
+  name: belt width
+  params:
+  - meaning: belt over channel width
+    name: n
+    note: invented, to review against Williams 1986 (Journal of Hydrology 88)
+    open: true
+    unit: '1'
+    value: 6.0
+  rule: about six channel widths (twice the loop amplitude)
+  unit: m
+layout:
+- formula: k * channel width
+  meaning: loop to loop along the valley
+  name: wavelength
+  params:
+  - meaning: wavelength over width
+    name: k
+    note: Leopold and Wolman 1960, River meanders, GSA Bulletin 71
+    range:
+    - 10.0
+    - 14.0
+    unit: '1'
+    value: 11.0
+  rule: about 11 channel widths (Leopold and Wolman 1960, River meanders, GSA Bulletin 71)
+  unit: m
+- formula: r * channel width
+  meaning: radius of curvature at the bend apex
+  name: bend radius
+  params:
+  - meaning: radius over width
+    name: r
+    note: Leopold and Wolman 1960, River meanders, GSA Bulletin 71
+    range:
+    - 2.0
+    - 3.0
+    unit: '1'
+    value: 2.5
+  rule: two to three channel widths (Leopold and Wolman 1960, River meanders, GSA Bulletin 71)
+  unit: m
+parent_kinds:
+- planet-feature.floodplain
+- planet-feature.trunk-river

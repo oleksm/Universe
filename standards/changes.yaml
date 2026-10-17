@@ -1733,7 +1733,7 @@
 - { record: planet-feature.fjord, at: "2026-10-17T18:20:32Z", status: "", summary: "first tracked", sha: "4568f34a45d5b855" }
 - { record: planet-feature.flatiron, at: "2026-10-17T18:20:32Z", status: "", summary: "first tracked", sha: "9d91843d3f29c0f4" }
 - { record: planet-feature.flood-basalt-plateau, at: "2026-10-17T18:20:32Z", status: "", summary: "changed: identity, geometry, properties, trigger, generator, overrides, basis, metadata, metadata_from, sim_kinds, landmark", sha: "b94577a61ca65655" }
-- { record: planet-feature.floodplain, at: "2026-10-17T18:20:32Z", status: "", summary: "changed: identity, level, properties, trigger, generator, levels, basis, metadata, metadata_from", sha: "7bfc917f10841e64" }
+- { record: planet-feature.floodplain, at: "2026-10-17T20:14:23Z", status: "", summary: "changed: basis, pinned_to, spans, dimensions, parent_kinds", sha: "38502daabb5a5c12" }
 - { record: planet-feature.foreland-basin, at: "2026-10-17T18:20:32Z", status: "", summary: "changed: identity, geometry, properties, trigger, generator, overrides, basis, metadata, metadata_from", sha: "a302d4ed0735f72f" }
 - { record: planet-feature.former-lake-bed, at: "2026-10-17T18:20:32Z", status: "", summary: "first tracked", sha: "0a9fd6f9841f5884" }
 - { record: planet-feature.free-face-cliff, at: "2026-10-17T18:20:32Z", status: "", summary: "first tracked", sha: "b7e53983b62fd3ea" }
@@ -1772,7 +1772,7 @@
 - { record: planet-feature.maar, at: "2026-10-17T18:20:32Z", status: "", summary: "first tracked", sha: "779a535d9424975c" }
 - { record: planet-feature.mangrove-coast, at: "2026-10-17T18:20:32Z", status: "", summary: "first tracked", sha: "98680d8a95721e51" }
 - { record: planet-feature.marine-terrace, at: "2026-10-17T18:20:32Z", status: "", summary: "first tracked", sha: "8d08dd12cd5ceaed" }
-- { record: planet-feature.meander-belt, at: "2026-10-17T18:20:32Z", status: "", summary: "first tracked", sha: "b7f56f504577060d" }
+- { record: planet-feature.meander-belt, at: "2026-10-17T20:14:23Z", status: "", summary: "changed: basis, pinned_to, spans, dimensions, layout, parent_kinds", sha: "2ef5dbd99142e865" }
 - { record: planet-feature.medial-moraine, at: "2026-10-17T18:20:32Z", status: "", summary: "first tracked", sha: "6bd3b9c219b59c36" }
 - { record: planet-feature.mega-scale-glacial-lineations, at: "2026-10-17T18:20:32Z", status: "", summary: "first tracked", sha: "43ebb659c49755e0" }
 - { record: planet-feature.megaflood-scabland, at: "2026-10-17T18:20:32Z", status: "", summary: "changed: identity, family, properties, generator, basis, metadata, metadata_from", sha: "df5884013618d5ab" }
@@ -1849,7 +1849,7 @@
 - { record: planet-feature.transverse-dunes, at: "2026-10-17T18:20:32Z", status: "", summary: "first tracked", sha: "80c5f817ed49c06a" }
 - { record: planet-feature.triangular-facet, at: "2026-10-17T18:20:32Z", status: "", summary: "first tracked", sha: "8dc4c7e17bd52fb7" }
 - { record: planet-feature.tributary-network, at: "2026-10-17T18:20:32Z", status: "", summary: "changed: identity, level, properties, generator, levels, basis, metadata, metadata_from", sha: "5d7aefbae97673c7" }
-- { record: planet-feature.trunk-river, at: "2026-10-17T18:20:32Z", status: "", summary: "changed: identity, properties, generator, basis, metadata, metadata_from", sha: "919a64c46c39eb9d" }
+- { record: planet-feature.trunk-river, at: "2026-10-17T20:14:23Z", status: "", summary: "changed: basis, pinned_to, spans, dimensions, layout, parent_kinds", sha: "55926d744e107c99" }
 - { record: planet-feature.tuff-ring, at: "2026-10-17T18:20:32Z", status: "", summary: "first tracked", sha: "0ff7fa1fab1d8cd8" }
 - { record: planet-feature.v-valley, at: "2026-10-17T18:20:32Z", status: "", summary: "first tracked", sha: "246206ad84d72c27" }
 - { record: planet-feature.volcanic-arc-chain, at: "2026-10-17T18:20:32Z", status: "", summary: "changed: identity, geometry, properties, generator, overrides, basis, metadata, metadata_from, sim_kinds, landmark", sha: "e549a3ca30a80a39" }
@@ -2002,7 +2002,7 @@
 - { record: planet-measure.to-sea-pct, at: "2026-10-17T19:32:13Z", status: "", summary: "first tracked", sha: "1759c6291fbd63ea" }
 - { record: planet-measure.valley-spacing, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "d4dde745cde03b3f" }
 - { record: planet-model.anchor, at: "2026-10-17T17:32:25Z", status: "", summary: "changed", sha: "c9adae30021bdde6" }
-- { record: planet-model.relief, at: "2026-10-17T18:20:32Z", status: "", summary: "changed: legends, feature_kinds, record_fields, basis", sha: "00a202de3f87f82f" }
+- { record: planet-model.relief, at: "2026-10-17T20:14:23Z", status: "", summary: "changed: record_fields", sha: "4dd58b4b4914cb2b" }
 - { record: planet-pattern.aeolian.dune.barchan, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "4fed3f7652690758" }
 - { record: planet-pattern.aeolian.dune.carbonate-eolianite, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "57787d270a7efd13" }
 - { record: planet-pattern.aeolian.dune.coastal-foredune, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "11531b3670b62a25" }
@@ -2271,6 +2271,7 @@
 - { record: planet-process.relief-volcanic-arc-chain, at: "2026-10-17T19:32:13Z", status: "", summary: "changed: writes", sha: "d1a19b34bdec5401" }
 - { record: planet-process.resolution-refine, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "7d557b8cd452214c" }
 - { record: planet-process.river-discharge, at: "2026-10-17T19:32:13Z", status: "", summary: "changed: reads", sha: "2d046f7cd74cdba0" }
+- { record: planet-process.river-features, at: "2026-10-17T20:14:23Z", status: "", summary: "first tracked", sha: "bababcb7d9d16a66" }
 - { record: planet-process.river-memory, at: "2026-10-17T19:32:13Z", status: "", summary: "changed: reads", sha: "35e2b366defcf0d8" }
 - { record: planet-process.rock-unit-stack, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "fb6bd1b25ecc9110" }
 - { record: planet-process.run-ledger-and-snapshots, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "b7bbaf279b1afd75" }

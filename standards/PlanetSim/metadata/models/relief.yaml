@@ -535,62 +535,80 @@ feature_kinds:
 - planet-feature.wind-gap
 - planet-feature.yardangs
 record_fields:
-- name: id
-  meaning: stable id (L12 a line, M5 a record)
-- name: kind
-  meaning: the feature kind (this catalogue)
-- name: geometry
-  meaning: polyline / polygon / ring / point / point set / network, on the sphere, riding the crust
-- name: level
-  meaning: '1: 10-50 km, 2: 2-10 km, 3: under 2 km (the coarsest it appears at)'
+- meaning: stable id (L12 a line, M5 a record)
+  name: id
+- meaning: the feature kind (this catalogue)
+  name: kind
+- meaning: polyline / polygon / ring / point / point set / network, on the sphere, riding the crust
+  name: geometry
+- meaning: '1: 10-50 km, 2: 2-10 km, 3: under 2 km (the coarsest it appears at)'
+  name: level
   unit: 1-3
-- name: length
-  meaning: along the feature
+- meaning: along the feature
+  name: length
   unit: m
-- name: width
-  meaning: its footprint across
+- meaning: its footprint across
+  name: width
   unit: m
-- name: relief
-  meaning: height above (ridge, scarp) or depth below (valley, basin) its surroundings; relief0 at birth
+- meaning: height above (ridge, scarp) or depth below (valley, basin) its surroundings; relief0 at birth
+  name: relief
   unit: m
-- name: profile
-  meaning: 'cross-section: V, U, flat-floored, box, asymmetric, stepped, convex, concave; side slopes deg'
+- meaning: 'cross-section: V, U, flat-floored, box, asymmetric, stepped, convex, concave; side slopes deg'
+  name: profile
   unit: class
-- name: direction
-  meaning: 'trend / strike / flow direction; facing: which side is steep or down'
+- meaning: 'trend / strike / flow direction; facing: which side is steep or down'
+  name: direction
   unit: deg
-- name: pattern
-  meaning: dendritic, trellis, radial, parallel, rectangular, en-echelon, braided, alternating ...
+- meaning: dendritic, trellis, radial, parallel, rectangular, en-echelon, braided, alternating ...
+  name: pattern
   unit: class
-- name: spacing
-  meaning: between repeats (ridges, folds, scarps, centres, dunes)
+- meaning: between repeats (ridges, folds, scarps, centres, dunes)
+  name: spacing
   unit: m
-- name: spread
-  meaning: how far its influence reaches
+- meaning: how far its influence reaches
+  name: spread
   unit: m
-- name: curvature
-  meaning: turning per 100 km; sinuosity (path / chord); straight share
+- meaning: turning per 100 km; sinuosity (path / chord); straight share
+  name: curvature
   unit: deg/100 km, 1
-- name: born, last active
-  meaning: 'and state: active / former / worn / buried / drowned / overprinted / dead'
+- meaning: 'and state: active / former / worn / buried / drowned / overprinted / dead'
+  name: born, last active
   unit: Myr
-- name: cause
-  meaning: the sim event id and process
-- name: rule, trigger
-  meaning: the generator that fired and the values that fired it
-- name: rock, climate
-  meaning: at forming
+- meaning: the sim event id and process
+  name: cause
+- meaning: the generator that fired and the values that fired it
+  name: rule, trigger
+- meaning: at forming
+  name: rock, climate
   unit: class
-- name: parent, children
-  meaning: what it sits in / what it expands into
+- meaning: what it sits in / what it expands into
+  name: parent, children
   unit: ids
-- name: history
-  meaning: 'every change: grown, segmented, overridden, eroded (rule and values)'
-- name: confidence
-  meaning: measured vs inferred
+- meaning: 'every change: grown, segmented, overridden, eroded (rule and values)'
+  name: history
+- meaning: measured vs inferred
+  name: confidence
   unit: 0-1
-- name: seed
-  meaning: its deterministic detail
+- meaning: its deterministic detail
+  name: seed
+- meaning: 'the instance''s anchor point: x, y, z in integer centimetres in the planet''s body-fixed frame (y the spin axis), on its plate''s frame while its crust moves; set once, never re-derived, so the feature renders in the same
+    place at every level and on every machine (owner, 17 Oct 2026). Its kind''s pinned_to says what it marks'
+  name: pin
+  unit: cm
+- meaning: east, north, up at the pin, worked out from the pin alone (never stored)
+  name: frame
+- meaning: 'the kind''s named polylines, each vertex an integer-cm offset (east, north, up) from the pin: exact and reversible; up carries the planet''s curvature'
+  name: spans
+  unit: cm
+- meaning: 'values along a span, one per vertex, SI (named <span>.<what>: centreline.width)'
+  name: profiles
+- meaning: the kind's dimensions with their values for this instance, SI, each set by the law on the kind
+  name: dimensions
+- meaning: the kind's layout parameters for this instance (meander wavelength, bend radius), SI
+  name: layout
+- meaning: the feature it hangs from (one of its kind's parent_kinds) and its pin's offset in the parent's frame, integer cm
+  name: parent, parent_offset
+  unit: cm
 trace:
   row: 'One row for every spawn and every change: step, t (Myr), rule, kind, feature id, lon and lat, the trigger values, the metadata set or changed.'
   saved: <ck>_relief_trace.jsonl beside the store, per checkpoint
