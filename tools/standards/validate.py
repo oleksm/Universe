@@ -163,7 +163,7 @@ def lint(sch, name, at="", unit=False, top=True):
             if (name, "oneOf") not in WAITING and not (isinstance(a, dict) and "const" in ((a.get("properties") or {}).get("kind") or {})):
                 yield at, f"{key}: each shape must have a `kind` that is a constant"
                 break
-    unit = unit or "x-unit" in sch
+    unit = unit or "x-unit" in sch or "x-unit-from" in sch      # (x-unit-from: a sibling field names its unit, as a field's or a measure's `unit` does)
     numeric = t == "number" or (isinstance(t, list) and "number" in t) or str(sch.get("$ref", "")).endswith("number_or_null")
     if numeric and not unit and name not in ("standard.schema.yaml", "law.schema.yaml") and not at.endswith("#number_or_null"):
         yield at, "a number with no x-unit (a pure number says x-unit: \"1\")"

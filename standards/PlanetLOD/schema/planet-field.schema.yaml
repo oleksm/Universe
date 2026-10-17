@@ -1,0 +1,34 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Planet field
+x-kind: [planet-field]
+description: "standards/PlanetLOD/metadata/fields/<name>.yaml: a value the sim holds per sample or node: its unit (SI), its range, where it is produced and under which key."
+type: object
+additionalProperties: false
+required: [identity, unit, producer]
+allOf:
+  - { $ref: "../../common.schema.yaml#/definitions/planet_context" }
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name, about]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      about: { type: string, description: "What it is, in a sentence or two: the word's meaning." }
+  unit: { type: string, description: "SI, as Dogma and every x-unit: m, K, m3/s, 1 (a pure number), deg (the registry's one angle exception)." }
+  said_as: { $ref: "../../common.schema.yaml#/definitions/said_as" }
+  range: { type: array, minItems: 2, maxItems: 2, items: { type: number, x-unit-from: unit }, description: "Least and most it takes, in its unit." }
+  per: { enum: [sample, node, segment, line, point], description: "What carries it." }
+  vector: { type: boolean, description: "true: a unit vector, not a number." }
+  producer:
+    type: object
+    additionalProperties: false
+    required: [where]
+    properties:
+      where: { type: string, description: "The stage or tool that makes it (stages/plates.py, tools/planet_query.py)." }
+      file: { type: string, description: "The file it is kept in (checkpoint, ctx, store, query)." }
+      key: { type: string, description: "Its array or attribute key there (z, h_T, wacc)." }
+  derived_from: { type: array, items: { type: string, x-ref: [planet-field] }, description: "The fields it is computed from." }
+  status: { enum: [draft, published, retired], description: "draft: the sim builds against the word, not yet the figures" }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

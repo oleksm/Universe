@@ -11,7 +11,7 @@ next_asset.py --rework and --gap use it. The verdicts (docs/asset-contract.md, "
   measure   its envelope boxes are to be measured from the installed model (model_measure.py)
   optimise  over its triangle budget
   none      nothing to do: a port moved (the game draws the joint at every port: rule 1 of 2026-10-16), a mass changed
-The registry may also ask by name: a record's `model_requests` (do, because, asked, of_version), open until a version
+The registry may also ask by name: a record's `model_requests` (work, because, asked, of_version), open until a version
 above of_version is installed.
 """
 import functools, hashlib, json, os, subprocess, sys
@@ -135,7 +135,7 @@ def gap(kind, key, path, r):
     if now["budget"] and m.get("triangles", 0) > now["budget"]:
         add("optimise", "triangles", f"{m['triangles']:,} triangles against a budget of {now['budget']:,}")
     for q in open_requests(r):
-        add(q["do"], "asked", f"{q['because']} (asked {q['asked']}{' by ' + q['by'] if q.get('by') else ''}, of v{q['of_version']})")
+        add(q["work"], "asked", f"{q['because']} (asked {q['asked']}{' by ' + q['by'] if q.get('by') else ''}, of v{q['of_version']})")
     worst = max((x["verdict"] for x in out), key=RANK.get, default="none")
     return {"key": key, "kind": kind, "installed": (r.get("visual") or {}).get("version"), "spec_from": source, "verdict": worst, "gaps": out}
 

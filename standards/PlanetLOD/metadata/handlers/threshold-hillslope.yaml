@@ -1,0 +1,47 @@
+# yaml-language-server: $schema=../../schema/planet-handler.schema.yaml
+identity:
+  key: planet-handler.threshold-hillslope
+  name: Threshold hillslope
+  about: The mesher's threshold hillslope law.
+law: slope = tan(phi) up to near the divide, a convex top
+params:
+- name: phi
+  by: relief class
+  table:
+  - - -1
+    - 0.0
+  - - 0
+    - 2.0
+  - - 1
+    - 4.0
+  - - 2
+    - 6.0
+  - - 3
+    - 20.0
+  - - 4
+    - 30.0
+  - - 5
+    - 34.0
+  unit: deg
+  source: THRESH_DEG
+  note: by relief class x hardness
+- name: top
+  value: 150.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 1000.0
+applies_when: on every hillslope
+where: tools/anchored_mesh.py
+levels:
+- planet-level.square
+basis:
+- of:
+  - identity
+  tier: derived
+  note: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+- of:
+  - params
+  tier: derived
+  note: planet-trees-pgs2 tools/anchored_mesh.py KS and THRESH_DEG; the rest sim-architecture.md 3.5.
+status: draft

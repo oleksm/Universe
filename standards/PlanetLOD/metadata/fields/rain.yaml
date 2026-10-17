@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.rain
+  name: Rain
+  about: Annual precipitation.
+unit: m/s
+said_as:
+  unit: m/yr
+  factor: 3.168808781402895e-08
+per: sample
+producer:
+  where: stages/coupled_climate.py
+  file: ctx
+  key: h_P
+source: h_P
+levels:
+- planet-level.planet
+- planet-level.cluster
+basis:
+- of:
+  - identity
+  tier: derived
+  note: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+status: draft

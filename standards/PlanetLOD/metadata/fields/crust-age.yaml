@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.crust-age
+  name: Crust age
+  about: Since the crust formed.
+unit: s
+said_as:
+  unit: yr
+  factor: 31557600.0
+per: sample
+producer:
+  where: stages/plates.py
+  file: ctx
+  key: age
+levels:
+- planet-level.planet
+basis:
+- of:
+  - identity
+  tier: derived
+  note: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+status: draft
+source: age

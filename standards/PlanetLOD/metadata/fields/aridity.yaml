@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.aridity
+  name: Aridity
+  about: Evaporation demand over rain.
+unit: '1'
+per: sample
+producer:
+  where: stages/coupled_climate.py
+  file: ctx
+  key: h_aridity
+source: h_aridity
+levels:
+- planet-level.planet
+- planet-level.cluster
+basis:
+- of:
+  - identity
+  tier: derived
+  note: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+status: draft

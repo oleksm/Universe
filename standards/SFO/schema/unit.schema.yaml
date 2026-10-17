@@ -11,21 +11,6 @@ allOf:
 definitions:
   port: { $ref: "../../common.schema.yaml#/definitions/port" }
 properties:
-      id: { type: string, description: "Its name on the unit, unique there (gas-in, water-out, hv)." }
-      flow: { enum: [in, out, both], description: "Which way what it carries goes at full rate: in, out, or both (a power port feeding and fed)." }
-      medium: { enum: [gas, liquid, bulk, power] }
-      item: { type: string, x-ref: [material, stock, good], description: "What it carries, by key; none for power." }
-      rate: { type: number, minimum: 0, x-unit: "kg/s", description: "kg/s at the unit's rating" }
-      power: { type: number, minimum: 0, x-unit: "W", description: "W through it at the unit's rating (a power port)" }
-      pressure: { type: number, minimum: 0, x-unit: "Pa", description: "Pa inside it in service" }
-      temperature: { type: number, minimum: 0, x-unit: "K", description: "K of what it carries" }
-      voltage: { type: number, minimum: 0, x-unit: "V", description: "V between phases (a power port)" }
-      connector: { type: string, x-ref: [connector], description: "The connector it is built to, by key." }
-      at: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "m", description: "Its face's middle in the unit's frame (x along, y across from its middle, z up from its bay's floor)." }
-      facing: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "1", description: "The way out of its face, a unit vector in the unit's frame: a run leaves it this way." }
-      optional: { type: boolean, description: "A spare, blinded when nothing joins it: a pass-through a layout may leave unused." }
-      note: { type: string }
-properties:
   identity:
     type: object
     additionalProperties: false

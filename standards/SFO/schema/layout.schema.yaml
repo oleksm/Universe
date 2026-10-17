@@ -85,7 +85,7 @@ properties:
             additionalProperties: false
             required: [end, to]
             properties:
-              end: { type: integer, enum: [0, 1] }
+              end: { type: integer, minimum: 0, maximum: 1, description: "0 its from end, 1 its to end" }
               to: { type: string, x-ref: [connector] }
               length: { type: number, exclusiveMinimum: 0, x-unit: m }
               mass: { type: number, x-unit: kg }

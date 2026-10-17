@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=../../schema/planet-handler.schema.yaml
+identity:
+  key: planet-handler.channel-profile
+  name: Channel profile
+  about: The mesher's channel profile law.
+law: S = k_s A^-theta
+params:
+- name: theta
+  value: 0.45
+  unit: '1'
+- name: k_s
+  by: relief class (-1 sea .. 5 high mountains)
+  table:
+  - - -1
+    - 0.0
+  - - 0
+    - 0.004
+  - - 1
+    - 0.01
+  - - 2
+    - 0.02
+  - - 3
+    - 0.06
+  - - 4
+    - 0.11
+  - - 5
+    - 0.15
+  unit: '1'
+  source: KS
+  note: for A in km2 (the code's); rock hardness to come
+applies_when: on every channel
+where: tools/anchored_mesh.py
+levels:
+- planet-level.square
+basis:
+- of:
+  - identity
+  tier: derived
+  note: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+- of:
+  - params
+  tier: derived
+  note: planet-trees-pgs2 tools/anchored_mesh.py KS and THRESH_DEG; the rest sim-architecture.md 3.5.
+status: draft

@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schema/planet-level.schema.yaml
+identity:
+  key: planet-level.square
+  name: Square
+  about: 'The square level: a view about 5 km across.'
+span: 5000.0
+spacing:
+- 200.0
+- 200.0
+segment_n: 2000
+segment_id: n<n>_f<face>_<i>_<j>
+exists:
+- channel network
+- hillslopes
+- handlers (U valleys, terraces, karst)
+from_parent:
+- tributaries
+- peaks
+- passes
+levels:
+- planet-level.square
+basis:
+- of:
+  - identity
+  tier: derived
+  note: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+- of:
+  - span
+  - spacing
+  - segment_n
+  tier: derived
+  note: 'sim-architecture.md 2: SEG_N 20, n 200 and 2000 for the finer segments.'
+status: draft

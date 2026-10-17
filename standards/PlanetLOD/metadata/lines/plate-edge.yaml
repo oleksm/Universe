@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schema/planet-line.schema.yaml
+identity:
+  key: planet-line.plate-edge
+  name: Plate edge
+  about: 'A plate boundary, redrawn each step: the zones layer''s kind 1.'
+born_from: plate boundaries
+ends: redrawn each step
+sides: 1
+first_level: planet-level.planet
+levels:
+- planet-level.planet
+- planet-level.cluster
+- planet-level.pattern
+basis:
+- of:
+  - identity
+  tier: derived
+  note: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+- of:
+  - ends_idle
+  - offset
+  tier: derived
+  note: 'planet-sim-landform stages/zones.py: CLOSE_MYR 30, ARC_FRONT_M 150e3.'
+status: draft

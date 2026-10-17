@@ -167,7 +167,7 @@ changes are remade (the owner, 2026-10-16: never the same model again without a 
 | optimise | over its triangle budget | reduce, install a new version |
 | none | a port moved or was added; a mass changed | nothing: the game draws the joint at each port, the model ends at the mating plane |
 
-- **Requests by name**: a record's `model_requests` (`do`, `because`, `asked`, `of_version`, `by`). For plant units they
+- **Requests by name**: a record's `model_requests` (`work`, `because`, `asked`, `of_version`, `by`). For plant units they
   are written from `tools/standards/unit_requests.yaml`. A request is open until a version above `of_version` is
   installed; a `measure` request closes when `model_measure.py --apply` writes the boxes.
 - **What the registry does not ask**: a new model because a port moved, or a size within tolerance. A body conflict a

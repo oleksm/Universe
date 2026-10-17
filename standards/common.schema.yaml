@@ -174,13 +174,35 @@ definitions:
       properties:
         profession: { type: string, x-ref: [profession], description: "The trade, by its key." }
         count: { type: integer, minimum: 0, description: "how many of them" }
+  planet_context:
+    description: "Where a PlanetLOD word sits in the context tree (standards/PlanetLOD): the levels it means something at, and its links, so a tool working at one level takes that level's words and its parent's frozen anchors. A shape: each PlanetLOD kind derives from it (allOf)."
+    type: object
+    additionalProperties: false
+    properties:
+      levels: { type: array, items: { type: string, x-ref: [planet-level] }, description: "The levels it is meaningful at." }
+      parent: { type: string, x-ref: [planet-line, planet-landmark, planet-layer, planet-field], description: "What it hangs from one level up (a tributary from its trunk river, a peak from its crest spine)." }
+      children: { type: array, items: { type: string, x-ref: [planet-line, planet-landmark] }, description: "The kinds it expands into one level down." }
+      bounded_by: { type: array, items: { type: string, x-ref: [planet-line] }, description: "The line kinds that bound it (a layer's boundaries)." }
+      made_by: { type: array, items: { $ref: "dictionary.schema.yaml#/definitions/geological_event" }, description: "The events that make it." }
+      handled_by: { type: array, items: { type: string, x-ref: [planet-handler] }, description: "The mesher handlers that draw it." }
+      measured_by: { type: array, items: { type: string, x-ref: [planet-measure] }, description: "The measures that judge it against real ground." }
+      source: { type: string, description: "The sim's own word for it, exactly as its code or files write it (a constant, a type string, an array key): what the extractor matches." }
+  said_as:
+    description: "How the sim or its people say a figure, beside the registry's SI value: their unit and the factor from it to SI (SI = value x factor)."
+    type: object
+    additionalProperties: false
+    required: [unit, factor]
+    properties:
+      unit: { type: string, description: "Their unit: m3/yr, km2, Myr, degC." }
+      factor: { type: number, x-unit: "1", description: "SI value = their value x this (an offset unit like degC says its offset in a note)." }
+      note: { type: string }
   model_request:
     description: "Work the registry asks of a record's model (tools/standards/model_spec.py, docs/asset-contract.md): rebuild (its body changed: a part moved, was added or turned out wrong), rig (its moving parts want pivots, nodes or a motion file), measure (its envelope boxes are to be measured from the installed model), optimise (over its triangle budget). Asked of one installed version: a later version answers it. A port moving is never a request (the game draws the joint at the port)."
     type: object
     additionalProperties: false
-    required: [do, because, asked, of_version]
+    required: [work, because, asked, of_version]
     properties:
-      do: { enum: [rebuild, rig, measure, optimise] }
+      work: { enum: [rebuild, rig, measure, optimise], description: "What is asked of the model." }
       because: { type: string, description: "What changed or is wrong, and what the new model must do: plainly, so a modeller can act on it." }
       asked: { type: string, format: date, description: "When it was asked (YYYY-MM-DD)." }
       of_version: { type: integer, minimum: 0, description: "The installed version it is asked of; a version above it answers it." }

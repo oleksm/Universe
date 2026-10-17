@@ -86,10 +86,10 @@ def main(argv):
     rq = os.path.join(HERE, "unit_requests.yaml")
     reqs = yaml.safe_load(open(rq)) or {}
     if reqs.get(key):
-        left = [q for q in reqs[key] if q["do"] != "measure"]
+        left = [q for q in reqs[key] if q["work"] != "measure"]
         lines = open(rq).read()
         block = re.search(rf"^{re.escape(key)}:\n((?:- .*\n)*)", lines, re.M)
-        lines = lines[:block.start()] + ((f"{key}:\n" + "".join(l + "\n" for l in block.group(1).splitlines() if "do: measure" not in l)) if left else "") + lines[block.end():]
+        lines = lines[:block.start()] + ((f"{key}:\n" + "".join(l + "\n" for l in block.group(1).splitlines() if "work: measure" not in l)) if left else "") + lines[block.end():]
         open(rq, "w").write(lines)
     out = subprocess.run([sys.executable, os.path.join(HERE, "plants.py")], capture_output=True, text=True, cwd=ROOT)
     print((out.stdout.strip().splitlines() or [""])[-1], out.stderr[-500:])

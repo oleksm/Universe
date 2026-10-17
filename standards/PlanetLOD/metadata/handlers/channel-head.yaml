@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/planet-handler.schema.yaml
+identity:
+  key: planet-handler.channel-head
+  name: Channel head
+  about: The mesher's channel head law.
+law: a channel starts where A >= A_c
+params:
+- name: A_c
+  value: 500000.0
+  unit: m2
+  said_as:
+    unit: km2
+    factor: 1000000.0
+  note: 'by climate and rock: to come'
+applies_when: everywhere
+where: tools/anchored_mesh.py
+levels:
+- planet-level.square
+basis:
+- of:
+  - identity
+  tier: derived
+  note: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+- of:
+  - params
+  tier: derived
+  note: planet-trees-pgs2 tools/anchored_mesh.py KS and THRESH_DEG; the rest sim-architecture.md 3.5.
+status: draft

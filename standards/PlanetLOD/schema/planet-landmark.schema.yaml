@@ -1,0 +1,27 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Planet landmark type
+x-kind: [planet-landmark]
+description: "standards/PlanetLOD/metadata/landmarks/<name>.yaml: a kind of landmark record the sim writes, anchored to a crust particle: when it is made, how it ages (active, former, worn), and the anchors it expands into one level down."
+type: object
+additionalProperties: false
+required: [identity, made_when]
+allOf:
+  - { $ref: "../../common.schema.yaml#/definitions/planet_context" }
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name, about]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      about: { type: string, description: "What it is, in a sentence or two: the word's meaning." }
+  made_when: { type: string, description: "What makes one, in words." }
+  threshold: { type: array, items: { $ref: "planet-layer.schema.yaml#/definitions/condition" }, description: "The figures that make one (a river of at least 1,000 m3/s at the sea)." }
+  active: { type: number, x-unit: s, description: "Active while its event goes on and this long after its last; the sim's default is 5 Myr." }
+  worn: { type: number, x-unit: s, description: "Former until this long after its last, then worn: kept in the history, not drawn." }
+  ages_said: { $ref: "../../common.schema.yaml#/definitions/said_as" }
+  records: { type: array, items: { type: string }, description: "What each record of it carries beyond position, type, born, size, event, causes." }
+  expands_into: { type: array, items: { type: string }, description: "Its anchor children one level down, in words, until those are records of their own." }
+  status: { enum: [draft, published, retired], description: "draft: the sim builds against the word, not yet the figures" }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

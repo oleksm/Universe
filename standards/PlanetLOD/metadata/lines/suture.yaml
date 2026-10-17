@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=../../schema/planet-line.schema.yaml
+identity:
+  key: planet-line.suture
+  name: Suture
+  about: Where two continents met and welded.
+born_from: first contact of two continents
+ends: no new points for 30 Myr
+ends_idle: 946728000000000.0
+ends_idle_said:
+  unit: Myr
+  factor: 31557600000000.0
+sides: 1
+first_level: planet-level.planet
+rules:
+- 'extension-only reach: takes later points only near its own'
+- overthrust lines are cut at the suture
+- 'a line lies on one plate: cut where its vertices ride different plates'
+- crossings are cut; every fate (split, ended, sunk, reindexed) is logged
+constants:
+- CLOSE_MYR
+- REACH
+- LINK
+made_by:
+- collision
+source: suture
+levels:
+- planet-level.planet
+- planet-level.cluster
+- planet-level.pattern
+basis:
+- of:
+  - identity
+  tier: derived
+  note: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+- of:
+  - ends_idle
+  - offset
+  tier: derived
+  note: 'planet-sim-landform stages/zones.py: CLOSE_MYR 30, ARC_FRONT_M 150e3.'
+status: draft

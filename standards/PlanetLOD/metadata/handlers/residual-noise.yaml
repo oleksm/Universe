@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../../schema/planet-handler.schema.yaml
+identity:
+  key: planet-handler.residual-noise
+  name: Residual noise
+  about: The mesher's residual noise law.
+law: multifractal noise along the grain, a few % of local relief
+applies_when: everywhere, seeded by provenance
+where: tools/anchored_mesh.py
+levels:
+- planet-level.detail
+basis:
+- of:
+  - identity
+  tier: derived
+  note: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+- of:
+  - params
+  tier: derived
+  note: planet-trees-pgs2 tools/anchored_mesh.py KS and THRESH_DEG; the rest sim-architecture.md 3.5.
+status: draft

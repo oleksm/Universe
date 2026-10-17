@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schema/planet-line.schema.yaml
+identity:
+  key: planet-line.rift-margin
+  name: Rift margin
+  about: Where a plate broke apart, one each side.
+born_from: a plate breaking
+ends: no new points for 30 Myr
+ends_idle: 946728000000000.0
+sides: 2
+first_level: planet-level.planet
+constants:
+- CLOSE_MYR
+made_by:
+- rift
+source: rift
+levels:
+- planet-level.planet
+- planet-level.cluster
+- planet-level.pattern
+rules:
+- 'a line lies on one plate: cut where its vertices ride different plates'
+- crossings are cut; every fate (split, ended, sunk, reindexed) is logged
+basis:
+- of:
+  - identity
+  tier: derived
+  note: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+- of:
+  - ends_idle
+  - offset
+  tier: derived
+  note: 'planet-sim-landform stages/zones.py: CLOSE_MYR 30, ARC_FRONT_M 150e3.'
+status: draft

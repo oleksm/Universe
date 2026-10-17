@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/planet-level.schema.yaml
+identity:
+  key: planet-level.planet
+  name: Planet
+  about: 'The planet level: a view about 40,000 km across.'
+span: 40000000.0
+spacing:
+- 130000.0
+- 130000.0
+exists:
+- plates
+- continents
+- climate belts
+- layers as classes per sample
+levels:
+- planet-level.planet
+basis:
+- of:
+  - identity
+  tier: derived
+  note: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+- of:
+  - span
+  - spacing
+  - segment_n
+  tier: derived
+  note: 'sim-architecture.md 2: SEG_N 20, n 200 and 2000 for the finer segments.'
+status: draft
