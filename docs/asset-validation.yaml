@@ -7924,3 +7924,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "load acceptance (blender: static only)"
+  - key: unit.degassing-stand
+    version: 2
+    manifest_sha256: "b4214bdb705c810d2e06cdbf2a2f2a111e68324e35656d98bf0cb14a35599443"
+    installed: afc210cf
+    game: "the loader (world::assets) at fso afc210cf"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/degassing-stand/v2 (139560 bytes, bounds [-3.3, 0.0, -1.82] to [1.85, 8.0, 4.1]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "the ladle's argon coupling at the stand, and the arm's swing (blender: static only)"
