@@ -337,17 +337,19 @@ def jacketed_duct(dn, heat, temp=1873.0):
     do = dn + 2 * t + 2 * gap + 2 * to
     span = _span(do, dn, per_m * G)
     R = 1.0 * dn
+    stub = dn_for(math.sqrt(4 * heat / (4186 * 10) / 1000 / 2.5 / math.pi))     # (the jacket's water pipes' bore, at 2.5 m/s)
     _recs[key] = {"identity": {"key": key, "name": f"Water-jacketed duct DN {dn * 1000:.0f}", "description": f"A {dn * 1000:.0f} mm duct for a furnace's hot gas at about 1 bar, its steel kept cool by water in a {gap * 1000:.0f} mm jacket round it; the jacket's water comes and goes by pipes ending on it. Its bends are mitred, one bore in radius."},
                   "kind": "jacketed-duct", "size": dn, "bore": dn, "outside": [r(do, 3), r(do, 3)], "rating": {"pressure": 1.0e5, "temperature": temp},
                   "per_m": {"mass": r(per_m), "built_of": built},
                   "jacket": {"heat": r(heat), "rise": 10.0},
+                  "jacket_stub": {"bore": stub, "mass": r(math.pi * (stub + 0.01) * 0.01 * 0.4 * RHO[A36] + math.pi / 4 * ((stub + 0.2) ** 2 - stub ** 2) * 0.012 * RHO[A36])},
+                  "jacket_end": {"mass": r(math.pi / 4 * ((dn + 2 * t + 2 * gap) ** 2 - (dn + 2 * t) ** 2) * 0.012 * RHO[A36])},
                   "elbow": {"radius": r(R, 3), "mass": r(per_m * math.pi / 2 * R * 1.1)},
-                  "tee": {"mass": r(per_m * 0.5)},
                   "support": {"spacing": r(span), "mass": r(30 + 80 * do), "per_m_height": r(4 * (0.1 + 0.1 * do) * 0.006 * RHO[A36]), "item": A36},
                   "cap": cap(dn, 1.0e5, A36, flange(dn, 1, temp=523.0)),
                   "connector": flange(dn, 1, temp=523.0), "carries": "gas",
                   "basis": [{"of": ["per_m"], "tier": "derived", "review": True, "note": "Shells and water from their dimensions; the plate and gap from memory of furnace off-gas ducts."},
-                            {"of": ["support", "elbow", "jacket"], "tier": "derived", "review": True, "note": f"Spacing from the span it bears full at 1 g, {span:.1f} m; mitred bends a tenth heavier than their arc; the jacket's water 10 K warmer out than in. Stands from memory."}]}
+                            {"of": ["support", "elbow", "jacket", "jacket_stub", "jacket_end"], "tier": "derived", "review": True, "note": f"Spacing from the span it bears full at 1 g, {span:.1f} m; mitred bends a tenth heavier than their arc; the jacket's water 10 K warmer out than in. A jacket stub is a 10 mm nozzle 0.4 m long through the outer shell, its bore the water pipe's, on a 12 mm pad 0.1 m wider; a jacket end the 12 mm annular plate closing the water gap where the duct meets a flange or hood. Stands from memory."}]}
     return key
 
 
@@ -566,6 +568,7 @@ def lay(run_key, pts, count=1, tees=0, taps=(), port_ends=0, caps=0):
     conn = _recs[rec["connector"]]["physical"]["mass"]
     m = count * (rec["per_m"]["mass"] * L + m_elb + port_ends * conn + caps * rec.get("cap", {}).get("mass", conn / 2))
     m += (tees + len(taps)) * rec.get("tee", {}).get("mass", 0.0) * count
+    m += (port_ends + caps) * rec.get("jacket_end", {}).get("mass", 0.0) * count
     m += sum(_recs[c]["physical"]["mass"] for c in taps) * count
     m += m_sup + count * sum(t["mass"] for t in rec.get("terminals", {}).values())
     fit = {"elbows": n_elb, "tees": tees + len(taps), "supports": n_sup, "connectors": port_ends + caps + len(taps)}

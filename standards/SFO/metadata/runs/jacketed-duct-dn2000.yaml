@@ -13,8 +13,9 @@ per_m:
   - {what: Outer shell, item: material.structural-steel-a36, mass: 329.4, note: '6 mm, round a 100 mm water gap'}
   - {what: Jacket water, item: good.water, mass: 666.0, note: 'in the gap, flowing'}
 jacket: {heat: 7200000.0, rise: 10.0}
+jacket_stub: {bore: 0.3, mass: 42.4}
+jacket_end: {mass: 62.7}
 elbow: {radius: 2.0, mass: 5152.9}
-tee: {mass: 745.5}
 support: {spacing: 12.0, mass: 208.6, per_m_height: 60.9, item: material.structural-steel-a36}
 cap: {thickness: 0.024, mass: 591.9}
 connector: connector.flange-dn2000-pn1
@@ -24,7 +25,7 @@ basis:
   tier: derived
   review: true
   note: Shells and water from their dimensions; the plate and gap from memory of furnace off-gas ducts.
-- of: [support, elbow, jacket]
+- of: [support, elbow, jacket, jacket_stub, jacket_end]
   tier: derived
   review: true
-  note: Spacing from the span it bears full at 1 g, 12.0 m; mitred bends a tenth heavier than their arc; the jacket's water 10 K warmer out than in. Stands from memory.
+  note: Spacing from the span it bears full at 1 g, 12.0 m; mitred bends a tenth heavier than their arc; the jacket's water 10 K warmer out than in. A jacket stub is a 10 mm nozzle 0.4 m long through the outer shell, its bore the water pipe's, on a 12 mm pad 0.1 m wider; a jacket end the 12 mm annular plate closing the water gap where the duct meets a flange or hood. Stands from memory.
