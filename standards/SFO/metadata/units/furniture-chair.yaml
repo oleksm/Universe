@@ -3,7 +3,7 @@
 identity:
   key: unit.furniture-chair
   name: Chair
-  description: A stacking chair.
+  description: A plain chair with a seat and back.
 size_class: 1
 physical:
   length: 0.45

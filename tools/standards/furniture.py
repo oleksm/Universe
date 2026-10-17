@@ -16,7 +16,7 @@ BLENDER = "blender's model (2026-10-17)"
 
 FURNITURE = {  # name: (title, description, (length, width, height), [(what, item, kg)], source)
     "table": ("Table", "A table for four, 1.1 m square.", (1.1, 1.1, 0.75), [("Frame", AL, 9.9), ("Top", PE, 22.7)], "blender's dining set: four tables 39.7 kg of aluminium, 20 mm tops"),
-    "chair": ("Chair", "A stacking chair.", (0.45, 0.5, 0.85), [("Frame", AL, 2.6), ("Seat and back", PE, 3.5)], "blender's dining set: sixteen chairs 41.2 kg of aluminium, 10 mm seats"),
+    "chair": ("Chair", "A plain chair with a seat and back.", (0.45, 0.5, 0.85), [("Frame", AL, 2.6), ("Seat and back", PE, 3.5)], "blender's dining set: sixteen chairs 41.2 kg of aluminium, 10 mm seats"),
     "desk": ("Desk", "A desk 1.6 m by 0.8 m.", (1.6, 0.8, 0.75), [("Frame", STEEL, 22.0), ("Top", PE, 13.0)], None),
     "office-chair": ("Office chair", "A swivel chair on castors.", (0.65, 0.65, 1.0), [("Base and frame", STEEL, 9.0), ("Seat and back", PE, 6.0)], None),
     "pupil-desk": ("Pupil desk", "A single pupil's desk.", (0.7, 0.5, 0.75), [("Frame", STEEL, 9.0), ("Top", PE, 4.5)], "of the order of blender's classroom: 300 kg of steel for sixteen sets and the teacher's"),
