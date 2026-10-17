@@ -50,8 +50,8 @@ basis:
   tier: sourced
 pinned_to: 'its mouth: where it reaches the sea, a lake, or the river it joins (a tributary hangs from that river)'
 spans:
-- meaning: 'the channel from source to mouth, in cm east/north/up of the pin; profiles along it: discharge (m3/s), width (m), depth (m), gradient (1)'
-  name: centreline
+- name: centreline
+  meaning: 'the channel from source to mouth (the last vertex is the pin), in cm east/north/up of the pin; profiles along it: discharge (m3/s), width (m), depth (m), gradient (1)'
 dimensions:
 - formula: a * Q^b
   meaning: bankfull width at each centreline vertex (a profile) and at the mouth

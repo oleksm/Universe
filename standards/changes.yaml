@@ -1847,7 +1847,7 @@
 - { record: planet-feature.transverse-dunes, at: "2026-10-17T18:20:32Z", status: "", summary: "first tracked", sha: "80c5f817ed49c06a" }
 - { record: planet-feature.triangular-facet, at: "2026-10-17T18:20:32Z", status: "", summary: "first tracked", sha: "8dc4c7e17bd52fb7" }
 - { record: planet-feature.tributary-network, at: "2026-10-17T18:20:32Z", status: "", summary: "changed: identity, level, properties, generator, levels, basis, metadata, metadata_from", sha: "5d7aefbae97673c7" }
-- { record: planet-feature.trunk-river, at: "2026-10-17T20:14:23Z", status: "", summary: "changed: basis, pinned_to, spans, dimensions, layout, parent_kinds", sha: "55926d744e107c99" }
+- { record: planet-feature.trunk-river, at: "2026-10-17T20:33:25Z", status: "", summary: "changed: spans", sha: "6ad11bc919841b61" }
 - { record: planet-feature.tuff-ring, at: "2026-10-17T18:20:32Z", status: "", summary: "first tracked", sha: "0ff7fa1fab1d8cd8" }
 - { record: planet-feature.v-valley, at: "2026-10-17T18:20:32Z", status: "", summary: "first tracked", sha: "246206ad84d72c27" }
 - { record: planet-feature.volcanic-arc-chain, at: "2026-10-17T18:20:32Z", status: "", summary: "changed: identity, geometry, properties, generator, overrides, basis, metadata, metadata_from, sim_kinds, landmark", sha: "e549a3ca30a80a39" }
@@ -2288,7 +2288,7 @@
 - { record: planet-process.relief-volcanic-arc-chain, at: "2026-10-17T19:32:13Z", status: "", summary: "changed: writes", sha: "d1a19b34bdec5401" }
 - { record: planet-process.resolution-refine, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "7d557b8cd452214c" }
 - { record: planet-process.river-discharge, at: "2026-10-17T19:32:13Z", status: "", summary: "changed: reads", sha: "2d046f7cd74cdba0" }
-- { record: planet-process.river-features, at: "2026-10-17T20:14:23Z", status: "", summary: "first tracked", sha: "bababcb7d9d16a66" }
+- { record: planet-process.river-features, at: "2026-10-17T20:33:25Z", status: "", summary: "changed: invariants", sha: "4f71f91401ec179f" }
 - { record: planet-process.river-memory, at: "2026-10-17T19:32:13Z", status: "", summary: "changed: reads", sha: "35e2b366defcf0d8" }
 - { record: planet-process.rock-unit-stack, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "fb6bd1b25ecc9110" }
 - { record: planet-process.run-ledger-and-snapshots, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "b7bbaf279b1afd75" }
