@@ -2019,7 +2019,7 @@
 - { record: planet-measure.to-sea-pct, at: "2026-10-17T19:32:13Z", status: "", summary: "first tracked", sha: "1759c6291fbd63ea" }
 - { record: planet-measure.valley-spacing, at: "2026-10-17T15:33:29Z", status: "", summary: "first tracked", sha: "d4dde745cde03b3f" }
 - { record: planet-model.anchor, at: "2026-10-17T17:32:25Z", status: "", summary: "changed", sha: "c9adae30021bdde6" }
-- { record: planet-model.relief, at: "2026-10-17T20:14:23Z", status: "", summary: "changed: record_fields", sha: "4dd58b4b4914cb2b" }
+- { record: planet-model.relief, at: "2026-10-17T20:46:02Z", status: "", summary: "changed: record_fields", sha: "4a6f26409335b7b6" }
 - { record: planet-pattern.aeolian.dune.barchan, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "4fed3f7652690758" }
 - { record: planet-pattern.aeolian.dune.carbonate-eolianite, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "57787d270a7efd13" }
 - { record: planet-pattern.aeolian.dune.coastal-foredune, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "11531b3670b62a25" }

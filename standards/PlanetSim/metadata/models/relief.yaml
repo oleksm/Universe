@@ -597,10 +597,11 @@ record_fields:
   unit: cm
 - meaning: east, north, up at the pin, worked out from the pin alone (never stored)
   name: frame
-- meaning: 'the kind''s named polylines, each vertex an integer-cm offset (east, north, up) from the pin: exact and reversible; up carries the planet''s curvature'
+- meaning: 'the kind''s named paths, each a chain of pins (owner, 17 Oct 2026): a pin (integer cm) at every sample location the feature passes, each with the path on to the next pin as curve handles leaving and arriving (inn, out) and
+    finer points (via) when known, integer-cm offsets in that pin''s own frame; features through the same location share the pin (a tributary ends on its parent''s pin); a feature smaller than a sample is one pin with via points'
   name: spans
   unit: cm
-- meaning: 'values along a span, one per vertex, SI (named <span>.<what>: centreline.width)'
+- meaning: 'values along a span, one per chain pin, SI (named <span>.<what>: centreline.width)'
   name: profiles
 - meaning: the kind's dimensions with their values for this instance, SI, each set by the law on the kind
   name: dimensions
