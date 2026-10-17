@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/run.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: run.jacketed-duct-dn2000, name: Water-jacketed duct DN 2000, description: 'A 2000 mm duct for a furnace''s hot gas at about 1 bar, its steel kept cool by water in a 100 mm jacket round it; the jacket''s water comes and goes by pipes ending on it. Its bends are mitred, one bore in radius.'}
+kind: jacketed-duct
+size: 2.0
+bore: 2.0
+outside: [2.232, 2.232]
+rating: {pressure: 100000.0, temperature: 1873.0}
+per_m:
+  mass: 1491.1
+  built_of:
+  - {what: Inner shell, item: material.structural-steel-a36, mass: 495.7, note: '2000 mm bore, 10 mm plate, the hot face'}
+  - {what: Outer shell, item: material.structural-steel-a36, mass: 329.4, note: '6 mm, round a 100 mm water gap'}
+  - {what: Jacket water, item: good.water, mass: 666.0, note: 'in the gap, flowing'}
+jacket: {heat: 7200000.0, rise: 10.0}
+elbow: {radius: 2.0, mass: 5152.9}
+tee: {mass: 745.5}
+support: {spacing: 12.0, mass: 208.6, per_m_height: 60.9, item: material.structural-steel-a36}
+cap: {thickness: 0.024, mass: 591.9}
+connector: connector.flange-dn2000-pn1
+carries: gas
+basis:
+- of: [per_m]
+  tier: derived
+  review: true
+  note: Shells and water from their dimensions; the plate and gap from memory of furnace off-gas ducts.
+- of: [support, elbow, jacket]
+  tier: derived
+  review: true
+  note: Spacing from the span it bears full at 1 g, 12.0 m; mitred bends a tenth heavier than their arc; the jacket's water 10 K warmer out than in. Stands from memory.

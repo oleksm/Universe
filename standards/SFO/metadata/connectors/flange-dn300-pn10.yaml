@@ -3,7 +3,7 @@
 identity: {key: connector.flange-dn300-pn10, name: Flange DN 300 PN 10, description: 'A bolted pair of weld-neck flanges for a pipe of 300 mm nominal bore at up to 10 bar inside (on airless ground, the whole of it against vacuum).'}
 kind: flange
 size: 0.3
-rating: {pressure: 1000000.0, temperature: 345.0}
+rating: {pressure: 1000000.0, temperature: 373.0}
 sealing: single
 physical: {length: 0.466, width: 0.466, height: 0.11, mass: 37.8}
 built_of:

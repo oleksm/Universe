@@ -207,3 +207,33 @@ The owner noticed the kit took most of a day: 129 of the 162 models installed on
 2. **Batches.** Install a family's new sizes together. Send one QC report and one message per batch, listing the keys and their install commits. The registry records the batch's loader validation as one entry per key, in one run and one commit (`validate_model.py <key> <key>...`).
 3. **Shared looks.** A kit record whose kind, outside size and material match another's carries `looks_as: <that record's key>`. It is drawn with that model and wants none of its own (next_asset skips it). Mass, rating and connector stay its own. Today every kit record has its own model, so none carries `looks_as` yet; new sizes will, where they match.
 4. **Existing models stay.** Nothing is rebuilt. Bring the old pieces under the generators only when a family next changes.
+
+## 9. The arc furnace shop for air (2026-10-16)
+
+`layout.arc-furnace-air` is now laid of runs: 15 runs, 6 layout ports, 0 faults. Its furnace's off-gas is not a flanged joint. A fixed, water-cooled catch hood stands 0.15 m over the tilting furnace's elbow, and the gap draws in the air that burns the CO. The duct after it is water-jacketed, its water brought by pipes that end on the jacket. SFO 25 gains:
+- the run kind `jacketed-duct`;
+- the connector kind `hood`;
+- layout ends `jacket:<run>`.
+
+**Kit, one batch per family** (section 8):
+- New family `jacketed-duct`: `run.jacketed-duct-dn2000`. A 2 m inner shell (10 mm), a 100 mm water gap and a 6 mm outer shell, 2.232 m outside, mitred bends one bore in radius. Pipes end on its jacket's underside: draw a stub per `jacket:` end where the layout puts it, as tees are.
+- New family `hood`: `connector.hood-dn2000`. A double-walled, water-cooled ring 2.4 m across and 0.5 m deep, its mouth 0.15 m over the port it serves (never touching it).
+- Flange family: `connector.flange-dn2000-pn1`.
+- Nothing else: the 6.6 kV 50 mm2 cable and its termination carry `looks_as` (the 400 V 120 mm2 pieces).
+
+**Unit versions** (plain stubs at the ports; the records say where):
+1. `eaf-vessel-80t` v4: the sealed furnace's port changes, without its lock and bellows:
+   - the deck manifold's DN 400 barrels at (-4.2, 4.95, 0.5) in and (-3.4, 4.95, 0.5) out;
+   - the bus joint at (0, -6.2, 2.3);
+   - the elbow's mouth at (2, 1.5, 8.5) facing up;
+   - the fifth hole's mouth at (0, 1.8, 8.3).
+   - Measure its envelope: the registry lends it the sealed furnace's boxes until then.
+2. `cooling-tower` v2:
+   - flanges on its east end (x 12, z 0.75) facing +x: the hall loop DN 400 out at y -0.6 and in at 0.6, the duct jacket's DN 300 out at 3.9 and in at 5.1;
+   - make-up water DN 100 at (-12, 0, 0.75) and a 400 V box at (-12, -3, 1), facing -x.
+   - Measure its envelope.
+3. `baghouse-800k` v2:
+   - a DN 2000 inlet flange at (0, -6, 15), facing -y;
+   - a 6.6 kV box at (12, 3, 1), facing +x.
+   - Measure its envelope.
+4. `hall-crane-20t`: its envelope only.

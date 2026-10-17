@@ -140,6 +140,27 @@ def chute(dn, item=SS):
     return key
 
 
+def hood(dn):
+    """A catch hood: a fixed water-cooled ring over a moving outlet (a tilting furnace's elbow), not touching it: the
+    gap draws in air, which burns the outlet's CO, and lets the outlet move. No pressure across it."""
+    key = f"connector.hood-dn{_tag(dn)}"
+    if key in _recs:
+        return key
+    D, h, t = dn + 0.4, 0.5, 0.010
+    ring = math.pi * D * h * t * RHO[A36] * 2 + math.pi / 4 * (D ** 2 - dn ** 2) * t * RHO[A36]
+    water = math.pi * D * h * 0.05 * 1000.0
+    built = [_part("Hood ring", A36, ring, f"a double-walled ring {D:.2f} m across and {h:g} m deep, 10 mm, its water jacket 50 mm, and its top plate"),
+             _part("Jacket water", "good.water", water, "in the ring's jacket, fed with the duct's")]
+    _recs[key] = {"identity": {"key": key, "name": f"Catch hood DN {dn * 1000:.0f}", "description": f"The fixed, water-cooled mouth of a {dn * 1000:.0f} mm duct over a moving outlet, {GAP_HOOD:g} m clear of it: air drawn in through the gap burns the gas's CO, and the outlet (a tilting furnace's elbow) moves free. The port it serves is the outlet's mouth; the duct's end stands {GAP_HOOD:g} m above it."},
+                  "kind": "hood", "size": dn, "rating": {"pressure": 0.0, "temperature": 1873.0}, "sealing": "single",
+                  "physical": {"length": r(D, 3), "width": r(D, 3), "height": h, "mass": r(sum(b["mass"] for b in built))}, "built_of": built,
+                  "basis": [{"of": ["built_of", "physical"], "tier": "invented", "review": True, "note": "Sizes from memory of arc furnace off-gas hoods; the gap from memory, adjustable on real plant."}]}
+    return key
+
+
+GAP_HOOD = 0.15                  # m between a moving outlet's mouth and the fixed hood over it (from memory of arc furnace ducts)
+
+
 FLANGE_MEASURED = {"connector.flange-dn3000-pn1-double": (333.18, "two weld-neck rings 3.196 m across, 20 mm thick, their necks tapering over 20 mm from 16 mm to the gallery's 4 mm wall at 3 m outside, 2.992 m clear; measured on blender's model v1")}
 SEALED_TRANSFER_MEASURED = {0.8: (806.35, 59.02), 1.0: (948.71, 70.05)}     # kg of steel and liner, the sealed transfers measured
 TRANSFER_MEASURED = {1.2: (1652.31, 146.40), 1.0: (1395.23, 123.10), 0.8: (1176.03, 103.72), 0.65: (959.32, 84.67)}     # kg of plate and liner, by belt width (blender's models)
@@ -296,6 +317,38 @@ def lined_duct(dn, pn, lining=0.2, temp=1173.0, sealing="single"):
 
 
 BELT_HEIGHT_MEASURED = {0.65: 0.91}     # m: an open belt's full height about its axis, the rigid return roll under it included (0.454 below, 0.426 above), measured on blender's 650 kit (2026-10-16)
+
+
+def jacketed_duct(dn, heat, temp=1873.0):
+    """A water-jacketed steel duct for hot gas at about 1 bar: an inner shell, a 100 mm water gap and an outer shell.
+    Its jacket's water comes by pipes ending on it (`jacket:` ends) and carries `heat` away."""
+    key = f"run.jacketed-duct-dn{_tag(dn)}"
+    if key in _recs:
+        _recs[key]["jacket"]["heat"] = max(_recs[key]["jacket"]["heat"], r(heat))
+        return key
+    t, gap, to = 0.010, 0.10, 0.006
+    inner = math.pi * (dn + t) * t * RHO[A36]
+    outer = math.pi * (dn + 2 * t + 2 * gap + to) * to * RHO[A36]
+    water = math.pi / 4 * ((dn + 2 * t + 2 * gap) ** 2 - (dn + 2 * t) ** 2) * 1000.0
+    built = [_part("Inner shell", A36, inner, f"{dn * 1000:.0f} mm bore, {t * 1000:.0f} mm plate, the hot face"),
+             _part("Outer shell", A36, outer, f"{to * 1000:.0f} mm, round a {gap * 1000:.0f} mm water gap"),
+             _part("Jacket water", "good.water", water, "in the gap, flowing")]
+    per_m = sum(b["mass"] for b in built)
+    do = dn + 2 * t + 2 * gap + 2 * to
+    span = _span(do, dn, per_m * G)
+    R = 1.0 * dn
+    _recs[key] = {"identity": {"key": key, "name": f"Water-jacketed duct DN {dn * 1000:.0f}", "description": f"A {dn * 1000:.0f} mm duct for a furnace's hot gas at about 1 bar, its steel kept cool by water in a {gap * 1000:.0f} mm jacket round it; the jacket's water comes and goes by pipes ending on it. Its bends are mitred, one bore in radius."},
+                  "kind": "jacketed-duct", "size": dn, "bore": dn, "outside": [r(do, 3), r(do, 3)], "rating": {"pressure": 1.0e5, "temperature": temp},
+                  "per_m": {"mass": r(per_m), "built_of": built},
+                  "jacket": {"heat": r(heat), "rise": 10.0},
+                  "elbow": {"radius": r(R, 3), "mass": r(per_m * math.pi / 2 * R * 1.1)},
+                  "tee": {"mass": r(per_m * 0.5)},
+                  "support": {"spacing": r(span), "mass": r(30 + 80 * do), "per_m_height": r(4 * (0.1 + 0.1 * do) * 0.006 * RHO[A36]), "item": A36},
+                  "cap": cap(dn, 1.0e5, A36, flange(dn, 1, temp=523.0)),
+                  "connector": flange(dn, 1, temp=523.0), "carries": "gas",
+                  "basis": [{"of": ["per_m"], "tier": "derived", "review": True, "note": "Shells and water from their dimensions; the plate and gap from memory of furnace off-gas ducts."},
+                            {"of": ["support", "elbow", "jacket"], "tier": "derived", "review": True, "note": f"Spacing from the span it bears full at 1 g, {span:.1f} m; mitred bends a tenth heavier than their arc; the jacket's water 10 K warmer out than in. Stands from memory."}]}
+    return key
 
 
 def belt(width, rate, sealed=False):

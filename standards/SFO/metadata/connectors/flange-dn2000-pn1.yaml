@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: connector.flange-dn2000-pn1, name: Flange DN 2000 PN 1, description: 'A bolted pair of weld-neck flanges for a pipe of 2000 mm nominal bore at up to 1 bar inside (on airless ground, the whole of it against vacuum).'}
+kind: flange
+size: 2.0
+rating: {pressure: 100000.0, temperature: 523.0}
+sealing: single
+physical: {length: 2.166, width: 2.166, height: 0.11, mass: 254.2}
+built_of:
+- {what: Flanges, item: material.structural-steel-a36, mass: 238.4, note: 'two weld-neck rings 2.166 m across, 20 mm thick, their necks tapering over 20 mm from 54 mm to the pipe''s wall; along the pipe the joint is 110 mm with the necks and the bolts'' and nuts'' ends'}
+- {what: Bolts and nuts, item: material.high-strength-steel-4340, mass: 11.0, note: '60 of M16, 78 mm, on a 2.118 m circle'}
+- {what: Gasket, item: material.stainless-steel-304, mass: 4.8, note: 'spiral wound, stainless windings'}
+basis:
+- of: [built_of, physical]
+  tier: derived
+  review: true
+  note: 'Sized by a simple rule, not to a flange code: the end force on the gasket''s mean circle (2.05 m) at the class''s pressure, bolts at 170 MPa, the ring''s thickness from its bending about the bolt circle at 140 MPa.'

@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.baghouse-800k, name: 'Off-gas baghouse, 800,000 m3/h', description: 'Cleans the furnace''s fume before it goes to the air: filter bags in a closed 18 x 8 m steel casing over six hoppers, the dust shaken down and let out through sealed valves; two fans with their stacks in the 6 m strip at one end draw the gas through. The gas comes in at the top of one long side (local 0, -6, 15) from the layout''s water-cooled duct and burn-out gap.'}
+identity: {key: unit.baghouse-800k, name: 'Off-gas baghouse, 800,000 m3/h', description: 'Cleans the furnace''s fume before it goes to the air: filter bags in a closed 18 x 8 m steel casing over six hoppers, the dust shaken down and let out through sealed valves; two fans with their stacks in the 6 m strip at one end draw the gas through. The gas comes in at the top of one long side through a DN 2000 flange at (0, -6, 15), facing -y, from the layout''s water-cooled duct; the fans'' 6.6 kV box at (12, 3, 1), facing +x; the hoppers'' closed dust bins come out on the +y side.'}
 size_class: 3
 fits: plant-mount.bay-s3
 physical: {length: 24.0, width: 12.0, height: 18.0, mass: 197900.0}
@@ -11,6 +11,23 @@ built_of:
 - {what: Fans and motors, item: good.electric-motors, mass: 16000.0, note: 'two induced-draught fans, from memory'}
 holds: 5760.0
 needs: {power: 1185000.0}
+ports:
+- id: gas-in
+  flow: in
+  medium: gas
+  connector: connector.flange-dn2000-pn1
+  at: [0.0, -6.0, 15.0]
+  facing: [0.0, -1.0, 0.0]
+  note: the furnace's gas burnt in the air drawn in at the hood, and diluted
+- id: power-in
+  flow: in
+  medium: power
+  power: 1185000.0
+  voltage: 6600
+  connector: connector.termination-6p6kv-50mm2
+  at: [12.0, 3.0, 1.0]
+  facing: [1.0, 0.0, 0.0]
+  note: the two fans
 life: 788940000
 visual: {format: freefall-model/1, path: models/baghouse-800k/v2, manifest_sha256: fb223ba9c9cb718e522451aeec890f43ae3a2cd898c69b1f745aefaf348e3c8d, version: 2, triangles: 8136}
 basis:

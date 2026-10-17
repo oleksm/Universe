@@ -21,6 +21,7 @@ STEP = 0.25        # m between the points a run is sampled at
 GAP = 0.05         # m kept clear between runs
 HEADROOM = 4.5     # m a run keeps clear over a road (a forklift's mast, a truck: from memory)
 CULVERT = 0.3      # m of cover a run under a road keeps between its top and the road's surface
+HOOD_GAP = 0.15    # m: a duct's catch hood over a moving outlet (plant_kit.GAP_HOOD)
 TOUCH = 0.03       # m: a run touching a unit's box closer than this is seated on it, not through it (a gallery's foil on a deck)
 DROP = 0.5         # m a belt's head stands over the belt it drops onto (plant_kit.TRANSFER_DROP)
 
@@ -47,6 +48,8 @@ def turn_vec(bay, v):
 def end_offset(conn_kind, run, which):
     if conn_kind == "belt-transfer" and which == 1:
         return np.array([0.0, 0.0, 3.0])
+    if conn_kind == "hood":
+        return np.array([0.0, 0.0, HOOD_GAP])
     if conn_kind == "chute":
         return np.array([0.0, 0.0, -run["outside"][1] / 2 if which == 0 else run["outside"][1] / 2])
     return np.zeros(3)
@@ -139,6 +142,18 @@ def check(lay, units, runs, conns):
                 if runs[main["run"]]["carries"] != run["carries"]:
                     faults.append(f"{l['name']}: carries {run['carries']}, tees off {main['name']} which carries {runs[main['run']]['carries']}")
                 continue
+            if e.startswith("jacket:"):               # (a pipe ending on a jacketed duct's water jacket)
+                main = by_name.get(e[7:])
+                if not main or runs.get(main.get("run"), {}).get("kind") != "jacketed-duct":
+                    faults.append(f"{l['name']}: ends on {e[7:]}'s jacket, which is not a jacketed duct here")
+                    continue
+                if run["kind"] != "pipe":
+                    faults.append(f"{l['name']}: only a pipe ends on a duct's jacket")
+                mp = path_of(main)
+                d = min(seg_dist(at[None], a, b)[0] for a, b in zip(mp, mp[1:]))
+                if d > 0.02:
+                    faults.append(f"{l['name']}: its end at {at.tolist()} is {d:.2f} m off {main['name']}")
+                continue
             if e.startswith("onto:"):                 # (a belt's head over another belt, TRANSFER_DROP above its path)
                 main = by_name.get(e[5:])
                 if not main:
@@ -168,7 +183,7 @@ def check(lay, units, runs, conns):
             pos = pos + end_offset(ck, run, 1 if l.get("reversible") else which)
             if np.linalg.norm(pos - at) > 0.02:
                 faults.append(f"{l['name']}: its {'from' if which == 0 else 'to'} end {at.tolist()} is not at {e} ({pos.round(3).tolist()})")
-            if p["connector"] != run["connector"] and not (run["kind"] == "belt" and ck == "chute"):     # (a chute drops onto a belt's tail, into its skirt; a belt's head drops through its hood into a chute's mouth)
+            if p["connector"] != run["connector"] and not (run["kind"] == "belt" and ck == "chute") and not (run["kind"] == "jacketed-duct" and ck == "hood"):     # (a chute drops onto a belt's tail, into its skirt; a belt's head drops through its hood into a chute's mouth)
                 faults.append(f"{l['name']}: {run['connector']} at its end, {e} is built to {p['connector']}")
             want = "in" if l.get("reversible") else ("out" if which == 0 else "in")
             if flow not in (want, "both"):
@@ -177,7 +192,7 @@ def check(lay, units, runs, conns):
                 faults.append(f"{l['name']}: carries {run['carries']}, {e} is {p['medium']}")
             items.append(p.get("item"))
             dot = float(leave @ face)
-            need = {"flange": 0.7, "lined-flange": 0.7, "chute": -0.35}.get(ck)     # (a belt may rise from under a chute at up to 20 degrees, its loading zone's limit; from memory)
+            need = {"flange": 0.7, "lined-flange": 0.7, "hood": 0.7, "chute": -0.35}.get(ck)     # (a belt may rise from under a chute at up to 20 degrees, its loading zone's limit; from memory)
             if need is not None and dot < need:
                 faults.append(f"{l['name']}: leaves {e} at {math.degrees(math.acos(max(-1, min(1, dot)))):.0f} deg from the way it faces")
         if len(items) == 2 and None not in items and items[0] != items[1]:
@@ -222,7 +237,7 @@ def check(lay, units, runs, conns):
         taps = {t.split(":")[0] for t in l.get("taps", [])}          # (a manifold under the units it taps, by design)
         joined = {}                                                    # the units at its ends: only the stretch at the port is let through
         for which, e in enumerate(l.get("ends", [])):
-            if ":" in e and not e.startswith(("tee:", "edge:")):
+            if ":" in e and not e.startswith(("tee:", "edge:", "jacket:", "onto:")):
                 joined.setdefault(e.split(":")[0], []).append(path_of(l)[0 if which == 0 else -1])
         R_ = runs[l["run"]].get("elbow", {}).get("radius", 0.0)
         pts, rad = S_[l["name"]], radius[l["name"]]
@@ -324,14 +339,14 @@ def check(lay, units, runs, conns):
         la = by_name[na]
         for nb in names[i + 1:]:
             lb = by_name[nb]
-            tees = [(x, y) for x, y in ((la, lb), (lb, la)) if f"tee:{y['name']}" in x.get("ends", []) or f"onto:{y['name']}" in x.get("ends", [])]
+            tees = [(x, y) for x, y in ((la, lb), (lb, la)) if any(f"{k}:{y['name']}" in x.get("ends", []) for k in ("tee", "onto", "jacket"))]
             pb = path_of(lb)
             d = np.full(len(S_[na]), np.inf)
             for a, b in zip(pb, pb[1:]):
                 d = np.minimum(d, seg_dist(S_[na], a, b))
             bad = d < radius[na] + radius[nb] + GAP
             for x, y in tees:
-                tp = path_of(x)[0] if x.get("ends", ["", ""])[0] in (f"tee:{y['name']}", f"onto:{y['name']}") else path_of(x)[-1]
+                tp = path_of(x)[0] if x.get("ends", ["", ""])[0] in (f"tee:{y['name']}", f"onto:{y['name']}", f"jacket:{y['name']}") else path_of(x)[-1]
                 keep = radius[na] + radius[nb] + runs[y["run"]].get("elbow", {}).get("radius", 0.0) + runs[x["run"]].get("elbow", {}).get("radius", 0.0) + (3.0 if f"onto:{y['name']}" in x.get("ends", []) else 0.5)     # (a belt's head reaches into the receiving belt's hood)
                 bad &= np.linalg.norm(S_[na] - tp, axis=1) > keep
             if bad.any():

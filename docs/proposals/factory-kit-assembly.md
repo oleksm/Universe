@@ -157,3 +157,14 @@ Open after the arc furnace shop:
 - **The fume** is mostly argon at 50 kPa, about 0.02 kg/s: a DN 200 line, not the old 0.5 m duct sized from the station for air. It goes to a second, small inlet on the shared filter.
 - **Argon** comes from the site at 10 bar to the stand and the furnace: the recipe's 1 kg a tonne, 0.042 kg/s. It is let go. On a moon that is scarce argon, and a later unit could take it back.
 - **The bus** is the kit's AC busbar, 27 kA a phase. The transformer is fed at 33 kV through a cable box (v2).
+
+## The air line begins: the arc furnace shop for air (2026-10-16)
+
+`layout.arc-furnace-air` is laid of runs: 15 runs, 6 layout ports, 0 faults. It weighs 4,817 t.
+
+- **The off-gas joint is open by design.** The tilting furnace's elbow and the fixed duct don't touch: a water-cooled catch hood stands 0.15 m over the elbow, and the air drawn in through the gap burns the CO. SFO 25 gains the connector kind `hood`, whose run end stands that gap above the port.
+- **The water-cooled duct is a run, not a unit:** the run kind `jacketed-duct`. Its jacket's water pipes end on it by `jacket:<run>` ends, checked like tees.
+- **Frame openings.** The hall gains two service openings, west and low for the hall loop's pipes, and south for the 33 kV cable.
+- **The bin's roof** takes either a closed conveyor's head (the airless shop) or a belt's transfer chute 3 m over it (this one). Both inlets are optional ports.
+- **A dust road** runs along the baghouse's north side.
+- **Shared looks.** The new 6.6 kV cable and termination are drawn with the 400 V 120 mm2 pieces' models (`looks_as`). The batch for blender is three pieces in three families.

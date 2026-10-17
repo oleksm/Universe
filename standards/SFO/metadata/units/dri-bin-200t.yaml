@@ -24,6 +24,17 @@ ports:
   at: [0.0, 0.0, 15.3]
   facing: [0.0, 0.0, 1.0]
   note: a nozzle in its roof's middle, a closed conveyor's head over it
+  optional: true
+- id: dri-in-belt
+  flow: in
+  medium: bulk
+  item: good.sponge-iron
+  rate: 29.33
+  connector: connector.belt-transfer-800
+  at: [0.0, 0.0, 15.3]
+  facing: [0.0, 0.0, 1.0]
+  note: the same nozzle with a belt's transfer chute on it, the belt's head 3 m over the roof
+  optional: true
 - id: dri-out
   flow: out
   medium: bulk

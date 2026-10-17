@@ -5,7 +5,7 @@ kind: pipe
 size: 0.4
 bore: 0.4
 outside: [0.41, 0.41]
-rating: {pressure: 1000000.0, temperature: 330.0}
+rating: {pressure: 1000000.0, temperature: 373.0}
 per_m:
   mass: 49.9
   built_of:

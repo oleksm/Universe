@@ -15,8 +15,8 @@ properties:
       name: { type: string }
       description: { type: string }
   kind:
-    enum: [pipe, lined-duct, belt, drag-conveyor, cable, busbar]
-    description: "pipe: steel or stainless pipe, bare or lagged; lined-duct: a steel shell lined with refractory, for hot gas; belt: an open troughed belt on idlers and a stringer; drag-conveyor: a chain drawing flights through a closed casing, for hot or sealed bulk; cable: power cables on their tray; busbar: a direct current bus of two poles, water-cooled hollow copper on insulators, where a cable would be too many circuits."
+    enum: [pipe, lined-duct, jacketed-duct, belt, drag-conveyor, cable, busbar]
+    description: "pipe: steel or stainless pipe, bare or lagged; lined-duct: a steel shell lined with refractory, for hot gas; jacketed-duct: a steel duct for hot gas inside a water jacket, its water brought by pipes ending on it (`jacket:` ends); belt: an open troughed belt on idlers and a stringer; drag-conveyor: a chain drawing flights through a closed casing, for hot or sealed bulk; cable: power cables on their tray; busbar: a direct current bus of two poles, water-cooled hollow copper on insulators, where a cable would be too many circuits."
   size: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "Nominal bore (pipe: the steel's; lined duct: the steel shell's), belt width or casing width; for a cable, the conductor's cross-section in m2" }
   bore: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "The clear bore the flow has (inside the lining of a lined duct)" }
   outside: { type: array, items: { type: number, exclusiveMinimum: 0 }, minItems: 2, maxItems: 2, x-unit: "m", description: "Its outside across and up [width, height], lagging and casing included: what a fit check keeps clear (a pipe's diameter twice)." }
@@ -109,6 +109,7 @@ properties:
         pitch: { type: number, exclusiveMinimum: 0, x-unit: "m" }
   connector: { type: string, x-ref: [connector], description: "The connector its ends are built to, by key: it joins a port built to the same connector, or another run of its class." }
   carries: { enum: [gas, liquid, bulk, power], description: "What it can carry." }
+  jacket: { type: object, additionalProperties: false, properties: { heat: { type: number, minimum: 0, x-unit: "W", description: "Heat its water takes, at most" }, rise: { type: number, x-unit: "K", description: "Its water's rise from in to out" } }, description: "A jacketed duct's water jacket." }
   triangle_budget: { type: integer, minimum: 1000, description: "Triangles its kit may have, where the kind's default (12,000) is too few: a bus of many tubes." }
   visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
   looks_as: { type: string, x-ref: [run], description: "Another run of the same look (kind, size, material) whose model this one is drawn with; it wants no model of its own. Mass, rating and connector stay this record's." }

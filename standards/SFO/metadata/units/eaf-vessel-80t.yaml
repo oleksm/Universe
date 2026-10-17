@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.eaf-vessel-80t, name: 'Arc furnace vessel, 80 t', description: 'An AC arc furnace that taps 80 t: a refractory hearth 6.6 m across, water-cooled upper shell and roof, three graphite electrodes on masts, a tilting cradle and an eccentric bottom tap. Fed sponge iron through a fifth hole in the roof. Stands on a platform 5 m up so a ladle car runs under its tap. Its cooling water comes by two flexible hoses of its own (it tilts), 300 mm bore, flow and return, from its ports at local (-3.8, 3.2, 2.6) and (-3.8, 3.6, 2.6), clear of the tilt pin and its actuator, down to a fixed manifold on the deck whose two ports face up at local (-3.8, 4.9, 0.5) and (-3.8, 5.3, 0.5). Its box is not centred across: the arms'' tails and the secondary cables reach 6.25 m behind the furnace''s axis (toward the transformer), its water hoses'' couplings at the deck manifold 5.49 m in front (the manifold itself is the layout''s); 14 m tall with the masts at rest.'}
+identity: {key: unit.eaf-vessel-80t, name: 'Arc furnace vessel, 80 t', description: 'An AC arc furnace that taps 80 t: a refractory hearth 6.6 m across, water-cooled upper shell and roof, three graphite electrodes on masts, a tilting cradle and an eccentric bottom tap. Fed sponge iron through a fifth hole in the roof. Stands on a platform 5 m up so a ladle car runs under its tap. Its cooling water comes by two flexible hoses of its own (it tilts), 300 mm bore, flow and return, from its ports at local (-3.8, 3.2, 2.6) and (-3.8, 3.6, 2.6), clear of the tilt pin and its actuator, down to a fixed manifold on the deck whose two ports face up at local (-3.8, 4.9, 0.5) and (-3.8, 5.3, 0.5). Its box is not centred across: the arms'' tails and the secondary cables reach 6.25 m behind the furnace''s axis (toward the transformer), its water hoses'' couplings at the deck manifold 5.49 m in front (the manifold is the unit''s: two barrels standing on the deck, each taking its hose from the side); 14
+    m tall with the masts at rest. Its ports (SFO 25): sponge iron in through the fifth hole''s mouth, local (0, 1.8, 8.3), a belt''s head dropping into it; the off-gas elbow''s mouth on the fourth hole at (2, 1.5, 8.5), facing up, a fixed catch hood 0.15 m over it (the gap draws in the air that burns the CO, and lets the furnace tilt); the secondary bus''s joint at the flexible cables'' fixed ends, (0, -6.2, 2.3), facing -y; the deck manifold''s water flanges, DN 400 facing up, in at (-4.2, 4.95, 0.5) and out at (-3.4, 4.95, 0.5), in front of the tilting cradle''s deck (v4, as the sealed furnace''s).'}
 size_class: 2
 fits: plant-mount.bay-s2
 physical: {length: 12.0, width: 11.74, height: 14.0, mass: 306900.0}
@@ -35,6 +36,57 @@ recipes:
   rate: 26.6666666666667
   batch: 80000
   power: 72000000
+ports:
+- id: dri-in
+  flow: in
+  medium: bulk
+  item: good.sponge-iron
+  rate: 29.33
+  connector: connector.chute-dn800
+  at: [0.0, 1.8, 8.3]
+  facing: [0.0, 0.0, 1.0]
+  note: the fifth hole's mouth; a belt's head 0.4 m over it
+- id: offgas-out
+  flow: out
+  medium: gas
+  connector: connector.hood-dn2000
+  at: [2.0, 1.5, 8.5]
+  facing: [0.0, 0.0, 1.0]
+  note: the elbow's mouth; it moves as the furnace tilts
+- id: power-in
+  flow: in
+  medium: power
+  power: 72000000
+  voltage: 800.0
+  connector: connector.bus-joint-ac-65ka
+  at: [0.0, -6.2, 2.3]
+  facing: [0.0, -1.0, 0.0]
+  note: 65 kA a phase
+- id: water-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 258.0
+  temperature: 303.0
+  connector: connector.flange-dn400-pn10
+  at: [-4.2, 4.95, 0.5]
+  facing: [0.0, 0.0, 1.0]
+- id: water-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 258.0
+  temperature: 313.0
+  connector: connector.flange-dn400-pn10
+  at: [-3.4, 4.95, 0.5]
+  facing: [0.0, 0.0, 1.0]
+envelope:
+- [-5.851, -4.501, -0.001, 5.851, 4.501, 2.512]
+- [-5.077, -3.743, 1.798, 4.802, 3.743, 7.302]
+- [-2.051, -6.245, 1.604, 2.051, 0.286, 11.722]
+- [-0.932, -0.732, 2.898, 0.932, 1.001, 14.001]
+- [-1.852, 0.288, 6.149, 3.101, 2.601, 10.102]
+- [-5.071, 2.089, -0.001, -2.22, 5.201, 5.952]
 life: 788940000
 visual: {format: freefall-model/1, path: models/eaf-vessel-80t/v3, manifest_sha256: 3f25d87364b41b931e5b4e1d39d1cce191f9e91813cbf903ae171a76c6f35568, version: 3, triangles: 23358}
 basis:

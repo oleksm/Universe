@@ -3,7 +3,7 @@
 identity: {key: connector.flange-dn400-pn10, name: Flange DN 400 PN 10, description: 'A bolted pair of weld-neck flanges for a pipe of 400 mm nominal bore at up to 10 bar inside (on airless ground, the whole of it against vacuum).'}
 kind: flange
 size: 0.4
-rating: {pressure: 1000000.0, temperature: 330.0}
+rating: {pressure: 1000000.0, temperature: 373.0}
 sealing: single
 physical: {length: 0.566, width: 0.566, height: 0.11, mass: 48.2}
 built_of:
