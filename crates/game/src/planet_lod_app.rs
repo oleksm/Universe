@@ -48,6 +48,12 @@ const ID_FEAT: u32 = 22;
 const ID_EX: u32 = 30;
 const ID_KEYS: u32 = 40;
 const ID_VIS: u32 = 50;
+/// The layer chips: ID_LAYER + the layer's index.
+const ID_LAYER: u32 = 100;
+/// Each layer's own lift over the ground (m), the k-th at (k + 1) x this: shells, not one surface.
+const LAYER_LIFT: f64 = 1500.0;
+/// A layer's faces are this opaque (75 % transparent, the owner's).
+const LAYER_ALPHA: f32 = 0.25;
 const PANEL_W: f32 = 284.0;
 
 #[derive(Clone, Copy, PartialEq)]
@@ -536,6 +542,8 @@ pub struct PlanetLodApp {
     last_hist: f64,
     feat: Option<Mesh>,
     pins: Vec<(DVec3, f64, String, bool)>,
+    /// The landform layers over the land, when the view has them.
+    layers: Option<Layers>,
     ui: Mutex<Ui>,
     /// Sums for the log line written each second: frames, seconds, LOD ms, mesh ms, max of each, rebuilt.
     log: [f64; 7],
@@ -603,6 +611,110 @@ fn kilo(x: usize) -> String {
     if x >= 1_000_000 { format!("{:.2}M", x as f64 / 1e6) } else { format!("{}k", (x as f64 / 1e3).round()) }
 }
 
+/// One landform layer over the land (views' `layers/`, tools/layer_meshes.py): a class for every land triangle.
+struct Layer {
+    title: String,
+    names: Vec<String>,
+    rgb: Vec<[u8; 3]>,
+    share: Vec<f32>,
+    cls: Vec<u16>,
+}
+
+/// The layer meshes (owner 16 Oct): each layer its own mesh over the land, in its classes' colours, 75 %
+/// transparent, lifted a little more than the one under it; switched on and off in the panel. The land triangles
+/// index the view's vertices (the coast carved in the source), so a layer stands where the ground is drawn.
+struct Layers {
+    tri: Vec<[u32; 3]>,
+    /// Land triangles grouped by where they are (cube-face cells): each group's centre direction, cos of its
+    /// angular radius, its triangles.
+    groups: Vec<(DVec3, f64, Vec<u32>)>,
+    list: Vec<Layer>,
+    on: Vec<bool>,
+    /// Built meshes per layer (group's origin), and the (view, height x) they were built for.
+    meshes: Vec<Vec<(Mesh, DVec3, f64)>>,
+    built: Vec<Option<u64>>,
+}
+
+impl Layers {
+    fn open(dir: &Path) -> Result<Option<Layers>, String> {
+        let ld = dir.join("layers");
+        if !ld.join("layers.json").exists() {
+            return Ok(None);
+        }
+        let meta = json(&ld, "layers.json")?;
+        let t: Vec<u32> = read(&ld, "land_tri.u32")?;
+        let tri: Vec<[u32; 3]> = t.chunks_exact(3).map(|c| [c[0], c[1], c[2]]).collect();
+        let mut list = vec![];
+        for l in meta["layers"].as_array().ok_or("layers.json: layers")? {
+            let key = l["key"].as_str().unwrap_or("");
+            let strs = |v: &serde_json::Value| v.as_array().map(|a| a.iter().map(|x| x.as_str().unwrap_or("").to_string()).collect::<Vec<_>>()).unwrap_or_default();
+            let rgb = l["rgb"].as_array().map(|a| a.iter().map(|c| [0, 1, 2].map(|j| c[j].as_u64().unwrap_or(0) as u8)).collect()).unwrap_or_default();
+            let share = l["share"].as_array().map(|a| a.iter().map(|x| x.as_f64().unwrap_or(0.0) as f32).collect()).unwrap_or_default();
+            let cls: Vec<u16> = read(&ld, &format!("{key}.u16"))?;
+            if cls.len() != tri.len() {
+                return Err(format!("layers/{key}.u16: {} classes for {} triangles", cls.len(), tri.len()));
+            }
+            list.push(Layer { title: l["title"].as_str().unwrap_or(key).to_string(), names: strs(&l["names"]), rgb, share, cls });
+        }
+        let n = list.len();
+        Ok(Some(Layers { tri, groups: vec![], list, on: (0..n).map(|k| k == 0).collect(), meshes: (0..n).map(|_| vec![]).collect(), built: vec![None; n] }))
+    }
+
+    /// The triangles into cube-face cells (6 x G x G), once the vertices are known.
+    fn group(&mut self, dirs: &[DVec3]) {
+        const G: usize = 8;
+        let mut cells: std::collections::HashMap<usize, Vec<u32>> = Default::default();
+        for (i, t) in self.tri.iter().enumerate() {
+            let c = (dirs[t[0] as usize] + dirs[t[1] as usize] + dirs[t[2] as usize]).normalize();
+            let a = c.abs();
+            let (ax, u, v) = if a.x >= a.y && a.x >= a.z { (0, c.y / a.x, c.z / a.x) } else if a.y >= a.z { (1, c.z / a.y, c.x / a.y) } else { (2, c.x / a.z, c.y / a.z) };
+            let face = 2 * ax + (c[ax] < 0.0) as usize;
+            let cu = (((u + 1.0) / 2.0 * G as f64) as usize).min(G - 1);
+            let cv = (((v + 1.0) / 2.0 * G as f64) as usize).min(G - 1);
+            cells.entry((face * G + cu) * G + cv).or_default().push(i as u32);
+        }
+        self.groups = cells.into_values().map(|ts| {
+            let mut m = DVec3::ZERO;
+            for &i in &ts {
+                for v in self.tri[i as usize] {
+                    m += dirs[v as usize];
+                }
+            }
+            let m = m.normalize();
+            let cos_a = ts.iter().flat_map(|&i| self.tri[i as usize]).map(|v| dirs[v as usize].dot(m)).fold(1.0, f64::min);
+            (m, cos_a, ts)
+        }).collect();
+    }
+
+    /// Layer k's meshes on the ground as drawn now (`pos`), each corner lifted along its own up.
+    fn build(&self, k: usize, pos: &[DVec3], dirs: &[DVec3]) -> Vec<(Mesh, DVec3, f64)> {
+        let l = &self.list[k];
+        let lift = LAYER_LIFT * (k + 1) as f64;
+        let col: Vec<[f32; 4]> = l.rgb.iter().map(|c| [srgb_to_linear(c[0]), srgb_to_linear(c[1]), srgb_to_linear(c[2]), LAYER_ALPHA]).collect();
+        self.groups.iter().filter_map(|(m, cos_a, ts)| {
+            let origin = *m * pos.iter().take(1).map(|p| p.length()).next().unwrap_or(6.371e6);
+            let mut w = WireModel::default();
+            let mut top: f64 = 0.0;
+            for &i in ts {
+                let c = l.cls[i as usize];
+                if c == u16::MAX || c as usize >= col.len() {
+                    continue;
+                }
+                let base = w.positions.len() as u32;
+                for v in self.tri[i as usize] {
+                    let p = pos[v as usize] + dirs[v as usize] * lift;
+                    top = top.max(p.length());
+                    w.positions.push((p - origin).as_vec3());
+                }
+                w.faces.push([base, base + 1, base + 2]);
+                w.colors.extend([col[c as usize]; 3]);
+            }
+            let _ = cos_a;
+            (!w.faces.is_empty()).then(|| (Mesh::new(w), origin, top))
+        }).collect()
+    }
+}
+
 fn srgb_to_linear(c: u8) -> f32 {
     let c = c as f32 / 255.0;
     if c <= 0.04045 { c / 12.92 } else { ((c + 0.055) / 1.055).powf(2.4) }
@@ -640,6 +752,10 @@ impl PlanetLodApp {
         let ft: Vec<[u32; 3]> = ft32.chunks_exact(3).map(|c| [c[0], c[1], c[2]]).collect();
         let fe: Vec<[u32; 2]> = fe32.chunks_exact(2).map(|c| [c[0], c[1]]).collect();
         let d = Data { r, dirs: unit_dirs, pos, z, col, mv, ma, dptr, dep, ao, am, ml, stand_in, ft, fe };
+        let mut layers = Layers::open(&dir)?;
+        if let Some(l) = &mut layers {
+            l.group(&d.dirs);
+        }
 
         // The chunk grid: over every finest triangle's centre, in the plane tangent at the peak.
         let peak = &lod["peak"];
@@ -882,6 +998,7 @@ impl PlanetLodApp {
             last_hist: 0.0,
             feat: None,
             pins,
+            layers,
             ui: Mutex::new(Ui::default()),
             log: [0.0; 7],
         };
@@ -897,6 +1014,15 @@ impl PlanetLodApp {
                     ("ex", Some(v)) => app.ex = v.clamp(1.0, 50.0),
                     ("feat", Some(v)) => app.show_feat = v > 0.0,
                     ("view", _) if kv.ends_with("real") => app.view = View::Real,
+                    ("layers", _) => {
+                        // (layers=0,2 or layers=none: which layer meshes are on)
+                        if let Some(l) = &mut app.layers {
+                            let want: Vec<usize> = kv[7..].split(',').filter_map(|x| x.parse().ok()).collect();
+                            for k in 0..l.on.len() {
+                                l.on[k] = want.contains(&k);
+                            }
+                        }
+                    }
                     _ => {}
                 }
             }
@@ -1231,6 +1357,14 @@ impl App for PlanetLodApp {
                 Some(ID_KEYS) => self.keys_open = !self.keys_open,
                 Some(ID_VIS) => self.ui.lock().unwrap().vis_note = true,
                 Some(ID_EX) => self.sliding = true,
+                Some(x) if (ID_LAYER..ID_LAYER + 64).contains(&x) => {
+                    if let Some(l) = &mut self.layers {
+                        let k = (x - ID_LAYER) as usize;
+                        if k < l.on.len() {
+                            l.on[k] = !l.on[k];
+                        }
+                    }
+                }
                 _ => {}
             }
             if !over_panel {
@@ -1419,6 +1553,16 @@ impl App for PlanetLodApp {
                 self.tiles[g].mesh = Some((view, mesh));
             }
         }
+        // (The layers after the tiles: built later, drawn later, so they blend over the ground drawn this frame.)
+        if let Some(l) = &mut self.layers {
+            let key = Some(self.ex.to_bits() ^ ((view == View::Real) as u64));
+            for k in 0..l.list.len() {
+                if l.on[k] && l.built[k] != key && !self.sliding {
+                    l.meshes[k] = l.build(k, &self.d.pos, &self.d.dirs);
+                    l.built[k] = key;
+                }
+            }
+        }
         if self.show_feat && self.feat.is_none() && !self.meta.features.is_empty() {
             self.feat = Some(self.build_features());
         }
@@ -1501,6 +1645,27 @@ impl App for PlanetLodApp {
             tiles_drawn += 1;
             sent += g.tris.len();
             drawn.push((mesh, g.origin));
+        }
+        if let Some(l) = &self.layers {
+            for k in 0..l.list.len() {
+                if !l.on[k] {
+                    continue;
+                }
+                for (mesh, origin, top) in &l.meshes[k] {
+                    let r = mesh.radius() as f64;
+                    if !Self::in_view(&cam, *origin, r, aspect) {
+                        continue;
+                    }
+                    // (behind the planet: every corner beyond the horizon, as a whole group)
+                    let dir = origin.normalize();
+                    let cos_a = 1.0 - 0.5 * (r / top.max(1.0)).powi(2);
+                    if !self.above_horizon(dir, cos_a.clamp(-1.0, 1.0), top - self.d.r, eye) {
+                        continue;
+                    }
+                    let t = Transform { position: *origin, rotation: Quat::IDENTITY, scale: 1.0 };
+                    frame.model_colored_shaded(mesh, &t, 0.0, 1.0);
+                }
+            }
         }
         let mut drawn_clusters: Vec<u32> = vec![];
         let cl_data = self.clusters.as_ref().map(|c| { let c = c.lock().unwrap(); (c.ptr.clone(), c.tris.clone()) });
@@ -1789,6 +1954,35 @@ impl PlanetLodApp {
         let real = self.view == View::Real;
         p.chips(&[("edges", self.show_edges && !real, !real, ID_EDGES), ("faces", self.show_faces, true, ID_FACES), ("crest & valleys", self.show_feat, !m.features.is_empty(), ID_FEAT)]);
         p.slider("height ×", self.ex as f32, 1.0, 50.0, &format!("{:.0}", self.ex), ID_EX);
+        if let Some(l) = &self.layers {
+            p.section("LAYERS", &[]);
+            let short: Vec<&str> = l.list.iter().map(|x| x.title.split(" (").next().unwrap_or(&x.title)).collect();
+            for row in (0..l.list.len()).collect::<Vec<_>>().chunks(3) {
+                let items: Vec<(&str, bool, bool, u32)> = row.iter().map(|&k| (short[k], l.on[k], true, ID_LAYER + k as u32)).collect();
+                p.chips(&items);
+            }
+            for (k, layer) in l.list.iter().enumerate() {
+                if !l.on[k] {
+                    continue;
+                }
+                p.note(&layer.title, hud_kit::INK2);
+                // (its classes on the land, largest first, each in its own colour; basins: too many, the closed share)
+                let mut rows: Vec<usize> = (0..layer.names.len()).filter(|&i| layer.share.get(i).copied().unwrap_or(0.0) > 0.0).collect();
+                rows.sort_by(|a, b| layer.share[*b].total_cmp(&layer.share[*a]));
+                if rows.len() > 14 {
+                    let last = layer.names.len() - 1;
+                    let open: f32 = rows.iter().filter(|&&i| i != last).map(|&i| layer.share[i]).sum();
+                    p.note(&format!("  {} basins to the sea · {:.0} % of land", rows.len() - 1, open), hud_kit::INK2);
+                    rows = vec![last];
+                }
+                for i in rows {
+                    let c = layer.rgb[i].map(|x| x as f32 / 255.0);
+                    // (dark classes lifted so the text reads on the panel)
+                    let lift = (0.55 - (c[0] + c[1] + c[2]) / 3.0).max(0.0);
+                    p.note(&format!("  - {} · {:.1} %", layer.names[i], layer.share[i]), Color([c[0] + lift, c[1] + lift, c[2] + lift, 1.0]));
+                }
+            }
+        }
         p.chips(&[(if self.keys_open { "controls (hide)" } else { "controls" }, self.keys_open, true, ID_KEYS)]);
         if self.keys_open {
             for (k, what) in [("W A S D", "fly"), ("Q E · wheel", "down / up"), ("<- -> · right-drag", "turn"), ("Shift", "× 5 speed"), ("drag", "slide"), ("V", "mesh or real"), ("H", "hide this panel"), ("Esc", "close")] {
