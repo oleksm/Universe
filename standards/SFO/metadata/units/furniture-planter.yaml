@@ -14,6 +14,12 @@ built_of:
 - what: Kerb
   item: good.concrete
   mass: 900.0
+visual:
+  format: "freefall-model/1"
+  path: "models/furniture-planter/v1"
+  manifest_sha256: "0b56db94ee74a5efb96b9d60bb847866daa931ac044eae425585638be492ffb2"
+  version: 1
+  triangles: 96
 basis:
 - of:
   - built_of
