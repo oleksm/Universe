@@ -166,6 +166,13 @@ One model draws every size of a kit family (`standards/SFO/metadata/templates/`)
   invented, to be sourced from a maker's drawing). The collector is one root node `body` on the same datum: travel +X,
   its trolley above y = 0 inside the housing (no wider than width − 0.02), its four shoes facing outward ±Z onto those
   faces, its towing arm below y = 0 to the machine.
+- **Corner casting** (ISO 1161): one root node `female`, a top corner of the right hand: the top face's outer plane at
+  y = 0, the body below to y = -0.118; length 0.178 along X (the container's length), width 0.162 along Z; its open
+  faces are the top, the end (+X) and the side (+Z), the game mirrors it for the other corners and flips it for the
+  bottom ones. Apertures, from memory of the standard, provisional: top an oblong 124 x 63.5 mm with round ends, long
+  along X, its centre 12.5 mm inboard (-X) and 8 mm inboard (-Z) of the casting's centre; end and side faces an oblong
+  78 x 51 mm (78 across, 51 high), centred on their face 8 mm below its middle. Walls: top plate 26 mm (the twistlock's
+  cone sits in it), the others 13 mm, hollow inside.
 - **Panels** (building panels' templates): one root node `body`, static. A wall or partition stands with its foot at
   y = 0, its face along X centred on x = 0, its thickness along Z centred on the frame's grid line (z = 0), outside
   face toward +Z. A floor's walking plane is y = 0, the cassette below it; a roof sits on the frame's top, its underside
