@@ -17,12 +17,6 @@ built_of:
 - what: Seat and back
   item: material.polyethylene-uhmw
   mass: 5.9
-visual:
-  format: "freefall-model/1"
-  path: "models/furniture-office-chair/v1"
-  manifest_sha256: "a28a26b8f6e58fc78e59d08868962d28935d56871c43bc245f78f82126b1fb04"
-  version: 1
-  triangles: 2748
 basis:
 - of:
   - built_of
@@ -30,3 +24,9 @@ basis:
   tier: derived
   review: true
   note: 'From blender''s model (2026-10-17): hollow 25 and 30 mm frame, solid hub and spindle, five castors.'
+visual:
+  format: freefall-model/1
+  path: models/furniture-office-chair/v1
+  manifest_sha256: a28a26b8f6e58fc78e59d08868962d28935d56871c43bc245f78f82126b1fb04
+  version: 1
+  triangles: 2748

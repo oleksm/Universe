@@ -17,12 +17,6 @@ built_of:
 - what: Top
   item: material.polyethylene-uhmw
   mass: 4.5
-visual:
-  format: "freefall-model/1"
-  path: "models/furniture-pupil-desk/v1"
-  manifest_sha256: "144ea066d5bc0cb700570a81f457eae34641b8da852c3fc419d167cb49aaae09"
-  version: 1
-  triangles: 396
 basis:
 - of:
   - built_of
@@ -30,3 +24,9 @@ basis:
   tier: derived
   review: true
   note: 'From of the order of blender''s classroom: 300 kg of steel for sixteen sets and the teacher''s.'
+visual:
+  format: freefall-model/1
+  path: models/furniture-pupil-desk/v1
+  manifest_sha256: 144ea066d5bc0cb700570a81f457eae34641b8da852c3fc419d167cb49aaae09
+  version: 1
+  triangles: 396

@@ -15,7 +15,7 @@ physical:
   length: 102.0
   width: 42.0
   height: 12.15
-  mass: 4672801.9
+  mass: 4675806.7
 bays: []
 rooms:
 - id: CLA1
@@ -2932,8 +2932,8 @@ ground:
   mass: 248832.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 4672801.9
-  against_module: 'building.college (deprecated): one box 100 x 40 x 16 m of 17,648 t, from the average of 538 concrete buildings. This layout: 102 x 42 x 12 m, 4,673 t (346 t frame, 2,326 t panels, 210 t furniture, 1,791 t ground),
+  mass: 4675806.7
+  against_module: 'building.college (deprecated): one box 100 x 40 x 16 m of 17,648 t, from the average of 538 concrete buildings. This layout: 102 x 42 x 12 m, 4,676 t (346 t frame, 2,326 t panels, 213 t furniture, 1,791 t ground),
     for 5002 people served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:
 - profession: profession.teacher

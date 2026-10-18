@@ -9,18 +9,18 @@ physical:
   length: 2.0
   width: 0.4
   height: 2.0
-  mass: 100.0
+  mass: 131.3
 built_of:
 - what: Rack
   item: material.structural-steel-a36
-  mass: 40.0
+  mass: 63.6
 - what: Tools
   item: material.high-strength-steel-4340
-  mass: 60.0
+  mass: 67.7
 basis:
 - of:
   - built_of
   - physical
-  tier: invented
+  tier: derived
   review: true
-  note: From memory of such furniture; to be sourced.
+  note: 'From blender''s model (2026-10-17): 40 x 40 x 2 mm frame, backboard and tray; spanners, sledges and bars.'

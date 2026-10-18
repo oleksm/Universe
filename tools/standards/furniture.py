@@ -49,7 +49,7 @@ FURNITURE = {  # name: (title, description, (length, width, height), [(what, ite
     "seat-row": ("Seating tier", "A tier of six seats 3.6 m long on its 0.9 m step.", (3.6, 0.9, 0.5), [("Tier frame", STEEL, 180.0), ("Seats", PE, 50.0)], None),
     "stage-deck": ("Stage deck", "A stage deck module 2 m by 1 m, 1 m high.", (2.0, 1.0, 1.0), [("Deck and legs", STEEL, 120.0)], None),
     "workbench": ("Workbench", "A steel workbench with a vice.", (2.0, 0.8, 0.9), [("Bench and vice", STEEL, 120.0)], None),
-    "tool-rack": ("Tool rack", "A wall rack of tools.", (2.0, 0.4, 2.0), [("Rack", STEEL, 40.0), ("Tools", "material.high-strength-steel-4340", 60.0)], None),
+    "tool-rack": ("Tool rack", "A wall rack of tools.", (2.0, 0.4, 2.0), [("Rack", STEEL, 63.6), ("Tools", "material.high-strength-steel-4340", 67.7)], "blender's model (2026-10-17): 40 x 40 x 2 mm frame, backboard and tray; spanners, sledges and bars"),
     "drill": ("Pillar drill", "A pillar drill.", (0.6, 0.5, 1.8), [("Drill", CI, 150.0)], None),
     "charge-point": ("Charge point", "A vehicle charge point on its post.", (0.3, 0.3, 1.4), [("Post and charger", STEEL, 30.0)], None),
     "judge-bench": ("Judge's bench", "A raised bench for a judge and clerk.", (3.0, 0.9, 1.2), [("Bench", STEEL, 230.0)], "blender's court bay: bench, dock and witness box 495 kg of steel"),
