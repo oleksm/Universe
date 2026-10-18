@@ -253,10 +253,10 @@
 - { record: connector.flange-dn600-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "0b731818b1ee1180" }
 - { record: connector.flange-dn700-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "e6a4835702872c76" }
 - { record: connector.flange-dn900-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "43e5d4d96ca89c2f" }
-- { record: connector.flat-face-dn13, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "305a11fa79c83679" }
-- { record: connector.flat-face-dn19, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "2fe77e648b6662df" }
-- { record: connector.flat-face-dn25, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "643513590c7763b1" }
-- { record: connector.flat-face-dn6, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "c8cebfde6900d321" }
+- { record: connector.flat-face-dn13, at: "2026-10-18T04:54:39Z", status: draft, summary: "changed: physical, built_of, basis", sha: "e2c8f75cd6c6ead1" }
+- { record: connector.flat-face-dn19, at: "2026-10-18T04:54:39Z", status: draft, summary: "changed: physical, built_of, basis", sha: "ff44630fc52462fe" }
+- { record: connector.flat-face-dn25, at: "2026-10-18T04:54:39Z", status: draft, summary: "changed: physical, built_of, basis", sha: "11b4cdbad101f28f" }
+- { record: connector.flat-face-dn6, at: "2026-10-18T04:54:39Z", status: draft, summary: "changed: physical, built_of, basis", sha: "ff4ae0d148b0a305" }
 - { record: connector.hood-dn2000, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "e034527157c4a0bc" }
 - { record: connector.hose-union-dn25, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "64e061970d43b2cf" }
 - { record: connector.hose-union-dn50, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "7a00283e7304272f" }
@@ -3577,10 +3577,10 @@
 - { record: stock.kit-flange-dn600-pn10, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "424a638fc4875bde" }
 - { record: stock.kit-flange-dn700-pn10, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "3381ed9f2ffb374e" }
 - { record: stock.kit-flange-dn900-pn10, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "cc4fe7939daa9b6e" }
-- { record: stock.kit-flat-face-dn13, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "aaf6082c8cd9dbca" }
-- { record: stock.kit-flat-face-dn19, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "cdbeeefd90d76449" }
-- { record: stock.kit-flat-face-dn25, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "1bb0906f502f910c" }
-- { record: stock.kit-flat-face-dn6, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "1fa2b5f6c04255fd" }
+- { record: stock.kit-flat-face-dn13, at: "2026-10-18T04:54:39Z", status: review, summary: "changed: made_from, physical", sha: "4e3d898429f231f7" }
+- { record: stock.kit-flat-face-dn19, at: "2026-10-18T04:54:39Z", status: review, summary: "changed: made_from, physical", sha: "f57f2f622fbb06d6" }
+- { record: stock.kit-flat-face-dn25, at: "2026-10-18T04:54:39Z", status: review, summary: "changed: made_from, physical", sha: "6a030fcfb20b84e0" }
+- { record: stock.kit-flat-face-dn6, at: "2026-10-18T04:54:39Z", status: review, summary: "changed: made_from, physical", sha: "ddacab8ded562896" }
 - { record: stock.kit-hood-dn2000, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "a21782deffadf2c2" }
 - { record: stock.kit-hose-dn100-pn16, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "6a925118771671a8" }
 - { record: stock.kit-hose-dn150-pn16, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "1c18b9eeccb08bac" }
@@ -4360,7 +4360,7 @@
 - { record: template.coupler, at: "2026-10-18T04:31:06Z", status: "", summary: "changed", sha: "92f33e0051a9f6f6" }
 - { record: template.drag-conveyor, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "da78b5e8e253b112" }
 - { record: template.expansion-joint, at: "2026-10-18T04:42:30Z", status: "", summary: "changed", sha: "35f0e9f3830a86f9" }
-- { record: template.festoon, at: "2026-10-18T04:50:24Z", status: "", summary: "changed: visual", sha: "00606aa633da5d3a" }
+- { record: template.festoon, at: "2026-10-18T04:54:39Z", status: "", summary: "changed", sha: "e8d5604c86f67779" }
 - { record: template.flange, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "df7d790e5b79a704" }
 - { record: template.flange-double, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "1587eb01caf04022" }
 - { record: template.flat-face, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "1b798aa986e5491c" }

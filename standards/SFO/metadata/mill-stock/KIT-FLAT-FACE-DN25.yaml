@@ -8,7 +8,7 @@ identity:
   form: piece
 package: package.crate-steel
 made_from:
-- item: material.structural-steel-a36
+- item: material.stainless-steel-304
 - item: material.epdm-rubber
 size:
   length: 0.091
@@ -17,7 +17,7 @@ size:
 supplies:
   item: connector.flat-face-dn25
 physical:
-  mass: 1.8
+  mass: 3.581
 basis:
 - of:
   - size

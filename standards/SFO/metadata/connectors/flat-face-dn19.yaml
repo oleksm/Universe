@@ -13,20 +13,25 @@ physical:
   length: 0.07
   width: 0.07
   height: 0.146
-  mass: 0.95
+  mass: 1.889
 built_of:
-- what: Male and female halves
-  item: material.structural-steel-a36
-  mass: 0.921
-  note: plated steel
+- what: Male and female halves, sleeve and valves
+  item: material.stainless-steel-304
+  mass: 1.86
 - what: Seals
   item: material.epdm-rubber
-  mass: 0.028
+  mass: 0.029
+  note: allowance
 provides: both
 template: template.flat-face
 basis:
 - of:
   - physical
+  - built_of
+  tier: invented
+  review: true
+  note: Scaled from the DN 12.7's measured 0.8225 kg by the old catalogue ratios; From memory of makers' catalogues; to be sourced.
+- of:
   - rating
   tier: invented
   review: true

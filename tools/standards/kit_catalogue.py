@@ -102,7 +102,13 @@ for dn in (0.025, 0.05, 0.1, 0.15):
         {"slug": ck, "name": f"Cam-lock DN {tag(dn)}", "domain": "fluid", "kind": "quick-coupling", "media": ["gas", "liquid"], "halves": "male-female", "make": "manual", "standard": "EN 14420-7 (cam-lock) sizes"})
 
 FF = {0.00635: (0.15, 34.5e6), 0.0127: (0.42, 31.5e6), 0.01905: (0.95, 27.5e6), 0.0254: (1.8, 25.0e6)}   # kg a pair, Pa (ISO 16028; from memory)
+FF_STEEL = 0.8225       # blender's DN 12.7 model (2026-10-17): the halves in stainless; the seals an allowance on top; the others scaled by the old ratios to it
+FF_SEALS = 0.013
+FF_NOTE = "From blender's model (2026-10-17): 51.2 x 51.2 x 121 mm, 12.7 mm bore, 36 mm body and hex, 51 mm release sleeve over a 36.4 mm cavity, 0.8225 kg of stainless; seals, springs and balls an allowance. No pressure qualification claimed."
 for dn, (mass, p) in FF.items():
+    steel = round(mass * FF_STEEL / 0.42, 3)
+    seals = round(FF_SEALS * mass / 0.42, 3)
+    mass = round(steel + seals, 3)
     od = {0.00635: 0.0141, 0.0127: 0.0213, 0.01905: 0.0293, 0.0254: 0.038}[dn]
     pm = {0.00635: 0.23, 0.0127: 0.53, 0.01905: 0.83, 0.0254: 1.26}[dn]
     ck = f"flat-face-dn{tag(dn)}"
@@ -117,9 +123,9 @@ for dn, (mass, p) in FF.items():
         "identity": {"key": f"connector.{ck}", "name": f"Flat-face coupling, DN {dn * 1000:g}", "description": "A hydraulic quick coupling with flat valve faces: made and broken by hand under no load, spilling next to nothing."},
         "kind": "quick-coupling", "size": dn, "rating": {"pressure": p, "temperature": 373.0},
         "physical": {"length": r(od * 2.4, 3), "width": r(od * 2.4, 3), "height": r(dn * 4 + 0.07, 3), "mass": mass},
-        "built_of": [part("Male and female halves", A36, mass * 0.97, "plated steel"), part("Seals", RUB, mass * 0.03)],
+        "built_of": [part("Male and female halves, sleeve and valves", SS, steel), part("Seals", RUB, seals, "allowance")],
         "provides": "both", "template": "template.flat-face",
-        "basis": [{"of": ["physical", "rating"], "tier": "invented", "review": True, "note": MEMORY}]},
+        "basis": [{"of": ["physical", "built_of"], "tier": "derived" if dn == 0.0127 else "invented", "review": True, "note": FF_NOTE if dn == 0.0127 else f"Scaled from the DN 12.7's measured {FF_STEEL:g} kg by the old catalogue ratios; {MEMORY}"}, {"of": ["rating"], "tier": "invented", "review": True, "note": MEMORY}]},
         {"slug": ck, "name": f"Flat-face DN {dn * 1000:g}", "domain": "fluid", "kind": "quick-coupling", "media": ["liquid"], "halves": "male-female", "make": "manual", "standard": "ISO 16028 (flat-face) sizes"})
 
 for dn in (0.025, 0.05, 0.1, 0.2):

@@ -26,15 +26,15 @@ pieces:
   width: 0.1
   height: 0.15
   mass: 2.1
-visual:
-  format: "freefall-model/1"
-  path: "models/festoon/v1"
-  manifest_sha256: "71ca287c05a58ddcdf12bb316397e83be5d0f94c160ceae14bb33da080e80232"
-  version: 1
-  triangles: 1016
 basis:
 - of:
   - draws
   - scales_by
   tier: derived
   note: 'The owner, 2026-10-17: one template a family, scaled; the catalogue families (kit_catalogue.py).'
+visual:
+  format: freefall-model/1
+  path: models/festoon/v1
+  manifest_sha256: 71ca287c05a58ddcdf12bb316397e83be5d0f94c160ceae14bb33da080e80232
+  version: 1
+  triangles: 1016

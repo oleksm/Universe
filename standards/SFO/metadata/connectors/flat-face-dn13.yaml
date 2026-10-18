@@ -13,20 +13,26 @@ physical:
   length: 0.051
   width: 0.051
   height: 0.121
-  mass: 0.42
+  mass: 0.836
 built_of:
-- what: Male and female halves
-  item: material.structural-steel-a36
-  mass: 0.407
-  note: plated steel
+- what: Male and female halves, sleeve and valves
+  item: material.stainless-steel-304
+  mass: 0.823
 - what: Seals
   item: material.epdm-rubber
   mass: 0.013
+  note: allowance
 provides: both
 template: template.flat-face
 basis:
 - of:
   - physical
+  - built_of
+  tier: derived
+  review: true
+  note: 'From blender''s model (2026-10-17): 51.2 x 51.2 x 121 mm, 12.7 mm bore, 36 mm body and hex, 51 mm release sleeve over a 36.4 mm cavity, 0.8225 kg of stainless; seals, springs and balls an allowance. No pressure qualification
+    claimed.'
+- of:
   - rating
   tier: invented
   review: true
