@@ -3,14 +3,14 @@
 identity:
   key: planet-view.fromanchors
   name: world from anchors
-  about: the heights rebuilt from the planet graph alone (a thin plate through its loops, shores, rivers and anchors), inland
-    water by its depth, in the samples' tints
-title: world from anchors
+  about: the heights rebuilt from the planet graph alone (a thin plate through its loops, sea shores and anchors) in the samples'
+    tints and shading; the sim's river courses (the basins layer's) over it; no old lakes or rivers
+title: The world from the anchor model
 row: top (history views)
 file_suffix: _fromanchors.png
 draws:
-  words: the heights rebuilt from the planet graph alone (a thin plate through its loops, shores, rivers and anchors), inland
-    water by its depth, in the samples' tints
+  words: the heights rebuilt from the planet graph alone (a thin plate through its loops, sea shores and anchors) in the samples'
+    tints and shading; the sim's river courses (the basins layer's) over it; no old lakes or rivers
 shown: true
 implementations:
 - where: planet-trees-pgs2 tools/planet_vectors.py / planet_anchors.py sheet() (not inventoried; unverified which writes which)
@@ -20,9 +20,13 @@ implementations:
   note: the viewer
 status: draft
 legend:
-  title: the world from the anchor model
-  source: planet_anchors.py:169-200 unfold, 277-298 relief_with_water
+  title: The world from the anchor model
+  source: planet_anchors.py unfold, preview.py relief; the rings-basins, rings-cover and samples records
   rows:
+  - key: head-relief
+    kind: head
+    label: 'Relief: a thin plate through the planet graph (its loops, sea shores and anchors), in height tints'
+    shown_when: always
   - kind: fill
     label: sea at -8000 m
     colour:
@@ -30,6 +34,7 @@ legend:
     - 20
     - 60
     shown_when: always
+    key: tint:sea-at--8000-m
   - kind: fill
     label: sea at -4000 m
     colour:
@@ -37,6 +42,7 @@ legend:
     - 50
     - 110
     shown_when: always
+    key: tint:sea-at--4000-m
   - kind: fill
     label: sea at -1000 m
     colour:
@@ -44,6 +50,7 @@ legend:
     - 90
     - 160
     shown_when: always
+    key: tint:sea-at--1000-m
   - kind: fill
     label: sea at 0 m
     colour:
@@ -51,6 +58,7 @@ legend:
     - 150
     - 200
     shown_when: always
+    key: tint:sea-at-0-m
   - kind: fill
     label: land at 0 m
     colour:
@@ -58,6 +66,7 @@ legend:
     - 120
     - 60
     shown_when: always
+    key: tint:land-at-0-m
   - kind: fill
     label: land at 500 m
     colour:
@@ -65,6 +74,7 @@ legend:
     - 150
     - 80
     shown_when: always
+    key: tint:land-at-500-m
   - kind: fill
     label: land at 1500 m
     colour:
@@ -72,6 +82,7 @@ legend:
     - 150
     - 100
     shown_when: always
+    key: tint:land-at-1500-m
   - kind: fill
     label: land at 3000 m
     colour:
@@ -79,6 +90,7 @@ legend:
     - 110
     - 90
     shown_when: always
+    key: tint:land-at-3000-m
   - kind: fill
     label: land at 5000 m
     colour:
@@ -86,6 +98,19 @@ legend:
     - 230
     - 235
     shown_when: always
+    key: tint:land-at-5000-m
+  - key: head-rivers
+    kind: head
+    label: Rivers (the sim's own courses, as on the basins layer)
+    shown_when: always
+  - key: river
+    kind: line
+    label: rivers flowing, > 300 m³/s; thicker over 30,000 m³/s ({n_rivers} courses)
+    colour:
+    - 30
+    - 90
+    - 200
+    shown_when: rivers
 basis:
 - of:
   - legend
@@ -93,3 +118,8 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: the viewer port (crates/viewer), from planet-trees-pgs2 tools/planet_vectors.py, planet_form.py
     and planet-sim preview.py, look.py.'
+- of:
+  - legend
+  - draws
+  tier: derived
+  note: 'planets, 17 Oct 2026: the viewer (crates/viewer/src/layers/anchors.rs), the owner''s world-from-anchors requests.'
