@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: connector.wiring-box-lv
+  name: Wiring box, low voltage
+  description: 'A small steel box with terminal blocks inside and glands in its sides, where a building''s installation cables end: at an outlet, a light, a switch, a machine''s isolator or a distribution board''s way.'
+kind: termination
+size: 1.6e-05
+rating:
+  voltage: 400
+  current: 63
+physical:
+  length: 0.1
+  width: 0.1
+  height: 0.06
+  mass: 0.35
+built_of:
+- what: Box and lid
+  item: material.structural-steel-a36
+  mass: 0.25
+  note: 1 mm steel
+- what: Terminal blocks and glands
+  item: material.polyethylene-uhmw
+  mass: 0.07
+  note: polyamide, as UHMW polyethylene here
+- what: Clamps
+  item: material.copper
+  mass: 0.03
+  note: brass, as copper here
+provides: both
+template: template.wiring-box
+basis:
+- of:
+  - physical
+  - built_of
+  tier: invented
+  review: true
+  note: From memory of makers' catalogues; to be sourced.
+interface: interface.wiring-box-lv

@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/template.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: template.circular-connector
+  name: Circular harness connectors
+  description: 'Circular harness connectors: one look for every size of the family, scaled to each record''s figures (the owner, 2026-10-17: never one model per size).'
+family: plug-socket
+draws: model
+scales_by:
+- physical
+members: 4
+reference: connector.circular-shell-17
+basis:
+- of:
+  - draws
+  - scales_by
+  tier: derived
+  note: 'The owner, 2026-10-17: one template a family, scaled; the catalogue families (kit_catalogue.py).'

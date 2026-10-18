@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-wire-16mm2
+  code: KIT-WIRE-16MM2
+  name: Hook-up wire, 16 mm2, 600 V, a 500 m drum
+  traded_as: market.machinery
+  form: coil
+package: package.coil
+made_from:
+- item: material.copper
+- item: material.ptfe
+size:
+  length: 500.0
+  diameter: 0.007
+supplies:
+  item: run.wire-16mm2
+  length: 500.0
+physical:
+  mass: 88.8
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: 'a 500 m drum of run.wire-16mm2: its mass a metre times the length sold.'

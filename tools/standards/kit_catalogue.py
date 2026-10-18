@@ -176,6 +176,67 @@ for slug, v, n, mm2, amps, od, ck in FLEX:
         "connector": f"connector.{ck}", "carries": "power", "template": "template.cable-flexible",
         "basis": [{"of": ["per_m", "rating", "outside"], "tier": "invented", "review": True, "note": f"Reeling cable figures; least bend 7.5 outsides on a reel; {MEMORY}"}]})
 
+# ------------------------------------------------------------------ small wiring: a building's circuits, a ship's harness
+PTFE = "material.ptfe"
+RHO[PTFE] = 2200
+conn("wiring-box-lv", {
+    "identity": {"key": "connector.wiring-box-lv", "name": "Wiring box, low voltage", "description": "A small steel box with terminal blocks inside and glands in its sides, where a building's installation cables end: at an outlet, a light, a switch, a machine's isolator or a distribution board's way."},
+    "kind": "termination", "size": 16e-6, "rating": {"voltage": 400, "current": 63},
+    "physical": {"length": 0.1, "width": 0.1, "height": 0.06, "mass": 0.35},
+    "built_of": [part("Box and lid", A36, 0.25, "1 mm steel"), part("Terminal blocks and glands", PE, 0.07, "polyamide, as UHMW polyethylene here"), part("Clamps", CU, 0.03, "brass, as copper here")],
+    "provides": "both", "template": "template.wiring-box",
+    "basis": [{"of": ["physical", "built_of"], "tier": "invented", "review": True, "note": MEMORY}]},
+    {"slug": "wiring-box-lv", "name": "Wiring box, low voltage", "domain": "power", "kind": "termination", "media": ["power"], "halves": "male-female", "make": "bolted"})
+INSTALL = [  # (volts, cores, mm2, amps clipped in air)
+    (230, 3, 1.5, 16), (230, 3, 2.5, 20), (230, 3, 4, 27), (230, 3, 6, 34), (230, 3, 10, 46),
+    (400, 5, 2.5, 18), (400, 5, 6, 30), (400, 5, 16, 57)]
+for v, n, mm2, amps in INSTALL:
+    a = mm2 * 1e-6
+    dc = 1.15 * math.sqrt(4 * a / math.pi)
+    ti = 0.0007 if mm2 <= 2.5 else 0.0008 if mm2 <= 6 else 0.001
+    core = dc + 2 * ti
+    od = core * (2.15 if n == 3 else 2.7) + 2 * 0.0012
+    cu = n * a * RHO[CU]
+    pe = (math.pi / 4 * od ** 2 - n * math.pi / 4 * dc ** 2) * RHO[PE] * 0.85      # (insulation, filler and sheath: the section less the copper, 15% voids)
+    slug = f"cable-installation-{v}v-{n}x{tag(mm2 / 1000) if mm2 >= 1 and mm2 == int(mm2) else str(mm2).replace('.', 'p')}"
+    run(slug, {
+        "identity": {"key": f"run.{slug}", "name": f"Installation cable, {v} V, {n} x {mm2:g} mm2",
+                     "description": f"A sheathed cable of {n} solid copper cores ({'line, neutral and earth' if n == 3 else 'three lines, neutral and earth'}) clipped along a building's frame or laid in its floors and walls: its circuits to outlets, lights and small machines, {amps} A clipped in air."},
+        "kind": "cable", "size": a, "outside": [r(od, 4), r(od, 4)], "rating": {"voltage": v, "current": amps},
+        "per_m": {"mass": r(cu + pe, 3), "built_of": [part("Conductors", CU, cu, f"{n} solid cores of {mm2:g} mm2"), part("Insulation and sheath", PE, pe, "PVC or LSZH, as UHMW polyethylene here")]},
+        "elbow": {"radius": r(od * 4, 3), "mass": r((cu + pe) * od * 4 * math.pi / 2, 4)},
+        "connector": "connector.wiring-box-lv", "carries": "power", "template": "template.cable-installation",
+        "basis": [{"of": ["per_m", "rating", "outside"], "tier": "invented", "review": True, "note": f"Wiring regulations' clipped-direct ratings and usual insulation thicknesses; least bend 4 outsides; {MEMORY}"}]})
+CIRC = [  # (shell, outside m, mated length m, kg a pair, contacts, mm2 a contact at most)
+    (11, 0.022, 0.05, 0.05, 7, 1.0), (17, 0.03, 0.06, 0.1, 7, 2.5), (25, 0.04, 0.075, 0.2, 4, 16), (33, 0.052, 0.095, 0.4, 2, 50)]
+for sh, od, ll, kg, nc, mm2 in CIRC:
+    conn(f"circular-shell-{sh}", {
+        "identity": {"key": f"connector.circular-shell-{sh}", "name": f"Circular connector, shell {sh}", "description": f"A bayonet-coupled circular connector, plug and receptacle, an aluminium shell round an insert of {nc} crimped contacts for wires up to {mm2:g} mm2: where a harness meets a unit, a ship's equipment or a bulkhead. Sealed; keyed so that only its own mates."},
+        "kind": "plug-socket", "size": mm2 * 1e-6, "rating": {"voltage": 600, "current": {1.0: 8, 2.5: 15, 16: 55, 50: 120}[mm2]},
+        "physical": {"length": od, "width": od, "height": ll, "mass": kg},
+        "built_of": [part("Shells and coupling ring", AL, kg * 0.6, "anodised aluminium"), part("Contacts", CU, kg * 0.2, "gold-plated copper alloy, as copper here"), part("Inserts and seals", RUB, kg * 0.2, "silicone, as EPDM here")],
+        "provides": "both", "template": "template.circular-connector",
+        "basis": [{"of": ["physical", "built_of", "rating"], "tier": "invented", "review": True, "note": f"Of the order of military circular connectors (MIL-DTL-38999 class); {MEMORY}"}]},
+        {"slug": f"circular-shell-{sh}", "name": f"Circular shell {sh}", "domain": "power", "kind": "plug-socket", "media": ["power"], "halves": "male-female", "make": "manual"})
+WIRE = [  # (mm2, amps single in vacuum, connector shell)
+    (0.5, 5, 11), (1.0, 8, 11), (2.5, 15, 17), (6.0, 28, 25), (16.0, 55, 25), (50.0, 120, 33)]
+for mm2, amps, sh in WIRE:
+    a = mm2 * 1e-6
+    dc = 1.2 * math.sqrt(4 * a / math.pi)          # (stranded)
+    ti = 0.0003 if mm2 <= 1 else 0.0005 if mm2 <= 6 else 0.0008
+    od = dc + 2 * ti
+    cu = a * RHO[CU]
+    ins = math.pi * (dc + ti) * ti * RHO[PTFE]
+    slug = f"wire-{str(mm2).replace('.0', '').replace('.', 'p')}mm2"
+    run(slug, {
+        "identity": {"key": f"run.{slug}", "name": f"Hook-up wire, {mm2:g} mm2, 600 V",
+                     "description": f"A single stranded, plated copper wire in thin fluoropolymer, light and good in vacuum: laid in bundles as a vehicle's or a ship's harness, or inside a unit's cabinets. {amps} A alone in vacuum; less in a bundle."},
+        "kind": "cable", "size": a, "outside": [r(od, 4), r(od, 4)], "rating": {"voltage": 600, "current": amps},
+        "per_m": {"mass": r(cu + ins, 4), "built_of": [part("Conductor", CU, cu, f"{mm2:g} mm2 stranded, silver-plated (as copper here)"), part("Insulation", PTFE, ins, f"{ti * 1000:g} mm of PTFE")]},
+        "elbow": {"radius": r(max(0.005, od * 10), 3), "mass": r((cu + ins) * max(0.005, od * 10) * math.pi / 2, 5)},
+        "connector": f"connector.circular-shell-{sh}", "carries": "power", "template": "template.wire",
+        "basis": [{"of": ["per_m", "rating", "outside"], "tier": "invented", "review": True, "note": f"Of the order of aerospace hook-up wire (SAE AS22759 class): the rating a single wire's in vacuum, radiation only; least bend 10 outsides; {MEMORY}"}]})
+
 PLUGS = [  # (slug, name, amps, volts, pins, kg a pair, l, w, h, interface name, standard)
     ("plug-iec60309-16a", "Plug and socket, 16 A, 400 V", 16, 400, 5, 0.45, 0.095, 0.095, 0.19, "IEC 60309 16 A 5-pin", "IEC 60309-2"),
     ("plug-iec60309-32a", "Plug and socket, 32 A, 400 V", 32, 400, 5, 0.65, 0.11, 0.11, 0.21, "IEC 60309 32 A 5-pin", "IEC 60309-2"),
@@ -335,6 +396,10 @@ TEMPLATES = {
     "hose-hydraulic": ("hose", "sweep", "a round hose of the record's outside, its ferrules at the ends", ["outside"], "Two-braid hydraulic hoses"),
     "hose-metal": ("hose", "sweep", "a corrugated, braided round hose of the record's outside", ["outside"], "Corrugated stainless metal hoses"),
     "cable-flexible": ("cable", "sweep", "a round rubber-sheathed cable of the record's outside", ["outside"], "Flexible trailing and reeling cables"),
+    "cable-installation": ("cable", "sweep", "a round sheathed cable of the record's outside", ["outside"], "Installation cables for buildings"),
+    "wire": ("cable", "sweep", "a round insulated wire of the record's outside", ["outside"], "Hook-up wires for harnesses"),
+    "wiring-box": ("termination", "model", None, ["physical"], "Low-voltage wiring boxes"),
+    "circular-connector": ("plug-socket", "model", None, ["physical"], "Circular harness connectors"),
     "conductor-rail": ("conductor-rail", "sweep-and-pieces", "the housing's section, its width and height the record's outside", ["outside"], "Enclosed conductor rails"),
     "festoon": ("festoon", "sweep-and-pieces", "the C-track swept; trolleys every 1.5 m, the cable hung in loops between them", ["outside"], "Cable festoons on C-track"),
     "camlock": ("quick-coupling", "model", None, ["physical"], "Cam-lock hose couplings"),

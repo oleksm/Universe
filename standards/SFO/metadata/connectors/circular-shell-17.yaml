@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: connector.circular-shell-17
+  name: Circular connector, shell 17
+  description: 'A bayonet-coupled circular connector, plug and receptacle, an aluminium shell round an insert of 7 crimped contacts for wires up to 2.5 mm2: where a harness meets a unit, a ship''s equipment or a bulkhead. Sealed; keyed
+    so that only its own mates.'
+kind: plug-socket
+size: 2.4999999999999998e-06
+rating:
+  voltage: 600
+  current: 15
+physical:
+  length: 0.03
+  width: 0.03
+  height: 0.06
+  mass: 0.1
+built_of:
+- what: Shells and coupling ring
+  item: material.aluminium-alloy-6061
+  mass: 0.06
+  note: anodised aluminium
+- what: Contacts
+  item: material.copper
+  mass: 0.02
+  note: gold-plated copper alloy, as copper here
+- what: Inserts and seals
+  item: material.epdm-rubber
+  mass: 0.02
+  note: silicone, as EPDM here
+provides: both
+template: template.circular-connector
+basis:
+- of:
+  - physical
+  - built_of
+  - rating
+  tier: invented
+  review: true
+  note: Of the order of military circular connectors (MIL-DTL-38999 class); From memory of makers' catalogues; to be sourced.
+interface: interface.circular-shell-17

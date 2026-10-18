@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/interface.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: interface.circular-shell-11
+  name: Circular shell 11
+  description: 'The mating face of the Circular shell 11: any maker''s half built to it mates with any other''s.'
+domain: power
+kind: plug-socket
+envelope:
+  voltage: 600
+  current: 8
+media:
+- power
+sealing: air
+halves: male-female
+make: manual
+face:
+  length: 0.022
+  width: 0.022
+  height: 0.05
+size: 1.0e-06
+basis:
+- of:
+  - envelope
+  - face
+  tier: derived
+  note: The most the products built to it are rated for, and their joint's outside.
