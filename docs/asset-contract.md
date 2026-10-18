@@ -198,7 +198,7 @@ One model draws every size of a kit family (`standards/SFO/metadata/templates/`)
   y = 0.028, resting on the lower casting's top face; the lower cone and head down through its 26 mm plate to y = -0.086,
   the upper up through the next box's casting to y = 0.114; each head passes the 124 x 63.5 mm hole (about 118 x 58 mm
   at most) on a neck as long as the plate plus 2 mm; the hand lever out of the spacer's side to about z = +0.105. The
-  game turns it 90 degrees about Y to lock; figures invented.
+  game turns its child `rotating_lock` (the shaft and both heads) 90 degrees about Y to lock; figures invented.
 - **Panels** (building panels' templates): one root node `body`, static. A wall or partition stands with its foot at
   y = 0, its face along X centred on x = 0, its thickness along Z centred on the frame's grid line (z = 0), outside
   face toward +Z. A floor's walking plane is y = 0, the cassette below it; a roof sits on the frame's top, its underside
