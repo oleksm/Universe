@@ -4470,7 +4470,7 @@
 - { record: unit.furniture-pupil-desk, at: "2026-10-18T00:56:24Z", status: draft, summary: "changed", sha: "4066d573a98657f1" }
 - { record: unit.furniture-rack, at: "2026-10-18T00:15:44Z", status: draft, summary: "changed", sha: "8d7fdf474fa84455" }
 - { record: unit.furniture-range, at: "2026-10-18T02:18:23Z", status: draft, summary: "changed", sha: "353fa620d3bc9867" }
-- { record: unit.furniture-reception-desk, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "2c88bdb2d8241095" }
+- { record: unit.furniture-reception-desk, at: "2026-10-18T02:30:14Z", status: draft, summary: "changed: visual", sha: "6f00e71e49401452" }
 - { record: unit.furniture-seat-row, at: "2026-10-18T01:46:32Z", status: draft, summary: "changed", sha: "14e0d68e779dffa5" }
 - { record: unit.furniture-shelf, at: "2026-10-18T00:56:24Z", status: draft, summary: "changed", sha: "58017cd37890b2e0" }
 - { record: unit.furniture-shower, at: "2026-10-17T23:50:32Z", status: draft, summary: "changed", sha: "1a6be31eea394c48" }
