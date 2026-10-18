@@ -13,6 +13,7 @@ pub(crate) mod ship_code;
 mod walk;
 mod scene;
 mod compile;
+mod wiring;
 mod preparation;
 use walk::{Stand, stand_input, stand_spot, draw_stand};
 
@@ -68,7 +69,7 @@ fn sort_index(name: Option<&str>) -> usize {
 
 /// The layers, each shown or hidden: (name, the layer it's under, its colour).
 /// Points' kinds are 3.. in `SORTS`' order.
-const LAYERS: [(&str, Option<usize>, Option<Color>); 26] = [
+const LAYERS: [(&str, Option<usize>, Option<Color>); 27] = [
     ("HULL", None, Some(Color([0.55, 0.8, 1.0, 0.8]))),
     ("GRID, MEASURES", None, Some(Color([0.75, 0.88, 1.0, 0.75]))),
     ("POINTS", None, None),
@@ -95,7 +96,11 @@ const LAYERS: [(&str, Option<usize>, Option<Color>); 26] = [
     ("FRAME", None, Some(Color([0.4, 1.0, 0.5, 1.0]))),
     ("PRESSURE", None, Some(Color([1.0, 0.3, 0.25, 1.0]))),
     ("DECKS", None, Some(DECK)),
+    ("WIRING", None, Some(WIRE_COLOURS[2])),
 ];
+
+/// The harness drawn by bus: 28 V, 270 V, the power bus.
+const WIRE_COLOURS: [Color; 3] = [Color([0.45, 0.85, 1.0, 1.0]), Color([1.0, 0.85, 0.3, 1.0]), Color([1.0, 0.4, 0.3, 1.0])];
 
 /// Modules placed: their colour.
 const MODULE: Color = Color([0.8, 0.6, 1.0, 1.0]);
@@ -118,6 +123,7 @@ pub mod layer {
     pub const FRAME: usize = 23;
     pub const PRESSURE: usize = 24;
     pub const DECKS: usize = 25;
+    pub const WIRING: usize = 26;
 }
 
 /// A deck's colour (its plate, filled and outlined).
@@ -197,6 +203,8 @@ pub struct Interior {
     /// Each frame member's clash, as a solid tube (what it passes into, if anything),
     /// for which plan.
     member_clash: Option<(Plan, Vec<Option<Passes>>)>,
+    /// The harness, for which plan.
+    harness: std::cell::RefCell<Option<(Plan, std::sync::Arc<wiring::Harness>)>>,
     /// Its nodes (each joint, its widest tube, its node), for which plan.
     node_cache: Option<(Plan, Vec<Node>)>,
     /// FRAME: the stock new members are cut from (its number in `stocks()`), the load
@@ -4046,6 +4054,17 @@ pub struct Hull {
 
 impl Interior {
     /// Is layer `k` shown (and the layer it's under)?
+    /// The plan's harness, worked out again when the plan has changed.
+    fn harness(&self) -> std::sync::Arc<wiring::Harness> {
+        let mut cache = self.harness.borrow_mut();
+        if let Some((_, h)) = cache.as_ref().filter(|(p, _)| *p == self.plan) {
+            return h.clone();
+        }
+        let h = std::sync::Arc::new(wiring::harness(&self.plan, &self.fit));
+        *cache = Some((self.plan.clone(), h.clone()));
+        h
+    }
+
     fn shown(&self, k: usize) -> bool {
         !self.hidden[k] && LAYERS[k].1.is_none_or(|p| self.shown(p))
     }
@@ -5272,6 +5291,7 @@ fn craft(i: &Interior) -> crate::test_drive::Craft {
     for (at,diameter,node) in nodes(&i.plan.beams,&roots(&i.plan,&i.fit)) {
         if let Some(node)=node {masses.push((at.as_dvec3(),node.mass,DVec3::splat(f64::from(diameter))));}
     }
+    masses.extend(wiring::harness(&i.plan, &i.fit).masses().into_iter().map(|(at, m, size)| (at.as_dvec3(), m, size.as_dvec3())));
     let total: f64 = masses.iter().map(|m|m.1).sum();
     let middle = masses.iter().fold(DVec3::ZERO, |c, m| c + m.0 * m.1) / masses.iter().map(|m| m.1).sum::<f64>().max(1.0);
     // (Inertia: each box's own, and its mass at its distance.)
@@ -5460,7 +5480,8 @@ fn key_figures(i: &Interior) -> Vec<Figure> {
     let walls: f64 = walls(&i.plan).iter().map(|w| w.1 * w.2.per_square_metre).sum();
     let mods: f64 = i.plan.blocks.iter().filter_map(|b| i.fit.iter().find(|f| f.id == kind(&b.id))).map(|f| f.mass).sum();
     let load: f64 = i.plan.blocks.iter().filter_map(|b| i.fit.iter().find(|f| f.id == kind(&b.id))).map(|f| f.load).sum();
-    let (dry, full) = (mods + frame + walls, mods + frame + walls + load);
+    let wiring = i.harness().mass();
+    let (dry, full) = (mods + frame + walls + wiring, mods + frame + walls + wiring + load);
     let a = Assembly { blocks: i.plan.blocks.clone(), beams: i.plan.beams.clone(), plates: i.plan.plates.clone() };
     let (lo, hi) = a.bounds();
     let g = i.plan.gravity();
@@ -5558,11 +5579,12 @@ fn budget(i: &Interior) -> Budget {
     // (The rooms' walls, each the lightest stock that holds the cabin pressure.)
     let ws = walls(&i.plan);
     let wall_mass: f64 = ws.iter().map(|w| w.1 * w.2.per_square_metre).sum();
-    let dry: f64 = i.plan.blocks.iter().filter_map(|b| i.fit.iter().find(|f| f.id == kind(&b.id))).map(|f| f.mass).sum::<f64>() + frame_mass + wall_mass;
+    let wiring = i.harness().mass();
+    let dry: f64 = i.plan.blocks.iter().filter_map(|b| i.fit.iter().find(|f| f.id == kind(&b.id))).map(|f| f.mass).sum::<f64>() + frame_mass + wall_mass + wiring;
     let full = dry + i.plan.blocks.iter().filter_map(|b| i.fit.iter().find(|f| f.id == kind(&b.id))).map(|f| f.load).sum::<f64>();
     let mut lines = Vec::new();
     let t = |kg: f64| format!("{:.1} T", kg / 1000.0);
-    lines.push((format!("MASS  DRY {}  FULL {}  (FRAME {})", t(dry), t(full), t(frame_mass)), true));
+    lines.push((format!("MASS  DRY {}  FULL {}  (FRAME {}, WIRING {})", t(dry), t(full), t(frame_mass), t(wiring)), true));
     if !ws.is_empty() {
         // (The walls: their area and mass, the stock most of it is, and whether every
         // room's holds the cabin pressure.)
@@ -6068,7 +6090,19 @@ pub fn report(name: &str) -> String {
     let (members, node_mass, decks) = frame_masses(&i);
     let wall_mass: f64 = walls(&i.plan).iter().map(|w| w.1 * w.2.per_square_metre).sum();
     let mods: f64 = i.plan.blocks.iter().filter_map(|b| i.fit.iter().find(|f| f.id == kind(&b.id))).map(|f| f.mass).sum();
-    let _ = writeln!(out, "MASS modules {:.1} t, members {:.1} t, nodes {:.1} t, decks {:.1} t, walls {:.1} t", mods / 1000.0, members / 1000.0, node_mass / 1000.0, decks / 1000.0, wall_mass / 1000.0);
+    let h = wiring::harness(&i.plan, &i.fit);
+    let _ = writeln!(out, "MASS modules {:.1} t, members {:.1} t, nodes {:.1} t, decks {:.1} t, walls {:.1} t, wiring {:.2} t", mods / 1000.0, members / 1000.0, node_mass / 1000.0, decks / 1000.0, wall_mass / 1000.0, h.mass() / 1000.0);
+    // (The harness: from its hub, each run's bus, cable, length and loss.)
+    if let Some(hub) = &h.hub {
+        let _ = writeln!(out, "WIRING hub {hub}: {} runs, {:.0} kg", h.runs.len(), h.mass());
+    }
+    for r in &h.runs {
+        let cable = r.cable.as_deref().map_or("NONE".into(), |c| format!("{}{}", c.trim_start_matches("run."), if r.pairs > 1 { format!(" x{}", r.pairs) } else { String::new() }));
+        let _ = writeln!(out, "WIRE {} {:.0} V {:.1} kW: {cable}, {:.1} m, {:.1} kg, drop {:.1}%", r.module, r.volts, r.watts / 1000.0, r.length, r.mass, r.drop * 100.0);
+    }
+    for f in &h.faults {
+        let _ = writeln!(out, "WIRING {f}");
+    }
     out
 }
 
@@ -8618,6 +8652,39 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
             }
         }
     }
+    // The harness: each run along its way, in its bus's colour; a sheet of what it
+    // weighs, by bus, and what can't be wired.
+    if interior.shown(layer::WIRING) {
+        let h = interior.harness();
+        for r in &h.runs {
+            let col = WIRE_COLOURS[wiring::BUSES.iter().position(|&v| v == r.volts).unwrap_or(2)];
+            let col = if r.cable.is_some() { col } else { CLASH };
+            for w in r.path.windows(2) {
+                if let (Some((a, _)), Some((b, _))) = (cam.project(w[0]), cam.project(w[1])) {
+                    frame.hud_line(a, b, col);
+                }
+            }
+        }
+        if h.hub.is_some() || !h.faults.is_empty() {
+            let mut lines: Vec<(String, Color)> = vec![(format!("WIRING {} RUNS, {:.0} KG", h.runs.len(), h.mass()), LABEL)];
+            for (k, v) in wiring::BUSES.iter().enumerate() {
+                let on: Vec<&wiring::WireRun> = h.runs.iter().filter(|r| r.volts == *v).collect();
+                if !on.is_empty() {
+                    lines.push((format!("{v:.0} V: {} RUNS, {:.0} KG", on.len(), on.iter().map(|r| r.mass).sum::<f64>()), WIRE_COLOURS[k]));
+                }
+            }
+            lines.extend(h.faults.iter().map(|f| (f.clone(), CLASH)));
+            let line = 13.0;
+            let w = lines.iter().map(|l| l.0.len()).max().unwrap_or(0) as f32 * 10.6 + 14.0;
+            let tall = lines.len() as f32 * line + 10.0;
+            let at = Vec2::new(PANEL.0.x + PANEL.1.x + 16.0, PANEL.0.y);
+            frame.hud_rect(at, Vec2::new(w, tall), Color([0.02, 0.06, 0.13, 0.85]));
+            frame.hud_box(at, Vec2::new(w, tall), PLANE.scale(1.5));
+            for (k, (l, col)) in lines.iter().enumerate() {
+                frame.text_scaled(at + Vec2::new(6.0, 5.0 + k as f32 * line), l, *col, 0.7);
+            }
+        }
+    }
     // The reach check's findings: the floor got to (dots), where it drops away, and
     // a report (out of date once the plan's changed).
     if let Some((checked, found)) = interior.reach.as_ref().filter(|_| interior.shown(layer::REACH)) {
@@ -9089,5 +9156,20 @@ mod tests {
         assert_eq!(member_mass(&beam(2.0)), Some(s.mass), "a strut weighs its ENDs and bolts in");
         let n = nodes(&[beam(2.0)], &[]);
         assert!(n.iter().all(|j| j.2.is_some_and(|x| x.key == s.node)), "its ends meet the node it is made for");
+        // The harness: a battery, a fan and a nav unit on an L of struts. The fan's
+        // feeder runs along the frame on the power bus; the nav unit, on 28 V, wants
+        // a converter until one is fitted, then draws from it.
+        let block = |id: &str, at: Vec3| Block { uid: Default::default(), id: format!("{id}#1"), at, size: Vec3::splat(0.5), push: None, rotation: None };
+        let mut plan = Plan { beams: vec![beam(2.0), Beam { a: Vec3::new(2.0, 0.0, 0.0), b: Vec3::new(2.0, 0.0, 2.0), ..beam(2.0) }], ..Default::default() };
+        plan.blocks = vec![block("equipment.power.battery-vtol.s1", Vec3::ZERO), block("equipment.engine.fan.s3", Vec3::new(2.0, 0.0, 2.0)), block("equipment.avionics.nav-basic.s1", Vec3::new(2.0, 0.0, 0.0))];
+        let fit = catalogue();
+        let h = wiring::harness(&plan, fit);
+        let fan = h.runs.iter().find(|r| r.module.contains("fan")).expect("the fan is wired");
+        assert!(fan.volts == 3000.0 && fan.cable.is_some() && fan.path.len() == 3 && (fan.length - 4.0).abs() < 1e-6, "along both struts: {fan:?}");
+        assert!(h.faults.iter().any(|f| f.starts_with("NO 28 V CONVERTER")));
+        plan.blocks.push(block("equipment.power.converter.28v-1kw", Vec3::new(2.0, 0.0, 0.5)));
+        let h = wiring::harness(&plan, fit);
+        assert!(h.faults.is_empty() && h.runs.iter().any(|r| r.module.contains("nav") && r.volts == 28.0 && r.cable.is_some()), "{:?}", h.faults);
+        assert_eq!(wiring::bus_for(500.0), 28.0);
     }
 }
