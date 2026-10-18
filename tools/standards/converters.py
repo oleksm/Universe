@@ -151,6 +151,11 @@ def main():
         if os.path.exists(path):
             old = yaml.safe_load(open(path)) or {}
             d = dict(d, **{k: old[k] for k in KEEP if k in old and k not in d})
+        if c in BOARDS:          # (an installed model's empties, named by port id, give the places)
+            em = ep.empties(d)
+            for q in d["ports"]:
+                if q["id"] in em:
+                    q["at"], q["facing"], q["note"] = em[q["id"]][0], em[q["id"]][1], f"place from the model's empty {q['id']}"
         if c in CONVERTERS:
             pts, internal = wiring(c[0], c[1], c[2], d)
             d["ports"], d["internal"] = pts, internal
