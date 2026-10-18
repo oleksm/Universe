@@ -192,7 +192,8 @@ panel("roof-pressure-3x3", "Pressure roof panel, 3 x 3 m", "roof", (3.0, 3.0), r
       "roof-pressure", u=MLI_U, load=P_IN, basis=PRESSURE, site="airless", tier="derived")
 panel("floor-pressure-3x3", "Pressure floor panel, 3 x 3 m", "floor", (3.0, 3.0), 0.05,
       [("Pressure plate", AL, 9.0 * 0.005 * AL_RHO, "5 mm welded 6061, the vessel's bottom, bearing on the ground slab (the slab takes the pressure)"),
-       ("Edge channel, seals and bolts", AL, 12 * 6.0, "as the walls'"), ("Screed", CONC, 9.0 * 0.04 * 2400, "40 mm to walk on")],
+       ("Edge channel", AL, 19.48, "a 45 mm perimeter channel, 5 mm returns outward: blender's model (2026-10-18)"), ("Seals", RUB, 0.204, "blender's model"), ("Bolts", STEEL, 1.771, "M16 at 250 mm in the exposed border: blender's model"),
+       ("Screed", CONC, 812.94, "40 mm, 2.91 m square, inset 45 mm: blender's model")],
       "The ground floor of a pressurised building: a sealed aluminium plate on the ground slab, the air's push carried by the slab, a screed over it.",
       "floor-pressure", load=5000.0, basis=PRESSURE, site="airless", tier="derived")
 door = (1.0, 2.0)

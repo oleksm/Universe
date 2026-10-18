@@ -9,6 +9,8 @@ identity:
 package: package.plate-stack
 made_from:
 - item: material.aluminium-alloy-6061
+- item: material.epdm-rubber
+- item: material.structural-steel-a36
 - item: good.concrete
 size:
   length: 3.0
@@ -17,7 +19,7 @@ size:
 supplies:
   item: panel.floor-pressure-3x3
 physical:
-  mass: 1057.5
+  mass: 955.9
 basis:
 - of:
   - size
