@@ -17,8 +17,8 @@ basis:
   tier: derived
   note: 'The owner, 2026-10-17: buildings as layouts; one template a panel family (building_kit.py).'
 visual:
-  format: freefall-model/1
-  path: models/partition-pressure-hatch/v1
-  manifest_sha256: ed9c4bb6fa34be3c13d98a50528e284739a0ac199704f44f68a7bc40540e4eed
-  version: 1
-  triangles: 9828
+  format: "freefall-model/1"
+  path: "models/partition-pressure-hatch/v2"
+  manifest_sha256: "7861a75dd1d5a3821740ce025fb9d30b3353d137397aca9e2992c5fc3a864def"
+  version: 2
+  triangles: 9936
