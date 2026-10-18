@@ -10,6 +10,12 @@ scales_by:
 - physical
 members: 1
 reference: connector.corner-casting-iso1161
+visual:
+  format: "freefall-model/1"
+  path: "models/corner-casting/v1"
+  manifest_sha256: "1db5768acfa504d3556aaf5022870d4d548fc3c0e4c72586243be41ee89ac79e"
+  version: 1
+  triangles: 542
 basis:
 - of:
   - draws
