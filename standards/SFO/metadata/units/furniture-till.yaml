@@ -20,6 +20,12 @@ built_of:
 - what: Boards, printer and supply
   item: material.polyethylene-uhmw
   mass: 3.0
+visual:
+  format: "freefall-model/1"
+  path: "models/furniture-till/v1"
+  manifest_sha256: "40ed069e05a1d53002b0dfebd0a638f76c9177751ce6b320600e7241cdcaee51"
+  version: 1
+  triangles: 564
 basis:
 - of:
   - built_of
