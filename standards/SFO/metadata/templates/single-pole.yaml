@@ -10,6 +10,12 @@ scales_by:
 - physical
 members: 1
 reference: connector.powerlock-400a
+visual:
+  format: "freefall-model/1"
+  path: "models/single-pole/v1"
+  manifest_sha256: "a7509f7f276ccad80013b8388512a84f6d374a82289e9fa601155ea9e244c5cd"
+  version: 1
+  triangles: 10680
 basis:
 - of:
   - draws

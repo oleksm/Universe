@@ -4378,7 +4378,7 @@
 - { record: template.pipe-lagged, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "ee12031c045d334f" }
 - { record: template.plug-socket, at: "2026-10-18T05:10:36Z", status: "", summary: "changed", sha: "5aff04409b33b553" }
 - { record: template.roof, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "a966489b0bd9126b" }
-- { record: template.single-pole, at: "2026-10-18T04:18:11Z", status: "", summary: "first tracked", sha: "88eb85873afaab61" }
+- { record: template.single-pole, at: "2026-10-18T05:18:51Z", status: "", summary: "changed: visual", sha: "b8a5b97da3b5ee50" }
 - { record: template.stair, at: "2026-10-18T01:25:38Z", status: "", summary: "changed", sha: "dc0f89d97f6807ea" }
 - { record: template.termination-hv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "b0398bafc880c882" }
 - { record: template.termination-lv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "b3fff31e02cd79e5" }
