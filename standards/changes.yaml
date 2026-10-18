@@ -4462,7 +4462,7 @@
 - { record: template.cable-reel, at: "2026-10-17T22:28:14Z", status: "", summary: "changed", sha: "ef1cf9b4de2f7b1b" }
 - { record: template.camlock, at: "2026-10-17T22:28:14Z", status: "", summary: "changed: visual", sha: "2f9b6f2f5893ebf8" }
 - { record: template.chute, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "e667824e0f7b7e6c" }
-- { record: template.circular-connector, at: "2026-10-18T14:51:23Z", status: "", summary: "first tracked", sha: "52549c78008009f1" }
+- { record: template.circular-connector, at: "2026-10-18T15:15:35Z", status: "", summary: "changed: visual", sha: "76efef2bf10e1185" }
 - { record: template.clamp-coupling, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "56041bc040721ee0" }
 - { record: template.collector, at: "2026-10-18T03:58:51Z", status: "", summary: "changed", sha: "1317e309694e2142" }
 - { record: template.conductor-rail, at: "2026-10-18T04:18:11Z", status: "", summary: "changed", sha: "4365e26daa362ba1" }
