@@ -4383,7 +4383,7 @@
 - { record: template.termination-hv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "b0398bafc880c882" }
 - { record: template.termination-lv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "b3fff31e02cd79e5" }
 - { record: template.termination-mv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "5098fcf4fe0ded80" }
-- { record: template.twistlock, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "cbd4a644b8b3677d" }
+- { record: template.twistlock, at: "2026-10-18T05:29:35Z", status: "", summary: "changed: visual", sha: "41cc1f99f00b7f40" }
 - { record: template.union, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "c1676128c6be1767" }
 - { record: template.valve-ball, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "c7aa276338bc7083" }
 - { record: template.valve-butterfly, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "910ee70eb7366890" }

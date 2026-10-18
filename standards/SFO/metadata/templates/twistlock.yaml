@@ -10,6 +10,12 @@ scales_by:
 - physical
 members: 1
 reference: connector.twistlock-iso1161
+visual:
+  format: "freefall-model/1"
+  path: "models/twistlock/v1"
+  manifest_sha256: "263a013a4da846f548ab9e1bb5b16fc2d0ff600c40c75ae3b16dfce029b87d0d"
+  version: 1
+  triangles: 596
 basis:
 - of:
   - draws
