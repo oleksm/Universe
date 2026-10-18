@@ -14,6 +14,12 @@ built_of:
 - what: Panels, door and posts
   item: material.structural-steel-a36
   mass: 60.0
+visual:
+  format: "freefall-model/1"
+  path: "models/furniture-cubicle/v1"
+  manifest_sha256: "b64e408a5f2b3264efca36b5b52786d18cc7b5bd9ce638ed8dd7f78e1a2fc471"
+  version: 1
+  triangles: 1012
 basis:
 - of:
   - built_of
