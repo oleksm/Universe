@@ -35,9 +35,8 @@ pub(super) fn compile(
     if !craft.mass.is_finite() || craft.mass <= 0. {
         return Err("The design needs physical mass before it can be simulated".into());
     }
-    // Ship has one consumable fuel pool. Never substitute a rocket's reaction
-    // mass for its separate reactor fuel, or merge different tank contents.
-    let mut fuels = std::collections::BTreeSet::new();
+    // The ship's fuel, and propellants of their own (`fuels`).
+    let (fuel, _) = fuels(i)?;
     let mut actuator_records = Vec::new();
     for b in &i.plan.blocks {
         let f = i
@@ -45,41 +44,16 @@ pub(super) fn compile(
             .iter()
             .find(|f| f.id == kind(&b.id))
             .ok_or_else(|| format!("No registry equipment record for {}", b.id))?;
-        let Some((device, fields, _)) = figures(f) else {
+        let Some((_, fields, _)) = figures(f) else {
             if push_of(b, f).is_some() {
                 return Err(format!("{} has no actuator figures", f.key));
             }
             continue;
         };
-        if device == "power_plant"
-            || (push_of(b, f).is_some() && !fields.contains_key("full_power"))
-        {
-            let mut has_fuel = false;
-            for key in ["propellant", "burns"] {
-                if let Some(fuel) = fields
-                    .get(key)
-                    .and_then(|v| v.as_str())
-                    .filter(|s| !s.is_empty())
-                {
-                    fuels.insert(fuel.to_string());
-                    has_fuel = true;
-                }
-            }
-            if !has_fuel {
-                return Err(format!("{} has no fuel or propellant record", f.key));
-            }
-        }
         if push_of(b, f).is_some() {
             actuator_records.push((f.key.clone(), fields));
         }
     }
-    if fuels.len() > 1 {
-        return Err(format!(
-            "Shared ship runtime has one fuel pool; this design consumes {}",
-            fuels.into_iter().collect::<Vec<_>>().join(", ")
-        ));
-    }
-    let fuel = fuels.into_iter().next();
     if actuator_records.len() != craft.actuators.len() {
         return Err("Authored actuators and registry devices do not match".into());
     }
@@ -196,7 +170,8 @@ pub(super) fn compile(
                 .map(|p| (centre + rotation * p).as_dvec3())
                 .collect(),
         );
-        let mass = stock.per_metre * f64::from(length);
+        // (Weighed as the design weighs it: a kit strut its record's mass.)
+        let mass = super::member_mass(beam).unwrap_or(stock.per_metre * f64::from(length));
         let at = centre.as_dvec3() - origin;
         dry_mass += mass;
         dry_first += at * mass;
@@ -434,6 +409,55 @@ pub(super) fn compile(
 }
 
 /// Device limits stay individual: a warm pack cannot lend a cold pack its limit.
+/// What a design burns: the ship's fuel (what its plants burn; with no plant,
+/// the propellant of its strongest rockets), and each other rocket propellant
+/// as one of its own (its tanks' contents, the thrusters burning it, by their
+/// index among the actuators). Never substitute a rocket's reaction mass for a
+/// plant's fuel, or merge different tank contents.
+fn fuels(i: &Interior) -> Result<(Option<String>, Vec<universe_sim::world::ship_devices::Propellant>), String> {
+    let mut plants = std::collections::BTreeSet::new();
+    // (Each propellant's thrust, its thrusters; each tank's contents.)
+    let mut rockets: Vec<(String, f64, Vec<usize>)> = Vec::new();
+    let mut tanks: Vec<(String, f64)> = Vec::new();
+    let mut thruster = 0;
+    for b in &i.plan.blocks {
+        let Some(f) = i.fit.iter().find(|f| f.id == kind(&b.id)) else { continue };
+        let Some((device, fields, _)) = figures(f) else { continue };
+        let named = |key: &str| fields.get(key).and_then(|v| v.as_str()).filter(|s| !s.is_empty()).map(str::to_string);
+        let push = push_of(b, f);
+        if device == "power_plant" {
+            plants.insert(named("burns").ok_or_else(|| format!("{} has no fuel or propellant record", f.key))?);
+        }
+        if device == "tank" && f.load > 0. {
+            tanks.push((named("holds").unwrap_or_default(), f.load));
+        }
+        if let Some((_, thrust)) = push {
+            if !fields.contains_key("full_power") {
+                let what = named("propellant").or_else(|| named("burns")).ok_or_else(|| format!("{} has no fuel or propellant record", f.key))?;
+                match rockets.iter_mut().find(|r| r.0 == what) {
+                    Some(r) => { r.1 += thrust; r.2.push(thruster); }
+                    None => rockets.push((what, thrust, vec![thruster])),
+                }
+            }
+            thruster += 1;
+        }
+    }
+    if plants.len() > 1 {
+        return Err(format!("Its plants burn different fuels: {}", plants.into_iter().collect::<Vec<_>>().join(", ")));
+    }
+    let fuel = plants.into_iter().next().or_else(|| rockets.iter().max_by(|a, b| a.1.total_cmp(&b.1)).map(|r| r.0.clone()));
+    let own = rockets
+        .into_iter()
+        .filter(|r| Some(&r.0) != fuel.as_ref())
+        .map(|(material, _, thrusters)| universe_sim::world::ship_devices::Propellant {
+            capacity: tanks.iter().filter(|t| t.0 == material).map(|t| t.1).sum(),
+            material,
+            thrusters,
+        })
+        .collect();
+    Ok((fuel, own))
+}
+
 pub(super) fn devices(
     i: &Interior,
     craft: &crate::test_drive::Craft,
@@ -515,6 +539,7 @@ pub(super) fn devices(
     if fit.legs.len() != craft.legs.len() {
         return Err("Authored landing legs and device fit do not match".into());
     }
+    fit.propellants = fuels(i)?.1;
     fit.validate(craft.actuators.len())?;
     Ok(fit)
 }

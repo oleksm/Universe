@@ -48,12 +48,16 @@ pub fn rates(input: DVec3, limits: DVec3) -> DVec3 {
 /// +X right). Returns desired force and grouped main-drive fraction. Authority
 /// is the caller's balanced main/lift/side force, not raw summed thrust.
 /// Use a basis adapter for a Studio craft with a different forward axis.
+/// A ship with no main drive (a lifter) takes its throttle as collective: the
+/// lift it sets, added to the lift thrusters held.
 pub fn force_demand(throttle: f64, translation: DVec3, authority: crate::ship::Authority, main_thrust: f64, push: bool) -> (DVec3, f64) {
     if !push { return (DVec3::ZERO, 0.0); }
     let c = translation.clamp(DVec3::splat(-1.0), DVec3::ONE);
-    let force = DVec3::NEG_Z * (throttle.clamp(0.0, 1.0) * authority.main)
-        + DVec3::new(c.x * authority.side, c.y * if c.y > 0.0 { authority.lift } else { authority.side }, c.z * authority.side);
-    let level = throttle.clamp(0.0, 1.0) * authority.main / main_thrust.max(1.0);
+    let throttle = throttle.clamp(0.0, 1.0);
+    let (main, collective) = if main_thrust > 0.0 { (throttle, 0.0) } else { (0.0, throttle) };
+    let up = (c.y.max(0.0) + collective).min(1.0) * authority.lift + c.y.min(0.0) * authority.side;
+    let force = DVec3::NEG_Z * (main * authority.main) + DVec3::new(c.x * authority.side, up, c.z * authority.side);
+    let level = main * authority.main / main_thrust.max(1.0);
     (force, level)
 }
 

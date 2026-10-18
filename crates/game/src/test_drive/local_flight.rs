@@ -347,11 +347,16 @@ mod tests {
         fly(&mut f, 3.0);
         assert!(f.ship.powered && matches!(f.ship.state, ShipState::Landed { .. }));
         assert!(f.ship.position.distance(p) < 1e-6 && f.ship.orientation.angle_between(q) < 1e-9, "never turned in place");
-        // No flight computer: manual thrusters are all it has, and they lift it
-        // off the ground (G has nothing to switch to).
+        // A lifter (no main drive) with no flight computer: manual thrusters are
+        // all it has, and W, its lifts, lift it off the ground (G has nothing to
+        // switch to).
         let mut spec = (*fixture()).clone();
+        spec.thrusters.retain(|t| t.role != universe_sim::world::ship::ThrusterRole::Main);
+        spec.main_thrust = 0.0;
+        let lifter = spec.clone();
         (spec.turn_rate, spec.roll_rate) = (0.0, 0.0);
-        let lift: u64 = spec.thrusters.iter().enumerate().filter(|(_, t)| t.push.y > 0.5).map(|(k, _)| 1u64 << k).sum();
+        let lift = crate::manual::held_keys(|k| k == universe_engine::KeyCode::KeyW, &spec.thrusters);
+        assert!(lift != 0 && spec.thrusters.iter().enumerate().all(|(k, t)| (lift >> k & 1 == 1) == (t.role == universe_sim::world::ship::ThrusterRole::Lift)));
         let mut f = LocalFlight::new(Arc::new(spec), None, 9.81, 0, false).unwrap();
         let mut helm = Helm::default();
         assert_eq!(helm.fly(&f.ship, false, &HelmInput { manual: true, ..Default::default() }).say, Some("NO FLIGHT COMPUTER - MANUAL THRUSTERS ONLY"));
@@ -364,5 +369,16 @@ mod tests {
             f.advance(dt).unwrap();
         }
         assert!(f.ship.manual && f.ship.is_flying() && f.ship.position.length() - EARTH_RADIUS > f.ship.rest_height() + 1.0, "lifted off by hand");
+        // With a flight computer, the lifter's throttle is collective: it climbs, level.
+        let mut f = LocalFlight::new(Arc::new(lifter), None, 9.81, 0, false).unwrap();
+        let mut helm = Helm::default();
+        for k in 0..(4.0 / dt) as usize {
+            let hands = HelmInput { systems: k == 0, throttle_delta: if k > 0 && k < 20 { 0.05 } else { 0.0 }, ..Default::default() };
+            for o in helm.fly(&f.ship, false, &hands).orders {
+                f.order(&o);
+            }
+            f.advance(dt).unwrap();
+        }
+        assert!(!f.ship.manual && f.ship.is_flying() && f.climb() > 0.5 && f.ship.up().dot(f.ship.position.normalize()) > 0.99, "climbs level on the throttle: {} m/s", f.climb());
     }
 }
