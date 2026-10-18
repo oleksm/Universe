@@ -16,9 +16,9 @@ built_of:
   mass: 30.0
 visual:
   format: "freefall-model/1"
-  path: "models/furniture-charge-point/v1"
-  manifest_sha256: "89e6fa9beb3992a250a7ba43f318ed19f28d0a7aab4dc01604897d7f72c95b59"
-  version: 1
+  path: "models/furniture-charge-point/v2"
+  manifest_sha256: "01c231c925695388dedf149d07d026ebac7c0d81bdb3d8c3c69c8edb87d1cb62"
+  version: 2
   triangles: 644
 basis:
 - of:
