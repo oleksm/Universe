@@ -58,6 +58,12 @@ function:
   to_voltage: 28.0
   carries: 1000.0
   efficiency: 0.93
+visual:
+  format: "freefall-model/1"
+  path: "models/power-converter-28v-1kw/v1"
+  manifest_sha256: "6e9fc36215ed71855f8203f7cca0375e38405ee896a2b52739c97a2cc5580835"
+  version: 1
+  triangles: 22164
 life: 473364000
 basis:
 - of:
