@@ -1,0 +1,365 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+# Written by tools/standards/kit_works.py: change it there.
+identity:
+  key: module.valve-shop
+  name: Valve and coupling shop
+  step: Make valves and couplings
+  description: Casts and machines bodies and trim, assembles and tests valves, quick couplings, unions and container locks.
+physical:
+  length: 150
+  width: 50
+  height: 12
+staff:
+- profession: profession.machinist
+  count: 4
+- profession: profession.fitter
+  count: 2
+- profession: profession.metalworker
+  count: 2
+- profession: profession.technician
+  count: 1
+recipes:
+- makes: stock.kit-camlock-dn100
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.9785
+  - item: material.epdm-rubber
+    quantity: 0.05
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0285
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-camlock-dn150
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.9785
+  - item: material.epdm-rubber
+    quantity: 0.05
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0285
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-camlock-dn25
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.9785
+  - item: material.epdm-rubber
+    quantity: 0.05
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0285
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-camlock-dn50
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.9783
+  - item: material.epdm-rubber
+    quantity: 0.0502
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0285
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-corner-casting-iso1161
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1.03
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.03
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-flat-face-dn13
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 1.014
+  - item: material.epdm-rubber
+    quantity: 0.0156
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.0295
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-flat-face-dn19
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 1.0142
+  - item: material.epdm-rubber
+    quantity: 0.0154
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.0295
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-flat-face-dn25
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 1.0139
+  - item: material.epdm-rubber
+    quantity: 0.0157
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.0295
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-flat-face-dn6
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 1.0128
+  - item: material.epdm-rubber
+    quantity: 0.0167
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.0295
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-hose-union-dn25
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 1.03
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.03
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-hose-union-dn50
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 1.03
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.03
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-twistlock-iso1161
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.st4340-bar-120
+    quantity: 1.03
+  outputs:
+  - item: stock.st4340-scrap
+    quantity: 0.03
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-valve-ball-dn100-pn10
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9665
+  - item: stock.st304-pl-3
+    quantity: 0.0624
+  - item: material.epdm-rubber
+    quantity: 0.0011
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0282
+  - item: stock.st304-scrap
+    quantity: 0.0018
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-valve-ball-dn50-pn10
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9668
+  - item: stock.st304-pl-3
+    quantity: 0.0621
+  - item: material.epdm-rubber
+    quantity: 0.0011
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0282
+  - item: stock.st304-scrap
+    quantity: 0.0018
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-valve-butterfly-dn1000-pn10
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.7725
+  - item: stock.st304-pl-3
+    quantity: 0.206
+  - item: material.epdm-rubber
+    quantity: 0.05
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0225
+  - item: stock.st304-scrap
+    quantity: 0.006
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-valve-butterfly-dn150-pn10
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.7725
+  - item: stock.st304-pl-3
+    quantity: 0.206
+  - item: material.epdm-rubber
+    quantity: 0.05
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0225
+  - item: stock.st304-scrap
+    quantity: 0.006
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-valve-butterfly-dn300-pn10
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.7728
+  - item: stock.st304-pl-3
+    quantity: 0.2058
+  - item: material.epdm-rubber
+    quantity: 0.0499
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0225
+  - item: stock.st304-scrap
+    quantity: 0.006
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-valve-butterfly-dn600-pn10
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.7725
+  - item: stock.st304-pl-3
+    quantity: 0.206
+  - item: material.epdm-rubber
+    quantity: 0.05
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0225
+  - item: stock.st304-scrap
+    quantity: 0.006
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-valve-check-dn100-pn10
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9801
+  - item: stock.st304-pl-3
+    quantity: 0.0497
+  - item: material.epdm-rubber
+    quantity: 0.0002
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0285
+  - item: stock.st304-scrap
+    quantity: 0.0014
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-valve-check-dn300-pn10
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9799
+  - item: stock.st304-pl-3
+    quantity: 0.0498
+  - item: material.epdm-rubber
+    quantity: 0.0002
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0285
+  - item: stock.st304-scrap
+    quantity: 0.0015
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-valve-gate-dn100-pn10
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.7725
+  - item: stock.st304-pl-3
+    quantity: 0.2575
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0225
+  - item: stock.st304-scrap
+    quantity: 0.0075
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-valve-gate-dn300-pn10
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.7725
+  - item: stock.st304-pl-3
+    quantity: 0.2575
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0225
+  - item: stock.st304-scrap
+    quantity: 0.0075
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-valve-relief-dn100-pn10
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9993
+  - item: stock.st304-pl-3
+    quantity: 0.0307
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0291
+  - item: stock.st304-scrap
+    quantity: 0.0009
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-valve-relief-dn50-pn10
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9993
+  - item: stock.st304-pl-3
+    quantity: 0.0307
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0291
+  - item: stock.st304-scrap
+    quantity: 0.0009
+  rate: 0.5
+  power: 2500000.0
+life: 788940000
+basis:
+- of:
+  - recipes.inputs
+  - recipes.outputs
+  tier: derived
+  review: true
+  note: Each recipe's inputs are the parts of the record its stock supplies, as kg a kg; each material as the mill stock or good other works make of it; 3% of cut metal lost as scrap (invented). A material no works makes yet is taken
+    as the material itself.
+- of:
+  - physical
+  - recipes.rate
+  - recipes.power
+  tier: invented
+  review: true
+  note: Its size, rate and power chosen for the kind of plant; to be reviewed.
+- of:
+  - staff
+  tier: invented
+  review: true
+  note: 'Coarse: by the kind of plant, not this one; to be reviewed.'
+- of:
+  - life
+  rule: rule.life-plant

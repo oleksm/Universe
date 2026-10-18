@@ -1230,6 +1230,8 @@
 - { record: module.brewery, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "97ec62ff6e892b87" }
 - { record: module.brickworks, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "d9b426470254669b" }
 - { record: module.building-dock, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "05c2ff7a3d706191" }
+- { record: module.building-panel-works, at: "2026-10-18T14:56:23Z", status: review, summary: "first tracked", sha: "8e61ea130a0a3536" }
+- { record: module.cable-works, at: "2026-10-18T14:56:23Z", status: review, summary: "first tracked", sha: "6713696c76706535" }
 - { record: module.carbide-furnace, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "15b378968095ca34" }
 - { record: module.carbon-works, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "681dec68c4a8a45c" }
 - { record: module.casthouse, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "6432d22868be07a6" }
@@ -1245,11 +1247,13 @@
 - { record: module.compost-works, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "7ca9feac66a2e8d1" }
 - { record: module.concentrator, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "22c801b0a9939e84" }
 - { record: module.concrete-plant, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "b0e93672cd952988" }
+- { record: module.conveyor-shop, at: "2026-10-18T14:56:23Z", status: review, summary: "first tracked", sha: "187033e767f3d26a" }
 - { record: module.copper-smelter, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "73a96fbb2d2b2b27" }
 - { record: module.crushing-plant, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "191bebf9e40a0c58" }
 - { record: module.cutting-table, at: "2026-10-07T04:19:21Z", status: review, summary: "changed: cuts", sha: "2545992d8a3147da" }
 - { record: module.dairy, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "87a7222d2b693662" }
 - { record: module.deuterium-plant, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "7cc8640ba74a548d" }
+- { record: module.electrical-fittings-works, at: "2026-10-18T14:56:23Z", status: review, summary: "first tracked", sha: "fa7e75daf05fe9db" }
 - { record: module.electronics-works, at: "2026-10-07T04:19:21Z", status: review, summary: "changed: cuts", sha: "09c82312a21035ed" }
 - { record: module.extrusion-press, at: "2026-10-07T04:17:36Z", status: review, summary: "changed: recipes", sha: "9207ecb04016e199" }
 - { record: module.feed-mill, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "2149d25f26397089" }
@@ -1271,6 +1275,7 @@
 - { record: module.grain-silo, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "e0dec37d17cbeb5c" }
 - { record: module.grow-hall, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "0386f6f594d065b9" }
 - { record: module.honeycomb-works, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: recipes", sha: "106356f2726727f3" }
+- { record: module.hose-works, at: "2026-10-18T14:56:23Z", status: review, summary: "first tracked", sha: "edb54e851ff21c36" }
 - { record: module.hot-rolling-mill, at: "2026-10-12T22:59:56Z", status: review, summary: "changed: recipes", sha: "d02bd8da54aae1ff" }
 - { record: module.hydrogen-plant, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "acc387122b6d2ad0" }
 - { record: module.ice-melter, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "20f3bf44bfddd262" }
@@ -1301,6 +1306,7 @@
 - { record: module.pharma-works, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "f8a0230d5e067327" }
 - { record: module.phosphate-works, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "79d798750056cadc" }
 - { record: module.piercing-mill, at: "2026-10-07T04:17:36Z", status: review, summary: "changed: recipes", sha: "b42ac2603744e4a6" }
+- { record: module.pipe-shop, at: "2026-10-18T14:56:23Z", status: review, summary: "first tracked", sha: "618f905193d240c8" }
 - { record: module.potline, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "ab400440b396279b" }
 - { record: module.propellant-plant, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "b0818ffe6e5c908d" }
 - { record: module.reheat-furnace, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "bd616c29e0c16abe" }
@@ -1322,6 +1328,7 @@
 - { record: module.titanium-works, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "4bebc9d91c71ef52" }
 - { record: module.tungsten-works, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "b29e324df7a94727" }
 - { record: module.vacuum-furnace, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "f2470112fd348796" }
+- { record: module.valve-shop, at: "2026-10-18T14:56:23Z", status: review, summary: "first tracked", sha: "fa6e6910f2b7cebb" }
 - { record: module.waste-dump, at: "2026-10-06T18:38:56Z", status: review, summary: "first tracked", sha: "7dad5c67c8500c7a" }
 - { record: module.water-works, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "e07ff32d48a7971a" }
 - { record: module.welding-bay, at: "2026-10-14T01:37:48Z", status: review, summary: "changed: recipes", sha: "2001e7fb8aad6b4f" }

@@ -1,0 +1,361 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+# Written by tools/standards/kit_works.py: change it there.
+identity:
+  key: module.building-panel-works
+  name: Building panel works
+  step: Make building panels
+  description: Forms skins, foams or welds cores and stiffeners, glazes, hangs doors and frames each building panel and stair for the kit's 3 m grid.
+physical:
+  length: 250
+  width: 50
+  height: 15
+staff:
+- profession: profession.metalworker
+  count: 4
+- profession: profession.welder
+  count: 2
+- profession: profession.plant-operator
+  count: 2
+- profession: profession.technician
+  count: 1
+recipes:
+- makes: stock.kit-panel-floor-3x3
+  does: Skins are formed and joined to their cores or stiffeners, openings cut and fitted, the panel framed and sealed.
+  inputs:
+  - item: good.concrete
+    quantity: 0.8571
+  - item: stock.sta36-pl-8
+    quantity: 0.1471
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0043
+  rate: 2.0
+  power: 3000000.0
+- makes: stock.kit-panel-floor-pressure-3x3
+  does: Skins are formed and joined to their cores or stiffeners, openings cut and fitted, the panel framed and sealed.
+  inputs:
+  - item: good.concrete
+    quantity: 0.817
+  - item: stock.al6061-pl-5
+    quantity: 0.1885
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0055
+  rate: 2.0
+  power: 3000000.0
+- makes: stock.kit-panel-partition-3x3
+  does: Skins are formed and joined to their cores or stiffeners, openings cut and fitted, the panel framed and sealed.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.8724
+  - item: material.pir-foam
+    quantity: 0.153
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0254
+  rate: 2.0
+  power: 3000000.0
+- makes: stock.kit-panel-partition-door-3x3
+  does: Skins are formed and joined to their cores or stiffeners, openings cut and fitted, the panel framed and sealed.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9213
+  - item: material.pir-foam
+    quantity: 0.1056
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0268
+  rate: 2.0
+  power: 3000000.0
+- makes: stock.kit-panel-partition-pressure-3x3
+  does: Skins are formed and joined to their cores or stiffeners, openings cut and fitted, the panel framed and sealed.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 1.03
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.03
+  rate: 2.0
+  power: 3000000.0
+- makes: stock.kit-panel-partition-pressure-hatch-3x3
+  does: Skins are formed and joined to their cores or stiffeners, openings cut and fitted, the panel framed and sealed.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.8999
+  - item: stock.sta36-pl-8
+    quantity: 0.1301
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0262
+  - item: stock.sta36-scrap
+    quantity: 0.0038
+  rate: 2.0
+  power: 3000000.0
+- makes: stock.kit-panel-roof-3x3
+  does: Skins are formed and joined to their cores or stiffeners, openings cut and fitted, the panel framed and sealed.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.6078
+  - item: material.pir-foam
+    quantity: 0.3027
+  - item: material.epdm-rubber
+    quantity: 0.1072
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0177
+  rate: 2.0
+  power: 3000000.0
+- makes: stock.kit-panel-roof-pressure-3x3
+  does: Skins are formed and joined to their cores or stiffeners, openings cut and fitted, the panel framed and sealed.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 1.0164
+  - item: material.polyimide-film
+    quantity: 0.0132
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0296
+  rate: 2.0
+  power: 3000000.0
+- makes: stock.kit-panel-stair-3m
+  does: Skins are formed and joined to their cores or stiffeners, openings cut and fitted, the panel framed and sealed.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1.03
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.03
+  rate: 2.0
+  power: 3000000.0
+- makes: stock.kit-panel-wall-cargo-door-3x3
+  does: Skins are formed and joined to their cores or stiffeners, openings cut and fitted, the panel framed and sealed.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.8662
+  - item: stock.sta36-pl-8
+    quantity: 0.1606
+  - item: material.polyimide-film
+    quantity: 0.0031
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0252
+  - item: stock.sta36-scrap
+    quantity: 0.0047
+  rate: 2.0
+  power: 3000000.0
+- makes: stock.kit-panel-wall-door-3x3
+  does: Skins are formed and joined to their cores or stiffeners, openings cut and fitted, the panel framed and sealed.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.8666
+  - item: material.pir-foam
+    quantity: 0.1587
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0252
+  rate: 2.0
+  power: 3000000.0
+- makes: stock.kit-panel-wall-double-door-3x3
+  does: Skins are formed and joined to their cores or stiffeners, openings cut and fitted, the panel framed and sealed.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9434
+  - item: material.pir-foam
+    quantity: 0.0841
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0275
+  rate: 2.0
+  power: 3000000.0
+- makes: stock.kit-panel-wall-glazed-3x3
+  does: Skins are formed and joined to their cores or stiffeners, openings cut and fitted, the panel framed and sealed.
+  inputs:
+  - item: good.glass
+    quantity: 0.6726
+  - item: stock.al6061-pl-5
+    quantity: 0.2771
+  - item: stock.sta36-pl-8
+    quantity: 0.0462
+  - item: material.epdm-rubber
+    quantity: 0.0135
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0081
+  - item: stock.sta36-scrap
+    quantity: 0.0013
+  rate: 2.0
+  power: 3000000.0
+- makes: stock.kit-panel-wall-hatch-3x3
+  does: Skins are formed and joined to their cores or stiffeners, openings cut and fitted, the panel framed and sealed.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.892
+  - item: stock.sta36-pl-8
+    quantity: 0.1289
+  - item: material.polyimide-film
+    quantity: 0.0088
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.026
+  - item: stock.sta36-scrap
+    quantity: 0.0038
+  rate: 2.0
+  power: 3000000.0
+- makes: stock.kit-panel-wall-insulated-1p5x3
+  does: Skins are formed and joined to their cores or stiffeners, openings cut and fitted, the panel framed and sealed.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.7675
+  - item: material.pir-foam
+    quantity: 0.2549
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0224
+  rate: 2.0
+  power: 3000000.0
+- makes: stock.kit-panel-wall-insulated-3x1p5
+  does: Skins are formed and joined to their cores or stiffeners, openings cut and fitted, the panel framed and sealed.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.7675
+  - item: material.pir-foam
+    quantity: 0.2549
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0224
+  rate: 2.0
+  power: 3000000.0
+- makes: stock.kit-panel-wall-insulated-3x3
+  does: Skins are formed and joined to their cores or stiffeners, openings cut and fitted, the panel framed and sealed.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.7675
+  - item: material.pir-foam
+    quantity: 0.2549
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0224
+  rate: 2.0
+  power: 3000000.0
+- makes: stock.kit-panel-wall-pressure-1p5x3
+  does: Skins are formed and joined to their cores or stiffeners, openings cut and fitted, the panel framed and sealed.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 1.0135
+  - item: material.polyimide-film
+    quantity: 0.016
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0295
+  rate: 2.0
+  power: 3000000.0
+- makes: stock.kit-panel-wall-pressure-3x1p5
+  does: Skins are formed and joined to their cores or stiffeners, openings cut and fitted, the panel framed and sealed.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 1.0135
+  - item: material.polyimide-film
+    quantity: 0.016
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0295
+  rate: 2.0
+  power: 3000000.0
+- makes: stock.kit-panel-wall-pressure-3x3
+  does: Skins are formed and joined to their cores or stiffeners, openings cut and fitted, the panel framed and sealed.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 1.0164
+  - item: material.polyimide-film
+    quantity: 0.0132
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0296
+  rate: 2.0
+  power: 3000000.0
+- makes: stock.kit-panel-wall-roller-3x3
+  does: Skins are formed and joined to their cores or stiffeners, openings cut and fitted, the panel framed and sealed.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1.03
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.03
+  rate: 2.0
+  power: 3000000.0
+- makes: stock.kit-panel-wall-shopfront-3x3
+  does: Skins are formed and joined to their cores or stiffeners, openings cut and fitted, the panel framed and sealed.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.6296
+  - item: good.glass
+    quantity: 0.3343
+  - item: stock.sta36-pl-8
+    quantity: 0.0492
+  - item: material.epdm-rubber
+    quantity: 0.0066
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0183
+  - item: stock.sta36-scrap
+    quantity: 0.0014
+  rate: 2.0
+  power: 3000000.0
+- makes: stock.kit-panel-wall-viewport-3x3
+  does: Skins are formed and joined to their cores or stiffeners, openings cut and fitted, the panel framed and sealed.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.929
+  - item: stock.fs-pl-6
+    quantity: 0.0867
+  - item: material.polyimide-film
+    quantity: 0.0113
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0271
+  rate: 2.0
+  power: 3000000.0
+- makes: stock.kit-panel-wall-window-3x3
+  does: Skins are formed and joined to their cores or stiffeners, openings cut and fitted, the panel framed and sealed.
+  inputs:
+  - item: good.glass
+    quantity: 0.4087
+  - item: stock.sta36-pl-8
+    quantity: 0.3274
+  - item: stock.al6061-pl-5
+    quantity: 0.1684
+  - item: material.pir-foam
+    quantity: 0.1019
+  - item: material.epdm-rubber
+    quantity: 0.0081
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0095
+  - item: stock.al6061-scrap
+    quantity: 0.0049
+  rate: 2.0
+  power: 3000000.0
+life: 788940000
+basis:
+- of:
+  - recipes.inputs
+  - recipes.outputs
+  tier: derived
+  review: true
+  note: Each recipe's inputs are the parts of the record its stock supplies, as kg a kg; each material as the mill stock or good other works make of it; 3% of cut metal lost as scrap (invented). A material no works makes yet is taken
+    as the material itself.
+- of:
+  - physical
+  - recipes.rate
+  - recipes.power
+  tier: invented
+  review: true
+  note: Its size, rate and power chosen for the kind of plant; to be reviewed.
+- of:
+  - staff
+  tier: invented
+  review: true
+  note: 'Coarse: by the kind of plant, not this one; to be reviewed.'
+- of:
+  - life
+  rule: rule.life-plant

@@ -1,0 +1,227 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+# Written by tools/standards/kit_works.py: change it there.
+identity:
+  key: module.conveyor-shop
+  name: Conveyor shop
+  step: Make conveyors
+  description: Builds belt conveyor sections and their idlers, drag conveyor casings and chains, and the transfer chutes between them.
+physical:
+  length: 200
+  width: 40
+  height: 15
+staff:
+- profession: profession.metalworker
+  count: 4
+- profession: profession.fitter
+  count: 2
+- profession: profession.technician
+  count: 1
+recipes:
+- makes: stock.kit-belt-1000
+  does: Stringers, casings and chutes are cut and welded, idlers and chains assembled, belting cut and spliced.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.68
+  - item: material.silicone-rubber
+    quantity: 0.3398
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0198
+  rate: 1.5
+  power: 3000000.0
+- makes: stock.kit-belt-1000-sealed
+  does: Stringers, casings and chutes are cut and welded, idlers and chains assembled, belting cut and spliced.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9128
+  - item: material.silicone-rubber
+    quantity: 0.0872
+  - item: stock.mli-fl
+    quantity: 0.0266
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0266
+  rate: 1.5
+  power: 3000000.0
+- makes: stock.kit-belt-1200
+  does: Stringers, casings and chutes are cut and welded, idlers and chains assembled, belting cut and spliced.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.637
+  - item: material.silicone-rubber
+    quantity: 0.3816
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0186
+  rate: 1.5
+  power: 3000000.0
+- makes: stock.kit-belt-1400
+  does: Stringers, casings and chutes are cut and welded, idlers and chains assembled, belting cut and spliced.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.5986
+  - item: material.silicone-rubber
+    quantity: 0.4189
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0174
+  rate: 1.5
+  power: 3000000.0
+- makes: stock.kit-belt-650
+  does: Stringers, casings and chutes are cut and welded, idlers and chains assembled, belting cut and spliced.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.7715
+  - item: material.silicone-rubber
+    quantity: 0.251
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0225
+  rate: 1.5
+  power: 3000000.0
+- makes: stock.kit-belt-800
+  does: Stringers, casings and chutes are cut and welded, idlers and chains assembled, belting cut and spliced.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.7293
+  - item: material.silicone-rubber
+    quantity: 0.2919
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0212
+  rate: 1.5
+  power: 3000000.0
+- makes: stock.kit-belt-800-sealed
+  does: Stringers, casings and chutes are cut and welded, idlers and chains assembled, belting cut and spliced.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9289
+  - item: material.silicone-rubber
+    quantity: 0.0711
+  - item: stock.mli-fl
+    quantity: 0.0271
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0271
+  rate: 1.5
+  power: 3000000.0
+- makes: stock.kit-belt-transfer-1000
+  does: Stringers, casings and chutes are cut and welded, idlers and chains assembled, belting cut and spliced.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9465
+  - item: good.polyethylene
+    quantity: 0.0811
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0276
+  rate: 1.5
+  power: 3000000.0
+- makes: stock.kit-belt-transfer-1000-sealed
+  does: Stringers, casings and chutes are cut and welded, idlers and chains assembled, belting cut and spliced.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9592
+  - item: good.polyethylene
+    quantity: 0.0687
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0279
+  rate: 1.5
+  power: 3000000.0
+- makes: stock.kit-belt-transfer-1200
+  does: Stringers, casings and chutes are cut and welded, idlers and chains assembled, belting cut and spliced.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9462
+  - item: good.polyethylene
+    quantity: 0.0814
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0276
+  rate: 1.5
+  power: 3000000.0
+- makes: stock.kit-belt-transfer-1400
+  does: Stringers, casings and chutes are cut and welded, idlers and chains assembled, belting cut and spliced.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9459
+  - item: good.polyethylene
+    quantity: 0.0816
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0276
+  rate: 1.5
+  power: 3000000.0
+- makes: stock.kit-belt-transfer-650
+  does: Stringers, casings and chutes are cut and welded, idlers and chains assembled, belting cut and spliced.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9464
+  - item: good.polyethylene
+    quantity: 0.0811
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0276
+  rate: 1.5
+  power: 3000000.0
+- makes: stock.kit-belt-transfer-800
+  does: Stringers, casings and chutes are cut and welded, idlers and chains assembled, belting cut and spliced.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9465
+  - item: good.polyethylene
+    quantity: 0.081
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0276
+  rate: 1.5
+  power: 3000000.0
+- makes: stock.kit-belt-transfer-800-sealed
+  does: Stringers, casings and chutes are cut and welded, idlers and chains assembled, belting cut and spliced.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9598
+  - item: good.polyethylene
+    quantity: 0.0682
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.028
+  rate: 1.5
+  power: 3000000.0
+- makes: stock.kit-drag-conveyor-800
+  does: Stringers, casings and chutes are cut and welded, idlers and chains assembled, belting cut and spliced.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 0.8128
+  - item: material.silica-aerogel
+    quantity: 0.2109
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.0237
+  rate: 1.5
+  power: 3000000.0
+life: 788940000
+basis:
+- of:
+  - recipes.inputs
+  - recipes.outputs
+  tier: derived
+  review: true
+  note: Each recipe's inputs are the parts of the record its stock supplies, as kg a kg; each material as the mill stock or good other works make of it; 3% of cut metal lost as scrap (invented). A material no works makes yet is taken
+    as the material itself.
+- of:
+  - physical
+  - recipes.rate
+  - recipes.power
+  tier: invented
+  review: true
+  note: Its size, rate and power chosen for the kind of plant; to be reviewed.
+- of:
+  - staff
+  tier: invented
+  review: true
+  note: 'Coarse: by the kind of plant, not this one; to be reviewed.'
+- of:
+  - life
+  rule: rule.life-plant

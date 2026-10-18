@@ -1,0 +1,177 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+# Written by tools/standards/kit_works.py: change it there.
+identity:
+  key: module.hose-works
+  name: Hose works
+  step: Make hose
+  description: Extrudes rubber tube, braids steel wire or corrugates stainless tube over it, covers it and cuts it to lengths.
+physical:
+  length: 150
+  width: 30
+  height: 12
+staff:
+- profession: profession.plant-operator
+  count: 4
+- profession: profession.technician
+  count: 1
+recipes:
+- makes: stock.kit-hose-dn100-pn16
+  does: A tube is extruded or corrugated, braided, covered, cured and cut to lengths.
+  inputs:
+  - item: material.epdm-rubber
+    quantity: 0.7623
+  - item: stock.sta36-pl-8
+    quantity: 0.2449
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0071
+  rate: 0.5
+  power: 2000000.0
+- makes: stock.kit-hose-dn150-pn16
+  does: A tube is extruded or corrugated, braided, covered, cured and cut to lengths.
+  inputs:
+  - item: material.epdm-rubber
+    quantity: 0.7614
+  - item: stock.sta36-pl-8
+    quantity: 0.2457
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0072
+  rate: 0.5
+  power: 2000000.0
+- makes: stock.kit-hose-dn25-pn16
+  does: A tube is extruded or corrugated, braided, covered, cured and cut to lengths.
+  inputs:
+  - item: material.epdm-rubber
+    quantity: 0.762
+  - item: stock.sta36-pl-8
+    quantity: 0.2451
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0071
+  rate: 0.5
+  power: 2000000.0
+- makes: stock.kit-hose-dn50-pn16
+  does: A tube is extruded or corrugated, braided, covered, cured and cut to lengths.
+  inputs:
+  - item: material.epdm-rubber
+    quantity: 0.7618
+  - item: stock.sta36-pl-8
+    quantity: 0.2453
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0071
+  rate: 0.5
+  power: 2000000.0
+- makes: stock.kit-hose-hydraulic-dn13
+  does: A tube is extruded or corrugated, braided, covered, cured and cut to lengths.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.5664
+  - item: material.epdm-rubber
+    quantity: 0.4501
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0165
+  rate: 0.5
+  power: 2000000.0
+- makes: stock.kit-hose-hydraulic-dn19
+  does: A tube is extruded or corrugated, braided, covered, cured and cut to lengths.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.5671
+  - item: material.epdm-rubber
+    quantity: 0.4494
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0165
+  rate: 0.5
+  power: 2000000.0
+- makes: stock.kit-hose-hydraulic-dn25
+  does: A tube is extruded or corrugated, braided, covered, cured and cut to lengths.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.5665
+  - item: material.epdm-rubber
+    quantity: 0.45
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0165
+  rate: 0.5
+  power: 2000000.0
+- makes: stock.kit-hose-hydraulic-dn6
+  does: A tube is extruded or corrugated, braided, covered, cured and cut to lengths.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.5663
+  - item: material.epdm-rubber
+    quantity: 0.4502
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0165
+  rate: 0.5
+  power: 2000000.0
+- makes: stock.kit-hose-metal-dn100
+  does: A tube is extruded or corrugated, braided, covered, cured and cut to lengths.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 1.03
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.03
+  rate: 0.5
+  power: 2000000.0
+- makes: stock.kit-hose-metal-dn200
+  does: A tube is extruded or corrugated, braided, covered, cured and cut to lengths.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 1.03
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.03
+  rate: 0.5
+  power: 2000000.0
+- makes: stock.kit-hose-metal-dn25
+  does: A tube is extruded or corrugated, braided, covered, cured and cut to lengths.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 1.03
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.03
+  rate: 0.5
+  power: 2000000.0
+- makes: stock.kit-hose-metal-dn50
+  does: A tube is extruded or corrugated, braided, covered, cured and cut to lengths.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 1.03
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.03
+  rate: 0.5
+  power: 2000000.0
+life: 788940000
+basis:
+- of:
+  - recipes.inputs
+  - recipes.outputs
+  tier: derived
+  review: true
+  note: Each recipe's inputs are the parts of the record its stock supplies, as kg a kg; each material as the mill stock or good other works make of it; 3% of cut metal lost as scrap (invented). A material no works makes yet is taken
+    as the material itself.
+- of:
+  - physical
+  - recipes.rate
+  - recipes.power
+  tier: invented
+  review: true
+  note: Its size, rate and power chosen for the kind of plant; to be reviewed.
+- of:
+  - staff
+  tier: invented
+  review: true
+  note: 'Coarse: by the kind of plant, not this one; to be reviewed.'
+- of:
+  - life
+  rule: rule.life-plant
