@@ -2,11 +2,17 @@
 identity:
   key: planet-process.plate-motion-and-forces
   name: Plate motion (Euler rotation) driven by remembered boundary forces
-  about: 'Each step the reference speed follows the mantle heat flux from the interior history: speed = min(EARTH_SPEED*(q/EARTH_MANTLE_FLUX)^SPEED_POWER, MAX_SPEED). Each plate''s torque vector (decaying memory of slab pull, trench
-    suction and ridge push forces, each a unit tangent force at a particle, crossed with position) sets its axis (torque direction) and a speed multiplier |torque|/particle_count relative to the median over driven plates, clipped to
-    0.15-2.0; a plate with zero torque keeps its axis and gets DRIFT. The multiplier is then times the plate''s rate (collision stall) and (1 - CONTINENT_DRAG*continental particle share). dt = min(step_myr, STEP*gap*R/(speed*fastest),
-    time left). Every plate rotates its particles exactly by Rodrigues rotation about its axis by speed*mult/R*dt, and its particles'' structural grain vectors too, and the relief layer''s anchored vectors. After the step: torque <-
-    torque*exp(-dt/FORCE_MYR) + force (this step''s force sum is NOT scaled by dt), and plates not stalled this step recover rate toward base on RECOVER_MYR. w.spin records each plate''s angular velocity vector (rad/yr).'
+  about: 'Each step the reference speed follows the mantle heat flux from the interior history: speed = min(EARTH_SPEED*(q/EARTH_MANTLE_FLUX)^SPEED_POWER,
+    MAX_SPEED). Each plate''s torque vector (decaying memory of slab pull, trench suction and ridge push forces, each a unit
+    tangent force at a particle, crossed with position) sets its axis (torque direction) and a speed multiplier |torque|/particle_count
+    relative to the median over driven plates, clipped to 0.15-2.0; a plate with zero torque keeps its axis and gets DRIFT.
+    The multiplier is then times the plate''s rate (collision stall) and (1 - CONTINENT_DRAG*continental particle share).
+    dt = min(step_myr, STEP*gap*R/(speed*fastest), time left). Every plate rotates its particles exactly by Rodrigues rotation
+    about its axis by speed*mult/R*dt, and its particles'' structural grain vectors too, and the relief layer''s anchored
+    vectors. After the step: torque <- torque*exp(-dt/FORCE_MYR) + force (this step''s force sum is NOT scaled by dt), and
+    plates not stalled this step recover rate toward base on RECOVER_MYR. w.spin records each plate''s angular velocity vector
+    (rad/yr). The multipliers are then scaled so their particle-weighted mean is 1: the mean plate speed is the reference
+    speed (EARTH_SPEED at Earth''s flux).'
 area: plates
 clock:
   when: every step; dt <= step_myr (default 5 Myr) and <= STEP spacing for the fastest plate
@@ -104,9 +110,10 @@ params:
   said_as:
     unit: m/yr
     factor: 0.05
-  meaning: mean plate speed at EARTH_MANTLE_FLUX
+  meaning: 'the particle-weighted mean plate speed at EARTH_MANTLE_FLUX: the multipliers (torque per area, rate, continental
+    drag) are scaled so their particle-weighted mean is 1'
   source: stages/plates.py:95
-  note: m/yr, (real) DeMets et al. 2010
+  note: m/yr, (real) DeMets et al. 2010; the mean enforced since 18 Oct 2026 (the Python ran at 0.35 of it)
 - name: EARTH_MANTLE_FLUX
   value: 0.04745098039215686
   unit: W/m2
@@ -131,7 +138,8 @@ params:
 - name: SLAB_PULL
   value: 1.0
   unit: '1'
-  meaning: 'weight of slab pull: unit tangent force at each sinking particle toward its rider, added to the sinking plate''s torque'
+  meaning: 'weight of slab pull: unit tangent force at each sinking particle toward its rider, added to the sinking plate''s
+    torque'
   source: stages/plates.py:53
   note: Forsyth & Uyeda 1975; Conrad & Lithgow-Bertelloni 2002
 - name: TRENCH_SUCTION
@@ -143,7 +151,8 @@ params:
 - name: RIDGE_PUSH
   value: 0.15
   unit: '1'
-  meaning: 'weight of ridge push: at each opened sample, a unit tangent force from the new point toward the source particle, on the source plate'
+  meaning: 'weight of ridge push: at each opened sample, a unit tangent force from the new point toward the source particle,
+    on the source plate'
   source: stages/plates.py:55
   note: Forsyth & Uyeda 1975
 - name: FORCE_MYR
@@ -168,11 +177,13 @@ params:
   source: stages/plates.py:104
   note: Forsyth & Uyeda 1975
 - name: STEP
-  value: 1.0
+  value: 0.5
   unit: '1'
-  meaning: the fastest plate moves at most STEP*gap per step (CFL-like bound on dt)
+  meaning: 'the fastest plate moves at most STEP*gap per substep (CFL-like bound on dt): at most the overlap reach (OVERLAP
+    0.5), so no particle passes through the other plate unseen'
   source: stages/plates.py:48
-  note: chosen
+  note: 'numerical: STEP <= OVERLAP (subduction); at 1.0 the floor sunk was 0.56-1.07 of the convergence x trench length,
+    at 0.5 1.00 (planets, 18 Oct 2026)'
 - name: RECOVER_MYR
   value: 946728000000000.0
   unit: s
@@ -210,7 +221,8 @@ depends_on:
 backends:
 - cpu
 implementations:
-- where: planet-sim-landform stages/plates.py:run (lines 963-999 speed/axis/dt/rotation, 1000-1008 tangent_torque, 1044-1045 slab pull and suction, 1227 ridge push, 1410-1416 torque memory and recovery); sphere.py:rotate (lines 29-32)
+- where: planet-sim-landform stages/plates.py:run (lines 963-999 speed/axis/dt/rotation, 1000-1008 tangent_torque, 1044-1045
+    slab pull and suction, 1227 ridge push, 1410-1416 torque memory and recovery); sphere.py:rotate (lines 29-32)
   state: reference
 status: draft
 basis:
@@ -220,4 +232,11 @@ basis:
   - reads
   - writes
   tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
+    code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - params.STEP
+  - params.EARTH_SPEED
+  tier: derived
+  note: 'planets, 18 Oct 2026: the plates variant the owner chose (planet-forge plates-foundation), measured on plates_earth,
+    3 seeds.'

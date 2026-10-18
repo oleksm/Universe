@@ -2,11 +2,16 @@
 identity:
   key: planet-process.subduction
   name: Convergence detection, subduction and floor foundering
-  about: 'After motion, all particle pairs closer than OVERLAP*gap (KD-tree query_pairs on unit-sphere chord) from different plates are tested for closing: relative surface velocity rel = spin_a x x_a - spin_b x x_b; closing if rel
-    . (x_b-x_a)/|..| > SLIP*|rel|. A particle is buoyant if continental or its floor >= BUOYANT. If not both buoyant, one sinks: the non-buoyant under the buoyant, else the older floor (ties: a). Each sinker counted once (first pair).
-    Sunk particles are flagged, their positions/plates recorded (w.sunk_at, w.sunk_plate for trenches), slab pull and trench suction forces are added. Separately, every 5th step, ocean floor older than FOUNDER_AGE_MYR (not already sunk)
-    sinks with probability 1-exp(-5*dt/FOUNDER_MYR) (spontaneous subduction initiation; Stern 2004); foundered floor adds to consumed area but makes no arc. Finally sunk particles are removed, and so are continental particles worn to
-    xvol <= 0.05*OCEAN_CRUST*cell; the relief layer is told which removed particles sank.'
+  about: 'After motion, all particle pairs closer than OVERLAP*gap (KD-tree query_pairs on unit-sphere chord) from different
+    plates are tested for closing: relative surface velocity rel = spin_a x x_a - spin_b x x_b; closing if rel . (x_b-x_a)/|..|
+    > SLIP*|rel|. A particle is buoyant if continental or its floor >= BUOYANT. If not both buoyant, one sinks: the non-buoyant
+    under the buoyant; of two floors, one polarity per plate pair: the plate whose floor in the contacts is older on the whole
+    goes down (ties: the lower id''s). Each sinker counted once (first pair). Sunk particles are flagged, their positions/plates
+    recorded (w.sunk_at, w.sunk_plate for trenches), slab pull and trench suction forces are added. Separately, every 5th
+    step, ocean floor older than FOUNDER_AGE_MYR (not already sunk) sinks with probability 1-exp(-5*dt/FOUNDER_MYR) (spontaneous
+    subduction initiation; Stern 2004); foundered floor adds to consumed area but makes no arc. Finally sunk particles are
+    removed, and so are continental particles worn to xvol <= 0.05*OCEAN_CRUST*cell; the relief layer is told which removed
+    particles sank.'
 area: plates
 clock:
   when: every step (foundering only when steps % 5 == 0)
@@ -112,7 +117,8 @@ params:
 - name: SLIP
   value: 0.35
   unit: '1'
-  meaning: two overlapping particles of different plates count as converging only if their closing speed exceeds SLIP x |relative velocity|; below it they slide past (transform)
+  meaning: two overlapping particles of different plates count as converging only if their closing speed exceeds SLIP x |relative
+    velocity|; below it they slide past (transform)
   source: stages/plates.py:41
   note: 'chosen: transform-like within about 70 deg'
 - name: BUOYANT
@@ -124,7 +130,8 @@ params:
 - name: SLAB_PULL
   value: 1.0
   unit: '1'
-  meaning: 'weight of slab pull: unit tangent force at each sinking particle toward its rider, added to the sinking plate''s torque'
+  meaning: 'weight of slab pull: unit tangent force at each sinking particle toward its rider, added to the sinking plate''s
+    torque'
   source: stages/plates.py:53
   note: Forsyth & Uyeda 1975; Conrad & Lithgow-Bertelloni 2002
 - name: TRENCH_SUCTION
@@ -168,7 +175,8 @@ params:
   meaning: continental particles with xvol <= 0.05*OCEAN_CRUST*cell (350 m equivalent) are dropped
   source: stages/plates.py:1210
 random_draws:
-- 'Foundering: rng.uniform(size=len(w.x)) drawn only on steps where steps % 5 == 0 AND some floor is old enough (the draw is inside `if old.any()`), size = current particle count.'
+- 'Foundering: rng.uniform(size=len(w.x)) drawn only on steps where steps % 5 == 0 AND some floor is old enough (the draw
+  is inside `if old.any()`), size = current particle count.'
 invariants:
 - a particle sinks at most once
 - continental particles never sink at a trench (they only collide)
@@ -188,4 +196,11 @@ basis:
   - reads
   - writes
   tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
+    code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - identity
+  tier: sourced
+  note: 'planets, 18 Oct 2026: the plates variant the owner chose (planet-forge plates-foundation), measured on plates_earth,
+    3 seeds. Polarity: the older, denser lithosphere subducts, one polarity per trench.'
+  source: Stern 2002, Subduction zones, Rev. Geophys. 40

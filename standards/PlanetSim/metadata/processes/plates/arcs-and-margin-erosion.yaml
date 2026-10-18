@@ -2,11 +2,15 @@
 identity:
   key: planet-process.arcs-and-margin-erosion
   name: Arc growth behind trenches and subduction erosion of continental margins
-  about: 'Particles within ARC_WIDTH (as ARC_WIDTH/R on the unit sphere) of any sunk particle, not themselves sunk, and on the same plate as the rider of their nearest trench point form the arc band. The volume ARC_PER_AREA * (#sunk
-    * cell) is spread evenly: each band particle gains ARC_PER_AREA*#sunk/#band metres (floor thickness on ocean particles, volume*cell on continental ones). This is per step, scaled by consumed area, not by dt. New volcanic rock: greenstone
-    while mantle T > G.KOMATIITE_MANTLE_K else arc_volcanic; arc_plutonic basement; cover grows to G.ARC_COVER; ore fertility (porphyry, epithermal, volcanic sulphur on continent; VMS, porphyry on island arcs) with gain e-fold G.ARC_FERTILE_M;
-    grain along the trench. Where a continent rides over the trench, continental particles within ARC_WIDTH of a continent-ridden trench on the rider''s plate lose MARGIN_LOSS_PER_AREA*(#sunk under continent)/#margin*cell of volume
-    (clamped at 0). Arc additions also go to the per-sample volcano record w.volc[''arc''] (metres and last time).'
+  about: 'Particles within ARC_WIDTH (as ARC_WIDTH/R on the unit sphere) of any sunk particle, not themselves sunk, and on
+    the same plate as the rider of their nearest trench point form the arc band. The volume ARC_PER_AREA * (#sunk * cell)
+    is spread evenly: each band particle gains ARC_PER_AREA*#sunk/#band metres (floor thickness on ocean particles, volume*cell
+    on continental ones). This is per step, scaled by consumed area, not by dt. New volcanic rock: greenstone while mantle
+    T > G.KOMATIITE_MANTLE_K else arc_volcanic; arc_plutonic basement; cover grows to G.ARC_COVER; ore fertility (porphyry,
+    epithermal, volcanic sulphur on continent; VMS, porphyry on island arcs) with gain e-fold G.ARC_FERTILE_M; grain along
+    the trench. Where a continent rides over the trench, continental particles within ARC_WIDTH of a continent-ridden trench
+    on the rider''s plate lose MARGIN_LOSS_PER_AREA*(#sunk under continent)/#margin*cell of volume (clamped at 0). Arc additions
+    also go to the per-sample volcano record w.volc[''arc''] (metres and last time).'
 area: plates
 clock:
   when: every step with sunk particles
@@ -84,11 +88,12 @@ params:
   source: stages/plates.py:146
   note: 'real: arc-trench gaps 100-300 km'
 - name: ARC_PER_AREA
-  value: 2216.6666666666665
+  value: 1266.6666666666665
   unit: m
-  meaning: arc crust added per area of subducted floor, spread evenly over the arc band particles; =2216.7
-  source: stages/plates.py:110
-  note: 3.8 km3/yr arcs over 3.0 km2/yr subducted (Parsons 1981; Scholl & von Huene 2009), x1.75 recalibrated to Earth's crust volume ~7e9 km3
+  meaning: 'arc crust added per area of subducted floor (m3/m2), spread evenly over the arc band: 3.8 km3/yr of arcs over
+    3.0 km2/yr of floor consumed'
+  source: Scholl & von Huene 2009 (arc addition 3.8 km3/yr); Parsons 1981 (3.0 km2/yr consumed)
+  note: sourced; the Python had x1.75 recalibrated to Earth crust volume at its slow plates (dropped 18 Oct 2026)
 - name: MARGIN_LOSS_PER_AREA
   value: 900.0
   unit: m
@@ -130,7 +135,14 @@ basis:
   - reads
   - writes
   tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
+    code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - params.ARC_PER_AREA
+  tier: sourced
+  note: 'planets, 18 Oct 2026: the plates variant the owner chose (planet-forge plates-foundation), measured on plates_earth,
+    3 seeds.'
+  source: Scholl & von Huene 2009; Parsons 1981
 events_emitted:
 - event: planet-event.arc
   where: 'forge: one per substep with arcs (volumes added and eaten)'
