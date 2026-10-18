@@ -10,6 +10,12 @@ scales_by:
 - physical
 members: 2
 reference: connector.valve-ball-dn50-pn10
+visual:
+  format: "freefall-model/1"
+  path: "models/valve-ball/v1"
+  manifest_sha256: "02e32f4f6229230dd669dc5088569208245660fa79b9dc53e6cabed5509b2a38"
+  version: 1
+  triangles: 5870
 basis:
 - of:
   - draws
