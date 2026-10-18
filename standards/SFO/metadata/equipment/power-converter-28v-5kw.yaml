@@ -81,9 +81,9 @@ basis:
   rule: rule.life-ship-system
 visual:
   format: freefall-model/1
-  path: models/power-converter-28v-5kw/v1
-  manifest_sha256: 2ea67850c291e4aa45a95d670ee877446573ba75d2cbf72911ed8f4dd37d03af
-  version: 1
+  path: models/power-converter-28v-5kw/v2
+  manifest_sha256: 3fb69f9d7ce695d29c7dbc2b70ebb548891f11fef975e76da32bff0df0ca0f4c
+  version: 2
   triangles: 24390
 ports:
 - id: dc-in+
