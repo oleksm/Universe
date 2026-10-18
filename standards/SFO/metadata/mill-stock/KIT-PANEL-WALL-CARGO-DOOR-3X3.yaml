@@ -13,12 +13,12 @@ made_from:
 - item: material.structural-steel-a36
 size:
   length: 3.0
-  width: 0.2
+  width: 0.267
   height: 3.0
 supplies:
   item: panel.wall-cargo-door-3x3
 physical:
-  mass: 615.7
+  mass: 619.1
 basis:
 - of:
   - size

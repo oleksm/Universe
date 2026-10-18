@@ -1244,7 +1244,7 @@
 - { record: module.brewery, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "97ec62ff6e892b87" }
 - { record: module.brickworks, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "d9b426470254669b" }
 - { record: module.building-dock, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "05c2ff7a3d706191" }
-- { record: module.building-panel-works, at: "2026-10-18T14:56:23Z", status: review, summary: "first tracked", sha: "8e61ea130a0a3536" }
+- { record: module.building-panel-works, at: "2026-10-18T15:50:18Z", status: review, summary: "changed: recipes", sha: "09f6f72ab9ce23dd" }
 - { record: module.cable-works, at: "2026-10-18T15:11:23Z", status: review, summary: "changed: recipes", sha: "29e44c5f661a8421" }
 - { record: module.carbide-furnace, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "15b378968095ca34" }
 - { record: module.carbon-works, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "681dec68c4a8a45c" }
@@ -1485,7 +1485,7 @@
 - { record: panel.roof-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "da24091c503ae16b" }
 - { record: panel.roof-pressure-3x3, at: "2026-10-18T14:47:28Z", status: draft, summary: "first tracked", sha: "d906c360700190c4" }
 - { record: panel.stair-3m, at: "2026-10-18T01:25:38Z", status: draft, summary: "changed: built_of", sha: "4beb1e9891445b12" }
-- { record: panel.wall-cargo-door-3x3, at: "2026-10-18T14:47:28Z", status: draft, summary: "first tracked", sha: "3a3e77f85eb610ab" }
+- { record: panel.wall-cargo-door-3x3, at: "2026-10-18T15:50:18Z", status: draft, summary: "changed: thickness, physical, built_of", sha: "5f8f27bfa40ac4b4" }
 - { record: panel.wall-door-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "483f3d2946a9f8c3" }
 - { record: panel.wall-double-door-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "bb78c6d4f7f947e2" }
 - { record: panel.wall-glazed-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "3ac92dbf3aa79894" }
@@ -3703,7 +3703,7 @@
 - { record: stock.kit-panel-roof-3x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "804eed560cd5171e" }
 - { record: stock.kit-panel-roof-pressure-3x3, at: "2026-10-18T14:47:28Z", status: review, summary: "first tracked", sha: "10d90dfdc0e0255b" }
 - { record: stock.kit-panel-stair-3m, at: "2026-10-18T01:21:24Z", status: review, summary: "changed: size, physical", sha: "684cba216549922c" }
-- { record: stock.kit-panel-wall-cargo-door-3x3, at: "2026-10-18T14:47:28Z", status: review, summary: "first tracked", sha: "8c61382ba3809265" }
+- { record: stock.kit-panel-wall-cargo-door-3x3, at: "2026-10-18T15:50:18Z", status: review, summary: "changed: size, physical", sha: "1e85f8892b3c9ebc" }
 - { record: stock.kit-panel-wall-door-3x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "3be92634e77b794b" }
 - { record: stock.kit-panel-wall-double-door-3x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "7b5cf72ce9e4a514" }
 - { record: stock.kit-panel-wall-glazed-3x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "b8dee276df05eaf0" }
@@ -4488,12 +4488,12 @@
 - { record: template.partition, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "645d2adf776d002f" }
 - { record: template.partition-door, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "099a30da62f30cb9" }
 - { record: template.partition-pressure, at: "2026-10-18T15:33:19Z", status: "", summary: "changed", sha: "ff6321a21585e199" }
-- { record: template.partition-pressure-hatch, at: "2026-10-18T15:36:21Z", status: "", summary: "changed: visual", sha: "2d488ce9a3b2ff14" }
+- { record: template.partition-pressure-hatch, at: "2026-10-18T15:50:18Z", status: "", summary: "changed", sha: "2790524843e5e3cc" }
 - { record: template.pipe, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "9a17ec7ddd415223" }
 - { record: template.pipe-lagged, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "ee12031c045d334f" }
 - { record: template.plug-socket, at: "2026-10-18T05:10:36Z", status: "", summary: "changed", sha: "5aff04409b33b553" }
 - { record: template.roof, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "a966489b0bd9126b" }
-- { record: template.roof-pressure, at: "2026-10-18T15:40:37Z", status: "", summary: "changed: visual", sha: "95af8307c0294d4a" }
+- { record: template.roof-pressure, at: "2026-10-18T15:50:18Z", status: "", summary: "changed", sha: "63e52626b85327fb" }
 - { record: template.single-pole, at: "2026-10-18T05:21:02Z", status: "", summary: "changed", sha: "891598fccf7fa541" }
 - { record: template.stair, at: "2026-10-18T01:25:38Z", status: "", summary: "changed", sha: "dc0f89d97f6807ea" }
 - { record: template.termination-hv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "b0398bafc880c882" }

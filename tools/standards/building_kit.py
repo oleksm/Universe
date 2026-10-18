@@ -205,7 +205,9 @@ panel("wall-hatch-3x3", "Pressure wall panel with a door, 3 x 3 m", "wall", (3.0
 cargo = (2.4, 2.4)
 lp, ld = plug_leaf(*cargo, "Cargo door leaf")
 parts, th = pressure_skin(3.0, 3.0, cut=cargo[0] * cargo[1])
-panel("wall-cargo-door-3x3", "Pressure wall panel with a cargo door, 3 x 3 m", "wall", (3.0, 3.0), r(max(th, ld + 0.05), 3), parts + lp + [("Door surround", AL, 120.0, "a heavy welded ring frame round the opening (invented)")],
+CARGO_DEPTH = 0.267      # m through the panel with its three offset hinges: blender's swept model (2026-10-18)
+panel("wall-cargo-door-3x3", "Pressure wall panel with a cargo door, 3 x 3 m", "wall", (3.0, 3.0), max(r(max(th, ld + 0.05), 3), CARGO_DEPTH),
+      parts + lp + [("Door surround", AL, 120.0, "a heavy welded ring frame round the opening (invented)"), ("Leaf insulation", "material.polyimide-film", 3.44, "the blanket over the leaf's vacuum face, its seal lands bare: blender's model")],
       "A pressure wall panel with a 2.4 x 2.4 m plug door opening inward on heavy hinges: a vehicle or stock airlock's door, two cells apart with the chamber between.",
       "wall-cargo-door", opening={"kind": "pressure-cargo-door", "width": cargo[0], "height": cargo[1], "sill": 0.1, "vehicles": True}, u=MLI_U, load=P_IN, basis=PRESSURE, site="airless", tier="derived")
 vp_r, vp_t = 0.3, 0.032     # m: a 0.6 m round viewport, two fused silica panes each holding the whole pressure (clamped disc, 3 p a^2 / 4 t^2 under 7 MPa: 31 mm)
