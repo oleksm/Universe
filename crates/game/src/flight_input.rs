@@ -1,4 +1,5 @@
-//! Pilot commands shared by normal flight and the Studio test stand.
+//! Pilot commands shared by normal flight and the Studio test stand (their
+//! rules: `universe_avionics::helm`).
 //! Cameras/cursor ownership and autopilot gates belong to each caller.
 use universe_engine::{Input, KeyCode, glam::{DVec3, Vec2}};
 use universe_sim::Controls;
@@ -8,6 +9,31 @@ pub struct Pilot {
     pub turn: Controls,
     pub translation: DVec3,
     pub throttle_delta: f64,
+}
+
+/// The keys that fly `ship` as it is now, and what each does (the game's HUD
+/// and the test drive say the same): set down, power and lift-off; manual
+/// thrusters, the jets; otherwise the flight computer's throttle, thrusters
+/// and stick.
+pub fn keys(ship: &universe_sim::world::Ship) -> Vec<(String, &'static str)> {
+    use crate::keys::{key, Act};
+    if matches!(ship.state, universe_sim::ShipState::Landed { .. }) {
+        let mut k = vec![(key(Act::Systems), if ship.powered { "POWER DOWN" } else { "POWER UP" })];
+        if ship.powered {
+            k.push(("S+E".into(), "LIFT OFF"));
+        }
+        return k;
+    }
+    if ship.manual {
+        return vec![(key(Act::Manual), "THRUSTERS"), ("NUM".into(), "FIRE A JET"), ("W".into(), "MAINS")];
+    }
+    vec![
+        ("W S".into(), "THROTTLE"),
+        ("S+WASDQE".into(), "THRUSTERS"),
+        ("ARROWS A D Q E".into(), "TURN"),
+        ("CLICK".into(), "STEER BY MOUSE"),
+        (key(Act::Manual), "MANUAL THRUSTERS"),
+    ]
 }
 
 pub fn sample(input: &Input, mouse: Option<Vec2>, dt: f64) -> Pilot {

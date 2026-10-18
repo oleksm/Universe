@@ -59,7 +59,6 @@ impl Interior {
                     Mode::Drive(collective) => {
                         let mut drive = crate::test_drive::Drive::new(craft);
                         if let Some(c) = collective {
-                            drive.set_assist(!crate::devenv::flag("UNIVERSE_DRIVE_MANUAL"));
                             drive.set_throttle(c);
                         }
                         self.drive = Some(drive);

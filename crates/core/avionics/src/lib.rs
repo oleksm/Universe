@@ -20,6 +20,7 @@ pub mod fire_control;
 pub mod follow;
 pub mod gate;
 pub mod gunner;
+pub mod helm;
 pub mod hunter;
 pub mod hyperdrive;
 pub mod landing;

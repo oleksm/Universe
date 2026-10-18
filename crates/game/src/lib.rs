@@ -243,7 +243,8 @@ pub struct App {
     /// The passengers panel open: its row picked.
     pub passengers: Option<usize>,
     /// Manual: the thrusters last held (sent when it changes).
-    pub jets_held: u64,
+    /// The pilot's helm (the same rules the test drive flies by).
+    pub helm: universe_sim::avionics::helm::Helm,
     /// Mining mode and the prospector's pulse; T's lock picker.
     pub mining: mining::Mining,
     pub picker: lock::Picker,
@@ -415,7 +416,7 @@ impl App {
             show_cargo: false,
             show_thrusters: false,
             passengers: None,
-            jets_held: 0,
+            helm: Default::default(),
             open: None,
             explored: Default::default(),
             deckplans: Vec::new(),
@@ -888,9 +889,6 @@ impl App {
         // Docked or landed: the pilot's own business — flight systems up (to
         // fly) or down (to park), the tank filled, the hull mended.
         if matches!(self.v.ship.state, ShipState::Landed { .. }) {
-            if pressed(input, Act::Systems) {
-                self.engine.send(Command::Ship(ShipCommands { power: Some(!self.v.ship.powered), ..self.v.ship.holding() }));
-            }
             if pressed(input, Act::Refuel) {
                 self.engine.send(Command::Refuel);
             }
@@ -970,16 +968,32 @@ impl App {
         if pressed(input, Act::Cancel) && self.v.avionics.following.is_some() {
             self.engine.send(Command::StopFollowing);
         }
-        // Manual thrusters (NAV): the flight computer off, every thruster
-        // fired by hand; again, back on.
-        let flying = self.v.ship.is_flying() && !self.v.ship.hyperdrive;
-        if mode == ShipMode::Nav && pressed(input, Act::Manual) {
-            if !self.v.ship.manual && !flying {
-                self.say("MANUAL THRUSTERS IN FLIGHT ONLY".into());
-            } else {
-                let on = !self.v.ship.manual;
-                // (Going manual, the autopilots let go: nothing flies it but you.)
-                if on {
+        // Flying: the helm's rules (power, manual thrusters, throttle,
+        // thrusters, stick), the same for the shipyard's test drive.
+        let autopilot = self.v.avionics.route.active || self.v.avionics.clearance.is_some_and(|c| c.autopilot) || self.v.avionics.following.is_some();
+        let mouse = if ctx.cursor_grabbed() && !listing {
+            Some(if self.engine.running() {
+                self.mouse_since_tick += input.mouse_delta;
+                self.mouse_since_tick
+            } else { input.mouse_delta })
+        } else { None };
+        let pilot = flight_input::sample(input, mouse, dt);
+        let hands = universe_sim::avionics::helm::HelmInput {
+            turn: pilot.turn,
+            translation: pilot.translation,
+            throttle_delta: pilot.throttle_delta,
+            held: manual::held(input, self.v.ship.spec()),
+            systems: pressed(input, Act::Systems),
+            manual: mode == ShipMode::Nav && pressed(input, Act::Manual),
+        };
+        let out = self.helm.fly(&self.v.ship, autopilot, &hands);
+        for order in out.orders {
+            use universe_sim::avionics::helm::Order;
+            match order {
+                Order::Ship(c) => self.engine.send(Command::Ship(*c)),
+                Order::Throttle(delta) => self.engine.send(Command::Throttle { delta, set: None }),
+                Order::Thrusters(rcs) => self.engine.send(Command::Thrusters(rcs)),
+                Order::ReleaseAutopilots => {
                     if self.v.avionics.following.is_some() {
                         self.engine.send(Command::StopFollowing);
                     }
@@ -989,41 +1003,12 @@ impl App {
                         self.engine.send(Command::ToggleAutopilot);
                     }
                 }
-                self.jets_held = 0;
-                self.engine.send(Command::Ship(ShipCommands { manual: Some(on), throttle: 0.0, rcs: DVec3::ZERO, ..self.v.ship.holding() }));
-                self.say(if on { "MANUAL THRUSTERS - FLIGHT COMPUTER OFF" } else { "FLIGHT COMPUTER ON" }.into());
             }
         }
-        if self.v.ship.manual {
-            // An autopilot taken up: the flight computer's back on to fly it.
-            if self.v.avionics.route.active || self.v.avionics.clearance.is_some_and(|c| c.autopilot) || self.v.avionics.following.is_some() || !flying {
-                self.engine.send(Command::Ship(ShipCommands { manual: Some(false), ..self.v.ship.holding() }));
-                return Controls::default();
-            }
-            let held = manual::held(input, self.v.ship.spec());
-            if held != self.jets_held {
-                self.jets_held = held;
-                self.engine.send(Command::Ship(ShipCommands { jets: Some(held), ..self.v.ship.holding() }));
-            }
-            return Controls::default();
+        if let Some(line) = out.say {
+            self.say(line.into());
         }
-        // The autopilot has the stick.
-        if self.v.avionics.route.active || self.v.avionics.clearance.is_some_and(|c| c.autopilot) || self.v.avionics.following.is_some() {
-            return Controls::default();
-        }
-
-        let mouse = if ctx.cursor_grabbed() && !listing {
-            Some(if self.engine.running() {
-                self.mouse_since_tick += input.mouse_delta;
-                self.mouse_since_tick
-            } else { input.mouse_delta })
-        } else { None };
-        let pilot = flight_input::sample(input, mouse, dt);
-        if pilot.throttle_delta != 0.0 {
-            self.engine.send(Command::Throttle { delta: pilot.throttle_delta, set: None });
-        }
-        self.engine.send(Command::Thrusters(pilot.translation));
-        pilot.turn
+        out.turn
     }
 
     fn handle_events(&mut self, ctx: &Context) {
