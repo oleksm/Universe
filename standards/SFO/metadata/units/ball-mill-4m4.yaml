@@ -95,8 +95,13 @@ envelope:
 - [-8.661, -0.662, -0.001, -5.049, 1.256, 4.001]
 - [5.098, -0.802, -0.001, 7.701, 3.202, 3.701]
 - [6.698, 1.998, -0.001, 8.501, 4.201, 0.922]
+visual:
+  format: "freefall-model/1"
+  path: "models/ball-mill-4m4/v3"
+  manifest_sha256: "2ba9db333d8f5dacd229d22bb809df0e69462062a7c480c45a555712c33589e7"
+  version: 3
+  triangles: 13302
 life: 788940000
-visual: {format: freefall-model/1, path: models/ball-mill-4m4/v2, manifest_sha256: 41ca45634ca102477dcd734f7c93781b97e502cc4b031ae755c2c7446787f3c8, version: 2, triangles: 13302}
 basis:
 - of: [physical, built_of, holds, needs.power]
   tier: derived

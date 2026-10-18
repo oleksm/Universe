@@ -4537,7 +4537,7 @@
 - { record: unit.baghouse-200k, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "abfebdff23b38d30" }
 - { record: unit.baghouse-450k, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "4b73a94e4d25edcf" }
 - { record: unit.baghouse-800k, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "e61036dc442f69f8" }
-- { record: unit.ball-mill-4m4, at: "2026-10-18T17:35:40Z", status: draft, summary: "changed", sha: "9ad503e5d1f3015e" }
+- { record: unit.ball-mill-4m4, at: "2026-10-18T17:38:03Z", status: draft, summary: "changed: visual", sha: "c361a5828481825e" }
 - { record: unit.balling-disc-7m5, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "32744a27014adde1" }
 - { record: unit.cooling-tower, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "82070bf6c4f7ee69" }
 - { record: unit.cooling-tower-1cell, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "58fd33a41f3c66a9" }
