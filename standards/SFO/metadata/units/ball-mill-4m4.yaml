@@ -83,7 +83,7 @@ product: product.ball-mill-4m4
 motion:
 - id: spin
   kind: rotate
-  point: [0.0, 0.0, 3.2]
+  point: [0.0, 0.0, 3.0]
   direction: [1.0, 0.0, 0.0]
   moves: [the shell and its charge]
   boxes: []

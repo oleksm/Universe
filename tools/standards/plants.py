@@ -5186,7 +5186,7 @@ def set_motions(us):
         elif k == "balling-disc-7m5":
             u["motion"] = [{"id": "spin", "kind": "rotate", "moves": ["the disc"], "boxes": [], "note": "turning continuously about its own tilted axis: it sweeps nothing beyond itself"}]
         elif k == "ball-mill-4m4":
-            u["motion"] = [{"id": "spin", "kind": "rotate", "point": [0.0, 0.0, 3.2], "direction": [1.0, 0.0, 0.0], "moves": ["the shell and its charge"], "boxes": [], "note": "turning continuously on its trunnions, sweeping nothing beyond itself; its feed and discharge stay still"}]
+            u["motion"] = [{"id": "spin", "kind": "rotate", "point": [0.0, 0.0, 3.0], "direction": [1.0, 0.0, 0.0], "moves": ["the shell and its charge"], "boxes": [], "note": "turning continuously on its trunnions, sweeping nothing beyond itself; its feed and discharge stay still"}]
         elif k == "degassing-stand":
             u["motion"] = [{"id": "swing", "kind": "rotate", "point": [0.0, -3.5, 0.0], "direction": [0.0, 0.0, 1.0], "angle": [0.0, r(math.pi / 2, 4)], "moves": ["the arm and the heat shield"], "boxes": [1], "note": "swung off the ladle to let the car pass (a quarter turn, invented); only its arm and shield box moves"}]
 
