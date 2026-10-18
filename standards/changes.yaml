@@ -607,7 +607,7 @@
 - { record: equipment.power.converter.270v-10kw, at: "2026-10-18T16:38:03Z", status: draft, summary: "changed: visual", sha: "d7db9d8a654b87df" }
 - { record: equipment.power.converter.270v-40kw, at: "2026-10-18T16:36:22Z", status: draft, summary: "changed: visual", sha: "27965207e40e8f89" }
 - { record: equipment.power.converter.28v-1kw, at: "2026-10-18T16:23:35Z", status: draft, summary: "changed: identity", sha: "6623d97656ca9c3a" }
-- { record: equipment.power.converter.28v-3kw, at: "2026-10-18T16:23:35Z", status: draft, summary: "changed: identity", sha: "42eb4616f0998a18" }
+- { record: equipment.power.converter.28v-3kw, at: "2026-10-18T16:41:53Z", status: draft, summary: "changed: visual", sha: "c276f9c9214646ff" }
 - { record: equipment.power.converter.28v-5kw, at: "2026-10-18T16:39:20Z", status: draft, summary: "changed: visual", sha: "6e5c3d9de1add947" }
 - { record: equipment.power.fuelcell.s1, at: "2026-10-13T13:32:36Z", status: draft, summary: "changed: visual", sha: "45d1aee343bd0a5c" }
 - { record: equipment.power.fusion.s1, at: "2026-10-17T19:39:34Z", status: draft, summary: "changed: visual", sha: "aee18b581bd8417f" }
