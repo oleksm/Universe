@@ -251,6 +251,60 @@ for mm2, amps, sh, amps_air in WIRE:
         "connector": f"connector.circular-shell-{sh}", "carries": "power", "template": "template.wire",
         "basis": [{"of": ["per_m", "rating", "outside"], "tier": "invented", "review": True, "note": f"Of the order of aerospace hook-up wire (SAE AS22759 class): `current` a single wire's in vacuum, radiation only; `current_air` alone in free air at 40 deg C, a bundle's at {BUNDLE:g} of it; least bend 10 outsides; {MEMORY}"}]})
 
+MULTI = [  # (mm2 a core, cores, connector shell): a harness cable for one low-bus way (ships, 2026-10-18: a laid wire fills a socket once, so one cable carries the way's every contact)
+    (1.0, 3, 11), (2.5, 3, 17), (6.0, 3, 25), (16.0, 3, 25), (50.0, 2, 33)]
+MULTI_SHARE = 0.8        # a core of a multicore carries this share of a single wire's amps (invented: three cores in one jacket run warmer)
+JACKET = 0.0003          # m of FEP jacket over the laid-up cores (invented)
+WIRE_AMPS = {mm2: (amps, air) for mm2, amps, _sh, air in WIRE}
+
+
+def jacketed(cores):
+    """Outside and kg/m of the jacket over cores laid up together (each core (dc, ti)): a circle round them."""
+    d1 = max(dc + 2 * ti for dc, ti in cores)
+    od = d1 * {1: 1.0, 2: 2.0, 3: 2.155, 4: 2.414}[len(cores)] + 2 * JACKET
+    return od, math.pi * (od - JACKET) * JACKET * RHO[PTFE]
+
+
+for mm2, n, sh in MULTI:
+    a = mm2 * 1e-6
+    dc = 1.2 * math.sqrt(4 * a / math.pi)
+    ti = 0.0003 if mm2 <= 1 else 0.0005 if mm2 <= 6 else 0.0008
+    od, jkt = jacketed([(dc, ti)] * n)
+    cu = n * a * RHO[CU]
+    ins = n * math.pi * (dc + ti) * ti * RHO[PTFE]
+    amps, air = WIRE_AMPS[mm2]
+    slug = f"cable-dc-600v-{n}x{str(mm2).replace('.0', '').replace('.', 'p')}mm2"
+    roles = ["plus", "minus", "earth"][:n]
+    run(slug, {
+        "identity": {"key": f"run.{slug}", "name": f"Harness cable, 600 V DC, {n} x {mm2:g} mm2",
+                     "description": f"One low-voltage DC way in one jacket: {n} stranded, plated copper cores in PTFE ({', '.join(roles)} by colour) under a thin FEP jacket, a circular shell {sh} at each end. {round(amps * MULTI_SHARE)} A in vacuum; {round(air * BUNDLE)} A in free air."},
+        "kind": "cable", "size": a, "outside": [r(od, 4), r(od, 4)],
+        "rating": {"voltage": 600, "current": round(amps * MULTI_SHARE), "current_air": round(air * BUNDLE), "current_air_bundle": round(air * BUNDLE * BUNDLE)},
+        "conductors": [{"id": c, "role": c, "size": a} for c in roles],
+        "per_m": {"mass": r(cu + ins + jkt, 4), "built_of": [part("Conductors", CU, cu, f"{n} cores of {mm2:g} mm2"), part("Insulation and jacket", PTFE, ins + jkt, f"{ti * 1000:g} mm PTFE a core, {JACKET * 1000:g} mm FEP jacket (as PTFE)")]},
+        "elbow": {"radius": r(max(0.01, od * 8), 3), "mass": r((cu + ins + jkt) * max(0.01, od * 8) * math.pi / 2, 5)},
+        "connector": f"connector.circular-shell-{sh}", "carries": "power", "template": "template.wire",
+        "basis": [{"of": ["per_m", "outside"], "tier": "derived", "note": "Each core as the hook-up wire of its size, laid up in a circle, the jacket round them: calculated, not a single wire's mass multiplied."},
+                  {"of": ["rating"], "tier": "invented", "review": True, "note": f"A core at {MULTI_SHARE:g} of a single wire's amps in vacuum and at the bundle factor {BUNDLE:g} in air (the cores share one jacket); {MEMORY}"}]})
+# a CAN-class data cable: a twisted pair, a return, a braid screen
+a = 0.5e-6
+dc = 1.2 * math.sqrt(4 * a / math.pi)
+ti = 0.0003
+od, jkt = jacketed([(dc, ti)] * 3)
+braid = math.pi * od * 0.0001 * RHO[CU] * 0.6        # a 0.1 mm braid, 60% cover
+od += 0.0004
+cu = 3 * a * RHO[CU]
+ins = 3 * math.pi * (dc + ti) * ti * RHO[PTFE]
+run("cable-data-can", {
+    "identity": {"key": "run.cable-data-can", "name": "Data cable, control bus, 2 x 0.5 mm2 pair, screened",
+                 "description": "A ship's control-bus cable (can-a): a twisted pair of 0.5 mm2 cores (signal-high, signal-low), a 0.5 mm2 return, under a braid screen and an FEP jacket; a circular shell 11 at each end. A unit's data-1 to the next's data-2: the bus daisy-chains."},
+    "kind": "cable", "size": a, "outside": [r(od, 4), r(od, 4)], "rating": {"voltage": 60, "current": 1},
+    "conductors": [{"id": "H", "role": "signal-high", "size": a}, {"id": "L", "role": "signal-low", "size": a}, {"id": "G", "role": "return", "size": a}, {"id": "S", "role": "screen"}],
+    "per_m": {"mass": r(cu + braid + ins + jkt, 4), "built_of": [part("Conductors and braid", CU, cu + braid, "three 0.5 mm2 cores and a tinned braid"), part("Insulation and jacket", PTFE, ins + jkt, "PTFE cores, FEP jacket (as PTFE)")]},
+    "elbow": {"radius": r(max(0.01, od * 8), 3), "mass": r((cu + braid + ins + jkt) * max(0.01, od * 8) * math.pi / 2, 5)},
+    "connector": "connector.circular-shell-11", "carries": "signal", "template": "template.wire",
+    "basis": [{"of": ["per_m", "outside", "rating"], "tier": "invented", "review": True, "note": f"Of the order of aerospace CAN and data-bus cable; {MEMORY}"}]})
+
 # ------------------------------------------------------------------ a ship's high-voltage DC bus (ships, 2026-10-18: 3 kV DC from the plants and batteries to fans, drives and lasers)
 J_VAC = 2.5e6           # A/m2: copper in vacuum, radiation only (as plant_kit.J_VACUUM)
 HVDC_POLE = [  # (amps, outside m, mated length m, kg a pair, mm2 at most)

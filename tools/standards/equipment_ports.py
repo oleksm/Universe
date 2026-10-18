@@ -55,7 +55,7 @@ def _quat_mul(a, b):
 
 def empties(rec):
     """{name: (at, facing)} of the installed model's empty nodes, in the record's frame (x along, y across, z up from
-    its base; the glTF export is +Y up, so record (x, y, z) = glTF (x, -z, y)); facing is the empty's +Y arrow."""
+    its base; the glTF export is +Y up, so glTF (X, Y, Z) = record (x, z, -y), height along +Y); facing is the empty's +Y arrow."""
     v = (rec.get("visual") or {}).get("path")
     p = v and os.path.join(ASSETS, v, "model.glb")
     if not p or not os.path.exists(p):

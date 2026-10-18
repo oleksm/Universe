@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../schema/run.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: run.cable-data-can
+  name: Data cable, control bus, 2 x 0.5 mm2 pair, screened
+  description: 'A ship''s control-bus cable (can-a): a twisted pair of 0.5 mm2 cores (signal-high, signal-low), a 0.5 mm2 return, under a braid screen and an FEP jacket; a circular shell 11 at each end. A unit''s data-1 to the next''s
+    data-2: the bus daisy-chains.'
+kind: cable
+size: 5.0e-07
+outside:
+- 0.0044
+- 0.0044
+rating:
+  voltage: 60
+  current: 1
+conductors:
+- id: H
+  role: signal-high
+  size: 5.0e-07
+- id: L
+  role: signal-low
+  size: 5.0e-07
+- id: G
+  role: return
+  size: 5.0e-07
+- id: S
+  role: screen
+per_m:
+  mass: 0.0355
+  built_of:
+  - what: Conductors and braid
+    item: material.copper
+    mass: 0.02
+    note: three 0.5 mm2 cores and a tinned braid
+  - what: Insulation and jacket
+    item: material.ptfe
+    mass: 0.015
+    note: PTFE cores, FEP jacket (as PTFE)
+elbow:
+  radius: 0.035
+  mass: 0.00194
+connector: connector.circular-shell-11
+carries: signal
+template: template.wire
+basis:
+- of:
+  - per_m
+  - outside
+  - rating
+  tier: invented
+  review: true
+  note: Of the order of aerospace CAN and data-bus cable; From memory of makers' catalogues; to be sourced.

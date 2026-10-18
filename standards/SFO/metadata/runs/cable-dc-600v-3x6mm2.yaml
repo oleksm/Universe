@@ -1,0 +1,54 @@
+# yaml-language-server: $schema=../../schema/run.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: run.cable-dc-600v-3x6mm2
+  name: Harness cable, 600 V DC, 3 x 6 mm2
+  description: 'One low-voltage DC way in one jacket: 3 stranded, plated copper cores in PTFE (plus, minus, earth by colour) under a thin FEP jacket, a circular shell 25 at each end. 22 A in vacuum; 38 A in free air.'
+kind: cable
+size: 6.0e-06
+outside:
+- 0.0099
+- 0.0099
+rating:
+  voltage: 600
+  current: 22
+  current_air: 38
+  current_air_bundle: 27
+conductors:
+- id: plus
+  role: plus
+  size: 6.0e-06
+- id: minus
+  role: minus
+  size: 6.0e-06
+- id: earth
+  role: earth
+  size: 6.0e-06
+per_m:
+  mass: 0.2208
+  built_of:
+  - what: Conductors
+    item: material.copper
+    mass: 0.161
+    note: 3 cores of 6 mm2
+  - what: Insulation and jacket
+    item: material.ptfe
+    mass: 0.059
+    note: 0.5 mm PTFE a core, 0.3 mm FEP jacket (as PTFE)
+elbow:
+  radius: 0.079
+  mass: 0.02747
+connector: connector.circular-shell-25
+carries: power
+template: template.wire
+basis:
+- of:
+  - per_m
+  - outside
+  tier: derived
+  note: 'Each core as the hook-up wire of its size, laid up in a circle, the jacket round them: calculated, not a single wire''s mass multiplied.'
+- of:
+  - rating
+  tier: invented
+  review: true
+  note: A core at 0.8 of a single wire's amps in vacuum and at the bundle factor 0.7 in air (the cores share one jacket); From memory of makers' catalogues; to be sourced.

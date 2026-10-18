@@ -37,6 +37,11 @@ On a cable (run): **`conductors`**, by id, with the role a core's colour fixes (
 (a single hook-up wire or feeder takes the role of the contacts it joins). A laid link stores, per conductor, the
 contact it lands on at each end (ships' `pins (conductor, from, to)`); its channel and roles come from the ports.
 
+A laid wire fills a socket once, so one cable carries a way's every contact: `run.cable-dc-600v-{3x1,3x2p5,3x6,3x16,2x50}mm2`
+(plus, minus, earth; the 50 mm2 plus and minus, as the shell 33 has two contacts) for the low buses, `run.cable-data-can`
+(H signal-high, L signal-low, G return, S screen; `carries: signal`) for the control bus. The single hook-up wires stay
+for inside cabinets; the 3 kV feeders are single-core, one per keyed pole.
+
 ## Halves
 
 Sources carry the female half (a dead plug when unplugged), loads the male, data ports female; a cable's end is always
@@ -47,7 +52,7 @@ is checked against its own port.
 ## Frame
 
 `at` and `facing` are in the record's frame: x along its length, y across its width, z up, the origin at the middle
-of its base. The glTF export is +Y up, so record (x, y, z) = glTF (x, -z, y); the game centres a model on its place by
+of its base. The glTF export is +Y up, so glTF (X, Y, Z) = record (x, z, -y), height along +Y; the game centres a model on its place by
 its manifest's `bounds_m`, so a port in the studio sits at `at` less the bounds' centre (in glTF terms), then turned as
 the fit is turned. Places come from the installed model's empties where it has them (`power_data`, `power_entry_*`, the
 converters' `input_*`, `output_*`, `data`, `coolant_*`: an empty's +Y arrow is the facing); otherwise they lie on the

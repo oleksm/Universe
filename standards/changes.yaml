@@ -1247,7 +1247,7 @@
 - { record: module.brickworks, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "d9b426470254669b" }
 - { record: module.building-dock, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "05c2ff7a3d706191" }
 - { record: module.building-panel-works, at: "2026-10-18T16:06:33Z", status: review, summary: "changed: recipes", sha: "9031252ae4625b91" }
-- { record: module.cable-works, at: "2026-10-18T15:11:23Z", status: review, summary: "changed: recipes", sha: "29e44c5f661a8421" }
+- { record: module.cable-works, at: "2026-10-18T16:58:29Z", status: review, summary: "changed: recipes", sha: "95e95aea7109eaf2" }
 - { record: module.carbide-furnace, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "15b378968095ca34" }
 - { record: module.carbon-works, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "681dec68c4a8a45c" }
 - { record: module.casthouse, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "6432d22868be07a6" }
@@ -2862,6 +2862,12 @@
 - { record: run.cable-6p6kv-630mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "91dba21d5cec7cb5" }
 - { record: run.cable-6p6kv-70mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template, looks_as", sha: "30e1cb5d9658c8f0" }
 - { record: run.cable-6p6kv-95mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "92a8b7319d1a70e1" }
+- { record: run.cable-data-can, at: "2026-10-18T16:58:29Z", status: draft, summary: "first tracked", sha: "2f9c07fc93d1b147" }
+- { record: run.cable-dc-600v-2x50mm2, at: "2026-10-18T16:58:29Z", status: draft, summary: "first tracked", sha: "ca040bd14f955817" }
+- { record: run.cable-dc-600v-3x16mm2, at: "2026-10-18T16:58:29Z", status: draft, summary: "first tracked", sha: "735913a3bd779714" }
+- { record: run.cable-dc-600v-3x1mm2, at: "2026-10-18T16:58:29Z", status: draft, summary: "first tracked", sha: "88415064e428681d" }
+- { record: run.cable-dc-600v-3x2p5mm2, at: "2026-10-18T16:58:29Z", status: draft, summary: "first tracked", sha: "50066411ef75edfe" }
+- { record: run.cable-dc-600v-3x6mm2, at: "2026-10-18T16:58:29Z", status: draft, summary: "first tracked", sha: "fc2400d36ba59732" }
 - { record: run.cable-flexible-11kv-3x95, at: "2026-10-18T16:52:32Z", status: draft, summary: "changed", sha: "1946adbd52692bc3" }
 - { record: run.cable-flexible-690v-4x16, at: "2026-10-18T16:52:32Z", status: draft, summary: "changed", sha: "472cffd8f9eac779" }
 - { record: run.cable-flexible-690v-4x35, at: "2026-10-18T16:52:32Z", status: draft, summary: "changed", sha: "88c30cc3857ae6a6" }
@@ -3565,6 +3571,12 @@
 - { record: stock.kit-cable-6p6kv-630mm2, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "99f8a989b2733a0f" }
 - { record: stock.kit-cable-6p6kv-70mm2, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "3d25e1b8f804b37f" }
 - { record: stock.kit-cable-6p6kv-95mm2, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "c84760d6b12cd01d" }
+- { record: stock.kit-cable-data-can, at: "2026-10-18T16:58:29Z", status: review, summary: "first tracked", sha: "f51777f8abc557bd" }
+- { record: stock.kit-cable-dc-600v-2x50mm2, at: "2026-10-18T16:58:29Z", status: review, summary: "first tracked", sha: "8fa6689c5f02838a" }
+- { record: stock.kit-cable-dc-600v-3x16mm2, at: "2026-10-18T16:58:29Z", status: review, summary: "first tracked", sha: "51a8591ce449b5a8" }
+- { record: stock.kit-cable-dc-600v-3x1mm2, at: "2026-10-18T16:58:29Z", status: review, summary: "first tracked", sha: "ff9b93e9d7c124c0" }
+- { record: stock.kit-cable-dc-600v-3x2p5mm2, at: "2026-10-18T16:58:29Z", status: review, summary: "first tracked", sha: "f4e5128d48fe0ffe" }
+- { record: stock.kit-cable-dc-600v-3x6mm2, at: "2026-10-18T16:58:29Z", status: review, summary: "first tracked", sha: "2e9d1a673730a4a4" }
 - { record: stock.kit-cable-flexible-11kv-3x95, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "f08f51e6ad44f678" }
 - { record: stock.kit-cable-flexible-690v-4x16, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "1ee4bf7ed8abddd5" }
 - { record: stock.kit-cable-flexible-690v-4x35, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "6b83a6de4401569e" }
@@ -4519,7 +4531,7 @@
 - { record: template.wall-shopfront, at: "2026-10-18T02:56:15Z", status: "", summary: "changed", sha: "d3c8e9cf93a222ac" }
 - { record: template.wall-viewport, at: "2026-10-18T16:09:13Z", status: "", summary: "changed: visual", sha: "455a5043cc2219ef" }
 - { record: template.wall-window, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "c858aa8573364c8e" }
-- { record: template.wire, at: "2026-10-18T14:51:23Z", status: "", summary: "first tracked", sha: "bf68ff348da2e001" }
+- { record: template.wire, at: "2026-10-18T16:58:29Z", status: "", summary: "changed: members", sha: "c1f91840d24e4cdd" }
 - { record: template.wiring-box, at: "2026-10-18T16:18:08Z", status: "", summary: "changed", sha: "a03b0ddae21ce430" }
 - { record: unit.alloy-bins-8, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "f164893e2dc287ed" }
 - { record: unit.baghouse-200k, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "abfebdff23b38d30" }
