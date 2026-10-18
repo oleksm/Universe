@@ -18,7 +18,7 @@ FURNITURE = {  # name: (title, description, (length, width, height), [(what, ite
     "table": ("Table", "A table for four, 1.1 m square.", (1.1, 1.1, 0.75), [("Frame", AL, 9.9), ("Top", PE, 22.7)], "blender's dining set: four tables 39.7 kg of aluminium, 20 mm tops"),
     "chair": ("Chair", "A plain chair with a seat and back.", (0.45, 0.5, 0.85), [("Frame", AL, 2.6), ("Seat and back", PE, 3.5)], "blender's dining set: sixteen chairs 41.2 kg of aluminium, 10 mm seats"),
     "desk": ("Desk", "A desk 1.6 m by 0.8 m.", (1.6, 0.8, 0.75), [("Frame", STEEL, 22.0), ("Top", PE, 13.0)], None),
-    "office-chair": ("Office chair", "A swivel chair on castors.", (0.65, 0.65, 1.0), [("Base and frame", STEEL, 9.0), ("Seat and back", PE, 6.0)], None),
+    "office-chair": ("Office chair", "A swivel chair on castors.", (0.65, 0.571, 1.0), [("Base, spindle and frame", STEEL, 14.2), ("Seat and back", PE, 5.9)], "blender's model (2026-10-17): hollow 25 and 30 mm frame, solid hub and spindle, five castors"),
     "pupil-desk": ("Pupil desk", "A single pupil's desk.", (0.7, 0.5, 0.75), [("Frame", STEEL, 9.0), ("Top", PE, 4.5)], "of the order of blender's classroom: 300 kg of steel for sixteen sets and the teacher's"),
     "cabinet": ("Cabinet", "A steel filing or storage cabinet.", (0.8, 0.45, 1.2), [("Carcass and drawers", STEEL, 40.0)], None),
     "board": ("Board", "A wall board for a classroom or a briefing room.", (2.4, 0.1, 1.2), [("Board and frame", AL, 25.0)], None),

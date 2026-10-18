@@ -15,7 +15,7 @@ physical:
   length: 30.0
   width: 18.0
   height: 3.15
-  mass: 312523.6
+  mass: 312538.9
 bays: []
 rooms:
 - id: REC1
@@ -164,7 +164,7 @@ ground:
   mass: 82944.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 312523.6
+  mass: 312538.9
   against_module: 'building.clinic (deprecated): one box 30 x 20 x 4 m of 662 t, from the average of 538 concrete buildings. This layout: 30 x 18 x 3 m, 313 t (10 t frame, 20 t panels, 6 t furniture, 277 t ground), for 76 people served
     or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:

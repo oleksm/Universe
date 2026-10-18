@@ -15,7 +15,7 @@ physical:
   length: 60.0
   width: 18.0
   height: 6.15
-  mass: 808243.4
+  mass: 808427.0
 bays: []
 rooms:
 - id: CLA1
@@ -436,8 +436,8 @@ ground:
   mass: 134784.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 808243.4
-  against_module: 'building.school (deprecated): one box 60 x 20 x 8 m of 2,647 t, from the average of 538 concrete buildings. This layout: 60 x 18 x 6 m, 808 t (40 t frame, 220 t panels, 24 t furniture, 524 t ground), for 756 people
+  mass: 808427.0
+  against_module: 'building.school (deprecated): one box 60 x 20 x 8 m of 2,647 t, from the average of 538 concrete buildings. This layout: 60 x 18 x 6 m, 808 t (40 t frame, 220 t panels, 25 t furniture, 524 t ground), for 756 people
     served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:
 - profession: profession.teacher

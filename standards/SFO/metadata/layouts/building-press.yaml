@@ -15,7 +15,7 @@ physical:
   length: 30.0
   width: 18.0
   height: 9.15
-  mass: 475694.4
+  mass: 476031.0
 bays: []
 rooms:
 - id: PRE1
@@ -258,7 +258,7 @@ ground:
   mass: 82944.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 475694.4
+  mass: 476031.0
   against_module: 'building.press (deprecated): one box 30 x 20 x 8 m of 1,324 t, from the average of 538 concrete buildings. This layout: 30 x 18 x 9 m, 476 t (23 t frame, 113 t panels, 63 t furniture, 277 t ground), for 66 people
     served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:

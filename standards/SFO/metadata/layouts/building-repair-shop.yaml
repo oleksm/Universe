@@ -15,7 +15,7 @@ physical:
   length: 30.0
   width: 18.0
   height: 4.65
-  mass: 310818.3
+  mass: 310823.4
 bays: []
 rooms:
 - id: WOR1
@@ -164,7 +164,7 @@ ground:
   mass: 82944.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 310818.3
+  mass: 310823.4
   against_module: 'building.repair-shop (deprecated): one box 30 x 20 x 6 m of 662 t, from the average of 538 concrete buildings. This layout: 30 x 18 x 4.5 m, 311 t (11 t frame, 16 t panels, 7 t furniture, 277 t ground), for 12 people
     served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:

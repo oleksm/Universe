@@ -14,7 +14,7 @@ physical:
   length: 48.0
   width: 42.0
   height: 105.15
-  mass: 56324375.6
+  mass: 56324574.5
 bays: []
 rooms:
 - id: FLA1
@@ -11840,8 +11840,8 @@ ground:
   mass: 40483800.0
   note: a pad under each column, 10.5 m square, 0.6 m deep (sized by the storeys, invented)
 totals:
-  mass: 56324375.6
-  against_module: 'building.dwelling-block (deprecated): one box 50 x 40 x 105 m of 77,210 t, from the average of 538 concrete buildings. This layout: 48 x 42 x 105 m, 56,324 t (2,046 t frame, 12,191 t panels, 722 t furniture, 41,365
+  mass: 56324574.5
+  against_module: 'building.dwelling-block (deprecated): one box 50 x 40 x 105 m of 77,210 t, from the average of 538 concrete buildings. This layout: 48 x 42 x 105 m, 56,325 t (2,046 t frame, 12,191 t panels, 722 t furniture, 41,365
     t ground), for 3996 people served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff: []
 basis:

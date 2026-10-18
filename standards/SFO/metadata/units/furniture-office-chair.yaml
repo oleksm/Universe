@@ -7,20 +7,20 @@ identity:
 size_class: 1
 physical:
   length: 0.65
-  width: 0.65
+  width: 0.571
   height: 1.0
-  mass: 15.0
+  mass: 20.1
 built_of:
-- what: Base and frame
+- what: Base, spindle and frame
   item: material.structural-steel-a36
-  mass: 9.0
+  mass: 14.2
 - what: Seat and back
   item: material.polyethylene-uhmw
-  mass: 6.0
+  mass: 5.9
 basis:
 - of:
   - built_of
   - physical
-  tier: invented
+  tier: derived
   review: true
-  note: From memory of such furniture; to be sourced.
+  note: 'From blender''s model (2026-10-17): hollow 25 and 30 mm frame, solid hub and spindle, five castors.'

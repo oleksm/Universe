@@ -15,7 +15,7 @@ physical:
   length: 78.0
   width: 60.0
   height: 6.15
-  mass: 2260117.5
+  mass: 2260148.1
 bays: []
 rooms:
 - id: SEA1
@@ -852,7 +852,7 @@ ground:
   mass: 238464.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 2260117.5
+  mass: 2260148.1
   against_module: 'building.arena (deprecated): one box 80 x 60 x 20 m of 5,294 t, from the average of 538 concrete buildings. This layout: 78 x 60 x 6 m, 2,260 t (81 t frame, 108 t panels, 148 t furniture, 1,923 t ground), for 2922
     people served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:
