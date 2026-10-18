@@ -6,9 +6,11 @@
 //! to tell the pilot. The client sends the orders its own way (the game
 //! through its cockpit; a sandbox straight to its ship).
 //!
-//! The rules: flight systems power up or down only while set down; manual
-//! thrusters (the flight computer off, each thruster fired by hand) only in
-//! flight, outside the hyperdrive, and going manual lets the autopilots go;
+//! The rules: flight systems power up or down only while set down; with no
+//! flight computer fitted, manual thrusters are the only way to fly it, on the
+//! ground too; with one, manual thrusters (the flight computer off, each
+//! thruster fired by hand) only in flight, outside the hyperdrive, and going
+//! manual lets the autopilots go;
 //! an autopilot taken up, or the ship set down, puts the flight computer back
 //! on; manual jets are ordered only when the held set changes; while an
 //! autopilot flies, the hands are off the stick; otherwise the throttle moves
@@ -57,10 +59,17 @@ pub struct HelmOut {
     pub say: Option<&'static str>,
 }
 
-/// A pilot's helm: remembers the manual thrusters last ordered.
+/// A pilot's helm: remembers the manual thrusters last ordered, and whether
+/// the design it last flew can turn itself (by its design's address).
 #[derive(Clone, Debug, Default)]
 pub struct Helm {
     jets_held: u64,
+    steers: Option<(usize, bool)>,
+}
+
+/// Has `ship` a flight computer (its turn rates come from one)?
+pub fn has_computer(ship: &Ship) -> bool {
+    ship.spec().turn_rate > 0.0
 }
 
 /// The throttle `delta` moves `ship`'s to.
@@ -75,6 +84,22 @@ impl Helm {
         let landed = matches!(ship.state, universe_world::ShipState::Landed { .. });
         if landed && input.systems {
             out.orders.push(Order::Ship(Box::new(ShipCommands { power: Some(!ship.powered), ..ship.holding() })));
+        }
+        // No flight computer: manual thrusters are all it has, anywhere.
+        if !has_computer(ship) {
+            if input.manual {
+                out.say = Some("NO FLIGHT COMPUTER - MANUAL THRUSTERS ONLY");
+            }
+            if !ship.manual {
+                self.jets_held = 0;
+                out.orders.push(Order::Ship(Box::new(ShipCommands { manual: Some(true), throttle: 0.0, rcs: DVec3::ZERO, ..ship.holding() })));
+                return out;
+            }
+            if input.held != self.jets_held {
+                self.jets_held = input.held;
+                out.orders.push(Order::Ship(Box::new(ShipCommands { jets: Some(input.held), ..ship.holding() })));
+            }
+            return out;
         }
         let flying = ship.is_flying() && !ship.hyperdrive;
         if input.manual {
@@ -108,15 +133,29 @@ impl Helm {
         if input.throttle_delta != 0.0 {
             out.orders.push(Order::Throttle(input.throttle_delta));
         }
-        // Thrust set (as the ship has taken it), powered, and none given: the
-        // flight computer holds it back, having no thrusters to keep the ship
-        // straight with.
-        let asked = ship.throttle > 0.0 || ship.rcs != DVec3::ZERO;
-        if asked && ship.powered && ship.applied.0 == DVec3::ZERO && out.say.is_none() {
+        // Thrust asked for, from a design whose thrusters can't turn it: the
+        // flight computer holds it all back, having nothing to keep it straight.
+        let asked = ship.throttle > 0.0 || input.throttle_delta > 0.0 || input.translation != DVec3::ZERO;
+        if asked && ship.powered && !ship.hyperdrive && ship.fuel > 0.0 && !self.steers(ship) && out.say.is_none() {
             out.say = Some("NO THRUST - THE FLIGHT COMPUTER CAN'T KEEP IT STRAIGHT (FIT THRUSTERS TO TURN IT)");
         }
         out.orders.push(Order::Thrusters(input.translation));
         out.turn = input.turn;
         out
+    }
+
+    /// Can `ship`'s thrusters turn it about every axis (its design's, worked out once)?
+    fn steers(&mut self, ship: &Ship) -> bool {
+        let spec = ship.spec();
+        let id = spec as *const universe_world::ship::ClassSpec as usize;
+        if let Some((at, steers)) = self.steers
+            && at == id
+        {
+            return steers;
+        }
+        let thrusters = universe_world::trim::thrusters(spec, &ship.trim);
+        let steers = universe_world::thrusters::turn_envelope(&thrusters, ship.centre_of_mass(), ship.mass(), ship.inertia()).min_element() > 0.0;
+        self.steers = Some((id, steers));
+        steers
     }
 }

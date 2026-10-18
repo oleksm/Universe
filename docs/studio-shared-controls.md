@@ -7,14 +7,16 @@ the same rules, one implementation.
   `manual::held_for` (numpad jets) read the keys, in the game crate.
 - **Rules:** `universe_avionics::helm` (client-side pilot software, beside the
   autopilots: the core never holds a pilot's intentions) turns them into orders
-  for the ship as it is: J powers up or down only while set down; G (manual
+  for the ship as it is: J powers up or down only while set down; with no flight
+  computer fitted, manual thrusters are the only mode, on the ground too (G says
+  so); with one, G (manual
   thrusters, flight computer off) only in flight, outside the hyperdrive, and
   going manual lets the autopilots go; an autopilot taken up or a landing puts
   the flight computer back on; jets are ordered only when the held set changes;
   while an autopilot flies the hands are off; otherwise W/S move the throttle,
   Shift+WASDQE the thrusters, arrows/A/D/Q/E and the grabbed mouse the stick. With
-  thrust set and none given, it says the flight computer can't keep the ship
-  straight (no thrusters to turn it).
+  thrust asked of a design whose thrusters can't turn it (no turn authority), it
+  says the flight computer can't keep the ship straight.
 - **Sending:** the game sends the orders through its cockpit
   (`App::pilot_input`); the test drive applies them to its sandbox ship
   (`LocalFlight::order`). The keys shown for the ship's state come from

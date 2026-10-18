@@ -109,7 +109,7 @@ impl LocalFlight {
     /// Carry out a helm's order on this sandbox's ship, as the game's
     /// cockpit does on the player's.
     pub fn order(&mut self, order: &universe_sim::avionics::helm::Order) {
-        use universe_sim::avionics::helm::{throttle_after, Order};
+        use universe_sim::avionics::helm::Order;
         match order {
             Order::Ship(c) => {
                 if c.power.is_some() {
@@ -122,7 +122,8 @@ impl LocalFlight {
                     self.commands.jets = c.jets;
                 }
             }
-            Order::Throttle(delta) => self.commands.throttle = throttle_after(&self.ship, *delta),
+            // (Adding up, as the game's cockpit does: frames between ticks all count.)
+            Order::Throttle(delta) => self.commands.throttle = (self.commands.throttle + delta).clamp(0.0, 1.0),
             Order::Thrusters(rcs) => self.commands.rcs = *rcs,
             // (No autopilot flies in the sandbox.)
             Order::ReleaseAutopilots => {}
@@ -346,5 +347,22 @@ mod tests {
         fly(&mut f, 3.0);
         assert!(f.ship.powered && matches!(f.ship.state, ShipState::Landed { .. }));
         assert!(f.ship.position.distance(p) < 1e-6 && f.ship.orientation.angle_between(q) < 1e-9, "never turned in place");
+        // No flight computer: manual thrusters are all it has, and they lift it
+        // off the ground (G has nothing to switch to).
+        let mut spec = (*fixture()).clone();
+        (spec.turn_rate, spec.roll_rate) = (0.0, 0.0);
+        let lift: u64 = spec.thrusters.iter().enumerate().filter(|(_, t)| t.push.y > 0.5).map(|(k, _)| 1u64 << k).sum();
+        let mut f = LocalFlight::new(Arc::new(spec), None, 9.81, 0, false).unwrap();
+        let mut helm = Helm::default();
+        assert_eq!(helm.fly(&f.ship, false, &HelmInput { manual: true, ..Default::default() }).say, Some("NO FLIGHT COMPUTER - MANUAL THRUSTERS ONLY"));
+        let dt = universe_sim::clocks::tick();
+        for k in 0..(3.0 / dt) as usize {
+            let hands = HelmInput { systems: k == 0, held: lift, ..Default::default() };
+            for o in helm.fly(&f.ship, false, &hands).orders {
+                f.order(&o);
+            }
+            f.advance(dt).unwrap();
+        }
+        assert!(f.ship.manual && f.ship.is_flying() && f.ship.position.length() - EARTH_RADIUS > f.ship.rest_height() + 1.0, "lifted off by hand");
     }
 }
