@@ -10,6 +10,12 @@ scales_by:
 - physical
 members: 2
 reference: connector.valve-relief-dn50-pn10
+visual:
+  format: "freefall-model/1"
+  path: "models/valve-relief/v1"
+  manifest_sha256: "4a1cc690189b0b559ce909acdf1a45425d03552680c747a7e395a7e048c750b8"
+  version: 1
+  triangles: 5448
 basis:
 - of:
   - draws

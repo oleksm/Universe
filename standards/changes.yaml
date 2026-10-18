@@ -4389,7 +4389,7 @@
 - { record: template.valve-butterfly, at: "2026-10-18T05:53:01Z", status: "", summary: "changed", sha: "6baaa3aa154ffd11" }
 - { record: template.valve-check, at: "2026-10-18T06:04:55Z", status: "", summary: "changed", sha: "0f4708352138616b" }
 - { record: template.valve-gate, at: "2026-10-18T06:04:55Z", status: "", summary: "changed", sha: "d85c253b61e53906" }
-- { record: template.valve-relief, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "d49ebff915dfb3f2" }
+- { record: template.valve-relief, at: "2026-10-18T06:07:47Z", status: "", summary: "changed: visual", sha: "fa131b826596f825" }
 - { record: template.wall-door, at: "2026-10-18T02:56:15Z", status: "", summary: "changed", sha: "5ee61de4e9641cf9" }
 - { record: template.wall-double-door, at: "2026-10-18T02:56:15Z", status: "", summary: "changed", sha: "26ab0ddf416087e3" }
 - { record: template.wall-glazed, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "963b9e61ba2e0e62" }
