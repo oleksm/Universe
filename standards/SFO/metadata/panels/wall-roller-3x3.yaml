@@ -3,29 +3,30 @@
 identity:
   key: panel.wall-roller-3x3
   name: Wall panel, roller shutter, 3 x 3 m
-  description: 'A full cell face closed by a steel roller shutter on its drum and motor: stock in by forklift or truck.'
+  description: 'A cell face closed by a steel roller shutter, a 2.8 x 2.5 m opening; its drum and motor in a box across the top on the inside face, within the cell (it stands 0.35 m inside the wall''s plane): stock in by forklift or
+    truck.'
 kind: wall
 site: air
 cell:
 - 3.0
 - 3.0
-thickness: 0.1
+thickness: 0.35
 opening:
   kind: roller-shutter
   width: 2.8
-  height: 2.8
+  height: 2.5
   sill: 0.0
   vehicles: true
 u_value: 3.0
 physical:
   length: 3.0
-  width: 0.1
+  width: 0.35
   height: 3.0
-  mass: 160.9
+  mass: 152.5
 built_of:
 - what: Shutter slats
   item: material.structural-steel-a36
-  mass: 78.4
+  mass: 70.0
   note: steel slats, 10 kg/m2
 - what: Drum, guides and motor
   item: material.structural-steel-a36

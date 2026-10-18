@@ -84,7 +84,7 @@ for slug, name, op, extra, desc in (
         ("wall-window-3x3", "Wall panel with a window, 3 x 3 m", {"kind": "window", "width": 1.8, "height": 1.5, "sill": 0.9}, None, "An insulated wall panel with a 1.8 x 1.5 m double-glazed window."),
         ("wall-door-3x3", "Wall panel with a door, 3 x 3 m", {"kind": "door", "width": 1.0, "height": 2.1, "sill": 0.0, "people": True}, ("Door leaf and frame", STEEL, 45.0, "an insulated steel door, its frame, lock and closer"), "An insulated wall panel with a 1.0 x 2.1 m steel door: a way in for people."),
         ("wall-double-door-3x3", "Wall panel with double doors, 3 x 3 m", {"kind": "double-door", "width": 2.0, "height": 2.4, "sill": 0.0, "people": True}, ("Door leaves and frame", STEEL, 95.0, "a pair of insulated steel leaves, frame and panic bar"), "An insulated wall panel with a 2.0 x 2.4 m pair of steel doors: a public way in, or stock by hand truck."),
-        ("wall-roller-3x3", "Wall panel, roller shutter, 3 x 3 m", {"kind": "roller-shutter", "width": 2.8, "height": 2.8, "sill": 0.0, "vehicles": True}, None, "A full cell face closed by a steel roller shutter on its drum and motor: stock in by forklift or truck.")):
+        ("wall-roller-3x3", "Wall panel, roller shutter, 3 x 3 m", {"kind": "roller-shutter", "width": 2.8, "height": 2.5, "sill": 0.0, "vehicles": True}, None, "A cell face closed by a steel roller shutter, a 2.8 x 2.5 m opening; its drum and motor in a box across the top on the inside face, within the cell (it stands 0.35 m inside the wall's plane): stock in by forklift or truck.")):
     opa = op["width"] * op["height"]
     if slug == "wall-window-3x3":
         sp, _, u = sandwich(9.0 - opa, 0.1)
@@ -98,7 +98,7 @@ for slug, name, op, extra, desc in (
         sp, _, u = sandwich(9.0 - opa, 0.1)
         parts = sp + [extra] + frame_parts(9.0, 2.0)
         uu = ((9.0 - opa) * u + opa * 1.5) / 9.0
-    panel(slug, name, "wall", (3.0, 3.0), 0.1, parts, desc, slug.replace("-3x3", ""), opening=op, u=uu)
+    panel(slug, name, "wall", (3.0, 3.0), 0.35 if slug == "wall-roller-3x3" else 0.1, parts, desc, slug.replace("-3x3", ""), opening=op, u=uu)
 gp, _ = glazed(9.0 - 4.8)
 panel("wall-shopfront-3x3", "Shop front, 3 x 3 m", "wall", (3.0, 3.0), 0.15, gp + [("Sliding doors and operator", AL, 180.0, "a pair of glazed sliding leaves, its track and motor")] + frame_parts(9.0, 2.0),
       "Curtain walling round a 2.0 x 2.4 m pair of automatic sliding doors: a shop's or a clinic's public front.", "wall-shopfront",

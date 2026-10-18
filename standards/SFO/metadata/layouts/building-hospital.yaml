@@ -15,7 +15,7 @@ physical:
   length: 300.0
   width: 102.0
   height: 22.65
-  mass: 50922292.3
+  mass: 50922191.5
 bays: []
 rooms:
 - id: WAR1
@@ -25565,7 +25565,7 @@ frame:
     count: 16
   - panel: panel.wall-window-3x3
     count: 370
-  panels_mass: 22161722.3
+  panels_mass: 22161621.5
   sized: 'At 1 g: floors 1893 Pa dead and 5000 Pa imposed, the roof 1155 Pa; a ground column carries 267 kN (st4340-tb-120x3 takes it with half again to spare); a 3 m beam bends with 23.3 kN m (st4340-tb-160x5, under 470 MPa with half
     again to spare). Wind, the tall halls'' columns between floors and the footings'' loads not yet checked.'
 ground:
@@ -25585,7 +25585,7 @@ ground:
   mass: 11453400.0
   note: a pad under each column, 1.5 m square, 0.6 m deep (sized by the storeys, invented)
 totals:
-  mass: 50922292.3
+  mass: 50922191.5
   against_module: 'building.hospital (deprecated): one box 300 x 100 x 20 m of 165,450 t, from the average of 538 concrete buildings. This layout: 300 x 102 x 22.5 m, 50,922 t (3,442 t frame, 22,162 t panels, 2,154 t furniture, 23,164
     t ground), for 16580 people served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:

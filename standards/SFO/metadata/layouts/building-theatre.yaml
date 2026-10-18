@@ -15,7 +15,7 @@ physical:
   length: 60.0
   width: 42.0
   height: 12.15
-  mass: 1848215.4
+  mass: 1848198.6
 bays: []
 rooms:
 - id: SEA1
@@ -903,7 +903,7 @@ frame:
     count: 3
   - panel: panel.wall-window-3x3
     count: 38
-  panels_mass: 510539.9
+  panels_mass: 510523.1
   sized: 'At 1 g: floors 1893 Pa dead and 5000 Pa imposed, the roof 1155 Pa; a ground column carries 77 kN (st4340-tb-80x3 takes it with half again to spare); a 3 m beam bends with 23.3 kN m (st4340-tb-160x5, under 470 MPa with half
     again to spare). Wind, the tall halls'' columns between floors and the footings'' loads not yet checked.'
 ground:
@@ -918,7 +918,7 @@ ground:
   mass: 176256.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 1848215.4
+  mass: 1848198.6
   against_module: 'building.theatre (deprecated): one box 60 x 40 x 16 m of 5,294 t, from the average of 538 concrete buildings. This layout: 60 x 42 x 12 m, 1,848 t (103 t frame, 511 t panels, 151 t furniture, 1,083 t ground), for
     2982 people served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:

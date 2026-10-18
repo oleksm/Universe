@@ -11,12 +11,12 @@ made_from:
 - item: material.structural-steel-a36
 size:
   length: 3.0
-  width: 0.1
+  width: 0.35
   height: 3.0
 supplies:
   item: panel.wall-roller-3x3
 physical:
-  mass: 160.9
+  mass: 152.5
 basis:
 - of:
   - size

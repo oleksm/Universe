@@ -15,7 +15,7 @@ physical:
   length: 78.0
   width: 60.0
   height: 6.15
-  mass: 2260020.7
+  mass: 2259995.5
 bays: []
 rooms:
 - id: SEA1
@@ -837,7 +837,7 @@ frame:
     count: 3
   - panel: panel.wall-window-3x3
     count: 31
-  panels_mass: 108012.4
+  panels_mass: 107987.2
   sized: 'At 1 g: floors 1893 Pa dead and 5000 Pa imposed, the roof 1155 Pa; a ground column carries 13 kN (st4340-tb-60x2 takes it with half again to spare); a 3 m beam bends with 23.3 kN m (st4340-tb-160x5, under 470 MPa with half
     again to spare). Wind, the tall halls'' columns between floors and the footings'' loads not yet checked.'
 ground:
@@ -852,7 +852,7 @@ ground:
   mass: 238464.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 2260020.7
+  mass: 2259995.5
   against_module: 'building.arena (deprecated): one box 80 x 60 x 20 m of 5,294 t, from the average of 538 concrete buildings. This layout: 78 x 60 x 6 m, 2,260 t (81 t frame, 108 t panels, 148 t furniture, 1,923 t ground), for 2922
     people served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:

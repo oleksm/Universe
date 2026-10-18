@@ -14,12 +14,6 @@ built_of:
 - what: Hood and filters
   item: material.stainless-steel-304
   mass: 120.0
-visual:
-  format: "freefall-model/1"
-  path: "models/furniture-hood/v1"
-  manifest_sha256: "365c67b20e5d2d8c2ed541c9d40e548e4e0b320d944083c74f17db2d531bc788"
-  version: 1
-  triangles: 2312
 basis:
 - of:
   - built_of
@@ -27,3 +21,9 @@ basis:
   tier: invented
   review: true
   note: From memory of such furniture; to be sourced.
+visual:
+  format: freefall-model/1
+  path: models/furniture-hood/v1
+  manifest_sha256: 365c67b20e5d2d8c2ed541c9d40e548e4e0b320d944083c74f17db2d531bc788
+  version: 1
+  triangles: 2312

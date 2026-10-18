@@ -1097,31 +1097,31 @@
 - { record: law.year, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "29f1ef4424e5cc98" }
 - { record: layout.arc-furnace-air, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "6977948ab4b88033" }
 - { record: layout.arc-furnace-airless, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: ports", sha: "e02225a947e6a1df" }
-- { record: layout.building-arena, at: "2026-10-18T01:33:11Z", status: draft, summary: "changed: physical, totals", sha: "9a6bfdcccd4945be" }
+- { record: layout.building-arena, at: "2026-10-18T02:56:15Z", status: draft, summary: "changed: physical, frame, totals", sha: "e41703686f2c411f" }
 - { record: layout.building-bank, at: "2026-10-18T01:33:11Z", status: draft, summary: "changed: physical, totals", sha: "ee9bef662a6b8ac7" }
-- { record: layout.building-builders-yard, at: "2026-10-18T01:48:09Z", status: draft, summary: "changed: physical, totals", sha: "3a642ff9676bcb09" }
+- { record: layout.building-builders-yard, at: "2026-10-18T02:56:15Z", status: draft, summary: "changed: physical, frame, totals", sha: "0dea58b39b038bbe" }
 - { record: layout.building-bunkhouse, at: "2026-10-18T01:21:24Z", status: draft, summary: "changed: physical, frame, totals", sha: "6a70d3f4749427fa" }
 - { record: layout.building-care-home, at: "2026-10-18T01:21:24Z", status: draft, summary: "changed: physical, frame, totals", sha: "951b066929737253" }
 - { record: layout.building-clinic, at: "2026-10-18T01:58:36Z", status: draft, summary: "changed: physical, totals", sha: "cd02070811a336ae" }
 - { record: layout.building-college, at: "2026-10-18T02:20:10Z", status: draft, summary: "changed: physical, totals", sha: "6b35b1ed676072f6" }
 - { record: layout.building-courthouse, at: "2026-10-18T01:21:24Z", status: draft, summary: "changed: physical, frame, totals", sha: "0989e6d28c192002" }
-- { record: layout.building-depot, at: "2026-10-18T00:15:44Z", status: draft, summary: "changed: physical, totals", sha: "e5e295a4f25adb81" }
+- { record: layout.building-depot, at: "2026-10-18T02:56:15Z", status: draft, summary: "changed: physical, frame, totals", sha: "0a7e7f4cb4315465" }
 - { record: layout.building-dwelling-block, at: "2026-10-18T01:21:24Z", status: draft, summary: "changed: physical, frame, totals", sha: "777931de01d0f708" }
-- { record: layout.building-flight-school, at: "2026-10-18T02:20:10Z", status: draft, summary: "changed: physical, totals", sha: "74c0b1fb9dc24735" }
+- { record: layout.building-flight-school, at: "2026-10-18T02:56:15Z", status: draft, summary: "changed: physical, frame, totals", sha: "1742c1a499bc6bc6" }
 - { record: layout.building-gaol, at: "2026-10-18T01:21:24Z", status: draft, summary: "changed: physical, frame, totals", sha: "5df9291534ec812a" }
-- { record: layout.building-hospital, at: "2026-10-18T01:58:36Z", status: draft, summary: "changed: physical, totals", sha: "6fc368c6791acf3e" }
+- { record: layout.building-hospital, at: "2026-10-18T02:56:15Z", status: draft, summary: "changed: physical, frame, totals", sha: "47074d03378201c3" }
 - { record: layout.building-inn, at: "2026-10-18T01:33:11Z", status: draft, summary: "changed: physical, totals", sha: "ae2b5f1f86e1140d" }
-- { record: layout.building-market-hall, at: "2026-10-18T01:33:11Z", status: draft, summary: "changed: physical, totals", sha: "ee8e3ac8be66f9b4" }
+- { record: layout.building-market-hall, at: "2026-10-18T02:56:15Z", status: draft, summary: "changed: physical, frame, totals", sha: "4199ee673cb80134" }
 - { record: layout.building-offices, at: "2026-10-18T01:21:24Z", status: draft, summary: "changed: physical, frame, totals", sha: "4a1af0207988591b" }
 - { record: layout.building-park, at: "2026-10-17T22:41:41Z", status: draft, summary: "changed: identity, physical, bays, rooms, totals", sha: "6de1991e39723dc0" }
-- { record: layout.building-press, at: "2026-10-18T01:21:24Z", status: draft, summary: "changed: physical, frame, totals", sha: "7cab0df53da7484b" }
-- { record: layout.building-repair-shop, at: "2026-10-18T01:48:09Z", status: draft, summary: "changed: physical, totals", sha: "fed3409e8642575b" }
+- { record: layout.building-press, at: "2026-10-18T02:56:15Z", status: draft, summary: "changed: physical, frame, totals", sha: "a875a387908cdf19" }
+- { record: layout.building-repair-shop, at: "2026-10-18T02:56:15Z", status: draft, summary: "changed: physical, frame, totals", sha: "45adef5ae75b7516" }
 - { record: layout.building-school, at: "2026-10-18T02:20:10Z", status: draft, summary: "changed: physical, totals", sha: "0686f47a5eed98e4" }
 - { record: layout.building-shop, at: "2026-10-18T01:33:11Z", status: draft, summary: "changed: physical, totals", sha: "0918bf759cf52bff" }
-- { record: layout.building-studio, at: "2026-10-18T01:48:09Z", status: draft, summary: "changed: physical, totals", sha: "ebbca121c97326b5" }
+- { record: layout.building-studio, at: "2026-10-18T02:56:15Z", status: draft, summary: "changed: physical, frame, totals", sha: "5fcf63adce5954f9" }
 - { record: layout.building-tavern, at: "2026-10-18T01:33:11Z", status: draft, summary: "changed: physical, totals", sha: "cba50342e8bbece9" }
-- { record: layout.building-theatre, at: "2026-10-18T01:33:11Z", status: draft, summary: "changed: physical, totals", sha: "542b34f3d50a8834" }
-- { record: layout.building-watch-house, at: "2026-10-18T00:15:44Z", status: draft, summary: "changed: physical, totals", sha: "b3a3148eaa3eca27" }
+- { record: layout.building-theatre, at: "2026-10-18T02:56:15Z", status: draft, summary: "changed: physical, frame, totals", sha: "dcb1658eaf30aaa8" }
+- { record: layout.building-watch-house, at: "2026-10-18T02:56:15Z", status: draft, summary: "changed: physical, frame, totals", sha: "6f379162c949750d" }
 - { record: layout.casting-bay-air, at: "2026-10-15T02:26:46Z", status: draft, summary: "changed: physical", sha: "64ae565ca9d653a2" }
 - { record: layout.casting-bay-airless, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: ports", sha: "f6b03993734bcbb5" }
 - { record: layout.hydrogen-plant-air, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "65caed1d4f751543" }
@@ -1456,7 +1456,7 @@
 - { record: panel.wall-insulated-1p5x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "69865dd7db610153" }
 - { record: panel.wall-insulated-3x1p5, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "5a7f10b33fb57c63" }
 - { record: panel.wall-insulated-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "a0e9865c323478c5" }
-- { record: panel.wall-roller-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "227e957c4569f763" }
+- { record: panel.wall-roller-3x3, at: "2026-10-18T02:56:15Z", status: draft, summary: "changed: identity, thickness, opening, physical, built_of", sha: "0af422197b39aa78" }
 - { record: panel.wall-shopfront-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "9ebd2722ce66e0b6" }
 - { record: panel.wall-window-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "f87480f511bff347" }
 - { record: parcel.treistun.ashfall-camp.1, at: "2026-10-06T18:38:56Z", status: "", summary: "changed: outline", sha: "42f17141996df99c" }
@@ -3613,7 +3613,7 @@
 - { record: stock.kit-panel-wall-insulated-1p5x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "e5cf9780cfaed40e" }
 - { record: stock.kit-panel-wall-insulated-3x1p5, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "fb022e375f0b9746" }
 - { record: stock.kit-panel-wall-insulated-3x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "b2f638b97863d6b8" }
-- { record: stock.kit-panel-wall-roller-3x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "836a4bee1144d681" }
+- { record: stock.kit-panel-wall-roller-3x3, at: "2026-10-18T02:56:15Z", status: review, summary: "changed: size, physical", sha: "1b25147e9e1257d6" }
 - { record: stock.kit-panel-wall-shopfront-3x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "a2209874e188f70a" }
 - { record: stock.kit-panel-wall-window-3x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "43dce171212e3fc7" }
 - { record: stock.kit-pipe-dn100-pn10, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "8df242d5e942f7e7" }
@@ -4388,12 +4388,12 @@
 - { record: template.valve-check, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "db1774a554f80df0" }
 - { record: template.valve-gate, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "f6e8abb14d71c0ab" }
 - { record: template.valve-relief, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "d49ebff915dfb3f2" }
-- { record: template.wall-door, at: "2026-10-18T02:38:33Z", status: "", summary: "changed: visual", sha: "49489e6891304ce7" }
-- { record: template.wall-double-door, at: "2026-10-18T02:53:30Z", status: "", summary: "changed: visual", sha: "8126da7a7ecfac4b" }
+- { record: template.wall-door, at: "2026-10-18T02:56:15Z", status: "", summary: "changed", sha: "5ee61de4e9641cf9" }
+- { record: template.wall-double-door, at: "2026-10-18T02:56:15Z", status: "", summary: "changed", sha: "26ab0ddf416087e3" }
 - { record: template.wall-glazed, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "963b9e61ba2e0e62" }
 - { record: template.wall-insulated, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "008123b71f0f4b1a" }
 - { record: template.wall-roller, at: "2026-10-17T21:45:11Z", status: "", summary: "first tracked", sha: "300ff4cdf302d4e7" }
-- { record: template.wall-shopfront, at: "2026-10-18T02:45:07Z", status: "", summary: "changed: visual", sha: "8c686547a3487d6d" }
+- { record: template.wall-shopfront, at: "2026-10-18T02:56:15Z", status: "", summary: "changed", sha: "d3c8e9cf93a222ac" }
 - { record: template.wall-window, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "c858aa8573364c8e" }
 - { record: unit.alloy-bins-8, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "f164893e2dc287ed" }
 - { record: unit.baghouse-200k, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "abfebdff23b38d30" }
@@ -4448,7 +4448,7 @@
 - { record: unit.furniture-bed, at: "2026-10-18T00:15:44Z", status: draft, summary: "changed", sha: "27e2655c9f2b42e6" }
 - { record: unit.furniture-bed-ward, at: "2026-10-18T00:56:24Z", status: draft, summary: "changed", sha: "aa302b37216848ef" }
 - { record: unit.furniture-bench, at: "2026-10-18T00:56:24Z", status: draft, summary: "changed", sha: "30276ffd7eb04afe" }
-- { record: unit.furniture-board, at: "2026-10-18T02:25:23Z", status: draft, summary: "changed: visual", sha: "0903a8652151e53c" }
+- { record: unit.furniture-board, at: "2026-10-18T02:56:15Z", status: draft, summary: "changed", sha: "d55915f9fdbd6ff2" }
 - { record: unit.furniture-bunk, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "2a9e159161a89509" }
 - { record: unit.furniture-cabinet, at: "2026-10-17T23:50:32Z", status: draft, summary: "changed", sha: "248b558c0a38d40f" }
 - { record: unit.furniture-cell-front, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "a20418eaa1d56f64" }
@@ -4462,7 +4462,7 @@
 - { record: unit.furniture-dock, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "a43d0b372e36d83b" }
 - { record: unit.furniture-drill, at: "2026-10-18T01:58:36Z", status: draft, summary: "changed", sha: "6730fed217801a37" }
 - { record: unit.furniture-fridge, at: "2026-10-18T02:18:23Z", status: draft, summary: "changed", sha: "f757551d7c912841" }
-- { record: unit.furniture-hood, at: "2026-10-18T02:49:36Z", status: draft, summary: "changed: visual", sha: "5d15861d2c145abe" }
+- { record: unit.furniture-hood, at: "2026-10-18T02:56:15Z", status: draft, summary: "changed", sha: "0748be583420441e" }
 - { record: unit.furniture-judge-bench, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "3385b860f8c00a25" }
 - { record: unit.furniture-kitchen-bench, at: "2026-10-18T00:15:44Z", status: draft, summary: "changed", sha: "dd108d66cbfb7780" }
 - { record: unit.furniture-locker, at: "2026-10-18T00:56:24Z", status: draft, summary: "changed", sha: "7472e8539aed4b1b" }
@@ -4471,12 +4471,12 @@
 - { record: unit.furniture-pupil-desk, at: "2026-10-18T00:56:24Z", status: draft, summary: "changed", sha: "4066d573a98657f1" }
 - { record: unit.furniture-rack, at: "2026-10-18T00:15:44Z", status: draft, summary: "changed", sha: "8d7fdf474fa84455" }
 - { record: unit.furniture-range, at: "2026-10-18T02:18:23Z", status: draft, summary: "changed", sha: "353fa620d3bc9867" }
-- { record: unit.furniture-reception-desk, at: "2026-10-18T02:30:14Z", status: draft, summary: "changed: visual", sha: "6f00e71e49401452" }
+- { record: unit.furniture-reception-desk, at: "2026-10-18T02:56:15Z", status: draft, summary: "changed", sha: "ba61fd1850db0428" }
 - { record: unit.furniture-seat-row, at: "2026-10-18T01:46:32Z", status: draft, summary: "changed", sha: "14e0d68e779dffa5" }
 - { record: unit.furniture-shelf, at: "2026-10-18T00:56:24Z", status: draft, summary: "changed", sha: "58017cd37890b2e0" }
 - { record: unit.furniture-shower, at: "2026-10-17T23:50:32Z", status: draft, summary: "changed", sha: "1a6be31eea394c48" }
 - { record: unit.furniture-sink, at: "2026-10-18T00:15:44Z", status: draft, summary: "changed", sha: "5e97c124867003fc" }
-- { record: unit.furniture-stage-deck, at: "2026-10-18T02:33:52Z", status: draft, summary: "changed: visual", sha: "63b114b68ae62f7a" }
+- { record: unit.furniture-stage-deck, at: "2026-10-18T02:56:15Z", status: draft, summary: "changed", sha: "8df3f5b22f1f086c" }
 - { record: unit.furniture-steel-wc, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "cc0a9e03df3ae71d" }
 - { record: unit.furniture-table, at: "2026-10-17T23:50:32Z", status: draft, summary: "changed", sha: "655a5c0e8bf0c09f" }
 - { record: unit.furniture-till, at: "2026-10-18T01:46:32Z", status: draft, summary: "changed", sha: "7838cf411799f62f" }

@@ -15,7 +15,7 @@ physical:
   length: 102.0
   width: 60.0
   height: 6.15
-  mass: 2816767.3
+  mass: 2816733.7
 bays: []
 rooms:
 - id: STO1
@@ -1077,7 +1077,7 @@ frame:
     count: 4
   - panel: panel.wall-window-3x3
     count: 34
-  panels_mass: 137902.0
+  panels_mass: 137868.4
   sized: 'At 1 g: floors 1893 Pa dead and 5000 Pa imposed, the roof 1155 Pa; a ground column carries 13 kN (st4340-tb-60x2 takes it with half again to spare); a 3 m beam bends with 23.3 kN m (st4340-tb-160x5, under 470 MPa with half
     again to spare). Wind, the tall halls'' columns between floors and the footings'' loads not yet checked.'
 ground:
@@ -1092,7 +1092,7 @@ ground:
   mass: 279936.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 2816767.3
+  mass: 2816733.7
   against_module: 'building.builders-yard (deprecated): one box 100 x 60 x 8 m of 6,618 t, from the average of 538 concrete buildings. This layout: 102 x 60 x 6 m, 2,817 t (105 t frame, 138 t panels, 90 t furniture, 2,483 t ground),
     for 54 people served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:
