@@ -71,6 +71,10 @@ def _reference(key):
 def size_of(kind, r):
     """The record's size, length by width by height (m), or None where it says none (a template's: its reference
     member's, docs/asset-contract.md, Templates)."""
+    if kind == "template":       # a run's template: its first modelled piece's envelope at the reference
+        piece = next((p for p in r.get("pieces", []) if all(p.get(k) for k in ("length", "width", "height"))), None)
+        if piece:
+            return [float(piece["length"]), float(piece["width"]), float(piece["height"])]
     if kind == "template" and r.get("reference"):
         ref = _reference(r["reference"])
         return size_of(r["reference"].split(".", 1)[0], ref) if ref else None

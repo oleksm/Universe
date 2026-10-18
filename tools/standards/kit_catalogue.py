@@ -331,6 +331,9 @@ def templates():
             d["profile"] = profile
         if draws == "sweep-and-pieces":
             d["pieces"] = [{"name": "support", "how": "at each support.spacing along the run, scaled to its outside"}]
+        if fam == "conductor-rail":   # hung from above: the head clasps the housing, the game stretches the rod up to the ceiling
+            d["pieces"] = [{"name": "support_head", "how": "a hanger clasping the housing at each support.spacing, the slot underneath clear; its child leg_top is the rod's seat above, envelope at the reference rail (invented)", "length": 0.06, "width": 0.11, "height": 0.2, "mass": 1.2},
+                           {"name": "support_leg", "how": "a threaded rod 1 m long from leg_top up to y = 1; the game stretches it to the ceiling (support.per_m_height)"}]
         d["basis"] = [{"of": ["draws", "scales_by"], "tier": "derived", "note": "The owner, 2026-10-17: one template a family, scaled; the catalogue families (kit_catalogue.py)."}]
         yield "templates", t, d
 
