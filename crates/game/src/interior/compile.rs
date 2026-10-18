@@ -32,6 +32,7 @@ pub(super) fn compile(
     i: &Interior,
     craft: &crate::test_drive::Craft,
 ) -> Result<Arc<ClassSpec>, String> {
+    attachments::validate(&i.plan, &i.fit)?;
     if i.plan.wiring.is_some() {
         return Err("Authored wiring is saved, but physical port/topology resolution is not installed yet; this design cannot be flown using an inferred harness".into());
     }

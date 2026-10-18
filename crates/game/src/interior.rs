@@ -13,6 +13,7 @@ pub(crate) mod ship_code;
 mod walk;
 mod scene;
 mod compile;
+mod attachments;
 mod wiring;
 mod preparation;
 use walk::{Stand, stand_input, stand_spot, draw_stand};
@@ -499,7 +500,9 @@ fn issues(i: &Interior, faults: &[String]) -> Vec<Issue> {
     // (A fault or a loose module naming a module: at that module.)
     let named = |text: &str| plan.blocks.iter().enumerate().find(|(_, b)| text.contains(&kind(&b.id).to_uppercase()) || i.fit.iter().find(|f| f.id == kind(&b.id)).is_some_and(|f| text.starts_with(&f.name)));
     for f in faults {
-        let at = named(f);
+        let at = plan.blocks.iter().enumerate()
+            .find(|(_, b)| f.contains(&format!("[{}]", b.id)))
+            .or_else(|| named(f));
         out.push(Issue { text: f.clone(), at: at.map(|(_, b)| b.at), pick: at.map(|(k, _)| Hover::Module(k)) });
     }
     if let Some((_, b)) = i.bearing.as_ref().filter(|(p, _)| *p == *plan) {
@@ -5835,7 +5838,7 @@ fn budget(i: &Interior) -> Budget {
         lines.push((format!("LIFE  KEEPS {keeps:.0} OF {crew:.0}; COOLS {} OF THEIR {}", si(cools, "W"), si(body, "W")), keeps >= crew && cools >= body));
     }
     // Checks: sealed spaces, the way in, the way down, the ore's path.
-    let mut faults = Vec::new();
+    let mut faults = attachments::faults(&i.plan, &i.fit);
     // (Modules the registry doesn't know (renamed or taken out): not counted in
     // anything; said, not dropped.)
     let mut unknown: Vec<&str> = i.plan.blocks.iter().map(|b| kind(&b.id)).filter(|k| !i.fit.iter().any(|f| f.id == *k)).collect();
@@ -9175,5 +9178,20 @@ mod tests {
         let h = wiring::harness(&plan, fit);
         assert!(h.faults.is_empty() && h.runs.iter().any(|r| r.module.contains("nav") && r.volts == 28.0 && r.cable.is_some()), "{:?}", h.faults);
         assert_eq!(wiring::bus_for(500.0), 28.0);
+
+        // A frame touching equipment is not an authored compatible mount.
+        let errors = attachments::faults(&plan, fit);
+        assert_eq!(errors.len(), plan.blocks.len());
+        assert!(errors.iter().all(|e| e.contains("NO VERIFIED ATTACHMENT")));
+        assert!(errors.iter().any(|e| e.contains("REQUIRES MOUNT.")));
+        // Landing legs must fail both floating in space and at a frame joint.
+        let leg = fit.iter().find(|f| f.gear.is_some()).expect("landing gear record");
+        plan.blocks = vec![block(&leg.id, Vec3::splat(100.0))];
+        assert!(attachments::validate(&plan, fit).unwrap_err().contains("NOT MOUNTED"));
+        plan.blocks[0].at = Vec3::ZERO;
+        assert!(attachments::validate(&plan, fit).is_err());
+        let i = Interior { plan, fit: fit.to_vec(), ..Default::default() };
+        assert!(compile::compile(&i, &craft(&i)).unwrap_err().contains("NO VERIFIED ATTACHMENT"));
+        assert!(attachments::validate(&Plan::default(), fit).is_ok());
     }
 }
