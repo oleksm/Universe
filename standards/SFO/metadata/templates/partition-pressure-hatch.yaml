@@ -10,6 +10,12 @@ scales_by:
 - physical
 reference: panel.partition-pressure-hatch-3x3
 members: 1
+visual:
+  format: "freefall-model/1"
+  path: "models/partition-pressure-hatch/v1"
+  manifest_sha256: "ed9c4bb6fa34be3c13d98a50528e284739a0ac199704f44f68a7bc40540e4eed"
+  version: 1
+  triangles: 9828
 basis:
 - of:
   - draws
