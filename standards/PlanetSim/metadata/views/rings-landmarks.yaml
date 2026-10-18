@@ -1,0 +1,134 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.rings-landmarks
+  name: Landmarks
+  about: coast from <ck>_lines.npz and every alive non-worn landmark record from <ck>_store.npz by MARK_STYLE (solid active,
+    faint former)
+title: Landmarks
+row: line rings
+file_suffix: _rings_landmarks.png (+ .legend.json)
+draws:
+  words: coast from <ck>_lines.npz and every alive non-worn landmark record from <ck>_store.npz by MARK_STYLE (solid active,
+    faint former)
+legend:
+  title: Landmarks
+  rows:
+  - kind: head
+    label: 'Records ({n_marks}): point events; solid active, faint former; worn away not drawn'
+  - kind: head
+    label: 'Sutures, rift margins, arc fronts and the other relief features: see relief'
+  - key: mark:planet-feature.arc-volcano-centre
+    kind: dot
+    colour:
+    - 200
+    - 60
+    - 20
+    label: 'arc volcano: {arc-volcano-centre_active} active, {arc-volcano-centre_former} former'
+  - key: mark:planet-feature.hotspot-volcano-centre
+    kind: dot
+    colour:
+    - 40
+    - 40
+    - 160
+    label: 'hotspot volcano: {hotspot-volcano-centre_active} active, {hotspot-volcano-centre_former} former'
+  - key: mark:planet-feature.flood-basalt-plateau
+    kind: dot
+    colour:
+    - 60
+    - 60
+    - 60
+    label: 'flood basalt province: {flood-basalt-plateau_active} active, {flood-basalt-plateau_former} former'
+  - key: mark:planet-feature.river-mouth
+    kind: dot
+    colour:
+    - 0
+    - 90
+    - 200
+    label: 'river mouth: {river-mouth_active} active, {river-mouth_former} former'
+  - key: mark:planet-feature.delta-river-dominated
+    kind: dot
+    colour:
+    - 0
+    - 60
+    - 160
+    label: 'delta: {delta-river-dominated_active} active, {delta-river-dominated_former} former'
+  - key: mark:planet-feature.water-gap
+    kind: dot
+    colour:
+    - 0
+    - 150
+    - 200
+    label: 'water gap: {water-gap_active} active, {water-gap_former} former'
+  - key: mark:planet-feature.river-capture
+    kind: dot
+    colour:
+    - 0
+    - 120
+    - 120
+    label: 'river capture: {river-capture_active} active, {river-capture_former} former'
+  - key: mark:planet-feature.dry-valley
+    kind: dot
+    colour:
+    - 150
+    - 120
+    - 80
+    label: 'dry valley: {dry-valley_active} active, {dry-valley_former} former'
+  - key: mark:planet-feature.misfit-river
+    kind: dot
+    colour:
+    - 100
+    - 140
+    - 180
+    label: 'misfit river: {misfit-river_active} active, {misfit-river_former} former'
+  - key: mark:planet-feature.former-lake-bed
+    kind: dot
+    colour:
+    - 150
+    - 150
+    - 150
+    label: 'former lake bed: {former-lake-bed_active} active, {former-lake-bed_former} former'
+  - key: mark:planet-feature.water-carved-land
+    kind: dot
+    colour:
+    - 170
+    - 90
+    - 40
+    label: 'water-carved land: {water-carved-land_active} active, {water-carved-land_former} former'
+  - key: coastline
+    kind: line
+    colour:
+    - 0
+    - 0
+    - 0
+    label: coastline
+shown: true
+implementations:
+- where: planet-trees-pgs2 ~/git/planet-trees-pgs2/tools/layer_lines.py:rings (376 (landmarks 452-497))
+  state: reference
+- where: planet-forge crates/planet-layers/src/layers/landmarks.rs
+  state: current
+  note: the viewer layer
+status: draft
+styles:
+- key: coast
+  colour:
+  - 0
+  - 0
+  - 0
+- key: base-land
+  colour:
+  - 200
+  - 196
+  - 186
+- key: base-sea
+  colour:
+  - 205
+  - 220
+  - 232
+basis:
+- of:
+  - legend
+  - styles
+  tier: derived
+  note: 'planets, 17 Oct 2026: the viewer layers (planet-forge planet-layers), from planet-trees-pgs2 context_view.py / layer_lines.py.'

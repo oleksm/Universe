@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/planet-event.schema.yaml
+identity:
+  key: planet-event.rift
+  name: Rift
+  about: A plate breaking apart.
+source: rift
+is: rift
+basis:
+- of:
+  - is
+  tier: derived
+  note: 'planets, 17 Oct 2026: the sim''s event words onto the dictionary''s geological events.'
+status: draft

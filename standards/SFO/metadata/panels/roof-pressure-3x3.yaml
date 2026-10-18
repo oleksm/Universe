@@ -1,0 +1,47 @@
+# yaml-language-server: $schema=../../schema/panel.schema.yaml
+# Written by tools/standards/building_kit.py: change it there.
+identity:
+  key: panel.roof-pressure-3x3
+  name: Pressure roof panel, 3 x 3 m
+  description: 'The wall panel''s build on the frame''s top cells: the pressure pushes it up into the frame''s ties. Regolith shielding over it is ground works, not the panel.'
+kind: roof
+site: airless
+cell:
+- 3.0
+- 3.0
+thickness: 0.19
+u_value: 0.1
+load: 101300.0
+physical:
+  length: 3.0
+  width: 3.0
+  height: 0.19
+  mass: 409.8
+built_of:
+- what: Pressure skin
+  item: material.aluminium-alloy-6061
+  mass: 121.5
+  note: 5 mm welded 6061
+- what: Stiffeners
+  item: material.aluminium-alloy-6061
+  mass: 210.9
+  note: 14 T-stiffeners 155 mm deep at 0.23 m
+- what: Edge channel, seals and bolts
+  item: material.aluminium-alloy-6061
+  mass: 72.0
+  note: a welded edge channel and two O-ring grooves on the frame's beams, 6 kg/m
+- what: Multi-layer insulation
+  item: material.polyimide-film
+  mass: 5.4
+  note: about twenty layers, outside the skin
+template: template.roof-pressure
+basis:
+- of:
+  - built_of
+  - physical
+  - u_value
+  - load
+  tier: derived
+  review: true
+  note: 'Holds 101.3 kPa against vacuum: 6061 welded at 110 MPa, the skin between stiffeners 0.23 m apart as a clamped strip (p b^2 / 2 t^2), each stiffener a fixed-ended T over the cell''s short side (w L^2 / 12) with the skin its
+    other flange, as the cargo cabins (equipment/cargo-cabin-s1.yaml). Edge channel, seals, door hardware and the insulation from memory; to be sourced.'

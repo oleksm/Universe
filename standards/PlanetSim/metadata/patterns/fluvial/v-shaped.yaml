@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.valley.v-shaped
+  name: V-shaped (fluvial) valley
+  about: V-shaped (fluvial) valley.
+family: fluvial
+factors:
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: active uplift with incision faster than widening (Indus 2-12 mm/yr)
+- factor: planet-factor.base-level
+  weight: 1
+  why: falling base level keeps channel incising
+- factor: planet-factor.rock-type
+  weight: 3
+  why: rock strength caps side slopes; threshold hillslopes 30-35 deg
+- factor: planet-factor.rock-fracture
+  weight: 1
+  why: fracturing lowers threshold slope, landslide-dominated walls
+- factor: planet-factor.ice-extent
+  weight: 3
+  why: must be unglaciated; glaciation converts to U-shape
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: runoff drives incision; humid climates favour V gorges
+- factor: planet-factor.events
+  weight: 1
+  why: landslides set wall slopes at threshold
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: high local relief; depth grows with uplift
+- factor: planet-factor.time
+  weight: 1
+  why: 10 kyr-10 Myr
+vocabulary_id: 61
+sources:
+- https://en.wikipedia.org/wiki/Canyon
+- https://en.wikipedia.org/wiki/Knickpoint
+library_status: written
+source: fluvial.valley.v_shaped
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

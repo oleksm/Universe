@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../../schema/run.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: run.cable-flexible-690v-4x35
+  name: Flexible cable, 690 V, 4 x 35 mm2
+  description: 'A rubber-sheathed cable of fine-stranded copper that bends all its life: on a reel, a festoon or laid to a machine that moves. 125 A in air; about half that on airless ground, where only radiation cools it.'
+kind: cable
+size: 3.5e-05
+outside:
+- 0.034
+- 0.034
+rating:
+  voltage: 690
+  current: 125
+per_m:
+  mass: 1.83
+  built_of:
+  - what: Conductors
+    item: material.copper
+    mass: 1.25
+    note: 4 fine-stranded cores of 35 mm2
+  - what: Insulation and sheath
+    item: material.epdm-rubber
+    mass: 0.574
+    note: EPDM and a tough rubber sheath
+elbow:
+  radius: 0.255
+  mass: 0.73
+connector: connector.plug-iec60309-125a
+carries: power
+template: template.cable-flexible
+basis:
+- of:
+  - per_m
+  - rating
+  - outside
+  tier: invented
+  review: true
+  note: Reeling cable figures; least bend 7.5 outsides on a reel; From memory of makers' catalogues; to be sourced.

@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.plate-force
+  name: Plate force this step
+  about: The torque of this step's forces on a plate, added by the boundary processes; joins the remembered torque at the motion model's next step.
+unit: '1'
+producer:
+  where: planet-forge crates/forge-core/src/models/plates/motion.rs
+  file: checkpoint
+  key: tables/plates/planet-field.plate-force
+per: plate
+amount: per-step
+also_from:
+- where: stages/plates.py
+  key: force (run local)
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: forge''s plates foundation (branch plates-foundation) and the Python sim''s World (stages/plates.py:247-393), read from the code.'

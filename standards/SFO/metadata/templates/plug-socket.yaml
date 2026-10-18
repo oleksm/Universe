@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schema/template.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: template.plug-socket
+  name: IEC 60309 plugs and sockets
+  description: 'IEC 60309 plugs and sockets: one look for every size of the family, scaled to each record''s figures (the owner, 2026-10-17: never one model per size).'
+family: plug-socket
+draws: model
+scales_by:
+- physical
+members: 4
+reference: connector.plug-iec60309-32a
+basis:
+- of:
+  - draws
+  - scales_by
+  tier: derived
+  note: 'The owner, 2026-10-17: one template a family, scaled; the catalogue families (kit_catalogue.py).'
+visual:
+  format: freefall-model/1
+  path: models/plug-socket/v1
+  manifest_sha256: 4ca565ee08212ec791dd0b9eea16c89fc16e1bb779eeb21d483c59343f96cff3
+  version: 1
+  triangles: 6798

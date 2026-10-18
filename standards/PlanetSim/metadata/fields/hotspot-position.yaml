@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.hotspot-position
+  name: Hotspot position
+  about: Where the hotspots stand, fixed in the mantle.
+unit: '1'
+per: point
+vector: true
+producer:
+  where: stages/plates.py
+  file: ctx
+  key: hotspot_xyz
+source: hotspot_xyz
+levels:
+- planet-level.planet
+basis:
+- of:
+  - identity
+  - producer
+  - said_as
+  tier: derived
+  note: 'planet-trees-pgs2 docs/sim-arrays.md (planets, 17 Oct 2026: checked against the code at aab9f6a, run earth_s25).'
+status: draft

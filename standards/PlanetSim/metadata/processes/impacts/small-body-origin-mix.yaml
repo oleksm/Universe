@@ -1,0 +1,145 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.small-body-origin-mix
+  name: Small-body composition from formation zone
+  about: 'One origin model for asteroids/moons/planets on the registry''s rock classes: a zone''s primitive material = registry
+    ''found'' shares of stony, enstatite, carbonaceous, primitive, icy (classes only from melted bodies removed), normalised.
+    A belt: n bodies (radii from cumulative N ∝ r^−2.5, 1-500 km), each melts with p = MELT_MAX[class]/(1 + exp(−(ln r − ln
+    60 km)/0.5)); a melted one broken (share `broken`, default 0.3) gives fragments: metallic (core = registry metal share,
+    mid or drawn), stony-iron 4 %, basaltic crust 10 %, olivine mantle the rest. Today''s mix adds 25 % of the inner zone''s
+    melted fragments scattered out, weights each class by survival (cut_energy/60000)^0.8, normalised.'
+area: impacts
+clock:
+  when: once per zone, on demand (tools/belt_check.py; tools/survey.py uses zone_mix)
+reads:
+- name: data/rock_classes.json
+  unit: registry snapshot
+  meaning: 'rock classes: found shares by zone, composition.metal, mining.cut_energy (J/kg)'
+- name: zone
+  unit: enum warm|frost_line|cold|trojans|outer
+  meaning: formation zone
+writes:
+- name: zone_mix / belt_mix
+  unit: 1 (mass shares)
+  meaning: class → share
+params:
+- name: ZONES
+  setting: '["warm", "frost_line", "cold", "trojans", "outer"]'
+  meaning: formation zones, inner to outer
+  source: src/planet_sim/stages/bodies.py:23
+  note: 'unit: enum'
+- name: PRIMITIVE
+  setting: '["stony", "enstatite", "carbonaceous", "primitive", "icy"]'
+  meaning: classes formed directly from the disc
+  source: src/planet_sim/stages/bodies.py:24
+  note: 'unit: class keys'
+- name: FROM_MELTED
+  setting: '["metallic", "stony-iron", "basaltic"]'
+  meaning: classes only from melted bodies
+  source: src/planet_sim/stages/bodies.py:25
+  note: 'unit: class keys'
+- name: OLIVINE
+  setting: olivine (pending)
+  meaning: 'mantle fragment class (no registry class yet: pending)'
+  source: src/planet_sim/stages/bodies.py:26
+  note: 'unit: class key'
+- name: MELT_RADIUS_KM
+  value: 60000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 1000.0
+  meaning: radius at half melt probability (Kruijer et al. 2014)
+  source: src/planet_sim/stages/bodies.py:52
+- name: MELT_WIDTH
+  value: 0.5
+  unit: '1'
+  said_as:
+    unit: ln(radius)
+    factor: 1.0
+  open: true
+  meaning: logistic width
+  source: src/planet_sim/stages/bodies.py:53
+  note: 'unit as the code says it: ''ln(radius)''; SI conversion unverified'
+- name: MELT_MAX
+  setting: '{"stony": 0.6, "enstatite": 0.6, "carbonaceous": 0.25, "primitive": 0.05, "icy": 0.0}'
+  meaning: max melt probability per class
+  source: src/planet_sim/stages/bodies.py:54
+  note: 'unit: 1'
+- name: BOUNDARY
+  value: 0.04
+  unit: '1'
+  meaning: core-mantle boundary share
+  source: src/planet_sim/stages/bodies.py:57
+- name: CRUST
+  value: 0.1
+  unit: '1'
+  meaning: basaltic crust share
+  source: src/planet_sim/stages/bodies.py:58
+- name: SURVIVAL_POWER
+  value: 0.8
+  unit: '1'
+  meaning: survival ∝ (cut_energy/60000 J/kg)^0.8 (chosen)
+  source: src/planet_sim/stages/bodies.py:65
+- name: CUT_ENERGY_FALLBACK
+  setting: '{"enstatite": 60000.0, "basaltic": 60000.0, "olivine (pending)": 40000.0, "stony-iron": 200000.0, "primitive":
+    25000.0}'
+  meaning: cut energy for classes the registry lacks
+  source: src/planet_sim/stages/bodies.py:66
+  note: 'unit: J/kg'
+- name: SCATTER_OUT
+  value: 0.25
+  unit: '1'
+  meaning: share of inner zone's melted fragments scattered one zone out (Bottke et al. 2006)
+  source: src/planet_sim/stages/bodies.py:69
+- name: size distribution
+  setting: '{"power": -2.5, "r_min_km": 1.0, "r_max_km": 500.0, "n": 20000, "broken": 0.3}'
+  meaning: belt draw defaults (Bottke et al. 2005)
+  source: src/planet_sim/stages/bodies.py:83,94-96
+  note: 'unit: 1, km'
+- name: survival reference
+  value: 60000.0
+  unit: J/kg
+  meaning: cut energy normalising survival (and default)
+  source: src/planet_sim/stages/bodies.py:73
+tables:
+- name: bodies.MELT_MAX (melt probability ceiling per primitive class)
+  source: src/planet_sim/stages/bodies.py:163
+  columns:
+  - class
+  - melt_max
+  rows:
+  - - stony
+    - '0.6'
+  - - enstatite
+    - '0.6'
+  - - carbonaceous
+    - '0.25'
+  - - primitive
+    - '0.05'
+  - - icy
+    - '0.0'
+random_draws:
+- 'rng (default default_rng(1)): class choice by mix, uniform radii, uniform melt and break tests, uniform metal share within
+  registry range; belt_mix reuses the same rng for own and inner zone'
+invariants:
+- mix shares sum to 1
+- layers sum to 1 (metallic + 0.04 + olivine + 0.10)
+note: Reads the registry (rock-classes) snapshot rather than owning the data; in the Rust port read the registry directly.
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform src/planet_sim/stages/bodies.py:classes (29-31), zone_mix (34-40), metal_share (43-46), survival
+    (72-74), layers (77-80), belt (83-107), belt_mix (110-125)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

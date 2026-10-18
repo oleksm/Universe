@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/building_kit.py: change it there.
+identity:
+  key: stock.kit-panel-wall-double-door-3x3
+  code: KIT-PANEL-WALL-DOUBLE-DOOR-3X3
+  name: Wall panel with double doors, 3 x 3 m
+  traded_as: market.machinery
+  form: panel
+package: package.plate-stack
+made_from:
+- item: material.structural-steel-a36
+- item: material.pir-foam
+size:
+  length: 3.0
+  width: 0.1
+  height: 3.0
+supplies:
+  item: panel.wall-double-door-3x3
+physical:
+  mass: 159.4
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One panel.wall-double-door-3x3, as made.

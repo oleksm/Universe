@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: connector.camlock-dn25
+  name: Cam-lock coupling, DN 25
+  description: 'A hose coupling made and broken by hand: a grooved adapter (male) and a coupler (female) whose two cam arms pull it home on its gasket.'
+kind: quick-coupling
+size: 0.025
+rating:
+  pressure: 1700000.0
+  temperature: 373.0
+physical:
+  length: 0.1
+  width: 0.061
+  height: 0.107
+  mass: 0.6
+built_of:
+- what: Adapter and coupler
+  item: material.aluminium-alloy-6061
+  mass: 0.57
+  note: cast aluminium; stainless pins
+- what: Gasket
+  item: material.epdm-rubber
+  mass: 0.03
+provides: both
+template: template.camlock
+basis:
+- of:
+  - physical
+  - rating
+  tier: invented
+  review: true
+  note: From memory of makers' catalogues; to be sourced.
+interface: interface.camlock-dn25

@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.weathering-reference
+  name: Weathering reference
+  about: 'The carbon thermostat''s weathering at the first coupled step, at no offset (sum over land of P exp((T - 15 degC)/17
+    K) cos lat, P in m/s): the balance''s reference.'
+unit: '1'
+per: global
+producer:
+  where: stages/coupled.py step
+  key: state['W_ref']
+levels:
+- planet-level.planet
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge climate port (models/climate, models/ice), read from planet-sim-landform 1df4daf.'

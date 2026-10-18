@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=../../schema/panel.schema.yaml
+# Written by tools/standards/building_kit.py: change it there.
+identity:
+  key: panel.floor-3x3
+  name: Floor panel, 3 x 3 m
+  description: 'A steel floor cassette with a concrete topping spanning one cell between the frame''s nodes: an upper floor, or a floor laid over the ground slab''s service void.'
+kind: floor
+site: air
+cell:
+- 3.0
+- 3.0
+thickness: 0.2
+load: 5000.0
+physical:
+  length: 3.0
+  width: 3.0
+  height: 0.2
+  mass: 1512.0
+built_of:
+- what: Joists and deck
+  item: material.structural-steel-a36
+  mass: 216.0
+  note: 'a cold-formed steel cassette: joists 15 kg/m2 and a 0.9 mm deck 9'
+- what: Topping
+  item: good.concrete
+  mass: 1296.0
+  note: 60 mm of concrete
+template: template.floor
+basis:
+- of:
+  - built_of
+  - physical
+  - u_value
+  - load
+  tier: invented
+  review: true
+  note: From memory of modular building practice; to be sourced.

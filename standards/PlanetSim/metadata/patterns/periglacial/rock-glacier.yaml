@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.periglacial.creep.rock-glacier
+  name: Rock glacier
+  about: Rock glacier.
+family: periglacial
+factors:
+- factor: planet-factor.permafrost
+  weight: 3
+  why: Mountain permafrost essential; ice-supersaturated debris ~40-60 vol% ice
+- factor: planet-factor.clim-temp
+  weight: 3
+  why: MAAT about -1 to -2 C at front or colder; occurs -8 to +8 C locally
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: Continental, low precipitation favoured (too dry for glaciers)
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: Abundant coarse talus from jointed walls; ~83% talus-derived
+- factor: planet-factor.rock-fracture
+  weight: 1
+  why: Jointed walls yield blocks up to 8 m
+- factor: planet-factor.ice-extent
+  weight: 1
+  why: Glacier-origin type from debris-covered retreating glacier; glacier-steepened valleys
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: Below cirque headwalls and talus; moderate slope for creep
+- factor: planet-factor.aspect
+  weight: 1
+  why: Shaded aspects favour permafrost
+- factor: planet-factor.time
+  weight: 1
+  why: 1-10 kyr; flows <2 m/yr, up to ~3 km long
+vocabulary_id: 104
+sources:
+- https://en.wikipedia.org/wiki/Rock_glacier
+- https://research.fs.usda.gov/treesearch/44709
+library_status: written
+source: periglacial.creep.rock_glacier
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

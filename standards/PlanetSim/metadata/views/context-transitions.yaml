@@ -1,0 +1,69 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.context-transitions
+  name: Transitions
+  about: shoreline, rock contacts on land, range fronts (z > 1500 next to land < 500), plate boundary zones
+title: Transitions
+row: landform
+file_suffix: _context_transitions.png (+ .legend.json)
+draws:
+  words: shoreline, rock contacts on land, range fronts (z > 1500 next to land < 500), plate boundary zones
+legend:
+  title: Transitions
+  rows:
+  - kind: head
+    label: Transitions
+    shown_when: always
+  - kind: line
+    label: shoreline
+    colour:
+    - 0
+    - 0
+    - 0
+    shown_when: always
+  - kind: line
+    label: rock contacts (hard to soft)
+    colour:
+    - 230
+    - 140
+    - 0
+    shown_when: always
+  - kind: dot
+    label: 'range fronts: high ground meets lowland ({n})'
+    colour:
+    - 200
+    - 30
+    - 30
+    shown_when: always
+  - kind: line
+    label: plate boundary zones
+    colour:
+    - 130
+    - 130
+    - 130
+    shown_when: always
+  - kind: dash
+    label: snowline
+    shown_when: never
+  - kind: dash
+    label: ice margins
+    shown_when: never
+  - kind: dash
+    label: permafrost limit
+    shown_when: never
+  - kind: dash
+    label: desert margin
+    shown_when: never
+  - kind: dash
+    label: treeline
+    shown_when: never
+  - kind: dot
+    label: knickpoints (incision waves)
+    shown_when: never
+  source: ~/git/planet-trees-pgs2/tools/context_view.py:349-352
+shown: true
+implementations:
+- where: planet-trees-pgs2 ~/git/planet-trees-pgs2/tools/context_view.py:view_transitions (340)
+  state: reference
+status: draft

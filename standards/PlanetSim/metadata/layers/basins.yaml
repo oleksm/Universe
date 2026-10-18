@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/planet-layer.schema.yaml
+identity:
+  key: planet-layer.basins
+  name: Basins
+  about: Drainage basins and their lakes.
+version: 1
+classes:
+- id: 1
+  name: drainage basin
+- id: 2
+  name: fresh lake
+- id: 3
+  name: saline lake
+- id: 4
+  name: dry lake
+bounded_by:
+- planet-line.divide
+- planet-line.river
+levels:
+- planet-level.planet
+- planet-level.cluster
+basis:
+- of:
+  - identity
+  tier: derived
+  note: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+status: draft

@@ -1,15 +1,100 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.recycle-compressor, name: 'Recycle compressor, 20 MW', description: 'Raises 14.3 kg/s of hydrogen (the recycle with the hydrogen plant''s make-up) from 1.3 to 2.8 bar: 14 centrifugal stages, about 80 kJ/kg each at the impellers'' tip speed limit, in three casings on one line along x with intercoolers, driven by an electric motor at the -x end. Suction on +y at the +x end, discharge on -y at the -x end, both 1.5 m up.'}
+identity: {key: unit.recycle-compressor, name: 'Recycle compressor, 20 MW', description: 'Raises 14.3 kg/s of hydrogen (the recycle with the hydrogen plant''s make-up) from 1.3 to 2.8 bar: 14 centrifugal stages, about 80 kJ/kg each at the impellers'' tip speed limit, in three casings on one line along x (centres x -4.5, 0, 4.5, shaft at z 2.3, 3.3 m across), driven by an electric motor at the -x end (x -11 to -6.5). The gas runs from +x to -x: suction by a 2.45 m flange on the +y face at (8, 4, 1.5), the recycle with the make-up (the make-up tees into the suction duct before it); each casing''s outlet up to a cooler overhead (three shell-and-tube coolers along x at z 5.4, 2.6 m across and 3.6 m long: two intercoolers, between casings at 1.68 and 2.17 bar by 2.16 and 1.90 m pipes, and an aftercooler), discharge from the aftercooler by a 1.67 m flange on the -y face at (-10, -4, 1.5). The coolers'' water, 476 kg/s at a 10 K rise, by a pair of 0.5 m flanges on the -y face at z 1 (flow x 5.5,
+    return x 7). The motor''s 11 kV supply into its terminal box on the +y face, cable entry at (-8.75, 4, 1). The coolers'' frame is the unit''s own.'}
 size_class: 3
 fits: plant-mount.bay-s3
-physical: {length: 22.0, width: 8.0, height: 7.0, mass: 174500.0}
+physical: {length: 22.0, width: 8.0, height: 7.0, mass: 223000.0}
 built_of:
 - {what: Casings and rotors, item: material.high-strength-steel-4340, mass: 95720.0, note: 'from memory: 8 t a MW of drive, three fifths of it the machines'}
 - {what: Motor, item: good.electric-motors, mass: 63810.0, note: from memory}
-- {what: Intercoolers, item: material.stainless-steel-304, mass: 15000.0, note: from memory}
+- {what: Intercoolers and aftercooler, item: material.stainless-steel-304, mass: 15000.0, note: from memory}
+- {what: 'Skid, feet and cooler frame', item: material.structural-steel-a36, mass: 48470.0, note: 'measured on model v1 (fabricated square tubes and feet, sized provisionally)'}
 needs: {power: 20770000.0, heat: 19940000.0}
+ports:
+- id: suction
+  flow: in
+  medium: gas
+  item: material.hydrogen
+  rate: 14.25
+  pressure: 130000.0
+  temperature: 313.1
+  interface: interface.flange-dn2200-pn10-double
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn2200-pn10-double
+  at: [8.0, 4.0, 1.5]
+  facing: [0.0, 1.0, 0.0]
+  note: the recycle with the hydrogen plant's make-up
+- id: discharge
+  flow: out
+  medium: gas
+  item: material.hydrogen
+  rate: 14.25
+  pressure: 280000.0
+  temperature: 313.1
+  interface: interface.flange-dn1800-pn10-double
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn1800-pn10-double
+  at: [-10.0, -4.0, 1.5]
+  facing: [0.0, -1.0, 0.0]
+  note: after the aftercooler
+- id: water-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 476.4
+  temperature: 303.0
+  interface: interface.flange-dn500-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn500-pn10
+  at: [5.5, -4.0, 1.0]
+  facing: [0.0, -1.0, 0.0]
+  note: the coolers' flow
+  pressure: 400000.0
+- id: water-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 476.4
+  temperature: 313.0
+  interface: interface.flange-dn500-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn500-pn10
+  at: [7.0, -4.0, 1.0]
+  facing: [0.0, -1.0, 0.0]
+  pressure: 400000.0
+- id: power-in
+  flow: in
+  medium: power
+  power: 20770000.0
+  voltage: 11000
+  interface: interface.termination-11kv-500mm2
+  half: female
+  make: bolted
+  connector: connector.termination-11kv-500mm2
+  at: [-8.75, 4.0, 1.0]
+  facing: [0.0, 1.0, 0.0]
+  note: the motor's terminal box
+  current: 1211.0
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s3
+  half: male
+  make: bolted
+  mass: 223000.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
+product: product.recycle-compressor
+envelope:
+- [-11.001, -4.001, -0.001, 11.001, 4.001, 6.762]
 life: 788940000
+visual: {format: freefall-model/1, path: models/recycle-compressor/v1, manifest_sha256: f6531ecd42aba91e5bf346fa3151f57c694c6485f8348248881fb4c8ff51b732, version: 1, triangles: 12980}
 basis:
 - of: [physical, built_of]
   tier: invented
@@ -18,5 +103,9 @@ basis:
 - of: [needs]
   tier: derived
   note: Isentropic head 1119 kJ/kg at 80%, a motor at 96%; all the work leaves by the intercoolers and aftercooler to the tower.
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage; water at the pumps'' 4 bar.'
 - of: [life]
   rule: rule.life-plant

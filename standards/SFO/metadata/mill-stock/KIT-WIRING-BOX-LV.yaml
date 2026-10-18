@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-wiring-box-lv
+  code: KIT-WIRING-BOX-LV
+  name: Wiring box, low voltage
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.structural-steel-a36
+- item: material.polyethylene-uhmw
+- item: material.copper
+size:
+  length: 0.1
+  width: 0.1
+  height: 0.06
+supplies:
+  item: connector.wiring-box-lv
+physical:
+  mass: 0.35
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.wiring-box-lv, as made.

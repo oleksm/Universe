@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-belt-transfer-1200
+  code: KIT-BELT-TRANSFER-1200
+  name: Belt transfer, 1200 mm
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.structural-steel-a36
+- item: material.polyethylene-uhmw
+size:
+  length: 1.5
+  width: 1.8
+  height: 3.55
+supplies:
+  item: connector.belt-transfer-1200
+physical:
+  mass: 1798.7
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.belt-transfer-1200, as made.

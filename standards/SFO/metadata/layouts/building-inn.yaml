@@ -1,0 +1,478 @@
+# yaml-language-server: $schema=../../schema/layout.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: layout.building-inn
+  name: Inn, world with air
+  description: 'Rooms for travellers and crews between ships, a dining room, a bar. Laid of the kit: a strut frame on the 3 m grid, panels, and 63 rooms of 6 m furnished piece by piece (13 dining room, 6 kitchen, 3 counter, 35 flat,
+    6 washroom).'
+stands_for: building.inn
+site:
+  atmosphere: air
+  gravity:
+  - 8.0
+  - 11.0
+physical:
+  length: 42.0
+  width: 18.0
+  height: 9.15
+  mass: 737418.8
+bays: []
+rooms:
+- id: DIN1
+  arrangement: arrangement.dining
+  at:
+  - -18.0
+  - -6.0
+  - 0.0
+- id: DIN2
+  arrangement: arrangement.dining
+  at:
+  - -12.0
+  - -6.0
+  - 0.0
+- id: DIN3
+  arrangement: arrangement.dining
+  at:
+  - -6.0
+  - -6.0
+  - 0.0
+- id: DIN4
+  arrangement: arrangement.dining
+  at:
+  - 0.0
+  - -6.0
+  - 0.0
+- id: DIN5
+  arrangement: arrangement.dining
+  at:
+  - 6.0
+  - -6.0
+  - 0.0
+- id: DIN6
+  arrangement: arrangement.dining
+  at:
+  - 12.0
+  - -6.0
+  - 0.0
+- id: DIN7
+  arrangement: arrangement.dining
+  at:
+  - 18.0
+  - -6.0
+  - 0.0
+- id: DIN8
+  arrangement: arrangement.dining
+  at:
+  - -18.0
+  - 0.0
+  - 0.0
+- id: DIN9
+  arrangement: arrangement.dining
+  at:
+  - -12.0
+  - 0.0
+  - 0.0
+- id: DIN10
+  arrangement: arrangement.dining
+  at:
+  - -6.0
+  - 0.0
+  - 0.0
+- id: DIN11
+  arrangement: arrangement.dining
+  at:
+  - 0.0
+  - 0.0
+  - 0.0
+- id: DIN12
+  arrangement: arrangement.dining
+  at:
+  - 6.0
+  - 0.0
+  - 0.0
+- id: DIN13
+  arrangement: arrangement.dining
+  at:
+  - 12.0
+  - 0.0
+  - 0.0
+- id: KIT14
+  arrangement: arrangement.kitchen
+  at:
+  - 18.0
+  - 0.0
+  - 0.0
+- id: KIT15
+  arrangement: arrangement.kitchen
+  at:
+  - -18.0
+  - 6.0
+  - 0.0
+- id: KIT16
+  arrangement: arrangement.kitchen
+  at:
+  - -12.0
+  - 6.0
+  - 0.0
+- id: KIT17
+  arrangement: arrangement.kitchen
+  at:
+  - -6.0
+  - 6.0
+  - 0.0
+- id: KIT18
+  arrangement: arrangement.kitchen
+  at:
+  - 0.0
+  - 6.0
+  - 0.0
+- id: KIT19
+  arrangement: arrangement.kitchen
+  at:
+  - 6.0
+  - 6.0
+  - 0.0
+- id: COU20
+  arrangement: arrangement.counter
+  at:
+  - 12.0
+  - 6.0
+  - 0.0
+- id: COU21
+  arrangement: arrangement.counter
+  at:
+  - 18.0
+  - 6.0
+  - 0.0
+- id: COU22
+  arrangement: arrangement.counter
+  at:
+  - -18.0
+  - -6.0
+  - 3.0
+- id: FLA23
+  arrangement: arrangement.flat
+  at:
+  - -12.0
+  - -6.0
+  - 3.0
+- id: FLA24
+  arrangement: arrangement.flat
+  at:
+  - -6.0
+  - -6.0
+  - 3.0
+- id: FLA25
+  arrangement: arrangement.flat
+  at:
+  - 0.0
+  - -6.0
+  - 3.0
+- id: FLA26
+  arrangement: arrangement.flat
+  at:
+  - 6.0
+  - -6.0
+  - 3.0
+- id: FLA27
+  arrangement: arrangement.flat
+  at:
+  - 12.0
+  - -6.0
+  - 3.0
+- id: FLA28
+  arrangement: arrangement.flat
+  at:
+  - 18.0
+  - -6.0
+  - 3.0
+- id: FLA29
+  arrangement: arrangement.flat
+  at:
+  - -18.0
+  - 0.0
+  - 3.0
+- id: FLA30
+  arrangement: arrangement.flat
+  at:
+  - -12.0
+  - 0.0
+  - 3.0
+- id: FLA31
+  arrangement: arrangement.flat
+  at:
+  - -6.0
+  - 0.0
+  - 3.0
+- id: FLA32
+  arrangement: arrangement.flat
+  at:
+  - 0.0
+  - 0.0
+  - 3.0
+- id: FLA33
+  arrangement: arrangement.flat
+  at:
+  - 6.0
+  - 0.0
+  - 3.0
+- id: FLA34
+  arrangement: arrangement.flat
+  at:
+  - 12.0
+  - 0.0
+  - 3.0
+- id: FLA35
+  arrangement: arrangement.flat
+  at:
+  - 18.0
+  - 0.0
+  - 3.0
+- id: FLA36
+  arrangement: arrangement.flat
+  at:
+  - -18.0
+  - 6.0
+  - 3.0
+- id: FLA37
+  arrangement: arrangement.flat
+  at:
+  - -12.0
+  - 6.0
+  - 3.0
+- id: FLA38
+  arrangement: arrangement.flat
+  at:
+  - -6.0
+  - 6.0
+  - 3.0
+- id: FLA39
+  arrangement: arrangement.flat
+  at:
+  - 0.0
+  - 6.0
+  - 3.0
+- id: FLA40
+  arrangement: arrangement.flat
+  at:
+  - 6.0
+  - 6.0
+  - 3.0
+- id: FLA41
+  arrangement: arrangement.flat
+  at:
+  - 12.0
+  - 6.0
+  - 3.0
+- id: FLA42
+  arrangement: arrangement.flat
+  at:
+  - 18.0
+  - 6.0
+  - 3.0
+- id: FLA43
+  arrangement: arrangement.flat
+  at:
+  - -18.0
+  - -6.0
+  - 6.0
+- id: FLA44
+  arrangement: arrangement.flat
+  at:
+  - -12.0
+  - -6.0
+  - 6.0
+- id: FLA45
+  arrangement: arrangement.flat
+  at:
+  - -6.0
+  - -6.0
+  - 6.0
+- id: FLA46
+  arrangement: arrangement.flat
+  at:
+  - 0.0
+  - -6.0
+  - 6.0
+- id: FLA47
+  arrangement: arrangement.flat
+  at:
+  - 6.0
+  - -6.0
+  - 6.0
+- id: FLA48
+  arrangement: arrangement.flat
+  at:
+  - 12.0
+  - -6.0
+  - 6.0
+- id: FLA49
+  arrangement: arrangement.flat
+  at:
+  - 18.0
+  - -6.0
+  - 6.0
+- id: FLA50
+  arrangement: arrangement.flat
+  at:
+  - -18.0
+  - 0.0
+  - 6.0
+- id: FLA51
+  arrangement: arrangement.flat
+  at:
+  - -12.0
+  - 0.0
+  - 6.0
+- id: FLA52
+  arrangement: arrangement.flat
+  at:
+  - -6.0
+  - 0.0
+  - 6.0
+- id: FLA53
+  arrangement: arrangement.flat
+  at:
+  - 0.0
+  - 0.0
+  - 6.0
+- id: FLA54
+  arrangement: arrangement.flat
+  at:
+  - 6.0
+  - 0.0
+  - 6.0
+- id: FLA55
+  arrangement: arrangement.flat
+  at:
+  - 12.0
+  - 0.0
+  - 6.0
+- id: FLA56
+  arrangement: arrangement.flat
+  at:
+  - 18.0
+  - 0.0
+  - 6.0
+- id: FLA57
+  arrangement: arrangement.flat
+  at:
+  - -18.0
+  - 6.0
+  - 6.0
+- id: WAS58
+  arrangement: arrangement.washroom
+  at:
+  - -12.0
+  - 6.0
+  - 6.0
+- id: WAS59
+  arrangement: arrangement.washroom
+  at:
+  - -6.0
+  - 6.0
+  - 6.0
+- id: WAS60
+  arrangement: arrangement.washroom
+  at:
+  - 0.0
+  - 6.0
+  - 6.0
+- id: WAS61
+  arrangement: arrangement.washroom
+  at:
+  - 6.0
+  - 6.0
+  - 6.0
+- id: WAS62
+  arrangement: arrangement.washroom
+  at:
+  - 12.0
+  - 6.0
+  - 6.0
+- id: WAS63
+  arrangement: arrangement.washroom
+  at:
+  - 18.0
+  - 6.0
+  - 6.0
+frame:
+  box:
+  - -21.0
+  - -9.0
+  - 0.0
+  - 21.0
+  - 9.0
+  - 9.0
+  cell: 3.0
+  shape: 'A skeleton frame on the 3 m grid: 14 x 6 cells, 3 storey(s) of 3 m; columns at every node, beams on every cell edge at each floor and the roof, one diagonal in every other outside face. Panels on its faces (frame.panels).'
+  members:
+  - item: stock.st4340-tb-100x3-s3000
+    count: 315
+    where: columns
+  - item: stock.st4340-tb-160x3-s3000
+    count: 564
+    where: beams
+  - item: stock.st4340-tb-80x2-d3000
+    count: 60
+    where: bracing
+  - item: stock.st4340-node-160b
+    count: 420
+    where: nodes
+  mass: 38871.6
+  panels:
+  - panel: panel.floor-3x3
+    count: 164
+  - panel: panel.partition-3x3
+    count: 95
+  - panel: panel.partition-door-3x3
+    count: 94
+  - panel: panel.roof-3x3
+    count: 84
+  - panel: panel.stair-3m
+    count: 2
+  - panel: panel.wall-door-3x3
+    count: 1
+  - panel: panel.wall-double-door-3x3
+    count: 2
+  - panel: panel.wall-insulated-3x3
+    count: 79
+  - panel: panel.wall-window-3x3
+    count: 38
+  panels_mass: 297265.3
+  sized: 'At 1 g: floors 1893 Pa dead and 2000 Pa imposed, the roof 1155 Pa; a ground column carries 84 kN (st4340-tb-100x3 takes it with half again to spare); a 3 m beam bends with 13.1 kN m (st4340-tb-160x3, under 470 MPa with half
+    again to spare). Wind, the tall halls'' columns between floors and the footings'' loads not yet checked.'
+ground:
+- what: Ground slab
+  item: good.concrete
+  volume: 113.4
+  mass: 272160.0
+  note: 0.15 m over the 42 x 18 m plan
+- what: Edge footings
+  item: good.concrete
+  volume: 43.2
+  mass: 103680.0
+  note: 0.6 x 0.6 m strips under the outside walls
+totals:
+  mass: 737418.8
+  against_module: 'building.inn (deprecated): one box 40 x 20 x 12 m of 2,647 t, from the average of 538 concrete buildings. This layout: 42 x 18 x 9 m, 737 t (39 t frame, 297 t panels, 25 t furniture, 376 t ground), for 296 people
+    served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
+staff:
+- profession: profession.innkeeper
+  count: 5
+- profession: profession.food-worker
+  count: 20
+- profession: profession.clerk
+  count: 5
+basis:
+- of:
+  - bays
+  tier: invented
+  review: true
+  note: The mix of rooms for a inn is chosen (dining 0.2, kitchen 0.1, counter 0.05, flat 0.55, washroom 0.1), shared over the record's floor (2400 m2 in 3 storeys, laid as 7 x 3 rooms of 6 m a storey).
+- of:
+  - frame
+  - ground
+  tier: derived
+  review: true
+  note: Counted from the grid (tools/standards/building_layouts.py); sections by the loads in frame.sized; masses from the strut, node and panel records.

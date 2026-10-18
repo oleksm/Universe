@@ -1,14 +1,39 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.ingot-crane-10t, name: 'Ingot crane, 10 t', description: 'A double-girder ingot crane on the hall''s runways: it lifts hot ingots off the ingot car with its tongs, a row at a time, onto the cooling racks, and later onto the crating line''s roller table. Hangs on the frame; names no bay. It travels along its x, its wheels at y -11.4 and +11.4 (22.8 m between the rails), its ends 0.3 m beyond; its origin on the runway''s rail plane; the trolley, with ingot tongs, runs 9 m either way along y, the hook raised to 0.1 m under the rail plane. Parked at the hall''s centre.'}
+identity: {key: unit.ingot-crane-10t, name: 'Ingot crane, 10 t', description: 'A double-girder ingot crane on the hall''s runways: it lifts hot ingots off the ingot car, one at a time, onto the cooling racks; later lays each cooled ingot on a crop saw''s table and the cropped ingot onto the crating line''s roller table. Its scissor tongs hang from the single hook by their bail: closed 0.8 m along x, 0.4 m across and 1.8 m tall under the hook; their jaws, 0.4 m long, open from 0.35 to 0.7 m across y and grip an ingot by two opposite faces, standing (below its head) or lying, so a cropped ingot with no eye left is held the same way; parked, the tongs hang closed. Hangs on the frame; names no bay. It travels along its x, its wheels at y -11.4 and +11.4 (22.8 m between the rails), its ends 0.3 m beyond; its origin on the runway''s rail plane; the trolley, with scissor ingot tongs, about 1.5 t of the trolley''s, runs 9 m either way along y, the hook raised to 0.1 m under the rail plane. Parked
+    at the hall''s centre. Its box runs from the closed tongs'' jaws, 1.9 m under the rail plane when parked, to the trolley''s top.'}
 size_class: 2
-physical: {length: 8.0, width: 23.4, height: 3.0, mass: 23690.0}
+physical: {length: 8.0, width: 23.4, height: 4.8, mass: 23690.0}
 built_of:
 - {what: Bridge girders, item: material.structural-steel-a36, mass: 19190.0, note: 'two box girders 1.4 x 0.8 m, 12 mm wall, 23.4 m long over a 22.8 m span, the lightest that meet span/800 under the load (4.1 mm, span/5581) and 150 MPa with every load on (30 MPa)'}
-- {what: Trolley and hoist, item: material.structural-steel-a36, mass: 3000.0, note: 'with ingot tongs: 30% of the load, from memory'}
+- {what: Trolley and hoist, item: material.structural-steel-a36, mass: 3000.0, note: 'with scissor ingot tongs, about 1.5 t of the trolley''s: 30% of the load, from memory'}
 - {what: End carriages and drives, item: good.electric-motors, mass: 1500.0, note: '15% of the load, from memory'}
 needs: {power: 20000.0}
+product: product.overhead-crane
+options: [ingot-tongs]
+motion:
+- id: travel
+  kind: travel
+  direction: [1.0, 0.0, 0.0]
+  moves: [the whole crane]
+  note: along its rails or runways; its range is the layout's
+- id: traverse
+  kind: travel
+  direction: [0.0, 1.0, 0.0]
+  distance: [-9.7, 9.7]
+  moves: [the trolley and its hook]
+  note: across the bridge, about 1.5 m short of each end (invented)
+- id: hoist
+  kind: lift
+  direction: [0.0, 0.0, 1.0]
+  moves: [the hook and what it carries]
+  note: from parked down to the floor or the load; its depth is the layout's
+envelope:
+- [-4.001, -11.702, -0.041, 4.001, -10.698, 2.421]
+- [-4.001, 10.698, -0.041, 4.001, 11.701, 2.422]
+- [-2.201, -11.69, -1.901, 2.201, 11.689, 2.902]
 life: 788940000
+visual: {format: freefall-model/1, path: models/ingot-crane-10t/v1, manifest_sha256: 9c659c060e5c25b71118cbedd054cf83d0c4255895d9c28dcddf1fd52e4db857, version: 1, triangles: 7292}
 basis:
 - of: [physical, built_of]
   tier: derived

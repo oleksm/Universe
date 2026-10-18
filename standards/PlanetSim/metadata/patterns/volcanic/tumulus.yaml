@@ -1,0 +1,43 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.volcanic.flow.tumulus
+  name: Tumulus (lava)
+  about: Tumulus (lava).
+family: volcanic
+factors:
+- factor: planet-factor.volc-magma
+  weight: 3
+  why: fluid pahoehoe basalt
+- factor: planet-factor.slope-relief
+  weight: 3
+  why: near-flat ground (<~2 deg, often ~0.5 deg)
+- factor: planet-factor.other-effusion-rate
+  weight: 3
+  why: low sustained supply inflates core locally into mounds over incipient tubes
+- factor: planet-factor.events
+  weight: 1
+  why: burst tumuli leak lava breakouts when pressure exceeds crust strength
+- factor: planet-factor.time
+  weight: 1
+  why: form over days-months of supply
+vocabulary_id: 182
+sources:
+- https://en.wikipedia.org/wiki/Pressure_ridge_(lava)
+- https://www.usgs.gov/media/images/burst-tumuli
+library_status: planned
+source: volcanic.flow.tumulus
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.volcanic.province.ignimbrite-plateau
+  name: Ignimbrite (tuff) plateau
+  about: Ignimbrite (tuff) plateau.
+family: volcanic
+factors:
+- factor: planet-factor.volc-magma
+  weight: 3
+  why: 'silicic (>65% SiO2) gas-rich magma: caldera-forming pyroclastic currents'
+- factor: planet-factor.tect-setting
+  weight: 1
+  why: continental arcs over thick crust and plateaus (Altiplano-Puna, Taupo)
+- factor: planet-factor.other-welding
+  weight: 3
+  why: 'emplacement temperature and thickness decide welding: cliff-forming welded zone vs soft tuff'
+- factor: planet-factor.relief-inherited
+  weight: 1
+  why: flows fill valleys and level landscape; thick ponding in lows
+- factor: planet-factor.clim-arid
+  weight: 1
+  why: aridity preserves flat sheets; humid climate dissects them
+- factor: planet-factor.clim-wind
+  weight: 1
+  why: strong unidirectional wind on soft tuff carves yardangs
+- factor: planet-factor.time
+  weight: 1
+  why: later canyon incision through welded caprock
+- factor: planet-factor.other-magma-supply
+  weight: 3
+  why: eruption volume (100s-1000s km3) sets sheet extent and thickness
+vocabulary_id: 143
+sources:
+- https://en.wikipedia.org/wiki/Ignimbrite
+- https://en.wikipedia.org/wiki/Caldera
+library_status: written
+source: volcanic.province.ignimbrite_plateau
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

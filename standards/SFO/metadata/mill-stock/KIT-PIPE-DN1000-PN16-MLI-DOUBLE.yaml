@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-pipe-dn1000-pn16-mli-double
+  code: KIT-PIPE-DN1000-PN16-MLI-DOUBLE
+  name: Pipe DN 1000 PN 16, lagged, double-sealed joints, a 6 m length
+  traded_as: market.machinery
+  form: length
+package: package.bar-bundle
+made_from:
+- item: material.structural-steel-a36
+- item: material.multi-layer-insulation
+size:
+  length: 6.0
+  diameter: 1.068
+supplies:
+  item: run.pipe-dn1000-pn16-mli-double
+  length: 6.0
+physical:
+  mass: 1368.6
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: 'a 6 m length of run.pipe-dn1000-pn16-mli-double: its mass a metre times the length sold.'

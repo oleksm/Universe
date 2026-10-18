@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/product.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: product.cooling-tower, name: Cooling tower, description: 'An induced-draught wet tower of 12 m cells over a sunk basin, the loop''s pumps and plate exchanger on a skid within it.'}
+kind: family
+params:
+- {name: cells, unit: count, description: 12 m cells side by side}
+- {name: heat, unit: W, description: the loop's heat at a 10 K rise}
+pieces:
+- {id: cell, description: 'one 12 m cell: frame, fill, eliminators, fan deck, fan'}
+- {id: pump-skid, description: the loop's pumps and plate exchanger}
+units: [unit.cooling-tower, unit.cooling-tower-1cell, unit.cooling-tower-h2, unit.cooling-tower-pellet, unit.cooling-tower-shaft]
+basis:
+- of: [kind, params, pieces, options]
+  tier: invented
+  review: true
+  note: Grouped from the units the layouts use (docs/proposals/plant-products.md, 2026-10-16).

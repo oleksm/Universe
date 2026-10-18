@@ -1,0 +1,62 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.relief-thrust-front
+  name: Thrust front
+  about: 'The foreland edge: offset from the suture to the thin side by the thin side''s belt width (at least one station
+    step).'
+area: relief
+clock:
+  when: with relief-orogen-axis
+reads:
+- name: features (planet-feature.orogen-axis)
+  meaning: and its suture's belt
+- name: crust thickness
+  field: planet-field.crust-thickness
+  unit: m
+  meaning: the belt, the sides of a margin
+- name: plate rotation
+  field: planet-field.plate-rotation
+  unit: '1'
+  meaning: 'each plate''s rotation: where the features'' pins stand'
+writes:
+- name: features (planet-feature.thrust-front)
+  meaning: child of its axis
+params:
+- name: min distance
+  value: 1.0
+  unit: '1'
+  said_as:
+    unit: stations (station step gaps)
+    factor: 1.0
+  meaning: the front at least this many stations out
+  source: stages/relief.py:240
+  note: was a setting in words ('1 station (0.5 gap)'); the comment says 30 km, the code max(w_f, 1) x step
+depends_on:
+- planet-process.relief-orogen-axis
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:orogen (239-244)
+  state: reference
+- where: planet-forge crates/forge-core/src/models/tectonic/thrust_front.rs
+  state: current
+  note: planet-forge port (relief-tectonic line, merged in forge main fc8f460)
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
+    9747f0d-c437724.'
+cautions:
+- 'the Python''s reads were its line store''s internals: thin-side belt width per station'

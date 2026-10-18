@@ -1,13 +1,17 @@
 # yaml-language-server: $schema=../../schema/law.schema.yaml
 identity:
   key: law.hull-crumple-speed
-  name: "Hull crumples"
-  symbol: "vc"
+  name: Hull crumples
+  symbol: vc
   label: HULL_CRUMPLE_SPEED
   section: dogma.contact
 value: 1.0
-unit: "m/s"
+unit: m/s
 kind: simplified
-note: "A hull striking the ground faster than this is damaged: the energy it loses goes into its structure (over its hull strength, as in a collision)."
+note: 'A hull striking the ground faster than this is damaged: the energy it loses goes into its structure (over its hull strength, as in a collision).'
 basis:
-  - { of: [value], tier: invented, review: true, note: "A walking-pace knock leaves sheet metal unmarked; to be sourced per skin." }
+- of:
+  - value
+  tier: sourced
+  review: true
+  note: 'Sourced as an order: road-vehicle bumper standards ask for no damage at 2.5 mph, 1.1 m/s (US 49 CFR 581, from memory); a ship''s skin is not a bumper, so 1.0 m/s is the round figure, to be set per skin from its strength.'

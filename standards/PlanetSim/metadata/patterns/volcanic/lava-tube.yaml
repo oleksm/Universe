@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.volcanic.flow.lava-tube
+  name: Lava tube
+  about: Lava tube.
+family: volcanic
+factors:
+- factor: planet-factor.volc-magma
+  weight: 3
+  why: low-viscosity pahoehoe basalt with continuous crust
+- factor: planet-factor.other-effusion-rate
+  weight: 3
+  why: low to moderate, steady effusion (~1-10 m3/s) roofs channels into tubes
+- factor: planet-factor.slope-relief
+  weight: 3
+  why: low to moderate slopes; long eruptions extend tubes onto steeper ground
+- factor: planet-factor.volc-vent
+  weight: 1
+  why: long-lived eruption (months-years) for long tubes up to 65 km
+- factor: planet-factor.events
+  weight: 1
+  why: roof collapse makes skylights and collapse-trench chains
+- factor: planet-factor.time
+  weight: 1
+  why: tube drainage after supply stops leaves caves
+vocabulary_id: 180
+sources:
+- https://en.wikipedia.org/wiki/Lava_tube
+library_status: planned
+source: volcanic.flow.lava_tube
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

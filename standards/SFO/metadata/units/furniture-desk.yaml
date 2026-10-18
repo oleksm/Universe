@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: unit.furniture-desk
+  name: Desk
+  description: A desk 1.6 m by 0.8 m.
+size_class: 1
+physical:
+  length: 1.6
+  width: 0.8
+  height: 0.75
+  mass: 35.0
+built_of:
+- what: Frame
+  item: material.structural-steel-a36
+  mass: 22.0
+- what: Top
+  item: material.polyethylene-uhmw
+  mass: 13.0
+basis:
+- of:
+  - built_of
+  - physical
+  tier: invented
+  review: true
+  note: From memory of such furniture; to be sourced.
+visual:
+  format: freefall-model/1
+  path: models/furniture-desk/v1
+  manifest_sha256: 392165775ea65e8f256909a20832e78a33a4d3c0073283262ec2cc4c485ebc93
+  version: 1
+  triangles: 492

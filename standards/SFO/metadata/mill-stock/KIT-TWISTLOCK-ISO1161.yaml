@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-twistlock-iso1161
+  code: KIT-TWISTLOCK-ISO1161
+  name: Twistlock, ISO 1161
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.high-strength-steel-4340
+size:
+  length: 0.16
+  width: 0.15
+  height: 0.2
+supplies:
+  item: connector.twistlock-iso1161
+physical:
+  mass: 6.46
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.twistlock-iso1161, as made.

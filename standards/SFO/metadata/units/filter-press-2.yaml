@@ -1,0 +1,152 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.filter-press-2, name: 'Filter presses, 2', description: 'Two membrane plate presses back to back take the water out of the mill''s slurry (70% solids) down to 9%, pushing it through cloth at 6 bar, which works the same at the hall''s 20 kPa as in air (a vacuum filter would pull against a fifth of an atmosphere): each has 13 chambers between 2.5 m polypropylene plates, filled, squeezed by its membranes at 15 bar and opened every 10 minutes, the two in turn, so the cake falls in slabs about every 5. Their fixed heads stand back to back at local x 0, their plate packs from x 0.5 to 3.5 each way, their closing cylinders (9.5 MN) at the outer ends (x ±6), all on a stand whose top is 8 m up, the presses'' axis at z 10 (the plates'' bottoms 8.75), so the cake drops through a 0.6 m hopper and a 0.4 m breaker; the cake drops through a lump breaker in the stand onto the layout''s cake belt along x at y 0, local z 7.6 (x -6 to 6). Slurry in by a 150 mm flange on the -y face at
+    (0, -3.25, 9.5), split in the stand to both presses'' feed eyes between the heads; each press''s cake leaves its own breaker through a 1.5 x 1.1 m opening at (-1.2, 0, 7.775) and (1.2, 0, 7.775), facing down onto the same belt; the filtrate (10.9 kg/s) collects in a tank in the stand and is pumped through a plate cooler, which takes the mill''s and presses'' heat out of the water (2.3 MW: the grinding''s power all ends as warm slurry) into the radiator loop, so the water stays under 50 deg C; every service on the -y face, 0.5 m up, facing -y: filtrate out (100 mm, stainless) at (5, -3.25, 0.5) to the mill, the radiator loop''s 200 mm pair at (-5, -3.25, 0.5) in and (-4.4, -3.25, 0.5) out, the condensate from the shafts in (50 mm, stainless) at (4, -3.25, 0.5), the 400 V supply (95 mm2) at (2.5, -3.25, 0.5).'}
+size_class: 2
+fits: plant-mount.bay-s2
+physical: {length: 12.0, width: 6.5, height: 12.0, mass: 155900.0}
+built_of:
+- {what: Heads and followers, item: material.high-strength-steel-4340, mass: 49060.0, note: 'four plates 2.5 m square, 250 mm, which take the closing force in bending, from memory'}
+- {what: Rear crossheads, item: material.high-strength-steel-4340, mass: 24530.0, note: 'two 250 mm plates 2.5 m square at x -5.8 and 5.8, where the closing cylinders push from, tied to the heads by the side beams; measured on blender''s candidate (2026-10-16)'}
+- {what: Side beams, item: material.high-strength-steel-4340, mass: 9710.0, note: '600 x 400 x 25 mm boxes, 6 m, two a press: each 100 MPa in tension; with their seats, measured on blender''s candidate (2026-10-16)'}
+- {what: Plates and cloth, item: material.polyethylene-uhmw, mass: 9645.0, note: '28 recessed plates 100 mm thick, touching rim to rim, each face recessed 25 mm, with their membranes; polyethylene stands for polypropylene; measured'}
+- {what: 'Stand, supports and hoppers', item: material.structural-steel-a36, mass: 45130.0, note: 'the hollow stand, its longitudinals at y -0.9 and 0.9 that keep the cake belt''s corridor clear (y -0.75 to 0.75, z 6.9 to 7.75), the cylinders'' and pack''s seats, the breakers'' bearers, the cake hoppers, the pipes'' stands and saddles; measured'}
+- {what: Lump breakers, item: good.pumps, mass: 2000.0, note: 'two breakers'' rotors and drives, from memory'}
+- {what: Piping, item: material.structural-steel-a36, mass: 796.7, note: 'the feed split, the filtrate collectors and the cooling pipes inside the stand; measured'}
+- {what: Filtrate cooler, item: material.stainless-steel-304, mass: 3000.0, note: 'a plate exchanger, from memory'}
+- {what: 'Cylinders, power packs and pumps', item: good.pumps, mass: 12000.0, note: from memory}
+needs: {power: 122900.0, heat: 2272000.0, atmosphere: any}
+ports:
+- id: slurry-in
+  flow: in
+  medium: liquid
+  item: good.iron-ore
+  rate: 47.37
+  pressure: 300000.0
+  temperature: 303.0
+  interface: interface.flange-dn150-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn150-pn10
+  at: [0.0, -3.25, 9.5]
+  facing: [0.0, -1.0, 0.0]
+- id: filtrate-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 10.93
+  pressure: 200000.0
+  temperature: 303.0
+  interface: interface.flange-dn100-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn100-pn10-ss
+  at: [5.0, -3.25, 0.5]
+  facing: [0.0, -1.0, 0.0]
+  note: the slurry's water less the cake's
+- id: cooling-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 54.27
+  temperature: 320.0
+  interface: interface.flange-dn200-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn200-pn10
+  at: [-5.0, -3.25, 0.5]
+  facing: [0.0, -1.0, 0.0]
+  pressure: 400000.0
+- id: cooling-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 54.27
+  temperature: 330.0
+  interface: interface.flange-dn200-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn200-pn10
+  at: [-4.4, -3.25, 0.5]
+  facing: [0.0, -1.0, 0.0]
+  pressure: 400000.0
+- id: condensate-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 3.28
+  interface: interface.flange-dn50-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn50-pn10-ss
+  at: [4.0, -3.25, 0.5]
+  facing: [0.0, -1.0, 0.0]
+  pressure: 400000.0
+  temperature: 303.0
+- id: power-in
+  flow: in
+  medium: power
+  power: 122900.0
+  voltage: 400
+  interface: interface.termination-400v-95mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-95mm2
+  at: [2.5, -3.25, 0.5]
+  facing: [0.0, -1.0, 0.0]
+  current: 197.1
+- id: cake-1
+  flow: out
+  medium: bulk
+  item: good.iron-ore
+  rate: 16.58
+  interface: interface.chute-dn1000
+  half: androgynous
+  make: bolted
+  connector: connector.chute-dn1000
+  at: [-1.2, 0.0, 7.775]
+  facing: [0.0, 0.0, -1.0]
+  note: a press's breaker's opening onto the cake belt
+- id: cake-2
+  flow: out
+  medium: bulk
+  item: good.iron-ore
+  rate: 16.58
+  interface: interface.chute-dn1000
+  half: androgynous
+  make: bolted
+  connector: connector.chute-dn1000
+  at: [1.2, 0.0, 7.775]
+  facing: [0.0, 0.0, -1.0]
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 155900.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
+product: product.filter-press-2
+envelope:
+- [-6.03, -3.25, 0, 6.03, 3.1, 6.89]
+- [-6.03, -3.25, 6.89, 6.03, -0.775, 7.751]
+- [-6.03, 0.775, 6.89, 6.03, 3.1, 7.751]
+- [-6.03, -3.25, 7.751, 6.03, 3.1, 11.26]
+life: 788940000
+visual: {format: freefall-model/1, path: models/filter-press-2/v2, manifest_sha256: d201849900f3286353b7aa805cb1d94bddef32f070aa409c9e71a891ea790043, version: 2, triangles: 19824}
+basis:
+- of: [physical, built_of, needs.power]
+  tier: derived
+  review: true
+  note: 'Chambers from the rate: 16.6 kg/s a press, 778 kg of ore a chamber a 10 minute cycle (cycle, cake and plate weights from memory); the feed pump at 6 bar and three times the mean flow while filling, hydraulics, squeeze pump and breakers.'
+- of: [needs.heat]
+  tier: derived
+  note: The mill's 2.15 MW (18 kWh a tonne) and the presses' own power, all of it warm water by the time it reaches the cooler.
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage; water at 30 deg C in and 40 out; water at the pumps'' 4 bar.'
+- of: [life]
+  rule: rule.life-plant

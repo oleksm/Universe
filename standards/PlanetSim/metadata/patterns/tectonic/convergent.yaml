@@ -1,0 +1,56 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.tectonic.margin.convergent
+  name: Convergent margin (subduction / collision)
+  about: Convergent margin (subduction / collision).
+family: tectonic
+factors:
+- factor: planet-factor.tect-setting
+  weight: 3
+  why: ocean-ocean (island arc), ocean-continent (Andean), continent-continent (Himalayan)
+- factor: planet-factor.tect-fault
+  weight: 1
+  why: subduction dip ~45 deg (varies) sets trench-arc distance; flat slabs kill arc
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: convergence rate (>7 cm/yr fast) and crustal thickening set elevation
+- factor: planet-factor.volc-magma
+  weight: 3
+  why: slab dehydration melting builds arc volcanoes ~100 km above slab
+- factor: planet-factor.sed-supply
+  weight: 1
+  why: trench sediment builds accretionary wedge vs erosive margin
+- factor: planet-factor.other-slab-age
+  weight: 1
+  why: older denser lithosphere gives deeper trench, steeper slab, back-arc extension
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: erosion/rain asymmetry controls wedge width and uplift
+- factor: planet-factor.events
+  weight: 1
+  why: megathrust earthquakes, coseismic coastal uplift/subsidence
+- factor: planet-factor.time
+  weight: 1
+  why: Myr to 100s of Myr
+vocabulary_id: 170
+sources:
+- https://en.wikipedia.org/wiki/Convergent_boundary
+- https://en.wikipedia.org/wiki/Orogeny
+- https://wpg.forestry.oregonstate.edu/sites/default/files/seminars/2009_Whipple.pdf
+library_status: planned
+source: tectonic.margin.convergent
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

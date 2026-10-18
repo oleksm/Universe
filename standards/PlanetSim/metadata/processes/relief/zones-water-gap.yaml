@@ -1,0 +1,69 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.zones-water-gap
+  name: Water gap records
+  about: 'Big-river reaches (land->land, Q >= BIG_Q) whose great-circle segment crosses a segment of a finished ''suture''
+    or ''arc front'' line of the store: the river kept its course while the range rose across it. Candidates by k-d tree of
+    segment midpoints, tested with lines.cross_many. Record ''water gap'' at the reach midpoint, size Q m3/s, extra {crosses:
+    line type}.'
+area: relief
+clock:
+  when: as planet-process.zones-water-mouths
+reads:
+- name: store vertices S.V/S.L/S.K of non-forming suture / arc front lines
+- name: pts, hydro['down'], hydro['Q']
+  field: planet-field.receiver
+- name: Q
+  field: planet-field.discharge
+- name: z
+  field: planet-field.height
+- name: suture and arc-front features
+  meaning: 'planet-feature.suture and planet-feature.arc-front chains (forge: the features in the state)'
+writes:
+- name: landmark 'water gap' with 'crosses'
+events_emitted:
+- event: planet-event.trace-spawn-rule-zones-water
+params:
+- name: BIG_Q
+  value: 1000.0760514107536
+  unit: m3/s
+  said_as:
+    unit: m3/yr
+    factor: 3.168808781402895e-08
+  meaning: only big rivers
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:174
+- name: reach
+  setting: max half river segment + max half line segment
+  meaning: candidate radius for crossing tests
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:222
+  note: 'unit: rad'
+invariants:
+- only finished (non-forming) lines are crossed
+depends_on:
+- planet-process.zones-water-mouths
+- planet-process.zones-close-stale
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:rivers (210-231); ~/git/planet-sim-landform/src/planet_sim/stages/lines.py:cross_many
+    (353-363)
+  state: reference
+- where: planet-forge crates/forge-core/src/models/water.rs
+  state: current
+  note: planet-forge port (surface line, merged in forge main 370ab83)
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge surface port (models/surface), read from planet-sim-landform 9747f0d-c437724.'

@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/planet-event.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-event.subduction
+  name: Subduction
+  about: ocean floor consumed at converging boundaries this step (and spontaneous foundering)
+source: subduction
+payload:
+- name: t_gyr
+  meaning: Gyr
+- name: area_m2
+  meaning: m2 consumed (w.consumed tuple)
+status: draft

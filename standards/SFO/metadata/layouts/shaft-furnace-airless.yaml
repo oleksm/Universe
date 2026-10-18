@@ -5,7 +5,7 @@ stands_for: module.shaft-furnace
 site:
   atmosphere: none
   gravity: [1.6, 2.0]
-physical: {length: 473.3, width: 456.0, height: 45.0, mass: 7997000.0}
+physical: {length: 473.3, width: 477.0, height: 45.0, mass: 9561000.0}
 bays:
 - id: F
   mount: plant-mount.bay-s3
@@ -45,349 +45,2320 @@ bays:
 - id: RL1
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-60.0, 60.0, 0.0]
+  at: [-60.0, 66.0, 0.0]
   note: north-west, in rows of 6
 - id: RL2
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-108.0, 60.0, 0.0]
+  at: [-108.0, 66.0, 0.0]
   note: north-west, in rows of 6
 - id: RL3
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-156.0, 60.0, 0.0]
+  at: [-156.0, 66.0, 0.0]
   note: north-west, in rows of 6
 - id: RL4
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-204.0, 60.0, 0.0]
+  at: [-204.0, 66.0, 0.0]
   note: north-west, in rows of 6
 - id: RL5
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-252.0, 60.0, 0.0]
+  at: [-252.0, 66.0, 0.0]
   note: north-west, in rows of 6
 - id: RL6
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-300.0, 60.0, 0.0]
+  at: [-300.0, 66.0, 0.0]
   note: north-west, in rows of 6
 - id: RL7
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-60.0, 108.0, 0.0]
+  at: [-60.0, 117.0, 0.0]
   note: north-west, in rows of 6
 - id: RL8
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-108.0, 108.0, 0.0]
+  at: [-108.0, 117.0, 0.0]
   note: north-west, in rows of 6
 - id: RL9
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-156.0, 108.0, 0.0]
+  at: [-156.0, 117.0, 0.0]
   note: north-west, in rows of 6
 - id: RL10
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-204.0, 108.0, 0.0]
+  at: [-204.0, 117.0, 0.0]
   note: north-west, in rows of 6
 - id: RL11
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-252.0, 108.0, 0.0]
+  at: [-252.0, 117.0, 0.0]
   note: north-west, in rows of 6
 - id: RL12
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-300.0, 108.0, 0.0]
+  at: [-300.0, 117.0, 0.0]
   note: north-west, in rows of 6
 - id: RL13
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-60.0, 156.0, 0.0]
+  at: [-60.0, 168.0, 0.0]
   note: north-west, in rows of 6
 - id: RL14
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-108.0, 156.0, 0.0]
+  at: [-108.0, 168.0, 0.0]
   note: north-west, in rows of 6
 - id: RL15
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-156.0, 156.0, 0.0]
+  at: [-156.0, 168.0, 0.0]
   note: north-west, in rows of 6
 - id: RL16
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-204.0, 156.0, 0.0]
+  at: [-204.0, 168.0, 0.0]
   note: north-west, in rows of 6
 - id: RL17
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-252.0, 156.0, 0.0]
+  at: [-252.0, 168.0, 0.0]
   note: north-west, in rows of 6
 - id: RL18
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-300.0, 156.0, 0.0]
+  at: [-300.0, 168.0, 0.0]
   note: north-west, in rows of 6
 - id: RL19
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-60.0, 204.0, 0.0]
+  at: [-60.0, 219.0, 0.0]
   note: north-west, in rows of 6
 - id: RL20
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-108.0, 204.0, 0.0]
+  at: [-108.0, 219.0, 0.0]
   note: north-west, in rows of 6
 - id: RL21
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-156.0, 204.0, 0.0]
+  at: [-156.0, 219.0, 0.0]
   note: north-west, in rows of 6
 - id: RL22
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-204.0, 204.0, 0.0]
+  at: [-204.0, 219.0, 0.0]
   note: north-west, in rows of 6
 - id: RL23
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-252.0, 204.0, 0.0]
+  at: [-252.0, 219.0, 0.0]
   note: north-west, in rows of 6
 - id: RL24
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-300.0, 204.0, 0.0]
+  at: [-300.0, 219.0, 0.0]
   note: north-west, in rows of 6
 - id: RL25
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-60.0, 252.0, 0.0]
+  at: [-60.0, 270.0, 0.0]
   note: north-west, in rows of 6
 - id: RL26
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-108.0, 252.0, 0.0]
+  at: [-108.0, 270.0, 0.0]
   note: north-west, in rows of 6
 - id: RL27
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-156.0, 252.0, 0.0]
+  at: [-156.0, 270.0, 0.0]
   note: north-west, in rows of 6
 - id: RL28
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-204.0, 252.0, 0.0]
+  at: [-204.0, 270.0, 0.0]
   note: north-west, in rows of 6
 - id: RL29
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-252.0, 252.0, 0.0]
+  at: [-252.0, 270.0, 0.0]
   note: north-west, in rows of 6
 - id: RL30
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-300.0, 252.0, 0.0]
+  at: [-300.0, 270.0, 0.0]
   note: north-west, in rows of 6
 - id: RL31
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-60.0, 300.0, 0.0]
+  at: [-60.0, 321.0, 0.0]
   note: north-west, in rows of 6
 - id: RL32
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-108.0, 300.0, 0.0]
+  at: [-108.0, 321.0, 0.0]
   note: north-west, in rows of 6
 - id: RL33
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-156.0, 300.0, 0.0]
+  at: [-156.0, 321.0, 0.0]
   note: north-west, in rows of 6
 - id: RL34
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-204.0, 300.0, 0.0]
+  at: [-204.0, 321.0, 0.0]
   note: north-west, in rows of 6
 - id: RL35
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-252.0, 300.0, 0.0]
+  at: [-252.0, 321.0, 0.0]
   note: north-west, in rows of 6
 - id: RL36
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-300.0, 300.0, 0.0]
+  at: [-300.0, 321.0, 0.0]
   note: north-west, in rows of 6
 - id: RL37
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-60.0, 348.0, 0.0]
+  at: [-60.0, 372.0, 0.0]
   note: north-west, in rows of 6
 - id: RL38
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-108.0, 348.0, 0.0]
+  at: [-108.0, 372.0, 0.0]
   note: north-west, in rows of 6
 - id: RL39
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-156.0, 348.0, 0.0]
+  at: [-156.0, 372.0, 0.0]
   note: north-west, in rows of 6
 - id: RL40
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-204.0, 348.0, 0.0]
+  at: [-204.0, 372.0, 0.0]
   note: north-west, in rows of 6
 - id: RL41
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-252.0, 348.0, 0.0]
+  at: [-252.0, 372.0, 0.0]
   note: north-west, in rows of 6
 - id: RL42
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-300.0, 348.0, 0.0]
+  at: [-300.0, 372.0, 0.0]
   note: north-west, in rows of 6
 - id: RL43
   mount: plant-mount.bay-s4
   unit: unit.radiator-field-345k
-  at: [-60.0, 396.0, 0.0]
+  at: [-60.0, 423.0, 0.0]
   note: north-west, in rows of 6
+ports:
+- id: pellets-in
+  flow: in
+  medium: bulk
+  item: good.iron-ore-pellets
+  rate: 79.44
+  interface: interface.belt-transfer-1200
+  half: female
+  make: open
+  connector: connector.belt-transfer-1200
+  at: [149.3, 0.0, 2.0]
+  facing: [-1.0, 0.0, 0.0]
+  note: onto the charge belt's tail, from the pellet plant or its stockpile
+- id: sponge-iron-out
+  flow: out
+  medium: bulk
+  item: good.sponge-iron
+  rate: 55.56
+  temperature: 923.1
+  interface: interface.chute-dn800
+  half: androgynous
+  make: bolted
+  connector: connector.chute-dn800
+  at: [-60.0, 0.0, 5.188]
+  facing: [1.0, 0.0, 0.0]
+  note: hot, to the arc furnace shop's bin
+- id: h2-in
+  flow: in
+  medium: gas
+  item: material.hydrogen
+  rate: 3.0
+  pressure: 1000000.0
+  interface: interface.flange-dn250-pn16-double
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn250-pn16-ss-double
+  at: [100.0, 4.0, 1.5]
+  facing: [-1.0, 0.0, 0.0]
+  note: from the hydrogen plant's electrolysers at 10 bar
+- id: condensate-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 20.47
+  interface: interface.flange-dn200-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn200-pn10-ss
+  at: [100.0, 24.0, 0.5]
+  facing: [-1.0, 0.0, 0.0]
+  note: 'back to the electrolysers: on a moon every kilogram comes back'
+- id: mv-in
+  flow: in
+  medium: power
+  power: 4241000.0
+  voltage: 6600
+  interface: interface.termination-6p6kv-185mm2
+  half: female
+  make: bolted
+  connector: connector.termination-6p6kv-185mm2
+  at: [100.0, -1.5, 6.0]
+  facing: [-1.0, 0.0, 0.0]
+  note: the site's 6.6 kV switchgear
+- id: hv-in
+  flow: in
+  medium: power
+  power: 122000000.0
+  voltage: 132000
+  interface: interface.termination-132kv-240mm2
+  half: female
+  make: bolted
+  connector: connector.termination-132kv-240mm2
+  at: [100.0, -24.956, 8.8]
+  facing: [-1.0, 0.0, 0.0]
+  note: the site's 132 kV substation
+- id: lv-fields
+  flow: in
+  medium: power
+  power: 605000.0
+  voltage: 400
+  interface: interface.termination-400v-400mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-400mm2
+  at: [-32.4, 30.0, 0.3]
+  facing: [0.0, 1.0, 0.0]
+  note: the site's 400 V distribution, for the radiator fields' pumps
+- id: lv-furnace
+  flow: in
+  medium: power
+  power: 400000.0
+  voltage: 400
+  interface: interface.termination-400v-300mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-300mm2
+  at: [-40.0, 2.0, 4.0]
+  facing: [1.0, 0.0, 0.0]
+- id: lv-post
+  flow: in
+  medium: power
+  power: 20000.0
+  voltage: 400
+  interface: interface.termination-400v-16mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-16mm2
+  at: [-16.0, -24.0, 2.3]
+  facing: [-1.0, 0.0, 0.0]
 links:
 - kind: conveyor
   name: pellet belt
+  run: run.belt-1200
+  ends: ['edge:pellets-in', 'F:charge-in']
   from: [149.3, 0.0, 2.0]
-  to: [0.0, 0.0, 42.0]
-  length: 154.6
-  item: material.structural-steel-a36
-  mass: 18550.0
+  to: [0.0, 0.0, 43.0]
+  length: 154.8
+  item: material.silicone-rubber
+  mass: 47040.0
   power: 111200.0
-  note: a 1.2 m belt on trestles, open, rising at 15 degrees to the charge lock's hopper; its bearings and grease vacuum-rated
+  fittings: {elbows: 0, tees: 0, supports: 9, connectors: 2}
+  note: an open belt on trestles rising at 15.4 degrees, its head 3 m over the hopper's rim, up through the tower roof's framed opening; over the compressor its trestles are portals with legs at y -5.5 and 5.5, clear to z 9; its bearings and grease vacuum-rated
 - kind: conveyor
   name: hot sponge iron
-  from: [0.0, 0.0, 6.0]
-  to: [-60.0, 0.0, 6.0]
+  run: run.drag-conveyor-800
+  ends: ['F:dri-out', 'edge:sponge-iron-out']
+  from: [0.0, 0.0, 5.594]
+  to: [-60.0, 0.0, 5.594]
   length: 60.0
   item: material.stainless-steel-304
-  mass: 24000.0
+  mass: 29950.0
   power: 150000.0
-  note: 'a closed drag chain conveyor in an insulated casing: 55.6 kg/s of sponge iron at about 650 deg C to the arc furnace shop''s bin, beyond the layout; the hot charge saves the furnace about 24 MW'
+  fittings: {elbows: 0, tees: 0, supports: 10, connectors: 2}
+  note: 55.6 kg/s of sponge iron at about 650 deg C to the arc furnace shop's bin, beyond the layout; the hot charge saves the furnace about 24 MW
 - kind: pipe
   name: top gas main
+  run: run.pipe-dn1600-pn16-mli-double
+  ends: ['F:top-gas-out', 'R:top-gas-in']
   from: [6.0, 0.0, 31.0]
   to: [24.0, 24.0, 18.0]
-  length: 47.63
+  length: 48.64
   item: material.structural-steel-a36
-  mass: 27440.0
+  mass: 33220.0
   via:
   - [15.0, 0.0, 31.0]
+  - [15.0, 10.0, 31.0]
   - [24.0, 24.0, 31.0]
-  note: 1.5 m, 16 mm wall for 8 bar, insulated
+  fittings: {elbows: 3, tees: 0, supports: 5, connectors: 2}
+  note: north along x 15 to y 10 before its diagonal, clear of the pellet belt's trestles; lagged to keep it over its dew point
 - kind: pipe
-  name: gas to the condenser and compressor
-  from: [24.0, 27.0, 1.5]
-  to: [42.0, 0.0, 1.5]
-  length: 87.83
+  name: wet gas to the condenser
+  run: run.pipe-dn1000-pn16-double
+  ends: ['R:wet-out', 'S:gas-in']
+  from: [24.0, 29.2, 1.5]
+  to: [42.0, 24.0, 12.0]
+  length: 39.3
   item: material.structural-steel-a36
-  mass: 35280.0
+  mass: 10630.0
   via:
   - [24.0, 32.0, 1.5]
-  - [42.0, 32.0, 1.5]
-  - [42.0, 24.0, 12.0]
-  - [54.0, 24.0, 2.0]
-  - [54.0, 0.0, 1.5]
-  note: 1.0 m, 16 mm
+  - [38.0, 32.0, 1.5]
+  - [38.0, 32.0, 12.0]
+  - [38.0, 24.0, 12.0]
+  fittings: {elbows: 4, tees: 0, supports: 6, connectors: 2}
 - kind: pipe
-  name: compressed gas back to the recuperator and heater
-  from: [42.0, 0.0, 1.5]
-  to: [24.0, -28.0, 2.0]
-  length: 116.6
+  name: gas to the compressor
+  run: run.pipe-dn1000-pn16-double
+  ends: ['S:gas-out', 'K:suction']
+  from: [54.0, 24.0, 2.0]
+  to: [54.0, 0.0, 1.5]
+  length: 30.01
   item: material.structural-steel-a36
-  mass: 46840.0
+  mass: 7756.0
+  via:
+  - [57.0, 24.0, 2.0]
+  - [57.0, 0.0, 1.5]
+  fittings: {elbows: 2, tees: 0, supports: 5, connectors: 2}
+- kind: pipe
+  name: compressed gas to the recuperator
+  run: run.pipe-dn1000-pn16-double
+  ends: ['K:discharge', 'R:clean-in']
+  from: [42.0, 0.0, 1.5]
+  to: [24.0, 18.8, 1.0]
+  length: 36.81
+  item: material.structural-steel-a36
+  mass: 9049.0
   via:
   - [36.0, 0.0, 1.5]
-  - [36.0, 14.0, 1.5]
-  - [24.0, 14.0, 17.0]
-  - [14.0, 14.0, 17.0]
-  - [14.0, -28.0, 17.0]
-  - [14.0, -28.0, 2.0]
-  note: 1.0 m, 16 mm, insulated after the recuperator
+  - [36.0, 14.0, 1.0]
+  - [24.0, 14.0, 1.0]
+  fittings: {elbows: 3, tees: 0, supports: 5, connectors: 2}
 - kind: pipe
-  name: hot gas to the bustle
-  from: [24.0, -20.0, 15.0]
-  to: [0.0, -6.0, 16.0]
-  length: 39.0
+  name: warm gas to the heater
+  run: run.pipe-dn1000-pn16-mli-double
+  ends: ['R:warm-out', 'H:gas-in']
+  from: [24.0, 18.8, 16.75]
+  to: [12.0, -27.3, 2.0]
+  length: 76.85
   item: material.structural-steel-a36
-  mass: 205300.0
+  mass: 22090.0
   via:
-  - [24.0, -20.0, 16.0]
-  - [0.0, -20.0, 16.0]
-  note: 1.9 m inside 200 mm of refractory, 25 mm shell for 8 bar
+  - [24.0, 16.0, 16.75]
+  - [14.0, 16.0, 16.75]
+  - [14.0, -15.0, 16.75]
+  - [10.0, -15.0, 16.75]
+  - [10.0, -15.0, 2.0]
+  - [10.0, -27.3, 2.0]
+  fittings: {elbows: 6, tees: 0, supports: 10, connectors: 2}
+  note: round the shaft's tower and the heater's north side, down and into its cold header
+- kind: duct
+  name: hot gas to the bustle
+  run: run.lined-duct-dn2400-pn16-double
+  ends: ['H:gas-out', 'F:hot-gas-in']
+  from: [24.0, -20.0, 18.0]
+  to: [0.0, -6.5, 16.0]
+  length: 45.5
+  item: material.structural-steel-a36
+  mass: 240500.0
+  via:
+  - [24.0, -20.0, 21.0]
+  - [24.0, -14.0, 21.0]
+  - [0.0, -14.0, 21.0]
+  - [0.0, -14.0, 16.0]
+  fittings: {elbows: 4, tees: 0, supports: 6, connectors: 2}
+  note: up from the heater's stub, west along y -14 clear of the hot header, down outside the tower and in through its opening to the bustle
 - kind: pipe
   name: hydrogen make-up
+  run: run.pipe-dn250-pn16-ss-double
+  ends: ['edge:h2-in', 'tee:gas to the compressor']
   from: [100.0, 4.0, 1.5]
-  to: [54.0, 4.0, 1.5]
-  length: 46.0
+  to: [57.0, 4.0, 1.583]
+  length: 43.0
   item: material.stainless-steel-304
-  mass: 2269.0
-  note: 3.00 kg/s from the hydrogen plant's electrolysers, which run at 10 bar so that no make-up compressor is needed
+  mass: 1608.0
+  fittings: {elbows: 0, tees: 1, supports: 6, connectors: 1}
+  note: '3.00 kg/s teed into the compressor''s suction: the electrolysers run at 10 bar, so no make-up compressor'
 - kind: pipe
   name: condensate to the hydrogen plant
+  run: run.pipe-dn200-pn10-ss
+  ends: ['S:condensate-out', 'edge:condensate-out']
   from: [54.0, 24.0, 0.5]
   to: [100.0, 24.0, 0.5]
   length: 46.0
   item: material.stainless-steel-304
-  mass: 1370.0
-  note: '200 mm: 20.5 kg/s of water back to the electrolysers: on a moon every kilogram comes back'
-- kind: pipe
-  name: loop water to the radiators
-  from: [-82.0, 396.0, 1.0]
-  to: [48.0, 20.0, 1.0]
-  length: 506.0
-  item: material.structural-steel-a36
-  mass: 216900.0
+  mass: 1278.0
+  fittings: {elbows: 0, tees: 0, supports: 9, connectors: 2}
+- kind: cable
+  name: compressor supply
+  run: run.cable-6p6kv-185mm2
+  ends: ['edge:mv-in', 'K:hv']
+  from: [100.0, -1.5, 6.0]
+  to: [48.0, -1.5, 5.0]
+  length: 53.0
+  item: material.copper
+  mass: 1454.0
   via:
-  - [-36.0, 396.0, 1.0]
-  - [-36.0, 36.0, 1.0]
-  - [48.0, 36.0, 1.0]
-  note: 'a pair of 0.87 m pipes at about 345 K: 1,483 kg/s along the 43 radiator fields'' rows to the condenser, a branch to the transformer'
+  - [48.0, -1.5, 6.0]
+  fittings: {elbows: 1, tees: 0, supports: 19, connectors: 2}
+- kind: cable
+  name: transformer supply
+  run: run.cable-132kv-240mm2
+  ends: ['edge:hv-in', 'T:hv-in']
+  from: [100.0, -24.956, 8.8]
+  to: [48.0, -24.956, 7.55]
+  length: 53.25
+  item: material.copper
+  mass: 2454.0
+  via:
+  - [48.0, -24.956, 8.8]
+  fittings: {elbows: 1, tees: 0, supports: 19, connectors: 2}
 - kind: cable
   name: heater supply
-  from: [48.0, -24.0, 4.0]
-  to: [12.0, -24.0, 2.0]
-  length: 36.06
+  run: run.cable-6p6kv-630mm2
+  ends: ['T:lv-out', 'H:power-in']
+  from: [48.0, -20.65, 4.5]
+  to: [12.0, -22.55, 1.575]
+  length: 49.52
   item: material.copper
-  mass: 2651.0
-  note: as for air
+  mass: 10100.0
+  via:
+  - [48.0, -17.0, 4.5]
+  - [11.3, -17.0, 4.5]
+  - [11.3, -22.55, 4.5]
+  - [11.3, -22.55, 1.575]
+  count: 8
+  fittings: {elbows: 4, tees: 0, supports: 19, connectors: 2}
+- kind: cable
+  name: furnace supply
+  run: run.cable-400v-300mm2
+  ends: ['edge:lv-furnace', 'F:power-in']
+  from: [-40.0, 2.0, 4.0]
+  to: [-4.7, 2.0, 12.0]
+  length: 43.3
+  item: material.copper
+  mass: 1082.0
+  via:
+  - [-7.0, 2.0, 4.0]
+  - [-7.0, 2.0, 12.0]
+  fittings: {elbows: 2, tees: 0, supports: 13, connectors: 2}
+  note: in through the tower's west opening and up inside the platforms' opening round the shaft to the ring girder
+- kind: cable
+  name: crew post supply
+  run: run.cable-400v-16mm2
+  ends: ['edge:lv-post', 'P:power-in']
+  from: [-16.0, -24.0, 2.3]
+  to: [-21.0, -24.0, 2.3]
+  length: 5.0
+  item: material.copper
+  mass: 77.3
+  fittings: {elbows: 0, tees: 0, supports: 2, connectors: 2}
+  note: through the berm
+- kind: pipe
+  name: loop flow main
+  run: run.pipe-dn900-pn10
+  ends: ['S:water-out', cap]
+  from: [48.6, 20.0, 1.0]
+  to: [-34.8, 398.35, 1.0]
+  length: 467.4
+  item: material.structural-steel-a36
+  mass: 88150.0
+  via:
+  - [48.6, 17.2, 1.0]
+  - [39.4, 17.2, 1.0]
+  - [39.4, 35.4, 1.0]
+  - [-34.8, 35.4, 1.0]
+  fittings: {elbows: 4, tees: 0, supports: 48, connectors: 2}
+  note: 1,483 kg/s at about 345 K to the 43 radiator fields; the return main on its right all the way
+- kind: pipe
+  name: loop return main
+  run: run.pipe-dn900-pn10
+  ends: [cap, 'S:water-in']
+  from: [-33.6, 399.25, 1.0]
+  to: [47.4, 20.0, 1.0]
+  length: 463.4
+  item: material.structural-steel-a36
+  mass: 87450.0
+  via:
+  - [-33.6, 36.6, 1.0]
+  - [40.6, 36.6, 1.0]
+  - [40.6, 18.4, 1.0]
+  - [47.4, 18.4, 1.0]
+  fittings: {elbows: 4, tees: 0, supports: 48, connectors: 2}
+  note: back from the fields at about 10 K less
+- kind: cable
+  name: radiator pumps' supply
+  run: run.cable-400v-400mm2
+  ends: ['edge:lv-fields', cap]
+  from: [-32.4, 30.0, 0.3]
+  to: [-32.4, 397.6, 0.3]
+  length: 367.6
+  item: material.copper
+  mass: 7020.0
+  fittings: {elbows: 0, tees: 0, supports: 123, connectors: 1}
+  note: north along the fields' east side under the loop's mains
+- kind: pipe
+  name: row 1 flow
+  run: run.pipe-dn350-pn10
+  ends: ['tee:loop flow main', cap]
+  from: [-34.8, 40.35, 1.0]
+  to: [-324.0, 40.35, 1.0]
+  length: 289.2
+  item: material.structural-steel-a36
+  mass: 14920.0
+  fittings: {elbows: 0, tees: 1, supports: 42, connectors: 1}
+  note: in the aisle south of its row, 1 m up
+- kind: pipe
+  name: row 1 return
+  run: run.pipe-dn350-pn10
+  ends: [cap, 'tee:loop return main']
+  from: [-324.0, 41.25, 2.0]
+  to: [-33.6, 41.25, 1.0]
+  length: 291.4
+  item: material.structural-steel-a36
+  mass: 15980.0
+  via:
+  - [-33.6, 41.25, 2.0]
+  fittings: {elbows: 1, tees: 1, supports: 43, connectors: 1}
+  note: 'in the aisle, 2 m up: over the flow main and the fields'' flow branches'
+- kind: cable
+  name: row 1 pumps' supply
+  run: run.cable-400v-70mm2
+  ends: ['tee:radiator pumps'' supply', cap]
+  from: [-32.4, 39.6, 0.3]
+  to: [-324.0, 39.6, 0.3]
+  length: 291.6
+  item: material.copper
+  mass: 2852.0
+  fittings: {elbows: 0, tees: 1, supports: 98, connectors: 0}
+  note: in the aisle, 0.3 m up, under the water rows
+- kind: pipe
+  name: RL1 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 1 flow', 'RL1:water-in']
+  from: [-83.0, 40.35, 1.0]
+  to: [-83.0, 42.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL1 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL1:water-out', 'tee:row 1 return']
+  from: [-82.4, 42.0, 1.0]
+  to: [-82.4, 41.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-82.4, 41.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL1 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 1 pumps'' supply', 'RL1:power-in']
+  from: [-81.8, 39.6, 0.3]
+  to: [-81.8, 42.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL2 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 1 flow', 'RL2:water-in']
+  from: [-131.0, 40.35, 1.0]
+  to: [-131.0, 42.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL2 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL2:water-out', 'tee:row 1 return']
+  from: [-130.4, 42.0, 1.0]
+  to: [-130.4, 41.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-130.4, 41.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL2 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 1 pumps'' supply', 'RL2:power-in']
+  from: [-129.8, 39.6, 0.3]
+  to: [-129.8, 42.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL3 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 1 flow', 'RL3:water-in']
+  from: [-179.0, 40.35, 1.0]
+  to: [-179.0, 42.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL3 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL3:water-out', 'tee:row 1 return']
+  from: [-178.4, 42.0, 1.0]
+  to: [-178.4, 41.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-178.4, 41.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL3 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 1 pumps'' supply', 'RL3:power-in']
+  from: [-177.8, 39.6, 0.3]
+  to: [-177.8, 42.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL4 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 1 flow', 'RL4:water-in']
+  from: [-227.0, 40.35, 1.0]
+  to: [-227.0, 42.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL4 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL4:water-out', 'tee:row 1 return']
+  from: [-226.4, 42.0, 1.0]
+  to: [-226.4, 41.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-226.4, 41.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL4 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 1 pumps'' supply', 'RL4:power-in']
+  from: [-225.8, 39.6, 0.3]
+  to: [-225.8, 42.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL5 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 1 flow', 'RL5:water-in']
+  from: [-275.0, 40.35, 1.0]
+  to: [-275.0, 42.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL5 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL5:water-out', 'tee:row 1 return']
+  from: [-274.4, 42.0, 1.0]
+  to: [-274.4, 41.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-274.4, 41.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL5 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 1 pumps'' supply', 'RL5:power-in']
+  from: [-273.8, 39.6, 0.3]
+  to: [-273.8, 42.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL6 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 1 flow', 'RL6:water-in']
+  from: [-323.0, 40.35, 1.0]
+  to: [-323.0, 42.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL6 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL6:water-out', 'tee:row 1 return']
+  from: [-322.4, 42.0, 1.0]
+  to: [-322.4, 41.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-322.4, 41.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL6 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 1 pumps'' supply', 'RL6:power-in']
+  from: [-321.8, 39.6, 0.3]
+  to: [-321.8, 42.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: row 2 flow
+  run: run.pipe-dn350-pn10
+  ends: ['tee:loop flow main', cap]
+  from: [-34.8, 91.35, 1.0]
+  to: [-324.0, 91.35, 1.0]
+  length: 289.2
+  item: material.structural-steel-a36
+  mass: 14920.0
+  fittings: {elbows: 0, tees: 1, supports: 42, connectors: 1}
+  note: in the aisle south of its row, 1 m up
+- kind: pipe
+  name: row 2 return
+  run: run.pipe-dn350-pn10
+  ends: [cap, 'tee:loop return main']
+  from: [-324.0, 92.25, 2.0]
+  to: [-33.6, 92.25, 1.0]
+  length: 291.4
+  item: material.structural-steel-a36
+  mass: 15980.0
+  via:
+  - [-33.6, 92.25, 2.0]
+  fittings: {elbows: 1, tees: 1, supports: 43, connectors: 1}
+  note: 'in the aisle, 2 m up: over the flow main and the fields'' flow branches'
+- kind: cable
+  name: row 2 pumps' supply
+  run: run.cable-400v-70mm2
+  ends: ['tee:radiator pumps'' supply', cap]
+  from: [-32.4, 90.6, 0.3]
+  to: [-324.0, 90.6, 0.3]
+  length: 291.6
+  item: material.copper
+  mass: 2852.0
+  fittings: {elbows: 0, tees: 1, supports: 98, connectors: 0}
+  note: in the aisle, 0.3 m up, under the water rows
+- kind: pipe
+  name: RL7 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 2 flow', 'RL7:water-in']
+  from: [-83.0, 91.35, 1.0]
+  to: [-83.0, 93.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL7 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL7:water-out', 'tee:row 2 return']
+  from: [-82.4, 93.0, 1.0]
+  to: [-82.4, 92.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-82.4, 92.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL7 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 2 pumps'' supply', 'RL7:power-in']
+  from: [-81.8, 90.6, 0.3]
+  to: [-81.8, 93.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL8 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 2 flow', 'RL8:water-in']
+  from: [-131.0, 91.35, 1.0]
+  to: [-131.0, 93.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL8 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL8:water-out', 'tee:row 2 return']
+  from: [-130.4, 93.0, 1.0]
+  to: [-130.4, 92.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-130.4, 92.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL8 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 2 pumps'' supply', 'RL8:power-in']
+  from: [-129.8, 90.6, 0.3]
+  to: [-129.8, 93.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL9 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 2 flow', 'RL9:water-in']
+  from: [-179.0, 91.35, 1.0]
+  to: [-179.0, 93.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL9 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL9:water-out', 'tee:row 2 return']
+  from: [-178.4, 93.0, 1.0]
+  to: [-178.4, 92.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-178.4, 92.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL9 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 2 pumps'' supply', 'RL9:power-in']
+  from: [-177.8, 90.6, 0.3]
+  to: [-177.8, 93.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL10 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 2 flow', 'RL10:water-in']
+  from: [-227.0, 91.35, 1.0]
+  to: [-227.0, 93.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL10 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL10:water-out', 'tee:row 2 return']
+  from: [-226.4, 93.0, 1.0]
+  to: [-226.4, 92.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-226.4, 92.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL10 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 2 pumps'' supply', 'RL10:power-in']
+  from: [-225.8, 90.6, 0.3]
+  to: [-225.8, 93.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL11 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 2 flow', 'RL11:water-in']
+  from: [-275.0, 91.35, 1.0]
+  to: [-275.0, 93.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL11 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL11:water-out', 'tee:row 2 return']
+  from: [-274.4, 93.0, 1.0]
+  to: [-274.4, 92.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-274.4, 92.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL11 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 2 pumps'' supply', 'RL11:power-in']
+  from: [-273.8, 90.6, 0.3]
+  to: [-273.8, 93.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL12 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 2 flow', 'RL12:water-in']
+  from: [-323.0, 91.35, 1.0]
+  to: [-323.0, 93.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL12 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL12:water-out', 'tee:row 2 return']
+  from: [-322.4, 93.0, 1.0]
+  to: [-322.4, 92.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-322.4, 92.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL12 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 2 pumps'' supply', 'RL12:power-in']
+  from: [-321.8, 90.6, 0.3]
+  to: [-321.8, 93.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: row 3 flow
+  run: run.pipe-dn350-pn10
+  ends: ['tee:loop flow main', cap]
+  from: [-34.8, 142.35, 1.0]
+  to: [-324.0, 142.35, 1.0]
+  length: 289.2
+  item: material.structural-steel-a36
+  mass: 14920.0
+  fittings: {elbows: 0, tees: 1, supports: 42, connectors: 1}
+  note: in the aisle south of its row, 1 m up
+- kind: pipe
+  name: row 3 return
+  run: run.pipe-dn350-pn10
+  ends: [cap, 'tee:loop return main']
+  from: [-324.0, 143.25, 2.0]
+  to: [-33.6, 143.25, 1.0]
+  length: 291.4
+  item: material.structural-steel-a36
+  mass: 15980.0
+  via:
+  - [-33.6, 143.25, 2.0]
+  fittings: {elbows: 1, tees: 1, supports: 43, connectors: 1}
+  note: 'in the aisle, 2 m up: over the flow main and the fields'' flow branches'
+- kind: cable
+  name: row 3 pumps' supply
+  run: run.cable-400v-70mm2
+  ends: ['tee:radiator pumps'' supply', cap]
+  from: [-32.4, 141.6, 0.3]
+  to: [-324.0, 141.6, 0.3]
+  length: 291.6
+  item: material.copper
+  mass: 2852.0
+  fittings: {elbows: 0, tees: 1, supports: 98, connectors: 0}
+  note: in the aisle, 0.3 m up, under the water rows
+- kind: pipe
+  name: RL13 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 3 flow', 'RL13:water-in']
+  from: [-83.0, 142.35, 1.0]
+  to: [-83.0, 144.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL13 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL13:water-out', 'tee:row 3 return']
+  from: [-82.4, 144.0, 1.0]
+  to: [-82.4, 143.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-82.4, 143.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL13 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 3 pumps'' supply', 'RL13:power-in']
+  from: [-81.8, 141.6, 0.3]
+  to: [-81.8, 144.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL14 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 3 flow', 'RL14:water-in']
+  from: [-131.0, 142.35, 1.0]
+  to: [-131.0, 144.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL14 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL14:water-out', 'tee:row 3 return']
+  from: [-130.4, 144.0, 1.0]
+  to: [-130.4, 143.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-130.4, 143.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL14 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 3 pumps'' supply', 'RL14:power-in']
+  from: [-129.8, 141.6, 0.3]
+  to: [-129.8, 144.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL15 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 3 flow', 'RL15:water-in']
+  from: [-179.0, 142.35, 1.0]
+  to: [-179.0, 144.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL15 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL15:water-out', 'tee:row 3 return']
+  from: [-178.4, 144.0, 1.0]
+  to: [-178.4, 143.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-178.4, 143.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL15 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 3 pumps'' supply', 'RL15:power-in']
+  from: [-177.8, 141.6, 0.3]
+  to: [-177.8, 144.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL16 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 3 flow', 'RL16:water-in']
+  from: [-227.0, 142.35, 1.0]
+  to: [-227.0, 144.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL16 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL16:water-out', 'tee:row 3 return']
+  from: [-226.4, 144.0, 1.0]
+  to: [-226.4, 143.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-226.4, 143.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL16 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 3 pumps'' supply', 'RL16:power-in']
+  from: [-225.8, 141.6, 0.3]
+  to: [-225.8, 144.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL17 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 3 flow', 'RL17:water-in']
+  from: [-275.0, 142.35, 1.0]
+  to: [-275.0, 144.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL17 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL17:water-out', 'tee:row 3 return']
+  from: [-274.4, 144.0, 1.0]
+  to: [-274.4, 143.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-274.4, 143.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL17 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 3 pumps'' supply', 'RL17:power-in']
+  from: [-273.8, 141.6, 0.3]
+  to: [-273.8, 144.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL18 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 3 flow', 'RL18:water-in']
+  from: [-323.0, 142.35, 1.0]
+  to: [-323.0, 144.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL18 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL18:water-out', 'tee:row 3 return']
+  from: [-322.4, 144.0, 1.0]
+  to: [-322.4, 143.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-322.4, 143.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL18 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 3 pumps'' supply', 'RL18:power-in']
+  from: [-321.8, 141.6, 0.3]
+  to: [-321.8, 144.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: row 4 flow
+  run: run.pipe-dn350-pn10
+  ends: ['tee:loop flow main', cap]
+  from: [-34.8, 193.35, 1.0]
+  to: [-324.0, 193.35, 1.0]
+  length: 289.2
+  item: material.structural-steel-a36
+  mass: 14920.0
+  fittings: {elbows: 0, tees: 1, supports: 42, connectors: 1}
+  note: in the aisle south of its row, 1 m up
+- kind: pipe
+  name: row 4 return
+  run: run.pipe-dn350-pn10
+  ends: [cap, 'tee:loop return main']
+  from: [-324.0, 194.25, 2.0]
+  to: [-33.6, 194.25, 1.0]
+  length: 291.4
+  item: material.structural-steel-a36
+  mass: 15980.0
+  via:
+  - [-33.6, 194.25, 2.0]
+  fittings: {elbows: 1, tees: 1, supports: 43, connectors: 1}
+  note: 'in the aisle, 2 m up: over the flow main and the fields'' flow branches'
+- kind: cable
+  name: row 4 pumps' supply
+  run: run.cable-400v-70mm2
+  ends: ['tee:radiator pumps'' supply', cap]
+  from: [-32.4, 192.6, 0.3]
+  to: [-324.0, 192.6, 0.3]
+  length: 291.6
+  item: material.copper
+  mass: 2852.0
+  fittings: {elbows: 0, tees: 1, supports: 98, connectors: 0}
+  note: in the aisle, 0.3 m up, under the water rows
+- kind: pipe
+  name: RL19 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 4 flow', 'RL19:water-in']
+  from: [-83.0, 193.35, 1.0]
+  to: [-83.0, 195.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL19 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL19:water-out', 'tee:row 4 return']
+  from: [-82.4, 195.0, 1.0]
+  to: [-82.4, 194.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-82.4, 194.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL19 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 4 pumps'' supply', 'RL19:power-in']
+  from: [-81.8, 192.6, 0.3]
+  to: [-81.8, 195.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL20 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 4 flow', 'RL20:water-in']
+  from: [-131.0, 193.35, 1.0]
+  to: [-131.0, 195.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL20 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL20:water-out', 'tee:row 4 return']
+  from: [-130.4, 195.0, 1.0]
+  to: [-130.4, 194.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-130.4, 194.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL20 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 4 pumps'' supply', 'RL20:power-in']
+  from: [-129.8, 192.6, 0.3]
+  to: [-129.8, 195.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL21 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 4 flow', 'RL21:water-in']
+  from: [-179.0, 193.35, 1.0]
+  to: [-179.0, 195.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL21 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL21:water-out', 'tee:row 4 return']
+  from: [-178.4, 195.0, 1.0]
+  to: [-178.4, 194.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-178.4, 194.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL21 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 4 pumps'' supply', 'RL21:power-in']
+  from: [-177.8, 192.6, 0.3]
+  to: [-177.8, 195.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL22 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 4 flow', 'RL22:water-in']
+  from: [-227.0, 193.35, 1.0]
+  to: [-227.0, 195.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL22 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL22:water-out', 'tee:row 4 return']
+  from: [-226.4, 195.0, 1.0]
+  to: [-226.4, 194.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-226.4, 194.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL22 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 4 pumps'' supply', 'RL22:power-in']
+  from: [-225.8, 192.6, 0.3]
+  to: [-225.8, 195.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL23 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 4 flow', 'RL23:water-in']
+  from: [-275.0, 193.35, 1.0]
+  to: [-275.0, 195.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL23 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL23:water-out', 'tee:row 4 return']
+  from: [-274.4, 195.0, 1.0]
+  to: [-274.4, 194.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-274.4, 194.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL23 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 4 pumps'' supply', 'RL23:power-in']
+  from: [-273.8, 192.6, 0.3]
+  to: [-273.8, 195.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL24 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 4 flow', 'RL24:water-in']
+  from: [-323.0, 193.35, 1.0]
+  to: [-323.0, 195.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL24 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL24:water-out', 'tee:row 4 return']
+  from: [-322.4, 195.0, 1.0]
+  to: [-322.4, 194.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-322.4, 194.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL24 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 4 pumps'' supply', 'RL24:power-in']
+  from: [-321.8, 192.6, 0.3]
+  to: [-321.8, 195.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: row 5 flow
+  run: run.pipe-dn350-pn10
+  ends: ['tee:loop flow main', cap]
+  from: [-34.8, 244.35, 1.0]
+  to: [-324.0, 244.35, 1.0]
+  length: 289.2
+  item: material.structural-steel-a36
+  mass: 14920.0
+  fittings: {elbows: 0, tees: 1, supports: 42, connectors: 1}
+  note: in the aisle south of its row, 1 m up
+- kind: pipe
+  name: row 5 return
+  run: run.pipe-dn350-pn10
+  ends: [cap, 'tee:loop return main']
+  from: [-324.0, 245.25, 2.0]
+  to: [-33.6, 245.25, 1.0]
+  length: 291.4
+  item: material.structural-steel-a36
+  mass: 15980.0
+  via:
+  - [-33.6, 245.25, 2.0]
+  fittings: {elbows: 1, tees: 1, supports: 43, connectors: 1}
+  note: 'in the aisle, 2 m up: over the flow main and the fields'' flow branches'
+- kind: cable
+  name: row 5 pumps' supply
+  run: run.cable-400v-70mm2
+  ends: ['tee:radiator pumps'' supply', cap]
+  from: [-32.4, 243.6, 0.3]
+  to: [-324.0, 243.6, 0.3]
+  length: 291.6
+  item: material.copper
+  mass: 2852.0
+  fittings: {elbows: 0, tees: 1, supports: 98, connectors: 0}
+  note: in the aisle, 0.3 m up, under the water rows
+- kind: pipe
+  name: RL25 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 5 flow', 'RL25:water-in']
+  from: [-83.0, 244.35, 1.0]
+  to: [-83.0, 246.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL25 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL25:water-out', 'tee:row 5 return']
+  from: [-82.4, 246.0, 1.0]
+  to: [-82.4, 245.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-82.4, 245.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL25 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 5 pumps'' supply', 'RL25:power-in']
+  from: [-81.8, 243.6, 0.3]
+  to: [-81.8, 246.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL26 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 5 flow', 'RL26:water-in']
+  from: [-131.0, 244.35, 1.0]
+  to: [-131.0, 246.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL26 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL26:water-out', 'tee:row 5 return']
+  from: [-130.4, 246.0, 1.0]
+  to: [-130.4, 245.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-130.4, 245.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL26 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 5 pumps'' supply', 'RL26:power-in']
+  from: [-129.8, 243.6, 0.3]
+  to: [-129.8, 246.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL27 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 5 flow', 'RL27:water-in']
+  from: [-179.0, 244.35, 1.0]
+  to: [-179.0, 246.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL27 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL27:water-out', 'tee:row 5 return']
+  from: [-178.4, 246.0, 1.0]
+  to: [-178.4, 245.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-178.4, 245.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL27 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 5 pumps'' supply', 'RL27:power-in']
+  from: [-177.8, 243.6, 0.3]
+  to: [-177.8, 246.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL28 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 5 flow', 'RL28:water-in']
+  from: [-227.0, 244.35, 1.0]
+  to: [-227.0, 246.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL28 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL28:water-out', 'tee:row 5 return']
+  from: [-226.4, 246.0, 1.0]
+  to: [-226.4, 245.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-226.4, 245.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL28 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 5 pumps'' supply', 'RL28:power-in']
+  from: [-225.8, 243.6, 0.3]
+  to: [-225.8, 246.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL29 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 5 flow', 'RL29:water-in']
+  from: [-275.0, 244.35, 1.0]
+  to: [-275.0, 246.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL29 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL29:water-out', 'tee:row 5 return']
+  from: [-274.4, 246.0, 1.0]
+  to: [-274.4, 245.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-274.4, 245.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL29 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 5 pumps'' supply', 'RL29:power-in']
+  from: [-273.8, 243.6, 0.3]
+  to: [-273.8, 246.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL30 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 5 flow', 'RL30:water-in']
+  from: [-323.0, 244.35, 1.0]
+  to: [-323.0, 246.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL30 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL30:water-out', 'tee:row 5 return']
+  from: [-322.4, 246.0, 1.0]
+  to: [-322.4, 245.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-322.4, 245.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL30 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 5 pumps'' supply', 'RL30:power-in']
+  from: [-321.8, 243.6, 0.3]
+  to: [-321.8, 246.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: row 6 flow
+  run: run.pipe-dn350-pn10
+  ends: ['tee:loop flow main', cap]
+  from: [-34.8, 295.35, 1.0]
+  to: [-324.0, 295.35, 1.0]
+  length: 289.2
+  item: material.structural-steel-a36
+  mass: 14920.0
+  fittings: {elbows: 0, tees: 1, supports: 42, connectors: 1}
+  note: in the aisle south of its row, 1 m up
+- kind: pipe
+  name: row 6 return
+  run: run.pipe-dn350-pn10
+  ends: [cap, 'tee:loop return main']
+  from: [-324.0, 296.25, 2.0]
+  to: [-33.6, 296.25, 1.0]
+  length: 291.4
+  item: material.structural-steel-a36
+  mass: 15980.0
+  via:
+  - [-33.6, 296.25, 2.0]
+  fittings: {elbows: 1, tees: 1, supports: 43, connectors: 1}
+  note: 'in the aisle, 2 m up: over the flow main and the fields'' flow branches'
+- kind: cable
+  name: row 6 pumps' supply
+  run: run.cable-400v-70mm2
+  ends: ['tee:radiator pumps'' supply', cap]
+  from: [-32.4, 294.6, 0.3]
+  to: [-324.0, 294.6, 0.3]
+  length: 291.6
+  item: material.copper
+  mass: 2852.0
+  fittings: {elbows: 0, tees: 1, supports: 98, connectors: 0}
+  note: in the aisle, 0.3 m up, under the water rows
+- kind: pipe
+  name: RL31 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 6 flow', 'RL31:water-in']
+  from: [-83.0, 295.35, 1.0]
+  to: [-83.0, 297.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL31 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL31:water-out', 'tee:row 6 return']
+  from: [-82.4, 297.0, 1.0]
+  to: [-82.4, 296.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-82.4, 296.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL31 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 6 pumps'' supply', 'RL31:power-in']
+  from: [-81.8, 294.6, 0.3]
+  to: [-81.8, 297.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL32 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 6 flow', 'RL32:water-in']
+  from: [-131.0, 295.35, 1.0]
+  to: [-131.0, 297.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL32 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL32:water-out', 'tee:row 6 return']
+  from: [-130.4, 297.0, 1.0]
+  to: [-130.4, 296.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-130.4, 296.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL32 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 6 pumps'' supply', 'RL32:power-in']
+  from: [-129.8, 294.6, 0.3]
+  to: [-129.8, 297.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL33 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 6 flow', 'RL33:water-in']
+  from: [-179.0, 295.35, 1.0]
+  to: [-179.0, 297.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL33 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL33:water-out', 'tee:row 6 return']
+  from: [-178.4, 297.0, 1.0]
+  to: [-178.4, 296.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-178.4, 296.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL33 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 6 pumps'' supply', 'RL33:power-in']
+  from: [-177.8, 294.6, 0.3]
+  to: [-177.8, 297.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL34 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 6 flow', 'RL34:water-in']
+  from: [-227.0, 295.35, 1.0]
+  to: [-227.0, 297.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL34 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL34:water-out', 'tee:row 6 return']
+  from: [-226.4, 297.0, 1.0]
+  to: [-226.4, 296.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-226.4, 296.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL34 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 6 pumps'' supply', 'RL34:power-in']
+  from: [-225.8, 294.6, 0.3]
+  to: [-225.8, 297.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL35 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 6 flow', 'RL35:water-in']
+  from: [-275.0, 295.35, 1.0]
+  to: [-275.0, 297.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL35 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL35:water-out', 'tee:row 6 return']
+  from: [-274.4, 297.0, 1.0]
+  to: [-274.4, 296.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-274.4, 296.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL35 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 6 pumps'' supply', 'RL35:power-in']
+  from: [-273.8, 294.6, 0.3]
+  to: [-273.8, 297.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL36 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 6 flow', 'RL36:water-in']
+  from: [-323.0, 295.35, 1.0]
+  to: [-323.0, 297.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL36 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL36:water-out', 'tee:row 6 return']
+  from: [-322.4, 297.0, 1.0]
+  to: [-322.4, 296.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-322.4, 296.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL36 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 6 pumps'' supply', 'RL36:power-in']
+  from: [-321.8, 294.6, 0.3]
+  to: [-321.8, 297.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: row 7 flow
+  run: run.pipe-dn350-pn10
+  ends: ['tee:loop flow main', cap]
+  from: [-34.8, 346.35, 1.0]
+  to: [-324.0, 346.35, 1.0]
+  length: 289.2
+  item: material.structural-steel-a36
+  mass: 14920.0
+  fittings: {elbows: 0, tees: 1, supports: 42, connectors: 1}
+  note: in the aisle south of its row, 1 m up
+- kind: pipe
+  name: row 7 return
+  run: run.pipe-dn350-pn10
+  ends: [cap, 'tee:loop return main']
+  from: [-324.0, 347.25, 2.0]
+  to: [-33.6, 347.25, 1.0]
+  length: 291.4
+  item: material.structural-steel-a36
+  mass: 15980.0
+  via:
+  - [-33.6, 347.25, 2.0]
+  fittings: {elbows: 1, tees: 1, supports: 43, connectors: 1}
+  note: 'in the aisle, 2 m up: over the flow main and the fields'' flow branches'
+- kind: cable
+  name: row 7 pumps' supply
+  run: run.cable-400v-70mm2
+  ends: ['tee:radiator pumps'' supply', cap]
+  from: [-32.4, 345.6, 0.3]
+  to: [-324.0, 345.6, 0.3]
+  length: 291.6
+  item: material.copper
+  mass: 2852.0
+  fittings: {elbows: 0, tees: 1, supports: 98, connectors: 0}
+  note: in the aisle, 0.3 m up, under the water rows
+- kind: pipe
+  name: RL37 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 7 flow', 'RL37:water-in']
+  from: [-83.0, 346.35, 1.0]
+  to: [-83.0, 348.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL37 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL37:water-out', 'tee:row 7 return']
+  from: [-82.4, 348.0, 1.0]
+  to: [-82.4, 347.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-82.4, 347.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL37 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 7 pumps'' supply', 'RL37:power-in']
+  from: [-81.8, 345.6, 0.3]
+  to: [-81.8, 348.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL38 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 7 flow', 'RL38:water-in']
+  from: [-131.0, 346.35, 1.0]
+  to: [-131.0, 348.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL38 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL38:water-out', 'tee:row 7 return']
+  from: [-130.4, 348.0, 1.0]
+  to: [-130.4, 347.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-130.4, 347.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL38 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 7 pumps'' supply', 'RL38:power-in']
+  from: [-129.8, 345.6, 0.3]
+  to: [-129.8, 348.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL39 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 7 flow', 'RL39:water-in']
+  from: [-179.0, 346.35, 1.0]
+  to: [-179.0, 348.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL39 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL39:water-out', 'tee:row 7 return']
+  from: [-178.4, 348.0, 1.0]
+  to: [-178.4, 347.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-178.4, 347.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL39 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 7 pumps'' supply', 'RL39:power-in']
+  from: [-177.8, 345.6, 0.3]
+  to: [-177.8, 348.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL40 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 7 flow', 'RL40:water-in']
+  from: [-227.0, 346.35, 1.0]
+  to: [-227.0, 348.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL40 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL40:water-out', 'tee:row 7 return']
+  from: [-226.4, 348.0, 1.0]
+  to: [-226.4, 347.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-226.4, 347.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL40 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 7 pumps'' supply', 'RL40:power-in']
+  from: [-225.8, 345.6, 0.3]
+  to: [-225.8, 348.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL41 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 7 flow', 'RL41:water-in']
+  from: [-275.0, 346.35, 1.0]
+  to: [-275.0, 348.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL41 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL41:water-out', 'tee:row 7 return']
+  from: [-274.4, 348.0, 1.0]
+  to: [-274.4, 347.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-274.4, 347.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL41 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 7 pumps'' supply', 'RL41:power-in']
+  from: [-273.8, 345.6, 0.3]
+  to: [-273.8, 348.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL42 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 7 flow', 'RL42:water-in']
+  from: [-323.0, 346.35, 1.0]
+  to: [-323.0, 348.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL42 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL42:water-out', 'tee:row 7 return']
+  from: [-322.4, 348.0, 1.0]
+  to: [-322.4, 347.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-322.4, 347.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL42 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 7 pumps'' supply', 'RL42:power-in']
+  from: [-321.8, 345.6, 0.3]
+  to: [-321.8, 348.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: row 8 flow
+  run: run.pipe-dn150-pn10
+  ends: ['tee:loop flow main', cap]
+  from: [-34.8, 397.35, 1.0]
+  to: [-84.0, 397.35, 1.0]
+  length: 49.2
+  item: material.structural-steel-a36
+  mass: 1128.0
+  fittings: {elbows: 0, tees: 1, supports: 10, connectors: 1}
+  note: in the aisle south of its row, 1 m up
+- kind: pipe
+  name: row 8 return
+  run: run.pipe-dn150-pn10
+  ends: [cap, 'tee:loop return main']
+  from: [-84.0, 398.25, 2.0]
+  to: [-33.6, 398.25, 1.0]
+  length: 51.4
+  item: material.structural-steel-a36
+  mass: 1398.0
+  via:
+  - [-33.6, 398.25, 2.0]
+  fittings: {elbows: 1, tees: 1, supports: 11, connectors: 1}
+  note: 'in the aisle, 2 m up: over the flow main and the fields'' flow branches'
+- kind: cable
+  name: row 8 pumps' supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:radiator pumps'' supply', cap]
+  from: [-32.4, 396.6, 0.3]
+  to: [-84.0, 396.6, 0.3]
+  length: 51.6
+  item: material.copper
+  mass: 443.9
+  fittings: {elbows: 0, tees: 1, supports: 18, connectors: 0}
+  note: in the aisle, 0.3 m up, under the water rows
+- kind: pipe
+  name: RL43 flow branch
+  run: run.pipe-dn150-pn10
+  ends: ['tee:row 8 flow', 'RL43:water-in']
+  from: [-83.0, 397.35, 1.0]
+  to: [-83.0, 399.0, 1.0]
+  length: 1.65
+  item: material.structural-steel-a36
+  mass: 87.38
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: RL43 return branch
+  run: run.pipe-dn150-pn10
+  ends: ['RL43:water-out', 'tee:row 8 return']
+  from: [-82.4, 399.0, 1.0]
+  to: [-82.4, 398.25, 2.0]
+  length: 1.75
+  item: material.structural-steel-a36
+  mass: 143.4
+  via:
+  - [-82.4, 398.25, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: RL43 pump supply
+  run: run.cable-400v-16mm2
+  ends: ['tee:row 8 pumps'' supply', 'RL43:power-in']
+  from: [-81.8, 396.6, 0.3]
+  to: [-81.8, 399.0, 0.3]
+  length: 2.4
+  item: material.copper
+  mass: 51.18
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: transformer cooling in
+  run: run.pipe-dn150-pn10
+  ends: ['tee:loop return main', 'T:water-in']
+  from: [42.6, 18.4, 1.0]
+  to: [43.45, -24.6, 1.0]
+  length: 52.65
+  item: material.structural-steel-a36
+  mass: 1204.0
+  via:
+  - [42.6, 18.4, 0.3]
+  - [42.6, 5.8, 0.3]
+  - [38.9, 5.8, 0.3]
+  - [38.9, -24.6, 0.3]
+  - [42.8, -24.6, 0.3]
+  - [42.8, -24.6, 1.0]
+  fittings: {elbows: 6, tees: 1, supports: 14, connectors: 1}
+- kind: pipe
+  name: transformer cooling out
+  run: run.pipe-dn150-pn10
+  ends: ['T:water-out', 'tee:loop return main']
+  from: [43.45, -23.4, 1.0]
+  to: [43.8, 18.4, 1.0]
+  length: 50.25
+  item: material.structural-steel-a36
+  mass: 1167.0
+  via:
+  - [42.8, -23.4, 1.0]
+  - [42.8, -23.4, 0.3]
+  - [40.1, -23.4, 0.3]
+  - [40.1, 4.6, 0.3]
+  - [43.8, 4.6, 0.3]
+  - [43.8, 18.4, 0.3]
+  fittings: {elbows: 6, tees: 1, supports: 14, connectors: 1}
+- kind: pipe
+  name: compressor cooling in
+  run: run.pipe-dn100-pn10
+  ends: ['tee:loop return main', 'K:cooling-in']
+  from: [44.4, 18.4, 1.0]
+  to: [42.0, -2.2, 0.6]
+  length: 26.6
+  item: material.structural-steel-a36
+  mass: 491.2
+  via:
+  - [44.4, 18.4, 0.3]
+  - [44.4, 4.0, 0.3]
+  - [40.7, 4.0, 0.3]
+  - [40.7, -2.2, 0.3]
+  - [40.7, -2.2, 0.6]
+  fittings: {elbows: 5, tees: 1, supports: 10, connectors: 1}
+- kind: pipe
+  name: compressor cooling out
+  run: run.pipe-dn100-pn10
+  ends: ['K:cooling-out', 'tee:loop return main']
+  from: [42.0, -1.6, 0.6]
+  to: [45.0, 18.4, 1.0]
+  length: 25.4
+  item: material.structural-steel-a36
+  mass: 480.5
+  via:
+  - [41.3, -1.6, 0.6]
+  - [41.3, -1.6, 0.3]
+  - [41.3, 3.4, 0.3]
+  - [45.0, 3.4, 0.3]
+  - [45.0, 18.4, 0.3]
+  fittings: {elbows: 5, tees: 1, supports: 10, connectors: 1}
 frame:
   box: [-12.0, -12.0, 0.0, 12.0, 12.0, 45.0]
   cell: 3.0
-  shape: An open braced tower 24 x 24 m and 45 m tall of aluminium kit struts round the shaft; six grating platforms; no cladding.
+  shape: An open braced tower 24 x 24 m and 45 m tall of aluminium kit struts round the shaft; six grating platforms at z 6, 12, 18, 24, 30 and 36, each a 24 m square with a 15.2 m square opening round the shaft (60% of the plan), 6 mm aluminium grating on a perimeter and eight radial 150 x 100 x 4 mm aluminium box beams, with guard rails; a caged ladder up the south-west corner between them; no cladding.
   openings:
   - [9.0, -3.0, 28.0, 12.0, 3.0, 42.0]
   - [-3.0, -12.0, 13.0, 3.0, -9.0, 19.0]
   - [-12.0, -3.0, 3.0, -9.0, 3.0, 9.0]
+  - [-3.0, -3.0, 42.0, 6.0, 3.0, 48.0]
   members:
   - {item: stock.al6061-tb-80x2-s3000, count: 1991, where: tower walls}
   - {item: stock.al6061-tb-80x2-d3000, count: 1537, where: tower walls}
-  - {item: stock.al6061-tb-80x2-s3000, count: 290, where: tower roof}
-  - {item: stock.al6061-tb-80x2-d3000, count: 246, where: tower roof}
-  - {item: stock.st4340-node-110b, count: 934, where: nodes}
+  - {item: stock.al6061-tb-80x2-s3000, count: 274, where: tower roof}
+  - {item: stock.al6061-tb-80x2-d3000, count: 227, where: tower roof}
+  - {item: stock.st4340-node-110b, count: 930, where: nodes}
   - {item: stock.st4340-box-300x300x20, count: 8, where: 'columns under the shaft''s ring girder, 12 m, braced to the tower every 6 m'}
   carries: [unit.shaft-furnace-200th-hp]
-  mass: 79470.0
-  sized: 'At 2 m/s2 the shaft with its burden, 4.8 MN, on 8 columns of 300 x 300 x 20 mm 4340 box: 27 MPa each. No wind: the lattice braces the columns and carries six aluminium grating platforms (6 mm, 60% of the plan), the kit''s lightest aluminium strut (al6061-tb-80x2). Footings not yet checked.'
+  mass: 84810.0
+  sized: 'At 2 m/s2 the shaft with its burden, 4.9 MN, on 8 columns of 300 x 300 x 20 mm 4340 box: 27 MPa each. No wind: the lattice braces the columns and carries six aluminium grating platforms (6 mm, 60% of the plan), the kit''s lightest aluminium strut (al6061-tb-80x2). Footings not yet checked.'
 ground:
 - {what: Tower foundation, item: material.regolith-sintered, volume: 864.0, note: a mat of sintered regolith blocks 1.5 m thick (a fifth of the load of 1 g), mass: 2160000.0}
-- {what: Unit pads, item: material.regolith-sintered, volume: 259.9, note: 0.5 m under each unit, mass: 649800.0}
+- {what: Unit pads, item: material.regolith-sintered, volume: 334.1, note: 0.5 m under each unit, mass: 835200.0}
 - {what: Radiator legs' pads, item: material.regolith-sintered, volume: 124.9, mass: 312200.0}
-- {what: Crew post berm, item: material.regolith, volume: 164.6, mass: 246900.0}
+- {what: Crew post berm, item: material.regolith, volume: 586.23, note: 'loose regolith at least 1 m over the post everywhere (its top 4 x 2 m, 5.3 m up), lying at 35 degrees, its foot about 19 x 17 m, a cavity for the post; measured on blender''s arc furnace shop; with openings for its windows (light wells on the north) and its airlock (a ramp cut on the west); with openings for its windows and airlock; at the airlock''s door a landing of packed regolith 2 x 2 m, its top at the threshold (1.35 m up), and a ramp down to the ground at about 1 in 3', mass: 879300.0}
 - {what: Trestle footings, item: material.regolith-sintered, volume: 39.0, mass: 97500.0}
-totals: {rate: 55.5555555555556, power: 127500000.0, heat: 62090000.0, water: 0.0, mass: 7997000.0, against_module: 'module.shaft-furnace: one box, 22 MW. The layout for air draws 152 MW and sends 130 MW up four towers. This layout: the same rate; 127 MW (heater 121, compressor 4.1: at 8 bar the compressor only makes up the loop''s pressure drop); 62 MW to 43 radiator fields at 345 K (10 ha), for the water must condense somewhere and only light can take the heat away; no cooling zone or loop (the sponge iron goes on hot); no water used up. 4,531 t of plant and frame, 3,466 t of sintered regolith.'}
+totals: {rate: 55.5555555555556, power: 127500000.0, heat: 62090000.0, water: 0.0, mass: 9561000.0, against_module: 'module.shaft-furnace: one box, 22 MW. The layout for air draws 152 MW and sends 130 MW up four towers. This layout: the same rate; 127 MW (heater 121, compressor 4.1: at 8 bar the compressor only makes up the loop''s pressure drop); 62 MW to 43 radiator fields at 345 K (10 ha), for the water must condense somewhere and only light can take the heat away; no cooling zone or loop (the sponge iron goes on hot); no water used up. 5,277 t of plant and frame, 4,284 t of sintered regolith.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}

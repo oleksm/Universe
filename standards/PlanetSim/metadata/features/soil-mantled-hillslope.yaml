@@ -1,0 +1,60 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.soil-mantled-hillslope
+  name: Soil-mantled hillslope
+  about: 'A relief feature of the hillslope family: soil-mantled hillslope.'
+register: feature
+family: hillslope
+level:
+- 3
+geometry: polygon
+properties:
+- field: slope
+  unit: deg
+- field: length
+  unit: m
+- field: convexity
+  unit: 1/m
+trigger: everywhere at small scale
+generator: level 3 mesher
+wave: 3
+built: false
+levels:
+- planet-level.square
+- planet-level.detail
+status: draft
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
+  - trigger
+  - generator
+  - overrides
+  - wave
+  - built
+  tier: derived
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical
+    feature catalogue.'
+- of:
+  - layout
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
+    9747f0d-c437724. frame and record from: proposed (the schema has no fields for them yet).'
+  review: true
+layout:
+- name: frame
+  unit: '1'
+  meaning: '1: its pins sit in its plate''s frame (integer cm) and ride the crust, placed by planet-field.plate-rotation;
+    0: a body-frame snapshot, remade from the present state each pass'
+  rule: it rides its crust (the Python's line store anchored it to crust particles)
+  params:
+  - name: rides
+    value: 1.0
+    unit: '1'
+    meaning: 1 rides, 0 snapshot
+    source: 'planet-forge src/ride.rs (from the Python: stages/lines.py Store vs its rivers and coast)'
+    open: true

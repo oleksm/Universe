@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.aeolian.dune.barchan
+  name: Barchan dune
+  about: Barchan dune.
+family: aeolian
+factors:
+- factor: planet-factor.clim-wind
+  weight: 3
+  why: unimodal wind; horns downwind; migration 1-100 m/yr inversely with height
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: limited sand; more sand merges barchans into barchanoid/transverse ridges
+- factor: planet-factor.regolith
+  weight: 3
+  why: hard, deflated, non-sandy substrate between dunes
+- factor: planet-factor.clim-arid
+  weight: 1
+  why: arid, little vegetation
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: flat surfaces
+- factor: planet-factor.other-atmosphere-density
+  weight: 1
+  why: saturation length (min size) scales with air/sand density; Mars barchans larger
+- factor: planet-factor.time
+  weight: 1
+  why: years to kyr
+vocabulary_id: 1
+sources:
+- https://en.wikipedia.org/wiki/Barchan
+- https://pubs.usgs.gov/gip/deserts/dunes/
+- https://en.wikipedia.org/wiki/Dune
+library_status: written
+source: aeolian.dune.barchan
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

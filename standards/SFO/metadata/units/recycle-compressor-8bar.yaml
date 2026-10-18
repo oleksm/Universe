@@ -1,13 +1,99 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.recycle-compressor-8bar, name: 'Recycle compressor, 4.1 MW, 8 bar', description: 'Raises 14.3 kg/s of hydrogen from 7.3 to 8.5 bar, the loop''s pressure drop only: two centrifugal stages in one casing and a motor. At 8 bar the gas is dense enough that this is a small machine. Suction at local (6, 0, 1.5), discharge at (-6, 0, 1.5).'}
+identity: {key: unit.recycle-compressor-8bar, name: 'Recycle compressor, 4.1 MW, 8 bar', description: 'Raises 14.3 kg/s of hydrogen from 7.3 to 8.5 bar, the loop''s pressure drop only: two centrifugal stages in one casing and a motor. At 8 bar the gas is dense enough that this is a small machine. Suction at local (6, 0, 1.5), discharge at (-6, 0, 1.5); the casing''s axis along y at (0, 1.3, 2.5), the motor behind it (y -2.6 to -0.4); the motor''s 6.6 kV terminal box on top, its cable entry at (0, -1.5, 5); its water cooler''s flanges low on the -x face at (-6, -2.2, 0.6) and (-6, -1.6, 0.6), over the skid''s end beam, for the motor''s losses (about 4%) to the layout''s loop.'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 6.0, height: 5.0, mass: 32570.0}
+physical: {length: 12.0, width: 6.0, height: 5.0, mass: 54560.0}
 built_of:
-- {what: 'Casing, rotor and motor', item: material.high-strength-steel-4340, mass: 32570.0, note: '8 t a MW of drive, from memory'}
+- {what: 'Casing, rotor and motor', item: material.high-strength-steel-4340, mass: 32570.0, note: '8 t a MW of drive, from memory (the 13 t of casing and motor walls drawn on blender''s model v1 are within it)'}
+- {what: Skid and supports, item: material.structural-steel-a36, mass: 15630.0, note: with two saddle pads; measured on blender's model v2}
+- {what: Gas and coolant piping, item: material.structural-steel-a36, mass: 6363.0, note: 'the suction and discharge stubs and the 100 mm cooling pair to the motor''s jacket, ending plain at the SFO 25 ports; measured on blender''s model v2'}
 needs: {power: 4241000.0, atmosphere: any}
+ports:
+- id: suction
+  flow: in
+  medium: gas
+  item: material.hydrogen
+  rate: 20.67
+  pressure: 730000.0
+  temperature: 353.1
+  interface: interface.flange-dn1000-pn16-double
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn1000-pn16-double
+  at: [6.0, 0.0, 1.5]
+  facing: [1.0, 0.0, 0.0]
+- id: discharge
+  flow: out
+  medium: gas
+  item: material.hydrogen
+  rate: 20.67
+  pressure: 850000.0
+  temperature: 373.1
+  interface: interface.flange-dn1000-pn16-double
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn1000-pn16-double
+  at: [-6.0, 0.0, 1.5]
+  facing: [-1.0, 0.0, 0.0]
+- id: hv
+  flow: in
+  medium: power
+  power: 4241000.0
+  voltage: 6600
+  interface: interface.termination-6p6kv-185mm2
+  half: female
+  make: bolted
+  connector: connector.termination-6p6kv-185mm2
+  at: [0.0, -1.5, 5.0]
+  facing: [0.0, 0.0, 1.0]
+  current: 412.2
+- id: cooling-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 3.89
+  temperature: 335.0
+  interface: interface.flange-dn100-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn100-pn10
+  at: [-6.0, -2.2, 0.6]
+  facing: [-1.0, 0.0, 0.0]
+  pressure: 400000.0
+- id: cooling-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 3.89
+  interface: interface.flange-dn100-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn100-pn10
+  at: [-6.0, -1.6, 0.6]
+  facing: [-1.0, 0.0, 0.0]
+  pressure: 400000.0
+  temperature: 313.0
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 54560.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
+product: product.recycle-compressor
+envelope:
+- [-1.551, -2.601, 0.949, 1.551, 2.402, 4.052]
+- [-6.001, -2.902, -0.001, 6.001, 2.902, 1.541]
+- [-6.001, -0.51, 0.989, -0.598, 1.602, 2.011]
+- [0.598, -0.51, 0.989, 6.001, 1.602, 2.011]
+- [-6.001, -2.271, 0.448, -0.999, -1.528, 2.555]
+- [-0.552, -2.101, 3.329, 0.552, -0.898, 5.001]
 life: 788940000
+visual: {format: freefall-model/1, path: models/recycle-compressor-8bar/v2, manifest_sha256: 69561d6adac4480abe9e6aa6c7feab8fb256ef896247ee9cb67741f0ae237866, version: 2, triangles: 18540}
 basis:
 - of: [physical, built_of]
   tier: invented
@@ -16,5 +102,9 @@ basis:
 - of: [needs]
   tier: derived
   note: Isentropic at 80%, a motor at 96%; its heat leaves by the condenser's aftercooler.
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage; water at 30 deg C in and 40 out; water at the pumps'' 4 bar.'
 - of: [life]
   rule: rule.life-plant

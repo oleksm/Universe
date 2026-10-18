@@ -1,0 +1,220 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.clouds
+  name: Cloud regimes by month, SST anomalies, ENSO
+  about: 'Clouds: where a world''s clouds form, of which kind, month by month, and how its El Niño (if its seas allow one)
+    moves them. From the climate stage''s temperatures (themselves from the star''s light, the orbit''s distance, eccentricity
+    and tilt), its winds, rising air and moisture. NOT INVENTORIED IN DETAIL: neither plates.py nor coupled.py imports clouds.py
+    (directly or through another module); it is used by tools/clouds_bake.py.'
+area: climate
+clock:
+  when: not part of the coupled planet run (offline tools / bakes)
+params:
+- name: R_D
+  value: 287.0
+  unit: '1'
+  said_as:
+    unit: J/(kg K)
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/clouds.py:55
+  note: 'unit as the code says it: ''J/(kg K)''; SI conversion unverified'
+- name: CP
+  value: 1004.0
+  unit: '1'
+  said_as:
+    unit: J/(kg K)
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/clouds.py:56
+  note: 'unit as the code says it: ''J/(kg K)''; SI conversion unverified'
+- name: L_V
+  value: 2500000.0
+  unit: J/kg
+  meaning: unverified (no comment)
+  source: stages/clouds.py:57
+- name: G0
+  value: 9.81
+  unit: '1'
+  said_as:
+    unit: m/s^2
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/clouds.py:58
+  note: 'unit as the code says it: ''m/s^2''; SI conversion unverified'
+- name: EB_COOL_K
+  value: 4.0
+  unit: K
+  meaning: unverified (no comment)
+  source: stages/clouds.py:59
+- name: EB_SCALE_KM
+  value: 1000000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 1000.0
+  meaning: unverified (no comment)
+  source: stages/clouds.py:59
+- name: WB_WARM_K
+  value: 2.0
+  unit: K
+  meaning: unverified (no comment)
+  source: stages/clouds.py:60
+- name: WB_SCALE_KM
+  value: 800000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 1000.0
+  meaning: unverified (no comment)
+  source: stages/clouds.py:60
+- name: EQ_CONTRAST_K
+  value: 5.0
+  unit: '1'
+  said_as:
+    unit: warm pool to cold tongue (from the code comment; SI conversion not done, unverif
+    factor: 1.0
+  open: true
+  meaning: warm pool to cold tongue, a Pacific-wide basin
+  source: stages/clouds.py:61
+  note: 'unit as the code says it: ''warm pool to cold tongue (from the code comment; SI conversion not done, unverified)'';
+    SI conversion unverified'
+- name: BASIN_FULL_KM
+  value: 12000000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 1000.0
+  meaning: unverified (no comment)
+  source: stages/clouds.py:62
+- name: BASIN_MIN_KM
+  value: 4000000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 1000.0
+  meaning: unverified (no comment)
+  source: stages/clouds.py:62
+- name: LCL_RH_SEA
+  value: 0.8
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/clouds.py:63
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: ENSO_MIN_KM
+  value: 6000000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 1000.0
+  meaning: unverified (no comment)
+  source: stages/clouds.py:64
+- name: ENSO_PERIOD_DAYS_PACIFIC
+  value: 1643.625
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/clouds.py:65
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: PACIFIC_KM
+  value: 17000000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 1000.0
+  meaning: unverified (no comment)
+  source: stages/clouds.py:66
+- name: ENSO_DAMPING
+  value: 0.15
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: 'of critical: weakly damped (Jin 1997''s regime near neutral)'
+  source: stages/clouds.py:67
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: ENSO_K_PER_INDEX
+  value: 1.0
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/clouds.py:68
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: ENSO_YEARS
+  value: 600.0
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: world years of index
+  source: stages/clouds.py:69
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: CIRRUS_ANVIL
+  env: CIRRUS_ANVIL
+  value: 0.72
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: 'Cirrus: from the anvils spread and along the jets; calibrated so Grown Earth''s high cloud seen from above is
+    ISCCP''s ~0.20.'
+  source: stages/clouds.py:72
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: CIRRUS_JET
+  env: CIRRUS_JET
+  value: 0.19
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/clouds.py:73
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: KINDS
+  setting: '{"low": {"tau": 10.0, "base": "lcl", "top_km": "lcl + 0.4 + 1.2\u00b7(1 \u2212 cover)", "note": "stratocumulus
+    closed cells where cover is high, cumulus where low"}, "deep": {"tau": 40.0, "base": "lcl", "top": "trop", "note": "cumulonimbus
+    with anvils (anvil \u03c4 ~ 5, spreading 50\u2013300 km)"}, "frontal": {"tau": 20.0, "base_km": 1.5, "top_km": 7.0, "note":
+    "nimbostratus/altostratus bands alon'
+  meaning: 'The kinds, as the renderer draws them: optical depth (visible), base and top (rules for the shader: "lcl" the
+    condensation level, "trop" the tropopause, else km).'
+  source: stages/clouds.py:77
+  note: 'unit: unverified'
+random_draws:
+- not inventoried
+used: false
+note: 'unused by plates.py / coupled.py; users: tools/clouds_bake.py'
+backends:
+- cpu
+implementations:
+- where: 'planet-sim-landform stages/clouds.py: _theta_ratio (85-86), moist_lapse (89-93), t700_moist (96-107), row_distances
+    (110-131), sea_surface (134-147), regimes (150-224), _dewpoint (227-230), total (233-235), equator_basin (238-260), enso_index
+    (263-286), enso_pattern (289-302), run (305-376)'
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
+    the code at planet-sim-landform 9747f0d-c437724.'

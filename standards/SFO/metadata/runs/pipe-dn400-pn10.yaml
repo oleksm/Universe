@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=../../schema/run.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: run.pipe-dn400-pn10, name: Pipe DN 400 PN 10, description: 'Welded pipe, 400 mm bore, for up to 10 bar; welded between the units'' flanges, so a run has a flange pair only at its ends.'}
+kind: pipe
+size: 0.4
+bore: 0.4
+outside: [0.41, 0.41]
+rating: {pressure: 1000000.0, temperature: 373.0}
+per_m:
+  mass: 49.9
+  built_of:
+  - {what: Pipe, item: material.structural-steel-a36, mass: 49.9, note: '400 mm bore, 5.0 mm wall (Barlow at 10 bar, 133 MPa, weld factor 0.85, 1.5 mm for corrosion)'}
+elbow: {radius: 0.6, mass: 47.0}
+tee: {mass: 19.7}
+cap: {thickness: 0.016, mass: 15.8}
+support: {spacing: 7.3, mass: 34.6, per_m_height: 22.1, item: material.structural-steel-a36}
+connector: connector.flange-dn400-pn10
+carries: liquid
+template: template.pipe
+visual:
+  format: "freefall-model/1"
+  path: "models/pipe-dn400-pn10/v1"
+  manifest_sha256: "85f2d7a27563de6f90d283d998d4a9342462ddd4d86239c2f9f499dd3ed1b8a8"
+  version: 1
+  triangles: 3536
+basis:
+- of: [per_m]
+  tier: derived
+  note: Wall from pressure; mass from material and dimensions.
+- of: [elbow, tee]
+  tier: derived
+  note: A long-radius elbow (1.5 bores) is its arc of straight; a tee is its branch stub over the straight it sits in, from the main's outside to 1.5 bores off its axis (checked on blender's DN 200 kit).
+- of: [support]
+  tier: derived
+  review: true
+  note: 'Spacing from the span it bears full at 1 g (2.5 mm sag, a third of yield), 3 to 12 m: 7.3 m. The stand''s head and its leg by the metre from memory.'

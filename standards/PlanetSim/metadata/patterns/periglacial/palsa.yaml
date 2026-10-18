@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.periglacial.mound.palsa
+  name: Palsa (and peat plateau)
+  about: Palsa (and peat plateau).
+family: periglacial
+factors:
+- factor: planet-factor.clim-temp
+  weight: 3
+  why: MAAT just below 0 C; 0.8 C warming collapsed palsas in Norway
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: Low precipitation, generally <500 mm/yr
+- factor: planet-factor.clim-wind
+  weight: 3
+  why: Wind strips snow from mound tops, letting frost penetrate
+- factor: planet-factor.permafrost
+  weight: 1
+  why: Sporadic/discontinuous permafrost margin; segregation ice core
+- factor: planet-factor.bio-veg
+  weight: 3
+  why: Peat cover insulates in summer; mire vegetation needed
+- factor: planet-factor.regolith
+  weight: 1
+  why: Peat over frost-susceptible silt
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: Flat mires
+- factor: planet-factor.time
+  weight: 1
+  why: 'Cyclic: embryonic, mature, degrading over decades to ~3 kyr'
+vocabulary_id: 108
+sources:
+- https://en.wikipedia.org/wiki/Palsa
+library_status: written
+source: periglacial.mound.palsa
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

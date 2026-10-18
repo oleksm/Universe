@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: connector.powerlock-400a
+  name: Single-pole connectors, 400 A, set of five
+  description: 'The plug and receiver a crew or a player hooks a machine up with: made and broken by hand, keyed so that only its own rating mates, the earth pin first in and last out.'
+kind: plug-socket
+size: 0.0004
+rating:
+  voltage: 1000
+  current: 400
+physical:
+  length: 0.3
+  width: 0.12
+  height: 0.25
+  mass: 4.45
+built_of:
+- what: Contacts
+  item: material.copper
+  mass: 1.42
+  note: 16 mm pins, 22 mm socket sleeves; silver-plated brass, as copper here
+- what: Bodies, glands and bands
+  item: material.epdm-rubber
+  mass: 2.0
+  note: rubber-moulded body
+- what: Panel plate
+  item: material.structural-steel-a36
+  mass: 1.03
+  note: 5 mm, the receivers' common mounting plate, four corner holes
+provides: both
+template: template.single-pole
+basis:
+- of:
+  - physical
+  tier: derived
+  review: true
+  note: 'From blender''s model (2026-10-18): five bored pairs, the 5 mm steel panel plate; hidden cable terminations not drawn.'
+interface: interface.powerlock-400a

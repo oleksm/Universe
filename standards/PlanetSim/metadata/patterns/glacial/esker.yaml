@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.glacial.deposit.esker
+  name: Esker
+  about: Esker.
+family: glacial
+factors:
+- factor: planet-factor.ice-thermal
+  weight: 3
+  why: warm-based with channelised subglacial (R-channel) meltwater
+- factor: planet-factor.rock-type
+  weight: 3
+  why: hard crystalline bed with thin cover favours eskers (R-channels incise up)
+- factor: planet-factor.regolith
+  weight: 1
+  why: thick deformable sediment discourages eskers
+- factor: planet-factor.ice-flow
+  weight: 3
+  why: 'ice-surface slope sets hydraulic gradient: eskers cross divides, run uphill'
+- factor: planet-factor.ice-extent
+  weight: 1
+  why: time-transgressive growth at retreating margin; systems 10-800 km
+- factor: planet-factor.water-discharge
+  weight: 1
+  why: melt discharge sets ridge size, 3-50 m
+- factor: planet-factor.sed-supply
+  weight: 1
+  why: sand/gravel supply to conduit
+- factor: planet-factor.clim-season
+  weight: 1
+  why: seasonal melt pulses form beads
+- factor: planet-factor.time
+  weight: 1
+  why: hundreds to thousands of years to form
+vocabulary_id: 64
+sources:
+- https://www.antarcticglaciers.org/?p=11043
+- https://www.antarcticglaciers.org/glacial-geology/glacial-landforms/glacial-depositional-landforms/
+library_status: written
+source: glacial.deposit.esker
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

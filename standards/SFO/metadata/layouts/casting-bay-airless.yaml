@@ -5,13 +5,26 @@ stands_for: module.casting-bay
 site:
   atmosphere: none
   gravity: [1.6, 2.0]
-physical: {length: 72.0, width: 48.0, height: 27.0, mass: 2756000.0}
+physical: {length: 72.0, width: 48.0, height: 27.0, mass: 3409000.0}
 bays:
 - id: P
   mount: plant-mount.bay-s1
   unit: unit.crew-post
-  at: [0.0, -21.0, 0.0]
-  note: south, under its berm
+  at: [0.0, -24.0, 0.0]
+  note: south, under its berm, which stays clear of the gantries' south rails at y -12
+ports:
+- id: lv-post
+  flow: in
+  medium: power
+  power: 20000.0
+  voltage: 400
+  interface: interface.termination-400v-16mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-16mm2
+  at: [8.0, -24.0, 2.3]
+  facing: [-1.0, 0.0, 0.0]
+  note: the site's 400 V distribution
 mobile:
 - unit: unit.ladle-car-80t
   rides: ladle rail
@@ -56,58 +69,63 @@ links:
   to: [-12.0, 6.0, 0.0]
   length: 24.0
   item: material.structural-steel-a36
-  mass: 2880.0
-  note: as for air, on sintered regolith sleepers; the car stops at x -15, under the ladle gantry
+  mass: 2879.0
+  note: 'as for air, on sintered regolith sleepers; the car stops at x -15, under the ladle gantry; its mass measured on blender''s layout (candidate v01): 60 kg/m rail'
 - kind: rail
   name: teeming rail
   from: [-30.0, -6.0, 0.0]
   to: [30.0, -6.0, 0.0]
   length: 60.0
   item: material.structural-steel-a36
-  mass: 6000.0
-  note: 'as for air: two trains of 4 mould cars (24 m each); teeming in vacuum takes the hydrogen out of the stream as it falls'
+  mass: 7197.0
+  note: 'as for air: two trains of 4 mould cars (24 m each); teeming in vacuum takes the hydrogen out of the stream as it falls; its mass measured on blender''s layout (candidate v01): 60 kg/m rail'
 - kind: rail
   name: ingot rail
   from: [3.0, 6.0, 0.0]
   to: [36.0, 6.0, 0.0]
   length: 33.0
   item: material.structural-steel-a36
-  mass: 3300.0
-  note: 'as for air: out to the ingot yard'
+  mass: 3958.0
+  note: 'as for air: out to the ingot yard; its mass measured on blender''s layout (candidate v01): 60 kg/m rail'
 - kind: rail
   name: ladle gantry rails
-  from: [-33.0, -12.0, 0.0]
-  to: [0.0, 12.0, 0.0]
-  length: 123.0
+  from: [-33.0, 0.0, 0.0]
+  to: [0.0, 0.0, 0.0]
+  length: 33.0
   item: material.structural-steel-a36
-  mass: 14760.0
-  via:
-  - [0.0, -12.0, 0.0]
-  - [0.0, 12.0, 0.0]
-  - [-33.0, 12.0, 0.0]
-  note: the ladle gantry's two rails, 24 m apart, over the west half
+  mass: 4539.0
+  note: 'the ladle gantry''s two straight rails over the west half, at y -12 and 12; the link runs on their centre line; its mass measured on blender''s layout (candidate v01): 68.8 kg/m gantry rail'
 - kind: rail
   name: stripper gantry rails
-  from: [0.0, -12.0, 0.0]
-  to: [33.0, 12.0, 0.0]
-  length: 123.0
+  from: [0.0, 0.0, 0.0]
+  to: [33.0, 0.0, 0.0]
+  length: 33.0
   item: material.structural-steel-a36
-  mass: 12300.0
-  via:
-  - [33.0, -12.0, 0.0]
-  - [33.0, 12.0, 0.0]
-  - [0.0, 12.0, 0.0]
-  note: the stripper gantry's two rails over the east half, beside the ladle gantry's ends
+  mass: 4539.0
+  note: 'the stripper gantry''s two straight rails over the east half, at y -12 and 12, beside the ladle gantry''s ends; the link runs on their centre line; its mass measured on blender''s layout (candidate v01): 68.8 kg/m gantry rail'
+- kind: cable
+  name: crew post supply
+  run: run.cable-400v-16mm2
+  ends: ['edge:lv-post', 'P:power-in']
+  from: [8.0, -24.0, 2.3]
+  to: [3.0, -24.0, 2.3]
+  length: 5.0
+  item: material.copper
+  mass: 77.3
+  fittings: {elbows: 0, tees: 0, supports: 2, connectors: 2}
+  note: through the berm, south of the gantries' rails
 ground:
-- {what: Casting floor, item: material.regolith-sintered, volume: 576.0, note: '0.4 m of sintered regolith under the teeming and stripping, so spilt steel meets stone', mass: 1440000.0}
-- {what: Gantry rail sleepers, item: material.regolith-sintered, volume: 132.0, mass: 330000.0}
-- {what: Crew post berm, item: material.regolith, volume: 164.6, mass: 246900.0}
-totals: {rate: 27.7777777777778, power: 690000.0, heat: 0.0, water: 0.0, mass: 2756000.0, against_module: 'module.casting-bay: one box, the same on every world. This layout: the same rate; 0.69 MW; no water; no hall: the 150 t and 20 t cranes stand on their own legs, sized for 2 m/s2. The moulds and ingots cool by radiation alone, with no air to help: the second train stands longer (not yet worked out). 739 t of plant, 2,017 t of sintered regolith.'}
+- {what: Casting floor, item: material.regolith-sintered, volume: 560.09, note: '72 x 20 m, 0.4 m of sintered regolith at grade under the three rails (x -36 to 36, y -10 to 10), so spilt steel meets stone; its rails set in 0.4 m channels that take the cars'' treads and flanges; measured on blender''s layout (candidate v01)', mass: 1400000.0}
+- {what: Gantry rail sleepers, item: material.regolith-sintered, volume: 132.0, note: 88 bearing blocks under the gantries' rails; measured on blender's layout (candidate v01), mass: 330000.0}
+- {what: Crew post berm, item: material.regolith, volume: 584.56, note: 'loose regolith at least 1 m over the post everywhere, lying at 35 degrees, a cavity for the post, the ramp cut and the light wells; measured on blender''s layout (candidate v01)', mass: 876800.0}
+- {what: Crew post entry and light wells, item: material.regolith-sintered, volume: 14.0, note: 'the landing, the ramp, the cut''s retaining sides and the light wells'' retainers, provisional; measured on blender''s layout (candidate v01)', mass: 35000.0}
+totals: {rate: 27.7777777777778, power: 690000.0, heat: 0.0, water: 0.0, mass: 3409000.0, against_module: 'module.casting-bay: one box, the same on every world. This layout: the same rate; 0.69 MW; no water; no hall: the 150 t and 20 t cranes stand on their own legs, sized for 2 m/s2. The moulds and ingots cool by radiation alone, with no air to help: the second train stands longer (not yet worked out). 767 t of plant, 2,642 t of sintered regolith.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}
 - {profession: profession.technician, count: 1}
 - {profession: profession.engineer, count: 1}
+visual: {format: freefall-model/1, path: models/casting-bay-airless/v1, manifest_sha256: 7c323900a6808f1d71b2b2a0f2e1464b369cc7995b16f12e8ddd84824b939709, version: 1, triangles: 125760}
 basis:
 - of: [bays, links, mobile]
   tier: invented

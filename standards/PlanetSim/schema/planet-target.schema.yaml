@@ -1,0 +1,39 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Planet target
+x-kind: [planet-target]
+description: "standards/PlanetSim/metadata/targets/<name>.yaml: one of the owner's targets for a planet (land at least 30 %, 4 to 6 continents): what is measured, the rule, its units, and when it applies."
+type: object
+additionalProperties: false
+required: [identity, rule]
+allOf:
+  - { $ref: "../../common.schema.yaml#/definitions/planet_context" }
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name, about]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      about: { type: string }
+  quantity: { type: string, description: "What is measured, in words." }
+  measure: { type: string, x-ref: [planet-measure], description: "The measure it is, when one." }
+  rule:
+    type: object
+    additionalProperties: false
+    required: [op]
+    properties:
+      op: { enum: ["<", "<=", ">", ">=", "==", between] }
+      value: { type: number, x-unit-from: unit }
+      values: { type: array, minItems: 2, maxItems: 2, items: { type: number, x-unit-from: unit } }
+      unit: { type: string }
+      of: { type: string, description: "What counts, when the rule counts things (a landmass of at least 0.2 % of the planet)." }
+  applies: { type: string, description: "When it applies (from the coupled era, at today)." }
+  words: { type: string, description: "The owner's words, with the date." }
+  params: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/sim_param" } }
+  implementations:
+    type: array
+    items: { type: object, additionalProperties: false, required: [where, state], properties: { where: { type: string, description: "repository and file:function, or a forge module" }, state: { enum: [reference, current, building, retired] }, note: { type: string } } }
+  cautions: { type: array, items: { type: string }, description: "Findings on it: bugs, comments that disagree with the code, what trips a reader up." }
+  status: { enum: [draft, published, retired] }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

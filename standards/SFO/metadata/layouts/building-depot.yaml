@@ -1,0 +1,1296 @@
+# yaml-language-server: $schema=../../schema/layout.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: layout.building-depot
+  name: Depot, world with air
+  description: 'Where the ground''s vehicles are kept, loaded and driven from: carts and trucks between the pads, the warehouse, the shops and the fields. Laid of the kit: a strut frame on the 3 m grid, panels, and 200 rooms of 6 m
+    furnished piece by piece (140 store room, 40 vehicle bay, 10 office, 10 washroom).'
+stands_for: building.depot
+site:
+  atmosphere: air
+  gravity:
+  - 8.0
+  - 11.0
+physical:
+  length: 120.0
+  width: 60.0
+  height: 6.15
+  mass: 3307270.2
+bays: []
+rooms:
+- id: STO1
+  arrangement: arrangement.store
+  at:
+  - -57.0
+  - -27.0
+  - 0.0
+- id: STO2
+  arrangement: arrangement.store
+  at:
+  - -51.0
+  - -27.0
+  - 0.0
+- id: STO3
+  arrangement: arrangement.store
+  at:
+  - -45.0
+  - -27.0
+  - 0.0
+- id: STO4
+  arrangement: arrangement.store
+  at:
+  - -39.0
+  - -27.0
+  - 0.0
+- id: STO5
+  arrangement: arrangement.store
+  at:
+  - -33.0
+  - -27.0
+  - 0.0
+- id: STO6
+  arrangement: arrangement.store
+  at:
+  - -27.0
+  - -27.0
+  - 0.0
+- id: STO7
+  arrangement: arrangement.store
+  at:
+  - -21.0
+  - -27.0
+  - 0.0
+- id: STO8
+  arrangement: arrangement.store
+  at:
+  - -15.0
+  - -27.0
+  - 0.0
+- id: STO9
+  arrangement: arrangement.store
+  at:
+  - -9.0
+  - -27.0
+  - 0.0
+- id: STO10
+  arrangement: arrangement.store
+  at:
+  - -3.0
+  - -27.0
+  - 0.0
+- id: STO11
+  arrangement: arrangement.store
+  at:
+  - 3.0
+  - -27.0
+  - 0.0
+- id: STO12
+  arrangement: arrangement.store
+  at:
+  - 9.0
+  - -27.0
+  - 0.0
+- id: STO13
+  arrangement: arrangement.store
+  at:
+  - 15.0
+  - -27.0
+  - 0.0
+- id: STO14
+  arrangement: arrangement.store
+  at:
+  - 21.0
+  - -27.0
+  - 0.0
+- id: STO15
+  arrangement: arrangement.store
+  at:
+  - 27.0
+  - -27.0
+  - 0.0
+- id: STO16
+  arrangement: arrangement.store
+  at:
+  - 33.0
+  - -27.0
+  - 0.0
+- id: STO17
+  arrangement: arrangement.store
+  at:
+  - 39.0
+  - -27.0
+  - 0.0
+- id: STO18
+  arrangement: arrangement.store
+  at:
+  - 45.0
+  - -27.0
+  - 0.0
+- id: STO19
+  arrangement: arrangement.store
+  at:
+  - 51.0
+  - -27.0
+  - 0.0
+- id: STO20
+  arrangement: arrangement.store
+  at:
+  - 57.0
+  - -27.0
+  - 0.0
+- id: STO21
+  arrangement: arrangement.store
+  at:
+  - -57.0
+  - -21.0
+  - 0.0
+- id: STO22
+  arrangement: arrangement.store
+  at:
+  - -51.0
+  - -21.0
+  - 0.0
+- id: STO23
+  arrangement: arrangement.store
+  at:
+  - -45.0
+  - -21.0
+  - 0.0
+- id: STO24
+  arrangement: arrangement.store
+  at:
+  - -39.0
+  - -21.0
+  - 0.0
+- id: STO25
+  arrangement: arrangement.store
+  at:
+  - -33.0
+  - -21.0
+  - 0.0
+- id: STO26
+  arrangement: arrangement.store
+  at:
+  - -27.0
+  - -21.0
+  - 0.0
+- id: STO27
+  arrangement: arrangement.store
+  at:
+  - -21.0
+  - -21.0
+  - 0.0
+- id: STO28
+  arrangement: arrangement.store
+  at:
+  - -15.0
+  - -21.0
+  - 0.0
+- id: STO29
+  arrangement: arrangement.store
+  at:
+  - -9.0
+  - -21.0
+  - 0.0
+- id: STO30
+  arrangement: arrangement.store
+  at:
+  - -3.0
+  - -21.0
+  - 0.0
+- id: STO31
+  arrangement: arrangement.store
+  at:
+  - 3.0
+  - -21.0
+  - 0.0
+- id: STO32
+  arrangement: arrangement.store
+  at:
+  - 9.0
+  - -21.0
+  - 0.0
+- id: STO33
+  arrangement: arrangement.store
+  at:
+  - 15.0
+  - -21.0
+  - 0.0
+- id: STO34
+  arrangement: arrangement.store
+  at:
+  - 21.0
+  - -21.0
+  - 0.0
+- id: STO35
+  arrangement: arrangement.store
+  at:
+  - 27.0
+  - -21.0
+  - 0.0
+- id: STO36
+  arrangement: arrangement.store
+  at:
+  - 33.0
+  - -21.0
+  - 0.0
+- id: STO37
+  arrangement: arrangement.store
+  at:
+  - 39.0
+  - -21.0
+  - 0.0
+- id: STO38
+  arrangement: arrangement.store
+  at:
+  - 45.0
+  - -21.0
+  - 0.0
+- id: STO39
+  arrangement: arrangement.store
+  at:
+  - 51.0
+  - -21.0
+  - 0.0
+- id: STO40
+  arrangement: arrangement.store
+  at:
+  - 57.0
+  - -21.0
+  - 0.0
+- id: STO41
+  arrangement: arrangement.store
+  at:
+  - -57.0
+  - -15.0
+  - 0.0
+- id: STO42
+  arrangement: arrangement.store
+  at:
+  - -51.0
+  - -15.0
+  - 0.0
+- id: STO43
+  arrangement: arrangement.store
+  at:
+  - -45.0
+  - -15.0
+  - 0.0
+- id: STO44
+  arrangement: arrangement.store
+  at:
+  - -39.0
+  - -15.0
+  - 0.0
+- id: STO45
+  arrangement: arrangement.store
+  at:
+  - -33.0
+  - -15.0
+  - 0.0
+- id: STO46
+  arrangement: arrangement.store
+  at:
+  - -27.0
+  - -15.0
+  - 0.0
+- id: STO47
+  arrangement: arrangement.store
+  at:
+  - -21.0
+  - -15.0
+  - 0.0
+- id: STO48
+  arrangement: arrangement.store
+  at:
+  - -15.0
+  - -15.0
+  - 0.0
+- id: STO49
+  arrangement: arrangement.store
+  at:
+  - -9.0
+  - -15.0
+  - 0.0
+- id: STO50
+  arrangement: arrangement.store
+  at:
+  - -3.0
+  - -15.0
+  - 0.0
+- id: STO51
+  arrangement: arrangement.store
+  at:
+  - 3.0
+  - -15.0
+  - 0.0
+- id: STO52
+  arrangement: arrangement.store
+  at:
+  - 9.0
+  - -15.0
+  - 0.0
+- id: STO53
+  arrangement: arrangement.store
+  at:
+  - 15.0
+  - -15.0
+  - 0.0
+- id: STO54
+  arrangement: arrangement.store
+  at:
+  - 21.0
+  - -15.0
+  - 0.0
+- id: STO55
+  arrangement: arrangement.store
+  at:
+  - 27.0
+  - -15.0
+  - 0.0
+- id: STO56
+  arrangement: arrangement.store
+  at:
+  - 33.0
+  - -15.0
+  - 0.0
+- id: STO57
+  arrangement: arrangement.store
+  at:
+  - 39.0
+  - -15.0
+  - 0.0
+- id: STO58
+  arrangement: arrangement.store
+  at:
+  - 45.0
+  - -15.0
+  - 0.0
+- id: STO59
+  arrangement: arrangement.store
+  at:
+  - 51.0
+  - -15.0
+  - 0.0
+- id: STO60
+  arrangement: arrangement.store
+  at:
+  - 57.0
+  - -15.0
+  - 0.0
+- id: STO61
+  arrangement: arrangement.store
+  at:
+  - -57.0
+  - -9.0
+  - 0.0
+- id: STO62
+  arrangement: arrangement.store
+  at:
+  - -51.0
+  - -9.0
+  - 0.0
+- id: STO63
+  arrangement: arrangement.store
+  at:
+  - -45.0
+  - -9.0
+  - 0.0
+- id: STO64
+  arrangement: arrangement.store
+  at:
+  - -39.0
+  - -9.0
+  - 0.0
+- id: STO65
+  arrangement: arrangement.store
+  at:
+  - -33.0
+  - -9.0
+  - 0.0
+- id: STO66
+  arrangement: arrangement.store
+  at:
+  - -27.0
+  - -9.0
+  - 0.0
+- id: STO67
+  arrangement: arrangement.store
+  at:
+  - -21.0
+  - -9.0
+  - 0.0
+- id: STO68
+  arrangement: arrangement.store
+  at:
+  - -15.0
+  - -9.0
+  - 0.0
+- id: STO69
+  arrangement: arrangement.store
+  at:
+  - -9.0
+  - -9.0
+  - 0.0
+- id: STO70
+  arrangement: arrangement.store
+  at:
+  - -3.0
+  - -9.0
+  - 0.0
+- id: STO71
+  arrangement: arrangement.store
+  at:
+  - 3.0
+  - -9.0
+  - 0.0
+- id: STO72
+  arrangement: arrangement.store
+  at:
+  - 9.0
+  - -9.0
+  - 0.0
+- id: STO73
+  arrangement: arrangement.store
+  at:
+  - 15.0
+  - -9.0
+  - 0.0
+- id: STO74
+  arrangement: arrangement.store
+  at:
+  - 21.0
+  - -9.0
+  - 0.0
+- id: STO75
+  arrangement: arrangement.store
+  at:
+  - 27.0
+  - -9.0
+  - 0.0
+- id: STO76
+  arrangement: arrangement.store
+  at:
+  - 33.0
+  - -9.0
+  - 0.0
+- id: STO77
+  arrangement: arrangement.store
+  at:
+  - 39.0
+  - -9.0
+  - 0.0
+- id: STO78
+  arrangement: arrangement.store
+  at:
+  - 45.0
+  - -9.0
+  - 0.0
+- id: STO79
+  arrangement: arrangement.store
+  at:
+  - 51.0
+  - -9.0
+  - 0.0
+- id: STO80
+  arrangement: arrangement.store
+  at:
+  - 57.0
+  - -9.0
+  - 0.0
+- id: STO81
+  arrangement: arrangement.store
+  at:
+  - -57.0
+  - -3.0
+  - 0.0
+- id: STO82
+  arrangement: arrangement.store
+  at:
+  - -51.0
+  - -3.0
+  - 0.0
+- id: STO83
+  arrangement: arrangement.store
+  at:
+  - -45.0
+  - -3.0
+  - 0.0
+- id: STO84
+  arrangement: arrangement.store
+  at:
+  - -39.0
+  - -3.0
+  - 0.0
+- id: STO85
+  arrangement: arrangement.store
+  at:
+  - -33.0
+  - -3.0
+  - 0.0
+- id: STO86
+  arrangement: arrangement.store
+  at:
+  - -27.0
+  - -3.0
+  - 0.0
+- id: STO87
+  arrangement: arrangement.store
+  at:
+  - -21.0
+  - -3.0
+  - 0.0
+- id: STO88
+  arrangement: arrangement.store
+  at:
+  - -15.0
+  - -3.0
+  - 0.0
+- id: STO89
+  arrangement: arrangement.store
+  at:
+  - -9.0
+  - -3.0
+  - 0.0
+- id: STO90
+  arrangement: arrangement.store
+  at:
+  - -3.0
+  - -3.0
+  - 0.0
+- id: STO91
+  arrangement: arrangement.store
+  at:
+  - 3.0
+  - -3.0
+  - 0.0
+- id: STO92
+  arrangement: arrangement.store
+  at:
+  - 9.0
+  - -3.0
+  - 0.0
+- id: STO93
+  arrangement: arrangement.store
+  at:
+  - 15.0
+  - -3.0
+  - 0.0
+- id: STO94
+  arrangement: arrangement.store
+  at:
+  - 21.0
+  - -3.0
+  - 0.0
+- id: STO95
+  arrangement: arrangement.store
+  at:
+  - 27.0
+  - -3.0
+  - 0.0
+- id: STO96
+  arrangement: arrangement.store
+  at:
+  - 33.0
+  - -3.0
+  - 0.0
+- id: STO97
+  arrangement: arrangement.store
+  at:
+  - 39.0
+  - -3.0
+  - 0.0
+- id: STO98
+  arrangement: arrangement.store
+  at:
+  - 45.0
+  - -3.0
+  - 0.0
+- id: STO99
+  arrangement: arrangement.store
+  at:
+  - 51.0
+  - -3.0
+  - 0.0
+- id: STO100
+  arrangement: arrangement.store
+  at:
+  - 57.0
+  - -3.0
+  - 0.0
+- id: STO101
+  arrangement: arrangement.store
+  at:
+  - -57.0
+  - 3.0
+  - 0.0
+- id: STO102
+  arrangement: arrangement.store
+  at:
+  - -51.0
+  - 3.0
+  - 0.0
+- id: STO103
+  arrangement: arrangement.store
+  at:
+  - -45.0
+  - 3.0
+  - 0.0
+- id: STO104
+  arrangement: arrangement.store
+  at:
+  - -39.0
+  - 3.0
+  - 0.0
+- id: STO105
+  arrangement: arrangement.store
+  at:
+  - -33.0
+  - 3.0
+  - 0.0
+- id: STO106
+  arrangement: arrangement.store
+  at:
+  - -27.0
+  - 3.0
+  - 0.0
+- id: STO107
+  arrangement: arrangement.store
+  at:
+  - -21.0
+  - 3.0
+  - 0.0
+- id: STO108
+  arrangement: arrangement.store
+  at:
+  - -15.0
+  - 3.0
+  - 0.0
+- id: STO109
+  arrangement: arrangement.store
+  at:
+  - -9.0
+  - 3.0
+  - 0.0
+- id: STO110
+  arrangement: arrangement.store
+  at:
+  - -3.0
+  - 3.0
+  - 0.0
+- id: STO111
+  arrangement: arrangement.store
+  at:
+  - 3.0
+  - 3.0
+  - 0.0
+- id: STO112
+  arrangement: arrangement.store
+  at:
+  - 9.0
+  - 3.0
+  - 0.0
+- id: STO113
+  arrangement: arrangement.store
+  at:
+  - 15.0
+  - 3.0
+  - 0.0
+- id: STO114
+  arrangement: arrangement.store
+  at:
+  - 21.0
+  - 3.0
+  - 0.0
+- id: STO115
+  arrangement: arrangement.store
+  at:
+  - 27.0
+  - 3.0
+  - 0.0
+- id: STO116
+  arrangement: arrangement.store
+  at:
+  - 33.0
+  - 3.0
+  - 0.0
+- id: STO117
+  arrangement: arrangement.store
+  at:
+  - 39.0
+  - 3.0
+  - 0.0
+- id: STO118
+  arrangement: arrangement.store
+  at:
+  - 45.0
+  - 3.0
+  - 0.0
+- id: STO119
+  arrangement: arrangement.store
+  at:
+  - 51.0
+  - 3.0
+  - 0.0
+- id: STO120
+  arrangement: arrangement.store
+  at:
+  - 57.0
+  - 3.0
+  - 0.0
+- id: STO121
+  arrangement: arrangement.store
+  at:
+  - -57.0
+  - 9.0
+  - 0.0
+- id: STO122
+  arrangement: arrangement.store
+  at:
+  - -51.0
+  - 9.0
+  - 0.0
+- id: STO123
+  arrangement: arrangement.store
+  at:
+  - -45.0
+  - 9.0
+  - 0.0
+- id: STO124
+  arrangement: arrangement.store
+  at:
+  - -39.0
+  - 9.0
+  - 0.0
+- id: STO125
+  arrangement: arrangement.store
+  at:
+  - -33.0
+  - 9.0
+  - 0.0
+- id: STO126
+  arrangement: arrangement.store
+  at:
+  - -27.0
+  - 9.0
+  - 0.0
+- id: STO127
+  arrangement: arrangement.store
+  at:
+  - -21.0
+  - 9.0
+  - 0.0
+- id: STO128
+  arrangement: arrangement.store
+  at:
+  - -15.0
+  - 9.0
+  - 0.0
+- id: STO129
+  arrangement: arrangement.store
+  at:
+  - -9.0
+  - 9.0
+  - 0.0
+- id: STO130
+  arrangement: arrangement.store
+  at:
+  - -3.0
+  - 9.0
+  - 0.0
+- id: STO131
+  arrangement: arrangement.store
+  at:
+  - 3.0
+  - 9.0
+  - 0.0
+- id: STO132
+  arrangement: arrangement.store
+  at:
+  - 9.0
+  - 9.0
+  - 0.0
+- id: STO133
+  arrangement: arrangement.store
+  at:
+  - 15.0
+  - 9.0
+  - 0.0
+- id: STO134
+  arrangement: arrangement.store
+  at:
+  - 21.0
+  - 9.0
+  - 0.0
+- id: STO135
+  arrangement: arrangement.store
+  at:
+  - 27.0
+  - 9.0
+  - 0.0
+- id: STO136
+  arrangement: arrangement.store
+  at:
+  - 33.0
+  - 9.0
+  - 0.0
+- id: STO137
+  arrangement: arrangement.store
+  at:
+  - 39.0
+  - 9.0
+  - 0.0
+- id: STO138
+  arrangement: arrangement.store
+  at:
+  - 45.0
+  - 9.0
+  - 0.0
+- id: STO139
+  arrangement: arrangement.store
+  at:
+  - 51.0
+  - 9.0
+  - 0.0
+- id: STO140
+  arrangement: arrangement.store
+  at:
+  - 57.0
+  - 9.0
+  - 0.0
+- id: GAR141
+  arrangement: arrangement.garage
+  at:
+  - -57.0
+  - 15.0
+  - 0.0
+- id: GAR142
+  arrangement: arrangement.garage
+  at:
+  - -51.0
+  - 15.0
+  - 0.0
+- id: GAR143
+  arrangement: arrangement.garage
+  at:
+  - -45.0
+  - 15.0
+  - 0.0
+- id: GAR144
+  arrangement: arrangement.garage
+  at:
+  - -39.0
+  - 15.0
+  - 0.0
+- id: GAR145
+  arrangement: arrangement.garage
+  at:
+  - -33.0
+  - 15.0
+  - 0.0
+- id: GAR146
+  arrangement: arrangement.garage
+  at:
+  - -27.0
+  - 15.0
+  - 0.0
+- id: GAR147
+  arrangement: arrangement.garage
+  at:
+  - -21.0
+  - 15.0
+  - 0.0
+- id: GAR148
+  arrangement: arrangement.garage
+  at:
+  - -15.0
+  - 15.0
+  - 0.0
+- id: GAR149
+  arrangement: arrangement.garage
+  at:
+  - -9.0
+  - 15.0
+  - 0.0
+- id: GAR150
+  arrangement: arrangement.garage
+  at:
+  - -3.0
+  - 15.0
+  - 0.0
+- id: GAR151
+  arrangement: arrangement.garage
+  at:
+  - 3.0
+  - 15.0
+  - 0.0
+- id: GAR152
+  arrangement: arrangement.garage
+  at:
+  - 9.0
+  - 15.0
+  - 0.0
+- id: GAR153
+  arrangement: arrangement.garage
+  at:
+  - 15.0
+  - 15.0
+  - 0.0
+- id: GAR154
+  arrangement: arrangement.garage
+  at:
+  - 21.0
+  - 15.0
+  - 0.0
+- id: GAR155
+  arrangement: arrangement.garage
+  at:
+  - 27.0
+  - 15.0
+  - 0.0
+- id: GAR156
+  arrangement: arrangement.garage
+  at:
+  - 33.0
+  - 15.0
+  - 0.0
+- id: GAR157
+  arrangement: arrangement.garage
+  at:
+  - 39.0
+  - 15.0
+  - 0.0
+- id: GAR158
+  arrangement: arrangement.garage
+  at:
+  - 45.0
+  - 15.0
+  - 0.0
+- id: GAR159
+  arrangement: arrangement.garage
+  at:
+  - 51.0
+  - 15.0
+  - 0.0
+- id: GAR160
+  arrangement: arrangement.garage
+  at:
+  - 57.0
+  - 15.0
+  - 0.0
+- id: GAR161
+  arrangement: arrangement.garage
+  at:
+  - -57.0
+  - 21.0
+  - 0.0
+- id: GAR162
+  arrangement: arrangement.garage
+  at:
+  - -51.0
+  - 21.0
+  - 0.0
+- id: GAR163
+  arrangement: arrangement.garage
+  at:
+  - -45.0
+  - 21.0
+  - 0.0
+- id: GAR164
+  arrangement: arrangement.garage
+  at:
+  - -39.0
+  - 21.0
+  - 0.0
+- id: GAR165
+  arrangement: arrangement.garage
+  at:
+  - -33.0
+  - 21.0
+  - 0.0
+- id: GAR166
+  arrangement: arrangement.garage
+  at:
+  - -27.0
+  - 21.0
+  - 0.0
+- id: GAR167
+  arrangement: arrangement.garage
+  at:
+  - -21.0
+  - 21.0
+  - 0.0
+- id: GAR168
+  arrangement: arrangement.garage
+  at:
+  - -15.0
+  - 21.0
+  - 0.0
+- id: GAR169
+  arrangement: arrangement.garage
+  at:
+  - -9.0
+  - 21.0
+  - 0.0
+- id: GAR170
+  arrangement: arrangement.garage
+  at:
+  - -3.0
+  - 21.0
+  - 0.0
+- id: GAR171
+  arrangement: arrangement.garage
+  at:
+  - 3.0
+  - 21.0
+  - 0.0
+- id: GAR172
+  arrangement: arrangement.garage
+  at:
+  - 9.0
+  - 21.0
+  - 0.0
+- id: GAR173
+  arrangement: arrangement.garage
+  at:
+  - 15.0
+  - 21.0
+  - 0.0
+- id: GAR174
+  arrangement: arrangement.garage
+  at:
+  - 21.0
+  - 21.0
+  - 0.0
+- id: GAR175
+  arrangement: arrangement.garage
+  at:
+  - 27.0
+  - 21.0
+  - 0.0
+- id: GAR176
+  arrangement: arrangement.garage
+  at:
+  - 33.0
+  - 21.0
+  - 0.0
+- id: GAR177
+  arrangement: arrangement.garage
+  at:
+  - 39.0
+  - 21.0
+  - 0.0
+- id: GAR178
+  arrangement: arrangement.garage
+  at:
+  - 45.0
+  - 21.0
+  - 0.0
+- id: GAR179
+  arrangement: arrangement.garage
+  at:
+  - 51.0
+  - 21.0
+  - 0.0
+- id: GAR180
+  arrangement: arrangement.garage
+  at:
+  - 57.0
+  - 21.0
+  - 0.0
+- id: OFF181
+  arrangement: arrangement.office
+  at:
+  - -57.0
+  - 27.0
+  - 0.0
+- id: OFF182
+  arrangement: arrangement.office
+  at:
+  - -51.0
+  - 27.0
+  - 0.0
+- id: OFF183
+  arrangement: arrangement.office
+  at:
+  - -45.0
+  - 27.0
+  - 0.0
+- id: OFF184
+  arrangement: arrangement.office
+  at:
+  - -39.0
+  - 27.0
+  - 0.0
+- id: OFF185
+  arrangement: arrangement.office
+  at:
+  - -33.0
+  - 27.0
+  - 0.0
+- id: OFF186
+  arrangement: arrangement.office
+  at:
+  - -27.0
+  - 27.0
+  - 0.0
+- id: OFF187
+  arrangement: arrangement.office
+  at:
+  - -21.0
+  - 27.0
+  - 0.0
+- id: OFF188
+  arrangement: arrangement.office
+  at:
+  - -15.0
+  - 27.0
+  - 0.0
+- id: OFF189
+  arrangement: arrangement.office
+  at:
+  - -9.0
+  - 27.0
+  - 0.0
+- id: OFF190
+  arrangement: arrangement.office
+  at:
+  - -3.0
+  - 27.0
+  - 0.0
+- id: WAS191
+  arrangement: arrangement.washroom
+  at:
+  - 3.0
+  - 27.0
+  - 0.0
+- id: WAS192
+  arrangement: arrangement.washroom
+  at:
+  - 9.0
+  - 27.0
+  - 0.0
+- id: WAS193
+  arrangement: arrangement.washroom
+  at:
+  - 15.0
+  - 27.0
+  - 0.0
+- id: WAS194
+  arrangement: arrangement.washroom
+  at:
+  - 21.0
+  - 27.0
+  - 0.0
+- id: WAS195
+  arrangement: arrangement.washroom
+  at:
+  - 27.0
+  - 27.0
+  - 0.0
+- id: WAS196
+  arrangement: arrangement.washroom
+  at:
+  - 33.0
+  - 27.0
+  - 0.0
+- id: WAS197
+  arrangement: arrangement.washroom
+  at:
+  - 39.0
+  - 27.0
+  - 0.0
+- id: WAS198
+  arrangement: arrangement.washroom
+  at:
+  - 45.0
+  - 27.0
+  - 0.0
+- id: WAS199
+  arrangement: arrangement.washroom
+  at:
+  - 51.0
+  - 27.0
+  - 0.0
+- id: WAS200
+  arrangement: arrangement.washroom
+  at:
+  - 57.0
+  - 27.0
+  - 0.0
+frame:
+  box:
+  - -60.0
+  - -30.0
+  - 0.0
+  - 60.0
+  - 30.0
+  - 6.0
+  cell: 3.0
+  shape: 'A skeleton frame on the 3 m grid: 40 x 20 cells, 1 storey(s) of 6 m; columns at every node, beams on every cell edge at each floor and the roof, one diagonal in every other outside face. Panels on its faces (frame.panels).'
+  members:
+  - item: stock.st4340-tb-60x2-s3000
+    count: 1722
+    where: columns
+  - item: stock.st4340-tb-160x5-s3000
+    count: 1660
+    where: beams
+  - item: stock.st4340-tb-80x2-d3000
+    count: 120
+    where: bracing
+  - item: stock.st4340-node-90b
+    count: 2583
+    where: nodes
+  mass: 123669.6
+  panels:
+  - panel: panel.partition-3x3
+    count: 60
+  - panel: panel.partition-door-3x3
+    count: 20
+  - panel: panel.roof-3x3
+    count: 800
+  - panel: panel.wall-double-door-3x3
+    count: 6
+  - panel: panel.wall-insulated-3x3
+    count: 192
+  - panel: panel.wall-roller-3x3
+    count: 5
+  - panel: panel.wall-window-3x3
+    count: 37
+  panels_mass: 152634.6
+  sized: 'At 1 g: floors 1893 Pa dead and 5000 Pa imposed, the roof 1155 Pa; a ground column carries 13 kN (st4340-tb-60x2 takes it with half again to spare); a 3 m beam bends with 23.3 kN m (st4340-tb-160x5, under 470 MPa with half
+    again to spare). Wind, the tall halls'' columns between floors and the footings'' loads not yet checked.'
+ground:
+- what: Ground slab
+  item: good.concrete
+  volume: 1080.0
+  mass: 2592000.0
+  note: 0.15 m over the 120 x 60 m plan
+- what: Edge footings
+  item: good.concrete
+  volume: 129.6
+  mass: 311040.0
+  note: 0.6 x 0.6 m strips under the outside walls
+totals:
+  mass: 3307270.2
+  against_module: 'building.depot (deprecated): one box 120 x 60 x 8 m of 7,942 t, from the average of 538 concrete buildings. This layout: 120 x 60 x 6 m, 3,307 t (124 t frame, 153 t panels, 128 t furniture, 2,903 t ground), for 60
+    people served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
+staff:
+- profession: profession.driver
+  count: 35
+- profession: profession.docker
+  count: 10
+- profession: profession.fitter
+  count: 5
+basis:
+- of:
+  - bays
+  tier: invented
+  review: true
+  note: The mix of rooms for a depot is chosen (store 0.7, garage 0.2, office 0.05, washroom 0.05), shared over the record's floor (7200 m2 in 1 storeys, laid as 20 x 10 rooms of 6 m a storey).
+- of:
+  - frame
+  - ground
+  tier: derived
+  review: true
+  note: Counted from the grid (tools/standards/building_layouts.py); sections by the loads in frame.sized; masses from the strut, node and panel records.

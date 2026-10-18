@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.tectonic.province.extensional-province
+  name: Extensional province (wide rift)
+  about: Extensional province (wide rift).
+family: tectonic
+factors:
+- factor: planet-factor.tect-setting
+  weight: 3
+  why: thickened/hot continental lithosphere, back-arc or post-orogenic collapse
+- factor: planet-factor.other-extension-amount
+  weight: 3
+  why: strain ~100% (Basin and Range) gives wide rift; low strain narrow rift
+- factor: planet-factor.tect-fault
+  weight: 3
+  why: normal fault spacing ~25-30 km, block tilts, core complexes
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: high heat flow; elevated province average 1-2 km
+- factor: planet-factor.volc-magma
+  weight: 1
+  why: extension-related volcanism
+- factor: planet-factor.clim-arid
+  weight: 1
+  why: arid gives internal drainage, playas; humid integrates drainage
+- factor: planet-factor.sed-supply
+  weight: 1
+  why: basin filling reduces relief
+- factor: planet-factor.time
+  weight: 1
+  why: ~17 Myr (Basin and Range)
+vocabulary_id: 173
+sources:
+- https://en.wikipedia.org/wiki/Basin_and_Range_Province
+library_status: planned
+source: tectonic.province.extensional_province
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

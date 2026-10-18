@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-termination-400v-50mm2
+  code: KIT-TERMINATION-400V-50MM2
+  name: Cable termination, 0.4 kV, 50 mm2
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.copper
+- item: material.aluminium-alloy-6061
+size:
+  length: 0.4
+  width: 0.4
+  height: 0.715
+supplies:
+  item: connector.termination-400v-50mm2
+physical:
+  mass: 5.2
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.termination-400v-50mm2, as made.

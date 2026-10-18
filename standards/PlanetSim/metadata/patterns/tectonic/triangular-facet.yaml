@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.tectonic.fault.triangular-facet
+  name: Triangular facet (faulted spur end)
+  about: Triangular facet (faulted spur end).
+family: tectonic
+factors:
+- factor: planet-factor.tect-fault
+  weight: 3
+  why: normal fault footwall truncates spurs; facet slope near fault dip when fresh
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: high slip rate (>~0.1 mm/yr) keeps facets steep, tall, multi-tiered
+- factor: planet-factor.relief-inherited
+  weight: 1
+  why: range-front catchment spacing sets spur, hence facet, width
+- factor: planet-factor.rock-type
+  weight: 3
+  why: resistant bedrock footwall needed; weak rock degrades facets quickly
+- factor: planet-factor.rock-fracture
+  weight: 1
+  why: jointing controls facet planarity and degradation
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: erosion rate relative to slip decides facet slope 20-45 deg
+- factor: planet-factor.time
+  weight: 1
+  why: 0.1-3 Myr; facets lower and round with age once slip stops
+vocabulary_id: 122
+sources:
+- https://WWW.ISPRS.org/proceedings/2011/ISRSE-34/211104015Final00629.pdf
+library_status: written
+source: tectonic.fault.triangular_facet
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

@@ -1,0 +1,151 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.materials
+  name: materials
+  about: the rock units in their colour from orbit, dimmed under the sea; rock contacts, coastlines, structural grain strokes,
+    the units on land listed
+title: materials
+row: top (history views)
+file_suffix: _materials.png
+draws:
+  words: the rock units in their colour from orbit, dimmed under the sea; rock contacts, coastlines, structural grain strokes,
+    the units on land listed
+shown: true
+implementations:
+- where: planet-trees-pgs2 tools/planet_vectors.py / planet_anchors.py sheet() (not inventoried; unverified which writes which)
+  state: reference
+- where: planet-forge crates/viewer/src/layers/materials.rs
+  state: current
+  note: the viewer
+status: draft
+legend:
+  title: '4. THE MATERIALS: rock units between {contacts} contacts; strokes = structural grain'
+  source: 'planet_vectors.py:226-262 (look.py TRUE: bare rock from orbit)'
+  rows:
+  - kind: fill
+    label: morb
+    colour:
+    - 90
+    - 84
+    - 78
+    shown_when: always
+  - kind: fill
+    label: arc_volcanic
+    colour:
+    - 122
+    - 104
+    - 94
+    shown_when: always
+  - kind: fill
+    label: arc_plutonic
+    colour:
+    - 176
+    - 160
+    - 146
+    shown_when: always
+  - kind: fill
+    label: basement
+    colour:
+    - 168
+    - 150
+    - 132
+    shown_when: always
+  - kind: fill
+    label: greenstone
+    colour:
+    - 108
+    - 110
+    - 92
+    shown_when: always
+  - kind: fill
+    label: schist
+    colour:
+    - 150
+    - 140
+    - 130
+    shown_when: always
+  - kind: fill
+    label: granite
+    colour:
+    - 192
+    - 172
+    - 160
+    shown_when: always
+  - kind: fill
+    label: flood_basalt
+    colour:
+    - 78
+    - 68
+    - 60
+    shown_when: always
+  - kind: fill
+    label: carbonate
+    colour:
+    - 214
+    - 204
+    - 182
+    shown_when: always
+  - kind: fill
+    label: clastic
+    colour:
+    - 206
+    - 172
+    - 122
+    shown_when: always
+  - kind: fill
+    label: ophiolite
+    colour:
+    - 98
+    - 94
+    - 80
+    shown_when: always
+  - kind: fill
+    label: rift
+    colour:
+    - 172
+    - 98
+    - 72
+    shown_when: always
+  - kind: fill
+    label: iron_formation
+    colour:
+    - 140
+    - 72
+    - 52
+    shown_when: always
+  - kind: line
+    label: rock contacts
+    colour:
+    - 40
+    - 30
+    - 20
+    shown_when: always
+  - kind: line
+    label: coastlines
+    colour:
+    - 255
+    - 255
+    - 255
+    shown_when: always
+  - kind: line
+    label: structural grain
+    colour:
+    - 20
+    - 20
+    - 20
+    shown_when: grain
+  - kind: head
+    label: legend text
+    colour:
+    - 255
+    - 255
+    - 255
+    shown_when: always
+basis:
+- of:
+  - legend
+  - draws
+  tier: derived
+  note: 'planets, 17 Oct 2026: the viewer port (crates/viewer), from planet-trees-pgs2 tools/planet_vectors.py, planet_form.py
+    and planet-sim preview.py, look.py.'

@@ -34,6 +34,17 @@ properties:
         item: { type: string, x-ref: [element, good], description: "What is won from it, by its key." }
         grade: { type: number, x-unit: "1", description: "kg of it in each kg of ore, typically" }
         said_as: { type: string, description: "The simulation's own name and unit for it (Cu %, Au g/t), where ours differs." }
+        split:
+          description: "How the item divides by mass into the elements it stands for (platinum-group metals, rare-earth oxides): shares summing to 1."
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [share]
+            properties:
+              item: { type: string, x-ref: [element, good], description: "The element (or good), by its key; left out for the rest ('others')." }
+              share: { type: number, minimum: 0, maximum: 1, x-unit: "1", description: "its share by mass" }
+              said_as: { type: string, description: "The simulation's name for it (Pt, Ce, others)." }
   offshore: { type: boolean, description: "It lies under the sea." }
   ore: { type: string, x-ref: [good], description: "The good its ore is, as dug, by its key." }
   size:
@@ -52,6 +63,22 @@ properties:
       length: { type: number, x-unit: "m", description: "m along its strike" }
       width: { type: number, x-unit: "m", description: "m across it" }
   forms_at: { type: number, x-unit: "m", description: "m below the ground it forms at; erosion brings it up" }
+  body_height: { type: number, x-unit: "m", description: "m, the ore body's vertical extent" }
+  rate: { type: number, minimum: 0, x-unit: "1", description: "deposits the simulation places per unit of ore chance (its own scale)" }
+  density: { type: number, minimum: 0, x-unit: "1/(m2 s)", description: "deposits per m2 of full ore chance per s of plate history (the vector Planet Simulator reads this; rate is the old per-sample scale, converted once by planet-forge tools/registry/deposit_density.py: rate / 17,003 km2 / 4.067 Gyr)" }
+  host_units: { type: array, items: { type: string, x-ref: [rock-unit] }, description: "The rock units it forms on (a weathering, setting or impact type); empty or left out: any land." }
+  setting: { type: string, description: "The setting it forms in, in the simulation's words (old crust, young basins and climate...)." }
+  impact:
+    description: "For an impact type: which craters make it, and where in them."
+    type: object
+    additionalProperties: false
+    properties:
+      min_diameter: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "m, the smallest crater that can hold one" }
+      chance: { type: number, minimum: 0, maximum: 1, x-unit: "1", description: "the chance a qualifying crater holds any" }
+      depth: { type: number, minimum: 0, x-unit: "1", description: "the ore's depth as a share of the crater's diameter" }
+      per_crater: { type: number, minimum: 0, x-unit: "1", description: "deposits in a crater that holds any (a Poisson mean)" }
+      radial_range: { type: array, minItems: 2, maxItems: 2, items: { type: number, minimum: 0, x-unit: "1" }, description: "where they lie, as shares of the crater's radius from its centre" }
+      dry_world: { type: number, minimum: 0, x-unit: "1", description: "its chance multiplied by this on a world without water" }
   cluster:
     description: "How its deposits group into a district, stretched along the grain of the belt."
     type: object

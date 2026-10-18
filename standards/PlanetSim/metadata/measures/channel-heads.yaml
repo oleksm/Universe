@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schema/planet-measure.schema.yaml
+identity:
+  key: planet-measure.channel-heads
+  name: Channel heads
+  about: 'Channel heads: compares generated ground with real ground.'
+unit: 1/m2
+said_as:
+  unit: 1/100 km2
+  factor: 1.0e-08
+how: channel heads per area
+tool: tools/terrain_compare.py
+levels:
+- planet-level.square
+- planet-level.detail
+basis:
+- of:
+  - identity
+  tier: derived
+  note: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+- of:
+  - reference
+  tier: invented
+  note: No reference measured yet.
+status: draft

@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.karst.collapse.gorge
+  name: Collapse doline, tiankeng and cave-collapse gorge
+  about: Collapse doline, tiankeng and cave-collapse gorge.
+family: karst
+factors:
+- factor: planet-factor.rock-soluble
+  weight: 3
+  why: Thick limestone (hundreds of m) holding large chambers; tiankeng occur in cone/tower karst
+- factor: planet-factor.water-discharge
+  weight: 3
+  why: Large, fluctuating underground-river discharge removes fallen blocks; most volume removed by streams
+- factor: planet-factor.rock-fracture
+  weight: 1
+  why: Vertical fractures give collapse weakness; stress release opens new fractures
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: Uplift gives deep vadose zone and steep hydraulic gradient
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: 'High relief between sinking point and resurgence: steep gradient, more erosion'
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: Humid (monsoon) recharge supplies the cave river
+- factor: planet-factor.events
+  weight: 1
+  why: Discrete roof collapses enlarge chamber stepwise; blockage diverts streams
+- factor: planet-factor.time
+  weight: 1
+  why: 10 kyr-1 Myr; sequence river-chamber-tiankeng-degradation-gorge with natural bridges
+vocabulary_id: 93
+sources:
+- https://digitalcommons.usf.edu/kip_articles/2580
+- https://en.wikipedia.org/wiki/Sinkhole
+library_status: written
+source: karst.collapse.gorge
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

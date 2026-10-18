@@ -1,0 +1,136 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.world-spec-derived
+  name: World spec and derived facts
+  about: 'The facts a world starts from (star mass, age, metallicity, luminosity; planet mass, radius, orbit, spin, radiogenic
+    scale, surface temperature, regime, core share/radius/light elements, core stratification, water share, impact flux, air
+    column) and what follows from them at once: bulk density, surface gravity, escape velocity, luminosity (L = M^4 main-sequence
+    when not given), insolation; and the core radius from the core mass fraction with core/mantle densities in PREM''s ratio
+    10990/4460 when not given. Every stage reads it; none writes it.'
+area: geology
+clock:
+  when: once per world (static input)
+reads:
+- name: star.mass_suns
+  unit: 'kg (code: solar masses, ×1.98847e30)'
+  meaning: star mass
+- name: star.luminosity_suns
+  unit: 'W (code: L_sun, ×3.828e26)'
+  meaning: today's luminosity or null
+- name: planet.mass_earths
+  unit: 'kg (code: M_earth, ×5.9722e24)'
+  meaning: planet mass
+- name: planet.radius_earths
+  unit: 'm (code: R_earth, ×6.371e6)'
+  meaning: mean radius
+- name: planet.semi_major_au
+  unit: 'm (code: AU, ×1.495978707e11)'
+  meaning: orbit semi-major axis
+- name: planet.core_mass_fraction
+  unit: '1'
+  meaning: core share of mass
+- name: planet.core_radius_earths
+  unit: 'm (code: R_earth)'
+  meaning: core radius or null
+writes:
+- name: density_kg_m3
+  unit: kg/m³
+  meaning: bulk density
+- name: surface_gravity_m_s2
+  unit: m/s²
+  meaning: G M / R²
+- name: escape_velocity_km_s
+  unit: 'm/s (code: km/s)'
+  meaning: sqrt(2GM/R)
+- name: star_luminosity_suns
+  unit: 'W (code: L_sun)'
+  meaning: luminosity
+- name: insolation_w_m2
+  unit: W/m²
+  meaning: L / (4π a²)
+- name: insolation_earths
+  unit: '1'
+  meaning: insolation / 1361 W/m²
+- name: core_radius
+  unit: m
+  meaning: given, else R·(x/ratio / (x/ratio + 1 − x))^(1/3), ratio = 10990/4460
+params:
+- name: G
+  value: 6.6743e-11
+  unit: '1'
+  said_as:
+    unit: m³ kg⁻¹ s⁻²
+    factor: 1.0
+  open: true
+  meaning: gravitational constant (CODATA 2018)
+  source: src/planet_sim/spec.py:12
+  note: 'unit as the code says it: ''m³ kg⁻¹ s⁻²''; SI conversion unverified'
+- name: M_EARTH
+  value: 5.9722e+24
+  unit: kg
+  meaning: Earth mass
+  source: src/planet_sim/spec.py:13
+- name: R_EARTH
+  value: 6371000.0
+  unit: m
+  meaning: Earth mean radius
+  source: src/planet_sim/spec.py:14
+- name: M_SUN
+  value: 1.98847e+30
+  unit: kg
+  meaning: solar mass
+  source: src/planet_sim/spec.py:15
+- name: L_SUN
+  value: 3.828e+26
+  unit: W
+  meaning: IAU 2015 nominal solar luminosity
+  source: src/planet_sim/spec.py:16
+- name: AU
+  value: 149597870700.0
+  unit: m
+  meaning: astronomical unit
+  source: src/planet_sim/spec.py:17
+- name: core/mantle density ratio
+  value: 2.4641255605381165
+  unit: '1'
+  meaning: stand-in core radius from core mass share
+  source: src/planet_sim/spec.py:93
+- name: solar constant
+  value: 1361.0
+  unit: W/m2
+  meaning: Earth insolation for insolation_earths
+  source: src/planet_sim/spec.py:118
+- name: mass-luminosity exponent
+  value: 4.0
+  unit: '1'
+  meaning: L ∝ M^4 when luminosity_suns is null (valid ~0.43-2 M_sun)
+  source: src/planet_sim/spec.py:35
+- name: PLANET_SIM_SPEC
+  env: PLANET_SIM_SPEC
+  setting: none
+  meaning: 'spec JSON the tools run (a world seeded from a registry record, tools/from_record.py); empty: Earth preset'
+  source: src/planet_sim/presets.py:44
+  note: 'read by presets.current(), not by the stages; listed because it selects the spec; unit: path'
+random_draws:
+- none
+invariants:
+- spec is never modified by a stage
+- core_radius < radius
+- luminosity_suns overrides the M^4 relation when given
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform src/planet_sim/spec.py:Star.luminosity, Planet.mass/radius/density/gravity/core_radius/escape_velocity,
+    Spec.derived (lines 29-119)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

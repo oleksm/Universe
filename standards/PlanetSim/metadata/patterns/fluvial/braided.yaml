@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.channel.braided
+  name: Braided river
+  about: Braided river.
+family: fluvial
+factors:
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: abundant coarse bedload; flume braids at >3110 ppm bedload
+- factor: planet-factor.slope-relief
+  weight: 3
+  why: slope above threshold S=0.06 Q^-0.44 (flume S>=0.016)
+- factor: planet-factor.water-discharge
+  weight: 1
+  why: flashy, variable discharge reworks bars
+- factor: planet-factor.bio-veg
+  weight: 3
+  why: sparse bank vegetation; vegetation turns bars into islands
+- factor: planet-factor.regolith
+  weight: 1
+  why: non-cohesive gravel banks give wide shallow channels
+- factor: planet-factor.ice-extent
+  weight: 1
+  why: proglacial outwash supplies sediment and meltwater
+- factor: planet-factor.clim-season
+  weight: 1
+  why: snowmelt/monsoon peaks drive braiding
+- factor: planet-factor.time
+  weight: 1
+  why: 10 yr-1 Myr
+vocabulary_id: 36
+sources:
+- https://en.wikipedia.org/wiki/Braided_river
+- https://www.nps.gov/subjects/geology/fluvial-landforms.htm
+library_status: written
+source: fluvial.channel.braided
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

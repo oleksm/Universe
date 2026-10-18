@@ -1,0 +1,54 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.tectonic.province.orogen
+  name: Orogen (mountain belt)
+  about: Orogen (mountain belt).
+family: tectonic
+factors:
+- factor: planet-factor.tect-setting
+  weight: 3
+  why: subduction (Andean) or continental collision (Himalayan)
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: crustal thickening and isostasy; convergence/accretion flux sets size
+- factor: planet-factor.tect-fault
+  weight: 1
+  why: thrusts, decollements; critical taper geometry
+- factor: planet-factor.clim-precip
+  weight: 3
+  why: erosional efficiency narrows and lowers orogen, increases uplift
+- factor: planet-factor.clim-wind
+  weight: 1
+  why: windward rain vs rain-shadow plateau asymmetry
+- factor: planet-factor.ice-extent
+  weight: 1
+  why: glacial buzzsaw caps peaks near snowline
+- factor: planet-factor.other-gravitational-collapse
+  weight: 1
+  why: thick hot crust collapses into extension/plateau
+- factor: planet-factor.time
+  weight: 1
+  why: active orogens high, steep; dead orogens decay over 100s Myr
+vocabulary_id: 174
+sources:
+- https://en.wikipedia.org/wiki/Orogeny
+- https://wpg.forestry.oregonstate.edu/sites/default/files/seminars/2009_Whipple.pdf
+- https://earthweb.ess.washington.edu/roe/Publications/RoeEtal_ClimateWedge_08.pdf
+- https://en.wikipedia.org/wiki/Convergent_boundary
+library_status: planned
+source: tectonic.province.orogen
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

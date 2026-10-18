@@ -1,0 +1,61 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.run-ledger-and-snapshots
+  name: Run clock, ledger, volume budget, snapshots and history
+  about: 'The loop runs t from START_GYR to the star''s age. Continental volume changes are booked per named step in w.budget
+    (whole run) and w._step (this step) via note(); each step appends a ledger row (t, per-step changes in km3, cont_volume
+    km3, zone stats). snapshot(w,t) every every_myr (after read: changes the run), history(copy) every history_myr (never
+    changes the run, except relief timed generators run on the real world). SIM_SNAPSHOT_SAVE pickles state at the start of
+    the coupled era; SIM_SNAPSHOT_LOAD resumes. Per-sample diagnostics: w.volc, w.cause. Log every 400 steps.'
+area: plates
+clock:
+  when: every step
+writes:
+- name: w.budget, w.ledger, w.consumed, w.events
+events_emitted:
+- event: planet-event.ledger-row
+  where: stages/plates.py:1419-1422
+- event: planet-event.snapshot
+  where: stages/plates.py:945
+- event: planet-event.history
+  where: stages/plates.py:958
+params:
+- name: snap_save
+  env: SIM_SNAPSHOT_SAVE
+  setting: none
+  meaning: pickle the whole run state once, at the first step of the coupled era (only if COUPLED)
+  source: stages/plates.py:901
+  note: 'unit: path'
+- name: snap_load
+  env: SIM_SNAPSHOT_LOAD
+  setting: none
+  meaning: resume from a pickled state (world, rng state, clocks, fronts, resolution, hotspots, ledger); disables save
+  source: stages/plates.py:901
+  note: 'unit: path'
+- name: log every
+  value: 400.0
+  unit: '1'
+  meaning: 'unverified: the code names it log every without saying what it is'
+  source: stages/plates.py:1455
+random_draws:
+- SIM_SNAPSHOT_LOAD restores rng.bit_generator.state; seeding is one stream for the whole run, so any change to draws shifts
+  all later ones.
+invariants:
+- w.xage += dt every step for all particles
+- t advances by dt/1e3 Gyr
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/plates.py:run (776-779, 856-928, 943-962, 1406, 1417-1422, 1455-1457)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
+    code at planet-sim-landform 9747f0d-c437724.'

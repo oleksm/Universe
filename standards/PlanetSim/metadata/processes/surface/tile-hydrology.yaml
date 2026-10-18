@@ -1,0 +1,163 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.tile-hydrology
+  name: 'Fine-tile water: Budyko runoff, priority-flood basins, lakes, wetlands, playas, floodplains'
+  about: 'Water on the land at the fine tiles'' resolution: what runs off, where it gathers, how long it stays. Lakes, wetlands,
+    playas and floodplains all from the water''s balance, nothing from the look of the ground (flat ≠ marsh: a flat is wet
+    only if water reaches it faster than it dries). NOT INVENTORIED IN DETAIL: neither plates.py nor coupled.py imports hydrology.py
+    (directly or through another module); it is used by tools/landcover_tiles.py.'
+area: surface
+clock:
+  when: not part of the coupled planet run (offline tools / bakes)
+params:
+- name: BUDYKO_W
+  value: 2.6
+  unit: '1'
+  said_as:
+    unit: dimensionless
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/hydrology.py:26
+  note: 'unit as the code says it: ''dimensionless''; SI conversion unverified'
+- name: LAKE_EVAP
+  value: 1.1
+  unit: '1'
+  said_as:
+    unit: x PET
+    factor: 1.0
+  open: true
+  meaning: × PET
+  source: stages/hydrology.py:27
+  note: 'unit as the code says it: ''x PET''; SI conversion unverified'
+- name: FLAT_SLOPE
+  value: 0.002
+  unit: '1'
+  said_as:
+    unit: m/m
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/hydrology.py:28
+  note: 'unit as the code says it: ''m/m''; SI conversion unverified'
+- name: WETLAND_SLOPE
+  value: 0.0004
+  unit: '1'
+  said_as:
+    unit: m/m
+    factor: 1.0
+  open: true
+  meaning: '(Wet the year round only where drainage is impeded: dead-flat ground, the filled hollows the erosion leaves level
+    (no gradient to drain by). Gently sloping valley floors and terraces drain down their rivers, wet or not; counted as wetlands,
+    every flat in a humid climate turned to marsh (rain alone beats evaporation there).)'
+  source: stages/hydrology.py:33
+  note: 'unit as the code says it: ''m/m''; SI conversion unverified'
+- name: FLAT_MIN_PX
+  value: 6.0
+  unit: '1'
+  said_as:
+    unit: pixels (from the name, unverified)
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/hydrology.py:34
+  note: 'unit as the code says it: ''pixels (from the name, unverified)''; SI conversion unverified'
+- name: WET_H
+  value: 1.5
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/hydrology.py:35
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: SEASONAL_H
+  value: 0.5
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/hydrology.py:35
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: FLOODPLAIN_Q
+  value: 30.0
+  unit: '1'
+  said_as:
+    unit: m^3/s
+    factor: 1.0
+  open: true
+  meaning: m³/s
+  source: stages/hydrology.py:36
+  note: 'unit as the code says it: ''m^3/s''; SI conversion unverified'
+- name: FLOODPLAIN_SLOPE
+  value: 0.004
+  unit: '1'
+  said_as:
+    unit: m/m
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/hydrology.py:37
+  note: 'unit as the code says it: ''m/m''; SI conversion unverified'
+- name: FLOODPLAIN_WIDTHS
+  value: 15.0
+  unit: '1'
+  said_as:
+    unit: channel widths
+    factor: 1.0
+  open: true
+  meaning: × the channel's width
+  source: stages/hydrology.py:38
+  note: 'unit as the code says it: ''channel widths''; SI conversion unverified'
+- name: WIDTH_K
+  value: 7.0
+  unit: K
+  meaning: unverified (no comment)
+  source: stages/hydrology.py:39
+- name: LAKE_KM2
+  value: 3000000.0
+  unit: m2
+  said_as:
+    unit: km^2
+    factor: 1000000.0
+  meaning: channel width w = WIDTH_K·Q^0.5 m (Leopold & Maddock 1953)
+  source: stages/hydrology.py:43
+  note: '(A basin is a real one at LAKE_KM2 and LAKE_DEPTH_M (tools/fine_rivers.py''s rule): hollows of a cell or two are
+    the bake''s grain; in a landscape rivers carve, such hollows fill with sediment or are breached (Lindsay 2016), so they
+    count as flats.)'
+- name: LAKE_DEPTH_M
+  value: 5.0
+  unit: m
+  meaning: channel width w = WIDTH_K·Q^0.5 m (Leopold & Maddock 1953)
+  source: stages/hydrology.py:43
+  note: '(A basin is a real one at LAKE_KM2 and LAKE_DEPTH_M (tools/fine_rivers.py''s rule): hollows of a cell or two are
+    the bake''s grain; in a landscape rivers carve, such hollows fill with sediment or are breached (Lindsay 2016), so they
+    count as flats.)'
+- name: YEAR
+  value: 31560000.0
+  unit: s
+  meaning: unverified (no comment)
+  source: stages/hydrology.py:44
+random_draws:
+- not inventoried
+used: false
+note: 'unused by plates.py / coupled.py; users: tools/landcover_tiles.py'
+backends:
+- cpu
+implementations:
+- where: 'planet-sim-landform stages/hydrology.py: budyko_runoff (47-52), water (55-143)'
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
+    the code at planet-sim-landform 9747f0d-c437724.'

@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.volcanic.province.flood-basalt
+  name: Flood basalt province / lava plateau (traps)
+  about: Flood basalt province / lava plateau (traps).
+family: volcanic
+factors:
+- factor: planet-factor.tect-setting
+  weight: 3
+  why: mantle plume head under continent, often at incipient rifting/breakup
+- factor: planet-factor.other-magma-supply
+  weight: 3
+  why: huge pulses, >75% of 10^5-10^6 km3 in 1-5 Myr
+- factor: planet-factor.volc-vent
+  weight: 1
+  why: fissure eruptions fed by giant dike swarms >300 km
+- factor: planet-factor.volc-magma
+  weight: 1
+  why: 'tholeiitic basalt, very fluid: flows 10-100 m thick spread hundreds of km'
+- factor: planet-factor.rock-layers
+  weight: 3
+  why: stacked flows with interbeds/boles give stepped trap topography on erosion
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: plume uplift and later rift-flank uplift tilt plateau, make great escarpment
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: humid tropical weathering gives laterite caps and deep dissection
+- factor: planet-factor.time
+  weight: 1
+  why: post-eruption erosion turns plateau into mesas, buttes and escarpments over Myr
+vocabulary_id: 142
+sources:
+- https://en.wikipedia.org/wiki/Large_igneous_province
+- https://en.wikipedia.org/wiki/Dike_(geology)
+library_status: written
+source: volcanic.province.flood_basalt
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

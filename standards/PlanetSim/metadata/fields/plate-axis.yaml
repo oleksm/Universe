@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.plate-axis
+  name: Plate axis
+  about: 'A plate''s Euler pole: the unit vector it turns about (the direction of its torque when it has one).'
+unit: '1'
+producer:
+  where: planet-forge crates/forge-core/src/models/plates/init.rs, motion.rs
+  file: checkpoint
+  key: tables/plates/planet-field.plate-axis
+per: plate
+vector: true
+also_from:
+- where: stages/plates.py
+  key: Plate.axis
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: forge''s plates foundation (branch plates-foundation) and the Python sim''s World (stages/plates.py:247-393), read from the code.'

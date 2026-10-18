@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.ice-cycles
+  name: Ice cycles
+  about: How many times the sample was glaciated (ice over 50 m).
+unit: '1'
+per: sample
+producer:
+  where: stages/recent.py
+  file: ctx
+  key: r_ice_cycles
+source: r_ice_cycles
+levels:
+- planet-level.planet
+- planet-level.cluster
+basis:
+- of:
+  - identity
+  - producer
+  - said_as
+  tier: derived
+  note: 'planet-trees-pgs2 docs/sim-arrays.md (planets, 17 Oct 2026: checked against the code at aab9f6a, run earth_s25).'
+status: draft

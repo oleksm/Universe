@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/template.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: template.cable-flexible
+  name: Flexible trailing and reeling cables
+  description: 'Flexible trailing and reeling cables: one look for every size of the family, scaled to each record''s figures (the owner, 2026-10-17: never one model per size).'
+family: cable
+draws: sweep
+scales_by:
+- outside
+members: 4
+profile: a round rubber-sheathed cable of the record's outside
+basis:
+- of:
+  - draws
+  - scales_by
+  tier: derived
+  note: 'The owner, 2026-10-17: one template a family, scaled; the catalogue families (kit_catalogue.py).'

@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../schema/run.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: run.busbar-ac-65ka, name: 'Busbar, AC, 65 kA', description: 'A three-phase alternating current bus, its phases'' centres 0.6 m apart (0.3 m clear), each 11 hollow copper tubes 60 mm across, water-cooled, on post insulators: 65.0 kA a phase at 800 V. The tubes'' 10 mm wall is about the skin depth of copper at 50 Hz, so the current fills it; it loses 14,649 W a metre into its water, which the unit at its source carries away.'}
+kind: busbar
+size: 0.01728
+outside: [1.6, 0.32]
+rating: {voltage: 800.0, current: 64951.9}
+per_m:
+  mass: 560.0
+  power: 14649.5
+  built_of:
+  - {what: Conductors, item: material.copper, mass: 464.5, note: 'three phases of 11 tubes 60 x 10 mm, 17,279 mm2 a phase, in 3 rows of four'}
+  - {what: Cooling water, item: good.water, mass: 41.5, note: 'inside the tubes, half of them flow and half return, turned at the far joint'}
+  - {what: Clamps and spacers, item: material.structural-steel-a36, mass: 54.0, note: 'a clamp a row every metre, from memory'}
+elbow: {radius: 1.32, mass: 1161.1}
+riser: {radius: 0.68, mass: 598.2}
+support: {spacing: 3.0, mass: 75.0, per_m_height: 25.0, item: material.structural-steel-a36}
+connector: connector.bus-joint-ac-65ka
+carries: power
+triangle_budget: 28000
+template: template.busbar
+visual: {format: freefall-model/1, path: models/busbar-ac-65ka/v1, manifest_sha256: eabaad9fda02ccfd7ef30f358e6d63a396d9d8b1f2a3df8df3a3a4023f54772a, version: 1, triangles: 26320}
+basis:
+- of: [per_m]
+  tier: derived
+  review: true
+  note: 'Copper at 4 A/mm2 water-cooled (from memory); its loss by its resistance at 60 deg C (the AC resistance taken as the DC''s: the wall is about one skin depth).'
+- of: [elbow, riser, support]
+  tier: invented
+  review: true
+  note: Each tube bent at 0.6 m or more, so the bus's axis bends at that plus its outermost tube's offset; a steel post with three insulators, one a phase, every 3 m (from memory).

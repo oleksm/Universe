@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.tectonic.uplift.plateau
+  name: Plateau (tectonic/epeirogenic)
+  about: Plateau (tectonic/epeirogenic).
+family: tectonic
+factors:
+- factor: planet-factor.tect-setting
+  weight: 3
+  why: craton epeirogeny, mantle upwelling, or orogenic crustal thickening (Tibet ~4.5-5 km)
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: broad uplift amount and rate with little internal deformation
+- factor: planet-factor.volc-magma
+  weight: 1
+  why: flood basalt stacks build volcanic plateaus
+- factor: planet-factor.rock-layers
+  weight: 3
+  why: flat-lying hard cover keeps flat top, makes cliffs and mesas
+- factor: planet-factor.clim-arid
+  weight: 1
+  why: arid/internally drained plateaus keep low relief; rain-shadowed by bounding ranges
+- factor: planet-factor.base-level
+  weight: 1
+  why: drop of external base level drives canyon incision at edges
+- factor: planet-factor.water-discharge
+  weight: 1
+  why: through-flowing rivers dissect into canyons
+- factor: planet-factor.time
+  weight: 1
+  why: 1-70 Myr; dissection grows with time since uplift
+vocabulary_id: 130
+sources:
+- https://en.wikipedia.org/wiki/Plateau
+- https://earthweb.ess.washington.edu/roe/Publications/RoeEtal_ClimateWedge_08.pdf
+library_status: written
+source: tectonic.uplift.plateau
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

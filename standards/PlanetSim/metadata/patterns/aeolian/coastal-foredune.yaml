@@ -1,0 +1,53 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.aeolian.dune.coastal-foredune
+  name: Coastal foredune
+  about: Coastal foredune.
+family: aeolian
+factors:
+- factor: planet-factor.clim-wind
+  weight: 3
+  why: onshore to oblique strong winds; highest flux at moderate oblique incidence
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: stable or prograding coast with sand supply; inverse dune volume with grain size
+- factor: planet-factor.bio-veg
+  weight: 3
+  why: burial-tolerant grasses trap sand; species set shape (marram high, steep)
+- factor: planet-factor.waves-tides
+  weight: 1
+  why: wide dissipative beach gives fetch, ~60% higher transport than reflective
+- factor: planet-factor.groundwater
+  weight: 1
+  why: beach moisture from water table reduces transport
+- factor: planet-factor.clim-storm
+  weight: 1
+  why: storm scarping and overwash set foredune back
+- factor: planet-factor.sea-level
+  weight: 1
+  why: rising sea level erodes; stable allows growth
+- factor: planet-factor.time
+  weight: 1
+  why: years to centuries
+vocabulary_id: 145
+sources:
+- https://www.coastalwiki.org/wiki/Dune_development
+- https://www.nps.gov/articles/sandy-coast-landforms.htm
+- https://en.wikipedia.org/wiki/Dune
+library_status: planned
+source: aeolian.dune.coastal_foredune
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

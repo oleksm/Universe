@@ -1,17 +1,34 @@
 # yaml-language-server: $schema=../../schema/rock-unit.schema.yaml
-# Brought in by tools/standards/geology_import.py from the planet simulation's vocabulary.
 identity:
   key: rock-unit.rift-basalt
-  name: "Rift basalt and red beds"
-  about: "Lava and red sandstone of a rift."
-sim: { key: rift }
-made_by: [rift]
+  name: Rift basalt and red beds
+  about: Lava and red sandstone of a rift.
+sim:
+  key: rift
+  index: 11
+  colour:
+  - 200
+  - 120
+  - 90
+  erodibility: 1.4
+  written_by: stretched continent (plates.py:1245)
+made_by:
+- rift
 physical:
   density: 2550.0
   magnetic_susceptibility: 0.002
   erodibility: 1.4
 yields:
-  - { item: good.aggregate, quality: "50 to 150 strength MPa" }
-  - { item: good.clay, quality: "12 to 25 Al2O3 %" }
+- item: good.aggregate
+  quality: 50 to 150 strength MPa
+- item: good.clay
+  quality: 12 to 25 Al2O3 %
 basis:
-  - { of: [sim, physical, yields], tier: sourced, review: true, source: "the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)", note: "As the simulation has it." }
+- of:
+  - sim
+  - physical
+  - yields
+  tier: sourced
+  review: true
+  source: 'the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)'
+  note: As the simulation has it.

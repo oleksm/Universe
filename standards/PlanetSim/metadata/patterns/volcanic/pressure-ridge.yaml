@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.volcanic.flow.pressure-ridge
+  name: Pressure ridge (lava)
+  about: Pressure ridge (lava).
+family: volcanic
+factors:
+- factor: planet-factor.volc-magma
+  weight: 3
+  why: pahoehoe basalt with brittle crust over fluid core
+- factor: planet-factor.slope-relief
+  weight: 3
+  why: very low slopes (<~2 deg) favour inflation features
+- factor: planet-factor.other-effusion-rate
+  weight: 3
+  why: sustained supply under crust lifts plates into ridges <=15 m; excess supply gives pressure plateaus
+- factor: planet-factor.relief-inherited
+  weight: 1
+  why: confinement by topography or flow margins restricts flow, focusing ridges
+- factor: planet-factor.time
+  weight: 1
+  why: forms during weeks-months of sustained supply
+vocabulary_id: 181
+sources:
+- https://en.wikipedia.org/wiki/Pressure_ridge_(lava)
+library_status: planned
+source: volcanic.flow.pressure_ridge
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

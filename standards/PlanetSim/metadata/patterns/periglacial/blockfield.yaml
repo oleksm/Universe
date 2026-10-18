@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.periglacial.slope.blockfield
+  name: Blockfield (felsenmeer)
+  about: Blockfield (felsenmeer).
+family: periglacial
+factors:
+- factor: planet-factor.rock-type
+  weight: 1
+  why: Resistant jointed rock (granite, quartzite, basalt)
+- factor: planet-factor.rock-fracture
+  weight: 3
+  why: Joint spacing sets block size
+- factor: planet-factor.clim-temp
+  weight: 1
+  why: Frost wedging in periglacial climate
+- factor: planet-factor.slope-relief
+  weight: 3
+  why: Plateaus and slopes <25 deg; steeper becomes talus
+- factor: planet-factor.ice-thermal
+  weight: 3
+  why: Survives under cold-based ice or on nunataks
+- factor: planet-factor.clim-history
+  weight: 1
+  why: Neogene chemical weathering preconditions some fields
+- factor: planet-factor.time
+  weight: 1
+  why: 10 kyr to millions of years
+vocabulary_id: 110
+sources:
+- https://en.wikipedia.org/wiki/Blockfield
+- https://www.antarcticglaciers.org/glacial-geology/glacial-landforms/periglaciation/periglacial-landforms/
+library_status: written
+source: periglacial.slope.blockfield
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

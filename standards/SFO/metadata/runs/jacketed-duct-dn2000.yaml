@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=../../schema/run.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: run.jacketed-duct-dn2000, name: Water-jacketed duct DN 2000, description: 'A 2000 mm duct for a furnace''s hot gas at about 1 bar, its steel kept cool by water in a 100 mm jacket round it; the jacket''s water comes and goes by pipes ending on it. Its bends are mitred, one bore in radius.'}
+kind: jacketed-duct
+size: 2.0
+bore: 2.0
+outside: [2.232, 2.232]
+rating: {pressure: 100000.0, temperature: 1873.0}
+per_m:
+  mass: 1491.1
+  built_of:
+  - {what: Inner shell, item: material.structural-steel-a36, mass: 495.7, note: '2000 mm bore, 10 mm plate, the hot face'}
+  - {what: Outer shell, item: material.structural-steel-a36, mass: 329.4, note: '6 mm, round a 100 mm water gap'}
+  - {what: Jacket water, item: good.water, mass: 666.0, note: 'in the gap, flowing'}
+jacket: {heat: 7200000.0, rise: 10.0}
+jacket_stub: {bore: 0.3, mass: 42.4}
+jacket_end: {mass: 62.7}
+elbow: {radius: 2.0, mass: 4746.3}
+support: {spacing: 12.0, mass: 208.6, per_m_height: 60.9, item: material.structural-steel-a36}
+cap: {thickness: 0.024, mass: 591.9}
+connector: connector.flange-dn2000-pn1
+carries: gas
+template: template.jacketed-duct
+visual:
+  format: "freefall-model/1"
+  path: "models/jacketed-duct-dn2000/v1"
+  manifest_sha256: "19094b81a25f6b408de23b460c05fa395563ec3e39e1f3c76d7afa02c7394713"
+  version: 1
+  triangles: 6124
+basis:
+- of: [per_m]
+  tier: derived
+  review: true
+  note: Shells and water from their dimensions; the plate and gap from memory of furnace off-gas ducts.
+- of: [support, elbow, jacket, jacket_stub, jacket_end]
+  tier: derived
+  review: true
+  note: Spacing from the span it bears full at 1 g, 12.0 m; a bend of four mitres 1.3% longer along its centreline than the arc (3.183 m for the DN 2000's, measured on blender's kit); the jacket's water 10 K warmer out than in. A jacket stub is a 10 mm nozzle 0.4 m long through the outer shell, its bore the water pipe's, on a 12 mm pad 0.1 m wider; a jacket end the 12 mm annular plate closing the water gap where the duct meets a flange or hood. Stands from memory.

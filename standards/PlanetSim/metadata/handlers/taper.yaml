@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/planet-handler.schema.yaml
+identity:
+  key: planet-handler.taper
+  name: Taper
+  about: The mesher's taper law.
+law: the region's mesh tapers to the planet surface at its margin
+params:
+- name: width
+  value: 2000.0
+  unit: m
+applies_when: at every region's margin
+where: tools/anchored_mesh.py
+levels:
+- planet-level.cluster
+- planet-level.pattern
+basis:
+- of:
+  - identity
+  tier: derived
+  note: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+- of:
+  - params
+  tier: derived
+  note: planet-trees-pgs2 tools/anchored_mesh.py KS and THRESH_DEG; the rest sim-architecture.md 3.5.
+status: draft

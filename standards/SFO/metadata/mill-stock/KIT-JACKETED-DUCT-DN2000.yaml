@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-jacketed-duct-dn2000
+  code: KIT-JACKETED-DUCT-DN2000
+  name: Water-jacketed duct DN 2000, a 6 m length
+  traded_as: market.machinery
+  form: length
+package: package.bar-bundle
+made_from:
+- item: material.structural-steel-a36
+size:
+  length: 6.0
+  diameter: 2.232
+supplies:
+  item: run.jacketed-duct-dn2000
+  length: 6.0
+physical:
+  mass: 8946.6
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: 'a 6 m length of run.jacketed-duct-dn2000: its mass a metre times the length sold.'

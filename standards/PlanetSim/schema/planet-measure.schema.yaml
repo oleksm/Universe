@@ -1,0 +1,43 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Planet measure
+x-kind: [planet-measure]
+description: "standards/PlanetSim/metadata/measures/<name>.yaml: a figure that judges generated ground against real ground: what it is, its unit, how it is taken, and the reference range with its source."
+type: object
+additionalProperties: false
+required: [identity, unit]
+allOf:
+  - { $ref: "../../common.schema.yaml#/definitions/planet_context" }
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name, about]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      about: { type: string, description: "What it is, in a sentence or two: the word's meaning." }
+  unit: { type: string, description: "SI, or 1, or deg." }
+  said_as: { $ref: "../../common.schema.yaml#/definitions/said_as" }
+  how: { type: string, description: "How it is taken (window, sampling, fit)." }
+  tool: { type: string, description: "The tool that takes it (tools/terrain_compare.py)." }
+  reference:
+    type: object
+    additionalProperties: false
+    properties:
+      range: { type: array, minItems: 2, maxItems: 2, items: { type: number, x-unit-from: unit }, description: "Real ground, in its unit." }
+      of: { type: string, description: "What ground (real mountains)." }
+      source: { type: string, description: "Where it was measured (USGS 3DEP 1/3 arc-second)." }
+  scorecard:
+    type: object
+    description: "How the run's scorecard grades it: Earth's value, the ok and warn bands, the era it applies in and the grading rule."
+    additionalProperties: false
+    properties:
+      earth: { type: number, x-unit-from: unit }
+      ok: { type: array, minItems: 2, maxItems: 2, items: { type: number, x-unit-from: unit } }
+      warn: { type: array, minItems: 2, maxItems: 2, items: { type: number, x-unit-from: unit } }
+      era: { type: string }
+      grade: { type: string }
+      source: { type: string }
+  ours: { type: array, items: { type: object, additionalProperties: false, required: [value, what], properties: { value: { type: number, x-unit-from: unit }, what: { type: string }, date: { type: string } } }, description: "Our ground's figure, by mesher and date: the gap to close." }
+  status: { enum: [draft, published, retired], description: "draft: the sim builds against the word, not yet the figures" }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

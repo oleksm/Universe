@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/planet-measure.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry_extra.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-measure.earth-cell-relief
+  name: Earth cell relief (rugged quantiles)
+  about: formations.rugged quantile-matches the sim's ranking to ETOPO 2022 30k-cell relief (~/planet-data/scratch/earth_cell_relief_30k.npy)
+unit: m
+how: 'formations.rugged quantile-matches the sim''s ranking to ETOPO 2022 30k-cell relief (~/planet-data/scratch/earth_cell_relief_30k.npy);
+  Earth: {"median": 320, "share_above_600": 0.33, "share_above_900": 0.22, "share_above_1500": 0.09} (m (p95-p5 inside ~130
+  km cells))'
+tool: ~/git/planet-trees-pgs2/tools/formations.py:25-54
+status: draft
+basis:
+- of:
+  - scorecard
+  tier: sourced
+  source: Earth values as the Python sim cites them (scorecard.py TARGETS and legends)
+  review: true

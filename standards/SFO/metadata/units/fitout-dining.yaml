@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: unit.fitout-dining
+  name: Dining bay
+  description: 'Four tables of four and their chairs: a tavern''s, an inn''s or a canteen''s room to eat.'
+size_class: 1
+fits: plant-mount.bay-s1
+physical:
+  length: 6.0
+  width: 6.0
+  height: 2.2
+  mass: 420.0
+built_of:
+- what: Tables
+  item: material.aluminium-alloy-6061
+  mass: 160.0
+  note: four
+- what: Chairs
+  item: material.aluminium-alloy-6061
+  mass: 170.0
+  note: sixteen
+- what: Tops and seats
+  item: material.polyethylene-uhmw
+  mass: 90.0
+basis:
+- of:
+  - built_of
+  - physical
+  tier: invented
+  review: true
+  note: 'A furnished 6 m bay (its size is what is fitted; the bay, plant-mount.bay-s1, is what it is given): 16 people served or seated, 0 at work in it; masses from memory of such furniture, to be sourced.'
+revision:
+  status: deprecated
+  owner: registry
+  on_conflict: propose
+  replaced_by: arrangement.dining
+  because: 'The owner, 2026-10-17: one model a piece (a table, a chair); the layout places pieces by an arrangement, never a furnished set as one model.'

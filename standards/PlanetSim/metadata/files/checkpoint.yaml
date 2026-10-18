@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/planet-file.schema.yaml
+identity:
+  key: planet-file.checkpoint
+  name: Checkpoint
+  about: The run's checkpoint file.
+path: out/planet/<run>/ck_NN_<kyr>.npz
+written_by: planet_form.py Former.save_checkpoint
+source: checkpoint
+bookkeeping:
+- key: p
+  meaning: sample positions on the unit sphere (routing positions)
+- key: R
+  meaning: planet radius, m
+- key: down
+  meaning: the routing's downstream sample, -1 none (equals h_down but at 14 coastal samples)
+basis:
+- of:
+  - identity
+  - producer
+  - said_as
+  tier: derived
+  note: 'planet-trees-pgs2 docs/sim-arrays.md (planets, 17 Oct 2026: checked against the code at aab9f6a, run earth_s25).'
+status: draft

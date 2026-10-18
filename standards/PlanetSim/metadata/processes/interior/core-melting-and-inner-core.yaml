@@ -1,0 +1,114 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.core-melting-and-inner-core
+  name: Core melting curve and inner-core size
+  about: 'The core alloy''s melting point against pressure: pure iron by the Anzellini et al. 2013 Simon-Glatzel fit, T =
+    1991·((P_GPa − 5.2)/27.39 + 1)^(1/2.38) (P floored at 5.2 GPa), lowered by 15,800 K per unit light-element mass fraction
+    but never below 0.6 of pure iron''s (Fe-FeS eutectic). The inner core''s radius is where the core adiabat T_cmb·exp((Rc²
+    − r²)/D²) meets the melting curve (Brent root, xtol 10 m; 0 if the centre is still liquid, Rc if all frozen). Tabulated
+    once per world over 2000 CMB temperatures, then read by linear interpolation, with dR/dT by a ±0.5 K central difference.'
+area: interior
+clock:
+  when: once per world (table); read every ODE evaluation
+reads:
+- name: p_cmb, p_centre, core_pressure(r)
+  unit: Pa
+  meaning: core pressures
+- name: core_light
+  unit: '1'
+  meaning: light-element mass fraction
+- name: adiabat_scale
+  unit: m
+  meaning: D
+- name: t_cmb
+  unit: K
+  meaning: core top temperature
+writes:
+- name: melting(p)
+  unit: K
+  meaning: alloy melting point
+- name: r_ic
+  unit: m
+  meaning: inner-core radius
+- name: dric_dtc
+  unit: m/K
+  meaning: inner-core radius slope against T_cmb (negative while growing)
+params:
+- name: LIGHT_MELT_DROP
+  value: 15800.0
+  unit: '1'
+  said_as:
+    unit: K per unit mass fraction
+    factor: 1.0
+  open: true
+  meaning: 'melting-point drop from light elements (chosen: Earth''s 8 wt% → 1,260 K, gives 1,221 km inner core today)'
+  source: src/planet_sim/stages/interior.py:76
+  note: 'unit as the code says it: ''K per unit mass fraction''; SI conversion unverified'
+- name: EUTECTIC_SHARE
+  value: 0.6
+  unit: '1'
+  meaning: 'floor: never below 0.6 × pure iron''s melting point (Fei et al. 1997)'
+  source: src/planet_sim/stages/interior.py:77
+- name: Anzellini T0
+  value: 1991.0
+  unit: K
+  meaning: iron melting point at the 5.2 GPa reference
+  source: src/planet_sim/stages/interior.py:143
+- name: Anzellini P0
+  value: 5200000000.0
+  unit: Pa
+  said_as:
+    unit: GPa
+    factor: 1000000000.0
+  meaning: reference pressure; pressure floored here
+  source: src/planet_sim/stages/interior.py:142
+- name: Anzellini a
+  value: 27390000000.0
+  unit: Pa
+  said_as:
+    unit: GPa
+    factor: 1000000000.0
+  meaning: Simon-Glatzel a
+  source: src/planet_sim/stages/interior.py:143
+- name: Anzellini c
+  value: 2.38
+  unit: '1'
+  meaning: Simon-Glatzel exponent c
+  source: src/planet_sim/stages/interior.py:143
+- name: inner-core table size
+  value: 2000.0
+  unit: '1'
+  said_as:
+    unit: count
+    factor: 1.0
+  meaning: CMB-temperature samples, from min(T_lo,T_hi)−1 to T_hi+1 K
+  source: src/planet_sim/stages/interior.py:167
+- name: brentq xtol
+  value: 10.0
+  unit: m
+  meaning: root tolerance
+  source: src/planet_sim/stages/interior.py:187
+random_draws:
+- none
+invariants:
+- 0 ≤ r_ic ≤ Rc
+- r_ic non-increasing in T_cmb
+- melting ≥ EUTECTIC_SHARE × iron
+depends_on:
+- planet-process.interior-structure
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform src/planet_sim/stages/interior.py:melting (139-144), inner_core (179-187), InnerCore (158-176)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

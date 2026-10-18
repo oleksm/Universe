@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.aeolian.dune.carbonate-eolianite
+  name: Carbonate eolianite (lithified coastal carbonate dune)
+  about: Carbonate eolianite (lithified coastal carbonate dune).
+family: aeolian
+factors:
+- factor: planet-factor.other-carbonate-factory
+  weight: 3
+  why: offshore shell/skeletal carbonate sand production
+- factor: planet-factor.clim-temp
+  weight: 1
+  why: warm 20-40 deg latitude bands; few near equator or poles
+- factor: planet-factor.clim-wind
+  weight: 3
+  why: onshore winds move beach sand into dunes
+- factor: planet-factor.sed-supply
+  weight: 1
+  why: low siliciclastic input
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: low onshore topography, broad shelf
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: low-moderate rain promotes fast vadose cementation
+- factor: planet-factor.sea-level
+  weight: 3
+  why: interglacial highstands (or transgressions) flood shelf and feed dunes
+- factor: planet-factor.tect-setting
+  weight: 1
+  why: tectonic stability
+- factor: planet-factor.time
+  weight: 1
+  why: cycles of dune phases over 100s kyr
+vocabulary_id: 144
+sources:
+- https://en.wikipedia.org/wiki/Eolianite
+- https://www.mdpi.com/2077-1312/13/2/321/htm
+library_status: planned
+source: aeolian.dune.carbonate_eolianite
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

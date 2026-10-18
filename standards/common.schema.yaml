@@ -103,6 +103,7 @@ definitions:
       fixed: { type: array, items: { type: string }, description: "The groups or figures that will not change, where the rest may." }
       because: { type: string, description: "Why it stands where it does: what it rests on, or what waits on it." }
       ask: { type: string, description: "Where a proposal to change it goes: a file of the repository." }
+      replaced_by: { type: string, description: "What replaces a deprecated record, by key, or the kind that will (layout)." }
       priority: { enum: [low], description: "low: its work waits behind everything else (the asset queue puts it last): a hold the user set, said in because" }
   mark:
     description: "A made thing's mark (SFO 21): given once where it is made and never changed. What carries one: hulls, equipment, industrial modules, structures, parts (one serial a unit). Ownership and registration are separate records that point at the serial. The game stamps every unit it produces; the registry carries marks only on day-0 stock."
@@ -174,6 +175,105 @@ definitions:
       properties:
         profession: { type: string, x-ref: [profession], description: "The trade, by its key." }
         count: { type: integer, minimum: 0, description: "how many of them" }
+  planet_context:
+    description: "Where a Planet Simulator word sits in the context tree (standards/PlanetSim): the levels it means something at, and its links, so a tool working at one level takes that level's words and its parent's frozen anchors. A shape: each Planet Simulator kind derives from it (allOf)."
+    type: object
+    additionalProperties: false
+    properties:
+      levels: { type: array, items: { type: string, x-ref: [planet-level] }, description: "The levels it is meaningful at." }
+      parent: { type: string, x-ref: [planet-line, planet-landmark, planet-layer, planet-field], description: "What it hangs from one level up (a tributary from its trunk river, a peak from its crest spine)." }
+      children: { type: array, items: { type: string, x-ref: [planet-line, planet-landmark] }, description: "The kinds it expands into one level down." }
+      bounded_by: { type: array, items: { type: string, x-ref: [planet-line] }, description: "The line kinds that bound it (a layer's boundaries)." }
+      made_by: { type: array, items: { $ref: "dictionary.schema.yaml#/definitions/geological_event" }, description: "The events that make it." }
+      handled_by: { type: array, items: { type: string, x-ref: [planet-handler] }, description: "The mesher handlers that draw it." }
+      measured_by: { type: array, items: { type: string, x-ref: [planet-measure] }, description: "The measures that judge it against real ground." }
+      source: { type: string, description: "The sim's own word for it, exactly as its code or files write it (a constant, a type string, an array key): what the extractor matches." }
+  sim_param:
+    description: "One parameter of the planet sim (Planet Simulator): its name in the code, the old environment setting that set it, its value in SI with how the code says it, its range, what it means, where it is set (file:line), and whether it is still open."
+    type: object
+    additionalProperties: false
+    required: [name, meaning]
+    properties:
+      name: { type: string, description: "Its name in the code (EARTH_SPEED)." }
+      env: { type: string, description: "The old environment setting (SIM_*), when one set it." }
+      value: { type: number, x-unit-from: unit, description: "In SI (or 1)." }
+      values: { type: array, items: { type: number, x-unit-from: unit }, description: "When it is a list or a schedule." }
+      setting: { type: string, description: "When it is not a number: a flag, a choice, a name." }
+      unit: { type: string, description: "SI, 1, or deg." }
+      said_as: { $ref: "#/definitions/said_as" }
+      range: { type: array, minItems: 2, maxItems: 2, items: { type: number, x-unit-from: unit } }
+      meaning: { type: string }
+      source: { type: string, description: "Where the code sets it: file:line." }
+      note: { type: string }
+      open: { type: boolean, description: "true: a draft, not settled." }
+      used: { type: boolean, description: "false: set but read nowhere in the code." }
+  feature_quantity:
+    description: "A figure every instance of a relief feature kind carries (a dimension, or a layout parameter): its name, its SI unit, what it means, the law that sets it in words, its formula and its parameters."
+    type: object
+    additionalProperties: false
+    required: [name, meaning]
+    properties:
+      name: { type: string }
+      unit: { type: string, description: "SI, 1, or deg." }
+      meaning: { type: string }
+      rule: { type: string, description: "The scaling law in words, with its source (width grows as the square root of discharge, Leopold and Maddock 1953)." }
+      formula: { type: string, description: "The law as a formula in the names of its parameters (a * Q^b)." }
+      params: { type: array, items: { $ref: "#/definitions/sim_param" } }
+  sim_io:
+    description: "A value a planet process reads or writes: the code's name, the Planet Simulator field it is (when there is one), its unit and meaning."
+    type: object
+    additionalProperties: false
+    required: [name]
+    properties:
+      name: { type: string, description: "The code's name (w.x, h.column('heat_flow_mantle_tw'))." }
+      field: { type: string, x-ref: [planet-field], description: "The Planet Simulator field it is." }
+      unit: { type: string }
+      meaning: { type: string }
+  planet_legend:
+    description: "A legend as a page draws it: a title, a subtitle, and its rows, each a kind (head, fill, line, dot), a colour and a label (a template may hold {placeholders} the view fills)."
+    type: object
+    additionalProperties: false
+    required: [title, rows]
+    properties:
+      name: { type: string }
+      title: { type: string }
+      sub: { type: string }
+      source: { type: string }
+      rows:
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          required: [kind, label]
+          properties:
+            key: { type: string, description: "What the row stands for, for the tool that draws it (rock:morb, coast): its colour is found by it." }
+            kind: { type: string, description: "head, fill, line, dot..." }
+            colour: { type: array, items: { type: integer, minimum: 0, maximum: 255, x-unit: "1" }, description: "RGB" }
+            label: { type: string }
+            shown: { type: boolean }
+            style: { type: string, enum: [solid, dashed, dotted, dashdot], description: "A line row's line style." }
+            width: { type: number, minimum: 0, x-unit: "1", description: "A line row's width, pixels at 1,000 px a picture." }
+            shown_when: { type: string, description: "When the page shows the row (always, ctx...)." }
+  said_as:
+    description: "How the sim or its people say a figure, beside the registry's SI value: their unit and the factor from it to SI (SI = value x factor)."
+    type: object
+    additionalProperties: false
+    required: [unit, factor]
+    properties:
+      unit: { type: string, description: "Their unit: m3/yr, km2, Myr, degC." }
+      factor: { type: number, x-unit: "1", description: "SI value = their value x this (an offset unit like degC says its offset in a note)." }
+      note: { type: string }
+  model_request:
+    description: "Work the registry asks of a record's model (tools/standards/model_spec.py, docs/asset-contract.md): rebuild (its body changed: a part moved, was added or turned out wrong), rig (its moving parts want pivots, nodes or a motion file), measure (its envelope boxes are to be measured from the installed model), optimise (over its triangle budget). Asked of one installed version: a later version answers it. A port moving is never a request (the game draws the joint at the port)."
+    type: object
+    additionalProperties: false
+    required: [work, because, asked, of_version]
+    properties:
+      work: { enum: [rebuild, rig, measure, optimise, keep], description: "What is asked of the model; keep: a review found the model shows the record as it is, no work (closes the review for that version)." }
+      because: { type: string, description: "What changed or is wrong, and what the new model must do: plainly, so a modeller can act on it." }
+      asked: { type: string, format: date, description: "When it was asked (YYYY-MM-DD)." }
+      of_version: { type: integer, minimum: 0, description: "The installed version it is asked of; a version above it answers it." }
+      by: { type: string, description: "Who asks: the session or agent." }
   visual:
     description: "A made thing's model (the asset contract, docs/asset-contract.md): a package in the assets store (UNIVERSE_ASSETS, else ~/git/freefall-assets) written once per version by tools/standards/install_model.py, which checks the model against this record (its size, its required nodes, its budget) and the package's files against their hashes. Without one the game draws the record as a translucent box of its size with its name on the edges."
     type: object
@@ -185,6 +285,50 @@ definitions:
       manifest_sha256: { type: string, pattern: "^[0-9a-f]{64}$", description: "Of the version's manifest.json." }
       version: { type: integer, minimum: 1 }
       triangles: { type: integer, description: "triangles drawn, from the model" }
+      note: { type: string }
+  port:
+    type: object
+    additionalProperties: false
+    required: [id, flow, medium, interface, at, facing]
+    description: "One place where something goes in or comes out of a made thing (SFO 25, SFO 26): a unit, a piece of equipment, a module or a layout. It is built to an interface (a standard's mating face) and carries one half of it; it states the duty it needs, so any maker's connection product built to that interface and rated for that duty fits it. The game draws the joint at the port, and the thing's own model ends at the mating plane."
+    properties:
+      id: { type: string, description: "Its name on the thing, unique there (gas-in, water-out, hv, base)." }
+      flow: { enum: [in, out, both], description: "Which way what it carries goes at full rate: in, out, or both (a power port feeding and fed). For a load port: out, the thing's weight going down into what bears it." }
+      medium: { enum: [gas, liquid, bulk, power, signal, heat, load, carrier, people], description: "What crosses it: gas, liquid or bulk solids; power; signal (control and data); heat (by a heat pipe or a contact); load (weight and working forces into what bears it); carrier (a batch on a car, a crane's hook, a container's lock); people (an airlock, a docking ring)." }
+      interface: { type: string, x-ref: [interface], description: "The interface it is built to (SFO 26), by key: its mating face and the envelope a product built to it must meet." }
+      half: { enum: [male, female, androgynous], description: "Which half of the interface the thing itself carries; the joining product brings the other (androgynous: both halves are the same)." }
+      make: { enum: [permanent, bolted, manual, automatic, open], description: "How the joint is made and broken here: welded once; bolted; by hand (a plug, a quick coupling, a crew's work, a game action); automatically (a clamp, a docking ring, a coupler); open (nothing mates: a belt's head over a hopper, a hood over an outlet)." }
+      connector: { type: string, x-ref: [connector], description: "The connection product the registry's own layouts join it with, by key; any other product built to the same interface and rated for the duty fits as well." }
+      item: { type: string, x-ref: [material, stock, good, package], description: "What it carries, by key; none for power, signal or load." }
+      rate: { type: number, minimum: 0, x-unit: "kg/s", description: "kg/s at the thing's rating: the duty a product must carry" }
+      power: { type: number, minimum: 0, x-unit: "W", description: "W through it at the thing's rating (power or heat)" }
+      pressure: { type: number, minimum: 0, x-unit: "Pa", description: "Pa inside it in service" }
+      temperature: { type: number, minimum: 0, x-unit: "K", description: "K of what it carries" }
+      voltage: { type: number, minimum: 0, x-unit: "V", description: "V between phases (a power port)" }
+      current: { type: number, minimum: 0, x-unit: "A", description: "A a phase through it at the thing's rating" }
+      mass: { type: number, minimum: 0, x-unit: "kg", description: "A load port: kg it bears down through it, the thing and what it holds (its weight is this times the site's gravity). A carrier port: kg a batch weighs." }
+      force: { type: number, minimum: 0, x-unit: "N", description: "A load port: N of working force on top of its weight, at its worst (a crane wheel's reaction, a tilt, a thrust)" }
+      moment: { type: number, minimum: 0, x-unit: "N m", description: "A load port: N m of working moment at its worst" }
+      cycle: { type: number, exclusiveMinimum: 0, x-unit: "s", description: "A carrier port: s between batches" }
+      moves_with: { type: string, description: "The id of the thing's motion this port moves with (a tilting furnace's outlet): its joint must let it move." }
+      at: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "m", description: "Its face's middle in the thing's frame (x along, y across from its middle, z up from its base)." }
+      facing: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "1", description: "The way out of its face, a unit vector in the thing's frame: a run leaves it this way." }
+      optional: { type: boolean, description: "A spare, blinded when nothing joins it." }
+      note: { type: string }
+  motion:
+    type: object
+    additionalProperties: false
+    required: [id, kind]
+    description: "A way a made thing or a part of it moves in service (SFO 26): a fit check sweeps what moves through its range, and its moving ports need joints that let them."
+    properties:
+      id: { type: string }
+      kind: { enum: [tilt, rotate, travel, lift, dock], description: "tilt or rotate: about an axis; travel or lift: along one; dock: coming to rest against a mating face." }
+      point: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "m", description: "A point on its axis, in the thing's frame" }
+      direction: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "1", description: "Its axis, a unit vector" }
+      angle: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "rad", description: "rad from rest it turns, least and most (a tilt or a rotation)" }
+      distance: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "m", description: "m from rest it moves, least and most (a travel or a lift)" }
+      moves: { type: array, items: { type: string }, description: "What moves: the whole thing, or its named parts" }
+      boxes: { type: array, items: { type: integer, minimum: 0 }, description: "Which of the thing's envelope boxes move with it, by index; none given: all of them; an empty list: none sweeps beyond itself (a drum spinning on its own axis)." }
       note: { type: string }
   physical_object:
     description: "A thing that exists in the world: it has physical figures. A kind of record that is one derives from this (allOf), and adds the figures its kind must have. A company, a law or a need does not."

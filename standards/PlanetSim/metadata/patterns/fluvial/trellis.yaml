@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.network.trellis
+  name: Trellis drainage pattern
+  about: Trellis drainage pattern.
+family: fluvial
+factors:
+- factor: planet-factor.rock-layers
+  weight: 3
+  why: alternating hard/soft beds; subsequents follow soft beds, ridges on hard
+- factor: planet-factor.tect-fold
+  weight: 3
+  why: tilted or folded strata, strike-parallel outcrop belts; dip sets ridge asymmetry
+- factor: planet-factor.tect-setting
+  weight: 1
+  why: fold-thrust belts, eroded orogens (Valley and Ridge)
+- factor: planet-factor.rock-type
+  weight: 1
+  why: erodibility contrast sandstone vs shale/limestone sets valley-ridge relief
+- factor: planet-factor.relief-inherited
+  weight: 1
+  why: consequent streams on original surface become cross-strike trunks/water gaps
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: renewed uplift/base-level fall deepens strike valleys and drives captures
+- factor: planet-factor.time
+  weight: 3
+  why: structural adjustment needs ~1-300 Myr of differential erosion
+vocabulary_id: 55
+sources:
+- https://ebooks.inflibnet.ac.in/geop11/chapter/drainage-pattern
+- https://en.wikipedia.org/wiki/Drainage_system_(geomorphology)
+- https://en.wikipedia.org/wiki/Water_gap
+library_status: written
+source: fluvial.network.trellis
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

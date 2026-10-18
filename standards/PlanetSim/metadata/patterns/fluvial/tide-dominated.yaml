@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.delta.tide-dominated
+  name: Tide-dominated delta
+  about: Tide-dominated delta.
+family: fluvial
+factors:
+- factor: planet-factor.waves-tides
+  weight: 3
+  why: macrotidal range (>4 m) strong currents form elongate sand ridges
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: mixed sand/mud, large supply
+- factor: planet-factor.water-discharge
+  weight: 3
+  why: discharge vs tidal prism sets funnel shape
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: shallow broad shelf amplifies tides
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: mangroves/marsh stabilize tidal flats
+- factor: planet-factor.sea-level
+  weight: 1
+  why: stable or slowly rising sea level
+- factor: planet-factor.time
+  weight: 1
+  why: 1-10 kyr
+vocabulary_id: 42
+sources:
+- https://geo.libretexts.org/Bookshelves/Oceanography/Coastal_Dynamics_(Bosboom_and_Stive)/02%3A_Large-scale_geographical_variation_of_coasts/2.07%3A_Process-based_classification/2.7.3%3A_Classification_of_deltas
+- https://en.wikipedia.org/wiki/River_delta
+library_status: written
+source: fluvial.delta.tide_dominated
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

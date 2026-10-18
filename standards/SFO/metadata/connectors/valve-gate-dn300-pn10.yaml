@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: connector.valve-gate-dn300-pn10
+  name: Gate valve, DN 300, PN 10
+  description: 'A flanged gate valve set in a line between two flange joints: a wedge drawn up out of the bore by a handwheel''s stem.'
+kind: valve
+size: 0.3
+valve: gate
+rating:
+  pressure: 1000000.0
+  temperature: 473.0
+physical:
+  length: 0.466
+  width: 1.733
+  height: 0.33
+  mass: 280.0
+built_of:
+- what: Body and bonnet
+  item: material.structural-steel-a36
+  mass: 210.0
+  note: cast carbon steel
+- what: Trim
+  item: material.stainless-steel-304
+  mass: 56.0
+  note: stainless seats, stem, disc or ball
+- what: Packing and seats
+  item: material.stainless-steel-304
+  mass: 14.0
+provides: both
+template: template.valve-gate
+basis:
+- of:
+  - physical
+  - built_of
+  tier: invented
+  review: true
+  note: Face to face as the EN 558 series run (from memory); its height along the line; the lever, gearbox or actuator out to 1.5 m from the axis along +Z, inside its width; From memory of makers' catalogues; to be sourced.
+interface: interface.flange-dn300-pn10

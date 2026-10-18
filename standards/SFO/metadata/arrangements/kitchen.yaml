@@ -1,0 +1,67 @@
+# yaml-language-server: $schema=../../schema/arrangement.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: arrangement.kitchen
+  name: Kitchen
+  description: 'How a 6 m room is furnished as a kitchen: 2 ranges, 1 kitchen hood, 3 kitchen benchs, 1 sink unit, 2 fridges.'
+room:
+- 6.0
+- 6.0
+people: 0
+staff: 3
+items:
+- unit: unit.furniture-range
+  at:
+  - -2.2
+  - -2.4
+  - 0.0
+- unit: unit.furniture-range
+  at:
+  - -1.0
+  - -2.4
+  - 0.0
+- unit: unit.furniture-hood
+  at:
+  - -1.6
+  - -2.4
+  - 0.0
+- unit: unit.furniture-kitchen-bench
+  at:
+  - 1.2
+  - -2.4
+  - 0.0
+- unit: unit.furniture-kitchen-bench
+  at:
+  - -1.5
+  - 0.6
+  - 0.0
+- unit: unit.furniture-kitchen-bench
+  at:
+  - 1.0
+  - 0.6
+  - 0.0
+- unit: unit.furniture-sink
+  at:
+  - 2.2
+  - 2.4
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-fridge
+  at:
+  - -2.4
+  - 2.4
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-fridge
+  at:
+  - -1.6
+  - 2.4
+  - 0.0
+  turn: 180.0
+mass: 1051.5
+basis:
+- of:
+  - items
+  tier: invented
+  review: true
+  note: Laid out by hand on the 6 m room (tools/standards/furniture.py); each piece is modelled once and placed here.

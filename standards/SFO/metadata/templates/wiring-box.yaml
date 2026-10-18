@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/template.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: template.wiring-box
+  name: Low-voltage wiring boxes
+  description: 'Low-voltage wiring boxes: one look for every size of the family, scaled to each record''s figures (the owner, 2026-10-17: never one model per size).'
+family: termination
+draws: model
+scales_by:
+- physical
+members: 1
+reference: connector.wiring-box-lv
+basis:
+- of:
+  - draws
+  - scales_by
+  tier: derived
+  note: 'The owner, 2026-10-17: one template a family, scaled; the catalogue families (kit_catalogue.py).'

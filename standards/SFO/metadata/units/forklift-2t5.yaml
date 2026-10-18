@@ -1,13 +1,28 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.forklift-2t5, name: 'Forklift, 2.5 t', description: 'A battery-electric counterbalance forklift that moves heavy crates from the crating line to the stacks and from the stacks onto trucks; it lifts a loaded crate (1.6 t) onto another, two high.'}
+identity: {key: unit.forklift-2t5, name: 'Forklift, 2.5 t', description: 'A battery-electric counterbalance forklift that moves heavy crates from the crating line to the stacks and from the stacks onto trucks; it lifts a loaded crate (1.6 t: an ingot of 1,592 kg in a 50 kg crate, its centre 0.6 m out on the forks) onto another, two high (forks to 1 m), and onto a truck''s bed (up to about 1.8 m); rated 2.5 t at 0.5 m, about 2.1 t at 0.6.'}
 size_class: 1
 physical: {length: 3.6, width: 1.3, height: 2.2, mass: 4200.0}
 built_of:
 - {what: Chassis and counterweight, item: material.structural-steel-a36, mass: 3200.0, note: from memory}
 - {what: 'Mast, motors and battery', item: good.electric-motors, mass: 1000.0, note: from memory}
 needs: {power: 8000.0}
+product: product.forklift-2t5
+motion:
+- id: drive
+  kind: travel
+  moves: [the whole truck]
+  note: free on roads and lanes
+- id: mast
+  kind: lift
+  direction: [0.0, 0.0, 1.0]
+  distance: [0.0, 3.0]
+  moves: [the forks]
+  note: a 3 m mast (invented)
+envelope:
+- [-1.816, -0.636, -0.001, 1.801, 0.636, 2.202]
 life: 788940000
+visual: {format: freefall-model/1, path: models/forklift-2t5/v1, manifest_sha256: 1d5dce1a9e5c1c83b21b90416975f8769826867e830c1afb9909546bdf8fe50e, version: 1, triangles: 4644}
 basis:
 - of: [physical, built_of, needs]
   tier: invented

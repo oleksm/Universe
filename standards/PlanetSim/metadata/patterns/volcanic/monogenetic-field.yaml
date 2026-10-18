@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.volcanic.field.monogenetic-field
+  name: Monogenetic volcanic field
+  about: Monogenetic volcanic field.
+family: volcanic
+factors:
+- factor: planet-factor.tect-setting
+  weight: 3
+  why: extension, rift flanks, arc back-areas, intraplate; rare on cratons
+- factor: planet-factor.other-magma-supply
+  weight: 3
+  why: 'low basaltic flux: magma never builds a central system, vents scatter'
+- factor: planet-factor.tect-fault
+  weight: 3
+  why: faults and crustal fractures align vents and set field elongation
+- factor: planet-factor.volc-magma
+  weight: 1
+  why: basalt mostly; composition decides cones vs lava shields
+- factor: planet-factor.groundwater
+  weight: 1
+  why: high water table or wet sediment favours maars and tuff rings over cinder cones
+- factor: planet-factor.volc-vent
+  weight: 1
+  why: vent count, clustering and nearest-neighbour spacing ~1-3 km set field texture
+- factor: planet-factor.time
+  weight: 1
+  why: field life 0.1-5 Myr; mix of fresh and degraded cones
+- factor: planet-factor.relief-inherited
+  weight: 1
+  why: lava flows fill valleys of pre-existing drainage
+vocabulary_id: 137
+sources:
+- https://en.wikipedia.org/wiki/Volcanic_field
+library_status: written
+source: volcanic.field.monogenetic_field
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

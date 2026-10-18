@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../schema/product.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: product.baghouse, name: Fume baghouse, description: 'Filter bags in closed compartments over hoppers, fans and stacks at one end.'}
+kind: family
+params:
+- {name: flow, unit: m3/s}
+pieces:
+- {id: compartment, description: a compartment of bags over its hopper}
+- {id: fan-end, description: 'the fans, stacks and their bay'}
+units: [unit.baghouse-200k, unit.baghouse-450k, unit.baghouse-800k]
+basis:
+- of: [kind, params, pieces, options]
+  tier: invented
+  review: true
+  note: Grouped from the units the layouts use (docs/proposals/plant-products.md, 2026-10-16).

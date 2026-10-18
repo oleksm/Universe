@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.routing-surface
+  name: Routing surface
+  about: 'The surface water is routed on: on land the height less the valleys rivers have cut (VALLEY_HOLD x incision) and
+    the faults'' drop, never below 0.5 m + 1e-3 of the height; the sea keeps its height.'
+unit: m
+per: sample
+producer:
+  where: planet-forge crates/forge-core/src/models/surface/routing.rs
+  file: checkpoint
+  key: planet-field.routing-surface
+amount: snapshot
+levels:
+- planet-level.planet
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge surface port (models/surface), read from planet-sim-landform 9747f0d-c437724.'

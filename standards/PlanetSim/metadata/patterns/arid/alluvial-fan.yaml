@@ -1,0 +1,62 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.arid.slope.alluvial-fan
+  name: Alluvial fan / bajada (arid)
+  about: Alluvial fan / bajada (arid).
+family: arid
+factors:
+- factor: planet-factor.tect-fault
+  weight: 3
+  why: Active range-front normal faults create relief and accommodation at the apex
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: Uplift renews catchment relief and supply; ratio to basin subsidence sets fan entrenchment
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: Abrupt slope drop where confined channel exits; fan slope 1.5-25 deg
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: Coarse, abundant supply; calibre and catchment size set slope and area
+- factor: planet-factor.rock-type
+  weight: 1
+  why: Mudstone or clay-rich saprolite source favours debris-flow fans; coarse permeable regolith gives fluvial fans
+- factor: planet-factor.clim-storm
+  weight: 3
+  why: Intense rare storms trigger debris flows and sheetfloods
+- factor: planet-factor.clim-arid
+  weight: 1
+  why: Arid/semi-arid with sparse vegetation; also humid areas with intense rain
+- factor: planet-factor.clim-history
+  weight: 1
+  why: Pluvial-arid shifts cause aggradation/incision phases, fan segmentation
+- factor: planet-factor.base-level
+  weight: 1
+  why: Basin floor or axial river trims toe; base-level fall entrenches fan
+- factor: planet-factor.events
+  weight: 1
+  why: Debris flows and floods build lobes, avulsions
+- factor: planet-factor.time
+  weight: 1
+  why: 1 kyr-1 Myr; desert varnish and pavements age the surfaces
+vocabulary_id: 14
+sources:
+- https://en.wikipedia.org/wiki/Alluvial_fan
+- https://en.wikipedia.org/wiki/Basin_and_Range_Province
+- https://www.nps.gov/subjects/geology/arid-landforms.htm
+library_status: written
+source: arid.slope.alluvial_fan
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

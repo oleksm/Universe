@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../../schema/material.schema.yaml
+identity:
+  key: material.lithium
+  name: Lithium
+  class: metal
+  form:
+  - ingot
+  - fluid
+  composition:
+  - part: element.li
+    share: 1.0
+mass:
+  density: 534.0
+thermal:
+  melting_point: 453.65
+  thermal_conductivity: 85.0
+  specific_heat_capacity: 3570.0
+basis:
+  - { of: [mass, thermal], tier: sourced, source: "element.li (PubChem, Periodic-Table-JSON, Wikipedia data pages)", note: "The solid at room temperature, as its element record has it." }
+  - { of: [identity], tier: derived, review: true, note: "Liquid, as a high-temperature coolant (the hot radiator panels' loops): about 410 kg/m3 near 1,500 K and a specific heat near 4.2 kJ/kg K (from memory, to check); it boils at 1,615 K at one atmosphere (its element record), so a loop running to 1,600 K is held under pressure. It burns in air and attacks most metals but molybdenum, niobium and their alloys at these temperatures." }

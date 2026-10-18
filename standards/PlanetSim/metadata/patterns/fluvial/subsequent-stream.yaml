@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.channel.subsequent-stream
+  name: Subsequent stream
+  about: Subsequent stream.
+family: fluvial
+factors:
+- factor: planet-factor.rock-layers
+  weight: 3
+  why: follows outcrop belt of the weakest bed along strike
+- factor: planet-factor.tect-fold
+  weight: 3
+  why: dipping/folded strata; strike direction sets course
+- factor: planet-factor.rock-fracture
+  weight: 1
+  why: also follows faults or shatter zones
+- factor: planet-factor.relief-inherited
+  weight: 1
+  why: develops after master consequents as their tributaries
+- factor: planet-factor.base-level
+  weight: 1
+  why: incision of the consequent trunk drives headward growth
+- factor: planet-factor.time
+  weight: 3
+  why: long differential erosion; Myr
+vocabulary_id: 152
+sources:
+- https://ebooks.inflibnet.ac.in/geop11/chapter/drainage-pattern
+- https://en.wikipedia.org/wiki/Stream_capture
+library_status: planned
+source: fluvial.channel.subsequent_stream
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

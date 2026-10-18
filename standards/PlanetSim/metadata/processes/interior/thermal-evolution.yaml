@@ -1,0 +1,102 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.thermal-evolution
+  name: Mantle and core thermal evolution
+  about: 'Parameterised two-reservoir cooling (Stevenson, Spohn & Schubert 1983): dT_m/dt = (H_mantle + q_cmb − q_mantle)/(Mm
+    c_m ε_m); dT_c/dt = −q_cmb/(Mc c_c ε_c + grow), grow = −(L + E_G)·4π r_ic² ρc·dr_ic/dT_c (latent and gravitational heat
+    of inner-core growth, Labrosse 2003). Started from a just-solidified mantle at 1900 K and a core 1300 K above the mantle
+    base, integrated by LSODA (rtol 1e-6, atol 1e-3) from 0 to the star''s age with output every step_myr (default 10 Myr).
+    Produces the interior history table that plates and organics read (mantle temperature for komatiite/greenstone era, mantle
+    heat flow for geotherm scaling).'
+area: interior
+clock:
+  when: once per world; internal output every step_myr = 10 Myr (3.15576e14 s) from 0 to age
+reads:
+- name: Structure, InnerCore
+  unit: SI
+  meaning: structure and inner-core table
+- name: fluxes
+  unit: W
+  meaning: all heat flows
+- name: star.age_gyr
+  unit: 's (code: Gyr)'
+  meaning: end time
+writes:
+- name: t_mantle_k(t)
+  unit: K
+  meaning: mantle temperature history
+- name: t_cmb_k(t)
+  unit: K
+  meaning: core top temperature history
+- name: heat_flow_mantle_tw(t) * 1e12 / area
+  field: planet-field.mantle-heat-flux
+  unit: W/m2
+  meaning: mantle heat flux per area history (read by plate motion)
+params:
+- name: T_MANTLE_START
+  value: 1900.0
+  unit: K
+  meaning: mantle start temperature (chosen, as Stevenson et al. 1983)
+  source: src/planet_sim/stages/interior.py:82
+- name: CORE_EXCESS_START
+  value: 1300.0
+  unit: K
+  meaning: 'core start: this much above the mantle base'
+  source: src/planet_sim/stages/interior.py:83
+- name: LATENT
+  value: 750000.0
+  unit: J/kg
+  meaning: iron latent heat at core pressures (Anderson & Duba 1997)
+  source: src/planet_sim/stages/interior.py:68
+- name: GRAV_ENERGY
+  value: 300000.0
+  unit: J/kg
+  meaning: gravitational energy per kg frozen (Labrosse 2003)
+  source: src/planet_sim/stages/interior.py:69
+- name: step_myr
+  value: 10.0
+  unit: '1'
+  said_as:
+    unit: 's: 3.15576e14 (code: Myr)'
+    factor: 1.0
+  open: true
+  meaning: output spacing (run() argument)
+  source: src/planet_sim/stages/interior.py:272
+  note: 'unit as the code says it: ''s: 3.15576e14 (code: Myr)''; SI conversion unverified; the Python only: planet-forge
+    steps by its manifest'
+- name: LSODA rtol/atol
+  values:
+  - 1.0e-06
+  - 0.001
+  unit: '1'
+  said_as:
+    unit: 1 / K
+    factor: 1.0
+  meaning: integrator tolerances
+  source: src/planet_sim/stages/interior.py:293
+random_draws:
+- none
+invariants:
+- energy balance closes per step
+- raises RuntimeError if the integrator fails
+- 'deterministic: no random draws'
+depends_on:
+- planet-process.radiogenic-heating
+- planet-process.mantle-heat-loss
+- planet-process.core-heat-loss
+- planet-process.core-melting-and-inner-core
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform src/planet_sim/stages/interior.py:run (272-295)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

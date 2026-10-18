@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-hvdc-pole-400a
+  code: KIT-HVDC-POLE-400A
+  name: HV DC pole connector, 400 A, 3 kV
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.aluminium-alloy-6061
+- item: material.copper
+- item: material.ptfe
+size:
+  length: 0.055
+  width: 0.055
+  height: 0.16
+supplies:
+  item: connector.hvdc-pole-400a
+physical:
+  mass: 1.0
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.hvdc-pole-400a, as made.

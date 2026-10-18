@@ -452,6 +452,8 @@ properties:
           efficiency: { type: number, x-unit: "1", description: "the share of the stroke that does work (an oleo strut: about 0.8)" }
           sink_rate: { type: number, x-unit: "m/s", description: "m/s, the touchdown it is designed for, at its design load" }
           extended: { type: number, x-unit: "m", description: "m from its mount to its pad, gear down" }
+          spring: { type: number, exclusiveMinimum: 0, x-unit: "N/m", description: "N/m, the strut's stiffness as a linear spring (the game's contact model): holds over its stroke" }
+          damper: { type: number, exclusiveMinimum: 0, x-unit: "N s/m", description: "N s/m, its damping as a linear damper" }
       - description: "Holds a gate's tube: one to a segment of a ring. Not in the game yet."
         type: object
         x-in-game: "not made"
@@ -591,7 +593,10 @@ properties:
         properties:
           kind: { const: camera }
           field_of_view: { type: number, x-unit: "rad", description: "rad across its picture" }
+  ports: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/port" }, description: "Its ins and outs and where it bears, each built to an interface (SFO 26): what it takes and gives, at what duty, through which mating face." }
+  motion: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/motion" }, description: "How it, or a part of it, moves in service." }
   visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
+  model_requests: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/model_request" }, description: "Work asked of its installed model, open until a later version answers it." }
   life: { type: number, x-unit: "s", description: "s in service before it is worn out and replaced; what it is made of comes back as scrap. Everything made has a life (the user's rule): this is what makes demand steady." }
   revision:
     $ref: "../../common.schema.yaml#/definitions/record_revision"

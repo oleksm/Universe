@@ -3,7 +3,7 @@ identity:
   key: ground-vocabulary.pattern
   name: "Landform patterns of the ground"
   about: "The landform pattern a ground face or line was grown from: an entry of the landform library (planet-trees). Frozen here: version 1 is the library's 143 entries in sorted order, 1 upward; later entries are appended, never re-sorted (the library's own pattern_table sorts and would shift ids)."
-version: 1
+version: 2
 entries:
   - { id: 1, source: aeolian.dune.barchan }
   - { id: 2, source: aeolian.dune.linear }
@@ -148,5 +148,48 @@ entries:
   - { id: 141, source: volcanic.material.columnar_jointing }
   - { id: 142, source: volcanic.province.flood_basalt }
   - { id: 143, source: volcanic.province.ignimbrite_plateau }
+  - { id: 144, source: aeolian.dune.carbonate_eolianite, since: 2 }
+  - { id: 145, source: aeolian.dune.coastal_foredune, since: 2 }
+  - { id: 146, source: arid.landscape.desert_basin, since: 2 }
+  - { id: 147, source: arid.landscape.desert_margin, since: 2 }
+  - { id: 148, source: arid.landscape.shield_plain, since: 2 }
+  - { id: 149, source: arid.plateau.layered_tableland, since: 2 }
+  - { id: 150, source: coastal.barrier.beach_ridge_plain, since: 2 }
+  - { id: 151, source: coastal.delta.tidal_delta, since: 2 }
+  - { id: 152, source: fluvial.channel.subsequent_stream, since: 2 }
+  - { id: 153, source: fluvial.gap.water_gap, since: 2 }
+  - { id: 154, source: fluvial.gap.wind_gap, since: 2 }
+  - { id: 155, source: fluvial.valley.consequent, since: 2 }
+  - { id: 156, source: fluvial.valley.incised, since: 2 }
+  - { id: 157, source: fluvial.valley.obsequent, since: 2 }
+  - { id: 158, source: glacial.isostatic.rebound_coast, since: 2 }
+  - { id: 159, source: glacial.landscape.periglacial_plain, since: 2 }
+  - { id: 160, source: hillslope.flatiron, since: 2 }
+  - { id: 161, source: hillslope.scarp.free_face, since: 2 }
+  - { id: 162, source: karst.landscape.tropical, since: 2 }
+  - { id: 163, source: lacustrine.basin.seasonal_karst_lake, since: 2 }
+  - { id: 164, source: lacustrine.lake.dammed_lake, since: 2 }
+  - { id: 165, source: structural.flat.pinnacle, since: 2 }
+  - { id: 166, source: tectonic.basin.intermontane, since: 2 }
+  - { id: 167, source: tectonic.craton.shield, since: 2 }
+  - { id: 168, source: tectonic.fault.range_front, since: 2 }
+  - { id: 169, source: tectonic.fold.breached_anticline, since: 2 }
+  - { id: 170, source: tectonic.margin.convergent, since: 2 }
+  - { id: 171, source: tectonic.margin.passive, since: 2 }
+  - { id: 172, source: tectonic.province.craton_platform, since: 2 }
+  - { id: 173, source: tectonic.province.extensional_province, since: 2 }
+  - { id: 174, source: tectonic.province.orogen, since: 2 }
+  - { id: 175, source: tectonic.province.transform_boundary, since: 2 }
+  - { id: 176, source: tectonic.strike_slip.sag_pond, since: 2 }
+  - { id: 177, source: tectonic.strike_slip.shutter_ridge, since: 2 }
+  - { id: 178, source: volcanic.edifice.resurgent_dome, since: 2 }
+  - { id: 179, source: volcanic.edifice.tuff_ring, since: 2 }
+  - { id: 180, source: volcanic.flow.lava_tube, since: 2 }
+  - { id: 181, source: volcanic.flow.pressure_ridge, since: 2 }
+  - { id: 182, source: volcanic.flow.tumulus, since: 2 }
+  - { id: 183, source: volcanic.province.hotspot, since: 2 }
+  - { id: 184, source: volcanic.province.volcanic_arc, since: 2 }
+  - { id: 185, source: volcanic.rift_zone, since: 2 }
 basis:
   - { of: [entries], tier: derived, note: "From planet-trees src/planet_trees/library load().entries, sorted, 2026-10-10 (143 entries; the same order lines_export.pattern_table gives today, so existing PTL2 lines keep their pattern u16)." }
+  - { of: [entries], tier: derived, note: "Version 2 (17 Oct 2026): the library's 42 entries added since, sorted, appended after id 143 as planets agreed; earlier ids unchanged." }

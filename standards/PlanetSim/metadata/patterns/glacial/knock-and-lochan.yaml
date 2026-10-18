@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.glacial.erosion.knock-and-lochan
+  name: Knock-and-lochan topography
+  about: Knock-and-lochan topography.
+family: glacial
+factors:
+- factor: planet-factor.ice-thermal
+  weight: 3
+  why: warm-based ice sheet over the whole area (areal scouring zone)
+- factor: planet-factor.ice-extent
+  weight: 1
+  why: ice-sheet cover over many cycles
+- factor: planet-factor.rock-type
+  weight: 3
+  why: gneiss/granite shield rock
+- factor: planet-factor.rock-fracture
+  weight: 3
+  why: dense fracture network excavated into lochan basins
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: low relief 10-100 m
+- factor: planet-factor.regolith
+  weight: 1
+  why: preglacial weathered mantle stripped; thin or no till
+- factor: planet-factor.tect-setting
+  weight: 1
+  why: cratonic shield
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: peat fills hollows postglacially
+- factor: planet-factor.time
+  weight: 1
+  why: 10-2600 kyr
+vocabulary_id: 76
+sources:
+- https://www.antarcticglaciers.org/glacial-geology/glacial-landforms/glacial-erosional-landforms/roches-moutonnees/
+- https://www.antarcticglaciers.org/glacial-geology/glacial-landforms/glacial-depositional-landforms/
+library_status: written
+source: glacial.erosion.knock_and_lochan
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.particle-suture
+  name: Particle suture time
+  about: When the particle's crust was last sutured to another plate, on the planet's clock; far in the past (-1e9 Myr) when never.
+unit: s
+producer:
+  where: planet-forge crates/forge-core/src/models/plates/init.rs
+  file: checkpoint
+  key: tables/particles/planet-field.particle-suture
+per: particle
+said_as:
+  unit: Myr
+  factor: 31557600000000.0
+time_base: planet-age
+missing: '-3.15576e22 s (-1e9 Myr): never sutured'
+also_from:
+- where: stages/plates.py
+  key: xsuture
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: forge''s plates foundation (branch plates-foundation) and the Python sim''s World (stages/plates.py:247-393), read from the code.'

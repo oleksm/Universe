@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.particle-grain
+  name: Particle grain
+  about: 'The trend of the belt the particle formed in (strike of folds, faults, veins): a unit tangent at the particle, body
+    frame, turning with its plate; zero where none was set.'
+unit: '1'
+producer:
+  where: planet-forge crates/forge-core/src/models/grain.rs
+  file: checkpoint
+  key: tables/particles/planet-field.particle-grain
+per: particle
+vector: true
+missing: 0 (no belt yet)
+also_from:
+- where: stages/plates.py
+  key: xgrain
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
+    9747f0d-c437724.'

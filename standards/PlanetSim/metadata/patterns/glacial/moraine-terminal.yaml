@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.glacial.deposit.moraine-terminal
+  name: Terminal/recessional moraines
+  about: Terminal/recessional moraines.
+family: glacial
+factors:
+- factor: planet-factor.ice-extent
+  weight: 3
+  why: stillstand or readvance holds margin; ridge marks maximum or recessional position
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: debris flux and dwell time set ridge size (1-100 m)
+- factor: planet-factor.ice-flow
+  weight: 1
+  why: pushing advance glaciotectonises sediment; lobe shape sets plan
+- factor: planet-factor.clim-history
+  weight: 3
+  why: climate oscillations (stadials) give recessional sequences
+- factor: planet-factor.ice-thermal
+  weight: 1
+  why: polythermal margins freeze-on/thrust debris; temperate dump/squeeze
+- factor: planet-factor.water-discharge
+  weight: 1
+  why: meltwater breaches and reworks into outwash
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: valley mouths confine; lowlands give broad lobate arcs
+- factor: planet-factor.time
+  weight: 1
+  why: decades to centuries of stable margin per ridge
+vocabulary_id: 68
+sources:
+- https://en.wikipedia.org/wiki/Moraine
+- https://www.antarcticglaciers.org/glacial-geology/glacial-landforms/glacial-depositional-landforms/
+library_status: written
+source: glacial.deposit.moraine_terminal
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

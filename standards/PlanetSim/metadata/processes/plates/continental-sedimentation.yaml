@@ -1,0 +1,160 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.continental-sedimentation
+  name: Platform and basin sediment on continents (record only)
+  about: 'Flooded continent lays PLATFORM_M_PER_MYR*every*dt*clip(depth/200 m, 0, 1). Land basins: coupled era - the rivers''
+    deposits; else the eroded supply smoothed BASIN_REACH times over neighbours, BASIN_SHARE of it laid on low land (< BASIN_BELOW
+    above sea) x (1-above/BASIN_BELOW). Limited to room: 2.5 x sea depth ((rho_m-rho_w)/(rho_m-rho_s)) or BASIN_FILL on land,
+    minus existing sediment cover. _deposit lays units (iron formation / carbonate in warm marine within 100 m of sea / clastic),
+    evaporites in the arid band, manganese in the oxygenation window. A rock-unit record only: it adds no crust volume. Organics
+    are buried and heated.'
+area: plates
+clock:
+  when: with each denudation pass
+reads:
+- name: lost, z_, sea_
+  unit: m
+- name: w.xtop
+  field: planet-field.particle-rock-top
+  unit: '1'
+- name: w.xbase
+  field: planet-field.particle-rock-base
+  unit: '1'
+- name: w.xcover
+  field: planet-field.particle-rock-cover
+  unit: m
+- name: lost
+  field: planet-field.denuded
+  unit: m
+- name: z_
+  field: planet-field.height-above-ridge
+  unit: m
+- name: sea_
+  field: planet-field.sea-level
+  unit: m
+- name: w.kind
+  field: planet-field.crust-kind
+  unit: '1'
+- name: w.x
+  field: planet-field.particle-position
+  unit: '1'
+- name: w.xcont
+  field: planet-field.particle-continental
+  unit: '1'
+- name: (coupled era) the rivers' deposits
+  field: planet-field.laid
+  unit: m
+writes:
+- name: w.xtop, w.xcover, w.xfert, w.xdep, w.xorg...
+  field: planet-field.organic-carbon
+- name: w.xtop
+  field: planet-field.particle-rock-top
+  unit: '1'
+- name: w.xbase
+  field: planet-field.particle-rock-base
+  unit: '1'
+- name: w.xcover
+  field: planet-field.particle-rock-cover
+  unit: m
+params:
+- name: PLATFORM_M_PER_MYR
+  value: 6.33761756280579e-13
+  unit: m/s
+  said_as:
+    unit: m/Myr
+    factor: 3.168808781402895e-14
+  meaning: platform sediment rate laid on flooded continent (ramped by depth/200 m)
+  source: stages/plates.py:124
+  note: long-term epicontinental rates ~10-100 m/Myr; Schlager 1981
+- name: BASIN_BELOW
+  value: 400.0
+  unit: m
+  meaning: continental land below this height above sea receives basin fill from eroding highland
+  source: stages/plates.py:125
+  note: chosen
+- name: BASIN_SHARE
+  value: 0.5
+  unit: '1'
+  meaning: share of the (smoothed) nearby eroded supply laid in low basins, x(1-above/BASIN_BELOW)
+  source: stages/plates.py:126
+  note: chosen
+- name: BASIN_FILL
+  value: 3000.0
+  unit: m
+  meaning: max sediment cover a land basin can hold (room = BASIN_FILL - existing sediment cover)
+  source: stages/plates.py:127
+  note: m (foreland and interior basins hold some km of sediment)
+- name: BASIN_REACH
+  env: SIM_BASIN_REACH
+  value: 3.0
+  unit: '1'
+  meaning: 'neighbour-averaging passes on the eroded supply: how far debris travels inland to basins'
+  source: stages/plates.py:128
+  note: 'smoothing passes: how far debris travels inland to the basins (~ several spacings)'
+- name: platform depth ramp
+  value: 200.0
+  unit: m
+  meaning: 'unverified: the code names it platform depth ramp without saying what it is'
+  source: stages/plates.py:1385
+- name: basin subsidence factor
+  value: 2.5
+  unit: '1'
+  meaning: (rho_m-rho_w)/(rho_m-rho_s)
+  source: stages/plates.py:1396
+- name: marine margin
+  value: -100.0
+  unit: m
+  meaning: samples within 100 m above sea count as marine for carbonate
+  source: stages/plates.py:1398
+- name: evaporite e-fold
+  value: 300.0
+  unit: m
+  meaning: 'unverified: the code names it evaporite e-fold without saying what it is'
+  source: stages/plates.py:687
+- name: COUPLED
+  env: SIM_COUPLED
+  setting: 'False'
+  meaning: 'landform line: run the coupled surface step (stages/coupled.py) in the last COUPLE_FROM_MYR'
+  source: stages/plates.py:136
+  note: 'env ''1'' -> True; default ''0''; unit: bool'
+- name: COUPLE_FROM_MYR
+  env: SIM_COUPLE_FROM_MYR
+  value: 2.209032e+16
+  unit: s
+  said_as:
+    unit: Myr before the end
+    factor: 700.0
+  meaning: the coupled era starts when (end - t) <= this; also gates SIM_LAND_SHARE (late) and the snapshot save
+  source: stages/plates.py:139
+  note: 'owner 16 Oct: weathering, rivers and history from the fifth checkpoint (700 Ma) on'
+random_draws:
+- none
+invariants:
+- no change to crust volume (xvol)
+depends_on:
+- planet-process.denudation-and-rivers
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/plates.py:run (lines 1380-1402), _deposit (658-693), _cover_at (648-655), _bury (696-701)
+  state: reference
+- where: planet-forge crates/forge-core/src/models/geology/sedimentation.rs
+  state: current
+  note: planet-forge port (geology line, merged in forge main 338c9ce)
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
+    code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge geology port (models/geology, models/impacts), read from planet-sim-landform 1df4daf.'
+events_emitted:
+- event: planet-event.ledger-row
+  where: 'forge: what the step laid (a rock record, no volume)'

@@ -1,12 +1,16 @@
 # yaml-language-server: $schema=../../schema/law.schema.yaml
 identity:
   key: law.hull-friction
-  name: "Friction under a hull"
-  symbol: "μh"
+  name: Friction under a hull
+  symbol: μh
   label: HULL_FRICTION
   section: dogma.contact
 value: 0.4
 kind: simplified
-note: "Coulomb friction of a hull's skin sliding on rock or regolith (a ship down on its belly or its side)."
+note: Coulomb friction of a hull's skin sliding on rock or regolith (a ship down on its belly or its side).
 basis:
-  - { of: [value], tier: invented, review: true, note: "Sheet metal sliding on rock: below a footpad's grip; to be sourced per ground." }
+- of:
+  - value
+  tier: sourced
+  review: true
+  note: Aluminium or steel skin sliding on rock, kinetic, from memory about 0.3-0.5; 0.4 the middle, below a pad's grip.

@@ -1,0 +1,93 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.zones-suture-forming
+  name: Suture recorded during a continental collision
+  about: 'Each plate step with continental contacts: the midpoints of every winner-loser particle pair across the contact are added to one forming ''suture'' line per plate pair (key (''suture'', min plate, max plate)); a new forming
+    line and a ''collision'' event are opened when none is forming for that pair.'
+area: relief
+clock:
+  when: every plate step (<= 5 Myr) inside the collision pass, plates.py:1107 (only when w.lines is not None, SIM_LINES=1); t is sim time in Gyr since formation (code converts with *1e3 to Myr)
+reads:
+- name: particle positions
+  field: planet-field.particle-position
+  unit: '1'
+- name: particle plates
+  field: planet-field.particle-plate
+  unit: '1'
+- name: front plate pair
+  field: planet-field.particle-front-low
+  unit: '1'
+  meaning: collision-and-docking's continental contacts (with front-high)
+- name: front plate pair (high)
+  field: planet-field.particle-front-high
+  unit: '1'
+- name: front time
+  field: planet-field.particle-front-time
+  unit: s
+  meaning: this step's contacts
+- name: plate rotation
+  field: planet-field.plate-rotation
+  unit: '1'
+  meaning: 'each plate''s rotation: where the features'' pins stand'
+- name: w.plate
+  field: planet-field.plate
+  unit: '1'
+  meaning: the plate each sample reads (forge main's code reads it)
+writes:
+- name: features (planet-feature.suture)
+  meaning: one forming suture per plate pair, growing along its length
+note: 'Emits: store event kind ''collision'' (plates=[u,v]) Emits: trace row what=''spawn'' rule=''zones.collision'' (Relief.tag_line)'
+params:
+- name: POINT_SEP
+  value: 0.6
+  unit: '1'
+  said_as:
+    unit: x gap (rad)
+    factor: 1.0
+  meaning: points of a forming line closer than this are one
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:21
+- name: REACH
+  value: 1.5
+  unit: '1'
+  said_as:
+    unit: x gap (rad)
+    factor: 1.0
+  meaning: 'once a line has points, only points farther than this from all of them are taken: the line grows along its length, never behind itself'
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:23
+- name: causes
+  setting: '{"plates": 0.6, "history": 0.4}'
+  meaning: provenance weights stored on the line
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:32
+  note: 'unit: weights'
+invariants:
+- one forming suture per plate pair at a time
+- accepted points mutually >= POINT_SEP*gap apart
+- each vertex anchored to a crust particle and rides its plate
+depends_on:
+- planet-process.line-store-ride-crust
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:collision (38-47), _open (26-35)
+  state: reference
+- where: planet-forge crates/forge-core/src/models/tectonic/suture.rs
+  state: current
+  note: planet-forge port (relief-tectonic line, merged in forge main fc8f460)
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform 9747f0d-c437724.'
+cautions:
+- 'the Python''s reads were its line store''s internals: w.x (particle unit vectors); w.xplate; contact pairs win/lose and continental mask cc (w.xcont[win] & w.xcont[lose] & different plates); gap = sphere.spacing(n) of the current
+  lattice, radians on the unit sphere (x R = metres); refined as the present nears'

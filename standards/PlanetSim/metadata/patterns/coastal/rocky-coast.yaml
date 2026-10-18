@@ -1,0 +1,62 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.coastal.rocky.rocky-coast
+  name: Rocky coast (cliffed coast with stacks, arches, caves)
+  about: Rocky coast (cliffed coast with stacks, arches, caves).
+family: coastal
+factors:
+- factor: planet-factor.rock-type
+  weight: 3
+  why: lithified rock; strength sets cliff steepness and retreat rate (mm/yr granite to m/yr ash)
+- factor: planet-factor.rock-fracture
+  weight: 3
+  why: joints, faults, bedding guide caves, arches, inlets and stack spacing
+- factor: planet-factor.rock-layers
+  weight: 1
+  why: layered sedimentary rocks erode stepwise; capstones protect
+- factor: planet-factor.waves-tides
+  weight: 3
+  why: high wave energy gives steep profiles and fast retreat; tidal range spreads erosion vertically
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: steep coastal land meeting deep water
+- factor: planet-factor.tect-setting
+  weight: 1
+  why: common on active (collision) margins with uplift, faults, intrusions
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: uplift strands platforms as terraces and keeps cliffs high
+- factor: planet-factor.sea-level
+  weight: 1
+  why: stable sea level ~6-7 ka focuses erosion at one level
+- factor: planet-factor.ice-extent
+  weight: 1
+  why: past glaciation leaves fjords, scoured bedrock coasts
+- factor: planet-factor.clim-temp
+  weight: 1
+  why: frost, salt and wetting-drying weathering vary with climate
+- factor: planet-factor.time
+  weight: 1
+  why: forms over 1 kyr-1 Myr
+vocabulary_id: 27
+sources:
+- https://www.nps.gov/articles/rocky-coast-landforms.htm
+- https://www.coastalwiki.org/wiki/Rocky_shores
+- https://en.wikipedia.org/wiki/Cliffed_coast
+library_status: written
+source: coastal.rocky.rocky_coast
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

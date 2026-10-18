@@ -1,0 +1,61 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.glacial.erosion.cirque
+  name: Cirque
+  about: Cirque.
+family: glacial
+factors:
+- factor: planet-factor.ice-extent
+  weight: 3
+  why: cirque floors sit near former ELA; repeated marginal glaciation over many cycles
+- factor: planet-factor.aspect
+  weight: 3
+  why: 'poleward/east-facing in N hemisphere: less insolation, less melt'
+- factor: planet-factor.clim-wind
+  weight: 3
+  why: prevailing wind drifts snow into lee hollows; can override aspect (Antarctica)
+- factor: planet-factor.clim-temp
+  weight: 1
+  why: freeze-thaw nivation starts hollows; near-0 C seasonal cycling
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: snowfall sets ELA and glacier size
+- factor: planet-factor.relief-inherited
+  weight: 1
+  why: starts in fluvial valley heads, landslide scars or volcanic hollows
+- factor: planet-factor.rock-type
+  weight: 1
+  why: jointed crystalline/volcanic best; size median ~650 m
+- factor: planet-factor.rock-fracture
+  weight: 1
+  why: joint density controls headwall quarrying and steepness
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: mountain flank must exceed ~300 m relief above floor
+- factor: planet-factor.ice-thermal
+  weight: 1
+  why: warm-based rotational sliding deepens floor; tarn overdeepening
+- factor: planet-factor.time
+  weight: 1
+  why: 100-2600 kyr; enlarges over several glaciations
+vocabulary_id: 72
+sources:
+- https://www.antarcticglaciers.org/glacial-geology/glacial-landforms/glacial-erosional-landforms/cirques/
+- https://en.wikipedia.org/wiki/Cirque
+library_status: written
+source: glacial.erosion.cirque
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

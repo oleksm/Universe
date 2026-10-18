@@ -1,0 +1,388 @@
+# yaml-language-server: $schema=../../schema/layout.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: layout.building-care-home
+  name: Care home, world with air
+  description: 'Rooms, nurses and a kitchen for the old and the long sick. Laid of the kit: a strut frame on the 3 m grid, panels, and 48 rooms of 6 m furnished piece by piece (24 ward, 7 dining room, 3 kitchen, 2 reception, 7 washroom,
+    5 office).'
+stands_for: building.care-home
+site:
+  atmosphere: air
+  gravity:
+  - 8.0
+  - 11.0
+physical:
+  length: 48.0
+  width: 18.0
+  height: 6.15
+  mass: 654443.0
+bays: []
+rooms:
+- id: WAR1
+  arrangement: arrangement.ward
+  at:
+  - -21.0
+  - -6.0
+  - 0.0
+- id: WAR2
+  arrangement: arrangement.ward
+  at:
+  - -15.0
+  - -6.0
+  - 0.0
+- id: WAR3
+  arrangement: arrangement.ward
+  at:
+  - -9.0
+  - -6.0
+  - 0.0
+- id: WAR4
+  arrangement: arrangement.ward
+  at:
+  - -3.0
+  - -6.0
+  - 0.0
+- id: WAR5
+  arrangement: arrangement.ward
+  at:
+  - 3.0
+  - -6.0
+  - 0.0
+- id: WAR6
+  arrangement: arrangement.ward
+  at:
+  - 9.0
+  - -6.0
+  - 0.0
+- id: WAR7
+  arrangement: arrangement.ward
+  at:
+  - 15.0
+  - -6.0
+  - 0.0
+- id: WAR8
+  arrangement: arrangement.ward
+  at:
+  - 21.0
+  - -6.0
+  - 0.0
+- id: WAR9
+  arrangement: arrangement.ward
+  at:
+  - -21.0
+  - 0.0
+  - 0.0
+- id: WAR10
+  arrangement: arrangement.ward
+  at:
+  - -15.0
+  - 0.0
+  - 0.0
+- id: WAR11
+  arrangement: arrangement.ward
+  at:
+  - -9.0
+  - 0.0
+  - 0.0
+- id: WAR12
+  arrangement: arrangement.ward
+  at:
+  - -3.0
+  - 0.0
+  - 0.0
+- id: WAR13
+  arrangement: arrangement.ward
+  at:
+  - 3.0
+  - 0.0
+  - 0.0
+- id: WAR14
+  arrangement: arrangement.ward
+  at:
+  - 9.0
+  - 0.0
+  - 0.0
+- id: WAR15
+  arrangement: arrangement.ward
+  at:
+  - 15.0
+  - 0.0
+  - 0.0
+- id: WAR16
+  arrangement: arrangement.ward
+  at:
+  - 21.0
+  - 0.0
+  - 0.0
+- id: WAR17
+  arrangement: arrangement.ward
+  at:
+  - -21.0
+  - 6.0
+  - 0.0
+- id: WAR18
+  arrangement: arrangement.ward
+  at:
+  - -15.0
+  - 6.0
+  - 0.0
+- id: WAR19
+  arrangement: arrangement.ward
+  at:
+  - -9.0
+  - 6.0
+  - 0.0
+- id: WAR20
+  arrangement: arrangement.ward
+  at:
+  - -3.0
+  - 6.0
+  - 0.0
+- id: WAR21
+  arrangement: arrangement.ward
+  at:
+  - 3.0
+  - 6.0
+  - 0.0
+- id: WAR22
+  arrangement: arrangement.ward
+  at:
+  - 9.0
+  - 6.0
+  - 0.0
+- id: WAR23
+  arrangement: arrangement.ward
+  at:
+  - 15.0
+  - 6.0
+  - 0.0
+- id: WAR24
+  arrangement: arrangement.ward
+  at:
+  - 21.0
+  - 6.0
+  - 0.0
+- id: DIN25
+  arrangement: arrangement.dining
+  at:
+  - -21.0
+  - -6.0
+  - 3.0
+- id: DIN26
+  arrangement: arrangement.dining
+  at:
+  - -15.0
+  - -6.0
+  - 3.0
+- id: DIN27
+  arrangement: arrangement.dining
+  at:
+  - -9.0
+  - -6.0
+  - 3.0
+- id: DIN28
+  arrangement: arrangement.dining
+  at:
+  - -3.0
+  - -6.0
+  - 3.0
+- id: DIN29
+  arrangement: arrangement.dining
+  at:
+  - 3.0
+  - -6.0
+  - 3.0
+- id: DIN30
+  arrangement: arrangement.dining
+  at:
+  - 9.0
+  - -6.0
+  - 3.0
+- id: DIN31
+  arrangement: arrangement.dining
+  at:
+  - 15.0
+  - -6.0
+  - 3.0
+- id: KIT32
+  arrangement: arrangement.kitchen
+  at:
+  - 21.0
+  - -6.0
+  - 3.0
+- id: KIT33
+  arrangement: arrangement.kitchen
+  at:
+  - -21.0
+  - 0.0
+  - 3.0
+- id: KIT34
+  arrangement: arrangement.kitchen
+  at:
+  - -15.0
+  - 0.0
+  - 3.0
+- id: REC35
+  arrangement: arrangement.reception
+  at:
+  - -9.0
+  - 0.0
+  - 3.0
+- id: REC36
+  arrangement: arrangement.reception
+  at:
+  - -3.0
+  - 0.0
+  - 3.0
+- id: WAS37
+  arrangement: arrangement.washroom
+  at:
+  - 3.0
+  - 0.0
+  - 3.0
+- id: WAS38
+  arrangement: arrangement.washroom
+  at:
+  - 9.0
+  - 0.0
+  - 3.0
+- id: WAS39
+  arrangement: arrangement.washroom
+  at:
+  - 15.0
+  - 0.0
+  - 3.0
+- id: WAS40
+  arrangement: arrangement.washroom
+  at:
+  - 21.0
+  - 0.0
+  - 3.0
+- id: WAS41
+  arrangement: arrangement.washroom
+  at:
+  - -21.0
+  - 6.0
+  - 3.0
+- id: WAS42
+  arrangement: arrangement.washroom
+  at:
+  - -15.0
+  - 6.0
+  - 3.0
+- id: WAS43
+  arrangement: arrangement.washroom
+  at:
+  - -9.0
+  - 6.0
+  - 3.0
+- id: OFF44
+  arrangement: arrangement.office
+  at:
+  - -3.0
+  - 6.0
+  - 3.0
+- id: OFF45
+  arrangement: arrangement.office
+  at:
+  - 3.0
+  - 6.0
+  - 3.0
+- id: OFF46
+  arrangement: arrangement.office
+  at:
+  - 9.0
+  - 6.0
+  - 3.0
+- id: OFF47
+  arrangement: arrangement.office
+  at:
+  - 15.0
+  - 6.0
+  - 3.0
+- id: OFF48
+  arrangement: arrangement.office
+  at:
+  - 21.0
+  - 6.0
+  - 3.0
+frame:
+  box:
+  - -24.0
+  - -9.0
+  - 0.0
+  - 24.0
+  - 9.0
+  - 6.0
+  cell: 3.0
+  shape: 'A skeleton frame on the 3 m grid: 16 x 6 cells, 2 storey(s) of 3 m; columns at every node, beams on every cell edge at each floor and the roof, one diagonal in every other outside face. Panels on its faces (frame.panels).'
+  members:
+  - item: stock.st4340-tb-80x2-s3000
+    count: 238
+    where: columns
+  - item: stock.st4340-tb-160x3-s3000
+    count: 428
+    where: beams
+  - item: stock.st4340-tb-80x2-d3000
+    count: 44
+    where: bracing
+  - item: stock.st4340-node-110b
+    count: 357
+    where: nodes
+  mass: 23211.8
+  panels:
+  - panel: panel.floor-3x3
+    count: 92
+  - panel: panel.partition-3x3
+    count: 72
+  - panel: panel.partition-door-3x3
+    count: 72
+  - panel: panel.roof-3x3
+    count: 96
+  - panel: panel.stair-3m
+    count: 2
+  - panel: panel.wall-door-3x3
+    count: 2
+  - panel: panel.wall-double-door-3x3
+    count: 2
+  - panel: panel.wall-insulated-3x3
+    count: 57
+  - panel: panel.wall-window-3x3
+    count: 27
+  panels_mass: 181131.1
+  sized: 'At 1 g: floors 1893 Pa dead and 2000 Pa imposed, the roof 1155 Pa; a ground column carries 48 kN (st4340-tb-80x2 takes it with half again to spare); a 3 m beam bends with 13.1 kN m (st4340-tb-160x3, under 470 MPa with half
+    again to spare). Wind, the tall halls'' columns between floors and the footings'' loads not yet checked.'
+ground:
+- what: Ground slab
+  item: good.concrete
+  volume: 129.6
+  mass: 311040.0
+  note: 0.15 m over the 48 x 18 m plan
+- what: Edge footings
+  item: good.concrete
+  volume: 47.5
+  mass: 114048.0
+  note: 0.6 x 0.6 m strips under the outside walls
+totals:
+  mass: 654443.0
+  against_module: 'building.care-home (deprecated): one box 50 x 20 x 8 m of 2,206 t, from the average of 538 concrete buildings. This layout: 48 x 18 x 6 m, 654 t (23 t frame, 181 t panels, 25 t furniture, 425 t ground), for 262 people
+    served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
+staff:
+- profession: profession.nurse
+  count: 20
+- profession: profession.food-worker
+  count: 5
+- profession: profession.clerk
+  count: 2
+basis:
+- of:
+  - bays
+  tier: invented
+  review: true
+  note: The mix of rooms for a care home is chosen (ward 0.5, dining 0.15, kitchen 0.05, reception 0.05, washroom 0.15, office 0.1), shared over the record's floor (2000 m2 in 2 storeys, laid as 8 x 3 rooms of 6 m a storey).
+- of:
+  - frame
+  - ground
+  tier: derived
+  review: true
+  note: Counted from the grid (tools/standards/building_layouts.py); sections by the loads in frame.sized; masses from the strut, node and panel records.

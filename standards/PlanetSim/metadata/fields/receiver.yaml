@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry_extra.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-field.receiver
+  name: Receiver
+  about: 'The sample each sample drains to: the routing (-1 or itself: none, a sink or the sea).'
+unit: '1'
+per: sample
+producer:
+  where: stages/coupled.py
+  file: ctx
+  key: h_down
+also_from:
+- where: tools/planet_form.py
+  file: checkpoint
+  key: down
+  note: the sea edge patched at 14 samples
+missing: '-1: drains nowhere'
+status: draft
+basis:
+- of:
+  - identity
+  - producer
+  - unit
+  tier: derived
+  note: 'planets, 17 Oct 2026: from the Python sim''s inventory (planet-forge docs/registry-migration/surface.json), read
+    from the code.'

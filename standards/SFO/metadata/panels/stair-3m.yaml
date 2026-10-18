@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=../../schema/panel.schema.yaml
+# Written by tools/standards/building_kit.py: change it there.
+identity:
+  key: panel.stair-3m
+  name: Stair, 3 m rise
+  description: 'A steel stair between floors 3 m apart, in a stair well of two cells (3 x 6 m): two flights of ten 150 mm risers on 300 mm goings, its half and end landings its own, handrails to 1 m over the upper floor.'
+kind: stair
+site: air
+cell:
+- 3.0
+- 6.0
+thickness: 0.3
+physical:
+  length: 2.74
+  width: 5.24
+  height: 4.053
+  mass: 831.7
+built_of:
+- what: Stringers, treads, landings and frames
+  item: material.structural-steel-a36
+  mass: 669.1
+  note: '8 mm stringers, 3 mm folded treads and landings, 50 x 50 x 3 landing frames and columns: blender''s model (2026-10-17)'
+- what: Handrails, guards and posts
+  item: material.structural-steel-a36
+  mass: 162.6
+  note: '35 x 35 x 2 mm: blender''s model'
+template: template.stair
+basis:
+- of:
+  - built_of
+  - physical
+  - u_value
+  - load
+  tier: invented
+  review: true
+  note: From memory of modular building practice; to be sourced.

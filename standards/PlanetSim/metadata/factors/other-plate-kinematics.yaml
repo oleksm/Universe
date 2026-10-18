@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/planet-factor.schema.yaml
+identity:
+  key: planet-factor.other-plate-kinematics
+  name: OTHER:plate_kinematics
+  about: 'Named by the library outside its vocabulary: plate kinematics.'
+source: OTHER:plate_kinematics
+levels:
+- planet-level.cluster
+- planet-level.pattern
+basis:
+- of:
+  - identity
+  tier: derived
+  note: planet-trees-pgs2 docs/landforms/deciding_factors_vocab.md.
+- of:
+  - reads
+  - signal
+  tier: invented
+  review: true
+  note: 'The registry''s first guess at which of the sim''s words a factor reads and how its strength ramps (2026-10-17): for planets to correct.'
+status: draft

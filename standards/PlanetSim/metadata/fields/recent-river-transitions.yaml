@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.recent-river-transitions
+  name: River transitions (recent epoch)
+  about: How many rivers changed state, by kind, in the recent epoch.
+unit: '1'
+per: global
+producer:
+  where: tools/recent.py
+  file: ctx
+  key: r_river_events
+amount: running-total
+status: draft
+basis:
+- of:
+  - identity
+  - producer
+  - unit
+  tier: derived
+  note: 'planets, 17 Oct 2026: from the Python sim''s inventory (planet-forge docs/registry-migration/surface.json), read
+    from the code.'
+cautions:
+- 'One global record for five counts (misfit, dry valley, captured, reversed, reborn): forge keeps them as scalars <key>/<state>.'

@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.delta.wave-dominated
+  name: Wave-dominated (cuspate / arcuate) delta
+  about: Wave-dominated (cuspate / arcuate) delta.
+family: fluvial
+factors:
+- factor: planet-factor.waves-tides
+  weight: 3
+  why: high wave energy reworks mouth into beach ridges, spits
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: sand-rich load; supply below wave reworking
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: steep shoreface, open coast
+- factor: planet-factor.clim-wind
+  weight: 3
+  why: wave approach angle sets symmetry/deflection
+- factor: planet-factor.tect-setting
+  weight: 1
+  why: passive or active margin open coast
+- factor: planet-factor.sea-level
+  weight: 1
+  why: stable sea level
+- factor: planet-factor.time
+  weight: 1
+  why: 1-10 kyr
+vocabulary_id: 43
+sources:
+- https://geo.libretexts.org/Bookshelves/Oceanography/Coastal_Dynamics_(Bosboom_and_Stive)/02%3A_Large-scale_geographical_variation_of_coasts/2.07%3A_Process-based_classification/2.7.3%3A_Classification_of_deltas
+- https://en.wikipedia.org/wiki/River_delta
+library_status: written
+source: fluvial.delta.wave_dominated
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

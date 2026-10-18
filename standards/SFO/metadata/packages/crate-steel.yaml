@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/package.schema.yaml
+identity:
+  key: package.crate-steel
+  name: "Steel crate"
+  description: "A low crate of 2 mm steel sheet on a welded angle frame and steel skids, its lid latched, not nailed: ingots, blanks, forgings and boxed parts where there is no timber (airless ground) or where crates come back to be used again."
+physical:
+  length: 1.2
+  width: 1.0
+  height: 0.8
+  mass: 168.4
+holds:
+  volume: 0.655
+  mass: 2000
+handling: forklift
+stack: 4
+labels:
+  - { node: label, face: "+Z", centre: [0.0, 0.48, 0.501], size: [0.3, 0.15] }
+  - { node: label_2, face: "-Z", centre: [0.0, 0.48, -0.501], size: [0.3, 0.15] }
+shows_contents: false
+visual:
+  format: "freefall-model/1"
+  path: "models/crate-steel/v1"
+  manifest_sha256: "db33d1c94e20f1907bafeb5c15322fe57d15e721981018e75c713755f208301e"
+  version: 1
+  triangles: 996
+basis:
+  - { of: [physical, holds, handling], tier: derived, review: true, note: "The heavy crate's size; holds.volume the clear box inside the corner angles (blender measured 0.655 m3, gross cavity 0.79)." }
+  - { of: [physical.mass], tier: derived, note: "Measured from blender's drawn steel (package-crate-steel candidate-v01, 2026-10-16): 2 mm skins, floor and lid, 40x40x4 angles, 5 floor channels, two welded 6 mm skids; 168.4 kg, up from a 130 kg estimate." }
+  - { of: [stack], tier: invented, review: true, note: "Four high: the frame's corner posts take three full crates at 1 g with some to spare (from memory, not checked); on a moon's gravity the same." }

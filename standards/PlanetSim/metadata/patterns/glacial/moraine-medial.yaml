@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.glacial.deposit.moraine-medial
+  name: Medial moraine
+  about: Medial moraine.
+family: glacial
+factors:
+- factor: planet-factor.ice-flow
+  weight: 3
+  why: confluence of two glaciers merges lateral moraines into central stripe
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: debris from valley walls above the confluence
+- factor: planet-factor.slope-relief
+  weight: 3
+  why: steep tributary headwalls
+- factor: planet-factor.ice-extent
+  weight: 1
+  why: active multi-tributary valley glacier; rarely survives deglaciation
+- factor: planet-factor.clim-temp
+  weight: 1
+  why: ablation raises ice-cored ridge 1-30 m
+- factor: planet-factor.time
+  weight: 1
+  why: 0.01-10 kyr
+vocabulary_id: 67
+sources:
+- https://en.wikipedia.org/wiki/Moraine
+library_status: written
+source: glacial.deposit.moraine_medial
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

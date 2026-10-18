@@ -1,0 +1,140 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.sediment-routing
+  name: River sediment transport and deposition (lakes, alluvial fans, slow reaches, deltas)
+  about: 'Water-borne load = (wear - wear_wind) x cell per sample, routed highest-first along the receivers. In a lake: a
+    closed lake (or an open one whose water is fully lost) keeps all, an open lake 90 %. At a river mouth (receiver is sea
+    or none) half is laid as a delta, half goes to sea. Elsewhere a share is laid equal to the share of water lost at that
+    sample (soaking/evaporation: fans, inland deltas), at least half on reaches flatter than SLOW_SLOPE. laid = dust + river
+    deposits (m). On the host, laid counts only on continent above sea, clipped to the room (BASIN_FILL minus existing sediment
+    cover) and becomes clastic units in geology._deposit; the sea part is not returned (the host sends all eroded volume to
+    the shelves instead).'
+area: hydrology
+clock:
+  when: each coupled step
+reads:
+- name: order, down
+  unit: index
+  field: planet-field.receiver
+- name: lake
+  unit: code
+  field: planet-field.lake
+- name: slope
+  unit: m/m
+  field: planet-field.routing-slope
+- name: wear
+  field: planet-field.wear-total
+  unit: m
+  meaning: all wear
+- name: wear_wind
+  field: planet-field.wear-wind
+  unit: m
+  meaning: wind wear (not water-borne)
+- name: water_lost
+  field: planet-field.water-lost
+  unit: m3/yr
+  meaning: losses
+- name: Q
+  field: planet-field.discharge
+  unit: m3/yr
+  meaning: discharge
+- name: dust
+  field: planet-field.dust
+  unit: m
+  meaning: dust laid this step (part of laid)
+- name: land
+  field: planet-field.height
+  unit: m
+  meaning: z > sea
+writes:
+- name: laid
+  unit: m per step
+  meaning: sediment + dust laid on land (returned and in hydro)
+  field: planet-field.laid
+params:
+- name: SLOW_SLOPE
+  value: 0.0002
+  unit: '1'
+  said_as:
+    unit: m/m
+    factor: 1.0
+  open: true
+  meaning: rivers this flat drop at least half their load
+  source: stages/coupled.py:26
+  note: 'unit as the code says it: ''m/m''; SI conversion unverified'
+- name: 'inline: open-lake trap'
+  value: 0.9
+  unit: '1'
+  said_as:
+    unit: share
+    factor: 1.0
+  meaning: 'unverified: the code names it inline: open-lake trap without saying what it is'
+  source: stages/coupled.py:340
+- name: 'inline: closed-lake trap'
+  value: 1.0
+  unit: '1'
+  said_as:
+    unit: share
+    factor: 1.0
+  meaning: 'unverified: the code names it inline: closed-lake trap without saying what it is'
+  source: stages/coupled.py:340
+- name: 'inline: delta share'
+  value: 0.5
+  unit: '1'
+  said_as:
+    unit: share
+    factor: 1.0
+  meaning: laid at a river mouth
+  source: stages/coupled.py:344
+- name: 'inline: slow-reach drop'
+  value: 0.5
+  unit: '1'
+  said_as:
+    unit: share
+    factor: 1.0
+  meaning: minimum drop where slope < SLOW_SLOPE
+  source: stages/coupled.py:348
+- name: 'inline: lost-share floor'
+  value: 3.168808781402895e-17
+  unit: m3/s
+  said_as:
+    unit: m3/yr
+    factor: 3.168808781402895e-08
+  meaning: share of water lost = lost / max(Q + lost, this)
+  source: stages/coupled.py:333
+random_draws:
+- none
+invariants:
+- 'water-borne mass: sum(laid_river*cell) + to_sea = sum((wear - wear_wind)*cell)'
+- laid >= 0
+depends_on:
+- planet-process.coupled-erosion
+- planet-process.river-discharge
+- planet-process.lakes
+- planet-process.dust
+note: 'Samples with lake code 3 (playa) take the river branch, not the lake branch. Mass is not conserved across the host:
+  laid on land adds no crust, all eroded volume also goes to the shelves (plates.py:1373-1379).'
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/coupled.py:step (lines 329-352)
+  state: reference
+- where: planet-forge crates/forge-core/src/models/surface/sediment.rs
+  state: current
+  note: planet-forge port (surface line, merged in forge main 370ab83)
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
+    the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge surface port (models/surface), read from planet-sim-landform 9747f0d-c437724.'

@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.lacustrine.basin.oxbow
+  name: Oxbow lake
+  about: Oxbow lake.
+family: lacustrine
+factors:
+- factor: planet-factor.water-discharge
+  weight: 3
+  why: Meandering river discharge drives bend migration
+- factor: planet-factor.clim-storm
+  weight: 3
+  why: Floods trigger chute or neck cutoffs
+- factor: planet-factor.regolith
+  weight: 1
+  why: Cohesive alluvium sustains meanders
+- factor: planet-factor.sed-supply
+  weight: 1
+  why: Plugs seal cutoff ends; fills over years-decades
+- factor: planet-factor.slope-relief
+  weight: 3
+  why: Low-gradient floodplains
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: Bank vegetation cohesion sustains sinuosity
+- factor: planet-factor.time
+  weight: 1
+  why: Infill over years to decades
+vocabulary_id: 100
+sources:
+- https://en.wikipedia.org/wiki/Oxbow_lake
+library_status: written
+source: lacustrine.basin.oxbow
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/planet-measure.schema.yaml
+identity:
+  key: planet-measure.rms-against-samples
+  name: RMS against the samples
+  about: 'How far a model''s ground lies from the sim''s own heights: the root mean square of the model''s height less the sample''s, over every sample it covers.'
+unit: m
+how: At each sim sample in the region, the model's height there less the sample's height; the root mean square of those.
+levels:
+- planet-level.planet
+- planet-level.cluster
+- planet-level.pattern
+status: draft
+basis:
+- of:
+  - identity
+  - how
+  tier: derived
+  note: planets, 17 Oct 2026 (the anchor model's measures).
+ours:
+- value: 66.0
+  what: anchor model (anchor_mesher.py cf14939), earth_s30, against the smoothed field, overall
+  date: '2026-10-17'
+- value: 32.0
+  what: the same, on land
+  date: '2026-10-17'
+- value: 128.0
+  what: the same, 95th percentile
+  date: '2026-10-17'

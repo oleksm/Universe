@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/planet-event.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-event.water-landmark-records-line-store
+  name: Water landmark records (line store)
+  about: water landmark records (line store)
+source: water landmark records (line store)
+payload:
+- name: position (unit vector)
+  meaning: position (unit vector)
+- name: kind
+  meaning: kind
+- name: size
+  meaning: size
+- name: 'extra.crosses (water gap: suture | arc front)'
+  meaning: 'extra.crosses (water gap: suture | arc front)'
+status: draft

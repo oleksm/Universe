@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.crating-line-steel, name: 'Crating line, steel crates', description: 'A roller table along x, its rollers'' tops 0.8 m up (100 mm rollers at 150 mm, so each of the crate''s 160 mm skids, which run across y, always rests on one): a forklift sets an empty steel crate (package.crate-steel), its hinged lid shut, at the -x end (x -6 to -2); it rolls to the crating station at x 0, where a lid arm beside the table (on its -y side) swings the crate''s hinged lid open and holds it up and the ingot crane lowers a cropped ingot straight into it from the saws, lying, its tongs'' jaws in the gaps between the ingot and the crate''s sides; a platform scale under the station weighs crate and ingot (the crate''s tare known); the crate rolls on to the latching portal at x 3.5, the lid arm having swung the lid shut, where it is clamped and latched, past the label marker (a stencil and paint that hold in vacuum) at x 4.8 (heat, grade and mass), and leaves at the +x end for a forklift. For
+    airless ground: no timber; its bearings and drives rated for vacuum and the lunar night.'}
+size_class: 2
+fits: plant-mount.bay-s2
+physical: {length: 12.0, width: 4.0, height: 3.0, mass: 12000.0}
+built_of:
+- {what: 'Roller table, scale, lid arm and latching portal', item: material.structural-steel-a36, mass: 12000.0, note: from memory}
+needs: {power: 40000.0, atmosphere: vacuum}
+ports:
+- id: power-in
+  flow: in
+  medium: power
+  power: 40000.0
+  voltage: 400
+  interface: interface.termination-400v-35mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-35mm2
+  at: [-6.0, -1.5, 0.4]
+  facing: [-1.0, 0.0, 0.0]
+  note: low on the in end's frame, under the rollers
+  current: 64.15
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 12000.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
+product: product.crating-line
+envelope:
+- [-6.002, -2.021, -0.001, 6.001, 2.001, 3.002]
+life: 788940000
+visual: {format: freefall-model/1, path: models/crating-line-steel/v1, manifest_sha256: 05a3a04ae2f0b032f306d04ddb1a0ba4273bf23cf71e1d93b66d4a22dadf1a3f, version: 1, triangles: 20004}
+basis:
+- of: [physical, built_of, needs]
+  tier: invented
+  review: true
+  note: From memory.
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage.'
+- of: [life]
+  rule: rule.life-plant

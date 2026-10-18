@@ -1,0 +1,822 @@
+# yaml-language-server: $schema=../../schema/planet-model.schema.yaml
+identity:
+  key: planet-model.relief
+  name: Relief model
+  about: 'The planet''s relief layer, on a continuous planet: first the local relief R, a continuous field the sim samples at points about 130 km apart and read anywhere between them as the heights are, Earth''s amounts placed by the
+    sim''s causes, with its classes and summits; then every land-forming feature the sim generates as vectors with metadata, pinned to the crust (the relief store, the former line store), each with its own scale (spacing, wavelength,
+    width) below the sample spacing, with the trigger and rule that made it, its later overrides and erosion, traced so what, why, where and when can be asked.'
+  words: 'The owner, 17 Oct 2026: "Move that stuff [the line store] on the relief layer. Run through every feature and find a way for our sim to generate it. Create tracing and debugging tools and stats so we can later trace what and
+    why and where is spawned, what is their trigger, geo pattern, dimensions, length, curvature pattern, segmentation, later overrides, erosion based on zones and formations."'
+purpose: 'To give the sim''s land its relief, a continuous local-relief field and, below the sample spacing, the land-forming features that carry that relief at their own scales: the skeleton the mesher meshes round, each feature with
+  the history that made it.'
+detail:
+  rule: Rank the land samples by a weighted score of causes; take Earth's local relief at the same quantile; read R anywhere between the samples as a continuous field; class each place by its relief and height; raise the summits from
+    both. Below the sample spacing the relief features carry the relief, each at its scale.
+inputs:
+- name: z
+  unit: m
+  field: planet-field.height
+  source: checkpoint z
+  meaning: height above sea level at the sample
+- name: thick
+  unit: m
+  field: planet-field.crust-thickness
+  source: ctx thick
+  meaning: crust thickness
+- name: hfold
+  unit: '1'
+  field: planet-field.fold
+  source: ctx h_fold
+  meaning: the sim's fold belts, 0 to 1
+- name: conv, div, trans
+  unit: '1'
+  source: plate boundaries from plate and the plates' spin axes (ctx axes)
+  meaning: 'nearness to a converging, diverging or transform boundary: 1 on it, falling to 0 four samples away'
+- name: anyb
+  unit: '1'
+  source: as above
+  meaning: nearness to any boundary (five samples)
+- name: relief to neighbours
+  unit: m
+  field: planet-field.local-relief
+  source: z less the lowest neighbour's z
+  meaning: the drop to the lowest neighbouring sample
+- name: up
+  unit: m/s
+  source: z change since the previous checkpoint (or thickened crust at converging plates when there is none)
+  meaning: uplift, said in m/Myr
+- name: rock
+  unit: class
+  field: planet-field.rock
+  source: checkpoint rock
+  meaning: 'volcanic units: arc volcanics, flood basalt, rift basalt'
+- name: ice cycles
+  unit: '1'
+  field: planet-field.ice-cycles
+  source: ctx r_ice_cycles
+  meaning: glaciations in the recent epoch
+- name: age
+  unit: s
+  field: planet-field.crust-age
+  source: ctx age
+  meaning: crust age since formed, said in Myr
+steps:
+- name: ranking score g
+  rule: A weighted sum of the causes, then two smoothing passes over the land neighbours (g = 0.5 g + 0.5 their mean), so ranges, not single samples, carry relief; ties broken by a fixed seed. ramp(x, a, b) is 0 below a, 1 above b,
+    linear between.
+  formula: g = 0.35 ramp(thick, 38 km, 60 km) + 0.25 hfold + 0.20 conv + 0.15 ramp(relief to neighbours, 200 m, 2,000 m) + 0.15 ramp(up, 3, 40 m/Myr) + 0.10 volcanic rock + 0.10 ramp(ice cycles, 0.5, 6) + 0.20 ramp(z, 300 m, 3,000 m)
+    + 0.05 trans + 0.05 div - 0.15 ramp(age, 500, 2,000 Myr) (1 - anyb)
+- name: Earth's amounts
+  rule: 'Quantile matching: the land samples ranked by g take Earth''s local relief at the same quantile, so the planet''s relief distribution is Earth''s by construction and the sim decides only where. R is then a continuous field,
+    interpolated between the samples, never a value per area. First draft: Earth''s amounts as one statistic, p95 - p5 of the heights within about 130 km of each of 30,000 points (the old per-sample statistic); agreed (17 Oct 2026):
+    Earth''s local relief within radii of about 2, 10 and 50 km, per relief class (ETOPO, USGS 3DEP), as the target instead (open until measured).'
+  formula: R = Earth[q(g)]
+- name: relief classes
+  rule: 'Each place''s class from R and z, the first rule that holds from high mountains down (the legend: planet-layer.relief).'
+- name: summits
+  rule: 'The highest summit near each land sample, u uniform 0 to 1 seeded by the sample index; first draft from Earth at 30,000 points: the summit stands 1.03 x (p95 - p5) over the mean height within about 130 km at the median, 1.69
+    x at the 90th percentile (the old per-sample statistic).'
+  formula: summit = z + R (1.03 + 0.66 u) PEAK_GAIN
+- name: lines
+  rule: 'The relief layer as lines (layers as curved lines, never patches): land contours of the smoothed height at 500, 1,000, 2,000, 3,000, 4,000 and 5,000 m, and the boundaries between relief classes, each point''s class the leader
+    among its nearest 40 samples (Gaussian weights, sigma 1.4 sample spacings) on its side of the coast.'
+legend: planet-layer.relief
+legends:
+- name: context_relief
+  title: Relief and patterns
+  sub: earth_s30 · today
+  source: out/planet/earth_s30/ck_20_00000000kyr_context_relief.legend.json
+  rows:
+  - kind: head
+    label: Relief inside each sample (Earth's amounts, placed by the sim)
+    shown: true
+  - kind: fill
+    colour:
+    - 205
+    - 225
+    - 160
+    label: 'lowland plain: 8 % of land'
+    shown: true
+  - kind: fill
+    colour:
+    - 225
+    - 220
+    - 170
+    label: 'plain: 18 % of land'
+    shown: true
+  - kind: fill
+    colour:
+    - 215
+    - 190
+    - 140
+    label: 'plateau: 22 % of land'
+    shown: true
+  - kind: fill
+    colour:
+    - 180
+    - 160
+    - 110
+    label: 'hills: 30 % of land'
+    shown: true
+  - kind: fill
+    colour:
+    - 140
+    - 105
+    - 80
+    label: 'low mountains: 12 % of land'
+    shown: true
+  - kind: fill
+    colour:
+    - 95
+    - 70
+    - 60
+    label: 'high mountains: 9 % of land'
+    shown: true
+  - kind: head
+    label: Mountains 22 % of land (Earth ~22 %); hills 30 % (Earth ~30 %)
+    shown: true
+  - kind: head
+    label: 'Patterns on 100 % of land, 3.0 per sample, 96 patterns in use; labels: leading pattern'
+    shown: true
+- name: rings_relief
+  title: Relief and patterns
+  sub: earth_s30 · today
+  source: out/planet/earth_s30/ck_20_00000000kyr_rings_relief.legend.json
+  rows:
+  - kind: head
+    label: Relief inside each sample (Earth's amounts, placed by the sim)
+    shown: true
+  - kind: fill
+    colour:
+    - 205
+    - 225
+    - 160
+    label: 'lowland plain: 9 % of land'
+    shown: true
+  - kind: fill
+    colour:
+    - 225
+    - 220
+    - 170
+    label: 'plain: 18 % of land'
+    shown: true
+  - kind: fill
+    colour:
+    - 215
+    - 190
+    - 140
+    label: 'plateau: 21 % of land'
+    shown: true
+  - kind: fill
+    colour:
+    - 180
+    - 160
+    - 110
+    label: 'hills: 30 % of land'
+    shown: true
+  - kind: fill
+    colour:
+    - 140
+    - 105
+    - 80
+    label: 'low mountains: 12 % of land'
+    shown: true
+  - kind: fill
+    colour:
+    - 95
+    - 70
+    - 60
+    label: 'high mountains: 9 % of land'
+    shown: true
+  - kind: head
+    label: Mountains 22 % of land (Earth ~22 %); hills 30 % (Earth ~30 %)
+    shown: true
+  - kind: head
+    label: 'Patterns on 100 % of land, 3.0 per sample, 93 patterns in use; labels: leading pattern'
+    shown: true
+- name: rings_relief_lines
+  title: 'Relief: lines (the relief line rings)'
+  source: tools/layer_lines.py RELIEF_M
+  rows:
+  - kind: line
+    label: contour 500 m
+  - kind: line
+    label: contour 1000 m
+  - kind: line
+    label: contour 2000 m
+  - kind: line
+    label: contour 3000 m
+  - kind: line
+    label: contour 4000 m
+  - kind: line
+    label: contour 5000 m
+  - kind: line
+    label: relief class boundary (classes on its two sides)
+- name: relief_features_map
+  title: Relief features (tools/relief_trace.py --map)
+  source: tools/relief_trace.py
+  rows:
+  - kind: line
+    colour:
+    - 200
+    - 60
+    - 50
+    label: tectonic
+  - kind: line
+    colour:
+    - 200
+    - 120
+    - 50
+    label: structural
+  - kind: line
+    colour:
+    - 150
+    - 40
+    - 40
+    label: volcanic
+  - kind: line
+    colour:
+    - 40
+    - 110
+    - 210
+    label: fluvial
+  - kind: line
+    colour:
+    - 120
+    - 200
+    - 230
+    label: glacial
+  - kind: line
+    colour:
+    - 160
+    - 190
+    - 210
+    label: periglacial
+  - kind: line
+    colour:
+    - 40
+    - 190
+    - 200
+    label: coastal
+  - kind: line
+    colour:
+    - 120
+    - 90
+    - 200
+    label: karst
+  - kind: line
+    colour:
+    - 220
+    - 190
+    - 110
+    label: arid
+  - kind: line
+    colour:
+    - 230
+    - 210
+    - 150
+    label: aeolian
+  - kind: line
+    colour:
+    - 30
+    - 80
+    - 140
+    label: lacustrine
+  - kind: line
+    colour:
+    - 130
+    - 170
+    - 90
+    label: hillslope
+  - kind: line
+    colour:
+    - 90
+    - 90
+    - 90
+    label: impact
+  - kind: line
+    colour:
+    - 230
+    - 120
+    - 20
+    label: landmark
+source_field:
+- planet-field.height
+- planet-field.recent-height
+params:
+- name: weights
+  note: as in the ranking score; first drafts, judged only by the class shares against Earth
+- name: ramps
+  note: thick 38 to 60 km; relief 200 to 2,000 m; up 3 to 40 m/Myr; ice 0.5 to 6 cycles; z 300 to 3,000 m; age 500 to 2,000 Myr; first drafts
+- name: smoothing
+  note: 2 passes, 0.5 / 0.5
+- name: class thresholds
+  note: R 300, 900 and 1,500 m; z 200 and 600 m (on planet-layer.relief)
+- name: summit ratio
+  note: 1.03 + 0.66 u
+- name: PEAK_GAIN
+  value: 1.1
+  unit: '1'
+  note: 'the owner, 16 Oct 2026: giants a bit higher than Earth''s'
+- name: relief contours
+  note: 500, 1,000, 2,000, 3,000, 4,000, 5,000 m
+- name: ring smoothing
+  value: 40.0
+  unit: '1'
+  note: K nearest samples, sigma 1.4 sample spacings
+- name: local relief targets
+  open: true
+  note: 'Earth''s local relief within radii of about 2, 10 and 50 km, per relief class (ETOPO, USGS 3DEP): agreed 17 Oct 2026 as the target, not yet measured.'
+guarantees:
+- 'The planet''s land relief distribution is Earth''s by construction (first draft: against the old per-sample statistic).'
+- 'R is a continuous field: read anywhere, never a value per area.'
+- 'The check (agreed): the mesh''s local relief at radii of about 2, 10 and 50 km, measured anywhere, against Earth''s for its class and scale.'
+references:
+- name: ETOPO 2022
+  by: NOAA NCEI
+  used_for: 'Earth''s local relief. First draft (the old per-sample statistic): p95 - p5 of the heights within about 130 km of each of 30,000 equal-area points, ice sheets left out (7,827 on land): median 320 m; 33 % above 600 m; 22
+    % above 900 m; 9 % above 1,500 m. Agreed next: the local relief within radii of about 2, 10 and 50 km, per relief class (open).'
+  path: ~/planet-data/scratch/earth_cell_relief_30k.npy
+  url: https://www.ncei.noaa.gov/products/etopo-global-relief-model
+- name: UNEP-WCMC mountain extent
+  by: UN Environment Programme World Conservation Monitoring Centre
+  used_for: 'The check on the mountain share: about 24 % of land, against the model''s 22 %'
+- name: USGS 3DEP
+  by: U.S. Geological Survey
+  used_for: 'Earth''s local relief at the small radii (about 2 and 10 km), per relief class: the agreed target, open until measured'
+  url: https://www.usgs.gov/3d-elevation-program
+registers:
+- name: provinces
+  what: Where a kind of relief holds; bounded by lines.
+  geometry: polygons with boundary lines
+  example: fold-and-thrust belt, shield, plateau, rift province
+- name: relief features (the skeleton)
+  what: The land-forming lines, areas and points inside provinces, at every scale.
+  geometry: polylines, polygons, points, rings, networks
+  example: crest lines, valley axes, escarpments, terraces, fans, moraines
+- name: landmarks (events)
+  what: Single, dated events, not the slow work (the Planet Simulator's landmark types).
+  geometry: points and small areas with a record
+  example: Shasta, Crater Lake caldera, an impact crater, a flood
+feature_kinds:
+- planet-feature.alluvial-fan
+- planet-feature.anastomosing-reach
+- planet-feature.anticline-axis
+- planet-feature.arc-front
+- planet-feature.arc-volcano-centre
+- planet-feature.arete
+- planet-feature.atoll
+- planet-feature.badlands
+- planet-feature.bajada
+- planet-feature.barchan-dunes
+- planet-feature.barrier-island
+- planet-feature.barrier-reef
+- planet-feature.beach-ridge-plain
+- planet-feature.blockfield-felsenmeer
+- planet-feature.braided-reach
+- planet-feature.breached-anticline
+- planet-feature.butte
+- planet-feature.caldera-crater-lake
+- planet-feature.canyon-gorge
+- planet-feature.carbonate-platform
+- planet-feature.cinder-cone
+- planet-feature.cirque
+- planet-feature.coastal-foredune
+- planet-feature.coastline-typed
+- planet-feature.cockpit-cone-karst
+- planet-feature.col
+- planet-feature.collapse-doline-tiankeng
+- planet-feature.colluvial-hollow
+- planet-feature.consequent-subsequent-obsequent-valley
+- planet-feature.cuesta
+- planet-feature.debris-flow-fan
+- planet-feature.deflation-hollow
+- planet-feature.delta-river-dominated
+- planet-feature.delta-tide-dominated
+- planet-feature.delta-wave-dominated
+- planet-feature.desert-basin-bolson
+- planet-feature.desert-pavement
+- planet-feature.dike-ridge
+- planet-feature.doline-field
+- planet-feature.drainage-divide
+- planet-feature.drumlin-field
+- planet-feature.dry-valley
+- planet-feature.erg-sand-sea
+- planet-feature.esker
+- planet-feature.estuary
+- planet-feature.fjord
+- planet-feature.flatiron
+- planet-feature.flood-basalt-plateau
+- planet-feature.floodplain
+- planet-feature.foreland-basin
+- planet-feature.former-lake-bed
+- planet-feature.free-face-cliff
+- planet-feature.fringing-reef
+- planet-feature.giant-landslide-sector-collapse
+- planet-feature.glacial-horn
+- planet-feature.glacial-trough-u-valley
+- planet-feature.graben
+- planet-feature.great-escarpment
+- planet-feature.hanging-valley
+- planet-feature.hogback
+- planet-feature.homoclinal-ridge
+- planet-feature.horst
+- planet-feature.hotspot-chain
+- planet-feature.hotspot-volcano-centre
+- planet-feature.ice-dammed-lake-shorelines
+- planet-feature.ice-sheet-extent
+- planet-feature.ice-wedge-polygons
+- planet-feature.ignimbrite-plateau
+- planet-feature.impact-crater-complex
+- planet-feature.impact-crater-simple
+- planet-feature.inselberg
+- planet-feature.interfluve-ridge-crest
+- planet-feature.kame-and-kettle-terrain
+- planet-feature.karst-plateau
+- planet-feature.knickpoint-waterfall
+- planet-feature.lagoon
+- planet-feature.lahar-plain
+- planet-feature.lake-basin-rift-glacial-volcanic-dammed
+- planet-feature.lake-shoreline-terraces
+- planet-feature.landslide-rotational-translational
+- planet-feature.lateral-moraine
+- planet-feature.lava-flow-field
+- planet-feature.linear-seif-dunes
+- planet-feature.loess-plateau
+- planet-feature.maar
+- planet-feature.mangrove-coast
+- planet-feature.marine-terrace
+- planet-feature.meander-belt
+- planet-feature.medial-moraine
+- planet-feature.mega-scale-glacial-lineations
+- planet-feature.megaflood-scabland
+- planet-feature.mesa
+- planet-feature.misfit-river
+- planet-feature.monogenetic-volcanic-field
+- planet-feature.multi-ring-impact-basin
+- planet-feature.nivation-hollow
+- planet-feature.normal-fault-scarp
+- planet-feature.offset-stream
+- planet-feature.orogen-axis
+- planet-feature.outwash-plain-sandur
+- planet-feature.overdeepening-and-riegel
+- planet-feature.oxbow-lake
+- planet-feature.palsa-peat-plateau
+- planet-feature.pediment
+- planet-feature.peneplain-etchplain
+- planet-feature.pingo
+- planet-feature.plate-boundary-convergent
+- planet-feature.plate-boundary-divergent
+- planet-feature.plate-boundary-transform
+- planet-feature.plateau
+- planet-feature.plateau-edge
+- planet-feature.playa-salt-pan
+- planet-feature.polje
+- planet-feature.proglacial-lake
+- planet-feature.raised-shoreline-rebound
+- planet-feature.range-crest-main-divide
+- planet-feature.range-front-fault-bounded
+- planet-feature.recessional-moraine
+- planet-feature.resurgent-dome
+- planet-feature.ria
+- planet-feature.rift-floor-axis
+- planet-feature.rift-margin
+- planet-feature.rift-shoulder
+- planet-feature.rill-and-gully-system
+- planet-feature.river-capture
+- planet-feature.river-mouth
+- planet-feature.river-terrace
+- planet-feature.roche-moutonnee-whaleback
+- planet-feature.rock-glacier
+- planet-feature.sag-pond
+- planet-feature.salt-marsh
+- planet-feature.sandy-beach
+- planet-feature.sea-cliff
+- planet-feature.sea-stacks-and-arches
+- planet-feature.shelf
+- planet-feature.shelf-edge
+- planet-feature.shield-craton
+- planet-feature.shield-volcano
+- planet-feature.shore-platform
+- planet-feature.shutter-ridge
+- planet-feature.slot-canyon
+- planet-feature.soil-mantled-hillslope
+- planet-feature.solifluction-lobes
+- planet-feature.sorted-patterned-ground
+- planet-feature.spit
+- planet-feature.star-dunes
+- planet-feature.stratovolcano-shasta-rainier
+- planet-feature.structural-basin
+- planet-feature.structural-dome
+- planet-feature.subsidiary-ridge
+- planet-feature.suture
+- planet-feature.syncline-axis
+- planet-feature.talus-slope
+- planet-feature.terminal-moraine
+- planet-feature.thermokarst-lakes
+- planet-feature.thrust-front
+- planet-feature.tidal-flat
+- planet-feature.till-plain
+- planet-feature.tombolo
+- planet-feature.tower-karst
+- planet-feature.transform-valley
+- planet-feature.transverse-dunes
+- planet-feature.triangular-facet
+- planet-feature.tributary-network
+- planet-feature.trunk-river
+- planet-feature.tuff-ring
+- planet-feature.v-valley
+- planet-feature.volcanic-arc-chain
+- planet-feature.volcanic-neck
+- planet-feature.volcanic-rift-zone
+- planet-feature.wadi
+- planet-feature.water-carved-land
+- planet-feature.water-gap
+- planet-feature.wind-gap
+- planet-feature.yardangs
+record_fields:
+- meaning: stable id (L12 a line, M5 a record)
+  name: id
+- meaning: the feature kind (this catalogue)
+  name: kind
+- meaning: polyline / polygon / ring / point / point set / network, on the sphere, riding the crust
+  name: geometry
+- meaning: '1: 10-50 km, 2: 2-10 km, 3: under 2 km (the coarsest it appears at)'
+  name: level
+  unit: 1-3
+- meaning: along the feature
+  name: length
+  unit: m
+- meaning: its footprint across
+  name: width
+  unit: m
+- meaning: height above (ridge, scarp) or depth below (valley, basin) its surroundings; relief0 at birth
+  name: relief
+  unit: m
+- meaning: 'cross-section: V, U, flat-floored, box, asymmetric, stepped, convex, concave; side slopes deg'
+  name: profile
+  unit: class
+- meaning: 'trend / strike / flow direction; facing: which side is steep or down'
+  name: direction
+  unit: deg
+- meaning: dendritic, trellis, radial, parallel, rectangular, en-echelon, braided, alternating ...
+  name: pattern
+  unit: class
+- meaning: between repeats (ridges, folds, scarps, centres, dunes)
+  name: spacing
+  unit: m
+- meaning: how far its influence reaches
+  name: spread
+  unit: m
+- meaning: turning per 100 km; sinuosity (path / chord); straight share
+  name: curvature
+  unit: deg/100 km, 1
+- meaning: 'and state: active / former / worn / buried / drowned / overprinted / dead'
+  name: born, last active
+  unit: Myr
+- meaning: the sim event id and process
+  name: cause
+- meaning: the generator that fired and the values that fired it
+  name: rule, trigger
+- meaning: at forming
+  name: rock, climate
+  unit: class
+- meaning: what it sits in / what it expands into
+  name: parent, children
+  unit: ids
+- meaning: 'every change: grown, segmented, overridden, eroded (rule and values)'
+  name: history
+- meaning: measured vs inferred
+  name: confidence
+  unit: 0-1
+- meaning: its deterministic detail
+  name: seed
+- meaning: 'the instance''s anchor point: x, y, z in integer centimetres in the planet''s body-fixed frame (y the spin axis), on its plate''s frame while its crust moves; set once, never re-derived, so the feature renders in the same
+    place at every level and on every machine (owner, 17 Oct 2026). Its kind''s pinned_to says what it marks'
+  name: pin
+  unit: cm
+- meaning: east, north, up at the pin, worked out from the pin alone (never stored)
+  name: frame
+- meaning: 'the kind''s named paths, each a chain of pins (owner, 17 Oct 2026): a pin (integer cm) at every sample location the feature passes, each with the path on to the next pin as curve handles leaving and arriving (inn, out) and
+    finer points (via) when known, integer-cm offsets in that pin''s own frame; features through the same location share the pin (a tributary ends on its parent''s pin); a feature smaller than a sample is one pin with via points'
+  name: spans
+  unit: cm
+- meaning: 'values along a span, one per chain pin, SI (named <span>.<what>: centreline.width)'
+  name: profiles
+- meaning: the kind's dimensions with their values for this instance, SI, each set by the law on the kind
+  name: dimensions
+- meaning: the kind's layout parameters for this instance (meander wavelength, bend radius), SI
+  name: layout
+- meaning: the feature it hangs from (one of its kind's parent_kinds) and its pin's offset in the parent's frame, integer cm
+  name: parent, parent_offset
+  unit: cm
+trace:
+  row: 'One row for every spawn and every change: step, t (Myr), rule, kind, feature id, lon and lat, the trigger values, the metadata set or changed.'
+  saved: <ck>_relief_trace.jsonl beside the store, per checkpoint
+  log: 'per checkpoint one line per family: features alive, spawned, segmented and eroded since the last checkpoint, and the busiest rule'
+overrides:
+- name: move / tear
+  trigger: its crust moves; plates part under it
+  effect: vertices move; cut at the plate edge; segmented
+- name: sink
+  trigger: its crust subducts
+  effect: dead, its fate kept
+- name: crossing
+  trigger: a younger feature crosses it (a fault across a fold, a river across a ridge)
+  effect: cut, or the younger one bends (by rule); both traced
+- name: erosion
+  trigger: every coupled step (applied per checkpoint)
+  effect: relief decays by the erosion rule; valleys widen, crests round; worn below a quarter of its first relief
+- name: burial
+  trigger: sediment laid over it (laid) above its relief
+  effect: 'buried (kept: it can be exhumed)'
+- name: drowning
+  trigger: the sea rises over it
+  effect: drowned (a ria, a drowned valley)
+- name: overprint
+  trigger: a younger process reshapes it (ice over a river valley)
+  effect: a child of the new kind replaces its shape; the old one overprinted
+- name: reactivation
+  trigger: its cause fires again (a fault re-used by a later rift)
+  effect: active again, new relief added, traced
+erosion:
+  formula: 'relief(t) = relief0 exp(-(t - born) / tau); tau = tau0 x hardness(rock) / wetness(climate) x glacial factor: hardness from the rock unit''s erodibility (Celestial rock units), wetness from rain and runoff, the glacial factor
+    over 1 for cold-based ice and under 1 for wet-based'
+  params:
+  - name: tau0
+    source: TAU0_MYR
+    value: 1893456000000000.0
+    unit: s
+    note: '60 Myr (the code; the design doc fixed to match at pgs2 6374530): Earth''s ranges lose most relief in 100 to 300 Myr (Appalachians, Urals)'
+  - name: worn share
+    source: WORN_SHARE
+    value: 0.25
+    unit: '1'
+    note: worn below this share of its first relief
+  - name: escarpment retreat
+    source: ESCARP_RETREAT_M_MYR
+    value: 1.5844043907014474e-11
+    unit: m/s
+    note: '500 m/Myr (the design: 0.5 to 1 km/Myr)'
+tools:
+- name: tools/relief_trace.py RUN --stats
+  does: 'per kind: alive and ever spawned; length, width, relief and spacing distributions; curvature (turning per km, sinuosity, straight share); segments per feature; trigger histograms; spawn times; state shares'
+- name: tools/relief_trace.py RUN --why ID
+  does: 'a feature''s lineage: event, rule, trigger values, parent, every later change'
+- name: tools/relief_trace.py RUN --near LON,LAT,KM
+  does: every feature there, with kind, age, rule
+- name: tools/relief_trace.py RUN --map, --timeline
+  does: a map of the features by family, and their spawns through time
+- name: tools/relief_view.py RUN
+  does: a map per checkpoint of all features coloured by family, line weight by level, with the legend and counts
+feeds:
+- planet-model.anchor
+- lod-model.anchor
+not_yet:
+- Its grain (the fold direction is in planet-field.grain) and its wavelength.
+- 'Applying it to the anchor model''s heights: the owner''s next design step.'
+- 'Waves 2 and 3: fluvial, glacial, coastal, karst, arid and aeolian kinds, and the level 2-3 detail (designed, not built).'
+- 'Where the relief stands between the samples: only how much (R), not its shape; below the sample spacing the relief features are to carry it, each at its scale.'
+- 'The local relief targets at about 2, 10 and 50 km per relief class: agreed, not yet measured.'
+results:
+- what: land samples
+  value: 8304.0
+  unit: '1'
+  run: earth_s30
+- what: R, 5th percentile
+  value: 50.0
+  unit: m
+  run: earth_s30
+  note: first draft, against the old per-sample statistic
+- what: R, median
+  value: 319.0
+  unit: m
+  run: earth_s30
+  note: first draft, against the old per-sample statistic
+- what: R, 95th percentile
+  value: 2014.0
+  unit: m
+  run: earth_s30
+  note: first draft, against the old per-sample statistic
+- what: share of land, high mountains
+  value: 0.094
+  unit: '1'
+  run: earth_s30
+  note: Earth 9 % above 1,500 m; first draft, against the old per-sample statistic
+- what: share of land, low mountains
+  value: 0.124
+  unit: '1'
+  run: earth_s30
+  note: mountains together about 22 %, as Earth; first draft, against the old per-sample statistic
+- what: share of land, hills
+  value: 0.297
+  unit: '1'
+  run: earth_s30
+  note: Earth about 30 %; first draft, against the old per-sample statistic
+- what: share of land, plateau
+  value: 0.215
+  unit: '1'
+  run: earth_s30
+  note: first draft, against the old per-sample statistic
+- what: share of land, plain
+  value: 0.184
+  unit: '1'
+  run: earth_s30
+  note: first draft, against the old per-sample statistic
+- what: share of land, lowland plain
+  value: 0.085
+  unit: '1'
+  run: earth_s30
+  note: first draft, against the old per-sample statistic
+- what: highest summit
+  value: 14632.0
+  unit: m
+  run: earth_s30
+  note: on a highest sample height of 5,888 m; first draft
+- what: orogen axes spawned
+  value: 98.0
+  unit: '1'
+  run: test_relief_d (earth_s30's 700 Ma snapshot to 350 Ma)
+- what: thrust fronts spawned
+  value: 98.0
+  unit: '1'
+  run: test_relief_d
+- what: fold axes spawned
+  value: 99.0
+  unit: '1'
+  run: test_relief_d
+- what: subsidiary ridges spawned
+  value: 182.0
+  unit: '1'
+  run: test_relief_d
+- what: normal fault scarps spawned
+  value: 258.0
+  unit: '1'
+  run: test_relief_d
+- what: rift shoulders spawned
+  value: 129.0
+  unit: '1'
+  run: test_relief_d
+- what: great escarpments spawned
+  value: 44.0
+  unit: '1'
+  run: test_relief_d
+- what: erosion steps traced
+  value: 3193.0
+  unit: '1'
+  run: test_relief_d
+- what: features worn by 350 Ma
+  value: 397.0
+  unit: '1'
+  run: test_relief_d
+implementations:
+- where: planet-trees-pgs2 tools/formations.py (features, rugged, relief_class, summits)
+  state: current
+  note: 'at 01abf7f: per checkpoint, saved in <ck>_patterns.npz (rugged, rclass, summit); drawn by tools/context_view.py view_relief and tools/layer_lines.py (the relief rings)'
+- where: planet-sim-landform stages/relief.py (Relief, the former line store; KINDS; generators orogen, rift_features, at_checkpoint)
+  state: building
+  note: 'at 54430a6: wave 1 first draft, 14 tectonic and volcanic kinds and the 11 former records, traced; waves 2 and 3 designed, not built'
+- where: planet-trees-pgs2 tools/relief_trace.py
+  state: current
+  note: at b4b0edf
+levels:
+- planet-level.planet
+- planet-level.cluster
+status: draft
+basis:
+- of:
+  - identity
+  - inputs
+  - steps
+  - references
+  - not_yet
+  - results
+  - implementations
+  tier: derived
+  note: planet-trees-pgs2 docs/relief-model.md (01abf7f), planets, 17 Oct 2026.
+- of:
+  - params
+  tier: invented
+  review: true
+  note: The weights and ramps are first drafts, judged only by the class shares against Earth.
+- of:
+  - registers
+  - feature_kinds
+  - record_fields
+  - trace
+  - overrides
+  - erosion
+  - tools
+  tier: derived
+  review: true
+  note: 'planet-trees-pgs2 docs/relief-features.md and docs/relief-generation.md (b4b0edf), the sim at 54430a6, planets, 17 Oct 2026: all draft. The feature kinds, their common fields and the legends from docs/relief-catalogue.json
+    (ff4f859), the canonical catalogue.'
+- of:
+  - identity
+  - detail
+  - steps
+  - references
+  - guarantees
+  - not_yet
+  tier: derived
+  note: 'The owner, via planets, 17 Oct 2026: no cells, the planet is continuous; R a continuous field; local relief at about 2, 10 and 50 km per class as the target and the check (docs/relief-model.md, Changes agreed).'

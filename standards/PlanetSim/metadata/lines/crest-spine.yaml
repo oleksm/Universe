@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/planet-line.schema.yaml
+identity:
+  key: planet-line.crest-spine
+  name: Crest spine
+  about: A range's crest line, with its peaks and passes.
+born_from: range detection
+first_level: planet-level.cluster
+expands_into:
+- peaks and passes
+- spurs
+levels:
+- planet-level.cluster
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - identity
+  tier: derived
+  note: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+- of:
+  - ends_idle
+  - offset
+  tier: derived
+  note: 'planet-sim-landform stages/zones.py: CLOSE_MYR 30, ARC_FRONT_M 150e3.'
+status: draft

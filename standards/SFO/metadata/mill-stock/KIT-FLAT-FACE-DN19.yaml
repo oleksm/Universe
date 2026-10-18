@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-flat-face-dn19
+  code: KIT-FLAT-FACE-DN19
+  name: Flat-face coupling, DN 19.05
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.stainless-steel-304
+- item: material.epdm-rubber
+size:
+  length: 0.07
+  width: 0.07
+  height: 0.146
+supplies:
+  item: connector.flat-face-dn19
+physical:
+  mass: 1.889
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.flat-face-dn19, as made.

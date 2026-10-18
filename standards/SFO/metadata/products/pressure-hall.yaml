@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/product.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: product.pressure-hall, name: Pressure hall, description: 'A tube hall of welded rings holding a gas at pressure on airless ground, built of sections and two heads.'}
+kind: family
+params:
+- {name: diameter, unit: m}
+- {name: sections, unit: count}
+pieces:
+- {id: section, description: a 30 m section}
+- {id: head, description: a domed head with its nozzles and service panel}
+units: [unit.pressure-hall-30m, unit.pressure-hall-30m-end]
+basis:
+- of: [kind, params, pieces, options]
+  tier: invented
+  review: true
+  note: Grouped from the units the layouts use (docs/proposals/plant-products.md, 2026-10-16).

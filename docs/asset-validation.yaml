@@ -4420,3 +4420,3781 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.mould-car-12
+    version: 1
+    manifest_sha256: "3ed158435a215e553246ff91bc0a073b7d0c12fcf9c3bdb1c6e311f7829cf210"
+    installed: 241e0d0b
+    game: "the loader (world::assets) at fso 241e0d0b"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/mould-car-12/v1 (455180 bytes, bounds [-3.0, -0.04, -1.4] to [3.0, 2.3, 1.4]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.stripper-crane-20t
+    version: 1
+    manifest_sha256: "490c774b610236ed6ae7ecc33b40319b67547c9e5c07ff8d1c6e19f58c62f290"
+    installed: da42ce04
+    game: "the loader (world::assets) at fso da42ce04"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/stripper-crane-20t/v1 (361392 bytes, bounds [-4.0, -1.6, -11.7] to [4.0, 2.9, 11.7]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.ingot-car-40t
+    version: 1
+    manifest_sha256: "f28c52c42babf8c858de534f2b64e4122bac1a0eeb06619e5fdce214ab76eefd"
+    installed: 7065874c
+    game: "the loader (world::assets) at fso 6824a75a"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/ingot-car-40t/v1 (323040 bytes, bounds [-4.0, -0.04, -1.5] to [4.0, 1.2, 1.5]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: layout.casting-bay-air
+    version: 1
+    manifest_sha256: "160f678f477e57a9c40b2af1d8d1ca811019916e98ad601bc33149fd213b0c55"
+    installed: 06f3dbdd
+    game: "the loader (world::assets) at fso 06f3dbdd"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/casting-bay-air/v1 (20818504 bytes, bounds [-36.0, -1.0, -15.75] to [36.0, 27.112, 15.75]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.shaft-furnace-200th
+    version: 1
+    manifest_sha256: "5a75d52c57308ce4769f62194fdfda56fa2656469c869d0ed4a1fc8ed3d6de86"
+    installed: 3a3c9b35
+    game: "the loader (world::assets) at fso 3a3c9b35"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/shaft-furnace-200th/v1 (1343176 bytes, bounds [-7.4, 7.0, -7.4] to [7.4, 50.0, 7.5]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.gas-heater-122mw
+    version: 1
+    manifest_sha256: "273834c6e66616924fda57b296b0ec4a6f062351267a470ebca9ab29d10e6427"
+    installed: b2a93c1d
+    game: "the loader (world::assets) at fso b2a93c1d"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/gas-heater-122mw/v1 (3469320 bytes, bounds [-12.03, -0.0, -5.931] to [11.12, 18.0, 4.542]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.heater-transformer-131mva
+    version: 1
+    manifest_sha256: "f819d7559dd216ea49ae536e13e2af8e70ea163ad600118e653aedc294254029"
+    installed: c25b82ae
+    game: "the loader (world::assets) at fso c25b82ae"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/heater-transformer-131mva/v1 (520940 bytes, bounds [-4.55, 0.0, -2.8125] to [4.5158, 6.75, 2.475]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.recuperator
+    version: 1
+    manifest_sha256: "e6b1b44ca5d620ba75e5f4a31ee70c206bf041c137ca83b9f555b89c470b5082"
+    installed: bcfe6590
+    game: "the loader (world::assets) at fso bcfe6590"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/recuperator/v1 (1194616 bytes, bounds [-5.42, 0.0, -5.2] to [5.42, 18.0, 5.2]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.top-gas-scrubber
+    version: 1
+    manifest_sha256: "3dff621b775c605590cce00e8c0c28cfef4e306fa09cdadad01335fa87c3ea55"
+    installed: df4f042d
+    game: "the loader (world::assets) at fso df4f042d"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/top-gas-scrubber/v1 (804952 bytes, bounds [-6.0, 0.0, -6.0] to [6.0, 23.0, 4.45]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.recycle-compressor
+    version: 1
+    manifest_sha256: "f6531ecd42aba91e5bf346fa3151f57c694c6485f8348248881fb4c8ff51b732"
+    installed: 0a5f2453
+    game: "the loader (world::assets) at fso 0a5f2453"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/recycle-compressor/v1 (685148 bytes, bounds [-11.0, 0.0, -4.0] to [11.0, 6.76, 4.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.dri-cooling-loop
+    version: 1
+    manifest_sha256: "173747509218d3e143bc3b3f90eda330ac4ae768f71b49ab2022f0d1fc2249ff"
+    installed: d83481d9
+    game: "the loader (world::assets) at fso d83481d9"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/dri-cooling-loop/v1 (463616 bytes, bounds [-6.0, -0.0, -4.0] to [5.53, 15.1899, 4.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.cooling-tower-shaft
+    version: 1
+    manifest_sha256: "35be38a48538288af3957fa9984642961abfdd1e88e8d4841e4ae92d3cbf6833"
+    installed: f8621ffc
+    game: "the loader (world::assets) at fso f8621ffc"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/cooling-tower-shaft-1/v1 (1075304 bytes, bounds [-23.975, 0.0, -5.95] to [24.0, 14.0, 5.95]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: layout.shaft-furnace-air
+    version: 1
+    manifest_sha256: "3f3139441e3b9a4c658f005c07e5522e3b141796c6849e68bdc85b15ccffd3f0"
+    installed: 5c942fc3
+    game: "the loader (world::assets) at fso 5c942fc3"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/shaft-furnace-air/v1 (25319760 bytes, bounds [-126.3, -2.5, -66.3] to [186.836, 54.08, 28.742]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.electrolyser-block-20mw
+    version: 1
+    manifest_sha256: "fba10ad99a8a16473ebfed89037ca61fd21ff6033b5db52156961ea5e7e6e770"
+    installed: 9b81bab5
+    game: "the loader (world::assets) at fso 9b81bab5"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/electrolyser-block-20mw/v1 (1683540 bytes, bounds [-10.2, 0.0, -6.0] to [11.6, 8.0, 6.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.rectifier-transformer-21mva
+    version: 1
+    manifest_sha256: "15205789a7dffd47743c70ec8a5be040748465790573340fabd5a4198062e937"
+    installed: 946f6b14
+    game: "the loader (world::assets) at fso 946f6b14"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/rectifier-transformer-21mva/v1 (497316 bytes, bounds [-2.45, 0.0, -3.0] to [2.4084, 3.6, 2.82]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.hydrogen-purifier
+    version: 1
+    manifest_sha256: "c68ccc70f176081bf583bcf03a409c8c79260a9f608cc8d69646d2d784531a58"
+    installed: a1de8ab4
+    game: "the loader (world::assets) at fso a1de8ab4"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/hydrogen-purifier/v1 (1624000 bytes, bounds [-6.0, -0.0, -4.0] to [6.0, 8.74, 4.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.water-treatment
+    version: 1
+    manifest_sha256: "c44a856468e34bb6c730c4dc77ae8593b37448fb1d7372df6f020af8ddcee010"
+    installed: 1b16acce
+    game: "the loader (world::assets) at fso 1b16acce"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/water-treatment/v1 (1408592 bytes, bounds [-6.0239, -0.0, -4.0] to [6.0, 4.77, 4.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.stack-crane-20t
+    version: 1
+    manifest_sha256: "8eaf0d78065d699c797125e0d3ee84f65d13f8236ef9e7febeb0633e92c6649a"
+    installed: ff5e8700
+    game: "the loader (world::assets) at fso ff5e8700"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/stack-crane-20t/v1 (309276 bytes, bounds [-4.0, -0.0989, -11.7] to [4.0, 2.9, 11.7]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.cooling-tower-h2
+    version: 1
+    manifest_sha256: "43146992d5659aee0b0cd9be1b5b1f3509d6528f84af7d083b372de63dc498ea"
+    installed: 1dec51fc
+    game: "the loader (world::assets) at fso 1dec51fc"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/cooling-tower-h2/v1 (878704 bytes, bounds [-17.975, 0.0, -5.95] to [18.0, 14.0, 5.95]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: layout.hydrogen-plant-air
+    version: 1
+    manifest_sha256: "2ff411d9e9ffae155e2527aa97fe5b516db8ccf94b45237d0e6f8d1d7b5d1909"
+    installed: cbc03bd6
+    game: "the loader (world::assets) at fso cbc03bd6"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/hydrogen-plant-air/v1 (15967032 bytes, bounds [-63.75, -2.5, -54.3] to [110.0, 18.19, 30.9]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.ball-mill-4m4
+    version: 1
+    manifest_sha256: "a3095ce13179352c7581b7762111851e6c9b6460baa776d570bcfe50d04bdbd2"
+    installed: 3aefcecf
+    game: "the loader (world::assets) at fso 3aefcecf"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/ball-mill-4m4/v1 (424036 bytes, bounds [-8.1324, -0.2, -4.2] to [8.5, 6.2, 4.45]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.disc-filter-2
+    version: 1
+    manifest_sha256: "5c5e751207d166c8c9627c818b4c2c5ebc3b8ed0f8fbaeea3568e100894aeefc"
+    installed: 81cc6ea4
+    game: "the loader (world::assets) at fso 81cc6ea4"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/disc-filter-2/v1 (1083796 bytes, bounds [-6.0, 0.0, -4.0] to [6.0, 5.5, 2.5472]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.balling-disc-7m5
+    version: 1
+    manifest_sha256: "c985be6e94664545b174830d4f5bc5c7eac037648180c35a1ae1b66035c2f9e7"
+    installed: 198ce21b
+    game: "the loader (world::assets) at fso 198ce21b"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/balling-disc-7m5/v1 (219540 bytes, bounds [-4.5, 0.0, -3.9] to [4.5, 7.0, 4.55]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.induration-grate-125th
+    version: 1
+    manifest_sha256: "8a9942e4681c54c4b7e52613fcf05a3d09712e4e7bd6eaa15e089f5511dbbe55"
+    installed: 35ab7c32
+    game: "the loader (world::assets) at fso 35ab7c32"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/induration-grate-125th/v1 (1874080 bytes, bounds [-22.45, -0.0, -8.3] to [21.5462, 17.66, 6.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.mill-crane-30t
+    version: 1
+    manifest_sha256: "a98fb4a6c71b3e3359cef712ac8c46b88a0f39fa99b200c7364d45d4f9f1d85d"
+    installed: e092b0fb
+    game: "the loader (world::assets) at fso e092b0fb"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/mill-crane-30t/v1 (309272 bytes, bounds [-4.0, -0.0989, -11.7] to [4.0, 2.9, 11.7]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.plant-transformer-35mva
+    version: 1
+    manifest_sha256: "b207efc9f77c507b6faa60312370a25e14f8b1b6477f4dceccb70dc726045ae2"
+    installed: 985bc0f8
+    game: "the loader (world::assets) at fso 985bc0f8"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/plant-transformer-35mva/v1 (521084 bytes, bounds [-2.9052, 0.0, -1.8125] to [2.9102, 4.35, 1.595]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.induration-grate-125th
+    version: 2
+    manifest_sha256: "be34f76aaa4379e2f7cf11f28bab483e7dc4626cc5259459daccca93be0c35af"
+    installed: 94faacc8
+    game: "the loader (world::assets) at fso 94faacc8"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/induration-grate-125th/v2 (1889020 bytes, bounds [-22.45, -0.0, -8.3] to [21.5462, 17.66, 6.01]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.baghouse-450k
+    version: 1
+    manifest_sha256: "6ffe5db4255320ddfb83aaaf7b3bbdd63d7e3be915be9ebe9871e118dea43173"
+    installed: e5168c6c
+    game: "the loader (world::assets) at fso e5168c6c"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/baghouse-450k/v1 (473132 bytes, bounds [-11.99, 0.0, -4.525] to [11.85, 68.0, 6.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.cooling-tower-pellet
+    version: 1
+    manifest_sha256: "d704b0573c23fda8a6f1d4fa049a86ac524b9efb4c42ca43b291ab2064dd5f76"
+    installed: 4d37a967
+    game: "the loader (world::assets) at fso 4d37a967"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/cooling-tower-pellet/v1 (472204 bytes, bounds [-5.975, 0.0, -5.95] to [6.0, 14.0, 5.95]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.induration-grate-125th
+    version: 3
+    manifest_sha256: "1b8cdff70fb214652d97d0f4b1b0f9991b746f45fdc4f830963b9f7b91531fdc"
+    installed: 4768f7ab
+    game: "the loader (world::assets) at fso 4768f7ab"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/induration-grate-125th/v3 (1892732 bytes, bounds [-22.45, -0.0, -8.3] to [21.5462, 17.66, 6.01]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: layout.pellet-plant-air
+    version: 1
+    manifest_sha256: "13b4b0fcbcac5c3d634496069cee1313f5afa290c887604b9e0981ca1086da4a"
+    installed: 90edfe1e
+    game: "the loader (world::assets) at fso 90edfe1e"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/pellet-plant-air/v1 (21321972 bytes, bounds [-100.0, -3.0, -42.0] to [110.04, 68.0, 33.3]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.stacker-reclaimer-1500th
+    version: 1
+    manifest_sha256: "c08f13e2311e87b9fb3b7993944a15b11bedddd2f823e7bee714da6f33aa0545"
+    installed: ad65d800
+    game: "the loader (world::assets) at fso ad65d800"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/stacker-reclaimer-1500th/v1 (1010844 bytes, bounds [-16.0, -0.06, -5.686] to [34.65, 20.0, 5.686]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.stacker-reclaimer-1500th
+    version: 2
+    manifest_sha256: "486e11f161b99293de9fc4ded7a926f6631e5eb27203d496aa3029d2d6f3a134"
+    installed: a8d8b44f
+    game: "the loader (world::assets) at fso a8d8b44f"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/stacker-reclaimer-1500th/v2 (991244 bytes, bounds [-16.0, -0.06, -5.686] to [34.65, 20.0, 5.686]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.yard-tripper-1500th
+    version: 1
+    manifest_sha256: "7939c549e15cd86804e14dbab2ea7f0b5fb94d32b30bd7739bcbdbe40b1edcaf"
+    installed: 87c02296
+    game: "the loader (world::assets) at fso 87c02296"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/yard-tripper-1500th/v1 (1305508 bytes, bounds [-33.76, -0.0, -5.56] to [0.8133, 10.1871, 5.56]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.truck-dump-hopper
+    version: 1
+    manifest_sha256: "3ce59dac691148e4c348091de1b7482235dc6fca678d72abe1e28287aee8fca0"
+    installed: 18ac39c5
+    game: "the loader (world::assets) at fso 18ac39c5"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/truck-dump-hopper/v1 (307264 bytes, bounds [-6.05, -6.0, -5.15] to [6.05, 2.0, 5.15]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.truck-dump-hopper
+    version: 2
+    manifest_sha256: "8b26fae88ef7ef55e55cf8410f67efe360e4bc962ba1dd66808f93404b1947c4"
+    installed: d2762ecc
+    game: "the loader (world::assets) at fso d2762ecc"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/truck-dump-hopper/v2 (318160 bytes, bounds [-6.05, -6.0, -5.15] to [6.05, 2.0, 5.15]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: layout.ore-yard-air
+    version: 1
+    manifest_sha256: "6bb6212cd092f0e825e812bbd9ed8ace928fe4d91117438d29e200bedc3e68e1"
+    installed: 99705ac9
+    game: "the loader (world::assets) at fso 99705ac9"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/ore-yard-air/v1 (3305592 bytes, bounds [-114.9, -6.5, -49.9613] to [132.83, 20.0, 49.9613]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.ingot-crane-10t
+    version: 1
+    manifest_sha256: "9c659c060e5c25b71118cbedd054cf83d0c4255895d9c28dcddf1fd52e4db857"
+    installed: c630cf1b
+    game: "the loader (world::assets) at fso c630cf1b"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/ingot-crane-10t/v1 (388272 bytes, bounds [-4.0, -1.9, -11.7] to [4.0, 2.9, 11.7]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.sampling-lab
+    version: 1
+    manifest_sha256: "1c88555d840e1d6a7da6a10f68128d24e713dfb1cd91783ffcac8d02cb487dad"
+    installed: b519a3d1
+    game: "the loader (world::assets) at fso b519a3d1"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/sampling-lab/v1 (189152 bytes, bounds [-3.0, 0.0, -3.145] to [3.0, 3.5, 3.2]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.crating-line
+    version: 1
+    manifest_sha256: "b0c099a8ffef5a750dfd2645f8a0955b07dda764468c77bcdd7bb39593349b13"
+    installed: 35c6980c
+    game: "the loader (world::assets) at fso 35c6980c"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/crating-line/v1 (660024 bytes, bounds [-6.0, -0.0, -2.0] to [6.0, 3.0, 2.02]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.crop-saws
+    version: 1
+    manifest_sha256: "a49ddbf3d07a5d7238142f67f465575aca4a1bbc12d454c9d46cd15805fc723a"
+    installed: 1af9f1ab
+    game: "the loader (world::assets) at fso 1af9f1ab"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/crop-saws/v1 (2113900 bytes, bounds [-5.85, 0.0, -4.64] to [5.79, 2.84, 4.5]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.forklift-2t5
+    version: 1
+    manifest_sha256: "1d5dce1a9e5c1c83b21b90416975f8769826867e830c1afb9909546bdf8fe50e"
+    installed: 00e426b9
+    game: "the loader (world::assets) at fso 00e426b9"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/forklift-2t5/v1 (289684 bytes, bounds [-1.815, 0.0, -0.635] to [1.8, 2.2, 0.635]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: layout.ingot-yard-air
+    version: 1
+    manifest_sha256: "b086393f156b3670703d0db9a77a1d8a7d2e324a411f28255c5f0e669694238f"
+    installed: 41c72c93
+    game: "the loader (world::assets) at fso 41c72c93"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/ingot-yard-air/v1 (11988540 bytes, bounds [-36.0, -1.0, -85.5] to [199.7, 15.4422, 85.5]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.ingot-tipper
+    version: 1
+    manifest_sha256: "67d9cd587fc04cae1634b6c443a34520b966bd13bca31b1d19ac354ab4657a9a"
+    installed: c01e94a1
+    game: "the loader (world::assets) at fso 5bec9ed0"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/ingot-tipper/v1 (87840 bytes, bounds [-2.85, 0.0, -1.5] to [2.55, 2.1, 1.5]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.eaf-vessel-80t-sealed
+    version: 1
+    manifest_sha256: "c15d6a1e89561897e3ee2395b543ba04dbcc56996a058b1922a1952526ef889b"
+    installed: 89dcb184
+    game: "the loader (world::assets) at fso 89dcb184"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/eaf-vessel-80t-sealed/v1 (1720776 bytes, bounds [-5.85, 0.0, -5.49] to [5.85, 14.0, 6.2433]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.offgas-filter-sealed
+    version: 1
+    manifest_sha256: "e7754676f126f8e8e4ec8a936d2b1ec74935f5e4d1bd8120441e2b91104211b9"
+    installed: 635b52cf
+    game: "the loader (world::assets) at fso 635b52cf"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/offgas-filter-sealed/v1 (187956 bytes, bounds [-6.0, 0.0, -2.875] to [5.36, 10.0, 2.875]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.gantry-crane-20t-moon
+    version: 1
+    manifest_sha256: "410195f4ab5b7ad60ddfc6f651edff50de697389a61c573e7d96190916c0e417"
+    installed: 44efdde4
+    game: "the loader (world::assets) at fso 44efdde4"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/gantry-crane-20t-moon/v1 (224508 bytes, bounds [-4.9, -0.04, -12.57] to [4.9, 23.7, 12.57]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.crew-post
+    version: 1
+    manifest_sha256: "ecc574880d20dfb64668f11ba4315a2bc744ee2e8793ba0b3689c35a6cd87e1d"
+    installed: f681128f
+    game: "the loader (world::assets) at fso f681128f"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/crew-post/v1 (286824 bytes, bounds [-3.02, 0.0, -2.0] to [3.0, 4.3, 2.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.radiator-field-330k
+    version: 1
+    manifest_sha256: "98e6b271749bafe82bc8ba6908048abb83a4bcdde422ee9a151f012e35aa02e7"
+    installed: 51ba77a6
+    game: "the loader (world::assets) at fso 51ba77a6"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/radiator-field-330k/v1 (1435696 bytes, bounds [-24.015, 0.0, -23.11] to [23.11, 3.134, 22.06]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.radiator-field-485k
+    version: 1
+    manifest_sha256: "863fbabebcfb4a37f019bcf1abc1fb3a2e7f126e9b71adad684b2470758cb995"
+    installed: 60afd29e
+    game: "the loader (world::assets) at fso 60afd29e"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/radiator-field-485k/v1 (1478560 bytes, bounds [-24.13, 0.0, -22.06] to [22.06, 3.134, 22.06]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: layout.arc-furnace-airless
+    version: 1
+    manifest_sha256: "71396d8e114dad722d2d20c65478d8383b1e97f18472c7ec595aaa0ad777be0c"
+    installed: 56f16447
+    game: "the loader (world::assets) at fso 56f16447"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/arc-furnace-airless/v1 (19875416 bytes, bounds [-218.65, -1.4, -64.1] to [33.0, 23.7, 126.65]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.ladle-furnace-80t-sealed
+    version: 1
+    manifest_sha256: "089a53bf2442adb3981bc188959b2d70cfc8f0373787db1e7baf0854f16ca8be"
+    installed: 7c9d8260
+    game: "the loader (world::assets) at fso 7c9d8260"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/ladle-furnace-80t-sealed/v1 (1202380 bytes, bounds [-5.5, 0.0, -5.0] to [5.5, 14.0, 5.34]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.degassing-stand
+    version: 1
+    manifest_sha256: "d6f152ab5af50cf230ff187895ec0f38981ac51590578101ef18beb09682749f"
+    installed: 596e3725
+    game: "the loader (world::assets) at fso 596e3725"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/degassing-stand/v1 (164648 bytes, bounds [-3.3, 0.0, -1.82] to [1.85, 8.0, 4.1]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.gantry-crane-150t-moon
+    version: 1
+    manifest_sha256: "ba799e17a82e1417e464ca665a79de2960ed761093b329323411e7198aaaa843"
+    installed: 76f2e9ab
+    game: "the loader (world::assets) at fso 76f2e9ab"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/gantry-crane-150t-moon/v1 (282760 bytes, bounds [-5.0, -0.04, -12.67] to [5.0, 26.0, 12.67]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.stripper-gantry-20t-moon
+    version: 1
+    manifest_sha256: "b5d80811bd194de4d6df67f50534f3acbaa1ca6d06498c60de639af9c2ee1efa"
+    installed: a7d87605
+    game: "the loader (world::assets) at fso a7d87605"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/stripper-gantry-20t-moon/v1 (282204 bytes, bounds [-5.0, -0.04, -12.72] to [5.0, 25.7, 12.72]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: layout.ladle-station-airless
+    version: 1
+    manifest_sha256: "b435df68cbd2fa6179f3bfe1dcb01030beaf9f07377043673220515df900e4d5"
+    installed: 889b13bb
+    game: "the loader (world::assets) at fso 889b13bb"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/ladle-station-airless/v1 (9441044 bytes, bounds [-98.7, -2.0058, -30.3] to [34.5692, 23.7, 64.1]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: layout.casting-bay-airless
+    version: 1
+    manifest_sha256: "7c323900a6808f1d71b2b2a0f2e1464b369cc7995b16f12e8ddd84824b939709"
+    installed: d082fc3e
+    game: "the loader (world::assets) at fso d082fc3e"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/casting-bay-airless/v1 (2248704 bytes, bounds [-36.0, -1.17, -12.75] to [36.0, 26.0, 32.5692]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: layout.ladle-station-airless
+    version: 2
+    manifest_sha256: "b9f97206cfd0db9eda6078b8201404aa6808abcb7cff795aa13ce5a33a0874bf"
+    installed: d0c48434
+    game: "the loader (world::assets) at fso d0c48434"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/ladle-station-airless/v2 (9441040 bytes, bounds [-98.7, -2.0058, -30.3] to [34.5692, 23.7, 64.1]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.shaft-furnace-200th-hp
+    version: 1
+    manifest_sha256: "3962dc1119298d6e9dda3b74d14384126fa35ea7ab1e13ce91fdf42ee3856a84"
+    installed: 7979b4e0
+    game: "the loader (world::assets) at fso 7979b4e0"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/shaft-furnace-200th-hp/v1 (1281628 bytes, bounds [-6.115, 6.0, -6.115] to [6.115, 40.0, 6.5]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.top-gas-condenser-8bar
+    version: 1
+    manifest_sha256: "931287e69cb670a4b73626e184fbb1e8f97f53263ba9ba0d27e165d814b9c8fe"
+    installed: 1ced507f
+    game: "the loader (world::assets) at fso 1ced507f"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/top-gas-condenser-8bar/v1 (1882092 bytes, bounds [-6.0, 0.0, -3.45] to [6.1, 13.0, 4.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.recycle-compressor-8bar
+    version: 1
+    manifest_sha256: "f440ad990ad711f11909111071341addefb919872611ad74fcde819e7a5c7aa0"
+    installed: a66c46a0
+    game: "the loader (world::assets) at fso a66c46a0"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/recycle-compressor-8bar/v1 (1126144 bytes, bounds [-6.0, -0.0, -2.9] to [6.0, 4.5, 2.9]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.gas-heater-119mw-8bar
+    version: 1
+    manifest_sha256: "73f5139caf11ab96a7bb41bd7b1c013459cdb143f26d8811672c12ee251c3015"
+    installed: cb15b9a2
+    game: "the loader (world::assets) at fso d20a351b"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/gas-heater-119mw-8bar/v1 (3469320 bytes, bounds [-12.03, -0.0, -5.931] to [11.12, 18.0, 4.542]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.radiator-field-345k
+    version: 1
+    manifest_sha256: "435128449e1c3eb36ff43efced47744e66a4858dae367b017b837d796dc0f218"
+    installed: c526806b
+    game: "the loader (world::assets) at fso c526806b"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/radiator-field-345k/v1 (1435696 bytes, bounds [-24.015, 0.0, -23.11] to [23.11, 3.134, 22.06]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.shaft-furnace-200th-hp
+    version: 2
+    manifest_sha256: "8ca9eaec0f90ee49d20ad12d2509d0bb162504a1fffc96c79eae959abc9442cc"
+    installed: e46cb9f0
+    game: "the loader (world::assets) at fso e46cb9f0"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/shaft-furnace-200th-hp/v2 (1255760 bytes, bounds [-6.115, 6.0, -6.115] to [6.115, 40.0, 6.5]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.recuperator
+    version: 2
+    manifest_sha256: "27ff778e72dca4283e41dfcf5fb151b09cbc2d944cab02cf5f213a96be684d88"
+    installed: 36d29dd0
+    game: "the loader (world::assets) at fso 36d29dd0"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/recuperator/v2 (1163392 bytes, bounds [-5.42, 0.0, -5.2] to [5.42, 18.0, 5.2]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.top-gas-condenser-8bar
+    version: 2
+    manifest_sha256: "c04f473d86ef390e5b61fedf86d552a7ae673df57bbdaf68dfc611ff75069273"
+    installed: 9cc45658
+    game: "the loader (world::assets) at fso 9cc45658"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/top-gas-condenser-8bar/v2 (1827488 bytes, bounds [-6.0, 0.0, -3.45] to [6.0, 13.0, 4.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.recycle-compressor-8bar
+    version: 2
+    manifest_sha256: "69561d6adac4480abe9e6aa6c7feab8fb256ef896247ee9cb67741f0ae237866"
+    installed: 71cb496d
+    game: "the loader (world::assets) at fso 71cb496d"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/recycle-compressor-8bar/v2 (893840 bytes, bounds [-6.0, -0.0, -2.9] to [6.0, 5.0, 2.9]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.gas-heater-119mw-8bar
+    version: 2
+    manifest_sha256: "2f7280308e7dc16d493e72d1b033e97ec4045a1d68160bac67f5f2ddf3f7c6e2"
+    installed: 18205dff
+    game: "the loader (world::assets) at fso 18205dff"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/gas-heater-119mw-8bar/v2 (3511660 bytes, bounds [-12.03, -0.0, -5.831] to [11.12, 18.0, 4.467]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.heater-transformer-131mva
+    version: 2
+    manifest_sha256: "215f4307cbd1bd3b909c276a9880d3b857010bae3f7750cf82636c5071de9ca7"
+    installed: 0e2c7598
+    game: "the loader (world::assets) at fso 0e2c7598"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/heater-transformer-131mva/v2 (761032 bytes, bounds [-4.55, 0.0, -3.35] to [4.5158, 7.55, 2.475]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.crew-post
+    version: 2
+    manifest_sha256: "73400f0b9521de6b288bfd8ea194dd32da6a68977db67f4d3b91efbdfed664cb"
+    installed: aec6f1ad
+    game: "the loader (world::assets) at fso aec6f1ad"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/crew-post/v2 (367680 bytes, bounds [-3.02, 0.0, -2.0] to [3.0, 4.3, 2.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.radiator-field-345k
+    version: 2
+    manifest_sha256: "6c2983c5ad48842469d0724394824dbcdfb13bae026594ad7bea8a9b57eb197a"
+    installed: 7e911352
+    game: "the loader (world::assets) at fso 7e911352"
+    date: "2026-10-15"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): cargo:warning=../../../standards/SFO/metadata/units/radiator-field-345k.yaml: unit.radiator-field-345k: unknown field `envelope`, expected one of `identity`, `size_class`, `fits`, `physical`, `built_of`, `holds`, `needs`, `rejects`, `recipes`, `ports`, `life`, `visual`, `revision`, `basis` at line 45 column 1: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: run.pipe-dn150-pn10
+    version: 1
+    manifest_sha256: "e07c0a3feee6d32693b544c63aae2aaca6fcbe3f154dcde94a310d2693d97418"
+    installed: ca1c71d4
+    game: "the loader (world::assets) at fso ca1c71d4"
+    date: "2026-10-15"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.radiator-field-345k
+    version: 3
+    manifest_sha256: "f4da230072c0278b5aae2899a48bcbb8295a740774783b261f70962e54cce355"
+    installed: 7de841bc
+    game: "the loader (world::assets) at fso 7de841bc"
+    date: "2026-10-15"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/radiator-field-345k/v3 (1955040 bytes, bounds [-23.61, 0.0, -23.11] to [23.11, 3.134, 24.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: connector.flange-dn150-pn10
+    version: 1
+    manifest_sha256: "c0d9199184d2b0e46ed03a0f0ac7b086fb4ba075ac1589ee038aa18175e81f3a"
+    installed: 438993da
+    game: "the loader (world::assets) at fso 438993da"
+    date: "2026-10-15"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.pipe-dn200-pn10-ss
+    version: 1
+    manifest_sha256: "e0ca6a916483894688e2304bccbe515d58c5ba6af5c12196c0842e732d76b897"
+    installed: ab417235
+    game: "the loader (world::assets) at fso ab417235"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.flange-dn200-pn10-ss
+    version: 1
+    manifest_sha256: "456f50a123f3c78ed2e3e99b688ab0583f4cdd003a44d8cdaa6f416083e97424"
+    installed: 4dc42f35
+    game: "the loader (world::assets) at fso 4dc42f35"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.pipe-dn250-pn16-ss-double
+    version: 1
+    manifest_sha256: "31e829e601b781ec2b9f047ebb692d730c830d45fe6110a20766465280064076"
+    installed: bef9fe82
+    game: "the loader (world::assets) at fso bef9fe82"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.flange-dn250-pn16-ss-double
+    version: 1
+    manifest_sha256: "a5697c2c8632650508f218365ef2fd878dcf6fb399e808433f625fc2e4ca03d0"
+    installed: 0ffb2253
+    game: "the loader (world::assets) at fso 0ffb2253"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.pipe-dn350-pn10
+    version: 1
+    manifest_sha256: "5dadbf9cd81340011a81d13c2b53525b37a82018c30f260d9a065fbc6e6905e4"
+    installed: 70de4118
+    game: "the loader (world::assets) at fso 70de4118"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.pipe-dn250-pn16-ss-double
+    version: 2
+    manifest_sha256: "1a24f45f8191bc8aba607203323cf91b8d5b82234636f26d7cec98f3965e0cf1"
+    installed: 2e5a9515
+    game: "the loader (world::assets) at fso 2e5a9515"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.pipe-dn200-pn10-ss
+    version: 2
+    manifest_sha256: "38bf1fbb4b4d9df6e98ad4a50cec56e3311241b857edabed2ac2699d44fb2568"
+    installed: e0faca16
+    game: "the loader (world::assets) at fso e0faca16"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.flange-dn350-pn10
+    version: 1
+    manifest_sha256: "20184d354ee2c09d9e0f1c3a7d1f6a110f6fa872d804da581c42a8c1e62e67f4"
+    installed: 67f74418
+    game: "the loader (world::assets) at fso 67f74418"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.pipe-dn900-pn10
+    version: 1
+    manifest_sha256: "4532e1b12268120032c522f63d71bedddd963f1a7075f04c8fbfe9d10a54e11e"
+    installed: d9f6aa7a
+    game: "the loader (world::assets) at fso d9f6aa7a"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.flange-dn900-pn10
+    version: 1
+    manifest_sha256: "19eae556fd99149ca52373f518611af5bf465335c0d1e2a22b6a38714f130247"
+    installed: 9c79f46b
+    game: "the loader (world::assets) at fso 9c79f46b"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.pipe-dn1000-pn16-double
+    version: 1
+    manifest_sha256: "5fa32eea74316e6a356d5abe481f2b9e90178f605b8d011928f1bb000167486b"
+    installed: ad598a93
+    game: "the loader (world::assets) at fso ad598a93"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run kind yet (engine task 20261015T224523-registry-52e4)"
+      - "A36 at 623 K: the class's wall uses the 133 MPa allowable up to about 340 deg C; the top gas runs at 350 deg C, at the edge (registry review)"
+  - key: connector.flange-dn1000-pn16-double
+    version: 1
+    manifest_sha256: "4e884d7d297939981985588bfba19039f03a5ffe065afa175a6d71b60a64d521"
+    installed: 3ccb3fdc
+    game: "the loader (world::assets) at fso 3ccb3fdc"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.pipe-dn1000-pn16-mli-double
+    version: 1
+    manifest_sha256: "3376d559a11d3ed6951a68113a67d9d0c24227ed638ce92f4c107c0b7f37c091"
+    installed: f680227c
+    game: "the loader (world::assets) at fso f680227c"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.pipe-dn1600-pn16-mli-double
+    version: 1
+    manifest_sha256: "826bf40320c5d1e8fe8fd87c2fa636edc35ca02c90702c21f9af7d63228725a0"
+    installed: 3efea4b3
+    game: "the loader (world::assets) at fso 3efea4b3"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.flange-dn1600-pn16-double
+    version: 1
+    manifest_sha256: "8fa93e8dd782de74ac0f438b8b6a1d35b3e39f350ec4816a8e0d7f6ae571ed26"
+    installed: 91a2725d
+    game: "the loader (world::assets) at fso 91a2725d"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.lined-duct-dn2400-pn16-double
+    version: 1
+    manifest_sha256: "ca1f5e74cf3746f689b08113b7cfb3ee08d8839462dc668caae972b7fc1a6784"
+    installed: 2f38b775
+    game: "the loader (world::assets) at fso 2f38b775"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.pipe-dn1600-pn16-mli-double
+    version: 2
+    manifest_sha256: "c7ab28706c0a558995a62862a8268653eca9550abbbf7149f75804013719ff00"
+    installed: 860c5865
+    game: "the loader (world::assets) at fso 860c5865"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.pipe-dn1000-pn16-mli-double
+    version: 2
+    manifest_sha256: "40b9fc0261c60684be8ee0ceb5006ceccaaddb0469442ea43d836c395e0b4e96"
+    installed: ab92a263
+    game: "the loader (world::assets) at fso ab92a263"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.pipe-dn1000-pn16-double
+    version: 2
+    manifest_sha256: "4ec8145c83cbc7e54ed3a9d92e47e0ffc5c08eb200f98eb9947418bcb950a32e"
+    installed: f2a821f2
+    game: "the loader (world::assets) at fso f2a821f2"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.pipe-dn900-pn10
+    version: 2
+    manifest_sha256: "886eaa351401e493d918d02e6b82b4f0d6c6c13d72b0879a004fbd435e2dad39"
+    installed: 420233b6
+    game: "the loader (world::assets) at fso 420233b6"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.lined-flange-dn2400-pn16-double
+    version: 1
+    manifest_sha256: "121089bc5f42784391a0802935702ea514624ca6d5dba5d5c21f3d868f3b2a5c"
+    installed: 97d9e17a
+    game: "the loader (world::assets) at fso 97d9e17a"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.pipe-dn100-pn10
+    version: 1
+    manifest_sha256: "e873f04075b862ec0617c92ae554d8ae193b2dbed12ef945771c7c353abc80eb"
+    installed: 92c288ba
+    game: "the loader (world::assets) at fso 92c288ba"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.flange-dn100-pn10
+    version: 1
+    manifest_sha256: "58fcdc85f7965d1285572a8fe2943009974334ea8ed56813b2b24b62376fccc3"
+    installed: d57bb464
+    game: "the loader (world::assets) at fso 2137f269"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.belt-1200
+    version: 1
+    manifest_sha256: "da079e782142577598a46234a86efe7a730a848ac2e8890a6da1334c32cc9e6a"
+    installed: a4dc75d2
+    game: "the loader (world::assets) at fso 377e9d6a"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.belt-transfer-1200
+    version: 1
+    manifest_sha256: "0d12f2bc53e50a96ae1dff09bb2102312e0ea7ecccf5c9f3f557754f03f9bf7b"
+    installed: 3d25d328
+    game: "the loader (world::assets) at fso 3d25d328"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.drag-conveyor-800
+    version: 1
+    manifest_sha256: "7677f340565202ffa6f80d4564616b4b9b5b85175c8dfa44a3f4eee6b7cb33c5"
+    installed: 80df3b42
+    game: "the loader (world::assets) at fso 80df3b42"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.belt-1200
+    version: 2
+    manifest_sha256: "116d9c590a890a5c0d7f6f69269006f199dd1d1dbecd44c782b0acb05c1f09ac"
+    installed: 4294bf21
+    game: "the loader (world::assets) at fso 4294bf21"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.chute-dn800
+    version: 1
+    manifest_sha256: "09701c59c3c0de6f95dc4e635620119b96bcb3eaf6129e6104d65aa57e5bfe5d"
+    installed: b80eac17
+    game: "the loader (world::assets) at fso b80eac17"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.cable-6p6kv-185mm2
+    version: 1
+    manifest_sha256: "49a26c3692afda02ee2fd4ef52f324cb7c3f38264dd82473e6e7ae26d13b9ad0"
+    installed: 2721bc9a
+    game: "the loader (world::assets) at fso 2721bc9a"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.termination-6p6kv-185mm2
+    version: 1
+    manifest_sha256: "54463f6a408a20799df7beb7f5041daf7e0826c0e6b8edbcf58f93d58754641c"
+    installed: 8f62305a
+    game: "the loader (world::assets) at fso 8f62305a"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.cable-132kv-240mm2
+    version: 1
+    manifest_sha256: "dff66b3aca90b9812e8cd6440f20fac49b8450461c7fe573e9e73850e6b9d3e5"
+    installed: 45f58805
+    game: "the loader (world::assets) at fso 3f5edb1d"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.cable-6p6kv-185mm2
+    version: 2
+    manifest_sha256: "c16a08c91a3e15250db4eaaafc20250d31947782a3a2d384264eddcb0db60183"
+    installed: 3f5edb1d
+    game: "the loader (world::assets) at fso 1006ae31"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.termination-132kv-240mm2
+    version: 1
+    manifest_sha256: "cb91214429904d331099c3d43b94e3db0ea63e5b674e9b1ec01d26331d438e08"
+    installed: 31f95312
+    game: "the loader (world::assets) at fso 31f95312"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no connector kind yet (engine task 20261015T224523-registry-52e4)"
+      - "dielectric design not checked (provisional plug-in termination)"
+  - key: run.cable-6p6kv-630mm2
+    version: 1
+    manifest_sha256: "030068fa84d6b555fee012d437ef4ebd25796134b6231de464be9476d5376407"
+    installed: aeb79c70
+    game: "the loader (world::assets) at fso aeb79c70"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.termination-6p6kv-630mm2
+    version: 1
+    manifest_sha256: "c1c567af747ab41adc2e2fc9efbd11ce9d8184bc91797fd6e8ffb58198fe35ca"
+    installed: eeaf8de2
+    game: "the loader (world::assets) at fso eeaf8de2"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.cable-400v-300mm2
+    version: 1
+    manifest_sha256: "bf2c9004347a1274552f50dbe1e693a72a0633981d1a8857db78ad3326b49f9c"
+    installed: 2a602829
+    game: "the loader (world::assets) at fso 2a602829"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.termination-400v-300mm2
+    version: 1
+    manifest_sha256: "44db5b6ec040341f1a3de413fbd481b63ac21dd462da4637b8dcda07151ddbf6"
+    installed: 2270c87e
+    game: "the loader (world::assets) at fso 2270c87e"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.cable-400v-16mm2
+    version: 1
+    manifest_sha256: "b3a11742574f73d41017394174488e0929e2ff10ca3af68079faa676e959a338"
+    installed: cb33e521
+    game: "the loader (world::assets) at fso cb33e521"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.termination-400v-16mm2
+    version: 1
+    manifest_sha256: "40b9a43c83eba151cd3618bb903bf15bc3067bc1d940c7003ed83d3590d6cd01"
+    installed: 6705f438
+    game: "the loader (world::assets) at fso 6705f438"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.cable-400v-70mm2
+    version: 1
+    manifest_sha256: "ff6374ec809b7cd13489821ce4cc0e494868556468258b66896cf7a7339c1acf"
+    installed: a6f0d39c
+    game: "the loader (world::assets) at fso a6f0d39c"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.termination-400v-70mm2
+    version: 1
+    manifest_sha256: "e35d7cdc568a1f4a27633afe26d85318697a64ac12b5fc30232bf5a10405cce9"
+    installed: 0fc86395
+    game: "the loader (world::assets) at fso 0fc86395"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.cable-400v-400mm2
+    version: 1
+    manifest_sha256: "499d7a9f56339e6ba940e9fedaeabafe8e34b556dd887ee631e57878fa4ad77e"
+    installed: faab7645
+    game: "the loader (world::assets) at fso d89efe60"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.termination-400v-400mm2
+    version: 1
+    manifest_sha256: "67caddccec22c13603cfcc6ab0b645665562a2e04ba023830a484affecc65225"
+    installed: 1983e1f7
+    game: "the loader (world::assets) at fso 1983e1f7"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: package.crate-steel
+    version: 1
+    manifest_sha256: "db33d1c94e20f1907bafeb5c15322fe57d15e721981018e75c713755f208301e"
+    installed: 7ecced72
+    game: "the loader (world::assets) at fso 7ecced72"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/crate-steel/v1 (71812 bytes, bounds [-0.6, 0.0, -0.512] to [0.6, 0.8, 0.512]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.ingot-gantry-10t-moon
+    version: 1
+    manifest_sha256: "5afd7128b51bef760f525654308d63138bf12bedd515c4f98d8f8e7f6bf6334c"
+    installed: 43495253
+    game: "the loader (world::assets) at fso 43495253"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/ingot-gantry-10t-moon/v1 (285516 bytes, bounds [-3.9, -0.04, -11.95] to [3.9, 13.7, 11.95]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.pressure-hall-30m
+    version: 1
+    manifest_sha256: "e74d4dde6fcb1b3474de8dd30215ffa6cb2720eb3301f5425d3c4e4084039b1b"
+    installed: 727369ba
+    game: "the loader (world::assets) at fso 727369ba"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/pressure-hall-30m/v1 (1794572 bytes, bounds [-15.0, -0.3, -15.2998] to [15.0, 30.3, 15.3]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.pressure-hall-30m-end
+    version: 1
+    manifest_sha256: "240398f70c352d0b8c1936b9ad642d2c6ad168ae6a009f1e02b98fc5163beda4"
+    installed: 4d3b9a2b
+    game: "the loader (world::assets) at fso 4d3b9a2b"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/pressure-hall-30m-end/v1 (970884 bytes, bounds [0.0, -0.3, -15.2998] to [14.06, 30.3, 15.3]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.crating-line-steel
+    version: 1
+    manifest_sha256: "05a3a04ae2f0b032f306d04ddb1a0ba4273bf23cf71e1d93b66d4a22dadf1a3f"
+    installed: 5106963c
+    game: "the loader (world::assets) at fso 5106963c"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/crating-line-steel/v1 (1143316 bytes, bounds [-6.0, 0.0, -2.0] to [6.0, 3.0, 2.02]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.sampling-lab-sealed
+    version: 1
+    manifest_sha256: "fdc5531029e125e8784b2fa081654711f18561d7ad1b42c3d0b42a6f402a629d"
+    installed: 47623d9a
+    game: "the loader (world::assets) at fso 47623d9a"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/sampling-lab-sealed/v1 (466984 bytes, bounds [-4.06, 0.0, -2.0] to [6.1, 4.3, 2.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.electrolyser-block-20mw-10bar
+    version: 1
+    manifest_sha256: "369aa8203a8d1c9ca4411e8f488d6a92b78ffa0f79b0ff0293b01bd54f1ffc61"
+    installed: 10eb6588
+    game: "the loader (world::assets) at fso 10eb6588"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/electrolyser-block-20mw-10bar/v1 (1748456 bytes, bounds [-10.2, 0.0, -6.0] to [11.6, 8.0, 6.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.hydrogen-purifier-10bar
+    version: 1
+    manifest_sha256: "3a4b32250d40f452d691f715fcc37eba578c66eace1c0a863f30f9b266f588de"
+    installed: e15eeab4
+    game: "the loader (world::assets) at fso e15eeab4"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/hydrogen-purifier-10bar/v1 (2085452 bytes, bounds [-6.0, -0.0, -4.0] to [6.0, 8.74, 4.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.water-treatment-sealed
+    version: 1
+    manifest_sha256: "b69d739dbefa18d9b0321f3a873720dc642d2ce36ef91c421d0b9e44fb39479e"
+    installed: c09e250a
+    game: "the loader (world::assets) at fso c09e250a"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/water-treatment-sealed/v1 (268856 bytes, bounds [-6.0, -0.0, -4.003] to [6.0, 5.02, 4.003]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.rectifier-transformer-21mva
+    version: 2
+    manifest_sha256: "689be998f837a44c2aff628e0a989f7ab2773ac92b98d8a91e88ce3ab27fcc87"
+    installed: 74d0fa22
+    game: "the loader (world::assets) at fso 74d0fa22"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/rectifier-transformer-21mva/v2 (571780 bytes, bounds [-2.45, 0.0, -3.0] to [2.4084, 4.4, 2.82]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: run.pipe-dn50-pn10-ss
+    version: 1
+    manifest_sha256: "3df1c6fe9f8809534486ad2b5952c9f3aaf95424c0e5181d5a80def5c92a94ab"
+    installed: 38c2e789
+    game: "the loader (world::assets) at fso 38c2e789"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.flange-dn50-pn10-ss
+    version: 1
+    manifest_sha256: "6a538daa0647d9af58071a64e81c4eede76a3af921dcd6a8704363e88f13c79d"
+    installed: 3d50b2b2
+    game: "the loader (world::assets) at fso 3d50b2b2"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.pipe-dn100-pn10-ss
+    version: 1
+    manifest_sha256: "715ff2c91fb6e2daa6e637c5dbe656b8a7ec52f70a9b241c20da477482741b71"
+    installed: 4ce43a7a
+    game: "the loader (world::assets) at fso 4ce43a7a"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.flange-dn100-pn10-ss
+    version: 1
+    manifest_sha256: "d63a9e5aa3686dc032f3e00955951b8f079eaedc1e9f6bf8fe8cf03e186b265a"
+    installed: 56bf9c0e
+    game: "the loader (world::assets) at fso 56bf9c0e"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.pipe-dn150-pn10-ss
+    version: 1
+    manifest_sha256: "4f3c67d2900a95755f26ddd0662b8706e954643aed5a41e9a1a97aa101770194"
+    installed: 34a527d3
+    game: "the loader (world::assets) at fso 34a527d3"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.flange-dn150-pn10-ss
+    version: 1
+    manifest_sha256: "825b0f04678516b0fa915f9bd52f7c1addd2a6f3d9a9e8768a06ea8e23ca5064"
+    installed: 568bf7c0
+    game: "the loader (world::assets) at fso 568bf7c0"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.pipe-dn100-pn16-ss-double
+    version: 1
+    manifest_sha256: "756d3e4265ac9b8baf9f40ad70e22d07502a0875f228d4ecdf54f0e511d205e2"
+    installed: 268ff5e8
+    game: "the loader (world::assets) at fso 268ff5e8"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.flange-dn100-pn16-ss-double
+    version: 1
+    manifest_sha256: "57b4185d2d402b5c6ed290679673a23cf1fb3e5890fc96020e010915b4677c0e"
+    installed: 6aa07489
+    game: "the loader (world::assets) at fso 6aa07489"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.pipe-dn150-pn16-ss-double
+    version: 1
+    manifest_sha256: "51b4ca8a180619eb0e7633dfd2bd890c6a0e21c96a462633c4596e7ffa1a1d8c"
+    installed: a5798bc3
+    game: "the loader (world::assets) at fso a5798bc3"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.flange-dn150-pn16-ss-double
+    version: 1
+    manifest_sha256: "685fde752e68ef6f5d80852d93a988620e871891f88e7a66524eb70d51a8a6cd"
+    installed: fc51e094
+    game: "the loader (world::assets) at fso fc51e094"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.pipe-dn200-pn16-ss-double
+    version: 1
+    manifest_sha256: "946332330ec18075ab6d0ab19fb068286bbf12f249259463b056a0dab78d54ea"
+    installed: 7cf5b9f8
+    game: "the loader (world::assets) at fso 7cf5b9f8"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.flange-dn200-pn16-ss-double
+    version: 1
+    manifest_sha256: "832d7f92a75c05ca5e1d888bca7d4e0e6f0ac39bd2f9597ebb0211b3f0b88156"
+    installed: 110dd86f
+    game: "the loader (world::assets) at fso 110dd86f"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.pipe-dn200-pn10
+    version: 1
+    manifest_sha256: "324bc39cc73f16b26f8b4ee27544c975dad1c8fb5f34fd74a5dcc14713a11069"
+    installed: 19dd5c6d
+    game: "the loader (world::assets) at fso 19dd5c6d"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.flange-dn200-pn10
+    version: 1
+    manifest_sha256: "15338538a0c772c3dd5787e2f41e25926115f0793dbee9bb6c3975e7bf1f34db"
+    installed: 4d7c1870
+    game: "the loader (world::assets) at fso 4d7c1870"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.pipe-dn250-pn10
+    version: 1
+    manifest_sha256: "ab69893f8dfce405927f6847ad9c275453902de11437895e1d0f2259222c4e76"
+    installed: fb41ac7c
+    game: "the loader (world::assets) at fso fb41ac7c"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.flange-dn250-pn10
+    version: 1
+    manifest_sha256: "99929aa7fbb27f448c772f5210346d9b7c6c7c5bbac9a578b0ecf4179d16dc76"
+    installed: 03b2840e
+    game: "the loader (world::assets) at fso 03b2840e"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.pipe-dn300-pn10
+    version: 1
+    manifest_sha256: "6e7747f52703f00af6e5f2cc731d894a266f0c04084e3c4d6687e269664b7d3a"
+    installed: 2652b298
+    game: "the loader (world::assets) at fso 2652b298"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.flange-dn300-pn10
+    version: 1
+    manifest_sha256: "fc0088030b0ef07b55ceede76d3d27eb581cdd867d24838b506b0c1088082a33"
+    installed: 7415eece
+    game: "the loader (world::assets) at fso 7415eece"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.pipe-dn600-pn10
+    version: 1
+    manifest_sha256: "18b646c95fd6245745b2c9ef237a58295f3186446945d1041a364648d9434348"
+    installed: 654dbe08
+    game: "the loader (world::assets) at fso 654dbe08"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.flange-dn600-pn10
+    version: 1
+    manifest_sha256: "e8081e701596cd42f907ad1e7e08f8fb0c04f3aeaa68382e5ce60324007b4870"
+    installed: 1cac465f
+    game: "the loader (world::assets) at fso 1cac465f"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.cable-33kv-150mm2
+    version: 1
+    manifest_sha256: "0b6c501eb310d10ff0b67dd48492f8f1b71e75da8afda7be95387203b167249f"
+    installed: 206dea09
+    game: "the loader (world::assets) at fso 206dea09"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.termination-33kv-150mm2
+    version: 1
+    manifest_sha256: "99125a194bbcb61af8dff5f1eadbe94c997c0a477538626c22ad6c5bd050b857"
+    installed: 8a47198d
+    game: "the loader (world::assets) at fso 8a47198d"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.cable-400v-25mm2
+    version: 1
+    manifest_sha256: "dba9dbb43e28a6f41fbf9db60482741f952d5c88f3f001592177d25950d7350d"
+    installed: 122f14c8
+    game: "the loader (world::assets) at fso 122f14c8"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.termination-400v-25mm2
+    version: 1
+    manifest_sha256: "64fdea7c2ca6b6847600c9b39e9a22c74f6315de4fe822ce2ac29d4745fa10bb"
+    installed: 078714a4
+    game: "the loader (world::assets) at fso 078714a4"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.cable-400v-185mm2
+    version: 1
+    manifest_sha256: "08da45c64fb5a65790f12ebc4396c264b23241e271e9eab949462d5eb6730b8d"
+    installed: 4f972bbc
+    game: "the loader (world::assets) at fso 4f972bbc"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.termination-400v-185mm2
+    version: 1
+    manifest_sha256: "ed82ebac4014adf46a3dd3ad03fd6e044e5d34746ab6afb18b3fea1973eaa141"
+    installed: 2cbc71d2
+    game: "the loader (world::assets) at fso 2cbc71d2"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.cable-400v-500mm2
+    version: 1
+    manifest_sha256: "127e505e2c788413125dc9a219e0447f850d07ba9f70d88009e3356d36a75263"
+    installed: 4105be59
+    game: "the loader (world::assets) at fso 4105be59"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.termination-400v-500mm2
+    version: 1
+    manifest_sha256: "c44d26d61d9b231476c68b56fc8582b3f9ce2aa20da7eb3737fb4c7ef9271889"
+    installed: 08470040
+    game: "the loader (world::assets) at fso 08470040"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.busbar-dc-44ka
+    version: 1
+    manifest_sha256: "ca4fdc08fd1c31746fccbc3d5f215915d216659a7b18dab1633debf3f8fdf507"
+    installed: 62d4e2ce
+    game: "the loader (world::assets) at fso 62d4e2ce"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.bus-joint-dc-44ka
+    version: 1
+    manifest_sha256: "c4f6fbff9b5870b9442ac652ea20b26cfc198e72ca84d280f7b018f3421d9ed0"
+    installed: eebf77b0
+    game: "the loader (world::assets) at fso eebf77b0"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: unit.filter-press-2
+    version: 1
+    manifest_sha256: "481187cbfd7c76d63cd5f6584a2a3b6a4195ffde72cc558f1a0e2593f429f7d2"
+    installed: 4e158702
+    game: "the loader (world::assets) at fso 4e158702"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/filter-press-2/v1 (1244976 bytes, bounds [-6.025, -0.0, -3.1] to [6.025, 11.25, 3.25]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.ore-lock-hopper
+    version: 1
+    manifest_sha256: "0968f0b2f09f80551271d3f6889d5a6a578d63d69ef994a418103b0335c747e3"
+    installed: 4604f6c6
+    game: "the loader (world::assets) at fso 35f28481"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/ore-lock-hopper/v1 (757892 bytes, bounds [-2.8, 0.0, -2.8] to [3.0, 17.5, 2.8]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.filter-press-2
+    version: 2
+    manifest_sha256: "d201849900f3286353b7aa805cb1d94bddef32f070aa409c9e71a891ea790043"
+    installed: d636d345
+    game: "the loader (world::assets) at fso d636d345"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/filter-press-2/v2 (1262384 bytes, bounds [-6.025, 0.0, -3.1] to [6.025, 11.25, 3.25]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.pellet-gas-loop
+    version: 1
+    manifest_sha256: "498c0127dd9c705cbf5c8bde9c4fc14b63c3e0da4988d1f03fda0907180bc9ac"
+    installed: 1df1c95f
+    game: "the loader (world::assets) at fso 1df1c95f"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/pellet-gas-loop/v1 (1144932 bytes, bounds [-12.0, -0.0, -6.0] to [12.0, 13.383, 6.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.pellet-shaft-63th
+    version: 1
+    manifest_sha256: "f35e1075337710846bc10c637157c955b123bf09b38dc340ed7167dc265803fe"
+    installed: 2ec3b7e5
+    game: "the loader (world::assets) at fso 2ec3b7e5"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/pellet-shaft-63th/v1 (1443872 bytes, bounds [-5.75, -0.0, -5.5] to [5.75, 29.5, 3.4]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.pressure-hall-30m-end
+    version: 2
+    manifest_sha256: "400434a5d93a784323912afaacce86caebff3342961fdb0e8a113515a5734ab9"
+    installed: 2d9ed372
+    game: "the loader (world::assets) at fso 2d9ed372"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/pressure-hall-30m-end/v2 (1063988 bytes, bounds [0.0, -0.3, -15.2998] to [14.06, 30.3, 15.3]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.pressure-hall-30m
+    version: 2
+    manifest_sha256: "879bbe70c363b0cfbdf800600d52891fd07e4bd83cd0f93a6fc63d5654ea143b"
+    installed: 41fc3b8d
+    game: "the loader (world::assets) at fso 41fc3b8d"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/pressure-hall-30m/v2 (1810628 bytes, bounds [-15.0, -0.3, -15.2998] to [15.0, 30.3, 15.3]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.ore-lock-hopper
+    version: 2
+    manifest_sha256: "eee35bfa39342dd1efe13bbd0826a52e506e53f9da3d9a1870a1a4e2cc619152"
+    installed: fd9d7114
+    game: "the loader (world::assets) at fso fd9d7114"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/ore-lock-hopper/v2 (795780 bytes, bounds [-2.8, 0.0, -2.8] to [3.0, 17.5, 2.8]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.pellet-gas-loop
+    version: 2
+    manifest_sha256: "813d14d55c3985e8143344fed21978cf1eadeffb907f39cb918ad669a8b26e2d"
+    installed: d68e5949
+    game: "the loader (world::assets) at fso d68e5949"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/pellet-gas-loop/v2 (1261776 bytes, bounds [-12.0, -0.0, -6.0] to [12.0, 13.383, 6.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.balling-disc-7m5
+    version: 2
+    manifest_sha256: "28ced9e5efbee0034cfc9380404362c9083c88139469703aad09198bff57f6a9"
+    installed: ca5ab4a7
+    game: "the loader (world::assets) at fso ca5ab4a7"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/balling-disc-7m5/v2 (261728 bytes, bounds [-4.5, 0.0, -3.9] to [4.5, 10.506, 4.55]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.plant-transformer-35mva
+    version: 2
+    manifest_sha256: "5487e552837489da1b719ca888321daeda5d7ed11de8d2494ca9bc42687c46f1"
+    installed: ec86dbd5
+    game: "the loader (world::assets) at fso ec86dbd5"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/plant-transformer-35mva/v2 (702256 bytes, bounds [-2.9052, 0.0, -2.35] to [2.9102, 5.2, 1.595]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.radiator-field-330k
+    version: 2
+    manifest_sha256: "fc60eeb0d0a2e35cf4fc73e25b5dcd74458848ca2850f7f56ae045ac180f46f5"
+    installed: 9385136a
+    game: "the loader (world::assets) at fso 9385136a"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/radiator-field-330k/v2 (1955108 bytes, bounds [-23.61, 0.0, -23.11] to [23.11, 3.134, 24.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.ball-mill-4m4
+    version: 2
+    manifest_sha256: "41ca45634ca102477dcd734f7c93781b97e502cc4b031ae755c2c7446787f3c8"
+    installed: ddc8caee
+    game: "the loader (world::assets) at fso ddc8caee"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/ball-mill-4m4/v2 (542064 bytes, bounds [-8.66, -0.2, -4.2] to [8.5, 6.2, 4.45]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: run.pipe-dn450-pn10
+    version: 1
+    manifest_sha256: "7eeb99795171fe292c7baa9d42a9b66bad955a3b9e5be599d06f1ce7f6f548b9"
+    installed: a5f056e5
+    game: "the loader (world::assets) at fso a5f056e5"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.flange-dn450-pn10
+    version: 1
+    manifest_sha256: "a33f891bc705c6ee137926745b08ad101662bf5bd06a49fa2ab8f8cdf7c5c332"
+    installed: c986fd58
+    game: "the loader (world::assets) at fso c986fd58"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.pipe-dn50-pn16-ss-double
+    version: 1
+    manifest_sha256: "2852e7292e77bed5b6b0004967ee158421185963a0d1e6bb8f41d8558963ebbf"
+    installed: c24063c3
+    game: "the loader (world::assets) at fso c24063c3"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.flange-dn50-pn16-ss-double
+    version: 1
+    manifest_sha256: "64cc05de33ac64493157a97e11ccae5ee87e05de23d36a6ee09f6195e70f9091"
+    installed: e1d8cf2e
+    game: "the loader (world::assets) at fso e1d8cf2e"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.pipe-dn700-pn10-mli
+    version: 1
+    manifest_sha256: "fbf76a3f9d20cfb07db54dcc6ddf6b9b8b271426f972c2fbcc9f4e5455da213a"
+    installed: 2e5705e4
+    game: "the loader (world::assets) at fso 2e5705e4"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.flange-dn700-pn10
+    version: 1
+    manifest_sha256: "fbe46be2bfa6c4685a9700e07c822f5502327b4e64a599f354c64343a3f75823"
+    installed: c770d984
+    game: "the loader (world::assets) at fso c770d984"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.belt-800
+    version: 1
+    manifest_sha256: "28b97d6e25ab178913f4aa089369cc2ecd12890edd03d3a57c7674ee7b04cefa"
+    installed: 850f2690
+    game: "the loader (world::assets) at fso 850f2690"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.belt-transfer-800
+    version: 1
+    manifest_sha256: "9ca50ee95c520edd080a9b2df8c13a03e26c1877988f396805a42932da1379f8"
+    installed: a79274a0
+    game: "the loader (world::assets) at fso a79274a0"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.belt-1000
+    version: 1
+    manifest_sha256: "de565ed53a1b11edde743bbb40c82c25f7ba35940dd98f75d12d21dd2f0b6aff"
+    installed: c09f8b25
+    game: "the loader (world::assets) at fso c09f8b25"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.belt-transfer-1000
+    version: 1
+    manifest_sha256: "bc8b51b886b18dcb90a3cae13a3a897070aa7a27d0e17e0fa8f3fc726698b907"
+    installed: cd56e9f9
+    game: "the loader (world::assets) at fso cd56e9f9"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.belt-800-sealed
+    version: 1
+    manifest_sha256: "779c252037bff135860db7dc0d3024feff660a6f1c9063e50d88d2a2b482ccc4"
+    installed: b29b43a4
+    game: "the loader (world::assets) at fso b29b43a4"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.belt-transfer-800-sealed
+    version: 1
+    manifest_sha256: "ca1ba8acf6ef012cc86d08c194d4d4640091e224d4d67ca70a5c42ed3de7b352"
+    installed: cb3b3585
+    game: "the loader (world::assets) at fso cb3b3585"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.belt-1000-sealed
+    version: 1
+    manifest_sha256: "3de38e0408d72afa27911eef767baf339f7ae4ea4073bdffc112b4eff553df5c"
+    installed: 3398ff3f
+    game: "the loader (world::assets) at fso 3398ff3f"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.belt-transfer-1000-sealed
+    version: 1
+    manifest_sha256: "185f51444f6894e4cfce978936821900b3f08ee81f055210d2f5936532ac4585"
+    installed: 0728a4b2
+    game: "the loader (world::assets) at fso 0728a4b2"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.flange-dn3000-pn1-double
+    version: 1
+    manifest_sha256: "8429f30c6d97e90461e3c7419d7cfa87d68b24330344a59eaf3936456a4105d7"
+    installed: a6071c8c
+    game: "the loader (world::assets) at fso a6071c8c"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.chute-dn400
+    version: 1
+    manifest_sha256: "085378f2481a3e691a19b060a74092b7d5d8be01e8e3ef3f9097df1814e60f35"
+    installed: faa56e3c
+    game: "the loader (world::assets) at fso faa56e3c"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.chute-dn600
+    version: 1
+    manifest_sha256: "b3f98808c369da995d04beebef6dbd4bfe6b4dc2feab4652defde78df3ea7062"
+    installed: 08a450b9
+    game: "the loader (world::assets) at fso 08a450b9"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.chute-dn1000
+    version: 1
+    manifest_sha256: "16a5fa74cd1a867186ffda1cd289c67b23085cf3f03f206026d5f61226cc3c15"
+    installed: 6e607775
+    game: "the loader (world::assets) at fso 6e607775"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.cable-33kv-185mm2
+    version: 1
+    manifest_sha256: "f6e71a6495729e4d4a5ad48b7aa4c1d9299f40deb98fec8a52aa464140fc910f"
+    installed: 6d0f29a9
+    game: "the loader (world::assets) at fso 6d0f29a9"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.termination-33kv-185mm2
+    version: 1
+    manifest_sha256: "207dea6c3fdb99b5697d17c948490b244f987438ac0f3258dc5e19543a712deb"
+    installed: 210a8f21
+    game: "the loader (world::assets) at fso 210a8f21"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.cable-6p6kv-95mm2
+    version: 1
+    manifest_sha256: "71628d4356e7265d339968bee78a91313cae9797e47ad3eeaf56e00ee97949a1"
+    installed: d35a4e63
+    game: "the loader (world::assets) at fso d35a4e63"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.termination-6p6kv-95mm2
+    version: 1
+    manifest_sha256: "6049bcec98b349b8fd868748e77a0dded05fa7fc721e1a433a607637f945bd97"
+    installed: 67183a25
+    game: "the loader (world::assets) at fso 67183a25"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.cable-6p6kv-400mm2
+    version: 1
+    manifest_sha256: "13465c48d72b84b9a429d15467813c20ffb57b091953a2834e0af19ec4e411c3"
+    installed: 8f3e360c
+    game: "the loader (world::assets) at fso 8f3e360c"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.termination-6p6kv-400mm2
+    version: 1
+    manifest_sha256: "7253ffbd3a3975c15bb4883eb9cfc97fb149dccd1aae90f29c9c55c4d1c3b02b"
+    installed: 79925aa1
+    game: "the loader (world::assets) at fso 79925aa1"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.cable-400v-35mm2
+    version: 1
+    manifest_sha256: "09aee71144d2c4a5e2e8715893a88850c757a985dadb62d56547cdc325844906"
+    installed: 759df8e5
+    game: "the loader (world::assets) at fso 759df8e5"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.termination-400v-35mm2
+    version: 1
+    manifest_sha256: "c125c9b79ee6450b793b6537dad67e25013abcfc18f47b1107f26b592328d99a"
+    installed: b29fb866
+    game: "the loader (world::assets) at fso b29fb866"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.cable-400v-50mm2
+    version: 1
+    manifest_sha256: "cd444164fb3482903d408c4cc52dcfe6c07f4f23bddfa8afe48018c4962ec069"
+    installed: c862b546
+    game: "the loader (world::assets) at fso c862b546"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.termination-400v-50mm2
+    version: 1
+    manifest_sha256: "1214ded225a3a3e3f268b3391e2139fe246ba767aa201e3badb46c70751abf0a"
+    installed: 606fa171
+    game: "the loader (world::assets) at fso 606fa171"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.cable-400v-95mm2
+    version: 1
+    manifest_sha256: "9b14bc3d6b7e39b5353c85f8dfbe8613d7e588324fba836897878f5debb3d3a2"
+    installed: d23aab29
+    game: "the loader (world::assets) at fso d23aab29"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.termination-400v-95mm2
+    version: 1
+    manifest_sha256: "2827d64ba8dca8dfb4aefc3ea4973897b109a8692707593f3ce0172a8d9b280a"
+    installed: 3714f99f
+    game: "the loader (world::assets) at fso 3714f99f"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.cable-400v-120mm2
+    version: 1
+    manifest_sha256: "4c19fd893a7afbc5eff3c5c234261a7aa0cab9ff5242dc6aa91c5ef7805c54f3"
+    installed: a8116d61
+    game: "the loader (world::assets) at fso a8116d61"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.termination-400v-120mm2
+    version: 1
+    manifest_sha256: "2ef2477f37fb0d5a1ea5c3f1d0f8ad686162fcce06c8b265932849e59e7487f6"
+    installed: d76766ff
+    game: "the loader (world::assets) at fso d76766ff"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: unit.offgas-cooler-sealed
+    version: 1
+    manifest_sha256: "323c10da14be614fd1d11b8ac5c61b12100e32ed4f0a83d9447d17f3bb801bec"
+    installed: 15ea9e10
+    game: "the loader (world::assets) at fso 15ea9e10"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/offgas-cooler-sealed/v1 (838504 bytes, bounds [-3.0, -0.0, -1.725] to [3.0, 18.0, 2.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.eaf-vessel-80t-sealed
+    version: 2
+    manifest_sha256: "d3de09813a5d24f9ce57ef3a38dc902c5acad28c7600df363000735e0e477b07"
+    installed: 2f884b61
+    game: "the loader (world::assets) at fso 2f884b61"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/eaf-vessel-80t-sealed/v2 (1786016 bytes, bounds [-5.85, 0.0, -5.2] to [5.85, 14.0, 6.2433]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "tilt, pressure and electrical acceptance (blender: static rest only)"
+  - key: unit.furnace-transformer-90mva
+    version: 2
+    manifest_sha256: "a8cbae72796656c2fdbdc20eea12546b6d23d7430585a6c606b8bce1ef19f47d"
+    installed: 7eb2849f
+    game: "the loader (world::assets) at fso 7eb2849f"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/furnace-transformer-90mva/v2 (452612 bytes, bounds [-4.0, 0.0, -2.5] to [4.014, 6.8, 2.4335]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "dielectric, pressure and load acceptance (blender: static only)"
+  - key: unit.dri-bin-200t
+    version: 2
+    manifest_sha256: "99877b90f2395c45caac9aee11021fc5a1a83131f258fbd2db89dd76071f2bc1"
+    installed: 310424a6
+    game: "the loader (world::assets) at fso 310424a6"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/dri-bin-200t/v2 (250004 bytes, bounds [-3.0, 0.0, -3.0] to [3.0, 15.3, 3.45]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: unit.offgas-filter-sealed
+    version: 2
+    manifest_sha256: "7998f1f835566d8cfa2bdfd1801b8733a1baa3070cc3f64ac9c8684c71e22426"
+    installed: de6740de
+    game: "the loader (world::assets) at fso de6740de"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/offgas-filter-sealed/v2 (253132 bytes, bounds [-6.0, 0.0, -2.875] to [5.36, 10.0, 2.875]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "pressure and load acceptance (blender: static only)"
+  - key: unit.radiator-field-485k
+    version: 2
+    manifest_sha256: "d83f297399e9684e8cb47f2f3f5fd8d94a890a5e4e328b3c870606a7b08034dc"
+    installed: d76cd24d
+    game: "the loader (world::assets) at fso d76cd24d"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/radiator-field-485k/v2 (2010080 bytes, bounds [-24.13, 0.0, -22.06] to [22.06, 3.134, 22.06]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "pressure, thermal and load acceptance (blender: static only)"
+  - key: run.busbar-ac-65ka
+    version: 1
+    manifest_sha256: "eabaad9fda02ccfd7ef30f358e6d63a396d9d8b1f2a3df8df3a3a4023f54772a"
+    installed: c66df7c7
+    game: "the loader (world::assets) at fso c66df7c7"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.bus-joint-ac-65ka
+    version: 1
+    manifest_sha256: "64bd623f97fe87fed19f776237df5de85d4e8921088ecf678cd81ea63427c9fb"
+    installed: af6b5697
+    game: "the loader (world::assets) at fso af6b5697"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.lined-duct-dn1200-pn1
+    version: 1
+    manifest_sha256: "aab91418c3257e1f5d2c6d9d3b06332a2b14ab29740fe7de0affd99325e4e888"
+    installed: e595528b
+    game: "the loader (world::assets) at fso e595528b"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.lined-flange-dn1200-pn1
+    version: 1
+    manifest_sha256: "8e8ee1718cfc83a2240a2571edebaeeade90b44fa2835cf031383dcff5fbd704"
+    installed: b9df43d3
+    game: "the loader (world::assets) at fso b9df43d3"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.pipe-dn1200-pn1
+    version: 1
+    manifest_sha256: "235cfb3879ebc773c92e4e31e8c3b5b33ffe33ae01283f1d95f79d85bfdc0a44"
+    installed: a2f95a15
+    game: "the loader (world::assets) at fso 993e8b17"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.flange-dn1200-pn1
+    version: 1
+    manifest_sha256: "0725ac831519120043b34f7025fc0df25489488f077c0d5711c9674bda613302"
+    installed: cd1216c7
+    game: "the loader (world::assets) at fso cd1216c7"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.pipe-dn400-pn10
+    version: 1
+    manifest_sha256: "85f2d7a27563de6f90d283d998d4a9342462ddd4d86239c2f9f499dd3ed1b8a8"
+    installed: e07cb2b3
+    game: "the loader (world::assets) at fso 283bd1e3"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.flange-dn400-pn10
+    version: 1
+    manifest_sha256: "5708d75fa4128838ea2339f4a3916638efa7c9cf6263773631d60a217830e6be"
+    installed: d214101e
+    game: "the loader (world::assets) at fso 03182e15"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.pipe-dn150-pn25-mli
+    version: 1
+    manifest_sha256: "abd418ed25d272079989668098bb3c5524037ce40394b7375d03eac5e8f58f4f"
+    installed: 06273e9a
+    game: "the loader (world::assets) at fso 06273e9a"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.flange-dn150-pn25
+    version: 1
+    manifest_sha256: "1bd883b403fcc35b46822d04d6f946cccf67493ca4bb1a2437acfd9a36f4b189"
+    installed: ee41183d
+    game: "the loader (world::assets) at fso ee41183d"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.pipe-dn100-pn25
+    version: 1
+    manifest_sha256: "06394ec013c80e89221c1b8e4fea307c787afc805cdff32bdac87219b838023e"
+    installed: a96d524b
+    game: "the loader (world::assets) at fso a96d524b"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.flange-dn100-pn25
+    version: 1
+    manifest_sha256: "acdb7488cb20a432c436acaf2b1babdc4f2c1463510cb247384318943f8d2d5a"
+    installed: d8e730fc
+    game: "the loader (world::assets) at fso d8e730fc"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.cable-33kv-630mm2
+    version: 1
+    manifest_sha256: "8862a7a5f1bf7a33a9b2ceea8b693d47499b75b88350344d375926ea9b9e1515"
+    installed: 35c3bcba
+    game: "the loader (world::assets) at fso 35c3bcba"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.termination-33kv-630mm2
+    version: 1
+    manifest_sha256: "df4021a3dc3c3f5ea7aeaec15b8dfa59e0343abc28414d6f71fa90bd8f40c184"
+    installed: 65cf6c04
+    game: "the loader (world::assets) at fso 65cf6c04"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: unit.ladle-furnace-80t-sealed
+    version: 2
+    manifest_sha256: "6933dc1923a20d3607e2b4dd5f23899ac216ced008d727b9681e2204bf73bfc5"
+    installed: ebe68575
+    game: "the loader (world::assets) at fso ebe68575"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/ladle-furnace-80t-sealed/v2 (1288340 bytes, bounds [-5.5, 0.0, -5.0] to [5.5, 14.0, 5.34]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "pressure, electrical and load acceptance (blender: static only)"
+  - key: unit.furnace-transformer-14mva
+    version: 2
+    manifest_sha256: "86b9770bc35b9d2e4ba77c21c733021353d890c3070d18af1252c252c8fc604d"
+    installed: e8c2823b
+    game: "the loader (world::assets) at fso e8c2823b"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/furnace-transformer-14mva/v2 (439704 bytes, bounds [-2.15, 0.0, -1.35] to [2.1408, 3.7, 1.1733]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "dielectric, pressure and load acceptance (blender: static only)"
+  - key: unit.alloy-bins-8
+    version: 2
+    manifest_sha256: "a21ddf6253d3abff6ff1c5fe4a5508cec0a9b205bacbccae85fa6a6dc310a376"
+    installed: 7c87a78e
+    game: "the loader (world::assets) at fso 7c87a78e"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/alloy-bins-8/v2 (1193008 bytes, bounds [-6.28, 0.0, -3.15] to [6.3, 15.14, 3.15]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "load acceptance (blender: static only)"
+  - key: unit.degassing-stand
+    version: 2
+    manifest_sha256: "b4214bdb705c810d2e06cdbf2a2f2a111e68324e35656d98bf0cb14a35599443"
+    installed: afc210cf
+    game: "the loader (world::assets) at fso afc210cf"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/degassing-stand/v2 (139560 bytes, bounds [-3.3, 0.0, -1.82] to [1.85, 8.0, 4.1]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "the ladle's argon coupling at the stand, and the arm's swing (blender: static only)"
+  - key: run.belt-650
+    version: 1
+    manifest_sha256: "1a399d8009fb87ae5a6376551a64e61d4e8c9518cd1835a508c4e3bb1cc81ad2"
+    installed: 2d83f576
+    game: "the loader (world::assets) at fso 2d83f576"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.belt-transfer-650
+    version: 1
+    manifest_sha256: "1330139058b781af9c5306c17635cd2da5b2059f235d4d82417120427eb84f76"
+    installed: 47c76014
+    game: "the loader (world::assets) at fso 47c76014"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.busbar-ac-27ka
+    version: 1
+    manifest_sha256: "74159368f6235d5b7ecc8a537ad3c5953f7b59de6aca8783d0c536877c40ad6c"
+    installed: 79e5cb94
+    game: "the loader (world::assets) at fso 79e5cb94"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.bus-joint-ac-27ka
+    version: 1
+    manifest_sha256: "4f9eba3037da1ed36cd84e9173c3ac88a2d8d91362ec35d7dd83fecdd9ce9e8b"
+    installed: 6cc89880
+    game: "the loader (world::assets) at fso 6cc89880"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.pipe-dn200-pn1-ss
+    version: 1
+    manifest_sha256: "bb7f1c586bcce908670fa9c1859e8aaa5472c1e7026847c5e856fd32396e216c"
+    installed: 59a8a8f3
+    game: "the loader (world::assets) at fso 59a8a8f3"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.flange-dn200-pn1-ss
+    version: 1
+    manifest_sha256: "040d7a6a21d7eb2aafa09b639000ceba5897557a78a434ca9292556b4b7d7dd2"
+    installed: 70283af3
+    game: "the loader (world::assets) at fso 70283af3"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.pipe-dn50-pn16-ss
+    version: 1
+    manifest_sha256: "43311e5375abe6b8aaa3a0b69d56563bbc3ab884f4b3bc064e9fe0d0d919f891"
+    installed: 3ef9f93d
+    game: "the loader (world::assets) at fso 3ef9f93d"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.flange-dn50-pn16-ss
+    version: 1
+    manifest_sha256: "2561094132555ec053546d2a4e9a53c082296833acc0769d7fbdd1ff2955435b"
+    installed: dd48ccde
+    game: "the loader (world::assets) at fso dd48ccde"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: run.cable-33kv-120mm2
+    version: 1
+    manifest_sha256: "465756142daf40b6ccb2a3d874ac7032d948ca80a625478f0b8470516f9df4c5"
+    installed: 40edf446
+    game: "the loader (world::assets) at fso 40edf446"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.termination-33kv-120mm2
+    version: 1
+    manifest_sha256: "658f16249b27a0c382e366b34be2f269d138938d06d3b1397bf20d2db8bbffba"
+    installed: 9e1927e8
+    game: "the loader (world::assets) at fso 9e1927e8"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+      - "dielectric review (blender)"
+  - key: run.jacketed-duct-dn2000
+    version: 1
+    manifest_sha256: "19094b81a25f6b408de23b460c05fa395563ec3e39e1f3c76d7afa02c7394713"
+    installed: ab661600
+    game: "the loader (world::assets) at fso ab661600"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.hood-dn2000
+    version: 1
+    manifest_sha256: "381c7dd5a7ab245c3b73c4997625bf5c1705140c1032182dfa79927f03e81113"
+    installed: c8037ee3
+    game: "the loader (world::assets) at fso c8037ee3"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: connector.flange-dn2000-pn1
+    version: 1
+    manifest_sha256: "75dfb145f87c4e06e77b4c331984d6e55f98e2cfafafca27b16a282c35b27cac"
+    installed: 5d525431
+    game: "the loader (world::assets) at fso 5d525431"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+  - key: unit.eaf-vessel-80t
+    version: 4
+    manifest_sha256: "b98090be739d1927bbfaaafa710454e60111b91ea115f4e85a2a885da884a983"
+    installed: b36e7045
+    game: "the loader (world::assets) at fso b36e7045"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/eaf-vessel-80t/v4 (1130008 bytes, bounds [-5.85, 0.0, -5.49] to [5.85, 14.0, 6.2433]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "operational tilt acceptance (blender: 31 diagnostic poses clear, the sleeve and chute parked; the axis assumed)"
+  - key: unit.eaf-vessel-80t-sealed
+    version: 3
+    manifest_sha256: "0f93f757a87cf1a87c6c95a0414dc3cf3394ee5764ce88f8682db9a22d0c9f34"
+    installed: 008ca0fe
+    game: "the loader (world::assets) at fso 008ca0fe"
+    date: "2026-10-16"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/eaf-vessel-80t-sealed/v3 (2271108 bytes, bounds [-5.85, 0.0, -5.2] to [5.85, 14.0, 6.2433]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "operational tilt acceptance (blender: 31 diagnostic poses clear with the clamp open; the axis assumed)"
+  - key: connector.clamp-coupling-dn1200
+    version: 1
+    manifest_sha256: "1e5da038a201382caa349c6620a1f92162d26d33e38ce0e915d3438bb8d4ca40"
+    installed: 458dfe80
+    game: "the loader (world::assets) at fso 458dfe80"
+    date: "2026-10-16"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "world::assets has no run|connector kind yet (engine task 20261015T224523-registry-52e4)"
+      - "its two-step opening (moving and fixed groups) for the game to drive"

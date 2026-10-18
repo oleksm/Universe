@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/run.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: run.pipe-dn350-pn10-ss, name: 'Pipe DN 350 PN 10, stainless', description: 'Welded pipe, 350 mm bore, for up to 10 bar; welded between the units'' flanges, so a run has a flange pair only at its ends.'}
+kind: pipe
+size: 0.35
+bore: 0.35
+outside: [0.36, 0.36]
+rating: {pressure: 1000000.0, temperature: 373.0}
+per_m:
+  mass: 44.1
+  built_of:
+  - {what: Pipe, item: material.stainless-steel-304, mass: 44.1, note: '350 mm bore, 5.0 mm wall (Barlow at 10 bar, 115 MPa, weld factor 0.85)'}
+elbow: {radius: 0.525, mass: 36.4}
+tee: {mass: 15.2}
+cap: {thickness: 0.016, mass: 12.2}
+support: {spacing: 9.4, mass: 31.6, per_m_height: 21.4, item: material.structural-steel-a36}
+connector: connector.flange-dn350-pn10-ss
+carries: gas
+basis:
+- of: [per_m]
+  tier: derived
+  note: Wall from pressure; mass from material and dimensions.
+- of: [elbow, tee]
+  tier: derived
+  note: A long-radius elbow (1.5 bores) is its arc of straight; a tee is its branch stub over the straight it sits in, from the main's outside to 1.5 bores off its axis (checked on blender's DN 200 kit).
+- of: [support]
+  tier: derived
+  review: true
+  note: 'Spacing from the span it bears full at 1 g (2.5 mm sag, a third of yield), 3 to 12 m: 9.4 m. The stand''s head and its leg by the metre from memory.'
+template: template.pipe

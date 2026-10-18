@@ -1,0 +1,137 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.rings-cover
+  name: Land cover
+  about: view_cover on smoothed cover classes
+title: Land cover
+row: line rings
+file_suffix: _rings_cover.png (+ .legend.json)
+draws:
+  words: view_cover on smoothed cover classes
+shown: true
+implementations:
+- where: planet-trees-pgs2 ~/git/planet-trees-pgs2/tools/layer_lines.py:rings (358)
+  state: reference
+- where: planet-forge crates/planet-layers/src/layers/cover.rs
+  state: current
+  note: the viewer layer
+status: draft
+legend:
+  title: Land cover
+  rows:
+  - kind: head
+    label: Land cover (from the sim's temperature and rain)
+  - key: cover:0
+    kind: fill
+    colour:
+    - 240
+    - 248
+    - 255
+    label: 'ice: {cover_0} % of land'
+  - key: cover:1
+    kind: fill
+    colour:
+    - 180
+    - 190
+    - 170
+    label: 'tundra: {cover_1} % of land'
+  - key: cover:2
+    kind: fill
+    colour:
+    - 170
+    - 200
+    - 140
+    label: 'alpine meadow: {cover_2} % of land'
+  - key: cover:3
+    kind: fill
+    colour:
+    - 60
+    - 100
+    - 80
+    label: 'boreal forest (taiga): {cover_3} % of land'
+  - key: cover:4
+    kind: fill
+    colour:
+    - 70
+    - 140
+    - 70
+    label: 'temperate forest: {cover_4} % of land'
+  - key: cover:5
+    kind: fill
+    colour:
+    - 190
+    - 210
+    - 120
+    label: 'temperate grassland (meadow, prairie, steppe): {cover_5} % of land'
+  - key: cover:6
+    kind: fill
+    colour:
+    - 170
+    - 170
+    - 90
+    label: 'Mediterranean scrub: {cover_6} % of land'
+  - key: cover:7
+    kind: fill
+    colour:
+    - 235
+    - 215
+    - 160
+    label: 'desert: {cover_7} % of land'
+  - key: cover:8
+    kind: fill
+    colour:
+    - 210
+    - 190
+    - 100
+    label: 'savanna: {cover_8} % of land'
+  - key: cover:9
+    kind: fill
+    colour:
+    - 110
+    - 160
+    - 60
+    label: 'tropical seasonal forest: {cover_9} % of land'
+  - key: cover:10
+    kind: fill
+    colour:
+    - 20
+    - 100
+    - 40
+    label: 'tropical rainforest: {cover_10} % of land'
+  - key: cover:11
+    kind: fill
+    colour:
+    - 90
+    - 160
+    - 160
+    label: 'wetland: {cover_11} % of land'
+  - kind: head
+    label: 'Earth: forests ~31 %, grass and savanna ~26 %, desert ~19 %, tundra ~8 %, ice ~10 %'
+styles:
+- key: coast
+  colour:
+  - 0
+  - 0
+  - 0
+- key: base-land
+  colour:
+  - 200
+  - 196
+  - 186
+- key: base-sea
+  colour:
+  - 205
+  - 220
+  - 232
+- key: sea
+  colour:
+  - 215
+  - 225
+  - 235
+basis:
+- of:
+  - legend
+  - styles
+  tier: derived
+  note: 'planets, 17 Oct 2026: the viewer layers (planet-forge planet-layers), from planet-trees-pgs2 context_view.py / layer_lines.py.'

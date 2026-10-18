@@ -1,0 +1,58 @@
+# yaml-language-server: $schema=../../schema/planet-layer.schema.yaml
+identity:
+  key: planet-layer.cover
+  name: Land cover
+  about: What covers the land.
+version: 1
+classes:
+- id: 1
+  name: ice
+  source: ice
+- id: 2
+  name: tundra
+  source: tundra
+- id: 3
+  name: alpine meadow
+  source: alpine meadow
+- id: 4
+  name: boreal forest
+  source: boreal forest
+- id: 5
+  name: temperate forest
+  source: temperate forest
+- id: 6
+  name: temperate grassland
+  source: temperate grassland
+- id: 7
+  name: Mediterranean scrub
+  source: Mediterranean scrub
+- id: 8
+  name: desert
+  source: desert
+- id: 9
+  name: savanna
+  source: savanna
+- id: 10
+  name: tropical seasonal forest
+  source: tropical seasonal forest
+- id: 11
+  name: tropical rainforest
+  source: tropical rainforest
+- id: 12
+  name: wetland
+  source: wetland
+bounded_by:
+- planet-line.class-boundary
+levels:
+- planet-level.planet
+- planet-level.cluster
+basis:
+- of:
+  - identity
+  tier: derived
+  note: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+- of:
+  - classes
+  tier: derived
+  note: planet-trees-pgs2 tools/surface_types.py COVER, its order plus 1.
+status: draft

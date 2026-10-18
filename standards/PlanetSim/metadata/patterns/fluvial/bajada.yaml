@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.fan.bajada
+  name: Bajada (coalescent fan piedmont)
+  about: Bajada (coalescent fan piedmont).
+family: fluvial
+factors:
+- factor: planet-factor.tect-fault
+  weight: 3
+  why: long linear range-front fault
+- factor: planet-factor.tect-setting
+  weight: 1
+  why: extensional horst-graben (Basin and Range)
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: basin subsidence provides accommodation; belt width ~19-31 km
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: many closely spaced catchments with high supply coalesce
+- factor: planet-factor.clim-arid
+  weight: 3
+  why: arid / semi-arid
+- factor: planet-factor.clim-storm
+  weight: 1
+  why: flash floods spread sheetfloods across piedmont
+- factor: planet-factor.base-level
+  weight: 1
+  why: closed-basin playa base level
+- factor: planet-factor.time
+  weight: 1
+  why: 100 kyr-5 Myr
+vocabulary_id: 48
+sources:
+- https://en.wikipedia.org/wiki/Alluvial_fan
+- https://en.wikipedia.org/wiki/Pediment_(geology)
+library_status: written
+source: fluvial.fan.bajada
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

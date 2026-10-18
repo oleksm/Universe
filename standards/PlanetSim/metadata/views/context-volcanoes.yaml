@@ -1,0 +1,70 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.context-volcanoes
+  name: Volcanoes
+  about: 'volcanoes from tools/volcanoes.py place(): triangles by state, layout glyphs (cone+satellite, sisters, compound,
+    domes, caldera, remnant, field), glacier caps, sector collapse ticks, top-6 summit labels'
+title: Volcanoes
+row: landform
+file_suffix: _context_volcanoes.png (+ .legend.json)
+draws:
+  words: 'volcanoes from tools/volcanoes.py place(): triangles by state, layout glyphs (cone+satellite, sisters, compound,
+    domes, caldera, remnant, field), glacier caps, sector collapse ticks, top-6 summit labels'
+legend:
+  title: Volcanoes
+  rows:
+  - kind: head
+    label: 'Volcanoes ({n}): {a} active, {d} dormant, {e} extinct (Earth: ~1,350 active in the last 10,000 yr)'
+    shown_when: always
+  - kind: tri
+    label: active
+    colour:
+    - 220
+    - 40
+    - 30
+    shown_when: always
+  - kind: tri
+    label: dormant
+    colour:
+    - 240
+    - 150
+    - 30
+    shown_when: always
+  - kind: tri
+    label: extinct (worn down with age)
+    colour:
+    - 120
+    - 120
+    - 120
+    shown_when: always
+  - kind: dot
+    label: volcanic fields (small cones, three rings)
+    colour:
+    - 60
+    - 60
+    - 60
+    shown_when: always
+  - kind: head
+    label: 'Shapes: double triangle cone + satellite (Shasta), three in a row: sisters (older greyed), cluster: compound cones,
+      dots: lava domes, ring: caldera (blue: lake), bar: worn remnant; white tip: glacier cap; white-brown tick: sector collapse,
+      pointing where the flank slid'
+    shown_when: always
+  - kind: head
+    label: '{setting}: {n}  (one row per volcano setting)'
+    shown_when: always
+  - kind: head
+    label: 'Forms: {layout counts}'
+    shown_when: always
+  - kind: head
+    label: 'Events: {event counts}; stages: {stage counts}'
+    shown_when: always
+  - kind: head
+    label: stratovolcanoes 1.5-3.5 km over their base, ~70 km apart along arcs (Shasta 3 km over its base, Fuji 3.8 km high)
+    shown_when: always
+  source: ~/git/planet-trees-pgs2/tools/context_view.py:547-556
+shown: true
+implementations:
+- where: planet-trees-pgs2 ~/git/planet-trees-pgs2/tools/context_view.py:view_volcanoes (501)
+  state: reference
+status: draft

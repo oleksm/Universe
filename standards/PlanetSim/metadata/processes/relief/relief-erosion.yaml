@@ -1,0 +1,315 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.relief-erosion
+  name: Feature relief eroded by rock and rain
+  about: 'For every alive finished line with meta.relief0_m and not worn: er = mean geology.ERODIBILITY of the rock under
+    its vertices (1.0 if no rock), wet = clip(mean rain P under them / 1.0, 0.2, 3.0) (1.0 if no climate); tau = TAU0_MYR
+    / max(er*wet, 0.05); relief_m *= exp(-dt/tau) with dt the Myr since the last call. Below WORN_SHARE x relief0 the line
+    becomes state ''worn'' (trace ''worn''); otherwise a trace ''eroded'' row each time it falls under 0.9 of the last traced
+    value. The first call only records the time.'
+area: relief
+clock:
+  when: every EVERY_MYR (25 Myr)
+reads:
+- name: rock
+  field: planet-field.rock
+  unit: '1'
+  meaning: 'erodibility: the ERODIBILITY params in this record''s order are the rock unit index'
+- name: rain
+  field: planet-field.rain
+  unit: m/s
+  meaning: wetness
+- name: plate rotation
+  field: planet-field.plate-rotation
+  unit: '1'
+  meaning: 'each plate''s rotation: where the features'' pins stand'
+writes:
+- name: 'features: dims relief, relief traced; state worn; history rows'
+note: 'Emits: trace ''worn'' rule ''relief.erosion'' {relief_m, tau_myr, erodibility, wetness}'
+events_emitted:
+- event: planet-event.trace-eroded
+params:
+- name: TAU0_MYR
+  value: 1893456000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+  meaning: relief's e-folding time on mean rock and mean rain (Earth's ranges mostly gone in 100-300 Myr)
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:51
+- name: WORN_SHARE
+  value: 0.25
+  unit: '1'
+  said_as:
+    unit: share of relief0
+    factor: 1.0
+  open: true
+  meaning: below this the feature is worn
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:52
+  note: 'unit as the code says it: ''share of relief0''; SI conversion unverified'
+- name: rain reference
+  value: 3.168808781402895e-08
+  unit: m/s
+  said_as:
+    unit: m/yr
+    factor: 3.168808781402895e-08
+  meaning: wetness = mean rain / this
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:371
+  note: unverified whether 1.0 m/yr is meant as the mean land rain (scorecard Earth 0.75)
+- name: wetness clip
+  values:
+  - 0.2
+  - 3.0
+  unit: '1'
+  said_as:
+    unit: ratio
+    factor: 1.0
+  meaning: wetness bounds
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:371
+- name: rate floor
+  value: 0.05
+  unit: '1'
+  said_as:
+    unit: ratio
+    factor: 1.0
+  meaning: min er*wet
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:372
+- name: trace step
+  value: 0.9
+  unit: '1'
+  said_as:
+    unit: share
+    factor: 1.0
+  meaning: trace an 'eroded' row per 10 % drop
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:377
+- name: ERODIBILITY.morb
+  value: 0.6
+  unit: '1'
+  said_as:
+    unit: relative
+    factor: 1.0
+  open: true
+  meaning: ocean-floor basalt
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/geology.py:23-51
+  note: 'unit as the code says it: ''relative''; SI conversion unverified'
+- name: ERODIBILITY.arc_volcanic
+  value: 0.9
+  unit: '1'
+  said_as:
+    unit: relative
+    factor: 1.0
+  open: true
+  meaning: andesite volcanics
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/geology.py:23-51
+  note: 'unit as the code says it: ''relative''; SI conversion unverified'
+- name: ERODIBILITY.arc_plutonic
+  value: 0.3
+  unit: '1'
+  said_as:
+    unit: relative
+    factor: 1.0
+  open: true
+  meaning: granodiorite batholith
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/geology.py:23-51
+  note: 'unit as the code says it: ''relative''; SI conversion unverified'
+- name: ERODIBILITY.basement
+  value: 0.35
+  unit: '1'
+  said_as:
+    unit: relative
+    factor: 1.0
+  open: true
+  meaning: gneiss basement
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/geology.py:23-51
+  note: 'unit as the code says it: ''relative''; SI conversion unverified'
+- name: ERODIBILITY.greenstone
+  value: 0.5
+  unit: '1'
+  said_as:
+    unit: relative
+    factor: 1.0
+  open: true
+  meaning: greenstone (komatiite, basalt)
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/geology.py:23-51
+  note: 'unit as the code says it: ''relative''; SI conversion unverified'
+- name: ERODIBILITY.schist
+  value: 0.6
+  unit: '1'
+  said_as:
+    unit: relative
+    factor: 1.0
+  open: true
+  meaning: schist and gneiss
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/geology.py:23-51
+  note: 'unit as the code says it: ''relative''; SI conversion unverified'
+- name: ERODIBILITY.granite
+  value: 0.3
+  unit: '1'
+  said_as:
+    unit: relative
+    factor: 1.0
+  open: true
+  meaning: S-type granite
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/geology.py:23-51
+  note: 'unit as the code says it: ''relative''; SI conversion unverified'
+- name: ERODIBILITY.flood_basalt
+  value: 0.7
+  unit: '1'
+  said_as:
+    unit: relative
+    factor: 1.0
+  open: true
+  meaning: flood basalt
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/geology.py:23-51
+  note: 'unit as the code says it: ''relative''; SI conversion unverified'
+- name: ERODIBILITY.carbonate
+  value: 1.0
+  unit: '1'
+  said_as:
+    unit: relative
+    factor: 1.0
+  open: true
+  meaning: limestone and dolomite
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/geology.py:23-51
+  note: 'unit as the code says it: ''relative''; SI conversion unverified'
+- name: ERODIBILITY.clastic
+  value: 2.0
+  unit: '1'
+  said_as:
+    unit: relative
+    factor: 1.0
+  open: true
+  meaning: sandstone and shale
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/geology.py:23-51
+  note: 'unit as the code says it: ''relative''; SI conversion unverified'
+- name: ERODIBILITY.ophiolite
+  value: 0.7
+  unit: '1'
+  said_as:
+    unit: relative
+    factor: 1.0
+  open: true
+  meaning: ophiolite (peridotite, gabbro)
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/geology.py:23-51
+  note: 'unit as the code says it: ''relative''; SI conversion unverified'
+- name: ERODIBILITY.rift
+  value: 1.4
+  unit: '1'
+  said_as:
+    unit: relative
+    factor: 1.0
+  open: true
+  meaning: rift basalt and red beds
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/geology.py:23-51
+  note: 'unit as the code says it: ''relative''; SI conversion unverified'
+- name: ERODIBILITY.iron_formation
+  value: 0.25
+  unit: '1'
+  said_as:
+    unit: relative
+    factor: 1.0
+  open: true
+  meaning: banded iron formation
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/geology.py:23-51
+  note: 'unit as the code says it: ''relative''; SI conversion unverified'
+- name: ERODIBILITY.primary_crust
+  value: 0.5
+  unit: '1'
+  said_as:
+    unit: relative
+    factor: 1.0
+  open: true
+  meaning: primary crust (ancient, cratered)
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/geology.py:23-51
+  note: 'unit as the code says it: ''relative''; SI conversion unverified'
+- name: ERODIBILITY.intercrater_plains
+  value: 0.6
+  unit: '1'
+  said_as:
+    unit: relative
+    factor: 1.0
+  open: true
+  meaning: intercrater plains (old lava, cratered)
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/geology.py:23-51
+  note: 'unit as the code says it: ''relative''; SI conversion unverified'
+- name: ERODIBILITY.high_ti_basalt
+  value: 0.7
+  unit: '1'
+  said_as:
+    unit: relative
+    factor: 1.0
+  open: true
+  meaning: high-titanium basalt (ilmenite-rich)
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/geology.py:23-51
+  note: 'unit as the code says it: ''relative''; SI conversion unverified'
+- name: ERODIBILITY.impact_melt
+  value: 0.5
+  unit: '1'
+  said_as:
+    unit: relative
+    factor: 1.0
+  open: true
+  meaning: impact melt rock
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/geology.py:23-51
+  note: 'unit as the code says it: ''relative''; SI conversion unverified'
+- name: ERODIBILITY.impact_breccia
+  value: 0.9
+  unit: '1'
+  said_as:
+    unit: relative
+    factor: 1.0
+  open: true
+  meaning: impact breccia and ejecta
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/geology.py:23-51
+  note: 'unit as the code says it: ''relative''; SI conversion unverified'
+- name: ERODIBILITY.anorthosite
+  value: 0.4
+  unit: '1'
+  said_as:
+    unit: relative
+    factor: 1.0
+  open: true
+  meaning: anorthosite highlands
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/geology.py:23-51
+  note: 'unit as the code says it: ''relative''; SI conversion unverified'
+- name: ERODIBILITY.kreep
+  value: 0.6
+  unit: '1'
+  said_as:
+    unit: relative
+    factor: 1.0
+  open: true
+  meaning: KREEP basalt (potassium, rare earths, phosphorus, thorium, uranium)
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/geology.py:23-51
+  note: 'unit as the code says it: ''relative''; SI conversion unverified'
+invariants:
+- landmarks (marks) are never eroded here
+- worn lines are skipped thereafter
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:at_checkpoint (353-380)
+  state: reference
+- where: planet-forge crates/forge-core/src/models/tectonic/erosion.rs
+  state: current
+  note: planet-forge port (relief-tectonic line, merged in forge main fc8f460)
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
+    9747f0d-c437724.'
+cautions:
+- 'the Python''s reads were its line store''s internals: geology.ERODIBILITY (per unit); w.hydro[''P''] (rain, m/yr); line
+  meta relief0_m/relief_m'

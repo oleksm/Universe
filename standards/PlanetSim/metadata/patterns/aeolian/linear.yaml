@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.aeolian.dune.linear
+  name: Linear (longitudinal / seif) dune
+  about: Linear (longitudinal / seif) dune.
+family: aeolian
+factors:
+- factor: planet-factor.clim-wind
+  weight: 3
+  why: bimodal wide-angle wind; ridge along resultant drift; lengths to >160 km
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: moderate sand; elongating mode on sand-poor floors
+- factor: planet-factor.clim-arid
+  weight: 3
+  why: arid sharp seifs; semi-arid vegetated linear dunes (Kalahari, Australia)
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: vegetation stabilises flanks, keeps them straight and long-lived
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: flat; obstacles anchor dune heads
+- factor: planet-factor.clim-history
+  weight: 1
+  why: many are relict from drier glacial phases
+- factor: planet-factor.time
+  weight: 1
+  why: 1-1000 kyr; complex forms to 200 m high
+vocabulary_id: 2
+sources:
+- https://en.wikipedia.org/wiki/Seif_dune
+- https://pubs.usgs.gov/gip/deserts/dunes/
+library_status: written
+source: aeolian.dune.linear
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

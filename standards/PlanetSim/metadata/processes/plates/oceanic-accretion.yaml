@@ -1,0 +1,74 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.oceanic-accretion
+  name: Thick ocean crust becomes continent
+  about: Ocean particles with xfloor >= ACCRETE become continental with xvol = xfloor*cell; their MORB basement becomes 'basement'.
+area: plates
+clock:
+  when: every step
+reads:
+- name: w.xfloor
+  field: planet-field.particle-floor-thickness
+  unit: m
+- name: w.xcont
+  field: planet-field.particle-continental
+  unit: '1'
+- name: w.xtop
+  field: planet-field.particle-rock-top
+  unit: '1'
+- name: w.xbase
+  field: planet-field.particle-rock-base
+  unit: '1'
+- name: w.xcover
+  field: planet-field.particle-rock-cover
+  unit: m
+writes:
+- name: w.xcont
+  field: planet-field.particle-continental
+  unit: '1'
+- name: w.xvol
+  field: planet-field.particle-volume
+  unit: m3
+- name: w.xbase
+  meaning: geology (not ported)
+- name: w.xtop
+  field: planet-field.particle-rock-top
+  unit: '1'
+- name: w.xbase
+  field: planet-field.particle-rock-base
+  unit: '1'
+- name: w.xcover
+  field: planet-field.particle-rock-cover
+  unit: m
+params:
+- name: ACCRETE
+  env: SIM_ACCRETE
+  value: 25000.0
+  unit: m
+  meaning: ocean floor (xfloor) at or above this becomes continent (accretion of arcs/plateaus)
+  source: stages/plates.py:89
+  note: 'chosen: island arcs reach 20-35 km, Calvert 2011'
+random_draws:
+- none
+invariants:
+- crust volume created here equals sum(xfloor*cell) of converted particles (budget 'accreted')
+depends_on:
+- planet-process.arcs-and-margin-erosion
+- planet-process.hotspots
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/plates.py:run (lines 1192-1198)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'
+events_emitted:
+- event: planet-event.ledger-row
+  where: 'forge: the continental volume this process made or removed this step (the Python''s ledger rows)'

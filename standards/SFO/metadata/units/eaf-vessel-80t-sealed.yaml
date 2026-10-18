@@ -1,10 +1,11 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.eaf-vessel-80t-sealed, name: 'Arc furnace vessel, 80 t, sealed', description: 'The 80 t arc furnace closed for airless ground: its roof sealed to the shell, glands round the three electrodes, the sponge iron fed through a lock in the fifth hole, and the off-gas taken by a sealed bellows joint from the fourth, so the furnace holds its own gas (the CO its charge gives off, started with argon) at about 1 bar: the arc burns as in air, the melt neither boils nor loses its manganese to the vacuum, and the slag foams. It tilts only a few degrees to tap and 15 to deslag, through the bellows. Otherwise as unit.eaf-vessel-80t: An AC arc furnace that taps 80 t: a refractory hearth 6.6 m across, water-cooled upper shell and roof, three graphite electrodes on masts, a tilting cradle and an eccentric bottom tap. Fed sponge iron through a fifth hole in the roof. Stands on a platform 5 m up so a ladle car runs under its tap. Its cooling water comes by two flexible hoses of its own (it
-    tilts), 300 mm bore, flow and return, from its ports at local (-3.8, 3.2, 2.6) and (-3.8, 3.6, 2.6), clear of the tilt pin and its actuator, down to a fixed manifold on the deck whose two ports face up at local (-3.8, 4.9, 0.5) and (-3.8, 5.3, 0.5). Its box is not centred across: the arms'' tails and the secondary cables reach 6.25 m behind the furnace''s axis (toward the transformer), its water hoses'' couplings at the deck manifold 5.49 m in front (the manifold itself is the layout''s); 14 m tall with the masts at rest.'}
+identity: {key: unit.eaf-vessel-80t-sealed, name: 'Arc furnace vessel, 80 t, sealed', description: 'The 80 t arc furnace closed for airless ground: its roof sealed to the shell, glands round the three electrodes, the sponge iron fed through a lock in the fifth hole, and the off-gas taken by the furnace''s horizontal elbow (the same as the furnace for air''s, v4) to a sealed clamp coupling: so the furnace holds its own gas (the CO its charge gives off, started with argon) at about 1 bar: the arc burns as in air, the melt neither boils nor loses its manganese to the vacuum, and the slag foams. It tilts only a few degrees to tap and 15 to deslag, through the bellows. Otherwise as unit.eaf-vessel-80t: An AC arc furnace that taps 80 t: a refractory hearth 6.6 m across, water-cooled upper shell and roof, three graphite electrodes on masts, a tilting cradle and an eccentric bottom tap. Fed sponge iron through a fifth hole in the roof. Stands on a platform 5 m up so a ladle car runs under its tap.
+    Its cooling water comes by two flexible hoses of its own (it tilts), 300 mm bore, flow and return, from its ports at local (-3.8, 3.2, 2.6) and (-3.8, 3.6, 2.6), clear of the tilt pin and its actuator, down to a fixed manifold on the deck whose two ports face up at local (-3.8, 4.9, 0.5) and (-3.8, 5.3, 0.5). Its box is not centred across: the arms'' tails and the secondary cables reach 6.25 m behind the furnace''s axis (toward the transformer), its water hoses'' couplings at the deck manifold 5.49 m in front (the manifold is the unit''s: two DN 400 barrels standing on the deck, each taking its hose from the side); 14 m tall with the masts at rest. Its ports (SFO 25): sponge iron in at the feed lock''s top, local (0, 1.8, 10.1), a belt''s head over it; off-gas out at the elbow''s mouth past the roof''s edge, (3, 4.5, 8.5), facing +y, where the sealing kit narrows it to 1.2 m with a slide gate before a clamp coupling (the tilt sweep, 2026-10-16: a bellows joint would have to take 2.3
+    m at 15 degrees, so the gate shuts, the clamp opens and the furnace''s mouth slides across the duct''s face to tilt); the secondary bus''s joint at the flexible cables'' fixed ends, (0, -6.2, 2.3), facing -y; the deck manifold''s water flanges, DN 400 facing up, in at (-4.2, 4.95, 0.5) and out at (-3.4, 4.95, 0.5), side by side 0.8 m apart so their flanges clear, and in front of the cradle''s deck, which tilts over them (v4: the manifold reduces from the hoses'' 300 mm, and keeps inside local y 5.3, clear of the airless shop''s gantry crane''s legs, whose inner faces pass at y 5.43).'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 11.74, height: 14.0, mass: 315400.0}
+physical: {length: 12.0, width: 11.74, height: 14.0, mass: 329300.0}
 built_of:
 - {what: Hearth shell, item: material.structural-steel-a36, mass: 33060.0, note: '6.6 m across, 2.0 m tall, 50 mm plate, its dished bottom 1.25 times the disc'}
 - {what: Hearth lining, item: good.refractory-brick, mass: 148400.0, note: '0.9 m under the bath, 0.45 m up the hearth wall'}
@@ -18,12 +19,23 @@ built_of:
 - {what: Slag spout, item: material.structural-steel-a36, mass: 648.4, note: 'a steel trough 0.8 m wide, 0.4 m deep, 30 mm plate, 1.79 m long, outside sizes (a clear channel 0.44 m wide and 0.22 m deep inside its wall and lining); its floor from the slag door''s sill (local x -3.32, 3.2 m up) sloping 20 degrees down to x -5.0, 2.59 m up, 0.5 m past the cradle deck, so the slag falls clear into the pot'}
 - {what: Slag spout lining, item: good.refractory-brick, mass: 949.3, note: 150 mm of refractory in the trough}
 - {what: Slag spout brackets, item: material.structural-steel-a36, mass: 169.8, note: 'four seated brackets of 120 x 120 x 6 mm tube and plate that carry the trough on the cradle; measured on blender''s model (eaf-vessel-80t candidate v02: tubes 83.4 kg, plates 86.4 kg)'}
-- {what: Water hoses, item: material.silicone-rubber, mass: 171.4, note: 'two flexible hoses, flow and return, 300 mm bore, 20 mm wall, 3.964 m each along their centreline (measured on blender''s model, v3), a supported dogleg from the vessel''s ports to the deck manifold; reinforced EPDM hose, which the registry has not got: silicone rubber (1,075 kg/m3) stands for it, the wire not counted. At rest only: pressure loss, bend radius and the tilt''s travel not checked'}
+- {what: Water hoses, item: material.silicone-rubber, mass: 182.8, note: 'two flexible hoses, flow and return, 300 mm bore, 4.71 and 4.31 m along their centrelines, to the deck manifold''s barrels; reinforced EPDM, silicone rubber standing for it; measured on blender''s model v2 (the registry''s v4, 2026-10-16)'}
 - {what: Tilt and mast hydraulics, item: good.pumps, mass: 15000.0, note: 'cylinders, pumps and valves; from memory'}
-- {what: Roof seal and electrode glands, item: material.structural-steel-a36, mass: 4000.0, note: 'a sand seal round the roof''s rim and three water-cooled glands, from memory'}
-- {what: Feed lock, item: material.structural-steel-a36, mass: 3000.0, note: 'two valves and a chamber over the fifth hole, from memory'}
-- {what: Off-gas bellows, item: material.stainless-steel-304, mass: 1500.0, note: '2 m across, from memory'}
-holds: 107100.0
+- {what: Roof seal flanges, item: material.structural-steel-a36, mass: 2489.0, note: 'a clamped flange joint round the roof''s rim (a sand seal cannot hold 1 bar against vacuum): the shell''s and the roof''s rings, 250 mm wide and 30 mm thick, and the seal''s land; measured on model v3'}
+- {what: Roof hold-down clamps, item: material.structural-steel-a36, mass: 5978.0, note: 'twelve: 1 bar inside against vacuum lifts the 6.6 m roof with 3.4 MN, about 285 kN a clamp, each a 200 x 120 mm A36 bridge from the cage''s upright over 0.3 m (about 90 MPa at a 0.15 m lever) on 60 mm pins, with its anchor, base, brace and toe drawn solid; measured on model v3; the roof''s panels at 1 bar not checked'}
+- {what: Electrode glands, item: material.structural-steel-a36, mass: 1646.0, note: 'three water-cooled glands with their flanges, 20 mm jackets; measured on model v3'}
+- {what: Seals, item: material.silicone-rubber, mass: 60.0, note: 'the roof''s double O-ring, cooled by a tee off the vessel''s upper water header, and the glands'' packings, from memory; the gap between the O-rings needs no pump on airless ground: a 25 mm line from it, through a pressure gauge that shows a leak, ends at a capped vent beside the vessel''s external water ports, open to the vacuum outside'}
+- {what: Seal services, item: material.structural-steel-a36, mass: 35.9, note: 'the cooling tee, the gap''s line, gauge and cap; measured on model v3'}
+- {what: Feed lock, item: material.structural-steel-a36, mass: 2948.0, note: 'two gate valves and a chamber over the fifth hole, the chamber shortened under a square-to-round catch hopper whose rim is the port at z 10.1: bodies, housings, seats and the hopper; measured on blender''s model v2 (the registry''s v4, 2026-10-16) (v3''s 3,311.5 kg less its chamber, 576.9, and top flange, 337.8; the new chamber 351.2 and hopper 199.6)'}
+- {what: Feed lock drives, item: good.electric-motors, mass: 500.0, note: from memory}
+- {what: Off-gas elbow, item: material.structural-steel-a36, mass: 4214.0, note: 'water-jacketed, from the fourth hole horizontal past the roof''s edge to its mouth; measured on the furnace for air''s model v4, the same body (2026-10-16)'}
+- {what: Elbow posts and saddle, item: material.structural-steel-a36, mass: 490.9, note: 'two posts on the cradle''s deck, the saddle and webs; measured on the furnace for air''s model v4, the same body (2026-10-16)'}
+- {what: Off-gas gate and reducer, item: material.structural-steel-a36, mass: 961.4, note: 'the sealing kit''s end of the elbow, inside its jacket: a cone from 2 m to 1.2 m (218.0 kg), the slide gate''s blade (201.7) and its sealed pocket through the jacket on +x (527.4), the neck (14.3); measured on blender''s sealed v3 (2026-10-16)'}
+- {what: Off-gas gate drive, item: good.electric-motors, mass: 500.0, note: from memory (drawn as a proxy)}
+- {what: Deck manifold, item: material.structural-steel-a36, mass: 908.4, note: 'two DN 400 barrels standing on the deck, their closed bottoms, feet, hose reducers and saddles; measured on blender''s model v2 (the registry''s v4, 2026-10-16)'}
+- {what: Bus terminal necks, item: material.copper, mass: 601.2, note: 'three copper necks from the flexible cables'' fixed ends to the bus joint; measured on blender''s model v2 (the registry''s v4, 2026-10-16)'}
+- {what: Bus joint supports, item: material.structural-steel-a36, mass: 1060.0, note: 'the joint''s three supports and insulators, the insulators not mass-qualified; measured on blender''s model v2 (the registry''s v4, 2026-10-16)'}
+holds: 110200.0
 needs: {power: 72000000, heat: 10800000.0, gravity: 1.6, atmosphere: any}
 recipes:
 - makes: good.liquid-steel
@@ -39,7 +51,106 @@ recipes:
   rate: 26.6666666666667
   batch: 80000
   power: 72000000
+ports:
+- id: dri-in
+  flow: in
+  medium: bulk
+  item: good.sponge-iron
+  rate: 29.33
+  interface: interface.belt-transfer-800
+  half: female
+  make: open
+  connector: connector.belt-transfer-800
+  at: [0.0, 1.8, 10.1]
+  facing: [0.0, 0.0, 1.0]
+  note: the feed lock's top; the belt's head 3 m over it
+- id: offgas-out
+  flow: out
+  medium: gas
+  item: material.carbon-monoxide
+  rate: 1.369
+  pressure: 100000.0
+  temperature: 1873.0
+  interface: interface.clamp-coupling-dn1200
+  half: androgynous
+  make: automatic
+  connector: connector.clamp-coupling-dn1200
+  at: [3.0, 4.5, 8.5]
+  facing: [0.0, 1.0, 0.0]
+- id: power-in
+  flow: in
+  medium: power
+  power: 72000000
+  voltage: 800.0
+  interface: interface.bus-joint-ac-65ka
+  half: androgynous
+  make: bolted
+  connector: connector.bus-joint-ac-65ka
+  at: [0.0, -6.2, 2.3]
+  facing: [0.0, -1.0, 0.0]
+  note: 65 kA a phase
+  current: 57740.0
+- id: water-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 258.0
+  temperature: 320.0
+  interface: interface.flange-dn400-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn400-pn10
+  at: [-4.2, 4.95, 0.5]
+  facing: [0.0, 0.0, 1.0]
+  pressure: 400000.0
+- id: water-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 258.0
+  temperature: 330.0
+  interface: interface.flange-dn400-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn400-pn10
+  at: [-3.4, 4.95, 0.5]
+  facing: [0.0, 0.0, 1.0]
+  pressure: 400000.0
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 439600.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
+product: product.eaf-vessel-80t
+options: [sealing]
+motion:
+- id: tilt
+  kind: tilt
+  point: [0.0, 0.0, 1.0]
+  direction: [0.0, 1.0, 0.0]
+  angle: [-0.2618, 0.2618]
+  moves: ['the vessel on its cradle, its roof, masts, elbow and feed']
+  note: 'rocker tilt: about 15 degrees each way, toward +x to tap and -x to deslag (from memory of furnaces with an eccentric bottom tap); a rocker rolls, so the axis through the rockers'' centres is assumed (blender''s sweeps, 2026-10-16). The arc is off while it tilts.'
+  boxes: [0, 1, 2, 3, 4]
+envelope:
+- [-5.851, -4.501, -0.001, 5.851, 4.501, 2.512]
+- [-5.077, -3.743, 1.798, 4.802, 3.743, 7.302]
+- [-2.051, -6.245, 1.604, 2.051, 0.286, 11.722]
+- [-0.932, -0.732, 2.898, 0.932, 1.001, 14.001]
+- [-1.852, 0.288, 6.149, 3.101, 2.601, 10.102]
+- [-5.071, 2.089, -0.001, -2.22, 5.201, 5.952]
 life: 788940000
+visual:
+  format: "freefall-model/1"
+  path: "models/eaf-vessel-80t-sealed/v3"
+  manifest_sha256: "0f93f757a87cf1a87c6c95a0414dc3cf3394ee5764ce88f8682db9a22d0c9f34"
+  version: 3
+  triangles: 48554
 basis:
 - of: [recipes]
   tier: derived
@@ -60,5 +171,9 @@ basis:
   tier: invented
   review: true
   note: Sealed as closed ferroalloy furnaces are; not a design that has been built for vacuum.
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage; water at the pumps'' 4 bar.'
 - of: [life]
   rule: rule.life-plant

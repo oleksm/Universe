@@ -1,0 +1,56 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Planet layer
+x-kind: [planet-layer]
+description: "standards/PlanetSim/metadata/layers/<name>.yaml: a layer the planet is read in: its classes (u16 ids, frozen and append-only, 0 none) and the lines between them (the owner, 16 Oct 2026: layers as lines, never patches). A layer whose classes are a registry vocabulary names it instead of listing them."
+type: object
+additionalProperties: false
+required: [identity]
+allOf:
+  - { $ref: "../../common.schema.yaml#/definitions/planet_context" }
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name, about]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      about: { type: string, description: "What it is, in a sentence or two: the word's meaning." }
+  vocabulary: { type: string, x-ref: [ground-vocabulary], description: "Its classes are this vocabulary's entries (rock units, landform patterns), not listed again." }
+  version: { type: integer, minimum: 1, description: "Raised whenever a class is added; earlier ids keep their meaning." }
+  classes:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [id, name]
+      properties:
+        id: { type: integer, minimum: 1, maximum: 65535, x-unit: "1", description: "The u16 a sample or face carries; never reused." }
+        name: { type: string }
+        source: { type: string, description: "The sim's word for it." }
+        when: { type: array, items: { $ref: "#/definitions/condition" }, description: "What makes a sample this class (all of them)." }
+        rgb: { type: array, minItems: 3, maxItems: 3, items: { type: integer, minimum: 0, maximum: 255 }, description: "Its colour on the views." }
+  default: { type: integer, minimum: 1, maximum: 65535, x-unit: "1", description: "The class a sample starts as before any rule." }
+  order: { type: array, items: { type: integer, minimum: 1, maximum: 65535, x-unit: "1" }, description: "The classes whose `when` is tested, in this order, each that holds replacing the last (later rules override earlier)." }
+  lines:
+    type: array
+    description: "The lines drawn in it: isolines at a field's value, or class boundaries."
+    items:
+      type: object
+      additionalProperties: false
+      required: [name]
+      properties:
+        name: { type: string }
+        field: { type: string, x-ref: [planet-field] }
+        value: { type: number, x-unit-from: field, description: "In the field's unit." }
+  status: { enum: [draft, published, retired], description: "draft: the sim builds against the word, not yet the figures" }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }
+definitions:
+  condition:
+    type: object
+    additionalProperties: false
+    required: [field, op, value]
+    properties:
+      field: { type: string, x-ref: [planet-field] }
+      op: { enum: ["<", "<=", ">", ">=", "=="] }
+      value: { type: number, x-unit-from: field, description: "In the field's unit." }

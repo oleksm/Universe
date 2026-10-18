@@ -1,0 +1,43 @@
+# yaml-language-server: $schema=../../schema/run.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: run.feeder-3kv-dc-50mm2
+  name: Feeder, 3 kV DC, 50 mm2
+  description: 'One pole of a ship''s high-voltage DC bus: a single stranded copper core in 2 mm of PTFE under an earthed braid and jacket, laid in pairs (plus and minus) along the frame. 125 A in vacuum, where only radiation cools
+    it.'
+kind: cable
+size: 4.9999999999999996e-05
+outside:
+- 0.0142
+- 0.0142
+rating:
+  voltage: 3000
+  current: 125
+per_m:
+  mass: 0.656
+  built_of:
+  - what: Conductor
+    item: material.copper
+    mass: 0.448
+    note: 50 mm2 stranded
+  - what: Insulation, screen and jacket
+    item: material.ptfe
+    mass: 0.208
+    note: 2 mm PTFE, a braid screen and a thin jacket (the braid's copper counted here)
+elbow:
+  radius: 0.113
+  mass: 0.1169
+connector: connector.hvdc-pole-150a
+carries: power
+template: template.feeder
+basis:
+- of:
+  - per_m
+  - outside
+  tier: invented
+  review: true
+  note: Insulation from memory of medium-voltage aerospace and traction cable; least bend 8 outsides; From memory of makers' catalogues; to be sourced.
+- of:
+  - rating
+  tier: derived
+  note: '2.5 A/mm2 in copper, radiation only (plant_kit.J_VACUUM): one core alone; a pair laid together runs warmer.'

@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.gap.wind-gap
+  name: Wind gap
+  about: Wind gap.
+family: fluvial
+factors:
+- factor: planet-factor.other-stream-capture
+  weight: 3
+  why: capture beheads the gap stream, leaving it dry
+- factor: planet-factor.rock-layers
+  weight: 3
+  why: subsequent on weak beds erodes headward faster
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: uplift/tilting diverts drainage or outpaces incision
+- factor: planet-factor.ice-extent
+  weight: 1
+  why: glacial damming diverts rivers
+- factor: planet-factor.rock-soluble
+  weight: 1
+  why: karst subsurface piracy
+- factor: planet-factor.base-level
+  weight: 1
+  why: lower base level of the capturing stream
+- factor: planet-factor.time
+  weight: 1
+  why: persists on divide Myr after capture
+vocabulary_id: 154
+sources:
+- https://en.wikipedia.org/wiki/Stream_capture
+- https://en.wikipedia.org/wiki/Water_gap
+library_status: planned
+source: fluvial.gap.wind_gap
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

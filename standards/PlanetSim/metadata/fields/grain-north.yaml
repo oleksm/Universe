@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.grain-north
+  name: Grain, north
+  about: 'The grain''s northward component at each sample (with planet-field.grain, the east one): its nearest particle''s
+    grain, as the wind''s two fields.'
+unit: '1'
+producer:
+  where: planet-forge crates/forge-core/src/models/grain.rs
+  file: checkpoint
+  key: fields/planet-field.grain-north
+per: sample
+also_from:
+- where: stages/plates.py
+  key: 'read: w.grain = w.xgrain[src]'
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
+    9747f0d-c437724.'

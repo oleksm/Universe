@@ -1,8 +1,8 @@
 # yaml-language-server: $schema=../../schema/building.schema.yaml
 identity:
   key: building.depot
-  name: "Depot"
-  description: "Where the ground's vehicles are kept, loaded and driven from: carts and trucks between the pads, the warehouse, the shops and the fields."
+  name: Depot
+  description: 'Where the ground''s vehicles are kept, loaded and driven from: carts and trucks between the pads, the warehouse, the shops and the fields.'
 physical:
   length: 120
   width: 60
@@ -12,18 +12,52 @@ per_people: 2000
 floor: 7200
 storeys: 1
 meets:
-  - { need: need.travel, people: 2000 }
+- need: need.travel
+  people: 2000
 staff:
-  - { profession: profession.driver, count: 35 }
-  - { profession: profession.docker, count: 10 }
-  - { profession: profession.fitter, count: 5 }
+- profession: profession.driver
+  count: 35
+- profession: profession.docker
+  count: 10
+- profession: profession.fitter
+  count: 5
 built_of:
-  - { item: good.concrete, quantity: 7488000 }
-  - { item: material.structural-steel-a36, quantity: 417600 }
+- item: good.concrete
+  quantity: 7488000
+- item: material.structural-steel-a36
+  quantity: 417600
 life: 1577880000
 basis:
-  - { of: [per_people, staff], tier: invented, review: true, note: "One of fifty to 2,000 people: transport on the ground, about two and a half percent. The share of a people this gives work to is set so that a settlement's trades together come to about what a rich country's do (about half its people at work; from memory of employment by sector: retail 7%, construction 3-4%, offices and business services 6%, transport 2-3%, hospitality 3%, repair 1-2%). Review." }
-  - { of: [physical, floor, storeys], tier: invented, review: true, note: "Chosen. To be reviewed." }
-  - { of: [built_of], tier: sourced, source: "standards/sources/research_people_plant.json", note: "1,040 kg of concrete and 58 kg of steel for each m2 of floor: the average of 538 residential buildings in China." }
-  - { of: [physical.mass], tier: derived, source: "standards/sources/research_people_plant.json", note: "1,103 kg for each m2 of floor, all materials." }
-  - { of: [life], rule: rule.life-building }
+- of:
+  - per_people
+  - staff
+  tier: invented
+  review: true
+  note: 'One of fifty to 2,000 people: transport on the ground, about two and a half percent. The share of a people this gives work to is set so that a settlement''s trades together come to about what a rich country''s do (about half
+    its people at work; from memory of employment by sector: retail 7%, construction 3-4%, offices and business services 6%, transport 2-3%, hospitality 3%, repair 1-2%). Review.'
+- of:
+  - physical
+  - floor
+  - storeys
+  tier: invented
+  review: true
+  note: Chosen. To be reviewed.
+- of:
+  - built_of
+  tier: sourced
+  source: standards/sources/research_people_plant.json
+  note: '1,040 kg of concrete and 58 kg of steel for each m2 of floor: the average of 538 residential buildings in China.'
+- of:
+  - physical.mass
+  tier: derived
+  source: standards/sources/research_people_plant.json
+  note: 1,103 kg for each m2 of floor, all materials.
+- of:
+  - life
+  rule: rule.life-building
+revision:
+  status: deprecated
+  owner: registry
+  on_conflict: propose
+  replaced_by: layout.building-depot
+  because: 'The owner, 2026-10-17: a building is a layout, laid of units, structure and kit on its site like the factories, not one model. This record stands for the game until its layout exists; no new model work on it.'

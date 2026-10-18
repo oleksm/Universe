@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-flange-dn2200-pn10-double
+  code: KIT-FLANGE-DN2200-PN10-DOUBLE
+  name: Flange DN 2200 PN 10, double seal
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.structural-steel-a36
+- item: material.high-strength-steel-4340
+- item: material.stainless-steel-304
+size:
+  length: 2.444
+  width: 2.444
+  height: 0.214
+supplies:
+  item: connector.flange-dn2200-pn10-double
+physical:
+  mass: 1034.6
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.flange-dn2200-pn10-double, as made.

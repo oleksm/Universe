@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.lowstand-shore
+  name: Lowstand shore
+  about: 'A shore sample at some glacial lowstand: the exposed shelf''s coastline.'
+unit: '1'
+per: sample
+producer:
+  where: stages/recent.py
+  file: ctx
+  key: r_lowstand_shore
+source: r_lowstand_shore
+levels:
+- planet-level.planet
+- planet-level.cluster
+basis:
+- of:
+  - identity
+  - producer
+  - said_as
+  tier: derived
+  note: 'planet-trees-pgs2 docs/sim-arrays.md (planets, 17 Oct 2026: checked against the code at aab9f6a, run earth_s25).'
+status: draft

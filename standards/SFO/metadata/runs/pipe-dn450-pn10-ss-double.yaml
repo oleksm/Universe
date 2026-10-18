@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/run.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: run.pipe-dn450-pn10-ss-double, name: 'Pipe DN 450 PN 10, stainless, double-sealed joints', description: 'Welded pipe, 450 mm bore, for up to 10 bar; welded between the units'' flanges, so a run has a flange pair only at its ends.'}
+kind: pipe
+size: 0.45
+bore: 0.45
+outside: [0.461, 0.461]
+rating: {pressure: 1000000.0, temperature: 373.0}
+per_m:
+  mass: 62.2
+  built_of:
+  - {what: Pipe, item: material.stainless-steel-304, mass: 62.2, note: '450 mm bore, 5.5 mm wall (Barlow at 10 bar, 115 MPa, weld factor 0.85)'}
+elbow: {radius: 0.675, mass: 65.9}
+tee: {mass: 27.6}
+cap: {thickness: 0.02, mass: 25.1}
+support: {spacing: 10.6, mass: 37.7, per_m_height: 22.9, item: material.structural-steel-a36}
+connector: connector.flange-dn450-pn10-ss-double
+carries: gas
+basis:
+- of: [per_m]
+  tier: derived
+  note: Wall from pressure; mass from material and dimensions.
+- of: [elbow, tee]
+  tier: derived
+  note: A long-radius elbow (1.5 bores) is its arc of straight; a tee is its branch stub over the straight it sits in, from the main's outside to 1.5 bores off its axis (checked on blender's DN 200 kit).
+- of: [support]
+  tier: derived
+  review: true
+  note: 'Spacing from the span it bears full at 1 g (2.5 mm sag, a third of yield), 3 to 12 m: 10.6 m. The stand''s head and its leg by the metre from memory.'
+template: template.pipe

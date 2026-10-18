@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/planet-target.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-target.continents
+  name: Continents
+  about: How many continents the planet has.
+quantity: landmasses of at least 0.2 % of the planet
+rule:
+  op: between
+  values:
+  - 4.0
+  - 6.0
+  unit: '1'
+  of: 'a landmass: land samples connected through their 7 nearest neighbours, of at least 0.2 % of the planet''s samples (~1
+    Mkm2)'
+applies: judged at every checkpoint from 50 Ma to today
+words: 'The owner, 16-17 Oct 2026: 4-6 continents, not a group of islands; s30 counted as 8.'
+params:
+- name: continent size
+  value: 0.002
+  unit: '1'
+  meaning: a landmass counts as a continent at this share of the planet's samples
+  source: ~/git/planet-trees-pgs2/tools/planet_form.py:271
+implementations:
+- where: planet-trees-pgs2 tools/planet_form.py:264-272
+  state: reference
+status: draft

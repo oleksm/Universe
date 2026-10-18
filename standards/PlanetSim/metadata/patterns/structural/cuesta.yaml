@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.structural.homocline.cuesta
+  name: Cuesta (escarpment plus dip slope)
+  about: Cuesta (escarpment plus dip slope).
+family: structural
+factors:
+- factor: planet-factor.tect-fold
+  weight: 3
+  why: Gentle dip (< ~10-25 deg); dip sets backslope and scarp migration distance
+- factor: planet-factor.rock-layers
+  weight: 3
+  why: Resistant caprock over weak shale; strength contrast and thickness set scarp height
+- factor: planet-factor.rock-type
+  weight: 1
+  why: Limestone, dolostone, sandstone caps; clay/shale below
+- factor: planet-factor.tect-setting
+  weight: 1
+  why: Platform/basin margins, domes and basins
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: Uplift/base-level fall drives erosion stripping weak beds
+- factor: planet-factor.water-discharge
+  weight: 1
+  why: Subsequent/obsequent streams cause lobate front and outliers
+- factor: planet-factor.groundwater
+  weight: 1
+  why: Spring sapping at caprock base drives retreat
+- factor: planet-factor.clim-arid
+  weight: 1
+  why: Any; aridity sharpens free face
+- factor: planet-factor.time
+  weight: 3
+  why: 1-100 Myr; scarp retreats down-dip km
+vocabulary_id: 116
+sources:
+- https://en.wikipedia.org/wiki/Cuesta
+- https://en.wikipedia.org/wiki/Hogback_(geology)
+library_status: written
+source: structural.homocline.cuesta
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

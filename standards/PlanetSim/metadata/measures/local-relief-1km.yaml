@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../schema/planet-measure.schema.yaml
+identity:
+  key: planet-measure.local-relief-1km
+  name: Local relief, 1 km window
+  about: 'Local relief, 1 km window: compares generated ground with real ground.'
+unit: m
+how: highest less lowest in a 1 km window
+tool: tools/terrain_compare.py
+reference:
+  range:
+  - 152.0
+  - 418.0
+  of: real mountains
+  source: USGS 3DEP 1/3 arc-second
+ours:
+- value: 27.0
+  what: old mesher
+  date: '2026-10-17'
+levels:
+- planet-level.square
+- planet-level.detail
+basis:
+- of:
+  - identity
+  tier: derived
+  note: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+- of:
+  - reference
+  tier: sourced
+  note: USGS 3DEP 1/3 arc-second, as planets measured it (sim-architecture.md 3.6).
+status: draft

@@ -1,0 +1,60 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.fan.alluvial-fan
+  name: Alluvial fan
+  about: Alluvial fan.
+family: fluvial
+factors:
+- factor: planet-factor.tect-fault
+  weight: 3
+  why: active range-front fault keeps relief and accommodation
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: range uplift vs basin subsidence; slow uplift causes fan-head trenching
+- factor: planet-factor.slope-relief
+  weight: 3
+  why: steep catchment debouches onto low gradient; fan slope 1.5-25 deg
+- factor: planet-factor.rock-type
+  weight: 1
+  why: mudstone basins give larger steeper fans (Af=2.4Ad^0.88 vs 1.3 sandstone)
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: abundant weathered debris; fine regolith favours debris-flow fans
+- factor: planet-factor.clim-arid
+  weight: 1
+  why: arid/semi-arid sparse cover favours fans and debris flows
+- factor: planet-factor.clim-storm
+  weight: 1
+  why: flash floods and debris flows build lobes, avulse channels
+- factor: planet-factor.base-level
+  weight: 1
+  why: axial river erosion trims toe, entrenches fan
+- factor: planet-factor.clim-history
+  weight: 1
+  why: wetter/glacial phases shift aggradation/incision
+- factor: planet-factor.ice-extent
+  weight: 1
+  why: paraglacial sediment supply builds fans
+- factor: planet-factor.time
+  weight: 1
+  why: 1 kyr-2 Myr
+vocabulary_id: 47
+sources:
+- https://en.wikipedia.org/wiki/Alluvial_fan
+library_status: written
+source: fluvial.fan.alluvial_fan
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

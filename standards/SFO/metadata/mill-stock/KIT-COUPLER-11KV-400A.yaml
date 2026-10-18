@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-coupler-11kv-400a
+  code: KIT-COUPLER-11KV-400A
+  name: Coupler, 11 kV, 400 A
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.copper
+- item: material.epdm-rubber
+- item: material.structural-steel-a36
+size:
+  length: 0.22
+  width: 0.22
+  height: 0.6
+supplies:
+  item: connector.coupler-11kv-400a
+physical:
+  mass: 23.09
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.coupler-11kv-400a, as made.

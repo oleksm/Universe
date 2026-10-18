@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-cable-installation-400v-5x16
+  code: KIT-CABLE-INSTALLATION-400V-5X16
+  name: Installation cable, 400 V, 5 x 16 mm2, a 500 m drum
+  traded_as: market.machinery
+  form: coil
+package: package.coil
+made_from:
+- item: material.copper
+- item: material.polyethylene-uhmw
+size:
+  length: 500.0
+  diameter: 0.0218
+supplies:
+  item: run.cable-installation-400v-5x16
+  length: 500.0
+physical:
+  mass: 465.5
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: 'a 500 m drum of run.cable-installation-400v-5x16: its mass a metre times the length sold.'

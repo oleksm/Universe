@@ -1,0 +1,54 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.paleo-climate
+  name: Past climates every ~100 Myr, CO2 thermostat, productivity and burial maps
+  about: 'Past climates and what grew in them (stage 11, second part): the climate stage run on the world''s geography every
+    ~100 Myr (from the plates'' snapshots), under a fainter young star, its CO2 set by the weathering thermostat worked out
+    on that very map; and from each climate, how much grew on land and in the sea, and how much of it was buried (the raw
+    stuff of coal, oil and gas). NOT INVENTORIED IN DETAIL: neither plates.py nor coupled.py imports paleo.py (directly or
+    through another module); it is used by tools/paleo.py.'
+area: climate
+clock:
+  when: not part of the coupled planet run (offline tools / bakes)
+params:
+- name: RES_DEG
+  value: 4.0
+  unit: '1'
+  said_as:
+    unit: degrees
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/paleo.py:35
+  note: 'unit as the code says it: ''degrees''; SI conversion unverified'
+- name: YEARS
+  value: 12.0
+  unit: '1'
+  said_as:
+    unit: model years
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/paleo.py:36
+  note: 'unit as the code says it: ''model years''; SI conversion unverified'
+random_draws:
+- not inventoried
+used: false
+note: 'unused by plates.py / coupled.py; users: tools/paleo.py'
+backends:
+- cpu
+implementations:
+- where: 'planet-sim-landform stages/paleo.py: luminosity (39-41), _weathering (44-48), _mean_t (51-53), methane_forcing (56-63),
+    thermostat (66-84), productivity (87-106)'
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
+    the code at planet-sim-landform 9747f0d-c437724.'

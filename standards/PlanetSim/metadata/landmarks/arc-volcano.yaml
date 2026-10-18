@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=../../schema/planet-landmark.schema.yaml
+identity:
+  key: planet-landmark.arc-volcano
+  name: Arc volcano
+  about: 'A landmark record: made when an arc front is active.'
+made_when: an arc front is active
+active: 63115200000000.0
+worn: 1893456000000000.0
+ages_said:
+  unit: Myr
+  factor: 31557600000000.0
+expands_into:
+- cone
+- crater
+- radial gullies
+source: arc volcano
+made_by:
+- arc
+levels:
+- planet-level.planet
+- planet-level.cluster
+- planet-level.pattern
+basis:
+- of:
+  - identity
+  tier: derived
+  note: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+- of:
+  - active
+  - worn
+  tier: derived
+  note: planet-sim-landform stages/lines.py ACTIVE_MYR (default 5) and WORN_MYR.
+- of:
+  - threshold
+  tier: invented
+  note: No figure yet.
+status: draft

@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=../../schema/planet-layer.schema.yaml
+identity:
+  key: planet-layer.coast
+  name: Coast
+  about: Land and sea; the 0 m line exact at every level.
+version: 1
+classes:
+- id: 1
+  name: land
+  when:
+  - field: planet-field.height
+    op: '>'
+    value: 0.0
+- id: 2
+  name: sea
+  when:
+  - field: planet-field.height
+    op: <=
+    value: 0.0
+lines:
+- name: coast
+  field: planet-field.height
+  value: 0.0
+bounded_by:
+- planet-line.coast
+levels:
+- planet-level.planet
+- planet-level.cluster
+- planet-level.pattern
+- planet-level.square
+- planet-level.detail
+basis:
+- of:
+  - identity
+  tier: derived
+  note: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+status: draft

@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.aeolian.dune.star
+  name: Star dune
+  about: Star dune.
+family: aeolian
+factors:
+- factor: planet-factor.clim-wind
+  weight: 3
+  why: multidirectional or seasonally reversing winds; grows up, little net migration
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: large sand accumulation; heights 50-300 m, to 500 m
+- factor: planet-factor.relief-inherited
+  weight: 3
+  why: topographic barriers at erg margins cause wind reversals
+- factor: planet-factor.clim-arid
+  weight: 1
+  why: arid
+- factor: planet-factor.groundwater
+  weight: 1
+  why: moist cores/lake-fed cementation help megadunes (Badain Jaran)
+- factor: planet-factor.time
+  weight: 1
+  why: 10-1000 kyr
+vocabulary_id: 3
+sources:
+- https://en.wikipedia.org/wiki/Star_dune
+- https://pubs.usgs.gov/gip/deserts/dunes/
+library_status: written
+source: aeolian.dune.star
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

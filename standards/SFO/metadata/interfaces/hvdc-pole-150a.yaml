@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/interface.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: interface.hvdc-pole-150a
+  name: HV DC pole 150 A
+  description: 'The mating face of the HV DC pole 150 A: any maker''s half built to it mates with any other''s.'
+domain: power
+kind: plug-socket
+envelope:
+  voltage: 3000
+  current: 150
+media:
+- power
+sealing: air
+halves: male-female
+make: manual
+face:
+  length: 0.04
+  width: 0.04
+  height: 0.12
+size: 4.9999999999999996e-05
+basis:
+- of:
+  - envelope
+  - face
+  tier: derived
+  note: The most the products built to it are rated for, and their joint's outside.

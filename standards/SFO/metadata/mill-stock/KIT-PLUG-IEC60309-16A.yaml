@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-plug-iec60309-16a
+  code: KIT-PLUG-IEC60309-16A
+  name: Plug and socket, 16 A, 400 V
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.copper
+- item: material.polyethylene-uhmw
+size:
+  length: 0.095
+  width: 0.095
+  height: 0.19
+supplies:
+  item: connector.plug-iec60309-16a
+physical:
+  mass: 0.45
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.plug-iec60309-16a, as made.

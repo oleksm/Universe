@@ -1,0 +1,102 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.structural-grain
+  name: Structural grain of belts
+  about: 'Each crust particle carries a unit tangent vector, the trend of the belt it formed in (strike of folds, faults,
+    veins). Set when a belt forms: the tangent at right angles to the convergence/opening direction from the particle toward
+    the other side: g = normalize(x × (d − (d·x)x)), d = toward − x; zero where undefined. Carried as the plate turns.'
+area: climate
+clock:
+  when: 'every plates substep, last of the substep group: at the plate events of the substep (docking, collision, arcs, spreading)'
+reads:
+- name: particle positions
+  field: planet-field.particle-position
+  unit: '1'
+- name: particle plates
+  field: planet-field.particle-plate
+  unit: '1'
+- name: particle continental
+  field: planet-field.particle-continental
+  unit: '1'
+  meaning: 'docking: ocean floor turned continent'
+- name: particle ids
+  field: planet-field.particle-id
+  unit: '1'
+  meaning: 'spreading: the new ones'
+- name: front plate pair
+  field: planet-field.particle-front-low
+  unit: '1'
+  meaning: 'collision: this substep''s contacts'
+- name: front plate pair (high)
+  field: planet-field.particle-front-high
+  unit: '1'
+- name: front time
+  field: planet-field.particle-front-time
+  unit: s
+- name: trench points
+  field: planet-field.trench-position
+  unit: '1'
+  meaning: arcs
+- name: rider plate
+  field: planet-field.trench-rider-plate
+  unit: '1'
+- name: trench time
+  field: planet-field.trench-time
+  unit: s
+- name: plate rotation
+  field: planet-field.plate-rotation
+  unit: '1'
+  meaning: 'each plate''s rotation: where the features'' pins stand'
+writes:
+- name: particle grain
+  field: planet-field.particle-grain
+  unit: '1'
+  meaning: set at the events, turned with its plate every substep
+- name: grain (east)
+  field: planet-field.grain
+  unit: '1'
+  meaning: 'the samples'': their nearest particle''s'
+- name: grain (north)
+  field: planet-field.grain-north
+  unit: '1'
+random_draws:
+- none
+invariants:
+- '|g| = 1 or 0'
+- g ⟂ x
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform src/planet_sim/stages/geology.py:tangent_grain (171-178)
+  state: reference
+- where: planet-forge crates/forge-core/src/models/grain.rs
+  state: current
+  note: planet-forge port (relief-tectonic line)
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - clock
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
+    9747f0d-c437724.'
+depends_on:
+- planet-process.collision-and-docking
+- planet-process.arcs-and-margin-erosion
+- planet-process.seafloor-spreading
+params:
+- name: partner search
+  value: 24.0
+  unit: '1'
+  meaning: nearest particles searched for a docking's partner or a new particle's source (the events leave no pairs)
+  source: planet-forge models/grain.rs

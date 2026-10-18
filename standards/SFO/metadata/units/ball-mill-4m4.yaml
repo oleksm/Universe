@@ -1,18 +1,102 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.ball-mill-4m4, name: 'Ball mill, 4.4 m', description: 'Grinds the ore wet, to about 80% finer than 45 um, so it can be balled: a steel drum 4.4 m across and 7 m long on trunnion bearings, its axis along x 3 m up, a third full of steel balls, turned by a girth gear and a 2.1 MW motor at its +x end. Ore and water in by a chute at its -x trunnion (local -8, 0, 4); the slurry out of its +x trunnion into a sump and pumped on (local 8, 3, 0.5).'}
+identity: {key: unit.ball-mill-4m4, name: 'Ball mill, 4.4 m', description: 'Grinds the ore wet, to about 80% finer than 45 um, so it can be balled: a steel drum 4.4 m across and 7 m long on trunnion bearings, its axis along x 3 m up, a third full of steel balls, turned by a girth gear and a 2.1 MW motor at its +x end: the gear 6.0 m across (about 1.35 times the drum, so its pinion clears the shell; from memory) on a flange by the +x head, in a guard 6.4 m across that reaches z 6.2 and sits in a 0.4 m pit in the floor below; its pinion on the -y side at axis height, a gearbox and the motor on the floor beyond, out to y -4.4. Ore and water in by a chute at its -x trunnion (local -8, 0, 4); the slurry out of its +x trunnion into a sump and pumped on (local 8, 3, 0.5).'}
 size_class: 3
 fits: plant-mount.bay-s3
-physical: {length: 18.0, width: 9.0, height: 7.0, mass: 160800.0}
+physical: {length: 18.0, width: 9.0, height: 6.5, mass: 161000.0}
 built_of:
-- {what: Shell and heads, item: material.structural-steel-a36, mass: 44920.0, note: '4.4 m across, 7 m, 45 mm plate'}
+- {what: Shell and heads, item: material.structural-steel-a36, mass: 43470.0, note: '4.4 m across, 7 m, 45 mm plate: the shell 33,776.9 kg and the annular heads 9,691.8; measured on model v1'}
 - {what: Liners, item: material.structural-steel-a36, mass: 55030.0, note: '75 mm wear liners of manganese steel, which the registry has not got: structural steel stands for it'}
-- {what: 'Trunnions, bearings and girth gear', item: material.high-strength-steel-4340, mass: 40000.0, note: from memory}
+- {what: Trunnions and flanges, item: material.high-strength-steel-4340, mass: 8703.0, note: 'the hollow trunnions'' walls (7,478.8 kg) and their flanges to the heads (1,224.4); measured on model v1'}
+- {what: Bearings and girth gear, item: material.high-strength-steel-4340, mass: 30000.0, note: 'the two trunnion bearings and the 6 m girth gear with its pinion, from memory'}
+- {what: Gear guard, item: material.structural-steel-a36, mass: 1779.0, note: 5 mm plate round the girth gear; measured on model v1}
 - {what: Motor and gearbox, item: good.electric-motors, mass: 12890.0, note: '6 t a MW, from memory'}
 - {what: Slurry sump and pumps, item: good.pumps, mass: 8000.0, note: from memory}
+- {what: 'Feed hopper, seal and services', item: material.structural-steel-a36, mass: 1081.0, note: 'the 1.3 m receiving hopper and its chute into the trunnion, the seal''s sleeve, the water and slurry stubs, the 6.6 kV terminal box and their supports; measured on blender''s model v2 (2026-10-16)'}
 holds: 150400.0
 needs: {power: 2149000.0, water: 3.28}
+ports:
+- id: ore-in
+  flow: in
+  medium: bulk
+  item: good.iron-ore
+  rate: 33.16
+  interface: interface.belt-transfer-1000-sealed
+  half: female
+  make: open
+  connector: connector.belt-transfer-1000-sealed
+  at: [-8.0, 0.0, 4.0]
+  facing: [0.0, 0.0, 1.0]
+  note: the feed chute's hopper at its -x trunnion, flanged for a sealed gallery's drop
+- id: water-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 14.21
+  pressure: 200000.0
+  temperature: 303.0
+  interface: interface.flange-dn100-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn100-pn10-ss
+  at: [-8.0, 1.2, 4.0]
+  facing: [0.0, 0.0, 1.0]
+  note: 'the presses'' filtrate back, with the condensate''s make-up, into the feed chute: the slurry''s water'
+- id: slurry-out
+  flow: out
+  medium: liquid
+  item: good.iron-ore
+  rate: 47.37
+  pressure: 300000.0
+  temperature: 303.0
+  interface: interface.flange-dn150-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn150-pn10
+  at: [8.0, 3.0, 0.5]
+  facing: [0.0, 1.0, 0.0]
+  note: 'from the sump''s pump: ore and water'
+- id: power-in
+  flow: in
+  medium: power
+  power: 2149000.0
+  voltage: 6600
+  interface: interface.termination-6p6kv-95mm2
+  half: female
+  make: bolted
+  connector: connector.termination-6p6kv-95mm2
+  at: [6.0, -4.4, 0.5]
+  facing: [0.0, -1.0, 0.0]
+  note: the motor's terminal box
+  current: 208.9
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s3
+  half: male
+  make: bolted
+  mass: 311400.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
+product: product.ball-mill-4m4
+motion:
+- id: spin
+  kind: rotate
+  point: [0.0, 0.0, 3.2]
+  direction: [1.0, 0.0, 0.0]
+  moves: [the shell and its charge]
+  boxes: []
+  note: turning continuously on its trunnions, sweeping nothing beyond itself; its feed and discharge stay still
+envelope:
+- [-5.351, -2.242, -0.001, 5.351, 2.242, 5.241]
+- [2.199, -3.751, -0.202, 2.857, 3.202, 6.201]
+- [0.899, -4.451, -0.001, 6.302, -2.449, 3.451]
+- [-8.661, -0.662, -0.001, -5.049, 1.256, 4.001]
+- [5.098, -0.802, -0.001, 7.701, 3.202, 3.701]
+- [6.698, 1.998, -0.001, 8.501, 4.201, 0.922]
 life: 788940000
+visual: {format: freefall-model/1, path: models/ball-mill-4m4/v2, manifest_sha256: 41ca45634ca102477dcd734f7c93781b97e502cc4b031ae755c2c7446787f3c8, version: 2, triangles: 13302}
 basis:
 - of: [physical, built_of, holds, needs.power]
   tier: derived
@@ -21,5 +105,9 @@ basis:
 - of: [needs.water]
   tier: derived
   note: 'The water the plant loses: the green balls hold 9%, dried off on the grate; the rest of the grinding water comes back from the filters.'
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage.'
 - of: [life]
   rule: rule.life-plant

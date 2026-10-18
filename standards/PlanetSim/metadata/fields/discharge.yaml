@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.discharge
+  name: Discharge
+  about: River discharge leaving the sample after evaporation, seepage and lake losses.
+unit: m3/s
+said_as:
+  unit: m3/yr
+  factor: 3.168808781402895e-08
+per: sample
+producer:
+  where: stages/coupled.py route_water
+  file: checkpoint
+  key: wacc
+also_from:
+- where: stages/coupled.py route_water
+  file: ctx
+  key: h_Q
+  note: the same values
+cautions:
+- a channel starts at 1e10 m3/yr (317 m3/s)
+source: wacc
+levels:
+- planet-level.planet
+- planet-level.cluster
+- planet-level.pattern
+basis:
+- of:
+  - identity
+  - producer
+  - said_as
+  tier: derived
+  note: 'planet-trees-pgs2 docs/sim-arrays.md (planets, 17 Oct 2026: checked against the code at aab9f6a, run earth_s25).'
+status: draft

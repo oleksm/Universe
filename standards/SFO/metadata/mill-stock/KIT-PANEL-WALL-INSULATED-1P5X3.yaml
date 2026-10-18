@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/building_kit.py: change it there.
+identity:
+  key: stock.kit-panel-wall-insulated-1p5x3
+  code: KIT-PANEL-WALL-INSULATED-1P5X3
+  name: Wall panel, insulated, 1.5 x 3 m
+  traded_as: market.machinery
+  form: panel
+package: package.plate-stack
+made_from:
+- item: material.structural-steel-a36
+- item: material.pir-foam
+size:
+  length: 1.5
+  width: 0.1
+  height: 3.0
+supplies:
+  item: panel.wall-insulated-1p5x3
+physical:
+  mass: 56.5
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One panel.wall-insulated-1p5x3, as made.

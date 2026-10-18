@@ -1,0 +1,179 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.thermal.radiator-hot.s1
+  name: Hot radiator panel S1
+  maker: org.kestrel
+  revision: draft
+  slot: thermal
+  description: 'A deployable radiator panel for a fusion thermal engine S1, two to an engine: carbon-carbon with liquid lithium through it, stowed flat against the hull and swung out on its root hinge to stand edge-on to the jet, both
+    faces to space, where it throws off 57 MW at 1500 K. Its coolant comes from the engine''s ports by a supply and a return header along the root edge, on the hinge line, each crossing the hinge in one molybdenum-rhenium bellows loop.
+    It was part of the engine until 2026-10-17: a radiator this hot and large cannot fold inside an engine mount with its plumbing live (blender''s packing traces), so it is its own equipment on its own mount, and the ship must give
+    it hull to lie against.'
+size_class: 1
+fits: mount.radiator-hot-s1
+physical:
+  mass: 4147
+  volume: 6.5
+  length: 16.76
+  width: 9.64
+  height: 2.349
+built_of:
+  parts: thermal-radiator-hot-s1
+  list:
+  - code: RAH1-01
+    name: Panel
+    description: 3 mm carbon-carbon, 117 m2, 15.3 m out from the hinge by 7.65 m along it; both faces dark; tubes 12 mm across (0.5 mm molybdenum) out from the root and back.
+    mass: 616
+    length: 15.3
+    width: 7.65
+    height: 0.03
+    item: stock.cc-pl-3
+    quantity: 707.8
+    module: module.assembly-shop
+  - code: RAH1-02
+    name: Tubes
+    description: '168 U-tubes of molybdenum, 20 mm across with a 0.5 mm wall, each 15.3 m out from the root header and back (30.6 m), on a 45.5 mm pitch a U along the 7.65 m root (336 legs at 22.75 mm, 2.75 mm of sheet between them: the tubes themselves do most of the radiating): 68 kg/s of lithium at about 3.5 m/s in their 19 mm bores,
+      about 81 kPa lost across them; the 3 mm sheet bonded between them as fins. 5.1 km of tube.'
+    mass: 1619
+    length: 15.3
+    width: 7.65
+    height: 0.02
+    item: stock.mo-tb-12x0p5
+    quantity: 1861.8
+    module: module.machining-centre
+  - code: RAH1-04
+    name: Root headers
+    description: The supply and the return header along the root edge, DN 250 molybdenum, 5 mm wall, 7.65 m each, side by side (x 0.15 and 0.45, z 0.15), on the hinge line, swinging with the panel; their -y ends (y -3.825) each meet
+      one molybdenum-rhenium bellows loop spanning 0.6 m to its fixed seat on the hull-side root bracket at y -4.425, where the ports are.
+    mass: 630
+    length: 7.65
+    width: 0.6
+    height: 0.27
+    item: stock.mo-tb-12x0p5
+    quantity: 724.5
+    module: module.machining-centre
+  - code: RAH1-05
+    name: Backing frame
+    description: 'Carbon-carbon box ribs 250 x 80 mm with a 3 mm wall, six running out from the root every 1.5 m, and a mid and a tip spar across: the 3 mm sheet cannot stand alone; within the panel''s 0.3 m.'
+    mass: 382
+    length: 15.3
+    width: 7.65
+    height: 0.25
+    item: stock.cc-pl-3
+    quantity: 439.3
+    module: module.assembly-shop
+  - code: RAH1-03
+    name: Hinge, drive and root joints
+    description: 'Root hinge brackets on the hull, the deploy drive, tip latches that hold it stowed, and the hinge crossings: each header splits at its moving -y end into three DN125 molybdenum-rhenium corrugated hoses (about 0.15
+      m outside, 4.5 m/s of lithium), each wound about half a turn round the hinge axis in a plane across it, at a bend radius of at least 0.6 m (4 x its outside; deploys are few, under 1,000 in its life), so the 90 degree swing winds
+      and unwinds them like a clock spring and stretches none; about 3.4 m of hose each (blender''s route study 2026-10-17: a 2.5 m planar loop fails past 30 degrees; a 3.4 m clock-spring holds R >= 0.6 m through the swing) from the
+      moving end to its fixed seat. They stand in a root pod beyond the panel''s -y end the six hoses sweeping x -0.73 to 0.90, y -5.23 to -4.18, z -1.27 to 0.88 (the part below the hull line goes into a recess the hull gives), taller
+      than the 0.3 m panel; the mount grows to the pod as measured.'
+    mass: 325
+    length: 7.65
+    width: 0.5
+    height: 0.3
+    item: stock.mo-tb-12x0p5
+    quantity: 373.7
+    module: module.machining-centre
+  - code: RAH1-06
+    name: Fixed manifolds, drops and hose cuffs
+    description: The fixed DN250 supply and return collectors beyond the hose pod (ports at y -5.5), each with three DN125 drops to the fixed hose cuffs at x -0.65; molybdenum. Mass as blender's analytic figure from the model (2026-10-17).
+    mass: 575.33
+    length: 1.46
+    width: 1.0
+    height: 1.0
+    item: stock.mo-tb-12x0p5
+    quantity: 661.4
+    module: module.machining-centre
+making:
+  module: module.assembly-shop
+function:
+  kind: radiator
+  rejects: 56917331
+  temperature: 1500.0
+  area: 116.6
+ports:
+- id: coolant-in
+  flow: in
+  medium: liquid
+  item: material.lithium
+  interface: interface.lm-flange-dn250
+  half: androgynous
+  make: bolted
+  rate: 67.8
+  pressure: 500000.0
+  temperature: 1600.0
+  at:
+  - -0.95
+  - -5.5
+  - 0.6
+  facing:
+  - 0.0
+  - -1.0
+  - 0.0
+  note: 'hot lithium from the engine: the fixed DN250 supply manifold beyond the hose pod, facing -y; three DN125 drops to the fixed hose cuffs at x -0.65 (blender 2026-10-17)'
+- id: coolant-out
+  flow: out
+  medium: liquid
+  item: material.lithium
+  interface: interface.lm-flange-dn250
+  half: androgynous
+  make: bolted
+  rate: 67.8
+  pressure: 500000.0
+  temperature: 1400.0
+  at:
+  - -1.25
+  - -5.5
+  - 0.95
+  facing:
+  - 0.0
+  - -1.0
+  - 0.0
+  note: 'back to the engine: the fixed DN250 return manifold beyond the hose pod, facing -y; three DN125 drops to the fixed hose cuffs at x -0.65'
+visual:
+  format: "freefall-model/1"
+  path: "models/thermal-radiator-hot-s1/v1"
+  manifest_sha256: "42642e7a02ec69feb956578b110ceea8b1859546e86cea3924b9652be4298866"
+  version: 1
+  triangles: 59958
+life: 473364000
+basis:
+- of:
+  - function
+  - physical
+  tier: derived
+  review: true
+  note: 'Its share of the engine''s heat (half its 233 m2 at 1500 K, both faces, emissivity 0.85): 57 MW. Twice as long as wide, as the other radiator panels. Lithium (material.lithium) about 4.2 kJ/kg K and 410 kg/m3 near 1,500 K (from
+    memory), a 200 K drop, about 3.5 m/s in the headers.'
+- of:
+  - built_of.list
+  tier: derived
+  review: true
+  note: 'Sized from its flow and its geometry (blender''s question, 2026-10-17): the tubes to carry 68 kg/s at about 3.5 m/s under 1 bar of loss (168 of 20 mm Mo), the root headers DN 250 Mo, a carbon-carbon backing frame, the sheet
+    half the engine''s former panels; hinge, drive and joints a tenth more (invented). It weighs about two and a half times the engine''s former share: that budget left out the tubes the flow needs.'
+- of:
+  - built_of
+  - making
+  rule: rule.first-design-parts
+- of:
+  - life
+  rule: rule.life-ship-system
+- of:
+  - physical.width
+  - ports
+  tier: derived
+  note: 'Width over the root bracket, bellows loops and drive, y -4.425 to 4.14 (blender''s candidate-v01 measure, 2026-10-17): 8.565 m; the panel itself is 7.65 m. The engine''s lines are fixed to the hull, so the ports sit on the
+    loops'' fixed seats, not on the swinging header ends; mount.radiator-hot-s1 widened to 9.42 m by rule.mounts-margin.'
+- of:
+  - built_of.list
+  tier: invented
+  review: true
+  note: 'The hinge crossing (2026-10-17, after blender''s reach check: a 90 degree swing stretches a straight 0.6 m bellows 6 to 46 %): three DN125 Mo-Re corrugated hoses per header wound round the hinge axis. Bend radius 0.6 m is 4
+    x outside, a low-cycle allowance from memory of metal-hose practice (static about 2-3 x, dynamic about 10 x); to be checked against a Mo-Re hose''s fatigue at 1,600 K.'
+- of:
+  - physical
+  tier: derived
+  note: 'Rest bounds of blender''s final S1 draft (2026-10-17): x -1.46 to 15.3, y -5.5 to 4.14, z -1.269 to 1.08: 16.76 x 9.64 x 2.35 m with the hose pod and manifolds; the panel itself stays 15.3 x 7.65 x 0.3. Mass 3,572 + 575 kg
+    of fixed manifolds and drops.'

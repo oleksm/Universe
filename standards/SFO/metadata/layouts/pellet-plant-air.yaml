@@ -5,7 +5,7 @@ stands_for: module.pellet-plant
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 210.0, width: 78.0, height: 27.0, mass: 9545000.0}
+physical: {length: 210.0, width: 75.3, height: 68.0, mass: 9876000.0}
 bays:
 - id: M
   mount: plant-mount.bay-s3
@@ -21,11 +21,13 @@ bays:
   mount: plant-mount.bay-s2
   unit: unit.balling-disc-7m5
   at: [-6.0, -6.0, 0.0]
-  note: two rows of two
+  turn: 180.0
+  note: two rows of two, the south pair turned so all four screens face the aisle at y 0
 - id: B2
   mount: plant-mount.bay-s2
   unit: unit.balling-disc-7m5
   at: [6.0, -6.0, 0.0]
+  turn: 180.0
   note: ''
 - id: B3
   mount: plant-mount.bay-s2
@@ -45,86 +47,532 @@ bays:
 - id: D
   mount: plant-mount.bay-s3
   unit: unit.baghouse-450k
-  at: [39.0, 36.0, 0.0]
-  note: outside, north, its stack at its east end
+  at: [41.0, 36.0, 0.0]
+  note: outside, north, its stack at its east end; its inlet in line with the grate's waste nozzle
 - id: T
   mount: plant-mount.bay-s2
   unit: unit.plant-transformer-35mva
   at: [0.0, -24.0, 0.0]
   note: outside, south, in a fire-walled vault
+- id: C
+  mount: plant-mount.bay-s3
+  unit: unit.cooling-tower-pellet
+  at: [30.0, -27.0, 0.0]
+  note: outside, south-east
+ports:
+- id: ore-in
+  flow: in
+  medium: bulk
+  item: good.iron-ore
+  rate: 33.16
+  interface: interface.belt-transfer-1000
+  half: female
+  make: open
+  connector: connector.belt-transfer-1000
+  at: [-100.0, 0.0, 6.0]
+  facing: [1.0, 0.0, 0.0]
+  note: ore fines from the ore yard's out belt, onto the ore belt's tail
+- id: pellets-out
+  flow: out
+  medium: bulk
+  item: good.iron-ore-pellets
+  rate: 34.72
+  interface: interface.belt-transfer-1000
+  half: male
+  make: open
+  connector: connector.belt-transfer-1000
+  at: [110.0, 0.0, 1.0]
+  facing: [-1.0, 0.0, 0.0]
+  note: 'fired pellets to the shaft furnace''s pellet belt: the pellet belt''s head 3 m over it'
+- id: water-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 3.28
+  pressure: 400000.0
+  temperature: 293.0
+  interface: interface.flange-dn50-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn50-pn10-ss
+  at: [-51.0, 11.7, 6.5]
+  facing: [0.0, -1.0, 0.0]
+  note: the site's water, the mill's make-up
+- id: hv-in
+  flow: in
+  medium: power
+  power: 24110000.0
+  voltage: 33000
+  interface: interface.termination-33kv-185mm2
+  half: female
+  make: bolted
+  connector: connector.termination-33kv-185mm2
+  at: [0.0, -31.0, 8.0]
+  facing: [0.0, 1.0, 0.0]
+  note: the site's 33 kV
+- id: lv-hall
+  flow: in
+  medium: power
+  power: 788100.0
+  voltage: 400
+  interface: interface.termination-400v-630mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-630mm2
+  at: [0.6, -13.5, -0.6]
+  facing: [0.0, 1.0, 0.0]
+  note: the site's 400 V, in a trench under the south wall, for the filters and discs
+- id: lv-baghouse
+  flow: in
+  medium: power
+  power: 666700.0
+  voltage: 400
+  interface: interface.termination-400v-500mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-500mm2
+  at: [56.0, 36.0, 1.0]
+  facing: [-1.0, 0.0, 0.0]
+- id: lv-tower
+  flow: in
+  medium: power
+  power: 43650.0
+  voltage: 400
+  interface: interface.termination-400v-35mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-35mm2
+  at: [21.0, -30.0, 1.0]
+  facing: [1.0, 0.0, 0.0]
+- id: makeup-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 1.164
+  pressure: 400000.0
+  temperature: 293.0
+  interface: interface.flange-dn100-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn100-pn10
+  at: [21.0, -27.0, 0.75]
+  facing: [1.0, 0.0, 0.0]
+  note: the site's water
 links:
 - kind: conveyor
   name: ore belt
-  from: [-100.0, 0.0, 2.0]
-  to: [-53.0, 0.0, 4.0]
-  length: 48.93
-  item: material.structural-steel-a36
-  mass: 7340.0
-  via:
-  - [-62.0, 0.0, 9.0]
+  run: run.belt-1000
+  ends: ['edge:ore-in', 'M:ore-in']
+  from: [-100.0, 0.0, 6.0]
+  to: [-53.0, 0.0, 7.0]
+  length: 47.01
+  item: material.silicone-rubber
+  mass: 17480.0
   power: 100000.0
-  note: 'a 1 m belt in a gallery: 33.2 kg/s of ore fines from the ore yard, beyond the layout, through the west wall into the mill''s chute'
+  fittings: {elbows: 0, tees: 0, supports: 3, connectors: 2}
+  note: 33.2 kg/s of ore fines from the ore yard, rising about 1 degree through the west wall's opening to its head 3 m over the mill's feed hopper (the hopper's gallery flange unused in air)
 - kind: pipe
   name: slurry
+  run: run.pipe-dn150-pn10
+  ends: ['M:slurry-out', 'F:slurry-in']
   from: [-37.0, 3.0, 0.5]
   to: [-24.0, 0.0, 9.0]
-  length: 15.82
+  length: 34.1
   item: material.structural-steel-a36
-  mass: 975.3
-  note: 250 mm rubber-lined, 10 mm wall, pumped from the mill's sump up to the filters' troughs on their deck
+  mass: 2035.0
+  via:
+  - [-37.0, 4.6, 0.5]
+  - [-37.0, 4.6, 12.2]
+  - [-24.0, 4.6, 12.2]
+  - [-24.0, 0.0, 12.2]
+  fittings: {elbows: 4, tees: 0, supports: 7, connectors: 2}
+  note: pumped from the mill's sump up over the filters' receivers and down into the distribution box (rubber-lined)
+- kind: pipe
+  name: filtrate
+  run: run.pipe-dn100-pn10-ss
+  ends: ['F:filtrate-out', 'M:water-in']
+  from: [-30.0, 3.0, 6.5]
+  to: [-53.0, 1.2, 4.0]
+  length: 27.3
+  item: material.stainless-steel-304
+  mass: 1316.0
+  via:
+  - [-53.0, 3.0, 6.5]
+  - [-53.0, 1.2, 6.5]
+  fittings: {elbows: 2, tees: 0, supports: 8, connectors: 2}
+  note: back over the mill's drum to its feed chute
+- kind: pipe
+  name: mill make-up
+  run: run.pipe-dn50-pn10-ss
+  ends: ['edge:water-in', 'tee:filtrate']
+  from: [-51.0, 11.7, 6.5]
+  to: [-51.0, 3.0, 6.5]
+  length: 8.7
+  item: material.stainless-steel-304
+  mass: 417.2
+  fittings: {elbows: 0, tees: 1, supports: 3, connectors: 1}
 - kind: conveyor
   name: cake belt
-  from: [-24.0, -4.0, 7.0]
-  to: [6.0, 8.0, 7.5]
-  length: 42.13
-  item: material.structural-steel-a36
-  mass: 4213.0
-  via:
-  - [-12.0, -4.0, 8.0]
-  - [-12.0, 0.0, 8.5]
-  - [6.0, 0.0, 8.5]
-  power: 40000.0
-  note: a 0.8 m belt from under the filters, shuttling over the four discs' feed points
+  run: run.belt-800
+  ends: [cap, 'onto:cake riser']
+  from: [-30.5, -2.4, 6.55]
+  to: [-20.1, -2.4, 6.55]
+  length: 10.4
+  item: material.silicone-rubber
+  mass: 8731.0
+  taps: ['F:cake-1', 'F:cake-2']
+  power: 15000.0
+  fittings: {elbows: 0, tees: 2, supports: 1, connectors: 2}
+  note: level along x on the filters' deck under all eight discs' chutes, its top just under their feet (z 7.0)
 - kind: conveyor
-  name: green ball belt
-  from: [-6.0, -10.5, 1.0]
-  to: [21.0, 0.0, 9.0]
-  length: 33.98
-  item: material.structural-steel-a36
-  mass: 3398.0
-  via:
-  - [12.0, -10.5, 1.0]
-  power: 40000.0
-  note: a 0.8 m belt collecting the four discs' green balls (the north pair's by a short cross belt from y 1.5), rising to the grate's roller feeder
+  name: cake riser
+  run: run.belt-800
+  ends: [cap, 'onto:cake shuttle']
+  from: [-20.1, -2.4, 6.05]
+  to: [-12.0, -2.4, 8.3]
+  length: 8.407
+  item: material.silicone-rubber
+  mass: 8461.0
+  power: 15000.0
+  fittings: {elbows: 0, tees: 0, supports: 1, connectors: 0}
+  note: up at about 16 degrees to the shuttle, its tail in a slot through the filter deck
+- kind: conveyor
+  name: cake shuttle
+  run: run.belt-800
+  ends: ['onto:south cake header', 'onto:north cake header']
+  from: [-12.0, -8.4, 7.8]
+  to: [-12.0, 8.4, 7.8]
+  length: 16.8
+  item: material.silicone-rubber
+  mass: 9399.0
+  reversible: true
+  power: 7500.0
+  fittings: {elbows: 0, tees: 0, supports: 1, connectors: 0}
+  note: reversible, along y
+- kind: conveyor
+  name: south cake header
+  run: run.belt-800
+  ends: [cap, cap]
+  from: [-12.5, -8.4, 7.3]
+  to: [8.0, -8.4, 7.3]
+  length: 20.5
+  item: material.silicone-rubber
+  mass: 10710.0
+  taps: ['B1:cake-in', 'B2:cake-in']
+  power: 10000.0
+  fittings: {elbows: 0, tees: 2, supports: 2, connectors: 2}
+  note: along y -8.4, 0.4 m outside the discs' chutes and clear of their fines elevators' heads, ploughs dropping into B1 and B2's chutes
+- kind: conveyor
+  name: north cake header
+  run: run.belt-800
+  ends: [cap, cap]
+  from: [-12.5, 8.4, 7.3]
+  to: [8.0, 8.4, 7.3]
+  length: 20.5
+  item: material.silicone-rubber
+  mass: 10710.0
+  taps: ['B3:cake-in', 'B4:cake-in']
+  power: 10000.0
+  fittings: {elbows: 0, tees: 2, supports: 2, connectors: 2}
+  note: along y 8.4, ploughs into B3 and B4
+- kind: conveyor
+  name: green ball collector
+  run: run.belt-800
+  ends: [cap, 'onto:green ball cross belt']
+  from: [7.5, 0.0, 0.6]
+  to: [-16.5, 0.0, 0.6]
+  length: 24.0
+  item: material.silicone-rubber
+  mass: 10260.0
+  taps: ['B1:balls-out', 'B2:balls-out', 'B3:balls-out', 'B4:balls-out']
+  power: 15000.0
+  fittings: {elbows: 0, tees: 4, supports: 2, connectors: 4}
+  note: level along the aisle, west, under the four screens' ends
+- kind: conveyor
+  name: green ball cross belt
+  run: run.belt-800
+  ends: [cap, 'onto:green ball lift']
+  from: [-16.5, 0.0, 0.1]
+  to: [-16.5, -11.0, 1.3]
+  length: 11.07
+  item: material.silicone-rubber
+  mass: 8258.0
+  power: 6000.0
+  fittings: {elbows: 0, tees: 0, supports: 1, connectors: 0}
+  note: south along x -16.5, its tail in a shallow pit under the collector's head
+- kind: conveyor
+  name: green ball lift
+  run: run.belt-800
+  ends: [cap, 'onto:green ball feed']
+  from: [-16.5, -11.0, 0.8]
+  to: [21.0, -11.0, 10.1]
+  length: 38.64
+  item: material.silicone-rubber
+  mass: 12960.0
+  power: 30000.0
+  fittings: {elbows: 0, tees: 0, supports: 3, connectors: 0}
+  note: along the south wall rising east at under 14 degrees (green balls roll back on a steeper belt); over the south door
+- kind: conveyor
+  name: green ball feed
+  run: run.belt-800
+  ends: [cap, 'G:balls-in']
+  from: [21.0, -11.0, 9.6]
+  to: [21.0, 0.0, 9.6]
+  length: 11.0
+  item: material.silicone-rubber
+  mass: 10200.0
+  power: 10000.0
+  fittings: {elbows: 0, tees: 0, supports: 1, connectors: 1}
+  note: north over the grate's open loading end to its head over the roller feeder
 - kind: conveyor
   name: pellet belt
-  from: [62.0, 0.0, 2.0]
-  to: [110.0, 0.0, 2.0]
-  length: 48.0
-  item: material.structural-steel-a36
-  mass: 7200.0
+  run: run.belt-1000
+  ends: ['G:pellets-out', 'edge:pellets-out']
+  from: [62.25, 0.0, 0.5]
+  to: [110.0, 0.0, 4.0]
+  length: 47.88
+  item: material.silicone-rubber
+  mass: 16630.0
   power: 100000.0
-  note: 'a 1 m belt: 34.7 kg/s of fired pellets off the grate''s end, out by the east wall to the shaft furnace''s pellet belt, beyond the layout'
-- kind: duct
+  fittings: {elbows: 0, tees: 0, supports: 3, connectors: 2}
+  note: 34.7 kg/s of fired pellets out through the east wall's opening, rising about 4 degrees
+- kind: pipe
   name: waste gas
+  run: run.pipe-dn2000-pn1
+  ends: ['G:gas-out', 'D:gas-in']
   from: [41.0, 6.0, 3.0]
-  to: [39.0, 30.0, 12.0]
-  length: 35.0
+  to: [41.0, 30.0, 12.0]
+  length: 33.0
   item: material.structural-steel-a36
-  mass: 14610.0
+  mass: 22860.0
   via:
-  - [39.0, 6.0, 3.0]
-  - [39.0, 20.0, 3.0]
-  - [39.0, 20.0, 12.0]
-  note: '2.8 m across, 6 mm plate, insulated: from the process fans'' discharge through the north wall to the baghouse''s inlet'
+  - [41.0, 20.0, 3.0]
+  - [41.0, 20.0, 12.0]
+  fittings: {elbows: 2, tees: 0, supports: 4, connectors: 2}
+  note: north from the grate's nozzle through the north wall's opening, up and into the baghouse's inlet; insulated (not counted)
+- kind: pipe
+  name: torches flow
+  run: run.pipe-dn150-pn10
+  ends: ['C:torch-out', 'G:water-in']
+  from: [36.0, -26.4, 0.75]
+  to: [41.0, -6.0, 1.0]
+  length: 25.42
+  item: material.structural-steel-a36
+  mass: 630.9
+  via:
+  - [41.0, -26.4, 0.75]
+  - [41.0, -8.0, 0.75]
+  fittings: {elbows: 2, tees: 0, supports: 6, connectors: 2}
+  note: 46 kg/s east and north through the south wall's low opening to the grate's flanges; the inner of the pair
+- kind: pipe
+  name: torches return
+  run: run.pipe-dn150-pn10
+  ends: ['G:water-out', 'C:torch-in']
+  from: [41.6, -6.0, 1.0]
+  to: [36.0, -27.6, 0.75]
+  length: 27.22
+  item: material.structural-steel-a36
+  mass: 691.4
+  via:
+  - [41.6, -8.0, 0.75]
+  - [41.6, -27.6, 0.75]
+  fittings: {elbows: 2, tees: 0, supports: 7, connectors: 2}
+  note: the outer of the pair
+- kind: pipe
+  name: transformer cooling flow
+  run: run.pipe-dn100-pn10
+  ends: ['C:tr-out', 'T:cooling-in']
+  from: [36.0, -23.1, 0.75]
+  to: [-2.9, -24.6, 1.0]
+  length: 54.62
+  item: material.structural-steel-a36
+  mass: 963.0
+  via:
+  - [37.4, -23.1, 0.75]
+  - [37.4, -19.0, 0.75]
+  - [-4.5, -19.0, 0.75]
+  - [-4.5, -24.6, 0.75]
+  fittings: {elbows: 4, tees: 0, supports: 15, connectors: 2}
+  note: north, west along y -19 and into the cooler's ports; the outer of the pair
+- kind: pipe
+  name: transformer cooling return
+  run: run.pipe-dn100-pn10
+  ends: ['T:cooling-out', 'C:tr-in']
+  from: [-2.9, -23.4, 1.0]
+  to: [36.0, -21.9, 0.75]
+  length: 48.63
+  item: material.structural-steel-a36
+  mass: 880.2
+  via:
+  - [-3.9, -23.4, 0.75]
+  - [-3.9, -19.6, 0.75]
+  - [36.8, -19.6, 0.75]
+  - [36.8, -21.9, 0.75]
+  fittings: {elbows: 4, tees: 0, supports: 14, connectors: 2}
+  note: the inner of the pair
 - kind: cable
-  name: plant supply
-  from: [0.0, -22.15, 4.0]
-  to: [0.0, -10.0, 3.0]
-  length: 12.19
+  name: transformer supply
+  run: run.cable-33kv-185mm2
+  ends: ['edge:hv-in', 'T:hv-in']
+  from: [0.0, -31.0, 8.0]
+  to: [0.0, -24.9, 5.2]
+  length: 8.9
   item: material.copper
-  mass: 228.9
-  note: three phases at 6.6 kV in a cable tray, copper at 4 A/mm2, through the south door to the hall's switchroom
+  mass: 511.7
+  via:
+  - [0.0, -24.9, 8.0]
+  fittings: {elbows: 1, tees: 0, supports: 4, connectors: 2}
+  note: over the vault's south wall and down into the cable box
+- kind: cable
+  name: 6.6 kV main
+  run: run.cable-6p6kv-630mm2
+  ends: ['T:lv-out', cap]
+  from: [0.0, -21.65, 2.9]
+  to: [-41.0, -9.8, 12.0]
+  length: 61.95
+  item: material.copper
+  mass: 4245.0
+  via:
+  - [0.0, -9.8, 2.9]
+  - [0.0, -9.8, 12.0]
+  count: 2
+  fittings: {elbows: 2, tees: 0, supports: 19, connectors: 1}
+  note: north through the south door under the green ball lift, up between the discs and the lift, then west on a tray 12 m up
+- kind: cable
+  name: grate supply
+  run: run.cable-6p6kv-630mm2
+  ends: ['tee:6.6 kV main', 'G:power-in']
+  from: [0.0, -9.8, 11.0]
+  to: [18.6, -3.0, 1.0]
+  length: 35.4
+  item: material.copper
+  mass: 2475.0
+  via:
+  - [17.6, -9.8, 11.0]
+  - [17.6, -3.0, 11.0]
+  - [17.6, -3.0, 1.0]
+  count: 2
+  fittings: {elbows: 3, tees: 1, supports: 11, connectors: 1}
+  note: east on a tray 11 m up, over the discs and under the lift's head, down to the grate's box
+- kind: cable
+  name: mill supply
+  run: run.cable-6p6kv-95mm2
+  ends: ['tee:6.6 kV main', 'M:power-in']
+  from: [-39.0, -9.8, 12.0]
+  to: [-39.0, -4.4, 0.5]
+  length: 16.9
+  item: material.copper
+  mass: 282.9
+  via:
+  - [-39.0, -9.8, 0.5]
+  fittings: {elbows: 1, tees: 1, supports: 3, connectors: 1}
+- kind: cable
+  name: hall 400 V
+  run: run.cable-400v-630mm2
+  ends: ['edge:lv-hall', cap]
+  from: [0.6, -13.5, -0.6]
+  to: [0.6, 8.6, -0.6]
+  length: 22.1
+  item: material.copper
+  mass: 560.4
+  fittings: {elbows: 0, tees: 0, supports: 8, connectors: 1}
+  note: north in a floor trench up the aisle between the discs, under the collector
+- kind: cable
+  name: B1 supply
+  run: run.cable-400v-70mm2
+  ends: ['tee:hall 400 V', 'B1:power-in']
+  from: [0.6, -8.0, -0.6]
+  to: [-10.5, -7.0, 0.5]
+  length: 14.6
+  item: material.copper
+  mass: 185.7
+  via:
+  - [-11.2, -8.0, -0.6]
+  - [-11.2, -8.0, 0.5]
+  - [-11.2, -7.0, 0.5]
+  fittings: {elbows: 3, tees: 1, supports: 7, connectors: 1}
+- kind: cable
+  name: B2 supply
+  run: run.cable-400v-70mm2
+  ends: ['tee:hall 400 V', 'B2:power-in']
+  from: [0.6, -7.0, -0.6]
+  to: [1.5, -7.0, 0.5]
+  length: 2.0
+  item: material.copper
+  mass: 64.09
+  via:
+  - [0.6, -7.0, 0.5]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: B3 supply
+  run: run.cable-400v-70mm2
+  ends: ['tee:hall 400 V', 'B3:power-in']
+  from: [0.6, 7.0, -0.6]
+  to: [-1.5, 7.0, 0.5]
+  length: 3.2
+  item: material.copper
+  mass: 71.77
+  via:
+  - [0.6, 7.0, 0.5]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: cable
+  name: B4 supply
+  run: run.cable-400v-70mm2
+  ends: ['tee:hall 400 V', 'B4:power-in']
+  from: [0.6, 8.0, -0.6]
+  to: [10.5, 7.0, 0.5]
+  length: 13.4
+  item: material.copper
+  mass: 178.0
+  via:
+  - [11.2, 8.0, -0.6]
+  - [11.2, 8.0, 0.5]
+  - [11.2, 7.0, 0.5]
+  fittings: {elbows: 3, tees: 1, supports: 7, connectors: 1}
+- kind: cable
+  name: filters supply
+  run: run.cable-400v-240mm2
+  ends: ['tee:hall 400 V', 'F:power-in']
+  from: [0.6, 3.5, -0.6]
+  to: [-18.0, 3.5, 6.5]
+  length: 25.7
+  item: material.copper
+  mass: 459.2
+  via:
+  - [-17.3, 3.5, -0.6]
+  - [-17.3, 3.5, 6.5]
+  fittings: {elbows: 2, tees: 1, supports: 8, connectors: 1}
+  note: west in the trench, up through the filter deck
+- kind: cable
+  name: baghouse supply
+  run: run.cable-400v-500mm2
+  ends: ['edge:lv-baghouse', 'D:power-in']
+  from: [56.0, 36.0, 1.0]
+  to: [52.9, 36.0, 1.0]
+  length: 3.1
+  item: material.copper
+  mass: 100.2
+  fittings: {elbows: 0, tees: 0, supports: 2, connectors: 2}
+- kind: cable
+  name: tower supply
+  run: run.cable-400v-35mm2
+  ends: ['edge:lv-tower', 'C:power-in']
+  from: [21.0, -30.0, 1.0]
+  to: [24.0, -30.0, 1.0]
+  length: 3.0
+  item: material.copper
+  mass: 40.3
+  fittings: {elbows: 0, tees: 0, supports: 1, connectors: 2}
+- kind: pipe
+  name: tower make-up
+  run: run.pipe-dn100-pn10
+  ends: ['edge:makeup-in', 'C:makeup-in']
+  from: [21.0, -27.0, 0.75]
+  to: [24.0, -27.0, 0.75]
+  length: 3.0
+  item: material.structural-steel-a36
+  mass: 91.35
+  fittings: {elbows: 0, tees: 0, supports: 1, connectors: 2}
 frame:
   box: [-60.0, -15.0, 0.0, 69.0, 15.0, 27.0]
   cell: 3.0
@@ -132,32 +580,43 @@ frame:
   openings:
   - [-60.0, -3.0, 6.0, -57.0, 3.0, 12.0]
   - [66.0, -3.0, 0.0, 69.0, 3.0, 6.0]
-  - [36.0, 12.0, 0.0, 42.0, 15.0, 6.0]
+  - [36.0, 12.0, 0.0, 45.0, 15.0, 6.0]
   - [-3.0, -15.0, 0.0, 3.0, -12.0, 6.0]
+  - [39.0, -15.0, 0.0, 42.0, -12.0, 3.0]
   members:
-  - {item: stock.st4340-tb-160x3-s3000, count: 4335, where: wall}
-  - {item: stock.st4340-tb-160x3-d3000, count: 3312, where: wall}
+  - {item: stock.st4340-tb-160x3-s3000, count: 4323, where: wall}
+  - {item: stock.st4340-tb-160x3-d3000, count: 3301, where: wall}
   - {item: stock.st4340-tb-100x3-s3000, count: 2004, where: roof}
   - {item: stock.st4340-tb-100x3-d3000, count: 1671, where: roof}
-  - {item: stock.st4340-node-220b, count: 2586, where: nodes}
+  - {item: stock.st4340-node-220b, count: 2582, where: nodes}
   - {item: stock.st4340-box-400x400x25, count: 8, where: 'crane runways, four a side, 30.8 m lengths, along x on the inside of the long walls: their rail plane 18 m up at y -11.4 and +11.4'}
-  cladding: {item: stock.al6061-sh-2, area: 12310.0, mass: 66480.0}
+  cladding: {item: stock.al6061-sh-2, area: 12670.0, mass: 68440.0}
   carries: [unit.mill-crane-30t]
-  mass: 721700.0
+  mass: 722400.0
   sized: 'At 1 g: roof 1249 Pa (2 mm aluminium, the frame about 20 kg/m2, 1 kPa of snow and wind, the last invented) over a 24 m span in 3 m deep strips puts 90 kN in a chord: st4340-tb-100x3 takes 242 kN. A wheel of the 30 t crane loaded at the runway''s end puts 259 kN on a wall node, with the roof''s share 304 kN: st4340-tb-160x3 takes 695 kN. Each the kit''s lightest section with half again to spare. The runway bends to 44 MPa between nodes, against 470 MPa with half again to spare. Wind and footings not yet checked.'
 ground:
-- {what: Hall floor, item: good.concrete, volume: 1181.0, note: '0.4 m, 123 x 24 m', mass: 2834000.0}
-- {what: Mill foundation, item: good.concrete, volume: 486.0, note: 'two piers under the trunnions on a 3 m block, sized to the drum''s dynamic load (not yet checked)', mass: 1166000.0}
-- {what: Filter deck, item: good.concrete, volume: 84.0, note: a 0.5 m deck 6 m up on six columns, mass: 201600.0}
-- {what: Grate foundations, item: good.concrete, volume: 528.0, note: under the machine's frame, mass: 1267000.0}
-- {what: Frame footings, item: good.concrete, volume: 445.5, note: a 1.5 x 1.5 x 1 m pad under each of the lattice's 198 ground nodes, mass: 1069000.0}
-- {what: Outside slabs, item: good.concrete, volume: 271.2, note: the baghouse's slab and the transformer's vault, mass: 650900.0}
-totals: {rate: 34.7222222222222, power: 26080000.0, heat: 0.0, water: 3.28, mass: 9545000.0, against_module: 'module.pellet-plant: one box 250 x 100 x 40 m, 23 MW (45 kWh and 0.5 GJ of heat a tonne, the heat counted as power). This layout: the same 125 t an hour; 26.1 MW, of which 19.3 the grate''s plasma torches; no cooling water (the pellets cool on the grate in the air it draws, the waste gas leaves by the baghouse''s stack); 3.3 kg/s of water dried off the green balls; 2,357 t of plant and frame, 7,188 t of concrete. One shaft furnace at its full rate takes 79.4 kg/s of pellets, about 2.3 of these.'}
+- {what: Hall floor, item: good.concrete, volume: 904.8, note: '0.4 m, 123 x 24 m, less the machines'' foundations it stops at; measured on blender''s layout (candidate v01)', mass: 2172000.0}
+- {what: Mill foundation, item: good.concrete, volume: 480.37, note: 'two piers under the trunnions on a 3 m block, sized to the drum''s dynamic load (not yet checked), with a pit 0.4 m deep under the girth gear''s guard (x -41.8 to -40.6, y -3.2 to 3.2, its floor at z -0.4); measured on blender''s layout (candidate v01), net of the pit', mass: 1153000.0}
+- {what: Filter deck, item: good.concrete, volume: 86.6, note: 'a 14 x 8 x 0.5 m deck 6 m up on six 1 m square columns (two rows of three, 6 m apart along x); the green ball lift passes south of it; measured on blender''s layout (candidate v01), less a 1.6 x 3 m slot at its east end for the cake riser''s tail (2026-10-17)', mass: 207800.0}
+- {what: Grate foundations, item: good.concrete, volume: 528.0, note: under the machine's frame; measured on blender's layout (candidate v01), mass: 1267000.0}
+- {what: Frame footings, item: good.concrete, volume: 441.0, note: a 1.5 x 1.5 x 1 m pad under each of the lattice's 196 ground nodes; 445.5 m3 measured on blender's layout (candidate v01), mass: 1058000.0}
+- {what: Pellet hopper, item: material.structural-steel-a36, volume: 0.1159, note: 'the 4 m to 1 m hopper under the grate''s discharge chute at x 62, 10 mm wear plate, with its seats; measured on blender''s layout (candidate v01), 910 kg', mass: 909.8}
+- {what: Filter deck stair, item: material.structural-steel-a36, volume: 2.597, note: 'a steel stair in three 2 m flights with landings from the floor to the filter deck''s west edge, and the deck''s guard rails; solid treads and stringers as drawn, not a checked design; measured on blender''s layout (candidate v01), 20,385 kg', mass: 20390.0}
+- {what: Outside slabs, item: good.concrete, volume: 196.7, note: 'the baghouse''s slab and the transformer''s vault floor, trimmed where the stack''s foundation takes over; measured on blender''s layout (candidate v01)', mass: 472100.0}
+- {what: Stack foundation, item: good.concrete, volume: 122.5, note: 'a block 7 x 7 x 2.5 m under the baghouse''s 68 m stack (centre (50, 36)), its top at grade, the stack''s base ring bolted to it: against an invented 1 kPa of wind on the stack, its overturning moment about 3.2 MN m leaves the load within the middle third of the block (e 0.9 m against 1.2); soil bearing about 130 kPa at the toe; measured on blender''s layout (candidate v01)', mass: 294000.0}
+- {what: Cooling tower basin, item: good.concrete, volume: 114.66, note: 'a 0.5 m floor 0.6 m wider than the tower each way, walls 0.3 m thick and 2 m deep, eight piers under the tower''s four feet and its skid''s four corners; measured on blender''s layout (candidate v01)', mass: 275200.0}
+- {what: Transformer fire walls, item: good.concrete, volume: 42.74, note: 'the vault''s walls round the plant transformer, with the cooling pipes'' and cables'' penetrations; measured on blender''s layout (candidate v01)', mass: 102600.0}
+- {what: Service and conveyor piers, item: good.concrete, volume: 4.25, note: feet under the conveyors' trestles and the pipe and cable supports outside; measured on blender's layout (candidate v01), mass: 10200.0}
+- {what: Runway brackets, item: material.structural-steel-a36, volume: 2.507, note: 'the stubs and diagonals that seat the crane runways on the wall nodes; measured on blender''s layout (candidate v01), 19,682 kg', mass: 19680.0}
+- {what: Conveyor steel, item: material.structural-steel-a36, volume: 3.291, note: 'the belts'' stringers, posts, trestles and bases; the links'' own mass a metre stays for belt, idlers and drives, so the stringers may be counted twice (at most about 12 t); measured on blender''s layout (candidate v01), 25,836 kg', mass: 25830.0}
+- {what: Pipe and cable supports, item: material.structural-steel-a36, volume: 1.244, note: 'portals, posts, shoes and bearings under the slurry, filtrate, cooling water, waste gas duct and supply cables; joints and anchors left out, not checked for strength; measured on blender''s layout (candidate v01), 9,763 kg', mass: 9765.0}
+totals: {rate: 34.7222222222222, power: 25990000.0, heat: 2105000.0, water: 4.444, mass: 9876000.0, against_module: 'module.pellet-plant: one box 250 x 100 x 40 m, 23 MW (45 kWh and 0.5 GJ of heat a tonne, the heat counted as power). This layout: the same 125 t an hour; 26.0 MW, of which 19.3 the grate''s plasma torches; the pellets cool on the grate in the air it draws and the waste gas leaves by the baghouse''s stack, so only the torches'' and the transformer''s 2.1 MW goes to a one-cell tower; 4.4 kg/s of water dried off the green balls; 2,864 t of plant, frame and supports, 7,012 t of concrete. One shaft furnace at its full rate takes 79.4 kg/s of pellets, about 2.3 of these.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}
 - {profession: profession.technician, count: 1}
 - {profession: profession.engineer, count: 1}
+visual: {format: freefall-model/1, path: models/pellet-plant-air/v1, manifest_sha256: 13b4b0fcbcac5c3d634496069cee1313f5afa290c887604b9e0981ca1086da4a, version: 1, triangles: 321240}
 basis:
 - of: [bays, links, frame.box, frame.openings]
   tier: invented

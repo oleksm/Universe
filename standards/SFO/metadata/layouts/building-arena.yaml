@@ -1,0 +1,876 @@
+# yaml-language-server: $schema=../../schema/layout.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: layout.building-arena
+  name: Arena, world with air
+  description: 'A hall with tiers round a floor: games, matches, races on the track outside. Laid of the kit: a strut frame on the 3 m grid, panels, and 130 rooms of 6 m furnished piece by piece (78 seating, 26 stage, 7 counter, 6 reception,
+    13 washroom).'
+stands_for: building.arena
+site:
+  atmosphere: air
+  gravity:
+  - 8.0
+  - 11.0
+physical:
+  length: 78.0
+  width: 60.0
+  height: 6.15
+  mass: 2259995.5
+bays: []
+rooms:
+- id: SEA1
+  arrangement: arrangement.seating
+  at:
+  - -36.0
+  - -27.0
+  - 0.0
+- id: SEA2
+  arrangement: arrangement.seating
+  at:
+  - -30.0
+  - -27.0
+  - 0.0
+- id: SEA3
+  arrangement: arrangement.seating
+  at:
+  - -24.0
+  - -27.0
+  - 0.0
+- id: SEA4
+  arrangement: arrangement.seating
+  at:
+  - -18.0
+  - -27.0
+  - 0.0
+- id: SEA5
+  arrangement: arrangement.seating
+  at:
+  - -12.0
+  - -27.0
+  - 0.0
+- id: SEA6
+  arrangement: arrangement.seating
+  at:
+  - -6.0
+  - -27.0
+  - 0.0
+- id: SEA7
+  arrangement: arrangement.seating
+  at:
+  - 0.0
+  - -27.0
+  - 0.0
+- id: SEA8
+  arrangement: arrangement.seating
+  at:
+  - 6.0
+  - -27.0
+  - 0.0
+- id: SEA9
+  arrangement: arrangement.seating
+  at:
+  - 12.0
+  - -27.0
+  - 0.0
+- id: SEA10
+  arrangement: arrangement.seating
+  at:
+  - 18.0
+  - -27.0
+  - 0.0
+- id: SEA11
+  arrangement: arrangement.seating
+  at:
+  - 24.0
+  - -27.0
+  - 0.0
+- id: SEA12
+  arrangement: arrangement.seating
+  at:
+  - 30.0
+  - -27.0
+  - 0.0
+- id: SEA13
+  arrangement: arrangement.seating
+  at:
+  - 36.0
+  - -27.0
+  - 0.0
+- id: SEA14
+  arrangement: arrangement.seating
+  at:
+  - -36.0
+  - -21.0
+  - 0.0
+- id: SEA15
+  arrangement: arrangement.seating
+  at:
+  - -30.0
+  - -21.0
+  - 0.0
+- id: SEA16
+  arrangement: arrangement.seating
+  at:
+  - -24.0
+  - -21.0
+  - 0.0
+- id: SEA17
+  arrangement: arrangement.seating
+  at:
+  - -18.0
+  - -21.0
+  - 0.0
+- id: SEA18
+  arrangement: arrangement.seating
+  at:
+  - -12.0
+  - -21.0
+  - 0.0
+- id: SEA19
+  arrangement: arrangement.seating
+  at:
+  - -6.0
+  - -21.0
+  - 0.0
+- id: SEA20
+  arrangement: arrangement.seating
+  at:
+  - 0.0
+  - -21.0
+  - 0.0
+- id: SEA21
+  arrangement: arrangement.seating
+  at:
+  - 6.0
+  - -21.0
+  - 0.0
+- id: SEA22
+  arrangement: arrangement.seating
+  at:
+  - 12.0
+  - -21.0
+  - 0.0
+- id: SEA23
+  arrangement: arrangement.seating
+  at:
+  - 18.0
+  - -21.0
+  - 0.0
+- id: SEA24
+  arrangement: arrangement.seating
+  at:
+  - 24.0
+  - -21.0
+  - 0.0
+- id: SEA25
+  arrangement: arrangement.seating
+  at:
+  - 30.0
+  - -21.0
+  - 0.0
+- id: SEA26
+  arrangement: arrangement.seating
+  at:
+  - 36.0
+  - -21.0
+  - 0.0
+- id: SEA27
+  arrangement: arrangement.seating
+  at:
+  - -36.0
+  - -15.0
+  - 0.0
+- id: SEA28
+  arrangement: arrangement.seating
+  at:
+  - -30.0
+  - -15.0
+  - 0.0
+- id: SEA29
+  arrangement: arrangement.seating
+  at:
+  - -24.0
+  - -15.0
+  - 0.0
+- id: SEA30
+  arrangement: arrangement.seating
+  at:
+  - -18.0
+  - -15.0
+  - 0.0
+- id: SEA31
+  arrangement: arrangement.seating
+  at:
+  - -12.0
+  - -15.0
+  - 0.0
+- id: SEA32
+  arrangement: arrangement.seating
+  at:
+  - -6.0
+  - -15.0
+  - 0.0
+- id: SEA33
+  arrangement: arrangement.seating
+  at:
+  - 0.0
+  - -15.0
+  - 0.0
+- id: SEA34
+  arrangement: arrangement.seating
+  at:
+  - 6.0
+  - -15.0
+  - 0.0
+- id: SEA35
+  arrangement: arrangement.seating
+  at:
+  - 12.0
+  - -15.0
+  - 0.0
+- id: SEA36
+  arrangement: arrangement.seating
+  at:
+  - 18.0
+  - -15.0
+  - 0.0
+- id: SEA37
+  arrangement: arrangement.seating
+  at:
+  - 24.0
+  - -15.0
+  - 0.0
+- id: SEA38
+  arrangement: arrangement.seating
+  at:
+  - 30.0
+  - -15.0
+  - 0.0
+- id: SEA39
+  arrangement: arrangement.seating
+  at:
+  - 36.0
+  - -15.0
+  - 0.0
+- id: SEA40
+  arrangement: arrangement.seating
+  at:
+  - -36.0
+  - -9.0
+  - 0.0
+- id: SEA41
+  arrangement: arrangement.seating
+  at:
+  - -30.0
+  - -9.0
+  - 0.0
+- id: SEA42
+  arrangement: arrangement.seating
+  at:
+  - -24.0
+  - -9.0
+  - 0.0
+- id: SEA43
+  arrangement: arrangement.seating
+  at:
+  - -18.0
+  - -9.0
+  - 0.0
+- id: SEA44
+  arrangement: arrangement.seating
+  at:
+  - -12.0
+  - -9.0
+  - 0.0
+- id: SEA45
+  arrangement: arrangement.seating
+  at:
+  - -6.0
+  - -9.0
+  - 0.0
+- id: SEA46
+  arrangement: arrangement.seating
+  at:
+  - 0.0
+  - -9.0
+  - 0.0
+- id: SEA47
+  arrangement: arrangement.seating
+  at:
+  - 6.0
+  - -9.0
+  - 0.0
+- id: SEA48
+  arrangement: arrangement.seating
+  at:
+  - 12.0
+  - -9.0
+  - 0.0
+- id: SEA49
+  arrangement: arrangement.seating
+  at:
+  - 18.0
+  - -9.0
+  - 0.0
+- id: SEA50
+  arrangement: arrangement.seating
+  at:
+  - 24.0
+  - -9.0
+  - 0.0
+- id: SEA51
+  arrangement: arrangement.seating
+  at:
+  - 30.0
+  - -9.0
+  - 0.0
+- id: SEA52
+  arrangement: arrangement.seating
+  at:
+  - 36.0
+  - -9.0
+  - 0.0
+- id: SEA53
+  arrangement: arrangement.seating
+  at:
+  - -36.0
+  - -3.0
+  - 0.0
+- id: SEA54
+  arrangement: arrangement.seating
+  at:
+  - -30.0
+  - -3.0
+  - 0.0
+- id: SEA55
+  arrangement: arrangement.seating
+  at:
+  - -24.0
+  - -3.0
+  - 0.0
+- id: SEA56
+  arrangement: arrangement.seating
+  at:
+  - -18.0
+  - -3.0
+  - 0.0
+- id: SEA57
+  arrangement: arrangement.seating
+  at:
+  - -12.0
+  - -3.0
+  - 0.0
+- id: SEA58
+  arrangement: arrangement.seating
+  at:
+  - -6.0
+  - -3.0
+  - 0.0
+- id: SEA59
+  arrangement: arrangement.seating
+  at:
+  - 0.0
+  - -3.0
+  - 0.0
+- id: SEA60
+  arrangement: arrangement.seating
+  at:
+  - 6.0
+  - -3.0
+  - 0.0
+- id: SEA61
+  arrangement: arrangement.seating
+  at:
+  - 12.0
+  - -3.0
+  - 0.0
+- id: SEA62
+  arrangement: arrangement.seating
+  at:
+  - 18.0
+  - -3.0
+  - 0.0
+- id: SEA63
+  arrangement: arrangement.seating
+  at:
+  - 24.0
+  - -3.0
+  - 0.0
+- id: SEA64
+  arrangement: arrangement.seating
+  at:
+  - 30.0
+  - -3.0
+  - 0.0
+- id: SEA65
+  arrangement: arrangement.seating
+  at:
+  - 36.0
+  - -3.0
+  - 0.0
+- id: SEA66
+  arrangement: arrangement.seating
+  at:
+  - -36.0
+  - 3.0
+  - 0.0
+- id: SEA67
+  arrangement: arrangement.seating
+  at:
+  - -30.0
+  - 3.0
+  - 0.0
+- id: SEA68
+  arrangement: arrangement.seating
+  at:
+  - -24.0
+  - 3.0
+  - 0.0
+- id: SEA69
+  arrangement: arrangement.seating
+  at:
+  - -18.0
+  - 3.0
+  - 0.0
+- id: SEA70
+  arrangement: arrangement.seating
+  at:
+  - -12.0
+  - 3.0
+  - 0.0
+- id: SEA71
+  arrangement: arrangement.seating
+  at:
+  - -6.0
+  - 3.0
+  - 0.0
+- id: SEA72
+  arrangement: arrangement.seating
+  at:
+  - 0.0
+  - 3.0
+  - 0.0
+- id: SEA73
+  arrangement: arrangement.seating
+  at:
+  - 6.0
+  - 3.0
+  - 0.0
+- id: SEA74
+  arrangement: arrangement.seating
+  at:
+  - 12.0
+  - 3.0
+  - 0.0
+- id: SEA75
+  arrangement: arrangement.seating
+  at:
+  - 18.0
+  - 3.0
+  - 0.0
+- id: SEA76
+  arrangement: arrangement.seating
+  at:
+  - 24.0
+  - 3.0
+  - 0.0
+- id: SEA77
+  arrangement: arrangement.seating
+  at:
+  - 30.0
+  - 3.0
+  - 0.0
+- id: SEA78
+  arrangement: arrangement.seating
+  at:
+  - 36.0
+  - 3.0
+  - 0.0
+- id: STA79
+  arrangement: arrangement.stage
+  at:
+  - -36.0
+  - 9.0
+  - 0.0
+- id: STA80
+  arrangement: arrangement.stage
+  at:
+  - -30.0
+  - 9.0
+  - 0.0
+- id: STA81
+  arrangement: arrangement.stage
+  at:
+  - -24.0
+  - 9.0
+  - 0.0
+- id: STA82
+  arrangement: arrangement.stage
+  at:
+  - -18.0
+  - 9.0
+  - 0.0
+- id: STA83
+  arrangement: arrangement.stage
+  at:
+  - -12.0
+  - 9.0
+  - 0.0
+- id: STA84
+  arrangement: arrangement.stage
+  at:
+  - -6.0
+  - 9.0
+  - 0.0
+- id: STA85
+  arrangement: arrangement.stage
+  at:
+  - 0.0
+  - 9.0
+  - 0.0
+- id: STA86
+  arrangement: arrangement.stage
+  at:
+  - 6.0
+  - 9.0
+  - 0.0
+- id: STA87
+  arrangement: arrangement.stage
+  at:
+  - 12.0
+  - 9.0
+  - 0.0
+- id: STA88
+  arrangement: arrangement.stage
+  at:
+  - 18.0
+  - 9.0
+  - 0.0
+- id: STA89
+  arrangement: arrangement.stage
+  at:
+  - 24.0
+  - 9.0
+  - 0.0
+- id: STA90
+  arrangement: arrangement.stage
+  at:
+  - 30.0
+  - 9.0
+  - 0.0
+- id: STA91
+  arrangement: arrangement.stage
+  at:
+  - 36.0
+  - 9.0
+  - 0.0
+- id: STA92
+  arrangement: arrangement.stage
+  at:
+  - -36.0
+  - 15.0
+  - 0.0
+- id: STA93
+  arrangement: arrangement.stage
+  at:
+  - -30.0
+  - 15.0
+  - 0.0
+- id: STA94
+  arrangement: arrangement.stage
+  at:
+  - -24.0
+  - 15.0
+  - 0.0
+- id: STA95
+  arrangement: arrangement.stage
+  at:
+  - -18.0
+  - 15.0
+  - 0.0
+- id: STA96
+  arrangement: arrangement.stage
+  at:
+  - -12.0
+  - 15.0
+  - 0.0
+- id: STA97
+  arrangement: arrangement.stage
+  at:
+  - -6.0
+  - 15.0
+  - 0.0
+- id: STA98
+  arrangement: arrangement.stage
+  at:
+  - 0.0
+  - 15.0
+  - 0.0
+- id: STA99
+  arrangement: arrangement.stage
+  at:
+  - 6.0
+  - 15.0
+  - 0.0
+- id: STA100
+  arrangement: arrangement.stage
+  at:
+  - 12.0
+  - 15.0
+  - 0.0
+- id: STA101
+  arrangement: arrangement.stage
+  at:
+  - 18.0
+  - 15.0
+  - 0.0
+- id: STA102
+  arrangement: arrangement.stage
+  at:
+  - 24.0
+  - 15.0
+  - 0.0
+- id: STA103
+  arrangement: arrangement.stage
+  at:
+  - 30.0
+  - 15.0
+  - 0.0
+- id: STA104
+  arrangement: arrangement.stage
+  at:
+  - 36.0
+  - 15.0
+  - 0.0
+- id: COU105
+  arrangement: arrangement.counter
+  at:
+  - -36.0
+  - 21.0
+  - 0.0
+- id: COU106
+  arrangement: arrangement.counter
+  at:
+  - -30.0
+  - 21.0
+  - 0.0
+- id: COU107
+  arrangement: arrangement.counter
+  at:
+  - -24.0
+  - 21.0
+  - 0.0
+- id: COU108
+  arrangement: arrangement.counter
+  at:
+  - -18.0
+  - 21.0
+  - 0.0
+- id: COU109
+  arrangement: arrangement.counter
+  at:
+  - -12.0
+  - 21.0
+  - 0.0
+- id: COU110
+  arrangement: arrangement.counter
+  at:
+  - -6.0
+  - 21.0
+  - 0.0
+- id: COU111
+  arrangement: arrangement.counter
+  at:
+  - 0.0
+  - 21.0
+  - 0.0
+- id: REC112
+  arrangement: arrangement.reception
+  at:
+  - 6.0
+  - 21.0
+  - 0.0
+- id: REC113
+  arrangement: arrangement.reception
+  at:
+  - 12.0
+  - 21.0
+  - 0.0
+- id: REC114
+  arrangement: arrangement.reception
+  at:
+  - 18.0
+  - 21.0
+  - 0.0
+- id: REC115
+  arrangement: arrangement.reception
+  at:
+  - 24.0
+  - 21.0
+  - 0.0
+- id: REC116
+  arrangement: arrangement.reception
+  at:
+  - 30.0
+  - 21.0
+  - 0.0
+- id: REC117
+  arrangement: arrangement.reception
+  at:
+  - 36.0
+  - 21.0
+  - 0.0
+- id: WAS118
+  arrangement: arrangement.washroom
+  at:
+  - -36.0
+  - 27.0
+  - 0.0
+- id: WAS119
+  arrangement: arrangement.washroom
+  at:
+  - -30.0
+  - 27.0
+  - 0.0
+- id: WAS120
+  arrangement: arrangement.washroom
+  at:
+  - -24.0
+  - 27.0
+  - 0.0
+- id: WAS121
+  arrangement: arrangement.washroom
+  at:
+  - -18.0
+  - 27.0
+  - 0.0
+- id: WAS122
+  arrangement: arrangement.washroom
+  at:
+  - -12.0
+  - 27.0
+  - 0.0
+- id: WAS123
+  arrangement: arrangement.washroom
+  at:
+  - -6.0
+  - 27.0
+  - 0.0
+- id: WAS124
+  arrangement: arrangement.washroom
+  at:
+  - 0.0
+  - 27.0
+  - 0.0
+- id: WAS125
+  arrangement: arrangement.washroom
+  at:
+  - 6.0
+  - 27.0
+  - 0.0
+- id: WAS126
+  arrangement: arrangement.washroom
+  at:
+  - 12.0
+  - 27.0
+  - 0.0
+- id: WAS127
+  arrangement: arrangement.washroom
+  at:
+  - 18.0
+  - 27.0
+  - 0.0
+- id: WAS128
+  arrangement: arrangement.washroom
+  at:
+  - 24.0
+  - 27.0
+  - 0.0
+- id: WAS129
+  arrangement: arrangement.washroom
+  at:
+  - 30.0
+  - 27.0
+  - 0.0
+- id: WAS130
+  arrangement: arrangement.washroom
+  at:
+  - 36.0
+  - 27.0
+  - 0.0
+frame:
+  box:
+  - -39.0
+  - -30.0
+  - 0.0
+  - 39.0
+  - 30.0
+  - 6.0
+  cell: 3.0
+  shape: 'A skeleton frame on the 3 m grid: 26 x 20 cells, 1 storey(s) of 6 m; columns at every node, beams on every cell edge at each floor and the roof, one diagonal in every other outside face. Panels on its faces (frame.panels).'
+  members:
+  - item: stock.st4340-tb-60x2-s3000
+    count: 1134
+    where: columns
+  - item: stock.st4340-tb-160x5-s3000
+    count: 1086
+    where: beams
+  - item: stock.st4340-tb-80x2-d3000
+    count: 92
+    where: bracing
+  - item: stock.st4340-node-90b
+    count: 1701
+    where: nodes
+  mass: 81231.9
+  panels:
+  - panel: panel.partition-3x3
+    count: 78
+  - panel: panel.partition-door-3x3
+    count: 26
+  - panel: panel.roof-3x3
+    count: 520
+  - panel: panel.wall-double-door-3x3
+    count: 4
+  - panel: panel.wall-insulated-3x3
+    count: 146
+  - panel: panel.wall-roller-3x3
+    count: 3
+  - panel: panel.wall-window-3x3
+    count: 31
+  panels_mass: 107987.2
+  sized: 'At 1 g: floors 1893 Pa dead and 5000 Pa imposed, the roof 1155 Pa; a ground column carries 13 kN (st4340-tb-60x2 takes it with half again to spare); a 3 m beam bends with 23.3 kN m (st4340-tb-160x5, under 470 MPa with half
+    again to spare). Wind, the tall halls'' columns between floors and the footings'' loads not yet checked.'
+ground:
+- what: Ground slab
+  item: good.concrete
+  volume: 702.0
+  mass: 1684800.0
+  note: 0.15 m over the 78 x 60 m plan
+- what: Edge footings
+  item: good.concrete
+  volume: 99.4
+  mass: 238464.0
+  note: 0.6 x 0.6 m strips under the outside walls
+totals:
+  mass: 2259995.5
+  against_module: 'building.arena (deprecated): one box 80 x 60 x 20 m of 5,294 t, from the average of 538 concrete buildings. This layout: 78 x 60 x 6 m, 2,260 t (81 t frame, 108 t panels, 148 t furniture, 1,923 t ground), for 2922
+    people served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
+staff:
+- profession: profession.performer
+  count: 5
+- profession: profession.clerk
+  count: 5
+- profession: profession.technician
+  count: 3
+basis:
+- of:
+  - bays
+  tier: invented
+  review: true
+  note: The mix of rooms for a arena is chosen (seating 0.6, stage 0.2, counter 0.05, reception 0.05, washroom 0.1), shared over the record's floor (4800 m2 in 1 storeys, laid as 13 x 10 rooms of 6 m a storey).
+- of:
+  - frame
+  - ground
+  tier: derived
+  review: true
+  note: Counted from the grid (tools/standards/building_layouts.py); sections by the loads in frame.sized; masses from the strut, node and panel records.

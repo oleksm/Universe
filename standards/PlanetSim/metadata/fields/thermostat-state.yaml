@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry_extra.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-field.thermostat-state
+  name: Thermostat state
+  about: 'The carbon thermostat''s state carried between steps: its offset and reference weathering.'
+unit: K
+per: global
+producer:
+  where: stages/coupled_climate.py
+  file: run
+  key: coupled_state.dT
+also_from:
+- where: stages/coupled_climate.py
+  file: run
+  key: coupled_state.W_ref
+  note: reference weathering, arbitrary units
+status: draft
+basis:
+- of:
+  - identity
+  - producer
+  - unit
+  tier: derived
+  note: 'planets, 17 Oct 2026: from the Python sim''s inventory (planet-forge docs/registry-migration/surface.json), read
+    from the code.'

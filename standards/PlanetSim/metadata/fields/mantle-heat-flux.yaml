@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.mantle-heat-flux
+  name: Mantle heat flux
+  about: 'The heat the mantle loses through the surface per area, from the interior''s thermal history: it sets the plates'' reference speed.'
+unit: W/m2
+producer:
+  where: stages/interior.py (planet-process.thermal-evolution)
+  key: h.column('heat_flow_mantle_tw') * 1e12 / area
+  note: 'forge: no interior model yet; the plate motion reads it as the global field when one writes it'
+per: global
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: forge''s plates foundation (branch plates-foundation) and the Python sim''s World (stages/plates.py:247-393), read from the code.'

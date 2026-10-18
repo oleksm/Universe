@@ -129,7 +129,7 @@ def flattened(sch, here):
     return props, required
 
 
-UNIT = re.compile(r"^(deg|[(/ ]*((kg|mol|rad|Pa|Sv|m|s|K|W|N|J|V|S|T|1)(\^0\.5|[0-9])?[()/ ]*)+)$")
+UNIT = re.compile(r"^(deg|[(/ ]*((kg|mol|rad|Pa|Sv|m|s|K|W|N|J|V|S|T|A|1)(\^0\.5|[0-9])?[()/ ]*)+)$")
 
 
 def units(sch, at=""):
@@ -163,7 +163,7 @@ def lint(sch, name, at="", unit=False, top=True):
             if (name, "oneOf") not in WAITING and not (isinstance(a, dict) and "const" in ((a.get("properties") or {}).get("kind") or {})):
                 yield at, f"{key}: each shape must have a `kind` that is a constant"
                 break
-    unit = unit or "x-unit" in sch
+    unit = unit or "x-unit" in sch or "x-unit-from" in sch      # (x-unit-from: a sibling field names its unit, as a field's or a measure's `unit` does)
     numeric = t == "number" or (isinstance(t, list) and "number" in t) or str(sch.get("$ref", "")).endswith("number_or_null")
     if numeric and not unit and name not in ("standard.schema.yaml", "law.schema.yaml") and not at.endswith("#number_or_null"):
         yield at, "a number with no x-unit (a pure number says x-unit: \"1\")"
@@ -238,7 +238,7 @@ def key_of(rel, rec):
             return "element." + str((rec.get("identity") or {}).get("symbol", "")).lower()
         if kind in ("equipment", "gates"):
             return {"equipment": "equipment.", "gates": "gate."}[kind]
-        return {"materials": "material.", "processes": "process.", "modules": "module.", "goods": "good.", "hulls": "hull.", "mill-stock": "stock.", "stock": "stock.", "assemblies": "assembly.", "parts": "part.", "structures": "structure.", "markets": "market.", "buildings": "building.", "mounts": "mount.", "plant-mounts": "plant-mount.", "units": "unit.", "layouts": "layout.", "sights": "sight.", "rules": "rule.", "packages": "package."}[kind] + low
+        return {"materials": "material.", "processes": "process.", "modules": "module.", "goods": "good.", "hulls": "hull.", "mill-stock": "stock.", "stock": "stock.", "assemblies": "assembly.", "parts": "part.", "structures": "structure.", "markets": "market.", "buildings": "building.", "mounts": "mount.", "plant-mounts": "plant-mount.", "units": "unit.", "layouts": "layout.", "connectors": "connector.", "runs": "run.", "products": "product.", "interfaces": "interface.", "sights": "sight.", "rules": "rule.", "packages": "package.", "templates": "template.", "panels": "panel.", "arrangements": "arrangement."}[kind] + low
     if root == "MakerHouse":
         return "org."
     if root == "People":

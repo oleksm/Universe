@@ -1,0 +1,116 @@
+# yaml-language-server: $schema=../../schema/planet-layer.schema.yaml
+identity:
+  key: planet-layer.climate
+  name: Climate
+  about: 'The climate belt of a land sample: it starts temperate, then each rule in order that holds replaces it (tropical seasonal, tropical wet, steppe, desert, cold, polar, ice sheet).'
+version: 1
+default: 6
+order:
+- 7
+- 8
+- 5
+- 4
+- 3
+- 2
+- 1
+classes:
+- id: 1
+  name: ice sheet
+  source: ice sheet
+  when:
+  - field: planet-field.ice
+    op: '>'
+    value: 50.0
+- id: 2
+  name: polar
+  source: polar
+  when:
+  - field: planet-field.temperature
+    op: <
+    value: 267.15
+- id: 3
+  name: cold
+  source: cold
+  when:
+  - field: planet-field.temperature
+    op: <
+    value: 273.15
+- id: 4
+  name: desert
+  source: desert
+  when:
+  - field: planet-field.aridity
+    op: '>'
+    value: 5.0
+- id: 5
+  name: steppe
+  source: steppe
+  when:
+  - field: planet-field.aridity
+    op: '>'
+    value: 2.0
+- id: 6
+  name: temperate
+  source: temperate
+- id: 7
+  name: tropical seasonal
+  source: tropical seasonal
+  when:
+  - field: planet-field.temperature
+    op: '>='
+    value: 291.15
+  - field: planet-field.aridity
+    op: <
+    value: 2.0
+- id: 8
+  name: tropical wet
+  source: tropical wet
+  when:
+  - field: planet-field.temperature
+    op: '>='
+    value: 291.15
+  - field: planet-field.aridity
+    op: <
+    value: 1.0
+lines:
+- name: freezing line
+  field: planet-field.temperature
+  value: 273.15
+- name: permafrost
+  field: planet-field.temperature
+  value: 267.15
+- name: tropics
+  field: planet-field.temperature
+  value: 291.15
+- name: desert margin
+  field: planet-field.aridity
+  value: 2.0
+- name: desert
+  field: planet-field.aridity
+  value: 5.0
+- name: rain 0.25 m/yr
+  field: planet-field.rain
+  value: 7.922021953507237e-09
+- name: rain 1 m/yr
+  field: planet-field.rain
+  value: 3.168808781402895e-08
+- name: rain 2 m/yr
+  field: planet-field.rain
+  value: 6.33761756280579e-08
+bounded_by:
+- planet-line.isoline
+- planet-line.class-boundary
+levels:
+- planet-level.planet
+- planet-level.cluster
+basis:
+- of:
+  - identity
+  tier: derived
+  note: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+- of:
+  - classes
+  tier: derived
+  note: 'planet-trees-pgs2 tools/planet_query.py _query, as planets gave it 17 Oct 2026: temperate, then T >= 18 C and aridity < 2 tropical seasonal, < 1 tropical wet, aridity > 2 steppe, > 5 desert, T
+    < 0 cold, < -6 polar, ice > 50 m ice sheet; later rules override.'
+status: draft

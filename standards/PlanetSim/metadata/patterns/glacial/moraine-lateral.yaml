@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.glacial.deposit.moraine-lateral
+  name: Lateral moraine
+  about: Lateral moraine.
+family: glacial
+factors:
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: rockfall from valley walls onto glacier edges; heights up to 140 m
+- factor: planet-factor.slope-relief
+  weight: 3
+  why: high-relief steep catchments supply debris
+- factor: planet-factor.clim-temp
+  weight: 1
+  why: frost shattering of valley walls
+- factor: planet-factor.ice-extent
+  weight: 3
+  why: stable glacier thickness; repeated advances stack ridges
+- factor: planet-factor.rock-fracture
+  weight: 1
+  why: jointed walls yield more debris
+- factor: planet-factor.time
+  weight: 1
+  why: 0.1-20 kyr; collapse after ice retreat (debuttressing)
+vocabulary_id: 66
+sources:
+- https://en.wikipedia.org/wiki/Moraine
+library_status: written
+source: glacial.deposit.moraine_lateral
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

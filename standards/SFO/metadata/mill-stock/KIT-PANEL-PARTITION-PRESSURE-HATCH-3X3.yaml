@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/building_kit.py: change it there.
+identity:
+  key: stock.kit-panel-partition-pressure-hatch-3x3
+  code: KIT-PANEL-PARTITION-PRESSURE-HATCH-3X3
+  name: Pressure partition with a door, 3 x 3 m
+  traded_as: market.machinery
+  form: panel
+package: package.plate-stack
+made_from:
+- item: material.aluminium-alloy-6061
+- item: material.structural-steel-a36
+size:
+  length: 3.0
+  width: 0.17
+  height: 3.0
+supplies:
+  item: panel.partition-pressure-hatch-3x3
+physical:
+  mass: 475.0
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One panel.partition-pressure-hatch-3x3, as made.

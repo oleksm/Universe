@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.coast-features
+  name: Coast features
+  about: 'Makes the relief layer''s coast: the sea-level contour on the samples'' Delaunay mesh, a pin at every exact crossing
+    between a land and a sea sample (land on the left), each crossing given its tectonic setting from the plates (collision
+    where a converging boundary is within reach, else trailing-edge), and each run of one setting a planet-feature.coastline-typed
+    with onshore and offshore slopes as profiles. The laws are on the kind.'
+area: relief
+clock:
+  when: at each checkpoint (planet-forge; a pure function of the heights and the plates, remade from any checkpoint)
+reads:
+- name: height
+  field: planet-field.height
+  unit: m
+  meaning: 'above the sea: the coast is where it is 0'
+- name: plate
+  field: planet-field.plate
+  unit: '1'
+  meaning: the plate at each sample, for its boundaries
+- name: plate spin
+  field: planet-field.plate-spin
+  unit: rad/s
+  meaning: each plate's angular velocity, for the closing speed across its boundaries
+writes:
+- name: features (planet-feature.coastline-typed)
+  meaning: one per run of one setting along each coast loop
+random_draws:
+- none; each feature's seed is (run seed, this process, its first pin's integers)
+invariants:
+- every pin lies on the sea level between a land and a sea sample, within 0.87 cm of the exact crossing
+- a feature's anchor is its first pin; every profile has one value per pin
+- neighbouring runs share the pin where the setting changes
+- a remake from the same state gives the same features with the same ids
+depends_on:
+- planet-process.sea-level
+- planet-process.plate-motion-and-forces
+- planet-process.crust-read
+backends:
+- cpu
+status: draft
+basis:
+- of:
+  - identity
+  - clock
+  - reads
+  - writes
+  - invariants
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-features (models/coast.rs, mesh.rs).'

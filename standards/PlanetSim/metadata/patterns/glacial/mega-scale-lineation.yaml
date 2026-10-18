@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.glacial.bedform.mega-scale-lineation
+  name: Mega-scale glacial lineations
+  about: Mega-scale glacial lineations.
+family: glacial
+factors:
+- factor: planet-factor.ice-flow
+  weight: 3
+  why: ice stream fast flow (>~1000 m/yr); elongation >10:1
+- factor: planet-factor.regolith
+  weight: 3
+  why: soft deforming till bed
+- factor: planet-factor.ice-thermal
+  weight: 3
+  why: warm bed with high water pressure for streaming
+- factor: planet-factor.relief-inherited
+  weight: 1
+  why: topographic troughs and shelf troughs focus streams
+- factor: planet-factor.sea-level
+  weight: 1
+  why: lowstand exposes continental shelf troughs to grounded ice
+- factor: planet-factor.time
+  weight: 1
+  why: short 0.1-20 kyr; may form in centuries
+- factor: planet-factor.ice-extent
+  weight: 1
+  why: needs ice sheet with stream catchment
+vocabulary_id: 63
+sources:
+- https://www.antarcticglaciers.org/glacial-geology/glacial-landforms/drumlins/
+- https://en.wikipedia.org/wiki/Ice_stream
+library_status: written
+source: glacial.bedform.mega_scale_lineation
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

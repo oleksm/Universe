@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/interface.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: interface.cable-reel-690v-4x35
+  name: Reel feed 4 x 35 mm2
+  description: The fixed feed point a cable reel's cable is plugged into at the travel's centre.
+domain: power
+kind: cable-reel
+envelope:
+  voltage: 690
+  current: 125
+media:
+- power
+sealing: air
+halves: male-female
+make: bolted
+face:
+  length: 2.32
+  width: 0.38
+  height: 2.52
+size: 3.5e-05
+basis:
+- of:
+  - envelope
+  - face
+  tier: derived
+  note: The most the products built to it are rated for, and their joint's outside.

@@ -1,0 +1,41 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Planet view
+x-kind: [planet-view]
+description: "standards/PlanetSim/metadata/views/<name>.yaml: a view or map the planet sim's tools draw: its title, its row on the page, its file suffix, what it draws (layers, features, fields, lines, landmarks) and its legend."
+type: object
+additionalProperties: false
+required: [identity, title]
+allOf:
+  - { $ref: "../../common.schema.yaml#/definitions/planet_context" }
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name, about]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      about: { type: string }
+  title: { type: string }
+  row: { type: string, description: "Its row on the planet page." }
+  file_suffix: { type: string, description: "Its file suffix (_context_relief.png)." }
+  draws:
+    type: object
+    additionalProperties: false
+    properties:
+      layers: { type: array, items: { type: string, x-ref: [planet-layer] } }
+      features: { type: array, items: { type: string, x-ref: [planet-feature] } }
+      fields: { type: array, items: { type: string, x-ref: [planet-field] } }
+      lines: { type: array, items: { type: string, x-ref: [planet-line] } }
+      landmarks: { type: array, items: { type: string, x-ref: [planet-landmark] } }
+      words: { type: string, description: "What it draws, in words." }
+  legend: { $ref: "../../common.schema.yaml#/definitions/planet_legend" }
+  styles: { type: array, description: "What the map draws that has no legend row (coast, base relief, label boxes).", items: { type: object, additionalProperties: false, required: [key, colour], properties: { key: { type: string }, colour: { type: array, items: { type: integer, minimum: 0, maximum: 255, x-unit: "1" }, description: "RGB" }, note: { type: string } } } }
+  shown: { type: boolean, description: "false: retired from the page." }
+  note: { type: string }
+  implementations:
+    type: array
+    items: { type: object, additionalProperties: false, required: [where, state], properties: { where: { type: string, description: "repository and file:function, or a forge module" }, state: { enum: [reference, current, building, retired] }, note: { type: string } } }
+  cautions: { type: array, items: { type: string }, description: "Findings on it: bugs, comments that disagree with the code, what trips a reader up." }
+  status: { enum: [draft, published, retired] }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

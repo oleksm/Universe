@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.trench-time
+  name: Trench point time
+  about: 'When the particle sank there, on the planet''s clock (the substep''s start): the arcs of a substep and the trenches of the heights use the latest.'
+unit: s
+producer:
+  where: planet-forge crates/forge-core/src/models/plates/subduction.rs
+  file: checkpoint
+  key: tables/trenches/planet-field.trench-time
+per: point
+time_base: planet-age
+said_as:
+  unit: Myr
+  factor: 31557600000000.0
+also_from:
+- where: stages/plates.py
+  key: (sunk_at is the substep's own)
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: forge keeps a step''s trench points; the Python kept the last substep''s.'

@@ -1,18 +1,35 @@
 # yaml-language-server: $schema=../../schema/rock-unit.schema.yaml
-# Brought in by tools/standards/geology_import.py from the planet simulation's vocabulary.
 identity:
   key: rock-unit.limestone
-  name: "Limestone and dolomite"
-  about: "Laid down in warm shallow seas."
-sim: { key: carbonate }
-made_by: [sea]
+  name: Limestone and dolomite
+  about: Laid down in warm shallow seas.
+sim:
+  key: carbonate
+  index: 8
+  colour:
+  - 120
+  - 200
+  - 220
+  erodibility: 1.0
+  written_by: warm shallow sea sediment after oxygenation (plates.py:622,677)
+made_by:
+- sea
 physical:
   density: 2700.0
   magnetic_susceptibility: 1.0e-05
   erodibility: 1.0
 yields:
-  - { item: good.limestone, quality: "75 to 98 CaCO3 %" }
+- item: good.limestone
+  quality: 75 to 98 CaCO3 %
 also:
-  - "dolomite for refractory, flux, magnesium (20 to 45 MgCO3 %)"
+- dolomite for refractory, flux, magnesium (20 to 45 MgCO3 %)
 basis:
-  - { of: [sim, physical, yields, also], tier: sourced, review: true, source: "the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)", note: "As the simulation has it." }
+- of:
+  - sim
+  - physical
+  - yields
+  - also
+  tier: sourced
+  review: true
+  source: 'the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)'
+  note: As the simulation has it.

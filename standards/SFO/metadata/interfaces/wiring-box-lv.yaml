@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/interface.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: interface.wiring-box-lv
+  name: Wiring box, low voltage
+  description: 'The mating face of the Wiring box, low voltage: any maker''s half built to it mates with any other''s.'
+domain: power
+kind: termination
+envelope:
+  voltage: 400
+  current: 63
+media:
+- power
+sealing: air
+halves: male-female
+make: bolted
+face:
+  length: 0.1
+  width: 0.1
+  height: 0.06
+size: 1.6e-05
+basis:
+- of:
+  - envelope
+  - face
+  tier: derived
+  note: The most the products built to it are rated for, and their joint's outside.

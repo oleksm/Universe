@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.aeolian.erosion.deflation-hollow
+  name: Deflation hollow / depression (pan to mega-depression)
+  about: Deflation hollow / depression (pan to mega-depression).
+family: aeolian
+factors:
+- factor: planet-factor.clim-wind
+  weight: 3
+  why: wind removes loose sediment
+- factor: planet-factor.clim-arid
+  weight: 3
+  why: arid; sparse vegetation
+- factor: planet-factor.groundwater
+  weight: 3
+  why: water table sets deflation base; saline groundwater feeds salt weathering
+- factor: planet-factor.rock-type
+  weight: 1
+  why: weak sediment or salt-weathered rock
+- factor: planet-factor.other-salt-weathering
+  weight: 1
+  why: salt crystal growth breaks floor for wind to remove (Qattara)
+- factor: planet-factor.relief-inherited
+  weight: 1
+  why: pre-incised fluvial lows initiate hollows
+- factor: planet-factor.clim-history
+  weight: 1
+  why: wet-dry alternations
+- factor: planet-factor.time
+  weight: 1
+  why: 1-5000 kyr; Qattara to -133 m
+vocabulary_id: 5
+sources:
+- https://en.wikipedia.org/wiki/Qattara_Depression
+- https://pubs.usgs.gov/gip/deserts/eolian/
+library_status: written
+source: aeolian.erosion.deflation_hollow
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

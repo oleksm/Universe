@@ -1,0 +1,168 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.crater-preservation
+  name: Crater degradation and survival
+  about: 'What is left of each crater today. Airless: degraded as diffusion (Soderblom 1970): κ = 5.5 m²/Myr × D_km at today''s
+    lunar flux, effective time = flux × n1(age)/n1_rate_now; Gaussian width σ = sqrt(2κ t_eff)/(D/2) in radii; depth kept
+    from a tabulated diffusion of a simple bowl (41 σ values to 2.5); none older than the crust under it. With air/sea: none
+    older than its crust; under the sea buried at 20 m/Myr; on land eroded at (8 + 25·rain) m/Myr × (1 − 0.85·shield), shield
+    = clip((crust age − 500)/1500); relief gone once erosion exceeds depth; structure (roots ~10-15 % of D) lost when erosion
+    > 120 m × D_km.'
+area: impacts
+clock:
+  when: once per world (after plates and climate, tools/impacts.py)
+reads:
+- name: d_km, age_myr, depth_m
+  unit: m, s, m (code km, Myr, m)
+  meaning: crater
+- name: crust_age_myr
+  unit: 's (code: Myr)'
+  meaning: crust age under the crater
+- name: sea
+  unit: bool
+  meaning: under the sea
+- name: rain_m
+  unit: 'm/s (code: m/yr)'
+  meaning: precipitation
+- name: flux
+  unit: '1'
+  meaning: focus × impact_flux
+writes:
+- name: relief
+  unit: '1'
+  meaning: share of the crater's fresh shape still shown (the craters table's `relief left`, its feature's dims; not planet-field.local-relief,
+    a height)
+- name: structure
+  unit: bool
+  meaning: still findable
+- name: eroded_m
+  unit: m
+  meaning: land lowered since (tools)
+note: 'Emits: impacts.crater-erased (implied: structure false)'
+params:
+- name: SED_M_PER_MYR
+  value: 6.337617562805789e-13
+  unit: m/s
+  said_as:
+    unit: m/Myr
+    factor: 3.168808781402895e-14
+  meaning: deep-sea sedimentation (Seibold & Berger 1996)
+  source: src/planet_sim/stages/impacts.py:44
+- name: KAPPA_1KM
+  value: 5.5
+  unit: '1'
+  said_as:
+    unit: m²/Myr (1.743e-13 m²/s) per km of D
+    factor: 1.0
+  open: true
+  meaning: lunar crater diffusivity at today's flux (Fassett & Thomson 2014)
+  source: src/planet_sim/stages/impacts.py:236
+  note: 'unit as the code says it: ''m²/Myr (1.743e-13 m²/s) per km of D''; SI conversion unverified'
+- name: N1_RATE_NOW
+  value: 0.000838
+  unit: '1'
+  said_as:
+    unit: per km² per Gyr
+    factor: 1.0
+  open: true
+  meaning: today's lunar ≥1 km crater rate
+  source: src/planet_sim/stages/impacts.py:237
+  note: 'unit as the code says it: ''per km² per Gyr''; SI conversion unverified'
+- name: land erosion
+  setting: '{"base_m_myr": 8.0, "per_m_rain": 25.0, "shield_cut": 0.85, "shield_start_myr": 500.0, "shield_span_myr": 1500.0}'
+  meaning: Milliman & Syvitski 1992; Fleming et al. 1999
+  source: src/planet_sim/stages/impacts.py:227-228
+  note: 'unit: m/Myr, m/Myr per m/yr, 1, Myr'
+- name: structure depth
+  value: 120.0
+  unit: '1'
+  said_as:
+    unit: m per km of D (0.12)
+    factor: 1.0
+  open: true
+  meaning: roots erased when erosion exceeds 12 % of D (Grieve & Pilkington 1996)
+  source: src/planet_sim/stages/impacts.py:286
+  note: 'unit as the code says it: ''m per km of D (0.12)''; SI conversion unverified'
+- name: _SIG
+  values:
+  - 0.0
+  - 0.01
+  - 0.011520879685776308
+  - 0.01327306687341332
+  - 0.0152917406509858
+  - 0.017617430422610207
+  - 0.020296829627142757
+  - 0.02338373321370117
+  - 0.026940117695934258
+  - 0.031037385469551187
+  - 0.035757798375576105
+  - 0.04119612929132598
+  - 0.047461564908505186
+  - 0.054679897900955135
+  - 0.06299605249474363
+  - 0.07257699414707902
+  - 0.08361508175237888
+  - 0.09633192967855071
+  - 0.11098285717252467
+  - 0.1278620144668353
+  - 0.14730828850533992
+  - 0.16971210685876464
+  - 0.19552327643394407
+  - 0.22526001435642518
+  - 0.25951935234166185
+  - 0.29898912344588763
+  - 0.3444617718575792
+  - 0.39685026299204973
+  - 0.4572064133200091
+  - 0.5267420079425142
+  - 0.6068531298949935
+  - 0.6991481896457002
+  - 0.805480217543643
+  - 0.9279840675593238
+  - 1.069119279266829
+  - 1.2317194586177012
+  - 1.4190491689364073
+  - 1.6348694743517198
+  - 1.883513451595453
+  - 2.169973186237246
+  - 2.5
+  unit: '1'
+  said_as:
+    unit: crater radii
+    factor: 1.0
+  open: true
+  meaning: σ grid for the depth-kept table
+  source: src/planet_sim/stages/impacts.py:310
+  note: 'unit as the code says it: ''crater radii''; SI conversion unverified'
+random_draws:
+- none
+invariants:
+- 0 ≤ relief ≤ 1
+- no crater older than its crust
+depends_on:
+- planet-process.crater-production
+- planet-process.crater-shape
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform src/planet_sim/stages/impacts.py:erosion_rate (223-228), wear_width (240-244), depth_kept (247-253),
+    preserved (256-287), _depth_left (297-307)
+  state: reference
+- where: planet-forge crates/forge-core/src/models/impacts/preservation.rs
+  state: current
+  note: planet-forge port (geology line, merged in forge main 338c9ce)
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge geology port (models/geology, models/impacts), read from planet-sim-landform 1df4daf.'

@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.coastal.delta.tidal-delta
+  name: Tidal delta (flood and ebb)
+  about: Tidal delta (flood and ebb).
+family: coastal
+factors:
+- factor: planet-factor.waves-tides
+  weight: 3
+  why: tidal prism scales ebb-delta volume; wave energy pushes ebb delta onshore; mixed-energy coasts give largest
+- factor: planet-factor.other-tidal-prism
+  weight: 3
+  why: back-barrier basin area x tidal range sets inlet size and delta volume
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: longshore drift into inlet feeds deltas; Wadden ebb deltas ~ lagoon volume
+- factor: planet-factor.relief-inherited
+  weight: 1
+  why: needs barrier inlet with back-barrier lagoon or estuary
+- factor: planet-factor.clim-storm
+  weight: 1
+  why: storms open inlets and build flood deltas
+- factor: planet-factor.sea-level
+  weight: 1
+  why: rising sea level enlarges prism and flood deltas
+- factor: planet-factor.time
+  weight: 1
+  why: decades to kyr
+vocabulary_id: 151
+sources:
+- https://www.coastalwiki.org/wiki/Morphology_of_estuaries
+- https://www.coastalwiki.org/wiki/Estuaries
+- https://en.wikipedia.org/wiki/Inlet
+library_status: planned
+source: coastal.delta.tidal_delta
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

@@ -1,0 +1,107 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.surface-ore-chances
+  name: Surface, weathering and setting ore chances
+  about: 'Chances (per sample × WEATHER type) of ores read off the final world rather than carried on plates. Laterite nickel
+    and bauxite: 0.6 × climate × host rock, climate = clip((T−18)/6) clip((rain−1)/0.8) clip(1 − slope/0.02). Heavy-mineral
+    sands: low coasts (land < 60 m, sea among 12 nearest, T > 0 °C), 0.6 × clip((felsic share within 500 km − 0.2)/0.5). Lithium
+    brine: land, rain < 0.3 m/yr, > 1,500 m, a basin (500 m below the max within 150 km), arc volcanics > 15 % within 300
+    km: 0.5 clip((0.3 − rain)/0.2). Mn nodules: floor < −4,000 m, age > 20 Myr, > 600 km from land: 0.3 clip((age−20)/40).
+    Setting ores from neighbour units (12 nearest), crust age and climate: skarn Cu/W, LCT pegmatite, IOCG, Carlin gold, paleoplacer
+    gold, unconformity and sandstone uranium, ion-clay REE, graphite, placer gold (formulas in source).'
+area: geology
+clock:
+  when: once per world, after the climate stage (tools/deposits.py)
+reads:
+- name: rock
+  field: planet-field.rock
+  unit: unit index
+  meaning: surface unit per sample
+- name: t_mean_c
+  unit: 'K (code: °C, +273.15)'
+  meaning: mean annual temperature
+- name: rain_m
+  unit: 'm/s (code: m/yr)'
+  meaning: annual precipitation
+- name: slope
+  unit: 1 (m/m)
+  meaning: ground slope
+- name: p
+  unit: unit vector
+  meaning: sample positions
+- name: z
+  field: planet-field.height
+  unit: m
+  meaning: height (land z > 0)
+- name: age
+  field: planet-field.crust-age
+  unit: 's (code: Myr)'
+  meaning: crust/floor age
+- name: R_km
+  unit: 'm (code: km)'
+  meaning: planet radius
+writes:
+- name: extra_fert[:, WEATHER]
+  unit: '1'
+  meaning: chance per weathering/setting ore type
+params:
+- name: laterite/bauxite climate
+  setting: '{"T0_c": 18.0, "T_span_c": 6.0, "rain0_m_yr": 1.0, "rain_span_m_yr": 0.8, "slope_max": 0.02, "scale": 0.6}'
+  meaning: climate window (Freyssinet et al. 2005)
+  source: src/planet_sim/stages/geology.py:383-388
+  note: 'unit: °C, m/yr, 1'
+- name: heavy-sand coast
+  setting: '{"coast_below_m": 60.0, "neighbours": 12, "feed_radius_m": 500000.0, "share0": 0.2, "share_span": 0.5, "scale":
+    0.6}'
+  meaning: low coast fed from granite/gneiss
+  source: src/planet_sim/stages/geology.py:394-402
+  note: 'unit: m, count, 1'
+- name: lithium brine
+  setting: '{"rain_below_m_yr": 0.3, "above_m": 1500.0, "basin_drop_m": 500.0, "basin_radius_m": 150000.0, "arc_radius_m":
+    300000.0, "arc_share": 0.15, "scale": 0.5, "rain_span_m_yr": 0.2}'
+  meaning: salt-flat brine window (Munk et al. 2016)
+  source: src/planet_sim/stages/geology.py:403-414
+  note: 'unit: m/yr, m, 1'
+- name: mn nodules
+  setting: '{"deeper_than_m": 4000.0, "age_min_myr": 20.0, "age_span_myr": 40.0, "land_dist_m": 600000.0, "scale": 0.3}'
+  meaning: deep old floor far from land (Hein et al. 2013)
+  source: src/planet_sim/stages/geology.py:415-419
+  note: 'unit: m, Myr, 1'
+- name: setting ores
+  setting: '{"skarn_copper": "0.6\u00b7[carbonate]\u00b7near(arc_plutonic,granite)", "skarn_tungsten": "0.5\u00b7[carbonate]\u00b7near(granite)",
+    "lithium_pegmatite": "0.5\u00b7[granite]\u00b7near(schist,basement)\u00b7(300<age<3200 Myr)", "iocg": "0.4\u00b7[basement]\u00b7(age>1500)\u00b7near(flood_basalt,rift,arc_plutonic)",
+    "carlin_gold": "0.5\u00b7[carbonate|clastic]\u00b7near(rift)\u00b7(near(arc_volcani'
+  meaning: near(...) = share of the 12 nearest samples in those units; all × land
+  source: src/planet_sim/stages/geology.py:420-447
+  note: 'paleoplacer age > 2400 Myr is an Earth number, not tied to OXYGENATION_GYR (unverified intent); unit: age Myr, rain
+    m/yr, T °C'
+random_draws:
+- none
+invariants:
+- 0 ≤ chance ≤ 1
+- setting ores only on land
+depends_on:
+- planet-process.rock-unit-stack
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform src/planet_sim/stages/geology.py:weathering_chance (377-448)
+  state: reference
+- where: planet-forge crates/forge-core/src/models/geology/surface_ores.rs
+  state: current
+  note: planet-forge port (geology line, merged in forge main 338c9ce)
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge geology port (models/geology, models/impacts), read from planet-sim-landform 1df4daf.'

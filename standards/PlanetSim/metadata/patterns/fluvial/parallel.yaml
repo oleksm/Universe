@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.network.parallel
+  name: Parallel drainage pattern
+  about: Parallel drainage pattern.
+family: fluvial
+factors:
+- factor: planet-factor.slope-relief
+  weight: 3
+  why: pronounced uniform moderate-steep slope makes subparallel consequents
+- factor: planet-factor.relief-inherited
+  weight: 3
+  why: parallel landforms (moraines, dunes, scarps, lava flows) guide streams
+- factor: planet-factor.tect-fold
+  weight: 3
+  why: monoclines, uniformly dipping strata
+- factor: planet-factor.tect-fault
+  weight: 1
+  why: fault scarps provide uniform steep slopes
+- factor: planet-factor.rock-type
+  weight: 1
+  why: uniform lithology along slope; contrasts break the pattern
+- factor: planet-factor.clim-arid
+  weight: 1
+  why: arid surface-flow channelization gives acute junctions
+- factor: planet-factor.time
+  weight: 1
+  why: 0.1 kyr-10 Myr; integrates toward dendritic with age
+vocabulary_id: 52
+sources:
+- https://ebooks.inflibnet.ac.in/geop11/chapter/drainage-pattern
+- https://en.wikipedia.org/wiki/Drainage_system_(geomorphology)
+- https://eos.org/research-spotlights/stream-network-geometry-correlates-with-climate
+library_status: written
+source: fluvial.network.parallel
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

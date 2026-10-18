@@ -1,0 +1,190 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.landscape-erosion
+  name: Stage 9 regional stream-power erosion (Braun-Willett implicit), hillslope and marine diffusion, deltas
+  about: 'Stage 9, landscape: rain on uplifted land carving it into river networks, valleys and canyons, the sediment carried
+    to the sea building shelves, on a square grid over part of a world (a region, or a tile within one). NOT INVENTORIED IN
+    DETAIL: neither plates.py nor coupled.py imports erosion.py (directly or through another module); it is used by tools/global_erosion.py,
+    fine_erosion.py, fine_bake.py, region_bake.py, region.py, fine_rivers.py, terrain_texture.py, shelf_test.py, fz150_pack.py,
+    mountains_try.py; stages/hydrology.py, steady.py, mountains.py.'
+area: surface
+clock:
+  when: not part of the coupled planet run (offline tools / bakes)
+params:
+- name: K_RIVER
+  value: 2.0e-05
+  unit: '1'
+  said_as:
+    unit: m^(1-2m)/yr
+    factor: 1.0
+  open: true
+  meaning: 'Bedrock erodibility and the area exponent (m^(1−2m)/yr): fluvial erosion''s measured range is about 1e-6–1e-4
+    for m ≈ 0.4–0.5 (Stock & Montgomery 1999; Harel et al. 2016). (Chosen in it.)'
+  source: stages/erosion.py:27
+  note: 'unit as the code says it: ''m^(1-2m)/yr''; SI conversion unverified'
+- name: M_AREA
+  value: 0.45
+  unit: '1'
+  said_as:
+    unit: dimensionless
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/erosion.py:28
+  note: 'unit as the code says it: ''dimensionless''; SI conversion unverified'
+- name: K_HILL
+  env: K_HILL
+  value: 0.01
+  unit: '1'
+  said_as:
+    unit: m^2/yr
+    factor: 1.0
+  open: true
+  meaning: 'Hillslope diffusivity (m²/yr): 0.001–0.05 measured on soil-mantled slopes (Fernandes & Dietrich 1997; Roering
+    et al. 1999). Offshore, sediment spreads far faster (chosen: shelves form in a few hundred kyr; Kaufman et al. 1991 use
+    0.5–10).'
+  source: stages/erosion.py:32
+  note: 'unit as the code says it: ''m^2/yr''; SI conversion unverified'
+- name: K_MARINE
+  value: 2.0
+  unit: '1'
+  said_as:
+    unit: m^2/yr
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/erosion.py:33
+  note: 'unit as the code says it: ''m^2/yr''; SI conversion unverified'
+- name: K_WAVE
+  env: K_WAVE
+  value: 5000.0
+  unit: '1'
+  said_as:
+    unit: m^2/yr
+    factor: 1.0
+  open: true
+  meaning: 'Waves move the sea floor''s sediment hardest near the surface, their reach fading with depth (wave base): marine
+    transport as diffusion falling off exponentially with depth (Kaufman et al. 1991; Rivenæs 1992; Steckler et al. 1996).
+    It grades the shoreface and the shelf, carries the rivers'' load out to the shelf''s edge and builds the slope beyond
+    (the clinoform). K_WAVE at the shore (m²/yr; chosen within those models'' 10³–10⁵), its e-folding depth WAVE_BASE_M (storm
+    wave base on open shelves ~ 20-50 m).'
+  source: stages/erosion.py:40
+  note: 'unit as the code says it: ''m^2/yr''; SI conversion unverified'
+- name: WAVE_BASE_M
+  env: WAVE_BASE_M
+  value: 50.0
+  unit: m
+  meaning: unverified (no comment)
+  source: stages/erosion.py:41
+- name: SEA_SWING_M
+  env: SEA_SWING_M
+  value: 0.0
+  unit: m
+  meaning: '(Judged on Heath''s face 1, 10 Myr at 5 km, against Earth''s depths (shares of the surface): 5-50 m 1.9% (Earth
+    ~1.6 at that sea area), 50-200 m 3.5% (~3.0); the old: 0.6 and 3.3, with a platform a metre deep. tools/shelf_test.py:
+    a synthetic margin.) The sea''s level swings with the ice ages: ~120 m down at glacial maxima, every ~100 kyr in the late
+    Pleistocene (Lambeck et al. 2014; Spratt & Lisiecki 2016). Shelves are planed and built at the lowstands and drowned at
+    the highstands: their edge stands near the lowstand''s wave base, ~120-130 m. SEA_SWING_M the swing (a world with polar
+    ice; ~10-50'
+  source: stages/erosion.py:49
+- name: SEA_PERIOD_YR
+  value: 3155760000000.0
+  unit: s
+  said_as:
+    unit: yr
+    factor: 31557600.0
+  meaning: '(Off for now: at the global run''s steps (10 kyr, ten to a cycle) the swings filled the coasts'' 0-120 m zone
+    into shallows hundreds of km wide (16% of Heath at 5-50 m, Earth''s ~2%). Wants finer steps in time, or the lowstands''
+    canyons and fans to carry the load past the shelf.)'
+  source: stages/erosion.py:53
+- name: SLOPE_CRIT_SEA
+  value: 0.08
+  unit: '1'
+  said_as:
+    unit: m/m
+    factor: 1.0
+  open: true
+  meaning: 'Marine mud fails on slopes steeper than a few degrees: slumps and turbidity currents carry it down (the continental
+    slope''s ~2-5°: Pratson & Haxby 1996). As an angle of repose: each step, passes moving the excess over SLOPE_CRIT_SEA
+    from the higher cell of a pair to the lower, keeping the volume.'
+  source: stages/erosion.py:58
+  note: 'unit as the code says it: ''m/m''; SI conversion unverified'
+- name: SLUMP_PASSES
+  value: 8.0
+  unit: '1'
+  said_as:
+    unit: count
+    factor: 1.0
+  meaning: unverified (no comment)
+  source: stages/erosion.py:59
+- name: DELTA_TOP
+  env: DELTA_TOP
+  value: -2.0
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: '(The uplift given is the rock''s net uplift, its isostatic response to erosion included, as measured uplift rates
+    are: no separate rebound.) Offshore sediment fills to this depth below the sea (m) and no higher: −2, deltas build land
+    ~2 m over the sea at the rivers'' mouths (delta plains), and the load is laid near the mouths (SPREAD_M ~3 km), the waves
+    spreading the rest along the shoreface. (A cap at the sea''s level, blurred over 12 km, grew a flat 0-1 m deep and tens
+    of km wide along every coast: Heath''s 0-5 m 1.4% of its surface (Earth''s < 0.5%), a murky band. Heath face 1 now, with
+    SEA_MEAN'
+  source: stages/erosion.py:68
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: SPREAD_M
+  env: SPREAD_M
+  value: 3000.0
+  unit: m
+  meaning: 'How far offshore waves and currents spread river sediment (m) (chosen: river plumes and longshore drift carry
+    it some km; Syvitski et al. 2005).'
+  source: stages/erosion.py:71
+- name: ROUTE_EVERY
+  value: 5.0
+  unit: '1'
+  said_as:
+    unit: steps
+    factor: 1.0
+  open: true
+  meaning: Drainage is routed afresh every this many steps (FastScape-style models re-route seldom too).
+  source: stages/erosion.py:73
+  note: 'unit as the code says it: ''steps''; SI conversion unverified'
+- name: SEA_MEAN_M
+  env: SEA_MEAN_M
+  value: 50.0
+  unit: m
+  meaning: 'The sea''s level averaged over the ice ages: for most of the last million years it stood tens of metres below
+    today''s (the glacial cycles'' mean, ~−40 to −60 m: Spratt & Lisiecki 2016), and rose to today''s only ~10 kyr ago. The
+    landscape is built at the mean; today''s sea, higher, drowns the coastal plains built below it: the inner shelves (Earth''s
+    are mostly such drowned plains).'
+  source: stages/erosion.py:259
+- name: PLANET_SIM_GPU
+  env: PLANET_SIM_GPU
+  setting: '1'
+  meaning: 0 forces the CPU path in run_best
+  source: stages/erosion.py:400
+  note: 'env read inside a function; unit: flag / count'
+random_draws:
+- not inventoried
+used: false
+note: 'unused by plates.py / coupled.py; users: tools/global_erosion.py, fine_erosion.py, fine_bake.py, region_bake.py, region.py,
+  fine_rivers.py, terrain_texture.py, shelf_test.py, fz150_pack.py, mountains_try.py; stages/hydrology.py, steady.py, mountains.py'
+backends:
+- cpu
+implementations:
+- where: 'planet-sim-landform stages/erosion.py: _route (93-181), _accumulate (185-192), _incise (196-213), _sediment (217-235),
+    _blur (238-252), sea_level (262-264), marine_k (267-271), diffuse_steps (274-275), diffuse (278-296), slump (299-317),
+    _diffuse (320-321), orographic_rain (324-337), run (340-394), gpu_available (397-406), run_best (409-415)'
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
+    the code at planet-sim-landform 9747f0d-c437724.'

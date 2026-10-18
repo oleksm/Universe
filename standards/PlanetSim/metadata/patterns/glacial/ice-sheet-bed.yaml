@@ -1,0 +1,59 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.glacial.landscape.ice-sheet-bed
+  name: Ice-sheet bed landscape
+  about: Ice-sheet bed landscape.
+family: glacial
+factors:
+- factor: planet-factor.ice-extent
+  weight: 1
+  why: continental ice sheet cover required; repeat cycles accumulate scour
+- factor: planet-factor.ice-thermal
+  weight: 3
+  why: warm-based zones scour areally/deposit drumlins; cold-based zones preserve preglacial relief (Sugden 1978)
+- factor: planet-factor.ice-flow
+  weight: 3
+  why: flow direction aligns bedforms; ice streams give MSGL, slow sheet gives drumlins
+- factor: planet-factor.tect-setting
+  weight: 1
+  why: cratonic shields and stable platforms with low relief
+- factor: planet-factor.rock-type
+  weight: 3
+  why: hard crystalline shield gives scoured rock; soft sedimentary lowland gives till bed
+- factor: planet-factor.rock-fracture
+  weight: 1
+  why: fracture zones excavated into lake basins; structure guides scour pattern
+- factor: planet-factor.regolith
+  weight: 1
+  why: soft sediment cover allows deformation bedforms; thin cover leaves bare rock
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: low relief 10-100 m lets ice flow over, not around, terrain
+- factor: planet-factor.clim-history
+  weight: 1
+  why: ice-sheet growth needs glacial climate at mid-high latitude
+- factor: planet-factor.time
+  weight: 1
+  why: 10-2600 kyr; each cycle overprints bedforms
+vocabulary_id: 82
+sources:
+- https://www.antarcticglaciers.org/glacial-geology/glacial-landforms/glacial-depositional-landforms/
+- https://www.antarcticglaciers.org/glacial-geology/glacial-landforms/drumlins/
+- https://en.wikipedia.org/wiki/Ice_stream
+library_status: written
+source: glacial.landscape.ice_sheet_bed
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

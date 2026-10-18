@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-hose-union-dn25
+  code: KIT-HOSE-UNION-DN25
+  name: Hose union, DN 25
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.stainless-steel-304
+size:
+  length: 0.085
+  width: 0.085
+  height: 0.09
+supplies:
+  item: connector.hose-union-dn25
+physical:
+  mass: 1.38
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.hose-union-dn25, as made.

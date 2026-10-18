@@ -1,0 +1,382 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.impactor-scaling
+  name: Impactor speed, focusing and crater-size scaling
+  about: 'From the Moon to this world (Ivanov 2001): impactor speed at infinity v∞ = 17 km/s × sqrt(M_star/a), impact speed
+    sqrt(v∞² + v_esc²); flux focusing (1 + (v_esc/v∞)²) against the Moon''s; crater diameter for the same impactor ∝ (g_moon/g)^0.22
+    (v/v_moon)^0.43 (gravity-regime π-scaling); simple-complex transition D_t = 15 km × 1.62/g (Pike 1980); smallest crater
+    the air lets through = 0.2 km × air_column.'
+area: impacts
+clock:
+  when: once per world
+reads:
+- name: g
+  unit: m/s²
+  meaning: surface gravity
+- name: v_esc
+  unit: 'm/s (code: km/s)'
+  meaning: escape speed
+- name: a
+  unit: 'm (code: AU)'
+  meaning: semi-major axis
+- name: star.mass
+  unit: 'kg (code: M_sun)'
+  meaning: star mass
+- name: planet.air_column
+  unit: '1'
+  meaning: air screening vs Earth (0 airless)
+writes:
+- name: v_imp
+  unit: 'm/s (code: km/s)'
+  meaning: impact speed
+- name: focus
+  unit: '1'
+  meaning: flux per area vs Moon
+- name: size
+  unit: '1'
+  meaning: crater diameter vs Moon, same impactor
+- name: d_t
+  unit: 'm (code: km)'
+  meaning: simple-complex transition
+- name: d_screen
+  unit: 'm (code: km)'
+  meaning: air screening diameter
+params:
+- name: G_MOON
+  value: 1.62
+  unit: m/s2
+  meaning: lunar gravity
+  source: src/planet_sim/stages/impacts.py:40
+- name: V_INF_1AU
+  value: 17.0
+  unit: '1'
+  said_as:
+    unit: km/s (1.7e4 m/s)
+    factor: 1.0
+  open: true
+  meaning: impactor speed far away at 1 AU (Ivanov 2001)
+  source: src/planet_sim/stages/impacts.py:41
+  note: 'unit as the code says it: ''km/s (1.7e4 m/s)''; SI conversion unverified'
+- name: V_ESC_MOON
+  value: 2.38
+  unit: '1'
+  said_as:
+    unit: km/s (2380 m/s)
+    factor: 1.0
+  open: true
+  meaning: lunar escape speed
+  source: src/planet_sim/stages/impacts.py:42
+  note: 'unit as the code says it: ''km/s (2380 m/s)''; SI conversion unverified'
+- name: D_SCREEN_KM
+  value: 200.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 1000.0
+  meaning: craters smaller than this rare under Earth's air
+  source: src/planet_sim/stages/impacts.py:43
+- name: gravity exponent
+  value: 0.22
+  unit: '1'
+  meaning: D ∝ g^−0.22
+  source: src/planet_sim/stages/impacts.py:77
+- name: velocity exponent
+  value: 0.43
+  unit: '1'
+  meaning: D ∝ v^0.43
+  source: src/planet_sim/stages/impacts.py:77
+- name: transition base
+  value: 15000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 1000.0
+  meaning: D_t on Earth-scaled gravity (Pike 1980)
+  source: src/planet_sim/stages/impacts.py:78
+tables:
+- name: 'impacts size-frequency: lunar production function N(>D)/N(>1 km) (Neukum et al. 2001)'
+  source: src/planet_sim/stages/impacts.py:38-39, 57-60
+  columns:
+  - D (km)
+  - D (m)
+  - N(>D)/N(>1km)
+  - N(>D) per km² for 1 Gyr surface, lunar (n1(1)·shape)
+  - same per m²
+  rows:
+  - - '0.01'
+    - '10.0'
+    - '4530986.831687223'
+    - '3796.9672167375347'
+    - '0.0037969672167375347'
+  - - '0.02'
+    - '20.0'
+    - '560381.6690447837'
+    - '469.5998697995304'
+    - '0.0004695998697995304'
+  - - '0.05'
+    - '50.0'
+    - '31117.518711905475'
+    - '26.076482409754664'
+    - '2.6076482409754666e-05'
+  - - '0.1'
+    - '100.0'
+    - '3466.6627986153594'
+    - '2.905063617879601'
+    - '2.905063617879601e-06'
+  - - '0.2'
+    - '200.0'
+    - '355.9603283424619'
+    - '0.2982947749314395'
+    - '2.9829477493143953e-07'
+  - - '0.5'
+    - '500.0'
+    - '12.991047503953327'
+    - '0.010886498530215947'
+    - '1.0886498530215947e-08'
+  - - '1'
+    - '1000.0'
+    - '1.0'
+    - '0.0008380000555692725'
+    - '8.380000555692725e-10'
+  - - '2'
+    - '2000.0'
+    - '0.10601671865892337'
+    - '8.88420161274497e-05'
+    - '8.88420161274497e-11'
+  - - '5'
+    - '5000.0'
+    - '0.013845634425483776'
+    - '1.1602642417947237e-05'
+    - '1.1602642417947237e-11'
+  - - '10'
+    - '10000.0'
+    - '0.005495084814779589'
+    - '4.604881380143161e-06'
+    - '4.604881380143161e-12'
+  - - '20'
+    - '20000.0'
+    - '0.0023840040066714324'
+    - '1.9977954900680287e-06'
+    - '1.9977954900680287e-12'
+  - - '50'
+    - '50000.0'
+    - '0.0004331224976871782'
+    - '3.629566771301574e-07'
+    - '3.629566771301574e-13'
+  - - '100'
+    - '100000.0'
+    - '6.899334478886308e-05'
+    - '5.781642676697723e-08'
+    - '5.781642676697723e-14'
+  - - '200'
+    - '200000.0'
+    - '1.0927025540257057e-05'
+    - '9.156848009942274e-09'
+    - '9.156848009942274e-15'
+  - - '300'
+    - '300000.0'
+    - '4.657660873039354e-06'
+    - '3.903120070429805e-09'
+    - '3.903120070429805e-15'
+- name: 'impacts chronology: cumulative lunar N(≥1 km) per km² (Neukum 1983)'
+  source: src/planet_sim/stages/impacts.py:52-54
+  columns:
+  - T (Gyr before present)
+  - T (s)
+  - N1 per km²
+  - N1 per m²
+  rows:
+  - - '0.1'
+    - '3155760000000000.0'
+    - '8.380000005438399e-05'
+    - '8.3800000054384e-11'
+  - - '0.5'
+    - '1.57788e+16'
+    - '0.00041900000168511943'
+    - '4.190000016851194e-10'
+  - - '1.0'
+    - '3.15576e+16'
+    - '0.0008380000555692725'
+    - '8.380000555692725e-10'
+  - - '2.0'
+    - '6.31152e+16'
+    - '0.001676056874815847'
+    - '1.676056874815847e-09'
+  - - '3.0'
+    - '9.46728e+16'
+    - '0.002572154212365007'
+    - '2.5721542123650074e-09'
+  - - '3.5'
+    - '1.104516e+17'
+    - '0.004792565834012868'
+    - '4.792565834012868e-09'
+  - - '3.8'
+    - '1.1991888e+17'
+    - '0.01805435951584996'
+    - '1.805435951584996e-08'
+  - - '4.0'
+    - '1.262304e+17'
+    - '0.0628143320884855'
+    - '6.281433208848549e-08'
+  - - '4.2'
+    - '1.3254192e+17'
+    - '0.24129892506307538'
+    - '2.4129892506307536e-07'
+  - - '4.5'
+    - '1.420092e+17'
+    - '1.9051658700456706'
+    - '1.9051658700456706e-06'
+  - - '4.57'
+    - '1.44218232e+17'
+    - '3.0923365251173345'
+    - '3.0923365251173347e-06'
+- name: impacts crater shape regimes
+  source: src/planet_sim/stages/impacts.py:159-176
+  columns:
+  - kind
+  - D range
+  - depth
+  - rim
+  - floor share
+  - peak
+  - ring
+  rows:
+  - - simple
+    - D < D_t
+    - 0.2 D
+    - 0.036 D
+    - '0'
+    - '0'
+    - '0'
+  - - complex
+    - D_t ≤ D < 8 D_t
+    - 200 m·D_t(km)·q^0.3
+    - 36 m·D_t·q^0.4
+    - min(0.65, 0.3 + 0.06 log2 q)
+    - min(6 m·D^1.28·(D_t/15)^0.3, 0.8 depth)
+    - '0'
+  - - peak_ring
+    - 8 D_t ≤ D < max(20 D_t, 150 km)
+    - as complex
+    - as complex
+    - as complex
+    - '0'
+    - 0.3 depth
+  - - basin
+    - D ≥ max(20 D_t, 150 km)
+    - 0.5 × complex
+    - 0.6 × complex
+    - '0.7'
+    - '0'
+    - 0.15 depth
+- name: impacts depth-kept table (diffusion of a simple bowl)
+  source: src/planet_sim/stages/impacts.py:297-311
+  columns:
+  - sigma (crater radii)
+  - depth kept (share)
+  rows:
+  - - '0.0'
+    - '1.0'
+  - - '0.01'
+    - '0.9999999560258204'
+  - - '0.011520879685776308'
+    - '0.9999990410103545'
+  - - '0.01327306687341332'
+    - '0.999990233557597'
+  - - '0.0152917406509858'
+    - '0.9999442562440314'
+  - - '0.017617430422610207'
+    - '0.9997969539091257'
+  - - '0.020296829627142757'
+    - '0.9994819059224659'
+  - - '0.02338373321370117'
+    - '0.9989990142675891'
+  - - '0.026940117695934258'
+    - '0.998413800874351'
+  - - '0.031037385469551187'
+    - '0.9977614916024795'
+  - - '0.035757798375576105'
+    - '0.996987500402096'
+  - - '0.04119612929132598'
+    - '0.9959957880608117'
+  - - '0.047461564908505186'
+    - '0.9946839840176598'
+  - - '0.054679897900955135'
+    - '0.9929468612763626'
+  - - '0.06299605249474363'
+    - '0.9906358989188945'
+  - - '0.07257699414707902'
+    - '0.9875702960515044'
+  - - '0.08361508175237888'
+    - '0.9835020692196523'
+  - - '0.09633192967855071'
+    - '0.9781033821227125'
+  - - '0.11098285717252467'
+    - '0.9709406022636171'
+  - - '0.1278620144668353'
+    - '0.9614423407451826'
+  - - '0.14730828850533992'
+    - '0.9488085276957072'
+  - - '0.16971210685876464'
+    - '0.9320506955177671'
+  - - '0.19552327643394407'
+    - '0.9098184724225316'
+  - - '0.22526001435642518'
+    - '0.8803340313504716'
+  - - '0.25951935234166185'
+    - '0.8412283765385146'
+  - - '0.29898912344588763'
+    - '0.7900119271942164'
+  - - '0.3444617718575792'
+    - '0.724788784828336'
+  - - '0.39685026299204973'
+    - '0.6460289299913179'
+  - - '0.4572064133200091'
+    - '0.5573347466553359'
+  - - '0.5267420079425142'
+    - '0.4648782731901375'
+  - - '0.6068531298949935'
+    - '0.37536174607825296'
+  - - '0.6991481896457002'
+    - '0.29429826018161376'
+  - - '0.805480217543643'
+    - '0.2249471343878303'
+  - - '0.9279840675593238'
+    - '0.16838382978002295'
+  - - '1.069119279266829'
+    - '0.12404022840059711'
+  - - '1.2317194586177012'
+    - '0.09036771277526046'
+  - - '1.4190491689364073'
+    - '0.06541453257527095'
+  - - '1.6348694743517198'
+    - '0.0472415911235792'
+  - - '1.883513451595453'
+    - '0.034147885278633425'
+  - - '2.169973186237246'
+    - '0.024761115435909864'
+  - - '2.5'
+    - '0.01803401321413865'
+random_draws:
+- none
+depends_on:
+- planet-process.world-spec-derived
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform src/planet_sim/stages/impacts.py:scaling (72-78)
+  state: reference
+- where: planet-forge crates/forge-core/src/models/impacts/mod.rs
+  state: current
+  note: planet-forge port (geology line, merged in forge main 338c9ce)
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

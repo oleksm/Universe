@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-lined-duct-dn2400-pn16-double
+  code: KIT-LINED-DUCT-DN2400-PN16-DOUBLE
+  name: Lined duct DN 2400 PN 16, a 6 m length
+  traded_as: market.machinery
+  form: length
+package: package.bar-bundle
+made_from:
+- item: material.structural-steel-a36
+- item: material.stainless-steel-304
+size:
+  length: 6.0
+  diameter: 2.437
+supplies:
+  item: run.lined-duct-dn2400-pn16-double
+  length: 6.0
+physical:
+  mass: 31632.6
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: 'a 6 m length of run.lined-duct-dn2400-pn16-double: its mass a metre times the length sold.'

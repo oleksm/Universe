@@ -1,8 +1,8 @@
 # yaml-language-server: $schema=../../schema/building.schema.yaml
 identity:
   key: building.bunkhouse
-  name: "Bunkhouse"
-  description: "Rooms and bunks, a wash room and a mess: a roof for those who have come to work and not yet to stay."
+  name: Bunkhouse
+  description: 'Rooms and bunks, a wash room and a mess: a roof for those who have come to work and not yet to stay.'
 physical:
   length: 60
   width: 12
@@ -12,14 +12,42 @@ per_people: 240
 floor: 3600
 storeys: 5
 meets:
-  - { need: need.shelter, people: 240 }
-  - { need: need.warmth, people: 240 }
+- need: need.shelter
+  people: 240
+- need: need.warmth
+  people: 240
 built_of:
-  - { item: good.concrete, quantity: 3742560 }
-  - { item: material.structural-steel-a36, quantity: 208440 }
+- item: good.concrete
+  quantity: 3742560
+- item: material.structural-steel-a36
+  quantity: 208440
 life: 1577880000
 basis:
-  - { of: [physical, floor, storeys, meets], tier: derived, review: true, source: "standards/sources/research_people_needs.json", note: "Chosen: five storeys, as the commonest Soviet panel block. 15 m2 of floor a person, Hong Kong's." }
-  - { of: [built_of], tier: sourced, source: "standards/sources/research_people_plant.json", note: "1,040 kg of concrete and 58 kg of steel for each m2 of floor: the average of 538 residential buildings in China. Glass, brick, pipes and wire are not counted: no figures were found." }
-  - { of: [physical.mass], tier: derived, source: "standards/sources/research_people_plant.json", note: "1,103 kg for each m2 of floor, all materials: the average of 18 mid- and high-rise buildings, mostly in Toronto. Of a residential building's weight about 1,040 kg a m2 is concrete and 58 steel (538 buildings in China)." }
-  - { of: [life], rule: rule.life-building }
+- of:
+  - physical
+  - floor
+  - storeys
+  - meets
+  tier: derived
+  review: true
+  source: standards/sources/research_people_needs.json
+  note: 'Chosen: five storeys, as the commonest Soviet panel block. 15 m2 of floor a person, Hong Kong''s.'
+- of:
+  - built_of
+  tier: sourced
+  source: standards/sources/research_people_plant.json
+  note: '1,040 kg of concrete and 58 kg of steel for each m2 of floor: the average of 538 residential buildings in China. Glass, brick, pipes and wire are not counted: no figures were found.'
+- of:
+  - physical.mass
+  tier: derived
+  source: standards/sources/research_people_plant.json
+  note: '1,103 kg for each m2 of floor, all materials: the average of 18 mid- and high-rise buildings, mostly in Toronto. Of a residential building''s weight about 1,040 kg a m2 is concrete and 58 steel (538 buildings in China).'
+- of:
+  - life
+  rule: rule.life-building
+revision:
+  status: deprecated
+  owner: registry
+  on_conflict: propose
+  replaced_by: layout.building-bunkhouse
+  because: 'The owner, 2026-10-17: a building is a layout, laid of units, structure and kit on its site like the factories, not one model. This record stands for the game until its layout exists; no new model work on it.'

@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/planet-event.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-event.subduction-consumed
+  name: Subduction(consumed)
+  about: subduction(consumed)
+source: subduction(consumed)
+emitted_by:
+- planet-process.subduction
+payload:
+- name: t_gyr
+- name: area_m2
+status: draft

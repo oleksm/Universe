@@ -1,0 +1,80 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+identity:
+  key: planet-view.world
+  name: world
+  about: 'the world from anchors with the land in its cover (planet-view.rings-cover''s classes and colours: biomes, the treeline,
+    ice, wet ground) shaded by the rebuilt relief; the sea in depth tints; the rivers as on the world from anchors'
+title: 'The world: land cover on the world from anchors'
+row: top (history views)
+file_suffix: _world.png (+ .legend.json)
+shown: true
+status: draft
+draws:
+  words: 'the world from anchors with the land in its cover (planet-view.rings-cover''s classes and colours: biomes, the treeline,
+    ice, wet ground) shaded by the rebuilt relief; the sea in depth tints; the rivers as on the world from anchors'
+legend:
+  title: 'The world: land cover on the world from anchors'
+  source: planet_anchors.py unfold, preview.py relief; the rings-basins, rings-cover and samples records
+  rows:
+  - key: head-cover
+    kind: head
+    label: 'Land: the cover of the land cover layer (biomes, ice, wet ground), shaded by the relief'
+    shown_when: always
+  - key: head-sea
+    kind: head
+    label: 'Sea: the depth tints'
+    shown_when: always
+  - kind: fill
+    label: sea at -8000 m
+    colour:
+    - 8
+    - 20
+    - 60
+    shown_when: always
+    key: tint:sea-at--8000-m
+  - kind: fill
+    label: sea at -4000 m
+    colour:
+    - 20
+    - 50
+    - 110
+    shown_when: always
+    key: tint:sea-at--4000-m
+  - kind: fill
+    label: sea at -1000 m
+    colour:
+    - 40
+    - 90
+    - 160
+    shown_when: always
+    key: tint:sea-at--1000-m
+  - kind: fill
+    label: sea at 0 m
+    colour:
+    - 90
+    - 150
+    - 200
+    shown_when: always
+    key: tint:sea-at-0-m
+  - key: head-rivers
+    kind: head
+    label: Rivers (the sim's own courses, as on the basins layer)
+    shown_when: always
+  - key: river
+    kind: line
+    label: rivers flowing, > 300 m³/s; thicker over 30,000 m³/s ({n_rivers} courses)
+    colour:
+    - 30
+    - 90
+    - 200
+    shown_when: rivers
+implementations:
+- where: planet-forge crates/viewer/src/layers/anchors.rs
+  state: current
+  note: the viewer
+basis:
+- of:
+  - legend
+  - draws
+  tier: derived
+  note: 'planets, 17 Oct 2026: the viewer (crates/viewer/src/layers/anchors.rs), the owner''s world-from-anchors requests.'

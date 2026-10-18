@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.volcanic.edifice.resurgent-dome
+  name: Resurgent dome
+  about: Resurgent dome.
+family: volcanic
+factors:
+- factor: planet-factor.other-magma-recharge
+  weight: 3
+  why: renewed magma pressure after collapse uplifts the caldera floor block
+- factor: planet-factor.tect-setting
+  weight: 1
+  why: large silicic calderas (Yellowstone, Valles, Long Valley, Toba)
+- factor: planet-factor.volc-magma
+  weight: 1
+  why: 'silicic, viscous: uplift rather than eruption; post-resurgence lava domes on ring fracture'
+- factor: planet-factor.tect-fault
+  weight: 3
+  why: ring faults and apical graben fault the dome
+- factor: planet-factor.lake-level
+  weight: 1
+  why: caldera lake may surround dome, giving island (Samosir) and raised lake beds
+- factor: planet-factor.time
+  weight: 1
+  why: forms within ~10s-100s kyr after collapse
+- factor: planet-factor.other-magma-supply
+  weight: 3
+  why: only large calderas (>~10 km) above big silicic chambers resurge
+vocabulary_id: 178
+sources:
+- https://en.wikipedia.org/wiki/Resurgent_dome
+- https://en.wikipedia.org/wiki/Caldera
+library_status: planned
+source: volcanic.edifice.resurgent_dome
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

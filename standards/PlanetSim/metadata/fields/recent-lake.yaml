@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry_extra.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-field.recent-lake
+  name: Lake now (recent epoch)
+  about: Whether a sample held a lake at the last recent-epoch step.
+unit: '1'
+per: sample
+producer:
+  where: tools/recent.py
+  file: ctx
+  key: r_lake_now
+  epoch: the end of the recent epoch
+status: draft
+basis:
+- of:
+  - identity
+  - producer
+  - unit
+  tier: derived
+  note: 'planets, 17 Oct 2026: from the Python sim''s inventory (planet-forge docs/registry-migration/surface.json), read
+    from the code.'

@@ -1,0 +1,56 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.coastal.drowned.ria
+  name: Ria (drowned unglaciated river valley)
+  about: Ria (drowned unglaciated river valley).
+family: coastal
+factors:
+- factor: planet-factor.sea-level
+  weight: 3
+  why: ~120 m post-glacial rise (or subsidence) floods valleys
+- factor: planet-factor.ice-extent
+  weight: 3
+  why: valley unglaciated in last glacial; glaciated valleys become fjords
+- factor: planet-factor.relief-inherited
+  weight: 3
+  why: dendritic fluvially incised valleys set the branching outline
+- factor: planet-factor.tect-fold
+  weight: 1
+  why: 'strike vs coast: valleys across structure give Atlantic rias, along strike Pacific/Dalmatian type'
+- factor: planet-factor.rock-type
+  weight: 1
+  why: hard crystalline or folded rock preserves steep valley walls
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: dissected upland meeting the sea
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: stable or subsiding coast; uplift would emerge valleys
+- factor: planet-factor.sed-supply
+  weight: 1
+  why: low infill keeps ria open; high supply turns it into estuary/delta
+- factor: planet-factor.time
+  weight: 1
+  why: flooded 7-20 ka
+vocabulary_id: 22
+sources:
+- https://en.wikipedia.org/wiki/Ria
+- https://www.nps.gov/articles/estuary-landforms.htm
+- https://www.nps.gov/articles/rocky-coast-landforms.htm
+library_status: written
+source: coastal.drowned.ria
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

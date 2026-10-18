@@ -1,0 +1,3405 @@
+# yaml-language-server: $schema=../../schema/layout.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: layout.building-park
+  name: Park, world with air
+  description: 'Open ground kept green under a sky or a dome: paths, trees, water and a field to play on. Laid of the kit: a strut frame on the 3 m grid, panels, and 561 rooms of 6 m furnished piece by piece (561 garden).'
+stands_for: building.park
+site:
+  atmosphere: air
+  gravity:
+  - 8.0
+  - 11.0
+physical:
+  length: 198.0
+  width: 102.0
+  height: 2.2
+  mass: 2266440.0
+bays: []
+rooms:
+- id: GAR1
+  arrangement: arrangement.garden
+  at:
+  - -96.0
+  - -48.0
+  - 0.0
+- id: GAR2
+  arrangement: arrangement.garden
+  at:
+  - -90.0
+  - -48.0
+  - 0.0
+- id: GAR3
+  arrangement: arrangement.garden
+  at:
+  - -84.0
+  - -48.0
+  - 0.0
+- id: GAR4
+  arrangement: arrangement.garden
+  at:
+  - -78.0
+  - -48.0
+  - 0.0
+- id: GAR5
+  arrangement: arrangement.garden
+  at:
+  - -72.0
+  - -48.0
+  - 0.0
+- id: GAR6
+  arrangement: arrangement.garden
+  at:
+  - -66.0
+  - -48.0
+  - 0.0
+- id: GAR7
+  arrangement: arrangement.garden
+  at:
+  - -60.0
+  - -48.0
+  - 0.0
+- id: GAR8
+  arrangement: arrangement.garden
+  at:
+  - -54.0
+  - -48.0
+  - 0.0
+- id: GAR9
+  arrangement: arrangement.garden
+  at:
+  - -48.0
+  - -48.0
+  - 0.0
+- id: GAR10
+  arrangement: arrangement.garden
+  at:
+  - -42.0
+  - -48.0
+  - 0.0
+- id: GAR11
+  arrangement: arrangement.garden
+  at:
+  - -36.0
+  - -48.0
+  - 0.0
+- id: GAR12
+  arrangement: arrangement.garden
+  at:
+  - -30.0
+  - -48.0
+  - 0.0
+- id: GAR13
+  arrangement: arrangement.garden
+  at:
+  - -24.0
+  - -48.0
+  - 0.0
+- id: GAR14
+  arrangement: arrangement.garden
+  at:
+  - -18.0
+  - -48.0
+  - 0.0
+- id: GAR15
+  arrangement: arrangement.garden
+  at:
+  - -12.0
+  - -48.0
+  - 0.0
+- id: GAR16
+  arrangement: arrangement.garden
+  at:
+  - -6.0
+  - -48.0
+  - 0.0
+- id: GAR17
+  arrangement: arrangement.garden
+  at:
+  - 0.0
+  - -48.0
+  - 0.0
+- id: GAR18
+  arrangement: arrangement.garden
+  at:
+  - 6.0
+  - -48.0
+  - 0.0
+- id: GAR19
+  arrangement: arrangement.garden
+  at:
+  - 12.0
+  - -48.0
+  - 0.0
+- id: GAR20
+  arrangement: arrangement.garden
+  at:
+  - 18.0
+  - -48.0
+  - 0.0
+- id: GAR21
+  arrangement: arrangement.garden
+  at:
+  - 24.0
+  - -48.0
+  - 0.0
+- id: GAR22
+  arrangement: arrangement.garden
+  at:
+  - 30.0
+  - -48.0
+  - 0.0
+- id: GAR23
+  arrangement: arrangement.garden
+  at:
+  - 36.0
+  - -48.0
+  - 0.0
+- id: GAR24
+  arrangement: arrangement.garden
+  at:
+  - 42.0
+  - -48.0
+  - 0.0
+- id: GAR25
+  arrangement: arrangement.garden
+  at:
+  - 48.0
+  - -48.0
+  - 0.0
+- id: GAR26
+  arrangement: arrangement.garden
+  at:
+  - 54.0
+  - -48.0
+  - 0.0
+- id: GAR27
+  arrangement: arrangement.garden
+  at:
+  - 60.0
+  - -48.0
+  - 0.0
+- id: GAR28
+  arrangement: arrangement.garden
+  at:
+  - 66.0
+  - -48.0
+  - 0.0
+- id: GAR29
+  arrangement: arrangement.garden
+  at:
+  - 72.0
+  - -48.0
+  - 0.0
+- id: GAR30
+  arrangement: arrangement.garden
+  at:
+  - 78.0
+  - -48.0
+  - 0.0
+- id: GAR31
+  arrangement: arrangement.garden
+  at:
+  - 84.0
+  - -48.0
+  - 0.0
+- id: GAR32
+  arrangement: arrangement.garden
+  at:
+  - 90.0
+  - -48.0
+  - 0.0
+- id: GAR33
+  arrangement: arrangement.garden
+  at:
+  - 96.0
+  - -48.0
+  - 0.0
+- id: GAR34
+  arrangement: arrangement.garden
+  at:
+  - -96.0
+  - -42.0
+  - 0.0
+- id: GAR35
+  arrangement: arrangement.garden
+  at:
+  - -90.0
+  - -42.0
+  - 0.0
+- id: GAR36
+  arrangement: arrangement.garden
+  at:
+  - -84.0
+  - -42.0
+  - 0.0
+- id: GAR37
+  arrangement: arrangement.garden
+  at:
+  - -78.0
+  - -42.0
+  - 0.0
+- id: GAR38
+  arrangement: arrangement.garden
+  at:
+  - -72.0
+  - -42.0
+  - 0.0
+- id: GAR39
+  arrangement: arrangement.garden
+  at:
+  - -66.0
+  - -42.0
+  - 0.0
+- id: GAR40
+  arrangement: arrangement.garden
+  at:
+  - -60.0
+  - -42.0
+  - 0.0
+- id: GAR41
+  arrangement: arrangement.garden
+  at:
+  - -54.0
+  - -42.0
+  - 0.0
+- id: GAR42
+  arrangement: arrangement.garden
+  at:
+  - -48.0
+  - -42.0
+  - 0.0
+- id: GAR43
+  arrangement: arrangement.garden
+  at:
+  - -42.0
+  - -42.0
+  - 0.0
+- id: GAR44
+  arrangement: arrangement.garden
+  at:
+  - -36.0
+  - -42.0
+  - 0.0
+- id: GAR45
+  arrangement: arrangement.garden
+  at:
+  - -30.0
+  - -42.0
+  - 0.0
+- id: GAR46
+  arrangement: arrangement.garden
+  at:
+  - -24.0
+  - -42.0
+  - 0.0
+- id: GAR47
+  arrangement: arrangement.garden
+  at:
+  - -18.0
+  - -42.0
+  - 0.0
+- id: GAR48
+  arrangement: arrangement.garden
+  at:
+  - -12.0
+  - -42.0
+  - 0.0
+- id: GAR49
+  arrangement: arrangement.garden
+  at:
+  - -6.0
+  - -42.0
+  - 0.0
+- id: GAR50
+  arrangement: arrangement.garden
+  at:
+  - 0.0
+  - -42.0
+  - 0.0
+- id: GAR51
+  arrangement: arrangement.garden
+  at:
+  - 6.0
+  - -42.0
+  - 0.0
+- id: GAR52
+  arrangement: arrangement.garden
+  at:
+  - 12.0
+  - -42.0
+  - 0.0
+- id: GAR53
+  arrangement: arrangement.garden
+  at:
+  - 18.0
+  - -42.0
+  - 0.0
+- id: GAR54
+  arrangement: arrangement.garden
+  at:
+  - 24.0
+  - -42.0
+  - 0.0
+- id: GAR55
+  arrangement: arrangement.garden
+  at:
+  - 30.0
+  - -42.0
+  - 0.0
+- id: GAR56
+  arrangement: arrangement.garden
+  at:
+  - 36.0
+  - -42.0
+  - 0.0
+- id: GAR57
+  arrangement: arrangement.garden
+  at:
+  - 42.0
+  - -42.0
+  - 0.0
+- id: GAR58
+  arrangement: arrangement.garden
+  at:
+  - 48.0
+  - -42.0
+  - 0.0
+- id: GAR59
+  arrangement: arrangement.garden
+  at:
+  - 54.0
+  - -42.0
+  - 0.0
+- id: GAR60
+  arrangement: arrangement.garden
+  at:
+  - 60.0
+  - -42.0
+  - 0.0
+- id: GAR61
+  arrangement: arrangement.garden
+  at:
+  - 66.0
+  - -42.0
+  - 0.0
+- id: GAR62
+  arrangement: arrangement.garden
+  at:
+  - 72.0
+  - -42.0
+  - 0.0
+- id: GAR63
+  arrangement: arrangement.garden
+  at:
+  - 78.0
+  - -42.0
+  - 0.0
+- id: GAR64
+  arrangement: arrangement.garden
+  at:
+  - 84.0
+  - -42.0
+  - 0.0
+- id: GAR65
+  arrangement: arrangement.garden
+  at:
+  - 90.0
+  - -42.0
+  - 0.0
+- id: GAR66
+  arrangement: arrangement.garden
+  at:
+  - 96.0
+  - -42.0
+  - 0.0
+- id: GAR67
+  arrangement: arrangement.garden
+  at:
+  - -96.0
+  - -36.0
+  - 0.0
+- id: GAR68
+  arrangement: arrangement.garden
+  at:
+  - -90.0
+  - -36.0
+  - 0.0
+- id: GAR69
+  arrangement: arrangement.garden
+  at:
+  - -84.0
+  - -36.0
+  - 0.0
+- id: GAR70
+  arrangement: arrangement.garden
+  at:
+  - -78.0
+  - -36.0
+  - 0.0
+- id: GAR71
+  arrangement: arrangement.garden
+  at:
+  - -72.0
+  - -36.0
+  - 0.0
+- id: GAR72
+  arrangement: arrangement.garden
+  at:
+  - -66.0
+  - -36.0
+  - 0.0
+- id: GAR73
+  arrangement: arrangement.garden
+  at:
+  - -60.0
+  - -36.0
+  - 0.0
+- id: GAR74
+  arrangement: arrangement.garden
+  at:
+  - -54.0
+  - -36.0
+  - 0.0
+- id: GAR75
+  arrangement: arrangement.garden
+  at:
+  - -48.0
+  - -36.0
+  - 0.0
+- id: GAR76
+  arrangement: arrangement.garden
+  at:
+  - -42.0
+  - -36.0
+  - 0.0
+- id: GAR77
+  arrangement: arrangement.garden
+  at:
+  - -36.0
+  - -36.0
+  - 0.0
+- id: GAR78
+  arrangement: arrangement.garden
+  at:
+  - -30.0
+  - -36.0
+  - 0.0
+- id: GAR79
+  arrangement: arrangement.garden
+  at:
+  - -24.0
+  - -36.0
+  - 0.0
+- id: GAR80
+  arrangement: arrangement.garden
+  at:
+  - -18.0
+  - -36.0
+  - 0.0
+- id: GAR81
+  arrangement: arrangement.garden
+  at:
+  - -12.0
+  - -36.0
+  - 0.0
+- id: GAR82
+  arrangement: arrangement.garden
+  at:
+  - -6.0
+  - -36.0
+  - 0.0
+- id: GAR83
+  arrangement: arrangement.garden
+  at:
+  - 0.0
+  - -36.0
+  - 0.0
+- id: GAR84
+  arrangement: arrangement.garden
+  at:
+  - 6.0
+  - -36.0
+  - 0.0
+- id: GAR85
+  arrangement: arrangement.garden
+  at:
+  - 12.0
+  - -36.0
+  - 0.0
+- id: GAR86
+  arrangement: arrangement.garden
+  at:
+  - 18.0
+  - -36.0
+  - 0.0
+- id: GAR87
+  arrangement: arrangement.garden
+  at:
+  - 24.0
+  - -36.0
+  - 0.0
+- id: GAR88
+  arrangement: arrangement.garden
+  at:
+  - 30.0
+  - -36.0
+  - 0.0
+- id: GAR89
+  arrangement: arrangement.garden
+  at:
+  - 36.0
+  - -36.0
+  - 0.0
+- id: GAR90
+  arrangement: arrangement.garden
+  at:
+  - 42.0
+  - -36.0
+  - 0.0
+- id: GAR91
+  arrangement: arrangement.garden
+  at:
+  - 48.0
+  - -36.0
+  - 0.0
+- id: GAR92
+  arrangement: arrangement.garden
+  at:
+  - 54.0
+  - -36.0
+  - 0.0
+- id: GAR93
+  arrangement: arrangement.garden
+  at:
+  - 60.0
+  - -36.0
+  - 0.0
+- id: GAR94
+  arrangement: arrangement.garden
+  at:
+  - 66.0
+  - -36.0
+  - 0.0
+- id: GAR95
+  arrangement: arrangement.garden
+  at:
+  - 72.0
+  - -36.0
+  - 0.0
+- id: GAR96
+  arrangement: arrangement.garden
+  at:
+  - 78.0
+  - -36.0
+  - 0.0
+- id: GAR97
+  arrangement: arrangement.garden
+  at:
+  - 84.0
+  - -36.0
+  - 0.0
+- id: GAR98
+  arrangement: arrangement.garden
+  at:
+  - 90.0
+  - -36.0
+  - 0.0
+- id: GAR99
+  arrangement: arrangement.garden
+  at:
+  - 96.0
+  - -36.0
+  - 0.0
+- id: GAR100
+  arrangement: arrangement.garden
+  at:
+  - -96.0
+  - -30.0
+  - 0.0
+- id: GAR101
+  arrangement: arrangement.garden
+  at:
+  - -90.0
+  - -30.0
+  - 0.0
+- id: GAR102
+  arrangement: arrangement.garden
+  at:
+  - -84.0
+  - -30.0
+  - 0.0
+- id: GAR103
+  arrangement: arrangement.garden
+  at:
+  - -78.0
+  - -30.0
+  - 0.0
+- id: GAR104
+  arrangement: arrangement.garden
+  at:
+  - -72.0
+  - -30.0
+  - 0.0
+- id: GAR105
+  arrangement: arrangement.garden
+  at:
+  - -66.0
+  - -30.0
+  - 0.0
+- id: GAR106
+  arrangement: arrangement.garden
+  at:
+  - -60.0
+  - -30.0
+  - 0.0
+- id: GAR107
+  arrangement: arrangement.garden
+  at:
+  - -54.0
+  - -30.0
+  - 0.0
+- id: GAR108
+  arrangement: arrangement.garden
+  at:
+  - -48.0
+  - -30.0
+  - 0.0
+- id: GAR109
+  arrangement: arrangement.garden
+  at:
+  - -42.0
+  - -30.0
+  - 0.0
+- id: GAR110
+  arrangement: arrangement.garden
+  at:
+  - -36.0
+  - -30.0
+  - 0.0
+- id: GAR111
+  arrangement: arrangement.garden
+  at:
+  - -30.0
+  - -30.0
+  - 0.0
+- id: GAR112
+  arrangement: arrangement.garden
+  at:
+  - -24.0
+  - -30.0
+  - 0.0
+- id: GAR113
+  arrangement: arrangement.garden
+  at:
+  - -18.0
+  - -30.0
+  - 0.0
+- id: GAR114
+  arrangement: arrangement.garden
+  at:
+  - -12.0
+  - -30.0
+  - 0.0
+- id: GAR115
+  arrangement: arrangement.garden
+  at:
+  - -6.0
+  - -30.0
+  - 0.0
+- id: GAR116
+  arrangement: arrangement.garden
+  at:
+  - 0.0
+  - -30.0
+  - 0.0
+- id: GAR117
+  arrangement: arrangement.garden
+  at:
+  - 6.0
+  - -30.0
+  - 0.0
+- id: GAR118
+  arrangement: arrangement.garden
+  at:
+  - 12.0
+  - -30.0
+  - 0.0
+- id: GAR119
+  arrangement: arrangement.garden
+  at:
+  - 18.0
+  - -30.0
+  - 0.0
+- id: GAR120
+  arrangement: arrangement.garden
+  at:
+  - 24.0
+  - -30.0
+  - 0.0
+- id: GAR121
+  arrangement: arrangement.garden
+  at:
+  - 30.0
+  - -30.0
+  - 0.0
+- id: GAR122
+  arrangement: arrangement.garden
+  at:
+  - 36.0
+  - -30.0
+  - 0.0
+- id: GAR123
+  arrangement: arrangement.garden
+  at:
+  - 42.0
+  - -30.0
+  - 0.0
+- id: GAR124
+  arrangement: arrangement.garden
+  at:
+  - 48.0
+  - -30.0
+  - 0.0
+- id: GAR125
+  arrangement: arrangement.garden
+  at:
+  - 54.0
+  - -30.0
+  - 0.0
+- id: GAR126
+  arrangement: arrangement.garden
+  at:
+  - 60.0
+  - -30.0
+  - 0.0
+- id: GAR127
+  arrangement: arrangement.garden
+  at:
+  - 66.0
+  - -30.0
+  - 0.0
+- id: GAR128
+  arrangement: arrangement.garden
+  at:
+  - 72.0
+  - -30.0
+  - 0.0
+- id: GAR129
+  arrangement: arrangement.garden
+  at:
+  - 78.0
+  - -30.0
+  - 0.0
+- id: GAR130
+  arrangement: arrangement.garden
+  at:
+  - 84.0
+  - -30.0
+  - 0.0
+- id: GAR131
+  arrangement: arrangement.garden
+  at:
+  - 90.0
+  - -30.0
+  - 0.0
+- id: GAR132
+  arrangement: arrangement.garden
+  at:
+  - 96.0
+  - -30.0
+  - 0.0
+- id: GAR133
+  arrangement: arrangement.garden
+  at:
+  - -96.0
+  - -24.0
+  - 0.0
+- id: GAR134
+  arrangement: arrangement.garden
+  at:
+  - -90.0
+  - -24.0
+  - 0.0
+- id: GAR135
+  arrangement: arrangement.garden
+  at:
+  - -84.0
+  - -24.0
+  - 0.0
+- id: GAR136
+  arrangement: arrangement.garden
+  at:
+  - -78.0
+  - -24.0
+  - 0.0
+- id: GAR137
+  arrangement: arrangement.garden
+  at:
+  - -72.0
+  - -24.0
+  - 0.0
+- id: GAR138
+  arrangement: arrangement.garden
+  at:
+  - -66.0
+  - -24.0
+  - 0.0
+- id: GAR139
+  arrangement: arrangement.garden
+  at:
+  - -60.0
+  - -24.0
+  - 0.0
+- id: GAR140
+  arrangement: arrangement.garden
+  at:
+  - -54.0
+  - -24.0
+  - 0.0
+- id: GAR141
+  arrangement: arrangement.garden
+  at:
+  - -48.0
+  - -24.0
+  - 0.0
+- id: GAR142
+  arrangement: arrangement.garden
+  at:
+  - -42.0
+  - -24.0
+  - 0.0
+- id: GAR143
+  arrangement: arrangement.garden
+  at:
+  - -36.0
+  - -24.0
+  - 0.0
+- id: GAR144
+  arrangement: arrangement.garden
+  at:
+  - -30.0
+  - -24.0
+  - 0.0
+- id: GAR145
+  arrangement: arrangement.garden
+  at:
+  - -24.0
+  - -24.0
+  - 0.0
+- id: GAR146
+  arrangement: arrangement.garden
+  at:
+  - -18.0
+  - -24.0
+  - 0.0
+- id: GAR147
+  arrangement: arrangement.garden
+  at:
+  - -12.0
+  - -24.0
+  - 0.0
+- id: GAR148
+  arrangement: arrangement.garden
+  at:
+  - -6.0
+  - -24.0
+  - 0.0
+- id: GAR149
+  arrangement: arrangement.garden
+  at:
+  - 0.0
+  - -24.0
+  - 0.0
+- id: GAR150
+  arrangement: arrangement.garden
+  at:
+  - 6.0
+  - -24.0
+  - 0.0
+- id: GAR151
+  arrangement: arrangement.garden
+  at:
+  - 12.0
+  - -24.0
+  - 0.0
+- id: GAR152
+  arrangement: arrangement.garden
+  at:
+  - 18.0
+  - -24.0
+  - 0.0
+- id: GAR153
+  arrangement: arrangement.garden
+  at:
+  - 24.0
+  - -24.0
+  - 0.0
+- id: GAR154
+  arrangement: arrangement.garden
+  at:
+  - 30.0
+  - -24.0
+  - 0.0
+- id: GAR155
+  arrangement: arrangement.garden
+  at:
+  - 36.0
+  - -24.0
+  - 0.0
+- id: GAR156
+  arrangement: arrangement.garden
+  at:
+  - 42.0
+  - -24.0
+  - 0.0
+- id: GAR157
+  arrangement: arrangement.garden
+  at:
+  - 48.0
+  - -24.0
+  - 0.0
+- id: GAR158
+  arrangement: arrangement.garden
+  at:
+  - 54.0
+  - -24.0
+  - 0.0
+- id: GAR159
+  arrangement: arrangement.garden
+  at:
+  - 60.0
+  - -24.0
+  - 0.0
+- id: GAR160
+  arrangement: arrangement.garden
+  at:
+  - 66.0
+  - -24.0
+  - 0.0
+- id: GAR161
+  arrangement: arrangement.garden
+  at:
+  - 72.0
+  - -24.0
+  - 0.0
+- id: GAR162
+  arrangement: arrangement.garden
+  at:
+  - 78.0
+  - -24.0
+  - 0.0
+- id: GAR163
+  arrangement: arrangement.garden
+  at:
+  - 84.0
+  - -24.0
+  - 0.0
+- id: GAR164
+  arrangement: arrangement.garden
+  at:
+  - 90.0
+  - -24.0
+  - 0.0
+- id: GAR165
+  arrangement: arrangement.garden
+  at:
+  - 96.0
+  - -24.0
+  - 0.0
+- id: GAR166
+  arrangement: arrangement.garden
+  at:
+  - -96.0
+  - -18.0
+  - 0.0
+- id: GAR167
+  arrangement: arrangement.garden
+  at:
+  - -90.0
+  - -18.0
+  - 0.0
+- id: GAR168
+  arrangement: arrangement.garden
+  at:
+  - -84.0
+  - -18.0
+  - 0.0
+- id: GAR169
+  arrangement: arrangement.garden
+  at:
+  - -78.0
+  - -18.0
+  - 0.0
+- id: GAR170
+  arrangement: arrangement.garden
+  at:
+  - -72.0
+  - -18.0
+  - 0.0
+- id: GAR171
+  arrangement: arrangement.garden
+  at:
+  - -66.0
+  - -18.0
+  - 0.0
+- id: GAR172
+  arrangement: arrangement.garden
+  at:
+  - -60.0
+  - -18.0
+  - 0.0
+- id: GAR173
+  arrangement: arrangement.garden
+  at:
+  - -54.0
+  - -18.0
+  - 0.0
+- id: GAR174
+  arrangement: arrangement.garden
+  at:
+  - -48.0
+  - -18.0
+  - 0.0
+- id: GAR175
+  arrangement: arrangement.garden
+  at:
+  - -42.0
+  - -18.0
+  - 0.0
+- id: GAR176
+  arrangement: arrangement.garden
+  at:
+  - -36.0
+  - -18.0
+  - 0.0
+- id: GAR177
+  arrangement: arrangement.garden
+  at:
+  - -30.0
+  - -18.0
+  - 0.0
+- id: GAR178
+  arrangement: arrangement.garden
+  at:
+  - -24.0
+  - -18.0
+  - 0.0
+- id: GAR179
+  arrangement: arrangement.garden
+  at:
+  - -18.0
+  - -18.0
+  - 0.0
+- id: GAR180
+  arrangement: arrangement.garden
+  at:
+  - -12.0
+  - -18.0
+  - 0.0
+- id: GAR181
+  arrangement: arrangement.garden
+  at:
+  - -6.0
+  - -18.0
+  - 0.0
+- id: GAR182
+  arrangement: arrangement.garden
+  at:
+  - 0.0
+  - -18.0
+  - 0.0
+- id: GAR183
+  arrangement: arrangement.garden
+  at:
+  - 6.0
+  - -18.0
+  - 0.0
+- id: GAR184
+  arrangement: arrangement.garden
+  at:
+  - 12.0
+  - -18.0
+  - 0.0
+- id: GAR185
+  arrangement: arrangement.garden
+  at:
+  - 18.0
+  - -18.0
+  - 0.0
+- id: GAR186
+  arrangement: arrangement.garden
+  at:
+  - 24.0
+  - -18.0
+  - 0.0
+- id: GAR187
+  arrangement: arrangement.garden
+  at:
+  - 30.0
+  - -18.0
+  - 0.0
+- id: GAR188
+  arrangement: arrangement.garden
+  at:
+  - 36.0
+  - -18.0
+  - 0.0
+- id: GAR189
+  arrangement: arrangement.garden
+  at:
+  - 42.0
+  - -18.0
+  - 0.0
+- id: GAR190
+  arrangement: arrangement.garden
+  at:
+  - 48.0
+  - -18.0
+  - 0.0
+- id: GAR191
+  arrangement: arrangement.garden
+  at:
+  - 54.0
+  - -18.0
+  - 0.0
+- id: GAR192
+  arrangement: arrangement.garden
+  at:
+  - 60.0
+  - -18.0
+  - 0.0
+- id: GAR193
+  arrangement: arrangement.garden
+  at:
+  - 66.0
+  - -18.0
+  - 0.0
+- id: GAR194
+  arrangement: arrangement.garden
+  at:
+  - 72.0
+  - -18.0
+  - 0.0
+- id: GAR195
+  arrangement: arrangement.garden
+  at:
+  - 78.0
+  - -18.0
+  - 0.0
+- id: GAR196
+  arrangement: arrangement.garden
+  at:
+  - 84.0
+  - -18.0
+  - 0.0
+- id: GAR197
+  arrangement: arrangement.garden
+  at:
+  - 90.0
+  - -18.0
+  - 0.0
+- id: GAR198
+  arrangement: arrangement.garden
+  at:
+  - 96.0
+  - -18.0
+  - 0.0
+- id: GAR199
+  arrangement: arrangement.garden
+  at:
+  - -96.0
+  - -12.0
+  - 0.0
+- id: GAR200
+  arrangement: arrangement.garden
+  at:
+  - -90.0
+  - -12.0
+  - 0.0
+- id: GAR201
+  arrangement: arrangement.garden
+  at:
+  - -84.0
+  - -12.0
+  - 0.0
+- id: GAR202
+  arrangement: arrangement.garden
+  at:
+  - -78.0
+  - -12.0
+  - 0.0
+- id: GAR203
+  arrangement: arrangement.garden
+  at:
+  - -72.0
+  - -12.0
+  - 0.0
+- id: GAR204
+  arrangement: arrangement.garden
+  at:
+  - -66.0
+  - -12.0
+  - 0.0
+- id: GAR205
+  arrangement: arrangement.garden
+  at:
+  - -60.0
+  - -12.0
+  - 0.0
+- id: GAR206
+  arrangement: arrangement.garden
+  at:
+  - -54.0
+  - -12.0
+  - 0.0
+- id: GAR207
+  arrangement: arrangement.garden
+  at:
+  - -48.0
+  - -12.0
+  - 0.0
+- id: GAR208
+  arrangement: arrangement.garden
+  at:
+  - -42.0
+  - -12.0
+  - 0.0
+- id: GAR209
+  arrangement: arrangement.garden
+  at:
+  - -36.0
+  - -12.0
+  - 0.0
+- id: GAR210
+  arrangement: arrangement.garden
+  at:
+  - -30.0
+  - -12.0
+  - 0.0
+- id: GAR211
+  arrangement: arrangement.garden
+  at:
+  - -24.0
+  - -12.0
+  - 0.0
+- id: GAR212
+  arrangement: arrangement.garden
+  at:
+  - -18.0
+  - -12.0
+  - 0.0
+- id: GAR213
+  arrangement: arrangement.garden
+  at:
+  - -12.0
+  - -12.0
+  - 0.0
+- id: GAR214
+  arrangement: arrangement.garden
+  at:
+  - -6.0
+  - -12.0
+  - 0.0
+- id: GAR215
+  arrangement: arrangement.garden
+  at:
+  - 0.0
+  - -12.0
+  - 0.0
+- id: GAR216
+  arrangement: arrangement.garden
+  at:
+  - 6.0
+  - -12.0
+  - 0.0
+- id: GAR217
+  arrangement: arrangement.garden
+  at:
+  - 12.0
+  - -12.0
+  - 0.0
+- id: GAR218
+  arrangement: arrangement.garden
+  at:
+  - 18.0
+  - -12.0
+  - 0.0
+- id: GAR219
+  arrangement: arrangement.garden
+  at:
+  - 24.0
+  - -12.0
+  - 0.0
+- id: GAR220
+  arrangement: arrangement.garden
+  at:
+  - 30.0
+  - -12.0
+  - 0.0
+- id: GAR221
+  arrangement: arrangement.garden
+  at:
+  - 36.0
+  - -12.0
+  - 0.0
+- id: GAR222
+  arrangement: arrangement.garden
+  at:
+  - 42.0
+  - -12.0
+  - 0.0
+- id: GAR223
+  arrangement: arrangement.garden
+  at:
+  - 48.0
+  - -12.0
+  - 0.0
+- id: GAR224
+  arrangement: arrangement.garden
+  at:
+  - 54.0
+  - -12.0
+  - 0.0
+- id: GAR225
+  arrangement: arrangement.garden
+  at:
+  - 60.0
+  - -12.0
+  - 0.0
+- id: GAR226
+  arrangement: arrangement.garden
+  at:
+  - 66.0
+  - -12.0
+  - 0.0
+- id: GAR227
+  arrangement: arrangement.garden
+  at:
+  - 72.0
+  - -12.0
+  - 0.0
+- id: GAR228
+  arrangement: arrangement.garden
+  at:
+  - 78.0
+  - -12.0
+  - 0.0
+- id: GAR229
+  arrangement: arrangement.garden
+  at:
+  - 84.0
+  - -12.0
+  - 0.0
+- id: GAR230
+  arrangement: arrangement.garden
+  at:
+  - 90.0
+  - -12.0
+  - 0.0
+- id: GAR231
+  arrangement: arrangement.garden
+  at:
+  - 96.0
+  - -12.0
+  - 0.0
+- id: GAR232
+  arrangement: arrangement.garden
+  at:
+  - -96.0
+  - -6.0
+  - 0.0
+- id: GAR233
+  arrangement: arrangement.garden
+  at:
+  - -90.0
+  - -6.0
+  - 0.0
+- id: GAR234
+  arrangement: arrangement.garden
+  at:
+  - -84.0
+  - -6.0
+  - 0.0
+- id: GAR235
+  arrangement: arrangement.garden
+  at:
+  - -78.0
+  - -6.0
+  - 0.0
+- id: GAR236
+  arrangement: arrangement.garden
+  at:
+  - -72.0
+  - -6.0
+  - 0.0
+- id: GAR237
+  arrangement: arrangement.garden
+  at:
+  - -66.0
+  - -6.0
+  - 0.0
+- id: GAR238
+  arrangement: arrangement.garden
+  at:
+  - -60.0
+  - -6.0
+  - 0.0
+- id: GAR239
+  arrangement: arrangement.garden
+  at:
+  - -54.0
+  - -6.0
+  - 0.0
+- id: GAR240
+  arrangement: arrangement.garden
+  at:
+  - -48.0
+  - -6.0
+  - 0.0
+- id: GAR241
+  arrangement: arrangement.garden
+  at:
+  - -42.0
+  - -6.0
+  - 0.0
+- id: GAR242
+  arrangement: arrangement.garden
+  at:
+  - -36.0
+  - -6.0
+  - 0.0
+- id: GAR243
+  arrangement: arrangement.garden
+  at:
+  - -30.0
+  - -6.0
+  - 0.0
+- id: GAR244
+  arrangement: arrangement.garden
+  at:
+  - -24.0
+  - -6.0
+  - 0.0
+- id: GAR245
+  arrangement: arrangement.garden
+  at:
+  - -18.0
+  - -6.0
+  - 0.0
+- id: GAR246
+  arrangement: arrangement.garden
+  at:
+  - -12.0
+  - -6.0
+  - 0.0
+- id: GAR247
+  arrangement: arrangement.garden
+  at:
+  - -6.0
+  - -6.0
+  - 0.0
+- id: GAR248
+  arrangement: arrangement.garden
+  at:
+  - 0.0
+  - -6.0
+  - 0.0
+- id: GAR249
+  arrangement: arrangement.garden
+  at:
+  - 6.0
+  - -6.0
+  - 0.0
+- id: GAR250
+  arrangement: arrangement.garden
+  at:
+  - 12.0
+  - -6.0
+  - 0.0
+- id: GAR251
+  arrangement: arrangement.garden
+  at:
+  - 18.0
+  - -6.0
+  - 0.0
+- id: GAR252
+  arrangement: arrangement.garden
+  at:
+  - 24.0
+  - -6.0
+  - 0.0
+- id: GAR253
+  arrangement: arrangement.garden
+  at:
+  - 30.0
+  - -6.0
+  - 0.0
+- id: GAR254
+  arrangement: arrangement.garden
+  at:
+  - 36.0
+  - -6.0
+  - 0.0
+- id: GAR255
+  arrangement: arrangement.garden
+  at:
+  - 42.0
+  - -6.0
+  - 0.0
+- id: GAR256
+  arrangement: arrangement.garden
+  at:
+  - 48.0
+  - -6.0
+  - 0.0
+- id: GAR257
+  arrangement: arrangement.garden
+  at:
+  - 54.0
+  - -6.0
+  - 0.0
+- id: GAR258
+  arrangement: arrangement.garden
+  at:
+  - 60.0
+  - -6.0
+  - 0.0
+- id: GAR259
+  arrangement: arrangement.garden
+  at:
+  - 66.0
+  - -6.0
+  - 0.0
+- id: GAR260
+  arrangement: arrangement.garden
+  at:
+  - 72.0
+  - -6.0
+  - 0.0
+- id: GAR261
+  arrangement: arrangement.garden
+  at:
+  - 78.0
+  - -6.0
+  - 0.0
+- id: GAR262
+  arrangement: arrangement.garden
+  at:
+  - 84.0
+  - -6.0
+  - 0.0
+- id: GAR263
+  arrangement: arrangement.garden
+  at:
+  - 90.0
+  - -6.0
+  - 0.0
+- id: GAR264
+  arrangement: arrangement.garden
+  at:
+  - 96.0
+  - -6.0
+  - 0.0
+- id: GAR265
+  arrangement: arrangement.garden
+  at:
+  - -96.0
+  - 0.0
+  - 0.0
+- id: GAR266
+  arrangement: arrangement.garden
+  at:
+  - -90.0
+  - 0.0
+  - 0.0
+- id: GAR267
+  arrangement: arrangement.garden
+  at:
+  - -84.0
+  - 0.0
+  - 0.0
+- id: GAR268
+  arrangement: arrangement.garden
+  at:
+  - -78.0
+  - 0.0
+  - 0.0
+- id: GAR269
+  arrangement: arrangement.garden
+  at:
+  - -72.0
+  - 0.0
+  - 0.0
+- id: GAR270
+  arrangement: arrangement.garden
+  at:
+  - -66.0
+  - 0.0
+  - 0.0
+- id: GAR271
+  arrangement: arrangement.garden
+  at:
+  - -60.0
+  - 0.0
+  - 0.0
+- id: GAR272
+  arrangement: arrangement.garden
+  at:
+  - -54.0
+  - 0.0
+  - 0.0
+- id: GAR273
+  arrangement: arrangement.garden
+  at:
+  - -48.0
+  - 0.0
+  - 0.0
+- id: GAR274
+  arrangement: arrangement.garden
+  at:
+  - -42.0
+  - 0.0
+  - 0.0
+- id: GAR275
+  arrangement: arrangement.garden
+  at:
+  - -36.0
+  - 0.0
+  - 0.0
+- id: GAR276
+  arrangement: arrangement.garden
+  at:
+  - -30.0
+  - 0.0
+  - 0.0
+- id: GAR277
+  arrangement: arrangement.garden
+  at:
+  - -24.0
+  - 0.0
+  - 0.0
+- id: GAR278
+  arrangement: arrangement.garden
+  at:
+  - -18.0
+  - 0.0
+  - 0.0
+- id: GAR279
+  arrangement: arrangement.garden
+  at:
+  - -12.0
+  - 0.0
+  - 0.0
+- id: GAR280
+  arrangement: arrangement.garden
+  at:
+  - -6.0
+  - 0.0
+  - 0.0
+- id: GAR281
+  arrangement: arrangement.garden
+  at:
+  - 0.0
+  - 0.0
+  - 0.0
+- id: GAR282
+  arrangement: arrangement.garden
+  at:
+  - 6.0
+  - 0.0
+  - 0.0
+- id: GAR283
+  arrangement: arrangement.garden
+  at:
+  - 12.0
+  - 0.0
+  - 0.0
+- id: GAR284
+  arrangement: arrangement.garden
+  at:
+  - 18.0
+  - 0.0
+  - 0.0
+- id: GAR285
+  arrangement: arrangement.garden
+  at:
+  - 24.0
+  - 0.0
+  - 0.0
+- id: GAR286
+  arrangement: arrangement.garden
+  at:
+  - 30.0
+  - 0.0
+  - 0.0
+- id: GAR287
+  arrangement: arrangement.garden
+  at:
+  - 36.0
+  - 0.0
+  - 0.0
+- id: GAR288
+  arrangement: arrangement.garden
+  at:
+  - 42.0
+  - 0.0
+  - 0.0
+- id: GAR289
+  arrangement: arrangement.garden
+  at:
+  - 48.0
+  - 0.0
+  - 0.0
+- id: GAR290
+  arrangement: arrangement.garden
+  at:
+  - 54.0
+  - 0.0
+  - 0.0
+- id: GAR291
+  arrangement: arrangement.garden
+  at:
+  - 60.0
+  - 0.0
+  - 0.0
+- id: GAR292
+  arrangement: arrangement.garden
+  at:
+  - 66.0
+  - 0.0
+  - 0.0
+- id: GAR293
+  arrangement: arrangement.garden
+  at:
+  - 72.0
+  - 0.0
+  - 0.0
+- id: GAR294
+  arrangement: arrangement.garden
+  at:
+  - 78.0
+  - 0.0
+  - 0.0
+- id: GAR295
+  arrangement: arrangement.garden
+  at:
+  - 84.0
+  - 0.0
+  - 0.0
+- id: GAR296
+  arrangement: arrangement.garden
+  at:
+  - 90.0
+  - 0.0
+  - 0.0
+- id: GAR297
+  arrangement: arrangement.garden
+  at:
+  - 96.0
+  - 0.0
+  - 0.0
+- id: GAR298
+  arrangement: arrangement.garden
+  at:
+  - -96.0
+  - 6.0
+  - 0.0
+- id: GAR299
+  arrangement: arrangement.garden
+  at:
+  - -90.0
+  - 6.0
+  - 0.0
+- id: GAR300
+  arrangement: arrangement.garden
+  at:
+  - -84.0
+  - 6.0
+  - 0.0
+- id: GAR301
+  arrangement: arrangement.garden
+  at:
+  - -78.0
+  - 6.0
+  - 0.0
+- id: GAR302
+  arrangement: arrangement.garden
+  at:
+  - -72.0
+  - 6.0
+  - 0.0
+- id: GAR303
+  arrangement: arrangement.garden
+  at:
+  - -66.0
+  - 6.0
+  - 0.0
+- id: GAR304
+  arrangement: arrangement.garden
+  at:
+  - -60.0
+  - 6.0
+  - 0.0
+- id: GAR305
+  arrangement: arrangement.garden
+  at:
+  - -54.0
+  - 6.0
+  - 0.0
+- id: GAR306
+  arrangement: arrangement.garden
+  at:
+  - -48.0
+  - 6.0
+  - 0.0
+- id: GAR307
+  arrangement: arrangement.garden
+  at:
+  - -42.0
+  - 6.0
+  - 0.0
+- id: GAR308
+  arrangement: arrangement.garden
+  at:
+  - -36.0
+  - 6.0
+  - 0.0
+- id: GAR309
+  arrangement: arrangement.garden
+  at:
+  - -30.0
+  - 6.0
+  - 0.0
+- id: GAR310
+  arrangement: arrangement.garden
+  at:
+  - -24.0
+  - 6.0
+  - 0.0
+- id: GAR311
+  arrangement: arrangement.garden
+  at:
+  - -18.0
+  - 6.0
+  - 0.0
+- id: GAR312
+  arrangement: arrangement.garden
+  at:
+  - -12.0
+  - 6.0
+  - 0.0
+- id: GAR313
+  arrangement: arrangement.garden
+  at:
+  - -6.0
+  - 6.0
+  - 0.0
+- id: GAR314
+  arrangement: arrangement.garden
+  at:
+  - 0.0
+  - 6.0
+  - 0.0
+- id: GAR315
+  arrangement: arrangement.garden
+  at:
+  - 6.0
+  - 6.0
+  - 0.0
+- id: GAR316
+  arrangement: arrangement.garden
+  at:
+  - 12.0
+  - 6.0
+  - 0.0
+- id: GAR317
+  arrangement: arrangement.garden
+  at:
+  - 18.0
+  - 6.0
+  - 0.0
+- id: GAR318
+  arrangement: arrangement.garden
+  at:
+  - 24.0
+  - 6.0
+  - 0.0
+- id: GAR319
+  arrangement: arrangement.garden
+  at:
+  - 30.0
+  - 6.0
+  - 0.0
+- id: GAR320
+  arrangement: arrangement.garden
+  at:
+  - 36.0
+  - 6.0
+  - 0.0
+- id: GAR321
+  arrangement: arrangement.garden
+  at:
+  - 42.0
+  - 6.0
+  - 0.0
+- id: GAR322
+  arrangement: arrangement.garden
+  at:
+  - 48.0
+  - 6.0
+  - 0.0
+- id: GAR323
+  arrangement: arrangement.garden
+  at:
+  - 54.0
+  - 6.0
+  - 0.0
+- id: GAR324
+  arrangement: arrangement.garden
+  at:
+  - 60.0
+  - 6.0
+  - 0.0
+- id: GAR325
+  arrangement: arrangement.garden
+  at:
+  - 66.0
+  - 6.0
+  - 0.0
+- id: GAR326
+  arrangement: arrangement.garden
+  at:
+  - 72.0
+  - 6.0
+  - 0.0
+- id: GAR327
+  arrangement: arrangement.garden
+  at:
+  - 78.0
+  - 6.0
+  - 0.0
+- id: GAR328
+  arrangement: arrangement.garden
+  at:
+  - 84.0
+  - 6.0
+  - 0.0
+- id: GAR329
+  arrangement: arrangement.garden
+  at:
+  - 90.0
+  - 6.0
+  - 0.0
+- id: GAR330
+  arrangement: arrangement.garden
+  at:
+  - 96.0
+  - 6.0
+  - 0.0
+- id: GAR331
+  arrangement: arrangement.garden
+  at:
+  - -96.0
+  - 12.0
+  - 0.0
+- id: GAR332
+  arrangement: arrangement.garden
+  at:
+  - -90.0
+  - 12.0
+  - 0.0
+- id: GAR333
+  arrangement: arrangement.garden
+  at:
+  - -84.0
+  - 12.0
+  - 0.0
+- id: GAR334
+  arrangement: arrangement.garden
+  at:
+  - -78.0
+  - 12.0
+  - 0.0
+- id: GAR335
+  arrangement: arrangement.garden
+  at:
+  - -72.0
+  - 12.0
+  - 0.0
+- id: GAR336
+  arrangement: arrangement.garden
+  at:
+  - -66.0
+  - 12.0
+  - 0.0
+- id: GAR337
+  arrangement: arrangement.garden
+  at:
+  - -60.0
+  - 12.0
+  - 0.0
+- id: GAR338
+  arrangement: arrangement.garden
+  at:
+  - -54.0
+  - 12.0
+  - 0.0
+- id: GAR339
+  arrangement: arrangement.garden
+  at:
+  - -48.0
+  - 12.0
+  - 0.0
+- id: GAR340
+  arrangement: arrangement.garden
+  at:
+  - -42.0
+  - 12.0
+  - 0.0
+- id: GAR341
+  arrangement: arrangement.garden
+  at:
+  - -36.0
+  - 12.0
+  - 0.0
+- id: GAR342
+  arrangement: arrangement.garden
+  at:
+  - -30.0
+  - 12.0
+  - 0.0
+- id: GAR343
+  arrangement: arrangement.garden
+  at:
+  - -24.0
+  - 12.0
+  - 0.0
+- id: GAR344
+  arrangement: arrangement.garden
+  at:
+  - -18.0
+  - 12.0
+  - 0.0
+- id: GAR345
+  arrangement: arrangement.garden
+  at:
+  - -12.0
+  - 12.0
+  - 0.0
+- id: GAR346
+  arrangement: arrangement.garden
+  at:
+  - -6.0
+  - 12.0
+  - 0.0
+- id: GAR347
+  arrangement: arrangement.garden
+  at:
+  - 0.0
+  - 12.0
+  - 0.0
+- id: GAR348
+  arrangement: arrangement.garden
+  at:
+  - 6.0
+  - 12.0
+  - 0.0
+- id: GAR349
+  arrangement: arrangement.garden
+  at:
+  - 12.0
+  - 12.0
+  - 0.0
+- id: GAR350
+  arrangement: arrangement.garden
+  at:
+  - 18.0
+  - 12.0
+  - 0.0
+- id: GAR351
+  arrangement: arrangement.garden
+  at:
+  - 24.0
+  - 12.0
+  - 0.0
+- id: GAR352
+  arrangement: arrangement.garden
+  at:
+  - 30.0
+  - 12.0
+  - 0.0
+- id: GAR353
+  arrangement: arrangement.garden
+  at:
+  - 36.0
+  - 12.0
+  - 0.0
+- id: GAR354
+  arrangement: arrangement.garden
+  at:
+  - 42.0
+  - 12.0
+  - 0.0
+- id: GAR355
+  arrangement: arrangement.garden
+  at:
+  - 48.0
+  - 12.0
+  - 0.0
+- id: GAR356
+  arrangement: arrangement.garden
+  at:
+  - 54.0
+  - 12.0
+  - 0.0
+- id: GAR357
+  arrangement: arrangement.garden
+  at:
+  - 60.0
+  - 12.0
+  - 0.0
+- id: GAR358
+  arrangement: arrangement.garden
+  at:
+  - 66.0
+  - 12.0
+  - 0.0
+- id: GAR359
+  arrangement: arrangement.garden
+  at:
+  - 72.0
+  - 12.0
+  - 0.0
+- id: GAR360
+  arrangement: arrangement.garden
+  at:
+  - 78.0
+  - 12.0
+  - 0.0
+- id: GAR361
+  arrangement: arrangement.garden
+  at:
+  - 84.0
+  - 12.0
+  - 0.0
+- id: GAR362
+  arrangement: arrangement.garden
+  at:
+  - 90.0
+  - 12.0
+  - 0.0
+- id: GAR363
+  arrangement: arrangement.garden
+  at:
+  - 96.0
+  - 12.0
+  - 0.0
+- id: GAR364
+  arrangement: arrangement.garden
+  at:
+  - -96.0
+  - 18.0
+  - 0.0
+- id: GAR365
+  arrangement: arrangement.garden
+  at:
+  - -90.0
+  - 18.0
+  - 0.0
+- id: GAR366
+  arrangement: arrangement.garden
+  at:
+  - -84.0
+  - 18.0
+  - 0.0
+- id: GAR367
+  arrangement: arrangement.garden
+  at:
+  - -78.0
+  - 18.0
+  - 0.0
+- id: GAR368
+  arrangement: arrangement.garden
+  at:
+  - -72.0
+  - 18.0
+  - 0.0
+- id: GAR369
+  arrangement: arrangement.garden
+  at:
+  - -66.0
+  - 18.0
+  - 0.0
+- id: GAR370
+  arrangement: arrangement.garden
+  at:
+  - -60.0
+  - 18.0
+  - 0.0
+- id: GAR371
+  arrangement: arrangement.garden
+  at:
+  - -54.0
+  - 18.0
+  - 0.0
+- id: GAR372
+  arrangement: arrangement.garden
+  at:
+  - -48.0
+  - 18.0
+  - 0.0
+- id: GAR373
+  arrangement: arrangement.garden
+  at:
+  - -42.0
+  - 18.0
+  - 0.0
+- id: GAR374
+  arrangement: arrangement.garden
+  at:
+  - -36.0
+  - 18.0
+  - 0.0
+- id: GAR375
+  arrangement: arrangement.garden
+  at:
+  - -30.0
+  - 18.0
+  - 0.0
+- id: GAR376
+  arrangement: arrangement.garden
+  at:
+  - -24.0
+  - 18.0
+  - 0.0
+- id: GAR377
+  arrangement: arrangement.garden
+  at:
+  - -18.0
+  - 18.0
+  - 0.0
+- id: GAR378
+  arrangement: arrangement.garden
+  at:
+  - -12.0
+  - 18.0
+  - 0.0
+- id: GAR379
+  arrangement: arrangement.garden
+  at:
+  - -6.0
+  - 18.0
+  - 0.0
+- id: GAR380
+  arrangement: arrangement.garden
+  at:
+  - 0.0
+  - 18.0
+  - 0.0
+- id: GAR381
+  arrangement: arrangement.garden
+  at:
+  - 6.0
+  - 18.0
+  - 0.0
+- id: GAR382
+  arrangement: arrangement.garden
+  at:
+  - 12.0
+  - 18.0
+  - 0.0
+- id: GAR383
+  arrangement: arrangement.garden
+  at:
+  - 18.0
+  - 18.0
+  - 0.0
+- id: GAR384
+  arrangement: arrangement.garden
+  at:
+  - 24.0
+  - 18.0
+  - 0.0
+- id: GAR385
+  arrangement: arrangement.garden
+  at:
+  - 30.0
+  - 18.0
+  - 0.0
+- id: GAR386
+  arrangement: arrangement.garden
+  at:
+  - 36.0
+  - 18.0
+  - 0.0
+- id: GAR387
+  arrangement: arrangement.garden
+  at:
+  - 42.0
+  - 18.0
+  - 0.0
+- id: GAR388
+  arrangement: arrangement.garden
+  at:
+  - 48.0
+  - 18.0
+  - 0.0
+- id: GAR389
+  arrangement: arrangement.garden
+  at:
+  - 54.0
+  - 18.0
+  - 0.0
+- id: GAR390
+  arrangement: arrangement.garden
+  at:
+  - 60.0
+  - 18.0
+  - 0.0
+- id: GAR391
+  arrangement: arrangement.garden
+  at:
+  - 66.0
+  - 18.0
+  - 0.0
+- id: GAR392
+  arrangement: arrangement.garden
+  at:
+  - 72.0
+  - 18.0
+  - 0.0
+- id: GAR393
+  arrangement: arrangement.garden
+  at:
+  - 78.0
+  - 18.0
+  - 0.0
+- id: GAR394
+  arrangement: arrangement.garden
+  at:
+  - 84.0
+  - 18.0
+  - 0.0
+- id: GAR395
+  arrangement: arrangement.garden
+  at:
+  - 90.0
+  - 18.0
+  - 0.0
+- id: GAR396
+  arrangement: arrangement.garden
+  at:
+  - 96.0
+  - 18.0
+  - 0.0
+- id: GAR397
+  arrangement: arrangement.garden
+  at:
+  - -96.0
+  - 24.0
+  - 0.0
+- id: GAR398
+  arrangement: arrangement.garden
+  at:
+  - -90.0
+  - 24.0
+  - 0.0
+- id: GAR399
+  arrangement: arrangement.garden
+  at:
+  - -84.0
+  - 24.0
+  - 0.0
+- id: GAR400
+  arrangement: arrangement.garden
+  at:
+  - -78.0
+  - 24.0
+  - 0.0
+- id: GAR401
+  arrangement: arrangement.garden
+  at:
+  - -72.0
+  - 24.0
+  - 0.0
+- id: GAR402
+  arrangement: arrangement.garden
+  at:
+  - -66.0
+  - 24.0
+  - 0.0
+- id: GAR403
+  arrangement: arrangement.garden
+  at:
+  - -60.0
+  - 24.0
+  - 0.0
+- id: GAR404
+  arrangement: arrangement.garden
+  at:
+  - -54.0
+  - 24.0
+  - 0.0
+- id: GAR405
+  arrangement: arrangement.garden
+  at:
+  - -48.0
+  - 24.0
+  - 0.0
+- id: GAR406
+  arrangement: arrangement.garden
+  at:
+  - -42.0
+  - 24.0
+  - 0.0
+- id: GAR407
+  arrangement: arrangement.garden
+  at:
+  - -36.0
+  - 24.0
+  - 0.0
+- id: GAR408
+  arrangement: arrangement.garden
+  at:
+  - -30.0
+  - 24.0
+  - 0.0
+- id: GAR409
+  arrangement: arrangement.garden
+  at:
+  - -24.0
+  - 24.0
+  - 0.0
+- id: GAR410
+  arrangement: arrangement.garden
+  at:
+  - -18.0
+  - 24.0
+  - 0.0
+- id: GAR411
+  arrangement: arrangement.garden
+  at:
+  - -12.0
+  - 24.0
+  - 0.0
+- id: GAR412
+  arrangement: arrangement.garden
+  at:
+  - -6.0
+  - 24.0
+  - 0.0
+- id: GAR413
+  arrangement: arrangement.garden
+  at:
+  - 0.0
+  - 24.0
+  - 0.0
+- id: GAR414
+  arrangement: arrangement.garden
+  at:
+  - 6.0
+  - 24.0
+  - 0.0
+- id: GAR415
+  arrangement: arrangement.garden
+  at:
+  - 12.0
+  - 24.0
+  - 0.0
+- id: GAR416
+  arrangement: arrangement.garden
+  at:
+  - 18.0
+  - 24.0
+  - 0.0
+- id: GAR417
+  arrangement: arrangement.garden
+  at:
+  - 24.0
+  - 24.0
+  - 0.0
+- id: GAR418
+  arrangement: arrangement.garden
+  at:
+  - 30.0
+  - 24.0
+  - 0.0
+- id: GAR419
+  arrangement: arrangement.garden
+  at:
+  - 36.0
+  - 24.0
+  - 0.0
+- id: GAR420
+  arrangement: arrangement.garden
+  at:
+  - 42.0
+  - 24.0
+  - 0.0
+- id: GAR421
+  arrangement: arrangement.garden
+  at:
+  - 48.0
+  - 24.0
+  - 0.0
+- id: GAR422
+  arrangement: arrangement.garden
+  at:
+  - 54.0
+  - 24.0
+  - 0.0
+- id: GAR423
+  arrangement: arrangement.garden
+  at:
+  - 60.0
+  - 24.0
+  - 0.0
+- id: GAR424
+  arrangement: arrangement.garden
+  at:
+  - 66.0
+  - 24.0
+  - 0.0
+- id: GAR425
+  arrangement: arrangement.garden
+  at:
+  - 72.0
+  - 24.0
+  - 0.0
+- id: GAR426
+  arrangement: arrangement.garden
+  at:
+  - 78.0
+  - 24.0
+  - 0.0
+- id: GAR427
+  arrangement: arrangement.garden
+  at:
+  - 84.0
+  - 24.0
+  - 0.0
+- id: GAR428
+  arrangement: arrangement.garden
+  at:
+  - 90.0
+  - 24.0
+  - 0.0
+- id: GAR429
+  arrangement: arrangement.garden
+  at:
+  - 96.0
+  - 24.0
+  - 0.0
+- id: GAR430
+  arrangement: arrangement.garden
+  at:
+  - -96.0
+  - 30.0
+  - 0.0
+- id: GAR431
+  arrangement: arrangement.garden
+  at:
+  - -90.0
+  - 30.0
+  - 0.0
+- id: GAR432
+  arrangement: arrangement.garden
+  at:
+  - -84.0
+  - 30.0
+  - 0.0
+- id: GAR433
+  arrangement: arrangement.garden
+  at:
+  - -78.0
+  - 30.0
+  - 0.0
+- id: GAR434
+  arrangement: arrangement.garden
+  at:
+  - -72.0
+  - 30.0
+  - 0.0
+- id: GAR435
+  arrangement: arrangement.garden
+  at:
+  - -66.0
+  - 30.0
+  - 0.0
+- id: GAR436
+  arrangement: arrangement.garden
+  at:
+  - -60.0
+  - 30.0
+  - 0.0
+- id: GAR437
+  arrangement: arrangement.garden
+  at:
+  - -54.0
+  - 30.0
+  - 0.0
+- id: GAR438
+  arrangement: arrangement.garden
+  at:
+  - -48.0
+  - 30.0
+  - 0.0
+- id: GAR439
+  arrangement: arrangement.garden
+  at:
+  - -42.0
+  - 30.0
+  - 0.0
+- id: GAR440
+  arrangement: arrangement.garden
+  at:
+  - -36.0
+  - 30.0
+  - 0.0
+- id: GAR441
+  arrangement: arrangement.garden
+  at:
+  - -30.0
+  - 30.0
+  - 0.0
+- id: GAR442
+  arrangement: arrangement.garden
+  at:
+  - -24.0
+  - 30.0
+  - 0.0
+- id: GAR443
+  arrangement: arrangement.garden
+  at:
+  - -18.0
+  - 30.0
+  - 0.0
+- id: GAR444
+  arrangement: arrangement.garden
+  at:
+  - -12.0
+  - 30.0
+  - 0.0
+- id: GAR445
+  arrangement: arrangement.garden
+  at:
+  - -6.0
+  - 30.0
+  - 0.0
+- id: GAR446
+  arrangement: arrangement.garden
+  at:
+  - 0.0
+  - 30.0
+  - 0.0
+- id: GAR447
+  arrangement: arrangement.garden
+  at:
+  - 6.0
+  - 30.0
+  - 0.0
+- id: GAR448
+  arrangement: arrangement.garden
+  at:
+  - 12.0
+  - 30.0
+  - 0.0
+- id: GAR449
+  arrangement: arrangement.garden
+  at:
+  - 18.0
+  - 30.0
+  - 0.0
+- id: GAR450
+  arrangement: arrangement.garden
+  at:
+  - 24.0
+  - 30.0
+  - 0.0
+- id: GAR451
+  arrangement: arrangement.garden
+  at:
+  - 30.0
+  - 30.0
+  - 0.0
+- id: GAR452
+  arrangement: arrangement.garden
+  at:
+  - 36.0
+  - 30.0
+  - 0.0
+- id: GAR453
+  arrangement: arrangement.garden
+  at:
+  - 42.0
+  - 30.0
+  - 0.0
+- id: GAR454
+  arrangement: arrangement.garden
+  at:
+  - 48.0
+  - 30.0
+  - 0.0
+- id: GAR455
+  arrangement: arrangement.garden
+  at:
+  - 54.0
+  - 30.0
+  - 0.0
+- id: GAR456
+  arrangement: arrangement.garden
+  at:
+  - 60.0
+  - 30.0
+  - 0.0
+- id: GAR457
+  arrangement: arrangement.garden
+  at:
+  - 66.0
+  - 30.0
+  - 0.0
+- id: GAR458
+  arrangement: arrangement.garden
+  at:
+  - 72.0
+  - 30.0
+  - 0.0
+- id: GAR459
+  arrangement: arrangement.garden
+  at:
+  - 78.0
+  - 30.0
+  - 0.0
+- id: GAR460
+  arrangement: arrangement.garden
+  at:
+  - 84.0
+  - 30.0
+  - 0.0
+- id: GAR461
+  arrangement: arrangement.garden
+  at:
+  - 90.0
+  - 30.0
+  - 0.0
+- id: GAR462
+  arrangement: arrangement.garden
+  at:
+  - 96.0
+  - 30.0
+  - 0.0
+- id: GAR463
+  arrangement: arrangement.garden
+  at:
+  - -96.0
+  - 36.0
+  - 0.0
+- id: GAR464
+  arrangement: arrangement.garden
+  at:
+  - -90.0
+  - 36.0
+  - 0.0
+- id: GAR465
+  arrangement: arrangement.garden
+  at:
+  - -84.0
+  - 36.0
+  - 0.0
+- id: GAR466
+  arrangement: arrangement.garden
+  at:
+  - -78.0
+  - 36.0
+  - 0.0
+- id: GAR467
+  arrangement: arrangement.garden
+  at:
+  - -72.0
+  - 36.0
+  - 0.0
+- id: GAR468
+  arrangement: arrangement.garden
+  at:
+  - -66.0
+  - 36.0
+  - 0.0
+- id: GAR469
+  arrangement: arrangement.garden
+  at:
+  - -60.0
+  - 36.0
+  - 0.0
+- id: GAR470
+  arrangement: arrangement.garden
+  at:
+  - -54.0
+  - 36.0
+  - 0.0
+- id: GAR471
+  arrangement: arrangement.garden
+  at:
+  - -48.0
+  - 36.0
+  - 0.0
+- id: GAR472
+  arrangement: arrangement.garden
+  at:
+  - -42.0
+  - 36.0
+  - 0.0
+- id: GAR473
+  arrangement: arrangement.garden
+  at:
+  - -36.0
+  - 36.0
+  - 0.0
+- id: GAR474
+  arrangement: arrangement.garden
+  at:
+  - -30.0
+  - 36.0
+  - 0.0
+- id: GAR475
+  arrangement: arrangement.garden
+  at:
+  - -24.0
+  - 36.0
+  - 0.0
+- id: GAR476
+  arrangement: arrangement.garden
+  at:
+  - -18.0
+  - 36.0
+  - 0.0
+- id: GAR477
+  arrangement: arrangement.garden
+  at:
+  - -12.0
+  - 36.0
+  - 0.0
+- id: GAR478
+  arrangement: arrangement.garden
+  at:
+  - -6.0
+  - 36.0
+  - 0.0
+- id: GAR479
+  arrangement: arrangement.garden
+  at:
+  - 0.0
+  - 36.0
+  - 0.0
+- id: GAR480
+  arrangement: arrangement.garden
+  at:
+  - 6.0
+  - 36.0
+  - 0.0
+- id: GAR481
+  arrangement: arrangement.garden
+  at:
+  - 12.0
+  - 36.0
+  - 0.0
+- id: GAR482
+  arrangement: arrangement.garden
+  at:
+  - 18.0
+  - 36.0
+  - 0.0
+- id: GAR483
+  arrangement: arrangement.garden
+  at:
+  - 24.0
+  - 36.0
+  - 0.0
+- id: GAR484
+  arrangement: arrangement.garden
+  at:
+  - 30.0
+  - 36.0
+  - 0.0
+- id: GAR485
+  arrangement: arrangement.garden
+  at:
+  - 36.0
+  - 36.0
+  - 0.0
+- id: GAR486
+  arrangement: arrangement.garden
+  at:
+  - 42.0
+  - 36.0
+  - 0.0
+- id: GAR487
+  arrangement: arrangement.garden
+  at:
+  - 48.0
+  - 36.0
+  - 0.0
+- id: GAR488
+  arrangement: arrangement.garden
+  at:
+  - 54.0
+  - 36.0
+  - 0.0
+- id: GAR489
+  arrangement: arrangement.garden
+  at:
+  - 60.0
+  - 36.0
+  - 0.0
+- id: GAR490
+  arrangement: arrangement.garden
+  at:
+  - 66.0
+  - 36.0
+  - 0.0
+- id: GAR491
+  arrangement: arrangement.garden
+  at:
+  - 72.0
+  - 36.0
+  - 0.0
+- id: GAR492
+  arrangement: arrangement.garden
+  at:
+  - 78.0
+  - 36.0
+  - 0.0
+- id: GAR493
+  arrangement: arrangement.garden
+  at:
+  - 84.0
+  - 36.0
+  - 0.0
+- id: GAR494
+  arrangement: arrangement.garden
+  at:
+  - 90.0
+  - 36.0
+  - 0.0
+- id: GAR495
+  arrangement: arrangement.garden
+  at:
+  - 96.0
+  - 36.0
+  - 0.0
+- id: GAR496
+  arrangement: arrangement.garden
+  at:
+  - -96.0
+  - 42.0
+  - 0.0
+- id: GAR497
+  arrangement: arrangement.garden
+  at:
+  - -90.0
+  - 42.0
+  - 0.0
+- id: GAR498
+  arrangement: arrangement.garden
+  at:
+  - -84.0
+  - 42.0
+  - 0.0
+- id: GAR499
+  arrangement: arrangement.garden
+  at:
+  - -78.0
+  - 42.0
+  - 0.0
+- id: GAR500
+  arrangement: arrangement.garden
+  at:
+  - -72.0
+  - 42.0
+  - 0.0
+- id: GAR501
+  arrangement: arrangement.garden
+  at:
+  - -66.0
+  - 42.0
+  - 0.0
+- id: GAR502
+  arrangement: arrangement.garden
+  at:
+  - -60.0
+  - 42.0
+  - 0.0
+- id: GAR503
+  arrangement: arrangement.garden
+  at:
+  - -54.0
+  - 42.0
+  - 0.0
+- id: GAR504
+  arrangement: arrangement.garden
+  at:
+  - -48.0
+  - 42.0
+  - 0.0
+- id: GAR505
+  arrangement: arrangement.garden
+  at:
+  - -42.0
+  - 42.0
+  - 0.0
+- id: GAR506
+  arrangement: arrangement.garden
+  at:
+  - -36.0
+  - 42.0
+  - 0.0
+- id: GAR507
+  arrangement: arrangement.garden
+  at:
+  - -30.0
+  - 42.0
+  - 0.0
+- id: GAR508
+  arrangement: arrangement.garden
+  at:
+  - -24.0
+  - 42.0
+  - 0.0
+- id: GAR509
+  arrangement: arrangement.garden
+  at:
+  - -18.0
+  - 42.0
+  - 0.0
+- id: GAR510
+  arrangement: arrangement.garden
+  at:
+  - -12.0
+  - 42.0
+  - 0.0
+- id: GAR511
+  arrangement: arrangement.garden
+  at:
+  - -6.0
+  - 42.0
+  - 0.0
+- id: GAR512
+  arrangement: arrangement.garden
+  at:
+  - 0.0
+  - 42.0
+  - 0.0
+- id: GAR513
+  arrangement: arrangement.garden
+  at:
+  - 6.0
+  - 42.0
+  - 0.0
+- id: GAR514
+  arrangement: arrangement.garden
+  at:
+  - 12.0
+  - 42.0
+  - 0.0
+- id: GAR515
+  arrangement: arrangement.garden
+  at:
+  - 18.0
+  - 42.0
+  - 0.0
+- id: GAR516
+  arrangement: arrangement.garden
+  at:
+  - 24.0
+  - 42.0
+  - 0.0
+- id: GAR517
+  arrangement: arrangement.garden
+  at:
+  - 30.0
+  - 42.0
+  - 0.0
+- id: GAR518
+  arrangement: arrangement.garden
+  at:
+  - 36.0
+  - 42.0
+  - 0.0
+- id: GAR519
+  arrangement: arrangement.garden
+  at:
+  - 42.0
+  - 42.0
+  - 0.0
+- id: GAR520
+  arrangement: arrangement.garden
+  at:
+  - 48.0
+  - 42.0
+  - 0.0
+- id: GAR521
+  arrangement: arrangement.garden
+  at:
+  - 54.0
+  - 42.0
+  - 0.0
+- id: GAR522
+  arrangement: arrangement.garden
+  at:
+  - 60.0
+  - 42.0
+  - 0.0
+- id: GAR523
+  arrangement: arrangement.garden
+  at:
+  - 66.0
+  - 42.0
+  - 0.0
+- id: GAR524
+  arrangement: arrangement.garden
+  at:
+  - 72.0
+  - 42.0
+  - 0.0
+- id: GAR525
+  arrangement: arrangement.garden
+  at:
+  - 78.0
+  - 42.0
+  - 0.0
+- id: GAR526
+  arrangement: arrangement.garden
+  at:
+  - 84.0
+  - 42.0
+  - 0.0
+- id: GAR527
+  arrangement: arrangement.garden
+  at:
+  - 90.0
+  - 42.0
+  - 0.0
+- id: GAR528
+  arrangement: arrangement.garden
+  at:
+  - 96.0
+  - 42.0
+  - 0.0
+- id: GAR529
+  arrangement: arrangement.garden
+  at:
+  - -96.0
+  - 48.0
+  - 0.0
+- id: GAR530
+  arrangement: arrangement.garden
+  at:
+  - -90.0
+  - 48.0
+  - 0.0
+- id: GAR531
+  arrangement: arrangement.garden
+  at:
+  - -84.0
+  - 48.0
+  - 0.0
+- id: GAR532
+  arrangement: arrangement.garden
+  at:
+  - -78.0
+  - 48.0
+  - 0.0
+- id: GAR533
+  arrangement: arrangement.garden
+  at:
+  - -72.0
+  - 48.0
+  - 0.0
+- id: GAR534
+  arrangement: arrangement.garden
+  at:
+  - -66.0
+  - 48.0
+  - 0.0
+- id: GAR535
+  arrangement: arrangement.garden
+  at:
+  - -60.0
+  - 48.0
+  - 0.0
+- id: GAR536
+  arrangement: arrangement.garden
+  at:
+  - -54.0
+  - 48.0
+  - 0.0
+- id: GAR537
+  arrangement: arrangement.garden
+  at:
+  - -48.0
+  - 48.0
+  - 0.0
+- id: GAR538
+  arrangement: arrangement.garden
+  at:
+  - -42.0
+  - 48.0
+  - 0.0
+- id: GAR539
+  arrangement: arrangement.garden
+  at:
+  - -36.0
+  - 48.0
+  - 0.0
+- id: GAR540
+  arrangement: arrangement.garden
+  at:
+  - -30.0
+  - 48.0
+  - 0.0
+- id: GAR541
+  arrangement: arrangement.garden
+  at:
+  - -24.0
+  - 48.0
+  - 0.0
+- id: GAR542
+  arrangement: arrangement.garden
+  at:
+  - -18.0
+  - 48.0
+  - 0.0
+- id: GAR543
+  arrangement: arrangement.garden
+  at:
+  - -12.0
+  - 48.0
+  - 0.0
+- id: GAR544
+  arrangement: arrangement.garden
+  at:
+  - -6.0
+  - 48.0
+  - 0.0
+- id: GAR545
+  arrangement: arrangement.garden
+  at:
+  - 0.0
+  - 48.0
+  - 0.0
+- id: GAR546
+  arrangement: arrangement.garden
+  at:
+  - 6.0
+  - 48.0
+  - 0.0
+- id: GAR547
+  arrangement: arrangement.garden
+  at:
+  - 12.0
+  - 48.0
+  - 0.0
+- id: GAR548
+  arrangement: arrangement.garden
+  at:
+  - 18.0
+  - 48.0
+  - 0.0
+- id: GAR549
+  arrangement: arrangement.garden
+  at:
+  - 24.0
+  - 48.0
+  - 0.0
+- id: GAR550
+  arrangement: arrangement.garden
+  at:
+  - 30.0
+  - 48.0
+  - 0.0
+- id: GAR551
+  arrangement: arrangement.garden
+  at:
+  - 36.0
+  - 48.0
+  - 0.0
+- id: GAR552
+  arrangement: arrangement.garden
+  at:
+  - 42.0
+  - 48.0
+  - 0.0
+- id: GAR553
+  arrangement: arrangement.garden
+  at:
+  - 48.0
+  - 48.0
+  - 0.0
+- id: GAR554
+  arrangement: arrangement.garden
+  at:
+  - 54.0
+  - 48.0
+  - 0.0
+- id: GAR555
+  arrangement: arrangement.garden
+  at:
+  - 60.0
+  - 48.0
+  - 0.0
+- id: GAR556
+  arrangement: arrangement.garden
+  at:
+  - 66.0
+  - 48.0
+  - 0.0
+- id: GAR557
+  arrangement: arrangement.garden
+  at:
+  - 72.0
+  - 48.0
+  - 0.0
+- id: GAR558
+  arrangement: arrangement.garden
+  at:
+  - 78.0
+  - 48.0
+  - 0.0
+- id: GAR559
+  arrangement: arrangement.garden
+  at:
+  - 84.0
+  - 48.0
+  - 0.0
+- id: GAR560
+  arrangement: arrangement.garden
+  at:
+  - 90.0
+  - 48.0
+  - 0.0
+- id: GAR561
+  arrangement: arrangement.garden
+  at:
+  - 96.0
+  - 48.0
+  - 0.0
+ground:
+- what: Paths and beds
+  item: good.concrete
+  volume: 504.9
+  mass: 1211760.0
+  note: paving on half the park's ground, 50 mm
+totals:
+  mass: 2266440.0
+  against_module: 'building.park (deprecated): one box 200 x 100 m. This layout: 198 x 102 m of gardens.'
+staff:
+- profession: profession.farmer
+  count: 4
+- profession: profession.builder
+  count: 1
+basis:
+- of:
+  - bays
+  tier: invented
+  review: true
+  note: 'A park is its ground and gardens: no frame or panels.'

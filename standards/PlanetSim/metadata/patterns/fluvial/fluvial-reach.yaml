@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.estuary.fluvial-reach
+  name: Estuary (fluvial / bay-head side)
+  about: Estuary (fluvial / bay-head side).
+family: fluvial
+factors:
+- factor: planet-factor.sea-level
+  weight: 3
+  why: Holocene rise (~10-12 ka) drowns incised valley
+- factor: planet-factor.relief-inherited
+  weight: 3
+  why: lowstand incised valley (or glacial trough) sets shape
+- factor: planet-factor.waves-tides
+  weight: 1
+  why: wave vs tide dominance sets barrier vs funnel form, mixing class
+- factor: planet-factor.water-discharge
+  weight: 1
+  why: river discharge vs tidal prism sets salt wedge vs well mixed
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: supply rate sets infill and bay-head delta progradation
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: tectonic subsidence/faulting can create estuaries
+- factor: planet-factor.time
+  weight: 1
+  why: 1-10 kyr until infilled to delta
+vocabulary_id: 46
+sources:
+- https://en.wikipedia.org/wiki/Estuary
+library_status: written
+source: fluvial.estuary.fluvial_reach
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

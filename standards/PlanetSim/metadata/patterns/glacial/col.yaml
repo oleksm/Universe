@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.glacial.erosion.col
+  name: Col
+  about: Col.
+family: glacial
+factors:
+- factor: planet-factor.ice-extent
+  weight: 3
+  why: opposing cirque headwalls intersect; or transfluent ice overspills divide
+- factor: planet-factor.ice-flow
+  weight: 1
+  why: transfluence through divide breaches lowers col
+- factor: planet-factor.relief-inherited
+  weight: 3
+  why: low points on pre-existing divides
+- factor: planet-factor.rock-fracture
+  weight: 3
+  why: fracture/weak zones crossing ridge localise col
+- factor: planet-factor.rock-type
+  weight: 1
+  why: weaker rock bands erode into saddles
+- factor: planet-factor.time
+  weight: 1
+  why: deepens with cycles; 20-300 m below ridge
+vocabulary_id: 73
+sources:
+- https://en.wikipedia.org/wiki/Cirque
+- https://www.antarcticglaciers.org/glacial-geology/glacial-landforms/glacial-erosional-landforms/cirques/
+library_status: written
+source: glacial.erosion.col
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

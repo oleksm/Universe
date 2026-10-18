@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.recent-mean-discharge
+  name: Recent mean discharge
+  about: 'The recent epoch''s running mean of the discharge (CHANNEL_TAU_KYR): what its river memory classifies, not each
+    melt pulse.'
+unit: m3/s
+per: sample
+producer:
+  where: planet-forge crates/forge-core/src/models/surface/recent.rs
+  file: checkpoint
+  key: planet-field.recent-mean-discharge
+amount: running-total
+e_fold: 946800000000.0
+levels:
+- planet-level.planet
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge surface port (models/surface), read from planet-sim-landform 9747f0d-c437724.'

@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.volcanic.province.volcanic-arc
+  name: Volcanic arc
+  about: Volcanic arc.
+family: volcanic
+factors:
+- factor: planet-factor.tect-setting
+  weight: 3
+  why: 'subduction: oceanic under oceanic gives island arc, under continent gives continental arc'
+- factor: planet-factor.volc-magma
+  weight: 3
+  why: 'slab water flux melting: calc-alkaline andesite-dacite, explosive stratovolcanoes'
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: crustal thickening raises continental arcs into high plateaus
+- factor: planet-factor.tect-fault
+  weight: 1
+  why: arc-parallel and strike-slip faults segment arc and align vents
+- factor: planet-factor.time
+  weight: 1
+  why: arc age decides edifice density and caldera/ignimbrite development
+- factor: planet-factor.other-plate-kinematics
+  weight: 3
+  why: slab reaching ~100-120 km depth under arc; dip, convergence rate and obliquity set arc-trench gap, flux
+vocabulary_id: 184
+sources:
+- https://en.wikipedia.org/wiki/Volcanic_arc
+- https://pubs.usgs.gov/gip/dynamic/understanding.html
+library_status: planned
+source: volcanic.province.volcanic_arc
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

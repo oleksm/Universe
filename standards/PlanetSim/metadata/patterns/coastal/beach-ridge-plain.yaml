@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.coastal.barrier.beach-ridge-plain
+  name: Beach-ridge plain (strandplain)
+  about: Beach-ridge plain (strandplain).
+family: coastal
+factors:
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: abundant sand/gravel supply (river mouth, drift) makes coast prograde; supply pulses set ridge spacing
+- factor: planet-factor.slope-relief
+  weight: 3
+  why: low offshore gradient needed for progradation
+- factor: planet-factor.waves-tides
+  weight: 3
+  why: swash builds ridges; wave energy sets ridge height; low tidal range favours
+- factor: planet-factor.clim-storm
+  weight: 1
+  why: storm ridges vs fair-weather swash ridges; storms truncate sets
+- factor: planet-factor.sea-level
+  weight: 1
+  why: not required, but stable or falling level sets ridge elevation and orientation
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: isostatic uplift strands ridge staircases (raised beach-ridge flights)
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: vegetation and aeolian cap stabilise and preserve ridges
+- factor: planet-factor.clim-wind
+  weight: 1
+  why: onshore wind adds foredune cap to ridges
+- factor: planet-factor.time
+  weight: 1
+  why: ridges every decades-centuries over 1-7 kyr
+vocabulary_id: 150
+sources:
+- https://en.wikipedia.org/wiki/Beach_ridge
+- https://www.nps.gov/articles/sandy-coast-landforms.htm
+library_status: planned
+source: coastal.barrier.beach_ridge_plain
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

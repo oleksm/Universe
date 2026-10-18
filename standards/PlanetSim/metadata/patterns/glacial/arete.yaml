@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.glacial.erosion.arete
+  name: Arête
+  about: Arête.
+family: glacial
+factors:
+- factor: planet-factor.ice-extent
+  weight: 3
+  why: needs adjacent cirques/troughs actively eroding near the ELA
+- factor: planet-factor.relief-inherited
+  weight: 3
+  why: divide between back-to-back or side-by-side cirques
+- factor: planet-factor.rock-type
+  weight: 3
+  why: hard rock holds steep 48-68 deg flanks
+- factor: planet-factor.rock-fracture
+  weight: 1
+  why: jointing sets crest serration and gendarmes
+- factor: planet-factor.clim-temp
+  weight: 1
+  why: frost shattering above ice sharpens crest
+- factor: planet-factor.time
+  weight: 1
+  why: headwall retreat over many cycles thins the ridge
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: uplift keeps crests above the ice surface
+vocabulary_id: 71
+sources:
+- https://en.wikipedia.org/wiki/Cirque
+- https://www.antarcticglaciers.org/glacial-geology/glacial-landforms/glacial-erosional-landforms/cirques/
+library_status: written
+source: glacial.erosion.arete
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

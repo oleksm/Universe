@@ -1,0 +1,217 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.ice-sheets
+  name: 'Recent epoch ice sheets: snow accumulation, degree-day melt, margin retreat, ice flow, calving, LGM and cycle counts'
+  about: 'Ice thickness H per sample. Snow threshold it = ICE_T + ICE_GROW g (cool glacial summers let snow outlast summers
+    at a warmer mean). Accumulation on land where T < it: P x clip((it - T)/6, 0, 1) (m/yr, water depth taken as ice depth).
+    Melt where H > 0: MELT_PER_C max(T - it, 0) + MELT_BASE, plus MELT_MARGIN x warming on margin samples (ice with an ice-free
+    neighbour), warming = clip((g_prev - g)/(DT_KYR/15), 0, 1). H += (snow - melt) x 10 kyr, capped at 4,000 m. Flow: 8 sub-steps,
+    each moving ICE_MOVE x (surface excess)/12 to every lower neighbour, limited to the ice present (mass-conserving). Over
+    the sea (z <= shifted sea) ice thicker than 300 m keeps 70 %, thinner calves away. Ice = H > 50 m; cycles counts ice onsets
+    per sample; the LGM snapshot is the H at the highest g within the last 100 kyr.'
+area: ice
+clock:
+  when: 'recent epoch: once, after the plates reach the present, 260 steps of DT_KYR = 10 kyr from 2,600 kyr to 10 kyr ago
+    on the final relief zr with sea0 = 0; run by planet-trees-pgs2/tools/planet_form.py:561-574 when SIM_RECENT=1 (default:
+    SIM_COUPLED); outputs written as r_<key> into the last ck_??_*kyr_ctx.npz (needs CONTEXT=1)'
+  step: 315576000000.0
+  step_said:
+    unit: kyr
+    factor: 31557600000.0
+reads:
+- name: z
+  field: planet-field.height
+  unit: m
+  meaning: evolving relief
+- name: nbr
+  unit: index
+- name: T
+  field: planet-field.temperature
+  unit: K
+  meaning: 'the climate (uncooled: the cycle''s cooling is applied here)'
+- name: P
+  field: planet-field.rain
+  unit: m/s
+  meaning: rain
+- name: g
+  field: planet-field.glaciality
+- name: g_prev
+  field: planet-field.glaciality-previous
+- name: cooling
+  field: planet-field.glacial-cooling
+- name: cooling, polar
+  field: planet-field.glacial-cooling-polar
+- name: sea
+  field: planet-field.glacial-sea-offset
+- name: t_kyr
+  field: planet-field.time-before-present
+- name: z (recent)
+  field: planet-field.recent-height
+  unit: m
+  meaning: the recent epoch's relief (the height until it is first lowered)
+writes:
+- name: H (r_ice_now)
+  unit: m
+  meaning: ice thickness at the end (present)
+  field: planet-field.ice
+- name: r_ice_lgm
+  field: planet-field.ice-lgm
+  unit: m
+  meaning: ice at the last glacial maximum
+- name: r_ice_cycles
+  field: planet-field.ice-cycles
+  unit: count
+  meaning: glaciations per sample
+- name: melt
+  unit: m/yr
+  meaning: internal, feeds runoff
+  field: planet-field.ice-melt
+- name: best_g
+  field: planet-field.ice-lgm-glaciality
+  unit: '1'
+  meaning: the LGM's glaciality so far
+params:
+- name: ICE_T
+  env: SIM_ICE_T
+  value: 263.15
+  unit: K
+  said_as:
+    unit: degC
+    factor: 1.0
+    note: plus 273.15
+  meaning: annual mean at which snow outlasts summers
+  source: stages/recent.py:28
+  note: 'owner 16 Oct: less ice; ELA temperatures -2 (maritime) to -10 degC (continental), Ohmura et al. 1992; unit as the
+    code says it: ''degC (SI: 263.15 K)''; SI conversion unverified In K (was degC with unit 1).'
+- name: ICE_GROW
+  env: SIM_ICE_GROW
+  value: 5.0
+  unit: K
+  meaning: snow threshold rise at full glacial
+  source: stages/recent.py:30
+  note: 's21: LGM held 16 % of land vs Earth ~25 %'
+- name: MELT_PER_C
+  value: 1.9012852688417368e-08
+  unit: m/s per K
+  said_as:
+    unit: m/yr per K
+    factor: 3.168808781402895e-08
+  meaning: degree-day melt above the threshold
+  source: stages/recent.py:27
+- name: MELT_BASE
+  value: 1.5844043907014474e-09
+  unit: m/s
+  said_as:
+    unit: m/yr
+    factor: 3.168808781402895e-08
+  meaning: summer melt and sublimation where colder
+  source: stages/recent.py:32
+- name: MELT_MARGIN
+  value: 4.753213172104342e-08
+  unit: m/s
+  said_as:
+    unit: m/yr
+    factor: 3.168808781402895e-08
+  meaning: extra margin melt in a warming phase
+  source: stages/recent.py:31
+  note: Laurentide margins retreated ~100-300 m/yr
+- name: ICE_MOVE
+  value: 0.35
+  unit: '1'
+  said_as:
+    unit: share per sub-step
+    factor: 1.0
+  open: true
+  meaning: surface-height excess moved downhill
+  source: stages/recent.py:33
+  note: 'unit as the code says it: ''share per sub-step''; SI conversion unverified'
+- name: 'inline: snow ramp'
+  value: 6.0
+  unit: K
+  meaning: accumulation reaches full P at 6 K below the threshold
+  source: stages/recent.py:77
+- name: 'inline: warming rate scale'
+  value: 473364000000.0
+  unit: s
+  said_as:
+    unit: kyr
+    factor: 31557600000.0
+  meaning: warming = clip((g_prev - g)/(DT_KYR/15), 0, 1)
+  source: stages/recent.py:80
+- name: 'inline: max ice'
+  value: 4000.0
+  unit: m
+  meaning: ice thickness cap
+  source: stages/recent.py:84
+- name: 'inline: flow sub-steps'
+  value: 8.0
+  unit: '1'
+  said_as:
+    unit: count
+    factor: 1.0
+  meaning: 'unverified: the code names it inline: flow sub-steps without saying what it is'
+  source: stages/recent.py:85
+- name: 'inline: flow divisor'
+  value: 12.0
+  unit: '1'
+  said_as:
+    unit: 2 x 6 neighbours
+    factor: 1.0
+  open: true
+  meaning: want = ICE_MOVE*diff/(2*k)
+  source: stages/recent.py:87
+  note: 'unit as the code says it: ''2 x 6 neighbours''; SI conversion unverified'
+- name: 'inline: calving'
+  setting: '{"grounded_min_m": 300.0, "keep": 0.7}'
+  meaning: ice over the sea
+  source: stages/recent.py:91
+  note: 'unit: m, share'
+- name: 'inline: ice threshold'
+  value: 50.0
+  unit: m
+  meaning: glaciated sample
+  source: stages/recent.py:92
+- name: 'inline: LGM window'
+  value: 3155760000000.0
+  unit: s
+  said_as:
+    unit: kyr
+    factor: 31557600000.0
+  meaning: LGM searched in the last 100 kyr
+  source: stages/recent.py:94
+random_draws:
+- none
+invariants:
+- '0 <= H (the 4,000 m cap binds the mass balance only: the flow can pile ice over it, in the Python too)'
+- ice flow conserves volume (np.add.at); only melt and calving remove ice
+- no ice-volume / sea-level coupling (sea level is prescribed by g)
+depends_on:
+- planet-process.glacial-cycles
+- planet-process.coupled-climate
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/recent.py:run (lines 70-95)
+  state: reference
+- where: planet-forge crates/forge-core/src/models/ice/sheets.rs
+  state: current
+  note: planet-forge port (climate line, merged in forge main 736031c)
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
+    the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  - invariants
+  - clock
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge climate port (models/climate, models/ice), read from planet-sim-landform 1df4daf.'

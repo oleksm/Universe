@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.volcanic.depression.maar
+  name: Maar (maar-diatreme volcano)
+  about: Maar (maar-diatreme volcano).
+family: volcanic
+factors:
+- factor: planet-factor.groundwater
+  weight: 3
+  why: magma meeting aquifer water drives explosions; steady water supply deepens crater
+- factor: planet-factor.rock-perm
+  weight: 3
+  why: water-bearing permeable country rock or soft sediment needed; tight rock gives scoria cone
+- factor: planet-factor.volc-magma
+  weight: 3
+  why: low-volume basaltic to kimberlitic magma
+- factor: planet-factor.permafrost
+  weight: 1
+  why: 'melting ground ice supplies slow water, low water/magma ratio: largest maars (Alaska)'
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: low ground, valley floors and plains where water table is shallow
+- factor: planet-factor.rock-type
+  weight: 1
+  why: country-rock lithics form ring; soft host widens crater
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: post-eruption rain/groundwater fills crater with lake unless floor too porous
+- factor: planet-factor.time
+  weight: 1
+  why: crater infilled by lake sediment over kyr; eroded to diatreme over Myr
+vocabulary_id: 133
+sources:
+- https://en.wikipedia.org/wiki/Maar
+- https://en.wikipedia.org/wiki/Phreatomagmatic_eruption
+library_status: written
+source: volcanic.depression.maar
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

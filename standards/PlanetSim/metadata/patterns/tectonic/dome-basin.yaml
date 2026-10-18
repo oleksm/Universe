@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.tectonic.fold.dome-basin
+  name: Structural dome / structural basin
+  about: Structural dome / structural basin.
+family: tectonic
+factors:
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: radial uplift (intrusion, basement uplift, salt) or subsidence; 50-2000 m structural relief
+- factor: planet-factor.tect-setting
+  weight: 1
+  why: cratonic platform or foreland; intracratonic basins from slow long-lived subsidence
+- factor: planet-factor.volc-magma
+  weight: 1
+  why: magmatic doming (laccolith, alkaline complex) cores some domes (Richat)
+- factor: planet-factor.rock-layers
+  weight: 3
+  why: alternating hard/soft cover beds give concentric cuestas/hogbacks
+- factor: planet-factor.rock-type
+  weight: 1
+  why: crystalline/intrusive core vs layered cover; core hardness decides peak or central hollow
+- factor: planet-factor.tect-fold
+  weight: 1
+  why: dip of flanks decides cuesta (<~10 deg) vs hogback (steep)
+- factor: planet-factor.clim-arid
+  weight: 1
+  why: arid climate displays ring ridges most sharply
+- factor: planet-factor.time
+  weight: 3
+  why: 1-500 Myr; erosion depth decides breached dome with central depression
+vocabulary_id: 124
+sources:
+- https://en.wikipedia.org/wiki/Craton
+library_status: written
+source: tectonic.fold.dome_basin
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

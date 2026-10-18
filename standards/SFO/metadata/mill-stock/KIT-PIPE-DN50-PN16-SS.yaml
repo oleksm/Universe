@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-pipe-dn50-pn16-ss
+  code: KIT-PIPE-DN50-PN16-SS
+  name: Pipe DN 50 PN 16, stainless, a 6 m length
+  traded_as: market.machinery
+  form: length
+package: package.bar-bundle
+made_from:
+- item: material.stainless-steel-304
+size:
+  length: 6.0
+  diameter: 0.057
+supplies:
+  item: run.pipe-dn50-pn16-ss
+  length: 6.0
+physical:
+  mass: 27.6
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: 'a 6 m length of run.pipe-dn50-pn16-ss: its mass a metre times the length sold.'

@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-lined-flange-dn2400-pn16-double
+  code: KIT-LINED-FLANGE-DN2400-PN16-DOUBLE
+  name: Lined flange DN 2400 PN 16, double seal
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.structural-steel-a36
+- item: material.high-strength-steel-4340
+- item: material.stainless-steel-304
+- item: material.silica-aerogel
+size:
+  length: 2.752
+  width: 2.752
+  height: 0.338
+supplies:
+  item: connector.lined-flange-dn2400-pn16-double
+physical:
+  mass: 2599.2
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.lined-flange-dn2400-pn16-double, as made.

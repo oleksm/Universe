@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.peak-pins
+  name: peaks and deeps pins
+  about: 10 highest summits (formations.summits from _patterns.npz, volcanoes from _volcanoes.json) and 5 deepest samples,
+    >= 1,500 km apart; red / blue pins
+title: peaks and deeps pins
+row: overlay on top-row views
+file_suffix: /peaks endpoint
+draws:
+  words: 10 highest summits (formations.summits from _patterns.npz, volcanoes from _volcanoes.json) and 5 deepest samples,
+    >= 1,500 km apart; red / blue pins
+shown: true
+implementations:
+- where: planet-trees-pgs2 ~/git/planet-trees-pgs2/tools/planet_slideshow.py:_peaks (196-249), drawPeaks (61-75)
+  state: reference
+status: draft

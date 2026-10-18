@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.plate-base
+  name: Plate base rate
+  about: The rate a plate regains after a collision.
+unit: '1'
+producer:
+  where: planet-forge crates/forge-core/src/models/plates/init.rs
+  file: checkpoint
+  key: tables/plates/planet-field.plate-base
+per: plate
+also_from:
+- where: stages/plates.py
+  key: Plate.base
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: forge''s plates foundation (branch plates-foundation) and the Python sim''s World (stages/plates.py:247-393), read from the code.'

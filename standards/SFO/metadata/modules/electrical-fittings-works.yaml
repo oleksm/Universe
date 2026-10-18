@@ -1,0 +1,889 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+# Written by tools/standards/kit_works.py: change it there.
+identity:
+  key: module.electrical-fittings-works
+  name: Electrical fittings works
+  step: Make electrical fittings
+  description: Presses and machines copper, moulds insulators and housings, and assembles terminations, plugs and sockets, connectors, wiring boxes, collectors, conductor rails, bus joints and cable reels.
+physical:
+  length: 150
+  width: 40
+  height: 12
+staff:
+- profession: profession.electrician
+  count: 2
+- profession: profession.machinist
+  count: 2
+- profession: profession.plant-operator
+  count: 2
+- profession: profession.technician
+  count: 1
+recipes:
+- makes: stock.kit-bus-joint-ac-27ka
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.cu-ingot
+    quantity: 0.8378
+  - item: stock.st4340-bar-120
+    quantity: 0.1382
+  - item: material.silicone-rubber
+    quantity: 0.0524
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0244
+  - item: stock.st4340-scrap
+    quantity: 0.004
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-bus-joint-ac-65ka
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.cu-ingot
+    quantity: 0.8762
+  - item: stock.st4340-bar-120
+    quantity: 0.0827
+  - item: material.silicone-rubber
+    quantity: 0.069
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0255
+  - item: stock.st4340-scrap
+    quantity: 0.0024
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-bus-joint-dc-44ka
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.cu-ingot
+    quantity: 0.861
+  - item: stock.st4340-bar-120
+    quantity: 0.1092
+  - item: material.silicone-rubber
+    quantity: 0.058
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0251
+  - item: stock.st4340-scrap
+    quantity: 0.0032
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-busbar-ac-27ka
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.cu-ingot
+    quantity: 0.8177
+  - item: stock.sta36-pl-8
+    quantity: 0.1395
+  - item: good.water
+    quantity: 0.0707
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0238
+  - item: stock.sta36-scrap
+    quantity: 0.0041
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-busbar-ac-65ka
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.cu-ingot
+    quantity: 0.8543
+  - item: stock.sta36-pl-8
+    quantity: 0.0993
+  - item: good.water
+    quantity: 0.0741
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0249
+  - item: stock.sta36-scrap
+    quantity: 0.0029
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-busbar-dc-44ka
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.cu-ingot
+    quantity: 0.8504
+  - item: stock.sta36-pl-8
+    quantity: 0.1036
+  - item: good.water
+    quantity: 0.0738
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0248
+  - item: stock.sta36-scrap
+    quantity: 0.003
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-cable-reel-11kv-3x95-300m
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.5567
+  - item: stock.cu-ingot
+    quantity: 0.4733
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0162
+  - item: stock.cu-scrap
+    quantity: 0.0138
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-cable-reel-690v-4x35-100m
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.7236
+  - item: stock.cu-ingot
+    quantity: 0.3064
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0211
+  - item: stock.cu-scrap
+    quantity: 0.0089
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-cable-reel-690v-4x95-200m
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.517
+  - item: stock.cu-ingot
+    quantity: 0.513
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0151
+  - item: stock.cu-scrap
+    quantity: 0.0149
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-circular-shell-11
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.618
+  - item: stock.cu-ingot
+    quantity: 0.206
+  - item: material.epdm-rubber
+    quantity: 0.2
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.018
+  - item: stock.cu-scrap
+    quantity: 0.006
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-circular-shell-17
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.618
+  - item: stock.cu-ingot
+    quantity: 0.206
+  - item: material.epdm-rubber
+    quantity: 0.2
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.018
+  - item: stock.cu-scrap
+    quantity: 0.006
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-circular-shell-25
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.618
+  - item: stock.cu-ingot
+    quantity: 0.206
+  - item: material.epdm-rubber
+    quantity: 0.2
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.018
+  - item: stock.cu-scrap
+    quantity: 0.006
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-circular-shell-33
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.618
+  - item: stock.cu-ingot
+    quantity: 0.206
+  - item: material.epdm-rubber
+    quantity: 0.2
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.018
+  - item: stock.cu-scrap
+    quantity: 0.006
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-collector-1000a
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.618
+  - item: good.polyethylene
+    quantity: 0.25
+  - item: stock.cu-ingot
+    quantity: 0.1545
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.018
+  - item: stock.cu-scrap
+    quantity: 0.0045
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-collector-100a
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.618
+  - item: good.polyethylene
+    quantity: 0.25
+  - item: stock.cu-ingot
+    quantity: 0.1545
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.018
+  - item: stock.cu-scrap
+    quantity: 0.0045
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-collector-250a
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.618
+  - item: good.polyethylene
+    quantity: 0.25
+  - item: stock.cu-ingot
+    quantity: 0.1545
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.018
+  - item: stock.cu-scrap
+    quantity: 0.0045
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-collector-500a
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.618
+  - item: good.polyethylene
+    quantity: 0.25
+  - item: stock.cu-ingot
+    quantity: 0.1545
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.018
+  - item: stock.cu-scrap
+    quantity: 0.0045
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-conductor-rail-1000a
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.cu-ingot
+    quantity: 0.7324
+  - item: good.polyethylene
+    quantity: 0.2492
+  - item: stock.sta36-pl-8
+    quantity: 0.0409
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0213
+  - item: stock.sta36-scrap
+    quantity: 0.0012
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-conductor-rail-100a
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: good.polyethylene
+    quantity: 0.4622
+  - item: stock.cu-ingot
+    quantity: 0.3555
+  - item: stock.sta36-pl-8
+    quantity: 0.1984
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0104
+  - item: stock.sta36-scrap
+    quantity: 0.0058
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-conductor-rail-250a
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.cu-ingot
+    quantity: 0.515
+  - item: good.polyethylene
+    quantity: 0.3837
+  - item: stock.sta36-pl-8
+    quantity: 0.1198
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.015
+  - item: stock.sta36-scrap
+    quantity: 0.0035
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-conductor-rail-500a
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.cu-ingot
+    quantity: 0.6499
+  - item: good.polyethylene
+    quantity: 0.2986
+  - item: stock.sta36-pl-8
+    quantity: 0.0725
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0189
+  - item: stock.sta36-scrap
+    quantity: 0.0021
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-coupler-11kv-400a
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: material.epdm-rubber
+    quantity: 0.6453
+  - item: stock.cu-ingot
+    quantity: 0.2168
+  - item: stock.sta36-pl-8
+    quantity: 0.1485
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0063
+  - item: stock.sta36-scrap
+    quantity: 0.0043
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-festoon-690v-4x16
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.8197
+  - item: stock.cu-ingot
+    quantity: 0.2103
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0239
+  - item: stock.cu-scrap
+    quantity: 0.0061
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-festoon-690v-4x35
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.6788
+  - item: stock.cu-ingot
+    quantity: 0.3512
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0198
+  - item: stock.cu-scrap
+    quantity: 0.0102
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-festoon-690v-4x95
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.cu-ingot
+    quantity: 0.5847
+  - item: stock.sta36-pl-8
+    quantity: 0.4453
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.017
+  - item: stock.sta36-scrap
+    quantity: 0.013
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-plug-iec60309-125a
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: good.polyethylene
+    quantity: 0.7
+  - item: stock.cu-ingot
+    quantity: 0.309
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.009
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-plug-iec60309-16a
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: good.polyethylene
+    quantity: 0.7
+  - item: stock.cu-ingot
+    quantity: 0.309
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.009
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-plug-iec60309-32a
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: good.polyethylene
+    quantity: 0.7
+  - item: stock.cu-ingot
+    quantity: 0.309
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.009
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-plug-iec60309-63a
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: good.polyethylene
+    quantity: 0.7
+  - item: stock.cu-ingot
+    quantity: 0.309
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.009
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-powerlock-400a
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: material.epdm-rubber
+    quantity: 0.4494
+  - item: stock.cu-ingot
+    quantity: 0.3287
+  - item: stock.sta36-pl-8
+    quantity: 0.2384
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0096
+  - item: stock.sta36-scrap
+    quantity: 0.0069
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-termination-11kv-500mm2
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: material.silicone-rubber
+    quantity: 0.7052
+  - item: stock.al6061-pl-5
+    quantity: 0.2052
+  - item: stock.cu-ingot
+    quantity: 0.0985
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.006
+  - item: stock.cu-scrap
+    quantity: 0.0029
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-termination-132kv-240mm2
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.fs-pl-6
+    quantity: 0.656
+  - item: stock.al6061-pl-5
+    quantity: 0.1516
+  - item: material.silicone-rubber
+    quantity: 0.1312
+  - item: stock.cu-ingot
+    quantity: 0.0676
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0044
+  - item: stock.cu-scrap
+    quantity: 0.002
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-termination-33kv-120mm2
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: material.silicone-rubber
+    quantity: 0.9193
+  - item: stock.al6061-pl-5
+    quantity: 0.0742
+  - item: stock.cu-ingot
+    quantity: 0.0089
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0022
+  - item: stock.cu-scrap
+    quantity: 0.0003
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-termination-33kv-150mm2
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: material.silicone-rubber
+    quantity: 0.918
+  - item: stock.al6061-pl-5
+    quantity: 0.0741
+  - item: stock.cu-ingot
+    quantity: 0.0104
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0022
+  - item: stock.cu-scrap
+    quantity: 0.0003
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-termination-33kv-185mm2
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: material.silicone-rubber
+    quantity: 0.9154
+  - item: stock.al6061-pl-5
+    quantity: 0.0739
+  - item: stock.cu-ingot
+    quantity: 0.0133
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0022
+  - item: stock.cu-scrap
+    quantity: 0.0004
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-termination-33kv-630mm2
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: material.silicone-rubber
+    quantity: 0.8886
+  - item: stock.al6061-pl-5
+    quantity: 0.0717
+  - item: stock.cu-ingot
+    quantity: 0.043
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0021
+  - item: stock.cu-scrap
+    quantity: 0.0013
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-termination-400v-120mm2
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.9196
+  - item: stock.cu-ingot
+    quantity: 0.1104
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0268
+  - item: stock.cu-scrap
+    quantity: 0.0032
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-termination-400v-16mm2
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 1.0098
+  - item: stock.cu-ingot
+    quantity: 0.0202
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0294
+  - item: stock.cu-scrap
+    quantity: 0.0006
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-termination-400v-185mm2
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.8729
+  - item: stock.cu-ingot
+    quantity: 0.1571
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0254
+  - item: stock.cu-scrap
+    quantity: 0.0046
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-termination-400v-240mm2
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.8306
+  - item: stock.cu-ingot
+    quantity: 0.1994
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0242
+  - item: stock.cu-scrap
+    quantity: 0.0058
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-termination-400v-25mm2
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 1.0098
+  - item: stock.cu-ingot
+    quantity: 0.0202
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0294
+  - item: stock.cu-scrap
+    quantity: 0.0006
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-termination-400v-300mm2
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.7923
+  - item: stock.cu-ingot
+    quantity: 0.2377
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0231
+  - item: stock.cu-scrap
+    quantity: 0.0069
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-termination-400v-35mm2
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.9904
+  - item: stock.cu-ingot
+    quantity: 0.0396
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0288
+  - item: stock.cu-scrap
+    quantity: 0.0012
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-termination-400v-400mm2
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.7464
+  - item: stock.cu-ingot
+    quantity: 0.2836
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0217
+  - item: stock.cu-scrap
+    quantity: 0.0083
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-termination-400v-500mm2
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.6959
+  - item: stock.cu-ingot
+    quantity: 0.3341
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0203
+  - item: stock.cu-scrap
+    quantity: 0.0097
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-termination-400v-50mm2
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.9904
+  - item: stock.cu-ingot
+    quantity: 0.0396
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0288
+  - item: stock.cu-scrap
+    quantity: 0.0012
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-termination-400v-630mm2
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.6438
+  - item: stock.cu-ingot
+    quantity: 0.3862
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0187
+  - item: stock.cu-scrap
+    quantity: 0.0112
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-termination-400v-70mm2
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.9717
+  - item: stock.cu-ingot
+    quantity: 0.0583
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0283
+  - item: stock.cu-scrap
+    quantity: 0.0017
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-termination-400v-95mm2
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.9364
+  - item: stock.cu-ingot
+    quantity: 0.0936
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0273
+  - item: stock.cu-scrap
+    quantity: 0.0027
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-termination-6p6kv-185mm2
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: material.silicone-rubber
+    quantity: 0.6289
+  - item: stock.al6061-pl-5
+    quantity: 0.3239
+  - item: stock.cu-ingot
+    quantity: 0.0583
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0094
+  - item: stock.cu-scrap
+    quantity: 0.0017
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-termination-6p6kv-400mm2
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: material.silicone-rubber
+    quantity: 0.5917
+  - item: stock.al6061-pl-5
+    quantity: 0.3047
+  - item: stock.cu-ingot
+    quantity: 0.1158
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0089
+  - item: stock.cu-scrap
+    quantity: 0.0034
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-termination-6p6kv-50mm2
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: material.silicone-rubber
+    quantity: 0.6579
+  - item: stock.al6061-pl-5
+    quantity: 0.3388
+  - item: stock.cu-ingot
+    quantity: 0.0136
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0099
+  - item: stock.cu-scrap
+    quantity: 0.0004
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-termination-6p6kv-630mm2
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: material.silicone-rubber
+    quantity: 0.5556
+  - item: stock.al6061-pl-5
+    quantity: 0.2861
+  - item: stock.cu-ingot
+    quantity: 0.1717
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0083
+  - item: stock.cu-scrap
+    quantity: 0.005
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-termination-6p6kv-70mm2
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: material.silicone-rubber
+    quantity: 0.6536
+  - item: stock.al6061-pl-5
+    quantity: 0.3366
+  - item: stock.cu-ingot
+    quantity: 0.0202
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0098
+  - item: stock.cu-scrap
+    quantity: 0.0006
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-termination-6p6kv-95mm2
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: material.silicone-rubber
+    quantity: 0.6452
+  - item: stock.al6061-pl-5
+    quantity: 0.3323
+  - item: stock.cu-ingot
+    quantity: 0.0332
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0097
+  - item: stock.cu-scrap
+    quantity: 0.001
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-wiring-box-lv
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.7357
+  - item: good.polyethylene
+    quantity: 0.2
+  - item: stock.cu-ingot
+    quantity: 0.0883
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0214
+  - item: stock.cu-scrap
+    quantity: 0.0026
+  rate: 0.3
+  power: 1500000.0
+life: 788940000
+basis:
+- of:
+  - recipes.inputs
+  - recipes.outputs
+  tier: derived
+  review: true
+  note: Each recipe's inputs are the parts of the record its stock supplies, as kg a kg; each material as the mill stock or good other works make of it; 3% of cut metal lost as scrap (invented). A material no works makes yet is taken
+    as the material itself.
+- of:
+  - physical
+  - recipes.rate
+  - recipes.power
+  tier: invented
+  review: true
+  note: Its size, rate and power chosen for the kind of plant; to be reviewed.
+- of:
+  - staff
+  tier: invented
+  review: true
+  note: 'Coarse: by the kind of plant, not this one; to be reviewed.'
+- of:
+  - life
+  rule: rule.life-plant

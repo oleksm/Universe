@@ -1,0 +1,90 @@
+# yaml-language-server: $schema=../schema/standard.schema.yaml
+identity:
+  key: standard.sfo.26
+title: Connections
+parent: standard.sfo.25
+purpose: "Everything that joins one made thing to another, a flange, a mains plug, a docking ring, a rail coupler or a container lock, is held in one shape: an interface (the standard), its two halves (a plug and its receiver, male and female, or two alike), the conduit between interfaces, the fittings along it and the supports under it. Any maker's half then fits any maker's other half built to the same interface. Sizes come from short preferred series, and each kind is one family, so the inventory stays small."
+details:
+  text:
+    - "Ports (SFO 25) name the interface they are built to; the game draws the halves and the conduit at the port, and a unit's own model ends at the mating plane with no stub. A port moving is never a reason to remake a unit."
+    - "Two halves mate only when they are built to the same interface, of opposite gender (or both androgynous), and the media and ratings agree. Where they don't, an adapter joins them: a reducer, a plug adapter, a flange adapter. An adapter is a made thing with its own mass and a fitting's place in the run."
+    - "Draft, set 2026-10-17 from the survey in docs/proposals/connectables.md. In the registry now: an interface for every SFO 25 connector and every plant bay (interfaces/), each connector naming its own; every plant unit's ports naming their interface, half and make and stating their duty (from the unit's design, or by a rule its basis names); a load port on every unit that stands in a bay; and the motion of the 25 units that move, which the fit check sweeps (no run may stand in what a unit tilts or turns through, but for the last 3 m at its own joint). Ship equipment and industrial modules have the fields, not yet the ports; the rest is to be added by family."
+sections:
+  - title: The shape of a connection
+    table:
+      columns: [Part, What it is, Example]
+      rows:
+        - ["Interface", "The standard: the mating geometry; its rating (size, pressure, temperature, voltage, current, flow, load); its sealing (air, vacuum, cryogenic); how it is made and broken (permanent, bolted, quick by hand, automatic)", "DN 200 PN 16 flange; 400 V 125 A 3P+E socket; a docking ring"]
+        - ["Halves", "The two mating parts: male and female (a plug and its receiver), or androgynous (the same on both sides)", "A flange pair; a plug and socket; a nozzle and its receptacle; a twistlock and a corner casting"]
+        - ["Conduit", "What carries the flow from one interface to another", "Pipe, hose, tube, cable, busbar, belt, rail, road"]
+        - ["Fittings", "What changes the conduit along its way", "Bend, branch, reducer, valve, expansion joint, adapter, splice"]
+        - ["Support", "What holds the conduit up", "Pipe stand, cable tray, idler, rail bed, hanger"]
+  - title: The code - what a made thing declares
+    text:
+      - "Every made thing that joins others (a plant unit, a piece of ship equipment, an industrial module, a layout) declares its ports, and moves as it says (records: units/, equipment/, modules/, layouts/; the shape: common.schema.yaml port and motion)."
+      - "A port declares: its id; which way it flows (in, out, both); what crosses it (gas, liquid, bulk, power, signal, heat, load, carrier, people) and the item; the interface it is built to (interfaces/<name>.yaml); which half the thing carries (male, female, androgynous); how the joint is made and broken (permanent, bolted, by hand, automatic, open); the duty it needs (rate, power, pressure, temperature, voltage, current; for a load, the mass it bears and its working force and moment; for a carrier, a batch's mass and its cycle); where its face is and which way it faces in the thing's frame; and, if it moves with a part of the thing, which motion."
+      - "A thing that bears on something declares a load port: its feet on its mount, the mass it bears down through them (its weight is that times the site's gravity) and its working forces. Load is a connection like any other: the load path runs from the thing through its mount, the frame or rails, the footings and the ground, each part rated for what it bears."
+      - "A thing that moves declares its motions: tilt, rotate, travel, lift or dock, the axis, the range, and what moves. A fit check sweeps them, and a port that moves needs a joint that lets it (a hose, a festoon, a cable reel, a sleeve, a clamp coupling)."
+  - title: The code - when a product fits
+    text:
+      - "An interface (interfaces/<name>.yaml) is the standard: its domain, its family, its size, its envelope (the most a product built to it is made for), the media it takes, its sealing, whether its halves differ or are the same, and how a joint to it is made."
+      - "A connection product (a connector, a run's ends, a hose, a cable, a plug, a coupler: connectors/, runs/) names the interface it is built to and which halves it provides (both, one, or an adapter between two)."
+      - "A product fits a port when it is built to the port's interface, brings the half the port lacks, and its rating covers the port's duty: its pressure, temperature, voltage and current at least the port's, the media agreeing. Any maker may build to an interface, so a vendor's product is judged by these, not by who made the port."
+      - "Where two interfaces differ, an adapter joins them (a reducer, a plug adapter, a flange adapter): a product with its own mass and a fitting's place."
+  - title: The inventory, by what flows
+    text:
+      - "Have: in the registry now. Lack: to be added, by family, in the preferred sizes."
+    table:
+      columns: [What flows, Conduits, Joints, Plugs and receivers, Fittings, Have, Lack]
+      rows:
+        - ["Liquids and gases", "Rigid pipe (carbon, stainless, plastic for water; lined, water-jacketed, lagged, vacuum-jacketed); small-bore tube; hose; duct", "Butt and socket welds; flanges by DN and PN (EN 1092, ASME B16.5); threads; grooved couplings; compression fittings", "Cam-lock hose couplings (EN 14420-7); hydraulic quick couplings (ISO 7241, ISO 16028); dry-break couplings; cryogenic bayonets; pressure refuelling nozzles and receptacles (ISO 45); clamp couplings; catch hoods", "Elbow, tee, reducer, cap; valves (gate, ball, butterfly, check, control, relief, slide gate); expansion joints and bellows; strainers; meters; traps; heat tracing", "Pipe, lined and jacketed duct, flanges, clamp coupling, hood", "Tube, hose, vacuum-jacketed pipe, quick couplings, refuelling, valves, expansion joints"]
+        - ["Vacuum", "Vacuum lines", "KF quick flanges (small, clamped); ISO-K (large, clamped); CF (metal-sealed, ultra-high vacuum)", "", "", "Double seals on airless ground", "The vacuum flange families"]
+        - ["Bulk solids", "Troughed belts, open or in sealed galleries; pipe conveyors; cleated and sidewall belts; drag and en-masse chain; screws; bucket elevators; pneumatic conveying; chutes", "Transfer chutes and skirts; chute flanges", "Rotary valves and locks; slide gates", "", "Belts, sealed galleries, drag conveyor, transfers, chute flanges", "Pipe conveyors, steep belts, screws, elevators, pneumatic conveying"]
+        - ["Molten metal and slag", "Runners, launders", "Ladle and tundish nozzles", "Slide gates, shrouds", "", "Ladles and pots as carriers", "Runners and pouring gates"]
+        - ["Power", "Cables LV, MV, HV (IEC 60038 voltages); busbars AC and DC; enclosed bus ducts; overhead lines; earthing; feeds to moving things: festoons, cable reels, conductor rails", "Terminations; cable joints and splices; bus joints", "Industrial plugs and sockets (IEC 60309: 16 to 800 A, to 1,000 V); mining couplers above that", "", "Cables, busbars, terminations, bus joints", "Bus ducts, overhead lines, plugs and sockets, the cranes' and cars' feeds, earthing"]
+        - ["Signals and data", "Instrument and control cable; fibre; fieldbus; radio", "", "Circular industrial connectors; data jacks", "", "", "Control cores, carried with each power cable to begin with"]
+        - ["Heat", "Steam and condensate; cooling water; radiator loops; thermal oil; refrigerant; heat pipes", "", "", "", "Steam, water and radiator loops", "Thermal oil, refrigerant, heat pipes"]
+        - ["Batches and loads", "Rails; roads; crane runways", "Rail joints; switches; buffers", "Rail couplers (buffer and chain; Janney; Scharfenberg, which joins air and power too); hooks, spreaders, lifting lugs and trunnions, tongs; container corner castings and twistlocks (ISO 1161); forklift pockets", "", "Rails, roads, tongs, ladle beams, crates", "Couplers, container locks, rail and road ports at layouts' edges"]
+        - ["People and pressure", "Pressurised corridors and galleries", "Airlocks; hatches and doors", "Docking and berthing rings (the International Docking System Standard, androgynous); suit umbilicals", "", "Airlocks, galleries, ship doors", "A common docking ring; umbilicals"]
+        - ["Ships and vehicles to the world", "", "", "Docking collars and clamps; refuelling receptacles; power umbilicals; cargo hatches and ramps", "", "As ship equipment", "One interface record shared with plants"]
+        - ["Mounting", "Kit struts (SFO 13)", "Hardpoint mounts (SFO 19); plant mounts (SFO 24); anchors", "", "", "All", ""]
+  - title: Preferred sizes
+    text:
+      - "A layout or a design rounds up to the next preferred size; it never asks for a size between them."
+    table:
+      columns: [Interface, Series]
+      rows:
+        - ["Pipe bore (DN, mm)", "25, 50, 100, 150, 200, 300, 400, 600, 800, 1000, 1200, 2000"]
+        - ["Pressure class (PN, bar)", "1, 10, 25, 100"]
+        - ["Voltage (kV)", "0.4, 6.6, 33, 132"]
+        - ["Plug and socket current (A)", "16, 32, 63, 125, 250, 400, 630, 800 (IEC 60309)"]
+        - ["Belt width (m)", "0.65, 0.8, 1.0, 1.2"]
+  - title: Rules
+    text:
+      - "1. Families, not pieces: each kind of conduit, joint and fitting is one generator, modelled once; every size comes from its record's numbers, and records that look alike share a model (looks_as)."
+      - "2. An interface record names its halves (male, female or androgynous), how it is made and broken, its rating and the media it takes; an adapter is a record too."
+      - "3. The game draws the joint, not the unit: a unit's model ends at the mating plane."
+      - "4. The interfaces a player handles by hand come first: plugs and sockets, quick couplings, refuelling nozzles, docking rings, container locks. Making and breaking them is an action in the game."
+  - title: Order
+    text:
+      - "1. The interface record; the connectors of SFO 25 become interfaces with their halves."
+      - "2. A chain checker: layouts' edge ports matched by interface and commodity, a chain's counts sized by rate, and unmet inputs, unused outputs and mismatched interfaces listed."
+      - "3. The gaps, by family: valves and expansion joints; hose and quick couplings; festoons, cable reels and conductor rails; plugs and sockets; container locks; rail couplers; overhead lines; docking rings and refuelling; heat pipes; control cores."
+      - "4. Rail and road ports at layouts' edges, with a trip's load and a cycle's time."
+  - title: Sources
+    text:
+      - "IEC 60309 plugs and sockets: https://en.wikipedia.org/wiki/Industrial_and_multiphase_power_plugs_and_sockets"
+      - "IEC 60038 voltages: https://en.wikipedia.org/wiki/IEC_60038"
+      - "Cam-lock couplings, EN 14420-7: https://www.pathel.com/wp-content/uploads/2019/06/camlock-technical-data-sheets.pdf"
+      - "Hydraulic quick couplings, ISO 7241 and 16028: https://www.tubes-international.com/products/hydraulics-and-high-pressure/hydraulic-quick-couplings/"
+      - "Cryogenic bayonet couplings: https://patents.google.com/patent/US6513837"
+      - "ISO 45 pressure refuelling connections: https://webstore.ansi.org/standards/iso/iso451990"
+      - "Twistlocks and corner castings, ISO 1161: https://en.wikipedia.org/wiki/Twistlock"
+      - "Railway couplings: https://en.wikipedia.org/wiki/Railway_coupling"
+      - "International Docking System Standard: https://en.wikipedia.org/wiki/International_Docking_System_Standard"
+      - "Crane electrification: https://www.mazzellacompanies.com/resources/blog/crane-electrification-conductor-bars-cable-festoon-cable-reel"
+      - "Bulk conveying: https://www.processingmagazine.com/material-handling-dry-wet/conveyors/article/21275068/mechanical-conveying-part-2-six-options-for-mechanically-conveying-powders-and-bulk-solid-materials"
+      - "Vacuum flanges: https://www.idealvac.com/Adapter-KF-16-to-CF-1-13-in/pp/P101286"
+      - "Piping components: https://inspenet.com/en/articulo/what-is-a-flange-types-and-applications"
+refs: [SFO 13, SFO 19, SFO 24, SFO 25]
+status: draft

@@ -1,0 +1,66 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.network.drainage-basin
+  name: Drainage basin (catchment) and channel network
+  about: Drainage basin (catchment) and channel network.
+family: fluvial
+factors:
+- factor: planet-factor.clim-precip
+  weight: 3
+  why: drainage density minimum at intermediate vegetated precipitation; peak near 280 mm/yr semi-arid
+- factor: planet-factor.clim-storm
+  weight: 1
+  why: intense storms raise overland flow, denser channels (badlands 48-464 km/km2)
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: cover raises erosion threshold, sparser network; bare ground gives dense dissection
+- factor: planet-factor.rock-type
+  weight: 1
+  why: weak, erodible substrate gives dense network; resistant rock sparse
+- factor: planet-factor.rock-perm
+  weight: 3
+  why: permeable rock/regolith infiltrates, few channels; impermeable gives dense network
+- factor: planet-factor.regolith
+  weight: 1
+  why: soil thickness and cohesion set channel-head threshold and hillslope diffusion
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: uplift sets relief, incision and basin elongation
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: relief and slope set channel-head area (S=aA^-b) and valley spacing
+- factor: planet-factor.base-level
+  weight: 1
+  why: base-level falls propagate incision up the network
+- factor: planet-factor.relief-inherited
+  weight: 1
+  why: initial surface slope and structure template the basin shape
+- factor: planet-factor.tect-setting
+  weight: 1
+  why: orogen vs craton sets basin size and relief (up to 6000 km basins)
+- factor: planet-factor.time
+  weight: 1
+  why: network extends and integrates over 10 yr to 100 Myr
+vocabulary_id: 51
+sources:
+- https://en.wikipedia.org/wiki/Drainage_system_(geomorphology)
+- https://ebooks.inflibnet.ac.in/geop11/chapter/drainage-pattern
+- https://eos.org/research-spotlights/stream-network-geometry-correlates-with-climate
+- https://en.wikipedia.org/wiki/Badlands
+library_status: written
+source: fluvial.network.drainage_basin
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

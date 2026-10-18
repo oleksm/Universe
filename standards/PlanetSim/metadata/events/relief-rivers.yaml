@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/planet-event.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-event.relief-rivers
+  name: Relief.rivers
+  about: relief.rivers
+source: relief.rivers
+emitted_by:
+- planet-process.coupled-surface-hook
+payload:
+- name: t
+- name: p_route
+- name: hydro
+- name: sea
+- name: z
+- name: gap
+- name: steps
+status: draft

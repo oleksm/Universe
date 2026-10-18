@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.valley.consequent
+  name: Consequent valley
+  about: Consequent valley.
+family: fluvial
+factors:
+- factor: planet-factor.relief-inherited
+  weight: 3
+  why: follows initial slope of new surface (emerged seafloor, plateau, glacial plain)
+- factor: planet-factor.tect-fold
+  weight: 3
+  why: dip direction of strata; dip streams
+- factor: planet-factor.volc-vent
+  weight: 1
+  why: new lava plateaus and cones
+- factor: planet-factor.sea-level
+  weight: 1
+  why: emergent coastal plains
+- factor: planet-factor.slope-relief
+  weight: 3
+  why: gradient sets incision rate
+- factor: planet-factor.time
+  weight: 1
+  why: youngest drainage; later modified by subsequents
+vocabulary_id: 155
+sources:
+- https://ebooks.inflibnet.ac.in/geop11/chapter/drainage-pattern
+- https://en.wikipedia.org/wiki/Drainage_system_(geomorphology)
+library_status: planned
+source: fluvial.valley.consequent
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

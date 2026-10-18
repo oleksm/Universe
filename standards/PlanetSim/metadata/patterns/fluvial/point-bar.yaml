@@ -1,0 +1,47 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.channel.point-bar
+  name: Point bar (with scroll bars)
+  about: Point bar (with scroll bars).
+family: fluvial
+factors:
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: sand-gravel bedload supply builds bar; height ~0.8-1.0 bankfull depth
+- factor: planet-factor.water-discharge
+  weight: 3
+  why: bankfull flood stages add scroll ridges
+- factor: planet-factor.clim-storm
+  weight: 3
+  why: flood sequence spaces scroll bars
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: vegetation colonizes swales, fixes scrolls
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: low gradient meandering reach
+- factor: planet-factor.time
+  weight: 1
+  why: 10 yr-10 kyr per bend migration
+vocabulary_id: 40
+sources:
+- https://en.wikipedia.org/wiki/Incised_meander
+- https://www.nps.gov/subjects/geology/fluvial-landforms.htm
+- https://en.wikipedia.org/wiki/Floodplain
+library_status: written
+source: fluvial.channel.point_bar
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: unit.furniture-shower
+  name: Shower
+  description: A shower tray, screen and mixer.
+size_class: 1
+physical:
+  length: 0.9
+  width: 0.9
+  height: 2.1
+  mass: 50.0
+built_of:
+- what: Tray, screen and mixer
+  item: material.stainless-steel-304
+  mass: 50.0
+basis:
+- of:
+  - built_of
+  - physical
+  tier: invented
+  review: true
+  note: From memory of such furniture; to be sourced.
+visual:
+  format: freefall-model/1
+  path: models/furniture-shower/v1
+  manifest_sha256: 772abc1f43f9144919f8d0d0f4324ca985231269e1512a8c992130aee9af4287
+  version: 1
+  triangles: 1084

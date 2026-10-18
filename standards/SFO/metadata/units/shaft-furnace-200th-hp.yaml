@@ -1,17 +1,20 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.shaft-furnace-200th-hp, name: 'Hydrogen shaft furnace, 200 t an hour, 8 bar, hot discharge', description: 'The shaft of unit.shaft-furnace-200th built for airless ground: the gas loop at about 8 bar, so the shell is a pressure vessel (78 MPa in its 40 mm plate) and the charge and discharge go through pressure locks; no cooling zone: the sponge iron leaves through a lock at about 650 deg C into a closed hot conveyor to the arc furnace shop, which in vacuum it cannot rust on the way. Local frame: the axis at (0, 0); the discharge lock at z 8; the ring girder at z 12 (radius 4.1 m); the bustle main (1.9 m pipe) at z 16, its inlet on -y; the top gas outlet at z 31 on +x; the charge lock and hopper z 32 to 40. About 1,387 t of burden inside.'}
+identity: {key: unit.shaft-furnace-200th-hp, name: 'Hydrogen shaft furnace, 200 t an hour, 8 bar, hot discharge', description: 'The shaft of unit.shaft-furnace-200th built for airless ground: the gas loop at about 8 bar, so the shell is a pressure vessel (78 MPa in its 40 mm plate) and the charge and discharge go through pressure locks; no cooling zone: the sponge iron leaves through a lock at about 650 deg C into a closed hot conveyor to the arc furnace shop, which in vacuum it cannot rust on the way. Local frame: the axis at (0, 0); the discharge lock under the cone, its top valve at z 8 (7.8 to 8), its vessel 6.4 to 7.7, its lower valve 6.2 to 6.4, its outlet at z 6 onto the hot conveyor; the ring girder at z 12 (radius 4.1 m); the bustle main at z 16, a ring 9.88 m across (radius 4.94 to the pipe''s centre) of 1.9 m clear bore inside 200 mm of lining and a 25 mm shell (2.35 m outside), its inlet on -y (its flange the same 1.9 m bore); the top gas outlet at z 31 on +x; the charge lock
+    and hopper z 32 to 40. About 1,387 t of burden inside.'}
 size_class: 3
 fits: plant-mount.bay-s3
-physical: {length: 13, width: 13, height: 40.0, mass: 1034000.0}
+physical: {length: 13, width: 13, height: 40.0, mass: 1048000.0}
 built_of:
-- {what: Shell, item: material.structural-steel-a36, mass: 174700.0, note: '7.38 m across, 24 m, 40 mm plate'}
+- {what: Shell, item: material.structural-steel-a36, mass: 177400.0, note: '7.38 m across, 24 m with its cone, roof and bands, 40 mm plate; measured on blender''s model v1'}
 - {what: Lining, item: good.refractory-brick, mass: 550200.0, note: 350 mm}
-- {what: Bustle main, item: material.structural-steel-a36, mass: 42970.0, note: 'a ring 9.8 m across, 25 mm plate for the pressure'}
-- {what: Bustle lining, item: good.refractory-brick, mass: 119700.0, note: 200 mm}
-- {what: Support ring girder, item: material.structural-steel-a36, mass: 30990.0, note: as for air}
+- {what: Bustle main, item: material.structural-steel-a36, mass: 43730.0, note: 'a ring 9.88 m across, 25 mm plate for the pressure; measured on model v1'}
+- {what: Bustle lining, item: good.refractory-brick, mass: 122900.0, note: 200 mm}
+- {what: Support ring girder, item: material.structural-steel-a36, mass: 35860.0, note: 'a hollow ring and its land, as for air; measured on model v1'}
+- {what: Struts and seats, item: material.structural-steel-a36, mass: 2442.0, note: eight 200 x 200 x 12 mm struts and their 40 mm seats; measured on model v1}
 - {what: Charge and discharge pressure locks, item: material.structural-steel-a36, mass: 90000.0, note: 'two lock hoppers with their valves, from memory'}
 - {what: Burden feeders, item: good.electric-motors, mass: 25000.0, note: from memory}
+- {what: Drives' terminal box, item: material.structural-steel-a36, mass: 350.0, note: 'a 400 V box on the ring girder''s west face feeding the locks'', valves'' and feeders'' drives, 0.8 x 0.6 x 1 m; from memory'}
 holds: 1387000.0
 needs: {power: 400000.0, gravity: 1.0, atmosphere: any}
 recipes:
@@ -24,7 +27,93 @@ recipes:
   - {item: good.water, quantity: 0.484}
   rate: 55.5555555555556
   power: 22000000
+ports:
+- id: charge-in
+  flow: in
+  medium: bulk
+  item: good.iron-ore-pellets
+  rate: 79.44
+  interface: interface.belt-transfer-1200
+  half: female
+  make: open
+  connector: connector.belt-transfer-1200
+  at: [0.0, 0.0, 40.0]
+  facing: [0.0, 0.0, 1.0]
+  note: the charge lock's hopper rim; a belt's head stands 3 m over it
+- id: top-gas-out
+  flow: out
+  medium: gas
+  item: material.hydrogen
+  rate: 38.14
+  pressure: 730000.0
+  temperature: 623.1
+  interface: interface.flange-dn1600-pn16-double
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn1600-pn16-double
+  at: [6.0, 0.0, 31.0]
+  facing: [1.0, 0.0, 0.0]
+  note: hydrogen with the reduction's steam
+- id: hot-gas-in
+  flow: in
+  medium: gas
+  item: material.hydrogen
+  rate: 14.25
+  pressure: 850000.0
+  temperature: 1173.0
+  interface: interface.lined-flange-dn2400-pn16-double
+  half: androgynous
+  make: bolted
+  connector: connector.lined-flange-dn2400-pn16-double
+  at: [0.0, -6.5, 16.0]
+  facing: [0.0, -1.0, 0.0]
+  note: the bustle main's inlet stub; the bustle itself 1.9 m clear, the stub's flange 2.0 m
+- id: dri-out
+  flow: out
+  medium: bulk
+  item: good.sponge-iron
+  rate: 55.56
+  temperature: 923.1
+  interface: interface.chute-dn800
+  half: androgynous
+  make: bolted
+  connector: connector.chute-dn800
+  at: [0.0, 0.0, 6.0]
+  facing: [0.0, 0.0, -1.0]
+  note: the discharge lock's outlet, onto a closed conveyor's tail under it
+- id: power-in
+  flow: in
+  medium: power
+  power: 400000.0
+  voltage: 400
+  interface: interface.termination-400v-300mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-300mm2
+  at: [-4.7, 2.0, 12.0]
+  facing: [-1.0, 0.0, 0.0]
+  note: the drives' terminal box on the ring girder's west face
+  current: 641.5
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s3
+  half: male
+  make: bolted
+  mass: 2435000.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
+product: product.shaft-furnace-200th
+envelope:
+- [-3.722, -3.722, 7.999, 3.722, 3.722, 32.001]
+- [-2.501, -2.501, 31.899, 2.501, 2.501, 40.001]
+- [-1.102, -1.102, 5.999, 1.652, 1.102, 8.201]
+- [-4.702, -4.501, 11.499, 4.501, 4.501, 13.201]
+- [-6.116, -6.501, 13.172, 6.116, 6.116, 17.22]
+- [2.999, -0.839, 30.161, 6.001, 0.84, 31.839]
 life: 788940000
+visual: {format: freefall-model/1, path: models/shaft-furnace-200th-hp/v2, manifest_sha256: 8ca9eaec0f90ee49d20ad12d2509d0bb162504a1fffc96c79eae959abc9442cc, version: 2, triangles: 20672}
 basis:
 - of: [recipes]
   tier: derived
@@ -37,5 +126,9 @@ basis:
   tier: invented
   review: true
   note: 'At 1.6 m/s2 the burden weighs about 3 kPa a metre of bed against the gas''s drag of about 1 (from memory): it still sinks; at 8 bar the gas is slower.'
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage.'
 - of: [life]
   rule: rule.life-plant

@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.periglacial.lake.thermokarst
+  name: Thermokarst lakes and alases
+  about: Thermokarst lakes and alases.
+family: periglacial
+factors:
+- factor: planet-factor.permafrost
+  weight: 3
+  why: Ice-rich permafrost, ground ice >30 vol% (yedoma, marine silt)
+- factor: planet-factor.clim-temp
+  weight: 3
+  why: Warming or bottom water >0 C keeps a talik and continuous thaw
+- factor: planet-factor.bio-veg
+  weight: 3
+  why: Surface disturbance (fire, vegetation loss) starts thaw
+- factor: planet-factor.clim-wind
+  weight: 1
+  why: Prevailing winds orient and elongate lakes
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: Flat coastal plains and lowlands
+- factor: planet-factor.base-level
+  weight: 1
+  why: Drainage by stream capture or coastal erosion leaves drained basins
+- factor: planet-factor.events
+  weight: 1
+  why: Fires and drainage events reset the cycle
+- factor: planet-factor.time
+  weight: 1
+  why: Cyclic form-expand-drain, 0.1-12 kyr
+vocabulary_id: 107
+sources:
+- https://en.wikipedia.org/wiki/Thermokarst
+- https://www.antarcticglaciers.org/glacial-geology/glacial-landforms/periglaciation/periglacial-landforms/
+library_status: written
+source: periglacial.lake.thermokarst
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

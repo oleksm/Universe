@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../schema/run.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: run.pipe-dn1200-pn1, name: Pipe DN 1200 PN 1, description: 'Welded pipe, 1200 mm bore, for up to 1 bar; welded between the units'' flanges, so a run has a flange pair only at its ends.'}
+kind: pipe
+size: 1.2
+bore: 1.2
+outside: [1.219, 1.219]
+rating: {pressure: 100000.0, temperature: 523.15}
+per_m:
+  mass: 283.4
+  built_of:
+  - {what: Pipe, item: material.structural-steel-a36, mass: 283.4, note: '1200 mm bore, 9.5 mm wall (Barlow at 1 bar, 133 MPa, weld factor 0.85, 1.5 mm for corrosion)'}
+elbow: {radius: 1.8, mass: 801.3}
+tee: {mass: 337.4}
+cap: {thickness: 0.016, mass: 142.1}
+support: {spacing: 12.0, mass: 83.1, per_m_height: 34.8, item: material.structural-steel-a36}
+connector: connector.flange-dn1200-pn1
+carries: gas
+template: template.pipe
+visual: {format: freefall-model/1, path: models/pipe-dn1200-pn1/v1, manifest_sha256: 235cfb3879ebc773c92e4e31e8c3b5b33ffe33ae01283f1d95f79d85bfdc0a44, version: 1, triangles: 2704}
+basis:
+- of: [per_m]
+  tier: derived
+  note: Wall from pressure; mass from material and dimensions.
+- of: [elbow, tee]
+  tier: derived
+  note: A long-radius elbow (1.5 bores) is its arc of straight; a tee is its branch stub over the straight it sits in, from the main's outside to 1.5 bores off its axis (checked on blender's DN 200 kit).
+- of: [support]
+  tier: derived
+  review: true
+  note: 'Spacing from the span it bears full at 1 g (2.5 mm sag, a third of yield), 3 to 12 m: 12.0 m. The stand''s head and its leg by the metre from memory.'

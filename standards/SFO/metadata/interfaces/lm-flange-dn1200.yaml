@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/interface.schema.yaml
+identity:
+  key: interface.lm-flange-dn1200
+  name: Liquid-metal flange DN 1200
+  description: 'The mating face of a bolted molybdenum flange for liquid lithium at up to 1,700 K: DN 1200, a metal seal doubled (lithium burns in air and attacks most seals). Any maker''s half built to it mates with any other.'
+domain: fluid
+kind: flange
+envelope:
+  pressure: 1000000.0
+  temperature: 1700.0
+media:
+- liquid
+sealing: double
+halves: androgynous
+make: bolted
+face:
+  length: 1.4
+  width: 1.4
+  height: 0.12
+size: 1.2
+standard: 'The registry''s own liquid-metal flange (molybdenum, double metal seal): no public standard for lithium at these temperatures.'
+basis:
+- of:
+  - envelope
+  - face
+  - standard
+  tier: invented
+  review: true
+  note: '2026-10-17, for the FT engines'' radiator panels: molybdenum keeps strength and resists lithium to about 1,700 K (from memory); the face''s outside a bore and 0.2 m.'

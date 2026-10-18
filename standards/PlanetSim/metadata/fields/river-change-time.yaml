@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry_extra.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-field.river-change-time
+  name: River change time
+  about: When a sample's river last changed state.
+unit: s
+said_as:
+  unit: Gyr
+  factor: 3.15576e+16
+per: sample
+producer:
+  where: stages/coupled.py
+  file: ctx
+  key: h_t_change
+time_base: planet-age
+missing: 'NaN: never changed'
+status: draft
+basis:
+- of:
+  - identity
+  - producer
+  - unit
+  tier: derived
+  note: 'planets, 17 Oct 2026: from the Python sim''s inventory (planet-forge docs/registry-migration/surface.json), read
+    from the code.'

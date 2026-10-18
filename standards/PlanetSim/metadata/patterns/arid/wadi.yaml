@@ -1,0 +1,58 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.arid.channel.wadi
+  name: Wadi (arroyo, ephemeral desert valley)
+  about: Wadi (arroyo, ephemeral desert valley).
+family: arid
+factors:
+- factor: planet-factor.clim-arid
+  weight: 1
+  why: Arid; channel dry most of year
+- factor: planet-factor.clim-storm
+  weight: 3
+  why: Rare flash floods carry most work; few flow days per year
+- factor: planet-factor.clim-history
+  weight: 3
+  why: Large wadi systems inherited from wetter (pluvial) phases
+- factor: planet-factor.rock-perm
+  weight: 3
+  why: Porous bed causes transmission losses; flows shrink downstream and deposit
+- factor: planet-factor.rock-type
+  weight: 1
+  why: Strong rock gives box canyons; weak rock gives wide shallow wadis
+- factor: planet-factor.sed-supply
+  weight: 1
+  why: Abundant coarse sediment gives flat braided gravel/sand floors
+- factor: planet-factor.base-level
+  weight: 1
+  why: Ends in playa, sabkha or sand sea (endorheic) or the sea
+- factor: planet-factor.clim-wind
+  weight: 1
+  why: Dunes block and disrupt networks
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: Sparse cover gives flashy runoff; arroyo cut-and-fill tied to vegetation change
+- factor: planet-factor.time
+  weight: 1
+  why: 10 kyr-10 Myr
+vocabulary_id: 11
+sources:
+- https://en.wikipedia.org/wiki/Wadi
+- https://www.nps.gov/subjects/geology/arid-landforms.htm
+library_status: written
+source: arid.channel.wadi
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

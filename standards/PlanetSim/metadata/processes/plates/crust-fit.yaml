@@ -1,0 +1,43 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.crust-fit
+  name: Fitting particle volumes to a target thickness field
+  about: _scale_continents multiplies each continental particle's volume by the share-weighted mean of a per-sample ratio.
+    _set_continents iterates PROJECT_ROUNDS times towards a target thickness at selected samples, then rescales the touched
+    particles so the total changes by exactly the target's change.
+area: plates
+clock:
+  when: inside spread passes, denudation, remesh
+reads:
+- name: kern (rows, cols, share)
+writes:
+- name: w.xvol
+  unit: m3
+params:
+- name: PROJECT_ROUNDS
+  value: 6.0
+  unit: '1'
+  meaning: fixed-point rounds in _set_continents
+  source: stages/plates.py:219
+random_draws:
+- none
+invariants:
+- total continental volume after _set_continents = before + sum((target-now)*cell) over where
+depends_on:
+- planet-process.crust-read
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/plates.py:_scale_continents (543-551), _set_continents (554-580)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
+    code at planet-sim-landform 9747f0d-c437724.'

@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/interface.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: interface.bus-joint-ac-65ka, name: 'Bus joint, AC, 65 kA', description: 'The mating face of the Bus joint, AC, 65 kA joint: any maker''s half built to it mates with any other''s, whatever its metal.'}
+domain: power
+kind: bus-joint
+envelope: {voltage: 800.0, current: 64951.9}
+media: [power]
+sealing: open
+halves: androgynous
+make: bolted
+face: {length: 0.3, width: 1.6, height: 0.34}
+size: 0.01728
+basis:
+- of: [envelope, face]
+  tier: derived
+  note: The most the connection products built to it are rated for, and their joint's outside (SFO 25's connectors).

@@ -1,0 +1,172 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.plates
+  name: plates
+  about: the plates (a colour each, by plate id, kept through time), continents lighter, the deep trenches darker; plate boundaries,
+    coastlines, mid-ocean ridges and trench axes
+title: plates
+row: top (history views)
+file_suffix: _plates.png
+draws:
+  words: the plates (a colour each, by plate id, kept through time), continents lighter, the deep trenches darker; plate boundaries,
+    coastlines, mid-ocean ridges and trench axes
+shown: true
+implementations:
+- where: planet-trees-pgs2 tools/planet_vectors.py / planet_anchors.py sheet() (not inventoried; unverified which writes which)
+  state: reference
+- where: planet-forge crates/viewer/src/layers/plates.rs
+  state: current
+  note: the viewer
+status: draft
+legend:
+  title: '0. THE PLATES: {plates} plates (a colour each, kept through time); continents light, ridges yellow, trenches purple'
+  source: planet_vectors.py:283-298 (the plate view), 289-293 palette
+  rows:
+  - kind: fill
+    label: plate colour
+    colour:
+    - 86
+    - 140
+    - 200
+    shown_when: always
+  - kind: fill
+    label: plate colour
+    colour:
+    - 220
+    - 120
+    - 90
+    shown_when: always
+  - kind: fill
+    label: plate colour
+    colour:
+    - 120
+    - 190
+    - 110
+    shown_when: always
+  - kind: fill
+    label: plate colour
+    colour:
+    - 200
+    - 170
+    - 80
+    shown_when: always
+  - kind: fill
+    label: plate colour
+    colour:
+    - 160
+    - 110
+    - 190
+    shown_when: always
+  - kind: fill
+    label: plate colour
+    colour:
+    - 90
+    - 190
+    - 190
+    shown_when: always
+  - kind: fill
+    label: plate colour
+    colour:
+    - 220
+    - 90
+    - 150
+    shown_when: always
+  - kind: fill
+    label: plate colour
+    colour:
+    - 150
+    - 150
+    - 150
+    shown_when: always
+  - kind: fill
+    label: plate colour
+    colour:
+    - 60
+    - 110
+    - 160
+    shown_when: always
+  - kind: fill
+    label: plate colour
+    colour:
+    - 180
+    - 80
+    - 60
+    shown_when: always
+  - kind: fill
+    label: plate colour
+    colour:
+    - 80
+    - 150
+    - 80
+    shown_when: always
+  - kind: fill
+    label: plate colour
+    colour:
+    - 160
+    - 130
+    - 50
+    shown_when: always
+  - kind: fill
+    label: plate colour
+    colour:
+    - 120
+    - 80
+    - 150
+    shown_when: always
+  - kind: fill
+    label: plate colour
+    colour:
+    - 60
+    - 150
+    - 150
+    shown_when: always
+  - kind: fill
+    label: plate colour
+    colour:
+    - 180
+    - 60
+    - 120
+    shown_when: always
+  - kind: fill
+    label: plate colour
+    colour:
+    - 110
+    - 110
+    - 110
+    shown_when: always
+  - kind: line
+    label: plate boundaries
+    colour:
+    - 20
+    - 20
+    - 20
+    shown_when: always
+  - kind: line
+    label: coastlines
+    colour:
+    - 255
+    - 255
+    - 255
+    shown_when: always
+  - kind: line
+    label: mid-ocean ridges
+    colour:
+    - 255
+    - 230
+    - 90
+    shown_when: always
+  - kind: line
+    label: trench axes
+    colour:
+    - 200
+    - 60
+    - 220
+    shown_when: always
+basis:
+- of:
+  - legend
+  - draws
+  tier: derived
+  note: 'planets, 17 Oct 2026: the viewer port (crates/viewer), from planet-trees-pgs2 tools/planet_vectors.py, planet_form.py
+    and planet-sim preview.py, look.py.'

@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.aeolian.surface.desert-pavement
+  name: Desert pavement (stone pavement / reg / serir)
+  about: Desert pavement (stone pavement / reg / serir).
+family: aeolian
+factors:
+- factor: planet-factor.clim-arid
+  weight: 3
+  why: arid; little vegetation
+- factor: planet-factor.regolith
+  weight: 3
+  why: gravelly alluvium or weathered basalt supplies clasts
+- factor: planet-factor.sed-supply
+  weight: 1
+  why: dust influx builds accretionary Av mantle (0.1-3 m) under clasts
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: low slopes, stable fan terraces or lava flows
+- factor: planet-factor.time
+  weight: 3
+  why: 5-1000 kyr; older pavements tighter, varnished
+- factor: planet-factor.clim-wind
+  weight: 1
+  why: deflation removes fines
+- factor: planet-factor.clim-storm
+  weight: 1
+  why: sheetwash removes fines
+- factor: planet-factor.other-shrink-swell
+  weight: 1
+  why: clay swelling and salts heave clasts upward
+vocabulary_id: 9
+sources:
+- https://en.wikipedia.org/wiki/Desert_pavement
+- https://pubs.usgs.gov/gip/deserts/eolian/
+library_status: written
+source: aeolian.surface.desert_pavement
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

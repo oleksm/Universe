@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: connector.chute-dn400, name: Chute flange DN 400, description: A sealed bolted flange where bulk falls through a 400 mm chute into a closed conveyor.}
+kind: chute
+size: 0.4
+rating: {pressure: 0.0, temperature: 973.0}
+sealing: single
+physical: {length: 0.6, width: 0.6, height: 0.11, mass: 52.4}
+built_of:
+- {what: Flanges, item: material.stainless-steel-304, mass: 49.6, note: 'two plate rings 0.60 m across, 20 mm'}
+- {what: Bolts, item: material.high-strength-steel-4340, mass: 2.2, note: 12 of M16}
+- {what: Gasket, item: material.fused-silica, mass: 0.6, note: 'a 6 mm silica-fibre dust gasket, for the sponge iron''s 700 deg C (rubber would not take it); fused silica stands for it'}
+interface: interface.chute-dn400
+provides: both
+template: template.chute
+visual: {format: freefall-model/1, path: models/chute-dn400/v1, manifest_sha256: 085378f2481a3e691a19b060a74092b7d5d8be01e8e3ef3f9097df1814e60f35, version: 1, triangles: 3920}
+basis:
+- of: [built_of]
+  tier: invented
+  review: true
+  note: Plate rings and M16 bolts at a 150 mm pitch, from memory; along the chute the rings, gasket and the bolts' and nuts' ends, as for pipe flanges.

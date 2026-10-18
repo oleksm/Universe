@@ -7,6 +7,13 @@
     python3 tools/standards/next_asset.py --report        # done and left as a page (out/model-report.html), opened; --no-open to only write it
     python3 tools/standards/next_asset.py --key equipment.power.battery.s1   # the brief of one record
     python3 tools/standards/next_asset.py --hulls         # include hulls (the ships session's designs)
+    python3 tools/standards/next_asset.py --rework        # installed models with work to do, worst first (--json for an agent)
+    python3 tools/standards/next_asset.py --gap unit.ball-mill-4m4   # one model's gap: the spec it was made to, the spec now, what to do
+
+Rework (model_spec.py): a model's spec is what its record sets for it (size, parts, required nodes, ports, motion,
+envelope, budget). Each install keeps the spec it was made to; the gap against the record now gives a verdict:
+rebuild, rig, review, measure, optimise, or none (a port moving is never model work). The registry can also ask by
+name (a record's model_requests). Answer by installing a new version: a version above the one asked of closes it.
 
 The queue is every record of a kind that takes a model (equipment, modules, buildings, structures, gates; hulls on
 asking) with no `visual` yet and not retired, in the order the player sees them most: equipment the experimental ship
@@ -21,6 +28,7 @@ import yaml
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from assets import KINDS, TREE, LOW, HIGH, records, required_nodes, size_of, store, tail  # noqa: E402
+import model_spec  # noqa: E402
 
 
 def usage():
@@ -45,6 +53,23 @@ def usage():
                 add(x.get("module"), x.get("count", 1))
         for x in d.get("buildings") or []:
             add(x.get("building"), x.get("count", 1))
+    arr = {}
+    for f in glob.glob(os.path.join(TREE, "SFO/metadata/arrangements/*.yaml")):
+        d = yaml.safe_load(open(f)) or {}
+        arr[d["identity"]["key"]] = [x["unit"] for x in d.get("items") or []]
+    for f in glob.glob(os.path.join(TREE, "SFO/metadata/layouts/*.yaml")):       # (a building's pieces: every room's arrangement, as often as the building stands)
+        d = yaml.safe_load(open(f)) or {}
+        n = used.get(d.get("stands_for"), 0)
+        for room in d.get("rooms") or []:
+            for u in arr.get(room["arrangement"], []):
+                add(u, n)
+        for p_ in (d.get("frame") or {}).get("panels") or []:
+            add(p_["panel"], n * p_["count"])
+    for folder in ("panels", "runs", "connectors"):      # (a template is used wherever its members are)
+        for f in glob.glob(os.path.join(TREE, f"SFO/metadata/{folder}/*.yaml")):
+            d = yaml.safe_load(open(f)) or {}
+            if d.get("template"):
+                add(d["template"], used.get(d["identity"]["key"], 0))
     return used
 
 
@@ -64,7 +89,7 @@ def tier(kind, key, used):
         return 0
     if kind == "equipment":
         return 1
-    if kind in ("structure", "gate"):
+    if kind in ("structure", "gate", "unit", "run", "connector", "template"):      # (works units and their kit: the owner, 2026-10-15; kit templates)
         return 2
     if kind == "module":
         return 3
@@ -86,7 +111,7 @@ def brief(kind, key, path, r, used):
          "size_m": {"length": size[0], "width": size[1], "height": size[2]} if size else None,
          "size_rule": f"the model's three sides, sorted, each {LOW:.0%} to {HIGH:.0%} of the record's, sorted (glTF metres; axes free)",
          "mass_kg": (r.get("physical") or {}).get("mass"),
-         "required_nodes": required_nodes(kind, r), "triangle_budget": KINDS[kind][1],
+         "required_nodes": required_nodes(kind, r), "triangle_budget": r.get("triangle_budget") or KINDS[kind][1],
          "record": os.path.relpath(path, os.path.dirname(TREE)),
          "install": f"python3 tools/standards/install_model.py <model.glb> --as={key} --source=<file.blend> --push",
          "package": f"{store()}/models/{tail(key)}/v<N>/"}
@@ -101,7 +126,7 @@ def brief(kind, key, path, r, used):
         b["mount"] = {"key": r["fits"], "envelope_m": m.get("envelope"), "attachment": m.get("attachment")}
     lst = (r.get("built_of") or {}).get("list") or [] if not isinstance(r.get("built_of"), list) else []
     if isinstance(r.get("built_of"), list):
-        b["made_of"] = [{"what": p["what"], "of": p["item"], "mass_kg": p["mass"], "note": p.get("note")} for p in r["built_of"]]
+        b["made_of"] = [{"what": p.get("what", p["item"]), "of": p["item"], "mass_kg": p.get("mass", p.get("quantity")), "note": p.get("note")} for p in r["built_of"]]   # (older records list {item, quantity})
     if kind == "layout":
         b["layout"] = {k: r.get(k) for k in ("site", "bays", "mobile", "links", "frame", "ground")}
         b["model_notes"] = "a layout is assembled from its units' models placed at their bays (x along, y across, z up, metres from its middle at ground level) on the frame and ground works it names; model the frame and the links, place the units"
@@ -112,6 +137,19 @@ def brief(kind, key, path, r, used):
         b["parts"] = [{"code": d["identity"]["code"], "name": d["identity"]["name"], "mass_kg": (d.get("physical") or {}).get("mass"),
                        "box_m": [(d.get("physical") or {}).get(k) for k in ("length", "width", "height")]}
                       for d in (yaml.safe_load(open(f)) for f in sorted(glob.glob(folder + "/*.yaml")))]
+    sp = model_spec.spec(kind, r)
+    if sp["ports"]:
+        b["ports"] = [{**p, "note": "the joint is the game's: the model ends at the mating plane, no stub (SFO 26)"} if i == 0 else p for i, p in enumerate(sp["ports"])]
+    if sp["motion"]:
+        b["motion"] = sp["motion"]
+        b["motion_notes"] = "separate each moving part, its pivot on the motion's point and axis (record frame: x along, y across, z up), and install with --motion"
+    if sp["envelope"]:
+        b["envelope_m"] = sp["envelope"]
+    if r.get("model_requests"):
+        b["model_requests"] = model_spec.open_requests(r)
+    if r.get("visual"):
+        b["installed"] = r["visual"].get("version")
+        b["rework"] = model_spec.gap(kind, key, path, r)
     if r.get("basis"):
         b["basis"] = [{"of": x.get("of"), "tier": x.get("tier"), "rule": x.get("rule"), "note": x.get("note")} for x in r["basis"]]
     if kind == "package":
@@ -128,7 +166,9 @@ def brief(kind, key, path, r, used):
 def queue(hulls=False):
     used = usage()
     q = [(kind, key, path, r) for kind, key, path, r in records()
-         if not r.get("visual") and stage(r) != "retired" and (hulls or kind != "hull")]
+         if not r.get("visual") and not r.get("looks_as") and not r.get("template") and not r.get("model_of") and stage(r) != "retired" and (r.get("revision") or {}).get("status") != "deprecated" and (hulls or kind != "hull")      # (a kit record its family template draws, or a template an installed model serves, wants none of its own)
+         and not (kind == "template" and r.get("draws") == "sweep")
+         and kind not in ("module", "layout")]      # (no monolith works models: the owner, 2026-10-15; a works is units and runs snapped together)
     low = lambda r: (r.get("revision") or {}).get("priority") == "low"     # (a hold the user set: last of all)
     ds = designs()      # (the experimental designs' equipment ahead of the rest: the user, 2026-10-11)
     q.sort(key=lambda x: (low(x[3]), x[1] not in ds, tuple(-n for n in ds.get(x[1], (0, 0))), tier(x[0], x[1], used),
@@ -143,7 +183,7 @@ h1{font-size:22px;margin:0 0 4px}h2{font-size:17px;margin:28px 0 8px}p{color:var
 table{border-collapse:collapse;width:100%;margin-bottom:8px}th,td{text-align:left;padding:4px 8px;border-bottom:1px solid var(--line)}
 th{color:var(--mute);font-weight:600}td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}code{font-size:12.5px}
 .bar{background:var(--track);border-radius:3px;height:8px;min-width:120px}.bar i{display:block;background:var(--bar);height:8px;border-radius:3px}
-.wrap{overflow-x:auto}"""
+.wrap{overflow-x:auto}td.img{width:64px;padding:2px 8px}td.img img{width:56px;height:56px;object-fit:contain;display:block;border-radius:4px;background:var(--track)}"""
 
 
 def report(q, used):
@@ -155,6 +195,9 @@ def report(q, used):
         if r.get("visual"):
             done.append((kind, key, r))
     name = lambda r: e((r.get("identity") or {}).get("name") or "")
+    ph = lambda r: r.get("physical") or {}
+    dims = lambda r: " x ".join(f"{ph(r)[k]:g}" for k in ("length", "width", "height") if isinstance(ph(r).get(k), (int, float)))
+    mass = lambda r: (lambda m: "" if not isinstance(m, (int, float)) else f"{m / 1000:,.1f} t" if m >= 1000 else f"{m:,.0f} kg")(ph(r).get("mass"))
     h = [f"<!doctype html><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>Model report</title><style>{REPORT_CSS}</style>",
          f"<h1>Model report</h1><p>{datetime.datetime.now():%Y-%m-%d %H:%M}, from <code>next_asset.py --report</code>. "
          f"{sum(t[1] for t in rows.values())} modelled, {len(q)} in the queue.</p>",
@@ -166,10 +209,19 @@ def report(q, used):
     h.append("</table></div><h2>Left, in queue order</h2><div class=wrap><table><tr><th class=n>#</th><th>Kind</th><th>Key</th><th>Name</th><th>Stage</th><th class=n>Used</th></tr>")
     for n, (kind, key, path, r) in enumerate(q, 1):
         h.append(f"<tr><td class=n>{n}</td><td>{kind}</td><td><code>{key}</code></td><td>{name(r)}</td><td>{stage(r) or 'draft'}</td><td class=n>{used.get(key, 0)}</td></tr>")
-    h.append("</table></div><h2>Done</h2><div class=wrap><table><tr><th>Kind</th><th>Key</th><th>Name</th><th class=n>Version</th><th class=n>Triangles</th></tr>")
+    work = model_spec.rework()
+    h.append(f"</table></div><h2>Rework</h2><p>{len(work)} installed models with work to do, from <code>next_asset.py --rework</code>; each one's brief from <code>--gap &lt;key&gt;</code>.</p>"
+             "<div class=wrap><table><tr><th>Verdict</th><th>Kind</th><th>Key</th><th class=n>Version</th><th>What</th></tr>")
+    for g in work:
+        what = "; ".join(x["what"] + ": " + x["detail"][:220] for x in g["gaps"] if x["verdict"] != "none")
+        h.append(f"<tr><td>{g['verdict']}</td><td>{g['kind']}</td><td><code>{g['key']}</code></td><td class=n>{g['installed']}</td><td>{e(what)}</td></tr>")
+    h.append("</table></div><h2>Done</h2><div class=wrap><table><tr><th></th><th>Kind</th><th>Key</th><th>Name</th><th class=n>Size, m</th><th class=n>Mass</th><th class=n>Version</th><th class=n>Triangles</th></tr>")
     for kind, key, r in sorted(done, key=lambda x: (x[0], x[1])):
         v = r["visual"]
-        h.append(f"<tr><td>{kind}</td><td><code>{key}</code></td><td>{name(r)}</td><td class=n>{v.get('version', '')}</td><td class=n>{v.get('triangles', 0):,}</td></tr>")
+        d = os.path.join(store(), v.get("path", ""))
+        icon, thumb = os.path.join(d, "icon.png"), os.path.join(d, "thumb.png")
+        img = (f"<a href='file://{e(thumb)}'><img loading=lazy src='file://{e(icon if os.path.exists(icon) else thumb)}' alt=''></a>" if os.path.exists(thumb) or os.path.exists(icon) else "")
+        h.append(f"<tr><td class=img>{img}</td><td>{kind}</td><td><code>{key}</code></td><td>{name(r)}</td><td class=n>{dims(r)}</td><td class=n>{mass(r)}</td><td class=n>{v.get('version', '')}</td><td class=n>{v.get('triangles', 0):,}</td></tr>")
     h.append("</table></div>")
     out = os.path.join(os.path.dirname(TREE), "out", "model-report.html")
     os.makedirs(os.path.dirname(out), exist_ok=True)
@@ -190,6 +242,32 @@ def main(argv):
         print(f"{'kind':<10} {'records':>7} {'modelled':>8} {'retired':>7}")
         for kind, (n, m, x) in rows.items():
             print(f"{kind:<10} {n:>7} {m:>8} {x:>7}")
+        return
+    if opt.get("rework"):
+        work = model_spec.rework()
+        if opt.get("json"):
+            print(json.dumps(work, indent=1, ensure_ascii=False))
+            return
+        print(f"{'verdict':<9} {'kind':<10} {'v':>2} key: what")
+        for g in work:
+            print(f"{g['verdict']:<9} {g['kind']:<10} {g['installed'] or 0:>2} {g['key']}: " + "; ".join(x["what"] for x in g["gaps"] if x["verdict"] != "none"))
+        print(f"{len(work)} installed models with work to do; one's brief: --gap <key>")
+        return
+    if opt.get("gap"):
+        key = argv[argv.index("--gap") + 1] if opt["gap"] is True else opt["gap"]
+        hit = [(k, kk, p, r) for k, kk, p, r in records() if kk == key]
+        if not hit:
+            sys.exit(f"no record {key} of a kind that takes a model")
+        kind, key, path, r = hit[0]
+        if not r.get("visual"):
+            sys.exit(f"{key} has no model yet: its brief is --key {key}")
+        g = model_spec.gap(kind, key, path, r)
+        old, source = model_spec.installed_spec(kind, path, r)
+        g["spec_installed"], g["spec_now"] = old, model_spec.spec(kind, r)
+        g["package"] = os.path.join(store(), r["visual"]["path"])
+        g["install"] = f"python3 tools/standards/install_model.py <model.glb> --as={key} --source=<file.blend> --push" + (" --motion=<motion.json>" if any(x["verdict"] == "rig" for x in g["gaps"]) else "")
+        g["measure"] = f"python3 tools/standards/model_measure.py <model.glb> --as={key}" if kind == "unit" else None
+        print(json.dumps(g, indent=1, ensure_ascii=False))
         return
     q, used = queue(bool(opt.get("hulls")))
     if opt.get("report"):

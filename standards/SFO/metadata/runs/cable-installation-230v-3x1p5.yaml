@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../../schema/run.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: run.cable-installation-230v-3x1p5
+  name: Installation cable, 230 V, 3 x 1.5 mm2
+  description: 'A sheathed cable of 3 solid copper cores (line, neutral and earth) clipped along a building''s frame or laid in its floors and walls: its circuits to outlets, lights and small machines, 16 A clipped in air.'
+kind: cable
+size: 1.5e-06
+outside:
+- 0.0088
+- 0.0088
+rating:
+  voltage: 230
+  current: 16
+per_m:
+  mass: 0.084
+  built_of:
+  - what: Conductors
+    item: material.copper
+    mass: 0.04
+    note: 3 solid cores of 1.5 mm2
+  - what: Insulation and sheath
+    item: material.polyethylene-uhmw
+    mass: 0.044
+    note: PVC or LSZH, as UHMW polyethylene here
+elbow:
+  radius: 0.035
+  mass: 0.0047
+connector: connector.wiring-box-lv
+carries: power
+template: template.cable-installation
+basis:
+- of:
+  - per_m
+  - rating
+  - outside
+  tier: invented
+  review: true
+  note: Wiring regulations' clipped-direct ratings and usual insulation thicknesses; least bend 4 outsides; From memory of makers' catalogues; to be sourced.

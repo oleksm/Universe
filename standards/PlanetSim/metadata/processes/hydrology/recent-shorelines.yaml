@@ -1,0 +1,80 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.recent-shorelines
+  name: Recent epoch shoreline extremes
+  about: Shore = land sample with a non-land neighbour. lowstand_shore marks samples that were shore at any step with g >
+    0.8. coast_hi (shore at g < 0.1 cleared) is computed but NOT returned.
+area: hydrology
+clock:
+  when: 'recent epoch: once, after the plates reach the present, 260 steps of DT_KYR = 10 kyr from 2,600 kyr to 10 kyr ago
+    on the final relief zr with sea0 = 0; run by planet-trees-pgs2/tools/planet_form.py:561-574 when SIM_RECENT=1 (default:
+    SIM_COUPLED); outputs written as r_<key> into the last ck_??_*kyr_ctx.npz (needs CONTEXT=1)'
+reads:
+- name: land
+  unit: bool
+  meaning: ice surface > shifted sea
+  field: planet-field.recent-height
+- name: g
+  unit: 0-1
+  field: planet-field.glaciality
+- name: sea
+  field: planet-field.glacial-sea-offset
+  unit: m
+  meaning: the sea of the moment against the present's
+- name: H
+  field: planet-field.ice
+  unit: m
+  meaning: ice thickness
+writes:
+- name: r_lowstand_shore
+  field: planet-field.lowstand-shore
+  unit: bool
+  meaning: glacial lowstand shoreline
+params:
+- name: 'inline: lowstand g'
+  value: 0.8
+  unit: '1'
+  said_as:
+    unit: glaciality
+    factor: 1.0
+  open: true
+  meaning: 'unverified: the code names it inline: lowstand g without saying what it is'
+  source: stages/recent.py:121
+  note: 'unit as the code says it: ''glaciality''; SI conversion unverified'
+- name: 'inline: highstand g'
+  value: 0.1
+  unit: '1'
+  said_as:
+    unit: glaciality
+    factor: 1.0
+  open: true
+  meaning: unused output
+  source: stages/recent.py:121
+  note: 'unit as the code says it: ''glaciality''; SI conversion unverified'
+random_draws:
+- none
+depends_on:
+- planet-process.glacial-cycles
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/recent.py:run (lines 120-121)
+  state: reference
+- where: planet-forge crates/forge-core/src/models/surface/recent.rs
+  state: current
+  note: planet-forge port (surface line, merged in forge main 370ab83)
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
+    the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge surface port (models/surface), read from planet-sim-landform 9747f0d-c437724.'

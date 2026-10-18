@@ -1,0 +1,162 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.anchors
+  name: anchor model
+  about: 'the planet graph: level loops every 200 m off the samples'' refined mesh (reduced: uniform slopes and clusters dropped),
+    the shores (sea and inland water), the rivers with arrows downstream, the peaks and lows inside their rings; header and
+    legend in the image'
+title: anchor model
+row: top (history views)
+file_suffix: _anchors.png
+draws:
+  words: 'the planet graph: level loops every 200 m off the samples'' refined mesh (reduced: uniform slopes and clusters dropped),
+    the shores (sea and inland water), the rivers with arrows downstream, the peaks and lows inside their rings; header and
+    legend in the image'
+shown: true
+implementations:
+- where: planet-trees-pgs2 tools/planet_vectors.py / planet_anchors.py sheet() (not inventoried; unverified which writes which)
+  state: reference
+- where: planet-forge crates/viewer/src/layers/anchors.rs
+  state: current
+  note: the viewer
+status: draft
+legend:
+  title: 'the planet graph: contours at {step} m intervals · {loops} loops kept · reducer: {slope} slope, {cluster} cluster,
+    {deep} deep-water loops removed · {peaks} peaks / {lows} lows'
+  source: planet_anchors.py:358-430 sheet (drawn at twice the map), graph.py
+  rows:
+  - kind: line
+    label: 'shore: where standing water meets the land, at the water''s height; the sea''s at 0'
+    colour:
+    - 255
+    - 255
+    - 255
+    shown_when: always
+  - kind: line
+    label: land contours, every {step} m up to 2,000 m
+    colour:
+    - 180
+    - 135
+    - 80
+    shown_when: always
+  - kind: line
+    label: land contours above 2,000 m
+    colour:
+    - 225
+    - 195
+    - 140
+    shown_when: always
+  - kind: line
+    label: sea-floor contours, every {step} m
+    colour:
+    - 80
+    - 125
+    - 190
+    shown_when: always
+  - kind: line
+    label: 'rivers, arrows downstream: the water poured on the land, gathered from {river},000 km² of it, to the sea or a
+      lake'
+    colour:
+    - 120
+    - 190
+    - 255
+    shown_when: always
+  - kind: line
+    label: 'dry trace: the ground gathers that much but the water does not come (its source lost to the air)'
+    colour:
+    - 170
+    - 150
+    - 120
+    shown_when: always
+  - kind: line
+    label: 'shore inland: the same line at its water''s own height (standing water that filled a dip)'
+    colour:
+    - 255
+    - 255
+    - 255
+    shown_when: always
+  - kind: dot
+    label: 'peak: the highest point inside its ring'
+    colour:
+    - 255
+    - 60
+    - 40
+    shown_when: always
+  - kind: dot
+    label: 'low: the lowest point inside its ring'
+    colour:
+    - 60
+    - 120
+    - 255
+    shown_when: always
+  - kind: fill
+    label: land
+    colour:
+    - 58
+    - 60
+    - 64
+    shown_when: style
+  - kind: fill
+    label: sea
+    colour:
+    - 18
+    - 20
+    - 24
+    shown_when: style
+  - kind: fill
+    label: lake
+    colour:
+    - 18
+    - 20
+    - 24
+    shown_when: style
+  - kind: line
+    label: lake outline
+    colour:
+    - 255
+    - 255
+    - 255
+    shown_when: style
+  - kind: fill
+    label: river arrows
+    colour:
+    - 220
+    - 240
+    - 255
+    shown_when: style
+  - kind: line
+    label: anchor outline
+    colour:
+    - 255
+    - 255
+    - 255
+    shown_when: style
+  - kind: fill
+    label: legend box
+    colour:
+    - 20
+    - 22
+    - 28
+    shown_when: style
+  - kind: line
+    label: legend text
+    colour:
+    - 235
+    - 235
+    - 235
+    shown_when: style
+  - kind: line
+    label: header text
+    colour:
+    - 240
+    - 240
+    - 240
+    shown_when: style
+basis:
+- of:
+  - legend
+  - draws
+  tier: derived
+  note: 'planets, 17 Oct 2026: the viewer port (crates/viewer), from planet-trees-pgs2 tools/planet_vectors.py, planet_form.py
+    and planet-sim preview.py, look.py.'

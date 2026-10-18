@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.periglacial.slope.nivation-hollow
+  name: Nivation hollow
+  about: Nivation hollow.
+family: periglacial
+factors:
+- factor: planet-factor.clim-precip
+  weight: 3
+  why: Snow supply for late-lying snowpatches
+- factor: planet-factor.clim-wind
+  weight: 3
+  why: Lee-side drift accumulation sets location
+- factor: planet-factor.aspect
+  weight: 3
+  why: Shaded slopes keep snowpatches longest
+- factor: planet-factor.clim-temp
+  weight: 1
+  why: Periglacial freeze-thaw at snowpatch margins
+- factor: planet-factor.rock-type
+  weight: 1
+  why: Best on weak or well-jointed rock or regolith
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: Lee slopes and valley heads; may grow into cirques
+- factor: planet-factor.time
+  weight: 1
+  why: 1-100 kyr; 10-500 m across
+vocabulary_id: 111
+sources:
+- https://en.wikipedia.org/wiki/Nivation
+library_status: written
+source: periglacial.slope.nivation_hollow
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

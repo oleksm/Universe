@@ -1,18 +1,50 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.sampling-lab, name: Sampling laboratory, description: 'A cabin with a saw that cuts a sample from one ingot of each heat, a grinder, and a spark emission spectrometer that reads the steel''s composition in minutes, so the heat''s grade can be certified on its crates'' labels.'}
+identity: {key: unit.sampling-lab, name: Sampling laboratory, description: 'A closed steel cabin where the steel of each heat is read: no ingot comes in. At a crop saw, one ingot of each heat has a second slice taken off its cut face, a coupon 0.48 m square and 25 mm thick (about 45 kg), which a worker brings on a hand cart to the lab''s pass-through hatch. Inside, an abrasive cutter takes a 40 mm piece off it, a grinder dresses its face, and a spark emission spectrometer reads the steel''s composition in minutes, so the heat''s grade can be certified on its crates'' labels; the coupon is kept a while, then goes to scrap. A staff door, the pass-through hatch (0.6 x 0.6 m, 1 m up) beside it, the extraction and power at the rear.'}
 size_class: 1
 fits: plant-mount.bay-s1
 physical: {length: 6.0, width: 6.0, height: 3.5, mass: 11000.0}
 built_of:
 - {what: Cabin, item: material.structural-steel-a36, mass: 8000.0, note: from memory}
-- {what: 'Saw, grinder and spectrometer', item: good.electric-motors, mass: 3000.0, note: from memory}
+- {what: 'Cutter, grinder and spectrometer', item: good.electric-motors, mass: 3000.0, note: from memory}
 needs: {power: 60000.0}
+ports:
+- id: power-in
+  flow: in
+  medium: power
+  power: 60000.0
+  voltage: 400
+  interface: interface.termination-400v-50mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-50mm2
+  at: [-3.0, 1.5, 0.5]
+  facing: [-1.0, 0.0, 0.0]
+  note: on the west wall
+  current: 96.23
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s1
+  half: male
+  make: bolted
+  mass: 11000.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
+product: product.sampling-lab
+envelope:
+- [-3.001, -3.201, -0.001, 3.002, 3.146, 3.501]
 life: 788940000
+visual: {format: freefall-model/1, path: models/sampling-lab/v1, manifest_sha256: 1c88555d840e1d6a7da6a10f68128d24e713dfb1cd91783ffcac8d02cb487dad, version: 1, triangles: 2520}
 basis:
 - of: [physical, built_of, needs]
   tier: invented
   review: true
   note: From memory.
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage.'
 - of: [life]
   rule: rule.life-plant

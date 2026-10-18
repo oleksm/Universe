@@ -1,0 +1,40 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Interface
+x-kind: [interface]
+description: "standards/SFO/metadata/interfaces/<name>.yaml: a mating face as a standard (SFO 26), the building code of connection. A port on a made thing says which interface it is built to and the duty it needs; a connection product (a flange pair, a plug, a hose's coupling, a cable's termination, a coupler) says which interface it is built to and what it is rated for. A product fits a port when both name the same interface, it brings the other half, and its rating covers the port's duty. Any maker may build to it."
+type: object
+additionalProperties: false
+required: [identity, domain, kind, halves, make]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name]
+    properties:
+      key: { type: string, pattern: "^interface\\.[a-z0-9-]+$" }
+      name: { type: string }
+      description: { type: string }
+  domain: { enum: [fluid, vacuum, bulk, molten, power, signal, heat, load, carrier, people], description: "What crosses it, broadly." }
+  kind: { type: string, description: "Its family: flange, lined-flange, chute, belt-transfer, termination, bus-joint, hood, clamp-coupling, plug-socket, quick-coupling, bayonet, refuelling, docking-ring, coupler, twistlock, mount ..." }
+  size: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "Its nominal size: a bore, a belt's width, a mount's side" }
+  area: { type: number, exclusiveMinimum: 0, x-unit: "m2", description: "A conductor's cross-section (a cable termination)" }
+  envelope:
+    type: object
+    additionalProperties: false
+    description: "The most a product built to it is made for: a port's duty must lie within it."
+    properties:
+      pressure: { type: number, minimum: 0, x-unit: "Pa" }
+      temperature: { type: number, minimum: 0, x-unit: "K" }
+      voltage: { type: number, minimum: 0, x-unit: "V" }
+      current: { type: number, minimum: 0, x-unit: "A" }
+      rate: { type: number, minimum: 0, x-unit: "kg/s" }
+      mass: { type: number, minimum: 0, x-unit: "kg", description: "kg it bears (a mount) or carries (a carrier)" }
+      force: { type: number, minimum: 0, x-unit: "N" }
+      moment: { type: number, minimum: 0, x-unit: "N m" }
+  media: { type: array, items: { enum: [gas, liquid, bulk, power, signal, heat, load, carrier, people] }, description: "What may cross it." }
+  sealing: { enum: [open, air, double, vacuum, cryogenic], description: "How tight it is: open (nothing held), air, double (two seals, the space between watched, for airless ground), vacuum, cryogenic." }
+  halves: { enum: [male-female, androgynous], description: "Its two halves differ (a plug and its socket) or are the same (a flange pair, a docking ring)." }
+  make: { enum: [permanent, bolted, manual, automatic, open], description: "How a joint to it is made and broken." }
+  face: { type: object, additionalProperties: false, properties: { length: { type: number, x-unit: "m" }, width: { type: number, x-unit: "m" }, height: { type: number, x-unit: "m" } }, description: "The mated joint's outside, its axis along height: what a port must leave room for." }
+  standard: { type: string, description: "The real standard it follows, if any (EN 1092-1, IEC 60309, ISO 1161)." }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

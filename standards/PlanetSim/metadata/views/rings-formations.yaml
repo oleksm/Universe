@@ -1,0 +1,160 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.rings-formations
+  name: Formations
+  about: view_formations on smoothed province labels
+title: Formations
+row: line rings
+file_suffix: _rings_formations.png (+ .legend.json)
+draws:
+  words: view_formations on smoothed province labels
+shown: true
+implementations:
+- where: planet-trees-pgs2 ~/git/planet-trees-pgs2/tools/layer_lines.py:rings (362)
+  state: reference
+- where: planet-forge crates/planet-layers/src/layers/formations.rs
+  state: current
+  note: the viewer layer
+status: draft
+legend:
+  title: Formations
+  rows:
+  - kind: head
+    label: Formation provinces ({n_provinces}), coloured by leading family
+  - key: family:aeolian
+    kind: fill
+    colour:
+    - 240
+    - 220
+    - 160
+    label: 'aeolian: {aeolian_n} provinces, {aeolian_cells} cells; {aeolian_k}/{aeolian_tot} patterns scored'
+  - key: family:arid
+    kind: fill
+    colour:
+    - 220
+    - 200
+    - 110
+    label: 'arid: {arid_n} provinces, {arid_cells} cells; {arid_k}/{arid_tot} patterns scored'
+  - key: family:coastal
+    kind: fill
+    colour:
+    - 40
+    - 190
+    - 200
+    label: 'coastal: {coastal_n} provinces, {coastal_cells} cells; {coastal_k}/{coastal_tot} patterns scored'
+  - key: family:fluvial
+    kind: fill
+    colour:
+    - 60
+    - 120
+    - 220
+    label: 'fluvial: {fluvial_n} provinces, {fluvial_cells} cells; {fluvial_k}/{fluvial_tot} patterns scored'
+  - key: family:glacial
+    kind: fill
+    colour:
+    - 230
+    - 240
+    - 255
+    label: 'glacial: {glacial_n} provinces, {glacial_cells} cells; {glacial_k}/{glacial_tot} patterns scored'
+  - key: family:hillslope
+    kind: fill
+    colour:
+    - 130
+    - 170
+    - 90
+    label: 'hillslope: {hillslope_n} provinces, {hillslope_cells} cells; {hillslope_k}/{hillslope_tot} patterns scored'
+  - key: family:karst
+    kind: fill
+    colour:
+    - 120
+    - 90
+    - 200
+    label: 'karst: {karst_n} provinces, {karst_cells} cells; {karst_k}/{karst_tot} patterns scored'
+  - key: family:lacustrine
+    kind: fill
+    colour:
+    - 30
+    - 80
+    - 140
+    label: 'lacustrine: {lacustrine_n} provinces, {lacustrine_cells} cells; {lacustrine_k}/{lacustrine_tot} patterns scored'
+  - key: family:periglacial
+    kind: fill
+    colour:
+    - 170
+    - 200
+    - 220
+    label: 'periglacial: {periglacial_n} provinces, {periglacial_cells} cells; {periglacial_k}/{periglacial_tot} patterns
+      scored'
+  - key: family:structural
+    kind: fill
+    colour:
+    - 230
+    - 160
+    - 40
+    label: 'structural: {structural_n} provinces, {structural_cells} cells; {structural_k}/{structural_tot} patterns scored'
+  - key: family:tectonic
+    kind: fill
+    colour:
+    - 200
+    - 60
+    - 50
+    label: 'tectonic: {tectonic_n} provinces, {tectonic_cells} cells; {tectonic_k}/{tectonic_tot} patterns scored'
+  - key: family:volcanic
+    kind: fill
+    colour:
+    - 150
+    - 40
+    - 40
+    label: 'volcanic: {volcanic_n} provinces, {volcanic_cells} cells; {volcanic_k}/{volcanic_tot} patterns scored'
+  - key: none
+    kind: fill
+    colour:
+    - 200
+    - 200
+    - 200
+    label: no family above 0.35 (factors missing)
+  - kind: head
+    label: '{n_scorable} of {n_patterns} patterns scorable from this run'
+styles:
+- key: coast
+  colour:
+  - 0
+  - 0
+  - 0
+- key: base-land
+  colour:
+  - 200
+  - 196
+  - 186
+- key: base-sea
+  colour:
+  - 205
+  - 220
+  - 232
+- key: sea
+  colour:
+  - 215
+  - 225
+  - 235
+- key: province-edge
+  colour:
+  - 40
+  - 40
+  - 40
+- key: label-box
+  colour:
+  - 255
+  - 255
+  - 255
+- key: label-text
+  colour:
+  - 20
+  - 20
+  - 20
+basis:
+- of:
+  - legend
+  - styles
+  tier: derived
+  note: 'planets, 17 Oct 2026: the viewer layers (planet-forge planet-layers), from planet-trees-pgs2 context_view.py / layer_lines.py.'

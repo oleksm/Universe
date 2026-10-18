@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.tectonic.fold.anticlinal-ridge
+  name: Anticlinal ridge (incl. whaleback anticline)
+  about: Anticlinal ridge (incl. whaleback anticline).
+family: tectonic
+factors:
+- factor: planet-factor.tect-fold
+  weight: 3
+  why: fold growth rate, amplitude, plunge; doubly plunging, wavelength 3.5-7.5 km, length 20-50 km
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: crest uplift must outpace erosion for relief to mirror structure
+- factor: planet-factor.rock-layers
+  weight: 3
+  why: resistant carapace (limestone/quartzite 50-500 m) over weak core keeps ridge intact
+- factor: planet-factor.rock-type
+  weight: 1
+  why: carapace hardness decides whaleback vs early breaching
+- factor: planet-factor.rock-fracture
+  weight: 1
+  why: extension fractures at hinge weaken crest, promote breaching
+- factor: planet-factor.clim-arid
+  weight: 1
+  why: arid climate preserves carapace; humid speeds breaching
+- factor: planet-factor.water-discharge
+  weight: 1
+  why: antecedent rivers cut water gaps; weak streams diverted around nose (wind gaps)
+- factor: planet-factor.time
+  weight: 3
+  why: 0.1-5 Myr; age decides intact ridge vs breached anticline
+vocabulary_id: 123
+sources:
+- https://en.wikipedia.org/wiki/Anticline
+- https://wpg.forestry.oregonstate.edu/sites/default/files/seminars/2009_Whipple.pdf
+library_status: written
+source: tectonic.fold.anticlinal_ridge
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

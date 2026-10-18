@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.lacustrine.shoreline.terrace
+  name: Lake shoreline terraces
+  about: Lake shoreline terraces.
+family: lacustrine
+factors:
+- factor: planet-factor.clim-history
+  weight: 3
+  why: Pluvial phases raised levels (Bonneville 30-13 ka)
+- factor: planet-factor.lake-level
+  weight: 3
+  why: Stillstands of ~1 kyr cut terraces; Provo ~1000 yr
+- factor: planet-factor.tect-setting
+  weight: 1
+  why: Closed basins (basin and range)
+- factor: planet-factor.events
+  weight: 3
+  why: Outlet failure drop of ~125 m (Bonneville flood)
+- factor: planet-factor.waves-tides
+  weight: 1
+  why: Wave energy builds beach ridges
+- factor: planet-factor.sed-supply
+  weight: 1
+  why: Supply decides depositional vs erosional terraces
+- factor: planet-factor.other-isostatic-rebound
+  weight: 1
+  why: Rebound warps shorelines by ~74 m
+- factor: planet-factor.time
+  weight: 1
+  why: 5-100 kyr
+vocabulary_id: 103
+sources:
+- https://en.wikipedia.org/wiki/Lake_Bonneville
+library_status: written
+source: lacustrine.shoreline.terrace
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

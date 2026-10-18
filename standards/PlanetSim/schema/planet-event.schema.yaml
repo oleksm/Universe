@@ -1,0 +1,26 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Planet event
+x-kind: [planet-event]
+description: "standards/PlanetSim/metadata/events/<name>.yaml: an event the planet sim logs or passes between processes, by its own word: what it carries, which processes emit it, and the dictionary's geological event it is, when it is one (made_by everywhere names those)."
+type: object
+additionalProperties: false
+required: [identity, source]
+allOf:
+  - { $ref: "../../common.schema.yaml#/definitions/planet_context" }
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name, about]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      about: { type: string }
+  is: { $ref: "../../dictionary.schema.yaml#/definitions/geological_event", description: "The geological event it is, when it is one." }
+  payload:
+    type: array
+    description: "What each event of it carries."
+    items: { type: object, additionalProperties: false, required: [name], properties: { name: { type: string }, unit: { type: string }, meaning: { type: string } } }
+  emitted_by: { type: array, items: { type: string, x-ref: [planet-process] } }
+  status: { enum: [draft, published, retired] }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

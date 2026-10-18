@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/template.schema.yaml
+identity:
+  key: template.flange
+  name: Flange joint
+  description: 'A bolted flange pair, single seal: the rings scaled to the bore and class, the bolt circle with them. every size of the family is this template at the record''s figures.'
+family: flange
+draws: model
+scales_by:
+- size
+- physical.length
+- physical.height
+model_of: connector.flange-dn200-pn1-ss
+members: 26
+basis:
+- of:
+  - draws
+  - scales_by
+  - pieces
+  - model_of
+  tier: derived
+  note: 'The owner, 2026-10-17: one template a family, scaled, instead of a model a size; model_of is an installed size''s model, the middle one of those installed, until the template has its own.'

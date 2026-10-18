@@ -1,0 +1,87 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.zones-water-mouths
+  name: River mouth and delta records
+  about: 'Every WATER_EVERY coupled steps: land samples with discharge >= BIG_Q whose receiver is sea are mouths; Q >= DELTA_Q
+    gives ''delta'', else ''river mouth''. A record of that kind is made where none of the same kind is within VOLC_SEP*gap;
+    an existing one within it is marked active.'
+area: relief
+clock:
+  when: coupled surface step (plates.py:1351, every CP.COUPLE_EVERY plate steps, default 1, from SIM_COUPLE_FROM_MYR=700 Ma),
+    only when step_no % WATER_EVERY == 0
+reads:
+- name: w.p_route (routing positions)
+- name: hydro['Q'] (m3/yr)
+- name: hydro['down'] (receiver index, -1 none)
+  field: planet-field.receiver
+- name: z, sea (m)
+  field: planet-field.height
+- name: gap = sphere.spacing(n) of the current lattice, radians on the unit sphere (x R = metres); refined as the present
+    nears
+- name: Q
+  field: planet-field.discharge
+writes:
+- name: landmarks 'delta' / 'river mouth', size = Q/3.156e7 (m3/s), causes {water:0.6, relief:0.3, history:0.1}
+note: 'Emits: one store event ''rivers'' for the whole run (S.water_event) Emits: trace spawn rule ''zones.water'' trigger
+  {event, size}'
+params:
+- name: BIG_Q
+  value: 1000.0760514107536
+  unit: m3/s
+  said_as:
+    unit: m3/yr
+    factor: 3.168808781402895e-08
+  meaning: a big river
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:174
+- name: DELTA_Q
+  value: 5070.094050244632
+  unit: m3/s
+  said_as:
+    unit: m3/yr
+    factor: 3.168808781402895e-08
+  meaning: its mouth builds a delta
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:175
+- name: WATER_EVERY
+  value: 4.0
+  unit: '1'
+  said_as:
+    unit: coupled steps
+    factor: 1.0
+  open: true
+  meaning: coupled steps between looks
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:176
+  note: 'unit as the code says it: ''coupled steps''; SI conversion unverified'
+- name: VOLC_SEP
+  value: 0.5
+  unit: '1'
+  said_as:
+    unit: x gap
+    factor: 1.0
+  meaning: same-kind records closer than this are one
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:19
+invariants:
+- no two alive records of one kind within VOLC_SEP*gap
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:rivers (180-194), _record (234-252)
+  state: reference
+- where: planet-forge crates/forge-core/src/models/water.rs
+  state: current
+  note: planet-forge port (surface line, merged in forge main 370ab83)
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge surface port (models/surface), read from planet-sim-landform 9747f0d-c437724.'
