@@ -4453,7 +4453,7 @@
 - { record: unit.furniture-cell-front, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "a20418eaa1d56f64" }
 - { record: unit.furniture-cell-wall, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "4a3bb6f7b432987e" }
 - { record: unit.furniture-chair, at: "2026-10-17T23:23:00Z", status: draft, summary: "changed", sha: "bf4fa9b6dce5d30e" }
-- { record: unit.furniture-charge-point, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "3804bc0d9139537c" }
+- { record: unit.furniture-charge-point, at: "2026-10-18T01:28:26Z", status: draft, summary: "changed: visual", sha: "7937bfebee710685" }
 - { record: unit.furniture-couch, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "ed4d439528f97f0d" }
 - { record: unit.furniture-counter, at: "2026-10-18T01:14:24Z", status: draft, summary: "changed", sha: "8c9e8e4cc64ae2f8" }
 - { record: unit.furniture-cubicle, at: "2026-10-18T00:56:24Z", status: draft, summary: "changed", sha: "7b6daac7d905dbfd" }
