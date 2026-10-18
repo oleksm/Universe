@@ -314,8 +314,8 @@ conn("corner-casting-iso1161", {
 conn("twistlock-iso1161", {
     "identity": {"key": "connector.twistlock-iso1161", "name": "Twistlock, ISO 1161", "description": "The cone a quarter turn locks into a corner casting's hole, by hand lever or by itself as the box comes down: what holds a container to the next."},
     "kind": "twistlock", "size": 0.178, "rating": {"force": 250000.0},
-    "physical": {"length": 0.124, "width": 0.064, "height": 0.2, "mass": 4.5},
-    "built_of": [part("Cones, shaft and lever", "material.high-strength-steel-4340", 4.5, "forged steel")], "provides": "male", "template": "template.twistlock",
+    "physical": {"length": 0.16, "width": 0.15, "height": 0.2, "mass": 4.5},     # an inter-box lock: 160 x 90 mm spacer, the lever out to +Z (invented)
+    "built_of": [part("Cones, shaft and lever", "material.high-strength-steel-4340", 4.5, "forged steel; a double-ended inter-box lock")], "provides": "male", "template": "template.twistlock",
     "basis": [{"of": ["physical", "rating"], "tier": "invented", "review": True, "note": MEMORY}]}, TL)
 
 # ------------------------------------------------------------------ templates

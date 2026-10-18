@@ -192,6 +192,13 @@ One model draws every size of a kit family (`standards/SFO/metadata/templates/`)
   along X, its centre 12.5 mm inboard (-X) and 8 mm inboard (-Z) of the casting's centre; end and side faces an oblong
   78 x 51 mm (78 across, 51 high), centred on their face 8 mm below its middle. Walls: top plate 26 mm (the twistlock's
   cone sits in it), the others 13 mm, hollow inside.
+- **Twistlock** (template.twistlock, an inter-box lock, 160 x 150 x 200 mm envelope): one root node `male`, static, in
+  the unlocked pose (both heads long along X, as the hole). The root sits at the lower casting's top hole centre (the
+  corner casting's datum x = -0.0125, z = -0.008, y = 0): the spacer flange 160 x 90 mm, 28 mm thick, from y = 0 up to
+  y = 0.028, resting on the lower casting's top face; the lower cone and head down through its 26 mm plate to y = -0.086,
+  the upper up through the next box's casting to y = 0.114; each head passes the 124 x 63.5 mm hole (about 118 x 58 mm
+  at most) on a neck as long as the plate plus 2 mm; the hand lever out of the spacer's side to about z = +0.105. The
+  game turns it 90 degrees about Y to lock; figures invented.
 - **Panels** (building panels' templates): one root node `body`, static. A wall or partition stands with its foot at
   y = 0, its face along X centred on x = 0, its thickness along Z centred on the frame's grid line (z = 0), outside
   face toward +Z. A floor's walking plane is y = 0, the cassette below it; a roof sits on the frame's top, its underside

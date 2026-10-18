@@ -10,8 +10,8 @@ package: package.crate-steel
 made_from:
 - item: material.high-strength-steel-4340
 size:
-  length: 0.124
-  width: 0.064
+  length: 0.16
+  width: 0.15
   height: 0.2
 supplies:
   item: connector.twistlock-iso1161

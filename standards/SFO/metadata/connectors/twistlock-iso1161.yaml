@@ -9,15 +9,15 @@ size: 0.178
 rating:
   force: 250000.0
 physical:
-  length: 0.124
-  width: 0.064
+  length: 0.16
+  width: 0.15
   height: 0.2
   mass: 4.5
 built_of:
 - what: Cones, shaft and lever
   item: material.high-strength-steel-4340
   mass: 4.5
-  note: forged steel
+  note: forged steel; a double-ended inter-box lock
 provides: male
 template: template.twistlock
 basis:

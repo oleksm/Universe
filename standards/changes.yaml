@@ -293,7 +293,7 @@
 - { record: connector.termination-6p6kv-630mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "8f4b2d93afe67c6f" }
 - { record: connector.termination-6p6kv-70mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "6808ecca95e1a764" }
 - { record: connector.termination-6p6kv-95mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "3c36ff1d41d6a876" }
-- { record: connector.twistlock-iso1161, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "b1e5df24655a11f9" }
+- { record: connector.twistlock-iso1161, at: "2026-10-18T05:21:02Z", status: draft, summary: "changed: physical, built_of", sha: "11d1a1a540b31843" }
 - { record: connector.valve-ball-dn100-pn10, at: "2026-10-18T04:31:06Z", status: draft, summary: "changed: physical", sha: "9eda821fd094d31f" }
 - { record: connector.valve-ball-dn50-pn10, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "768f57a3095ad5e6" }
 - { record: connector.valve-butterfly-dn1000-pn10, at: "2026-10-18T04:31:06Z", status: draft, summary: "changed: physical", sha: "2f3be69446d0b8fe" }
@@ -3691,7 +3691,7 @@
 - { record: stock.kit-termination-6p6kv-630mm2, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "6b8e9dfbf55f52f9" }
 - { record: stock.kit-termination-6p6kv-70mm2, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "c3016dd7ec815558" }
 - { record: stock.kit-termination-6p6kv-95mm2, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "3dc2db05fd71552e" }
-- { record: stock.kit-twistlock-iso1161, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "6a73cc4cf7d60a8d" }
+- { record: stock.kit-twistlock-iso1161, at: "2026-10-18T05:21:02Z", status: review, summary: "changed: size", sha: "fc118820918cd5c0" }
 - { record: stock.kit-valve-ball-dn100-pn10, at: "2026-10-18T04:31:06Z", status: review, summary: "changed: size", sha: "814abac9d9ba77ab" }
 - { record: stock.kit-valve-ball-dn50-pn10, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "3d8846da1d650c41" }
 - { record: stock.kit-valve-butterfly-dn1000-pn10, at: "2026-10-18T04:31:06Z", status: review, summary: "changed: size", sha: "76716773143719b9" }
@@ -4378,7 +4378,7 @@
 - { record: template.pipe-lagged, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "ee12031c045d334f" }
 - { record: template.plug-socket, at: "2026-10-18T05:10:36Z", status: "", summary: "changed", sha: "5aff04409b33b553" }
 - { record: template.roof, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "a966489b0bd9126b" }
-- { record: template.single-pole, at: "2026-10-18T05:18:51Z", status: "", summary: "changed: visual", sha: "b8a5b97da3b5ee50" }
+- { record: template.single-pole, at: "2026-10-18T05:21:02Z", status: "", summary: "changed", sha: "891598fccf7fa541" }
 - { record: template.stair, at: "2026-10-18T01:25:38Z", status: "", summary: "changed", sha: "dc0f89d97f6807ea" }
 - { record: template.termination-hv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "b0398bafc880c882" }
 - { record: template.termination-lv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "b3fff31e02cd79e5" }
