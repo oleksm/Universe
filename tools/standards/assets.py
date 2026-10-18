@@ -92,6 +92,8 @@ def required_nodes(kind, r):
     """Named nodes the model must have, as name prefixes: what the game attaches things to."""
     if kind == "run":      # (SFO 25: the pieces the game lays a run from; docs/requests/blender-plant-kit.md)
         return ["straight", "support_head", "support_leg"] + (["elbow"] if r.get("elbow") else []) + (["tee"] if r.get("tee") else []) + (["cap"] if r.get("kind") in ("pipe", "lined-duct") else [])  + [x["piece"] for x in r.get("repeat", [])] + list(r.get("terminals", {})) + (["riser"] if r.get("riser") else [])
+    if kind == "template" and r.get("draws") == "sweep-and-pieces":     # (its pieces, and a head's leg seat)
+        return [p["name"] for p in r.get("pieces", [])] + (["leg_top"] if any(p["name"] == "support_head" for p in r.get("pieces", [])) else [])
     if kind == "connector":
         return ["face"]
     if kind != "equipment":
@@ -718,6 +720,13 @@ def check_model(kind, r, info):
         bad.append("the record says no size (physical.length, width, height): ask the registry for one first")
     else:
         b = list(info["bounds"])
+        piece = next((p for p in r.get("pieces", []) if all(p.get(k) for k in ("length", "width", "height"))), None) if kind == "template" else None
+        if piece:          # (a run's template: the sized piece's own subtree is held to its envelope; the others, a stretched leg, are not)
+            box = info.get("node_box", {}).get(piece["name"])
+            if not box:
+                bad.append(f"no node named {piece['name']} (the piece its envelope sizes)")
+                box = [info["lo"], info["hi"]]
+            b = [round(box[1][k] - box[0][k], 4) for k in range(3)]
         if kind in ("layout", "structure") and info.get("lo") and info["lo"][1] < 0:
             b[1] = round(info["hi"][1] - max(info["lo"][1], 0.0), 4)   # height above grade: its ground works below z 0 are in the record's ground, not its size
         m, s = sorted(b, reverse=True), sorted(size, reverse=True)
