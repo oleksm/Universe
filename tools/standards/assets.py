@@ -93,7 +93,8 @@ def required_nodes(kind, r):
     if kind == "run":      # (SFO 25: the pieces the game lays a run from; docs/requests/blender-plant-kit.md)
         return ["straight", "support_head", "support_leg"] + (["elbow"] if r.get("elbow") else []) + (["tee"] if r.get("tee") else []) + (["cap"] if r.get("kind") in ("pipe", "lined-duct") else [])  + [x["piece"] for x in r.get("repeat", [])] + list(r.get("terminals", {})) + (["riser"] if r.get("riser") else [])
     if kind == "template" and r.get("draws") == "sweep-and-pieces":     # (its pieces, and a head's leg seat)
-        return [p["name"] for p in r.get("pieces", [])] + (["leg_top"] if any(p["name"] == "support_head" for p in r.get("pieces", [])) else [])
+        names = [p["name"] for p in r.get("pieces", [])]
+        return names + (["leg_top"] if "support_head" in names else []) + (["cable_anchor"] if "trolley" in names else [])
     if kind == "connector":
         return ["face"]
     if kind != "equipment":
@@ -719,27 +720,31 @@ def check_model(kind, r, info):
     elif size is None:
         bad.append("the record says no size (physical.length, width, height): ask the registry for one first")
     else:
-        b = list(info["bounds"])
-        piece = next((p for p in r.get("pieces", []) if all(p.get(k) for k in ("length", "width", "height"))), None) if kind == "template" else None
-        if piece:          # (a run's template: the sized piece's own subtree is held to its envelope; the others, a stretched leg, are not)
-            box = info.get("node_box", {}).get(piece["name"])
-            if not box:
-                bad.append(f"no node named {piece['name']} (the piece its envelope sizes)")
-                box = [info["lo"], info["hi"]]
-            b = [round(box[1][k] - box[0][k], 4) for k in range(3)]
-            info["piece_size"] = b
-        if kind in ("layout", "structure") and info.get("lo") and info["lo"][1] < 0:
-            b[1] = round(info["hi"][1] - max(info["lo"][1], 0.0), 4)   # height above grade: its ground works below z 0 are in the record's ground, not its size
-        m, s = sorted(b, reverse=True), sorted(size, reverse=True)
-        planar = s[2] < s[0] / 50          # (a field, a pad: its thin side is relief, held only to at most the record's)
-        for k, (a, e) in enumerate(zip(m, s)):
-            if planar and k == 2:
-                if a > HIGH * e + 0.05:
-                    bad.append(f"its thin side is {a:.3g} m, more than the record's {e:.3g} m allows for a flat thing (at most {HIGH * e + 0.05:.3g})")
-                continue
-            if not (LOW * e - 0.05 <= a <= HIGH * e + 0.05):      # (and 5 cm either way, for thin things: a panel, a door)
-                bad.append(f"its {('longest', 'middle', 'shortest')[k]} side is {a:.3g} m against the record's {e:.3g} m "
-                           f"(allowed {LOW * e - 0.05:.3g} to {HIGH * e + 0.05:.3g}); model metres, or the record's size is wrong: then a request to the registry")
+        pieces = [p for p in r.get("pieces", []) if all(p.get(k) for k in ("length", "width", "height"))] if kind == "template" else []
+        checks = [("", list(info["bounds"]), size)]
+        if pieces:         # (a run's template: each sized piece's own subtree is held to its envelope; the others, a stretched leg, are not)
+            checks, info["piece_sizes"] = [], {}
+            for pc in pieces:
+                box = info.get("node_box", {}).get(pc["name"])
+                if not box:
+                    bad.append(f"no node named {pc['name']} (the piece its envelope sizes)")
+                    continue
+                pb = [round(box[1][k] - box[0][k], 4) for k in range(3)]
+                info["piece_sizes"][pc["name"]] = pb
+                checks.append((f"{pc['name']}: ", pb, [float(pc["length"]), float(pc["width"]), float(pc["height"])]))
+        for label, b, want in checks:
+            if kind in ("layout", "structure") and info.get("lo") and info["lo"][1] < 0:
+                b[1] = round(info["hi"][1] - max(info["lo"][1], 0.0), 4)   # height above grade: its ground works below z 0 are in the record's ground, not its size
+            m, s_ = sorted(b, reverse=True), sorted(want, reverse=True)
+            planar = s_[2] < s_[0] / 50          # (a field, a pad: its thin side is relief, held only to at most the record's)
+            for k, (a, e) in enumerate(zip(m, s_)):
+                if planar and k == 2:
+                    if a > HIGH * e + 0.05:
+                        bad.append(f"{label}its thin side is {a:.3g} m, more than the record's {e:.3g} m allows for a flat thing (at most {HIGH * e + 0.05:.3g})")
+                    continue
+                if not (LOW * e - 0.05 <= a <= HIGH * e + 0.05):      # (and 5 cm either way, for thin things: a panel, a door)
+                    bad.append(f"{label}its {('longest', 'middle', 'shortest')[k]} side is {a:.3g} m against the record's {e:.3g} m "
+                               f"(allowed {LOW * e - 0.05:.3g} to {HIGH * e + 0.05:.3g}); model metres, or the record's size is wrong: then a request to the registry")
     for p in required_nodes(kind, r):
         if not any(n.startswith(p) for n in info["nodes"]):
             bad.append(f"no node named {p}* (the game attaches to it)")

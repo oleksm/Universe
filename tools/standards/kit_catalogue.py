@@ -353,6 +353,10 @@ def templates():
         if fam == "conductor-rail":   # hung from above: the head clasps the housing, the game stretches the rod up to the ceiling
             d["pieces"] = [{"name": "support_head", "how": "a hanger clasping the housing at each support.spacing, the slot underneath clear; its child leg_top is the rod's seat above, envelope at the reference rail (invented)", "length": 0.06, "width": 0.11, "height": 0.2, "mass": 1.2},
                            {"name": "support_leg", "how": "a threaded rod 1 m long from leg_top up to y = 1; the game stretches it to the ceiling (support.per_m_height)"}]
+        if fam == "festoon":          # the same 40 x 40 C-track for every member: its pieces drawn at their own size, never by outside (its height is the loops' depth)
+            d["pieces"] = [{"name": "support_head", "how": "a bracket clasping the C-track from above at each support.spacing, the slot underneath clear; its child leg_top is the rod's seat above (invented)", "length": 0.08, "width": 0.12, "height": 0.1, "mass": 2.5},
+                           {"name": "support_leg", "how": "a rod 1 m long from leg_top up to y = 1; the game stretches it to the ceiling (support.per_m_height)"},
+                           {"name": "trolley", "how": "every 1.5 m along the track, four wheels inside it, a neck down through the slot to a cable saddle; its child cable_anchor is where the game hangs each loop's end (invented)", "length": 0.12, "width": 0.1, "height": 0.15, "mass": 2.1}]
         d["basis"] = [{"of": ["draws", "scales_by"], "tier": "derived", "note": "The owner, 2026-10-17: one template a family, scaled; the catalogue families (kit_catalogue.py)."}]
         yield "templates", t, d
 

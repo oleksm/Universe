@@ -97,13 +97,18 @@ def gap(kind, key, path, r):
     m = manifest(r) or {}
     old, source = installed_spec(kind, path, r)
     # Size: the model as measured at install, against the record now (the installer's own rule).
-    sized_piece = kind == "template" and any(all(p.get(k) for k in ("length", "width", "height")) for p in r.get("pieces", []))
-    measured = m.get("piece_size_m") if sized_piece else m.get("size_m")      # (a run's template: its sized piece alone; the installer held it so before piece_size_m was kept)
-    if now["size"] and measured:
-        a, b = sorted(measured), sorted(now["size"])
-        ok = lambda x, y: LOW * y <= x <= HIGH * y or abs(x - y) <= 0.03          # (a thin piece: 3 cm either way)
+    ok = lambda x, y: LOW * y <= x <= HIGH * y or abs(x - y) <= 0.03          # (a thin piece: 3 cm either way)
+    pieces = {p["name"]: [p["length"], p["width"], p["height"]] for p in r.get("pieces", []) if all(p.get(k) for k in ("length", "width", "height"))} if kind == "template" else {}
+    if pieces:         # (a run's template: each sized piece alone, as the installer held it; none kept before piece_sizes_m: the installer held it then)
+        for name, got in (m.get("piece_sizes_m") or {}).items():
+            if name in pieces:
+                off = [f"{x:.2f} m against {y:.2f}" for x, y in zip(sorted(got), sorted(pieces[name])) if not ok(x, y)]
+                if off:
+                    add("rebuild", "size", f"{name}'s sides (sorted) are out of {LOW:.0%} to {HIGH:.0%} of the record's: {'; '.join(off)}")
+    elif now["size"] and m.get("size_m"):
+        a, b = sorted(m["size_m"]), sorted(now["size"])
         off = [f"{x:.2f} m against {y:.2f}" for x, y in zip(a, b) if y and not ok(x, y)]
-        if off and m.get("bounds_m") and not sized_piece:                                              # (a record's box centred on the model's origin, round a lopsided body)
+        if off and m.get("bounds_m"):                                              # (a record's box centred on the model's origin, round a lopsided body)
             lo, hi = m["bounds_m"]
             c = sorted([2 * max(abs(lo[0]), abs(hi[0])), hi[1] - lo[1], 2 * max(abs(lo[2]), abs(hi[2]))])     # (glTF y is up: from the ground, not centred)
             if all(ok(x, y) for x, y in zip(c, b)):

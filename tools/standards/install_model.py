@@ -121,7 +121,7 @@ def main(argv):
         src = opt.get("source") if isinstance(opt.get("source"), str) else None
         repo = subprocess.run(["git", "-C", os.path.dirname(os.path.abspath(src)), "rev-parse", "--short", "HEAD"], capture_output=True, text=True).stdout.strip() if src and os.path.exists(src) else None
         manifest = {"format": FORMAT, "key": key, "kind": kind, "version": version, "file": "model.glb",
-                    "bounds_m": [info["lo"], info["hi"]], "size_m": info["bounds"], **({"piece_size_m": info["piece_size"]} if info.get("piece_size") else {}), "record_size_m": size, "nodes": info["nodes"], "triangles": info["triangles"],
+                    "bounds_m": [info["lo"], info["hi"]], "size_m": info["bounds"], **({"piece_sizes_m": info["piece_sizes"]} if info.get("piece_sizes") else {}), "record_size_m": size, "nodes": info["nodes"], "triangles": info["triangles"],
                     "measured": info["stats"], **({"about": about} if about else {}),
                     "spec": model_spec.spec(kind, rec), "spec_sha256": model_spec.sha(model_spec.spec(kind, rec)),
                     "source": {"file": src and os.path.abspath(src), "sha256": sha(src) if src and os.path.exists(src) else None, "commit": repo, "exported": os.path.basename(glb)},

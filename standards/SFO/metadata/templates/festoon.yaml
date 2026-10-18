@@ -12,8 +12,20 @@ members: 3
 reference: run.festoon-690v-4x35
 profile: the C-track swept; trolleys every 1.5 m, the cable hung in loops between them
 pieces:
-- name: support
-  how: at each support.spacing along the run, scaled to its outside
+- name: support_head
+  how: a bracket clasping the C-track from above at each support.spacing, the slot underneath clear; its child leg_top is the rod's seat above (invented)
+  length: 0.08
+  width: 0.12
+  height: 0.1
+  mass: 2.5
+- name: support_leg
+  how: a rod 1 m long from leg_top up to y = 1; the game stretches it to the ceiling (support.per_m_height)
+- name: trolley
+  how: every 1.5 m along the track, four wheels inside it, a neck down through the slot to a cable saddle; its child cable_anchor is where the game hangs each loop's end (invented)
+  length: 0.12
+  width: 0.1
+  height: 0.15
+  mass: 2.1
 basis:
 - of:
   - draws

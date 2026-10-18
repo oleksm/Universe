@@ -166,6 +166,13 @@ One model draws every size of a kit family (`standards/SFO/metadata/templates/`)
   invented, to be sourced from a maker's drawing). The collector is one root node `body` on the same datum: travel +X,
   its trolley above y = 0 inside the housing (no wider than width − 0.02), its four shoes facing outward ±Z onto those
   faces, its towing arm below y = 0 to the machine.
+- **Festoon** (C-track, the same 40 x 40 mm for every member): the track runs along +X, its slot underneath; datum the
+  slot mouth, y = 0, centred in Z, the track rising to y = 0.04, its slot 16 mm wide between lips 3 mm thick (invented).
+  Pieces, each its own root at that datum and drawn at its own size (never scaled by `outside`, whose height is the
+  loops' depth): `support_head` clasping the track from above, child `leg_top` at the rod's seat, `support_leg` a rod
+  1 m from leg_top up to y = 1 (stretched to the ceiling); `trolley` with four wheels about 30 mm across rolling on the
+  lips' top faces (y = 0.003), axles across Z at x = ±0.035, a neck down through the slot to a cable saddle below, its
+  child `cable_anchor` at the saddle's clamp centre (the game hangs each loop's end there and draws the cable itself).
 - **Single-pole sets** (template.single-pole, 300 x 120 x 250 mm reference): five single-pole connector pairs side by
   side along X at 60 mm pitch (L1, L2, L3, N, earth; each a round housing about 50 mm across), mating at y = 0, plugs
   `male` above, receivers `female` below in a common panel plate. Colour bands by pole; keyed so no two mate crosswise.
