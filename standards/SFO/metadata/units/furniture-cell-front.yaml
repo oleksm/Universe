@@ -9,15 +9,15 @@ physical:
   length: 3.0
   width: 0.1
   height: 2.2
-  mass: 330.0
+  mass: 224.4
 built_of:
-- what: Bars, rails and door
+- what: Bars, frames, door and lock
   item: material.structural-steel-a36
-  mass: 330.0
+  mass: 224.4
 basis:
 - of:
   - built_of
   - physical
   tier: derived
   review: true
-  note: 'From blender''s cell bay: a full cage of bars 1,548 kg of steel for two cells.'
+  note: 'From blender''s model (2026-10-17): 20 mm solid bars at about 129 mm, a 60 x 60 x 4 mm frame, a 35 x 35 x 3 mm door frame, three hinges and a lock box.'
