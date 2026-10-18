@@ -1449,7 +1449,7 @@
 - { record: panel.partition-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "52bad398a3b62283" }
 - { record: panel.partition-door-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "58796602b82db5e0" }
 - { record: panel.roof-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "da24091c503ae16b" }
-- { record: panel.stair-3m, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "d39e27c54193e87d" }
+- { record: panel.stair-3m, at: "2026-10-18T01:14:24Z", status: draft, summary: "changed: identity, physical", sha: "6ac88a9102f0356e" }
 - { record: panel.wall-door-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "483f3d2946a9f8c3" }
 - { record: panel.wall-double-door-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "bb78c6d4f7f947e2" }
 - { record: panel.wall-glazed-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "3ac92dbf3aa79894" }
@@ -3605,7 +3605,7 @@
 - { record: stock.kit-panel-partition-3x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "c5b5e648ef91ff2e" }
 - { record: stock.kit-panel-partition-door-3x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "e06b60d6b9e7d95c" }
 - { record: stock.kit-panel-roof-3x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "804eed560cd5171e" }
-- { record: stock.kit-panel-stair-3m, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "a874b5c8504cf676" }
+- { record: stock.kit-panel-stair-3m, at: "2026-10-18T01:14:24Z", status: review, summary: "changed: size", sha: "6552752bddfd011c" }
 - { record: stock.kit-panel-wall-door-3x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "3be92634e77b794b" }
 - { record: stock.kit-panel-wall-double-door-3x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "7b5cf72ce9e4a514" }
 - { record: stock.kit-panel-wall-glazed-3x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "b8dee276df05eaf0" }
@@ -4362,7 +4362,7 @@
 - { record: template.flange, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "df7d790e5b79a704" }
 - { record: template.flange-double, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "1587eb01caf04022" }
 - { record: template.flat-face, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "1b798aa986e5491c" }
-- { record: template.floor, at: "2026-10-17T22:52:55Z", status: "", summary: "changed: visual", sha: "c9ec449bd0490100" }
+- { record: template.floor, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "92d1ba192124ab37" }
 - { record: template.hood, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "2bd0f63963dc39e7" }
 - { record: template.hose, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "76521a9d59aafaae" }
 - { record: template.hose-hydraulic, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "1bdc07615e11b940" }
@@ -4370,12 +4370,12 @@
 - { record: template.jacketed-duct, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "f735abc971d05f0e" }
 - { record: template.lined-duct, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "4f0e1dffeb3819a1" }
 - { record: template.lined-flange, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "566901f48b56a274" }
-- { record: template.partition, at: "2026-10-17T23:03:05Z", status: "", summary: "changed: visual", sha: "3e71a757ebd8b215" }
-- { record: template.partition-door, at: "2026-10-17T23:12:05Z", status: "", summary: "changed: visual", sha: "77e8c93e645193bd" }
+- { record: template.partition, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "645d2adf776d002f" }
+- { record: template.partition-door, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "099a30da62f30cb9" }
 - { record: template.pipe, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "9a17ec7ddd415223" }
 - { record: template.pipe-lagged, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "ee12031c045d334f" }
 - { record: template.plug-socket, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "3dfe5b5f0345ce4a" }
-- { record: template.roof, at: "2026-10-17T23:07:56Z", status: "", summary: "changed: visual", sha: "9aeba20b79291c6c" }
+- { record: template.roof, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "a966489b0bd9126b" }
 - { record: template.stair, at: "2026-10-17T21:45:11Z", status: "", summary: "first tracked", sha: "03e5a6967a203093" }
 - { record: template.termination-hv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "b0398bafc880c882" }
 - { record: template.termination-lv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "b3fff31e02cd79e5" }
@@ -4389,11 +4389,11 @@
 - { record: template.valve-relief, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "d49ebff915dfb3f2" }
 - { record: template.wall-door, at: "2026-10-17T21:45:11Z", status: "", summary: "first tracked", sha: "5beb0a001571bf86" }
 - { record: template.wall-double-door, at: "2026-10-17T21:45:11Z", status: "", summary: "first tracked", sha: "2e13cecc785d47ab" }
-- { record: template.wall-glazed, at: "2026-10-18T00:52:31Z", status: "", summary: "changed: visual", sha: "70e5e85e572000c5" }
-- { record: template.wall-insulated, at: "2026-10-17T23:15:00Z", status: "", summary: "changed: visual", sha: "bbe21ff7d2410107" }
+- { record: template.wall-glazed, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "963b9e61ba2e0e62" }
+- { record: template.wall-insulated, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "008123b71f0f4b1a" }
 - { record: template.wall-roller, at: "2026-10-17T21:45:11Z", status: "", summary: "first tracked", sha: "300ff4cdf302d4e7" }
 - { record: template.wall-shopfront, at: "2026-10-17T21:45:11Z", status: "", summary: "first tracked", sha: "b6486dd1306087e5" }
-- { record: template.wall-window, at: "2026-10-18T00:07:49Z", status: "", summary: "changed: visual", sha: "dfedc8105c799a45" }
+- { record: template.wall-window, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "c858aa8573364c8e" }
 - { record: unit.alloy-bins-8, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "f164893e2dc287ed" }
 - { record: unit.baghouse-200k, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "abfebdff23b38d30" }
 - { record: unit.baghouse-450k, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "4b73a94e4d25edcf" }
@@ -4442,7 +4442,7 @@
 - { record: unit.forklift-2t5, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "ff3d76813084adac" }
 - { record: unit.furnace-transformer-14mva, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "c16dea6a1f79fcf2" }
 - { record: unit.furnace-transformer-90mva, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "3d66e024078d6eba" }
-- { record: unit.furniture-back-shelf, at: "2026-10-18T01:08:16Z", status: draft, summary: "changed: visual", sha: "6f4c0f6471cab57c" }
+- { record: unit.furniture-back-shelf, at: "2026-10-18T01:14:24Z", status: draft, summary: "changed", sha: "428913db432f4a93" }
 - { record: unit.furniture-basin, at: "2026-10-17T23:23:00Z", status: draft, summary: "changed", sha: "1b5c7806f0fa8576" }
 - { record: unit.furniture-bed, at: "2026-10-18T00:15:44Z", status: draft, summary: "changed", sha: "27e2655c9f2b42e6" }
 - { record: unit.furniture-bed-ward, at: "2026-10-18T00:56:24Z", status: draft, summary: "changed", sha: "aa302b37216848ef" }
@@ -4455,7 +4455,7 @@
 - { record: unit.furniture-chair, at: "2026-10-17T23:23:00Z", status: draft, summary: "changed", sha: "bf4fa9b6dce5d30e" }
 - { record: unit.furniture-charge-point, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "3804bc0d9139537c" }
 - { record: unit.furniture-couch, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "ed4d439528f97f0d" }
-- { record: unit.furniture-counter, at: "2026-10-18T01:11:28Z", status: draft, summary: "changed: visual", sha: "7f7635fe5c92b949" }
+- { record: unit.furniture-counter, at: "2026-10-18T01:14:24Z", status: draft, summary: "changed", sha: "8c9e8e4cc64ae2f8" }
 - { record: unit.furniture-cubicle, at: "2026-10-18T00:56:24Z", status: draft, summary: "changed", sha: "7b6daac7d905dbfd" }
 - { record: unit.furniture-desk, at: "2026-10-18T00:15:44Z", status: draft, summary: "changed", sha: "86ab2b77fb1953f3" }
 - { record: unit.furniture-dock, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "a43d0b372e36d83b" }
@@ -4479,12 +4479,12 @@
 - { record: unit.furniture-steel-wc, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "cc0a9e03df3ae71d" }
 - { record: unit.furniture-table, at: "2026-10-17T23:50:32Z", status: draft, summary: "changed", sha: "655a5c0e8bf0c09f" }
 - { record: unit.furniture-till, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "0a157018956f11a0" }
-- { record: unit.furniture-tool-rack, at: "2026-10-18T00:59:13Z", status: draft, summary: "changed: visual", sha: "7adc732ba5657d96" }
+- { record: unit.furniture-tool-rack, at: "2026-10-18T01:14:24Z", status: draft, summary: "changed", sha: "206dfcbbe5391f9f" }
 - { record: unit.furniture-trolley, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "a17e76c052fac46f" }
 - { record: unit.furniture-wc, at: "2026-10-17T23:50:32Z", status: draft, summary: "changed", sha: "a355e019445e7215" }
 - { record: unit.furniture-web-press, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "6e0efa657b117d4d" }
 - { record: unit.furniture-witness-box, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "c6f76789e7ef3fcb" }
-- { record: unit.furniture-workbench, at: "2026-10-18T01:03:21Z", status: draft, summary: "changed: visual", sha: "6b6cf319e45f4308" }
+- { record: unit.furniture-workbench, at: "2026-10-18T01:14:24Z", status: draft, summary: "changed", sha: "c906e6ce56d8bfce" }
 - { record: unit.gantry-crane-150t-moon, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "7dfe5d37742335da" }
 - { record: unit.gantry-crane-20t-moon, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "5498719cb23fe32b" }
 - { record: unit.gas-heater-119mw-8bar, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "afb29b6a4ca2922e" }

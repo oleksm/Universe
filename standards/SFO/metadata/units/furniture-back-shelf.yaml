@@ -14,12 +14,6 @@ built_of:
 - what: Frame and shelves
   item: material.structural-steel-a36
   mass: 57.0
-visual:
-  format: "freefall-model/1"
-  path: "models/furniture-back-shelf/v1"
-  manifest_sha256: "e7ada3c5a128b2aa451b34ee3e33beff138713599252610779509e9911aab14f"
-  version: 1
-  triangles: 1702
 basis:
 - of:
   - built_of
@@ -27,3 +21,9 @@ basis:
   tier: derived
   review: true
   note: From blender's counter bay.
+visual:
+  format: freefall-model/1
+  path: models/furniture-back-shelf/v1
+  manifest_sha256: e7ada3c5a128b2aa451b34ee3e33beff138713599252610779509e9911aab14f
+  version: 1
+  triangles: 1702

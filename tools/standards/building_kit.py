@@ -49,8 +49,8 @@ def panel(slug, name, kind, cell, thick, parts, desc, template, opening=None, u=
     mass = sum(p[2] for p in parts)
     if kind in ("wall", "partition"):
         ph = {"length": cell[0], "width": thick, "height": cell[1], "mass": r(mass)}
-    elif kind == "stair":
-        ph = {"length": cell[0], "width": cell[1], "height": CELL, "mass": r(mass)}
+    elif kind == "stair":      # (blender, 2026-10-17: two 1.2 m flights with their landings in the 3 x 6 m well, rails 1 m over the upper floor)
+        ph = {"length": 2.7, "width": 5.2, "height": CELL + 1.0, "mass": r(mass)}
     else:
         ph = {"length": cell[0], "width": cell[1], "height": thick, "mass": r(mass)}
     d = {"identity": {"key": f"panel.{slug}", "name": name, "description": desc}, "kind": kind, "site": "air", "cell": list(cell), "thickness": thick}
@@ -117,7 +117,7 @@ panel("roof-3x3", "Roof panel, 3 x 3 m", "roof", (3.0, 3.0), 0.15, sp + [("Membr
       "An insulated sandwich roof panel on the frame's top cells, a rubber membrane over it, laid to fall to its gutters.", "roof", u=u, load=1000.0)
 panel("stair-3m", "Stair, 3 m rise", "stair", (3.0, 6.0), 0.3,
       [("Stringers, treads and landing", STEEL, 560.0, "two flights of 1.2 m with a half landing"), ("Handrails", STEEL, 90.0, "")],
-      "A steel stair between floors 3 m apart, in a stair well of two cells (3 x 6 m).", "stair")
+      "A steel stair between floors 3 m apart, in a stair well of two cells (3 x 6 m): two flights of ten 150 mm risers on 300 mm goings, its half and end landings its own, handrails to 1 m over the upper floor.", "stair")
 
 TEMPLATES = {"wall-insulated": "Insulated wall panels", "wall-glazed": "Glazed wall panels", "wall-window": "Wall panels with a window",
              "wall-door": "Wall panels with a door", "wall-double-door": "Wall panels with double doors", "wall-roller": "Roller shutter wall panels",

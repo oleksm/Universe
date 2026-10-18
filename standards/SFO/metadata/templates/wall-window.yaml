@@ -10,15 +10,15 @@ scales_by:
 - physical
 reference: panel.wall-window-3x3
 members: 1
-visual:
-  format: "freefall-model/1"
-  path: "models/wall-window/v1"
-  manifest_sha256: "a97de07f619f574c9e59f7e2bd4ad077aa92607b7c24142546f013a5e12e6865"
-  version: 1
-  triangles: 600
 basis:
 - of:
   - draws
   - scales_by
   tier: derived
   note: 'The owner, 2026-10-17: buildings as layouts; one template a panel family (building_kit.py).'
+visual:
+  format: freefall-model/1
+  path: models/wall-window/v1
+  manifest_sha256: a97de07f619f574c9e59f7e2bd4ad077aa92607b7c24142546f013a5e12e6865
+  version: 1
+  triangles: 600

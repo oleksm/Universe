@@ -17,12 +17,6 @@ built_of:
 - what: Tools
   item: material.high-strength-steel-4340
   mass: 67.7
-visual:
-  format: "freefall-model/1"
-  path: "models/furniture-tool-rack/v1"
-  manifest_sha256: "460bc935de841b6ee9533ba7866bb6a9250aa36d7dba690f4fb35f8f8e08293d"
-  version: 1
-  triangles: 2196
 basis:
 - of:
   - built_of
@@ -30,3 +24,9 @@ basis:
   tier: derived
   review: true
   note: 'From blender''s model (2026-10-17): 40 x 40 x 2 mm frame, backboard and tray; spanners, sledges and bars.'
+visual:
+  format: freefall-model/1
+  path: models/furniture-tool-rack/v1
+  manifest_sha256: 460bc935de841b6ee9533ba7866bb6a9250aa36d7dba690f4fb35f8f8e08293d
+  version: 1
+  triangles: 2196

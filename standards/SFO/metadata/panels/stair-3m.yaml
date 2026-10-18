@@ -3,7 +3,7 @@
 identity:
   key: panel.stair-3m
   name: Stair, 3 m rise
-  description: A steel stair between floors 3 m apart, in a stair well of two cells (3 x 6 m).
+  description: 'A steel stair between floors 3 m apart, in a stair well of two cells (3 x 6 m): two flights of ten 150 mm risers on 300 mm goings, its half and end landings its own, handrails to 1 m over the upper floor.'
 kind: stair
 site: air
 cell:
@@ -11,9 +11,9 @@ cell:
 - 6.0
 thickness: 0.3
 physical:
-  length: 3.0
-  width: 6.0
-  height: 3.0
+  length: 2.7
+  width: 5.2
+  height: 4.0
   mass: 650.0
 built_of:
 - what: Stringers, treads and landing
