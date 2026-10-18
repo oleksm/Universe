@@ -204,10 +204,10 @@
 - { record: connector.collector-500a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "240ab4cd36914661" }
 - { record: connector.corner-casting-iso1161, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "e24d9788646c7810" }
 - { record: connector.coupler-11kv-400a, at: "2026-10-18T04:24:58Z", status: draft, summary: "changed: physical, built_of, basis", sha: "c35f835f31669aa3" }
-- { record: connector.expansion-joint-dn100-pn10, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "8bef4da02874e32d" }
-- { record: connector.expansion-joint-dn1000-pn10, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "f05e60aa1453c29a" }
-- { record: connector.expansion-joint-dn300-pn10, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "4130040a30184fb6" }
-- { record: connector.expansion-joint-dn600-pn10, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "ee49df7110efa987" }
+- { record: connector.expansion-joint-dn100-pn10, at: "2026-10-18T04:31:06Z", status: draft, summary: "changed: identity, physical, built_of", sha: "645fc3480f31e69a" }
+- { record: connector.expansion-joint-dn1000-pn10, at: "2026-10-18T04:31:06Z", status: draft, summary: "changed: identity, physical, built_of", sha: "0016c561071b3c06" }
+- { record: connector.expansion-joint-dn300-pn10, at: "2026-10-18T04:31:06Z", status: draft, summary: "changed: identity, physical, built_of", sha: "0ac39884197a5434" }
+- { record: connector.expansion-joint-dn600-pn10, at: "2026-10-18T04:31:06Z", status: draft, summary: "changed: identity, physical, built_of", sha: "b799de8bfb3fadd8" }
 - { record: connector.flange-dn100-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "8620055f6fd1811b" }
 - { record: connector.flange-dn100-pn10-ss, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "f4fea09af5e95a9b" }
 - { record: connector.flange-dn100-pn16-ss-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "2330bc07e88f41d3" }
@@ -294,17 +294,17 @@
 - { record: connector.termination-6p6kv-70mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "6808ecca95e1a764" }
 - { record: connector.termination-6p6kv-95mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "3c36ff1d41d6a876" }
 - { record: connector.twistlock-iso1161, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "b1e5df24655a11f9" }
-- { record: connector.valve-ball-dn100-pn10, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "7f8236fc99a2db8b" }
+- { record: connector.valve-ball-dn100-pn10, at: "2026-10-18T04:31:06Z", status: draft, summary: "changed: physical", sha: "9eda821fd094d31f" }
 - { record: connector.valve-ball-dn50-pn10, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "768f57a3095ad5e6" }
-- { record: connector.valve-butterfly-dn1000-pn10, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "5155972bbf6922e8" }
-- { record: connector.valve-butterfly-dn150-pn10, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "03e13bc7a6b84236" }
-- { record: connector.valve-butterfly-dn300-pn10, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "2fc2fc46a0a6c178" }
-- { record: connector.valve-butterfly-dn600-pn10, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "3ce3c1a4dc664904" }
-- { record: connector.valve-check-dn100-pn10, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "976aea809ec96259" }
-- { record: connector.valve-check-dn300-pn10, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "bc2b03dfbae6c3d2" }
-- { record: connector.valve-gate-dn100-pn10, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "c31ae383fa0e3f13" }
-- { record: connector.valve-gate-dn300-pn10, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "985e6233353671a8" }
-- { record: connector.valve-relief-dn100-pn10, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "93126da1f9e190e4" }
+- { record: connector.valve-butterfly-dn1000-pn10, at: "2026-10-18T04:31:06Z", status: draft, summary: "changed: physical", sha: "2f3be69446d0b8fe" }
+- { record: connector.valve-butterfly-dn150-pn10, at: "2026-10-18T04:31:06Z", status: draft, summary: "changed: physical", sha: "f430fac59d353253" }
+- { record: connector.valve-butterfly-dn300-pn10, at: "2026-10-18T04:31:06Z", status: draft, summary: "changed: physical", sha: "68b95568269a8132" }
+- { record: connector.valve-butterfly-dn600-pn10, at: "2026-10-18T04:31:06Z", status: draft, summary: "changed: physical", sha: "d6638200f649eb44" }
+- { record: connector.valve-check-dn100-pn10, at: "2026-10-18T04:31:06Z", status: draft, summary: "changed: physical", sha: "1402bd30ac1ad444" }
+- { record: connector.valve-check-dn300-pn10, at: "2026-10-18T04:31:06Z", status: draft, summary: "changed: physical", sha: "f4319d406a288512" }
+- { record: connector.valve-gate-dn100-pn10, at: "2026-10-18T04:31:06Z", status: draft, summary: "changed: physical", sha: "ff582ca0c116724d" }
+- { record: connector.valve-gate-dn300-pn10, at: "2026-10-18T04:31:06Z", status: draft, summary: "changed: physical", sha: "3ee827d6d147f83c" }
+- { record: connector.valve-relief-dn100-pn10, at: "2026-10-18T04:31:06Z", status: draft, summary: "changed: physical", sha: "311736cd4d713d50" }
 - { record: connector.valve-relief-dn50-pn10, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "cce9eb2283d6bfc1" }
 - { record: deposit-type.bauxite, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: host_units, rate", sha: "71dfd89adcd42d8f" }
 - { record: deposit-type.beach-sands, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: host_units, rate", sha: "ea1f36c83aa3ac15" }
@@ -3525,10 +3525,10 @@
 - { record: stock.kit-corner-casting-iso1161, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "aea7ba02a5c2a39c" }
 - { record: stock.kit-coupler-11kv-400a, at: "2026-10-18T04:24:58Z", status: review, summary: "changed: made_from, physical", sha: "72e03863ba78c631" }
 - { record: stock.kit-drag-conveyor-800, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "a8b1f3e09c3573d7" }
-- { record: stock.kit-expansion-joint-dn100-pn10, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "5211ebddab4c2921" }
-- { record: stock.kit-expansion-joint-dn1000-pn10, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "fb1b91f9672d3d8f" }
-- { record: stock.kit-expansion-joint-dn300-pn10, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "75c6ed646b01ac5e" }
-- { record: stock.kit-expansion-joint-dn600-pn10, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "7ff7abaceb52b8da" }
+- { record: stock.kit-expansion-joint-dn100-pn10, at: "2026-10-18T04:31:06Z", status: review, summary: "changed: size", sha: "636c4b7f05eec9b3" }
+- { record: stock.kit-expansion-joint-dn1000-pn10, at: "2026-10-18T04:31:06Z", status: review, summary: "changed: size", sha: "3de81d507a005d5c" }
+- { record: stock.kit-expansion-joint-dn300-pn10, at: "2026-10-18T04:31:06Z", status: review, summary: "changed: size", sha: "91520abb7c9f44b3" }
+- { record: stock.kit-expansion-joint-dn600-pn10, at: "2026-10-18T04:31:06Z", status: review, summary: "changed: size", sha: "4b69df8e0d87d5c3" }
 - { record: stock.kit-festoon-690v-4x16, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "d2e42dace15ad525" }
 - { record: stock.kit-festoon-690v-4x35, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "c9d27eabdee2299e" }
 - { record: stock.kit-festoon-690v-4x95, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "63aaefaf5efec3b2" }
@@ -3692,17 +3692,17 @@
 - { record: stock.kit-termination-6p6kv-70mm2, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "c3016dd7ec815558" }
 - { record: stock.kit-termination-6p6kv-95mm2, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "3dc2db05fd71552e" }
 - { record: stock.kit-twistlock-iso1161, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "6a73cc4cf7d60a8d" }
-- { record: stock.kit-valve-ball-dn100-pn10, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "70a295cdb32e1d0e" }
+- { record: stock.kit-valve-ball-dn100-pn10, at: "2026-10-18T04:31:06Z", status: review, summary: "changed: size", sha: "814abac9d9ba77ab" }
 - { record: stock.kit-valve-ball-dn50-pn10, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "3d8846da1d650c41" }
-- { record: stock.kit-valve-butterfly-dn1000-pn10, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "5b0d3d6421fbdd8f" }
-- { record: stock.kit-valve-butterfly-dn150-pn10, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "1be9157aef938dc6" }
-- { record: stock.kit-valve-butterfly-dn300-pn10, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "9b6bdcbe160d53d0" }
-- { record: stock.kit-valve-butterfly-dn600-pn10, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "ec95b77e65729d9a" }
-- { record: stock.kit-valve-check-dn100-pn10, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "aa892508c49b8470" }
-- { record: stock.kit-valve-check-dn300-pn10, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "52560a7d0d1de17d" }
-- { record: stock.kit-valve-gate-dn100-pn10, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "fe28db309de93683" }
-- { record: stock.kit-valve-gate-dn300-pn10, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "a90b998670adf372" }
-- { record: stock.kit-valve-relief-dn100-pn10, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "e1d35e5a3525c183" }
+- { record: stock.kit-valve-butterfly-dn1000-pn10, at: "2026-10-18T04:31:06Z", status: review, summary: "changed: size", sha: "76716773143719b9" }
+- { record: stock.kit-valve-butterfly-dn150-pn10, at: "2026-10-18T04:31:06Z", status: review, summary: "changed: size", sha: "229d5da5c21a1453" }
+- { record: stock.kit-valve-butterfly-dn300-pn10, at: "2026-10-18T04:31:06Z", status: review, summary: "changed: size", sha: "7ddfa1930566d9e9" }
+- { record: stock.kit-valve-butterfly-dn600-pn10, at: "2026-10-18T04:31:06Z", status: review, summary: "changed: size", sha: "a8b359faabe1057d" }
+- { record: stock.kit-valve-check-dn100-pn10, at: "2026-10-18T04:31:06Z", status: review, summary: "changed: size", sha: "23ce2f86a2e056de" }
+- { record: stock.kit-valve-check-dn300-pn10, at: "2026-10-18T04:31:06Z", status: review, summary: "changed: size", sha: "02d9fdbc8e6262e0" }
+- { record: stock.kit-valve-gate-dn100-pn10, at: "2026-10-18T04:31:06Z", status: review, summary: "changed: size", sha: "ab56b4b23fa62bca" }
+- { record: stock.kit-valve-gate-dn300-pn10, at: "2026-10-18T04:31:06Z", status: review, summary: "changed: size", sha: "b7a4ae462c8aa0fd" }
+- { record: stock.kit-valve-relief-dn100-pn10, at: "2026-10-18T04:31:06Z", status: review, summary: "changed: size", sha: "7d4cf5def075590d" }
 - { record: stock.kit-valve-relief-dn50-pn10, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "b08c43d5d803ef3d" }
 - { record: stock.lamps-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "44db537ad1273c3f" }
 - { record: stock.laterite-nickel-ore-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "59890bf0945dd4ae" }
@@ -4357,7 +4357,7 @@
 - { record: template.collector, at: "2026-10-18T03:58:51Z", status: "", summary: "changed", sha: "1317e309694e2142" }
 - { record: template.conductor-rail, at: "2026-10-18T04:18:11Z", status: "", summary: "changed", sha: "4365e26daa362ba1" }
 - { record: template.corner-casting, at: "2026-10-18T04:18:11Z", status: "", summary: "changed", sha: "d419adb8082c4d81" }
-- { record: template.coupler, at: "2026-10-18T04:28:29Z", status: "", summary: "changed: visual", sha: "249e0d5bced2df77" }
+- { record: template.coupler, at: "2026-10-18T04:31:06Z", status: "", summary: "changed", sha: "92f33e0051a9f6f6" }
 - { record: template.drag-conveyor, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "da78b5e8e253b112" }
 - { record: template.expansion-joint, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "b40d4515cf6b4c83" }
 - { record: template.festoon, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "d64b223260ef067b" }

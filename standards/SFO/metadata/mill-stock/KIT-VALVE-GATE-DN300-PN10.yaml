@@ -11,8 +11,8 @@ made_from:
 - item: material.structural-steel-a36
 - item: material.stainless-steel-304
 size:
-  length: 0.445
-  width: 0.445
+  length: 0.466
+  width: 0.466
   height: 0.33
 supplies:
   item: connector.valve-gate-dn300-pn10

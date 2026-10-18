@@ -257,12 +257,21 @@ VALVES = [  # (type, DN, kg, face to face m, height m, what)
     ("relief", 0.05, 20.0, 0.25, 0.45, "a spring-held disc that lifts when the pressure passes its set"),
     ("relief", 0.1, 60.0, 0.35, 0.75, "a spring-held disc that lifts when the pressure passes its set")]
 FL_OD = {0.05: 0.165, 0.1: 0.22, 0.15: 0.285, 0.3: 0.445, 0.6: 0.78, 1.0: 1.23}       # m, PN 10 flange outsides (EN 1092-1; from memory)
+
+
+def fl_od(dn):
+    """The PN 10 flange's outside it bolts to: the plant kit's flange record where there is one, else EN 1092-1's."""
+    f = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "standards", "SFO", "metadata", "connectors", f"flange-dn{tag(dn)}-pn10.yaml")
+    return float(yaml.safe_load(open(f))["physical"]["length"]) if os.path.exists(f) else FL_OD[dn]
+
+
+ROD_LUGS = 0.06     # m the limit rods' lugs stand out past the flanges, both sides together (invented)
 for vt, dn, kg, ff, h, what in VALVES:
     slug = f"valve-{vt}-dn{tag(dn)}-pn10"
     conn(slug, {
         "identity": {"key": f"connector.{slug}", "name": f"{vt.capitalize()} valve, DN {tag(dn)}, PN 10", "description": f"A flanged {vt} valve set in a line between two flange joints: {what}."},
         "kind": "valve", "size": dn, "valve": vt, "rating": {"pressure": 1.0e6, "temperature": 473.0},
-        "physical": {"length": FL_OD[dn], "width": FL_OD[dn], "height": r(ff, 3), "mass": kg},
+        "physical": {"length": fl_od(dn), "width": fl_od(dn), "height": r(ff, 3), "mass": kg},
         "built_of": [part("Body and bonnet", A36, kg * 0.75, "cast carbon steel"), part("Trim", SS, kg * 0.2, "stainless seats, stem, disc or ball"), part("Packing and seats", RUB if vt != "gate" else SS, kg * 0.05)],
         "provides": "both", "template": f"template.valve-{vt}",
         "basis": [{"of": ["physical", "built_of"], "tier": "invented", "review": True, "note": f"Face to face as the EN 558 series run (from memory); its height along the line; the actuator stands off it {h} m; {MEMORY}"}]},
@@ -270,10 +279,10 @@ for vt, dn, kg, ff, h, what in VALVES:
 for dn, kg, ll, mv in ((0.1, 15.0, 0.25, 0.025), (0.3, 70.0, 0.35, 0.04), (0.6, 220.0, 0.45, 0.06), (1.0, 560.0, 0.55, 0.08)):
     slug = f"expansion-joint-dn{tag(dn)}-pn10"
     conn(slug, {
-        "identity": {"key": f"connector.{slug}", "name": f"Expansion joint, DN {tag(dn)}, PN 10", "description": f"A stainless bellows between two flanges, set in a line to take its growth as it heats: {mv * 1000:g} mm each way along the line, a little sideways, tie rods holding the pressure's end load."},
+        "identity": {"key": f"connector.{slug}", "name": f"Expansion joint, DN {tag(dn)}, PN 10", "description": f"A stainless bellows between two flanges, set in a line to take its growth as it heats: {mv * 1000:g} mm each way along the line, a little sideways. Limit rods outside it stop its travel at that much; they do not hold the pressure's end load, the pipe's anchors either side do."},
         "kind": "expansion-joint", "size": dn, "rating": {"pressure": 1.0e6, "temperature": 673.0}, "movement": mv,
-        "physical": {"length": FL_OD[dn], "width": FL_OD[dn], "height": ll, "mass": kg},
-        "built_of": [part("Bellows", SS, kg * 0.3, "multi-ply 304"), part("Flanges and tie rods", A36, kg * 0.7)],
+        "physical": {"length": r(fl_od(dn) + ROD_LUGS, 3), "width": r(fl_od(dn) + ROD_LUGS, 3), "height": ll, "mass": kg},
+        "built_of": [part("Bellows", SS, kg * 0.3, "multi-ply 304"), part("Flanges and limit rods", A36, kg * 0.7)],
         "provides": "both", "template": "template.expansion-joint",
         "basis": [{"of": ["physical", "movement"], "tier": "invented", "review": True, "note": MEMORY}]},
         {"slug": f"flange-dn{tag(dn)}-pn10", "name": f"Flange DN {tag(dn)} PN 10", "domain": "fluid", "kind": "flange", "media": ["gas", "liquid"], "halves": "androgynous", "make": "bolted", "standard": "EN 1092-1 bores and pressure classes (its faces and bolting the registry's)"})

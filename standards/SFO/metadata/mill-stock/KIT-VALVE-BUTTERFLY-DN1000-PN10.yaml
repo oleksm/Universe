@@ -12,8 +12,8 @@ made_from:
 - item: material.stainless-steel-304
 - item: material.epdm-rubber
 size:
-  length: 1.23
-  width: 1.23
+  length: 1.166
+  width: 1.166
   height: 0.216
 supplies:
   item: connector.valve-butterfly-dn1000-pn10

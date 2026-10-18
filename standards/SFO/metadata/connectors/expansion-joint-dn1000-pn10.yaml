@@ -3,7 +3,8 @@
 identity:
   key: connector.expansion-joint-dn1000-pn10
   name: Expansion joint, DN 1000, PN 10
-  description: 'A stainless bellows between two flanges, set in a line to take its growth as it heats: 80 mm each way along the line, a little sideways, tie rods holding the pressure''s end load.'
+  description: 'A stainless bellows between two flanges, set in a line to take its growth as it heats: 80 mm each way along the line, a little sideways. Limit rods outside it stop its travel at that much; they do not hold the pressure''s
+    end load, the pipe''s anchors either side do.'
 kind: expansion-joint
 size: 1.0
 rating:
@@ -11,8 +12,8 @@ rating:
   temperature: 673.0
 movement: 0.08
 physical:
-  length: 1.23
-  width: 1.23
+  length: 1.226
+  width: 1.226
   height: 0.55
   mass: 560.0
 built_of:
@@ -20,7 +21,7 @@ built_of:
   item: material.stainless-steel-304
   mass: 168.0
   note: multi-ply 304
-- what: Flanges and tie rods
+- what: Flanges and limit rods
   item: material.structural-steel-a36
   mass: 392.0
 provides: both

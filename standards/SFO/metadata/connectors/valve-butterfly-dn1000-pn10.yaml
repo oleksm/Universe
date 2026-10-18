@@ -11,8 +11,8 @@ rating:
   pressure: 1000000.0
   temperature: 473.0
 physical:
-  length: 1.23
-  width: 1.23
+  length: 1.166
+  width: 1.166
   height: 0.216
   mass: 900.0
 built_of:

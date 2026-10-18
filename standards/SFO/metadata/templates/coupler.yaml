@@ -10,15 +10,15 @@ scales_by:
 - physical
 members: 1
 reference: connector.coupler-11kv-400a
-visual:
-  format: "freefall-model/1"
-  path: "models/coupler/v1"
-  manifest_sha256: "1c89947d4b01f35715aae424af0c0ac8d9620038592069654257047be3a1af01"
-  version: 1
-  triangles: 9068
 basis:
 - of:
   - draws
   - scales_by
   tier: derived
   note: 'The owner, 2026-10-17: one template a family, scaled; the catalogue families (kit_catalogue.py).'
+visual:
+  format: freefall-model/1
+  path: models/coupler/v1
+  manifest_sha256: 1c89947d4b01f35715aae424af0c0ac8d9620038592069654257047be3a1af01
+  version: 1
+  triangles: 9068

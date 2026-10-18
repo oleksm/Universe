@@ -11,8 +11,8 @@ made_from:
 - item: material.stainless-steel-304
 - item: material.structural-steel-a36
 size:
-  length: 0.445
-  width: 0.445
+  length: 0.526
+  width: 0.526
   height: 0.35
 supplies:
   item: connector.expansion-joint-dn300-pn10
