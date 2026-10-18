@@ -615,11 +615,24 @@ def _sweep_axes(mo, axes, bind, parent, eye):
         if len(ref["input"]) != len(axes):
             bad.append(f"motion: reference {ref['pose']}: {len(ref['input'])} input(s), one per axis wanted ({len(axes)})"); continue
         moved = pose(*ref["input"])
+        A = {mo["root"]: eye}
+        A.update({n: _mul(moved_of(n, moved), b) for n, b in bind.items()})
+        for ac in mo.get("actuators", []):      # (aimed as on the gimbal, engine's v11: absolute, at its own anchor)
+            f = _apply(A.get(ac["fixed"]["parent"], eye), ac["fixed"]["point"])
+            m_ = _apply(A.get(ac["moving"]["parent"], eye), ac["moving"]["point"])
+            ax = _unit(ac["axis"])
+            for node, at, to in ((ac["body_node"], f, m_), (ac["rod_node"], m_, f)):
+                d = _unit([to[k] - at[k] for k in range(3)])
+                if _dot(ax, d) < -1 + 1e-9:
+                    A[node] = None; continue
+                rr = _swing(ax, d)
+                A[node] = [[*rr[0], at[0]], [*rr[1], at[1]], [*rr[2], at[2]], [0, 0, 0, 1]]
         for n, t in ref["transforms"].items():
-            if n in bind:
-                A = _mul(moved_of(n, moved), bind[n])
-                if _diff(A, _m4(t)) > 2e-6:
-                    bad.append(f"motion: reference {ref['pose']}: {n} is {_diff(A, _m4(t)):.2e} off what the axes give")
+            if n in A:
+                if A[n] is None:
+                    bad.append(f"motion: reference {ref['pose']}: actuator node {n} turned end over end (no roll stated)"); continue
+                if _diff(A[n], _m4(t)) > 2e-6:
+                    bad.append(f"motion: reference {ref['pose']}: {n} is {_diff(A[n], _m4(t)):.2e} off what the axes give")
     return bad
 
 
