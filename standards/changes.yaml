@@ -4510,7 +4510,7 @@
 - { record: template.wall-door, at: "2026-10-18T02:56:15Z", status: "", summary: "changed", sha: "5ee61de4e9641cf9" }
 - { record: template.wall-double-door, at: "2026-10-18T02:56:15Z", status: "", summary: "changed", sha: "26ab0ddf416087e3" }
 - { record: template.wall-glazed, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "963b9e61ba2e0e62" }
-- { record: template.wall-hatch, at: "2026-10-18T14:47:28Z", status: "", summary: "first tracked", sha: "c15fb16348987fbd" }
+- { record: template.wall-hatch, at: "2026-10-18T16:00:11Z", status: "", summary: "changed", sha: "a1c6fb58133df808" }
 - { record: template.wall-insulated, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "008123b71f0f4b1a" }
 - { record: template.wall-pressure, at: "2026-10-18T15:18:53Z", status: "", summary: "changed", sha: "826eff21824e390e" }
 - { record: template.wall-roller, at: "2026-10-18T14:47:28Z", status: "", summary: "changed", sha: "b02024c6ab9beaee" }
