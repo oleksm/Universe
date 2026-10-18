@@ -10,6 +10,12 @@ scales_by:
 - physical
 members: 4
 reference: connector.hvdc-pole-400a
+visual:
+  format: "freefall-model/1"
+  path: "models/hvdc-pole/v1"
+  manifest_sha256: "d6dc3652d203bc3438bd736c06a9ea64ca938b023f5be7f44211ad159f85771e"
+  version: 1
+  triangles: 6064
 basis:
 - of:
   - draws
