@@ -10,6 +10,12 @@ scales_by:
 - physical
 reference: panel.wall-roller-3x3
 members: 1
+visual:
+  format: "freefall-model/1"
+  path: "models/wall-roller/v1"
+  manifest_sha256: "3f0ae014c8877b5e7d600557061ad5f773c4adf92ba5a825d965e65645765bac"
+  version: 1
+  triangles: 1860
 basis:
 - of:
   - draws
