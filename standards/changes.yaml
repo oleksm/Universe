@@ -4518,7 +4518,7 @@
 - { record: template.wall-viewport, at: "2026-10-18T16:09:13Z", status: "", summary: "changed: visual", sha: "455a5043cc2219ef" }
 - { record: template.wall-window, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "c858aa8573364c8e" }
 - { record: template.wire, at: "2026-10-18T14:51:23Z", status: "", summary: "first tracked", sha: "bf68ff348da2e001" }
-- { record: template.wiring-box, at: "2026-10-18T14:51:23Z", status: "", summary: "first tracked", sha: "eca4294fa0a5f3d2" }
+- { record: template.wiring-box, at: "2026-10-18T16:13:54Z", status: "", summary: "changed: visual", sha: "9bb1f6ef2e755170" }
 - { record: unit.alloy-bins-8, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "f164893e2dc287ed" }
 - { record: unit.baghouse-200k, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "abfebdff23b38d30" }
 - { record: unit.baghouse-450k, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "4b73a94e4d25edcf" }

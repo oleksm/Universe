@@ -10,6 +10,12 @@ scales_by:
 - physical
 members: 1
 reference: connector.wiring-box-lv
+visual:
+  format: "freefall-model/1"
+  path: "models/wiring-box/v1"
+  manifest_sha256: "8349d1e01df85a51b124de39a19b6298ad4cf9c55aae883742394468715e58c3"
+  version: 1
+  triangles: 1684
 basis:
 - of:
   - draws
