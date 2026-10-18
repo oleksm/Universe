@@ -23,7 +23,7 @@ properties:
     additionalProperties: false
     description: "A door or window in it, its clear size and what closes it."
     properties:
-      kind: { enum: [door, double-door, sliding-door, roller-shutter, window, glazing] }
+      kind: { enum: [door, double-door, sliding-door, roller-shutter, window, glazing, pressure-door, pressure-cargo-door, viewport] }
       width: { type: number, exclusiveMinimum: 0, x-unit: "m" }
       height: { type: number, exclusiveMinimum: 0, x-unit: "m" }
       sill: { type: number, minimum: 0, x-unit: "m", description: "m from the panel's foot to the opening's" }

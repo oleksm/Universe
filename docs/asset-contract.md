@@ -206,6 +206,10 @@ One model draws every size of a kit family (`standards/SFO/metadata/templates/`)
   y = 0, its face along X centred on x = 0, its thickness along Z centred on the frame's grid line (z = 0), outside
   face toward +Z. A floor's walking plane is y = 0, the cassette below it; a roof sits on the frame's top, its underside
   at y = 0. A stair's foot is y = 0 at the lower floor, rising along +X. Doors and windows closed.
+  Airless (pressure) panels: the welded skin on the outside face (+Z), its blankets over it, the T-stiffeners inside
+  (-Z) running across the cell's short side at 0.23 m, an edge channel all round; a plug door's leaf on the inside face,
+  closed (it opens inward); the viewport a round double pane at its sill height. A pressure floor is a plate and screed
+  over y = 0 (no cassette); a pressure roof is the wall's build lying flat, its skin up.
 - **Furniture** (unit.furniture-*): one root node `body`, its feet at y = 0, centred in X and Z, its front toward -Z.
 
 ## Rework: what an installed model lacks, and redoing it

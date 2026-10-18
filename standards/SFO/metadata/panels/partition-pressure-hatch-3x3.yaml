@@ -1,0 +1,60 @@
+# yaml-language-server: $schema=../../schema/panel.schema.yaml
+# Written by tools/standards/building_kit.py: change it there.
+identity:
+  key: panel.partition-pressure-hatch-3x3
+  name: Pressure partition with a door, 3 x 3 m
+  description: 'A pressure partition with a 1.0 x 2.0 m plug door: an airlock''s inner door, or a door between parts that can be shut on a leak.'
+kind: partition
+site: airless
+cell:
+- 3.0
+- 3.0
+thickness: 0.17
+opening:
+  kind: pressure-door
+  width: 1.0
+  height: 2.0
+  sill: 0.15
+  people: true
+load: 101300.0
+physical:
+  length: 3.0
+  width: 0.17
+  height: 3.0
+  mass: 475.0
+built_of:
+- what: Bulkhead skin
+  item: material.aluminium-alloy-6061
+  mass: 94.5
+  note: 5 mm welded 6061
+- what: Stiffeners
+  item: material.aluminium-alloy-6061
+  mass: 164.1
+  note: 14 T-stiffeners 155 mm deep at 0.23 m
+- what: Edge channel, seals and bolts
+  item: material.aluminium-alloy-6061
+  mass: 72.0
+  note: a welded edge channel and two O-ring grooves on the frame's beams, 6 kg/m
+- what: Pressure door leaf
+  item: material.aluminium-alloy-6061
+  mass: 44.5
+  note: a 5 mm skin on 9 ribs 60 mm deep, opening inward
+- what: Hinges, latches and seal frame
+  item: material.structural-steel-a36
+  mass: 60.0
+  note: forged hinges, dogs all round, the door's seal land (invented)
+- what: Door surround
+  item: material.aluminium-alloy-6061
+  mass: 40.0
+  note: a welded doubler round the opening (invented)
+template: template.partition-pressure-hatch
+basis:
+- of:
+  - built_of
+  - physical
+  - u_value
+  - load
+  tier: derived
+  review: true
+  note: 'Holds 101.3 kPa against vacuum: 6061 welded at 110 MPa, the skin between stiffeners 0.23 m apart as a clamped strip (p b^2 / 2 t^2), each stiffener a fixed-ended T over the cell''s short side (w L^2 / 12) with the skin its
+    other flange, as the cargo cabins (equipment/cargo-cabin-s1.yaml). Edge channel, seals, door hardware and the insulation from memory; to be sourced.'

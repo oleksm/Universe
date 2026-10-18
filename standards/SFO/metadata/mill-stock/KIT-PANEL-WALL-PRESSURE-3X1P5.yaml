@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/building_kit.py: change it there.
+identity:
+  key: stock.kit-panel-wall-pressure-3x1p5
+  code: KIT-PANEL-WALL-PRESSURE-3X1P5
+  name: Pressure wall panel, 3 x 1.5 m
+  traded_as: market.machinery
+  form: panel
+package: package.plate-stack
+made_from:
+- item: material.aluminium-alloy-6061
+- item: material.polyimide-film
+size:
+  length: 3.0
+  width: 0.11
+  height: 1.5
+supplies:
+  item: panel.wall-pressure-3x1p5
+physical:
+  mass: 168.5
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One panel.wall-pressure-3x1p5, as made.

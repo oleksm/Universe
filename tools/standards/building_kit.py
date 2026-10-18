@@ -1,5 +1,6 @@
 """The building kit (the owner, 2026-10-17: a building is a layout laid of a frame, panels, fit-out units and service
-kit, not one model). Panels on the strut frame's 3 m grid for a world with air: walls (insulated, glazed, with a
+kit, not one model). Panels on the strut frame's 3 m grid for a world with air (site air) and for an airless one
+(site airless: pressure walls, roof and floor, plug doors, a viewport, pressure partitions); for a world with air: walls (insulated, glazed, with a
 window, a door, double doors, a shop front, a roller shutter), partitions, floors, roofs and a stair; one template a
 family; each panel sold as a stock piece.
 
@@ -45,7 +46,7 @@ def glazed(area):
 PANELS = []
 
 
-def panel(slug, name, kind, cell, thick, parts, desc, template, opening=None, u=None, load=None, basis=MEMORY):
+def panel(slug, name, kind, cell, thick, parts, desc, template, opening=None, u=None, load=None, basis=MEMORY, site="air", tier="invented"):
     mass = sum(p[2] for p in parts)
     if kind in ("wall", "partition"):
         ph = {"length": cell[0], "width": thick, "height": cell[1], "mass": r(mass)}
@@ -53,7 +54,7 @@ def panel(slug, name, kind, cell, thick, parts, desc, template, opening=None, u=
         ph = {"length": 2.74, "width": 5.24, "height": 4.053, "mass": r(mass)}
     else:
         ph = {"length": cell[0], "width": cell[1], "height": thick, "mass": r(mass)}
-    d = {"identity": {"key": f"panel.{slug}", "name": name, "description": desc}, "kind": kind, "site": "air", "cell": list(cell), "thickness": thick}
+    d = {"identity": {"key": f"panel.{slug}", "name": name, "description": desc}, "kind": kind, "site": site, "cell": list(cell), "thickness": thick}
     if opening:
         d["opening"] = opening
     if u:
@@ -63,7 +64,7 @@ def panel(slug, name, kind, cell, thick, parts, desc, template, opening=None, u=
     d["physical"] = ph
     d["built_of"] = [{"what": w, "item": i, "mass": r(m), **({"note": n} if n else {})} for w, i, m, n in parts]
     d["template"] = f"template.{template}"
-    d["basis"] = [{"of": ["built_of", "physical", "u_value", "load"], "tier": "invented", "review": True, "note": basis}]
+    d["basis"] = [{"of": ["built_of", "physical", "u_value", "load"], "tier": tier, "review": True, "note": basis}]
     PANELS.append((slug, d))
 
 
@@ -119,10 +120,117 @@ panel("stair-3m", "Stair, 3 m rise", "stair", (3.0, 6.0), 0.3,
       [("Stringers, treads, landings and frames", STEEL, 669.1, "8 mm stringers, 3 mm folded treads and landings, 50 x 50 x 3 landing frames and columns: blender's model (2026-10-17)"), ("Handrails, guards and posts", STEEL, 162.6, "35 x 35 x 2 mm: blender's model")],
       "A steel stair between floors 3 m apart, in a stair well of two cells (3 x 6 m): two flights of ten 150 mm risers on 300 mm goings, its half and end landings its own, handrails to 1 m over the upper floor.", "stair")
 
+
+# ------------------------------------------------------------------ airless: the building is a pressure vessel
+# Sea-level air inside (101.3 kPa, chosen, as the MC-07's cabin), vacuum outside. Each pressure panel is a welded 6061
+# skin on T-stiffeners, the cargo cabins' method (equipment/cargo-cabin-s1.yaml): 6061 welded at 110 MPa (165 over a
+# factor 1.5); the skin between stiffeners a long clamped strip, stress = p b^2 / (2 t^2); a stiffener a fixed-ended beam
+# over the cell's short side, M = w L^2 / 12, the skin its other flange. Skin outside, stiffeners inside (the pressure
+# pushes the skin off them, as an airliner's), multi-layer insulation over the skin: no weather, but sun and shade.
+# The frame takes what the panels hand it: each cell face pushes out p x its area (about 0.9 MN on a 3 x 3 m face).
+P_IN = 101300.0
+AL_ALLOW = 110e6
+AL_RHO = 2700.0
+PITCH = 0.23             # m between stiffeners (the cabins')
+MLI_KG_M2, MLI_T, MLI_U = 0.6, 0.02, 0.1      # about twenty layers of aluminised polyimide on scrim; W/(m2 K) in vacuum with its seams (invented)
+PRESSURE = f"Holds {P_IN / 1e3:g} kPa against vacuum: 6061 welded at {AL_ALLOW / 1e6:g} MPa, the skin between stiffeners {PITCH:g} m apart as a clamped strip (p b^2 / 2 t^2), each stiffener a fixed-ended T over the cell's short side (w L^2 / 12) with the skin its other flange, as the cargo cabins (equipment/cargo-cabin-s1.yaml). Edge channel, seals, door hardware and the insulation from memory; to be sourced."
+
+
+def skin_t(pitch=PITCH, p=P_IN):
+    """mm-rounded-up skin thickness, m, for a clamped strip `pitch` wide."""
+    t = pitch * (p / (2 * AL_ALLOW)) ** 0.5
+    return max(0.003, -(-t // 0.0005) * 0.0005)
+
+
+def tee(span, pitch=PITCH, p=P_IN, ends=12.0):
+    """The lightest of a plain family of 6061 T-stiffeners (6 mm web, a 10 mm flange 0.6 x the depth wide) that carries
+    p over `pitch` on `span` (M = w L^2 / ends), with the skin as its other flange: (depth m, kg/m without the skin)."""
+    t = skin_t(pitch, p)
+    need = p * pitch * span ** 2 / ends / AL_ALLOW
+    for mm in range(40, 601, 5):
+        d = mm / 1000.0
+        bf, tf, tw = 0.6 * d, 0.010, 0.006
+        parts = [(pitch * t, t / 2), (tw * d, t + d / 2), (bf * tf, t + d + tf / 2)]
+        a = sum(x for x, _ in parts)
+        y = sum(x * c for x, c in parts) / a
+        i = pitch * t ** 3 / 12 + tw * d ** 3 / 12 + bf * tf ** 3 / 12 + sum(x * (c - y) ** 2 for x, c in parts)
+        if i / max(y, t + d + tf - y) >= need:
+            return d, (tw * d + bf * tf) * AL_RHO
+    raise ValueError(f"no stiffener for a {span} m span")
+
+
+def pressure_skin(w, h, cut=0.0, mli=True, what="Pressure skin"):
+    """A cell face w x h of skin and stiffeners spanning its short side, less `cut` m2 of opening: (parts, depth m)."""
+    t, (d, kgm) = skin_t(), tee(min(w, h))
+    n = int(max(w, h) / PITCH) + 1
+    area = w * h - cut
+    parts = [(what, AL, area * t * AL_RHO, f"{t * 1000:g} mm welded 6061"),
+             ("Stiffeners", AL, n * min(w, h) * kgm * (area / (w * h)), f"{n} T-stiffeners {d * 1000:g} mm deep at {PITCH:g} m"),
+             ("Edge channel, seals and bolts", AL, 2 * (w + h) * 6.0, "a welded edge channel and two O-ring grooves on the frame's beams, 6 kg/m")]
+    if mli:
+        parts.append(("Multi-layer insulation", "material.polyimide-film", area * MLI_KG_M2, "about twenty layers, outside the skin"))
+    return parts, t + d + 0.010 + (MLI_T if mli else 0.0)
+
+
+def plug_leaf(w, h, what):
+    """A door leaf that opens inward so the pressure seats it: one 5 mm skin on ribs across its width (simply supported,
+    w L^2 / 8), plus hinges, latches and its seal frame (invented, 20 kg a metre of edge): (parts, depth)."""
+    t, (d, kgm) = skin_t(), tee(w, ends=8.0)
+    n = int(h / PITCH) + 1
+    return [(what, AL, w * h * t * AL_RHO + n * w * kgm, f"a {t * 1000:g} mm skin on {n} ribs {d * 1000:g} mm deep, opening inward"),
+            ("Hinges, latches and seal frame", STEEL, 2 * (w + h) * 20.0 / 2, "forged hinges, dogs all round, the door's seal land (invented)")], d
+
+
+for w, h, sl in ((3.0, 3.0, "3x3"), (1.5, 3.0, "1p5x3"), (3.0, 1.5, "3x1p5")):
+    parts, th = pressure_skin(w, h)
+    panel(f"wall-pressure-{sl}", f"Pressure wall panel, {w:g} x {h:g} m", "wall", (w, h), r(th, 3), parts,
+          "A stiffened aluminium skin welded to a channel that bolts and seals on one cell face of the frame: the outside wall of a building on an airless world, holding its air in. Insulating blankets outside; no weather to keep off.",
+          "wall-pressure", u=MLI_U, load=P_IN, basis=PRESSURE, site="airless", tier="derived")
+parts, th = pressure_skin(3.0, 3.0)
+panel("roof-pressure-3x3", "Pressure roof panel, 3 x 3 m", "roof", (3.0, 3.0), r(th, 3), parts,
+      "The wall panel's build on the frame's top cells: the pressure pushes it up into the frame's ties. Regolith shielding over it is ground works, not the panel.",
+      "roof-pressure", u=MLI_U, load=P_IN, basis=PRESSURE, site="airless", tier="derived")
+panel("floor-pressure-3x3", "Pressure floor panel, 3 x 3 m", "floor", (3.0, 3.0), 0.05,
+      [("Pressure plate", AL, 9.0 * 0.005 * AL_RHO, "5 mm welded 6061, the vessel's bottom, bearing on the ground slab (the slab takes the pressure)"),
+       ("Edge channel, seals and bolts", AL, 12 * 6.0, "as the walls'"), ("Screed", CONC, 9.0 * 0.04 * 2400, "40 mm to walk on")],
+      "The ground floor of a pressurised building: a sealed aluminium plate on the ground slab, the air's push carried by the slab, a screed over it.",
+      "floor-pressure", load=5000.0, basis=PRESSURE, site="airless", tier="derived")
+door = (1.0, 2.0)
+lp, ld = plug_leaf(*door, "Pressure door leaf")
+parts, th = pressure_skin(3.0, 3.0, cut=door[0] * door[1])
+panel("wall-hatch-3x3", "Pressure wall panel with a door, 3 x 3 m", "wall", (3.0, 3.0), r(th, 3), parts + lp + [("Door surround", AL, 40.0, "a welded doubler round the opening (invented)")],
+      "A pressure wall panel with a 1.0 x 2.0 m plug door that opens inward, so the air seats it: the outer door of an airlock (its chamber one cell, the inner door a pressure partition's).",
+      "wall-hatch", opening={"kind": "pressure-door", "width": door[0], "height": door[1], "sill": 0.15, "people": True}, u=MLI_U, load=P_IN, basis=PRESSURE, site="airless", tier="derived")
+cargo = (2.4, 2.4)
+lp, ld = plug_leaf(*cargo, "Cargo door leaf")
+parts, th = pressure_skin(3.0, 3.0, cut=cargo[0] * cargo[1])
+panel("wall-cargo-door-3x3", "Pressure wall panel with a cargo door, 3 x 3 m", "wall", (3.0, 3.0), r(max(th, ld + 0.05), 3), parts + lp + [("Door surround", AL, 120.0, "a heavy welded ring frame round the opening (invented)")],
+      "A pressure wall panel with a 2.4 x 2.4 m plug door opening inward on heavy hinges: a vehicle or stock airlock's door, two cells apart with the chamber between.",
+      "wall-cargo-door", opening={"kind": "pressure-cargo-door", "width": cargo[0], "height": cargo[1], "sill": 0.1, "vehicles": True}, u=MLI_U, load=P_IN, basis=PRESSURE, site="airless", tier="derived")
+vp_r, vp_t = 0.3, 0.032     # m: a 0.6 m round viewport, two fused silica panes each holding the whole pressure (clamped disc, 3 p a^2 / 4 t^2 under 7 MPa: 31 mm)
+parts, th = pressure_skin(3.0, 3.0, cut=3.1416 * vp_r ** 2)
+panel("wall-viewport-3x3", "Pressure wall panel with a viewport, 3 x 3 m", "wall", (3.0, 3.0), r(th, 3),
+      parts + [("Viewport panes", "material.fused-silica", 2 * 3.1416 * vp_r ** 2 * vp_t * 2200, "two 32 mm panes, either holding the air alone"), ("Viewport ring", AL, 20.0, "a machined ring and its seals (invented)")],
+      "A pressure wall panel with a 0.6 m round viewport of two fused silica panes: a look out where a world with air would have a window.",
+      "wall-viewport", opening={"kind": "viewport", "width": 2 * vp_r, "height": 2 * vp_r, "sill": 1.2}, u=MLI_U, load=P_IN, basis=PRESSURE, site="airless", tier="derived")
+parts, th = pressure_skin(3.0, 3.0, mli=False, what="Bulkhead skin")
+panel("partition-pressure-3x3", "Pressure partition, 3 x 3 m", "partition", (3.0, 3.0), r(th, 3), parts,
+      "A wall panel's build inside, without the blankets: a bulkhead that keeps one part's air if the next loses it, or closes an airlock's chamber.",
+      "partition-pressure", load=P_IN, basis=PRESSURE, site="airless", tier="derived")
+lp, ld = plug_leaf(*door, "Pressure door leaf")
+parts, th = pressure_skin(3.0, 3.0, cut=door[0] * door[1], mli=False, what="Bulkhead skin")
+panel("partition-pressure-hatch-3x3", "Pressure partition with a door, 3 x 3 m", "partition", (3.0, 3.0), r(th, 3), parts + lp + [("Door surround", AL, 40.0, "a welded doubler round the opening (invented)")],
+      "A pressure partition with a 1.0 x 2.0 m plug door: an airlock's inner door, or a door between parts that can be shut on a leak.",
+      "partition-pressure-hatch", opening={"kind": "pressure-door", "width": door[0], "height": door[1], "sill": 0.15, "people": True}, load=P_IN, basis=PRESSURE, site="airless", tier="derived")
+
 TEMPLATES = {"wall-insulated": "Insulated wall panels", "wall-glazed": "Glazed wall panels", "wall-window": "Wall panels with a window",
              "wall-door": "Wall panels with a door", "wall-double-door": "Wall panels with double doors", "wall-roller": "Roller shutter wall panels",
              "wall-shopfront": "Shop fronts", "partition": "Partition panels", "partition-door": "Partition panels with a door",
-             "floor": "Floor panels", "roof": "Roof panels", "stair": "Stairs"}
+             "floor": "Floor panels", "roof": "Roof panels", "stair": "Stairs",
+             "wall-pressure": "Pressure wall panels", "roof-pressure": "Pressure roof panels", "floor-pressure": "Pressure floor panels",
+             "wall-hatch": "Pressure wall panels with a door", "wall-cargo-door": "Pressure wall panels with a cargo door",
+             "wall-viewport": "Pressure wall panels with a viewport", "partition-pressure": "Pressure partitions",
+             "partition-pressure-hatch": "Pressure partitions with a door"}
 
 
 KEEP = ("visual", "model_requests")      # (what the model installer and the asset tools write into a record: kept across a rerun)

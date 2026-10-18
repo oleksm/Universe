@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/building_kit.py: change it there.
+identity:
+  key: stock.kit-panel-roof-pressure-3x3
+  code: KIT-PANEL-ROOF-PRESSURE-3X3
+  name: Pressure roof panel, 3 x 3 m
+  traded_as: market.machinery
+  form: panel
+package: package.plate-stack
+made_from:
+- item: material.aluminium-alloy-6061
+- item: material.polyimide-film
+size:
+  length: 3.0
+  width: 3.0
+  height: 0.19
+supplies:
+  item: panel.roof-pressure-3x3
+physical:
+  mass: 409.8
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One panel.roof-pressure-3x3, as made.
