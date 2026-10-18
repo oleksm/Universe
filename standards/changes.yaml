@@ -4442,7 +4442,7 @@
 - { record: unit.forklift-2t5, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "ff3d76813084adac" }
 - { record: unit.furnace-transformer-14mva, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "c16dea6a1f79fcf2" }
 - { record: unit.furnace-transformer-90mva, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "3d66e024078d6eba" }
-- { record: unit.furniture-back-shelf, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "146e9b11379457b1" }
+- { record: unit.furniture-back-shelf, at: "2026-10-18T01:08:16Z", status: draft, summary: "changed: visual", sha: "6f4c0f6471cab57c" }
 - { record: unit.furniture-basin, at: "2026-10-17T23:23:00Z", status: draft, summary: "changed", sha: "1b5c7806f0fa8576" }
 - { record: unit.furniture-bed, at: "2026-10-18T00:15:44Z", status: draft, summary: "changed", sha: "27e2655c9f2b42e6" }
 - { record: unit.furniture-bed-ward, at: "2026-10-18T00:56:24Z", status: draft, summary: "changed", sha: "aa302b37216848ef" }
