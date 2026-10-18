@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=../../schema/run.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: run.feeder-3kv-dc-al-400mm2
+  name: Feeder, 3 kV DC, 400 mm2 aluminium
+  description: 'One pole of a ship''s high-voltage DC bus: a single stranded aluminium core in 2 mm of PTFE under an earthed braid and jacket, laid in pairs (plus and minus) along the frame. 781 A in vacuum, where only radiation cools
+    it; 860 A alone in free air. Half a copper feeder''s mass for the same amps, a size and a half fatter; its ends crimped on bimetallic contacts.'
+kind: cable
+size: 0.00039999999999999996
+outside:
+- 0.031
+- 0.031
+rating:
+  voltage: 3000
+  current: 781
+  current_air: 860
+  current_air_bundle: 602
+per_m:
+  mass: 1.586
+  built_of:
+  - what: Conductor
+    item: material.aluminium-alloy-6061
+    mass: 1.08
+    note: 400 mm2 stranded, 1350 grade, as 6061 here
+  - what: Insulation, screen and jacket
+    item: material.ptfe
+    mass: 0.506
+    note: 2 mm PTFE, a braid screen and a thin jacket (the braid's copper counted here)
+elbow:
+  radius: 0.248
+  mass: 0.6169
+connector: connector.hvdc-pole-1000a
+carries: power
+template: template.feeder
+basis:
+- of:
+  - per_m
+  - outside
+  tier: invented
+  review: true
+  note: Insulation from memory of medium-voltage aerospace and traction cable; least bend 8 outsides; From memory of makers' catalogues; to be sourced.
+- of:
+  - rating.current
+  tier: derived
+  note: '2.5 A/mm2 in copper, radiation only (plant_kit.J_VACUUM), aluminium at sqrt of the resistivities'' ratio of it (the same heat a metre): one core alone; a pair laid together runs warmer.'
+- of:
+  - rating.current_air
+  - rating.current_air_bundle
+  tier: invented
+  review: true
+  note: 800 A for 240 mm2 copper alone in free air at 40 deg C, others by area^0.625, aluminium as above; a bundle of up to six at 0.7; From memory of makers' catalogues; to be sourced.

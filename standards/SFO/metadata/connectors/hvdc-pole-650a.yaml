@@ -3,8 +3,8 @@
 identity:
   key: connector.hvdc-pole-650a
   name: HV DC pole connector, 650 A, 3 kV
-  description: 'A single-pole plug and receptacle for a 3 kV DC feeder, its crimped contact up to 240 mm2 inside a long creepage insulator and an earthed aluminium shell, bayonet-locked, keyed by polarity: two of them, plus and minus,
-    where a feeder meets a plant, a battery, a bus box or a load.'
+  description: 'A single-pole plug and receptacle for a 3 kV DC feeder, its crimped contact up to 240 mm2 (copper, or aluminium on a bimetallic contact) inside a long creepage insulator and an earthed aluminium shell, bayonet-locked,
+    keyed by polarity: two of them, plus and minus, where a feeder meets a plant, a battery, a bus box or a load.'
 kind: plug-socket
 size: 0.00023999999999999998
 rating:

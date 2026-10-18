@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-feeder-3kv-dc-al-95mm2
+  code: KIT-FEEDER-3KV-DC-AL-95MM2
+  name: Feeder, 3 kV DC, 95 mm2 aluminium, a 500 m drum
+  traded_as: market.machinery
+  form: coil
+package: package.coil
+made_from:
+- item: material.aluminium-alloy-6061
+- item: material.ptfe
+size:
+  length: 500.0
+  diameter: 0.0176
+supplies:
+  item: run.feeder-3kv-dc-al-95mm2
+  length: 500.0
+physical:
+  mass: 263.0
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: 'a 500 m drum of run.feeder-3kv-dc-al-95mm2: its mass a metre times the length sold.'

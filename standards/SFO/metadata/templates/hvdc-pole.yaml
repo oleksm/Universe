@@ -8,7 +8,7 @@ family: plug-socket
 draws: model
 scales_by:
 - physical
-members: 3
+members: 4
 reference: connector.hvdc-pole-400a
 basis:
 - of:
