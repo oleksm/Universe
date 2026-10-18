@@ -3,14 +3,91 @@
 identity:
   key: planet-view.samples
   name: samples
-  about: unverified (producer outside this inventory)
+  about: the samples' heights resampled over the sphere, in hypsometric tints, shaded by the relief (light from the north-west)
 title: samples
 row: top (history views)
 file_suffix: _samples.png
 draws:
-  words: unverified (producer outside this inventory)
+  words: the samples' heights resampled over the sphere, in hypsometric tints, shaded by the relief (light from the north-west)
 shown: true
 implementations:
 - where: planet-trees-pgs2 tools/planet_vectors.py / planet_anchors.py sheet() (not inventoried; unverified which writes which)
   state: reference
+- where: planet-forge crates/viewer/src/layers/samples.rs
+  state: current
+  note: the viewer
 status: draft
+legend:
+  title: 1. the plates' samples, rendered ({samples} points)
+  source: planet-sim preview.py:32-57 relief (hypsometric tints; light from the north-west)
+  rows:
+  - kind: fill
+    label: sea at -8000 m
+    colour:
+    - 8
+    - 20
+    - 60
+    shown_when: always
+  - kind: fill
+    label: sea at -4000 m
+    colour:
+    - 20
+    - 50
+    - 110
+    shown_when: always
+  - kind: fill
+    label: sea at -1000 m
+    colour:
+    - 40
+    - 90
+    - 160
+    shown_when: always
+  - kind: fill
+    label: sea at 0 m
+    colour:
+    - 90
+    - 150
+    - 200
+    shown_when: always
+  - kind: fill
+    label: land at 0 m
+    colour:
+    - 70
+    - 120
+    - 60
+    shown_when: always
+  - kind: fill
+    label: land at 500 m
+    colour:
+    - 120
+    - 150
+    - 80
+    shown_when: always
+  - kind: fill
+    label: land at 1500 m
+    colour:
+    - 170
+    - 150
+    - 100
+    shown_when: always
+  - kind: fill
+    label: land at 3000 m
+    colour:
+    - 140
+    - 110
+    - 90
+    shown_when: always
+  - kind: fill
+    label: land at 5000 m
+    colour:
+    - 230
+    - 230
+    - 235
+    shown_when: always
+basis:
+- of:
+  - legend
+  - draws
+  tier: derived
+  note: 'planets, 17 Oct 2026: the viewer port (crates/viewer), from planet-trees-pgs2 tools/planet_vectors.py, planet_form.py
+    and planet-sim preview.py, look.py.'

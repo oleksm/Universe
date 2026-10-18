@@ -9,10 +9,59 @@ title: CHECKPOINT k/20 + age title
 row: strip / fallback image
 file_suffix: .png (ck_NN_<ago>kyr.png)
 draws:
-  words: stamps title, subtitle and 'CHECKPOINT k/N' on the checkpoint image and its _plates/_samples/_lines/_globe/_materials
-    companions
+  words: the checkpoint's age and land share top left, 'CHECKPOINT k/N' top right, on the plates, samples and materials
 shown: true
 implementations:
 - where: planet-trees-pgs2 ~/git/planet-trees-pgs2/tools/planet_form.py:stamp (56-69), save_checkpoint (244-249)
   state: reference
+- where: planet-forge crates/viewer/src/layers/stamp.rs
+  state: current
+  note: the viewer
 status: draft
+legend:
+  title: CHECKPOINT {k}/{n}
+  sub: land {land}%
+  source: planet_form.py:56-69 stamp
+  rows:
+  - kind: fill
+    label: box
+    colour:
+    - 0
+    - 0
+    - 0
+    shown_when: always
+  - kind: line
+    label: title
+    colour:
+    - 255
+    - 255
+    - 255
+    shown_when: always
+  - kind: line
+    label: subtitle
+    colour:
+    - 210
+    - 210
+    - 210
+    shown_when: always
+  - kind: fill
+    label: tag
+    colour:
+    - 255
+    - 210
+    - 120
+    shown_when: always
+  - kind: line
+    label: tag text
+    colour:
+    - 0
+    - 0
+    - 0
+    shown_when: always
+basis:
+- of:
+  - legend
+  - draws
+  tier: derived
+  note: 'planets, 17 Oct 2026: the viewer port (crates/viewer), from planet-trees-pgs2 tools/planet_vectors.py, planet_form.py
+    and planet-sim preview.py, look.py.'
