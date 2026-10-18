@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/interface.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: interface.twistlock-iso1161
+  name: ISO 1161 corner
+  description: 'A container''s corner: the ISO 1161 corner casting''s oval hole and the twistlock turned a quarter in it. How containers stack and lock to trucks, trains, ships and pads.'
+domain: load
+kind: twistlock
+envelope:
+  force: 250000.0
+media:
+- load
+sealing: air
+halves: male-female
+make: manual
+face:
+  length: 0.178
+  width: 0.162
+  height: 0.118
+size: 0.178
+standard: ISO 1161 corner fittings; twistlocks as ISO 3874
+basis:
+- of:
+  - envelope
+  - face
+  tier: derived
+  note: The most the products built to it are rated for, and their joint's outside.

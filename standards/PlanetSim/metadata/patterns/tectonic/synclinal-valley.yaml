@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.tectonic.fold.synclinal-valley
+  name: Synclinal valley (and inverted synclinal ridge)
+  about: Synclinal valley (and inverted synclinal ridge).
+family: tectonic
+factors:
+- factor: planet-factor.tect-fold
+  weight: 3
+  why: syncline between growing anticlines; young folding gives valley along axis
+- factor: planet-factor.rock-layers
+  weight: 3
+  why: resistant bed preserved in trough after erosion inverts relief into synclinal ridge
+- factor: planet-factor.rock-type
+  weight: 1
+  why: weak trough strata keep valley; hard trough caprock gives inverted ridge
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: active fold growth keeps structural relief = topographic relief
+- factor: planet-factor.water-discharge
+  weight: 1
+  why: axial subsequent stream drains to water gaps; ponds where outlet blocked (lake)
+- factor: planet-factor.sed-supply
+  weight: 1
+  why: 'fill from limbs: alluvium/lake sediment 0-100 m'
+- factor: planet-factor.time
+  weight: 3
+  why: 0.1-50 Myr; long erosion inverts valley to ridge (Sideling Hill)
+vocabulary_id: 125
+sources:
+- https://en.wikipedia.org/wiki/Anticline
+library_status: written
+source: tectonic.fold.synclinal_valley
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

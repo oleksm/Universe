@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/run.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: run.pipe-dn1600-pn16-mli-double, name: 'Pipe DN 1600 PN 16, lagged, double-sealed joints', description: 'Welded pipe, 1600 mm bore, for up to 16 bar; welded between the units'' flanges, so a run has a flange pair only at its ends. Lagged in multi-layer insulation, 25 mm.'}
+kind: pipe
+size: 1.6
+bore: 1.6
+outside: [1.676, 1.676]
+rating: {pressure: 1600000.0, temperature: 623.15}
+per_m:
+  mass: 523.6
+  built_of:
+  - {what: Pipe, item: material.structural-steel-a36, mass: 517.1, note: '1600 mm bore, 13.0 mm wall (Barlow at 16 bar, 133 MPa, weld factor 0.85, 1.5 mm for corrosion)'}
+  - {what: Lagging, item: material.multi-layer-insulation, mass: 6.5, note: 25 mm of multi-layer insulation}
+elbow: {radius: 2.4, mass: 1973.9}
+tee: {mass: 817.9}
+cap: {thickness: 0.076, mass: 1199.5}
+support: {spacing: 12.0, mass: 110.6, per_m_height: 42.0, item: material.structural-steel-a36}
+connector: connector.flange-dn1600-pn16-double
+carries: gas
+template: template.pipe-lagged
+visual: {format: freefall-model/1, path: models/pipe-dn1600-pn16-mli-double/v2, manifest_sha256: c7ab28706c0a558995a62862a8268653eca9550abbbf7149f75804013719ff00, version: 2, triangles: 4344}
+basis:
+- of: [per_m]
+  tier: derived
+  note: Wall from pressure; mass from material and dimensions.
+- of: [elbow, tee]
+  tier: derived
+  note: A long-radius elbow (1.5 bores) is its arc of straight; a tee is its branch stub over the straight it sits in, from the main's outside to 1.5 bores off its axis (checked on blender's DN 200 kit).
+- of: [support]
+  tier: derived
+  review: true
+  note: 'Spacing from the span it bears full at 1 g (2.5 mm sag, a third of yield), 3 to 12 m: 12.0 m. The stand''s head and its leg by the metre from memory.'

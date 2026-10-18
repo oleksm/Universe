@@ -1,15 +1,75 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.degassing-stand, name: Degassing stand, description: 'Where the ladle stands on its car in the open vacuum for a quarter hour while argon through its porous plug stirs the melt: the hydrogen and nitrogen leave of themselves, as they do in a degasser''s tank on a world with air, and the carbon and oxygen meet as CO. A refractory heat shield on a swing arm hangs 1 m over the ladle''s open top, with gaps for the gas, so the melt loses less heat by radiation (about 4 MW open, 4 degrees a minute); the argon and a sampling lance come from the stand. Before the alloys, which the sealed ladle furnace adds. The car stops at local (0, 0).'}
+identity: {key: unit.degassing-stand, name: Degassing stand, description: 'Where the ladle stands on its car in the open vacuum for a quarter hour while argon through its porous plug stirs the melt: the hydrogen and nitrogen leave of themselves, as they do in a degasser''s tank on a world with air, and the carbon and oxygen meet as CO. A refractory heat shield on a swing arm hangs 1 m over the ladle''s open top, with gaps for the gas, so the melt loses less heat by radiation (about 4 MW open, 4 degrees a minute); the argon and a sampling lance come from the stand. Before the alloys, which the sealed ladle furnace adds. The car stops at local (0, 0), travelling along x; the stand''s one swing post at (0, -3.5), the shield 3.6 m across with its underside 5.4 m up (1 m over the ladle''s rim) on an arm at 6.2 m, the sampling lance parked beside the rim up to 8 m, the argon cabinet at (-2.6, -3.5). Its box is the stand as built, not the bay; drawn with the shield over the ladle, and its argon
+    hose parked with a capped coupling at (-2, -2.3, 1). The porous plug and its line are the ladle''s (package.ladle), coupled to the hose at the stand; that connection is not yet drawn on the ladle or its car. Its ports (SFO 25), on the argon cabinet''s -x face: argon in at (-3.3, -3.1, 0.6), DN 50; its 400 V at (-3.3, -2.6, 1.2).'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 10.0, width: 8.0, height: 8.0, mass: 18580.0}
+physical: {length: 5.2, width: 6.0, height: 8.0, mass: 16800.0}
 built_of:
-- {what: Swing arm and post, item: material.structural-steel-a36, mass: 12000.0, note: from memory}
-- {what: Heat shield, item: good.refractory-brick, mass: 4580.0, note: '3.6 m across, 150 mm'}
-- {what: Argon valve stand and lance, item: material.structural-steel-a36, mass: 2000.0, note: from memory}
+- {what: 'Post, arm, shield frame, lance and argon stand', item: material.structural-steel-a36, mass: 11160.0, note: 'the swing post on a 1.2 m square, 50 mm baseplate with eight M36 anchors (the shield and arm, about 7 t at 3.5 m, put about 50 kN m on it at 2 m/s2), the arm, the shield''s frame, the lance''s carriage and the argon cabinet, other baseplates 30 mm; measured on blender''s model v1; less the argon coupling''s old cap, 8.65 kg, measured on blender''s model v2 (2026-10-16)'}
+- {what: Heat shield, item: good.refractory-brick, mass: 4573.0, note: '3.6 m across, its refractory; measured on model v1'}
+- {what: 'Slew drive, bearings and valves', item: good.electric-motors, mass: 1000.0, note: from memory}
+- {what: Service annex, item: material.structural-steel-a36, mass: 62.81, note: 'a hollow box on the argon cabinet''s -x face carrying the argon and 400 V entries, on a footed post, with its plate and the argon stub; measured on blender''s model v2 (2026-10-16)'}
 needs: {power: 30000.0, atmosphere: vacuum}
+ports:
+- id: argon-in
+  flow: in
+  medium: gas
+  item: material.argon
+  rate: 0.02083
+  pressure: 1000000.0
+  interface: interface.flange-dn50-pn16
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn50-pn16-ss
+  at: [-3.3, -3.1, 0.6]
+  facing: [-1.0, 0.0, 0.0]
+  note: to the ladle's porous plug by the stand's hose
+  temperature: 293.0
+- id: power-in
+  flow: in
+  medium: power
+  power: 30000.0
+  voltage: 400
+  interface: interface.termination-400v-25mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-25mm2
+  at: [-3.3, -2.6, 1.2]
+  facing: [-1.0, 0.0, 0.0]
+  current: 48.11
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 16800.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
+product: product.degassing-stand
+motion:
+- id: swing
+  kind: rotate
+  point: [0.0, -3.5, 0.0]
+  direction: [0.0, 0.0, 1.0]
+  angle: [0.0, 1.571]
+  moves: [the arm and the heat shield]
+  boxes: [1]
+  note: swung off the ladle to let the car pass (a quarter turn, invented); only its arm and shield box moves
+envelope:
+- [-0.602, -4.101, -0.001, 0.947, -2.899, 6.302]
+- [-1.822, -3.501, 5.399, 1.822, 1.822, 6.452]
+- [-3.301, -3.952, -0.001, -1.864, -2.249, 1.432]
+- [1.145, -3.051, -0.001, 1.852, -2.345, 8.001]
 life: 788940000
+visual:
+  format: "freefall-model/1"
+  path: "models/degassing-stand/v2"
+  manifest_sha256: "b4214bdb705c810d2e06cdbf2a2f2a111e68324e35656d98bf0cb14a35599443"
+  version: 2
+  triangles: 3136
 basis:
 - of: [physical, built_of]
   tier: invented
@@ -19,5 +79,9 @@ basis:
   tier: derived
   review: true
   note: Radiation from 7 m2 of melt at 1,873 K at emissivity 0.9; 80 t at 820 J/kg K.
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): bottled gas at 20 deg C; power ports'' current from their power and voltage.'
 - of: [life]
   rule: rule.life-plant

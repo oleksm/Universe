@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.network.dendritic
+  name: Dendritic drainage pattern
+  about: Dendritic drainage pattern.
+family: fluvial
+factors:
+- factor: planet-factor.rock-type
+  weight: 3
+  why: homogeneous resistance (flat sediments, massive crystalline, fill) required
+- factor: planet-factor.rock-fracture
+  weight: 1
+  why: absence of strong joint/fault fabric; otherwise rectangular/angular
+- factor: planet-factor.tect-fold
+  weight: 3
+  why: flat-lying or gently dipping strata; folding yields trellis
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: gentle uniform regional slope; steep uniform slope gives parallel
+- factor: planet-factor.clim-arid
+  weight: 3
+  why: junction angle ~45 deg in arid, ~72 deg in humid landscapes
+- factor: planet-factor.groundwater
+  weight: 1
+  why: groundwater-fed channel growth widens junction angles in humid areas
+- factor: planet-factor.time
+  weight: 1
+  why: headward growth and branching over 1 kyr to 100 Myr
+vocabulary_id: 50
+sources:
+- https://ebooks.inflibnet.ac.in/geop11/chapter/drainage-pattern
+- https://en.wikipedia.org/wiki/Drainage_system_(geomorphology)
+- https://eos.org/research-spotlights/stream-network-geometry-correlates-with-climate
+library_status: written
+source: fluvial.network.dendritic
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

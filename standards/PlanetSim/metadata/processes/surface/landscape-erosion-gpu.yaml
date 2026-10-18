@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.landscape-erosion-gpu
+  name: CuPy port of erosion.run
+  about: 'River and hillslope erosion on the GPU (CUDA, through CuPy): the same physics as `erosion.run` (stream power, lakes,
+    sediment to lakes and the sea, hillslope and marine diffusion, rock erodibility and flat beds), restructured to run in
+    parallel. `erosion.py` stays the reference. NOT INVENTORIED IN DETAIL: neither plates.py nor coupled.py imports erosion_gpu.py
+    (directly or through another module); it is used by stages/erosion.py (run_best).'
+area: surface
+clock:
+  when: not part of the coupled planet run (offline tools / bakes)
+params:
+- name: _SRC
+  setting: <CUDA kernel source, 177 lines>
+  meaning: unverified (no comment)
+  source: stages/erosion_gpu.py:27
+  note: 'unit: unverified'
+- name: PLANET_SIM_LEVEL_BLOCKS
+  env: PLANET_SIM_LEVEL_BLOCKS
+  setting: '24'
+  meaning: max resident blocks per launch
+  source: stages/erosion_gpu.py:225
+  note: 'env read inside a function; unit: flag / count'
+- name: PLANET_SIM_PROFILE
+  env: PLANET_SIM_PROFILE
+  setting: none
+  meaning: 1 collects kernel timings
+  source: stages/erosion_gpu.py:333
+  note: 'env read inside a function; unit: flag / count'
+random_draws:
+- not inventoried
+used: false
+note: 'unused by plates.py / coupled.py; users: stages/erosion.py (run_best)'
+backends:
+- cpu
+implementations:
+- where: 'planet-sim-landform stages/erosion_gpu.py: _k (207-211), _launch (214-215), _blocks (218-225), _until_still (228-240),
+    run (303-404)'
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
+    the code at planet-sim-landform 9747f0d-c437724.'

@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-cable-reel-690v-4x35-100m
+  code: KIT-CABLE-REEL-690V-4X35-100M
+  name: Cable reel, 4 x 35 mm2, 100 m
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.structural-steel-a36
+- item: material.copper
+size:
+  length: 2.32
+  width: 0.38
+  height: 2.52
+supplies:
+  item: connector.cable-reel-690v-4x35-100m
+physical:
+  mass: 614.8
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.cable-reel-690v-4x35-100m, as made.

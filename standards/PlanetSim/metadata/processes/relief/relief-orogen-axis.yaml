@@ -1,0 +1,95 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.relief-orogen-axis
+  name: Orogen axis from an ended suture
+  about: 'Stations every 0.5 gap along the suture; on each side the crust thickness is sampled outward to BELT_MAX_M; the
+    belt is the run of thickness >= THICK_BELT_M from the suture. The thick side is the side with the larger median belt width.
+    If the median total belt width < 50 km the docking was soft: nothing spawned. Axis = the thickest point at each station
+    on the thick side. relief = clip(ISOSTASY*(max thick - 35 km), 0, 6000) m.'
+area: relief
+clock:
+  when: when a suture is ended (zones.close_stale)
+reads:
+- name: features (planet-feature.suture)
+  meaning: ended
+- name: crust thickness
+  field: planet-field.crust-thickness
+  unit: m
+  meaning: the belt, the sides of a margin
+- name: plate rotation
+  field: planet-field.plate-rotation
+  unit: '1'
+  meaning: 'each plate''s rotation: where the features'' pins stand'
+writes:
+- name: features (planet-feature.orogen-axis)
+  meaning: child of its suture
+note: 'Emits: trace spawn rule ''relief.orogen'' trigger {suture: L<id>, collision_myr, belt_km_p50, thick_km_max, event}'
+params:
+- name: THICK_BELT_M
+  value: 45000.0
+  unit: m
+  meaning: crust thicker than this is the orogen's belt (mean continent 39 km; 40 took whole continents)
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:39
+- name: BELT_MAX_M
+  value: 400000.0
+  unit: m
+  meaning: the belt profile looks this far from the suture
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:40
+- name: station step
+  value: 0.5
+  unit: '1'
+  said_as:
+    unit: x gap
+    factor: 1.0
+  meaning: profile sample spacing
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:214
+- name: soft docking
+  value: 50000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 1000.0
+  meaning: 'median belt width below this: no orogen'
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:229
+- name: relief max
+  value: 6000.0
+  unit: m
+  meaning: relief clip
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:231
+invariants:
+- only alive sutures with >= 3 vertices
+depends_on:
+- planet-process.zones-close-stale
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:orogen (206-238)
+  state: reference
+- where: planet-forge crates/forge-core/src/models/tectonic/orogen_axis.rs
+  state: current
+  note: planet-forge port (relief-tectonic line, merged in forge main fc8f460)
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
+    9747f0d-c437724.'
+- of:
+  - params
+  tier: derived
+  note: 'planets, 18 Oct 2026: planet-forge crates/relief (relief features on the vector planet, step 3 of docs/vector-planet.md).
+    One isostasy (owner, 18 Oct 2026): ISOSTASY 0.17 over 35 km dropped; the envelope is isostatic-elevation''s BUOYANCY over
+    CONTINENT_MEAN.'
+cautions:
+- 'the Python''s reads were its line store''s internals: suture vertices; line born/ended'

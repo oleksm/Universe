@@ -1,18 +1,109 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.disc-filter-2, name: 'Disc filters, 2', description: 'Two vacuum disc filters side by side (60 m2 each) take the water out of the slurry down to 9%; the cake drops onto the layout''s belt below their discharge (local 0, -4, 1); the vacuum pumps on their -x end, the filtrate back to the mill.'}
+identity: {key: unit.disc-filter-2, name: 'Disc filters, 2', description: 'Two vacuum disc filters end to end take the water out of the mill''s slurry (70% solids, 33.2 kg/s of ore) down to 9%: each has 4 discs 3.15 m across on a 0.6 m hollow shaft (60 m2, both faces), both shafts on one line along x at y 0, 3.7 m up, turning about once a minute in open U troughs (3.40 m wide, 4 m long: x -5 to -1 and 1 to 5) with agitators, each driven from its outer end (x -6 to -5, 5 to 6). The discs rise on the +y side and fall on the -y side, where the cake is blown off into a short steep chute beside each disc, straight down onto the layout''s cake belt, which runs along x under them all at y -2.4, 1 m up (x -6 to 6); no transfer inside the unit. Slurry in by a distribution box between the troughs (local 0, 0, 3) that splits it between them; on the +y side two filtrate receivers (1.6 m across, 3 m tall, at (-3, 3) and (3, 3)), the vacuum pumps between them (288 kW, x -1.5 to 1.5, y 2.5 to 4) and the
+    filtrate pump; the filtrate (10.9 kg/s) out at (-6, 3, 0.5) back to the mill; the pumps'' air out of a vent at (0, 3.5, 5.5); 400 V supply at (6, 3.5, 0.5). Its ports (SFO 25): slurry in at the box''s top, DN 150; the filtrate out at (-6, 3, 0.5), DN 100, facing -x; the cake at the chutes'' feet over the belt, (-3, -2.4, 1) and (3, -2.4, 1) (blender''s measure: the chutes end at z 1.0); the 400 V box facing +x. Its parts span y -2.55 to 4 about the local origin (the chutes to the pump skid): its width is that extent, not centred.'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 8.0, height: 6.0, mass: 72000.0}
+physical: {length: 12.0, width: 6.6, height: 6.0, mass: 29810.0}
 built_of:
-- {what: Filters, item: material.structural-steel-a36, mass: 60000.0, note: from memory}
-- {what: Vacuum pumps, item: good.pumps, mass: 12000.0, note: from memory}
-needs: {power: 600000.0}
+- {what: 'Troughs, shafts and receivers', item: material.structural-steel-a36, mass: 10620.0, note: 'the two U troughs in 8 mm plate (shells 2,672.6 kg, heads 1,090.0), the hollow shafts 0.6 m by 5 m in 25 mm (3,539.4), the receivers 1.6 m by 3 m in 10 mm (shells 2,348.9, heads 608.6, rings 361.2); measured on model v1'}
+- {what: Disc sectors and cloth, item: material.polyethylene-uhmw, mass: 3605.0, note: 'polypropylene sectors under their cloth at 30 kg/m2 of filter face, from memory; polyethylene stands for polypropylene'}
+- {what: Stand webs and chutes, item: material.structural-steel-a36, mass: 2373.0, note: 'the stands'' saddle webs (1,491.4 kg) and the cake chutes'' plates (881.6); measured on model v1'}
+- {what: Drives and agitators, item: material.structural-steel-a36, mass: 5000.0, note: 'a drive and an agitator for each filter, from memory'}
+- {what: Vacuum pumps and compressor, item: good.pumps, mass: 8210.0, note: 'liquid ring pumps at 25 kg/kW, the blow-back compressor and the filtrate pump, from memory'}
+needs: {power: 368100.0}
+ports:
+- id: slurry-in
+  flow: in
+  medium: liquid
+  item: good.iron-ore
+  rate: 47.37
+  pressure: 300000.0
+  temperature: 303.0
+  interface: interface.flange-dn150-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn150-pn10
+  at: [0.0, 0.0, 3.0]
+  facing: [0.0, 0.0, 1.0]
+  note: ore and water, into the distribution box
+- id: filtrate-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 10.9
+  pressure: 200000.0
+  temperature: 303.0
+  interface: interface.flange-dn100-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn100-pn10-ss
+  at: [-6.0, 3.0, 0.5]
+  facing: [-1.0, 0.0, 0.0]
+  note: from the filtrate pump, back to the mill
+- id: cake-1
+  flow: out
+  medium: bulk
+  item: good.iron-ore
+  rate: 16.58
+  interface: interface.chute-dn400
+  half: androgynous
+  make: bolted
+  connector: connector.chute-dn400
+  at: [-3.0, -2.4, 1.0]
+  facing: [0.0, 0.0, -1.0]
+  note: the west filter's four chutes, onto the layout's cake belt
+- id: cake-2
+  flow: out
+  medium: bulk
+  item: good.iron-ore
+  rate: 16.58
+  interface: interface.chute-dn400
+  half: androgynous
+  make: bolted
+  connector: connector.chute-dn400
+  at: [3.0, -2.4, 1.0]
+  facing: [0.0, 0.0, -1.0]
+  note: the east filter's four
+- id: power-in
+  flow: in
+  medium: power
+  power: 368100.0
+  voltage: 400
+  interface: interface.termination-400v-240mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-240mm2
+  at: [6.0, 3.5, 0.5]
+  facing: [1.0, 0.0, 0.0]
+  note: the vacuum pumps, drives and agitators
+  current: 590.3
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 29810.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
+product: product.disc-filter-2
+envelope:
+- [-6.0, -1.6, 0.0, 6.0, 4.0, 5.5]
+- [-5.025, -2.01, 2.0, 5.025, 1.7, 3.7]
+- [-5.125, -2.547, 1.0, -0.875, -1.828, 3.929]
+- [0.875, -2.547, 1.0, 5.125, -1.828, 3.929]
 life: 788940000
+visual: {format: freefall-model/1, path: models/disc-filter-2/v1, manifest_sha256: 5c5e751207d166c8c9627c818b4c2c5ebc3b8ed0f8fbaeea3568e100894aeefc, version: 1, triangles: 26756}
 basis:
 - of: [physical, built_of, needs]
+  tier: derived
+  review: true
+  note: 'From the plant''s 33.2 kg/s of ore at a tonne a m2 an hour: 119 m2, 2 filters of 4 discs; 14.2 kg/s of water in at 70% solids, 3.28 kg/s stays in the cake, 10.9 back; 3.0 m3/s of air through the cake, the vacuum pumps 288 kW, drives, agitators, filtrate pump and blow-back 80 kW. Slurry density, air rate and equipment weights from memory.'
+- of: [ports]
   tier: invented
   review: true
-  note: 119 m2 at a tonne a m2 an hour, masses and power from memory.
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage.'
 - of: [life]
   rule: rule.life-plant

@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: unit.fitout-garden
+  name: Garden bay
+  description: A 6 m square of planting, paths and a bench.
+size_class: 1
+fits: plant-mount.bay-s1
+physical:
+  length: 6.0
+  width: 6.0
+  height: 2.2
+  mass: 2560.0
+built_of:
+- what: Bench and edging
+  item: material.structural-steel-a36
+  mass: 160.0
+- what: Paths
+  item: good.concrete
+  mass: 2400.0
+  note: 50 mm of paving on the bay's half
+basis:
+- of:
+  - built_of
+  - physical
+  tier: invented
+  review: true
+  note: 'A furnished 6 m bay (its size is what is fitted; the bay, plant-mount.bay-s1, is what it is given): 8 people served or seated, 0 at work in it; masses from memory of such furniture, to be sourced.'
+revision:
+  status: deprecated
+  owner: registry
+  on_conflict: propose
+  replaced_by: arrangement.garden
+  because: 'The owner, 2026-10-17: one model a piece (a table, a chair); the layout places pieces by an arrangement, never a furnished set as one model.'

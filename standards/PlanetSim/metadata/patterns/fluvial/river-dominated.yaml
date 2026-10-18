@@ -1,0 +1,58 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.delta.river-dominated
+  name: River-dominated (birdfoot / lobate) delta
+  about: River-dominated (birdfoot / lobate) delta.
+family: fluvial
+factors:
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: high fine suspended supply exceeds marine reworking
+- factor: planet-factor.waves-tides
+  weight: 3
+  why: low wave energy and small tidal range
+- factor: planet-factor.water-discharge
+  weight: 3
+  why: large discharge builds levee-bound distributaries
+- factor: planet-factor.tect-setting
+  weight: 1
+  why: passive margin, broad shelf
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: shallow receiving basin; deep water gives birdfoot
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: subsidence of mud load sets lobe abandonment
+- factor: planet-factor.sea-level
+  weight: 1
+  why: stable post-glacial sea level allows progradation
+- factor: planet-factor.events
+  weight: 1
+  why: avulsions switch lobes (~1 kyr)
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: marsh vegetation stabilizes levees
+- factor: planet-factor.time
+  weight: 1
+  why: 1-10 kyr per delta complex
+vocabulary_id: 41
+sources:
+- https://geo.libretexts.org/Bookshelves/Oceanography/Coastal_Dynamics_(Bosboom_and_Stive)/02%3A_Large-scale_geographical_variation_of_coasts/2.07%3A_Process-based_classification/2.7.3%3A_Classification_of_deltas
+- https://en.wikipedia.org/wiki/River_delta
+library_status: written
+source: fluvial.delta.river_dominated
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

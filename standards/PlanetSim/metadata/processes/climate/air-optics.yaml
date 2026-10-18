@@ -1,0 +1,124 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.air-optics
+  name: Rayleigh/Mie/ozone scattering coefficients for the renderer
+  about: 'How the air scatters light: the coefficients a renderer needs for the sky, the limb and the haze over the ground,
+    derived from the air''s makeup and state. NOT INVENTORIED IN DETAIL: neither plates.py nor coupled.py imports optics.py
+    (directly or through another module); it is used by tools/atmosphere.py.'
+area: climate
+clock:
+  when: not part of the coupled planet run (offline tools / bakes)
+params:
+- name: K_B
+  value: 1.380649e-23
+  unit: '1'
+  said_as:
+    unit: J/K
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/optics.py:21
+  note: 'unit as the code says it: ''J/K''; SI conversion unverified'
+- name: AMU
+  value: 1.66053907e-27
+  unit: kg
+  meaning: unverified (no comment)
+  source: stages/optics.py:22
+- name: LOSCHMIDT
+  value: 2.6867811e+25
+  unit: '1'
+  said_as:
+    unit: 1/m^3
+    factor: 1.0
+  meaning: m⁻³ at 0 °C and 1 atm, where the refractivities below are measured
+  source: stages/optics.py:23
+- name: GASES
+  setting: '{"N2": [28.013, 0.000298, 1.034], "O2": [31.999, 0.000271, 1.096], "Ar": [39.948, 0.000281, 1.0], "CO2": [44.01,
+    0.000449, 1.15], "H2O": [18.015, 0.000256, 1.0], "CH4": [16.04, 0.000441, 1.0], "He": [4.0026, 3.5e-05, 1.0], "H2": [2.016,
+    0.000139, 1.0]}'
+  meaning: 'Gas: (molar mass g/mol, refractivity n − 1 at STP and 550 nm, King factor). Refractivities: Peck & Khanna 1966
+    (N2), Peck & Fisher 1964 (O2), Peck & Fisher (Ar), Old et al. 1971 (CO2), Leonard 1974 (He, H2), Sneep & Ubachs 2005 for
+    King factors (approximate).'
+  source: stages/optics.py:28
+  note: 'unit: unverified'
+- name: EARTH_AIR
+  setting: '{"N2": 0.7808, "O2": 0.2095, "Ar": 0.0093, "CO2": 0.0004}'
+  meaning: unverified (no comment)
+  source: stages/optics.py:33
+  note: 'unit: unverified'
+- name: WAVELENGTHS_NM
+  values:
+  - 680.0
+  - 550.0
+  - 440.0
+  unit: '1'
+  said_as:
+    unit: nm
+    factor: 1.0
+  open: true
+  meaning: red, green, blue
+  source: stages/optics.py:34
+  note: 'unit as the code says it: ''nm''; SI conversion unverified'
+- name: AEROSOL_DEPTH
+  value: 0.12
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: 'STAND-IN aerosol: Earth''s global mean (see the module''s notes).'
+  source: stages/optics.py:36
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: AEROSOL_SSA
+  value: 0.92
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/optics.py:37
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: AEROSOL_SCALE_M
+  value: 1200.0
+  unit: m
+  meaning: unverified (no comment)
+  source: stages/optics.py:38
+- name: MIE
+  setting: '{"scatter_per_m": 9.2e-05, "extinct_per_m": 0.0001, "scale_height_m": 1200.0, "g": 0.8}'
+  meaning: unverified (no comment)
+  source: stages/optics.py:39
+  note: 'unit: unverified'
+- name: DISPERSION
+  values:
+  - 0.994
+  - 1.0
+  - 1.013
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: The refractivity's rise toward the blue, relative to 550 nm (dry air, Ciddor 1996).
+  source: stages/optics.py:42
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+random_draws:
+- not inventoried
+used: false
+note: 'unused by plates.py / coupled.py; users: tools/atmosphere.py'
+backends:
+- cpu
+implementations:
+- where: 'planet-sim-landform stages/optics.py: air (45-72)'
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
+    the code at planet-sim-landform 9747f0d-c437724.'

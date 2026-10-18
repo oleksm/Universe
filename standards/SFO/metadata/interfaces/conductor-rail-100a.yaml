@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/interface.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: interface.conductor-rail-100a
+  name: Conductor rail 100 A
+  description: 'A 100 A four-pole conductor rail''s face: any collector built to it runs on any rail built to it.'
+domain: power
+kind: conductor-rail
+envelope:
+  voltage: 690
+  current: 100
+media:
+- power
+sealing: air
+halves: male-female
+make: automatic
+face:
+  length: 0.35
+  width: 0.15
+  height: 0.25
+size: 0.0001
+basis:
+- of:
+  - envelope
+  - face
+  tier: derived
+  note: The most the products built to it are rated for, and their joint's outside.

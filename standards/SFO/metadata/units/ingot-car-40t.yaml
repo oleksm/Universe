@@ -1,18 +1,30 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.ingot-car-40t, name: 'Ingot car, 40 t', description: 'A self-propelled flat rail car that takes the stripped ingots, still hot, to the ingot yard: 25 ingots in rows on its steel deck. It travels along its x on 2 m gauge, its origin on the running plane; the deck 1.2 m up.'}
+identity: {key: unit.ingot-car-40t, name: 'Ingot car, 40 t', description: 'A self-propelled flat rail car that takes the stripped ingots, still hot and with their hot tops on, to the ingot yard: 21 of them (each 1,847 kg, 38.8 t, the most under its 40 t), standing big end up as the stripper crane sets them, in 3 rows of 7 at 1.1 m along x and 0.9 m across, so the yard crane''s tongs take them by the same lifting eye. The heads are cropped in the yard. It travels along its x on 2 m gauge, its origin on the running plane; the deck 1.2 m up.'}
 size_class: 2
-physical: {length: 8.0, width: 3.0, height: 1.2, mass: 16250.0}
+physical: {length: 8.0, width: 3.0, height: 1.2, mass: 16950.0}
 built_of:
-- {what: Car frame and deck, item: stock.st4340-box-400x400x25, mass: 12250.0, note: 'two box beams 400 x 400 x 25 mm, 8 m, and a deck 8 x 3 m of 40 mm plate'}
+- {what: Car frame and deck, item: stock.st4340-box-400x400x25, mass: 12230.0, note: 'two box beams 400 x 400 x 25 mm, 8 m, and a deck 8 x 3 m of 40 mm plate; measured on model v1 (by formula 12,246 kg)'}
+- {what: Cross members, item: material.structural-steel-a36, mass: 716.2, note: four fabricated 260 x 160 x 12 mm boxes between the beams (not kit stock); measured on model v1}
 - {what: Bogies and drive, item: good.electric-motors, mass: 4000.0, note: from memory}
-holds: 40000.0
+holds: 38780.0
 needs: {power: 40000.0}
+product: product.rail-car
+options: [ingot-deck]
+motion:
+- id: travel
+  kind: travel
+  direction: [1.0, 0.0, 0.0]
+  moves: [the whole car]
+  note: along its rails; its range is the layout's
+envelope:
+- [-4.001, -1.501, -0.042, 4.001, 1.501, 1.201]
 life: 788940000
+visual: {format: freefall-model/1, path: models/ingot-car-40t/v1, manifest_sha256: f28c52c42babf8c858de534f2b64e4122bac1a0eeb06619e5fdce214ab76eefd, version: 1, triangles: 7648}
 basis:
 - of: [physical, built_of]
   tier: derived
   review: true
-  note: From the dimensions; bogies and drive from memory.
+  note: Frame, deck and cross members measured on model v1; the load the most stripped ingots under 40 t; bogies and drive from memory.
 - of: [life]
   rule: rule.life-plant

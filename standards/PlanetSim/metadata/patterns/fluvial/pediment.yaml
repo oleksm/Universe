@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.piedmont.pediment
+  name: Pediment
+  about: Pediment.
+family: fluvial
+factors:
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: tectonically quiescent front; fault activity favours fans instead
+- factor: planet-factor.rock-type
+  weight: 3
+  why: granitic, grus-forming rock most common
+- factor: planet-factor.clim-arid
+  weight: 3
+  why: arid, sparse vegetation, low bank cohesion
+- factor: planet-factor.clim-storm
+  weight: 1
+  why: episodic floods and sheetwash plane the surface
+- factor: planet-factor.rock-perm
+  weight: 1
+  why: high infiltration of grus favours planation
+- factor: planet-factor.base-level
+  weight: 1
+  why: stable basin base level; slope 0.5-7 deg
+- factor: planet-factor.regolith
+  weight: 1
+  why: thin transient alluvial veneer 0-5 m
+- factor: planet-factor.time
+  weight: 1
+  why: 100 kyr-10 Myr
+vocabulary_id: 56
+sources:
+- https://en.wikipedia.org/wiki/Pediment_(geology)
+library_status: written
+source: fluvial.piedmont.pediment
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.glaciality
+  name: Glaciality
+  about: 'The glacial cycles'' phase of the moment: 0 warm (no shift), 1 a full glacial (recent epoch).'
+unit: '1'
+range:
+- 0.0
+- 1.0
+per: global
+producer:
+  where: stages/recent.py glaciality
+  key: g
+levels:
+- planet-level.planet
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge surface port (models/surface), read from planet-sim-landform 9747f0d-c437724.'

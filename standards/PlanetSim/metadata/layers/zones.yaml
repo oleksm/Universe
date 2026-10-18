@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/planet-layer.schema.yaml
+identity:
+  key: planet-layer.zones
+  name: Zones (rock provinces)
+  about: 'The rock a place is made of: the Celestial root''s rock units, by the ground''s rock vocabulary.'
+vocabulary: ground-vocabulary.rock
+bounded_by:
+- planet-line.class-boundary
+- planet-line.plate-edge
+levels:
+- planet-level.planet
+- planet-level.cluster
+basis:
+- of:
+  - identity
+  tier: derived
+  note: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+status: draft

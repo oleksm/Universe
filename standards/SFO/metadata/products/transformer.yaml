@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/product.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: product.transformer, name: Power transformer, description: 'An oil-filled transformer in a closed tank, its size by its rating, cooled by oil to water.'}
+kind: family
+params:
+- {name: rating, unit: VA}
+- {name: primary, unit: V}
+- {name: secondary, unit: V}
+pieces:
+- {id: tank, description: 'the tank, core and windings, scaled by rating'}
+- {id: bushings, description: a set of HV or LV bushings}
+options:
+- {id: hv-cable-box, name: HV cable box, description: a box over the HV bushings with a gland plate on top}
+- {id: lv-cable-box, name: LV cable box, description: a box over the secondary pads with a gland plate}
+- {id: bus-pads, name: Bus joint pads, description: secondary pads at a bus joint's phase pitch}
+units: [unit.furnace-transformer-14mva, unit.furnace-transformer-90mva, unit.heater-transformer-131mva, unit.plant-transformer-35mva, unit.rectifier-transformer-21mva]
+basis:
+- of: [kind, params, pieces, options]
+  tier: invented
+  review: true
+  note: Grouped from the units the layouts use (docs/proposals/plant-products.md, 2026-10-16).

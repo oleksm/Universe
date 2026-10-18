@@ -1,0 +1,101 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.dust
+  name: Wind-blown dust (loess) transport and deposition
+  about: 'The deflated volume (wear_wind x cell) is carried downwind sample to sample: each sample''s downwind neighbour is
+    the one most aligned with the climate''s wind direction. Over DUST_HOPS hops, each hop drops trap x load: on land trap
+    = 0.15 + 0.6 V (plants and wet ground trap dust), at sea 0.05 (dropped at sea and lost from the record). What is still
+    airborne after 12 hops is lost. Laid depth = laid volume / cell.'
+area: surface
+clock:
+  when: each coupled step
+reads:
+- name: wear_wind
+  unit: m
+  field: planet-field.wear-wind
+- name: P
+  unit: m/yr
+  meaning: for V
+  field: planet-field.rain
+- name: land
+  unit: bool
+  field: planet-field.height
+- name: wind_e
+  field: planet-field.wind
+  unit: '1'
+  meaning: east component
+- name: wind_n
+  field: planet-field.wind-north
+  unit: '1'
+  meaning: north component
+writes:
+- name: dust
+  unit: m per step
+  meaning: dust laid on land (also included in laid)
+  field: planet-field.dust
+params:
+- name: DUST_HOPS
+  value: 12.0
+  unit: '1'
+  said_as:
+    unit: samples
+    factor: 1.0
+  open: true
+  meaning: max downwind hops
+  source: stages/coupled.py:52
+  note: 'unit as the code says it: ''samples''; SI conversion unverified'
+- name: 'inline: dust trap land'
+  value: 0.15
+  unit: '1'
+  meaning: share of the load dropped per hop on bare land
+  source: stages/coupled.py:198
+- name: 'inline: dust trap plants'
+  value: 0.6
+  unit: '1'
+  meaning: plus this times the plant cover V
+  source: stages/coupled.py:198
+- name: 'inline: dust trap sea'
+  value: 0.05
+  unit: '1'
+  meaning: share dropped per hop at sea (lost from the record)
+  source: stages/coupled.py:198
+- name: 'inline: plant cover rain scale'
+  value: 1.2675235125611581e-08
+  unit: m/s
+  said_as:
+    unit: m/yr
+    factor: 3.168808781402895e-08
+  meaning: V = 1 - exp(-P / this) (as coupled-erosion)
+  source: stages/coupled.py:197
+random_draws:
+- none
+invariants:
+- sum(dust*cell) <= sum(wear_wind*cell)
+- dust laid only on land
+depends_on:
+- planet-process.coupled-erosion
+- planet-process.coupled-climate
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/coupled.py:dust (lines 191-203); called in stages/coupled.py:step (325-327)
+  state: reference
+- where: planet-forge crates/forge-core/src/models/surface/dust.rs
+  state: current
+  note: planet-forge port (surface line, merged in forge main 370ab83)
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
+    the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge surface port (models/surface), read from planet-sim-landform 9747f0d-c437724.'

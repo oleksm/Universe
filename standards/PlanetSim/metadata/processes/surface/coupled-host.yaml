@@ -1,0 +1,244 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.coupled-host
+  name: 'Coupled-era host on the plates run: when the surface step runs, structure it reads, how its wear and deposits change
+    the crust'
+  about: 'plates.run calls coupled.step when SIM_COUPLED=1 and the run is within the last SIM_COUPLE_FROM_MYR. Before it:
+    sea level (sea_level, by water volume or SIM_LAND_SHARE in the coupled era), the river memory from the nearest crust particle
+    (xmem), the routing grid (the true samples unless SIM_JITTER > 0), and the structure: fold = for continental samples max(thick''
+    exp(-since_suture/300 Myr), 0.5 thick''), thick'' = clip((thick - 39 km)/15 km, 0, 1); fault = 1 on a plate boundary,
+    0.5 next to one; grain = w.grain; outgas = heat flow ratio. After: the returned wear replaces the old height-driven denudation
+    `base` (the `budget` argument is ignored), is scaled by rock erodibility through _wear (soft cover first, then basement),
+    exhumes particles (_exhume, organics), thins the continents (_scale_continents), and the whole eroded volume goes to the
+    shelves offshore (_to_shelf, unless ''shelf'' in SIM_OFF). Laid sediment on continent above sea plus platform sediment
+    on flooded continent (PLATFORM_M_PER_MYR) becomes geology units via _deposit (carbonate in warm shallow sea within 100
+    m of sea level, clastic otherwise). Crust-level highland wear still runs, slower (COUPLED_ERODE_MYR). zones.rivers turns
+    hydro into line-store water landmarks.'
+area: surface
+clock:
+  when: every plate step in the coupled era (COUPLE_EVERY=1); before it the old denudation every SEA_EVERY=20 steps
+reads:
+- name: w.thick
+  field: planet-field.crust-thickness
+  unit: m
+  meaning: crust thickness
+- name: w.xsuture
+  unit: Myr
+  meaning: suture time per particle
+- name: w.plate
+  field: planet-field.plate
+  unit: id
+- name: w.grain
+  field: planet-field.grain
+  unit: unit 3-vector
+- name: interior heat flow (times, flux)
+  unit: W/m2
+- name: w.xmem
+  unit: per particle
+  meaning: river memory
+writes:
+- name: w.hydro
+  unit: dict
+  meaning: the step's hydro fields (saved as h_* in ck_*_ctx.npz when CONTEXT=1)
+- name: w.coupled_state
+  unit: dict
+- name: w.xmem
+  unit: per particle x5
+- name: 'crust: xcover, xtop, xdep, xfert, thick'
+  unit: m, codes
+  meaning: via _wear/_exhume/_deposit/_scale_continents
+  field: planet-field.crust-thickness
+note: 'Emits: step ledger ''climate erosion'' / ''climate erosion to shelves'' Emits: line-store water records via zones.rivers
+  (delta, river mouth, river capture, dry valley, misfit river, former lake bed, water-carved land, water gap)'
+events_emitted:
+- event: planet-event.ledger-cause-climate
+  where: stages/plates.py:1367
+params:
+- name: COUPLED
+  env: SIM_COUPLED
+  setting: 'False'
+  meaning: turn the coupled surface step on
+  source: stages/plates.py:136
+  note: 'unit: bool'
+- name: COUPLE_FROM_MYR
+  env: SIM_COUPLE_FROM_MYR
+  value: 2.2092e+16
+  unit: s
+  said_as:
+    unit: Myr before present
+    factor: 31560000000000.0
+  meaning: coupled era length
+  source: stages/plates.py:139
+  note: 'owner 16 Oct: weathering, rivers and their history from the fifth checkpoint (700 Ma)'
+- name: COUPLE_EVERY
+  env: SIM_COUPLE_EVERY
+  value: 1.0
+  unit: '1'
+  said_as:
+    unit: plate steps
+    factor: 1.0
+  open: true
+  meaning: coupled step cadence
+  source: stages/coupled.py:22
+  note: 'unit as the code says it: ''plate steps''; SI conversion unverified'
+- name: SEA_EVERY
+  value: 20.0
+  unit: '1'
+  said_as:
+    unit: plate steps
+    factor: 1.0
+  open: true
+  meaning: pre-coupled denudation cadence
+  source: stages/plates.py:130
+  note: 'unit as the code says it: ''plate steps''; SI conversion unverified'
+- name: DENUDE_MYR
+  env: SIM_DENUDE_MYR
+  value: 2524800000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31560000000000.0
+  meaning: old height-driven denudation timescale; computed in the coupled era but replaced by the coupled wear
+  source: stages/plates.py:119-120
+- name: COUPLED_ERODE_MYR
+  env: SIM_COUPLED_ERODE_MYR
+  value: 7890000000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31560000000000.0
+  meaning: crust-level highland wear timescale in the coupled era
+  source: stages/plates.py:165
+- name: COUPLED_ERODE_ABOVE
+  env: SIM_COUPLED_ERODE_ABOVE
+  value: 38000.0
+  unit: m
+  meaning: crust thickness above which highland wear acts in the coupled era (default = ERODE_ABOVE)
+  source: stages/plates.py:166
+- name: PLATFORM_M_PER_MYR
+  value: 6.337135614702154e-13
+  unit: m/s
+  said_as:
+    unit: m/Myr
+    factor: 3.168567807351077e-14
+  meaning: platform sediment on flooded continent, x clip(depth/200 m)
+  source: stages/plates.py:124
+- name: BASIN_FILL
+  value: 3000.0
+  unit: m
+  meaning: max sediment cover on land
+  source: stages/plates.py:127
+- name: 'inline: marine room factor'
+  value: 2.5
+  unit: '1'
+  said_as:
+    unit: dimensionless
+    factor: 1.0
+  open: true
+  meaning: room at sea = 2.5 x depth ((rho_m-rho_w)/(rho_m-rho_s))
+  source: stages/plates.py:1396
+  note: 'unit as the code says it: ''dimensionless''; SI conversion unverified'
+- name: 'inline: marine margin'
+  value: -100.0
+  unit: m
+  meaning: within 100 m above sea counts as shallow sea for carbonate
+  source: stages/plates.py:1398
+- name: 'OFF'
+  env: SIM_OFF
+  setting: ''
+  meaning: 'processes switched off: flow, cap, roots, crustwear, climate, shelf'
+  source: stages/plates.py:143
+  note: 'unit: comma list'
+- name: 'inline: fold thickness scale'
+  values:
+  - 39000.0
+  - 15000.0
+  unit: m
+  meaning: thick' = clip((thick - CONTINENT_MEAN)/15 km, 0, 1)
+  source: stages/plates.py:1339
+- name: 'inline: fold age e-fold'
+  value: 9468000000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31560000000000.0
+  meaning: fold-belt index fades with time since suture, floor 0.5 thick'
+  source: stages/plates.py:1340
+- name: 'inline: fault neighbour value'
+  value: 0.5
+  unit: '1'
+  said_as:
+    unit: dimensionless
+    factor: 1.0
+  open: true
+  meaning: fault index one sample off a plate boundary
+  source: stages/plates.py:1342
+  note: 'unit as the code says it: ''dimensionless''; SI conversion unverified'
+- name: SIM_JITTER
+  env: SIM_JITTER
+  value: 0.0
+  unit: '1'
+  said_as:
+    unit: sample spacings
+    factor: 1.0
+  open: true
+  meaning: jitter of the routing grid (off; kept for old runs)
+  source: stages/plates.py:808
+  note: 'unit as the code says it: ''sample spacings''; SI conversion unverified'
+- name: SIM_LAND_SHARE
+  env: SIM_LAND_SHARE
+  setting: none
+  meaning: if set, sea level leaves this share of the surface as land (coupled era only unless SIM_LAND_SHARE_ALWAYS=1)
+  source: stages/plates.py:1544
+  note: 'unit: 0-1'
+- name: SIM_LAND_SHARE_ALWAYS
+  env: SIM_LAND_SHARE_ALWAYS
+  setting: '0'
+  meaning: apply SIM_LAND_SHARE before the coupled era too
+  source: stages/plates.py:1545
+  note: 'unit: flag'
+- name: SIM_LINES
+  env: SIM_LINES
+  setting: '1'
+  meaning: keep the line store (needed for zones.rivers records)
+  source: stages/plates.py:836
+  note: 'unit: flag'
+- name: FLUVIAL_SHARE
+  env: SIM_COUPLED_FLUVIAL
+  value: 0.6
+  unit: '1'
+  said_as:
+    unit: dimensionless
+    factor: 1.0
+  open: true
+  meaning: coupled fluvial share
+  source: stages/coupled.py:23
+  note: 'DEFINED BUT NEVER READ; unit as the code says it: ''dimensionless''; SI conversion unverified'
+  used: false
+random_draws:
+- none in the coupled path (SIM_JITTER>0 would draw rng(n+7919))
+invariants:
+- crust removed = _wear(coupled wear), <= height above sea scaled by erodibility
+- eroded volume to shelves = sum(max(lost,0))*cell (nothing lost)
+- laid sediment adds no crust (record only)
+depends_on:
+- planet-process.coupled-erosion
+- planet-process.sediment-routing
+- planet-process.river-memory
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/plates.py:run (lines 1306-1404); stages/plates.py:_wear (631-645), _deposit (658-693),
+    _exhume (704-713), sea_level (1537-1556), route_grid (799-816)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
+    the code at planet-sim-landform 9747f0d-c437724.'

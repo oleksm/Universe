@@ -1,0 +1,103 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.water-treatment-sealed, name: 'Water treatment, sealed', description: 'Makes the 4.7 kg/s (17.0 m3/h) of demineralised water the cells split, below 1 uS/cm, from 20.3 m3/h of the shaft furnace''s condensate and melted ice, in a closed house of insulated sandwich panels under multi-layer insulation, unpressurised (the crews work in suits), every tank sealed under a nitrogen blanket with no vent to the vacuum, trace heaters for the night. A service aisle along x at y -1.2 to 1.2. In order: two sand filters east (1.7 m across, 2.5 m straight with dished heads, 7 mm plate rubber-lined, on 0.5 m legs, centres (4.6, -2.2) and (4.6, 2.2)), one backwashing while the other runs; a cartridge filter (0.4 m across, 1.5 m, at (2.6, 1.6)) and the antiscalant dosing; the reverse osmosis bank north, 5 pressure tubes 0.21 m across and 6.7 m long in stainless, horizontal along x from x -3.6 to 3.1, in a rack y 1.8 to 3.6, z 0.4 to 2.6 (3 first stage, 2 second, 30 elements, 10 bar, 85%
+    recovery); a closed cabinet west for the electrodeionisation stage (x -5.8 to -4.2, y -2.2 to 2.2, 2.2 m tall: 6 modules and their DC supplies); the pump skid south (x -3.6 to 3.4, y -3.8 to -1.6): the feed booster, high-pressure, product, backwash and cleaning pumps, the cleaning tank (1 m3) and the permeate break tank (2 m across, 1.6 m tall, at (-2.4, -2.7)). Raw water in at local (6, -1.6, 0.5), beside the crew door at the aisle''s east end (y -0.6 to 0.6, at grade), clean water out at (-6, 0, 0.5); reject and backwash out by a 150 mm flange at (6, 3.4, 0.3) (3.3 m3/h of concentrate, 81 m3/h while a filter backwashes). Its reject is kept: back with the raw water''s return, beyond the layout, to the ice plant''s evaporator. 400 V supply at (-6, -3.4, 0.5).'}
+size_class: 2
+fits: plant-mount.bay-s2
+physical: {length: 12.0, width: 8.0, height: 5.0, mass: 31790.0}
+built_of:
+- {what: Sand filters, item: material.structural-steel-a36, mass: 2316.0, note: 'two shells 1.7 m by 2.5 m in 7 mm for 7 bar, heads as 1.1 discs, their legs and nozzle plates'}
+- {what: Filter sand, item: good.silica-sand, mass: 8716.0, note: '1.2 m of graded sand and gravel in each, 1,600 kg/m3'}
+- {what: Pressure tubes, item: material.stainless-steel-304, mass: 673.8, note: '5 tubes 0.21 m by 6.7 m in 3 mm for 15 bar, 30 kg of end caps each'}
+- {what: Membrane elements, item: material.polyethylene-uhmw, mass: 480.0, note: '30 spiral-wound polyamide elements, 16 kg each, which the registry has not got: polyethylene stands for them'}
+- {what: Electrodeionisation, item: material.structural-steel-a36, mass: 2280.0, note: '6 modules of ion-exchange membranes and resin between steel end plates, 180 kg each, and the cabinet with its DC supplies, from memory'}
+- {what: Tanks and cartridge filter, item: material.stainless-steel-304, mass: 886.1, note: 'the break tank 2 m by 1.6 m in 4 mm, the cleaning tank and the cartridge housing'}
+- {what: Pumps and dosing, item: good.pumps, mass: 1643.0, note: 'five pump sets at 30 kg/kW and 100 kg each, the dosing skid, from memory'}
+- {what: Piping and valves, item: material.stainless-steel-304, mass: 1500.0, note: from memory}
+- {what: Skid deck and rack, item: material.structural-steel-a36, mass: 5340.0, note: 'a beam deck under the bay at 40 kg/m2 and the tube rack, from memory'}
+- {what: House frame, item: material.structural-steel-a36, mass: 5009.0, note: 200 x 6 mm hollow mains and 120 x 5 mm posts; measured on blender's model v1 (2026-10-16)}
+- {what: House panels, item: material.honeycomb-sandwich-panel, mass: 2591.0, note: '287.9 m2 of walls and roof (measured), 60 mm panels'}
+- {what: Insulation, item: material.multi-layer-insulation, mass: 287.9, note: '20 mm of blanket over the house, 287.9 m2'}
+- {what: 'Stubs, seats and roof edges', item: material.stainless-steel-304, mass: 62.4, note: 'the ports'' plain stubs and their seats, the folded 1 mm roof edges; measured'}
+needs: {power: 35160.0, atmosphere: any}
+ports:
+- id: raw-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 5.639
+  interface: interface.flange-dn200-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn200-pn10-ss
+  at: [6.0, -1.6, 0.5]
+  facing: [1.0, 0.0, 0.0]
+  note: the shaft furnace's condensate and melted ice
+  pressure: 400000.0
+  temperature: 303.0
+- id: clean-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 4.725
+  interface: interface.flange-dn100-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn100-pn10-ss
+  at: [-6.0, 0.0, 0.5]
+  facing: [-1.0, 0.0, 0.0]
+  pressure: 400000.0
+  temperature: 313.0
+- id: reject-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 0.9139
+  interface: interface.flange-dn150-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn150-pn10-ss
+  at: [6.0, 3.4, 0.3]
+  facing: [1.0, 0.0, 0.0]
+  note: 'concentrate and backwash, kept: what comes in less what goes out clean'
+  pressure: 400000.0
+  temperature: 313.0
+- id: power-in
+  flow: in
+  medium: power
+  power: 35160.0
+  voltage: 400
+  interface: interface.termination-400v-25mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-25mm2
+  at: [-6.0, -3.4, 0.5]
+  facing: [-1.0, 0.0, 0.0]
+  current: 56.39
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 31790.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
+product: product.water-treatment
+options: [sealing]
+envelope:
+- [-6.0, -4.0, 0.0, 6.0, 4.0, 5.02]
+life: 788940000
+visual: {format: freefall-model/1, path: models/water-treatment-sealed/v1, manifest_sha256: b69d739dbefa18d9b0321f3a873720dc642d2ce36ef91c421d0b9e44fb39479e, version: 1, triangles: 4380}
+basis:
+- of: [physical, built_of, needs]
+  tier: derived
+  review: true
+  note: 'From the cells'' 17.0 m3/h: the EDI keeps 90%, the bank 85% at 20 L/m2/h on 37.2 m2 elements, six to a tube; the sand filters at 10 m/h, their shells for 7 bar in A36 at 138 MPa (85% joints, 1.5 mm allowance); pumps at 70-75% (feed booster 2.4 kW, high-pressure 8.2 kW, product 2.7 kW), the EDI at 0.4 kWh/m3, 5 kW of controls; backwash 8 kW ten minutes a day, not counted. Fluxes, recoveries and equipment weights from memory.'
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage; water at 30 deg C in and 40 out; water at the pumps'' 4 bar.'
+- of: [life]
+  rule: rule.life-plant

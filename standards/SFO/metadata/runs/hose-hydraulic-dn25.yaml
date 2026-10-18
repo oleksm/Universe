@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../../schema/run.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: run.hose-hydraulic-dn25
+  name: Hydraulic hose, DN 25.4
+  description: 'A two-braid hydraulic hose (SAE 100R2 class): oil at working pressure to cylinders and motors that move, its ends flat-face quick couplings.'
+kind: hose
+size: 0.0254
+bore: 0.0254
+outside:
+- 0.038
+- 0.038
+rating:
+  pressure: 25000000.0
+  temperature: 373.0
+per_m:
+  mass: 1.26
+  built_of:
+  - what: Tube and cover
+    item: material.epdm-rubber
+    mass: 0.567
+    note: nitrile, as EPDM here
+  - what: Two steel braids
+    item: material.structural-steel-a36
+    mass: 0.693
+elbow:
+  radius: 0.266
+  mass: 0.526
+connector: connector.flat-face-dn25
+carries: liquid
+template: template.hose-hydraulic
+basis:
+- of:
+  - per_m
+  - outside
+  - rating
+  tier: invented
+  review: true
+  note: Two-braid hose figures; From memory of makers' catalogues; to be sourced.

@@ -1,15 +1,40 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.gantry-crane-150t-moon, name: 'Ladle gantry crane, 150 t', description: 'A double-girder ladle gantry crane on its own legs, running on two ground rails 24 m apart: on its own legs over the teeming rail and the ladle rail: it lifts the full ladle off its car and holds it over each mould in turn. Hangs on the frame; names no bay. It travels along its x, its wheels at y -12 and +12 (24.0 m between the rails), its ends 0.3 m beyond; its origin on the ground rails'' plane, its girders 24 m up; the trolley, with a main hoist and a ladle beam, runs 9 m either way along y, the hook raised to 0.1 m under the rail plane. Parked at the hall''s centre. Sized for 2 m/s2.'}
+identity: {key: unit.gantry-crane-150t-moon, name: 'Ladle gantry crane, 150 t', description: 'A double-girder ladle gantry crane on its own legs, running on two ground rails 24 m apart: on its own legs over the teeming rail and the ladle rail: it lifts the full ladle off its car and holds it over each mould in turn. Hangs on the frame; names no bay. It travels along its x, its wheels at y -12 and +12 (24.0 m between the rails), its ends 0.3 m beyond; its origin on the ground rails'' plane, its girders 24 m up; the trolley, with a main hoist and a ladle beam, runs 9 m either way along y, the hook raised under the bridge (its heights below). Parked at the hall''s centre. Sized for 2 m/s2. Its bridge datum is the girders'' underside at z 24 (their tops about 25.1, the trolley''s rails 25.18); the legs, 1 x 1 m, 25 mm, stand from the sill beams'' tops at z 1; parked, the hook''s ladle beam hangs at z 22.2 under the full rope stack, not packed up to the girders.'}
 size_class: 2
-physical: {length: 10.0, width: 25.0, height: 27.0, mass: 161900.0}
+physical: {length: 10.0, width: 25.4, height: 27.0, mass: 182400.0}
 built_of:
-- {what: Bridge girders, item: material.structural-steel-a36, mass: 17390.0, note: 'two box girders 1.1 x 0.8 m, 12 mm wall, 24.6 m long over a 24.0 m span, the lightest that meet span/800 under the load (25.8 mm, span/931) and 150 MPa with every load on (79 MPa)'}
+- {what: Bridge girders, item: material.structural-steel-a36, mass: 17703.3, note: 'two box girders 1.1 x 0.8 m, 12 mm wall, 24.6 m long over a 24.0 m span, the lightest that meet span/800 under the load (25.8 mm, span/931) and 150 MPa with every load on (79 MPa); measured on blender''s model v1, 17,703.3 kg with its closed end plates'}
 - {what: Trolley and hoist, item: material.structural-steel-a36, mass: 37500.0, note: 'with a main hoist and a ladle beam: 25% of the load, from memory'}
 - {what: End carriages and drives, item: good.electric-motors, mass: 22500.0, note: '15% of the load, from memory'}
-- {what: Legs and sill beams, item: material.structural-steel-a36, mass: 84500.0, note: 'four box legs and two sill beams, from the legs'' size (the sills 15%)'}
+- {what: Legs and sill beams, item: material.structural-steel-a36, mass: 82740.0, note: 'four box legs 1 x 1 m, 25 mm, from the sills'' tops at z 1 to 24, and two sill beams; measured on model v1'}
+- {what: 'Seats, braces, rails and wheel pockets', item: material.structural-steel-a36, mass: 21920.0, note: 'the trolley''s rails, the legs'' braces and seats, the bridges over the wheel pockets; measured on model v1'}
 needs: {power: 300000.0}
+product: product.overhead-crane
+options: [gantry-legs, ladle-beam]
+motion:
+- id: travel
+  kind: travel
+  direction: [1.0, 0.0, 0.0]
+  moves: [the whole crane]
+  note: along its rails or runways; its range is the layout's
+- id: traverse
+  kind: travel
+  direction: [0.0, 1.0, 0.0]
+  distance: [-10.7, 10.7]
+  moves: [the trolley and its hook]
+  note: across the bridge, about 1.5 m short of each end (invented)
+- id: hoist
+  kind: lift
+  direction: [0.0, 0.0, 1.0]
+  moves: [the hook and what it carries]
+  note: from parked down to the floor or the load; its depth is the layout's
+envelope:
+- [-5.001, -12.672, -0.042, 5.001, -11.098, 25.401]
+- [-5.001, 11.098, -0.042, 5.001, 12.672, 25.401]
+- [-2.902, -12.302, 22.198, 2.902, 12.302, 26.001]
 life: 788940000
+visual: {format: freefall-model/1, path: models/gantry-crane-150t-moon/v1, manifest_sha256: ba799e17a82e1417e464ca665a79de2960ed761093b329323411e7198aaaa843, version: 1, triangles: 7404}
 basis:
 - of: [physical, built_of]
   tier: derived

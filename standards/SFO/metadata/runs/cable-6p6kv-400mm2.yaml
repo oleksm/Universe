@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../schema/run.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: run.cable-6p6kv-400mm2, name: 'Cable, 6.6 kV, 400 mm2', description: 'Three single-core cables of 400 mm2 at 6.6 kV on a ladder tray: 1,000 A a circuit on airless ground, where only radiation cools them.'}
+kind: cable
+size: 0.00039999999999999996
+outside: [0.3, 0.141]
+rating: {voltage: 6600, current: 1000.0}
+per_m:
+  mass: 17.3
+  built_of:
+  - {what: Conductors, item: material.copper, mass: 10.8, note: three cores of 400 mm2}
+  - {what: Insulation and sheaths, item: material.polyethylene-uhmw, mass: 1.6, note: 3.4 mm of insulation and a 2.5 mm sheath on each core; UHMW polyethylene stands for XLPE}
+  - {what: Screens, item: material.copper, mass: 0.9, note: a 35 mm2 copper screen on each core}
+  - {what: Tray, item: material.aluminium-alloy-6061, mass: 4.0, note: 'its share of a ladder tray, with 4 mm bridges over the cores at each rung that hold them on risers'}
+pitch: 0.06
+elbow: {radius: 0.609, mass: 16.6}
+riser: {radius: 0.549, mass: 14.9}
+tee: {mass: 25.0}
+support: {spacing: 3.0, mass: 8.0, per_m_height: 6.0, item: material.aluminium-alloy-6061}
+repeat:
+- {piece: rung, pitch: 0.3}
+connector: connector.termination-6p6kv-400mm2
+carries: power
+template: template.cable
+visual: {format: freefall-model/1, path: models/cable-6p6kv-400mm2/v1, manifest_sha256: 13465c48d72b84b9a429d15467813c20ffb57b091953a2834e0af19ec4e411c3, version: 1, triangles: 9220}
+basis:
+- of: [per_m]
+  tier: derived
+  review: true
+  note: Copper from its area; insulation by the voltage's usual thickness (from memory); the rating at 2.5 A/mm2, radiation only.
+- of: [support, tee, elbow, riser, pitch]
+  tier: invented
+  review: true
+  note: 'Tray posts every 3 m; a tee is a joint box; the cores'' least bend radius 15 cable diameters (from memory): a riser bends all three at it, an elbow in plan has its axis one core''s pitch further out so the inner core keeps it.'

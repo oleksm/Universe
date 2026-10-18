@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.periglacial.mound.pingo
+  name: Pingo
+  about: Pingo.
+family: periglacial
+factors:
+- factor: planet-factor.permafrost
+  weight: 3
+  why: 'Closed-system: continuous permafrost; open-system: thin discontinuous permafrost'
+- factor: planet-factor.lake-level
+  weight: 3
+  why: Closed-system pingos rise in drained lake basins as residual talik freezes
+- factor: planet-factor.groundwater
+  weight: 3
+  why: Open-system needs artesian groundwater flow; closed needs talik pore water
+- factor: planet-factor.regolith
+  weight: 1
+  why: Sandy saturated lake-bottom sediments for closed system
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: Flat lowlands/deltas (closed) or valley-bottom footslopes (open)
+- factor: planet-factor.clim-temp
+  weight: 1
+  why: Ground below 0 C; warming melts core and collapses pingo to a rampart lake
+- factor: planet-factor.time
+  weight: 1
+  why: Grows ~2 cm/yr; decades-centuries; up to 50-70 m high
+vocabulary_id: 109
+sources:
+- https://en.wikipedia.org/wiki/Pingo
+- https://www.antarcticglaciers.org/glacial-geology/glacial-landforms/periglaciation/pingos-and-ice-wedge-polygons/
+library_status: written
+source: periglacial.mound.pingo
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

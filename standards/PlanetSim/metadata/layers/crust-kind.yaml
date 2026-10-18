@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/planet-layer.schema.yaml
+identity:
+  key: planet-layer.crust-kind
+  name: Crust kind
+  about: Ocean or continent.
+version: 1
+classes:
+- id: 1
+  name: ocean
+  source: '0'
+- id: 2
+  name: continent
+  source: '1'
+  when:
+  - field: planet-field.crust-thickness
+    op: '>='
+    value: 15000.0
+levels:
+- planet-level.planet
+basis:
+- of:
+  - classes
+  tier: derived
+  note: 'docs/sim-arrays.md: the sim''s ids; the registry''s are the same where the sim''s 0 is none, its own plus 1 otherwise.'
+status: draft

@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/planet-measure.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry_extra.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-measure.rain-land-m
+  name: rain_land_m
+  about: mean h_P over land (needs _ctx.npz)
+unit: m/s
+said_as:
+  unit: m/yr
+  factor: 3.168808781402895e-08
+how: mean h_P over land (needs _ctx.npz)
+tool: ~/git/planet-trees-pgs2/tools/scorecard.py:15-29 (TARGETS), 32-55 (measure)
+scorecard:
+  earth: 2.3766065860521712e-08
+  ok:
+  - 2.0597257079118818e-08
+  - 2.8519279032626056e-08
+  warn:
+  - 1.7428448297715924e-08
+  - 3.168808781402895e-08
+  era: climate
+  grade: pass inside ok, warn inside warn, else fail (inclusive)
+  source: ~/git/planet-trees-pgs2/tools/scorecard.py:15-29 (TARGETS), 32-55 (measure)
+status: draft
+basis:
+- of:
+  - scorecard
+  tier: sourced
+  source: Earth values as the Python sim cites them (scorecard.py TARGETS and legends)
+  review: true

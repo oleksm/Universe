@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.glacial.erosion.horn
+  name: Glacial horn
+  about: Glacial horn.
+family: glacial
+factors:
+- factor: planet-factor.ice-extent
+  weight: 3
+  why: three or more cirques around one summit; summit above ELA
+- factor: planet-factor.relief-inherited
+  weight: 3
+  why: isolated high summit with radial valley heads
+- factor: planet-factor.rock-type
+  weight: 3
+  why: massive jointed crystalline rock keeps pyramidal faces
+- factor: planet-factor.rock-fracture
+  weight: 1
+  why: joint sets control face planes
+- factor: planet-factor.clim-temp
+  weight: 1
+  why: frost weathering of exposed faces
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: high uplift so summit stands above ice
+- factor: planet-factor.time
+  weight: 1
+  why: prolonged headward erosion over many cycles
+- factor: planet-factor.aspect
+  weight: 1
+  why: face sizes asymmetric with aspect-biased cirques
+vocabulary_id: 75
+sources:
+- https://en.wikipedia.org/wiki/Cirque
+- https://www.antarcticglaciers.org/glacial-geology/glacial-landforms/glacial-erosional-landforms/cirques/
+library_status: written
+source: glacial.erosion.horn
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

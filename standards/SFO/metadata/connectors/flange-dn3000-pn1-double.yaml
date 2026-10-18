@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: connector.flange-dn3000-pn1-double, name: 'Flange DN 3000 PN 1, double seal', description: 'A bolted pair of weld-neck flanges for a pipe of 3000 mm nominal bore at up to 1 bar inside (on airless ground, the whole of it against vacuum).'}
+kind: flange
+size: 3.0
+rating: {pressure: 100000.0, temperature: 373.0}
+sealing: double
+physical: {length: 3.196, width: 3.196, height: 0.11, mass: 368.4}
+built_of:
+- {what: Flanges, item: material.structural-steel-a36, mass: 333.2, note: 'two weld-neck rings 3.196 m across, 20 mm thick, their necks tapering over 20 mm from 16 mm to the gallery''s 4 mm wall at 3 m outside, 2.992 m clear; measured on blender''s model v1'}
+- {what: Bolts and nuts, item: material.high-strength-steel-4340, mass: 16.8, note: '92 of M16, 78 mm, on a 3.148 m circle'}
+- {what: Gaskets, item: material.stainless-steel-304, mass: 18.4, note: 'spiral wound, stainless windings; two, the space between them piped to a leak watch'}
+interface: interface.flange-dn3000-pn1-double
+provides: both
+template: template.flange-double
+visual: {format: freefall-model/1, path: models/flange-dn3000-pn1-double/v1, manifest_sha256: 8429f30c6d97e90461e3c7419d7cfa87d68b24330344a59eaf3936456a4105d7, version: 1, triangles: 11890}
+basis:
+- of: [built_of, physical]
+  tier: derived
+  review: true
+  note: 'Sized by a simple rule, not to a flange code: the end force on the gasket''s mean circle (3.05 m) at the class''s pressure, bolts at 170 MPa, the ring''s thickness from its bending about the bolt circle at 140 MPa.'

@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../schema/material.schema.yaml
+identity:
+  key: material.epdm-rubber
+  name: EPDM rubber
+  class: polymer
+mass:
+  density: 1150.0
+mechanical:
+  tensile_strength: 12000000.0
+  elongation_at_break: 3.0
+thermal:
+  max_service_temperature: 423.15
+  min_service_temperature: 223.15
+basis:
+  - { of: [mass, mechanical, thermal], tier: invented, review: true, note: "Compounded EPDM as hoses and cable sheaths use it, from memory: about 1,150 kg/m3, 10 to 15 MPa, 300 % at break, -50 to 150 deg C. It stands for the hose and sheath rubbers (EPDM, nitrile, polychloroprene) alike." }

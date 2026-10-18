@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.glacial.lake.proglacial
+  name: Proglacial lake
+  about: Proglacial lake.
+family: glacial
+factors:
+- factor: planet-factor.ice-extent
+  weight: 3
+  why: glacier retreat exposes basin
+- factor: planet-factor.relief-inherited
+  weight: 3
+  why: overdeepening or cirque basin; depth 1-300 m
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: moraine dam height and stability; inflow sediment infills via deltas
+- factor: planet-factor.water-discharge
+  weight: 1
+  why: meltwater fills lake
+- factor: planet-factor.events
+  weight: 1
+  why: moraine dam failure (GLOF) drains lake
+- factor: planet-factor.lake-level
+  weight: 1
+  why: outlet over dam/rock bar sets level
+- factor: planet-factor.time
+  weight: 1
+  why: 0.01-15 kyr before infill
+vocabulary_id: 80
+sources:
+- https://en.wikipedia.org/wiki/Cirque
+- https://en.wikipedia.org/wiki/Moraine
+library_status: written
+source: glacial.lake.proglacial
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

@@ -1,0 +1,54 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.gap.water-gap
+  name: Water gap
+  about: Water gap.
+family: fluvial
+factors:
+- factor: planet-factor.relief-inherited
+  weight: 3
+  why: river course predates ridge (antecedent) or overlying cover (superposed)
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: incision must keep pace with ridge uplift
+- factor: planet-factor.water-discharge
+  weight: 1
+  why: large enough river to cut through resistant ridge
+- factor: planet-factor.rock-layers
+  weight: 3
+  why: resistant bed between weak beds forms the cut ridge
+- factor: planet-factor.rock-fracture
+  weight: 1
+  why: gaps often sited on faults/fracture zones
+- factor: planet-factor.tect-fold
+  weight: 1
+  why: fold-thrust ridges (Valley and Ridge)
+- factor: planet-factor.other-stream-capture
+  weight: 1
+  why: headward erosion from both sides can breach ridge
+- factor: planet-factor.time
+  weight: 1
+  why: Myr of incision
+vocabulary_id: 153
+sources:
+- https://en.wikipedia.org/wiki/Water_gap
+- https://en.wikipedia.org/wiki/Stream_capture
+library_status: planned
+source: fluvial.gap.water_gap
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft
+handled_by:
+- planet-handler.water-gap

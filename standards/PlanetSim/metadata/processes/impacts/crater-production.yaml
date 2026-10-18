@@ -1,0 +1,164 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.crater-production
+  name: Crater population (production, chronology, saturation)
+  about: 'Draws the craters ≥ d_min a surface shows: the Neukum et al. 2001 lunar production function (log10 N(>D) = Σ a_n
+    (log10 D)^n per km²) shape scaled to this world''s crater size, the Neukum 1983 chronology N(1 km) = 5.44e-14 (e^{6.93
+    T} − 1) + 8.38e-4 T per km² (T Gyr) times focusing and impact_flux, in √2 diameter bins from max(d_min, 0.01·size) to
+    min(300·size, 3000 km). Per bin: Poisson count made; with equilibrium saturation keep only the youngest N_EQ·(a⁻² − b⁻²)·area;
+    diameters by inverse CDF of the production function inside the bin; ages from the chronology''s rate CDF (the youngest
+    k of n drawn directly via a Beta(k, n−k+1) quantile). Positions uniform on the sphere. Guard: > 5 million craters raises.'
+area: impacts
+clock:
+  when: once per world (tools/impacts.py, tools/lid_world.py)
+reads:
+- name: area
+  unit: 'm² (code: km²)'
+  meaning: surface area
+- name: age
+  field: planet-field.crust-age
+  unit: 's (code: Gyr)'
+  meaning: surface age
+- name: Scaling
+  unit: SI
+  meaning: impactor scaling
+- name: d_min
+  unit: 'm (code: km; tools default 5 km, floored at d_screen)'
+  meaning: smallest crater
+- name: planet.impact_flux
+  unit: '1'
+  meaning: system flux vs inner Solar System
+writes:
+- name: d_km
+  unit: 'm (code: km)'
+  meaning: crater diameters
+- name: age_myr
+  unit: 's (code: Myr)'
+  meaning: crater ages before present
+- name: p
+  unit: unit vector
+  meaning: positions
+note: 'Emits: impacts.crater-formed (one per crater, at its age)'
+params:
+- name: NPF
+  values:
+  - -3.0876
+  - -3.557528
+  - 0.781027
+  - 1.021521
+  - -0.156012
+  - -0.444058
+  - 0.019977
+  - 0.08685
+  - -0.005874
+  - -0.006809
+  - 0.000825
+  - 5.54e-05
+  unit: '1'
+  said_as:
+    unit: log10 per km² vs log10 km
+    factor: 1.0
+  open: true
+  meaning: Neukum 2001 production-function coefficients a0..a11 (a0 for 1 Gyr)
+  source: src/planet_sim/stages/impacts.py:38
+  note: 'unit as the code says it: ''log10 per km² vs log10 km''; SI conversion unverified'
+- name: chronology
+  setting: '{"a": 5.44e-14, "b": 6.93, "c": 0.000838}'
+  meaning: N(1 km) = a(e^{bT} − 1) + cT (Neukum 1983)
+  source: src/planet_sim/stages/impacts.py:54
+  note: 'unit: per km² (per 1e6 m²); b per Gyr; c per km² per Gyr'
+- name: N_EQ
+  value: 0.065
+  unit: '1'
+  said_as:
+    unit: 'km² per km² (D in km): N_eq(≥D) = 0.065 D⁻² per km²'
+    factor: 1.0
+  open: true
+  meaning: equilibrium saturation (chosen to match lunar highlands ~1.6e-4 /km² ≥20 km)
+  source: src/planet_sim/stages/impacts.py:49
+  note: 'unit as the code says it: ''km² per km² (D in km): N_eq(≥D) = 0.065 D⁻² per km²''; SI conversion unverified'
+- name: MAX_CRATERS
+  value: 5000000.0
+  unit: '1'
+  said_as:
+    unit: count
+    factor: 1.0
+  meaning: guard
+  source: src/planet_sim/stages/impacts.py:81
+- name: d_max_km
+  value: 3000000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 1000.0
+  meaning: largest crater drawn
+  source: src/planet_sim/stages/impacts.py:85
+- name: production range
+  values:
+  - 0.01
+  - 300.0
+  unit: '1'
+  said_as:
+    unit: km × size
+    factor: 1.0
+  open: true
+  meaning: production function validity 10 m - 300 km (lunar)
+  source: src/planet_sim/stages/impacts.py:94-95
+  note: 'unit as the code says it: ''km × size''; SI conversion unverified'
+- name: chronology grid
+  value: 4000.0
+  unit: '1'
+  said_as:
+    unit: count
+    factor: 1.0
+  meaning: time samples for the age CDF
+  source: src/planet_sim/stages/impacts.py:97
+- name: bin factor
+  value: 1.4142135623730951
+  unit: '1'
+  meaning: diameter bin width
+  source: src/planet_sim/stages/impacts.py:102
+- name: d_min
+  value: 20000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 1000.0
+  meaning: the smallest crater drawn and kept (a relief feature); smaller ones are the meshers' to draw on demand
+  source: planet-forge models/impacts/production.rs (tools/impacts.py drew from 5 km)
+  note: Earth's crater record is complete to about 20 km (Grieve and Shoemaker 1994); at 5 km a forward run stored ~1e5 craters
+    through the heavy bombardment
+random_draws:
+- 'rng passed in (tools: seeded per world; default default_rng(1)): Poisson per bin, uniform for diameter inverse CDF, Beta
+  + uniform for ages, normal ×3 for positions'
+invariants:
+- count per bin ≤ saturation when saturated
+- ages ≤ surface age
+depends_on:
+- planet-process.impactor-scaling
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform src/planet_sim/stages/impacts.py:n1 (52-54), production (57-60), draw (84-136); saturate (139-156)
+    unused
+  state: reference
+- where: planet-forge crates/forge-core/src/models/impacts/production.rs
+  state: current
+  note: planet-forge port (geology line, merged in forge main 338c9ce)
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - params
+  tier: sourced
+  note: 'planets, 17 Oct 2026: planet-forge geology port (models/geology, models/impacts), read from planet-sim-landform 1df4daf.'
+  source: Grieve, R. A. F. and Shoemaker, E. M. (1994), The record of past impacts on Earth, in Hazards due to comets and
+    asteroids, 417-462

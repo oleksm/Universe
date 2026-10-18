@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../schema/material.schema.yaml
+identity:
+  key: material.soda-lime-glass
+  name: Soda-lime glass
+  class: glass
+mass:
+  density: 2500.0
+thermal:
+  max_service_temperature: 573.15
+basis:
+  - { of: [mass, thermal], tier: sourced, review: true, source: "Float glass, from memory: about 2,500 kg/m3", note: "Window and curtain wall glass; toughened or laminated where people pass." }

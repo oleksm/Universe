@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.time-before-present
+  name: Time before present
+  about: 'The clock as time before the present (the run profile''s star_age less the time since formation): the recent epoch''s
+    cycles are a function of it.'
+unit: s
+per: global
+producer:
+  where: stages/recent.py run
+  key: t_kyr
+levels:
+- planet-level.planet
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge climate port (models/climate, models/ice), read from planet-sim-landform 1df4daf.'

@@ -1,0 +1,659 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+# Written by tools/standards/kit_works.py: change it there.
+identity:
+  key: module.cable-works
+  name: Cable works
+  step: Make cable and wire
+  description: 'Strands drawn copper wire into cores, extrudes their insulation and sheaths, lays the cores up and winds the cable onto drums: power cables, flexible cables, installation cables and hook-up wire.'
+physical:
+  length: 240
+  width: 40
+  height: 15
+staff:
+- profession: profession.plant-operator
+  count: 6
+- profession: profession.machinist
+  count: 2
+- profession: profession.technician
+  count: 2
+recipes:
+- makes: stock.kit-cable-11kv-500mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.7328
+  - item: stock.al6061-pl-5
+    quantity: 0.205
+  - item: good.polyethylene
+    quantity: 0.0896
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0213
+  - item: stock.al6061-scrap
+    quantity: 0.006
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-132kv-240mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: good.polyethylene
+    quantity: 0.4124
+  - item: stock.cu-wire-2
+    quantity: 0.3929
+  - item: stock.al6061-pl-5
+    quantity: 0.2124
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0114
+  - item: stock.al6061-scrap
+    quantity: 0.0062
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-33kv-120mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: good.polyethylene
+    quantity: 0.46
+  - item: stock.cu-wire-2
+    quantity: 0.2815
+  - item: stock.al6061-pl-5
+    quantity: 0.2747
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0082
+  - item: stock.al6061-scrap
+    quantity: 0.008
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-33kv-150mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: good.polyethylene
+    quantity: 0.4506
+  - item: stock.cu-wire-2
+    quantity: 0.3115
+  - item: stock.al6061-pl-5
+    quantity: 0.2543
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0091
+  - item: stock.al6061-scrap
+    quantity: 0.0074
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-33kv-185mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: good.polyethylene
+    quantity: 0.4343
+  - item: stock.cu-wire-2
+    quantity: 0.3473
+  - item: stock.al6061-pl-5
+    quantity: 0.2354
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0101
+  - item: stock.al6061-scrap
+    quantity: 0.0069
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-33kv-630mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.5694
+  - item: good.polyethylene
+    quantity: 0.323
+  - item: stock.al6061-pl-5
+    quantity: 0.128
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0166
+  - item: stock.al6061-scrap
+    quantity: 0.0037
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-400v-120mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.5282
+  - item: stock.cu-wire-2
+    quantity: 0.4226
+  - item: good.polyethylene
+    quantity: 0.0769
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0154
+  - item: stock.cu-scrap
+    quantity: 0.0123
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-400v-16mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.8766
+  - item: stock.cu-wire-2
+    quantity: 0.0877
+  - item: good.polyethylene
+    quantity: 0.0638
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0255
+  - item: stock.cu-scrap
+    quantity: 0.0026
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-400v-185mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.5309
+  - item: stock.al6061-pl-5
+    quantity: 0.4247
+  - item: good.polyethylene
+    quantity: 0.0722
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0155
+  - item: stock.al6061-scrap
+    quantity: 0.0124
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-400v-240mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.5925
+  - item: stock.al6061-pl-5
+    quantity: 0.3646
+  - item: good.polyethylene
+    quantity: 0.0708
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0173
+  - item: stock.al6061-scrap
+    quantity: 0.0106
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-400v-25mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.824
+  - item: stock.cu-wire-2
+    quantity: 0.1442
+  - item: good.polyethylene
+    quantity: 0.06
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.024
+  - item: stock.cu-scrap
+    quantity: 0.0042
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-400v-300mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.6418
+  - item: stock.al6061-pl-5
+    quantity: 0.3169
+  - item: good.polyethylene
+    quantity: 0.0692
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0187
+  - item: stock.al6061-scrap
+    quantity: 0.0092
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-400v-35mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.7774
+  - item: stock.cu-wire-2
+    quantity: 0.1749
+  - item: good.polyethylene
+    quantity: 0.0755
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0226
+  - item: stock.cu-scrap
+    quantity: 0.0051
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-400v-400mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.7041
+  - item: stock.al6061-pl-5
+    quantity: 0.2608
+  - item: good.polyethylene
+    quantity: 0.0633
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0205
+  - item: stock.al6061-scrap
+    quantity: 0.0076
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-400v-500mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.7461
+  - item: stock.al6061-pl-5
+    quantity: 0.2227
+  - item: good.polyethylene
+    quantity: 0.0595
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0217
+  - item: stock.al6061-scrap
+    quantity: 0.0065
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-400v-50mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.7228
+  - item: stock.cu-wire-2
+    quantity: 0.2349
+  - item: good.polyethylene
+    quantity: 0.0702
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0211
+  - item: stock.cu-scrap
+    quantity: 0.0068
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-400v-630mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.7876
+  - item: stock.al6061-pl-5
+    quantity: 0.1864
+  - item: good.polyethylene
+    quantity: 0.0543
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0229
+  - item: stock.al6061-scrap
+    quantity: 0.0054
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-400v-70mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.6438
+  - item: stock.cu-wire-2
+    quantity: 0.3058
+  - item: good.polyethylene
+    quantity: 0.0781
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0187
+  - item: stock.cu-scrap
+    quantity: 0.0089
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-400v-95mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.5722
+  - item: stock.cu-wire-2
+    quantity: 0.3719
+  - item: good.polyethylene
+    quantity: 0.0833
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0167
+  - item: stock.cu-scrap
+    quantity: 0.0108
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-6p6kv-185mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.5475
+  - item: stock.al6061-pl-5
+    quantity: 0.3712
+  - item: good.polyethylene
+    quantity: 0.1081
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0159
+  - item: stock.al6061-scrap
+    quantity: 0.0108
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-6p6kv-400mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.6966
+  - item: stock.al6061-pl-5
+    quantity: 0.2382
+  - item: good.polyethylene
+    quantity: 0.0925
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0203
+  - item: stock.al6061-scrap
+    quantity: 0.0069
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-6p6kv-50mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.5886
+  - item: stock.cu-wire-2
+    quantity: 0.3237
+  - item: good.polyethylene
+    quantity: 0.1143
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0171
+  - item: stock.cu-scrap
+    quantity: 0.0094
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-6p6kv-630mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.7736
+  - item: stock.al6061-pl-5
+    quantity: 0.1738
+  - item: good.polyethylene
+    quantity: 0.0802
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0225
+  - item: stock.al6061-scrap
+    quantity: 0.0051
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-6p6kv-70mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.5351
+  - item: stock.cu-wire-2
+    quantity: 0.3745
+  - item: good.polyethylene
+    quantity: 0.1169
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0156
+  - item: stock.cu-scrap
+    quantity: 0.0109
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-6p6kv-95mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.4905
+  - item: stock.cu-wire-2
+    quantity: 0.4292
+  - item: good.polyethylene
+    quantity: 0.1071
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0143
+  - item: stock.cu-scrap
+    quantity: 0.0125
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-flexible-11kv-3x95
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.5889
+  - item: material.epdm-rubber
+    quantity: 0.4283
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0172
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-flexible-690v-4x16
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.6493
+  - item: material.epdm-rubber
+    quantity: 0.3696
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0189
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-flexible-690v-4x35
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.7059
+  - item: material.epdm-rubber
+    quantity: 0.3147
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0206
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-flexible-690v-4x95
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.7547
+  - item: material.epdm-rubber
+    quantity: 0.2672
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.022
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-installation-230v-3x10
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.7123
+  - item: good.polyethylene
+    quantity: 0.3085
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0207
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-installation-230v-3x1p5
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: good.polyethylene
+    quantity: 0.5238
+  - item: stock.cu-wire-2
+    quantity: 0.4905
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0143
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-installation-230v-3x2p5
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.5751
+  - item: good.polyethylene
+    quantity: 0.4417
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0168
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-installation-230v-3x4
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.6285
+  - item: good.polyethylene
+    quantity: 0.3898
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0183
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-installation-230v-3x6
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.6824
+  - item: good.polyethylene
+    quantity: 0.3374
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0199
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-installation-400v-5x16
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.7932
+  - item: good.polyethylene
+    quantity: 0.2299
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0231
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-installation-400v-5x2p5
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.6236
+  - item: good.polyethylene
+    quantity: 0.3946
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0182
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-installation-400v-5x6
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.7215
+  - item: good.polyethylene
+    quantity: 0.2995
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.021
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-wire-0p5mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.5886
+  - item: material.ptfe
+    quantity: 0.4286
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0171
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-wire-16mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.8321
+  - item: material.ptfe
+    quantity: 0.1921
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0242
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-wire-1mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.7725
+  - item: material.ptfe
+    quantity: 0.25
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0225
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-wire-2p5mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.731
+  - item: material.ptfe
+    quantity: 0.2903
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0213
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-wire-50mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.9137
+  - item: material.ptfe
+    quantity: 0.1129
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0266
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-wire-6mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.8301
+  - item: material.ptfe
+    quantity: 0.194
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0242
+  rate: 1.5
+  power: 4500000.0
+life: 788940000
+basis:
+- of:
+  - recipes.inputs
+  - recipes.outputs
+  tier: derived
+  review: true
+  note: Each recipe's inputs are the parts of the record its stock supplies, as kg a kg; each material as the mill stock or good other works make of it; 3% of cut metal lost as scrap (invented). A material no works makes yet is taken
+    as the material itself.
+- of:
+  - physical
+  - recipes.rate
+  - recipes.power
+  tier: invented
+  review: true
+  note: Its size, rate and power chosen for the kind of plant; to be reviewed.
+- of:
+  - staff
+  tier: invented
+  review: true
+  note: 'Coarse: by the kind of plant, not this one; to be reviewed.'
+- of:
+  - life
+  rule: rule.life-plant

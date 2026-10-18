@@ -1,0 +1,200 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.glacial-cycles
+  name: 'Recent epoch climate cycles: glaciality, temperature shift and sea level'
+  about: 'A prescribed orbital forcing. glaciality g(t) in [0,1]: before 1,000 kyr ago 41-kyr cycles g = 0.55 (0.5 - 0.5 cos(2
+    pi f)), f = (-t mod 41)/41; after (Mid-Pleistocene Transition) 100-kyr sawtooth cycles that build over 85 % and terminate
+    over 15 %, f = ((HOLO_KYR - t) mod 100)/100, g = f/0.85 or (1-f)/0.15, and 0 in the last HOLO_KYR. Sea level = sea0 -
+    SEA_DROP g (Lambeck et al. 2014). Temperature shift dT = -(GLACIAL_DT + POLAR_GAIN 6 sin^2(lat)) g, applied after CC.run
+    (which runs with dT = 0 on z + H/8: the ice surface''s height feedback at 1/8).'
+area: ice
+clock:
+  when: 'recent epoch: once, after the plates reach the present, 260 steps of DT_KYR = 10 kyr from 2,600 kyr to 10 kyr ago
+    on the final relief zr with sea0 = 0; run by planet-trees-pgs2/tools/planet_form.py:561-574 when SIM_RECENT=1 (default:
+    SIM_COUPLED); outputs written as r_<key> into the last ck_??_*kyr_ctx.npz (needs CONTEXT=1)'
+  step: 315576000000.0
+  step_said:
+    unit: kyr
+    factor: 31557600000.0
+reads:
+- name: t_kyr
+  unit: kyr before present
+  field: planet-field.time-before-present
+- name: lat
+  unit: rad
+writes:
+- name: g
+  unit: 0-1
+  meaning: glaciality
+  field: planet-field.glaciality
+- name: sea
+  unit: m
+  meaning: shifted sea level
+  field: planet-field.glacial-sea-offset
+- name: T
+  unit: degC
+  meaning: climate + dT
+  field: planet-field.glacial-cooling
+- name: sea_curve (r_sea_curve)
+  unit: rows [kyr ago, g, m]
+  meaning: sea-level curve
+  field: planet-field.sea-level-curve
+- name: g_prev
+  field: planet-field.glaciality-previous
+  unit: '1'
+  meaning: last step's glaciality
+- name: T (polar)
+  field: planet-field.glacial-cooling-polar
+  unit: K
+  meaning: the polar part of the cooling (x sin^2 lat)
+- name: time before present
+  field: planet-field.time-before-present
+  unit: s
+  meaning: the run profile's star_age less the clock
+params:
+- name: DT_KYR
+  value: 315576000000.0
+  unit: s
+  said_as:
+    unit: kyr
+    factor: 31557600000.0
+  meaning: recent step
+  source: stages/recent.py:22
+  note: 'docstring says ~20,000-year steps: stale'
+- name: SPAN_KYR
+  value: 82049760000000.0
+  unit: s
+  said_as:
+    unit: kyr
+    factor: 31557600000.0
+  meaning: recent epoch span (Quaternary)
+  source: stages/recent.py:23
+- name: SEA_DROP
+  value: 120.0
+  unit: m
+  meaning: sea-level fall at full glacial
+  source: stages/recent.py:24
+  note: Lambeck et al. 2014
+- name: GLACIAL_DT
+  value: 6.0
+  unit: K
+  meaning: global cooling at full glacial
+  source: stages/recent.py:25
+- name: POLAR_GAIN
+  value: 1.0
+  unit: '1'
+  said_as:
+    unit: dimensionless
+    factor: 1.0
+  open: true
+  meaning: extra cooling factor x 6 K x sin^2(lat)
+  source: stages/recent.py:26
+  note: 'unit as the code says it: ''dimensionless''; SI conversion unverified'
+- name: HOLO_KYR
+  value: 315576000000.0
+  unit: s
+  said_as:
+    unit: kyr
+    factor: 31557600000.0
+  meaning: warm present since the last termination
+  source: stages/recent.py:29
+- name: 'inline: MPT'
+  value: 31557600000000.0
+  unit: s
+  said_as:
+    unit: kyr before present
+    factor: 31557600000.0
+  meaning: switch from 41-kyr to 100-kyr cycles
+  source: stages/recent.py:44
+  note: 'unit as the code says it: ''kyr before present''; SI conversion unverified'
+- name: 'inline: cycle periods'
+  values:
+  - 1293861600000.0
+  - 3155760000000.0
+  unit: s
+  said_as:
+    unit: kyr
+    factor: 31557600000.0
+  meaning: obliquity-like and eccentricity-like periods
+  source: stages/recent.py:48,50
+- name: 'inline: build share'
+  value: 0.85
+  unit: '1'
+  said_as:
+    unit: dimensionless
+    factor: 1.0
+  open: true
+  meaning: '100-kyr cycle: build 85 %, terminate 15 %'
+  source: stages/recent.py:49
+  note: 'unit as the code says it: ''dimensionless''; SI conversion unverified'
+- name: 'inline: 41-kyr amplitude'
+  value: 0.55
+  unit: '1'
+  said_as:
+    unit: glaciality
+    factor: 1.0
+  open: true
+  meaning: peak g of the early cycles
+  source: stages/recent.py:51
+  note: 'unit as the code says it: ''glaciality''; SI conversion unverified'
+- name: 'inline: polar factor'
+  value: 6.0
+  unit: K
+  meaning: multiplied by POLAR_GAIN sin^2(lat)
+  source: stages/recent.py:64
+- name: 'inline: ice height feedback'
+  value: 0.125
+  unit: '1'
+  said_as:
+    unit: dimensionless
+    factor: 1.0
+  open: true
+  meaning: climate run on z + H/8
+  source: stages/recent.py:68
+  note: 'comment says ''at a third'': mismatch with /8; unit as the code says it: ''dimensionless''; SI conversion unverified'
+tables:
+- name: recent-sea-curve
+  source: stages/recent.py:63, 125
+  columns:
+  - kyr before present
+  - glaciality
+  - sea offset (m)
+  rows: []
+  note: 'computed at run time: 260 rows, t = 2600, 2590, ..., 10 kyr (r_sea_curve; forge: the table planet-field.sea-level-curve)'
+random_draws:
+- none
+invariants:
+- 0 <= g <= 1
+- sea0 - 120 m <= sea <= sea0
+- g = 0 at the last step (t = 10 kyr)
+depends_on:
+- planet-process.coupled-climate
+note: Grid points are multiples of 10 kyr, so the recorded last glacial maximum is the step at 30 kyr (g = 0.94); the comments
+  say ~15-20 or ~25 kyr.
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/recent.py:glaciality (lines 40-51); stages/recent.py:run (61-69)
+  state: reference
+- where: planet-forge crates/forge-core/src/models/ice/cycles.rs
+  state: current
+  note: planet-forge port (climate line, merged in forge main 736031c)
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
+    the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  - tables
+  - clock
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge climate port (models/climate, models/ice), read from planet-sim-landform 1df4daf.'

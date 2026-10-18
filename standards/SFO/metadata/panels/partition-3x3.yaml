@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=../../schema/panel.schema.yaml
+# Written by tools/standards/building_kit.py: change it there.
+identity:
+  key: panel.partition-3x3
+  name: Partition panel, 3 x 3 m
+  description: 'A thin steel-faced panel dividing rooms inside: no weather, some sound.'
+kind: partition
+site: air
+cell:
+- 3.0
+- 3.0
+thickness: 0.05
+physical:
+  length: 3.0
+  width: 0.05
+  height: 3.0
+  mass: 94.1
+built_of:
+- what: Steel faces
+  item: material.structural-steel-a36
+  mass: 70.7
+  note: two 0.5 mm coated steel skins
+- what: Insulation core
+  item: material.pir-foam
+  mass: 14.4
+  note: 50 mm of PIR
+- what: Edge frame and fixings
+  item: material.structural-steel-a36
+  mass: 9.0
+  note: its edge channel and the bolts to the frame's nodes
+template: template.partition
+basis:
+- of:
+  - built_of
+  - physical
+  - u_value
+  - load
+  tier: invented
+  review: true
+  note: From memory of modular building practice; to be sourced.

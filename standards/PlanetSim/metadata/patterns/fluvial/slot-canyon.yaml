@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.valley.slot-canyon
+  name: Slot canyon
+  about: Slot canyon.
+family: fluvial
+factors:
+- factor: planet-factor.rock-type
+  weight: 3
+  why: massive uniform sandstone (Navajo, Wingate) or limestone; rarely granite/basalt
+- factor: planet-factor.rock-fracture
+  weight: 3
+  why: single joints localize incision; depth:width 10-100
+- factor: planet-factor.clim-storm
+  weight: 3
+  why: intense convective flash floods abrade and pluck
+- factor: planet-factor.clim-arid
+  weight: 1
+  why: low rainfall, sparse cover preserves narrow walls
+- factor: planet-factor.sed-supply
+  weight: 1
+  why: sand/gravel tools carried by floods do the abrasion
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: plateau uplift provides gradient for ephemeral streams
+- factor: planet-factor.base-level
+  weight: 1
+  why: incision driven by trunk canyon lowering
+- factor: planet-factor.time
+  weight: 1
+  why: 1 kyr-1 Myr
+vocabulary_id: 59
+sources:
+- https://en.wikipedia.org/wiki/Slot_canyon
+library_status: written
+source: fluvial.valley.slot_canyon
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

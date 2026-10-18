@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.lacustrine.basin.glacial
+  name: Glacial lake basin
+  about: Glacial lake basin.
+family: lacustrine
+factors:
+- factor: planet-factor.ice-extent
+  weight: 3
+  why: Past glaciation needed for overdeepening and moraine dams
+- factor: planet-factor.ice-flow
+  weight: 1
+  why: Fast flow overdeepens troughs
+- factor: planet-factor.ice-thermal
+  weight: 3
+  why: Warm-based ice erodes basins
+- factor: planet-factor.rock-fracture
+  weight: 3
+  why: Fractured rock zones are preferentially overdeepened
+- factor: planet-factor.sed-supply
+  weight: 1
+  why: Moraine dams; buried ice gives kettles
+- factor: planet-factor.relief-inherited
+  weight: 1
+  why: Pre-glacial valleys guide basins
+- factor: planet-factor.time
+  weight: 1
+  why: Infill over 10-20 kyr since deglaciation
+vocabulary_id: 99
+sources:
+- https://en.wikipedia.org/wiki/Glacial_lake
+library_status: written
+source: lacustrine.basin.glacial
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

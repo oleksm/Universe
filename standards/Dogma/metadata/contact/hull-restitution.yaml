@@ -1,12 +1,16 @@
 # yaml-language-server: $schema=../../schema/law.schema.yaml
 identity:
   key: law.hull-restitution
-  name: "Hull rebound"
-  symbol: "e"
+  name: Hull rebound
+  symbol: e
   label: HULL_RESTITUTION
   section: dogma.contact
 value: 0.3
 kind: simplified
-note: "The share of its speed into the ground a hull keeps going back out after striking it (the coefficient of restitution); the rest goes into crumpling and heat."
+note: The share of its speed into the ground a hull keeps going back out after striking it (the coefficient of restitution); the rest goes into crumpling and heat.
 basis:
-  - { of: [value], tier: invented, review: true, note: "The game's earlier bump restitution, 0.3; a hull on rock is inelastic." }
+- of:
+  - value
+  tier: sourced
+  review: true
+  note: 'Structures striking hard ground rebound little: vehicle crash restitution is about 0.1-0.3 at crash speeds (from memory), higher at a gentle knock. 0.3 the upper end, kept from the game''s earlier bump.'

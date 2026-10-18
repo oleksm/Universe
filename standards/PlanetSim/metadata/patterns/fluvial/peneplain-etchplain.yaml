@@ -1,0 +1,54 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.landscape.peneplain-etchplain
+  name: Peneplain / etchplain (low-relief erosion surface)
+  about: Peneplain / etchplain (low-relief erosion surface).
+family: fluvial
+factors:
+- factor: planet-factor.tect-setting
+  weight: 3
+  why: cratonic shield, long tectonic stability
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: quiescence to form; later uplift exposes/dissects it
+- factor: planet-factor.base-level
+  weight: 3
+  why: graded to sea level or raised local base level
+- factor: planet-factor.clim-history
+  weight: 1
+  why: humid phases etch, arid phases pediplanate
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: humid tropical deep chemical weathering for etchplains
+- factor: planet-factor.rock-type
+  weight: 1
+  why: crystalline basement; weathering front irregularities leave inselbergs
+- factor: planet-factor.regolith
+  weight: 1
+  why: deep saprolite stripped to make etchplain
+- factor: planet-factor.ice-thermal
+  weight: 1
+  why: cold-based ice preserves uplifted surfaces
+- factor: planet-factor.time
+  weight: 3
+  why: 10-500 Myr; local relief 5-200 m
+vocabulary_id: 49
+sources:
+- https://en.wikipedia.org/wiki/Peneplain
+library_status: written
+source: fluvial.landscape.peneplain_etchplain
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

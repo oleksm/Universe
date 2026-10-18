@@ -1,0 +1,65 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.glacial.landscape.alpine
+  name: Alpine glaciated landscape
+  about: Alpine glaciated landscape.
+family: glacial
+factors:
+- factor: planet-factor.ice-extent
+  weight: 3
+  why: ELA must intersect the range; summits cluster near ELA (buzz-saw); cycle count sets maturity
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: uplift must raise range above ELA; fast uplift outpaces buzz-saw, leaves peaks far above ELA
+- factor: planet-factor.tect-setting
+  weight: 1
+  why: orogens and uplifted rift shoulders; relief 1000-4000 m
+- factor: planet-factor.relief-inherited
+  weight: 3
+  why: fluvial valley network becomes dendritic trough network; valley heads become cirques
+- factor: planet-factor.clim-temp
+  weight: 1
+  why: cold enough for ELA in range; frost shattering sharpens ridges above ice
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: snowfall sets ELA height and glacier size; wet ranges glaciate lower
+- factor: planet-factor.clim-history
+  weight: 1
+  why: repeated Quaternary glacial-interglacial cycles (100 kyr) deepen and widen forms
+- factor: planet-factor.rock-type
+  weight: 1
+  why: jointed crystalline rock gives sharpest arêtes/horns; weak rock gives subdued forms
+- factor: planet-factor.rock-fracture
+  weight: 1
+  why: joint sets guide trough and cirque walls, frost quarrying of crests
+- factor: planet-factor.ice-thermal
+  weight: 1
+  why: warm-based valley glaciers erode; cold-based summit ice preserves
+- factor: planet-factor.aspect
+  weight: 1
+  why: cirques and glaciers biased to poleward/lee slopes
+- factor: planet-factor.time
+  weight: 1
+  why: 100-2600 kyr of glaciation for full alpine relief
+vocabulary_id: 81
+sources:
+- https://www.antarcticglaciers.org/glacial-geology/glacial-landforms/glacial-erosional-landforms/cirques/
+- https://en.wikipedia.org/wiki/Cirque
+- https://en.wikipedia.org/wiki/Fjord
+library_status: written
+source: glacial.landscape.alpine
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

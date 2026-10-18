@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/planet-layer.schema.yaml
+identity:
+  key: planet-layer.lake
+  name: Lake cover
+  about: Lake cover of a sample (0 none).
+version: 1
+classes:
+- id: 1
+  name: open lake
+  source: '1'
+- id: 2
+  name: closed lake
+  source: '2'
+- id: 3
+  name: playa
+  source: '3'
+levels:
+- planet-level.planet
+- planet-level.cluster
+basis:
+- of:
+  - classes
+  tier: derived
+  note: 'docs/sim-arrays.md: the sim''s ids; the registry''s are the same where the sim''s 0 is none, its own plus 1 otherwise.'
+status: draft

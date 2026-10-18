@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: connector.collector-250a
+  name: Collector trolley, 250 A
+  description: The sliding shoes a moving machine draws power by from a conductor rail, sprung against the conductors, on a towing arm.
+kind: collector
+size: 0.00025
+rating:
+  voltage: 690
+  current: 250
+physical:
+  length: 0.35
+  width: 0.15
+  height: 0.25
+  mass: 3.5
+built_of:
+- what: Shoes
+  item: material.copper
+  mass: 0.525
+  note: copper-graphite, as copper here
+- what: Trolley and arm
+  item: material.structural-steel-a36
+  mass: 2.1
+- what: Insulators
+  item: material.polyethylene-uhmw
+  mass: 0.875
+provides: both
+template: template.collector
+basis:
+- of:
+  - physical
+  tier: invented
+  review: true
+  note: From memory of makers' catalogues; to be sourced.
+interface: interface.conductor-rail-250a

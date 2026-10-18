@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.plate-rotation
+  name: Plate rotation
+  about: 'Rotation of the plate since the run''s start, body frame: a unit quaternion (w, x, y, z). A point fixed in the plate''s own frame is at rotation . point; relief features pinned to their plate ride with it. A new plate from
+    a rift inherits its parent''s; at a weld the survivor keeps its own.'
+unit: '1'
+producer:
+  where: planet-forge crates/forge-core/src/models/plates/motion.rs
+  file: checkpoint
+  key: tables/plates/planet-field.plate-rotation
+  note: 4 columns (w, x, y, z)
+per: plate
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: asked by the relief line (feature pins in integer cm in their plate''s frame); no Python counterpart (the Python moved its relief vectors with the particles).'

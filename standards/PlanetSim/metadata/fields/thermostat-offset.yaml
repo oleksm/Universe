@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry_extra.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-field.thermostat-offset
+  name: Thermostat offset
+  about: 'The carbon thermostat''s global temperature offset used in the last coupled step: the same value everywhere.'
+unit: K
+per: global
+producer:
+  where: stages/coupled_climate.py
+  file: ctx
+  key: h_dT_global
+amount: snapshot
+cautions:
+- saved per sample, one value repeated
+status: draft
+basis:
+- of:
+  - identity
+  - producer
+  - unit
+  tier: derived
+  note: 'planets, 17 Oct 2026: from the Python sim''s inventory (planet-forge docs/registry-migration/surface.json), read
+    from the code.'

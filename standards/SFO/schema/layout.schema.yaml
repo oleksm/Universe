@@ -19,7 +19,7 @@ properties:
       key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
       description: { type: string }
-  stands_for: { type: string, x-ref: [module], description: "The industrial module (SFO 10) it builds; its rate is the module's where the site is the one the module was set for." }
+  stands_for: { type: string, x-ref: [module, building], description: "The industrial module (SFO 10) it builds, or the building it is (a building laid of the kit); its rate is the module's where the site is the one the module was set for." }
   site:
     type: object
     additionalProperties: false
@@ -41,6 +41,18 @@ properties:
         at: { $ref: "#/definitions/point", description: "The middle of the bay on its floor." }
         turn: { type: number, x-unit: "deg", description: "The unit's turn about z from the layout's x, degrees." }
         note: { type: string }
+  rooms:
+    description: "A building layout's rooms: each a 6 m room furnished by an arrangement of single pieces."
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [id, arrangement, at]
+      properties:
+        id: { type: string }
+        arrangement: { type: string, x-ref: [arrangement] }
+        at: { $ref: "#/definitions/point", description: "The middle of the room on its floor." }
+        turn: { type: number, x-unit: "deg" }
   mobile:
     description: "Units that move on a link (a ladle car on its rail): where each stands at rest."
     type: array
@@ -52,6 +64,12 @@ properties:
         unit: { type: string, x-ref: [unit] }
         rides: { type: string, description: "The link it runs on, by its name." }
         at: { $ref: "#/definitions/point" }
+        range: { type: array, minItems: 2, maxItems: 2, items: { $ref: "#/definitions/point" }, description: "The two farthest places it stands along its link (its `at` reference point), when it does not run the link's whole length. A fit check sweeps it between them." }
+        straddles: { type: array, items: { type: string }, description: "Runs that pass through it by design, by name (the yard belt through a stacker's tripper, which rides on it)." }
+  ports:
+    description: "The layout's own ports, at its edge: what comes in from and goes out to other layouts or the site (SFO 25). A layout is a unit one level up: two layouts join port to port."
+    type: array
+    items: { $ref: "unit.schema.yaml#/definitions/port" }
   links:
     description: "What joins the bays, laid by the layout: each a line from one point to another, its mass by length."
     type: array
@@ -61,6 +79,37 @@ properties:
       required: [kind, from, to, length, mass]
       properties:
         kind: { enum: [conveyor, duct, rail, busbar, pipe, cable, road], description: "road: a paved lane that wheeled units (forklifts, trucks) run on." }
+        run: { type: string, x-ref: [run], description: "The class of run it is laid of (SFO 25), by key: its straights, elbows, tees, supports and connectors. Its mass is then the run's, by length and fittings." }
+        ends:
+          type: array
+          items: { type: string }
+          minItems: 2
+          maxItems: 2
+          description: "What its two ends join, from and to: `<bay>:<port>` (a unit's port), `edge:<port>` (one of the layout's own ports) `tee:<run name>` (it branches off that run, its end lying on that run's path) `onto:<run name>` (a belt's head dropping onto that belt or conveyor, 0.5 m over its path) or `jacket:<run name>` (a pipe ending on that jacketed duct's water jacket, its end on the duct's path). from, to and via are then where those are."
+        reversible: { type: boolean, description: "A shuttle belt that runs either way: both its ends deliver (a port it drops into, or a belt it drops onto)." }
+        taps: { type: array, items: { type: string }, description: "Ports taken off it along its length by a tee (`<bay>:<port>`): each lies on its path." }
+        count: { type: integer, minimum: 1, description: "Circuits laid side by side on one path (cables)" }
+        reducers:
+          description: "Concentric reducers at its ends down to a smaller port of the same class (SFO 26 adapters): which end, the port's connector, the cone's length and its mass (in the link's)."
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [end, to]
+            properties:
+              end: { type: integer, minimum: 0, maximum: 1, description: "0 its from end, 1 its to end" }
+              to: { type: string, x-ref: [connector] }
+              length: { type: number, exclusiveMinimum: 0, x-unit: m }
+              mass: { type: number, x-unit: kg }
+        fittings:
+          type: object
+          additionalProperties: false
+          description: "What it is laid of, counted from its path by the generator."
+          properties:
+            elbows: { type: integer, minimum: 0 }
+            tees: { type: integer, minimum: 0 }
+            supports: { type: integer, minimum: 0 }
+            connectors: { type: integer, minimum: 0 }
         name: { type: string }
         from: { $ref: "#/definitions/point" }
         to: { $ref: "#/definitions/point" }
@@ -70,6 +119,7 @@ properties:
         mass: { type: number, exclusiveMinimum: 0, x-unit: "kg" }
         power: { type: number, minimum: 0, x-unit: "W" }
         heat: { type: number, minimum: 0, x-unit: "W", description: "W this link gives the cooling loop (a water-cooled duct)" }
+        width: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "A road's paved width. A run crossing it keeps 4.5 m clear over it, or passes under it in a culvert; no unit stands on it." }
         note: { type: string }
   frame:
     description: "The hall or open frame, of standard struts (SFO 13) on its grid, and what clads it."
@@ -81,6 +131,8 @@ properties:
       shape: { type: string, description: "Which cells are filled: walls one cell thick and a roof one cell deep, and the openings." }
       openings: { type: array, items: { type: array, items: { type: number, x-unit: "m" }, minItems: 6, maxItems: 6 }, description: "[x0, y0, z0, x1, y1, z1] of each door left open in the lattice" }
       members: { type: array, items: { type: object, additionalProperties: false, required: [item, count], properties: { item: { type: string, x-ref: [stock] }, count: { type: integer, minimum: 1 }, where: { type: string } } } }
+      panels: { type: array, items: { type: object, additionalProperties: false, required: [panel, count], properties: { panel: { type: string, x-ref: [panel] }, count: { type: integer, minimum: 1 }, where: { type: string } } }, description: "The building panels on its faces (a building layout)." }
+      panels_mass: { type: number, x-unit: "kg" }
       cladding: { type: object, additionalProperties: false, properties: { item: { type: string, x-ref: [stock] }, area: { type: number, x-unit: "m2" }, mass: { type: number, x-unit: "kg" } } }
       carries: { type: array, items: { type: string }, description: "Plant hung on the frame (a crane), by unit key." }
       mass: { type: number, x-unit: "kg" }
@@ -102,6 +154,7 @@ properties:
       against_module: { type: string, description: "How it compares with the module it stands for." }
   staff: { $ref: "../../common.schema.yaml#/definitions/staff" }
   visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
+  model_requests: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/model_request" }, description: "Work asked of its installed model, open until a later version answers it." }
   revision:
     $ref: "../../common.schema.yaml#/definitions/record_revision"
     default: { status: draft, owner: registry, on_conflict: propose, because: "A trial layout (SFO 24), worked out by tools/standards/plants.py.", ask: docs/proposals/modular-factories.md }

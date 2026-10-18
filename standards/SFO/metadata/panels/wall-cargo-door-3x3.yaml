@@ -1,0 +1,65 @@
+# yaml-language-server: $schema=../../schema/panel.schema.yaml
+# Written by tools/standards/building_kit.py: change it there.
+identity:
+  key: panel.wall-cargo-door-3x3
+  name: Pressure wall panel with a cargo door, 3 x 3 m
+  description: 'A pressure wall panel with a 2.4 x 2.4 m plug door opening inward on heavy hinges: a vehicle or stock airlock''s door, two cells apart with the chamber between.'
+kind: wall
+site: airless
+cell:
+- 3.0
+- 3.0
+thickness: 0.2
+opening:
+  kind: pressure-cargo-door
+  width: 2.4
+  height: 2.4
+  sill: 0.1
+  vehicles: true
+u_value: 0.1
+load: 101300.0
+physical:
+  length: 3.0
+  width: 0.2
+  height: 3.0
+  mass: 615.7
+built_of:
+- what: Pressure skin
+  item: material.aluminium-alloy-6061
+  mass: 43.7
+  note: 5 mm welded 6061
+- what: Stiffeners
+  item: material.aluminium-alloy-6061
+  mass: 75.9
+  note: 14 T-stiffeners 155 mm deep at 0.23 m
+- what: Edge channel, seals and bolts
+  item: material.aluminium-alloy-6061
+  mass: 72.0
+  note: a welded edge channel and two O-ring grooves on the frame's beams, 6 kg/m
+- what: Multi-layer insulation
+  item: material.polyimide-film
+  mass: 1.9
+  note: about twenty layers, outside the skin
+- what: Cargo door leaf
+  item: material.aluminium-alloy-6061
+  mass: 206.1
+  note: a 5 mm skin on 11 ribs 150 mm deep, opening inward
+- what: Hinges, latches and seal frame
+  item: material.structural-steel-a36
+  mass: 96.0
+  note: forged hinges, dogs all round, the door's seal land (invented)
+- what: Door surround
+  item: material.aluminium-alloy-6061
+  mass: 120.0
+  note: a heavy welded ring frame round the opening (invented)
+template: template.wall-cargo-door
+basis:
+- of:
+  - built_of
+  - physical
+  - u_value
+  - load
+  tier: derived
+  review: true
+  note: 'Holds 101.3 kPa against vacuum: 6061 welded at 110 MPa, the skin between stiffeners 0.23 m apart as a clamped strip (p b^2 / 2 t^2), each stiffener a fixed-ended T over the cell''s short side (w L^2 / 12) with the skin its
+    other flange, as the cargo cabins (equipment/cargo-cabin-s1.yaml). Edge channel, seals, door hardware and the insulation from memory; to be sourced.'

@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schema/template.schema.yaml
+# Written by tools/standards/building_kit.py: change it there.
+identity:
+  key: template.roof
+  name: Roof panels
+  description: 'Roof panels: one look for every panel of the family, scaled to each record''s cell (docs/asset-contract.md, Templates).'
+family: panel
+draws: model
+scales_by:
+- physical
+reference: panel.roof-3x3
+members: 1
+basis:
+- of:
+  - draws
+  - scales_by
+  tier: derived
+  note: 'The owner, 2026-10-17: buildings as layouts; one template a panel family (building_kit.py).'
+visual:
+  format: freefall-model/1
+  path: models/roof/v1
+  manifest_sha256: 007659fa6517252924d0541988de54e498c72e331776950ae49591aba95096e9
+  version: 1
+  triangles: 192

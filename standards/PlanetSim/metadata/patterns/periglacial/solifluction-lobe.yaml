@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.periglacial.slope.solifluction-lobe
+  name: Solifluction lobes and sheets
+  about: Solifluction lobes and sheets.
+family: periglacial
+factors:
+- factor: planet-factor.clim-temp
+  weight: 3
+  why: MAAT -20 to +7 C; seasonal or diurnal freeze-thaw
+- factor: planet-factor.permafrost
+  weight: 1
+  why: Permafrost table keeps thawed layer saturated; also seasonal frost
+- factor: planet-factor.groundwater
+  weight: 1
+  why: Saturated active layer from snowmelt
+- factor: planet-factor.regolith
+  weight: 3
+  why: Fine frost-susceptible regolith (silt-rich)
+- factor: planet-factor.slope-relief
+  weight: 3
+  why: Slopes roughly 5-20 deg
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: Turf-banked vs stone-banked lobes; vegetation stabilises fronts
+- factor: planet-factor.time
+  weight: 1
+  why: cm/yr; lobes develop over 0.1-10 kyr
+vocabulary_id: 113
+sources:
+- https://en.wikipedia.org/wiki/Solifluction
+- https://www.antarcticglaciers.org/glacial-geology/glacial-landforms/periglaciation/periglacial-landforms/
+library_status: written
+source: periglacial.slope.solifluction_lobe
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

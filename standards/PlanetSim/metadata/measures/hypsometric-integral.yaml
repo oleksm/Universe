@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/planet-measure.schema.yaml
+identity:
+  key: planet-measure.hypsometric-integral
+  name: Hypsometric integral
+  about: 'Hypsometric integral: compares generated ground with real ground.'
+unit: '1'
+how: mean height above the lowest, over the relief
+tool: tools/terrain_compare.py
+levels:
+- planet-level.square
+- planet-level.detail
+basis:
+- of:
+  - identity
+  tier: derived
+  note: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+- of:
+  - reference
+  tier: invented
+  note: No reference measured yet.
+status: draft

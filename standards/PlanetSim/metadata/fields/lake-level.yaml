@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.lake-level
+  name: Lake level
+  about: The surface height of the lake a sample lies in.
+unit: m
+per: sample
+producer:
+  where: stages/coupled.py
+  file: ctx
+  key: h_lake_level
+missing: 'NaN off lakes: use nanmin and nanmax'
+status: draft
+basis:
+- of:
+  - identity
+  - producer
+  - unit
+  tier: derived
+  note: 'planets, 17 Oct 2026: from the Python sim''s inventory (planet-forge docs/registry-migration/surface.json), read
+    from the code.'
+cautions:
+- 'The coupled step''s lake surface above the sea (one value per lake; NaN off lakes and on playas): what forge''s river-discharge
+  writes. planet-field.lake-surface is the checkpoint''s water surface derived from it.'

@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-conductor-rail-500a
+  code: KIT-CONDUCTOR-RAIL-500A
+  name: Conductor rail, 500 A, 690 V, a 6 m length
+  traded_as: market.machinery
+  form: length
+package: package.bar-bundle
+made_from:
+- item: material.copper
+- item: material.polyethylene-uhmw
+- item: material.structural-steel-a36
+size:
+  length: 6.0
+  width: 0.12
+  height: 0.2
+supplies:
+  item: run.conductor-rail-500a
+  length: 6.0
+physical:
+  mass: 42.6
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: 'a 6 m length of run.conductor-rail-500a: its mass a metre times the length sold.'

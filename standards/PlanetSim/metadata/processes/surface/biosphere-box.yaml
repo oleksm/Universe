@@ -1,0 +1,226 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.biosphere-box
+  name: Life timeline and atmosphere box model (10 Myr steps, CO2/O2)
+  about: 'Life (stage 11), first part: its timeline and the air it makes, as a box model in 10 Myr steps, driven by the other
+    stages: the interior''s heat flow (5), the plates'' land and shelves (7), the star''s brightening (1). Nothing about Earth''s
+    dates is written in: Earth is the test. NOT INVENTORIED IN DETAIL: neither plates.py nor coupled.py imports biosphere.py
+    (directly or through another module); it is used by stages/paleo.py, tools/life.py.'
+area: surface
+clock:
+  when: not part of the coupled planet run (offline tools / bakes)
+params:
+- name: STEP_GYR
+  value: 315576000000000.0
+  unit: s
+  said_as:
+    unit: Gyr
+    factor: 3.15576e+16
+  meaning: unverified (no comment)
+  source: stages/biosphere.py:36
+- name: T_ORIGIN
+  values:
+  - 0.05
+  - 0.3
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: 'Waits (Gyr, exponential means; with a floor), chosen so that Earth''s dates are typical draws: life within ~0.3
+    Gyr of lasting seas (Earth: by ~3.8–4.1 Ga, seas by ~4.4 Ga); oxygenic photosynthesis ~1 Gyr after (Earth: ~3.0–2.7 Ga);
+    complex life ~0.3 Gyr after the oxygen allows it; land plants ~0.15 Gyr after complex life; forests ~0.05 Gyr after plants.'
+  source: stages/biosphere.py:41
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: T_OXYGENIC
+  values:
+  - 0.3
+  - 0.8
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/biosphere.py:42
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: T_EUKARYOTES
+  values:
+  - 0.1
+  - 0.5
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: '(Complex cells (eukaryotes) from a rare merger, some time after the air has oxygen (Earth: ~1.8–1.6 Ga, ~0.6 Gyr
+    after the Great Oxidation); complex life, animals, a long while later still once the oxygen allows them (Earth: ~0.6 Ga):
+    both long, contingent waits.)'
+  source: stages/biosphere.py:46
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: T_COMPLEX
+  values:
+  - 0.2
+  - 0.7
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/biosphere.py:47
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: T_PLANTS
+  values:
+  - 0.05
+  - 0.15
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/biosphere.py:48
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: T_FORESTS
+  values:
+  - 0.02
+  - 0.05
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/biosphere.py:49
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: O2_COMPLEX
+  value: 0.01
+  unit: '1'
+  said_as:
+    unit: PAL (from the code comment; SI conversion not done, unverified)
+    factor: 1.0
+  open: true
+  meaning: 'PAL: sponges'' need (~1% PAL; Mills et al. 2014)'
+  source: stages/biosphere.py:50
+  note: 'unit as the code says it: ''PAL (from the code comment; SI conversion not done, unverified)''; SI conversion unverified'
+- name: O2_ANOXIC
+  value: 1.0e-05
+  unit: '1'
+  said_as:
+    unit: PAL (from the code comment; SI conversion not done, unverified)
+    factor: 1.0
+  open: true
+  meaning: 'PAL: what the air holds before the Great Oxidation'
+  source: stages/biosphere.py:51
+  note: 'unit as the code says it: ''PAL (from the code comment; SI conversion not done, unverified)''; SI conversion unverified'
+- name: F_RED_NOW
+  value: 0.05
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: 'Present-day budget, F_org = 1: of its sinks ~5% the volcanoes'' reductants (Holland 2002: 5–20%), the rest weathering.'
+  source: stages/biosphere.py:54
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: W_OX_NOW
+  value: 0.95
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/biosphere.py:55
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: SEA_WEATHER
+  value: 0.25
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: the sea floor's share of today's CO2 drawdown
+  source: stages/biosphere.py:56
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: SEA_EFOLD_K
+  value: 12.0
+  unit: K
+  meaning: 'Its warmth sensitivity: an e-fold every ~12 K of surface warming (basalt alteration''s activation energy ~92 kJ/mol
+    at the pore waters'' temperatures: Krissansen-Totton et al. 2018), steeper than the land''s (~17 K): what keeps a young
+    world with little land temperate rather than hot.'
+  source: stages/biosphere.py:60
+- name: PLANT_WEATHER
+  value: 2.5
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: land weathering's speed-up by plants (roots, soils)
+  source: stages/biosphere.py:61
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: EUK_BURIAL
+  value: 1.6
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: burial's gain from algae and animals (bigger, faster-sinking matter)
+  source: stages/biosphere.py:62
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: PLANT_BURIAL
+  value: 1.25
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: 'and from land plants (carbon buried on land: coal)'
+  source: stages/biosphere.py:63
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: P_ANOXIC
+  value: 0.5
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: phosphorus left to life while the deep sea is anoxic (the rest on iron)
+  source: stages/biosphere.py:64
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: DEEP_O2
+  values:
+  - 0.1
+  - 0.4
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: '(The deep sea takes oxygen only once the air holds ~10–40% PAL (Canfield 2005; Lyons et al. 2014): phosphorus
+    freed between.)'
+  source: stages/biosphere.py:67
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+random_draws:
+- not inventoried
+used: false
+note: 'unused by plates.py / coupled.py; users: stages/paleo.py, tools/life.py'
+backends:
+- cpu
+implementations:
+- where: 'planet-sim-landform stages/biosphere.py: _interp (79-83), run (86-170)'
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
+    the code at planet-sim-landform 9747f0d-c437724.'

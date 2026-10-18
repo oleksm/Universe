@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.volcanic.depression.caldera
+  name: Caldera (collapse)
+  about: Caldera (collapse).
+family: volcanic
+factors:
+- factor: planet-factor.volc-magma
+  weight: 3
+  why: silicic explosive gives large calderas with ignimbrite; basaltic drainage gives summit pit calderas
+- factor: planet-factor.other-chamber-depth-roof
+  weight: 3
+  why: chamber depth and roof aspect ratio pick piston, piecemeal, trapdoor or downsag
+- factor: planet-factor.tect-setting
+  weight: 1
+  why: arcs and continental extension for large silicic; hotspot shields for basaltic
+- factor: planet-factor.tect-fault
+  weight: 1
+  why: regional stress and faults make calderas elliptical and steer ring faults
+- factor: planet-factor.events
+  weight: 1
+  why: single climactic eruption forms it in hours-days; later post-caldera vents
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: humid climate fills caldera with lake (Crater Lake); arid stays dry
+- factor: planet-factor.other-magma-recharge
+  weight: 1
+  why: renewed magma uplifts floor into resurgent dome
+- factor: planet-factor.time
+  weight: 1
+  why: wall retreat and infill (ignimbrite, lake sediment) with age
+- factor: planet-factor.other-magma-supply
+  weight: 3
+  why: rapid withdrawal of large chamber volume (km3-1000s km3) sets collapse diameter and depth
+vocabulary_id: 132
+sources:
+- https://en.wikipedia.org/wiki/Caldera
+- https://en.wikipedia.org/wiki/Resurgent_dome
+library_status: written
+source: volcanic.depression.caldera
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: connector.clamp-coupling-dn1200, name: Clamp coupling DN 1200, description: 'A sealed, clamped joint between a moving outlet and a fixed 1200 mm duct. To let the outlet move (a sealed furnace tilting to tap or deslag), its slide gate shuts, the clamp opens and the duct''s spool draws back 0.15 m. The outlet''s face then slides across the duct''s, never into it. The gate is the outlet''s; its mass is the unit''s.'}
+kind: clamp-coupling
+size: 1.2
+rating: {pressure: 100000.0, temperature: 773.0}
+sealing: double
+physical: {length: 1.6, width: 1.6, height: 0.23, mass: 1097.7}
+built_of:
+- {what: Flange rings, item: material.structural-steel-a36, mass: 552.4, note: 'two rings 1.60 m across, 40 mm, with a double O-ring seal'}
+- {what: Clamp ring and its drives, item: material.structural-steel-a36, mass: 323.0, note: 'a segmented clamp ring of C jaws round the rings (173 kg measured on blender''s model) and two actuators (150 kg, from memory); it opens in two steps, the jaws out and then the spool back'}
+- {what: Sliding spool, item: material.structural-steel-a36, mass: 53.8, note: 'a 0.15 m spool on the duct''s side, its stroke 0.15 m, sliding over the duct''s end'}
+- {what: Spool lining, item: good.refractory-brick, mass: 167.6, note: 'the refractory tapering from the furnace''s clear bore to the lined duct''s within the spool, measured on blender''s model'}
+- {what: Seals, item: material.silicone-rubber, mass: 0.9, note: the O-rings; silicone rubber stands for them}
+interface: interface.clamp-coupling-dn1200
+provides: both
+template: template.clamp-coupling
+visual:
+  format: "freefall-model/1"
+  path: "models/clamp-coupling-dn1200/v1"
+  manifest_sha256: "1e5da038a201382caa349c6620a1f92162d26d33e38ce0e915d3438bb8d4ca40"
+  version: 1
+  triangles: 6328
+basis:
+- of: [built_of, physical]
+  tier: invented
+  review: true
+  note: Sizes and the clamp's drives from memory of furnace off-gas couplings.

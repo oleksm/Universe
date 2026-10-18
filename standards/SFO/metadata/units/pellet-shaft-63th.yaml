@@ -1,0 +1,184 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.pellet-shaft-63th, name: 'Pellet shaft furnace, 62 t an hour, sealed', description: 'A vertical shaft 4.7 m across inside, sealed, that dries, fires and cools green balls in one bed as they sink through it against a closed loop of nitrogen at 4 bar (with the 4.5% oxygen the recipe takes, from the hydrogen plant''s): the oldest way of firing pellets, here with no air to draw and none to vent. From the bottom: cooling 6 m (the loop''s cold gas comes in under it and leaves it at about 1,150 deg C), soaking 1, firing 3 at about 1300 deg C, preheat 2, drying 2; about 510 t in the bed, some 8 hours from top to bottom. Two torch chambers on its ±x sides at the firing zone, 7 plasma torches of 1.5 MW between them, heat a share of the loop''s gas (5.9 of its 20.7 kg/s) to about 1,350 deg C and blow it in through ports round the shaft; the gas that cooled the pellets carries their heat up into the firing zone, so the new heat is only the module''s 0.5 GJ a tonne. Why 4 bar: at
+    1.6 m/s2 the bed weighs 3.4 kPa a metre, and at 1.2 bar the gas''s drag through it would be 5.4 (the bed would lift and hang); at 4 bar the gas is denser and slower and its drag 1.61. The shell holds the loop (55 MPa in 20 mm plate) and the charge and discharge go through lock hoppers. Local frame: the axis at (0, 0), its foot on the pit floor at z 0; the discharge lock and table feeder z 0 to 6, its outlet at (0, 0, 0.8); the bed z 6 to 20; the gas space and top gas outlet (0.7 m) at (0, -3.3, 21.5); the charge lock hopper z 23 to 29.5, its inlet at (0, 0, 29.5); the cooling gas in at (0, -3.3, 7), the firing gas into each torch chamber at (±5.55, 0, 12) on its outboard face; the torches'' cooling water by a pair of flanges at (-0.6, -3.3, 13) and (0.6, -3.3, 13); the shaft stands on eight columns under a ring girder from z 5.8 to 6.6 (under the cooling gas''s stub), holding the shell at z 6. The torch chambers stand upright, centred at x -4.3 and 4.3 from z 11 to 15, a hot duct from
+    each into the firing band. The shell runs from a discharge cone (z 4 to 6, the shell''s, over the table feeder and lock at z 0.8 to 4) up the bed to its roof (z 22 to 23). Its connections, plain stubs: the cooling gas 600 mm and each chamber''s firing gas 250 mm, facing out; the top gas 700 mm lagged in 25 mm of foil, facing -y (the gas loop''s inlet); the torches'' water a 150 mm pair facing -y; the charge at the lock hopper''s rim (0, 0, 29.5) facing up, where a belt''s head drops in; the discharge out at (0, 0, 0.8) through an 800 mm chute facing down; the torches'' 6.6 kV supply (400 mm2) into a terminal box at (0, 5.5, 8) facing +y.'}
+size_class: 2
+fits: plant-mount.bay-s2
+physical: {length: 11.5, width: 11.0, height: 29.5, mass: 517800.0}
+built_of:
+- {what: Shell, item: material.structural-steel-a36, mass: 49830.0, note: '5.54 m across, 19 m with its discharge cone and roof, 20 mm; measured on blender''s candidate (2026-10-16; by formula 54,021 kg over 17 m)'}
+- {what: Lining, item: good.refractory-brick, mass: 266900.0, note: '400 mm over the hot zones and the gas space (11 m), 200 mm and its backing over the cooling zone'}
+- {what: Torch chambers, item: material.structural-steel-a36, mass: 7948.0, note: 'two 2.5 m chambers upright, 4 m, 16 mm; measured'}
+- {what: Torch chambers' lining, item: good.refractory-brick, mass: 49760.0, note: 300 mm}
+- {what: Hot branches, item: material.structural-steel-a36, mass: 3993.0, note: 'two from each chamber into the firing band, 600 mm bore, 8 mm steel; measured'}
+- {what: Hot branches' lining, item: good.refractory-brick, mass: 42640.0, note: '300 mm, 14.21 m3 measured'}
+- {what: Supports and service pipes, item: material.structural-steel-a36, mass: 10420.0, note: 'the chambers'' legs and braces, the lower lock''s legs, the power and water posts and brackets, the service pipes; measured'}
+- {what: Plasma torches, item: good.electric-motors, mass: 14000.0, note: '7 torches of 1.5 MW, 2 t each with their supplies, from memory'}
+- {what: Charge and discharge locks, item: material.structural-steel-a36, mass: 50000.0, note: 'two lock hoppers with their valves, and the table feeder, from memory'}
+- {what: Ring girder and columns, item: material.high-strength-steel-4340, mass: 22330.0, note: 'measured, with the feet; a 600 x 800 x 30 mm box ring and eight 300 x 300 x 20 mm columns: 10 MPa each at 2 m/s2'}
+holds: 510100.0
+needs: {power: 9695000.0, heat: 964500.0, gravity: 1.6, atmosphere: any}
+recipes:
+- makes: good.iron-ore-pellets
+  does: The ore is crushed, ground, cleaned of waste rock and formed into pellets.
+  inputs:
+  - {item: good.iron-ore, quantity: 0.955}
+  - {item: element.o, quantity: 0.045}
+  rate: 34.7222222222222
+  power: 23000000
+ports:
+- id: top-gas-out
+  flow: out
+  medium: gas
+  item: material.nitrogen
+  rate: 22.34
+  pressure: 400000.0
+  temperature: 393.1
+  interface: interface.flange-dn700-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn700-pn10
+  at: [0.0, -3.3, 21.5]
+  facing: [0.0, -1.0, 0.0]
+  note: the loop's nitrogen with the green balls' steam
+- id: cooling-gas-in
+  flow: in
+  medium: gas
+  item: material.nitrogen
+  rate: 14.82
+  pressure: 400000.0
+  temperature: 338.1
+  interface: interface.flange-dn600-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn600-pn10
+  at: [0.0, -3.3, 7.0]
+  facing: [0.0, -1.0, 0.0]
+- id: firing-in-a
+  flow: in
+  medium: gas
+  item: material.nitrogen
+  rate: 2.937
+  pressure: 400000.0
+  temperature: 338.1
+  interface: interface.flange-dn250-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn250-pn10
+  at: [5.55, 0.0, 12.0]
+  facing: [1.0, 0.0, 0.0]
+  note: the +x torch chamber
+- id: firing-in-b
+  flow: in
+  medium: gas
+  item: material.nitrogen
+  rate: 2.937
+  pressure: 400000.0
+  temperature: 338.1
+  interface: interface.flange-dn250-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn250-pn10
+  at: [-5.55, 0.0, 12.0]
+  facing: [-1.0, 0.0, 0.0]
+  note: the -x torch chamber
+- id: water-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 23.04
+  temperature: 320.0
+  interface: interface.flange-dn150-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn150-pn10
+  at: [-0.6, -3.3, 13.0]
+  facing: [0.0, -1.0, 0.0]
+  pressure: 400000.0
+- id: water-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 23.04
+  temperature: 330.0
+  interface: interface.flange-dn150-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn150-pn10
+  at: [0.6, -3.3, 13.0]
+  facing: [0.0, -1.0, 0.0]
+  pressure: 400000.0
+- id: charge-in
+  flow: in
+  medium: bulk
+  item: good.iron-ore
+  rate: 18.22
+  interface: interface.belt-transfer-800-sealed
+  half: female
+  make: open
+  connector: connector.belt-transfer-800-sealed
+  at: [0.0, 0.0, 29.5]
+  facing: [0.0, 0.0, 1.0]
+  note: 'the charge lock hopper''s rim, flanged for a sealed gallery''s drop: the green balls, their water in'
+- id: discharge-out
+  flow: out
+  medium: bulk
+  item: good.iron-ore-pellets
+  rate: 17.36
+  interface: interface.chute-dn800
+  half: androgynous
+  make: bolted
+  connector: connector.chute-dn800
+  at: [0.0, 0.0, 0.8]
+  facing: [0.0, 0.0, -1.0]
+- id: power-in
+  flow: in
+  medium: power
+  power: 9695000.0
+  voltage: 6600
+  interface: interface.termination-6p6kv-400mm2
+  half: female
+  make: bolted
+  connector: connector.termination-6p6kv-400mm2
+  at: [0.0, 5.5, 8.0]
+  facing: [0.0, 1.0, 0.0]
+  note: the torches' supplies
+  current: 942.3
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 1028000.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
+product: product.pellet-shaft-63th
+envelope:
+- [-3.4, -3.4, 0, 3.4, 3.4, 29.5]
+- [-5.75, -3.4, 0, -3.4, 3.5, 17.6]
+- [3.4, -3.4, 0, 5.75, 3.5, 17.6]
+- [-3.4, 3.4, 8, 3.4, 3.5, 17.6]
+- [-0.75, 3.4, 0, 0.75, 5.5, 9.3]
+life: 788940000
+visual: {format: freefall-model/1, path: models/pellet-shaft-63th/v1, manifest_sha256: f35e1075337710846bc10c637157c955b123bf09b38dc340ed7167dc265803fe, version: 1, triangles: 33420}
+basis:
+- of: [recipes]
+  tier: derived
+  note: The module's recipe (module.pellet-plant), carried here; half the rate.
+- of: [physical, built_of, holds]
+  tier: derived
+  review: true
+  note: The section from 85 t a m2 a day (from memory); the zones' heights, pellet bulk 2,100 kg/m3 and the locks from memory.
+- of: [needs.gravity, identity.description]
+  tier: derived
+  review: true
+  note: 'Ergun''s equation for 12 mm pellets, voids 0.4, gas at 700 deg C: drag 1607 Pa/m against the bed''s weight 3360 at 1.6 m/s2, with half again to spare. The gas flow from the heat balance: the pellets cooled from 1300 to 100 deg C by gas warmed from 50 to 1,150, and the torches'' share heated from 65 to 1,350.'
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage; water at the pumps'' 4 bar.'
+- of: [life]
+  rule: rule.life-plant

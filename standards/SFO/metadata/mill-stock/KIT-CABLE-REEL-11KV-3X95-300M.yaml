@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-cable-reel-11kv-3x95-300m
+  code: KIT-CABLE-REEL-11KV-3X95-300M
+  name: Cable reel, 3 x 95 mm2, 300 m
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.structural-steel-a36
+- item: material.copper
+size:
+  length: 5.21
+  width: 0.41
+  height: 5.41
+supplies:
+  item: connector.cable-reel-11kv-3x95-300m
+physical:
+  mass: 2913.9
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.cable-reel-11kv-3x95-300m, as made.

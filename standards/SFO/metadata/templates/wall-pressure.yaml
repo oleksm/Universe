@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/template.schema.yaml
+# Written by tools/standards/building_kit.py: change it there.
+identity:
+  key: template.wall-pressure
+  name: Pressure wall panels
+  description: 'Pressure wall panels: one look for every panel of the family, scaled to each record''s cell (docs/asset-contract.md, Templates).'
+family: panel
+draws: model
+scales_by:
+- physical
+reference: panel.wall-pressure-3x3
+members: 3
+basis:
+- of:
+  - draws
+  - scales_by
+  tier: derived
+  note: 'The owner, 2026-10-17: buildings as layouts; one template a panel family (building_kit.py).'

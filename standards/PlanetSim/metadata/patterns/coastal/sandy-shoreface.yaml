@@ -1,0 +1,56 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.coastal.beach.sandy-shoreface
+  name: Sandy beach and shoreface (equilibrium profile)
+  about: Sandy beach and shoreface (equilibrium profile).
+family: coastal
+factors:
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: sand must be supplied (rivers, cliffs, shelf); grain size sets Dean A 0.06-0.20 and foreshore slope
+- factor: planet-factor.waves-tides
+  weight: 3
+  why: wave height/period set closure depth 6-20 m, bars, dissipative vs reflective state; tides widen intertidal zone
+- factor: planet-factor.clim-storm
+  weight: 1
+  why: 'storms cut berm and move bars offshore; calm seasons rebuild: seasonal summer/winter profiles'
+- factor: planet-factor.sea-level
+  weight: 1
+  why: stable or slowly rising sea level since ~7 ka lets profile equilibrate; rise drives landward retreat
+- factor: planet-factor.slope-relief
+  weight: 3
+  why: needs gentle shelf/coastal plain or embayment; steep rocky coasts give pocket beaches only
+- factor: planet-factor.relief-inherited
+  weight: 1
+  why: 'headlands control plan shape: log-spiral headland-bay beaches between fixed points'
+- factor: planet-factor.clim-temp
+  weight: 1
+  why: sea ice and frozen beaches shorten wave season, reduce profile activity at high latitude
+- factor: planet-factor.rock-type
+  weight: 1
+  why: sediment mineralogy (quartz, carbonate, volcanic) sets grain density, colour and sorting
+- factor: planet-factor.time
+  weight: 1
+  why: profile adjusts in days-years; Holocene beach bodies 1-7 kyr old
+vocabulary_id: 17
+sources:
+- https://www.nps.gov/articles/sandy-coast-landforms.htm
+- https://www.nps.gov/subjects/geology/coastal-landforms.htm
+- https://www.coastalwiki.org/wiki/Dune_development
+library_status: written
+source: coastal.beach.sandy_shoreface
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

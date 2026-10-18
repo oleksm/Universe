@@ -1,0 +1,60 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.coastal.barrier.barrier-island
+  name: Barrier island and back-barrier lagoon
+  about: Barrier island and back-barrier lagoon.
+family: coastal
+factors:
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: abundant sand from shelf, rivers or deltas; starved supply gives thin, washover-dominated barriers
+- factor: planet-factor.waves-tides
+  weight: 3
+  why: microtidal <2 m long continuous barriers; mesotidal 2-4 m short drumstick islands; macrotidal >4 m rarely
+- factor: planet-factor.sea-level
+  weight: 3
+  why: Holocene transgression drove onshore sand; slow rise sustains rollover, fast rise drowns barrier
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: gentle shelf and low coastal plain needed; steep coasts lack barriers
+- factor: planet-factor.tect-setting
+  weight: 1
+  why: mostly passive trailing margins and deltaic coasts (wide low-gradient shelves)
+- factor: planet-factor.clim-storm
+  weight: 1
+  why: storm overwash and breaching build washover fans, open inlets, drive landward migration
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: dune grasses trap sand, build dunes; height controls overwash frequency
+- factor: planet-factor.clim-wind
+  weight: 1
+  why: onshore winds build dune ridge on barrier crest
+- factor: planet-factor.clim-temp
+  weight: 1
+  why: 'Arctic sea ice limits fetch: barriers shorter (~5 km mean vs 10 km)'
+- factor: planet-factor.time
+  weight: 1
+  why: modern barriers formed within ~6-7 kyr of sea-level stillstand
+vocabulary_id: 16
+sources:
+- https://www.nps.gov/articles/sandy-coast-landforms.htm
+- https://www.coastalwiki.org/wiki/Barrier_islands
+- https://www.coastalwiki.org/wiki/Estuaries
+- https://www.nps.gov/subjects/geology/coastal-landforms.htm
+library_status: written
+source: coastal.barrier.barrier_island
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

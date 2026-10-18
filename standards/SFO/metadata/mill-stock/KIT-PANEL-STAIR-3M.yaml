@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/building_kit.py: change it there.
+identity:
+  key: stock.kit-panel-stair-3m
+  code: KIT-PANEL-STAIR-3M
+  name: Stair, 3 m rise
+  traded_as: market.machinery
+  form: panel
+package: package.plate-stack
+made_from:
+- item: material.structural-steel-a36
+size:
+  length: 2.74
+  width: 5.24
+  height: 4.053
+supplies:
+  item: panel.stair-3m
+physical:
+  mass: 831.7
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One panel.stair-3m, as made.

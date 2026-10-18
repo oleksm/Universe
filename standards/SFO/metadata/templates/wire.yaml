@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/template.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: template.wire
+  name: Hook-up wires for harnesses
+  description: 'Hook-up wires for harnesses: one look for every size of the family, scaled to each record''s figures (the owner, 2026-10-17: never one model per size).'
+family: cable
+draws: sweep
+scales_by:
+- outside
+members: 6
+profile: a round insulated wire of the record's outside
+basis:
+- of:
+  - draws
+  - scales_by
+  tier: derived
+  note: 'The owner, 2026-10-17: one template a family, scaled; the catalogue families (kit_catalogue.py).'

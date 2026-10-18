@@ -232,7 +232,7 @@ EQUIPMENT_READS = {
     "muzzle_speed": "m/s", "slug_mass": "kg", "magazine": "rounds", "beam_power": "W on the target", "focus": "m its beam holds together", "burn": "s of firing to too hot", "cool": "s to cool",
     "blow_energy": "J a blow", "blow_rate": "blows a second", "hydraulic_power": "W of hydraulic power", "feed_force": "N it pushes back on the ship",
     "excavator_power": "W it cuts with", "throughput": "kg/s of spoil at most", "anchor_reach": "m", "anchor_speed": "m/s it holds below",
-    "stroke": "m its strut compresses over", "sink_rate": "m/s, the touchdown it is designed for", "extended": "m, mount to pad, gear down",
+    "stroke": "m its strut compresses over", "sink_rate": "m/s, the touchdown it is designed for", "extended": "m, mount to pad, gear down", "spring": "N/m, the strut as a linear spring", "damper": "N s/m, the strut as a linear damper",
     "volume": "m3 it holds, heaped", "fill_density": "kg/m3 of broken rock its capacity is reckoned at", "reset": "the share of too hot it cools to before firing again", "heat_to_hull": "the share of the jet's power that reaches the hull as heat", "water_recovery": "the share of water recovered", "air_recovery": "the share of oxygen won back",
     "persons": "how many it cycles at once", "cycle": "s a cycle (an airlock); how it makes its jet (an engine)", "passage": "m, the clear way", "air_lost": "kg of air lost a cycle", "load": "kg it bears or lifts", "width": "m", "height": "m", "reach": "m", "travel": "m", "opens_in": "s to open",
     "propellant": "What it throws.", "chamber": "the chamber and nozzle as a design", "min_density": "kg/m3, the thinnest air a fan is rated for", "cycles": "full cycles before it is worn", "air_store": "kg of oxygen a pack carries", "water_store": "kg of water a pack carries", "throttle": "the least thrust it holds, as a share", "gimbal": "rad it steers its jet", "isotropic_loss": "the share of its power leaving in every direction", "shield_pass": "the share of that its shield lets through", "reaction_offset": "m aft to the reaction", "turns": "rad it turns through", "bears": "N it carries", "slew": "rad/s it turns at",
@@ -993,7 +993,7 @@ for ad in administrations:
 bodies, standards = [], []
 for name in sorted(os.listdir(TREE)):
     folder = os.path.join(TREE, name)
-    if not os.path.isdir(folder) or name in ("schema", "sources", HOUSE, LOCAL, "Celestial", "Dogma", "People", "Engine"):
+    if not os.path.isdir(folder) or name in ("schema", "sources", HOUSE, LOCAL, "Celestial", "Dogma", "People", "Engine", "PlanetSim", "PlanetLOD"):
         continue
     # (The body's own file: named after its folder, SFO/metadata/SFO.yaml.)
     meta_path = os.path.join(folder, "metadata", name + ".yaml")
@@ -1049,7 +1049,7 @@ for name in sorted(os.listdir(TREE)):
 # its schema (schema/element.schema.yaml, schema/material.schema.yaml).
 KINDS = {"elements": "element", "materials": "material", "modules": "module", "goods": "good", "hulls": "hull", "mill-stock": "mill-stock", "equipment": "equipment", "gates": "gate"}
 # (Parts are filed in folders of their own: read further down.)
-NESTED = {"parts", "mounts", "plant-mounts"}      # (folders whose records the page lists elsewhere, or not yet)
+NESTED = {"parts", "mounts", "plant-mounts", "connectors"}      # (folders whose records the page lists elsewhere, or not yet)
 SCHEMAS = {k: read_schema(os.path.join(TREE, "SFO", "schema", f"{v}.schema.yaml")) for k, v in KINDS.items()}
 elements, materials, processes, modules, goods, hulls, mill_stock, equipment, gates = [], [], [], [], [], [], [], [], []
 for s in standards:
@@ -1132,7 +1132,7 @@ for s in standards:
         seen[key] = name
         check_basis(e, full)
         for group, props in e.items():
-            if group in ("slug", "basis", "revision", "fits", "life", "visual") or (kind == "modules" and group == "recipes"):   # (a revision is held to its schema by validate.py)
+            if group in ("slug", "basis", "revision", "fits", "life", "visual", "model_requests", "ports", "motion") or (kind == "modules" and group == "recipes"):   # (a revision is held to its schema by validate.py)
                 continue
             if kind == "hulls" and group == "open_questions":
                 continue
@@ -1570,6 +1570,8 @@ import math
 stock_of = {}
 for ms in mill_stock:
     where = os.path.join(TREE, ms["file"])
+    if ms.get("supplies"):       # (kit stock: a made run or connector sold as it is; its mass is the kit record's, not a form of one material)
+        continue
     mf, size = ms.get("made_from") or {}, ms.get("size") or {}
     mat = next((m for m in materials if m.get("slug") == mf.get("material")), None)
     if mat is None:
@@ -1743,11 +1745,11 @@ reports = []
 REPORT_GROUPS = {"ships": ["equipment-parts", "equipment", "mounts", "members", "hulls", "budgets", "volume", "dimensions", "structure-mc-07", "shock", "mass", "chains"],
                  "industry": ["plant", "balance", "materials", "goods", "takers", "power", "gates"],
                  "people": ["needs", "work", "buildings", "census", "traffic"],
-                 "sky": ["worlds", "celestial"], "engine": ["clocks"],
+                 "sky": ["worlds", "celestial", "planet-lod", "planet-models"], "engine": ["clocks"],
                  "quality": ["confidence", "invented", "review", "revisions", "dictionary"]}
 REPORT_DOCS = {"mounts": ["docs/ships/registry-note-for-ships.md"], "members": ["docs/ships/registry-note-for-ships.md"], "budgets": ["docs/ships/registry-note-for-ships.md", "docs/ships/equipment-review.md"],
                "needs": ["docs/registry-people.md", "docs/registry-spirit.md"], "work": ["docs/registry-people.md"], "buildings": ["docs/registry-people.md"], "census": ["docs/registry-people.md", "docs/registry-order.md"],
-               "traffic": ["docs/registry-people.md", "docs/registry-stocking.md"], "worlds": ["docs/survey-contract.md"], "celestial": ["docs/survey-contract.md"], "clocks": ["docs/tick-tree.md"],
+               "traffic": ["docs/registry-people.md", "docs/registry-stocking.md"], "worlds": ["docs/survey-contract.md"], "celestial": ["docs/survey-contract.md"], "clocks": ["docs/tick-tree.md"], "planet-models": ["standards/PlanetSim/metadata/PlanetSim.yaml"], "planet-lod": ["standards/PlanetSim/metadata/PlanetSim.yaml"],
                "balance": ["docs/registry-recipes.md"], "materials": ["docs/registry-recipes.md"], "goods": ["docs/registry-recipes.md"], "takers": ["docs/registry-recipes.md"],
                "confidence": ["docs/registry-audit.md"], "invented": ["docs/registry-audit.md"], "review": ["docs/registry-audit.md"], "revisions": ["docs/registry-integration.md"], "dictionary": ["standards/README.md"],
                "equipment-parts": ["docs/registry-recipes.md"], "chains": ["docs/registry-recipes.md"], "plant": ["docs/registry-recipes.md"], "hulls": ["docs/registry-integration.md"], "gates": ["docs/standards.md"]}
@@ -2376,6 +2378,24 @@ for k__, c__ in _clocks.items():
 if _crows:
     report("clocks", "Clocks: the engine's tree of time", "standards/Engine: each clock, under the clock whose due time makes it step, with how many of it there are (scope), how tightly it exchanges data (coupling, which decides the thread, process or machine it runs on) and when it steps. Every period must be a whole number of the realtime tick, so every input is stamped by the same tick numbers and replay works per layer.", ["Clock", "One per", "Coupling", "Steps", "Rule, or what is wrong"], _crows)
 
+# 3d. The Planet Simulator (standards/PlanetSim): its words by kind, and its models.
+import planet_lod as _pl
+_PL = _pl.load(TREE)
+report("planet-lod", "Planet Simulator: its words", "standards/PlanetSim: the language the planet sim, its mesher, the LOD app and the agents share, by kind: how many words of each, how many still draft, and the tools that use them (planet_lod_extract.py checks the sim against them; planet_lod_match.py, planet_lod_context.py; the module standards/PlanetSim/generated/planet_lod_words.py).",
+       ["Kind", "Words", "Draft", "Examples"], [row("ok", k, len(v), sum(1 for d in v.values() if d.get("status") == "draft"), ", ".join(x.split(".", 1)[1] for x in list(v)[:6])) for k, v in _PL.items() if v])
+_mrows = []
+for _k, _m in sorted(_PL["planet-model"].items()):
+    _open = [p_["name"] for p_ in _m.get("params") or [] if p_.get("open")]
+    _mrows.append(row("gap" if _open else "ok", _m["identity"]["name"],
+                      "; ".join(f"{a['name']} ({a['kind']}{', exact' if a.get('exact') else ''}): {a['found_by']}" for a in _m.get("anchors") or []),
+                      (_m["detail"].get("formula") or _m["detail"]["rule"]) + (f" | nearest: {_m['detail']['nearest']}" if _m["detail"].get("nearest") else ""),
+                      "; ".join(_m.get("guarantees") or []), "; ".join(_m.get("leaves_out") or []),
+                      "; ".join(f"{p_['name']} {p_.get('value', '')}{(' ' + p_['unit']) if p_.get('unit') and p_.get('value') is not None else ''}{' (open)' if p_.get('open') else ''}" for p_ in _m.get("params") or []),
+                      "; ".join(f"{x['where']} ({x['state']})" for x in _m.get("implementations") or []),
+                      ", ".join(x.split(".", 1)[1] for x in _m.get("measured_by") or [])))
+report("planet-models", "Planet models: how a planet is described and meshed", "standards/PlanetSim/metadata/models: each model used to describe or mesh a planet, its anchors and how they are found, the rule that weaves detail round them, what it guarantees and leaves out, its parameters (open ones mark it a gap), its implementations and the measures that judge it. Its rules and the owner's words are on the record.",
+       ["Model", "Anchors", "Detail", "Guarantees", "Leaves out", "Parameters", "Implementations", "Measured by"], _mrows)
+
 # 3d'''. Members (SFO 13): the tubes a frame is cut from, read as an engineer sizes: weight a metre, the load
 # at which each yields (with the safety factor 1.5), and the pinned length at which it buckles under 50 and 200 kN (Euler).
 rows = []
@@ -2601,6 +2621,13 @@ _REG = [("mounts", "Mounts", "SFO", os.path.join("SFO", "metadata", "mounts"), "
         ("plant-mounts", "Plant mounts", "SFO", os.path.join("SFO", "metadata", "plant-mounts"), "SFO/schema/plant-mount.schema.yaml", "SFO 24"),
         ("units", "Plant units", "SFO", os.path.join("SFO", "metadata", "units"), "SFO/schema/unit.schema.yaml", "SFO 24"),
         ("layouts", "Plant layouts", "SFO", os.path.join("SFO", "metadata", "layouts"), "SFO/schema/layout.schema.yaml", "SFO 24"),
+        ("connectors", "Plant connectors", "SFO", os.path.join("SFO", "metadata", "connectors"), "SFO/schema/connector.schema.yaml", "SFO 25"),
+        ("runs", "Plant runs", "SFO", os.path.join("SFO", "metadata", "runs"), "SFO/schema/run.schema.yaml", "SFO 25"),
+        ("products", "Plant products", "SFO", os.path.join("SFO", "metadata", "products"), "SFO/schema/product.schema.yaml", "SFO 24"),
+        ("templates", "Kit templates", "SFO", os.path.join("SFO", "metadata", "templates"), "SFO/schema/template.schema.yaml", "SFO 25"),
+        ("panels", "Building panels", "SFO", os.path.join("SFO", "metadata", "panels"), "SFO/schema/panel.schema.yaml", "SFO 25"),
+        ("arrangements", "Room arrangements", "SFO", os.path.join("SFO", "metadata", "arrangements"), "SFO/schema/arrangement.schema.yaml", "SFO 25"),
+        ("interfaces", "Interfaces", "SFO", os.path.join("SFO", "metadata", "interfaces"), "SFO/schema/interface.schema.yaml", "SFO 26"),
         ("buildings", "Buildings", "SFO", os.path.join("SFO", "metadata", "buildings"), "SFO/schema/building.schema.yaml", None),
         ("markets", "Markets", "SFO", os.path.join("SFO", "metadata", "markets"), "SFO/schema/market.schema.yaml", None),
         ("structures", "Structures", "SFO", os.path.join("SFO", "metadata", "structures"), "SFO/schema/structure.schema.yaml", None),
@@ -2608,13 +2635,35 @@ _REG = [("mounts", "Mounts", "SFO", os.path.join("SFO", "metadata", "mounts"), "
         ("needs", "Needs", "People", os.path.join("People", "metadata", "needs"), "People/schema/need.schema.yaml", None),
         ("professions", "Professions", "People", os.path.join("People", "metadata", "professions"), "People/schema/profession.schema.yaml", None),
         ("clocks", "Clocks", "Engine", os.path.join("Engine", "metadata", "scheduling"), "Engine/schema/clock.schema.yaml", None),
-        ("sights", "Sights", "Celestial", os.path.join("Celestial", "metadata", "sights"), "Celestial/schema/sight.schema.yaml", None)]
+        ("sights", "Sights", "Celestial", os.path.join("Celestial", "metadata", "sights"), "Celestial/schema/sight.schema.yaml", None),
+        ("rock-units", "Rock units", "Celestial", os.path.join("Celestial", "metadata", "rock-units"), "Celestial/schema/rock-unit.schema.yaml", None),
+        ("ground-vocabularies", "Ground vocabularies", "Celestial", os.path.join("Celestial", "metadata", "ground-vocabularies"), "Celestial/schema/ground-vocabulary.schema.yaml", None),
+        ("planet-levels", "Levels", "PlanetSim", os.path.join("PlanetSim", "metadata", "levels"), "PlanetSim/schema/planet-level.schema.yaml", None),
+        ("planet-fields", "Fields", "PlanetSim", os.path.join("PlanetSim", "metadata", "fields"), "PlanetSim/schema/planet-field.schema.yaml", None),
+        ("planet-layers", "Layers", "PlanetSim", os.path.join("PlanetSim", "metadata", "layers"), "PlanetSim/schema/planet-layer.schema.yaml", None),
+        ("planet-lines", "Line kinds", "PlanetSim", os.path.join("PlanetSim", "metadata", "lines"), "PlanetSim/schema/planet-line.schema.yaml", None),
+        ("planet-landmarks", "Landmark types", "PlanetSim", os.path.join("PlanetSim", "metadata", "landmarks"), "PlanetSim/schema/planet-landmark.schema.yaml", None),
+        ("planet-events", "Events", "PlanetSim", os.path.join("PlanetSim", "metadata", "events"), "PlanetSim/schema/planet-event.schema.yaml", None),
+        ("planet-handlers", "Mesher handlers", "PlanetSim", os.path.join("PlanetSim", "metadata", "handlers"), "PlanetSim/schema/planet-handler.schema.yaml", None),
+        ("planet-measures", "Measures", "PlanetSim", os.path.join("PlanetSim", "metadata", "measures"), "PlanetSim/schema/planet-measure.schema.yaml", None),
+        ("planet-factors", "Deciding factors", "PlanetSim", os.path.join("PlanetSim", "metadata", "factors"), "PlanetSim/schema/planet-factor.schema.yaml", None),
+        ("planet-features", "Relief features", "PlanetSim", os.path.join("PlanetSim", "metadata", "features"), "PlanetSim/schema/planet-feature.schema.yaml", None),
+        ("planet-patterns", "Landform patterns", "PlanetSim", os.path.join("PlanetSim", "metadata", "patterns"), "PlanetSim/schema/planet-pattern.schema.yaml", None),
+        ("planet-models", "Planet Models", "PlanetSim", os.path.join("PlanetSim", "metadata", "models"), "PlanetSim/schema/planet-model.schema.yaml", None),
+        ("lod-models", "Planet Models", "PlanetLOD", os.path.join("PlanetLOD", "metadata", "models"), "PlanetLOD/schema/lod-model.schema.yaml", None),
+        ("planet-files", "Sim files", "PlanetSim", os.path.join("PlanetSim", "metadata", "files"), "PlanetSim/schema/planet-file.schema.yaml", None),
+        ("planet-processes", "Processes", "PlanetSim", os.path.join("PlanetSim", "metadata", "processes"), "PlanetSim/schema/planet-process.schema.yaml", None),
+        ("planet-views", "Views", "PlanetSim", os.path.join("PlanetSim", "metadata", "views"), "PlanetSim/schema/planet-view.schema.yaml", None),
+        ("planet-targets", "Targets", "PlanetSim", os.path.join("PlanetSim", "metadata", "targets"), "PlanetSim/schema/planet-target.schema.yaml", None),
+        ("planet-gates", "Run gates", "PlanetSim", os.path.join("PlanetSim", "metadata", "gates"), "PlanetSim/schema/planet-gate.schema.yaml", None),
+        ("planet-run-profiles", "Run profiles", "PlanetSim", os.path.join("PlanetSim", "metadata", "run-profiles"), "PlanetSim/schema/planet-run-profile.schema.yaml", None)]
 for _kind, _title, _root, _dir, _schema, _std in _REG:
     _recs = []
-    for _f in sorted(glob.glob(os.path.join(TREE, _dir, "*.yaml"))):
+    for _f in sorted(glob.glob(os.path.join(TREE, _dir, "**", "*.yaml"), recursive=True)):      # (the Planet Simulator's patterns lie in a folder a family)
         _r = yaml.safe_load(open(_f, encoding="utf-8")) or {}
         _idn = _r.get("identity") if isinstance(_r.get("identity"), dict) else _r
-        _r["slug"], _r["key"], _r["name"], _r["file"] = os.path.basename(_f)[:-5], _idn.get("key", ""), _idn.get("name", os.path.basename(_f)[:-5]), os.path.relpath(_f, TREE)
+        _slug = _idn.get("key", "").split(".", 1)[1] if _root in ("PlanetSim", "PlanetLOD") and "." in _idn.get("key", "") else os.path.basename(_f)[:-5]
+        _r["slug"], _r["key"], _r["name"], _r["file"] = _slug, _idn.get("key", ""), _idn.get("name", os.path.basename(_f)[:-5]), os.path.relpath(_f, TREE)
         _recs.append(_r)
         if _r["key"]:
             KEY_PAGES[_r["key"]] = f"x:{_kind}:{_r['slug']}"
@@ -3140,7 +3189,7 @@ def write_html():
         # (Each property's unit or note, from the schemas.)
         "element_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["elements"]["properties"].items() if "properties" in d},
         "material_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["materials"]["properties"].items() if "properties" in d},
-        "registers": REGISTERS,
+        "registers": REGISTERS, "roots": {r_: {"name": (yaml.safe_load(open(os.path.join(TREE, r_, "metadata", r_ + ".yaml"))) or {})["identity"]["name"], "note": (yaml.safe_load(open(os.path.join(TREE, r_, "metadata", r_ + ".yaml"))) or {}).get("note", "")} for r_ in ("PlanetSim", "PlanetLOD")},
         "register_groups": REGISTER_GROUPS,
         "key_pages": KEY_PAGES,
         "standards": sorted(standards, key=lambda s: (s["body"], s["number"])),
@@ -3174,4 +3223,6 @@ if problems:
 _renames = write_game_keys()
 print(f"{len(makers)} makers, {len(bodies)} bodies, {len(standards)} standards, {len(elements)} elements, {len(materials)} materials, {len(processes)} processes, {len(modules)} modules, {len(goods)} goods, {len(hulls)} hulls")
 print(f"  reports: " + ", ".join(f"{r['key']} {r['gaps']} gaps" for r in reports))
-print("  standards/index.html, standards/game-keys.yaml, standards/changes.yaml")
+import planet_lod_module as _plm      # (the Planet Simulator module the sim imports, written from the records like the page)
+open(_plm.OUT, "w", encoding="utf-8").write(_plm.render())
+print("  standards/index.html, standards/game-keys.yaml, standards/changes.yaml, standards/PlanetSim/generated/planet_lod_words.py")

@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: connector.expansion-joint-dn300-pn10
+  name: Expansion joint, DN 300, PN 10
+  description: 'A stainless bellows between two flanges, set in a line to take its growth as it heats: 40 mm each way along the line, a little sideways. Limit rods outside it stop its travel at that much; they do not hold the pressure''s
+    end load, the pipe''s anchors either side do.'
+kind: expansion-joint
+size: 0.3
+rating:
+  pressure: 1000000.0
+  temperature: 673.0
+movement: 0.04
+physical:
+  length: 0.526
+  width: 0.526
+  height: 0.35
+  mass: 49.5
+built_of:
+- what: Bellows and necks
+  item: material.stainless-steel-304
+  mass: 13.3
+  note: six formed convolutions, 3 mm multi-ply 304
+- what: Flanges, limit rods and lugs
+  item: material.structural-steel-a36
+  mass: 36.2
+provides: both
+template: template.expansion-joint
+basis:
+- of:
+  - physical
+  - built_of
+  tier: derived
+  review: true
+  note: 'From blender''s model (2026-10-17): 526 x 526 x 350 mm, six formed convolutions of 3 mm multi-ply 304 on a 300 mm bore, A36 flanges at the kit''s 466 mm, limit rods stopping 40 mm each way.'
+- of:
+  - movement
+  tier: invented
+  review: true
+  note: From memory of makers' catalogues; to be sourced.
+interface: interface.flange-dn300-pn10

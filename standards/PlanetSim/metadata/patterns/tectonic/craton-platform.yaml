@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.tectonic.province.craton-platform
+  name: Craton platform (sediment-covered stable interior)
+  about: Craton platform (sediment-covered stable interior).
+family: tectonic
+factors:
+- factor: planet-factor.tect-setting
+  weight: 3
+  why: stable craton; basement under flat sedimentary cover
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: slow epeirogeny; intracratonic basins and arches (domes/basins)
+- factor: planet-factor.rock-layers
+  weight: 3
+  why: near-horizontal hard/soft beds make cuestas, mesas, scarplands
+- factor: planet-factor.rock-soluble
+  weight: 1
+  why: carbonate/evaporite cover gives karst plains
+- factor: planet-factor.sea-level
+  weight: 1
+  why: epicontinental transgressions deposit the cover
+- factor: planet-factor.base-level
+  weight: 1
+  why: low gradient, distant base level gives low relief plains
+- factor: planet-factor.clim-history
+  weight: 1
+  why: glacial cover (Laurentide) or long weathering shapes surface
+- factor: planet-factor.time
+  weight: 1
+  why: 100s of Myr stability
+vocabulary_id: 172
+sources:
+- https://en.wikipedia.org/wiki/Craton
+- https://en.wikipedia.org/wiki/Shield_(geology)
+library_status: planned
+source: tectonic.province.craton_platform
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

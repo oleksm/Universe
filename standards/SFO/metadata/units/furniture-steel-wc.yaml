@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: unit.furniture-steel-wc
+  name: Steel toilet
+  description: A stainless vandal-proof toilet and basin in one.
+size_class: 1
+physical:
+  length: 0.6
+  width: 0.6
+  height: 0.9
+  mass: 41.5
+built_of:
+- what: Toilet and basin
+  item: material.stainless-steel-304
+  mass: 37.5
+- what: Hidden trap, flush and tap valves
+  item: material.stainless-steel-304
+  mass: 4.0
+basis:
+- of:
+  - built_of
+  - physical
+  tier: derived
+  review: true
+  note: 'From blender''s model (2026-10-17): 2 mm cabinet, 3 mm basin and pedestal, 2.5 mm pan, 3 mm seat; the 4 kg of hidden valves and trap is an invented allowance.'
+visual:
+  format: freefall-model/1
+  path: models/furniture-steel-wc/v1
+  manifest_sha256: 4a96cf4d36a7d2b1f74b6a55e197067e321e619fadeab3834afb3757a47100cc
+  version: 1
+  triangles: 4104

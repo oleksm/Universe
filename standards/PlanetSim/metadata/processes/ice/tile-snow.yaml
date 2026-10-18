@@ -1,0 +1,125 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.tile-snow
+  name: 'Monthly snow at tile resolution: accumulation, wind drift (Winstral Sx), degree-day melt, cover'
+  about: 'Snow on the ground at the fine tiles'' resolution, through the year: where it falls, where the wind puts it, how
+    fast it melts, how much of each place it still covers at a given month; and the glaciers, the snow that outlasts every
+    summer. NOT INVENTORIED IN DETAIL: neither plates.py nor coupled.py imports snow.py (directly or through another module);
+    it is used by tools/landcover_tiles.py.'
+area: ice
+clock:
+  when: not part of the coupled planet run (offline tools / bakes)
+params:
+- name: T_SNOW_LO
+  value: 0.0
+  unit: '1'
+  said_as:
+    unit: °C (from the code comment; SI conversion not done, unverified)
+    factor: 1.0
+  open: true
+  meaning: '°C: all snow below, all rain above'
+  source: stages/snow.py:23
+  note: 'unit as the code says it: ''°C (from the code comment; SI conversion not done, unverified)''; SI conversion unverified'
+- name: T_SNOW_HI
+  value: 2.0
+  unit: '1'
+  said_as:
+    unit: °C (from the code comment; SI conversion not done, unverified)
+    factor: 1.0
+  open: true
+  meaning: '°C: all snow below, all rain above'
+  source: stages/snow.py:23
+  note: 'unit as the code says it: ''°C (from the code comment; SI conversion not done, unverified)''; SI conversion unverified'
+- name: DDF
+  value: 3.0
+  unit: '1'
+  said_as:
+    unit: mm w.e. per degC per day
+    factor: 1.0
+  open: true
+  meaning: mm w.e. per °C per day
+  source: stages/snow.py:24
+  note: 'unit as the code says it: ''mm w.e. per degC per day''; SI conversion unverified'
+- name: SUN_MELT
+  value: 0.5
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: melt's share from the sun's facing (±50%)
+  source: stages/snow.py:25
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: SWE_HALF
+  value: 60.0
+  unit: '1'
+  said_as:
+    unit: mm w.e.
+    factor: 1.0
+  open: true
+  meaning: 'mm: cover tanh(SWE/SWE_HALF)'
+  source: stages/snow.py:26
+  note: 'unit as the code says it: ''mm w.e.''; SI conversion unverified'
+- name: WIND_GAIN
+  value: 2.0
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/snow.py:27
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: WIND_RANGE
+  values:
+  - 0.3
+  - 2.5
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/snow.py:28
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: CANOPY_HIDES
+  value: 0.85
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/snow.py:29
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: DAYS
+  value: 30.4
+  unit: '1'
+  said_as:
+    unit: days per month
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/snow.py:30
+  note: 'unit as the code says it: ''days per month''; SI conversion unverified'
+random_draws:
+- not inventoried
+used: false
+note: 'unused by plates.py / coupled.py; users: tools/landcover_tiles.py'
+backends:
+- cpu
+implementations:
+- where: 'planet-sim-landform stages/snow.py: sheltering (33-47), year (50-75), cover (78-83), holding_potential (86-96),
+    place (99-113)'
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
+    the code at planet-sim-landform 9747f0d-c437724.'

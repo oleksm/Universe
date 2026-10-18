@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../../root.schema.yaml
+identity:
+  key: root.planet-lod
+  name: "Planet LOD"
+note: "How a planet is meshed and drawn over its levels of detail (the owner, 17 Oct 2026): the meshing of the Planet Simulator's models (Planet Models): for each, the model it meshes (a link to its Planet Simulator page), its height rule, the lines it keeps as mesh edges, its vertex pattern, its triangulation, its parameters, what it guarantees, and its results. Their words (fields, lines, levels, measures) are the Planet Simulator's (standards/PlanetSim)."

@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.sea-level
+  name: Sea level
+  about: 'The sea''s level on the ridge reference: the level that holds the ocean, or that leaves the held land share above it.'
+unit: m
+producer:
+  where: planet-forge crates/forge-core/src/models/plates/sea.rs
+  file: checkpoint
+  key: 'scalars: planet-field.sea-level'
+per: global
+also_from:
+- where: stages/plates.py
+  key: sea_ = sea_level(z, R, water_m3)
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: forge''s plates foundation (branch plates-foundation) and the Python sim''s World (stages/plates.py:247-393), read from the code.'

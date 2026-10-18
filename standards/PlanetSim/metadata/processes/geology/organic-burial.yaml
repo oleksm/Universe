@@ -1,0 +1,110 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.organic-burial
+  name: Organic carbon laid and buried with sediment
+  about: Crust particles carry buried organic carbon in cohorts 250 Myr wide by when laid, two kinds (MARINE type II, oil-prone;
+    PEAT type III, coal and gas). When sediment `laid` (m) goes onto particles, organics in density × laid (kg C/m², density
+    from the paleo stage's function) go into the current cohort at the new bed's middle; the cohort's depth and dose become
+    carbon-weighted means (new carbon dose 0). Every burial deepens all cohorts by `laid`.
+area: geology
+clock:
+  when: every plate step with deposition (default 5 Myr), only when plates.run gets organics= (tools/demo_frames.py --organics)
+reads:
+- name: laid
+  unit: m
+  meaning: sediment thickness
+- name: density
+  unit: kg C / m³ of sediment, (n, KINDS)
+  meaning: organic content (from paleo stage)
+- name: w.org_t
+  unit: 's (code: Gyr)'
+  meaning: current time
+writes:
+- name: xorg
+  unit: kg C / m²
+  meaning: carbon per cohort×kind
+  field: planet-field.organic-carbon
+- name: xodep
+  unit: m
+  meaning: depth below surface
+  field: planet-field.organic-depth
+- name: xotti
+  unit: Myr (TTI index units)
+  meaning: heat dose
+  field: planet-field.organic-heat-dose
+params:
+- name: COHORT_MYR
+  value: 7889400000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+  meaning: cohort width
+  source: src/planet_sim/stages/organics.py:24
+- name: KINDS
+  value: 2.0
+  unit: '1'
+  said_as:
+    unit: count
+    factor: 1.0
+  meaning: MARINE=0, PEAT=1
+  source: src/planet_sim/stages/organics.py:26
+- name: ROCK_KG_M3
+  value: 2400.0
+  unit: kg/m3
+  meaning: sediment density (for TOC → kg C/m³ in the paleo side; unverified use here)
+  source: src/planet_sim/stages/organics.py:31
+- name: TOC_SHELF_NOW
+  value: 0.01
+  unit: '1'
+  meaning: ordinary shelf mud TOC ~1 % (Premuzic 1982)
+  source: src/planet_sim/stages/organics.py:32
+- name: TOC_MAX
+  value: 0.12
+  unit: '1'
+  meaning: source-rock TOC ceiling (Tissot & Welte 1984)
+  source: src/planet_sim/stages/organics.py:33
+- name: COAL_SHARE_MAX
+  value: 0.04
+  unit: '1'
+  meaning: max coal share of coal-measure thickness (Ruhr ~3 %)
+  source: src/planet_sim/stages/organics.py:34
+- name: COAL_C_KG_M3
+  value: 975.0
+  unit: '1'
+  said_as:
+    unit: kg C / m³
+    factor: 1.0
+  open: true
+  meaning: coal carbon density 0.75 × 1300
+  source: src/planet_sim/stages/organics.py:35
+  note: 'unit as the code says it: ''kg C / m³''; SI conversion unverified'
+random_draws:
+- none
+invariants:
+- carbon ≥ 0
+- cohort index clamps to the last
+depends_on:
+- planet-process.rock-unit-stack
+note: TOC/coal constants are defined here but consumed by the paleo stage's density function (tools/paleo.py / stages/paleo.py),
+  outside this area (unverified).
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform src/planet_sim/stages/organics.py:cohorts (40-41), empty (44-46), bury (49-53), lay (78-97);
+    called from stages/plates.py:_bury (696-701)
+  state: reference
+- where: planet-forge crates/forge-core/src/models/geology/organics.rs
+  state: current
+  note: planet-forge port (geology line, merged in forge main 338c9ce)
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

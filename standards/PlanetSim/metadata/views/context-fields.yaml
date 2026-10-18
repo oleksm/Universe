@@ -1,0 +1,68 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.context-fields
+  name: Direction fields
+  about: plate motion arrows every 7th sample, structural grain strokes, uplift red / subsidence blue since the previous checkpoint
+    (to 50 m/Myr)
+title: Direction fields
+row: landform
+file_suffix: _context_fields.png (+ .legend.json)
+draws:
+  words: plate motion arrows every 7th sample, structural grain strokes, uplift red / subsidence blue since the previous checkpoint
+    (to 50 m/Myr)
+legend:
+  title: Direction fields
+  rows:
+  - kind: head
+    label: Direction fields
+    shown_when: always
+  - kind: arrow
+    label: plate motion (relative speed)
+    colour:
+    - 60
+    - 60
+    - 60
+    shown_when: ctx
+  - kind: line
+    label: structural grain (strike of the rock fabric)
+    colour:
+    - 150
+    - 30
+    - 160
+    shown_when: ctx
+  - kind: fill
+    label: rising since the last checkpoint (to 50 m/Myr)
+    colour:
+    - 220
+    - 40
+    - 30
+    shown_when: previous checkpoint
+  - kind: fill
+    label: sinking since the last checkpoint
+    colour:
+    - 40
+    - 90
+    - 220
+    shown_when: previous checkpoint
+  - kind: arrow
+    label: wind
+    shown_when: never
+  - kind: arrow
+    label: wave approach
+    shown_when: never
+  - kind: arrow
+    label: ice velocity
+    shown_when: never
+  - kind: line
+    label: joint directions
+    shown_when: never
+  - kind: fill
+    label: temperature, rainfall, aridity
+    shown_when: never
+  source: ~/git/planet-trees-pgs2/tools/context_view.py:332-336
+shown: true
+implementations:
+- where: planet-trees-pgs2 ~/git/planet-trees-pgs2/tools/context_view.py:view_fields (306)
+  state: reference
+status: draft

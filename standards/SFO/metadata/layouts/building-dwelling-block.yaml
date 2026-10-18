@@ -1,0 +1,11858 @@
+# yaml-language-server: $schema=../../schema/layout.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: layout.building-dwelling-block
+  name: Dwelling block, world with air
+  description: 'A tower of flats: homes for two thousand, each with its own door. Laid of the kit: a strut frame on the 3 m grid, panels, and 1960 rooms of 6 m furnished piece by piece (1764 flat, 39 reception, 157 store room).'
+stands_for: building.dwelling-block
+site:
+  atmosphere: air
+  gravity:
+  - 8.0
+  - 11.0
+physical:
+  length: 48.0
+  width: 42.0
+  height: 105.15
+  mass: 56343107.9
+bays: []
+rooms:
+- id: FLA1
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -18.0
+  - 0.0
+- id: FLA2
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -18.0
+  - 0.0
+- id: FLA3
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -18.0
+  - 0.0
+- id: FLA4
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -18.0
+  - 0.0
+- id: FLA5
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -18.0
+  - 0.0
+- id: FLA6
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -18.0
+  - 0.0
+- id: FLA7
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -18.0
+  - 0.0
+- id: FLA8
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -18.0
+  - 0.0
+- id: FLA9
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -12.0
+  - 0.0
+- id: FLA10
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -12.0
+  - 0.0
+- id: FLA11
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -12.0
+  - 0.0
+- id: FLA12
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -12.0
+  - 0.0
+- id: FLA13
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -12.0
+  - 0.0
+- id: FLA14
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -12.0
+  - 0.0
+- id: FLA15
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -12.0
+  - 0.0
+- id: FLA16
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -12.0
+  - 0.0
+- id: FLA17
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -6.0
+  - 0.0
+- id: FLA18
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -6.0
+  - 0.0
+- id: FLA19
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -6.0
+  - 0.0
+- id: FLA20
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -6.0
+  - 0.0
+- id: FLA21
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -6.0
+  - 0.0
+- id: FLA22
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -6.0
+  - 0.0
+- id: FLA23
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -6.0
+  - 0.0
+- id: FLA24
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -6.0
+  - 0.0
+- id: FLA25
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 0.0
+  - 0.0
+- id: FLA26
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 0.0
+  - 0.0
+- id: FLA27
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 0.0
+  - 0.0
+- id: FLA28
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 0.0
+  - 0.0
+- id: FLA29
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 0.0
+  - 0.0
+- id: FLA30
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 0.0
+  - 0.0
+- id: FLA31
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 0.0
+  - 0.0
+- id: FLA32
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 0.0
+  - 0.0
+- id: FLA33
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 6.0
+  - 0.0
+- id: FLA34
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 6.0
+  - 0.0
+- id: FLA35
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 6.0
+  - 0.0
+- id: FLA36
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 6.0
+  - 0.0
+- id: FLA37
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 6.0
+  - 0.0
+- id: FLA38
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 6.0
+  - 0.0
+- id: FLA39
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 6.0
+  - 0.0
+- id: FLA40
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 6.0
+  - 0.0
+- id: FLA41
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 12.0
+  - 0.0
+- id: FLA42
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 12.0
+  - 0.0
+- id: FLA43
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 12.0
+  - 0.0
+- id: FLA44
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 12.0
+  - 0.0
+- id: FLA45
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 12.0
+  - 0.0
+- id: FLA46
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 12.0
+  - 0.0
+- id: FLA47
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 12.0
+  - 0.0
+- id: FLA48
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 12.0
+  - 0.0
+- id: FLA49
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 18.0
+  - 0.0
+- id: FLA50
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 18.0
+  - 0.0
+- id: FLA51
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 18.0
+  - 0.0
+- id: FLA52
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 18.0
+  - 0.0
+- id: FLA53
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 18.0
+  - 0.0
+- id: FLA54
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 18.0
+  - 0.0
+- id: FLA55
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 18.0
+  - 0.0
+- id: FLA56
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 18.0
+  - 0.0
+- id: FLA57
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -18.0
+  - 3.0
+- id: FLA58
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -18.0
+  - 3.0
+- id: FLA59
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -18.0
+  - 3.0
+- id: FLA60
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -18.0
+  - 3.0
+- id: FLA61
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -18.0
+  - 3.0
+- id: FLA62
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -18.0
+  - 3.0
+- id: FLA63
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -18.0
+  - 3.0
+- id: FLA64
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -18.0
+  - 3.0
+- id: FLA65
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -12.0
+  - 3.0
+- id: FLA66
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -12.0
+  - 3.0
+- id: FLA67
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -12.0
+  - 3.0
+- id: FLA68
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -12.0
+  - 3.0
+- id: FLA69
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -12.0
+  - 3.0
+- id: FLA70
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -12.0
+  - 3.0
+- id: FLA71
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -12.0
+  - 3.0
+- id: FLA72
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -12.0
+  - 3.0
+- id: FLA73
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -6.0
+  - 3.0
+- id: FLA74
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -6.0
+  - 3.0
+- id: FLA75
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -6.0
+  - 3.0
+- id: FLA76
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -6.0
+  - 3.0
+- id: FLA77
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -6.0
+  - 3.0
+- id: FLA78
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -6.0
+  - 3.0
+- id: FLA79
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -6.0
+  - 3.0
+- id: FLA80
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -6.0
+  - 3.0
+- id: FLA81
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 0.0
+  - 3.0
+- id: FLA82
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 0.0
+  - 3.0
+- id: FLA83
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 0.0
+  - 3.0
+- id: FLA84
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 0.0
+  - 3.0
+- id: FLA85
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 0.0
+  - 3.0
+- id: FLA86
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 0.0
+  - 3.0
+- id: FLA87
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 0.0
+  - 3.0
+- id: FLA88
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 0.0
+  - 3.0
+- id: FLA89
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 6.0
+  - 3.0
+- id: FLA90
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 6.0
+  - 3.0
+- id: FLA91
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 6.0
+  - 3.0
+- id: FLA92
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 6.0
+  - 3.0
+- id: FLA93
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 6.0
+  - 3.0
+- id: FLA94
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 6.0
+  - 3.0
+- id: FLA95
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 6.0
+  - 3.0
+- id: FLA96
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 6.0
+  - 3.0
+- id: FLA97
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 12.0
+  - 3.0
+- id: FLA98
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 12.0
+  - 3.0
+- id: FLA99
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 12.0
+  - 3.0
+- id: FLA100
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 12.0
+  - 3.0
+- id: FLA101
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 12.0
+  - 3.0
+- id: FLA102
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 12.0
+  - 3.0
+- id: FLA103
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 12.0
+  - 3.0
+- id: FLA104
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 12.0
+  - 3.0
+- id: FLA105
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 18.0
+  - 3.0
+- id: FLA106
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 18.0
+  - 3.0
+- id: FLA107
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 18.0
+  - 3.0
+- id: FLA108
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 18.0
+  - 3.0
+- id: FLA109
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 18.0
+  - 3.0
+- id: FLA110
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 18.0
+  - 3.0
+- id: FLA111
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 18.0
+  - 3.0
+- id: FLA112
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 18.0
+  - 3.0
+- id: FLA113
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -18.0
+  - 6.0
+- id: FLA114
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -18.0
+  - 6.0
+- id: FLA115
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -18.0
+  - 6.0
+- id: FLA116
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -18.0
+  - 6.0
+- id: FLA117
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -18.0
+  - 6.0
+- id: FLA118
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -18.0
+  - 6.0
+- id: FLA119
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -18.0
+  - 6.0
+- id: FLA120
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -18.0
+  - 6.0
+- id: FLA121
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -12.0
+  - 6.0
+- id: FLA122
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -12.0
+  - 6.0
+- id: FLA123
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -12.0
+  - 6.0
+- id: FLA124
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -12.0
+  - 6.0
+- id: FLA125
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -12.0
+  - 6.0
+- id: FLA126
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -12.0
+  - 6.0
+- id: FLA127
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -12.0
+  - 6.0
+- id: FLA128
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -12.0
+  - 6.0
+- id: FLA129
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -6.0
+  - 6.0
+- id: FLA130
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -6.0
+  - 6.0
+- id: FLA131
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -6.0
+  - 6.0
+- id: FLA132
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -6.0
+  - 6.0
+- id: FLA133
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -6.0
+  - 6.0
+- id: FLA134
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -6.0
+  - 6.0
+- id: FLA135
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -6.0
+  - 6.0
+- id: FLA136
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -6.0
+  - 6.0
+- id: FLA137
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 0.0
+  - 6.0
+- id: FLA138
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 0.0
+  - 6.0
+- id: FLA139
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 0.0
+  - 6.0
+- id: FLA140
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 0.0
+  - 6.0
+- id: FLA141
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 0.0
+  - 6.0
+- id: FLA142
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 0.0
+  - 6.0
+- id: FLA143
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 0.0
+  - 6.0
+- id: FLA144
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 0.0
+  - 6.0
+- id: FLA145
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 6.0
+  - 6.0
+- id: FLA146
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 6.0
+  - 6.0
+- id: FLA147
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 6.0
+  - 6.0
+- id: FLA148
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 6.0
+  - 6.0
+- id: FLA149
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 6.0
+  - 6.0
+- id: FLA150
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 6.0
+  - 6.0
+- id: FLA151
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 6.0
+  - 6.0
+- id: FLA152
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 6.0
+  - 6.0
+- id: FLA153
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 12.0
+  - 6.0
+- id: FLA154
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 12.0
+  - 6.0
+- id: FLA155
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 12.0
+  - 6.0
+- id: FLA156
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 12.0
+  - 6.0
+- id: FLA157
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 12.0
+  - 6.0
+- id: FLA158
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 12.0
+  - 6.0
+- id: FLA159
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 12.0
+  - 6.0
+- id: FLA160
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 12.0
+  - 6.0
+- id: FLA161
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 18.0
+  - 6.0
+- id: FLA162
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 18.0
+  - 6.0
+- id: FLA163
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 18.0
+  - 6.0
+- id: FLA164
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 18.0
+  - 6.0
+- id: FLA165
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 18.0
+  - 6.0
+- id: FLA166
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 18.0
+  - 6.0
+- id: FLA167
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 18.0
+  - 6.0
+- id: FLA168
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 18.0
+  - 6.0
+- id: FLA169
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -18.0
+  - 9.0
+- id: FLA170
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -18.0
+  - 9.0
+- id: FLA171
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -18.0
+  - 9.0
+- id: FLA172
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -18.0
+  - 9.0
+- id: FLA173
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -18.0
+  - 9.0
+- id: FLA174
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -18.0
+  - 9.0
+- id: FLA175
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -18.0
+  - 9.0
+- id: FLA176
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -18.0
+  - 9.0
+- id: FLA177
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -12.0
+  - 9.0
+- id: FLA178
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -12.0
+  - 9.0
+- id: FLA179
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -12.0
+  - 9.0
+- id: FLA180
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -12.0
+  - 9.0
+- id: FLA181
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -12.0
+  - 9.0
+- id: FLA182
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -12.0
+  - 9.0
+- id: FLA183
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -12.0
+  - 9.0
+- id: FLA184
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -12.0
+  - 9.0
+- id: FLA185
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -6.0
+  - 9.0
+- id: FLA186
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -6.0
+  - 9.0
+- id: FLA187
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -6.0
+  - 9.0
+- id: FLA188
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -6.0
+  - 9.0
+- id: FLA189
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -6.0
+  - 9.0
+- id: FLA190
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -6.0
+  - 9.0
+- id: FLA191
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -6.0
+  - 9.0
+- id: FLA192
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -6.0
+  - 9.0
+- id: FLA193
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 0.0
+  - 9.0
+- id: FLA194
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 0.0
+  - 9.0
+- id: FLA195
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 0.0
+  - 9.0
+- id: FLA196
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 0.0
+  - 9.0
+- id: FLA197
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 0.0
+  - 9.0
+- id: FLA198
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 0.0
+  - 9.0
+- id: FLA199
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 0.0
+  - 9.0
+- id: FLA200
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 0.0
+  - 9.0
+- id: FLA201
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 6.0
+  - 9.0
+- id: FLA202
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 6.0
+  - 9.0
+- id: FLA203
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 6.0
+  - 9.0
+- id: FLA204
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 6.0
+  - 9.0
+- id: FLA205
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 6.0
+  - 9.0
+- id: FLA206
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 6.0
+  - 9.0
+- id: FLA207
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 6.0
+  - 9.0
+- id: FLA208
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 6.0
+  - 9.0
+- id: FLA209
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 12.0
+  - 9.0
+- id: FLA210
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 12.0
+  - 9.0
+- id: FLA211
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 12.0
+  - 9.0
+- id: FLA212
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 12.0
+  - 9.0
+- id: FLA213
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 12.0
+  - 9.0
+- id: FLA214
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 12.0
+  - 9.0
+- id: FLA215
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 12.0
+  - 9.0
+- id: FLA216
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 12.0
+  - 9.0
+- id: FLA217
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 18.0
+  - 9.0
+- id: FLA218
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 18.0
+  - 9.0
+- id: FLA219
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 18.0
+  - 9.0
+- id: FLA220
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 18.0
+  - 9.0
+- id: FLA221
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 18.0
+  - 9.0
+- id: FLA222
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 18.0
+  - 9.0
+- id: FLA223
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 18.0
+  - 9.0
+- id: FLA224
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 18.0
+  - 9.0
+- id: FLA225
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -18.0
+  - 12.0
+- id: FLA226
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -18.0
+  - 12.0
+- id: FLA227
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -18.0
+  - 12.0
+- id: FLA228
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -18.0
+  - 12.0
+- id: FLA229
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -18.0
+  - 12.0
+- id: FLA230
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -18.0
+  - 12.0
+- id: FLA231
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -18.0
+  - 12.0
+- id: FLA232
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -18.0
+  - 12.0
+- id: FLA233
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -12.0
+  - 12.0
+- id: FLA234
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -12.0
+  - 12.0
+- id: FLA235
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -12.0
+  - 12.0
+- id: FLA236
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -12.0
+  - 12.0
+- id: FLA237
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -12.0
+  - 12.0
+- id: FLA238
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -12.0
+  - 12.0
+- id: FLA239
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -12.0
+  - 12.0
+- id: FLA240
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -12.0
+  - 12.0
+- id: FLA241
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -6.0
+  - 12.0
+- id: FLA242
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -6.0
+  - 12.0
+- id: FLA243
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -6.0
+  - 12.0
+- id: FLA244
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -6.0
+  - 12.0
+- id: FLA245
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -6.0
+  - 12.0
+- id: FLA246
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -6.0
+  - 12.0
+- id: FLA247
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -6.0
+  - 12.0
+- id: FLA248
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -6.0
+  - 12.0
+- id: FLA249
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 0.0
+  - 12.0
+- id: FLA250
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 0.0
+  - 12.0
+- id: FLA251
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 0.0
+  - 12.0
+- id: FLA252
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 0.0
+  - 12.0
+- id: FLA253
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 0.0
+  - 12.0
+- id: FLA254
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 0.0
+  - 12.0
+- id: FLA255
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 0.0
+  - 12.0
+- id: FLA256
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 0.0
+  - 12.0
+- id: FLA257
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 6.0
+  - 12.0
+- id: FLA258
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 6.0
+  - 12.0
+- id: FLA259
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 6.0
+  - 12.0
+- id: FLA260
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 6.0
+  - 12.0
+- id: FLA261
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 6.0
+  - 12.0
+- id: FLA262
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 6.0
+  - 12.0
+- id: FLA263
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 6.0
+  - 12.0
+- id: FLA264
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 6.0
+  - 12.0
+- id: FLA265
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 12.0
+  - 12.0
+- id: FLA266
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 12.0
+  - 12.0
+- id: FLA267
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 12.0
+  - 12.0
+- id: FLA268
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 12.0
+  - 12.0
+- id: FLA269
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 12.0
+  - 12.0
+- id: FLA270
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 12.0
+  - 12.0
+- id: FLA271
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 12.0
+  - 12.0
+- id: FLA272
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 12.0
+  - 12.0
+- id: FLA273
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 18.0
+  - 12.0
+- id: FLA274
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 18.0
+  - 12.0
+- id: FLA275
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 18.0
+  - 12.0
+- id: FLA276
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 18.0
+  - 12.0
+- id: FLA277
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 18.0
+  - 12.0
+- id: FLA278
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 18.0
+  - 12.0
+- id: FLA279
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 18.0
+  - 12.0
+- id: FLA280
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 18.0
+  - 12.0
+- id: FLA281
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -18.0
+  - 15.0
+- id: FLA282
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -18.0
+  - 15.0
+- id: FLA283
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -18.0
+  - 15.0
+- id: FLA284
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -18.0
+  - 15.0
+- id: FLA285
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -18.0
+  - 15.0
+- id: FLA286
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -18.0
+  - 15.0
+- id: FLA287
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -18.0
+  - 15.0
+- id: FLA288
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -18.0
+  - 15.0
+- id: FLA289
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -12.0
+  - 15.0
+- id: FLA290
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -12.0
+  - 15.0
+- id: FLA291
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -12.0
+  - 15.0
+- id: FLA292
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -12.0
+  - 15.0
+- id: FLA293
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -12.0
+  - 15.0
+- id: FLA294
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -12.0
+  - 15.0
+- id: FLA295
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -12.0
+  - 15.0
+- id: FLA296
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -12.0
+  - 15.0
+- id: FLA297
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -6.0
+  - 15.0
+- id: FLA298
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -6.0
+  - 15.0
+- id: FLA299
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -6.0
+  - 15.0
+- id: FLA300
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -6.0
+  - 15.0
+- id: FLA301
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -6.0
+  - 15.0
+- id: FLA302
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -6.0
+  - 15.0
+- id: FLA303
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -6.0
+  - 15.0
+- id: FLA304
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -6.0
+  - 15.0
+- id: FLA305
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 0.0
+  - 15.0
+- id: FLA306
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 0.0
+  - 15.0
+- id: FLA307
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 0.0
+  - 15.0
+- id: FLA308
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 0.0
+  - 15.0
+- id: FLA309
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 0.0
+  - 15.0
+- id: FLA310
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 0.0
+  - 15.0
+- id: FLA311
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 0.0
+  - 15.0
+- id: FLA312
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 0.0
+  - 15.0
+- id: FLA313
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 6.0
+  - 15.0
+- id: FLA314
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 6.0
+  - 15.0
+- id: FLA315
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 6.0
+  - 15.0
+- id: FLA316
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 6.0
+  - 15.0
+- id: FLA317
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 6.0
+  - 15.0
+- id: FLA318
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 6.0
+  - 15.0
+- id: FLA319
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 6.0
+  - 15.0
+- id: FLA320
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 6.0
+  - 15.0
+- id: FLA321
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 12.0
+  - 15.0
+- id: FLA322
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 12.0
+  - 15.0
+- id: FLA323
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 12.0
+  - 15.0
+- id: FLA324
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 12.0
+  - 15.0
+- id: FLA325
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 12.0
+  - 15.0
+- id: FLA326
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 12.0
+  - 15.0
+- id: FLA327
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 12.0
+  - 15.0
+- id: FLA328
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 12.0
+  - 15.0
+- id: FLA329
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 18.0
+  - 15.0
+- id: FLA330
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 18.0
+  - 15.0
+- id: FLA331
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 18.0
+  - 15.0
+- id: FLA332
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 18.0
+  - 15.0
+- id: FLA333
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 18.0
+  - 15.0
+- id: FLA334
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 18.0
+  - 15.0
+- id: FLA335
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 18.0
+  - 15.0
+- id: FLA336
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 18.0
+  - 15.0
+- id: FLA337
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -18.0
+  - 18.0
+- id: FLA338
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -18.0
+  - 18.0
+- id: FLA339
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -18.0
+  - 18.0
+- id: FLA340
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -18.0
+  - 18.0
+- id: FLA341
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -18.0
+  - 18.0
+- id: FLA342
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -18.0
+  - 18.0
+- id: FLA343
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -18.0
+  - 18.0
+- id: FLA344
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -18.0
+  - 18.0
+- id: FLA345
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -12.0
+  - 18.0
+- id: FLA346
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -12.0
+  - 18.0
+- id: FLA347
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -12.0
+  - 18.0
+- id: FLA348
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -12.0
+  - 18.0
+- id: FLA349
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -12.0
+  - 18.0
+- id: FLA350
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -12.0
+  - 18.0
+- id: FLA351
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -12.0
+  - 18.0
+- id: FLA352
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -12.0
+  - 18.0
+- id: FLA353
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -6.0
+  - 18.0
+- id: FLA354
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -6.0
+  - 18.0
+- id: FLA355
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -6.0
+  - 18.0
+- id: FLA356
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -6.0
+  - 18.0
+- id: FLA357
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -6.0
+  - 18.0
+- id: FLA358
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -6.0
+  - 18.0
+- id: FLA359
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -6.0
+  - 18.0
+- id: FLA360
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -6.0
+  - 18.0
+- id: FLA361
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 0.0
+  - 18.0
+- id: FLA362
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 0.0
+  - 18.0
+- id: FLA363
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 0.0
+  - 18.0
+- id: FLA364
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 0.0
+  - 18.0
+- id: FLA365
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 0.0
+  - 18.0
+- id: FLA366
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 0.0
+  - 18.0
+- id: FLA367
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 0.0
+  - 18.0
+- id: FLA368
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 0.0
+  - 18.0
+- id: FLA369
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 6.0
+  - 18.0
+- id: FLA370
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 6.0
+  - 18.0
+- id: FLA371
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 6.0
+  - 18.0
+- id: FLA372
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 6.0
+  - 18.0
+- id: FLA373
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 6.0
+  - 18.0
+- id: FLA374
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 6.0
+  - 18.0
+- id: FLA375
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 6.0
+  - 18.0
+- id: FLA376
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 6.0
+  - 18.0
+- id: FLA377
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 12.0
+  - 18.0
+- id: FLA378
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 12.0
+  - 18.0
+- id: FLA379
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 12.0
+  - 18.0
+- id: FLA380
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 12.0
+  - 18.0
+- id: FLA381
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 12.0
+  - 18.0
+- id: FLA382
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 12.0
+  - 18.0
+- id: FLA383
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 12.0
+  - 18.0
+- id: FLA384
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 12.0
+  - 18.0
+- id: FLA385
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 18.0
+  - 18.0
+- id: FLA386
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 18.0
+  - 18.0
+- id: FLA387
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 18.0
+  - 18.0
+- id: FLA388
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 18.0
+  - 18.0
+- id: FLA389
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 18.0
+  - 18.0
+- id: FLA390
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 18.0
+  - 18.0
+- id: FLA391
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 18.0
+  - 18.0
+- id: FLA392
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 18.0
+  - 18.0
+- id: FLA393
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -18.0
+  - 21.0
+- id: FLA394
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -18.0
+  - 21.0
+- id: FLA395
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -18.0
+  - 21.0
+- id: FLA396
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -18.0
+  - 21.0
+- id: FLA397
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -18.0
+  - 21.0
+- id: FLA398
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -18.0
+  - 21.0
+- id: FLA399
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -18.0
+  - 21.0
+- id: FLA400
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -18.0
+  - 21.0
+- id: FLA401
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -12.0
+  - 21.0
+- id: FLA402
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -12.0
+  - 21.0
+- id: FLA403
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -12.0
+  - 21.0
+- id: FLA404
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -12.0
+  - 21.0
+- id: FLA405
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -12.0
+  - 21.0
+- id: FLA406
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -12.0
+  - 21.0
+- id: FLA407
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -12.0
+  - 21.0
+- id: FLA408
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -12.0
+  - 21.0
+- id: FLA409
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -6.0
+  - 21.0
+- id: FLA410
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -6.0
+  - 21.0
+- id: FLA411
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -6.0
+  - 21.0
+- id: FLA412
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -6.0
+  - 21.0
+- id: FLA413
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -6.0
+  - 21.0
+- id: FLA414
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -6.0
+  - 21.0
+- id: FLA415
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -6.0
+  - 21.0
+- id: FLA416
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -6.0
+  - 21.0
+- id: FLA417
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 0.0
+  - 21.0
+- id: FLA418
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 0.0
+  - 21.0
+- id: FLA419
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 0.0
+  - 21.0
+- id: FLA420
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 0.0
+  - 21.0
+- id: FLA421
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 0.0
+  - 21.0
+- id: FLA422
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 0.0
+  - 21.0
+- id: FLA423
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 0.0
+  - 21.0
+- id: FLA424
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 0.0
+  - 21.0
+- id: FLA425
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 6.0
+  - 21.0
+- id: FLA426
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 6.0
+  - 21.0
+- id: FLA427
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 6.0
+  - 21.0
+- id: FLA428
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 6.0
+  - 21.0
+- id: FLA429
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 6.0
+  - 21.0
+- id: FLA430
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 6.0
+  - 21.0
+- id: FLA431
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 6.0
+  - 21.0
+- id: FLA432
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 6.0
+  - 21.0
+- id: FLA433
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 12.0
+  - 21.0
+- id: FLA434
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 12.0
+  - 21.0
+- id: FLA435
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 12.0
+  - 21.0
+- id: FLA436
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 12.0
+  - 21.0
+- id: FLA437
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 12.0
+  - 21.0
+- id: FLA438
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 12.0
+  - 21.0
+- id: FLA439
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 12.0
+  - 21.0
+- id: FLA440
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 12.0
+  - 21.0
+- id: FLA441
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 18.0
+  - 21.0
+- id: FLA442
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 18.0
+  - 21.0
+- id: FLA443
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 18.0
+  - 21.0
+- id: FLA444
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 18.0
+  - 21.0
+- id: FLA445
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 18.0
+  - 21.0
+- id: FLA446
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 18.0
+  - 21.0
+- id: FLA447
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 18.0
+  - 21.0
+- id: FLA448
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 18.0
+  - 21.0
+- id: FLA449
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -18.0
+  - 24.0
+- id: FLA450
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -18.0
+  - 24.0
+- id: FLA451
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -18.0
+  - 24.0
+- id: FLA452
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -18.0
+  - 24.0
+- id: FLA453
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -18.0
+  - 24.0
+- id: FLA454
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -18.0
+  - 24.0
+- id: FLA455
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -18.0
+  - 24.0
+- id: FLA456
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -18.0
+  - 24.0
+- id: FLA457
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -12.0
+  - 24.0
+- id: FLA458
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -12.0
+  - 24.0
+- id: FLA459
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -12.0
+  - 24.0
+- id: FLA460
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -12.0
+  - 24.0
+- id: FLA461
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -12.0
+  - 24.0
+- id: FLA462
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -12.0
+  - 24.0
+- id: FLA463
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -12.0
+  - 24.0
+- id: FLA464
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -12.0
+  - 24.0
+- id: FLA465
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -6.0
+  - 24.0
+- id: FLA466
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -6.0
+  - 24.0
+- id: FLA467
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -6.0
+  - 24.0
+- id: FLA468
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -6.0
+  - 24.0
+- id: FLA469
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -6.0
+  - 24.0
+- id: FLA470
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -6.0
+  - 24.0
+- id: FLA471
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -6.0
+  - 24.0
+- id: FLA472
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -6.0
+  - 24.0
+- id: FLA473
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 0.0
+  - 24.0
+- id: FLA474
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 0.0
+  - 24.0
+- id: FLA475
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 0.0
+  - 24.0
+- id: FLA476
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 0.0
+  - 24.0
+- id: FLA477
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 0.0
+  - 24.0
+- id: FLA478
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 0.0
+  - 24.0
+- id: FLA479
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 0.0
+  - 24.0
+- id: FLA480
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 0.0
+  - 24.0
+- id: FLA481
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 6.0
+  - 24.0
+- id: FLA482
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 6.0
+  - 24.0
+- id: FLA483
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 6.0
+  - 24.0
+- id: FLA484
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 6.0
+  - 24.0
+- id: FLA485
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 6.0
+  - 24.0
+- id: FLA486
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 6.0
+  - 24.0
+- id: FLA487
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 6.0
+  - 24.0
+- id: FLA488
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 6.0
+  - 24.0
+- id: FLA489
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 12.0
+  - 24.0
+- id: FLA490
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 12.0
+  - 24.0
+- id: FLA491
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 12.0
+  - 24.0
+- id: FLA492
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 12.0
+  - 24.0
+- id: FLA493
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 12.0
+  - 24.0
+- id: FLA494
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 12.0
+  - 24.0
+- id: FLA495
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 12.0
+  - 24.0
+- id: FLA496
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 12.0
+  - 24.0
+- id: FLA497
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 18.0
+  - 24.0
+- id: FLA498
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 18.0
+  - 24.0
+- id: FLA499
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 18.0
+  - 24.0
+- id: FLA500
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 18.0
+  - 24.0
+- id: FLA501
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 18.0
+  - 24.0
+- id: FLA502
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 18.0
+  - 24.0
+- id: FLA503
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 18.0
+  - 24.0
+- id: FLA504
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 18.0
+  - 24.0
+- id: FLA505
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -18.0
+  - 27.0
+- id: FLA506
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -18.0
+  - 27.0
+- id: FLA507
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -18.0
+  - 27.0
+- id: FLA508
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -18.0
+  - 27.0
+- id: FLA509
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -18.0
+  - 27.0
+- id: FLA510
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -18.0
+  - 27.0
+- id: FLA511
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -18.0
+  - 27.0
+- id: FLA512
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -18.0
+  - 27.0
+- id: FLA513
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -12.0
+  - 27.0
+- id: FLA514
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -12.0
+  - 27.0
+- id: FLA515
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -12.0
+  - 27.0
+- id: FLA516
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -12.0
+  - 27.0
+- id: FLA517
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -12.0
+  - 27.0
+- id: FLA518
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -12.0
+  - 27.0
+- id: FLA519
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -12.0
+  - 27.0
+- id: FLA520
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -12.0
+  - 27.0
+- id: FLA521
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -6.0
+  - 27.0
+- id: FLA522
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -6.0
+  - 27.0
+- id: FLA523
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -6.0
+  - 27.0
+- id: FLA524
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -6.0
+  - 27.0
+- id: FLA525
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -6.0
+  - 27.0
+- id: FLA526
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -6.0
+  - 27.0
+- id: FLA527
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -6.0
+  - 27.0
+- id: FLA528
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -6.0
+  - 27.0
+- id: FLA529
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 0.0
+  - 27.0
+- id: FLA530
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 0.0
+  - 27.0
+- id: FLA531
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 0.0
+  - 27.0
+- id: FLA532
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 0.0
+  - 27.0
+- id: FLA533
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 0.0
+  - 27.0
+- id: FLA534
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 0.0
+  - 27.0
+- id: FLA535
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 0.0
+  - 27.0
+- id: FLA536
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 0.0
+  - 27.0
+- id: FLA537
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 6.0
+  - 27.0
+- id: FLA538
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 6.0
+  - 27.0
+- id: FLA539
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 6.0
+  - 27.0
+- id: FLA540
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 6.0
+  - 27.0
+- id: FLA541
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 6.0
+  - 27.0
+- id: FLA542
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 6.0
+  - 27.0
+- id: FLA543
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 6.0
+  - 27.0
+- id: FLA544
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 6.0
+  - 27.0
+- id: FLA545
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 12.0
+  - 27.0
+- id: FLA546
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 12.0
+  - 27.0
+- id: FLA547
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 12.0
+  - 27.0
+- id: FLA548
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 12.0
+  - 27.0
+- id: FLA549
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 12.0
+  - 27.0
+- id: FLA550
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 12.0
+  - 27.0
+- id: FLA551
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 12.0
+  - 27.0
+- id: FLA552
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 12.0
+  - 27.0
+- id: FLA553
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 18.0
+  - 27.0
+- id: FLA554
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 18.0
+  - 27.0
+- id: FLA555
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 18.0
+  - 27.0
+- id: FLA556
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 18.0
+  - 27.0
+- id: FLA557
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 18.0
+  - 27.0
+- id: FLA558
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 18.0
+  - 27.0
+- id: FLA559
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 18.0
+  - 27.0
+- id: FLA560
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 18.0
+  - 27.0
+- id: FLA561
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -18.0
+  - 30.0
+- id: FLA562
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -18.0
+  - 30.0
+- id: FLA563
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -18.0
+  - 30.0
+- id: FLA564
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -18.0
+  - 30.0
+- id: FLA565
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -18.0
+  - 30.0
+- id: FLA566
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -18.0
+  - 30.0
+- id: FLA567
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -18.0
+  - 30.0
+- id: FLA568
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -18.0
+  - 30.0
+- id: FLA569
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -12.0
+  - 30.0
+- id: FLA570
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -12.0
+  - 30.0
+- id: FLA571
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -12.0
+  - 30.0
+- id: FLA572
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -12.0
+  - 30.0
+- id: FLA573
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -12.0
+  - 30.0
+- id: FLA574
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -12.0
+  - 30.0
+- id: FLA575
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -12.0
+  - 30.0
+- id: FLA576
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -12.0
+  - 30.0
+- id: FLA577
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -6.0
+  - 30.0
+- id: FLA578
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -6.0
+  - 30.0
+- id: FLA579
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -6.0
+  - 30.0
+- id: FLA580
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -6.0
+  - 30.0
+- id: FLA581
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -6.0
+  - 30.0
+- id: FLA582
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -6.0
+  - 30.0
+- id: FLA583
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -6.0
+  - 30.0
+- id: FLA584
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -6.0
+  - 30.0
+- id: FLA585
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 0.0
+  - 30.0
+- id: FLA586
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 0.0
+  - 30.0
+- id: FLA587
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 0.0
+  - 30.0
+- id: FLA588
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 0.0
+  - 30.0
+- id: FLA589
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 0.0
+  - 30.0
+- id: FLA590
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 0.0
+  - 30.0
+- id: FLA591
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 0.0
+  - 30.0
+- id: FLA592
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 0.0
+  - 30.0
+- id: FLA593
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 6.0
+  - 30.0
+- id: FLA594
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 6.0
+  - 30.0
+- id: FLA595
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 6.0
+  - 30.0
+- id: FLA596
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 6.0
+  - 30.0
+- id: FLA597
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 6.0
+  - 30.0
+- id: FLA598
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 6.0
+  - 30.0
+- id: FLA599
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 6.0
+  - 30.0
+- id: FLA600
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 6.0
+  - 30.0
+- id: FLA601
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 12.0
+  - 30.0
+- id: FLA602
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 12.0
+  - 30.0
+- id: FLA603
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 12.0
+  - 30.0
+- id: FLA604
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 12.0
+  - 30.0
+- id: FLA605
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 12.0
+  - 30.0
+- id: FLA606
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 12.0
+  - 30.0
+- id: FLA607
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 12.0
+  - 30.0
+- id: FLA608
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 12.0
+  - 30.0
+- id: FLA609
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 18.0
+  - 30.0
+- id: FLA610
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 18.0
+  - 30.0
+- id: FLA611
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 18.0
+  - 30.0
+- id: FLA612
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 18.0
+  - 30.0
+- id: FLA613
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 18.0
+  - 30.0
+- id: FLA614
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 18.0
+  - 30.0
+- id: FLA615
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 18.0
+  - 30.0
+- id: FLA616
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 18.0
+  - 30.0
+- id: FLA617
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -18.0
+  - 33.0
+- id: FLA618
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -18.0
+  - 33.0
+- id: FLA619
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -18.0
+  - 33.0
+- id: FLA620
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -18.0
+  - 33.0
+- id: FLA621
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -18.0
+  - 33.0
+- id: FLA622
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -18.0
+  - 33.0
+- id: FLA623
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -18.0
+  - 33.0
+- id: FLA624
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -18.0
+  - 33.0
+- id: FLA625
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -12.0
+  - 33.0
+- id: FLA626
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -12.0
+  - 33.0
+- id: FLA627
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -12.0
+  - 33.0
+- id: FLA628
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -12.0
+  - 33.0
+- id: FLA629
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -12.0
+  - 33.0
+- id: FLA630
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -12.0
+  - 33.0
+- id: FLA631
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -12.0
+  - 33.0
+- id: FLA632
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -12.0
+  - 33.0
+- id: FLA633
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -6.0
+  - 33.0
+- id: FLA634
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -6.0
+  - 33.0
+- id: FLA635
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -6.0
+  - 33.0
+- id: FLA636
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -6.0
+  - 33.0
+- id: FLA637
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -6.0
+  - 33.0
+- id: FLA638
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -6.0
+  - 33.0
+- id: FLA639
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -6.0
+  - 33.0
+- id: FLA640
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -6.0
+  - 33.0
+- id: FLA641
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 0.0
+  - 33.0
+- id: FLA642
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 0.0
+  - 33.0
+- id: FLA643
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 0.0
+  - 33.0
+- id: FLA644
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 0.0
+  - 33.0
+- id: FLA645
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 0.0
+  - 33.0
+- id: FLA646
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 0.0
+  - 33.0
+- id: FLA647
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 0.0
+  - 33.0
+- id: FLA648
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 0.0
+  - 33.0
+- id: FLA649
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 6.0
+  - 33.0
+- id: FLA650
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 6.0
+  - 33.0
+- id: FLA651
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 6.0
+  - 33.0
+- id: FLA652
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 6.0
+  - 33.0
+- id: FLA653
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 6.0
+  - 33.0
+- id: FLA654
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 6.0
+  - 33.0
+- id: FLA655
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 6.0
+  - 33.0
+- id: FLA656
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 6.0
+  - 33.0
+- id: FLA657
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 12.0
+  - 33.0
+- id: FLA658
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 12.0
+  - 33.0
+- id: FLA659
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 12.0
+  - 33.0
+- id: FLA660
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 12.0
+  - 33.0
+- id: FLA661
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 12.0
+  - 33.0
+- id: FLA662
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 12.0
+  - 33.0
+- id: FLA663
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 12.0
+  - 33.0
+- id: FLA664
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 12.0
+  - 33.0
+- id: FLA665
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 18.0
+  - 33.0
+- id: FLA666
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 18.0
+  - 33.0
+- id: FLA667
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 18.0
+  - 33.0
+- id: FLA668
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 18.0
+  - 33.0
+- id: FLA669
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 18.0
+  - 33.0
+- id: FLA670
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 18.0
+  - 33.0
+- id: FLA671
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 18.0
+  - 33.0
+- id: FLA672
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 18.0
+  - 33.0
+- id: FLA673
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -18.0
+  - 36.0
+- id: FLA674
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -18.0
+  - 36.0
+- id: FLA675
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -18.0
+  - 36.0
+- id: FLA676
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -18.0
+  - 36.0
+- id: FLA677
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -18.0
+  - 36.0
+- id: FLA678
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -18.0
+  - 36.0
+- id: FLA679
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -18.0
+  - 36.0
+- id: FLA680
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -18.0
+  - 36.0
+- id: FLA681
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -12.0
+  - 36.0
+- id: FLA682
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -12.0
+  - 36.0
+- id: FLA683
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -12.0
+  - 36.0
+- id: FLA684
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -12.0
+  - 36.0
+- id: FLA685
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -12.0
+  - 36.0
+- id: FLA686
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -12.0
+  - 36.0
+- id: FLA687
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -12.0
+  - 36.0
+- id: FLA688
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -12.0
+  - 36.0
+- id: FLA689
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -6.0
+  - 36.0
+- id: FLA690
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -6.0
+  - 36.0
+- id: FLA691
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -6.0
+  - 36.0
+- id: FLA692
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -6.0
+  - 36.0
+- id: FLA693
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -6.0
+  - 36.0
+- id: FLA694
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -6.0
+  - 36.0
+- id: FLA695
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -6.0
+  - 36.0
+- id: FLA696
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -6.0
+  - 36.0
+- id: FLA697
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 0.0
+  - 36.0
+- id: FLA698
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 0.0
+  - 36.0
+- id: FLA699
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 0.0
+  - 36.0
+- id: FLA700
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 0.0
+  - 36.0
+- id: FLA701
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 0.0
+  - 36.0
+- id: FLA702
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 0.0
+  - 36.0
+- id: FLA703
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 0.0
+  - 36.0
+- id: FLA704
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 0.0
+  - 36.0
+- id: FLA705
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 6.0
+  - 36.0
+- id: FLA706
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 6.0
+  - 36.0
+- id: FLA707
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 6.0
+  - 36.0
+- id: FLA708
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 6.0
+  - 36.0
+- id: FLA709
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 6.0
+  - 36.0
+- id: FLA710
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 6.0
+  - 36.0
+- id: FLA711
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 6.0
+  - 36.0
+- id: FLA712
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 6.0
+  - 36.0
+- id: FLA713
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 12.0
+  - 36.0
+- id: FLA714
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 12.0
+  - 36.0
+- id: FLA715
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 12.0
+  - 36.0
+- id: FLA716
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 12.0
+  - 36.0
+- id: FLA717
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 12.0
+  - 36.0
+- id: FLA718
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 12.0
+  - 36.0
+- id: FLA719
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 12.0
+  - 36.0
+- id: FLA720
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 12.0
+  - 36.0
+- id: FLA721
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 18.0
+  - 36.0
+- id: FLA722
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 18.0
+  - 36.0
+- id: FLA723
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 18.0
+  - 36.0
+- id: FLA724
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 18.0
+  - 36.0
+- id: FLA725
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 18.0
+  - 36.0
+- id: FLA726
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 18.0
+  - 36.0
+- id: FLA727
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 18.0
+  - 36.0
+- id: FLA728
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 18.0
+  - 36.0
+- id: FLA729
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -18.0
+  - 39.0
+- id: FLA730
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -18.0
+  - 39.0
+- id: FLA731
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -18.0
+  - 39.0
+- id: FLA732
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -18.0
+  - 39.0
+- id: FLA733
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -18.0
+  - 39.0
+- id: FLA734
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -18.0
+  - 39.0
+- id: FLA735
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -18.0
+  - 39.0
+- id: FLA736
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -18.0
+  - 39.0
+- id: FLA737
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -12.0
+  - 39.0
+- id: FLA738
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -12.0
+  - 39.0
+- id: FLA739
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -12.0
+  - 39.0
+- id: FLA740
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -12.0
+  - 39.0
+- id: FLA741
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -12.0
+  - 39.0
+- id: FLA742
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -12.0
+  - 39.0
+- id: FLA743
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -12.0
+  - 39.0
+- id: FLA744
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -12.0
+  - 39.0
+- id: FLA745
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -6.0
+  - 39.0
+- id: FLA746
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -6.0
+  - 39.0
+- id: FLA747
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -6.0
+  - 39.0
+- id: FLA748
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -6.0
+  - 39.0
+- id: FLA749
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -6.0
+  - 39.0
+- id: FLA750
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -6.0
+  - 39.0
+- id: FLA751
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -6.0
+  - 39.0
+- id: FLA752
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -6.0
+  - 39.0
+- id: FLA753
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 0.0
+  - 39.0
+- id: FLA754
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 0.0
+  - 39.0
+- id: FLA755
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 0.0
+  - 39.0
+- id: FLA756
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 0.0
+  - 39.0
+- id: FLA757
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 0.0
+  - 39.0
+- id: FLA758
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 0.0
+  - 39.0
+- id: FLA759
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 0.0
+  - 39.0
+- id: FLA760
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 0.0
+  - 39.0
+- id: FLA761
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 6.0
+  - 39.0
+- id: FLA762
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 6.0
+  - 39.0
+- id: FLA763
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 6.0
+  - 39.0
+- id: FLA764
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 6.0
+  - 39.0
+- id: FLA765
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 6.0
+  - 39.0
+- id: FLA766
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 6.0
+  - 39.0
+- id: FLA767
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 6.0
+  - 39.0
+- id: FLA768
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 6.0
+  - 39.0
+- id: FLA769
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 12.0
+  - 39.0
+- id: FLA770
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 12.0
+  - 39.0
+- id: FLA771
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 12.0
+  - 39.0
+- id: FLA772
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 12.0
+  - 39.0
+- id: FLA773
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 12.0
+  - 39.0
+- id: FLA774
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 12.0
+  - 39.0
+- id: FLA775
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 12.0
+  - 39.0
+- id: FLA776
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 12.0
+  - 39.0
+- id: FLA777
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 18.0
+  - 39.0
+- id: FLA778
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 18.0
+  - 39.0
+- id: FLA779
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 18.0
+  - 39.0
+- id: FLA780
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 18.0
+  - 39.0
+- id: FLA781
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 18.0
+  - 39.0
+- id: FLA782
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 18.0
+  - 39.0
+- id: FLA783
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 18.0
+  - 39.0
+- id: FLA784
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 18.0
+  - 39.0
+- id: FLA785
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -18.0
+  - 42.0
+- id: FLA786
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -18.0
+  - 42.0
+- id: FLA787
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -18.0
+  - 42.0
+- id: FLA788
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -18.0
+  - 42.0
+- id: FLA789
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -18.0
+  - 42.0
+- id: FLA790
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -18.0
+  - 42.0
+- id: FLA791
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -18.0
+  - 42.0
+- id: FLA792
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -18.0
+  - 42.0
+- id: FLA793
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -12.0
+  - 42.0
+- id: FLA794
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -12.0
+  - 42.0
+- id: FLA795
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -12.0
+  - 42.0
+- id: FLA796
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -12.0
+  - 42.0
+- id: FLA797
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -12.0
+  - 42.0
+- id: FLA798
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -12.0
+  - 42.0
+- id: FLA799
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -12.0
+  - 42.0
+- id: FLA800
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -12.0
+  - 42.0
+- id: FLA801
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -6.0
+  - 42.0
+- id: FLA802
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -6.0
+  - 42.0
+- id: FLA803
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -6.0
+  - 42.0
+- id: FLA804
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -6.0
+  - 42.0
+- id: FLA805
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -6.0
+  - 42.0
+- id: FLA806
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -6.0
+  - 42.0
+- id: FLA807
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -6.0
+  - 42.0
+- id: FLA808
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -6.0
+  - 42.0
+- id: FLA809
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 0.0
+  - 42.0
+- id: FLA810
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 0.0
+  - 42.0
+- id: FLA811
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 0.0
+  - 42.0
+- id: FLA812
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 0.0
+  - 42.0
+- id: FLA813
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 0.0
+  - 42.0
+- id: FLA814
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 0.0
+  - 42.0
+- id: FLA815
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 0.0
+  - 42.0
+- id: FLA816
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 0.0
+  - 42.0
+- id: FLA817
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 6.0
+  - 42.0
+- id: FLA818
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 6.0
+  - 42.0
+- id: FLA819
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 6.0
+  - 42.0
+- id: FLA820
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 6.0
+  - 42.0
+- id: FLA821
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 6.0
+  - 42.0
+- id: FLA822
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 6.0
+  - 42.0
+- id: FLA823
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 6.0
+  - 42.0
+- id: FLA824
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 6.0
+  - 42.0
+- id: FLA825
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 12.0
+  - 42.0
+- id: FLA826
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 12.0
+  - 42.0
+- id: FLA827
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 12.0
+  - 42.0
+- id: FLA828
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 12.0
+  - 42.0
+- id: FLA829
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 12.0
+  - 42.0
+- id: FLA830
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 12.0
+  - 42.0
+- id: FLA831
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 12.0
+  - 42.0
+- id: FLA832
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 12.0
+  - 42.0
+- id: FLA833
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 18.0
+  - 42.0
+- id: FLA834
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 18.0
+  - 42.0
+- id: FLA835
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 18.0
+  - 42.0
+- id: FLA836
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 18.0
+  - 42.0
+- id: FLA837
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 18.0
+  - 42.0
+- id: FLA838
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 18.0
+  - 42.0
+- id: FLA839
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 18.0
+  - 42.0
+- id: FLA840
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 18.0
+  - 42.0
+- id: FLA841
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -18.0
+  - 45.0
+- id: FLA842
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -18.0
+  - 45.0
+- id: FLA843
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -18.0
+  - 45.0
+- id: FLA844
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -18.0
+  - 45.0
+- id: FLA845
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -18.0
+  - 45.0
+- id: FLA846
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -18.0
+  - 45.0
+- id: FLA847
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -18.0
+  - 45.0
+- id: FLA848
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -18.0
+  - 45.0
+- id: FLA849
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -12.0
+  - 45.0
+- id: FLA850
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -12.0
+  - 45.0
+- id: FLA851
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -12.0
+  - 45.0
+- id: FLA852
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -12.0
+  - 45.0
+- id: FLA853
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -12.0
+  - 45.0
+- id: FLA854
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -12.0
+  - 45.0
+- id: FLA855
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -12.0
+  - 45.0
+- id: FLA856
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -12.0
+  - 45.0
+- id: FLA857
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -6.0
+  - 45.0
+- id: FLA858
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -6.0
+  - 45.0
+- id: FLA859
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -6.0
+  - 45.0
+- id: FLA860
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -6.0
+  - 45.0
+- id: FLA861
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -6.0
+  - 45.0
+- id: FLA862
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -6.0
+  - 45.0
+- id: FLA863
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -6.0
+  - 45.0
+- id: FLA864
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -6.0
+  - 45.0
+- id: FLA865
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 0.0
+  - 45.0
+- id: FLA866
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 0.0
+  - 45.0
+- id: FLA867
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 0.0
+  - 45.0
+- id: FLA868
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 0.0
+  - 45.0
+- id: FLA869
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 0.0
+  - 45.0
+- id: FLA870
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 0.0
+  - 45.0
+- id: FLA871
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 0.0
+  - 45.0
+- id: FLA872
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 0.0
+  - 45.0
+- id: FLA873
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 6.0
+  - 45.0
+- id: FLA874
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 6.0
+  - 45.0
+- id: FLA875
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 6.0
+  - 45.0
+- id: FLA876
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 6.0
+  - 45.0
+- id: FLA877
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 6.0
+  - 45.0
+- id: FLA878
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 6.0
+  - 45.0
+- id: FLA879
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 6.0
+  - 45.0
+- id: FLA880
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 6.0
+  - 45.0
+- id: FLA881
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 12.0
+  - 45.0
+- id: FLA882
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 12.0
+  - 45.0
+- id: FLA883
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 12.0
+  - 45.0
+- id: FLA884
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 12.0
+  - 45.0
+- id: FLA885
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 12.0
+  - 45.0
+- id: FLA886
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 12.0
+  - 45.0
+- id: FLA887
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 12.0
+  - 45.0
+- id: FLA888
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 12.0
+  - 45.0
+- id: FLA889
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 18.0
+  - 45.0
+- id: FLA890
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 18.0
+  - 45.0
+- id: FLA891
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 18.0
+  - 45.0
+- id: FLA892
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 18.0
+  - 45.0
+- id: FLA893
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 18.0
+  - 45.0
+- id: FLA894
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 18.0
+  - 45.0
+- id: FLA895
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 18.0
+  - 45.0
+- id: FLA896
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 18.0
+  - 45.0
+- id: FLA897
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -18.0
+  - 48.0
+- id: FLA898
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -18.0
+  - 48.0
+- id: FLA899
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -18.0
+  - 48.0
+- id: FLA900
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -18.0
+  - 48.0
+- id: FLA901
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -18.0
+  - 48.0
+- id: FLA902
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -18.0
+  - 48.0
+- id: FLA903
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -18.0
+  - 48.0
+- id: FLA904
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -18.0
+  - 48.0
+- id: FLA905
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -12.0
+  - 48.0
+- id: FLA906
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -12.0
+  - 48.0
+- id: FLA907
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -12.0
+  - 48.0
+- id: FLA908
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -12.0
+  - 48.0
+- id: FLA909
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -12.0
+  - 48.0
+- id: FLA910
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -12.0
+  - 48.0
+- id: FLA911
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -12.0
+  - 48.0
+- id: FLA912
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -12.0
+  - 48.0
+- id: FLA913
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -6.0
+  - 48.0
+- id: FLA914
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -6.0
+  - 48.0
+- id: FLA915
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -6.0
+  - 48.0
+- id: FLA916
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -6.0
+  - 48.0
+- id: FLA917
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -6.0
+  - 48.0
+- id: FLA918
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -6.0
+  - 48.0
+- id: FLA919
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -6.0
+  - 48.0
+- id: FLA920
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -6.0
+  - 48.0
+- id: FLA921
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 0.0
+  - 48.0
+- id: FLA922
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 0.0
+  - 48.0
+- id: FLA923
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 0.0
+  - 48.0
+- id: FLA924
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 0.0
+  - 48.0
+- id: FLA925
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 0.0
+  - 48.0
+- id: FLA926
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 0.0
+  - 48.0
+- id: FLA927
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 0.0
+  - 48.0
+- id: FLA928
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 0.0
+  - 48.0
+- id: FLA929
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 6.0
+  - 48.0
+- id: FLA930
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 6.0
+  - 48.0
+- id: FLA931
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 6.0
+  - 48.0
+- id: FLA932
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 6.0
+  - 48.0
+- id: FLA933
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 6.0
+  - 48.0
+- id: FLA934
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 6.0
+  - 48.0
+- id: FLA935
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 6.0
+  - 48.0
+- id: FLA936
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 6.0
+  - 48.0
+- id: FLA937
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 12.0
+  - 48.0
+- id: FLA938
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 12.0
+  - 48.0
+- id: FLA939
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 12.0
+  - 48.0
+- id: FLA940
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 12.0
+  - 48.0
+- id: FLA941
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 12.0
+  - 48.0
+- id: FLA942
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 12.0
+  - 48.0
+- id: FLA943
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 12.0
+  - 48.0
+- id: FLA944
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 12.0
+  - 48.0
+- id: FLA945
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 18.0
+  - 48.0
+- id: FLA946
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 18.0
+  - 48.0
+- id: FLA947
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 18.0
+  - 48.0
+- id: FLA948
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 18.0
+  - 48.0
+- id: FLA949
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 18.0
+  - 48.0
+- id: FLA950
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 18.0
+  - 48.0
+- id: FLA951
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 18.0
+  - 48.0
+- id: FLA952
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 18.0
+  - 48.0
+- id: FLA953
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -18.0
+  - 51.0
+- id: FLA954
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -18.0
+  - 51.0
+- id: FLA955
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -18.0
+  - 51.0
+- id: FLA956
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -18.0
+  - 51.0
+- id: FLA957
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -18.0
+  - 51.0
+- id: FLA958
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -18.0
+  - 51.0
+- id: FLA959
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -18.0
+  - 51.0
+- id: FLA960
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -18.0
+  - 51.0
+- id: FLA961
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -12.0
+  - 51.0
+- id: FLA962
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -12.0
+  - 51.0
+- id: FLA963
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -12.0
+  - 51.0
+- id: FLA964
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -12.0
+  - 51.0
+- id: FLA965
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -12.0
+  - 51.0
+- id: FLA966
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -12.0
+  - 51.0
+- id: FLA967
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -12.0
+  - 51.0
+- id: FLA968
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -12.0
+  - 51.0
+- id: FLA969
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -6.0
+  - 51.0
+- id: FLA970
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -6.0
+  - 51.0
+- id: FLA971
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -6.0
+  - 51.0
+- id: FLA972
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -6.0
+  - 51.0
+- id: FLA973
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -6.0
+  - 51.0
+- id: FLA974
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -6.0
+  - 51.0
+- id: FLA975
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -6.0
+  - 51.0
+- id: FLA976
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -6.0
+  - 51.0
+- id: FLA977
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 0.0
+  - 51.0
+- id: FLA978
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 0.0
+  - 51.0
+- id: FLA979
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 0.0
+  - 51.0
+- id: FLA980
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 0.0
+  - 51.0
+- id: FLA981
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 0.0
+  - 51.0
+- id: FLA982
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 0.0
+  - 51.0
+- id: FLA983
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 0.0
+  - 51.0
+- id: FLA984
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 0.0
+  - 51.0
+- id: FLA985
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 6.0
+  - 51.0
+- id: FLA986
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 6.0
+  - 51.0
+- id: FLA987
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 6.0
+  - 51.0
+- id: FLA988
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 6.0
+  - 51.0
+- id: FLA989
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 6.0
+  - 51.0
+- id: FLA990
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 6.0
+  - 51.0
+- id: FLA991
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 6.0
+  - 51.0
+- id: FLA992
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 6.0
+  - 51.0
+- id: FLA993
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 12.0
+  - 51.0
+- id: FLA994
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 12.0
+  - 51.0
+- id: FLA995
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 12.0
+  - 51.0
+- id: FLA996
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 12.0
+  - 51.0
+- id: FLA997
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 12.0
+  - 51.0
+- id: FLA998
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 12.0
+  - 51.0
+- id: FLA999
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 12.0
+  - 51.0
+- id: FLA1000
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 12.0
+  - 51.0
+- id: FLA1001
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 18.0
+  - 51.0
+- id: FLA1002
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 18.0
+  - 51.0
+- id: FLA1003
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 18.0
+  - 51.0
+- id: FLA1004
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 18.0
+  - 51.0
+- id: FLA1005
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 18.0
+  - 51.0
+- id: FLA1006
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 18.0
+  - 51.0
+- id: FLA1007
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 18.0
+  - 51.0
+- id: FLA1008
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 18.0
+  - 51.0
+- id: FLA1009
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -18.0
+  - 54.0
+- id: FLA1010
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -18.0
+  - 54.0
+- id: FLA1011
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -18.0
+  - 54.0
+- id: FLA1012
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -18.0
+  - 54.0
+- id: FLA1013
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -18.0
+  - 54.0
+- id: FLA1014
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -18.0
+  - 54.0
+- id: FLA1015
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -18.0
+  - 54.0
+- id: FLA1016
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -18.0
+  - 54.0
+- id: FLA1017
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -12.0
+  - 54.0
+- id: FLA1018
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -12.0
+  - 54.0
+- id: FLA1019
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -12.0
+  - 54.0
+- id: FLA1020
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -12.0
+  - 54.0
+- id: FLA1021
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -12.0
+  - 54.0
+- id: FLA1022
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -12.0
+  - 54.0
+- id: FLA1023
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -12.0
+  - 54.0
+- id: FLA1024
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -12.0
+  - 54.0
+- id: FLA1025
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -6.0
+  - 54.0
+- id: FLA1026
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -6.0
+  - 54.0
+- id: FLA1027
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -6.0
+  - 54.0
+- id: FLA1028
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -6.0
+  - 54.0
+- id: FLA1029
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -6.0
+  - 54.0
+- id: FLA1030
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -6.0
+  - 54.0
+- id: FLA1031
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -6.0
+  - 54.0
+- id: FLA1032
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -6.0
+  - 54.0
+- id: FLA1033
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 0.0
+  - 54.0
+- id: FLA1034
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 0.0
+  - 54.0
+- id: FLA1035
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 0.0
+  - 54.0
+- id: FLA1036
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 0.0
+  - 54.0
+- id: FLA1037
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 0.0
+  - 54.0
+- id: FLA1038
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 0.0
+  - 54.0
+- id: FLA1039
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 0.0
+  - 54.0
+- id: FLA1040
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 0.0
+  - 54.0
+- id: FLA1041
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 6.0
+  - 54.0
+- id: FLA1042
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 6.0
+  - 54.0
+- id: FLA1043
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 6.0
+  - 54.0
+- id: FLA1044
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 6.0
+  - 54.0
+- id: FLA1045
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 6.0
+  - 54.0
+- id: FLA1046
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 6.0
+  - 54.0
+- id: FLA1047
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 6.0
+  - 54.0
+- id: FLA1048
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 6.0
+  - 54.0
+- id: FLA1049
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 12.0
+  - 54.0
+- id: FLA1050
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 12.0
+  - 54.0
+- id: FLA1051
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 12.0
+  - 54.0
+- id: FLA1052
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 12.0
+  - 54.0
+- id: FLA1053
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 12.0
+  - 54.0
+- id: FLA1054
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 12.0
+  - 54.0
+- id: FLA1055
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 12.0
+  - 54.0
+- id: FLA1056
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 12.0
+  - 54.0
+- id: FLA1057
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 18.0
+  - 54.0
+- id: FLA1058
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 18.0
+  - 54.0
+- id: FLA1059
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 18.0
+  - 54.0
+- id: FLA1060
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 18.0
+  - 54.0
+- id: FLA1061
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 18.0
+  - 54.0
+- id: FLA1062
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 18.0
+  - 54.0
+- id: FLA1063
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 18.0
+  - 54.0
+- id: FLA1064
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 18.0
+  - 54.0
+- id: FLA1065
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -18.0
+  - 57.0
+- id: FLA1066
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -18.0
+  - 57.0
+- id: FLA1067
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -18.0
+  - 57.0
+- id: FLA1068
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -18.0
+  - 57.0
+- id: FLA1069
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -18.0
+  - 57.0
+- id: FLA1070
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -18.0
+  - 57.0
+- id: FLA1071
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -18.0
+  - 57.0
+- id: FLA1072
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -18.0
+  - 57.0
+- id: FLA1073
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -12.0
+  - 57.0
+- id: FLA1074
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -12.0
+  - 57.0
+- id: FLA1075
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -12.0
+  - 57.0
+- id: FLA1076
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -12.0
+  - 57.0
+- id: FLA1077
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -12.0
+  - 57.0
+- id: FLA1078
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -12.0
+  - 57.0
+- id: FLA1079
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -12.0
+  - 57.0
+- id: FLA1080
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -12.0
+  - 57.0
+- id: FLA1081
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -6.0
+  - 57.0
+- id: FLA1082
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -6.0
+  - 57.0
+- id: FLA1083
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -6.0
+  - 57.0
+- id: FLA1084
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -6.0
+  - 57.0
+- id: FLA1085
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -6.0
+  - 57.0
+- id: FLA1086
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -6.0
+  - 57.0
+- id: FLA1087
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -6.0
+  - 57.0
+- id: FLA1088
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -6.0
+  - 57.0
+- id: FLA1089
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 0.0
+  - 57.0
+- id: FLA1090
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 0.0
+  - 57.0
+- id: FLA1091
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 0.0
+  - 57.0
+- id: FLA1092
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 0.0
+  - 57.0
+- id: FLA1093
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 0.0
+  - 57.0
+- id: FLA1094
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 0.0
+  - 57.0
+- id: FLA1095
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 0.0
+  - 57.0
+- id: FLA1096
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 0.0
+  - 57.0
+- id: FLA1097
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 6.0
+  - 57.0
+- id: FLA1098
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 6.0
+  - 57.0
+- id: FLA1099
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 6.0
+  - 57.0
+- id: FLA1100
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 6.0
+  - 57.0
+- id: FLA1101
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 6.0
+  - 57.0
+- id: FLA1102
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 6.0
+  - 57.0
+- id: FLA1103
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 6.0
+  - 57.0
+- id: FLA1104
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 6.0
+  - 57.0
+- id: FLA1105
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 12.0
+  - 57.0
+- id: FLA1106
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 12.0
+  - 57.0
+- id: FLA1107
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 12.0
+  - 57.0
+- id: FLA1108
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 12.0
+  - 57.0
+- id: FLA1109
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 12.0
+  - 57.0
+- id: FLA1110
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 12.0
+  - 57.0
+- id: FLA1111
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 12.0
+  - 57.0
+- id: FLA1112
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 12.0
+  - 57.0
+- id: FLA1113
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 18.0
+  - 57.0
+- id: FLA1114
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 18.0
+  - 57.0
+- id: FLA1115
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 18.0
+  - 57.0
+- id: FLA1116
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 18.0
+  - 57.0
+- id: FLA1117
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 18.0
+  - 57.0
+- id: FLA1118
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 18.0
+  - 57.0
+- id: FLA1119
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 18.0
+  - 57.0
+- id: FLA1120
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 18.0
+  - 57.0
+- id: FLA1121
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -18.0
+  - 60.0
+- id: FLA1122
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -18.0
+  - 60.0
+- id: FLA1123
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -18.0
+  - 60.0
+- id: FLA1124
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -18.0
+  - 60.0
+- id: FLA1125
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -18.0
+  - 60.0
+- id: FLA1126
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -18.0
+  - 60.0
+- id: FLA1127
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -18.0
+  - 60.0
+- id: FLA1128
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -18.0
+  - 60.0
+- id: FLA1129
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -12.0
+  - 60.0
+- id: FLA1130
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -12.0
+  - 60.0
+- id: FLA1131
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -12.0
+  - 60.0
+- id: FLA1132
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -12.0
+  - 60.0
+- id: FLA1133
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -12.0
+  - 60.0
+- id: FLA1134
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -12.0
+  - 60.0
+- id: FLA1135
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -12.0
+  - 60.0
+- id: FLA1136
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -12.0
+  - 60.0
+- id: FLA1137
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -6.0
+  - 60.0
+- id: FLA1138
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -6.0
+  - 60.0
+- id: FLA1139
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -6.0
+  - 60.0
+- id: FLA1140
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -6.0
+  - 60.0
+- id: FLA1141
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -6.0
+  - 60.0
+- id: FLA1142
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -6.0
+  - 60.0
+- id: FLA1143
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -6.0
+  - 60.0
+- id: FLA1144
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -6.0
+  - 60.0
+- id: FLA1145
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 0.0
+  - 60.0
+- id: FLA1146
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 0.0
+  - 60.0
+- id: FLA1147
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 0.0
+  - 60.0
+- id: FLA1148
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 0.0
+  - 60.0
+- id: FLA1149
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 0.0
+  - 60.0
+- id: FLA1150
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 0.0
+  - 60.0
+- id: FLA1151
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 0.0
+  - 60.0
+- id: FLA1152
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 0.0
+  - 60.0
+- id: FLA1153
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 6.0
+  - 60.0
+- id: FLA1154
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 6.0
+  - 60.0
+- id: FLA1155
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 6.0
+  - 60.0
+- id: FLA1156
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 6.0
+  - 60.0
+- id: FLA1157
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 6.0
+  - 60.0
+- id: FLA1158
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 6.0
+  - 60.0
+- id: FLA1159
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 6.0
+  - 60.0
+- id: FLA1160
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 6.0
+  - 60.0
+- id: FLA1161
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 12.0
+  - 60.0
+- id: FLA1162
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 12.0
+  - 60.0
+- id: FLA1163
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 12.0
+  - 60.0
+- id: FLA1164
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 12.0
+  - 60.0
+- id: FLA1165
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 12.0
+  - 60.0
+- id: FLA1166
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 12.0
+  - 60.0
+- id: FLA1167
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 12.0
+  - 60.0
+- id: FLA1168
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 12.0
+  - 60.0
+- id: FLA1169
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 18.0
+  - 60.0
+- id: FLA1170
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 18.0
+  - 60.0
+- id: FLA1171
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 18.0
+  - 60.0
+- id: FLA1172
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 18.0
+  - 60.0
+- id: FLA1173
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 18.0
+  - 60.0
+- id: FLA1174
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 18.0
+  - 60.0
+- id: FLA1175
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 18.0
+  - 60.0
+- id: FLA1176
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 18.0
+  - 60.0
+- id: FLA1177
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -18.0
+  - 63.0
+- id: FLA1178
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -18.0
+  - 63.0
+- id: FLA1179
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -18.0
+  - 63.0
+- id: FLA1180
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -18.0
+  - 63.0
+- id: FLA1181
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -18.0
+  - 63.0
+- id: FLA1182
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -18.0
+  - 63.0
+- id: FLA1183
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -18.0
+  - 63.0
+- id: FLA1184
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -18.0
+  - 63.0
+- id: FLA1185
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -12.0
+  - 63.0
+- id: FLA1186
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -12.0
+  - 63.0
+- id: FLA1187
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -12.0
+  - 63.0
+- id: FLA1188
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -12.0
+  - 63.0
+- id: FLA1189
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -12.0
+  - 63.0
+- id: FLA1190
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -12.0
+  - 63.0
+- id: FLA1191
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -12.0
+  - 63.0
+- id: FLA1192
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -12.0
+  - 63.0
+- id: FLA1193
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -6.0
+  - 63.0
+- id: FLA1194
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -6.0
+  - 63.0
+- id: FLA1195
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -6.0
+  - 63.0
+- id: FLA1196
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -6.0
+  - 63.0
+- id: FLA1197
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -6.0
+  - 63.0
+- id: FLA1198
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -6.0
+  - 63.0
+- id: FLA1199
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -6.0
+  - 63.0
+- id: FLA1200
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -6.0
+  - 63.0
+- id: FLA1201
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 0.0
+  - 63.0
+- id: FLA1202
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 0.0
+  - 63.0
+- id: FLA1203
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 0.0
+  - 63.0
+- id: FLA1204
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 0.0
+  - 63.0
+- id: FLA1205
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 0.0
+  - 63.0
+- id: FLA1206
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 0.0
+  - 63.0
+- id: FLA1207
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 0.0
+  - 63.0
+- id: FLA1208
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 0.0
+  - 63.0
+- id: FLA1209
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 6.0
+  - 63.0
+- id: FLA1210
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 6.0
+  - 63.0
+- id: FLA1211
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 6.0
+  - 63.0
+- id: FLA1212
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 6.0
+  - 63.0
+- id: FLA1213
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 6.0
+  - 63.0
+- id: FLA1214
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 6.0
+  - 63.0
+- id: FLA1215
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 6.0
+  - 63.0
+- id: FLA1216
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 6.0
+  - 63.0
+- id: FLA1217
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 12.0
+  - 63.0
+- id: FLA1218
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 12.0
+  - 63.0
+- id: FLA1219
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 12.0
+  - 63.0
+- id: FLA1220
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 12.0
+  - 63.0
+- id: FLA1221
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 12.0
+  - 63.0
+- id: FLA1222
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 12.0
+  - 63.0
+- id: FLA1223
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 12.0
+  - 63.0
+- id: FLA1224
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 12.0
+  - 63.0
+- id: FLA1225
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 18.0
+  - 63.0
+- id: FLA1226
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 18.0
+  - 63.0
+- id: FLA1227
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 18.0
+  - 63.0
+- id: FLA1228
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 18.0
+  - 63.0
+- id: FLA1229
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 18.0
+  - 63.0
+- id: FLA1230
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 18.0
+  - 63.0
+- id: FLA1231
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 18.0
+  - 63.0
+- id: FLA1232
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 18.0
+  - 63.0
+- id: FLA1233
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -18.0
+  - 66.0
+- id: FLA1234
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -18.0
+  - 66.0
+- id: FLA1235
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -18.0
+  - 66.0
+- id: FLA1236
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -18.0
+  - 66.0
+- id: FLA1237
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -18.0
+  - 66.0
+- id: FLA1238
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -18.0
+  - 66.0
+- id: FLA1239
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -18.0
+  - 66.0
+- id: FLA1240
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -18.0
+  - 66.0
+- id: FLA1241
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -12.0
+  - 66.0
+- id: FLA1242
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -12.0
+  - 66.0
+- id: FLA1243
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -12.0
+  - 66.0
+- id: FLA1244
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -12.0
+  - 66.0
+- id: FLA1245
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -12.0
+  - 66.0
+- id: FLA1246
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -12.0
+  - 66.0
+- id: FLA1247
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -12.0
+  - 66.0
+- id: FLA1248
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -12.0
+  - 66.0
+- id: FLA1249
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -6.0
+  - 66.0
+- id: FLA1250
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -6.0
+  - 66.0
+- id: FLA1251
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -6.0
+  - 66.0
+- id: FLA1252
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -6.0
+  - 66.0
+- id: FLA1253
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -6.0
+  - 66.0
+- id: FLA1254
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -6.0
+  - 66.0
+- id: FLA1255
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -6.0
+  - 66.0
+- id: FLA1256
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -6.0
+  - 66.0
+- id: FLA1257
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 0.0
+  - 66.0
+- id: FLA1258
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 0.0
+  - 66.0
+- id: FLA1259
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 0.0
+  - 66.0
+- id: FLA1260
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 0.0
+  - 66.0
+- id: FLA1261
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 0.0
+  - 66.0
+- id: FLA1262
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 0.0
+  - 66.0
+- id: FLA1263
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 0.0
+  - 66.0
+- id: FLA1264
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 0.0
+  - 66.0
+- id: FLA1265
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 6.0
+  - 66.0
+- id: FLA1266
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 6.0
+  - 66.0
+- id: FLA1267
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 6.0
+  - 66.0
+- id: FLA1268
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 6.0
+  - 66.0
+- id: FLA1269
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 6.0
+  - 66.0
+- id: FLA1270
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 6.0
+  - 66.0
+- id: FLA1271
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 6.0
+  - 66.0
+- id: FLA1272
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 6.0
+  - 66.0
+- id: FLA1273
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 12.0
+  - 66.0
+- id: FLA1274
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 12.0
+  - 66.0
+- id: FLA1275
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 12.0
+  - 66.0
+- id: FLA1276
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 12.0
+  - 66.0
+- id: FLA1277
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 12.0
+  - 66.0
+- id: FLA1278
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 12.0
+  - 66.0
+- id: FLA1279
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 12.0
+  - 66.0
+- id: FLA1280
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 12.0
+  - 66.0
+- id: FLA1281
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 18.0
+  - 66.0
+- id: FLA1282
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 18.0
+  - 66.0
+- id: FLA1283
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 18.0
+  - 66.0
+- id: FLA1284
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 18.0
+  - 66.0
+- id: FLA1285
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 18.0
+  - 66.0
+- id: FLA1286
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 18.0
+  - 66.0
+- id: FLA1287
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 18.0
+  - 66.0
+- id: FLA1288
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 18.0
+  - 66.0
+- id: FLA1289
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -18.0
+  - 69.0
+- id: FLA1290
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -18.0
+  - 69.0
+- id: FLA1291
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -18.0
+  - 69.0
+- id: FLA1292
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -18.0
+  - 69.0
+- id: FLA1293
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -18.0
+  - 69.0
+- id: FLA1294
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -18.0
+  - 69.0
+- id: FLA1295
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -18.0
+  - 69.0
+- id: FLA1296
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -18.0
+  - 69.0
+- id: FLA1297
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -12.0
+  - 69.0
+- id: FLA1298
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -12.0
+  - 69.0
+- id: FLA1299
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -12.0
+  - 69.0
+- id: FLA1300
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -12.0
+  - 69.0
+- id: FLA1301
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -12.0
+  - 69.0
+- id: FLA1302
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -12.0
+  - 69.0
+- id: FLA1303
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -12.0
+  - 69.0
+- id: FLA1304
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -12.0
+  - 69.0
+- id: FLA1305
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -6.0
+  - 69.0
+- id: FLA1306
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -6.0
+  - 69.0
+- id: FLA1307
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -6.0
+  - 69.0
+- id: FLA1308
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -6.0
+  - 69.0
+- id: FLA1309
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -6.0
+  - 69.0
+- id: FLA1310
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -6.0
+  - 69.0
+- id: FLA1311
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -6.0
+  - 69.0
+- id: FLA1312
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -6.0
+  - 69.0
+- id: FLA1313
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 0.0
+  - 69.0
+- id: FLA1314
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 0.0
+  - 69.0
+- id: FLA1315
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 0.0
+  - 69.0
+- id: FLA1316
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 0.0
+  - 69.0
+- id: FLA1317
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 0.0
+  - 69.0
+- id: FLA1318
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 0.0
+  - 69.0
+- id: FLA1319
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 0.0
+  - 69.0
+- id: FLA1320
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 0.0
+  - 69.0
+- id: FLA1321
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 6.0
+  - 69.0
+- id: FLA1322
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 6.0
+  - 69.0
+- id: FLA1323
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 6.0
+  - 69.0
+- id: FLA1324
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 6.0
+  - 69.0
+- id: FLA1325
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 6.0
+  - 69.0
+- id: FLA1326
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 6.0
+  - 69.0
+- id: FLA1327
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 6.0
+  - 69.0
+- id: FLA1328
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 6.0
+  - 69.0
+- id: FLA1329
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 12.0
+  - 69.0
+- id: FLA1330
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 12.0
+  - 69.0
+- id: FLA1331
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 12.0
+  - 69.0
+- id: FLA1332
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 12.0
+  - 69.0
+- id: FLA1333
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 12.0
+  - 69.0
+- id: FLA1334
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 12.0
+  - 69.0
+- id: FLA1335
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 12.0
+  - 69.0
+- id: FLA1336
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 12.0
+  - 69.0
+- id: FLA1337
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 18.0
+  - 69.0
+- id: FLA1338
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 18.0
+  - 69.0
+- id: FLA1339
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 18.0
+  - 69.0
+- id: FLA1340
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 18.0
+  - 69.0
+- id: FLA1341
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 18.0
+  - 69.0
+- id: FLA1342
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 18.0
+  - 69.0
+- id: FLA1343
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 18.0
+  - 69.0
+- id: FLA1344
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 18.0
+  - 69.0
+- id: FLA1345
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -18.0
+  - 72.0
+- id: FLA1346
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -18.0
+  - 72.0
+- id: FLA1347
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -18.0
+  - 72.0
+- id: FLA1348
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -18.0
+  - 72.0
+- id: FLA1349
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -18.0
+  - 72.0
+- id: FLA1350
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -18.0
+  - 72.0
+- id: FLA1351
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -18.0
+  - 72.0
+- id: FLA1352
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -18.0
+  - 72.0
+- id: FLA1353
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -12.0
+  - 72.0
+- id: FLA1354
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -12.0
+  - 72.0
+- id: FLA1355
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -12.0
+  - 72.0
+- id: FLA1356
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -12.0
+  - 72.0
+- id: FLA1357
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -12.0
+  - 72.0
+- id: FLA1358
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -12.0
+  - 72.0
+- id: FLA1359
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -12.0
+  - 72.0
+- id: FLA1360
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -12.0
+  - 72.0
+- id: FLA1361
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -6.0
+  - 72.0
+- id: FLA1362
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -6.0
+  - 72.0
+- id: FLA1363
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -6.0
+  - 72.0
+- id: FLA1364
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -6.0
+  - 72.0
+- id: FLA1365
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -6.0
+  - 72.0
+- id: FLA1366
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -6.0
+  - 72.0
+- id: FLA1367
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -6.0
+  - 72.0
+- id: FLA1368
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -6.0
+  - 72.0
+- id: FLA1369
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 0.0
+  - 72.0
+- id: FLA1370
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 0.0
+  - 72.0
+- id: FLA1371
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 0.0
+  - 72.0
+- id: FLA1372
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 0.0
+  - 72.0
+- id: FLA1373
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 0.0
+  - 72.0
+- id: FLA1374
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 0.0
+  - 72.0
+- id: FLA1375
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 0.0
+  - 72.0
+- id: FLA1376
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 0.0
+  - 72.0
+- id: FLA1377
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 6.0
+  - 72.0
+- id: FLA1378
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 6.0
+  - 72.0
+- id: FLA1379
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 6.0
+  - 72.0
+- id: FLA1380
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 6.0
+  - 72.0
+- id: FLA1381
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 6.0
+  - 72.0
+- id: FLA1382
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 6.0
+  - 72.0
+- id: FLA1383
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 6.0
+  - 72.0
+- id: FLA1384
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 6.0
+  - 72.0
+- id: FLA1385
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 12.0
+  - 72.0
+- id: FLA1386
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 12.0
+  - 72.0
+- id: FLA1387
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 12.0
+  - 72.0
+- id: FLA1388
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 12.0
+  - 72.0
+- id: FLA1389
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 12.0
+  - 72.0
+- id: FLA1390
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 12.0
+  - 72.0
+- id: FLA1391
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 12.0
+  - 72.0
+- id: FLA1392
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 12.0
+  - 72.0
+- id: FLA1393
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 18.0
+  - 72.0
+- id: FLA1394
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 18.0
+  - 72.0
+- id: FLA1395
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 18.0
+  - 72.0
+- id: FLA1396
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 18.0
+  - 72.0
+- id: FLA1397
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 18.0
+  - 72.0
+- id: FLA1398
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 18.0
+  - 72.0
+- id: FLA1399
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 18.0
+  - 72.0
+- id: FLA1400
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 18.0
+  - 72.0
+- id: FLA1401
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -18.0
+  - 75.0
+- id: FLA1402
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -18.0
+  - 75.0
+- id: FLA1403
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -18.0
+  - 75.0
+- id: FLA1404
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -18.0
+  - 75.0
+- id: FLA1405
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -18.0
+  - 75.0
+- id: FLA1406
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -18.0
+  - 75.0
+- id: FLA1407
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -18.0
+  - 75.0
+- id: FLA1408
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -18.0
+  - 75.0
+- id: FLA1409
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -12.0
+  - 75.0
+- id: FLA1410
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -12.0
+  - 75.0
+- id: FLA1411
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -12.0
+  - 75.0
+- id: FLA1412
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -12.0
+  - 75.0
+- id: FLA1413
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -12.0
+  - 75.0
+- id: FLA1414
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -12.0
+  - 75.0
+- id: FLA1415
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -12.0
+  - 75.0
+- id: FLA1416
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -12.0
+  - 75.0
+- id: FLA1417
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -6.0
+  - 75.0
+- id: FLA1418
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -6.0
+  - 75.0
+- id: FLA1419
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -6.0
+  - 75.0
+- id: FLA1420
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -6.0
+  - 75.0
+- id: FLA1421
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -6.0
+  - 75.0
+- id: FLA1422
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -6.0
+  - 75.0
+- id: FLA1423
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -6.0
+  - 75.0
+- id: FLA1424
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -6.0
+  - 75.0
+- id: FLA1425
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 0.0
+  - 75.0
+- id: FLA1426
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 0.0
+  - 75.0
+- id: FLA1427
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 0.0
+  - 75.0
+- id: FLA1428
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 0.0
+  - 75.0
+- id: FLA1429
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 0.0
+  - 75.0
+- id: FLA1430
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 0.0
+  - 75.0
+- id: FLA1431
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 0.0
+  - 75.0
+- id: FLA1432
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 0.0
+  - 75.0
+- id: FLA1433
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 6.0
+  - 75.0
+- id: FLA1434
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 6.0
+  - 75.0
+- id: FLA1435
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 6.0
+  - 75.0
+- id: FLA1436
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 6.0
+  - 75.0
+- id: FLA1437
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 6.0
+  - 75.0
+- id: FLA1438
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 6.0
+  - 75.0
+- id: FLA1439
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 6.0
+  - 75.0
+- id: FLA1440
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 6.0
+  - 75.0
+- id: FLA1441
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 12.0
+  - 75.0
+- id: FLA1442
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 12.0
+  - 75.0
+- id: FLA1443
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 12.0
+  - 75.0
+- id: FLA1444
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 12.0
+  - 75.0
+- id: FLA1445
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 12.0
+  - 75.0
+- id: FLA1446
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 12.0
+  - 75.0
+- id: FLA1447
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 12.0
+  - 75.0
+- id: FLA1448
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 12.0
+  - 75.0
+- id: FLA1449
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 18.0
+  - 75.0
+- id: FLA1450
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 18.0
+  - 75.0
+- id: FLA1451
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 18.0
+  - 75.0
+- id: FLA1452
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 18.0
+  - 75.0
+- id: FLA1453
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 18.0
+  - 75.0
+- id: FLA1454
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 18.0
+  - 75.0
+- id: FLA1455
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 18.0
+  - 75.0
+- id: FLA1456
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 18.0
+  - 75.0
+- id: FLA1457
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -18.0
+  - 78.0
+- id: FLA1458
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -18.0
+  - 78.0
+- id: FLA1459
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -18.0
+  - 78.0
+- id: FLA1460
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -18.0
+  - 78.0
+- id: FLA1461
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -18.0
+  - 78.0
+- id: FLA1462
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -18.0
+  - 78.0
+- id: FLA1463
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -18.0
+  - 78.0
+- id: FLA1464
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -18.0
+  - 78.0
+- id: FLA1465
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -12.0
+  - 78.0
+- id: FLA1466
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -12.0
+  - 78.0
+- id: FLA1467
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -12.0
+  - 78.0
+- id: FLA1468
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -12.0
+  - 78.0
+- id: FLA1469
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -12.0
+  - 78.0
+- id: FLA1470
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -12.0
+  - 78.0
+- id: FLA1471
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -12.0
+  - 78.0
+- id: FLA1472
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -12.0
+  - 78.0
+- id: FLA1473
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -6.0
+  - 78.0
+- id: FLA1474
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -6.0
+  - 78.0
+- id: FLA1475
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -6.0
+  - 78.0
+- id: FLA1476
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -6.0
+  - 78.0
+- id: FLA1477
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -6.0
+  - 78.0
+- id: FLA1478
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -6.0
+  - 78.0
+- id: FLA1479
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -6.0
+  - 78.0
+- id: FLA1480
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -6.0
+  - 78.0
+- id: FLA1481
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 0.0
+  - 78.0
+- id: FLA1482
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 0.0
+  - 78.0
+- id: FLA1483
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 0.0
+  - 78.0
+- id: FLA1484
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 0.0
+  - 78.0
+- id: FLA1485
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 0.0
+  - 78.0
+- id: FLA1486
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 0.0
+  - 78.0
+- id: FLA1487
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 0.0
+  - 78.0
+- id: FLA1488
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 0.0
+  - 78.0
+- id: FLA1489
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 6.0
+  - 78.0
+- id: FLA1490
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 6.0
+  - 78.0
+- id: FLA1491
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 6.0
+  - 78.0
+- id: FLA1492
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 6.0
+  - 78.0
+- id: FLA1493
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 6.0
+  - 78.0
+- id: FLA1494
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 6.0
+  - 78.0
+- id: FLA1495
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 6.0
+  - 78.0
+- id: FLA1496
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 6.0
+  - 78.0
+- id: FLA1497
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 12.0
+  - 78.0
+- id: FLA1498
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 12.0
+  - 78.0
+- id: FLA1499
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 12.0
+  - 78.0
+- id: FLA1500
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 12.0
+  - 78.0
+- id: FLA1501
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 12.0
+  - 78.0
+- id: FLA1502
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 12.0
+  - 78.0
+- id: FLA1503
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 12.0
+  - 78.0
+- id: FLA1504
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 12.0
+  - 78.0
+- id: FLA1505
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 18.0
+  - 78.0
+- id: FLA1506
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 18.0
+  - 78.0
+- id: FLA1507
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 18.0
+  - 78.0
+- id: FLA1508
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 18.0
+  - 78.0
+- id: FLA1509
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 18.0
+  - 78.0
+- id: FLA1510
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 18.0
+  - 78.0
+- id: FLA1511
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 18.0
+  - 78.0
+- id: FLA1512
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 18.0
+  - 78.0
+- id: FLA1513
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -18.0
+  - 81.0
+- id: FLA1514
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -18.0
+  - 81.0
+- id: FLA1515
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -18.0
+  - 81.0
+- id: FLA1516
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -18.0
+  - 81.0
+- id: FLA1517
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -18.0
+  - 81.0
+- id: FLA1518
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -18.0
+  - 81.0
+- id: FLA1519
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -18.0
+  - 81.0
+- id: FLA1520
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -18.0
+  - 81.0
+- id: FLA1521
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -12.0
+  - 81.0
+- id: FLA1522
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -12.0
+  - 81.0
+- id: FLA1523
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -12.0
+  - 81.0
+- id: FLA1524
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -12.0
+  - 81.0
+- id: FLA1525
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -12.0
+  - 81.0
+- id: FLA1526
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -12.0
+  - 81.0
+- id: FLA1527
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -12.0
+  - 81.0
+- id: FLA1528
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -12.0
+  - 81.0
+- id: FLA1529
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -6.0
+  - 81.0
+- id: FLA1530
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -6.0
+  - 81.0
+- id: FLA1531
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -6.0
+  - 81.0
+- id: FLA1532
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -6.0
+  - 81.0
+- id: FLA1533
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -6.0
+  - 81.0
+- id: FLA1534
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -6.0
+  - 81.0
+- id: FLA1535
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -6.0
+  - 81.0
+- id: FLA1536
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -6.0
+  - 81.0
+- id: FLA1537
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 0.0
+  - 81.0
+- id: FLA1538
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 0.0
+  - 81.0
+- id: FLA1539
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 0.0
+  - 81.0
+- id: FLA1540
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 0.0
+  - 81.0
+- id: FLA1541
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 0.0
+  - 81.0
+- id: FLA1542
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 0.0
+  - 81.0
+- id: FLA1543
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 0.0
+  - 81.0
+- id: FLA1544
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 0.0
+  - 81.0
+- id: FLA1545
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 6.0
+  - 81.0
+- id: FLA1546
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 6.0
+  - 81.0
+- id: FLA1547
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 6.0
+  - 81.0
+- id: FLA1548
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 6.0
+  - 81.0
+- id: FLA1549
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 6.0
+  - 81.0
+- id: FLA1550
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 6.0
+  - 81.0
+- id: FLA1551
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 6.0
+  - 81.0
+- id: FLA1552
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 6.0
+  - 81.0
+- id: FLA1553
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 12.0
+  - 81.0
+- id: FLA1554
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 12.0
+  - 81.0
+- id: FLA1555
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 12.0
+  - 81.0
+- id: FLA1556
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 12.0
+  - 81.0
+- id: FLA1557
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 12.0
+  - 81.0
+- id: FLA1558
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 12.0
+  - 81.0
+- id: FLA1559
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 12.0
+  - 81.0
+- id: FLA1560
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 12.0
+  - 81.0
+- id: FLA1561
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 18.0
+  - 81.0
+- id: FLA1562
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 18.0
+  - 81.0
+- id: FLA1563
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 18.0
+  - 81.0
+- id: FLA1564
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 18.0
+  - 81.0
+- id: FLA1565
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 18.0
+  - 81.0
+- id: FLA1566
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 18.0
+  - 81.0
+- id: FLA1567
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 18.0
+  - 81.0
+- id: FLA1568
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 18.0
+  - 81.0
+- id: FLA1569
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -18.0
+  - 84.0
+- id: FLA1570
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -18.0
+  - 84.0
+- id: FLA1571
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -18.0
+  - 84.0
+- id: FLA1572
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -18.0
+  - 84.0
+- id: FLA1573
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -18.0
+  - 84.0
+- id: FLA1574
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -18.0
+  - 84.0
+- id: FLA1575
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -18.0
+  - 84.0
+- id: FLA1576
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -18.0
+  - 84.0
+- id: FLA1577
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -12.0
+  - 84.0
+- id: FLA1578
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -12.0
+  - 84.0
+- id: FLA1579
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -12.0
+  - 84.0
+- id: FLA1580
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -12.0
+  - 84.0
+- id: FLA1581
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -12.0
+  - 84.0
+- id: FLA1582
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -12.0
+  - 84.0
+- id: FLA1583
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -12.0
+  - 84.0
+- id: FLA1584
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -12.0
+  - 84.0
+- id: FLA1585
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -6.0
+  - 84.0
+- id: FLA1586
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -6.0
+  - 84.0
+- id: FLA1587
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -6.0
+  - 84.0
+- id: FLA1588
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -6.0
+  - 84.0
+- id: FLA1589
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -6.0
+  - 84.0
+- id: FLA1590
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -6.0
+  - 84.0
+- id: FLA1591
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -6.0
+  - 84.0
+- id: FLA1592
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -6.0
+  - 84.0
+- id: FLA1593
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 0.0
+  - 84.0
+- id: FLA1594
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 0.0
+  - 84.0
+- id: FLA1595
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 0.0
+  - 84.0
+- id: FLA1596
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 0.0
+  - 84.0
+- id: FLA1597
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 0.0
+  - 84.0
+- id: FLA1598
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 0.0
+  - 84.0
+- id: FLA1599
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 0.0
+  - 84.0
+- id: FLA1600
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 0.0
+  - 84.0
+- id: FLA1601
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 6.0
+  - 84.0
+- id: FLA1602
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 6.0
+  - 84.0
+- id: FLA1603
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 6.0
+  - 84.0
+- id: FLA1604
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 6.0
+  - 84.0
+- id: FLA1605
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 6.0
+  - 84.0
+- id: FLA1606
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 6.0
+  - 84.0
+- id: FLA1607
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 6.0
+  - 84.0
+- id: FLA1608
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 6.0
+  - 84.0
+- id: FLA1609
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 12.0
+  - 84.0
+- id: FLA1610
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 12.0
+  - 84.0
+- id: FLA1611
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 12.0
+  - 84.0
+- id: FLA1612
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 12.0
+  - 84.0
+- id: FLA1613
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 12.0
+  - 84.0
+- id: FLA1614
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 12.0
+  - 84.0
+- id: FLA1615
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 12.0
+  - 84.0
+- id: FLA1616
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 12.0
+  - 84.0
+- id: FLA1617
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 18.0
+  - 84.0
+- id: FLA1618
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 18.0
+  - 84.0
+- id: FLA1619
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 18.0
+  - 84.0
+- id: FLA1620
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 18.0
+  - 84.0
+- id: FLA1621
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 18.0
+  - 84.0
+- id: FLA1622
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 18.0
+  - 84.0
+- id: FLA1623
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 18.0
+  - 84.0
+- id: FLA1624
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 18.0
+  - 84.0
+- id: FLA1625
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -18.0
+  - 87.0
+- id: FLA1626
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -18.0
+  - 87.0
+- id: FLA1627
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -18.0
+  - 87.0
+- id: FLA1628
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -18.0
+  - 87.0
+- id: FLA1629
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -18.0
+  - 87.0
+- id: FLA1630
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -18.0
+  - 87.0
+- id: FLA1631
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -18.0
+  - 87.0
+- id: FLA1632
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -18.0
+  - 87.0
+- id: FLA1633
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -12.0
+  - 87.0
+- id: FLA1634
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -12.0
+  - 87.0
+- id: FLA1635
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -12.0
+  - 87.0
+- id: FLA1636
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -12.0
+  - 87.0
+- id: FLA1637
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -12.0
+  - 87.0
+- id: FLA1638
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -12.0
+  - 87.0
+- id: FLA1639
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -12.0
+  - 87.0
+- id: FLA1640
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -12.0
+  - 87.0
+- id: FLA1641
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -6.0
+  - 87.0
+- id: FLA1642
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -6.0
+  - 87.0
+- id: FLA1643
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -6.0
+  - 87.0
+- id: FLA1644
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -6.0
+  - 87.0
+- id: FLA1645
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -6.0
+  - 87.0
+- id: FLA1646
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -6.0
+  - 87.0
+- id: FLA1647
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -6.0
+  - 87.0
+- id: FLA1648
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -6.0
+  - 87.0
+- id: FLA1649
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 0.0
+  - 87.0
+- id: FLA1650
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 0.0
+  - 87.0
+- id: FLA1651
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 0.0
+  - 87.0
+- id: FLA1652
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 0.0
+  - 87.0
+- id: FLA1653
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 0.0
+  - 87.0
+- id: FLA1654
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 0.0
+  - 87.0
+- id: FLA1655
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 0.0
+  - 87.0
+- id: FLA1656
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 0.0
+  - 87.0
+- id: FLA1657
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 6.0
+  - 87.0
+- id: FLA1658
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 6.0
+  - 87.0
+- id: FLA1659
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 6.0
+  - 87.0
+- id: FLA1660
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 6.0
+  - 87.0
+- id: FLA1661
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 6.0
+  - 87.0
+- id: FLA1662
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 6.0
+  - 87.0
+- id: FLA1663
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 6.0
+  - 87.0
+- id: FLA1664
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 6.0
+  - 87.0
+- id: FLA1665
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 12.0
+  - 87.0
+- id: FLA1666
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 12.0
+  - 87.0
+- id: FLA1667
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 12.0
+  - 87.0
+- id: FLA1668
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 12.0
+  - 87.0
+- id: FLA1669
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 12.0
+  - 87.0
+- id: FLA1670
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 12.0
+  - 87.0
+- id: FLA1671
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 12.0
+  - 87.0
+- id: FLA1672
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 12.0
+  - 87.0
+- id: FLA1673
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 18.0
+  - 87.0
+- id: FLA1674
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 18.0
+  - 87.0
+- id: FLA1675
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 18.0
+  - 87.0
+- id: FLA1676
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 18.0
+  - 87.0
+- id: FLA1677
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 18.0
+  - 87.0
+- id: FLA1678
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 18.0
+  - 87.0
+- id: FLA1679
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 18.0
+  - 87.0
+- id: FLA1680
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 18.0
+  - 87.0
+- id: FLA1681
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -18.0
+  - 90.0
+- id: FLA1682
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -18.0
+  - 90.0
+- id: FLA1683
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -18.0
+  - 90.0
+- id: FLA1684
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -18.0
+  - 90.0
+- id: FLA1685
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -18.0
+  - 90.0
+- id: FLA1686
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -18.0
+  - 90.0
+- id: FLA1687
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -18.0
+  - 90.0
+- id: FLA1688
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -18.0
+  - 90.0
+- id: FLA1689
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -12.0
+  - 90.0
+- id: FLA1690
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -12.0
+  - 90.0
+- id: FLA1691
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -12.0
+  - 90.0
+- id: FLA1692
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -12.0
+  - 90.0
+- id: FLA1693
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -12.0
+  - 90.0
+- id: FLA1694
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -12.0
+  - 90.0
+- id: FLA1695
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -12.0
+  - 90.0
+- id: FLA1696
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -12.0
+  - 90.0
+- id: FLA1697
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -6.0
+  - 90.0
+- id: FLA1698
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -6.0
+  - 90.0
+- id: FLA1699
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -6.0
+  - 90.0
+- id: FLA1700
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -6.0
+  - 90.0
+- id: FLA1701
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -6.0
+  - 90.0
+- id: FLA1702
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -6.0
+  - 90.0
+- id: FLA1703
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -6.0
+  - 90.0
+- id: FLA1704
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -6.0
+  - 90.0
+- id: FLA1705
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 0.0
+  - 90.0
+- id: FLA1706
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 0.0
+  - 90.0
+- id: FLA1707
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 0.0
+  - 90.0
+- id: FLA1708
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 0.0
+  - 90.0
+- id: FLA1709
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 0.0
+  - 90.0
+- id: FLA1710
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 0.0
+  - 90.0
+- id: FLA1711
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 0.0
+  - 90.0
+- id: FLA1712
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 0.0
+  - 90.0
+- id: FLA1713
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 6.0
+  - 90.0
+- id: FLA1714
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 6.0
+  - 90.0
+- id: FLA1715
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 6.0
+  - 90.0
+- id: FLA1716
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 6.0
+  - 90.0
+- id: FLA1717
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 6.0
+  - 90.0
+- id: FLA1718
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 6.0
+  - 90.0
+- id: FLA1719
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 6.0
+  - 90.0
+- id: FLA1720
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 6.0
+  - 90.0
+- id: FLA1721
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 12.0
+  - 90.0
+- id: FLA1722
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 12.0
+  - 90.0
+- id: FLA1723
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 12.0
+  - 90.0
+- id: FLA1724
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 12.0
+  - 90.0
+- id: FLA1725
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 12.0
+  - 90.0
+- id: FLA1726
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 12.0
+  - 90.0
+- id: FLA1727
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 12.0
+  - 90.0
+- id: FLA1728
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 12.0
+  - 90.0
+- id: FLA1729
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 18.0
+  - 90.0
+- id: FLA1730
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 18.0
+  - 90.0
+- id: FLA1731
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 18.0
+  - 90.0
+- id: FLA1732
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 18.0
+  - 90.0
+- id: FLA1733
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - 18.0
+  - 90.0
+- id: FLA1734
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - 18.0
+  - 90.0
+- id: FLA1735
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - 18.0
+  - 90.0
+- id: FLA1736
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - 18.0
+  - 90.0
+- id: FLA1737
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -18.0
+  - 93.0
+- id: FLA1738
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -18.0
+  - 93.0
+- id: FLA1739
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -18.0
+  - 93.0
+- id: FLA1740
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -18.0
+  - 93.0
+- id: FLA1741
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -18.0
+  - 93.0
+- id: FLA1742
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -18.0
+  - 93.0
+- id: FLA1743
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -18.0
+  - 93.0
+- id: FLA1744
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -18.0
+  - 93.0
+- id: FLA1745
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -12.0
+  - 93.0
+- id: FLA1746
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -12.0
+  - 93.0
+- id: FLA1747
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -12.0
+  - 93.0
+- id: FLA1748
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -12.0
+  - 93.0
+- id: FLA1749
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -12.0
+  - 93.0
+- id: FLA1750
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -12.0
+  - 93.0
+- id: FLA1751
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -12.0
+  - 93.0
+- id: FLA1752
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -12.0
+  - 93.0
+- id: FLA1753
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - -6.0
+  - 93.0
+- id: FLA1754
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - -6.0
+  - 93.0
+- id: FLA1755
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - -6.0
+  - 93.0
+- id: FLA1756
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - -6.0
+  - 93.0
+- id: FLA1757
+  arrangement: arrangement.flat
+  at:
+  - 3.0
+  - -6.0
+  - 93.0
+- id: FLA1758
+  arrangement: arrangement.flat
+  at:
+  - 9.0
+  - -6.0
+  - 93.0
+- id: FLA1759
+  arrangement: arrangement.flat
+  at:
+  - 15.0
+  - -6.0
+  - 93.0
+- id: FLA1760
+  arrangement: arrangement.flat
+  at:
+  - 21.0
+  - -6.0
+  - 93.0
+- id: FLA1761
+  arrangement: arrangement.flat
+  at:
+  - -21.0
+  - 0.0
+  - 93.0
+- id: FLA1762
+  arrangement: arrangement.flat
+  at:
+  - -15.0
+  - 0.0
+  - 93.0
+- id: FLA1763
+  arrangement: arrangement.flat
+  at:
+  - -9.0
+  - 0.0
+  - 93.0
+- id: FLA1764
+  arrangement: arrangement.flat
+  at:
+  - -3.0
+  - 0.0
+  - 93.0
+- id: REC1765
+  arrangement: arrangement.reception
+  at:
+  - 3.0
+  - 0.0
+  - 93.0
+- id: REC1766
+  arrangement: arrangement.reception
+  at:
+  - 9.0
+  - 0.0
+  - 93.0
+- id: REC1767
+  arrangement: arrangement.reception
+  at:
+  - 15.0
+  - 0.0
+  - 93.0
+- id: REC1768
+  arrangement: arrangement.reception
+  at:
+  - 21.0
+  - 0.0
+  - 93.0
+- id: REC1769
+  arrangement: arrangement.reception
+  at:
+  - -21.0
+  - 6.0
+  - 93.0
+- id: REC1770
+  arrangement: arrangement.reception
+  at:
+  - -15.0
+  - 6.0
+  - 93.0
+- id: REC1771
+  arrangement: arrangement.reception
+  at:
+  - -9.0
+  - 6.0
+  - 93.0
+- id: REC1772
+  arrangement: arrangement.reception
+  at:
+  - -3.0
+  - 6.0
+  - 93.0
+- id: REC1773
+  arrangement: arrangement.reception
+  at:
+  - 3.0
+  - 6.0
+  - 93.0
+- id: REC1774
+  arrangement: arrangement.reception
+  at:
+  - 9.0
+  - 6.0
+  - 93.0
+- id: REC1775
+  arrangement: arrangement.reception
+  at:
+  - 15.0
+  - 6.0
+  - 93.0
+- id: REC1776
+  arrangement: arrangement.reception
+  at:
+  - 21.0
+  - 6.0
+  - 93.0
+- id: REC1777
+  arrangement: arrangement.reception
+  at:
+  - -21.0
+  - 12.0
+  - 93.0
+- id: REC1778
+  arrangement: arrangement.reception
+  at:
+  - -15.0
+  - 12.0
+  - 93.0
+- id: REC1779
+  arrangement: arrangement.reception
+  at:
+  - -9.0
+  - 12.0
+  - 93.0
+- id: REC1780
+  arrangement: arrangement.reception
+  at:
+  - -3.0
+  - 12.0
+  - 93.0
+- id: REC1781
+  arrangement: arrangement.reception
+  at:
+  - 3.0
+  - 12.0
+  - 93.0
+- id: REC1782
+  arrangement: arrangement.reception
+  at:
+  - 9.0
+  - 12.0
+  - 93.0
+- id: REC1783
+  arrangement: arrangement.reception
+  at:
+  - 15.0
+  - 12.0
+  - 93.0
+- id: REC1784
+  arrangement: arrangement.reception
+  at:
+  - 21.0
+  - 12.0
+  - 93.0
+- id: REC1785
+  arrangement: arrangement.reception
+  at:
+  - -21.0
+  - 18.0
+  - 93.0
+- id: REC1786
+  arrangement: arrangement.reception
+  at:
+  - -15.0
+  - 18.0
+  - 93.0
+- id: REC1787
+  arrangement: arrangement.reception
+  at:
+  - -9.0
+  - 18.0
+  - 93.0
+- id: REC1788
+  arrangement: arrangement.reception
+  at:
+  - -3.0
+  - 18.0
+  - 93.0
+- id: REC1789
+  arrangement: arrangement.reception
+  at:
+  - 3.0
+  - 18.0
+  - 93.0
+- id: REC1790
+  arrangement: arrangement.reception
+  at:
+  - 9.0
+  - 18.0
+  - 93.0
+- id: REC1791
+  arrangement: arrangement.reception
+  at:
+  - 15.0
+  - 18.0
+  - 93.0
+- id: REC1792
+  arrangement: arrangement.reception
+  at:
+  - 21.0
+  - 18.0
+  - 93.0
+- id: REC1793
+  arrangement: arrangement.reception
+  at:
+  - -21.0
+  - -18.0
+  - 96.0
+- id: REC1794
+  arrangement: arrangement.reception
+  at:
+  - -15.0
+  - -18.0
+  - 96.0
+- id: REC1795
+  arrangement: arrangement.reception
+  at:
+  - -9.0
+  - -18.0
+  - 96.0
+- id: REC1796
+  arrangement: arrangement.reception
+  at:
+  - -3.0
+  - -18.0
+  - 96.0
+- id: REC1797
+  arrangement: arrangement.reception
+  at:
+  - 3.0
+  - -18.0
+  - 96.0
+- id: REC1798
+  arrangement: arrangement.reception
+  at:
+  - 9.0
+  - -18.0
+  - 96.0
+- id: REC1799
+  arrangement: arrangement.reception
+  at:
+  - 15.0
+  - -18.0
+  - 96.0
+- id: REC1800
+  arrangement: arrangement.reception
+  at:
+  - 21.0
+  - -18.0
+  - 96.0
+- id: REC1801
+  arrangement: arrangement.reception
+  at:
+  - -21.0
+  - -12.0
+  - 96.0
+- id: REC1802
+  arrangement: arrangement.reception
+  at:
+  - -15.0
+  - -12.0
+  - 96.0
+- id: REC1803
+  arrangement: arrangement.reception
+  at:
+  - -9.0
+  - -12.0
+  - 96.0
+- id: STO1804
+  arrangement: arrangement.store
+  at:
+  - -3.0
+  - -12.0
+  - 96.0
+- id: STO1805
+  arrangement: arrangement.store
+  at:
+  - 3.0
+  - -12.0
+  - 96.0
+- id: STO1806
+  arrangement: arrangement.store
+  at:
+  - 9.0
+  - -12.0
+  - 96.0
+- id: STO1807
+  arrangement: arrangement.store
+  at:
+  - 15.0
+  - -12.0
+  - 96.0
+- id: STO1808
+  arrangement: arrangement.store
+  at:
+  - 21.0
+  - -12.0
+  - 96.0
+- id: STO1809
+  arrangement: arrangement.store
+  at:
+  - -21.0
+  - -6.0
+  - 96.0
+- id: STO1810
+  arrangement: arrangement.store
+  at:
+  - -15.0
+  - -6.0
+  - 96.0
+- id: STO1811
+  arrangement: arrangement.store
+  at:
+  - -9.0
+  - -6.0
+  - 96.0
+- id: STO1812
+  arrangement: arrangement.store
+  at:
+  - -3.0
+  - -6.0
+  - 96.0
+- id: STO1813
+  arrangement: arrangement.store
+  at:
+  - 3.0
+  - -6.0
+  - 96.0
+- id: STO1814
+  arrangement: arrangement.store
+  at:
+  - 9.0
+  - -6.0
+  - 96.0
+- id: STO1815
+  arrangement: arrangement.store
+  at:
+  - 15.0
+  - -6.0
+  - 96.0
+- id: STO1816
+  arrangement: arrangement.store
+  at:
+  - 21.0
+  - -6.0
+  - 96.0
+- id: STO1817
+  arrangement: arrangement.store
+  at:
+  - -21.0
+  - 0.0
+  - 96.0
+- id: STO1818
+  arrangement: arrangement.store
+  at:
+  - -15.0
+  - 0.0
+  - 96.0
+- id: STO1819
+  arrangement: arrangement.store
+  at:
+  - -9.0
+  - 0.0
+  - 96.0
+- id: STO1820
+  arrangement: arrangement.store
+  at:
+  - -3.0
+  - 0.0
+  - 96.0
+- id: STO1821
+  arrangement: arrangement.store
+  at:
+  - 3.0
+  - 0.0
+  - 96.0
+- id: STO1822
+  arrangement: arrangement.store
+  at:
+  - 9.0
+  - 0.0
+  - 96.0
+- id: STO1823
+  arrangement: arrangement.store
+  at:
+  - 15.0
+  - 0.0
+  - 96.0
+- id: STO1824
+  arrangement: arrangement.store
+  at:
+  - 21.0
+  - 0.0
+  - 96.0
+- id: STO1825
+  arrangement: arrangement.store
+  at:
+  - -21.0
+  - 6.0
+  - 96.0
+- id: STO1826
+  arrangement: arrangement.store
+  at:
+  - -15.0
+  - 6.0
+  - 96.0
+- id: STO1827
+  arrangement: arrangement.store
+  at:
+  - -9.0
+  - 6.0
+  - 96.0
+- id: STO1828
+  arrangement: arrangement.store
+  at:
+  - -3.0
+  - 6.0
+  - 96.0
+- id: STO1829
+  arrangement: arrangement.store
+  at:
+  - 3.0
+  - 6.0
+  - 96.0
+- id: STO1830
+  arrangement: arrangement.store
+  at:
+  - 9.0
+  - 6.0
+  - 96.0
+- id: STO1831
+  arrangement: arrangement.store
+  at:
+  - 15.0
+  - 6.0
+  - 96.0
+- id: STO1832
+  arrangement: arrangement.store
+  at:
+  - 21.0
+  - 6.0
+  - 96.0
+- id: STO1833
+  arrangement: arrangement.store
+  at:
+  - -21.0
+  - 12.0
+  - 96.0
+- id: STO1834
+  arrangement: arrangement.store
+  at:
+  - -15.0
+  - 12.0
+  - 96.0
+- id: STO1835
+  arrangement: arrangement.store
+  at:
+  - -9.0
+  - 12.0
+  - 96.0
+- id: STO1836
+  arrangement: arrangement.store
+  at:
+  - -3.0
+  - 12.0
+  - 96.0
+- id: STO1837
+  arrangement: arrangement.store
+  at:
+  - 3.0
+  - 12.0
+  - 96.0
+- id: STO1838
+  arrangement: arrangement.store
+  at:
+  - 9.0
+  - 12.0
+  - 96.0
+- id: STO1839
+  arrangement: arrangement.store
+  at:
+  - 15.0
+  - 12.0
+  - 96.0
+- id: STO1840
+  arrangement: arrangement.store
+  at:
+  - 21.0
+  - 12.0
+  - 96.0
+- id: STO1841
+  arrangement: arrangement.store
+  at:
+  - -21.0
+  - 18.0
+  - 96.0
+- id: STO1842
+  arrangement: arrangement.store
+  at:
+  - -15.0
+  - 18.0
+  - 96.0
+- id: STO1843
+  arrangement: arrangement.store
+  at:
+  - -9.0
+  - 18.0
+  - 96.0
+- id: STO1844
+  arrangement: arrangement.store
+  at:
+  - -3.0
+  - 18.0
+  - 96.0
+- id: STO1845
+  arrangement: arrangement.store
+  at:
+  - 3.0
+  - 18.0
+  - 96.0
+- id: STO1846
+  arrangement: arrangement.store
+  at:
+  - 9.0
+  - 18.0
+  - 96.0
+- id: STO1847
+  arrangement: arrangement.store
+  at:
+  - 15.0
+  - 18.0
+  - 96.0
+- id: STO1848
+  arrangement: arrangement.store
+  at:
+  - 21.0
+  - 18.0
+  - 96.0
+- id: STO1849
+  arrangement: arrangement.store
+  at:
+  - -21.0
+  - -18.0
+  - 99.0
+- id: STO1850
+  arrangement: arrangement.store
+  at:
+  - -15.0
+  - -18.0
+  - 99.0
+- id: STO1851
+  arrangement: arrangement.store
+  at:
+  - -9.0
+  - -18.0
+  - 99.0
+- id: STO1852
+  arrangement: arrangement.store
+  at:
+  - -3.0
+  - -18.0
+  - 99.0
+- id: STO1853
+  arrangement: arrangement.store
+  at:
+  - 3.0
+  - -18.0
+  - 99.0
+- id: STO1854
+  arrangement: arrangement.store
+  at:
+  - 9.0
+  - -18.0
+  - 99.0
+- id: STO1855
+  arrangement: arrangement.store
+  at:
+  - 15.0
+  - -18.0
+  - 99.0
+- id: STO1856
+  arrangement: arrangement.store
+  at:
+  - 21.0
+  - -18.0
+  - 99.0
+- id: STO1857
+  arrangement: arrangement.store
+  at:
+  - -21.0
+  - -12.0
+  - 99.0
+- id: STO1858
+  arrangement: arrangement.store
+  at:
+  - -15.0
+  - -12.0
+  - 99.0
+- id: STO1859
+  arrangement: arrangement.store
+  at:
+  - -9.0
+  - -12.0
+  - 99.0
+- id: STO1860
+  arrangement: arrangement.store
+  at:
+  - -3.0
+  - -12.0
+  - 99.0
+- id: STO1861
+  arrangement: arrangement.store
+  at:
+  - 3.0
+  - -12.0
+  - 99.0
+- id: STO1862
+  arrangement: arrangement.store
+  at:
+  - 9.0
+  - -12.0
+  - 99.0
+- id: STO1863
+  arrangement: arrangement.store
+  at:
+  - 15.0
+  - -12.0
+  - 99.0
+- id: STO1864
+  arrangement: arrangement.store
+  at:
+  - 21.0
+  - -12.0
+  - 99.0
+- id: STO1865
+  arrangement: arrangement.store
+  at:
+  - -21.0
+  - -6.0
+  - 99.0
+- id: STO1866
+  arrangement: arrangement.store
+  at:
+  - -15.0
+  - -6.0
+  - 99.0
+- id: STO1867
+  arrangement: arrangement.store
+  at:
+  - -9.0
+  - -6.0
+  - 99.0
+- id: STO1868
+  arrangement: arrangement.store
+  at:
+  - -3.0
+  - -6.0
+  - 99.0
+- id: STO1869
+  arrangement: arrangement.store
+  at:
+  - 3.0
+  - -6.0
+  - 99.0
+- id: STO1870
+  arrangement: arrangement.store
+  at:
+  - 9.0
+  - -6.0
+  - 99.0
+- id: STO1871
+  arrangement: arrangement.store
+  at:
+  - 15.0
+  - -6.0
+  - 99.0
+- id: STO1872
+  arrangement: arrangement.store
+  at:
+  - 21.0
+  - -6.0
+  - 99.0
+- id: STO1873
+  arrangement: arrangement.store
+  at:
+  - -21.0
+  - 0.0
+  - 99.0
+- id: STO1874
+  arrangement: arrangement.store
+  at:
+  - -15.0
+  - 0.0
+  - 99.0
+- id: STO1875
+  arrangement: arrangement.store
+  at:
+  - -9.0
+  - 0.0
+  - 99.0
+- id: STO1876
+  arrangement: arrangement.store
+  at:
+  - -3.0
+  - 0.0
+  - 99.0
+- id: STO1877
+  arrangement: arrangement.store
+  at:
+  - 3.0
+  - 0.0
+  - 99.0
+- id: STO1878
+  arrangement: arrangement.store
+  at:
+  - 9.0
+  - 0.0
+  - 99.0
+- id: STO1879
+  arrangement: arrangement.store
+  at:
+  - 15.0
+  - 0.0
+  - 99.0
+- id: STO1880
+  arrangement: arrangement.store
+  at:
+  - 21.0
+  - 0.0
+  - 99.0
+- id: STO1881
+  arrangement: arrangement.store
+  at:
+  - -21.0
+  - 6.0
+  - 99.0
+- id: STO1882
+  arrangement: arrangement.store
+  at:
+  - -15.0
+  - 6.0
+  - 99.0
+- id: STO1883
+  arrangement: arrangement.store
+  at:
+  - -9.0
+  - 6.0
+  - 99.0
+- id: STO1884
+  arrangement: arrangement.store
+  at:
+  - -3.0
+  - 6.0
+  - 99.0
+- id: STO1885
+  arrangement: arrangement.store
+  at:
+  - 3.0
+  - 6.0
+  - 99.0
+- id: STO1886
+  arrangement: arrangement.store
+  at:
+  - 9.0
+  - 6.0
+  - 99.0
+- id: STO1887
+  arrangement: arrangement.store
+  at:
+  - 15.0
+  - 6.0
+  - 99.0
+- id: STO1888
+  arrangement: arrangement.store
+  at:
+  - 21.0
+  - 6.0
+  - 99.0
+- id: STO1889
+  arrangement: arrangement.store
+  at:
+  - -21.0
+  - 12.0
+  - 99.0
+- id: STO1890
+  arrangement: arrangement.store
+  at:
+  - -15.0
+  - 12.0
+  - 99.0
+- id: STO1891
+  arrangement: arrangement.store
+  at:
+  - -9.0
+  - 12.0
+  - 99.0
+- id: STO1892
+  arrangement: arrangement.store
+  at:
+  - -3.0
+  - 12.0
+  - 99.0
+- id: STO1893
+  arrangement: arrangement.store
+  at:
+  - 3.0
+  - 12.0
+  - 99.0
+- id: STO1894
+  arrangement: arrangement.store
+  at:
+  - 9.0
+  - 12.0
+  - 99.0
+- id: STO1895
+  arrangement: arrangement.store
+  at:
+  - 15.0
+  - 12.0
+  - 99.0
+- id: STO1896
+  arrangement: arrangement.store
+  at:
+  - 21.0
+  - 12.0
+  - 99.0
+- id: STO1897
+  arrangement: arrangement.store
+  at:
+  - -21.0
+  - 18.0
+  - 99.0
+- id: STO1898
+  arrangement: arrangement.store
+  at:
+  - -15.0
+  - 18.0
+  - 99.0
+- id: STO1899
+  arrangement: arrangement.store
+  at:
+  - -9.0
+  - 18.0
+  - 99.0
+- id: STO1900
+  arrangement: arrangement.store
+  at:
+  - -3.0
+  - 18.0
+  - 99.0
+- id: STO1901
+  arrangement: arrangement.store
+  at:
+  - 3.0
+  - 18.0
+  - 99.0
+- id: STO1902
+  arrangement: arrangement.store
+  at:
+  - 9.0
+  - 18.0
+  - 99.0
+- id: STO1903
+  arrangement: arrangement.store
+  at:
+  - 15.0
+  - 18.0
+  - 99.0
+- id: STO1904
+  arrangement: arrangement.store
+  at:
+  - 21.0
+  - 18.0
+  - 99.0
+- id: STO1905
+  arrangement: arrangement.store
+  at:
+  - -21.0
+  - -18.0
+  - 102.0
+- id: STO1906
+  arrangement: arrangement.store
+  at:
+  - -15.0
+  - -18.0
+  - 102.0
+- id: STO1907
+  arrangement: arrangement.store
+  at:
+  - -9.0
+  - -18.0
+  - 102.0
+- id: STO1908
+  arrangement: arrangement.store
+  at:
+  - -3.0
+  - -18.0
+  - 102.0
+- id: STO1909
+  arrangement: arrangement.store
+  at:
+  - 3.0
+  - -18.0
+  - 102.0
+- id: STO1910
+  arrangement: arrangement.store
+  at:
+  - 9.0
+  - -18.0
+  - 102.0
+- id: STO1911
+  arrangement: arrangement.store
+  at:
+  - 15.0
+  - -18.0
+  - 102.0
+- id: STO1912
+  arrangement: arrangement.store
+  at:
+  - 21.0
+  - -18.0
+  - 102.0
+- id: STO1913
+  arrangement: arrangement.store
+  at:
+  - -21.0
+  - -12.0
+  - 102.0
+- id: STO1914
+  arrangement: arrangement.store
+  at:
+  - -15.0
+  - -12.0
+  - 102.0
+- id: STO1915
+  arrangement: arrangement.store
+  at:
+  - -9.0
+  - -12.0
+  - 102.0
+- id: STO1916
+  arrangement: arrangement.store
+  at:
+  - -3.0
+  - -12.0
+  - 102.0
+- id: STO1917
+  arrangement: arrangement.store
+  at:
+  - 3.0
+  - -12.0
+  - 102.0
+- id: STO1918
+  arrangement: arrangement.store
+  at:
+  - 9.0
+  - -12.0
+  - 102.0
+- id: STO1919
+  arrangement: arrangement.store
+  at:
+  - 15.0
+  - -12.0
+  - 102.0
+- id: STO1920
+  arrangement: arrangement.store
+  at:
+  - 21.0
+  - -12.0
+  - 102.0
+- id: STO1921
+  arrangement: arrangement.store
+  at:
+  - -21.0
+  - -6.0
+  - 102.0
+- id: STO1922
+  arrangement: arrangement.store
+  at:
+  - -15.0
+  - -6.0
+  - 102.0
+- id: STO1923
+  arrangement: arrangement.store
+  at:
+  - -9.0
+  - -6.0
+  - 102.0
+- id: STO1924
+  arrangement: arrangement.store
+  at:
+  - -3.0
+  - -6.0
+  - 102.0
+- id: STO1925
+  arrangement: arrangement.store
+  at:
+  - 3.0
+  - -6.0
+  - 102.0
+- id: STO1926
+  arrangement: arrangement.store
+  at:
+  - 9.0
+  - -6.0
+  - 102.0
+- id: STO1927
+  arrangement: arrangement.store
+  at:
+  - 15.0
+  - -6.0
+  - 102.0
+- id: STO1928
+  arrangement: arrangement.store
+  at:
+  - 21.0
+  - -6.0
+  - 102.0
+- id: STO1929
+  arrangement: arrangement.store
+  at:
+  - -21.0
+  - 0.0
+  - 102.0
+- id: STO1930
+  arrangement: arrangement.store
+  at:
+  - -15.0
+  - 0.0
+  - 102.0
+- id: STO1931
+  arrangement: arrangement.store
+  at:
+  - -9.0
+  - 0.0
+  - 102.0
+- id: STO1932
+  arrangement: arrangement.store
+  at:
+  - -3.0
+  - 0.0
+  - 102.0
+- id: STO1933
+  arrangement: arrangement.store
+  at:
+  - 3.0
+  - 0.0
+  - 102.0
+- id: STO1934
+  arrangement: arrangement.store
+  at:
+  - 9.0
+  - 0.0
+  - 102.0
+- id: STO1935
+  arrangement: arrangement.store
+  at:
+  - 15.0
+  - 0.0
+  - 102.0
+- id: STO1936
+  arrangement: arrangement.store
+  at:
+  - 21.0
+  - 0.0
+  - 102.0
+- id: STO1937
+  arrangement: arrangement.store
+  at:
+  - -21.0
+  - 6.0
+  - 102.0
+- id: STO1938
+  arrangement: arrangement.store
+  at:
+  - -15.0
+  - 6.0
+  - 102.0
+- id: STO1939
+  arrangement: arrangement.store
+  at:
+  - -9.0
+  - 6.0
+  - 102.0
+- id: STO1940
+  arrangement: arrangement.store
+  at:
+  - -3.0
+  - 6.0
+  - 102.0
+- id: STO1941
+  arrangement: arrangement.store
+  at:
+  - 3.0
+  - 6.0
+  - 102.0
+- id: STO1942
+  arrangement: arrangement.store
+  at:
+  - 9.0
+  - 6.0
+  - 102.0
+- id: STO1943
+  arrangement: arrangement.store
+  at:
+  - 15.0
+  - 6.0
+  - 102.0
+- id: STO1944
+  arrangement: arrangement.store
+  at:
+  - 21.0
+  - 6.0
+  - 102.0
+- id: STO1945
+  arrangement: arrangement.store
+  at:
+  - -21.0
+  - 12.0
+  - 102.0
+- id: STO1946
+  arrangement: arrangement.store
+  at:
+  - -15.0
+  - 12.0
+  - 102.0
+- id: STO1947
+  arrangement: arrangement.store
+  at:
+  - -9.0
+  - 12.0
+  - 102.0
+- id: STO1948
+  arrangement: arrangement.store
+  at:
+  - -3.0
+  - 12.0
+  - 102.0
+- id: STO1949
+  arrangement: arrangement.store
+  at:
+  - 3.0
+  - 12.0
+  - 102.0
+- id: STO1950
+  arrangement: arrangement.store
+  at:
+  - 9.0
+  - 12.0
+  - 102.0
+- id: STO1951
+  arrangement: arrangement.store
+  at:
+  - 15.0
+  - 12.0
+  - 102.0
+- id: STO1952
+  arrangement: arrangement.store
+  at:
+  - 21.0
+  - 12.0
+  - 102.0
+- id: STO1953
+  arrangement: arrangement.store
+  at:
+  - -21.0
+  - 18.0
+  - 102.0
+- id: STO1954
+  arrangement: arrangement.store
+  at:
+  - -15.0
+  - 18.0
+  - 102.0
+- id: STO1955
+  arrangement: arrangement.store
+  at:
+  - -9.0
+  - 18.0
+  - 102.0
+- id: STO1956
+  arrangement: arrangement.store
+  at:
+  - -3.0
+  - 18.0
+  - 102.0
+- id: STO1957
+  arrangement: arrangement.store
+  at:
+  - 3.0
+  - 18.0
+  - 102.0
+- id: STO1958
+  arrangement: arrangement.store
+  at:
+  - 9.0
+  - 18.0
+  - 102.0
+- id: STO1959
+  arrangement: arrangement.store
+  at:
+  - 15.0
+  - 18.0
+  - 102.0
+- id: STO1960
+  arrangement: arrangement.store
+  at:
+  - 21.0
+  - 18.0
+  - 102.0
+frame:
+  box:
+  - -24.0
+  - -21.0
+  - 0.0
+  - 24.0
+  - 21.0
+  - 105.0
+  cell: 3.0
+  shape: 'A skeleton frame on the 3 m grid: 16 x 14 cells, 35 storey(s) of 3 m; columns at every node, beams on every cell edge at each floor and the roof, one diagonal in every other outside face. Panels on its faces (frame.panels).'
+  members:
+  - item: stock.st4340-tb-150x10-s3000
+    count: 8925
+    where: columns
+  - item: stock.st4340-tb-160x3-s3000
+    count: 16730
+    where: beams
+  - item: stock.st4340-tb-160x3-d3000
+    count: 1050
+    where: bracing
+  - item: stock.st4340-node-220b
+    count: 9180
+    where: nodes
+  mass: 2046142.7
+  panels:
+  - panel: panel.floor-3x3
+    count: 7412
+  - panel: panel.partition-3x3
+    count: 2940
+  - panel: panel.partition-door-3x3
+    count: 2940
+  - panel: panel.roof-3x3
+    count: 224
+  - panel: panel.stair-3m
+    count: 102
+  - panel: panel.wall-door-3x3
+    count: 2
+  - panel: panel.wall-double-door-3x3
+    count: 2
+  - panel: panel.wall-insulated-3x3
+    count: 1327
+  - panel: panel.wall-window-3x3
+    count: 769
+  panels_mass: 12209631.3
+  sized: 'At 1 g: floors 1893 Pa dead and 2000 Pa imposed, the roof 1155 Pa; a ground column carries 1240 kN (st4340-tb-150x10 takes it with half again to spare); a 3 m beam bends with 13.1 kN m (st4340-tb-160x3, under 470 MPa with
+    half again to spare). Wind, the tall halls'' columns between floors and the footings'' loads not yet checked.'
+ground:
+- what: Ground slab
+  item: good.concrete
+  volume: 302.4
+  mass: 725760.0
+  note: 0.15 m over the 48 x 42 m plan
+- what: Edge footings
+  item: good.concrete
+  volume: 64.8
+  mass: 155520.0
+  note: 0.6 x 0.6 m strips under the outside walls
+- what: Column pads
+  item: good.concrete
+  volume: 16868.2
+  mass: 40483800.0
+  note: a pad under each column, 10.5 m square, 0.6 m deep (sized by the storeys, invented)
+totals:
+  mass: 56343107.9
+  against_module: 'building.dwelling-block (deprecated): one box 50 x 40 x 105 m of 77,210 t, from the average of 538 concrete buildings. This layout: 48 x 42 x 105 m, 56,343 t (2,046 t frame, 12,210 t panels, 722 t furniture, 41,365
+    t ground), for 3996 people served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
+staff: []
+basis:
+- of:
+  - bays
+  tier: invented
+  review: true
+  note: The mix of rooms for a dwelling block is chosen (flat 0.9, reception 0.02, store 0.08), shared over the record's floor (70000 m2 in 35 storeys, laid as 8 x 7 rooms of 6 m a storey).
+- of:
+  - frame
+  - ground
+  tier: derived
+  review: true
+  note: Counted from the grid (tools/standards/building_layouts.py); sections by the loads in frame.sized; masses from the strut, node and panel records.

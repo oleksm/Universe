@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-belt-1000-sealed
+  code: KIT-BELT-1000-SEALED
+  name: Belt conveyor, 1000 mm, in a sealed gallery, a 6 m length
+  traded_as: market.machinery
+  form: length
+package: package.bar-bundle
+made_from:
+- item: material.silicone-rubber
+- item: material.structural-steel-a36
+- item: material.multi-layer-insulation
+size:
+  length: 6.0
+  diameter: 3.05
+supplies:
+  item: run.belt-1000-sealed
+  length: 6.0
+physical:
+  mass: 2662.8
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: 'a 6 m length of run.belt-1000-sealed: its mass a metre times the length sold.'

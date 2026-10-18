@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-hose-hydraulic-dn6
+  code: KIT-HOSE-HYDRAULIC-DN6
+  name: Hydraulic hose, DN 6.35, a 20 m coil
+  traded_as: market.machinery
+  form: coil
+package: package.coil
+made_from:
+- item: material.epdm-rubber
+- item: material.structural-steel-a36
+size:
+  length: 20.0
+  diameter: 0.0141
+supplies:
+  item: run.hose-hydraulic-dn6
+  length: 20.0
+physical:
+  mass: 4.6
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: 'a 20 m coil of run.hose-hydraulic-dn6: its mass a metre times the length sold.'

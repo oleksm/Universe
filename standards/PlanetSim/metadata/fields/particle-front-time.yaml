@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.particle-front-time
+  name: Particle collision front time
+  about: When the particle was last driven into that continental collision, on the planet's clock; NaN when never.
+unit: s
+producer:
+  where: planet-forge crates/forge-core/src/models/plates/collision.rs
+  file: checkpoint
+  key: tables/particles/planet-field.particle-front-time
+per: particle
+time_base: planet-age
+missing: 'NaN: never in a front'
+said_as:
+  unit: Myr
+  factor: 31557600000000.0
+also_from:
+- where: stages/plates.py
+  key: fronts[(u, v)][k] = t
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: forge''s plates port (branch plates-foundation) and the Python sim (stages/plates.py), read from the code.'

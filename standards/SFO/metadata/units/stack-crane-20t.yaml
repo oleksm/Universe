@@ -8,7 +8,30 @@ built_of:
 - {what: Trolley and hoist, item: material.structural-steel-a36, mass: 6000.0, note: 'with a main hoist: 30% of the load, from memory'}
 - {what: End carriages and drives, item: good.electric-motors, mass: 3000.0, note: '15% of the load, from memory'}
 needs: {power: 40000.0}
+product: product.overhead-crane
+motion:
+- id: travel
+  kind: travel
+  direction: [1.0, 0.0, 0.0]
+  moves: [the whole crane]
+  note: along its rails or runways; its range is the layout's
+- id: traverse
+  kind: travel
+  direction: [0.0, 1.0, 0.0]
+  distance: [-9.7, 9.7]
+  moves: [the trolley and its hook]
+  note: across the bridge, about 1.5 m short of each end (invented)
+- id: hoist
+  kind: lift
+  direction: [0.0, 0.0, 1.0]
+  moves: [the hook and what it carries]
+  note: from parked down to the floor or the load; its depth is the layout's
+envelope:
+- [-4.001, -11.702, -0.041, 4.001, -10.698, 2.421]
+- [-4.001, 10.698, -0.041, 4.001, 11.701, 2.422]
+- [-2.201, -11.69, -0.1, 2.201, 11.689, 2.902]
 life: 788940000
+visual: {format: freefall-model/1, path: models/stack-crane-20t/v1, manifest_sha256: 8eaf0d78065d699c797125e0d3ee84f65d13f8236ef9e7febeb0633e92c6649a, version: 1, triangles: 5952}
 basis:
 - of: [physical, built_of]
   tier: derived

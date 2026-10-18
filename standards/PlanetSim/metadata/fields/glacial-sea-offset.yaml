@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.glacial-sea-offset
+  name: Glacial sea offset
+  about: 'The sea''s level of the moment against the present''s in the recent epoch: -SEA_DROP x glaciality (about -120 m
+    at a full glacial).'
+unit: m
+per: global
+producer:
+  where: stages/recent.py run
+  key: sea - sea0
+levels:
+- planet-level.planet
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge surface port (models/surface), read from planet-sim-landform 9747f0d-c437724.'

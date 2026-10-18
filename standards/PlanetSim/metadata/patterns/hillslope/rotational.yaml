@@ -1,0 +1,54 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.hillslope.landslide.rotational
+  name: Rotational slide (slump)
+  about: Rotational slide (slump).
+family: hillslope
+factors:
+- factor: planet-factor.rock-type
+  weight: 3
+  why: 'Homogeneous weak material: clay, mudstone, thick soil, weak rock over clay'
+- factor: planet-factor.rock-layers
+  weight: 1
+  why: Strong caprock over clay favours deep slumps and back-tilted blocks
+- factor: planet-factor.groundwater
+  weight: 3
+  why: Pore-water pressure from saturation is the main destabiliser
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: Wet climates and prolonged rain/snowmelt raise failure frequency
+- factor: planet-factor.slope-relief
+  weight: 3
+  why: Oversteepened slopes; depth/length 0.15-0.33
+- factor: planet-factor.base-level
+  weight: 1
+  why: River or wave undercutting removes toe support
+- factor: planet-factor.waves-tides
+  weight: 1
+  why: Wave erosion of cliff toes triggers coastal slumps
+- factor: planet-factor.events
+  weight: 1
+  why: Earthquakes and loading trigger failures
+- factor: planet-factor.time
+  weight: 1
+  why: Slump scars degrade over 0-10 kyr
+vocabulary_id: 88
+sources:
+- https://pubs.usgs.gov/fs/2004/3072/fs-2004-3072.html
+library_status: written
+source: hillslope.landslide.rotational
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

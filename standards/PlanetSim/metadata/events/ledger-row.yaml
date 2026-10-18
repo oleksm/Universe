@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/planet-event.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-event.ledger-row
+  name: Ledger_row
+  about: per-step volume budget and land statistics
+source: ledger_row
+emitted_by:
+- planet-process.run-ledger-and-snapshots
+payload:
+- name: t_gyr
+  meaning: Gyr
+- name: <step name>
+  meaning: km3 change
+- name: cont_volume
+  meaning: km3
+- name: land
+  meaning: share
+- name: sea
+  meaning: m
+- name: above_3km
+  meaning: share of land
+status: draft

@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.trench-rider-continental
+  name: Trench rider continental
+  about: 1 when the rider over the trench point is continental (an Andean margin, eaten by subduction erosion), 0 an island arc.
+unit: '1'
+producer:
+  where: planet-forge crates/forge-core/src/models/plates/subduction.rs
+  file: checkpoint
+  key: tables/trenches/planet-field.trench-rider-continental
+per: point
+also_from:
+- where: stages/plates.py
+  key: w.xcont[over]
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: forge''s plates port (branch plates-foundation) and the Python sim (stages/plates.py), read from the code.'

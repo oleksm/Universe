@@ -1,0 +1,57 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.relief-rift-floor-axis
+  name: Rift floor axis
+  about: 'With two margins: each vertex of the first paired to the nearest of the second; the axis is their normalised midpoints;
+    width = their chord.'
+area: relief
+clock:
+  when: when zones.rift finishes margins
+reads:
+- name: features (planet-feature.rift-margin)
+  meaning: a rift's two
+- name: plate rotation
+  field: planet-field.plate-rotation
+  unit: '1'
+  meaning: 'each plate''s rotation: where the features'' pins stand'
+writes:
+- name: features (planet-feature.rift-floor-axis)
+  meaning: one per rift of two margins
+note: 'Emits: trace spawn rule ''relief.rift'' trigger {margins, event, width_km}'
+params:
+- name: depth_m
+  value: 1500.0
+  unit: m
+  meaning: rift floor depth and relief0
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:281
+invariants:
+- only when exactly two margins
+depends_on:
+- planet-process.zones-rift-margins
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:rift_features (267-281)
+  state: reference
+- where: planet-forge crates/forge-core/src/models/tectonic/rift_floor.rs
+  state: current
+  note: planet-forge port (relief-tectonic line, merged in forge main fc8f460)
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
+    9747f0d-c437724.'
+cautions:
+- 'the Python''s reads were its line store''s internals: margin lines (>= 3 vertices)'

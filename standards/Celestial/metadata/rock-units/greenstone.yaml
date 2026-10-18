@@ -1,16 +1,32 @@
 # yaml-language-server: $schema=../../schema/rock-unit.schema.yaml
-# Brought in by tools/standards/geology_import.py from the planet simulation's vocabulary.
 identity:
   key: rock-unit.greenstone
-  name: "Greenstone"
-  about: "Old lavas of a young, hot mantle, squeezed and turned green."
-sim: { key: greenstone }
-made_by: [arc]
+  name: Greenstone
+  about: Old lavas of a young, hot mantle, squeezed and turned green.
+sim:
+  key: greenstone
+  index: 4
+  colour:
+  - 90
+  - 140
+  - 100
+  erodibility: 0.5
+  written_by: arc top while mantle > KOMATIITE_MANTLE_K; seed continents (plates.py:851,860)
+made_by:
+- arc
 physical:
   density: 2900.0
   magnetic_susceptibility: 0.01
   erodibility: 0.5
 yields:
-  - { item: good.aggregate, quality: "120 to 250 strength MPa" }
+- item: good.aggregate
+  quality: 120 to 250 strength MPa
 basis:
-  - { of: [sim, physical, yields], tier: sourced, review: true, source: "the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)", note: "As the simulation has it." }
+- of:
+  - sim
+  - physical
+  - yields
+  tier: sourced
+  review: true
+  source: 'the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)'
+  note: As the simulation has it.

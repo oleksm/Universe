@@ -1,0 +1,80 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.river-features
+  name: River features
+  about: 'Makes the relief layer''s river features from the routing: every river whose discharge passes q_min is followed from its sources down the receivers to its mouth and becomes a planet-feature.trunk-river, pinned at its mouth
+    to the centimetre, its centreline a span of cm offsets east/north/up of the pin, with discharge, channel width, depth and gradient as profiles along it (the laws on the feature kind: width a*Q^b, depth c*Q^f). A river that joins
+    a larger one hangs from it (parent, pinned at the junction). Each river''s reaches get a floodplain and a meander belt as children, their widths and loop layout from the laws on those kinds, and the reach pattern (meandering or
+    braided) from the gradient against the meander-braid threshold. Every feature names this rule and its trigger (the mouth''s discharge).'
+area: hydrology
+clock:
+  when: at each checkpoint of the coupled era, after the routing (planet-forge; a pure function of the routing, so it can be remade from any checkpoint)
+reads:
+- name: discharge
+  field: planet-field.discharge
+  unit: m3/s
+  meaning: what leaves each sample
+- name: receiver
+  field: planet-field.receiver
+  unit: '1'
+  meaning: the sample each sample drains to
+- name: height
+  field: planet-field.height
+  unit: m
+  meaning: for the gradient along the centreline
+writes:
+- name: features (planet-feature.trunk-river)
+  meaning: one per river, pinned at its mouth
+- name: features (planet-feature.floodplain)
+  meaning: one per reach, a child of its river
+- name: features (planet-feature.meander-belt)
+  meaning: one per meandering reach, a child of its floodplain
+params:
+- name: q_min
+  value: 1000.0
+  unit: m3/s
+  meaning: the discharge at which a river becomes a trunk-river feature (the kind's trigger, Q > 1,000 m3/s)
+  note: from planet-feature.trunk-river trigger
+- name: q_reach
+  value: 300.0
+  unit: m3/s
+  meaning: upstream of this discharge a river's centreline stops (its headwaters are left to the mesher's level 2-3 channels)
+  open: true
+- name: reach_length
+  value: 200000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 1000.0
+  meaning: a river is cut into reaches of about this length for its floodplains and meander belts
+  open: true
+random_draws:
+- 'each feature''s seed: (run seed, this process, the pin''s three integers), so a feature keeps its seed while its pin stays'
+invariants:
+- every feature's pin is integer centimetres; a river's last centreline vertex (its mouth) and a reach's last axis vertex are the pin, offset 0, 0, 0; every other vertex lies within 0.87 cm of its exact point (one rounding)
+- every child names a parent that exists and is of one of its kind's parent_kinds
+- 'a profile has one value per vertex of its span (discharge may fall downstream: evaporation, seepage and lakes take water, as on the Nile)'
+- a remake from the same routing gives the same features with the same ids
+depends_on:
+- planet-process.river-discharge
+- planet-process.flow-routing
+backends:
+- cpu
+cautions:
+- 'the Python sim''s transmission losses (planet-process.river-discharge) use a channel width of 2.7 Q^0.5; the feature kind uses 7.2 Q^0.5 (Moody and Troutman 2002, at mean discharge): the two should agree once the losses are ported'
+status: draft
+basis:
+- of:
+  - identity
+  - clock
+  - reads
+  - writes
+  - random_draws
+  - invariants
+  tier: derived
+  note: 'planets, 17 Oct 2026: the owner''s feature pins (every feature pinned to 1 cm, spans, dimensions and layout relative to the pin); planet-forge branch relief-features.'
+- of:
+  - params
+  tier: invented
+  review: true
+  note: q_min from the trunk-river kind's trigger; q_reach and reach_length chosen to start with.

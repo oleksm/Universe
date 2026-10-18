@@ -1,0 +1,1505 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+# Written by tools/standards/kit_works.py: change it there.
+identity:
+  key: module.pipe-shop
+  name: Pipe and fittings shop
+  step: Make pipe and fittings
+  description: Rolls and welds plate into pipe and ducts, lines and lags them, and machines flanges, chutes, hoods, couplings and bellows joints.
+physical:
+  length: 300
+  width: 60
+  height: 18
+staff:
+- profession: profession.welder
+  count: 6
+- profession: profession.metalworker
+  count: 4
+- profession: profession.machinist
+  count: 2
+- profession: profession.technician
+  count: 1
+recipes:
+- makes: stock.kit-chute-dn1000
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 0.9789
+  - item: stock.st4340-bar-120
+    quantity: 0.0394
+  - item: stock.fs-pl-6
+    quantity: 0.0113
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.0285
+  - item: stock.st4340-scrap
+    quantity: 0.0011
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-chute-dn400
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 0.975
+  - item: stock.st4340-bar-120
+    quantity: 0.0432
+  - item: stock.fs-pl-6
+    quantity: 0.0115
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.0284
+  - item: stock.st4340-scrap
+    quantity: 0.0013
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-chute-dn600
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 0.9766
+  - item: stock.st4340-bar-120
+    quantity: 0.0422
+  - item: stock.fs-pl-6
+    quantity: 0.0109
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.0284
+  - item: stock.st4340-scrap
+    quantity: 0.0012
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-chute-dn800
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 0.9775
+  - item: stock.st4340-bar-120
+    quantity: 0.0405
+  - item: stock.fs-pl-6
+    quantity: 0.0117
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.0285
+  - item: stock.st4340-scrap
+    quantity: 0.0012
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-clamp-coupling-dn1200
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.8719
+  - item: good.refractory-brick
+    quantity: 0.1527
+  - item: material.silicone-rubber
+    quantity: 0.0008
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0254
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-expansion-joint-dn100-pn10
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.7521
+  - item: stock.st304-pl-3
+    quantity: 0.2779
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0219
+  - item: stock.st304-scrap
+    quantity: 0.0081
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-expansion-joint-dn1000-pn10
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.7523
+  - item: stock.st304-pl-3
+    quantity: 0.2777
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0219
+  - item: stock.st304-scrap
+    quantity: 0.0081
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-expansion-joint-dn300-pn10
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.7533
+  - item: stock.st304-pl-3
+    quantity: 0.2767
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0219
+  - item: stock.st304-scrap
+    quantity: 0.0081
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-expansion-joint-dn600-pn10
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.7525
+  - item: stock.st304-pl-3
+    quantity: 0.2775
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0219
+  - item: stock.st304-scrap
+    quantity: 0.0081
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn100-pn10
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9305
+  - item: stock.st4340-bar-120
+    quantity: 0.0878
+  - item: stock.st304-pl-3
+    quantity: 0.0117
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0271
+  - item: stock.st4340-scrap
+    quantity: 0.0026
+  - item: stock.st304-scrap
+    quantity: 0.0003
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn100-pn10-ss
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 0.9427
+  - item: stock.st4340-bar-120
+    quantity: 0.0873
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.0275
+  - item: stock.st4340-scrap
+    quantity: 0.0025
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn100-pn16-ss-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 0.9598
+  - item: stock.st4340-bar-120
+    quantity: 0.0702
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.028
+  - item: stock.st4340-scrap
+    quantity: 0.002
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn100-pn25
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9305
+  - item: stock.st4340-bar-120
+    quantity: 0.0878
+  - item: stock.st304-pl-3
+    quantity: 0.0117
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0271
+  - item: stock.st4340-scrap
+    quantity: 0.0026
+  - item: stock.st304-scrap
+    quantity: 0.0003
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn100-pn25-ss
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 0.9427
+  - item: stock.st4340-bar-120
+    quantity: 0.0873
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.0275
+  - item: stock.st4340-scrap
+    quantity: 0.0025
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn1000-pn1
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9619
+  - item: stock.st4340-bar-120
+    quantity: 0.0522
+  - item: stock.st304-pl-3
+    quantity: 0.0159
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.028
+  - item: stock.st4340-scrap
+    quantity: 0.0015
+  - item: stock.st304-scrap
+    quantity: 0.0005
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn1000-pn10
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9486
+  - item: stock.st4340-bar-120
+    quantity: 0.0683
+  - item: stock.st304-pl-3
+    quantity: 0.0131
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0276
+  - item: stock.st4340-scrap
+    quantity: 0.002
+  - item: stock.st304-scrap
+    quantity: 0.0004
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn1000-pn16-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9396
+  - item: stock.st4340-bar-120
+    quantity: 0.0799
+  - item: stock.st304-pl-3
+    quantity: 0.0104
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0274
+  - item: stock.st4340-scrap
+    quantity: 0.0023
+  - item: stock.st304-scrap
+    quantity: 0.0003
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn1200-pn1
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.961
+  - item: stock.st4340-bar-120
+    quantity: 0.0524
+  - item: stock.st304-pl-3
+    quantity: 0.0165
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.028
+  - item: stock.st4340-scrap
+    quantity: 0.0015
+  - item: stock.st304-scrap
+    quantity: 0.0005
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn1200-pn10-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9506
+  - item: stock.st4340-bar-120
+    quantity: 0.064
+  - item: stock.st304-pl-3
+    quantity: 0.0154
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0277
+  - item: stock.st4340-scrap
+    quantity: 0.0019
+  - item: stock.st304-scrap
+    quantity: 0.0004
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn1400-pn10
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.94
+  - item: stock.st4340-bar-120
+    quantity: 0.0788
+  - item: stock.st304-pl-3
+    quantity: 0.0112
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0274
+  - item: stock.st4340-scrap
+    quantity: 0.0023
+  - item: stock.st304-scrap
+    quantity: 0.0003
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn150-pn10
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9518
+  - item: stock.st4340-bar-120
+    quantity: 0.069
+  - item: stock.st304-pl-3
+    quantity: 0.0092
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0277
+  - item: stock.st4340-scrap
+    quantity: 0.002
+  - item: stock.st304-scrap
+    quantity: 0.0003
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn150-pn10-ss
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 0.9613
+  - item: stock.st4340-bar-120
+    quantity: 0.0687
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.028
+  - item: stock.st4340-scrap
+    quantity: 0.002
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn150-pn16-ss-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 0.9499
+  - item: stock.st4340-bar-120
+    quantity: 0.0801
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.0277
+  - item: stock.st4340-scrap
+    quantity: 0.0023
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn150-pn25
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9518
+  - item: stock.st4340-bar-120
+    quantity: 0.069
+  - item: stock.st304-pl-3
+    quantity: 0.0092
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0277
+  - item: stock.st4340-scrap
+    quantity: 0.002
+  - item: stock.st304-scrap
+    quantity: 0.0003
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn1600-pn16-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9226
+  - item: stock.st4340-bar-120
+    quantity: 0.0994
+  - item: stock.st304-pl-3
+    quantity: 0.0079
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0269
+  - item: stock.st4340-scrap
+    quantity: 0.0029
+  - item: stock.st304-scrap
+    quantity: 0.0002
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn1800-pn10-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9374
+  - item: stock.st4340-bar-120
+    quantity: 0.0798
+  - item: stock.st304-pl-3
+    quantity: 0.0128
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0273
+  - item: stock.st4340-scrap
+    quantity: 0.0023
+  - item: stock.st304-scrap
+    quantity: 0.0004
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn200-pn1-ss
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 0.9488
+  - item: stock.st4340-bar-120
+    quantity: 0.0812
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.0276
+  - item: stock.st4340-scrap
+    quantity: 0.0024
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn200-pn10
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9374
+  - item: stock.st4340-bar-120
+    quantity: 0.0815
+  - item: stock.st304-pl-3
+    quantity: 0.0111
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0273
+  - item: stock.st4340-scrap
+    quantity: 0.0024
+  - item: stock.st304-scrap
+    quantity: 0.0003
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn200-pn10-ss
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 0.9488
+  - item: stock.st4340-bar-120
+    quantity: 0.0812
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.0276
+  - item: stock.st4340-scrap
+    quantity: 0.0024
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn200-pn16-ss-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 0.9632
+  - item: stock.st4340-bar-120
+    quantity: 0.0668
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.0281
+  - item: stock.st4340-scrap
+    quantity: 0.0019
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn200-pn25-ss
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 0.9488
+  - item: stock.st4340-bar-120
+    quantity: 0.0812
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.0276
+  - item: stock.st4340-scrap
+    quantity: 0.0024
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn2000-pn1
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.966
+  - item: stock.st4340-bar-120
+    quantity: 0.0446
+  - item: stock.st304-pl-3
+    quantity: 0.0194
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0281
+  - item: stock.st4340-scrap
+    quantity: 0.0013
+  - item: stock.st304-scrap
+    quantity: 0.0006
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn2000-pn10-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9356
+  - item: stock.st4340-bar-120
+    quantity: 0.0832
+  - item: stock.st304-pl-3
+    quantity: 0.0111
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0273
+  - item: stock.st4340-scrap
+    quantity: 0.0024
+  - item: stock.st304-scrap
+    quantity: 0.0003
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn2200-pn10-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9307
+  - item: stock.st4340-bar-120
+    quantity: 0.0881
+  - item: stock.st304-pl-3
+    quantity: 0.0112
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0271
+  - item: stock.st4340-scrap
+    quantity: 0.0026
+  - item: stock.st304-scrap
+    quantity: 0.0003
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn2400-pn10-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9288
+  - item: stock.st4340-bar-120
+    quantity: 0.091
+  - item: stock.st304-pl-3
+    quantity: 0.0102
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0271
+  - item: stock.st4340-scrap
+    quantity: 0.0027
+  - item: stock.st304-scrap
+    quantity: 0.0003
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn250-pn10
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9484
+  - item: stock.st4340-bar-120
+    quantity: 0.0691
+  - item: stock.st304-pl-3
+    quantity: 0.0126
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0276
+  - item: stock.st4340-scrap
+    quantity: 0.002
+  - item: stock.st304-scrap
+    quantity: 0.0004
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn250-pn10-ss-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 0.9729
+  - item: stock.st4340-bar-120
+    quantity: 0.0571
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.0283
+  - item: stock.st4340-scrap
+    quantity: 0.0017
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn250-pn16-ss-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 0.9755
+  - item: stock.st4340-bar-120
+    quantity: 0.0545
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.0284
+  - item: stock.st4340-scrap
+    quantity: 0.0016
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn2800-pn10-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.924
+  - item: stock.st4340-bar-120
+    quantity: 0.097
+  - item: stock.st304-pl-3
+    quantity: 0.009
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0269
+  - item: stock.st4340-scrap
+    quantity: 0.0028
+  - item: stock.st304-scrap
+    quantity: 0.0003
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn300-pn10
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9592
+  - item: stock.st4340-bar-120
+    quantity: 0.0599
+  - item: stock.st304-pl-3
+    quantity: 0.0109
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0279
+  - item: stock.st4340-scrap
+    quantity: 0.0017
+  - item: stock.st304-scrap
+    quantity: 0.0003
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn3000-pn1-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9316
+  - item: stock.st304-pl-3
+    quantity: 0.0514
+  - item: stock.st4340-bar-120
+    quantity: 0.047
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0271
+  - item: stock.st304-scrap
+    quantity: 0.0015
+  - item: stock.st4340-scrap
+    quantity: 0.0014
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn350-pn10
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9491
+  - item: stock.st4340-bar-120
+    quantity: 0.069
+  - item: stock.st304-pl-3
+    quantity: 0.0119
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0276
+  - item: stock.st4340-scrap
+    quantity: 0.002
+  - item: stock.st304-scrap
+    quantity: 0.0003
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn350-pn10-ss
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 0.9615
+  - item: stock.st4340-bar-120
+    quantity: 0.0685
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.028
+  - item: stock.st4340-scrap
+    quantity: 0.002
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn3600-pn10-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9198
+  - item: stock.st4340-bar-120
+    quantity: 0.1034
+  - item: stock.st304-pl-3
+    quantity: 0.0068
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0268
+  - item: stock.st4340-scrap
+    quantity: 0.003
+  - item: stock.st304-scrap
+    quantity: 0.0002
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn400-pn10
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9552
+  - item: stock.st4340-bar-120
+    quantity: 0.062
+  - item: stock.st304-pl-3
+    quantity: 0.0128
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0278
+  - item: stock.st4340-scrap
+    quantity: 0.0018
+  - item: stock.st304-scrap
+    quantity: 0.0004
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn450-pn10
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9608
+  - item: stock.st4340-bar-120
+    quantity: 0.0557
+  - item: stock.st304-pl-3
+    quantity: 0.0135
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.028
+  - item: stock.st4340-scrap
+    quantity: 0.0016
+  - item: stock.st304-scrap
+    quantity: 0.0004
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn450-pn10-ss-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 0.9746
+  - item: stock.st4340-bar-120
+    quantity: 0.0554
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.0284
+  - item: stock.st4340-scrap
+    quantity: 0.0016
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn50-pn10-ss
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 0.9121
+  - item: stock.st4340-bar-120
+    quantity: 0.1179
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.0266
+  - item: stock.st4340-scrap
+    quantity: 0.0034
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn50-pn16-ss
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 0.9121
+  - item: stock.st4340-bar-120
+    quantity: 0.1179
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.0266
+  - item: stock.st4340-scrap
+    quantity: 0.0034
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn50-pn16-ss-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 0.9369
+  - item: stock.st4340-bar-120
+    quantity: 0.0931
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.0273
+  - item: stock.st4340-scrap
+    quantity: 0.0027
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn500-pn10
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9533
+  - item: stock.st4340-bar-120
+    quantity: 0.0645
+  - item: stock.st304-pl-3
+    quantity: 0.0122
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0278
+  - item: stock.st4340-scrap
+    quantity: 0.0019
+  - item: stock.st304-scrap
+    quantity: 0.0004
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn600-pn10
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9523
+  - item: stock.st4340-bar-120
+    quantity: 0.0645
+  - item: stock.st304-pl-3
+    quantity: 0.0132
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0277
+  - item: stock.st4340-scrap
+    quantity: 0.0019
+  - item: stock.st304-scrap
+    quantity: 0.0004
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn700-pn10
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.965
+  - item: stock.st4340-bar-120
+    quantity: 0.0522
+  - item: stock.st304-pl-3
+    quantity: 0.0128
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0281
+  - item: stock.st4340-scrap
+    quantity: 0.0015
+  - item: stock.st304-scrap
+    quantity: 0.0004
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-flange-dn900-pn10
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.955
+  - item: stock.st4340-bar-120
+    quantity: 0.0629
+  - item: stock.st304-pl-3
+    quantity: 0.0121
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0278
+  - item: stock.st4340-scrap
+    quantity: 0.0018
+  - item: stock.st304-scrap
+    quantity: 0.0004
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-hood-dn2000
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.7501
+  - item: good.water
+    quantity: 0.2718
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0218
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-jacketed-duct-dn2000
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.57
+  - item: good.water
+    quantity: 0.4467
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0166
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-lined-duct-dn1200-pn1
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: good.refractory-brick
+    quantity: 0.8654
+  - item: stock.sta36-pl-8
+    quantity: 0.134
+  - item: stock.st304-pl-3
+    quantity: 0.0047
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0039
+  - item: stock.st304-scrap
+    quantity: 0.0001
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-lined-duct-dn2400-pn16-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: good.refractory-brick
+    quantity: 0.7866
+  - item: stock.sta36-pl-8
+    quantity: 0.2156
+  - item: stock.st304-pl-3
+    quantity: 0.0043
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0063
+  - item: stock.st304-scrap
+    quantity: 0.0001
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-lined-duct-dn3600-pn10-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: good.refractory-brick
+    quantity: 0.7705
+  - item: stock.sta36-pl-8
+    quantity: 0.2322
+  - item: stock.st304-pl-3
+    quantity: 0.0042
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0068
+  - item: stock.st304-scrap
+    quantity: 0.0001
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-lined-flange-dn1200-pn1
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9109
+  - item: material.silica-aerogel
+    quantity: 0.0522
+  - item: stock.st4340-bar-120
+    quantity: 0.0497
+  - item: stock.st304-pl-3
+    quantity: 0.0157
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0265
+  - item: stock.st4340-scrap
+    quantity: 0.0014
+  - item: stock.st304-scrap
+    quantity: 0.0005
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-lined-flange-dn2400-pn16-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9084
+  - item: stock.st4340-bar-120
+    quantity: 0.1097
+  - item: material.silica-aerogel
+    quantity: 0.0067
+  - item: stock.st304-pl-3
+    quantity: 0.0051
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0265
+  - item: stock.st4340-scrap
+    quantity: 0.0032
+  - item: stock.st304-scrap
+    quantity: 0.0001
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-lined-flange-dn3600-pn10-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9134
+  - item: stock.st4340-bar-120
+    quantity: 0.1027
+  - item: material.silica-aerogel
+    quantity: 0.007
+  - item: stock.st304-pl-3
+    quantity: 0.0067
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0266
+  - item: stock.st4340-scrap
+    quantity: 0.003
+  - item: stock.st304-scrap
+    quantity: 0.0002
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn100-pn10
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1.03
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn100-pn10-ss
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 1.03
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn100-pn16-ss-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 1.03
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn100-pn25
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1.03
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn1000-pn1
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1.03
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn1000-pn10
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1.03
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn1000-pn16-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1.03
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn1000-pn16-mli-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1.0115
+  - item: stock.mli-fl
+    quantity: 0.018
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0295
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn1200-pn1
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1.03
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn1200-pn10-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1.03
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn1400-pn10
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1.03
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn150-pn10
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1.03
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn150-pn10-ss
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 1.03
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn150-pn16-ss-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 1.03
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn150-pn25-mli
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.9847
+  - item: stock.mli-fl
+    quantity: 0.044
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0287
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn1600-pn16-mli-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1.0172
+  - item: stock.mli-fl
+    quantity: 0.0124
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0296
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn1800-pn10-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1.03
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn200-pn1-ss
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 1.03
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn200-pn10
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1.03
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn200-pn10-ss
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 1.03
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn200-pn16-ss-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 1.03
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn2000-pn1
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1.03
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn2000-pn10-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1.03
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn2200-pn10-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1.03
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn2400-pn10-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1.03
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn250-pn10
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1.03
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn250-pn10-ss-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 1.03
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn250-pn16-ss-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 1.03
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn2800-pn10-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1.03
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn300-pn10
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1.03
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn350-pn10
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1.03
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn350-pn10-ss
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 1.03
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn3600-pn10-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1.03
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn400-pn10
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1.03
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn450-pn10
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1.03
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn450-pn10-ss-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 1.03
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn50-pn10-ss
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 1.03
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn50-pn16-ss
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 1.03
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn50-pn16-ss-double
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 1.03
+  outputs:
+  - item: stock.st304-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn500-pn10
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1.03
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn600-pn10
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1.03
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn700-pn10
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1.03
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn700-pn10-mli
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1.0043
+  - item: stock.mli-fl
+    quantity: 0.025
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.0293
+  rate: 3.0
+  power: 6000000.0
+- makes: stock.kit-pipe-dn900-pn10
+  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1.03
+  outputs:
+  - item: stock.sta36-scrap
+    quantity: 0.03
+  rate: 3.0
+  power: 6000000.0
+life: 788940000
+basis:
+- of:
+  - recipes.inputs
+  - recipes.outputs
+  tier: derived
+  review: true
+  note: Each recipe's inputs are the parts of the record its stock supplies, as kg a kg; each material as the mill stock or good other works make of it; 3% of cut metal lost as scrap (invented). A material no works makes yet is taken
+    as the material itself.
+- of:
+  - physical
+  - recipes.rate
+  - recipes.power
+  tier: invented
+  review: true
+  note: Its size, rate and power chosen for the kind of plant; to be reviewed.
+- of:
+  - staff
+  tier: invented
+  review: true
+  note: 'Coarse: by the kind of plant, not this one; to be reviewed.'
+- of:
+  - life
+  rule: rule.life-plant

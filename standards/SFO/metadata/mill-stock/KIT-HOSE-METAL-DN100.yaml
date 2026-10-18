@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-hose-metal-dn100
+  code: KIT-HOSE-METAL-DN100
+  name: Metal hose, DN 100, PN 25, a 20 m coil
+  traded_as: market.machinery
+  form: coil
+package: package.coil
+made_from:
+- item: material.stainless-steel-304
+size:
+  length: 20.0
+  diameter: 0.138
+supplies:
+  item: run.hose-metal-dn100
+  length: 20.0
+physical:
+  mass: 168.4
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: 'a 20 m coil of run.hose-metal-dn100: its mass a metre times the length sold.'

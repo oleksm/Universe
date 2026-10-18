@@ -1,0 +1,217 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.carbon-thermostat
+  name: Deep-time global temperature offset from the carbon-silicate thermostat
+  about: 'The planet''s mean temperature offset dT is set so that silicate weathering balances volcanic outgassing. Weathering
+    on this step''s map W = sum over land samples of max(P,0) exp((T - 15)/17) cos(lat) (Walker et al. 1981: ~exp(T/17 K),
+    rain ~+3 %/K). W0 = W / f(dT_used) with f(d) = exp(d/17) max(1 + 0.03 d, 0.1) is the weathering the map would give at
+    no offset. The first coupled step stores W_ref = W0. Target = W_ref x outgas, outgas = interior heat flow now / heat flow
+    at the first coupled step (plates.py:1345-1348). dT for the NEXT step is found by 40 bisections on [-12, 12] K so that
+    W0 f(dT) = target. Supercontinent dry interiors weather little -> warmer; much wet tropical land -> cooler.'
+area: climate
+clock:
+  when: each coupled step (only when the caller passes struct['outgas'], which plates always does in the coupled era); the
+    solved dT is used one step later
+reads:
+- name: pts
+  unit: unit vector
+  meaning: for cos(lat)
+- name: struct.outgas
+  unit: dimensionless
+  meaning: heat-flow ratio to the first coupled step
+  field: planet-field.mantle-heat-flux
+- name: state.dT, state.W_ref
+  unit: K, arbitrary
+  meaning: previous offset and reference weathering
+  field: planet-field.thermostat-state
+- name: cl.P
+  field: planet-field.rain
+  unit: m/s
+  meaning: this step's rain
+- name: cl.T
+  field: planet-field.temperature
+  unit: K
+  meaning: this step's temperature
+- name: land
+  field: planet-field.height
+  unit: m
+  meaning: 'land: height above 0'
+writes:
+- name: state.dT
+  unit: K
+  meaning: offset for the next step
+  field: planet-field.thermostat-state
+- name: state.W_ref
+  unit: m/yr-weighted sum (arbitrary)
+  meaning: set once
+  field: planet-field.weathering-reference
+- name: hydro.dT_global
+  unit: K
+  meaning: offset used this step, broadcast per sample
+  field: planet-field.thermostat-offset
+- name: w.hf_ref
+  field: planet-field.outgassing-reference-heat-flux
+  unit: W/m2
+  meaning: the heat flux at the first coupled step
+params:
+- name: 'inline: weathering e-fold'
+  value: 17.0
+  unit: K
+  meaning: W ~ exp((T-15)/17)
+  source: stages/coupled.py:244-245
+  note: Walker et al. 1981
+- name: 'inline: weathering reference T'
+  value: 288.15
+  unit: K
+  said_as:
+    unit: degC
+    factor: 1.0
+    note: plus 273.15
+  meaning: reference temperature in exp((T-15)/17)
+  source: stages/coupled.py:244
+  note: 'unit as the code says it: ''degC''; SI conversion unverified In K (was degC with unit 1).'
+- name: 'inline: rain sensitivity'
+  value: 0.03
+  unit: '1'
+  said_as:
+    unit: 1/K
+    factor: 1.0
+  meaning: f(d) = exp(d/17) * max(1 + 0.03 d, 0.1)
+  source: stages/coupled.py:245
+  note: rain ~+3 %/K
+- name: 'inline: dT clamp'
+  values:
+  - -12.0
+  - 12.0
+  unit: K
+  meaning: bisection interval for dT
+  source: stages/coupled.py:250
+- name: 'inline: bisection iterations'
+  value: 40.0
+  unit: '1'
+  said_as:
+    unit: count
+    factor: 1.0
+  meaning: 'unverified: the code names it inline: bisection iterations without saying what it is'
+  source: stages/coupled.py:251
+- name: 'inline: rain factor floor'
+  value: 0.1
+  unit: '1'
+  meaning: f(d) = exp(d/17) max(1 + 0.03 d, this)
+  source: stages/coupled.py:245
+tables:
+- name: river-states
+  source: stages/coupled.py:27, 70-96
+  columns:
+  - code
+  - name
+  - rule
+  rows:
+  - - '0'
+    - none
+    - no channel
+  - - '1'
+    - active
+    - 'channel: Q >= CHANNEL_Q, or had one (not dry valley) and Q >= DRY_FRAC*CHANNEL_Q'
+  - - '2'
+    - misfit
+    - channel with Q < 0.3 peakQ
+  - - '3'
+    - dry valley
+    - no channel, peakQ >= CHANNEL_Q, incision >= DRY_CUT
+  - - '4'
+    - captured
+    - channel, had one, receiver changed, -0.5 <= cos(old,new) < 0.5
+  - - '5'
+    - reversed
+    - as captured with cos < -0.5
+  - - '6'
+    - reborn
+    - channel where the last state was dry valley (overrides 1-5)
+- name: lake-codes
+  source: stages/coupled.py:132-147
+  columns:
+  - code
+  - name
+  - rule
+  rows:
+  - - '0'
+    - none
+    - ''
+  - - '1'
+    - open lake
+    - inflow >= evaporation capacity of the whole depression; whole depression, share 1
+  - - '2'
+    - closed (salt) lake
+    - inflow < capacity; lowest samples first up to area inflow/(PET-P)
+  - - '3'
+    - playa
+    - closed lake under 0.1 cell; its lowest sample
+- name: lakes-per-lake
+  source: stages/coupled.py:158, 171, 174
+  columns:
+  - index
+  - name
+  - unit
+  rows:
+  - - '0'
+    - inflow
+    - m3/yr
+  - - '1'
+    - evaporation capacity sum((PET-P)*cell)
+    - m3/yr
+  - - '2'
+    - area
+    - m^2
+  - - '3'
+    - open
+    - 1/0
+- name: erosion-calibration
+  source: stages/coupled.py:33-37, 43
+  columns:
+  - case
+  - result
+  rows:
+  - - S15 at 50 Ma + test planet
+    - planet total 0.013-0.020 mm/yr over land, 60 % by rivers (same as the old height rule)
+  - - WEAR_SCALE 0.6, s23 at 30k
+    - '350 Ma: land 24 %, a quarter flooded'
+  - - WEAR_SCALE 0.4 from s23's 700 Ma state at 30k
+    - land 28-30 %, continents +250-435 m, 17-20 % flooded
+  - - WEAR_SCALE 0
+    - land 32 %
+random_draws:
+- none
+invariants:
+- -12 K <= dT <= 12 K
+- dT = 0 on the first coupled step (state has no dT yet)
+depends_on:
+- planet-process.coupled-climate
+note: 'unverified physics detail: the cos(lat) weight is applied although the Fibonacci samples are equal-area (double latitude
+  weighting); W is measured with T already shifted by dT and then divided by f(dT), which also re-applies the 3 %/K rain factor
+  that CC.run does not model explicitly.'
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/coupled.py:step (lines 239-255)
+  state: reference
+- where: planet-forge crates/forge-core/src/models/climate/thermostat.rs
+  state: current
+  note: planet-forge port (climate line, merged in forge main 736031c)
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
+    the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge climate port (models/climate, models/ice), read from planet-sim-landform 1df4daf.'

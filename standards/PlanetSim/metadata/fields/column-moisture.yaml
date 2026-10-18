@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.column-moisture
+  name: Column moisture
+  about: 'The air''s moisture after the coupled climate''s last downwind sweep, as a share of what air holds at 25 degC (over
+    the sea: saturated at its temperature).'
+unit: '1'
+per: sample
+producer:
+  where: stages/coupled_climate.py run
+  file: climate
+  key: moist
+levels:
+- planet-level.planet
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge climate port (models/climate, models/ice), read from planet-sim-landform 1df4daf.'

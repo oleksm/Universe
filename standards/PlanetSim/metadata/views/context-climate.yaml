@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.context-climate
+  name: Climate
+  about: rain ramp dry-moderate-wet on land, isolines 0 C, -6 C, aridity 2, wind every 9th sample; LGM ice, ice-cycle limit,
+    low-stand shoreline (r_* fields)
+title: Climate
+row: landform
+file_suffix: _context_climate.png (+ .legend.json)
+draws:
+  words: rain ramp dry-moderate-wet on land, isolines 0 C, -6 C, aridity 2, wind every 9th sample; LGM ice, ice-cycle limit,
+    low-stand shoreline (r_* fields)
+shown: true
+implementations:
+- where: planet-trees-pgs2 ~/git/planet-trees-pgs2/tools/context_view.py:view_climate (560)
+  state: reference
+status: draft

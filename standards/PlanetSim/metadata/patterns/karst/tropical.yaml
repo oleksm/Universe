@@ -1,0 +1,62 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.karst.landscape.tropical
+  name: Tropical karst landscape (cone, cockpit and tower karst)
+  about: Tropical karst landscape (cone, cockpit and tower karst).
+family: karst
+factors:
+- factor: planet-factor.clim-temp
+  weight: 3
+  why: Warm tropical/subtropical; cone and tower karst exist only there
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: High rainfall (>~1500 mm/yr) and runoff
+- factor: planet-factor.clim-season
+  weight: 1
+  why: Monsoon floods drive allogenic rivers and lateral corrosion
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: Rainforest soils high in CO2; organic acids
+- factor: planet-factor.rock-soluble
+  weight: 1
+  why: Thick, massive, pure limestone
+- factor: planet-factor.rock-fracture
+  weight: 1
+  why: Joint spacing sets cone/tower spacing
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: Uplift rate picks fengcong (deep water table) vs fenglin (shallow)
+- factor: planet-factor.groundwater
+  weight: 3
+  why: Water-table depth selects cockpit vs tower subtype
+- factor: planet-factor.sed-supply
+  weight: 1
+  why: Allogenic sediment from non-karst rocks aggrades plains between towers
+- factor: planet-factor.sea-level
+  weight: 1
+  why: Drowned tower karst (Ha Long Bay) after sea-level rise
+- factor: planet-factor.time
+  weight: 1
+  why: Myr; long continuous tropical exposure
+vocabulary_id: 162
+sources:
+- https://showcaves.com/english/explain/Karst/TowerKarst.html
+- https://en.wikipedia.org/wiki/Tower_karst
+- https://en.wikipedia.org/wiki/Cockpit_Country
+library_status: planned
+source: karst.landscape.tropical
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

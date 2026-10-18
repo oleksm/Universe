@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/interface.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: interface.flange-dn2000-pn1, name: Flange DN 2000 PN 1, description: 'The mating face of the Flange DN 2000 PN 1 joint: any maker''s half built to it mates with any other''s, whatever its metal.'}
+domain: fluid
+kind: flange
+envelope: {pressure: 100000.0, temperature: 523.0}
+media: [gas, liquid]
+sealing: air
+halves: androgynous
+make: bolted
+face: {length: 2.166, width: 2.166, height: 0.11}
+size: 2.0
+standard: EN 1092-1 bores and pressure classes (its faces and bolting the registry's)
+basis:
+- of: [envelope, face]
+  tier: derived
+  note: The most the connection products built to it are rated for, and their joint's outside (SFO 25's connectors).

@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.tectonic.fault.range-front
+  name: Range front (fault-bounded mountain front)
+  about: Range front (fault-bounded mountain front).
+family: tectonic
+factors:
+- factor: planet-factor.tect-fault
+  weight: 3
+  why: bounding normal/reverse fault; segment length sets front segments
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: 'uplift rate vs erosion: Smf 1.2-1.6 active, 1.8-3.4 weak, >3.5 inactive'
+- factor: planet-factor.rock-type
+  weight: 1
+  why: resistant footwall keeps straight front, facets
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: erosion efficiency embays the front, raises sinuosity
+- factor: planet-factor.clim-arid
+  weight: 1
+  why: arid fronts keep facets and fans; fans head at front
+- factor: planet-factor.sed-supply
+  weight: 1
+  why: catchment sediment builds fans; supply vs subsidence decides fan entrenchment
+- factor: planet-factor.base-level
+  weight: 1
+  why: basin subsidence/through-drainage sets front base level
+- factor: planet-factor.time
+  weight: 3
+  why: time since uplift slowed raises sinuosity and valley width (Vf)
+vocabulary_id: 168
+sources:
+- https://WWW.ISPRS.org/proceedings/2011/ISRSE-34/211104015Final00629.pdf
+library_status: planned
+source: tectonic.fault.range_front
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

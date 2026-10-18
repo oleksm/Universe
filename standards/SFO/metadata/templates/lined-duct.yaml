@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/template.schema.yaml
+identity:
+  key: template.lined-duct
+  name: Lined duct
+  description: Refractory-lined duct for hot gas. Its straight is swept along the run's path; every size of the family is this template at the record's figures.
+family: lined-duct
+draws: sweep-and-pieces
+profile: a steel shell of the record's outside diameter, its refractory lining inside
+scales_by:
+- outside
+- size
+- elbow.radius
+- support.spacing
+pieces:
+- name: elbow
+  how: the lined elbow scaled
+- name: support
+  how: the duct stand scaled
+model_of: run.lined-duct-dn2400-pn16-double
+members: 3
+basis:
+- of:
+  - draws
+  - scales_by
+  - pieces
+  - model_of
+  tier: derived
+  note: 'The owner, 2026-10-17: one template a family, scaled, instead of a model a size; model_of is an installed size''s model, the middle one of those installed, until the template has its own.'

@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: connector.bus-joint-ac-27ka, name: 'Bus joint, AC, 27 kA', description: 'Where a 26.3 kA three-phase alternating current bus meets a unit''s terminals: each phase''s tubes brazed into copper plates, bolted to the unit''s pads, the phases'' centres 0.6 m apart (0.3 m clear between them), and the tubes'' water handed by insulating hoses to the unit''s cooling manifold. At the plane: the three phases side by side across y, each phase 0.30 m wide and 0.14 m tall about the axis.'}
+kind: bus-joint
+size: 0.00785
+rating: {voltage: 300.0, current: 26301.5}
+physical: {length: 0.3, width: 1.6, height: 0.26, mass: 143.1}
+built_of:
+- {what: Joint plates, item: material.copper, mass: 106.2, note: 'a pair of 30 mm copper plates a phase, 340 x 250 mm, the tubes brazed into one, bolted to the unit''s terminal pad; measured on blender''s model with its tube bores and bolt holes cut, 137.1 kg as solid plates'}
+- {what: Bolts, item: material.high-strength-steel-4340, mass: 19.2, note: 'sixteen M20 a phase in two rows of eight, above and below the tubes, with spring washers'}
+- {what: Braze lands, item: material.copper, mass: 10.2, note: 'a copper land round each tube where it is brazed into the plate; measured on blender''s model (9.5 kg for 14 tubes, 2026-10-16)'}
+- {what: Water couplings and hoses, item: material.silicone-rubber, mass: 7.5, note: an insulating hose from each tube's end to the unit's cooling manifold behind its pad}
+triangle_budget: 22000
+interface: interface.bus-joint-ac-27ka
+provides: both
+template: template.bus-joint
+visual:
+  format: "freefall-model/1"
+  path: "models/bus-joint-ac-27ka/v1"
+  manifest_sha256: "4f9eba3037da1ed36cd84e9173c3ac88a2d8d91362ec35d7dd83fecdd9ce9e8b"
+  version: 1
+  triangles: 15904
+basis:
+- of: [built_of, physical]
+  tier: invented
+  review: true
+  note: Plates, bolting and hoses from memory of electrolysis and furnace bus joints; the bolts' edge distance 35 mm (1.6 bolt diameters).

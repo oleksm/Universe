@@ -1,0 +1,51 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Building panel
+x-kind: [panel]
+description: "standards/SFO/metadata/panels/<name>.yaml: a building's kit panel (the owner, 2026-10-17: a building is a layout laid of a frame, panels, fit-out units and service kit, not one model). Each panel fills one cell face (or half) of the kit's strut frame on its 3 m grid: a wall, a floor, a roof, a door or window in its wall, a partition, a stair. Sold and hauled as stock (its `KIT-PANEL-` record); drawn by its family template, scaled to its figures."
+type: object
+additionalProperties: false
+required: [identity, kind, site, cell, physical, built_of, template]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name, description]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      description: { type: string }
+  kind: { enum: [wall, floor, roof, partition, stair], description: "What face of a cell it fills." }
+  site: { enum: [air, airless], description: "The ground it is made for: air (weather, heat loss) or airless (pressure held, vacuum outside)." }
+  cell: { type: array, items: { type: number, exclusiveMinimum: 0, x-unit: "m" }, minItems: 2, maxItems: 2, description: "The face it fills on the frame's grid, m: along and up (a wall), or the two plan sides (a floor, a roof, a stair's well)." }
+  thickness: { type: number, exclusiveMinimum: 0, x-unit: "m" }
+  opening:
+    type: object
+    additionalProperties: false
+    description: "A door or window in it, its clear size and what closes it."
+    properties:
+      kind: { enum: [door, double-door, sliding-door, roller-shutter, window, glazing, pressure-door, pressure-cargo-door, viewport] }
+      width: { type: number, exclusiveMinimum: 0, x-unit: "m" }
+      height: { type: number, exclusiveMinimum: 0, x-unit: "m" }
+      sill: { type: number, minimum: 0, x-unit: "m", description: "m from the panel's foot to the opening's" }
+      people: { type: boolean, description: "People pass it (a door)." }
+      vehicles: { type: boolean, description: "Vehicles and stock pass it." }
+  u_value: { type: number, exclusiveMinimum: 0, x-unit: "W/(m2 K)", description: "Heat it lets through a m2 for each kelvin between its faces." }
+  load: { type: number, minimum: 0, x-unit: "Pa", description: "Pa it carries over its span besides its own weight (a floor's or roof's imposed load)." }
+  physical: { $ref: "../../common.schema.yaml#/definitions/physical", description: "As it stands placed: length along its face, width its thickness, height up (a floor or roof: its two plan sides and its thickness)." }
+  built_of:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [what, item, mass]
+      properties:
+        what: { type: string }
+        item: { type: string, x-ref: [material, good] }
+        mass: { type: number, exclusiveMinimum: 0, x-unit: "kg" }
+        note: { type: string }
+  template: { type: string, x-ref: [template], description: "The family template that draws it." }
+  visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
+  revision:
+    $ref: "../../common.schema.yaml#/definitions/record_revision"
+    default: { status: draft, owner: registry, on_conflict: propose, because: "The first building kit, from memory of modular building practice.", ask: docs/registry-ssot-request.md }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

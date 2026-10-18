@@ -1,13 +1,17 @@
 # yaml-language-server: $schema=../../schema/law.schema.yaml
 identity:
   key: law.hull-rest-speed
-  name: "Hull at rest"
-  symbol: "vr"
+  name: Hull at rest
+  symbol: vr
   label: HULL_REST_SPEED
   section: dogma.contact
 value: 0.5
-unit: "m/s"
+unit: m/s
 kind: simplified
-note: "Below this speed into the ground a hull does not rebound: it settles instead (a dead blow; the rebound law holds above it)."
+note: 'Below this speed into the ground a hull does not rebound: it settles instead (a dead blow; the rebound law holds above it).'
 basis:
-  - { of: [value], tier: invented, review: true, note: "A slow touch of sheet metal on rock rebounds by millimetres; to be sourced." }
+- of:
+  - value
+  tier: invented
+  review: true
+  note: 'Invented, a settling threshold for the solver: below 0.5 m/s a hull''s rebound is millimetres and is dropped. Not a property of the skin.'

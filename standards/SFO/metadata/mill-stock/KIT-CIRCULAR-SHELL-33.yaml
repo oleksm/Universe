@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-circular-shell-33
+  code: KIT-CIRCULAR-SHELL-33
+  name: Circular connector, shell 33
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.aluminium-alloy-6061
+- item: material.copper
+- item: material.epdm-rubber
+size:
+  length: 0.052
+  width: 0.052
+  height: 0.095
+supplies:
+  item: connector.circular-shell-33
+physical:
+  mass: 0.4
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.circular-shell-33, as made.

@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.tectonic.strike-slip.sag-pond
+  name: Sag pond
+  about: Sag pond.
+family: tectonic
+factors:
+- factor: planet-factor.tect-fault
+  weight: 3
+  why: releasing bend or stepover between parallel strands makes local subsidence
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: down-dropped block subsides faster than sediment fill
+- factor: planet-factor.events
+  weight: 1
+  why: earthquakes renew depression
+- factor: planet-factor.groundwater
+  weight: 1
+  why: fault gouge dams groundwater, springs feed ponds
+- factor: planet-factor.clim-precip
+  weight: 3
+  why: rain/snow amount decides perennial pond vs dry sag
+- factor: planet-factor.clim-arid
+  weight: 1
+  why: arid sags stay dry or ephemeral
+- factor: planet-factor.sed-supply
+  weight: 1
+  why: infill rate shortens pond lifetime
+- factor: planet-factor.time
+  weight: 1
+  why: short-lived; fills in kyr unless renewed
+vocabulary_id: 176
+sources:
+- https://en.wikipedia.org/wiki/Sag_pond
+- https://gotbooks.miracosta.edu/fieldtrips/Elsinore_Fault/interpretation.html
+library_status: planned
+source: tectonic.strike_slip.sag_pond
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

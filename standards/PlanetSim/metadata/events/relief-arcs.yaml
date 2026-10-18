@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/planet-event.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-event.relief-arcs
+  name: Relief.arcs
+  about: relief.arcs
+source: relief.arcs
+emitted_by:
+- planet-process.subduction
+payload:
+- name: t
+- name: sinker_at
+- name: rider
+- name: R
+- name: gap
+status: draft

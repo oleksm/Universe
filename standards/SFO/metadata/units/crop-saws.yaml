@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.crop-saws, name: 'Crop saws, 9', description: '9 horizontal band saws in 3 rows of 3 along x, each with its roller table: the ingot crane sets a cooled ingot on a table lying along x, its big end at the blade, and the blade cuts the hot top off (for one ingot of each heat, then a 25 mm coupon off the cut face, for the sampling lab) (255 kg, with its lifting eye) through the 0.48 m square section in about 10 minutes with the handling; the head drops into a scrap bin under the table, which goes back to the arc furnace as scrap, and the crane lifts the sound ingot onto the crating line. 54 ingots an hour from the casting bay need 9.'}
+size_class: 2
+fits: plant-mount.bay-s2
+physical: {length: 12.0, width: 10.0, height: 3.0, mass: 94500.0}
+built_of:
+- {what: Band saws, item: good.electric-motors, mass: 81000.0, note: 'about 9 t a saw for a 0.5 m section, from memory'}
+- {what: Roller tables and scrap bins, item: material.structural-steel-a36, mass: 13500.0, note: from memory}
+needs: {power: 135000.0}
+ports:
+- id: power-in
+  flow: in
+  medium: power
+  power: 135000.0
+  voltage: 400
+  interface: interface.termination-400v-95mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-95mm2
+  at: [4.0, -5.0, 0.5]
+  facing: [0.0, -1.0, 0.0]
+  note: the saws' distribution board, on the south side
+  current: 216.5
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 94500.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
+product: product.crop-saws
+envelope:
+- [-5.852, -4.501, -0.001, 5.792, 4.641, 2.842]
+life: 788940000
+visual: {format: freefall-model/1, path: models/crop-saws/v1, manifest_sha256: a49ddbf3d07a5d7238142f67f465575aca4a1bbc12d454c9d46cd15805fc723a, version: 1, triangles: 34308}
+basis:
+- of: [built_of, needs, physical]
+  tier: invented
+  review: true
+  note: The count from the casting bay's rate and a cut of 300 cm2 a minute (a large band saw in carbon steel, from memory); saw mass and power from memory.
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage.'
+- of: [life]
+  rule: rule.life-plant

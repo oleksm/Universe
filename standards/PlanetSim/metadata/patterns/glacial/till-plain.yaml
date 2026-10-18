@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.glacial.deposit.till-plain
+  name: Till plain (ground moraine)
+  about: Till plain (ground moraine).
+family: glacial
+factors:
+- factor: planet-factor.ice-extent
+  weight: 3
+  why: former ice-sheet interior/lobe; multiple advances stack tills
+- factor: planet-factor.rock-type
+  weight: 3
+  why: soft sedimentary bedrock gives thick clay-rich till
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: subglacial erosion supplies 1-100 m diamicton
+- factor: planet-factor.ice-thermal
+  weight: 1
+  why: warm-based lodgement/deformation
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: lowland plains, relief <10-20 m
+- factor: planet-factor.relief-inherited
+  weight: 1
+  why: buries preglacial valleys
+- factor: planet-factor.time
+  weight: 1
+  why: post-glacial drainage integration slowly dissects plain
+vocabulary_id: 70
+sources:
+- https://en.wikipedia.org/wiki/Moraine
+- https://www.antarcticglaciers.org/glacial-geology/glacial-landforms/glacial-depositional-landforms/
+library_status: written
+source: glacial.deposit.till_plain
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

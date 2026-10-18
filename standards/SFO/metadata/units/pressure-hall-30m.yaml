@@ -1,0 +1,96 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.pressure-hall-30m, name: 'Pressure hall section, 30 m', description: 'A 30 m length of a steel tube 30 m across lying on its side, flanged at both ends to the next section or a head, for a hall held at 20 kPa of nitrogen on airless ground (water stays liquid in it to about 60 deg C). Its 6 mm shell carries the pressure in hoop (50 MPa); 10 T rings 400 mm deep every 3 m stiffen it and carry the deck and the crane runways; the outside is wrapped in multilayer insulation against the lunar day and night. Local frame: the axis along x at z 15, the ends at x -15 and 15, its bottom on the cradle at z 0. A steel deck at z 7.5, 25.0 m wide (clear of the rings), on posts down to the shell, the gaps to the shell between rings closed by edge plates; the crane runways'' rail plane at z 24, y -11.4 and 11.4, the runway boxes under it hung from the rings. Each end has an outward flange ring 300 x 30 mm welded to the shell, its bolt holes at 150 mm; the bolts and the double O-rings
+    between two rings are the layout''s (the hall''s joints), not the section''s. The section stands on a cradle of sintered regolith that is the layout''s ground, grooved where the flange rings reach 0.3 m below the tube''s bottom (z -0.3 to 30.3). Fan coils under the deck take 173 kW of the machines'' heat out of the gas into the layout''s radiator loop, by a pair of 150 mm stubs rising through the deck at local (-14, -12) and (-13.2, -12) (clear of the ring at x -13.5), and their fans'' 400 V entry at (-12.4, -12), their faces facing up at the deck''s plane, z 7.5; the hall''s inner pipes run along the deck''s south edge to them. The section holds 4,875 kg of nitrogen.'}
+size_class: 4
+fits: plant-mount.bay-s4
+physical: {length: 30.0, width: 30.6, height: 30.6, mass: 369200.0}
+built_of:
+- {what: Shell, item: material.structural-steel-a36, mass: 133200.0, note: 6 mm plate}
+- {what: Ring stiffeners, item: material.structural-steel-a36, mass: 59190.0, note: '10 rings, 400 x 12 mm web, 200 x 16 mm flange'}
+- {what: Deck, item: material.structural-steel-a36, mass: 130700.0, note: '12 mm plate on a beam at each ring (150 kg/m) and three posts under each (100 kg/m): sized for about 20 kPa of floor at 2 m/s2 (from memory), not checked under the mill''s running load'}
+- {what: Crane runways, item: material.high-strength-steel-4340, mass: 17660.0, note: 'two 400 x 400 x 25 mm boxes, hung from the rings'}
+- {what: End flanges, item: material.structural-steel-a36, mass: 13320.0, note: 'two outward rings 300 x 30 mm, drilled for M24 at 150 mm'}
+- {what: Runway rails and hangers, item: material.structural-steel-a36, mass: 8261.0, note: 'measured on blender''s candidate (2026-10-16): the crane rails on the runway boxes and the hangers to the rings, which the boxes above leave out'}
+- {what: Fan coil pipes and supports, item: material.structural-steel-a36, mass: 1063.0, note: 'measured on blender''s candidate: the stubs'' pipes and their sleeves through the deck beams'}
+- {what: Insulation, item: material.polyimide-film, mass: 2827.0, note: 'multilayer blanket, about 1 kg/m2, from memory'}
+- {what: Fan coils, item: good.pumps, mass: 3000.0, note: from memory}
+holds: 4875.0
+needs: {power: 30000.0, heat: 173300.0, atmosphere: vacuum}
+ports:
+- id: water-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 4.141
+  temperature: 320.0
+  interface: interface.flange-dn150-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn150-pn10
+  at: [-14.0, -12.0, 7.5]
+  facing: [0.0, 0.0, 1.0]
+  pressure: 400000.0
+- id: water-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 4.141
+  temperature: 330.0
+  interface: interface.flange-dn150-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn150-pn10
+  at: [-13.2, -12.0, 7.5]
+  facing: [0.0, 0.0, 1.0]
+  pressure: 400000.0
+- id: power-in
+  flow: in
+  medium: power
+  power: 30000.0
+  voltage: 400
+  interface: interface.termination-400v-25mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-25mm2
+  at: [-12.4, -12.0, 7.5]
+  facing: [0.0, 0.0, 1.0]
+  note: the fan coils' fans, a gland up through the deck
+  current: 48.11
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s4
+  half: male
+  make: bolted
+  mass: 374100.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
+product: product.pressure-hall
+envelope:
+- [-15.0, -12.5, 0.0, 15.0, 12.5, 7.5]
+- [-15.0, -11.6, 23.4, 15.0, -11.2, 24.1]
+- [-15.0, 11.2, 23.4, 15.0, 11.6, 24.1]
+shells:
+- kind: tube
+  at: [-15.03, 15.03, 0.0, 15.0, 14.584, 15.3]
+life: 788940000
+visual: {format: freefall-model/1, path: models/pressure-hall-30m/v2, manifest_sha256: 879bbe70c363b0cfbdf800600d52891fd07e4bd83cd0f93a6fc63d5654ea143b, version: 2, triangles: 56860}
+basis:
+- of: [physical, built_of]
+  tier: derived
+  review: true
+  note: 'The shell from its hoop stress, 50 MPa against 150; the rings, deck and insulation from memory. Not checked for buckling: the hall is never let down to vacuum with its cradle''s load on it.'
+- of: [holds]
+  tier: derived
+  note: Nitrogen at 20 kPa and 20 deg C.
+- of: [needs.heat]
+  tier: derived
+  note: A third of the discs' drives (90 + 15 kW each) and 100 kW of crane, lights and fans; the mill's and presses' heat leaves in the filtrate instead.
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage; water at the pumps'' 4 bar.'
+- of: [life]
+  rule: rule.life-plant

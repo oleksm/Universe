@@ -1,0 +1,608 @@
+# yaml-language-server: $schema=../../schema/layout.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: layout.building-offices
+  name: Offices, world with air
+  description: 'Floors of desks: the administration''s offices of record, the companies'' books, the lawyers, the engineers who draw, the scholars who count. Laid of the kit: a strut frame on the 3 m grid, panels, and 84 rooms of 6
+    m furnished piece by piece (63 office, 4 reception, 9 washroom, 8 kitchen).'
+stands_for: building.offices
+site:
+  atmosphere: air
+  gravity:
+  - 8.0
+  - 11.0
+physical:
+  length: 42.0
+  width: 18.0
+  height: 12.15
+  mass: 908373.0
+bays: []
+rooms:
+- id: OFF1
+  arrangement: arrangement.office
+  at:
+  - -18.0
+  - -6.0
+  - 0.0
+- id: OFF2
+  arrangement: arrangement.office
+  at:
+  - -12.0
+  - -6.0
+  - 0.0
+- id: OFF3
+  arrangement: arrangement.office
+  at:
+  - -6.0
+  - -6.0
+  - 0.0
+- id: OFF4
+  arrangement: arrangement.office
+  at:
+  - 0.0
+  - -6.0
+  - 0.0
+- id: OFF5
+  arrangement: arrangement.office
+  at:
+  - 6.0
+  - -6.0
+  - 0.0
+- id: OFF6
+  arrangement: arrangement.office
+  at:
+  - 12.0
+  - -6.0
+  - 0.0
+- id: OFF7
+  arrangement: arrangement.office
+  at:
+  - 18.0
+  - -6.0
+  - 0.0
+- id: OFF8
+  arrangement: arrangement.office
+  at:
+  - -18.0
+  - 0.0
+  - 0.0
+- id: OFF9
+  arrangement: arrangement.office
+  at:
+  - -12.0
+  - 0.0
+  - 0.0
+- id: OFF10
+  arrangement: arrangement.office
+  at:
+  - -6.0
+  - 0.0
+  - 0.0
+- id: OFF11
+  arrangement: arrangement.office
+  at:
+  - 0.0
+  - 0.0
+  - 0.0
+- id: OFF12
+  arrangement: arrangement.office
+  at:
+  - 6.0
+  - 0.0
+  - 0.0
+- id: OFF13
+  arrangement: arrangement.office
+  at:
+  - 12.0
+  - 0.0
+  - 0.0
+- id: OFF14
+  arrangement: arrangement.office
+  at:
+  - 18.0
+  - 0.0
+  - 0.0
+- id: OFF15
+  arrangement: arrangement.office
+  at:
+  - -18.0
+  - 6.0
+  - 0.0
+- id: OFF16
+  arrangement: arrangement.office
+  at:
+  - -12.0
+  - 6.0
+  - 0.0
+- id: OFF17
+  arrangement: arrangement.office
+  at:
+  - -6.0
+  - 6.0
+  - 0.0
+- id: OFF18
+  arrangement: arrangement.office
+  at:
+  - 0.0
+  - 6.0
+  - 0.0
+- id: OFF19
+  arrangement: arrangement.office
+  at:
+  - 6.0
+  - 6.0
+  - 0.0
+- id: OFF20
+  arrangement: arrangement.office
+  at:
+  - 12.0
+  - 6.0
+  - 0.0
+- id: OFF21
+  arrangement: arrangement.office
+  at:
+  - 18.0
+  - 6.0
+  - 0.0
+- id: OFF22
+  arrangement: arrangement.office
+  at:
+  - -18.0
+  - -6.0
+  - 3.0
+- id: OFF23
+  arrangement: arrangement.office
+  at:
+  - -12.0
+  - -6.0
+  - 3.0
+- id: OFF24
+  arrangement: arrangement.office
+  at:
+  - -6.0
+  - -6.0
+  - 3.0
+- id: OFF25
+  arrangement: arrangement.office
+  at:
+  - 0.0
+  - -6.0
+  - 3.0
+- id: OFF26
+  arrangement: arrangement.office
+  at:
+  - 6.0
+  - -6.0
+  - 3.0
+- id: OFF27
+  arrangement: arrangement.office
+  at:
+  - 12.0
+  - -6.0
+  - 3.0
+- id: OFF28
+  arrangement: arrangement.office
+  at:
+  - 18.0
+  - -6.0
+  - 3.0
+- id: OFF29
+  arrangement: arrangement.office
+  at:
+  - -18.0
+  - 0.0
+  - 3.0
+- id: OFF30
+  arrangement: arrangement.office
+  at:
+  - -12.0
+  - 0.0
+  - 3.0
+- id: OFF31
+  arrangement: arrangement.office
+  at:
+  - -6.0
+  - 0.0
+  - 3.0
+- id: OFF32
+  arrangement: arrangement.office
+  at:
+  - 0.0
+  - 0.0
+  - 3.0
+- id: OFF33
+  arrangement: arrangement.office
+  at:
+  - 6.0
+  - 0.0
+  - 3.0
+- id: OFF34
+  arrangement: arrangement.office
+  at:
+  - 12.0
+  - 0.0
+  - 3.0
+- id: OFF35
+  arrangement: arrangement.office
+  at:
+  - 18.0
+  - 0.0
+  - 3.0
+- id: OFF36
+  arrangement: arrangement.office
+  at:
+  - -18.0
+  - 6.0
+  - 3.0
+- id: OFF37
+  arrangement: arrangement.office
+  at:
+  - -12.0
+  - 6.0
+  - 3.0
+- id: OFF38
+  arrangement: arrangement.office
+  at:
+  - -6.0
+  - 6.0
+  - 3.0
+- id: OFF39
+  arrangement: arrangement.office
+  at:
+  - 0.0
+  - 6.0
+  - 3.0
+- id: OFF40
+  arrangement: arrangement.office
+  at:
+  - 6.0
+  - 6.0
+  - 3.0
+- id: OFF41
+  arrangement: arrangement.office
+  at:
+  - 12.0
+  - 6.0
+  - 3.0
+- id: OFF42
+  arrangement: arrangement.office
+  at:
+  - 18.0
+  - 6.0
+  - 3.0
+- id: OFF43
+  arrangement: arrangement.office
+  at:
+  - -18.0
+  - -6.0
+  - 6.0
+- id: OFF44
+  arrangement: arrangement.office
+  at:
+  - -12.0
+  - -6.0
+  - 6.0
+- id: OFF45
+  arrangement: arrangement.office
+  at:
+  - -6.0
+  - -6.0
+  - 6.0
+- id: OFF46
+  arrangement: arrangement.office
+  at:
+  - 0.0
+  - -6.0
+  - 6.0
+- id: OFF47
+  arrangement: arrangement.office
+  at:
+  - 6.0
+  - -6.0
+  - 6.0
+- id: OFF48
+  arrangement: arrangement.office
+  at:
+  - 12.0
+  - -6.0
+  - 6.0
+- id: OFF49
+  arrangement: arrangement.office
+  at:
+  - 18.0
+  - -6.0
+  - 6.0
+- id: OFF50
+  arrangement: arrangement.office
+  at:
+  - -18.0
+  - 0.0
+  - 6.0
+- id: OFF51
+  arrangement: arrangement.office
+  at:
+  - -12.0
+  - 0.0
+  - 6.0
+- id: OFF52
+  arrangement: arrangement.office
+  at:
+  - -6.0
+  - 0.0
+  - 6.0
+- id: OFF53
+  arrangement: arrangement.office
+  at:
+  - 0.0
+  - 0.0
+  - 6.0
+- id: OFF54
+  arrangement: arrangement.office
+  at:
+  - 6.0
+  - 0.0
+  - 6.0
+- id: OFF55
+  arrangement: arrangement.office
+  at:
+  - 12.0
+  - 0.0
+  - 6.0
+- id: OFF56
+  arrangement: arrangement.office
+  at:
+  - 18.0
+  - 0.0
+  - 6.0
+- id: OFF57
+  arrangement: arrangement.office
+  at:
+  - -18.0
+  - 6.0
+  - 6.0
+- id: OFF58
+  arrangement: arrangement.office
+  at:
+  - -12.0
+  - 6.0
+  - 6.0
+- id: OFF59
+  arrangement: arrangement.office
+  at:
+  - -6.0
+  - 6.0
+  - 6.0
+- id: OFF60
+  arrangement: arrangement.office
+  at:
+  - 0.0
+  - 6.0
+  - 6.0
+- id: OFF61
+  arrangement: arrangement.office
+  at:
+  - 6.0
+  - 6.0
+  - 6.0
+- id: OFF62
+  arrangement: arrangement.office
+  at:
+  - 12.0
+  - 6.0
+  - 6.0
+- id: OFF63
+  arrangement: arrangement.office
+  at:
+  - 18.0
+  - 6.0
+  - 6.0
+- id: REC64
+  arrangement: arrangement.reception
+  at:
+  - -18.0
+  - -6.0
+  - 9.0
+- id: REC65
+  arrangement: arrangement.reception
+  at:
+  - -12.0
+  - -6.0
+  - 9.0
+- id: REC66
+  arrangement: arrangement.reception
+  at:
+  - -6.0
+  - -6.0
+  - 9.0
+- id: REC67
+  arrangement: arrangement.reception
+  at:
+  - 0.0
+  - -6.0
+  - 9.0
+- id: WAS68
+  arrangement: arrangement.washroom
+  at:
+  - 6.0
+  - -6.0
+  - 9.0
+- id: WAS69
+  arrangement: arrangement.washroom
+  at:
+  - 12.0
+  - -6.0
+  - 9.0
+- id: WAS70
+  arrangement: arrangement.washroom
+  at:
+  - 18.0
+  - -6.0
+  - 9.0
+- id: WAS71
+  arrangement: arrangement.washroom
+  at:
+  - -18.0
+  - 0.0
+  - 9.0
+- id: WAS72
+  arrangement: arrangement.washroom
+  at:
+  - -12.0
+  - 0.0
+  - 9.0
+- id: WAS73
+  arrangement: arrangement.washroom
+  at:
+  - -6.0
+  - 0.0
+  - 9.0
+- id: WAS74
+  arrangement: arrangement.washroom
+  at:
+  - 0.0
+  - 0.0
+  - 9.0
+- id: WAS75
+  arrangement: arrangement.washroom
+  at:
+  - 6.0
+  - 0.0
+  - 9.0
+- id: WAS76
+  arrangement: arrangement.washroom
+  at:
+  - 12.0
+  - 0.0
+  - 9.0
+- id: KIT77
+  arrangement: arrangement.kitchen
+  at:
+  - 18.0
+  - 0.0
+  - 9.0
+- id: KIT78
+  arrangement: arrangement.kitchen
+  at:
+  - -18.0
+  - 6.0
+  - 9.0
+- id: KIT79
+  arrangement: arrangement.kitchen
+  at:
+  - -12.0
+  - 6.0
+  - 9.0
+- id: KIT80
+  arrangement: arrangement.kitchen
+  at:
+  - -6.0
+  - 6.0
+  - 9.0
+- id: KIT81
+  arrangement: arrangement.kitchen
+  at:
+  - 0.0
+  - 6.0
+  - 9.0
+- id: KIT82
+  arrangement: arrangement.kitchen
+  at:
+  - 6.0
+  - 6.0
+  - 9.0
+- id: KIT83
+  arrangement: arrangement.kitchen
+  at:
+  - 12.0
+  - 6.0
+  - 9.0
+- id: KIT84
+  arrangement: arrangement.kitchen
+  at:
+  - 18.0
+  - 6.0
+  - 9.0
+frame:
+  box:
+  - -21.0
+  - -9.0
+  - 0.0
+  - 21.0
+  - 9.0
+  - 12.0
+  cell: 3.0
+  shape: 'A skeleton frame on the 3 m grid: 14 x 6 cells, 4 storey(s) of 3 m; columns at every node, beams on every cell edge at each floor and the roof, one diagonal in every other outside face. Panels on its faces (frame.panels).'
+  members:
+  - item: stock.st4340-tb-120x3-s3000
+    count: 420
+    where: columns
+  - item: stock.st4340-tb-160x5-s3000
+    count: 752
+    where: beams
+  - item: stock.st4340-tb-80x2-d3000
+    count: 80
+    where: bracing
+  - item: stock.st4340-node-160b
+    count: 525
+    where: nodes
+  mass: 67131.8
+  panels:
+  - panel: panel.floor-3x3
+    count: 246
+  - panel: panel.partition-3x3
+    count: 84
+  - panel: panel.partition-door-3x3
+    count: 84
+  - panel: panel.roof-3x3
+    count: 84
+  - panel: panel.stair-3m
+    count: 3
+  - panel: panel.wall-door-3x3
+    count: 1
+  - panel: panel.wall-double-door-3x3
+    count: 2
+  - panel: panel.wall-insulated-3x3
+    count: 106
+  - panel: panel.wall-window-3x3
+    count: 51
+  panels_mass: 425630.2
+  sized: 'At 1 g: floors 1893 Pa dead and 5000 Pa imposed, the roof 1155 Pa; a ground column carries 201 kN (st4340-tb-120x3 takes it with half again to spare); a 3 m beam bends with 23.3 kN m (st4340-tb-160x5, under 470 MPa with half
+    again to spare). Wind, the tall halls'' columns between floors and the footings'' loads not yet checked.'
+ground:
+- what: Ground slab
+  item: good.concrete
+  volume: 113.4
+  mass: 272160.0
+  note: 0.15 m over the 42 x 18 m plan
+- what: Edge footings
+  item: good.concrete
+  volume: 43.2
+  mass: 103680.0
+  note: 0.6 x 0.6 m strips under the outside walls
+totals:
+  mass: 908373.0
+  against_module: 'building.offices (deprecated): one box 40 x 20 x 16 m of 3,530 t, from the average of 538 concrete buildings. This layout: 42 x 18 x 12 m, 908 t (67 t frame, 426 t panels, 40 t furniture, 376 t ground), for 426 people
+    served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
+staff:
+- profession: profession.clerk
+  count: 30
+- profession: profession.administrator
+  count: 10
+- profession: profession.engineer
+  count: 6
+- profession: profession.scholar
+  count: 5
+- profession: profession.lawyer
+  count: 4
+basis:
+- of:
+  - bays
+  tier: invented
+  review: true
+  note: The mix of rooms for a offices is chosen (office 0.75, reception 0.05, washroom 0.1, kitchen 0.1), shared over the record's floor (3200 m2 in 4 storeys, laid as 7 x 3 rooms of 6 m a storey).
+- of:
+  - frame
+  - ground
+  tier: derived
+  review: true
+  note: Counted from the grid (tools/standards/building_layouts.py); sections by the loads in frame.sized; masses from the strut, node and panel records.

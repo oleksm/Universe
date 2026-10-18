@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.particle-sunk
+  name: Particle sunk
+  about: '1 when the particle sank this substep (at a trench, or foundered): marked by subduction, still seen by collisions, removed before the gaps open.'
+unit: '1'
+producer:
+  where: planet-forge crates/forge-core/src/models/plates/subduction.rs
+  file: checkpoint
+  key: tables/particles/planet-field.particle-sunk
+per: particle
+amount: per-step
+also_from:
+- where: stages/plates.py:1013
+  key: sank (run local mask)
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: forge''s plates port, read from the Python''s run loop.'

@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.glacial.lake.ice-dammed-shorelines
+  name: Ice-dammed lake shorelines
+  about: Ice-dammed lake shorelines.
+family: glacial
+factors:
+- factor: planet-factor.ice-flow
+  weight: 3
+  why: ice lobe blocks valley drainage (Missoula dam ~600 m tall)
+- factor: planet-factor.lake-level
+  weight: 3
+  why: stable levels set by spillway cols; each level a strandline
+- factor: planet-factor.relief-inherited
+  weight: 3
+  why: valley network and col heights fix level elevations
+- factor: planet-factor.events
+  weight: 1
+  why: repeated dam failures (Missoula ~40 floods) reset levels
+- factor: planet-factor.waves-tides
+  weight: 1
+  why: lake wave energy cuts benches
+- factor: planet-factor.regolith
+  weight: 1
+  why: drift-covered slopes record benches best
+- factor: planet-factor.time
+  weight: 1
+  why: needs centuries of stable level per strandline
+vocabulary_id: 79
+sources:
+- https://en.wikipedia.org/wiki/Glacial_Lake_Missoula
+library_status: written
+source: glacial.lake.ice_dammed_shorelines
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

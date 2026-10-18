@@ -2,7 +2,7 @@
 # Written by tools/standards/plants.py: change it there.
 identity: {key: plant-mount.bay-s1, name: 'Plant bay, class 1', size_class: 1, description: A 6 m square of prepared ground or floor and the feeds to it.}
 footprint: {length: 6.0, width: 6.0}
-bears: {load: 2790000.0}
+bears: {load: 2800000.0}
 feeds: {power: 85400.0, heat: 85400.0}
 basis:
 - of: [footprint]
@@ -10,4 +10,4 @@ basis:
   note: 'Sides 6, 12, 24, 48 m by class: chosen, each twice the last, so the bays of a layout share one grid.'
 - of: [bears, feeds]
   rule: rule.mounts-margin
-  note: Round the units fitted to it in the trial (unit.dri-bin-200t, unit.furnace-transformer-14mva, unit.stair-tower-12m, unit.sampling-lab, unit.dri-bin-200t, unit.crew-post, unit.furnace-transformer-14mva, unit.crew-post, unit.crew-post, unit.crew-post, unit.crew-post) at 1 g, full.
+  note: Round the units fitted to it in the trial (unit.dri-bin-200t, unit.furnace-transformer-14mva, unit.stair-tower-12m, unit.sampling-lab, unit.ingot-tipper, unit.crew-post, unit.ore-lock-hopper) at 1 g, full.

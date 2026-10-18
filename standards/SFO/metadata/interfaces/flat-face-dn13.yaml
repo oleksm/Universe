@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/interface.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: interface.flat-face-dn13
+  name: Flat-face DN 12.7
+  description: 'The mating face of the Flat-face DN 12.7: any maker''s half built to it mates with any other''s.'
+domain: fluid
+kind: quick-coupling
+envelope:
+  pressure: 31500000.0
+  temperature: 373.0
+media:
+- liquid
+sealing: air
+halves: male-female
+make: manual
+face:
+  length: 0.051
+  width: 0.051
+  height: 0.121
+size: 0.0127
+standard: ISO 16028 (flat-face) sizes
+basis:
+- of:
+  - envelope
+  - face
+  tier: derived
+  note: The most the products built to it are rated for, and their joint's outside.

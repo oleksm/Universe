@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/planet-gate.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-gate.owner-targets
+  name: The owner's targets
+  about: 'Stops a run that misses the owner''s targets near the present: a planet off target is never shown.'
+checks:
+- planet-target.land-share
+- planet-target.continents
+from: 1577880000000000.0
+from_said:
+  unit: Myr
+  factor: 31557600000000.0
+failures: 2
+action: stop the run (exit code 4), the failing checkpoint recorded
+params:
+- name: TARGETS_GATE
+  env: TARGETS_GATE
+  value: 1.0
+  unit: '1'
+  meaning: '1: the gate on (default); 0: measure only'
+  source: ~/git/planet-trees-pgs2/tools/planet_form.py:277-280
+implementations:
+- where: planet-trees-pgs2 tools/planet_form.py:277-280
+  state: reference
+status: draft

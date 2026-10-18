@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../../schema/template.schema.yaml
+identity:
+  key: template.cable
+  name: Cable
+  description: 'Power cables of every voltage and area: one swept circle, no model. Its straight is swept along the run''s path; every size of the family is this template at the record''s figures.'
+family: cable
+draws: sweep
+profile: a round sheathed cable of the record's outside diameter
+scales_by:
+- outside
+model_of: run.cable-33kv-185mm2
+members: 25
+basis:
+- of:
+  - draws
+  - scales_by
+  - pieces
+  - model_of
+  tier: derived
+  note: 'The owner, 2026-10-17: one template a family, scaled, instead of a model a size; model_of is an installed size''s model, the middle one of those installed, until the template has its own.'

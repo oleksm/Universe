@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/planet-factor.schema.yaml
+identity:
+  key: planet-factor.sed-supply
+  name: SED_SUPPLY
+  about: sediment supply rate and calibre
+source: SED_SUPPLY
+reads:
+  fields:
+  - planet-field.laid
+  - planet-field.wear-river
+  - planet-field.wear-hill
+  - planet-field.wear-wind
+levels:
+- planet-level.cluster
+- planet-level.pattern
+basis:
+- of:
+  - identity
+  tier: derived
+  note: planet-trees-pgs2 docs/landforms/deciding_factors_vocab.md.
+- of:
+  - reads
+  - signal
+  tier: invented
+  review: true
+  note: 'The registry''s first guess at which of the sim''s words a factor reads and how its strength ramps (2026-10-17): for planets to correct.'
+status: draft

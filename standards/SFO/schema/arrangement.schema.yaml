@@ -1,0 +1,34 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Room arrangement
+x-kind: [arrangement]
+description: "standards/SFO/metadata/arrangements/<name>.yaml: how a room of a building is furnished, as placements of single pieces (the owner, 2026-10-17: one model a piece; the layout places it as many times as the room needs). A building layout places arrangements in its rooms (layout `rooms`)."
+type: object
+additionalProperties: false
+required: [identity, room, items]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name, description]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      description: { type: string }
+  room: { type: array, items: { type: number, exclusiveMinimum: 0, x-unit: "m" }, minItems: 2, maxItems: 2, description: "m: the room's two sides, its middle the items' origin" }
+  people: { type: integer, minimum: 0, description: "People it serves or seats at once." }
+  staff: { type: integer, minimum: 0, description: "People at work in it." }
+  items:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [unit, at]
+      properties:
+        unit: { type: string, x-ref: [unit], description: "The piece, by its key: one model, placed here." }
+        at: { type: array, items: { type: number, x-unit: "m" }, minItems: 3, maxItems: 3, description: "Its middle on the floor, from the room's middle." }
+        turn: { type: number, x-unit: "deg", description: "Its turn about the vertical from the room's x, degrees." }
+  mass: { type: number, minimum: 0, x-unit: "kg", description: "The pieces' masses summed." }
+  revision:
+    $ref: "../../common.schema.yaml#/definitions/record_revision"
+    default: { status: draft, owner: registry, on_conflict: propose, because: "First room plans, by hand.", ask: docs/registry-ssot-request.md }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

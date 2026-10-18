@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.hillslope.profile.soil-mantled
+  name: Soil-mantled hillslope (convex-concave profile)
+  about: Soil-mantled hillslope (convex-concave profile).
+family: hillslope
+factors:
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: Low-moderate uplift/erosion keeps soil; high rates push slopes to threshold Sc ~1.2 m/m, planar profiles
+- factor: planet-factor.rock-type
+  weight: 1
+  why: Rock must weather to soil faster than erosion strips it; soil production falls exponentially with depth
+- factor: planet-factor.regolith
+  weight: 3
+  why: Continuous mobile soil 0.3-1.5 m over saprolite needed; thickness sets creep flux and profile
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: Humid to semi-arid; moisture drives weathering, creep diffusivity D and footslope wash
+- factor: planet-factor.clim-temp
+  weight: 1
+  why: Frost heave adds to creep in cold climates; raises diffusivity
+- factor: planet-factor.bio-veg
+  weight: 3
+  why: Bioturbation (roots, burrowers, tree throw) is main transport; cover limits wash, keeps convex form
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: Hilltop curvature records erosion rate; hillslope length ~90-120 m set by channel spacing
+- factor: planet-factor.base-level
+  weight: 1
+  why: Channel incision rate at slope foot sets gradient and curvature
+- factor: planet-factor.time
+  weight: 1
+  why: 10-1000 kyr to reach steady convex form after base-level change
+vocabulary_id: 90
+sources:
+- https://en.wikipedia.org/wiki/Hillslope_evolution
+- https://en.wikipedia.org/wiki/Colluvium
+library_status: written
+source: hillslope.profile.soil_mantled
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

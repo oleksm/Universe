@@ -1,0 +1,76 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.core-heat-loss
+  name: Core-mantle boundary heat flow and core adiabat
+  about: 'Heat out of the core through the thermal boundary layer at the mantle''s base: T_base from the mantle adiabat, ΔT_c
+    = T_cmb − T_base; if positive, the layer''s viscosity at its mean temperature and the CMB pressure, thickness δ = (κ η
+    Ra_crit,base / (α_mean ρm g_cmb ΔT_c))^(1/3), q_cmb = 4πRc² k_mantle ΔT_c/δ (zero otherwise). The heat conduction alone
+    carries down the core adiabat: q_ad = 4πRc² k_core α_core,top g_cmb T_cmb / c_core.'
+area: interior
+clock:
+  when: every ODE evaluation
+reads:
+- name: t_mantle
+  unit: K
+  meaning: mantle top T
+- name: t_cmb
+  unit: K
+  meaning: core top T
+- name: p_cmb, g_cmb, Rc, rho_m
+  unit: SI
+  meaning: structure
+writes:
+- name: q_cmb
+  unit: W
+  meaning: heat out of the core
+- name: q_adiabat
+  unit: W
+  meaning: adiabatic conductive heat flow at the core top
+params:
+- name: RA_CRIT_BASE
+  value: 2000.0
+  unit: '1'
+  meaning: 'local critical Rayleigh number of the basal layer (chosen: Earth''s core loses ~10 TW; Lay et al. 2008)'
+  source: src/planet_sim/stages/interior.py:51
+- name: K_CORE
+  value: 70.0
+  unit: '1'
+  said_as:
+    unit: W/(m K)
+    factor: 1.0
+  open: true
+  meaning: 'core conductivity (chosen 70 within 30-150: Venus''s core cannot convect thermally under its lid, Earth''s runs
+    on inner-core growth)'
+  source: src/planet_sim/stages/interior.py:67
+  note: 'unit as the code says it: ''W/(m K)''; SI conversion unverified'
+- name: ALPHA_CORE_TOP
+  value: 1.8e-05
+  unit: '1'
+  said_as:
+    unit: 1/K
+    factor: 1.0
+  meaning: core-top thermal expansion (real, Gubbins et al. 2003)
+  source: src/planet_sim/stages/interior.py:62
+random_draws:
+- none
+invariants:
+- q_cmb ≥ 0 (no heat into the core)
+depends_on:
+- planet-process.interior-structure
+- planet-process.mantle-heat-loss
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform src/planet_sim/stages/interior.py:fluxes (213-222)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

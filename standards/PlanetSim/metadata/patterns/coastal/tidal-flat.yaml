@@ -1,0 +1,53 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.coastal.tidal.tidal-flat
+  name: Tidal flat (sand/mixed/mud flat) with tidal channels
+  about: Tidal flat (sand/mixed/mud flat) with tidal channels.
+family: coastal
+factors:
+- factor: planet-factor.waves-tides
+  weight: 3
+  why: meso-macrotidal; flats where relative tidal range (spring range / wave height) >15
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: fine sediment supply; grain size grades mud landward, sand seaward
+- factor: planet-factor.slope-relief
+  weight: 3
+  why: low gradient 0.0005-0.002 in sheltered bays, estuaries, behind barriers
+- factor: planet-factor.sea-level
+  weight: 1
+  why: stable or slow rise lets flats accrete; fast rise drowns
+- factor: planet-factor.clim-temp
+  weight: 1
+  why: 'sets vegetated upper fringe: salt marsh temperate, mangrove tropics'
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: biofilms, worms, seagrass stabilise or bioturbate sediment
+- factor: planet-factor.clim-storm
+  weight: 1
+  why: storms rework flat surfaces, deposit shell/sand layers
+- factor: planet-factor.time
+  weight: 1
+  why: 1-7 kyr
+vocabulary_id: 33
+sources:
+- https://www.coastalwiki.org/wiki/Tidal_flat
+- https://en.wikipedia.org/wiki/Tidal_flat
+- https://www.coastalwiki.org/wiki/Morphology_of_estuaries
+library_status: written
+source: coastal.tidal.tidal_flat
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

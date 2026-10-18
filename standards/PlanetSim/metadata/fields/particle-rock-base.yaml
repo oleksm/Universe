@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.particle-rock-base
+  name: Particle basement unit
+  about: 'The rock unit under a crust particle''s top (shows when the cover is gone): a rock-unit record''s sim index.'
+unit: '1'
+producer:
+  where: planet-forge crates/forge-core/src/models/plates/rock.rs
+  file: checkpoint
+  key: tables/particles/planet-field.particle-rock-base
+per: particle
+also_from:
+- where: stages/plates.py, geology.py
+  key: xbase
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: forge''s plates port carries the rock-unit stack the crust''s erodibility needs (planet-process.rock-unit-stack), read from the Python (geology.py, plates.py).'

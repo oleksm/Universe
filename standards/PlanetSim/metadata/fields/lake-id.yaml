@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.lake-id
+  name: Lake id
+  about: 'The depression (possible lake) a sample lies in: its row in the lakes (planet-field.lake-budget); bookkeeping, arbitrary
+    per step.'
+unit: '1'
+per: sample
+producer:
+  where: planet-forge crates/forge-core/src/models/surface/lakes.rs
+  file: checkpoint
+  key: planet-field.lake-id
+missing: '-1: in no depression'
+levels:
+- planet-level.planet
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge surface port (models/surface), read from planet-sim-landform 9747f0d-c437724.'

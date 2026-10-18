@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.aeolian.dune.transverse
+  name: Transverse and barchanoid-ridge dunes
+  about: Transverse and barchanoid-ridge dunes.
+family: aeolian
+factors:
+- factor: planet-factor.clim-wind
+  weight: 3
+  why: unidirectional wind; crest perpendicular to it
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: abundant sand; barchans coalesce into ridges
+- factor: planet-factor.clim-arid
+  weight: 3
+  why: arid inland or coastal with sparse vegetation
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: vegetation turns them into parabolic dunes
+- factor: planet-factor.groundwater
+  weight: 1
+  why: high water table limits deflation, sets interdune floors (White Sands)
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: flat
+- factor: planet-factor.time
+  weight: 1
+  why: 0.01-10 kyr; height-spacing grow with age
+vocabulary_id: 4
+sources:
+- https://en.wikipedia.org/wiki/Dune
+- https://pubs.usgs.gov/gip/deserts/dunes/
+library_status: written
+source: aeolian.dune.transverse
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

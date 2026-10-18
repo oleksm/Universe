@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-festoon-690v-4x16
+  code: KIT-FESTOON-690V-4X16
+  name: Festoon, 4 x 16 mm2, a 100 m coil
+  traded_as: market.machinery
+  form: coil
+package: package.coil
+made_from:
+- item: material.structural-steel-a36
+- item: material.copper
+size:
+  length: 100.0
+  width: 0.086
+  height: 1.226
+supplies:
+  item: run.festoon-690v-4x16
+  length: 100.0
+physical:
+  mass: 578.0
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: 'a 100 m coil of run.festoon-690v-4x16: its mass a metre times the length sold.'

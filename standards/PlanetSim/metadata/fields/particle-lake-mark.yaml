@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.particle-lake-mark
+  name: Particle lake mark
+  about: 'The river memory a crust particle carries: its lake memory (lake-mark, riding the crust).'
+unit: '1'
+producer:
+  where: planet-forge crates/forge-core/src/models/plates/denudation.rs, read.rs
+  file: checkpoint
+  key: tables/particles/planet-field.particle-lake-mark
+per: particle
+derived_from:
+- planet-field.river-memory
+also_from:
+- where: stages/plates.py
+  key: xmem[:, 4]
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: forge''s plates port (branch plates-foundation), read from the Python''s run loop.'

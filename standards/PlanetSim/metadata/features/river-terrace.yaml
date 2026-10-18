@@ -1,0 +1,58 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.river-terrace
+  name: River terrace
+  about: 'A relief feature of the fluvial family: river terrace.'
+register: feature
+family: fluvial
+level:
+- 2
+geometry: polylines (stepped)
+properties:
+- field: height above river
+  unit: m
+- field: age
+  unit: Myr
+trigger: base-level fall or uplift
+generator: old floor heights along the valley sides
+overrides: erosion
+wave: 2
+built: false
+levels:
+- planet-level.pattern
+status: draft
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
+  - trigger
+  - generator
+  - overrides
+  - wave
+  - built
+  tier: derived
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical
+    feature catalogue.'
+- of:
+  - layout
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
+    9747f0d-c437724. frame and record from: proposed (the schema has no fields for them yet).'
+  review: true
+layout:
+- name: frame
+  unit: '1'
+  meaning: '1: its pins sit in its plate''s frame (integer cm) and ride the crust, placed by planet-field.plate-rotation;
+    0: a body-frame snapshot, remade from the present state each pass'
+  rule: it is the present state of an agent (water, sea, wind, the plates' meeting), remade each pass
+  params:
+  - name: rides
+    value: 0.0
+    unit: '1'
+    meaning: 1 rides, 0 snapshot
+    source: 'planet-forge src/ride.rs (from the Python: stages/lines.py Store vs its rivers and coast)'
+    open: true

@@ -1,0 +1,144 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.pellet-gas-loop, name: 'Pellet shaft gas loop, 4 bar', description: 'Cleans, dries and drives one pellet shaft''s 20.7 kg/s of nitrogen at 4 bar: the top gas (120 deg C, about 0.7 m pipe) through a cyclone and a candle filter kept above its dew point (about 90 deg C), then down through a condenser that keeps the 1.6 kg/s of water the green balls brought (to the presses, and on to the mill: on a moon every kilogram comes back), the gas out at 65 deg C still carrying 0.9 kg/s of vapour round the loop; then a fan (260 kW, for the bed''s 23 kPa and the loop''s 15) back to the shaft''s bottom and its torch chambers. Oxygen make-up joins before the fan. Local frame: the cyclone at x -9, the filter at x -3, the condenser''s two shells at x 3 and 6, the fan at x 10; Its connections, all plain stubs: the top gas in by a 700 mm lagged flange on the cyclone''s top at (-9, 0, 13) facing up (its tangential entry inside the barrel), the cold gas out by a 600 mm flange at (12, 0, 1.5)
+    facing +x, the shafts'' bore; the condensate out (50 mm, stainless) at (6, 6, 0.3) facing +y, the oxygen in (50 mm, stainless, double seal) at (9, 6, 1) facing +y; the radiator loop''s 300 mm pair at (-12, -2, 1) in and (-12, -1.4, 1) out, facing -x; the fan''s 400 V supply (185 mm2) at (10, -6, 0.5) facing -y. The dust: the cyclone''s cone and the filter''s hopper each end in a rotary lock, the unit''s, which holds the loop''s 4 bar and lets the dust into a dust-tight 2 m3 bin on the slab under it (5 mm plate, fork runners, a small filtered vent to the vacuum for the lock''s pocket gas), the loop''s, changed by forklift about once a shift.'}
+size_class: 3
+fits: plant-mount.bay-s3
+physical: {length: 24.0, width: 12.0, height: 14.0, mass: 86380.0}
+built_of:
+- {what: Cyclone, item: material.structural-steel-a36, mass: 6247.0, note: 'measured on blender''s candidate (2026-10-16); 3 m across, 9 m, 10 mm (60 MPa)'}
+- {what: Candle filter, item: material.structural-steel-a36, mass: 17850.0, note: '4 m across, 10 m, 16 mm, lagged: the shell measured (14.8 t); the candles 3 t of silicon carbide, from memory'}
+- {what: Condenser, item: material.stainless-steel-304, mass: 19950.0, note: 'two shells 2.5 m across, 10 m, 12 mm, and 6,125 m of 25 mm tube (1.2 mm): 5.2 MW at 300 W/m2 K over a 36 K mean difference; the shells measured (15.4 t), the tubes by their length'}
+- {what: Fan, item: good.electric-motors, mass: 5078.0, note: 'a centrifugal fan, 8 t a MW and its casing, from memory'}
+- {what: Pipework and pots, item: material.structural-steel-a36, mass: 7063.0, note: 'measured on model v2, the coolant mains raised to 3.4 m over the bins'' lanes'}
+- {what: 'Stands, skirts and supports', item: material.structural-steel-a36, mass: 29040.0, note: 'the cyclone''s braced stand and support ring, the filter''s and condenser''s skirts and base rings; measured'}
+- {what: Dust bins, item: material.structural-steel-a36, mass: 1153.0, note: 'two dust-tight 2 m3 floor bins of 5 mm plate with fork runners, and the cyclone''s fill neck; measured on model v2'}
+needs: {power: 270600.0, heat: 5468000.0, atmosphere: vacuum}
+ports:
+- id: top-gas-in
+  flow: in
+  medium: gas
+  item: material.nitrogen
+  rate: 22.34
+  pressure: 400000.0
+  temperature: 393.1
+  interface: interface.flange-dn700-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn700-pn10
+  at: [-9.0, 0.0, 13.0]
+  facing: [0.0, 0.0, 1.0]
+- id: cold-gas-out
+  flow: out
+  medium: gas
+  item: material.nitrogen
+  rate: 20.7
+  pressure: 400000.0
+  temperature: 338.1
+  interface: interface.flange-dn600-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn600-pn10
+  at: [12.0, 0.0, 1.5]
+  facing: [1.0, 0.0, 0.0]
+- id: condensate-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 1.64
+  interface: interface.flange-dn50-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn50-pn10-ss
+  at: [6.0, 6.0, 0.3]
+  facing: [0.0, 1.0, 0.0]
+  pressure: 400000.0
+  temperature: 313.0
+- id: oxygen-in
+  flow: in
+  medium: gas
+  item: material.oxygen
+  rate: 0.0
+  pressure: 1000000.0
+  temperature: 293.0
+  interface: interface.flange-dn50-pn16-double
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn50-pn16-ss-double
+  at: [9.0, 6.0, 1.0]
+  facing: [0.0, 1.0, 0.0]
+  note: a spare for the hydrogen plant's oxygen, should the loop burn anything; its design takes none
+  optional: true
+- id: cooling-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 130.6
+  temperature: 320.0
+  interface: interface.flange-dn300-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn300-pn10
+  at: [-12.0, -2.0, 1.0]
+  facing: [-1.0, 0.0, 0.0]
+  pressure: 400000.0
+- id: cooling-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 130.6
+  temperature: 330.0
+  interface: interface.flange-dn300-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn300-pn10
+  at: [-12.0, -1.4, 1.0]
+  facing: [-1.0, 0.0, 0.0]
+  pressure: 400000.0
+- id: power-in
+  flow: in
+  medium: power
+  power: 270600.0
+  voltage: 400
+  interface: interface.termination-400v-185mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-185mm2
+  at: [10.0, -6.0, 0.5]
+  facing: [0.0, -1.0, 0.0]
+  note: the fan
+  current: 434.0
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s3
+  half: male
+  make: bolted
+  mass: 86380.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
+product: product.pellet-gas-loop
+envelope:
+- [-11.1, -2.1, 0, -6.7, 2.1, 13.1]
+- [-7.6, -2.2, 0, 0.1, 2.2, 13.5]
+- [-0.1, -4.2, 0, 7.5, 3.65, 13.5]
+- [7.5, -6, 0, 12, 6, 3.55]
+- [-12, -4.2, 0, 1.2, -1.2, 3.6]
+- [5.9, 3.6, 0, 6.1, 6, 0.4]
+life: 788940000
+visual: {format: freefall-model/1, path: models/pellet-gas-loop/v2, manifest_sha256: 813d14d55c3985e8143344fed21978cf1eadeffb907f39cb918ad669a8b26e2d, version: 2, triangles: 26644}
+basis:
+- of: [physical, built_of]
+  tier: derived
+  review: true
+  note: Vessels by their pressure; the condenser by its duty; weights of the rest from memory.
+- of: [needs]
+  tier: derived
+  note: The top gas cooled 120 to 65 deg C and its 1.6 kg/s of water condensed (2.35 MJ/kg); the vapour left at 65 deg C from its 25 kPa vapour pressure; the fan at 75%.
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage; water at 30 deg C in and 40 out; water at the pumps'' 4 bar.'
+- of: [life]
+  rule: rule.life-plant

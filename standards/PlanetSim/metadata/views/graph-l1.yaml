@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.graph-l1
+  name: graph L1
+  about: landform graph, level 1 (unverified)
+title: graph L1
+row: landform
+file_suffix: _graph_L1.png
+draws:
+  words: landform graph, level 1 (unverified)
+shown: true
+implementations:
+- where: planet-trees-pgs2 tools/landform_graph.py (not inventoried)
+  state: reference
+status: draft

@@ -1,0 +1,152 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.line-store-record-aging
+  name: 'Landmark state: active, former, worn'
+  about: At save time a record's state is 'active' while (t - last) <= ACTIVE_MYR[type] (default 5 Myr), 'former' while <=
+    WORN_MYR[type] (default never), else 'worn' (kept in history, not drawn).
+area: relief
+clock:
+  when: each checkpoint save (planet_form.py:232, t = age - ago/1000 Gyr)
+reads:
+- name: mark['last'], mark['type']
+writes:
+- name: mark['state']
+params:
+- name: ACTIVE_MYR.arc volcano
+  value: 63115200000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+  meaning: active while its event goes on
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/lines.py:309
+- name: ACTIVE_MYR.hotspot volcano
+  value: 63115200000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+  meaning: active while its event goes on
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/lines.py:309
+- name: ACTIVE_MYR.default
+  value: 157788000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+  meaning: other types
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/lines.py:316
+- name: WORN_MYR.arc volcano
+  value: 1893456000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+  meaning: former until this long since last activity, then worn
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/lines.py:310
+- name: WORN_MYR.hotspot volcano
+  value: 2524608000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+  meaning: former until this long since last activity, then worn
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/lines.py:310
+- name: WORN_MYR.river mouth
+  value: 946728000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+  meaning: former until this long since last activity, then worn
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/lines.py:310
+- name: WORN_MYR.delta
+  value: 1893456000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+  meaning: former until this long since last activity, then worn
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/lines.py:310
+- name: WORN_MYR.river capture
+  value: 3155760000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+  meaning: former until this long since last activity, then worn
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/lines.py:310
+- name: WORN_MYR.water gap
+  value: 6311520000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+  meaning: former until this long since last activity, then worn
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/lines.py:310
+- name: WORN_MYR.dry valley
+  value: 1893456000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+  meaning: former until this long since last activity, then worn
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/lines.py:310
+- name: WORN_MYR.misfit river
+  value: 1893456000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+  meaning: former until this long since last activity, then worn
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/lines.py:310
+- name: WORN_MYR.former lake bed
+  value: 1262304000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+  meaning: former until this long since last activity, then worn
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/lines.py:310
+- name: WORN_MYR.water-carved land
+  value: 4733640000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+  meaning: former until this long since last activity, then worn
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/lines.py:310
+- name: WORN_MYR.flood basalt province
+  value: 1.262304e+16
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+  meaning: former until this long since last activity, then worn
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/lines.py:310
+- name: WORN_MYR.default
+  value: 3.15576e+22
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+  meaning: other types never worn
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/lines.py:317
+invariants:
+- state is recomputed at every save
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/lines.py:Store.aged (314-318), arrays (320-332)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.coastal.tidal.salt-marsh
+  name: Salt marsh with tidal creeks
+  about: Salt marsh with tidal creeks.
+family: coastal
+factors:
+- factor: planet-factor.bio-veg
+  weight: 3
+  why: halophytes colonise upper intertidal, trap sediment and add organic matter
+- factor: planet-factor.clim-temp
+  weight: 1
+  why: temperate to boreal; replaced by mangrove where coldest month >~20 C
+- factor: planet-factor.waves-tides
+  weight: 3
+  why: sheltered low-wave sites; sufficient tidal range for zonation; platform between MHW and highest tide
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: fine suspended sediment supply lets accretion keep pace
+- factor: planet-factor.sea-level
+  weight: 1
+  why: accretion must match sea-level rise; too fast rise drowns marsh
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: gently sloping shore behind barriers, spits, in estuaries
+- factor: planet-factor.clim-arid
+  weight: 1
+  why: not hypersaline; arid coasts give sabkha instead
+- factor: planet-factor.time
+  weight: 1
+  why: 0.1-7 kyr
+vocabulary_id: 32
+sources:
+- https://www.coastalwiki.org/wiki/Salt_marshes
+- https://www.nps.gov/articles/estuary-landforms.htm
+library_status: written
+source: coastal.tidal.salt_marsh
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

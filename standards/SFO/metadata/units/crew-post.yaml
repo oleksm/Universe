@@ -1,18 +1,53 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.crew-post, name: 'Crew post, pressurised', description: 'The shift''s control room on airless ground: an aluminium cylinder 4 m across and 6 m long at 1 bar, an airlock at its -x end, windows onto the furnace and the controls, air and water kept for its watch, under a berm of loose regolith 1 m deep against radiation and the cold.'}
+identity: {key: unit.crew-post, name: 'Crew post, pressurised', description: 'The shift''s control room on airless ground: an aluminium cylinder 4 m across and 4 m long at 1 bar on two saddles, its axis along x 2.3 m up (the shell from x -1 to 3), with a 2 m airlock at its -x end (x -3 to -1), coaxial, its outer door''s threshold at (-3, 0, 1.35); both its round doors (1.9 m clear, 110 mm aluminium sandwich leaves) are plugs that open toward the higher pressure, the outer into the lock and the inner into the cabin, so the air holds them shut (about 280 kN) and their eight dogs are only latches; and closed windows on its +y side; air and water kept for its watch. The berm of loose regolith 1 m deep over it, against radiation and the cold, is the layout''s, with openings for the airlock and the windows. Drawn as its bare shell, saddles and airlock, closed.'}
 size_class: 1
 fits: plant-mount.bay-s1
-physical: {length: 6.0, width: 6.0, height: 5.0, mass: 4629.0}
+physical: {length: 6.0, width: 4.4, height: 4.6, mass: 7491.0}
 built_of:
-- {what: Shell, item: material.aluminium-alloy-6061, mass: 1629.0, note: '4 m across, 6 m, 6 mm (1 bar gives 33 MPa)'}
-- {what: 'Airlock, life support and fit-out', item: good.electric-motors, mass: 3000.0, note: from memory}
+- {what: Shell and doors, item: material.aluminium-alloy-6061, mass: 1001.0, note: 'the shell 4 m across and 4 m long, 6 mm (1 bar gives 33 MPa), the two ribbed door leaves and the power gland''s pad on the +x dome; measured on blender''s model v2'}
+- {what: 'Airlock, saddles and frames', item: material.structural-steel-a36, mass: 3490.0, note: 'the 6 mm lock, two 10 mm saddles on 400 x 400 x 20 mm foot plates (about 15 kN each under the post and its berm at 2 m/s2), door frames, viewport rings and hardware; measured on blender''s model v1'}
+- {what: Life support and fit-out, item: good.electric-motors, mass: 3000.0, note: from memory}
 needs: {power: 20000.0, atmosphere: vacuum}
+ports:
+- id: power-in
+  flow: in
+  medium: power
+  power: 20000.0
+  voltage: 400
+  interface: interface.termination-400v-16mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-16mm2
+  at: [3.0, 0.0, 2.3]
+  facing: [1.0, 0.0, 0.0]
+  note: a gland on a pad on its +x end's dome, on the axis; the cable through the berm
+  current: 32.08
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s1
+  half: male
+  make: bolted
+  mass: 7491.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
+product: product.crew-post
+envelope:
+- [-0.799, -2.001, 0.298, 3.001, 2.001, 4.302]
+- [-3.022, -1.202, 1.098, -0.549, 1.202, 3.501]
+- [-2.751, -1.352, -0.001, 2.001, 1.352, 1.141]
 life: 788940000
+visual: {format: freefall-model/1, path: models/crew-post/v2, manifest_sha256: 73400f0b9521de6b288bfd8ea194dd32da6a68977db67f4d3b91efbdfed664cb, version: 2, triangles: 10236}
 basis:
 - of: [physical, built_of, needs]
   tier: invented
   review: true
   note: From memory.
+- of: [ports]
+  tier: invented
+  review: true
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage.'
 - of: [life]
   rule: rule.life-plant

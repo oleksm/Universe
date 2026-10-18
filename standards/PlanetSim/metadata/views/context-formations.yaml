@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.context-formations
+  name: Formations
+  about: formation provinces by leading family colour (FAM_RGB) shaded by score, province edges, up to 14 province labels;
+    writes <ck>_formations.json
+title: Formations
+row: landform
+file_suffix: _context_formations.png (+ .legend.json)
+draws:
+  words: formation provinces by leading family colour (FAM_RGB) shaded by score, province edges, up to 14 province labels;
+    writes <ck>_formations.json
+shown: true
+implementations:
+- where: planet-trees-pgs2 ~/git/planet-trees-pgs2/tools/context_view.py:view_formations (356)
+  state: reference
+status: draft

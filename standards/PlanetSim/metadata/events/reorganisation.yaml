@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/planet-event.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-event.reorganisation
+  name: Reorganisation
+  about: scheduled plate reorganisation (rifts follow)
+source: reorganisation
+emitted_by:
+- planet-process.plate-reorganisation
+payload:
+- name: count
+  meaning: w.events['reorganisations']
+status: draft

@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: connector.flange-dn150-pn16-ss-double, name: 'Flange DN 150 PN 16, stainless, double seal', description: 'A bolted pair of weld-neck flanges for a pipe of 150 mm nominal bore at up to 16 bar inside (on airless ground, the whole of it against vacuum).'}
+kind: flange
+size: 0.15
+rating: {pressure: 1600000.0, temperature: 373.0}
+sealing: double
+physical: {length: 0.346, width: 0.346, height: 0.11, mass: 28.3}
+built_of:
+- {what: Flanges, item: material.stainless-steel-304, mass: 25.7, note: 'two weld-neck rings 0.346 m across, 20 mm thick, their necks tapering over 20 mm from 16 mm to the pipe''s wall; along the pipe the joint is 110 mm with the necks and the bolts'' and nuts'' ends'}
+- {what: Bolts and nuts, item: material.high-strength-steel-4340, mass: 2.2, note: '12 of M16, 78 mm, on a 0.298 m circle'}
+- {what: Gaskets, item: material.stainless-steel-304, mass: 0.4, note: 'spiral wound, stainless windings; two, the space between them piped to a leak watch'}
+interface: interface.flange-dn150-pn16-double
+provides: both
+template: template.flange-double
+visual: {format: freefall-model/1, path: models/flange-dn150-pn16-ss-double/v1, manifest_sha256: 685fde752e68ef6f5d80852d93a988620e871891f88e7a66524eb70d51a8a6cd, version: 1, triangles: 5344}
+basis:
+- of: [built_of, physical]
+  tier: derived
+  review: true
+  note: 'Sized by a simple rule, not to a flange code: the end force on the gasket''s mean circle (0.20 m) at the class''s pressure, bolts at 170 MPa, the ring''s thickness from its bending about the bolt circle at 140 MPa.'

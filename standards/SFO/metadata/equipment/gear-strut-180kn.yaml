@@ -1,11 +1,13 @@
 # yaml-language-server: $schema=../../schema/equipment.schema.yaml
 identity:
   key: equipment.gear.strut.180kn
-  name: "Landing leg 180 kN"
+  name: Landing leg 180 kN
   maker: org.hadley
   revision: draft
   slot: gear
-  description: "A middle leg: 180 kN, a 0.4 m stroke, for craft of 20 to 40 t on four or six legs. Its size is the leg down and locked, 0.4 x 0.4 x 1.6 m from the mount face at the top to the sole of the pad: a titanium oleo strut on a trunnion at the mount, a 0.4 m square pad on a ball joint, and an enclosed geared retraction drive beside the trunnion that swings the leg up and locks it. Folded, it lies in the hull's gear bay; the bay is the hull's, not the leg's."
+  description: 'A middle leg: 180 kN, a 0.4 m stroke, for craft of 20 to 40 t on four or six legs. Its size is the leg down and locked, 0.4 x 0.4 x 1.6 m from the mount face at the top to the sole of the pad: a titanium oleo strut on
+    a trunnion at the mount, a 0.4 m square pad on a ball joint, and an enclosed geared retraction drive beside the trunnion that swings the leg up and locks it. Folded, it lies in the hull''s gear bay; the bay is the hull''s, not the
+    leg''s.'
 size_class: 1
 fits: mount.gear-s1
 physical:
@@ -19,9 +21,36 @@ needs:
 built_of:
   parts: gear-strut-180kn
   list:
-    - { code: GRS180-01, name: "Strut and oleo", mass: 114, length: 0.337, width: 0.337, height: 1.35, description: "The trunnion, outer cylinder and piston: the oleo that stops the craft over the 0.4 m stroke.", item: stock.ti64-pl-5, quantity: 131.1, module: module.machining-centre }
-    - { code: GRS180-02, name: "Pad", description: "A ribbed 0.4 m square foot on a ball joint; about 1.1 MPa at full load, for pads and rock, not soft ground.", mass: 38, length: 0.234, width: 0.234, height: 0.936, item: stock.al6061-pl-5, quantity: 43.7, module: module.machining-centre }
-    - { code: GRS180-03, name: "Retraction actuator", description: "An enclosed geared motor drive at the trunnion that raises the leg and locks it up or down.", mass: 38, length: 0.234, width: 0.234, height: 0.936, item: good.electric-motors, quantity: 38, module: module.assembly-shop }
+  - code: GRS180-01
+    name: Strut and oleo
+    mass: 114
+    length: 0.337
+    width: 0.337
+    height: 1.35
+    description: 'The trunnion, outer cylinder and piston: the oleo that stops the craft over the 0.4 m stroke.'
+    item: stock.ti64-pl-5
+    quantity: 131.1
+    module: module.machining-centre
+  - code: GRS180-02
+    name: Pad
+    description: A ribbed 0.4 m square foot on a ball joint; about 1.1 MPa at full load, for pads and rock, not soft ground.
+    mass: 38
+    length: 0.234
+    width: 0.234
+    height: 0.936
+    item: stock.al6061-pl-5
+    quantity: 43.7
+    module: module.machining-centre
+  - code: GRS180-03
+    name: Retraction actuator
+    description: An enclosed geared motor drive at the trunnion that raises the leg and locks it up or down.
+    mass: 38
+    length: 0.234
+    width: 0.234
+    height: 0.936
+    item: good.electric-motors
+    quantity: 38
+    module: module.assembly-shop
 making:
   module: module.assembly-shop
 function:
@@ -31,15 +60,40 @@ function:
   efficiency: 0.8
   sink_rate: 3.0
   extended: 1.6
+  spring: 450000.0
+  damper: 42000.0
 visual:
-  format: "freefall-model/1"
-  path: "models/gear-strut-180kn/v1"
-  manifest_sha256: "81629c5678403048a60ff84f74050d02c370d082ad02e26534a002deb31181be"
+  format: freefall-model/1
+  path: models/gear-strut-180kn/v1
+  manifest_sha256: 81629c5678403048a60ff84f74050d02c370d082ad02e26534a002deb31181be
   version: 1
   triangles: 4984
 life: 473364000
 basis:
-  - { of: [physical, function, needs], tier: invented, review: true, note: "At about 1 kg a kilonewton with titanium (the A320's 1.2 kg/kN, as the S1), 190 kg. Four hold a 24 t craft at 3 m/s on a 0.4 m stroke (1.1 g). Chosen; review." }
-  - { of: [physical, function.extended], tier: derived, note: "The record's size is the leg down (function.extended = height, mount to sole), as the S1; the model is exported gear down. The folded stowage is the hull bay's size." }
-  - { of: [built_of, making], rule: rule.first-design-parts }
-  - { of: [life], rule: rule.life-ship-system }
+- of:
+  - physical
+  - function
+  - needs
+  tier: invented
+  review: true
+  note: At about 1 kg a kilonewton with titanium (the A320's 1.2 kg/kN, as the S1), 190 kg. Four hold a 24 t craft at 3 m/s on a 0.4 m stroke (1.1 g). Chosen; review.
+- of:
+  - physical
+  - function.extended
+  tier: derived
+  note: The record's size is the leg down (function.extended = height, mount to sole), as the S1; the model is exported gear down. The folded stowage is the hull bay's size.
+- of:
+  - built_of
+  - making
+  rule: rule.first-design-parts
+- of:
+  - life
+  rule: rule.life-ship-system
+- of:
+  - function.spring
+  - function.damper
+  tier: derived
+  review: true
+  note: 'A linear spring and damper standing for the oleo strut: the spring takes holds at the end of the stroke (1.8e+05 N / 0.4 m); the damper is 0.7 x holds at the design sink rate (3.0 m/s). 0.7 is chosen (invented): dropped at
+    3.0 m/s with the mass whose touchdown fills the stroke at efficiency 0.8 (2 holds stroke eff / v^2), it peaks at 1.03 x holds and uses 0.87 of the stroke; at rest under holds/3 (an aircraft-like limit load factor of 3, from memory)
+    it settles with a damping ratio about 0.48. A real oleo is nonlinear (gas spring, orifice damping).'

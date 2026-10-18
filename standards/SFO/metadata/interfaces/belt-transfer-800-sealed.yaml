@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/interface.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: interface.belt-transfer-800-sealed, name: 'Belt transfer, 800 mm, sealed', description: 'The mating face of the Belt transfer, 800 mm, sealed joint: any maker''s half built to it mates with any other''s, whatever its metal.'}
+domain: bulk
+kind: belt-transfer
+envelope: {}
+media: [bulk]
+sealing: double
+halves: male-female
+make: open
+face: {length: 1.3, width: 1.3, height: 1.475}
+size: 0.8
+basis:
+- of: [envelope, face]
+  tier: derived
+  note: The most the connection products built to it are rated for, and their joint's outside (SFO 25's connectors).

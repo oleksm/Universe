@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../../schema/run.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: run.cable-flexible-11kv-3x95
+  name: Flexible cable, 11 kV, 3 x 95 mm2
+  description: 'A rubber-sheathed cable of fine-stranded copper that bends all its life: on a reel, a festoon or laid to a machine that moves. 260 A in air; about half that on airless ground, where only radiation cools it.'
+kind: cable
+size: 9.499999999999999e-05
+outside:
+- 0.062
+- 0.062
+rating:
+  voltage: 11000
+  current: 260
+per_m:
+  mass: 4.46
+  built_of:
+  - what: Conductors
+    item: material.copper
+    mass: 2.55
+    note: 3 fine-stranded cores of 95 mm2
+  - what: Insulation and sheath
+    item: material.epdm-rubber
+    mass: 1.91
+    note: EPDM and a tough rubber sheath
+elbow:
+  radius: 0.465
+  mass: 3.26
+connector: connector.coupler-11kv-400a
+carries: power
+template: template.cable-flexible
+basis:
+- of:
+  - per_m
+  - rating
+  - outside
+  tier: invented
+  review: true
+  note: Reeling cable figures; least bend 7.5 outsides on a reel; From memory of makers' catalogues; to be sourced.

@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.arid.landscape.desert-margin
+  name: Desert margin (semi-arid transition zone)
+  about: Desert margin (semi-arid transition zone).
+family: arid
+factors:
+- factor: planet-factor.clim-precip
+  weight: 3
+  why: Semi-arid ~250-500 mm/yr between desert (<250) and subhumid
+- factor: planet-factor.clim-arid
+  weight: 1
+  why: Aridity index ~0.2-0.5; evaporation and temperature move the line
+- factor: planet-factor.clim-history
+  weight: 3
+  why: Wetter/drier phases shifted margins; stabilised fossil dunes and relict channels
+- factor: planet-factor.bio-veg
+  weight: 3
+  why: Grass/shrub cover (steppe) stabilises dunes and slows runoff; cover threshold controls erosion
+- factor: planet-factor.clim-season
+  weight: 1
+  why: Seasonal rainfall (monsoon edge) controls vegetation cycle
+- factor: planet-factor.clim-storm
+  weight: 1
+  why: Intense storms on partial cover give peak erosion rates
+- factor: planet-factor.clim-wind
+  weight: 1
+  why: Wind remobilises sand when cover drops
+- factor: planet-factor.regolith
+  weight: 1
+  why: Loess, calcrete and soil development
+- factor: planet-factor.time
+  weight: 1
+  why: Responds in kyr to climate shifts
+vocabulary_id: 147
+sources:
+- https://en.wikipedia.org/wiki/Desert
+- https://www.nps.gov/subjects/geology/arid-landforms.htm
+library_status: planned
+source: arid.landscape.desert_margin
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

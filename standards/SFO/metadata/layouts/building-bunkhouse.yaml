@@ -1,0 +1,699 @@
+# yaml-language-server: $schema=../../schema/layout.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: layout.building-bunkhouse
+  name: Bunkhouse, world with air
+  description: 'Rooms and bunks, a wash room and a mess: a roof for those who have come to work and not yet to stay. Laid of the kit: a strut frame on the 3 m grid, panels, and 100 rooms of 6 m furnished piece by piece (75 dormitory,
+    15 washroom, 5 dining room, 5 kitchen).'
+stands_for: building.bunkhouse
+site:
+  atmosphere: air
+  gravity:
+  - 8.0
+  - 11.0
+physical:
+  length: 60.0
+  width: 12.0
+  height: 15.15
+  mass: 1388422.7
+bays: []
+rooms:
+- id: DOR1
+  arrangement: arrangement.dorm
+  at:
+  - -27.0
+  - -3.0
+  - 0.0
+- id: DOR2
+  arrangement: arrangement.dorm
+  at:
+  - -21.0
+  - -3.0
+  - 0.0
+- id: DOR3
+  arrangement: arrangement.dorm
+  at:
+  - -15.0
+  - -3.0
+  - 0.0
+- id: DOR4
+  arrangement: arrangement.dorm
+  at:
+  - -9.0
+  - -3.0
+  - 0.0
+- id: DOR5
+  arrangement: arrangement.dorm
+  at:
+  - -3.0
+  - -3.0
+  - 0.0
+- id: DOR6
+  arrangement: arrangement.dorm
+  at:
+  - 3.0
+  - -3.0
+  - 0.0
+- id: DOR7
+  arrangement: arrangement.dorm
+  at:
+  - 9.0
+  - -3.0
+  - 0.0
+- id: DOR8
+  arrangement: arrangement.dorm
+  at:
+  - 15.0
+  - -3.0
+  - 0.0
+- id: DOR9
+  arrangement: arrangement.dorm
+  at:
+  - 21.0
+  - -3.0
+  - 0.0
+- id: DOR10
+  arrangement: arrangement.dorm
+  at:
+  - 27.0
+  - -3.0
+  - 0.0
+- id: DOR11
+  arrangement: arrangement.dorm
+  at:
+  - -27.0
+  - 3.0
+  - 0.0
+- id: DOR12
+  arrangement: arrangement.dorm
+  at:
+  - -21.0
+  - 3.0
+  - 0.0
+- id: DOR13
+  arrangement: arrangement.dorm
+  at:
+  - -15.0
+  - 3.0
+  - 0.0
+- id: DOR14
+  arrangement: arrangement.dorm
+  at:
+  - -9.0
+  - 3.0
+  - 0.0
+- id: DOR15
+  arrangement: arrangement.dorm
+  at:
+  - -3.0
+  - 3.0
+  - 0.0
+- id: DOR16
+  arrangement: arrangement.dorm
+  at:
+  - 3.0
+  - 3.0
+  - 0.0
+- id: DOR17
+  arrangement: arrangement.dorm
+  at:
+  - 9.0
+  - 3.0
+  - 0.0
+- id: DOR18
+  arrangement: arrangement.dorm
+  at:
+  - 15.0
+  - 3.0
+  - 0.0
+- id: DOR19
+  arrangement: arrangement.dorm
+  at:
+  - 21.0
+  - 3.0
+  - 0.0
+- id: DOR20
+  arrangement: arrangement.dorm
+  at:
+  - 27.0
+  - 3.0
+  - 0.0
+- id: DOR21
+  arrangement: arrangement.dorm
+  at:
+  - -27.0
+  - -3.0
+  - 3.0
+- id: DOR22
+  arrangement: arrangement.dorm
+  at:
+  - -21.0
+  - -3.0
+  - 3.0
+- id: DOR23
+  arrangement: arrangement.dorm
+  at:
+  - -15.0
+  - -3.0
+  - 3.0
+- id: DOR24
+  arrangement: arrangement.dorm
+  at:
+  - -9.0
+  - -3.0
+  - 3.0
+- id: DOR25
+  arrangement: arrangement.dorm
+  at:
+  - -3.0
+  - -3.0
+  - 3.0
+- id: DOR26
+  arrangement: arrangement.dorm
+  at:
+  - 3.0
+  - -3.0
+  - 3.0
+- id: DOR27
+  arrangement: arrangement.dorm
+  at:
+  - 9.0
+  - -3.0
+  - 3.0
+- id: DOR28
+  arrangement: arrangement.dorm
+  at:
+  - 15.0
+  - -3.0
+  - 3.0
+- id: DOR29
+  arrangement: arrangement.dorm
+  at:
+  - 21.0
+  - -3.0
+  - 3.0
+- id: DOR30
+  arrangement: arrangement.dorm
+  at:
+  - 27.0
+  - -3.0
+  - 3.0
+- id: DOR31
+  arrangement: arrangement.dorm
+  at:
+  - -27.0
+  - 3.0
+  - 3.0
+- id: DOR32
+  arrangement: arrangement.dorm
+  at:
+  - -21.0
+  - 3.0
+  - 3.0
+- id: DOR33
+  arrangement: arrangement.dorm
+  at:
+  - -15.0
+  - 3.0
+  - 3.0
+- id: DOR34
+  arrangement: arrangement.dorm
+  at:
+  - -9.0
+  - 3.0
+  - 3.0
+- id: DOR35
+  arrangement: arrangement.dorm
+  at:
+  - -3.0
+  - 3.0
+  - 3.0
+- id: DOR36
+  arrangement: arrangement.dorm
+  at:
+  - 3.0
+  - 3.0
+  - 3.0
+- id: DOR37
+  arrangement: arrangement.dorm
+  at:
+  - 9.0
+  - 3.0
+  - 3.0
+- id: DOR38
+  arrangement: arrangement.dorm
+  at:
+  - 15.0
+  - 3.0
+  - 3.0
+- id: DOR39
+  arrangement: arrangement.dorm
+  at:
+  - 21.0
+  - 3.0
+  - 3.0
+- id: DOR40
+  arrangement: arrangement.dorm
+  at:
+  - 27.0
+  - 3.0
+  - 3.0
+- id: DOR41
+  arrangement: arrangement.dorm
+  at:
+  - -27.0
+  - -3.0
+  - 6.0
+- id: DOR42
+  arrangement: arrangement.dorm
+  at:
+  - -21.0
+  - -3.0
+  - 6.0
+- id: DOR43
+  arrangement: arrangement.dorm
+  at:
+  - -15.0
+  - -3.0
+  - 6.0
+- id: DOR44
+  arrangement: arrangement.dorm
+  at:
+  - -9.0
+  - -3.0
+  - 6.0
+- id: DOR45
+  arrangement: arrangement.dorm
+  at:
+  - -3.0
+  - -3.0
+  - 6.0
+- id: DOR46
+  arrangement: arrangement.dorm
+  at:
+  - 3.0
+  - -3.0
+  - 6.0
+- id: DOR47
+  arrangement: arrangement.dorm
+  at:
+  - 9.0
+  - -3.0
+  - 6.0
+- id: DOR48
+  arrangement: arrangement.dorm
+  at:
+  - 15.0
+  - -3.0
+  - 6.0
+- id: DOR49
+  arrangement: arrangement.dorm
+  at:
+  - 21.0
+  - -3.0
+  - 6.0
+- id: DOR50
+  arrangement: arrangement.dorm
+  at:
+  - 27.0
+  - -3.0
+  - 6.0
+- id: DOR51
+  arrangement: arrangement.dorm
+  at:
+  - -27.0
+  - 3.0
+  - 6.0
+- id: DOR52
+  arrangement: arrangement.dorm
+  at:
+  - -21.0
+  - 3.0
+  - 6.0
+- id: DOR53
+  arrangement: arrangement.dorm
+  at:
+  - -15.0
+  - 3.0
+  - 6.0
+- id: DOR54
+  arrangement: arrangement.dorm
+  at:
+  - -9.0
+  - 3.0
+  - 6.0
+- id: DOR55
+  arrangement: arrangement.dorm
+  at:
+  - -3.0
+  - 3.0
+  - 6.0
+- id: DOR56
+  arrangement: arrangement.dorm
+  at:
+  - 3.0
+  - 3.0
+  - 6.0
+- id: DOR57
+  arrangement: arrangement.dorm
+  at:
+  - 9.0
+  - 3.0
+  - 6.0
+- id: DOR58
+  arrangement: arrangement.dorm
+  at:
+  - 15.0
+  - 3.0
+  - 6.0
+- id: DOR59
+  arrangement: arrangement.dorm
+  at:
+  - 21.0
+  - 3.0
+  - 6.0
+- id: DOR60
+  arrangement: arrangement.dorm
+  at:
+  - 27.0
+  - 3.0
+  - 6.0
+- id: DOR61
+  arrangement: arrangement.dorm
+  at:
+  - -27.0
+  - -3.0
+  - 9.0
+- id: DOR62
+  arrangement: arrangement.dorm
+  at:
+  - -21.0
+  - -3.0
+  - 9.0
+- id: DOR63
+  arrangement: arrangement.dorm
+  at:
+  - -15.0
+  - -3.0
+  - 9.0
+- id: DOR64
+  arrangement: arrangement.dorm
+  at:
+  - -9.0
+  - -3.0
+  - 9.0
+- id: DOR65
+  arrangement: arrangement.dorm
+  at:
+  - -3.0
+  - -3.0
+  - 9.0
+- id: DOR66
+  arrangement: arrangement.dorm
+  at:
+  - 3.0
+  - -3.0
+  - 9.0
+- id: DOR67
+  arrangement: arrangement.dorm
+  at:
+  - 9.0
+  - -3.0
+  - 9.0
+- id: DOR68
+  arrangement: arrangement.dorm
+  at:
+  - 15.0
+  - -3.0
+  - 9.0
+- id: DOR69
+  arrangement: arrangement.dorm
+  at:
+  - 21.0
+  - -3.0
+  - 9.0
+- id: DOR70
+  arrangement: arrangement.dorm
+  at:
+  - 27.0
+  - -3.0
+  - 9.0
+- id: DOR71
+  arrangement: arrangement.dorm
+  at:
+  - -27.0
+  - 3.0
+  - 9.0
+- id: DOR72
+  arrangement: arrangement.dorm
+  at:
+  - -21.0
+  - 3.0
+  - 9.0
+- id: DOR73
+  arrangement: arrangement.dorm
+  at:
+  - -15.0
+  - 3.0
+  - 9.0
+- id: DOR74
+  arrangement: arrangement.dorm
+  at:
+  - -9.0
+  - 3.0
+  - 9.0
+- id: DOR75
+  arrangement: arrangement.dorm
+  at:
+  - -3.0
+  - 3.0
+  - 9.0
+- id: WAS76
+  arrangement: arrangement.washroom
+  at:
+  - 3.0
+  - 3.0
+  - 9.0
+- id: WAS77
+  arrangement: arrangement.washroom
+  at:
+  - 9.0
+  - 3.0
+  - 9.0
+- id: WAS78
+  arrangement: arrangement.washroom
+  at:
+  - 15.0
+  - 3.0
+  - 9.0
+- id: WAS79
+  arrangement: arrangement.washroom
+  at:
+  - 21.0
+  - 3.0
+  - 9.0
+- id: WAS80
+  arrangement: arrangement.washroom
+  at:
+  - 27.0
+  - 3.0
+  - 9.0
+- id: WAS81
+  arrangement: arrangement.washroom
+  at:
+  - -27.0
+  - -3.0
+  - 12.0
+- id: WAS82
+  arrangement: arrangement.washroom
+  at:
+  - -21.0
+  - -3.0
+  - 12.0
+- id: WAS83
+  arrangement: arrangement.washroom
+  at:
+  - -15.0
+  - -3.0
+  - 12.0
+- id: WAS84
+  arrangement: arrangement.washroom
+  at:
+  - -9.0
+  - -3.0
+  - 12.0
+- id: WAS85
+  arrangement: arrangement.washroom
+  at:
+  - -3.0
+  - -3.0
+  - 12.0
+- id: WAS86
+  arrangement: arrangement.washroom
+  at:
+  - 3.0
+  - -3.0
+  - 12.0
+- id: WAS87
+  arrangement: arrangement.washroom
+  at:
+  - 9.0
+  - -3.0
+  - 12.0
+- id: WAS88
+  arrangement: arrangement.washroom
+  at:
+  - 15.0
+  - -3.0
+  - 12.0
+- id: WAS89
+  arrangement: arrangement.washroom
+  at:
+  - 21.0
+  - -3.0
+  - 12.0
+- id: WAS90
+  arrangement: arrangement.washroom
+  at:
+  - 27.0
+  - -3.0
+  - 12.0
+- id: DIN91
+  arrangement: arrangement.dining
+  at:
+  - -27.0
+  - 3.0
+  - 12.0
+- id: DIN92
+  arrangement: arrangement.dining
+  at:
+  - -21.0
+  - 3.0
+  - 12.0
+- id: DIN93
+  arrangement: arrangement.dining
+  at:
+  - -15.0
+  - 3.0
+  - 12.0
+- id: DIN94
+  arrangement: arrangement.dining
+  at:
+  - -9.0
+  - 3.0
+  - 12.0
+- id: DIN95
+  arrangement: arrangement.dining
+  at:
+  - -3.0
+  - 3.0
+  - 12.0
+- id: KIT96
+  arrangement: arrangement.kitchen
+  at:
+  - 3.0
+  - 3.0
+  - 12.0
+- id: KIT97
+  arrangement: arrangement.kitchen
+  at:
+  - 9.0
+  - 3.0
+  - 12.0
+- id: KIT98
+  arrangement: arrangement.kitchen
+  at:
+  - 15.0
+  - 3.0
+  - 12.0
+- id: KIT99
+  arrangement: arrangement.kitchen
+  at:
+  - 21.0
+  - 3.0
+  - 12.0
+- id: KIT100
+  arrangement: arrangement.kitchen
+  at:
+  - 27.0
+  - 3.0
+  - 12.0
+frame:
+  box:
+  - -30.0
+  - -6.0
+  - 0.0
+  - 30.0
+  - 6.0
+  - 15.0
+  cell: 3.0
+  shape: 'A skeleton frame on the 3 m grid: 20 x 4 cells, 5 storey(s) of 3 m; columns at every node, beams on every cell edge at each floor and the roof, one diagonal in every other outside face. Panels on its faces (frame.panels).'
+  members:
+  - item: stock.st4340-tb-100x3-s3000
+    count: 525
+    where: columns
+  - item: stock.st4340-tb-160x3-s3000
+    count: 920
+    where: beams
+  - item: stock.st4340-tb-80x2-d3000
+    count: 120
+    where: bracing
+  - item: stock.st4340-node-160b
+    count: 630
+    where: nodes
+  mass: 63031.5
+  panels:
+  - panel: panel.floor-3x3
+    count: 312
+  - panel: panel.partition-3x3
+    count: 150
+  - panel: panel.partition-door-3x3
+    count: 150
+  - panel: panel.roof-3x3
+    count: 80
+  - panel: panel.stair-3m
+    count: 4
+  - panel: panel.wall-door-3x3
+    count: 2
+  - panel: panel.wall-double-door-3x3
+    count: 3
+  - panel: panel.wall-insulated-3x3
+    count: 167
+  - panel: panel.wall-window-3x3
+    count: 68
+  panels_mass: 549330.2
+  sized: 'At 1 g: floors 1893 Pa dead and 2000 Pa imposed, the roof 1155 Pa; a ground column carries 156 kN (st4340-tb-100x3 takes it with half again to spare); a 3 m beam bends with 13.1 kN m (st4340-tb-160x3, under 470 MPa with half
+    again to spare). Wind, the tall halls'' columns between floors and the footings'' loads not yet checked.'
+ground:
+- what: Ground slab
+  item: good.concrete
+  volume: 108.0
+  mass: 259200.0
+  note: 0.15 m over the 60 x 12 m plan
+- what: Edge footings
+  item: good.concrete
+  volume: 51.8
+  mass: 124416.0
+  note: 0.6 x 0.6 m strips under the outside walls
+- what: Column pads
+  item: good.concrete
+  volume: 141.8
+  mass: 340200.0
+  note: a pad under each column, 1.5 m square, 0.6 m deep (sized by the storeys, invented)
+totals:
+  mass: 1388422.7
+  against_module: 'building.bunkhouse (deprecated): one box 60 x 12 x 15 m of 3,971 t, from the average of 538 concrete buildings. This layout: 60 x 12 x 15 m, 1,388 t (63 t frame, 549 t panels, 52 t furniture, 724 t ground), for 530
+    people served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
+staff: []
+basis:
+- of:
+  - bays
+  tier: invented
+  review: true
+  note: The mix of rooms for a bunkhouse is chosen (dorm 0.75, washroom 0.15, dining 0.05, kitchen 0.05), shared over the record's floor (3600 m2 in 5 storeys, laid as 10 x 2 rooms of 6 m a storey).
+- of:
+  - frame
+  - ground
+  tier: derived
+  review: true
+  note: Counted from the grid (tools/standards/building_layouts.py); sections by the loads in frame.sized; masses from the strut, node and panel records.

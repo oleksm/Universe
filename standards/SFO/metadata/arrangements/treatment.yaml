@@ -1,0 +1,61 @@
+# yaml-language-server: $schema=../../schema/arrangement.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: arrangement.treatment
+  name: Treatment rooms
+  description: 'How a 6 m room is furnished as a treatment rooms: 2 treatment couchs, 2 trolleys, 2 sink units, 2 cabinets.'
+room:
+- 6.0
+- 6.0
+people: 4
+staff: 2
+items:
+- unit: unit.furniture-couch
+  at:
+  - -1.5
+  - 0.5
+  - 0.0
+- unit: unit.furniture-trolley
+  at:
+  - -0.5
+  - -0.6
+  - 0.0
+- unit: unit.furniture-sink
+  at:
+  - -1.5
+  - -2.4
+  - 0.0
+- unit: unit.furniture-cabinet
+  at:
+  - -2.5
+  - 2.6
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-couch
+  at:
+  - 1.5
+  - 0.5
+  - 0.0
+- unit: unit.furniture-trolley
+  at:
+  - 2.5
+  - -0.6
+  - 0.0
+- unit: unit.furniture-sink
+  at:
+  - 1.5
+  - -2.4
+  - 0.0
+- unit: unit.furniture-cabinet
+  at:
+  - 0.5
+  - 2.6
+  - 0.0
+  turn: 180.0
+mass: 350.4
+basis:
+- of:
+  - items
+  tier: invented
+  review: true
+  note: Laid out by hand on the 6 m room (tools/standards/furniture.py); each piece is modelled once and placed here.

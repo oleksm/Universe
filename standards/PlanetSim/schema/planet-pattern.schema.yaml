@@ -1,0 +1,36 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Planet landform pattern
+x-kind: [planet-pattern]
+description: "standards/PlanetSim/metadata/patterns/<family>/<name>.yaml: a landform pattern of the library (planet-trees docs/landforms): its family, its deciding factors with their weights (the matching rules), any hard conditions, its id in the ground's pattern vocabulary, and its sources. tools/standards/planet_lod_match.py ranks patterns for a place's signature by these."
+type: object
+additionalProperties: false
+required: [identity, family, factors]
+allOf:
+  - { $ref: "../../common.schema.yaml#/definitions/planet_context" }
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name, about]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      about: { type: string }
+  family: { enum: [aeolian, arid, coastal, fluvial, glacial, hillslope, karst, lacustrine, periglacial, structural, tectonic, volcanic] }
+  factors:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [factor, weight]
+      properties:
+        factor: { type: string, x-ref: [planet-factor] }
+        weight: { type: number, minimum: 0, x-unit: "1", description: "Its share of the match: the library's top three 3, the rest 1, until tuned." }
+        why: { type: string, description: "The library's own words: how the factor makes or shapes it." }
+  when: { type: array, items: { $ref: "planet-layer.schema.yaml#/definitions/condition" }, description: "Hard conditions: a place that fails one does not match at all (no glacier below the snowline)." }
+  vocabulary_id: { type: integer, minimum: 1, maximum: 65535, x-unit: "1", description: "Its id in ground-vocabulary.pattern." }
+  scale: { type: number, exclusiveMinimum: 0, x-unit: m, description: "How big one is, typically." }
+  sources: { type: array, items: { type: string } }
+  library_status: { type: string, description: "The library's own status for it (written, stub...)." }
+  status: { enum: [draft, published, retired] }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

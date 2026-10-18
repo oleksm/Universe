@@ -1,18 +1,93 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.recuperator, name: 'Recuperator, 53 MW', description: 'Two vertical shell-and-tube exchangers side by side (local x -3 and 3): the top gas from the shaft, 350 deg C with its steam, down through the tubes to 103 deg C, above its dew point; the cleaned recycle gas up through the shells from 40 to 300 deg C. Top gas in at the top, out at the bottom on +y; recycle in at the bottom and out at the top on -y.'}
+identity: {key: unit.recuperator, name: 'Recuperator, 53 MW', description: 'Two vertical shell-and-tube exchangers side by side (local x -3 and 3), shells 4.5 m across and 16 m tall: the top gas from the shaft, 350 deg C with its steam, down through the tubes to 103 deg C, above its dew point; the cleaned recycle gas up through the shells from 40 to 300 deg C. The manifolds run along x outside the 1.5 m gap between the shells: top gas in at the middle of the top (0, 0, 18) into a 3.5 m header across both tube sheets at z 16.2; out of the tubes'' bottoms into a 2.7 m wet header at y 3.8, z 1.5, its outlet flange on the +y face (0, 5.2, 1.5); recycle gas in by a 1.7 m clean header at y -3.3, z 1, flange on the -y face (0, -5.2, 1); out of the shells'' upper ends, below the tube sheets, by a 2.26 m warm header at y -3.5, z 13.5 (clear of the top gas header), its outlet a riser outside to a flange on the -y face (0, -5.2, 16.75), so the flange''s top stays under the unit''s top.'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 6.0, height: 18.0, mass: 288100.0}
+physical: {length: 12.0, width: 10.4, height: 18.0, mass: 351300.0}
 built_of:
 - {what: Tubes, item: material.stainless-steel-304, mass: 207100.0, note: '4,932 tubes 50 mm, 3 mm wall, 12 m: 9,297 m2'}
-- {what: Shells and heads, item: material.structural-steel-a36, mass: 81010.0, note: 'two shells 4.5 m across, 16 m, 20 mm plate'}
+- {what: 'Shells, heads and bands', item: material.structural-steel-a36, mass: 82640.0, note: 'two shells 4.5 m across, 16 m, 20 mm plate, with their bands; measured on model v1 (by formula 81,013 kg)'}
+- {what: Skirts and feet, item: material.structural-steel-a36, mass: 9164.0, note: measured on model v1}
+- {what: Headers and branches, item: material.structural-steel-a36, mass: 42560.0, note: 'the top gas header, the 8.2 m wet, clean and warm headers, the warm outlet''s riser with its tee-back plate, and the branches, their outlet stubs reduced to the 8 bar loop''s ports (SFO 25) and ending plain; measured on blender''s model v2'}
+- {what: Header supports, item: material.structural-steel-a36, mass: 9834.0, note: measured on model v1}
 needs: {}
+ports:
+- id: top-gas-in
+  flow: in
+  medium: gas
+  item: material.hydrogen
+  rate: 38.14
+  pressure: 730000.0
+  temperature: 623.1
+  interface: interface.flange-dn1600-pn16-double
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn1600-pn16-double
+  at: [0.0, 0.0, 18.0]
+  facing: [0.0, 0.0, 1.0]
+- id: wet-out
+  flow: out
+  medium: gas
+  item: material.hydrogen
+  rate: 38.14
+  pressure: 730000.0
+  temperature: 376.1
+  interface: interface.flange-dn1000-pn16-double
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn1000-pn16-double
+  at: [0.0, 5.2, 1.5]
+  facing: [0.0, 1.0, 0.0]
+- id: clean-in
+  flow: in
+  medium: gas
+  item: material.hydrogen
+  rate: 20.67
+  pressure: 850000.0
+  temperature: 373.1
+  interface: interface.flange-dn1000-pn16-double
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn1000-pn16-double
+  at: [0.0, -5.2, 1.0]
+  facing: [0.0, -1.0, 0.0]
+- id: warm-out
+  flow: out
+  medium: gas
+  item: material.hydrogen
+  rate: 20.67
+  pressure: 850000.0
+  temperature: 590.2
+  interface: interface.flange-dn1000-pn16-double
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn1000-pn16-double
+  at: [0.0, -5.2, 16.75]
+  facing: [0.0, -1.0, 0.0]
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 351300.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
+product: product.recuperator
+envelope:
+- [-5.422, -2.422, -0.001, -0.578, 2.422, 16.501]
+- [0.578, -2.422, -0.001, 5.422, 2.422, 16.501]
+- [-3.001, -1.763, 14.437, 3.001, 1.764, 18.001]
+- [-4.101, -0.002, -0.001, 4.101, 5.201, 2.863]
+- [-4.702, -5.201, -0.001, 4.702, 0.002, 1.863]
+- [-4.462, -5.201, 0.074, 4.462, 0.002, 17.894]
 life: 788940000
+visual: {format: freefall-model/1, path: models/recuperator/v2, manifest_sha256: 27ff778e72dca4283e41dfcf5fb151b09cbc2d944cab02cf5f213a96be684d88, version: 2, triangles: 21084}
 basis:
 - of: [physical, built_of]
   tier: derived
   review: true
-  note: Area from the duty (53 MW) at 100 W/m2 K, from memory for hydrogen on both sides; shells from memory.
+  note: Area from the duty (53 MW) at 100 W/m2 K, from memory for hydrogen on both sides; shells from memory. The model's heads are 20 mm flat plates, not yet qualified for pressure.
 - of: [life]
   rule: rule.life-plant

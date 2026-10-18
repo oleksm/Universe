@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/planet-measure.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry_extra.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-measure.cont-mean-z-m
+  name: cont_mean_z_m
+  about: mean z of continental samples - info only
+unit: m
+how: mean z of continental samples - info only
+tool: ~/git/planet-trees-pgs2/tools/scorecard.py:15-29 (TARGETS), 32-55 (measure)
+scorecard:
+  earth: 500.0
+  ok:
+  - -9000000000.0
+  - 9000000000.0
+  warn:
+  - -9000000000.0
+  - 9000000000.0
+  era: all
+  grade: 'info only: pass inside ok, warn inside warn, else fail (inclusive)'
+  source: ~/git/planet-trees-pgs2/tools/scorecard.py:15-29 (TARGETS), 32-55 (measure)
+status: draft
+basis:
+- of:
+  - scorecard
+  tier: sourced
+  source: Earth values as the Python sim cites them (scorecard.py TARGETS and legends)
+  review: true

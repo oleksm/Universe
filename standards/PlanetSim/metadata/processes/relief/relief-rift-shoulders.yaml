@@ -1,0 +1,69 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.relief-rift-shoulders
+  name: Rift shoulders
+  about: 'Each margin offset RIFT_SHOULDER_M to the side away from the rift: the side farther from the other margin (mean
+    distance at 30 km offsets), else (one margin) the side of thicker crust.'
+area: relief
+clock:
+  when: with relief-rift-floor-axis
+reads:
+- name: features (planet-feature.rift-margin)
+  meaning: the rift's
+- name: crust thickness
+  field: planet-field.crust-thickness
+  unit: m
+  meaning: the belt, the sides of a margin
+- name: plate rotation
+  field: planet-field.plate-rotation
+  unit: '1'
+  meaning: 'each plate''s rotation: where the features'' pins stand'
+writes:
+- name: features (planet-feature.rift-shoulder)
+  meaning: child of its margin
+note: 'Emits: trace spawn rule ''relief.rift'' trigger + {margin}'
+params:
+- name: RIFT_SHOULDER_M
+  value: 40000.0
+  unit: m
+  meaning: shoulders this far outside a rift's margins
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:47
+- name: side probe
+  value: 30000.0
+  unit: m
+  meaning: offset used to decide which side is the rift
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:286
+- name: uplift_m
+  value: 800.0
+  unit: m
+  meaning: shoulder uplift and relief0
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:290
+depends_on:
+- planet-process.zones-rift-margins
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:rift_features (282-290)
+  state: reference
+- where: planet-forge crates/forge-core/src/models/tectonic/rift_shoulders.rs
+  state: current
+  note: planet-forge port (relief-tectonic line, merged in forge main fc8f460)
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
+    9747f0d-c437724.'
+cautions:
+- 'the Python''s reads were its line store''s internals: other margin'

@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.ice-melt
+  name: Ice melt
+  about: 'Melt off the ice in the recent epoch: MELT_PER_C x the warmth above the ice threshold plus MELT_BASE, more at a
+    retreating margin; part of the runoff where ice covers a sample.'
+unit: m/s
+said_as:
+  unit: m/yr
+  factor: 3.168808781402895e-08
+per: sample
+producer:
+  where: stages/recent.py run
+  key: melt
+levels:
+- planet-level.planet
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge surface port (models/surface), read from planet-sim-landform 9747f0d-c437724.'

@@ -1,0 +1,695 @@
+# yaml-language-server: $schema=../../schema/layout.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: layout.building-gaol
+  name: Gaol, world with air
+  description: 'Cells, a yard and a kitchen: where a term is served. Laid of the kit: a strut frame on the 3 m grid, panels, and 100 rooms of 6 m furnished piece by piece (70 cells, 10 office, 5 dining room, 5 kitchen, 10 washroom).'
+stands_for: building.gaol
+site:
+  atmosphere: air
+  gravity:
+  - 8.0
+  - 11.0
+physical:
+  length: 60.0
+  width: 30.0
+  height: 6.15
+  mass: 1309408.5
+bays: []
+rooms:
+- id: CEL1
+  arrangement: arrangement.cell
+  at:
+  - -27.0
+  - -12.0
+  - 0.0
+- id: CEL2
+  arrangement: arrangement.cell
+  at:
+  - -21.0
+  - -12.0
+  - 0.0
+- id: CEL3
+  arrangement: arrangement.cell
+  at:
+  - -15.0
+  - -12.0
+  - 0.0
+- id: CEL4
+  arrangement: arrangement.cell
+  at:
+  - -9.0
+  - -12.0
+  - 0.0
+- id: CEL5
+  arrangement: arrangement.cell
+  at:
+  - -3.0
+  - -12.0
+  - 0.0
+- id: CEL6
+  arrangement: arrangement.cell
+  at:
+  - 3.0
+  - -12.0
+  - 0.0
+- id: CEL7
+  arrangement: arrangement.cell
+  at:
+  - 9.0
+  - -12.0
+  - 0.0
+- id: CEL8
+  arrangement: arrangement.cell
+  at:
+  - 15.0
+  - -12.0
+  - 0.0
+- id: CEL9
+  arrangement: arrangement.cell
+  at:
+  - 21.0
+  - -12.0
+  - 0.0
+- id: CEL10
+  arrangement: arrangement.cell
+  at:
+  - 27.0
+  - -12.0
+  - 0.0
+- id: CEL11
+  arrangement: arrangement.cell
+  at:
+  - -27.0
+  - -6.0
+  - 0.0
+- id: CEL12
+  arrangement: arrangement.cell
+  at:
+  - -21.0
+  - -6.0
+  - 0.0
+- id: CEL13
+  arrangement: arrangement.cell
+  at:
+  - -15.0
+  - -6.0
+  - 0.0
+- id: CEL14
+  arrangement: arrangement.cell
+  at:
+  - -9.0
+  - -6.0
+  - 0.0
+- id: CEL15
+  arrangement: arrangement.cell
+  at:
+  - -3.0
+  - -6.0
+  - 0.0
+- id: CEL16
+  arrangement: arrangement.cell
+  at:
+  - 3.0
+  - -6.0
+  - 0.0
+- id: CEL17
+  arrangement: arrangement.cell
+  at:
+  - 9.0
+  - -6.0
+  - 0.0
+- id: CEL18
+  arrangement: arrangement.cell
+  at:
+  - 15.0
+  - -6.0
+  - 0.0
+- id: CEL19
+  arrangement: arrangement.cell
+  at:
+  - 21.0
+  - -6.0
+  - 0.0
+- id: CEL20
+  arrangement: arrangement.cell
+  at:
+  - 27.0
+  - -6.0
+  - 0.0
+- id: CEL21
+  arrangement: arrangement.cell
+  at:
+  - -27.0
+  - 0.0
+  - 0.0
+- id: CEL22
+  arrangement: arrangement.cell
+  at:
+  - -21.0
+  - 0.0
+  - 0.0
+- id: CEL23
+  arrangement: arrangement.cell
+  at:
+  - -15.0
+  - 0.0
+  - 0.0
+- id: CEL24
+  arrangement: arrangement.cell
+  at:
+  - -9.0
+  - 0.0
+  - 0.0
+- id: CEL25
+  arrangement: arrangement.cell
+  at:
+  - -3.0
+  - 0.0
+  - 0.0
+- id: CEL26
+  arrangement: arrangement.cell
+  at:
+  - 3.0
+  - 0.0
+  - 0.0
+- id: CEL27
+  arrangement: arrangement.cell
+  at:
+  - 9.0
+  - 0.0
+  - 0.0
+- id: CEL28
+  arrangement: arrangement.cell
+  at:
+  - 15.0
+  - 0.0
+  - 0.0
+- id: CEL29
+  arrangement: arrangement.cell
+  at:
+  - 21.0
+  - 0.0
+  - 0.0
+- id: CEL30
+  arrangement: arrangement.cell
+  at:
+  - 27.0
+  - 0.0
+  - 0.0
+- id: CEL31
+  arrangement: arrangement.cell
+  at:
+  - -27.0
+  - 6.0
+  - 0.0
+- id: CEL32
+  arrangement: arrangement.cell
+  at:
+  - -21.0
+  - 6.0
+  - 0.0
+- id: CEL33
+  arrangement: arrangement.cell
+  at:
+  - -15.0
+  - 6.0
+  - 0.0
+- id: CEL34
+  arrangement: arrangement.cell
+  at:
+  - -9.0
+  - 6.0
+  - 0.0
+- id: CEL35
+  arrangement: arrangement.cell
+  at:
+  - -3.0
+  - 6.0
+  - 0.0
+- id: CEL36
+  arrangement: arrangement.cell
+  at:
+  - 3.0
+  - 6.0
+  - 0.0
+- id: CEL37
+  arrangement: arrangement.cell
+  at:
+  - 9.0
+  - 6.0
+  - 0.0
+- id: CEL38
+  arrangement: arrangement.cell
+  at:
+  - 15.0
+  - 6.0
+  - 0.0
+- id: CEL39
+  arrangement: arrangement.cell
+  at:
+  - 21.0
+  - 6.0
+  - 0.0
+- id: CEL40
+  arrangement: arrangement.cell
+  at:
+  - 27.0
+  - 6.0
+  - 0.0
+- id: CEL41
+  arrangement: arrangement.cell
+  at:
+  - -27.0
+  - 12.0
+  - 0.0
+- id: CEL42
+  arrangement: arrangement.cell
+  at:
+  - -21.0
+  - 12.0
+  - 0.0
+- id: CEL43
+  arrangement: arrangement.cell
+  at:
+  - -15.0
+  - 12.0
+  - 0.0
+- id: CEL44
+  arrangement: arrangement.cell
+  at:
+  - -9.0
+  - 12.0
+  - 0.0
+- id: CEL45
+  arrangement: arrangement.cell
+  at:
+  - -3.0
+  - 12.0
+  - 0.0
+- id: CEL46
+  arrangement: arrangement.cell
+  at:
+  - 3.0
+  - 12.0
+  - 0.0
+- id: CEL47
+  arrangement: arrangement.cell
+  at:
+  - 9.0
+  - 12.0
+  - 0.0
+- id: CEL48
+  arrangement: arrangement.cell
+  at:
+  - 15.0
+  - 12.0
+  - 0.0
+- id: CEL49
+  arrangement: arrangement.cell
+  at:
+  - 21.0
+  - 12.0
+  - 0.0
+- id: CEL50
+  arrangement: arrangement.cell
+  at:
+  - 27.0
+  - 12.0
+  - 0.0
+- id: CEL51
+  arrangement: arrangement.cell
+  at:
+  - -27.0
+  - -12.0
+  - 3.0
+- id: CEL52
+  arrangement: arrangement.cell
+  at:
+  - -21.0
+  - -12.0
+  - 3.0
+- id: CEL53
+  arrangement: arrangement.cell
+  at:
+  - -15.0
+  - -12.0
+  - 3.0
+- id: CEL54
+  arrangement: arrangement.cell
+  at:
+  - -9.0
+  - -12.0
+  - 3.0
+- id: CEL55
+  arrangement: arrangement.cell
+  at:
+  - -3.0
+  - -12.0
+  - 3.0
+- id: CEL56
+  arrangement: arrangement.cell
+  at:
+  - 3.0
+  - -12.0
+  - 3.0
+- id: CEL57
+  arrangement: arrangement.cell
+  at:
+  - 9.0
+  - -12.0
+  - 3.0
+- id: CEL58
+  arrangement: arrangement.cell
+  at:
+  - 15.0
+  - -12.0
+  - 3.0
+- id: CEL59
+  arrangement: arrangement.cell
+  at:
+  - 21.0
+  - -12.0
+  - 3.0
+- id: CEL60
+  arrangement: arrangement.cell
+  at:
+  - 27.0
+  - -12.0
+  - 3.0
+- id: CEL61
+  arrangement: arrangement.cell
+  at:
+  - -27.0
+  - -6.0
+  - 3.0
+- id: CEL62
+  arrangement: arrangement.cell
+  at:
+  - -21.0
+  - -6.0
+  - 3.0
+- id: CEL63
+  arrangement: arrangement.cell
+  at:
+  - -15.0
+  - -6.0
+  - 3.0
+- id: CEL64
+  arrangement: arrangement.cell
+  at:
+  - -9.0
+  - -6.0
+  - 3.0
+- id: CEL65
+  arrangement: arrangement.cell
+  at:
+  - -3.0
+  - -6.0
+  - 3.0
+- id: CEL66
+  arrangement: arrangement.cell
+  at:
+  - 3.0
+  - -6.0
+  - 3.0
+- id: CEL67
+  arrangement: arrangement.cell
+  at:
+  - 9.0
+  - -6.0
+  - 3.0
+- id: CEL68
+  arrangement: arrangement.cell
+  at:
+  - 15.0
+  - -6.0
+  - 3.0
+- id: CEL69
+  arrangement: arrangement.cell
+  at:
+  - 21.0
+  - -6.0
+  - 3.0
+- id: CEL70
+  arrangement: arrangement.cell
+  at:
+  - 27.0
+  - -6.0
+  - 3.0
+- id: OFF71
+  arrangement: arrangement.office
+  at:
+  - -27.0
+  - 0.0
+  - 3.0
+- id: OFF72
+  arrangement: arrangement.office
+  at:
+  - -21.0
+  - 0.0
+  - 3.0
+- id: OFF73
+  arrangement: arrangement.office
+  at:
+  - -15.0
+  - 0.0
+  - 3.0
+- id: OFF74
+  arrangement: arrangement.office
+  at:
+  - -9.0
+  - 0.0
+  - 3.0
+- id: OFF75
+  arrangement: arrangement.office
+  at:
+  - -3.0
+  - 0.0
+  - 3.0
+- id: OFF76
+  arrangement: arrangement.office
+  at:
+  - 3.0
+  - 0.0
+  - 3.0
+- id: OFF77
+  arrangement: arrangement.office
+  at:
+  - 9.0
+  - 0.0
+  - 3.0
+- id: OFF78
+  arrangement: arrangement.office
+  at:
+  - 15.0
+  - 0.0
+  - 3.0
+- id: OFF79
+  arrangement: arrangement.office
+  at:
+  - 21.0
+  - 0.0
+  - 3.0
+- id: OFF80
+  arrangement: arrangement.office
+  at:
+  - 27.0
+  - 0.0
+  - 3.0
+- id: DIN81
+  arrangement: arrangement.dining
+  at:
+  - -27.0
+  - 6.0
+  - 3.0
+- id: DIN82
+  arrangement: arrangement.dining
+  at:
+  - -21.0
+  - 6.0
+  - 3.0
+- id: DIN83
+  arrangement: arrangement.dining
+  at:
+  - -15.0
+  - 6.0
+  - 3.0
+- id: DIN84
+  arrangement: arrangement.dining
+  at:
+  - -9.0
+  - 6.0
+  - 3.0
+- id: DIN85
+  arrangement: arrangement.dining
+  at:
+  - -3.0
+  - 6.0
+  - 3.0
+- id: KIT86
+  arrangement: arrangement.kitchen
+  at:
+  - 3.0
+  - 6.0
+  - 3.0
+- id: KIT87
+  arrangement: arrangement.kitchen
+  at:
+  - 9.0
+  - 6.0
+  - 3.0
+- id: KIT88
+  arrangement: arrangement.kitchen
+  at:
+  - 15.0
+  - 6.0
+  - 3.0
+- id: KIT89
+  arrangement: arrangement.kitchen
+  at:
+  - 21.0
+  - 6.0
+  - 3.0
+- id: KIT90
+  arrangement: arrangement.kitchen
+  at:
+  - 27.0
+  - 6.0
+  - 3.0
+- id: WAS91
+  arrangement: arrangement.washroom
+  at:
+  - -27.0
+  - 12.0
+  - 3.0
+- id: WAS92
+  arrangement: arrangement.washroom
+  at:
+  - -21.0
+  - 12.0
+  - 3.0
+- id: WAS93
+  arrangement: arrangement.washroom
+  at:
+  - -15.0
+  - 12.0
+  - 3.0
+- id: WAS94
+  arrangement: arrangement.washroom
+  at:
+  - -9.0
+  - 12.0
+  - 3.0
+- id: WAS95
+  arrangement: arrangement.washroom
+  at:
+  - -3.0
+  - 12.0
+  - 3.0
+- id: WAS96
+  arrangement: arrangement.washroom
+  at:
+  - 3.0
+  - 12.0
+  - 3.0
+- id: WAS97
+  arrangement: arrangement.washroom
+  at:
+  - 9.0
+  - 12.0
+  - 3.0
+- id: WAS98
+  arrangement: arrangement.washroom
+  at:
+  - 15.0
+  - 12.0
+  - 3.0
+- id: WAS99
+  arrangement: arrangement.washroom
+  at:
+  - 21.0
+  - 12.0
+  - 3.0
+- id: WAS100
+  arrangement: arrangement.washroom
+  at:
+  - 27.0
+  - 12.0
+  - 3.0
+frame:
+  box:
+  - -30.0
+  - -15.0
+  - 0.0
+  - 30.0
+  - 15.0
+  - 6.0
+  cell: 3.0
+  shape: 'A skeleton frame on the 3 m grid: 20 x 10 cells, 2 storey(s) of 3 m; columns at every node, beams on every cell edge at each floor and the roof, one diagonal in every other outside face. Panels on its faces (frame.panels).'
+  members:
+  - item: stock.st4340-tb-80x3-s3000
+    count: 462
+    where: columns
+  - item: stock.st4340-tb-160x5-s3000
+    count: 860
+    where: beams
+  - item: stock.st4340-tb-80x2-d3000
+    count: 60
+    where: bracing
+  - item: stock.st4340-node-110b
+    count: 693
+    where: nodes
+  mass: 64021.1
+  panels:
+  - panel: panel.floor-3x3
+    count: 194
+  - panel: panel.partition-3x3
+    count: 100
+  - panel: panel.partition-door-3x3
+    count: 100
+  - panel: panel.roof-3x3
+    count: 200
+  - panel: panel.stair-3m
+    count: 3
+  - panel: panel.wall-door-3x3
+    count: 5
+  - panel: panel.wall-insulated-3x3
+    count: 77
+  - panel: panel.wall-window-3x3
+    count: 38
+  panels_mass: 361117.9
+  sized: 'At 1 g: floors 1893 Pa dead and 5000 Pa imposed, the roof 1155 Pa; a ground column carries 75 kN (st4340-tb-80x3 takes it with half again to spare); a 3 m beam bends with 23.3 kN m (st4340-tb-160x5, under 470 MPa with half
+    again to spare). Wind, the tall halls'' columns between floors and the footings'' loads not yet checked.'
+ground:
+- what: Ground slab
+  item: good.concrete
+  volume: 270.0
+  mass: 648000.0
+  note: 0.15 m over the 60 x 30 m plan
+- what: Edge footings
+  item: good.concrete
+  volume: 64.8
+  mass: 155520.0
+  note: 0.6 x 0.6 m strips under the outside walls
+totals:
+  mass: 1309408.5
+  against_module: 'building.gaol (deprecated): one box 60 x 30 x 8 m of 3,971 t, from the average of 538 concrete buildings. This layout: 60 x 30 x 6 m, 1,309 t (64 t frame, 361 t panels, 81 t furniture, 804 t ground), for 280 people
+    served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
+staff:
+- profession: profession.constable
+  count: 20
+- profession: profession.clerk
+  count: 2
+basis:
+- of:
+  - bays
+  tier: invented
+  review: true
+  note: The mix of rooms for a gaol is chosen (cell 0.7, office 0.1, dining 0.05, kitchen 0.05, washroom 0.1), shared over the record's floor (3600 m2 in 2 storeys, laid as 10 x 5 rooms of 6 m a storey).
+- of:
+  - frame
+  - ground
+  tier: derived
+  review: true
+  note: Counted from the grid (tools/standards/building_layouts.py); sections by the loads in frame.sized; masses from the strut, node and panel records.

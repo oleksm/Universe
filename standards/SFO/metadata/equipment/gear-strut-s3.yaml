@@ -1,11 +1,11 @@
 # yaml-language-server: $schema=../../schema/equipment.schema.yaml
 identity:
   key: equipment.gear.strut.s3
-  name: "Landing gear S3"
+  name: Landing gear S3
   maker: org.kestrel
   revision: draft
   slot: gear
-  description: "One landing leg, an oleo strut on a pad: a 350 t ship on four legs."
+  description: 'One landing leg, an oleo strut on a pad: a 350 t ship on four legs.'
 size_class: 3
 fits: mount.gear-s3
 physical:
@@ -17,33 +17,128 @@ physical:
 built_of:
   parts: gear-strut-s3
   list:
-    - { code: LGS3-01, name: "Strut cylinder", description: "The oleo: the piston and cylinder that stop the ship over the stroke.", mass: 1470, length: 1.48, width: 1.48, height: 4.228, item: stock.st4340-bar-120, quantity: 1690.5, module: module.machining-centre,
-        basis: [{ of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the leg (35%), as the parts of an airliner's main gear divide its weight, from memory: not sourced." }] }
-    - { code: LGS3-02, name: "Outer tube", description: "The column that carries the leg load into the hull.", mass: 1260, length: 1.406, width: 1.406, height: 4.017, item: stock.st4340-tb-200x15, quantity: 1449.0, module: module.machining-centre,
-        basis: [{ of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the leg (30%), as the parts of an airliner's main gear divide its weight, from memory: not sourced." }] }
-    - { code: LGS3-03, name: "Pad", description: "The foot it stands on: a plate, spread for soft ground.", mass: 630, length: 1.116, width: 1.116, height: 3.188, item: stock.sta36-pl-20, quantity: 724.5, module: module.cutting-table,
-        basis: [{ of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the leg (15%), as the parts of an airliner's main gear divide its weight, from memory: not sourced." }] }
-    - { code: LGS3-04, name: "Retraction actuator", description: "Swings the leg up and down, and locks it.", mass: 840, length: 1.228, width: 1.228, height: 3.509, item: stock.st4340-bar-120, quantity: 966.0, module: module.machining-centre,
-        basis: [{ of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the leg (20%), as the parts of an airliner's main gear divide its weight, from memory: not sourced." }] }
+  - code: LGS3-01
+    name: Strut cylinder
+    description: 'The oleo: the piston and cylinder that stop the ship over the stroke.'
+    mass: 1470
+    length: 1.48
+    width: 1.48
+    height: 4.228
+    item: stock.st4340-bar-120
+    quantity: 1690.5
+    module: module.machining-centre
+    basis:
+    - of:
+      - physical.mass
+      - fit
+      tier: invented
+      review: true
+      note: 'Its share of the leg (35%), as the parts of an airliner''s main gear divide its weight, from memory: not sourced.'
+  - code: LGS3-02
+    name: Outer tube
+    description: The column that carries the leg load into the hull.
+    mass: 1260
+    length: 1.406
+    width: 1.406
+    height: 4.017
+    item: stock.st4340-tb-200x15
+    quantity: 1449.0
+    module: module.machining-centre
+    basis:
+    - of:
+      - physical.mass
+      - fit
+      tier: invented
+      review: true
+      note: 'Its share of the leg (30%), as the parts of an airliner''s main gear divide its weight, from memory: not sourced.'
+  - code: LGS3-03
+    name: Pad
+    description: 'The foot it stands on: a plate, spread for soft ground.'
+    mass: 630
+    length: 1.116
+    width: 1.116
+    height: 3.188
+    item: stock.sta36-pl-20
+    quantity: 724.5
+    module: module.cutting-table
+    basis:
+    - of:
+      - physical.mass
+      - fit
+      tier: invented
+      review: true
+      note: 'Its share of the leg (15%), as the parts of an airliner''s main gear divide its weight, from memory: not sourced.'
+  - code: LGS3-04
+    name: Retraction actuator
+    description: Swings the leg up and down, and locks it.
+    mass: 840
+    length: 1.228
+    width: 1.228
+    height: 3.509
+    item: stock.st4340-bar-120
+    quantity: 966.0
+    module: module.machining-centre
+    basis:
+    - of:
+      - physical.mass
+      - fit
+      tier: invented
+      review: true
+      note: 'Its share of the leg (20%), as the parts of an airliner''s main gear divide its weight, from memory: not sourced.'
 making:
   module: module.assembly-shop
 function:
   kind: landing_gear
-  holds: 3.5e+06
+  holds: 3500000.0
   stroke: 1.0
   efficiency: 0.8
   sink_rate: 3.05
   extended: 6.0
+  spring: 3500000.0
+  damper: 803300.0
 visual:
-  format: "freefall-model/1"
-  path: "models/gear-strut-s3/v1"
-  manifest_sha256: "2897cee40e6fe70ae2d7fc30a8fd332ca978db9873af5b3c8863330705bd6e5b"
+  format: freefall-model/1
+  path: models/gear-strut-s3/v1
+  manifest_sha256: 2897cee40e6fe70ae2d7fc30a8fd332ca978db9873af5b3c8863330705bd6e5b
   version: 1
   triangles: 5044
 life: 473364000
 basis:
-  - { of: [function.holds, size_class], tier: invented, review: true, note: "Sized for a 350 t ship on four legs: the ship's weight at 1.5 g on its legs, the airliner rule (14 CFR 25.473), with the lightest ship of the class on four legs." }
-  - { of: [physical.mass], tier: derived, review: true, note: "1.2 kg a kN of leg load: an A320's main leg, about 700 kg for 574 kN (78 t at 1.5 g on two legs), from memory. Not sourced." }
-  - { of: [function.stroke, function.efficiency, function.sink_rate], tier: sourced, source: "https://www.ecfr.gov/current/title-14/section-25.473", note: "The sink rate is the airliner design case, 10 ft/s; the oleo's efficiency 0.8 (the hull's design.strut_efficiency); the stroke chosen longer with size." }
-  - { of: [physical.length, physical.width, physical.height, physical.volume, function.extended], tier: invented, review: true, note: "A leg about a third as wide as it is long, gear down; the MC-07's front leg stands 9 m (its model), between S2 and S3." }
-  - { of: [life], rule: rule.life-ship-system }
+- of:
+  - function.holds
+  - size_class
+  tier: invented
+  review: true
+  note: 'Sized for a 350 t ship on four legs: the ship''s weight at 1.5 g on its legs, the airliner rule (14 CFR 25.473), with the lightest ship of the class on four legs.'
+- of:
+  - physical.mass
+  tier: derived
+  review: true
+  note: '1.2 kg a kN of leg load: an A320''s main leg, about 700 kg for 574 kN (78 t at 1.5 g on two legs), from memory. Not sourced.'
+- of:
+  - function.stroke
+  - function.efficiency
+  - function.sink_rate
+  tier: sourced
+  source: https://www.ecfr.gov/current/title-14/section-25.473
+  note: The sink rate is the airliner design case, 10 ft/s; the oleo's efficiency 0.8 (the hull's design.strut_efficiency); the stroke chosen longer with size.
+- of:
+  - physical.length
+  - physical.width
+  - physical.height
+  - physical.volume
+  - function.extended
+  tier: invented
+  review: true
+  note: A leg about a third as wide as it is long, gear down; the MC-07's front leg stands 9 m (its model), between S2 and S3.
+- of:
+  - life
+  rule: rule.life-ship-system
+- of:
+  - function.spring
+  - function.damper
+  tier: derived
+  review: true
+  note: 'A linear spring and damper standing for the oleo strut: the spring takes holds at the end of the stroke (3.5e+06 N / 1.0 m); the damper is 0.7 x holds at the design sink rate (3.05 m/s). 0.7 is chosen (invented): dropped at
+    3.05 m/s with the mass whose touchdown fills the stroke at efficiency 0.8 (2 holds stroke eff / v^2), it peaks at 1.03 x holds and uses 0.87 of the stroke; at rest under holds/3 (an aircraft-like limit load factor of 3, from memory)
+    it settles with a damping ratio about 0.48. A real oleo is nonlinear (gas spring, orifice damping).'

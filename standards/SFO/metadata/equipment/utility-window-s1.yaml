@@ -32,6 +32,8 @@ visual:
   manifest_sha256: "df00a72f257a547ae0644aff97146185614701feb51d23bd5f5bb2a0498e97a5"
   version: 1
   triangles: 6916
+model_requests:
+- {work: keep, of_version: 1, asked: '2026-10-17', by: registry, because: "Blender's review (2026-10-17): the model already has the 27, 27 and 6 mm panes; the record only split its panes into named parts."}
 life: 473364000
 basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "Half a square metre of triple glazing: the ISS cupola's side windows are about this (0.8 m, three panes). From memory. The panes are fused silica plate (FS-PL-27, FS-PL-6; 2026-10-13)." }

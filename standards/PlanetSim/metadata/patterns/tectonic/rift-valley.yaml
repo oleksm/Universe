@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.tectonic.extension.rift-valley
+  name: Continental rift valley
+  about: Continental rift valley.
+family: tectonic
+factors:
+- factor: planet-factor.tect-setting
+  weight: 3
+  why: continental rift, often above mantle plume/dome; lithosphere strength sets width 40-75 km
+- factor: planet-factor.tect-fault
+  weight: 3
+  why: ~100 km border-fault segments, throw 2-5 km, polarity flips at accommodation zones
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: flank uplift 1-2 km (thermal + flexural footwall)
+- factor: planet-factor.volc-magma
+  weight: 3
+  why: 'magmatic vs amagmatic rift: volcanoes, calderas on floor'
+- factor: planet-factor.volc-vent
+  weight: 1
+  why: volcanic centres along axis split basins
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: wet climate fills rift with deep lakes (Tanganyika); dry gives saline lakes
+- factor: planet-factor.lake-level
+  weight: 1
+  why: rift lake level history drives shorelines and fill
+- factor: planet-factor.sed-supply
+  weight: 1
+  why: fill 1-7 km; supply vs subsidence decides underfilled deep lake vs filled plain
+- factor: planet-factor.time
+  weight: 1
+  why: 1-30 Myr; maturity grades to sea-floor spreading
+vocabulary_id: 120
+sources:
+- https://en.wikipedia.org/wiki/Basin_and_Range_Province
+- https://en.wikipedia.org/wiki/Transform_fault
+library_status: written
+source: tectonic.extension.rift_valley
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

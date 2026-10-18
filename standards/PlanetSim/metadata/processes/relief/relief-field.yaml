@@ -1,0 +1,146 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.relief-field
+  name: Relief field
+  about: 'Each feature as a profile across its line: a height at any point from its distance and side to the line, by its
+    kind''s cross-section law (planet-process.relief-field), its relief worn by relief-erosion since its cause ended.  A belt''s
+    height is its crust''s: isostasy over the thickened crust is the belt''s envelope (height.rs), and the orogen''s erosion
+    wears that envelope (the orogen axis carries it: relief / relief0), and toward the ends of its collision the envelope
+    and every feature of the belt fade along strike to nothing over `end taper share` of the belt''s width (their lines close
+    onto the suture there, make.rs). Inside it the belt''s features shape the ground around the envelope, each by its own
+    amplitude above and below it, never stacked on it: - subsidiary ridge: a crest between two troughs, of zero mean across
+    it: relief (1 - u^2) exp(-u^2 / 2), u = d / (spacing / 3); - anticline / syncline axis: +/- amplitude bump(d / wavelength)
+    (the alternate axes sum to a sine); - thrust front: its frontal ridge on the hinterland side, throw S(d / ramp) exp(-(d
+    - ramp) / back), and the foredeep before it, -throw / 2 S(-d / ramp) exp(-(-d - ramp) / (2 back)).  Outside belts the
+    features add to the ground (they have no envelope): - rift floor axis: -(depth - the scarps'' throws) bump(d / (width
+    / 2)); - normal fault scarp: -throw S(d / scarp width + 1/2) toward the axis, faded across the axis (the scarp opposite
+    takes over: the two fades sum to one); - rift shoulder: uplift bump(d / RIFT_SHOULDER_M); - great escarpment: inland,
+    height S(d / face + 1/2) exp(-(d - face/2) / plateau decay);  (bump(u) = cos^2(pi u / 2) for |u| < 1; S a smoothstep.)
+    Suture, arc front, rift margin: no profile of their own.'
+area: relief
+clock:
+  when: evaluated on demand at any point (a Field over the relief features' lines); the features are made each step from the
+    plates' boundaries
+reads:
+- name: features
+  meaning: the relief features' lines (pins in their plates' frames), dimensions, profiles and states
+- name: plate rotations
+  field: planet-field.plate-rotation
+  unit: '1'
+  meaning: 'each plate''s rotation: the features'' lines placed in the body frame'
+- name: crust thickness
+  meaning: 'the plates'' crust (a Field): isostasy, and the belts the orogen laws measure'
+- name: floor age
+  meaning: 'the ocean floor''s age (a Field): its depth, and where a feature''s profile may stand'
+writes:
+- name: height
+  meaning: 'a Field: isostasy plus the sum of the features'' profiles (m above the sea)'
+params:
+- name: measure tolerance
+  value: 500.0
+  unit: m
+  meaning: 'a belt''s measures (its crest''s offset, its reach each side, its ends along the suture) are refined until they
+    agree to this: where the belt changes they are taken closer, never at a fixed spacing'
+  source: planet-forge crates/relief/src/laws.rs FIELD_DEFAULTS
+  note: 'chosen: half a kilometre, finer than any feature''s own width'
+  open: true
+- name: thrust ramp
+  value: 5000.0
+  unit: m
+  meaning: 'a thrust front''s frontal ramp: its throw rises over this width from the foreland'
+  source: planet-forge crates/relief/src/laws.rs FIELD_DEFAULTS
+  note: 'chosen: frontal ramps dip 20-30 degrees over 2-3 km of throw'
+  open: true
+- name: thrust back
+  value: 20000.0
+  unit: m
+  meaning: behind the ramp the front's step fades into the belt over this
+  source: planet-forge crates/relief/src/laws.rs FIELD_DEFAULTS
+  note: chosen
+  open: true
+- name: scarp width
+  value: 2000.0
+  unit: m
+  meaning: a normal-fault scarp's drop spread over this
+  source: planet-forge crates/relief/src/laws.rs FIELD_DEFAULTS
+  note: 'chosen: scarps of 600 m at 30-60 degrees, with their footwall degradation'
+  open: true
+- name: escarpment width
+  value: 10000.0
+  unit: m
+  meaning: 'a great escarpment''s face: its height rises over this from the coastal side'
+  source: planet-forge crates/relief/src/laws.rs FIELD_DEFAULTS
+  note: 'chosen: the Drakensberg face 5-15 km'
+  open: true
+- name: plateau decay
+  value: 300000.0
+  unit: m
+  meaning: behind a great escarpment its plateau falls back to the continent's level over this
+  source: planet-forge crates/relief/src/laws.rs FIELD_DEFAULTS
+  note: chosen
+  open: true
+- name: trench width
+  value: 60000.0
+  unit: m
+  meaning: a trench's half width on the subducting side (isostatic-elevation's trench reach of 3 gaps, as metres)
+  source: planet-forge crates/relief/src/laws.rs FIELD_DEFAULTS
+  note: 'chosen: trenches 50-100 km wide'
+  open: true
+- name: end taper share
+  value: 1.0
+  unit: '1'
+  meaning: 'a belt''s thickening dies out along strike toward the ends of its collision over this share of the belt''s width:
+    its envelope and features fade to nothing and its lines close onto the suture'
+  source: planet-forge crates/relief/src/laws.rs FIELD_DEFAULTS
+  note: 'the Himalaya: the arc turns at its syntaxes (Nanga Parbat, Namche Barwa) and its belt of thick crust (~300-400 km
+    wide) narrows to them over a few hundred km (Bendick & Bilham 2001, How perfect is the Himalayan arc?, Geology 29: 791-794);
+    one belt width, open'
+- name: crest max
+  value: 8849.0
+  unit: m
+  meaning: 'no ground stands higher: the belt''s features shape the ground within the isostatic envelope, their rise pressed
+    softly under this'
+  source: planet-forge crates/relief/src/laws.rs FIELD_DEFAULTS
+  note: 'Everest 8,848.86 m (China-Nepal survey, 8 Dec 2020); Tibet''s mean ~5 km (Fielding et al. 1994, How flat is Tibet?,
+    Geology 22: 163-167)'
+- name: wetness
+  value: 1.0
+  unit: '1'
+  meaning: the climate's wetness in the erosion law until the climate's fields are evaluated on the vectors
+  source: planet-forge crates/relief/src/laws.rs FIELD_DEFAULTS
+  note: 'placeholder: relief-erosion''s wetness clip holds it'
+  open: true
+random_draws:
+- 'none: the profiles are functions of the lines and the laws'
+invariants:
+- 'no ground above crest max: a belt is its envelope (isostasy over its thickened crust, worn by its orogen) and its features
+  shape the ground around it'
+- 'no feature segment spans a plate gap: a line meeting a rift is split at the cut, each piece riding its own plate'
+- no profile stands on ocean floor younger than its feature
+- a line turns within four times its boundary's turning per km, and never zigzags (turning over 4 km at most twice that over
+  40 km)
+depends_on:
+- planet-process.isostatic-elevation
+- planet-process.relief-orogen-axis
+- planet-process.relief-erosion
+backends:
+- cpu
+implementations:
+- where: planet-forge crates/relief (profile.rs, height.rs)
+  state: building
+status: draft
+basis:
+- of:
+  - identity
+  - clock
+  - reads
+  - writes
+  - invariants
+  tier: derived
+  note: 'planets, 18 Oct 2026: planet-forge crates/relief (relief features on the vector planet, step 3 of docs/vector-planet.md).'
+- of:
+  - params
+  tier: derived
+  note: 'planets, 18 Oct 2026: planet-forge crates/relief (relief features on the vector planet, step 3 of docs/vector-planet.md).
+    Chosen values open.'
+  review: true

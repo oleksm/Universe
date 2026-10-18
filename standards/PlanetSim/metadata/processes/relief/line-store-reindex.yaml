@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.line-store-reindex
+  name: Records die with their crust
+  about: 'When particles are dropped (World.keep): vertices on them die (lines split there, log ''vertices lost''); landmarks
+    on them end with fate ''subducted'' (where the sim''s sank flag is set) else ''eroded'' (log ''landmark ended''); anchors
+    renumbered.'
+area: relief
+clock:
+  when: whenever particles are dropped, plates.py:344
+reads:
+- name: keep mask
+- name: fate (w._sank)
+writes:
+- name: V/A/L/K/VP filtered
+- name: marks alive False, fate, ended
+- name: S.log rows
+- name: _vrows = None (volcano cache rebuilt)
+note: 'Emits: trace ''segmented'' rule ''store.split'' (Relief._split)'
+events_emitted:
+- event: planet-event.log-vertices-lost
+- event: planet-event.log-landmark-ended
+invariants:
+- parts of a line under 2 vertices are dropped
+- a split piece is a new line record with parent and split{t, why}
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/lines.py:Store.reindex (188-207), _split (253-284)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

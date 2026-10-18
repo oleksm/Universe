@@ -1,0 +1,113 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.core-dynamo
+  name: Core dynamo and dipole moment
+  about: 'At every output step: the thermal buoyancy flux at the core top from heat flow above the adiabat''s, F_T = max(q_cmb
+    − q_ad, 0) α_core,top g_cmb / (ρc c_core 4πRc²); the compositional flux from light elements left by a growing inner core,
+    F_C = g_icb Δρ_icb/ρc (r_ic²/Rc²) dr_ic/dt (g_icb = g_cmb r_ic/Rc, dr_ic/dt from successive rows). The dynamo is on when
+    F_T + F_C > 0, the liquid shell is non-empty and the core is not compositionally stratified; dipole moment M = 4πRc³ γ
+    sqrt(ρc/(2μ0)) (F·(Rc − r_ic))^(1/3) (Olson & Christensen 2006). Also writes the full history row (temperatures, heat
+    flows in TW, Urey ratio, inner core km).'
+area: interior
+clock:
+  when: per interior output step (10 Myr)
+reads:
+- name: fluxes at each output time
+  unit: W, m
+  meaning: q_cmb, q_adiabat, r_ic
+- name: planet.core_stratified
+  unit: bool
+  meaning: layered core cannot convect (Jacobson et al. 2017)
+writes:
+- name: time_gyr
+  unit: 's (code: Gyr)'
+  meaning: interior history column
+- name: t_mantle_k
+  unit: K
+  meaning: interior history column
+- name: t_mantle_base_k
+  unit: K
+  meaning: interior history column
+- name: t_cmb_k
+  unit: K
+  meaning: interior history column
+- name: t_centre_k
+  unit: K
+  meaning: interior history column
+- name: heat_flow_surface_tw
+  unit: 'W (code: TW, ×1e12)'
+  meaning: interior history column
+- name: heat_flow_mantle_tw
+  unit: 'W (code: TW, ×1e12)'
+  meaning: interior history column
+- name: heat_flow_cmb_tw
+  unit: 'W (code: TW, ×1e12)'
+  meaning: interior history column
+- name: heat_flow_core_adiabat_tw
+  unit: 'W (code: TW, ×1e12)'
+  meaning: interior history column
+- name: radiogenic_tw
+  unit: 'W (code: TW, ×1e12)'
+  meaning: interior history column
+- name: urey_ratio
+  meaning: interior history column
+- name: inner_core_km
+  unit: 'm (code: km)'
+  meaning: interior history column
+- name: dynamo
+  unit: 0/1
+  meaning: interior history column
+- name: dipole_moment_am2
+  unit: A m²
+  meaning: interior history column
+events_emitted:
+- event: planet-event.interior-dynamo-start
+- event: planet-event.interior-dynamo-stop
+- event: planet-event.interior-inner-core-nucleation
+params:
+- name: DYNAMO_GAMMA
+  value: 0.2
+  unit: '1'
+  meaning: dipole moment prefactor (Olson & Christensen 2006)
+  source: src/planet_sim/stages/interior.py:78
+- name: ICB_DENSITY_JUMP
+  value: 600.0
+  unit: kg/m3
+  meaning: density jump at the inner-core boundary (PREM)
+  source: src/planet_sim/stages/interior.py:70
+- name: MU0
+  value: 1.25663706212e-06
+  unit: '1'
+  said_as:
+    unit: N/A²
+    factor: 1.0
+  open: true
+  meaning: vacuum permeability
+  source: src/planet_sim/stages/interior.py:35
+  note: 'unit as the code says it: ''N/A²''; SI conversion unverified'
+random_draws:
+- none
+invariants:
+- dynamo = 0 whenever core_stratified
+- dipole_moment ≥ 0
+- urey_ratio = radiogenic / surface heat flow
+depends_on:
+- planet-process.thermal-evolution
+note: Events are not emitted as such by the code; they are implied transitions of the `dynamo` and `inner_core_km` columns
+  (registry should derive them).
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform src/planet_sim/stages/interior.py:run (297-333), COLUMNS (253-269)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

@@ -1,0 +1,2 @@
+# Work the registry asks of plant units' installed models (common.schema.yaml model_request), written onto the unit
+# records by plants.py. A request is open until a version above of_version is installed (model_spec.py, next_asset.py --rework).

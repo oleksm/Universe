@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-chute-dn1000
+  code: KIT-CHUTE-DN1000
+  name: Chute flange DN 1000
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.stainless-steel-304
+- item: material.high-strength-steel-4340
+- item: material.fused-silica
+size:
+  length: 1.2
+  width: 1.2
+  height: 0.11
+supplies:
+  item: connector.chute-dn1000
+physical:
+  mass: 114.9
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.chute-dn1000, as made.

@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.tectonic.craton.shield
+  name: Shield (exposed Precambrian basement)
+  about: Shield (exposed Precambrian basement).
+family: tectonic
+factors:
+- factor: planet-factor.tect-setting
+  weight: 3
+  why: stable Archean-Proterozoic craton with thick root (>200 km); no active tectonics
+- factor: planet-factor.rock-type
+  weight: 3
+  why: crystalline gneiss/granite; joints and lithology make inselbergs and lake basins
+- factor: planet-factor.rock-fracture
+  weight: 1
+  why: fracture pattern guides lakes, valleys, deep-weathering fronts
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: very slow epeirogeny keeps relief low (tens-hundreds of m)
+- factor: planet-factor.regolith
+  weight: 1
+  why: deep saprolite in warm humid climates; etchplain stripped to bare rock
+- factor: planet-factor.clim-history
+  weight: 1
+  why: long tropical weathering then stripping sets etchplains, inselbergs
+- factor: planet-factor.ice-extent
+  weight: 3
+  why: 'Quaternary ice scoured northern shields: knob-and-lake terrain, tens of m erosion'
+- factor: planet-factor.time
+  weight: 1
+  why: '>500 Myr exposure; ancient peneplains preserved'
+vocabulary_id: 167
+sources:
+- https://en.wikipedia.org/wiki/Shield_(geology)
+- https://en.wikipedia.org/wiki/Craton
+library_status: planned
+source: tectonic.craton.shield
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/interface.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: interface.termination-400v-120mm2, name: 'Cable termination, 0.4 kV, 120 mm2', description: 'The mating face of the Cable termination, 0.4 kV, 120 mm2 joint: any maker''s half built to it mates with any other''s, whatever its metal.'}
+domain: power
+kind: termination
+envelope: {voltage: 400, current: 300.0}
+media: [power]
+sealing: air
+halves: male-female
+make: bolted
+face: {length: 0.4, width: 0.4, height: 0.723}
+area: 0.00011999999999999999
+standard: IEC 60038 voltages
+basis:
+- of: [envelope, face]
+  tier: derived
+  note: The most the connection products built to it are rated for, and their joint's outside (SFO 25's connectors).

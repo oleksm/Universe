@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.delivery-source
+  name: native source
+  about: unverified
+title: native source
+row: top (delivery views, enabled only on final model records)
+file_suffix: record.views[source]
+draws:
+  words: unverified
+shown: true
+implementations:
+- where: planet-trees-pgs2 finalize / delivery tools (not inventoried)
+  state: reference
+status: draft

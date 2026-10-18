@@ -1,0 +1,282 @@
+# yaml-language-server: $schema=../../schema/layout.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: layout.building-press
+  name: Press, world with air
+  description: 'The newsroom and the hypernet desk: where the settlement''s news is gathered, written and sent. Laid of the kit: a strut frame on the 3 m grid, panels, and 30 rooms of 6 m furnished piece by piece (12 press room, 11
+    office, 4 store room, 3 washroom).'
+stands_for: building.press
+site:
+  atmosphere: air
+  gravity:
+  - 8.0
+  - 11.0
+physical:
+  length: 30.0
+  width: 18.0
+  height: 9.15
+  mass: 476204.3
+bays: []
+rooms:
+- id: PRE1
+  arrangement: arrangement.press-room
+  at:
+  - -12.0
+  - -6.0
+  - 0.0
+- id: PRE2
+  arrangement: arrangement.press-room
+  at:
+  - -6.0
+  - -6.0
+  - 0.0
+- id: PRE3
+  arrangement: arrangement.press-room
+  at:
+  - 0.0
+  - -6.0
+  - 0.0
+- id: PRE4
+  arrangement: arrangement.press-room
+  at:
+  - 6.0
+  - -6.0
+  - 0.0
+- id: PRE5
+  arrangement: arrangement.press-room
+  at:
+  - 12.0
+  - -6.0
+  - 0.0
+- id: PRE6
+  arrangement: arrangement.press-room
+  at:
+  - -12.0
+  - 0.0
+  - 0.0
+- id: PRE7
+  arrangement: arrangement.press-room
+  at:
+  - -6.0
+  - 0.0
+  - 0.0
+- id: PRE8
+  arrangement: arrangement.press-room
+  at:
+  - 0.0
+  - 0.0
+  - 0.0
+- id: PRE9
+  arrangement: arrangement.press-room
+  at:
+  - 6.0
+  - 0.0
+  - 0.0
+- id: PRE10
+  arrangement: arrangement.press-room
+  at:
+  - 12.0
+  - 0.0
+  - 0.0
+- id: PRE11
+  arrangement: arrangement.press-room
+  at:
+  - -12.0
+  - 6.0
+  - 0.0
+- id: PRE12
+  arrangement: arrangement.press-room
+  at:
+  - -6.0
+  - 6.0
+  - 0.0
+- id: OFF13
+  arrangement: arrangement.office
+  at:
+  - 0.0
+  - 6.0
+  - 0.0
+- id: OFF14
+  arrangement: arrangement.office
+  at:
+  - 6.0
+  - 6.0
+  - 0.0
+- id: OFF15
+  arrangement: arrangement.office
+  at:
+  - 12.0
+  - 6.0
+  - 0.0
+- id: OFF16
+  arrangement: arrangement.office
+  at:
+  - -12.0
+  - -6.0
+  - 4.5
+- id: OFF17
+  arrangement: arrangement.office
+  at:
+  - -6.0
+  - -6.0
+  - 4.5
+- id: OFF18
+  arrangement: arrangement.office
+  at:
+  - 0.0
+  - -6.0
+  - 4.5
+- id: OFF19
+  arrangement: arrangement.office
+  at:
+  - 6.0
+  - -6.0
+  - 4.5
+- id: OFF20
+  arrangement: arrangement.office
+  at:
+  - 12.0
+  - -6.0
+  - 4.5
+- id: OFF21
+  arrangement: arrangement.office
+  at:
+  - -12.0
+  - 0.0
+  - 4.5
+- id: OFF22
+  arrangement: arrangement.office
+  at:
+  - -6.0
+  - 0.0
+  - 4.5
+- id: OFF23
+  arrangement: arrangement.office
+  at:
+  - 0.0
+  - 0.0
+  - 4.5
+- id: STO24
+  arrangement: arrangement.store
+  at:
+  - 6.0
+  - 0.0
+  - 4.5
+- id: STO25
+  arrangement: arrangement.store
+  at:
+  - 12.0
+  - 0.0
+  - 4.5
+- id: STO26
+  arrangement: arrangement.store
+  at:
+  - -12.0
+  - 6.0
+  - 4.5
+- id: STO27
+  arrangement: arrangement.store
+  at:
+  - -6.0
+  - 6.0
+  - 4.5
+- id: WAS28
+  arrangement: arrangement.washroom
+  at:
+  - 0.0
+  - 6.0
+  - 4.5
+- id: WAS29
+  arrangement: arrangement.washroom
+  at:
+  - 6.0
+  - 6.0
+  - 4.5
+- id: WAS30
+  arrangement: arrangement.washroom
+  at:
+  - 12.0
+  - 6.0
+  - 4.5
+frame:
+  box:
+  - -15.0
+  - -9.0
+  - 0.0
+  - 15.0
+  - 9.0
+  - 9.0
+  cell: 3.0
+  shape: 'A skeleton frame on the 3 m grid: 10 x 6 cells, 2 storey(s) of 4.5 m; columns at every node, beams on every cell edge at each floor and the roof, one diagonal in every other outside face. Panels on its faces (frame.panels).'
+  members:
+  - item: stock.st4340-tb-80x3-s3000
+    count: 231
+    where: columns
+  - item: stock.st4340-tb-160x5-s3000
+    count: 272
+    where: beams
+  - item: stock.st4340-tb-80x2-d3000
+    count: 48
+    where: bracing
+  - item: stock.st4340-node-110b
+    count: 308
+    where: nodes
+  mass: 22692.5
+  panels:
+  - panel: panel.floor-3x3
+    count: 58
+  - panel: panel.partition-3x3
+    count: 15
+  - panel: panel.partition-door-3x3
+    count: 15
+  - panel: panel.roof-3x3
+    count: 60
+  - panel: panel.stair-3m
+    count: 1
+  - panel: panel.wall-double-door-3x3
+    count: 1
+  - panel: panel.wall-insulated-3x1p5
+    count: 64
+  - panel: panel.wall-insulated-3x3
+    count: 41
+  - panel: panel.wall-roller-3x3
+    count: 1
+  - panel: panel.wall-window-3x3
+    count: 21
+  panels_mass: 112785.2
+  sized: 'At 1 g: floors 1893 Pa dead and 5000 Pa imposed, the roof 1155 Pa; a ground column carries 76 kN (st4340-tb-80x3 takes it with half again to spare); a 3 m beam bends with 23.3 kN m (st4340-tb-160x5, under 470 MPa with half
+    again to spare). Wind, the tall halls'' columns between floors and the footings'' loads not yet checked.'
+ground:
+- what: Ground slab
+  item: good.concrete
+  volume: 81.0
+  mass: 194400.0
+  note: 0.15 m over the 30 x 18 m plan
+- what: Edge footings
+  item: good.concrete
+  volume: 34.6
+  mass: 82944.0
+  note: 0.6 x 0.6 m strips under the outside walls
+totals:
+  mass: 476204.3
+  against_module: 'building.press (deprecated): one box 30 x 20 x 8 m of 1,324 t, from the average of 538 concrete buildings. This layout: 30 x 18 x 9 m, 476 t (23 t frame, 113 t panels, 63 t furniture, 277 t ground), for 66 people
+    served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
+staff:
+- profession: profession.reporter
+  count: 10
+- profession: profession.clerk
+  count: 5
+- profession: profession.technician
+  count: 5
+basis:
+- of:
+  - bays
+  tier: invented
+  review: true
+  note: The mix of rooms for a press is chosen (press-room 0.4, office 0.35, store 0.15, washroom 0.1), shared over the record's floor (1200 m2 in 2 storeys, laid as 5 x 3 rooms of 6 m a storey).
+- of:
+  - frame
+  - ground
+  tier: derived
+  review: true
+  note: Counted from the grid (tools/standards/building_layouts.py); sections by the loads in frame.sized; masses from the strut, node and panel records.

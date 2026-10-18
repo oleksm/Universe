@@ -1,0 +1,30 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Planet line kind
+x-kind: [planet-line]
+description: "standards/PlanetSim/metadata/lines/<name>.yaml: a kind of line the sim keeps (the line store) or draws (a layer's lines): what makes one, how it ends, which level first shows it, what it expands into."
+type: object
+additionalProperties: false
+required: [identity]
+allOf:
+  - { $ref: "../../common.schema.yaml#/definitions/planet_context" }
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name, about]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      about: { type: string, description: "What it is, in a sentence or two: the word's meaning." }
+  born_from: { type: string, description: "What makes one, in words." }
+  ends: { type: string, description: "How one ends." }
+  ends_idle: { type: number, x-unit: s, description: "Ended when it has had no new points for this long." }
+  ends_idle_said: { $ref: "../../common.schema.yaml#/definitions/said_as" }
+  offset: { type: number, x-unit: m, description: "Where it stands from what makes it (an arc front behind its trench)." }
+  sides: { type: integer, minimum: 1, maximum: 2, description: "One line, or one each side (a rift's margins)." }
+  first_level: { type: string, x-ref: [planet-level], description: "The level that first shows it." }
+  expands_into: { type: array, items: { type: string }, description: "What it becomes one level down, in words, until those are records of their own." }
+  rules: { type: array, items: { type: string }, description: "What always holds for it (a line lies on one plate; crossings are cut)." }
+  constants: { type: array, items: { type: string }, description: "The sim's constants that set it, by name (CLOSE_MYR): the extractor checks them." }
+  status: { enum: [draft, published, retired], description: "draft: the sim builds against the word, not yet the figures" }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

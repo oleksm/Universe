@@ -1,0 +1,51 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Planet process
+x-kind: [planet-process]
+description: "standards/PlanetSim/metadata/processes/<area>/<name>.yaml: one physical process of the planet sim (plate motion, collision, rifting, climate, routing, erosion, ice, relief generators...): when it runs, what it reads and writes, the events it emits, its parameters, its random draws, the rules that must always hold after it, what it depends on, the backends it runs on and its implementations. planet-forge reads these and refuses a parameter, field or event they do not name."
+type: object
+additionalProperties: false
+required: [identity, area, clock]
+allOf:
+  - { $ref: "../../common.schema.yaml#/definitions/planet_context" }
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name, about]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      about: { type: string }
+  area: { enum: [plates, interior, geology, surface, climate, hydrology, ice, relief, impacts, run], description: "Which part of the sim it belongs to." }
+  clock:
+    type: object
+    additionalProperties: false
+    required: [when]
+    properties:
+      when: { type: string, description: "When it runs: every step, every coupled step, at a checkpoint, once at the start..." }
+      step: { type: number, exclusiveMinimum: 0, x-unit: s, description: "Its step, when it has its own." }
+      step_said: { $ref: "../../common.schema.yaml#/definitions/said_as" }
+      note: { type: string }
+  reads: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/sim_io" } }
+  writes: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/sim_io" } }
+  events_emitted:
+    type: array
+    items: { type: object, additionalProperties: false, required: [event], properties: { event: { type: string, x-ref: [planet-event] }, where: { type: string, description: "file:line" }, note: { type: string } } }
+  params: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/sim_param" } }
+  tables:
+    type: array
+    description: "Lookup tables the process uses."
+    items: { type: object, additionalProperties: false, required: [name, columns, rows], properties: { name: { type: string }, source: { type: string }, columns: { type: array, items: { type: string } }, rows: { type: array, items: { type: array, items: { type: string } }, description: "Each row as text cells, in the columns' order (a number as written in the code; a list in YAML flow form). A table with a kind of its own (rock units, deposit types) goes in those records instead." }, note: { type: string } } }
+  random_draws: { type: array, items: { type: string }, description: "Each random draw it makes: what is drawn, from what, seeded how." }
+  invariants: { type: array, items: { type: string }, description: "Rules that hold after every run of it, each checkable." }
+  depends_on: { type: array, items: { type: string, x-ref: [planet-process] } }
+  used: { type: boolean, description: "false: an offline tool the run never calls." }
+  note: { type: string }
+  backends: { type: array, items: { enum: [cpu, gpu] } }
+  unverified: { type: array, items: { type: string }, description: "What is not yet known of its behaviour." }
+  implementations:
+    type: array
+    items: { type: object, additionalProperties: false, required: [where, state], properties: { where: { type: string, description: "repository and file:function, or a forge module" }, state: { enum: [reference, current, building, retired] }, note: { type: string } } }
+  cautions: { type: array, items: { type: string }, description: "Findings on it: bugs, comments that disagree with the code, what trips a reader up." }
+  status: { enum: [draft, published, retired] }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

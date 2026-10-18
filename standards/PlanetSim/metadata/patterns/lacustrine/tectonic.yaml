@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.lacustrine.basin.tectonic
+  name: Tectonic lake basin (rift/graben lake)
+  about: Tectonic lake basin (rift/graben lake).
+family: lacustrine
+factors:
+- factor: planet-factor.tect-setting
+  weight: 3
+  why: Continental rift, graben, pull-apart or foreland basin
+- factor: planet-factor.tect-fault
+  weight: 3
+  why: Faulting forms closed depressions; half-graben asymmetry
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: Subsidence rate vs infill decides depth (Baikal 1642 m)
+- factor: planet-factor.sed-supply
+  weight: 1
+  why: Sediment infill competes with subsidence
+- factor: planet-factor.clim-arid
+  weight: 3
+  why: 'Humid: deep permanent; arid: terminal saline lake'
+- factor: planet-factor.clim-history
+  weight: 1
+  why: Wet/dry phases swing levels
+- factor: planet-factor.time
+  weight: 1
+  why: 100 kyr to 30 Myr
+vocabulary_id: 101
+sources:
+- https://en.wikipedia.org/wiki/Rift_lake
+library_status: written
+source: lacustrine.basin.tectonic
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

@@ -142,6 +142,107 @@ model loader, every reference pose, a 513-pose sweep), then writes `review/regis
 Exit 0 is a pass: no registry review is needed before the owner's acceptance. Exit 1: send the registry a task with the
 report. The first build takes a few minutes; later runs are quick.
 
+## Templates (kit families, 2026-10-17)
+
+One model draws every size of a kit family (`standards/SFO/metadata/templates/`). Its brief is its **reference** record
+(`reference:`, a member; `model_of` on the older templates is the installed size that serves as theirs).
+
+- Build the model at the reference record's `physical` (a connector) or its pieces' sizes (a run's pieces), in metres,
+  +Y up as every model. The size check is the usual one against that record.
+- **Axes:** a connector's joint axis (the line its flow or current crosses) is +Y; the record's `height` lies along it,
+  `length` along X, `width` along Z. The mating plane is y = 0, the model centred on the axis in X and Z.
+- **Halves:** the two halves are named root nodes: `male` and `female` (a plug and its socket, a cam-lock's adapter and
+  coupler), or `half-a` and `half-b` for androgynous ones; mated in the static pose. A valve or an expansion joint is one
+  node, `body`, its flange faces at y = 0 and y = height. No motion. A valve's end flanges are the plant kit's flange
+  interface for its bore (its face's outside, bolting and ring as the flange record); its lever, handwheel, gearbox or
+  actuator stands off the axis along +Z, so its width runs from the flanges' rim at -Z to the actuator's top (the model
+  is centred on the axis in X only).
+- **Scaling:** the game draws each member at its own figures: X by length / reference length, Y by height / reference
+  height, Z by width / reference width. A run's pieces (supports, trolleys) scale by its `outside` the same way.
+- **Real shape first:** if the reference's figures are not what the real part measures, model the real part and send the
+  measured sides; the registry changes the family's rule, never the model.
+- A sweep template (hose, cable, conductor rail's housing) has no model: the game sweeps its profile.
+- **Conductor rail and collector** (enclosed rail): the housing runs along +X, open in a slot underneath. Its section's
+  datum is the slot mouth: y = 0 there, centred in Z, the housing rising to y = outside[1], `outside[0]` wide. The four
+  conductors line the inside side walls, two a side, stacked: contact faces at z = ±(width/2 − 0.015), y = 0.3 and
+  0.65 of the height (90 × 160 mm: z = ±0.030, y = 0.048 and 0.104; 120 × 200 mm: z = ±0.045, y = 0.060 and 0.130;
+  invented, to be sourced from a maker's drawing). The collector is one root node `body` on the same datum: travel +X,
+  its trolley above y = 0 inside the housing (no wider than width − 0.02), its four shoes facing outward ±Z onto those
+  faces, its towing arm below y = 0 to the machine.
+- **Festoon** (C-track, the same 40 x 40 mm for every member): the track runs along +X, its slot underneath; datum the
+  slot mouth, y = 0, centred in Z, the track rising to y = 0.04, its slot 16 mm wide between lips 3 mm thick (invented).
+  Pieces, each its own root at that datum and drawn at its own size (never scaled by `outside`, whose height is the
+  loops' depth): `support_head` clasping the track from above, child `leg_top` at the rod's seat, `support_leg` a rod
+  1 m from leg_top up to y = 1 (stretched to the ceiling); `trolley` with four wheels about 30 mm across rolling on the
+  lips' top faces (y = 0.003), axles across Z at x = ±0.035, a neck down through the slot to a cable saddle below, its
+  child `cable_anchor` at the saddle's clamp centre (the game hangs each loop's end there and draws the cable itself).
+- **Single-pole sets** (template.single-pole, 300 x 120 x 250 mm reference): five single-pole connector pairs side by
+  side along X at 60 mm pitch (L1, L2, L3, N, earth; each a round housing about 50 mm across), mating at y = 0, plugs
+  `male` above, receivers `female` below in a common panel plate. Colour bands by pole; keyed so no two mate crosswise.
+- **Industrial plug and socket** (template.plug-socket, IEC 60309 32 A 5-pin, 110 x 110 x 210 mm reference): one round
+  red housing along Y, mating at y = 0, `male` the plug above, `female` the socket below, rear cable glands. Seen from the
+  plug's face, five contacts on a 34 mm pitch circle at 72 degrees (L1, L2, L3, N; phase and neutral pins 6 mm across),
+  the earth at 6 o'clock (-Z) 8 mm across and 3 mm longer so it makes first; the collar's keyway also at 6 o'clock.
+  Pin layout invented, no IEC conformance claimed. One look for the family: the 125 A size is the 690 V version (in the
+  standard black with its earth at 5 o'clock), drawn with the same red 400 V model for now.
+- **High-voltage coupler** (template.coupler, 220 x 220 x 600 mm reference): one round rubber-moulded body along Y,
+  mating at y = 0; inside, three phase pins on a 90 mm pitch circle at 120 degrees and a pilot and an earth pin at the
+  centre, in a steel shroud with a bolted coupling ring (`male` the plug, `female` the receptacle). Pin layout invented.
+- **Corner casting** (ISO 1161): one root node `female`, a top corner of the right hand: the top face's outer plane at
+  y = 0, the body below to y = -0.118; length 0.178 along X (the container's length), width 0.162 along Z; its open
+  faces are the top, the end (+X) and the side (+Z), the game mirrors it for the other corners and flips it for the
+  bottom ones. Apertures, from memory of the standard, provisional: top an oblong 124 x 63.5 mm with round ends, long
+  along X, its centre 12.5 mm inboard (-X) and 8 mm inboard (-Z) of the casting's centre; end and side faces an oblong
+  78 x 51 mm (78 across, 51 high), centred on their face 8 mm below its middle. Walls: top plate 26 mm (the twistlock's
+  cone sits in it), the others 13 mm, hollow inside.
+- **Twistlock** (template.twistlock, an inter-box lock, 160 x 150 x 200 mm envelope): one root node `male`, static, in
+  the unlocked pose (both heads long along X, as the hole). The root sits at the lower casting's top hole centre (the
+  corner casting's datum x = -0.0125, z = -0.008, y = 0): the spacer flange 160 x 90 mm, 28 mm thick, from y = 0 up to
+  y = 0.028, resting on the lower casting's top face; the lower cone and head down through its 26 mm plate to y = -0.086,
+  the upper up through the next box's casting to y = 0.114; each head passes the 124 x 63.5 mm hole (about 118 x 58 mm
+  at most) on a neck as long as the plate plus 2 mm; the hand lever out of the spacer's side to about z = +0.105. The
+  game turns its child `rotating_lock` (the shaft and both heads) 90 degrees about Y to lock; figures invented.
+- **Panels** (building panels' templates): one root node `body`, static. A wall or partition stands with its foot at
+  y = 0, its face along X centred on x = 0, its thickness along Z centred on the frame's grid line (z = 0), outside
+  face toward +Z. A floor's walking plane is y = 0, the cassette below it; a roof sits on the frame's top, its underside
+  at y = 0. A stair's foot is y = 0 at the lower floor, rising along +X. Doors and windows closed.
+  Airless (pressure) panels: the welded skin on the outside face (+Z), its blankets over it, the T-stiffeners inside
+  (-Z) running across the cell's short side at 0.23 m, an edge channel all round; a plug door's leaf on the inside face,
+  closed (it opens inward); the viewport a round double pane at its sill height. A pressure floor is a plate and screed
+  over y = 0 (no cassette); a pressure roof is the wall's build lying flat, its skin up.
+- **Furniture** (unit.furniture-*): one root node `body`, its feet at y = 0, centred in X and Z, its front toward -Z.
+
+## Rework: what an installed model lacks, and redoing it
+
+A record changes after its model is made. The rework tools say what that change asks of the model, so only real body
+changes are remade (the owner, 2026-10-16: never the same model again without a good need).
+
+    python3 tools/standards/next_asset.py --rework [--json]     # installed models with work to do, worst first
+    python3 tools/standards/next_asset.py --gap <key>           # one model's gap: the spec it was made to, the spec now, what to do
+    python3 tools/standards/next_asset.py --key <key>           # the full brief: size, parts, ports, motion, envelope, requests
+    python3 tools/standards/model_measure.py <model.glb> --as=unit.<slug> [--list] [--nodes=a,b] [--apply]   # a unit's envelope boxes from its model
+
+- **The spec** (`tools/standards/model_spec.py`): what a record sets for its model: size, part names, required nodes,
+  ports (position, facing, connector), motion, envelope, triangle budget. Masses, prose and duties are not in it.
+  Every install keeps the spec it was made to in its manifest (`spec`, `spec_sha256`); older installs are read from
+  the record in git at the commit that installed them.
+- **The verdicts**, worst first:
+
+| Verdict | When | What to do |
+|---|---|---|
+| rebuild | the record's size left the model's tolerance, or the registry asks it by name | remake the body; install a new version |
+| rig | parts of it move (a motion not of the whole unit) and the package has no `motion.json`, or a required node is missing | separate the moving parts, pivot them on the record's axes, install with `--motion` |
+| review | the record's parts changed since (added, removed, renamed) | look: if the model shows them, nothing; if not, say so and remake |
+| measure | a unit without envelope boxes, or the registry asks them measured | `model_measure.py`, its groups named so open space stays open |
+| optimise | over its triangle budget | reduce, install a new version |
+| none | a port moved or was added; a mass changed | nothing: the game draws the joint at each port, the model ends at the mating plane |
+
+- **Requests by name**: a record's `model_requests` (`work`, `because`, `asked`, `of_version`, `by`). For plant units they
+  are written from `tools/standards/unit_requests.yaml`. A request is open until a version above `of_version` is
+  installed; a `measure` request closes when `model_measure.py --apply` writes the boxes.
+- **What the registry does not ask**: a new model because a port moved, or a size within tolerance. A body conflict a
+  layout can't route round comes as a request with its reason.
+
 ## Game validation
 
 The registry validates installed models in the game. After `--push`, the modeller sends the registry a `task` naming the

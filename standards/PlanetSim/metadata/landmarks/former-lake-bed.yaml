@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../schema/planet-landmark.schema.yaml
+identity:
+  key: planet-landmark.former-lake-bed
+  name: Former lake bed
+  about: 'A landmark record: made when a lake dried.'
+made_when: a lake dried
+active: 157788000000000.0
+worn: 1262304000000000.0
+ages_said:
+  unit: Myr
+  factor: 31557600000000.0
+expands_into:
+- flat floor at its shore height
+- shorelines
+source: former lake bed
+levels:
+- planet-level.planet
+- planet-level.cluster
+- planet-level.pattern
+basis:
+- of:
+  - identity
+  tier: derived
+  note: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+- of:
+  - active
+  - worn
+  tier: derived
+  note: planet-sim-landform stages/lines.py ACTIVE_MYR (default 5) and WORN_MYR.
+- of:
+  - threshold
+  tier: invented
+  note: No figure yet.
+status: draft

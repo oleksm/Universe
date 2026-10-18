@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.film
+  name: film
+  about: every record's image as 512x320 tiles, 5 per row
+title: film
+file_suffix: film.png
+draws:
+  words: every record's image as 512x320 tiles, 5 per row
+shown: true
+implementations:
+- where: planet-trees-pgs2 ~/git/planet-trees-pgs2/tools/planet_form.py:film (518-533)
+  state: reference
+status: draft

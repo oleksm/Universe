@@ -1,0 +1,164 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.crust-flow-cap-delamination
+  name: Lateral flow of thick crust, thickness cap and root delamination
+  about: 'Every SPREAD_EVERY steps (and at the last step), continental thickness H is read onto the samples (kernel spread). Diffusion on the 6-neighbour graph between continental samples: k = SPREAD*SPREAD_EVERY*dt/(gap*R)^2*4, sub-stepped
+    so each sub-step <= 0.2, with weakness = FLOW_COLD + (1-FLOW_COLD)*clip((max(H_i,H_j)-FLOW_ABOVE)/FLOW_RAMP, 0, 1). Then up to 12 rounds move any excess above CRUST_MAX equally to continental neighbours (none lost). Then roots above
+    ECLOGITE lose (H-ECLOGITE)*(1-exp(-SPREAD_EVERY*dt/DELAMINATE_MYR)) to the mantle (volume lost). The particles are then fitted to the new H (with crust-wear below) by _set_continents. Each step''s change per cause goes to w.cause.'
+area: plates
+clock:
+  when: every SPREAD_EVERY (4) steps, and the final step
+reads:
+- name: w.x
+  field: planet-field.particle-position
+  unit: '1'
+- name: w.xcont
+  field: planet-field.particle-continental
+  unit: '1'
+- name: w.xvol
+  field: planet-field.particle-volume
+  unit: m3
+- name: nbr
+  meaning: the samples' neighbours
+writes:
+- name: H2 -> w.xvol via _set_continents
+  field: planet-field.particle-volume
+  unit: m3
+- name: w.cause['flow'|'cap'|'roots']
+  meaning: diagnostic (event)
+params:
+- name: SPREAD
+  env: SIM_SPREAD
+  value: 0.0001901285268841737
+  unit: m2/s
+  said_as:
+    unit: m2/yr
+    factor: 6000.0
+  meaning: diffusivity of thick continental crust (lateral flow)
+  source: stages/plates.py:149, stages/plates.py:150
+  note: 'chosen: 1000 km plateau relaxes over a few hundred Myr; Rey et al. 2001'
+- name: SPREAD_EVERY
+  value: 4.0
+  unit: '1'
+  meaning: steps between spread/cap/delamination/crust-wear passes
+  source: stages/plates.py:157
+  note: steps between spreading passes
+- name: FLOW_ABOVE
+  env: SIM_FLOW_ABOVE
+  value: 55000.0
+  unit: m
+  meaning: thickness above which crust flows at a rising rate (ramp over FLOW_RAMP to full)
+  source: stages/plates.py:153
+  note: '16 Oct: 40 -> 55 km (s20 ck11->12: narrow ranges flowed flat in ~25 Myr)'
+- name: FLOW_RAMP
+  value: 15000.0
+  unit: m
+  meaning: ramp width from FLOW_COLD to full flow above FLOW_ABOVE
+  source: stages/plates.py:154
+  note: m
+- name: FLOW_COLD
+  env: SIM_FLOW_COLD
+  value: 0.1
+  unit: '1'
+  meaning: relative diffusivity of normal (cold) crust
+  source: stages/plates.py:155, stages/plates.py:156
+  note: Bird 1991; Clark & Royden 2000; override for A/B grows
+- name: CRUST_MAX
+  env: SIM_CRUST_MAX
+  value: 80000.0
+  unit: m
+  meaning: hard cap on continental read thickness; excess passed to continental neighbours (up to 12 rounds), none lost
+  source: stages/plates.py:180
+  note: owner 16 Oct; large value turns it off
+- name: ECLOGITE
+  env: SIM_ECLOGITE
+  value: 70000.0
+  unit: m
+  meaning: continental thickness above which the root delaminates (excess decays on DELAMINATE_MYR)
+  source: stages/plates.py:179
+  note: '16 Oct: 62 -> 70 km; Kay & Kay 1993; Jull & Kelemen 2001. The block comment above still says 62 km / 40 Myr (stale)'
+- name: DELAMINATE_MYR
+  env: SIM_DELAMINATE_MYR
+  value: 3155760000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 100.0
+  meaning: e-folding time of root delamination above ECLOGITE
+  source: stages/plates.py:181
+  note: '16 Oct: 40 -> 100 Myr, test t2'
+- name: CONTINENT_EDGE
+  value: 15000.0
+  unit: m
+  meaning: a sample whose spread continental thickness is below this reads as ocean
+  source: stages/plates.py:213
+  note: 'Continental crust is thinner than this (m) where only a particle''s edge reaches: ocean'
+- name: 'OFF'
+  env: SIM_OFF
+  values: []
+  unit: '1'
+  said_as:
+    unit: set of process names
+    factor: 1.0
+  open: true
+  meaning: 'ablation switches, comma separated: flow, cap, roots, crustwear, climate, shelf'
+  source: stages/plates.py:143
+  note: '16 Oct tooling (comment also lists ''shelf''; ''climate'' and ''shelf'' only matter in coupled era); unit as the code says it: ''set of process names''; SI conversion unverified'
+- name: CAUSES
+  setting: '["flow", "cap", "roots", "crustwear", "climate"]'
+  meaning: per-sample thickness-change accumulators kept in w.cause (diagnostic)
+  source: stages/plates.py:144
+  note: 'unit: names'
+- name: diffusion factor
+  value: 4.0
+  unit: '1'
+  meaning: k_s multiplier (graph Laplacian normalisation; unverified derivation)
+  source: stages/plates.py:1264
+- name: max sub-step
+  value: 0.2
+  unit: '1'
+  meaning: k_s/sub <= 0.2 for stability
+  source: stages/plates.py:1265
+- name: cap rounds
+  value: 12.0
+  unit: '1'
+  meaning: max redistribution rounds for CRUST_MAX
+  source: stages/plates.py:1274
+- name: KERNEL
+  value: 0.8
+  unit: '1'
+  meaning: Gaussian width h = KERNEL*gap for spreading continental particle volume onto samples (cut at 3h)
+  source: stages/plates.py:215
+  note: the continents' spread (_continental), as crust-read's
+- name: kernel cutoff
+  value: 3.0
+  unit: '1'
+  meaning: 'unverified: the code names it kernel cutoff without saying what it is'
+  source: stages/plates.py:483
+  note: the continents' spread (_continental), as crust-read's
+random_draws:
+- none
+invariants:
+- flow and cap conserve continental volume
+- delamination only removes volume
+- flow only between pairs of continental samples
+depends_on:
+- planet-process.crust-read
+- planet-process.crust-fit
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/plates.py:run (lines 1257-1284)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'
+events_emitted:
+- event: planet-event.ledger-row
+  where: 'forge: the step''s volume moved, shed, worn, denuded or laid on the shelf (the Python''s ledger rows)'

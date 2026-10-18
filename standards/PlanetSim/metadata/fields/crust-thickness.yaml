@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.crust-thickness
+  name: Continental crust thickness
+  about: Continental volume spread onto the sample over its area.
+unit: m
+per: sample
+producer:
+  where: stages/plates.py
+  file: ctx
+  key: thick
+cautions:
+- 'not zero on ocean samples: thin continent below 15 km reads there (up to 15 km)'
+source: thick
+levels:
+- planet-level.planet
+basis:
+- of:
+  - identity
+  - producer
+  - said_as
+  tier: derived
+  note: 'planet-trees-pgs2 docs/sim-arrays.md (planets, 17 Oct 2026: checked against the code at aab9f6a, run earth_s25).'
+status: draft

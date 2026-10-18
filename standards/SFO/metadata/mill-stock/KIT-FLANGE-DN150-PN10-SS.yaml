@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-flange-dn150-pn10-ss
+  code: KIT-FLANGE-DN150-PN10-SS
+  name: Flange DN 150 PN 10, stainless
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.stainless-steel-304
+- item: material.high-strength-steel-4340
+size:
+  length: 0.316
+  width: 0.316
+  height: 0.11
+supplies:
+  item: connector.flange-dn150-pn10-ss
+physical:
+  mass: 22.5
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.flange-dn150-pn10-ss, as made.

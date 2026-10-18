@@ -1,0 +1,277 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.rings-relief
+  name: 'Relief: classes and features'
+  about: 'view_relief on smoothed relief classes, then relief_overlay: every alive relief feature from <ck>_store.npz in its
+    family colour (RELIEF_FAM, worn faint), a pin with #id per line, landmark dots; legend adds coverage and every kind with
+    counts and id ranges'
+title: 'Relief: classes and features'
+row: line rings
+file_suffix: _rings_relief.png (+ .legend.json)
+draws:
+  words: 'view_relief on smoothed relief classes, then relief_overlay: every alive relief feature from <ck>_store.npz in its
+    family colour (RELIEF_FAM, worn faint), a pin with #id per line, landmark dots; legend adds coverage and every kind with
+    counts and id ranges'
+shown: true
+implementations:
+- where: planet-trees-pgs2 ~/git/planet-trees-pgs2/tools/layer_lines.py:rings (355-356 (+ relief_overlay 384-444))
+  state: reference
+- where: planet-forge crates/planet-layers/src/layers/relief.rs
+  state: current
+  note: the viewer layer
+- where: planet-forge crates/relief src/draw.rs + legend.rs (planet-relief demo)
+  state: building
+  note: 'the vector relief: every kind its own colour and line style'
+status: draft
+legend:
+  title: 'Relief: classes and features'
+  rows:
+  - kind: head
+    label: Relief inside each sample (Earth's amounts, placed by the sim)
+  - key: class:0
+    kind: fill
+    colour:
+    - 205
+    - 225
+    - 160
+    label: 'lowland plain: {class_0} % of land'
+  - key: class:1
+    kind: fill
+    colour:
+    - 225
+    - 220
+    - 170
+    label: 'plain: {class_1} % of land'
+  - key: class:2
+    kind: fill
+    colour:
+    - 215
+    - 190
+    - 140
+    label: 'plateau: {class_2} % of land'
+  - key: class:3
+    kind: fill
+    colour:
+    - 180
+    - 160
+    - 110
+    label: 'hills: {class_3} % of land'
+  - key: class:4
+    kind: fill
+    colour:
+    - 140
+    - 105
+    - 80
+    label: 'low mountains: {class_4} % of land'
+  - key: class:5
+    kind: fill
+    colour:
+    - 95
+    - 70
+    - 60
+    label: 'high mountains: {class_5} % of land'
+  - kind: head
+    label: Mountains {mountains} % of land (Earth ~22 %); hills {hills} % (Earth ~30 %)
+  - kind: head
+    label: 'Patterns on {patterns_pct} % of land, {per_sample} per sample, {patterns_used} patterns in use; labels: leading
+      pattern'
+  - kind: head
+    label: 'Relief features: {n_features} ({n_worn} worn, faint); pins: line refs (#id)'
+  - kind: head
+    label: 'Coverage: {cover_50} % of land within 50 km, {cover_150} % of land within 150 km'
+  - key: each:feature-kind
+    kind: line
+    label: '{kind}: {n}{worn} · #{first}–#{last}'
+  - kind: head
+    label: Relief features, each kind its own colour and line style (vector relief)
+  - key: kind:suture
+    kind: line
+    colour:
+    - 178
+    - 24
+    - 43
+    style: solid
+    width: 3.0
+    label: 'suture: {n_suture}'
+  - key: kind:arc-front
+    kind: line
+    colour:
+    - 230
+    - 97
+    - 1
+    style: dashdot
+    width: 2.5
+    label: 'arc front: {n_arc_front}'
+  - key: kind:rift-margin
+    kind: line
+    colour:
+    - 94
+    - 60
+    - 153
+    style: solid
+    width: 2.5
+    label: 'rift margin: {n_rift_margin}'
+  - key: kind:orogen-axis
+    kind: line
+    colour:
+    - 140
+    - 81
+    - 10
+    style: solid
+    width: 3.0
+    label: 'orogen axis: {n_orogen_axis}'
+  - key: kind:thrust-front
+    kind: line
+    colour:
+    - 191
+    - 129
+    - 45
+    style: dashed
+    width: 2.5
+    label: 'thrust front: {n_thrust_front}'
+  - key: kind:subsidiary-ridge
+    kind: line
+    colour:
+    - 223
+    - 194
+    - 125
+    style: dotted
+    width: 2.5
+    label: 'subsidiary ridge: {n_subsidiary_ridge}'
+  - key: kind:anticline-axis
+    kind: line
+    colour:
+    - 27
+    - 120
+    - 55
+    style: solid
+    width: 1.8
+    label: 'anticline axis: {n_anticline_axis}'
+  - key: kind:syncline-axis
+    kind: line
+    colour:
+    - 90
+    - 174
+    - 97
+    style: dashed
+    width: 1.8
+    label: 'syncline axis: {n_syncline_axis}'
+  - key: kind:rift-floor-axis
+    kind: line
+    colour:
+    - 33
+    - 102
+    - 172
+    style: solid
+    width: 2.5
+    label: 'rift floor axis: {n_rift_floor_axis}'
+  - key: kind:rift-shoulder
+    kind: line
+    colour:
+    - 146
+    - 197
+    - 222
+    style: dashed
+    width: 2.5
+    label: 'rift shoulder: {n_rift_shoulder}'
+  - key: kind:normal-fault-scarp
+    kind: line
+    colour:
+    - 118
+    - 42
+    - 131
+    style: dotted
+    width: 2.0
+    label: 'normal fault scarp: {n_normal_fault_scarp}'
+  - key: kind:great-escarpment
+    kind: line
+    colour:
+    - 1
+    - 102
+    - 94
+    style: solid
+    width: 3.0
+    label: 'great escarpment: {n_great_escarpment}'
+styles:
+- key: coast
+  colour:
+  - 0
+  - 0
+  - 0
+- key: base-land
+  colour:
+  - 200
+  - 196
+  - 186
+- key: base-sea
+  colour:
+  - 205
+  - 220
+  - 232
+- key: sea
+  colour:
+  - 215
+  - 225
+  - 235
+- key: pin-outline
+  colour:
+  - 255
+  - 255
+  - 255
+- key: label-box
+  colour:
+  - 255
+  - 255
+  - 255
+- key: label-text
+  colour:
+  - 20
+  - 20
+  - 20
+- key: family:tectonic
+  colour:
+  - 200
+  - 40
+  - 40
+- key: family:volcanic
+  colour:
+  - 140
+  - 20
+  - 120
+- key: family:fluvial
+  colour:
+  - 30
+  - 100
+  - 220
+- key: family:glacial
+  colour:
+  - 60
+  - 190
+  - 230
+- key: family:coastal
+  colour:
+  - 20
+  - 170
+  - 170
+- key: family:lacustrine
+  colour:
+  - 20
+  - 60
+  - 140
+- key: family:landmark
+  colour:
+  - 230
+  - 120
+  - 20
+- key: family:other
+  colour:
+  - 90
+  - 90
+  - 90
+basis:
+- of:
+  - legend
+  - styles
+  tier: derived
+  note: 'planets, 17 Oct 2026: the viewer layers (planet-forge planet-layers), from planet-trees-pgs2 context_view.py / layer_lines.py.'

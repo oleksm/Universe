@@ -1,0 +1,56 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.coastal.depositional.spit
+  name: Spit (incl. recurved spit, cuspate foreland)
+  about: Spit (incl. recurved spit, cuspate foreland).
+family: coastal
+factors:
+- factor: planet-factor.waves-tides
+  weight: 3
+  why: oblique waves drive longshore drift; refraction recurves tip; tidal/river flow at mouth limits length
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: continuous sand/shingle supply from updrift cliffs or rivers; cut supply turns spit to island
+- factor: planet-factor.relief-inherited
+  weight: 3
+  why: coastline turns abruptly (>~30 deg) at headland or bay/estuary mouth
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: shallow water at departure point; deep water halts growth
+- factor: planet-factor.water-discharge
+  weight: 1
+  why: river or tidal outflow at mouth caps spit growth and keeps channel open
+- factor: planet-factor.clim-wind
+  weight: 1
+  why: wind direction sets dominant wave approach and dune cap on spit
+- factor: planet-factor.clim-storm
+  weight: 1
+  why: storms add recurved hooks and breach necks
+- factor: planet-factor.sea-level
+  weight: 1
+  why: stable Holocene sea level; rise forces landward migration
+- factor: planet-factor.time
+  weight: 1
+  why: grows over centuries-millennia (0.1-7 kyr)
+vocabulary_id: 19
+sources:
+- https://en.wikipedia.org/wiki/Spit_(landform)
+- https://www.nps.gov/articles/sandy-coast-landforms.htm
+- https://www.coastalwiki.org/wiki/Morphology_of_estuaries
+library_status: written
+source: coastal.depositional.spit
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

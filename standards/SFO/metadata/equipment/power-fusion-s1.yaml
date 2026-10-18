@@ -42,10 +42,12 @@ function:
   burns: material.deuterium
 visual:
   format: "freefall-model/1"
-  path: "models/power-fusion-s1/v1"
-  manifest_sha256: "a0cf8edabf636e7abff1ba93fb3339350a0445d7a0f4ed75fc94db967b9a7235"
-  version: 1
-  triangles: 3494
+  path: "models/power-fusion-s1/v2"
+  manifest_sha256: "e864aaf4c79f621f638c159605597bf5cecf2ca822d89135a0307dd7662d3c28"
+  version: 2
+  triangles: 6164
+model_requests:
+- {work: rebuild, of_version: 1, asked: '2026-10-17', by: registry, because: "Blender's review (2026-10-17): the model shows 120 mm panel proxies on base slabs where the record has one 3 mm carbon-carbon radiator plate over the plant bay, hinged on its long edge to stand up, on carbon-fibre trusses. Remake the radiator as the record says, with its hinge."}
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }

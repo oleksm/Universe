@@ -1,0 +1,86 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.floodplain
+  name: Floodplain
+  about: 'A relief feature of the fluvial family: floodplain.'
+register: feature
+family: fluvial
+level:
+- 1
+geometry: polygon
+properties:
+- field: width
+  unit: m
+trigger: low gradient + big Q + laid sediment
+generator: band along the river
+overrides: burial, drowning
+wave: 1
+built: false
+levels:
+- planet-level.planet
+- planet-level.cluster
+status: draft
+basis:
+- note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical
+    feature catalogue.'
+  of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
+  - trigger
+  - generator
+  - overrides
+  - wave
+  - built
+  tier: derived
+- of:
+  - pinned_to
+  - spans
+  - dimensions
+  - layout
+  - parent_kinds
+  review: true
+  source: 'the laws'' notes: Moody and Troutman 2002; Leopold and Wolman 1957, 1960 (coefficients recalled, to check against
+    the papers); figures marked open are invented'
+  tier: sourced
+- of:
+  - layout
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
+    9747f0d-c437724. frame and record from: proposed (the schema has no fields for them yet).'
+  review: true
+pinned_to: the downstream end of its reach, on its river's centreline (a child of that river)
+spans:
+- meaning: 'the reach''s centreline, in cm east/north/up of the pin; profile along it: width (m)'
+  name: axis
+dimensions:
+- formula: m * belt width
+  meaning: across the floodplain at each axis vertex
+  name: width
+  params:
+  - meaning: floodplain over meander belt width
+    name: m
+    note: invented, to review
+    open: true
+    unit: '1'
+    value: 3.0
+  rule: a multiple of the meander belt (a placeholder until the sim lays sediment widths)
+  unit: m
+parent_kinds:
+- planet-feature.trunk-river
+layout:
+- name: frame
+  unit: '1'
+  meaning: '1: its pins sit in its plate''s frame (integer cm) and ride the crust, placed by planet-field.plate-rotation;
+    0: a body-frame snapshot, remade from the present state each pass'
+  rule: it is the present state of an agent (water, sea, wind, the plates' meeting), remade each pass
+  params:
+  - name: rides
+    value: 0.0
+    unit: '1'
+    meaning: 1 rides, 0 snapshot
+    source: 'planet-forge src/ride.rs (from the Python: stages/lines.py Store vs its rivers and coast)'
+    open: true

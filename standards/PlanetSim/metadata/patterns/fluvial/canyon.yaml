@@ -1,0 +1,58 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.valley.canyon
+  name: Canyon / gorge
+  about: Canyon / gorge.
+family: fluvial
+factors:
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: plateau or range uplift creates elevation differential (Grand Canyon ~1.8 km)
+- factor: planet-factor.base-level
+  weight: 1
+  why: base-level fall (e.g. basin integration) drives rapid incision
+- factor: planet-factor.clim-arid
+  weight: 3
+  why: arid climate preserves steep stepped walls; humid gives V-gorges
+- factor: planet-factor.rock-layers
+  weight: 3
+  why: hard/soft alternation gives cliff-and-slope steps
+- factor: planet-factor.rock-type
+  weight: 1
+  why: resistant sandstone/granite walls; crystalline gives narrow inner gorge
+- factor: planet-factor.water-discharge
+  weight: 1
+  why: exotic large river sustains incision across dry plateau
+- factor: planet-factor.relief-inherited
+  weight: 1
+  why: antecedent or superposed course crosses the uplift
+- factor: planet-factor.rock-soluble
+  weight: 1
+  why: limestone cave collapse can form canyons
+- factor: planet-factor.clim-temp
+  weight: 1
+  why: frost wedging retreats walls
+- factor: planet-factor.time
+  weight: 1
+  why: 100 kyr-10 Myr
+vocabulary_id: 57
+sources:
+- https://en.wikipedia.org/wiki/Canyon
+- https://en.wikipedia.org/wiki/Water_gap
+library_status: written
+source: fluvial.valley.canyon
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

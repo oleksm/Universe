@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-busbar-dc-44ka
+  code: KIT-BUSBAR-DC-44KA
+  name: Busbar, DC, 44 kA, a 6 m length
+  traded_as: market.machinery
+  form: length
+package: package.bar-bundle
+made_from:
+- item: material.copper
+- item: material.structural-steel-a36
+size:
+  length: 6.0
+  width: 1.0
+  height: 0.24
+supplies:
+  item: run.busbar-dc-44ka
+  length: 6.0
+physical:
+  mass: 1431.6
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: 'a 6 m length of run.busbar-dc-44ka: its mass a metre times the length sold.'

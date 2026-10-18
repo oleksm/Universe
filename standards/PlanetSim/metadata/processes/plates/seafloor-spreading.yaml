@@ -1,0 +1,175 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.seafloor-spreading
+  name: 'Gaps: new ridge floor and continental stretching'
+  about: 'After removal of sunk particles, every sample whose nearest particle is farther than GAP*gap is an opening. If the nearest (source) particle is continental and thicker than 2*STRETCH_MIN (xvol/cell), it stretches: half its
+    volume goes to a new continental particle at the sample (age copied, rift geology, rift ores and evaporites in the arid band). Otherwise a new ocean floor particle (OCEAN_CRUST, age 0, MORB, VMS) is added at the sample on the source''s
+    plate. Ridge push force from the new point toward the source is added to the source''s plate.'
+area: plates
+clock:
+  when: every step
+reads:
+- name: w.x
+  field: planet-field.particle-position
+  unit: '1'
+- name: w.xcont
+  field: planet-field.particle-continental
+  unit: '1'
+- name: w.xvol
+  field: planet-field.particle-volume
+  unit: m3
+- name: w.xplate
+  field: planet-field.particle-plate
+  unit: '1'
+- name: w.xage
+  field: planet-field.particle-age
+  unit: s
+- name: (forge) next particle id
+  field: planet-field.particle-id-next
+  unit: '1'
+- name: pts
+  unit: unit vec
+  meaning: samples
+- name: sank
+  field: planet-field.particle-sunk
+  unit: '1'
+- name: w.xtop
+  field: planet-field.particle-rock-top
+  unit: '1'
+- name: w.xbase
+  field: planet-field.particle-rock-base
+  unit: '1'
+- name: w.xcover
+  field: planet-field.particle-rock-cover
+  unit: m
+writes:
+- name: w.x
+  field: planet-field.particle-position
+  unit: '1'
+- name: w.xplate
+  field: planet-field.particle-plate
+  unit: '1'
+- name: w.xcont
+  field: planet-field.particle-continental
+  unit: '1'
+- name: w.xvol
+  field: planet-field.particle-volume
+  unit: m3
+- name: w.xfloor
+  field: planet-field.particle-floor-thickness
+  unit: m
+- name: w.xage
+  field: planet-field.particle-age
+  unit: s
+- name: w.xsuture
+  field: planet-field.particle-suture
+  unit: s
+- name: (forge) particle id
+  field: planet-field.particle-id
+  unit: '1'
+- name: fronts (by particle)
+  field: planet-field.particle-front-low
+  unit: '1'
+- name: fronts (by particle)
+  field: planet-field.particle-front-high
+  unit: '1'
+- name: fronts (by particle)
+  field: planet-field.particle-front-time
+  unit: s
+- name: force
+  field: planet-field.plate-force
+  unit: '1'
+  meaning: ridge push
+- name: (forge) next particle id
+  field: planet-field.particle-id-next
+  unit: '1'
+- name: sank (cleared)
+  field: planet-field.particle-sunk
+  unit: '1'
+- name: w.xtop
+  field: planet-field.particle-rock-top
+  unit: '1'
+- name: w.xbase
+  field: planet-field.particle-rock-base
+  unit: '1'
+- name: w.xcover
+  field: planet-field.particle-rock-cover
+  unit: m
+params:
+- name: GAP
+  value: 0.75
+  unit: '1'
+  meaning: 'a sample farther than GAP*gap from every particle is an opening: new particle there (ridge floor or stretched continent)'
+  source: stages/plates.py:46
+  note: 'lattice''s own points lie within ~0.62 of one anywhere: chosen clear of that'
+- name: STRETCH_MIN
+  value: 20000.0
+  unit: m
+  meaning: a continental source particle thicker than 2*STRETCH_MIN stretches into an opening gap (gives half its volume) instead of the ocean opening
+  source: stages/plates.py:175
+  note: 'real: rifted margins 10-30 km before breakup; Whitmarsh et al. 2001; McKenzie 1978'
+- name: OCEAN_CRUST
+  value: 7000.0
+  unit: m
+  meaning: new ocean floor thickness (also reference thickness in elevation, and read() fallback)
+  source: stages/plates.py:76
+  note: m, (real) White et al. 1992
+- name: RIDGE_PUSH
+  value: 0.15
+  unit: '1'
+  meaning: 'weight of ridge push: at each opened sample, a unit tangent force from the new point toward the source particle, on the source plate'
+  source: stages/plates.py:55
+  note: Forsyth & Uyeda 1975
+- name: stretch share
+  value: 0.5
+  unit: '1'
+  meaning: share of the source's volume given to the stretched new particle
+  source: stages/plates.py:1224
+- name: stretch threshold factor
+  value: 2.0
+  unit: '1'
+  meaning: source must exceed 2*STRETCH_MIN to stretch
+  source: stages/plates.py:1221
+- name: new xsuture
+  value: -3.15576e+22
+  unit: s
+  said_as:
+    unit: Myr
+    factor: -1000000000.0
+  meaning: 'a new particle''s suture time: never sutured (w.add)'
+  source: stages/plates.py:392
+- name: new floor age
+  value: 0.0
+  unit: s
+  meaning: new ridge floor's age
+  source: stages/plates.py:1230
+- name: worn-out continent
+  value: 0.05
+  unit: '1'
+  meaning: continental particles with xvol <= 0.05*OCEAN_CRUST*cell (350 m equivalent) are dropped
+  source: stages/plates.py:1210
+  note: 'forge: the removal (the Python''s keep) runs here, just before the gaps; subduction marks the sunk'
+random_draws:
+- none
+invariants:
+- stretching conserves continental volume
+- after this step no sample is farther than GAP*gap from a particle
+depends_on:
+- planet-process.subduction
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/plates.py:run (lines 1213-1255)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'
+events_emitted:
+- event: planet-event.ledger-row
+  where: 'forge: the continental volume this process made or removed this step (the Python''s ledger rows)'

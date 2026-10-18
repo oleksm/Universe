@@ -1,0 +1,134 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.trunk-river
+  name: Trunk river
+  about: 'A relief feature of the fluvial family: trunk river.'
+register: feature
+family: fluvial
+level:
+- 1
+geometry: polyline
+properties:
+- field: discharge profile
+  unit: m3/s
+- field: channel width
+  unit: m
+- field: gradient
+  unit: m/m
+trigger: routing, Q > 1,000 m3/s
+generator: down the routing
+overrides: capture, drowning, glacial overprint
+wave: 1
+built: false
+levels:
+- planet-level.planet
+- planet-level.cluster
+status: draft
+basis:
+- note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical
+    feature catalogue.'
+  of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
+  - trigger
+  - generator
+  - overrides
+  - wave
+  - built
+  tier: derived
+- of:
+  - pinned_to
+  - spans
+  - dimensions
+  - layout
+  - parent_kinds
+  review: true
+  source: 'the laws'' notes: Moody and Troutman 2002; Leopold and Wolman 1957, 1960 (coefficients recalled, to check against
+    the papers); figures marked open are invented'
+  tier: sourced
+- of:
+  - layout
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
+    9747f0d-c437724. frame and record from: proposed (the schema has no fields for them yet).'
+  review: true
+pinned_to: 'its mouth: where it reaches the sea, a lake, or the river it joins (a tributary hangs from that river)'
+spans:
+- name: centreline
+  meaning: 'the channel from source to mouth (the last vertex is the pin), in cm east/north/up of the pin; profiles along
+    it: discharge (m3/s), width (m), depth (m), gradient (1)'
+dimensions:
+- formula: a * Q^b
+  meaning: bankfull width at each centreline vertex (a profile) and at the mouth
+  name: channel width
+  params:
+  - meaning: width coefficient at Q in m3/s
+    name: a
+    note: Moody and Troutman 2002, Earth Surface Processes and Landforms 27 (global fit at mean discharge)
+    unit: m
+    value: 7.2
+  - meaning: width exponent
+    name: b
+    note: Moody and Troutman 2002, Earth Surface Processes and Landforms 27 (global fit at mean discharge)
+    unit: '1'
+    value: 0.5
+  rule: width grows as the square root of discharge, downstream (Leopold and Maddock 1953; coefficients Moody and Troutman
+    2002, Earth Surface Processes and Landforms 27 (global fit at mean discharge))
+  unit: m
+- formula: c * Q^f
+  meaning: mean depth at each centreline vertex
+  name: channel depth
+  params:
+  - meaning: depth coefficient at Q in m3/s
+    name: c
+    note: Moody and Troutman 2002, Earth Surface Processes and Landforms 27 (global fit at mean discharge)
+    unit: m
+    value: 0.27
+  - meaning: depth exponent
+    name: f
+    note: Moody and Troutman 2002, Earth Surface Processes and Landforms 27 (global fit at mean discharge)
+    unit: '1'
+    value: 0.39
+  rule: depth grows as discharge to about 0.4 (Moody and Troutman 2002, Earth Surface Processes and Landforms 27 (global fit
+    at mean discharge))
+  unit: m
+- meaning: along the centreline, source to mouth
+  name: length
+  rule: measured on the span
+  unit: m
+layout:
+- formula: braided if S > k * Q^e
+  meaning: 1 meandering, 2 braided, per reach
+  name: pattern
+  params:
+  - meaning: threshold coefficient at Q in m3/s
+    name: k
+    note: 'Leopold and Wolman 1957, River channel patterns, USGS Professional Paper 282-B: S = 0.06 Q^-0.44 with Q in ft3/s'
+    unit: '1'
+    value: 0.012
+  - meaning: threshold exponent
+    name: e
+    note: Leopold and Wolman 1957, River channel patterns, USGS Professional Paper 282-B
+    unit: '1'
+    value: -0.44
+  rule: braided where the gradient exceeds the meander-braid threshold, meandering below (Leopold and Wolman 1957, River channel
+    patterns, USGS Professional Paper 282-B, in SI)
+  unit: '1'
+- name: frame
+  unit: '1'
+  meaning: '1: its pins sit in its plate''s frame (integer cm) and ride the crust, placed by planet-field.plate-rotation;
+    0: a body-frame snapshot, remade from the present state each pass'
+  rule: it is the present state of an agent (water, sea, wind, the plates' meeting), remade each pass
+  params:
+  - name: rides
+    value: 0.0
+    unit: '1'
+    meaning: 1 rides, 0 snapshot
+    source: 'planet-forge src/ride.rs (from the Python: stages/lines.py Store vs its rivers and coast)'
+    open: true
+parent_kinds:
+- planet-feature.trunk-river

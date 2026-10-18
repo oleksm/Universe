@@ -1,0 +1,148 @@
+# yaml-language-server: $schema=../../schema/planet-layer.schema.yaml
+identity:
+  key: planet-layer.relief
+  name: Relief
+  about: How high and how rough the land is (sea is none).
+version: 1
+classes:
+- id: 1
+  name: lowland plain
+  source: '0'
+  when:
+  - field: planet-field.height
+    op: <
+    value: 200.0
+  - field: planet-field.local-relief
+    op: <
+    value: 300.0
+  - field: planet-field.height
+    op: '>'
+    value: 0.0
+  rgb:
+  - 205
+  - 225
+  - 160
+- id: 2
+  name: plain
+  source: '1'
+  when:
+  - field: planet-field.height
+    op: '>='
+    value: 200.0
+  - field: planet-field.height
+    op: <
+    value: 600.0
+  - field: planet-field.local-relief
+    op: <
+    value: 300.0
+  - field: planet-field.height
+    op: '>'
+    value: 0.0
+  rgb:
+  - 225
+  - 220
+  - 170
+- id: 3
+  name: plateau
+  source: '2'
+  when:
+  - field: planet-field.height
+    op: '>='
+    value: 600.0
+  - field: planet-field.local-relief
+    op: <
+    value: 300.0
+  - field: planet-field.height
+    op: '>'
+    value: 0.0
+  rgb:
+  - 215
+  - 190
+  - 140
+- id: 4
+  name: hills
+  source: '3'
+  when:
+  - field: planet-field.local-relief
+    op: '>='
+    value: 300.0
+  - field: planet-field.local-relief
+    op: <
+    value: 900.0
+  - field: planet-field.height
+    op: '>'
+    value: 0.0
+  rgb:
+  - 180
+  - 160
+  - 110
+- id: 5
+  name: low mountains
+  source: '4'
+  when:
+  - field: planet-field.local-relief
+    op: '>='
+    value: 900.0
+  - field: planet-field.local-relief
+    op: <
+    value: 1500.0
+  - field: planet-field.height
+    op: '>'
+    value: 0.0
+  rgb:
+  - 140
+  - 105
+  - 80
+- id: 6
+  name: high mountains
+  source: '5'
+  when:
+  - field: planet-field.local-relief
+    op: '>='
+    value: 1500.0
+  - field: planet-field.height
+    op: '>'
+    value: 0.0
+  rgb:
+  - 95
+  - 70
+  - 60
+lines:
+- name: 500 m contour
+  field: planet-field.height
+  value: 500.0
+- name: 1000 m contour
+  field: planet-field.height
+  value: 1000.0
+- name: 2000 m contour
+  field: planet-field.height
+  value: 2000.0
+- name: 3000 m contour
+  field: planet-field.height
+  value: 3000.0
+- name: 4000 m contour
+  field: planet-field.height
+  value: 4000.0
+- name: 5000 m contour
+  field: planet-field.height
+  value: 5000.0
+bounded_by:
+- planet-line.contour
+- planet-line.class-boundary
+levels:
+- planet-level.planet
+- planet-level.cluster
+basis:
+- of:
+  - identity
+  tier: derived
+  note: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+- of:
+  - classes
+  tier: derived
+  note: 'planet-trees-pgs2 tools/formations.py relief_class: ids its classes plus 1 (its -1 sea is none).'
+- of:
+  - classes
+  tier: derived
+  note: Colours from docs/relief-model.md (planets, 17 Oct 2026); the sim's ids 0 to 5 are these ids less 1, its -1 sea none here.
+status: draft

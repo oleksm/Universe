@@ -1,0 +1,61 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.glacial.landscape.periglacial-plain
+  name: Periglacial plain
+  about: Periglacial plain.
+family: glacial
+factors:
+- factor: planet-factor.clim-temp
+  weight: 3
+  why: MAAT below 0 C with frequent freeze-thaw; ice wedges need much colder (approx -6 C)
+- factor: planet-factor.permafrost
+  weight: 3
+  why: permafrost (>=2 yr <=0 C) and ground ice >30% drive polygons, pingos, thermokarst
+- factor: planet-factor.regolith
+  weight: 3
+  why: fine frost-susceptible sediment (silt) for heave and ice segregation
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: snow cover insulates ground; low snow favours permafrost
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: vegetation/peat insulates; removal triggers thermokarst
+- factor: planet-factor.groundwater
+  weight: 1
+  why: water supply feeds ice lenses and pingos
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: low-gradient plains; slopes switch to solifluction
+- factor: planet-factor.clim-history
+  weight: 1
+  why: warming phases make thermokarst lakes; cold phases rebuild ice wedges
+- factor: planet-factor.ice-extent
+  weight: 1
+  why: unglaciated or deglaciated ground beyond ice margins
+- factor: planet-factor.clim-wind
+  weight: 1
+  why: loess/sand deposition and continentality
+- factor: planet-factor.time
+  weight: 1
+  why: kyr for ice-wedge networks
+vocabulary_id: 159
+sources:
+- https://en.wikipedia.org/wiki/Periglaciation
+- https://nsidc.org/learn/parts-cryosphere/frozen-ground-permafrost
+library_status: planned
+source: glacial.landscape.periglacial_plain
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

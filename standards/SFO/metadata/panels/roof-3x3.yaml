@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=../../schema/panel.schema.yaml
+# Written by tools/standards/building_kit.py: change it there.
+identity:
+  key: panel.roof-3x3
+  name: Roof panel, 3 x 3 m
+  description: An insulated sandwich roof panel on the frame's top cells, a rubber membrane over it, laid to fall to its gutters.
+kind: roof
+site: air
+cell:
+- 3.0
+- 3.0
+thickness: 0.15
+u_value: 0.15
+load: 1000.0
+physical:
+  length: 3.0
+  width: 3.0
+  height: 0.15
+  mass: 142.7
+built_of:
+- what: Steel faces
+  item: material.structural-steel-a36
+  mass: 70.7
+  note: two 0.5 mm coated steel skins
+- what: Insulation core
+  item: material.pir-foam
+  mass: 43.2
+  note: 150 mm of PIR
+- what: Membrane
+  item: material.epdm-rubber
+  mass: 15.3
+  note: 1.5 mm EPDM
+- what: Edge frame and fixings
+  item: material.structural-steel-a36
+  mass: 13.5
+  note: its edge channel and the bolts to the frame's nodes
+template: template.roof
+basis:
+- of:
+  - built_of
+  - physical
+  - u_value
+  - load
+  tier: invented
+  review: true
+  note: From memory of modular building practice; to be sourced.

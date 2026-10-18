@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.glacial.bedform.drumlin-field
+  name: Drumlin field
+  about: Drumlin field.
+family: glacial
+factors:
+- factor: planet-factor.regolith
+  weight: 3
+  why: deformable till/soft sediment bed; length 250-1000 m
+- factor: planet-factor.ice-flow
+  weight: 3
+  why: flow aligns long axis; faster ice gives elongation 1.7-4.1 and toward MSGL
+- factor: planet-factor.ice-thermal
+  weight: 3
+  why: warm-based but not meltwater-flooded; abundant meltwater destroys bedforms
+- factor: planet-factor.ice-extent
+  weight: 1
+  why: ice-sheet interiors and lobes behind margins
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: lowlands with gentle bed
+- factor: planet-factor.time
+  weight: 1
+  why: 1-20 kyr of steady flow; instability growth
+- factor: planet-factor.sed-supply
+  weight: 1
+  why: till supply builds bodies; can have rock cores
+- factor: planet-factor.rock-type
+  weight: 1
+  why: soft sedimentary bedrock supplies till
+- factor: planet-factor.clim-history
+  weight: 1
+  why: later flow phases overprint/cross-cut fields
+vocabulary_id: 62
+sources:
+- https://www.antarcticglaciers.org/glacial-geology/glacial-landforms/drumlins/
+- https://www.antarcticglaciers.org/glacial-geology/glacial-landforms/glacial-depositional-landforms/
+library_status: written
+source: glacial.bedform.drumlin_field
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

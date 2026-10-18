@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/planet-event.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-event.inner-core-nucleation
+  name: Interior.inner-core-nucleation
+  about: the core's centre first freezes (Earth ~1.1 Gyr ago)
+source: interior.inner-core-nucleation
+emitted_by:
+- planet-process.core-dynamo
+status: draft

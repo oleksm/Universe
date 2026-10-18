@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-bus-joint-ac-65ka
+  code: KIT-BUS-JOINT-AC-65KA
+  name: Bus joint, AC, 65 kA
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.copper
+- item: material.high-strength-steel-4340
+- item: material.silicone-rubber
+size:
+  length: 0.3
+  width: 1.6
+  height: 0.34
+supplies:
+  item: connector.bus-joint-ac-65ka
+physical:
+  mass: 239.1
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.bus-joint-ac-65ka, as made.

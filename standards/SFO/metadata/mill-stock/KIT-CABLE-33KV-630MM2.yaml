@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-cable-33kv-630mm2
+  code: KIT-CABLE-33KV-630MM2
+  name: Cable, 33 kV, 630 mm2, a 100 m drum
+  traded_as: market.machinery
+  form: coil
+package: package.coil
+made_from:
+- item: material.copper
+- item: material.polyethylene-uhmw
+- item: material.aluminium-alloy-6061
+size:
+  length: 100.0
+  width: 0.325
+  height: 0.179
+supplies:
+  item: run.cable-33kv-630mm2
+  length: 100.0
+physical:
+  mass: 3220.0
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: 'a 100 m drum of run.cable-33kv-630mm2: its mass a metre times the length sold.'

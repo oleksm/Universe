@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry_extra.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-field.wind-north
+  name: Wind, north
+  about: 'The wind''s northward component (with planet-field.wind, the east one): a direction, no speed.'
+unit: '1'
+per: sample
+producer:
+  where: stages/coupled_climate.py
+  file: ctx
+  key: h_wind_n
+cautions:
+- 'a direction only: the sim has no wind speed'
+status: draft
+basis:
+- of:
+  - identity
+  - producer
+  - unit
+  tier: derived
+  note: 'planets, 17 Oct 2026: from the Python sim''s inventory (planet-forge docs/registry-migration/surface.json), read
+    from the code.'

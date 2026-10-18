@@ -1,30 +1,81 @@
 # yaml-language-server: $schema=../../schema/equipment.schema.yaml
 identity:
   key: equipment.engine.ft.s3
-  name: "Fusion thermal engine S3"
+  name: Fusion thermal engine S3
   maker: org.kestrel
   revision: draft
   slot: engine
-  description: "A fusion reactor (catalysed D-D, the deuterium the ports make) heating hydrogen through a magnetic nozzle: 27.8 kN at 347 km/s, 4.8 GW of jet. A cruise engine: 27.8 kN moves a 156 t ship at 0.18 m/s2. Hydrogen is its propellant, deuterium its fuel; D-He3 would halve its neutron loss when helium-3 is mined."
+  description: 'A fusion reactor (catalysed D-D, the deuterium the ports make) heating hydrogen through a magnetic nozzle: 27.8 kN at 347 km/s, 4.8 GW of jet. A cruise engine: 27.8 kN moves a 156 t ship at 0.18 m/s2. Hydrogen is its
+    propellant, deuterium its fuel; D-He3 would halve its neutron loss when helium-3 is mined. Its radiators are ten S2 hot radiator panels (equipment.thermal.radiator-hot.s2), five a side on the hull, fed from its four coolant ports
+    through the ship''s manifolds, each port to five panels (2026-10-17).'
 size_class: 3
 fits: mount.engine-s3
 physical:
-  mass: 421861
-  volume: 1.54e+03
+  mass: 361000
+  volume: 1540.0
   length: 24
   width: 8
   height: 8
 built_of:
   parts: engine-ft-s3
   list:
-    - { code: FTE3-01, name: "Reactor coils and cases", description: "The toroidal and poloidal coils in their titanium strengtheners.", mass: 198550, length: 19.7, width: 6.55, height: 6.55, item: stock.ti64-pl-5, quantity: 228300.0, module: module.welding-bay }
-    - { code: FTE3-02, name: "Shadow shield", description: "A nuclear-graphite disc between the mount and the reactor, 7.73 m across and 1.05 m thick.", mass: 90250, length: 7.73, width: 7.73, height: 1.05, item: good.carbon, quantity: 90250.0, module: module.assembly-shop }
-    - { code: FTE3-03, name: "First wall and nozzle", description: "Silicon carbide first wall; the magnetic nozzle.", mass: 18050, length: 8.84, width: 2.95, height: 2.95, item: stock.sic-tl-10, quantity: 20760.0, module: module.machining-centre }
-    - { code: FTE3-04, name: "Power conversion and heating", mass: 32490, length: 10.8, width: 3.59, height: 3.59, item: good.electronics, quantity: 32490.0, module: module.assembly-shop }
-    - { code: FTE3-05, name: "Coolant and refrigeration", mass: 14440, length: 8.21, width: 2.74, height: 2.74, item: good.pumps, quantity: 14440.0, module: module.assembly-shop }
-    - { code: FTE3-06, name: "Propellant feed", mass: 7220, length: 6.51, width: 2.17, height: 2.17, item: stock.st304-pl-3, quantity: 8303, module: module.machining-centre }
-    - { code: FTE3-07, name: "Radiator panels", description: "Two wings of 3 mm carbon-carbon, 5,533 m2 in all, stowed folded along the engine and swung out to stand edge-on to the jet; they shed the heat the reactor keeps from both faces at 1,500 K.", mass: 29047, length: 52.6, width: 52.6, height: 0.003, item: stock.cc-pl-3, quantity: 33404.0, module: module.assembly-shop }
-    - { code: FTE3-08, name: "Heat pipes, manifolds and booms", description: "Lithium heat pipes in molybdenum along the panels, the manifolds that feed them from the coolant loop, and the hinged booms that hold the wings out.", mass: 31814, length: 52.6, width: 0.5, height: 0.5, item: stock.mo-tb-12x0p5, quantity: 36586.1, module: module.machining-centre }
+  - code: FTE3-01
+    name: Reactor coils and cases
+    description: The toroidal and poloidal coils in their titanium strengtheners.
+    mass: 198550
+    length: 19.7
+    width: 6.55
+    height: 6.55
+    item: stock.ti64-pl-5
+    quantity: 228300.0
+    module: module.welding-bay
+  - code: FTE3-02
+    name: Shadow shield
+    description: A nuclear-graphite disc between the mount and the reactor, 7.73 m across and 1.05 m thick.
+    mass: 90250
+    length: 7.73
+    width: 7.73
+    height: 1.05
+    item: good.carbon
+    quantity: 90250.0
+    module: module.assembly-shop
+  - code: FTE3-03
+    name: First wall and nozzle
+    description: Silicon carbide first wall; the magnetic nozzle.
+    mass: 18050
+    length: 8.84
+    width: 2.95
+    height: 2.95
+    item: stock.sic-tl-10
+    quantity: 20760.0
+    module: module.machining-centre
+  - code: FTE3-04
+    name: Power conversion and heating
+    mass: 32490
+    length: 10.8
+    width: 3.59
+    height: 3.59
+    item: good.electronics
+    quantity: 32490.0
+    module: module.assembly-shop
+  - code: FTE3-05
+    name: Coolant and refrigeration
+    mass: 14440
+    length: 8.21
+    width: 2.74
+    height: 2.74
+    item: good.pumps
+    quantity: 14440.0
+    module: module.assembly-shop
+  - code: FTE3-06
+    name: Propellant feed
+    mass: 7220
+    length: 6.51
+    width: 2.17
+    height: 2.17
+    item: stock.st304-pl-3
+    quantity: 8303
+    module: module.machining-centre
 making:
   module: module.assembly-shop
 function:
@@ -41,20 +92,165 @@ function:
   shield_pass: 0.01
   reaction_offset: 7.2
   heat_to_hull: 0.00071
+ports:
+- id: coolant-out-1
+  flow: out
+  medium: liquid
+  item: material.lithium
+  interface: interface.lm-flange-dn1200
+  half: androgynous
+  make: bolted
+  rate: 1607.3
+  pressure: 500000.0
+  temperature: 1600.0
+  at:
+  - -6.0
+  - -4.0
+  - 2.4
+  facing:
+  - 0.0
+  - -1.0
+  - 0.0
+  note: to the port bank of five S2 radiator panels (equipment.thermal.radiator-hot.s2) by the ship's manifold, about 321 kg/s to each; place provisional
+- id: coolant-in-1
+  flow: in
+  medium: liquid
+  item: material.lithium
+  interface: interface.lm-flange-dn1200
+  half: androgynous
+  make: bolted
+  rate: 1607.3
+  pressure: 500000.0
+  temperature: 1400.0
+  at:
+  - -6.0
+  - -4.0
+  - -2.4
+  facing:
+  - 0.0
+  - -1.0
+  - 0.0
+  note: to the port bank of five S2 radiator panels (equipment.thermal.radiator-hot.s2) by the ship's manifold, about 321 kg/s to each; place provisional
+- id: coolant-out-2
+  flow: out
+  medium: liquid
+  item: material.lithium
+  interface: interface.lm-flange-dn1200
+  half: androgynous
+  make: bolted
+  rate: 1607.3
+  pressure: 500000.0
+  temperature: 1600.0
+  at:
+  - -6.0
+  - 4.0
+  - 2.4
+  facing:
+  - 0.0
+  - 1.0
+  - 0.0
+  note: to the starboard bank of five S2 radiator panels (equipment.thermal.radiator-hot.s2) by the ship's manifold, about 321 kg/s to each; place provisional
+- id: coolant-in-2
+  flow: in
+  medium: liquid
+  item: material.lithium
+  interface: interface.lm-flange-dn1200
+  half: androgynous
+  make: bolted
+  rate: 1607.3
+  pressure: 500000.0
+  temperature: 1400.0
+  at:
+  - -6.0
+  - 4.0
+  - -2.4
+  facing:
+  - 0.0
+  - 1.0
+  - 0.0
+  note: to the starboard bank of five S2 radiator panels (equipment.thermal.radiator-hot.s2) by the ship's manifold, about 321 kg/s to each; place provisional
 visual:
-  format: "freefall-model/1"
-  path: "models/engine-ft-s3/v1"
-  manifest_sha256: "d7843aba63fb8c3fbafda489b83596af415ead76f99d6e6e1fccb0cc474a6ac3"
+  format: freefall-model/1
+  path: models/engine-ft-s3/v1
+  manifest_sha256: d7843aba63fb8c3fbafda489b83596af415ead76f99d6e6e1fccb0cc474a6ac3
   version: 1
   triangles: 14548
 life: 473364000
 basis:
-  - { of: [function.exhaust, function.efficiency, function.thrust], tier: sourced, review: true, source: "standards/sources/research_ship_equipment.json", note: "Discovery II (NASA/TM-2005-213559): exhaust 347 km/s at the nozzle exit, 4.83 GW of jet from 7.9 GW of fusion (0.61), 6,250 lbf = 27.8 kN, 0.08 kg/s. The S3 is that engine; the others scale." }
-  - { of: [physical], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Discovery II itself: reactor 310 t (first wall 14, coils 206, shield 90), nozzle 3, power conversion 30, coolant 11, heating 5, refrigeration 2" }
-  - { of: [function.isotropic_loss, function.shield_pass, function.heat_to_hull], tier: invented, review: true, note: "Catalysed D-D: about 38% of the fusion power leaves as neutrons and about 12% as X-rays, in every direction (D-He3, Discovery II's fuel, would be about a quarter in all; the registry has no helium-3 stock yet, so the engine burns the deuterium the ports make); a half-metre carbon-graphite shadow shield (Discovery II's 90 t) passes about a hundredth toward the ship. heat_to_hull = 0.5 / 0.41 x 0.05 x 0.01 + 1e-4 soak-back = 0.00071 of the jet, for a hull taking a twentieth of the sphere. From memory of the physics; the figures want a source. Review." }
-  - { of: [function.efficiency], tier: derived, review: true, note: "Was 0.61, Discovery II's figure, but that engine burns D-He3, which loses about a quarter of its power in every direction; on D-D, which loses half, 0.61 plus 0.5 came to more than the fusion power (found by the modeller). Discovery II puts 0.61 / 0.75 = 0.81 of what is not lost into the jet; on D-D that is 0.5 x 0.81 = 0.41. The engine burns about half as much deuterium again for the same jet. Review." }
-  - { of: [function.throttle, function.gimbal], tier: invented, review: true, note: "Deep throttling by fuel rate (a fifth); a magnetic nozzle steers the jet a few degrees. Chosen." }
-  - { of: [built_of, making], rule: rule.first-design-parts }
-  - { of: [built_of.list], tier: derived, review: true, note: "Layout, with the modeller's first blockout (v1). The mount face is at the fore end and the jet aft. Scaling the S1's shield up would give 210 t; instead the shield keeps Discovery II's 90 t as a shadow disc of nuclear graphite at 1,800 kg/m3, 7.73 m across and 1.05 m thick, from 0.45 to 1.5 m aft of the mount face: 88.8 t, 90.25 t with its casing. The enclosed reactor runs from 1.45 m aft and is centred 7.2 m aft (reaction_offset, measured to the plasma centre). Steering is by the nozzle field (gimbal 0.05 rad), with no moving parts. This is a simplified analogue: Discovery II (NASA/TM-2005-213559) also wraps graphite round its reactor and nozzle coils, converging into a 60 degree shadow. Those coil blankets are not counted. The other part boxes are cube-root placeholders, not shapes. Review." }
-  - { of: [function.heat_to_hull, built_of.list, physical.mass], tier: derived, review: true, note: "The engine carries its own radiators (2026-10-13; the owner left it to the registry): 421,861 kg (was 361,000). Heat it keeps: fusion power is jet / 0.41 = 11.76 GW and half leaves in every direction; the X-rays, about 1,410 MW, stop in the first wall; the shield stops about 390 MW of neutrons; 0.09 is lost in heating and the nozzle, 1,058.8 MW: 2,858.8 MW, the coils' share not counted. Shed at 1,500 K (carbon-carbon is good to 2,300 K; lithium heat pipes work at 1,300 to 1,800 K) with emissivity 0.9 from both faces, 517 kW/m2: 5,532.8 m2. Areal mass 10 kg/m2 with heat pipes and manifolds (invented, of the order of the heavy end of heat-pipe radiator studies, from memory; the panel 5.25 of it), and 10% for booms and hinges. Within mount.engine-s3. Open: stowed, the wings take about 111 m3 inside the envelope, not yet laid out; the panel's fin efficiency between heat pipes needs close spacing at 1,500 K, so the 10 kg/m2 is to be checked by a design." }
-  - { of: [life], rule: rule.life-ship-system }
+- of:
+  - function.exhaust
+  - function.efficiency
+  - function.thrust
+  tier: sourced
+  review: true
+  source: standards/sources/research_ship_equipment.json
+  note: 'Discovery II (NASA/TM-2005-213559): exhaust 347 km/s at the nozzle exit, 4.83 GW of jet from 7.9 GW of fusion (0.61), 6,250 lbf = 27.8 kN, 0.08 kg/s. The S3 is that engine; the others scale.'
+- of:
+  - physical
+  tier: derived
+  review: true
+  source: standards/sources/research_ship_equipment.json
+  note: 'Discovery II itself: reactor 310 t (first wall 14, coils 206, shield 90), nozzle 3, power conversion 30, coolant 11, heating 5, refrigeration 2'
+- of:
+  - function.isotropic_loss
+  - function.shield_pass
+  - function.heat_to_hull
+  tier: invented
+  review: true
+  note: 'Catalysed D-D: about 38% of the fusion power leaves as neutrons and about 12% as X-rays, in every direction (D-He3, Discovery II''s fuel, would be about a quarter in all; the registry has no helium-3 stock yet, so the engine
+    burns the deuterium the ports make); a half-metre carbon-graphite shadow shield (Discovery II''s 90 t) passes about a hundredth toward the ship. heat_to_hull = 0.5 / 0.41 x 0.05 x 0.01 + 1e-4 soak-back = 0.00071 of the jet, for
+    a hull taking a twentieth of the sphere. From memory of the physics; the figures want a source. Review.'
+- of:
+  - function.efficiency
+  tier: derived
+  review: true
+  note: Was 0.61, Discovery II's figure, but that engine burns D-He3, which loses about a quarter of its power in every direction; on D-D, which loses half, 0.61 plus 0.5 came to more than the fusion power (found by the modeller). Discovery
+    II puts 0.61 / 0.75 = 0.81 of what is not lost into the jet; on D-D that is 0.5 x 0.81 = 0.41. The engine burns about half as much deuterium again for the same jet. Review.
+- of:
+  - function.throttle
+  - function.gimbal
+  tier: invented
+  review: true
+  note: Deep throttling by fuel rate (a fifth); a magnetic nozzle steers the jet a few degrees. Chosen.
+- of:
+  - built_of
+  - making
+  rule: rule.first-design-parts
+- of:
+  - built_of.list
+  tier: derived
+  review: true
+  note: 'Layout, with the modeller''s first blockout (v1). The mount face is at the fore end and the jet aft. Scaling the S1''s shield up would give 210 t; instead the shield keeps Discovery II''s 90 t as a shadow disc of nuclear graphite
+    at 1,800 kg/m3, 7.73 m across and 1.05 m thick, from 0.45 to 1.5 m aft of the mount face: 88.8 t, 90.25 t with its casing. The enclosed reactor runs from 1.45 m aft and is centred 7.2 m aft (reaction_offset, measured to the plasma
+    centre). Steering is by the nozzle field (gimbal 0.05 rad), with no moving parts. This is a simplified analogue: Discovery II (NASA/TM-2005-213559) also wraps graphite round its reactor and nozzle coils, converging into a 60 degree
+    shadow. Those coil blankets are not counted. The other part boxes are cube-root placeholders, not shapes. Review.'
+- of:
+  - function.heat_to_hull
+  - built_of.list
+  - physical.mass
+  tier: derived
+  review: true
+  note: 'The engine carries its own radiators (2026-10-13; the owner left it to the registry): 421,861 kg (was 361,000). Heat it keeps: fusion power is jet / 0.41 = 11.76 GW and half leaves in every direction; the X-rays, about 1,410
+    MW, stop in the first wall; the shield stops about 390 MW of neutrons; 0.09 is lost in heating and the nozzle, 1,058.8 MW: 2,858.8 MW, the coils'' share not counted. Shed at 1,500 K (carbon-carbon is good to 2,300 K; lithium heat
+    pipes work at 1,300 to 1,800 K) with emissivity 0.9 from both faces, 517 kW/m2: 5,532.8 m2. Areal mass 10 kg/m2 with heat pipes and manifolds (invented, of the order of the heavy end of heat-pipe radiator studies, from memory; the
+    panel 5.25 of it), and 10% for booms and hinges. Within mount.engine-s3. Open: stowed, the wings take about 111 m3 inside the envelope, not yet laid out; the panel''s fin efficiency between heat pipes needs close spacing at 1,500
+    K, so the 10 kg/m2 is to be checked by a design.'
+- of:
+  - life
+  rule: rule.life-ship-system
+- of:
+  - built_of.list
+  - physical.mass
+  - ports
+  tier: derived
+  review: true
+  note: '2026-10-17, the owner''s choice: the radiator wings left the engine (they cannot fold inside its mount with their plumbing live); FTE3-07 and FTE3-08 went to equipment.thermal.radiator-hot.s3, two to an engine, so the engine
+    is 361,000 kg; four coolant ports for their lithium, places provisional.'
+- of:
+  - ports
+  - identity.description
+  tier: derived
+  review: true
+  note: '2026-10-17, the owner''s choice: no S3 radiator panel. Sized as S1 and S2''s family, one 74.4 x 37.2 m panel came to about 170 t (its 149 m tubes need 90 mm molybdenum for under 1 bar); five S2 panels a side (265 MW each at
+    1,500 K) do it for about 138 t. Five a side shed 1,324.6 MW against the 1,350 MW a side the engine sends: the loop runs about 7 K hotter, 1,507 K ((1,350 / 1,324.6)^0.25 x 1,500), within lithium''s and carbon-carbon''s range; each
+    panel takes about 321 kg/s against its 315.4 design.'

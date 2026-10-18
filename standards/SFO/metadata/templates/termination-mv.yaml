@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/template.schema.yaml
+identity:
+  key: template.termination-mv
+  name: Cable termination, medium voltage
+  description: A cable's stress-cone termination, 1 to 36 kV. every size of the family is this template at the record's figures.
+family: termination
+draws: model
+scales_by:
+- size
+- physical.length
+- physical.height
+model_of: connector.termination-6p6kv-185mm2
+members: 11
+basis:
+- of:
+  - draws
+  - scales_by
+  - pieces
+  - model_of
+  tier: derived
+  note: 'The owner, 2026-10-17: one template a family, scaled, instead of a model a size; model_of is an installed size''s model, the middle one of those installed, until the template has its own.'

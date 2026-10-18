@@ -1,0 +1,58 @@
+# yaml-language-server: $schema=../../schema/panel.schema.yaml
+# Written by tools/standards/building_kit.py: change it there.
+identity:
+  key: panel.wall-window-3x3
+  name: Wall panel with a window, 3 x 3 m
+  description: An insulated wall panel with a 1.8 x 1.5 m double-glazed window.
+kind: wall
+site: air
+cell:
+- 3.0
+- 3.0
+thickness: 0.1
+opening:
+  kind: window
+  width: 1.8
+  height: 1.5
+  sill: 0.9
+u_value: 0.57
+physical:
+  length: 3.0
+  width: 0.1
+  height: 3.0
+  mass: 198.1
+built_of:
+- what: Steel faces
+  item: material.structural-steel-a36
+  mass: 49.5
+  note: two 0.5 mm coated steel skins
+- what: Insulation core
+  item: material.pir-foam
+  mass: 20.2
+  note: 100 mm of PIR
+- what: Glazing
+  item: material.soda-lime-glass
+  mass: 81.0
+  note: double glazing, two 6 mm panes
+- what: Mullions and transoms
+  item: material.aluminium-alloy-6061
+  mass: 32.4
+  note: aluminium curtain wall frame
+- what: Seals
+  item: material.epdm-rubber
+  mass: 1.6
+  note: EPDM gaskets
+- what: Edge frame and fixings
+  item: material.structural-steel-a36
+  mass: 13.5
+  note: its edge channel and the bolts to the frame's nodes
+template: template.wall-window
+basis:
+- of:
+  - built_of
+  - physical
+  - u_value
+  - load
+  tier: invented
+  review: true
+  note: From memory of modular building practice; to be sourced.

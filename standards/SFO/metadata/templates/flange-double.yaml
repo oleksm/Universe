@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/template.schema.yaml
+identity:
+  key: template.flange-double
+  name: Flange joint, double seal
+  description: A bolted flange pair with two seals and the leak-off between. every size of the family is this template at the record's figures.
+family: flange
+draws: model
+scales_by:
+- size
+- physical.length
+- physical.height
+model_of: connector.flange-dn250-pn16-ss-double
+members: 17
+basis:
+- of:
+  - draws
+  - scales_by
+  - pieces
+  - model_of
+  tier: derived
+  note: 'The owner, 2026-10-17: one template a family, scaled, instead of a model a size; model_of is an installed size''s model, the middle one of those installed, until the template has its own.'

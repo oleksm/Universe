@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.grain
+  name: Grain
+  about: 'The fold and strike direction: ridges run along it.'
+unit: '1'
+per: sample
+vector: true
+producer:
+  where: stages/coupled.py
+  file: ctx
+  key: grain
+source: grain
+levels:
+- planet-level.planet
+- planet-level.cluster
+- planet-level.pattern
+- planet-level.detail
+basis:
+- of:
+  - identity
+  tier: derived
+  note: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+status: draft

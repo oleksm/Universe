@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.glacial.erosion.whaleback
+  name: Whaleback (rock drumlin)
+  about: Whaleback (rock drumlin).
+family: glacial
+factors:
+- factor: planet-factor.ice-thermal
+  weight: 3
+  why: warm-based ice abrading all sides
+- factor: planet-factor.ice-flow
+  weight: 3
+  why: 'thick ice/high overburden keeps contact on lee: no cavity, no quarrying'
+- factor: planet-factor.rock-fracture
+  weight: 3
+  why: sparse jointing prevents lee plucking
+- factor: planet-factor.rock-type
+  weight: 1
+  why: massive hard rock
+- factor: planet-factor.relief-inherited
+  weight: 1
+  why: pre-existing bedrock knobs
+- factor: planet-factor.time
+  weight: 1
+  why: 10-1000 kyr; abrasion is slow
+vocabulary_id: 78
+sources:
+- https://www.antarcticglaciers.org/glacial-geology/glacial-landforms/glacial-erosional-landforms/roches-moutonnees/
+library_status: written
+source: glacial.erosion.whaleback
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

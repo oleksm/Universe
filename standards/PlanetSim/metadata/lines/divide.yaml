@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/planet-line.schema.yaml
+identity:
+  key: planet-line.divide
+  name: Divide
+  about: Between drainage basins.
+born_from: the basins layer
+first_level: planet-level.cluster
+levels:
+- planet-level.cluster
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - identity
+  tier: derived
+  note: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+- of:
+  - ends_idle
+  - offset
+  tier: derived
+  note: 'planet-sim-landform stages/zones.py: CLOSE_MYR 30, ARC_FRONT_M 150e3.'
+status: draft

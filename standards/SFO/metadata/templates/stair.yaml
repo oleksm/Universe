@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schema/template.schema.yaml
+# Written by tools/standards/building_kit.py: change it there.
+identity:
+  key: template.stair
+  name: Stairs
+  description: 'Stairs: one look for every panel of the family, scaled to each record''s cell (docs/asset-contract.md, Templates).'
+family: panel
+draws: model
+scales_by:
+- physical
+reference: panel.stair-3m
+members: 1
+basis:
+- of:
+  - draws
+  - scales_by
+  tier: derived
+  note: 'The owner, 2026-10-17: buildings as layouts; one template a panel family (building_kit.py).'
+visual:
+  format: freefall-model/1
+  path: models/stair/v1
+  manifest_sha256: a494158d81102c6a047ee3a1ed66de3497614f12f331fb26f94233ebdaa255bd
+  version: 1
+  triangles: 5004

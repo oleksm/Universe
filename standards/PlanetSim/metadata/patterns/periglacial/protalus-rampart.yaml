@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.periglacial.slope.protalus-rampart
+  name: Protalus (pronival) rampart
+  about: Protalus (pronival) rampart.
+family: periglacial
+factors:
+- factor: planet-factor.clim-temp
+  weight: 3
+  why: 'Marginal nival climate: perennial snowbed persists but no glacier forms'
+- factor: planet-factor.clim-precip
+  weight: 1
+  why: Enough snow (often drifted) to keep a perennial snowbed
+- factor: planet-factor.clim-wind
+  weight: 1
+  why: Lee-side drifting builds snowbed below cliff
+- factor: planet-factor.aspect
+  weight: 3
+  why: Shaded aspects keep snowbed through summer
+- factor: planet-factor.rock-fracture
+  weight: 3
+  why: Jointed cliff supplies clasts that slide across the snow
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: Cliff above talus; crest within ~30-70 m of talus foot
+- factor: planet-factor.clim-history
+  weight: 1
+  why: Mostly Younger Dryas/Holocene cold phases; now relict
+- factor: planet-factor.time
+  weight: 1
+  why: 0.1-12 kyr; height 1-10 m
+vocabulary_id: 112
+sources:
+- https://en.wikipedia.org/wiki/Protalus_rampart
+library_status: written
+source: periglacial.slope.protalus_rampart
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

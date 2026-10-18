@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/material.schema.yaml
+identity:
+  key: material.air
+  name: "Air"
+  class: fluid
+  form:
+  - fluid
+  description: "A world's air where it has one, about four parts nitrogen to one of oxygen: drawn into fume ducts and burners, blown through baghouses and towers."
+fuel:
+  release: none
+mass:
+  density: 1.2
+basis:
+  - { of: [mass.density], tier: derived, note: "At 20 deg C and 1 bar, about 1.2 kg/m3: the ideal gas at 29 g/mol. An Earth-like air; another world's differs." }

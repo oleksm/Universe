@@ -1,0 +1,123 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Plant run
+x-kind: [run]
+description: "standards/SFO/metadata/runs/<name>.yaml: a class of run (SFO 25), the made parts a layout lays between ports: a pipe, a lined duct, a belt or drag conveyor, a cable on its tray. One class is one size and rating: its straight (by the metre), its elbow, its tee, its supports and the connector at its ends. The game lays a run from its path: straights along each leg, an elbow at each corner, a support every spacing. Written by tools/standards/plant_kit.py."
+type: object
+additionalProperties: false
+required: [identity, kind, size, outside, per_m, connector]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      description: { type: string }
+  kind:
+    enum: [pipe, lined-duct, jacketed-duct, belt, drag-conveyor, cable, busbar, hose, conductor-rail, festoon]
+    description: "pipe: steel or stainless pipe, bare or lagged; lined-duct: a steel shell lined with refractory, for hot gas; jacketed-duct: a steel duct for hot gas inside a water jacket, its water brought by pipes ending on it (`jacket:` ends); belt: an open troughed belt on idlers and a stringer; drag-conveyor: a chain drawing flights through a closed casing, for hot or sealed bulk; cable: power cables on their tray; busbar: a direct current bus of two poles, water-cooled hollow copper on insulators, where a cable would be too many circuits; hose: a flexible hose (rubber, hydraulic or corrugated metal) laid loose to things that move or are coupled by hand; conductor-rail: enclosed conductors along a moving machine's path, a collector sliding on them; festoon: a flexible cable hung in loops from trolleys on a track along a short travel."
+  size: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "Nominal bore (pipe: the steel's; lined duct: the steel shell's), belt width or casing width; for a cable, the conductor's cross-section in m2" }
+  bore: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "The clear bore the flow has (inside the lining of a lined duct)" }
+  outside: { type: array, items: { type: number, exclusiveMinimum: 0 }, minItems: 2, maxItems: 2, x-unit: "m", description: "Its outside across and up [width, height], lagging and casing included: what a fit check keeps clear (a pipe's diameter twice)." }
+  rating:
+    type: object
+    additionalProperties: false
+    properties:
+      pressure: { type: number, minimum: 0, x-unit: "Pa" }
+      temperature: { type: number, minimum: 0, x-unit: "K", description: "K, the most at its wall" }
+      voltage: { type: number, minimum: 0, x-unit: "V" }
+      current: { type: number, minimum: 0, x-unit: "A", description: "A per phase, one circuit (a busbar: per pole)" }
+      rate: { type: number, minimum: 0, x-unit: "kg/s", description: "kg/s of bulk at full speed" }
+  per_m:
+    type: object
+    additionalProperties: false
+    required: [mass, built_of]
+    description: "A metre of its straight."
+    properties:
+      mass: { type: number, exclusiveMinimum: 0, x-unit: "kg" }
+      power: { type: number, minimum: 0, x-unit: "W", description: "W a metre it draws running at its rating, on flat ground at 1 g; a lift's power is the layout's" }
+      built_of:
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          required: [what, item, mass]
+          properties:
+            what: { type: string }
+            item: { type: string, x-ref: [material, stock, good] }
+            mass: { type: number, exclusiveMinimum: 0, x-unit: "kg" }
+            note: { type: string }
+  elbow:
+    type: object
+    additionalProperties: false
+    required: [radius, mass]
+    description: "A 90 degree bend; a corner of another angle counts as one."
+    properties:
+      radius: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "m to its centreline, the least the run turns at" }
+      mass: { type: number, exclusiveMinimum: 0, x-unit: "kg" }
+  riser:
+    type: object
+    additionalProperties: false
+    required: [radius, mass]
+    description: "A cable tray's bend up or down (on edge), its cores side by side at one radius; its elbow then turns in plan."
+    properties:
+      radius: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "m to the cores, their least bend radius" }
+      mass: { type: number, exclusiveMinimum: 0, x-unit: "kg" }
+  pitch: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "m between a cable run's cores, laid flat across it" }
+  tee:
+    type: object
+    additionalProperties: false
+    required: [mass]
+    description: "Where another run branches off it, or a port is taken off it along its length."
+    properties:
+      mass: { type: number, exclusiveMinimum: 0, x-unit: "kg", description: "kg over the straight it replaces, a reducer to the branch's size included" }
+  cap:
+    type: object
+    additionalProperties: false
+    required: [thickness, mass]
+    description: "A blind end: a flat plate welded into the run's end (no flange: runs are welded between the units' flanges)."
+    properties:
+      thickness: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "m of plate: a clamped flat plate at the class's pressure, 0.75 p r2 / t2 within the allowable stress" }
+      mass: { type: number, exclusiveMinimum: 0, x-unit: "kg", description: "kg of the plate" }
+  support:
+    type: object
+    additionalProperties: false
+    required: [spacing, mass, per_m_height]
+    description: "What holds it up: a stand, trestle or tray post, one every spacing along its level legs and one at the top of each rise."
+    properties:
+      spacing: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "m between supports, at 1 g full; where gravity is less the same spacing serves" }
+      mass: { type: number, exclusiveMinimum: 0, x-unit: "kg", description: "kg of one support's head and foot" }
+      per_m_height: { type: number, minimum: 0, x-unit: "kg/m", description: "kg its leg weighs a metre of height to the run's centre" }
+      item: { type: string, x-ref: [material, stock, good] }
+  terminals:
+    type: object
+    additionalProperties: false
+    description: "A conveyor's end machinery, once a run: its head (the delivering end: drive pulley, gearbox and motor) and its tail (the receiving end: tail pulley and take-up)."
+    properties:
+      head: { type: object, additionalProperties: false, required: [mass], properties: { mass: { type: number, exclusiveMinimum: 0, x-unit: "kg" }, transition: { type: number, minimum: 0, x-unit: "m", description: "m of the run before its end that the piece draws itself (a belt flattening out of its trough): the straight stops that far short" }, note: { type: string } } }
+      tail: { type: object, additionalProperties: false, required: [mass], properties: { mass: { type: number, exclusiveMinimum: 0, x-unit: "kg" }, transition: { type: number, minimum: 0, x-unit: "m", description: "m of the run after its start that the piece draws itself: the straight starts that far on" }, note: { type: string } } }
+  repeat:
+    type: array
+    description: "Rigid pieces the game sets along a straight at a fixed pitch, not stretched with it (a belt's idlers and return rolls): each the model's piece by name and its pitch."
+    items:
+      type: object
+      additionalProperties: false
+      required: [piece, pitch]
+      properties:
+        piece: { type: string }
+        pitch: { type: number, exclusiveMinimum: 0, x-unit: "m" }
+  connector: { type: string, x-ref: [connector], description: "The connector its ends are built to, by key: it joins a port built to the same connector, or another run of its class." }
+  carries: { enum: [gas, liquid, bulk, power], description: "What it can carry." }
+  jacket: { type: object, additionalProperties: false, properties: { heat: { type: number, minimum: 0, x-unit: "W", description: "Heat its water takes, at most" }, rise: { type: number, x-unit: "K", description: "Its water's rise from in to out" } }, description: "A jacketed duct's water jacket." }
+  jacket_stub: { type: object, additionalProperties: false, properties: { bore: { type: number, x-unit: "m" }, mass: { type: number, x-unit: "kg" } }, description: "A jacketed duct's water nozzle, where a `jacket:` pipe ends on it: its bore and mass." }
+  jacket_end: { type: object, additionalProperties: false, properties: { mass: { type: number, x-unit: "kg" } }, description: "The annular plate closing a jacketed duct's water gap at each end, where it meets a flange or hood." }
+  triangle_budget: { type: integer, minimum: 1000, description: "Triangles its kit may have, where the kind's default (12,000) is too few: a bus of many tubes." }
+  template: { type: string, x-ref: [template], description: "The family template that draws it, scaled by its figures (SFO 25, 2026-10-17): it needs no model of its own." }
+  visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
+  model_requests: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/model_request" }, description: "Work asked of its installed model, open until a later version answers it." }
+  looks_as: { type: string, x-ref: [run], description: "Another run of the same look (kind, size, material) whose model this one is drawn with; it wants no model of its own. Mass, rating and connector stay this record's." }
+  revision:
+    $ref: "../../common.schema.yaml#/definitions/record_revision"
+    default: { status: draft, owner: registry, on_conflict: propose, because: "A trial standard (SFO 25): walls from pressure (Barlow), supports from the span a pipe full of its fluid bears, many figures from memory and marked in the basis.", ask: docs/proposals/factory-kit-assembly.md }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

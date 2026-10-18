@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.periglacial.ground.patterned-sorted
+  name: Sorted patterned ground
+  about: Sorted patterned ground.
+family: periglacial
+factors:
+- factor: planet-factor.clim-temp
+  weight: 3
+  why: Frequent freeze-thaw cycles in active layer drive heave and lateral sorting
+- factor: planet-factor.permafrost
+  weight: 1
+  why: Permafrost or deep seasonal frost; active layer depth sets cell size
+- factor: planet-factor.regolith
+  weight: 3
+  why: Mixed fine/coarse frost-susceptible debris; stone fraction decides pattern type
+- factor: planet-factor.groundwater
+  weight: 1
+  why: Water-saturated fines needed for heave
+- factor: planet-factor.slope-relief
+  weight: 3
+  why: Circles/polygons on flat ground; stripes on ~2-7 deg slopes
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: Sparse vegetation needed; cover stops sorting
+- factor: planet-factor.time
+  weight: 1
+  why: Decadal-centennial organisation; 0.1-10 kyr for mature nets 0.1-10 m
+vocabulary_id: 106
+sources:
+- https://en.wikipedia.org/wiki/Patterned_ground
+- https://www.antarcticglaciers.org/glacial-geology/glacial-landforms/periglaciation/periglacial-landforms/
+library_status: written
+source: periglacial.ground.patterned_sorted
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

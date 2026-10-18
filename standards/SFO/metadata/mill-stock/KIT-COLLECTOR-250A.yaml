@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-collector-250a
+  code: KIT-COLLECTOR-250A
+  name: Collector trolley, 250 A
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.copper
+- item: material.structural-steel-a36
+- item: material.polyethylene-uhmw
+size:
+  length: 0.35
+  width: 0.15
+  height: 0.25
+supplies:
+  item: connector.collector-250a
+physical:
+  mass: 3.5
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.collector-250a, as made.

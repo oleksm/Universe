@@ -1,0 +1,226 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.context-paths
+  name: Paths and nodes
+  about: grey shaded relief; plate boundary pixels by type (convergent/divergent/transform from the plates' spins); main divides
+    between big basins; water layer (lakes, rivers by discharge, mouths, dying rivers, dry valleys, former lakes); fault zones
+    and fold-belt strike strokes (h_fault, h_fold, grain); river events (captured/reversed/reborn); coastline; peaks over
+    2,500 m
+title: Paths and nodes
+row: landform
+file_suffix: _context_paths.png (+ .legend.json)
+draws:
+  words: grey shaded relief; plate boundary pixels by type (convergent/divergent/transform from the plates' spins); main divides
+    between big basins; water layer (lakes, rivers by discharge, mouths, dying rivers, dry valleys, former lakes); fault zones
+    and fold-belt strike strokes (h_fault, h_fold, grain); river events (captured/reversed/reborn); coastline; peaks over
+    2,500 m
+legend:
+  title: Paths and nodes
+  rows:
+  - kind: head
+    label: Paths
+    shown_when: always
+  - kind: line
+    label: plate boundary, convergent
+    colour:
+    - 200
+    - 30
+    - 30
+    shown_when: ctx
+  - kind: line
+    label: plate boundary, divergent
+    colour:
+    - 30
+    - 160
+    - 60
+    shown_when: ctx
+  - kind: line
+    label: plate boundary, transform
+    colour:
+    - 150
+    - 60
+    - 190
+    shown_when: ctx
+  - kind: line
+    label: plate boundary, type unknown
+    colour:
+    - 110
+    - 110
+    - 110
+    shown_when: no ctx
+  - kind: line
+    label: main divides
+    colour:
+    - 140
+    - 90
+    - 40
+    shown_when: always
+  - kind: line
+    label: coastline
+    colour:
+    - 20
+    - 20
+    - 20
+    shown_when: always
+  - kind: line
+    label: fault zones (plate boundaries on land)
+    colour:
+    - 20
+    - 20
+    - 20
+    shown_when: h_fold
+  - kind: line
+    label: 'fold belts: strike of the folded rock'
+    colour:
+    - 170
+    - 60
+    - 20
+    shown_when: h_fold
+  - kind: dash
+    label: ice-flow lines, ice margins
+    colour:
+    - 0
+    - 0
+    - 0
+    shown_when: never
+  - kind: dash
+    label: hotspot tracks, volcanic chains
+    colour:
+    - 0
+    - 0
+    - 0
+    shown_when: never
+  - kind: dash
+    label: wind and sand paths
+    colour:
+    - 0
+    - 0
+    - 0
+    shown_when: never
+  - kind: dash
+    label: former shorelines
+    colour:
+    - 0
+    - 0
+    - 0
+    shown_when: never
+  - kind: head
+    label: Water (the sim's water balance)
+    shown_when: always
+  - kind: line
+    label: rivers flowing, > 300 m³/s; thicker over 30,000 m³/s ({n_flow} reaches)
+    colour:
+    - 30
+    - 90
+    - 200
+    shown_when: Q
+  - kind: dot
+    label: river mouths at the sea, > 1,000 m³/s ({n})
+    colour:
+    - 0
+    - 60
+    - 160
+    shown_when: Q
+  - kind: fill
+    label: 'open lake: fills its basin and overflows on ({nl(1)} samples)'
+    colour:
+    - 60
+    - 120
+    - 220
+    shown_when: h_lake
+  - kind: fill
+    label: 'closed (salt) lake: evaporation takes all it gets ({nl(2)})'
+    colour:
+    - 70
+    - 165
+    - 160
+    shown_when: h_lake
+  - kind: fill
+    label: 'playa: a closed lake too small to hold water long ({nl(3)})'
+    colour:
+    - 232
+    - 226
+    - 205
+    shown_when: h_lake
+  - kind: dot
+    label: 'river dies out: lost to dry air and its dry bed ({len(ends)})'
+    colour:
+    - 120
+    - 80
+    - 40
+    shown_when: h_water_lost
+  - kind: head
+    label: Water history (greyed)
+    shown_when: always
+  - kind: line
+    label: 'dry valley: a river ran here, too little water now ({n_dry} reaches)'
+    colour:
+    - 140
+    - 140
+    - 140
+    shown_when: h_river_state
+  - kind: fill
+    label: 'former lake bed: a lake stood here (fades over ~30 Myr)'
+    colour:
+    - 175
+    - 175
+    - 175
+    shown_when: h_lake_mem
+  - kind: head
+    label: 'Rain that runs off: {sea} % reaches the sea, {lost} % lost to the air (rivers, lakes)'
+    shown_when: budget
+  - kind: head
+    label: River events (the sim's memory)
+    shown_when: always
+  - kind: dot
+    label: 'captured: turned to another course'
+    colour:
+    - 150
+    - 60
+    - 190
+    shown_when: h_river_state
+  - kind: dot
+    label: reversed
+    colour:
+    - 240
+    - 140
+    - 20
+    shown_when: h_river_state
+  - kind: dot
+    label: 'reborn: water back in an old valley'
+    colour:
+    - 40
+    - 170
+    - 70
+    shown_when: h_river_state
+  - kind: head
+    label: Nodes
+    shown_when: always
+  - kind: tri
+    label: peaks over 2,500 m ({n})
+    colour:
+    - 120
+    - 40
+    - 20
+    shown_when: always
+  - kind: dot
+    label: passes, confluences, knickpoints
+    colour:
+    - 0
+    - 0
+    - 0
+    shown_when: never
+  - kind: dot
+    label: springs, vents
+    colour:
+    - 0
+    - 0
+    - 0
+    shown_when: never
+  source: ~/git/planet-trees-pgs2/tools/context_view.py:250-261 (water rows 200-211)
+shown: true
+implementations:
+- where: planet-trees-pgs2 ~/git/planet-trees-pgs2/tools/context_view.py:view_paths (215)
+  state: reference
+status: draft

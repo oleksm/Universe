@@ -5,7 +5,7 @@ stands_for: module.hydrogen-plant
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 170.0, width: 102.0, height: 18.0, mass: 7367000.0}
+physical: {length: 173.8, width: 86.0, height: 18.19, mass: 7897000.0}
 bays:
 - id: E1
   mount: plant-mount.bay-s3
@@ -72,147 +72,992 @@ bays:
   unit: unit.cooling-tower-h2
   at: [0.0, 48.0, 0.0]
   note: north
+ports:
+- id: hv-R1
+  flow: in
+  medium: power
+  power: 19640000.0
+  voltage: 33000.0
+  interface: interface.termination-33kv-150mm2
+  half: female
+  make: bolted
+  connector: connector.termination-33kv-150mm2
+  at: [-48.0, -32.0, 6.9]
+  facing: [0.0, 1.0, 0.0]
+  note: the site's 33 kV
+- id: hv-R2
+  flow: in
+  medium: power
+  power: 19640000.0
+  voltage: 33000.0
+  interface: interface.termination-33kv-150mm2
+  half: female
+  make: bolted
+  connector: connector.termination-33kv-150mm2
+  at: [-24.0, -32.0, 6.9]
+  facing: [0.0, 1.0, 0.0]
+  note: the site's 33 kV
+- id: hv-R3
+  flow: in
+  medium: power
+  power: 19640000.0
+  voltage: 33000.0
+  interface: interface.termination-33kv-150mm2
+  half: female
+  make: bolted
+  connector: connector.termination-33kv-150mm2
+  at: [0.0, -32.0, 6.9]
+  facing: [0.0, 1.0, 0.0]
+  note: the site's 33 kV
+- id: hv-R4
+  flow: in
+  medium: power
+  power: 19640000.0
+  voltage: 33000.0
+  interface: interface.termination-33kv-150mm2
+  half: female
+  make: bolted
+  connector: connector.termination-33kv-150mm2
+  at: [24.0, -32.0, 6.9]
+  facing: [0.0, 1.0, 0.0]
+  note: the site's 33 kV
+- id: hv-R5
+  flow: in
+  medium: power
+  power: 19640000.0
+  voltage: 33000.0
+  interface: interface.termination-33kv-150mm2
+  half: female
+  make: bolted
+  connector: connector.termination-33kv-150mm2
+  at: [48.0, -32.0, 6.9]
+  facing: [0.0, 1.0, 0.0]
+  note: the site's 33 kV
+- id: h2-out
+  flow: out
+  medium: gas
+  item: material.hydrogen
+  rate: 0.525
+  pressure: 300000.0
+  temperature: 313.0
+  interface: interface.flange-dn450-pn10-double
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn450-pn10-ss-double
+  at: [110.0, 0.0, 5.0]
+  facing: [-1.0, 0.0, 0.0]
+  note: dry hydrogen on to the shaft furnace's make-up
+- id: o2-out
+  flow: out
+  medium: gas
+  item: material.oxygen
+  rate: 4.2
+  pressure: 300000.0
+  interface: interface.flange-dn350-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn350-pn10-ss
+  at: [110.0, 2.5, 9.5]
+  facing: [-1.0, 0.0, 0.0]
+  note: to a vent stack or to buyers (the arc furnace lances it)
+- id: raw-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 6.472
+  pressure: 400000.0
+  temperature: 293.0
+  interface: interface.flange-dn150-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn150-pn10
+  at: [110.0, -24.0, 0.5]
+  facing: [-1.0, 0.0, 0.0]
+  note: town or river water, or the shaft furnace's condensate
+- id: reject-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 1.747
+  interface: interface.flange-dn150-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn150-pn10
+  at: [110.0, -20.6, 0.3]
+  facing: [-1.0, 0.0, 0.0]
+  note: to drain
+- id: condensate-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 0.8803
+  interface: interface.flange-dn50-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn50-pn10-ss
+  at: [65.2, 3.0, 0.3]
+  facing: [1.0, 0.0, 0.0]
+  note: to drain
+- id: lv-purifier
+  flow: in
+  medium: power
+  power: 296100.0
+  voltage: 400
+  interface: interface.termination-400v-240mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-240mm2
+  at: [82.0, -3.5, 0.5]
+  facing: [-1.0, 0.0, 0.0]
+  note: the site's 400 V
+- id: lv-water
+  flow: in
+  medium: power
+  power: 28480.0
+  voltage: 400
+  interface: interface.termination-400v-25mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-25mm2
+  at: [63.8, -27.4, 0.5]
+  facing: [1.0, 0.0, 0.0]
+- id: makeup-C
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 13.97
+  pressure: 400000.0
+  temperature: 293.0
+  interface: interface.flange-dn150-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn150-pn10
+  at: [-14.0, 39.0, 1.0]
+  facing: [0.0, 1.0, 0.0]
+  note: the site's water
+- id: lv-C
+  flow: in
+  medium: power
+  power: 524000.0
+  voltage: 400
+  interface: interface.termination-400v-400mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-400mm2
+  at: [-12.0, 39.0, 1.0]
+  facing: [0.0, 1.0, 0.0]
 links:
 - kind: busbar
   name: DC bus 1
-  from: [-48.0, -22.5, 2.4]
+  run: run.busbar-dc-44ka
+  ends: ['R1:dc-out', 'E1:dc-in']
+  from: [-48.0, -21.0, 2.4]
   to: [-48.0, -6.0, 3.0]
-  length: 16.51
-  item: material.aluminium-1350
-  mass: 2564.0
-  note: two aluminium bars, 288 cm2 each for 43 kA at 1.5 A/mm2, through the hall's south wall
+  length: 18.6
+  item: material.copper
+  mass: 5844.0
+  via:
+  - [-48.0, -17.5, 2.4]
+  - [-48.0, -17.5, 4.5]
+  - [-48.0, -8.0, 4.5]
+  - [-48.0, -8.0, 3.0]
+  fittings: {elbows: 4, tees: 0, supports: 9, connectors: 2}
+  note: two aluminium bars for 43 kA, up on a post south of the wall, level through the south wall's opening, down to the block's joint
+- kind: cable
+  name: rectifier 1 supply
+  run: run.cable-33kv-150mm2
+  ends: ['edge:hv-R1', 'R1:hv-in']
+  from: [-48.0, -32.0, 6.9]
+  to: [-48.0, -25.5, 4.4]
+  length: 9.0
+  item: material.copper
+  mass: 475.7
+  via:
+  - [-48.0, -25.5, 6.9]
+  fittings: {elbows: 1, tees: 0, supports: 4, connectors: 2}
+- kind: pipe
+  name: block 1 hydrogen
+  run: run.pipe-dn250-pn10-ss-double
+  ends: ['E1:h2-out', 'tee:hydrogen header']
+  from: [-37.5, -2.5, 8.0]
+  to: [-37.5, -2.5, 9.5]
+  length: 1.5
+  item: material.stainless-steel-304
+  mass: 302.9
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: block 1 oxygen
+  run: run.pipe-dn150-pn10-ss
+  ends: ['E1:o2-out', 'tee:oxygen header']
+  from: [-37.5, 2.5, 8.0]
+  to: [-37.5, 2.5, 9.5]
+  length: 1.5
+  item: material.stainless-steel-304
+  mass: 240.1
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: block 1 water
+  run: run.pipe-dn50-pn10-ss
+  ends: ['tee:demineralised water', 'E1:water-in']
+  from: [-38.2, 7.5, 0.5]
+  to: [-38.2, 6.0, 1.0]
+  length: 1.581
+  item: material.stainless-steel-304
+  mass: 46.42
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: block 1 cooling in
+  run: run.pipe-dn250-pn10
+  ends: ['tee:electrolysers'' flow header', 'E1:cooling-in']
+  from: [-37.4, 9.0, 1.0]
+  to: [-37.4, 6.0, 1.0]
+  length: 3.0
+  item: material.structural-steel-a36
+  mass: 169.6
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: block 1 cooling out
+  run: run.pipe-dn250-pn10
+  ends: ['E1:cooling-out', 'tee:electrolysers'' return header']
+  from: [-36.6, 6.0, 1.0]
+  to: [-36.6, 9.0, 2.6]
+  length: 4.6
+  item: material.structural-steel-a36
+  mass: 359.6
+  via:
+  - [-36.6, 7.0, 1.0]
+  - [-36.6, 7.0, 2.6]
+  fittings: {elbows: 2, tees: 1, supports: 3, connectors: 1}
+- kind: pipe
+  name: rectifier 1 cooling in
+  run: run.pipe-dn100-pn10
+  ends: ['tee:rectifiers'' flow main', 'R1:cooling-in']
+  from: [-51.4, -30.0, 1.0]
+  to: [-50.45, -25.86, 1.0]
+  length: 5.09
+  item: material.structural-steel-a36
+  mass: 130.8
+  via:
+  - [-51.4, -25.86, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: pipe
+  name: rectifier 1 cooling out
+  run: run.pipe-dn100-pn10
+  ends: ['R1:cooling-out', 'tee:rectifiers'' return main']
+  from: [-50.45, -25.14, 1.0]
+  to: [-52.2, -30.0, 2.6]
+  length: 8.21
+  item: material.structural-steel-a36
+  mass: 280.7
+  via:
+  - [-52.2, -25.14, 1.0]
+  - [-52.2, -28.5, 1.0]
+  - [-52.2, -28.5, 2.6]
+  fittings: {elbows: 3, tees: 1, supports: 4, connectors: 1}
 - kind: busbar
   name: DC bus 2
-  from: [-24.0, -22.5, 2.4]
+  run: run.busbar-dc-44ka
+  ends: ['R2:dc-out', 'E2:dc-in']
+  from: [-24.0, -21.0, 2.4]
   to: [-24.0, -6.0, 3.0]
-  length: 16.51
-  item: material.aluminium-1350
-  mass: 2564.0
-  note: two aluminium bars, 288 cm2 each for 43 kA at 1.5 A/mm2, through the hall's south wall
+  length: 18.6
+  item: material.copper
+  mass: 5844.0
+  via:
+  - [-24.0, -17.5, 2.4]
+  - [-24.0, -17.5, 4.5]
+  - [-24.0, -8.0, 4.5]
+  - [-24.0, -8.0, 3.0]
+  fittings: {elbows: 4, tees: 0, supports: 9, connectors: 2}
+  note: two aluminium bars for 43 kA, up on a post south of the wall, level through the south wall's opening, down to the block's joint
+- kind: cable
+  name: rectifier 2 supply
+  run: run.cable-33kv-150mm2
+  ends: ['edge:hv-R2', 'R2:hv-in']
+  from: [-24.0, -32.0, 6.9]
+  to: [-24.0, -25.5, 4.4]
+  length: 9.0
+  item: material.copper
+  mass: 475.7
+  via:
+  - [-24.0, -25.5, 6.9]
+  fittings: {elbows: 1, tees: 0, supports: 4, connectors: 2}
+- kind: pipe
+  name: block 2 hydrogen
+  run: run.pipe-dn250-pn10-ss-double
+  ends: ['E2:h2-out', 'tee:hydrogen header']
+  from: [-13.5, -2.5, 8.0]
+  to: [-13.5, -2.5, 9.5]
+  length: 1.5
+  item: material.stainless-steel-304
+  mass: 302.9
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: block 2 oxygen
+  run: run.pipe-dn150-pn10-ss
+  ends: ['E2:o2-out', 'tee:oxygen header']
+  from: [-13.5, 2.5, 8.0]
+  to: [-13.5, 2.5, 9.5]
+  length: 1.5
+  item: material.stainless-steel-304
+  mass: 240.1
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: block 2 water
+  run: run.pipe-dn50-pn10-ss
+  ends: ['tee:demineralised water', 'E2:water-in']
+  from: [-14.2, 7.5, 0.5]
+  to: [-14.2, 6.0, 1.0]
+  length: 1.581
+  item: material.stainless-steel-304
+  mass: 46.42
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: block 2 cooling in
+  run: run.pipe-dn250-pn10
+  ends: ['tee:electrolysers'' flow header', 'E2:cooling-in']
+  from: [-13.4, 9.0, 1.0]
+  to: [-13.4, 6.0, 1.0]
+  length: 3.0
+  item: material.structural-steel-a36
+  mass: 169.6
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: block 2 cooling out
+  run: run.pipe-dn250-pn10
+  ends: ['E2:cooling-out', 'tee:electrolysers'' return header']
+  from: [-12.6, 6.0, 1.0]
+  to: [-12.6, 9.0, 2.6]
+  length: 4.6
+  item: material.structural-steel-a36
+  mass: 359.6
+  via:
+  - [-12.6, 7.0, 1.0]
+  - [-12.6, 7.0, 2.6]
+  fittings: {elbows: 2, tees: 1, supports: 3, connectors: 1}
+- kind: pipe
+  name: rectifier 2 cooling in
+  run: run.pipe-dn100-pn10
+  ends: ['tee:rectifiers'' flow main', 'R2:cooling-in']
+  from: [-27.4, -30.0, 1.0]
+  to: [-26.45, -25.86, 1.0]
+  length: 5.09
+  item: material.structural-steel-a36
+  mass: 130.8
+  via:
+  - [-27.4, -25.86, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: pipe
+  name: rectifier 2 cooling out
+  run: run.pipe-dn100-pn10
+  ends: ['R2:cooling-out', 'tee:rectifiers'' return main']
+  from: [-26.45, -25.14, 1.0]
+  to: [-28.2, -30.0, 2.6]
+  length: 8.21
+  item: material.structural-steel-a36
+  mass: 280.7
+  via:
+  - [-28.2, -25.14, 1.0]
+  - [-28.2, -28.5, 1.0]
+  - [-28.2, -28.5, 2.6]
+  fittings: {elbows: 3, tees: 1, supports: 4, connectors: 1}
 - kind: busbar
   name: DC bus 3
-  from: [0.0, -22.5, 2.4]
+  run: run.busbar-dc-44ka
+  ends: ['R3:dc-out', 'E3:dc-in']
+  from: [0.0, -21.0, 2.4]
   to: [0.0, -6.0, 3.0]
-  length: 16.51
-  item: material.aluminium-1350
-  mass: 2564.0
-  note: two aluminium bars, 288 cm2 each for 43 kA at 1.5 A/mm2, through the hall's south wall
+  length: 18.6
+  item: material.copper
+  mass: 5844.0
+  via:
+  - [0.0, -17.5, 2.4]
+  - [0.0, -17.5, 4.5]
+  - [0.0, -8.0, 4.5]
+  - [0.0, -8.0, 3.0]
+  fittings: {elbows: 4, tees: 0, supports: 9, connectors: 2}
+  note: two aluminium bars for 43 kA, up on a post south of the wall, level through the south wall's opening, down to the block's joint
+- kind: cable
+  name: rectifier 3 supply
+  run: run.cable-33kv-150mm2
+  ends: ['edge:hv-R3', 'R3:hv-in']
+  from: [0.0, -32.0, 6.9]
+  to: [0.0, -25.5, 4.4]
+  length: 9.0
+  item: material.copper
+  mass: 475.7
+  via:
+  - [0.0, -25.5, 6.9]
+  fittings: {elbows: 1, tees: 0, supports: 4, connectors: 2}
+- kind: pipe
+  name: block 3 hydrogen
+  run: run.pipe-dn250-pn10-ss-double
+  ends: ['E3:h2-out', 'tee:hydrogen header']
+  from: [10.5, -2.5, 8.0]
+  to: [10.5, -2.5, 9.5]
+  length: 1.5
+  item: material.stainless-steel-304
+  mass: 302.9
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: block 3 oxygen
+  run: run.pipe-dn150-pn10-ss
+  ends: ['E3:o2-out', 'tee:oxygen header']
+  from: [10.5, 2.5, 8.0]
+  to: [10.5, 2.5, 9.5]
+  length: 1.5
+  item: material.stainless-steel-304
+  mass: 240.1
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: block 3 water
+  run: run.pipe-dn50-pn10-ss
+  ends: ['tee:demineralised water', 'E3:water-in']
+  from: [9.8, 7.5, 0.5]
+  to: [9.8, 6.0, 1.0]
+  length: 1.581
+  item: material.stainless-steel-304
+  mass: 46.42
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: block 3 cooling in
+  run: run.pipe-dn250-pn10
+  ends: ['tee:electrolysers'' flow header', 'E3:cooling-in']
+  from: [10.6, 9.0, 1.0]
+  to: [10.6, 6.0, 1.0]
+  length: 3.0
+  item: material.structural-steel-a36
+  mass: 169.6
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: block 3 cooling out
+  run: run.pipe-dn250-pn10
+  ends: ['E3:cooling-out', 'tee:electrolysers'' return header']
+  from: [11.4, 6.0, 1.0]
+  to: [11.4, 9.0, 2.6]
+  length: 4.6
+  item: material.structural-steel-a36
+  mass: 359.6
+  via:
+  - [11.4, 7.0, 1.0]
+  - [11.4, 7.0, 2.6]
+  fittings: {elbows: 2, tees: 1, supports: 3, connectors: 1}
+- kind: pipe
+  name: rectifier 3 cooling in
+  run: run.pipe-dn100-pn10
+  ends: ['tee:rectifiers'' flow main', 'R3:cooling-in']
+  from: [-3.4, -30.0, 1.0]
+  to: [-2.45, -25.86, 1.0]
+  length: 5.09
+  item: material.structural-steel-a36
+  mass: 130.8
+  via:
+  - [-3.4, -25.86, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: pipe
+  name: rectifier 3 cooling out
+  run: run.pipe-dn100-pn10
+  ends: ['R3:cooling-out', 'tee:rectifiers'' return main']
+  from: [-2.45, -25.14, 1.0]
+  to: [-4.2, -30.0, 2.6]
+  length: 8.21
+  item: material.structural-steel-a36
+  mass: 280.7
+  via:
+  - [-4.2, -25.14, 1.0]
+  - [-4.2, -28.5, 1.0]
+  - [-4.2, -28.5, 2.6]
+  fittings: {elbows: 3, tees: 1, supports: 4, connectors: 1}
 - kind: busbar
   name: DC bus 4
-  from: [24.0, -22.5, 2.4]
+  run: run.busbar-dc-44ka
+  ends: ['R4:dc-out', 'E4:dc-in']
+  from: [24.0, -21.0, 2.4]
   to: [24.0, -6.0, 3.0]
-  length: 16.51
-  item: material.aluminium-1350
-  mass: 2564.0
-  note: two aluminium bars, 288 cm2 each for 43 kA at 1.5 A/mm2, through the hall's south wall
+  length: 18.6
+  item: material.copper
+  mass: 5844.0
+  via:
+  - [24.0, -17.5, 2.4]
+  - [24.0, -17.5, 4.5]
+  - [24.0, -8.0, 4.5]
+  - [24.0, -8.0, 3.0]
+  fittings: {elbows: 4, tees: 0, supports: 9, connectors: 2}
+  note: two aluminium bars for 43 kA, up on a post south of the wall, level through the south wall's opening, down to the block's joint
+- kind: cable
+  name: rectifier 4 supply
+  run: run.cable-33kv-150mm2
+  ends: ['edge:hv-R4', 'R4:hv-in']
+  from: [24.0, -32.0, 6.9]
+  to: [24.0, -25.5, 4.4]
+  length: 9.0
+  item: material.copper
+  mass: 475.7
+  via:
+  - [24.0, -25.5, 6.9]
+  fittings: {elbows: 1, tees: 0, supports: 4, connectors: 2}
+- kind: pipe
+  name: block 4 hydrogen
+  run: run.pipe-dn250-pn10-ss-double
+  ends: ['E4:h2-out', 'tee:hydrogen header']
+  from: [34.5, -2.5, 8.0]
+  to: [34.5, -2.5, 9.5]
+  length: 1.5
+  item: material.stainless-steel-304
+  mass: 302.9
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: block 4 oxygen
+  run: run.pipe-dn150-pn10-ss
+  ends: ['E4:o2-out', 'tee:oxygen header']
+  from: [34.5, 2.5, 8.0]
+  to: [34.5, 2.5, 9.5]
+  length: 1.5
+  item: material.stainless-steel-304
+  mass: 240.1
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: block 4 water
+  run: run.pipe-dn50-pn10-ss
+  ends: ['tee:demineralised water', 'E4:water-in']
+  from: [33.8, 7.5, 0.5]
+  to: [33.8, 6.0, 1.0]
+  length: 1.581
+  item: material.stainless-steel-304
+  mass: 46.42
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: block 4 cooling in
+  run: run.pipe-dn250-pn10
+  ends: ['tee:electrolysers'' flow header', 'E4:cooling-in']
+  from: [34.6, 9.0, 1.0]
+  to: [34.6, 6.0, 1.0]
+  length: 3.0
+  item: material.structural-steel-a36
+  mass: 169.6
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: block 4 cooling out
+  run: run.pipe-dn250-pn10
+  ends: ['E4:cooling-out', 'tee:electrolysers'' return header']
+  from: [35.4, 6.0, 1.0]
+  to: [35.4, 9.0, 2.6]
+  length: 4.6
+  item: material.structural-steel-a36
+  mass: 359.6
+  via:
+  - [35.4, 7.0, 1.0]
+  - [35.4, 7.0, 2.6]
+  fittings: {elbows: 2, tees: 1, supports: 3, connectors: 1}
+- kind: pipe
+  name: rectifier 4 cooling in
+  run: run.pipe-dn100-pn10
+  ends: ['tee:rectifiers'' flow main', 'R4:cooling-in']
+  from: [20.6, -30.0, 1.0]
+  to: [21.55, -25.86, 1.0]
+  length: 5.09
+  item: material.structural-steel-a36
+  mass: 130.8
+  via:
+  - [20.6, -25.86, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: pipe
+  name: rectifier 4 cooling out
+  run: run.pipe-dn100-pn10
+  ends: ['R4:cooling-out', 'tee:rectifiers'' return main']
+  from: [21.55, -25.14, 1.0]
+  to: [19.8, -30.0, 2.6]
+  length: 8.21
+  item: material.structural-steel-a36
+  mass: 280.7
+  via:
+  - [19.8, -25.14, 1.0]
+  - [19.8, -28.5, 1.0]
+  - [19.8, -28.5, 2.6]
+  fittings: {elbows: 3, tees: 1, supports: 4, connectors: 1}
 - kind: busbar
   name: DC bus 5
-  from: [48.0, -22.5, 2.4]
+  run: run.busbar-dc-44ka
+  ends: ['R5:dc-out', 'E5:dc-in']
+  from: [48.0, -21.0, 2.4]
   to: [48.0, -6.0, 3.0]
-  length: 16.51
-  item: material.aluminium-1350
-  mass: 2564.0
-  note: two aluminium bars, 288 cm2 each for 43 kA at 1.5 A/mm2, through the hall's south wall
+  length: 18.6
+  item: material.copper
+  mass: 5844.0
+  via:
+  - [48.0, -17.5, 2.4]
+  - [48.0, -17.5, 4.5]
+  - [48.0, -8.0, 4.5]
+  - [48.0, -8.0, 3.0]
+  fittings: {elbows: 4, tees: 0, supports: 9, connectors: 2}
+  note: two aluminium bars for 43 kA, up on a post south of the wall, level through the south wall's opening, down to the block's joint
+- kind: cable
+  name: rectifier 5 supply
+  run: run.cable-33kv-150mm2
+  ends: ['edge:hv-R5', 'R5:hv-in']
+  from: [48.0, -32.0, 6.9]
+  to: [48.0, -25.5, 4.4]
+  length: 9.0
+  item: material.copper
+  mass: 475.7
+  via:
+  - [48.0, -25.5, 6.9]
+  fittings: {elbows: 1, tees: 0, supports: 4, connectors: 2}
+- kind: pipe
+  name: block 5 hydrogen
+  run: run.pipe-dn250-pn10-ss-double
+  ends: ['E5:h2-out', 'tee:hydrogen header']
+  from: [58.5, -2.5, 8.0]
+  to: [58.5, -2.5, 9.5]
+  length: 1.5
+  item: material.stainless-steel-304
+  mass: 302.9
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: block 5 oxygen
+  run: run.pipe-dn150-pn10-ss
+  ends: ['E5:o2-out', 'tee:oxygen header']
+  from: [58.5, 2.5, 8.0]
+  to: [58.5, 2.5, 9.5]
+  length: 1.5
+  item: material.stainless-steel-304
+  mass: 240.1
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: block 5 water
+  run: run.pipe-dn50-pn10-ss
+  ends: ['tee:demineralised water', 'E5:water-in']
+  from: [57.8, 7.5, 0.5]
+  to: [57.8, 6.0, 1.0]
+  length: 1.581
+  item: material.stainless-steel-304
+  mass: 46.42
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: block 5 cooling in
+  run: run.pipe-dn250-pn10
+  ends: ['tee:electrolysers'' flow header', 'E5:cooling-in']
+  from: [58.6, 9.0, 1.0]
+  to: [58.6, 6.0, 1.0]
+  length: 3.0
+  item: material.structural-steel-a36
+  mass: 169.6
+  fittings: {elbows: 0, tees: 1, supports: 1, connectors: 1}
+- kind: pipe
+  name: block 5 cooling out
+  run: run.pipe-dn250-pn10
+  ends: ['E5:cooling-out', 'tee:electrolysers'' return header']
+  from: [59.4, 6.0, 1.0]
+  to: [59.4, 9.0, 2.6]
+  length: 4.6
+  item: material.structural-steel-a36
+  mass: 359.6
+  via:
+  - [59.4, 7.0, 1.0]
+  - [59.4, 7.0, 2.6]
+  fittings: {elbows: 2, tees: 1, supports: 3, connectors: 1}
+- kind: pipe
+  name: rectifier 5 cooling in
+  run: run.pipe-dn100-pn10
+  ends: ['tee:rectifiers'' flow main', 'R5:cooling-in']
+  from: [44.6, -30.0, 1.0]
+  to: [45.55, -25.86, 1.0]
+  length: 5.09
+  item: material.structural-steel-a36
+  mass: 130.8
+  via:
+  - [44.6, -25.86, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 2, connectors: 1}
+- kind: pipe
+  name: rectifier 5 cooling out
+  run: run.pipe-dn100-pn10
+  ends: ['R5:cooling-out', 'tee:rectifiers'' return main']
+  from: [45.55, -25.14, 1.0]
+  to: [43.8, -30.0, 2.6]
+  length: 8.21
+  item: material.structural-steel-a36
+  mass: 280.7
+  via:
+  - [43.8, -25.14, 1.0]
+  - [43.8, -28.5, 1.0]
+  - [43.8, -28.5, 2.6]
+  fittings: {elbows: 3, tees: 1, supports: 4, connectors: 1}
 - kind: pipe
   name: hydrogen header
-  from: [-37.5, -2.5, 8.0]
+  run: run.pipe-dn450-pn10-ss-double
+  ends: [cap, 'P:gas-in']
+  from: [-38.5, -2.5, 9.5]
   to: [66.0, 0.0, 6.0]
-  length: 108.4
+  length: 110.5
   item: material.stainless-steel-304
-  mass: 7026.0
+  mass: 10150.0
   via:
-  - [-37.5, -2.5, 9.0]
-  - [58.5, -2.5, 9.0]
-  - [58.5, 0.0, 6.0]
-  note: '0.44 m stainless, 6 mm wall, at 3 bar: from each block''s hydrogen separator along the hall at z 9, out by the east wall to the purifier'
+  - [64.0, -2.5, 9.5]
+  - [64.0, 0.0, 9.5]
+  - [64.0, 0.0, 6.0]
+  fittings: {elbows: 3, tees: 0, supports: 13, connectors: 2}
+  note: stainless, at 3 bar, over the hydrogen separators along the hall, out by the east wall to the purifier
 - kind: pipe
   name: hydrogen to the shaft furnace
+  run: run.pipe-dn450-pn10-ss-double
+  ends: ['P:gas-out', 'edge:h2-out']
   from: [78.0, 0.0, 2.0]
-  to: [110.0, 0.0, 2.0]
-  length: 32.0
+  to: [110.0, 0.0, 5.0]
+  length: 35.0
   item: material.stainless-steel-304
-  mass: 2074.0
-  note: 0.525 kg/s of dry hydrogen at about 3 bar, on to the shaft furnace's make-up, beyond the layout
+  mass: 2975.0
+  via:
+  - [80.0, 0.0, 2.0]
+  - [80.0, 0.0, 5.0]
+  fittings: {elbows: 2, tees: 0, supports: 5, connectors: 2}
+  note: 0.525 kg/s of dry hydrogen, up over the rectifiers' loop and on
 - kind: pipe
   name: oxygen header
-  from: [-37.5, 2.5, 8.0]
-  to: [110.0, 6.0, 9.0]
-  length: 152.0
+  run: run.pipe-dn350-pn10-ss
+  ends: [cap, 'edge:o2-out']
+  from: [-38.5, 2.5, 9.5]
+  to: [110.0, 2.5, 9.5]
+  length: 148.5
   item: material.stainless-steel-304
-  mass: 6992.0
-  via:
-  - [-37.5, 2.5, 9.0]
-  - [58.5, 2.5, 9.0]
-  - [58.5, 6.0, 9.0]
-  note: '0.31 m stainless, 6 mm wall: the 4.2 kg/s of oxygen, out by the east wall to a vent stack or to buyers (the arc furnace lances it), beyond the layout; clean, oil-free, as oxygen service needs'
+  mass: 10360.0
+  fittings: {elbows: 0, tees: 0, supports: 16, connectors: 2}
+  note: stainless, the 4.2 kg/s of oxygen, over the oxygen separators, out by the east wall and over the purifier; clean, oil-free
 - kind: pipe
   name: demineralised water
+  run: run.pipe-dn100-pn10-ss
+  ends: ['W:clean-out', cap]
   from: [66.0, -24.0, 0.5]
-  to: [59.0, 6.0, 1.0]
-  length: 37.04
+  to: [-39.5, 7.5, 0.5]
+  length: 137.0
   item: material.stainless-steel-304
-  mass: 365.4
+  mass: 2103.0
   via:
-  - [62.0, -24.0, 0.5]
-  - [62.0, 6.0, 0.5]
-  note: 100 mm stainless, 4.7 kg/s to the blocks' feed points along the hall's north side
+  - [64.5, -24.0, 0.5]
+  - [64.5, 7.5, 0.5]
+  fittings: {elbows: 2, tees: 0, supports: 34, connectors: 2}
+  note: '4.7 kg/s: north, into the hall by the east wall''s low opening, west past every block'
 - kind: pipe
   name: raw water
+  run: run.pipe-dn150-pn10
+  ends: ['edge:raw-in', 'W:raw-in']
   from: [110.0, -24.0, 0.5]
   to: [78.0, -24.0, 0.5]
   length: 32.0
   item: material.structural-steel-a36
-  mass: 591.9
-  note: '150 mm: town or river water, or the shaft furnace''s condensate, beyond the layout'
+  mass: 731.4
+  fittings: {elbows: 0, tees: 0, supports: 7, connectors: 2}
 - kind: pipe
-  name: cooling water mains
-  from: [18.0, 48.0, 0.75]
-  to: [-37.0, 6.0, 1.0]
-  length: 100.0
+  name: reject to drain
+  run: run.pipe-dn150-pn10
+  ends: ['W:reject-out', 'edge:reject-out']
+  from: [78.0, -20.6, 0.3]
+  to: [110.0, -20.6, 0.3]
+  length: 32.0
   item: material.structural-steel-a36
-  mass: 26550.0
+  mass: 705.9
+  fittings: {elbows: 0, tees: 0, supports: 7, connectors: 2}
+- kind: pipe
+  name: purifier condensate
+  run: run.pipe-dn50-pn10-ss
+  ends: ['P:condensate-out', 'edge:condensate-out']
+  from: [66.0, 3.0, 0.3]
+  to: [65.2, 3.0, 0.3]
+  length: 0.8
+  item: material.stainless-steel-304
+  mass: 48.26
+  fittings: {elbows: 0, tees: 0, supports: 1, connectors: 2}
+- kind: cable
+  name: purifier supply
+  run: run.cable-400v-240mm2
+  ends: ['edge:lv-purifier', 'P:power-in']
+  from: [82.0, -3.5, 0.5]
+  to: [78.0, -3.5, 0.5]
+  length: 4.0
+  item: material.copper
+  mass: 79.6
+  fittings: {elbows: 0, tees: 0, supports: 2, connectors: 2}
+- kind: cable
+  name: water treatment supply
+  run: run.cable-400v-25mm2
+  ends: ['edge:lv-water', 'W:power-in']
+  from: [63.8, -27.4, 0.5]
+  to: [66.0, -27.4, 0.5]
+  length: 2.2
+  item: material.copper
+  mass: 32.2
+  fittings: {elbows: 0, tees: 0, supports: 1, connectors: 2}
+- kind: pipe
+  name: tower make-up
+  run: run.pipe-dn150-pn10
+  ends: ['edge:makeup-C', 'C:makeup-in']
+  from: [-14.0, 39.0, 1.0]
+  to: [-14.0, 42.0, 1.0]
+  length: 3.0
+  item: material.structural-steel-a36
+  mass: 128.1
+  fittings: {elbows: 0, tees: 0, supports: 1, connectors: 2}
+- kind: cable
+  name: tower supply
+  run: run.cable-400v-400mm2
+  ends: ['edge:lv-C', 'C:power-in']
+  from: [-12.0, 39.0, 1.0]
+  to: [-12.0, 42.0, 1.0]
+  length: 3.0
+  item: material.copper
+  mass: 75.2
+  fittings: {elbows: 0, tees: 0, supports: 1, connectors: 2}
+- kind: pipe
+  name: electrolysers' flow main
+  run: run.pipe-dn500-pn10
+  ends: ['C:out-1', 'tee:electrolysers'' flow header']
+  from: [18.0, 47.4, 1.0]
+  to: [0.0, 9.0, 1.0]
+  length: 59.4
+  item: material.structural-steel-a36
+  mass: 4746.0
   via:
-  - [19.5, 48.0, 0.75]
-  - [19.5, 20.0, 0.75]
-  - [0.0, 20.0, 0.75]
-  - [0.0, 9.0, 1.0]
-  - [-37.0, 9.0, 1.0]
-  note: 'a pair of 0.54 m pipes, 10 mm wall, flow and return: 569 kg/s at a 10 K rise, into the hall by the north wall and along it to each block''s coolers, a branch out to the rectifiers'
+  - [19.5, 47.4, 1.0]
+  - [19.5, 20.0, 1.0]
+  - [0.0, 20.0, 1.0]
+  fittings: {elbows: 3, tees: 1, supports: 10, connectors: 1}
+  note: '569 kg/s at a 10 K rise from the tower: south, west and in by the north wall''s opening, under its return'
+- kind: pipe
+  name: electrolysers' return main
+  run: run.pipe-dn500-pn10
+  ends: ['tee:electrolysers'' return header', 'C:in-1']
+  from: [0.0, 9.0, 2.6]
+  to: [18.0, 48.6, 1.0]
+  length: 65.2
+  item: material.structural-steel-a36
+  mass: 5725.0
+  via:
+  - [0.0, 20.0, 2.6]
+  - [19.5, 20.0, 2.6]
+  - [19.5, 45.5, 2.6]
+  - [21.0, 45.5, 2.6]
+  - [21.0, 48.6, 2.6]
+  - [21.0, 48.6, 1.0]
+  fittings: {elbows: 6, tees: 1, supports: 13, connectors: 1}
+  note: over the flow, stepping aside at the tower to its port
+- kind: pipe
+  name: electrolysers' flow header
+  run: run.pipe-dn500-pn10
+  ends: [cap, cap]
+  from: [-39.0, 9.0, 1.0]
+  to: [60.5, 9.0, 1.0]
+  length: 99.5
+  item: material.structural-steel-a36
+  mass: 7724.0
+  fittings: {elbows: 0, tees: 0, supports: 13, connectors: 2}
+  note: along y 9 inside the north wall, past every block's flanges
+- kind: pipe
+  name: electrolysers' return header
+  run: run.pipe-dn500-pn10
+  ends: [cap, cap]
+  from: [-39.0, 9.0, 2.6]
+  to: [60.5, 9.0, 2.6]
+  length: 99.5
+  item: material.structural-steel-a36
+  mass: 8217.0
+  fittings: {elbows: 0, tees: 0, supports: 13, connectors: 2}
+  note: over the flow header
+- kind: pipe
+  name: rectifiers' flow main
+  run: run.pipe-dn250-pn10
+  ends: ['C:out-2', cap]
+  from: [18.0, 51.9, 1.0]
+  to: [-56.0, -30.0, 1.0]
+  length: 287.9
+  item: material.structural-steel-a36
+  mass: 10320.0
+  via:
+  - [84.0, 51.9, 1.0]
+  - [84.0, -30.0, 1.0]
+  fittings: {elbows: 2, tees: 0, supports: 48, connectors: 2}
+  note: east north of the electrolysers' mains, south past the purifier and the water treatment, west behind the rectifiers
+- kind: pipe
+  name: rectifiers' return main
+  run: run.pipe-dn250-pn10
+  ends: [cap, 'C:in-2']
+  from: [-56.0, -30.0, 2.6]
+  to: [18.0, 53.1, 1.0]
+  length: 290.7
+  item: material.structural-steel-a36
+  mass: 12030.0
+  via:
+  - [84.0, -30.0, 2.6]
+  - [84.0, 51.9, 2.6]
+  - [22.0, 51.9, 2.6]
+  - [22.0, 53.1, 2.6]
+  - [22.0, 53.1, 1.0]
+  fittings: {elbows: 5, tees: 0, supports: 50, connectors: 2}
+  note: over the flow
+- kind: pipe
+  name: purifier cooling in
+  run: run.pipe-dn150-pn10
+  ends: ['tee:rectifiers'' flow main', 'P:cooling-in']
+  from: [84.0, -7.0, 1.0]
+  to: [72.0, -4.0, 1.0]
+  length: 15.0
+  item: material.structural-steel-a36
+  mass: 402.0
+  via:
+  - [72.0, -7.0, 1.0]
+  fittings: {elbows: 1, tees: 1, supports: 4, connectors: 1}
+- kind: pipe
+  name: purifier cooling out
+  run: run.pipe-dn150-pn10
+  ends: ['P:cooling-out', 'tee:rectifiers'' return main']
+  from: [72.6, -4.0, 1.0]
+  to: [84.0, -5.5, 2.6]
+  length: 14.5
+  item: material.structural-steel-a36
+  mass: 547.1
+  via:
+  - [72.6, -5.5, 1.0]
+  - [72.6, -5.5, 2.6]
+  fittings: {elbows: 2, tees: 1, supports: 5, connectors: 1}
 frame:
-  box: [-60.0, -15.0, 0.0, 60.0, 15.0, 18.0]
+  box: [-63.0, -15.0, 0.0, 63.0, 15.0, 18.0]
   cell: 3.0
-  shape: Walls one cell thick, 15 m tall; a roof one cell deep over a 114 x 24 m floor, open along its ridge (a vent 1.5 m wide) so hydrogen cannot gather; framed openings in the south wall for the DC busbars, in the east for the gas headers and a door, in the north for the cooling water.
+  shape: Walls one cell thick, 15 m tall; a roof one cell deep over a 120 x 24 m floor, open along its ridge so hydrogen cannot gather (a vent 1.5 m wide over y 0.75 to 2.25, between the top chords at y 0 and 3, the top diagonals there left out; only the cross chords every 3 m span it); framed openings in the south wall for the DC busbars, in the east for the gas headers and a door, in the north for the cooling water.
   openings:
   - [-49.5, -15.0, 3.0, -46.5, -12.0, 6.0]
   - [-25.5, -15.0, 3.0, -22.5, -12.0, 6.0]
   - [-1.5, -15.0, 3.0, 1.5, -12.0, 6.0]
   - [22.5, -15.0, 3.0, 25.5, -12.0, 6.0]
   - [46.5, -15.0, 3.0, 49.5, -12.0, 6.0]
-  - [57.0, -9.0, 6.0, 60.0, 9.0, 12.0]
+  - [60.0, -9.0, 6.0, 63.0, 9.0, 12.0]
   - [-3.0, 12.0, 0.0, 3.0, 15.0, 3.0]
-  - [57.0, -3.0, 0.0, 60.0, 3.0, 6.0]
+  - [60.0, -3.0, 0.0, 63.0, 3.0, 6.0]
+  - [60.0, 6.0, 0.0, 63.0, 9.0, 3.0]
   members:
-  - {item: stock.st4340-tb-120x3-s3000, count: 2615, where: wall}
-  - {item: stock.st4340-tb-120x3-d3000, count: 1928, where: wall}
-  - {item: stock.st4340-tb-100x3-s3000, count: 1863, where: roof}
-  - {item: stock.st4340-tb-100x3-d3000, count: 1554, where: roof}
-  - {item: stock.st4340-node-160b, count: 1844, where: nodes}
-  - {item: stock.st4340-box-400x400x25, count: 6, where: 'crane runways, three a side, 38 m lengths, along x on the inside of the long walls: their rail plane 11 m up at y -11.4 and +11.4'}
-  cladding: {item: stock.al6061-sh-2, area: 8622.0, mass: 46560.0}
+  - {item: stock.st4340-tb-120x3-s3000, count: 2725, where: wall}
+  - {item: stock.st4340-tb-120x3-d3000, count: 2009, where: wall}
+  - {item: stock.st4340-tb-100x3-s3000, count: 1957, where: roof}
+  - {item: stock.st4340-tb-100x3-d3000, count: 1592, where: roof}
+  - {item: stock.st4340-node-160b, count: 1928, where: nodes}
+  - {item: stock.st4340-box-400x400x25, count: 6, where: 'crane runways, three a side, 40 m lengths, along x on the inside of the long walls: their rail plane 11 m up at y -11.4 and +11.4'}
+  cladding: {item: stock.al6061-sh-2, area: 9426.0, mass: 50900.0}
   carries: [unit.stack-crane-20t]
-  mass: 383700.0
+  mass: 402500.0
   sized: 'At 1 g: roof 1249 Pa (2 mm aluminium, the frame about 20 kg/m2, 1 kPa of snow and wind, the last invented) over a 24 m span in 3 m deep strips puts 90 kN in a chord: st4340-tb-100x3 takes 242 kN. A wheel of the 20 t crane loaded at the runway''s end puts 188 kN on a wall node, with the roof''s share 233 kN: st4340-tb-120x3 takes 424 kN. Each the kit''s lightest section with half again to spare. The runway bends to 32 MPa between nodes, against 470 MPa with half again to spare. Wind and footings not yet checked.'
 ground:
-- {what: Hall floor, item: good.concrete, volume: 1094.0, note: '0.4 m, 114 x 24 m, with a lye-proof coating and bunds round each block', mass: 2626000.0}
-- {what: Frame footings, item: good.concrete, volume: 423.0, note: a 1.5 x 1.5 x 1 m pad under each of the lattice's 188 ground nodes, mass: 1015000.0}
-- {what: Rectifier slabs and fire walls, item: good.concrete, volume: 326.4, note: 'a slab under each, a fire wall between', mass: 783400.0}
-- {what: Outside slabs, item: good.concrete, volume: 96.0, note: under the purifier and the water treatment, mass: 230400.0}
-- {what: Cooling tower basin, item: good.concrete, volume: 288.9, note: sunk as the furnace shop's, mass: 693400.0}
-totals: {rate: 0.525, power: 99250000.0, heat: 23820000.0, water: 17.89, mass: 7367000.0, against_module: 'module.hydrogen-plant: one box 150 x 100 x 20 m, 100 MW. This layout: the same 1,890 kg of hydrogen an hour; 99.2 MW (the cells 95.5, at 1.9 V, 50.5 kWh a kg); 23.8 MW to the tower, 17.9 kg/s of water used and evaporated; 2,019 t of plant and frame, 5,348 t of concrete; 1.7 ha, against the source''s 0.8 to 1.7 for 100 MW. It makes 0.525 kg/s; one shaft furnace at its full rate takes 3.00, about 5.7 of these.'}
+- {what: Hall floor, item: good.concrete, volume: 1152.0, note: '0.4 m, 120 x 24 m, top at z 0, with a lye-proof coating', mass: 2765000.0}
+- {what: Bunds, item: good.concrete, volume: 21.36, note: 'a curb 0.2 m thick and 0.3 m high round each whole block (inside it, block local x -10.7 to 11.7, y -6.4 to 6.4), to hold a stack''s lye; E5''s east curb ends 0.1 m short of the hall''s inner wall plane', mass: 51260.0}
+- {what: Frame footings, item: good.concrete, volume: 441.0, note: a 1.5 x 1.5 x 1 m pad under each of the lattice's 196 ground nodes, mass: 1058000.0}
+- {what: Rectifier slabs and fire walls, item: good.concrete, volume: 326.4, note: 'a 12 x 8 x 0.5 m slab under each, its top at z 0 with an oil sump; fire walls 8 m long, 6 m tall, 0.3 m thick along y at x -60, -36, -12, 12, 36 and 60', mass: 783400.0}
+- {what: Outside slabs, item: good.concrete, volume: 96.0, note: '12 x 8 x 0.5 m under the purifier and the water treatment, tops at z 0, the water treatment''s with a drain channel to its reject flange', mass: 230400.0}
+- {what: Cooling tower basin, item: good.concrete, volume: 288.9, note: 'sunk as the furnace shop''s: a 0.5 m floor 0.6 m wider than the tower each way, walls 0.3 m thick and 2 m deep, the water just under z 0', mass: 693400.0}
+- {what: Tower pedestals, item: good.concrete, volume: 8.64, note: 'twelve 0.6 m square piers from the basin floor (z -2) to z 0 under the tower''s eight feet (x ±17.6 and ±6, y ±5.6) and its skid''s four corners', mass: 20740.0}
+- {what: Support footings, item: good.concrete, volume: 8.62, note: 'feet under the DC bus posts (1.01 m3), the gas header portals (2.87), the oxygen line''s supports (0.68), the ground pipes'' supports (3.97) and the hydrogen elbow (0.08); measured on blender''s layout (candidate v01)', mass: 20690.0}
+- {what: Support steel, item: material.structural-steel-a36, volume: 8.57, note: 'the crane runways'' seats (25 mm boxes), the gas header portals (200 x 200 x 8 beams on 160 x 8 round posts at y -8 and 8 every 6 m along x, beams about z 8.65), the bus posts and the pipes'' small 6 mm boxes, with solid shoes; joints and anchors left out, not checked for strength; measured on blender''s layout (candidate v01), 67,276 kg', mass: 67270.0}
+totals: {rate: 0.525, power: 99100000.0, heat: 25260000.0, water: 18.7, mass: 7897000.0, against_module: 'module.hydrogen-plant: one box 150 x 100 x 20 m, 100 MW. This layout: the same 1,890 kg of hydrogen an hour; 99.1 MW (the cells 95.5, at 1.9 V, 50.5 kWh a kg); 25.3 MW to the tower, 18.7 kg/s of water used and evaporated; 2,275 t of plant, frame and supports, 5,623 t of concrete; 1.5 ha, against the source''s 0.8 to 1.7 for 100 MW. It makes 0.525 kg/s; one shaft furnace at its full rate takes 3.00, about 5.7 of these.'}
 staff:
 - {profession: profession.chemist, count: 2}
 - {profession: profession.plant-operator, count: 4}
 - {profession: profession.technician, count: 1}
+visual: {format: freefall-model/1, path: models/hydrogen-plant-air/v1, manifest_sha256: 2ff411d9e9ffae155e2527aa97fe5b516db8ccf94b45237d0e6f8d1d7b5d1909, version: 1, triangles: 398772}
 basis:
 - of: [bays, links, frame.box, frame.openings]
   tier: invented

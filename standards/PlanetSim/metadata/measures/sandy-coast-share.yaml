@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/planet-measure.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry_extra.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-measure.sandy-coast-share
+  name: sandy coast share (tuning note)
+  about: surface_types shore rules tuned against Luijendijk et al. 2018; rocky/cliffed ~50 %
+unit: '1'
+said_as:
+  unit: '%'
+  factor: 0.01
+how: 'surface_types shore rules tuned against Luijendijk et al. 2018; rocky/cliffed ~50 %; Earth: 31 (% of ice-free coast)'
+tool: ~/git/planet-trees-pgs2/tools/surface_types.py:78-79
+status: draft
+basis:
+- of:
+  - scorecard
+  tier: sourced
+  source: Earth values as the Python sim cites them (scorecard.py TARGETS and legends)
+  review: true

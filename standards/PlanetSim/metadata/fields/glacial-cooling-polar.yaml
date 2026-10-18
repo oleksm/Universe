@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.glacial-cooling-polar
+  name: Glacial cooling, polar part
+  about: 'The recent epoch''s extra cooling at the poles: POLAR_GAIN x 6 K x glaciality, times sin^2(lat) at a sample.'
+unit: K
+per: global
+producer:
+  where: stages/recent.py run
+  key: dT (its sin^2 lat part)
+levels:
+- planet-level.planet
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge climate port (models/climate, models/ice), read from planet-sim-landform 1df4daf.'

@@ -1,30 +1,62 @@
 # yaml-language-server: $schema=../../schema/deposit-type.schema.yaml
-# Brought in by tools/standards/geology_import.py from the planet simulation's vocabulary: change it there, or the
-# registry's own part (name, about, formed_by, ore, counted) here.
 identity:
   key: deposit-type.lithium-pegmatite
-  name: "Lithium pegmatite"
-  about: "Coarse granite veins rich in lithium, tantalum and tin."
-sim: { key: lithium_pegmatite, code: LIP }
+  name: Lithium pegmatite
+  about: Coarse granite veins rich in lithium, tantalum and tin.
+sim:
+  key: lithium_pegmatite
+  code: LIP
 formed_by: collision
 carries:
-  - { item: element.li, grade: 0.006503, said_as: "Li2O %" }
-  - { item: element.ta, grade: 0.0001638, said_as: "Ta2O5 %" }
-  - { item: element.sn, grade: 0.0005, said_as: "Sn %" }
+- item: element.li
+  grade: 0.006503
+  said_as: Li2O %
+- item: element.ta
+  grade: 0.0001638
+  said_as: Ta2O5 %
+- item: element.sn
+  grade: 0.0005
+  said_as: Sn %
 ore: good.lithium-pegmatite-ore
 shape: veins
 size:
   median: 10000000000.0
   spread: 1.8
   cap: 400000000000.0
-footprint: { length: 1500.0, width: 30.0 }
+footprint:
+  length: 1500.0
+  width: 30.0
 forms_at: 0.0
 cluster:
   deposits: 5.0
   along: 20000.0
   across: 10000.0
 seen_by:
-  - { method: geochemistry, reach: 50.0 }
-  - { method: radiometrics, reach: 1.0 }
+- method: geochemistry
+  reach: 50.0
+- method: radiometrics
+  reach: 1.0
 basis:
-  - { of: [sim, carries, shape, size, footprint, forms_at, cluster, seen_by], tier: sourced, review: true, source: "the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)", note: "As the simulation has it. A grade is its figure put as kg in each kg; an oxide's as the element's; the rare earths and the platinum metals each by the simulation's own split, where it gives one (a rare-earth oxide is taken as 83% metal; the rare earths as cerium where there is no split)." }
+- of:
+  - sim
+  - carries
+  - shape
+  - size
+  - footprint
+  - forms_at
+  - cluster
+  - seen_by
+  tier: sourced
+  review: true
+  source: 'the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)'
+  note: As the simulation has it. A grade is its figure put as kg in each kg; an oxide's as the element's; the rare earths and the platinum metals each by the simulation's own split, where it gives one (a rare-earth oxide is taken as
+    83% metal; the rare earths as cerium where there is no split).
+- of:
+  - density
+  tier: derived
+  review: true
+  note: 'Converted once (17 Oct 2026) from rate, which was per E4 sample of 17,003 km2 over E4s 4.067 Gyr of plates: density = rate / 17,003 km2 / 4.067 Gyr (planet-forge tools/registry/deposit_density.py). Counts on a grown planet
+    unchanged; to be re-judged against known deposit counts per area.'
+setting: rock contacts
+rate: 0.21
+density: 9.624e-29

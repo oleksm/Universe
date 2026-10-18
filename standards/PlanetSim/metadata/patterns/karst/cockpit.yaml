@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.karst.landscape.cockpit
+  name: Cockpit (fengcong / polygonal cone) karst
+  about: Cockpit (fengcong / polygonal cone) karst.
+family: karst
+factors:
+- factor: planet-factor.clim-precip
+  weight: 3
+  why: Very high rainfall (~2000+ mm/yr, Jamaica/Guilin) drives intense point recharge
+- factor: planet-factor.clim-temp
+  weight: 1
+  why: Tropical/subtropical warmth; high soil CO2; cone forms limited to these zones
+- factor: planet-factor.rock-soluble
+  weight: 3
+  why: Massive pure limestone, hundreds of m thick
+- factor: planet-factor.rock-fracture
+  weight: 1
+  why: Joint network locates star-shaped depressions; spacing sets polygon size
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: Steady uplift keeps deep vadose zone; slower uplift lets cockpits evolve to towers
+- factor: planet-factor.groundwater
+  weight: 3
+  why: Deep water table (fengcong) versus shallow (fenglin); depressions drain vertically
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: Dense rainforest and soil supply CO2; soils funnel water to depression floors
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: Depressions 100-120 m deep, walls 30-40 deg
+- factor: planet-factor.time
+  weight: 1
+  why: 0.5 to 10 Myr
+vocabulary_id: 96
+sources:
+- https://en.wikipedia.org/wiki/Cockpit_Country
+- https://showcaves.com/english/explain/Karst/TowerKarst.html
+library_status: written
+source: karst.landscape.cockpit
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

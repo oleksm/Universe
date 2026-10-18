@@ -27,7 +27,7 @@ BOXED = {"market.electronics", "market.computers", "market.medicine", "market.to
 HEAVY_MARKETS = {"market.ores", "market.minerals"}
 FORMS = {"plate": "plate-stack", "sheet": "plate-stack", "panel": "plate-stack", "sandwich": "plate-stack",
          "honeycomb": "plate-stack", "tile": "plate-stack", "bar": "bar-bundle", "tube": "bar-bundle", "wire": "coil",
-         "fibre": "coil", "film": "coil", "ingot": "crate-heavy", "blank": "crate-heavy", "forging": "crate-heavy",
+         "fibre": "coil", "film": "coil", "coil": "coil", "length": "bar-bundle", "piece": "crate-steel", "ingot": "crate-heavy", "blank": "crate-heavy", "forging": "crate-heavy",
          "box": "crate-heavy", "fastener": "crate-heavy", "strut": "bar-bundle", "scrap": "skip"}
 
 

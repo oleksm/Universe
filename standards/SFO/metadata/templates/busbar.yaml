@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/template.schema.yaml
+identity:
+  key: template.busbar
+  name: Busbar
+  description: AC and DC busbars. Its straight is swept along the run's path; every size of the family is this template at the record's figures.
+family: busbar
+draws: sweep-and-pieces
+profile: the phases' water-cooled tubes side by side on their insulators
+scales_by:
+- outside
+- size
+pieces:
+- name: elbow
+  how: the bars' bend, scaled to the phase spacing
+- name: support
+  how: the insulator posts
+model_of: run.busbar-dc-44ka
+members: 3
+basis:
+- of:
+  - draws
+  - scales_by
+  - pieces
+  - model_of
+  tier: derived
+  note: 'The owner, 2026-10-17: one template a family, scaled, instead of a model a size; model_of is an installed size''s model, the middle one of those installed, until the template has its own.'

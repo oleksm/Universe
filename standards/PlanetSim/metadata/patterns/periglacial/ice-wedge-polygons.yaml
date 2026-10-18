@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.periglacial.ground.ice-wedge-polygons
+  name: Ice-wedge polygons
+  about: Ice-wedge polygons.
+family: periglacial
+factors:
+- factor: planet-factor.clim-temp
+  weight: 3
+  why: MAAT about -6 to -8 C or colder; rapid winter cooling cracks ground
+- factor: planet-factor.permafrost
+  weight: 3
+  why: Continuous permafrost; ice wedges grow annually
+- factor: planet-factor.regolith
+  weight: 3
+  why: Fine sediment, peat or gravel; sand-filled wedges in dry cold deserts
+- factor: planet-factor.clim-arid
+  weight: 1
+  why: Meltwater needed for ice veins; very arid gives sand wedges
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: Flat tundra, floodplains, drained lake basins; spacing 3-40 m
+- factor: planet-factor.sed-supply
+  weight: 1
+  why: Aggrading surfaces give syngenetic deep wedges
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: Snow and vegetation cover insulate, limit cracking
+- factor: planet-factor.time
+  weight: 1
+  why: Hundreds to thousands of years; wedges 1-10 m deep
+vocabulary_id: 105
+sources:
+- https://en.wikipedia.org/wiki/Ice_wedge
+- https://www.antarcticglaciers.org/glacial-geology/glacial-landforms/periglaciation/pingos-and-ice-wedge-polygons/
+library_status: written
+source: periglacial.ground.ice_wedge_polygons
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

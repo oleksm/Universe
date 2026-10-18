@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: connector.plug-iec60309-125a
+  name: Plug and socket, 125 A, 690 V
+  description: 'The plug and receiver a crew or a player hooks a machine up with: made and broken by hand, keyed so that only its own rating mates, the earth pin first in and last out.'
+kind: plug-socket
+size: 0.000125
+rating:
+  voltage: 690
+  current: 125
+physical:
+  length: 0.17
+  width: 0.17
+  height: 0.33
+  mass: 3.6
+built_of:
+- what: Contacts
+  item: material.copper
+  mass: 1.08
+  note: silver-plated brass, as copper here
+- what: Housings and seals
+  item: material.polyethylene-uhmw
+  mass: 2.52
+  note: polyamide housings, as UHMW polyethylene here
+provides: both
+template: template.plug-socket
+basis:
+- of:
+  - physical
+  tier: invented
+  review: true
+  note: From memory of makers' catalogues; to be sourced.
+interface: interface.plug-iec60309-125a

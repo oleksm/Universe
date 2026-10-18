@@ -1,13 +1,11 @@
 # yaml-language-server: $schema=../../schema/equipment.schema.yaml
-# Measured from the model (assets/models/mc07.glb): assets/models/mc07.glb: Gear_RL_*, Gear_RR_*. Once an empty part of the hull (MC07-24); now the MC-07's own product,
-# fitted to its gear slot like any other, built of the parts measured from the model.
 identity:
   key: equipment.gear.rear.mc07
-  name: "MC-07 landing leg, rear"
+  name: MC-07 landing leg, rear
   maker: org.kestrel
   revision: draft
   slot: gear
-  description: "MC-07 landing leg, rear, as the model draws it: a product the hull fits, not a part of it."
+  description: 'MC-07 landing leg, rear, as the model draws it: a product the hull fits, not a part of it.'
 size_class: 3
 fits: mount.gear-s3
 physical:
@@ -21,16 +19,18 @@ built_of:
 making:
   module: module.assembly-shop
 function:
-  kind: "landing_gear"
+  kind: landing_gear
   holds: 1200000.0
   stroke: 0.8
   efficiency: 0.8
   sink_rate: 3.05
   extended: 7.58
+  spring: 1500000.0
+  damper: 275400.0
 visual:
-  format: "freefall-model/1"
-  path: "models/gear-rear-mc07/v1"
-  manifest_sha256: "98bdd36ac4d06874e6017a66715a548d857be10e8179ec0f6888e48f37de24b3"
+  format: freefall-model/1
+  path: models/gear-rear-mc07/v1
+  manifest_sha256: 98bdd36ac4d06874e6017a66715a548d857be10e8179ec0f6888e48f37de24b3
   version: 1
   triangles: 3684
 life: 473364000
@@ -39,10 +39,43 @@ revision:
   owner: registry
   on_conflict: propose
   priority: low
-  because: "Low priority (the user, 2026-10-10): the MC-07 hull is to be reworked before its equipment is wrapped up; models installed so far stay."
+  because: 'Low priority (the user, 2026-10-10): the MC-07 hull is to be reworked before its equipment is wrapped up; models installed so far stay.'
 basis:
-  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, note: "Measured from the model; its volume the box round it." }
-  - { of: [physical.mass, built_of], tier: derived, note: "The sum of its measured parts, each its length in the stock it is cut from (the integrator's measuring, 2026-10-05)." }
-  - { of: [function, size_class], tier: invented, review: true, note: "Holds 1.2 MN: the same strut, shorter (its Euler load rises as the square of the shortening). Stroke chosen; sink rate the hull's." }
-  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, note: "The record's box is the thing stowed, as fitted and carried (registry convention 2026-10-10); its deployed reach is in function. Measured stowed by blender (gear-rear prototype-v01 extraction, 2026-10-10): 3.340 x 5.460 x 2.080 m. Extended mount to pad stays 7.58 m (function.extended)." }
-  - { of: [life], rule: rule.life-ship-system }
+- of:
+  - physical.length
+  - physical.width
+  - physical.height
+  - physical.volume
+  tier: derived
+  note: Measured from the model; its volume the box round it.
+- of:
+  - physical.mass
+  - built_of
+  tier: derived
+  note: The sum of its measured parts, each its length in the stock it is cut from (the integrator's measuring, 2026-10-05).
+- of:
+  - function
+  - size_class
+  tier: invented
+  review: true
+  note: 'Holds 1.2 MN: the same strut, shorter (its Euler load rises as the square of the shortening). Stroke chosen; sink rate the hull''s.'
+- of:
+  - physical.length
+  - physical.width
+  - physical.height
+  - physical.volume
+  tier: derived
+  review: true
+  note: 'The record''s box is the thing stowed, as fitted and carried (registry convention 2026-10-10); its deployed reach is in function. Measured stowed by blender (gear-rear prototype-v01 extraction, 2026-10-10): 3.340 x 5.460 x
+    2.080 m. Extended mount to pad stays 7.58 m (function.extended).'
+- of:
+  - life
+  rule: rule.life-ship-system
+- of:
+  - function.spring
+  - function.damper
+  tier: derived
+  review: true
+  note: 'A linear spring and damper standing for the oleo strut: the spring takes holds at the end of the stroke (1.2e+06 N / 0.8 m); the damper is 0.7 x holds at the design sink rate (3.05 m/s). 0.7 is chosen (invented): dropped at
+    3.05 m/s with the mass whose touchdown fills the stroke at efficiency 0.8 (2 holds stroke eff / v^2), it peaks at 1.03 x holds and uses 0.87 of the stroke; at rest under holds/3 (an aircraft-like limit load factor of 3, from memory)
+    it settles with a damping ratio about 0.48. A real oleo is nonlinear (gas spring, orifice damping).'

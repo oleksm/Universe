@@ -1,18 +1,124 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.hydrogen-purifier, name: Hydrogen purifier, description: 'Takes the last oxygen out of the hydrogen over a palladium catalyst (it burns to water) and dries it in two adsorber vessels that take turns, one regenerating by heat while the other works. Gas in at local (-6, 0, 6), out at (6, 0, 2).'}
+identity: {key: unit.hydrogen-purifier, name: Hydrogen purifier, description: 'Takes the last oxygen out of the electrolysers'' hydrogen and dries it to a dew point near -60 deg C, at 3 bar (rated 6). Cooled by the tower''s water. In order: a feed/effluent exchanger (0.9 m across, 3.5 m long, horizontal along x at y 0, z 6, x -5.6 to -2.1, on a stand) warms the wet gas a little against the hot outlet; the deoxidiser (1.6 m across, 3.5 m tall, on 1 m legs, centre (-4, -2)) burns the 0.5% of oxygen to water over 3.0 m3 of palladium catalyst, 83 K warmer; a water-cooled after-cooler (0.8 m across, 3.2 m long, along x at y 0.8, z 1.2, x -3.6 to -0.4) to 35 deg C and a knockout drum (1 m across, 2.5 m, centre (0.4, 0.8)); a chiller package (x -2 to 1.6, y -3.8 to -1.4, 2.2 m tall) to 5 deg C with its cold separator; two dryers (2.4 m across, 4 m straight with dished heads, 8 mm wall, on skirts, centres (4, -2.2) and (4, 2.2)), one adsorbing for 8 hours while the other is heated 4 hours by a slip
+    of dry gas and cooled; a regeneration heater cabinet (x -1.5 to 1.5, y 2.4 to 3.6, 2.2 m tall), its cooler (0.5 m across, 2 m, along x on the cabinet''s roof) and a knockout pot (0.6 m across, 2 m, centre (2, 3.4)); a dust filter (0.5 m, 2 m, centre (5.5, 0)) before the outlet. Gas in at local (-6, 0, 6), out at (6, 0, 2); the cooling water''s pair of 148 mm flanges on the -y face at (0, -4, 1) flow and (0.6, -4, 1) return (35 kg/s at a 10 K rise); condensate 50 mm out at (-6, 3, 0.3); 400 V supply at (6, -3.5, 0.5).'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 8.0, height: 9.0, mass: 33000.0}
+physical: {length: 12.0, width: 8.0, height: 9.0, mass: 57870.0}
 built_of:
-- {what: Vessels and piping, item: material.structural-steel-a36, mass: 25000.0, note: 'a deoxidiser and two adsorbers 1.5 m across and 6 m, from memory'}
-- {what: Adsorbent, item: material.fused-silica, mass: 8000.0, note: 'molecular sieve beads, which the registry has not got: fused silica stands for it'}
-needs: {power: 300000.0}
+- {what: Vessels, item: material.stainless-steel-304, mass: 7548.0, note: 'the dryers, deoxidiser, drums and filter shells with their heads and nozzles; measured on model v1'}
+- {what: Exchangers, item: material.stainless-steel-304, mass: 6000.0, note: 'feed/effluent exchanger, after-cooler and regeneration cooler, from memory'}
+- {what: Chiller package, item: good.pumps, mass: 4500.0, note: 'a 410 kW screw chiller on its frame, from memory'}
+- {what: Regeneration heater, item: material.stainless-steel-304, mass: 1500.0, note: '174 kW of electric elements in a cabinet, from memory'}
+- {what: Adsorbent, item: material.fused-silica, mass: 7851.0, note: '3.9 t of 4A molecular sieve a bed (the water of an 8 hour turn at 10%), which the registry has not got: fused silica stands for it'}
+- {what: Catalyst, item: material.fused-silica, mass: 2402.0, note: 'palladium on alumina pellets at 800 kg/m3, 0.5% palladium, which the registry has not got: fused silica stands for it'}
+- {what: 'Skid, skirts and supports', item: material.structural-steel-a36, mass: 24150.0, note: 'the skid''s beams and feet, the dryers'' skirts and base rings, the exchangers'' stands and saddles, the headers'' posts; measured on model v1'}
+- {what: Piping and valve bodies, item: material.stainless-steel-304, mass: 3916.0, note: 'the process, regeneration and water pipes and the valves'' bodies; measured on model v1'}
+needs: {power: 296100.0, heat: 1448000.0}
+ports:
+- id: gas-in
+  flow: in
+  medium: gas
+  item: material.hydrogen
+  rate: 0.525
+  pressure: 300000.0
+  temperature: 353.1
+  interface: interface.flange-dn450-pn10-double
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn450-pn10-ss-double
+  at: [-6.0, 0.0, 6.0]
+  facing: [-1.0, 0.0, 0.0]
+- id: gas-out
+  flow: out
+  medium: gas
+  item: material.hydrogen
+  rate: 0.525
+  pressure: 300000.0
+  temperature: 313.0
+  interface: interface.flange-dn450-pn10-double
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn450-pn10-ss-double
+  at: [6.0, 0.0, 2.0]
+  facing: [1.0, 0.0, 0.0]
+  note: dry, oxygen-free
+- id: cooling-in
+  flow: in
+  medium: liquid
+  item: good.water
+  rate: 34.59
+  temperature: 303.0
+  interface: interface.flange-dn150-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn150-pn10
+  at: [0.0, -4.0, 1.0]
+  facing: [0.0, -1.0, 0.0]
+  note: the model's 148 mm flow flange
+  pressure: 400000.0
+- id: cooling-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 34.59
+  temperature: 313.0
+  interface: interface.flange-dn150-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn150-pn10
+  at: [0.6, -4.0, 1.0]
+  facing: [0.0, -1.0, 0.0]
+  pressure: 400000.0
+- id: condensate-out
+  flow: out
+  medium: liquid
+  item: good.water
+  rate: 0.8803
+  pressure: 100000.0
+  temperature: 313.0
+  interface: interface.flange-dn50-pn10
+  half: androgynous
+  make: bolted
+  connector: connector.flange-dn50-pn10-ss
+  at: [-6.0, 3.0, 0.3]
+  facing: [-1.0, 0.0, 0.0]
+  note: 'the knockouts'' and the deoxidiser''s water: the hydrogen saturated at 80 deg C and 3 bar'
+- id: power-in
+  flow: in
+  medium: power
+  power: 296100.0
+  voltage: 400
+  interface: interface.termination-400v-240mm2
+  half: female
+  make: bolted
+  connector: connector.termination-400v-240mm2
+  at: [6.0, -3.5, 0.5]
+  facing: [1.0, 0.0, 0.0]
+  current: 474.9
+- id: base
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 57870.0
+  at: [0.0, 0.0, 0.0]
+  facing: [0.0, 0.0, -1.0]
+  note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
+product: product.hydrogen-purifier
+envelope:
+- [-6.002, -4.001, -0.002, 6.002, 4.002, 8.742]
 life: 788940000
+visual: {format: freefall-model/1, path: models/hydrogen-purifier/v1, manifest_sha256: c68ccc70f176081bf583bcf03a409c8c79260a9f608cc8d69646d2d784531a58, version: 1, triangles: 41476}
 basis:
 - of: [physical, built_of, needs]
+  tier: derived
+  review: true
+  note: 'From the plant''s 260 mol/s of hydrogen: the dryers'' diameter at 0.50 m/s at 3 bar, their walls for 6 bar in 304 at 138 MPa (85% joints, 1.5 mm allowance), the sieve from the water left at 5 deg C over 8 hours, regeneration warming sieve and shell 230 K and driving the water off in 4 hours (174 kW), the chiller 410 kW at a COP of 4; oxygen content, capacities and the catalyst''s space velocity from memory.'
+- of: [ports]
   tier: invented
   review: true
-  note: Sizes, masses and the regeneration heaters' power from memory.
+  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage; water at the pumps'' 4 bar.'
 - of: [life]
   rule: rule.life-plant

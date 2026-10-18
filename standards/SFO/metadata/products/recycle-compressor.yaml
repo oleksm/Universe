@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/product.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: product.recycle-compressor, name: Recycle compressor, description: A hydrogen loop's compressor.}
+kind: product
+params:
+- {name: power, unit: W}
+- {name: pressure, unit: Pa}
+units: [unit.recycle-compressor, unit.recycle-compressor-8bar]
+basis:
+- of: [kind, params, pieces, options]
+  tier: invented
+  review: true
+  note: Grouped from the units the layouts use (docs/proposals/plant-products.md, 2026-10-16).

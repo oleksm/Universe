@@ -1,8 +1,8 @@
 # yaml-language-server: $schema=../../schema/building.schema.yaml
 identity:
   key: building.park
-  name: "Park"
-  description: "Open ground kept green under a sky or a dome: paths, trees, water and a field to play on."
+  name: Park
+  description: 'Open ground kept green under a sky or a dome: paths, trees, water and a field to play on.'
 physical:
   length: 200
   width: 100
@@ -12,17 +12,50 @@ per_people: 5000
 floor: 20000
 storeys: 1
 meets:
-  - { need: need.play, people: 5000 }
+- need: need.play
+  people: 5000
 staff:
-  - { profession: profession.farmer, count: 4 }
-  - { profession: profession.builder, count: 1 }
+- profession: profession.farmer
+  count: 4
+- profession: profession.builder
+  count: 1
 built_of:
-  - { item: good.concrete, quantity: 20800000 }
-  - { item: material.structural-steel-a36, quantity: 1160000 }
+- item: good.concrete
+  quantity: 20800000
+- item: material.structural-steel-a36
+  quantity: 1160000
 life: 1577880000
 basis:
-  - { of: [per_people, staff, meets], tier: invented, review: true, note: "Two hectares to 5,000 people, four square metres a head, twice the need's two; four gardeners (farmers) and a builder keep it." }
-  - { of: [physical, floor, storeys], tier: invented, review: true, note: "Chosen. To be reviewed." }
-  - { of: [built_of], tier: sourced, source: "standards/sources/research_people_plant.json", note: "1,040 kg of concrete and 58 kg of steel for each m2 of floor: the average of 538 residential buildings in China." }
-  - { of: [physical.mass], tier: derived, source: "standards/sources/research_people_plant.json", note: "1,103 kg for each m2 of floor, all materials." }
-  - { of: [life], rule: rule.life-building }
+- of:
+  - per_people
+  - staff
+  - meets
+  tier: invented
+  review: true
+  note: Two hectares to 5,000 people, four square metres a head, twice the need's two; four gardeners (farmers) and a builder keep it.
+- of:
+  - physical
+  - floor
+  - storeys
+  tier: invented
+  review: true
+  note: Chosen. To be reviewed.
+- of:
+  - built_of
+  tier: sourced
+  source: standards/sources/research_people_plant.json
+  note: '1,040 kg of concrete and 58 kg of steel for each m2 of floor: the average of 538 residential buildings in China.'
+- of:
+  - physical.mass
+  tier: derived
+  source: standards/sources/research_people_plant.json
+  note: 1,103 kg for each m2 of floor, all materials.
+- of:
+  - life
+  rule: rule.life-building
+revision:
+  status: deprecated
+  owner: registry
+  on_conflict: propose
+  replaced_by: layout.building-park
+  because: 'The owner, 2026-10-17: a building is a layout, laid of units, structure and kit on its site like the factories, not one model. This record stands for the game until its layout exists; no new model work on it.'

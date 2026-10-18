@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/product.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: product.shaft-furnace-200th, name: 'Hydrogen shaft furnace, 200 t an hour', description: A refractory-lined shaft reducing pellets by hydrogen.}
+kind: product
+params:
+- {name: pressure, unit: Pa, description: its loop's class}
+- {name: discharge, description: cold or hot}
+units: [unit.shaft-furnace-200th, unit.shaft-furnace-200th-hp]
+basis:
+- of: [kind, params, pieces, options]
+  tier: invented
+  review: true
+  note: Grouped from the units the layouts use (docs/proposals/plant-products.md, 2026-10-16).

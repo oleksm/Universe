@@ -1,0 +1,102 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Planet LOD model
+x-kind: [lod-model]
+description: "standards/PlanetLOD/metadata/models/<name>.yaml: how a Planet Simulator model is meshed (the owner, 17 Oct 2026): the model it meshes (its anchors and rings are on that page), the rule every vertex height comes from, the lines kept as mesh edges, the vertex pattern by zone, the triangulation and its face rules, its parameters, what it guarantees, the owner's rules for it, its results and its implementation. Its words are the Planet Simulator's."
+type: object
+additionalProperties: false
+required: [identity, model, height_rule]
+allOf:
+  - { $ref: "../../common.schema.yaml#/definitions/planet_context" }
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name, about]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      about: { type: string }
+      words: { type: string, description: "The owner's definition, verbatim, with the date." }
+  purpose: { type: string, description: "What it is for, and what it is not (a height and coastline model says nothing of colour)." }
+  model: { type: string, x-ref: [planet-model], description: "The Planet Simulator model it meshes: its definition, anchors and rings are on that page." }
+  height_rule:
+    type: object
+    additionalProperties: false
+    required: [formula]
+    properties:
+      formula: { type: string, description: "Every vertex's height from the model." }
+      lines: { type: string, description: "What counts as a line for it." }
+      fallback: { type: string, description: "What it falls back on when no line is found; none, if it never does." }
+  meshed_lines:
+    type: array
+    description: "Lines kept as mesh edges."
+    items:
+      type: object
+      additionalProperties: false
+      required: [name, what]
+      properties:
+        name: { type: string }
+        what: { type: string }
+        step: { type: number, exclusiveMinimum: 0, x-unit: m, description: "Vertex step along it." }
+        clear: { type: string, description: "How it is kept an edge (no other vertex this near)." }
+  vertex_pattern:
+    type: array
+    description: "The vertex spacing by zone, graded outward."
+    items:
+      type: object
+      additionalProperties: false
+      required: [zone, spacing]
+      properties:
+        zone: { type: string }
+        spacing: { type: array, items: { type: number, exclusiveMinimum: 0, x-unit: m }, description: "Spacings outward, m." }
+        note: { type: string }
+  triangulation: { type: string, description: "How the vertices are joined into faces." }
+  face_rules: { type: array, items: { type: string }, description: "What is done to faces after triangulation (vertices added, winding, colour corner)." }
+  colour: { type: string, description: "What colours it draws, and that it invents none." }
+  source_field: { type: array, items: { type: string, x-ref: [planet-field] }, description: "The field it is built from; several while the choice is open." }
+  params:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [name]
+      properties:
+        name: { type: string }
+        source: { type: string, description: "The constant's name in the code (BAND_K, COAST_KM)." }
+        value: { type: number, x-unit-from: unit }
+        values: { type: array, items: { type: number, x-unit-from: unit }, description: "When it is a series." }
+        unit: { type: string, description: "SI, or 1." }
+        said_as: { $ref: "../../common.schema.yaml#/definitions/said_as" }
+        open: { type: boolean, description: "true: not chosen yet." }
+        note: { type: string }
+  guarantees: { type: array, items: { type: string } }
+  leaves_out: { type: array, items: { type: string } }
+  rules: { type: array, items: { type: string }, description: "The owner's rules for it." }
+  results:
+    type: array
+    description: "Figures a run of it gave."
+    items:
+      type: object
+      additionalProperties: false
+      required: [what, value, unit]
+      properties:
+        what: { type: string }
+        value: { type: number, x-unit-from: unit }
+        unit: { type: string, description: "SI, or 1 (a count or a share)." }
+        run: { type: string, description: "The planet run." }
+        date: { type: string }
+        note: { type: string }
+  outputs: { type: array, items: { type: object, additionalProperties: false, required: [path, holds], properties: { path: { type: string }, holds: { type: string } } } }
+  app: { type: string, description: "How the LOD app shows it." }
+  implementations:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [where, state]
+      properties:
+        where: { type: string }
+        state: { enum: [predecessor, current, building, retired] }
+        note: { type: string }
+  status: { enum: [draft, published, retired] }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

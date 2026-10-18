@@ -1,0 +1,154 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.landcover
+  name: Land cover shares and ground colour from climate (Miami NPP, aridity, aspect)
+  about: 'Land cover: what covers the ground, and so what it looks like, from what the stages know, at any scale. The same
+    function serves the 5 km globe and a 600 m (or finer) tile, so every view agrees: only its inputs'' resolution changes.
+    NOT INVENTORIED IN DETAIL: neither plates.py nor coupled.py imports landcover.py (directly or through another module);
+    it is used by tools/landcover_tiles.py, landcover_check.py, iss_view.py, water_test.py.'
+area: surface
+clock:
+  when: not part of the coupled planet run (offline tools / bakes)
+params:
+- name: REFL
+  setting: '{"broadleaf": [0.03, 0.06, 0.025], "needleleaf": [0.018, 0.034, 0.016], "shrub": [0.09, 0.1, 0.065], "grass_green":
+    [0.065, 0.115, 0.045], "grass_dry": [0.2, 0.17, 0.1], "tundra": [0.055, 0.08, 0.042], "sediment": [0.23, 0.185, 0.13],
+    "sand": [0.44, 0.37, 0.26], "fen": [0.04, 0.05, 0.03], "marsh": [0.045, 0.075, 0.035], "snow": [0.9, 0.925, 0.955]}'
+  meaning: '(Forest canopies as seen from above, their crowns'' own shadows in: MODIS''s visible albedo of forest ~0.03-0.05,
+    needleleaf the darkest (Gao et al. 2005; Kuusk et al. 2009 for boreal).) chlorophyll absorbs red and blue clumped, deep-shadowed
+    crowns senescent: the steppe''s and savanna''s dry season sedge, moss, dwarf shrub in summer (MODIS tundra VIS ~0.05-0.08:
+    Stroeve et al. 2005) dry soil, gravel, silt quartz sand (dunes), dry Wetlands (water at or above the ground much of the
+    year): peat bogs and fens, dark (mosses, sedges over black water; ~0.03-0.06 visible: Harris et al. 2006), marshes of '
+  source: stages/landcover.py:42
+  note: 'Reflectance, linear, (R ~650 nm, G ~550, B ~450).; unit: unverified'
+- name: NPP_COVER
+  value: 450.0
+  unit: '1'
+  said_as:
+    unit: g/m²/yr (from the code comment; SI conversion not done, unverified)
+    factor: 1.0
+  open: true
+  meaning: 'g/m²/yr: cover ~1 − 1/e at a temperate grassland''s NPP'
+  source: stages/landcover.py:59
+  note: 'unit as the code says it: ''g/m²/yr (from the code comment; SI conversion not done, unverified)''; SI conversion
+    unverified'
+- name: AI_COVER
+  value: 0.45
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/landcover.py:60
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: AI_CAP
+  value: 10.0
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: the aridity index at cover ~1 − 1/e
+  source: stages/landcover.py:61
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: SUN_ASPECT_C
+  value: 3.0
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: 'Local causes of the land''s patchwork (approximate; each a measured effect): - The sun on a slope: equator-facing
+    slopes run warmer and drier than pole-facing, ~2-4 °C in mid-latitudes on steep ground (Bennie et al. 2008); pole-facing
+    slopes hold more water and more trees in dry country (Holland & Steyn 1975; the "north-slope forests" of semi-arid ranges).'
+  source: stages/landcover.py:108
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: ASPECT_WATER
+  value: 0.35
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/landcover.py:109
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: DRIFT_C
+  value: 2.5
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: '- Snow: wind strips it off ridges and drifts it into gullies and lee hollows (Winstral et al. 2002), which keep
+    it long after the open slopes melt: the threads of snow along gullies seen from orbit. As an equivalent temperature: hollows
+    ~2.5 °C colder, ridges ~1.5 warmer.'
+  source: stages/landcover.py:113
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: SCOUR_C
+  value: 1.5
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: '- Snow: wind strips it off ridges and drifts it into gullies and lee hollows (Winstral et al. 2002), which keep
+    it long after the open slopes melt: the threads of snow along gullies seen from orbit. As an equivalent temperature: hollows
+    ~2.5 °C colder, ridges ~1.5 warmer.'
+  source: stages/landcover.py:113
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: RIDGE_SOIL
+  value: 0.2
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: '(Ridges'' thin soil and hollows'' deeper: at 600 m it shows as a faint tone along the drainage, not a pattern:
+    strong, it read as speckle and "marsh" everywhere; ~0.2 and ~0.15.)'
+  source: stages/landcover.py:116
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: HOLLOW_VEG
+  value: 0.15
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: '(Ridges'' thin soil and hollows'' deeper: at 600 m it shows as a faint tone along the drainage, not a pattern:
+    strong, it read as speckle and "marsh" everywhere; ~0.2 and ~0.15.)'
+  source: stages/landcover.py:116
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: REGOLITH_FROM_ROCK
+  value: 0.6
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: 'How much of the bedrock''s colour the regolith over it keeps (soil, gravel, desert pavement are its weathered
+    pieces: deserts show their geology from orbit; ~0.6, with the rest the common soil''s colour).'
+  source: stages/landcover.py:255
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+random_draws:
+- not inventoried
+used: false
+note: 'unused by plates.py / coupled.py; users: tools/landcover_tiles.py, landcover_check.py, iss_view.py, water_test.py'
+backends:
+- cpu
+implementations:
+- where: 'planet-sim-landform stages/landcover.py: srgb_to_linear (64-66), linear_to_srgb (69-71), thornthwaite_pet (74-89),
+    miami_npp (92-96), smooth (99-101), cover (123-249), colour (258-281)'
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
+    the code at planet-sim-landform 9747f0d-c437724.'

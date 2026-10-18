@@ -132,6 +132,8 @@
 - { key: module.brewery, game: "brewery", in: "formerly industry.ron, settlements.ron" }
 - { key: module.brickworks, game: "brickworks", in: "formerly industry.ron, settlements.ron" }
 - { key: module.building-dock, game: "building-dock", in: "formerly industry.ron, settlements.ron" }
+- { key: module.building-panel-works, game: "building-panel-works", in: "formerly industry.ron, settlements.ron" }
+- { key: module.cable-works, game: "cable-works", in: "formerly industry.ron, settlements.ron" }
 - { key: module.carbide-furnace, game: "carbide-furnace", in: "formerly industry.ron, settlements.ron" }
 - { key: module.carbon-works, game: "carbon-works", in: "formerly industry.ron, settlements.ron" }
 - { key: module.casthouse, game: "casthouse", in: "formerly industry.ron, settlements.ron" }
@@ -147,11 +149,13 @@
 - { key: module.compost-works, game: "compost-works", in: "formerly industry.ron, settlements.ron" }
 - { key: module.concentrator, game: "concentrator", in: "formerly industry.ron, settlements.ron" }
 - { key: module.concrete-plant, game: "concrete-plant", in: "formerly industry.ron, settlements.ron" }
+- { key: module.conveyor-shop, game: "conveyor-shop", in: "formerly industry.ron, settlements.ron" }
 - { key: module.copper-smelter, game: "copper-smelter", in: "formerly industry.ron, settlements.ron" }
 - { key: module.crushing-plant, game: "crushing-plant", in: "formerly industry.ron, settlements.ron" }
 - { key: module.cutting-table, game: "cutting-table", in: "formerly industry.ron, settlements.ron" }
 - { key: module.dairy, game: "dairy", in: "formerly industry.ron, settlements.ron" }
 - { key: module.deuterium-plant, game: "deuterium-plant", in: "formerly industry.ron, settlements.ron" }
+- { key: module.electrical-fittings-works, game: "electrical-fittings-works", in: "formerly industry.ron, settlements.ron" }
 - { key: module.electronics-works, game: "electronics-works", in: "formerly industry.ron, settlements.ron" }
 - { key: module.extrusion-press, game: "extrusion-press", in: "formerly industry.ron, settlements.ron" }
 - { key: module.feed-mill, game: "feed-mill", in: "formerly industry.ron, settlements.ron" }
@@ -173,6 +177,7 @@
 - { key: module.grain-silo, game: "grain-silo", in: "formerly industry.ron, settlements.ron" }
 - { key: module.grow-hall, game: "grow-hall", in: "formerly industry.ron, settlements.ron" }
 - { key: module.honeycomb-works, game: "honeycomb-works", in: "formerly industry.ron, settlements.ron" }
+- { key: module.hose-works, game: "hose-works", in: "formerly industry.ron, settlements.ron" }
 - { key: module.hot-rolling-mill, game: "hot-rolling-mill", in: "formerly industry.ron, settlements.ron" }
 - { key: module.hydrogen-plant, game: "hydrogen-plant", in: "formerly industry.ron, settlements.ron" }
 - { key: module.ice-melter, game: "ice-melter", in: "formerly industry.ron, settlements.ron" }
@@ -203,6 +208,7 @@
 - { key: module.pharma-works, game: "pharma-works", in: "formerly industry.ron, settlements.ron" }
 - { key: module.phosphate-works, game: "phosphate-works", in: "formerly industry.ron, settlements.ron" }
 - { key: module.piercing-mill, game: "piercing-mill", in: "formerly industry.ron, settlements.ron" }
+- { key: module.pipe-shop, game: "pipe-shop", in: "formerly industry.ron, settlements.ron" }
 - { key: module.potline, game: "potline", in: "formerly industry.ron, settlements.ron" }
 - { key: module.propellant-plant, game: "propellant-plant", in: "formerly industry.ron, settlements.ron" }
 - { key: module.reheat-furnace, game: "reheat-furnace", in: "formerly industry.ron, settlements.ron" }
@@ -224,6 +230,7 @@
 - { key: module.titanium-works, game: "titanium-works", in: "formerly industry.ron, settlements.ron" }
 - { key: module.tungsten-works, game: "tungsten-works", in: "formerly industry.ron, settlements.ron" }
 - { key: module.vacuum-furnace, game: "vacuum-furnace", in: "formerly industry.ron, settlements.ron" }
+- { key: module.valve-shop, game: "valve-shop", in: "formerly industry.ron, settlements.ron" }
 - { key: module.waste-dump, game: "waste-dump", in: "formerly industry.ron, settlements.ron" }
 - { key: module.water-works, game: "water-works", in: "formerly industry.ron, settlements.ron" }
 - { key: module.welding-bay, game: "welding-bay", in: "formerly industry.ron, settlements.ron" }
@@ -322,6 +329,8 @@
 - { key: standard.sfo.22, game: "SFO 22", in: "formerly standards.ron" }
 - { key: standard.sfo.23, game: "SFO 23", in: "formerly standards.ron" }
 - { key: standard.sfo.24, game: "SFO 24", in: "formerly standards.ron" }
+- { key: standard.sfo.25, game: "SFO 25", in: "formerly standards.ron" }
+- { key: standard.sfo.26, game: "SFO 26", in: "formerly standards.ron" }
 - { key: standard.sfo.3, game: "SFO 3", in: "formerly standards.ron" }
 - { key: standard.sfo.4, game: "SFO 4", in: "formerly standards.ron" }
 - { key: standard.sfo.5, game: "SFO 5", in: "formerly standards.ron" }

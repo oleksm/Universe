@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.hillslope.talus.cone
+  name: Talus (scree) cone / slope
+  about: Talus (scree) cone / slope.
+family: hillslope
+factors:
+- factor: planet-factor.slope-relief
+  weight: 3
+  why: Needs cliff/free face above; cone at angle of repose ~31-37 deg
+- factor: planet-factor.rock-fracture
+  weight: 3
+  why: Joint density sets clast size and rockfall supply
+- factor: planet-factor.rock-type
+  weight: 1
+  why: Hard jointed rock gives coarse talus; weak rock gives fine scree
+- factor: planet-factor.clim-temp
+  weight: 3
+  why: Freeze-thaw cycles drive rockfall; most active in cold climates
+- factor: planet-factor.ice-extent
+  weight: 1
+  why: Paraglacial debuttressing of glacier-steepened walls boosts supply
+- factor: planet-factor.events
+  weight: 1
+  why: Earthquakes shake loose rockfall
+- factor: planet-factor.clim-storm
+  weight: 1
+  why: Debris flows and avalanches rework into concave profiles
+- factor: planet-factor.time
+  weight: 1
+  why: Accumulates 0.1-15 kyr; fan size grows with time since deglaciation
+vocabulary_id: 92
+sources:
+- https://en.wikipedia.org/wiki/Scree
+- https://pubs.usgs.gov/fs/2004/3072/fs-2004-3072.html
+library_status: written
+source: hillslope.talus.cone
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

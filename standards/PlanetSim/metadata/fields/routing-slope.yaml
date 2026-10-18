@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.routing-slope
+  name: Routing slope
+  about: 'The drop from a sample to its receiver over their distance (at least 1 m), on the routing surface: what the river''s
+    stream power reads. Not planet-field.slope (the tiles'' slope in degrees).'
+unit: '1'
+per: sample
+producer:
+  where: planet-forge crates/forge-core/src/models/surface/routing.rs
+  file: checkpoint
+  key: planet-field.routing-slope
+missing: 0 at sea and on sinks
+amount: snapshot
+levels:
+- planet-level.planet
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge surface port (models/surface), read from planet-sim-landform 9747f0d-c437724.'

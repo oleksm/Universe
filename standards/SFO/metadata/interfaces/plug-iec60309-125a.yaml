@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/interface.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: interface.plug-iec60309-125a
+  name: IEC 60309 125 A 5-pin
+  description: 'The mating face of the IEC 60309 125 A 5-pin: any maker''s half built to it mates with any other''s.'
+domain: power
+kind: plug-socket
+envelope:
+  voltage: 690
+  current: 125
+media:
+- power
+sealing: air
+halves: male-female
+make: manual
+face:
+  length: 0.17
+  width: 0.17
+  height: 0.33
+size: 0.000125
+standard: IEC 60309-2
+basis:
+- of:
+  - envelope
+  - face
+  tier: derived
+  note: The most the products built to it are rated for, and their joint's outside.

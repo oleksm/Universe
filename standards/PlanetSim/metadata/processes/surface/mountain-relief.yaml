@@ -1,0 +1,191 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.mountain-relief
+  name: ~600 m mountain relief from uplift-erosion steady state, threshold slopes, glacial troughs, landslides
+  about: 'Mountains at ~600 m as uplift and erosion leave them: the stream power''s steady state (Whipple & Tucker 1999; Cordonnier
+    et al. 2016) set by the uplift, not read off the coarser ground (whose 5 km cells hold none of a range''s steep relief).
+    NOT INVENTORIED IN DETAIL: neither plates.py nor coupled.py imports mountains.py (directly or through another module);
+    it is used by tools/fine_erosion.py, fz150_pack.py, mountains_try.py.'
+area: surface
+clock:
+  when: not part of the coupled planet run (offline tools / bakes)
+params:
+- name: K_STEADY
+  value: 0.00015
+  unit: '1'
+  said_as:
+    unit: unverified (steepness, m^(2m))
+    factor: 1.0
+  open: true
+  meaning: 'The rivers'' erodibility in the steady state (m^(1−2m)/yr, n = 1): calibrated so an active belt (uplift ~5 mm/yr)
+    stands as steep as the Alps (k_s ~ 100–300 m^0.9; Kirby & Whipple 2012 give ~50–500 for active ranges).'
+  source: stages/mountains.py:34
+  note: 'unit as the code says it: ''unverified (steepness, m^(2m))''; SI conversion unverified'
+- name: A_ANCHOR_KM2
+  value: 200000000.0
+  unit: m2
+  said_as:
+    unit: km^2
+    factor: 1000000.0
+  meaning: rivers this big keep the coarse landscape's valley floors
+  source: stages/mountains.py:35
+- name: S_C_MEAN
+  value: 0.7
+  unit: '1'
+  said_as:
+    unit: m/m
+    factor: 1.0
+  open: true
+  meaning: the threshold slope (~35°) for rock of mean strength
+  source: stages/mountains.py:36
+  note: 'unit as the code says it: ''m/m''; SI conversion unverified'
+- name: S_C_RANGE
+  values:
+  - 0.5
+  - 1.0
+  unit: '1'
+  said_as:
+    unit: m/m
+    factor: 1.0
+  open: true
+  meaning: weak sediments … strong crystalline rock (~27° … 45°)
+  source: stages/mountains.py:37
+  note: 'unit as the code says it: ''m/m''; SI conversion unverified'
+- name: GLACIAL_FLOOR
+  value: 0.35
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: a glacier's floor slope against a river's for the same area
+  source: stages/mountains.py:38
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: A_GLACIER_KM2
+  value: 1000000.0
+  unit: m2
+  said_as:
+    unit: km^2
+    factor: 1000000.0
+  meaning: glaciers above this catchment, above the snowline
+  source: stages/mountains.py:39
+- name: PERTURB
+  value: 1.5
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/mountains.py:40
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: A_CHANNEL_KM2
+  value: 2.0
+  unit: '1'
+  said_as:
+    unit: channel heads (from the code comment; SI conversion not done, unverified)
+    factor: 1.0
+  open: true
+  meaning: 'channel heads: the drainage area past which water, not creep, shapes the ground'
+  source: stages/mountains.py:41
+  note: 'unit as the code says it: ''channel heads (from the code comment; SI conversion not done, unverified)''; SI conversion
+    unverified'
+- name: HILL_GRADIENT
+  value: 0.85
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: 'hillslopes'' gradient as a share of the threshold (active ranges: near it)'
+  source: stages/mountains.py:42
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: LARGE_KM
+  env: LARGE_KM
+  value: 6000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 1000.0
+  meaning: unverified (no comment)
+  source: stages/mountains.py:43
+- name: PEAK_CAP_M
+  env: PEAK_CAP_M
+  value: 1500.0
+  unit: m
+  meaning: 'Summits stand above the 5 km landscape''s mean by at most what the rock''s strength holds (σ/ρg, the landscape
+    stage''s relief limit, ~4 km on Harvest: a third of it here, softly: Everest stands ~1.5–2 km above its 5 km cell''s mean).'
+  source: stages/mountains.py:80
+- name: GLACIAL_GAIN
+  value: 8.0
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: 'Glaciers (above the snowline): erosion more efficient than rivers'' (the 5 km stage''s gain; the "glacial buzzsaw":
+    Brozović et al. 1997; Egholm et al. 2009), and their valleys U-shaped: a parabolic cross-section (Harbor 1992; Graf 1970:
+    depth ∝ width², the walls steepening outward) of a width growing with the ice''s catchment (∝ A^0.3, glaciers'' own scaling:
+    Bahr et al. 1997), so a trough''s floor is flat and its walls steep, and its head a bowl (a cirque).'
+  source: stages/mountains.py:93
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: A_GLACIER_KM2
+  value: 1000000.0
+  unit: m2
+  said_as:
+    unit: km^2
+    factor: 1000000.0
+  meaning: unverified (no comment)
+  source: stages/mountains.py:94
+- name: TROUGH_W_M
+  value: 900.0
+  unit: m
+  meaning: half-width at 10 km² of ice catchment
+  source: stages/mountains.py:95
+- name: TROUGH_EXP
+  value: 0.3
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: unverified (no comment)
+  source: stages/mountains.py:96
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: TROUGH_SHAPE
+  value: 1.6
+  unit: '1'
+  said_as:
+    unit: unverified
+    factor: 1.0
+  open: true
+  meaning: 'wall rise over the half-width, × the half-width (a parabola: z = k·d²/W)'
+  source: stages/mountains.py:97
+  note: 'unit as the code says it: ''unverified''; SI conversion unverified'
+- name: NO_SLIDES
+  env: NO_SLIDES
+  setting: none
+  meaning: if set, skip landslides
+  source: stages/mountains.py:145
+  note: 'env read inside a function; unit: flag / count'
+random_draws:
+- not inventoried
+used: false
+note: 'unused by plates.py / coupled.py; users: tools/fine_erosion.py, fz150_pack.py, mountains_try.py'
+backends:
+- cpu
+implementations:
+- where: 'planet-sim-landform stages/mountains.py: _climb_mfd (46-74), cap_peaks (83-85), warm_based (100-105), glacial_gain
+    (108-111), troughs (114-131), threshold_slope (134-136), landslides (139-150), _slides (153-182), relief (185-227)'
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
+    the code at planet-sim-landform 9747f0d-c437724.'

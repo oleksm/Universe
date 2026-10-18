@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schema/template.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: template.valve-butterfly
+  name: Flanged butterfly valves
+  description: 'Flanged butterfly valves: one look for every size of the family, scaled to each record''s figures (the owner, 2026-10-17: never one model per size).'
+family: valve
+draws: model
+scales_by:
+- physical
+members: 4
+reference: connector.valve-butterfly-dn300-pn10
+basis:
+- of:
+  - draws
+  - scales_by
+  tier: derived
+  note: 'The owner, 2026-10-17: one template a family, scaled; the catalogue families (kit_catalogue.py).'
+visual:
+  format: freefall-model/1
+  path: models/valve-butterfly/v1
+  manifest_sha256: de9421b68a94ccb7489482e1b074f9308aaa77198bb5d26ef19955d5533d3ea2
+  version: 1
+  triangles: 5616

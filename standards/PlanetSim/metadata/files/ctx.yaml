@@ -1,0 +1,57 @@
+# yaml-language-server: $schema=../../schema/planet-file.schema.yaml
+identity:
+  key: planet-file.ctx
+  name: Context
+  about: The run's context file.
+path: out/planet/<run>/ck_NN_<kyr>_ctx.npz
+written_by: planet_form.py save_checkpoint (CONTEXT=1); r_ keys added after the run
+source: ctx
+bookkeeping:
+- key: h_down
+  meaning: the routing's downstream sample, as the sim routed it
+- key: h_t_change
+  meaning: when the river state last changed, planet age in Gyr
+- key: h_dT_global
+  meaning: the global temperature offset, one scalar copied to every sample
+- key: h_lakes
+  meaning: 'one row per lake: inflow, evaporation capacity, area, open (not joinable to samples)'
+- key: river_events
+  meaning: counts of river state changes, JSON
+- key: sunk_at
+  meaning: where ocean floor sank in the last plate step
+- key: axes
+  meaning: 'per plate: id and spin vector'
+- key: events
+  meaning: run counters, JSON
+- key: hotspots
+  meaning: how many hotspots
+- key: ago_myr
+  meaning: the checkpoint's time, Myr before present
+- key: c_flow
+  meaning: crust change by lateral flow, m
+- key: c_cap
+  meaning: crust change by the 80 km cap, m
+- key: c_roots
+  meaning: crust change by delamination, m
+- key: c_crustwear
+  meaning: crust wear of highlands, m
+- key: c_climate
+  meaning: climate erosion off the crust, m
+- key: v_arc
+  meaning: arc crust added, summed over the run at fixed places (a history total, not today's rock)
+- key: v_hotspot
+  meaning: plume crust added, summed the same way
+- key: r_sea_curve
+  meaning: 'per recent step: kyr before present, glaciality, sea-level offset m'
+- key: r_river_t_change
+  meaning: when the river state last changed, -Gyr before present
+- key: r_river_events
+  meaning: counts of river state changes in the epoch, JSON
+basis:
+- of:
+  - identity
+  - producer
+  - said_as
+  tier: derived
+  note: 'planet-trees-pgs2 docs/sim-arrays.md (planets, 17 Oct 2026: checked against the code at aab9f6a, run earth_s25).'
+status: draft

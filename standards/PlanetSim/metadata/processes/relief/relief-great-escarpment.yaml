@@ -1,0 +1,113 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.relief-great-escarpment
+  name: Great escarpment on an old passive margin
+  about: 'For each alive rift margin aged ESCARP_AGE_MYR..ESCARP_MAX_AGE_MYR without an escarpment: median crust thickness
+    60 km on each side; a passive margin needs one side >= 30 km and the other <= 20 km (continent behind, ocean in front).
+    The escarpment is the margin offset inland (thick side) by min(ESCARP_MAX_M, ESCARP_INLAND_M + ESCARP_RETREAT_M_MYR x
+    age).'
+area: relief
+clock:
+  when: 'relief timed generators: every EVERY_MYR (25 Myr) of sim time, run in plates.run''s history hook (every 5 Myr) on
+    the real world before the history copy (plates.py:949-955); not tied to the checkpoint list despite the name'
+reads:
+- name: features (planet-feature.rift-margin)
+  meaning: aged
+- name: crust thickness
+  field: planet-field.crust-thickness
+  unit: m
+  meaning: the belt, the sides of a margin
+- name: plate rotation
+  field: planet-field.plate-rotation
+  unit: '1'
+  meaning: 'each plate''s rotation: where the features'' pins stand'
+writes:
+- name: features (planet-feature.great-escarpment)
+  meaning: child of its margin
+note: 'Emits: trace spawn rule ''relief.passive_margin'' trigger {margin, margin_age_myr}'
+params:
+- name: ESCARP_AGE_MYR
+  value: 946728000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+  meaning: a rift margin older than this gets its great escarpment
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:49
+- name: ESCARP_MAX_AGE_MYR
+  value: 1.262304e+16
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+  meaning: older margins are skipped
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:43
+- name: ESCARP_INLAND_M
+  value: 80000.0
+  unit: m
+  meaning: initial inland offset
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:50
+- name: ESCARP_RETREAT_M_MYR
+  value: 1.5844043907014474e-11
+  unit: m/s
+  said_as:
+    unit: m/Myr
+    factor: 3.168808781402895e-14
+  meaning: retreat rate
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:50
+- name: ESCARP_MAX_M
+  value: 300000.0
+  unit: m
+  meaning: offset cap
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:50
+- name: side probe
+  value: 60000.0
+  unit: m
+  meaning: offset where the two sides' thickness is read
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:306
+- name: continent side min
+  value: 30000.0
+  unit: m
+  meaning: thick side at least
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:307
+- name: ocean side max
+  value: 20000.0
+  unit: m
+  meaning: thin side at most
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:307
+- name: height_m
+  value: 1000.0
+  unit: m
+  meaning: escarpment height and relief0
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:313
+invariants:
+- one escarpment per margin
+depends_on:
+- planet-process.zones-rift-margins
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:at_checkpoint (302-313)
+  state: reference
+- where: planet-forge crates/forge-core/src/models/tectonic/escarpment.rs
+  state: current
+  note: planet-forge port (relief-tectonic line, merged in forge main fc8f460)
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
+    9747f0d-c437724.'
+cautions:
+- 'the Python''s reads were its line store''s internals: rift margin lines, born'

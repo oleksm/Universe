@@ -1,0 +1,95 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.fromcontours
+  name: world from contours
+  about: the heights rebuilt from contours alone (every 200 m on the map at twice its size, a thin plate through them), in
+    the samples' tints and shading
+title: world from contours
+row: top (history views)
+file_suffix: _fromcontours.png
+draws:
+  words: the heights rebuilt from contours alone (every 200 m on the map at twice its size, a thin plate through them), in
+    the samples' tints and shading
+shown: true
+implementations:
+- where: planet-trees-pgs2 tools/planet_vectors.py / planet_anchors.py sheet() (not inventoried; unverified which writes which)
+  state: reference
+- where: planet-forge crates/viewer/src/layers/contours.rs
+  state: current
+  note: the viewer
+status: draft
+legend:
+  title: '6. THE WORLD FROM CONTOURS ALONE: a thin plate through contours every 200 m, no crests or rivers'
+  source: planet_vectors.py:158-172 unfold_contours, 222-224 (preview.relief tints)
+  rows:
+  - kind: fill
+    label: sea at -8000 m
+    colour:
+    - 8
+    - 20
+    - 60
+    shown_when: always
+  - kind: fill
+    label: sea at -4000 m
+    colour:
+    - 20
+    - 50
+    - 110
+    shown_when: always
+  - kind: fill
+    label: sea at -1000 m
+    colour:
+    - 40
+    - 90
+    - 160
+    shown_when: always
+  - kind: fill
+    label: sea at 0 m
+    colour:
+    - 90
+    - 150
+    - 200
+    shown_when: always
+  - kind: fill
+    label: land at 0 m
+    colour:
+    - 70
+    - 120
+    - 60
+    shown_when: always
+  - kind: fill
+    label: land at 500 m
+    colour:
+    - 120
+    - 150
+    - 80
+    shown_when: always
+  - kind: fill
+    label: land at 1500 m
+    colour:
+    - 170
+    - 150
+    - 100
+    shown_when: always
+  - kind: fill
+    label: land at 3000 m
+    colour:
+    - 140
+    - 110
+    - 90
+    shown_when: always
+  - kind: fill
+    label: land at 5000 m
+    colour:
+    - 230
+    - 230
+    - 235
+    shown_when: always
+basis:
+- of:
+  - legend
+  - draws
+  tier: derived
+  note: 'planets, 17 Oct 2026: the viewer port (crates/viewer), from planet-trees-pgs2 tools/planet_vectors.py, planet_form.py
+    and planet-sim preview.py, look.py.'

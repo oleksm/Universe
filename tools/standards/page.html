@@ -365,8 +365,21 @@ function rows(q) {
     };
     under(null, 2);
   }
-  // Registers: every record kind with a page of its own, as written.
-  const REG = DATA.registers || [];
+  // Roots shown as their own trees (the Planet Simulator): their registers under them.
+  for (const [root, label] of Object.entries(ROOT_NAMES)) {
+    const regs = (DATA.registers || []).filter(r => r.root === root);
+    if (!regs.length) continue;
+    const rq = r => !q || q.split(/\s+/).every(w => `${r.name} ${r.key}`.toLowerCase().includes(w));
+    out.push({ k: "root:" + root, depth: 0, kind: "body", label, n: regs.reduce((s, r) => s + r.records.length, 0) });
+    if (open.has("root:" + root) || q) for (const r of regs) {
+      const hits = r.records.filter(rq);
+      if (q && !hits.length) continue;
+      out.push({ k: "rg:" + r.kind, depth: 1, kind: "maker", label: r.title, ticker: `${r.records.length}`, leaf: false });
+      if (open.has("rg:" + r.kind) || q) for (const x of hits) out.push({ k: `x:${r.kind}:${x.slug}`, depth: 2, kind: "maker", label: x.name, ticker: x.key.split(".").slice(1).join("."), leaf: true });
+    }
+  }
+  // Registers: every record kind with a page of its own, as written (the roots above have their own trees).
+  const REG = (DATA.registers || []).filter(r => !(r.root in ROOT_NAMES));
   if (REG.length) {
     const rq = r => !q || q.split(/\s+/).every(w => `${r.name} ${r.key}`.toLowerCase().includes(w));
     out.push({ k: "rg", depth: 0, kind: "body", label: "Registers", n: REG.reduce((s, r) => s + r.records.length, 0) });
@@ -444,6 +457,7 @@ function addressed() {
   return [...ORGS.filter(placeOf).map(o => ({ key: o.key, who: o.name, tag: o.tag, to: o.to, org: o, address: addressText(o) })), ...land].sort((p, r) => p.address.localeCompare(r.address, undefined, { numeric: true }));
 }
 
+const ROOT_NAMES = { PlanetSim: "Planet Simulator", PlanetLOD: "Planet LOD" };     // (roots shown as trees of their own)
 let current = decodeURIComponent(location.hash.slice(1));
 const stdOf = k => k.startsWith("s:") ? byId[k.slice(2).split("@")[0]] : null;
 // (Open the way to a standard: its body.)
@@ -468,8 +482,12 @@ function reveal(k) {
   if (k.startsWith("ra:") || k.startsWith("rp:")) { open.add("ar"); keepOpen(); return; }
   if (k.startsWith("pl:")) { open.add("pd"); keepOpen(); return; }
   if (k.startsWith("rep:") || k === "chains") { open.add("rp0"); keepOpen(); return; }
-  if (k.startsWith("x:")) { open.add("rg"); open.add("rg:" + k.split(":")[1]); keepOpen(); return; }
-  if (k.startsWith("rg:")) { open.add("rg"); keepOpen(); return; }
+  if (k.startsWith("x:") || k.startsWith("rg:")) {      // (a register under its root's own tree, or under Registers)
+    const reg = (DATA.registers || []).find(r => r.kind === k.split(":")[1]);
+    open.add(reg && reg.root in ROOT_NAMES ? "root:" + reg.root : "rg");
+    if (k.startsWith("x:")) open.add("rg:" + k.split(":")[1]);
+    keepOpen(); return;
+  }
   if (k.startsWith("ds:")) { open.add("dg"); keepOpen(); return; }
   if (k.startsWith("dl:")) { open.add("dg"); const s = (DATA.dogma || []).find(s => s.laws.some(l => "dl:" + l.slug === k)); if (s) open.add("ds:" + s.slug); keepOpen(); return; }
   if (k.startsWith("cr:") || k === "cvoc") { open.add("cel"); keepOpen(); return; }
@@ -614,6 +632,11 @@ function detail(k) {
     }
     return h + `<p class="meta">In all: ${DATA.reports.reduce((s, r) => s + r.rows.length, 0)} rows, ${DATA.reports.reduce((s, r) => s + r.ok, 0)} complete, ${DATA.reports.reduce((s, r) => s + r.gaps, 0)} gaps.</p>`;
   }
+  if (k.startsWith("root:")) {
+    const root = k.slice(5), info = (DATA.roots || {})[root] || {};
+    const regs = (DATA.registers || []).filter(r => r.root === root);
+    return `<h2>${esc(info.name || root)}</h2><p>${esc(info.note || "")}</p><table><tr><th>Register</th><th>Records</th><th>What it holds</th></tr>` + regs.map(r => `<tr><td><a data-k="${esc("rg:" + r.kind)}">${esc(r.title)}</a></td><td>${r.records.length}</td><td class="meta">${esc((r.about || "").split(": ").slice(1).join(": ").slice(0, 220))}</td></tr>`).join("") + `</table>`;
+  }
   if (k === "rg") {
     const REG = DATA.registers || [];
     return `<h2>Registers</h2><p>Every kind of record the registry keeps, as written: one page a record, each group a table with its schema's words.</p><table><tr><th>Register</th><th>Root</th><th>Records</th></tr>` + REG.map(r => `<tr><td><a data-k="${esc("rg:" + r.kind)}">${esc(r.title)}</a></td><td>${esc(r.root)}</td><td>${r.records.length}</td></tr>`).join("") + `</table>`;
@@ -635,6 +658,11 @@ function detail(k) {
     for (const [g, v] of Object.entries(e)) {
       if (skip.has(g) || v === null || v === undefined) continue;
       const gd = G[g] || {}, props = gd.props || {};
+      if (g === "legends" && Array.isArray(v)) {      // (a legend drawn as its page draws it: swatches and labels)
+        const sw = r => r.colour ? `<span style="display:inline-block;width:${r.kind === "line" ? 26 : 16}px;height:${r.kind === "line" ? 3 : 12}px;background:rgb(${r.colour.join(",")});border-radius:2px;vertical-align:middle"></span>` : "";
+        h += `<h3>legends</h3>` + v.map(L => `<h4 style="margin:14px 0 4px">${esc(L.title)}${L.sub ? ` <span class="meta">· ${esc(L.sub)}</span>` : ""}</h4><table>` + (L.rows || []).map(r => `<tr><td style="width:34px">${sw(r)}</td><td${r.kind === "head" ? ' class="meta"' : ""}>${esc(r.label)}</td></tr>`).join("") + `</table>` + (L.source ? `<div class="meta">${esc(L.source)}</div>` : "")).join("");
+        continue;
+      }
       h += `<h3>${esc(g.replace(/_/g, " "))}</h3>` + (gd.description ? `<p class="meta">${esc(gd.description)}</p>` : "");
       if (Array.isArray(v) && v.length && typeof v[0] === "object" && v[0] !== null) {
         const cols = [...new Set(v.flatMap(x => Object.keys(x)))];

@@ -1,0 +1,67 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.zones-arc-volcanoes
+  name: Arc volcano records
+  about: 'For points newly added to an arc front: a record ''arc volcano'' wherever no volcano record (arc or hotspot) is
+    within VOLC_SEP*gap and none already made this step is that close; every front point keeps volcano records within VOLC_SEP*gap
+    active (last=t). begin_step caches the alive volcano rows and a k-d tree once per store step.'
+area: relief
+clock:
+  when: every plate step, from arcs(); the cache is rebuilt when S._step_no changes; t is sim time in Gyr since formation
+    (code converts with *1e3 to Myr)
+reads:
+- name: features (planet-feature.arc-front)
+  meaning: its new points (contacts.t_myr) and its active points
+- name: features (planet-feature.hotspot-volcano-centre)
+  meaning: the centres already standing (with the arc ones)
+- name: plate rotation
+  field: planet-field.plate-rotation
+  unit: '1'
+  meaning: 'each plate''s rotation: where the features'' pins stand'
+writes:
+- name: features (planet-feature.arc-volcano-centre)
+  meaning: a child of its arc front; last_myr kept up by the front
+note: 'Emits: trace spawn rule ''zones.arc_volcano'' trigger {event, front_line: True}'
+params:
+- name: VOLC_SEP
+  value: 0.5
+  unit: '1'
+  said_as:
+    unit: x gap (rad)
+    factor: 1.0
+  meaning: volcano records closer than this are one centre
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:19
+invariants:
+- no two alive volcano records within VOLC_SEP*gap when spawned (arc vs hotspot share the test)
+depends_on:
+- planet-process.zones-arc-front
+- planet-process.line-store-record-aging
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:_volcanoes (86-103), begin_step (72-83)
+  state: reference
+- where: planet-forge crates/forge-core/src/models/tectonic/arc_volcanoes.rs
+  state: current
+  note: planet-forge port (relief-tectonic line, merged in forge main fc8f460)
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
+    9747f0d-c437724.'
+cautions:
+- 'the Python''s reads were its line store''s internals: S.marks (alive, type endswith ''volcano''); S.P landmark positions;
+  accepted front points; gap = sphere.spacing(n) of the current lattice, radians on the unit sphere (x R = metres); refined
+  as the present nears'

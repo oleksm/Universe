@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.context-zones
+  name: Zones
+  about: rock unit fill by ROCK_RGB, plate edges white, coast black
+title: Zones
+row: landform
+file_suffix: _context_zones.png (+ .legend.json)
+draws:
+  words: rock unit fill by ROCK_RGB, plate edges white, coast black
+shown: true
+implementations:
+- where: planet-trees-pgs2 ~/git/planet-trees-pgs2/tools/context_view.py:view_zones (265)
+  state: reference
+status: draft

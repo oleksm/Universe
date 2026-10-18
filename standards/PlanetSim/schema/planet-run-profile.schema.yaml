@@ -1,0 +1,61 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Planet run profile
+x-kind: [planet-run-profile]
+description: "standards/PlanetSim/metadata/run-profiles/<name>.yaml: how a planet run is set up: its start and end, its samples and resolution schedule, its checkpoints, its seed, its settings, the gates and targets it runs under, and what it writes."
+type: object
+additionalProperties: false
+required: [identity]
+allOf:
+  - { $ref: "../../common.schema.yaml#/definitions/planet_context" }
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name, about]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      about: { type: string }
+  planet:
+    description: "The planet the run makes: its figures as the sim reads them (today's manifest stands in), and the world it is, when one in the registry."
+    type: object
+    additionalProperties: false
+    properties:
+      body: { type: string, x-ref: [body], description: "The registry's world it is, when one." }
+      radius: { type: number, exclusiveMinimum: 0, x-unit: m }
+      mass: { type: number, exclusiveMinimum: 0, x-unit: kg }
+      water_mass_fraction: { type: number, minimum: 0, maximum: 1, x-unit: "1" }
+      star_age: { type: number, minimum: 0, x-unit: s, description: "The star's age at the run's end (today)." }
+      preset: { type: string, description: "The sim's preset it comes from (presets.earth())." }
+      core_mass_fraction: { type: number, minimum: 0, maximum: 1, x-unit: "1", description: "Earth 0.325" }
+      core_radius: { type: number, exclusiveMinimum: 0, x-unit: m, description: "Earth 3.48e6 m" }
+      core_light: { type: number, minimum: 0, maximum: 1, x-unit: "1", description: "The core's light-element mass fraction (Earth about 0.08)" }
+      surface_temp: { type: number, exclusiveMinimum: 0, x-unit: K, description: "Earth 288 K" }
+      regime: { enum: [plates, stagnant_lid], description: "Plate tectonics or a stagnant lid" }
+      radiogenic: { type: number, minimum: 0, x-unit: "1", description: "Its K, Th and U as a multiple of Earth's" }
+      core_stratified: { type: boolean, description: "A stably stratified core (no thermal convection at its top)" }
+      note: { type: string }
+  start: { type: number, x-unit: s, description: "Before present." }
+  end: { type: number, x-unit: s, description: "Before present (0: today)." }
+  times_said: { $ref: "../../common.schema.yaml#/definitions/said_as" }
+  samples: { type: integer, minimum: 1, description: "Samples on the sphere." }
+  resolution:
+    type: array
+    description: "The resolution schedule: from when, how many samples."
+    items: { type: object, additionalProperties: false, required: [from, samples], properties: { from: { type: number, x-unit: s }, samples: { type: integer, minimum: 1 } } }
+  checkpoints:
+    type: array
+    description: "When it saves, before present."
+    items: { type: object, additionalProperties: false, required: [at], properties: { at: { type: number, x-unit: s }, label: { type: string } } }
+  seed: { type: integer }
+  settings: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/sim_param" }, description: "The run's own settings (the old SIM_* environment)." }
+  gates: { type: array, items: { type: string, x-ref: [planet-gate] } }
+  targets: { type: array, items: { type: string, x-ref: [planet-target] } }
+  files: { type: string, description: "What it writes and where, in words (the checkpoint names and their keys)." }
+  outputs: { type: array, items: { type: string, x-ref: [planet-file] } }
+  implementations:
+    type: array
+    items: { type: object, additionalProperties: false, required: [where, state], properties: { where: { type: string, description: "repository and file:function, or a forge module" }, state: { enum: [reference, current, building, retired] }, note: { type: string } } }
+  cautions: { type: array, items: { type: string }, description: "Findings on it: bugs, comments that disagree with the code, what trips a reader up." }
+  status: { enum: [draft, published, retired] }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

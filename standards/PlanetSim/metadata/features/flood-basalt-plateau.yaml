@@ -1,0 +1,100 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.flood-basalt-plateau
+  name: Flood basalt plateau
+  about: 'A relief province of the volcanic family: flood basalt plateau.'
+register: province
+family: volcanic
+level:
+- 1
+geometry: polygon + step rings
+properties:
+- field: thickness
+  unit: m
+- field: ring
+  unit: m
+trigger: plume head under a continent
+generator: lobed polygon, step escarpments
+overrides: erosion into terraces
+wave: 1
+built: true
+levels:
+- planet-level.planet
+- planet-level.cluster
+status: draft
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
+  - trigger
+  - generator
+  - overrides
+  - wave
+  - built
+  tier: derived
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical
+    feature catalogue.'
+- of:
+  - pinned_to
+  - spans
+  - dimensions
+  - layout
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
+    9747f0d-c437724. The laws: stages/zones.py hotspots (the Python''s rules, its constants on the processes).'
+  review: true
+- of:
+  - layout
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
+    9747f0d-c437724. frame and record from: proposed (the schema has no fields for them yet).'
+  review: true
+pinned_to: the plume where it first stood under a continent
+spans:
+- name: centre
+  meaning: one pin where it stands
+dimensions:
+- name: ring radius
+  unit: m
+  meaning: ring_km
+- name: relief0
+  unit: m
+  meaning: relief0_m
+- name: relief
+  unit: m
+  meaning: relief0 (point features are not worn yet, as in the Python)
+layout:
+- name: frame
+  unit: '1'
+  meaning: '1: its pins sit in its plate''s frame (integer cm) and ride the crust, placed by planet-field.plate-rotation;
+    0: a body-frame snapshot, remade from the present state each pass'
+  rule: it rides its crust (the Python's line store anchored it to crust particles)
+  params:
+  - name: rides
+    value: 1.0
+    unit: '1'
+    meaning: 1 rides, 0 snapshot
+    source: 'planet-forge src/ride.rs (from the Python: stages/lines.py Store vs its rivers and coast)'
+    open: true
+- name: record from
+  unit: s
+  meaning: 'recorded only while the planet is within this of its present: one older would be worn away by today, never made'
+  rule: 'within its decay age (owner, 17 Oct 2026: "start models that make sense within their decay age")'
+  formula: record while age_today - t <= RECORD_FROM_MYR
+  params:
+  - name: RECORD_FROM_MYR
+    value: 1.262304e+16
+    unit: s
+    said_as:
+      unit: Myr
+      factor: 31557600000000.0
+    meaning: its decay age before the present
+    source: stages/relief.py:59 RECORD_FROM_MYR['flood basalt province']
+    open: true
+- name: hotspot
+  unit: '1'
+  meaning: the plume

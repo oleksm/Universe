@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-expansion-joint-dn300-pn10
+  code: KIT-EXPANSION-JOINT-DN300-PN10
+  name: Expansion joint, DN 300, PN 10
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.stainless-steel-304
+- item: material.structural-steel-a36
+size:
+  length: 0.526
+  width: 0.526
+  height: 0.35
+supplies:
+  item: connector.expansion-joint-dn300-pn10
+physical:
+  mass: 49.5
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.expansion-joint-dn300-pn10, as made.

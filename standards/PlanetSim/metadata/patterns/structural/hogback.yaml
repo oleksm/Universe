@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.structural.homocline.hogback
+  name: Hogback
+  about: Hogback.
+family: structural
+factors:
+- factor: planet-factor.tect-fold
+  weight: 3
+  why: Steep dip > ~30-40 deg; near-symmetric ridge stays almost fixed as land lowers
+- factor: planet-factor.rock-layers
+  weight: 3
+  why: Hard sandstone/conglomerate between weak shales
+- factor: planet-factor.tect-setting
+  weight: 3
+  why: Mountain-front monoclines, steep fold limbs, Laramide-style uplifts
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: Uplift drives erosion and differential stripping
+- factor: planet-factor.water-discharge
+  weight: 1
+  why: Water gaps give sawtooth crest
+- factor: planet-factor.clim-arid
+  weight: 1
+  why: Semi-arid best preserves sharp crests
+- factor: planet-factor.time
+  weight: 1
+  why: 1-50 Myr
+vocabulary_id: 117
+sources:
+- https://en.wikipedia.org/wiki/Hogback_(geology)
+- https://en.wikipedia.org/wiki/Cuesta
+library_status: written
+source: structural.homocline.hogback
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

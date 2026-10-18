@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: connector.valve-check-dn100-pn10
+  name: Check valve, DN 100, PN 10
+  description: 'A flanged check valve set in a line between two flange joints: a swing disc that lets flow one way only.'
+kind: valve
+size: 0.1
+valve: check
+rating:
+  pressure: 1000000.0
+  temperature: 473.0
+physical:
+  length: 0.266
+  width: 0.383
+  height: 0.3
+  mass: 50.72
+built_of:
+- what: Body, bonnet and flanges
+  item: material.structural-steel-a36
+  mass: 48.3
+  note: cast carbon steel, with its lever or hinge
+- what: Trim
+  item: material.stainless-steel-304
+  mass: 2.45
+  note: stainless ball, disc and stem
+- what: Seats
+  item: material.epdm-rubber
+  mass: 0.011
+provides: both
+template: template.valve-check
+basis:
+- of:
+  - physical
+  - built_of
+  tier: derived
+  review: true
+  note: 'From blender''s model (2026-10-18): the kit''s 266 x 20 mm end rings, 8 M16 on 218 mm, a 220 mm body round a 190 mm chamber, bolted bonnet, closed 304 swing disc.'
+interface: interface.flange-dn100-pn10

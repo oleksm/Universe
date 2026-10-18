@@ -1,28 +1,95 @@
 # yaml-language-server: $schema=../../schema/deposit-type.schema.yaml
-# Brought in by tools/standards/geology_import.py from the planet simulation's vocabulary: change it there, or the
-# registry's own part (name, about, formed_by, ore, counted) here.
 identity:
   key: deposit-type.rare-earth-clay
-  name: "Rare earth clay"
-  about: "Rare earths held on clay in deeply weathered granite."
-sim: { key: ree_ion_clay, code: REC }
+  name: Rare earth clay
+  about: Rare earths held on clay in deeply weathered granite.
+sim:
+  key: ree_ion_clay
+  code: REC
 formed_by: weathering
 carries:
-  - { item: element.ce, grade: 0.0006512, said_as: "TREO %" }
+- item: element.ce
+  grade: 0.0006512
+  said_as: TREO %
+  split:
+  - item: element.ce
+    share: 0.03
+    said_as: Ce
+  - item: element.dy
+    share: 0.06
+    said_as: Dy
+  - item: element.er
+    share: 0.04
+    said_as: Er
+  - item: element.eu
+    share: 0.005
+    said_as: Eu
+  - item: element.gd
+    share: 0.06
+    said_as: Gd
+  - item: element.la
+    share: 0.06
+    said_as: La
+  - item: element.nd
+    share: 0.08
+    said_as: Nd
+  - item: element.pr
+    share: 0.02
+    said_as: Pr
+  - item: element.sm
+    share: 0.03
+    said_as: Sm
+  - item: element.tb
+    share: 0.01
+    said_as: Tb
+  - item: element.y
+    share: 0.55
+    said_as: Y
+  - item: element.yb
+    share: 0.03
+    said_as: Yb
+  - share: 0.025
+    said_as: others
 ore: good.rare-earth-clay-ore
 shape: blanket
 size:
   median: 1000000000.0
   spread: 1.2
   cap: 50000000000.0
-footprint: { length: 2000.0, width: 1000.0 }
+footprint:
+  length: 2000.0
+  width: 1000.0
 forms_at: 0.0
 cluster:
   deposits: 6.0
   along: 30000.0
   across: 30000.0
 seen_by:
-  - { method: radiometrics, reach: 1.0 }
-  - { method: geochemistry, reach: 50.0 }
+- method: radiometrics
+  reach: 1.0
+- method: geochemistry
+  reach: 50.0
 basis:
-  - { of: [sim, carries, shape, size, footprint, forms_at, cluster, seen_by], tier: sourced, review: true, source: "the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)", note: "As the simulation has it. A grade is its figure put as kg in each kg; an oxide's as the element's; the rare earths and the platinum metals each by the simulation's own split, where it gives one (a rare-earth oxide is taken as 83% metal; the rare earths as cerium where there is no split)." }
+- of:
+  - sim
+  - carries
+  - shape
+  - size
+  - footprint
+  - forms_at
+  - cluster
+  - seen_by
+  tier: sourced
+  review: true
+  source: 'the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)'
+  note: As the simulation has it. A grade is its figure put as kg in each kg; an oxide's as the element's; the rare earths and the platinum metals each by the simulation's own split, where it gives one (a rare-earth oxide is taken as
+    83% metal; the rare earths as cerium where there is no split).
+- of:
+  - density
+  tier: derived
+  review: true
+  note: 'Converted once (17 Oct 2026) from rate, which was per E4 sample of 17,003 km2 over E4s 4.067 Gyr of plates: density = rate / 17,003 km2 / 4.067 Gyr (planet-forge tools/registry/deposit_density.py). Counts on a grown planet
+    unchanged; to be re-judged against known deposit counts per area.'
+setting: climate (weathering)
+rate: 0.107
+density: 4.902e-29

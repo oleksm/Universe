@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-plug-iec60309-32a
+  code: KIT-PLUG-IEC60309-32A
+  name: Plug and socket, 32 A, 400 V
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.copper
+- item: material.polyethylene-uhmw
+size:
+  length: 0.11
+  width: 0.11
+  height: 0.21
+supplies:
+  item: connector.plug-iec60309-32a
+physical:
+  mass: 0.65
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.plug-iec60309-32a, as made.

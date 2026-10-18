@@ -1,12 +1,17 @@
 # yaml-language-server: $schema=../../schema/law.schema.yaml
 identity:
   key: law.foot-friction
-  name: "Friction under a foot"
-  symbol: "μf"
+  name: Friction under a foot
+  symbol: μf
   label: FOOT_FRICTION
   section: dogma.contact
 value: 0.6
 kind: simplified
-note: "Coulomb friction of a landing leg's footpad on dry rock or regolith: it stands still on slopes up to atan(0.6), 31 degrees, and slides on steeper ones."
+note: 'Coulomb friction of a landing leg''s footpad on dry rock or regolith: it stands still on slopes up to atan(0.6), 31 degrees, and slides on steeper ones.'
 basis:
-  - { of: [value], tier: invented, review: true, note: "A dry metal pad on rock is commonly 0.5-0.8; to be sourced per ground." }
+- of:
+  - value
+  tier: sourced
+  review: true
+  note: 'A pad on dry rock or regolith, from memory: steel on dry rock about 0.5-0.8; on lunar regolith the pad-soil interface angle is about two thirds of the soil''s friction angle (35-45 degrees, Lunar Sourcebook 1991, ch. 9), tan(27)
+    = 0.5. 0.6 sits between; one figure for every ground until grounds carry their own.'

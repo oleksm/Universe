@@ -1,0 +1,142 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.isostatic-elevation
+  name: Surface height by isostasy, ocean age-depth and trenches
+  about: 'elevation(): continent: CONTINENT_ABOVE_RIDGE + BUOYANCY*(thick - CONTINENT_MEAN); ocean: 2600 - ocean_depth(age) + BUOYANCY*(floor - OCEAN_CRUST), ocean_depth by Stein & Stein 1992 GDH1: 2600 + 365*sqrt(age) for age < 20
+    Myr, else 5651 - 2473*exp(-0.0278*age). Heights relative to the ridge reference (2600 m below Earth''s sea). Trenches: ocean samples within 3 gap of a sunk particle and on its plate drop by (2000 + 3500*clip(age/150 Myr, 0, 1))*exp(-(d/gap)^2)
+    (Grellet & Dubois 1982).'
+area: plates
+clock:
+  when: with each denudation pass (and by callers outside, e.g. reports)
+reads:
+- name: w.kind
+  field: planet-field.crust-kind
+  unit: '1'
+- name: w.thick
+  field: planet-field.crust-thickness
+  unit: m
+- name: w.floor
+  field: planet-field.ocean-floor-thickness
+  unit: m
+- name: w.age
+  field: planet-field.crust-age
+  unit: s
+- name: w.plate
+  field: planet-field.plate
+  unit: '1'
+  meaning: 'trenches: on the sunk particle''s plate'
+- name: w.sunk_at
+  field: planet-field.trench-position
+  unit: '1'
+- name: w.sunk_plate
+  field: planet-field.trench-plate
+  unit: '1'
+- name: (forge) the latest substep's
+  field: planet-field.trench-time
+  unit: s
+writes:
+- name: z
+  field: planet-field.height-above-ridge
+  unit: m
+  meaning: solid surface above the ridge reference
+params:
+- name: BUOYANCY
+  value: 0.1515151515151515
+  unit: '1'
+  meaning: Airy isostasy factor 1 - rho_crust/rho_mantle (2800, 3300 kg/m3) = 0.1515
+  source: stages/plates.py:81
+  note: real, Turcotte & Schubert
+- name: CONTINENT_ABOVE_RIDGE
+  value: 3440.0
+  unit: m
+  meaning: continental surface above the ridge reference at CONTINENT_MEAN thickness (840 m mean land height + 2600 m ridge depth)
+  source: stages/plates.py:85
+  note: Cogley 1984 (real)
+- name: CONTINENT_MEAN
+  value: 39000.0
+  unit: m
+  meaning: reference continental thickness for isostasy; also fold-belt index base in coupled struct
+  source: stages/plates.py:86
+  note: Christensen & Mooney 1995 (real)
+- name: OCEAN_CRUST
+  value: 7000.0
+  unit: m
+  meaning: new ocean floor thickness (also reference thickness in elevation, and read() fallback)
+  source: stages/plates.py:76
+  note: m, (real) White et al. 1992
+- name: ridge depth
+  value: 2600.0
+  unit: m
+  meaning: GDH1 ridge depth / reference
+  source: stages/plates.py:1469
+- name: GDH1 young coef
+  value: 365.0
+  unit: '1'
+  said_as:
+    unit: m/sqrt(Myr)
+    factor: 1.0
+  open: true
+  meaning: 'unverified: the code names it GDH1 young coef without saying what it is'
+  source: stages/plates.py:1469
+  note: 'unit as the code says it: ''m/sqrt(Myr)''; SI conversion unverified'
+- name: GDH1 old
+  values:
+  - 5651.0
+  - 2473.0
+  - 0.0278
+  unit: '1'
+  said_as:
+    unit: '[m, m, 1/Myr]'
+    factor: 1.0
+  open: true
+  meaning: 'unverified: the code names it GDH1 old without saying what it is'
+  source: stages/plates.py:1470
+  note: 'unit as the code says it: ''[m, m, 1/Myr]''; SI conversion unverified'
+- name: GDH1 break
+  value: 631152000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 20.0
+  meaning: 'unverified: the code names it GDH1 break without saying what it is'
+  source: stages/plates.py:1471
+- name: trench depth
+  values:
+  - 2000.0
+  - 3500.0
+  unit: m
+  meaning: base and age-dependent extra
+  source: stages/plates.py:1532
+- name: trench age scale
+  value: 4733640000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 150.0
+  meaning: 'unverified: the code names it trench age scale without saying what it is'
+  source: stages/plates.py:1532
+- name: trench reach
+  value: 3.0
+  unit: '1'
+  meaning: 'unverified: the code names it trench reach without saying what it is'
+  source: stages/plates.py:1525
+random_draws:
+- none
+invariants:
+- 'monotone: thicker crust stands higher'
+depends_on:
+- planet-process.crust-read
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/plates.py:elevation (1514-1534), ocean_depth (1467-1471)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'

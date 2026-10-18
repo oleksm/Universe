@@ -1,0 +1,555 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.coupled-climate
+  name: Coupled climate from the relief (temperature, wind, moisture, rain, evaporation demand, runoff)
+  about: A coarse annual-mean climate recomputed on the current relief at every coupled step. Temperature is a fit to Earth's
+    zonal sea-level means, T = 28 - 22 sin^2(lat) - 22 sin^4(lat) degC, shifted by the thermostat offset dT, minus 6.5 K/km
+    of height above sea. Surface wind is a fixed three-cell pattern by latitude (trades, westerlies, polar easterlies) except
+    on subtropical east coasts (12-40 deg, open sea within 1,500 km to the east), where it turns onshore from the sea. Moisture
+    (relative to what air holds at 25 degC) starts saturated over the sea and is marched 60 sweeps downwind across the sample
+    graph (each sample takes its most-upwind neighbour's moisture), decaying with distance (e-fold REACH_KM, faster under
+    rising air) and capped by the local holding capacity (Clausius-Clapeyron, exp(0.0687 T)); air cooled by climbing drops
+    the excess (orographic rain, 3x weight). Rain = PRECIP_MAX x (0.25 + 0.75 x rising-air belt) x moisture + 3 x condensed
+    excess. Evaporation demand PET = PET_K T^1.15 (0 below 0 degC), raised in continental interiors by distance from the coast.
+    Actual evaporation by Fu's (1981) Budyko curve (w = 2.6); a second moisture pass returns RECYCLE x (ET/P) of the rain-out
+    to the air (land moisture recycling). Runoff = max(P - ET, 0) on land. No seasons, no ocean currents, no ice-albedo feedback.
+area: climate
+clock:
+  when: 'Each coupled step: called once per coupled.step, i.e. every COUPLE_EVERY (=1) plate steps during the last SIM_COUPLE_FROM_MYR
+    (700) Myr of the plates run; a plate step is dt = min(5 Myr, one sample spacing of the fastest plate) (plates.py:982).
+    Also called every 10-kyr step of the recent epoch (recent.py:68) with dT=0 on z + ice/8 and the shifted sea level.'
+reads:
+- name: p (pts)
+  unit: unit vector (y = north axis)
+  meaning: sample positions on the unit sphere; lat = asin(y)
+- name: z
+  field: planet-field.height
+  unit: m
+  meaning: 'solid-surface height in the sim''s reference (plates: above the ridge reference)'
+- name: sea
+  unit: m
+  meaning: sea level in the same reference
+  field: planet-field.glacial-sea-offset
+- name: nbr
+  unit: index (n, 6)
+  meaning: 6 nearest neighbours of each sample (cKDTree k=7 minus self)
+- name: R
+  unit: m
+  meaning: planet radius
+- name: dT
+  unit: K
+  meaning: global temperature offset (carbon thermostat, or 0)
+  field: planet-field.thermostat-state
+- name: H (recent epoch)
+  field: planet-field.ice
+  unit: m
+  meaning: 'the ice: the recent epoch runs the climate on height + ice x the cycle''s ice height feedback (glacial-cycles)'
+- name: recent relief
+  field: planet-field.recent-height
+  unit: m
+  meaning: the recent epoch's relief (the height until it is first lowered)
+writes:
+- name: T
+  unit: 'degC (SI: K - 273.15)'
+  meaning: annual-mean surface air temperature
+  field: planet-field.temperature
+- name: P
+  unit: 'm/yr water (SI: m/s = /3.156e7)'
+  meaning: precipitation
+  field: planet-field.rain
+- name: PET
+  unit: m/yr (SI m/s)
+  meaning: potential evapotranspiration (evaporation demand)
+  field: planet-field.potential-evaporation
+- name: runoff
+  unit: m/yr (SI m/s)
+  meaning: P - ET on land, >= 0; 0 at sea
+  field: planet-field.runoff
+- name: aridity
+  unit: dimensionless
+  meaning: phi = PET/P (Budyko dryness index; NOTE the inverse of UNEP's AI = P/PET)
+  field: planet-field.aridity
+- name: moist
+  unit: dimensionless (fraction of saturation at 25 degC)
+  meaning: column moisture after the last sweep
+  field: planet-field.column-moisture
+- name: wind_e
+  field: planet-field.wind
+  unit: '1'
+  meaning: surface wind, east component
+- name: wind_n
+  field: planet-field.wind-north
+  unit: '1'
+  meaning: surface wind, north component
+params:
+- name: LAPSE
+  value: 0.0065
+  unit: K/m
+  meaning: temperature fall with height above sea
+  source: stages/coupled_climate.py:19
+- name: PRECIP_MAX
+  value: 9.506426344208684e-08
+  unit: m/s
+  said_as:
+    unit: m/yr
+    factor: 3.168808781402895e-08
+  meaning: rain rate of a saturated column under full rising air
+  source: stages/coupled_climate.py:20
+  note: 'calibrated 16 Oct with recycling, flank and PET_K 0.05 on three checkpoints: land rain 0.79 m/yr (Earth 0.75), runoff
+    34 % of rain (35), drylands 27 % (32), hyperarid 9 % (7)'
+- name: REACH_KM
+  value: 3000000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 1000.0
+  meaning: e-folding distance of moisture over flat land (scaled by 0.6+0.8*rise)
+  source: stages/coupled_climate.py:21
+- name: ORO_PER_M
+  value: 0.0006666666666666666
+  unit: '1'
+  said_as:
+    unit: 1/m
+    factor: 1.0
+  meaning: extra rain-out share per metre of climb
+  source: stages/coupled_climate.py:22
+  note: 'DEFINED BUT NEVER READ: orographic rain comes from the holding-capacity cap instead (the `climb` variable at line
+    79 is also unused)'
+  used: false
+- name: FU_W
+  value: 2.6
+  unit: '1'
+  said_as:
+    unit: dimensionless
+    factor: 1.0
+  open: true
+  meaning: Fu (1981) Budyko-curve shape parameter w
+  source: stages/coupled_climate.py:23
+  note: 'world catchments'' median ~2.6; unit as the code says it: ''dimensionless''; SI conversion unverified'
+- name: PET_K
+  env: SIM_PET_K
+  value: 1.9012852688417366e-09
+  unit: m/s per degC^1.15
+  said_as:
+    unit: m/yr per degC^1.15
+    factor: 3.168808781402895e-08
+  meaning: PET = PET_K * max(T,0)^1.15
+  source: stages/coupled_climate.py:24
+  note: '16 Oct: 0.05 left s22 12 % dry; 0.06 on five checkpoints of s19-s22: drylands 15-33 %, runoff 31 % of rain'
+- name: FLANK_RISE
+  value: 0.45
+  unit: '1'
+  said_as:
+    unit: dimensionless (0-1 rising-air index)
+    factor: 1.0
+  open: true
+  meaning: minimum rising-air index on a subtropical east-coast flank (summer monsoon rain)
+  source: stages/coupled_climate.py:25
+  note: 'unit as the code says it: ''dimensionless (0-1 rising-air index)''; SI conversion unverified'
+- name: INTERIOR_START_KM
+  env: SIM_INTERIOR_START_KM
+  value: 500000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 1000.0
+  meaning: distance from the coast where continental interiors start drying
+  source: stages/coupled_climate.py:26
+  note: '16 Oct: 200 over 700 km on five checkpoints of s19-s24: drylands 24-41 %, mean 33 % (Earth ~32), rain 0.75 m/yr'
+- name: INTERIOR_KM
+  env: SIM_INTERIOR_KM
+  value: 1200000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 1000.0
+  meaning: distance over which continentality ramps 0 -> 1
+  source: stages/coupled_climate.py:27
+- name: INTERIOR_DRY
+  env: SIM_INTERIOR_DRY
+  value: 0.0
+  unit: '1'
+  said_as:
+    unit: dimensionless
+    factor: 1.0
+  open: true
+  meaning: share of rain removed at full continentality
+  source: stages/coupled_climate.py:28
+  note: '16 Oct, s25: off; drylands 36 % on five s25 checkpoints with it off, 39 % at 0.4; unit as the code says it: ''dimensionless'';
+    SI conversion unverified'
+- name: INTERIOR_PET
+  value: 0.25
+  unit: '1'
+  said_as:
+    unit: dimensionless
+    factor: 1.0
+  open: true
+  meaning: extra PET share at full continentality (hot dry summers)
+  source: stages/coupled_climate.py:29
+  note: 'unit as the code says it: ''dimensionless''; SI conversion unverified'
+- name: SUBTROP_REACH
+  value: 1500000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 1000.0
+  meaning: open sea this near to the east feeds a subtropical east coast
+  source: stages/coupled_climate.py:30
+- name: RECYCLE
+  env: SIM_RECYCLE
+  value: 0.6
+  unit: '1'
+  said_as:
+    unit: dimensionless
+    factor: 1.0
+  open: true
+  meaning: share of the land's evaporation that rains again downwind
+  source: stages/coupled_climate.py:31
+  note: '40-60 % of land rain over the Amazon and Eurasia is recycled (comment at 106-108); unit as the code says it: ''dimensionless'';
+    SI conversion unverified'
+- name: 'inline: t_lat coefficients'
+  values:
+  - 301.15
+  - -22.0
+  - -22.0
+  unit: K
+  said_as:
+    unit: degC
+    factor: 1.0
+    note: plus 273.15
+  meaning: T_sea(lat) = 28 - 22 s2 - 22 s2^2, s2 = sin^2(lat)
+  source: stages/coupled_climate.py:36
+  note: '~28 degC equator, ~21 at 30, ~7.5 at 50, ~-1 at 60, ~-16 at the poles (Earth zonal annual means); unit as the code
+    says it: ''degC''; SI conversion unverified In K (was degC with unit 1).'
+- name: 'inline: belts()'
+  setting: clip(0.95 exp(-(d/9)^2) + 0.75 exp(-((d-50)/12)^2) + 0.12 - 0.35 exp(-((d-27)/7)^2), 0.05, 1)
+  meaning: 'rising-air index: ITCZ, storm tracks, subtropical highs'
+  source: stages/coupled_climate.py:42
+  note: 'unit: dimensionless, d in degrees |lat|'
+- name: 'inline: wind_dir()'
+  setting: see table wind-belts
+  meaning: surface wind by latitude band
+  source: stages/coupled_climate.py:45-50
+  note: 'unit: unit vector'
+- name: 'inline: flank belt'
+  values:
+  - 12.0
+  - 40.0
+  unit: '1'
+  said_as:
+    unit: degrees |lat|
+    factor: 1.0
+  open: true
+  meaning: latitude band where the east-coast flank rule applies
+  source: stages/coupled_climate.py:65
+  note: 'unit as the code says it: ''degrees |lat|''; SI conversion unverified'
+- name: 'inline: flank wind'
+  values:
+  - -0.8
+  - 0.6
+  unit: '1'
+  said_as:
+    unit: unit (east, north*sign(lat)) before normalisation
+    factor: 1.0
+  open: true
+  meaning: onshore wind from the ESE (NNE... in the south)
+  source: stages/coupled_climate.py:72
+  note: 'unit as the code says it: ''unit (east, north*sign(lat)) before normalisation''; SI conversion unverified'
+- name: 'inline: Clausius-Clapeyron rate'
+  value: 0.0687
+  unit: '1'
+  said_as:
+    unit: 1/K
+    factor: 1.0
+  meaning: hold = exp(0.0687 T)/exp(0.0687*25), T clipped to [-40, 40] degC
+  source: stages/coupled_climate.py:80
+  note: ~7 %/K
+- name: 'inline: hold reference'
+  value: 298.15
+  unit: K
+  said_as:
+    unit: degC
+    factor: 1.0
+    note: plus 273.15
+  meaning: moisture is relative to what air holds at 25 degC
+  source: stages/coupled_climate.py:80
+  note: 'unit as the code says it: ''degC''; SI conversion unverified In K (was degC with unit 1).'
+- name: 'inline: flat-ground rain-out factor'
+  values:
+  - 0.6
+  - 0.8
+  unit: '1'
+  said_as:
+    unit: dimensionless
+    factor: 1.0
+  open: true
+  meaning: flat = exp(-step/(REACH)*(0.6 + 0.8*rise))
+  source: stages/coupled_climate.py:83
+  note: 'unit as the code says it: ''dimensionless''; SI conversion unverified'
+- name: 'inline: rain belt factor'
+  values:
+  - 0.25
+  - 0.75
+  unit: '1'
+  said_as:
+    unit: dimensionless
+    factor: 1.0
+  open: true
+  meaning: P = PRECIP_MAX*(0.25 + 0.75*rise)*M + 3.0*cond
+  source: stages/coupled_climate.py:91
+  note: 'unit as the code says it: ''dimensionless''; SI conversion unverified'
+- name: 'inline: orographic condensate weight'
+  value: 9.506426344208684e-08
+  unit: m/s
+  said_as:
+    unit: m/yr per unit relative moisture
+    factor: 3.168808781402895e-08
+  meaning: rain from condensed excess moisture
+  source: stages/coupled_climate.py:91
+  note: 'Not read by the vector climate (crates/vfields): see ORO_PER_FALL, RAIN_TOL.'
+- name: 'inline: PET exponent'
+  value: 1.15
+  unit: '1'
+  said_as:
+    unit: dimensionless
+    factor: 1.0
+  open: true
+  meaning: PET = PET_K*T^1.15
+  source: stages/coupled_climate.py:92
+  note: 'unit as the code says it: ''dimensionless''; SI conversion unverified'
+- name: sweeps
+  value: 60.0
+  unit: '1'
+  said_as:
+    unit: count
+    factor: 1.0
+  meaning: downwind moisture sweeps (moisture travels at most 60 hops)
+  source: stages/coupled_climate.py:53
+  note: 'Not read by the vector climate (crates/vfields): see ORO_PER_FALL, RAIN_TOL.'
+- name: 'inline: rain floor'
+  value: 3.168808781402895e-14
+  unit: m/s
+  said_as:
+    unit: m/yr
+    factor: 3.168808781402895e-08
+  meaning: phi = PET / max(P, this) and the recycling share ET / max(P, this)
+  source: stages/coupled_climate.py:94, 109
+- name: 'inline: hold clip'
+  values:
+  - 233.14999999999998
+  - 313.15
+  unit: K
+  said_as:
+    unit: degC
+    factor: 1.0
+    note: plus 273.15
+  meaning: what the air holds is computed on T clipped to this range
+  source: stages/coupled_climate.py:80
+- name: ORO_PER_FALL
+  value: 0.012395646924342302
+  unit: m2/s
+  meaning: 'orographic rain per unit fall of the saturated air''s holding capacity per metre along the wind (rain = ORO_PER_FALL
+    x max(0, -d hold/ds - rain-out rate x hold) where the air is saturated): the per-hop weight as a rate'
+  source: 'planets, 17 Oct 2026: the vector climate (planet-forge crates/vfields/src/climate.rs), the owner''s no-samples
+    model.'
+  note: 'Converted once from the sample march''s law: its condensate was the capacity fallen over one hop between samples,
+    weighted by inline: orographic condensate weight (9.506426344208684e-08 m/s); the hop of the calibration runs was their
+    mean sample spacing, sqrt(4 pi / 30,000) x 6,371 km = 130,392.289 m. Per metre the condensate is the capacity''s fall
+    rate, so the weight per metre is 9.506426344208684e-08 x 130,392.289 = 0.0123956 m2/s. Supersedes the per-hop weight;
+    nothing in the vector climate depends on a spacing.'
+- name: RH_CRIT
+  value: 0.8
+  unit: '1'
+  meaning: 'the relative humidity (moisture over what the air holds) at which condensation sets in: the orographic rain is
+    ORO_PER_FALL x the capacity''s excess fall x clip((m / hold - RH_CRIT) / (1 - RH_CRIT), 0, 1)'
+  source: 'planets, 17 Oct 2026: the vector climate (planet-forge crates/vfields/src/climate.rs), the owner''s no-samples
+    model.'
+  note: 'Sundqvist, H., Berge, E. & Kristjansson, J. E. (1989) Condensation and cloud parameterization studies with a mesoscale
+    numerical weather prediction model. Mon. Wea. Rev. 117, 1641-1657: cloud and condensation begin at a critical relative
+    humidity under 1 (about 0.8 near the ground; value to verify). Replaces the sample march''s sudden onset at saturation,
+    which made the rain jump with the step.'
+- name: RAIN_TOL
+  value: 0.005
+  unit: '1'
+  meaning: 'relative tolerance of the rain: the walk upwind stops where the moisture from farther upwind is carried down to
+    less than this share (exp(-integral of the rain-out rate) < RAIN_TOL), and the walk''s steps are bounded so that halving
+    them changes the rain by less than this'
+  source: 'planets, 17 Oct 2026: the vector climate (planet-forge crates/vfields/src/climate.rs), the owner''s no-samples
+    model.'
+  note: 'Replaces sweeps (60 hops of the sample march: a count of samples, not a law). With no cap the air reaching an interior
+    comes from as far upwind as its moisture survives.'
+- name: 'inline: walk max step'
+  value: 100000.0
+  unit: m
+  meaning: the longest step of the walk upwind (the wind turns, the ground changes); shorter where the holding capacity changes
+    fast (slopes, crests) by RAIN_TOL
+  source: 'planets, 17 Oct 2026: the vector climate (planet-forge crates/vfields/src/climate.rs), the owner''s no-samples
+    model.'
+- name: 'inline: walk safety length'
+  value: 80000000.0
+  unit: m
+  meaning: 'the farthest the walk goes upwind in any case (twice round the planet): a guard, the tolerance ends it long before'
+  source: 'planets, 17 Oct 2026: the vector climate (planet-forge crates/vfields/src/climate.rs), the owner''s no-samples
+    model.'
+- name: BELT_BLEND_DEG
+  value: 5.0
+  unit: deg
+  meaning: 'half-width of the blend between neighbouring wind belts (trades / westerlies at the subtropical high, westerlies
+    / polar easterlies at the polar front) and at the edges of the east-coast flank belt: the wind is mixed with a smooth
+    step across +-BELT_BLEND_DEG of each boundary'
+  source: 'planets, 17 Oct 2026: the vector climate (planet-forge crates/vfields/src/climate.rs), the owner''s no-samples
+    model.'
+  note: 'The annual-mean surface winds change sign gradually near 30 and 60 degrees (zonal-mean surface wind profiles: Peixoto
+    & Oort 1992, Physics of Climate, AIP, ch. 7); the subtropical high and the polar front move some 5 degrees either way
+    through the year, so the annual mean blends the belts over about that width. To verify against the source''s figure.'
+- name: 'inline: flank taper'
+  value: 0.5
+  unit: '1'
+  meaning: 'the subtropical east-coast flank as a smooth weight over the distance to the sea to the east: 1 within (1 - taper)
+    x SUBTROP_REACH, 0 beyond (1 + taper) x SUBTROP_REACH, a cosine between (half weight at SUBTROP_REACH)'
+  source: 'planets, 17 Oct 2026: the vector climate (planet-forge crates/vfields/src/climate.rs), the owner''s no-samples
+    model.'
+  note: The record gives a reach, not a profile; the taper is a choice that keeps the reach as the half-weight distance.
+- name: 'inline: Conrad continentality'
+  values:
+  - 1.7
+  - 14.0
+  - 10.0
+  unit: '1'
+  meaning: 'Conrad''s continentality index K = a A / sin(lat + c) - b (A the annual range of monthly mean temperature, K;
+    K 0 oceanic, 100 the most continental): a, b, c (c in degrees)'
+  source: 'planets, 17 Oct 2026: the vector climate (planet-forge crates/vfields/src/climate.rs), the owner''s no-samples
+    model.'
+  note: 'Conrad, V. (1946) Usual formulas of continentality and their limits of validity. Trans. AGU 27, 663-664. The vector
+    climate takes K = 100 x the continentality (0..1 by INTERIOR_START_KM, INTERIOR_KM) and the range it adds over the oceanic
+    one: dA = 100 sin(lat + c) / a.'
+- name: CONT_T_PER_RANGE
+  value: 0.28
+  unit: '1'
+  meaning: 'fall of the annual-mean temperature per kelvin of annual range continentality adds (continental winters cool more
+    than their summers warm): T -= CONT_T_PER_RANGE x dA'
+  source: 'planets, 17 Oct 2026: the vector climate (planet-forge crates/vfields/src/climate.rs), the owner''s no-samples
+    model.'
+  note: 'From station pairs at one latitude, maritime vs continental (climate normals): Torshavn 62N (mean ~6.5 degC, range
+    ~7 K) vs Yakutsk 62N (mean ~ -8.8 degC, range ~58 K): -15.3 / 51 = 0.30; Valentia 52N (mean ~10.4, range ~8) vs Astana
+    51N (mean ~3.5, range ~35): -6.9 / 27 = 0.26. Values as recalled, to verify against the normals; the pairs also carry
+    the westerlies'' maritime advection, which the record''s winds do not.'
+- name: 'inline: treeline warmest month'
+  value: 283.15
+  unit: K
+  meaning: 'the treeline: where the warmest month''s mean temperature is this (the warmest month = the annual mean + half
+    the annual range, Conrad''s range at the point''s continentality)'
+  source: 'planets, 17 Oct 2026: the vector climate (planet-forge crates/vfields/src/climate.rs), the owner''s no-samples
+    model.'
+  note: 'Koppen, W. (1936) Das geographische System der Klimate (Handbuch der Klimatologie I C): the polar (E) climates have
+    no month above 10 degC, the treeless tundra beyond it.'
+tables:
+- name: wind-belts
+  source: stages/coupled_climate.py:45-50
+  columns:
+  - '|lat| band (deg)'
+  - east component
+  - north component (x sign(lat))
+  - name
+  rows:
+  - - 0-30
+    - '-1.0'
+    - '-0.35'
+    - trades
+  - - 30-60
+    - '1.0'
+    - '0.25'
+    - westerlies
+  - - 60-90
+    - '-1.0'
+    - '-0.2'
+    - polar easterlies
+  - - 12-40 land, sea within 1,500 km east
+    - '-0.8'
+    - '0.6'
+    - subtropical east-coast flank (overrides)
+- name: sea-level-temperature (t_lat)
+  source: stages/coupled_climate.py:34-36
+  columns:
+  - lat (deg)
+  - T (degC)
+  rows:
+  - - '0'
+    - '28.0'
+  - - '30'
+    - '21.1'
+  - - '50'
+    - '7.5'
+  - - '60'
+    - '-0.9'
+  - - '90'
+    - '-16.0'
+- name: climate-calibration
+  source: stages/coupled_climate.py:20, 24, 26, 28
+  columns:
+  - checkpoint set
+  - metric
+  - sim
+  - Earth
+  rows:
+  - - 3 checkpoints, PET_K 0.05
+    - land rain m/yr
+    - '0.79'
+    - '0.75'
+  - - 3 checkpoints
+    - runoff share of rain
+    - '0.34'
+    - '0.35'
+  - - 3 checkpoints
+    - drylands share
+    - '0.27'
+    - '0.32'
+  - - 3 checkpoints
+    - hyperarid share
+    - '0.09'
+    - '0.07'
+  - - s19-s24, 5 checkpoints
+    - drylands share (interiors 500/1200 km)
+    - 0.24-0.41, mean 0.33
+    - '0.32'
+  - - s25, 5 checkpoints
+    - drylands share, INTERIOR_DRY 0
+    - '0.36'
+    - 'null'
+random_draws:
+- none
+invariants:
+- 0 <= runoff <= P on land; runoff = 0 at sea
+- ET <= P (Fu curve) and ET <= PET
+- PET = 0 where T <= 0 degC
+- moisture M <= hold on land; M = hold over sea
+- 'deterministic: same z, sea, dT give the same climate'
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/coupled_climate.py:run (lines 53-112); helpers t_lat (34-36), belts (39-42), wind_dir
+    (45-50)
+  state: reference
+- where: planet-forge crates/forge-core/src/models/climate/coupled.rs
+  state: current
+  note: planet-forge port (climate line, merged in forge main 736031c)
+- where: planet-forge crates/vfields/src/climate.rs
+  state: current
+  note: the climate as Fields at any point (vector planet step 5), branch v-climate
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
+    the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - reads
+  - writes
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge climate port (models/climate, models/ice), read from planet-sim-landform 1df4daf.'

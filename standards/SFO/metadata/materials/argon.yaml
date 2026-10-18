@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/material.schema.yaml
+identity:
+  key: material.argon
+  name: "Argon"
+  class: fluid
+  form:
+  - fluid
+  description: "An inert gas: it stirs a ladle through its porous plug and blankets a sealed ladle furnace. On a moon a little comes out of the regolith (argon-40 and the solar wind's), so it is scarce. Stored liquid, at about 87 K."
+fuel:
+  release: none
+mass:
+  density: 1395
+basis:
+  - { of: [mass.density], tier: invented, review: true, note: "Liquid argon at its boiling point, about 1,395 kg/m3 (from memory), as stored." }

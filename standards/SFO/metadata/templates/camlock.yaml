@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schema/template.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: template.camlock
+  name: Cam-lock hose couplings
+  description: 'Cam-lock hose couplings: one look for every size of the family, scaled to each record''s figures (the owner, 2026-10-17: never one model per size).'
+family: quick-coupling
+draws: model
+scales_by:
+- physical
+members: 4
+reference: connector.camlock-dn50
+basis:
+- of:
+  - draws
+  - scales_by
+  tier: derived
+  note: 'The owner, 2026-10-17: one template a family, scaled; the catalogue families (kit_catalogue.py).'
+visual:
+  format: freefall-model/1
+  path: models/camlock/v1
+  manifest_sha256: 61b58c5fb5ff5bb12c30cf9dc048f2576827f84ac68172562918b49d7f148750
+  version: 1
+  triangles: 4224

@@ -1,0 +1,56 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.hillslope.scarp.free-face
+  name: Free face / scarp (cliff in rock)
+  about: Free face / scarp (cliff in rock).
+family: hillslope
+factors:
+- factor: planet-factor.rock-layers
+  weight: 3
+  why: 'Hard caprock over soft rock: undercutting keeps a vertical face that retreats parallel'
+- factor: planet-factor.rock-type
+  weight: 1
+  why: Strong massive rock holds faces; weak rock decays to debris slopes
+- factor: planet-factor.tect-fault
+  weight: 3
+  why: Fault displacement makes fault scarps; slip rate keeps them fresh
+- factor: planet-factor.rock-fracture
+  weight: 1
+  why: Joint spacing sets block size and face retreat
+- factor: planet-factor.base-level
+  weight: 3
+  why: River, wave or glacial undercutting at foot removes debris
+- factor: planet-factor.clim-arid
+  weight: 1
+  why: Arid climates keep bare cliffs with talus; humid soften to soil slopes
+- factor: planet-factor.clim-temp
+  weight: 1
+  why: Frost weathering speeds rockfall retreat
+- factor: planet-factor.time
+  weight: 1
+  why: Face replaced by debris slope over time unless foot cleared
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: Uplift sustains incision that maintains face height
+vocabulary_id: 161
+sources:
+- https://en.wikipedia.org/wiki/Escarpment
+- https://en.wikipedia.org/wiki/Hillslope_evolution
+- https://pubs.usgs.gov/fs/2004/3072/fs-2004-3072.html
+library_status: planned
+source: hillslope.scarp.free_face
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

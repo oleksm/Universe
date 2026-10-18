@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/planet-measure.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry_extra.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-measure.relief-coverage
+  name: relief coverage
+  about: share of land samples within 50 / 150 km of an alive, not-worn relief feature (densified to ~10 km)
+unit: '1'
+said_as:
+  unit: '%'
+  factor: 0.01
+how: share of land samples within 50 / 150 km of an alive, not-worn relief feature (densified to ~10 km)
+tool: ~/git/planet-trees-pgs2/tools/layer_lines.py:381,424-434 (COVER_KM, relief_overlay)
+status: draft
+basis:
+- of:
+  - scorecard
+  tier: sourced
+  source: Earth values as the Python sim cites them (scorecard.py TARGETS and legends)
+  review: true

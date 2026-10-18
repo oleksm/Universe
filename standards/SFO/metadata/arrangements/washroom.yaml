@@ -1,0 +1,89 @@
+# yaml-language-server: $schema=../../schema/arrangement.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: arrangement.washroom
+  name: Washroom
+  description: 'How a 6 m room is furnished as a washroom: 4 toilet cubicles, 4 toilets, 4 basins, 1 shower.'
+room:
+- 6.0
+- 6.0
+people: 0
+staff: 0
+items:
+- unit: unit.furniture-cubicle
+  at:
+  - -1.35
+  - -2.2
+  - 0.0
+- unit: unit.furniture-cubicle
+  at:
+  - -0.45
+  - -2.2
+  - 0.0
+- unit: unit.furniture-cubicle
+  at:
+  - 0.45
+  - -2.2
+  - 0.0
+- unit: unit.furniture-cubicle
+  at:
+  - 1.35
+  - -2.2
+  - 0.0
+- unit: unit.furniture-wc
+  at:
+  - -1.35
+  - -2.4
+  - 0.0
+- unit: unit.furniture-wc
+  at:
+  - -0.45
+  - -2.4
+  - 0.0
+- unit: unit.furniture-wc
+  at:
+  - 0.45
+  - -2.4
+  - 0.0
+- unit: unit.furniture-wc
+  at:
+  - 1.35
+  - -2.4
+  - 0.0
+- unit: unit.furniture-basin
+  at:
+  - -1.35
+  - 0.8
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-basin
+  at:
+  - -0.45
+  - 0.8
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-basin
+  at:
+  - 0.45
+  - 0.8
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-basin
+  at:
+  - 1.35
+  - 0.8
+  - 0.0
+  turn: 180.0
+- unit: unit.furniture-shower
+  at:
+  - 2.4
+  - 2.4
+  - 0.0
+  turn: 180.0
+mass: 502.0
+basis:
+- of:
+  - items
+  tier: invented
+  review: true
+  note: Laid out by hand on the 6 m room (tools/standards/furniture.py); each piece is modelled once and placed here.

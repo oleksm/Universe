@@ -1,0 +1,56 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.coastal.rocky.shore-platform
+  name: Shore (wave-cut) platform
+  about: Shore (wave-cut) platform.
+family: coastal
+factors:
+- factor: planet-factor.waves-tides
+  weight: 3
+  why: 'tidal range sets gradient: type A sloping 1-5 deg macrotidal, type B near-horizontal 0.2-1.3 deg microtidal'
+- factor: planet-factor.rock-type
+  weight: 3
+  why: moderately strong sedimentary rock best; width falls with rock strength (10-1000 m)
+- factor: planet-factor.rock-layers
+  weight: 1
+  why: bedding dip and hard beds make stepped or ramp platforms
+- factor: planet-factor.rock-fracture
+  weight: 1
+  why: joint density controls quarrying rate and surface roughness
+- factor: planet-factor.clim-temp
+  weight: 1
+  why: 'warm climates: wetting-drying and salt weathering lower platform to near high-water level'
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: bioerosion (borers, grazers) in tropics; algae protect in cool seas
+- factor: planet-factor.sea-level
+  weight: 3
+  why: needs stable level; inheritance from previous interglacial highstands widens platforms
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: uplift strands platforms as terraces
+- factor: planet-factor.time
+  weight: 1
+  why: widths need 1-100 kyr; inherited components older
+vocabulary_id: 29
+sources:
+- https://en.wikipedia.org/wiki/Wave-cut_platform
+- https://www.coastalwiki.org/wiki/Rocky_shores
+- https://en.wikipedia.org/wiki/Marine_terrace
+library_status: written
+source: coastal.rocky.shore_platform
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

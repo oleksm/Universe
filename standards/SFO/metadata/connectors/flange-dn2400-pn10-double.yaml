@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: connector.flange-dn2400-pn10-double, name: 'Flange DN 2400 PN 10, double seal', description: 'A bolted pair of weld-neck flanges for a pipe of 2400 mm nominal bore at up to 10 bar inside (on airless ground, the whole of it against vacuum).'}
+kind: flange
+size: 2.4
+rating: {pressure: 1000000.0, temperature: 573.15}
+sealing: double
+physical: {length: 2.662, width: 2.662, height: 0.23, mass: 1296.0}
+built_of:
+- {what: Flanges, item: material.structural-steel-a36, mass: 1168.7, note: 'two weld-neck rings 2.662 m across, 56 mm thick, their necks tapering over 56 mm from 60 mm to the pipe''s wall; along the pipe the joint is 230 mm with the necks and the bolts'' and nuts'' ends'}
+- {what: Bolts and nuts, item: material.high-strength-steel-4340, mass: 114.5, note: '108 of M27, 172 mm, on a 2.581 m circle'}
+- {what: Gaskets, item: material.stainless-steel-304, mass: 12.8, note: 'spiral wound, stainless windings; two, the space between them piped to a leak watch'}
+basis:
+- of: [built_of, physical]
+  tier: derived
+  review: true
+  note: 'Sized by a simple rule, not to a flange code: the end force on the gasket''s mean circle (2.45 m) at the class''s pressure, bolts at 170 MPa, the ring''s thickness from its bending about the bolt circle at 140 MPa.'
+interface: interface.flange-dn2400-pn10-double
+provides: both
+template: template.flange-double

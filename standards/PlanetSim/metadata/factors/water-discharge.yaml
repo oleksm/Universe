@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/planet-factor.schema.yaml
+identity:
+  key: planet-factor.water-discharge
+  name: WATER_DISCHARGE
+  about: river discharge and its regime
+source: WATER_DISCHARGE
+reads:
+  fields:
+  - planet-field.discharge
+  - planet-field.peak-discharge
+signal:
+  field: planet-field.discharge
+  from: 10.0
+  to: 5000.0
+levels:
+- planet-level.cluster
+- planet-level.pattern
+basis:
+- of:
+  - identity
+  tier: derived
+  note: planet-trees-pgs2 docs/landforms/deciding_factors_vocab.md.
+- of:
+  - reads
+  - signal
+  tier: invented
+  review: true
+  note: 'The registry''s first guess at which of the sim''s words a factor reads and how its strength ramps (2026-10-17): for planets to correct.'
+status: draft

@@ -1,0 +1,58 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.arid.slope.pediment
+  name: Pediment and piedmont plain
+  about: Pediment and piedmont plain.
+family: arid
+factors:
+- factor: planet-factor.clim-arid
+  weight: 3
+  why: 'Arid/semi-arid best: sparse vegetation, weak soils and unstable banks promote planation'
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: Little vegetation lets sheetwash and channels migrate laterally
+- factor: planet-factor.clim-storm
+  weight: 1
+  why: Sheetfloods and flash floods do lateral planation
+- factor: planet-factor.rock-type
+  weight: 1
+  why: Granite and grus-forming crystalline rock most common, though lithology not essential
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: Stable or slowly uplifting mountain front; fast uplift makes fans instead
+- factor: planet-factor.base-level
+  weight: 3
+  why: Stable or slowly falling; more common in hydrologically open basins
+- factor: planet-factor.sed-supply
+  weight: 1
+  why: Supply balanced by transport keeps thin veneer, not aggrading fan
+- factor: planet-factor.regolith
+  weight: 1
+  why: Weathering front lowering beneath thin mantle; high-infiltration ground
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: 0.5-7 deg (typ 3-4) with sharp piedmont angle
+- factor: planet-factor.time
+  weight: 1
+  why: 100 kyr-10 Myr of scarp retreat
+vocabulary_id: 15
+sources:
+- https://en.wikipedia.org/wiki/Pediment_(geology)
+- https://www.nps.gov/subjects/geology/arid-landforms.htm
+library_status: written
+source: arid.slope.pediment
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schema/template.schema.yaml
+# Written by tools/standards/building_kit.py: change it there.
+identity:
+  key: template.partition
+  name: Partition panels
+  description: 'Partition panels: one look for every panel of the family, scaled to each record''s cell (docs/asset-contract.md, Templates).'
+family: panel
+draws: model
+scales_by:
+- physical
+reference: panel.partition-3x3
+members: 1
+basis:
+- of:
+  - draws
+  - scales_by
+  tier: derived
+  note: 'The owner, 2026-10-17: buildings as layouts; one template a panel family (building_kit.py).'
+visual:
+  format: freefall-model/1
+  path: models/partition/v1
+  manifest_sha256: d576bcc7241f7ee8bb07a1b54d502340f898611e0005c09a0f1de3db8231d59f
+  version: 1
+  triangles: 180

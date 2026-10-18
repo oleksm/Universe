@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/product.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: product.ladle-furnace-80t, name: 'Ladle furnace, 80 t', description: A gantry over the ladle rail with a water-cooled roof and three electrodes.}
+kind: product
+options:
+- {id: sealing, name: Sealing kit, description: 'a rim seal, electrode glands, roof locks and an alloy lock, for argon under the roof'}
+units: [unit.ladle-furnace-80t, unit.ladle-furnace-80t-sealed]
+basis:
+- of: [kind, params, pieces, options]
+  tier: invented
+  review: true
+  note: Grouped from the units the layouts use (docs/proposals/plant-products.md, 2026-10-16).

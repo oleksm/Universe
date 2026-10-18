@@ -1,0 +1,112 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.suture
+  name: Suture
+  about: 'A relief feature of the tectonic family: suture.'
+register: feature
+family: tectonic
+level:
+- 1
+geometry: polyline
+properties:
+- field: collision span
+  unit: Myr
+- field: plates
+  unit: ids
+trigger: first continent contact
+generator: contacts recorded per step, chained when the collision ends
+overrides: erosion (relief decays by rock and rain), tear at plate edges, sink with its crust; reactivated by rifts
+wave: 1
+built: true
+levels:
+- planet-level.planet
+- planet-level.cluster
+status: draft
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - level
+  - geometry
+  - properties
+  - trigger
+  - generator
+  - overrides
+  - wave
+  - built
+  tier: derived
+  note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical
+    feature catalogue.'
+- of:
+  - pinned_to
+  - spans
+  - dimensions
+  - layout
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
+    9747f0d-c437724. The laws: stages/zones.py collision, close_stale; stages/lines.py add_points, finish (the Python''s rules,
+    its constants on the processes).'
+  review: true
+- of:
+  - layout
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
+    9747f0d-c437724. frame and record from: proposed (the schema has no fields for them yet).'
+  review: true
+pinned_to: its first contact
+spans:
+- name: contacts
+  meaning: 'where continents of two plates met, as they came (each pin in the frame of the plate its particle rode; profiles:
+    t_myr when, plate which); kept unchanged when chained'
+- name: line
+  meaning: 'its contacts chained when it ended: the longest path through their spanning tree (linked within LINK gaps), smoothed
+    by `smooth` gaps, the ends kept'
+dimensions:
+- name: length
+  unit: m
+  meaning: along its line
+  rule: measured on the span
+- name: sinuosity
+  unit: '1'
+  meaning: path over chord
+  rule: measured on the span
+- name: turn per 100 km
+  unit: deg
+  meaning: mean turning
+  rule: measured on the span
+- name: straight share
+  unit: '1'
+  meaning: share of steps turning under 5 deg
+  rule: measured on the span
+layout:
+- name: frame
+  unit: '1'
+  meaning: '1: its pins sit in its plate''s frame (integer cm) and ride the crust, placed by planet-field.plate-rotation;
+    0: a body-frame snapshot, remade from the present state each pass'
+  rule: it rides its crust (the Python's line store anchored it to crust particles)
+  params:
+  - name: rides
+    value: 1.0
+    unit: '1'
+    meaning: 1 rides, 0 snapshot
+    source: 'planet-forge src/ride.rs (from the Python: stages/lines.py Store vs its rivers and coast)'
+    open: true
+- name: record from
+  unit: s
+  meaning: 'recorded only while the planet is within this of its present: one older would be worn away by today, never made'
+  rule: 'within its decay age (owner, 17 Oct 2026: "start models that make sense within their decay age")'
+  formula: record while age_today - t <= RECORD_FROM_MYR
+  params:
+  - name: RECORD_FROM_MYR
+    value: 3.15576e+16
+    unit: s
+    said_as:
+      unit: Myr
+      factor: 31557600000000.0
+    meaning: its decay age before the present
+    source: stages/relief.py:59 RECORD_FROM_MYR['suture']
+    open: true
+- name: forming
+  unit: '1'
+  meaning: 1 while contacts still come, 0 once ended (a water gap crosses only ended lines)

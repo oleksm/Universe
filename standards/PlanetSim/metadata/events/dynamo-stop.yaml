@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/planet-event.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-event.dynamo-stop
+  name: Interior.dynamo-stop
+  about: core dynamo switches on/off; Mars's field gone ~4 Gyr ago, Venus none
+source: interior.dynamo-stop
+emitted_by:
+- planet-process.core-dynamo
+status: draft

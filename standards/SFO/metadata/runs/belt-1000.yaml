@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/run.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: run.belt-1000, name: 'Belt conveyor, 1000 mm', description: 'An open troughed belt 1000 mm wide on idlers and stringers, carried on trestles; it runs straight (a turn is a transfer to another belt). Its drive is at its head.'}
+kind: belt
+size: 1.0
+outside: [1.6, 1.0]
+rating: {rate: 416.7}
+per_m:
+  mass: 113.9
+  built_of:
+  - {what: Belt, item: material.silicone-rubber, mass: 38.7, note: 'both runs, 18 mm; a vacuum-rated belt, silicone rubber standing for it'}
+  - {what: Idlers, item: material.structural-steel-a36, mass: 39.2, note: 'a three-roll troughing set every 1.2 m (39 kg) and a return roll every 3 m (20 kg), sealed bearings with vacuum grease; from memory'}
+  - {what: Stringers, item: material.structural-steel-a36, mass: 36.0, note: two 150 x 75 mm channels}
+support: {spacing: 18.0, mass: 300.0, per_m_height: 75.0, item: material.structural-steel-a36}
+repeat:
+- {piece: idler, pitch: 1.2}
+- {piece: return_roll, pitch: 3.0}
+terminals:
+  head: {mass: 4500.0, transition: 1.0, note: 'a 0.8 m lagged drive pulley, its bearings and frame, a gearbox and a motor of about 400 kW (from memory)'}
+  tail: {mass: 2230.0, transition: 1.0, note: 'a 0.63 m tail pulley on a screw take-up, its bearings and frame, and the loading skirt (rubber, 3 m a side) where a chute drops onto it (from memory)'}
+connector: connector.belt-transfer-1000
+carries: bulk
+template: template.belt
+visual: {format: freefall-model/1, path: models/belt-1000/v1, manifest_sha256: de565ed53a1b11edde743bbb40c82c25f7ba35940dd98f75d12d21dd2f0b6aff, version: 1, triangles: 3376}
+basis:
+- of: [per_m, support]
+  tier: invented
+  review: true
+  note: Belt, idlers and stringers from memory of 1.2 m belts; trestles every 18 m, a 300 kg cross beam and two 200 mm box legs (75 kg/m).

@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../schema/interface.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: interface.plant-bay-s2, name: 'Plant bay seat, class 2', description: 'Where a unit''s feet bear on a class 2 bay (12 m square): its seats and anchor bolts. The unit brings its feet, the bay its seats.'}
+domain: load
+kind: mount
+size: 12.0
+envelope: {mass: 1284000.0}
+media: [load]
+sealing: open
+halves: male-female
+make: bolted
+basis:
+- of: [envelope]
+  tier: derived
+  note: The bay's bearing (plant-mount.bay-s2), at 1 g.

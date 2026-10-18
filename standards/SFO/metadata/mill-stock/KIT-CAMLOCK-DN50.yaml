@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-camlock-dn50
+  code: KIT-CAMLOCK-DN50
+  name: Cam-lock coupling, DN 50
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.aluminium-alloy-6061
+- item: material.epdm-rubber
+size:
+  length: 0.13
+  width: 0.086
+  height: 0.155
+supplies:
+  item: connector.camlock-dn50
+physical:
+  mass: 1.27
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.camlock-dn50, as made.

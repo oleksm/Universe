@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: connector.lined-flange-dn1200-pn1, name: Lined flange DN 1200 PN 1, description: 'The flange pair of a refractory-lined hot gas duct whose steel shell is 1200 mm nominal bore, the lining''s joint packed; the shell kept cool by the lining.'}
+kind: lined-flange
+size: 1.2
+rating: {pressure: 100000.0, temperature: 473.0}
+sealing: single
+physical: {length: 1.366, width: 1.366, height: 0.11, mass: 151.3}
+built_of:
+- {what: Flanges, item: material.structural-steel-a36, mass: 133.8, note: 'two weld-neck rings 1.366 m across, 20 mm thick, their necks tapering over 20 mm from 38 mm to the pipe''s wall; along the pipe the joint is 110 mm with the necks and the bolts'' and nuts'' ends'}
+- {what: Bolts and nuts, item: material.high-strength-steel-4340, mass: 7.3, note: '40 of M16, 78 mm, on a 1.318 m circle'}
+- {what: Gasket, item: material.stainless-steel-304, mass: 2.3, note: 'spiral wound, stainless windings'}
+- {what: Lining joint, item: material.silica-aerogel, mass: 7.9, note: the refractory's joint packed with 50 mm of silica fibre; silica aerogel stands for it}
+interface: interface.lined-flange-dn1200-pn1
+provides: both
+template: template.lined-flange
+visual: {format: freefall-model/1, path: models/lined-flange-dn1200-pn1/v1, manifest_sha256: 8e8ee1718cfc83a2240a2571edebaeeade90b44fa2835cf031383dcff5fbd704, version: 1, triangles: 10168}
+basis:
+- of: [built_of, physical]
+  tier: derived
+  review: true
+  note: 'Sized by a simple rule, not to a flange code: the end force on the gasket''s mean circle (1.25 m) at the class''s pressure, bolts at 170 MPa, the ring''s thickness from its bending about the bolt circle at 140 MPa.'
+- of: [built_of]
+  tier: invented
+  review: true
+  note: The lining's joint from memory.

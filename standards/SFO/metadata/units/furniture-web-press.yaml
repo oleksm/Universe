@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: unit.furniture-web-press
+  name: Web press
+  description: A small web press, its folder and its paper stand.
+size_class: 1
+physical:
+  length: 5.0
+  width: 2.5
+  height: 2.5
+  mass: 4500.0
+built_of:
+- what: Press, folder and stand
+  item: material.structural-steel-a36
+  mass: 4200.0
+- what: Rollers and plates
+  item: material.aluminium-alloy-6061
+  mass: 300.0
+visual:
+  format: "freefall-model/1"
+  path: "models/furniture-web-press/v1"
+  manifest_sha256: "8643db13075d8d2ab7f76f5614938468238347b58ccb78cbf57fad4cb69cab0b"
+  version: 1
+  triangles: 2784
+basis:
+- of:
+  - built_of
+  - physical
+  tier: invented
+  review: true
+  note: From memory of such furniture; to be sourced.

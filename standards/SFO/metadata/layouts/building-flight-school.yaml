@@ -1,0 +1,1194 @@
+# yaml-language-server: $schema=../../schema/layout.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: layout.building-flight-school
+  name: Flight school, world with air
+  description: 'Simulators, classrooms and a pad with two training hulls: where pilots are made, three years from first lesson to a licence. Laid of the kit: a strut frame on the 3 m grid, panels, and 182 rooms of 6 m furnished piece
+    by piece (55 classroom, 36 workshop, 64 vehicle bay, 9 office, 18 washroom).'
+stands_for: building.flight-school
+site:
+  atmosphere: air
+  gravity:
+  - 8.0
+  - 11.0
+physical:
+  length: 78.0
+  width: 42.0
+  height: 9.15
+  mass: 2213426.2
+bays: []
+rooms:
+- id: CLA1
+  arrangement: arrangement.classroom
+  at:
+  - -36.0
+  - -18.0
+  - 0.0
+- id: CLA2
+  arrangement: arrangement.classroom
+  at:
+  - -30.0
+  - -18.0
+  - 0.0
+- id: CLA3
+  arrangement: arrangement.classroom
+  at:
+  - -24.0
+  - -18.0
+  - 0.0
+- id: CLA4
+  arrangement: arrangement.classroom
+  at:
+  - -18.0
+  - -18.0
+  - 0.0
+- id: CLA5
+  arrangement: arrangement.classroom
+  at:
+  - -12.0
+  - -18.0
+  - 0.0
+- id: CLA6
+  arrangement: arrangement.classroom
+  at:
+  - -6.0
+  - -18.0
+  - 0.0
+- id: CLA7
+  arrangement: arrangement.classroom
+  at:
+  - 0.0
+  - -18.0
+  - 0.0
+- id: CLA8
+  arrangement: arrangement.classroom
+  at:
+  - 6.0
+  - -18.0
+  - 0.0
+- id: CLA9
+  arrangement: arrangement.classroom
+  at:
+  - 12.0
+  - -18.0
+  - 0.0
+- id: CLA10
+  arrangement: arrangement.classroom
+  at:
+  - 18.0
+  - -18.0
+  - 0.0
+- id: CLA11
+  arrangement: arrangement.classroom
+  at:
+  - 24.0
+  - -18.0
+  - 0.0
+- id: CLA12
+  arrangement: arrangement.classroom
+  at:
+  - 30.0
+  - -18.0
+  - 0.0
+- id: CLA13
+  arrangement: arrangement.classroom
+  at:
+  - 36.0
+  - -18.0
+  - 0.0
+- id: CLA14
+  arrangement: arrangement.classroom
+  at:
+  - -36.0
+  - -12.0
+  - 0.0
+- id: CLA15
+  arrangement: arrangement.classroom
+  at:
+  - -30.0
+  - -12.0
+  - 0.0
+- id: CLA16
+  arrangement: arrangement.classroom
+  at:
+  - -24.0
+  - -12.0
+  - 0.0
+- id: CLA17
+  arrangement: arrangement.classroom
+  at:
+  - -18.0
+  - -12.0
+  - 0.0
+- id: CLA18
+  arrangement: arrangement.classroom
+  at:
+  - -12.0
+  - -12.0
+  - 0.0
+- id: CLA19
+  arrangement: arrangement.classroom
+  at:
+  - -6.0
+  - -12.0
+  - 0.0
+- id: CLA20
+  arrangement: arrangement.classroom
+  at:
+  - 0.0
+  - -12.0
+  - 0.0
+- id: CLA21
+  arrangement: arrangement.classroom
+  at:
+  - 6.0
+  - -12.0
+  - 0.0
+- id: CLA22
+  arrangement: arrangement.classroom
+  at:
+  - 12.0
+  - -12.0
+  - 0.0
+- id: CLA23
+  arrangement: arrangement.classroom
+  at:
+  - 18.0
+  - -12.0
+  - 0.0
+- id: CLA24
+  arrangement: arrangement.classroom
+  at:
+  - 24.0
+  - -12.0
+  - 0.0
+- id: CLA25
+  arrangement: arrangement.classroom
+  at:
+  - 30.0
+  - -12.0
+  - 0.0
+- id: CLA26
+  arrangement: arrangement.classroom
+  at:
+  - 36.0
+  - -12.0
+  - 0.0
+- id: CLA27
+  arrangement: arrangement.classroom
+  at:
+  - -36.0
+  - -6.0
+  - 0.0
+- id: CLA28
+  arrangement: arrangement.classroom
+  at:
+  - -30.0
+  - -6.0
+  - 0.0
+- id: CLA29
+  arrangement: arrangement.classroom
+  at:
+  - -24.0
+  - -6.0
+  - 0.0
+- id: CLA30
+  arrangement: arrangement.classroom
+  at:
+  - -18.0
+  - -6.0
+  - 0.0
+- id: CLA31
+  arrangement: arrangement.classroom
+  at:
+  - -12.0
+  - -6.0
+  - 0.0
+- id: CLA32
+  arrangement: arrangement.classroom
+  at:
+  - -6.0
+  - -6.0
+  - 0.0
+- id: CLA33
+  arrangement: arrangement.classroom
+  at:
+  - 0.0
+  - -6.0
+  - 0.0
+- id: CLA34
+  arrangement: arrangement.classroom
+  at:
+  - 6.0
+  - -6.0
+  - 0.0
+- id: CLA35
+  arrangement: arrangement.classroom
+  at:
+  - 12.0
+  - -6.0
+  - 0.0
+- id: CLA36
+  arrangement: arrangement.classroom
+  at:
+  - 18.0
+  - -6.0
+  - 0.0
+- id: CLA37
+  arrangement: arrangement.classroom
+  at:
+  - 24.0
+  - -6.0
+  - 0.0
+- id: CLA38
+  arrangement: arrangement.classroom
+  at:
+  - 30.0
+  - -6.0
+  - 0.0
+- id: CLA39
+  arrangement: arrangement.classroom
+  at:
+  - 36.0
+  - -6.0
+  - 0.0
+- id: CLA40
+  arrangement: arrangement.classroom
+  at:
+  - -36.0
+  - 0.0
+  - 0.0
+- id: CLA41
+  arrangement: arrangement.classroom
+  at:
+  - -30.0
+  - 0.0
+  - 0.0
+- id: CLA42
+  arrangement: arrangement.classroom
+  at:
+  - -24.0
+  - 0.0
+  - 0.0
+- id: CLA43
+  arrangement: arrangement.classroom
+  at:
+  - -18.0
+  - 0.0
+  - 0.0
+- id: CLA44
+  arrangement: arrangement.classroom
+  at:
+  - -12.0
+  - 0.0
+  - 0.0
+- id: CLA45
+  arrangement: arrangement.classroom
+  at:
+  - -6.0
+  - 0.0
+  - 0.0
+- id: CLA46
+  arrangement: arrangement.classroom
+  at:
+  - 0.0
+  - 0.0
+  - 0.0
+- id: CLA47
+  arrangement: arrangement.classroom
+  at:
+  - 6.0
+  - 0.0
+  - 0.0
+- id: CLA48
+  arrangement: arrangement.classroom
+  at:
+  - 12.0
+  - 0.0
+  - 0.0
+- id: CLA49
+  arrangement: arrangement.classroom
+  at:
+  - 18.0
+  - 0.0
+  - 0.0
+- id: CLA50
+  arrangement: arrangement.classroom
+  at:
+  - 24.0
+  - 0.0
+  - 0.0
+- id: CLA51
+  arrangement: arrangement.classroom
+  at:
+  - 30.0
+  - 0.0
+  - 0.0
+- id: CLA52
+  arrangement: arrangement.classroom
+  at:
+  - 36.0
+  - 0.0
+  - 0.0
+- id: CLA53
+  arrangement: arrangement.classroom
+  at:
+  - -36.0
+  - 6.0
+  - 0.0
+- id: CLA54
+  arrangement: arrangement.classroom
+  at:
+  - -30.0
+  - 6.0
+  - 0.0
+- id: CLA55
+  arrangement: arrangement.classroom
+  at:
+  - -24.0
+  - 6.0
+  - 0.0
+- id: WOR56
+  arrangement: arrangement.workshop
+  at:
+  - -18.0
+  - 6.0
+  - 0.0
+- id: WOR57
+  arrangement: arrangement.workshop
+  at:
+  - -12.0
+  - 6.0
+  - 0.0
+- id: WOR58
+  arrangement: arrangement.workshop
+  at:
+  - -6.0
+  - 6.0
+  - 0.0
+- id: WOR59
+  arrangement: arrangement.workshop
+  at:
+  - 0.0
+  - 6.0
+  - 0.0
+- id: WOR60
+  arrangement: arrangement.workshop
+  at:
+  - 6.0
+  - 6.0
+  - 0.0
+- id: WOR61
+  arrangement: arrangement.workshop
+  at:
+  - 12.0
+  - 6.0
+  - 0.0
+- id: WOR62
+  arrangement: arrangement.workshop
+  at:
+  - 18.0
+  - 6.0
+  - 0.0
+- id: WOR63
+  arrangement: arrangement.workshop
+  at:
+  - 24.0
+  - 6.0
+  - 0.0
+- id: WOR64
+  arrangement: arrangement.workshop
+  at:
+  - 30.0
+  - 6.0
+  - 0.0
+- id: WOR65
+  arrangement: arrangement.workshop
+  at:
+  - 36.0
+  - 6.0
+  - 0.0
+- id: WOR66
+  arrangement: arrangement.workshop
+  at:
+  - -36.0
+  - 12.0
+  - 0.0
+- id: WOR67
+  arrangement: arrangement.workshop
+  at:
+  - -30.0
+  - 12.0
+  - 0.0
+- id: WOR68
+  arrangement: arrangement.workshop
+  at:
+  - -24.0
+  - 12.0
+  - 0.0
+- id: WOR69
+  arrangement: arrangement.workshop
+  at:
+  - -18.0
+  - 12.0
+  - 0.0
+- id: WOR70
+  arrangement: arrangement.workshop
+  at:
+  - -12.0
+  - 12.0
+  - 0.0
+- id: WOR71
+  arrangement: arrangement.workshop
+  at:
+  - -6.0
+  - 12.0
+  - 0.0
+- id: WOR72
+  arrangement: arrangement.workshop
+  at:
+  - 0.0
+  - 12.0
+  - 0.0
+- id: WOR73
+  arrangement: arrangement.workshop
+  at:
+  - 6.0
+  - 12.0
+  - 0.0
+- id: WOR74
+  arrangement: arrangement.workshop
+  at:
+  - 12.0
+  - 12.0
+  - 0.0
+- id: WOR75
+  arrangement: arrangement.workshop
+  at:
+  - 18.0
+  - 12.0
+  - 0.0
+- id: WOR76
+  arrangement: arrangement.workshop
+  at:
+  - 24.0
+  - 12.0
+  - 0.0
+- id: WOR77
+  arrangement: arrangement.workshop
+  at:
+  - 30.0
+  - 12.0
+  - 0.0
+- id: WOR78
+  arrangement: arrangement.workshop
+  at:
+  - 36.0
+  - 12.0
+  - 0.0
+- id: WOR79
+  arrangement: arrangement.workshop
+  at:
+  - -36.0
+  - 18.0
+  - 0.0
+- id: WOR80
+  arrangement: arrangement.workshop
+  at:
+  - -30.0
+  - 18.0
+  - 0.0
+- id: WOR81
+  arrangement: arrangement.workshop
+  at:
+  - -24.0
+  - 18.0
+  - 0.0
+- id: WOR82
+  arrangement: arrangement.workshop
+  at:
+  - -18.0
+  - 18.0
+  - 0.0
+- id: WOR83
+  arrangement: arrangement.workshop
+  at:
+  - -12.0
+  - 18.0
+  - 0.0
+- id: WOR84
+  arrangement: arrangement.workshop
+  at:
+  - -6.0
+  - 18.0
+  - 0.0
+- id: WOR85
+  arrangement: arrangement.workshop
+  at:
+  - 0.0
+  - 18.0
+  - 0.0
+- id: WOR86
+  arrangement: arrangement.workshop
+  at:
+  - 6.0
+  - 18.0
+  - 0.0
+- id: WOR87
+  arrangement: arrangement.workshop
+  at:
+  - 12.0
+  - 18.0
+  - 0.0
+- id: WOR88
+  arrangement: arrangement.workshop
+  at:
+  - 18.0
+  - 18.0
+  - 0.0
+- id: WOR89
+  arrangement: arrangement.workshop
+  at:
+  - 24.0
+  - 18.0
+  - 0.0
+- id: WOR90
+  arrangement: arrangement.workshop
+  at:
+  - 30.0
+  - 18.0
+  - 0.0
+- id: WOR91
+  arrangement: arrangement.workshop
+  at:
+  - 36.0
+  - 18.0
+  - 0.0
+- id: GAR92
+  arrangement: arrangement.garage
+  at:
+  - -36.0
+  - -18.0
+  - 4.5
+- id: GAR93
+  arrangement: arrangement.garage
+  at:
+  - -30.0
+  - -18.0
+  - 4.5
+- id: GAR94
+  arrangement: arrangement.garage
+  at:
+  - -24.0
+  - -18.0
+  - 4.5
+- id: GAR95
+  arrangement: arrangement.garage
+  at:
+  - -18.0
+  - -18.0
+  - 4.5
+- id: GAR96
+  arrangement: arrangement.garage
+  at:
+  - -12.0
+  - -18.0
+  - 4.5
+- id: GAR97
+  arrangement: arrangement.garage
+  at:
+  - -6.0
+  - -18.0
+  - 4.5
+- id: GAR98
+  arrangement: arrangement.garage
+  at:
+  - 0.0
+  - -18.0
+  - 4.5
+- id: GAR99
+  arrangement: arrangement.garage
+  at:
+  - 6.0
+  - -18.0
+  - 4.5
+- id: GAR100
+  arrangement: arrangement.garage
+  at:
+  - 12.0
+  - -18.0
+  - 4.5
+- id: GAR101
+  arrangement: arrangement.garage
+  at:
+  - 18.0
+  - -18.0
+  - 4.5
+- id: GAR102
+  arrangement: arrangement.garage
+  at:
+  - 24.0
+  - -18.0
+  - 4.5
+- id: GAR103
+  arrangement: arrangement.garage
+  at:
+  - 30.0
+  - -18.0
+  - 4.5
+- id: GAR104
+  arrangement: arrangement.garage
+  at:
+  - 36.0
+  - -18.0
+  - 4.5
+- id: GAR105
+  arrangement: arrangement.garage
+  at:
+  - -36.0
+  - -12.0
+  - 4.5
+- id: GAR106
+  arrangement: arrangement.garage
+  at:
+  - -30.0
+  - -12.0
+  - 4.5
+- id: GAR107
+  arrangement: arrangement.garage
+  at:
+  - -24.0
+  - -12.0
+  - 4.5
+- id: GAR108
+  arrangement: arrangement.garage
+  at:
+  - -18.0
+  - -12.0
+  - 4.5
+- id: GAR109
+  arrangement: arrangement.garage
+  at:
+  - -12.0
+  - -12.0
+  - 4.5
+- id: GAR110
+  arrangement: arrangement.garage
+  at:
+  - -6.0
+  - -12.0
+  - 4.5
+- id: GAR111
+  arrangement: arrangement.garage
+  at:
+  - 0.0
+  - -12.0
+  - 4.5
+- id: GAR112
+  arrangement: arrangement.garage
+  at:
+  - 6.0
+  - -12.0
+  - 4.5
+- id: GAR113
+  arrangement: arrangement.garage
+  at:
+  - 12.0
+  - -12.0
+  - 4.5
+- id: GAR114
+  arrangement: arrangement.garage
+  at:
+  - 18.0
+  - -12.0
+  - 4.5
+- id: GAR115
+  arrangement: arrangement.garage
+  at:
+  - 24.0
+  - -12.0
+  - 4.5
+- id: GAR116
+  arrangement: arrangement.garage
+  at:
+  - 30.0
+  - -12.0
+  - 4.5
+- id: GAR117
+  arrangement: arrangement.garage
+  at:
+  - 36.0
+  - -12.0
+  - 4.5
+- id: GAR118
+  arrangement: arrangement.garage
+  at:
+  - -36.0
+  - -6.0
+  - 4.5
+- id: GAR119
+  arrangement: arrangement.garage
+  at:
+  - -30.0
+  - -6.0
+  - 4.5
+- id: GAR120
+  arrangement: arrangement.garage
+  at:
+  - -24.0
+  - -6.0
+  - 4.5
+- id: GAR121
+  arrangement: arrangement.garage
+  at:
+  - -18.0
+  - -6.0
+  - 4.5
+- id: GAR122
+  arrangement: arrangement.garage
+  at:
+  - -12.0
+  - -6.0
+  - 4.5
+- id: GAR123
+  arrangement: arrangement.garage
+  at:
+  - -6.0
+  - -6.0
+  - 4.5
+- id: GAR124
+  arrangement: arrangement.garage
+  at:
+  - 0.0
+  - -6.0
+  - 4.5
+- id: GAR125
+  arrangement: arrangement.garage
+  at:
+  - 6.0
+  - -6.0
+  - 4.5
+- id: GAR126
+  arrangement: arrangement.garage
+  at:
+  - 12.0
+  - -6.0
+  - 4.5
+- id: GAR127
+  arrangement: arrangement.garage
+  at:
+  - 18.0
+  - -6.0
+  - 4.5
+- id: GAR128
+  arrangement: arrangement.garage
+  at:
+  - 24.0
+  - -6.0
+  - 4.5
+- id: GAR129
+  arrangement: arrangement.garage
+  at:
+  - 30.0
+  - -6.0
+  - 4.5
+- id: GAR130
+  arrangement: arrangement.garage
+  at:
+  - 36.0
+  - -6.0
+  - 4.5
+- id: GAR131
+  arrangement: arrangement.garage
+  at:
+  - -36.0
+  - 0.0
+  - 4.5
+- id: GAR132
+  arrangement: arrangement.garage
+  at:
+  - -30.0
+  - 0.0
+  - 4.5
+- id: GAR133
+  arrangement: arrangement.garage
+  at:
+  - -24.0
+  - 0.0
+  - 4.5
+- id: GAR134
+  arrangement: arrangement.garage
+  at:
+  - -18.0
+  - 0.0
+  - 4.5
+- id: GAR135
+  arrangement: arrangement.garage
+  at:
+  - -12.0
+  - 0.0
+  - 4.5
+- id: GAR136
+  arrangement: arrangement.garage
+  at:
+  - -6.0
+  - 0.0
+  - 4.5
+- id: GAR137
+  arrangement: arrangement.garage
+  at:
+  - 0.0
+  - 0.0
+  - 4.5
+- id: GAR138
+  arrangement: arrangement.garage
+  at:
+  - 6.0
+  - 0.0
+  - 4.5
+- id: GAR139
+  arrangement: arrangement.garage
+  at:
+  - 12.0
+  - 0.0
+  - 4.5
+- id: GAR140
+  arrangement: arrangement.garage
+  at:
+  - 18.0
+  - 0.0
+  - 4.5
+- id: GAR141
+  arrangement: arrangement.garage
+  at:
+  - 24.0
+  - 0.0
+  - 4.5
+- id: GAR142
+  arrangement: arrangement.garage
+  at:
+  - 30.0
+  - 0.0
+  - 4.5
+- id: GAR143
+  arrangement: arrangement.garage
+  at:
+  - 36.0
+  - 0.0
+  - 4.5
+- id: GAR144
+  arrangement: arrangement.garage
+  at:
+  - -36.0
+  - 6.0
+  - 4.5
+- id: GAR145
+  arrangement: arrangement.garage
+  at:
+  - -30.0
+  - 6.0
+  - 4.5
+- id: GAR146
+  arrangement: arrangement.garage
+  at:
+  - -24.0
+  - 6.0
+  - 4.5
+- id: GAR147
+  arrangement: arrangement.garage
+  at:
+  - -18.0
+  - 6.0
+  - 4.5
+- id: GAR148
+  arrangement: arrangement.garage
+  at:
+  - -12.0
+  - 6.0
+  - 4.5
+- id: GAR149
+  arrangement: arrangement.garage
+  at:
+  - -6.0
+  - 6.0
+  - 4.5
+- id: GAR150
+  arrangement: arrangement.garage
+  at:
+  - 0.0
+  - 6.0
+  - 4.5
+- id: GAR151
+  arrangement: arrangement.garage
+  at:
+  - 6.0
+  - 6.0
+  - 4.5
+- id: GAR152
+  arrangement: arrangement.garage
+  at:
+  - 12.0
+  - 6.0
+  - 4.5
+- id: GAR153
+  arrangement: arrangement.garage
+  at:
+  - 18.0
+  - 6.0
+  - 4.5
+- id: GAR154
+  arrangement: arrangement.garage
+  at:
+  - 24.0
+  - 6.0
+  - 4.5
+- id: GAR155
+  arrangement: arrangement.garage
+  at:
+  - 30.0
+  - 6.0
+  - 4.5
+- id: OFF156
+  arrangement: arrangement.office
+  at:
+  - 36.0
+  - 6.0
+  - 4.5
+- id: OFF157
+  arrangement: arrangement.office
+  at:
+  - -36.0
+  - 12.0
+  - 4.5
+- id: OFF158
+  arrangement: arrangement.office
+  at:
+  - -30.0
+  - 12.0
+  - 4.5
+- id: OFF159
+  arrangement: arrangement.office
+  at:
+  - -24.0
+  - 12.0
+  - 4.5
+- id: OFF160
+  arrangement: arrangement.office
+  at:
+  - -18.0
+  - 12.0
+  - 4.5
+- id: OFF161
+  arrangement: arrangement.office
+  at:
+  - -12.0
+  - 12.0
+  - 4.5
+- id: OFF162
+  arrangement: arrangement.office
+  at:
+  - -6.0
+  - 12.0
+  - 4.5
+- id: OFF163
+  arrangement: arrangement.office
+  at:
+  - 0.0
+  - 12.0
+  - 4.5
+- id: OFF164
+  arrangement: arrangement.office
+  at:
+  - 6.0
+  - 12.0
+  - 4.5
+- id: WAS165
+  arrangement: arrangement.washroom
+  at:
+  - 12.0
+  - 12.0
+  - 4.5
+- id: WAS166
+  arrangement: arrangement.washroom
+  at:
+  - 18.0
+  - 12.0
+  - 4.5
+- id: WAS167
+  arrangement: arrangement.washroom
+  at:
+  - 24.0
+  - 12.0
+  - 4.5
+- id: WAS168
+  arrangement: arrangement.washroom
+  at:
+  - 30.0
+  - 12.0
+  - 4.5
+- id: WAS169
+  arrangement: arrangement.washroom
+  at:
+  - 36.0
+  - 12.0
+  - 4.5
+- id: WAS170
+  arrangement: arrangement.washroom
+  at:
+  - -36.0
+  - 18.0
+  - 4.5
+- id: WAS171
+  arrangement: arrangement.washroom
+  at:
+  - -30.0
+  - 18.0
+  - 4.5
+- id: WAS172
+  arrangement: arrangement.washroom
+  at:
+  - -24.0
+  - 18.0
+  - 4.5
+- id: WAS173
+  arrangement: arrangement.washroom
+  at:
+  - -18.0
+  - 18.0
+  - 4.5
+- id: WAS174
+  arrangement: arrangement.washroom
+  at:
+  - -12.0
+  - 18.0
+  - 4.5
+- id: WAS175
+  arrangement: arrangement.washroom
+  at:
+  - -6.0
+  - 18.0
+  - 4.5
+- id: WAS176
+  arrangement: arrangement.washroom
+  at:
+  - 0.0
+  - 18.0
+  - 4.5
+- id: WAS177
+  arrangement: arrangement.washroom
+  at:
+  - 6.0
+  - 18.0
+  - 4.5
+- id: WAS178
+  arrangement: arrangement.washroom
+  at:
+  - 12.0
+  - 18.0
+  - 4.5
+- id: WAS179
+  arrangement: arrangement.washroom
+  at:
+  - 18.0
+  - 18.0
+  - 4.5
+- id: WAS180
+  arrangement: arrangement.washroom
+  at:
+  - 24.0
+  - 18.0
+  - 4.5
+- id: WAS181
+  arrangement: arrangement.washroom
+  at:
+  - 30.0
+  - 18.0
+  - 4.5
+- id: WAS182
+  arrangement: arrangement.washroom
+  at:
+  - 36.0
+  - 18.0
+  - 4.5
+frame:
+  box:
+  - -39.0
+  - -21.0
+  - 0.0
+  - 39.0
+  - 21.0
+  - 9.0
+  cell: 3.0
+  shape: 'A skeleton frame on the 3 m grid: 26 x 14 cells, 2 storey(s) of 4.5 m; columns at every node, beams on every cell edge at each floor and the roof, one diagonal in every other outside face. Panels on its faces (frame.panels).'
+  members:
+  - item: stock.st4340-tb-80x3-s3000
+    count: 1215
+    where: columns
+  - item: stock.st4340-tb-160x5-s3000
+    count: 1536
+    where: beams
+  - item: stock.st4340-tb-80x2-d3000
+    count: 120
+    where: bracing
+  - item: stock.st4340-node-110b
+    count: 1620
+    where: nodes
+  mass: 123402.6
+  panels:
+  - panel: panel.floor-3x3
+    count: 354
+  - panel: panel.partition-3x3
+    count: 91
+  - panel: panel.partition-door-3x3
+    count: 91
+  - panel: panel.roof-3x3
+    count: 364
+  - panel: panel.stair-3m
+    count: 5
+  - panel: panel.wall-double-door-3x3
+    count: 4
+  - panel: panel.wall-insulated-3x1p5
+    count: 160
+  - panel: panel.wall-insulated-3x3
+    count: 101
+  - panel: panel.wall-roller-3x3
+    count: 3
+  - panel: panel.wall-window-3x3
+    count: 52
+  panels_mass: 641243.9
+  sized: 'At 1 g: floors 1893 Pa dead and 5000 Pa imposed, the roof 1155 Pa; a ground column carries 76 kN (st4340-tb-80x3 takes it with half again to spare); a 3 m beam bends with 23.3 kN m (st4340-tb-160x5, under 470 MPa with half
+    again to spare). Wind, the tall halls'' columns between floors and the footings'' loads not yet checked.'
+ground:
+- what: Ground slab
+  item: good.concrete
+  volume: 491.4
+  mass: 1179360.0
+  note: 0.15 m over the 78 x 42 m plan
+- what: Edge footings
+  item: good.concrete
+  volume: 86.4
+  mass: 207360.0
+  note: 0.6 x 0.6 m strips under the outside walls
+totals:
+  mass: 2213426.2
+  against_module: 'building.flight-school (deprecated): one box 80 x 40 x 10 m of 7,059 t, from the average of 538 concrete buildings. This layout: 78 x 42 x 9 m, 2,213 t (123 t frame, 641 t panels, 62 t furniture, 1,387 t ground),
+    for 934 people served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
+staff:
+- profession: profession.teacher
+  count: 12
+- profession: profession.pilot
+  count: 6
+- profession: profession.technician
+  count: 4
+basis:
+- of:
+  - bays
+  tier: invented
+  review: true
+  note: The mix of rooms for a flight school is chosen (classroom 0.3, workshop 0.2, garage 0.35, office 0.05, washroom 0.1), shared over the record's floor (6400 m2 in 2 storeys, laid as 13 x 7 rooms of 6 m a storey).
+- of:
+  - frame
+  - ground
+  tier: derived
+  review: true
+  note: Counted from the grid (tools/standards/building_layouts.py); sections by the loads in frame.sized; masses from the strut, node and panel records.

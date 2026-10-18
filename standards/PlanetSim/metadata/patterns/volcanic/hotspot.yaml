@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.volcanic.province.hotspot
+  name: Hotspot province / volcanic chain
+  about: Hotspot province / volcanic chain.
+family: volcanic
+factors:
+- factor: planet-factor.tect-setting
+  weight: 3
+  why: mantle plume under oceanic or continental plate
+- factor: planet-factor.other-magma-supply
+  weight: 3
+  why: plume flux sets edifice size and swell height
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: swell uplift near plume, subsidence and flexure as plate moves away
+- factor: planet-factor.sea-level
+  weight: 1
+  why: subsidence drowns old islands into atolls and guyots
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: tropical reef growth on subsiding islands makes atolls
+- factor: planet-factor.time
+  weight: 1
+  why: 'age along chain: active shields to eroded, drowned seamounts (Myr)'
+- factor: planet-factor.other-plate-kinematics
+  weight: 3
+  why: plate velocity and direction set chain line, volcano spacing and age progression
+vocabulary_id: 183
+sources:
+- https://pubs.usgs.gov/gip/dynamic/hotspots.html
+- https://en.wikipedia.org/wiki/Shield_volcano
+library_status: planned
+source: volcanic.province.hotspot
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

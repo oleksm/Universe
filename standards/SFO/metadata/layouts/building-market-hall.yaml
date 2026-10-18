@@ -1,0 +1,644 @@
+# yaml-language-server: $schema=../../schema/layout.schema.yaml
+# Written by tools/standards/building_layouts.py: change it there.
+identity:
+  key: layout.building-market-hall
+  name: Market hall, world with air
+  description: 'A covered market and wholesale floor: where farm goods and stock change hands by the lot, and the shops buy. Laid of the kit: a strut frame on the 3 m grid, panels, and 91 rooms of 6 m furnished piece by piece (50 sales
+    floor, 18 counter, 14 store room, 9 washroom).'
+stands_for: building.market-hall
+site:
+  atmosphere: air
+  gravity:
+  - 8.0
+  - 11.0
+physical:
+  length: 78.0
+  width: 42.0
+  height: 6.15
+  mass: 1577279.9
+bays: []
+rooms:
+- id: SAL1
+  arrangement: arrangement.sales-floor
+  at:
+  - -36.0
+  - -18.0
+  - 0.0
+- id: SAL2
+  arrangement: arrangement.sales-floor
+  at:
+  - -30.0
+  - -18.0
+  - 0.0
+- id: SAL3
+  arrangement: arrangement.sales-floor
+  at:
+  - -24.0
+  - -18.0
+  - 0.0
+- id: SAL4
+  arrangement: arrangement.sales-floor
+  at:
+  - -18.0
+  - -18.0
+  - 0.0
+- id: SAL5
+  arrangement: arrangement.sales-floor
+  at:
+  - -12.0
+  - -18.0
+  - 0.0
+- id: SAL6
+  arrangement: arrangement.sales-floor
+  at:
+  - -6.0
+  - -18.0
+  - 0.0
+- id: SAL7
+  arrangement: arrangement.sales-floor
+  at:
+  - 0.0
+  - -18.0
+  - 0.0
+- id: SAL8
+  arrangement: arrangement.sales-floor
+  at:
+  - 6.0
+  - -18.0
+  - 0.0
+- id: SAL9
+  arrangement: arrangement.sales-floor
+  at:
+  - 12.0
+  - -18.0
+  - 0.0
+- id: SAL10
+  arrangement: arrangement.sales-floor
+  at:
+  - 18.0
+  - -18.0
+  - 0.0
+- id: SAL11
+  arrangement: arrangement.sales-floor
+  at:
+  - 24.0
+  - -18.0
+  - 0.0
+- id: SAL12
+  arrangement: arrangement.sales-floor
+  at:
+  - 30.0
+  - -18.0
+  - 0.0
+- id: SAL13
+  arrangement: arrangement.sales-floor
+  at:
+  - 36.0
+  - -18.0
+  - 0.0
+- id: SAL14
+  arrangement: arrangement.sales-floor
+  at:
+  - -36.0
+  - -12.0
+  - 0.0
+- id: SAL15
+  arrangement: arrangement.sales-floor
+  at:
+  - -30.0
+  - -12.0
+  - 0.0
+- id: SAL16
+  arrangement: arrangement.sales-floor
+  at:
+  - -24.0
+  - -12.0
+  - 0.0
+- id: SAL17
+  arrangement: arrangement.sales-floor
+  at:
+  - -18.0
+  - -12.0
+  - 0.0
+- id: SAL18
+  arrangement: arrangement.sales-floor
+  at:
+  - -12.0
+  - -12.0
+  - 0.0
+- id: SAL19
+  arrangement: arrangement.sales-floor
+  at:
+  - -6.0
+  - -12.0
+  - 0.0
+- id: SAL20
+  arrangement: arrangement.sales-floor
+  at:
+  - 0.0
+  - -12.0
+  - 0.0
+- id: SAL21
+  arrangement: arrangement.sales-floor
+  at:
+  - 6.0
+  - -12.0
+  - 0.0
+- id: SAL22
+  arrangement: arrangement.sales-floor
+  at:
+  - 12.0
+  - -12.0
+  - 0.0
+- id: SAL23
+  arrangement: arrangement.sales-floor
+  at:
+  - 18.0
+  - -12.0
+  - 0.0
+- id: SAL24
+  arrangement: arrangement.sales-floor
+  at:
+  - 24.0
+  - -12.0
+  - 0.0
+- id: SAL25
+  arrangement: arrangement.sales-floor
+  at:
+  - 30.0
+  - -12.0
+  - 0.0
+- id: SAL26
+  arrangement: arrangement.sales-floor
+  at:
+  - 36.0
+  - -12.0
+  - 0.0
+- id: SAL27
+  arrangement: arrangement.sales-floor
+  at:
+  - -36.0
+  - -6.0
+  - 0.0
+- id: SAL28
+  arrangement: arrangement.sales-floor
+  at:
+  - -30.0
+  - -6.0
+  - 0.0
+- id: SAL29
+  arrangement: arrangement.sales-floor
+  at:
+  - -24.0
+  - -6.0
+  - 0.0
+- id: SAL30
+  arrangement: arrangement.sales-floor
+  at:
+  - -18.0
+  - -6.0
+  - 0.0
+- id: SAL31
+  arrangement: arrangement.sales-floor
+  at:
+  - -12.0
+  - -6.0
+  - 0.0
+- id: SAL32
+  arrangement: arrangement.sales-floor
+  at:
+  - -6.0
+  - -6.0
+  - 0.0
+- id: SAL33
+  arrangement: arrangement.sales-floor
+  at:
+  - 0.0
+  - -6.0
+  - 0.0
+- id: SAL34
+  arrangement: arrangement.sales-floor
+  at:
+  - 6.0
+  - -6.0
+  - 0.0
+- id: SAL35
+  arrangement: arrangement.sales-floor
+  at:
+  - 12.0
+  - -6.0
+  - 0.0
+- id: SAL36
+  arrangement: arrangement.sales-floor
+  at:
+  - 18.0
+  - -6.0
+  - 0.0
+- id: SAL37
+  arrangement: arrangement.sales-floor
+  at:
+  - 24.0
+  - -6.0
+  - 0.0
+- id: SAL38
+  arrangement: arrangement.sales-floor
+  at:
+  - 30.0
+  - -6.0
+  - 0.0
+- id: SAL39
+  arrangement: arrangement.sales-floor
+  at:
+  - 36.0
+  - -6.0
+  - 0.0
+- id: SAL40
+  arrangement: arrangement.sales-floor
+  at:
+  - -36.0
+  - 0.0
+  - 0.0
+- id: SAL41
+  arrangement: arrangement.sales-floor
+  at:
+  - -30.0
+  - 0.0
+  - 0.0
+- id: SAL42
+  arrangement: arrangement.sales-floor
+  at:
+  - -24.0
+  - 0.0
+  - 0.0
+- id: SAL43
+  arrangement: arrangement.sales-floor
+  at:
+  - -18.0
+  - 0.0
+  - 0.0
+- id: SAL44
+  arrangement: arrangement.sales-floor
+  at:
+  - -12.0
+  - 0.0
+  - 0.0
+- id: SAL45
+  arrangement: arrangement.sales-floor
+  at:
+  - -6.0
+  - 0.0
+  - 0.0
+- id: SAL46
+  arrangement: arrangement.sales-floor
+  at:
+  - 0.0
+  - 0.0
+  - 0.0
+- id: SAL47
+  arrangement: arrangement.sales-floor
+  at:
+  - 6.0
+  - 0.0
+  - 0.0
+- id: SAL48
+  arrangement: arrangement.sales-floor
+  at:
+  - 12.0
+  - 0.0
+  - 0.0
+- id: SAL49
+  arrangement: arrangement.sales-floor
+  at:
+  - 18.0
+  - 0.0
+  - 0.0
+- id: SAL50
+  arrangement: arrangement.sales-floor
+  at:
+  - 24.0
+  - 0.0
+  - 0.0
+- id: COU51
+  arrangement: arrangement.counter
+  at:
+  - 30.0
+  - 0.0
+  - 0.0
+- id: COU52
+  arrangement: arrangement.counter
+  at:
+  - 36.0
+  - 0.0
+  - 0.0
+- id: COU53
+  arrangement: arrangement.counter
+  at:
+  - -36.0
+  - 6.0
+  - 0.0
+- id: COU54
+  arrangement: arrangement.counter
+  at:
+  - -30.0
+  - 6.0
+  - 0.0
+- id: COU55
+  arrangement: arrangement.counter
+  at:
+  - -24.0
+  - 6.0
+  - 0.0
+- id: COU56
+  arrangement: arrangement.counter
+  at:
+  - -18.0
+  - 6.0
+  - 0.0
+- id: COU57
+  arrangement: arrangement.counter
+  at:
+  - -12.0
+  - 6.0
+  - 0.0
+- id: COU58
+  arrangement: arrangement.counter
+  at:
+  - -6.0
+  - 6.0
+  - 0.0
+- id: COU59
+  arrangement: arrangement.counter
+  at:
+  - 0.0
+  - 6.0
+  - 0.0
+- id: COU60
+  arrangement: arrangement.counter
+  at:
+  - 6.0
+  - 6.0
+  - 0.0
+- id: COU61
+  arrangement: arrangement.counter
+  at:
+  - 12.0
+  - 6.0
+  - 0.0
+- id: COU62
+  arrangement: arrangement.counter
+  at:
+  - 18.0
+  - 6.0
+  - 0.0
+- id: COU63
+  arrangement: arrangement.counter
+  at:
+  - 24.0
+  - 6.0
+  - 0.0
+- id: COU64
+  arrangement: arrangement.counter
+  at:
+  - 30.0
+  - 6.0
+  - 0.0
+- id: COU65
+  arrangement: arrangement.counter
+  at:
+  - 36.0
+  - 6.0
+  - 0.0
+- id: COU66
+  arrangement: arrangement.counter
+  at:
+  - -36.0
+  - 12.0
+  - 0.0
+- id: COU67
+  arrangement: arrangement.counter
+  at:
+  - -30.0
+  - 12.0
+  - 0.0
+- id: COU68
+  arrangement: arrangement.counter
+  at:
+  - -24.0
+  - 12.0
+  - 0.0
+- id: STO69
+  arrangement: arrangement.store
+  at:
+  - -18.0
+  - 12.0
+  - 0.0
+- id: STO70
+  arrangement: arrangement.store
+  at:
+  - -12.0
+  - 12.0
+  - 0.0
+- id: STO71
+  arrangement: arrangement.store
+  at:
+  - -6.0
+  - 12.0
+  - 0.0
+- id: STO72
+  arrangement: arrangement.store
+  at:
+  - 0.0
+  - 12.0
+  - 0.0
+- id: STO73
+  arrangement: arrangement.store
+  at:
+  - 6.0
+  - 12.0
+  - 0.0
+- id: STO74
+  arrangement: arrangement.store
+  at:
+  - 12.0
+  - 12.0
+  - 0.0
+- id: STO75
+  arrangement: arrangement.store
+  at:
+  - 18.0
+  - 12.0
+  - 0.0
+- id: STO76
+  arrangement: arrangement.store
+  at:
+  - 24.0
+  - 12.0
+  - 0.0
+- id: STO77
+  arrangement: arrangement.store
+  at:
+  - 30.0
+  - 12.0
+  - 0.0
+- id: STO78
+  arrangement: arrangement.store
+  at:
+  - 36.0
+  - 12.0
+  - 0.0
+- id: STO79
+  arrangement: arrangement.store
+  at:
+  - -36.0
+  - 18.0
+  - 0.0
+- id: STO80
+  arrangement: arrangement.store
+  at:
+  - -30.0
+  - 18.0
+  - 0.0
+- id: STO81
+  arrangement: arrangement.store
+  at:
+  - -24.0
+  - 18.0
+  - 0.0
+- id: STO82
+  arrangement: arrangement.store
+  at:
+  - -18.0
+  - 18.0
+  - 0.0
+- id: WAS83
+  arrangement: arrangement.washroom
+  at:
+  - -12.0
+  - 18.0
+  - 0.0
+- id: WAS84
+  arrangement: arrangement.washroom
+  at:
+  - -6.0
+  - 18.0
+  - 0.0
+- id: WAS85
+  arrangement: arrangement.washroom
+  at:
+  - 0.0
+  - 18.0
+  - 0.0
+- id: WAS86
+  arrangement: arrangement.washroom
+  at:
+  - 6.0
+  - 18.0
+  - 0.0
+- id: WAS87
+  arrangement: arrangement.washroom
+  at:
+  - 12.0
+  - 18.0
+  - 0.0
+- id: WAS88
+  arrangement: arrangement.washroom
+  at:
+  - 18.0
+  - 18.0
+  - 0.0
+- id: WAS89
+  arrangement: arrangement.washroom
+  at:
+  - 24.0
+  - 18.0
+  - 0.0
+- id: WAS90
+  arrangement: arrangement.washroom
+  at:
+  - 30.0
+  - 18.0
+  - 0.0
+- id: WAS91
+  arrangement: arrangement.washroom
+  at:
+  - 36.0
+  - 18.0
+  - 0.0
+frame:
+  box:
+  - -39.0
+  - -21.0
+  - 0.0
+  - 39.0
+  - 21.0
+  - 6.0
+  cell: 3.0
+  shape: 'A skeleton frame on the 3 m grid: 26 x 14 cells, 1 storey(s) of 6 m; columns at every node, beams on every cell edge at each floor and the roof, one diagonal in every other outside face. Panels on its faces (frame.panels).'
+  members:
+  - item: stock.st4340-tb-60x2-s3000
+    count: 810
+    where: columns
+  - item: stock.st4340-tb-160x5-s3000
+    count: 768
+    where: beams
+  - item: stock.st4340-tb-80x2-d3000
+    count: 80
+    where: bracing
+  - item: stock.st4340-node-90b
+    count: 1215
+    where: nodes
+  mass: 57803.4
+  panels:
+  - panel: panel.partition-3x3
+    count: 54
+  - panel: panel.partition-door-3x3
+    count: 18
+  - panel: panel.roof-3x3
+    count: 364
+  - panel: panel.wall-glazed-3x3
+    count: 22
+  - panel: panel.wall-insulated-3x3
+    count: 117
+  - panel: panel.wall-roller-3x3
+    count: 3
+  - panel: panel.wall-shopfront-3x3
+    count: 4
+  - panel: panel.wall-window-3x3
+    count: 14
+  panels_mass: 85690.1
+  sized: 'At 1 g: floors 1893 Pa dead and 5000 Pa imposed, the roof 1155 Pa; a ground column carries 13 kN (st4340-tb-60x2 takes it with half again to spare); a 3 m beam bends with 23.3 kN m (st4340-tb-160x5, under 470 MPa with half
+    again to spare). Wind, the tall halls'' columns between floors and the footings'' loads not yet checked.'
+ground:
+- what: Ground slab
+  item: good.concrete
+  volume: 491.4
+  mass: 1179360.0
+  note: 0.15 m over the 78 x 42 m plan
+- what: Edge footings
+  item: good.concrete
+  volume: 86.4
+  mass: 207360.0
+  note: 0.6 x 0.6 m strips under the outside walls
+totals:
+  mass: 1577279.9
+  against_module: 'building.market-hall (deprecated): one box 80 x 40 x 10 m of 3,530 t, from the average of 538 concrete buildings. This layout: 78 x 42 x 6 m, 1,577 t (58 t frame, 86 t panels, 47 t furniture, 1,387 t ground), for
+    708 people served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
+staff:
+- profession: profession.merchant
+  count: 10
+- profession: profession.docker
+  count: 10
+- profession: profession.clerk
+  count: 5
+basis:
+- of:
+  - bays
+  tier: invented
+  review: true
+  note: The mix of rooms for a market hall is chosen (sales-floor 0.55, counter 0.2, store 0.15, washroom 0.1), shared over the record's floor (3200 m2 in 1 storeys, laid as 13 x 7 rooms of 6 m a storey).
+- of:
+  - frame
+  - ground
+  tier: derived
+  review: true
+  note: Counted from the grid (tools/standards/building_layouts.py); sections by the loads in frame.sized; masses from the strut, node and panel records.

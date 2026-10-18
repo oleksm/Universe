@@ -1,0 +1,56 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-process.sphere-sampling
+  name: Sphere sample grids
+  about: 'Geometry helpers every stage samples the planet on: a Fibonacci lattice of n near-even unit vectors (+Y north, lon
+    = atan2(x, z)), its typical spacing sqrt(4π/n) rad, Rodrigues rotation of points about an axis, random unit vectors, and
+    the equal-angle warped cube-sphere (faces +X −X +Y −Y +Z −Z, u → tan(u·π/4), rows top down, matching Freefall GlobeMap::direction)
+    and equirectangular direction grids. Not a physical process: a frame and sampling convention the Rust side must reproduce
+    exactly.'
+area: geology
+clock:
+  when: on demand (grid construction)
+reads:
+- name: n / size / width
+  unit: count
+  meaning: sample counts
+writes:
+- name: directions
+  unit: unit vectors
+  meaning: (n,3) or grids (..,3)
+params:
+- name: golden angle
+  value: 2.399963229728653
+  unit: '1'
+  said_as:
+    unit: rad
+    factor: 1.0
+  meaning: Fibonacci lattice increment π(3 − √5)
+  source: src/planet_sim/sphere.py:19
+- name: cube warp
+  setting: tan(u·π/4)
+  meaning: equal-angle cube warp
+  source: src/planet_sim/sphere.py:43
+  note: 'unit: 1'
+random_draws:
+- 'random_unit: rng.normal(size=(n,3)) normalised (numpy Generator passed in)'
+invariants:
+- 'frame: +Y north pole, lon 0 toward +Z, east toward +X; lat = asin(y), lon = atan2(x, z)'
+- face order +X −X +Y −Y +Z −Z, rows top down
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform src/planet_sim/sphere.py:fibonacci, spacing, rotate, random_unit, face_directions, cube_directions,
+    latlon_directions (lines 14-71)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
+    from the code at planet-sim-landform 9747f0d-c437724.'

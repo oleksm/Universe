@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.glacial.erosion.roche-moutonnee
+  name: Roche moutonnée
+  about: Roche moutonnée.
+family: glacial
+factors:
+- factor: planet-factor.ice-thermal
+  weight: 3
+  why: warm-based ice with active meltwater at bed
+- factor: planet-factor.ice-flow
+  weight: 3
+  why: 'thin, fast ice: low overburden lets lee cavities open; sets stoss/lee orientation'
+- factor: planet-factor.rock-fracture
+  weight: 3
+  why: joint spacing sets lee step size and shape (e.g. 3-5 joints/m)
+- factor: planet-factor.rock-type
+  weight: 1
+  why: hard bedrock knob
+- factor: planet-factor.relief-inherited
+  weight: 1
+  why: pre-existing hills/knobs and preglacial weathering shape the form
+- factor: planet-factor.ice-extent
+  weight: 1
+  why: common near margins and during thinning deglaciation
+- factor: planet-factor.time
+  weight: 1
+  why: 10-1000 kyr
+- factor: planet-factor.other-basal-water-pressure
+  weight: 1
+  why: fluctuating basal water pressure in lee cavities drives quarrying
+vocabulary_id: 77
+sources:
+- https://www.antarcticglaciers.org/glacial-geology/glacial-landforms/glacial-erosional-landforms/roches-moutonnees/
+library_status: written
+source: glacial.erosion.roche_moutonnee
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

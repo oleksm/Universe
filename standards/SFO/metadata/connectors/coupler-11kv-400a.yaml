@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: connector.coupler-11kv-400a
+  name: Coupler, 11 kV, 400 A
+  description: 'The plug and receiver a crew or a player hooks a machine up with: made and broken by hand, keyed so that only its own rating mates, the earth pin first in and last out.'
+kind: plug-socket
+size: 0.0004
+rating:
+  voltage: 11000
+  current: 400
+physical:
+  length: 0.22
+  width: 0.22
+  height: 0.6
+  mass: 23.09
+built_of:
+- what: Contacts
+  item: material.copper
+  mass: 4.86
+  note: pins and sockets
+- what: Body
+  item: material.epdm-rubber
+  mass: 14.9
+  note: EPDM-moulded body
+- what: Shroud, coupling ring and bolts
+  item: material.structural-steel-a36
+  mass: 3.33
+provides: both
+template: template.coupler
+basis:
+- of:
+  - physical
+  tier: derived
+  review: true
+  note: 'From blender''s model (2026-10-17): EPDM body, three phase pins on a 90 mm circle, pilot and earth at the centre, steel shroud and ring.'
+interface: interface.coupler-11kv-400a

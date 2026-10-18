@@ -1,0 +1,173 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.thermal.radiator-hot.s2
+  name: Hot radiator panel S2
+  maker: org.kestrel
+  revision: draft
+  slot: thermal
+  description: 'A deployable radiator panel for a fusion thermal engine S2, two to an engine: carbon-carbon with liquid lithium through it, stowed flat against the hull and swung out on its root hinge to stand edge-on to the jet, both
+    faces to space, where it throws off 265 MW at 1500 K. Its coolant comes from the engine''s ports by a supply and a return header along the root edge, on the hinge line, each crossing the hinge in one molybdenum-rhenium bellows loop.
+    It was part of the engine until 2026-10-17: a radiator this hot and large cannot fold inside an engine mount with its plumbing live (blender''s packing traces), so it is its own equipment on its own mount, and the ship must give
+    it hull to lie against.'
+size_class: 2
+fits: mount.radiator-hot-s2
+physical:
+  mass: 27604.2
+  volume: 34.2
+  length: 35.925
+  width: 23.575
+  height: 4.032
+built_of:
+  parts: thermal-radiator-hot-s2
+  list:
+  - code: RAH2-01
+    name: Panel
+    description: 3 mm carbon-carbon, 543 m2, 33.0 m out from the hinge by 16.5 m along it; both faces dark; bonded between the tube legs as 30 mm fins.
+    mass: 2842
+    length: 33.0
+    width: 16.5
+    height: 0.03
+    item: stock.cc-pl-3
+    quantity: 3268.3
+    module: module.assembly-shop
+  - code: RAH2-02
+    name: Tubes
+    description: '103 U-tubes of molybdenum, 50 mm across with a 0.5 mm wall, each 33 m out from the root header and back (66 m): 206 legs on an 80 mm leg pitch (160 mm a U) along the 16.5 m root, 30 mm of fin between legs (fin efficiency
+      about 0.88): 315 kg/s of lithium at about 4.0 m/s in their 49 mm bores, about 0.6 bar lost across them (Blasius). 6.8 km of tube.'
+    mass: 5337.6
+    length: 33.0
+    width: 16.5
+    height: 0.05
+    item: stock.mo-tb-12x0p5
+    quantity: 6138.2
+    module: module.machining-centre
+  - code: RAH2-04
+    name: Root headers
+    description: The supply and the return header along the root edge, DN 600 molybdenum, 8 mm wall (hoop stress 19 MPa at 5 bar, kept low for creep at 1,600 K), 16.5 m each, on the hinge line, swinging with the panel.
+    mass: 5153.6
+    length: 16.5
+    width: 1.3
+    height: 0.62
+    item: stock.mo-tb-12x0p5
+    quantity: 5926.6
+    module: module.machining-centre
+  - code: RAH2-05
+    name: Backing frame
+    description: Carbon-carbon box ribs 550 x 120 mm with a 4 mm wall, twelve running out from the root every 1.5 m, and a mid and a tip spar across; within the panel's 0.65 m.
+    mass: 3933.2
+    length: 33.0
+    width: 16.5
+    height: 0.55
+    item: stock.cc-pl-3
+    quantity: 4523.2
+    module: module.assembly-shop
+  - code: RAH2-03
+    name: Hinge, drive and root joints
+    description: 'Root hinge brackets on the hull, the deploy drive, tip latches that hold it stowed, and the hinge crossings: each header splits at its moving end into six DN200 molybdenum-rhenium corrugated hoses (about 0.23 m outside,
+      4.1 m/s of lithium), wound round the hinge axis like S1''s (clock-spring), bend radius at least 0.95 m (4 x outside), about 5.4 m of hose each, in a root pod beyond the panel''s -y end. Mass: the supports and pins as modelled,
+      2,769.6 kg (blender, 8 mm hollow Mo pod members); the twelve hoses about 1,770 kg (DN200 Mo-Re corrugated, about 1 mm wall doubled by the corrugation, with braid: about 27 kg/m x 5.4 m); the drive, gearbox and tip latches 300
+      kg (invented).'
+    mass: 4840
+    length: 16.5
+    width: 0.5
+    height: 0.65
+    item: stock.mo-tb-12x0p5
+    quantity: 5566.0
+    module: module.machining-centre
+  - code: RAH2-06
+    name: Collectors, drops and hose cuffs
+    description: The fixed DN600 supply and return collectors beyond the hose pod and the moving collectors at the header ends, each with six DN200 drops to their hose cuffs; molybdenum. Mass as blender's model gives it (2026-10-17).
+    mass: 5497.8
+    length: 2.5
+    width: 2.0
+    height: 2.0
+    item: stock.mo-tb-12x0p5
+    quantity: 6322.5
+    module: module.machining-centre
+making:
+  module: module.assembly-shop
+function:
+  kind: radiator
+  rejects: 264916408
+  temperature: 1500.0
+  area: 542.9
+ports:
+- id: coolant-in
+  flow: in
+  medium: liquid
+  item: material.lithium
+  interface: interface.lm-flange-dn600
+  half: androgynous
+  make: bolted
+  rate: 315.4
+  pressure: 500000.0
+  temperature: 1600.0
+  at:
+  - -1.8
+  - -14.6
+  - 1.0
+  facing:
+  - 0.0
+  - -1.0
+  - 0.0
+  note: 'hot lithium from the engine: the fixed DN600 supply manifold beyond the hose pod, facing -y; six DN200 drops to the fixed hose cuffs at x -1.03 (blender 2026-10-17)'
+- id: coolant-out
+  flow: out
+  medium: liquid
+  item: material.lithium
+  interface: interface.lm-flange-dn600
+  half: androgynous
+  make: bolted
+  rate: 315.4
+  pressure: 500000.0
+  temperature: 1400.0
+  at:
+  - -2.5
+  - -14.6
+  - 1.8
+  facing:
+  - 0.0
+  - -1.0
+  - 0.0
+  note: 'back to the engine: the fixed DN600 return manifold beyond the hose pod, facing -y; six DN200 drops to the fixed hose cuffs at x -1.03'
+visual:
+  format: "freefall-model/1"
+  path: "models/thermal-radiator-hot-s2/v1"
+  manifest_sha256: "9625dd369bc2aae5f2f68311c4086339747b1d83fa362b73c613e055228c68d9"
+  version: 1
+  triangles: 50164
+life: 473364000
+basis:
+- of:
+  - function
+  - physical
+  tier: derived
+  review: true
+  note: 'Its share of the engine''s heat (half its 1,086 m2 at 1500 K, both faces, emissivity 0.85): 265 MW. Twice as long as wide, as the other radiator panels. Lithium (material.lithium) about 4.2 kJ/kg K and 410 kg/m3 near 1,500
+    K (from memory), a 200 K drop, about 3.5 m/s in the headers.'
+- of:
+  - built_of
+  - making
+  rule: rule.first-design-parts
+- of:
+  - life
+  rule: rule.life-ship-system
+- of:
+  - built_of.list
+  - physical.mass
+  tier: derived
+  review: true
+  note: 'Sized as S1''s family (2026-10-17, after blender''s S2 feasibility and packing checks: the old 6,550 kg could not carry the tubes, and a U has two legs): legs 50 mm on an 80 mm pitch, under 1 bar over 66 m (0.6 bar), fin 0.88
+    (radiating share of the width (50 + 0.88 x 30)/80 = 0.96); blender''s 136 U of 50 mm at a 60.5 mm leg pitch fins better (0.98) but weighs 1.7 t more for a 4 % gain. Lithium viscosity 0.25 mPa s near 1,500 K from memory; Mo 10,220
+    kg/m3, C-C 1,750 kg/m3. Ribs scaled from S1''s for a panel twice as long (invented). 21,719 kg in all: 12.2 kW/kg against S1''s 13.7.'
+- of:
+  - physical
+  - built_of.list
+  tier: derived
+  note: 'Rest bounds and part masses of blender''s S2 model (2026-10-17): x -2.90 to 33.025, y -14.6 to 8.975, z -1.924 to 2.108 with the hose pod and collectors; the panel itself 33 x 16.5 x 0.65. Tubes, headers, frame and collectors
+    as modelled; 24,264.2 kg in all.'
+- of:
+  - built_of.list
+  tier: derived
+  review: true
+  note: Hinge and root joints from blender's hardware audit (2026-10-17) plus the hoses (Mo-Re about 13,500 kg/m3, from memory) and an invented drive allowance.

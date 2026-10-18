@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.glacial.valley.hanging-valley
+  name: Hanging valley
+  about: Hanging valley.
+family: glacial
+factors:
+- factor: planet-factor.ice-flow
+  weight: 3
+  why: tributary/trunk ice discharge ratio sets incision difference and step height (100-1000 m)
+- factor: planet-factor.ice-extent
+  weight: 3
+  why: needs valley glaciation; duration grows the step
+- factor: planet-factor.relief-inherited
+  weight: 3
+  why: tributary junction of a fluvial network
+- factor: planet-factor.rock-type
+  weight: 1
+  why: resistant tributary rock enhances step; also forms by differential erosion
+- factor: planet-factor.ice-thermal
+  weight: 1
+  why: warm-based trunk glacier needed for deep trunk incision
+- factor: planet-factor.time
+  weight: 1
+  why: post-glacial fluvial incision slowly cuts gorge into lip
+- factor: planet-factor.water-discharge
+  weight: 1
+  why: tributary stream forms waterfall over step; low discharge preserves the hang
+- factor: planet-factor.sea-level
+  weight: 1
+  why: in fjords, tributary hangs below or above sea level
+vocabulary_id: 83
+sources:
+- https://en.wikipedia.org/wiki/Hanging_valley
+- https://en.wikipedia.org/wiki/Fjord
+library_status: written
+source: glacial.valley.hanging_valley
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/planet-line.schema.yaml
+identity:
+  key: planet-line.river
+  name: River (trunk)
+  about: A trunk river from the coupled step's routing, with its discharge and ground profile.
+born_from: river routing in the coupled step
+first_level: planet-level.cluster
+expands_into:
+- tributaries
+- channel heads
+made_by:
+- river
+levels:
+- planet-level.cluster
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - identity
+  tier: derived
+  note: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+- of:
+  - ends_idle
+  - offset
+  tier: derived
+  note: 'planet-sim-landform stages/zones.py: CLOSE_MYR 30, ARC_FRONT_M 150e3.'
+status: draft

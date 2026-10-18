@@ -1,0 +1,206 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.subduction
+  name: Convergence detection, subduction and floor foundering
+  about: 'After motion, all particle pairs closer than OVERLAP*gap (KD-tree query_pairs on unit-sphere chord) from different
+    plates are tested for closing: relative surface velocity rel = spin_a x x_a - spin_b x x_b; closing if rel . (x_b-x_a)/|..|
+    > SLIP*|rel|. A particle is buoyant if continental or its floor >= BUOYANT. If not both buoyant, one sinks: the non-buoyant
+    under the buoyant; of two floors, one polarity per plate pair: the plate whose floor in the contacts is older on the whole
+    goes down (ties: the lower id''s). Each sinker counted once (first pair). Sunk particles are flagged, their positions/plates
+    recorded (w.sunk_at, w.sunk_plate for trenches), slab pull and trench suction forces are added. Separately, every 5th
+    step, ocean floor older than FOUNDER_AGE_MYR (not already sunk) sinks with probability 1-exp(-5*dt/FOUNDER_MYR) (spontaneous
+    subduction initiation; Stern 2004); foundered floor adds to consumed area but makes no arc. Finally sunk particles are
+    removed, and so are continental particles worn to xvol <= 0.05*OCEAN_CRUST*cell; the relief layer is told which removed
+    particles sank.'
+area: plates
+clock:
+  when: every step (foundering only when steps % 5 == 0)
+reads:
+- name: w.x
+  field: planet-field.particle-position
+  unit: '1'
+- name: w.xplate
+  field: planet-field.particle-plate
+  unit: '1'
+- name: w.xcont
+  field: planet-field.particle-continental
+  unit: '1'
+- name: w.xfloor
+  field: planet-field.particle-floor-thickness
+  unit: m
+- name: w.xage
+  field: planet-field.particle-age
+  unit: s
+- name: w.xvol
+  field: planet-field.particle-volume
+  unit: m3
+- name: spin
+  field: planet-field.plate-spin
+  unit: rad/s
+- name: w.plates keys
+  field: planet-field.plate-id
+  unit: '1'
+writes:
+- name: w.x
+  field: planet-field.particle-position
+  unit: '1'
+- name: w.xplate
+  field: planet-field.particle-plate
+  unit: '1'
+- name: w.xcont
+  field: planet-field.particle-continental
+  unit: '1'
+- name: w.xvol
+  field: planet-field.particle-volume
+  unit: m3
+- name: w.xfloor
+  field: planet-field.particle-floor-thickness
+  unit: m
+- name: w.xage
+  field: planet-field.particle-age
+  unit: s
+- name: w.xsuture
+  field: planet-field.particle-suture
+  unit: s
+- name: (forge) particle id
+  field: planet-field.particle-id
+  unit: '1'
+- name: fronts (by particle)
+  field: planet-field.particle-front-low
+  unit: '1'
+- name: fronts (by particle)
+  field: planet-field.particle-front-high
+  unit: '1'
+- name: fronts (by particle)
+  field: planet-field.particle-front-time
+  unit: s
+- name: force
+  field: planet-field.plate-force
+  unit: '1'
+  meaning: slab pull and trench suction
+- name: w.sunk_at
+  field: planet-field.trench-position
+  unit: '1'
+- name: w.sunk_plate
+  field: planet-field.trench-plate
+  unit: '1'
+- name: w.xplate[over]
+  field: planet-field.trench-rider-plate
+  unit: '1'
+- name: w.xcont[over]
+  field: planet-field.trench-rider-continental
+  unit: '1'
+- name: w.consumed
+  unit: m2
+  meaning: floor consumed (event subduction-consumed)
+- name: sank
+  field: planet-field.particle-sunk
+  unit: '1'
+  meaning: sinkers and foundered floor, removed by seafloor-spreading before the gaps
+- name: (substep time)
+  field: planet-field.trench-time
+  unit: s
+events_emitted:
+- event: planet-event.relief-arcs
+  where: stages/plates.py:1040
+- event: planet-event.subduction-consumed
+  where: stages/plates.py:1168, stages/plates.py:1170, stages/plates.py:1205
+- event: planet-event.relief-reindex
+  where: stages/plates.py:344 (World.keep)
+params:
+- name: OVERLAP
+  value: 0.5
+  unit: '1'
+  meaning: particles of two plates closer than OVERLAP*gap overlap (candidate convergence pair)
+  source: stages/plates.py:43
+  note: chosen
+- name: SLIP
+  value: 0.35
+  unit: '1'
+  meaning: two overlapping particles of different plates count as converging only if their closing speed exceeds SLIP x |relative
+    velocity|; below it they slide past (transform)
+  source: stages/plates.py:41
+  note: 'chosen: transform-like within about 70 deg'
+- name: BUOYANT
+  value: 17000.0
+  unit: m
+  meaning: 'ocean floor at or above this does not subduct (buoyant like continent: docks)'
+  source: stages/plates.py:92
+  note: 'real: Cloos 1993, about 17 km'
+- name: SLAB_PULL
+  value: 1.0
+  unit: '1'
+  meaning: 'weight of slab pull: unit tangent force at each sinking particle toward its rider, added to the sinking plate''s
+    torque'
+  source: stages/plates.py:53
+  note: Forsyth & Uyeda 1975; Conrad & Lithgow-Bertelloni 2002
+- name: TRENCH_SUCTION
+  value: 0.3
+  unit: '1'
+  meaning: weight of trench suction on the riding plate, toward the sinking particle
+  source: stages/plates.py:54
+  note: Forsyth & Uyeda 1975; Conrad & Lithgow-Bertelloni 2002 (an order smaller than slab pull)
+- name: FOUNDER_AGE_MYR
+  value: 6311520000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 200.0
+  meaning: ocean floor older than this founders spontaneously
+  source: stages/plates.py:171
+  note: 'real: oldest floor in place ~180-200 Myr, Mueller et al. 2008; Stern 2004'
+- name: FOUNDER_MYR
+  value: 1577880000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 50.0
+  meaning: e-folding time of old-floor foundering (probability per check 1-exp(-5*dt/FOUNDER_MYR))
+  source: stages/plates.py:172
+  note: chosen timescale
+- name: OCEAN_CRUST
+  value: 7000.0
+  unit: m
+  meaning: new ocean floor thickness (also reference thickness in elevation, and read() fallback)
+  source: stages/plates.py:76
+  note: m, (real) White et al. 1992
+- name: founder cadence
+  value: 5.0
+  unit: '1'
+  meaning: foundering checked when steps % 5 == 0, with 5*dt as its interval
+  source: stages/plates.py:1201
+- name: worn-out continent
+  value: 0.05
+  unit: '1'
+  meaning: continental particles with xvol <= 0.05*OCEAN_CRUST*cell (350 m equivalent) are dropped
+  source: stages/plates.py:1210
+random_draws:
+- 'Foundering: rng.uniform(size=len(w.x)) drawn only on steps where steps % 5 == 0 AND some floor is old enough (the draw
+  is inside `if old.any()`), size = current particle count.'
+invariants:
+- a particle sinks at most once
+- continental particles never sink at a trench (they only collide)
+- 'consumed area = (#sunk + #foundered)*cell'
+depends_on:
+- planet-process.plate-motion-and-forces
+backends:
+- cpu
+implementations:
+- where: planet-sim-landform stages/plates.py:run (lines 1010-1045, 1199-1211)
+  state: reference
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
+    code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - identity
+  tier: sourced
+  note: 'planets, 18 Oct 2026: the plates variant the owner chose (planet-forge plates-foundation), measured on plates_earth,
+    3 seeds. Polarity: the older, denser lithosphere subducts, one polarity per trench.'
+  source: Stern 2002, Subduction zones, Rev. Geophys. 40

@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/product.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: product.rail-car, name: Rail car, description: 'A self-propelled flat car on bogies, its frame by its load and length, with a payload fixture.'}
+kind: family
+params:
+- {name: load, unit: kg}
+- {name: length, unit: m}
+- {name: gauge, unit: m}
+pieces:
+- {id: chassis, description: 'the frame, deck and bogies'}
+options:
+- {id: ladle-seat, name: Ladle seat}
+- {id: slag-pot, name: Slag pot, description: a 10 m3 pot on its seat}
+- {id: mould-set, name: Mould set, description: twelve moulds on their stools}
+- {id: ingot-deck, name: Ingot deck}
+units: [unit.ingot-car-40t, unit.ladle-car-80t, unit.mould-car-12, unit.slag-pot-car]
+basis:
+- of: [kind, params, pieces, options]
+  tier: invented
+  review: true
+  note: Grouped from the units the layouts use (docs/proposals/plant-products.md, 2026-10-16).

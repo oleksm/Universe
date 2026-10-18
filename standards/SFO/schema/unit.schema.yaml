@@ -8,6 +8,8 @@ required: [identity, size_class, physical, built_of]
 allOf:
   - { $ref: "../../common.schema.yaml#/definitions/physical_object" }
   - { properties: { physical: { required: [length, width, height, mass] } } }
+definitions:
+  port: { $ref: "../../common.schema.yaml#/definitions/port" }
 properties:
   identity:
     type: object
@@ -50,8 +52,24 @@ properties:
       heat: { type: number, minimum: 0, x-unit: "W" }
       temperature: { type: number, minimum: 0, x-unit: "K", description: "The loop's temperature it is sized for." }
   recipes: { type: array, items: { $ref: "module.schema.yaml#/definitions/module_recipe" }, description: "What it can be set to make, as a module's recipes (SFO 10)." }
+  envelope: { type: array, items: { type: array, items: { type: number }, minItems: 6, maxItems: 6 }, x-unit: "m", description: "Boxes [x0, y0, z0, x1, y1, z1] in its frame that hold its solid parts, measured on its model: what a fit check keeps runs out of (its whole box is coarser)." }
+  shells:
+    type: array
+    description: "For a hollow unit whose inside runs pass through (a hall's section or head): its walls as shells, which a fit check keeps runs out of as it does the envelope's boxes."
+    items:
+      type: object
+      additionalProperties: false
+      required: [kind, at]
+      properties:
+        kind: { enum: [tube, dome], description: "tube: a shell along x, at [x0, x1, yc, zc, r_in, r_out]; dome: a head bulging toward +x from x0, at [x0, depth, yc, zc, r_in, r_out], `depth` deep on its axis." }
+        at: { type: array, items: { type: number }, minItems: 6, maxItems: 6, x-unit: "m" }
+  ports: { type: array, items: { $ref: "#/definitions/port" }, description: "Where what it takes comes in and what it gives goes out, and where it bears on its mount, each built to an interface (SFO 25, SFO 26)." }
+  motion: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/motion" }, description: "How it, or a part of it, moves in service." }
   life: { type: number, x-unit: "s" }
+  product: { type: string, x-ref: [product], description: "The product this unit is, as fitted: its model is the product's (or its family's generator's), sized as this unit is, with these options." }
+  options: { type: array, items: { type: string }, description: "The product's option kits this unit carries, by their ids." }
   visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
+  model_requests: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/model_request" }, description: "Work asked of its installed model, open until a later version answers it." }
   revision:
     $ref: "../../common.schema.yaml#/definitions/record_revision"
     default: { status: draft, owner: registry, on_conflict: propose, because: "A trial unit (SFO 24): sized from material and dimensions, many of them from memory, marked in its basis.", ask: docs/proposals/modular-factories.md }

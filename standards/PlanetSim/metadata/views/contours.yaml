@@ -1,0 +1,88 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
+identity:
+  key: planet-view.contours
+  name: contours
+  about: contours every 250 m over the whole relief (sea floor blue, land brown, light over 2,000 m), the shelf and abyssal
+    edges, the coast white; the height written on every third level
+title: contours
+row: top (history views)
+file_suffix: _contours.png
+draws:
+  words: contours every 250 m over the whole relief (sea floor blue, land brown, light over 2,000 m), the shelf and abyssal
+    edges, the coast white; the height written on every third level
+shown: true
+implementations:
+- where: planet-trees-pgs2 tools/planet_vectors.py / planet_anchors.py sheet() (not inventoried; unverified which writes which)
+  state: reference
+- where: planet-forge crates/viewer/src/layers/contours.rs
+  state: current
+  note: the viewer
+status: draft
+legend:
+  title: 5. CONTOURS every 250 m ({lines} lines), the height on every third
+  source: 'planet_vectors.py:299-325 (the contour view: drawn at twice the size and downsampled)'
+  rows:
+  - kind: fill
+    label: land
+    colour:
+    - 58
+    - 60
+    - 64
+    shown_when: always
+  - kind: fill
+    label: sea
+    colour:
+    - 18
+    - 20
+    - 24
+    shown_when: always
+  - kind: line
+    label: sea-floor contours
+    colour:
+    - 80
+    - 125
+    - 190
+    shown_when: always
+  - kind: line
+    label: land contours
+    colour:
+    - 180
+    - 135
+    - 80
+    shown_when: always
+  - kind: line
+    label: land contours above 2,000 m
+    colour:
+    - 225
+    - 195
+    - 140
+    shown_when: always
+  - kind: line
+    label: coastlines
+    colour:
+    - 255
+    - 255
+    - 255
+    shown_when: always
+  - kind: line
+    label: height labels
+    colour:
+    - 240
+    - 240
+    - 240
+    shown_when: always
+  - kind: line
+    label: height label outline
+    colour:
+    - 25
+    - 30
+    - 40
+    shown_when: always
+basis:
+- of:
+  - legend
+  - draws
+  tier: derived
+  note: 'planets, 17 Oct 2026: the viewer port (crates/viewer), from planet-trees-pgs2 tools/planet_vectors.py, planet_form.py
+    and planet-sim preview.py, look.py.'

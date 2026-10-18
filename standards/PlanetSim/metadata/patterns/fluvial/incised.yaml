@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.valley.incised
+  name: Incised valley
+  about: Incised valley.
+family: fluvial
+factors:
+- factor: planet-factor.base-level
+  weight: 3
+  why: relative base-level fall drives incision
+- factor: planet-factor.sea-level
+  weight: 3
+  why: glacio-eustatic lowstand when shelf exposed
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: isostatic/tectonic uplift
+- factor: planet-factor.relief-inherited
+  weight: 1
+  why: inherited meanders entrench; antecedent geology limits width
+- factor: planet-factor.rock-type
+  weight: 1
+  why: rock type/fractures modify incised meander shape
+- factor: planet-factor.water-discharge
+  weight: 1
+  why: discharge sets incision depth and width
+- factor: planet-factor.slope-relief
+  weight: 1
+  why: shelf steeper than river profile favours incision
+- factor: planet-factor.time
+  weight: 1
+  why: one lowstand, ~10-100 kyr
+vocabulary_id: 156
+sources:
+- https://en.wikipedia.org/wiki/Incised_meander
+- https://en.wikipedia.org/wiki/River_terrace
+library_status: planned
+source: fluvial.valley.incised
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

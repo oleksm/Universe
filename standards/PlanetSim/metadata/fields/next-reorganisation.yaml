@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.next-reorganisation
+  name: Next plate reorganisation
+  about: When the next scheduled plate reorganisation is, on the planet's clock.
+unit: s
+producer:
+  where: planet-forge crates/forge-core/src/models/plates/reorganisation.rs
+  file: checkpoint
+  key: scalars/planet-field.next-reorganisation
+per: global
+time_base: planet-age
+said_as:
+  unit: Myr
+  factor: 31557600000000.0
+also_from:
+- where: stages/plates.py
+  key: next_reorg
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 17 Oct 2026: forge''s plates port (branch plates-foundation) and the Python sim (stages/plates.py), read from the code.'

@@ -1,0 +1,54 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.valley.terrace
+  name: River terrace (strath and fill)
+  about: River terrace (strath and fill).
+family: fluvial
+factors:
+- factor: planet-factor.clim-history
+  weight: 3
+  why: glacial/interglacial (Milankovitch) shifts in discharge and sediment cut and fill
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: supply pulses aggrade (fill); deficits incise; strath cap 1-5 m gravel
+- factor: planet-factor.water-discharge
+  weight: 1
+  why: discharge vs load ratio sets aggradation or incision
+- factor: planet-factor.tect-uplift
+  weight: 3
+  why: steady/episodic uplift raises treads, up to ~300 m flights
+- factor: planet-factor.base-level
+  weight: 1
+  why: sea or lake-level falls propagate incision upstream
+- factor: planet-factor.rock-type
+  weight: 1
+  why: bedrock floor gives strath; thick alluvium gives fill
+- factor: planet-factor.ice-extent
+  weight: 1
+  why: outwash supply from glaciers builds fill terraces
+- factor: planet-factor.time
+  weight: 1
+  why: 1 kyr-2 Myr; terrace count grows with cycles
+- factor: planet-factor.rock-layers
+  weight: 1
+  why: resistant bank material makes unpaired terraces
+vocabulary_id: 60
+sources:
+- https://en.wikipedia.org/wiki/River_terrace
+library_status: written
+source: fluvial.valley.terrace
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft

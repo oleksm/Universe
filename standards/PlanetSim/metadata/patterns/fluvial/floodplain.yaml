@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.valley.floodplain
+  name: Floodplain
+  about: Floodplain.
+family: fluvial
+factors:
+- factor: planet-factor.sed-supply
+  weight: 3
+  why: suspended vs bed load sets vertical vs lateral accretion
+- factor: planet-factor.water-discharge
+  weight: 3
+  why: 'specific stream power: <10 W/m2 low, 10-300 medium, 300-1000 high energy'
+- factor: planet-factor.clim-storm
+  weight: 1
+  why: overbank floods every 1-2 yr deposit levees, splays
+- factor: planet-factor.slope-relief
+  weight: 3
+  why: low gradient below bedrock-alluvial transition
+- factor: planet-factor.relief-inherited
+  weight: 1
+  why: valley width confines floodplain width
+- factor: planet-factor.bio-veg
+  weight: 1
+  why: vegetation stabilizes banks, traps fines
+- factor: planet-factor.base-level
+  weight: 1
+  why: rising base level aggrades; fall incises into terraces
+- factor: planet-factor.tect-uplift
+  weight: 1
+  why: subsidence widens and thickens alluvium
+- factor: planet-factor.time
+  weight: 1
+  why: 0.1 kyr-1 Myr
+vocabulary_id: 58
+sources:
+- https://en.wikipedia.org/wiki/Floodplain
+- https://www.nps.gov/subjects/geology/fluvial-landforms.htm
+library_status: written
+source: fluvial.valley.floodplain
+levels:
+- planet-level.pattern
+- planet-level.square
+basis:
+- of:
+  - factors
+  - sources
+  tier: derived
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+- of:
+  - when
+  tier: invented
+  review: true
+  note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+status: draft
