@@ -71,6 +71,27 @@ legend:
     - 40
     - 30
     label: desert margin (evaporation twice the rain)
+  - key: ice
+    kind: fill
+    label: 'ice today: the ice sheets'' balance above zero (snow under the snow line beats the melt)'
+    colour: &id001
+    - 255
+    - 255
+    - 255
+  - key: ice-edge
+    kind: line
+    label: edge of the ice today (balance zero)
+    colour:
+    - 0
+    - 140
+    - 200
+  - key: treeline
+    kind: line
+    label: treeline (warmest month 10 °C)
+    colour:
+    - 30
+    - 110
+    - 60
   - kind: head
     label: Glacial and warm cycles (last 2.6 Myr)
   - key: ice-lgm
@@ -116,10 +137,7 @@ styles:
   - 225
   - 235
 - key: ice-blend
-  colour:
-  - 255
-  - 255
-  - 255
+  colour: *id001
 basis:
 - of:
   - legend

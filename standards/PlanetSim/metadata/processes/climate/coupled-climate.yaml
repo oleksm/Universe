@@ -307,6 +307,7 @@ params:
     factor: 3.168808781402895e-08
   meaning: rain from condensed excess moisture
   source: stages/coupled_climate.py:91
+  note: 'Not read by the vector climate (crates/vfields): see ORO_PER_FALL, RAIN_TOL.'
 - name: 'inline: PET exponent'
   value: 1.15
   unit: '1'
@@ -325,6 +326,7 @@ params:
     factor: 1.0
   meaning: downwind moisture sweeps (moisture travels at most 60 hops)
   source: stages/coupled_climate.py:53
+  note: 'Not read by the vector climate (crates/vfields): see ORO_PER_FALL, RAIN_TOL.'
 - name: 'inline: rain floor'
   value: 3.168808781402895e-14
   unit: m/s
@@ -344,6 +346,104 @@ params:
     note: plus 273.15
   meaning: what the air holds is computed on T clipped to this range
   source: stages/coupled_climate.py:80
+- name: ORO_PER_FALL
+  value: 0.012395646924342302
+  unit: m2/s
+  meaning: 'orographic rain per unit fall of the saturated air''s holding capacity per metre along the wind (rain = ORO_PER_FALL
+    x max(0, -d hold/ds - rain-out rate x hold) where the air is saturated): the per-hop weight as a rate'
+  source: 'planets, 17 Oct 2026: the vector climate (planet-forge crates/vfields/src/climate.rs), the owner''s no-samples
+    model.'
+  note: 'Converted once from the sample march''s law: its condensate was the capacity fallen over one hop between samples,
+    weighted by inline: orographic condensate weight (9.506426344208684e-08 m/s); the hop of the calibration runs was their
+    mean sample spacing, sqrt(4 pi / 30,000) x 6,371 km = 130,392.289 m. Per metre the condensate is the capacity''s fall
+    rate, so the weight per metre is 9.506426344208684e-08 x 130,392.289 = 0.0123956 m2/s. Supersedes the per-hop weight;
+    nothing in the vector climate depends on a spacing.'
+- name: RH_CRIT
+  value: 0.8
+  unit: '1'
+  meaning: 'the relative humidity (moisture over what the air holds) at which condensation sets in: the orographic rain is
+    ORO_PER_FALL x the capacity''s excess fall x clip((m / hold - RH_CRIT) / (1 - RH_CRIT), 0, 1)'
+  source: 'planets, 17 Oct 2026: the vector climate (planet-forge crates/vfields/src/climate.rs), the owner''s no-samples
+    model.'
+  note: 'Sundqvist, H., Berge, E. & Kristjansson, J. E. (1989) Condensation and cloud parameterization studies with a mesoscale
+    numerical weather prediction model. Mon. Wea. Rev. 117, 1641-1657: cloud and condensation begin at a critical relative
+    humidity under 1 (about 0.8 near the ground; value to verify). Replaces the sample march''s sudden onset at saturation,
+    which made the rain jump with the step.'
+- name: RAIN_TOL
+  value: 0.005
+  unit: '1'
+  meaning: 'relative tolerance of the rain: the walk upwind stops where the moisture from farther upwind is carried down to
+    less than this share (exp(-integral of the rain-out rate) < RAIN_TOL), and the walk''s steps are bounded so that halving
+    them changes the rain by less than this'
+  source: 'planets, 17 Oct 2026: the vector climate (planet-forge crates/vfields/src/climate.rs), the owner''s no-samples
+    model.'
+  note: 'Replaces sweeps (60 hops of the sample march: a count of samples, not a law). With no cap the air reaching an interior
+    comes from as far upwind as its moisture survives.'
+- name: 'inline: walk max step'
+  value: 100000.0
+  unit: m
+  meaning: the longest step of the walk upwind (the wind turns, the ground changes); shorter where the holding capacity changes
+    fast (slopes, crests) by RAIN_TOL
+  source: 'planets, 17 Oct 2026: the vector climate (planet-forge crates/vfields/src/climate.rs), the owner''s no-samples
+    model.'
+- name: 'inline: walk safety length'
+  value: 80000000.0
+  unit: m
+  meaning: 'the farthest the walk goes upwind in any case (twice round the planet): a guard, the tolerance ends it long before'
+  source: 'planets, 17 Oct 2026: the vector climate (planet-forge crates/vfields/src/climate.rs), the owner''s no-samples
+    model.'
+- name: BELT_BLEND_DEG
+  value: 5.0
+  unit: deg
+  meaning: 'half-width of the blend between neighbouring wind belts (trades / westerlies at the subtropical high, westerlies
+    / polar easterlies at the polar front) and at the edges of the east-coast flank belt: the wind is mixed with a smooth
+    step across +-BELT_BLEND_DEG of each boundary'
+  source: 'planets, 17 Oct 2026: the vector climate (planet-forge crates/vfields/src/climate.rs), the owner''s no-samples
+    model.'
+  note: 'The annual-mean surface winds change sign gradually near 30 and 60 degrees (zonal-mean surface wind profiles: Peixoto
+    & Oort 1992, Physics of Climate, AIP, ch. 7); the subtropical high and the polar front move some 5 degrees either way
+    through the year, so the annual mean blends the belts over about that width. To verify against the source''s figure.'
+- name: 'inline: flank taper'
+  value: 0.5
+  unit: '1'
+  meaning: 'the subtropical east-coast flank as a smooth weight over the distance to the sea to the east: 1 within (1 - taper)
+    x SUBTROP_REACH, 0 beyond (1 + taper) x SUBTROP_REACH, a cosine between (half weight at SUBTROP_REACH)'
+  source: 'planets, 17 Oct 2026: the vector climate (planet-forge crates/vfields/src/climate.rs), the owner''s no-samples
+    model.'
+  note: The record gives a reach, not a profile; the taper is a choice that keeps the reach as the half-weight distance.
+- name: 'inline: Conrad continentality'
+  values:
+  - 1.7
+  - 14.0
+  - 10.0
+  unit: '1'
+  meaning: 'Conrad''s continentality index K = a A / sin(lat + c) - b (A the annual range of monthly mean temperature, K;
+    K 0 oceanic, 100 the most continental): a, b, c (c in degrees)'
+  source: 'planets, 17 Oct 2026: the vector climate (planet-forge crates/vfields/src/climate.rs), the owner''s no-samples
+    model.'
+  note: 'Conrad, V. (1946) Usual formulas of continentality and their limits of validity. Trans. AGU 27, 663-664. The vector
+    climate takes K = 100 x the continentality (0..1 by INTERIOR_START_KM, INTERIOR_KM) and the range it adds over the oceanic
+    one: dA = 100 sin(lat + c) / a.'
+- name: CONT_T_PER_RANGE
+  value: 0.28
+  unit: '1'
+  meaning: 'fall of the annual-mean temperature per kelvin of annual range continentality adds (continental winters cool more
+    than their summers warm): T -= CONT_T_PER_RANGE x dA'
+  source: 'planets, 17 Oct 2026: the vector climate (planet-forge crates/vfields/src/climate.rs), the owner''s no-samples
+    model.'
+  note: 'From station pairs at one latitude, maritime vs continental (climate normals): Torshavn 62N (mean ~6.5 degC, range
+    ~7 K) vs Yakutsk 62N (mean ~ -8.8 degC, range ~58 K): -15.3 / 51 = 0.30; Valentia 52N (mean ~10.4, range ~8) vs Astana
+    51N (mean ~3.5, range ~35): -6.9 / 27 = 0.26. Values as recalled, to verify against the normals; the pairs also carry
+    the westerlies'' maritime advection, which the record''s winds do not.'
+- name: 'inline: treeline warmest month'
+  value: 283.15
+  unit: K
+  meaning: 'the treeline: where the warmest month''s mean temperature is this (the warmest month = the annual mean + half
+    the annual range, Conrad''s range at the point''s continentality)'
+  source: 'planets, 17 Oct 2026: the vector climate (planet-forge crates/vfields/src/climate.rs), the owner''s no-samples
+    model.'
+  note: 'Koppen, W. (1936) Das geographische System der Klimate (Handbuch der Klimatologie I C): the polar (E) climates have
+    no month above 10 degC, the treeless tundra beyond it.'
 tables:
 - name: wind-belts
   source: stages/coupled_climate.py:45-50
@@ -434,6 +534,9 @@ implementations:
 - where: planet-forge crates/forge-core/src/models/climate/coupled.rs
   state: current
   note: planet-forge port (climate line, merged in forge main 736031c)
+- where: planet-forge crates/vfields/src/climate.rs
+  state: current
+  note: the climate as Fields at any point (vector planet step 5), branch v-climate
 status: draft
 basis:
 - of:

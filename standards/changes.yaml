@@ -2421,7 +2421,7 @@
 - { record: planet-process.core-dynamo, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "184950bc7642ea25" }
 - { record: planet-process.core-heat-loss, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "937cde0588809800" }
 - { record: planet-process.core-melting-and-inner-core, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "0e8b18a368c57f9a" }
-- { record: planet-process.coupled-climate, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: reads, writes, params, implementations, basis", sha: "2ba53feebe24da50" }
+- { record: planet-process.coupled-climate, at: "2026-10-18T05:21:37Z", status: "", summary: "changed: params, implementations", sha: "3361be594797f0d7" }
 - { record: planet-process.coupled-erosion, at: "2026-10-17T22:25:37Z", status: "", summary: "changed: reads, writes, params, implementations, basis", sha: "a37c95f1c684247a" }
 - { record: planet-process.coupled-host, at: "2026-10-17T19:32:13Z", status: "", summary: "changed: writes", sha: "517d8324f4b53b56" }
 - { record: planet-process.coupled-surface-hook, at: "2026-10-17T19:32:13Z", status: "", summary: "changed: reads", sha: "e5d9612395084945" }
@@ -2480,7 +2480,7 @@
 - { record: planet-process.region-rock-map, at: "2026-10-17T19:32:13Z", status: "", summary: "changed: reads", sha: "f46a82e0e4c1413d" }
 - { record: planet-process.relief-erosion, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: reads, writes, implementations, basis, cautions", sha: "6abfb968937fa2ac" }
 - { record: planet-process.relief-feature-record, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "d24386122f374c34" }
-- { record: planet-process.relief-field, at: "2026-10-18T04:41:23Z", status: "", summary: "changed: identity, params", sha: "a69ea389fe1f1f27" }
+- { record: planet-process.relief-field, at: "2026-10-18T05:21:37Z", status: "", summary: "changed: params", sha: "56310df36a16deda" }
 - { record: planet-process.relief-folds, at: "2026-10-18T04:31:28Z", status: "", summary: "changed: params", sha: "6239f9c88bcdbdf3" }
 - { record: planet-process.relief-great-escarpment, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: reads, writes, implementations, basis, cautions", sha: "1b86d131321d45e7" }
 - { record: planet-process.relief-hotspot-chain, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: reads, writes, params, implementations, basis, cautions", sha: "812b079f77675a13" }
@@ -2560,7 +2560,7 @@
 - { record: planet-view.peak-pins, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "e19ce48ee7944f26" }
 - { record: planet-view.plates, at: "2026-10-18T02:00:15Z", status: "", summary: "changed: identity, draws, implementations, legend, basis", sha: "30d4f67838ad9f3f" }
 - { record: planet-view.rings-basins, at: "2026-10-18T02:34:09Z", status: "", summary: "changed: identity", sha: "87d5d49e8ca01367" }
-- { record: planet-view.rings-climate, at: "2026-10-18T02:17:46Z", status: "", summary: "changed: implementations, legend, styles, basis", sha: "39343bf3a71cfa43" }
+- { record: planet-view.rings-climate, at: "2026-10-18T05:21:37Z", status: "", summary: "changed: legend", sha: "54daea67a87fbc6b" }
 - { record: planet-view.rings-cover, at: "2026-10-18T02:17:46Z", status: "", summary: "changed: implementations, legend, styles, basis", sha: "3fa663478973b32a" }
 - { record: planet-view.rings-formations, at: "2026-10-18T02:17:46Z", status: "", summary: "changed: implementations, legend, styles, basis", sha: "51fdac6764c38009" }
 - { record: planet-view.rings-landmarks, at: "2026-10-18T02:17:46Z", status: "", summary: "changed: legend, implementations, styles, basis", sha: "1474f94e6630db1a" }

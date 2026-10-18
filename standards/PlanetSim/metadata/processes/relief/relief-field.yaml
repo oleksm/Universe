@@ -36,26 +36,13 @@ writes:
 - name: height
   meaning: 'a Field: isostasy plus the sum of the features'' profiles (m above the sea)'
 params:
-- name: station spacing
-  value: 10000.0
+- name: measure tolerance
+  value: 500.0
   unit: m
-  meaning: 'the orogen''s stations along its suture: the belt measured across the line at each'
+  meaning: 'a belt''s measures (its crest''s offset, its reach each side, its ends along the suture) are refined until they
+    agree to this: where the belt changes they are taken closer, never at a fixed spacing'
   source: planet-forge crates/relief/src/laws.rs FIELD_DEFAULTS
-  note: 'chosen: the Python measured at half a sample gap (~65 km); a vector line can be asked anywhere'
-  open: true
-- name: probe step
-  value: 1000.0
-  unit: m
-  meaning: 'the step of a probe across a line (thickest crust, belt edges): where the crust Field is asked'
-  source: planet-forge crates/relief/src/laws.rs FIELD_DEFAULTS
-  note: chosen
-  open: true
-- name: line step
-  value: 2000.0
-  unit: m
-  meaning: the vertex spacing of a laid line at most (finer when its law's wavelength / 8 is finer)
-  source: planet-forge crates/relief/src/laws.rs FIELD_DEFAULTS
-  note: chosen
+  note: 'chosen: half a kilometre, finer than any feature''s own width'
   open: true
 - name: thrust ramp
   value: 5000.0
