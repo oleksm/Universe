@@ -341,6 +341,14 @@ mod tests {
 
     #[test]
     fn a_ship_whose_centre_is_outside_its_feet_tips_over() {
+        // (Its hull is its parts' convex hulls: a thin strut far from the origin,
+        // its corners rounded from f32, is one box, every face once.)
+        let (a, b, r) = (glam::Vec3::new(-1.5, -1.1, 1.5), glam::Vec3::new(-1.0, -0.1, 2.5), 0.05f32);
+        let turn = glam::Quat::from_rotation_arc(glam::Vec3::Z, (b - a).normalize());
+        let corners: Vec<DVec3> = (0..8).map(|n| ((a + b) * 0.5 + turn * glam::Vec3::new(if n & 1 == 0 { -r } else { r }, if n & 2 == 0 { -r } else { r }, if n & 4 == 0 { -0.75 } else { 0.75 })).as_dvec3()).collect();
+        let strut = crate::mesh::Mesh::convex_hull(&corners);
+        assert_eq!(strut.faces.len(), 12);
+        assert!((strut.mass_properties().volume - 0.1 * 0.1 * 1.5).abs() < 1e-5, "{}", strut.mass_properties().volume);
         let m = MassProps { com: DVec3::new(9.0, 0.0, 0.0), ..mc() };
         let mut hull = RigidBody { parts: std::borrow::Cow::Owned(vec![Sphere { at: DVec3::new(0.0, 0.0, 0.0), radius: 4.0 }]), ..standing(6.2) };
         hull.velocity = DVec3::ZERO;

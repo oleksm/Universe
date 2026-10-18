@@ -17,6 +17,17 @@ the same rules, one implementation.
   Shift+WASDQE the thrusters, arrows/A/D/Q/E and the grabbed mouse the stick. With
   thrust asked of a design whose thrusters can't turn it (no turn authority), it
   says the flight computer can't keep the ship straight.
+- **Lifters** (no main drive, lift thrusters: the commuters): the throttle is
+  collective, the lift it sets (`flight_control::force_demand`, in the core), and
+  in manual W fires the lift thrusters together (`manual::on_w`, client side).
+  With no flight computer nothing keeps one level; the test drive says so.
+- **Drafts the test drive compiles** (`interior/compile.rs`): struts weighed as
+  the design weighs them (a kit strut its record's mass); the modules where they
+  were placed (an uncommissioned assembly skips the stock fitter's room search);
+  the ship's fuel is what its plants burn (with none, its strongest rockets'), and
+  every other rocket propellant is one of its own (`ship_devices::Propellant`:
+  its tanks, the thrusters burning it; weighed full in the dry mass, what's
+  burned coming off the ship's mass).
 - **Sending:** the game sends the orders through its cockpit
   (`App::pilot_input`); the test drive applies them to its sandbox ship
   (`LocalFlight::order`). The keys shown for the ship's state come from

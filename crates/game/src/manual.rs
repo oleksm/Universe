@@ -1,6 +1,7 @@
 //! Manual thrusters: the flight computer off, each thruster fired by a key
 //! of its own while it's held (the numpad, each key where its thruster
-//! sits on the ship seen from above, nose up; W the main drive). Nothing
+//! sits on the ship seen from above, nose up; W the main drive, or a
+//! lifter's lift thrusters). Nothing
 //! steadies the ship: it turns and moves by just what's fired. A small plan
 //! of the ship at the left of the screen shows each thruster's key, lit
 //! while it fires.
@@ -31,13 +32,20 @@ const PAD: [(KeyCode, f64, f64, &str); 16] = [
     (KeyCode::NumpadDecimal, 2.0, 4.0, "."),
 ];
 
-/// Each of a hull's thrusters' key (index into `PAD`): the mains none (W
-/// fires them together); the rest, each to the free key nearest where it
+/// The thrusters W fires together: the mains, or on a ship with none (a
+/// lifter), the lift thrusters.
+pub fn on_w(ts: &[universe_sim::world::ship::Thruster]) -> ThrusterRole {
+    if ts.iter().any(|t| t.role == ThrusterRole::Main) { ThrusterRole::Main } else { ThrusterRole::Lift }
+}
+
+/// Each of a hull's thrusters' key (index into `PAD`): W's (`on_w`) none
+/// (W fires them together); the rest, each to the free key nearest where it
 /// sits on the ship seen from above (nose up), the nearest pairs first.
 /// More thrusters than keys: the last unbound.
 /// The same spatial key assignment for an authored Studio actuator layout.
 pub fn keys_for(ts: &[universe_sim::world::ship::Thruster]) -> Vec<Option<usize>> {
-    let others: Vec<usize> = (0..ts.len()).filter(|&k| ts[k].role != ThrusterRole::Main).collect();
+    let w = on_w(ts);
+    let others: Vec<usize> = (0..ts.len()).filter(|&k| ts[k].role != w).collect();
     let (mut lo, mut hi) = (DVec3::splat(f64::INFINITY), DVec3::splat(f64::NEG_INFINITY));
     for &k in &others {
         lo = lo.min(ts[k].at);
@@ -65,7 +73,7 @@ pub fn keys_for(ts: &[universe_sim::world::ship::Thruster]) -> Vec<Option<usize>
     out
 }
 
-/// The thrusters held now (bit `k`: thruster `k`): each bound key down, W the mains.
+/// The thrusters held now (bit `k`: thruster `k`): each bound key down, W the mains (a lifter's lifts).
 pub fn held(input: &Input, spec: &ClassSpec) -> u64 {
     held_for(input, &spec.thrusters)
 }
@@ -76,10 +84,11 @@ pub fn held_for(input: &Input, ts: &[universe_sim::world::ship::Thruster]) -> u6
 
 pub(crate) fn held_keys(down: impl Fn(KeyCode) -> bool, ts: &[universe_sim::world::ship::Thruster]) -> u64 {
     let mut bits = 0u64;
+    let w = on_w(ts);
     for (k, key) in keys_for(ts).into_iter().enumerate().take(64) {
         let down = match key {
             Some(p) => down(PAD[p].0),
-            None => ts[k].role == ThrusterRole::Main && down(KeyCode::KeyW),
+            None => ts[k].role == w && down(KeyCode::KeyW),
         };
         if down {
             bits |= 1 << k;
@@ -94,9 +103,10 @@ pub fn labels(spec: &ClassSpec) -> Vec<String> {
 }
 
 pub fn labels_for(ts: &[universe_sim::world::ship::Thruster]) -> Vec<String> {
+    let w = on_w(ts);
     keys_for(ts).into_iter().enumerate().map(|(k, p)| match p {
         Some(p) => PAD[p].3.to_string(),
-        None if ts[k].role == ThrusterRole::Main => "W".into(),
+        None if ts[k].role == w => "W".into(),
         None => String::new(),
     }).collect()
 }
@@ -116,5 +126,5 @@ pub fn draw(frame: &mut Frame, app: &App) {
     let labels = labels(s);
     let picture = crate::thrusterpanel::Picture { spec: s, jets: &ship.jets, com: ship.centre_of_mass(), mounts: false, picked: &[], labels: &labels };
     crate::thrusterpanel::view(frame, &picture, at, Vec2::new(w, h - 14.0), DVec3::X, DVec3::NEG_Z, "MANUAL THRUSTERS");
-    frame.text(at + Vec2::new(6.0, h - 12.0), &format!("NUMPAD JETS  W MAINS  {} EXIT", crate::keys::key(crate::keys::Act::Manual)), Color::hex(0x7d93a0));
+    frame.text(at + Vec2::new(6.0, h - 12.0), &format!("NUMPAD JETS  W {}  {} EXIT", if on_w(&s.thrusters) == ThrusterRole::Lift { "LIFT" } else { "MAINS" }, crate::keys::key(crate::keys::Act::Manual)), Color::hex(0x7d93a0));
 }

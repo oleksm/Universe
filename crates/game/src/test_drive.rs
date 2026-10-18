@@ -1228,6 +1228,8 @@ fn control_status(d: &Drive) -> String {
     let ship = &f.ship;
     if !ship.powered {
         "FLIGHT SYSTEMS DOWN".into()
+    } else if ship.manual && !universe_sim::avionics::helm::has_computer(ship) {
+        "NO FLIGHT COMPUTER - MANUAL THRUSTERS ONLY, NOTHING KEEPS IT LEVEL (FIT ONE)".into()
     } else if ship.manual {
         "MANUAL THRUSTERS - FLIGHT COMPUTER OFF".into()
     } else {

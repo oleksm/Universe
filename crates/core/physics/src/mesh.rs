@@ -33,7 +33,9 @@ impl Mesh {
         let scale = points.iter().map(|p| p.length()).fold(0.0, f64::max).max(1e-9);
         let eps = scale * 1e-7;
         let n = points.len();
-        let mut planes: Vec<(DVec3, f64)> = Vec::new();
+        // (Each plane once, by the points on it: a face's near-twin planes
+        // (points rounded from f32, far from the origin) hold the same points.)
+        let mut planes: Vec<(DVec3, f64, Vec<u32>)> = Vec::new();
         for i in 0..n {
             for j in i + 1..n {
                 for k in j + 1..n {
@@ -48,15 +50,15 @@ impl Mesh {
                     } else {
                         continue;
                     }
-                    if !planes.iter().any(|(pn, pd)| pn.dot(normal) > 1.0 - 1e-9 && (pd - d).abs() < eps) {
-                        planes.push((normal, d));
+                    let face: Vec<u32> = (0..n as u32).filter(|&i| (normal.dot(points[i as usize]) - d).abs() < eps).collect();
+                    if !planes.iter().any(|(_, _, f)| *f == face) {
+                        planes.push((normal, d, face));
                     }
                 }
             }
         }
         let mut edges = BTreeSet::new();
-        for (normal, d) in planes {
-            let face: Vec<u32> = (0..n as u32).filter(|&i| (normal.dot(points[i as usize]) - d).abs() < eps).collect();
+        for (normal, _, face) in planes {
             let ring = m.add_polygon(&face, normal);
             for w in 0..ring.len() {
                 let (a, b) = (ring[w], ring[(w + 1) % ring.len()]);

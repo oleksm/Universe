@@ -111,6 +111,7 @@ fn craft() -> Ship {
                 spring: None,
                 damper: None,
             }],
+            propellants: Vec::new(),
         },
         1.,
         300.,

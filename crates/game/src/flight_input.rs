@@ -17,23 +17,36 @@ pub struct Pilot {
 /// and stick.
 pub fn keys(ship: &universe_sim::world::Ship) -> Vec<(String, &'static str)> {
     use crate::keys::{key, Act};
-    if matches!(ship.state, universe_sim::ShipState::Landed { .. }) {
-        let mut k = vec![(key(Act::Systems), if ship.powered { "POWER DOWN" } else { "POWER UP" })];
-        if ship.powered {
-            k.push(("S+E".into(), "LIFT OFF"));
+    use universe_sim::world::ship::ThrusterRole;
+    // (W fires a lifter's lift thrusters; its throttle sets their lift.)
+    let lifter = crate::manual::on_w(&ship.spec().thrusters) == ThrusterRole::Lift;
+    let landed = matches!(ship.state, universe_sim::ShipState::Landed { .. });
+    let mut k = Vec::new();
+    if landed {
+        k.push((key(Act::Systems), if ship.powered { "POWER DOWN" } else { "POWER UP" }));
+        if !ship.powered {
+            return k;
         }
-        return k;
     }
     if ship.manual {
-        return vec![(key(Act::Manual), "THRUSTERS"), ("NUM".into(), "FIRE A JET"), ("W".into(), "MAINS")];
+        if universe_sim::avionics::helm::has_computer(ship) {
+            k.push((key(Act::Manual), "THRUSTERS"));
+        }
+        k.extend([("NUM".into(), "FIRE A JET"), ("W".into(), if lifter { "LIFT" } else { "MAINS" })]);
+        return k;
     }
-    vec![
-        ("W S".into(), "THROTTLE"),
+    if landed {
+        k.push(if lifter { ("W".into(), "LIFT OFF") } else { ("S+E".into(), "LIFT OFF") });
+        return k;
+    }
+    k.extend([
+        ("W S".into(), if lifter { "LIFT" } else { "THROTTLE" }),
         ("S+WASDQE".into(), "THRUSTERS"),
         ("ARROWS A D Q E".into(), "TURN"),
         ("CLICK".into(), "STEER BY MOUSE"),
         (key(Act::Manual), "MANUAL THRUSTERS"),
-    ]
+    ]);
+    k
 }
 
 pub fn sample(input: &Input, mouse: Option<Vec2>, dt: f64) -> Pilot {

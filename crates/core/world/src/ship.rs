@@ -630,9 +630,10 @@ impl ClassSpec {
         let (placed, crowded) = place(shape, &wants);
         // (A module with no room anywhere in the hull: it won't go together. Unless the hull is
         // one the registry marks outdated, a rough early guess never sized for real equipment: it
-        // flies as it is, its crowding said.)
+        // flies as it is, its crowding said. Nor a draft, uncommissioned: its modules sit where
+        // they were placed.)
         let outdated = outdated_hull(&key);
-        if !crowded.is_empty() && !outdated {
+        if !crowded.is_empty() && !outdated && validate_install {
             return Err(crowded.join(", "));
         }
         let mut crowded = crowded;
@@ -1113,7 +1114,8 @@ impl Ship {
 
     /// Total mass right now (kg).
     pub fn mass(&self) -> f64 {
-        self.spec().dry_mass + self.fuel + self.load()
+        // (Less what's burned of propellants of their own: see `ship_devices::Propellant`.)
+        self.spec().dry_mass + self.fuel + self.load() - self.devices.as_ref().map_or(0.0, |d| d.burned())
     }
 
     /// What its class is built with.

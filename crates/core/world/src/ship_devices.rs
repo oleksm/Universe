@@ -36,11 +36,26 @@ pub struct LandingLeg {
     #[serde(default)]
     pub damper: Option<f64>,
 }
+/// A propellant of its own, apart from the ship's fuel (cold gas for the
+/// thrusters beside hydrolox for the lifts): its tanks, and the thrusters that
+/// burn it. Its contents are weighed full in the dry mass, where its tanks
+/// are; what's burned comes off the ship's mass (`State::burned`).
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct Propellant {
+    /// What it is (a material's key).
+    pub material: String,
+    /// Its tanks' contents when full (kg).
+    pub capacity: f64,
+    /// The thrusters that burn it (indices in the ClassSpec thruster list).
+    pub thrusters: Vec<usize>,
+}
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
 pub struct Fit {
     pub fans: Vec<Fan>,
     pub batteries: Vec<Battery>,
     pub legs: Vec<LandingLeg>,
+    #[serde(default)]
+    pub propellants: Vec<Propellant>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct PackState {
@@ -67,6 +82,11 @@ pub struct State {
     pub(crate) rocket_fuel_rate: f64,
     #[serde(skip)]
     pub(crate) capacitor_w: f64,
+    /// What's left in each propellant's tanks (kg), and what they burn as set (kg/s).
+    #[serde(default)]
+    pub held: Vec<f64>,
+    #[serde(skip)]
+    pool_rates: Vec<f64>,
     #[serde(skip)]
     authority_cache: Option<(Vec<u64>, Authority)>,
 }
@@ -98,6 +118,13 @@ impl Fit {
                 || b.efficiency > 1.
             {
                 return Err("invalid battery specification".into());
+            }
+        }
+        for p in &self.propellants {
+            if !p.capacity.is_finite() || p.capacity < 0.
+                || p.thrusters.iter().any(|&t| t >= thrusters || !seen.insert(t))
+            {
+                return Err("invalid propellant, or a thruster burning two".into());
             }
         }
         for l in &self.legs {
@@ -157,9 +184,12 @@ impl State {
                 temperature,
             })
             .collect();
+        let held = fit.propellants.iter().map(|p| p.capacity).collect();
         Ok(Self {
             fit,
             packs,
+            held,
+            pool_rates: Vec::new(),
             density: 0.,
             demand_w: 0.,
             delivered_w: 0.,
@@ -192,6 +222,14 @@ impl State {
 
     pub fn is_fan(&self, index: usize) -> bool {
         self.fit.fans.iter().any(|f| f.thruster == index)
+    }
+    /// The propellant thruster `index` burns, if one of its own.
+    fn pool(&self, index: usize) -> Option<usize> {
+        self.fit.propellants.iter().position(|p| p.thrusters.contains(&index))
+    }
+    /// What's been burned of the propellants of their own (kg).
+    pub fn burned(&self) -> f64 {
+        self.fit.propellants.iter().zip(&self.held).map(|(p, h)| p.capacity - h).sum()
     }
     fn available(&self, dt: f64) -> Vec<f64> {
         self.fit
@@ -227,6 +265,9 @@ impl State {
             p.energy -= used;
             p.temperature += used * (1. - b.efficiency) / b.heat_capacity;
         }
+        for (h, r) in self.held.iter_mut().zip(&self.pool_rates) {
+            *h = (*h - r * dt).max(0.);
+        }
     }
     fn effective(&self, ts: &mut [Thruster], fuel: f64, powered: bool) {
         for (i, t) in ts.iter_mut().enumerate() {
@@ -238,7 +279,7 @@ impl State {
                     0.
                 };
                 t.thrust *= factor;
-            } else if fuel <= 0. || !powered {
+            } else if !powered || self.pool(i).map_or(fuel, |p| self.held.get(p).copied().unwrap_or(0.)) <= 0. {
                 t.thrust = 0.;
             }
         }
@@ -261,26 +302,33 @@ impl State {
                 *j = 0.;
             }
         }
-        let rocket_rate: f64 = ts
-            .iter()
-            .zip(jets.iter())
-            .enumerate()
-            .filter(|(i, _)| !self.is_fan(*i))
-            .map(|(_, (t, j))| {
-                if t.exhaust > 0. {
-                    t.thrust * j / t.exhaust
-                } else {
-                    0.
-                }
-            })
-            .sum();
-        let fuel_factor = if rocket_rate > 0. {
-            (fuel / (rocket_rate * dt)).clamp(0., 1.)
-        } else {
-            1.
+        // (Each rocket's burn, from the ship's fuel (pool None) or a propellant
+        // of its own, each limited by what's in it.)
+        let burn = |state: &Self, jets: &[f64], pool: Option<usize>| -> f64 {
+            ts.iter()
+                .zip(jets.iter())
+                .enumerate()
+                .filter(|(i, _)| !state.is_fan(*i) && state.pool(*i) == pool)
+                .map(|(_, (t, j))| if t.exhaust > 0. { t.thrust * j / t.exhaust } else { 0. })
+                .sum()
         };
+        let factor = |rate: f64, left: f64| if rate > 0. { (left / (rate * dt)).clamp(0., 1.) } else { 1. };
+        self.pool_rates = (0..self.fit.propellants.len())
+            .map(|p| {
+                let rate = burn(self, jets, Some(p));
+                let f = factor(rate, self.held.get(p).copied().unwrap_or(0.));
+                for &t in &self.fit.propellants[p].thrusters {
+                    if let Some(j) = jets.get_mut(t) {
+                        *j *= f;
+                    }
+                }
+                rate * f
+            })
+            .collect();
+        let rocket_rate = burn(self, jets, None);
+        let fuel_factor = factor(rocket_rate, fuel);
         for (i, j) in jets.iter_mut().enumerate() {
-            if !self.is_fan(i) {
+            if !self.is_fan(i) && self.pool(i).is_none() {
                 *j *= fuel_factor;
             }
         }
@@ -508,5 +556,22 @@ mod authority_tests {
             assert_eq!(state.authority(&ts,b),authority(&ts,b));
             assert_ne!(state.authority_cache.as_ref().unwrap().0,prior);
         }
+        // A propellant of its own: its thruster fires with the ship's fuel gone,
+        // burns its pool down, and what's burned comes off the mass.
+        let fit = Fit { propellants: vec![Propellant { material: "material.nitrogen".into(), capacity: 1., thrusters: vec![0] }], ..Fit::default() };
+        let mut pool = State::new(fit, 4, 1., 293.).unwrap();
+        let mut rk: Vec<_> = (0..4).map(|_| Thruster { nozzle: "test".into(), at: DVec3::ZERO, push: DVec3::Y, thrust: 7000., role: ThrusterRole::Lift, exhaust: 700., efficiency: 1. }).collect();
+        pool.effective(&mut rk, 0., true);
+        assert!(rk[0].thrust > 0. && rk[1..].iter().all(|t| t.thrust == 0.));
+        let mut jets = vec![1.; 4];
+        pool.plan(&rk, &mut jets, 0.06, 0., 0., 0., 0., 0.);
+        pool.consume(0.06);
+        assert!(jets[0] == 1. && (pool.burned() - 0.6).abs() < 1e-9);
+        pool.plan(&rk, &mut jets, 0.06, 0., 0., 0., 0., 0.);
+        pool.consume(0.06);
+        assert!((jets[0] - 4. / 6.).abs() < 1e-9 && pool.held[0] == 0.);
+        // A lifter's throttle (no main drive) sets its lift.
+        let a = Authority { main: 0., lift: 1000., side: 100. };
+        assert_eq!(crate::flight_control::force_demand(0.5, DVec3::ZERO, a, 0., true).0, DVec3::new(0., 500., 0.));
     }
 }
