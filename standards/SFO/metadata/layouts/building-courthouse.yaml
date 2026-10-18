@@ -15,7 +15,7 @@ physical:
   length: 42.0
   width: 24.0
   height: 9.15
-  mass: 756118.3
+  mass: 756037.3
 bays: []
 rooms:
 - id: COU1
@@ -414,7 +414,7 @@ ground:
   mass: 114048.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 756118.3
+  mass: 756037.3
   against_module: 'building.courthouse (deprecated): one box 40 x 25 x 8 m of 2,206 t, from the average of 538 concrete buildings. This layout: 42 x 24 x 9 m, 756 t (40 t frame, 210 t panels, 29 t furniture, 477 t ground), for 720 people
     served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:
