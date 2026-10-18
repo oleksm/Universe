@@ -9,11 +9,11 @@ physical:
   length: 0.6
   width: 0.505
   height: 1.8
-  mass: 227.4
+  mass: 228.7
 built_of:
 - what: Base, column, table and head
   item: material.cast-iron-grey
-  mass: 227.4
+  mass: 228.7
 basis:
 - of:
   - built_of
