@@ -14,6 +14,12 @@ built_of:
 - what: Bench
   item: material.structural-steel-a36
   mass: 325.4
+visual:
+  format: "freefall-model/1"
+  path: "models/furniture-judge-bench/v1"
+  manifest_sha256: "54ae528752aa7a968039ea21d583f6b9e83ff1921ff48285ce074095f9385ca0"
+  version: 1
+  triangles: 1224
 basis:
 - of:
   - built_of
