@@ -4459,7 +4459,7 @@
 - { record: unit.furniture-counter, at: "2026-10-18T01:14:24Z", status: draft, summary: "changed", sha: "8c9e8e4cc64ae2f8" }
 - { record: unit.furniture-cubicle, at: "2026-10-18T00:56:24Z", status: draft, summary: "changed", sha: "7b6daac7d905dbfd" }
 - { record: unit.furniture-desk, at: "2026-10-18T00:15:44Z", status: draft, summary: "changed", sha: "86ab2b77fb1953f3" }
-- { record: unit.furniture-dock, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "a43d0b372e36d83b" }
+- { record: unit.furniture-dock, at: "2026-10-18T03:32:01Z", status: draft, summary: "changed: visual", sha: "f04c2d2606cae52a" }
 - { record: unit.furniture-drill, at: "2026-10-18T01:58:36Z", status: draft, summary: "changed", sha: "6730fed217801a37" }
 - { record: unit.furniture-fridge, at: "2026-10-18T02:18:23Z", status: draft, summary: "changed", sha: "f757551d7c912841" }
 - { record: unit.furniture-hood, at: "2026-10-18T02:56:15Z", status: draft, summary: "changed", sha: "0748be583420441e" }
