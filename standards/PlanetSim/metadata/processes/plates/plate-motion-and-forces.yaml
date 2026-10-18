@@ -2,17 +2,12 @@
 identity:
   key: planet-process.plate-motion-and-forces
   name: Plate motion (Euler rotation) driven by remembered boundary forces
-  about: 'Each step the reference speed follows the mantle heat flux from the interior history: speed = min(EARTH_SPEED*(q/EARTH_MANTLE_FLUX)^SPEED_POWER,
-    MAX_SPEED). Each plate''s torque vector (decaying memory of slab pull, trench suction and ridge push forces, each a unit
-    tangent force at a particle, crossed with position) sets its axis (torque direction) and a speed multiplier |torque|/particle_count
-    relative to the median over driven plates, clipped to 0.15-2.0; a plate with zero torque keeps its axis and gets DRIFT.
-    The multiplier is then times the plate''s rate (collision stall) and (1 - CONTINENT_DRAG*continental particle share).
-    dt = min(step_myr, STEP*gap*R/(speed*fastest), time left). Every plate rotates its particles exactly by Rodrigues rotation
-    about its axis by speed*mult/R*dt, and its particles'' structural grain vectors too, and the relief layer''s anchored
-    vectors. After the step: torque <- torque*exp(-dt/FORCE_MYR) + force (this step''s force sum is NOT scaled by dt), and
-    plates not stalled this step recover rate toward base on RECOVER_MYR. w.spin records each plate''s angular velocity vector
-    (rad/yr). The multipliers are then scaled so their particle-weighted mean is 1: the mean plate speed is the reference
-    speed (EARTH_SPEED at Earth''s flux).'
+  about: 'Each step the reference speed follows the mantle heat flux from the interior history: speed = min(EARTH_SPEED*(q/EARTH_MANTLE_FLUX)^SPEED_POWER, MAX_SPEED). Each plate''s torque vector (decaying memory of slab pull, trench
+    suction and ridge push forces, each a unit tangent force at a particle, crossed with position) sets its axis (torque direction) and a speed multiplier |torque|/particle_count relative to the median over driven plates, clipped to
+    0.15-2.0; a plate with zero torque keeps its axis and gets DRIFT. The multiplier is then times the plate''s rate (collision stall) and (1 - CONTINENT_DRAG*continental particle share). dt = min(step_myr, STEP*gap*R/(speed*fastest),
+    time left). Every plate rotates its particles exactly by Rodrigues rotation about its axis by speed*mult/R*dt, and its particles'' structural grain vectors too, and the relief layer''s anchored vectors. After the step: torque <-
+    torque*exp(-dt/FORCE_MYR) + force (this step''s force sum is NOT scaled by dt), and plates not stalled this step recover rate toward base on RECOVER_MYR. w.spin records each plate''s angular velocity vector (rad/yr). The multipliers
+    are then scaled so their particle-weighted mean is 1: the mean plate speed is the reference speed (EARTH_SPEED at Earth''s flux).'
 area: plates
 clock:
   when: every step; dt <= step_myr (default 5 Myr) and <= STEP spacing for the fastest plate
@@ -110,8 +105,7 @@ params:
   said_as:
     unit: m/yr
     factor: 0.05
-  meaning: 'the particle-weighted mean plate speed at EARTH_MANTLE_FLUX: the multipliers (torque per area, rate, continental
-    drag) are scaled so their particle-weighted mean is 1'
+  meaning: 'the particle-weighted mean plate speed at EARTH_MANTLE_FLUX: the multipliers (torque per area, rate, continental drag) are scaled so their particle-weighted mean is 1'
   source: stages/plates.py:95
   note: m/yr, (real) DeMets et al. 2010; the mean enforced since 18 Oct 2026 (the Python ran at 0.35 of it)
 - name: EARTH_MANTLE_FLUX
@@ -138,8 +132,7 @@ params:
 - name: SLAB_PULL
   value: 1.0
   unit: '1'
-  meaning: 'weight of slab pull: unit tangent force at each sinking particle toward its rider, added to the sinking plate''s
-    torque'
+  meaning: 'weight of slab pull: unit tangent force at each sinking particle toward its rider, added to the sinking plate''s torque'
   source: stages/plates.py:53
   note: Forsyth & Uyeda 1975; Conrad & Lithgow-Bertelloni 2002
 - name: TRENCH_SUCTION
@@ -151,8 +144,7 @@ params:
 - name: RIDGE_PUSH
   value: 0.15
   unit: '1'
-  meaning: 'weight of ridge push: at each opened sample, a unit tangent force from the new point toward the source particle,
-    on the source plate'
+  meaning: 'weight of ridge push: at each opened sample, a unit tangent force from the new point toward the source particle, on the source plate'
   source: stages/plates.py:55
   note: Forsyth & Uyeda 1975
 - name: FORCE_MYR
@@ -179,11 +171,9 @@ params:
 - name: STEP
   value: 0.5
   unit: '1'
-  meaning: 'the fastest plate moves at most STEP*gap per substep (CFL-like bound on dt): at most the overlap reach (OVERLAP
-    0.5), so no particle passes through the other plate unseen'
+  meaning: 'the fastest plate moves at most STEP*gap per substep (CFL-like bound on dt): at most the overlap reach (OVERLAP 0.5), so no particle passes through the other plate unseen'
   source: stages/plates.py:48
-  note: 'numerical: STEP <= OVERLAP (subduction); at 1.0 the floor sunk was 0.56-1.07 of the convergence x trench length,
-    at 0.5 1.00 (planets, 18 Oct 2026)'
+  note: 'numerical: STEP <= OVERLAP (subduction); at 1.0 the floor sunk was 0.56-1.07 of the convergence x trench length, at 0.5 1.00 (planets, 18 Oct 2026)'
 - name: RECOVER_MYR
   value: 946728000000000.0
   unit: s
@@ -211,24 +201,55 @@ params:
 - name: SLAB_PULL_FORCE
   value: 54200000000000.0
   unit: N/m
-  meaning: 'vector plates: slab pull per metre of trench on the plate going down, toward the trench; the slab''s negative
-    buoyancy, excess density rho_m*alpha*(Tm-T0)/2 over a lithosphere 2.32*sqrt(kappa*t) thick (t = 100 Myr) down to 660 km'
+  meaning: 'vector plates: slab pull per metre of trench on the plate going down, toward the trench; the slab''s negative buoyancy, excess density rho_m*alpha*(Tm-T0)/2 over a lithosphere 2.32*sqrt(kappa*t) thick (t = 100 Myr) down
+    to 660 km'
   source: Turcotte & Schubert, Geodynamics (2014), gravitational body forces on the lithosphere (slab pull)
   note: 'derived: rho_m 3300 kg/m3, alpha 3e-5 /K, Tm-T0 1300 K, kappa 1e-6 m2/s, g 9.8 m/s2: 5.42e+13 N/m'
 - name: RIDGE_PUSH_FORCE
   value: 4120000000000.0
   unit: N/m
-  meaning: 'vector plates: ridge push per metre of ridge on each spreading plate, away from the ridge: g*rho_m*alpha*(Tm-T0)*(1
-    + 2*rho_m*alpha*(Tm-T0)/(pi*(rho_m-rho_w)))*kappa*t at t = 100 Myr'
+  meaning: 'vector plates: ridge push per metre of ridge on each spreading plate, away from the ridge: g*rho_m*alpha*(Tm-T0)*(1 + 2*rho_m*alpha*(Tm-T0)/(pi*(rho_m-rho_w)))*kappa*t at t = 100 Myr'
   source: Turcotte & Schubert, Geodynamics (2014), ridge push
-  note: 'derived from the same constants, rho_w 1000 kg/m3: 4.12e+12 N/m (an order below slab pull, as Forsyth & Uyeda 1975
-    found)'
+  note: 'derived from the same constants, rho_w 1000 kg/m3: 4.12e+12 N/m (an order below slab pull, as Forsyth & Uyeda 1975 found)'
 - name: TRENCH_SUCTION_FORCE
   value: 16300000000000.0
   unit: N/m
   meaning: 'vector plates: trench suction per metre of trench on the overriding plate, toward the trench'
   source: Forsyth & Uyeda 1975 (suction on the overriding plate, smaller than slab pull)
   note: 'chosen: 0.3 of SLAB_PULL_FORCE, the ratio the particle plates used (TRENCH_SUCTION 0.3)'
+- name: SLAB_PULL_TRANSMITTED
+  value: 0.1
+  unit: '1'
+  meaning: 'vector plates: the share of a slab''s negative buoyancy (SLAB_PULL_FORCE) passed to its plate as slab pull; the rest drives mantle flow (slab suction, rollback); trench suction scales with it'
+  source: Schellart 2004, Geophys. Res. Lett. 31 L07611 (net slab pull)
+  note: '8-12 % of the slab''s negative buoyancy reaches the plate (figure from memory, 18 Oct 2026: verify against the paper)'
+- name: SLAB_PULL_AGE
+  value: 3155760000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 100.0
+  meaning: 'vector plates: the floor age SLAB_PULL_FORCE and TRENCH_SUCTION_FORCE are given at; younger slabs pull by sqrt(age / SLAB_PULL_AGE) (thickness 2.32 sqrt(kappa t)), older as at it'
+  source: Turcotte & Schubert 2014 (half-space cooling); Parsons & Sclater 1977 (the lithosphere stops thickening near 100 Myr)
+  note: derived
+- name: ASTHENOSPHERE_VISCOSITY
+  value: 1.0e+20
+  unit: Pa s
+  meaning: 'vector plates: viscosity of the weak channel under the plates; basal drag per area = viscosity / ASTHENOSPHERE_THICKNESS x the plate''s speed'
+  source: 'post-glacial rebound and plate-motion models: 1e19-1e21 Pa s (Hager 1991; Mitrovica 1996)'
+  note: 'middle of the published range (from memory, 18 Oct 2026: verify); the emergent mean plate speed is checked against DeMets et al. 2010, never fitted'
+- name: ASTHENOSPHERE_THICKNESS
+  value: 200000.0
+  unit: m
+  meaning: 'vector plates: thickness of the weak channel the plates shear (from the oceanic lithosphere''s base near 100 km to about 300 km)'
+  source: seismic low-velocity zone, Gutenberg; Richards et al. 2001 (asthenosphere channel 100-200 km)
+  note: 'from memory, 18 Oct 2026: verify'
+- name: CONTINENT_DRAG_RATIO
+  value: 2.0
+  unit: '1'
+  meaning: 'vector plates: basal drag per area under continental crust over that under ocean floor: the keel (~200 km, Jordan 1978) halves the channel under it (to ~100 km) and drag goes as 1/thickness'
+  source: Jordan 1978 (continental tectosphere); Forsyth & Uyeda 1975 (continental plates slower)
+  note: 'derived from the channel thickness, figures from memory (18 Oct 2026: verify)'
 random_draws:
 - none
 invariants:
@@ -242,8 +263,7 @@ depends_on:
 backends:
 - cpu
 implementations:
-- where: planet-sim-landform stages/plates.py:run (lines 963-999 speed/axis/dt/rotation, 1000-1008 tangent_torque, 1044-1045
-    slab pull and suction, 1227 ridge push, 1410-1416 torque memory and recovery); sphere.py:rotate (lines 29-32)
+- where: planet-sim-landform stages/plates.py:run (lines 963-999 speed/axis/dt/rotation, 1000-1008 tangent_torque, 1044-1045 slab pull and suction, 1227 ridge push, 1410-1416 torque memory and recovery); sphere.py:rotate (lines 29-32)
   state: reference
 status: draft
 basis:
@@ -253,23 +273,19 @@ basis:
   - reads
   - writes
   tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
-    code at planet-sim-landform 9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'
 - of:
   - params.STEP
   - params.EARTH_SPEED
   tier: derived
-  note: 'planets, 18 Oct 2026: the plates variant the owner chose (planet-forge plates-foundation), measured on plates_earth,
-    3 seeds.'
+  note: 'planets, 18 Oct 2026: the plates variant the owner chose (planet-forge plates-foundation), measured on plates_earth, 3 seeds.'
 - of:
   - params.SLAB_PULL_FORCE
   - params.RIDGE_PUSH_FORCE
   tier: derived
-  note: 'planets, 18 Oct 2026: the vector plates (planet-forge vector-core) take physical boundary forces per metre; no sample
-    weights.'
+  note: 'planets, 18 Oct 2026: the vector plates (planet-forge vector-core) take physical boundary forces per metre; no sample weights.'
   source: Turcotte & Schubert 2014
 - of:
   - params.TRENCH_SUCTION_FORCE
   tier: invented
-  note: 'planets, 18 Oct 2026: the vector plates (planet-forge vector-core) take physical boundary forces per metre; no sample
-    weights. Suction: 0.3 of slab pull, the particle plates'' ratio.'
+  note: 'planets, 18 Oct 2026: the vector plates (planet-forge vector-core) take physical boundary forces per metre; no sample weights. Suction: 0.3 of slab pull, the particle plates'' ratio.'

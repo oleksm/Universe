@@ -2,15 +2,11 @@
 identity:
   key: planet-process.collision-and-docking
   name: 'Buoyant-buoyant contact: terrane docking, continental collision, obduction, stalling'
-  about: 'For converging pairs where both are buoyant: an ocean particle (thick floor) docks: becomes continental with volume
-    xfloor*cell; plain MORB becomes ophiolite with chromite. Between continental pairs the winner is the particle with the
-    larger volume; ''fresh'' losers are those not sutured within SUTURE_MYR. For fresh pairs both sides get collisional metamorphism
-    (schist top, cover >= G.SCHIST_COVER, orogenic gold, granite base and tin-tungsten where the last-read thickness >= G.TIN_THICK),
-    grain along the contact, and ocean floor within OBDUCT*gap of a fresh winner is obducted as ophiolite continent (chromite,
-    VMS x4, magnesite). Fresh losers lose COLLISION_LOSS of their volume. Every loser''s xsuture = now, and every loser joins
-    the winner''s plate (the smaller continent sutures to the larger''s plate). A plate whose particles among winners+losers,
-    x cell, reach STALL_AREA is stalled: rate <- max(STALL_FLOOR, rate*exp(-dt/STALL_MYR)). Continental pairs across different
-    plates are recorded per plate pair as collision fronts (loser particle -> time) for welding.'
+  about: 'For converging pairs where both are buoyant: an ocean particle (thick floor) docks: becomes continental with volume xfloor*cell; plain MORB becomes ophiolite with chromite. Between continental pairs the winner is the particle
+    with the larger volume; ''fresh'' losers are those not sutured within SUTURE_MYR. For fresh pairs both sides get collisional metamorphism (schist top, cover >= G.SCHIST_COVER, orogenic gold, granite base and tin-tungsten where the
+    last-read thickness >= G.TIN_THICK), grain along the contact, and ocean floor within OBDUCT*gap of a fresh winner is obducted as ophiolite continent (chromite, VMS x4, magnesite). Fresh losers lose COLLISION_LOSS of their volume.
+    Every loser''s xsuture = now, and every loser joins the winner''s plate (the smaller continent sutures to the larger''s plate). A plate whose particles among winners+losers, x cell, reach STALL_AREA is stalled: rate <- max(STALL_FLOOR,
+    rate*exp(-dt/STALL_MYR)). Continental pairs across different plates are recorded per plate pair as collision fronts (loser particle -> time) for welding.'
 area: plates
 clock:
   when: every step with buoyant-buoyant converging pairs
@@ -173,18 +169,22 @@ params:
 - name: SLIP
   value: 0.35
   unit: '1'
-  meaning: two overlapping particles of different plates count as converging only if their closing speed exceeds SLIP x |relative
-    velocity|; below it they slide past (transform)
+  meaning: two overlapping particles of different plates count as converging only if their closing speed exceeds SLIP x |relative velocity|; below it they slide past (transform)
   source: stages/plates.py:41
   note: 'chosen: transform-like within about 70 deg (also subduction''s: one pair search in the Python)'
 - name: COLLISION_RESISTANCE
   value: 5000000000000.0
   unit: N/m
-  meaning: 'vector plates: the force per metre of continental contact a collision belt holds against (its crust''s excess
-    potential energy); a plate stalls when its contact length times this reaches its driving force (the sum of its boundary
-    forces this substep)'
+  meaning: 'vector plates: the force per metre of continental contact a collision belt holds against (its crust''s excess potential energy); a plate stalls when its contact length times this reaches its driving force (the sum of its
+    boundary forces this substep)'
   source: 'Molnar & Lyon-Caen 1988 (GSA Special Paper 218): Tibet''s excess potential energy, a few 10^12 N/m'
   note: sourced (order of magnitude); replaces STALL_AREA (a count of sample cells) for the vector plates
+- name: COLLISION_COUPLING
+  value: 2.0e+21
+  unit: Pa s
+  meaning: 'vector plates: colliding plates resist each other with force per metre of contact = COLLISION_COUPLING x their closing speed: 2 x viscosity x thickness / width of the orogen (2 x 1e22 Pa s x 100 km / 1000 km)'
+  source: England & Molnar 1997 (Tibet effective viscosity ~1e22 Pa s); Molnar & Lyon-Caen 1988 (resisting force ~5e12 N/m)
+  note: 'derived; at 5 cm/yr it gives 3.2e12 N/m, the order Molnar & Lyon-Caen give (figures from memory, 18 Oct 2026: verify)'
 random_draws:
 - none
 invariants:
@@ -206,11 +206,9 @@ basis:
   - reads
   - writes
   tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
-    code at planet-sim-landform 9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'
 - of:
   - params.COLLISION_RESISTANCE
   tier: sourced
-  note: 'planets, 18 Oct 2026: the vector plates (planet-forge vector-core) take physical boundary forces per metre; no sample
-    weights.'
+  note: 'planets, 18 Oct 2026: the vector plates (planet-forge vector-core) take physical boundary forces per metre; no sample weights.'
   source: Molnar & Lyon-Caen 1988
