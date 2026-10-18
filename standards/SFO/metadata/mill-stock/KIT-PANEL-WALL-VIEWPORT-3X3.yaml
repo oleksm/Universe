@@ -18,7 +18,7 @@ size:
 supplies:
   item: panel.wall-viewport-3x3
 physical:
-  mass: 459.0
+  mass: 479.0
 basis:
 - of:
   - size

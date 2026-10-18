@@ -311,14 +311,14 @@ recipes:
   does: Skins are formed and joined to their cores or stiffeners, openings cut and fitted, the panel framed and sealed.
   inputs:
   - item: stock.al6061-pl-5
-    quantity: 0.929
+    quantity: 0.9227
   - item: stock.fs-pl-6
-    quantity: 0.0867
+    quantity: 0.0933
   - item: material.polyimide-film
-    quantity: 0.0113
+    quantity: 0.0109
   outputs:
   - item: stock.al6061-scrap
-    quantity: 0.0271
+    quantity: 0.0269
   rate: 2.0
   power: 3000000.0
 - makes: stock.kit-panel-wall-window-3x3

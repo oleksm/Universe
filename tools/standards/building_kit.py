@@ -214,7 +214,7 @@ panel("wall-cargo-door-3x3", "Pressure wall panel with a cargo door, 3 x 3 m", "
 vp_r, vp_t = 0.3, 0.032     # m: a 0.6 m round viewport, two fused silica panes each holding the whole pressure (clamped disc, 3 p a^2 / 4 t^2 under 7 MPa: 31 mm)
 parts, th = pressure_skin(3.0, 3.0, cut=3.1416 * vp_r ** 2)
 panel("wall-viewport-3x3", "Pressure wall panel with a viewport, 3 x 3 m", "wall", (3.0, 3.0), r(th, 3),
-      parts + [("Viewport panes", "material.fused-silica", 2 * 3.1416 * vp_r ** 2 * vp_t * 2200, "two 32 mm panes, either holding the air alone"), ("Viewport ring", AL, 20.0, "a machined ring and its seals (invented)")],
+      parts + [("Viewport panes", "material.fused-silica", 44.72, "two 32 mm panes 638 mm across on their seat lands, either holding the air alone: blender's model (2026-10-18)"), ("Viewport sleeve, collar and retainers", AL, 35.04, "a welded 640/680 mm sleeve through the wall's depth, a 760 mm collar, retainers, 12 bolts and dual seals: blender's model")],
       "A pressure wall panel with a 0.6 m round viewport of two fused silica panes: a look out where a world with air would have a window.",
       "wall-viewport", opening={"kind": "viewport", "width": 2 * vp_r, "height": 2 * vp_r, "sill": 1.2}, u=MLI_U, load=P_IN, basis=PRESSURE, site="airless", tier="derived")
 parts, th = pressure_skin(3.0, 3.0, mli=False, what="Bulkhead skin")
