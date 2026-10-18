@@ -14,6 +14,12 @@ built_of:
 - what: Uprights, base and shelves
   item: material.structural-steel-a36
   mass: 70.0
+visual:
+  format: "freefall-model/1"
+  path: "models/furniture-shelf/v1"
+  manifest_sha256: "807923c3c329129f00b556c312c52e86d35d5ac295b8c84145b31552bb476704"
+  version: 1
+  triangles: 1264
 basis:
 - of:
   - built_of
