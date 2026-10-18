@@ -4506,7 +4506,7 @@
 - { record: template.valve-check, at: "2026-10-18T06:04:55Z", status: "", summary: "changed", sha: "0f4708352138616b" }
 - { record: template.valve-gate, at: "2026-10-18T06:04:55Z", status: "", summary: "changed", sha: "d85c253b61e53906" }
 - { record: template.valve-relief, at: "2026-10-18T14:51:23Z", status: "", summary: "changed", sha: "f61fb751e034f725" }
-- { record: template.wall-cargo-door, at: "2026-10-18T14:47:28Z", status: "", summary: "first tracked", sha: "8598c3a4a2b31f9c" }
+- { record: template.wall-cargo-door, at: "2026-10-18T15:52:34Z", status: "", summary: "changed: visual", sha: "1e720df1f1783301" }
 - { record: template.wall-door, at: "2026-10-18T02:56:15Z", status: "", summary: "changed", sha: "5ee61de4e9641cf9" }
 - { record: template.wall-double-door, at: "2026-10-18T02:56:15Z", status: "", summary: "changed", sha: "26ab0ddf416087e3" }
 - { record: template.wall-glazed, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "963b9e61ba2e0e62" }
