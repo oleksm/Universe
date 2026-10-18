@@ -7,7 +7,7 @@ additionalProperties: false
 required: [identity, kind, size, physical, built_of]
 allOf:
   - { $ref: "../../common.schema.yaml#/definitions/physical_object" }
-  - { properties: { physical: { required: [length, width, height, mass] } } }
+  - { properties: { physical: { required: [length, width, height, mass], description: "The mated pair, both halves (a plug and its receptacle, two flanges): what a routed run counts at each of its ends. Equipment it plugs into counts none of it; its own looms and terminal hardware inside are the equipment's." } } }
 properties:
   identity:
     type: object

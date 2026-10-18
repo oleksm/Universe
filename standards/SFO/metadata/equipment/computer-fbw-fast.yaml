@@ -24,7 +24,7 @@ built_of:
     - { code: FCFA-02, name: "Inertial units and star trackers", description: "Feel the ship's turning and see where it points.", mass: 6.12, length: 0.309, width: 0.206, height: 0.154, item: good.electronics, quantity: 6.12, module: module.assembly-shop }
     - { code: FCFA-03, name: "Thruster drivers", description: "Switch the thrusters, faster and harder.", mass: 14.4, length: 0.411, width: 0.274, height: 0.205, item: good.electronics, quantity: 14.4, module: module.assembly-shop }
     - { code: FCFA-04, name: "Cabinet and cold plates", mass: 8.1, length: 0.339, width: 0.226, height: 0.169, item: stock.al6061-sh-2-panel, quantity: 8.1, module: module.welding-bay }
-    - { code: FCFA-05, name: "Harness", description: "The wiring to every nozzle.", mass: 4.14, length: 0.271, width: 0.181, height: 0.135, item: stock.cu-wire-2, quantity: 4.75, module: module.machining-centre }
+    - { code: FCFA-05, name: "Harness", description: "The signal wiring out to every nozzle (data, not power: the ship's routed harness carries power only today); if the ship comes to route data too, this moves to it. Review.", mass: 4.14, length: 0.271, width: 0.181, height: 0.135, item: stock.cu-wire-2, quantity: 4.75, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:

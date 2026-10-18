@@ -6,8 +6,9 @@ identity:
   maker: org.meridian
   revision: draft
   slot: power
-  description: 'Steps the ship''s 3 kV DC bus down to its 28 V DC bus, up to 5 kW out, isolated: a sealed box on four feet, the 3 kV pair in at one end (HV DC pole connectors), the 28 V out and data at the other, the coolant pair under
-    it. 93% efficient: at full load it draws 5.38 kW and gives 0.38 kW to the coolant loop.'
+  description: 'Steps the ship''s 3 kV DC bus down to its 28 V DC bus, up to 5 kW out, isolated: a sealed box on four feet, the 3 kV pair in at its -x end (two connector.hvdc-pole-150a receptacles, 2 A), the 28 V pair out (179 A: two
+    connector.hvdc-pole-400a receptacles) and data (connector.circular-shell-11) at its +x end, the coolant pair under it (connector.flat-face-dn6). The connectors'' mass is the routed harness''s (connector.schema physical), not the
+    box''s. 93% efficient: at full load it draws 5.38 kW and gives 0.38 kW to the coolant loop.'
 size_class: 1
 fits: mount.power-s1
 physical:
