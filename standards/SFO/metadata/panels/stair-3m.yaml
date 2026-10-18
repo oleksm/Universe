@@ -18,11 +18,11 @@ physical:
 built_of:
 - what: Stringers, treads, landings and frames
   item: material.structural-steel-a36
-  mass: 731.7
+  mass: 669.1
   note: '8 mm stringers, 3 mm folded treads and landings, 50 x 50 x 3 landing frames and columns: blender''s model (2026-10-17)'
-- what: Handrails and guards
+- what: Handrails, guards and posts
   item: material.structural-steel-a36
-  mass: 100.0
+  mass: 162.6
   note: '35 x 35 x 2 mm: blender''s model'
 template: template.stair
 basis:

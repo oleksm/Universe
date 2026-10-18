@@ -1449,7 +1449,7 @@
 - { record: panel.partition-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "52bad398a3b62283" }
 - { record: panel.partition-door-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "58796602b82db5e0" }
 - { record: panel.roof-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "da24091c503ae16b" }
-- { record: panel.stair-3m, at: "2026-10-18T01:21:24Z", status: draft, summary: "changed: physical, built_of", sha: "bf08a811efd3d62a" }
+- { record: panel.stair-3m, at: "2026-10-18T01:25:38Z", status: draft, summary: "changed: built_of", sha: "4beb1e9891445b12" }
 - { record: panel.wall-door-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "483f3d2946a9f8c3" }
 - { record: panel.wall-double-door-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "bb78c6d4f7f947e2" }
 - { record: panel.wall-glazed-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "3ac92dbf3aa79894" }
@@ -4376,7 +4376,7 @@
 - { record: template.pipe-lagged, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "ee12031c045d334f" }
 - { record: template.plug-socket, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "3dfe5b5f0345ce4a" }
 - { record: template.roof, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "a966489b0bd9126b" }
-- { record: template.stair, at: "2026-10-18T01:24:09Z", status: "", summary: "changed: visual", sha: "f855e1c63d92f9a0" }
+- { record: template.stair, at: "2026-10-18T01:25:38Z", status: "", summary: "changed", sha: "dc0f89d97f6807ea" }
 - { record: template.termination-hv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "b0398bafc880c882" }
 - { record: template.termination-lv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "b3fff31e02cd79e5" }
 - { record: template.termination-mv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "5098fcf4fe0ded80" }
