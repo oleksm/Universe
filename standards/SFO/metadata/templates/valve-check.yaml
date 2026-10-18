@@ -10,15 +10,15 @@ scales_by:
 - physical
 members: 2
 reference: connector.valve-check-dn100-pn10
-visual:
-  format: "freefall-model/1"
-  path: "models/valve-check/v1"
-  manifest_sha256: "e7e0af552a6b89bcfa9e519e33db3b42c450f44d1dfdcb9c42e44ad170b055f3"
-  version: 1
-  triangles: 4958
 basis:
 - of:
   - draws
   - scales_by
   tier: derived
   note: 'The owner, 2026-10-17: one template a family, scaled; the catalogue families (kit_catalogue.py).'
+visual:
+  format: freefall-model/1
+  path: models/valve-check/v1
+  manifest_sha256: e7e0af552a6b89bcfa9e519e33db3b42c450f44d1dfdcb9c42e44ad170b055f3
+  version: 1
+  triangles: 4958

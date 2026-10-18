@@ -14,26 +14,23 @@ physical:
   length: 0.216
   width: 0.558
   height: 0.25
-  mass: 20.0
+  mass: 27.83
 built_of:
-- what: Body and bonnet
+- what: Body, bonnet and flanges
   item: material.structural-steel-a36
-  mass: 15.0
-  note: cast carbon steel
+  mass: 27.0
+  note: cast carbon steel, with its lever or hinge
 - what: Trim
   item: material.stainless-steel-304
-  mass: 4.0
-  note: stainless seats, stem, disc or ball
-- what: Packing and seats
-  item: material.epdm-rubber
-  mass: 1.0
+  mass: 0.83
+  note: stainless ball, disc and stem
 provides: both
 template: template.valve-relief
 basis:
 - of:
   - physical
   - built_of
-  tier: invented
+  tier: derived
   review: true
-  note: Face to face as the EN 558 series run (from memory); its height along the line; the lever, gearbox or actuator out to 0.45 m from the axis along +Z, inside its width; From memory of makers' catalogues; to be sourced.
+  note: 'From blender''s model (2026-10-18): the kit''s flanges, inline chambers meeting only at an 18 mm-radius seat, a closed 304 poppet, stem, spring and cap adjuster; metal-seated, no elastomer.'
 interface: interface.flange-dn50-pn10

@@ -10,7 +10,6 @@ package: package.crate-steel
 made_from:
 - item: material.structural-steel-a36
 - item: material.stainless-steel-304
-- item: material.epdm-rubber
 size:
   length: 0.216
   width: 0.558
@@ -18,7 +17,7 @@ size:
 supplies:
   item: connector.valve-relief-dn50-pn10
 physical:
-  mass: 20.0
+  mass: 27.83
 basis:
 - of:
   - size

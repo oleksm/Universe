@@ -304,8 +304,8 @@
 - { record: connector.valve-check-dn300-pn10, at: "2026-10-18T05:53:01Z", status: draft, summary: "changed: physical, built_of, basis", sha: "615e4c0c8d4918d3" }
 - { record: connector.valve-gate-dn100-pn10, at: "2026-10-18T05:39:56Z", status: draft, summary: "changed: physical, basis", sha: "ca6d5f87ec5d6d4c" }
 - { record: connector.valve-gate-dn300-pn10, at: "2026-10-18T05:39:56Z", status: draft, summary: "changed: physical, basis", sha: "93fca62d4539631a" }
-- { record: connector.valve-relief-dn100-pn10, at: "2026-10-18T05:39:56Z", status: draft, summary: "changed: physical, basis", sha: "94ab6d5e46ddb2ae" }
-- { record: connector.valve-relief-dn50-pn10, at: "2026-10-18T05:39:56Z", status: draft, summary: "changed: physical, basis", sha: "65bb8a2277730945" }
+- { record: connector.valve-relief-dn100-pn10, at: "2026-10-18T06:04:55Z", status: draft, summary: "changed: physical, built_of, basis", sha: "ff47cfe4d1c9bd30" }
+- { record: connector.valve-relief-dn50-pn10, at: "2026-10-18T06:04:55Z", status: draft, summary: "changed: physical, built_of, basis", sha: "e3c176857ab1902b" }
 - { record: deposit-type.bauxite, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "dd1d9ae466b00d9c" }
 - { record: deposit-type.beach-sands, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "05300c8f8c485b23" }
 - { record: deposit-type.carbonate-zinc-lead, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "f3973001bc1c5802" }
@@ -3702,8 +3702,8 @@
 - { record: stock.kit-valve-check-dn300-pn10, at: "2026-10-18T05:53:01Z", status: review, summary: "changed: physical", sha: "d07fda45422508ff" }
 - { record: stock.kit-valve-gate-dn100-pn10, at: "2026-10-18T05:39:56Z", status: review, summary: "changed: size", sha: "12c799aefb163756" }
 - { record: stock.kit-valve-gate-dn300-pn10, at: "2026-10-18T05:39:56Z", status: review, summary: "changed: size", sha: "6b8a3e566d0a6fa8" }
-- { record: stock.kit-valve-relief-dn100-pn10, at: "2026-10-18T05:39:56Z", status: review, summary: "changed: size", sha: "6938ce69bbc8e433" }
-- { record: stock.kit-valve-relief-dn50-pn10, at: "2026-10-18T05:39:56Z", status: review, summary: "changed: size", sha: "aa215e91c16f17a3" }
+- { record: stock.kit-valve-relief-dn100-pn10, at: "2026-10-18T06:04:55Z", status: review, summary: "changed: made_from, physical", sha: "adfd35034259bc8c" }
+- { record: stock.kit-valve-relief-dn50-pn10, at: "2026-10-18T06:04:55Z", status: review, summary: "changed: made_from, physical", sha: "dcf7127567777d73" }
 - { record: stock.lamps-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "44db537ad1273c3f" }
 - { record: stock.laterite-nickel-ore-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "59890bf0945dd4ae" }
 - { record: stock.lead-concentrate-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "5729e1a58454cfc6" }
@@ -4387,8 +4387,8 @@
 - { record: template.union, at: "2026-10-18T05:39:56Z", status: "", summary: "changed", sha: "3450ba43d5c17d70" }
 - { record: template.valve-ball, at: "2026-10-18T05:53:01Z", status: "", summary: "changed", sha: "5f800b157e7a150c" }
 - { record: template.valve-butterfly, at: "2026-10-18T05:53:01Z", status: "", summary: "changed", sha: "6baaa3aa154ffd11" }
-- { record: template.valve-check, at: "2026-10-18T05:55:46Z", status: "", summary: "changed: visual", sha: "00cbc71b91f4f94d" }
-- { record: template.valve-gate, at: "2026-10-18T06:00:32Z", status: "", summary: "changed: visual", sha: "a05a746915ac092a" }
+- { record: template.valve-check, at: "2026-10-18T06:04:55Z", status: "", summary: "changed", sha: "0f4708352138616b" }
+- { record: template.valve-gate, at: "2026-10-18T06:04:55Z", status: "", summary: "changed", sha: "d85c253b61e53906" }
 - { record: template.valve-relief, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "d49ebff915dfb3f2" }
 - { record: template.wall-door, at: "2026-10-18T02:56:15Z", status: "", summary: "changed", sha: "5ee61de4e9641cf9" }
 - { record: template.wall-double-door, at: "2026-10-18T02:56:15Z", status: "", summary: "changed", sha: "26ab0ddf416087e3" }
