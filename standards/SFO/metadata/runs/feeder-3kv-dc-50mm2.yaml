@@ -4,7 +4,7 @@ identity:
   key: run.feeder-3kv-dc-50mm2
   name: Feeder, 3 kV DC, 50 mm2
   description: 'One pole of a ship''s high-voltage DC bus: a single stranded copper core in 2 mm of PTFE under an earthed braid and jacket, laid in pairs (plus and minus) along the frame. 125 A in vacuum, where only radiation cools
-    it.'
+    it; 300 A alone in free air.'
 kind: cable
 size: 4.9999999999999996e-05
 outside:
@@ -13,6 +13,8 @@ outside:
 rating:
   voltage: 3000
   current: 125
+  current_air: 300
+  current_air_bundle: 210
 per_m:
   mass: 0.656
   built_of:
@@ -38,6 +40,12 @@ basis:
   review: true
   note: Insulation from memory of medium-voltage aerospace and traction cable; least bend 8 outsides; From memory of makers' catalogues; to be sourced.
 - of:
-  - rating
+  - rating.current
   tier: derived
-  note: '2.5 A/mm2 in copper, radiation only (plant_kit.J_VACUUM): one core alone; a pair laid together runs warmer.'
+  note: '2.5 A/mm2 in copper, radiation only (plant_kit.J_VACUUM), aluminium at sqrt of the resistivities'' ratio of it (the same heat a metre): one core alone; a pair laid together runs warmer.'
+- of:
+  - rating.current_air
+  - rating.current_air_bundle
+  tier: invented
+  review: true
+  note: 800 A for 240 mm2 copper alone in free air at 40 deg C, others by area^0.625, aluminium as above; a bundle of up to six at 0.7; From memory of makers' catalogues; to be sourced.

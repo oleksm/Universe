@@ -14,19 +14,19 @@ physical:
   length: 0.03
   width: 0.03
   height: 0.06
-  mass: 0.1
+  mass: 0.0627
 built_of:
 - what: Shells and coupling ring
   item: material.aluminium-alloy-6061
-  mass: 0.06
+  mass: 0.046
   note: anodised aluminium
 - what: Contacts
   item: material.copper
-  mass: 0.02
+  mass: 0.007
   note: gold-plated copper alloy, as copper here
 - what: Inserts and seals
   item: material.epdm-rubber
-  mass: 0.02
+  mass: 0.009
   note: silicone, as EPDM here
 provides: both
 template: template.circular-connector
@@ -34,6 +34,10 @@ basis:
 - of:
   - physical
   - built_of
+  tier: derived
+  review: true
+  note: 'From blender''s model (2026-10-18): 30 x 30 x 60 mm mated, seven contacts (six on a 10 mm circle and one at the centre), 2 mm pins, three bayonet pins.'
+- of:
   - rating
   tier: invented
   review: true

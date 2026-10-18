@@ -1,0 +1,76 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+# Written by tools/standards/converters.py: change it there.
+identity:
+  key: equipment.power.converter.270v-10kw
+  name: DC converter, 3 kV to 270 V, 10 kW
+  maker: org.meridian
+  revision: draft
+  slot: power
+  description: 'Steps the ship''s 3 kV DC bus down to its 270 V DC bus, up to 10 kW out, isolated: a sealed box on four feet, the 3 kV pair in at one end (HV DC pole connectors), the 270 V out and data at the other, the coolant pair
+    under it. 97% efficient: at full load it draws 10.31 kW and gives 0.31 kW to the coolant loop.'
+size_class: 1
+fits: mount.power-s1
+physical:
+  mass: 6.2
+  volume: 0.005
+  length: 0.271
+  width: 0.136
+  height: 0.136
+built_of:
+  parts: power-converter-270v-10kw
+  list:
+  - code: DC270K10-01
+    name: Power stages and controls
+    description: silicon carbide switches, gate drives, the controller
+    mass: 1.86
+    length: 0.271
+    width: 0.136
+    height: 0.082
+    item: good.electronics
+    quantity: 2.14
+    module: module.electronics-works
+  - code: DC270K10-02
+    name: Transformer and inductors
+    description: the isolating high-frequency transformer and the filter chokes; ferrite cores counted with the copper
+    mass: 2.17
+    length: 0.271
+    width: 0.136
+    height: 0.095
+    item: stock.cu-wire-2
+    quantity: 2.5
+    module: module.electronics-works
+  - code: DC270K10-03
+    name: Cold plate and case
+    description: a machined cold plate on the coolant pair, the sealed case and four feet
+    mass: 2.17
+    length: 0.271
+    width: 0.136
+    height: 0.136
+    item: stock.al6061-pl-5
+    quantity: 2.5
+    module: module.machining-centre
+making:
+  module: module.assembly-shop
+function:
+  kind: converter
+  from_voltage: 3000.0
+  to_voltage: 270.0
+  carries: 10000.0
+  efficiency: 0.97
+life: 473364000
+basis:
+- of:
+  - function
+  - physical
+  - built_of.list
+  - size_class
+  tier: invented
+  review: true
+  note: 1.6 kW/kg and 2 kW/litre with its cold plate; 97% at full load; From memory of aerospace and traction DC-DC converters (isolated SiC stages, liquid-cooled); to be sourced.
+- of:
+  - built_of
+  - making
+  rule: rule.first-design-parts
+- of:
+  - life
+  rule: rule.life-ship-system
