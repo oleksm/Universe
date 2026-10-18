@@ -122,10 +122,14 @@ def cmd_set(key, dotted, value):
     parts = dotted.split(".")
     for p_ in parts[:-1]:
         node = node[int(p_)] if isinstance(node, list) else node.setdefault(p_, {})
-    old = node[int(parts[-1])] if isinstance(node, list) else node.get(parts[-1])
-    if isinstance(node, list):
+    if isinstance(node, list) and parts[-1] == "+":      # (a path ending in + appends to the list)
+        old = None
+        node.append(v)
+    elif isinstance(node, list):
+        old = node[int(parts[-1])]
         node[int(parts[-1])] = v
     else:
+        old = node.get(parts[-1])
         node[parts[-1]] = v
     open(f, "w", encoding="utf-8").write((head + "\n" if head.startswith("#") else "") + yaml.safe_dump(d, sort_keys=False, allow_unicode=True, width=230))
     print(f"{key} {dotted}: {old!r} -> {v!r}   (comments in the file, other than its first line, are not kept)")

@@ -306,50 +306,50 @@
 - { record: connector.valve-gate-dn300-pn10, at: "2026-10-18T04:31:06Z", status: draft, summary: "changed: physical", sha: "3ee827d6d147f83c" }
 - { record: connector.valve-relief-dn100-pn10, at: "2026-10-18T04:31:06Z", status: draft, summary: "changed: physical", sha: "311736cd4d713d50" }
 - { record: connector.valve-relief-dn50-pn10, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "cce9eb2283d6bfc1" }
-- { record: deposit-type.bauxite, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: host_units, rate", sha: "71dfd89adcd42d8f" }
-- { record: deposit-type.beach-sands, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: host_units, rate", sha: "ea1f36c83aa3ac15" }
-- { record: deposit-type.carbonate-zinc-lead, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: body_height, rate", sha: "80cc06090ebc52a3" }
-- { record: deposit-type.carbonatite, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: body_height, rate", sha: "64184e83c1d3353d" }
-- { record: deposit-type.carlin-gold, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: setting, rate", sha: "af8d091b4a0017c1" }
-- { record: deposit-type.chromite, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: body_height, rate", sha: "3e6dc6339d7adb10" }
+- { record: deposit-type.bauxite, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "dd1d9ae466b00d9c" }
+- { record: deposit-type.beach-sands, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "05300c8f8c485b23" }
+- { record: deposit-type.carbonate-zinc-lead, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "f3973001bc1c5802" }
+- { record: deposit-type.carbonatite, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "dedd9faa7e33ac04" }
+- { record: deposit-type.carlin-gold, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "01a225c667110aa9" }
+- { record: deposit-type.chromite, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "82b47c778c5e02ce" }
 - { record: deposit-type.coalfield, at: "2026-10-06T15:24:14Z", status: draft, summary: "first tracked", sha: "ce0681bfec1d8f4c" }
-- { record: deposit-type.copper-skarn, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: setting, rate", sha: "b7a05d335cf19192" }
-- { record: deposit-type.epithermal, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: body_height, rate", sha: "080f1bb79e54451a" }
-- { record: deposit-type.fossil-placer-gold, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: setting, rate", sha: "442a9c1dfc14df50" }
+- { record: deposit-type.copper-skarn, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "6f349fb7c600ee58" }
+- { record: deposit-type.epithermal, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "b956d5655ae97b50" }
+- { record: deposit-type.fossil-placer-gold, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "6762e98c96a1e210" }
 - { record: deposit-type.gas-field, at: "2026-10-06T15:24:14Z", status: draft, summary: "first tracked", sha: "5f17fe7ca938e16e" }
-- { record: deposit-type.graphite, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: setting, rate", sha: "7688d58f7b7c8606" }
+- { record: deposit-type.graphite, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "9a6dc6ffd2b2ae1e" }
 - { record: deposit-type.impact-diamond, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: host_units, impact", sha: "c5f2113c286cf67d" }
 - { record: deposit-type.impact-hydrothermal, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: impact", sha: "8457ff28c7cf2d63" }
 - { record: deposit-type.impact-melt-nickel, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: impact", sha: "0bfd251194902b81" }
-- { record: deposit-type.iron-formation, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: body_height, rate", sha: "a9b8775b93d1e20e" }
-- { record: deposit-type.iron-oxide-copper-gold, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: setting, rate", sha: "0affbcc462ee8ddc" }
-- { record: deposit-type.kimberlite, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: body_height, rate", sha: "fb13615fe64ee416" }
-- { record: deposit-type.laterite-nickel, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: host_units, rate", sha: "1418c4540283058d" }
-- { record: deposit-type.layered-intrusion, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: body_height, rate", sha: "646505f589cddbda" }
-- { record: deposit-type.lithium-pegmatite, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: setting, rate", sha: "edacf0a43ffa9676" }
-- { record: deposit-type.magnesite, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: body_height, rate", sha: "00b98708162bc2e7" }
-- { record: deposit-type.magnetite-seams, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: body_height, rate", sha: "b6d7c20ec096be56" }
-- { record: deposit-type.manganese-nodules, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: rate", sha: "6bf8389f127a2933" }
-- { record: deposit-type.massive-sulphide, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: body_height, rate", sha: "47ebfc63404d2b69" }
-- { record: deposit-type.nickel-sulphide, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: body_height, rate", sha: "5bbda7a7dd9029e4" }
+- { record: deposit-type.iron-formation, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "a5e90c60a4607a35" }
+- { record: deposit-type.iron-oxide-copper-gold, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "d8f4043190b41522" }
+- { record: deposit-type.kimberlite, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "13a230a7c7c90afb" }
+- { record: deposit-type.laterite-nickel, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "3cd5283cb6735b61" }
+- { record: deposit-type.layered-intrusion, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "3ff4ebabfe8aed8f" }
+- { record: deposit-type.lithium-pegmatite, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "6a96ff3bf920610f" }
+- { record: deposit-type.magnesite, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "aabfa3504d36a400" }
+- { record: deposit-type.magnetite-seams, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "07f9005feb6a18c8" }
+- { record: deposit-type.manganese-nodules, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "bb61d440a37459fc" }
+- { record: deposit-type.massive-sulphide, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "c9a2394028b3a0e3" }
+- { record: deposit-type.nickel-sulphide, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "afdd063e0da12f5d" }
 - { record: deposit-type.oil-field, at: "2026-10-06T15:24:14Z", status: draft, summary: "first tracked", sha: "030968da99a52b13" }
-- { record: deposit-type.orogenic-gold, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: body_height, rate", sha: "69ff2582fb79087e" }
-- { record: deposit-type.phosphorite, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: body_height, rate", sha: "71d89713974a5721" }
-- { record: deposit-type.placer-gold, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: setting, rate", sha: "7f754a9287153f5f" }
-- { record: deposit-type.porphyry, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: body_height, rate", sha: "6e7c780a11fa7557" }
-- { record: deposit-type.potash, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: body_height, rate", sha: "3d2f9d44ab1e441f" }
-- { record: deposit-type.rare-earth-clay, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: carries, setting, rate", sha: "ce34384c34e0045d" }
-- { record: deposit-type.rock-salt, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: body_height, rate", sha: "113c58c597f7b60e" }
-- { record: deposit-type.salt-dome-sulphur, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: body_height, rate", sha: "11c3295cef61b345" }
-- { record: deposit-type.salt-flat-brine, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: host_units, rate", sha: "07eababf89fd5144" }
-- { record: deposit-type.sandstone-uranium, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: setting, rate", sha: "d5f7ce45fc3f3b8e" }
-- { record: deposit-type.sediment-copper, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: body_height, rate", sha: "6c51cf99ac4dea7b" }
-- { record: deposit-type.sedimentary-manganese, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: body_height, rate", sha: "22223d13f7679df2" }
-- { record: deposit-type.shale-zinc-lead, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: body_height, rate", sha: "a3084f85197c4963" }
-- { record: deposit-type.tin-tungsten, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: body_height, rate", sha: "9458655fefb6805d" }
-- { record: deposit-type.tungsten-skarn, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: setting, rate", sha: "cba424439b972418" }
-- { record: deposit-type.unconformity-uranium, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: setting, rate", sha: "68f6082b65fd0c43" }
-- { record: deposit-type.volcanic-sulphur, at: "2026-10-17T19:35:29Z", status: draft, summary: "changed: body_height, rate", sha: "ac0fde048e7ca3f2" }
+- { record: deposit-type.orogenic-gold, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "5fadc57ae1d195e6" }
+- { record: deposit-type.phosphorite, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "f69a783a0c7c69c5" }
+- { record: deposit-type.placer-gold, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "157d33a12f84b6ee" }
+- { record: deposit-type.porphyry, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "ffca1ca0c33e059c" }
+- { record: deposit-type.potash, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "ca2bcc26f9d0d7f8" }
+- { record: deposit-type.rare-earth-clay, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "a05510c4b97bed68" }
+- { record: deposit-type.rock-salt, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "4af8a3bee31362d9" }
+- { record: deposit-type.salt-dome-sulphur, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "f82c35722e2b9fca" }
+- { record: deposit-type.salt-flat-brine, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "2a599b93680f93ed" }
+- { record: deposit-type.sandstone-uranium, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "035980997cb3dd97" }
+- { record: deposit-type.sediment-copper, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "94c6877b20e2d22a" }
+- { record: deposit-type.sedimentary-manganese, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "2e3fdd7bf6e60330" }
+- { record: deposit-type.shale-zinc-lead, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "a65e7dd2775c0ee2" }
+- { record: deposit-type.tin-tungsten, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "11e45bd52a907344" }
+- { record: deposit-type.tungsten-skarn, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "edf7b1a3de73c7b7" }
+- { record: deposit-type.unconformity-uranium, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "2ccfa665707e4f28" }
+- { record: deposit-type.volcanic-sulphur, at: "2026-10-18T05:25:20Z", status: draft, summary: "changed: basis, density", sha: "f36ea3e0e6637975" }
 - { record: dogma.air, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "b5d27529086ebefc" }
 - { record: dogma.climate, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "762d9412cc862e45" }
 - { record: dogma.contact, at: "2026-10-17T19:23:08Z", status: "", summary: "first tracked", sha: "9daff7129dfa56c2" }

@@ -57,9 +57,16 @@ basis:
   review: true
   source: 'the planet simulation: brief ''World Geology'' v0.3 of 2026-10-05; test world E4'
   note: Deposits in one test world, against about how many are known on Earth.
+- of:
+  - density
+  tier: derived
+  review: true
+  note: 'Converted once (17 Oct 2026) from rate, which was per E4 sample of 17,003 km2 over E4s 4.067 Gyr of plates: density = rate / 17,003 km2 / 4.067 Gyr (planet-forge tools/registry/deposit_density.py). Counts on a grown planet
+    unchanged; to be re-judged against known deposit counts per area.'
 host_units:
 - rock-unit.granite
 - rock-unit.gneiss-basement
 - rock-unit.granodiorite
 - rock-unit.schist
 rate: 3.37
+density: 1.544e-27

@@ -65,6 +65,7 @@ properties:
   forms_at: { type: number, x-unit: "m", description: "m below the ground it forms at; erosion brings it up" }
   body_height: { type: number, x-unit: "m", description: "m, the ore body's vertical extent" }
   rate: { type: number, minimum: 0, x-unit: "1", description: "deposits the simulation places per unit of ore chance (its own scale)" }
+  density: { type: number, minimum: 0, x-unit: "1/(m2 s)", description: "deposits per m2 of full ore chance per s of plate history (the vector Planet Simulator reads this; rate is the old per-sample scale, converted once by planet-forge tools/registry/deposit_density.py: rate / 17,003 km2 / 4.067 Gyr)" }
   host_units: { type: array, items: { type: string, x-ref: [rock-unit] }, description: "The rock units it forms on (a weathering, setting or impact type); empty or left out: any land." }
   setting: { type: string, description: "The setting it forms in, in the simulation's words (old crust, young basins and climate...)." }
   impact:
