@@ -4468,7 +4468,7 @@
 - { record: unit.furniture-office-chair, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "538892c4148ef759" }
 - { record: unit.furniture-planter, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "2db9aa9fd18c71b5" }
 - { record: unit.furniture-pupil-desk, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "b3ed49834de4bd3d" }
-- { record: unit.furniture-rack, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "1fa1084d32a2d1d1" }
+- { record: unit.furniture-rack, at: "2026-10-18T00:03:39Z", status: draft, summary: "changed: visual", sha: "e6cb36aaed1ee0bb" }
 - { record: unit.furniture-range, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "d20f0ea342a8c5ed" }
 - { record: unit.furniture-reception-desk, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "2c88bdb2d8241095" }
 - { record: unit.furniture-seat-row, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "6c43da2555446d84" }
