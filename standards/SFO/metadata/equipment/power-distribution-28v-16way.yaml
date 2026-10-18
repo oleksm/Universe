@@ -54,6 +54,12 @@ making:
 function:
   kind: switchgear
   carries: 11200.0
+visual:
+  format: "freefall-model/1"
+  path: "models/power-distribution-28v-16way/v1"
+  manifest_sha256: "61d6320b714fe196424d6a9278883b76c04e26c1b34b75250a713623799f5da7"
+  version: 1
+  triangles: 10780
 life: 473364000
 ports:
 - id: in+
