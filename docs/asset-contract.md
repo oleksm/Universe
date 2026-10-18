@@ -159,6 +159,13 @@ One model draws every size of a kit family (`standards/SFO/metadata/templates/`)
 - **Real shape first:** if the reference's figures are not what the real part measures, model the real part and send the
   measured sides; the registry changes the family's rule, never the model.
 - A sweep template (hose, cable, conductor rail's housing) has no model: the game sweeps its profile.
+- **Conductor rail and collector** (enclosed rail): the housing runs along +X, open in a slot underneath. Its section's
+  datum is the slot mouth: y = 0 there, centred in Z, the housing rising to y = outside[1], `outside[0]` wide. The four
+  conductors line the inside side walls, two a side, stacked: contact faces at z = ±(width/2 − 0.015), y = 0.3 and
+  0.65 of the height (90 × 160 mm: z = ±0.030, y = 0.048 and 0.104; 120 × 200 mm: z = ±0.045, y = 0.060 and 0.130;
+  invented, to be sourced from a maker's drawing). The collector is one root node `body` on the same datum: travel +X,
+  its trolley above y = 0 inside the housing (no wider than width − 0.02), its four shoes facing outward ±Z onto those
+  faces, its towing arm below y = 0 to the machine.
 - **Panels** (building panels' templates): one root node `body`, static. A wall or partition stands with its foot at
   y = 0, its face along X centred on x = 0, its thickness along Z centred on the frame's grid line (z = 0), outside
   face toward +Z. A floor's walking plane is y = 0, the cassette below it; a roof sits on the frame's top, its underside
