@@ -16,7 +16,7 @@ size:
 supplies:
   item: connector.twistlock-iso1161
 physical:
-  mass: 4.5
+  mass: 6.46
 basis:
 - of:
   - size

@@ -12,17 +12,21 @@ physical:
   length: 0.16
   width: 0.15
   height: 0.2
-  mass: 4.5
+  mass: 6.46
 built_of:
 - what: Cones, shaft and lever
   item: material.high-strength-steel-4340
-  mass: 4.5
+  mass: 6.46
   note: forged steel; a double-ended inter-box lock
 provides: male
 template: template.twistlock
 basis:
 - of:
   - physical
+  tier: derived
+  review: true
+  note: 'From blender''s model (2026-10-18): solid 160 x 90 x 28 mm spacer with bearing and lever slot, 36 mm shaft, 118 x 58 mm tapered heads, 12 mm lever; turns 0 to 90 degrees in the casting clear.'
+- of:
   - rating
   tier: invented
   review: true
