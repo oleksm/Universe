@@ -24,7 +24,7 @@ FURNITURE = {  # name: (title, description, (length, width, height), [(what, ite
     "board": ("Board", "A wall board for a classroom or a briefing room.", (2.4, 0.1, 1.2), [("Skins, frame, tray and retaining strips", AL, 34.7)], "blender's model (2026-10-17): two 1 mm coated skins, perimeter frame, tray and wall seats"),
     "bed": ("Bed", "A single bed with its mattress.", (2.1, 1.0, 0.6), [("Frame", STEEL, 35.0), ("Mattress", PE, 15.0)], None),
     "bed-ward": ("Ward bed", "A powered hospital bed with rails.", (2.2, 1.0, 0.7), [("Frame, rails and motors", STEEL, 105.0), ("Mattress", PE, 18.0)], None),
-    "bunk": ("Bunk", "A double bunk with its two mattresses.", (2.0, 0.9, 1.7), [("Frame", STEEL, 60.0), ("Mattresses", PE, 30.0)], None),
+    "bunk": ("Bunk", "A double bunk with its two mattresses.", (2.0, 0.9, 1.7), [("Frame, guards, ladder and slats", STEEL, 90.3), ("Mattresses", PE, 30.0)], "blender's model (2026-10-17): 40 x 40 x 2 mm posts and rails, 25 x 25 x 1.5 mm guards and ladder, 2 mm slats; the mattresses an allowance"),
     "locker": ("Locker", "A full-height steel locker.", (0.3, 0.5, 1.8), [("Carcass", STEEL, 25.0)], None),
     "shelf": ("Shelf section", "A double-sided gondola shelf section, 1.2 m long.", (1.2, 1.0, 1.8), [("Uprights, base and shelves", STEEL, 70.0)], None),
     "counter": ("Counter section", "A serving counter section 1.8 m long with its worktop.", (1.8, 0.8, 1.05), [("Carcass", STEEL, 85.0), ("Worktop", PE, 32.0)], "blender's counter bay: 5.4 m of counter and back shelving 427 kg of steel, 96 kg of worktop"),

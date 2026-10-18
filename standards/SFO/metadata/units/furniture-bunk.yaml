@@ -9,11 +9,11 @@ physical:
   length: 2.0
   width: 0.9
   height: 1.7
-  mass: 90.0
+  mass: 120.3
 built_of:
-- what: Frame
+- what: Frame, guards, ladder and slats
   item: material.structural-steel-a36
-  mass: 60.0
+  mass: 90.3
 - what: Mattresses
   item: material.polyethylene-uhmw
   mass: 30.0
@@ -21,6 +21,6 @@ basis:
 - of:
   - built_of
   - physical
-  tier: invented
+  tier: derived
   review: true
-  note: From memory of such furniture; to be sourced.
+  note: 'From blender''s model (2026-10-17): 40 x 40 x 2 mm posts and rails, 25 x 25 x 1.5 mm guards and ladder, 2 mm slats; the mattresses an allowance.'

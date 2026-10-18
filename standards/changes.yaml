@@ -9,7 +9,7 @@
 - { record: arrangement.counter, at: "2026-10-18T01:33:11Z", status: draft, summary: "changed: mass", sha: "5045d99f6bb5c67e" }
 - { record: arrangement.court, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "30da7ccb0fbfd71c" }
 - { record: arrangement.dining, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "e42e56fe736f0c2c" }
-- { record: arrangement.dorm, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "53de964be57e70cd" }
+- { record: arrangement.dorm, at: "2026-10-18T03:07:13Z", status: draft, summary: "changed: mass", sha: "070e169f29eb2bac" }
 - { record: arrangement.flat, at: "2026-10-17T23:50:32Z", status: draft, summary: "changed: mass", sha: "8648e52944b6217e" }
 - { record: arrangement.garage, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "20f237bd40fe7309" }
 - { record: arrangement.garden, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "6513b9ce9404437f" }
@@ -1100,7 +1100,7 @@
 - { record: layout.building-arena, at: "2026-10-18T02:56:15Z", status: draft, summary: "changed: physical, frame, totals", sha: "e41703686f2c411f" }
 - { record: layout.building-bank, at: "2026-10-18T01:33:11Z", status: draft, summary: "changed: physical, totals", sha: "ee9bef662a6b8ac7" }
 - { record: layout.building-builders-yard, at: "2026-10-18T02:56:15Z", status: draft, summary: "changed: physical, frame, totals", sha: "0dea58b39b038bbe" }
-- { record: layout.building-bunkhouse, at: "2026-10-18T01:21:24Z", status: draft, summary: "changed: physical, frame, totals", sha: "6a70d3f4749427fa" }
+- { record: layout.building-bunkhouse, at: "2026-10-18T03:07:13Z", status: draft, summary: "changed: physical, totals", sha: "bca3605ff5b82cc1" }
 - { record: layout.building-care-home, at: "2026-10-18T01:21:24Z", status: draft, summary: "changed: physical, frame, totals", sha: "951b066929737253" }
 - { record: layout.building-clinic, at: "2026-10-18T01:58:36Z", status: draft, summary: "changed: physical, totals", sha: "cd02070811a336ae" }
 - { record: layout.building-college, at: "2026-10-18T02:20:10Z", status: draft, summary: "changed: physical, totals", sha: "6b35b1ed676072f6" }
@@ -4449,7 +4449,7 @@
 - { record: unit.furniture-bed-ward, at: "2026-10-18T00:56:24Z", status: draft, summary: "changed", sha: "aa302b37216848ef" }
 - { record: unit.furniture-bench, at: "2026-10-18T00:56:24Z", status: draft, summary: "changed", sha: "30276ffd7eb04afe" }
 - { record: unit.furniture-board, at: "2026-10-18T02:56:15Z", status: draft, summary: "changed", sha: "d55915f9fdbd6ff2" }
-- { record: unit.furniture-bunk, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "2a9e159161a89509" }
+- { record: unit.furniture-bunk, at: "2026-10-18T03:07:13Z", status: draft, summary: "changed: physical, built_of, basis", sha: "babd62c249ad661e" }
 - { record: unit.furniture-cabinet, at: "2026-10-17T23:50:32Z", status: draft, summary: "changed", sha: "248b558c0a38d40f" }
 - { record: unit.furniture-cell-front, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "a20418eaa1d56f64" }
 - { record: unit.furniture-cell-wall, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "4a3bb6f7b432987e" }

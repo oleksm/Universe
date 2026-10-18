@@ -61,7 +61,7 @@ items:
   - 2.6
   - 0.0
   turn: 180.0
-mass: 420.0
+mass: 510.9
 basis:
 - of:
   - items
