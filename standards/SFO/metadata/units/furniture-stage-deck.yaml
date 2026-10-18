@@ -14,6 +14,12 @@ built_of:
 - what: Deck and legs
   item: material.structural-steel-a36
   mass: 120.0
+visual:
+  format: "freefall-model/1"
+  path: "models/furniture-stage-deck/v1"
+  manifest_sha256: "83b11ae9b7c9b32f291bfc5d4e4553d42767f97697a3ad8a77f3d87f0c589e3f"
+  version: 1
+  triangles: 1068
 basis:
 - of:
   - built_of
