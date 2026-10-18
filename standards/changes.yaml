@@ -263,7 +263,7 @@
 - { record: connector.lined-flange-dn1200-pn1, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "a3508423bbfa95b2" }
 - { record: connector.lined-flange-dn2400-pn16-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "250ee52b4dee6fc9" }
 - { record: connector.lined-flange-dn3600-pn10-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "eaf49c50b35ba4b3" }
-- { record: connector.plug-iec60309-125a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "12b4038d41d937cf" }
+- { record: connector.plug-iec60309-125a, at: "2026-10-18T05:00:50Z", status: draft, summary: "changed: identity", sha: "e2cc98b4d5313bd9" }
 - { record: connector.plug-iec60309-16a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "e8f81c94aaddd091" }
 - { record: connector.plug-iec60309-32a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "c21a0b2f7fa8508a" }
 - { record: connector.plug-iec60309-63a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "3da7c6192318b95d" }
@@ -3661,7 +3661,7 @@
 - { record: stock.kit-pipe-dn700-pn10, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "4593e088cc41978e" }
 - { record: stock.kit-pipe-dn700-pn10-mli, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "36b925289cc467c6" }
 - { record: stock.kit-pipe-dn900-pn10, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "845ba11b410a070b" }
-- { record: stock.kit-plug-iec60309-125a, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "6c44e4ef78a5829e" }
+- { record: stock.kit-plug-iec60309-125a, at: "2026-10-18T05:00:50Z", status: review, summary: "changed: identity", sha: "6386fd4c532635e9" }
 - { record: stock.kit-plug-iec60309-16a, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "59daeb83bfdd7936" }
 - { record: stock.kit-plug-iec60309-32a, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "d0a273e2ba50b3eb" }
 - { record: stock.kit-plug-iec60309-63a, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "cf91e00d14157b89" }
@@ -4363,7 +4363,7 @@
 - { record: template.festoon, at: "2026-10-18T04:54:39Z", status: "", summary: "changed", sha: "e8d5604c86f67779" }
 - { record: template.flange, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "df7d790e5b79a704" }
 - { record: template.flange-double, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "1587eb01caf04022" }
-- { record: template.flat-face, at: "2026-10-18T04:58:25Z", status: "", summary: "changed: visual", sha: "01c871cba8a12081" }
+- { record: template.flat-face, at: "2026-10-18T05:00:50Z", status: "", summary: "changed", sha: "6655c0a42fb55b1c" }
 - { record: template.floor, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "92d1ba192124ab37" }
 - { record: template.hood, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "2bd0f63963dc39e7" }
 - { record: template.hose, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "76521a9d59aafaae" }

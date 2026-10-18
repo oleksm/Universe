@@ -3,7 +3,7 @@
 identity:
   key: stock.kit-plug-iec60309-125a
   code: KIT-PLUG-IEC60309-125A
-  name: Plug and socket, 125 A, 400 V
+  name: Plug and socket, 125 A, 690 V
   traded_as: market.machinery
   form: piece
 package: package.crate-steel

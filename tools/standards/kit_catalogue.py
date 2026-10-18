@@ -179,7 +179,7 @@ PLUGS = [  # (slug, name, amps, volts, pins, kg a pair, l, w, h, interface name,
     ("plug-iec60309-16a", "Plug and socket, 16 A, 400 V", 16, 400, 5, 0.45, 0.095, 0.095, 0.19, "IEC 60309 16 A 5-pin", "IEC 60309-2"),
     ("plug-iec60309-32a", "Plug and socket, 32 A, 400 V", 32, 400, 5, 0.65, 0.11, 0.11, 0.21, "IEC 60309 32 A 5-pin", "IEC 60309-2"),
     ("plug-iec60309-63a", "Plug and socket, 63 A, 400 V", 63, 400, 5, 1.9, 0.14, 0.14, 0.28, "IEC 60309 63 A 5-pin", "IEC 60309-2"),
-    ("plug-iec60309-125a", "Plug and socket, 125 A, 400 V", 125, 690, 5, 3.6, 0.17, 0.17, 0.33, "IEC 60309 125 A 5-pin", "IEC 60309-2"),
+    ("plug-iec60309-125a", "Plug and socket, 125 A, 690 V", 125, 690, 5, 3.6, 0.17, 0.17, 0.33, "IEC 60309 125 A 5-pin", "IEC 60309-2"),
     ("powerlock-400a", "Single-pole connectors, 400 A, set of five", 400, 1000, 5, 6.5, 0.3, 0.12, 0.25, "Single-pole 400 A", "single-pole 400 A connectors (the registry's; of the order of the Powerlock family)"),
     ("coupler-11kv-400a", "Coupler, 11 kV, 400 A", 400, 11000, 3, 28.0, 0.22, 0.22, 0.6, "Coupler 11 kV 400 A", "a mining-type 11 kV plug coupler (the registry's)")]
 BOUND = {  # blender's measured parts, where the model changed what it is made of

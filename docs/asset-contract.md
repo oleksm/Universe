@@ -176,6 +176,12 @@ One model draws every size of a kit family (`standards/SFO/metadata/templates/`)
 - **Single-pole sets** (template.single-pole, 300 x 120 x 250 mm reference): five single-pole connector pairs side by
   side along X at 60 mm pitch (L1, L2, L3, N, earth; each a round housing about 50 mm across), mating at y = 0, plugs
   `male` above, receivers `female` below in a common panel plate. Colour bands by pole; keyed so no two mate crosswise.
+- **Industrial plug and socket** (template.plug-socket, IEC 60309 32 A 5-pin, 110 x 110 x 210 mm reference): one round
+  red housing along Y, mating at y = 0, `male` the plug above, `female` the socket below, rear cable glands. Seen from the
+  plug's face, five contacts on a 34 mm pitch circle at 72 degrees (L1, L2, L3, N; phase and neutral pins 6 mm across),
+  the earth at 6 o'clock (-Z) 8 mm across and 3 mm longer so it makes first; the collar's keyway also at 6 o'clock.
+  Pin layout invented, no IEC conformance claimed. One look for the family: the 125 A size is the 690 V version (in the
+  standard black with its earth at 5 o'clock), drawn with the same red 400 V model for now.
 - **High-voltage coupler** (template.coupler, 220 x 220 x 600 mm reference): one round rubber-moulded body along Y,
   mating at y = 0; inside, three phase pins on a 90 mm pitch circle at 120 degrees and a pilot and an earth pin at the
   centre, in a steel shroud with a bolted coupling ring (`male` the plug, `female` the receptacle). Pin layout invented.

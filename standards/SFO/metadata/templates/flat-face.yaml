@@ -10,15 +10,15 @@ scales_by:
 - physical
 members: 4
 reference: connector.flat-face-dn13
-visual:
-  format: "freefall-model/1"
-  path: "models/flat-face/v1"
-  manifest_sha256: "0c19c024bfe2b6e643c4d21f4c3f2844049551e0dce37cd2b6e1cb5743b92a7e"
-  version: 1
-  triangles: 5208
 basis:
 - of:
   - draws
   - scales_by
   tier: derived
   note: 'The owner, 2026-10-17: one template a family, scaled; the catalogue families (kit_catalogue.py).'
+visual:
+  format: freefall-model/1
+  path: models/flat-face/v1
+  manifest_sha256: 0c19c024bfe2b6e643c4d21f4c3f2844049551e0dce37cd2b6e1cb5743b92a7e
+  version: 1
+  triangles: 5208

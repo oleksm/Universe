@@ -2,7 +2,7 @@
 # Written by tools/standards/kit_catalogue.py: change it there.
 identity:
   key: connector.plug-iec60309-125a
-  name: Plug and socket, 125 A, 400 V
+  name: Plug and socket, 125 A, 690 V
   description: 'The plug and receiver a crew or a player hooks a machine up with: made and broken by hand, keyed so that only its own rating mates, the earth pin first in and last out.'
 kind: plug-socket
 size: 0.000125
