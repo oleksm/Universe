@@ -54,12 +54,6 @@ making:
 function:
   kind: switchgear
   carries: 11200.0
-visual:
-  format: "freefall-model/1"
-  path: "models/power-distribution-28v-16way/v1"
-  manifest_sha256: "61d6320b714fe196424d6a9278883b76c04e26c1b34b75250a713623799f5da7"
-  version: 1
-  triangles: 10780
 life: 473364000
 ports:
 - id: in+
@@ -85,7 +79,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty in+
 - id: in-
   flow: in
   medium: power
@@ -109,7 +103,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty in-
 - id: in-33
   flow: in
   medium: power
@@ -134,7 +128,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty in-33
 - id: in-25
   flow: in
   medium: power
@@ -163,7 +157,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty in-25
 - id: way-1
   flow: out
   medium: power
@@ -198,7 +192,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty way-1
 - id: way-2
   flow: out
   medium: power
@@ -233,7 +227,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty way-2
 - id: way-3
   flow: out
   medium: power
@@ -268,7 +262,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty way-3
 - id: way-4
   flow: out
   medium: power
@@ -303,7 +297,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty way-4
 - id: way-5
   flow: out
   medium: power
@@ -338,7 +332,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty way-5
 - id: way-6
   flow: out
   medium: power
@@ -373,7 +367,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty way-6
 - id: way-7
   flow: out
   medium: power
@@ -408,7 +402,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty way-7
 - id: way-8
   flow: out
   medium: power
@@ -443,7 +437,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty way-8
 - id: way-9
   flow: out
   medium: power
@@ -478,7 +472,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty way-9
 - id: way-10
   flow: out
   medium: power
@@ -513,7 +507,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty way-10
 - id: way-11
   flow: out
   medium: power
@@ -548,7 +542,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty way-11
 - id: way-12
   flow: out
   medium: power
@@ -583,7 +577,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty way-12
 - id: way-13
   flow: out
   medium: power
@@ -612,7 +606,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty way-13
 - id: way-14
   flow: out
   medium: power
@@ -641,7 +635,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty way-14
 - id: way-15
   flow: out
   medium: power
@@ -670,7 +664,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty way-15
 - id: way-16
   flow: out
   medium: power
@@ -699,7 +693,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty way-16
 - id: data-1
   flow: both
   medium: signal
@@ -731,7 +725,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty data-1
 - id: data-2
   flow: both
   medium: signal
@@ -763,7 +757,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty data-2
 internal:
 - kind: switched
   ports:
@@ -809,3 +803,9 @@ basis:
 - of:
   - life
   rule: rule.life-ship-system
+visual:
+  format: freefall-model/1
+  path: models/power-distribution-28v-16way/v1
+  manifest_sha256: 61d6320b714fe196424d6a9278883b76c04e26c1b34b75250a713623799f5da7
+  version: 1
+  triangles: 10780
