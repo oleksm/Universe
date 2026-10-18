@@ -176,15 +176,20 @@ PLUGS = [  # (slug, name, amps, volts, pins, kg a pair, l, w, h, interface name,
     ("plug-iec60309-125a", "Plug and socket, 125 A, 400 V", 125, 690, 5, 3.6, 0.17, 0.17, 0.33, "IEC 60309 125 A 5-pin", "IEC 60309-2"),
     ("powerlock-400a", "Single-pole connectors, 400 A, set of five", 400, 1000, 5, 6.5, 0.3, 0.12, 0.25, "Single-pole 400 A", "single-pole 400 A connectors (the registry's; of the order of the Powerlock family)"),
     ("coupler-11kv-400a", "Coupler, 11 kV, 400 A", 400, 11000, 3, 28.0, 0.22, 0.22, 0.6, "Coupler 11 kV 400 A", "a mining-type 11 kV plug coupler (the registry's)")]
+BOUND = {  # blender's measured parts, where the model changed what it is made of
+    "coupler-11kv-400a": ([("Contacts", CU, 4.86, "pins and sockets"), ("Body", RUB, 14.95, "EPDM-moulded body"), ("Shroud, coupling ring and bolts", A36, 3.33, None)],
+                          "blender's model (2026-10-17): EPDM body, three phase pins on a 90 mm circle, pilot and earth at the centre, steel shroud and ring")}
 for slug, name, amps, v, pins, kg, l, w, h, iname, std in PLUGS:
     cu = min(kg * 0.3, pins * amps * 4e-6 * 0.08 * RHO[CU] + 0.05)
+    if slug in BOUND:
+        kg = round(sum(part(*p)["mass"] for p in BOUND[slug][0]), 2)
     conn(slug, {
         "identity": {"key": f"connector.{slug}", "name": name, "description": "The plug and receiver a crew or a player hooks a machine up with: made and broken by hand, keyed so that only its own rating mates, the earth pin first in and last out."},
         "kind": "plug-socket", "size": amps / 1e6, "rating": {"voltage": v, "current": amps},
         "physical": {"length": l, "width": w, "height": h, "mass": kg},
-        "built_of": [part("Contacts", CU, cu, "silver-plated brass, as copper here"), part("Housings and seals", PE if v < 1000 else RUB, kg - cu, "polyamide housings, as UHMW polyethylene here" if v < 1000 else "rubber-moulded body")],
+        "built_of": [part(*p) for p in BOUND[slug][0]] if slug in BOUND else [part("Contacts", CU, cu, "silver-plated brass, as copper here"), part("Housings and seals", PE if v < 1000 else RUB, kg - cu, "polyamide housings, as UHMW polyethylene here" if v < 1000 else "rubber-moulded body")],
         "provides": "both", "template": "template.plug-socket" if v < 1000 and pins == 5 and amps <= 125 else "template.single-pole" if slug.startswith("powerlock") else "template.coupler",
-        "basis": [{"of": ["physical"], "tier": "invented", "review": True, "note": MEMORY}]},
+        "basis": [{"of": ["physical"], "tier": "derived", "review": True, "note": f"From {BOUND[slug][1]}."} if slug in BOUND else {"of": ["physical"], "tier": "invented", "review": True, "note": MEMORY}]},
         {"slug": slug, "name": iname, "domain": "power", "kind": "plug-socket", "media": ["power"], "halves": "male-female", "make": "manual", "standard": std})
 
 RAILS = [(100, 25, 2.6), (250, 60, 4.3), (500, 125, 7.1), (1000, 250, 12.6)]     # (A, mm2 copper a pole, kg/m)

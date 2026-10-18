@@ -13,22 +13,25 @@ physical:
   length: 0.22
   width: 0.22
   height: 0.6
-  mass: 28.0
+  mass: 23.09
 built_of:
 - what: Contacts
   item: material.copper
-  mass: 3.49
-  note: silver-plated brass, as copper here
-- what: Housings and seals
+  mass: 4.86
+  note: pins and sockets
+- what: Body
   item: material.epdm-rubber
-  mass: 24.5
-  note: rubber-moulded body
+  mass: 14.9
+  note: EPDM-moulded body
+- what: Shroud, coupling ring and bolts
+  item: material.structural-steel-a36
+  mass: 3.33
 provides: both
 template: template.coupler
 basis:
 - of:
   - physical
-  tier: invented
+  tier: derived
   review: true
-  note: From memory of makers' catalogues; to be sourced.
+  note: 'From blender''s model (2026-10-17): EPDM body, three phase pins on a 90 mm circle, pilot and earth at the centre, steel shroud and ring.'
 interface: interface.coupler-11kv-400a

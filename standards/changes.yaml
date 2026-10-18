@@ -203,7 +203,7 @@
 - { record: connector.collector-250a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "cfa746b83013a2d7" }
 - { record: connector.collector-500a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "240ab4cd36914661" }
 - { record: connector.corner-casting-iso1161, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "e24d9788646c7810" }
-- { record: connector.coupler-11kv-400a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "724e2861c5ba7584" }
+- { record: connector.coupler-11kv-400a, at: "2026-10-18T04:24:58Z", status: draft, summary: "changed: physical, built_of, basis", sha: "c35f835f31669aa3" }
 - { record: connector.expansion-joint-dn100-pn10, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "8bef4da02874e32d" }
 - { record: connector.expansion-joint-dn1000-pn10, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "f05e60aa1453c29a" }
 - { record: connector.expansion-joint-dn300-pn10, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "4130040a30184fb6" }
@@ -3523,7 +3523,7 @@
 - { record: stock.kit-conductor-rail-250a, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "8b773995838c01dc" }
 - { record: stock.kit-conductor-rail-500a, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "1ffeebc58db3aadc" }
 - { record: stock.kit-corner-casting-iso1161, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "aea7ba02a5c2a39c" }
-- { record: stock.kit-coupler-11kv-400a, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "f6e133f08912a563" }
+- { record: stock.kit-coupler-11kv-400a, at: "2026-10-18T04:24:58Z", status: review, summary: "changed: made_from, physical", sha: "72e03863ba78c631" }
 - { record: stock.kit-drag-conveyor-800, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "a8b1f3e09c3573d7" }
 - { record: stock.kit-expansion-joint-dn100-pn10, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "5211ebddab4c2921" }
 - { record: stock.kit-expansion-joint-dn1000-pn10, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "fb1b91f9672d3d8f" }
