@@ -204,10 +204,10 @@
 - { record: connector.collector-500a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "240ab4cd36914661" }
 - { record: connector.corner-casting-iso1161, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "e24d9788646c7810" }
 - { record: connector.coupler-11kv-400a, at: "2026-10-18T04:24:58Z", status: draft, summary: "changed: physical, built_of, basis", sha: "c35f835f31669aa3" }
-- { record: connector.expansion-joint-dn100-pn10, at: "2026-10-18T04:31:06Z", status: draft, summary: "changed: identity, physical, built_of", sha: "645fc3480f31e69a" }
-- { record: connector.expansion-joint-dn1000-pn10, at: "2026-10-18T04:31:06Z", status: draft, summary: "changed: identity, physical, built_of", sha: "0016c561071b3c06" }
-- { record: connector.expansion-joint-dn300-pn10, at: "2026-10-18T04:31:06Z", status: draft, summary: "changed: identity, physical, built_of", sha: "0ac39884197a5434" }
-- { record: connector.expansion-joint-dn600-pn10, at: "2026-10-18T04:31:06Z", status: draft, summary: "changed: identity, physical, built_of", sha: "b799de8bfb3fadd8" }
+- { record: connector.expansion-joint-dn100-pn10, at: "2026-10-18T04:35:53Z", status: draft, summary: "changed: physical, built_of, basis", sha: "2fbbbda7f30d84b3" }
+- { record: connector.expansion-joint-dn1000-pn10, at: "2026-10-18T04:35:53Z", status: draft, summary: "changed: physical, built_of, basis", sha: "5fc1530538aa386c" }
+- { record: connector.expansion-joint-dn300-pn10, at: "2026-10-18T04:35:53Z", status: draft, summary: "changed: physical, built_of, basis", sha: "762cb8062bc0b7c6" }
+- { record: connector.expansion-joint-dn600-pn10, at: "2026-10-18T04:35:53Z", status: draft, summary: "changed: physical, built_of, basis", sha: "64625a306fc95dc7" }
 - { record: connector.flange-dn100-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "8620055f6fd1811b" }
 - { record: connector.flange-dn100-pn10-ss, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "f4fea09af5e95a9b" }
 - { record: connector.flange-dn100-pn16-ss-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "2330bc07e88f41d3" }
@@ -3525,10 +3525,10 @@
 - { record: stock.kit-corner-casting-iso1161, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "aea7ba02a5c2a39c" }
 - { record: stock.kit-coupler-11kv-400a, at: "2026-10-18T04:24:58Z", status: review, summary: "changed: made_from, physical", sha: "72e03863ba78c631" }
 - { record: stock.kit-drag-conveyor-800, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "a8b1f3e09c3573d7" }
-- { record: stock.kit-expansion-joint-dn100-pn10, at: "2026-10-18T04:31:06Z", status: review, summary: "changed: size", sha: "636c4b7f05eec9b3" }
-- { record: stock.kit-expansion-joint-dn1000-pn10, at: "2026-10-18T04:31:06Z", status: review, summary: "changed: size", sha: "3de81d507a005d5c" }
-- { record: stock.kit-expansion-joint-dn300-pn10, at: "2026-10-18T04:31:06Z", status: review, summary: "changed: size", sha: "91520abb7c9f44b3" }
-- { record: stock.kit-expansion-joint-dn600-pn10, at: "2026-10-18T04:31:06Z", status: review, summary: "changed: size", sha: "4b69df8e0d87d5c3" }
+- { record: stock.kit-expansion-joint-dn100-pn10, at: "2026-10-18T04:35:53Z", status: review, summary: "changed: physical", sha: "530d9e61ca980586" }
+- { record: stock.kit-expansion-joint-dn1000-pn10, at: "2026-10-18T04:35:53Z", status: review, summary: "changed: physical", sha: "1e54753b3e2cf437" }
+- { record: stock.kit-expansion-joint-dn300-pn10, at: "2026-10-18T04:35:53Z", status: review, summary: "changed: physical", sha: "e9d08de8af2a232a" }
+- { record: stock.kit-expansion-joint-dn600-pn10, at: "2026-10-18T04:35:53Z", status: review, summary: "changed: physical", sha: "3f81804e9f9ad657" }
 - { record: stock.kit-festoon-690v-4x16, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "d2e42dace15ad525" }
 - { record: stock.kit-festoon-690v-4x35, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "c9d27eabdee2299e" }
 - { record: stock.kit-festoon-690v-4x95, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "63aaefaf5efec3b2" }

@@ -17,7 +17,7 @@ size:
 supplies:
   item: connector.expansion-joint-dn1000-pn10
 physical:
-  mass: 560.0
+  mass: 395.8
 basis:
 - of:
   - size

@@ -15,20 +15,25 @@ physical:
   length: 1.226
   width: 1.226
   height: 0.55
-  mass: 560.0
+  mass: 395.8
 built_of:
-- what: Bellows
+- what: Bellows and necks
   item: material.stainless-steel-304
-  mass: 168.0
-  note: multi-ply 304
-- what: Flanges and limit rods
+  mass: 106.7
+  note: six formed convolutions, 3 mm multi-ply 304
+- what: Flanges, limit rods and lugs
   item: material.structural-steel-a36
-  mass: 392.0
+  mass: 289.1
 provides: both
 template: template.expansion-joint
 basis:
 - of:
   - physical
+  - built_of
+  tier: invented
+  review: true
+  note: Scaled from the DN 300's measured 49.48 kg by the old catalogue ratios; From memory of makers' catalogues; to be sourced.
+- of:
   - movement
   tier: invented
   review: true

@@ -15,20 +15,25 @@ physical:
   length: 0.526
   width: 0.526
   height: 0.35
-  mass: 70.0
+  mass: 49.5
 built_of:
-- what: Bellows
+- what: Bellows and necks
   item: material.stainless-steel-304
-  mass: 21.0
-  note: multi-ply 304
-- what: Flanges and limit rods
+  mass: 13.3
+  note: six formed convolutions, 3 mm multi-ply 304
+- what: Flanges, limit rods and lugs
   item: material.structural-steel-a36
-  mass: 49.0
+  mass: 36.2
 provides: both
 template: template.expansion-joint
 basis:
 - of:
   - physical
+  - built_of
+  tier: derived
+  review: true
+  note: 'From blender''s model (2026-10-17): 526 x 526 x 350 mm, six formed convolutions of 3 mm multi-ply 304 on a 300 mm bore, A36 flanges at the kit''s 466 mm, limit rods stopping 40 mm each way.'
+- of:
   - movement
   tier: invented
   review: true

@@ -276,15 +276,19 @@ for vt, dn, kg, ff, h, what in VALVES:
         "provides": "both", "template": f"template.valve-{vt}",
         "basis": [{"of": ["physical", "built_of"], "tier": "invented", "review": True, "note": f"Face to face as the EN 558 series run (from memory); its height along the line; the actuator stands off it {h} m; {MEMORY}"}]},
         {"slug": f"flange-dn{tag(dn)}-pn10", "name": f"Flange DN {tag(dn)} PN 10", "domain": "fluid", "kind": "flange", "media": ["gas", "liquid"], "halves": "androgynous", "make": "bolted", "standard": "EN 1092-1 bores and pressure classes (its faces and bolting the registry's)"})
+EJ_KG = {0.3: 49.48}       # blender's DN 300 model (2026-10-17): 36.15 kg A36, 13.34 kg 304; the others scaled by the old catalogue's ratios to it
+EJ_SS = 13.34 / 49.48
+EJ_NOTE = "From blender's model (2026-10-17): 526 x 526 x 350 mm, six formed convolutions of 3 mm multi-ply 304 on a 300 mm bore, A36 flanges at the kit's 466 mm, limit rods stopping 40 mm each way."
 for dn, kg, ll, mv in ((0.1, 15.0, 0.25, 0.025), (0.3, 70.0, 0.35, 0.04), (0.6, 220.0, 0.45, 0.06), (1.0, 560.0, 0.55, 0.08)):
+    kg = round(kg * EJ_KG[0.3] / 70.0, 1)
     slug = f"expansion-joint-dn{tag(dn)}-pn10"
     conn(slug, {
         "identity": {"key": f"connector.{slug}", "name": f"Expansion joint, DN {tag(dn)}, PN 10", "description": f"A stainless bellows between two flanges, set in a line to take its growth as it heats: {mv * 1000:g} mm each way along the line, a little sideways. Limit rods outside it stop its travel at that much; they do not hold the pressure's end load, the pipe's anchors either side do."},
         "kind": "expansion-joint", "size": dn, "rating": {"pressure": 1.0e6, "temperature": 673.0}, "movement": mv,
         "physical": {"length": r(fl_od(dn) + ROD_LUGS, 3), "width": r(fl_od(dn) + ROD_LUGS, 3), "height": ll, "mass": kg},
-        "built_of": [part("Bellows", SS, kg * 0.3, "multi-ply 304"), part("Flanges and limit rods", A36, kg * 0.7)],
+        "built_of": [part("Bellows and necks", SS, kg * EJ_SS, "six formed convolutions, 3 mm multi-ply 304"), part("Flanges, limit rods and lugs", A36, kg * (1 - EJ_SS))],
         "provides": "both", "template": "template.expansion-joint",
-        "basis": [{"of": ["physical", "movement"], "tier": "invented", "review": True, "note": MEMORY}]},
+        "basis": [{"of": ["physical", "built_of"], "tier": "derived" if dn == 0.3 else "invented", "review": True, "note": EJ_NOTE if dn == 0.3 else f"Scaled from the DN 300's measured {EJ_KG[0.3]:g} kg by the old catalogue ratios; {MEMORY}"}, {"of": ["movement"], "tier": "invented", "review": True, "note": MEMORY}]},
         {"slug": f"flange-dn{tag(dn)}-pn10", "name": f"Flange DN {tag(dn)} PN 10", "domain": "fluid", "kind": "flange", "media": ["gas", "liquid"], "halves": "androgynous", "make": "bolted", "standard": "EN 1092-1 bores and pressure classes (its faces and bolting the registry's)"})
 
 # ------------------------------------------------------------------ container locks

@@ -17,7 +17,7 @@ size:
 supplies:
   item: connector.expansion-joint-dn600-pn10
 physical:
-  mass: 220.0
+  mass: 155.5
 basis:
 - of:
   - size
