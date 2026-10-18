@@ -289,3 +289,17 @@ basis:
   - params.TRENCH_SUCTION_FORCE
   tier: invented
   note: 'planets, 18 Oct 2026: the vector plates (planet-forge vector-core) take physical boundary forces per metre; no sample weights. Suction: 0.3 of slab pull, the particle plates'' ratio.'
+- of:
+  - params.SLAB_PULL_TRANSMITTED
+  - params.ASTHENOSPHERE_VISCOSITY
+  - params.ASTHENOSPHERE_THICKNESS
+  tier: sourced
+  source: Schellart 2004 (GRL 31 L07611); Hager 1991; Mitrovica 1996; Richards et al. 2001
+  review: true
+  note: 'Written from memory on 18 Oct 2026 (web search unavailable that session): check each figure against the paper.'
+- of:
+  - params.CONTINENT_DRAG_RATIO
+  - params.SLAB_PULL_AGE
+  tier: derived
+  review: true
+  note: 'Drag ratio from the channel thickness under keels (Jordan 1978); slab age from half-space cooling and the plate model (Parsons & Sclater 1977). Figures from memory, 18 Oct 2026: check.'

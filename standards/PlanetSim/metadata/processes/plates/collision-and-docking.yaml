@@ -212,3 +212,8 @@ basis:
   tier: sourced
   note: 'planets, 18 Oct 2026: the vector plates (planet-forge vector-core) take physical boundary forces per metre; no sample weights.'
   source: Molnar & Lyon-Caen 1988
+- of:
+  - params.COLLISION_COUPLING
+  tier: derived
+  review: true
+  note: '2 x 1e22 Pa s (England & Molnar 1997) x 100 km / 1000 km; checked against Molnar & Lyon-Caen 1988 (~5e12 N/m). Figures from memory, 18 Oct 2026: check.'
