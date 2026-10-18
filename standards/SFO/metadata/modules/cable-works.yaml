@@ -561,6 +561,66 @@ recipes:
     quantity: 0.021
   rate: 1.5
   power: 4500000.0
+- makes: stock.kit-feeder-3kv-dc-150mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.828
+  - item: material.ptfe
+    quantity: 0.1962
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0241
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-feeder-3kv-dc-240mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.8678
+  - item: material.ptfe
+    quantity: 0.1575
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0253
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-feeder-3kv-dc-25mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.6008
+  - item: material.ptfe
+    quantity: 0.4167
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0175
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-feeder-3kv-dc-50mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.7034
+  - item: material.ptfe
+    quantity: 0.3171
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0205
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-feeder-3kv-dc-95mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.7819
+  - item: material.ptfe
+    quantity: 0.2409
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0228
+  rate: 1.5
+  power: 4500000.0
 - makes: stock.kit-wire-0p5mm2
   does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:

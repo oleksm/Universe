@@ -1237,7 +1237,7 @@
 - { record: module.brickworks, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "d9b426470254669b" }
 - { record: module.building-dock, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "05c2ff7a3d706191" }
 - { record: module.building-panel-works, at: "2026-10-18T14:56:23Z", status: review, summary: "first tracked", sha: "8e61ea130a0a3536" }
-- { record: module.cable-works, at: "2026-10-18T14:56:23Z", status: review, summary: "first tracked", sha: "6713696c76706535" }
+- { record: module.cable-works, at: "2026-10-18T14:59:28Z", status: review, summary: "changed: recipes", sha: "7b49a00a221c589c" }
 - { record: module.carbide-furnace, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "15b378968095ca34" }
 - { record: module.carbon-works, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "681dec68c4a8a45c" }
 - { record: module.casthouse, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "6432d22868be07a6" }
@@ -1259,7 +1259,7 @@
 - { record: module.cutting-table, at: "2026-10-07T04:19:21Z", status: review, summary: "changed: cuts", sha: "2545992d8a3147da" }
 - { record: module.dairy, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "87a7222d2b693662" }
 - { record: module.deuterium-plant, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "7cc8640ba74a548d" }
-- { record: module.electrical-fittings-works, at: "2026-10-18T14:56:23Z", status: review, summary: "first tracked", sha: "fa7e75daf05fe9db" }
+- { record: module.electrical-fittings-works, at: "2026-10-18T14:59:28Z", status: review, summary: "changed: recipes", sha: "806c17196b11add5" }
 - { record: module.electronics-works, at: "2026-10-07T04:19:21Z", status: review, summary: "changed: cuts", sha: "09c82312a21035ed" }
 - { record: module.extrusion-press, at: "2026-10-07T04:17:36Z", status: review, summary: "changed: recipes", sha: "9207ecb04016e199" }
 - { record: module.feed-mill, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "2149d25f26397089" }

@@ -407,6 +407,54 @@ recipes:
     quantity: 0.013
   rate: 0.3
   power: 1500000.0
+- makes: stock.kit-hvdc-pole-150a
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.4635
+  - item: material.ptfe
+    quantity: 0.3
+  - item: stock.cu-ingot
+    quantity: 0.2575
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0135
+  - item: stock.cu-scrap
+    quantity: 0.0075
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-hvdc-pole-400a
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.4635
+  - item: material.ptfe
+    quantity: 0.3
+  - item: stock.cu-ingot
+    quantity: 0.2575
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0135
+  - item: stock.cu-scrap
+    quantity: 0.0075
+  rate: 0.3
+  power: 1500000.0
+- makes: stock.kit-hvdc-pole-650a
+  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.4635
+  - item: material.ptfe
+    quantity: 0.3
+  - item: stock.cu-ingot
+    quantity: 0.2575
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0135
+  - item: stock.cu-scrap
+    quantity: 0.0075
+  rate: 0.3
+  power: 1500000.0
 - makes: stock.kit-plug-iec60309-125a
   does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
