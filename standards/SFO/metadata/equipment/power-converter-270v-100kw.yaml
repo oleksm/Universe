@@ -58,6 +58,12 @@ function:
   to_voltage: 270.0
   carries: 100000.0
   efficiency: 0.97
+visual:
+  format: "freefall-model/1"
+  path: "models/power-converter-270v-100kw/v1"
+  manifest_sha256: "b60320ab3aebb9bcd9c64ca02ad8ab95caa610debf4c80a8e08b3169c4a366db"
+  version: 1
+  triangles: 24414
 life: 473364000
 basis:
 - of:
