@@ -15,7 +15,7 @@ physical:
   length: 30.0
   width: 12.0
   height: 9.15
-  mass: 309390.0
+  mass: 309699.6
 bays: []
 rooms:
 - id: STA1
@@ -198,8 +198,8 @@ ground:
   mass: 72576.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 309390.0
-  against_module: 'building.studio (deprecated): one box 30 x 15 x 8 m of 993 t, from the average of 538 concrete buildings. This layout: 30 x 12 x 9 m, 309 t (16 t frame, 77 t panels, 14 t furniture, 202 t ground), for 36 people served
+  mass: 309699.6
+  against_module: 'building.studio (deprecated): one box 30 x 15 x 8 m of 993 t, from the average of 538 concrete buildings. This layout: 30 x 12 x 9 m, 310 t (16 t frame, 77 t panels, 15 t furniture, 202 t ground), for 36 people served
     or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:
 - profession: profession.artist

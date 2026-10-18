@@ -7,17 +7,17 @@ identity:
 size_class: 1
 physical:
   length: 0.6
-  width: 0.5
+  width: 0.505
   height: 1.8
-  mass: 150.0
+  mass: 227.4
 built_of:
-- what: Drill
+- what: Base, column, table and head
   item: material.cast-iron-grey
-  mass: 150.0
+  mass: 227.4
 basis:
 - of:
   - built_of
   - physical
-  tier: invented
+  tier: derived
   review: true
-  note: From memory of such furniture; to be sourced.
+  note: 'From blender''s model (2026-10-17): cast base, 120 x 12 mm column, 35 mm table; of the order of a floor-standing drill''s 150 to 300 kg.'
