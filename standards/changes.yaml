@@ -264,10 +264,10 @@
 - { record: connector.hood-dn2000, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "e034527157c4a0bc" }
 - { record: connector.hose-union-dn25, at: "2026-10-18T05:34:39Z", status: draft, summary: "changed: physical, built_of, basis", sha: "02a5541d0aa77a90" }
 - { record: connector.hose-union-dn50, at: "2026-10-18T05:34:39Z", status: draft, summary: "changed: physical, built_of, basis", sha: "13575e6e9875d0ce" }
-- { record: connector.hvdc-pole-1000a, at: "2026-10-18T15:11:23Z", status: draft, summary: "first tracked", sha: "903697de56457f81" }
-- { record: connector.hvdc-pole-150a, at: "2026-10-18T15:11:23Z", status: draft, summary: "changed: identity", sha: "44304124d6567f5a" }
-- { record: connector.hvdc-pole-400a, at: "2026-10-18T15:11:23Z", status: draft, summary: "changed: identity", sha: "ae4f05ecebc2d086" }
-- { record: connector.hvdc-pole-650a, at: "2026-10-18T15:11:23Z", status: draft, summary: "changed: identity", sha: "f1f6970cebcff83a" }
+- { record: connector.hvdc-pole-1000a, at: "2026-10-18T16:18:08Z", status: draft, summary: "changed: physical, built_of, basis", sha: "ddad5c75aa4365c3" }
+- { record: connector.hvdc-pole-150a, at: "2026-10-18T16:18:08Z", status: draft, summary: "changed: physical, built_of, basis", sha: "7a43b7ab1796dbdf" }
+- { record: connector.hvdc-pole-400a, at: "2026-10-18T16:18:08Z", status: draft, summary: "changed: physical, built_of, basis", sha: "0ef10b822819c145" }
+- { record: connector.hvdc-pole-650a, at: "2026-10-18T16:18:08Z", status: draft, summary: "changed: physical, built_of, basis", sha: "29564ab37f8d77d6" }
 - { record: connector.lined-flange-dn1200-pn1, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "a3508423bbfa95b2" }
 - { record: connector.lined-flange-dn2400-pn16-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "250ee52b4dee6fc9" }
 - { record: connector.lined-flange-dn3600-pn10-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "eaf49c50b35ba4b3" }
@@ -1267,7 +1267,7 @@
 - { record: module.cutting-table, at: "2026-10-07T04:19:21Z", status: review, summary: "changed: cuts", sha: "2545992d8a3147da" }
 - { record: module.dairy, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "87a7222d2b693662" }
 - { record: module.deuterium-plant, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "7cc8640ba74a548d" }
-- { record: module.electrical-fittings-works, at: "2026-10-18T15:12:44Z", status: review, summary: "changed: recipes", sha: "78708b5b957144a4" }
+- { record: module.electrical-fittings-works, at: "2026-10-18T16:18:08Z", status: review, summary: "changed: recipes", sha: "0e017a3e41bd1129" }
 - { record: module.electronics-works, at: "2026-10-07T04:19:21Z", status: review, summary: "changed: cuts", sha: "09c82312a21035ed" }
 - { record: module.extrusion-press, at: "2026-10-07T04:17:36Z", status: review, summary: "changed: recipes", sha: "9207ecb04016e199" }
 - { record: module.feed-mill, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "2149d25f26397089" }
@@ -3683,10 +3683,10 @@
 - { record: stock.kit-hose-metal-dn50, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "3fb3f73217930f5a" }
 - { record: stock.kit-hose-union-dn25, at: "2026-10-18T05:34:39Z", status: review, summary: "changed: physical", sha: "38dc925340cef29f" }
 - { record: stock.kit-hose-union-dn50, at: "2026-10-18T05:34:39Z", status: review, summary: "changed: physical", sha: "87f69b4a85df88a4" }
-- { record: stock.kit-hvdc-pole-1000a, at: "2026-10-18T15:11:23Z", status: review, summary: "first tracked", sha: "0d8373a9468df15c" }
-- { record: stock.kit-hvdc-pole-150a, at: "2026-10-18T14:56:31Z", status: review, summary: "first tracked", sha: "d4aa9e151e3d74c6" }
-- { record: stock.kit-hvdc-pole-400a, at: "2026-10-18T14:56:31Z", status: review, summary: "first tracked", sha: "0805a150164deca2" }
-- { record: stock.kit-hvdc-pole-650a, at: "2026-10-18T14:56:31Z", status: review, summary: "first tracked", sha: "7808e2915423cf61" }
+- { record: stock.kit-hvdc-pole-1000a, at: "2026-10-18T16:18:08Z", status: review, summary: "changed: physical", sha: "ad54e24a3a9c0a0a" }
+- { record: stock.kit-hvdc-pole-150a, at: "2026-10-18T16:18:08Z", status: review, summary: "changed: physical", sha: "0845971bc56980b8" }
+- { record: stock.kit-hvdc-pole-400a, at: "2026-10-18T16:18:08Z", status: review, summary: "changed: physical", sha: "e5f53eabce8000b2" }
+- { record: stock.kit-hvdc-pole-650a, at: "2026-10-18T16:18:08Z", status: review, summary: "changed: physical", sha: "3d692e0411773592" }
 - { record: stock.kit-jacketed-duct-dn2000, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "9b07f02fae3f212b" }
 - { record: stock.kit-lined-duct-dn1200-pn1, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "376badfc6021cc62" }
 - { record: stock.kit-lined-duct-dn2400-pn16-double, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "820e4013566b1cb1" }
@@ -4462,7 +4462,7 @@
 - { record: template.cable-reel, at: "2026-10-17T22:28:14Z", status: "", summary: "changed", sha: "ef1cf9b4de2f7b1b" }
 - { record: template.camlock, at: "2026-10-17T22:28:14Z", status: "", summary: "changed: visual", sha: "2f9b6f2f5893ebf8" }
 - { record: template.chute, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "e667824e0f7b7e6c" }
-- { record: template.circular-connector, at: "2026-10-18T15:15:35Z", status: "", summary: "changed: visual", sha: "76efef2bf10e1185" }
+- { record: template.circular-connector, at: "2026-10-18T16:18:08Z", status: "", summary: "changed", sha: "e800f8b5aa71544a" }
 - { record: template.clamp-coupling, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "56041bc040721ee0" }
 - { record: template.collector, at: "2026-10-18T03:58:51Z", status: "", summary: "changed", sha: "1317e309694e2142" }
 - { record: template.conductor-rail, at: "2026-10-18T04:18:11Z", status: "", summary: "changed", sha: "4365e26daa362ba1" }
@@ -4518,7 +4518,7 @@
 - { record: template.wall-viewport, at: "2026-10-18T16:09:13Z", status: "", summary: "changed: visual", sha: "455a5043cc2219ef" }
 - { record: template.wall-window, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "c858aa8573364c8e" }
 - { record: template.wire, at: "2026-10-18T14:51:23Z", status: "", summary: "first tracked", sha: "bf68ff348da2e001" }
-- { record: template.wiring-box, at: "2026-10-18T16:13:54Z", status: "", summary: "changed: visual", sha: "9bb1f6ef2e755170" }
+- { record: template.wiring-box, at: "2026-10-18T16:18:08Z", status: "", summary: "changed", sha: "a03b0ddae21ce430" }
 - { record: unit.alloy-bins-8, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "f164893e2dc287ed" }
 - { record: unit.baghouse-200k, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "abfebdff23b38d30" }
 - { record: unit.baghouse-450k, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "4b73a94e4d25edcf" }

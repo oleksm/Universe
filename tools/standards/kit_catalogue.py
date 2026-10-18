@@ -247,14 +247,19 @@ for mm2, amps, sh, amps_air in WIRE:
 J_VAC = 2.5e6           # A/m2: copper in vacuum, radiation only (as plant_kit.J_VACUUM)
 HVDC_POLE = [  # (amps, outside m, mated length m, kg a pair, mm2 at most)
     (150, 0.04, 0.12, 0.4, 50), (400, 0.055, 0.16, 1.0, 150), (650, 0.07, 0.2, 1.8, 240), (1000, 0.085, 0.24, 3.0, 400)]
+HVDC_KG = (400, 0.30575, 0.13510, 0.24021)       # blender's 400 A pole (2026-10-18): kg of aluminium, copper and PTFE; the other sizes scaled by the old ratio to it
 for amps, od, ll, kg, mm2 in HVDC_POLE:
+    ref = next(k for a_, _o, _l, k, _m in HVDC_POLE if a_ == HVDC_KG[0])
+    split = [x * kg / ref for x in HVDC_KG[1:]]
+    kg = round(sum(split), 3)
     conn(f"hvdc-pole-{amps}a", {
         "identity": {"key": f"connector.hvdc-pole-{amps}a", "name": f"HV DC pole connector, {amps} A, 3 kV", "description": f"A single-pole plug and receptacle for a 3 kV DC feeder, its crimped contact up to {mm2} mm2 (copper, or aluminium on a bimetallic contact) inside a long creepage insulator and an earthed aluminium shell, bayonet-locked, keyed by polarity: two of them, plus and minus, where a feeder meets a plant, a battery, a bus box or a load."},
         "kind": "plug-socket", "size": mm2 * 1e-6, "rating": {"voltage": 3000, "current": amps},
         "physical": {"length": od, "width": od, "height": ll, "mass": kg},
-        "built_of": [part("Shell and coupling ring", AL, kg * 0.45, "anodised aluminium, earthed"), part("Contact", CU, kg * 0.25, "silver-plated copper"), part("Insulator and seals", PTFE, kg * 0.3, "PTFE creepage body; silicone seals as PTFE here")],
+        "built_of": [part("Shell and coupling ring", AL, split[0], "anodised aluminium, earthed"), part("Contact", CU, split[1], "silver-plated copper"), part("Insulator and seals", PTFE, split[2], "PTFE creepage body; silicone seals as PTFE here")],
         "provides": "both", "template": "template.hvdc-pole",
-        "basis": [{"of": ["physical", "built_of", "rating"], "tier": "invented", "review": True, "note": f"Of the order of single-pole high-voltage DC connectors for electric vehicles and aircraft; {MEMORY}"}]},
+        "basis": [{"of": ["physical", "built_of"], "tier": "derived" if amps == HVDC_KG[0] else "invented", "review": True, "note": "From blender's model (2026-10-18): 55 x 55 x 160 mm mated, a 14 mm pin in a 14.2 mm socket, a long PTFE body, keyed 44 mm aluminium shells, three bayonet pins." if amps == HVDC_KG[0] else f"Scaled from the {HVDC_KG[0]} A pole's measured mass by the old ratio; {MEMORY}"},
+                  {"of": ["rating"], "tier": "invented", "review": True, "note": f"Of the order of single-pole high-voltage DC connectors for electric vehicles and aircraft; {MEMORY}"}]},
         {"slug": f"hvdc-pole-{amps}a", "name": f"HV DC pole {amps} A", "domain": "power", "kind": "plug-socket", "media": ["power"], "halves": "male-female", "make": "manual"})
 AIR_240 = 800.0          # A: a 240 mm2 copper core in PTFE alone in free air at 40 deg C (the conductor to about 150 deg C); others by area^0.625 (invented, of the order of cable tables)
 RHO_E = {CU: 1.72e-8, AL: 2.82e-8}      # ohm m at 20 deg C

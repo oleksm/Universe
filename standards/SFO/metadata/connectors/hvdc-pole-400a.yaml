@@ -14,19 +14,19 @@ physical:
   length: 0.055
   width: 0.055
   height: 0.16
-  mass: 1.0
+  mass: 0.681
 built_of:
 - what: Shell and coupling ring
   item: material.aluminium-alloy-6061
-  mass: 0.45
+  mass: 0.306
   note: anodised aluminium, earthed
 - what: Contact
   item: material.copper
-  mass: 0.25
+  mass: 0.135
   note: silver-plated copper
 - what: Insulator and seals
   item: material.ptfe
-  mass: 0.3
+  mass: 0.24
   note: PTFE creepage body; silicone seals as PTFE here
 provides: both
 template: template.hvdc-pole
@@ -34,6 +34,10 @@ basis:
 - of:
   - physical
   - built_of
+  tier: derived
+  review: true
+  note: 'From blender''s model (2026-10-18): 55 x 55 x 160 mm mated, a 14 mm pin in a 14.2 mm socket, a long PTFE body, keyed 44 mm aluminium shells, three bayonet pins.'
+- of:
   - rating
   tier: invented
   review: true

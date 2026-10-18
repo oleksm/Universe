@@ -18,7 +18,7 @@ size:
 supplies:
   item: connector.hvdc-pole-1000a
 physical:
-  mass: 3.0
+  mass: 2.043
 basis:
 - of:
   - size

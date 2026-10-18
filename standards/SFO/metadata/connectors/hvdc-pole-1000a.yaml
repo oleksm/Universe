@@ -14,19 +14,19 @@ physical:
   length: 0.085
   width: 0.085
   height: 0.24
-  mass: 3.0
+  mass: 2.043
 built_of:
 - what: Shell and coupling ring
   item: material.aluminium-alloy-6061
-  mass: 1.35
+  mass: 0.917
   note: anodised aluminium, earthed
 - what: Contact
   item: material.copper
-  mass: 0.75
+  mass: 0.405
   note: silver-plated copper
 - what: Insulator and seals
   item: material.ptfe
-  mass: 0.9
+  mass: 0.721
   note: PTFE creepage body; silicone seals as PTFE here
 provides: both
 template: template.hvdc-pole
@@ -34,6 +34,10 @@ basis:
 - of:
   - physical
   - built_of
+  tier: invented
+  review: true
+  note: Scaled from the 400 A pole's measured mass by the old ratio; From memory of makers' catalogues; to be sourced.
+- of:
   - rating
   tier: invented
   review: true
