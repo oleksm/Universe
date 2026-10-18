@@ -4476,7 +4476,7 @@
 - { record: template.flange-double, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "1587eb01caf04022" }
 - { record: template.flat-face, at: "2026-10-18T05:00:50Z", status: "", summary: "changed", sha: "6655c0a42fb55b1c" }
 - { record: template.floor, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "92d1ba192124ab37" }
-- { record: template.floor-pressure, at: "2026-10-18T14:47:28Z", status: "", summary: "first tracked", sha: "4c7a8198c0fc81b2" }
+- { record: template.floor-pressure, at: "2026-10-18T15:21:47Z", status: "", summary: "changed: visual", sha: "bfa5c80e60571f7c" }
 - { record: template.hood, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "2bd0f63963dc39e7" }
 - { record: template.hose, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "76521a9d59aafaae" }
 - { record: template.hose-hydraulic, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "1bdc07615e11b940" }
