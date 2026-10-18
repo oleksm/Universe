@@ -10,7 +10,7 @@ converters' input_*/output_*/data/coolant_*), else on its -x end face, marked in
     python3 tools/standards/equipment_ports.py           # write the ports into the hand-written records (idempotent)
     python3 tools/standards/equipment_ports.py --check   # exit 1 if any record differs from what it would write
 """
-import glob
+import glob, re
 import json
 import math
 import os
@@ -291,6 +291,16 @@ def feet(rec):
     return out
 
 
+def with_feet(text, rec):
+    """A record whose ports are hand-written, its `foot-` ports replaced by feet() at the end of the list; the rest of
+    its text untouched (the port block holds no comments)."""
+    a = text.index("\nports:\n") + 1
+    m = re.search(r"\n[a-z_]+:", text[a + 7:])
+    end = a + 7 + m.start() + 1 if m else len(text)
+    ports = [p for p in rec["ports"] if not p["id"].startswith("foot-")] + feet(rec)
+    return text[:a] + yaml.safe_dump({"ports": ports}, sort_keys=False, allow_unicode=True, width=230) + text[end:]
+
+
 def block(ports, internal):
     lines = [MARK, "ports:\n"]
     for p in ports:
@@ -353,8 +363,14 @@ def main(check=False):
             continue
         rec = yaml.safe_load(text)
         base = strip(text)
-        if "\nports:" in base or base.startswith("ports:"):
-            print(f"  {rec['identity']['key']}: has hand-written ports; left alone")
+        if "\nports:" in base or base.startswith("ports:"):      # (hand-written ports: kept as written, only its feet rewritten)
+            new = with_feet(text, rec)
+            done += 1
+            if new != text:
+                differ.append(rec["identity"]["key"])
+                if not check:
+                    open(f, "w", encoding="utf-8").write(new)
+                    wrote += 1
             continue
         b = build(yaml.safe_load(base)) if rec["identity"]["key"] in usage else None
         ft = feet(rec)

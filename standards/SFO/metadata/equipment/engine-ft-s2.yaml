@@ -116,6 +116,142 @@ ports:
   - 1.0
   - 0.0
   note: to the starboard radiator panel (equipment.thermal.radiator-hot.s2); place provisional
+- id: foot-1
+  flow: out
+  medium: load
+  interface: interface.insert-m42
+  half: male
+  make: bolted
+  mass: 11250.0
+  force: 625.0
+  at:
+  - 1.98
+  - 0.0
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: on mount.engine-s2's socket of the same id, bolted through
+- id: foot-2
+  flow: out
+  medium: load
+  interface: interface.insert-m42
+  half: male
+  make: bolted
+  mass: 11250.0
+  force: 625.0
+  at:
+  - 1.4001
+  - 1.4001
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: on mount.engine-s2's socket of the same id, bolted through
+- id: foot-3
+  flow: out
+  medium: load
+  interface: interface.insert-m42
+  half: male
+  make: bolted
+  mass: 11250.0
+  force: 625.0
+  at:
+  - 0.0
+  - 1.98
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: on mount.engine-s2's socket of the same id, bolted through
+- id: foot-4
+  flow: out
+  medium: load
+  interface: interface.insert-m42
+  half: male
+  make: bolted
+  mass: 11250.0
+  force: 625.0
+  at:
+  - -1.4001
+  - 1.4001
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: on mount.engine-s2's socket of the same id, bolted through
+- id: foot-5
+  flow: out
+  medium: load
+  interface: interface.insert-m42
+  half: male
+  make: bolted
+  mass: 11250.0
+  force: 625.0
+  at:
+  - -1.98
+  - 0.0
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: on mount.engine-s2's socket of the same id, bolted through
+- id: foot-6
+  flow: out
+  medium: load
+  interface: interface.insert-m42
+  half: male
+  make: bolted
+  mass: 11250.0
+  force: 625.0
+  at:
+  - -1.4001
+  - -1.4001
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: on mount.engine-s2's socket of the same id, bolted through
+- id: foot-7
+  flow: out
+  medium: load
+  interface: interface.insert-m42
+  half: male
+  make: bolted
+  mass: 11250.0
+  force: 625.0
+  at:
+  - 0.0
+  - -1.98
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: on mount.engine-s2's socket of the same id, bolted through
+- id: foot-8
+  flow: out
+  medium: load
+  interface: interface.insert-m42
+  half: male
+  make: bolted
+  mass: 11250.0
+  force: 625.0
+  at:
+  - 1.4001
+  - -1.4001
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: on mount.engine-s2's socket of the same id, bolted through
 visual:
   format: "freefall-model/1"
   path: "models/engine-ft-s2/v1"

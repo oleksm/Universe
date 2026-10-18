@@ -613,9 +613,9 @@
 - { record: equipment.engine.fan.s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "1b9b90efe95a3fb0" }
 - { record: equipment.engine.fan.s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "2541fb14913bf787" }
 - { record: equipment.engine.fan.s3, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "24e903208b9ea540" }
-- { record: equipment.engine.ft.s1, at: "2026-10-17T17:55:24Z", status: draft, summary: "changed: ports", sha: "cc7a9907c1c72beb" }
-- { record: equipment.engine.ft.s2, at: "2026-10-17T17:55:24Z", status: draft, summary: "changed: ports", sha: "d1d4c438de8540d7" }
-- { record: equipment.engine.ft.s3, at: "2026-10-17T20:27:52Z", status: draft, summary: "changed: identity, ports, basis", sha: "fecf54d2860c7efe" }
+- { record: equipment.engine.ft.s1, at: "2026-10-18T20:04:33Z", status: draft, summary: "changed: ports", sha: "74b672354e588408" }
+- { record: equipment.engine.ft.s2, at: "2026-10-18T20:04:33Z", status: draft, summary: "changed: ports", sha: "c3ee9ba5f6a877f8" }
+- { record: equipment.engine.ft.s3, at: "2026-10-18T20:04:33Z", status: draft, summary: "changed: ports", sha: "bcc54619c847fcc9" }
 - { record: equipment.engine.nt.s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "79d29bfd7a8f204c" }
 - { record: equipment.engine.nt.s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "a4b220ef9868b4ad" }
 - { record: equipment.engine.nt.s3, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "3184d645a005e925" }
@@ -721,8 +721,8 @@
 - { record: equipment.thermal.coolant-loop.s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "4d35da622804d019" }
 - { record: equipment.thermal.heat.exchanger, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "c2ebc8fb57e78f6b" }
 - { record: equipment.thermal.heat.sink, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "da56886ec546d695" }
-- { record: equipment.thermal.radiator-hot.s1, at: "2026-10-17T20:07:08Z", status: draft, summary: "changed: built_of", sha: "ff83d47ee877a2ed" }
-- { record: equipment.thermal.radiator-hot.s2, at: "2026-10-17T20:18:28Z", status: draft, summary: "changed: visual", sha: "c91bcc3369261375" }
+- { record: equipment.thermal.radiator-hot.s1, at: "2026-10-18T20:04:33Z", status: draft, summary: "changed: ports", sha: "dd9a1264d911429d" }
+- { record: equipment.thermal.radiator-hot.s2, at: "2026-10-18T20:04:33Z", status: draft, summary: "changed: ports", sha: "23b059cadbd0fb48" }
 - { record: equipment.thermal.radiator.s0, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "06cd678332f7a5ce" }
 - { record: equipment.thermal.radiator.s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "cd9da4f78bf4af16" }
 - { record: equipment.thermal.radiator.s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "bc7cc38763fed32f" }
