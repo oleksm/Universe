@@ -13,12 +13,12 @@ made_from:
 - item: material.structural-steel-a36
 size:
   length: 3.0
-  width: 0.19
+  width: 0.225
   height: 3.0
 supplies:
   item: panel.wall-hatch-3x3
 physical:
-  mass: 479.2
+  mass: 480.4
 basis:
 - of:
   - size

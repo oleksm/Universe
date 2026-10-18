@@ -199,7 +199,8 @@ panel("floor-pressure-3x3", "Pressure floor panel, 3 x 3 m", "floor", (3.0, 3.0)
 door = (1.0, 2.0)
 lp, ld = plug_leaf(*door, "Pressure door leaf")
 parts, th = pressure_skin(3.0, 3.0, cut=door[0] * door[1])
-panel("wall-hatch-3x3", "Pressure wall panel with a door, 3 x 3 m", "wall", (3.0, 3.0), r(th, 3), parts + lp + [("Door surround", AL, 40.0, "a welded doubler round the opening (invented)")],
+panel("wall-hatch-3x3", "Pressure wall panel with a door, 3 x 3 m", "wall", (3.0, 3.0), max(r(th, 3), 0.225),       # (0.225 m through with the offset hinge and the blankets: blender's swept model, 2026-10-18)
+      parts + lp + [("Door surround", AL, 40.0, "a welded doubler round the opening (invented)"), ("Leaf insulation", "material.polyimide-film", 1.19, "the blanket over the leaf's vacuum face, its seal lands bare: blender's model")],
       "A pressure wall panel with a 1.0 x 2.0 m plug door that opens inward, so the air seats it: the outer door of an airlock (its chamber one cell, the inner door a pressure partition's).",
       "wall-hatch", opening={"kind": "pressure-door", "width": door[0], "height": door[1], "sill": 0.15, "people": True}, u=MLI_U, load=P_IN, basis=PRESSURE, site="airless", tier="derived")
 cargo = (2.4, 2.4)
