@@ -60,9 +60,9 @@ function:
   efficiency: 0.97
 visual:
   format: "freefall-model/1"
-  path: "models/power-converter-270v-40kw/v1"
-  manifest_sha256: "e2e4554efe6130d921e8a8bce8b7c2a748b237eb0125fb981b438941f6e8cc1c"
-  version: 1
+  path: "models/power-converter-270v-40kw/v2"
+  manifest_sha256: "9a146aac194095f73da71447b541c8e0eab52fd44fa2bcb7a6eb98a325e17df0"
+  version: 2
   triangles: 24402
 life: 473364000
 basis:
