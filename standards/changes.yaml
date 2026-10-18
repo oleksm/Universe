@@ -604,7 +604,7 @@
 - { record: equipment.power.battery.s0, at: "2026-10-13T06:41:10Z", status: draft, summary: "changed: visual", sha: "4d3bfd92acb08d32" }
 - { record: equipment.power.battery.s1, at: "2026-10-12T02:10:45Z", status: draft, summary: "changed: visual", sha: "8e06eecd1ef3a586" }
 - { record: equipment.power.converter.270v-100kw, at: "2026-10-18T16:45:37Z", status: draft, summary: "changed: visual", sha: "4f42c5c1a0b24419" }
-- { record: equipment.power.converter.270v-10kw, at: "2026-10-18T16:38:03Z", status: draft, summary: "changed: visual", sha: "d7db9d8a654b87df" }
+- { record: equipment.power.converter.270v-10kw, at: "2026-10-18T16:49:08Z", status: draft, summary: "changed: visual", sha: "b29ed229382d50a2" }
 - { record: equipment.power.converter.270v-40kw, at: "2026-10-18T16:47:26Z", status: draft, summary: "changed: visual", sha: "97febf3dc6e957a9" }
 - { record: equipment.power.converter.28v-1kw, at: "2026-10-18T16:43:37Z", status: draft, summary: "changed: visual", sha: "02978a605b43d554" }
 - { record: equipment.power.converter.28v-3kw, at: "2026-10-18T16:41:53Z", status: draft, summary: "changed: visual", sha: "c276f9c9214646ff" }
