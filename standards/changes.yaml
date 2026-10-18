@@ -4386,7 +4386,7 @@
 - { record: template.twistlock, at: "2026-10-18T05:34:39Z", status: "", summary: "changed", sha: "8d12961195852bce" }
 - { record: template.union, at: "2026-10-18T05:39:56Z", status: "", summary: "changed", sha: "3450ba43d5c17d70" }
 - { record: template.valve-ball, at: "2026-10-18T05:46:05Z", status: "", summary: "changed: visual", sha: "8dc6b86df6378a22" }
-- { record: template.valve-butterfly, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "910ee70eb7366890" }
+- { record: template.valve-butterfly, at: "2026-10-18T05:49:19Z", status: "", summary: "changed: visual", sha: "2d6a478124d464c2" }
 - { record: template.valve-check, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "db1774a554f80df0" }
 - { record: template.valve-gate, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "f6e8abb14d71c0ab" }
 - { record: template.valve-relief, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "d49ebff915dfb3f2" }

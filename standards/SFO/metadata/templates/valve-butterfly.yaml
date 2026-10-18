@@ -10,6 +10,12 @@ scales_by:
 - physical
 members: 4
 reference: connector.valve-butterfly-dn300-pn10
+visual:
+  format: "freefall-model/1"
+  path: "models/valve-butterfly/v1"
+  manifest_sha256: "de9421b68a94ccb7489482e1b074f9308aaa77198bb5d26ef19955d5533d3ea2"
+  version: 1
+  triangles: 5616
 basis:
 - of:
   - draws
