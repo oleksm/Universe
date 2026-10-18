@@ -195,6 +195,9 @@ One model draws every size of a kit family (`standards/SFO/metadata/templates/`)
   along X, its centre 12.5 mm inboard (-X) and 8 mm inboard (-Z) of the casting's centre; end and side faces an oblong
   78 x 51 mm (78 across, 51 high), centred on their face 8 mm below its middle. Walls: top plate 26 mm (the twistlock's
   cone sits in it), the others 13 mm, hollow inside.
+- **Wiring box** (template.wiring-box, 100 x 60 x 100 mm): one fixed part, not two mating halves: root `body` with a
+  child `lid` facing +Y, static and closed, centred on the origin; two glands on opposite sides along X, spare ones
+  capped; empties `gland_a` and `gland_b` at the gland mouths, where the game lands a cable.
 - **Twistlock** (template.twistlock, an inter-box lock, 160 x 150 x 200 mm envelope): one root node `male`, static, in
   the unlocked pose (both heads long along X, as the hole). The root sits at the lower casting's top hole centre (the
   corner casting's datum x = -0.0125, z = -0.008, y = 0): the spacer flange 160 x 90 mm, 28 mm thick, from y = 0 up to
