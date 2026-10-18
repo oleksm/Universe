@@ -5,16 +5,18 @@ identity:
   about: 'Each feature as a profile across its line: a height at any point from its distance and side to the line, by its
     kind''s cross-section law (planet-process.relief-field), its relief worn by relief-erosion since its cause ended.  A belt''s
     height is its crust''s: isostasy over the thickened crust is the belt''s envelope (height.rs), and the orogen''s erosion
-    wears that envelope (the orogen axis carries it: relief / relief0). Inside it the belt''s features shape the ground around
-    the envelope, each by its own amplitude above and below it, never stacked on it: - subsidiary ridge: a crest between two
-    troughs, of zero mean across it: relief (1 - u^2) exp(-u^2 / 2), u = d / (spacing / 3); - anticline / syncline axis: +/-
-    amplitude bump(d / wavelength) (the alternate axes sum to a sine); - thrust front: its frontal ridge on the hinterland
-    side, throw S(d / ramp) exp(-(d - ramp) / back), and the foredeep before it, -throw / 2 S(-d / ramp) exp(-(-d - ramp)
-    / (2 back)).  Outside belts the features add to the ground (they have no envelope): - rift floor axis: -(depth - the scarps''
-    throws) bump(d / (width / 2)); - normal fault scarp: -throw S(d / scarp width + 1/2) toward the axis, faded across the
-    axis (the scarp opposite takes over: the two fades sum to one); - rift shoulder: uplift bump(d / RIFT_SHOULDER_M); - great
-    escarpment: inland, height S(d / face + 1/2) exp(-(d - face/2) / plateau decay);  (bump(u) = cos^2(pi u / 2) for |u| <
-    1; S a smoothstep.) Suture, arc front, rift margin: no profile of their own.'
+    wears that envelope (the orogen axis carries it: relief / relief0), and toward the ends of its collision the envelope
+    and every feature of the belt fade along strike to nothing over `end taper share` of the belt''s width (their lines close
+    onto the suture there, make.rs). Inside it the belt''s features shape the ground around the envelope, each by its own
+    amplitude above and below it, never stacked on it: - subsidiary ridge: a crest between two troughs, of zero mean across
+    it: relief (1 - u^2) exp(-u^2 / 2), u = d / (spacing / 3); - anticline / syncline axis: +/- amplitude bump(d / wavelength)
+    (the alternate axes sum to a sine); - thrust front: its frontal ridge on the hinterland side, throw S(d / ramp) exp(-(d
+    - ramp) / back), and the foredeep before it, -throw / 2 S(-d / ramp) exp(-(-d - ramp) / (2 back)).  Outside belts the
+    features add to the ground (they have no envelope): - rift floor axis: -(depth - the scarps'' throws) bump(d / (width
+    / 2)); - normal fault scarp: -throw S(d / scarp width + 1/2) toward the axis, faded across the axis (the scarp opposite
+    takes over: the two fades sum to one); - rift shoulder: uplift bump(d / RIFT_SHOULDER_M); - great escarpment: inland,
+    height S(d / face + 1/2) exp(-(d - face/2) / plateau decay);  (bump(u) = cos^2(pi u / 2) for |u| < 1; S a smoothstep.)
+    Suture, arc front, rift margin: no profile of their own.'
 area: relief
 clock:
   when: evaluated on demand at any point (a Field over the relief features' lines); the features are made each step from the
@@ -97,6 +99,15 @@ params:
   source: planet-forge crates/relief/src/laws.rs FIELD_DEFAULTS
   note: 'chosen: trenches 50-100 km wide'
   open: true
+- name: end taper share
+  value: 1.0
+  unit: '1'
+  meaning: 'a belt''s thickening dies out along strike toward the ends of its collision over this share of the belt''s width:
+    its envelope and features fade to nothing and its lines close onto the suture'
+  source: planet-forge crates/relief/src/laws.rs FIELD_DEFAULTS
+  note: 'the Himalaya: the arc turns at its syntaxes (Nanga Parbat, Namche Barwa) and its belt of thick crust (~300-400 km
+    wide) narrows to them over a few hundred km (Bendick & Bilham 2001, How perfect is the Himalayan arc?, Geology 29: 791-794);
+    one belt width, open'
 - name: crest max
   value: 8849.0
   unit: m
