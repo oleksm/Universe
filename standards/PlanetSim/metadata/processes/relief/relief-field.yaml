@@ -3,16 +3,18 @@ identity:
   key: planet-process.relief-field
   name: Relief field
   about: 'Each feature as a profile across its line: a height at any point from its distance and side to the line, by its
-    kind''s cross-section law (planet-process.relief-field), its relief worn by relief-erosion since its cause ended. The
-    relief Field is their sum, asked at any point (only the lines within a profile''s reach are asked).  The cross-sections
-    (d: distance from the line, + toward the side the law names; bump(u) = cos^2(pi u / 2) for |u| < 1, S a smoothstep): -
-    orogen axis: relief bump(d / half width), its half widths from the axis to the belt''s edges on each side; - subsidiary
-    ridge: relief bump(d / (spacing / 2)); - anticline / syncline axis: +/- amplitude bump(d / wavelength) (the alternate
-    axes sum to a sine of period twice the spacing); - thrust front: a ridge on its hinterland side: throw S(d / ramp) exp(-(d
-    - ramp) / back); - rift floor axis: -(depth - the scarps'' throws) bump(d / (width / 2)); - normal fault scarp: -throw
-    S(d / scarp width + 1/2) toward the axis, faded across the axis (the scarp opposite takes over: the two fades sum to one);
-    - rift shoulder: uplift bump(d / RIFT_SHOULDER_M); - great escarpment: inland, height S(d / face + 1/2) exp(-(d - face/2)
-    / plateau decay); - suture, arc front, rift margin: no profile of their own (lines the others are laid from).'
+    kind''s cross-section law (planet-process.relief-field), its relief worn by relief-erosion since its cause ended.  A belt''s
+    height is its crust''s: isostasy over the thickened crust is the belt''s envelope (height.rs), and the orogen''s erosion
+    wears that envelope (the orogen axis carries it: relief / relief0). Inside it the belt''s features shape the ground around
+    the envelope, each by its own amplitude above and below it, never stacked on it: - subsidiary ridge: a crest between two
+    troughs, of zero mean across it: relief (1 - u^2) exp(-u^2 / 2), u = d / (spacing / 3); - anticline / syncline axis: +/-
+    amplitude bump(d / wavelength) (the alternate axes sum to a sine); - thrust front: its frontal ridge on the hinterland
+    side, throw S(d / ramp) exp(-(d - ramp) / back), and the foredeep before it, -throw / 2 S(-d / ramp) exp(-(-d - ramp)
+    / (2 back)).  Outside belts the features add to the ground (they have no envelope): - rift floor axis: -(depth - the scarps''
+    throws) bump(d / (width / 2)); - normal fault scarp: -throw S(d / scarp width + 1/2) toward the axis, faded across the
+    axis (the scarp opposite takes over: the two fades sum to one); - rift shoulder: uplift bump(d / RIFT_SHOULDER_M); - great
+    escarpment: inland, height S(d / face + 1/2) exp(-(d - face/2) / plateau decay);  (bump(u) = cos^2(pi u / 2) for |u| <
+    1; S a smoothstep.) Suture, arc front, rift margin: no profile of their own.'
 area: relief
 clock:
   when: evaluated on demand at any point (a Field over the relief features' lines); the features are made each step from the
@@ -38,14 +40,6 @@ params:
   meaning: 'the orogen''s stations along its suture: the belt measured across the line at each'
   source: planet-forge crates/relief/src/laws.rs FIELD_DEFAULTS
   note: 'chosen: the Python measured at half a sample gap (~65 km); a vector line can be asked anywhere'
-  open: true
-- name: along smoothing
-  value: 30000.0
-  unit: m
-  meaning: 'an orogen''s measures (crest offset, belt edges) smoothed along its line by a Gaussian this wide: lines, not station
-    by station'
-  source: planet-forge crates/relief/src/laws.rs FIELD_DEFAULTS
-  note: 'chosen: as the suture''s chain is smoothed (its `smooth` law)'
   open: true
 - name: probe step
   value: 1000.0
@@ -103,6 +97,14 @@ params:
   source: planet-forge crates/relief/src/laws.rs FIELD_DEFAULTS
   note: 'chosen: trenches 50-100 km wide'
   open: true
+- name: crest max
+  value: 8849.0
+  unit: m
+  meaning: 'no ground stands higher: the belt''s features shape the ground within the isostatic envelope, their rise pressed
+    softly under this'
+  source: planet-forge crates/relief/src/laws.rs FIELD_DEFAULTS
+  note: 'Everest 8,848.86 m (China-Nepal survey, 8 Dec 2020); Tibet''s mean ~5 km (Fielding et al. 1994, How flat is Tibet?,
+    Geology 22: 163-167)'
 - name: wetness
   value: 1.0
   unit: '1'
@@ -113,6 +115,8 @@ params:
 random_draws:
 - 'none: the profiles are functions of the lines and the laws'
 invariants:
+- 'no ground above crest max: a belt is its envelope (isostasy over its thickened crust, worn by its orogen) and its features
+  shape the ground around it'
 - 'no feature segment spans a plate gap: a line meeting a rift is split at the cut, each piece riding its own plate'
 - no profile stands on ocean floor younger than its feature
 - a line turns within four times its boundary's turning per km, and never zigzags (turning over 4 km at most twice that over

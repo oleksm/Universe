@@ -51,19 +51,6 @@ params:
     factor: 1000.0
   meaning: 'median belt width below this: no orogen'
   source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:229
-- name: ISOSTASY
-  value: 0.17
-  unit: '1'
-  said_as:
-    unit: ratio
-    factor: 1.0
-  meaning: 'relief over the mean crust: (thick - 35 km) x (1 - rho_c/rho_m)'
-  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:44
-- name: reference thickness
-  value: 35000.0
-  unit: m
-  meaning: mean crust in the isostasy rule
-  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:231
 - name: relief max
   value: 6000.0
   unit: m
@@ -98,5 +85,11 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
     9747f0d-c437724.'
+- of:
+  - params
+  tier: derived
+  note: 'planets, 18 Oct 2026: planet-forge crates/relief (relief features on the vector planet, step 3 of docs/vector-planet.md).
+    One isostasy (owner, 18 Oct 2026): ISOSTASY 0.17 over 35 km dropped; the envelope is isostatic-elevation''s BUOYANCY over
+    CONTINENT_MEAN.'
 cautions:
 - 'the Python''s reads were its line store''s internals: suture vertices; line born/ended'

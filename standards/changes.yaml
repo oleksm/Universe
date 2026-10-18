@@ -1912,7 +1912,7 @@
 - { record: planet-feature.nivation-hollow, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: basis, layout", sha: "2e47cd3788ef94a6" }
 - { record: planet-feature.normal-fault-scarp, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: basis, pinned_to, spans, dimensions, layout", sha: "b939d5ab2fa683f1" }
 - { record: planet-feature.offset-stream, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: basis, layout", sha: "25e5190420e89297" }
-- { record: planet-feature.orogen-axis, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: basis, pinned_to, spans, dimensions, layout", sha: "84929ff059858a30" }
+- { record: planet-feature.orogen-axis, at: "2026-10-18T04:31:28Z", status: "", summary: "changed: dimensions", sha: "55465e931a61f6f1" }
 - { record: planet-feature.outwash-plain-sandur, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: basis, layout", sha: "f2270a1d3dc0bd11" }
 - { record: planet-feature.overdeepening-and-riegel, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: basis, layout", sha: "8072ffcc6e83b9eb" }
 - { record: planet-feature.oxbow-lake, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: basis, layout", sha: "fb4add704346084d" }
@@ -2480,12 +2480,12 @@
 - { record: planet-process.region-rock-map, at: "2026-10-17T19:32:13Z", status: "", summary: "changed: reads", sha: "f46a82e0e4c1413d" }
 - { record: planet-process.relief-erosion, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: reads, writes, implementations, basis, cautions", sha: "6abfb968937fa2ac" }
 - { record: planet-process.relief-feature-record, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "d24386122f374c34" }
-- { record: planet-process.relief-field, at: "2026-10-18T04:18:55Z", status: "", summary: "first tracked", sha: "89147e7b649309bb" }
-- { record: planet-process.relief-folds, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: reads, writes, params, implementations, basis, cautions", sha: "9d6b506bc1d1ac57" }
+- { record: planet-process.relief-field, at: "2026-10-18T04:31:28Z", status: "", summary: "changed: identity, params, invariants", sha: "2380240174db032f" }
+- { record: planet-process.relief-folds, at: "2026-10-18T04:31:28Z", status: "", summary: "changed: params", sha: "6239f9c88bcdbdf3" }
 - { record: planet-process.relief-great-escarpment, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: reads, writes, implementations, basis, cautions", sha: "1b86d131321d45e7" }
 - { record: planet-process.relief-hotspot-chain, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: reads, writes, params, implementations, basis, cautions", sha: "812b079f77675a13" }
 - { record: planet-process.relief-layer-hooks, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "94dc2c1de9d8543e" }
-- { record: planet-process.relief-orogen-axis, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: reads, writes, implementations, basis, cautions", sha: "27963736184e456d" }
+- { record: planet-process.relief-orogen-axis, at: "2026-10-18T04:31:28Z", status: "", summary: "changed: params, basis", sha: "c2fd4f681c562e0f" }
 - { record: planet-process.relief-rift-floor-axis, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: reads, writes, implementations, basis, cautions", sha: "62ccfbe193197698" }
 - { record: planet-process.relief-rift-scarps, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: reads, writes, params, depends_on, implementations, basis, cautions", sha: "c48f23465252916a" }
 - { record: planet-process.relief-rift-shoulders, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: reads, writes, implementations, basis, cautions", sha: "bc64c8a2c3e4d484" }

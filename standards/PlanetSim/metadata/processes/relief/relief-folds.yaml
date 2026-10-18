@@ -32,10 +32,14 @@ writes:
 note: 'Emits: trace spawn rule ''relief.orogen.folds'' trigger + {offset_km, rock ''sedimentary''}'
 params:
 - name: FOLD_MIN_M
-  value: 15000.0
+  value: 5000.0
   unit: m
   meaning: fold wavelength floor
   source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:45
+  note: 'owner, 18 Oct 2026: 5 km. Natural folds range from about 1 km to 50 km in wavelength (Ramsay and Huber 1987, The
+    Techniques of Modern Structural Geology, vol. 2: Folds and Fractures); fold-belt anticlines of the Zagros 5-15 km (Mouthereau
+    et al. 2007, Tectonics 26, TC5006)'
+  open: true
 - name: FOLD_MAX_M
   value: 50000.0
   unit: m

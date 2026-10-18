@@ -79,12 +79,14 @@ dimensions:
 - name: width
   unit: m
   meaning: 'the median belt: crust of THICK_BELT_M or more run out from the suture on both sides'
-  rule: stations every `station step` gaps to BELT_MAX_M; soft docking under 50 km
+  rule: the median over its stations of the crust of THICK_BELT_M or more run out from the suture on both sides; the belt's
+    lines are the suture's offset curves at the median distances
 - name: relief0
   unit: m
-  meaning: 'its relief when made: the median over its stations'
-  rule: 'Airy isostasy over the mean crust: ISOSTASY (thickest - reference thickness), clipped to 0..relief max'
-  formula: 0.17 (t_max - 35 km), 0..6000 m
+  meaning: 'its envelope''s relief when made: isostasy over the belt''s thickest crust (the median over its stations)'
+  rule: 'isostatic-elevation''s Airy isostasy: BUOYANCY (thickest - CONTINENT_MEAN), clipped to 0..relief max; the one isostasy
+    law of the planet'
+  formula: 0.1515 (t_max - 39 km), 0..6000 m
 - name: relief
   unit: m
   meaning: its relief now, worn by relief-erosion
