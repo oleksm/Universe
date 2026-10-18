@@ -727,6 +727,7 @@ def check_model(kind, r, info):
                 bad.append(f"no node named {piece['name']} (the piece its envelope sizes)")
                 box = [info["lo"], info["hi"]]
             b = [round(box[1][k] - box[0][k], 4) for k in range(3)]
+            info["piece_size"] = b
         if kind in ("layout", "structure") and info.get("lo") and info["lo"][1] < 0:
             b[1] = round(info["hi"][1] - max(info["lo"][1], 0.0), 4)   # height above grade: its ground works below z 0 are in the record's ground, not its size
         m, s = sorted(b, reverse=True), sorted(size, reverse=True)
