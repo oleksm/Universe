@@ -55,7 +55,7 @@ properties:
           compression: { type: number, exclusiveMinimum: 0, x-unit: "N" }
           shear: { type: number, exclusiveMinimum: 0, x-unit: "N" }
   feeds:
-    description: "What the hull brings to it, at most."
+    description: "What the hull can bring near it, at most: a capacity for the ship's wiring and piping to plan by, never a connection. Fastening equipment to a mount joins nothing; power, data and fluids reach it only through its ports, joined by laid runs (SFO 26)."
     type: object
     additionalProperties: false
     properties:

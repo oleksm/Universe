@@ -314,6 +314,18 @@ definitions:
       at: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "m", description: "Its face's middle in the thing's frame (x along, y across from its middle, z up from its base)." }
       facing: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "1", description: "The way out of its face, a unit vector in the thing's frame: a run leaves it this way." }
       optional: { type: boolean, description: "A spare, blinded when nothing joins it." }
+      channel: { type: string, description: "The circuit it belongs to, so a wire may only join ports of the same channel: a power bus by its kind and voltage (dc-28v, dc-270v, dc-3kv, ac-400v), a data link by its protocol and name (can-a, ethernet-1). A DC feed of two single-pole receptacles is two ports of one channel, plus and minus." }
+      pins:
+        type: array
+        description: "What each contact of its interface carries (the interface's contacts by id): a wire joins two ports contact to contact, and the roles must agree (plus to plus, signal-high to signal-high). Electrical and signal ports only."
+        items:
+          type: object
+          additionalProperties: false
+          required: [contact, role]
+          properties:
+            contact: { type: string, description: "The interface's contact id" }
+            role: { enum: [plus, minus, line, neutral, earth, screen, signal-high, signal-low, signal, return, spare], description: "What it carries: DC plus or minus; AC line or neutral; protective earth; a cable's screen; a differential pair's high and low; a single-ended signal and its return; spare (no connection)." }
+            line: { type: string, description: "Which line of a multi-line port (L1, L2, L3; a data link's lane)" }
       note: { type: string }
   motion:
     type: object
