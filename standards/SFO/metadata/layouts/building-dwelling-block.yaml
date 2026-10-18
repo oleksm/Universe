@@ -14,7 +14,7 @@ physical:
   length: 48.0
   width: 42.0
   height: 105.15
-  mass: 56324574.5
+  mass: 56343107.9
 bays: []
 rooms:
 - id: FLA1
@@ -11820,7 +11820,7 @@ frame:
     count: 1327
   - panel: panel.wall-window-3x3
     count: 769
-  panels_mass: 12191097.9
+  panels_mass: 12209631.3
   sized: 'At 1 g: floors 1893 Pa dead and 2000 Pa imposed, the roof 1155 Pa; a ground column carries 1240 kN (st4340-tb-150x10 takes it with half again to spare); a 3 m beam bends with 13.1 kN m (st4340-tb-160x3, under 470 MPa with
     half again to spare). Wind, the tall halls'' columns between floors and the footings'' loads not yet checked.'
 ground:
@@ -11840,8 +11840,8 @@ ground:
   mass: 40483800.0
   note: a pad under each column, 10.5 m square, 0.6 m deep (sized by the storeys, invented)
 totals:
-  mass: 56324574.5
-  against_module: 'building.dwelling-block (deprecated): one box 50 x 40 x 105 m of 77,210 t, from the average of 538 concrete buildings. This layout: 48 x 42 x 105 m, 56,325 t (2,046 t frame, 12,191 t panels, 722 t furniture, 41,365
+  mass: 56343107.9
+  against_module: 'building.dwelling-block (deprecated): one box 50 x 40 x 105 m of 77,210 t, from the average of 538 concrete buildings. This layout: 48 x 42 x 105 m, 56,343 t (2,046 t frame, 12,210 t panels, 722 t furniture, 41,365
     t ground), for 3996 people served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff: []
 basis:

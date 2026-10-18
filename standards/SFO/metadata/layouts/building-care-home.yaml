@@ -15,7 +15,7 @@ physical:
   length: 48.0
   width: 18.0
   height: 6.15
-  mass: 654079.6
+  mass: 654443.0
 bays: []
 rooms:
 - id: WAR1
@@ -349,7 +349,7 @@ frame:
     count: 57
   - panel: panel.wall-window-3x3
     count: 27
-  panels_mass: 180767.7
+  panels_mass: 181131.1
   sized: 'At 1 g: floors 1893 Pa dead and 2000 Pa imposed, the roof 1155 Pa; a ground column carries 48 kN (st4340-tb-80x2 takes it with half again to spare); a 3 m beam bends with 13.1 kN m (st4340-tb-160x3, under 470 MPa with half
     again to spare). Wind, the tall halls'' columns between floors and the footings'' loads not yet checked.'
 ground:
@@ -364,7 +364,7 @@ ground:
   mass: 114048.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 654079.6
+  mass: 654443.0
   against_module: 'building.care-home (deprecated): one box 50 x 20 x 8 m of 2,206 t, from the average of 538 concrete buildings. This layout: 48 x 18 x 6 m, 654 t (23 t frame, 181 t panels, 25 t furniture, 425 t ground), for 262 people
     served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:

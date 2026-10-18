@@ -14,7 +14,7 @@ physical:
   length: 60.0
   width: 30.0
   height: 6.15
-  mass: 1325537.4
+  mass: 1326082.5
 bays: []
 rooms:
 - id: CEL1
@@ -658,7 +658,7 @@ frame:
     count: 77
   - panel: panel.wall-window-3x3
     count: 38
-  panels_mass: 360572.8
+  panels_mass: 361117.9
   sized: 'At 1 g: floors 1893 Pa dead and 5000 Pa imposed, the roof 1155 Pa; a ground column carries 75 kN (st4340-tb-80x3 takes it with half again to spare); a 3 m beam bends with 23.3 kN m (st4340-tb-160x5, under 470 MPa with half
     again to spare). Wind, the tall halls'' columns between floors and the footings'' loads not yet checked.'
 ground:
@@ -673,7 +673,7 @@ ground:
   mass: 155520.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 1325537.4
+  mass: 1326082.5
   against_module: 'building.gaol (deprecated): one box 60 x 30 x 8 m of 3,971 t, from the average of 538 concrete buildings. This layout: 60 x 30 x 6 m, 1,326 t (64 t frame, 361 t panels, 97 t furniture, 804 t ground), for 280 people
     served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:

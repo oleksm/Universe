@@ -15,7 +15,7 @@ physical:
   length: 78.0
   width: 42.0
   height: 9.15
-  mass: 2209176.2
+  mass: 2210084.7
 bays: []
 rooms:
 - id: CLA1
@@ -1155,7 +1155,7 @@ frame:
     count: 3
   - panel: panel.wall-window-3x3
     count: 52
-  panels_mass: 640360.6
+  panels_mass: 641269.1
   sized: 'At 1 g: floors 1893 Pa dead and 5000 Pa imposed, the roof 1155 Pa; a ground column carries 76 kN (st4340-tb-80x3 takes it with half again to spare); a 3 m beam bends with 23.3 kN m (st4340-tb-160x5, under 470 MPa with half
     again to spare). Wind, the tall halls'' columns between floors and the footings'' loads not yet checked.'
 ground:
@@ -1170,8 +1170,8 @@ ground:
   mass: 207360.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 2209176.2
-  against_module: 'building.flight-school (deprecated): one box 80 x 40 x 10 m of 7,059 t, from the average of 538 concrete buildings. This layout: 78 x 42 x 9 m, 2,209 t (123 t frame, 640 t panels, 59 t furniture, 1,387 t ground),
+  mass: 2210084.7
+  against_module: 'building.flight-school (deprecated): one box 80 x 40 x 10 m of 7,059 t, from the average of 538 concrete buildings. This layout: 78 x 42 x 9 m, 2,210 t (123 t frame, 641 t panels, 59 t furniture, 1,387 t ground),
     for 934 people served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:
 - profession: profession.teacher

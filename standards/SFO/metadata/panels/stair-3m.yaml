@@ -11,18 +11,19 @@ cell:
 - 6.0
 thickness: 0.3
 physical:
-  length: 2.7
-  width: 5.2
-  height: 4.0
-  mass: 650.0
+  length: 2.74
+  width: 5.24
+  height: 4.053
+  mass: 831.7
 built_of:
-- what: Stringers, treads and landing
+- what: Stringers, treads, landings and frames
   item: material.structural-steel-a36
-  mass: 560.0
-  note: two flights of 1.2 m with a half landing
-- what: Handrails
+  mass: 731.7
+  note: '8 mm stringers, 3 mm folded treads and landings, 50 x 50 x 3 landing frames and columns: blender''s model (2026-10-17)'
+- what: Handrails and guards
   item: material.structural-steel-a36
-  mass: 90.0
+  mass: 100.0
+  note: '35 x 35 x 2 mm: blender''s model'
 template: template.stair
 basis:
 - of:

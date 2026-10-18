@@ -15,7 +15,7 @@ physical:
   length: 30.0
   width: 12.0
   height: 9.15
-  mass: 309208.3
+  mass: 309390.0
 bays: []
 rooms:
 - id: STA1
@@ -183,7 +183,7 @@ frame:
     count: 1
   - panel: panel.wall-window-3x3
     count: 17
-  panels_mass: 76830.0
+  panels_mass: 77011.7
   sized: 'At 1 g: floors 1893 Pa dead and 5000 Pa imposed, the roof 1155 Pa; a ground column carries 76 kN (st4340-tb-80x3 takes it with half again to spare); a 3 m beam bends with 23.3 kN m (st4340-tb-160x5, under 470 MPa with half
     again to spare). Wind, the tall halls'' columns between floors and the footings'' loads not yet checked.'
 ground:
@@ -198,7 +198,7 @@ ground:
   mass: 72576.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 309208.3
+  mass: 309390.0
   against_module: 'building.studio (deprecated): one box 30 x 15 x 8 m of 993 t, from the average of 538 concrete buildings. This layout: 30 x 12 x 9 m, 309 t (16 t frame, 77 t panels, 14 t furniture, 202 t ground), for 36 people served
     or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:

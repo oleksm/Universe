@@ -15,7 +15,7 @@ physical:
   length: 30.0
   width: 18.0
   height: 9.15
-  mass: 476031.0
+  mass: 476212.7
 bays: []
 rooms:
 - id: PRE1
@@ -243,7 +243,7 @@ frame:
     count: 1
   - panel: panel.wall-window-3x3
     count: 21
-  panels_mass: 112611.9
+  panels_mass: 112793.6
   sized: 'At 1 g: floors 1893 Pa dead and 5000 Pa imposed, the roof 1155 Pa; a ground column carries 76 kN (st4340-tb-80x3 takes it with half again to spare); a 3 m beam bends with 23.3 kN m (st4340-tb-160x5, under 470 MPa with half
     again to spare). Wind, the tall halls'' columns between floors and the footings'' loads not yet checked.'
 ground:
@@ -258,7 +258,7 @@ ground:
   mass: 82944.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 476031.0
+  mass: 476212.7
   against_module: 'building.press (deprecated): one box 30 x 20 x 8 m of 1,324 t, from the average of 538 concrete buildings. This layout: 30 x 18 x 9 m, 476 t (23 t frame, 113 t panels, 63 t furniture, 277 t ground), for 66 people
     served or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:

@@ -50,7 +50,7 @@ def panel(slug, name, kind, cell, thick, parts, desc, template, opening=None, u=
     if kind in ("wall", "partition"):
         ph = {"length": cell[0], "width": thick, "height": cell[1], "mass": r(mass)}
     elif kind == "stair":      # (blender, 2026-10-17: two 1.2 m flights with their landings in the 3 x 6 m well, rails 1 m over the upper floor)
-        ph = {"length": 2.7, "width": 5.2, "height": CELL + 1.0, "mass": r(mass)}
+        ph = {"length": 2.74, "width": 5.24, "height": 4.053, "mass": r(mass)}
     else:
         ph = {"length": cell[0], "width": cell[1], "height": thick, "mass": r(mass)}
     d = {"identity": {"key": f"panel.{slug}", "name": name, "description": desc}, "kind": kind, "site": "air", "cell": list(cell), "thickness": thick}
@@ -116,7 +116,7 @@ sp, _, u = sandwich(9.0, 0.15)
 panel("roof-3x3", "Roof panel, 3 x 3 m", "roof", (3.0, 3.0), 0.15, sp + [("Membrane", RUB, 9.0 * 1.7, "1.5 mm EPDM")] + frame_parts(9.0),
       "An insulated sandwich roof panel on the frame's top cells, a rubber membrane over it, laid to fall to its gutters.", "roof", u=u, load=1000.0)
 panel("stair-3m", "Stair, 3 m rise", "stair", (3.0, 6.0), 0.3,
-      [("Stringers, treads and landing", STEEL, 560.0, "two flights of 1.2 m with a half landing"), ("Handrails", STEEL, 90.0, "")],
+      [("Stringers, treads, landings and frames", STEEL, 731.7, "8 mm stringers, 3 mm folded treads and landings, 50 x 50 x 3 landing frames and columns: blender's model (2026-10-17)"), ("Handrails and guards", STEEL, 100.0, "35 x 35 x 2 mm: blender's model")],
       "A steel stair between floors 3 m apart, in a stair well of two cells (3 x 6 m): two flights of ten 150 mm risers on 300 mm goings, its half and end landings its own, handrails to 1 m over the upper floor.", "stair")
 
 TEMPLATES = {"wall-insulated": "Insulated wall panels", "wall-glazed": "Glazed wall panels", "wall-window": "Wall panels with a window",

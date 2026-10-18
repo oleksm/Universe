@@ -10,13 +10,13 @@ package: package.plate-stack
 made_from:
 - item: material.structural-steel-a36
 size:
-  length: 2.7
-  width: 5.2
-  height: 4.0
+  length: 2.74
+  width: 5.24
+  height: 4.053
 supplies:
   item: panel.stair-3m
 physical:
-  mass: 650.0
+  mass: 831.7
 basis:
 - of:
   - size
