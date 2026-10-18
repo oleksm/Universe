@@ -218,6 +218,9 @@ fn generated_raw(i: &Interior) -> Result<code::Document, String> {
         root["view"]["camera"] =
             json!({"target_m":target,"yaw_rad":i.yaw,"pitch_rad":i.pitch,"distance_m":distance});
     }
+    if let Some(wires) = &p.wiring {
+        root["wiring"] = value(wires);
+    }
     restore_names(&mut root, &i.plan, decks);
     let doc: code::Document = serde_json::from_value(root).map_err(|e| e.to_string())?;
     let problems = code::validate(&doc);
@@ -560,11 +563,12 @@ fn projection(doc: &code::Document) -> Result<(Plan, deck::DeckPlan), String> {
         return Err("camera distance collapses at Studio's f32 precision".into());
     }
     bind_names(&mut p, &decks, doc);
+    p.wiring = doc.wiring.clone();
     Ok((p, decks))
 }
 
 /// Names are attached to identities, never to current vector positions.
-fn named(p: &Plan, prefix: &str, uid: Id) -> String {
+pub(super) fn named(p: &Plan, prefix: &str, uid: Id) -> String {
     if let Some(name) = p.authored.as_ref().and_then(|a| a.names.get(&uid)) {
         return name.clone();
     }
@@ -1290,7 +1294,45 @@ mod tests {
         let path = dir.join("all.ship.yaml");
         let mut i = Interior::prepared(&source()).unwrap();
         i.source_path = Some(path.clone());
+        let equipment: Vec<_> = i
+            .plan
+            .blocks
+            .iter()
+            .filter(|b| b.id != HOLD)
+            .map(|b| named(&i.plan, "module", b.uid))
+            .collect();
+        assert!(equipment.len() >= 2);
+        let end = |module: String| code::WireEnd {
+            module,
+            port: "power".into(),
+            connector: "connector.test".into(),
+        };
+        i.plan.wiring = Some(
+            [(
+                "test_feed".into(),
+                code::Wire {
+                    from: end(equipment[0].clone()),
+                    to: end(equipment[1].clone()),
+                    cable: "run.test".into(),
+                    waypoints_m: vec![[1., 2., 3.]],
+                    pins: vec![code::WirePin {
+                        conductor: "1".into(),
+                        from: "1".into(),
+                        to: "1".into(),
+                    }],
+                },
+            )]
+            .into(),
+        );
+        let before_move = i.snapshot();
         i.plan.blocks[0].at.x -= 1.;
+        // Reordering the UI list must not retarget physical endpoints.
+        i.plan.blocks.reverse();
+        assert_eq!(generated(&i).unwrap().wiring, before_move.plan.wiring);
+        let moved = i.snapshot();
+        i.restore(before_move.clone());
+        assert_eq!(generated(&i).unwrap().wiring, before_move.plan.wiring);
+        i.restore(moved);
         i.hidden[22] = true;
         i.decks_now.as_mut().unwrap().decks[0].floor -= 0.25;
         let expected = generated(&i).unwrap();

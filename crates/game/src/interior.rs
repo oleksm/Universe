@@ -1069,6 +1069,10 @@ struct Plan {
     /// The ship's modules (and its hold) placed in it.
     #[serde(default)]
     blocks: Vec<Block>,
+    /// Explicit physical connections. Missing in legacy plans; never inferred
+    /// from proximity or from the automatic harness estimate.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    wiring: Option<std::collections::BTreeMap<String, universe_ship_design::Wire>>,
     /// Its frame: the members that bear its loads.
     #[serde(default)]
     beams: Vec<Beam>,
@@ -4604,7 +4608,7 @@ impl Interior {
             }
             None => Vec::new(),
         };
-        self.plan = Plan { authored: None, hull: id.into(), points, lines: Vec::new(), groups: Vec::new(), ends: Vec::new(), doors: Vec::new(), blocks: Vec::new(), beams: Vec::new(), on, pads: Vec::new(), plates: Vec::new(), gravity: None, targets: None };
+        self.plan = Plan { authored: None, hull: id.into(), points, lines: Vec::new(), groups: Vec::new(), ends: Vec::new(), doors: Vec::new(), blocks: Vec::new(), wiring: None, beams: Vec::new(), on, pads: Vec::new(), plates: Vec::new(), gravity: None, targets: None };
         // The plan saved for this hull, if there is one (its hull's own points where
         // the model has them now).
         if let Some(saved) = self.read_saved() {

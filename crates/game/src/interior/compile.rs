@@ -32,6 +32,9 @@ pub(super) fn compile(
     i: &Interior,
     craft: &crate::test_drive::Craft,
 ) -> Result<Arc<ClassSpec>, String> {
+    if i.plan.wiring.is_some() {
+        return Err("Authored wiring is saved, but physical port/topology resolution is not installed yet; this design cannot be flown using an inferred harness".into());
+    }
     if !craft.mass.is_finite() || craft.mass <= 0. {
         return Err("The design needs physical mass before it can be simulated".into());
     }

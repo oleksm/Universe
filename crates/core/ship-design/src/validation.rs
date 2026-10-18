@@ -75,6 +75,57 @@ pub fn validate(d: &Document) -> Vec<Diagnostic> {
             );
         }
     }
+    let mut occupied = BTreeSet::new();
+    for (id, wire) in d.wiring.iter().flat_map(|w| w.iter()) {
+        let p = pointer("/wiring", id);
+        if !wire.cable.starts_with("run.") {
+            error(format!("{p}/cable"), "expected a cable run registry key");
+        }
+        for (field, end) in [("from", &wire.from), ("to", &wire.to)] {
+            if !matches!(d.modules.get(&end.module), Some(Module::Equipment(_))) {
+                error(
+                    format!("{p}/{field}/module"),
+                    "wire endpoint must name an equipment instance",
+                );
+            }
+            if !occupied.insert((&end.module, &end.port)) {
+                error(
+                    format!("{p}/{field}/port"),
+                    "port is already occupied; use a junction with separate ports",
+                );
+            }
+            if !end.connector.starts_with("connector.") {
+                error(
+                    format!("{p}/{field}/connector"),
+                    "expected a connector registry key",
+                );
+            }
+        }
+        let mut conductors = BTreeSet::new();
+        let mut from = BTreeSet::new();
+        let mut to = BTreeSet::new();
+        for (n, pin) in wire.pins.iter().enumerate() {
+            if !conductors.insert(&pin.conductor)
+                || !from.insert(&pin.from)
+                || !to.insert(&pin.to)
+            {
+                error(
+                    format!("{p}/pins/{n}"),
+                    "conductor and endpoint contact assignments must be unique",
+                );
+            }
+        }
+        if wire
+            .waypoints_m
+            .windows(2)
+            .any(|w| !nonzero_span(&w[0], &w[1]))
+        {
+            error(
+                format!("{p}/waypoints_m"),
+                "successive waypoints must have nonzero finite separation",
+            );
+        }
+    }
     for (id, p) in &d.access.points {
         if p.hull_anchor.is_some() && d.hull.is_none() {
             error(

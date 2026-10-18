@@ -36,6 +36,23 @@ models, verify hull anchor snapshots, prove polygon simplicity/collision/structu
 check flight readiness or migrate old saves. Those remain consumer responsibilities.
 A schema-valid or locally valid document is not an accepted ship.
 
+## Physical wiring (authoring foundation)
+
+The optional `wiring` map stores `Wire` values under stable wire IDs. Each end
+references an equipment instance in `modules`, its registry port ID and a connector
+product. `cable` names a run product; `pins` maps conductor IDs to contact IDs at
+the two ends. `waypoints_m` contains only intermediate route points in ship
+coordinates. The endpoints follow the ports when their modules move or rotate.
+The registry defines channel, role/polarity, flow, mating geometry and ratings;
+the document does not override those facts. `from`/`to` order the route, not the
+permitted direction of current or signal flow.
+
+Omission denotes a legacy design without authored connectivity; an empty map
+denotes explicit disconnection. The parser rejects dangling equipment references,
+multiple wires occupying one socket, duplicate pin assignments, and invalid
+waypoints. Consumers still need to resolve ports and check all electrical and
+mechanical compatibility. Crossings and proximity create no connections.
+
 Measured foundation check (2026-10-11, shared2CPU/8GiB, dev build): a1000-module
 230306-byte document emitted in2.91ms and parsed+validated in18.00ms. This is a
 bounded synthetic parser probe, not an editor/renderer performance claim.

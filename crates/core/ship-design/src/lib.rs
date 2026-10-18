@@ -160,6 +160,7 @@ impl Document {
             hull: None,
             requirements: None,
             modules: BTreeMap::new(),
+            wiring: None,
             access: Access {
                 points: BTreeMap::new(),
                 paths: BTreeMap::new(),

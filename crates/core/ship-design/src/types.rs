@@ -497,6 +497,44 @@ pub struct Dependencies {
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
+pub struct WireEnd {
+    /// Stable instance ID in this document, not an equipment catalogue key.
+    #[schemars(length(min = 1))]
+    pub module: String,
+    /// Port ID defined by that equipment's registry record.
+    #[schemars(length(min = 1))]
+    pub port: String,
+    /// The actual mating product at this end.
+    #[schemars(length(min = 1))]
+    pub connector: String,
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct WirePin {
+    #[schemars(length(min = 1))]
+    pub conductor: String,
+    #[schemars(length(min = 1))]
+    pub from: String,
+    #[schemars(length(min = 1))]
+    pub to: String,
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct Wire {
+    pub from: WireEnd,
+    pub to: WireEnd,
+    #[schemars(length(min = 1))]
+    pub cable: String,
+    /// Interior routing points in ship coordinates; endpoints follow their ports.
+    pub waypoints_m: Vec<[f64; 3]>,
+    #[schemars(length(min = 1))]
+    pub pins: Vec<WirePin>,
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
 pub struct Document {
     #[serde(rename = "$schema")]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -513,6 +551,10 @@ pub struct Document {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub requirements: Option<Requirements>,
     pub modules: BTreeMap<String, Module>,
+    /// None is a legacy design without authored connectivity. Some(empty) is
+    /// explicitly disconnected. Neither is evidence of electrical connectivity.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub wiring: Option<BTreeMap<String, Wire>>,
     pub access: Access,
     pub structure: Structure,
     pub decks: BTreeMap<String, Deck>,

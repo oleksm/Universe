@@ -1067,6 +1067,98 @@
         "height_m"
       ],
       "type": "object"
+    },
+    "Wire": {
+      "additionalProperties": false,
+      "properties": {
+        "cable": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "from": {
+          "$ref": "#/$defs/WireEnd"
+        },
+        "pins": {
+          "items": {
+            "$ref": "#/$defs/WirePin"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "to": {
+          "$ref": "#/$defs/WireEnd"
+        },
+        "waypoints_m": {
+          "description": "Interior routing points in ship coordinates; endpoints follow their ports.",
+          "items": {
+            "items": {
+              "format": "double",
+              "type": "number"
+            },
+            "maxItems": 3,
+            "minItems": 3,
+            "type": "array"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "from",
+        "to",
+        "cable",
+        "waypoints_m",
+        "pins"
+      ],
+      "type": "object"
+    },
+    "WireEnd": {
+      "additionalProperties": false,
+      "properties": {
+        "connector": {
+          "description": "The actual mating product at this end.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "module": {
+          "description": "Stable instance ID in this document, not an equipment catalogue key.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "port": {
+          "description": "Port ID defined by that equipment's registry record.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "module",
+        "port",
+        "connector"
+      ],
+      "type": "object"
+    },
+    "WirePin": {
+      "additionalProperties": false,
+      "properties": {
+        "conductor": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "from": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "to": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "conductor",
+        "from",
+        "to"
+      ],
+      "type": "object"
     }
   },
   "$id": "urn:freefall:ship-code:1-draft",
@@ -1152,6 +1244,15 @@
     },
     "view": {
       "$ref": "#/$defs/View"
+    },
+    "wiring": {
+      "additionalProperties": {
+        "$ref": "#/$defs/Wire"
+      },
+      "description": "None is a legacy design without authored connectivity. Some(empty) is\nexplicitly disconnected. Neither is evidence of electrical connectivity.",
+      "type": [
+        "object"
+      ]
     }
   },
   "required": [
