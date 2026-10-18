@@ -1,5 +1,8 @@
 # Agent messaging: agentmsg
 
+For installation and daily operation, start with the [operator README](../tools/agents/README.md).
+The [operating skill](../tools/agents/skills/agentmsg/SKILL.md) teaches this workflow to Claude and Codex.
+
 A mailbox any agent with a shell can use: Claude Code sessions, Codex, scripts. Files, not sockets, so it works across
 tools, survives restarts and power cuts, and costs no tokens while an agent waits. `tools/agents/agentmsg.py`, linked as
 `~/bin/agentmsg`; the mailbox is `~/.agents` (or `$AGENTMSG_HOME`).

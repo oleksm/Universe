@@ -14,3 +14,5 @@ The executable is `freefall`. Press F1 in the game for help. See `docs/architect
 it's built and `changelog/` for what's changed.
 
 (The code's crates keep their working names, `universe-*`.)
+
+For the local Claude/Codex agent network, see the [agentmsg operator guide](tools/agents/README.md).
