@@ -4359,7 +4359,7 @@
 - { record: template.corner-casting, at: "2026-10-18T04:18:11Z", status: "", summary: "changed", sha: "d419adb8082c4d81" }
 - { record: template.coupler, at: "2026-10-18T04:31:06Z", status: "", summary: "changed", sha: "92f33e0051a9f6f6" }
 - { record: template.drag-conveyor, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "da78b5e8e253b112" }
-- { record: template.expansion-joint, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "b40d4515cf6b4c83" }
+- { record: template.expansion-joint, at: "2026-10-18T04:38:47Z", status: "", summary: "changed: visual", sha: "4d2c3194bee243e3" }
 - { record: template.festoon, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "d64b223260ef067b" }
 - { record: template.flange, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "df7d790e5b79a704" }
 - { record: template.flange-double, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "1587eb01caf04022" }

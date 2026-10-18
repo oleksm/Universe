@@ -10,6 +10,12 @@ scales_by:
 - physical
 members: 4
 reference: connector.expansion-joint-dn300-pn10
+visual:
+  format: "freefall-model/1"
+  path: "models/expansion-joint/v1"
+  manifest_sha256: "5fe02cfc779b7dcad44fe2c649cce82251adc9b116971c14eca8c80d851ca586"
+  version: 1
+  triangles: 11152
 basis:
 - of:
   - draws
