@@ -169,8 +169,9 @@ links:
   design's real duty comes from the stiffness model.
 - The 3 kV converters and the distribution boards now fit `mount.utility-s1` (a deck), no longer the 13.8 m power
   plant mount.
-- Not yet: feet on the 5 records whose ports are hand-written (`equipment.engine.ft.s1` to `s3`,
-  `equipment.thermal.radiator-hot.s1` and `s2`); run clips (`interface.run-clip-d<mm>`).
+- Feet on the 5 records whose ports are hand-written (FT S1 to S3, hot radiators S1 and S2): `equipment_ports.py` keeps
+  their ports as written and rewrites only the `foot-` ones (fso c906bece).
+- Not yet: run clips (`interface.run-clip-d<mm>`).
 
 ## Asked
 
