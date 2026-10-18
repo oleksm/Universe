@@ -258,8 +258,8 @@
 - { record: connector.flat-face-dn25, at: "2026-10-18T04:54:39Z", status: draft, summary: "changed: physical, built_of, basis", sha: "11b4cdbad101f28f" }
 - { record: connector.flat-face-dn6, at: "2026-10-18T04:54:39Z", status: draft, summary: "changed: physical, built_of, basis", sha: "ff4ae0d148b0a305" }
 - { record: connector.hood-dn2000, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "e034527157c4a0bc" }
-- { record: connector.hose-union-dn25, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "64e061970d43b2cf" }
-- { record: connector.hose-union-dn50, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "7a00283e7304272f" }
+- { record: connector.hose-union-dn25, at: "2026-10-18T05:34:39Z", status: draft, summary: "changed: physical, built_of, basis", sha: "02a5541d0aa77a90" }
+- { record: connector.hose-union-dn50, at: "2026-10-18T05:34:39Z", status: draft, summary: "changed: physical, built_of, basis", sha: "13575e6e9875d0ce" }
 - { record: connector.lined-flange-dn1200-pn1, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "a3508423bbfa95b2" }
 - { record: connector.lined-flange-dn2400-pn16-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "250ee52b4dee6fc9" }
 - { record: connector.lined-flange-dn3600-pn10-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "eaf49c50b35ba4b3" }
@@ -3594,8 +3594,8 @@
 - { record: stock.kit-hose-metal-dn200, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "e0de308a785ad599" }
 - { record: stock.kit-hose-metal-dn25, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "668400ddbf432cde" }
 - { record: stock.kit-hose-metal-dn50, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "3fb3f73217930f5a" }
-- { record: stock.kit-hose-union-dn25, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "d4c190f670adc785" }
-- { record: stock.kit-hose-union-dn50, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "99dd976eebca329c" }
+- { record: stock.kit-hose-union-dn25, at: "2026-10-18T05:34:39Z", status: review, summary: "changed: physical", sha: "38dc925340cef29f" }
+- { record: stock.kit-hose-union-dn50, at: "2026-10-18T05:34:39Z", status: review, summary: "changed: physical", sha: "87f69b4a85df88a4" }
 - { record: stock.kit-jacketed-duct-dn2000, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "9b07f02fae3f212b" }
 - { record: stock.kit-lined-duct-dn1200-pn1, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "376badfc6021cc62" }
 - { record: stock.kit-lined-duct-dn2400-pn16-double, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "820e4013566b1cb1" }
@@ -4383,7 +4383,7 @@
 - { record: template.termination-hv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "b0398bafc880c882" }
 - { record: template.termination-lv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "b3fff31e02cd79e5" }
 - { record: template.termination-mv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "5098fcf4fe0ded80" }
-- { record: template.twistlock, at: "2026-10-18T05:29:35Z", status: "", summary: "changed: visual", sha: "41cc1f99f00b7f40" }
+- { record: template.twistlock, at: "2026-10-18T05:34:39Z", status: "", summary: "changed", sha: "8d12961195852bce" }
 - { record: template.union, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "c1676128c6be1767" }
 - { record: template.valve-ball, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "c7aa276338bc7083" }
 - { record: template.valve-butterfly, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "910ee70eb7366890" }

@@ -13,11 +13,11 @@ physical:
   length: 0.14
   width: 0.14
   height: 0.14
-  mass: 1.8
+  mass: 4.12
 built_of:
 - what: Union nut, tail and seat
   item: material.stainless-steel-304
-  mass: 1.8
+  mass: 4.12
 provides: both
 template: template.union
 basis:
@@ -25,5 +25,5 @@ basis:
   - physical
   tier: invented
   review: true
-  note: From memory of makers' catalogues; to be sourced.
+  note: Scaled from the DN 25's measured 1.375 kg by the old ratio; From memory of makers' catalogues; to be sourced.
 interface: interface.hose-union-dn50

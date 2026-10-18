@@ -140,15 +140,16 @@ for dn in (0.025, 0.05, 0.1, 0.2):
         "connector": f"connector.flange-dn{tag(dn)}-pn25-ss" if dn >= 0.1 else f"connector.hose-union-dn{tag(dn)}",
         "carries": "gas", "template": "template.hose-metal",
         "basis": [{"of": ["per_m", "elbow"], "tier": "invented", "review": True, "note": f"0.4 mm stainless corrugation (0.6 mm from DN 100) and a braid of nine tenths its weight; least bend radius five outsides for a hose that flexes now and then (static: about two); {MEMORY}"}]})
+UNION_KG = 1.375         # blender's DN 25 model (2026-10-18): 304, captive hex nut, metal cone seat; the DN 50 scaled by the old ratio
 for dn in (0.025, 0.05):
-    m = {0.025: 0.6, 0.05: 1.8}[dn]
+    m = round({0.025: 0.6, 0.05: 1.8}[dn] * UNION_KG / 0.6, 2)
     ck = f"hose-union-dn{tag(dn)}"
     conn(ck, {
         "identity": {"key": f"connector.{ck}", "name": f"Hose union, DN {tag(dn)}", "description": "A screwed union with a metal seat: a small metal hose's end, made with spanners."},
         "kind": "union", "size": dn, "rating": {"pressure": 2.5e6, "temperature": 823.0},
         "physical": {"length": r(dn * 2.2 + 0.03, 3), "width": r(dn * 2.2 + 0.03, 3), "height": r(dn * 2 + 0.04, 3), "mass": m},
         "built_of": [part("Union nut, tail and seat", SS, m)], "provides": "both", "template": "template.union",
-        "basis": [{"of": ["physical"], "tier": "invented", "review": True, "note": MEMORY}]},
+        "basis": [{"of": ["physical"], "tier": "derived" if dn == 0.025 else "invented", "review": True, "note": "From blender's model (2026-10-18): 73.6 mm hex across flats (85 across corners) x 90 mm, round DN 25 bore, captive nut and metal cone seat, 1.375 kg of 304." if dn == 0.025 else f"Scaled from the DN 25's measured {UNION_KG:g} kg by the old ratio; {MEMORY}"}]},
         {"slug": ck, "name": f"Union DN {tag(dn)}", "domain": "fluid", "kind": "union", "media": ["gas", "liquid"], "halves": "male-female", "make": "bolted"})
 for dn in (0.1, 0.2):          # (PN 25 stainless flanges for the bigger metal hoses, as the plant kit makes its own)
     key = pk.flange(dn, 25, item=pk.SS, temp=823.0)

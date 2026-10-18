@@ -16,7 +16,7 @@ size:
 supplies:
   item: connector.hose-union-dn50
 physical:
-  mass: 1.8
+  mass: 4.12
 basis:
 - of:
   - size

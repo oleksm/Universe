@@ -13,17 +13,17 @@ physical:
   length: 0.085
   width: 0.085
   height: 0.09
-  mass: 0.6
+  mass: 1.38
 built_of:
 - what: Union nut, tail and seat
   item: material.stainless-steel-304
-  mass: 0.6
+  mass: 1.38
 provides: both
 template: template.union
 basis:
 - of:
   - physical
-  tier: invented
+  tier: derived
   review: true
-  note: From memory of makers' catalogues; to be sourced.
+  note: 'From blender''s model (2026-10-18): 73.6 mm hex across flats (85 across corners) x 90 mm, round DN 25 bore, captive nut and metal cone seat, 1.375 kg of 304.'
 interface: interface.hose-union-dn25
