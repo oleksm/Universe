@@ -45,6 +45,17 @@ A unit that travels whole (a car, a crane's run along its rails, a forklift driv
 - In the schema (`docs/formats/freefall-motion-1.schema.yaml`, `axes`) and `check_motion` (`assets.py _check_axes`).
   `precheck_model.py` skips the game consumer for plain axes: the engine has none yet and builds it when units go in.
 
+## With actuators and hoses (2026-10-18, blender's EAF, thread 20261018T125615-blender-b71e)
+
+A unit's axes may carry `actuators` and `hoses` as freefall-motion/1 defines them: their anchors and end frames are
+parented to an axis's node (or the root), and they follow it. The axes drive; an actuator only follows its two
+anchors, and a hose only its two ends. `check_motion` (`assets.py _sweep_axes`) sweeps them over the axes: neutral,
+each axis through its range in 8 steps with the others at 0, and every corner of the ranges together. It checks each
+actuator's overlap and closed length and each hose's reach. **References** give one input value per axis, in the order
+of `axes`, and every listed node's transform must match within 2e-6. Links, bellows and a gimbal together with plain
+axes are refused until they are needed. The engine's runtime is the same hierarchy: the axis poses its node, and an
+actuator's body and rod aim at their anchors, as on the gimbal (engine's convention v11).
+
 ## Still asked
 - Registry (mine): give the record motions their `rate` where known, and keep `moves` naming the parts so blender knows
   which geometry to separate.

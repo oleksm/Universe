@@ -552,6 +552,77 @@ def _check_axes(r, mo, parent):
     return bad
 
 
+def _sweep_axes(mo, axes, bind, parent, eye):
+    """Actuators and hoses over plain axes (plant units): each axis's node moves by its value, an axis riding another
+    composes on it; the poses are neutral, each axis through its range in 8 steps (others at 0), and every corner of the
+    ranges together. References give one value per axis, in the order of `axes`."""
+    by = {a["motion"]: a for a in axes}
+
+    def local(a, v):
+        if a["kind"] == "rotate":
+            return _about(a["pivot"], _rot(a["axis"], v))
+        u = _unit(a["axis"])
+        return [[1, 0, 0, u[0] * v], [0, 1, 0, u[1] * v], [0, 0, 1, u[2] * v], [0, 0, 0, 1]]
+
+    def pose(*q):
+        out = {}
+        def m_of(a):
+            if a["node"] in out:
+                return out[a["node"]]
+            par = by.get(a.get("parent_axis"))
+            m = _mul(m_of(par), local(a, q[axes.index(a)])) if par else local(a, q[axes.index(a)])
+            out[a["node"]] = m
+            return m
+        for a in axes:
+            m_of(a)
+        return out
+
+    def span(a):
+        return [0.0, 2 * math.pi] if a.get("continuous") else a.get("range", [0.0, 0.0])
+
+    poses = [tuple(0.0 for _ in axes)]
+    for i, a in enumerate(axes):
+        lo, hi = span(a)
+        poses += [tuple(lo + (hi - lo) * k / 8 if j == i else 0.0 for j in range(len(axes))) for k in range(9)]
+    if len(axes) <= 4:
+        for c in range(2 ** len(axes)):
+            poses.append(tuple(span(a)[(c >> i) & 1] for i, a in enumerate(axes)))
+
+    def moved_of(par, moved):
+        m, x = moved.get(par), par
+        while m is None and x in parent:
+            x = parent[x]; m = moved.get(x)
+        return m or eye
+
+    bad = []
+    for a in mo.get("actuators", []):
+        lens = [math.dist(*[_apply(_mul(moved_of(e["parent"], pose(*q)), bind.get(e["parent"], eye)), e["point"]) for e in (a["fixed"], a["moving"])]) for q in poses]
+        least = a["body_length"] + a["rod_length"] - max(lens)
+        if least < a["min_overlap"] - 1e-6:
+            bad.append(f"motion: actuator {a['name']}: overlap falls to {least:.4f} m at full stroke, under its {a['min_overlap']} m")
+        if min(lens) < max(a["body_length"], a["rod_length"]):
+            bad.append(f"motion: actuator {a['name']}: closes to {min(lens):.4f} m, shorter than its longer part")
+    for h in mo.get("hoses", []):
+        pts = lambda q: [_apply(_mul(moved_of(e["parent"], pose(*q)), bind.get(e["parent"], eye)), [e["frame"][12], e["frame"][13], e["frame"][14]]) for e in h["ends"]]
+        far = max(math.dist(*pts(q)) for q in poses)
+        if far > h["free_length"] + h["length_tolerance"]:
+            bad.append(f"motion: hose {h['name']}: its ends reach {far:.4f} m apart, more than its {h['free_length']} m")
+        if h["min_bend_radius"] <= 0 or h["diameter"] <= 0:
+            bad.append(f"motion: hose {h['name']}: diameter and bend radius must be above 0")
+    if mo.get("links") or mo.get("bellows") or mo.get("gimbal"):
+        bad.append("motion: links, bellows and a gimbal are not yet checked with plain axes: ask the registry")
+    for ref in mo.get("references", []):
+        if len(ref["input"]) != len(axes):
+            bad.append(f"motion: reference {ref['pose']}: {len(ref['input'])} input(s), one per axis wanted ({len(axes)})"); continue
+        moved = pose(*ref["input"])
+        for n, t in ref["transforms"].items():
+            if n in bind:
+                A = _mul(moved_of(n, moved), bind[n])
+                if _diff(A, _m4(t)) > 2e-6:
+                    bad.append(f"motion: reference {ref['pose']}: {n} is {_diff(A, _m4(t)):.2e} off what the axes give")
+    return bad
+
+
 def check_motion(key, r, info, mo):
     """What is wrong with a motion account against its record and model: plain sentences (empty: it fits)."""
     schema = yaml.safe_load(open(MOTION_SCHEMA, encoding="utf-8"))
@@ -626,9 +697,12 @@ def check_motion(key, r, info, mo):
             bad.append(f"motion: gimbal limit {g['limit']} rad, the record's is {limit} (the registry is the authority)")
     elif limit:
         bad.append(f"motion: the record gimbals ({limit} rad) but the motion has no gimbal")
-    if bad or not g:
+    axes = mo.get("axes", [])
+    if bad or not (g or axes):
         return bad
     eye = [[1 if i == j else 0 for j in range(4)] for i in range(4)]
+    if axes and not g:
+        return bad + _sweep_axes(mo, axes, bind, parent, eye)
 
     def pose(p, y):
         """Each node's motion (model root) at input (p, y): the pitch stage turns, the yaw stage turns within it."""

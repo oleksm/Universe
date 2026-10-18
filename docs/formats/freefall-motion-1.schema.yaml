@@ -263,5 +263,5 @@ properties:
       required: [pose, input, transforms]
       properties:
         pose: { type: string }
-        input: { type: array, items: { type: number }, minItems: 2, maxItems: 2 }
+        input: { type: array, items: { type: number }, minItems: 1, description: "the gimbal's (pitch, yaw) in [-1, 1]; with plain axes, one value per axis in the order of `axes` (rad or m)" }
         transforms: { type: object, additionalProperties: { $ref: "#/definitions/transform" } }
