@@ -72,14 +72,14 @@ ports:
   - contact: '1'
     role: plus
   at:
-  - -0.225
-  - 0.0
-  - -0.295
+  - -0.164
+  - -0.06
+  - 0.08
   facing:
+  - 0.0
   - -1.0
   - 0.0
-  - 0.0
-  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+  note: 'place invented (no model yet): a grid on its -y broad face, for review'
 - id: in-
   flow: in
   medium: power
@@ -96,14 +96,14 @@ ports:
   - contact: '1'
     role: minus
   at:
-  - -0.225
-  - 0.0
-  - -0.225
+  - -0.093
+  - -0.06
+  - 0.08
   facing:
+  - 0.0
   - -1.0
   - 0.0
-  - 0.0
-  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+  note: 'place invented (no model yet): a grid on its -y broad face, for review'
 - id: in-33
   flow: in
   medium: power
@@ -121,14 +121,14 @@ ports:
   - contact: B
     role: minus
   at:
-  - -0.225
-  - 0.028
-  - -0.155
+  - -0.025
+  - -0.06
+  - 0.08
   facing:
+  - 0.0
   - -1.0
   - 0.0
-  - 0.0
-  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+  note: 'place invented (no model yet): a grid on its -y broad face, for review'
 - id: in-25
   flow: in
   medium: power
@@ -150,14 +150,14 @@ ports:
   - contact: D
     role: spare
   at:
-  - -0.225
-  - -0.034
-  - -0.155
+  - 0.036
+  - -0.06
+  - 0.08
   facing:
+  - 0.0
   - -1.0
   - 0.0
-  - 0.0
-  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+  note: 'place invented (no model yet): a grid on its -y broad face, for review'
 - id: way-1
   flow: out
   medium: power
@@ -185,14 +185,14 @@ ports:
   - contact: '7'
     role: spare
   at:
-  - -0.225
-  - 0.022
-  - -0.085
+  - 0.086
+  - -0.06
+  - 0.08
   facing:
+  - 0.0
   - -1.0
   - 0.0
-  - 0.0
-  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+  note: 'place invented (no model yet): a grid on its -y broad face, for review'
 - id: way-2
   flow: out
   medium: power
@@ -220,14 +220,14 @@ ports:
   - contact: '7'
     role: spare
   at:
-  - -0.225
-  - -0.022
-  - -0.085
+  - 0.131
+  - -0.06
+  - 0.08
   facing:
+  - 0.0
   - -1.0
   - 0.0
-  - 0.0
-  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+  note: 'place invented (no model yet): a grid on its -y broad face, for review'
 - id: way-3
   flow: out
   medium: power
@@ -255,14 +255,14 @@ ports:
   - contact: '7'
     role: spare
   at:
-  - -0.225
-  - 0.022
-  - -0.015
+  - 0.176
+  - -0.06
+  - 0.08
   facing:
+  - 0.0
   - -1.0
   - 0.0
-  - 0.0
-  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+  note: 'place invented (no model yet): a grid on its -y broad face, for review'
 - id: way-4
   flow: out
   medium: power
@@ -290,14 +290,14 @@ ports:
   - contact: '7'
     role: spare
   at:
-  - -0.225
-  - -0.022
-  - -0.015
+  - -0.18
+  - -0.06
+  - 0.15
   facing:
+  - 0.0
   - -1.0
   - 0.0
-  - 0.0
-  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+  note: 'place invented (no model yet): a grid on its -y broad face, for review'
 - id: way-5
   flow: out
   medium: power
@@ -325,14 +325,14 @@ ports:
   - contact: '7'
     role: spare
   at:
-  - -0.225
-  - 0.022
-  - 0.055
+  - -0.135
+  - -0.06
+  - 0.15
   facing:
+  - 0.0
   - -1.0
   - 0.0
-  - 0.0
-  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+  note: 'place invented (no model yet): a grid on its -y broad face, for review'
 - id: way-6
   flow: out
   medium: power
@@ -360,14 +360,14 @@ ports:
   - contact: '7'
     role: spare
   at:
-  - -0.225
-  - -0.022
-  - 0.055
+  - -0.09
+  - -0.06
+  - 0.15
   facing:
+  - 0.0
   - -1.0
   - 0.0
-  - 0.0
-  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+  note: 'place invented (no model yet): a grid on its -y broad face, for review'
 - id: way-7
   flow: out
   medium: power
@@ -395,14 +395,14 @@ ports:
   - contact: '7'
     role: spare
   at:
-  - -0.225
-  - 0.022
-  - 0.125
+  - -0.045
+  - -0.06
+  - 0.15
   facing:
+  - 0.0
   - -1.0
   - 0.0
-  - 0.0
-  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+  note: 'place invented (no model yet): a grid on its -y broad face, for review'
 - id: way-8
   flow: out
   medium: power
@@ -430,14 +430,14 @@ ports:
   - contact: '7'
     role: spare
   at:
-  - -0.225
-  - -0.022
-  - 0.125
+  - 0.0
+  - -0.06
+  - 0.15
   facing:
+  - 0.0
   - -1.0
   - 0.0
-  - 0.0
-  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+  note: 'place invented (no model yet): a grid on its -y broad face, for review'
 - id: way-9
   flow: out
   medium: power
@@ -465,14 +465,14 @@ ports:
   - contact: '7'
     role: spare
   at:
-  - -0.225
-  - 0.022
-  - 0.195
+  - 0.045
+  - -0.06
+  - 0.15
   facing:
+  - 0.0
   - -1.0
   - 0.0
-  - 0.0
-  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+  note: 'place invented (no model yet): a grid on its -y broad face, for review'
 - id: way-10
   flow: out
   medium: power
@@ -500,14 +500,14 @@ ports:
   - contact: '7'
     role: spare
   at:
-  - -0.225
-  - -0.022
-  - 0.195
+  - 0.09
+  - -0.06
+  - 0.15
   facing:
+  - 0.0
   - -1.0
   - 0.0
-  - 0.0
-  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+  note: 'place invented (no model yet): a grid on its -y broad face, for review'
 - id: way-11
   flow: out
   medium: power
@@ -535,14 +535,14 @@ ports:
   - contact: '7'
     role: spare
   at:
-  - -0.225
-  - 0.022
-  - 0.265
+  - 0.135
+  - -0.06
+  - 0.15
   facing:
+  - 0.0
   - -1.0
   - 0.0
-  - 0.0
-  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+  note: 'place invented (no model yet): a grid on its -y broad face, for review'
 - id: way-12
   flow: out
   medium: power
@@ -570,14 +570,14 @@ ports:
   - contact: '7'
     role: spare
   at:
-  - -0.225
-  - -0.022
-  - 0.265
+  - 0.18
+  - -0.06
+  - 0.15
   facing:
+  - 0.0
   - -1.0
   - 0.0
-  - 0.0
-  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+  note: 'place invented (no model yet): a grid on its -y broad face, for review'
 - id: way-13
   flow: out
   medium: power
@@ -599,14 +599,14 @@ ports:
   - contact: D
     role: spare
   at:
-  - -0.225
-  - 0.028
-  - 0.335
+  - -0.12
+  - -0.06
+  - 0.22
   facing:
+  - 0.0
   - -1.0
   - 0.0
-  - 0.0
-  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+  note: 'place invented (no model yet): a grid on its -y broad face, for review'
 - id: way-14
   flow: out
   medium: power
@@ -628,14 +628,14 @@ ports:
   - contact: D
     role: spare
   at:
-  - -0.225
-  - -0.028
-  - 0.335
+  - -0.065
+  - -0.06
+  - 0.22
   facing:
+  - 0.0
   - -1.0
   - 0.0
-  - 0.0
-  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+  note: 'place invented (no model yet): a grid on its -y broad face, for review'
 - id: way-15
   flow: out
   medium: power
@@ -657,14 +657,14 @@ ports:
   - contact: D
     role: spare
   at:
-  - -0.225
-  - 0.028
-  - 0.405
+  - -0.01
+  - -0.06
+  - 0.22
   facing:
+  - 0.0
   - -1.0
   - 0.0
-  - 0.0
-  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+  note: 'place invented (no model yet): a grid on its -y broad face, for review'
 - id: way-16
   flow: out
   medium: power
@@ -686,14 +686,14 @@ ports:
   - contact: D
     role: spare
   at:
-  - -0.225
-  - -0.028
-  - 0.405
+  - 0.045
+  - -0.06
+  - 0.22
   facing:
+  - 0.0
   - -1.0
   - 0.0
-  - 0.0
-  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+  note: 'place invented (no model yet): a grid on its -y broad face, for review'
 - id: data-1
   flow: both
   medium: signal
@@ -718,14 +718,14 @@ ports:
   - contact: '7'
     role: spare
   at:
-  - -0.225
-  - 0.018
-  - 0.475
+  - 0.091
+  - -0.06
+  - 0.22
   facing:
+  - 0.0
   - -1.0
   - 0.0
-  - 0.0
-  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+  note: 'place invented (no model yet): a grid on its -y broad face, for review'
 - id: data-2
   flow: both
   medium: signal
@@ -750,14 +750,14 @@ ports:
   - contact: '7'
     role: spare
   at:
-  - -0.225
-  - -0.018
-  - 0.475
+  - 0.129
+  - -0.06
+  - 0.22
   facing:
+  - 0.0
   - -1.0
   - 0.0
-  - 0.0
-  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+  note: 'place invented (no model yet): a grid on its -y broad face, for review'
 internal:
 - kind: switched
   ports:

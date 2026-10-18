@@ -188,7 +188,13 @@ def end_face(rec):
 INVENTED = "place invented (the model has no empty for it): on its -x end face, for review"
 
 
-def place(rec, items, at=None, name=None):
+FRONT = "place invented (no model yet): a grid on its -y broad face, for review"           # (blender, 2026-10-18: the end face is too small for a board)
+
+
+def place(rec, items, at=None, name=None, front=False):
+    if front:
+        ph = rec["physical"]
+        return lay(items, [0.0, r(-ph["width"] / 2), r(ph["height"] / 2)], [0.0, -1.0, 0.0], ph["length"] * 0.9, FRONT)
     if at:
         c, f = at
         return lay(items, c, f, max(0.3, rec["physical"]["width"] * 0.9), f"place from the model's empty {name}")

@@ -95,7 +95,7 @@ def board(v, n17, n25, n33, kg, l, w, h):
             outs.append(ep.way(f"way-{n}", "out", "female", float(v), ch, a, a * v, sh=sh))
     total = 400 * v
     rec = {"physical": {"length": l, "width": w, "height": h}}
-    ports = ep.place(rec, ins + outs + ep.data_ports(2))
+    ports = ep.place(rec, ins + outs + ep.data_ports(2), front=True)
     parts = [{"code": f"{code}-{i + 1:02d}", "name": nm, "description": d, "mass": r(kg * s, 2), "length": l, "width": w, "height": r(h * s, 3),
               "item": item, "quantity": r(kg * s * 1.15, 2), "module": mod} for i, (nm, item, s, mod, d) in enumerate(BOARD_SHARES)]
     return slug, {
