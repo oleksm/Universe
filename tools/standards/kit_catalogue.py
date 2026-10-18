@@ -272,9 +272,9 @@ FL_OD = {0.05: 0.165, 0.1: 0.22, 0.15: 0.285, 0.3: 0.445, 0.6: 0.78, 1.0: 1.23} 
 
 
 def fl_od(dn):
-    """The PN 10 flange's outside it bolts to: the plant kit's flange record where there is one, else EN 1092-1's."""
-    f = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "standards", "SFO", "metadata", "connectors", f"flange-dn{tag(dn)}-pn10.yaml")
-    return float(yaml.safe_load(open(f))["physical"]["length"]) if os.path.exists(f) else FL_OD[dn]
+    """The PN 10 flange's outside it bolts to: the plant kit's flange interface (its joint's face) where there is one, else EN 1092-1's."""
+    f = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "standards", "SFO", "metadata", "interfaces", f"flange-dn{tag(dn)}-pn10.yaml")
+    return float(yaml.safe_load(open(f))["face"]["length"]) if os.path.exists(f) else FL_OD[dn]
 
 
 ROD_LUGS = 0.06     # m the limit rods' lugs stand out past the flanges, both sides together (invented)
@@ -283,10 +283,10 @@ for vt, dn, kg, ff, h, what in VALVES:
     conn(slug, {
         "identity": {"key": f"connector.{slug}", "name": f"{vt.capitalize()} valve, DN {tag(dn)}, PN 10", "description": f"A flanged {vt} valve set in a line between two flange joints: {what}."},
         "kind": "valve", "size": dn, "valve": vt, "rating": {"pressure": 1.0e6, "temperature": 473.0},
-        "physical": {"length": fl_od(dn), "width": fl_od(dn), "height": r(ff, 3), "mass": kg},
+        "physical": {"length": fl_od(dn), "width": r(fl_od(dn) / 2 + max(h, fl_od(dn) / 2), 3), "height": r(ff, 3), "mass": kg},     # (width: from the flange's far rim to the actuator's top, off the axis along +Z)
         "built_of": [part("Body and bonnet", A36, kg * 0.75, "cast carbon steel"), part("Trim", SS, kg * 0.2, "stainless seats, stem, disc or ball"), part("Packing and seats", RUB if vt != "gate" else SS, kg * 0.05)],
         "provides": "both", "template": f"template.valve-{vt}",
-        "basis": [{"of": ["physical", "built_of"], "tier": "invented", "review": True, "note": f"Face to face as the EN 558 series run (from memory); its height along the line; the actuator stands off it {h} m; {MEMORY}"}]},
+        "basis": [{"of": ["physical", "built_of"], "tier": "invented", "review": True, "note": f"Face to face as the EN 558 series run (from memory); its height along the line; the lever, gearbox or actuator out to {h} m from the axis along +Z, inside its width; {MEMORY}"}]},
         {"slug": f"flange-dn{tag(dn)}-pn10", "name": f"Flange DN {tag(dn)} PN 10", "domain": "fluid", "kind": "flange", "media": ["gas", "liquid"], "halves": "androgynous", "make": "bolted", "standard": "EN 1092-1 bores and pressure classes (its faces and bolting the registry's)"})
 EJ_KG = {0.3: 49.48}       # blender's DN 300 model (2026-10-17): 36.15 kg A36, 13.34 kg 304; the others scaled by the old catalogue's ratios to it
 EJ_SS = 13.34 / 49.48

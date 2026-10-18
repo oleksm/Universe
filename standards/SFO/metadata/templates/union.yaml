@@ -10,15 +10,15 @@ scales_by:
 - physical
 members: 2
 reference: connector.hose-union-dn25
-visual:
-  format: "freefall-model/1"
-  path: "models/union/v1"
-  manifest_sha256: "09ded711be76999b9142c782db174bc8f8f83e4e2bf49ae0181cd2f6a0d3b1ad"
-  version: 1
-  triangles: 2248
 basis:
 - of:
   - draws
   - scales_by
   tier: derived
   note: 'The owner, 2026-10-17: one template a family, scaled; the catalogue families (kit_catalogue.py).'
+visual:
+  format: freefall-model/1
+  path: models/union/v1
+  manifest_sha256: 09ded711be76999b9142c782db174bc8f8f83e4e2bf49ae0181cd2f6a0d3b1ad
+  version: 1
+  triangles: 2248

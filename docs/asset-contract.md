@@ -153,7 +153,10 @@ One model draws every size of a kit family (`standards/SFO/metadata/templates/`)
   `length` along X, `width` along Z. The mating plane is y = 0, the model centred on the axis in X and Z.
 - **Halves:** the two halves are named root nodes: `male` and `female` (a plug and its socket, a cam-lock's adapter and
   coupler), or `half-a` and `half-b` for androgynous ones; mated in the static pose. A valve or an expansion joint is one
-  node, `body`, its flange faces at y = 0 and y = height. No motion.
+  node, `body`, its flange faces at y = 0 and y = height. No motion. A valve's end flanges are the plant kit's flange
+  interface for its bore (its face's outside, bolting and ring as the flange record); its lever, handwheel, gearbox or
+  actuator stands off the axis along +Z, so its width runs from the flanges' rim at -Z to the actuator's top (the model
+  is centred on the axis in X only).
 - **Scaling:** the game draws each member at its own figures: X by length / reference length, Y by height / reference
   height, Z by width / reference width. A run's pieces (supports, trolleys) scale by its `outside` the same way.
 - **Real shape first:** if the reference's figures are not what the real part measures, model the real part and send the

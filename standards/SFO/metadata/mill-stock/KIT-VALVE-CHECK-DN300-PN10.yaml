@@ -13,7 +13,7 @@ made_from:
 - item: material.epdm-rubber
 size:
   length: 0.466
-  width: 0.466
+  width: 0.783
   height: 0.5
 supplies:
   item: connector.valve-check-dn300-pn10

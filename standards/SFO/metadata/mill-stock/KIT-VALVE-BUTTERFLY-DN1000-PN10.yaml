@@ -13,7 +13,7 @@ made_from:
 - item: material.epdm-rubber
 size:
   length: 1.166
-  width: 1.166
+  width: 2.533
   height: 0.216
 supplies:
   item: connector.valve-butterfly-dn1000-pn10

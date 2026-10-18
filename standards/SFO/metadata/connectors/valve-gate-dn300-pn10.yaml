@@ -12,7 +12,7 @@ rating:
   temperature: 473.0
 physical:
   length: 0.466
-  width: 0.466
+  width: 1.733
   height: 0.33
   mass: 280.0
 built_of:
@@ -35,5 +35,5 @@ basis:
   - built_of
   tier: invented
   review: true
-  note: Face to face as the EN 558 series run (from memory); its height along the line; the actuator stands off it 1.5 m; From memory of makers' catalogues; to be sourced.
+  note: Face to face as the EN 558 series run (from memory); its height along the line; the lever, gearbox or actuator out to 1.5 m from the axis along +Z, inside its width; From memory of makers' catalogues; to be sourced.
 interface: interface.flange-dn300-pn10
