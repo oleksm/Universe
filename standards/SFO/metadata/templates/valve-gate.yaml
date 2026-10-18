@@ -10,6 +10,12 @@ scales_by:
 - physical
 members: 2
 reference: connector.valve-gate-dn100-pn10
+visual:
+  format: "freefall-model/1"
+  path: "models/valve-gate/v1"
+  manifest_sha256: "6e976d0e79b83c6a1d650118c9b637ad5cec784217d2f2c7995054fd1494e80f"
+  version: 1
+  triangles: 4088
 basis:
 - of:
   - draws
