@@ -4447,7 +4447,7 @@
 - { record: unit.furniture-bed, at: "2026-10-18T00:15:44Z", status: draft, summary: "changed", sha: "27e2655c9f2b42e6" }
 - { record: unit.furniture-bed-ward, at: "2026-10-18T00:56:24Z", status: draft, summary: "changed", sha: "aa302b37216848ef" }
 - { record: unit.furniture-bench, at: "2026-10-18T00:56:24Z", status: draft, summary: "changed", sha: "30276ffd7eb04afe" }
-- { record: unit.furniture-board, at: "2026-10-18T02:20:10Z", status: draft, summary: "changed: physical, built_of, basis", sha: "345a2293fe40f01f" }
+- { record: unit.furniture-board, at: "2026-10-18T02:25:23Z", status: draft, summary: "changed: visual", sha: "0903a8652151e53c" }
 - { record: unit.furniture-bunk, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "2a9e159161a89509" }
 - { record: unit.furniture-cabinet, at: "2026-10-17T23:50:32Z", status: draft, summary: "changed", sha: "248b558c0a38d40f" }
 - { record: unit.furniture-cell-front, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "a20418eaa1d56f64" }

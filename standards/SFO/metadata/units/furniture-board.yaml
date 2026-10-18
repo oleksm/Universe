@@ -14,6 +14,12 @@ built_of:
 - what: Skins, frame, tray and retaining strips
   item: material.aluminium-alloy-6061
   mass: 34.7
+visual:
+  format: "freefall-model/1"
+  path: "models/furniture-board/v1"
+  manifest_sha256: "e344700bc624a6a074a05aed7b17ee11977b813d3c31737ec818a3e2be86c6ac"
+  version: 1
+  triangles: 240
 basis:
 - of:
   - built_of
