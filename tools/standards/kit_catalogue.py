@@ -183,7 +183,7 @@ for slug, name, amps, v, pins, kg, l, w, h, iname, std in PLUGS:
         "kind": "plug-socket", "size": amps / 1e6, "rating": {"voltage": v, "current": amps},
         "physical": {"length": l, "width": w, "height": h, "mass": kg},
         "built_of": [part("Contacts", CU, cu, "silver-plated brass, as copper here"), part("Housings and seals", PE if v < 1000 else RUB, kg - cu, "polyamide housings, as UHMW polyethylene here" if v < 1000 else "rubber-moulded body")],
-        "provides": "both", "template": "template.plug-socket" if v < 1000 and pins == 5 and amps <= 125 else "template.coupler",
+        "provides": "both", "template": "template.plug-socket" if v < 1000 and pins == 5 and amps <= 125 else "template.single-pole" if slug.startswith("powerlock") else "template.coupler",
         "basis": [{"of": ["physical"], "tier": "invented", "review": True, "note": MEMORY}]},
         {"slug": slug, "name": iname, "domain": "power", "kind": "plug-socket", "media": ["power"], "halves": "male-female", "make": "manual", "standard": std})
 
@@ -301,7 +301,8 @@ TEMPLATES = {
     "flat-face": ("quick-coupling", "model", None, ["physical"], "Flat-face hydraulic couplings"),
     "union": ("union", "model", None, ["physical"], "Screwed hose unions"),
     "plug-socket": ("plug-socket", "model", None, ["physical"], "IEC 60309 plugs and sockets"),
-    "coupler": ("plug-socket", "model", None, ["physical"], "Heavy power couplers (single-pole sets, 11 kV)"),
+    "single-pole": ("plug-socket", "model", None, ["physical"], "Single-pole power connector sets"),
+    "coupler": ("plug-socket", "model", None, ["physical"], "High-voltage plug couplers"),
     "collector": ("collector", "model", None, ["physical"], "Conductor rail collector trolleys"),
     "cable-reel": ("cable-reel", "model", None, ["physical"], "Motor-driven cable reels"),
     "valve-ball": ("valve", "model", None, ["physical"], "Flanged ball valves"),

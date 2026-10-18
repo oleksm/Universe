@@ -267,7 +267,7 @@
 - { record: connector.plug-iec60309-16a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "e8f81c94aaddd091" }
 - { record: connector.plug-iec60309-32a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "c21a0b2f7fa8508a" }
 - { record: connector.plug-iec60309-63a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "3da7c6192318b95d" }
-- { record: connector.powerlock-400a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "386af1cf7ef1ae70" }
+- { record: connector.powerlock-400a, at: "2026-10-18T04:18:11Z", status: draft, summary: "changed: template", sha: "c1f9b965cc8906d4" }
 - { record: connector.termination-11kv-500mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "8b2c1633ea36234b" }
 - { record: connector.termination-132kv-240mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "f05b65d2e83b93c4" }
 - { record: connector.termination-33kv-120mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "749c2fe74fadb727" }
@@ -4354,9 +4354,9 @@
 - { record: template.chute, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "e667824e0f7b7e6c" }
 - { record: template.clamp-coupling, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "56041bc040721ee0" }
 - { record: template.collector, at: "2026-10-18T03:58:51Z", status: "", summary: "changed", sha: "1317e309694e2142" }
-- { record: template.conductor-rail, at: "2026-10-18T04:07:37Z", status: "", summary: "changed: visual", sha: "867ab89ccae956f2" }
-- { record: template.corner-casting, at: "2026-10-18T04:15:44Z", status: "", summary: "changed: visual", sha: "be78ce9b7c6ac013" }
-- { record: template.coupler, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "9f203fcd8163538d" }
+- { record: template.conductor-rail, at: "2026-10-18T04:18:11Z", status: "", summary: "changed", sha: "4365e26daa362ba1" }
+- { record: template.corner-casting, at: "2026-10-18T04:18:11Z", status: "", summary: "changed", sha: "d419adb8082c4d81" }
+- { record: template.coupler, at: "2026-10-18T04:18:11Z", status: "", summary: "changed: identity, members, reference", sha: "ca2d590b8d8d9025" }
 - { record: template.drag-conveyor, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "da78b5e8e253b112" }
 - { record: template.expansion-joint, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "b40d4515cf6b4c83" }
 - { record: template.festoon, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "d64b223260ef067b" }
@@ -4377,6 +4377,7 @@
 - { record: template.pipe-lagged, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "ee12031c045d334f" }
 - { record: template.plug-socket, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "3dfe5b5f0345ce4a" }
 - { record: template.roof, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "a966489b0bd9126b" }
+- { record: template.single-pole, at: "2026-10-18T04:18:11Z", status: "", summary: "first tracked", sha: "88eb85873afaab61" }
 - { record: template.stair, at: "2026-10-18T01:25:38Z", status: "", summary: "changed", sha: "dc0f89d97f6807ea" }
 - { record: template.termination-hv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "b0398bafc880c882" }
 - { record: template.termination-lv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "b3fff31e02cd79e5" }

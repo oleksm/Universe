@@ -20,15 +20,15 @@ pieces:
   mass: 1.2
 - name: support_leg
   how: a threaded rod 1 m long from leg_top up to y = 1; the game stretches it to the ceiling (support.per_m_height)
-visual:
-  format: "freefall-model/1"
-  path: "models/conductor-rail/v1"
-  manifest_sha256: "230d4f5660309d780a7c31e076238bf322dc01cbc56b9dee8c6ec74a24376548"
-  version: 1
-  triangles: 272
 basis:
 - of:
   - draws
   - scales_by
   tier: derived
   note: 'The owner, 2026-10-17: one template a family, scaled; the catalogue families (kit_catalogue.py).'
+visual:
+  format: freefall-model/1
+  path: models/conductor-rail/v1
+  manifest_sha256: 230d4f5660309d780a7c31e076238bf322dc01cbc56b9dee8c6ec74a24376548
+  version: 1
+  triangles: 272

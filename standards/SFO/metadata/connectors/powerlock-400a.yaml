@@ -24,7 +24,7 @@ built_of:
   mass: 4.55
   note: rubber-moulded body
 provides: both
-template: template.coupler
+template: template.single-pole
 basis:
 - of:
   - physical

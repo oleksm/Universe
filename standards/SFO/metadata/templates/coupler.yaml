@@ -2,14 +2,14 @@
 # Written by tools/standards/kit_catalogue.py: change it there.
 identity:
   key: template.coupler
-  name: Heavy power couplers (single-pole sets, 11 kV)
-  description: 'Heavy power couplers (single-pole sets, 11 kV): one look for every size of the family, scaled to each record''s figures (the owner, 2026-10-17: never one model per size).'
+  name: High-voltage plug couplers
+  description: 'High-voltage plug couplers: one look for every size of the family, scaled to each record''s figures (the owner, 2026-10-17: never one model per size).'
 family: plug-socket
 draws: model
 scales_by:
 - physical
-members: 2
-reference: connector.powerlock-400a
+members: 1
+reference: connector.coupler-11kv-400a
 basis:
 - of:
   - draws

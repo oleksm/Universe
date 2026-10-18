@@ -166,6 +166,12 @@ One model draws every size of a kit family (`standards/SFO/metadata/templates/`)
   invented, to be sourced from a maker's drawing). The collector is one root node `body` on the same datum: travel +X,
   its trolley above y = 0 inside the housing (no wider than width − 0.02), its four shoes facing outward ±Z onto those
   faces, its towing arm below y = 0 to the machine.
+- **Single-pole sets** (template.single-pole, 300 x 120 x 250 mm reference): five single-pole connector pairs side by
+  side along X at 60 mm pitch (L1, L2, L3, N, earth; each a round housing about 50 mm across), mating at y = 0, plugs
+  `male` above, receivers `female` below in a common panel plate. Colour bands by pole; keyed so no two mate crosswise.
+- **High-voltage coupler** (template.coupler, 220 x 220 x 600 mm reference): one round rubber-moulded body along Y,
+  mating at y = 0; inside, three phase pins on a 90 mm pitch circle at 120 degrees and a pilot and an earth pin at the
+  centre, in a steel shroud with a bolted coupling ring (`male` the plug, `female` the receptacle). Pin layout invented.
 - **Corner casting** (ISO 1161): one root node `female`, a top corner of the right hand: the top face's outer plane at
   y = 0, the body below to y = -0.118; length 0.178 along X (the container's length), width 0.162 along Z; its open
   faces are the top, the end (+X) and the side (+Z), the game mirrors it for the other corners and flips it for the
