@@ -13,15 +13,15 @@ physical:
   length: 0.3
   width: 0.12
   height: 0.25
-  mass: 7.53
+  mass: 4.45
 built_of:
 - what: Contacts
   item: material.copper
-  mass: 1.95
-  note: silver-plated brass, as copper here
-- what: Housings and seals
+  mass: 1.42
+  note: 16 mm pins, 22 mm socket sleeves; silver-plated brass, as copper here
+- what: Bodies, glands and bands
   item: material.epdm-rubber
-  mass: 4.55
+  mass: 2.0
   note: rubber-moulded body
 - what: Panel plate
   item: material.structural-steel-a36
@@ -32,7 +32,7 @@ template: template.single-pole
 basis:
 - of:
   - physical
-  tier: invented
+  tier: derived
   review: true
-  note: From memory of makers' catalogues; to be sourced.
+  note: 'From blender''s model (2026-10-18): five bored pairs, the 5 mm steel panel plate; hidden cable terminations not drawn.'
 interface: interface.powerlock-400a

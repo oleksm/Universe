@@ -184,7 +184,9 @@ PLUGS = [  # (slug, name, amps, volts, pins, kg a pair, l, w, h, interface name,
     ("coupler-11kv-400a", "Coupler, 11 kV, 400 A", 400, 11000, 3, 28.0, 0.22, 0.22, 0.6, "Coupler 11 kV 400 A", "a mining-type 11 kV plug coupler (the registry's)")]
 BOUND = {  # blender's measured parts, where the model changed what it is made of
     "coupler-11kv-400a": ([("Contacts", CU, 4.86, "pins and sockets"), ("Body", RUB, 14.95, "EPDM-moulded body"), ("Shroud, coupling ring and bolts", A36, 3.33, None)],
-                          "blender's model (2026-10-17): EPDM body, three phase pins on a 90 mm circle, pilot and earth at the centre, steel shroud and ring")}
+                          "blender's model (2026-10-17): EPDM body, three phase pins on a 90 mm circle, pilot and earth at the centre, steel shroud and ring"),
+    "powerlock-400a": ([("Contacts", CU, 1.421, "16 mm pins, 22 mm socket sleeves; silver-plated brass, as copper here"), ("Bodies, glands and bands", RUB, 2.005, "rubber-moulded body")],
+                       "blender's model (2026-10-18): five bored pairs, the 5 mm steel panel plate; hidden cable terminations not drawn")}
 PANEL = {"powerlock-400a": round((0.3 * 0.12 - 5 * math.pi * 0.025 ** 2) * 0.005 * RHO[A36], 2)}   # the receivers' common plate: 5 mm steel (invented), five 50 mm cut-outs
 for slug, name, amps, v, pins, kg, l, w, h, iname, std in PLUGS:
     cu = min(kg * 0.3, pins * amps * 4e-6 * 0.08 * RHO[CU] + 0.05)

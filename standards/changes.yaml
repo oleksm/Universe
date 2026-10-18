@@ -267,7 +267,7 @@
 - { record: connector.plug-iec60309-16a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "e8f81c94aaddd091" }
 - { record: connector.plug-iec60309-32a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "c21a0b2f7fa8508a" }
 - { record: connector.plug-iec60309-63a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "3da7c6192318b95d" }
-- { record: connector.powerlock-400a, at: "2026-10-18T05:10:36Z", status: draft, summary: "changed: physical, built_of", sha: "930e8c8478fee489" }
+- { record: connector.powerlock-400a, at: "2026-10-18T05:15:35Z", status: draft, summary: "changed: physical, built_of, basis", sha: "528acdaf49ddd12d" }
 - { record: connector.termination-11kv-500mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "8b2c1633ea36234b" }
 - { record: connector.termination-132kv-240mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "f05b65d2e83b93c4" }
 - { record: connector.termination-33kv-120mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "749c2fe74fadb727" }
@@ -3665,7 +3665,7 @@
 - { record: stock.kit-plug-iec60309-16a, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "59daeb83bfdd7936" }
 - { record: stock.kit-plug-iec60309-32a, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "d0a273e2ba50b3eb" }
 - { record: stock.kit-plug-iec60309-63a, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "cf91e00d14157b89" }
-- { record: stock.kit-powerlock-400a, at: "2026-10-18T05:10:36Z", status: review, summary: "changed: made_from, physical", sha: "01f2b28041e705f9" }
+- { record: stock.kit-powerlock-400a, at: "2026-10-18T05:15:35Z", status: review, summary: "changed: physical", sha: "2d8a975deef2f8e9" }
 - { record: stock.kit-termination-11kv-500mm2, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "9ebf2861603535d8" }
 - { record: stock.kit-termination-132kv-240mm2, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "e2c20466b4be5798" }
 - { record: stock.kit-termination-33kv-120mm2, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "3a3b16d8aeedbae5" }

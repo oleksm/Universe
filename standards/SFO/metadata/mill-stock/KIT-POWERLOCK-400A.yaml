@@ -18,7 +18,7 @@ size:
 supplies:
   item: connector.powerlock-400a
 physical:
-  mass: 7.53
+  mass: 4.45
 basis:
 - of:
   - size
