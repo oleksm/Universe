@@ -37,7 +37,7 @@ basis:
   tier: invented
   review: true
   note: Two-braid hose figures; From memory of makers' catalogues; to be sourced.
-support:
+hold:
   clip: connector.run-clip-d40
   ship: 0.6
   plant: 1.0

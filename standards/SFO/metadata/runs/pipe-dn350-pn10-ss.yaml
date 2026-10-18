@@ -13,7 +13,7 @@ per_m:
 elbow: {radius: 0.525, mass: 36.4}
 tee: {mass: 15.2}
 cap: {thickness: 0.016, mass: 12.2}
-support: {clip: connector.run-clip-d400, ship: 2.0, plant: 7.6, basis: rule.run-support}
+support: {spacing: 9.4, mass: 31.6, per_m_height: 21.4, item: material.structural-steel-a36}
 connector: connector.flange-dn350-pn10-ss
 carries: gas
 basis:
@@ -28,3 +28,4 @@ basis:
   review: true
   note: 'Spacing from the span it bears full at 1 g (2.5 mm sag, a third of yield), 3 to 12 m: 9.4 m. The stand''s head and its leg by the metre from memory.'
 template: template.pipe
+hold: {clip: connector.run-clip-d400, ship: 2.0, plant: 9.4, by: its stands (support), basis: rule.run-support}

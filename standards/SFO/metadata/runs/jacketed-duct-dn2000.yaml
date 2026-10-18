@@ -16,11 +16,12 @@ jacket: {heat: 7200000.0, rise: 10.0}
 jacket_stub: {bore: 0.3, mass: 42.4}
 jacket_end: {mass: 62.7}
 elbow: {radius: 2.0, mass: 4746.3}
-support: {plant: 6.0, by: its own steel, basis: rule.run-support}
+support: {spacing: 12.0, mass: 208.6, per_m_height: 60.9, item: material.structural-steel-a36}
 cap: {thickness: 0.024, mass: 591.9}
 connector: connector.flange-dn2000-pn1
 carries: gas
 template: template.jacketed-duct
+hold: {plant: 6.0, by: its own steel, basis: rule.run-support}
 visual:
   format: "freefall-model/1"
   path: "models/jacketed-duct-dn2000/v1"

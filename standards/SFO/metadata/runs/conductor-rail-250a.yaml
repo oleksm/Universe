@@ -27,9 +27,10 @@ per_m:
     item: material.structural-steel-a36
     mass: 0.5
 support:
-  plant: 1.5
-  by: its brackets
-  basis: rule.run-support
+  spacing: 1.5
+  mass: 1.2
+  per_m_height: 2.0
+  item: material.structural-steel-a36
 connector: connector.collector-250a
 carries: power
 template: template.conductor-rail
@@ -40,3 +41,7 @@ basis:
   tier: invented
   review: true
   note: About 1 to 4 A/mm2 in the housing; hangers every 1.5 m; From memory of makers' catalogues; to be sourced.
+hold:
+  plant: 1.5
+  by: its brackets
+  basis: rule.run-support

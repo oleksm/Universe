@@ -14,10 +14,11 @@ per_m:
 elbow: {radius: 0.225, mass: 5.6}
 tee: {mass: 1.9}
 cap: {thickness: 0.01, mass: 1.4}
-support: {clip: connector.run-clip-d250, ship: 2.0, plant: 5.8, basis: rule.run-support}
+support: {spacing: 6.1, mass: 29.19, per_m_height: 19.0, item: material.structural-steel-a36}
 connector: connector.flange-dn150-pn25
 carries: gas
 template: template.pipe-lagged
+hold: {clip: connector.run-clip-d250, ship: 2.0, plant: 6.1, by: its stands (support), basis: rule.run-support}
 visual:
   format: "freefall-model/1"
   path: "models/pipe-dn150-pn25-mli/v1"

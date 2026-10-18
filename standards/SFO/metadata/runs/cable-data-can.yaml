@@ -50,7 +50,7 @@ basis:
   tier: invented
   review: true
   note: Of the order of aerospace CAN and data-bus cable; From memory of makers' catalogues; to be sourced.
-support:
+hold:
   clip: connector.run-clip-d10
   ship: 0.6
   plant: 1.5

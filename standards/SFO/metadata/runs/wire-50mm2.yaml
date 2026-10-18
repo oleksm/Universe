@@ -43,7 +43,7 @@ basis:
   review: true
   note: 'Of the order of aerospace hook-up wire (SAE AS22759 class): `current` a single wire''s in vacuum, radiation only; `current_air` alone in free air at 40 deg C, a bundle''s at 0.7 of it; least bend 10 outsides; From memory of
     makers'' catalogues; to be sourced.'
-support:
+hold:
   clip: connector.run-clip-d16
   ship: 0.6
   plant: 1.5

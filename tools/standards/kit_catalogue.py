@@ -633,10 +633,10 @@ def write(folder, slug, d, schema):
 
 def main():
     n = 0
-    from mounting import support      # (how each run is held: rule.run-support)
+    from mounting import hold      # (how each run is held: rule.run-support)
     for folder, slug, d in OUT:
         if folder == "runs":
-            d = dict(d, support=support(d))
+            d = dict(d, hold=hold(d))
         n += write(folder, slug, d, {"runs": "run", "connectors": "connector"}[folder])
     for slug, d in IFS.items():
         if os.path.exists(os.path.join(M, "interfaces", slug + ".yaml")) and "kit_catalogue" not in open(os.path.join(M, "interfaces", slug + ".yaml")).read():

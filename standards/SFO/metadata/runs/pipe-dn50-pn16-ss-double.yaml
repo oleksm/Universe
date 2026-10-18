@@ -13,10 +13,11 @@ per_m:
 elbow: {radius: 0.075, mass: 0.5}
 tee: {mass: 0.2}
 cap: {thickness: 0.004, mass: 0.1}
-support: {clip: connector.run-clip-d63, ship: 1.0, plant: 3.0, basis: rule.run-support}
+support: {spacing: 3.7, mass: 13.4, per_m_height: 16.6, item: material.structural-steel-a36}
 connector: connector.flange-dn50-pn16-ss-double
 carries: gas
 template: template.pipe
+hold: {clip: connector.run-clip-d63, ship: 1.0, plant: 3.7, by: its stands (support), basis: rule.run-support}
 visual: {format: freefall-model/1, path: models/pipe-dn50-pn16-ss-double/v1, manifest_sha256: 2852e7292e77bed5b6b0004967ee158421185963a0d1e6bb8f41d8558963ebbf, version: 1, triangles: 2320}
 basis:
 - of: [per_m]

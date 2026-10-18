@@ -363,12 +363,13 @@ def run_clip(band):
     return rec, iface
 
 
-def support(run):
+def hold(run):
     """A run's support (ships, 2026-10-18: the registry owns the most spacing by run and support family and service;
     the studio enforces it with load, bend and end restraint; a run with none given is not to be laid there): its clip
     by outside, and the most spacing aboard a ship and in a plant (1 g)."""
     kind = run.get("kind")
     od = max(run.get("outside") or [0.0])
+    stands = (run.get("support") or {}).get("spacing")
     if kind in OWN:
         m, by = OWN[kind]
         return {"plant": m, "by": by, "basis": "rule.run-support"}
@@ -382,11 +383,13 @@ def support(run):
         if band is not None:
             out["ship"] = 0.6 if od <= 0.03 else 1.0 if od <= 0.065 else 1.5 if od <= 0.12 else 2.0
         sp = next((s for o, s in PIPE_SPAN if od <= o + 1e-9), PIPE_SPAN[-1][1])
-        out["plant"] = sp
+        out["plant"] = stands or sp
         if band is None:
             out["by"] = "pipe shoes on steel"
     else:
-        out["plant"] = {"cable": 1.5, "hose": 1.0}.get(kind, 1.0)
+        out["plant"] = stands or {"cable": 1.5, "hose": 1.0}.get(kind, 1.0)
+    if stands:
+        out["by"] = "its stands (support)"
     out["basis"] = "rule.run-support"
     return out
 

@@ -13,7 +13,7 @@ per_m:
 elbow: {radius: 3.6, mass: 5052.1}
 tee: {mass: 2130.8}
 cap: {thickness: 0.092, mass: 3267.2}
-support: {plant: 9.1, by: pipe shoes on steel, basis: rule.run-support}
+support: {spacing: 12.0, mass: 155.8, per_m_height: 53.9, item: material.structural-steel-a36}
 connector: connector.flange-dn2400-pn10-double
 carries: gas
 basis:
@@ -28,3 +28,4 @@ basis:
   review: true
   note: 'Spacing from the span it bears full at 1 g (2.5 mm sag, a third of yield), 3 to 12 m: 12.0 m. The stand''s head and its leg by the metre from memory.'
 template: template.pipe
+hold: {plant: 12.0, by: its stands (support), basis: rule.run-support}

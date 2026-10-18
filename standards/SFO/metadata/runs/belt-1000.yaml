@@ -11,7 +11,7 @@ per_m:
   - {what: Belt, item: material.silicone-rubber, mass: 38.7, note: 'both runs, 18 mm; a vacuum-rated belt, silicone rubber standing for it'}
   - {what: Idlers, item: material.structural-steel-a36, mass: 39.2, note: 'a three-roll troughing set every 1.2 m (39 kg) and a return roll every 3 m (20 kg), sealed bearings with vacuum grease; from memory'}
   - {what: Stringers, item: material.structural-steel-a36, mass: 36.0, note: two 150 x 75 mm channels}
-support: {plant: 1.2, by: its idler frames, basis: rule.run-support}
+support: {spacing: 18.0, mass: 300.0, per_m_height: 75.0, item: material.structural-steel-a36}
 repeat:
 - {piece: idler, pitch: 1.2}
 - {piece: return_roll, pitch: 3.0}
@@ -21,6 +21,7 @@ terminals:
 connector: connector.belt-transfer-1000
 carries: bulk
 template: template.belt
+hold: {plant: 1.2, by: its idler frames, basis: rule.run-support}
 visual: {format: freefall-model/1, path: models/belt-1000/v1, manifest_sha256: de565ed53a1b11edde743bbb40c82c25f7ba35940dd98f75d12d21dd2f0b6aff, version: 1, triangles: 3376}
 basis:
 - of: [per_m, support]

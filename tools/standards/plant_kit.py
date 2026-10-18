@@ -707,8 +707,8 @@ def records():
         kind, slug = key.split(".", 1)
         d = dict(d, template=template_of(key, d))
         if kind == "run":
-            from mounting import support      # (how each run is held: rule.run-support)
-            d["support"] = support(d)
+            from mounting import hold      # (how each run is held: rule.run-support)
+            d["hold"] = hold(d)
         yield {"connector": "connectors", "run": "runs"}[kind], slug, d
     for key, d in sorted(ifs.items()):
         yield "interfaces", key.split(".", 1)[1], d

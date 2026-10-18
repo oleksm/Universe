@@ -38,7 +38,7 @@ basis:
   tier: invented
   review: true
   note: Wall 12 mm, rubber at 1,150 kg/m3 and a quarter as much steel spiral; least bend six outsides; From memory of makers' catalogues; to be sourced.
-support:
+hold:
   clip: connector.run-clip-d160
   ship: 0.6
   plant: 1.0

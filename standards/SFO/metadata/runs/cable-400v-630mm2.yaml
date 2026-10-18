@@ -15,7 +15,7 @@ pitch: 0.06
 elbow: {radius: 0.644, mass: 22.4}
 riser: {radius: 0.584, mass: 20.3}
 tee: {mass: 25.0}
-support: {clip: connector.run-clip-d400, ship: 0.6, plant: 1.5, basis: rule.run-support}
+support: {spacing: 3.0, mass: 8.0, per_m_height: 6.0, item: material.aluminium-alloy-6061}
 repeat:
 - {piece: rung, pitch: 0.3}
 connector: connector.termination-400v-630mm2
@@ -30,3 +30,4 @@ basis:
   review: true
   note: 'Tray posts every 3 m; a tee is a joint box; the cores'' least bend radius 15 cable diameters (from memory): a riser bends all three at it, an elbow in plan has its axis one core''s pitch further out so the inner core keeps it.'
 template: template.cable
+hold: {clip: connector.run-clip-d400, ship: 0.6, plant: 3.0, by: its stands (support), basis: rule.run-support}

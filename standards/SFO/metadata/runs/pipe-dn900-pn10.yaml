@@ -13,10 +13,11 @@ per_m:
 elbow: {radius: 1.35, mass: 379.8}
 tee: {mass: 159.8}
 cap: {thickness: 0.034, mass: 169.8}
-support: {plant: 9.1, by: pipe shoes on steel, basis: rule.run-support}
+support: {spacing: 10.3, mass: 65.0, per_m_height: 30.1, item: material.structural-steel-a36}
 connector: connector.flange-dn900-pn10
 carries: liquid
 template: template.pipe
+hold: {plant: 10.3, by: its stands (support), basis: rule.run-support}
 visual: {format: freefall-model/1, path: models/pipe-dn900-pn10/v2, manifest_sha256: 886eaa351401e493d918d02e6b82b4f0d6c6c13d72b0879a004fbd435e2dad39, version: 2, triangles: 2320}
 basis:
 - of: [per_m]
