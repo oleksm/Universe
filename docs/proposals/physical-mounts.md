@@ -171,7 +171,9 @@ links:
   plant mount.
 - Feet on the 5 records whose ports are hand-written (FT S1 to S3, hot radiators S1 and S2): `equipment_ports.py` keeps
   their ports as written and rewrites only the `foot-` ones (fso c906bece).
-- Not yet: run clips (`interface.run-clip-d<mm>`).
+- Run clips (ships' option b, thread 6bc0): `connector.run-clip-d10` to `-d400`, each a cushioned loop whose tab bolts to
+  a strut clamp's lug (`fixing: interface.kit-clamp`). `rule.run-support` sets the most spacing, and every run has
+  `hold` {clip, ship, plant, by}. A run with no `ship` figure is not laid aboard a ship (fso a00b948b, 12cd3ff5).
 
 ## Asked
 
