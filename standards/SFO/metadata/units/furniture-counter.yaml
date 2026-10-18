@@ -17,6 +17,12 @@ built_of:
 - what: Worktop
   item: material.polyethylene-uhmw
   mass: 32.0
+visual:
+  format: "freefall-model/1"
+  path: "models/furniture-counter/v1"
+  manifest_sha256: "b51567239d234c341ce30b93fc6e91791f18395c333bfdeda16a5f1352d6c01c"
+  version: 1
+  triangles: 888
 basis:
 - of:
   - built_of
