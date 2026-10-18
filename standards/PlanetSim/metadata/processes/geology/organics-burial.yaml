@@ -38,11 +38,11 @@ writes:
   field: planet-field.organic-heat-dose
 params:
 - name: COHORT_MYR
-  value: 7890000000000000.0
+  value: 7889400000000000.0
   unit: s
   said_as:
     unit: Myr
-    factor: 31560000000000.0
+    factor: 31557600000000.0
   meaning: cohort width
   source: stages/organics.py:24
 - name: MARINE
@@ -173,3 +173,8 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
     the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge geology port (models/geology, models/impacts), read from planet-sim-landform 1df4daf.
+    COHORT_MYR on law.year as organic-burial has it.'

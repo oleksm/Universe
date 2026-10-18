@@ -31,6 +31,9 @@ implementations:
 - where: planet-sim-landform src/planet_sim/stages/organics.py:exhume (56-66), reset (69-75); called from stages/plates.py:_exhume
     (713), 1058, 1089, 1237
   state: reference
+- where: planet-forge crates/forge-core/src/models/geology/organics.rs
+  state: current
+  note: planet-forge port (geology line, merged in forge main 338c9ce)
 status: draft
 basis:
 - of:

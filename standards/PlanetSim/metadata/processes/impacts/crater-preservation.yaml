@@ -30,9 +30,9 @@ reads:
   meaning: focus × impact_flux
 writes:
 - name: relief
-  field: planet-field.local-relief
   unit: '1'
-  meaning: share of shape still shown
+  meaning: share of the crater's fresh shape still shown (the craters table's `relief left`, its feature's dims; not planet-field.local-relief,
+    a height)
 - name: structure
   unit: bool
   meaning: still findable
@@ -149,6 +149,9 @@ implementations:
 - where: planet-sim-landform src/planet_sim/stages/impacts.py:erosion_rate (223-228), wear_width (240-244), depth_kept (247-253),
     preserved (256-287), _depth_left (297-307)
   state: reference
+- where: planet-forge crates/forge-core/src/models/impacts/preservation.rs
+  state: current
+  note: planet-forge port (geology line, merged in forge main 338c9ce)
 status: draft
 basis:
 - of:
@@ -159,3 +162,7 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
     from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - writes
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge geology port (models/geology, models/impacts), read from planet-sim-landform 1df4daf.'

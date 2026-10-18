@@ -119,6 +119,16 @@ params:
   unit: '1'
   meaning: diameter bin width
   source: src/planet_sim/stages/impacts.py:102
+- name: d_min
+  value: 20000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 1000.0
+  meaning: the smallest crater drawn and kept (a relief feature); smaller ones are the meshers' to draw on demand
+  source: planet-forge models/impacts/production.rs (tools/impacts.py drew from 5 km)
+  note: Earth's crater record is complete to about 20 km (Grieve and Shoemaker 1994); at 5 km a forward run stored ~1e5 craters
+    through the heavy bombardment
 random_draws:
 - 'rng passed in (tools: seeded per world; default default_rng(1)): Poisson per bin, uniform for diameter inverse CDF, Beta
   + uniform for ages, normal ×3 for positions'
@@ -133,6 +143,9 @@ implementations:
 - where: planet-sim-landform src/planet_sim/stages/impacts.py:n1 (52-54), production (57-60), draw (84-136); saturate (139-156)
     unused
   state: reference
+- where: planet-forge crates/forge-core/src/models/impacts/production.rs
+  state: current
+  note: planet-forge port (geology line, merged in forge main 338c9ce)
 status: draft
 basis:
 - of:
@@ -143,3 +156,9 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
     from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - params
+  tier: sourced
+  note: 'planets, 17 Oct 2026: planet-forge geology port (models/geology, models/impacts), read from planet-sim-landform 1df4daf.'
+  source: Grieve, R. A. F. and Shoemaker, E. M. (1994), The record of past impacts on Earth, in Hazards due to comets and
+    asteroids, 417-462

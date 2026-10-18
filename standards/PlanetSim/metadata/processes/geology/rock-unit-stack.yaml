@@ -44,15 +44,15 @@ params:
   meaning: mean erodibility of continental surface rock (measured on grown Earth); erodibility is used as ERODIBILITY[u]/MEAN_ERODIBILITY
   source: src/planet_sim/stages/geology.py:214
 - name: SHIELD_MYR
-  value: 1500.0
-  unit: '1'
+  value: 4.73364e+16
+  unit: s
   said_as:
-    unit: 's: 4.73364e+16 (code: Myr)'
-    factor: 1.0
-  open: true
+    unit: Myr
+    factor: 31557600000000.0
   meaning: batholiths older than this display as basement gneiss (chosen)
   source: src/planet_sim/stages/geology.py:730
-  note: 'unit as the code says it: ''s: 4.73364e+16 (code: Myr)''; SI conversion unverified'
+  note: 'unit as the code says it: ''s: 4.73364e+16 (code: Myr)''; SI conversion unverified In s (was 1500.0 Myr with unit
+    1).'
 - name: ARC_COVER
   value: 2500.0
   unit: m
@@ -1128,6 +1128,9 @@ implementations:
     stages/plates.py:_wear (631-645), _deposit (658-693), _bury (696-701), _exhume (704-713), read (493-540, unit read-out
     527-540)
   state: reference
+- where: planet-forge crates/forge-core/src/models/geology/rock.rs
+  state: current
+  note: planet-forge port (geology line, merged in forge main 338c9ce)
 status: draft
 basis:
 - of:
@@ -1138,3 +1141,7 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
     from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge geology port (models/geology, models/impacts), read from planet-sim-landform 1df4daf.'

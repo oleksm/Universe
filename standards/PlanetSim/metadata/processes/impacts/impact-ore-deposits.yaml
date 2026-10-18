@@ -52,6 +52,9 @@ backends:
 implementations:
 - where: planet-sim-landform src/planet_sim/stages/geology.py:impact_deposits (631-685)
   state: reference
+- where: planet-forge crates/forge-core/src/models/impacts/ores.rs
+  state: current
+  note: planet-forge port (geology line, merged in forge main 338c9ce)
 status: draft
 basis:
 - of:

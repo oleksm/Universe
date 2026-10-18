@@ -101,6 +101,17 @@ params:
   meaning: calibrated on grown Earth E4 (tools/deposits.py --calibrate)
   source: src/planet_sim/stages/geology.py:265
   note: 'see tables; unit: deposits per unit chance'
+- name: shelf reach
+  value: 200.0
+  unit: m
+  meaning: 'reachable: land, and shelf under no more than this much water (offshore mining''s reach)'
+  source: tools/deposits.py:26
+- name: dip ranges
+  setting: '{"stock": [90, 90], "veins": [55, 90], "lens": [30, 80], "strata": [5, 40], "pipe": [85, 90], "blanket": [0, 3]}'
+  unit: '1'
+  meaning: dip range (deg) by the deposit shape, drawn uniformly within
+  source: src/planet_sim/stages/geology.py:362 (SHAPE_DIP)
+  note: 'unit: deg'
 random_draws:
 - 'numpy default_rng seeded by zlib.crc32(''/''.join(parts)): per type (''world_id/type'') for Poisson district counts; per
   district (''world_id/district_id'') for position, deposit count, scatter, depth, tonnage, grades, strike, dip, footprint.
@@ -119,6 +130,9 @@ implementations:
 - where: planet-sim-landform src/planet_sim/stages/geology.py:deposits (547-621), _belts (508-526), _rng (529-532), _azimuth
     (451-458)
   state: reference
+- where: planet-forge crates/forge-core/src/models/geology/deposits.rs
+  state: current
+  note: planet-forge port (geology line, merged in forge main 338c9ce)
 status: draft
 basis:
 - of:
@@ -129,3 +143,7 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
     from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge geology port (models/geology, models/impacts), read from planet-sim-landform 1df4daf.'

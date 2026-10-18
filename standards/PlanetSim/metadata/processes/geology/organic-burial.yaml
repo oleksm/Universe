@@ -95,6 +95,9 @@ implementations:
 - where: planet-sim-landform src/planet_sim/stages/organics.py:cohorts (40-41), empty (44-46), bury (49-53), lay (78-97);
     called from stages/plates.py:_bury (696-701)
   state: reference
+- where: planet-forge crates/forge-core/src/models/geology/organics.rs
+  state: current
+  note: planet-forge port (geology line, merged in forge main 338c9ce)
 status: draft
 basis:
 - of:

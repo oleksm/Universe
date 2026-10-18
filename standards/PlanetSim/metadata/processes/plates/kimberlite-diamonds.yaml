@@ -33,6 +33,9 @@ backends:
 implementations:
 - where: planet-sim-landform stages/plates.py:run (1458-1461)
   state: reference
+- where: planet-forge crates/forge-core/src/models/geology/kimberlite.rs
+  state: current
+  note: planet-forge port (geology line, merged in forge main 338c9ce)
 status: draft
 basis:
 - of:

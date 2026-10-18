@@ -83,6 +83,38 @@ params:
   unit: '1'
   meaning: slump amplitude
   source: src/planet_sim/stages/impacts.py:201
+- name: floor share
+  values:
+  - 0.3
+  - 0.06
+  - 0.65
+  unit: '1'
+  meaning: 'complex floor (share of the radius): a + b log2(D/D_t), at most c'
+  source: src/planet_sim/stages/impacts.py:167
+- name: central peak
+  values:
+  - 6.0
+  - 15000.0
+  - 0.8
+  - 0.3
+  unit: '1'
+  meaning: central peak height a D_km^peak (D_t / b)^d, at most c x depth (m; b in m)
+  source: src/planet_sim/stages/impacts.py:172
+  note: 'a: m at D = 1 km (Hale and Grieve 1982); b: m'
+- name: peak ring
+  value: 0.3
+  unit: '1'
+  meaning: 'peak-ring crater: ring height as a share of depth'
+  source: src/planet_sim/stages/impacts.py:175
+- name: basin
+  values:
+  - 0.5
+  - 0.6
+  - 0.7
+  - 0.15
+  unit: '1'
+  meaning: 'multi-ring basin: depth and rim as shares of the complex law, floor share, ring height share of depth'
+  source: src/planet_sim/stages/impacts.py:176
 random_draws:
 - 'profile: rng for 4 peak summits (uniform angle, offset ≤ 0.07, height 0.4-0.8, width 0.003-0.01)'
 depends_on:
@@ -92,6 +124,9 @@ backends:
 implementations:
 - where: planet-sim-landform src/planet_sim/stages/impacts.py:shape (159-176), profile (179-220)
   state: reference
+- where: planet-forge crates/forge-core/src/models/impacts/mod.rs
+  state: current
+  note: planet-forge port (geology line, merged in forge main 338c9ce)
 status: draft
 basis:
 - of:
@@ -102,3 +137,7 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json), read
     from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge geology port (models/geology, models/impacts), read from planet-sim-landform 1df4daf.'

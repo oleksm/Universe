@@ -76,6 +76,9 @@ backends:
 implementations:
 - where: planet-sim-landform src/planet_sim/stages/organics.py:heat (100-109); called from stages/plates.py:1402
   state: reference
+- where: planet-forge crates/forge-core/src/models/geology/organics.rs
+  state: current
+  note: planet-forge port (geology line, merged in forge main 338c9ce)
 status: draft
 basis:
 - of:

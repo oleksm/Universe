@@ -27,6 +27,9 @@ backends:
 implementations:
 - where: planet-sim-landform src/planet_sim/stages/geology.py:contained (688-700), districts (703-726)
   state: reference
+- where: planet-forge crates/forge-core/src/models/geology/contents.rs
+  state: current
+  note: planet-forge port (geology line, merged in forge main 338c9ce)
 status: draft
 basis:
 - of:

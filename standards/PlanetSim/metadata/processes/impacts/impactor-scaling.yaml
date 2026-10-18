@@ -367,6 +367,9 @@ backends:
 implementations:
 - where: planet-sim-landform src/planet_sim/stages/impacts.py:scaling (72-78)
   state: reference
+- where: planet-forge crates/forge-core/src/models/impacts/mod.rs
+  state: current
+  note: planet-forge port (geology line, merged in forge main 338c9ce)
 status: draft
 basis:
 - of:

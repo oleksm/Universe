@@ -2,9 +2,12 @@
 identity:
   key: planet-process.continental-sedimentation
   name: Platform and basin sediment on continents (record only)
-  about: 'Flooded continent lays PLATFORM_M_PER_MYR*every*dt*clip(depth/200 m, 0, 1). Land basins: coupled era - the rivers'' deposits; else the eroded supply smoothed BASIN_REACH times over neighbours, BASIN_SHARE of it laid on low
-    land (< BASIN_BELOW above sea) x (1-above/BASIN_BELOW). Limited to room: 2.5 x sea depth ((rho_m-rho_w)/(rho_m-rho_s)) or BASIN_FILL on land, minus existing sediment cover. _deposit lays units (iron formation / carbonate in warm
-    marine within 100 m of sea / clastic), evaporites in the arid band, manganese in the oxygenation window. A rock-unit record only: it adds no crust volume. Organics are buried and heated.'
+  about: 'Flooded continent lays PLATFORM_M_PER_MYR*every*dt*clip(depth/200 m, 0, 1). Land basins: coupled era - the rivers''
+    deposits; else the eroded supply smoothed BASIN_REACH times over neighbours, BASIN_SHARE of it laid on low land (< BASIN_BELOW
+    above sea) x (1-above/BASIN_BELOW). Limited to room: 2.5 x sea depth ((rho_m-rho_w)/(rho_m-rho_s)) or BASIN_FILL on land,
+    minus existing sediment cover. _deposit lays units (iron formation / carbonate in warm marine within 100 m of sea / clastic),
+    evaporites in the arid band, manganese in the oxygenation window. A rock-unit record only: it adds no crust volume. Organics
+    are buried and heated.'
 area: plates
 clock:
   when: with each denudation pass
@@ -59,7 +62,7 @@ params:
   unit: m/s
   said_as:
     unit: m/Myr
-    factor: 20.0
+    factor: 3.168808781402895e-14
   meaning: platform sediment rate laid on flooded continent (ramped by depth/200 m)
   source: stages/plates.py:124
   note: long-term epicontinental rates ~10-100 m/Myr; Schlager 1981
@@ -135,6 +138,9 @@ backends:
 implementations:
 - where: planet-sim-landform stages/plates.py:run (lines 1380-1402), _deposit (658-693), _cover_at (648-655), _bury (696-701)
   state: reference
+- where: planet-forge crates/forge-core/src/models/geology/sedimentation.rs
+  state: current
+  note: planet-forge port (geology line, merged in forge main 338c9ce)
 status: draft
 basis:
 - of:
@@ -143,7 +149,12 @@ basis:
   - reads
   - writes
   tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
+    code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - params
+  tier: derived
+  note: 'planets, 17 Oct 2026: planet-forge geology port (models/geology, models/impacts), read from planet-sim-landform 1df4daf.'
 events_emitted:
 - event: planet-event.ledger-row
   where: 'forge: what the step laid (a rock record, no volume)'
