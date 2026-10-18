@@ -87,6 +87,9 @@ pub struct State {
     pub held: Vec<f64>,
     #[serde(skip)]
     pool_rates: Vec<f64>,
+    /// The fans' share last span and what they drew on it at full (W).
+    #[serde(skip)]
+    fan_drew: (f64, f64),
     #[serde(skip)]
     authority_cache: Option<(Vec<u64>, Authority)>,
 }
@@ -190,6 +193,7 @@ impl State {
             packs,
             held,
             pool_rates: Vec::new(),
+            fan_drew: (0., 0.),
             density: 0.,
             demand_w: 0.,
             delivered_w: 0.,
@@ -269,7 +273,27 @@ impl State {
             *h = (*h - r * dt).max(0.);
         }
     }
-    fn effective(&self, ts: &mut [Thruster], fuel: f64, powered: bool) {
+    /// What share of their full thrust the fans can have on the power there
+    /// is (`bus` W, less `steady`): a fan's draw goes as its thrust to the
+    /// 3/2. At least what all of them flat out could have; more as far as
+    /// what they drew last span leaves room (a ship balanced on its fans
+    /// holds some back). In 64ths, rounded down, so the authority cache
+    /// holds while a pack drains.
+    fn fan_share(&self, bus: f64, steady: f64) -> f64 {
+        let full: f64 = self.fit.fans.iter().map(|f| f.full_power).sum();
+        if full <= 0. {
+            return 1.;
+        }
+        let spare = (bus - steady).max(0.);
+        let (share, drew) = self.fan_drew;
+        let room = if drew > 0. { share * (spare / drew).powf(2. / 3.) } else { 0. };
+        let share = room.max((spare / full).powf(2. / 3.)).min(1.);
+        (share * 64.).floor() / 64.
+    }
+    /// Thrust limits as they are now. Fans get `fan_share` of theirs, so
+    /// the flight computer balances on what they can really give, not on
+    /// thrust that `plan` would take back from every fan alike.
+    fn effective(&self, ts: &mut [Thruster], fuel: f64, powered: bool, fan_share: f64) {
         for (i, t) in ts.iter_mut().enumerate() {
             if let Some(f) = self.fit.fans.iter().find(|f| f.thruster == i) {
                 let factor = if powered && self.density.is_finite() && self.density >= f.min_density
@@ -278,7 +302,7 @@ impl State {
                 } else {
                     0.
                 };
-                t.thrust *= factor;
+                t.thrust *= factor * fan_share;
             } else if !powered || self.pool(i).map_or(fuel, |p| self.held.get(p).copied().unwrap_or(0.)) <= 0. {
                 t.thrust = 0.;
             }
@@ -296,6 +320,7 @@ impl State {
         per_kg: f64,
         steady: f64,
         capacitor_w: f64,
+        fan_share: f64,
     ) {
         for (t, j) in ts.iter().zip(jets.iter_mut()) {
             if t.thrust <= 0. {
@@ -345,7 +370,7 @@ impl State {
             .fit
             .fans
             .iter()
-            .map(|f| f.full_power * jets[f.thruster].powf(1.5))
+            .map(|f| f.full_power * (jets[f.thruster] * fan_share).powf(1.5))
             .sum();
         let factor = if wanted > 0. {
             ((bus - steady).max(0.) / wanted).min(1.).powf(2. / 3.)
@@ -355,6 +380,7 @@ impl State {
         for f in &self.fit.fans {
             jets[f.thruster] *= factor;
         }
+        self.fan_drew = (fan_share, wanted);
         self.demand_w = steady + wanted;
         self.delivered_w = steady.min(bus) + wanted * factor.powf(1.5);
         let from_plant = self.delivered_w.min(plant);
@@ -434,9 +460,15 @@ impl Ship {
         let mut state = self.devices.take().unwrap();
         let spec = self.spec();
         let mut ts = crate::trim::thrusters(spec, &self.trim).into_owned();
-        state.effective(&mut ts, self.fuel, self.powered);
         let per_kg =
             crate::materials::material(&spec.fuel).map_or(0., |m| m.energy) * spec.plant_efficiency;
+        let fan_share = if self.powered {
+            let plant = if per_kg > 0. { spec.power_output.min(self.fuel / dt * per_kg) } else { 0. };
+            state.fan_share(plant + state.available(dt).iter().sum::<f64>(), spec.power_draw)
+        } else {
+            1.
+        };
+        state.effective(&mut ts, self.fuel, self.powered, fan_share);
         let cap_w = if self.powered && !self.hyperdrive {
             ((spec.capacitor_capacity - self.energy).max(0.) / dt).min(spec.capacitor_rate)
         } else {
@@ -501,6 +533,7 @@ impl Ship {
             per_kg,
             if self.powered { draw } else { 0. },
             cap_w,
+            fan_share,
         );
         let (mut force, mut torque) = (DVec3::ZERO, DVec3::ZERO);
         for (t, j) in ts.iter().zip(&self.jets) {
@@ -561,17 +594,24 @@ mod authority_tests {
         let fit = Fit { propellants: vec![Propellant { material: "material.nitrogen".into(), capacity: 1., thrusters: vec![0] }], ..Fit::default() };
         let mut pool = State::new(fit, 4, 1., 293.).unwrap();
         let mut rk: Vec<_> = (0..4).map(|_| Thruster { nozzle: "test".into(), at: DVec3::ZERO, push: DVec3::Y, thrust: 7000., role: ThrusterRole::Lift, exhaust: 700., efficiency: 1. }).collect();
-        pool.effective(&mut rk, 0., true);
+        pool.effective(&mut rk, 0., true, 1.);
         assert!(rk[0].thrust > 0. && rk[1..].iter().all(|t| t.thrust == 0.));
         let mut jets = vec![1.; 4];
-        pool.plan(&rk, &mut jets, 0.06, 0., 0., 0., 0., 0.);
+        pool.plan(&rk, &mut jets, 0.06, 0., 0., 0., 0., 0., 1.);
         pool.consume(0.06);
         assert!(jets[0] == 1. && (pool.burned() - 0.6).abs() < 1e-9);
-        pool.plan(&rk, &mut jets, 0.06, 0., 0., 0., 0., 0.);
+        pool.plan(&rk, &mut jets, 0.06, 0., 0., 0., 0., 0., 1.);
         pool.consume(0.06);
         assert!((jets[0] - 4. / 6.).abs() < 1e-9 && pool.held[0] == 0.);
         // A lifter's throttle (no main drive) sets its lift.
         let a = Authority { main: 0., lift: 1000., side: 100. };
         assert_eq!(crate::flight_control::force_demand(0.5, DVec3::ZERO, a, 0., true).0, DVec3::new(0., 500., 0.));
+        // Fans short of power: planned on the thrust they can all have at once,
+        // and on more when the last span drew less than there is.
+        let fan = |thruster| Fan { thruster, full_power: 1e6, min_density: 0., reference_density: 1.2 };
+        let mut fans = State::new(Fit { fans: vec![fan(0), fan(1)], ..Fit::default() }, 4, 1., 293.).unwrap();
+        assert_eq!(fans.fan_share(1e6, 0.), 40. / 64.);
+        fans.fan_drew = (40. / 64., 0.5e6);
+        assert_eq!(fans.fan_share(1e6, 0.), 63. / 64.);
     }
 }
