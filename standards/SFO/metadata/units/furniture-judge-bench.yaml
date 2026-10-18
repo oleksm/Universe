@@ -9,15 +9,15 @@ physical:
   length: 3.0
   width: 0.9
   height: 1.2
-  mass: 230.0
+  mass: 325.4
 built_of:
 - what: Bench
   item: material.structural-steel-a36
-  mass: 230.0
+  mass: 325.4
 basis:
 - of:
   - built_of
   - physical
   tier: derived
   review: true
-  note: 'From blender''s court bay: bench, dock and witness box 495 kg of steel.'
+  note: 'From blender''s model (2026-10-17): 50 x 50 x 3 mm hollow frame, 3 mm skins, 4 mm tops; a raised public top at 1.2 m and a writing top at 0.78 m for two.'

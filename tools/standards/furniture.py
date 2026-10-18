@@ -52,7 +52,7 @@ FURNITURE = {  # name: (title, description, (length, width, height), [(what, ite
     "tool-rack": ("Tool rack", "A wall rack of tools.", (2.0, 0.4, 2.0), [("Rack", STEEL, 63.6), ("Tools", "material.high-strength-steel-4340", 67.7)], "blender's model (2026-10-17): 40 x 40 x 2 mm frame, backboard and tray; spanners, sledges and bars"),
     "drill": ("Pillar drill", "A pillar drill.", (0.6, 0.505, 1.8), [("Base, column, table and head", CI, 228.7)], "blender's model (2026-10-17): cast base, 120 x 12 mm column, 35 mm table; of the order of a floor-standing drill's 150 to 300 kg"),
     "charge-point": ("Charge point", "A vehicle charge point on its post.", (0.3, 0.3, 1.4), [("Post and charger", STEEL, 30.0)], None),
-    "judge-bench": ("Judge's bench", "A raised bench for a judge and clerk.", (3.0, 0.9, 1.2), [("Bench", STEEL, 230.0)], "blender's court bay: bench, dock and witness box 495 kg of steel"),
+    "judge-bench": ("Judge's bench", "A raised bench for a judge and clerk.", (3.0, 0.9, 1.2), [("Bench", STEEL, 325.4)], "blender's model (2026-10-17): 50 x 50 x 3 mm hollow frame, 3 mm skins, 4 mm tops; a raised public top at 1.2 m and a writing top at 0.78 m for two"),
     "dock": ("Dock", "A dock for the accused, standing.", (2.4, 1.2, 1.1), [("Dock", STEEL, 170.0)], "blender's court bay"),
     "witness-box": ("Witness box", "A witness box.", (1.2, 1.2, 1.1), [("Box", STEEL, 95.0)], "blender's court bay"),
     "web-press": ("Web press", "A small web press, its folder and its paper stand.", (5.0, 2.5, 2.5), [("Press, folder and stand", STEEL, 4200.0), ("Rollers and plates", AL, 300.0)], None),

@@ -17,12 +17,6 @@ built_of:
 - what: Hidden trap, flush and tap valves
   item: material.stainless-steel-304
   mass: 4.0
-visual:
-  format: "freefall-model/1"
-  path: "models/furniture-steel-wc/v1"
-  manifest_sha256: "4a96cf4d36a7d2b1f74b6a55e197067e321e619fadeab3834afb3757a47100cc"
-  version: 1
-  triangles: 4104
 basis:
 - of:
   - built_of
@@ -30,3 +24,9 @@ basis:
   tier: derived
   review: true
   note: 'From blender''s model (2026-10-17): 2 mm cabinet, 3 mm basin and pedestal, 2.5 mm pan, 3 mm seat; the 4 kg of hidden valves and trap is an invented allowance.'
+visual:
+  format: freefall-model/1
+  path: models/furniture-steel-wc/v1
+  manifest_sha256: 4a96cf4d36a7d2b1f74b6a55e197067e321e619fadeab3834afb3757a47100cc
+  version: 1
+  triangles: 4104

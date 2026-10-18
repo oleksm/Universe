@@ -14,12 +14,6 @@ built_of:
 - what: Dock
   item: material.structural-steel-a36
   mass: 170.0
-visual:
-  format: "freefall-model/1"
-  path: "models/furniture-dock/v1"
-  manifest_sha256: "68fcf5c1004ff08942a9e95061bc461c762c2adc1e88b93ec7d44418c38fa533"
-  version: 1
-  triangles: 660
 basis:
 - of:
   - built_of
@@ -27,3 +21,9 @@ basis:
   tier: derived
   review: true
   note: From blender's court bay.
+visual:
+  format: freefall-model/1
+  path: models/furniture-dock/v1
+  manifest_sha256: 68fcf5c1004ff08942a9e95061bc461c762c2adc1e88b93ec7d44418c38fa533
+  version: 1
+  triangles: 660
