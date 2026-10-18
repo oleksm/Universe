@@ -294,14 +294,14 @@
 - { record: connector.termination-6p6kv-70mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "6808ecca95e1a764" }
 - { record: connector.termination-6p6kv-95mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "3c36ff1d41d6a876" }
 - { record: connector.twistlock-iso1161, at: "2026-10-18T05:26:10Z", status: draft, summary: "changed: physical, built_of, basis", sha: "ff4b510621665c17" }
-- { record: connector.valve-ball-dn100-pn10, at: "2026-10-18T05:43:35Z", status: draft, summary: "changed: physical, built_of, basis", sha: "f99213b246fd24ff" }
-- { record: connector.valve-ball-dn50-pn10, at: "2026-10-18T05:43:35Z", status: draft, summary: "changed: physical, built_of, basis", sha: "d3fd878b49534692" }
+- { record: connector.valve-ball-dn100-pn10, at: "2026-10-18T05:53:01Z", status: draft, summary: "changed: built_of", sha: "881cdf28b2858da2" }
+- { record: connector.valve-ball-dn50-pn10, at: "2026-10-18T05:53:01Z", status: draft, summary: "changed: built_of", sha: "2b2c65eaae4e95b9" }
 - { record: connector.valve-butterfly-dn1000-pn10, at: "2026-10-18T05:39:56Z", status: draft, summary: "changed: physical, basis", sha: "6420d876034af41a" }
 - { record: connector.valve-butterfly-dn150-pn10, at: "2026-10-18T05:39:56Z", status: draft, summary: "changed: physical, basis", sha: "5188bd9375c529c9" }
 - { record: connector.valve-butterfly-dn300-pn10, at: "2026-10-18T05:39:56Z", status: draft, summary: "changed: physical, basis", sha: "52c521837270e457" }
 - { record: connector.valve-butterfly-dn600-pn10, at: "2026-10-18T05:39:56Z", status: draft, summary: "changed: physical, basis", sha: "c41a61e8ebba17da" }
-- { record: connector.valve-check-dn100-pn10, at: "2026-10-18T05:39:56Z", status: draft, summary: "changed: physical, basis", sha: "aaed815aa26f9e1b" }
-- { record: connector.valve-check-dn300-pn10, at: "2026-10-18T05:39:56Z", status: draft, summary: "changed: physical, basis", sha: "21b7eb71ffa211da" }
+- { record: connector.valve-check-dn100-pn10, at: "2026-10-18T05:53:01Z", status: draft, summary: "changed: physical, built_of, basis", sha: "876df34868c5504e" }
+- { record: connector.valve-check-dn300-pn10, at: "2026-10-18T05:53:01Z", status: draft, summary: "changed: physical, built_of, basis", sha: "615e4c0c8d4918d3" }
 - { record: connector.valve-gate-dn100-pn10, at: "2026-10-18T05:39:56Z", status: draft, summary: "changed: physical, basis", sha: "ca6d5f87ec5d6d4c" }
 - { record: connector.valve-gate-dn300-pn10, at: "2026-10-18T05:39:56Z", status: draft, summary: "changed: physical, basis", sha: "93fca62d4539631a" }
 - { record: connector.valve-relief-dn100-pn10, at: "2026-10-18T05:39:56Z", status: draft, summary: "changed: physical, basis", sha: "94ab6d5e46ddb2ae" }
@@ -3698,8 +3698,8 @@
 - { record: stock.kit-valve-butterfly-dn150-pn10, at: "2026-10-18T05:39:56Z", status: review, summary: "changed: size", sha: "57daf301176d2926" }
 - { record: stock.kit-valve-butterfly-dn300-pn10, at: "2026-10-18T05:39:56Z", status: review, summary: "changed: size", sha: "7d85eb2c808437dc" }
 - { record: stock.kit-valve-butterfly-dn600-pn10, at: "2026-10-18T05:39:56Z", status: review, summary: "changed: size", sha: "a5bfd26d38285edc" }
-- { record: stock.kit-valve-check-dn100-pn10, at: "2026-10-18T05:39:56Z", status: review, summary: "changed: size", sha: "4cced891848b140a" }
-- { record: stock.kit-valve-check-dn300-pn10, at: "2026-10-18T05:39:56Z", status: review, summary: "changed: size", sha: "212cbcb636c9135a" }
+- { record: stock.kit-valve-check-dn100-pn10, at: "2026-10-18T05:53:01Z", status: review, summary: "changed: physical", sha: "935c1eeb5c6384b5" }
+- { record: stock.kit-valve-check-dn300-pn10, at: "2026-10-18T05:53:01Z", status: review, summary: "changed: physical", sha: "d07fda45422508ff" }
 - { record: stock.kit-valve-gate-dn100-pn10, at: "2026-10-18T05:39:56Z", status: review, summary: "changed: size", sha: "12c799aefb163756" }
 - { record: stock.kit-valve-gate-dn300-pn10, at: "2026-10-18T05:39:56Z", status: review, summary: "changed: size", sha: "6b8a3e566d0a6fa8" }
 - { record: stock.kit-valve-relief-dn100-pn10, at: "2026-10-18T05:39:56Z", status: review, summary: "changed: size", sha: "6938ce69bbc8e433" }
@@ -4385,8 +4385,8 @@
 - { record: template.termination-mv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "5098fcf4fe0ded80" }
 - { record: template.twistlock, at: "2026-10-18T05:34:39Z", status: "", summary: "changed", sha: "8d12961195852bce" }
 - { record: template.union, at: "2026-10-18T05:39:56Z", status: "", summary: "changed", sha: "3450ba43d5c17d70" }
-- { record: template.valve-ball, at: "2026-10-18T05:46:05Z", status: "", summary: "changed: visual", sha: "8dc6b86df6378a22" }
-- { record: template.valve-butterfly, at: "2026-10-18T05:49:19Z", status: "", summary: "changed: visual", sha: "2d6a478124d464c2" }
+- { record: template.valve-ball, at: "2026-10-18T05:53:01Z", status: "", summary: "changed", sha: "5f800b157e7a150c" }
+- { record: template.valve-butterfly, at: "2026-10-18T05:53:01Z", status: "", summary: "changed", sha: "6baaa3aa154ffd11" }
 - { record: template.valve-check, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "db1774a554f80df0" }
 - { record: template.valve-gate, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "f6e8abb14d71c0ab" }
 - { record: template.valve-relief, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "d49ebff915dfb3f2" }

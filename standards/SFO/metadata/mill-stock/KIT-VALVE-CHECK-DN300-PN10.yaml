@@ -18,7 +18,7 @@ size:
 supplies:
   item: connector.valve-check-dn300-pn10
 physical:
-  mass: 220.0
+  mass: 371.95
 basis:
 - of:
   - size

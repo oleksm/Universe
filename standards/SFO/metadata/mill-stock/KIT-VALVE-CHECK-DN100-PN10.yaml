@@ -18,7 +18,7 @@ size:
 supplies:
   item: connector.valve-check-dn100-pn10
 physical:
-  mass: 30.0
+  mass: 50.72
 basis:
 - of:
   - size

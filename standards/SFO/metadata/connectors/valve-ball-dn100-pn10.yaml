@@ -16,14 +16,14 @@ physical:
   height: 0.23
   mass: 55.65
 built_of:
-- what: Body, bonnet, flanges and lever
+- what: Body, bonnet and flanges
   item: material.structural-steel-a36
   mass: 52.2
-  note: cast carbon steel
+  note: cast carbon steel, with its lever or hinge
 - what: Trim
   item: material.stainless-steel-304
   mass: 3.37
-  note: stainless ball and stem
+  note: stainless ball, disc and stem
 - what: Seats
   item: material.epdm-rubber
   mass: 0.059
