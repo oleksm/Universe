@@ -175,10 +175,10 @@ envelope:
 life: 788940000
 visual:
   format: "freefall-model/1"
-  path: "models/eaf-vessel-80t-sealed/v3"
-  manifest_sha256: "0f93f757a87cf1a87c6c95a0414dc3cf3394ee5764ce88f8682db9a22d0c9f34"
-  version: 3
-  triangles: 48554
+  path: "models/eaf-vessel-80t-sealed/v4"
+  manifest_sha256: "907b631326c4307e7b4d0fa775a435b636084894b565fc09cb6e2365117821a1"
+  version: 4
+  triangles: 59582
 basis:
 - of: [recipes]
   tier: derived
