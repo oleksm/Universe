@@ -537,18 +537,20 @@ def _check_axes(r, mo, parent):
                 bad.append(f"{who}: continuous, but the record limits it to {span}")
         elif "range" not in a:
             bad.append(f"{who}: needs a range, or continuous")
-        elif span and max(abs(a["range"][i] - span[i]) for i in range(2)) > 1e-6:
-            bad.append(f"{who}: range {a['range']}, the record's is {span}")
+        elif span and max(abs(a["range"][i] - a.get("ratio", 1.0) * span[i]) for i in range(2)) > 1e-6:
+            bad.append(f"{who}: range {a['range']}, the record's is {span}" + (f" times its ratio {a['ratio']}" if "ratio" in a else ""))
         given = m.get("rate") if a["kind"] == "rotate" else m.get("speed")
         if given is not None and a.get("rate") is not None and abs(a["rate"] - given) > 1e-6:
             bad.append(f"{who}: rate {a['rate']}, the record's is {given}")
         p = a.get("parent_axis")
         if p is not None:
-            if p not in by:
+            nodes = [b["node"] for b in axes if b["motion"] == p]
+            if not nodes:
                 bad.append(f"{who}: rides axis {p!r}, which is not in axes")
-            elif parent.get(a["node"]) != by[p]["node"]:
-                bad.append(f"{who}: rides {p!r}, so its node's parent must be {by[p]['node']!r}, not {parent.get(a['node'])!r}")
-    bad += [f"motion: axis {k!r} given twice" for k in sorted({a["motion"] for a in axes if [b["motion"] for b in axes].count(a["motion"]) > 1})]
+            elif parent.get(a["node"]) not in nodes:
+                bad.append(f"{who}: rides {p!r}, so its node's parent must be {' or '.join(map(repr, nodes))}, not {parent.get(a['node'])!r}")
+    bad += [f"motion: axis {k!r} given twice (several axes may answer one motion only each with a ratio)" for k in sorted({a["motion"] for a in axes if [b["motion"] for b in axes].count(a["motion"]) > 1 and any("ratio" not in b for b in axes if b["motion"] == a["motion"])})]
+    bad += [f"motion: node {n!r} moved by two axes" for n in sorted({a["node"] for a in axes if [b["node"] for b in axes].count(a["node"]) > 1})]
     return bad
 
 
@@ -556,7 +558,8 @@ def _sweep_axes(mo, axes, bind, parent, eye):
     """Actuators and hoses over plain axes (plant units): each axis's node moves by its value, an axis riding another
     composes on it; the poses are neutral, each axis through its range in 8 steps (others at 0), and every corner of the
     ranges together. References give one value per axis, in the order of `axes`."""
-    by = {a["motion"]: a for a in axes}
+    drivers = list(dict.fromkeys(a["motion"] for a in axes))      # (one input a record motion: axes sharing it move by their ratios)
+    on = {a["node"]: a for a in axes}
 
     def local(a, v):
         if a["kind"] == "rotate":
@@ -569,24 +572,29 @@ def _sweep_axes(mo, axes, bind, parent, eye):
         def m_of(a):
             if a["node"] in out:
                 return out[a["node"]]
-            par = by.get(a.get("parent_axis"))
-            m = _mul(m_of(par), local(a, q[axes.index(a)])) if par else local(a, q[axes.index(a)])
+            v = a.get("ratio", 1.0) * q[drivers.index(a["motion"])]
+            x, par = a["node"], None
+            while x in parent and par is None:          # (the nearest axis above it in the hierarchy carries it)
+                x = parent[x]; par = on.get(x)
+            m = _mul(m_of(par), local(a, v)) if par else local(a, v)
             out[a["node"]] = m
             return m
         for a in axes:
             m_of(a)
         return out
 
-    def span(a):
-        return [0.0, 2 * math.pi] if a.get("continuous") else a.get("range", [0.0, 0.0])
+    def span(mid):
+        a = next(b for b in axes if b["motion"] == mid)
+        k = a.get("ratio", 1.0)
+        return [0.0, 2 * math.pi] if a.get("continuous") else [v / k for v in a.get("range", [0.0, 0.0])]
 
-    poses = [tuple(0.0 for _ in axes)]
-    for i, a in enumerate(axes):
-        lo, hi = span(a)
-        poses += [tuple(lo + (hi - lo) * k / 8 if j == i else 0.0 for j in range(len(axes))) for k in range(9)]
-    if len(axes) <= 4:
-        for c in range(2 ** len(axes)):
-            poses.append(tuple(span(a)[(c >> i) & 1] for i, a in enumerate(axes)))
+    poses = [tuple(0.0 for _ in drivers)]
+    for i, mid in enumerate(drivers):
+        lo, hi = span(mid)
+        poses += [tuple(lo + (hi - lo) * k / 8 if j == i else 0.0 for j in range(len(drivers))) for k in range(9)]
+    if len(drivers) <= 4:
+        for c in range(2 ** len(drivers)):
+            poses.append(tuple(span(mid)[(c >> i) & 1] for i, mid in enumerate(drivers)))
 
     def moved_of(par, moved):
         m, x = moved.get(par), par
@@ -612,8 +620,8 @@ def _sweep_axes(mo, axes, bind, parent, eye):
     if mo.get("links") or mo.get("bellows") or mo.get("gimbal"):
         bad.append("motion: links, bellows and a gimbal are not yet checked with plain axes: ask the registry")
     for ref in mo.get("references", []):
-        if len(ref["input"]) != len(axes):
-            bad.append(f"motion: reference {ref['pose']}: {len(ref['input'])} input(s), one per axis wanted ({len(axes)})"); continue
+        if len(ref["input"]) != len(drivers):
+            bad.append(f"motion: reference {ref['pose']}: {len(ref['input'])} input(s), one per record motion its axes answer wanted ({len(drivers)}: {', '.join(drivers)})"); continue
         moved = pose(*ref["input"])
         A = {mo["root"]: eye}
         A.update({n: _mul(moved_of(n, moved), b) for n, b in bind.items()})

@@ -56,6 +56,15 @@ of `axes`, and every listed node's transform must match within 2e-6. Links, bell
 axes are refused until they are needed. The engine's runtime is the same hierarchy: the axis poses its node, and an
 actuator's body and rod aim at their anchors, as on the gimbal (engine's convention v11).
 
+## Ratios (2026-10-18, blender's forklift, thread 20261018T134752-blender-8337)
+
+An axis may carry `ratio`: it moves by that many times its record motion's value. Several axes may answer one record
+motion only when each has a ratio, and one input drives them all. A duplex mast's inner mast and its carriage (a child
+of the inner mast) each take 0.5 of `mast`, so the forks rise by the whole 3 m. Each axis's range is the record's range
+times its ratio. An axis rides the nearest axis above its node in the hierarchy. References give one input per record
+motion the axes answer, in the order they first appear. Chain strands that change length are not motion: draw each as
+a rigid piece riding the carriage or the inner mast, its excess hidden in the upright's channel past the sheave.
+
 ## Still asked
 - Registry (mine): give the record motions their `rate` where known, and keep `moves` naming the parts so blender knows
   which geometry to separate.
