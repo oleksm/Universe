@@ -4481,7 +4481,7 @@
 - { record: template.hose, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "76521a9d59aafaae" }
 - { record: template.hose-hydraulic, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "1bdc07615e11b940" }
 - { record: template.hose-metal, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "7c583306ffc2f9d2" }
-- { record: template.hvdc-pole, at: "2026-10-18T15:11:23Z", status: "", summary: "changed: members", sha: "d77dfc294a1bd1a0" }
+- { record: template.hvdc-pole, at: "2026-10-18T16:18:56Z", status: "", summary: "changed: visual", sha: "79cc7f95b0043a93" }
 - { record: template.jacketed-duct, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "f735abc971d05f0e" }
 - { record: template.lined-duct, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "4f0e1dffeb3819a1" }
 - { record: template.lined-flange, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "566901f48b56a274" }
