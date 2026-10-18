@@ -213,6 +213,9 @@ def cmd_ship(message):
         if sh(["git", "merge", "-q", "--ff-only", branch], cwd=fso).returncode:
             if sh("git rebase -q fso").returncode and not resolve_generated():
                 sys.exit("rebase onto fso stopped on a conflict in a hand-written file: resolve it, git rebase --continue, ship again")
+            if sh("git merge-base --is-ancestor fso HEAD").returncode:
+                r = sh("git status -sb")
+                sys.exit("the rebase onto fso did not complete (no conflict to resolve): " + (r.stdout.splitlines() or [""])[0] + ". Run git rebase fso here, then ship again")
             sh(["git", "merge", "-q", "--ff-only", branch], cwd=fso, check=True)
     sh([sys.executable, "tools/standards/build.py"], cwd=fso)
     sh("git add standards/index.html standards/changes.yaml standards/game-keys.yaml standards/PlanetSim/generated", cwd=fso)
