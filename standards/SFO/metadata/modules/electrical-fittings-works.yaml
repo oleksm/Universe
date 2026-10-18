@@ -161,64 +161,64 @@ recipes:
   does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
-    quantity: 0.618
-  - item: stock.cu-ingot
-    quantity: 0.206
+    quantity: 0.7403
   - item: material.epdm-rubber
-    quantity: 0.2
+    quantity: 0.1562
+  - item: stock.cu-ingot
+    quantity: 0.1288
   outputs:
   - item: stock.al6061-scrap
-    quantity: 0.018
+    quantity: 0.0216
   - item: stock.cu-scrap
-    quantity: 0.006
+    quantity: 0.0037
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-circular-shell-17
   does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
-    quantity: 0.618
-  - item: stock.cu-ingot
-    quantity: 0.206
+    quantity: 0.7642
   - item: material.epdm-rubber
-    quantity: 0.2
+    quantity: 0.1452
+  - item: stock.cu-ingot
+    quantity: 0.1163
   outputs:
   - item: stock.al6061-scrap
-    quantity: 0.018
+    quantity: 0.0223
   - item: stock.cu-scrap
-    quantity: 0.006
+    quantity: 0.0034
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-circular-shell-25
   does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
-    quantity: 0.618
-  - item: stock.cu-ingot
-    quantity: 0.206
+    quantity: 0.7602
   - item: material.epdm-rubber
-    quantity: 0.2
+    quantity: 0.1508
+  - item: stock.cu-ingot
+    quantity: 0.1144
   outputs:
   - item: stock.al6061-scrap
-    quantity: 0.018
+    quantity: 0.0221
   - item: stock.cu-scrap
-    quantity: 0.006
+    quantity: 0.0033
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-circular-shell-33
   does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
-    quantity: 0.618
-  - item: stock.cu-ingot
-    quantity: 0.206
+    quantity: 0.7592
   - item: material.epdm-rubber
-    quantity: 0.2
+    quantity: 0.1514
+  - item: stock.cu-ingot
+    quantity: 0.1149
   outputs:
   - item: stock.al6061-scrap
-    quantity: 0.018
+    quantity: 0.0221
   - item: stock.cu-scrap
-    quantity: 0.006
+    quantity: 0.0033
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-collector-1000a

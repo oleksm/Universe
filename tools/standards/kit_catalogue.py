@@ -209,14 +209,19 @@ for v, n, mm2, amps in INSTALL:
         "basis": [{"of": ["per_m", "rating", "outside"], "tier": "invented", "review": True, "note": f"Wiring regulations' clipped-direct ratings and usual insulation thicknesses; least bend 4 outsides; {MEMORY}"}]})
 CIRC = [  # (shell, outside m, mated length m, kg a pair, contacts, mm2 a contact at most)
     (11, 0.022, 0.05, 0.05, 7, 1.0), (17, 0.03, 0.06, 0.1, 7, 2.5), (25, 0.04, 0.075, 0.2, 4, 16), (33, 0.052, 0.095, 0.4, 2, 50)]
+CIRC_KG = (17, 0.06268, 0.04627, 0.00703, 0.00938)     # blender's shell 17 (2026-10-18): kg in all, aluminium, copper, inserts and seals; the other shells scaled by the old ratio to it
 for sh, od, ll, kg, nc, mm2 in CIRC:
+    ref = next(k for s_, _o, _l, k, *_r in CIRC if s_ == CIRC_KG[0])
+    split = [x * kg / ref for x in CIRC_KG[2:]]
+    kg = round(sum(split), 4)
     conn(f"circular-shell-{sh}", {
         "identity": {"key": f"connector.circular-shell-{sh}", "name": f"Circular connector, shell {sh}", "description": f"A bayonet-coupled circular connector, plug and receptacle, an aluminium shell round an insert of {nc} crimped contacts for wires up to {mm2:g} mm2: where a harness meets a unit, a ship's equipment or a bulkhead. Sealed; keyed so that only its own mates."},
         "kind": "plug-socket", "size": mm2 * 1e-6, "rating": {"voltage": 600, "current": {1.0: 8, 2.5: 15, 16: 55, 50: 120}[mm2]},
         "physical": {"length": od, "width": od, "height": ll, "mass": kg},
-        "built_of": [part("Shells and coupling ring", AL, kg * 0.6, "anodised aluminium"), part("Contacts", CU, kg * 0.2, "gold-plated copper alloy, as copper here"), part("Inserts and seals", RUB, kg * 0.2, "silicone, as EPDM here")],
+        "built_of": [part("Shells and coupling ring", AL, split[0], "anodised aluminium"), part("Contacts", CU, split[1], "gold-plated copper alloy, as copper here"), part("Inserts and seals", RUB, split[2], "silicone, as EPDM here")],
         "provides": "both", "template": "template.circular-connector",
-        "basis": [{"of": ["physical", "built_of", "rating"], "tier": "invented", "review": True, "note": f"Of the order of military circular connectors (MIL-DTL-38999 class); {MEMORY}"}]},
+        "basis": [{"of": ["physical", "built_of"], "tier": "derived" if sh == CIRC_KG[0] else "invented", "review": True, "note": "From blender's model (2026-10-18): 30 x 30 x 60 mm mated, seven contacts (six on a 10 mm circle and one at the centre), 2 mm pins, three bayonet pins." if sh == CIRC_KG[0] else f"Scaled from the shell {CIRC_KG[0]}'s measured mass by the old ratio; {MEMORY}"},
+                  {"of": ["rating"], "tier": "invented", "review": True, "note": f"Of the order of military circular connectors (MIL-DTL-38999 class); {MEMORY}"}]},
         {"slug": f"circular-shell-{sh}", "name": f"Circular shell {sh}", "domain": "power", "kind": "plug-socket", "media": ["power"], "halves": "male-female", "make": "manual"})
 WIRE = [  # (mm2, amps single in vacuum, connector shell, amps single in free air at 40 C)
     (0.5, 5, 11, 11), (1.0, 8, 11, 16), (2.5, 15, 17, 30), (6.0, 28, 25, 55), (16.0, 55, 25, 105), (50.0, 120, 33, 220)]

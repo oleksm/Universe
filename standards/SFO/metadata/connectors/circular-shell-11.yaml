@@ -14,19 +14,19 @@ physical:
   length: 0.022
   width: 0.022
   height: 0.05
-  mass: 0.05
+  mass: 0.0313
 built_of:
 - what: Shells and coupling ring
   item: material.aluminium-alloy-6061
-  mass: 0.03
+  mass: 0.023
   note: anodised aluminium
 - what: Contacts
   item: material.copper
-  mass: 0.01
+  mass: 0.004
   note: gold-plated copper alloy, as copper here
 - what: Inserts and seals
   item: material.epdm-rubber
-  mass: 0.01
+  mass: 0.005
   note: silicone, as EPDM here
 provides: both
 template: template.circular-connector
@@ -34,6 +34,10 @@ basis:
 - of:
   - physical
   - built_of
+  tier: invented
+  review: true
+  note: Scaled from the shell 17's measured mass by the old ratio; From memory of makers' catalogues; to be sourced.
+- of:
   - rating
   tier: invented
   review: true

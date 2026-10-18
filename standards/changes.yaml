@@ -197,10 +197,10 @@
 - { record: connector.chute-dn400, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "249eeb811c9dc969" }
 - { record: connector.chute-dn600, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "239672a4c8f7692d" }
 - { record: connector.chute-dn800, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "3321a89a50168059" }
-- { record: connector.circular-shell-11, at: "2026-10-18T14:51:23Z", status: draft, summary: "first tracked", sha: "56c8382b0d32d5a4" }
-- { record: connector.circular-shell-17, at: "2026-10-18T14:51:23Z", status: draft, summary: "first tracked", sha: "fe44d5bbf5533f35" }
-- { record: connector.circular-shell-25, at: "2026-10-18T14:51:23Z", status: draft, summary: "first tracked", sha: "2b117b9284349011" }
-- { record: connector.circular-shell-33, at: "2026-10-18T14:51:23Z", status: draft, summary: "first tracked", sha: "d0242c7b2ff5abbe" }
+- { record: connector.circular-shell-11, at: "2026-10-18T15:12:44Z", status: draft, summary: "changed: physical, built_of, basis", sha: "e860a5918ea9d2de" }
+- { record: connector.circular-shell-17, at: "2026-10-18T15:12:44Z", status: draft, summary: "changed: physical, built_of, basis", sha: "12b86ec38b691596" }
+- { record: connector.circular-shell-25, at: "2026-10-18T15:12:44Z", status: draft, summary: "changed: physical, built_of, basis", sha: "0384a256b629d3fd" }
+- { record: connector.circular-shell-33, at: "2026-10-18T15:12:44Z", status: draft, summary: "changed: physical, built_of, basis", sha: "cff3a41261f4f814" }
 - { record: connector.clamp-coupling-dn1200, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "0de77f5f98016bdf" }
 - { record: connector.collector-1000a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "a41b8e347f2dc24f" }
 - { record: connector.collector-100a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "753457e566e08ea6" }
@@ -1267,7 +1267,7 @@
 - { record: module.cutting-table, at: "2026-10-07T04:19:21Z", status: review, summary: "changed: cuts", sha: "2545992d8a3147da" }
 - { record: module.dairy, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "87a7222d2b693662" }
 - { record: module.deuterium-plant, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "7cc8640ba74a548d" }
-- { record: module.electrical-fittings-works, at: "2026-10-18T15:11:23Z", status: review, summary: "changed: recipes", sha: "7ed6be45585ec1c7" }
+- { record: module.electrical-fittings-works, at: "2026-10-18T15:12:44Z", status: review, summary: "changed: recipes", sha: "78708b5b957144a4" }
 - { record: module.electronics-works, at: "2026-10-07T04:19:21Z", status: review, summary: "changed: cuts", sha: "09c82312a21035ed" }
 - { record: module.extrusion-press, at: "2026-10-07T04:17:36Z", status: review, summary: "changed: recipes", sha: "9207ecb04016e199" }
 - { record: module.feed-mill, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "2149d25f26397089" }
@@ -3586,10 +3586,10 @@
 - { record: stock.kit-chute-dn400, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "ac9b49d425629cd2" }
 - { record: stock.kit-chute-dn600, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "3ea9ad4e7fb75ada" }
 - { record: stock.kit-chute-dn800, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "a2915751ceef0394" }
-- { record: stock.kit-circular-shell-11, at: "2026-10-18T14:51:23Z", status: review, summary: "first tracked", sha: "ec4703d33b6f2478" }
-- { record: stock.kit-circular-shell-17, at: "2026-10-18T14:51:23Z", status: review, summary: "first tracked", sha: "c6c966f105afccbf" }
-- { record: stock.kit-circular-shell-25, at: "2026-10-18T14:51:23Z", status: review, summary: "first tracked", sha: "427717d08c6d4442" }
-- { record: stock.kit-circular-shell-33, at: "2026-10-18T14:51:23Z", status: review, summary: "first tracked", sha: "c0ddeb0990e600b7" }
+- { record: stock.kit-circular-shell-11, at: "2026-10-18T15:12:44Z", status: review, summary: "changed: physical", sha: "990586480caa829c" }
+- { record: stock.kit-circular-shell-17, at: "2026-10-18T15:12:44Z", status: review, summary: "changed: physical", sha: "6f247f4430c183da" }
+- { record: stock.kit-circular-shell-25, at: "2026-10-18T15:12:44Z", status: review, summary: "changed: physical", sha: "9f1f27f6326a8a4e" }
+- { record: stock.kit-circular-shell-33, at: "2026-10-18T15:12:44Z", status: review, summary: "changed: physical", sha: "216a96c19b790ec1" }
 - { record: stock.kit-clamp-coupling-dn1200, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "324222ff86a522d2" }
 - { record: stock.kit-collector-1000a, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "0a6837abb2e9f9fa" }
 - { record: stock.kit-collector-100a, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "f9352d5023e9a62e" }
