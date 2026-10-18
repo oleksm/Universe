@@ -42,7 +42,7 @@ FURNITURE = {  # name: (title, description, (length, width, height), [(what, ite
     "shower": ("Shower", "A shower tray, screen and mixer.", (0.9, 0.9, 2.1), [("Tray, screen and mixer", SS, 50.0)], None),
     "reception-desk": ("Reception desk", "A front desk 2.4 m long.", (2.4, 0.8, 1.1), [("Carcass", STEEL, 120.0), ("Top", PE, 30.0)], None),
     "couch": ("Treatment couch", "An adjustable treatment couch.", (1.9, 0.7, 0.75), [("Frame", STEEL, 70.0), ("Pad", PE, 10.0)], None),
-    "trolley": ("Trolley", "A stainless instrument trolley.", (0.8, 0.5, 0.9), [("Trolley", SS, 20.0)], None),
+    "trolley": ("Trolley", "A stainless instrument trolley on four castors.", (0.8, 0.5, 0.9), [("Frame, trays and yokes", SS, 21.7), ("Castor wheels", "material.epdm-rubber", 2.0)], "blender's model (2026-10-17): 25 x 25 x 1.5 mm tube, two 1.5 mm trays; its four wheels, drawn as solid proxies, as about 2 kg of rubber-tyred wheels (invented)"),
     "cell-front": ("Cell front", "A barred cell front 3 m wide with its locked door: solid 20 mm bars about 140 mm apart.", (3.0, 0.1, 2.2), [("Bars, rails and door", STEEL, 330.0)], "blender's cell bay: a full cage of bars 1,548 kg of steel for two cells"),
     "cell-wall": ("Cell wall", "A barred wall between or behind cells, 4 m long.", (4.0, 0.1, 2.2), [("Bars and rails", STEEL, 300.0)], "blender's cell bay"),
     "steel-wc": ("Steel toilet", "A stainless vandal-proof toilet and basin in one.", (0.6, 0.6, 0.9), [("Toilet and basin", SS, 55.0)], "blender's cell bay: 225 kg of stainless for two cells"),

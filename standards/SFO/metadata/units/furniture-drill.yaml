@@ -14,12 +14,6 @@ built_of:
 - what: Base, column, table and head
   item: material.cast-iron-grey
   mass: 228.7
-visual:
-  format: "freefall-model/1"
-  path: "models/furniture-drill/v1"
-  manifest_sha256: "09f35e87e3ef5e162302afb3b05755b18a9844f13d7d6548567a99f39e692828"
-  version: 1
-  triangles: 1748
 basis:
 - of:
   - built_of
@@ -27,3 +21,9 @@ basis:
   tier: derived
   review: true
   note: 'From blender''s model (2026-10-17): cast base, 120 x 12 mm column, 35 mm table; of the order of a floor-standing drill''s 150 to 300 kg.'
+visual:
+  format: freefall-model/1
+  path: models/furniture-drill/v1
+  manifest_sha256: 09f35e87e3ef5e162302afb3b05755b18a9844f13d7d6548567a99f39e692828
+  version: 1
+  triangles: 1748

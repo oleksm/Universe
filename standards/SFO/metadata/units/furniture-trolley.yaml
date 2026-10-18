@@ -3,21 +3,24 @@
 identity:
   key: unit.furniture-trolley
   name: Trolley
-  description: A stainless instrument trolley.
+  description: A stainless instrument trolley on four castors.
 size_class: 1
 physical:
   length: 0.8
   width: 0.5
   height: 0.9
-  mass: 20.0
+  mass: 23.7
 built_of:
-- what: Trolley
+- what: Frame, trays and yokes
   item: material.stainless-steel-304
-  mass: 20.0
+  mass: 21.7
+- what: Castor wheels
+  item: material.epdm-rubber
+  mass: 2.0
 basis:
 - of:
   - built_of
   - physical
-  tier: invented
+  tier: derived
   review: true
-  note: From memory of such furniture; to be sourced.
+  note: 'From blender''s model (2026-10-17): 25 x 25 x 1.5 mm tube, two 1.5 mm trays; its four wheels, drawn as solid proxies, as about 2 kg of rubber-tyred wheels (invented).'
