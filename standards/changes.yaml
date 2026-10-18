@@ -4483,7 +4483,7 @@
 - { record: unit.furniture-tool-rack, at: "2026-10-18T01:14:24Z", status: draft, summary: "changed", sha: "206dfcbbe5391f9f" }
 - { record: unit.furniture-trolley, at: "2026-10-18T02:18:23Z", status: draft, summary: "changed", sha: "fd58b9e670885b0d" }
 - { record: unit.furniture-wc, at: "2026-10-17T23:50:32Z", status: draft, summary: "changed", sha: "a355e019445e7215" }
-- { record: unit.furniture-web-press, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "6e0efa657b117d4d" }
+- { record: unit.furniture-web-press, at: "2026-10-18T03:48:18Z", status: draft, summary: "changed: visual", sha: "5624ed52aa5b714b" }
 - { record: unit.furniture-witness-box, at: "2026-10-18T03:41:57Z", status: draft, summary: "changed: visual", sha: "864f7cb87d3f1e09" }
 - { record: unit.furniture-workbench, at: "2026-10-18T01:14:24Z", status: draft, summary: "changed", sha: "c906e6ce56d8bfce" }
 - { record: unit.gantry-crane-150t-moon, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "7dfe5d37742335da" }
