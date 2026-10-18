@@ -54,12 +54,6 @@ making:
 function:
   kind: switchgear
   carries: 108000.0
-visual:
-  format: "freefall-model/1"
-  path: "models/power-distribution-270v-10way/v1"
-  manifest_sha256: "c20d81b790b47f9046374aa28520ecb6c559295593e661376aba53b7d1b10034"
-  version: 1
-  triangles: 8348
 life: 473364000
 ports:
 - id: in+
@@ -85,7 +79,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty in+
 - id: in-
   flow: in
   medium: power
@@ -109,7 +103,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty in-
 - id: in-33
   flow: in
   medium: power
@@ -134,7 +128,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty in-33
 - id: in-25
   flow: in
   medium: power
@@ -163,7 +157,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty in-25
 - id: way-1
   flow: out
   medium: power
@@ -192,7 +186,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty way-1
 - id: way-2
   flow: out
   medium: power
@@ -221,7 +215,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty way-2
 - id: way-3
   flow: out
   medium: power
@@ -250,7 +244,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty way-3
 - id: way-4
   flow: out
   medium: power
@@ -279,7 +273,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty way-4
 - id: way-5
   flow: out
   medium: power
@@ -308,7 +302,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty way-5
 - id: way-6
   flow: out
   medium: power
@@ -337,7 +331,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty way-6
 - id: way-7
   flow: out
   medium: power
@@ -366,7 +360,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty way-7
 - id: way-8
   flow: out
   medium: power
@@ -395,7 +389,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty way-8
 - id: way-9
   flow: out
   medium: power
@@ -420,7 +414,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty way-9
 - id: way-10
   flow: out
   medium: power
@@ -445,7 +439,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty way-10
 - id: data-1
   flow: both
   medium: signal
@@ -477,7 +471,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty data-1
 - id: data-2
   flow: both
   medium: signal
@@ -509,7 +503,7 @@ ports:
   - 0.0
   - -1.0
   - 0.0
-  note: 'place invented (no model yet): a grid on its -y broad face, for review'
+  note: place from the model's empty data-2
 internal:
 - kind: switched
   ports:
@@ -549,3 +543,9 @@ basis:
 - of:
   - life
   rule: rule.life-ship-system
+visual:
+  format: freefall-model/1
+  path: models/power-distribution-270v-10way/v1
+  manifest_sha256: c20d81b790b47f9046374aa28520ecb6c559295593e661376aba53b7d1b10034
+  version: 1
+  triangles: 8348
