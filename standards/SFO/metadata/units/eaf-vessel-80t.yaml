@@ -146,7 +146,7 @@ motion:
   angle: [-0.2618, 0.2618]
   moves: ['the vessel on its cradle, its roof, masts, elbow and feed']
   note: 'rocker tilt: about 15 degrees each way, toward +x to tap and -x to deslag (from memory of furnaces with an eccentric bottom tap); a rocker rolls, so the axis through the rockers'' centres is assumed (blender''s sweeps, 2026-10-16). The arc is off while it tilts.'
-  boxes: [0, 1, 2, 3, 4, 7, 8]
+  boxes: [0, 1, 2, 3, 4]
 envelope:
 - [-5.851, -4.501, -0.001, 5.851, 4.501, 2.512]
 - [-5.077, -3.743, 1.798, 4.802, 3.743, 7.302]
