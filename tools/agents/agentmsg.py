@@ -10,6 +10,13 @@
     agentmsg up [AGENT...] [--no-windows]            start every agent (or those named) that is down, a window on each
                                                      nobody watches, the mail watcher; safe to run again any time
     agentmsg open [--as ME]                          what I owe (tasks, blocks to me unanswered) and wait on (my tasks)
+    agentmsg status [--usage] [--json]                observed network, work, peers and session usage
+    agentmsg register NAME --cwd PATH --runtime codex|claude
+    agentmsg launch NAME [--no-windows]               start connected to the network
+    agentmsg spool NAME [--snapshot]                 request context, or recover recorded context offline
+    agentmsg switch NAME --to codex|claude [--handoff PATH] [--wait SECONDS]
+    agentmsg probe A B [--wait SECONDS]               ask both agents to ping and acknowledge
+    agentmsg probe --check ID                        inspect a connection test
     agentmsg who                                     the agents configured, their inboxes and wake commands
     agentmsg term <agent> [--here] [-- CMD ...]      run the agent in a terminal you can watch and type into (tmux
                                                      session agent-<name>); `serve` types its mail into it and notifies you
@@ -81,16 +88,35 @@ def unread(name):
     out = []
     for f in sorted(glob.glob(os.path.join(box(name), "*.json"))):
         try:
-            out.append((f, json.load(open(f))))
+            with open(f) as stream:
+                out.append((f, json.load(stream)))
         except (json.JSONDecodeError, OSError):
             pass
     return out
 
 
 def mark_read(name, files):
+    claimed = []
     for f in files:
         try:
             os.replace(f, os.path.join(box(name, "read"), os.path.basename(f)))
+            claimed.append(f)
+        except FileNotFoundError:
+            pass
+    return claimed
+
+
+def claim(name, got):
+    claimed = set(mark_read(name, [f for f, _ in got]))
+    return [(f, m) for f, m in got if f in claimed]
+
+
+def restore(name, got):
+    for f, _ in got:
+        old = os.path.join(box(name, "read"), os.path.basename(f))
+        try:
+            os.replace(old, f)
+            os.utime(f, None)  # retry after the normal settle interval
         except FileNotFoundError:
             pass
 
@@ -142,14 +168,14 @@ def cmd_send(pos, opt):
 def cmd_inbox(pos, opt):
     name = me(opt) or die("who are you? --as NAME")
     got = unread(name)
+    if not opt.get("peek"):
+        got = claim(name, got)
     if not got:
         if not opt.get("quiet"):
             print("no mail")
         sys.exit(1 if opt.get("quiet") else 0)
     for _, m in got:
         print(line(m))
-    if not opt.get("peek"):
-        mark_read(name, [f for f, _ in got])
 
 
 def cmd_show(pos, opt):
@@ -214,9 +240,34 @@ def running(name):
     try:
         pid = int(open(p).read())
         os.kill(pid, 0)
+        try:
+            finished, _ = os.waitpid(pid, os.WNOHANG)
+            if finished:
+                return False
+        except ChildProcessError:
+            pass
+        # A finished wake child must not permanently prevent the next wake.
+        try:
+            if open(f"/proc/{pid}/stat").read().split(") ", 1)[1].startswith("Z"):
+                return False
+        except (FileNotFoundError, IndexError):
+            return False
         return True
     except (FileNotFoundError, ValueError, ProcessLookupError, PermissionError):
         return False
+
+
+def starting(name):
+    try:
+        return time.time() - os.path.getmtime(os.path.join(RUN, name + ".starting")) < 12
+    except FileNotFoundError:
+        return False
+
+
+def mark_starting(name):
+    os.makedirs(RUN, exist_ok=True)
+    with open(os.path.join(RUN, name + ".starting"), "w") as f:
+        f.write(str(time.time()))
 
 
 def cmd_serve(pos, opt):
@@ -231,6 +282,8 @@ def cmd_serve(pos, opt):
         names = sorted(set(os.listdir(MAIL)) | set(agents)) if os.path.isdir(MAIL) else sorted(agents)
         soonest = 60
         for name in names:
+            if name == "_agentmsg" or agents.get(name, {}).get("handoff_pause") or starting(name):
+                continue
             got = unread(name)
             if not got or not wakes(got):
                 continue
@@ -240,15 +293,21 @@ def cmd_serve(pos, opt):
                 continue
             c = agents.get(name, {})
             if tmux_alive(f"agent-{name}"):
-                mark_read(name, [f for f, _ in got])
-                inject(name, f"agent-{name}", got)
+                got = claim(name, got)
+                if not got:
+                    continue
+                if not inject(name, f"agent-{name}", got):
+                    restore(name, got)
+                    continue
                 if shutil.which("notify-send"):
                     subprocess.run(["notify-send", f"Mail for {name} (typed into its terminal)", line(got[-1][1])[:200]], check=False)
                 print(f"{datetime.datetime.now():%T} typed {len(got)} message(s) into agent-{name}", flush=True)
             elif c.get("wake") and not running(name):
+                got = claim(name, got)
+                if not got:
+                    continue
                 prompt = wake_prompt(name, got)
                 cmd = [a.replace("{prompt}", prompt).replace("{name}", name) for a in c["wake"]]
-                mark_read(name, [f for f, _ in got])
                 log = open(os.path.join(LOG, name + ".log"), "a")
                 log.write(f"\n=== {datetime.datetime.now():%F %T} wake {name}: {len(got)} message(s)\n"); log.flush()
                 proc = subprocess.Popen(cmd, cwd=os.path.expanduser(c.get("cwd", "~")), stdout=log, stderr=subprocess.STDOUT, env={**os.environ, "AGENTMSG_NAME": name, "PATH": os.path.dirname(os.path.abspath(sys.argv[0])) + os.pathsep + os.path.expanduser("~/bin") + os.pathsep + os.environ.get("PATH", "")})
@@ -277,11 +336,14 @@ def cmd_hook_claude(pos, opt):
     name = opt.get("as") or os.environ.get("AGENTMSG_NAME") or owner or me(opt, data.get("cwd"))
     if not name or (not owner and sid and conf().get(name, {}).get("session") not in (None, sid)):
         return          # (a Claude session of another agent in a shared folder: the folder alone does not make it this one)
+    if conf().get(name, {}).get("handoff_pause"):
+        return
     got = unread(name)
     if not got or not wakes(got):
         return
-    mark_read(name, [f for f, _ in got])
-    print(json.dumps({"decision": "block", "reason": wake_prompt(name, got)}))
+    got = claim(name, got)
+    if got:
+        print(json.dumps({"decision": "block", "reason": wake_prompt(name, got)}))
 
 
 def tx(sess):
@@ -342,8 +404,9 @@ def start(name, c):
         if other:
             print(f"{name}: its conversation is open elsewhere (pid {', '.join(other)}): close it there, then run this again")
             return False
-    env = ["-e", f"AGENTMSG_NAME={name}", "-e", f"PATH={os.path.expanduser('~/bin')}{os.pathsep}{os.environ.get('PATH', '')}"]
+    env = ["-e", f"AGENTMSG_NAME={name}", "-e", f"AGENTMSG_HOME={HOME}", "-e", f"PATH={os.path.dirname(os.path.abspath(sys.argv[0]))}{os.pathsep}{os.path.expanduser('~/bin')}{os.pathsep}{os.environ.get('PATH', '')}"]
     own = ["systemd-run", "--user", "--scope", "--quiet", f"--unit={sess}-{secrets.token_hex(3)}"] if shutil.which("systemd-run") else []
+    mark_starting(name)
     subprocess.run([*own, *tx(sess), "new-session", "-d", "-s", sess, "-c", os.path.expanduser(c.get("cwd", "~")), *env, *cmd], check=True)
     print(f"started {name} in tmux session {sess} ({' '.join(cmd)})")
     if unread(name):        # mail that came while it was not running: typed in once its prompt is up
@@ -412,9 +475,10 @@ def cmd_deliver(pos, opt):
     name, sess = pos[0], f"agent-{pos[0]}"
     time.sleep(float(opt.get("delay", 12)))
     got = unread(name)
-    if got and wakes(got) and tmux_alive(sess):
-        mark_read(name, [f for f, _ in got])
-        inject(name, sess, got)
+    if got and wakes(got) and tmux_alive(sess) and not conf().get(name, {}).get("handoff_pause"):
+        got = claim(name, got)
+        if got and not inject(name, sess, got):
+            restore(name, got)
 
 
 def cmd_open(pos, opt):
@@ -454,6 +518,12 @@ def cmd_who(pos, opt):
 def main(argv):
     if len(argv) < 2 or argv[1] in ("-h", "--help", "help"):
         print(__doc__); return
+    if argv[1] in ("status", "register", "bind", "launch", "probe", "probe-send", "probe-ack",
+                    "spool", "handoff-ready", "handoff-cancel", "switch"):
+        # Resolve symlink installs before importing our adjacent module.
+        sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
+        import agentnet
+        raise SystemExit(agentnet.main(sys.modules[__name__], argv[1:]))
     rest = None
     if "--" in argv:
         rest = argv[argv.index("--") + 1:]; argv = argv[:argv.index("--")]
