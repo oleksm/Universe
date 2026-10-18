@@ -233,6 +233,27 @@ properties:
               node: { $ref: "#/definitions/node" }
               t: { type: number, description: "0 to 1 along the curve, rising" }
               bind: { $ref: "#/definitions/transform", description: "model root, neutral" }
+  axes:
+    type: array
+    description: >-
+      Plain axes (plant units, docs/proposals/plant-motion.md, agreed with engine 2026-10-18): each moves one listed node,
+      with everything under it, by one number: an angle (rad, positive right-hand about `axis`) or a distance (m along
+      `axis`); 0 is the pose as modelled. An axis riding another names it in `parent_axis`, and its node's parent in
+      `nodes` must be that axis's node (the engine composes by hierarchy; parent_axis is a check).
+    items:
+      type: object
+      additionalProperties: false
+      required: [motion, node, kind, axis]
+      properties:
+        motion: { type: string, description: "the record motion id it carries out (SFO 26 motion.id)" }
+        node: { $ref: "#/definitions/node", description: "the node that moves; listed in `nodes`" }
+        kind: { enum: [rotate, translate] }
+        pivot: { $ref: "#/definitions/vec3", description: "rotate only: m, a point on the axis, model root" }
+        axis: { $ref: "#/definitions/vec3", description: "unit, model root" }
+        range: { type: array, items: { type: number }, minItems: 2, maxItems: 2, description: "rad or m from 0, least and most; left out with continuous" }
+        continuous: { type: boolean, description: "true: turns without end (a mill's drum)" }
+        rate: { type: number, description: "rad/s or m/s in service, where the record gives one" }
+        parent_axis: { type: string, description: "the motion id of the axis this one rides on" }
   references:
     type: array
     description: "poses to compare against: input and node transforms in model root at that pose (motion times bind, the A of engine's draw rule); the installer compares every node it can evaluate (listed nodes, solved links, rings) within 2e-6 per matrix component (engine's threshold)"

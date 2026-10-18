@@ -125,7 +125,7 @@ tangents, diameter, free length and tolerance, bend radius and its source, neutr
 between two joints: one pose producer each, `inherited` (rides a listed parent) or `solved` (placed from joint a toward
 joint b, rolled by a stated rule), joints framed on both sides with ordered hinges, limits and their source, axial,
 lateral and twist allowances, tie rods; bellows as rigid rings on the Hermite curve between two cuffs, the evaluator
-engine and blender agreed for v04). The installer checks it against the schema, the model's nodes, rigid binds,
+engine and blender agreed for v04). Plant units use plain `axes` (one node turned about or slid along one axis by one number, continuous spins, nesting by `parent_axis`; docs/proposals/plant-motion.md), checked against the record's `motion`: kind, pivot on its axis within 0.1 m, axis parallel, range and rate equal. The installer checks it against the schema, the model's nodes, rigid binds,
 parents, the record's gimbal limit, actuator overlap and hose reach (16 directions), and over 65 poses: link closure,
 each joint's relative rotation decomposed in hinge order (hinge angles against limits, twist and slide against
 allowances, any other turn refused), roll never undetermined, tie lengths, bellows rims against their skirt, and every

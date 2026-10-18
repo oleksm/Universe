@@ -497,6 +497,61 @@ def _mul4(a, b):
     return _mul(a, b)
 
 
+def _check_axes(r, mo, parent):
+    """The plain axes (docs/proposals/plant-motion.md) against the record's motions: kind, pivot on the record's axis
+    within 0.1 m, axis parallel, range equal (record frame to glTF: x, z, -y), nesting by the node hierarchy."""
+    axes, bad = mo.get("axes", []), []
+    rec = {m["id"]: m for m in r.get("motion") or []}
+    by = {a["motion"]: a for a in axes}
+    gl = lambda v: [v[0], v[2], -v[1]]
+    for a in axes:
+        who = f"motion: axis {a['motion']}"
+        m = rec.get(a["motion"])
+        if m is None:
+            bad.append(f"{who}: the record has no motion {a['motion']!r}"); continue
+        if a["node"] not in parent:
+            bad.append(f"{who}: node {a['node']!r} is not listed in nodes")
+        want = "rotate" if m["kind"] in ("tilt", "rotate") else "translate" if m["kind"] in ("travel", "lift") else None
+        if a["kind"] != want:
+            bad.append(f"{who}: {a['kind']}, but the record's motion is a {m['kind']}"); continue
+        ax = _unit(a["axis"])
+        if m.get("direction"):
+            d = _unit(gl(m["direction"]))
+            if _dot(ax, d) < 1 - 1e-4:
+                bad.append(f"{who}: axis {a['axis']} is not the record's direction (glTF {[round(x, 4) for x in d]})")
+        if a["kind"] == "translate" and "pivot" in a:
+            bad.append(f"{who}: a translate has no pivot")
+        if a["kind"] == "rotate":
+            if "pivot" not in a:
+                bad.append(f"{who}: a rotate needs a pivot")
+            elif m.get("point"):
+                q = [a["pivot"][i] - gl(m["point"])[i] for i in range(3)]
+                off = math.dist(q, [_dot(q, ax) * x for x in ax])
+                if off > 0.1:
+                    bad.append(f"{who}: pivot {off:.3f} m off the record's axis (0.1 m allowed)")
+        span = m.get("angle") or m.get("distance")
+        if a.get("continuous"):
+            if "range" in a:
+                bad.append(f"{who}: continuous, so no range")
+            if span:
+                bad.append(f"{who}: continuous, but the record limits it to {span}")
+        elif "range" not in a:
+            bad.append(f"{who}: needs a range, or continuous")
+        elif span and max(abs(a["range"][i] - span[i]) for i in range(2)) > 1e-6:
+            bad.append(f"{who}: range {a['range']}, the record's is {span}")
+        given = m.get("rate") if a["kind"] == "rotate" else m.get("speed")
+        if given is not None and a.get("rate") is not None and abs(a["rate"] - given) > 1e-6:
+            bad.append(f"{who}: rate {a['rate']}, the record's is {given}")
+        p = a.get("parent_axis")
+        if p is not None:
+            if p not in by:
+                bad.append(f"{who}: rides axis {p!r}, which is not in axes")
+            elif parent.get(a["node"]) != by[p]["node"]:
+                bad.append(f"{who}: rides {p!r}, so its node's parent must be {by[p]['node']!r}, not {parent.get(a['node'])!r}")
+    bad += [f"motion: axis {k!r} given twice" for k in sorted({a["motion"] for a in axes if [b["motion"] for b in axes].count(a["motion"]) > 1})]
+    return bad
+
+
 def check_motion(key, r, info, mo):
     """What is wrong with a motion account against its record and model: plain sentences (empty: it fits)."""
     schema = yaml.safe_load(open(MOTION_SCHEMA, encoding="utf-8"))
@@ -558,6 +613,9 @@ def check_motion(key, r, info, mo):
             why = _rigid(e["frame"])
             if why:
                 bad.append(f"motion: hose {h['name']}: an end frame is {why}")
+    if bad:
+        return bad
+    bad += _check_axes(r, mo, parent)
     if bad:
         return bad
     limit = (r.get("function") or {}).get("gimbal")

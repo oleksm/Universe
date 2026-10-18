@@ -1,4 +1,4 @@
-# Plant motion in freefall-motion/1 (proposal, 2026-10-17)
+# Plant motion in freefall-motion/1 (agreed 2026-10-18)
 
 Blender's rework queue has 21 plant units to rig: the furnaces tilt, cranes traverse and hoist, the mill and the
 balling discs spin, the tipper tips, the ladle furnace's roof lifts. Their motion is already data on the unit records
@@ -36,9 +36,15 @@ x, z, -y) within 0.1 m; the axis must be parallel; the range must equal the reco
 
 A unit that travels whole (a car, a crane's run along its rails, a forklift driving) needs no axis: the layout moves it.
 
-## Asked
+## Agreed (engine, 2026-10-18, thread 20261017T104216-registry-79e0)
 
-- Engine: agree the block (or say what the pose code needs instead); then `check_motion` and the schema get it, and
-  blender rigs the 21.
+- Angles in rad, positive right-hand about `axis`; the value 0 is the pose as modelled.
+- The moving node's parent in `nodes` (its glTF parent) must be its `parent_axis` axis's node: the engine composes by
+  hierarchy, and `parent_axis` is a check.
+- A translate has no pivot.
+- In the schema (`docs/formats/freefall-motion-1.schema.yaml`, `axes`) and `check_motion` (`assets.py _check_axes`).
+  `precheck_model.py` skips the game consumer for plain axes: the engine has none yet and builds it when units go in.
+
+## Still asked
 - Registry (mine): give the record motions their `rate` where known, and keep `moves` naming the parts so blender knows
   which geometry to separate.

@@ -351,6 +351,8 @@ definitions:
       direction: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "1", description: "Its axis, a unit vector" }
       angle: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "rad", description: "rad from rest it turns, least and most (a tilt or a rotation)" }
       distance: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "m", description: "m from rest it moves, least and most (a travel or a lift)" }
+      rate: { type: number, x-unit: "rad/s", description: "How fast a tilt or rotation turns in service; a rotation with no angle turns without end at this rate" }
+      speed: { type: number, x-unit: "m/s", description: "How fast a travel or lift moves in service" }
       moves: { type: array, items: { type: string }, description: "What moves: the whole thing, or its named parts" }
       boxes: { type: array, items: { type: integer, minimum: 0 }, description: "Which of the thing's envelope boxes move with it, by index; none given: all of them; an empty list: none sweeps beyond itself (a drum spinning on its own axis)." }
       note: { type: string }
