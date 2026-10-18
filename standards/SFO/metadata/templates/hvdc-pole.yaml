@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/template.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: template.hvdc-pole
+  name: HV DC pole connectors
+  description: 'HV DC pole connectors: one look for every size of the family, scaled to each record''s figures (the owner, 2026-10-17: never one model per size).'
+family: plug-socket
+draws: model
+scales_by:
+- physical
+members: 3
+reference: connector.hvdc-pole-400a
+basis:
+- of:
+  - draws
+  - scales_by
+  tier: derived
+  note: 'The owner, 2026-10-17: one template a family, scaled; the catalogue families (kit_catalogue.py).'

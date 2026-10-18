@@ -237,6 +237,38 @@ for mm2, amps, sh in WIRE:
         "connector": f"connector.circular-shell-{sh}", "carries": "power", "template": "template.wire",
         "basis": [{"of": ["per_m", "rating", "outside"], "tier": "invented", "review": True, "note": f"Of the order of aerospace hook-up wire (SAE AS22759 class): the rating a single wire's in vacuum, radiation only; least bend 10 outsides; {MEMORY}"}]})
 
+# ------------------------------------------------------------------ a ship's high-voltage DC bus (ships, 2026-10-18: 3 kV DC from the plants and batteries to fans, drives and lasers)
+J_VAC = 2.5e6           # A/m2: copper in vacuum, radiation only (as plant_kit.J_VACUUM)
+HVDC_POLE = [  # (amps, outside m, mated length m, kg a pair, mm2 at most)
+    (150, 0.04, 0.12, 0.4, 50), (400, 0.055, 0.16, 1.0, 150), (650, 0.07, 0.2, 1.8, 240)]
+for amps, od, ll, kg, mm2 in HVDC_POLE:
+    conn(f"hvdc-pole-{amps}a", {
+        "identity": {"key": f"connector.hvdc-pole-{amps}a", "name": f"HV DC pole connector, {amps} A, 3 kV", "description": f"A single-pole plug and receptacle for a 3 kV DC feeder, its crimped contact up to {mm2} mm2 inside a long creepage insulator and an earthed aluminium shell, bayonet-locked, keyed by polarity: two of them, plus and minus, where a feeder meets a plant, a battery, a bus box or a load."},
+        "kind": "plug-socket", "size": mm2 * 1e-6, "rating": {"voltage": 3000, "current": amps},
+        "physical": {"length": od, "width": od, "height": ll, "mass": kg},
+        "built_of": [part("Shell and coupling ring", AL, kg * 0.45, "anodised aluminium, earthed"), part("Contact", CU, kg * 0.25, "silver-plated copper"), part("Insulator and seals", PTFE, kg * 0.3, "PTFE creepage body; silicone seals as PTFE here")],
+        "provides": "both", "template": "template.hvdc-pole",
+        "basis": [{"of": ["physical", "built_of", "rating"], "tier": "invented", "review": True, "note": f"Of the order of single-pole high-voltage DC connectors for electric vehicles and aircraft; {MEMORY}"}]},
+        {"slug": f"hvdc-pole-{amps}a", "name": f"HV DC pole {amps} A", "domain": "power", "kind": "plug-socket", "media": ["power"], "halves": "male-female", "make": "manual"})
+for mm2 in (25, 50, 95, 150, 240):
+    a = mm2 * 1e-6
+    dc = 1.15 * math.sqrt(4 * a / math.pi)
+    ti, tj = 0.002, 0.0005           # m: 2 mm of PTFE for 3 kV DC with margin for vacuum's partial discharge, a 0.5 mm braid-and-jacket
+    od = dc + 2 * (ti + tj)
+    cu = a * RHO[CU]
+    ins = math.pi * (dc + ti) * ti * RHO[PTFE] + math.pi * (od - tj) * tj * 2500     # (the jacket a tinned copper braid in FEP, about 2,500 kg/m3 together)
+    amps = round(a * J_VAC)
+    ck = next(f"hvdc-pole-{x}a" for x, *_r, m in HVDC_POLE if m >= mm2)
+    run(f"feeder-3kv-dc-{mm2}mm2", {
+        "identity": {"key": f"run.feeder-3kv-dc-{mm2}mm2", "name": f"Feeder, 3 kV DC, {mm2} mm2",
+                     "description": f"One pole of a ship's high-voltage DC bus: a single stranded copper core in 2 mm of PTFE under an earthed braid and jacket, laid in pairs (plus and minus) along the frame. {amps} A in vacuum, where only radiation cools it."},
+        "kind": "cable", "size": a, "outside": [r(od, 4), r(od, 4)], "rating": {"voltage": 3000, "current": amps},
+        "per_m": {"mass": r(cu + ins, 3), "built_of": [part("Conductor", CU, cu, f"{mm2} mm2 stranded"), part("Insulation, screen and jacket", PTFE, ins, "2 mm PTFE, a braid screen and a thin jacket (the braid's copper counted here)")]},
+        "elbow": {"radius": r(od * 8, 3), "mass": r((cu + ins) * od * 8 * math.pi / 2, 4)},
+        "connector": f"connector.{ck}", "carries": "power", "template": "template.feeder",
+        "basis": [{"of": ["per_m", "outside"], "tier": "invented", "review": True, "note": f"Insulation from memory of medium-voltage aerospace and traction cable; least bend 8 outsides; {MEMORY}"},
+                  {"of": ["rating"], "tier": "derived", "note": f"{J_VAC / 1e6:g} A/mm2 in copper, radiation only (plant_kit.J_VACUUM): one core alone; a pair laid together runs warmer."}]})
+
 PLUGS = [  # (slug, name, amps, volts, pins, kg a pair, l, w, h, interface name, standard)
     ("plug-iec60309-16a", "Plug and socket, 16 A, 400 V", 16, 400, 5, 0.45, 0.095, 0.095, 0.19, "IEC 60309 16 A 5-pin", "IEC 60309-2"),
     ("plug-iec60309-32a", "Plug and socket, 32 A, 400 V", 32, 400, 5, 0.65, 0.11, 0.11, 0.21, "IEC 60309 32 A 5-pin", "IEC 60309-2"),
@@ -398,6 +430,8 @@ TEMPLATES = {
     "cable-flexible": ("cable", "sweep", "a round rubber-sheathed cable of the record's outside", ["outside"], "Flexible trailing and reeling cables"),
     "cable-installation": ("cable", "sweep", "a round sheathed cable of the record's outside", ["outside"], "Installation cables for buildings"),
     "wire": ("cable", "sweep", "a round insulated wire of the record's outside", ["outside"], "Hook-up wires for harnesses"),
+    "feeder": ("cable", "sweep", "a round screened single-core cable of the record's outside", ["outside"], "3 kV DC feeders"),
+    "hvdc-pole": ("plug-socket", "model", None, ["physical"], "HV DC pole connectors"),
     "wiring-box": ("termination", "model", None, ["physical"], "Low-voltage wiring boxes"),
     "circular-connector": ("plug-socket", "model", None, ["physical"], "Circular harness connectors"),
     "conductor-rail": ("conductor-rail", "sweep-and-pieces", "the housing's section, its width and height the record's outside", ["outside"], "Enclosed conductor rails"),

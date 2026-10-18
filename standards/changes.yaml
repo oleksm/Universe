@@ -264,6 +264,9 @@
 - { record: connector.hood-dn2000, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "e034527157c4a0bc" }
 - { record: connector.hose-union-dn25, at: "2026-10-18T05:34:39Z", status: draft, summary: "changed: physical, built_of, basis", sha: "02a5541d0aa77a90" }
 - { record: connector.hose-union-dn50, at: "2026-10-18T05:34:39Z", status: draft, summary: "changed: physical, built_of, basis", sha: "13575e6e9875d0ce" }
+- { record: connector.hvdc-pole-150a, at: "2026-10-18T14:56:31Z", status: draft, summary: "first tracked", sha: "231dd88e6c2463d9" }
+- { record: connector.hvdc-pole-400a, at: "2026-10-18T14:56:31Z", status: draft, summary: "first tracked", sha: "df3cc731351da062" }
+- { record: connector.hvdc-pole-650a, at: "2026-10-18T14:56:31Z", status: draft, summary: "first tracked", sha: "2431d190b2644d2a" }
 - { record: connector.lined-flange-dn1200-pn1, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "a3508423bbfa95b2" }
 - { record: connector.lined-flange-dn2400-pn16-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "250ee52b4dee6fc9" }
 - { record: connector.lined-flange-dn3600-pn10-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "eaf49c50b35ba4b3" }
@@ -1027,6 +1030,9 @@
 - { record: interface.hood-dn2000, at: "2026-10-17T13:40:50Z", status: "", summary: "changed", sha: "258571eeda39205c" }
 - { record: interface.hose-union-dn25, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "31272dd2a5b2735a" }
 - { record: interface.hose-union-dn50, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "b7e4e51629267d5e" }
+- { record: interface.hvdc-pole-150a, at: "2026-10-18T14:56:31Z", status: "", summary: "first tracked", sha: "7a66ee1cb9c7da5e" }
+- { record: interface.hvdc-pole-400a, at: "2026-10-18T14:56:31Z", status: "", summary: "first tracked", sha: "94bc620be1e4a969" }
+- { record: interface.hvdc-pole-650a, at: "2026-10-18T14:56:31Z", status: "", summary: "first tracked", sha: "7a313f3ba4c3d687" }
 - { record: interface.lined-flange-dn1200-pn1, at: "2026-10-17T13:40:50Z", status: "", summary: "changed", sha: "d24ebdff20b0661d" }
 - { record: interface.lined-flange-dn2400-pn16-double, at: "2026-10-17T13:40:50Z", status: "", summary: "changed", sha: "f46bcd861c1a1ea0" }
 - { record: interface.lined-flange-dn3600-pn10-double, at: "2026-10-17T15:19:33Z", status: "", summary: "first tracked", sha: "d3fcbd4906c99a49" }
@@ -2863,6 +2869,11 @@
 - { record: run.conductor-rail-250a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "97ea1112daa4966e" }
 - { record: run.conductor-rail-500a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "3943c16fc8690bed" }
 - { record: run.drag-conveyor-800, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "14f1c129b476f57f" }
+- { record: run.feeder-3kv-dc-150mm2, at: "2026-10-18T14:56:31Z", status: draft, summary: "first tracked", sha: "161cac14367ac03c" }
+- { record: run.feeder-3kv-dc-240mm2, at: "2026-10-18T14:56:31Z", status: draft, summary: "first tracked", sha: "5d497d5db95b8894" }
+- { record: run.feeder-3kv-dc-25mm2, at: "2026-10-18T14:56:31Z", status: draft, summary: "first tracked", sha: "d3fdc6cf304837ba" }
+- { record: run.feeder-3kv-dc-50mm2, at: "2026-10-18T14:56:31Z", status: draft, summary: "first tracked", sha: "097b44db035c9764" }
+- { record: run.feeder-3kv-dc-95mm2, at: "2026-10-18T14:56:31Z", status: draft, summary: "first tracked", sha: "bb83fb7014043337" }
 - { record: run.festoon-690v-4x16, at: "2026-10-18T04:47:20Z", status: draft, summary: "changed: support, basis", sha: "c363d4cf464a0dba" }
 - { record: run.festoon-690v-4x35, at: "2026-10-18T04:47:20Z", status: draft, summary: "changed: support, basis", sha: "4db86b5132a18e50" }
 - { record: run.festoon-690v-4x95, at: "2026-10-18T04:47:20Z", status: draft, summary: "changed: support, basis", sha: "4121bb9635c117a4" }
@@ -3582,6 +3593,11 @@
 - { record: stock.kit-expansion-joint-dn1000-pn10, at: "2026-10-18T04:35:53Z", status: review, summary: "changed: physical", sha: "1e54753b3e2cf437" }
 - { record: stock.kit-expansion-joint-dn300-pn10, at: "2026-10-18T04:35:53Z", status: review, summary: "changed: physical", sha: "e9d08de8af2a232a" }
 - { record: stock.kit-expansion-joint-dn600-pn10, at: "2026-10-18T04:35:53Z", status: review, summary: "changed: physical", sha: "3f81804e9f9ad657" }
+- { record: stock.kit-feeder-3kv-dc-150mm2, at: "2026-10-18T14:56:31Z", status: review, summary: "first tracked", sha: "ec05e2d462929fa7" }
+- { record: stock.kit-feeder-3kv-dc-240mm2, at: "2026-10-18T14:56:31Z", status: review, summary: "first tracked", sha: "56a315bd702faaf2" }
+- { record: stock.kit-feeder-3kv-dc-25mm2, at: "2026-10-18T14:56:31Z", status: review, summary: "first tracked", sha: "bea677594d6e1c64" }
+- { record: stock.kit-feeder-3kv-dc-50mm2, at: "2026-10-18T14:56:31Z", status: review, summary: "first tracked", sha: "68a5d56c32500745" }
+- { record: stock.kit-feeder-3kv-dc-95mm2, at: "2026-10-18T14:56:31Z", status: review, summary: "first tracked", sha: "adb26ee44551bfc1" }
 - { record: stock.kit-festoon-690v-4x16, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "d2e42dace15ad525" }
 - { record: stock.kit-festoon-690v-4x35, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "c9d27eabdee2299e" }
 - { record: stock.kit-festoon-690v-4x95, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "63aaefaf5efec3b2" }
@@ -3649,6 +3665,9 @@
 - { record: stock.kit-hose-metal-dn50, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "3fb3f73217930f5a" }
 - { record: stock.kit-hose-union-dn25, at: "2026-10-18T05:34:39Z", status: review, summary: "changed: physical", sha: "38dc925340cef29f" }
 - { record: stock.kit-hose-union-dn50, at: "2026-10-18T05:34:39Z", status: review, summary: "changed: physical", sha: "87f69b4a85df88a4" }
+- { record: stock.kit-hvdc-pole-150a, at: "2026-10-18T14:56:31Z", status: review, summary: "first tracked", sha: "d4aa9e151e3d74c6" }
+- { record: stock.kit-hvdc-pole-400a, at: "2026-10-18T14:56:31Z", status: review, summary: "first tracked", sha: "0805a150164deca2" }
+- { record: stock.kit-hvdc-pole-650a, at: "2026-10-18T14:56:31Z", status: review, summary: "first tracked", sha: "7808e2915423cf61" }
 - { record: stock.kit-jacketed-duct-dn2000, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "9b07f02fae3f212b" }
 - { record: stock.kit-lined-duct-dn1200-pn1, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "376badfc6021cc62" }
 - { record: stock.kit-lined-duct-dn2400-pn16-double, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "820e4013566b1cb1" }
@@ -4432,6 +4451,7 @@
 - { record: template.coupler, at: "2026-10-18T04:31:06Z", status: "", summary: "changed", sha: "92f33e0051a9f6f6" }
 - { record: template.drag-conveyor, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "da78b5e8e253b112" }
 - { record: template.expansion-joint, at: "2026-10-18T04:42:30Z", status: "", summary: "changed", sha: "35f0e9f3830a86f9" }
+- { record: template.feeder, at: "2026-10-18T14:56:31Z", status: "", summary: "first tracked", sha: "7b8d1039f81d701d" }
 - { record: template.festoon, at: "2026-10-18T04:54:39Z", status: "", summary: "changed", sha: "e8d5604c86f67779" }
 - { record: template.flange, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "df7d790e5b79a704" }
 - { record: template.flange-double, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "1587eb01caf04022" }
@@ -4442,6 +4462,7 @@
 - { record: template.hose, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "76521a9d59aafaae" }
 - { record: template.hose-hydraulic, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "1bdc07615e11b940" }
 - { record: template.hose-metal, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "7c583306ffc2f9d2" }
+- { record: template.hvdc-pole, at: "2026-10-18T14:56:31Z", status: "", summary: "first tracked", sha: "7ae6a8e034fe68f0" }
 - { record: template.jacketed-duct, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "f735abc971d05f0e" }
 - { record: template.lined-duct, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "4f0e1dffeb3819a1" }
 - { record: template.lined-flange, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "566901f48b56a274" }
