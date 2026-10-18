@@ -19,6 +19,12 @@ face:
   width: 0.055
   height: 0.16
 size: 0.00015
+keys:
+- plus
+- minus
+contacts:
+- id: '1'
+  size: 0.00015
 basis:
 - of:
   - envelope

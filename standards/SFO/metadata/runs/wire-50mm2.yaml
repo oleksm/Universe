@@ -14,6 +14,9 @@ rating:
   current: 120
   current_air: 220
   current_air_bundle: 154
+conductors:
+- id: '1'
+  size: 4.9999999999999996e-05
 per_m:
   mass: 0.5054
   built_of:

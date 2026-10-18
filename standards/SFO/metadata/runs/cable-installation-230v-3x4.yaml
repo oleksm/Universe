@@ -12,6 +12,17 @@ outside:
 rating:
   voltage: 230
   current: 27
+conductors:
+- id: L
+  role: line
+  line: L
+  size: 4.0e-06
+- id: N
+  role: neutral
+  size: 4.0e-06
+- id: PE
+  role: earth
+  size: 4.0e-06
 per_m:
   mass: 0.177
   built_of:

@@ -499,21 +499,21 @@
 - { record: equipment.access.docking.clamp, at: "2026-10-11T23:47:33Z", status: draft, summary: "changed: visual", sha: "6dc0a2a9bd913706" }
 - { record: equipment.access.docking.collar, at: "2026-10-12T19:01:30Z", status: draft, summary: "changed: visual", sha: "1e19bf605882d498" }
 - { record: equipment.access.door.s1, at: "2026-10-12T19:21:34Z", status: draft, summary: "changed: visual", sha: "b390eb3aaa180513" }
-- { record: equipment.avionics.nav-basic.s1, at: "2026-10-12T01:15:34Z", status: draft, summary: "changed: visual", sha: "913752612922b9b8" }
-- { record: equipment.avionics.nav-full.s1, at: "2026-10-11T02:40:00Z", status: draft, summary: "changed: visual", sha: "f45d1b9a28faeb92" }
+- { record: equipment.avionics.nav-basic.s1, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: ports, internal", sha: "0eee964b8a209e14" }
+- { record: equipment.avionics.nav-full.s1, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: ports, internal", sha: "29f33663e6c90d06" }
 - { record: equipment.capacitor.s1, at: "2026-10-11T02:35:59Z", status: draft, summary: "changed: visual", sha: "366dccda6684e4e0" }
 - { record: equipment.capacitor.s2, at: "2026-10-11T17:20:51Z", status: draft, summary: "changed: visual", sha: "d6a18d68186dafde" }
 - { record: equipment.capacitor.s3, at: "2026-10-13T19:38:54Z", status: draft, summary: "changed: visual", sha: "507f8960bb9d3d81" }
-- { record: equipment.cargo.berths.2, at: "2026-10-12T14:48:01Z", status: draft, summary: "changed: visual", sha: "a154d2471e6aa8ce" }
+- { record: equipment.cargo.berths.2, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: ports, internal", sha: "dbf05f869fd97848" }
 - { record: equipment.cargo.berths.4, at: "2026-10-12T19:34:02Z", status: draft, summary: "changed: visual", sha: "4bcdd5fef3042029" }
 - { record: equipment.cargo.berths.6, at: "2026-10-12T19:44:00Z", status: draft, summary: "changed: visual", sha: "a735887cc50312e4" }
 - { record: equipment.cargo.cabin.s1, at: "2026-10-13T20:22:55Z", status: draft, summary: "changed: visual", sha: "1be90c96dc5fa124" }
 - { record: equipment.cargo.cabin.s2, at: "2026-10-13T20:35:52Z", status: draft, summary: "changed: visual", sha: "d131b678a2f01cb5" }
 - { record: equipment.cargo.cabin.s3, at: "2026-10-13T20:57:04Z", status: draft, summary: "changed: visual", sha: "e09e4f4c39d2b85b" }
 - { record: equipment.cargo.cabin.s4, at: "2026-10-13T21:32:14Z", status: draft, summary: "changed: visual", sha: "c95dae405217edca" }
-- { record: equipment.cargo.food-store.s1, at: "2026-10-12T01:55:46Z", status: draft, summary: "changed: visual", sha: "31156fab432e785b" }
-- { record: equipment.cargo.galley.s1, at: "2026-10-12T15:09:28Z", status: draft, summary: "changed: visual", sha: "cb6e0970b6b28063" }
-- { record: equipment.cargo.head.s1, at: "2026-10-12T15:32:28Z", status: draft, summary: "changed: visual", sha: "6d32393ffd85d85a" }
+- { record: equipment.cargo.food-store.s1, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: ports, internal", sha: "af84ec08a43e10d4" }
+- { record: equipment.cargo.galley.s1, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: ports, internal", sha: "818f90dfbfab71db" }
+- { record: equipment.cargo.head.s1, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: ports, internal", sha: "ba60b6462f275312" }
 - { record: equipment.cargo.ore-bay.100t, at: "2026-10-12T23:36:25Z", status: draft, summary: "changed: basis", sha: "fda841f80221f723" }
 - { record: equipment.cargo.ore-bay.10t, at: "2026-10-12T23:38:37Z", status: draft, summary: "changed: visual", sha: "802658ef28338540" }
 - { record: equipment.cargo.ore-bay.150t, at: "2026-10-12T23:48:47Z", status: draft, summary: "changed: basis", sha: "b007307605ad0558" }
@@ -529,26 +529,26 @@
 - { record: equipment.cargo.rack.s3, at: "2026-10-11T02:34:38Z", status: draft, summary: "changed: visual", sha: "37568773642e99b1" }
 - { record: equipment.cargo.rack.s4, at: "2026-10-11T19:39:50Z", status: draft, summary: "changed: visual", sha: "1c727e57107ea5f7" }
 - { record: equipment.comm.basic.s1, at: "2026-10-11T02:42:50Z", status: draft, summary: "changed: visual", sha: "0f6f2cc60ab24c10" }
-- { record: equipment.comm.long.s1, at: "2026-10-12T18:26:09Z", status: draft, summary: "changed: visual", sha: "5cb6c82f3fc57bff" }
+- { record: equipment.comm.long.s1, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: ports, internal", sha: "f1955ddbac633425" }
 - { record: equipment.command.s1, at: "2026-10-18T16:22:26Z", status: draft, summary: "changed: built_of", sha: "01d6138dae933832" }
-- { record: equipment.command.s2, at: "2026-10-18T16:22:26Z", status: draft, summary: "changed: built_of", sha: "89d927d503bb6dd9" }
+- { record: equipment.command.s2, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: ports, internal", sha: "f088cc89cffe23e5" }
 - { record: equipment.command.s3, at: "2026-10-18T16:22:26Z", status: draft, summary: "changed: built_of", sha: "0f55e8f359cb3107" }
-- { record: equipment.computer.fbw.fast, at: "2026-10-18T16:22:26Z", status: draft, summary: "changed: built_of", sha: "2c4501e2c84fe1a3" }
+- { record: equipment.computer.fbw.fast, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: ports, internal", sha: "ce1a2d4aed47aac8" }
 - { record: equipment.computer.fbw.s1, at: "2026-10-11T02:38:35Z", status: draft, summary: "changed: visual", sha: "199e7a0ffe056c1b" }
 - { record: equipment.drive.kestrel.k2, at: "2026-10-11T18:55:25Z", status: draft, summary: "changed: revision", sha: "ecc930140ca66688" }
 - { record: equipment.drive.torch.s1, at: "2026-10-11T18:55:25Z", status: draft, summary: "changed: revision", sha: "2ce9926699091633" }
 - { record: equipment.drive.torch.s2, at: "2026-10-11T02:31:00Z", status: draft, summary: "changed: visual", sha: "48b715b159afcb9f" }
 - { record: equipment.drive.torch.s3, at: "2026-10-11T18:55:25Z", status: draft, summary: "changed: revision", sha: "22a7762606e2e6bc" }
 - { record: equipment.engine.ca.s1, at: "2026-10-12T22:10:51Z", status: draft, summary: "changed: visual", sha: "5454c88ee23140e3" }
-- { record: equipment.engine.cg.s1, at: "2026-10-12T01:04:26Z", status: draft, summary: "changed: visual", sha: "8f09bad0fb16fbc1" }
-- { record: equipment.engine.cg.s2, at: "2026-10-12T04:22:34Z", status: draft, summary: "changed: visual", sha: "939d83558d5ead65" }
+- { record: equipment.engine.cg.s1, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: ports, internal", sha: "557c1c41a028531a" }
+- { record: equipment.engine.cg.s2, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: ports, internal", sha: "d995e9b613e46599" }
 - { record: equipment.engine.ch.s1, at: "2026-10-12T22:47:12Z", status: draft, summary: "changed: visual", sha: "76d0a834551ed629" }
 - { record: equipment.engine.ch.s2, at: "2026-10-11T02:51:18Z", status: draft, summary: "changed: visual", sha: "c4d9a17800a85a95" }
 - { record: equipment.engine.ch.s3, at: "2026-10-12T23:04:25Z", status: draft, summary: "changed: visual", sha: "38947a0377027b07" }
 - { record: equipment.engine.ch.s4, at: "2026-10-12T14:08:33Z", status: draft, summary: "changed: visual", sha: "353e7195d13e4eb4" }
 - { record: equipment.engine.fan.s1, at: "2026-10-13T00:40:35Z", status: draft, summary: "changed: visual", sha: "8571271370838a45" }
 - { record: equipment.engine.fan.s2, at: "2026-10-13T00:46:03Z", status: draft, summary: "changed: visual", sha: "131081299755298f" }
-- { record: equipment.engine.fan.s3, at: "2026-10-12T01:31:44Z", status: draft, summary: "changed: visual", sha: "cc49eb09dba4218d" }
+- { record: equipment.engine.fan.s3, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: ports, internal", sha: "eb56cdc7c575ad82" }
 - { record: equipment.engine.ft.s1, at: "2026-10-17T17:55:24Z", status: draft, summary: "changed: ports", sha: "cc7a9907c1c72beb" }
 - { record: equipment.engine.ft.s2, at: "2026-10-17T17:55:24Z", status: draft, summary: "changed: ports", sha: "d1d4c438de8540d7" }
 - { record: equipment.engine.ft.s3, at: "2026-10-17T20:27:52Z", status: draft, summary: "changed: identity, ports, basis", sha: "fecf54d2860c7efe" }
@@ -569,8 +569,8 @@
 - { record: equipment.gear.front.mc07-right, at: "2026-10-17T19:23:08Z", status: draft, summary: "changed: function, basis", sha: "b74179c554284fc3" }
 - { record: equipment.gear.rear.mc07, at: "2026-10-17T19:23:08Z", status: draft, summary: "changed: function, basis", sha: "eb96763b9fb6780e" }
 - { record: equipment.gear.rear.mc07-right, at: "2026-10-17T19:23:08Z", status: draft, summary: "changed: function, basis", sha: "3bd7224ccfec1169" }
-- { record: equipment.gear.strut.180kn, at: "2026-10-17T19:23:08Z", status: draft, summary: "changed: function, basis", sha: "bd283fbadbd42548" }
-- { record: equipment.gear.strut.s0, at: "2026-10-17T19:23:08Z", status: draft, summary: "changed: function, basis", sha: "7627919b711654ea" }
+- { record: equipment.gear.strut.180kn, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: ports, internal", sha: "b5eca64f3afe3ff4" }
+- { record: equipment.gear.strut.s0, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: ports, internal", sha: "7fa8bfd04c9c992d" }
 - { record: equipment.gear.strut.s1, at: "2026-10-17T19:23:08Z", status: draft, summary: "changed: function, basis", sha: "82531fdce13c9450" }
 - { record: equipment.gear.strut.s2, at: "2026-10-17T19:23:08Z", status: draft, summary: "changed: function, basis", sha: "602163035bc2169c" }
 - { record: equipment.gear.strut.s3, at: "2026-10-17T19:23:08Z", status: draft, summary: "changed: function, basis", sha: "eee5ecdb32fa8699" }
@@ -582,15 +582,15 @@
 - { record: equipment.hardpoint.mining-hammer.mc07, at: "2026-10-11T02:06:40Z", status: draft, summary: "changed: revision", sha: "92f797ed52ebf7ab" }
 - { record: equipment.hardpoint.mining-hammer.mc07-right, at: "2026-10-11T02:06:40Z", status: draft, summary: "changed: revision", sha: "bba06c634d9b1793" }
 - { record: equipment.hardpoint.pulse-laser.s1, at: "2026-10-11T18:21:01Z", status: draft, summary: "changed: visual", sha: "90e393310c1fbdfb" }
-- { record: equipment.hyperdrive.halcyon.s1, at: "2026-10-12T03:33:56Z", status: draft, summary: "changed: visual", sha: "1416dddf03aeffaa" }
+- { record: equipment.hyperdrive.halcyon.s1, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: ports, internal", sha: "b7d010bc07a6245f" }
 - { record: equipment.hyperdrive.halcyon.s2, at: "2026-10-13T22:18:42Z", status: draft, summary: "changed: visual", sha: "4153eb6bef46d5b4" }
 - { record: equipment.hyperdrive.halcyon.s3, at: "2026-10-13T22:22:03Z", status: draft, summary: "changed: visual", sha: "8268a90dc3a8229e" }
 - { record: equipment.hyperdrive.s1, at: "2026-10-11T18:29:04Z", status: draft, summary: "changed: visual", sha: "45c75a9de8b707a4" }
 - { record: equipment.hyperdrive.s2, at: "2026-10-11T18:38:43Z", status: draft, summary: "changed: visual", sha: "a74ae18b015dc484" }
 - { record: equipment.hyperdrive.s3, at: "2026-10-11T20:17:49Z", status: draft, summary: "changed: visual", sha: "080dde7b5aacb1d2" }
 - { record: equipment.life-support.cartridge, at: "2026-10-13T06:23:42Z", status: draft, summary: "changed: visual", sha: "971e9ebd54b97f57" }
-- { record: equipment.life-support.s0, at: "2026-10-12T02:03:55Z", status: draft, summary: "changed: visual", sha: "e4ace9ae37d2cffd" }
-- { record: equipment.life-support.s1, at: "2026-10-11T18:50:00Z", status: draft, summary: "changed: visual", sha: "68f2aeb4cdd2d961" }
+- { record: equipment.life-support.s0, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: ports, internal", sha: "e23d184e1876d395" }
+- { record: equipment.life-support.s1, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: ports, internal", sha: "d1a50720955fd6a7" }
 - { record: equipment.life-support.s2, at: "2026-10-11T03:27:54Z", status: draft, summary: "changed: visual", sha: "dca5121157bab0ff" }
 - { record: equipment.lift.belly.s1, at: "2026-10-11T18:55:25Z", status: draft, summary: "changed: revision", sha: "b14a92771fd37651" }
 - { record: equipment.lift.belly.s2, at: "2026-10-11T18:55:25Z", status: draft, summary: "changed: revision", sha: "2510b2eaa9ec3756" }
@@ -599,25 +599,27 @@
 - { record: equipment.power.aurel.s2, at: "2026-10-14T01:52:22Z", status: draft, summary: "changed: basis", sha: "c2bb2ded917597c5" }
 - { record: equipment.power.aurel.s3, at: "2026-10-14T01:52:22Z", status: draft, summary: "changed: basis", sha: "91d00f40e48ef4b7" }
 - { record: equipment.power.battery-vtol.s0, at: "2026-10-13T06:30:43Z", status: draft, summary: "changed: visual", sha: "e1305a44edbdbfb0" }
-- { record: equipment.power.battery-vtol.s1, at: "2026-10-12T01:40:18Z", status: draft, summary: "changed: visual", sha: "03fe8e8ac782e425" }
+- { record: equipment.power.battery-vtol.s1, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: ports, internal", sha: "b1945231d6d85e5a" }
 - { record: equipment.power.battery-vtol.s2, at: "2026-10-13T06:36:57Z", status: draft, summary: "changed: visual", sha: "a0f2d85a4b00bdb8" }
 - { record: equipment.power.battery.s0, at: "2026-10-13T06:41:10Z", status: draft, summary: "changed: visual", sha: "4d3bfd92acb08d32" }
-- { record: equipment.power.battery.s1, at: "2026-10-12T02:10:45Z", status: draft, summary: "changed: visual", sha: "8e06eecd1ef3a586" }
-- { record: equipment.power.converter.270v-100kw, at: "2026-10-18T16:45:37Z", status: draft, summary: "changed: visual", sha: "4f42c5c1a0b24419" }
-- { record: equipment.power.converter.270v-10kw, at: "2026-10-18T16:38:03Z", status: draft, summary: "changed: visual", sha: "d7db9d8a654b87df" }
-- { record: equipment.power.converter.270v-40kw, at: "2026-10-18T16:47:26Z", status: draft, summary: "changed: visual", sha: "97febf3dc6e957a9" }
-- { record: equipment.power.converter.28v-1kw, at: "2026-10-18T16:43:37Z", status: draft, summary: "changed: visual", sha: "02978a605b43d554" }
-- { record: equipment.power.converter.28v-3kw, at: "2026-10-18T16:41:53Z", status: draft, summary: "changed: visual", sha: "c276f9c9214646ff" }
-- { record: equipment.power.converter.28v-5kw, at: "2026-10-18T16:39:20Z", status: draft, summary: "changed: visual", sha: "6e5c3d9de1add947" }
+- { record: equipment.power.battery.s1, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: ports, internal", sha: "661ac0896419c1bc" }
+- { record: equipment.power.converter.270v-100kw, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: basis, ports, internal", sha: "d2da41ea92108372" }
+- { record: equipment.power.converter.270v-10kw, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: basis, ports, internal", sha: "f7c756f5c72ce15d" }
+- { record: equipment.power.converter.270v-40kw, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: basis, ports, internal", sha: "1327745a5d138e19" }
+- { record: equipment.power.converter.28v-1kw, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: basis, ports, internal", sha: "cdc2245e1d7a7a5a" }
+- { record: equipment.power.converter.28v-3kw, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: basis, ports, internal", sha: "3cbf643d6bfbc961" }
+- { record: equipment.power.converter.28v-5kw, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: basis, ports, internal", sha: "b6293ea8fe5c4c3a" }
+- { record: equipment.power.distribution.270v-10way, at: "2026-10-18T16:49:15Z", status: draft, summary: "first tracked", sha: "293de7b548ce1efc" }
+- { record: equipment.power.distribution.28v-16way, at: "2026-10-18T16:49:15Z", status: draft, summary: "first tracked", sha: "b5d4820b8b29f794" }
 - { record: equipment.power.fuelcell.s1, at: "2026-10-13T13:32:36Z", status: draft, summary: "changed: visual", sha: "45d1aee343bd0a5c" }
-- { record: equipment.power.fusion.s1, at: "2026-10-17T19:39:34Z", status: draft, summary: "changed: visual", sha: "aee18b581bd8417f" }
+- { record: equipment.power.fusion.s1, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: ports, internal", sha: "5977e9a9e2b91643" }
 - { record: equipment.power.fusion.s2, at: "2026-10-17T20:39:43Z", status: draft, summary: "changed: visual", sha: "5703c179592945ef" }
 - { record: equipment.power.fusion.s3, at: "2026-10-17T20:42:58Z", status: draft, summary: "changed: visual", sha: "fa39f1f0fac3f5fe" }
 - { record: equipment.power.solar-array.s2, at: "2026-10-13T14:11:52Z", status: draft, summary: "changed: visual", sha: "f72449f6041078d2" }
-- { record: equipment.power.switchgear.s1, at: "2026-10-12T15:43:34Z", status: draft, summary: "changed: visual", sha: "9918c6813669d603" }
-- { record: equipment.sensors.altimeter.s1, at: "2026-10-12T00:41:34Z", status: draft, summary: "changed: visual", sha: "ac5a015c7002afad" }
-- { record: equipment.sensors.camera.s1, at: "2026-10-12T15:54:37Z", status: draft, summary: "changed: visual", sha: "02c26949cfc650d8" }
-- { record: equipment.sensors.radar.s1, at: "2026-10-11T02:41:55Z", status: draft, summary: "changed: visual", sha: "439938caca9e701d" }
+- { record: equipment.power.switchgear.s1, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: ports, internal", sha: "031a19e5f02eda54" }
+- { record: equipment.sensors.altimeter.s1, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: ports, internal", sha: "b774c48c54d4f000" }
+- { record: equipment.sensors.camera.s1, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: ports, internal", sha: "40b86d0568750a61" }
+- { record: equipment.sensors.radar.s1, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: ports, internal", sha: "dc557b0043fbf8c4" }
 - { record: equipment.tank.air.s1, at: "2026-10-11T02:44:35Z", status: draft, summary: "changed: visual", sha: "773197aed42ee1dd" }
 - { record: equipment.tank.deuterium.s0, at: "2026-10-11T20:42:22Z", status: review, summary: "changed: visual", sha: "3759b1127356f895" }
 - { record: equipment.tank.deuterium.s1, at: "2026-10-11T20:46:10Z", status: draft, summary: "changed: visual", sha: "2ff820e4df5c65a3" }
@@ -649,8 +651,8 @@
 - { record: equipment.tank.water.50kg, at: "2026-10-12T02:52:06Z", status: draft, summary: "changed: visual", sha: "75cd6a61a77202dd" }
 - { record: equipment.tank.water.s1, at: "2026-10-11T02:43:43Z", status: draft, summary: "changed: visual", sha: "e34a78988ac94117" }
 - { record: equipment.tank.water.s2, at: "2026-10-13T17:32:38Z", status: draft, summary: "changed: visual", sha: "78a3904730ad0c88" }
-- { record: equipment.thermal.air-cooler.s0, at: "2026-10-12T03:08:43Z", status: draft, summary: "changed: visual", sha: "f874ce1f745ce6b6" }
-- { record: equipment.thermal.coolant-loop.s0, at: "2026-10-12T03:23:31Z", status: draft, summary: "changed: visual", sha: "d092833ef951e72d" }
+- { record: equipment.thermal.air-cooler.s0, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: ports, internal", sha: "37de2db7edb63fa5" }
+- { record: equipment.thermal.coolant-loop.s0, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: ports, internal", sha: "6dad57abbee28e0b" }
 - { record: equipment.thermal.coolant-loop.s1, at: "2026-10-11T02:47:24Z", status: draft, summary: "changed: visual", sha: "f68babb31c8d295b" }
 - { record: equipment.thermal.coolant-loop.s2, at: "2026-10-11T02:46:30Z", status: draft, summary: "changed: visual", sha: "ee98e3c0e9eb3051" }
 - { record: equipment.thermal.heat.exchanger, at: "2026-10-13T17:50:25Z", status: draft, summary: "changed: visual", sha: "a4ac2793c3ff1dee" }
@@ -664,14 +666,14 @@
 - { record: equipment.thrusters.quad.s1, at: "2026-10-11T20:59:30Z", status: draft, summary: "changed: visual", sha: "89ee80a7224d708b" }
 - { record: equipment.thrusters.quad.s2, at: "2026-10-11T17:08:09Z", status: draft, summary: "changed: visual", sha: "b589b28c8098cb07" }
 - { record: equipment.thrusters.quad.s3, at: "2026-10-11T21:02:53Z", status: draft, summary: "changed: visual", sha: "b348e576b88cd0e8" }
-- { record: equipment.transponder.s1, at: "2026-10-11T02:40:51Z", status: draft, summary: "changed: visual", sha: "2d455f48eff153ca" }
+- { record: equipment.transponder.s1, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: ports, internal", sha: "f928189c861bbc18" }
 - { record: equipment.utility.compressor.s1, at: "2026-10-13T18:24:09Z", status: draft, summary: "changed: visual", sha: "970ffb3cf14ba56a" }
-- { record: equipment.utility.fire.s1, at: "2026-10-11T23:55:07Z", status: draft, summary: "changed: visual", sha: "f4758eba5b118982" }
+- { record: equipment.utility.fire.s1, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: ports, internal", sha: "04ccd13a6dbea82e" }
 - { record: equipment.utility.mining-rig.s2, at: "2026-10-11T19:23:28Z", status: draft, summary: "changed: visual", sha: "2829778aa555442d" }
-- { record: equipment.utility.pumps.s1, at: "2026-10-12T17:44:27Z", status: draft, summary: "changed: visual", sha: "35c588c32167d350" }
-- { record: equipment.utility.reaction-wheels.s2, at: "2026-10-12T18:10:06Z", status: draft, summary: "changed: visual", sha: "76c4f3043e7b6b86" }
+- { record: equipment.utility.pumps.s1, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: ports, internal", sha: "9d9046553f177a02" }
+- { record: equipment.utility.reaction-wheels.s2, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: ports, internal", sha: "7db682c34d591429" }
 - { record: equipment.utility.refuelling-port.s1, at: "2026-10-13T18:47:21Z", status: draft, summary: "changed: visual", sha: "3c30b51453242ef5" }
-- { record: equipment.utility.suits.s1, at: "2026-10-12T00:52:18Z", status: draft, summary: "changed: visual", sha: "2410dcd4ec4f928c" }
+- { record: equipment.utility.suits.s1, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: ports, internal", sha: "e4a9a55cdc1a7121" }
 - { record: equipment.utility.transfer.boom, at: "2026-10-13T19:14:06Z", status: draft, summary: "changed: visual", sha: "b390569c732891a4" }
 - { record: equipment.utility.window.s1, at: "2026-10-17T15:56:09Z", status: draft, summary: "changed", sha: "603752fe0b9a3c32" }
 - { record: equipment.utility.window.s2, at: "2026-10-17T15:56:09Z", status: draft, summary: "changed", sha: "0b8b54c1939fcabc" }
@@ -980,16 +982,16 @@
 - { record: interface.chute-dn400, at: "2026-10-17T13:40:50Z", status: "", summary: "changed", sha: "e8523d02ea8e66b6" }
 - { record: interface.chute-dn600, at: "2026-10-17T13:40:50Z", status: "", summary: "changed", sha: "6eff0b7f20aca05e" }
 - { record: interface.chute-dn800, at: "2026-10-17T13:40:50Z", status: "", summary: "changed", sha: "17a3199c44b778a6" }
-- { record: interface.circular-shell-11, at: "2026-10-18T14:51:23Z", status: "", summary: "first tracked", sha: "b52f288bbb80a918" }
-- { record: interface.circular-shell-17, at: "2026-10-18T14:51:23Z", status: "", summary: "first tracked", sha: "9b5b971864ff94be" }
-- { record: interface.circular-shell-25, at: "2026-10-18T14:51:23Z", status: "", summary: "first tracked", sha: "a7f1288e50b357b3" }
-- { record: interface.circular-shell-33, at: "2026-10-18T14:51:23Z", status: "", summary: "first tracked", sha: "8e0243c3ace699cb" }
+- { record: interface.circular-shell-11, at: "2026-10-18T16:49:15Z", status: "", summary: "changed: contacts", sha: "04956df1cec8e0ae" }
+- { record: interface.circular-shell-17, at: "2026-10-18T16:49:15Z", status: "", summary: "changed: contacts", sha: "e9522c583f186ef5" }
+- { record: interface.circular-shell-25, at: "2026-10-18T16:49:15Z", status: "", summary: "changed: contacts", sha: "eaed922a191762c7" }
+- { record: interface.circular-shell-33, at: "2026-10-18T16:49:15Z", status: "", summary: "changed: contacts", sha: "0d363122a7630291" }
 - { record: interface.clamp-coupling-dn1200, at: "2026-10-17T13:40:50Z", status: "", summary: "changed", sha: "fba5e4166d7bee62" }
 - { record: interface.conductor-rail-1000a, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "62aded8b320fe609" }
 - { record: interface.conductor-rail-100a, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "ecef7c9a23dfd8f8" }
 - { record: interface.conductor-rail-250a, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "000155d25c2538d6" }
 - { record: interface.conductor-rail-500a, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "41a3e0564f0931c2" }
-- { record: interface.coupler-11kv-400a, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "ec73ac0e8740ba98" }
+- { record: interface.coupler-11kv-400a, at: "2026-10-18T16:49:15Z", status: "", summary: "changed: contacts", sha: "03642c0e0c54b6b2" }
 - { record: interface.flange-dn100-pn10, at: "2026-10-17T13:40:50Z", status: "", summary: "changed", sha: "ebfeb0bd723707dc" }
 - { record: interface.flange-dn100-pn16-double, at: "2026-10-17T13:40:50Z", status: "", summary: "changed", sha: "cdc7a450f025bcf5" }
 - { record: interface.flange-dn100-pn25, at: "2026-10-17T13:40:50Z", status: "", summary: "changed", sha: "182cb9dc50f5b8d0" }
@@ -1037,10 +1039,10 @@
 - { record: interface.hood-dn2000, at: "2026-10-17T13:40:50Z", status: "", summary: "changed", sha: "258571eeda39205c" }
 - { record: interface.hose-union-dn25, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "31272dd2a5b2735a" }
 - { record: interface.hose-union-dn50, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "b7e4e51629267d5e" }
-- { record: interface.hvdc-pole-1000a, at: "2026-10-18T15:11:23Z", status: "", summary: "first tracked", sha: "e2681012a29ab459" }
-- { record: interface.hvdc-pole-150a, at: "2026-10-18T14:56:31Z", status: "", summary: "first tracked", sha: "7a66ee1cb9c7da5e" }
-- { record: interface.hvdc-pole-400a, at: "2026-10-18T14:56:31Z", status: "", summary: "first tracked", sha: "94bc620be1e4a969" }
-- { record: interface.hvdc-pole-650a, at: "2026-10-18T14:56:31Z", status: "", summary: "first tracked", sha: "7a313f3ba4c3d687" }
+- { record: interface.hvdc-pole-1000a, at: "2026-10-18T16:49:15Z", status: "", summary: "changed: keys, contacts", sha: "d4ecbdbc6b9f173f" }
+- { record: interface.hvdc-pole-150a, at: "2026-10-18T16:49:15Z", status: "", summary: "changed: keys, contacts", sha: "9ef4bb394b6a00f3" }
+- { record: interface.hvdc-pole-400a, at: "2026-10-18T16:49:15Z", status: "", summary: "changed: keys, contacts", sha: "6d49bf9f8ca3f53c" }
+- { record: interface.hvdc-pole-650a, at: "2026-10-18T16:49:15Z", status: "", summary: "changed: keys, contacts", sha: "d8a8718df6ecd0a5" }
 - { record: interface.lined-flange-dn1200-pn1, at: "2026-10-17T13:40:50Z", status: "", summary: "changed", sha: "d24ebdff20b0661d" }
 - { record: interface.lined-flange-dn2400-pn16-double, at: "2026-10-17T13:40:50Z", status: "", summary: "changed", sha: "f46bcd861c1a1ea0" }
 - { record: interface.lined-flange-dn3600-pn10-double, at: "2026-10-17T15:19:33Z", status: "", summary: "first tracked", sha: "d3fcbd4906c99a49" }
@@ -1051,11 +1053,11 @@
 - { record: interface.plant-bay-s2, at: "2026-10-17T13:39:36Z", status: "", summary: "first tracked", sha: "2dd52410ffd36105" }
 - { record: interface.plant-bay-s3, at: "2026-10-17T13:39:36Z", status: "", summary: "first tracked", sha: "0ba51627cd0c06a9" }
 - { record: interface.plant-bay-s4, at: "2026-10-17T13:39:36Z", status: "", summary: "first tracked", sha: "6f1760ae7722b7ec" }
-- { record: interface.plug-iec60309-125a, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "da72604dd88578f2" }
-- { record: interface.plug-iec60309-16a, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "754e8ed3f5e80a2e" }
-- { record: interface.plug-iec60309-32a, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "4491c8c9febc987c" }
-- { record: interface.plug-iec60309-63a, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "b8771ad07c4d5108" }
-- { record: interface.powerlock-400a, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "21239a3880a5a151" }
+- { record: interface.plug-iec60309-125a, at: "2026-10-18T16:49:15Z", status: "", summary: "changed: contacts", sha: "b3118fba44ee5189" }
+- { record: interface.plug-iec60309-16a, at: "2026-10-18T16:49:15Z", status: "", summary: "changed: contacts", sha: "ec737c5d3b322ec6" }
+- { record: interface.plug-iec60309-32a, at: "2026-10-18T16:49:15Z", status: "", summary: "changed: contacts", sha: "7f01be8a5c944a75" }
+- { record: interface.plug-iec60309-63a, at: "2026-10-18T16:49:15Z", status: "", summary: "changed: contacts", sha: "f40fe29d2e1c739f" }
+- { record: interface.powerlock-400a, at: "2026-10-18T16:49:15Z", status: "", summary: "changed: keys, contacts", sha: "b8bdad34fc56e2ec" }
 - { record: interface.termination-11kv-500mm2, at: "2026-10-17T15:19:33Z", status: "", summary: "first tracked", sha: "eed6ac0d1865ee7a" }
 - { record: interface.termination-132kv-240mm2, at: "2026-10-17T13:40:50Z", status: "", summary: "changed", sha: "5fd1a51634b310c0" }
 - { record: interface.termination-33kv-120mm2, at: "2026-10-17T13:40:50Z", status: "", summary: "changed", sha: "fc3902ab6a8596e5" }
@@ -2860,33 +2862,33 @@
 - { record: run.cable-6p6kv-630mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "91dba21d5cec7cb5" }
 - { record: run.cable-6p6kv-70mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template, looks_as", sha: "30e1cb5d9658c8f0" }
 - { record: run.cable-6p6kv-95mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "92a8b7319d1a70e1" }
-- { record: run.cable-flexible-11kv-3x95, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "25287ad4027578de" }
-- { record: run.cable-flexible-690v-4x16, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "5252a3dd69005905" }
-- { record: run.cable-flexible-690v-4x35, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "3b79b3200c8d2478" }
-- { record: run.cable-flexible-690v-4x95, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "7581a65605548d66" }
-- { record: run.cable-installation-230v-3x10, at: "2026-10-18T14:51:23Z", status: draft, summary: "first tracked", sha: "b6e31bb955a9bb2e" }
-- { record: run.cable-installation-230v-3x1p5, at: "2026-10-18T14:51:23Z", status: draft, summary: "first tracked", sha: "6078f76375ee3d21" }
-- { record: run.cable-installation-230v-3x2p5, at: "2026-10-18T14:51:23Z", status: draft, summary: "first tracked", sha: "1f46ab8ddd502506" }
-- { record: run.cable-installation-230v-3x4, at: "2026-10-18T14:51:23Z", status: draft, summary: "first tracked", sha: "4a6f68d615311e3c" }
-- { record: run.cable-installation-230v-3x6, at: "2026-10-18T14:51:23Z", status: draft, summary: "first tracked", sha: "84386cf818dcae56" }
-- { record: run.cable-installation-400v-5x16, at: "2026-10-18T14:51:23Z", status: draft, summary: "first tracked", sha: "8c20f528267bdb3e" }
-- { record: run.cable-installation-400v-5x2p5, at: "2026-10-18T14:51:23Z", status: draft, summary: "first tracked", sha: "d39a1cdbdeb01c23" }
-- { record: run.cable-installation-400v-5x6, at: "2026-10-18T14:51:23Z", status: draft, summary: "first tracked", sha: "10d45481310fc5cc" }
+- { record: run.cable-flexible-11kv-3x95, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: conductors", sha: "1946adbd52692bc3" }
+- { record: run.cable-flexible-690v-4x16, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: conductors", sha: "472cffd8f9eac779" }
+- { record: run.cable-flexible-690v-4x35, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: conductors", sha: "88c30cc3857ae6a6" }
+- { record: run.cable-flexible-690v-4x95, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: conductors", sha: "59e69cedab700751" }
+- { record: run.cable-installation-230v-3x10, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: conductors", sha: "777cb5f156606930" }
+- { record: run.cable-installation-230v-3x1p5, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: conductors", sha: "e46f0e83010f1fb5" }
+- { record: run.cable-installation-230v-3x2p5, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: conductors", sha: "3dde22f7a37e237c" }
+- { record: run.cable-installation-230v-3x4, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: conductors", sha: "2b8aae71421a6e14" }
+- { record: run.cable-installation-230v-3x6, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: conductors", sha: "a824a695a551d4fd" }
+- { record: run.cable-installation-400v-5x16, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: conductors", sha: "a5249314b8cb1e7f" }
+- { record: run.cable-installation-400v-5x2p5, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: conductors", sha: "01907a88244f6319" }
+- { record: run.cable-installation-400v-5x6, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: conductors", sha: "382a14a83b73f991" }
 - { record: run.conductor-rail-1000a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "f3312d2c5694191b" }
 - { record: run.conductor-rail-100a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "57d065ae60fe1418" }
 - { record: run.conductor-rail-250a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "97ea1112daa4966e" }
 - { record: run.conductor-rail-500a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "3943c16fc8690bed" }
 - { record: run.drag-conveyor-800, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "14f1c129b476f57f" }
-- { record: run.feeder-3kv-dc-150mm2, at: "2026-10-18T15:11:23Z", status: draft, summary: "changed: identity, rating, basis", sha: "e6f22cd025fed981" }
-- { record: run.feeder-3kv-dc-240mm2, at: "2026-10-18T15:11:23Z", status: draft, summary: "changed: identity, rating, basis", sha: "acb3806c55bc223a" }
-- { record: run.feeder-3kv-dc-25mm2, at: "2026-10-18T15:11:23Z", status: draft, summary: "changed: identity, rating, basis", sha: "0065e161918b8fbc" }
-- { record: run.feeder-3kv-dc-50mm2, at: "2026-10-18T15:11:23Z", status: draft, summary: "changed: identity, rating, basis", sha: "6ae3769c80fe50c5" }
-- { record: run.feeder-3kv-dc-95mm2, at: "2026-10-18T15:11:23Z", status: draft, summary: "changed: identity, rating, basis", sha: "9161e98020a0ad58" }
-- { record: run.feeder-3kv-dc-al-150mm2, at: "2026-10-18T15:11:23Z", status: draft, summary: "first tracked", sha: "f78c33aa19a17b53" }
-- { record: run.feeder-3kv-dc-al-240mm2, at: "2026-10-18T15:11:23Z", status: draft, summary: "first tracked", sha: "ac0002015fc54c9c" }
-- { record: run.feeder-3kv-dc-al-400mm2, at: "2026-10-18T15:11:23Z", status: draft, summary: "first tracked", sha: "4dce8b863dd0bcd4" }
-- { record: run.feeder-3kv-dc-al-50mm2, at: "2026-10-18T15:11:23Z", status: draft, summary: "first tracked", sha: "b5d005defca520a7" }
-- { record: run.feeder-3kv-dc-al-95mm2, at: "2026-10-18T15:11:23Z", status: draft, summary: "first tracked", sha: "c8f0f37ac789114e" }
+- { record: run.feeder-3kv-dc-150mm2, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: conductors", sha: "a192cf125651dc27" }
+- { record: run.feeder-3kv-dc-240mm2, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: conductors", sha: "579aa256b79f9729" }
+- { record: run.feeder-3kv-dc-25mm2, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: conductors", sha: "9151372488969e0b" }
+- { record: run.feeder-3kv-dc-50mm2, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: conductors", sha: "13823c09d524e7e4" }
+- { record: run.feeder-3kv-dc-95mm2, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: conductors", sha: "fc639d169b667cfc" }
+- { record: run.feeder-3kv-dc-al-150mm2, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: conductors", sha: "d8b218b55caa1f3f" }
+- { record: run.feeder-3kv-dc-al-240mm2, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: conductors", sha: "5f5d179179bccc45" }
+- { record: run.feeder-3kv-dc-al-400mm2, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: conductors", sha: "f2c2e3a46e86ba0c" }
+- { record: run.feeder-3kv-dc-al-50mm2, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: conductors", sha: "bb648d38bf61c657" }
+- { record: run.feeder-3kv-dc-al-95mm2, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: conductors", sha: "ab7eb3d4738057ac" }
 - { record: run.festoon-690v-4x16, at: "2026-10-18T04:47:20Z", status: draft, summary: "changed: support, basis", sha: "c363d4cf464a0dba" }
 - { record: run.festoon-690v-4x35, at: "2026-10-18T04:47:20Z", status: draft, summary: "changed: support, basis", sha: "4db86b5132a18e50" }
 - { record: run.festoon-690v-4x95, at: "2026-10-18T04:47:20Z", status: draft, summary: "changed: support, basis", sha: "4121bb9635c117a4" }
@@ -2950,12 +2952,12 @@
 - { record: run.pipe-dn700-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "29a23419f3a3f11f" }
 - { record: run.pipe-dn700-pn10-mli, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "8dbbcccfcb4a3df2" }
 - { record: run.pipe-dn900-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "4cdb010f133a14cb" }
-- { record: run.wire-0p5mm2, at: "2026-10-18T15:11:23Z", status: draft, summary: "changed: rating, basis", sha: "30c268004bf01960" }
-- { record: run.wire-16mm2, at: "2026-10-18T15:11:23Z", status: draft, summary: "changed: rating, basis", sha: "a0a2ece2abb70caa" }
-- { record: run.wire-1mm2, at: "2026-10-18T15:11:23Z", status: draft, summary: "changed: rating, basis", sha: "d446cee92deec6ea" }
-- { record: run.wire-2p5mm2, at: "2026-10-18T15:11:23Z", status: draft, summary: "changed: rating, basis", sha: "812f793d487bf1f1" }
-- { record: run.wire-50mm2, at: "2026-10-18T15:11:23Z", status: draft, summary: "changed: rating, basis", sha: "7374b40758434039" }
-- { record: run.wire-6mm2, at: "2026-10-18T15:11:23Z", status: draft, summary: "changed: rating, basis", sha: "00495321a5f81725" }
+- { record: run.wire-0p5mm2, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: conductors", sha: "e1210c315f7d81a9" }
+- { record: run.wire-16mm2, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: conductors", sha: "b6bf22ee62785ed6" }
+- { record: run.wire-1mm2, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: conductors", sha: "f9ffb3265de73d6e" }
+- { record: run.wire-2p5mm2, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: conductors", sha: "11e0db0831ce8804" }
+- { record: run.wire-50mm2, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: conductors", sha: "5b68610715264949" }
+- { record: run.wire-6mm2, at: "2026-10-18T16:49:15Z", status: draft, summary: "changed: conductors", sha: "3c5bb4e50fd04002" }
 - { record: seeding.asteroids, at: "2026-10-10T16:13:03Z", status: "", summary: "changed: basis", sha: "523d44e4bfa3af5f" }
 - { record: seeding.conditions, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "96e581fa4cb02009" }
 - { record: seeding.galaxy, at: "2026-10-10T16:13:03Z", status: "", summary: "changed", sha: "c3aeb429e01bf69f" }
@@ -4481,7 +4483,7 @@
 - { record: template.hose, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "76521a9d59aafaae" }
 - { record: template.hose-hydraulic, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "1bdc07615e11b940" }
 - { record: template.hose-metal, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "7c583306ffc2f9d2" }
-- { record: template.hvdc-pole, at: "2026-10-18T16:18:56Z", status: "", summary: "changed: visual", sha: "79cc7f95b0043a93" }
+- { record: template.hvdc-pole, at: "2026-10-18T16:49:15Z", status: "", summary: "changed", sha: "de57063a18360cd5" }
 - { record: template.jacketed-duct, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "f735abc971d05f0e" }
 - { record: template.lined-duct, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "4f0e1dffeb3819a1" }
 - { record: template.lined-flange, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "566901f48b56a274" }

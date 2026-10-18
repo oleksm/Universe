@@ -31,6 +31,18 @@ properties:
       current_air: { type: number, minimum: 0, x-unit: "A", description: "A in free air at 40 deg C, one cable alone, where `current` is its rating in vacuum (radiation only): a feed to a load that only works in air (a fan) is always air-cooled" }
       current_air_bundle: { type: number, minimum: 0, x-unit: "A", description: "A each in free air at 40 deg C when laid in a bundle of up to six" }
       rate: { type: number, minimum: 0, x-unit: "kg/s", description: "kg/s of bulk at full speed" }
+  conductors:
+    type: array
+    description: "A cable's conductors, by id: a laid link maps each conductor to a contact at each end (the game's state, not the registry's). A multi-core cable's cores carry fixed roles by their colours; a single-core wire's one conductor takes the role of the contacts it joins."
+    items:
+      type: object
+      additionalProperties: false
+      required: [id]
+      properties:
+        id: { type: string, description: "Its name in the cable (1; L1, N, PE by core colour)" }
+        role: { enum: [plus, minus, line, neutral, earth, screen, signal-high, signal-low, signal, return, spare], description: "The role it is made for, where its colour fixes one; none: any" }
+        line: { type: string }
+        size: { type: number, exclusiveMinimum: 0, x-unit: "m2", description: "Its cross-section" }
   per_m:
     type: object
     additionalProperties: false

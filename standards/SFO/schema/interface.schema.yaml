@@ -46,6 +46,7 @@ properties:
         id: { type: string, description: "The contact's name in the face (A, B, 1, PE)" }
         size: { type: number, exclusiveMinimum: 0, x-unit: "m2", description: "The largest conductor it takes" }
         note: { type: string }
+  keys: { type: array, items: { type: string }, description: "The keyings its halves are cut to, where one face is made in variants that must not meet (an HV DC pole: plus and minus; a single-pole connector: L1, L2, L3, N, PE): a port names its key, and two halves mate only at the same key." }
   face: { type: object, additionalProperties: false, properties: { length: { type: number, x-unit: "m" }, width: { type: number, x-unit: "m" }, height: { type: number, x-unit: "m" } }, description: "The mated joint's outside, its axis along height: what a port must leave room for." }
   standard: { type: string, description: "The real standard it follows, if any (EN 1092-1, IEC 60309, ISO 1161)." }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

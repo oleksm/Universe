@@ -12,6 +12,22 @@ outside:
 rating:
   voltage: 690
   current: 80
+conductors:
+- id: L1
+  role: line
+  line: L1
+  size: 1.6e-05
+- id: L2
+  role: line
+  line: L2
+  size: 1.6e-05
+- id: L3
+  role: line
+  line: L3
+  size: 1.6e-05
+- id: N
+  role: neutral
+  size: 1.6e-05
 per_m:
   mass: 0.91
   built_of:

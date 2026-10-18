@@ -12,6 +12,22 @@ outside:
 rating:
   voltage: 690
   current: 125
+conductors:
+- id: L1
+  role: line
+  line: L1
+  size: 3.5e-05
+- id: L2
+  role: line
+  line: L2
+  size: 3.5e-05
+- id: L3
+  role: line
+  line: L3
+  size: 3.5e-05
+- id: N
+  role: neutral
+  size: 3.5e-05
 per_m:
   mass: 1.83
   built_of:

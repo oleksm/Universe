@@ -12,6 +12,19 @@ outside:
 rating:
   voltage: 11000
   current: 260
+conductors:
+- id: L1
+  role: line
+  line: L1
+  size: 9.499999999999999e-05
+- id: L2
+  role: line
+  line: L2
+  size: 9.499999999999999e-05
+- id: L3
+  role: line
+  line: L3
+  size: 9.499999999999999e-05
 per_m:
   mass: 4.46
   built_of:

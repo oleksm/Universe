@@ -1,0 +1,805 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+# Written by tools/standards/converters.py: change it there.
+identity:
+  key: equipment.power.distribution.28v-16way
+  name: Distribution board, 28 V DC, 16 ways
+  maker: org.meridian
+  revision: draft
+  slot: power
+  description: 'Where a ship''s 28 V DC bus branches: fed from its converter by a pole pair or a circular shell 33 or 25 (whichever the converter has, all three on one bus bar), 12 ways of shell 17 (15 A), 4 ways of shell 25 (55 A)
+    out, each through its own solid-state breaker, and the control bus through. Up to 11.2 kW on its bus bar. The connectors'' mass is the routed harness''s, not the board''s.'
+size_class: 1
+fits: mount.power-s1
+physical:
+  mass: 6.0
+  volume: 0.0162
+  length: 0.45
+  width: 0.12
+  height: 0.3
+built_of:
+  parts: power-distribution-28v-16way
+  list:
+  - code: DB28W16-01
+    name: Enclosure and rails
+    description: a folded aluminium box, its DIN-style rails and the gland plates
+    mass: 2.7
+    length: 0.45
+    width: 0.12
+    height: 0.135
+    item: stock.al6061-pl-5
+    quantity: 3.1
+    module: module.machining-centre
+  - code: DB28W16-02
+    name: Bus bars
+    description: copper bars, plus and minus, and their insulators
+    mass: 1.2
+    length: 0.45
+    width: 0.12
+    height: 0.06
+    item: stock.cu-wire-2
+    quantity: 1.38
+    module: module.electronics-works
+  - code: DB28W16-03
+    name: Breakers and controls
+    description: a solid-state breaker on each way, the board's controller
+    mass: 2.1
+    length: 0.45
+    width: 0.12
+    height: 0.105
+    item: good.electronics
+    quantity: 2.41
+    module: module.electronics-works
+making:
+  module: module.assembly-shop
+function:
+  kind: switchgear
+  carries: 11200.0
+life: 473364000
+ports:
+- id: in+
+  flow: in
+  medium: power
+  interface: interface.hvdc-pole-400a
+  half: male
+  make: manual
+  connector: connector.hvdc-pole-400a
+  voltage: 28.0
+  current: 400.0
+  power: 11200.0
+  channel: dc-28v
+  key: plus
+  pins:
+  - contact: '1'
+    role: plus
+  at:
+  - -0.225
+  - 0.0
+  - -0.295
+  facing:
+  - -1.0
+  - 0.0
+  - 0.0
+  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+- id: in-
+  flow: in
+  medium: power
+  interface: interface.hvdc-pole-400a
+  half: male
+  make: manual
+  connector: connector.hvdc-pole-400a
+  voltage: 28.0
+  current: 400.0
+  power: 11200.0
+  channel: dc-28v
+  key: minus
+  pins:
+  - contact: '1'
+    role: minus
+  at:
+  - -0.225
+  - 0.0
+  - -0.225
+  facing:
+  - -1.0
+  - 0.0
+  - 0.0
+  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+- id: in-33
+  flow: in
+  medium: power
+  interface: interface.circular-shell-33
+  half: male
+  make: manual
+  connector: connector.circular-shell-33
+  voltage: 28.0
+  current: 120.0
+  power: 3360.0
+  channel: dc-28v
+  pins:
+  - contact: A
+    role: plus
+  - contact: B
+    role: minus
+  at:
+  - -0.225
+  - 0.028
+  - -0.155
+  facing:
+  - -1.0
+  - 0.0
+  - 0.0
+  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+- id: in-25
+  flow: in
+  medium: power
+  interface: interface.circular-shell-25
+  half: male
+  make: manual
+  connector: connector.circular-shell-25
+  voltage: 28.0
+  current: 55.0
+  power: 1540.0
+  channel: dc-28v
+  pins:
+  - contact: A
+    role: plus
+  - contact: B
+    role: minus
+  - contact: C
+    role: earth
+  - contact: D
+    role: spare
+  at:
+  - -0.225
+  - -0.034
+  - -0.155
+  facing:
+  - -1.0
+  - 0.0
+  - 0.0
+  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+- id: way-1
+  flow: out
+  medium: power
+  interface: interface.circular-shell-17
+  half: female
+  make: manual
+  connector: connector.circular-shell-17
+  voltage: 28.0
+  current: 15.0
+  power: 420.0
+  channel: dc-28v
+  pins:
+  - contact: '1'
+    role: plus
+  - contact: '2'
+    role: minus
+  - contact: '3'
+    role: earth
+  - contact: '4'
+    role: spare
+  - contact: '5'
+    role: spare
+  - contact: '6'
+    role: spare
+  - contact: '7'
+    role: spare
+  at:
+  - -0.225
+  - 0.022
+  - -0.085
+  facing:
+  - -1.0
+  - 0.0
+  - 0.0
+  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+- id: way-2
+  flow: out
+  medium: power
+  interface: interface.circular-shell-17
+  half: female
+  make: manual
+  connector: connector.circular-shell-17
+  voltage: 28.0
+  current: 15.0
+  power: 420.0
+  channel: dc-28v
+  pins:
+  - contact: '1'
+    role: plus
+  - contact: '2'
+    role: minus
+  - contact: '3'
+    role: earth
+  - contact: '4'
+    role: spare
+  - contact: '5'
+    role: spare
+  - contact: '6'
+    role: spare
+  - contact: '7'
+    role: spare
+  at:
+  - -0.225
+  - -0.022
+  - -0.085
+  facing:
+  - -1.0
+  - 0.0
+  - 0.0
+  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+- id: way-3
+  flow: out
+  medium: power
+  interface: interface.circular-shell-17
+  half: female
+  make: manual
+  connector: connector.circular-shell-17
+  voltage: 28.0
+  current: 15.0
+  power: 420.0
+  channel: dc-28v
+  pins:
+  - contact: '1'
+    role: plus
+  - contact: '2'
+    role: minus
+  - contact: '3'
+    role: earth
+  - contact: '4'
+    role: spare
+  - contact: '5'
+    role: spare
+  - contact: '6'
+    role: spare
+  - contact: '7'
+    role: spare
+  at:
+  - -0.225
+  - 0.022
+  - -0.015
+  facing:
+  - -1.0
+  - 0.0
+  - 0.0
+  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+- id: way-4
+  flow: out
+  medium: power
+  interface: interface.circular-shell-17
+  half: female
+  make: manual
+  connector: connector.circular-shell-17
+  voltage: 28.0
+  current: 15.0
+  power: 420.0
+  channel: dc-28v
+  pins:
+  - contact: '1'
+    role: plus
+  - contact: '2'
+    role: minus
+  - contact: '3'
+    role: earth
+  - contact: '4'
+    role: spare
+  - contact: '5'
+    role: spare
+  - contact: '6'
+    role: spare
+  - contact: '7'
+    role: spare
+  at:
+  - -0.225
+  - -0.022
+  - -0.015
+  facing:
+  - -1.0
+  - 0.0
+  - 0.0
+  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+- id: way-5
+  flow: out
+  medium: power
+  interface: interface.circular-shell-17
+  half: female
+  make: manual
+  connector: connector.circular-shell-17
+  voltage: 28.0
+  current: 15.0
+  power: 420.0
+  channel: dc-28v
+  pins:
+  - contact: '1'
+    role: plus
+  - contact: '2'
+    role: minus
+  - contact: '3'
+    role: earth
+  - contact: '4'
+    role: spare
+  - contact: '5'
+    role: spare
+  - contact: '6'
+    role: spare
+  - contact: '7'
+    role: spare
+  at:
+  - -0.225
+  - 0.022
+  - 0.055
+  facing:
+  - -1.0
+  - 0.0
+  - 0.0
+  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+- id: way-6
+  flow: out
+  medium: power
+  interface: interface.circular-shell-17
+  half: female
+  make: manual
+  connector: connector.circular-shell-17
+  voltage: 28.0
+  current: 15.0
+  power: 420.0
+  channel: dc-28v
+  pins:
+  - contact: '1'
+    role: plus
+  - contact: '2'
+    role: minus
+  - contact: '3'
+    role: earth
+  - contact: '4'
+    role: spare
+  - contact: '5'
+    role: spare
+  - contact: '6'
+    role: spare
+  - contact: '7'
+    role: spare
+  at:
+  - -0.225
+  - -0.022
+  - 0.055
+  facing:
+  - -1.0
+  - 0.0
+  - 0.0
+  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+- id: way-7
+  flow: out
+  medium: power
+  interface: interface.circular-shell-17
+  half: female
+  make: manual
+  connector: connector.circular-shell-17
+  voltage: 28.0
+  current: 15.0
+  power: 420.0
+  channel: dc-28v
+  pins:
+  - contact: '1'
+    role: plus
+  - contact: '2'
+    role: minus
+  - contact: '3'
+    role: earth
+  - contact: '4'
+    role: spare
+  - contact: '5'
+    role: spare
+  - contact: '6'
+    role: spare
+  - contact: '7'
+    role: spare
+  at:
+  - -0.225
+  - 0.022
+  - 0.125
+  facing:
+  - -1.0
+  - 0.0
+  - 0.0
+  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+- id: way-8
+  flow: out
+  medium: power
+  interface: interface.circular-shell-17
+  half: female
+  make: manual
+  connector: connector.circular-shell-17
+  voltage: 28.0
+  current: 15.0
+  power: 420.0
+  channel: dc-28v
+  pins:
+  - contact: '1'
+    role: plus
+  - contact: '2'
+    role: minus
+  - contact: '3'
+    role: earth
+  - contact: '4'
+    role: spare
+  - contact: '5'
+    role: spare
+  - contact: '6'
+    role: spare
+  - contact: '7'
+    role: spare
+  at:
+  - -0.225
+  - -0.022
+  - 0.125
+  facing:
+  - -1.0
+  - 0.0
+  - 0.0
+  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+- id: way-9
+  flow: out
+  medium: power
+  interface: interface.circular-shell-17
+  half: female
+  make: manual
+  connector: connector.circular-shell-17
+  voltage: 28.0
+  current: 15.0
+  power: 420.0
+  channel: dc-28v
+  pins:
+  - contact: '1'
+    role: plus
+  - contact: '2'
+    role: minus
+  - contact: '3'
+    role: earth
+  - contact: '4'
+    role: spare
+  - contact: '5'
+    role: spare
+  - contact: '6'
+    role: spare
+  - contact: '7'
+    role: spare
+  at:
+  - -0.225
+  - 0.022
+  - 0.195
+  facing:
+  - -1.0
+  - 0.0
+  - 0.0
+  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+- id: way-10
+  flow: out
+  medium: power
+  interface: interface.circular-shell-17
+  half: female
+  make: manual
+  connector: connector.circular-shell-17
+  voltage: 28.0
+  current: 15.0
+  power: 420.0
+  channel: dc-28v
+  pins:
+  - contact: '1'
+    role: plus
+  - contact: '2'
+    role: minus
+  - contact: '3'
+    role: earth
+  - contact: '4'
+    role: spare
+  - contact: '5'
+    role: spare
+  - contact: '6'
+    role: spare
+  - contact: '7'
+    role: spare
+  at:
+  - -0.225
+  - -0.022
+  - 0.195
+  facing:
+  - -1.0
+  - 0.0
+  - 0.0
+  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+- id: way-11
+  flow: out
+  medium: power
+  interface: interface.circular-shell-17
+  half: female
+  make: manual
+  connector: connector.circular-shell-17
+  voltage: 28.0
+  current: 15.0
+  power: 420.0
+  channel: dc-28v
+  pins:
+  - contact: '1'
+    role: plus
+  - contact: '2'
+    role: minus
+  - contact: '3'
+    role: earth
+  - contact: '4'
+    role: spare
+  - contact: '5'
+    role: spare
+  - contact: '6'
+    role: spare
+  - contact: '7'
+    role: spare
+  at:
+  - -0.225
+  - 0.022
+  - 0.265
+  facing:
+  - -1.0
+  - 0.0
+  - 0.0
+  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+- id: way-12
+  flow: out
+  medium: power
+  interface: interface.circular-shell-17
+  half: female
+  make: manual
+  connector: connector.circular-shell-17
+  voltage: 28.0
+  current: 15.0
+  power: 420.0
+  channel: dc-28v
+  pins:
+  - contact: '1'
+    role: plus
+  - contact: '2'
+    role: minus
+  - contact: '3'
+    role: earth
+  - contact: '4'
+    role: spare
+  - contact: '5'
+    role: spare
+  - contact: '6'
+    role: spare
+  - contact: '7'
+    role: spare
+  at:
+  - -0.225
+  - -0.022
+  - 0.265
+  facing:
+  - -1.0
+  - 0.0
+  - 0.0
+  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+- id: way-13
+  flow: out
+  medium: power
+  interface: interface.circular-shell-25
+  half: female
+  make: manual
+  connector: connector.circular-shell-25
+  voltage: 28.0
+  current: 55.0
+  power: 1540.0
+  channel: dc-28v
+  pins:
+  - contact: A
+    role: plus
+  - contact: B
+    role: minus
+  - contact: C
+    role: earth
+  - contact: D
+    role: spare
+  at:
+  - -0.225
+  - 0.028
+  - 0.335
+  facing:
+  - -1.0
+  - 0.0
+  - 0.0
+  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+- id: way-14
+  flow: out
+  medium: power
+  interface: interface.circular-shell-25
+  half: female
+  make: manual
+  connector: connector.circular-shell-25
+  voltage: 28.0
+  current: 55.0
+  power: 1540.0
+  channel: dc-28v
+  pins:
+  - contact: A
+    role: plus
+  - contact: B
+    role: minus
+  - contact: C
+    role: earth
+  - contact: D
+    role: spare
+  at:
+  - -0.225
+  - -0.028
+  - 0.335
+  facing:
+  - -1.0
+  - 0.0
+  - 0.0
+  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+- id: way-15
+  flow: out
+  medium: power
+  interface: interface.circular-shell-25
+  half: female
+  make: manual
+  connector: connector.circular-shell-25
+  voltage: 28.0
+  current: 55.0
+  power: 1540.0
+  channel: dc-28v
+  pins:
+  - contact: A
+    role: plus
+  - contact: B
+    role: minus
+  - contact: C
+    role: earth
+  - contact: D
+    role: spare
+  at:
+  - -0.225
+  - 0.028
+  - 0.405
+  facing:
+  - -1.0
+  - 0.0
+  - 0.0
+  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+- id: way-16
+  flow: out
+  medium: power
+  interface: interface.circular-shell-25
+  half: female
+  make: manual
+  connector: connector.circular-shell-25
+  voltage: 28.0
+  current: 55.0
+  power: 1540.0
+  channel: dc-28v
+  pins:
+  - contact: A
+    role: plus
+  - contact: B
+    role: minus
+  - contact: C
+    role: earth
+  - contact: D
+    role: spare
+  at:
+  - -0.225
+  - -0.028
+  - 0.405
+  facing:
+  - -1.0
+  - 0.0
+  - 0.0
+  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+- id: data-1
+  flow: both
+  medium: signal
+  interface: interface.circular-shell-11
+  half: female
+  make: manual
+  connector: connector.circular-shell-11
+  channel: can-a
+  pins:
+  - contact: '1'
+    role: signal-high
+  - contact: '2'
+    role: signal-low
+  - contact: '3'
+    role: return
+  - contact: '4'
+    role: screen
+  - contact: '5'
+    role: spare
+  - contact: '6'
+    role: spare
+  - contact: '7'
+    role: spare
+  at:
+  - -0.225
+  - 0.018
+  - 0.475
+  facing:
+  - -1.0
+  - 0.0
+  - 0.0
+  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+- id: data-2
+  flow: both
+  medium: signal
+  interface: interface.circular-shell-11
+  half: female
+  make: manual
+  connector: connector.circular-shell-11
+  channel: can-a
+  pins:
+  - contact: '1'
+    role: signal-high
+  - contact: '2'
+    role: signal-low
+  - contact: '3'
+    role: return
+  - contact: '4'
+    role: screen
+  - contact: '5'
+    role: spare
+  - contact: '6'
+    role: spare
+  - contact: '7'
+    role: spare
+  at:
+  - -0.225
+  - -0.018
+  - 0.475
+  facing:
+  - -1.0
+  - 0.0
+  - 0.0
+  note: 'place invented (the model has no empty for it): on its -x end face, for review'
+internal:
+- kind: switched
+  ports:
+  - in+
+  - in-
+  - in-33
+  - in-25
+  - way-1
+  - way-2
+  - way-3
+  - way-4
+  - way-5
+  - way-6
+  - way-7
+  - way-8
+  - way-9
+  - way-10
+  - way-11
+  - way-12
+  - way-13
+  - way-14
+  - way-15
+  - way-16
+  note: one bus bar; each way through its own breaker, the feeds in joined
+- kind: joined
+  ports:
+  - data-1
+  - data-2
+  note: the control bus passes through
+basis:
+- of:
+  - physical
+  - built_of.list
+  - function
+  - ports
+  tier: invented
+  review: true
+  note: Of the order of aircraft DC power distribution panels, from memory; the ways (their count and sizes) chosen for a commuter's loads (ships, 2026-10-18); places invented until a model gives them.
+- of:
+  - built_of
+  - making
+  rule: rule.first-design-parts
+- of:
+  - life
+  rule: rule.life-ship-system

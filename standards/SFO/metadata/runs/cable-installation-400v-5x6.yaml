@@ -12,6 +12,25 @@ outside:
 rating:
   voltage: 400
   current: 30
+conductors:
+- id: L1
+  role: line
+  line: L1
+  size: 6.0e-06
+- id: L2
+  role: line
+  line: L2
+  size: 6.0e-06
+- id: L3
+  role: line
+  line: L3
+  size: 6.0e-06
+- id: N
+  role: neutral
+  size: 6.0e-06
+- id: PE
+  role: earth
+  size: 6.0e-06
 per_m:
   mass: 0.384
   built_of:

@@ -12,7 +12,7 @@
 
 check runs: validate.py (every record against its schema), build.py (its own cross-checks; it writes the page and the
 generated module), planet_lod_module.py --check, fit_layout.py (every plant layout laid of runs), kit_works.py --check
-(every KIT- stock made by some module), with --engine the
+(every KIT- stock made by some module), equipment_ports.py --check (every port's key, pins and internal against its interface), with --engine the
 engine's registry reader (cargo check of crates/core/world, under ~/bin/capped), with --page a headless Chromium load
 of each page key, failing on any JavaScript error. A generated record (its header says "Written by tools/...") is
 changed in its generator, never here: set refuses it.
@@ -155,7 +155,8 @@ def cmd_check(opt, pages):
              ("build", [sys.executable, "tools/standards/build.py"], None),
              ("module", [sys.executable, "tools/standards/planet_lod_module.py", "--check"], None),
              ("fit", [sys.executable, "tools/standards/fit_layout.py"], lambda o: not re.search(r"[1-9]\d* fault\(s\)", o)),
-             ("makers", [sys.executable, "tools/standards/kit_works.py", "--check"], lambda o: not re.search(r"[1-9]\d* fault\(s\)", o))]
+             ("makers", [sys.executable, "tools/standards/kit_works.py", "--check"], lambda o: not re.search(r"[1-9]\d* fault\(s\)", o)),
+             ("ports", [sys.executable, "tools/standards/equipment_ports.py", "--check"], lambda o: not re.search(r"[1-9]\d* fault\(s\)", o))]
     failed = 0
     for name, cmd, ok in steps:
         r = sh(cmd)

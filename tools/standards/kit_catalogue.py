@@ -71,6 +71,9 @@ def conn(slug, d, iface):
             i["envelope"][k] = max(i["envelope"].get(k, 0), v)
     if iface.get("standard"):
         i["standard"] = iface["standard"]
+    for k in ("keys", "contacts"):         # (what a wire's snap checks: a port's key and its pins' contacts)
+        if iface.get(k):
+            i[k] = iface[k]
     i["basis"] = [{"of": ["envelope", "face"], "tier": "derived", "note": "The most the products built to it are rated for, and their joint's outside."}]
 
 
@@ -171,6 +174,7 @@ for slug, v, n, mm2, amps, od, ck in FLEX:
         "identity": {"key": f"run.cable-flexible-{slug}", "name": f"Flexible cable, {v / 1000:g} kV, {n} x {mm2} mm2" if v >= 1000 else f"Flexible cable, {v} V, {n} x {mm2} mm2",
                      "description": f"A rubber-sheathed cable of fine-stranded copper that bends all its life: on a reel, a festoon or laid to a machine that moves. {amps} A in air; about half that on airless ground, where only radiation cools it."},
         "kind": "cable", "size": mm2 * 1e-6, "outside": [od, od], "rating": {"voltage": v, "current": amps},
+        "conductors": [{"id": c, "role": "earth" if c == "PE" else "neutral" if c == "N" else "line", **({"line": c} if c[0] == "L" else {}), "size": mm2 * 1e-6} for c in (["L1", "L2", "L3", "N"][:n] if n == 4 else ["L1", "L2", "L3"])],
         "per_m": {"mass": r(cu + sheath, 2), "built_of": [part("Conductors", CU, cu, f"{n} fine-stranded cores of {mm2} mm2"), part("Insulation and sheath", RUB, sheath, "EPDM and a tough rubber sheath")]},
         "elbow": {"radius": r(od * 7.5, 3), "mass": r((cu + sheath) * od * 7.5 * math.pi / 2, 2)},
         "connector": f"connector.{ck}", "carries": "power", "template": "template.cable-flexible",
@@ -203,12 +207,14 @@ for v, n, mm2, amps in INSTALL:
         "identity": {"key": f"run.{slug}", "name": f"Installation cable, {v} V, {n} x {mm2:g} mm2",
                      "description": f"A sheathed cable of {n} solid copper cores ({'line, neutral and earth' if n == 3 else 'three lines, neutral and earth'}) clipped along a building's frame or laid in its floors and walls: its circuits to outlets, lights and small machines, {amps} A clipped in air."},
         "kind": "cable", "size": a, "outside": [r(od, 4), r(od, 4)], "rating": {"voltage": v, "current": amps},
+        "conductors": [{"id": c, "role": "earth" if c == "PE" else "neutral" if c == "N" else "line", **({"line": c} if c[0] == "L" else {}), "size": a} for c in (["L", "N", "PE"] if n == 3 else ["L1", "L2", "L3", "N", "PE"])],
         "per_m": {"mass": r(cu + pe, 3), "built_of": [part("Conductors", CU, cu, f"{n} solid cores of {mm2:g} mm2"), part("Insulation and sheath", PE, pe, "PVC or LSZH, as UHMW polyethylene here")]},
         "elbow": {"radius": r(od * 4, 3), "mass": r((cu + pe) * od * 4 * math.pi / 2, 4)},
         "connector": "connector.wiring-box-lv", "carries": "power", "template": "template.cable-installation",
         "basis": [{"of": ["per_m", "rating", "outside"], "tier": "invented", "review": True, "note": f"Wiring regulations' clipped-direct ratings and usual insulation thicknesses; least bend 4 outsides; {MEMORY}"}]})
 CIRC = [  # (shell, outside m, mated length m, kg a pair, contacts, mm2 a contact at most)
     (11, 0.022, 0.05, 0.05, 7, 1.0), (17, 0.03, 0.06, 0.1, 7, 2.5), (25, 0.04, 0.075, 0.2, 4, 16), (33, 0.052, 0.095, 0.4, 2, 50)]
+CIRC_IDS = "ABCD"       # contact ids: the seven-contact inserts numbered 1 to 7 (6 on the circle, 7 at the centre), the others lettered (invented)
 CIRC_KG = (17, 0.06268, 0.04627, 0.00703, 0.00938)     # blender's shell 17 (2026-10-18): kg in all, aluminium, copper, inserts and seals; the other shells scaled by the old ratio to it
 for sh, od, ll, kg, nc, mm2 in CIRC:
     ref = next(k for s_, _o, _l, k, *_r in CIRC if s_ == CIRC_KG[0])
@@ -222,7 +228,8 @@ for sh, od, ll, kg, nc, mm2 in CIRC:
         "provides": "both", "template": "template.circular-connector",
         "basis": [{"of": ["physical", "built_of"], "tier": "derived" if sh == CIRC_KG[0] else "invented", "review": True, "note": "From blender's model (2026-10-18): 30 x 30 x 60 mm mated, seven contacts (six on a 10 mm circle and one at the centre), 2 mm pins, three bayonet pins." if sh == CIRC_KG[0] else f"Scaled from the shell {CIRC_KG[0]}'s measured mass by the old ratio; {MEMORY}"},
                   {"of": ["rating"], "tier": "invented", "review": True, "note": f"Of the order of military circular connectors (MIL-DTL-38999 class); {MEMORY}"}]},
-        {"slug": f"circular-shell-{sh}", "name": f"Circular shell {sh}", "domain": "power", "kind": "plug-socket", "media": ["power"], "halves": "male-female", "make": "manual"})
+        {"slug": f"circular-shell-{sh}", "name": f"Circular shell {sh}", "domain": "power", "kind": "plug-socket", "media": ["power"], "halves": "male-female", "make": "manual",
+         "contacts": [{"id": c, "size": mm2 * 1e-6} for c in (CIRC_IDS[:nc] if nc != 7 else [str(j) for j in range(1, 8)])]})
 WIRE = [  # (mm2, amps single in vacuum, connector shell, amps single in free air at 40 C)
     (0.5, 5, 11, 11), (1.0, 8, 11, 16), (2.5, 15, 17, 30), (6.0, 28, 25, 55), (16.0, 55, 25, 105), (50.0, 120, 33, 220)]
 BUNDLE = 0.7            # a bundle of up to six in free air carries this share each (invented, of the order of wiring rules' grouping factors)
@@ -238,6 +245,7 @@ for mm2, amps, sh, amps_air in WIRE:
         "identity": {"key": f"run.{slug}", "name": f"Hook-up wire, {mm2:g} mm2, 600 V",
                      "description": f"A single stranded, plated copper wire in thin fluoropolymer, light and good in vacuum: laid in bundles as a vehicle's or a ship's harness, or inside a unit's cabinets. {amps} A alone in vacuum; less in a bundle."},
         "kind": "cable", "size": a, "outside": [r(od, 4), r(od, 4)], "rating": {"voltage": 600, "current": amps, "current_air": amps_air, "current_air_bundle": round(amps_air * BUNDLE)},
+        "conductors": [{"id": "1", "size": a}],
         "per_m": {"mass": r(cu + ins, 4), "built_of": [part("Conductor", CU, cu, f"{mm2:g} mm2 stranded, silver-plated (as copper here)"), part("Insulation", PTFE, ins, f"{ti * 1000:g} mm of PTFE")]},
         "elbow": {"radius": r(max(0.005, od * 10), 3), "mass": r((cu + ins) * max(0.005, od * 10) * math.pi / 2, 5)},
         "connector": f"connector.circular-shell-{sh}", "carries": "power", "template": "template.wire",
@@ -260,7 +268,8 @@ for amps, od, ll, kg, mm2 in HVDC_POLE:
         "provides": "both", "template": "template.hvdc-pole",
         "basis": [{"of": ["physical", "built_of"], "tier": "derived" if amps == HVDC_KG[0] else "invented", "review": True, "note": "From blender's model (2026-10-18): 55 x 55 x 160 mm mated, a 14 mm pin in a 14.2 mm socket, a long PTFE body, keyed 44 mm aluminium shells, three bayonet pins." if amps == HVDC_KG[0] else f"Scaled from the {HVDC_KG[0]} A pole's measured mass by the old ratio; {MEMORY}"},
                   {"of": ["rating"], "tier": "invented", "review": True, "note": f"Of the order of single-pole high-voltage DC connectors for electric vehicles and aircraft; {MEMORY}"}]},
-        {"slug": f"hvdc-pole-{amps}a", "name": f"HV DC pole {amps} A", "domain": "power", "kind": "plug-socket", "media": ["power"], "halves": "male-female", "make": "manual"})
+        {"slug": f"hvdc-pole-{amps}a", "name": f"HV DC pole {amps} A", "domain": "power", "kind": "plug-socket", "media": ["power"], "halves": "male-female", "make": "manual",
+         "keys": ["plus", "minus"], "contacts": [{"id": "1", "size": mm2 * 1e-6}]})
 AIR_240 = 800.0          # A: a 240 mm2 copper core in PTFE alone in free air at 40 deg C (the conductor to about 150 deg C); others by area^0.625 (invented, of the order of cable tables)
 RHO_E = {CU: 1.72e-8, AL: 2.82e-8}      # ohm m at 20 deg C
 FEEDERS = [(CU, mm2) for mm2 in (25, 50, 95, 150, 240)] + [(AL, mm2) for mm2 in (50, 95, 150, 240, 400)]
@@ -282,6 +291,7 @@ for metal, mm2 in FEEDERS:
                      "description": f"One pole of a ship's high-voltage DC bus: a single stranded {'aluminium' if al else 'copper'} core in 2 mm of PTFE under an earthed braid and jacket, laid in pairs (plus and minus) along the frame. {amps} A in vacuum, where only radiation cools it; {air} A alone in free air."
                      + (" Half a copper feeder's mass for the same amps, a size and a half fatter; its ends crimped on bimetallic contacts." if al else "")},
         "kind": "cable", "size": a, "outside": [r(od, 4), r(od, 4)], "rating": {"voltage": 3000, "current": amps, "current_air": air, "current_air_bundle": round(air * BUNDLE)},
+        "conductors": [{"id": "1", "size": a}],
         "per_m": {"mass": r(cond + ins, 3), "built_of": [part("Conductor", metal, cond, f"{mm2} mm2 stranded" + (", 1350 grade, as 6061 here" if al else "")), part("Insulation, screen and jacket", PTFE, ins, "2 mm PTFE, a braid screen and a thin jacket (the braid's copper counted here)")]},
         "elbow": {"radius": r(od * 8, 3), "mass": r((cond + ins) * od * 8 * math.pi / 2, 4)},
         "connector": f"connector.{ck}", "carries": "power", "template": "template.feeder",
@@ -314,7 +324,9 @@ for slug, name, amps, v, pins, kg, l, w, h, iname, std in PLUGS:
         "built_of": ([part(*p) for p in BOUND[slug][0]] if slug in BOUND else [part("Contacts", CU, cu, "silver-plated brass, as copper here"), part("Housings and seals", PE if v < 1000 else RUB, kg - cu, "polyamide housings, as UHMW polyethylene here" if v < 1000 else "rubber-moulded body")]) + plate,
         "provides": "both", "template": "template.plug-socket" if v < 1000 and pins == 5 and amps <= 125 else "template.single-pole" if slug.startswith("powerlock") else "template.coupler",
         "basis": [{"of": ["physical"], "tier": "derived", "review": True, "note": f"From {BOUND[slug][1]}."} if slug in BOUND else {"of": ["physical"], "tier": "invented", "review": True, "note": MEMORY}]},
-        {"slug": slug, "name": iname, "domain": "power", "kind": "plug-socket", "media": ["power"], "halves": "male-female", "make": "manual", "standard": std})
+        {"slug": slug, "name": iname, "domain": "power", "kind": "plug-socket", "media": ["power"], "halves": "male-female", "make": "manual", "standard": std,
+         **({"keys": ["L1", "L2", "L3", "N", "PE"], "contacts": [{"id": "1"}]} if slug.startswith("powerlock") else
+            {"contacts": [{"id": c} for c in (["L1", "L2", "L3", "N", "PE"] if pins == 5 else ["L1", "L2", "L3"])]})})
 
 RAILS = [(100, 25, 2.6), (250, 60, 4.3), (500, 125, 7.1), (1000, 250, 12.6)]     # (A, mm2 copper a pole, kg/m)
 for amps, mm2, kgm in RAILS:

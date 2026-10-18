@@ -20,6 +20,10 @@ face:
   height: 0.6
 size: 0.0004
 standard: a mining-type 11 kV plug coupler (the registry's)
+contacts:
+- id: L1
+- id: L2
+- id: L3
 basis:
 - of:
   - envelope
