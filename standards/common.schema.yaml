@@ -251,6 +251,8 @@ definitions:
             colour: { type: array, items: { type: integer, minimum: 0, maximum: 255, x-unit: "1" }, description: "RGB" }
             label: { type: string }
             shown: { type: boolean }
+            style: { type: string, enum: [solid, dashed, dotted, dashdot], description: "A line row's line style." }
+            width: { type: number, minimum: 0, x-unit: "1", description: "A line row's width, pixels at 1,000 px a picture." }
             shown_when: { type: string, description: "When the page shows the row (always, ctx...)." }
   said_as:
     description: "How the sim or its people say a figure, beside the registry's SI value: their unit and the factor from it to SI (SI = value x factor)."

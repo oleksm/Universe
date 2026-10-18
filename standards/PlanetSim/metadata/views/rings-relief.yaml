@@ -20,6 +20,9 @@ implementations:
 - where: planet-forge crates/planet-layers/src/layers/relief.rs
   state: current
   note: the viewer layer
+- where: planet-forge crates/relief src/draw.rs + legend.rs (planet-relief demo)
+  state: building
+  note: 'the vector relief: every kind its own colour and line style'
 status: draft
 legend:
   title: 'Relief: classes and features'
@@ -80,6 +83,116 @@ legend:
   - key: each:feature-kind
     kind: line
     label: '{kind}: {n}{worn} · #{first}–#{last}'
+  - kind: head
+    label: Relief features, each kind its own colour and line style (vector relief)
+  - key: kind:suture
+    kind: line
+    colour:
+    - 178
+    - 24
+    - 43
+    style: solid
+    width: 3.0
+    label: 'suture: {n_suture}'
+  - key: kind:arc-front
+    kind: line
+    colour:
+    - 230
+    - 97
+    - 1
+    style: dashdot
+    width: 2.5
+    label: 'arc front: {n_arc_front}'
+  - key: kind:rift-margin
+    kind: line
+    colour:
+    - 94
+    - 60
+    - 153
+    style: solid
+    width: 2.5
+    label: 'rift margin: {n_rift_margin}'
+  - key: kind:orogen-axis
+    kind: line
+    colour:
+    - 140
+    - 81
+    - 10
+    style: solid
+    width: 3.0
+    label: 'orogen axis: {n_orogen_axis}'
+  - key: kind:thrust-front
+    kind: line
+    colour:
+    - 191
+    - 129
+    - 45
+    style: dashed
+    width: 2.5
+    label: 'thrust front: {n_thrust_front}'
+  - key: kind:subsidiary-ridge
+    kind: line
+    colour:
+    - 223
+    - 194
+    - 125
+    style: dotted
+    width: 2.5
+    label: 'subsidiary ridge: {n_subsidiary_ridge}'
+  - key: kind:anticline-axis
+    kind: line
+    colour:
+    - 27
+    - 120
+    - 55
+    style: solid
+    width: 1.8
+    label: 'anticline axis: {n_anticline_axis}'
+  - key: kind:syncline-axis
+    kind: line
+    colour:
+    - 90
+    - 174
+    - 97
+    style: dashed
+    width: 1.8
+    label: 'syncline axis: {n_syncline_axis}'
+  - key: kind:rift-floor-axis
+    kind: line
+    colour:
+    - 33
+    - 102
+    - 172
+    style: solid
+    width: 2.5
+    label: 'rift floor axis: {n_rift_floor_axis}'
+  - key: kind:rift-shoulder
+    kind: line
+    colour:
+    - 146
+    - 197
+    - 222
+    style: dashed
+    width: 2.5
+    label: 'rift shoulder: {n_rift_shoulder}'
+  - key: kind:normal-fault-scarp
+    kind: line
+    colour:
+    - 118
+    - 42
+    - 131
+    style: dotted
+    width: 2.0
+    label: 'normal fault scarp: {n_normal_fault_scarp}'
+  - key: kind:great-escarpment
+    kind: line
+    colour:
+    - 1
+    - 102
+    - 94
+    style: solid
+    width: 3.0
+    label: 'great escarpment: {n_great_escarpment}'
 styles:
 - key: coast
   colour:
