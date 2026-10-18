@@ -13,4 +13,116 @@ shown: true
 implementations:
 - where: planet-trees-pgs2 ~/git/planet-trees-pgs2/tools/layer_lines.py:rings (375)
   state: reference
+- where: planet-forge crates/planet-layers/src/layers/climate.rs
+  state: current
+  note: the viewer layer
 status: draft
+legend:
+  title: Climate
+  rows:
+  - kind: head
+    label: Climate from the relief
+  - key: dry
+    kind: fill
+    colour:
+    - 210
+    - 180
+    - 120
+    label: 'dry: rain under ~0.1 m/yr'
+  - key: moderate
+    kind: fill
+    colour:
+    - 120
+    - 175
+    - 90
+    label: 'moderate: ~0.4 m/yr'
+  - key: wet
+    kind: fill
+    colour:
+    - 30
+    - 90
+    - 170
+    label: 'wet: rain over ~2 m/yr (windward, tropics)'
+  - key: wind
+    kind: arrow
+    colour:
+    - 40
+    - 40
+    - 40
+    label: surface wind
+  - key: freeze
+    kind: line
+    colour:
+    - 255
+    - 255
+    - 255
+    label: freezing line (mean 0 °C)
+  - key: cold
+    kind: line
+    colour:
+    - 90
+    - 0
+    - 140
+    label: 'cold limit (mean -6 °C: permafrost)'
+  - key: desert
+    kind: line
+    colour:
+    - 200
+    - 40
+    - 30
+    label: desert margin (evaporation twice the rain)
+  - kind: head
+    label: Glacial and warm cycles (last 2.6 Myr)
+  - key: ice-lgm
+    kind: fill
+    colour:
+    - 235
+    - 240
+    - 245
+    label: ice at the last glacial maximum
+  - key: ice-limit
+    kind: line
+    colour:
+    - 0
+    - 140
+    - 200
+    label: limit of ice in any cycle
+  - key: lowstand
+    kind: dot
+    colour:
+    - 0
+    - 60
+    - 120
+    label: shoreline at glacial low sea level
+styles:
+- key: coast
+  colour:
+  - 0
+  - 0
+  - 0
+- key: base-land
+  colour:
+  - 200
+  - 196
+  - 186
+- key: base-sea
+  colour:
+  - 205
+  - 220
+  - 232
+- key: sea
+  colour:
+  - 215
+  - 225
+  - 235
+- key: ice-blend
+  colour:
+  - 255
+  - 255
+  - 255
+basis:
+- of:
+  - legend
+  - styles
+  tier: derived
+  note: 'planets, 17 Oct 2026: the viewer layers (planet-forge planet-layers), from planet-trees-pgs2 context_view.py / layer_lines.py.'

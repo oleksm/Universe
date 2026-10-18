@@ -15,4 +15,202 @@ shown: true
 implementations:
 - where: planet-trees-pgs2 ~/git/planet-trees-pgs2/tools/layer_lines.py:rings (348)
   state: reference
+- where: planet-forge crates/planet-layers/src/layers/zones.rs
+  state: current
+  note: the viewer layer
 status: draft
+legend:
+  title: Zones
+  rows:
+  - kind: head
+    label: Rock provinces (surface unit)
+  - key: rock:morb
+    kind: fill
+    colour:
+    - 40
+    - 60
+    - 90
+    label: ocean-floor basalt
+  - key: rock:arc_volcanic
+    kind: fill
+    colour:
+    - 190
+    - 90
+    - 70
+    label: andesite volcanics
+  - key: rock:arc_plutonic
+    kind: fill
+    colour:
+    - 230
+    - 160
+    - 160
+    label: granodiorite batholith
+  - key: rock:basement
+    kind: fill
+    colour:
+    - 150
+    - 120
+    - 160
+    label: gneiss basement
+  - key: rock:greenstone
+    kind: fill
+    colour:
+    - 90
+    - 140
+    - 100
+    label: greenstone
+  - key: rock:schist
+    kind: fill
+    colour:
+    - 170
+    - 150
+    - 190
+    label: schist and gneiss
+  - key: rock:granite
+    kind: fill
+    colour:
+    - 240
+    - 190
+    - 190
+    label: granite
+  - key: rock:flood_basalt
+    kind: fill
+    colour:
+    - 90
+    - 70
+    - 60
+    label: flood basalt
+  - key: rock:carbonate
+    kind: fill
+    colour:
+    - 120
+    - 200
+    - 220
+    label: limestone and dolomite
+  - key: rock:clastic
+    kind: fill
+    colour:
+    - 230
+    - 200
+    - 120
+    label: sandstone and shale
+  - key: rock:ophiolite
+    kind: fill
+    colour:
+    - 80
+    - 140
+    - 90
+    label: ophiolite
+  - key: rock:rift
+    kind: fill
+    colour:
+    - 200
+    - 120
+    - 90
+    label: rift basalt and red beds
+  - key: rock:iron_formation
+    kind: fill
+    colour:
+    - 150
+    - 60
+    - 60
+    label: iron formation
+  - key: rock:primary_crust
+    kind: fill
+    colour:
+    - 172
+    - 160
+    - 150
+    label: primary crust
+    shown_when: present
+  - key: rock:intercrater_plains
+    kind: fill
+    colour:
+    - 150
+    - 138
+    - 122
+    label: intercrater plains
+    shown_when: present
+  - key: rock:high_ti_basalt
+    kind: fill
+    colour:
+    - 70
+    - 82
+    - 118
+    label: high-titanium basalt
+    shown_when: present
+  - key: rock:impact_melt
+    kind: fill
+    colour:
+    - 112
+    - 96
+    - 108
+    label: impact melt rock
+    shown_when: present
+  - key: rock:impact_breccia
+    kind: fill
+    colour:
+    - 168
+    - 152
+    - 136
+    label: impact breccia and ejecta
+    shown_when: present
+  - key: rock:anorthosite
+    kind: fill
+    colour:
+    - 228
+    - 228
+    - 218
+    label: anorthosite highlands
+    shown_when: present
+  - key: rock:kreep
+    kind: fill
+    colour:
+    - 196
+    - 122
+    - 64
+    label: kreep basalt
+    shown_when: present
+  - key: plate-edge
+    kind: line
+    colour:
+    - 255
+    - 255
+    - 255
+    label: plate edges
+  - kind: head
+    label: Other zones
+  - kind: fill
+    label: climate zones
+    shown: false
+  - kind: fill
+    label: ice extent per cycle
+    shown: false
+  - kind: fill
+    label: permafrost
+    shown: false
+  - kind: fill
+    label: sand seas
+    shown: false
+styles:
+- key: coast
+  colour:
+  - 0
+  - 0
+  - 0
+- key: base-land
+  colour:
+  - 200
+  - 196
+  - 186
+- key: base-sea
+  colour:
+  - 205
+  - 220
+  - 232
+basis:
+- of:
+  - legend
+  - styles
+  tier: derived
+  note: 'planets, 17 Oct 2026: the viewer layers (planet-forge planet-layers), from planet-trees-pgs2 context_view.py / layer_lines.py.'

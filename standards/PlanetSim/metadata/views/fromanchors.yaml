@@ -3,14 +3,93 @@
 identity:
   key: planet-view.fromanchors
   name: world from anchors
-  about: unverified (producer outside this inventory)
+  about: the heights rebuilt from the planet graph alone (a thin plate through its loops, shores, rivers and anchors), inland
+    water by its depth, in the samples' tints
 title: world from anchors
 row: top (history views)
 file_suffix: _fromanchors.png
 draws:
-  words: unverified (producer outside this inventory)
+  words: the heights rebuilt from the planet graph alone (a thin plate through its loops, shores, rivers and anchors), inland
+    water by its depth, in the samples' tints
 shown: true
 implementations:
 - where: planet-trees-pgs2 tools/planet_vectors.py / planet_anchors.py sheet() (not inventoried; unverified which writes which)
   state: reference
+- where: planet-forge crates/viewer/src/layers/anchors.rs
+  state: current
+  note: the viewer
 status: draft
+legend:
+  title: the world from the anchor model
+  source: planet_anchors.py:169-200 unfold, 277-298 relief_with_water
+  rows:
+  - kind: fill
+    label: sea at -8000 m
+    colour:
+    - 8
+    - 20
+    - 60
+    shown_when: always
+  - kind: fill
+    label: sea at -4000 m
+    colour:
+    - 20
+    - 50
+    - 110
+    shown_when: always
+  - kind: fill
+    label: sea at -1000 m
+    colour:
+    - 40
+    - 90
+    - 160
+    shown_when: always
+  - kind: fill
+    label: sea at 0 m
+    colour:
+    - 90
+    - 150
+    - 200
+    shown_when: always
+  - kind: fill
+    label: land at 0 m
+    colour:
+    - 70
+    - 120
+    - 60
+    shown_when: always
+  - kind: fill
+    label: land at 500 m
+    colour:
+    - 120
+    - 150
+    - 80
+    shown_when: always
+  - kind: fill
+    label: land at 1500 m
+    colour:
+    - 170
+    - 150
+    - 100
+    shown_when: always
+  - kind: fill
+    label: land at 3000 m
+    colour:
+    - 140
+    - 110
+    - 90
+    shown_when: always
+  - kind: fill
+    label: land at 5000 m
+    colour:
+    - 230
+    - 230
+    - 235
+    shown_when: always
+basis:
+- of:
+  - legend
+  - draws
+  tier: derived
+  note: 'planets, 17 Oct 2026: the viewer port (crates/viewer), from planet-trees-pgs2 tools/planet_vectors.py, planet_form.py
+    and planet-sim preview.py, look.py.'

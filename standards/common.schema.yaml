@@ -246,6 +246,7 @@ definitions:
           additionalProperties: false
           required: [kind, label]
           properties:
+            key: { type: string, description: "What the row stands for, for the tool that draws it (rock:morb, coast): its colour is found by it." }
             kind: { type: string, description: "head, fill, line, dot..." }
             colour: { type: array, items: { type: integer, minimum: 0, maximum: 255, x-unit: "1" }, description: "RGB" }
             label: { type: string }
