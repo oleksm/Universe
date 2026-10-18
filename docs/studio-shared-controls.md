@@ -1,21 +1,25 @@
 # Shared Studio flight controls
 
-Studio Test Drive and normal flight use `flight_input::sample` for keyboard/mouse
-commands, `manual::{held_for,labels_for}` for spatial numpad bindings, and
-`world::flight_control` for rate demand, bounded actuator allocation, manual
-firing and angular integration. The normal pilot retains its existing autopilot,
-cursor and threaded-input gates.
+The shipyard's Test Drive flies a ship exactly as the game does: the same keys,
+the same rules, one implementation.
 
-- W/S adjusts forward throttle at the normal rate.
-- Shift+WASDQE commands translation; Shift+E is upward lift.
-- Arrows/A/D/Q/E and grabbed mouse command body turn rates.
-- G switches assisted/manual control; manual uses the same numpad layout and W
-  for main engines, with no hidden braking.
-- Assisted rates come from the placed flight computer. Without one, Studio uses
-  manual mode and explains what is missing.
-- Releasing a turn commands zero rate (braking), not a level attitude. There is
-  no separate Studio attitude target or tilt cap.
-- Saved design axes, chase view and radar use -Z forward, +X right, +Y up.
+- **Hands:** `flight_input::sample` (stick, translation, throttle delta) and
+  `manual::held_for` (numpad jets) read the keys, in the game crate.
+- **Rules:** `universe_avionics::helm` (client-side pilot software, beside the
+  autopilots: the core never holds a pilot's intentions) turns them into orders
+  for the ship as it is: J powers up or down only while set down; G (manual
+  thrusters, flight computer off) only in flight, outside the hyperdrive, and
+  going manual lets the autopilots go; an autopilot taken up or a landing puts
+  the flight computer back on; jets are ordered only when the held set changes;
+  while an autopilot flies the hands are off; otherwise W/S move the throttle,
+  Shift+WASDQE the thrusters, arrows/A/D/Q/E and the grabbed mouse the stick. With
+  thrust set and none given, it says the flight computer can't keep the ship
+  straight (no thrusters to turn it).
+- **Sending:** the game sends the orders through its cockpit
+  (`App::pilot_input`); the test drive applies them to its sandbox ship
+  (`LocalFlight::order`). The keys shown for the ship's state come from
+  `flight_input::keys` in both (the HUD's manual cells, the test drive's line).
+- The test drive's own keys are the sandbox's only: Z air/reset, R reset, Esc.
 
 The Balance stand uses the same bounded allocator for trimmed lift. Its
 untrimmed collective and single-actuator diagnostic remain explicit stand tools.

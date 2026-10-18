@@ -106,6 +106,29 @@ impl LocalFlight {
         Ok(())
     }
 
+    /// Carry out a helm's order on this sandbox's ship, as the game's
+    /// cockpit does on the player's.
+    pub fn order(&mut self, order: &universe_sim::avionics::helm::Order) {
+        use universe_sim::avionics::helm::{throttle_after, Order};
+        match order {
+            Order::Ship(c) => {
+                if c.power.is_some() {
+                    self.commands.power = c.power;
+                }
+                if c.manual.is_some() {
+                    (self.commands.manual, self.commands.throttle, self.commands.rcs) = (c.manual, c.throttle, c.rcs);
+                }
+                if c.jets.is_some() {
+                    self.commands.jets = c.jets;
+                }
+            }
+            Order::Throttle(delta) => self.commands.throttle = throttle_after(&self.ship, *delta),
+            Order::Thrusters(rcs) => self.commands.rcs = *rcs,
+            // (No autopilot flies in the sandbox.)
+            Order::ReleaseAutopilots => {}
+        }
+    }
+
     pub fn density(&self) -> f64 {
         let sys = self.world.system(0);
         let mut positions = Vec::new();
@@ -290,7 +313,10 @@ mod tests {
     #[test]
     fn a_descent_like_the_autopilots_touches_down_and_comes_to_rest() {
         // Sinking at 1.5 m/s on the lift thrusters, engines off once down (as
-        // `avionics::landing` does): landed, no leg lost, no hard landing.
+        // `avionics::landing` does), the pilot's hands through the game's helm:
+        // landed, no leg lost, no hard landing.
+        use universe_sim::avionics::helm::{Helm, HelmInput};
+        let mut helm = Helm::default();
         let mut f = dropped(20.0, 0.0);
         f.commands.power = Some(true);
         let dt = universe_sim::clocks::tick();
@@ -299,7 +325,10 @@ mod tests {
                 let down = f.ship.ground.as_ref().is_some_and(|g| g.last.touching > 0);
                 let up = f.ship.position.normalize();
                 let accel = (up * -1.5 - f.ship.velocity) * 2.0 + up * 9.81;
-                f.commands.rcs = if down { DVec3::ZERO } else { f.ship.thruster_command(f.ship.orientation.inverse() * accel) };
+                let translation = if down { DVec3::ZERO } else { f.ship.thruster_command(f.ship.orientation.inverse() * accel) };
+                for o in helm.fly(&f.ship, false, &HelmInput { translation, ..Default::default() }).orders {
+                    f.order(&o);
+                }
             }
             f.advance(dt).unwrap();
         }
@@ -308,9 +337,12 @@ mod tests {
         assert!(!f.events.iter().any(|e| matches!(e, ShipEvent::HardLanding { .. } | ShipEvent::Crashed { .. })), "{:?}", f.events);
         // At rest and powered up with nothing commanded, it stays put: it never
         // turns in place (the old weld spun a powered landed ship about its centre).
+        // (Set down, the helm's rules: manual thrusters refused, J powers up.)
+        assert_eq!(helm.fly(&f.ship, false, &HelmInput { manual: true, ..Default::default() }).say, Some("MANUAL THRUSTERS IN FLIGHT ONLY"));
         let (p, q) = (f.ship.position, f.ship.orientation);
-        f.commands.rcs = DVec3::ZERO;
-        f.commands.power = Some(true);
+        for o in helm.fly(&f.ship, false, &HelmInput { systems: true, ..Default::default() }).orders {
+            f.order(&o);
+        }
         fly(&mut f, 3.0);
         assert!(f.ship.powered && matches!(f.ship.state, ShipState::Landed { .. }));
         assert!(f.ship.position.distance(p) < 1e-6 && f.ship.orientation.angle_between(q) < 1e-9, "never turned in place");

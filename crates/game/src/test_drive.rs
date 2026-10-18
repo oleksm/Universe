@@ -91,7 +91,8 @@ pub struct Drive {
     propellant: f64,
     mass: f64,
     throttle: f64,
-    assist: bool,
+    /// The pilot's helm: the game's flying rules (see `universe_avionics::helm`).
+    helm: universe_sim::avionics::helm::Helm,
     air: usize,
     time: f64,
     throttles: Vec<f64>,
@@ -170,7 +171,7 @@ impl Drive {
             propellant: 0.0,
             mass: craft.mass,
             throttle: 0.0,
-            assist: craft.rates.is_some(),
+            helm: Default::default(),
             air,
             time: 0.0,
             throttles: Vec::new(),
@@ -204,15 +205,6 @@ impl Drive {
         self.grabbed = false;
         self.mouse_pending = Vec2::ZERO;
     }
-    pub fn set_assist(&mut self, on: bool) {
-        self.assist = on && self.craft.rates.is_some();
-        if let Some(f) = &mut self.flight {
-            f.commands.manual = Some(!self.assist);
-            f.commands.throttle = 0.0;
-            f.commands.rcs = DVec3::ZERO;
-            f.commands.jets = Some(0);
-        }
-    }
     fn say(&mut self, what: String) {
         if !self.events.contains(&what) {
             self.events.push(what);
@@ -235,13 +227,6 @@ impl Drive {
             self.grabbed = grabbed;
             return;
         }
-        if crate::keys::pressed(input, crate::keys::Act::Manual) {
-            if !self.assist && self.craft.rates.is_none() {
-                self.say("FIT A FLIGHT COMPUTER FOR ASSISTED CONTROL".into());
-            } else {
-                self.set_assist(!self.assist);
-            }
-        }
         let clicked = input.button_pressed(MouseButton::Left) && !self.grabbed;
         if clicked {
             self.grabbed = true;
@@ -262,19 +247,25 @@ impl Drive {
             self.cam_dist = (self.cam_dist * 0.88f32.powf(input.scroll)).clamp(3.0, 400.0);
         }
         if let Some(f) = &mut self.flight {
-            if crate::keys::pressed(input, crate::keys::Act::Systems) {
-                f.commands.power = Some(!f.commands.power.unwrap_or(f.ship.powered));
+            // The game's helm, for the pilot's hands; the orders go straight to
+            // this sandbox's ship (no autopilot here).
+            let hands = universe_sim::avionics::helm::HelmInput {
+                turn: pilot.turn,
+                translation: pilot.translation,
+                throttle_delta: pilot.throttle_delta,
+                held: crate::manual::held_for(input, &f.ship.spec().thrusters),
+                systems: crate::keys::pressed(input, crate::keys::Act::Systems),
+                manual: crate::keys::pressed(input, crate::keys::Act::Manual),
+            };
+            let out = self.helm.fly(&f.ship, false, &hands);
+            for order in &out.orders {
+                f.order(order);
             }
-            if self.assist {
-                f.commands.throttle = (f.commands.throttle + pilot.throttle_delta).clamp(0.0, 1.0);
-                f.commands.rcs = pilot.translation;
-                f.commands.turn = Some(pilot.turn);
-                f.commands.jets = Some(0);
-            } else {
-                f.commands.throttle = 0.0;
-                f.commands.rcs = DVec3::ZERO;
-                f.commands.turn = None;
-                f.commands.jets = Some(crate::manual::held_for(input, &f.ship.spec().thrusters));
+            f.commands.turn = Some(out.turn);
+            if let Some(line) = out.say
+                && !self.events.iter().any(|e| e == line)
+            {
+                self.events.push(line.into());
             }
             let before = f.world.time;
             let result = f.advance(dt);
@@ -300,7 +291,6 @@ impl Drive {
         self.propellant = s.fuel;
         self.mass = s.mass();
         self.throttle = s.throttle;
-        self.assist = !f.commands.manual.unwrap_or(s.manual);
         self.time = f.world.time;
         self.throttles.clone_from(&s.jets);
         self.stopped = matches!(s.state, ShipState::Destroyed { .. });
@@ -923,7 +913,7 @@ pub fn draw(frame: &mut Frame, d: &Drive) {
             if up_now.y < 0.0 { "UPSIDE DOWN" } else { "" }
         ),
         control_status(d),
-        lift_help(d, &manual_labels),
+        flight_keys(d),
         format!(
             "LIVE CAPACITOR {:.3} MJ   SKIN {:.1} K   FUEL {:.0} KG   MASS {:.2} T",
             d.energy / 1e6,
@@ -1229,72 +1219,34 @@ fn profile_line(d: &Drive) -> String {
 }
 
 fn control_status(d: &Drive) -> String {
-    if d.flight.is_none() {
+    let Some(f) = &d.flight else {
         return "DRIVE UNAVAILABLE - COMPILER ERRORS BELOW - ESC BACK".into();
-    }
-    if d.flight.as_ref().is_some_and(|f| !f.ship.powered) {
-        return format!(
-            "FLIGHT SYSTEMS OFF - {} START ENGINES",
-            crate::keys::key(crate::keys::Act::Systems)
-        );
-    }
+    };
     if d.stopped {
         return "CRASHED - R RESTARTS THE TEST DRIVE".into();
     }
-    if d.assist {
-        format!(
-            "FORWARD THROTTLE {:.0}% - FLIGHT COMPUTER ON - G FOR MANUAL",
-            d.throttle * 100.0
-        )
-    } else if d.craft.rates.is_none() {
-        "POWER ON / MANUAL ONLY - FIT A FLIGHT COMPUTER FOR ASSIST".into()
+    let ship = &f.ship;
+    if !ship.powered {
+        "FLIGHT SYSTEMS DOWN".into()
+    } else if ship.manual {
+        "MANUAL THRUSTERS - FLIGHT COMPUTER OFF".into()
     } else {
-        "POWER ON / MANUAL - G ENABLES THE FITTED FLIGHT COMPUTER".into()
+        format!("FLIGHT COMPUTER ON - THROTTLE {:.0}%", ship.throttle * 100.0)
     }
 }
 
-fn lift_help(d: &Drive, labels: &[String]) -> String {
+/// The keys that fly it now: the game's own (`flight_input::keys`).
+fn flight_keys(d: &Drive) -> String {
     let Some(f) = &d.flight else {
         return "BALANCE REMAINS AVAILABLE FOR DESIGN ANALYSIS".into();
     };
-    let thrusters = &f.ship.spec().thrusters;
-    if !thrusters.iter().any(|a| a.push.y > 0.5) {
-        return "NO UPWARD ENGINES FITTED - W COMMANDS FORWARD".into();
-    }
-    if d.assist {
-        return "HOLD SHIFT+E FOR UPWARD THRUST - W/S SET FORWARD THROTTLE".into();
-    }
-    let up: Vec<_> = thrusters
-        .iter()
-        .zip(labels)
-        .filter(|(a, _)| a.push.y > 0.5)
-        .map(|(_, key)| {
-            if key.is_empty() {
-                "UNBOUND"
-            } else {
-                key.as_str()
-            }
-        })
-        .collect();
-    format!(
-        "UPWARD ENGINES: HOLD NUMPAD [ {} ] - NO AUTOMATIC STABILISATION",
-        up.join(" ")
-    )
+    crate::flight_input::keys(&f.ship).iter().map(|(k, what)| format!("{k} {what}")).collect::<Vec<_>>().join("   ")
 }
 
+/// The test drive's own keys (the sandbox, not the ship).
 fn control_help(d: &Drive) -> String {
     if d.stopped {
         return "R RESTART - ESC RELEASE MOUSE / BACK".into();
     }
-    let power = crate::keys::key(crate::keys::Act::Systems);
-    let manual = crate::keys::key(crate::keys::Act::Manual);
-    if d.assist {
-        format!(
-            "CLICK: STEER - W/S THROTTLE - SHIFT+WASDQE TRANSLATE - ARROWS/A/D/Q/E TURN - {manual} MANUAL - {power} START ENGINES - Z AIR/RESET - R RESET - ESC BACK"
-        )
-    } else {
-        format!(
-            "HOLD ENGINE NUMPAD KEYS - W MAINS - {manual} ASSIST - {power} START ENGINES - Z AIR/RESET - R RESET - ESC RELEASE/BACK"
-        )
-    }
+    "Z AIR/RESET - R RESET - ESC RELEASE MOUSE / BACK".into()
 }

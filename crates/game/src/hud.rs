@@ -1681,7 +1681,12 @@ fn action_grid(frame: &mut Frame, app: &App) {
         }
         _ if ship.manual => (
             "NAV - MANUAL THRUSTERS",
-            vec![b(Act::Manual, "THRUSTERS", Lamp::On), c("NUM", "FIRE A JET", Lamp::Off), c("W", "MAINS", Lamp::Off), c("F7", "THRUSTERS PANEL", if app.show_thrusters { Lamp::On } else { Lamp::Off })],
+            crate::flight_input::keys(ship)
+                .into_iter()
+                .enumerate()
+                .map(|(k, (key, label))| c(&key, label, if k == 0 { Lamp::On } else { Lamp::Off }))
+                .chain([c("F7", "THRUSTERS PANEL", if app.show_thrusters { Lamp::On } else { Lamp::Off })])
+                .collect(),
         ),
         _ if ship.hyperdrive => (
             "NAV - HYPERDRIVE",
