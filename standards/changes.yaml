@@ -2553,10 +2553,10 @@
 - { record: planet-process.crater-relief-stamp, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "ea982382b5f4123f" }
 - { record: planet-process.crater-shape, at: "2026-10-18T01:09:30Z", status: "", summary: "changed: params, implementations, basis", sha: "cc1518beff5bbec6" }
 - { record: planet-process.crust-fit, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "f4fb0b5900996349" }
-- { record: planet-process.crust-flow-cap-delamination, at: "2026-10-17T22:25:37Z", status: "", summary: "changed: reads, writes, params, events_emitted", sha: "fad22040d5e15e03" }
+- { record: planet-process.crust-flow-cap-delamination, at: "2026-10-18T19:00:55Z", status: "", summary: "changed: params, basis", sha: "c52c6708f548f90d" }
 - { record: planet-process.crust-read, at: "2026-10-17T22:25:37Z", status: "", summary: "changed: reads, writes", sha: "49b3953dc01c3ec5" }
 - { record: planet-process.crust-remesh, at: "2026-10-17T23:17:32Z", status: "", summary: "changed: events_emitted", sha: "abe8782f51ed5e7a" }
-- { record: planet-process.crust-wear-to-shelf, at: "2026-10-17T23:17:32Z", status: "", summary: "changed: reads, writes", sha: "0e0c30708d1562b8" }
+- { record: planet-process.crust-wear-to-shelf, at: "2026-10-18T19:00:55Z", status: "", summary: "changed: params, basis", sha: "bf59367dc5f3e262" }
 - { record: planet-process.denudation-and-rivers, at: "2026-10-17T23:17:32Z", status: "", summary: "changed: reads, writes", sha: "fbc5e2e10f12e90b" }
 - { record: planet-process.deposit-contents, at: "2026-10-18T01:09:30Z", status: "", summary: "changed: implementations", sha: "af5d12495ee9e186" }
 - { record: planet-process.deposit-draw, at: "2026-10-18T01:09:30Z", status: "", summary: "changed: params, implementations, basis", sha: "35f3b99ab16fe826" }

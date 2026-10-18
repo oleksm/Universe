@@ -146,6 +146,26 @@ params:
   meaning: 'unverified: the code names it kernel cutoff without saying what it is'
   source: stages/plates.py:483
   note: the continents' spread (_continental), as crust-read's
+- name: DENUDATION_PER_RELIEF
+  value: 4.864e-15
+  unit: 1/s
+  said_as:
+    unit: mm/kyr per m
+    factor: 0.1535
+  meaning: 'vector plates: continental crust wears down by this times its height above the sea (local relief stands in for it); isostasy gives back BUOYANCY of each metre worn, so the height decays as exp(-BUOYANCY k t), e-folding ~43
+    Myr'
+  source: Ahnert 1970 (denudation 0.1535 mm/kyr per m of local relief, mid-latitude basins)
+  note: 'height above the sea as the relief is an approximation (relief is less than height on plateaus); from memory, 18 Oct 2026: verify'
+- name: SEDIMENT_EVERY
+  value: 4.0
+  unit: '1'
+  meaning: 'vector plates: steps between laying the worn crust on the margins (numerical; the Python spread every 4 steps)'
+- name: MARGIN_WEDGE
+  value: 200000.0
+  unit: m
+  meaning: 'vector plates: width of the ring around a plate''s continents where the worn crust is laid (shelf, slope and rise: the passive-margin sediment wedge)'
+  source: 'passive margins: shelf ~80 km, shelf to rise some 100-300 km (Shepard 1963; Kennett 1982)'
+  note: 'from memory, 18 Oct 2026: verify'
 random_draws:
 - none
 invariants:
@@ -166,6 +186,13 @@ basis:
   - writes
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - params.DENUDATION_PER_RELIEF
+  - params.MARGIN_WEDGE
+  tier: sourced
+  source: Ahnert 1970; Shepard 1963; Kennett 1982
+  review: true
+  note: 'Figures from memory, 18 Oct 2026: check.'
 events_emitted:
 - event: planet-event.ledger-row
   where: 'forge: the step''s volume moved, shed, worn, denuded or laid on the shelf (the Python''s ledger rows)'

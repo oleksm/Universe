@@ -136,6 +136,23 @@ params:
   meaning: 'unverified: the code names it kernel cutoff without saying what it is'
   source: stages/plates.py:483
   note: the continents' spread (_continental), as crust-read's
+- name: LOWER_CRUST_CHANNEL
+  value: 15000.0
+  unit: m
+  meaning: 'vector plates: thickness of the weak lower-crust channel that flows under thick crust; thickness diffuses with kappa = h^3 rho_c g (1 - rho_c/rho_m) / (12 eta) (Poiseuille channel under the surface slope)'
+  source: Clark & Royden 2000 (lower-crust channel ~15 km under eastern Tibet); Turcotte & Schubert 2014 (channel flow)
+  note: 'from memory, 18 Oct 2026: verify; with 1e19 Pa s it gives kappa 1.2e-4 m2/s, the order of the Python chosen SPREAD (1.9e-4)'
+- name: LOWER_CRUST_VISCOSITY
+  value: 1.0e+19
+  unit: Pa s
+  meaning: 'vector plates: viscosity of the hot lower crust under thick crust (the channel)'
+  source: Clark & Royden 2000 (~1e18 Pa s under eastern Tibet); Bird 1991 (1e19-1e21 for thickened crust)
+  note: '1e19 inside the published range (from memory, 18 Oct 2026: verify)'
+- name: CRUST_DENSITY
+  value: 2800.0
+  unit: kg/m3
+  meaning: 'vector plates: continental crust density (the channel flow law; BUOYANCY = 1 - 2800/3300)'
+  source: Turcotte & Schubert 2014
 random_draws:
 - none
 invariants:
@@ -159,6 +176,14 @@ basis:
   - writes
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - params.LOWER_CRUST_CHANNEL
+  - params.LOWER_CRUST_VISCOSITY
+  - params.CRUST_DENSITY
+  tier: sourced
+  source: Clark & Royden 2000; Bird 1991; Turcotte & Schubert 2014
+  review: true
+  note: 'Figures from memory, 18 Oct 2026: check.'
 events_emitted:
 - event: planet-event.ledger-row
   where: 'forge: the step''s volume moved, shed, worn, denuded or laid on the shelf (the Python''s ledger rows)'
