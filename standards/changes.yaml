@@ -4393,7 +4393,7 @@
 - { record: template.wall-insulated, at: "2026-10-17T23:15:00Z", status: "", summary: "changed: visual", sha: "bbe21ff7d2410107" }
 - { record: template.wall-roller, at: "2026-10-17T21:45:11Z", status: "", summary: "first tracked", sha: "300ff4cdf302d4e7" }
 - { record: template.wall-shopfront, at: "2026-10-17T21:45:11Z", status: "", summary: "first tracked", sha: "b6486dd1306087e5" }
-- { record: template.wall-window, at: "2026-10-17T21:45:11Z", status: "", summary: "first tracked", sha: "393a28673200baa9" }
+- { record: template.wall-window, at: "2026-10-18T00:07:49Z", status: "", summary: "changed: visual", sha: "dfedc8105c799a45" }
 - { record: unit.alloy-bins-8, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "f164893e2dc287ed" }
 - { record: unit.baghouse-200k, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "abfebdff23b38d30" }
 - { record: unit.baghouse-450k, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "4b73a94e4d25edcf" }
