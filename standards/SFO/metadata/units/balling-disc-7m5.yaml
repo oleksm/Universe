@@ -77,8 +77,13 @@ envelope:
 - [-4.46, -1.173, 8.385, -2.06, 0.773, 10.426]
 - [-2.38, 0.427, 7.388, -0.9, 1.665, 8.637]
 - [-1.22, 1.32, 6.734, -0.14, 2.25, 7.639]
+visual:
+  format: "freefall-model/1"
+  path: "models/balling-disc-7m5/v3"
+  manifest_sha256: "e7f93c2b25e9f3ace3a3dd341160b7147d8e799db6dc2bdb910f4e75f1a2a1ba"
+  version: 3
+  triangles: 4964
 life: 788940000
-visual: {format: freefall-model/1, path: models/balling-disc-7m5/v2, manifest_sha256: 28ced9e5efbee0034cfc9380404362c9083c88139469703aad09198bff57f6a9, version: 2, triangles: 4964}
 basis:
 - of: [physical, built_of, needs]
   tier: derived
