@@ -182,6 +182,25 @@ class NetworkTests(unittest.TestCase):
         stale_id = net.read(Path(stale.strip()) / 'manifest.json')['request']
         self.assertNotIn(stale_id, [m['id'] for _, m in api.unread('a')])
 
+    def test_aliases_route_both_ends_and_preserve_reply_threads(self):
+        net.save(self.root / 'aliases.json', {'a-old': 'a', 'b-old': 'b'})
+        mid = net.send('b-old', 'task', 'ping via aliases', 'a-old')
+        message = net.messages()[0]
+        self.assertEqual((message['from'], message['to']), ('a', 'b'))
+        self.assertEqual(len(api.unread('b-old')), 1)
+        net.send('a-old', 'done', 'pong', 'b-old', **{'reply-to': mid})
+        self.assertEqual(api.unread('a')[0][1]['reply_to'], mid)
+        sid = '11111111-1111-4111-8111-111111111111'
+        self.assertEqual(self.call(['bind', 'a-old', '--runtime', 'codex', '--session', sid])[0], 0)
+        self.assertEqual(api.conf()['a']['session'], sid)
+
+    def test_renamed_tmux_session_keeps_its_existing_socket(self):
+        net.update('a', lambda c: c.update(tmux_socket='agent-a-old'))
+        with patch('subprocess.run') as run:
+            run.return_value.returncode = 0
+            self.assertEqual(api.tx('agent-a'), ['tmux', '-L', 'agent-a-old'])
+        self.assertIn('agent-a', run.call_args.args[0])
+
     def test_register_bind_and_unknown_identity(self):
         self.assertEqual(self.call(['register', '../bad', '--cwd', str(self.root), '--runtime', 'codex'])[0], 2)
         self.assertEqual(self.call(['register', 'new', '--cwd', str(self.root), '--runtime', 'codex'])[0], 0)

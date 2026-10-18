@@ -45,16 +45,34 @@ def die(msg, code=2):
 
 def conf():
     try:
-        return json.load(open(CONF))
+        with open(CONF) as f:
+            return json.load(f)
     except FileNotFoundError:
         return {}
 
 
+def canonical(name):
+    if not name:
+        return name
+    try:
+        with open(os.path.join(HOME, "aliases.json")) as f:
+            aliases = json.load(f)
+    except FileNotFoundError:
+        return name
+    seen = set()
+    while name in aliases:
+        if name in seen:
+            die("cycle in agent aliases")
+        seen.add(name)
+        name = aliases[name]
+    return name
+
+
 def me(opt, cwd=None):
     if opt.get("as"):
-        return opt["as"]
+        return canonical(opt["as"])
     if os.environ.get("AGENTMSG_NAME"):
-        return os.environ["AGENTMSG_NAME"]
+        return canonical(os.environ["AGENTMSG_NAME"])
     cwd = os.path.realpath(cwd or os.getcwd())
     best = None
     for name, c in conf().items():
@@ -65,6 +83,7 @@ def me(opt, cwd=None):
 
 
 def box(name, part="new"):
+    name = canonical(name)
     p = os.path.join(MAIL, name, part)
     os.makedirs(p, exist_ok=True)
     return p
@@ -145,7 +164,7 @@ def parse(argv):
 def cmd_send(pos, opt):
     if len(pos) < 2:
         die("send <to> <kind> --summary '...'")
-    to, kind = pos[0], pos[1]
+    to, kind = canonical(pos[0]), pos[1]
     if kind not in KINDS:
         die(f"kind is one of {', '.join(KINDS)}")
     frm = me(opt) or die("who are you? --as NAME, $AGENTMSG_NAME, or a cwd in ~/.agents/agents.json")
@@ -279,7 +298,7 @@ def cmd_serve(pos, opt):
             print("agentmsg changed: restarting serve", flush=True)
             os.execv(sys.executable, [sys.executable, me_file, "serve"])
         agents = conf()
-        names = sorted(set(os.listdir(MAIL)) | set(agents)) if os.path.isdir(MAIL) else sorted(agents)
+        names = sorted({canonical(n) for n in (set(os.listdir(MAIL)) | set(agents))}) if os.path.isdir(MAIL) else sorted(agents)
         soonest = 60
         for name in names:
             if name == "_agentmsg" or agents.get(name, {}).get("handoff_pause") or starting(name):
@@ -334,6 +353,7 @@ def cmd_hook_claude(pos, opt):
     sid = data.get("session_id")
     owner = next((n for n, c in conf().items() if sid and c.get("session") == sid), None)
     name = opt.get("as") or os.environ.get("AGENTMSG_NAME") or owner or me(opt, data.get("cwd"))
+    name = canonical(name)
     if not name or (not owner and sid and conf().get(name, {}).get("session") not in (None, sid)):
         return          # (a Claude session of another agent in a shared folder: the folder alone does not make it this one)
     if conf().get(name, {}).get("handoff_pause"):
@@ -351,10 +371,11 @@ def tx(sess):
     other agent with it; a session started before that lives on the default server and is still found there. The server
     starts in a systemd scope of its own: started from inside a terminal it would belong to that terminal's scope, and
     closing that window would take every agent down with it (2026-10-10)."""
-    for sock in (["-L", sess], []):
+    socket_name = conf().get(sess.removeprefix("agent-"), {}).get("tmux_socket", sess)
+    for sock in (["-L", socket_name], []):
         if subprocess.run(["tmux", *sock, "has-session", "-t", sess], capture_output=True).returncode == 0:
             return ["tmux", *sock]
-    return ["tmux", "-L", sess]
+    return ["tmux", "-L", socket_name]
 
 
 def tmux_alive(sess):
@@ -433,7 +454,7 @@ def window(sess):
 def cmd_term(pos, opt, rest=None):
     if not pos:
         die("term <agent> [--here] [-- CMD ...]")
-    name = pos[0]
+    name = canonical(pos[0])
     agents = conf(); c = agents.get(name) or die(f"no agent {name} in {CONF}")
     if rest:
         c["term"] = rest
@@ -455,6 +476,7 @@ def cmd_term(pos, opt, rest=None):
 def cmd_up(pos, opt):
     """Every agent with a start command: started if down, a window on each nobody is watching (--no-windows: none), and
     the mail watcher running. Safe to run again at any time: what is up is left alone."""
+    pos = [canonical(name) for name in pos]
     if shutil.which("systemctl"):
         subprocess.run(["systemctl", "--user", "enable", "--now", "agentmsg.service"], capture_output=True)
     for name, c in conf().items():
@@ -472,7 +494,8 @@ def cmd_up(pos, opt):
 
 def cmd_deliver(pos, opt):
     """Type an agent's waiting mail into its terminal, after giving its prompt time to come up (used by term)."""
-    name, sess = pos[0], f"agent-{pos[0]}"
+    name = canonical(pos[0])
+    sess = f"agent-{name}"
     time.sleep(float(opt.get("delay", 12)))
     got = unread(name)
     if got and wakes(got) and tmux_alive(sess) and not conf().get(name, {}).get("handoff_pause"):
@@ -507,7 +530,7 @@ def cmd_open(pos, opt):
 
 def cmd_who(pos, opt):
     agents = conf()
-    names = sorted(set(os.listdir(MAIL)) | set(agents)) if os.path.isdir(MAIL) else sorted(agents)
+    names = sorted({canonical(n) for n in (set(os.listdir(MAIL)) | set(agents))}) if os.path.isdir(MAIL) else sorted(agents)
     print(f"{'agent':<14} {'unread':>6}  {'wake':<6} cwd")
     for n in names:
         c = agents.get(n, {})

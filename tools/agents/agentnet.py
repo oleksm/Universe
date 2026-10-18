@@ -79,6 +79,8 @@ def messages():
     for p in (root() / 'mail').glob('*/*/*.json'):
         m = read(p)
         if m and 'id' in m:
+            m['from'] = API.canonical(m.get('from'))
+            m['to'] = API.canonical(m.get('to'))
             found[m['id']] = m
     return list(found.values())
 
@@ -593,6 +595,10 @@ def main(api, argv):
     p.add_argument('--handoff'); p.add_argument('--snapshot', action='store_true'); p.add_argument('--wait', type=float, default=180)
     p.add_argument('--no-start', action='store_true'); p.add_argument('--no-windows', action='store_true'); p.set_defaults(fn=switch)
     args = parser.parse_args(argv)
+    if args.command != 'register':
+        for field in ('agent', 'a', 'b', 'as_name'):
+            if getattr(args, field, None):
+                setattr(args, field, API.canonical(getattr(args, field)))
     try:
         result = args.fn(args)
         return result if isinstance(result, int) else 0

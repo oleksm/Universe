@@ -244,3 +244,25 @@ python -m unittest discover -s tools/agents -p 'test_*.py' -v
 
 Tests use an isolated mailbox. For live testing, use `AGENTMSG_HOME` and disposable
 agents rather than consuming project agents' outstanding tasks.
+
+### Canonical names and compatibility aliases
+
+Use role names (`ships`, `engine`) independently of the runtime. `aliases.json` in
+`AGENTMSG_HOME` maps older names to canonical ones, for example:
+
+```json
+{"ships-claude": "ships", "engine-claude": "engine"}
+```
+
+Sending, reading, explicit `--as`, inherited `AGENTMSG_NAME`, binding and launcher
+commands resolve aliases. Historical message IDs and reply threads stay intact;
+status normalizes the endpoints for counts. When consolidating existing agents,
+back up their configuration and merge their `new`, `read` and `sent` mail folders
+into the canonical mailbox; aliases route future messages but do not move existing
+files by themselves. Keep the actual current conversation's runtime/session in the
+canonical configuration, rather than an older runtime's saved session.
+
+A renamed tmux session can keep its original server socket and attached window.
+Set `tmux_socket` in the canonical agent entry to that socket name. For example,
+`ships` can use session `agent-ships` on socket `agent-ships-claude`; the visible
+session name is `agent-ships` and subsequent launches/attachments use that mapping.
