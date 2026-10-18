@@ -4493,7 +4493,7 @@
 - { record: template.wall-glazed, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "963b9e61ba2e0e62" }
 - { record: template.wall-hatch, at: "2026-10-18T14:47:28Z", status: "", summary: "first tracked", sha: "c15fb16348987fbd" }
 - { record: template.wall-insulated, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "008123b71f0f4b1a" }
-- { record: template.wall-pressure, at: "2026-10-18T14:47:28Z", status: "", summary: "first tracked", sha: "0ff50b3a6d89d93e" }
+- { record: template.wall-pressure, at: "2026-10-18T15:01:54Z", status: "", summary: "changed: visual", sha: "bc2aecf47668d0a1" }
 - { record: template.wall-roller, at: "2026-10-18T14:47:28Z", status: "", summary: "changed", sha: "b02024c6ab9beaee" }
 - { record: template.wall-shopfront, at: "2026-10-18T02:56:15Z", status: "", summary: "changed", sha: "d3c8e9cf93a222ac" }
 - { record: template.wall-viewport, at: "2026-10-18T14:47:28Z", status: "", summary: "first tracked", sha: "3981365bf2236ff0" }
