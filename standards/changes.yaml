@@ -4703,7 +4703,7 @@
 - { record: unit.disc-filter-2, at: "2026-10-17T15:44:28Z", status: draft, summary: "changed", sha: "d756b402862ee86f" }
 - { record: unit.dri-bin-200t, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "1406b4d852320fbc" }
 - { record: unit.dri-cooling-loop, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "cd280a71276e9df4" }
-- { record: unit.eaf-vessel-80t, at: "2026-10-18T18:20:08Z", status: draft, summary: "changed: identity, physical, built_of, ports, motion, envelope", sha: "a62d4fc00f37bff2" }
+- { record: unit.eaf-vessel-80t, at: "2026-10-18T18:23:37Z", status: draft, summary: "changed: visual", sha: "75587d7b859b6133" }
 - { record: unit.eaf-vessel-80t-sealed, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "eee1d31b1b71fdb6" }
 - { record: unit.electrolyser-block-20mw, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "7610f0ca7cdcf0b0" }
 - { record: unit.electrolyser-block-20mw-10bar, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "a1140c4fec571d83" }
