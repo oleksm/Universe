@@ -4464,7 +4464,7 @@
 - { record: unit.furniture-hood, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "8e038c0cff03d5ee" }
 - { record: unit.furniture-judge-bench, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "3385b860f8c00a25" }
 - { record: unit.furniture-kitchen-bench, at: "2026-10-18T00:15:44Z", status: draft, summary: "changed", sha: "dd108d66cbfb7780" }
-- { record: unit.furniture-locker, at: "2026-10-17T22:41:41Z", status: draft, summary: "first tracked", sha: "b9b85b29ca6354db" }
+- { record: unit.furniture-locker, at: "2026-10-18T00:43:42Z", status: draft, summary: "changed: visual", sha: "4f6768ae5cb3bd0e" }
 - { record: unit.furniture-office-chair, at: "2026-10-18T00:18:41Z", status: draft, summary: "changed: visual", sha: "3c2858bf7b6f4749" }
 - { record: unit.furniture-planter, at: "2026-10-18T00:35:10Z", status: draft, summary: "changed: visual", sha: "871539347425c36f" }
 - { record: unit.furniture-pupil-desk, at: "2026-10-18T00:21:37Z", status: draft, summary: "changed: visual", sha: "bd0cf552cdc5e991" }
