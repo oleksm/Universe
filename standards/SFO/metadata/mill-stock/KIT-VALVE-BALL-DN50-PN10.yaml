@@ -18,7 +18,7 @@ size:
 supplies:
   item: connector.valve-ball-dn50-pn10
 physical:
-  mass: 9.0
+  mass: 17.89
 basis:
 - of:
   - size

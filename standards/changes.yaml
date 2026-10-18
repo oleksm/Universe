@@ -294,8 +294,8 @@
 - { record: connector.termination-6p6kv-70mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "6808ecca95e1a764" }
 - { record: connector.termination-6p6kv-95mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "3c36ff1d41d6a876" }
 - { record: connector.twistlock-iso1161, at: "2026-10-18T05:26:10Z", status: draft, summary: "changed: physical, built_of, basis", sha: "ff4b510621665c17" }
-- { record: connector.valve-ball-dn100-pn10, at: "2026-10-18T05:39:56Z", status: draft, summary: "changed: physical, basis", sha: "48f7189c842f726a" }
-- { record: connector.valve-ball-dn50-pn10, at: "2026-10-18T05:39:56Z", status: draft, summary: "changed: physical, basis", sha: "eeb4bcf9fee72fe1" }
+- { record: connector.valve-ball-dn100-pn10, at: "2026-10-18T05:43:35Z", status: draft, summary: "changed: physical, built_of, basis", sha: "f99213b246fd24ff" }
+- { record: connector.valve-ball-dn50-pn10, at: "2026-10-18T05:43:35Z", status: draft, summary: "changed: physical, built_of, basis", sha: "d3fd878b49534692" }
 - { record: connector.valve-butterfly-dn1000-pn10, at: "2026-10-18T05:39:56Z", status: draft, summary: "changed: physical, basis", sha: "6420d876034af41a" }
 - { record: connector.valve-butterfly-dn150-pn10, at: "2026-10-18T05:39:56Z", status: draft, summary: "changed: physical, basis", sha: "5188bd9375c529c9" }
 - { record: connector.valve-butterfly-dn300-pn10, at: "2026-10-18T05:39:56Z", status: draft, summary: "changed: physical, basis", sha: "52c521837270e457" }
@@ -3692,8 +3692,8 @@
 - { record: stock.kit-termination-6p6kv-70mm2, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "c3016dd7ec815558" }
 - { record: stock.kit-termination-6p6kv-95mm2, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "3dc2db05fd71552e" }
 - { record: stock.kit-twistlock-iso1161, at: "2026-10-18T05:26:10Z", status: review, summary: "changed: physical", sha: "37c5921b749157c7" }
-- { record: stock.kit-valve-ball-dn100-pn10, at: "2026-10-18T05:39:56Z", status: review, summary: "changed: size", sha: "7926b4bf2565eac2" }
-- { record: stock.kit-valve-ball-dn50-pn10, at: "2026-10-18T05:39:56Z", status: review, summary: "changed: size", sha: "19293f39d21bb00a" }
+- { record: stock.kit-valve-ball-dn100-pn10, at: "2026-10-18T05:43:35Z", status: review, summary: "changed: physical", sha: "753bb8a0ce0cc40f" }
+- { record: stock.kit-valve-ball-dn50-pn10, at: "2026-10-18T05:43:35Z", status: review, summary: "changed: physical", sha: "1673d0a420d511ce" }
 - { record: stock.kit-valve-butterfly-dn1000-pn10, at: "2026-10-18T05:39:56Z", status: review, summary: "changed: size", sha: "97bf5b3be2ac8b93" }
 - { record: stock.kit-valve-butterfly-dn150-pn10, at: "2026-10-18T05:39:56Z", status: review, summary: "changed: size", sha: "57daf301176d2926" }
 - { record: stock.kit-valve-butterfly-dn300-pn10, at: "2026-10-18T05:39:56Z", status: review, summary: "changed: size", sha: "7d85eb2c808437dc" }

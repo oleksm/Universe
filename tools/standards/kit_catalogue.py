@@ -278,15 +278,23 @@ def fl_od(dn):
 
 
 ROD_LUGS = 0.06     # m the limit rods' lugs stand out past the flanges, both sides together (invented)
+VALVE_BOUND = {  # blender's measured references: (DN, A36, 304, EPDM kg, note); the type's other sizes scaled by the old ratio
+    "ball": (0.05, 16.786, 1.084, 0.019, "blender's model (2026-10-18): the kit's 216 x 20 mm flanges, 8 M16 on 168 mm, a 110 mm body round an 80 mm chamber, bored 304 ball and stem, EPDM seats, A36 lever")}
 for vt, dn, kg, ff, h, what in VALVES:
     slug = f"valve-{vt}-dn{tag(dn)}-pn10"
+    vb = VALVE_BOUND.get(vt)
+    if vb:
+        ref = next(k for t, d, k, *_ in VALVES if t == vt and d == vb[0])
+        f = (vb[1] + vb[2] + vb[3]) / ref
+        parts = [round(x * kg / ref, 3) for x in vb[1:4]]
+        kg = round(kg * f, 2)
     conn(slug, {
         "identity": {"key": f"connector.{slug}", "name": f"{vt.capitalize()} valve, DN {tag(dn)}, PN 10", "description": f"A flanged {vt} valve set in a line between two flange joints: {what}."},
         "kind": "valve", "size": dn, "valve": vt, "rating": {"pressure": 1.0e6, "temperature": 473.0},
         "physical": {"length": fl_od(dn), "width": r(fl_od(dn) / 2 + max(h, fl_od(dn) / 2), 3), "height": r(ff, 3), "mass": kg},     # (width: from the flange's far rim to the actuator's top, off the axis along +Z)
-        "built_of": [part("Body and bonnet", A36, kg * 0.75, "cast carbon steel"), part("Trim", SS, kg * 0.2, "stainless seats, stem, disc or ball"), part("Packing and seats", RUB if vt != "gate" else SS, kg * 0.05)],
+        "built_of": [part("Body, bonnet, flanges and lever", A36, parts[0], "cast carbon steel"), part("Trim", SS, parts[1], "stainless ball and stem"), part("Seats", RUB, parts[2])] if vb else [part("Body and bonnet", A36, kg * 0.75, "cast carbon steel"), part("Trim", SS, kg * 0.2, "stainless seats, stem, disc or ball"), part("Packing and seats", RUB if vt != "gate" else SS, kg * 0.05)],
         "provides": "both", "template": f"template.valve-{vt}",
-        "basis": [{"of": ["physical", "built_of"], "tier": "invented", "review": True, "note": f"Face to face as the EN 558 series run (from memory); its height along the line; the lever, gearbox or actuator out to {h} m from the axis along +Z, inside its width; {MEMORY}"}]},
+        "basis": [{"of": ["physical", "built_of"], "tier": "derived", "review": True, "note": f"From {vb[4]}."} if vb and dn == vb[0] else {"of": ["physical", "built_of"], "tier": "invented", "review": True, "note": f"Scaled from the DN {tag(vb[0])}'s measured mass by the old ratio; {MEMORY}"} if vb else {"of": ["physical", "built_of"], "tier": "invented", "review": True, "note": f"Face to face as the EN 558 series run (from memory); its height along the line; the lever, gearbox or actuator out to {h} m from the axis along +Z, inside its width; {MEMORY}"}]},
         {"slug": f"flange-dn{tag(dn)}-pn10", "name": f"Flange DN {tag(dn)} PN 10", "domain": "fluid", "kind": "flange", "media": ["gas", "liquid"], "halves": "androgynous", "make": "bolted", "standard": "EN 1092-1 bores and pressure classes (its faces and bolting the registry's)"})
 EJ_KG = {0.3: 49.48}       # blender's DN 300 model (2026-10-17): 36.15 kg A36, 13.34 kg 304; the others scaled by the old catalogue's ratios to it
 EJ_SS = 13.34 / 49.48
