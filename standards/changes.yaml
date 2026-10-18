@@ -4389,7 +4389,7 @@
 - { record: template.valve-gate, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "f6e8abb14d71c0ab" }
 - { record: template.valve-relief, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "d49ebff915dfb3f2" }
 - { record: template.wall-door, at: "2026-10-18T02:38:33Z", status: "", summary: "changed: visual", sha: "49489e6891304ce7" }
-- { record: template.wall-double-door, at: "2026-10-17T21:45:11Z", status: "", summary: "first tracked", sha: "2e13cecc785d47ab" }
+- { record: template.wall-double-door, at: "2026-10-18T02:53:30Z", status: "", summary: "changed: visual", sha: "8126da7a7ecfac4b" }
 - { record: template.wall-glazed, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "963b9e61ba2e0e62" }
 - { record: template.wall-insulated, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "008123b71f0f4b1a" }
 - { record: template.wall-roller, at: "2026-10-17T21:45:11Z", status: "", summary: "first tracked", sha: "300ff4cdf302d4e7" }
