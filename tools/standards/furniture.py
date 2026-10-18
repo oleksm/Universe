@@ -21,7 +21,7 @@ FURNITURE = {  # name: (title, description, (length, width, height), [(what, ite
     "office-chair": ("Office chair", "A swivel chair on castors.", (0.65, 0.571, 1.0), [("Base, spindle and frame", STEEL, 14.2), ("Seat and back", PE, 5.9)], "blender's model (2026-10-17): hollow 25 and 30 mm frame, solid hub and spindle, five castors"),
     "pupil-desk": ("Pupil desk", "A single pupil's desk.", (0.7, 0.5, 0.75), [("Frame", STEEL, 9.0), ("Top", PE, 4.5)], "of the order of blender's classroom: 300 kg of steel for sixteen sets and the teacher's"),
     "cabinet": ("Cabinet", "A steel filing or storage cabinet.", (0.8, 0.45, 1.2), [("Carcass and drawers", STEEL, 40.0)], None),
-    "board": ("Board", "A wall board for a classroom or a briefing room.", (2.4, 0.1, 1.2), [("Board and frame", AL, 25.0)], None),
+    "board": ("Board", "A wall board for a classroom or a briefing room.", (2.4, 0.1, 1.2), [("Skins, frame, tray and retaining strips", AL, 34.7)], "blender's model (2026-10-17): two 1 mm coated skins, perimeter frame, tray and wall seats"),
     "bed": ("Bed", "A single bed with its mattress.", (2.1, 1.0, 0.6), [("Frame", STEEL, 35.0), ("Mattress", PE, 15.0)], None),
     "bed-ward": ("Ward bed", "A powered hospital bed with rails.", (2.2, 1.0, 0.7), [("Frame, rails and motors", STEEL, 105.0), ("Mattress", PE, 18.0)], None),
     "bunk": ("Bunk", "A double bunk with its two mattresses.", (2.0, 0.9, 1.7), [("Frame", STEEL, 60.0), ("Mattresses", PE, 30.0)], None),
