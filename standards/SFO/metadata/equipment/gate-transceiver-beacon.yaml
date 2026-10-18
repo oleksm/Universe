@@ -47,3 +47,13 @@ basis:
   - { of: [built_of, making], tier: invented, review: true, note: "A first design, in the shares of the Mars Reconnaissance Orbiter's radio: a dish on a gimbal, amplifiers, a transponder, waveguide. A larger one is the same, larger." }
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "A dish: taking three tenths of its 6,000 kg as the reflector, at the Mars Reconnaissance Orbiter's 2.7 kg a m2 (19.1 kg for a 3 m dish), gives 667 m2: 29 m across, a seventh as deep." }
   - { of: [life], rule: rule.life-ship-system }
+# ports and internal: written by tools/standards/equipment_ports.py, change them there.
+ports:
+- {id: foot-1, flow: out, medium: load, interface: interface.insert-m30, half: male, make: bolted, mass: 750.0, at: [-26.325, -26.325, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.gate-s4''s socket of the same id, bolted through'}
+- {id: foot-2, flow: out, medium: load, interface: interface.insert-m30, half: male, make: bolted, mass: 750.0, at: [26.325, -26.325, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.gate-s4''s socket of the same id, bolted through'}
+- {id: foot-3, flow: out, medium: load, interface: interface.insert-m30, half: male, make: bolted, mass: 750.0, at: [26.325, 26.325, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.gate-s4''s socket of the same id, bolted through'}
+- {id: foot-4, flow: out, medium: load, interface: interface.insert-m30, half: male, make: bolted, mass: 750.0, at: [-26.325, 26.325, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.gate-s4''s socket of the same id, bolted through'}
+- {id: foot-5, flow: out, medium: load, interface: interface.insert-m30, half: male, make: bolted, mass: 750.0, at: [0.0, -26.325, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.gate-s4''s socket of the same id, bolted through'}
+- {id: foot-6, flow: out, medium: load, interface: interface.insert-m30, half: male, make: bolted, mass: 750.0, at: [26.325, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.gate-s4''s socket of the same id, bolted through'}
+- {id: foot-7, flow: out, medium: load, interface: interface.insert-m30, half: male, make: bolted, mass: 750.0, at: [0.0, 26.325, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.gate-s4''s socket of the same id, bolted through'}
+- {id: foot-8, flow: out, medium: load, interface: interface.insert-m30, half: male, make: bolted, mass: 750.0, at: [-26.325, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.gate-s4''s socket of the same id, bolted through'}

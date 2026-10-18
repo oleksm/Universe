@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/mounting.py: change it there.
+identity:
+  key: stock.kit-adapter-gear-s2
+  code: KIT-ADAPTER-GEAR-S2
+  name: Landing gear cradle, class 2
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.high-strength-steel-4340
+- item: material.aluminium-alloy-6061
+size:
+  length: 2.0
+  width: 2.0
+  height: 0.5
+supplies:
+  item: adapter.gear-s2
+physical:
+  mass: 515.64
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One adapter.gear-s2, as made.

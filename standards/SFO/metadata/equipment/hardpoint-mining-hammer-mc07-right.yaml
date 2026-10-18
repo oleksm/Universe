@@ -48,3 +48,9 @@ basis:
   - { of: [physical.length, physical.width, physical.height, physical.volume, size_class], tier: derived, review: true, note: "The record's box is the thing stowed, as fitted and carried (registry convention 2026-10-10). Measured in its hatch by blender: 5.340 x 6.440 x 5.320 m with the lift-slide hatch, its lift rods and carriages (the hull's rails are the hull's; candidate-v01 extraction, 2026-10-10; was 4.845 m without them), over hardpoint-s2's 4.5 m width, so class 3 (ships' choice, 2026-10-10: larger slots, the source kept)." }
   - { of: [identity, built_of], tier: derived, review: true, note: "The right-hand twin of equipment.hardpoint.mining-hammer.mc07 (2026-10-10): the same product mirrored across the ship's centre plane (its model is the left's reflected, with rigid frames: blender handedness-v01). Same parts, mass and figures; the hull's fit picks the hand." }
   - { of: [life], rule: rule.life-ship-system }
+# ports and internal: written by tools/standards/equipment_ports.py, change them there.
+ports:
+- {id: foot-1, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 431.5, at: [2.6415, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.hardpoint-s3''s socket of the same id, bolted through'}
+- {id: foot-2, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 431.5, at: [0.0, 2.6415, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.hardpoint-s3''s socket of the same id, bolted through'}
+- {id: foot-3, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 431.5, at: [-2.6415, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.hardpoint-s3''s socket of the same id, bolted through'}
+- {id: foot-4, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 431.5, at: [0.0, -2.6415, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.hardpoint-s3''s socket of the same id, bolted through'}

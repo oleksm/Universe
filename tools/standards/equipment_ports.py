@@ -257,11 +257,46 @@ def switchgear(rec, em):
 
 
 # ------------------------------------------------------------------ writing
+TRACK_PITCH, RAIL_GAP = 0.0254, 0.25         # (mounting.py's deck track)
+
+
+def feet(rec):
+    """Its load ports on the mount it fits (docs/proposals/physical-mounts.md): on a cradle, one foot a socket, where the
+    socket is; on a deck, studs into the track under its own footprint (rails 0.25 m apart, studs on 25.4 mm), two a
+    rail. Each foot's duty: its share of the mass and of its thrust; a design's real duty comes from the stiffness model."""
+    fits = rec.get("fits")
+    if not fits:
+        return []
+    m = yaml.safe_load(open(os.path.join(ROOT, "standards/SFO/metadata/mounts", fits.split(".", 1)[1] + ".yaml")))
+    ph, fn = rec.get("physical") or {}, rec.get("function") or {}
+    if m.get("holder") == "deck":
+        L, W = ph.get("length") or 0.2, ph.get("width") or 0.1
+        ys = [-RAIL_GAP / 2, RAIL_GAP / 2] if W >= RAIL_GAP + 0.02 else [0.0]
+        xb = max(TRACK_PITCH, math.floor(0.45 * L / TRACK_PITCH) * TRACK_PITCH)
+        pts = [(x, y, None, "interface.deck-track", "manual") for y in ys for x in (-xb, xb)]
+        note = "a stud into the deck track under it"
+    else:
+        pts = [(s["at"][0], s["at"][1], s.get("connector"), s["interface"], "bolted") for s in m.get("sockets") or []]
+        note = f"on {fits}'s socket of the same id, bolted through"
+    n = len(pts)
+    thrust = fn.get("thrust") or 0.0
+    out = []
+    for i, (x, y, con, iface, make) in enumerate(pts):
+        p = {"id": f"foot-{i + 1}", "flow": "out", "medium": "load", "interface": iface, "half": "male", "make": make}
+        p.update({"mass": r(ph.get("mass", 0) / n, 2)})
+        if thrust:
+            p["force"] = r(thrust / n, 0)
+        p.update({"at": [r(x, 4), r(y, 4), 0.0], "facing": [0.0, 0.0, -1.0], "note": note})
+        out.append(p)
+    return out
+
+
 def block(ports, internal):
     lines = [MARK, "ports:\n"]
     for p in ports:
         lines.append("- " + yaml.safe_dump(p, default_flow_style=True, sort_keys=False, width=100000, allow_unicode=True).strip() + "\n")
-    lines.append("internal:\n")
+    if internal:
+        lines.append("internal:\n")
     for i in internal:
         lines.append("- " + yaml.safe_dump(i, default_flow_style=True, sort_keys=False, width=100000, allow_unicode=True).strip() + "\n")
     return "".join(lines)
@@ -317,13 +352,14 @@ def main(check=False):
         if "Written by tools/" in text[:400]:
             continue
         rec = yaml.safe_load(text)
-        if rec["identity"]["key"] not in usage:
-            continue
         base = strip(text)
         if "\nports:" in base or base.startswith("ports:"):
             print(f"  {rec['identity']['key']}: has hand-written ports; left alone")
             continue
-        b = build(yaml.safe_load(base))
+        b = build(yaml.safe_load(base)) if rec["identity"]["key"] in usage else None
+        ft = feet(rec)
+        if ft:
+            b = (ft + (b[0] if b else []), b[1] if b else [])
         new = base if b is None else base.rstrip("\n") + "\n" + block(*b)
         done += b is not None
         if new != text:

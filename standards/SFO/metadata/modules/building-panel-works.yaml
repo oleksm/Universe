@@ -19,6 +19,46 @@ staff:
 - profession: profession.technician
   count: 1
 recipes:
+- makes: stock.kit-panel-deck-0p5x0p5
+  does: Skins are formed and joined to their cores or stiffeners, openings cut and fitted, the panel framed and sealed.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 1.03
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.03
+  rate: 2.0
+  power: 3000000.0
+- makes: stock.kit-panel-deck-1x0p5
+  does: Skins are formed and joined to their cores or stiffeners, openings cut and fitted, the panel framed and sealed.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 1.03
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.03
+  rate: 2.0
+  power: 3000000.0
+- makes: stock.kit-panel-deck-1x1
+  does: Skins are formed and joined to their cores or stiffeners, openings cut and fitted, the panel framed and sealed.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 1.03
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.03
+  rate: 2.0
+  power: 3000000.0
+- makes: stock.kit-panel-deck-2x1
+  does: Skins are formed and joined to their cores or stiffeners, openings cut and fitted, the panel framed and sealed.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 1.03
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.03
+  rate: 2.0
+  power: 3000000.0
 - makes: stock.kit-panel-floor-3x3
   does: Skins are formed and joined to their cores or stiffeners, openings cut and fitted, the panel framed and sealed.
   inputs:

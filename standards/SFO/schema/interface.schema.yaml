@@ -31,6 +31,17 @@ properties:
       mass: { type: number, minimum: 0, x-unit: "kg", description: "kg it bears (a mount) or carries (a carrier)" }
       force: { type: number, minimum: 0, x-unit: "N" }
       moment: { type: number, minimum: 0, x-unit: "N m" }
+      tension: { type: number, minimum: 0, x-unit: "N", description: "A load joint: N it holds pulled apart along its axis" }
+      compression: { type: number, minimum: 0, x-unit: "N", description: "A load joint: N it holds pressed together" }
+      shear: { type: number, minimum: 0, x-unit: "N", description: "A load joint: N it holds across its axis" }
+  stiffness:
+    type: object
+    additionalProperties: false
+    description: "A load joint's springs, for sharing a load between redundant joints (docs/proposals/physical-mounts.md): a holder is a rigid body on joints of these stiffnesses."
+    properties:
+      axial: { type: number, exclusiveMinimum: 0, x-unit: "N/m", description: "Along its axis (the port's facing)" }
+      shear: { type: number, exclusiveMinimum: 0, x-unit: "N/m", description: "Across its axis" }
+  pitch: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "A track's: the spacing of its stud holes along it; a link names a stud by its index from the port's `at`." }
   media: { type: array, items: { enum: [gas, liquid, bulk, power, signal, heat, load, carrier, people] }, description: "What may cross it." }
   sealing: { enum: [open, air, double, vacuum, cryogenic], description: "How tight it is: open (nothing held), air, double (two seals, the space between watched, for airless ground), vacuum, cryogenic." }
   halves: { enum: [male-female, androgynous], description: "Its two halves differ (a plug and its socket) or are the same (a flange pair, a docking ring)." }

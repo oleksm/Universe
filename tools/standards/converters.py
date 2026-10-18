@@ -99,11 +99,11 @@ def board(v, n17, n25, n33, kg, l, w, h):
     parts = [{"code": f"{code}-{i + 1:02d}", "name": nm, "description": d, "mass": r(kg * s, 2), "length": l, "width": w, "height": r(h * s, 3),
               "item": item, "quantity": r(kg * s * 1.15, 2), "module": mod} for i, (nm, item, s, mod, d) in enumerate(BOARD_SHARES)]
     return slug, {
-        "identity": {"key": f"equipment.power.distribution.{v}v-{n17 + n25 + n33}way", "name": f"Distribution board, {v} V DC, {n17 + n25 + n33} ways", "maker": "org.meridian", "revision": "draft", "slot": "power",
+        "identity": {"key": f"equipment.power.distribution.{v}v-{n17 + n25 + n33}way", "name": f"Distribution board, {v} V DC, {n17 + n25 + n33} ways", "maker": "org.meridian", "revision": "draft", "slot": "utility",
                      "description": f"Where a ship's {v} V DC bus branches: fed from its converter by a pole pair or a circular shell 33 or 25 (whichever the converter has, all three on one bus bar), "
                                     + ", ".join(f"{c} ways of shell {sh} ({a} A)" for sh, c, a in ((17, n17, 15), (25, n25, 55), (33, n33, 120)) if c)
                                     + f" out, each through its own solid-state breaker, and the control bus through. Up to {total / 1000:g} kW on its bus bar. The connectors' mass is the routed harness's, not the board's."},
-        "size_class": 1, "fits": "mount.power-s1",
+        "size_class": 1, "fits": "mount.utility-s1",
         "physical": {"mass": kg, "volume": r(l * w * h, 4), "length": l, "width": w, "height": h},
         "built_of": {"parts": slug, "list": parts},
         "making": {"module": "module.assembly-shop"},
@@ -130,9 +130,9 @@ def record(v, kw, eff, kwkg, kwl):
     parts = [{"code": f"{code}-{i + 1:02d}", "name": n, "description": d, "mass": r(mass * s, 2), "length": l, "width": w, "height": r(h * s * 2 if i < 2 else h, 3),
               "item": item, "quantity": r(mass * s * 1.15, 2), "module": mod} for i, (n, item, s, mod, d) in enumerate(SHARES)]
     return slug, {
-        "identity": {"key": f"equipment.power.converter.{v}v-{kw}kw", "name": f"DC converter, 3 kV to {v} V, {kw} kW", "maker": "org.meridian", "revision": "draft", "slot": "power",
+        "identity": {"key": f"equipment.power.converter.{v}v-{kw}kw", "name": f"DC converter, 3 kV to {v} V, {kw} kW", "maker": "org.meridian", "revision": "draft", "slot": "utility",
                      "description": f"Steps the ship's 3 kV DC bus down to its {v} V DC bus, up to {kw} kW out, isolated: a sealed box on four feet, the 3 kV pair in at its -x end (two connector.hvdc-pole-150a receptacles, {p / eff / 3000:.0f} A), the {v} V pair out ({amps:.0f} A: two connector.{out} receptacles) and data (connector.circular-shell-11) at its +x end, the coolant pair under it (connector.{cool}). The connectors' mass is the routed harness's (connector.schema physical), not the box's. {eff * 100:.0f}% efficient: at full load it draws {p / eff / 1000:.2f} kW and gives {loss / 1000:.2f} kW to the coolant loop."},
-        "size_class": 1, "fits": "mount.power-s1",
+        "size_class": 1, "fits": "mount.utility-s1",
         "physical": {"mass": mass, "volume": r(vol, 4), "length": l, "width": w, "height": h},
         "built_of": {"parts": slug, "list": parts},
         "making": {"module": "module.assembly-shop"},
@@ -160,6 +160,7 @@ def main():
             pts, internal = wiring(c[0], c[1], c[2], d)
             d["ports"], d["internal"] = pts, internal
             d["basis"].insert(1, {"of": ["ports"], "tier": "derived", "note": "Places from the installed model's empties where it has them (each port's note says); connectors by current (ports() here); docs/proposals/equipment-ports.md."})
+        d["ports"] = ep.feet(d) + d["ports"]           # (its feet on the deck track: docs/proposals/physical-mounts.md)
         text = HEAD + yaml.safe_dump(d, sort_keys=False, allow_unicode=True, width=230)
         if not os.path.exists(path) or open(path).read() != text:
             open(path, "w").write(text)

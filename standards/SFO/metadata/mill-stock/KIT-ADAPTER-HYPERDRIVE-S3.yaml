@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/mounting.py: change it there.
+identity:
+  key: stock.kit-adapter-hyperdrive-s3
+  code: KIT-ADAPTER-HYPERDRIVE-S3
+  name: Hyperdrive cradle, class 3
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.aluminium-alloy-6061
+- item: material.high-strength-steel-4340
+size:
+  length: 4.0
+  width: 3.0
+  height: 0.45
+supplies:
+  item: adapter.hyperdrive-s3
+physical:
+  mass: 227.52
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One adapter.hyperdrive-s3, as made.

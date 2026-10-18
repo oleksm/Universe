@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/mounting.py: change it there.
+identity:
+  key: stock.kit-panel-deck-1x0p5
+  code: KIT-PANEL-DECK-1X0P5
+  name: Deck panel, 1 x 0.5 m
+  traded_as: market.machinery
+  form: panel
+package: package.plate-stack
+made_from:
+- item: material.aluminium-alloy-6061
+size:
+  length: 1.0
+  width: 0.5
+  height: 0.03
+supplies:
+  item: panel.deck-1x0p5
+physical:
+  mass: 5.42
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One panel.deck-1x0p5, as made.

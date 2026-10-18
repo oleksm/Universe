@@ -19,6 +19,26 @@ attachment:
     tension: 184.0
     compression: 184.0
     shear: 91.9
+# (holder and sockets: written by tools/standards/mounting.py)
+holder: deck
+sockets:
+- id: s1
+  at: [-0.1778, -0.125, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.deck-track
+- id: s2
+  at: [0.1778, -0.125, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.deck-track
+- id: s3
+  at: [-0.1778, 0.125, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.deck-track
+- id: s4
+  at: [0.1778, 0.125, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.deck-track
+# (end of mounting.py)
 feeds:
   power: 175.0
 basis:

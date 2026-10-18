@@ -41,3 +41,9 @@ basis:
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, note: "The fitted envelope, from the modeller's exterior layout (candidate v01): the 4.6 m sphere stands on four steel saddles 0.178 m clear of its bottom, 4.778 m high in all; the oxygen and hydrogen service bosses stand opposed, 0.167 m beyond the sphere on each side along the length, 4.934 m long in all; 4.6 m across. The drawn saddles weigh 135 kg of the 160 kg allowed. Within the mount's 5.88 m." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
+# ports and internal: written by tools/standards/equipment_ports.py, change them there.
+ports:
+- {id: foot-1, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 457.5, at: [-2.646, -2.646, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.tank-s1''s socket of the same id, bolted through'}
+- {id: foot-2, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 457.5, at: [2.646, -2.646, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.tank-s1''s socket of the same id, bolted through'}
+- {id: foot-3, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 457.5, at: [2.646, 2.646, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.tank-s1''s socket of the same id, bolted through'}
+- {id: foot-4, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 457.5, at: [-2.646, 2.646, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.tank-s1''s socket of the same id, bolted through'}

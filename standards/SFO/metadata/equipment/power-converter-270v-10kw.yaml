@@ -5,12 +5,12 @@ identity:
   name: DC converter, 3 kV to 270 V, 10 kW
   maker: org.meridian
   revision: draft
-  slot: power
+  slot: utility
   description: 'Steps the ship''s 3 kV DC bus down to its 270 V DC bus, up to 10 kW out, isolated: a sealed box on four feet, the 3 kV pair in at its -x end (two connector.hvdc-pole-150a receptacles, 3 A), the 270 V pair out (37 A:
     two connector.circular-shell-25 receptacles) and data (connector.circular-shell-11) at its +x end, the coolant pair under it (connector.flat-face-dn13). The connectors'' mass is the routed harness''s (connector.schema physical),
     not the box''s. 97% efficient: at full load it draws 10.31 kW and gives 0.31 kW to the coolant loop.'
 size_class: 1
-fits: mount.power-s1
+fits: mount.utility-s1
 physical:
   mass: 6.2
   volume: 0.005
@@ -86,6 +86,38 @@ visual:
   version: 2
   triangles: 22184
 ports:
+- id: foot-1
+  flow: out
+  medium: load
+  interface: interface.deck-track
+  half: male
+  make: manual
+  mass: 3.1
+  at:
+  - -0.1016
+  - 0.0
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: a stud into the deck track under it
+- id: foot-2
+  flow: out
+  medium: load
+  interface: interface.deck-track
+  half: male
+  make: manual
+  mass: 3.1
+  at:
+  - 0.1016
+  - 0.0
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: a stud into the deck track under it
 - id: dc-in+
   flow: in
   medium: power

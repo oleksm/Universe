@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/interface.schema.yaml
+# Written by tools/standards/mounting.py: change it there.
+identity:
+  key: interface.deck-track
+  name: Deck seat track
+  description: 'A deck panel''s seat-track rail (female) and an equipment foot''s stud (male): studs on a 25.4 mm pitch along the rail, rails 0.25 m apart.'
+domain: load
+kind: track
+envelope:
+  tension: 9000.0
+  shear: 13000.0
+  compression: 18000.0
+stiffness:
+  axial: 50000000.0
+  shear: 25000000.0
+pitch: 0.0254
+media:
+- load
+sealing: open
+halves: male-female
+make: manual
+basis:
+- of:
+  - envelope
+  - stiffness
+  - pitch
+  tier: invented
+  review: true
+  note: 'The aircraft seat-track convention from memory (25.4 mm pitch); stud ratings and stiffness chosen. Review-pending (docs/proposals/physical-mounts.md): chosen, not approved.'

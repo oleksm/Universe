@@ -51,3 +51,9 @@ basis:
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: invented, review: true, note: "A rail gun's barrel: the Navy's is about 10 m long for 32 MJ (from memory: its length was not found in a source). At the same acceleration a 3 km/s slug wants 14 m; 10 m taken, with the breech and loader within 0.6 m round it." }
   - { of: [built_of.list, identity.description], tier: derived, review: true, note: "Visual contract (2026-10-10): the record's box is the complete fitted unit; fixed, no turret (the record has no aim or slew). Model: muzzle along +Y in Blender (the hull's forward), up +Z, the mount node at the centre of the saddle's base, a muzzle node at the lip's centre for the shot. Static. Recoil 0.5 kg x 3,000 m/s x 10/s = 15 kN." }
   - { of: [life], rule: rule.life-ship-system }
+# ports and internal: written by tools/standards/equipment_ports.py, change them there.
+ports:
+- {id: foot-1, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 200.0, at: [1.98, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.hardpoint-s1''s socket of the same id, bolted through'}
+- {id: foot-2, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 200.0, at: [0.0, 1.98, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.hardpoint-s1''s socket of the same id, bolted through'}
+- {id: foot-3, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 200.0, at: [-1.98, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.hardpoint-s1''s socket of the same id, bolted through'}
+- {id: foot-4, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 200.0, at: [0.0, -1.98, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.hardpoint-s1''s socket of the same id, bolted through'}

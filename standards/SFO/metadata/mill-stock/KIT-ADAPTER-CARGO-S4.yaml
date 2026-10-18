@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/mounting.py: change it there.
+identity:
+  key: stock.kit-adapter-cargo-s4
+  code: KIT-ADAPTER-CARGO-S4
+  name: Cargo cradle, class 4
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.high-strength-steel-4340
+- item: material.aluminium-alloy-6061
+size:
+  length: 27.0
+  width: 6.0
+  height: 0.5
+supplies:
+  item: adapter.cargo-s4
+physical:
+  mass: 25136.81
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One adapter.cargo-s4, as made.

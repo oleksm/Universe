@@ -156,7 +156,8 @@ def cmd_check(opt, pages):
              ("module", [sys.executable, "tools/standards/planet_lod_module.py", "--check"], None),
              ("fit", [sys.executable, "tools/standards/fit_layout.py"], lambda o: not re.search(r"[1-9]\d* fault\(s\)", o)),
              ("makers", [sys.executable, "tools/standards/kit_works.py", "--check"], lambda o: not re.search(r"[1-9]\d* fault\(s\)", o)),
-             ("ports", [sys.executable, "tools/standards/equipment_ports.py", "--check"], lambda o: not re.search(r"[1-9]\d* fault\(s\)", o))]
+             ("ports", [sys.executable, "tools/standards/equipment_ports.py", "--check"], lambda o: not re.search(r"[1-9]\d* fault\(s\)", o)),
+             ("mounts", [sys.executable, "tools/standards/mounting.py", "--check"], lambda o: not re.search(r"[1-9]\d* fault\(s\)", o))]
     failed = 0
     for name, cmd, ok in steps:
         r = sh(cmd)

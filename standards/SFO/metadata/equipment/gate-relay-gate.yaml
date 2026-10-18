@@ -43,3 +43,13 @@ basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making, physical, needs.power, identity.description], tier: invented, review: true, note: "Reworked 2026-10-13 (story follows physics): the ring's throat coils hold the tube open all the time, so light crosses it; a signal down the tube needs no capsules and no thread of its own (it was a hyperdrive's coils throwing capsules, 40 t and 2 MW). 50,000 messages an hour is little for a laser link: real space laser terminals weigh tens of kilograms (from memory); here two at 150 kg. Computers, power, cooler and frame are guesses; 30 kW for the cabinet. The partner relay must sit on the tube's axis line at the far ring; that placement is the gate's to give." }
   - { of: [life], rule: rule.life-ship-system }
+# ports and internal: written by tools/standards/equipment_ports.py, change them there.
+ports:
+- {id: foot-1, flow: out, medium: load, interface: interface.insert-m30, half: male, make: bolted, mass: 300.0, at: [-26.325, -26.325, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.gate-s4''s socket of the same id, bolted through'}
+- {id: foot-2, flow: out, medium: load, interface: interface.insert-m30, half: male, make: bolted, mass: 300.0, at: [26.325, -26.325, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.gate-s4''s socket of the same id, bolted through'}
+- {id: foot-3, flow: out, medium: load, interface: interface.insert-m30, half: male, make: bolted, mass: 300.0, at: [26.325, 26.325, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.gate-s4''s socket of the same id, bolted through'}
+- {id: foot-4, flow: out, medium: load, interface: interface.insert-m30, half: male, make: bolted, mass: 300.0, at: [-26.325, 26.325, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.gate-s4''s socket of the same id, bolted through'}
+- {id: foot-5, flow: out, medium: load, interface: interface.insert-m30, half: male, make: bolted, mass: 300.0, at: [0.0, -26.325, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.gate-s4''s socket of the same id, bolted through'}
+- {id: foot-6, flow: out, medium: load, interface: interface.insert-m30, half: male, make: bolted, mass: 300.0, at: [26.325, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.gate-s4''s socket of the same id, bolted through'}
+- {id: foot-7, flow: out, medium: load, interface: interface.insert-m30, half: male, make: bolted, mass: 300.0, at: [0.0, 26.325, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.gate-s4''s socket of the same id, bolted through'}
+- {id: foot-8, flow: out, medium: load, interface: interface.insert-m30, half: male, make: bolted, mass: 300.0, at: [-26.325, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.gate-s4''s socket of the same id, bolted through'}

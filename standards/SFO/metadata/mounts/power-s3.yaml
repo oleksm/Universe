@@ -19,6 +19,50 @@ attachment:
     tension: 43300.0
     compression: 43300.0
     shear: 21600.0
+# (holder and sockets: written by tools/standards/mounting.py)
+holder: adapter
+sockets:
+- id: s1
+  at: [-15.84, -8.055, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m16
+  connector: stock.st4340-bolt-m16
+- id: s2
+  at: [15.84, -8.055, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m16
+  connector: stock.st4340-bolt-m16
+- id: s3
+  at: [15.84, 8.055, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m16
+  connector: stock.st4340-bolt-m16
+- id: s4
+  at: [-15.84, 8.055, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m16
+  connector: stock.st4340-bolt-m16
+- id: s5
+  at: [0.0, -8.055, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m16
+  connector: stock.st4340-bolt-m16
+- id: s6
+  at: [15.84, 0.0, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m16
+  connector: stock.st4340-bolt-m16
+- id: s7
+  at: [0.0, 8.055, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m16
+  connector: stock.st4340-bolt-m16
+- id: s8
+  at: [-15.84, 0.0, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m16
+  connector: stock.st4340-bolt-m16
+# (end of mounting.py)
 feeds:
   cooling: 32500000.0
   fuel: 1.45e-07

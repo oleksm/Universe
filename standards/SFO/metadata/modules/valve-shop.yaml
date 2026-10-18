@@ -145,6 +145,118 @@ recipes:
     quantity: 0.03
   rate: 0.5
   power: 2500000.0
+- makes: stock.kit-strut-clamp-d100
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.9659
+  - item: stock.st4340-bar-120
+    quantity: 0.0641
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0281
+  - item: stock.st4340-scrap
+    quantity: 0.0019
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-strut-clamp-d120
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.9852
+  - item: stock.st4340-bar-120
+    quantity: 0.0448
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0287
+  - item: stock.st4340-scrap
+    quantity: 0.0013
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-strut-clamp-d150
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.9842
+  - item: stock.st4340-bar-120
+    quantity: 0.0458
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0287
+  - item: stock.st4340-scrap
+    quantity: 0.0013
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-strut-clamp-d160
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.9902
+  - item: stock.st4340-bar-120
+    quantity: 0.0398
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0288
+  - item: stock.st4340-scrap
+    quantity: 0.0012
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-strut-clamp-d200
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.9705
+  - item: stock.st4340-bar-120
+    quantity: 0.0595
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0283
+  - item: stock.st4340-scrap
+    quantity: 0.0017
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-strut-clamp-d250
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.9552
+  - item: stock.st4340-bar-120
+    quantity: 0.0748
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0278
+  - item: stock.st4340-scrap
+    quantity: 0.0022
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-strut-clamp-d60
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.9733
+  - item: stock.st4340-bar-120
+    quantity: 0.0567
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0283
+  - item: stock.st4340-scrap
+    quantity: 0.0017
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-strut-clamp-d80
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.9952
+  - item: stock.st4340-bar-120
+    quantity: 0.0348
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.029
+  - item: stock.st4340-scrap
+    quantity: 0.001
+  rate: 0.5
+  power: 2500000.0
 - makes: stock.kit-twistlock-iso1161
   does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:

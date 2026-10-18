@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/mounting.py: change it there.
+identity:
+  key: stock.kit-adapter-command-s3
+  code: KIT-ADAPTER-COMMAND-S3
+  name: Command station cradle, class 3
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.aluminium-alloy-6061
+- item: material.high-strength-steel-4340
+size:
+  length: 4.0
+  width: 3.0
+  height: 0.16
+supplies:
+  item: adapter.command-s3
+physical:
+  mass: 29.2
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One adapter.command-s3, as made.

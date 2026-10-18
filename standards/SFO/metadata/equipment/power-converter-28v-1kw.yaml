@@ -5,12 +5,12 @@ identity:
   name: DC converter, 3 kV to 28 V, 1 kW
   maker: org.meridian
   revision: draft
-  slot: power
+  slot: utility
   description: 'Steps the ship''s 3 kV DC bus down to its 28 V DC bus, up to 1 kW out, isolated: a sealed box on four feet, the 3 kV pair in at its -x end (two connector.hvdc-pole-150a receptacles, 0 A), the 28 V pair out (36 A: two
     connector.circular-shell-25 receptacles) and data (connector.circular-shell-11) at its +x end, the coolant pair under it (connector.flat-face-dn6). The connectors'' mass is the routed harness''s (connector.schema physical), not
     the box''s. 93% efficient: at full load it draws 1.08 kW and gives 0.08 kW to the coolant loop.'
 size_class: 1
-fits: mount.power-s1
+fits: mount.utility-s1
 physical:
   mass: 2.0
   volume: 0.002
@@ -86,6 +86,38 @@ visual:
   version: 1
   triangles: 22164
 ports:
+- id: foot-1
+  flow: out
+  medium: load
+  interface: interface.deck-track
+  half: male
+  make: manual
+  mass: 1.0
+  at:
+  - -0.0762
+  - 0.0
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: a stud into the deck track under it
+- id: foot-2
+  flow: out
+  medium: load
+  interface: interface.deck-track
+  half: male
+  make: manual
+  mass: 1.0
+  at:
+  - 0.0762
+  - 0.0
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: a stud into the deck track under it
 - id: dc-in+
   flow: in
   medium: power

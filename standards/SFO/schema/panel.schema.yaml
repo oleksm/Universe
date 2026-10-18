@@ -14,8 +14,8 @@ properties:
       key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
       description: { type: string }
-  kind: { enum: [wall, floor, roof, partition, stair], description: "What face of a cell it fills." }
-  site: { enum: [air, airless], description: "The ground it is made for: air (weather, heat loss) or airless (pressure held, vacuum outside)." }
+  kind: { enum: [wall, floor, roof, partition, stair, deck], description: "What face of a cell it fills; a deck: a ship's floor panel on its frame, with seat track for small equipment (docs/proposals/physical-mounts.md)." }
+  site: { enum: [air, airless, ship], description: "The ground it is made for: air (weather, heat loss) or airless (pressure held, vacuum outside)." }
   cell: { type: array, items: { type: number, exclusiveMinimum: 0, x-unit: "m" }, minItems: 2, maxItems: 2, description: "The face it fills on the frame's grid, m: along and up (a wall), or the two plan sides (a floor, a roof, a stair's well)." }
   thickness: { type: number, exclusiveMinimum: 0, x-unit: "m" }
   opening:
@@ -31,6 +31,8 @@ properties:
       vehicles: { type: boolean, description: "Vehicles and stock pass it." }
   u_value: { type: number, exclusiveMinimum: 0, x-unit: "W/(m2 K)", description: "Heat it lets through a m2 for each kelvin between its faces." }
   load: { type: number, minimum: 0, x-unit: "Pa", description: "Pa it carries over its span besides its own weight (a floor's or roof's imposed load)." }
+  point_load: { type: number, minimum: 0, x-unit: "N", description: "N it carries on one stud or foot besides its own weight" }
+  ports: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/port" }, description: "Its load ports (SFO 26): track and edge fixings" }
   physical: { $ref: "../../common.schema.yaml#/definitions/physical", description: "As it stands placed: length along its face, width its thickness, height up (a floor or roof: its two plan sides and its thickness)." }
   built_of:
     type: array

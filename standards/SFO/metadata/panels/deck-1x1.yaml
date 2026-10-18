@@ -1,0 +1,240 @@
+# yaml-language-server: $schema=../../schema/panel.schema.yaml
+# Written by tools/standards/mounting.py: change it there.
+identity:
+  key: panel.deck-1x1
+  name: Deck panel, 1 x 1 m
+  description: 'A ship''s floor panel on its frame: 6061 skins on aluminium honeycomb, 4 seat-track rails along it for small equipment''s feet, clamped onto the struts under its edges.'
+kind: deck
+site: ship
+cell:
+- 1.0
+- 1.0
+thickness: 0.03
+load: 10000.0
+point_load: 18000.0
+ports:
+- id: track-1
+  flow: in
+  medium: load
+  interface: interface.deck-track
+  half: female
+  make: bolted
+  at:
+  - -0.4873
+  - -0.375
+  - 0.03
+  facing:
+  - 0.0
+  - 0.0
+  - 1.0
+  optional: true
+  note: 'a rail along x: stud i at x + 0.0254 i'
+- id: track-2
+  flow: in
+  medium: load
+  interface: interface.deck-track
+  half: female
+  make: bolted
+  at:
+  - -0.4873
+  - -0.125
+  - 0.03
+  facing:
+  - 0.0
+  - 0.0
+  - 1.0
+  optional: true
+  note: 'a rail along x: stud i at x + 0.0254 i'
+- id: track-3
+  flow: in
+  medium: load
+  interface: interface.deck-track
+  half: female
+  make: bolted
+  at:
+  - -0.4873
+  - 0.125
+  - 0.03
+  facing:
+  - 0.0
+  - 0.0
+  - 1.0
+  optional: true
+  note: 'a rail along x: stud i at x + 0.0254 i'
+- id: track-4
+  flow: in
+  medium: load
+  interface: interface.deck-track
+  half: female
+  make: bolted
+  at:
+  - -0.4873
+  - 0.375
+  - 0.03
+  facing:
+  - 0.0
+  - 0.0
+  - 1.0
+  optional: true
+  note: 'a rail along x: stud i at x + 0.0254 i'
+- id: edge-1
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 1.28
+  at:
+  - -0.25
+  - -0.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the edge strut under it, 0.25 m from the nodes
+- id: edge-2
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 1.28
+  at:
+  - 0.25
+  - -0.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the edge strut under it, 0.25 m from the nodes
+- id: edge-3
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 1.28
+  at:
+  - 0.5
+  - -0.25
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the edge strut under it, 0.25 m from the nodes
+- id: edge-4
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 1.28
+  at:
+  - 0.5
+  - 0.25
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the edge strut under it, 0.25 m from the nodes
+- id: edge-5
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 1.28
+  at:
+  - 0.25
+  - 0.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the edge strut under it, 0.25 m from the nodes
+- id: edge-6
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 1.28
+  at:
+  - -0.25
+  - 0.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the edge strut under it, 0.25 m from the nodes
+- id: edge-7
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 1.28
+  at:
+  - -0.5
+  - 0.25
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the edge strut under it, 0.25 m from the nodes
+- id: edge-8
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 1.28
+  at:
+  - -0.5
+  - -0.25
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the edge strut under it, 0.25 m from the nodes
+physical:
+  length: 1.0
+  width: 1.0
+  height: 0.03
+  mass: 10.25
+built_of:
+- what: Skins
+  item: material.aluminium-alloy-6061
+  mass: 5.4
+  note: two 1 mm 6061 sheets
+- what: Honeycomb core
+  item: material.aluminium-alloy-6061
+  mass: 1.25
+  note: 25 mm aluminium honeycomb, 50 kg/m3
+- what: Seat track
+  item: material.aluminium-alloy-6061
+  mass: 2.4
+  note: 4 rails, 0.6 kg/m extruded 6061
+- what: Edge lugs
+  item: material.aluminium-alloy-6061
+  mass: 1.2
+  note: 8, a strut clamp bolted to each
+template: template.deck
+basis:
+- of:
+  - built_of
+  - physical
+  - load
+  - point_load
+  - ports
+  tier: invented
+  review: true
+  note: 'An aircraft-style sandwich floor and seat track, from memory; 10 kPa and a stud''s 18 kN pressed chosen. Review-pending (docs/proposals/physical-mounts.md): chosen, not approved.'

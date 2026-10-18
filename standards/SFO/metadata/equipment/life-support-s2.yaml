@@ -58,3 +58,9 @@ basis:
   - { of: [needs.power, function.cooling], tier: invented, review: true, note: "Open: 200 kW drawn (the game's early list) against 3 kW of cabin cooling cannot both stand: nearly all that power ends as heat aboard. The space station's water and oxygen plant for six draws a few kW (from memory), so a few kW is likely right and 200 kW the outlier; the game uses the figure, so engine first. The model is the exterior only; the parts are mass proxies, not a packing." }
   - { of: [life], rule: rule.life-ship-system }
   - { of: [function.persons, function.cooling], tier: derived, review: true, note: "By the space station's weights (about 270 kg of plant a head) 1,500 kg keeps about 6 people; it carries their heat and their equipment's, 500 W a head, and dries the air." }
+# ports and internal: written by tools/standards/equipment_ports.py, change them there.
+ports:
+- {id: foot-1, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 375.0, at: [-1.5615, -0.99, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.life-support-s2''s socket of the same id, bolted through'}
+- {id: foot-2, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 375.0, at: [1.5615, -0.99, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.life-support-s2''s socket of the same id, bolted through'}
+- {id: foot-3, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 375.0, at: [1.5615, 0.99, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.life-support-s2''s socket of the same id, bolted through'}
+- {id: foot-4, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 375.0, at: [-1.5615, 0.99, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.life-support-s2''s socket of the same id, bolted through'}

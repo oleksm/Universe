@@ -5,11 +5,11 @@ identity:
   name: Distribution board, 28 V DC, 16 ways
   maker: org.meridian
   revision: draft
-  slot: power
+  slot: utility
   description: 'Where a ship''s 28 V DC bus branches: fed from its converter by a pole pair or a circular shell 33 or 25 (whichever the converter has, all three on one bus bar), 12 ways of shell 17 (15 A), 4 ways of shell 25 (55 A)
     out, each through its own solid-state breaker, and the control bus through. Up to 11.2 kW on its bus bar. The connectors'' mass is the routed harness''s, not the board''s.'
 size_class: 1
-fits: mount.power-s1
+fits: mount.utility-s1
 physical:
   mass: 6.0
   volume: 0.0162
@@ -56,6 +56,38 @@ function:
   carries: 11200.0
 life: 473364000
 ports:
+- id: foot-1
+  flow: out
+  medium: load
+  interface: interface.deck-track
+  half: male
+  make: manual
+  mass: 3.0
+  at:
+  - -0.1778
+  - 0.0
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: a stud into the deck track under it
+- id: foot-2
+  flow: out
+  medium: load
+  interface: interface.deck-track
+  half: male
+  make: manual
+  mass: 3.0
+  at:
+  - 0.1778
+  - 0.0
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: a stud into the deck track under it
 - id: in+
   flow: in
   medium: power

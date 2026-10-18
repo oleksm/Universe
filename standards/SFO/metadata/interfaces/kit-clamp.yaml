@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../schema/interface.schema.yaml
+# Written by tools/standards/mounting.py: change it there.
+identity:
+  key: interface.kit-clamp
+  name: Kit strut clamp face
+  description: 'A holder''s fixing (male: a lug with a bolt hole) meeting a kit strut''s surface (female, anywhere on its clear length) through a strut clamp sized to the strut (connector.strut-clamp-d<mm>): the clamp''s rating and
+    stiffness are the link''s.'
+domain: load
+kind: strut-clamp
+envelope:
+  tension: 1301440.0
+  compression: 1301440.0
+  shear: 780864.0
+stiffness:
+  axial: 785398000.0
+  shear: 392700000.0
+media:
+- load
+sealing: open
+halves: male-female
+make: bolted
+basis:
+- of:
+  - envelope
+  tier: derived
+  note: The strongest strut clamp; a link is rated by its own clamp.
+- of:
+  - stiffness
+  tier: derived
+  review: true
+  note: 'The softest strut clamp, where a link names none. Review-pending (docs/proposals/physical-mounts.md): chosen, not approved.'

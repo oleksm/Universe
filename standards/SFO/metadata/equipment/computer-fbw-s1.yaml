@@ -49,3 +49,9 @@ basis:
   - { of: [physical.mass, physical.volume, needs.power], tier: sourced, review: true, source: "standards/sources/research_ship_equipment.json", note: "As the audit of 2026-10-05 has it (docs/ships/mc-07-equipment-dimensions.md): real avionics are far lighter and thriftier than the game's first list." }
   - { of: [built_of.list, identity.description], tier: derived, review: true, note: "For the modeller (2026-10-10): packed into the record's 0.5 x 0.4 x 0.25 m. Three inertial units in 4.5 kg are small fibre-optic or MEMS units (1.5 kg each, invented); the three 3 kg star trackers the dimensions note counts are heads that must see the sky: separate sensor equipment, not made yet (flagged). Ship wiring belongs to the hull." }
   - { of: [life], rule: rule.life-ship-system }
+# ports and internal: written by tools/standards/equipment_ports.py, change them there.
+ports:
+- {id: foot-1, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 7.5, at: [-0.2032, -0.125, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}
+- {id: foot-2, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 7.5, at: [0.2032, -0.125, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}
+- {id: foot-3, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 7.5, at: [-0.2032, 0.125, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}
+- {id: foot-4, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 7.5, at: [0.2032, 0.125, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}

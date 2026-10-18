@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/mounting.py: change it there.
+identity:
+  key: stock.kit-strut-clamp-d120
+  code: KIT-STRUT-CLAMP-D120
+  name: Strut clamp, 120 mm
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.aluminium-alloy-6061
+- item: material.high-strength-steel-4340
+size:
+  length: 0.264
+  width: 0.168
+  height: 0.12
+supplies:
+  item: connector.strut-clamp-d120
+physical:
+  mass: 6.041
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.strut-clamp-d120, as made.

@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/mounting.py: change it there.
+identity:
+  key: connector.strut-clamp-d100
+  name: Strut clamp, 100 mm
+  description: 'A split collar clamped round a 100 mm kit strut by two M16 bolts, its lug bolted to a holder''s fixing (a cradle''s or a deck panel''s): how a holder is fixed to a ship''s frame anywhere along a strut''s clear length,
+    never at a node.'
+kind: strut-clamp
+size: 0.1
+rating:
+  tension: 182434.0
+  compression: 182434.0
+  shear: 109460.0
+stiffness:
+  axial: 1256638000.0
+  shear: 628318000.0
+physical:
+  length: 0.236
+  width: 0.14
+  height: 0.1
+  mass: 4.227
+built_of:
+- what: Collar halves and lugs
+  item: material.aluminium-alloy-6061
+  mass: 3.965
+  note: 6061, 20 mm thick, 100 mm long
+- what: Bolts
+  item: material.high-strength-steel-4340
+  mass: 0.263
+  note: two M16 with nuts
+interface: interface.kit-clamp
+provides: both
+template: template.strut-clamp
+basis:
+- of:
+  - physical
+  - rating
+  - stiffness
+  tier: invented
+  review: true
+  note: 'Sized by the rule in tools/standards/mounting.py: collar 100 mm long and 20 mm thick; two M16 at 0.7 of proof (91.2 kN each); pulled or pressed, the two preloads; slipping, friction 0.3 at both halves. Review-pending (docs/proposals/physical-mounts.md):
+    chosen, not approved.'

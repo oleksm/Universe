@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/mounting.py: change it there.
+identity:
+  key: stock.kit-adapter-capacitor-s2
+  code: KIT-ADAPTER-CAPACITOR-S2
+  name: Capacitor cradle, class 2
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.aluminium-alloy-6061
+- item: material.high-strength-steel-4340
+size:
+  length: 3.0
+  width: 2.0
+  height: 0.2
+supplies:
+  item: adapter.capacitor-s2
+physical:
+  mass: 37.68
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One adapter.capacitor-s2, as made.

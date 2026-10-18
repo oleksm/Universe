@@ -43,3 +43,13 @@ basis:
   - { of: [function, size_class], tier: invented, review: true, note: "A four-stage telescoping clamp with four jaws that grips the rock the ship mines: 2 MN chosen, a 200 t ship held at 1 g. The mining rig's anchor reach is this clamp's." }
   - { of: [size_class], tier: derived, review: true, note: "Stowed 4.127 x 3.791 x 3.705 m: every side over access-s2's 3.3 m height, so class 3 (access-s3, 13.2 x 8.8 x 8.56 m; ships' choice, 2026-10-10). The aft clamp (3.266 m) stays class 2." }
   - { of: [life], rule: rule.life-ship-system }
+# ports and internal: written by tools/standards/equipment_ports.py, change them there.
+ports:
+- {id: foot-1, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 65.5, at: [3.96, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s3''s socket of the same id, bolted through'}
+- {id: foot-2, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 65.5, at: [2.8001, 2.8001, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s3''s socket of the same id, bolted through'}
+- {id: foot-3, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 65.5, at: [0.0, 3.96, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s3''s socket of the same id, bolted through'}
+- {id: foot-4, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 65.5, at: [-2.8001, 2.8001, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s3''s socket of the same id, bolted through'}
+- {id: foot-5, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 65.5, at: [-3.96, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s3''s socket of the same id, bolted through'}
+- {id: foot-6, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 65.5, at: [-2.8001, -2.8001, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s3''s socket of the same id, bolted through'}
+- {id: foot-7, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 65.5, at: [0.0, -3.96, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s3''s socket of the same id, bolted through'}
+- {id: foot-8, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 65.5, at: [2.8001, -2.8001, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s3''s socket of the same id, bolted through'}

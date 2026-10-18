@@ -151,6 +151,7 @@
 - { key: module.concrete-plant, game: "concrete-plant", in: "formerly industry.ron, settlements.ron" }
 - { key: module.conveyor-shop, game: "conveyor-shop", in: "formerly industry.ron, settlements.ron" }
 - { key: module.copper-smelter, game: "copper-smelter", in: "formerly industry.ron, settlements.ron" }
+- { key: module.cradle-shop, game: "cradle-shop", in: "formerly industry.ron, settlements.ron" }
 - { key: module.crushing-plant, game: "crushing-plant", in: "formerly industry.ron, settlements.ron" }
 - { key: module.cutting-table, game: "cutting-table", in: "formerly industry.ron, settlements.ron" }
 - { key: module.dairy, game: "dairy", in: "formerly industry.ron, settlements.ron" }

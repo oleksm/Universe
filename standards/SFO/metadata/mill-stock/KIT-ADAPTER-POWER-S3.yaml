@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/mounting.py: change it there.
+identity:
+  key: stock.kit-adapter-power-s3
+  code: KIT-ADAPTER-POWER-S3
+  name: Power plant cradle, class 3
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.aluminium-alloy-6061
+- item: material.high-strength-steel-4340
+size:
+  length: 32.0
+  width: 17.0
+  height: 0.45
+supplies:
+  item: adapter.power-s3
+physical:
+  mass: 3129.89
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One adapter.power-s3, as made.

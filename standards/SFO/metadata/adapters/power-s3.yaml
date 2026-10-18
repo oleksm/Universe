@@ -1,0 +1,1264 @@
+# yaml-language-server: $schema=../../schema/adapter.schema.yaml
+# Written by tools/standards/mounting.py: change it there.
+identity:
+  key: adapter.power-s3
+  name: Power plant cradle, class 3
+  description: 'Holds what fits mount.power-s3 on a ship''s frame: 2 6061 tube 200 x 5 mm beams over the frame''s struts, 1 m or more apart, clamped at the middle of every 1 m, 5 cross tubes, the mount''s 8 sockets on top.'
+offers: mount.power-s3
+rating:
+  tension: 346400.0
+  compression: 346400.0
+  shear: 172800.0
+physical:
+  length: 32.0
+  width: 17.0
+  height: 0.45
+  mass: 3129.89
+built_of:
+- what: Beams
+  item: material.aluminium-alloy-6061
+  mass: 529.3
+  note: 2 of 6061 tube 200 x 5 mm, 32.0 m each
+- what: Cross tubes
+  item: material.high-strength-steel-4340
+  mass: 2567.88
+  note: 5 of 4340 tube 250 x 5 mm, 17.0 m each
+- what: Socket pads and inserts
+  item: material.high-strength-steel-4340
+  mass: 1.61
+  note: 8 4340 pads, each an M16 insert
+- what: Fixing lugs
+  item: material.aluminium-alloy-6061
+  mass: 31.1
+  note: 64 6061 lugs, a strut clamp bolted to each
+ports:
+- id: s1
+  flow: in
+  medium: load
+  interface: interface.insert-m16
+  half: female
+  make: bolted
+  at:
+  - -15.84
+  - -8.055
+  - 0.45
+  facing:
+  - 0.0
+  - 0.0
+  - 1.0
+  optional: true
+  note: the mount's socket, an M16 insert (bolt stock.st4340-bolt-m16); spare when no foot is on it
+- id: s2
+  flow: in
+  medium: load
+  interface: interface.insert-m16
+  half: female
+  make: bolted
+  at:
+  - 15.84
+  - -8.055
+  - 0.45
+  facing:
+  - 0.0
+  - 0.0
+  - 1.0
+  optional: true
+  note: the mount's socket, an M16 insert (bolt stock.st4340-bolt-m16); spare when no foot is on it
+- id: s3
+  flow: in
+  medium: load
+  interface: interface.insert-m16
+  half: female
+  make: bolted
+  at:
+  - 15.84
+  - 8.055
+  - 0.45
+  facing:
+  - 0.0
+  - 0.0
+  - 1.0
+  optional: true
+  note: the mount's socket, an M16 insert (bolt stock.st4340-bolt-m16); spare when no foot is on it
+- id: s4
+  flow: in
+  medium: load
+  interface: interface.insert-m16
+  half: female
+  make: bolted
+  at:
+  - -15.84
+  - 8.055
+  - 0.45
+  facing:
+  - 0.0
+  - 0.0
+  - 1.0
+  optional: true
+  note: the mount's socket, an M16 insert (bolt stock.st4340-bolt-m16); spare when no foot is on it
+- id: s5
+  flow: in
+  medium: load
+  interface: interface.insert-m16
+  half: female
+  make: bolted
+  at:
+  - 0.0
+  - -8.055
+  - 0.45
+  facing:
+  - 0.0
+  - 0.0
+  - 1.0
+  optional: true
+  note: the mount's socket, an M16 insert (bolt stock.st4340-bolt-m16); spare when no foot is on it
+- id: s6
+  flow: in
+  medium: load
+  interface: interface.insert-m16
+  half: female
+  make: bolted
+  at:
+  - 15.84
+  - 0.0
+  - 0.45
+  facing:
+  - 0.0
+  - 0.0
+  - 1.0
+  optional: true
+  note: the mount's socket, an M16 insert (bolt stock.st4340-bolt-m16); spare when no foot is on it
+- id: s7
+  flow: in
+  medium: load
+  interface: interface.insert-m16
+  half: female
+  make: bolted
+  at:
+  - 0.0
+  - 8.055
+  - 0.45
+  facing:
+  - 0.0
+  - 0.0
+  - 1.0
+  optional: true
+  note: the mount's socket, an M16 insert (bolt stock.st4340-bolt-m16); spare when no foot is on it
+- id: s8
+  flow: in
+  medium: load
+  interface: interface.insert-m16
+  half: female
+  make: bolted
+  at:
+  - -15.84
+  - 0.0
+  - 0.45
+  facing:
+  - 0.0
+  - 0.0
+  - 1.0
+  optional: true
+  note: the mount's socket, an M16 insert (bolt stock.st4340-bolt-m16); spare when no foot is on it
+- id: fix-1
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - -15.5
+  - -8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-2
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - -14.5
+  - -8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-3
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - -13.5
+  - -8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-4
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - -12.5
+  - -8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-5
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - -11.5
+  - -8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-6
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - -10.5
+  - -8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-7
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - -9.5
+  - -8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-8
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - -8.5
+  - -8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-9
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - -7.5
+  - -8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-10
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - -6.5
+  - -8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-11
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - -5.5
+  - -8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-12
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - -4.5
+  - -8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-13
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - -3.5
+  - -8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-14
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - -2.5
+  - -8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-15
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - -1.5
+  - -8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-16
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - -0.5
+  - -8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-17
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - 0.5
+  - -8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-18
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - 1.5
+  - -8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-19
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - 2.5
+  - -8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-20
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - 3.5
+  - -8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-21
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - 4.5
+  - -8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-22
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - 5.5
+  - -8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-23
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - 6.5
+  - -8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-24
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - 7.5
+  - -8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-25
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - 8.5
+  - -8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-26
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - 9.5
+  - -8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-27
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - 10.5
+  - -8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-28
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - 11.5
+  - -8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-29
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - 12.5
+  - -8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-30
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - 13.5
+  - -8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-31
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - 14.5
+  - -8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-32
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - 15.5
+  - -8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-33
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - -15.5
+  - 8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-34
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - -14.5
+  - 8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-35
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - -13.5
+  - 8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-36
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - -12.5
+  - 8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-37
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - -11.5
+  - 8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-38
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - -10.5
+  - 8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-39
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - -9.5
+  - 8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-40
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - -8.5
+  - 8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-41
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - -7.5
+  - 8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-42
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - -6.5
+  - 8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-43
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - -5.5
+  - 8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-44
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - -4.5
+  - 8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-45
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - -3.5
+  - 8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-46
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - -2.5
+  - 8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-47
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - -1.5
+  - 8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-48
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - -0.5
+  - 8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-49
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - 0.5
+  - 8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-50
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - 1.5
+  - 8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-51
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - 2.5
+  - 8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-52
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - 3.5
+  - 8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-53
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - 4.5
+  - 8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-54
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - 5.5
+  - 8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-55
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - 6.5
+  - 8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-56
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - 7.5
+  - 8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-57
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - 8.5
+  - 8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-58
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - 9.5
+  - 8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-59
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - 10.5
+  - 8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-60
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - 11.5
+  - 8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-61
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - 12.5
+  - 8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-62
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - 13.5
+  - 8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-63
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - 14.5
+  - 8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-64
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 233.3
+  force: 5412.0
+  at:
+  - 15.5
+  - 8.5
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+template: template.cradle
+basis:
+- of:
+  - built_of
+  - physical
+  - ports
+  tier: derived
+  review: true
+  note: 'By the cradle rule in tools/standards/mounting.py: tubes chosen for the mount''s points times 1.5 in bending (cross tubes 276.0 kN m, beams 32.5 kN m); fixings'' duty the mount''s mass and points shared evenly, a placeholder:
+    a design''s duty comes from the stiffness model. Review-pending (docs/proposals/physical-mounts.md): chosen, not approved.'
+- of:
+  - rating
+  tier: derived
+  note: The mount's 8 points (mount.power-s3).

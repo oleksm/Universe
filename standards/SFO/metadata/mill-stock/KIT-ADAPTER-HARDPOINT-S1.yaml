@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/mounting.py: change it there.
+identity:
+  key: stock.kit-adapter-hardpoint-s1
+  code: KIT-ADAPTER-HARDPOINT-S1
+  name: Hardpoint cradle, class 1
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.aluminium-alloy-6061
+- item: material.high-strength-steel-4340
+size:
+  length: 4.0
+  width: 4.0
+  height: 0.28
+supplies:
+  item: adapter.hardpoint-s1
+physical:
+  mass: 159.39
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One adapter.hardpoint-s1, as made.

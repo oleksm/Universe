@@ -1,0 +1,45 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Adapter
+x-kind: [adapter]
+description: "standards/SFO/metadata/adapters/<slot>-s<class>.yaml: a structural adapter, the cradle that holds one mount's equipment on a ship's frame (docs/proposals/physical-mounts.md). Its top face offers the mount's sockets; its fixings clamp onto kit struts. Made from stock, sold as stock (its KIT-ADAPTER- record), drawn by its family template. Written by tools/standards/mounting.py."
+type: object
+additionalProperties: false
+required: [identity, offers, physical, built_of, ports, template]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name, description]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      description: { type: string }
+  offers: { type: string, x-ref: [mount], description: "The mount whose sockets its top face carries" }
+  rating:
+    type: object
+    additionalProperties: false
+    description: "What it is built to carry at most, through all its sockets together, before the ultimate factor"
+    properties:
+      tension: { type: number, minimum: 0, x-unit: "N" }
+      compression: { type: number, minimum: 0, x-unit: "N" }
+      shear: { type: number, minimum: 0, x-unit: "N" }
+  physical: { $ref: "../../common.schema.yaml#/definitions/physical" }
+  built_of:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [what, item, mass]
+      properties:
+        what: { type: string }
+        item: { type: string, x-ref: [material, stock, good] }
+        mass: { type: number, exclusiveMinimum: 0, x-unit: "kg" }
+        count: { type: integer, minimum: 1 }
+        note: { type: string }
+  ports: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/port" }, description: "Its sockets (female, the mount's) and fixings (male, kit-clamp)" }
+  template: { type: string, x-ref: [template] }
+  visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
+  revision:
+    $ref: "../../common.schema.yaml#/definitions/record_revision"
+    default: { status: draft, owner: registry, on_conflict: propose, because: "The first cradles, sized by a simple beam rule; review.", ask: docs/registry-ssot-request.md }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

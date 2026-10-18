@@ -48,6 +48,9 @@ WORKS = {  # slug: (name, step, description, (l, w, h), rate kg/s, power W, staf
     "building-panel-works": ("Building panel works", "Make building panels", "Forms skins, foams or welds cores and stiffeners, glazes, hangs doors and frames each building panel and stair for the kit's 3 m grid.",
                              (250, 50, 15), 2.0, 3.0e6, STAFF(("metalworker", 4), ("welder", 2), ("plant-operator", 2), ("technician", 1)),
                              "Skins are formed and joined to their cores or stiffeners, openings cut and fitted, the panel framed and sealed."),
+    "cradle-shop": ("Cradle shop", "Make equipment cradles", "Cuts kit tube and plate, welds them into the cradles that hold a ship's equipment on its frame, and sets their threaded inserts and clamp lugs.",
+                    (120, 40, 12), 0.5, 1.5e6, STAFF(("welder", 3), ("machinist", 1), ("metalworker", 2), ("technician", 1)),
+                    "Tube and plate are cut, jigged and welded; inserts are set and lugs bored; each cradle is proof loaded."),
     "conveyor-shop": ("Conveyor shop", "Make conveyors", "Builds belt conveyor sections and their idlers, drag conveyor casings and chains, and the transfer chutes between them.",
                       (200, 40, 15), 1.5, 3.0e6, STAFF(("metalworker", 4), ("fitter", 2), ("technician", 1)),
                       "Stringers, casings and chutes are cut and welded, idlers and chains assembled, belting cut and spliced."),
@@ -56,7 +59,7 @@ RUN_WORKS = {"cable": "cable-works", "hose": "hose-works", "pipe": "pipe-shop", 
              "belt": "conveyor-shop", "drag-conveyor": "conveyor-shop", "busbar": "electrical-fittings-works",
              "conductor-rail": "electrical-fittings-works", "festoon": "electrical-fittings-works"}
 CONN_WORKS = {"flange": "pipe-shop", "lined-flange": "pipe-shop", "chute": "pipe-shop", "hood": "pipe-shop", "clamp-coupling": "pipe-shop",
-              "expansion-joint": "pipe-shop", "valve": "valve-shop", "quick-coupling": "valve-shop", "union": "valve-shop", "twistlock": "valve-shop",
+              "expansion-joint": "pipe-shop", "valve": "valve-shop", "quick-coupling": "valve-shop", "union": "valve-shop", "twistlock": "valve-shop", "strut-clamp": "valve-shop",
               "termination": "electrical-fittings-works", "bus-joint": "electrical-fittings-works", "plug-socket": "electrical-fittings-works",
               "collector": "electrical-fittings-works", "cable-reel": "electrical-fittings-works", "belt-transfer": "conveyor-shop"}
 
@@ -82,6 +85,8 @@ def works_for(t):
     folder = t["identity"]["key"].split(".")[0]
     if folder == "panel":
         return "building-panel-works"
+    if folder == "adapter":
+        return "cradle-shop"
     table = RUN_WORKS if folder == "run" else CONN_WORKS
     if t.get("kind") not in table:
         raise SystemExit(f"kit_works: no works for {t['identity']['key']} (kind {t.get('kind')})")

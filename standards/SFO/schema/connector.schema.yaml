@@ -18,8 +18,8 @@ properties:
       name: { type: string }
       description: { type: string }
   kind:
-    enum: [flange, lined-flange, chute, belt-transfer, termination, bus-joint, hood, clamp-coupling, quick-coupling, union, plug-socket, collector, cable-reel, valve, expansion-joint, twistlock]
-    description: "flange: a bolted pipe or duct flange pair; lined-flange: the same on a refractory-lined duct, the lining's joint packed; chute: a sealed bolted chute flange for bulk solids (a lock's outlet into a closed conveyor); belt-transfer: a receiving chute and skirt where a belt's head discharges into a hopper or onto another belt; termination: a power cable's end into a terminal box (lugs, stress cones, gland); clamp-coupling: a sealed clamped joint whose duct side draws back to let its outlet move; hood: a fixed water-cooled catch hood over a moving outlet, a gap between them (no contact, no pressure); bus-joint: a bus's bolted joint to a unit's terminals, both poles, with the joint's water couplings; quick-coupling: a hose coupling made and broken by hand (cam-lock, flat-face); union: a screwed hose union; plug-socket: a power plug and its receiver, made and broken by hand; collector: a moving machine's sliding shoes on a conductor rail; cable-reel: a motor-driven reel paying out a machine's cable; valve: a flanged valve set in a line between two flange joints; expansion-joint: a flanged bellows taking a line's growth; twistlock: a container corner's casting (female) or its twistlock (male)."
+    enum: [flange, lined-flange, chute, belt-transfer, termination, bus-joint, hood, clamp-coupling, quick-coupling, union, plug-socket, collector, cable-reel, valve, expansion-joint, twistlock, strut-clamp]
+    description: "flange: a bolted pipe or duct flange pair; lined-flange: the same on a refractory-lined duct, the lining's joint packed; chute: a sealed bolted chute flange for bulk solids (a lock's outlet into a closed conveyor); belt-transfer: a receiving chute and skirt where a belt's head discharges into a hopper or onto another belt; termination: a power cable's end into a terminal box (lugs, stress cones, gland); clamp-coupling: a sealed clamped joint whose duct side draws back to let its outlet move; hood: a fixed water-cooled catch hood over a moving outlet, a gap between them (no contact, no pressure); bus-joint: a bus's bolted joint to a unit's terminals, both poles, with the joint's water couplings; quick-coupling: a hose coupling made and broken by hand (cam-lock, flat-face); union: a screwed hose union; plug-socket: a power plug and its receiver, made and broken by hand; collector: a moving machine's sliding shoes on a conductor rail; cable-reel: a motor-driven reel paying out a machine's cable; valve: a flanged valve set in a line between two flange joints; expansion-joint: a flanged bellows taking a line's growth; twistlock: a container corner's casting (female) or its twistlock (male); strut-clamp: a split collar clamped round a kit strut, joining a holder's fixing to the frame (docs/proposals/physical-mounts.md)."
   size: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "Its nominal size: a pipe's or duct's nominal bore (the steel's, for a lined duct), a chute's bore, a belt's width. For a termination, the conductor's cross-section in m2." }
   rating:
     type: object
@@ -32,6 +32,16 @@ properties:
       current: { type: number, minimum: 0, x-unit: "A", description: "A per phase (a bus joint: per pole)" }
       rate: { type: number, minimum: 0, x-unit: "kg/s", description: "kg/s of bulk it passes" }
       force: { type: number, minimum: 0, x-unit: "N", description: "N it holds (a container lock)" }
+      tension: { type: number, minimum: 0, x-unit: "N", description: "A load joint: N pulled apart, square to the strut" }
+      compression: { type: number, minimum: 0, x-unit: "N", description: "A load joint: N pressed together" }
+      shear: { type: number, minimum: 0, x-unit: "N", description: "A load joint: N across, slipping along or round the strut" }
+  stiffness:
+    type: object
+    additionalProperties: false
+    description: "A load joint's springs, which the load-sharing model uses for this product (overriding its interface's)."
+    properties:
+      axial: { type: number, exclusiveMinimum: 0, x-unit: "N/m" }
+      shear: { type: number, exclusiveMinimum: 0, x-unit: "N/m" }
   sealing: { enum: [single, double, open], description: "single: one gasket; double: two seals with the space between them watched for leaks (hydrogen, or any line to vacuum where a leak is lost for good); open: no seal (a belt's transfer)." }
   physical: { $ref: "../../common.schema.yaml#/definitions/physical", description: "The joint as fitted: its outside diameter (length and width) and its length along the run (height); its mass, both halves." }
   built_of:

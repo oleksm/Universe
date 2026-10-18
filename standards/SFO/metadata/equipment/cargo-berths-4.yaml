@@ -39,3 +39,13 @@ basis:
   - { of: [identity.description, physical.width, physical.volume, built_of.list], tier: derived, review: true, note: "Two Crew berths 2 stacks (accepted model) set back to back, from the modeller's proposal: body 2 x 2 x 2 m, fitted 2 x 2.14 x 2 m with a 70 mm ladder on each open face, inside the mount's 2.2 m. Each face needs its own hull corridor at least 0.8 m wide measured from the ladder face and 2 m high, as for Crew berths 2. Mass 520 kg and 200 W are two Crew berths 2; the shared spine and back wall are left inside the partition's share, not thinned. Chosen; review." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
+# ports and internal: written by tools/standards/equipment_ports.py, change them there.
+ports:
+- {id: foot-1, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 65.0, at: [-1.5705, -0.99, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.cargo-s1''s socket of the same id, bolted through'}
+- {id: foot-2, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 65.0, at: [1.5705, -0.99, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.cargo-s1''s socket of the same id, bolted through'}
+- {id: foot-3, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 65.0, at: [1.5705, 0.99, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.cargo-s1''s socket of the same id, bolted through'}
+- {id: foot-4, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 65.0, at: [-1.5705, 0.99, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.cargo-s1''s socket of the same id, bolted through'}
+- {id: foot-5, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 65.0, at: [0.0, -0.99, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.cargo-s1''s socket of the same id, bolted through'}
+- {id: foot-6, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 65.0, at: [1.5705, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.cargo-s1''s socket of the same id, bolted through'}
+- {id: foot-7, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 65.0, at: [0.0, 0.99, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.cargo-s1''s socket of the same id, bolted through'}
+- {id: foot-8, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 65.0, at: [-1.5705, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.cargo-s1''s socket of the same id, bolted through'}
