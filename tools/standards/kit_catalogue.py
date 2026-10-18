@@ -221,9 +221,10 @@ for slug, v, n, mm2, amps, od, ck in FLEX[:3]:
         "identity": {"key": f"run.festoon-{slug}", "name": f"Festoon, {n} x {mm2} mm2", "description": "A flexible cable hung in loops from trolleys on a C-track along a crane's or a carriage's travel: the loops gather as the machine comes near and pay out as it goes. For short travels up to about 100 m."},
         "kind": "festoon", "size": mm2 * 1e-6, "outside": [r(0.06 + od, 3), r(1.2 + od, 3)], "rating": {"voltage": v, "current": amps},
         "per_m": {"mass": r(3.2 + 1.4 + cable * 1.3, 2), "built_of": [part("C-track", A36, 3.2, "galvanised 40 x 40 mm section"), part("Cable trolleys' share", A36, 1.4, "a trolley every 1.5 m of track"), part("Cable, with its loops", CU, cable * 1.3, "1.3 m of cable a metre of track")]},
-        "support": {"spacing": 2.0, "mass": 2.5, "per_m_height": 3.0, "item": A36},
+        "support": {"spacing": 2.0, "mass": 1.02, "per_m_height": 3.0, "item": A36},
         "connector": f"connector.{ck}", "carries": "power", "template": "template.festoon",
-        "basis": [{"of": ["per_m", "outside"], "tier": "invented", "review": True, "note": f"Loops 1.2 m deep; {MEMORY}"}]})
+        "basis": [{"of": ["per_m", "outside"], "tier": "invented", "review": True, "note": f"Loops 1.2 m deep; {MEMORY}"},
+                  {"of": ["support"], "tier": "derived", "review": True, "note": "Head from blender's model (2026-10-17): a 6 mm clasp and threaded seat, 1.02 kg; the rod 22 mm, 2.95 kg/m (kept at 3)."}]})
 
 for slug, v, n, mm2, amps, od, ck in FLEX[1:]:
     L = {"690v-4x35": 100, "690v-4x95": 200, "11kv-3x95": 300}[slug]
@@ -354,7 +355,7 @@ def templates():
             d["pieces"] = [{"name": "support_head", "how": "a hanger clasping the housing at each support.spacing, the slot underneath clear; its child leg_top is the rod's seat above, envelope at the reference rail (invented)", "length": 0.06, "width": 0.11, "height": 0.2, "mass": 1.2},
                            {"name": "support_leg", "how": "a threaded rod 1 m long from leg_top up to y = 1; the game stretches it to the ceiling (support.per_m_height)"}]
         if fam == "festoon":          # the same 40 x 40 C-track for every member: its pieces drawn at their own size, never by outside (its height is the loops' depth)
-            d["pieces"] = [{"name": "support_head", "how": "a bracket clasping the C-track from above at each support.spacing, the slot underneath clear; its child leg_top is the rod's seat above (invented)", "length": 0.08, "width": 0.12, "height": 0.1, "mass": 2.5},
+            d["pieces"] = [{"name": "support_head", "how": "a bracket clasping the C-track from above at each support.spacing, the slot underneath clear; its child leg_top is the rod's seat above (blender's model)", "length": 0.08, "width": 0.12, "height": 0.1, "mass": 1.02},
                            {"name": "support_leg", "how": "a rod 1 m long from leg_top up to y = 1; the game stretches it to the ceiling (support.per_m_height)"},
                            {"name": "trolley", "how": "every 1.5 m along the track, four wheels inside it, a neck down through the slot to a cable saddle; its child cable_anchor is where the game hangs each loop's end (invented)", "length": 0.12, "width": 0.1, "height": 0.15, "mass": 2.1}]
         d["basis"] = [{"of": ["draws", "scales_by"], "tier": "derived", "note": "The owner, 2026-10-17: one template a family, scaled; the catalogue families (kit_catalogue.py)."}]

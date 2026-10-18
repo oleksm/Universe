@@ -29,7 +29,7 @@ per_m:
     note: 1.3 m of cable a metre of track
 support:
   spacing: 2.0
-  mass: 2.5
+  mass: 1.02
   per_m_height: 3.0
   item: material.structural-steel-a36
 connector: connector.plug-iec60309-125a
@@ -42,3 +42,8 @@ basis:
   tier: invented
   review: true
   note: Loops 1.2 m deep; From memory of makers' catalogues; to be sourced.
+- of:
+  - support
+  tier: derived
+  review: true
+  note: 'Head from blender''s model (2026-10-17): a 6 mm clasp and threaded seat, 1.02 kg; the rod 22 mm, 2.95 kg/m (kept at 3).'

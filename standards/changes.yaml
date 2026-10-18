@@ -2828,9 +2828,9 @@
 - { record: run.conductor-rail-250a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "97ea1112daa4966e" }
 - { record: run.conductor-rail-500a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "3943c16fc8690bed" }
 - { record: run.drag-conveyor-800, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "14f1c129b476f57f" }
-- { record: run.festoon-690v-4x16, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "959cf5f22e42032d" }
-- { record: run.festoon-690v-4x35, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "5eb948c4995dab50" }
-- { record: run.festoon-690v-4x95, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "57957fa8e8f0727a" }
+- { record: run.festoon-690v-4x16, at: "2026-10-18T04:47:20Z", status: draft, summary: "changed: support, basis", sha: "c363d4cf464a0dba" }
+- { record: run.festoon-690v-4x35, at: "2026-10-18T04:47:20Z", status: draft, summary: "changed: support, basis", sha: "4db86b5132a18e50" }
+- { record: run.festoon-690v-4x95, at: "2026-10-18T04:47:20Z", status: draft, summary: "changed: support, basis", sha: "4121bb9635c117a4" }
 - { record: run.hose-dn100-pn16, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "cccb7806eb301d4b" }
 - { record: run.hose-dn150-pn16, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "16e8a225a3ec65db" }
 - { record: run.hose-dn25-pn16, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "eb8da5b0e67b9d0f" }
@@ -4360,7 +4360,7 @@
 - { record: template.coupler, at: "2026-10-18T04:31:06Z", status: "", summary: "changed", sha: "92f33e0051a9f6f6" }
 - { record: template.drag-conveyor, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "da78b5e8e253b112" }
 - { record: template.expansion-joint, at: "2026-10-18T04:42:30Z", status: "", summary: "changed", sha: "35f0e9f3830a86f9" }
-- { record: template.festoon, at: "2026-10-18T04:42:30Z", status: "", summary: "changed: pieces", sha: "5dbe67175240c510" }
+- { record: template.festoon, at: "2026-10-18T04:47:20Z", status: "", summary: "changed: pieces", sha: "b1d6dea8c5425a3d" }
 - { record: template.flange, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "df7d790e5b79a704" }
 - { record: template.flange-double, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "1587eb01caf04022" }
 - { record: template.flat-face, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "1b798aa986e5491c" }
