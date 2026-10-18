@@ -4353,7 +4353,7 @@
 - { record: template.camlock, at: "2026-10-17T22:28:14Z", status: "", summary: "changed: visual", sha: "2f9b6f2f5893ebf8" }
 - { record: template.chute, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "e667824e0f7b7e6c" }
 - { record: template.clamp-coupling, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "56041bc040721ee0" }
-- { record: template.collector, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "13c03b72d1e3930c" }
+- { record: template.collector, at: "2026-10-18T03:56:14Z", status: "", summary: "changed: visual", sha: "7c1956b1e752fdcc" }
 - { record: template.conductor-rail, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "4d9bd117533433fe" }
 - { record: template.corner-casting, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "60bd55a1c9ae01b7" }
 - { record: template.coupler, at: "2026-10-17T21:34:29Z", status: "", summary: "changed: reference", sha: "9f203fcd8163538d" }

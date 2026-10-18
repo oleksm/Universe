@@ -10,6 +10,12 @@ scales_by:
 - physical
 members: 4
 reference: connector.collector-250a
+visual:
+  format: "freefall-model/1"
+  path: "models/collector/v1"
+  manifest_sha256: "39e76fb024d694c2f7712d75abf98323cf1594ee3220e75d200c615b82c1cb1e"
+  version: 1
+  triangles: 556
 basis:
 - of:
   - draws
