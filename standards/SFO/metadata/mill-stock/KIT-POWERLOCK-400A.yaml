@@ -10,6 +10,7 @@ package: package.crate-steel
 made_from:
 - item: material.copper
 - item: material.epdm-rubber
+- item: material.structural-steel-a36
 size:
   length: 0.3
   width: 0.12
@@ -17,7 +18,7 @@ size:
 supplies:
   item: connector.powerlock-400a
 physical:
-  mass: 6.5
+  mass: 7.53
 basis:
 - of:
   - size

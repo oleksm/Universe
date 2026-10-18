@@ -10,15 +10,15 @@ scales_by:
 - physical
 members: 4
 reference: connector.plug-iec60309-32a
-visual:
-  format: "freefall-model/1"
-  path: "models/plug-socket/v1"
-  manifest_sha256: "4ca565ee08212ec791dd0b9eea16c89fc16e1bb779eeb21d483c59343f96cff3"
-  version: 1
-  triangles: 6798
 basis:
 - of:
   - draws
   - scales_by
   tier: derived
   note: 'The owner, 2026-10-17: one template a family, scaled; the catalogue families (kit_catalogue.py).'
+visual:
+  format: freefall-model/1
+  path: models/plug-socket/v1
+  manifest_sha256: 4ca565ee08212ec791dd0b9eea16c89fc16e1bb779eeb21d483c59343f96cff3
+  version: 1
+  triangles: 6798

@@ -185,15 +185,17 @@ PLUGS = [  # (slug, name, amps, volts, pins, kg a pair, l, w, h, interface name,
 BOUND = {  # blender's measured parts, where the model changed what it is made of
     "coupler-11kv-400a": ([("Contacts", CU, 4.86, "pins and sockets"), ("Body", RUB, 14.95, "EPDM-moulded body"), ("Shroud, coupling ring and bolts", A36, 3.33, None)],
                           "blender's model (2026-10-17): EPDM body, three phase pins on a 90 mm circle, pilot and earth at the centre, steel shroud and ring")}
+PANEL = {"powerlock-400a": round((0.3 * 0.12 - 5 * math.pi * 0.025 ** 2) * 0.005 * RHO[A36], 2)}   # the receivers' common plate: 5 mm steel (invented), five 50 mm cut-outs
 for slug, name, amps, v, pins, kg, l, w, h, iname, std in PLUGS:
     cu = min(kg * 0.3, pins * amps * 4e-6 * 0.08 * RHO[CU] + 0.05)
     if slug in BOUND:
         kg = round(sum(part(*p)["mass"] for p in BOUND[slug][0]), 2)
+    plate = [part("Panel plate", A36, PANEL[slug], "5 mm, the receivers' common mounting plate, four corner holes")] if slug in PANEL else []
     conn(slug, {
         "identity": {"key": f"connector.{slug}", "name": name, "description": "The plug and receiver a crew or a player hooks a machine up with: made and broken by hand, keyed so that only its own rating mates, the earth pin first in and last out."},
         "kind": "plug-socket", "size": amps / 1e6, "rating": {"voltage": v, "current": amps},
-        "physical": {"length": l, "width": w, "height": h, "mass": kg},
-        "built_of": [part(*p) for p in BOUND[slug][0]] if slug in BOUND else [part("Contacts", CU, cu, "silver-plated brass, as copper here"), part("Housings and seals", PE if v < 1000 else RUB, kg - cu, "polyamide housings, as UHMW polyethylene here" if v < 1000 else "rubber-moulded body")],
+        "physical": {"length": l, "width": w, "height": h, "mass": round(kg + sum(q["mass"] for q in plate), 2)},
+        "built_of": ([part(*p) for p in BOUND[slug][0]] if slug in BOUND else [part("Contacts", CU, cu, "silver-plated brass, as copper here"), part("Housings and seals", PE if v < 1000 else RUB, kg - cu, "polyamide housings, as UHMW polyethylene here" if v < 1000 else "rubber-moulded body")]) + plate,
         "provides": "both", "template": "template.plug-socket" if v < 1000 and pins == 5 and amps <= 125 else "template.single-pole" if slug.startswith("powerlock") else "template.coupler",
         "basis": [{"of": ["physical"], "tier": "derived", "review": True, "note": f"From {BOUND[slug][1]}."} if slug in BOUND else {"of": ["physical"], "tier": "invented", "review": True, "note": MEMORY}]},
         {"slug": slug, "name": iname, "domain": "power", "kind": "plug-socket", "media": ["power"], "halves": "male-female", "make": "manual", "standard": std})

@@ -267,7 +267,7 @@
 - { record: connector.plug-iec60309-16a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "e8f81c94aaddd091" }
 - { record: connector.plug-iec60309-32a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "c21a0b2f7fa8508a" }
 - { record: connector.plug-iec60309-63a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "3da7c6192318b95d" }
-- { record: connector.powerlock-400a, at: "2026-10-18T04:18:11Z", status: draft, summary: "changed: template", sha: "c1f9b965cc8906d4" }
+- { record: connector.powerlock-400a, at: "2026-10-18T05:10:36Z", status: draft, summary: "changed: physical, built_of", sha: "930e8c8478fee489" }
 - { record: connector.termination-11kv-500mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "8b2c1633ea36234b" }
 - { record: connector.termination-132kv-240mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "f05b65d2e83b93c4" }
 - { record: connector.termination-33kv-120mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "749c2fe74fadb727" }
@@ -3665,7 +3665,7 @@
 - { record: stock.kit-plug-iec60309-16a, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "59daeb83bfdd7936" }
 - { record: stock.kit-plug-iec60309-32a, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "d0a273e2ba50b3eb" }
 - { record: stock.kit-plug-iec60309-63a, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "cf91e00d14157b89" }
-- { record: stock.kit-powerlock-400a, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "c0231123ad7e3fc9" }
+- { record: stock.kit-powerlock-400a, at: "2026-10-18T05:10:36Z", status: review, summary: "changed: made_from, physical", sha: "01f2b28041e705f9" }
 - { record: stock.kit-termination-11kv-500mm2, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "9ebf2861603535d8" }
 - { record: stock.kit-termination-132kv-240mm2, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "e2c20466b4be5798" }
 - { record: stock.kit-termination-33kv-120mm2, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "3a3b16d8aeedbae5" }
@@ -4376,7 +4376,7 @@
 - { record: template.partition-door, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "099a30da62f30cb9" }
 - { record: template.pipe, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "9a17ec7ddd415223" }
 - { record: template.pipe-lagged, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "ee12031c045d334f" }
-- { record: template.plug-socket, at: "2026-10-18T05:08:04Z", status: "", summary: "changed: visual", sha: "9936f0ba4718c5cd" }
+- { record: template.plug-socket, at: "2026-10-18T05:10:36Z", status: "", summary: "changed", sha: "5aff04409b33b553" }
 - { record: template.roof, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "a966489b0bd9126b" }
 - { record: template.single-pole, at: "2026-10-18T04:18:11Z", status: "", summary: "first tracked", sha: "88eb85873afaab61" }
 - { record: template.stair, at: "2026-10-18T01:25:38Z", status: "", summary: "changed", sha: "dc0f89d97f6807ea" }

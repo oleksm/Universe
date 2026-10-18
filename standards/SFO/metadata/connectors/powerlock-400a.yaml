@@ -13,7 +13,7 @@ physical:
   length: 0.3
   width: 0.12
   height: 0.25
-  mass: 6.5
+  mass: 7.53
 built_of:
 - what: Contacts
   item: material.copper
@@ -23,6 +23,10 @@ built_of:
   item: material.epdm-rubber
   mass: 4.55
   note: rubber-moulded body
+- what: Panel plate
+  item: material.structural-steel-a36
+  mass: 1.03
+  note: 5 mm, the receivers' common mounting plate, four corner holes
 provides: both
 template: template.single-pole
 basis:
