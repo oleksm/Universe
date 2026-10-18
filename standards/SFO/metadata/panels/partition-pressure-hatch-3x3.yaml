@@ -9,7 +9,7 @@ site: airless
 cell:
 - 3.0
 - 3.0
-thickness: 0.17
+thickness: 0.205
 opening:
   kind: pressure-door
   width: 1.0
@@ -19,7 +19,7 @@ opening:
 load: 101300.0
 physical:
   length: 3.0
-  width: 0.17
+  width: 0.205
   height: 3.0
   mass: 475.0
 built_of:

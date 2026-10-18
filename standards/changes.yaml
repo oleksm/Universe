@@ -1481,7 +1481,7 @@
 - { record: panel.partition-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "52bad398a3b62283" }
 - { record: panel.partition-door-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "58796602b82db5e0" }
 - { record: panel.partition-pressure-3x3, at: "2026-10-18T14:47:28Z", status: draft, summary: "first tracked", sha: "5b84ce851138d72c" }
-- { record: panel.partition-pressure-hatch-3x3, at: "2026-10-18T14:47:28Z", status: draft, summary: "first tracked", sha: "c912d33b2330f0be" }
+- { record: panel.partition-pressure-hatch-3x3, at: "2026-10-18T15:33:19Z", status: draft, summary: "changed: thickness, physical", sha: "368879d8cd9dddbb" }
 - { record: panel.roof-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "da24091c503ae16b" }
 - { record: panel.roof-pressure-3x3, at: "2026-10-18T14:47:28Z", status: draft, summary: "first tracked", sha: "d906c360700190c4" }
 - { record: panel.stair-3m, at: "2026-10-18T01:25:38Z", status: draft, summary: "changed: built_of", sha: "4beb1e9891445b12" }
@@ -3699,7 +3699,7 @@
 - { record: stock.kit-panel-partition-3x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "c5b5e648ef91ff2e" }
 - { record: stock.kit-panel-partition-door-3x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "e06b60d6b9e7d95c" }
 - { record: stock.kit-panel-partition-pressure-3x3, at: "2026-10-18T14:47:28Z", status: review, summary: "first tracked", sha: "1eecb74eeb8aab5d" }
-- { record: stock.kit-panel-partition-pressure-hatch-3x3, at: "2026-10-18T14:47:28Z", status: review, summary: "first tracked", sha: "1cb61f702657e5d7" }
+- { record: stock.kit-panel-partition-pressure-hatch-3x3, at: "2026-10-18T15:33:19Z", status: review, summary: "changed: size", sha: "b7d843f907a695ad" }
 - { record: stock.kit-panel-roof-3x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "804eed560cd5171e" }
 - { record: stock.kit-panel-roof-pressure-3x3, at: "2026-10-18T14:47:28Z", status: review, summary: "first tracked", sha: "10d90dfdc0e0255b" }
 - { record: stock.kit-panel-stair-3m, at: "2026-10-18T01:21:24Z", status: review, summary: "changed: size, physical", sha: "684cba216549922c" }
@@ -4476,7 +4476,7 @@
 - { record: template.flange-double, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "1587eb01caf04022" }
 - { record: template.flat-face, at: "2026-10-18T05:00:50Z", status: "", summary: "changed", sha: "6655c0a42fb55b1c" }
 - { record: template.floor, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "92d1ba192124ab37" }
-- { record: template.floor-pressure, at: "2026-10-18T15:21:47Z", status: "", summary: "changed: visual", sha: "bfa5c80e60571f7c" }
+- { record: template.floor-pressure, at: "2026-10-18T15:33:19Z", status: "", summary: "changed", sha: "e48751b5d3d96dbc" }
 - { record: template.hood, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "2bd0f63963dc39e7" }
 - { record: template.hose, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "76521a9d59aafaae" }
 - { record: template.hose-hydraulic, at: "2026-10-17T21:18:58Z", status: "", summary: "first tracked", sha: "1bdc07615e11b940" }
@@ -4487,7 +4487,7 @@
 - { record: template.lined-flange, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "566901f48b56a274" }
 - { record: template.partition, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "645d2adf776d002f" }
 - { record: template.partition-door, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "099a30da62f30cb9" }
-- { record: template.partition-pressure, at: "2026-10-18T15:24:44Z", status: "", summary: "changed: visual", sha: "2efd6c16ca386cbe" }
+- { record: template.partition-pressure, at: "2026-10-18T15:33:19Z", status: "", summary: "changed", sha: "ff6321a21585e199" }
 - { record: template.partition-pressure-hatch, at: "2026-10-18T14:47:28Z", status: "", summary: "first tracked", sha: "8b9d59df0872caa5" }
 - { record: template.pipe, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "9a17ec7ddd415223" }
 - { record: template.pipe-lagged, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "ee12031c045d334f" }

@@ -220,7 +220,8 @@ panel("partition-pressure-3x3", "Pressure partition, 3 x 3 m", "partition", (3.0
       "partition-pressure", load=P_IN, basis=PRESSURE, site="airless", tier="derived")
 lp, ld = plug_leaf(*door, "Pressure door leaf")
 parts, th = pressure_skin(3.0, 3.0, cut=door[0] * door[1], mli=False, what="Bulkhead skin")
-panel("partition-pressure-hatch-3x3", "Pressure partition with a door, 3 x 3 m", "partition", (3.0, 3.0), r(th, 3), parts + lp + [("Door surround", AL, 40.0, "a welded doubler round the opening (invented)")],
+HINGE_DEPTH = 0.205      # m through the panel with the door's hinge arms wrapping the jamb: blender's swept model (2026-10-18)
+panel("partition-pressure-hatch-3x3", "Pressure partition with a door, 3 x 3 m", "partition", (3.0, 3.0), max(r(th, 3), HINGE_DEPTH), parts + lp + [("Door surround", AL, 40.0, "a welded doubler round the opening (invented)")],
       "A pressure partition with a 1.0 x 2.0 m plug door: an airlock's inner door, or a door between parts that can be shut on a leak.",
       "partition-pressure-hatch", opening={"kind": "pressure-door", "width": door[0], "height": door[1], "sill": 0.15, "people": True}, load=P_IN, basis=PRESSURE, site="airless", tier="derived")
 

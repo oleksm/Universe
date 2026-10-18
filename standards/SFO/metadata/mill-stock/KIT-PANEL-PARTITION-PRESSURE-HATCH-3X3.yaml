@@ -12,7 +12,7 @@ made_from:
 - item: material.structural-steel-a36
 size:
   length: 3.0
-  width: 0.17
+  width: 0.205
   height: 3.0
 supplies:
   item: panel.partition-pressure-hatch-3x3
