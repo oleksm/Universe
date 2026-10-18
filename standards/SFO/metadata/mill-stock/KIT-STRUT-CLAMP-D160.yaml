@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
-# Written by tools/standards/mounting.py: change it there.
+# Written by tools/standards/kit_catalogue.py: change it there.
 identity:
   key: stock.kit-strut-clamp-d160
   code: KIT-STRUT-CLAMP-D160

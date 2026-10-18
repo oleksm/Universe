@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+# Written by tools/standards/mounting.py: change it there.
+identity:
+  key: rule.run-support
+  name: Run support spacing
+  about: The most spacing between a run's supports, by its family and where it is laid.
+statement: 'Aboard a ship: cable and hose clipped every 0.6 m at most (aircraft practice); tube and pipe every 0.6 m up to 30 mm outside, 1.0 m to 65, 1.5 m to 120, 2.0 m above. In a plant at 1 g: steel pipe at the suggested spans of
+  ASME B31.1 by size (2.1 m at 34 mm to 9.1 m at 610 mm outside), cable 1.5 m, hose 1.0 m; belts, conveyors, busbars, conductor rails, festoons and ducts on their own supports at their family''s pitch. A run whose family has no figure
+  for a place is not to be laid there. The studio enforces it, and the clips'' load, the run''s bend radius and its end restraint.'
+tier: invented
+source: FAA AC 43.13-1B (wire clamps 24 in); ASME B31.1 suggested pipe spans; both from memory
+review: true

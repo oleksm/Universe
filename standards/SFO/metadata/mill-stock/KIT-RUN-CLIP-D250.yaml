@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-run-clip-d250
+  code: KIT-RUN-CLIP-D250
+  name: Run clip, up to 250 mm
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.aluminium-alloy-6061
+- item: material.silicone-rubber
+- item: material.high-strength-steel-4340
+size:
+  length: 0.415
+  width: 0.264
+  height: 0.0625
+supplies:
+  item: connector.run-clip-d250
+physical:
+  mass: 1.053
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.run-clip-d250, as made.

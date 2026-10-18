@@ -28,10 +28,9 @@ per_m:
     mass: 1.18
     note: 1.3 m of cable a metre of track
 support:
-  spacing: 2.0
-  mass: 1.02
-  per_m_height: 3.0
-  item: material.structural-steel-a36
+  plant: 1.0
+  by: its trolleys on their track
+  basis: rule.run-support
 connector: connector.plug-iec60309-125a
 carries: power
 template: template.festoon

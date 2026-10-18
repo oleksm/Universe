@@ -332,6 +332,15 @@
 - { record: connector.plug-iec60309-32a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "c21a0b2f7fa8508a" }
 - { record: connector.plug-iec60309-63a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "3da7c6192318b95d" }
 - { record: connector.powerlock-400a, at: "2026-10-18T05:15:35Z", status: draft, summary: "changed: physical, built_of, basis", sha: "528acdaf49ddd12d" }
+- { record: connector.run-clip-d10, at: "2026-10-18T20:37:52Z", status: draft, summary: "first tracked", sha: "36352f2599fab715" }
+- { record: connector.run-clip-d100, at: "2026-10-18T20:37:52Z", status: draft, summary: "first tracked", sha: "73b5ef7e29aa9d53" }
+- { record: connector.run-clip-d16, at: "2026-10-18T20:37:52Z", status: draft, summary: "first tracked", sha: "cac88d1a6efed827" }
+- { record: connector.run-clip-d160, at: "2026-10-18T20:37:52Z", status: draft, summary: "first tracked", sha: "791f133d656b4057" }
+- { record: connector.run-clip-d25, at: "2026-10-18T20:37:52Z", status: draft, summary: "first tracked", sha: "2d8a748e40a12b8b" }
+- { record: connector.run-clip-d250, at: "2026-10-18T20:37:52Z", status: draft, summary: "first tracked", sha: "403ceeb3deaf1fd9" }
+- { record: connector.run-clip-d40, at: "2026-10-18T20:37:52Z", status: draft, summary: "first tracked", sha: "75ff8f6585302913" }
+- { record: connector.run-clip-d400, at: "2026-10-18T20:37:52Z", status: draft, summary: "first tracked", sha: "9e67448bd4dd6332" }
+- { record: connector.run-clip-d63, at: "2026-10-18T20:37:52Z", status: draft, summary: "first tracked", sha: "023ef572a3359463" }
 - { record: connector.strut-clamp-d100, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "9df8138ee2125e4c" }
 - { record: connector.strut-clamp-d120, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "ff86538c8db2f29f" }
 - { record: connector.strut-clamp-d150, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "aaaa0b0420640043" }
@@ -1133,6 +1142,15 @@
 - { record: interface.plug-iec60309-32a, at: "2026-10-18T16:52:32Z", status: "", summary: "changed", sha: "7f01be8a5c944a75" }
 - { record: interface.plug-iec60309-63a, at: "2026-10-18T16:52:32Z", status: "", summary: "changed", sha: "f40fe29d2e1c739f" }
 - { record: interface.powerlock-400a, at: "2026-10-18T16:52:32Z", status: "", summary: "changed", sha: "b8bdad34fc56e2ec" }
+- { record: interface.run-clip-d10, at: "2026-10-18T20:37:52Z", status: "", summary: "first tracked", sha: "3d269e2b54902509" }
+- { record: interface.run-clip-d100, at: "2026-10-18T20:37:52Z", status: "", summary: "first tracked", sha: "b1f3e4d6bd9d2286" }
+- { record: interface.run-clip-d16, at: "2026-10-18T20:37:52Z", status: "", summary: "first tracked", sha: "5fb80026bbda8131" }
+- { record: interface.run-clip-d160, at: "2026-10-18T20:37:52Z", status: "", summary: "first tracked", sha: "e8900d560701913f" }
+- { record: interface.run-clip-d25, at: "2026-10-18T20:37:52Z", status: "", summary: "first tracked", sha: "3bb11db505601ca1" }
+- { record: interface.run-clip-d250, at: "2026-10-18T20:37:52Z", status: "", summary: "first tracked", sha: "844c775b5ab9971e" }
+- { record: interface.run-clip-d40, at: "2026-10-18T20:37:52Z", status: "", summary: "first tracked", sha: "09b0f8a153eca0d3" }
+- { record: interface.run-clip-d400, at: "2026-10-18T20:37:52Z", status: "", summary: "first tracked", sha: "436faad5f04b3186" }
+- { record: interface.run-clip-d63, at: "2026-10-18T20:37:52Z", status: "", summary: "first tracked", sha: "d417d9fa4e5cb475" }
 - { record: interface.termination-11kv-500mm2, at: "2026-10-17T15:19:33Z", status: "", summary: "first tracked", sha: "eed6ac0d1865ee7a" }
 - { record: interface.termination-132kv-240mm2, at: "2026-10-17T13:40:50Z", status: "", summary: "changed", sha: "5fd1a51634b310c0" }
 - { record: interface.termination-33kv-120mm2, at: "2026-10-17T13:40:50Z", status: "", summary: "changed", sha: "fc3902ab6a8596e5" }
@@ -1420,7 +1438,7 @@
 - { record: module.titanium-works, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "4bebc9d91c71ef52" }
 - { record: module.tungsten-works, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "b29e324df7a94727" }
 - { record: module.vacuum-furnace, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "f2470112fd348796" }
-- { record: module.valve-shop, at: "2026-10-18T17:53:40Z", status: review, summary: "changed: recipes", sha: "68251d65c379b614" }
+- { record: module.valve-shop, at: "2026-10-18T20:37:52Z", status: review, summary: "changed: recipes", sha: "afb1d9f555e51759" }
 - { record: module.waste-dump, at: "2026-10-06T18:38:56Z", status: review, summary: "first tracked", sha: "7dad5c67c8500c7a" }
 - { record: module.water-works, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "e07ff32d48a7971a" }
 - { record: module.welding-bay, at: "2026-10-14T01:37:48Z", status: review, summary: "changed: recipes", sha: "2001e7fb8aad6b4f" }
@@ -2906,144 +2924,145 @@
 - { record: rule.life-ship-system, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "dfb76750c01c37b7" }
 - { record: rule.mounts-margin, at: "2026-10-13T05:32:00Z", status: review, summary: "changed: statement", sha: "88491f348e30a319" }
 - { record: rule.plant-weights-from-memory, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "d4bff33987b75c18" }
+- { record: rule.run-support, at: "2026-10-18T20:37:52Z", status: review, summary: "first tracked", sha: "2d38160a4d228cbc" }
 - { record: rule.shares-chosen, at: "2026-10-07T03:53:08Z", status: review, summary: "first tracked", sha: "2f29f0362d9d7f04" }
-- { record: run.belt-1000, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "40889b04ac1de050" }
-- { record: run.belt-1000-sealed, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "8b452eaa08f47e8f" }
-- { record: run.belt-1200, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "ca62efa0a9d87958" }
-- { record: run.belt-1400, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "b8137a4b56695a1c" }
-- { record: run.belt-650, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "c6354a8c0d472a71" }
-- { record: run.belt-800, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "348120cfee412a4d" }
-- { record: run.belt-800-sealed, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "2db514e4975d2945" }
-- { record: run.busbar-ac-27ka, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "d47bf0c2971cac9f" }
-- { record: run.busbar-ac-65ka, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "9f011e68e2d0c0a4" }
-- { record: run.busbar-dc-44ka, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "10051ea8e3a138d9" }
-- { record: run.cable-11kv-500mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template, looks_as", sha: "7cd5daef167c7844" }
-- { record: run.cable-132kv-240mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "95b667698b0bc2d3" }
-- { record: run.cable-33kv-120mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "1508c61145fb5a25" }
-- { record: run.cable-33kv-150mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "3fc39d8e68f1b8ee" }
-- { record: run.cable-33kv-185mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "cc7b2baa170c739e" }
-- { record: run.cable-33kv-630mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "a3d0e93ddcc07d5f" }
-- { record: run.cable-400v-120mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "57f07e90fcc29648" }
-- { record: run.cable-400v-16mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "402252556fa67b62" }
-- { record: run.cable-400v-185mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "050d4188daa1a4aa" }
-- { record: run.cable-400v-240mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template, looks_as", sha: "35a47e343bb3ae29" }
-- { record: run.cable-400v-25mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "9ade99e0e59a1838" }
-- { record: run.cable-400v-300mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "e5f7b393a11f3f14" }
-- { record: run.cable-400v-35mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "54941ba70b427c69" }
-- { record: run.cable-400v-400mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "d396ff6ba92e8d6f" }
-- { record: run.cable-400v-500mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "9f79e826102a4539" }
-- { record: run.cable-400v-50mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "d219118371d08cbc" }
-- { record: run.cable-400v-630mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template, looks_as", sha: "dc9c7fc86ea43cef" }
-- { record: run.cable-400v-70mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "ea25842006019b2f" }
-- { record: run.cable-400v-95mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "77098d8186307e8b" }
-- { record: run.cable-6p6kv-185mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "754a13f2f4873d65" }
-- { record: run.cable-6p6kv-400mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "aeb2709acf90e727" }
-- { record: run.cable-6p6kv-50mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template, looks_as", sha: "d7db68a430b83385" }
-- { record: run.cable-6p6kv-630mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "91dba21d5cec7cb5" }
-- { record: run.cable-6p6kv-70mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template, looks_as", sha: "30e1cb5d9658c8f0" }
-- { record: run.cable-6p6kv-95mm2, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "92a8b7319d1a70e1" }
-- { record: run.cable-data-can, at: "2026-10-18T16:58:29Z", status: draft, summary: "first tracked", sha: "2f9c07fc93d1b147" }
-- { record: run.cable-dc-600v-2x50mm2, at: "2026-10-18T16:58:29Z", status: draft, summary: "first tracked", sha: "ca040bd14f955817" }
-- { record: run.cable-dc-600v-3x16mm2, at: "2026-10-18T16:58:29Z", status: draft, summary: "first tracked", sha: "735913a3bd779714" }
-- { record: run.cable-dc-600v-3x1mm2, at: "2026-10-18T16:58:29Z", status: draft, summary: "first tracked", sha: "88415064e428681d" }
-- { record: run.cable-dc-600v-3x2p5mm2, at: "2026-10-18T16:58:29Z", status: draft, summary: "first tracked", sha: "50066411ef75edfe" }
-- { record: run.cable-dc-600v-3x6mm2, at: "2026-10-18T16:58:29Z", status: draft, summary: "first tracked", sha: "fc2400d36ba59732" }
-- { record: run.cable-flexible-11kv-3x95, at: "2026-10-18T16:52:32Z", status: draft, summary: "changed", sha: "1946adbd52692bc3" }
-- { record: run.cable-flexible-690v-4x16, at: "2026-10-18T16:52:32Z", status: draft, summary: "changed", sha: "472cffd8f9eac779" }
-- { record: run.cable-flexible-690v-4x35, at: "2026-10-18T16:52:32Z", status: draft, summary: "changed", sha: "88c30cc3857ae6a6" }
-- { record: run.cable-flexible-690v-4x95, at: "2026-10-18T16:52:32Z", status: draft, summary: "changed", sha: "59e69cedab700751" }
-- { record: run.cable-installation-230v-3x10, at: "2026-10-18T16:52:32Z", status: draft, summary: "changed", sha: "777cb5f156606930" }
-- { record: run.cable-installation-230v-3x1p5, at: "2026-10-18T16:52:32Z", status: draft, summary: "changed", sha: "e46f0e83010f1fb5" }
-- { record: run.cable-installation-230v-3x2p5, at: "2026-10-18T16:52:32Z", status: draft, summary: "changed", sha: "3dde22f7a37e237c" }
-- { record: run.cable-installation-230v-3x4, at: "2026-10-18T16:52:32Z", status: draft, summary: "changed", sha: "2b8aae71421a6e14" }
-- { record: run.cable-installation-230v-3x6, at: "2026-10-18T16:52:32Z", status: draft, summary: "changed", sha: "a824a695a551d4fd" }
-- { record: run.cable-installation-400v-5x16, at: "2026-10-18T16:52:32Z", status: draft, summary: "changed", sha: "a5249314b8cb1e7f" }
-- { record: run.cable-installation-400v-5x2p5, at: "2026-10-18T16:52:32Z", status: draft, summary: "changed", sha: "01907a88244f6319" }
-- { record: run.cable-installation-400v-5x6, at: "2026-10-18T16:52:32Z", status: draft, summary: "changed", sha: "382a14a83b73f991" }
-- { record: run.conductor-rail-1000a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "f3312d2c5694191b" }
-- { record: run.conductor-rail-100a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "57d065ae60fe1418" }
-- { record: run.conductor-rail-250a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "97ea1112daa4966e" }
-- { record: run.conductor-rail-500a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "3943c16fc8690bed" }
-- { record: run.drag-conveyor-800, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "14f1c129b476f57f" }
-- { record: run.feeder-3kv-dc-150mm2, at: "2026-10-18T16:52:32Z", status: draft, summary: "changed", sha: "a192cf125651dc27" }
-- { record: run.feeder-3kv-dc-240mm2, at: "2026-10-18T16:52:32Z", status: draft, summary: "changed", sha: "579aa256b79f9729" }
-- { record: run.feeder-3kv-dc-25mm2, at: "2026-10-18T16:52:32Z", status: draft, summary: "changed", sha: "9151372488969e0b" }
-- { record: run.feeder-3kv-dc-50mm2, at: "2026-10-18T16:52:32Z", status: draft, summary: "changed", sha: "13823c09d524e7e4" }
-- { record: run.feeder-3kv-dc-95mm2, at: "2026-10-18T16:52:32Z", status: draft, summary: "changed", sha: "fc639d169b667cfc" }
-- { record: run.feeder-3kv-dc-al-150mm2, at: "2026-10-18T16:52:32Z", status: draft, summary: "changed", sha: "d8b218b55caa1f3f" }
-- { record: run.feeder-3kv-dc-al-240mm2, at: "2026-10-18T16:52:32Z", status: draft, summary: "changed", sha: "5f5d179179bccc45" }
-- { record: run.feeder-3kv-dc-al-400mm2, at: "2026-10-18T16:52:32Z", status: draft, summary: "changed", sha: "f2c2e3a46e86ba0c" }
-- { record: run.feeder-3kv-dc-al-50mm2, at: "2026-10-18T16:52:32Z", status: draft, summary: "changed", sha: "bb648d38bf61c657" }
-- { record: run.feeder-3kv-dc-al-95mm2, at: "2026-10-18T16:52:32Z", status: draft, summary: "changed", sha: "ab7eb3d4738057ac" }
-- { record: run.festoon-690v-4x16, at: "2026-10-18T04:47:20Z", status: draft, summary: "changed: support, basis", sha: "c363d4cf464a0dba" }
-- { record: run.festoon-690v-4x35, at: "2026-10-18T04:47:20Z", status: draft, summary: "changed: support, basis", sha: "4db86b5132a18e50" }
-- { record: run.festoon-690v-4x95, at: "2026-10-18T04:47:20Z", status: draft, summary: "changed: support, basis", sha: "4121bb9635c117a4" }
-- { record: run.hose-dn100-pn16, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "cccb7806eb301d4b" }
-- { record: run.hose-dn150-pn16, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "16e8a225a3ec65db" }
-- { record: run.hose-dn25-pn16, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "eb8da5b0e67b9d0f" }
-- { record: run.hose-dn50-pn16, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "1b7f4f4068adde1e" }
-- { record: run.hose-hydraulic-dn13, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "dd68834760a21440" }
-- { record: run.hose-hydraulic-dn19, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "bc343c69540ecba2" }
-- { record: run.hose-hydraulic-dn25, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "0523bfd093b8961d" }
-- { record: run.hose-hydraulic-dn6, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "d572f476a278ddfc" }
-- { record: run.hose-metal-dn100, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "348c7924ed125c47" }
-- { record: run.hose-metal-dn200, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "a8c6ab50b47eca8c" }
-- { record: run.hose-metal-dn25, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "3e0756d7340f4c01" }
-- { record: run.hose-metal-dn50, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "7d2a51c827eff38a" }
-- { record: run.jacketed-duct-dn2000, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "17709bb4b99fbdf7" }
-- { record: run.lined-duct-dn1200-pn1, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "f5a4d16cd95931c1" }
-- { record: run.lined-duct-dn2400-pn16-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "986af13a36e314d3" }
-- { record: run.lined-duct-dn3600-pn10-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "878409fdc38aff75" }
-- { record: run.pipe-dn100-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "6684a5b023770234" }
-- { record: run.pipe-dn100-pn10-ss, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "c034c1565489b05e" }
-- { record: run.pipe-dn100-pn16-ss-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "d5034adf5ee4386b" }
-- { record: run.pipe-dn100-pn25, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "a34d2bfd2af6536f" }
-- { record: run.pipe-dn1000-pn1, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template, looks_as", sha: "a183ced440298aef" }
-- { record: run.pipe-dn1000-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template, looks_as", sha: "3a929014f88745eb" }
-- { record: run.pipe-dn1000-pn16-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "56bdbeff803be243" }
-- { record: run.pipe-dn1000-pn16-mli-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "51d2d5cd52258465" }
-- { record: run.pipe-dn1200-pn1, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "ba6fd32de84ee8ea" }
-- { record: run.pipe-dn1200-pn10-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template, looks_as", sha: "5e97c66b1acc41c8" }
-- { record: run.pipe-dn1400-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "aacb0f175134ebf9" }
-- { record: run.pipe-dn150-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "0da50515f8d557f9" }
-- { record: run.pipe-dn150-pn10-ss, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "63c7f9f963f33809" }
-- { record: run.pipe-dn150-pn16-ss-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "7a6e892e9ac519ec" }
-- { record: run.pipe-dn150-pn25-mli, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "0e9fdc75aebdddc6" }
-- { record: run.pipe-dn1600-pn16-mli-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "85fc36754b66f90a" }
-- { record: run.pipe-dn1800-pn10-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "5dba3788f94cec0e" }
-- { record: run.pipe-dn200-pn1-ss, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "ee483a23faf6629d" }
-- { record: run.pipe-dn200-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "d5328af1a105fbe2" }
-- { record: run.pipe-dn200-pn10-ss, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "274a80ae4bdd6a83" }
-- { record: run.pipe-dn200-pn16-ss-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "ad28daa4b358d908" }
-- { record: run.pipe-dn2000-pn1, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "a208a1e6806f2265" }
-- { record: run.pipe-dn2000-pn10-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template, looks_as", sha: "9010565c21b762ea" }
-- { record: run.pipe-dn2200-pn10-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "e065f271e476f373" }
-- { record: run.pipe-dn2400-pn10-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "f6a16e88444dc12e" }
-- { record: run.pipe-dn250-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "2542aba1f48867a2" }
-- { record: run.pipe-dn250-pn10-ss-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template, looks_as", sha: "62b9ad51bad00a63" }
-- { record: run.pipe-dn250-pn16-ss-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "66d589a88b88c0f8" }
-- { record: run.pipe-dn2800-pn10-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "d1b478dcfab3efa1" }
-- { record: run.pipe-dn300-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "324941bf4da3097b" }
-- { record: run.pipe-dn350-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "9253d7abf980cbde" }
-- { record: run.pipe-dn350-pn10-ss, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "1f388ff4d48b89aa" }
-- { record: run.pipe-dn3600-pn10-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "2361f43b0096e8f6" }
-- { record: run.pipe-dn400-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "a80fa096c0cfe419" }
-- { record: run.pipe-dn450-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "71d2d832d98e6240" }
-- { record: run.pipe-dn450-pn10-ss-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "1dfdfeb656479113" }
-- { record: run.pipe-dn50-pn10-ss, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "0a9c925eae6d9033" }
-- { record: run.pipe-dn50-pn16-ss, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "d3eaee7d25499de0" }
-- { record: run.pipe-dn50-pn16-ss-double, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "0b81dc8679ec79a7" }
-- { record: run.pipe-dn500-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "7849de09696841fc" }
-- { record: run.pipe-dn600-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "66d31af1c07d2abd" }
-- { record: run.pipe-dn700-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "29a23419f3a3f11f" }
-- { record: run.pipe-dn700-pn10-mli, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "8dbbcccfcb4a3df2" }
-- { record: run.pipe-dn900-pn10, at: "2026-10-17T19:00:12Z", status: draft, summary: "changed: template", sha: "4cdb010f133a14cb" }
-- { record: run.wire-0p5mm2, at: "2026-10-18T16:52:32Z", status: draft, summary: "changed", sha: "e1210c315f7d81a9" }
-- { record: run.wire-16mm2, at: "2026-10-18T16:52:32Z", status: draft, summary: "changed", sha: "b6bf22ee62785ed6" }
-- { record: run.wire-1mm2, at: "2026-10-18T16:52:32Z", status: draft, summary: "changed", sha: "f9ffb3265de73d6e" }
-- { record: run.wire-2p5mm2, at: "2026-10-18T16:52:32Z", status: draft, summary: "changed", sha: "11e0db0831ce8804" }
-- { record: run.wire-50mm2, at: "2026-10-18T16:52:32Z", status: draft, summary: "changed", sha: "5b68610715264949" }
-- { record: run.wire-6mm2, at: "2026-10-18T16:52:32Z", status: draft, summary: "changed", sha: "3c5bb4e50fd04002" }
+- { record: run.belt-1000, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "001fce2334b614a1" }
+- { record: run.belt-1000-sealed, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "48dd6f2ab6824866" }
+- { record: run.belt-1200, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "47236ff1663fa29f" }
+- { record: run.belt-1400, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "7d8ca3b1068f9306" }
+- { record: run.belt-650, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "11da52569d87643a" }
+- { record: run.belt-800, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "9c3dc2842ad0581f" }
+- { record: run.belt-800-sealed, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "96109f559ec635e3" }
+- { record: run.busbar-ac-27ka, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "3a1e870c65b33f18" }
+- { record: run.busbar-ac-65ka, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "59bc13dfe689202c" }
+- { record: run.busbar-dc-44ka, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "94311566bca1a633" }
+- { record: run.cable-11kv-500mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "a986daeb7f7f1d4e" }
+- { record: run.cable-132kv-240mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "c7f6088a5f6b81d4" }
+- { record: run.cable-33kv-120mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "970990ace0459514" }
+- { record: run.cable-33kv-150mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "eefa1ffbc9ebdb9d" }
+- { record: run.cable-33kv-185mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "f4fe9afd18585209" }
+- { record: run.cable-33kv-630mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "2fbfda5fc6f9bc3c" }
+- { record: run.cable-400v-120mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "a27de9c652297c7c" }
+- { record: run.cable-400v-16mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "631b2ce1b1b3e224" }
+- { record: run.cable-400v-185mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "9756bd44eba52f5f" }
+- { record: run.cable-400v-240mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "9fecd57d215c8481" }
+- { record: run.cable-400v-25mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "65e47cc87bc4c4e1" }
+- { record: run.cable-400v-300mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "03f22286e9d0b442" }
+- { record: run.cable-400v-35mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "3ffbab42f3ab7fe7" }
+- { record: run.cable-400v-400mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "c83e541e33a95cb6" }
+- { record: run.cable-400v-500mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "a8c4b237bfaad6ca" }
+- { record: run.cable-400v-50mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "e117cc5e8ea4526b" }
+- { record: run.cable-400v-630mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "4ab5f122a7c3a976" }
+- { record: run.cable-400v-70mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "1b01dc4a657b4f24" }
+- { record: run.cable-400v-95mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "1347ac6ae9bc0318" }
+- { record: run.cable-6p6kv-185mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "fbcd9cfadbcc1553" }
+- { record: run.cable-6p6kv-400mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "45d78bdc1fafbf43" }
+- { record: run.cable-6p6kv-50mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "21c4e845c98c0fef" }
+- { record: run.cable-6p6kv-630mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "3df1ef48c01d8577" }
+- { record: run.cable-6p6kv-70mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "c54807df9250140d" }
+- { record: run.cable-6p6kv-95mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "6935b0184738546c" }
+- { record: run.cable-data-can, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "5e7a084f056b738f" }
+- { record: run.cable-dc-600v-2x50mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "1d80be2a92049a45" }
+- { record: run.cable-dc-600v-3x16mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "730d771965eeca3e" }
+- { record: run.cable-dc-600v-3x1mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "2020bbef3c8d0673" }
+- { record: run.cable-dc-600v-3x2p5mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "2b1c1ab5a22de9c2" }
+- { record: run.cable-dc-600v-3x6mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "605e06d70a768994" }
+- { record: run.cable-flexible-11kv-3x95, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "39da418dfbd004ab" }
+- { record: run.cable-flexible-690v-4x16, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "c02cc80a6bb94bb6" }
+- { record: run.cable-flexible-690v-4x35, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "75860d1ded06724f" }
+- { record: run.cable-flexible-690v-4x95, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "a3f46c6de7fe5fbd" }
+- { record: run.cable-installation-230v-3x10, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "5db0f8d4e403348e" }
+- { record: run.cable-installation-230v-3x1p5, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "389146bfe81655ba" }
+- { record: run.cable-installation-230v-3x2p5, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "1bd1a139597df36e" }
+- { record: run.cable-installation-230v-3x4, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "10d99ff17eca9867" }
+- { record: run.cable-installation-230v-3x6, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "8e39fe4d12413b87" }
+- { record: run.cable-installation-400v-5x16, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "926dae020a3c371a" }
+- { record: run.cable-installation-400v-5x2p5, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "da2c4f7b55493553" }
+- { record: run.cable-installation-400v-5x6, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "e20d5087f261f904" }
+- { record: run.conductor-rail-1000a, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "9cf27381f5c50d85" }
+- { record: run.conductor-rail-100a, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "8a5df05e9dddd478" }
+- { record: run.conductor-rail-250a, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "a3a8cc869a9bce0d" }
+- { record: run.conductor-rail-500a, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "a795b49ee7ed07a2" }
+- { record: run.drag-conveyor-800, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "7509db13ad239eac" }
+- { record: run.feeder-3kv-dc-150mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "a5b5359344176a66" }
+- { record: run.feeder-3kv-dc-240mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "d186877a35ae5517" }
+- { record: run.feeder-3kv-dc-25mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "579813601a8503c5" }
+- { record: run.feeder-3kv-dc-50mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "6c4df8a9653238a0" }
+- { record: run.feeder-3kv-dc-95mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "cc96e59437d28ab2" }
+- { record: run.feeder-3kv-dc-al-150mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "00f8ca392e27221e" }
+- { record: run.feeder-3kv-dc-al-240mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "9cda778192fffb66" }
+- { record: run.feeder-3kv-dc-al-400mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "466058dc03ca9507" }
+- { record: run.feeder-3kv-dc-al-50mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "2496e70d897119d7" }
+- { record: run.feeder-3kv-dc-al-95mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "f0826a024730fc70" }
+- { record: run.festoon-690v-4x16, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "2ed626859d12c7f8" }
+- { record: run.festoon-690v-4x35, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "a6d93b0ab9fb3498" }
+- { record: run.festoon-690v-4x95, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "d29c4976dcb882a7" }
+- { record: run.hose-dn100-pn16, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "4565b4edaff1edf8" }
+- { record: run.hose-dn150-pn16, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "cf6bbb810258a1f7" }
+- { record: run.hose-dn25-pn16, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "87e6ffb21fb248ac" }
+- { record: run.hose-dn50-pn16, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "fdbe09b57d148682" }
+- { record: run.hose-hydraulic-dn13, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "40d3975c3f2be7b9" }
+- { record: run.hose-hydraulic-dn19, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "2ceb440c911b6042" }
+- { record: run.hose-hydraulic-dn25, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "3ef33eb80886770c" }
+- { record: run.hose-hydraulic-dn6, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "29293b5d9e0818ab" }
+- { record: run.hose-metal-dn100, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "10d98cf2b68c0686" }
+- { record: run.hose-metal-dn200, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "ed3175144b55d074" }
+- { record: run.hose-metal-dn25, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "b6367b6039027790" }
+- { record: run.hose-metal-dn50, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "676e3f83f3224ae8" }
+- { record: run.jacketed-duct-dn2000, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "56a1e08d3d402eaf" }
+- { record: run.lined-duct-dn1200-pn1, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "1ac778af4e261365" }
+- { record: run.lined-duct-dn2400-pn16-double, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "0f452e60f46b7307" }
+- { record: run.lined-duct-dn3600-pn10-double, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "220c453206511d42" }
+- { record: run.pipe-dn100-pn10, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "9f2d38bf04155731" }
+- { record: run.pipe-dn100-pn10-ss, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "cfe46a313cdda3bd" }
+- { record: run.pipe-dn100-pn16-ss-double, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "3d07823ecf52315c" }
+- { record: run.pipe-dn100-pn25, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "8b58f9afa42f6af4" }
+- { record: run.pipe-dn1000-pn1, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "28a0909680f27c03" }
+- { record: run.pipe-dn1000-pn10, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "a5bb4bfa7cf6af32" }
+- { record: run.pipe-dn1000-pn16-double, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "dd816192a4a63737" }
+- { record: run.pipe-dn1000-pn16-mli-double, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "0ac7f94501398e5a" }
+- { record: run.pipe-dn1200-pn1, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "3e4eba829d41fce4" }
+- { record: run.pipe-dn1200-pn10-double, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "8da83697e64ae922" }
+- { record: run.pipe-dn1400-pn10, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "f86ebc56a109e8eb" }
+- { record: run.pipe-dn150-pn10, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "4d43f9a388e7c13c" }
+- { record: run.pipe-dn150-pn10-ss, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "52e89c5a9a2f8e0a" }
+- { record: run.pipe-dn150-pn16-ss-double, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "f77c104a4623f4e3" }
+- { record: run.pipe-dn150-pn25-mli, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "dcc1828b9d82b380" }
+- { record: run.pipe-dn1600-pn16-mli-double, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "48dbb154acc63e36" }
+- { record: run.pipe-dn1800-pn10-double, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "f24bd7c859b1e0a7" }
+- { record: run.pipe-dn200-pn1-ss, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "199e2efcd7b79687" }
+- { record: run.pipe-dn200-pn10, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "1c471e6592ff2aaa" }
+- { record: run.pipe-dn200-pn10-ss, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "2ba2be87b6aa4fa2" }
+- { record: run.pipe-dn200-pn16-ss-double, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "9085a94d70605161" }
+- { record: run.pipe-dn2000-pn1, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "97fa665d200b9e72" }
+- { record: run.pipe-dn2000-pn10-double, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "a8f79636aa5229d7" }
+- { record: run.pipe-dn2200-pn10-double, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "860eb0bd4034b8b4" }
+- { record: run.pipe-dn2400-pn10-double, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "f139979429cf8c01" }
+- { record: run.pipe-dn250-pn10, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "897645e6692cb4b9" }
+- { record: run.pipe-dn250-pn10-ss-double, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "26b216934aa7aef0" }
+- { record: run.pipe-dn250-pn16-ss-double, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "4d6031153d01c780" }
+- { record: run.pipe-dn2800-pn10-double, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "80278a590a9a1235" }
+- { record: run.pipe-dn300-pn10, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "493991f48703e540" }
+- { record: run.pipe-dn350-pn10, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "10c511de82192f14" }
+- { record: run.pipe-dn350-pn10-ss, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "fd2a879c1e01c55e" }
+- { record: run.pipe-dn3600-pn10-double, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "17f44825750549f8" }
+- { record: run.pipe-dn400-pn10, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "49af5284dd3f3ee9" }
+- { record: run.pipe-dn450-pn10, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "6c6c61cd68e42f70" }
+- { record: run.pipe-dn450-pn10-ss-double, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "e0df39c4eb8e1b1c" }
+- { record: run.pipe-dn50-pn10-ss, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "b11b3463a39cdd61" }
+- { record: run.pipe-dn50-pn16-ss, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "f1622073f2b2a79b" }
+- { record: run.pipe-dn50-pn16-ss-double, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "8c01fc67b0a1a2a6" }
+- { record: run.pipe-dn500-pn10, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "0e34139fa967796d" }
+- { record: run.pipe-dn600-pn10, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "f44828270559963b" }
+- { record: run.pipe-dn700-pn10, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "2f39effc7f599d33" }
+- { record: run.pipe-dn700-pn10-mli, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "ac980af8838c2e9a" }
+- { record: run.pipe-dn900-pn10, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "5f21669503a9538e" }
+- { record: run.wire-0p5mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "410ca15ae8df6b3e" }
+- { record: run.wire-16mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "135f208d65b677ef" }
+- { record: run.wire-1mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "1855db2375bfe85c" }
+- { record: run.wire-2p5mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "20a59d158a40049d" }
+- { record: run.wire-50mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "5704091b9308a7f4" }
+- { record: run.wire-6mm2, at: "2026-10-18T20:37:52Z", status: draft, summary: "changed: support", sha: "02101b3b25eb95ce" }
 - { record: seeding.asteroids, at: "2026-10-10T16:13:03Z", status: "", summary: "changed: basis", sha: "523d44e4bfa3af5f" }
 - { record: seeding.conditions, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "96e581fa4cb02009" }
 - { record: seeding.galaxy, at: "2026-10-10T16:13:03Z", status: "", summary: "changed", sha: "c3aeb429e01bf69f" }
@@ -3921,14 +3940,23 @@
 - { record: stock.kit-plug-iec60309-32a, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "d0a273e2ba50b3eb" }
 - { record: stock.kit-plug-iec60309-63a, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "cf91e00d14157b89" }
 - { record: stock.kit-powerlock-400a, at: "2026-10-18T05:15:35Z", status: review, summary: "changed: physical", sha: "2d8a975deef2f8e9" }
-- { record: stock.kit-strut-clamp-d100, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "f1f83666a6483679" }
-- { record: stock.kit-strut-clamp-d120, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "1681c4623128c518" }
-- { record: stock.kit-strut-clamp-d150, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "5dc60e51cc70f0ab" }
-- { record: stock.kit-strut-clamp-d160, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "9eccad3c3aded876" }
-- { record: stock.kit-strut-clamp-d200, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "66714e4dc3ccd053" }
-- { record: stock.kit-strut-clamp-d250, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "48150ed30fe003e2" }
-- { record: stock.kit-strut-clamp-d60, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "ffdb114a3b8cbe11" }
-- { record: stock.kit-strut-clamp-d80, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "e0d31e739a435e0d" }
+- { record: stock.kit-run-clip-d10, at: "2026-10-18T20:37:52Z", status: review, summary: "first tracked", sha: "44c974513c0e646f" }
+- { record: stock.kit-run-clip-d100, at: "2026-10-18T20:37:52Z", status: review, summary: "first tracked", sha: "f12be3ead889306f" }
+- { record: stock.kit-run-clip-d16, at: "2026-10-18T20:37:52Z", status: review, summary: "first tracked", sha: "5ed7df4ea23ac31c" }
+- { record: stock.kit-run-clip-d160, at: "2026-10-18T20:37:52Z", status: review, summary: "first tracked", sha: "c79be510615a1ce7" }
+- { record: stock.kit-run-clip-d25, at: "2026-10-18T20:37:52Z", status: review, summary: "first tracked", sha: "2662b73b387491a1" }
+- { record: stock.kit-run-clip-d250, at: "2026-10-18T20:37:52Z", status: review, summary: "first tracked", sha: "0fc50c1061f37050" }
+- { record: stock.kit-run-clip-d40, at: "2026-10-18T20:37:52Z", status: review, summary: "first tracked", sha: "60f30a71d1fa6a0a" }
+- { record: stock.kit-run-clip-d400, at: "2026-10-18T20:37:52Z", status: review, summary: "first tracked", sha: "7ba8cd433ae62367" }
+- { record: stock.kit-run-clip-d63, at: "2026-10-18T20:37:52Z", status: review, summary: "first tracked", sha: "32265c7e9d9fa0d7" }
+- { record: stock.kit-strut-clamp-d100, at: "2026-10-18T20:37:52Z", status: review, summary: "changed", sha: "ead6be6653e86e56" }
+- { record: stock.kit-strut-clamp-d120, at: "2026-10-18T20:37:52Z", status: review, summary: "changed", sha: "69776da4162ffaf1" }
+- { record: stock.kit-strut-clamp-d150, at: "2026-10-18T20:37:52Z", status: review, summary: "changed", sha: "fb320ea84216356c" }
+- { record: stock.kit-strut-clamp-d160, at: "2026-10-18T20:37:52Z", status: review, summary: "changed", sha: "eeb595b3d38dff9c" }
+- { record: stock.kit-strut-clamp-d200, at: "2026-10-18T20:37:52Z", status: review, summary: "changed", sha: "4de75ddef0978080" }
+- { record: stock.kit-strut-clamp-d250, at: "2026-10-18T20:37:52Z", status: review, summary: "changed", sha: "4fdcd8fc5099e927" }
+- { record: stock.kit-strut-clamp-d60, at: "2026-10-18T20:37:52Z", status: review, summary: "changed", sha: "8c0e30c3978fccca" }
+- { record: stock.kit-strut-clamp-d80, at: "2026-10-18T20:37:52Z", status: review, summary: "changed", sha: "a212b89fef3f45e5" }
 - { record: stock.kit-termination-11kv-500mm2, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "9ebf2861603535d8" }
 - { record: stock.kit-termination-132kv-240mm2, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "e2c20466b4be5798" }
 - { record: stock.kit-termination-33kv-120mm2, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "3a3b16d8aeedbae5" }
@@ -4658,6 +4686,7 @@
 - { record: template.plug-socket, at: "2026-10-18T05:10:36Z", status: "", summary: "changed", sha: "5aff04409b33b553" }
 - { record: template.roof, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "a966489b0bd9126b" }
 - { record: template.roof-pressure, at: "2026-10-18T15:50:18Z", status: "", summary: "changed", sha: "63e52626b85327fb" }
+- { record: template.run-clip, at: "2026-10-18T20:37:52Z", status: "", summary: "first tracked", sha: "df9b4ea61668f508" }
 - { record: template.single-pole, at: "2026-10-18T05:21:02Z", status: "", summary: "changed", sha: "891598fccf7fa541" }
 - { record: template.stair, at: "2026-10-18T01:25:38Z", status: "", summary: "changed", sha: "dc0f89d97f6807ea" }
 - { record: template.strut-clamp, at: "2026-10-18T17:53:40Z", status: "", summary: "first tracked", sha: "466ad2dc88757182" }

@@ -52,3 +52,8 @@ basis:
   tier: invented
   review: true
   note: 800 A for 240 mm2 copper alone in free air at 40 deg C, others by area^0.625, aluminium as above; a bundle of up to six at 0.7; From memory of makers' catalogues; to be sourced.
+support:
+  clip: connector.run-clip-d25
+  ship: 0.6
+  plant: 1.5
+  basis: rule.run-support

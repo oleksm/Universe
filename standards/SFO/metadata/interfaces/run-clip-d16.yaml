@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/interface.schema.yaml
+# Written by tools/standards/mounting.py: change it there.
+identity:
+  key: interface.run-clip-d16
+  name: Run clip, 16 mm
+  description: 'A run''s outside (male: any run up to 16 mm and over the next band down) held in a clip''s loop (female).'
+domain: load
+kind: run-clip
+size: 0.016
+envelope:
+  tension: 9720.0
+  shear: 2916.0
+media:
+- load
+sealing: open
+halves: male-female
+make: bolted
+basis:
+- of:
+  - envelope
+  tier: derived
+  note: The clip's rating.

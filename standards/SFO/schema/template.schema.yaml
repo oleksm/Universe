@@ -14,7 +14,7 @@ properties:
       key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
       description: { type: string }
-  family: { enum: [cable, pipe, lined-duct, jacketed-duct, belt, drag-conveyor, busbar, flange, lined-flange, termination, belt-transfer, chute, bus-joint, hood, clamp-coupling, hose, conductor-rail, festoon, panel, quick-coupling, union, plug-socket, collector, cable-reel, valve, expansion-joint, twistlock, adapter, strut-clamp], description: "The kit kind it draws." }
+  family: { enum: [cable, pipe, lined-duct, jacketed-duct, belt, drag-conveyor, busbar, flange, lined-flange, termination, belt-transfer, chute, bus-joint, hood, clamp-coupling, hose, conductor-rail, festoon, panel, quick-coupling, union, plug-socket, collector, cable-reel, valve, expansion-joint, twistlock, adapter, strut-clamp, run-clip], description: "The kit kind it draws." }
   draws: { enum: [sweep, model, sweep-and-pieces], description: "sweep: a profile swept along the run's path, no model; model: one model scaled to the record; sweep-and-pieces: the straight swept, its elbows, supports and ends from pieces." }
   profile: { type: string, description: "What is swept: its cross-section, from the record's figures." }
   scales_by: { type: array, items: { type: string }, description: "The record's figures that size it (outside, size, physical.length...)." }

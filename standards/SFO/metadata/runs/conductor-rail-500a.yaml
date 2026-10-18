@@ -27,10 +27,9 @@ per_m:
     item: material.structural-steel-a36
     mass: 0.5
 support:
-  spacing: 1.5
-  mass: 1.2
-  per_m_height: 2.0
-  item: material.structural-steel-a36
+  plant: 1.5
+  by: its brackets
+  basis: rule.run-support
 connector: connector.collector-500a
 carries: power
 template: template.conductor-rail

@@ -13,7 +13,7 @@ per_m:
 elbow: {radius: 0.375, mass: 16.7}
 tee: {mass: 7.0}
 cap: {thickness: 0.014, mass: 5.4}
-support: {spacing: 8.0, mass: 25.5, per_m_height: 19.8, item: material.structural-steel-a36}
+support: {clip: connector.run-clip-d400, ship: 2.0, plant: 7.0, basis: rule.run-support}
 connector: connector.flange-dn250-pn16-ss-double
 carries: gas
 template: template.pipe

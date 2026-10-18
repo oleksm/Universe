@@ -35,3 +35,8 @@ basis:
   tier: invented
   review: true
   note: '0.4 mm stainless corrugation (0.6 mm from DN 100) and a braid of nine tenths its weight; least bend radius five outsides for a hose that flexes now and then (static: about two); From memory of makers'' catalogues; to be sourced.'
+support:
+  clip: connector.run-clip-d160
+  ship: 0.6
+  plant: 1.0
+  basis: rule.run-support

@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/template.schema.yaml
+# Written by tools/standards/mounting.py: change it there.
+identity:
+  key: template.run-clip
+  name: Run clip
+  description: 'Run clip: one look for the whole family, scaled to each record''s figures (docs/asset-contract.md, Templates; docs/proposals/physical-mounts.md).'
+family: run-clip
+draws: model
+scales_by:
+- physical
+reference: connector.run-clip-d25
+members: 9
+basis:
+- of:
+  - draws
+  - scales_by
+  tier: derived
+  note: 'The owner, 2026-10-18 (via ships): equipment held by typed mounts on cradles or deck panels made from stock; one template a family.'

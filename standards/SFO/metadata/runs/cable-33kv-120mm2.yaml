@@ -16,7 +16,7 @@ pitch: 0.075
 elbow: {radius: 0.939, mass: 22.1}
 riser: {radius: 0.864, mass: 20.4}
 tee: {mass: 25.0}
-support: {spacing: 3.0, mass: 8.0, per_m_height: 6.0, item: material.aluminium-alloy-6061}
+support: {clip: connector.run-clip-d400, ship: 0.6, plant: 1.5, basis: rule.run-support}
 repeat:
 - {piece: rung, pitch: 0.3}
 connector: connector.termination-33kv-120mm2

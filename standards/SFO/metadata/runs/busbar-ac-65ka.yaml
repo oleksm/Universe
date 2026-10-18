@@ -14,7 +14,7 @@ per_m:
   - {what: Clamps and spacers, item: material.structural-steel-a36, mass: 54.0, note: 'a clamp a row every metre, from memory'}
 elbow: {radius: 1.32, mass: 1161.1}
 riser: {radius: 0.68, mass: 598.2}
-support: {spacing: 3.0, mass: 75.0, per_m_height: 25.0, item: material.structural-steel-a36}
+support: {plant: 2.0, by: its insulator supports, basis: rule.run-support}
 connector: connector.bus-joint-ac-65ka
 carries: power
 triangle_budget: 28000

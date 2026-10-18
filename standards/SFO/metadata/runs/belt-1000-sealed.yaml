@@ -14,7 +14,7 @@ per_m:
   - {what: Gallery tube, item: material.structural-steel-a36, mass: 295.9, note: 'a 3 m tube of 4 mm plate round the belt, holding about 20 kPa of nitrogen'}
   - {what: Gallery rings, item: material.structural-steel-a36, mass: 22.2, note: 'an inside stiffening ring every 3 m, 90 x 6 mm, with the stringers'' seats, 66.5 kg (a repeated piece; measured), its share a metre'}
   - {what: Insulation, item: material.multi-layer-insulation, mass: 11.8, note: '25 mm of multilayer foil over the tube, against the lunar day and night'}
-support: {spacing: 9.0, mass: 416.3, per_m_height: 75.0, item: material.structural-steel-a36}
+support: {plant: 1.2, by: its idler frames, basis: rule.run-support}
 repeat:
 - {piece: idler, pitch: 1.2}
 - {piece: return_roll, pitch: 3.0}

@@ -52,3 +52,8 @@ basis:
   tier: invented
   review: true
   note: A core at 0.8 of a single wire's amps in vacuum and at the bundle factor 0.7 in air (the cores share one jacket); From memory of makers' catalogues; to be sourced.
+support:
+  clip: connector.run-clip-d10
+  ship: 0.6
+  plant: 1.5
+  basis: rule.run-support

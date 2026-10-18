@@ -48,3 +48,8 @@ basis:
   tier: invented
   review: true
   note: Wiring regulations' clipped-direct ratings and usual insulation thicknesses; least bend 4 outsides; From memory of makers' catalogues; to be sourced.
+support:
+  clip: connector.run-clip-d16
+  ship: 0.6
+  plant: 1.5
+  basis: rule.run-support

@@ -12,7 +12,7 @@ per_m:
   - {what: Insulation, item: material.silica-aerogel, mass: 80.0, note: 100 mm of microporous silica round it; silica aerogel stands for it}
   - {what: Chain and flights, item: material.stainless-steel-304, mass: 166.7, note: 'two strands of forged chain, both runs (25 kg/m each), a flight every 0.6 m (40 kg)'}
 elbow: {radius: 6.0, mass: 3575.8}
-support: {spacing: 6.0, mass: 80.0, per_m_height: 25.0, item: material.structural-steel-a36}
+support: {plant: 3.0, by: its casing's supports, basis: rule.run-support}
 terminals:
   head: {mass: 3000.0, transition: 1.2, note: 'the drive sprocket, its shaft seals, a gearbox and a motor of about 150 kW, and the outlet nozzle under the casing (from memory)'}
   tail: {mass: 1800.0, transition: 1.2, note: 'the tail sprocket on a take-up, its shaft seals, and the inlet nozzle on top of the casing (from memory)'}

@@ -14,7 +14,7 @@ per_m:
   - {what: Anchors, item: material.stainless-steel-304, mass: 33.8, note: 'stainless anchors holding the lining, about 0.2% of its volume'}
 elbow: {radius: 3.6, mass: 51740.3}
 tee: {mass: 24779.0}
-support: {spacing: 12.0, mass: 321.4, per_m_height: 87.5, item: material.structural-steel-a36}
+support: {plant: 6.0, by: its own steel, basis: rule.run-support}
 cap: {thickness: 0.136, mass: 15692.3}
 connector: connector.lined-flange-dn3600-pn10-double
 carries: gas

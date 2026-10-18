@@ -145,6 +145,150 @@ recipes:
     quantity: 0.03
   rate: 0.5
   power: 2500000.0
+- makes: stock.kit-run-clip-d10
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.st4340-bar-120
+    quantity: 0.884
+  - item: stock.al6061-pl-5
+    quantity: 0.1184
+  - item: material.silicone-rubber
+    quantity: 0.0267
+  outputs:
+  - item: stock.st4340-scrap
+    quantity: 0.0257
+  - item: stock.al6061-scrap
+    quantity: 0.0034
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-run-clip-d100
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.st4340-bar-120
+    quantity: 0.6591
+  - item: stock.al6061-pl-5
+    quantity: 0.2826
+  - item: material.silicone-rubber
+    quantity: 0.0858
+  outputs:
+  - item: stock.st4340-scrap
+    quantity: 0.0192
+  - item: stock.al6061-scrap
+    quantity: 0.0082
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-run-clip-d16
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.st4340-bar-120
+    quantity: 0.8478
+  - item: stock.al6061-pl-5
+    quantity: 0.1426
+  - item: material.silicone-rubber
+    quantity: 0.0385
+  outputs:
+  - item: stock.st4340-scrap
+    quantity: 0.0247
+  - item: stock.al6061-scrap
+    quantity: 0.0042
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-run-clip-d160
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.5715
+  - item: stock.st4340-bar-120
+    quantity: 0.3419
+  - item: material.silicone-rubber
+    quantity: 0.1132
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0166
+  - item: stock.st4340-scrap
+    quantity: 0.01
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-run-clip-d25
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.st4340-bar-120
+    quantity: 0.8006
+  - item: stock.al6061-pl-5
+    quantity: 0.1746
+  - item: material.silicone-rubber
+    quantity: 0.0533
+  outputs:
+  - item: stock.st4340-scrap
+    quantity: 0.0233
+  - item: stock.al6061-scrap
+    quantity: 0.0051
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-run-clip-d250
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.795
+  - item: stock.st4340-bar-120
+    quantity: 0.1285
+  - item: material.silicone-rubber
+    quantity: 0.1034
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0232
+  - item: stock.st4340-scrap
+    quantity: 0.0037
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-run-clip-d40
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.st4340-bar-120
+    quantity: 0.7315
+  - item: stock.al6061-pl-5
+    quantity: 0.2188
+  - item: material.silicone-rubber
+    quantity: 0.0774
+  outputs:
+  - item: stock.st4340-scrap
+    quantity: 0.0213
+  - item: stock.al6061-scrap
+    quantity: 0.0064
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-run-clip-d400
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 0.9152
+  - item: material.silicone-rubber
+    quantity: 0.0757
+  - item: stock.st4340-bar-120
+    quantity: 0.0369
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0267
+  - item: stock.st4340-scrap
+    quantity: 0.0011
+  rate: 0.5
+  power: 2500000.0
+- makes: stock.kit-run-clip-d63
+  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
+  inputs:
+  - item: stock.st4340-bar-120
+    quantity: 0.578
+  - item: stock.al6061-pl-5
+    quantity: 0.3241
+  - item: material.silicone-rubber
+    quantity: 0.1241
+  outputs:
+  - item: stock.st4340-scrap
+    quantity: 0.0168
+  - item: stock.al6061-scrap
+    quantity: 0.0094
+  rate: 0.5
+  power: 2500000.0
 - makes: stock.kit-strut-clamp-d100
   does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:

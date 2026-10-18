@@ -13,7 +13,7 @@ per_m:
 elbow: {radius: 1.8, mass: 801.3}
 tee: {mass: 337.4}
 cap: {thickness: 0.016, mass: 142.1}
-support: {spacing: 12.0, mass: 83.1, per_m_height: 34.8, item: material.structural-steel-a36}
+support: {plant: 9.1, by: pipe shoes on steel, basis: rule.run-support}
 connector: connector.flange-dn1200-pn1
 carries: gas
 template: template.pipe

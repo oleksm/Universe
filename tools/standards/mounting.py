@@ -329,6 +329,68 @@ def deck(L, W):
                             "note": f"An aircraft-style sandwich floor and seat track, from memory; 10 kPa and a stud's 18 kN pressed chosen. {REVIEW}"}]}
 
 
+# ------------------------------------------------------------------ run clips and support spacing
+CLIP_BANDS = [0.010, 0.016, 0.025, 0.040, 0.063, 0.100, 0.160, 0.250, 0.400]     # m, the largest run outside each clip takes
+PIPE_SPAN = [(0.034, 2.1), (0.060, 3.0), (0.114, 4.3), (0.168, 5.1), (0.219, 5.8), (0.324, 7.0), (0.406, 7.6), (0.610, 9.1)]   # (outside m, span m): water-filled steel at 1 g, the suggested spans of ASME B31.1 from memory
+SHIP = {"cable": 0.6, "hose": 0.6}          # m: aircraft practice, wire bundles clamped every 24 in at most (FAA AC 43.13-1B, from memory)
+OWN = {"belt": (1.2, "its idler frames"), "drag-conveyor": (3.0, "its casing's supports"), "busbar": (2.0, "its insulator supports"),
+       "conductor-rail": (1.5, "its brackets"), "festoon": (1.0, "its trolleys on their track"), "lined-duct": (6.0, "its own steel"), "jacketed-duct": (6.0, "its own steel")}
+
+
+def run_clip(band):
+    mm = round(band * 1000)
+    w, t = max(0.012, 0.25 * band), max(0.0015, 0.02 * band)
+    loop = math.pi * (band + 0.004) + 2 * (0.02 + band / 4)
+    strap = w * t * loop * RHO[AL]
+    cushion = math.pi * (band + 0.002) * 0.002 * w * 1100.0
+    b = 10 if band <= 0.063 else 16
+    hold = 2 * w * t * YIELD[AL]
+    rec = {"identity": {"key": f"connector.run-clip-d{mm}", "name": f"Run clip, up to {mm} mm",
+                        "description": f"A cushioned 6061 loop clip holding one run up to {mm} mm outside (a cable, a hose, a tube), its tab bolted by an M{b} to a strut clamp's lug: how a run is held on a ship's frame (docs/proposals/physical-mounts.md)."},
+           "kind": "run-clip", "size": band, "rating": {"tension": r(hold, 0), "shear": r(MU * hold, 0)},
+           "physical": {"length": r(band + 2 * (0.02 + band / 4)), "width": r(band + 2 * t + 0.004), "height": r(w), "mass": r(strap + cushion + bolt_mass(b), 3)},
+           "built_of": [{"what": "Strap", "item": AL, "mass": r(strap, 4), "note": f"6061, {round(w * 1000)} x {t * 1000:.1f} mm"},
+                        {"what": "Cushion", "item": "material.silicone-rubber", "mass": r(cushion, 4), "note": "2 mm silicone lining"},
+                        {"what": "Bolt", "item": ST, "mass": r(bolt_mass(b), 4), "note": f"M{b} with nut, into the strut clamp's lug"}],
+           "interface": f"interface.run-clip-d{mm}", "provides": "female", "fixing": "interface.kit-clamp", "template": "template.run-clip",
+           "basis": [{"of": ["physical", "rating"], "tier": "invented", "review": True,
+                      "note": f"A P-clip by rule (mounting.py): strap a quarter of the band wide, 2% thick; holds both legs at 6061's yield pulled, friction 0.3 sliding. {REVIEW}"}]}
+    iface = {"identity": {"key": f"interface.run-clip-d{mm}", "name": f"Run clip, {mm} mm",
+                          "description": f"A run's outside (male: any run up to {mm} mm and over the next band down) held in a clip's loop (female)."},
+             "domain": "load", "kind": "run-clip", "size": band, "envelope": dict(rec["rating"]), "media": ["load"], "sealing": "open",
+             "halves": "male-female", "make": "bolted",
+             "basis": [{"of": ["envelope"], "tier": "derived", "note": "The clip's rating."}]}
+    return rec, iface
+
+
+def support(run):
+    """A run's support (ships, 2026-10-18: the registry owns the most spacing by run and support family and service;
+    the studio enforces it with load, bend and end restraint; a run with none given is not to be laid there): its clip
+    by outside, and the most spacing aboard a ship and in a plant (1 g)."""
+    kind = run.get("kind")
+    od = max(run.get("outside") or [0.0])
+    if kind in OWN:
+        m, by = OWN[kind]
+        return {"plant": m, "by": by, "basis": "rule.run-support"}
+    out = {}
+    band = next((b for b in CLIP_BANDS if od <= b + 1e-9), None)
+    if band is not None:
+        out["clip"] = f"connector.run-clip-d{round(band * 1000)}"
+    if kind in SHIP and band is not None:
+        out["ship"] = SHIP[kind]
+    if kind == "pipe":
+        if band is not None:
+            out["ship"] = 0.6 if od <= 0.03 else 1.0 if od <= 0.065 else 1.5 if od <= 0.12 else 2.0
+        sp = next((s for o, s in PIPE_SPAN if od <= o + 1e-9), PIPE_SPAN[-1][1])
+        out["plant"] = sp
+        if band is None:
+            out["by"] = "pipe shoes on steel"
+    else:
+        out["plant"] = {"cable": 1.5, "hose": 1.0}.get(kind, 1.0)
+    out["basis"] = "rule.run-support"
+    return out
+
+
 def stock_for(code, rec, form):
     mats = list(dict.fromkeys(p["item"] for p in rec["built_of"]))
     ph = rec["physical"]
@@ -362,7 +424,14 @@ def build():
     for c, b in clamps:
         slug = c["identity"]["key"].split(".", 1)[1]
         n += write("connectors", slug, c, "connector")
-        n += write("mill-stock", "KIT-" + slug.upper(), stock_for("KIT-" + slug.upper(), c, "piece"), "mill-stock")
+    for band in CLIP_BANDS:
+        c, i = run_clip(band)
+        slug = c["identity"]["key"].split(".", 1)[1]
+        n += write("connectors", slug, c, "connector")
+        n += write("interfaces", i["identity"]["key"].split(".", 1)[1], i, "interface")
+    n += write("rules", "run-support", {"identity": {"key": "rule.run-support", "name": "Run support spacing", "about": "The most spacing between a run's supports, by its family and where it is laid."},
+                                         "statement": "Aboard a ship: cable and hose clipped every 0.6 m at most (aircraft practice); tube and pipe every 0.6 m up to 30 mm outside, 1.0 m to 65, 1.5 m to 120, 2.0 m above. In a plant at 1 g: steel pipe at the suggested spans of ASME B31.1 by size (2.1 m at 34 mm to 9.1 m at 610 mm outside), cable 1.5 m, hose 1.0 m; belts, conveyors, busbars, conductor rails, festoons and ducts on their own supports at their family's pitch. A run whose family has no figure for a place is not to be laid there. The studio enforces it, and the clips' load, the run's bend radius and its end restraint.",
+                                         "tier": "invented", "source": "FAA AC 43.13-1B (wire clamps 24 in); ASME B31.1 suggested pipe spans; both from memory", "review": True}, "rule")
     tl = tubes()
     cradles, decks = [], []
     for slug, (path, m) in load("mounts").items():
@@ -387,7 +456,8 @@ def build():
         n += write("mill-stock", f"KIT-PANEL-DECK-{tag.upper()}", stock_for(f"KIT-PANEL-DECK-{tag.upper()}", p, "panel"), "mill-stock")
     for t, fam, name, ref, cnt in (("cradle", "adapter", "Equipment cradle", cradles[0]["identity"]["key"] if cradles else None, len(cradles)),
                                    ("deck", "panel", "Deck panel", "panel.deck-1x1", len(DECKS)),
-                                   ("strut-clamp", "strut-clamp", "Strut clamp", "connector.strut-clamp-d100", len(clamps))):
+                                   ("strut-clamp", "strut-clamp", "Strut clamp", "connector.strut-clamp-d100", len(clamps)),
+                                   ("run-clip", "run-clip", "Run clip", "connector.run-clip-d25", len(CLIP_BANDS))):
         n += write("templates", t, {"identity": {"key": f"template.{t}", "name": name, "description": f"{name}: one look for the whole family, scaled to each record's figures (docs/asset-contract.md, Templates; docs/proposals/physical-mounts.md)."},
                                     "family": fam, "draws": "model", "scales_by": ["physical"], "reference": ref, "members": cnt,
                                     "basis": [{"of": ["draws", "scales_by"], "tier": "derived", "note": "The owner, 2026-10-18 (via ships): equipment held by typed mounts on cradles or deck panels made from stock; one template a family."}]}, "template")
