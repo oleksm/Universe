@@ -980,6 +980,9 @@
             },
             "reach": {
               "type": "boolean"
+            },
+            "wiring": {
+              "type": "boolean"
             }
           },
           "type": [

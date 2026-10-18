@@ -8,7 +8,7 @@ family: cable
 draws: sweep
 scales_by:
 - outside
-members: 5
+members: 10
 profile: a round screened single-core cable of the record's outside
 basis:
 - of:

@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: connector.hvdc-pole-1000a
+  name: HV DC pole connector, 1000 A, 3 kV
+  description: 'A single-pole plug and receptacle for a 3 kV DC feeder, its crimped contact up to 400 mm2 (copper, or aluminium on a bimetallic contact) inside a long creepage insulator and an earthed aluminium shell, bayonet-locked,
+    keyed by polarity: two of them, plus and minus, where a feeder meets a plant, a battery, a bus box or a load.'
+kind: plug-socket
+size: 0.00039999999999999996
+rating:
+  voltage: 3000
+  current: 1000
+physical:
+  length: 0.085
+  width: 0.085
+  height: 0.24
+  mass: 3.0
+built_of:
+- what: Shell and coupling ring
+  item: material.aluminium-alloy-6061
+  mass: 1.35
+  note: anodised aluminium, earthed
+- what: Contact
+  item: material.copper
+  mass: 0.75
+  note: silver-plated copper
+- what: Insulator and seals
+  item: material.ptfe
+  mass: 0.9
+  note: PTFE creepage body; silicone seals as PTFE here
+provides: both
+template: template.hvdc-pole
+basis:
+- of:
+  - physical
+  - built_of
+  - rating
+  tier: invented
+  review: true
+  note: Of the order of single-pole high-voltage DC connectors for electric vehicles and aircraft; From memory of makers' catalogues; to be sourced.
+interface: interface.hvdc-pole-1000a

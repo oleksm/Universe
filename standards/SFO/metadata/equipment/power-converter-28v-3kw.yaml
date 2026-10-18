@@ -1,0 +1,76 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+# Written by tools/standards/converters.py: change it there.
+identity:
+  key: equipment.power.converter.28v-3kw
+  name: DC converter, 3 kV to 28 V, 3 kW
+  maker: org.meridian
+  revision: draft
+  slot: power
+  description: 'Steps the ship''s 3 kV DC bus down to its 28 V DC bus, up to 3 kW out, isolated: a sealed box on four feet, the 3 kV pair in at one end (HV DC pole connectors), the 28 V out and data at the other, the coolant pair under
+    it. 93% efficient: at full load it draws 3.23 kW and gives 0.23 kW to the coolant loop.'
+size_class: 1
+fits: mount.power-s1
+physical:
+  mass: 5.0
+  volume: 0.006
+  length: 0.288
+  width: 0.144
+  height: 0.145
+built_of:
+  parts: power-converter-28v-3kw
+  list:
+  - code: DC28K3-01
+    name: Power stages and controls
+    description: silicon carbide switches, gate drives, the controller
+    mass: 1.5
+    length: 0.288
+    width: 0.144
+    height: 0.087
+    item: good.electronics
+    quantity: 1.72
+    module: module.electronics-works
+  - code: DC28K3-02
+    name: Transformer and inductors
+    description: the isolating high-frequency transformer and the filter chokes; ferrite cores counted with the copper
+    mass: 1.75
+    length: 0.288
+    width: 0.144
+    height: 0.101
+    item: stock.cu-wire-2
+    quantity: 2.01
+    module: module.electronics-works
+  - code: DC28K3-03
+    name: Cold plate and case
+    description: a machined cold plate on the coolant pair, the sealed case and four feet
+    mass: 1.75
+    length: 0.288
+    width: 0.144
+    height: 0.145
+    item: stock.al6061-pl-5
+    quantity: 2.01
+    module: module.machining-centre
+making:
+  module: module.assembly-shop
+function:
+  kind: converter
+  from_voltage: 3000.0
+  to_voltage: 28.0
+  carries: 3000.0
+  efficiency: 0.93
+life: 473364000
+basis:
+- of:
+  - function
+  - physical
+  - built_of.list
+  - size_class
+  tier: invented
+  review: true
+  note: 0.6 kW/kg and 0.5 kW/litre with its cold plate; 93% at full load; From memory of aerospace and traction DC-DC converters (isolated SiC stages, liquid-cooled); to be sourced.
+- of:
+  - built_of
+  - making
+  rule: rule.first-design-parts
+- of:
+  - life
+  rule: rule.life-ship-system

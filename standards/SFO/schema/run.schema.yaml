@@ -28,6 +28,8 @@ properties:
       temperature: { type: number, minimum: 0, x-unit: "K", description: "K, the most at its wall" }
       voltage: { type: number, minimum: 0, x-unit: "V" }
       current: { type: number, minimum: 0, x-unit: "A", description: "A per phase, one circuit (a busbar: per pole)" }
+      current_air: { type: number, minimum: 0, x-unit: "A", description: "A in free air at 40 deg C, one cable alone, where `current` is its rating in vacuum (radiation only): a feed to a load that only works in air (a fan) is always air-cooled" }
+      current_air_bundle: { type: number, minimum: 0, x-unit: "A", description: "A each in free air at 40 deg C when laid in a bundle of up to six" }
       rate: { type: number, minimum: 0, x-unit: "kg/s", description: "kg/s of bulk at full speed" }
   per_m:
     type: object

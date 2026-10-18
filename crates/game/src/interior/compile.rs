@@ -209,6 +209,13 @@ pub(super) fn compile(
             ));
         }
     }
+    // (Its harness, along its runs.)
+    for (at, mass, size) in super::wiring::harness(&i.plan, &i.fit).masses() {
+        let p = at.as_dvec3() - origin;
+        dry_mass += mass;
+        dry_first += p * mass;
+        dry_terms.push((p, mass, size.as_dvec3(), universe_engine::glam::DQuat::IDENTITY));
+    }
     let native = i.spec().map(|spec| {
         let shape = spec.shape();
         for range in &shape.part_points {

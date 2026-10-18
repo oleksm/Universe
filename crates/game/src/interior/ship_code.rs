@@ -43,7 +43,7 @@ impl From<PadRepr> for Pad {
     }
 }
 
-const LAYER_KEYS: [&str; 26] = [
+const LAYER_KEYS: [&str; 27] = [
     "hull",
     "grid_measures",
     "points",
@@ -70,6 +70,7 @@ const LAYER_KEYS: [&str; 26] = [
     "frame",
     "pressure",
     "decks",
+    "wiring",
 ];
 fn id(prefix: &str, n: usize) -> String {
     format!("{prefix}_{:06}", n + 1)
@@ -833,7 +834,7 @@ pub(crate) fn check_path(path: &std::path::Path) -> Result<(), String> {
 
 #[derive(Clone, PartialEq)]
 pub(super) struct ViewState {
-    hidden: [bool; 26],
+    hidden: [bool; 27],
     yaw: f32,
     pitch: f32,
     distance: Option<f32>,

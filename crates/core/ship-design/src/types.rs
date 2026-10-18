@@ -440,6 +440,8 @@ pub enum Layer {
     Pressure,
     #[serde(rename = "decks")]
     Decks,
+    #[serde(rename = "wiring")]
+    Wiring,
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]

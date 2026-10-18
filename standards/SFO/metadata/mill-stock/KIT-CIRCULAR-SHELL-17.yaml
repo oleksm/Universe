@@ -18,7 +18,7 @@ size:
 supplies:
   item: connector.circular-shell-17
 physical:
-  mass: 0.1
+  mass: 0.0627
 basis:
 - of:
   - size

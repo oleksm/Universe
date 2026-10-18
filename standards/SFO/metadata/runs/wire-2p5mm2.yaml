@@ -12,6 +12,8 @@ outside:
 rating:
   voltage: 600
   current: 15
+  current_air: 30
+  current_air_bundle: 21
 per_m:
   mass: 0.0315
   built_of:
@@ -36,4 +38,5 @@ basis:
   - outside
   tier: invented
   review: true
-  note: 'Of the order of aerospace hook-up wire (SAE AS22759 class): the rating a single wire''s in vacuum, radiation only; least bend 10 outsides; From memory of makers'' catalogues; to be sourced.'
+  note: 'Of the order of aerospace hook-up wire (SAE AS22759 class): `current` a single wire''s in vacuum, radiation only; `current_air` alone in free air at 40 deg C, a bundle''s at 0.7 of it; least bend 10 outsides; From memory of
+    makers'' catalogues; to be sourced.'

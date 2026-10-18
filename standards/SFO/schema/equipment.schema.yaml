@@ -431,6 +431,17 @@ properties:
         properties:
           kind: { const: switchgear }
           carries: { type: number, x-unit: "W", description: "W through it" }
+      - description: "Steps one DC bus's voltage to another's (a ship's 3 kV bus down to its 270 V or 28 V bus). Not in the game yet."
+        type: object
+        x-in-game: "not made"
+        additionalProperties: false
+        required: [kind, from_voltage, to_voltage, carries, efficiency]
+        properties:
+          kind: { const: converter }
+          from_voltage: { type: number, x-unit: "V", description: "V of the bus it takes from" }
+          to_voltage: { type: number, x-unit: "V", description: "V of the bus it feeds" }
+          carries: { type: number, x-unit: "W", description: "W it delivers at most" }
+          efficiency: { type: number, x-unit: "1", description: "the share of what it draws that it delivers; the rest is heat to the coolant loop" }
       - description: "Turn the ship by spinning wheels, without fuel. Not in the game yet."
         type: object
         x-in-game: "not made"
