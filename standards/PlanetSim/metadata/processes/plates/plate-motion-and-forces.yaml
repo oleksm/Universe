@@ -208,6 +208,27 @@ params:
     factor: 5.0
   meaning: 'run() argument: max step length'
   source: stages/plates.py:776
+- name: SLAB_PULL_FORCE
+  value: 54200000000000.0
+  unit: N/m
+  meaning: 'vector plates: slab pull per metre of trench on the plate going down, toward the trench; the slab''s negative
+    buoyancy, excess density rho_m*alpha*(Tm-T0)/2 over a lithosphere 2.32*sqrt(kappa*t) thick (t = 100 Myr) down to 660 km'
+  source: Turcotte & Schubert, Geodynamics (2014), gravitational body forces on the lithosphere (slab pull)
+  note: 'derived: rho_m 3300 kg/m3, alpha 3e-5 /K, Tm-T0 1300 K, kappa 1e-6 m2/s, g 9.8 m/s2: 5.42e+13 N/m'
+- name: RIDGE_PUSH_FORCE
+  value: 4120000000000.0
+  unit: N/m
+  meaning: 'vector plates: ridge push per metre of ridge on each spreading plate, away from the ridge: g*rho_m*alpha*(Tm-T0)*(1
+    + 2*rho_m*alpha*(Tm-T0)/(pi*(rho_m-rho_w)))*kappa*t at t = 100 Myr'
+  source: Turcotte & Schubert, Geodynamics (2014), ridge push
+  note: 'derived from the same constants, rho_w 1000 kg/m3: 4.12e+12 N/m (an order below slab pull, as Forsyth & Uyeda 1975
+    found)'
+- name: TRENCH_SUCTION_FORCE
+  value: 16300000000000.0
+  unit: N/m
+  meaning: 'vector plates: trench suction per metre of trench on the overriding plate, toward the trench'
+  source: Forsyth & Uyeda 1975 (suction on the overriding plate, smaller than slab pull)
+  note: 'chosen: 0.3 of SLAB_PULL_FORCE, the ratio the particle plates used (TRENCH_SUCTION 0.3)'
 random_draws:
 - none
 invariants:
@@ -240,3 +261,15 @@ basis:
   tier: derived
   note: 'planets, 18 Oct 2026: the plates variant the owner chose (planet-forge plates-foundation), measured on plates_earth,
     3 seeds.'
+- of:
+  - params.SLAB_PULL_FORCE
+  - params.RIDGE_PUSH_FORCE
+  tier: derived
+  note: 'planets, 18 Oct 2026: the vector plates (planet-forge vector-core) take physical boundary forces per metre; no sample
+    weights.'
+  source: Turcotte & Schubert 2014
+- of:
+  - params.TRENCH_SUCTION_FORCE
+  tier: invented
+  note: 'planets, 18 Oct 2026: the vector plates (planet-forge vector-core) take physical boundary forces per metre; no sample
+    weights. Suction: 0.3 of slab pull, the particle plates'' ratio.'
