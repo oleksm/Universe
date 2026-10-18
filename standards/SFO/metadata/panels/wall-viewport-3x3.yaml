@@ -21,7 +21,7 @@ physical:
   length: 3.0
   width: 0.19
   height: 3.0
-  mass: 479.0
+  mass: 471.2
 built_of:
 - what: Pressure skin
   item: material.aluminium-alloy-6061
@@ -45,7 +45,7 @@ built_of:
   note: 'two 32 mm panes 638 mm across on their seat lands, either holding the air alone: blender''s model (2026-10-18)'
 - what: Viewport sleeve, collar and retainers
   item: material.aluminium-alloy-6061
-  mass: 35.0
+  mass: 27.3
   note: 'a welded 640/680 mm sleeve through the wall''s depth, a 760 mm collar, retainers, 12 bolts and dual seals: blender''s model'
 template: template.wall-viewport
 basis:

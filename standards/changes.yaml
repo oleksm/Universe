@@ -1244,7 +1244,7 @@
 - { record: module.brewery, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "97ec62ff6e892b87" }
 - { record: module.brickworks, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "d9b426470254669b" }
 - { record: module.building-dock, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "05c2ff7a3d706191" }
-- { record: module.building-panel-works, at: "2026-10-18T16:04:48Z", status: review, summary: "changed: recipes", sha: "594f2ea6c96edaa6" }
+- { record: module.building-panel-works, at: "2026-10-18T16:06:33Z", status: review, summary: "changed: recipes", sha: "9031252ae4625b91" }
 - { record: module.cable-works, at: "2026-10-18T15:11:23Z", status: review, summary: "changed: recipes", sha: "29e44c5f661a8421" }
 - { record: module.carbide-furnace, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "15b378968095ca34" }
 - { record: module.carbon-works, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "681dec68c4a8a45c" }
@@ -1498,7 +1498,7 @@
 - { record: panel.wall-pressure-3x3, at: "2026-10-18T14:47:28Z", status: draft, summary: "first tracked", sha: "bd63fd12cc7b3a57" }
 - { record: panel.wall-roller-3x3, at: "2026-10-18T02:56:15Z", status: draft, summary: "changed: identity, thickness, opening, physical, built_of", sha: "0af422197b39aa78" }
 - { record: panel.wall-shopfront-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "9ebd2722ce66e0b6" }
-- { record: panel.wall-viewport-3x3, at: "2026-10-18T16:04:48Z", status: draft, summary: "changed: physical, built_of", sha: "688114faa5eaa4af" }
+- { record: panel.wall-viewport-3x3, at: "2026-10-18T16:06:33Z", status: draft, summary: "changed: physical, built_of", sha: "03e6d14a54ae1195" }
 - { record: panel.wall-window-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "f87480f511bff347" }
 - { record: parcel.treistun.ashfall-camp.1, at: "2026-10-06T18:38:56Z", status: "", summary: "changed: outline", sha: "42f17141996df99c" }
 - { record: parcel.treistun.ashfall-camp.2, at: "2026-10-06T18:25:49Z", status: "", summary: "first tracked", sha: "38fe80aeecce0011" }
@@ -3716,7 +3716,7 @@
 - { record: stock.kit-panel-wall-pressure-3x3, at: "2026-10-18T14:47:28Z", status: review, summary: "first tracked", sha: "c3ce3e328c4813ab" }
 - { record: stock.kit-panel-wall-roller-3x3, at: "2026-10-18T02:56:15Z", status: review, summary: "changed: size, physical", sha: "1b25147e9e1257d6" }
 - { record: stock.kit-panel-wall-shopfront-3x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "a2209874e188f70a" }
-- { record: stock.kit-panel-wall-viewport-3x3, at: "2026-10-18T16:04:48Z", status: review, summary: "changed: physical", sha: "5ebbf35a36f51e5f" }
+- { record: stock.kit-panel-wall-viewport-3x3, at: "2026-10-18T16:06:33Z", status: review, summary: "changed: physical", sha: "69a9667456ae8379" }
 - { record: stock.kit-panel-wall-window-3x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "43dce171212e3fc7" }
 - { record: stock.kit-pipe-dn100-pn10, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "8df242d5e942f7e7" }
 - { record: stock.kit-pipe-dn100-pn10-ss, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "9b2ab8eb5ba4f9fa" }
