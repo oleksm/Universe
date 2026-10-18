@@ -7,17 +7,23 @@ identity:
 size_class: 1
 physical:
   length: 0.5
-  width: 0.4
+  width: 0.409
   height: 0.4
-  mass: 20.0
+  mass: 10.9
 built_of:
-- what: Case and drawer
+- what: Case, drawer and stand
   item: material.aluminium-alloy-6061
-  mass: 20.0
+  mass: 7.7
+- what: Screen
+  item: material.soda-lime-glass
+  mass: 0.2
+- what: Boards, printer and supply
+  item: material.polyethylene-uhmw
+  mass: 3.0
 basis:
 - of:
   - built_of
   - physical
-  tier: invented
+  tier: derived
   review: true
-  note: From memory of such furniture; to be sourced.
+  note: From blender's model (2026-10-17) for the case, drawer, stand and screen, 7.9 kg; the electronics inside it 3 kg (invented, as polymer here).

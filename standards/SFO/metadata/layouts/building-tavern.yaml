@@ -15,7 +15,7 @@ physical:
   length: 18.0
   width: 18.0
   height: 3.15
-  mass: 199570.5
+  mass: 199534.1
 bays: []
 rooms:
 - id: DIN1
@@ -128,7 +128,7 @@ ground:
   mass: 62208.0
   note: 0.6 x 0.6 m strips under the outside walls
 totals:
-  mass: 199570.5
+  mass: 199534.1
   against_module: 'building.tavern (deprecated): one box 20 x 15 x 4 m of 331 t, from the average of 538 concrete buildings. This layout: 18 x 18 x 3 m, 200 t (6 t frame, 11 t panels, 4 t furniture, 179 t ground), for 92 people served
     or seated at once. Services (power, water, drains) not laid: the kit has no low-voltage cable or small pipe yet.'
 staff:

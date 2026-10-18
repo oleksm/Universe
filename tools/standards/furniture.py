@@ -29,7 +29,7 @@ FURNITURE = {  # name: (title, description, (length, width, height), [(what, ite
     "shelf": ("Shelf section", "A double-sided gondola shelf section, 1.2 m long.", (1.2, 1.0, 1.8), [("Uprights, base and shelves", STEEL, 70.0)], None),
     "counter": ("Counter section", "A serving counter section 1.8 m long with its worktop.", (1.8, 0.8, 1.05), [("Carcass", STEEL, 85.0), ("Worktop", PE, 32.0)], "blender's counter bay: 5.4 m of counter and back shelving 427 kg of steel, 96 kg of worktop"),
     "back-shelf": ("Back shelf", "Shelving behind a counter, 1.8 m long.", (1.8, 0.45, 2.2), [("Frame and shelves", STEEL, 57.0)], "blender's counter bay"),
-    "till": ("Till", "A till with its drawer and screen.", (0.5, 0.4, 0.4), [("Case and drawer", AL, 20.0)], None),
+    "till": ("Till", "A till with its drawer and screen.", (0.5, 0.409, 0.4), [("Case, drawer and stand", AL, 7.7), ("Screen", "material.soda-lime-glass", 0.2), ("Boards, printer and supply", PE, 3.0)], "blender's model (2026-10-17) for the case, drawer, stand and screen, 7.9 kg; the electronics inside it 3 kg (invented, as polymer here)"),
     "rack": ("Pallet rack bay", "One bay of pallet racking, 2.7 m long, three beam levels.", (2.7, 1.1, 4.5), [("Uprights and beams", STEEL, 210.0)], None),
     "range": ("Range", "A commercial cooking range with its oven.", (1.2, 0.9, 0.9), [("Range and oven", SS, 250.0)], None),
     "kitchen-bench": ("Kitchen bench", "A stainless kitchen bench with a shelf under it.", (1.8, 0.7, 0.9), [("Bench", SS, 60.0)], None),
