@@ -39,3 +39,9 @@ basis:
   - { of: [built_of.list, physical], tier: derived, review: true, note: "Sized as the methalox S2 (2026-10-13, from the modeller's blockout v01): 40,700 kg at O/F 3.6 (31,850 kg of oxygen, 8,850 of methane), each side with 3% ullage, the 50 mm common bulkhead inside a 2.303 m inner radius. Wall: 0.45 MPa plus the oxygen's head at 30 m/s2 (158 kPa), times 1.5 against 165 MPa welded, wants 6.36 mm: 8 mm plate, 1,445 kg bare plus 20% for lands and bosses. Insulation 50 mm at 2 kg/m2, bulkhead 170 kg, saddles 147 kg, fittings 244 kg. Total 2,429 kg, 6.0% of what it holds. Full at 30 m/s2 it puts 323 kN on each mount point (397 kN allowed); about 37 m/s2 is the most. Box: 5.064 x 4.722 x 4.905 m with saddles and opposed service bosses (it was a 4.6 m box with no room for insulation or ullage). Chosen; review." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
+# ports and internal: written by tools/standards/equipment_ports.py, change them there.
+ports:
+- {id: foot-1, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 607.25, at: [-2.646, -2.646, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.tank-s1''s socket of the same id, bolted through'}
+- {id: foot-2, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 607.25, at: [2.646, -2.646, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.tank-s1''s socket of the same id, bolted through'}
+- {id: foot-3, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 607.25, at: [2.646, 2.646, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.tank-s1''s socket of the same id, bolted through'}
+- {id: foot-4, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 607.25, at: [-2.646, 2.646, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.tank-s1''s socket of the same id, bolted through'}

@@ -169,6 +169,142 @@ ports:
   - 1.0
   - 0.0
   note: to the starboard bank of five S2 radiator panels (equipment.thermal.radiator-hot.s2) by the ship's manifold, about 321 kg/s to each; place provisional
+- id: foot-1
+  flow: out
+  medium: load
+  interface: interface.insert-m80
+  half: male
+  make: bolted
+  mass: 45125.0
+  force: 3475.0
+  at:
+  - 3.96
+  - 0.0
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: on mount.engine-s3's socket of the same id, bolted through
+- id: foot-2
+  flow: out
+  medium: load
+  interface: interface.insert-m80
+  half: male
+  make: bolted
+  mass: 45125.0
+  force: 3475.0
+  at:
+  - 2.8001
+  - 2.8001
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: on mount.engine-s3's socket of the same id, bolted through
+- id: foot-3
+  flow: out
+  medium: load
+  interface: interface.insert-m80
+  half: male
+  make: bolted
+  mass: 45125.0
+  force: 3475.0
+  at:
+  - 0.0
+  - 3.96
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: on mount.engine-s3's socket of the same id, bolted through
+- id: foot-4
+  flow: out
+  medium: load
+  interface: interface.insert-m80
+  half: male
+  make: bolted
+  mass: 45125.0
+  force: 3475.0
+  at:
+  - -2.8001
+  - 2.8001
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: on mount.engine-s3's socket of the same id, bolted through
+- id: foot-5
+  flow: out
+  medium: load
+  interface: interface.insert-m80
+  half: male
+  make: bolted
+  mass: 45125.0
+  force: 3475.0
+  at:
+  - -3.96
+  - 0.0
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: on mount.engine-s3's socket of the same id, bolted through
+- id: foot-6
+  flow: out
+  medium: load
+  interface: interface.insert-m80
+  half: male
+  make: bolted
+  mass: 45125.0
+  force: 3475.0
+  at:
+  - -2.8001
+  - -2.8001
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: on mount.engine-s3's socket of the same id, bolted through
+- id: foot-7
+  flow: out
+  medium: load
+  interface: interface.insert-m80
+  half: male
+  make: bolted
+  mass: 45125.0
+  force: 3475.0
+  at:
+  - 0.0
+  - -3.96
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: on mount.engine-s3's socket of the same id, bolted through
+- id: foot-8
+  flow: out
+  medium: load
+  interface: interface.insert-m80
+  half: male
+  make: bolted
+  mass: 45125.0
+  force: 3475.0
+  at:
+  - 2.8001
+  - -2.8001
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: on mount.engine-s3's socket of the same id, bolted through
 visual:
   format: freefall-model/1
   path: models/engine-ft-s3/v1

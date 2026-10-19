@@ -88,8 +88,8 @@ def units():
     hyd = 15000.0
     holds = HEAT + 0.15 * HEAT + SLAG + up_w + roof_w   # the charge, a sixth left as the heel (from memory), slag and panel water
     out["eaf-vessel-80t"] = dict(
-        name="Arc furnace vessel, 80 t", size_class=2, fits="bay-s2", dims=(12.0, 11.74, 14.0),   # as built in blender's model (v3): the arms' tails and cables reach 6.25 m behind the axis, the hoses' couplings at the deck manifold 5.49 m in front
-        desc=f"An AC arc furnace that taps {HEAT / 1000:.0f} t: a refractory hearth {D} m across, water-cooled upper shell and roof, three graphite electrodes on masts, a tilting cradle and an eccentric bottom tap. Fed sponge iron through a fifth hole in the roof. Stands on a platform 5 m up so a ladle car runs under its tap. Its cooling water comes by two flexible hoses of its own (it tilts), 300 mm bore, flow and return, from its ports at local (-3.8, 3.2, 2.6) and (-3.8, 3.6, 2.6), clear of the tilt pin and its actuator, down to a fixed manifold on the deck whose two ports face up at local (-3.8, 4.9, 0.5) and (-3.8, 5.3, 0.5). Its box is not centred across: the arms\' tails and the secondary cables reach 6.25 m behind the furnace\'s axis (toward the transformer), its water hoses' couplings at the deck manifold 5.49 m in front (the manifold itself is the layout's); 14 m tall with the masts at rest.",
+        name="Arc furnace vessel, 80 t", size_class=2, fits="bay-s2", dims=(10.0752, 18.61, 17.565),   # blender's v5 (2026-10-18): the tilt cylinders' feet in platform pockets to z -3.1 and the hose loops to z -3.565 and y 12.7; before, as built in blender's model (v3): the arms' tails and cables reach 6.25 m behind the axis, the hoses' couplings at the deck manifold 5.49 m in front
+        desc=f"An AC arc furnace that taps {HEAT / 1000:.0f} t: a refractory hearth {D} m across, water-cooled upper shell and roof, three graphite electrodes on masts, a tilting cradle and an eccentric bottom tap. Fed sponge iron through a fifth hole in the roof. Stands on a platform 5 m up so a ladle car runs under its tap. Its cooling water comes by rigid 300 mm pipes on the vessel out over the deck's edge to y 6.8, then two flexible hoses of its own (it tilts), 14 m each in U loops hanging outside the platform (bent no tighter than 2 m), down to fixed pipes back to a manifold on the deck whose two ports face up. Two single-stage tilt cylinders, one each side (x -4.05 and 4.05, y 2), their rod ends on the rocker girder 1.3 m up and their feet in pockets in the platform at z -3.1: the rockers carry the weight, the cylinders the tilt. Its box is not centred across: the arms\' tails and the secondary cables reach 6.25 m behind the furnace\'s axis (toward the transformer), its water hoses' couplings at the deck manifold 5.49 m in front (the manifold itself is the layout's); 14 m tall with the masts at rest.",
         built_of=[
             part("Hearth shell", A36, shell, f"{D} m across, {Hh} m tall, 50 mm plate, its dished bottom 1.25 times the disc"),
             part("Hearth lining", REF, lining, "0.9 m under the bath, 0.45 m up the hearth wall"),
@@ -103,7 +103,7 @@ def units():
             part("Slag spout", A36, spout_s, f"a steel trough {sp_w} m wide, {sp_d} m deep, 30 mm plate, {sp_L:.2f} m long, outside sizes (a clear channel {sp_w - 2 * 0.18:.2f} m wide and {sp_d - 0.18:.2f} m deep inside its wall and lining); its floor from the slag door's sill (local x -3.32, 3.2 m up) sloping 20 degrees down to x -5.0, 2.59 m up, 0.5 m past the cradle deck, so the slag falls clear into the pot"),
             part("Slag spout lining", REF, spout_r, "150 mm of refractory in the trough"),
             part("Slag spout brackets", A36, 169.8, "four seated brackets of 120 x 120 x 6 mm tube and plate that carry the trough on the cradle; measured on blender's model (eaf-vessel-80t candidate v02: tubes 83.4 kg, plates 86.4 kg)"),
-            part("Water hoses", "material.silicone-rubber", 2 * 3.964 * math.pi * 0.32 * 0.02 * 1075.0, "two flexible hoses, flow and return, 300 mm bore, 20 mm wall, 3.964 m each along their centreline (measured on blender's model, v3), a supported dogleg from the vessel's ports to the deck manifold; reinforced EPDM hose, which the registry has not got: silicone rubber (1,075 kg/m3) stands for it, the wire not counted. At rest only: pressure loss, bend radius and the tilt's travel not checked"),
+            part("Water hoses", "material.silicone-rubber", 2 * 14.0 * math.pi * 0.32 * 0.02 * 1075.0, "two flexible hoses, flow and return, 300 mm bore, 20 mm wall, 14 m each in U loops outside the platform (blender's v5: least bend 2.21 m over the tilt, against a provisional 2.0 m, invented); reinforced EPDM hose, which the registry has not got: silicone rubber (1,075 kg/m3) stands for it, the wire not counted. Pressure loss not checked"),
             part("Tilt and mast hydraulics", "good.pumps", hyd, "cylinders, pumps and valves; from memory"),
         ],
         holds=holds,
@@ -582,7 +582,7 @@ def air_ports(us):
         port("power-in", "in", "power", kit.bus_joint(V2, I2, 3), (0.0, -6.2, 2.3), (0, -1, 0), power=P, voltage=V2, note=f"{I2 / 1000:.0f} kA a phase"),
         port("water-in", "in", "liquid", kit.flange(dn_hall, 10), (-4.2, 4.95, 0.5), (0, 0, 1), item=WATER, rate=WATER_SHARE * P / (4186 * 10), temperature=303.0),
         port("water-out", "out", "liquid", kit.flange(dn_hall, 10), (-3.4, 4.95, 0.5), (0, 0, 1), item=WATER, rate=WATER_SHARE * P / (4186 * 10), temperature=313.0),
-    ]
+    ] + tilt_feet()
     t = us["cooling-tower"]
     L_ = t["dims"][0] / 2
     t["desc"] = t["desc"].replace(f"the loop leaves by two pairs of 500 mm ports on its east end (local x +{L_:.0f}, 0.75 m up, at y 0 and +4.5)",
@@ -2982,14 +2982,15 @@ def arc_ports(us):
                           part("Off-gas gate drive", "good.electric-motors", 500.0, "from memory (drawn as a proxy)"),
                           part("Deck manifold", A36, 908.4, f"two DN 400 barrels standing on the deck, their closed bottoms, feet, hose reducers and saddles; {m4}"),
                           part("Bus terminal necks", CU, 601.2, f"three copper necks from the flexible cables' fixed ends to the bus joint; {m4}"),
-                          part("Bus joint supports", A36, 1059.7, f"the joint's three supports and insulators, the insulators not mass-qualified; {m4}")]
+                          part("Bus joint supports", A36, 1059.7, f"the joint's three supports and insulators, the insulators not mass-qualified; {m4}"),
+                          part("Fixed bus support", A36, 434.4, "columns and feet standing on the platform behind the cradle, so the bus joint stays still as the furnace tilts; measured on blender's sealed v4 (2026-10-18), net of its shorter bus beam and the moving brackets taken away")]
     us["eaf-vessel-80t-sealed"]["ports"] = [
         port("dri-in", "in", "bulk", kit.belt_transfer(0.8), (0.0, 1.8, 10.1), (0, 0, 1), item="good.sponge-iron", rate=DRI, note="the feed lock's top; the belt's head 3 m over it"),
         port("offgas-out", "out", "gas", kit.clamp_coupling(1.2), (3.0, 4.5, 8.5), (0, 1, 0), item="material.carbon-monoxide", rate=co, pressure=1e5, temperature=SEALED_GAS_T + K),
         port("power-in", "in", "power", kit.bus_joint(V2, I2, 3), (0.0, -6.2, 2.3), (0, -1, 0), power=P, voltage=V2, note=f"{I2 / 1000:.0f} kA a phase"),
         port("water-in", "in", "liquid", kit.flange(dn_main, 10, temp=330.0), (-4.2, 4.95, 0.5), (0, 0, 1), item=WATER, rate=low, temperature=320.0),
         port("water-out", "out", "liquid", kit.flange(dn_main, 10, temp=330.0), (-3.4, 4.95, 0.5), (0, 0, 1), item=WATER, rate=low, temperature=330.0),
-    ]
+    ] + tilt_feet()
     t = us["furnace-transformer-90mva"]
     L_, W_, H_ = t["dims"]
     if "HV cable box" not in [x["what"] for x in t["built_of"]]:
@@ -3055,6 +3056,12 @@ def airless_units(us):
         part("Feed lock", A36, 3311.5, "two gate valves and a chamber over the fifth hole, local z 8.3 to 10.1: bodies, housings and seats; measured on model v3"),
         part("Feed lock drives", "good.electric-motors", 500.0, "from memory"),
         part("Off-gas bellows and reducer", "material.stainless-steel-304", 1426.8, "a bellows 2 m across from the fourth hole's flange (local z 8.5 to 9.1), then a reducer to the layout's 1.2 m duct at z 9.7, with their flanges; measured on model v3")]
+    # (blender's sealed v4, 2026-10-18: the air furnace's tilt cylinders, its hoses on the slag side clear of the gantry crane and over the loop mains, flexible power leads to a fixed bus support)
+    v["dims"] = (19.4372, 15.7736, 17.1)
+    v["desc"] = v["desc"].replace("Its cooling water comes by rigid 300 mm pipes on the vessel out over the deck's edge to y 6.8, then two flexible hoses of its own (it tilts), 14 m each in U loops hanging outside the platform (bent no tighter than 2 m), down to fixed pipes back to a manifold on the deck whose two ports face up.",
+                                  "Its cooling water comes by rigid 300 mm pipes on the vessel out on its slag side (-x) to x -6.8, then two flexible hoses of its own (it tilts), 18 m each in loops beside the platform at y 1.0 and 1.7 (bent no tighter than 2.2 m), kept above local z -3.3 so they clear the cooling loop's mains under them and inside y 5.3 so they clear the gantry crane's legs, down to fixed pipes back to a manifold on the deck whose two ports face up. Its six secondary cables are flexible water-cooled leads, 13 m each (bent no tighter than 2.75 m over the tilt), from the cradle to a fixed bus support standing on the platform behind it, which carries the bus joint.")
+    v["built_of"] = [part("Water hoses", "material.silicone-rubber", 2 * 18.0 * math.pi * 0.32 * 0.02 * 1075.0, "two flexible hoses, flow and return, 300 mm bore, 20 mm wall, 18 m each in loops on the slag side (blender's sealed v4: least bend 2.235 m over the tilt, against a provisional 2.0 m, invented); reinforced EPDM hose, which the registry has not got: silicone rubber (1,075 kg/m3) stands for it, the wire not counted. Pressure loss not checked")
+                     if p_["what"] == "Water hoses" else p_ for p_ in v["built_of"]]
     v["needs"] = dict(us["eaf-vessel-80t"]["needs"], atmosphere="any")
     v["basis"] = us["eaf-vessel-80t"]["basis"] + [{"of": ["identity.description"], "tier": "invented", "review": True, "note": "Sealed as closed ferroalloy furnaces are; not a design that has been built for vacuum."}]
     out["eaf-vessel-80t-sealed"] = v
@@ -5049,7 +5056,11 @@ def mounts_for(bays, recs):
                                          {"of": ["bears", "feeds"], "rule": "rule.mounts-margin", "note": f"Round the units fitted to it in the trial ({', '.join(dict.fromkeys(v['units']))}) at 1 g, full."}]}
     for b in bays:
         u, m = recs[b["unit"].split(".", 1)[1]], mounts[b["mount"].split(".", 1)[1]]
-        assert u["physical"]["length"] <= m["footprint"]["length"] and u["physical"]["width"] <= m["footprint"]["width"], b
+        base = [e for e in u.get("envelope") or [] if abs(e[2]) < 0.05]      # (what stands on the bay: its boxes from the floor; hoses hung past a platform's edge or feet in pockets overhang it)
+        fl, fw = u["physical"]["length"], u["physical"]["width"]
+        if base:
+            fl, fw = min(fl, max(e[3] for e in base) - min(e[0] for e in base)), min(fw, max(e[4] for e in base) - min(e[1] for e in base))
+        assert fl <= m["footprint"]["length"] and fw <= m["footprint"]["width"], b
 
     return mounts
 
@@ -5152,6 +5163,17 @@ def products(us):
     return out
 
 
+def tilt_feet():
+    """The arc furnaces' tilt cylinders' feet in their platform pockets (blender's v5, 2026-10-18)."""
+    return [dict(id=f"tilt-foot-{i}", flow="out", medium="load", interface="interface.plant-bay-s2", half="male", make="bolted", mass=0.0, force=1.28e6,
+              at=[x, 2.0, -3.1], facing=[0.0, 0.0, -1.0],
+              note="a tilt cylinder's foot in its pocket in the platform: no weight (the rockers carry it), the tilt's push, each sized to take it alone: 422 t x 9.81 x a 1.0 m offset of the centre of gravity at 15 deg (invented) over the 4.05 m lever, x 1.25")
+            for i, x in ((1, -4.05), (2, 4.05))]
+
+
+SWEPT = [[-14.933, 0.835, -3.017, -5.575, 1.865, 6.408], [-4.039, -10.717, 2.437, 4.272, -5.187, 11.486]]     # (the sealed furnace's hose and power-lead boxes, each already swept over the tilt: blender's v4)
+
+
 def set_motions(us):
     """SFO 26: how each unit, or a part of it, moves in service, as data a fit check can sweep. A range the layout sets (a
     crane's travel along its rails) is left to the layout; the axis is the unit's."""
@@ -5160,7 +5182,7 @@ def set_motions(us):
                 "note": "rocker tilt: about 15 degrees each way, toward +x to tap and -x to deslag (from memory of furnaces with an eccentric bottom tap); a rocker rolls, so the axis through the rockers' centres is assumed (blender's sweeps, 2026-10-16). The arc is off while it tilts."}
     for k in ("eaf-vessel-80t", "eaf-vessel-80t-sealed"):
         env = [e for e in ENVELOPES.get(f"unit.{k}", []) if isinstance(e, list)]
-        fixed = [i for i, e in enumerate(env) if e[3] < -2.0 and e[1] > 2.0]       # (the deck manifold's box: its barrels stand on the fixed platform, the hoses to them flex)
+        fixed = [i for i, e in enumerate(env) if (e[3] < -2.0 and e[1] > 2.0) or e[2] < -2.5 or e in SWEPT]       # (the deck manifold's box: its barrels stand on the fixed platform, the hoses to them flex; boxes hung below the platform and the boxes blender measured over the whole tilt hold still)
         us[k]["motion"] = [dict(tilt_eaf, boxes=[i for i in range(len(env)) if i not in fixed])]
     for k, u in us.items():
         if "crane" in k or "gantry" in k:
@@ -5186,7 +5208,7 @@ def set_motions(us):
         elif k == "balling-disc-7m5":
             u["motion"] = [{"id": "spin", "kind": "rotate", "moves": ["the disc"], "boxes": [], "note": "turning continuously about its own tilted axis: it sweeps nothing beyond itself"}]
         elif k == "ball-mill-4m4":
-            u["motion"] = [{"id": "spin", "kind": "rotate", "point": [0.0, 0.0, 3.2], "direction": [1.0, 0.0, 0.0], "moves": ["the shell and its charge"], "boxes": [], "note": "turning continuously on its trunnions, sweeping nothing beyond itself; its feed and discharge stay still"}]
+            u["motion"] = [{"id": "spin", "kind": "rotate", "point": [0.0, 0.0, 3.0], "direction": [1.0, 0.0, 0.0], "moves": ["the shell and its charge"], "boxes": [], "note": "turning continuously on its trunnions, sweeping nothing beyond itself; its feed and discharge stay still"}]
         elif k == "degassing-stand":
             u["motion"] = [{"id": "swing", "kind": "rotate", "point": [0.0, -3.5, 0.0], "direction": [0.0, 0.0, 1.0], "angle": [0.0, r(math.pi / 2, 4)], "moves": ["the arm and the heat shield"], "boxes": [1], "note": "swung off the ladle to let the car pass (a quarter turn, invented); only its arm and shield box moves"}]
 

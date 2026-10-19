@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=../../schema/interface.schema.yaml
+# Written by tools/standards/mounting.py: change it there.
+identity:
+  key: interface.insert-m64
+  name: Threaded insert M64
+  description: 'A holder''s socket: an M64 threaded insert set in a pad, its face square to the bolt. Equipment''s foot (male) is a flange with a clearance hole; the joining product is an M64 bolt.'
+domain: load
+kind: insert
+size: 0.064
+envelope:
+  tension: 2224400.0
+  compression: 4448800.0
+  shear: 1672320.0
+stiffness:
+  axial: 2513274000.0
+  shear: 1256637000.0
+media:
+- load
+sealing: open
+halves: male-female
+make: bolted
+face:
+  length: 0.16
+  width: 0.16
+  height: 0.064
+basis:
+- of:
+  - envelope
+  tier: derived
+  review: true
+  note: 'An ISO 898-1 class 10.9 bolt: proof 830 MPa and 0.6 of 1,040 MPa over its 2680 mm2 stress area; pressed together, twice its proof (the pad bears). Review-pending (docs/proposals/physical-mounts.md): chosen, not approved.'
+- of:
+  - stiffness
+  tier: derived
+  review: true
+  note: 'The shank, E A / L over a grip of 4 diameters; across, half. Review-pending (docs/proposals/physical-mounts.md): chosen, not approved.'

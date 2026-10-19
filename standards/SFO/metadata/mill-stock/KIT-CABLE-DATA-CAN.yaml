@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-cable-data-can
+  code: KIT-CABLE-DATA-CAN
+  name: Data cable, control bus, 2 x 0.5 mm2 pair, screened, a 500 m drum
+  traded_as: market.machinery
+  form: coil
+package: package.coil
+made_from:
+- item: material.copper
+- item: material.ptfe
+size:
+  length: 500.0
+  diameter: 0.0044
+supplies:
+  item: run.cable-data-can
+  length: 500.0
+physical:
+  mass: 17.8
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: 'a 500 m drum of run.cable-data-can: its mass a metre times the length sold.'

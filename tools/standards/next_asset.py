@@ -65,7 +65,7 @@ def usage():
                 add(u, n)
         for p_ in (d.get("frame") or {}).get("panels") or []:
             add(p_["panel"], n * p_["count"])
-    for folder in ("panels", "runs", "connectors"):      # (a template is used wherever its members are)
+    for folder in ("panels", "runs", "connectors", "adapters"):      # (a template is used wherever its members are)
         for f in glob.glob(os.path.join(TREE, f"SFO/metadata/{folder}/*.yaml")):
             d = yaml.safe_load(open(f)) or {}
             if d.get("template"):

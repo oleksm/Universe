@@ -54,3 +54,9 @@ basis:
   - { of: [function.reset], tier: invented, review: true, note: "The game's figure (weapons.rs LASER_RESET), brought onto the record so no constant is left in the code: locked out after overheating until it has cooled to three tenths." }
   - { of: [function.beam_power, needs.power], tier: invented, review: true, note: "Open: 2 MW on the target from 2.5 MW drawn is 80% from the wall; high-power lasers manage 30 to 50% (from memory), so about 5 MW drawn and 3 MW of heat to shed is likelier. The game uses these figures: engine first." }
   - { of: [life], rule: rule.life-ship-system }
+# ports and internal: written by tools/standards/equipment_ports.py, change them there.
+ports:
+- {id: foot-1, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 300.0, at: [1.98, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.hardpoint-s1''s socket of the same id, bolted through'}
+- {id: foot-2, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 300.0, at: [0.0, 1.98, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.hardpoint-s1''s socket of the same id, bolted through'}
+- {id: foot-3, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 300.0, at: [-1.98, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.hardpoint-s1''s socket of the same id, bolted through'}
+- {id: foot-4, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 300.0, at: [0.0, -1.98, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.hardpoint-s1''s socket of the same id, bolted through'}

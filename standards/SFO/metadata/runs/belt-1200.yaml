@@ -21,6 +21,7 @@ terminals:
 connector: connector.belt-transfer-1200
 carries: bulk
 template: template.belt
+hold: {plant: 1.2, by: its idler frames, basis: rule.run-support}
 visual: {format: freefall-model/1, path: models/belt-1200/v2, manifest_sha256: 116d9c590a890a5c0d7f6f69269006f199dd1d1dbecd44c782b0acb05c1f09ac, version: 2, triangles: 2648}
 basis:
 - of: [per_m, support]

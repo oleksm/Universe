@@ -1,0 +1,583 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+# Written by tools/standards/converters.py: change it there.
+identity:
+  key: equipment.power.distribution.270v-10way
+  name: Distribution board, 270 V DC, 10 ways
+  maker: org.meridian
+  revision: draft
+  slot: utility
+  description: 'Where a ship''s 270 V DC bus branches: fed from its converter by a pole pair or a circular shell 33 or 25 (whichever the converter has, all three on one bus bar), 8 ways of shell 25 (55 A), 2 ways of shell 33 (120 A)
+    out, each through its own solid-state breaker, and the control bus through. Up to 108 kW on its bus bar. The connectors'' mass is the routed harness''s, not the board''s.'
+size_class: 1
+fits: mount.utility-s1
+physical:
+  mass: 11.0
+  volume: 0.0262
+  length: 0.5
+  width: 0.15
+  height: 0.35
+built_of:
+  parts: power-distribution-270v-10way
+  list:
+  - code: DB270W10-01
+    name: Enclosure and rails
+    description: a folded aluminium box, its DIN-style rails and the gland plates
+    mass: 4.95
+    length: 0.5
+    width: 0.15
+    height: 0.158
+    item: stock.al6061-pl-5
+    quantity: 5.69
+    module: module.machining-centre
+  - code: DB270W10-02
+    name: Bus bars
+    description: copper bars, plus and minus, and their insulators
+    mass: 2.2
+    length: 0.5
+    width: 0.15
+    height: 0.07
+    item: stock.cu-wire-2
+    quantity: 2.53
+    module: module.electronics-works
+  - code: DB270W10-03
+    name: Breakers and controls
+    description: a solid-state breaker on each way, the board's controller
+    mass: 3.85
+    length: 0.5
+    width: 0.15
+    height: 0.122
+    item: good.electronics
+    quantity: 4.43
+    module: module.electronics-works
+making:
+  module: module.assembly-shop
+function:
+  kind: switchgear
+  carries: 108000.0
+life: 473364000
+ports:
+- id: foot-1
+  flow: out
+  medium: load
+  interface: interface.deck-track
+  half: male
+  make: manual
+  mass: 5.5
+  at:
+  - -0.2032
+  - 0.0
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: a stud into the deck track under it
+- id: foot-2
+  flow: out
+  medium: load
+  interface: interface.deck-track
+  half: male
+  make: manual
+  mass: 5.5
+  at:
+  - 0.2032
+  - 0.0
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: a stud into the deck track under it
+- id: in+
+  flow: in
+  medium: power
+  interface: interface.hvdc-pole-400a
+  half: male
+  make: manual
+  connector: connector.hvdc-pole-400a
+  voltage: 270.0
+  current: 400.0
+  power: 108000.0
+  channel: dc-270v
+  key: plus
+  pins:
+  - contact: '1'
+    role: plus
+  at:
+  - -0.179
+  - -0.075
+  - 0.105
+  facing:
+  - 0.0
+  - -1.0
+  - 0.0
+  note: place from the model's empty in+
+- id: in-
+  flow: in
+  medium: power
+  interface: interface.hvdc-pole-400a
+  half: male
+  make: manual
+  connector: connector.hvdc-pole-400a
+  voltage: 270.0
+  current: 400.0
+  power: 108000.0
+  channel: dc-270v
+  key: minus
+  pins:
+  - contact: '1'
+    role: minus
+  at:
+  - -0.109
+  - -0.075
+  - 0.105
+  facing:
+  - 0.0
+  - -1.0
+  - 0.0
+  note: place from the model's empty in-
+- id: in-33
+  flow: in
+  medium: power
+  interface: interface.circular-shell-33
+  half: male
+  make: manual
+  connector: connector.circular-shell-33
+  voltage: 270.0
+  current: 120.0
+  power: 32400.0
+  channel: dc-270v
+  pins:
+  - contact: A
+    role: plus
+  - contact: B
+    role: minus
+  at:
+  - -0.04
+  - -0.075
+  - 0.105
+  facing:
+  - 0.0
+  - -1.0
+  - 0.0
+  note: place from the model's empty in-33
+- id: in-25
+  flow: in
+  medium: power
+  interface: interface.circular-shell-25
+  half: male
+  make: manual
+  connector: connector.circular-shell-25
+  voltage: 270.0
+  current: 55.0
+  power: 14850.0
+  channel: dc-270v
+  pins:
+  - contact: A
+    role: plus
+  - contact: B
+    role: minus
+  - contact: C
+    role: earth
+  - contact: D
+    role: spare
+  at:
+  - 0.021
+  - -0.075
+  - 0.105
+  facing:
+  - 0.0
+  - -1.0
+  - 0.0
+  note: place from the model's empty in-25
+- id: way-1
+  flow: out
+  medium: power
+  interface: interface.circular-shell-25
+  half: female
+  make: manual
+  connector: connector.circular-shell-25
+  voltage: 270.0
+  current: 55.0
+  power: 14850.0
+  channel: dc-270v
+  pins:
+  - contact: A
+    role: plus
+  - contact: B
+    role: minus
+  - contact: C
+    role: earth
+  - contact: D
+    role: spare
+  at:
+  - 0.076
+  - -0.075
+  - 0.105
+  facing:
+  - 0.0
+  - -1.0
+  - 0.0
+  note: place from the model's empty way-1
+- id: way-2
+  flow: out
+  medium: power
+  interface: interface.circular-shell-25
+  half: female
+  make: manual
+  connector: connector.circular-shell-25
+  voltage: 270.0
+  current: 55.0
+  power: 14850.0
+  channel: dc-270v
+  pins:
+  - contact: A
+    role: plus
+  - contact: B
+    role: minus
+  - contact: C
+    role: earth
+  - contact: D
+    role: spare
+  at:
+  - 0.131
+  - -0.075
+  - 0.105
+  facing:
+  - 0.0
+  - -1.0
+  - 0.0
+  note: place from the model's empty way-2
+- id: way-3
+  flow: out
+  medium: power
+  interface: interface.circular-shell-25
+  half: female
+  make: manual
+  connector: connector.circular-shell-25
+  voltage: 270.0
+  current: 55.0
+  power: 14850.0
+  channel: dc-270v
+  pins:
+  - contact: A
+    role: plus
+  - contact: B
+    role: minus
+  - contact: C
+    role: earth
+  - contact: D
+    role: spare
+  at:
+  - 0.186
+  - -0.075
+  - 0.105
+  facing:
+  - 0.0
+  - -1.0
+  - 0.0
+  note: place from the model's empty way-3
+- id: way-4
+  flow: out
+  medium: power
+  interface: interface.circular-shell-25
+  half: female
+  make: manual
+  connector: connector.circular-shell-25
+  voltage: 270.0
+  current: 55.0
+  power: 14850.0
+  channel: dc-270v
+  pins:
+  - contact: A
+    role: plus
+  - contact: B
+    role: minus
+  - contact: C
+    role: earth
+  - contact: D
+    role: spare
+  at:
+  - -0.196
+  - -0.075
+  - 0.175
+  facing:
+  - 0.0
+  - -1.0
+  - 0.0
+  note: place from the model's empty way-4
+- id: way-5
+  flow: out
+  medium: power
+  interface: interface.circular-shell-25
+  half: female
+  make: manual
+  connector: connector.circular-shell-25
+  voltage: 270.0
+  current: 55.0
+  power: 14850.0
+  channel: dc-270v
+  pins:
+  - contact: A
+    role: plus
+  - contact: B
+    role: minus
+  - contact: C
+    role: earth
+  - contact: D
+    role: spare
+  at:
+  - -0.141
+  - -0.075
+  - 0.175
+  facing:
+  - 0.0
+  - -1.0
+  - 0.0
+  note: place from the model's empty way-5
+- id: way-6
+  flow: out
+  medium: power
+  interface: interface.circular-shell-25
+  half: female
+  make: manual
+  connector: connector.circular-shell-25
+  voltage: 270.0
+  current: 55.0
+  power: 14850.0
+  channel: dc-270v
+  pins:
+  - contact: A
+    role: plus
+  - contact: B
+    role: minus
+  - contact: C
+    role: earth
+  - contact: D
+    role: spare
+  at:
+  - -0.086
+  - -0.075
+  - 0.175
+  facing:
+  - 0.0
+  - -1.0
+  - 0.0
+  note: place from the model's empty way-6
+- id: way-7
+  flow: out
+  medium: power
+  interface: interface.circular-shell-25
+  half: female
+  make: manual
+  connector: connector.circular-shell-25
+  voltage: 270.0
+  current: 55.0
+  power: 14850.0
+  channel: dc-270v
+  pins:
+  - contact: A
+    role: plus
+  - contact: B
+    role: minus
+  - contact: C
+    role: earth
+  - contact: D
+    role: spare
+  at:
+  - -0.031
+  - -0.075
+  - 0.175
+  facing:
+  - 0.0
+  - -1.0
+  - 0.0
+  note: place from the model's empty way-7
+- id: way-8
+  flow: out
+  medium: power
+  interface: interface.circular-shell-25
+  half: female
+  make: manual
+  connector: connector.circular-shell-25
+  voltage: 270.0
+  current: 55.0
+  power: 14850.0
+  channel: dc-270v
+  pins:
+  - contact: A
+    role: plus
+  - contact: B
+    role: minus
+  - contact: C
+    role: earth
+  - contact: D
+    role: spare
+  at:
+  - 0.024
+  - -0.075
+  - 0.175
+  facing:
+  - 0.0
+  - -1.0
+  - 0.0
+  note: place from the model's empty way-8
+- id: way-9
+  flow: out
+  medium: power
+  interface: interface.circular-shell-33
+  half: female
+  make: manual
+  connector: connector.circular-shell-33
+  voltage: 270.0
+  current: 120.0
+  power: 32400.0
+  channel: dc-270v
+  pins:
+  - contact: A
+    role: plus
+  - contact: B
+    role: minus
+  at:
+  - 0.085
+  - -0.075
+  - 0.175
+  facing:
+  - 0.0
+  - -1.0
+  - 0.0
+  note: place from the model's empty way-9
+- id: way-10
+  flow: out
+  medium: power
+  interface: interface.circular-shell-33
+  half: female
+  make: manual
+  connector: connector.circular-shell-33
+  voltage: 270.0
+  current: 120.0
+  power: 32400.0
+  channel: dc-270v
+  pins:
+  - contact: A
+    role: plus
+  - contact: B
+    role: minus
+  at:
+  - 0.152
+  - -0.075
+  - 0.175
+  facing:
+  - 0.0
+  - -1.0
+  - 0.0
+  note: place from the model's empty way-10
+- id: data-1
+  flow: both
+  medium: signal
+  interface: interface.circular-shell-11
+  half: female
+  make: manual
+  connector: connector.circular-shell-11
+  channel: can-a
+  pins:
+  - contact: '1'
+    role: signal-high
+  - contact: '2'
+    role: signal-low
+  - contact: '3'
+    role: return
+  - contact: '4'
+    role: screen
+  - contact: '5'
+    role: spare
+  - contact: '6'
+    role: spare
+  - contact: '7'
+    role: spare
+  at:
+  - 0.205
+  - -0.075
+  - 0.175
+  facing:
+  - 0.0
+  - -1.0
+  - 0.0
+  note: place from the model's empty data-1
+- id: data-2
+  flow: both
+  medium: signal
+  interface: interface.circular-shell-11
+  half: female
+  make: manual
+  connector: connector.circular-shell-11
+  channel: can-a
+  pins:
+  - contact: '1'
+    role: signal-high
+  - contact: '2'
+    role: signal-low
+  - contact: '3'
+    role: return
+  - contact: '4'
+    role: screen
+  - contact: '5'
+    role: spare
+  - contact: '6'
+    role: spare
+  - contact: '7'
+    role: spare
+  at:
+  - 0.0
+  - -0.075
+  - 0.245
+  facing:
+  - 0.0
+  - -1.0
+  - 0.0
+  note: place from the model's empty data-2
+internal:
+- kind: switched
+  ports:
+  - in+
+  - in-
+  - in-33
+  - in-25
+  - way-1
+  - way-2
+  - way-3
+  - way-4
+  - way-5
+  - way-6
+  - way-7
+  - way-8
+  - way-9
+  - way-10
+  note: one bus bar; each way through its own breaker, the feeds in joined
+- kind: joined
+  ports:
+  - data-1
+  - data-2
+  note: the control bus passes through
+basis:
+- of:
+  - physical
+  - built_of.list
+  - function
+  - ports
+  tier: invented
+  review: true
+  note: Of the order of aircraft DC power distribution panels, from memory; the ways (their count and sizes) chosen for a commuter's loads (ships, 2026-10-18); places invented until a model gives them.
+- of:
+  - built_of
+  - making
+  rule: rule.first-design-parts
+- of:
+  - life
+  rule: rule.life-ship-system
+visual:
+  format: freefall-model/1
+  path: models/power-distribution-270v-10way/v1
+  manifest_sha256: c20d81b790b47f9046374aa28520ecb6c559295593e661376aba53b7d1b10034
+  version: 1
+  triangles: 8348

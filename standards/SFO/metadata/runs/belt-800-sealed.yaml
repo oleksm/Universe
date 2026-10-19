@@ -25,6 +25,7 @@ terminals:
 connector: connector.belt-transfer-800-sealed
 carries: bulk
 template: template.belt-sealed
+hold: {plant: 1.2, by: its idler frames, basis: rule.run-support}
 visual: {format: freefall-model/1, path: models/belt-800-sealed/v1, manifest_sha256: 779c252037bff135860db7dc0d3024feff660a6f1c9063e50d88d2a2b482ccc4, version: 1, triangles: 8476}
 basis:
 - of: [per_m, support]

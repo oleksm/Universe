@@ -10,6 +10,12 @@ scales_by:
 - physical
 reference: panel.wall-viewport-3x3
 members: 1
+visual:
+  format: "freefall-model/1"
+  path: "models/wall-viewport/v1"
+  manifest_sha256: "9ac1709bae050edea4ccfeaa1a66d46aa86c542a042e8fb750059a2121fe0704"
+  version: 1
+  triangles: 10084
 basis:
 - of:
   - draws

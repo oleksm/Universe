@@ -16,3 +16,9 @@ basis:
   - scales_by
   tier: derived
   note: 'The owner, 2026-10-17: buildings as layouts; one template a panel family (building_kit.py).'
+visual:
+  format: freefall-model/1
+  path: models/wall-hatch/v1
+  manifest_sha256: a190b8df612b6ecb6383a9693d839355cf18a8cf0b0a33c2b3c346a06f207f74
+  version: 1
+  triangles: 9980

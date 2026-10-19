@@ -250,6 +250,35 @@ params:
   meaning: 'vector plates: basal drag per area under continental crust over that under ocean floor: the keel (~200 km, Jordan 1978) halves the channel under it (to ~100 km) and drag goes as 1/thickness'
   source: Jordan 1978 (continental tectosphere); Forsyth & Uyeda 1975 (continental plates slower)
   note: 'derived from the channel thickness, figures from memory (18 Oct 2026: verify)'
+- name: SLAB_DEPTH
+  value: 660000.0
+  unit: m
+  meaning: 'vector plates: the slab length that pulls its plate (the upper mantle, down to the 660 km transition where slabs stall); a plate''s slab torque follows its trenches over SLAB_DEPTH / its speed (the time to feed a new slab
+    down, or to lose an old one)'
+  source: Conrad & Lithgow-Bertelloni 2002 (upper-mantle slabs pull plates; lower-mantle slabs act by suction)
+  note: 'derived: at 3-5 cm/yr it is 13-22 Myr, the memory the Python chose as FORCE_MYR 20 Myr'
+- name: SLAB_BREAKOFF
+  value: 473364000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 15.0
+  meaning: 'vector plates: the longest a slab keeps pulling once its plate stops (its trench dead or in collision): slab breakoff'
+  source: Davies & von Blanckenburg 1995 (slab breakoff some 10-20 Myr after collision begins)
+  note: 'middle of the range (from memory, 18 Oct 2026: verify)'
+- name: SLAB_RESISTANCE
+  value: 2.0e+21
+  unit: Pa s
+  meaning: 'vector plates: the upper mantle resisting a sinking slab: force per metre of trench = SLAB_RESISTANCE x the down plate''s speed toward the trench, against it; with the transmitted pull it sets the slab''s terminal speed
+    (5.4e12 N/m / 2e21 Pa s = 8.5 cm/yr at 100 Myr)'
+  source: 'Stokes drag of a slab through the upper mantle, about 2 x its viscosity (1e21 Pa s: Haskell 1935; Mitrovica 1996); checked against Forsyth & Uyeda 1975 (plates attached to slabs move 6-9 cm/yr whatever their size)'
+  note: 'derived (figures from memory, 18 Oct 2026: verify)'
+- name: LITHOSPHERE_BEND_RADIUS
+  value: 250000.0
+  unit: m
+  meaning: 'vector plates: the tightest a plate boundary bends in plan view; a line bent tighter (between junctions) is eased toward the chord of its neighbours'
+  source: the tightest subduction arcs (Calabria, Gibraltar, Scotia) curve at a few hundred km; the lithosphere's flexural wavelength is some 400 km (Turcotte & Schubert 2014)
+  note: 'figures from memory, 18 Oct 2026: verify; it stands in for slab rollback and ridge segmentation shaping the lines, to be replaced by those processes'
 random_draws:
 - none
 invariants:
@@ -303,3 +332,21 @@ basis:
   tier: derived
   review: true
   note: 'Drag ratio from the channel thickness under keels (Jordan 1978); slab age from half-space cooling and the plate model (Parsons & Sclater 1977). Figures from memory, 18 Oct 2026: check.'
+- of:
+  - params.SLAB_DEPTH
+  - params.SLAB_BREAKOFF
+  tier: sourced
+  source: Conrad & Lithgow-Bertelloni 2002; Davies & von Blanckenburg 1995
+  review: true
+  note: 'Figures from memory, 18 Oct 2026: check.'
+- of:
+  - params.SLAB_RESISTANCE
+  tier: derived
+  review: true
+  note: '2 x 1e21 Pa s (upper mantle, Haskell 1935; Mitrovica 1996); terminal speed checked against Forsyth & Uyeda 1975. Figures from memory, 18 Oct 2026: check.'
+- of:
+  - params.LITHOSPHERE_BEND_RADIUS
+  tier: sourced
+  source: arc curvatures (Calabria, Gibraltar, Scotia); Turcotte & Schubert 2014 flexure
+  review: true
+  note: 'From memory, 18 Oct 2026: check; a stand-in for rollback and ridge segmentation.'

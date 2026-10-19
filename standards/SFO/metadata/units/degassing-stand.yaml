@@ -66,10 +66,10 @@ envelope:
 life: 788940000
 visual:
   format: "freefall-model/1"
-  path: "models/degassing-stand/v2"
-  manifest_sha256: "b4214bdb705c810d2e06cdbf2a2f2a111e68324e35656d98bf0cb14a35599443"
-  version: 2
-  triangles: 3136
+  path: "models/degassing-stand/v3"
+  manifest_sha256: "33feac7cc4481a9df43bb58899d6a59c1a52c9d8af0ef30b482aa630c90f9c64"
+  version: 3
+  triangles: 4668
 basis:
 - of: [physical, built_of]
   tier: invented

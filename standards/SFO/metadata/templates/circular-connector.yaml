@@ -16,3 +16,9 @@ basis:
   - scales_by
   tier: derived
   note: 'The owner, 2026-10-17: one template a family, scaled; the catalogue families (kit_catalogue.py).'
+visual:
+  format: freefall-model/1
+  path: models/circular-connector/v1
+  manifest_sha256: 9d5f685f357cbc0cca608d1bd0b7172193145c85b4a2850bdb4751cf604684b1
+  version: 1
+  triangles: 6826

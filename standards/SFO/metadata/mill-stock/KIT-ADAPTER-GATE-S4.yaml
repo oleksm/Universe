@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/mounting.py: change it there.
+identity:
+  key: stock.kit-adapter-gate-s4
+  code: KIT-ADAPTER-GATE-S4
+  name: Gate cradle, class 4
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.aluminium-alloy-6061
+- item: material.high-strength-steel-4340
+size:
+  length: 53.0
+  width: 53.0
+  height: 0.5
+supplies:
+  item: adapter.gate-s4
+physical:
+  mass: 52752.29
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One adapter.gate-s4, as made.

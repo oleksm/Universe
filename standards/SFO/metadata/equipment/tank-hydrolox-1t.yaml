@@ -39,3 +39,9 @@ basis:
   - { of: [built_of.list, physical], tier: derived, review: true, note: "Sized as the 0.5 t (2026-10-13, from the modeller's blockout v01): 1,000 kg at O/F 5.5 is 846 kg of oxygen and 154 kg of hydrogen, each with 3% ullage, with the 100 mm common bulkhead inside a 0.919 m inner radius. Wall: 0.35 MPa times 1.5 against 165 MPa welded wants 1.46 mm, so the 2 mm sheet: 57 kg bare plus 20% for lands and bosses. Insulation 100 mm at 3.3 kg/m2, bulkhead 33.5 kg, saddles 12 kg, fittings 25 kg for two circuits (10 drawn). Total 174.5 kg, 17% of what it holds (the old 140 kg was an assumed 14%). Box: 2.191 x 2.042 x 2.122 m with saddles and opposed service bosses. Chosen; review." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
+# ports and internal: written by tools/standards/equipment_ports.py, change them there.
+ports:
+- {id: foot-1, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 43.62, at: [-2.646, -2.646, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.tank-s1''s socket of the same id, bolted through'}
+- {id: foot-2, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 43.62, at: [2.646, -2.646, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.tank-s1''s socket of the same id, bolted through'}
+- {id: foot-3, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 43.62, at: [2.646, 2.646, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.tank-s1''s socket of the same id, bolted through'}
+- {id: foot-4, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 43.62, at: [-2.646, 2.646, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.tank-s1''s socket of the same id, bolted through'}

@@ -18,7 +18,7 @@ to it) it:
 Exit 0: pass. Exit 1: a check failed (the report says which); send the registry a task then, with the report. Nothing is
 installed or committed. Docs: docs/asset-contract.md, Pre-acceptance check.
 """
-import datetime, os, subprocess, sys
+import datetime, json, os, subprocess, sys
 import yaml
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -76,7 +76,10 @@ def main(argv):
     ok &= code == 0
 
     # 4. the game's CPU consumer
-    if motion:
+    plain = motion and "gimbal" not in json.load(open(motion, encoding="utf-8"))
+    if plain:      # (plain axes only, a plant unit: the engine has no consumer yet; it builds one when units go in)
+        steps.append(("game CPU consumer", True, "none yet for plain axes (engine, 2026-10-18); the installer's axis checks stand"))
+    elif motion:
         capped = [os.path.expanduser("~/bin/capped")] if os.path.exists(os.path.expanduser("~/bin/capped")) else []   # (heavy builds under the memory cap)
         code, out = run([*capped, "cargo", "run", "-q", "--release", "-p", "universe-engine", "--example", "ch_s2_fixture", "--", motion, glb])
         passed = code == 0 and "PASS" in out

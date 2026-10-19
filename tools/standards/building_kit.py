@@ -192,25 +192,29 @@ panel("roof-pressure-3x3", "Pressure roof panel, 3 x 3 m", "roof", (3.0, 3.0), r
       "roof-pressure", u=MLI_U, load=P_IN, basis=PRESSURE, site="airless", tier="derived")
 panel("floor-pressure-3x3", "Pressure floor panel, 3 x 3 m", "floor", (3.0, 3.0), 0.05,
       [("Pressure plate", AL, 9.0 * 0.005 * AL_RHO, "5 mm welded 6061, the vessel's bottom, bearing on the ground slab (the slab takes the pressure)"),
-       ("Edge channel, seals and bolts", AL, 12 * 6.0, "as the walls'"), ("Screed", CONC, 9.0 * 0.04 * 2400, "40 mm to walk on")],
+       ("Edge channel", AL, 19.48, "a 45 mm perimeter channel, 5 mm returns outward: blender's model (2026-10-18)"), ("Seals", RUB, 0.204, "blender's model"), ("Bolts", STEEL, 1.771, "M16 at 250 mm in the exposed border: blender's model"),
+       ("Screed", CONC, 812.94, "40 mm, 2.91 m square, inset 45 mm: blender's model")],
       "The ground floor of a pressurised building: a sealed aluminium plate on the ground slab, the air's push carried by the slab, a screed over it.",
       "floor-pressure", load=5000.0, basis=PRESSURE, site="airless", tier="derived")
 door = (1.0, 2.0)
 lp, ld = plug_leaf(*door, "Pressure door leaf")
 parts, th = pressure_skin(3.0, 3.0, cut=door[0] * door[1])
-panel("wall-hatch-3x3", "Pressure wall panel with a door, 3 x 3 m", "wall", (3.0, 3.0), r(th, 3), parts + lp + [("Door surround", AL, 40.0, "a welded doubler round the opening (invented)")],
+panel("wall-hatch-3x3", "Pressure wall panel with a door, 3 x 3 m", "wall", (3.0, 3.0), max(r(th, 3), 0.225),       # (0.225 m through with the offset hinge and the blankets: blender's swept model, 2026-10-18)
+      parts + lp + [("Door surround", AL, 40.0, "a welded doubler round the opening (invented)"), ("Leaf insulation", "material.polyimide-film", 1.19, "the blanket over the leaf's vacuum face, its seal lands bare: blender's model")],
       "A pressure wall panel with a 1.0 x 2.0 m plug door that opens inward, so the air seats it: the outer door of an airlock (its chamber one cell, the inner door a pressure partition's).",
       "wall-hatch", opening={"kind": "pressure-door", "width": door[0], "height": door[1], "sill": 0.15, "people": True}, u=MLI_U, load=P_IN, basis=PRESSURE, site="airless", tier="derived")
 cargo = (2.4, 2.4)
 lp, ld = plug_leaf(*cargo, "Cargo door leaf")
 parts, th = pressure_skin(3.0, 3.0, cut=cargo[0] * cargo[1])
-panel("wall-cargo-door-3x3", "Pressure wall panel with a cargo door, 3 x 3 m", "wall", (3.0, 3.0), r(max(th, ld + 0.05), 3), parts + lp + [("Door surround", AL, 120.0, "a heavy welded ring frame round the opening (invented)")],
+CARGO_DEPTH = 0.267      # m through the panel with its three offset hinges: blender's swept model (2026-10-18)
+panel("wall-cargo-door-3x3", "Pressure wall panel with a cargo door, 3 x 3 m", "wall", (3.0, 3.0), max(r(max(th, ld + 0.05), 3), CARGO_DEPTH),
+      parts + lp + [("Door surround", AL, 120.0, "a heavy welded ring frame round the opening (invented)"), ("Leaf insulation", "material.polyimide-film", 3.44, "the blanket over the leaf's vacuum face, its seal lands bare: blender's model")],
       "A pressure wall panel with a 2.4 x 2.4 m plug door opening inward on heavy hinges: a vehicle or stock airlock's door, two cells apart with the chamber between.",
       "wall-cargo-door", opening={"kind": "pressure-cargo-door", "width": cargo[0], "height": cargo[1], "sill": 0.1, "vehicles": True}, u=MLI_U, load=P_IN, basis=PRESSURE, site="airless", tier="derived")
 vp_r, vp_t = 0.3, 0.032     # m: a 0.6 m round viewport, two fused silica panes each holding the whole pressure (clamped disc, 3 p a^2 / 4 t^2 under 7 MPa: 31 mm)
 parts, th = pressure_skin(3.0, 3.0, cut=3.1416 * vp_r ** 2)
 panel("wall-viewport-3x3", "Pressure wall panel with a viewport, 3 x 3 m", "wall", (3.0, 3.0), r(th, 3),
-      parts + [("Viewport panes", "material.fused-silica", 2 * 3.1416 * vp_r ** 2 * vp_t * 2200, "two 32 mm panes, either holding the air alone"), ("Viewport ring", AL, 20.0, "a machined ring and its seals (invented)")],
+      parts + [("Viewport panes", "material.fused-silica", 44.72, "two 32 mm panes 638 mm across on their seat lands, either holding the air alone: blender's model (2026-10-18)"), ("Viewport sleeve, collar and retainers", AL, 27.26, "a welded 640/680 mm sleeve through the wall's depth, a 760 mm collar, retainers, 12 bolts and dual seals: blender's model")],
       "A pressure wall panel with a 0.6 m round viewport of two fused silica panes: a look out where a world with air would have a window.",
       "wall-viewport", opening={"kind": "viewport", "width": 2 * vp_r, "height": 2 * vp_r, "sill": 1.2}, u=MLI_U, load=P_IN, basis=PRESSURE, site="airless", tier="derived")
 parts, th = pressure_skin(3.0, 3.0, mli=False, what="Bulkhead skin")
@@ -219,7 +223,8 @@ panel("partition-pressure-3x3", "Pressure partition, 3 x 3 m", "partition", (3.0
       "partition-pressure", load=P_IN, basis=PRESSURE, site="airless", tier="derived")
 lp, ld = plug_leaf(*door, "Pressure door leaf")
 parts, th = pressure_skin(3.0, 3.0, cut=door[0] * door[1], mli=False, what="Bulkhead skin")
-panel("partition-pressure-hatch-3x3", "Pressure partition with a door, 3 x 3 m", "partition", (3.0, 3.0), r(th, 3), parts + lp + [("Door surround", AL, 40.0, "a welded doubler round the opening (invented)")],
+HINGE_DEPTH = 0.205      # m through the panel with the door's hinge arms wrapping the jamb: blender's swept model (2026-10-18)
+panel("partition-pressure-hatch-3x3", "Pressure partition with a door, 3 x 3 m", "partition", (3.0, 3.0), max(r(th, 3), HINGE_DEPTH), parts + lp + [("Door surround", AL, 40.0, "a welded doubler round the opening (invented)")],
       "A pressure partition with a 1.0 x 2.0 m plug door: an airlock's inner door, or a door between parts that can be shut on a leak.",
       "partition-pressure-hatch", opening={"kind": "pressure-door", "width": door[0], "height": door[1], "sill": 0.15, "people": True}, load=P_IN, basis=PRESSURE, site="airless", tier="derived")
 

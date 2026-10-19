@@ -39,3 +39,9 @@ basis:
   - { of: [built_of.list, physical], tier: derived, review: true, note: "Sized as the liquid cargo S4 (2026-10-13, from the modeller's blockout v01): 50 m3 with 3% ullage, 2.309 m inner radius. Wall: 0.1 MPa plus the water's head at 30 m/s2, times 1.5 against 165 MPa welded, wants 2.5 mm: the 5 mm plate, 906 kg bare plus 20% for lands and bosses. Saddles 779 kg as drawn; full at 30 m/s2 the tank puts about 392 kN on each mount point (483 kN allowed). Baffles 375 kg (the first allowance, invented); fittings 140 kg (99 drawn before caps and gauge, scaled as the S4's). Total 2,381 kg, 4.8% of what it holds (it was 2,500 at an assumed twentieth). Box 4.627 x 4.627 x 5.003 m with saddles and guarded top fittings. Chosen; review." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
+# ports and internal: written by tools/standards/equipment_ports.py, change them there.
+ports:
+- {id: foot-1, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 595.25, at: [-4.113, -4.113, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.tank-s3''s socket of the same id, bolted through'}
+- {id: foot-2, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 595.25, at: [4.113, -4.113, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.tank-s3''s socket of the same id, bolted through'}
+- {id: foot-3, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 595.25, at: [4.113, 4.113, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.tank-s3''s socket of the same id, bolted through'}
+- {id: foot-4, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 595.25, at: [-4.113, 4.113, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.tank-s3''s socket of the same id, bolted through'}

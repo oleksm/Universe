@@ -39,3 +39,9 @@ basis:
   - { of: [physical, built_of.list], tier: derived, review: true, note: "Sized as a sphere, as the air store S1 (2026-10-13, for the modeller): 4340 at 631 MPa allowable (1,420 MPa over 2.25), wall p r / 2 s = 40.0 mm, 11,465 kg (the small-cylinder rule made the shell 26,775 kg). Saddles: A36, each a 20 mm foot, a 12 mm contoured pad and two 12 mm webs with a cross web, 80 kg (321 kg for four, measured on the blender blockout v02, 2026-10-13, against a 300 kg first allowance); at 30 m/s2 the full tank (19.3 t) puts 145 kN on each, well inside the mount's 483 kN. Box: 80 mm gap + 3.448 m sphere + 0.2 m guarded valves = 3.73 m tall. Fittings 150 kg, invented." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
+# ports and internal: written by tools/standards/equipment_ports.py, change them there.
+ports:
+- {id: foot-1, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 2984.0, at: [-4.113, -4.113, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.tank-s3''s socket of the same id, bolted through'}
+- {id: foot-2, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 2984.0, at: [4.113, -4.113, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.tank-s3''s socket of the same id, bolted through'}
+- {id: foot-3, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 2984.0, at: [4.113, 4.113, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.tank-s3''s socket of the same id, bolted through'}
+- {id: foot-4, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 2984.0, at: [-4.113, 4.113, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.tank-s3''s socket of the same id, bolted through'}

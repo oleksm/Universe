@@ -417,6 +417,78 @@ recipes:
     quantity: 0.0125
   rate: 1.5
   power: 4500000.0
+- makes: stock.kit-cable-data-can
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.5886
+  - item: material.ptfe
+    quantity: 0.4286
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0171
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-dc-600v-2x50mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.8723
+  - item: material.ptfe
+    quantity: 0.1531
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0254
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-dc-600v-3x16mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.7839
+  - item: material.ptfe
+    quantity: 0.2389
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0228
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-dc-600v-3x1mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.5917
+  - item: material.ptfe
+    quantity: 0.4255
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0172
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-dc-600v-3x2p5mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.6331
+  - item: material.ptfe
+    quantity: 0.3853
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.0184
+  rate: 1.5
+  power: 4500000.0
+- makes: stock.kit-cable-dc-600v-3x6mm2
+  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
+  inputs:
+  - item: stock.cu-wire-2
+    quantity: 0.7538
+  - item: material.ptfe
+    quantity: 0.2682
+  outputs:
+  - item: stock.cu-scrap
+    quantity: 0.022
+  rate: 1.5
+  power: 4500000.0
 - makes: stock.kit-cable-flexible-11kv-3x95
   does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:

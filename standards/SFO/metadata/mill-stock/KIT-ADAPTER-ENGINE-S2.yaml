@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/mounting.py: change it there.
+identity:
+  key: stock.kit-adapter-engine-s2
+  code: KIT-ADAPTER-ENGINE-S2
+  name: Engine cradle, class 2
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.high-strength-steel-4340
+- item: material.aluminium-alloy-6061
+size:
+  length: 4.0
+  width: 4.0
+  height: 0.45
+supplies:
+  item: adapter.engine-s2
+physical:
+  mass: 3401.73
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One adapter.engine-s2, as made.

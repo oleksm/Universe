@@ -44,3 +44,13 @@ basis:
   - { of: [built_of, making], tier: invented, review: true, note: "A first design, and all invented: nothing real holds a hyper-field. Taken as coils in strong cases, the power gear that feeds them, and cooling." }
   - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out, but shaped: coils in a rack, to its volume. A stand-in until it is sized from what it must do." }
   - { of: [life], rule: rule.life-ship-system }
+# ports and internal: written by tools/standards/equipment_ports.py, change them there.
+ports:
+- {id: foot-1, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 1125.0, at: [-1.818, -1.215, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.hyperdrive-s3''s socket of the same id, bolted through'}
+- {id: foot-2, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 1125.0, at: [1.818, -1.215, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.hyperdrive-s3''s socket of the same id, bolted through'}
+- {id: foot-3, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 1125.0, at: [1.818, 1.215, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.hyperdrive-s3''s socket of the same id, bolted through'}
+- {id: foot-4, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 1125.0, at: [-1.818, 1.215, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.hyperdrive-s3''s socket of the same id, bolted through'}
+- {id: foot-5, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 1125.0, at: [0.0, -1.215, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.hyperdrive-s3''s socket of the same id, bolted through'}
+- {id: foot-6, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 1125.0, at: [1.818, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.hyperdrive-s3''s socket of the same id, bolted through'}
+- {id: foot-7, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 1125.0, at: [0.0, 1.215, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.hyperdrive-s3''s socket of the same id, bolted through'}
+- {id: foot-8, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 1125.0, at: [-1.818, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.hyperdrive-s3''s socket of the same id, bolted through'}

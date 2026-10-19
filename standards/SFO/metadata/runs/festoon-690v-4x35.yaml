@@ -47,3 +47,7 @@ basis:
   tier: derived
   review: true
   note: 'Head from blender''s model (2026-10-17): a 6 mm clasp and threaded seat, 1.02 kg; the rod 22 mm, 2.95 kg/m (kept at 3).'
+hold:
+  plant: 1.0
+  by: its trolleys on their track
+  basis: rule.run-support

@@ -5,11 +5,12 @@ identity:
   name: DC converter, 3 kV to 28 V, 3 kW
   maker: org.meridian
   revision: draft
-  slot: power
-  description: 'Steps the ship''s 3 kV DC bus down to its 28 V DC bus, up to 3 kW out, isolated: a sealed box on four feet, the 3 kV pair in at one end (HV DC pole connectors), the 28 V out and data at the other, the coolant pair under
-    it. 93% efficient: at full load it draws 3.23 kW and gives 0.23 kW to the coolant loop.'
+  slot: utility
+  description: 'Steps the ship''s 3 kV DC bus down to its 28 V DC bus, up to 3 kW out, isolated: a sealed box on four feet, the 3 kV pair in at its -x end (two connector.hvdc-pole-150a receptacles, 1 A), the 28 V pair out (107 A: two
+    connector.circular-shell-33 receptacles) and data (connector.circular-shell-11) at its +x end, the coolant pair under it (connector.flat-face-dn6). The connectors'' mass is the routed harness''s (connector.schema physical), not
+    the box''s. 93% efficient: at full load it draws 3.23 kW and gives 0.23 kW to the coolant loop.'
 size_class: 1
-fits: mount.power-s1
+fits: mount.utility-s1
 physical:
   mass: 5.0
   volume: 0.006
@@ -68,9 +69,228 @@ basis:
   review: true
   note: 0.6 kW/kg and 0.5 kW/litre with its cold plate; 93% at full load; From memory of aerospace and traction DC-DC converters (isolated SiC stages, liquid-cooled); to be sourced.
 - of:
+  - ports
+  tier: derived
+  note: Places from the installed model's empties where it has them (each port's note says); connectors by current (ports() here); docs/proposals/equipment-ports.md.
+- of:
   - built_of
   - making
   rule: rule.first-design-parts
 - of:
   - life
   rule: rule.life-ship-system
+visual:
+  format: freefall-model/1
+  path: models/power-converter-28v-3kw/v1
+  manifest_sha256: 7ef90f52e552bd49d12eb537068d3f68c66c2badbc7a2aad9389b9d83000072d
+  version: 1
+  triangles: 22256
+ports:
+- id: foot-1
+  flow: out
+  medium: load
+  interface: interface.deck-track
+  half: male
+  make: manual
+  mass: 2.5
+  at:
+  - -0.127
+  - 0.0
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: a stud into the deck track under it
+- id: foot-2
+  flow: out
+  medium: load
+  interface: interface.deck-track
+  half: male
+  make: manual
+  mass: 2.5
+  at:
+  - 0.127
+  - 0.0
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: a stud into the deck track under it
+- id: dc-in+
+  flow: in
+  medium: power
+  interface: interface.hvdc-pole-150a
+  half: male
+  make: manual
+  connector: connector.hvdc-pole-150a
+  voltage: 3000.0
+  current: 1.08
+  power: 3225.8
+  channel: dc-3kv
+  key: plus
+  pins:
+  - contact: '1'
+    role: plus
+  at:
+  - -0.144
+  - -0.033
+  - 0.094
+  facing:
+  - -1.0
+  - 0.0
+  - 0.0
+  note: place from the model's empty input_0
+- id: dc-in-
+  flow: in
+  medium: power
+  interface: interface.hvdc-pole-150a
+  half: male
+  make: manual
+  connector: connector.hvdc-pole-150a
+  voltage: 3000.0
+  current: 1.08
+  power: 3225.8
+  channel: dc-3kv
+  key: minus
+  pins:
+  - contact: '1'
+    role: minus
+  at:
+  - -0.144
+  - 0.033
+  - 0.094
+  facing:
+  - -1.0
+  - 0.0
+  - 0.0
+  note: place from the model's empty input_1
+- id: dc-out-1
+  flow: out
+  medium: power
+  interface: interface.circular-shell-33
+  half: female
+  make: manual
+  connector: connector.circular-shell-33
+  voltage: 28.0
+  current: 53.57
+  power: 1500.0
+  channel: dc-28v
+  pins:
+  - contact: A
+    role: plus
+  - contact: B
+    role: minus
+  at:
+  - 0.144
+  - 0.0
+  - 0.094
+  facing:
+  - 1.0
+  - 0.0
+  - 0.0
+  note: place from the model's empty output_0
+- id: dc-out-2
+  flow: out
+  medium: power
+  interface: interface.circular-shell-33
+  half: female
+  make: manual
+  connector: connector.circular-shell-33
+  voltage: 28.0
+  current: 53.57
+  power: 1500.0
+  channel: dc-28v
+  pins:
+  - contact: A
+    role: plus
+  - contact: B
+    role: minus
+  at:
+  - 0.144
+  - -0.033
+  - 0.094
+  facing:
+  - 1.0
+  - 0.0
+  - 0.0
+  note: place invented (no installed model with this empty), for review
+- id: data-1
+  flow: both
+  medium: signal
+  interface: interface.circular-shell-11
+  half: female
+  make: manual
+  connector: connector.circular-shell-11
+  channel: can-a
+  pins:
+  - contact: '1'
+    role: signal-high
+  - contact: '2'
+    role: signal-low
+  - contact: '3'
+    role: return
+  - contact: '4'
+    role: screen
+  - contact: '5'
+    role: spare
+  - contact: '6'
+    role: spare
+  - contact: '7'
+    role: spare
+  at:
+  - 0.144
+  - 0.0
+  - 0.043
+  facing:
+  - 1.0
+  - 0.0
+  - 0.0
+  note: place from the model's empty data
+- id: coolant-in
+  flow: in
+  medium: liquid
+  interface: interface.flat-face-dn6
+  half: male
+  make: manual
+  connector: connector.flat-face-dn6
+  power: 225.8
+  at:
+  - -0.035
+  - 0.0
+  - 0.005
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: place from the model's empty coolant_0
+- id: coolant-out
+  flow: out
+  medium: liquid
+  interface: interface.flat-face-dn6
+  half: male
+  make: manual
+  connector: connector.flat-face-dn6
+  power: 225.8
+  at:
+  - 0.035
+  - 0.0
+  - 0.005
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: place from the model's empty coolant_1
+internal:
+- kind: converts
+  from:
+  - dc-in+
+  - dc-in-
+  to: &id001
+  - dc-out-1
+  - dc-out-2
+  note: the 28 V side is live only while the 3 kV pair is fed, 3 kW at most
+- kind: joined
+  ports: *id001
+  note: two ways off one output

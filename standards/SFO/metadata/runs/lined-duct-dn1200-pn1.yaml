@@ -19,6 +19,7 @@ cap: {thickness: 0.016, mass: 443.7}
 connector: connector.lined-flange-dn1200-pn1
 carries: gas
 template: template.lined-duct
+hold: {plant: 6.0, by: its own steel, basis: rule.run-support}
 visual: {format: freefall-model/1, path: models/lined-duct-dn1200-pn1/v1, manifest_sha256: aab91418c3257e1f5d2c6d9d3b06332a2b14ab29740fe7de0affd99325e4e888, version: 1, triangles: 2704}
 basis:
 - of: [per_m]

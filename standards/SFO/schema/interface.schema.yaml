@@ -31,10 +31,33 @@ properties:
       mass: { type: number, minimum: 0, x-unit: "kg", description: "kg it bears (a mount) or carries (a carrier)" }
       force: { type: number, minimum: 0, x-unit: "N" }
       moment: { type: number, minimum: 0, x-unit: "N m" }
+      tension: { type: number, minimum: 0, x-unit: "N", description: "A load joint: N it holds pulled apart along its axis" }
+      compression: { type: number, minimum: 0, x-unit: "N", description: "A load joint: N it holds pressed together" }
+      shear: { type: number, minimum: 0, x-unit: "N", description: "A load joint: N it holds across its axis" }
+  stiffness:
+    type: object
+    additionalProperties: false
+    description: "A load joint's springs, for sharing a load between redundant joints (docs/proposals/physical-mounts.md): a holder is a rigid body on joints of these stiffnesses."
+    properties:
+      axial: { type: number, exclusiveMinimum: 0, x-unit: "N/m", description: "Along its axis (the port's facing)" }
+      shear: { type: number, exclusiveMinimum: 0, x-unit: "N/m", description: "Across its axis" }
+  pitch: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "A track's: the spacing of its stud holes along it; a link names a stud by its index from the port's `at`." }
   media: { type: array, items: { enum: [gas, liquid, bulk, power, signal, heat, load, carrier, people] }, description: "What may cross it." }
   sealing: { enum: [open, air, double, vacuum, cryogenic], description: "How tight it is: open (nothing held), air, double (two seals, the space between watched, for airless ground), vacuum, cryogenic." }
   halves: { enum: [male-female, androgynous], description: "Its two halves differ (a plug and its socket) or are the same (a flange pair, a docking ring)." }
   make: { enum: [permanent, bolted, manual, automatic, open], description: "How a joint to it is made and broken." }
+  contacts:
+    type: array
+    description: "The contacts in its mating face (a plug's pins), by id, as the standard or the registry numbers them: what a port's pins map to. Electrical and signal interfaces only."
+    items:
+      type: object
+      additionalProperties: false
+      required: [id]
+      properties:
+        id: { type: string, description: "The contact's name in the face (A, B, 1, PE)" }
+        size: { type: number, exclusiveMinimum: 0, x-unit: "m2", description: "The largest conductor it takes" }
+        note: { type: string }
+  keys: { type: array, items: { type: string }, description: "The keyings its halves are cut to, where one face is made in variants that must not meet (an HV DC pole: plus and minus; a single-pole connector: L1, L2, L3, N, PE): a port names its key, and two halves mate only at the same key." }
   face: { type: object, additionalProperties: false, properties: { length: { type: number, x-unit: "m" }, width: { type: number, x-unit: "m" }, height: { type: number, x-unit: "m" } }, description: "The mated joint's outside, its axis along height: what a port must leave room for." }
   standard: { type: string, description: "The real standard it follows, if any (EN 1092-1, IEC 60309, ISO 1161)." }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

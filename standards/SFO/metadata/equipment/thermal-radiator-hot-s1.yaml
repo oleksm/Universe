@@ -132,6 +132,70 @@ ports:
   - -1.0
   - 0.0
   note: 'back to the engine: the fixed DN250 return manifold beyond the hose pod, facing -y; three DN125 drops to the fixed hose cuffs at x -0.65'
+- id: foot-1
+  flow: out
+  medium: load
+  interface: interface.insert-m16
+  half: male
+  make: bolted
+  mass: 1036.75
+  at:
+  - -8.298
+  - -4.77
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: on mount.radiator-hot-s1's socket of the same id, bolted through
+- id: foot-2
+  flow: out
+  medium: load
+  interface: interface.insert-m16
+  half: male
+  make: bolted
+  mass: 1036.75
+  at:
+  - 8.298
+  - -4.77
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: on mount.radiator-hot-s1's socket of the same id, bolted through
+- id: foot-3
+  flow: out
+  medium: load
+  interface: interface.insert-m16
+  half: male
+  make: bolted
+  mass: 1036.75
+  at:
+  - 8.298
+  - 4.77
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: on mount.radiator-hot-s1's socket of the same id, bolted through
+- id: foot-4
+  flow: out
+  medium: load
+  interface: interface.insert-m16
+  half: male
+  make: bolted
+  mass: 1036.75
+  at:
+  - -8.298
+  - 4.77
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: on mount.radiator-hot-s1's socket of the same id, bolted through
 visual:
   format: "freefall-model/1"
   path: "models/thermal-radiator-hot-s1/v1"

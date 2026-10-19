@@ -12,6 +12,25 @@ outside:
 rating:
   voltage: 400
   current: 18
+conductors:
+- id: L1
+  role: line
+  line: L1
+  size: 2.4999999999999998e-06
+- id: L2
+  role: line
+  line: L2
+  size: 2.4999999999999998e-06
+- id: L3
+  role: line
+  line: L3
+  size: 2.4999999999999998e-06
+- id: N
+  role: neutral
+  size: 2.4999999999999998e-06
+- id: PE
+  role: earth
+  size: 2.4999999999999998e-06
 per_m:
   mass: 0.185
   built_of:
@@ -37,3 +56,8 @@ basis:
   tier: invented
   review: true
   note: Wiring regulations' clipped-direct ratings and usual insulation thicknesses; least bend 4 outsides; From memory of makers' catalogues; to be sourced.
+hold:
+  clip: connector.run-clip-d16
+  ship: 0.6
+  plant: 1.5
+  basis: rule.run-support

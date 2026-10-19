@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/mounting.py: change it there.
+identity:
+  key: stock.kit-adapter-access-s3
+  code: KIT-ADAPTER-ACCESS-S3
+  name: Access cradle, class 3
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.high-strength-steel-4340
+- item: material.aluminium-alloy-6061
+size:
+  length: 8.0
+  width: 8.0
+  height: 0.45
+supplies:
+  item: adapter.access-s3
+physical:
+  mass: 2714.93
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One adapter.access-s3, as made.

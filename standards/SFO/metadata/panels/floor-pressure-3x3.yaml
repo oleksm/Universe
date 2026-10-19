@@ -15,20 +15,28 @@ physical:
   length: 3.0
   width: 3.0
   height: 0.05
-  mass: 1057.5
+  mass: 955.9
 built_of:
 - what: Pressure plate
   item: material.aluminium-alloy-6061
   mass: 121.5
   note: 5 mm welded 6061, the vessel's bottom, bearing on the ground slab (the slab takes the pressure)
-- what: Edge channel, seals and bolts
+- what: Edge channel
   item: material.aluminium-alloy-6061
-  mass: 72.0
-  note: as the walls'
+  mass: 19.5
+  note: 'a 45 mm perimeter channel, 5 mm returns outward: blender''s model (2026-10-18)'
+- what: Seals
+  item: material.epdm-rubber
+  mass: 0.2
+  note: blender's model
+- what: Bolts
+  item: material.structural-steel-a36
+  mass: 1.8
+  note: 'M16 at 250 mm in the exposed border: blender''s model'
 - what: Screed
   item: good.concrete
-  mass: 864.0
-  note: 40 mm to walk on
+  mass: 812.9
+  note: '40 mm, 2.91 m square, inset 45 mm: blender''s model'
 template: template.floor-pressure
 basis:
 - of:

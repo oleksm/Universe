@@ -21,6 +21,7 @@ repeat:
 connector: connector.termination-400v-500mm2
 carries: power
 template: template.cable
+hold: {clip: connector.run-clip-d400, ship: 0.6, plant: 3.0, by: its stands (support), basis: rule.run-support}
 visual: {format: freefall-model/1, path: models/cable-400v-500mm2/v1, manifest_sha256: 127e505e2c788413125dc9a219e0447f850d07ba9f70d88009e3356d36a75263, version: 1, triangles: 9226}
 basis:
 - of: [per_m]

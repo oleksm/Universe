@@ -21,6 +21,7 @@ cap: {thickness: 0.024, mass: 591.9}
 connector: connector.flange-dn2000-pn1
 carries: gas
 template: template.jacketed-duct
+hold: {plant: 6.0, by: its own steel, basis: rule.run-support}
 visual:
   format: "freefall-model/1"
   path: "models/jacketed-duct-dn2000/v1"

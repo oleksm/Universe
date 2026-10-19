@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/mounting.py: change it there.
+identity:
+  key: stock.kit-adapter-thrusters-s3
+  code: KIT-ADAPTER-THRUSTERS-S3
+  name: Thruster cradle, class 3
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.high-strength-steel-4340
+- item: material.aluminium-alloy-6061
+size:
+  length: 3.0
+  width: 3.0
+  height: 0.45
+supplies:
+  item: adapter.thrusters-s3
+physical:
+  mass: 877.9
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One adapter.thrusters-s3, as made.

@@ -31,6 +31,18 @@ properties:
       current_air: { type: number, minimum: 0, x-unit: "A", description: "A in free air at 40 deg C, one cable alone, where `current` is its rating in vacuum (radiation only): a feed to a load that only works in air (a fan) is always air-cooled" }
       current_air_bundle: { type: number, minimum: 0, x-unit: "A", description: "A each in free air at 40 deg C when laid in a bundle of up to six" }
       rate: { type: number, minimum: 0, x-unit: "kg/s", description: "kg/s of bulk at full speed" }
+  conductors:
+    type: array
+    description: "A cable's conductors, by id: a laid link maps each conductor to a contact at each end (the game's state, not the registry's). A multi-core cable's cores carry fixed roles by their colours; a single-core wire's one conductor takes the role of the contacts it joins."
+    items:
+      type: object
+      additionalProperties: false
+      required: [id]
+      properties:
+        id: { type: string, description: "Its name in the cable (1; L1, N, PE by core colour)" }
+        role: { enum: [plus, minus, line, neutral, earth, screen, signal-high, signal-low, signal, return, spare], description: "The role it is made for, where its colour fixes one; none: any" }
+        line: { type: string }
+        size: { type: number, exclusiveMinimum: 0, x-unit: "m2", description: "Its cross-section" }
   per_m:
     type: object
     additionalProperties: false
@@ -110,11 +122,21 @@ properties:
         piece: { type: string }
         pitch: { type: number, exclusiveMinimum: 0, x-unit: "m" }
   connector: { type: string, x-ref: [connector], description: "The connector its ends are built to, by key: it joins a port built to the same connector, or another run of its class." }
-  carries: { enum: [gas, liquid, bulk, power], description: "What it can carry." }
+  carries: { enum: [gas, liquid, bulk, power, signal], description: "What it can carry (signal: a data cable)." }
   jacket: { type: object, additionalProperties: false, properties: { heat: { type: number, minimum: 0, x-unit: "W", description: "Heat its water takes, at most" }, rise: { type: number, x-unit: "K", description: "Its water's rise from in to out" } }, description: "A jacketed duct's water jacket." }
   jacket_stub: { type: object, additionalProperties: false, properties: { bore: { type: number, x-unit: "m" }, mass: { type: number, x-unit: "kg" } }, description: "A jacketed duct's water nozzle, where a `jacket:` pipe ends on it: its bore and mass." }
   jacket_end: { type: object, additionalProperties: false, properties: { mass: { type: number, x-unit: "kg" } }, description: "The annular plate closing a jacketed duct's water gap at each end, where it meets a flange or hood." }
   triangle_budget: { type: integer, minimum: 1000, description: "Triangles its kit may have, where the kind's default (12,000) is too few: a bus of many tubes." }
+  hold:
+    type: object
+    additionalProperties: false
+    description: "How it is held along its way (rule.run-support, written by tools/standards/mounting.py hold()): its clip and the most spacing between supports, aboard a ship and in a plant; a place with no figure is a place it is not laid. A plant run's stands, where it has them, are its `support`, and `plant` is their spacing."
+    properties:
+      clip: { type: string, x-ref: [connector], description: "The run clip its outside takes" }
+      ship: { type: number, exclusiveMinimum: 0, x-unit: "m" }
+      plant: { type: number, exclusiveMinimum: 0, x-unit: "m" }
+      by: { type: string, description: "What supports it where no clip does (its own frames, pipe shoes)" }
+      basis: { type: string, x-ref: [rule] }
   template: { type: string, x-ref: [template], description: "The family template that draws it, scaled by its figures (SFO 25, 2026-10-17): it needs no model of its own." }
   visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
   model_requests: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/model_request" }, description: "Work asked of its installed model, open until a later version answers it." }

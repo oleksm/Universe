@@ -27,3 +27,4 @@ basis:
   review: true
   note: Spacing from the span it bears at 1 g, 12.0 m; mitred bends a tenth heavier than their arc. Stands from memory.
 template: template.lined-duct
+hold: {plant: 6.0, by: its own steel, basis: rule.run-support}

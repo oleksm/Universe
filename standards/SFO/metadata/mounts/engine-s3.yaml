@@ -20,6 +20,50 @@ attachment:
     tension: 1740000.0
     compression: 1740000.0
     shear: 869000.0
+# (holder and sockets: written by tools/standards/mounting.py)
+holder: adapter
+sockets:
+- id: s1
+  at: [3.96, 0.0, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m80
+  connector: stock.st4340-bolt-m80
+- id: s2
+  at: [2.8001, 2.8001, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m80
+  connector: stock.st4340-bolt-m80
+- id: s3
+  at: [0.0, 3.96, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m80
+  connector: stock.st4340-bolt-m80
+- id: s4
+  at: [-2.8001, 2.8001, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m80
+  connector: stock.st4340-bolt-m80
+- id: s5
+  at: [-3.96, 0.0, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m80
+  connector: stock.st4340-bolt-m80
+- id: s6
+  at: [-2.8001, -2.8001, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m80
+  connector: stock.st4340-bolt-m80
+- id: s7
+  at: [-0.0, -3.96, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m80
+  connector: stock.st4340-bolt-m80
+- id: s8
+  at: [2.8001, -2.8001, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m80
+  connector: stock.st4340-bolt-m80
+# (end of mounting.py)
 feeds:
   power: 7140000.0
   cooling: 3070000.0

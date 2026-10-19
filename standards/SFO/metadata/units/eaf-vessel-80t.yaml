@@ -1,11 +1,11 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.eaf-vessel-80t, name: 'Arc furnace vessel, 80 t', description: 'An AC arc furnace that taps 80 t: a refractory hearth 6.6 m across, water-cooled upper shell and roof, three graphite electrodes on masts, a tilting cradle and an eccentric bottom tap. Fed sponge iron through a fifth hole in the roof. Stands on a platform 5 m up so a ladle car runs under its tap. Its cooling water comes by two flexible hoses of its own (it tilts), 300 mm bore, flow and return, from its ports at local (-3.8, 3.2, 2.6) and (-3.8, 3.6, 2.6), clear of the tilt pin and its actuator, down to a fixed manifold on the deck whose two ports face up at local (-3.8, 4.9, 0.5) and (-3.8, 5.3, 0.5). Its box is not centred across: the arms'' tails and the secondary cables reach 6.25 m behind the furnace''s axis (toward the transformer), its water hoses'' couplings at the deck manifold 5.49 m in front (the manifold is the unit''s: two barrels standing on the deck, each taking its hose from the side); 14
-    m tall with the masts at rest. Its ports (SFO 25): sponge iron in through the fifth hole''s mouth, local (0, 1.8, 8.3), a belt''s transfer chute 3 m over it that telescopes up to z 10.8 before the furnace tilts; the off-gas elbow from the fourth hole turns horizontal and runs north past the roof''s edge to a vertical mouth at (3, 4.5, 8.5) facing +y (the elbow water-jacketed like the duct, 2.232 m outside, fed from the roof''s coolant circuit, carried on two posts from the cradle''s deck), the duct''s water-cooled sleeve 0.15 m beyond it (the gap draws in the air that burns the CO), drawn back 1 m to the plane y 5.65 before the furnace tilts: a tilt about y slides the mouth across the sleeve''s, never into it (the arc is off to tap and deslag); the secondary bus''s joint at the flexible cables'' fixed ends, (0, -6.2, 2.3), facing -y; the deck manifold''s water flanges, DN 400 facing up, in at (-4.2, 4.95, 0.5) and out at (-3.4, 4.95, 0.5), in front of the tilting cradle''s deck (v4,
-    as the sealed furnace''s).'}
+identity: {key: unit.eaf-vessel-80t, name: 'Arc furnace vessel, 80 t', description: 'An AC arc furnace that taps 80 t: a refractory hearth 6.6 m across, water-cooled upper shell and roof, three graphite electrodes on masts, a tilting cradle and an eccentric bottom tap. Fed sponge iron through a fifth hole in the roof. Stands on a platform 5 m up so a ladle car runs under its tap. Its cooling water comes by rigid 300 mm pipes on the vessel out over the deck''s edge to y 6.8, then two flexible hoses of its own (it tilts), 14 m each in U loops hanging outside the platform (bent no tighter than 2 m), down to fixed pipes back to a manifold on the deck whose two ports face up. Two single-stage tilt cylinders, one each side (x -4.05 and 4.05, y 2), their rod ends on the rocker girder 1.3 m up and their feet in pockets in the platform at z -3.1: the rockers carry the weight, the cylinders the tilt. Its box is not centred across: the arms'' tails and the secondary cables reach 6.25 m behind the furnace''s
+    axis (toward the transformer), its water hoses'' couplings at the deck manifold 5.49 m in front (the manifold is the unit''s: two barrels standing on the deck, each taking its hose from the side); 14 m tall with the masts at rest. Its ports (SFO 25): sponge iron in through the fifth hole''s mouth, local (0, 1.8, 8.3), a belt''s transfer chute 3 m over it that telescopes up to z 10.8 before the furnace tilts; the off-gas elbow from the fourth hole turns horizontal and runs north past the roof''s edge to a vertical mouth at (3, 4.5, 8.5) facing +y (the elbow water-jacketed like the duct, 2.232 m outside, fed from the roof''s coolant circuit, carried on two posts from the cradle''s deck), the duct''s water-cooled sleeve 0.15 m beyond it (the gap draws in the air that burns the CO), drawn back 1 m to the plane y 5.65 before the furnace tilts: a tilt about y slides the mouth across the sleeve''s, never into it (the arc is off to tap and deslag); the secondary bus''s joint at the flexible
+    cables'' fixed ends, (0, -6.2, 2.3), facing -y; the deck manifold''s water flanges, DN 400 facing up, in at (-4.2, 4.95, 0.5) and out at (-3.4, 4.95, 0.5), in front of the tilting cradle''s deck (v4, as the sealed furnace''s).'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 11.74, height: 14.0, mass: 311600.0}
+physical: {length: 10.0752, width: 18.61, height: 17.565, mass: 312100.0}
 built_of:
 - {what: Hearth shell, item: material.structural-steel-a36, mass: 33060.0, note: '6.6 m across, 2.0 m tall, 50 mm plate, its dished bottom 1.25 times the disc'}
 - {what: Hearth lining, item: good.refractory-brick, mass: 148400.0, note: '0.9 m under the bath, 0.45 m up the hearth wall'}
@@ -19,7 +19,7 @@ built_of:
 - {what: Slag spout, item: material.structural-steel-a36, mass: 648.4, note: 'a steel trough 0.8 m wide, 0.4 m deep, 30 mm plate, 1.79 m long, outside sizes (a clear channel 0.44 m wide and 0.22 m deep inside its wall and lining); its floor from the slag door''s sill (local x -3.32, 3.2 m up) sloping 20 degrees down to x -5.0, 2.59 m up, 0.5 m past the cradle deck, so the slag falls clear into the pot'}
 - {what: Slag spout lining, item: good.refractory-brick, mass: 949.3, note: 150 mm of refractory in the trough}
 - {what: Slag spout brackets, item: material.structural-steel-a36, mass: 169.8, note: 'four seated brackets of 120 x 120 x 6 mm tube and plate that carry the trough on the cradle; measured on blender''s model (eaf-vessel-80t candidate v02: tubes 83.4 kg, plates 86.4 kg)'}
-- {what: Water hoses, item: material.silicone-rubber, mass: 171.4, note: 'two flexible hoses, flow and return, 300 mm bore, 20 mm wall, 3.964 m each along their centreline (measured on blender''s model, v3), a supported dogleg from the vessel''s ports to the deck manifold; reinforced EPDM hose, which the registry has not got: silicone rubber (1,075 kg/m3) stands for it, the wire not counted. At rest only: pressure loss, bend radius and the tilt''s travel not checked'}
+- {what: Water hoses, item: material.silicone-rubber, mass: 605.2, note: 'two flexible hoses, flow and return, 300 mm bore, 20 mm wall, 14 m each in U loops outside the platform (blender''s v5: least bend 2.21 m over the tilt, against a provisional 2.0 m, invented); reinforced EPDM hose, which the registry has not got: silicone rubber (1,075 kg/m3) stands for it, the wire not counted. Pressure loss not checked'}
 - {what: Tilt and mast hydraulics, item: good.pumps, mass: 15000.0, note: 'cylinders, pumps and valves; from memory'}
 - {what: Off-gas elbow, item: material.structural-steel-a36, mass: 4214.0, note: 'water-jacketed, from the fourth hole horizontal past the roof''s edge to its mouth: inner shell 2,418.9 kg, jacket 1,575.3, two annular closures and the head; measured on blender''s model v4 (2026-10-16)'}
 - {what: Elbow posts and saddle, item: material.structural-steel-a36, mass: 490.9, note: 'two 150 x 150 x 8 mm posts on the cradle''s deck with their feet, the saddle and webs; measured on blender''s model v4 (2026-10-16)'}
@@ -105,13 +105,35 @@ ports:
   at: [-3.4, 4.95, 0.5]
   facing: [0.0, 0.0, 1.0]
   pressure: 400000.0
+- id: tilt-foot-1
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 0.0
+  force: 1280000.0
+  at: [-4.05, 2.0, -3.1]
+  facing: [0.0, 0.0, -1.0]
+  note: 'a tilt cylinder''s foot in its pocket in the platform: no weight (the rockers carry it), the tilt''s push, each sized to take it alone: 422 t x 9.81 x a 1.0 m offset of the centre of gravity at 15 deg (invented) over the 4.05 m lever, x 1.25'
+- id: tilt-foot-2
+  flow: out
+  medium: load
+  interface: interface.plant-bay-s2
+  half: male
+  make: bolted
+  mass: 0.0
+  force: 1280000.0
+  at: [4.05, 2.0, -3.1]
+  facing: [0.0, 0.0, -1.0]
+  note: 'a tilt cylinder''s foot in its pocket in the platform: no weight (the rockers carry it), the tilt''s push, each sized to take it alone: 422 t x 9.81 x a 1.0 m offset of the centre of gravity at 15 deg (invented) over the 4.05 m lever, x 1.25'
 - id: base
   flow: out
   medium: load
   interface: interface.plant-bay-s2
   half: male
   make: bolted
-  mass: 421900.0
+  mass: 422300.0
   at: [0.0, 0.0, 0.0]
   facing: [0.0, 0.0, -1.0]
   note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
@@ -132,13 +154,16 @@ envelope:
 - [-0.932, -0.732, 2.898, 0.932, 1.001, 14.001]
 - [-1.852, 0.187, 1.789, 4.117, 4.501, 9.617]
 - [-4.451, 2.089, 0.499, -2.22, 5.492, 5.952]
+- [-4.726, 6.635, -3.565, -2.615, 12.703, 3.463]
+- [-4.4, 1.65, -3.1, -3.7, 2.35, 1.6]
+- [3.7, 1.65, -3.1, 4.4, 2.35, 1.6]
 life: 788940000
 visual:
   format: "freefall-model/1"
-  path: "models/eaf-vessel-80t/v4"
-  manifest_sha256: "b98090be739d1927bbfaaafa710454e60111b91ea115f4e85a2a885da884a983"
-  version: 4
-  triangles: 26194
+  path: "models/eaf-vessel-80t/v5"
+  manifest_sha256: "1939e00ecd8f05c986380704a7d9f87915a11b35bbb0ff0f94ba19bcc7e6f976"
+  version: 5
+  triangles: 42946
 basis:
 - of: [recipes]
   tier: derived

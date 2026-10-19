@@ -20,6 +20,14 @@ face:
   height: 0.25
 size: 0.0004
 standard: single-pole 400 A connectors (the registry's; of the order of the Powerlock family)
+keys:
+- L1
+- L2
+- L3
+- N
+- PE
+contacts:
+- id: '1'
 basis:
 - of:
   - envelope

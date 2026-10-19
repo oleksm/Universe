@@ -19,6 +19,15 @@ face:
   width: 0.04
   height: 0.075
 size: 1.6e-05
+contacts:
+- id: A
+  size: 1.6e-05
+- id: B
+  size: 1.6e-05
+- id: C
+  size: 1.6e-05
+- id: D
+  size: 1.6e-05
 basis:
 - of:
   - envelope

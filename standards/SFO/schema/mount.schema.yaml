@@ -54,8 +54,23 @@ properties:
           tension: { type: number, exclusiveMinimum: 0, x-unit: "N" }
           compression: { type: number, exclusiveMinimum: 0, x-unit: "N" }
           shear: { type: number, exclusiveMinimum: 0, x-unit: "N" }
+  holder: { enum: [deck, adapter], description: "What holds its equipment (docs/proposals/physical-mounts.md): a deck panel's track (small and light), or the mount's own cradle (adapter.<slot>-s<class>)." }
+  sockets:
+    description: "One per attachment point, written by tools/standards/mounting.py from the pattern, the envelope and the per-point loads: the female faces a holder offers and the equipment's feet meet. Mount frame: x along, y across, z up from the contact face, origin its middle."
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [id, at, facing, interface]
+      properties:
+        id: { type: string }
+        at: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "m" }
+        facing: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "1", description: "Out of the holder's face, toward the equipment" }
+        interface: { type: string, x-ref: [interface] }
+        connector: { type: string, x-ref: [stock, connector], description: "The fastener the registry joins it with (a bolt), by key" }
+        key: { enum: [index], description: "The index socket: the equipment's index foot lands here, so only poses that keep it so are allowed." }
   feeds:
-    description: "What the hull brings to it, at most."
+    description: "What the hull can bring near it, at most: a capacity for the ship's wiring and piping to plan by, never a connection. Fastening equipment to a mount joins nothing; power, data and fluids reach it only through its ports, joined by laid runs (SFO 26)."
     type: object
     additionalProperties: false
     properties:

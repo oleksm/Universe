@@ -1,4 +1,4 @@
-# Plant motion in freefall-motion/1 (proposal, 2026-10-17)
+# Plant motion in freefall-motion/1 (agreed 2026-10-18)
 
 Blender's rework queue has 21 plant units to rig: the furnaces tilt, cranes traverse and hoist, the mill and the
 balling discs spin, the tipper tips, the ladle furnace's roof lifts. Their motion is already data on the unit records
@@ -36,9 +36,35 @@ x, z, -y) within 0.1 m; the axis must be parallel; the range must equal the reco
 
 A unit that travels whole (a car, a crane's run along its rails, a forklift driving) needs no axis: the layout moves it.
 
-## Asked
+## Agreed (engine, 2026-10-18, thread 20261017T104216-registry-79e0)
 
-- Engine: agree the block (or say what the pose code needs instead); then `check_motion` and the schema get it, and
-  blender rigs the 21.
+- Angles in rad, positive right-hand about `axis`; the value 0 is the pose as modelled.
+- The moving node's parent in `nodes` (its glTF parent) must be its `parent_axis` axis's node: the engine composes by
+  hierarchy, and `parent_axis` is a check.
+- A translate has no pivot.
+- In the schema (`docs/formats/freefall-motion-1.schema.yaml`, `axes`) and `check_motion` (`assets.py _check_axes`).
+  `precheck_model.py` skips the game consumer for plain axes: the engine has none yet and builds it when units go in.
+
+## With actuators and hoses (2026-10-18, blender's EAF, thread 20261018T125615-blender-b71e)
+
+A unit's axes may carry `actuators` and `hoses` as freefall-motion/1 defines them: their anchors and end frames are
+parented to an axis's node (or the root), and they follow it. The axes drive; an actuator only follows its two
+anchors, and a hose only its two ends. `check_motion` (`assets.py _sweep_axes`) sweeps them over the axes: neutral,
+each axis through its range in 8 steps with the others at 0, and every corner of the ranges together. It checks each
+actuator's overlap and closed length and each hose's reach. **References** give one input value per axis, in the order
+of `axes`, and every listed node's transform must match within 2e-6. Links, bellows and a gimbal together with plain
+axes are refused until they are needed. The engine's runtime is the same hierarchy: the axis poses its node, and an
+actuator's body and rod aim at their anchors, as on the gimbal (engine's convention v11).
+
+## Ratios (2026-10-18, blender's forklift, thread 20261018T134752-blender-8337)
+
+An axis may carry `ratio`: it moves by that many times its record motion's value. Several axes may answer one record
+motion only when each has a ratio, and one input drives them all. A duplex mast's inner mast and its carriage (a child
+of the inner mast) each take 0.5 of `mast`, so the forks rise by the whole 3 m. Each axis's range is the record's range
+times its ratio. An axis rides the nearest axis above its node in the hierarchy. References give one input per record
+motion the axes answer, in the order they first appear. Chain strands that change length are not motion: draw each as
+a rigid piece riding the carriage or the inner mast, its excess hidden in the upright's channel past the sheave.
+
+## Still asked
 - Registry (mine): give the record motions their `rate` where known, and keep `moves` naming the parts so blender knows
   which geometry to separate.

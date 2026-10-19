@@ -12,6 +12,17 @@ outside:
 rating:
   voltage: 230
   current: 16
+conductors:
+- id: L
+  role: line
+  line: L
+  size: 1.5e-06
+- id: N
+  role: neutral
+  size: 1.5e-06
+- id: PE
+  role: earth
+  size: 1.5e-06
 per_m:
   mass: 0.084
   built_of:
@@ -37,3 +48,8 @@ basis:
   tier: invented
   review: true
   note: Wiring regulations' clipped-direct ratings and usual insulation thicknesses; least bend 4 outsides; From memory of makers' catalogues; to be sourced.
+hold:
+  clip: connector.run-clip-d10
+  ship: 0.6
+  plant: 1.5
+  basis: rule.run-support

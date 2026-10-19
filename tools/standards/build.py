@@ -1132,7 +1132,7 @@ for s in standards:
         seen[key] = name
         check_basis(e, full)
         for group, props in e.items():
-            if group in ("slug", "basis", "revision", "fits", "life", "visual", "model_requests", "ports", "motion") or (kind == "modules" and group == "recipes"):   # (a revision is held to its schema by validate.py)
+            if group in ("slug", "basis", "revision", "fits", "life", "visual", "model_requests", "ports", "internal", "motion") or (kind == "modules" and group == "recipes"):   # (a revision is held to its schema by validate.py)
                 continue
             if kind == "hulls" and group == "open_questions":
                 continue
@@ -2626,6 +2626,7 @@ _REG = [("mounts", "Mounts", "SFO", os.path.join("SFO", "metadata", "mounts"), "
         ("products", "Plant products", "SFO", os.path.join("SFO", "metadata", "products"), "SFO/schema/product.schema.yaml", "SFO 24"),
         ("templates", "Kit templates", "SFO", os.path.join("SFO", "metadata", "templates"), "SFO/schema/template.schema.yaml", "SFO 25"),
         ("panels", "Building panels", "SFO", os.path.join("SFO", "metadata", "panels"), "SFO/schema/panel.schema.yaml", "SFO 25"),
+        ("adapters", "Structural adapters", "SFO", os.path.join("SFO", "metadata", "adapters"), "SFO/schema/adapter.schema.yaml", "SFO 19"),
         ("arrangements", "Room arrangements", "SFO", os.path.join("SFO", "metadata", "arrangements"), "SFO/schema/arrangement.schema.yaml", "SFO 25"),
         ("interfaces", "Interfaces", "SFO", os.path.join("SFO", "metadata", "interfaces"), "SFO/schema/interface.schema.yaml", "SFO 26"),
         ("buildings", "Buildings", "SFO", os.path.join("SFO", "metadata", "buildings"), "SFO/schema/building.schema.yaml", None),

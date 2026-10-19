@@ -20,6 +20,12 @@ face:
   height: 0.28
 size: 6.3e-05
 standard: IEC 60309-2
+contacts:
+- id: L1
+- id: L2
+- id: L3
+- id: N
+- id: PE
 basis:
 - of:
   - envelope

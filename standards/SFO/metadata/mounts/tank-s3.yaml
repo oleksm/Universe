@@ -19,5 +19,29 @@ attachment:
     tension: 483000.0
     compression: 483000.0
     shear: 241000.0
+# (holder and sockets: written by tools/standards/mounting.py)
+holder: adapter
+sockets:
+- id: s1
+  at: [-4.113, -4.113, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m42
+  connector: stock.st4340-bolt-m42
+- id: s2
+  at: [4.113, -4.113, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m42
+  connector: stock.st4340-bolt-m42
+- id: s3
+  at: [4.113, 4.113, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m42
+  connector: stock.st4340-bolt-m42
+- id: s4
+  at: [-4.113, 4.113, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m42
+  connector: stock.st4340-bolt-m42
+# (end of mounting.py)
 basis:
   - { of: [envelope, bears, attachment], rule: rule.mounts-margin }

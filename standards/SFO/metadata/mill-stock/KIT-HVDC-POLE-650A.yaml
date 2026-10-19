@@ -18,7 +18,7 @@ size:
 supplies:
   item: connector.hvdc-pole-650a
 physical:
-  mass: 1.8
+  mass: 1.226
 basis:
 - of:
   - size

@@ -42,3 +42,13 @@ basis:
   - { of: [physical.mass, built_of], tier: derived, note: "The sum of its measured parts, each its length in the stock it is cut from (the integrator's measuring, 2026-10-05)." }
   - { of: [function, size_class], tier: invented, review: true, note: "A four-stage telescoping clamp with four jaws that grips the rock the ship mines: 2 MN chosen, a 200 t ship held at 1 g. The mining rig's anchor reach is this clamp's." }
   - { of: [life], rule: rule.life-ship-system }
+# ports and internal: written by tools/standards/equipment_ports.py, change them there.
+ports:
+- {id: foot-1, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 65.5, at: [2.475, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s2''s socket of the same id, bolted through'}
+- {id: foot-2, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 65.5, at: [1.7501, 1.7501, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s2''s socket of the same id, bolted through'}
+- {id: foot-3, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 65.5, at: [0.0, 2.475, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s2''s socket of the same id, bolted through'}
+- {id: foot-4, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 65.5, at: [-1.7501, 1.7501, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s2''s socket of the same id, bolted through'}
+- {id: foot-5, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 65.5, at: [-2.475, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s2''s socket of the same id, bolted through'}
+- {id: foot-6, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 65.5, at: [-1.7501, -1.7501, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s2''s socket of the same id, bolted through'}
+- {id: foot-7, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 65.5, at: [0.0, -2.475, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s2''s socket of the same id, bolted through'}
+- {id: foot-8, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 65.5, at: [1.7501, -1.7501, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s2''s socket of the same id, bolted through'}

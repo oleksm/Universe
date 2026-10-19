@@ -30,3 +30,4 @@ basis:
   review: true
   note: 'Tray posts every 3 m; a tee is a joint box; the cores'' least bend radius 15 cable diameters (from memory): a riser bends all three at it, an elbow in plan has its axis one core''s pitch further out so the inner core keeps it.'
 template: template.cable
+hold: {clip: connector.run-clip-d400, ship: 0.6, plant: 3.0, by: its stands (support), basis: rule.run-support}

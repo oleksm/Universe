@@ -14,13 +14,13 @@ properties:
       key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
       description: { type: string }
-  family: { enum: [cable, pipe, lined-duct, jacketed-duct, belt, drag-conveyor, busbar, flange, lined-flange, termination, belt-transfer, chute, bus-joint, hood, clamp-coupling, hose, conductor-rail, festoon, panel, quick-coupling, union, plug-socket, collector, cable-reel, valve, expansion-joint, twistlock], description: "The kit kind it draws." }
+  family: { enum: [cable, pipe, lined-duct, jacketed-duct, belt, drag-conveyor, busbar, flange, lined-flange, termination, belt-transfer, chute, bus-joint, hood, clamp-coupling, hose, conductor-rail, festoon, panel, quick-coupling, union, plug-socket, collector, cable-reel, valve, expansion-joint, twistlock, adapter, strut-clamp, run-clip], description: "The kit kind it draws." }
   draws: { enum: [sweep, model, sweep-and-pieces], description: "sweep: a profile swept along the run's path, no model; model: one model scaled to the record; sweep-and-pieces: the straight swept, its elbows, supports and ends from pieces." }
   profile: { type: string, description: "What is swept: its cross-section, from the record's figures." }
   scales_by: { type: array, items: { type: string }, description: "The record's figures that size it (outside, size, physical.length...)." }
   pieces: { type: array, items: { type: object, additionalProperties: false, required: [name, how], properties: { name: { type: string }, how: { type: string }, length: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "the piece at the reference member, along the run (X)" }, width: { type: number, exclusiveMinimum: 0, x-unit: "m" }, height: { type: number, exclusiveMinimum: 0, x-unit: "m" }, mass: { type: number, exclusiveMinimum: 0, x-unit: "kg" } } }, description: "The modelled pieces and how each is placed and scaled." }
   model_of: { type: string, x-ref: [run, connector], description: "An installed size whose model serves as the template's, scaled, until the template has its own." }
-  reference: { type: string, x-ref: [run, connector, panel], description: "The member its model is built at (docs/asset-contract.md, Templates): the game scales the model per axis by each record's figures over this one's." }
+  reference: { type: string, x-ref: [run, connector, panel, adapter], description: "The member its model is built at (docs/asset-contract.md, Templates): the game scales the model per axis by each record's figures over this one's." }
   members: { type: integer, minimum: 0, description: "How many records of the family name it." }
   visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
   model_requests: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/model_request" } }

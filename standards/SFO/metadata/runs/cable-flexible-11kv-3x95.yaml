@@ -12,6 +12,19 @@ outside:
 rating:
   voltage: 11000
   current: 260
+conductors:
+- id: L1
+  role: line
+  line: L1
+  size: 9.499999999999999e-05
+- id: L2
+  role: line
+  line: L2
+  size: 9.499999999999999e-05
+- id: L3
+  role: line
+  line: L3
+  size: 9.499999999999999e-05
 per_m:
   mass: 4.46
   built_of:
@@ -37,3 +50,8 @@ basis:
   tier: invented
   review: true
   note: Reeling cable figures; least bend 7.5 outsides on a reel; From memory of makers' catalogues; to be sourced.
+hold:
+  clip: connector.run-clip-d63
+  ship: 0.6
+  plant: 1.5
+  basis: rule.run-support

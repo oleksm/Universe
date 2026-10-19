@@ -125,7 +125,7 @@ tangents, diameter, free length and tolerance, bend radius and its source, neutr
 between two joints: one pose producer each, `inherited` (rides a listed parent) or `solved` (placed from joint a toward
 joint b, rolled by a stated rule), joints framed on both sides with ordered hinges, limits and their source, axial,
 lateral and twist allowances, tie rods; bellows as rigid rings on the Hermite curve between two cuffs, the evaluator
-engine and blender agreed for v04). The installer checks it against the schema, the model's nodes, rigid binds,
+engine and blender agreed for v04). Plant units use plain `axes` (one node turned about or slid along one axis by one number, continuous spins, nesting by `parent_axis`; docs/proposals/plant-motion.md), checked against the record's `motion`: kind, pivot on its axis within 0.1 m, axis parallel, range and rate equal. The installer checks it against the schema, the model's nodes, rigid binds,
 parents, the record's gimbal limit, actuator overlap and hose reach (16 directions), and over 65 poses: link closure,
 each joint's relative rotation decomposed in hinge order (hinge angles against limits, twist and slide against
 allowances, any other turn refused), roll never undetermined, tie lengths, bellows rims against their skirt, and every
@@ -195,6 +195,9 @@ One model draws every size of a kit family (`standards/SFO/metadata/templates/`)
   along X, its centre 12.5 mm inboard (-X) and 8 mm inboard (-Z) of the casting's centre; end and side faces an oblong
   78 x 51 mm (78 across, 51 high), centred on their face 8 mm below its middle. Walls: top plate 26 mm (the twistlock's
   cone sits in it), the others 13 mm, hollow inside.
+- **Wiring box** (template.wiring-box, 100 x 60 x 100 mm): one fixed part, not two mating halves: root `body` with a
+  child `lid` facing +Y, static and closed, centred on the origin; two glands on opposite sides along X, spare ones
+  capped; empties `gland_a` and `gland_b` at the gland mouths, where the game lands a cable.
 - **Twistlock** (template.twistlock, an inter-box lock, 160 x 150 x 200 mm envelope): one root node `male`, static, in
   the unlocked pose (both heads long along X, as the hole). The root sits at the lower casting's top hole centre (the
   corner casting's datum x = -0.0125, z = -0.008, y = 0): the spacer flange 160 x 90 mm, 28 mm thick, from y = 0 up to

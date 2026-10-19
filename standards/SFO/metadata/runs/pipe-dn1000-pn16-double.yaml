@@ -17,6 +17,7 @@ support: {spacing: 12.0, mass: 71.1, per_m_height: 31.7, item: material.structur
 connector: connector.flange-dn1000-pn16-double
 carries: gas
 template: template.pipe
+hold: {plant: 12.0, by: its stands (support), basis: rule.run-support}
 visual: {format: freefall-model/1, path: models/pipe-dn1000-pn16-double/v2, manifest_sha256: 4ec8145c83cbc7e54ed3a9d92e47e0ffc5c08eb200f98eb9947418bcb950a32e, version: 2, triangles: 2320}
 basis:
 - of: [per_m]

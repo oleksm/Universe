@@ -19,6 +19,50 @@ attachment:
     tension: 12000.0
     compression: 12000.0
     shear: 5980.0
+# (holder and sockets: written by tools/standards/mounting.py)
+holder: adapter
+sockets:
+- id: s1
+  at: [-1.179, -0.7875, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m10
+  connector: stock.st4340-bolt-m10
+- id: s2
+  at: [1.179, -0.7875, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m10
+  connector: stock.st4340-bolt-m10
+- id: s3
+  at: [1.179, 0.7875, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m10
+  connector: stock.st4340-bolt-m10
+- id: s4
+  at: [-1.179, 0.7875, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m10
+  connector: stock.st4340-bolt-m10
+- id: s5
+  at: [0.0, -0.7875, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m10
+  connector: stock.st4340-bolt-m10
+- id: s6
+  at: [1.179, 0.0, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m10
+  connector: stock.st4340-bolt-m10
+- id: s7
+  at: [0.0, 0.7875, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m10
+  connector: stock.st4340-bolt-m10
+- id: s8
+  at: [-1.179, 0.0, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m10
+  connector: stock.st4340-bolt-m10
+# (end of mounting.py)
 feeds:
   power: 1120000.0
 basis:

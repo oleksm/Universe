@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/interface.schema.yaml
+# Written by tools/standards/mounting.py: change it there.
+identity:
+  key: interface.run-clip-d400
+  name: Run clip, 400 mm
+  description: 'A run''s outside (male: any run up to 400 mm and over the next band down) held in a clip''s loop (female).'
+domain: load
+kind: run-clip
+size: 0.4
+envelope:
+  tension: 432000.0
+  shear: 129600.0
+media:
+- load
+sealing: open
+halves: male-female
+make: bolted
+basis:
+- of:
+  - envelope
+  tier: derived
+  note: The clip's rating.

@@ -8,7 +8,7 @@ family: cable
 draws: sweep
 scales_by:
 - outside
-members: 6
+members: 12
 profile: a round insulated wire of the record's outside
 basis:
 - of:

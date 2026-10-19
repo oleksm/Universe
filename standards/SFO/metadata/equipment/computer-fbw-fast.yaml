@@ -24,7 +24,7 @@ built_of:
     - { code: FCFA-02, name: "Inertial units and star trackers", description: "Feel the ship's turning and see where it points.", mass: 6.12, length: 0.309, width: 0.206, height: 0.154, item: good.electronics, quantity: 6.12, module: module.assembly-shop }
     - { code: FCFA-03, name: "Thruster drivers", description: "Switch the thrusters, faster and harder.", mass: 14.4, length: 0.411, width: 0.274, height: 0.205, item: good.electronics, quantity: 14.4, module: module.assembly-shop }
     - { code: FCFA-04, name: "Cabinet and cold plates", mass: 8.1, length: 0.339, width: 0.226, height: 0.169, item: stock.al6061-sh-2-panel, quantity: 8.1, module: module.welding-bay }
-    - { code: FCFA-05, name: "Harness", description: "The wiring to every nozzle.", mass: 4.14, length: 0.271, width: 0.181, height: 0.135, item: stock.cu-wire-2, quantity: 4.75, module: module.machining-centre }
+    - { code: FCFA-05, name: "Harness", description: "The signal wiring out to every nozzle (data, not power: the ship's routed harness carries power only today); if the ship comes to route data too, this moves to it. Review.", mass: 4.14, length: 0.271, width: 0.181, height: 0.135, item: stock.cu-wire-2, quantity: 4.75, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:
@@ -44,3 +44,14 @@ basis:
   - { of: [physical.length, physical.width, physical.height], tier: sourced, review: true, source: "docs/ships/mc-07-equipment-dimensions.md", note: "As the standard flight computer, with heavier thruster drivers: half as much again. Real figures: docs/ships/mc-07-equipment-dimensions.md." }
   - { of: [physical.mass, physical.volume, needs.power], tier: sourced, review: true, source: "standards/sources/research_ship_equipment.json", note: "As the audit of 2026-10-05 has it (docs/ships/mc-07-equipment-dimensions.md): real avionics are far lighter and thriftier than the game's first list." }
   - { of: [life], rule: rule.life-ship-system }
+# ports and internal: written by tools/standards/equipment_ports.py, change them there.
+ports:
+- {id: foot-1, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 11.25, at: [-0.254, -0.125, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}
+- {id: foot-2, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 11.25, at: [0.254, -0.125, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}
+- {id: foot-3, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 11.25, at: [-0.254, 0.125, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}
+- {id: foot-4, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 11.25, at: [0.254, 0.125, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}
+- {id: dc-in, flow: in, medium: power, interface: interface.circular-shell-17, half: male, make: manual, connector: connector.circular-shell-17, voltage: 28.0, current: 10.71, power: 300.0, channel: dc-28v, pins: [{contact: '1', role: plus}, {contact: '2', role: minus}, {contact: '3', role: earth}, {contact: '4', role: spare}, {contact: '5', role: spare}, {contact: '6', role: spare}, {contact: '7', role: spare}], at: [-0.3, 0.037, 0.09], facing: [-1.0, 0.0, 0.0], note: 'place invented (the model has no empty for it): on its -x end face, for review'}
+- {id: data-1, flow: both, medium: signal, interface: interface.circular-shell-11, half: female, make: manual, connector: connector.circular-shell-11, channel: can-a, pins: [{contact: '1', role: signal-high}, {contact: '2', role: signal-low}, {contact: '3', role: return}, {contact: '4', role: screen}, {contact: '5', role: spare}, {contact: '6', role: spare}, {contact: '7', role: spare}], at: [-0.3, -0.004, 0.09], facing: [-1.0, 0.0, 0.0], note: 'place invented (the model has no empty for it): on its -x end face, for review'}
+- {id: data-2, flow: both, medium: signal, interface: interface.circular-shell-11, half: female, make: manual, connector: connector.circular-shell-11, channel: can-a, pins: [{contact: '1', role: signal-high}, {contact: '2', role: signal-low}, {contact: '3', role: return}, {contact: '4', role: screen}, {contact: '5', role: spare}, {contact: '6', role: spare}, {contact: '7', role: spare}], at: [-0.3, -0.041, 0.09], facing: [-1.0, 0.0, 0.0], note: 'place invented (the model has no empty for it): on its -x end face, for review'}
+internal:
+- {kind: joined, ports: [data-1, data-2], note: 'the control bus passes through, so units daisy-chain on it'}

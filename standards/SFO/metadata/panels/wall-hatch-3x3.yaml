@@ -9,7 +9,7 @@ site: airless
 cell:
 - 3.0
 - 3.0
-thickness: 0.19
+thickness: 0.225
 opening:
   kind: pressure-door
   width: 1.0
@@ -20,9 +20,9 @@ u_value: 0.1
 load: 101300.0
 physical:
   length: 3.0
-  width: 0.19
+  width: 0.225
   height: 3.0
-  mass: 479.2
+  mass: 480.4
 built_of:
 - what: Pressure skin
   item: material.aluminium-alloy-6061
@@ -52,6 +52,10 @@ built_of:
   item: material.aluminium-alloy-6061
   mass: 40.0
   note: a welded doubler round the opening (invented)
+- what: Leaf insulation
+  item: material.polyimide-film
+  mass: 1.2
+  note: 'the blanket over the leaf''s vacuum face, its seal lands bare: blender''s model'
 template: template.wall-hatch
 basis:
 - of:

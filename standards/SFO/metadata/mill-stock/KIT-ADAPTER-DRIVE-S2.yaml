@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/mounting.py: change it there.
+identity:
+  key: stock.kit-adapter-drive-s2
+  code: KIT-ADAPTER-DRIVE-S2
+  name: Main drive cradle, class 2
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.high-strength-steel-4340
+- item: material.aluminium-alloy-6061
+size:
+  length: 11.0
+  width: 11.0
+  height: 0.32
+supplies:
+  item: adapter.drive-s2
+physical:
+  mass: 4069.3
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One adapter.drive-s2, as made.

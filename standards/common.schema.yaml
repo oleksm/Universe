@@ -314,6 +314,30 @@ definitions:
       at: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "m", description: "Its face's middle in the thing's frame (x along, y across from its middle, z up from its base)." }
       facing: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "1", description: "The way out of its face, a unit vector in the thing's frame: a run leaves it this way." }
       optional: { type: boolean, description: "A spare, blinded when nothing joins it." }
+      key: { type: string, description: "The keying its half is cut to, one of its interface's `keys`: halves mate only at the same key (an HV DC pole keyed plus cannot meet one keyed minus)." }
+      channel: { type: string, description: "The circuit it belongs to, so a wire may only join ports of the same channel: a power bus by its kind and voltage (dc-28v, dc-270v, dc-3kv, ac-400v), a data link by its protocol and name (can-a, ethernet-1). A DC feed of two single-pole receptacles is two ports of one channel, plus and minus." }
+      pins:
+        type: array
+        description: "What each contact of its interface carries (the interface's contacts by id): a wire joins two ports contact to contact, and the roles must agree (plus to plus, signal-high to signal-high). Electrical and signal ports only."
+        items:
+          type: object
+          additionalProperties: false
+          required: [contact, role]
+          properties:
+            contact: { type: string, description: "The interface's contact id" }
+            role: { enum: [plus, minus, line, neutral, earth, screen, signal-high, signal-low, signal, return, spare], description: "What it carries: DC plus or minus; AC line or neutral; protective earth; a cable's screen; a differential pair's high and low; a single-ended signal and its return; spare (no connection)." }
+            line: { type: string, description: "Which line of a multi-line port (L1, L2, L3; a data link's lane)" }
+      note: { type: string }
+  internal:
+    type: object
+    additionalProperties: false
+    required: [kind]
+    description: "How a thing's own ports are joined inside it, stated so a wiring graph never infers it from where they lie (ships, 2026-10-18)."
+    properties:
+      kind: { enum: [joined, switched, converts], description: "joined: the listed ports' contacts of the same role and line are one conductor inside (a bus bar); switched: the same, each port through its own breaker the game may open; converts: the `to` ports are live only while the `from` ports are fed, at most the thing's function's rating (a converter, a charger)." }
+      ports: { type: array, items: { type: string }, description: "joined or switched: the port ids" }
+      from: { type: array, items: { type: string }, description: "converts: the port ids it draws from" }
+      to: { type: array, items: { type: string }, description: "converts: the port ids it gives to" }
       note: { type: string }
   motion:
     type: object
@@ -327,6 +351,8 @@ definitions:
       direction: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "1", description: "Its axis, a unit vector" }
       angle: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "rad", description: "rad from rest it turns, least and most (a tilt or a rotation)" }
       distance: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "m", description: "m from rest it moves, least and most (a travel or a lift)" }
+      rate: { type: number, x-unit: "rad/s", description: "How fast a tilt or rotation turns in service; a rotation with no angle turns without end at this rate" }
+      speed: { type: number, x-unit: "m/s", description: "How fast a travel or lift moves in service" }
       moves: { type: array, items: { type: string }, description: "What moves: the whole thing, or its named parts" }
       boxes: { type: array, items: { type: integer, minimum: 0 }, description: "Which of the thing's envelope boxes move with it, by index; none given: all of them; an empty list: none sweeps beyond itself (a drum spinning on its own axis)." }
       note: { type: string }

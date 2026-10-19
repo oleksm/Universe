@@ -1,5 +1,8 @@
 # Agent messaging: agentmsg
 
+For installation and daily operation, start with the [operator README](../tools/agents/README.md).
+The [operating skill](../tools/agents/skills/agentmsg/SKILL.md) teaches this workflow to Claude and Codex.
+
 A mailbox any agent with a shell can use: Claude Code sessions, Codex, scripts. Files, not sockets, so it works across
 tools, survives restarts and power cuts, and costs no tokens while an agent waits. `tools/agents/agentmsg.py`, linked as
 `~/bin/agentmsg`; the mailbox is `~/.agents` (or `$AGENTMSG_HOME`).
@@ -85,3 +88,184 @@ notification. Its replies come back through `agentmsg send`. `agentmsg who` show
 
 2026-10-10: a task sent to a Codex agent with a wake command was answered (`done … pong`) in 7 seconds through
 `serve`; the Stop hook, `wait`, `inbox --quiet` and `who` checked by hand.
+
+## Portable agents: onboard, switch, inspect, test
+
+An agent name is permanent; Claude and Codex are runtimes for that name. Keep the
+mailbox, working directory and task threads when switching runtimes. These commands
+are implemented in `tools/agents/agentnet.py`, next to `agentmsg.py`.
+
+### Onboard and launch
+
+```sh
+agentmsg register designer --cwd ~/git/my-project --runtime codex
+agentmsg launch designer
+agentmsg launch designer --no-windows
+```
+
+`launch` starts the configured user service, sets `AGENTMSG_NAME` and
+`AGENTMSG_HOME`, and opens a managed tmux terminal. Its initial prompt supplies the
+network instructions. A new Codex agent runs `agentmsg bind designer --runtime codex`
+from its own session; this reads `CODEX_THREAD_ID` (or `CODEX_SESSION_ID`) and saves
+an exact resume command. New Claude sessions receive an explicit UUID at launch.
+To bind an existing session explicitly:
+
+```sh
+agentmsg bind designer --runtime claude --session UUID
+```
+
+`bind` records a session; it does not launch it or terminate another conversation.
+An existing legacy resume command is kept by `launch`, including its flags and cwd
+wrapper; direct Codex commands gain `--no-daemon` unless explicitly remote. `runtime_args` in an agent's config can store argument arrays for each
+runtime, e.g. `{"codex": ["--sandbox", "workspace-write"], "claude": []}`. New Codex
+sessions use `--no-daemon` to avoid inheriting a different agent's shell environment
+from the shared Codex daemon, while retaining the selected logical agent identity.
+They default to workspace-write with the mailbox directory added as a writable
+root. Claude gets the mailbox directory as an additional directory. Normal tool
+permission prompts still apply. Direct CLI flags preceding a known resume command
+are saved when switching away; complex shell wrappers are retained in the switch
+backup, not translated into the other provider's arguments.
+
+### Switch with the current context
+
+```sh
+agentmsg switch engine --to claude
+agentmsg switch engine --to codex
+```
+
+This requests a handoff and waits up to 180 seconds (override with `--wait`). The
+outgoing agent writes `CONTEXT.md` describing the objective, constraints, decisions,
+files, commits, validation, unfinished work and outstanding communication. It then
+runs the provided `agentmsg handoff-ready PATH` command and stops work. Delivery to
+that identity pauses until the switch completes. A safe stopping point is required;
+the launcher does not infer that an agent is idle from its process existing.
+
+The switch replaces the source CLI inside the same managed tmux session only
+after its explicit ready signal. The attached terminal window stays open; the new
+conversation reads the handoff path and keeps the same mailbox. Work done in either runtime therefore travels into the next handoff.
+Provider-private session databases are never rewritten. Installed Claude Code
+2.1.284 exposes configuration import, not cross-provider conversation import;
+Codex 0.163.0 exposes resume/fork, not Claude history import. This implementation
+uses context handoff rather than fabricating native session records.
+
+If the agent is busy or only has notification delivery, the command prints a
+continuation command after the wait. Run that command when its context is ready:
+
+```sh
+agentmsg switch engine --to claude --handoff /path/printed/by/the/tool
+```
+
+For separate preparation:
+
+```sh
+agentmsg spool engine
+agentmsg switch engine --to claude --handoff /path/to/handoff --no-start
+agentmsg launch engine
+```
+
+`--no-start` changes the configured runtime after the safe stopping checks but
+leaves launch for later. `--no-windows` starts the managed terminal without opening
+a desktop window. `agentmsg handoff-cancel engine` resumes delivery and invalidates
+a ready handoff if you decide to keep working in the source. A used handoff cannot
+be reused: spool the current state for the next switch.
+
+When the source has exhausted its quota, use the offline fallback:
+
+```sh
+agentmsg spool engine --snapshot
+# Exit the source session, then:
+agentmsg switch engine --to claude --handoff /path/to/snapshot
+```
+
+A snapshot needs no model turn. It saves recorded conversation text/tool records,
+mail history and Git status/log/diff statistics, with a clearly labelled automatic
+context note. An optional `--source /path/to/session.jsonl` selects the source log.
+Without an exact registered session (for example a legacy `resume --last` entry),
+no transcript is guessed: the manifest reports zero exported records. Bind the
+session or supply its log when transcript recovery is needed. The original session
+files and working tree are retained. The snapshot does not capture unsaved editor
+buffers, a process's memory, or history absent from the source JSONL. It does not
+invent a semantic summary. The destination must inspect the recorded context.
+
+If the source is running outside the managed terminal and its session ID is visible
+in its process command, switching asks you to exit that conversation before
+continuing. Processes whose session identity is not observable cannot be reliably
+detected; close those manually before switching. A snapshot never kills a live
+managed source without an agent-written ready signal.
+
+Handoffs live under `~/.agents/handoffs/NAME/`; switch events and the previous config
+are retained under `~/.agents/switches/`. They contain local project context. The
+internal `_agentmsg` mailbox holds orchestration replies and does not wake an LLM
+or trigger desktop notifications.
+
+### Test both directions of a connection
+
+```sh
+agentmsg probe engine ships --wait 60
+agentmsg probe --check probe-ID --wait 60
+```
+
+The probe sends a task to each agent. Each must execute `probe-send` to send a ping
+to its peer; each peer must execute `probe-ack` with the actual ping message ID.
+`PASS` requires **both** pings and **both** matching acknowledgements, with the
+correct sender, recipient, nonce and reply thread. Reading an inbox, a running
+process, a generic `done` reply, or one-way delivery cannot produce a pass. Steps
+are idempotent. A probe expires after one hour; a wait timeout is `PENDING`, not a
+claim that the agents are disconnected. Agents can be busy, quota-limited or
+waiting for a permission prompt. Inspect `status`, the terminal, or wake logs.
+
+A probe is a live agent test and uses model turns. Ordinary `ack` messages still
+never wake an agent. The acknowledgement helper also closes the ping task with a
+`done` message, so the probe does not leave outstanding tasks behind.
+
+### Inspect status and usage
+
+```sh
+agentmsg status
+agentmsg status --usage
+agentmsg status --usage --json
+```
+
+Status reports runtime/session, delivery route, unread/owed/waiting counts, message
+counts, outgoing peers, last sent time, handoff pause state, probe outcomes and
+switch history. Sent and received copies are deduplicated by message ID. Delivery
+availability is not a responsiveness claim: use a probe for that.
+
+`--usage` reads the registered current session's recorded usage, not account billing
+or a complete history across every provider session. Claude API response IDs are
+deduplicated; Codex's latest cumulative token totals are used rather than adding
+cumulative snapshots together. Codex quota observations include their recorded
+timestamp and may be stale. Missing usage, session identity, or quota data is
+reported as null/unknown. No costs or remaining quotas are inferred from token
+counts. Old handoffs/switch events retain source-session references for inspection.
+
+### Validate changes
+
+```sh
+python -m unittest discover -s tools/agents -p 'test_*.py' -v
+```
+
+Tests use an isolated mailbox. For live testing, use `AGENTMSG_HOME` and disposable
+agents rather than consuming project agents' outstanding tasks.
+
+### Canonical names and compatibility aliases
+
+Use role names (`ships`, `engine`) independently of the runtime. `aliases.json` in
+`AGENTMSG_HOME` maps older names to canonical ones, for example:
+
+```json
+{"ships-claude": "ships", "engine-claude": "engine"}
+```
+
+Sending, reading, explicit `--as`, inherited `AGENTMSG_NAME`, binding and launcher
+commands resolve aliases. Historical message IDs and reply threads stay intact;
+status normalizes the endpoints for counts. When consolidating existing agents,
+back up their configuration and merge their `new`, `read` and `sent` mail folders
+into the canonical mailbox; aliases route future messages but do not move existing
+files by themselves. Keep the actual current conversation's runtime/session in the
+canonical configuration, rather than an older runtime's saved session.
+
+A renamed tmux session can keep its original server socket and attached window.
+Set `tmux_socket` in the canonical agent entry to that socket name. For example,
+`ships` can use session `agent-ships` on socket `agent-ships-claude`; the visible
+session name is `agent-ships` and subsequent launches/attachments use that mapping.
