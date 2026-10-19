@@ -87,6 +87,16 @@ params:
     factor: 50.0
   meaning: window over which collision front particles are counted for welding
   source: stages/plates.py:242
+- name: WELD_CONTACT_MYR
+  value: 946728000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 30.0
+  meaning: 'vector plates: two plates whose continents have stayed in contact (a continent-continent collision on their boundary at every step, gaps under two steps) this long weld into one: the suture locks and the convergence moves
+    elsewhere'
+  source: 'collisional orogens run a few tens of Myr from first contact to the end of convergence across the suture (e.g. Caledonian-Scandian ~40 Myr, Alpine ~30-50 Myr); figures from memory: verify'
+  note: '19 Oct 2026: alongside WELD_AREA; with stiff collision coupling the area brought in is small, so stalled contacts did not weld and kept trading crust'
 random_draws:
 - none
 invariants:
