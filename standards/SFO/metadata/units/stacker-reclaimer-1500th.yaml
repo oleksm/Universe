@@ -27,15 +27,16 @@ motion:
   kind: rotate
   point: [0.0, 0.0, 0.0]
   direction: [0.0, 0.0, 1.0]
-  angle: [-1.92, 1.92]
-  moves: [the boom and its bucket wheel]
-  note: about 110 degrees each way (invented)
+  angle: [-1.6580627893946132, 1.6580627893946132]
+  moves: ['the slewing upperworks, mast, counterweight, boom and bucket wheel']
+  note: 95 degrees each way as the description requires for the tripper corridor; invented operating limit, corrected from 110 degrees for blender rig 2026-10-19
 - id: luff
   kind: tilt
+  point: [2.5, 0.0, 8.0]
   direction: [0.0, 1.0, 0.0]
-  angle: [-0.2094, 0.2094]
-  moves: [the boom]
-  note: about 12 degrees up and down (invented)
+  angle: [-0.2094, 0.16]
+  moves: [the boom and its bucket wheel]
+  note: 'negative raises, positive lowers: about 12 degrees up and 9.17 down (invented). At +0.16 rad the 29 m arm puts the wheel centre at 8 - 29 sin(0.16) = 3.380 m, about 0.228 m above grade below its 3.152 m bounding radius; +12 degrees put the rim below grade. Two mast-to-boom luff ropes use variable free spans with winch payout; the mast follows slew but stays fixed against luff. Rope construction, winch support, load qualification and full swept clearance remain provisional (blender proposal 2026-10-19).'
 envelope:
 - [23.965, -1.271, 4.848, 34.651, 3.601, 11.152]
 - [-16.001, -5.688, -0.062, 4.501, 5.688, 19.939]
@@ -54,5 +55,9 @@ basis:
   tier: invented
   review: true
   note: Rates and power from memory of stacker-reclaimers of this size.
+- of: [motion]
+  tier: invented
+  review: true
+  note: '19 Oct 2026 rig correction: slew follows the existing 95-degree tripper-corridor limit; luff pivot from model, lower stop +0.16 rad chosen for about 0.2 m wheel clearance. Rope spans describe paid-out free length, not elastic stretch; construction and load qualification pending.'
 - of: [life]
   rule: rule.life-plant
