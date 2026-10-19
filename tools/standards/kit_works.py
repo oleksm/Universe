@@ -59,7 +59,7 @@ RUN_WORKS = {"cable": "cable-works", "hose": "hose-works", "pipe": "pipe-shop", 
              "belt": "conveyor-shop", "drag-conveyor": "conveyor-shop", "busbar": "electrical-fittings-works",
              "conductor-rail": "electrical-fittings-works", "festoon": "electrical-fittings-works"}
 CONN_WORKS = {"flange": "pipe-shop", "lined-flange": "pipe-shop", "chute": "pipe-shop", "hood": "pipe-shop", "clamp-coupling": "pipe-shop",
-              "expansion-joint": "pipe-shop", "valve": "valve-shop", "quick-coupling": "valve-shop", "union": "valve-shop", "twistlock": "valve-shop", "strut-clamp": "valve-shop", "run-clip": "valve-shop",
+              "expansion-joint": "pipe-shop", "valve": "valve-shop", "quick-coupling": "valve-shop", "union": "valve-shop", "twistlock": "valve-shop", "strut-clamp": "valve-shop", "run-clip": "valve-shop", "support-shoe": "cradle-shop",
               "termination": "electrical-fittings-works", "bus-joint": "electrical-fittings-works", "plug-socket": "electrical-fittings-works",
               "collector": "electrical-fittings-works", "cable-reel": "electrical-fittings-works", "belt-transfer": "conveyor-shop"}
 

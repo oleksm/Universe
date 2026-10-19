@@ -316,6 +316,35 @@ def cradle(slot, m, socks, d, tl):
                       {"of": ["rating"], "tier": "derived", "note": f"The mount's {n} points ({m['identity']['key']})."}]}
 
 
+# ------------------------------------------------------------------ shared deck support
+DECK_INSET = 0.04
+
+
+def deck_support_shoe():
+    parts = [
+        {"what": "Crossbar", "item": AL, "mass": 0.5964142370450011,
+         "note": "80 x 140 x 20 mm 6061, two nominal M10 seat bores; measured cut volume"},
+        {"what": "Fixing boss", "item": AL, "mass": 0.15938280935569557,
+         "note": "40 x 40 x 40 mm 6061, nominal M16 blind bore 25 mm deep from bottom; measured cut volume"}
+    ]
+    ports = [{"id": name, "flow": "in", "medium": "load", "interface": "interface.insert-m10",
+              "half": "female", "make": "bolted", "at": [0.0, y, 0.0], "facing": [0.0, 0.0, 1.0],
+              "optional": True, "note": "One panel edge per seat. At least one seat must be linked; a perimeter shoe may leave the other spare. Thread/insert and bearing strength unqualified."}
+             for name, y in (("panel-a", -DECK_INSET), ("panel-b", DECK_INSET))]
+    ports.append({"id": "frame", "flow": "out", "medium": "load", "interface": "interface.kit-clamp",
+                  "half": "male", "make": "bolted", "at": [0.0, 0.0, -0.06], "facing": [0.0, 0.0, -1.0],
+                  "note": "Required: one strut clamp. Resolve both seat forces and their offset moments at this face, including the 60 mm vertical offset; no stiffness or load rating is approved."})
+    return {"identity": {"key": "connector.deck-support-shoe", "name": "Shared deck support shoe",
+                         "description": "A separate support beneath a deck edge: two inboard panel seats and one fixing to a strut clamp. Origin midway between the top seat faces, z 0; bottom fixing z -0.06. Rotate about z for each edge. One shoe and one clamp per support, shared by adjacent panels; a perimeter shoe has one spare seat. Bolts and clamp are separate connection hardware, not included in this body's measured mass."},
+            "kind": "support-shoe", "size": 0.08, "provides": "adapter",
+            "physical": {"length": 0.08, "width": 0.14, "height": 0.06, "mass": r(sum(p["mass"] for p in parts), 6)},
+            "built_of": parts, "ports": ports, "template": "template.support-shoe",
+            "basis": [{"of": ["physical", "built_of", "ports"], "tier": "derived", "review": True,
+                       "note": "Blender deck candidate-v01 shared-shoe-20mm-qc.json, 2026-10-19: cut volume 0.755797 kg, manifold solids, sixteen mating pairs and sampled bolt access clear; actual clamp/head/tool access pending. Ships confirmed separate instance and single-count load path (8765/fc34)."},
+                      {"of": ["built_of", "ports"], "tier": "invented", "review": True,
+                       "note": "Trial geometry only, no strength rating. Screening cases: 27 kN factored per panel, 54 kN both, 1080 N m single-seat offset. Gross/net crossbar stress 202.5/231.4 MPa against the existing 270 MPa rule. These are not complete service envelopes: resolve asymmetric shear/tension and moments including the 60 mm offset. Thread stripping, concentrations, bearing, welds, fatigue and clamp compliance remain unqualified."}]}
+
+
 # ------------------------------------------------------------------ deck panels
 def deck(L, W):
     tag = f"{L:g}x{W:g}".replace(".", "p")
@@ -328,7 +357,7 @@ def deck(L, W):
     parts = [{"what": "Skins", "item": AL, "mass": r(skins, 2), "note": "two 1 mm 6061 sheets"},
              {"what": "Honeycomb core", "item": AL, "mass": r(core, 2), "note": "25 mm aluminium honeycomb, 50 kg/m3"},
              {"what": "Seat track", "item": AL, "mass": r(rails, 2), "note": f"{nr} rails, 0.6 kg/m extruded 6061"},
-             {"what": "Edge lugs", "item": AL, "mass": r(lugs, 2), "note": f"{segs}, a strut clamp bolted to each"}]
+             {"what": "Edge lugs", "item": AL, "mass": r(lugs, 2), "note": f"{segs} recessed inboard lugs for shared support shoes; inherited 0.15 kg each allowance, final panel cut masses pending"}]
     mass = r(sum(p["mass"] for p in parts), 2)
     th = 0.03
     ports = [{"id": f"track-{k + 1}", "flow": "in", "medium": "load", "interface": "interface.deck-track", "half": "female", "make": "bolted",
@@ -341,11 +370,11 @@ def deck(L, W):
         for i in range(n):
             f = (i + 0.5) / n
             k += 1
-            ports.append({"id": f"edge-{k}", "flow": "out", "medium": "load", "interface": "interface.kit-clamp", "half": "male", "make": "bolted",
-                          "mass": r(mass / segs, 2), "at": [r(x0 + (x1 - x0) * f), r(y0 + (y1 - y0) * f), 0.0], "facing": [0.0, 0.0, -1.0],
-                          "note": "clamped onto the edge strut under it, 0.25 m from the nodes"})
+            ports.append({"id": f"edge-{k}", "flow": "out", "medium": "load", "interface": "interface.insert-m10", "half": "male", "make": "bolted",
+                          "mass": r(mass / segs, 2), "at": [r(x0 + (x1 - x0) * f - DECK_INSET * (y1 - y0) / math.dist((x0, y0), (x1, y1))), r(y0 + (y1 - y0) * f + DECK_INSET * (x1 - x0) / math.dist((x0, y0), (x1, y1))), 0.0], "facing": [0.0, 0.0, -1.0],
+                          "note": "40 mm inboard of the edge, 0.25 m along from a cell corner: male M10 clearance lug onto one seat of connector.deck-support-shoe; the separate shoe attaches to the frame through one strut clamp"})
     return tag, {"identity": {"key": f"panel.deck-{tag}", "name": f"Deck panel, {L:g} x {W:g} m",
-                              "description": f"A ship's floor panel on its frame: 6061 skins on aluminium honeycomb, {nr} seat-track rails along it for small equipment's feet, clamped onto the struts under its edges."},
+                              "description": f"A ship's floor panel on its frame: 6061 skins on aluminium honeycomb, {nr} seat-track rails along it for small equipment's feet; inboard edge lugs bolt to separate shared support shoes, each held by one strut clamp."},
                  "kind": "deck", "site": "ship", "cell": [L, W], "thickness": th, "load": 10000.0, "point_load": STUD["compression"],
                  "ports": ports, "physical": {"length": L, "width": W, "height": th, "mass": mass}, "built_of": parts, "template": "template.deck",
                  "basis": [{"of": ["built_of", "physical", "load", "point_load", "ports"], "tier": "invented", "review": True,
@@ -458,6 +487,9 @@ def build():
     n += write("rules", "run-support", {"identity": {"key": "rule.run-support", "name": "Run support spacing", "about": "The most spacing between a run's supports, by its family and where it is laid."},
                                          "statement": "Aboard a ship: cable and hose clipped every 0.6 m at most (aircraft practice); tube and pipe every 0.6 m up to 30 mm outside, 1.0 m to 65, 1.5 m to 120, 2.0 m above. In a plant at 1 g: steel pipe at the suggested spans of ASME B31.1 by size (2.1 m at 34 mm to 9.1 m at 610 mm outside), cable 1.5 m, hose 1.0 m; belts, conveyors, busbars, conductor rails, festoons and ducts on their own supports at their family's pitch. A run whose family has no figure for a place is not to be laid there. The studio enforces it, and the clips' load, the run's bend radius and its end restraint.",
                                          "tier": "invented", "source": "FAA AC 43.13-1B (wire clamps 24 in); ASME B31.1 suggested pipe spans; both from memory", "review": True}, "rule")
+    shoe = deck_support_shoe()
+    n += write("connectors", "deck-support-shoe", shoe, "connector")
+    n += write("mill-stock", "KIT-DECK-SUPPORT-SHOE", stock_for("KIT-DECK-SUPPORT-SHOE", shoe, "piece"), "mill-stock")
     tl = tubes()
     cradles, decks = [], []
     for slug, (path, m) in load("mounts").items():
@@ -483,7 +515,8 @@ def build():
     for t, fam, name, ref, cnt in (("cradle", "adapter", "Equipment cradle", cradles[0]["identity"]["key"] if cradles else None, len(cradles)),
                                    ("deck", "panel", "Deck panel", "panel.deck-1x1", len(DECKS)),
                                    ("strut-clamp", "strut-clamp", "Strut clamp", "connector.strut-clamp-d100", len(clamps)),
-                                   ("run-clip", "run-clip", "Run clip", "connector.run-clip-d25", len(CLIP_BANDS))):
+                                   ("run-clip", "run-clip", "Run clip", "connector.run-clip-d25", len(CLIP_BANDS)),
+                                   ("support-shoe", "support-shoe", "Shared deck support shoe", "connector.deck-support-shoe", 1)):
         n += write("templates", t, {"identity": {"key": f"template.{t}", "name": name, "description": f"{name}: one look for the whole family, scaled to each record's figures (docs/asset-contract.md, Templates; docs/proposals/physical-mounts.md)."},
                                     "family": fam, "draws": "model", "scales_by": ["physical"], "reference": ref, "members": cnt,
                                     **({"model_requests": [{"work": "rig", "because": "Hold v1: exported port-node local +Y does not match registry facing. Correct all 14 frames and verify positions and +Y directions directly from raw GLB world matrices; source/reimport checks alone missed the export-axis conversion.", "asked": "2026-10-19", "of_version": 1, "by": "registry"}]} if t == "cradle" else {}),

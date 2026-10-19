@@ -3,7 +3,7 @@
 identity:
   key: panel.deck-2x1
   name: Deck panel, 2 x 1 m
-  description: 'A ship''s floor panel on its frame: 6061 skins on aluminium honeycomb, 4 seat-track rails along it for small equipment''s feet, clamped onto the struts under its edges.'
+  description: 'A ship''s floor panel on its frame: 6061 skins on aluminium honeycomb, 4 seat-track rails along it for small equipment''s feet; inboard edge lugs bolt to separate shared support shoes, each held by one strut clamp.'
 kind: deck
 site: ship
 cell:
@@ -80,195 +80,195 @@ ports:
 - id: edge-1
   flow: out
   medium: load
-  interface: interface.kit-clamp
+  interface: interface.insert-m10
   half: male
   make: bolted
   mass: 1.66
   at:
   - -0.75
-  - -0.5
+  - -0.46
   - 0.0
   facing:
   - 0.0
   - 0.0
   - -1.0
-  note: clamped onto the edge strut under it, 0.25 m from the nodes
+  note: '40 mm inboard of the edge, 0.25 m along from a cell corner: male M10 clearance lug onto one seat of connector.deck-support-shoe; the separate shoe attaches to the frame through one strut clamp'
 - id: edge-2
   flow: out
   medium: load
-  interface: interface.kit-clamp
+  interface: interface.insert-m10
   half: male
   make: bolted
   mass: 1.66
   at:
   - -0.25
-  - -0.5
+  - -0.46
   - 0.0
   facing:
   - 0.0
   - 0.0
   - -1.0
-  note: clamped onto the edge strut under it, 0.25 m from the nodes
+  note: '40 mm inboard of the edge, 0.25 m along from a cell corner: male M10 clearance lug onto one seat of connector.deck-support-shoe; the separate shoe attaches to the frame through one strut clamp'
 - id: edge-3
   flow: out
   medium: load
-  interface: interface.kit-clamp
+  interface: interface.insert-m10
   half: male
   make: bolted
   mass: 1.66
   at:
   - 0.25
-  - -0.5
+  - -0.46
   - 0.0
   facing:
   - 0.0
   - 0.0
   - -1.0
-  note: clamped onto the edge strut under it, 0.25 m from the nodes
+  note: '40 mm inboard of the edge, 0.25 m along from a cell corner: male M10 clearance lug onto one seat of connector.deck-support-shoe; the separate shoe attaches to the frame through one strut clamp'
 - id: edge-4
   flow: out
   medium: load
-  interface: interface.kit-clamp
+  interface: interface.insert-m10
   half: male
   make: bolted
   mass: 1.66
   at:
   - 0.75
-  - -0.5
+  - -0.46
   - 0.0
   facing:
   - 0.0
   - 0.0
   - -1.0
-  note: clamped onto the edge strut under it, 0.25 m from the nodes
+  note: '40 mm inboard of the edge, 0.25 m along from a cell corner: male M10 clearance lug onto one seat of connector.deck-support-shoe; the separate shoe attaches to the frame through one strut clamp'
 - id: edge-5
   flow: out
   medium: load
-  interface: interface.kit-clamp
+  interface: interface.insert-m10
   half: male
   make: bolted
   mass: 1.66
   at:
-  - 1.0
+  - 0.96
   - -0.25
   - 0.0
   facing:
   - 0.0
   - 0.0
   - -1.0
-  note: clamped onto the edge strut under it, 0.25 m from the nodes
+  note: '40 mm inboard of the edge, 0.25 m along from a cell corner: male M10 clearance lug onto one seat of connector.deck-support-shoe; the separate shoe attaches to the frame through one strut clamp'
 - id: edge-6
   flow: out
   medium: load
-  interface: interface.kit-clamp
+  interface: interface.insert-m10
   half: male
   make: bolted
   mass: 1.66
   at:
-  - 1.0
+  - 0.96
   - 0.25
   - 0.0
   facing:
   - 0.0
   - 0.0
   - -1.0
-  note: clamped onto the edge strut under it, 0.25 m from the nodes
+  note: '40 mm inboard of the edge, 0.25 m along from a cell corner: male M10 clearance lug onto one seat of connector.deck-support-shoe; the separate shoe attaches to the frame through one strut clamp'
 - id: edge-7
   flow: out
   medium: load
-  interface: interface.kit-clamp
+  interface: interface.insert-m10
   half: male
   make: bolted
   mass: 1.66
   at:
   - 0.75
-  - 0.5
+  - 0.46
   - 0.0
   facing:
   - 0.0
   - 0.0
   - -1.0
-  note: clamped onto the edge strut under it, 0.25 m from the nodes
+  note: '40 mm inboard of the edge, 0.25 m along from a cell corner: male M10 clearance lug onto one seat of connector.deck-support-shoe; the separate shoe attaches to the frame through one strut clamp'
 - id: edge-8
   flow: out
   medium: load
-  interface: interface.kit-clamp
+  interface: interface.insert-m10
   half: male
   make: bolted
   mass: 1.66
   at:
   - 0.25
-  - 0.5
+  - 0.46
   - 0.0
   facing:
   - 0.0
   - 0.0
   - -1.0
-  note: clamped onto the edge strut under it, 0.25 m from the nodes
+  note: '40 mm inboard of the edge, 0.25 m along from a cell corner: male M10 clearance lug onto one seat of connector.deck-support-shoe; the separate shoe attaches to the frame through one strut clamp'
 - id: edge-9
   flow: out
   medium: load
-  interface: interface.kit-clamp
+  interface: interface.insert-m10
   half: male
   make: bolted
   mass: 1.66
   at:
   - -0.25
-  - 0.5
+  - 0.46
   - 0.0
   facing:
   - 0.0
   - 0.0
   - -1.0
-  note: clamped onto the edge strut under it, 0.25 m from the nodes
+  note: '40 mm inboard of the edge, 0.25 m along from a cell corner: male M10 clearance lug onto one seat of connector.deck-support-shoe; the separate shoe attaches to the frame through one strut clamp'
 - id: edge-10
   flow: out
   medium: load
-  interface: interface.kit-clamp
+  interface: interface.insert-m10
   half: male
   make: bolted
   mass: 1.66
   at:
   - -0.75
-  - 0.5
+  - 0.46
   - 0.0
   facing:
   - 0.0
   - 0.0
   - -1.0
-  note: clamped onto the edge strut under it, 0.25 m from the nodes
+  note: '40 mm inboard of the edge, 0.25 m along from a cell corner: male M10 clearance lug onto one seat of connector.deck-support-shoe; the separate shoe attaches to the frame through one strut clamp'
 - id: edge-11
   flow: out
   medium: load
-  interface: interface.kit-clamp
+  interface: interface.insert-m10
   half: male
   make: bolted
   mass: 1.66
   at:
-  - -1.0
+  - -0.96
   - 0.25
   - 0.0
   facing:
   - 0.0
   - 0.0
   - -1.0
-  note: clamped onto the edge strut under it, 0.25 m from the nodes
+  note: '40 mm inboard of the edge, 0.25 m along from a cell corner: male M10 clearance lug onto one seat of connector.deck-support-shoe; the separate shoe attaches to the frame through one strut clamp'
 - id: edge-12
   flow: out
   medium: load
-  interface: interface.kit-clamp
+  interface: interface.insert-m10
   half: male
   make: bolted
   mass: 1.66
   at:
-  - -1.0
+  - -0.96
   - -0.25
   - 0.0
   facing:
   - 0.0
   - 0.0
   - -1.0
-  note: clamped onto the edge strut under it, 0.25 m from the nodes
+  note: '40 mm inboard of the edge, 0.25 m along from a cell corner: male M10 clearance lug onto one seat of connector.deck-support-shoe; the separate shoe attaches to the frame through one strut clamp'
 physical:
   length: 2.0
   width: 1.0
@@ -290,7 +290,7 @@ built_of:
 - what: Edge lugs
   item: material.aluminium-alloy-6061
   mass: 1.8
-  note: 12, a strut clamp bolted to each
+  note: 12 recessed inboard lugs for shared support shoes; inherited 0.15 kg each allowance, final panel cut masses pending
 template: template.deck
 basis:
 - of:

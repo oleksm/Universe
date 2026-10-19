@@ -1,0 +1,89 @@
+# yaml-language-server: $schema=../../schema/connector.schema.yaml
+# Written by tools/standards/mounting.py: change it there.
+identity:
+  key: connector.deck-support-shoe
+  name: Shared deck support shoe
+  description: 'A separate support beneath a deck edge: two inboard panel seats and one fixing to a strut clamp. Origin midway between the top seat faces, z 0; bottom fixing z -0.06. Rotate about z for each edge. One shoe and one clamp
+    per support, shared by adjacent panels; a perimeter shoe has one spare seat. Bolts and clamp are separate connection hardware, not included in this body''s measured mass.'
+kind: support-shoe
+size: 0.08
+provides: adapter
+physical:
+  length: 0.08
+  width: 0.14
+  height: 0.06
+  mass: 0.755797
+built_of:
+- what: Crossbar
+  item: material.aluminium-alloy-6061
+  mass: 0.5964142370450011
+  note: 80 x 140 x 20 mm 6061, two nominal M10 seat bores; measured cut volume
+- what: Fixing boss
+  item: material.aluminium-alloy-6061
+  mass: 0.15938280935569557
+  note: 40 x 40 x 40 mm 6061, nominal M16 blind bore 25 mm deep from bottom; measured cut volume
+ports:
+- id: panel-a
+  flow: in
+  medium: load
+  interface: interface.insert-m10
+  half: female
+  make: bolted
+  at:
+  - 0.0
+  - -0.04
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - 1.0
+  optional: true
+  note: One panel edge per seat. At least one seat must be linked; a perimeter shoe may leave the other spare. Thread/insert and bearing strength unqualified.
+- id: panel-b
+  flow: in
+  medium: load
+  interface: interface.insert-m10
+  half: female
+  make: bolted
+  at:
+  - 0.0
+  - 0.04
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - 1.0
+  optional: true
+  note: One panel edge per seat. At least one seat must be linked; a perimeter shoe may leave the other spare. Thread/insert and bearing strength unqualified.
+- id: frame
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  at:
+  - 0.0
+  - 0.0
+  - -0.06
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: 'Required: one strut clamp. Resolve both seat forces and their offset moments at this face, including the 60 mm vertical offset; no stiffness or load rating is approved.'
+template: template.support-shoe
+basis:
+- of:
+  - physical
+  - built_of
+  - ports
+  tier: derived
+  review: true
+  note: 'Blender deck candidate-v01 shared-shoe-20mm-qc.json, 2026-10-19: cut volume 0.755797 kg, manifold solids, sixteen mating pairs and sampled bolt access clear; actual clamp/head/tool access pending. Ships confirmed separate instance
+    and single-count load path (8765/fc34).'
+- of:
+  - built_of
+  - ports
+  tier: invented
+  review: true
+  note: 'Trial geometry only, no strength rating. Screening cases: 27 kN factored per panel, 54 kN both, 1080 N m single-seat offset. Gross/net crossbar stress 202.5/231.4 MPa against the existing 270 MPa rule. These are not complete
+    service envelopes: resolve asymmetric shear/tension and moments including the 60 mm offset. Thread stripping, concentrations, bearing, welds, fatigue and clamp compliance remain unqualified.'
