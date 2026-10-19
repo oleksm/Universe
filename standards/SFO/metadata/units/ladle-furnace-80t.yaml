@@ -4,11 +4,11 @@ identity: {key: unit.ladle-furnace-80t, name: 'Ladle furnace, 80 t', description
     masts at the rear (y -3.8), their arms fanning forward, the centre arm 0.6 m higher; the gantry''s columns at x -5 and 5, y -4.4 and 4.4, 12 m tall, its two cross beams on top. Its ports (SFO 25): the bus joint at the cables'' hanger, (0, -5.34, 6), facing -y; the manifold''s water, DN 150 facing -y, out at (-4.8, -4.85, 1) and in at (-4.2, -4.85, 1); the alloy chute''s mouth at (0, 3, 9), a belt''s head over it; the fume out of the roof''s elbow at (2, 0, 7.5), facing up, DN 1000, a sleeve in the duct taking the roof''s lift. Argon comes through the ladle''s plug from its car.'}
 size_class: 2
 fits: plant-mount.bay-s2
-physical: {length: 12.0, width: 10.7, height: 14.0, mass: 75880.0}
+physical: {length: 12.0, width: 10.7, height: 15.06, mass: 77360.0}
 built_of:
 - {what: Roof panels, item: material.structural-steel-a36, mass: 5010.0, note: 'water-cooled pipe panels over a dome 4.6 m across, 1.15 times the disc, the lifting frame half as much again'}
 - {what: Roof delta, item: good.refractory-brick, mass: 771.6, note: 'the refractory centre round the electrode ports, 1.2 m across, 0.3 m thick, less its electrode, feed and fume bores: 0.257 m3 as measured on blender''s model (candidate v01)'}
-- {what: Gantry, item: material.structural-steel-a36, mass: 53900.0, note: 'four box columns 0.6 m, 25 mm wall, 12 m tall, two cross beams 0.8 x 0.5 m, 10 m, longitudinal ties, the mast bench, the roof-lift heads, a grounded hanger beam over the mast bank for the cables and 200 mm baseplates (these provisional, not load-sized): measured on blender''s model (candidate v01); columns and beams alone 31,479 kg'}
+- {what: Gantry, item: material.structural-steel-a36, mass: 55380.0, note: 'four box columns 0.6 m, 25 mm wall, 12 m tall, two cross beams 0.8 x 0.5 m, 10 m, longitudinal ties, the mast bench, the roof-lift heads, a grounded hanger beam over the mast bank for the cables and 200 mm baseplates (these provisional, not load-sized): measured on blender''s model (candidate v01); columns and beams alone 31,479 kg. Candidate v02 raises the rear tie on risers with head hangers: net (0.613697297 - 0.425000098) m3 at 7850 kg/m3 adds 1481.3 kg; section and load qualification remain provisional'}
 - {what: Electrode masts, item: material.structural-steel-a36, mass: 7830.0, note: 'three box masts 0.5 m, 25 mm wall, 7 m'}
 - {what: Current-conducting arms, item: material.aluminium-1350, mass: 843.0, note: 'three box arms 0.5 x 0.35 m, 20 mm wall, trimmed at their insulated carriages: measured on blender''s model (candidate v01)'}
 - {what: Secondary cables, item: material.copper, mass: 1528.0, note: 'two water-cooled copper cables a phase, each 2630 mm2 for half of 26 kA at 5 A/mm2, run behind the steel and over the top on six insulators: measured on blender''s model (1,414 kg for 10 m each)'}
@@ -125,7 +125,7 @@ ports:
   interface: interface.plant-bay-s2
   half: male
   make: bolted
-  mass: 76510.0
+  mass: 77990.0
   at: [0.0, 0.0, 0.0]
   facing: [0.0, 0.0, -1.0]
   note: 'its feet on its bay''s seats: its weight is this mass times the site''s gravity'
@@ -144,15 +144,22 @@ motion:
   moves: ['the three electrodes with their arms and carriages, riding the fixed masts']
   note: regulating the arc and raised clear, each on its own mast, apart from the roof (invented); raised before the roof lifts
 envelope:
-- [-0.3, 0.7, 4.4, 0.3, 3.3, 9.0]
-- [-5.0, -4.85, 0.8, -1.33, -0.63, 6.623]
-- [4.5, -5.0, 0.0, 5.5, 5.0, 12.8]
-- [-1.5, -4.19, 3.8, 1.5, 0.59, 14.0]
-- [1.3, -0.5, 4.5, 2.5, 0.5, 7.5]
-- [-5.25, -5.34, 4.6, 5.25, -3.06, 12.69]
-- [-2.3, -2.3, 4.4, 2.3, 2.3, 5.2]
-- [-5.0, -4.65, 11.6, 5.0, 4.65, 12.61]
-- [-5.5, -5.0, 0.0, -4.5, 5.0, 12.8]
+- [4.699, -4.701, 0.0, 5.301, -4.099, 12.0]
+- [4.699, 4.099, 0.0, 5.301, 4.701, 12.0]
+- [-5.25, -5.0, 12.0, -4.75, 5.0, 12.8]
+- [4.75, -5.0, 12.0, 5.25, 5.0, 12.8]
+- [-0.301, 0.699, 4.4, 0.301, 3.3, 10.5]
+- [-2.3, -2.3, 4.4, 2.3, 2.3, 6.7]
+- [-4.626, -5.226, 1.199, -0.876, -0.676, 11.351]
+- [-5.25, -4.401, 4.6, 5.25, -3.399, 5.0]
+- [4.5, -4.901, 0.0, 5.5, 4.901, 0.201]
+- [-0.824, -3.5, 8.75, 0.824, 0.59, 12.9]
+- [-5.0, -4.651, 11.6, 5.0, -4.15, 13.5]
+- [-5.5, 3.9, 0.0, -4.5, 4.901, 12.0]
+- [-1.5, -5.181, 4.8, 1.5, -3.034, 16.058]
+- [-5.5, -5.25, 0.0, -4.0, -3.9, 12.0]
+- [-1.201, -0.501, 2.799, 2.5, 0.501, 16.0]
+- [-5.0, -4.401, 11.5, 5.0, 4.651, 12.0]
 life: 788940000
 visual: {format: freefall-model/1, path: models/ladle-furnace-80t/v1, manifest_sha256: 798a06197c33e9638f0472ab6f552f02f59f935abf73bc1d0fe9f92fcb43d2bc, version: 1, triangles: 12662}
 basis:
@@ -162,7 +169,7 @@ basis:
 - of: [physical, built_of]
   tier: derived
   review: true
-  note: From the materials and dimensions in built_of; dimensions from memory of 80 to 100 t ladle furnaces. The electrodes are a good it uses, not counted. Secondary 300 V, from memory.
+  note: From the materials and dimensions in built_of; plan dimensions from memory of 80 to 100 t ladle furnaces; height rounded up from candidate v02 rest top 15.057788 m (blender, 19 Oct 2026, review/measures.json), full swept top 16.057789 m reserved in the layout envelope. Raised tie steel is measured, its load qualification remains provisional. The electrodes are a good it uses, not counted. Secondary 300 V, from memory.
 - of: [needs.heat]
   tier: invented
   review: true
