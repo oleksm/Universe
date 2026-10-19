@@ -76,3 +76,41 @@ params:
     factor: 700.0
   meaning: 'the coupled era: the last couple_from of the planet''s age'
   source: planet-process.sea-level couple_from (stages/plates.py:138)
+- name: resolution ages
+  values:
+  - 3.15576e+16
+  - 1.57788e+16
+  - 3155760000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 3.168808781402895e-14
+  meaning: 'the resolution schedule: how long before the present each finer stretch starts (oldest first); boundary segment and crust tolerance give one value more, the coarsest before the first age'
+  source: 'owner, 19 Oct 2026: coarse (~200 km) in deep time, finer toward the present'
+  note: chosen; review
+- name: boundary segment
+  values:
+  - 200000.0
+  - 100000.0
+  - 50000.0
+  - 25000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 0.001
+  meaning: 'the longest plate-boundary segment in each stretch of the schedule (also the substep: half a segment at the fastest plate)'
+  source: owner, 19 Oct 2026
+  note: chosen; review
+- name: crust tolerance
+  values:
+  - 20000.0
+  - 10000.0
+  - 5000.0
+  - 1000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 0.001
+  meaning: how closely crust band outlines follow the true edge in each stretch (bands simplified to it; thick crust and margins grown from outlines held to it, at least 5 km)
+  source: owner, 19 Oct 2026
+  note: chosen; review
