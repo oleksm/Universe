@@ -180,11 +180,20 @@ params:
   source: 'Molnar & Lyon-Caen 1988 (GSA Special Paper 218): Tibet''s excess potential energy, a few 10^12 N/m'
   note: sourced (order of magnitude); replaces STALL_AREA (a count of sample cells) for the vector plates
 - name: COLLISION_COUPLING
-  value: 2.0e+21
+  value: 2e+21
   unit: Pa s
   meaning: 'vector plates: colliding plates resist each other with force per metre of contact = COLLISION_COUPLING x their closing speed: 2 x viscosity x thickness / width of the orogen (2 x 1e22 Pa s x 100 km / 1000 km)'
   source: England & Molnar 1997 (Tibet effective viscosity ~1e22 Pa s); Molnar & Lyon-Caen 1988 (resisting force ~5e12 N/m)
   note: 'derived; at 5 cm/yr it gives 3.2e12 N/m, the order Molnar & Lyon-Caen give (figures from memory, 18 Oct 2026: verify)'
+- name: OROGEN_HALF_WIDTH
+  value: 250000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 0.001
+  meaning: 'vector plates: the shortened crust of a continental collision thickens a belt this wide on each side of the suture (the colliding continents keep their outlines); the belt widens further by lower-crust flow'
+  source: 'collisional orogen widths: Alps ~200 km, Zagros and Himalaya ~250-350 km across the thrust belt (e.g. Dewey & Burke 1973; Molnar & Lyon-Caen 1988)'
+  note: '19 Oct 2026, replaces the 125 km strip (ARC_WIDTH/2); from memory: verify'
 random_draws:
 - none
 invariants:
@@ -217,3 +226,9 @@ basis:
   tier: derived
   review: true
   note: '2 x 1e22 Pa s (England & Molnar 1997) x 100 km / 1000 km; checked against Molnar & Lyon-Caen 1988 (~5e12 N/m). Figures from memory, 18 Oct 2026: check.'
+- of:
+  - params.OROGEN_HALF_WIDTH
+  tier: sourced
+  source: Dewey & Burke 1973; Molnar & Lyon-Caen 1988
+  review: true
+  note: 'From memory, 19 Oct 2026: check.'
