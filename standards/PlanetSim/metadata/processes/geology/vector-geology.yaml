@@ -30,5 +30,11 @@ params:
   meaning: the arcs are recorded every this many steps (each the trenches then, with the arc crust the floor consumed since the last built)
   source: 'chosen: 50 Myr at 5 Myr steps'
   note: invented; review
+- name: ROCK_EVERY_STEPS
+  value: 10.0
+  unit: '1'
+  meaning: the rock surface is published (and built when first read) every this many steps; between, the relief models keep what they last read
+  source: the checkpoint cadence (10 steps)
+  note: invented; review
 depends_on:
 - planet-process.vector-plates

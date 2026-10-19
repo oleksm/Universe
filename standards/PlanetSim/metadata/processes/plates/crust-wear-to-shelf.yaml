@@ -166,6 +166,28 @@ params:
   meaning: 'vector plates: width of the ring around a plate''s continents where the worn crust is laid (shelf, slope and rise: the passive-margin sediment wedge)'
   source: 'passive margins: shelf ~80 km, shelf to rise some 100-300 km (Shepard 1963; Kennett 1982)'
   note: 'from memory, 18 Oct 2026: verify'
+- name: WEDGE_EFOLD
+  value: 45000.0
+  unit: m
+  meaning: 'vector plates: the margin sediment wedge thins away from the coast as exp(-d / WEDGE_EFOLD), out to MARGIN_WEDGE'
+  source: 'the Python WEDGE 0.35 sample spacings (~130 km at 30,000 samples), chosen 16 Oct (s22: laid evenly, sediment built a broad thin apron)'
+  note: invented (the Python's choice in metres); to replace with a margin profile from a source
+- name: SUBDUCTED_SEDIMENT
+  value: 450.0
+  unit: m
+  meaning: 'vector plates: the sediment column ocean floor brings to its trench and takes down (eroded continent, shed to the sea): sediment subducted = floor consumed x SUBDUCTED_SEDIMENT, taken from the eroded volume waiting to be
+    laid on the margins'
+  source: Rea & Ruff 1996 and Plank & Langmuir 1998 (mean sediment entering trenches some 400-500 m); Scholl & von Huene 2009 (sediment subduction ~1.65 km3/yr at ~3 km2/yr of floor)
+  note: 'from memory, 18 Oct 2026: verify; the Python lost all land denudation to subduction (DENUDE_MYR, chosen)'
+- name: EARTH_SEDIMENT_SUPPLY
+  value: 237.6
+  unit: m3/s
+  said_as:
+    unit: km3/yr
+    factor: 7.5
+  meaning: 'vector plates: the sediment Earth''s land sheds to the sea today; the sediment column a floor brings to its trench (SUBDUCTED_SEDIMENT) scales with the planet''s own supply against this'
+  source: Milliman & Syvitski 1992 (~20 Gt/yr of sediment to the oceans, / 2,650 kg/m3)
+  note: 'from memory, 18 Oct 2026: verify'
 random_draws:
 - none
 invariants:
@@ -193,6 +215,23 @@ basis:
   source: Ahnert 1970; Shepard 1963; Kennett 1982
   review: true
   note: 'Figures from memory, 18 Oct 2026: check.'
+- of:
+  - params.WEDGE_EFOLD
+  tier: invented
+  review: true
+  note: The Python chose WEDGE 0.35 spacings; carried over in metres 18 Oct 2026.
+- of:
+  - params.SUBDUCTED_SEDIMENT
+  tier: sourced
+  source: Rea & Ruff 1996; Plank & Langmuir 1998; Scholl & von Huene 2009
+  review: true
+  note: 'From memory, 18 Oct 2026: check.'
+- of:
+  - params.EARTH_SEDIMENT_SUPPLY
+  tier: sourced
+  source: Milliman & Syvitski 1992
+  review: true
+  note: 'From memory, 18 Oct 2026: check.'
 events_emitted:
 - event: planet-event.ledger-row
   where: 'forge: the step''s volume moved, shed, worn, denuded or laid on the shelf (the Python''s ledger rows)'
