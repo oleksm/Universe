@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=../../../schema/planet-object.schema.yaml
+identity:
+  key: planet-object.hotspot
+  name: Hotspot
+  about: A mantle plume, fixed under the plates.
+scope: generator
+about_model: Plates move over it; it builds plume crust and leaves a track on each plate it passes under.
+extends: planet-object.record
+generator: planet-process.vector-plates
+geometry:
+  kind: location
+  frame: mantle
+attributes:
+- name: position
+  meaning: its place
+  field: planet-field.hotspot-position
+dynamics:
+- what: created
+  how: HOTSPOTS_PER_EARTH_AREA scaled by the planet's area, at the deep era's start
+persistence:
+  how: bytes
+  table: vector-plates-world (HOTS); table hotspots
+code:
+- type: World::hotspots
+  file: crates/tectonics/src/lib.rs
+status: draft
+basis:
+- of:
+  - identity
+  - about_model
+  - attributes
+  - dynamics
+  - persistence
+  - code
+  tier: derived
+  note: 'planets, 19 Oct 2026: read from planet-forge''s types (docs/data-model.md)'

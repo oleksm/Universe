@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=../../../schema/planet-object.schema.yaml
+identity:
+  key: planet-object.lake
+  name: Lake
+  about: 'A depression''s water: level, spill saddle, outlet, shore, and its water-balance class.'
+scope: generator
+about_model: 'Only the water balance makes a lake: open where inflow beats evaporation, closed where less, a playa under PLAYA_SHARE.'
+extends: planet-object.record
+generator: planet-process.vector-water
+geometry:
+  kind: ring
+  frame: body
+attributes:
+- name: level
+  unit: m
+  meaning: its surface
+- name: saddle, outlet, bottom
+  meaning: spill point, where the outflow leaves the shore, deepest point
+- name: class
+  meaning: 1 open, 2 closed, 3 playa
+  field: planet-field.lake
+persistence:
+  how: derived
+provides:
+- planet-field.lake
+- planet-field.lake-level
+code:
+- type: Lake
+  file: crates/water/src/lakes.rs
+status: draft
+basis:
+- of:
+  - identity
+  - about_model
+  - attributes
+  - dynamics
+  - persistence
+  - code
+  tier: derived
+  note: 'planets, 19 Oct 2026: read from planet-forge''s types (docs/data-model.md)'

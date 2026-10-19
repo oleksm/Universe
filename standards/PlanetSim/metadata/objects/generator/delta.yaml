@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../../schema/planet-object.schema.yaml
+identity:
+  key: planet-object.delta
+  name: Delta
+  about: 'A delta at a river mouth: its apex, plain, front, channels, and the causes that shape it (river, waves, tide).'
+scope: generator
+about_model: Shaped by the three sediment fluxes at its mouth (Galloway 1975, made quantitative after Nienhuis et al. 2020).
+extends: planet-object.record
+generator: planet-process.vector-water
+geometry:
+  kind: area
+  frame: body
+persistence:
+  how: derived
+code:
+- type: Delta
+  file: crates/water/src/delta.rs
+status: draft
+basis:
+- of:
+  - identity
+  - about_model
+  - attributes
+  - dynamics
+  - persistence
+  - code
+  tier: derived
+  note: 'planets, 19 Oct 2026: read from planet-forge''s types (docs/data-model.md)'

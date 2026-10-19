@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../../../schema/planet-object.schema.yaml
+identity:
+  key: planet-object.crust-ledger
+  name: Crust ledger
+  about: 'The plates'' running account of crust: floor made and consumed, crust added and lost by cause.'
+scope: generator
+about_model: The continental volume now equals the start plus what came in less what went out; a gap is a leak.
+extends: planet-object.record
+generator: planet-process.vector-plates
+geometry:
+  kind: none
+  frame: none
+attributes:
+- name: consumed, created
+  unit: m2
+  meaning: floor
+- name: arc, margin, stacked, plume
+  unit: m3
+  meaning: crust by cause
+- name: eroded, deposited, delaminated, subducted sediment
+  unit: m3
+  meaning: crust out and moved
+persistence:
+  how: bytes
+  table: vector-plates-world (FLUX)
+code:
+- type: Tally
+  file: crates/tectonics/src/lib.rs
+status: draft
+basis:
+- of:
+  - identity
+  - about_model
+  - attributes
+  - dynamics
+  - persistence
+  - code
+  tier: derived
+  note: 'planets, 19 Oct 2026: read from planet-forge''s types (docs/data-model.md)'

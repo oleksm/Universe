@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../../schema/planet-object.schema.yaml
+identity:
+  key: planet-object.clock
+  name: Clock
+  about: 'The planet''s time: seconds since formation.'
+scope: core
+about_model: Every record has a time or a span on this clock; the present is the run profile's star age. Said in Myr since formation, or Ma before the present.
+geometry:
+  kind: clock
+  frame: none
+attributes:
+- name: t
+  unit: s
+  meaning: since formation
+- name: star age
+  unit: s
+  meaning: the present (the run profile's planet)
+code:
+- type: State::t_myr, World::t
+  file: crates/forge-core/src/state.rs, crates/tectonics/src/lib.rs
+status: draft
+basis:
+- of:
+  - identity
+  - about_model
+  - attributes
+  - dynamics
+  - persistence
+  - code
+  tier: derived
+  note: 'planets, 19 Oct 2026: read from planet-forge''s types (docs/data-model.md)'

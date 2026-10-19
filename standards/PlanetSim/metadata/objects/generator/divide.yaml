@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../../schema/planet-object.schema.yaml
+identity:
+  key: planet-object.divide
+  name: Divide
+  about: A line between two drainage basins.
+scope: generator
+about_model: Found by bisection between places draining to different outlets.
+extends: planet-object.record
+generator: planet-process.vector-water
+geometry:
+  kind: line
+  frame: body
+attributes:
+- name: between
+  meaning: the two outlets
+persistence:
+  how: derived
+code:
+- type: Divide
+  file: crates/water/src/divides.rs
+status: draft
+basis:
+- of:
+  - identity
+  - about_model
+  - attributes
+  - dynamics
+  - persistence
+  - code
+  tier: derived
+  note: 'planets, 19 Oct 2026: read from planet-forge''s types (docs/data-model.md)'

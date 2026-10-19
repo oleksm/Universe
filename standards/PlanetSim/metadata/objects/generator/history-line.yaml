@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=../../../schema/planet-object.schema.yaml
+identity:
+  key: planet-object.history-line
+  name: History line
+  about: 'A line a plate process left in the crust, kept for the rock it lays: an arc along a trench, a rift''s cut, a hotspot''s track.'
+scope: generator
+about_model: The rock provinces are rebuilt from these lines and the plates' sutures and ridges; the lines are the geology's own records.
+extends: planet-object.record
+generator: planet-process.vector-geology
+geometry:
+  kind: line
+  frame: plate
+attributes:
+- name: plate
+  meaning: its plate
+- name: pts
+  meaning: the line
+- name: born_s
+  unit: s
+  meaning: when
+- name: kind
+  meaning: arc (continental, built_m), rift (half_width_m), track (hotspot, dwell_s)
+dynamics:
+- what: created
+  how: arcs every ARC_RECORD_STEPS from the trenches (rider's side); rifts at each rift; tracks each step under each hotspot
+- what: moves
+  how: rides its plate
+- what: merges
+  how: carried into the keeper's frame at a weld
+- what: splits
+  how: goes to the new plate at a rift when on its side
+- what: ends
+  how: with its plate
+persistence:
+  how: bytes
+  table: vector-geology-lines (JSON)
+knobs:
+- name: arc record cadence
+  param: planet-process.vector-geology / ARC_RECORD_STEPS
+  meaning: steps between arc records
+  cost: arc lines 1/steps
+code:
+- type: HLine
+  file: crates/geology-vector/src/forge_model.rs
+status: draft
+basis:
+- of:
+  - identity
+  - about_model
+  - attributes
+  - dynamics
+  - persistence
+  - code
+  tier: derived
+  note: 'planets, 19 Oct 2026: read from planet-forge''s types (docs/data-model.md)'

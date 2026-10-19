@@ -1,0 +1,74 @@
+# yaml-language-server: $schema=../../../schema/planet-object.schema.yaml
+identity:
+  key: planet-object.plate
+  name: Plate
+  about: 'A lithospheric plate: a rigid cap of the sphere bounded by its boundary segments, turning about its Euler pole.'
+scope: generator
+about_model: Everything a plate carries (crust bands, isochrons, sutures, history lines, features) is kept in its frame; its rotation since the start puts them in the body frame at any time.
+extends: planet-object.record
+generator: planet-process.vector-plates
+geometry:
+  kind: rotation
+  frame: mantle
+attributes:
+- name: id
+  unit: '1'
+  meaning: its number
+  field: planet-field.plate-id
+- name: q
+  unit: '1'
+  meaning: 'rotation since the run''s start (w, x, y, z): plate frame to body'
+  field: planet-field.plate-rotation
+- name: spin
+  unit: rad/s
+  meaning: angular velocity from the balance of forces
+  field: planet-field.plate-spin
+- name: axis
+  unit: '1'
+  meaning: its Euler axis
+  field: planet-field.plate-axis
+- name: torque
+  unit: N m
+  meaning: the forces' torque on it (slabs, ridge push)
+- name: slab
+  unit: N m
+  meaning: its slabs' torque, built over their time
+- name: area
+  unit: sr
+  meaning: followed continuously
+- name: big_since
+  unit: s
+  meaning: since when it carries more than BIG_SHARE of the continents
+dynamics:
+- what: created
+  how: the first plates at the deep era's start; a rift splits one into two
+  by: planet-process.vector-plates
+  event: planet-event.rift
+- what: moves
+  how: 'turns by its spin each substep (force balance: boundary torques against basal drag)'
+- what: merges
+  how: a weld joins two whose collision front reached WELD_AREA
+  event: planet-event.weld
+- what: ends
+  how: 'consumed below a few segments'' square: its outline goes to its neighbour'
+persistence:
+  how: bytes
+  table: vector-plates-world
+  format: store.rs PLAT section (vpck v3)
+  resumed: World restore from the bytes
+provides:
+- planet-field.plate
+code:
+- type: Plate
+  file: crates/tectonics/src/lib.rs
+status: draft
+basis:
+- of:
+  - identity
+  - about_model
+  - attributes
+  - dynamics
+  - persistence
+  - code
+  tier: derived
+  note: 'planets, 19 Oct 2026: read from planet-forge''s types (docs/data-model.md)'

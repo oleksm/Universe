@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../../schema/planet-object.schema.yaml
+identity:
+  key: planet-object.plate-happening
+  name: Plate happening
+  about: A rift (a plate split, the new plate on one side) or a weld (two plates joined), as the step's events.
+scope: generator
+about_model: The line store carries its features through them; the geology moves its history lines with them.
+extends: planet-object.record
+generator: planet-process.vector-plates
+geometry:
+  kind: none
+  frame: none
+attributes:
+- name: 'rift: plate, new'
+  meaning: the split plate and the new one
+- name: 'weld: keep, gone, qr'
+  meaning: the plate kept, the one gone, the turn from gone's frame to keep's
+persistence:
+  how: table
+  table: events.jsonl (planet-event.rift, planet-event.weld)
+code:
+- type: Happened
+  file: crates/tectonics/src/lib.rs
+status: draft
+basis:
+- of:
+  - identity
+  - about_model
+  - attributes
+  - dynamics
+  - persistence
+  - code
+  tier: derived
+  note: 'planets, 19 Oct 2026: read from planet-forge''s types (docs/data-model.md)'

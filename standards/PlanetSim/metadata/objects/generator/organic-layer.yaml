@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../../schema/planet-object.schema.yaml
+identity:
+  key: planet-object.organic-layer
+  name: Organic layer
+  about: 'Buried organic carbon in a shelf province: its depth and heat dose.'
+scope: generator
+about_model: Hydrocarbons' maturity follows from depth and time-temperature (TTI) over the province.
+extends: planet-object.record
+generator: planet-process.vector-geology
+geometry:
+  kind: area
+  frame: plate
+persistence:
+  how: derived
+provides:
+- planet-field.organic-carbon
+- planet-field.organic-depth
+- planet-field.organic-heat-dose
+code:
+- type: Organics
+  file: crates/geology-vector/src/organics.rs
+status: draft
+basis:
+- of:
+  - identity
+  - about_model
+  - attributes
+  - dynamics
+  - persistence
+  - code
+  tier: derived
+  note: 'planets, 19 Oct 2026: read from planet-forge''s types (docs/data-model.md)'

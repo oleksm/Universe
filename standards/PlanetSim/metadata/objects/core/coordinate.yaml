@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../../schema/planet-object.schema.yaml
+identity:
+  key: planet-object.coordinate
+  name: Coordinate
+  about: 'A place on the planet: a unit vector from the centre times the radius, pinned to the centimetre.'
+scope: core
+about_model: Every geometry in the model is made of coordinates. Something riding a plate keeps its coordinates in that plate's frame; its body position at a time is the plate's rotation then applied.
+geometry:
+  kind: location
+  frame: body
+  precision: pinned to the cm (integer cm in features; f64 unit vectors rounded to the cm in the plates' checkpoint)
+attributes:
+- name: direction
+  unit: '1'
+  meaning: 'unit vector from the centre, body frame (y the spin axis: lat = asin(y), lon = atan2(x, z))'
+- name: radius
+  unit: m
+  meaning: the planet's radius (the run profile's)
+code:
+- type: '[f64; 3] (vector::P)'
+  file: crates/vector/src/lib.rs
+- type: Pin
+  file: crates/forge-core/src/features.rs
+status: draft
+basis:
+- of:
+  - identity
+  - about_model
+  - attributes
+  - dynamics
+  - persistence
+  - code
+  tier: derived
+  note: 'planets, 19 Oct 2026: read from planet-forge''s types (docs/data-model.md)'
