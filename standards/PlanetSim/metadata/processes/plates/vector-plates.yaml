@@ -136,6 +136,35 @@ params:
   meaning: 'the interior model''s present mantle temperature (planet-field.mantle-temperature at the present in forge_e3): the excess is measured from it'
   source: planet-forge run forge_e3 (1257 degC at 4570 Myr)
   note: derived from the interior model; review if the interior changes
+- name: isopach step
+  values:
+  - 4000.0
+  - 2000.0
+  - 1000.0
+  - 1000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 0.001
+  meaning: 'the thickness step crust bands are kept at in each stretch of the resolution schedule: neighbouring crust within a step is one band (its thickness the volume over the area), so the crust is not a mosaic of patches a metre
+    apart'
+  source: 'derived: 4 km of crust is ~550 m of height (BUOYANCY), below what deep time is judged on; 1 km in the last 500 Myr as before'
+  note: '19 Oct 2026: e15 at 3.5 Ga had 815,000 patches under 40 km touching other bands, 38% of the crust volume, at 1 km steps'
+- name: quiet distance
+  value: 500000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 0.001
+  meaning: 'crust bands lying wholly farther than this from their plate''s boundary are quiet: held to twice the crust tolerance (cratons and old floor interiors change only by erosion)'
+  source: 'derived: twice OROGEN_HALF_WIDTH, beyond which no boundary process (arcs, belts, flow, docking) reaches in a step'
+  note: chosen; review
+- name: quiet tolerance factor
+  value: 2.0
+  unit: '1'
+  meaning: how much coarser than the crust tolerance a quiet band is held
+  source: owner, 19 Oct 2026 (consolidate old crust)
+  note: chosen; review
 reads:
 - name: mantle temperature
   field: planet-field.mantle-temperature

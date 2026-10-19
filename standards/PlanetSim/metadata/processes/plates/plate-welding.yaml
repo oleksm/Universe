@@ -97,6 +97,15 @@ params:
     elsewhere'
   source: 'collisional orogens run a few tens of Myr from first contact to the end of convergence across the suture (e.g. Caledonian-Scandian ~40 Myr, Alpine ~30-50 Myr); figures from memory: verify'
   note: '19 Oct 2026: alongside WELD_AREA; with stiff collision coupling the area brought in is small, so stalled contacts did not weld and kept trading crust'
+- name: WELD_CONTACT_LENGTH
+  value: 500000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 0.001
+  meaning: 'vector plates: a continental contact welds two plates (WELD_CONTACT_MYR) only once it is at least this long: a promontory touching another continent indents it; a wide front locks the suture'
+  source: 'derived from collision fronts that ended convergence (hundreds to thousands of km: Arabia ~1,000 km; India ~2,500 km); chosen at the small end for small Archean continents'
+  note: '19 Oct 2026: e15 welded 45 times by 3.5 Ga with plates holding at 9-10 (weld-rift churn) on any brief touch'
 random_draws:
 - none
 invariants:
