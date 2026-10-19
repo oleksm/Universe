@@ -247,6 +247,8 @@ def key_of(rel, rec):
         return {"scheduling": "clock."}[p[2]] + low
     if root == "Dogma":
         return ("dogma." if len(p) == 3 else "law.") + low
+    if root == "PlanetSim" and len(p) == 5 and p[2] == "objects":      # (objects/<core|generator>/<name>.yaml)
+        return "planet-object." + low
     if root == "Celestial":
         if p[2] == "seeding":
             return "seeding." + low

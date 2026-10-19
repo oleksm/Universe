@@ -13,7 +13,7 @@ import glob, os
 
 ORDER = ("planet-level", "planet-field", "planet-layer", "planet-line", "planet-landmark", "planet-event", "planet-handler",
          "planet-measure", "planet-factor", "planet-pattern", "planet-file", "planet-model", "lod-model", "planet-feature",
-         "planet-process", "planet-view", "planet-target", "planet-gate", "planet-run-profile")
+         "planet-process", "planet-view", "planet-target", "planet-gate", "planet-run-profile", "planet-object")
 
 
 def load(tree):

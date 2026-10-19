@@ -1,0 +1,90 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Planet object
+x-kind: [planet-object]
+description: "standards/PlanetSim/metadata/objects/<scope>/<name>.yaml: one kind of object in the Planet Simulator's data model. The core objects (scope core) are the general model every generator shares: the planet's coordinates and clock, the record a generator writes, its geometry, the surface that answers a property at any coordinate, the generator itself, how records persist, the resolution knobs. A generator's objects (scope generator) are what that generator keeps (a plate, a crust band, a suture, a river, a glacial moment), each extending a core object: their attributes, how they come to be, move, change and end, what they carry about themselves, how they are kept, which fields are evaluated from them, and the knobs that set their resolution. No object is a set of points: geometry is lines, areas and locations in planet coordinates, to a stated tolerance. planet-forge's types follow these records; a type with no record, or a record whose code does not match, is drift."
+type: object
+additionalProperties: false
+required: [identity, scope, about_model]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name, about]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      about: { type: string }
+  scope: { enum: [core, generator], description: "core: part of the general model; generator: kept by one generator." }
+  about_model: { type: string, description: "Its place in the model: what it stands for on the planet, in one or two sentences." }
+  extends: { type: string, x-ref: [planet-object], description: "The core object it is a kind of (a generator object extends one)." }
+  generator: { type: string, x-ref: [planet-process], description: "The process that keeps it (generator scope)." }
+  geometry:
+    type: object
+    additionalProperties: false
+    required: [kind]
+    properties:
+      kind: { enum: [none, location, line, ring, area, rotation, clock], description: "Its shape in planet coordinates (none: a value with no place; rotation: a plate's turn; clock: a time)." }
+      frame: { enum: [body, plate, mantle, none], description: "The frame its coordinates are in: body (now), plate (riding a plate; body = the plate's rotation applied), mantle (fixed under the plates), none." }
+      precision: { type: string, description: "How its coordinates are held (pinned to the cm, f64 unit vectors...)." }
+      tolerance: { type: string, description: "How closely its stored geometry follows the true line or edge, and what sets it (a knob)." }
+  attributes:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [name, meaning]
+      properties:
+        name: { type: string }
+        unit: { type: string }
+        meaning: { type: string }
+        field: { type: string, x-ref: [planet-field], description: "The field it is, when it has a field record." }
+        object: { type: string, x-ref: [planet-object], description: "The object it refers to (a plate id, a parent record)." }
+  dynamics:
+    type: array
+    description: "How it comes to be, moves, changes and ends: each step of its life, by which process and event."
+    items:
+      type: object
+      additionalProperties: false
+      required: [what, how]
+      properties:
+        what: { enum: [created, moves, changes, merges, splits, ends, read] }
+        how: { type: string }
+        by: { type: string, x-ref: [planet-process] }
+        event: { type: string, x-ref: [planet-event] }
+  annotations:
+    type: array
+    items: { type: string }
+    description: "What it carries about itself beyond its attributes: cause, trigger, rule, history, seed, state."
+  lineage: { type: string, description: "What it came from and what it can become (records of other objects)." }
+  persistence:
+    type: object
+    additionalProperties: false
+    required: [how]
+    properties:
+      how: { enum: [table, bytes, features, scalar, derived], description: "table: rows of a state table; bytes: a model's objects serialised in a state table; features: the line store; scalar: a named state scalar; derived: rebuilt from other records when read, never stored." }
+      table: { type: string, description: "The state table (or scalar, feature kind) it is kept in." }
+      format: { type: string, description: "Its layout there." }
+      resumed: { type: string, description: "How a resumed run and a client get it back (Model::restore)." }
+  provides:
+    type: array
+    items: { type: string, x-ref: [planet-field] }
+    description: "The fields evaluated from it (its generator's surface)."
+  knobs:
+    type: array
+    description: "What sets its resolution or count, and what each costs."
+    items:
+      type: object
+      additionalProperties: false
+      required: [name, meaning]
+      properties:
+        name: { type: string }
+        param: { type: string, description: "The process parameter (process key / name), or 'code: <const>' while it is not one yet." }
+        meaning: { type: string }
+        cost: { type: string, description: "How the cost scales with it (lines 1/tol, areas 1/tol^2, steps 1/dt, events n)." }
+  code:
+    type: array
+    description: "Where it is in planet-forge: the type and file. Drift: a field of the type not here, or here and not in the type."
+    items: { type: object, additionalProperties: false, required: [type, file], properties: { type: { type: string }, file: { type: string } } }
+  open: { type: array, items: { type: string }, description: "What is not settled or not built yet." }
+  status: { enum: [draft, published, retired] }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

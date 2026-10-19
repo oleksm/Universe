@@ -2657,7 +2657,8 @@ _REG = [("mounts", "Mounts", "SFO", os.path.join("SFO", "metadata", "mounts"), "
         ("planet-views", "Views", "PlanetSim", os.path.join("PlanetSim", "metadata", "views"), "PlanetSim/schema/planet-view.schema.yaml", None),
         ("planet-targets", "Targets", "PlanetSim", os.path.join("PlanetSim", "metadata", "targets"), "PlanetSim/schema/planet-target.schema.yaml", None),
         ("planet-gates", "Run gates", "PlanetSim", os.path.join("PlanetSim", "metadata", "gates"), "PlanetSim/schema/planet-gate.schema.yaml", None),
-        ("planet-run-profiles", "Run profiles", "PlanetSim", os.path.join("PlanetSim", "metadata", "run-profiles"), "PlanetSim/schema/planet-run-profile.schema.yaml", None)]
+        ("planet-run-profiles", "Run profiles", "PlanetSim", os.path.join("PlanetSim", "metadata", "run-profiles"), "PlanetSim/schema/planet-run-profile.schema.yaml", None),
+        ("planet-objects", "Data model", "PlanetSim", os.path.join("PlanetSim", "metadata", "objects"), "PlanetSim/schema/planet-object.schema.yaml", None)]
 for _kind, _title, _root, _dir, _schema, _std in _REG:
     _recs = []
     for _f in sorted(glob.glob(os.path.join(TREE, _dir, "**", "*.yaml"), recursive=True)):      # (the Planet Simulator's patterns lie in a folder a family)
