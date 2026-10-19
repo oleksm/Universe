@@ -32,8 +32,13 @@ envelope:
 - [-4.001, -11.702, -0.041, 4.001, -10.698, 2.421]
 - [-4.001, 10.698, -0.041, 4.001, 11.701, 2.422]
 - [-2.201, -11.69, -1.901, 2.201, 11.689, 2.902]
+visual:
+  format: "freefall-model/1"
+  path: "models/ingot-crane-10t/v2"
+  manifest_sha256: "1195fc7073b7dcd71088894d531cb6744e93b7412cf83a1bec5dc05e85e654b0"
+  version: 2
+  triangles: 7292
 life: 788940000
-visual: {format: freefall-model/1, path: models/ingot-crane-10t/v1, manifest_sha256: 9c659c060e5c25b71118cbedd054cf83d0c4255895d9c28dcddf1fd52e4db857, version: 1, triangles: 7292}
 basis:
 - of: [physical, built_of]
   tier: derived
