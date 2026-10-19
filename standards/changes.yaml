@@ -4824,7 +4824,7 @@
 - { record: unit.gantry-crane-20t-moon, at: "2026-10-19T14:37:23Z", status: draft, summary: "changed: visual", sha: "c5b1dc1bccfc2fbb" }
 - { record: unit.gas-heater-119mw-8bar, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "afb29b6a4ca2922e" }
 - { record: unit.gas-heater-122mw, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "c12dececee3dce51" }
-- { record: unit.hall-crane-20t, at: "2026-10-19T04:20:56Z", status: draft, summary: "changed: motion", sha: "5df71f9119c5126f" }
+- { record: unit.hall-crane-20t, at: "2026-10-19T14:41:48Z", status: draft, summary: "changed: visual", sha: "732c712506303096" }
 - { record: unit.heater-transformer-131mva, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "11e27b4ec8146004" }
 - { record: unit.hydrogen-purifier, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "d1d588633bfb0798" }
 - { record: unit.hydrogen-purifier-10bar, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "3b00fd69c2c8c7d7" }
