@@ -2924,7 +2924,7 @@
 - { record: root.local-administration, at: "2026-10-05T18:39:55Z", status: "", summary: "changed: identity, name", sha: "44ac9a3a3dfb6d34" }
 - { record: root.maker-house, at: "2026-10-05T18:39:55Z", status: "", summary: "changed: identity, name", sha: "99987243a02e746e" }
 - { record: root.planet-lod, at: "2026-10-17T17:32:25Z", status: "", summary: "changed: note", sha: "a38f7bd1bd5d7953" }
-- { record: root.planet-sim, at: "2026-10-17T17:32:25Z", status: "", summary: "changed: note", sha: "f01bc36a1ab8aaf2" }
+- { record: root.planet-sim, at: "2026-10-19T15:13:58Z", status: "", summary: "changed", sha: "09bf31541de49659" }
 - { record: rule.built-in-whole, at: "2026-10-07T03:53:08Z", status: review, summary: "first tracked", sha: "573c1e6d6c81a1ac" }
 - { record: rule.bulk-density-typical, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "bbd6cee7ed89e978" }
 - { record: rule.cut-loss, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "93cd4014464ec2ae" }
