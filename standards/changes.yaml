@@ -4821,7 +4821,7 @@
 - { record: unit.furniture-witness-box, at: "2026-10-18T03:41:57Z", status: draft, summary: "changed: visual", sha: "864f7cb87d3f1e09" }
 - { record: unit.furniture-workbench, at: "2026-10-18T01:14:24Z", status: draft, summary: "changed", sha: "c906e6ce56d8bfce" }
 - { record: unit.gantry-crane-150t-moon, at: "2026-10-19T14:33:43Z", status: draft, summary: "changed: visual", sha: "8fe9b50359f28065" }
-- { record: unit.gantry-crane-20t-moon, at: "2026-10-19T04:20:56Z", status: draft, summary: "changed: motion", sha: "2575ca35c56e8551" }
+- { record: unit.gantry-crane-20t-moon, at: "2026-10-19T14:37:23Z", status: draft, summary: "changed: visual", sha: "c5b1dc1bccfc2fbb" }
 - { record: unit.gas-heater-119mw-8bar, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "afb29b6a4ca2922e" }
 - { record: unit.gas-heater-122mw, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "c12dececee3dce51" }
 - { record: unit.hall-crane-20t, at: "2026-10-19T04:20:56Z", status: draft, summary: "changed: motion", sha: "5df71f9119c5126f" }
