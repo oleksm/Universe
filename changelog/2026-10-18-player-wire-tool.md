@@ -19,6 +19,8 @@ current capacity, voltage drop, bend clearance, clips, or runtime power/control
 nets. Authored wiring remains blocked from flight pending those checks. Existing
 mount-validation restrictions remain in effect.
 
-Deployment dependency: registry's fso port and multicore-cable records must be
-merged before this tool can offer those ports/cables. They are not copied into
-the game or replaced with guessed snap points.
+Registry fso 49bd202d is now integrated, supplying the real ports and multicore
+cables. A regression exercises a distribution-board to navigation-module route
+using registry contacts, transformed endpoint geometry, and cable mass. The
+registry build and workspace suite validate the merge; desktop playtesting is
+still outstanding.

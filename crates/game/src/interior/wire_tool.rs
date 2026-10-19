@@ -557,6 +557,60 @@ mod tests {
     use super::*;
     use serde_json::json;
     #[test]
+    #[ignore = "requires installed distribution-board and navigation model manifests"]
+    fn registry_board_to_navigation_route() {
+        let reg = universe_sim::world::registry::registry();
+        let mut plan = Plan::default();
+        let mut fit = Vec::new();
+        for (uid, key) in [
+            (1, "equipment.power.distribution.28v-16way"),
+            (2, "equipment.avionics.nav-basic.s1"),
+        ] {
+            let f = fitted(reg.equipment(key).unwrap(), key).unwrap();
+            plan.blocks.push(Block {
+                uid: Id(uid),
+                id: key.into(),
+                at: Vec3::X * uid as f32 * 2.,
+                size: f.size,
+                push: None,
+                rotation: None,
+            });
+            fit.push(f);
+        }
+        let ports = ports_for(&plan, &fit);
+        let a = ports
+            .iter()
+            .find(|p| p.end.port == "way-1")
+            .expect("board port geometry");
+        let b = ports
+            .iter()
+            .find(|p| p.end.port == "dc-in")
+            .expect("navigation port geometry");
+        let cable = cables()
+            .into_iter()
+            .find(|c| s(&c["identity"], "key") == "run.cable-dc-600v-3x1mm2")
+            .unwrap();
+        let pins = compatible(a, b, &cable).expect("real registry contacts mate");
+        assert_eq!(pins.len(), 3);
+        let wire = Wire {
+            from: a.end.clone(),
+            to: b.end.clone(),
+            cable: "run.cable-dc-600v-3x1mm2".into(),
+            waypoints_m: vec![[0., 2., 0.]],
+            pins,
+        };
+        plan.wiring = Some(std::collections::BTreeMap::from([("wire_1".into(), wire)]));
+        let h = harness(&plan, &fit);
+        assert_eq!(h.runs.len(), 1);
+        assert!(h.runs[0].mass > 0. && h.runs[0].length > 0.);
+        assert_eq!(
+            h.faults.len(),
+            1,
+            "only pending load/support validation: {:?}",
+            h.faults
+        );
+    }
+    #[test]
     fn player_wires_require_matching_ports_and_keep_their_route() {
         let make = |name: &str, x: f32, flow: &str| Port {
             end: WireEnd {
