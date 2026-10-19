@@ -116,3 +116,26 @@ params:
   meaning: how closely crust band outlines follow the true edge in each stretch (bands simplified to it; thick crust and margins grown from outlines held to it, at least 5 km)
   source: owner, 19 Oct 2026
   note: chosen; review
+- name: MELT_EFOLD
+  value: 175.0
+  unit: K
+  meaning: 'melt production (crust made by melting: plumes) grows as exp(excess / MELT_EFOLD) with the mantle temperature above today''s'
+  source: 'McKenzie & Bickle 1988: crust ~7 km today, ~15 km at +130 K, ~26 km at +230 K (fit)'
+  note: derived from the source curve; review
+- name: ARC_ONSET_EXCESS
+  values:
+  - 250.0
+  - 160.0
+  unit: K
+  meaning: 'arc crust from modern one-sided subduction: none while the mantle is more than [0] above today''s, all below [1] (between: the hot mantle''s transitional regime of weak, shallow underthrusting)'
+  source: Sizova et al. 2010 (regimes by mantle excess temperature); van Hunen & Moyen 2012; Dhuime et al. 2012 and Cawood et al. 2018 (arc-dominated growth from ~3 Ga)
+  note: review
+- name: MODERN_MANTLE_T
+  value: 1530.0
+  unit: K
+  meaning: 'the interior model''s present mantle temperature (planet-field.mantle-temperature at the present in forge_e3): the excess is measured from it'
+  source: planet-forge run forge_e3 (1257 degC at 4570 Myr)
+  note: derived from the interior model; review if the interior changes
+reads:
+- name: mantle temperature
+  field: planet-field.mantle-temperature
