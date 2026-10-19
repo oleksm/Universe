@@ -3336,11 +3336,11 @@ def airless_ladle_units(us):
     lf = dict(us["ladle-furnace-80t"])
     lf["name"] = "Ladle furnace, 80 t, sealed"
     lf["desc"] = ("The 80 t ladle furnace closed for airless ground: its roof's skirt seals on the ladle's rim with a soft ring, glands round the electrodes, the alloys in through a lock in the chute, and argon fed under the roof to about 50 kPa, so the arc burns as in air and the manganese it adds is not boiled off into the vacuum (open to vacuum, an 80 t heat at 1,600 deg C would lose about a fifth of its manganese in a quarter hour). "
-                 "Its fume, mostly argon, leaves by the roof's elbow to the layout's filter. Otherwise as unit.ladle-furnace-80t: " + us["ladle-furnace-80t"]["desc"])
+                 "Its fume, mostly argon, leaves by the roof's elbow to the layout's filter. Depressurize before retracting both halves of each lift-rod lock, raise the electrodes clear, then lift the roof. Lower and seat the roof and fully engage the locks before pressurizing. The argon feed has a flexible section between the fixed inlet and the moving roof, retaining its bore; length, bend limit and swept clearance require model measurement. Otherwise as unit.ladle-furnace-80t: " + us["ladle-furnace-80t"]["desc"])
     lf["built_of"] = list(us["ladle-furnace-80t"]["built_of"]) + [
         part("Electrode glands", A36, 368.7, "insulated water-cooled glands round the electrodes; measured on blender's model v1"),
         part("Rim seal and gland packing", "material.silicon-carbide", 150.0, "a soft ring of ceramic fibre rope on the roof's skirt (a hot rim burns elastomers), which leaks some argon that the feed makes up, and the glands' packing; silicon carbide stands for the ceramic fibre, from memory"),
-        part("Roof locks", A36, 1023.4, "50 kPa under the roof over the ladle's 2.9 m mouth lifts it with about 330 kN; the roof's own weight (about 5.8 t, 9 kN at 1.6 m/s2) barely counts against it, so lock collars on the two lift rods take about 165 kN each through twin 40 x 100 mm straps (about 21 MPa) to the cylinders' fixed heads on the gantry; measured on model v1"),
+        part("Roof locks", A36, 1023.4, "50 kPa under the roof over the ladle's 2.9 m mouth lifts it with about 330 kN; the roof's own weight (about 5.8 t, 9 kN at 1.6 m/s2) barely counts against it, so lock collars on the two lift rods take about 165 kN each through twin 40 x 100 mm straps (about 21 MPa) to the cylinders' fixed heads on the gantry; measured on model v1. Rig proposal, 19 Oct 2026: split collars below the new glands at z 7.9 m, each half retracts 0.20 m; catchers and straps stay fixed. Positions and travel are provisional; clearance and load qualification remain to review"),
         part("Alloy lock", A36, 2014.5, "two valves and a chamber in the chute; measured on model v1"),
         part("Lock drives", "good.electric-motors", 500.0, "the locks' actuators, from memory")]
     lf["needs"] = dict(us["ladle-furnace-80t"]["needs"])
@@ -5203,6 +5203,13 @@ def set_motions(us):
         elif k.startswith("ladle-furnace-80t"):
             u["motion"] = [{"id": "roof", "kind": "lift", "direction": [0.0, 0.0, 1.0], "distance": [0.0, 1.5], "moves": ["the roof, the alloy chute and the fume elbow"], "note": "raised about 1.5 m to let the ladle car pass (invented); the masts stand fixed on the bench (blender's rig, 2026-10-19)"},
                            {"id": "electrodes", "kind": "lift", "direction": [0.0, 0.0, 1.0], "distance": [-1.0, 2.0], "moves": ["the three electrodes with their arms and carriages, riding the fixed masts"], "note": "regulating the arc and raised clear, each on its own mast, apart from the roof (invented); raised before the roof lifts"}]
+            if k == "ladle-furnace-80t-sealed":
+                u["motion"][0]["note"] += "; depressurize and fully retract both halves of each rod lock before lifting; seat the roof and engage the locks before pressurizing (required sequence, not a runtime interlock)"
+                u["motion"].append({"id": "unlock", "kind": "travel", "distance": [0.0, 0.20],
+                                    "moves": ["the two opposed halves of each roof lift-rod lock collar"],
+                                    "note": "0 is locked, 0.20 m is fully retracted per half (invented, blender proposal 2026-10-19); no common direction because the halves move oppositely: each model axis specifies its outward direction and ratio 1. Catchers and straps remain fixed. Depressurize before unlocking, unlock fully and raise electrodes clear before roof lift; seat roof before relocking and pressurizing. Clearance, collar support and load qualification remain provisional."})
+                u["basis"].append({"of": ["motion"], "tier": "invented", "review": True,
+                                   "note": "Sealed roof lock release: 0.20 m per half from blender's 19 Oct 2026 rig proposal; operating sequence required, runtime interlocking and full-sweep clearance not established by this record."})
         elif k == "ingot-tipper":
             u["motion"] = [{"id": "tip", "kind": "tilt", "point": [0.0, 0.0, 1.0], "direction": [0.0, 1.0, 0.0], "angle": [0.0, r(math.pi / 2, 4)], "moves": ["the cradle and the ingot in it"], "note": "a quarter turn about the pivot along y, upright to lying toward +x (positive about +y), from its job; blender's rig, 2026-10-18 (was direction +x, the way it tips, not its axis)"}]
         elif k == "balling-disc-7m5":

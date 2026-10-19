@@ -1,8 +1,8 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.ladle-furnace-80t-sealed, name: 'Ladle furnace, 80 t, sealed', description: 'The 80 t ladle furnace closed for airless ground: its roof''s skirt seals on the ladle''s rim with a soft ring, glands round the electrodes, the alloys in through a lock in the chute, and argon fed under the roof to about 50 kPa, so the arc burns as in air and the manganese it adds is not boiled off into the vacuum (open to vacuum, an 80 t heat at 1,600 deg C would lose about a fifth of its manganese in a quarter hour). Its fume, mostly argon, leaves by the roof''s elbow to the layout''s filter. Otherwise as unit.ladle-furnace-80t: Reheats and trims an 80 t heat in its ladle, the ladle standing on its car under the furnace: a steel gantry straddles the ladle rail (a lane 5 m wide left clear under it along x), carrying a water-cooled roof 4.6 m across that is lowered onto the ladle (an annular seat skirt, radius 1.45 to 1.70 m, sits on its rim), three graphite electrodes on masts with their arms,
-    and an alloy chute through the roof. Its arc, about 10.9 MW at full heat, comes from its own transformer by a bus on its -y side (local 0, -5, 6); its cooling water by a manifold at local (-4.5, -4.5, 1); the alloys by a chute whose top stands at local (0, 3, 9); its fume leaves by an elbow on the roof at local (2, 0, 7.5). Argon is blown through the ladle''s porous plug from the car. At rest: the roof''s rim on the ladle''s lip (z 4.4), its crown at 5.2; three 300 mm graphite electrodes on a 0.35 m pitch radius through the roof''s delta; the masts at the rear (y -3.8), their arms fanning forward, the centre arm 0.6 m higher; the gantry''s columns at x -5 and 5, y -4.4 and 4.4, 12 m tall, its two cross beams on top. Its ports (SFO 25): the bus joint at the cables'' hanger, (0, -5.34, 6), facing -y; the manifold''s water, DN 150 facing -y, out at (-4.8, -4.85, 1) and in at (-4.2, -4.85, 1); the alloy chute''s mouth at (0, 3, 9), a belt''s head over it; the fume out of the roof''s elbow
-    at (2, 0, 7.5), facing up, DN 200 (the elbow water-cooled, so the gas leaves it under 400 deg C); argon in at (-5.5, -2.5, 1.5) on the west frame, facing -x.'}
+identity: {key: unit.ladle-furnace-80t-sealed, name: 'Ladle furnace, 80 t, sealed', description: 'The 80 t ladle furnace closed for airless ground: its roof''s skirt seals on the ladle''s rim with a soft ring, glands round the electrodes, the alloys in through a lock in the chute, and argon fed under the roof to about 50 kPa, so the arc burns as in air and the manganese it adds is not boiled off into the vacuum (open to vacuum, an 80 t heat at 1,600 deg C would lose about a fifth of its manganese in a quarter hour). Its fume, mostly argon, leaves by the roof''s elbow to the layout''s filter. Depressurize before retracting both halves of each lift-rod lock, raise the electrodes clear, then lift the roof. Lower and seat the roof and fully engage the locks before pressurizing. The argon feed has a flexible section between the fixed inlet and the moving roof, retaining its bore; length, bend limit and swept clearance require model measurement. Otherwise as unit.ladle-furnace-80t: Reheats and
+    trims an 80 t heat in its ladle, the ladle standing on its car under the furnace: a steel gantry straddles the ladle rail (a lane 5 m wide left clear under it along x), carrying a water-cooled roof 4.6 m across that is lowered onto the ladle (an annular seat skirt, radius 1.45 to 1.70 m, sits on its rim), three graphite electrodes on masts with their arms, and an alloy chute through the roof. Its arc, about 10.9 MW at full heat, comes from its own transformer by a bus on its -y side (local 0, -5, 6); its cooling water by a manifold at local (-4.5, -4.5, 1); the alloys by a chute whose top stands at local (0, 3, 9); its fume leaves by an elbow on the roof at local (2, 0, 7.5). Argon is blown through the ladle''s porous plug from the car. At rest: the roof''s rim on the ladle''s lip (z 4.4), its crown at 5.2; three 300 mm graphite electrodes on a 0.35 m pitch radius through the roof''s delta; the masts at the rear (y -3.8), their arms fanning forward, the centre arm 0.6 m higher; the gantry''s
+    columns at x -5 and 5, y -4.4 and 4.4, 12 m tall, its two cross beams on top. Its ports (SFO 25): the bus joint at the cables'' hanger, (0, -5.34, 6), facing -y; the manifold''s water, DN 150 facing -y, out at (-4.8, -4.85, 1) and in at (-4.2, -4.85, 1); the alloy chute''s mouth at (0, 3, 9), a belt''s head over it; the fume out of the roof''s elbow at (2, 0, 7.5), facing up, DN 200 (the elbow water-cooled, so the gas leaves it under 400 deg C); argon in at (-5.5, -2.5, 1.5) on the west frame, facing -x.'}
 size_class: 2
 fits: plant-mount.bay-s2
 physical: {length: 12.0, width: 10.7, height: 15.06, mass: 80630.0}
@@ -16,7 +16,7 @@ built_of:
 - {what: Roof lift and mast hydraulics, item: good.pumps, mass: 6000.0, note: from memory}
 - {what: Electrode glands, item: material.structural-steel-a36, mass: 368.7, note: insulated water-cooled glands round the electrodes; measured on blender's model v1}
 - {what: Rim seal and gland packing, item: material.silicon-carbide, mass: 150.0, note: 'a soft ring of ceramic fibre rope on the roof''s skirt (a hot rim burns elastomers), which leaks some argon that the feed makes up, and the glands'' packing; silicon carbide stands for the ceramic fibre, from memory'}
-- {what: Roof locks, item: material.structural-steel-a36, mass: 1023.0, note: '50 kPa under the roof over the ladle''s 2.9 m mouth lifts it with about 330 kN; the roof''s own weight (about 5.8 t, 9 kN at 1.6 m/s2) barely counts against it, so lock collars on the two lift rods take about 165 kN each through twin 40 x 100 mm straps (about 21 MPa) to the cylinders'' fixed heads on the gantry; measured on model v1'}
+- {what: Roof locks, item: material.structural-steel-a36, mass: 1023.0, note: '50 kPa under the roof over the ladle''s 2.9 m mouth lifts it with about 330 kN; the roof''s own weight (about 5.8 t, 9 kN at 1.6 m/s2) barely counts against it, so lock collars on the two lift rods take about 165 kN each through twin 40 x 100 mm straps (about 21 MPa) to the cylinders'' fixed heads on the gantry; measured on model v1. Rig proposal, 19 Oct 2026: split collars below the new glands at z 7.9 m, each half retracts 0.20 m; catchers and straps stay fixed. Positions and travel are provisional; clearance and load qualification remain to review'}
 - {what: Alloy lock, item: material.structural-steel-a36, mass: 2014.0, note: two valves and a chamber in the chute; measured on model v1}
 - {what: Lock drives, item: good.electric-motors, mass: 500.0, note: 'the locks'' actuators, from memory'}
 - {what: Fume riser and argon piping, item: material.stainless-steel-304, mass: 92.75, note: the DN 200 fume riser to its flange and the argon feed to the roof; measured on blender's model v2 (2026-10-16)}
@@ -157,13 +157,18 @@ motion:
   direction: [0.0, 0.0, 1.0]
   distance: [0.0, 1.5]
   moves: ['the roof, the alloy chute and the fume elbow']
-  note: raised about 1.5 m to let the ladle car pass (invented); the masts stand fixed on the bench (blender's rig, 2026-10-19)
+  note: raised about 1.5 m to let the ladle car pass (invented); the masts stand fixed on the bench (blender's rig, 2026-10-19); depressurize and fully retract both halves of each rod lock before lifting; seat the roof and engage the locks before pressurizing (required sequence, not a runtime interlock)
 - id: electrodes
   kind: lift
   direction: [0.0, 0.0, 1.0]
   distance: [-1.0, 2.0]
   moves: ['the three electrodes with their arms and carriages, riding the fixed masts']
   note: regulating the arc and raised clear, each on its own mast, apart from the roof (invented); raised before the roof lifts
+- id: unlock
+  kind: travel
+  distance: [0.0, 0.2]
+  moves: [the two opposed halves of each roof lift-rod lock collar]
+  note: '0 is locked, 0.20 m is fully retracted per half (invented, blender proposal 2026-10-19); no common direction because the halves move oppositely: each model axis specifies its outward direction and ratio 1. Catchers and straps remain fixed. Depressurize before unlocking, unlock fully and raise electrodes clear before roof lift; seat roof before relocking and pressurizing. Clearance, collar support and load qualification remain provisional.'
 envelope:
 - [4.699, -4.701, 0.0, 5.301, -4.099, 12.0]
 - [4.699, 4.099, 0.0, 5.301, 4.701, 12.0]
@@ -211,6 +216,10 @@ basis:
   tier: invented
   review: true
   note: 'Manganese''s loss: its vapour pressure over a 1% melt (about 40 Pa at 1,873 K, from memory) through Hertz-Knudsen over the ladle''s 7 m2. Sealed roofs as on closed furnaces; not built for vacuum.'
+- of: [motion]
+  tier: invented
+  review: true
+  note: 'Sealed roof lock release: 0.20 m per half from blender''s 19 Oct 2026 rig proposal; operating sequence required, runtime interlocking and full-sweep clearance not established by this record.'
 - of: [ports]
   tier: invented
   review: true
