@@ -160,8 +160,13 @@ envelope:
 - [-5.5, -5.25, 0.0, -4.0, -3.9, 12.0]
 - [-1.201, -0.501, 2.799, 2.5, 0.501, 16.0]
 - [-5.0, -4.401, 11.5, 5.0, 4.651, 12.0]
+visual:
+  format: "freefall-model/1"
+  path: "models/ladle-furnace-80t/v2"
+  manifest_sha256: "72e4b85e81ca29df0ef1268012f891476b6724d19cae61dee579553aca90df2c"
+  version: 2
+  triangles: 32046
 life: 788940000
-visual: {format: freefall-model/1, path: models/ladle-furnace-80t/v1, manifest_sha256: 798a06197c33e9638f0472ab6f552f02f59f935abf73bc1d0fe9f92fcb43d2bc, version: 1, triangles: 12662}
 basis:
 - of: [recipes]
   tier: derived
