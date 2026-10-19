@@ -78,8 +78,13 @@ envelope:
 - [-4.058, -32.193, 2.434, 31.854, 1.529, 15.93]
 - [-1.48, -34.762, 0.191, 34.459, -2.834, 17.237]
 - [-3.311, -24.137, 5.788, 23.824, 0.488, 19.67]
+visual:
+  format: "freefall-model/1"
+  path: "models/stacker-reclaimer-1500th/v3"
+  manifest_sha256: "059fc1f69d9b801af3b9f28c0bba1d17316212933b95ce1fb57052d67b5b47c8"
+  version: 3
+  triangles: 20444
 life: 788940000
-visual: {format: freefall-model/1, path: models/stacker-reclaimer-1500th/v2, manifest_sha256: 486e11f161b99293de9fc4ded7a926f6631e5eb27203d496aa3029d2d6f3a134, version: 2, triangles: 20492}
 basis:
 - of: [physical, built_of]
   tier: derived
