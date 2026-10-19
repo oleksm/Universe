@@ -33,13 +33,13 @@ envelope:
 - [-2.202, -12.501, 21.9, 2.202, 12.501, 23.701]
 - [-4.902, -12.571, -0.041, 4.902, -11.429, 22.001]
 - [-4.902, 11.429, -0.041, 4.902, 12.571, 22.001]
+life: 788940000
 visual:
   format: "freefall-model/1"
   path: "models/gantry-crane-20t-moon/v2"
   manifest_sha256: "9f6edb7247c262807bfdd0fd57b4ec218f546f0021be6e1160405b1e0a3be0f2"
   version: 2
   triangles: 5824
-life: 788940000
 basis:
 - of: [physical, built_of]
   tier: derived

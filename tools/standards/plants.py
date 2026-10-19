@@ -5204,7 +5204,7 @@ def set_motions(us):
             u["motion"] = [{"id": "roof", "kind": "lift", "direction": [0.0, 0.0, 1.0], "distance": [0.0, 1.5], "moves": ["the roof, its masts and arms, the alloy chute and the fume elbow"], "note": "raised about 1.5 m to let the ladle car pass (invented)"},
                            {"id": "electrodes", "kind": "lift", "direction": [0.0, 0.0, 1.0], "distance": [-1.0, 2.0], "moves": ["the three electrodes on their masts"], "note": "regulating the arc and raised clear (invented)"}]
         elif k == "ingot-tipper":
-            u["motion"] = [{"id": "tip", "kind": "tilt", "direction": [1.0, 0.0, 0.0], "angle": [0.0, r(math.pi / 2, 4)], "moves": ["the cradle and the ingot in it"], "note": "a quarter turn, upright to lying (from its job)"}]
+            u["motion"] = [{"id": "tip", "kind": "tilt", "point": [0.0, 0.0, 1.0], "direction": [0.0, 1.0, 0.0], "angle": [0.0, r(math.pi / 2, 4)], "moves": ["the cradle and the ingot in it"], "note": "a quarter turn about the pivot along y, upright to lying toward +x (positive about +y), from its job; blender's rig, 2026-10-18 (was direction +x, the way it tips, not its axis)"}]
         elif k == "balling-disc-7m5":
             u["motion"] = [{"id": "spin", "kind": "rotate", "moves": ["the disc"], "boxes": [], "note": "turning continuously about its own tilted axis: it sweeps nothing beyond itself"}]
         elif k == "ball-mill-4m4":
