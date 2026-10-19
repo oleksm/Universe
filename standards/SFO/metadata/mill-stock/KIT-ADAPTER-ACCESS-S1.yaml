@@ -17,7 +17,7 @@ size:
 supplies:
   item: adapter.access-s1
 physical:
-  mass: 892.44
+  mass: 878.724
 basis:
 - of:
   - size

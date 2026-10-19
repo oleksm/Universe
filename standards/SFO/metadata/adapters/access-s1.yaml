@@ -13,24 +13,26 @@ physical:
   length: 3.22
   width: 3.2
   height: 0.45
-  mass: 892.44
+  mass: 878.724
 built_of:
 - what: Beams
   item: material.high-strength-steel-4340
-  mass: 144.27
-  note: 2 of 4340 tube 200 x 5 mm, 3.0 m each
+  mass: 143.466
+  note: 2 hollow 4340 tubes 200 x 5 mm, 3 m; bottom raised 12 mm over fixing plates; measured from Blender cradle candidate-v01 final 48-segment mesh, 2026-10-19 mass-review.json; joint/load qualification pending
 - what: Cross tubes
   item: material.high-strength-steel-4340
-  mass: 716.17
-  note: 5 of 4340 tube 250 x 8 mm, 3.0 m each at x [-1.485, -1.05, 0.0, 1.05, 1.485]; untrimmed stock mass, fishmouth deductions pending
+  mass: 703.472
+  note: 5 hollow 4340 tubes 250 x 8 mm, at x [-1.485, -1.05, 0, 1.05, 1.485], fishmouth seats cut; socket face z 0.45 retained; measured from Blender cradle candidate-v01 final 48-segment mesh, 2026-10-19 mass-review.json; joint/load
+    qualification pending
 - what: Socket pads and inserts
   item: material.high-strength-steel-4340
-  mass: 29.08
-  note: 8 4340 pads, each an M42 insert; pad thickness 0.042 m, crosses lowered by that thickness with fishmouth seats to retain socket face z 0.45; joints unqualified
+  mass: 28.123
+  note: 8 4340 pads, 42 mm thick, nominal 42 mm socket bores; detailed threads/inserts unqualified; measured from Blender cradle candidate-v01 final 48-segment mesh, 2026-10-19 mass-review.json; joint/load qualification pending
 - what: Fixing lugs
   item: material.aluminium-alloy-6061
-  mass: 2.92
-  note: 6 6061 lugs, a strut clamp bolted to each
+  mass: 3.663
+  note: 6 6061 saddle lugs, top z 0.055, 12 mm bottom plates, 46 mm clearance bores for provisional M42 fixings; all fixing datums retained; measured from Blender cradle candidate-v01 final 48-segment mesh, 2026-10-19 mass-review.json;
+    joint/load qualification pending
 ports:
 - id: s1
   flow: in
@@ -166,7 +168,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 462.1
+  mass: 459.8
   force: 425333.0
   at:
   - -1.0
@@ -183,7 +185,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 462.1
+  mass: 459.8
   force: 425333.0
   at:
   - 0.0
@@ -200,7 +202,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 462.1
+  mass: 459.8
   force: 425333.0
   at:
   - 1.0
@@ -217,7 +219,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 462.1
+  mass: 459.8
   force: 425333.0
   at:
   - -1.0
@@ -234,7 +236,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 462.1
+  mass: 459.8
   force: 425333.0
   at:
   - 0.0
@@ -251,7 +253,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 462.1
+  mass: 459.8
   force: 425333.0
   at:
   - 1.0

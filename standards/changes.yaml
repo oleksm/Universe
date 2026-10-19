@@ -4,7 +4,7 @@
 # what changed, and the hash of its file. A record whose line says `complete` may not change:
 # validation fails if it does. Only the user reopens one:
 #   python3 tools/standards/tracker.py reopen <key> "<why>"
-- { record: adapter.access-s1, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: identity, physical, built_of, ports", sha: "1d2ffb565cb90476" }
+- { record: adapter.access-s1, at: "2026-10-19T16:47:21Z", status: draft, summary: "changed: physical, built_of, ports", sha: "b1fad07431a035ae" }
 - { record: adapter.access-s2, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: identity, physical, built_of, ports", sha: "f26262505257466d" }
 - { record: adapter.access-s3, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: identity, physical, built_of, ports", sha: "6e6f62ebc560071f" }
 - { record: adapter.capacitor-s1, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "d2a8ff8e455a45bf" }
@@ -3672,7 +3672,7 @@
 - { record: stock.iron-ore-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "6418e5e574655925" }
 - { record: stock.iron-ore-pellets-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "f4e6815b244b2cb6" }
 - { record: stock.kimberlite-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "be5e6246e5123b72" }
-- { record: stock.kit-adapter-access-s1, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size, physical", sha: "a00be30be89adab8" }
+- { record: stock.kit-adapter-access-s1, at: "2026-10-19T16:47:21Z", status: review, summary: "changed: physical", sha: "6d330813b2aab30c" }
 - { record: stock.kit-adapter-access-s2, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size, physical", sha: "38a489475c2e1197" }
 - { record: stock.kit-adapter-access-s3, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size, physical", sha: "a1d6c730cd64e83b" }
 - { record: stock.kit-adapter-capacitor-s1, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "33f596f9e96217d1" }

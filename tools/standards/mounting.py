@@ -277,7 +277,21 @@ def cradle(slot, m, socks, d, tl):
              {"what": "Cross tubes", "item": tc["mat"], "mass": r(lc * tc["kgm"], 2), "note": f"{len(cross_x)} of {tc['name']}, {r(2 * Yb, 2)} m each at x {cross_x}; untrimmed stock mass, fishmouth deductions pending"},
              {"what": "Socket pads and inserts", "item": ST, "mass": r(n * pad, 2), "note": f"{n} 4340 pads, each an M{d} insert; pad thickness {d / 1000:g} m, crosses lowered by that thickness with fishmouth seats to retain socket face z {h:g}; joints unqualified"},
              {"what": "Fixing lugs", "item": AL, "mass": r(nfix * lug, 2), "note": f"{nfix} 6061 lugs, a strut clamp bolted to each"}]
-    mass = r(sum(p["mass"] for p in parts), 2)
+    if slot == "access-s1":
+        # Measured reference only; do not spread its cuts across differently sized cradles.
+        # Blender cradle/candidate-v01/review/mass-review.json, 2026-10-19.
+        assert (n, nfix, cross_x, tb["D"], tc["D"], d) == (8, 6, [-1.485, -1.05, 0.0, 1.05, 1.485], 0.2, 0.25, 42)
+        measured = [143.46569443534898, 703.4717793548417, 28.123396788736326, 3.66273821116026]
+        notes = [
+            "2 hollow 4340 tubes 200 x 5 mm, 3 m; bottom raised 12 mm over fixing plates",
+            "5 hollow 4340 tubes 250 x 8 mm, at x [-1.485, -1.05, 0, 1.05, 1.485], fishmouth seats cut; socket face z 0.45 retained",
+            "8 4340 pads, 42 mm thick, nominal 42 mm socket bores; detailed threads/inserts unqualified",
+            "6 6061 saddle lugs, top z 0.055, 12 mm bottom plates, 46 mm clearance bores for provisional M42 fixings; all fixing datums retained"
+        ]
+        for part, value, note in zip(parts, measured, notes):
+            part["mass"] = r(value, 3)
+            part["note"] = note + "; measured from Blender cradle candidate-v01 final 48-segment mesh, 2026-10-19 mass-review.json; joint/load qualification pending"
+    mass = r(sum(p["mass"] for p in parts), 3 if slot == "access-s1" else 2)
     ports = [{"id": s["id"], "flow": "in", "medium": "load", "interface": s["interface"], "half": "female", "make": "bolted",
               "at": [s["at"][0], s["at"][1], h], "facing": [0.0, 0.0, 1.0], "optional": True,
               "note": f"the mount's socket, an M{d} insert (bolt {s['connector']}); spare when no foot is on it"} for s in socks]
