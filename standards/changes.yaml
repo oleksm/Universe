@@ -4758,7 +4758,7 @@
 - { record: unit.fitout-ward, at: "2026-10-17T22:41:41Z", status: deprecated, summary: "changed: revision", sha: "a523c11df8787324" }
 - { record: unit.fitout-washroom, at: "2026-10-17T22:41:41Z", status: deprecated, summary: "changed: revision", sha: "c8b365efd22ab34d" }
 - { record: unit.fitout-workshop, at: "2026-10-17T22:41:41Z", status: deprecated, summary: "changed: revision", sha: "ff3120bbb7dba9e2" }
-- { record: unit.forklift-2t5, at: "2026-10-19T04:16:31Z", status: draft, summary: "changed: visual", sha: "9efee297871c2554" }
+- { record: unit.forklift-2t5, at: "2026-10-19T04:20:56Z", status: draft, summary: "changed", sha: "11fb737ea034ae4f" }
 - { record: unit.furnace-transformer-14mva, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "c16dea6a1f79fcf2" }
 - { record: unit.furnace-transformer-90mva, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "3d66e024078d6eba" }
 - { record: unit.furniture-back-shelf, at: "2026-10-18T01:14:24Z", status: draft, summary: "changed", sha: "428913db432f4a93" }
@@ -4804,24 +4804,24 @@
 - { record: unit.furniture-web-press, at: "2026-10-18T03:48:18Z", status: draft, summary: "changed: visual", sha: "5624ed52aa5b714b" }
 - { record: unit.furniture-witness-box, at: "2026-10-18T03:41:57Z", status: draft, summary: "changed: visual", sha: "864f7cb87d3f1e09" }
 - { record: unit.furniture-workbench, at: "2026-10-18T01:14:24Z", status: draft, summary: "changed", sha: "c906e6ce56d8bfce" }
-- { record: unit.gantry-crane-150t-moon, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "7dfe5d37742335da" }
-- { record: unit.gantry-crane-20t-moon, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "5498719cb23fe32b" }
+- { record: unit.gantry-crane-150t-moon, at: "2026-10-19T04:20:56Z", status: draft, summary: "changed: motion", sha: "a87960415eb81ae9" }
+- { record: unit.gantry-crane-20t-moon, at: "2026-10-19T04:20:56Z", status: draft, summary: "changed: motion", sha: "2575ca35c56e8551" }
 - { record: unit.gas-heater-119mw-8bar, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "afb29b6a4ca2922e" }
 - { record: unit.gas-heater-122mw, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "c12dececee3dce51" }
-- { record: unit.hall-crane-20t, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "195f5aa1fde4238b" }
+- { record: unit.hall-crane-20t, at: "2026-10-19T04:20:56Z", status: draft, summary: "changed: motion", sha: "5df71f9119c5126f" }
 - { record: unit.heater-transformer-131mva, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "11e27b4ec8146004" }
 - { record: unit.hydrogen-purifier, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "d1d588633bfb0798" }
 - { record: unit.hydrogen-purifier-10bar, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "3b00fd69c2c8c7d7" }
 - { record: unit.induration-grate-125th, at: "2026-10-17T15:30:24Z", status: draft, summary: "changed: envelope, model_requests", sha: "66e79544df6a597b" }
 - { record: unit.ingot-car-40t, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "e523477322c9c8c9" }
-- { record: unit.ingot-crane-10t, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "0716d9177da4f4d3" }
-- { record: unit.ingot-gantry-10t-moon, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "cb09723a565f6e02" }
+- { record: unit.ingot-crane-10t, at: "2026-10-19T04:20:56Z", status: draft, summary: "changed: motion", sha: "c47cdd185cad6a97" }
+- { record: unit.ingot-gantry-10t-moon, at: "2026-10-19T04:20:56Z", status: draft, summary: "changed: motion", sha: "5377d00f96094530" }
 - { record: unit.ingot-tipper, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "d947c8a488a62412" }
 - { record: unit.ladle-car-80t, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "1d6463f997b73110" }
-- { record: unit.ladle-crane-150t, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "ba112509cc38694b" }
+- { record: unit.ladle-crane-150t, at: "2026-10-19T04:20:56Z", status: draft, summary: "changed: motion", sha: "0033acb2e4a43f0e" }
 - { record: unit.ladle-furnace-80t, at: "2026-10-17T15:44:28Z", status: draft, summary: "changed: envelope, model_requests", sha: "962e5bb7f838e935" }
 - { record: unit.ladle-furnace-80t-sealed, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "2c94a26365aaabda" }
-- { record: unit.mill-crane-30t, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "e0067c9b9bf91396" }
+- { record: unit.mill-crane-30t, at: "2026-10-19T04:20:56Z", status: draft, summary: "changed: motion", sha: "fedae02d1a8a6d68" }
 - { record: unit.mould-car-12, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "1612fedfe2241d7a" }
 - { record: unit.offgas-cooler-sealed, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "fde89cff403f2d70" }
 - { record: unit.offgas-filter-sealed, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "42fd7e582dbb5965" }
@@ -4843,11 +4843,11 @@
 - { record: unit.shaft-furnace-200th, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "f7ced1b1d9990a30" }
 - { record: unit.shaft-furnace-200th-hp, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "c033f38b4f979327" }
 - { record: unit.slag-pot-car, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "3cdcfc4a0162b4be" }
-- { record: unit.stack-crane-20t, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "1637aefa4e7e4318" }
+- { record: unit.stack-crane-20t, at: "2026-10-19T04:20:56Z", status: draft, summary: "changed: motion", sha: "1ba9922791a9860f" }
 - { record: unit.stacker-reclaimer-1500th, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "23285e1ea4c7acbc" }
 - { record: unit.stair-tower-12m, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: ports", sha: "b9576bc580379925" }
-- { record: unit.stripper-crane-20t, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "ddafe91e499e56ca" }
-- { record: unit.stripper-gantry-20t-moon, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "865c6a3f1cff9952" }
+- { record: unit.stripper-crane-20t, at: "2026-10-19T04:20:56Z", status: draft, summary: "changed: motion", sha: "102556c9cf67fbbe" }
+- { record: unit.stripper-gantry-20t-moon, at: "2026-10-19T04:20:56Z", status: draft, summary: "changed: motion", sha: "6c2aa866422a1f2d" }
 - { record: unit.top-gas-condenser-8bar, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "b85a3301f5340364" }
 - { record: unit.top-gas-scrubber, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "cd0ec91f709a508d" }
 - { record: unit.truck-dump-hopper, at: "2026-10-17T15:44:28Z", status: draft, summary: "changed", sha: "820349243a51d3e8" }

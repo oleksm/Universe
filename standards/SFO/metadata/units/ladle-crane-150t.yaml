@@ -19,9 +19,9 @@ motion:
 - id: traverse
   kind: travel
   direction: [0.0, 1.0, 0.0]
-  distance: [-9.7, 9.7]
+  distance: [-9.0, 9.0]
   moves: [the trolley and its hook]
-  note: across the bridge, about 1.5 m short of each end (invented)
+  note: 'across the bridge, 9 m either way as the description says (at most 1.5 m short of each end), its end stops there (invented; blender''s sweep of the 150 t moon gantry, 2026-10-18: at 10.7 m its wheels met the stops)'
 - id: hoist
   kind: lift
   direction: [0.0, 0.0, 1.0]

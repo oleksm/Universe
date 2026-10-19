@@ -617,6 +617,14 @@ def _sweep_axes(mo, axes, bind, parent, eye):
             bad.append(f"motion: hose {h['name']}: its ends reach {far:.4f} m apart, more than its {h['free_length']} m")
         if h["min_bend_radius"] <= 0 or h["diameter"] <= 0:
             bad.append(f"motion: hose {h['name']}: diameter and bend radius must be above 0")
+    for sp in mo.get("spans", []):
+        lens = [math.dist(*[_apply(_mul(moved_of(e["parent"], pose(*q)), bind.get(e["parent"], eye)), e["point"]) for e in (sp["from"], sp["to"])]) for q in poses]
+        if min(sp["unit_length"], sp["min_length"], sp["diameter"]) <= 0 or sp["min_length"] > sp["max_length"]:
+            bad.append(f"motion: span {sp['name']}: unit_length, diameter and lengths must be above 0, min_length no more than max_length")
+        elif min(lens) < sp["min_length"] - 1e-6 or max(lens) > sp["max_length"] + 1e-6:
+            bad.append(f"motion: span {sp['name']}: its anchors are {min(lens):.4f} to {max(lens):.4f} m apart, outside its {sp['min_length']} to {sp['max_length']} m")
+        if sp["node"] in on or sp["node"] in parent and parent[sp["node"]] != mo["root"]:
+            bad.append(f"motion: span {sp['name']}: {sp['node']!r} is placed by the span alone (listed under the root, if at all, and no axis on it)")
     if mo.get("links") or mo.get("bellows") or mo.get("gimbal"):
         bad.append("motion: links, bellows and a gimbal are not yet checked with plain axes: ask the registry")
     for ref in mo.get("references", []):
@@ -635,10 +643,20 @@ def _sweep_axes(mo, axes, bind, parent, eye):
                     A[node] = None; continue
                 rr = _swing(ax, d)
                 A[node] = [[*rr[0], at[0]], [*rr[1], at[1]], [*rr[2], at[2]], [0, 0, 0, 1]]
+        for sp in mo.get("spans", []):      # (aimed as an actuator, then stretched along its axis: M = T(from) R S)
+            f = _apply(A.get(sp["from"]["parent"], eye), sp["from"]["point"])
+            t_ = _apply(A.get(sp["to"]["parent"], eye), sp["to"]["point"])
+            ax, d = _unit(sp["axis"]), [t_[k] - f[k] for k in range(3)]
+            if _dot(ax, _unit(d)) < -1 + 1e-9:
+                A[sp["node"]] = None; continue
+            rr, k_ = _swing(ax, _unit(d)), math.dist(f, t_) / sp["unit_length"]
+            S = [[(1 if i == j else 0) + (k_ - 1) * ax[i] * ax[j] for j in range(3)] for i in range(3)]
+            rs = [[sum(rr[i][m] * S[m][j] for m in range(3)) for j in range(3)] for i in range(3)]
+            A[sp["node"]] = [[*rs[0], f[0]], [*rs[1], f[1]], [*rs[2], f[2]], [0, 0, 0, 1]]
         for n, t in ref["transforms"].items():
             if n in A:
                 if A[n] is None:
-                    bad.append(f"motion: reference {ref['pose']}: actuator node {n} turned end over end (no roll stated)"); continue
+                    bad.append(f"motion: reference {ref['pose']}: actuator or span node {n} turned end over end (no roll stated)"); continue
                 if _diff(A[n], _m4(t)) > 2e-6:
                     bad.append(f"motion: reference {ref['pose']}: {n} is {_diff(A[n], _m4(t)):.2e} off what the axes give")
     return bad
@@ -660,6 +678,8 @@ def check_motion(key, r, info, mo):
         refs += [g["pitch_node"], g["yaw_node"]]
     for a in mo.get("actuators", []):
         refs += [a["body_node"], a["rod_node"], a["fixed"]["parent"], a["moving"]["parent"]]
+    for sp in mo.get("spans", []):
+        refs += [sp["node"], sp["from"]["parent"], sp["to"]["parent"]]
     for h in mo.get("hoses", []):
         refs += [h["rest_node"]] + [e["parent"] for e in h["ends"]] + [x["parent"] for x in h.get("guides", [])]
     for ln in mo.get("links", []):
@@ -678,6 +698,7 @@ def check_motion(key, r, info, mo):
                 bad.append(f"motion: link {ln['name']}: solved, but {ln['node']!r} is also a listed node: one pose producer only")
             bad += [f"motion: link {ln['name']}: solved needs `{k}`" for k in ("bind", "origin", "axis", "roll_axis", "roll_rule", "rest_length", "tolerance") if k not in ln]
     atts = [(f"actuator {a['name']}", x["parent"]) for a in mo.get("actuators", []) for x in (a["fixed"], a["moving"])]
+    atts += [(f"span {sp['name']}", x["parent"]) for sp in mo.get("spans", []) for x in (sp["from"], sp["to"])]
     atts += [(f"hose {h['name']}", x["parent"]) for h in mo.get("hoses", []) for x in h["ends"] + h.get("guides", [])]
     atts += [(f"link {ln['name']} joint {j['name']}", j[sd]["parent"]) for ln in mo.get("links", []) for j in ln["joints"] for sd in "ab"]
     atts += [(f"link {ln['name']} tie {t['name']}", x["parent"]) for ln in mo.get("links", []) for t in ln.get("ties", []) for x in (t["a"], t["b"])]
@@ -724,6 +745,8 @@ def check_motion(key, r, info, mo):
     eye = [[1 if i == j else 0 for j in range(4)] for i in range(4)]
     if axes and not g:
         return bad + _sweep_axes(mo, axes, bind, parent, eye)
+    if mo.get("spans"):
+        bad.append("motion: spans are checked with plain axes only, not with a gimbal: ask the registry")
 
     def pose(p, y):
         """Each node's motion (model root) at input (p, y): the pitch stage turns, the yaw stage turns within it."""

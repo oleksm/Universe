@@ -65,6 +65,17 @@ times its ratio. An axis rides the nearest axis above its node in the hierarchy.
 motion the axes answer, in the order they first appear. Chain strands that change length are not motion: draw each as
 a rigid piece riding the carriage or the inner mast, its excess hidden in the upright's channel past the sheave.
 
+## Spans (2026-10-18, blender's 150 t moon gantry, thread 20261018T231801-blender-1c16)
+
+A hoist rope's falls lengthen as the hook lowers, so a rigid piece will not do. `spans` lists straight members whose
+length follows the pose. Each is one node, modelled `unit_length` long along its local `axis`. At a pose its origin sits
+at `from`; it is turned toward `to` by the shortest rotation, as an actuator is (v11); then it is stretched along
+`axis` to the anchors' distance: M = T(from) R S. Each fall of the reeving is one span (eight falls, eight spans), from
+the trolley's sheave block to the hook block's. The check sweeps the axes and holds the anchors' distance within
+`min_length` to `max_length`. References check the stretched transform. No axis moves a span's node, and it is listed
+under the root only, if at all. The engine draws a span by that transform; it needs no other rope solver. Chains stay
+as before: rigid strands, or covered.
+
 ## Still asked
 - Registry (mine): give the record motions their `rate` where known, and keep `moves` naming the parts so blender knows
   which geometry to separate.

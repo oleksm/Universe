@@ -5188,7 +5188,7 @@ def set_motions(us):
         if "crane" in k or "gantry" in k:
             span = u["dims"][1] - 1.0
             u["motion"] = [{"id": "travel", "kind": "travel", "direction": [1.0, 0.0, 0.0], "moves": ["the whole crane"], "note": "along its rails or runways; its range is the layout's"},
-                           {"id": "traverse", "kind": "travel", "direction": [0.0, 1.0, 0.0], "distance": [-r(span / 2 - 1.5), r(span / 2 - 1.5)], "moves": ["the trolley and its hook"], "note": "across the bridge, about 1.5 m short of each end (invented)"},
+                           {"id": "traverse", "kind": "travel", "direction": [0.0, 1.0, 0.0], "distance": [-min(9.0, r(span / 2 - 1.5)), min(9.0, r(span / 2 - 1.5))], "moves": ["the trolley and its hook"], "note": "across the bridge, 9 m either way as the description says (at most 1.5 m short of each end), its end stops there (invented; blender's sweep of the 150 t moon gantry, 2026-10-18: at 10.7 m its wheels met the stops)"},
                            {"id": "hoist", "kind": "lift", "direction": [0.0, 0.0, 1.0], "moves": ["the hook and what it carries"], "note": "from parked down to the floor or the load; its depth is the layout's"}]
         elif k in ("ladle-car-80t", "slag-pot-car", "mould-car-12", "ingot-car-40t"):
             u["motion"] = [{"id": "travel", "kind": "travel", "direction": [1.0, 0.0, 0.0], "moves": ["the whole car"], "note": "along its rails; its range is the layout's"}]
