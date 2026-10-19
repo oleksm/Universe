@@ -4705,7 +4705,7 @@
 - { record: template.conductor-rail, at: "2026-10-18T04:18:11Z", status: "", summary: "changed", sha: "4365e26daa362ba1" }
 - { record: template.corner-casting, at: "2026-10-18T04:18:11Z", status: "", summary: "changed", sha: "d419adb8082c4d81" }
 - { record: template.coupler, at: "2026-10-18T04:31:06Z", status: "", summary: "changed", sha: "92f33e0051a9f6f6" }
-- { record: template.cradle, at: "2026-10-19T16:59:07Z", status: "", summary: "changed: visual", sha: "9fdf8856cfcc7ebb" }
+- { record: template.cradle, at: "2026-10-19T17:00:28Z", status: "", summary: "changed", sha: "de151696556f4f99" }
 - { record: template.deck, at: "2026-10-18T17:53:40Z", status: "", summary: "first tracked", sha: "0dff23e9b6c1b980" }
 - { record: template.drag-conveyor, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "da78b5e8e253b112" }
 - { record: template.expansion-joint, at: "2026-10-18T04:42:30Z", status: "", summary: "changed", sha: "35f0e9f3830a86f9" }
