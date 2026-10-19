@@ -486,6 +486,7 @@ def build():
                                    ("run-clip", "run-clip", "Run clip", "connector.run-clip-d25", len(CLIP_BANDS))):
         n += write("templates", t, {"identity": {"key": f"template.{t}", "name": name, "description": f"{name}: one look for the whole family, scaled to each record's figures (docs/asset-contract.md, Templates; docs/proposals/physical-mounts.md)."},
                                     "family": fam, "draws": "model", "scales_by": ["physical"], "reference": ref, "members": cnt,
+                                    **({"model_requests": [{"work": "rig", "because": "Hold v1: exported port-node local +Y does not match registry facing. Correct all 14 frames and verify positions and +Y directions directly from raw GLB world matrices; source/reimport checks alone missed the export-axis conversion.", "asked": "2026-10-19", "of_version": 1, "by": "registry"}]} if t == "cradle" else {}),
                                     "basis": [{"of": ["draws", "scales_by"], "tier": "derived", "note": "The owner, 2026-10-18 (via ships): equipment held by typed mounts on cradles or deck panels made from stock; one template a family."}]}, "template")
     return n, faults, cradles, decks
 
