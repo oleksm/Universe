@@ -1575,7 +1575,7 @@
 - { record: package.tote, at: "2026-10-11T16:12:54Z", status: "", summary: "changed: visual", sha: "b2a5f3077bb1d0cb" }
 - { record: panel.deck-0p5x0p5, at: "2026-10-19T17:12:19Z", status: draft, summary: "changed: identity, ports, built_of", sha: "6c6a9d6e6d47af4e" }
 - { record: panel.deck-1x0p5, at: "2026-10-19T17:12:19Z", status: draft, summary: "changed: identity, ports, built_of", sha: "9ec624ab5d1beafe" }
-- { record: panel.deck-1x1, at: "2026-10-19T17:12:19Z", status: draft, summary: "changed: identity, ports, built_of", sha: "f38b5a69249268ce" }
+- { record: panel.deck-1x1, at: "2026-10-19T17:18:04Z", status: draft, summary: "changed: ports, physical, built_of", sha: "373a2c4fa71d8315" }
 - { record: panel.deck-2x1, at: "2026-10-19T17:12:19Z", status: draft, summary: "changed: identity, ports, built_of", sha: "af1c6a80fa100898" }
 - { record: panel.floor-3x3, at: "2026-10-17T21:45:11Z", status: draft, summary: "first tracked", sha: "0cf3e722c971ed0f" }
 - { record: panel.floor-pressure-3x3, at: "2026-10-18T15:18:53Z", status: draft, summary: "changed: physical, built_of", sha: "f94d3ccabf97153f" }
@@ -3914,7 +3914,7 @@
 - { record: stock.kit-lined-flange-dn3600-pn10-double, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "7b5b4f9c15e3a167" }
 - { record: stock.kit-panel-deck-0p5x0p5, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "420bd4dcd569d6ff" }
 - { record: stock.kit-panel-deck-1x0p5, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "5fc32818488ef4a7" }
-- { record: stock.kit-panel-deck-1x1, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "79684149cd09497a" }
+- { record: stock.kit-panel-deck-1x1, at: "2026-10-19T17:18:04Z", status: review, summary: "changed: physical", sha: "ad60eec95eb8b6a1" }
 - { record: stock.kit-panel-deck-2x1, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "a83d46e5fa980539" }
 - { record: stock.kit-panel-floor-3x3, at: "2026-10-17T21:45:11Z", status: review, summary: "first tracked", sha: "2e60cfdc00345137" }
 - { record: stock.kit-panel-floor-pressure-3x3, at: "2026-10-18T15:18:53Z", status: review, summary: "changed: made_from, physical", sha: "eba3e69bda4de22d" }

@@ -358,7 +358,19 @@ def deck(L, W):
              {"what": "Honeycomb core", "item": AL, "mass": r(core, 2), "note": "25 mm aluminium honeycomb, 50 kg/m3"},
              {"what": "Seat track", "item": AL, "mass": r(rails, 2), "note": f"{nr} rails, 0.6 kg/m extruded 6061"},
              {"what": "Edge lugs", "item": AL, "mass": r(lugs, 2), "note": f"{segs} recessed inboard lugs for shared support shoes; inherited 0.15 kg each allowance, final panel cut masses pending"}]
-    mass = r(sum(p["mass"] for p in parts), 2)
+    if (L, W) == (1.0, 1.0):
+        # Reference cut volumes only: deck/candidate-v01/review/final-panel-mass.json,
+        # Blender 2026-10-19. Other panel sizes retain their calculated allowances.
+        assert nr == 4 and segs == 8 and DECK_INSET == 0.04
+        measured = [4.941059824257454, 1.140257672632459, 2.3992502916082934, 1.0165064488375128]
+        notes = ["two 1 mm 6061 skins after rail recesses, lug seats and access bores",
+                 "25 mm honeycomb proxy after recesses; retained assumed density 50 kg/m3, not solid aluminium",
+                 "four recessed seat tracks after entry/slot cuts, at existing 25.4 mm pitch",
+                 "eight 40 mm-inboard lugs with 11 mm M10 clearance bores; shoes and joining bolts separate"]
+        for part, value, note in zip(parts, measured, notes):
+            part["mass"] = value
+            part["note"] = note + "; measured Blender deck candidate-v01 final-panel-mass.json, 2026-10-19; joints and loads unqualified"
+    mass = r(sum(p["mass"] for p in parts), 6 if (L, W) == (1.0, 1.0) else 2)
     th = 0.03
     ports = [{"id": f"track-{k + 1}", "flow": "in", "medium": "load", "interface": "interface.deck-track", "half": "female", "make": "bolted",
               "at": [r(-L / 2 + TRACK_PITCH / 2), r(-W / 2 + RAIL_GAP / 2 + RAIL_GAP * k), th], "facing": [0.0, 0.0, 1.0], "optional": True,

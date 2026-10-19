@@ -85,7 +85,7 @@ of 6061 skins on aluminium honeycomb, sized to the frame grid: 0.5 × 0.5, 1 × 
   pitch, the aircraft seat-track convention. Equipment with `fits: mount.deck` gets track-stud feet, any number on the
   pitch. Rating per stud: 9 kN tension, 13 kN shear. These figures are from memory of aircraft seat-track practice and
   need review.
-- **Edge fixings** (shared-shoe revision, 2026-10-19): panel lugs sit 40 mm inboard, at the middle of every 0.5 m of each edge. Their male `insert-m10` faces point down into distinct female seats of a separate `connector.deck-support-shoe`. The shoe has one required `kit-clamp` fixing to the frame; adjacent panels share that instance and clamp, not coincident panel tabs. Panel cell size and track datums stay unchanged. Final panel cut masses are pending; the inherited allowances remain marked as such.
+- **Edge fixings** (shared-shoe revision, 2026-10-19): panel lugs sit 40 mm inboard, at the middle of every 0.5 m of each edge. Their male `insert-m10` faces point down into distinct female seats of a separate `connector.deck-support-shoe`. The shoe has one required `kit-clamp` fixing to the frame; adjacent panels share that instance and clamp, not coincident panel tabs. Panel cell size and track datums stay unchanged. The 1 x 1 m reference is bound to Blender final-panel-mass.json (2026-10-19): 9.497074 kg after cuts, with honeycomb still a 50 kg/m3 proxy. Other panel sizes retain their calculated allowances.
 
 ### Shared deck support shoe
 
