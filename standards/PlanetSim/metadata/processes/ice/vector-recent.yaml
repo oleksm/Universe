@@ -1,0 +1,59 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.vector-recent
+  name: Vector recent epoch
+  about: 'The recent epoch as vectors: each moment of the glacial cycle (glacial-cycles: glaciality, cooling, the sea''s offset) kept; at any point its mass balance from the climate surface cooled by the cycle (the ice-sheets record''s
+    snow line, ramp and melt); ice where positive, as thick as plastic ice that far inside the traced margin (Nye 1951); its onsets counted, the last glacial maximum''s ice, the erosion under it (the glacial-erosion record''s law over
+    every glaciated moment, at the maximum''s thickness), the recent relief lowered by it, the shore at the lowest sea. In the run it replaces the sampled ice-sheets, recent-rivers, recent-shorelines and glacial-erosion.'
+area: ice
+clock:
+  when: every step of the recent phase, after glacial-cycles and the climate
+reads:
+- name: height
+  field: planet-field.height
+- name: temperature
+  field: planet-field.temperature
+- name: rain
+  field: planet-field.rain
+- name: glaciality
+  field: planet-field.glaciality
+- name: glacial sea offset
+  field: planet-field.glacial-sea-offset
+writes:
+- name: ice
+  field: planet-field.ice
+- name: ice at the LGM
+  field: planet-field.ice-lgm
+- name: ice cycles
+  field: planet-field.ice-cycles
+- name: ice melt
+  field: planet-field.ice-melt
+- name: glacial erosion
+  field: planet-field.glacial-erosion
+- name: recent height
+  field: planet-field.recent-height
+- name: lowstand shore
+  field: planet-field.lowstand-shore
+params:
+- name: YIELD_STRESS
+  value: 100000.0
+  unit: Pa
+  meaning: 'the yield stress of plastic ice: h = sqrt(2 tau d / (rho g)) at d inside the margin'
+  source: Nye 1951; Paterson 1994 (50-150 kPa)
+  note: sourced
+- name: ICE_DENSITY
+  value: 917.0
+  unit: kg/m3
+  meaning: glacier ice density
+  source: Paterson 1994
+  note: sourced
+- name: SHORE_REACH
+  value: 10000.0
+  unit: m
+  meaning: a point within this of the lowest sea's shore (on land) marks the lowstand shore
+  source: 'chosen: about a display pixel'
+  note: invented; review
+depends_on:
+- planet-process.ice-sheets
+- planet-process.glacial-erosion
+- planet-process.recent-shorelines

@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.vector-geology
+  name: Vector geology
+  about: 'The geology as vectors (crates/geology-vector): the rock provinces laid by the lines the plates made (arcs, sutures, rifts, ridges, hotspot tracks), continents, cratons and shelves; organics, ores and craters read from them.
+    Its laws and constants are the records of rock-unit-stack, ore-fertility, organic-burial, crater-*, deposit-draw and the plates processes; in the run it replaces their sampled models. It keeps the lines as the plates make them (each
+    in its plate frame, carried through welds and rifts) and publishes a surface evaluating the rock unit and the organics at any point.'
+area: geology
+clock:
+  when: every step of the plates and coupled phases, after planet-process.vector-plates
+writes:
+- name: rock
+  field: planet-field.rock
+- name: organic carbon
+  field: planet-field.organic-carbon
+- name: organic depth
+  field: planet-field.organic-depth
+- name: organic heat dose
+  field: planet-field.organic-heat-dose
+params:
+- name: RIFT_HALF_WIDTH_M
+  value: 35000.0
+  unit: m
+  meaning: half the width of a continental rift basin (the rift fill province each side of the rift line)
+  source: 'Allemand & Brun 1991: graben width about twice the brittle crust thickness (~15 km)'
+  note: derived; review
+- name: ARC_RECORD_STEPS
+  value: 10.0
+  unit: '1'
+  meaning: the arcs are recorded every this many steps (each the trenches then, with the arc crust the floor consumed since the last built)
+  source: 'chosen: 50 Myr at 5 Myr steps'
+  note: invented; review
+depends_on:
+- planet-process.vector-plates

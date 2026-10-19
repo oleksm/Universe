@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.boundary-right
+  name: Boundary right plate
+  about: The plate on the segment's right.
+unit: '1'
+producer:
+  where: planet-forge crates/tectonics/src/forge_model.rs
+  file: checkpoint
+  key: tables/plate-boundary/planet-field.boundary-right
+per: point
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 18 Oct 2026: the vector plates boundary graph'

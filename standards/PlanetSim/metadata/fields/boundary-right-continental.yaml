@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.boundary-right-continental
+  name: Boundary right continental
+  about: 1 where the right plate's crust at the segment's middle is continental.
+unit: '1'
+producer:
+  where: planet-forge crates/tectonics/src/forge_model.rs
+  file: checkpoint
+  key: tables/plate-boundary/planet-field.boundary-right-continental
+per: point
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 18 Oct 2026: the vector plates boundary graph'

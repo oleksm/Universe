@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.basin
+  name: Drainage basin
+  about: 'The basin a point drains to: the root river its descent joins (its index in the water''s network), a lake (-(lake + 2)), or -1 (the sea, none). From the vector water.'
+unit: '1'
+producer:
+  where: planet-forge crates/water/src/forge_model.rs
+  file: surface
+  key: planet-field.basin
+per: sample
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 18 Oct 2026: the vector water surface'

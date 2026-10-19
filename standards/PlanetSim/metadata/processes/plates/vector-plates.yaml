@@ -1,0 +1,78 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.vector-plates
+  name: Vector plates
+  about: 'The plates as vectors (crates/tectonics World): plates bounded by their boundary lines, moved by the balance of their forces; crust as bands (cube-face polygons) with its ledger; isochrons, sutures, spots. Its laws and constants
+    are the plates records (plates-init, plate-motion-and-forces, subduction, collision-and-docking, arcs-and-margin-erosion, hotspots, oceanic-accretion, seafloor-spreading, plate-welding, plate-reorganisation, plate-rifting, crust-flow-cap-delamination,
+    crust-wear-to-shelf, isostatic-elevation, sea-level); in the run it replaces their sampled models. Shared with the models after it as the live object vector-plates; for the views it writes the fields evaluated from the vectors at
+    their points; sea level and land share by quadrature over the vector height.'
+area: plates
+clock:
+  when: every step of the plates and coupled phases (substeps by its own fastest plate)
+writes:
+- name: plate
+  field: planet-field.plate
+- name: crust-kind
+  field: planet-field.crust-kind
+- name: crust-thickness
+  field: planet-field.crust-thickness
+- name: crust-age
+  field: planet-field.crust-age
+- name: ocean-floor-thickness
+  field: planet-field.ocean-floor-thickness
+- name: height-above-ridge
+  field: planet-field.height-above-ridge
+- name: height
+  field: planet-field.height
+- name: sea-level
+  field: planet-field.sea-level
+- name: land-share
+  field: planet-field.land-share
+- name: plate-id
+  field: planet-field.plate-id
+- name: plate-rotation
+  field: planet-field.plate-rotation
+- name: plate-spin
+  field: planet-field.plate-spin
+- name: plate-axis
+  field: planet-field.plate-axis
+- name: hotspot-position
+  field: planet-field.hotspot-position
+- name: boundary-from
+  field: planet-field.boundary-from
+- name: boundary-to
+  field: planet-field.boundary-to
+- name: boundary-left
+  field: planet-field.boundary-left
+- name: boundary-right
+  field: planet-field.boundary-right
+- name: boundary-kind
+  field: planet-field.boundary-kind
+- name: boundary-down
+  field: planet-field.boundary-down
+- name: boundary-closing
+  field: planet-field.boundary-closing
+- name: boundary-left-continental
+  field: planet-field.boundary-left-continental
+- name: boundary-right-continental
+  field: planet-field.boundary-right-continental
+events_emitted:
+- event: planet-event.rift
+  where: crates/tectonics/src/rift.rs split
+- event: planet-event.weld
+  where: crates/tectonics/src/rift.rs weld
+params:
+- name: share
+  setting: none
+  unit: '1'
+  meaning: 'in the coupled era (the last couple_from of the planet''s age) the sea level is the one that leaves this share of the surface above it (by the quadrature over the vector height); unset: the level holds the ocean volume'
+  source: planet-process.sea-level share (stages/plates.py:1544)
+  note: owner targets land 30%+ (2026-10-09, 17 Oct)
+- name: couple_from
+  value: 2.209032e+16
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 700.0
+  meaning: 'the coupled era: the last couple_from of the planet''s age'
+  source: planet-process.sea-level couple_from (stages/plates.py:138)

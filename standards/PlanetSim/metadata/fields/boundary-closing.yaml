@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.boundary-closing
+  name: Boundary closing speed
+  about: 'How fast the plates close across the segment (m/s; negative: opening).'
+unit: m/s
+producer:
+  where: planet-forge crates/tectonics/src/forge_model.rs
+  file: checkpoint
+  key: tables/plate-boundary/planet-field.boundary-closing
+per: point
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 18 Oct 2026: the vector plates boundary graph'

@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.boundary-to
+  name: Boundary segment end
+  about: The segment's second vertex (unit vector, body frame now).
+unit: '1'
+producer:
+  where: planet-forge crates/tectonics/src/forge_model.rs
+  file: checkpoint
+  key: tables/plate-boundary/planet-field.boundary-to
+per: point
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 18 Oct 2026: the vector plates boundary graph'
