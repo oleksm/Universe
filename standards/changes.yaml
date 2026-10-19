@@ -2599,7 +2599,7 @@
 - { record: planet-process.climate-ebm, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "96f9c6b3cc77c279" }
 - { record: planet-process.clouds, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "6cf3cc69333f4caf" }
 - { record: planet-process.coast-features, at: "2026-10-17T21:22:32Z", status: "", summary: "first tracked", sha: "bd1a7b296e3bd8eb" }
-- { record: planet-process.collision-and-docking, at: "2026-10-18T14:40:48Z", status: "", summary: "changed: basis", sha: "fd6e404bf520357a" }
+- { record: planet-process.collision-and-docking, at: "2026-10-19T16:50:56Z", status: "", summary: "changed", sha: "cc866923c4852cd8" }
 - { record: planet-process.continental-sedimentation, at: "2026-10-18T01:09:30Z", status: "", summary: "changed: params, implementations, basis", sha: "91d87a149f4a8078" }
 - { record: planet-process.core-dynamo, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "184950bc7642ea25" }
 - { record: planet-process.core-heat-loss, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "937cde0588809800" }
