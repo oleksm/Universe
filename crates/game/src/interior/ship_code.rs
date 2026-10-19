@@ -879,6 +879,7 @@ impl Interior {
         }
     }
     pub(super) fn restore(&mut self, s: Snapshot) {
+        self.wire_editor.cancel();
         if self.plan.hull != s.plan.hull || self.plan.on != s.plan.on {
             self.lines = None;
             self.job = None;

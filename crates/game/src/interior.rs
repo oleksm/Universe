@@ -14,6 +14,7 @@ mod walk;
 mod scene;
 mod compile;
 mod attachments;
+mod wire_tool;
 mod wiring;
 mod preparation;
 use walk::{Stand, stand_input, stand_spot, draw_stand};
@@ -160,6 +161,7 @@ pub struct Interior {
     /// the point a path being laid runs on from, and where a press began (a click,
     /// if it doesn't move).
     tool: Tool,
+    wire_editor: wire_tool::Editor,
     plane: Option<f32>,
     from: Option<usize>,
     press: Option<Vec2>,
@@ -4034,6 +4036,7 @@ enum Tool {
     /// corners, other joints, or the work plane), of the stock picked; each load
     /// case's forces through it, what's over its limit and what breaks.
     Frame,
+    Wire,
 }
 
 #[derive(Clone, Copy, PartialEq)]
@@ -4520,6 +4523,7 @@ impl Interior {
     /// own name), or none; the plan saved as `id` if there is one, else fresh (the
     /// hull's own places as points); its decks too.
     fn start(&mut self, id: &str, shape: Option<&universe_sim::world::shape::Shape>, on: Option<String>) {
+        self.wire_editor.cancel();
         self.stand = None;
         self.drive = None;
         self.balance = None;
@@ -4680,12 +4684,13 @@ impl Interior {
     /// Is something in progress (to cancel): a module picked, a path, member or truss
     /// being laid, TRUSS waiting for its corners, a member picked, WALK HERE armed?
     fn in_progress(&self) -> bool {
-        self.module.is_some() || self.block.is_some() || self.from.is_some() || self.beam_from.is_some() || self.truss_from.is_some() || self.truss_mode || self.deck_mode || self.beam_pick.is_some() || self.walk_armed || self.stamping
+        self.wire_editor.active() || self.module.is_some() || self.block.is_some() || self.from.is_some() || self.beam_from.is_some() || self.truss_from.is_some() || self.truss_mode || self.deck_mode || self.beam_pick.is_some() || self.walk_armed || self.stamping
     }
 
     /// What's in progress cancelled; was anything?
     fn cancel(&mut self) -> bool {
         let any = self.in_progress();
+        self.wire_editor.cancel();
         (self.module, self.block, self.from, self.beam_from, self.truss_from, self.beam_pick) = (None, None, None, None, None, None);
         (self.truss_mode, self.deck_mode, self.walk_armed, self.deck_from, self.deck_pick) = (false, false, false, None, None);
         let any = any || self.stamping || self.measuring;
@@ -4783,7 +4788,7 @@ impl Camera {
 }
 
 /// The toolbar: the tools (key, name).
-const TOOLBAR: [(&str, &str, Tool); 5] = [("V", "SELECT", Tool::Look), ("P", "PATH", Tool::Path), ("D", "DOOR", Tool::Door), ("M", "MODULES", Tool::Modules), ("R", "FRAME", Tool::Frame)];
+const TOOLBAR: [(&str, &str, Tool); 6] = [("V", "SELECT", Tool::Look), ("P", "PATH", Tool::Path), ("D", "DOOR", Tool::Door), ("M", "MODULES", Tool::Modules), ("R", "FRAME", Tool::Frame), ("W", "WIRE", Tool::Wire)];
 
 /// Where toolbar button `k` is (one row along the top).
 fn button(k: usize) -> (Vec2, Vec2) {
@@ -6483,6 +6488,7 @@ fn panel_buttons(tool: Tool) -> Vec<((Vec2, Vec2), &'static str, Action)> {
     }).collect();
     let shapes = shapes.into_iter();
     match tool {
+        Tool::Wire => Vec::new(),
         Tool::Frame => {
             let w3 = (c.x - 16.0 - 12.0) / 3.0;
             let w4 = (c.x - 16.0 - 18.0) / 4.0;
@@ -6741,7 +6747,7 @@ fn on_plane(i: &Interior, cam: &Camera, plane: f32, q: Vec2, shift: bool) -> Opt
     }
     // SNAP FLOOR: down to the hull's floor under it (the first surface below, if it
     // faces up; within 8 m).
-    if i.snap_floor
+    if i.snap_floor && i.tool != Tool::Wire
         && let Some((_, h)) = &i.lines
     {
         let from = universe_engine::glam::DVec3::new(f64::from(at.x), f64::from(plane) + 0.05, f64::from(at.z));
@@ -7233,8 +7239,9 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
     }
     // The tools (toolbar or key); the panel's actions.
     let tool = if pressed { button_at(cursor) } else { None };
-    for (key, t) in [(KeyCode::KeyV, Tool::Look), (KeyCode::KeyP, Tool::Path), (KeyCode::KeyD, Tool::Door), (KeyCode::KeyM, Tool::Modules), (KeyCode::KeyR, Tool::Frame)] {
+    for (key, t) in [(KeyCode::KeyV, Tool::Look), (KeyCode::KeyP, Tool::Path), (KeyCode::KeyD, Tool::Door), (KeyCode::KeyM, Tool::Modules), (KeyCode::KeyR, Tool::Frame), (KeyCode::KeyW, Tool::Wire)] {
         if input.pressed(key) || tool == Some(t) {
+            interior.wire_editor.cancel();
             interior.tool = t;
             interior.from = None;
         }
@@ -7316,7 +7323,7 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
     // A cross-section, its shape (a button) or its width or height (a slider, held
     // and slid): for new lines; picked in LOOK, that line's.
     if pressed {
-        interior.slider = sliders(interior.tool).iter().position(|t| inside((t.0 - Vec2::new(0.0, 4.0), t.1 + Vec2::new(0.0, 8.0)), cursor));
+        interior.slider = if interior.tool == Tool::Wire { None } else { sliders(interior.tool).iter().position(|t| inside((t.0 - Vec2::new(0.0, 4.0), t.1 + Vec2::new(0.0, 8.0)), cursor)) };
     }
     if !input.button_down(MouseButton::Left) {
         interior.slider = None;
@@ -7340,6 +7347,7 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
         }
     };
     match interior.tool {
+        Tool::Wire => { if pressed && inside(PANEL,cursor) { wire_tool::panel_click(interior); } },
         Tool::Look => {
             for &k in &picked {
                 set(&mut interior.plan.lines[k].2);
@@ -7539,7 +7547,7 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
     if interior.slider.is_some() {
         return true;
     }
-    interior.hover = if matches!(interior.tool, Tool::Modules | Tool::Frame) { None } else { hover_at(interior, &cam, cursor) };
+    interior.hover = if matches!(interior.tool, Tool::Modules | Tool::Frame | Tool::Wire) { None } else { hover_at(interior, &cam, cursor) };
     interior.beam_hover = if interior.tool == Tool::Frame && interior.shown(layer::FRAME) && !inside(PANEL, cursor) { beam_at(interior, &cam, cursor) } else { None };
     // (MODULES: the nearest placed one under the cursor.)
     interior.block_hover = None;
@@ -7604,6 +7612,11 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
         interior.plan.blocks[n].rotation = None;
         return true;
     }
+    if interior.tool == Tool::Wire {
+        if input.pressed(KeyCode::KeyN) && !ctrl { wire_tool::next(interior); }
+        if input.pressed(KeyCode::Backspace) { wire_tool::back(interior); }
+        if input.pressed(KeyCode::Delete) { wire_tool::remove(interior, &cam); return true; }
+    }
     // (FRAME: DEL takes out the member under the cursor.)
     if input.pressed(KeyCode::Delete)
         && let Some(k) = interior.beam_hover.take()
@@ -7666,10 +7679,10 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
     }
     // The plane's handle (laying paths): held, it goes up and down with the mouse.
     let plane = plane_of(interior, &h);
-    if matches!(interior.tool, Tool::Path | Tool::Modules | Tool::Frame) {
+    if matches!(interior.tool, Tool::Path | Tool::Modules | Tool::Frame | Tool::Wire) {
         interior.map_hollow(plane);
     }
-    if pressed && matches!(interior.tool, Tool::Path | Tool::Modules | Tool::Frame) && cam.project(plane_handle(&cam, &h, plane)).is_some_and(|(q, _)| q.distance(cursor) < 10.0) {
+    if pressed && matches!(interior.tool, Tool::Path | Tool::Modules | Tool::Frame | Tool::Wire) && cam.project(plane_handle(&cam, &h, plane)).is_some_and(|(q, _)| q.distance(cursor) < 10.0) {
         interior.lifting = true;
     }
     if interior.lifting {
@@ -7727,6 +7740,7 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
         && !dragged
     {
         match interior.tool {
+            Tool::Wire => wire_tool::click(interior, &cam, plane),
             // FRAME: a click at a joint or a bearer (else on the work plane) ends the
             // member being laid there and starts the next from it; not laying one, a
             // click on a member picks it, else starts one.
@@ -8002,6 +8016,7 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
     let (p,c)=ship_code::code_button(size);frame.hud_rect(p,c,PAPER);frame.text(p+Vec2::new(4.,5.),"CODE ^E",LABEL);
     let hint = match interior.tool {
         _ if interior.walk_armed && interior.spec().is_none() => "CLICK WHERE TO START WALKING (A ROOM: ON ITS FLOOR) - RIGHT-CLICK OR ESC CANCELS",
+        Tool::Wire => "CLICK PORT, WAYPOINTS, END PORT - N CABLE - [ ] PLANE HEIGHT - BACKSPACE WAYPOINT - DEL WIRE - ESC CANCEL",
         Tool::Modules => "PICK ONE IN THE LIST, CLICK THE PLANE: IT STANDS THERE - CLICK ONE IN THE VIEW TO PICK IT - RIGHT-CLICK OR ESC DROPS IT - WHEEL OVER THE LIST SCROLLS",
         _ => "LEFT-DRAG TURNS IT - RIGHT-DRAG MOVES IT - WHEEL: NEARER, FARTHER - HOME: AS IT WAS - ESC CLOSES",
     };
@@ -8209,7 +8224,7 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
     {
         measure(frame, from, to);
     }
-    if matches!(interior.tool, Tool::Path | Tool::Modules | Tool::Frame) {
+    if matches!(interior.tool, Tool::Path | Tool::Modules | Tool::Frame | Tool::Wire) {
         let c = [Vec3::new(lo.x, plane, lo.z), Vec3::new(hi.x, plane, lo.z), Vec3::new(hi.x, plane, hi.z), Vec3::new(lo.x, plane, hi.z)];
         // The hull at this height: hollow cells green, solid red (where there's room).
         if let Some((at, cells)) = interior.hollow.as_ref().filter(|_| interior.shown(layer::HOLLOW)) {
@@ -8661,7 +8676,8 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
     }
     // The harness: each run along its way, in its bus's colour; a sheet of what it
     // weighs, by bus, and what can't be wired.
-    if interior.shown(layer::WIRING) {
+    if interior.shown(layer::WIRING) || interior.tool == Tool::Wire { wire_tool::draw(frame, interior, &cam, plane); }
+    if interior.shown(layer::WIRING) && interior.plan.wiring.is_none() && interior.tool != Tool::Wire {
         let h = interior.harness();
         for r in &h.runs {
             let col = WIRE_COLOURS[wiring::BUSES.iter().position(|&v| v == r.volts).unwrap_or(2)];
@@ -8742,6 +8758,7 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
         frame.hud_rect(p, c, Color([0.02, 0.06, 0.13, 0.92]));
         frame.hud_box(p, c, PLANE.scale(1.5));
         let (title, help) = match interior.tool {
+            Tool::Wire => ("WIRE", "CLICK A PORT, LAY WAYPOINTS, THEN CLICK THE OTHER PORT. N CHANGES CABLE."),
             Tool::Look => ("SELECT", "CLICK ANYTHING TO SEE WHAT IT IS AND WHAT IT CARRIES: A MODULE, A MEMBER, A NODE, A DECK, A ROOM. A TUBE IN A GROUP PICKS THE GROUP; SHIFT-CLICK TUBES TO PICK MORE. GROUP THEM, WALL THEM OFF. DRAG TO TURN, RIGHT-DRAG TO MOVE. DEL TAKES OUT WHAT'S UNDER THE CURSOR."),
             Tool::Path => ("PATH", "CLICK THE PLANE TO LAY A POINT, JOINED TO THE LAST ONE; CLICK A POINT TO START THERE, OR TO JOIN TO IT (THAT TUNNEL DONE AND PICKED). RIGHT-CLICK STOPS. DRAG THE PLANE'S GRIP (ITS NEAR RIGHT CORNER) UP OR DOWN."),
             Tool::Door => ("DOOR", "CLICK NEAR A WALLED TUBE'S END: CLOSED, A HATCH, OPEN, IN TURN. CLICK ALONG A TUBE: A HATCH IN THE WALL FACING YOU (AGAIN: GONE). HATCHES SLIDE OPEN AS YOU COME NEAR. SET THEIR SHAPE, SIZE AND SLIDE BELOW."),
@@ -8760,6 +8777,7 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
             frame.text_scaled(Vec2::new(p.x + 8.0, y), &line, LABEL.scale(0.85), 0.8);
             y += 12.0;
         }
+        if interior.tool == Tool::Wire { wire_tool::panel(frame, interior); }
         // FRAME: the stock (lit: what new members, or the picked one, are cut from),
         // the case shown, how each case goes, what isn't carried, its members' mass.
         if interior.tool == Tool::Frame {
@@ -8946,7 +8964,7 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
             }
         }
         // (Else: the picked line, the cross-section, the tool's actions.)
-        if !matches!(interior.tool, Tool::Modules | Tool::Frame) {
+        if !matches!(interior.tool, Tool::Modules | Tool::Frame | Tool::Wire) {
             let pick = match interior.pick {
                 Some(Hover::Point(k)) => match &plan.points[k].name {
                     Some(n) => format!("PICKED: {n} (THE HULL'S: STAYS)"),
@@ -8992,7 +9010,7 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
             let what = match interior.tool {
                 Tool::Look => "THE PICKED LINE'S CROSS-SECTION",
                 Tool::Door => "NEW HATCHES: SHAPE, SIZE, SLIDE",
-                Tool::Path | Tool::Modules | Tool::Frame => "NEW LINES' CROSS-SECTION",
+                Tool::Path | Tool::Modules | Tool::Frame | Tool::Wire => "NEW LINES' CROSS-SECTION",
             };
             frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 162.0), what, LABEL.scale(0.8), 0.7);
             if interior.tool == Tool::Path {

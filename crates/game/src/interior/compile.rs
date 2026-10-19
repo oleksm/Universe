@@ -23,7 +23,7 @@ fn corners(lo: Vec3, hi: Vec3) -> Vec<Vec3> {
 
 // Resolve the registry's default push just as placed_module does. Block's
 // fallback only sees b.push and can otherwise leave a forward engine upright.
-fn orientation(b: &Block, f: &Fitted) -> universe_engine::glam::Quat {
+pub(super) fn orientation(b: &Block, f: &Fitted) -> universe_engine::glam::Quat {
     b.rotation
         .unwrap_or_else(|| crate::equipment_visual::rotation(push_of(b, f).map(|p| p.0)))
 }

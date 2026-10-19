@@ -198,6 +198,7 @@ const SPREAD: f32 = 0.5;
 
 /// The design's harness as it stands.
 pub fn harness(plan: &Plan, fit: &[Fitted]) -> Harness {
+    if plan.wiring.is_some() { return super::wire_tool::harness(plan, fit); }
     let mut h = Harness::default();
     let placed: Vec<(&Block, Power)> = plan.blocks.iter().filter_map(|b| {
         let p = power(fit.iter().find(|f| f.id == kind(&b.id))?);
