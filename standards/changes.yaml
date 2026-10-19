@@ -4741,7 +4741,7 @@
 - { record: template.single-pole, at: "2026-10-18T05:21:02Z", status: "", summary: "changed", sha: "891598fccf7fa541" }
 - { record: template.stair, at: "2026-10-18T01:25:38Z", status: "", summary: "changed", sha: "dc0f89d97f6807ea" }
 - { record: template.strut-clamp, at: "2026-10-18T17:53:40Z", status: "", summary: "first tracked", sha: "466ad2dc88757182" }
-- { record: template.support-shoe, at: "2026-10-19T17:12:19Z", status: "", summary: "first tracked", sha: "438f617a8e1fa162" }
+- { record: template.support-shoe, at: "2026-10-19T21:25:38Z", status: "", summary: "changed: visual", sha: "020eabd61cd83ba9" }
 - { record: template.termination-hv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "b0398bafc880c882" }
 - { record: template.termination-lv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "b3fff31e02cd79e5" }
 - { record: template.termination-mv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "5098fcf4fe0ded80" }
