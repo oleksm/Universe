@@ -180,7 +180,7 @@ params:
   source: 'Molnar & Lyon-Caen 1988 (GSA Special Paper 218): Tibet''s excess potential energy, a few 10^12 N/m'
   note: sourced (order of magnitude); replaces STALL_AREA (a count of sample cells) for the vector plates
 - name: COLLISION_COUPLING
-  value: 2e+21
+  value: 2.0e+21
   unit: Pa s
   meaning: 'vector plates: colliding plates resist each other with force per metre of contact = COLLISION_COUPLING x their closing speed: 2 x viscosity x thickness / width of the orogen (2 x 1e22 Pa s x 100 km / 1000 km)'
   source: England & Molnar 1997 (Tibet effective viscosity ~1e22 Pa s); Molnar & Lyon-Caen 1988 (resisting force ~5e12 N/m)
