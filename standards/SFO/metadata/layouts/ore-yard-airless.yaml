@@ -104,7 +104,7 @@ mobile:
   rides: machine rail
   straddles: [yard belt]
   unit: unit.yard-tripper-1500th
-physical: {height: 20.0, length: 252.3, mass: 6421000.0, width: 101.6}
+physical: {height: 20.0, length: 252.3, mass: 6420000.0, width: 101.6}
 ports:
 - at: [132.3, 0.0, 1.0]
   connector: connector.belt-transfer-1000
@@ -137,4 +137,4 @@ staff:
 - {count: 3, profession: profession.docker}
 - {count: 1, profession: profession.clerk}
 stands_for: module.ore-yard
-totals: {against_module: 'module.ore-yard: one box 200 x 100 x 15 m, holding 150 kt. This layout: two beds 105 m long, 40 m across and 15 m high (iron ore at 2400 kg/m3 lying at 37 degrees) hold the same; 1.58 MW with every drive running, against the module''s 0.5; no water used; 6,421 t in all, its ground of sintered regolith.', heat: 0.0, mass: 6421000.0, power: 1580000.0, rate: 0.0, water: 0.0}
+totals: {against_module: 'module.ore-yard: one box 200 x 100 x 15 m, holding 150 kt. This layout: two beds 105 m long, 40 m across and 15 m high (iron ore at 2400 kg/m3 lying at 37 degrees) hold the same; 1.58 MW with every drive running, against the module''s 0.5; no water used; 6,420 t in all, its ground of sintered regolith.', heat: 0.0, mass: 6420000.0, power: 1580000.0, rate: 0.0, water: 0.0}
