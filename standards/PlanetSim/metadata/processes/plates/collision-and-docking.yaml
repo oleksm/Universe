@@ -180,11 +180,12 @@ params:
   source: 'Molnar & Lyon-Caen 1988 (GSA Special Paper 218): Tibet''s excess potential energy, a few 10^12 N/m'
   note: sourced (order of magnitude); replaces STALL_AREA (a count of sample cells) for the vector plates
 - name: COLLISION_COUPLING
-  value: 2.0e+21
+  value: 4.0e+22
   unit: Pa s
-  meaning: 'vector plates: colliding plates resist each other with force per metre of contact = COLLISION_COUPLING x their closing speed: 2 x viscosity x thickness / width of the orogen (2 x 1e22 Pa s x 100 km / 1000 km)'
-  source: England & Molnar 1997 (Tibet effective viscosity ~1e22 Pa s); Molnar & Lyon-Caen 1988 (resisting force ~5e12 N/m)
-  note: 'derived; at 5 cm/yr it gives 3.2e12 N/m, the order Molnar & Lyon-Caen give (figures from memory, 18 Oct 2026: verify)'
+  meaning: 'vector plates: colliding plates resist each other with force per metre of contact = COLLISION_COUPLING x their closing speed: 2 x viscosity x thickness / width of the collision zone (2 x 1e23 Pa s x 100 km / 500 km: strong
+    continental lithosphere across the belt, 2 x OROGEN_HALF_WIDTH)'
+  source: England & Molnar 1997 (Tibet's weak crust ~1e22 Pa s; continental lithosphere 1e22-1e23); Molnar & Lyon-Caen 1988
+  note: '19 Oct 2026: was 2e21 (Tibet''s crust over 1000 km); continents in contact are near-solid at plate scale; figures from memory: verify'
 - name: OROGEN_HALF_WIDTH
   value: 250000.0
   unit: m
