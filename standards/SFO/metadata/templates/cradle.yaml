@@ -10,6 +10,12 @@ scales_by:
 - physical
 reference: adapter.access-s1
 members: 56
+visual:
+  format: "freefall-model/1"
+  path: "models/cradle/v1"
+  manifest_sha256: "0a765f6a06a5d3a25056820a0930948173a9ec8034ad105eecba0b5c7021fd4a"
+  version: 1
+  triangles: 9688
 basis:
 - of:
   - draws
