@@ -4891,7 +4891,7 @@
 - { record: unit.shaft-furnace-200th-hp, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "c033f38b4f979327" }
 - { record: unit.slag-pot-car, at: "2026-10-17T15:19:33Z", status: draft, summary: "changed", sha: "3cdcfc4a0162b4be" }
 - { record: unit.stack-crane-20t, at: "2026-10-19T15:51:04Z", status: draft, summary: "changed: visual", sha: "108f96be4eb6cc41" }
-- { record: unit.stacker-reclaimer-1500th, at: "2026-10-19T16:20:36Z", status: draft, summary: "changed: visual", sha: "a6c871b2602175d9" }
+- { record: unit.stacker-reclaimer-1500th, at: "2026-10-19T16:21:55Z", status: draft, summary: "changed", sha: "a14b105d3b8cc359" }
 - { record: unit.stair-tower-12m, at: "2026-10-17T13:39:36Z", status: draft, summary: "changed: ports", sha: "b9576bc580379925" }
 - { record: unit.stripper-crane-20t, at: "2026-10-19T04:20:56Z", status: draft, summary: "changed: motion", sha: "102556c9cf67fbbe" }
 - { record: unit.stripper-gantry-20t-moon, at: "2026-10-19T04:20:56Z", status: draft, summary: "changed: motion", sha: "6c2aa866422a1f2d" }
