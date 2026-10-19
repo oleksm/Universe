@@ -11,8 +11,8 @@ made_from:
 - item: material.high-strength-steel-4340
 - item: material.aluminium-alloy-6061
 size:
-  length: 11.0
-  width: 11.0
+  length: 11.16
+  width: 11.16
   height: 0.32
 supplies:
   item: adapter.drive-s2

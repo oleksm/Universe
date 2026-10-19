@@ -3,17 +3,17 @@
 identity:
   key: adapter.comm-s1
   name: Comm cradle, class 1
-  description: 'Holds what fits mount.comm-s1 on a ship''s frame: 2 6061 tube 60 x 2 mm beams over the frame''s struts, 1 m or more apart, clamped at the middle of every 1 m, 4 cross tubes, the mount''s 4 sockets on top.'
+  description: 'Holds what fits mount.comm-s1 on a ship''s frame: 2 6061 tube 60 x 2 mm beams over the frame''s struts, 1 m or more apart, clamped at the middle of every 1 m, 2 cross tubes, the mount''s 4 sockets on top.'
 offers: mount.comm-s1
 rating:
   tension: 11040.0
   compression: 11040.0
   shear: 5520.0
 physical:
-  length: 3.0
-  width: 3.0
+  length: 3.03
+  width: 3.06
   height: 0.12
-  mass: 20.83
+  mass: 14.92
 built_of:
 - what: Beams
   item: material.aluminium-alloy-6061
@@ -21,12 +21,12 @@ built_of:
   note: 2 of 6061 tube 60 x 2 mm, 3.0 m each
 - what: Cross tubes
   item: material.aluminium-alloy-6061
-  mass: 11.81
-  note: 4 of 6061 tube 60 x 2 mm, 3.0 m each
+  mass: 5.9
+  note: 2 of 6061 tube 60 x 2 mm, 3.0 m each at x [-1.485, 1.485]; untrimmed stock mass, fishmouth deductions pending
 - what: Socket pads and inserts
   item: material.high-strength-steel-4340
   mass: 0.2
-  note: 4 4340 pads, each an M10 insert
+  note: 4 4340 pads, each an M10 insert; pad thickness 0.01 m, crosses lowered by that thickness with fishmouth seats to retain socket face z 0.12; joints unqualified
 - what: Fixing lugs
   item: material.aluminium-alloy-6061
   mass: 2.92
@@ -102,7 +102,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 66.0
+  mass: 65.0
   force: 1840.0
   at:
   - -1.0
@@ -119,7 +119,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 66.0
+  mass: 65.0
   force: 1840.0
   at:
   - 0.0
@@ -136,7 +136,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 66.0
+  mass: 65.0
   force: 1840.0
   at:
   - 1.0
@@ -153,7 +153,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 66.0
+  mass: 65.0
   force: 1840.0
   at:
   - -1.0
@@ -170,7 +170,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 66.0
+  mass: 65.0
   force: 1840.0
   at:
   - 0.0
@@ -187,7 +187,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 66.0
+  mass: 65.0
   force: 1840.0
   at:
   - 1.0

@@ -12,12 +12,12 @@ made_from:
 - item: material.high-strength-steel-4340
 size:
   length: 53.0
-  width: 53.0
+  width: 53.25
   height: 0.5
 supplies:
   item: adapter.gate-s4
 physical:
-  mass: 52752.29
+  mass: 51011.59
 basis:
 - of:
   - size

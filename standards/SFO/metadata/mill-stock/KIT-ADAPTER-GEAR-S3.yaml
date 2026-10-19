@@ -11,8 +11,8 @@ made_from:
 - item: material.high-strength-steel-4340
 - item: material.aluminium-alloy-6061
 size:
-  length: 4.0
-  width: 4.0
+  length: 6.65
+  width: 4.25
   height: 0.5
 supplies:
   item: adapter.gear-s3

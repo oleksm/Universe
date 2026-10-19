@@ -11,13 +11,13 @@ made_from:
 - item: material.aluminium-alloy-6061
 - item: material.high-strength-steel-4340
 size:
-  length: 4.0
-  width: 4.0
+  length: 4.12
+  width: 4.12
   height: 0.28
 supplies:
   item: adapter.hardpoint-s1
 physical:
-  mass: 159.39
+  mass: 106.8
 basis:
 - of:
   - size

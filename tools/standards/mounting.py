@@ -259,14 +259,23 @@ def cradle(slot, m, socks, d, tl):
             break
     else:
         return None
+    # End ties are redundant when they overlap a socket-bearing cross tube.
+    # Keep socket rows fixed; removing unloaded end ties does not alter size().
+    socket_x = sorted({round(x, 3) for x in xs})
+    cross_x = sorted(set(socket_x) | {end for end in (-Xb, Xb)
+                                   if all(abs(end - x) >= tc["D"] for x in socket_x)})
     h = r(tb["D"] + tc["D"])
+    pad_side = 2.5 * d / 1000
+    length = 2 * max(Xb, max(abs(x) for x in cross_x) + tc["D"] / 2,
+                     max(abs(x) for x in xs) + pad_side / 2)
+    width = 2 * max(Yb + tb["D"] / 2, max(ys) + pad_side / 2)
     lb, lc = len(lines) * 2 * Xb, len(cross_x) * 2 * Yb
     pad = (2.5 * d / 1000) ** 2 * (d / 1000) * RHO[ST]
     lug = 0.15 * 0.1 * 0.012 * RHO[AL]
     nfix = len(lines) * nfix_beam
     parts = [{"what": "Beams", "item": tb["mat"], "mass": r(lb * tb["kgm"], 2), "note": f"{len(lines)} of {tb['name']}, {r(2 * Xb, 2)} m each"},
-             {"what": "Cross tubes", "item": tc["mat"], "mass": r(lc * tc["kgm"], 2), "note": f"{len(cross_x)} of {tc['name']}, {r(2 * Yb, 2)} m each"},
-             {"what": "Socket pads and inserts", "item": ST, "mass": r(n * pad, 2), "note": f"{n} 4340 pads, each an M{d} insert"},
+             {"what": "Cross tubes", "item": tc["mat"], "mass": r(lc * tc["kgm"], 2), "note": f"{len(cross_x)} of {tc['name']}, {r(2 * Yb, 2)} m each at x {cross_x}; untrimmed stock mass, fishmouth deductions pending"},
+             {"what": "Socket pads and inserts", "item": ST, "mass": r(n * pad, 2), "note": f"{n} 4340 pads, each an M{d} insert; pad thickness {d / 1000:g} m, crosses lowered by that thickness with fishmouth seats to retain socket face z {h:g}; joints unqualified"},
              {"what": "Fixing lugs", "item": AL, "mass": r(nfix * lug, 2), "note": f"{nfix} 6061 lugs, a strut clamp bolted to each"}]
     mass = r(sum(p["mass"] for p in parts), 2)
     ports = [{"id": s["id"], "flow": "in", "medium": "load", "interface": s["interface"], "half": "female", "make": "bolted",
@@ -286,7 +295,7 @@ def cradle(slot, m, socks, d, tl):
                          "description": f"Holds what fits {m['identity']['key']} on a ship's frame: {len(lines)} {tb['name']} beams over the frame's struts, 1 m or more apart, clamped at the middle of every 1 m, {len(cross_x)} cross tubes, the mount's {n} sockets on top."},
             "offers": m["identity"]["key"],
             "rating": {"tension": r(n * each["tension"], 0), "compression": r(n * each["compression"], 0), "shear": r(n * each["shear"], 0)},
-            "physical": {"length": r(2 * Xb), "width": r(2 * Yb), "height": h, "mass": mass},
+            "physical": {"length": r(length), "width": r(width), "height": h, "mass": mass},
             "built_of": parts, "ports": ports, "template": "template.cradle",
             "basis": [{"of": ["built_of", "physical", "ports"], "tier": "derived", "review": True,
                        "note": f"By the cradle rule in tools/standards/mounting.py: tubes chosen for the mount's points times {FACTOR} in bending (cross tubes {m_cross / 1e3:.1f} kN m, beams {m_beam / 1e3:.1f} kN m); fixings' duty the mount's mass and points shared evenly, a placeholder: a design's duty comes from the stiffness model. {REVIEW}"},

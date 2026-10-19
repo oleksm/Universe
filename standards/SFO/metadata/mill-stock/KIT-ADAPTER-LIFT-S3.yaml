@@ -11,8 +11,8 @@ made_from:
 - item: material.high-strength-steel-4340
 - item: material.aluminium-alloy-6061
 size:
-  length: 18.0
-  width: 15.0
+  length: 18.2
+  width: 15.2
   height: 0.4
 supplies:
   item: adapter.lift-s3

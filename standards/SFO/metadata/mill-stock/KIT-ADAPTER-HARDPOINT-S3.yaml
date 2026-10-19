@@ -11,8 +11,8 @@ made_from:
 - item: material.aluminium-alloy-6061
 - item: material.high-strength-steel-4340
 size:
-  length: 6.0
-  width: 6.0
+  length: 6.25
+  width: 6.12
   height: 0.37
 supplies:
   item: adapter.hardpoint-s3

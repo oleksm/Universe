@@ -11,8 +11,8 @@ made_from:
 - item: material.aluminium-alloy-6061
 - item: material.high-strength-steel-4340
 size:
-  length: 17.0
-  width: 10.0
+  length: 17.16
+  width: 10.16
   height: 0.32
 supplies:
   item: adapter.radiator-hot-s1

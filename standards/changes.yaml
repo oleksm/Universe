@@ -4,62 +4,62 @@
 # what changed, and the hash of its file. A record whose line says `complete` may not change:
 # validation fails if it does. Only the user reopens one:
 #   python3 tools/standards/tracker.py reopen <key> "<why>"
-- { record: adapter.access-s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "6ac41e83515d48c5" }
-- { record: adapter.access-s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "443aa9cee3f40507" }
-- { record: adapter.access-s3, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "658856fcefda1add" }
-- { record: adapter.capacitor-s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "c75a215287b8c019" }
-- { record: adapter.capacitor-s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "822931a3bbd51e3c" }
-- { record: adapter.capacitor-s3, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "d8acac9fb1753678" }
-- { record: adapter.cargo-s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "cb9ff6369e7e89db" }
-- { record: adapter.cargo-s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "a98fb8b6d7c151ba" }
-- { record: adapter.cargo-s3, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "b9a2da3e162bf8a0" }
-- { record: adapter.cargo-s4, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "2530b7c2e2967d9b" }
-- { record: adapter.comm-s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "f8206c257f764f31" }
-- { record: adapter.command-s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "3e9cac7805fc5d0d" }
-- { record: adapter.command-s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "ad313617fa76db6d" }
-- { record: adapter.command-s3, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "6e0f1bb5ae10de71" }
-- { record: adapter.drive-s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "47b585849d7f0b88" }
-- { record: adapter.drive-s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "e49dd21ae0175cd6" }
-- { record: adapter.drive-s3, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "77a64133925236cf" }
-- { record: adapter.engine-s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "ce2bf69cc5cad6d3" }
-- { record: adapter.engine-s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "45f9bec0c32f8e43" }
-- { record: adapter.engine-s3, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "d01117e4bc55e488" }
-- { record: adapter.engine-s4, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "56309c93c6077305" }
-- { record: adapter.gate-s3, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "4c0146517bc65bd7" }
-- { record: adapter.gate-s4, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "ed10fbbae08369b1" }
-- { record: adapter.gear-s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "55a02db88d40a934" }
-- { record: adapter.gear-s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "2a01574463df208c" }
-- { record: adapter.gear-s3, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "9a4be6806a93d9c0" }
-- { record: adapter.handling-s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "add6331907f50d94" }
-- { record: adapter.handling-s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "292a9ab63e335734" }
-- { record: adapter.hardpoint-s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "befbb0f9932d741a" }
-- { record: adapter.hardpoint-s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "0901adbec3b78c63" }
-- { record: adapter.hardpoint-s3, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "d043df73789cf4c5" }
-- { record: adapter.hyperdrive-s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "454dff6f8e03a56f" }
-- { record: adapter.hyperdrive-s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "da4ccf7b03c65d17" }
-- { record: adapter.hyperdrive-s3, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "98f34e54362ae0fe" }
-- { record: adapter.life-support-s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "0448d0d0e7858d61" }
-- { record: adapter.life-support-s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "68d44d83c98bba34" }
-- { record: adapter.lift-s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "806e4699a7bb755e" }
-- { record: adapter.lift-s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "506a679c607acd89" }
-- { record: adapter.lift-s3, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "f6660c6ac941f369" }
-- { record: adapter.power-s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "032c9190c9ca90f2" }
-- { record: adapter.power-s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "1fb42d73ffb567fd" }
-- { record: adapter.power-s3, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "6ec42aa4e6bb9fb1" }
-- { record: adapter.radiator-hot-s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "242f33a6708a18bb" }
-- { record: adapter.radiator-hot-s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "dd9ac9ee3093f711" }
-- { record: adapter.sensors-s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "76eb96ba949d8e97" }
-- { record: adapter.tank-s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "40967de5c9ca6fd5" }
-- { record: adapter.tank-s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "2e32a7cd07bf7cf3" }
-- { record: adapter.tank-s3, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "5ec8254004bd21a7" }
-- { record: adapter.tank-s4, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "95ee54c2d3455d90" }
-- { record: adapter.thermal-s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "7ccc6171e2060eab" }
-- { record: adapter.thermal-s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "3dee426ad82cc6da" }
-- { record: adapter.thermal-s3, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "883fd688291f6572" }
-- { record: adapter.thrusters-s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "ffd8f5df04a9987c" }
-- { record: adapter.thrusters-s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "cd0b8e40958518f2" }
-- { record: adapter.thrusters-s3, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "da1c9a29dddb61d8" }
-- { record: adapter.utility-s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "4c5302f8b4b456c5" }
+- { record: adapter.access-s1, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: identity, physical, built_of, ports", sha: "1d2ffb565cb90476" }
+- { record: adapter.access-s2, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: identity, physical, built_of, ports", sha: "f26262505257466d" }
+- { record: adapter.access-s3, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: identity, physical, built_of, ports", sha: "6e6f62ebc560071f" }
+- { record: adapter.capacitor-s1, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "d2a8ff8e455a45bf" }
+- { record: adapter.capacitor-s2, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "816bff87a98d13da" }
+- { record: adapter.capacitor-s3, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: identity, physical, built_of, ports", sha: "8dd74c4f0c3c6d4c" }
+- { record: adapter.cargo-s1, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "43a7ea3d4121b9a6" }
+- { record: adapter.cargo-s2, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "6b5e2c0aaf57f7ce" }
+- { record: adapter.cargo-s3, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: identity, physical, built_of, ports", sha: "99b855a4a2a03e45" }
+- { record: adapter.cargo-s4, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: identity, physical, built_of, ports", sha: "2b9cdb0b339e5e0f" }
+- { record: adapter.comm-s1, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: identity, physical, built_of, ports", sha: "7403ddd227e161eb" }
+- { record: adapter.command-s1, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "c6addc5e6915ca42" }
+- { record: adapter.command-s2, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "14ee28bc4298a93e" }
+- { record: adapter.command-s3, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "9b4e9861c19b7365" }
+- { record: adapter.drive-s1, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: identity, physical, built_of, ports", sha: "0314d6fd4a458598" }
+- { record: adapter.drive-s2, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "d7eaa0d625931433" }
+- { record: adapter.drive-s3, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: identity, physical, built_of, ports", sha: "438879abf53169f4" }
+- { record: adapter.engine-s1, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: identity, physical, built_of, ports", sha: "4da8ca4931ee7ca3" }
+- { record: adapter.engine-s2, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: identity, physical, built_of, ports", sha: "00a7848455e3b72a" }
+- { record: adapter.engine-s3, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: identity, physical, built_of, ports", sha: "1f79fd5424d8a4ab" }
+- { record: adapter.engine-s4, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: identity, physical, built_of, ports", sha: "7438f57b5fa1620b" }
+- { record: adapter.gate-s3, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "7d71b970b7f498bb" }
+- { record: adapter.gate-s4, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: identity, physical, built_of, ports", sha: "4dcfb622359dd7a8" }
+- { record: adapter.gear-s1, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "26ba25d7a9ffa79f" }
+- { record: adapter.gear-s2, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "8122d03df8be4195" }
+- { record: adapter.gear-s3, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "23c0b103ed11a3d4" }
+- { record: adapter.handling-s1, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: identity, physical, built_of, ports", sha: "592c31c95c0e9d09" }
+- { record: adapter.handling-s2, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "05bae3c02b418639" }
+- { record: adapter.hardpoint-s1, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: identity, physical, built_of, ports", sha: "675c214019fa4e88" }
+- { record: adapter.hardpoint-s2, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "a3d58881a8186f62" }
+- { record: adapter.hardpoint-s3, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "180a6e70e325379f" }
+- { record: adapter.hyperdrive-s1, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "35f2b89cc86c610a" }
+- { record: adapter.hyperdrive-s2, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: identity, physical, built_of, ports", sha: "3115716182e11a14" }
+- { record: adapter.hyperdrive-s3, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: identity, physical, built_of, ports", sha: "ee294c16885dafbe" }
+- { record: adapter.life-support-s1, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "c245cdd9674dac35" }
+- { record: adapter.life-support-s2, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "e9ec799a8a8b2d66" }
+- { record: adapter.lift-s1, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "afa2269ba82ea3f6" }
+- { record: adapter.lift-s2, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "c8b4a1eee3c35bc0" }
+- { record: adapter.lift-s3, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "0d333beae58b3f44" }
+- { record: adapter.power-s1, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "0360c6d3b9477f8b" }
+- { record: adapter.power-s2, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: identity, physical, built_of, ports", sha: "da22ed28acb219f9" }
+- { record: adapter.power-s3, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: identity, physical, built_of, ports", sha: "a17cc843c9224060" }
+- { record: adapter.radiator-hot-s1, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "f618b37912099720" }
+- { record: adapter.radiator-hot-s2, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "d1fcb605865cc9ef" }
+- { record: adapter.sensors-s1, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: identity, physical, built_of, ports", sha: "c497fc04db57adbe" }
+- { record: adapter.tank-s1, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "79df45da28b24178" }
+- { record: adapter.tank-s2, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: identity, physical, built_of, ports", sha: "790ab785b9eb112e" }
+- { record: adapter.tank-s3, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "ef3058536f78238c" }
+- { record: adapter.tank-s4, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "0bb19daf0e5f3247" }
+- { record: adapter.thermal-s1, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "ec5610356680e88e" }
+- { record: adapter.thermal-s2, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "06a885b80e619620" }
+- { record: adapter.thermal-s3, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: identity, physical, built_of, ports", sha: "d86fd654d28ac2e7" }
+- { record: adapter.thrusters-s1, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "f6660e7a036e3ce4" }
+- { record: adapter.thrusters-s2, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "f510be23b1283832" }
+- { record: adapter.thrusters-s3, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: physical, built_of", sha: "47a31a09eee4d729" }
+- { record: adapter.utility-s2, at: "2026-10-19T16:39:43Z", status: draft, summary: "changed: identity, physical, built_of, ports", sha: "fdb351cda5c91656" }
 - { record: arrangement.cell, at: "2026-10-18T03:21:28Z", status: draft, summary: "changed: mass", sha: "479556e45108963a" }
 - { record: arrangement.classroom, at: "2026-10-18T02:20:10Z", status: draft, summary: "changed: mass", sha: "379ae5eb60d6cee4" }
 - { record: arrangement.counter, at: "2026-10-18T01:33:11Z", status: draft, summary: "changed: mass", sha: "5045d99f6bb5c67e" }
@@ -3672,62 +3672,62 @@
 - { record: stock.iron-ore-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "6418e5e574655925" }
 - { record: stock.iron-ore-pellets-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "f4e6815b244b2cb6" }
 - { record: stock.kimberlite-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "be5e6246e5123b72" }
-- { record: stock.kit-adapter-access-s1, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "ae5d7052886d5838" }
-- { record: stock.kit-adapter-access-s2, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "8201fcf2bb7a2ec2" }
-- { record: stock.kit-adapter-access-s3, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "b080eb933324e876" }
-- { record: stock.kit-adapter-capacitor-s1, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "c0129508e43c2483" }
-- { record: stock.kit-adapter-capacitor-s2, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "8c11b2ad1494aa1b" }
-- { record: stock.kit-adapter-capacitor-s3, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "17ec7641a2561b99" }
-- { record: stock.kit-adapter-cargo-s1, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "932d3422663019ca" }
-- { record: stock.kit-adapter-cargo-s2, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "79c3ffc8c3d76eed" }
-- { record: stock.kit-adapter-cargo-s3, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "ac8954f5e8b98940" }
-- { record: stock.kit-adapter-cargo-s4, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "7ba4c15819585a1d" }
-- { record: stock.kit-adapter-comm-s1, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "b3fccfb013d828d1" }
-- { record: stock.kit-adapter-command-s1, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "fd5353aa472ae49a" }
-- { record: stock.kit-adapter-command-s2, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "b13323a9c6666912" }
-- { record: stock.kit-adapter-command-s3, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "d7569e2a63225438" }
-- { record: stock.kit-adapter-drive-s1, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "1992dbfa4820b6fe" }
-- { record: stock.kit-adapter-drive-s2, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "9278591bd224c044" }
-- { record: stock.kit-adapter-drive-s3, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "62c949bc73f48944" }
-- { record: stock.kit-adapter-engine-s1, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "f5c75d5f0b0f555e" }
-- { record: stock.kit-adapter-engine-s2, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "aec8fc0c2dea9969" }
-- { record: stock.kit-adapter-engine-s3, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "d1c69a129264a46c" }
-- { record: stock.kit-adapter-engine-s4, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "b8197626f2416ba9" }
-- { record: stock.kit-adapter-gate-s3, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "6ef2464f58341d2f" }
-- { record: stock.kit-adapter-gate-s4, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "3a8da37d6ae1fe4e" }
-- { record: stock.kit-adapter-gear-s1, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "887197576b19e8fe" }
-- { record: stock.kit-adapter-gear-s2, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "0177d9693581df67" }
-- { record: stock.kit-adapter-gear-s3, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "fedbad2ce92bf29a" }
-- { record: stock.kit-adapter-handling-s1, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "93a181d849d0dbac" }
-- { record: stock.kit-adapter-handling-s2, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "d827cb057fdfed04" }
-- { record: stock.kit-adapter-hardpoint-s1, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "82981990f724bd44" }
-- { record: stock.kit-adapter-hardpoint-s2, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "591a967b396deaf9" }
-- { record: stock.kit-adapter-hardpoint-s3, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "de99235b1195fd23" }
-- { record: stock.kit-adapter-hyperdrive-s1, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "fffe4c5c083167cf" }
-- { record: stock.kit-adapter-hyperdrive-s2, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "8ca9388443649bf7" }
-- { record: stock.kit-adapter-hyperdrive-s3, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "48974c9fadc8b28f" }
-- { record: stock.kit-adapter-life-support-s1, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "6d5331bd92e4955a" }
-- { record: stock.kit-adapter-life-support-s2, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "7d805892bfefa19e" }
-- { record: stock.kit-adapter-lift-s1, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "6b831d4a52adbde4" }
-- { record: stock.kit-adapter-lift-s2, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "2960013a0c8cb59b" }
-- { record: stock.kit-adapter-lift-s3, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "ff01e7b1561408d2" }
-- { record: stock.kit-adapter-power-s1, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "5ae5dd3ebd22f073" }
-- { record: stock.kit-adapter-power-s2, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "eb7e856ac554b847" }
-- { record: stock.kit-adapter-power-s3, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "c2e665df6658963b" }
-- { record: stock.kit-adapter-radiator-hot-s1, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "0fd7db41b9ad3b84" }
-- { record: stock.kit-adapter-radiator-hot-s2, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "11d8c058f17e4aff" }
-- { record: stock.kit-adapter-sensors-s1, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "adc481ac7ccdd62f" }
-- { record: stock.kit-adapter-tank-s1, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "35fc1f2cabba0c6d" }
-- { record: stock.kit-adapter-tank-s2, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "9d19923f00532978" }
-- { record: stock.kit-adapter-tank-s3, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "68fa073f7dd21cb3" }
-- { record: stock.kit-adapter-tank-s4, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "1ed4587fabbca783" }
-- { record: stock.kit-adapter-thermal-s1, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "ee50f4b21ce601b5" }
-- { record: stock.kit-adapter-thermal-s2, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "2a869ac661231236" }
-- { record: stock.kit-adapter-thermal-s3, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "9726433d68b8c165" }
-- { record: stock.kit-adapter-thrusters-s1, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "2e5df4fa26645fbf" }
-- { record: stock.kit-adapter-thrusters-s2, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "e9e7cd7dc1957444" }
-- { record: stock.kit-adapter-thrusters-s3, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "12dddd04f6074051" }
-- { record: stock.kit-adapter-utility-s2, at: "2026-10-18T17:53:40Z", status: review, summary: "first tracked", sha: "6922bd8f35811bb0" }
+- { record: stock.kit-adapter-access-s1, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size, physical", sha: "a00be30be89adab8" }
+- { record: stock.kit-adapter-access-s2, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size, physical", sha: "38a489475c2e1197" }
+- { record: stock.kit-adapter-access-s3, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size, physical", sha: "a1d6c730cd64e83b" }
+- { record: stock.kit-adapter-capacitor-s1, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "33f596f9e96217d1" }
+- { record: stock.kit-adapter-capacitor-s2, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "4dfdace6824aa8c8" }
+- { record: stock.kit-adapter-capacitor-s3, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size, physical", sha: "3ab31e852c89f2da" }
+- { record: stock.kit-adapter-cargo-s1, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "51e4c65d3ddc54cd" }
+- { record: stock.kit-adapter-cargo-s2, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "bd25162b649b7b68" }
+- { record: stock.kit-adapter-cargo-s3, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size, physical", sha: "0ce67b50c74188c7" }
+- { record: stock.kit-adapter-cargo-s4, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size, physical", sha: "19da264c3d6070cb" }
+- { record: stock.kit-adapter-comm-s1, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size, physical", sha: "1cb997362c139e99" }
+- { record: stock.kit-adapter-command-s1, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "4dc3227de981a302" }
+- { record: stock.kit-adapter-command-s2, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "1e606fb7f853458f" }
+- { record: stock.kit-adapter-command-s3, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "6b18a6e4533d718a" }
+- { record: stock.kit-adapter-drive-s1, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size, physical", sha: "c3c6773d023fcc20" }
+- { record: stock.kit-adapter-drive-s2, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "08b7c347171362ea" }
+- { record: stock.kit-adapter-drive-s3, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size, physical", sha: "7bca51647a826a7c" }
+- { record: stock.kit-adapter-engine-s1, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size, physical", sha: "8cba2a26a17177c7" }
+- { record: stock.kit-adapter-engine-s2, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size, physical", sha: "3b15ad2c7f7ae91d" }
+- { record: stock.kit-adapter-engine-s3, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size, physical", sha: "f941882dd72e93c4" }
+- { record: stock.kit-adapter-engine-s4, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size, physical", sha: "fd0cf3bd5180d4a3" }
+- { record: stock.kit-adapter-gate-s3, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "d64c3ae3ded7da5f" }
+- { record: stock.kit-adapter-gate-s4, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size, physical", sha: "06a13a036fe9359b" }
+- { record: stock.kit-adapter-gear-s1, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "78a9c9ca4274f658" }
+- { record: stock.kit-adapter-gear-s2, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "f5d946ee361109e9" }
+- { record: stock.kit-adapter-gear-s3, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "bc3126b9d89e4b26" }
+- { record: stock.kit-adapter-handling-s1, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size, physical", sha: "56cc8021d2ce0c35" }
+- { record: stock.kit-adapter-handling-s2, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "09b2712c80cc31ed" }
+- { record: stock.kit-adapter-hardpoint-s1, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size, physical", sha: "fbaa2ed49364db78" }
+- { record: stock.kit-adapter-hardpoint-s2, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "b330414b1f5e228c" }
+- { record: stock.kit-adapter-hardpoint-s3, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "85bec2f1f2c0c0a6" }
+- { record: stock.kit-adapter-hyperdrive-s1, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "92e1afff854484f7" }
+- { record: stock.kit-adapter-hyperdrive-s2, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size, physical", sha: "36b1803a7cad4c51" }
+- { record: stock.kit-adapter-hyperdrive-s3, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size, physical", sha: "7cc0a9e2a8690dc7" }
+- { record: stock.kit-adapter-life-support-s1, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "615379982e7ec3e0" }
+- { record: stock.kit-adapter-life-support-s2, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "06829fb7ceee966f" }
+- { record: stock.kit-adapter-lift-s1, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "03a2df588592604a" }
+- { record: stock.kit-adapter-lift-s2, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "13164f81bb3ae25d" }
+- { record: stock.kit-adapter-lift-s3, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "e5c963f67967378d" }
+- { record: stock.kit-adapter-power-s1, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "9cbdc56205d48435" }
+- { record: stock.kit-adapter-power-s2, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size, physical", sha: "14740ea59f1d0f3c" }
+- { record: stock.kit-adapter-power-s3, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size, physical", sha: "14aa41a3e6216ddb" }
+- { record: stock.kit-adapter-radiator-hot-s1, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "501b864d54894840" }
+- { record: stock.kit-adapter-radiator-hot-s2, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "24ddbcb3fd647851" }
+- { record: stock.kit-adapter-sensors-s1, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size, physical", sha: "da6da8a78e9f82b7" }
+- { record: stock.kit-adapter-tank-s1, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "ad07827cac7af6cf" }
+- { record: stock.kit-adapter-tank-s2, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size, physical", sha: "8ea4f5ab07e406c4" }
+- { record: stock.kit-adapter-tank-s3, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "524214426baa03d6" }
+- { record: stock.kit-adapter-tank-s4, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "0ddfe910cea1da7e" }
+- { record: stock.kit-adapter-thermal-s1, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "1414718c9e5cd198" }
+- { record: stock.kit-adapter-thermal-s2, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "a0260f4356fba1f4" }
+- { record: stock.kit-adapter-thermal-s3, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size, physical", sha: "1dfb714ed22c5b19" }
+- { record: stock.kit-adapter-thrusters-s1, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "70f895f6fe66fee7" }
+- { record: stock.kit-adapter-thrusters-s2, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "416f20baf075e981" }
+- { record: stock.kit-adapter-thrusters-s3, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size", sha: "1049b4ed997552aa" }
+- { record: stock.kit-adapter-utility-s2, at: "2026-10-19T16:39:43Z", status: review, summary: "changed: size, physical", sha: "48069680a6280b9a" }
 - { record: stock.kit-belt-1000, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "386ac053ecdedb34" }
 - { record: stock.kit-belt-1000-sealed, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "1a89fe9b0b60d0c5" }
 - { record: stock.kit-belt-1200, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "ffbcfc81c2062c6b" }

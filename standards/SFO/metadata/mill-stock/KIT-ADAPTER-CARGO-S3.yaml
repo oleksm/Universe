@@ -11,13 +11,13 @@ made_from:
 - item: material.high-strength-steel-4340
 - item: material.aluminium-alloy-6061
 size:
-  length: 8.0
-  width: 3.0
+  length: 8.07
+  width: 3.25
   height: 0.5
 supplies:
   item: adapter.cargo-s3
 physical:
-  mass: 2502.41
+  mass: 1821.76
 basis:
 - of:
   - size

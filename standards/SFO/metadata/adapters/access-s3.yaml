@@ -3,17 +3,17 @@
 identity:
   key: adapter.access-s3
   name: Access cradle, class 3
-  description: 'Holds what fits mount.access-s3 on a ship''s frame: 9 4340 tube 200 x 5 mm beams over the frame''s struts, 1 m or more apart, clamped at the middle of every 1 m, 7 cross tubes, the mount''s 8 sockets on top.'
+  description: 'Holds what fits mount.access-s3 on a ship''s frame: 9 4340 tube 200 x 5 mm beams over the frame''s struts, 1 m or more apart, clamped at the middle of every 1 m, 5 cross tubes, the mount''s 8 sockets on top.'
 offers: mount.access-s3
 rating:
   tension: 2944000.0
   compression: 2944000.0
   shear: 1472000.0
 physical:
-  length: 8.0
-  width: 8.0
+  length: 8.17
+  width: 8.2
   height: 0.45
-  mass: 2714.93
+  mass: 2452.18
 built_of:
 - what: Beams
   item: material.high-strength-steel-4340
@@ -21,12 +21,12 @@ built_of:
   note: 9 of 4340 tube 200 x 5 mm, 8.0 m each
 - what: Cross tubes
   item: material.aluminium-alloy-6061
-  mass: 919.62
-  note: 7 of 6061 tube 250 x 8 mm, 8.0 m each
+  mass: 656.87
+  note: 5 of 6061 tube 250 x 8 mm, 8.0 m each at x [-3.96, -2.8, 0.0, 2.8, 3.96]; untrimmed stock mass, fishmouth deductions pending
 - what: Socket pads and inserts
   item: material.high-strength-steel-4340
   mass: 29.08
-  note: 8 4340 pads, each an M42 insert
+  note: 8 4340 pads, each an M42 insert; pad thickness 0.042 m, crosses lowered by that thickness with fishmouth seats to retain socket face z 0.45; joints unqualified
 - what: Fixing lugs
   item: material.aluminium-alloy-6061
   mass: 34.99
@@ -166,7 +166,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -3.5
@@ -183,7 +183,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -2.5
@@ -200,7 +200,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -1.5
@@ -217,7 +217,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -0.5
@@ -234,7 +234,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 0.5
@@ -251,7 +251,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 1.5
@@ -268,7 +268,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 2.5
@@ -285,7 +285,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 3.5
@@ -302,7 +302,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -3.5
@@ -319,7 +319,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -2.5
@@ -336,7 +336,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -1.5
@@ -353,7 +353,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -0.5
@@ -370,7 +370,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 0.5
@@ -387,7 +387,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 1.5
@@ -404,7 +404,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 2.5
@@ -421,7 +421,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 3.5
@@ -438,7 +438,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -3.5
@@ -455,7 +455,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -2.5
@@ -472,7 +472,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -1.5
@@ -489,7 +489,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -0.5
@@ -506,7 +506,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 0.5
@@ -523,7 +523,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 1.5
@@ -540,7 +540,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 2.5
@@ -557,7 +557,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 3.5
@@ -574,7 +574,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -3.5
@@ -591,7 +591,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -2.5
@@ -608,7 +608,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -1.5
@@ -625,7 +625,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -0.5
@@ -642,7 +642,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 0.5
@@ -659,7 +659,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 1.5
@@ -676,7 +676,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 2.5
@@ -693,7 +693,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 3.5
@@ -710,7 +710,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -3.5
@@ -727,7 +727,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -2.5
@@ -744,7 +744,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -1.5
@@ -761,7 +761,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -0.5
@@ -778,7 +778,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 0.5
@@ -795,7 +795,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 1.5
@@ -812,7 +812,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 2.5
@@ -829,7 +829,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 3.5
@@ -846,7 +846,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -3.5
@@ -863,7 +863,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -2.5
@@ -880,7 +880,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -1.5
@@ -897,7 +897,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -0.5
@@ -914,7 +914,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 0.5
@@ -931,7 +931,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 1.5
@@ -948,7 +948,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 2.5
@@ -965,7 +965,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 3.5
@@ -982,7 +982,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -3.5
@@ -999,7 +999,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -2.5
@@ -1016,7 +1016,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -1.5
@@ -1033,7 +1033,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -0.5
@@ -1050,7 +1050,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 0.5
@@ -1067,7 +1067,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 1.5
@@ -1084,7 +1084,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 2.5
@@ -1101,7 +1101,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 3.5
@@ -1118,7 +1118,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -3.5
@@ -1135,7 +1135,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -2.5
@@ -1152,7 +1152,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -1.5
@@ -1169,7 +1169,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -0.5
@@ -1186,7 +1186,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 0.5
@@ -1203,7 +1203,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 1.5
@@ -1220,7 +1220,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 2.5
@@ -1237,7 +1237,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 3.5
@@ -1254,7 +1254,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -3.5
@@ -1271,7 +1271,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -2.5
@@ -1288,7 +1288,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -1.5
@@ -1305,7 +1305,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - -0.5
@@ -1322,7 +1322,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 0.5
@@ -1339,7 +1339,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 1.5
@@ -1356,7 +1356,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 2.5
@@ -1373,7 +1373,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 246.0
+  mass: 242.4
   force: 40889.0
   at:
   - 3.5

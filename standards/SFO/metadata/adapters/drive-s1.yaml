@@ -3,17 +3,17 @@
 identity:
   key: adapter.drive-s1
   name: Main drive cradle, class 1
-  description: 'Holds what fits mount.drive-s1 on a ship''s frame: 2 6061 tube 250 x 5 mm beams over the frame''s struts, 1 m or more apart, clamped at the middle of every 1 m, 7 cross tubes, the mount''s 8 sockets on top.'
+  description: 'Holds what fits mount.drive-s1 on a ship''s frame: 2 6061 tube 250 x 5 mm beams over the frame''s struts, 1 m or more apart, clamped at the middle of every 1 m, 5 cross tubes, the mount''s 8 sockets on top.'
 offers: mount.drive-s1
 rating:
   tension: 1256000.0
   compression: 1256000.0
   shear: 627200.0
 physical:
-  length: 8.0
-  width: 8.0
+  length: 8.174
+  width: 8.25
   height: 0.45
-  mass: 4017.03
+  mass: 2922.06
 built_of:
 - what: Beams
   item: material.aluminium-alloy-6061
@@ -21,12 +21,12 @@ built_of:
   note: 2 of 6061 tube 250 x 5 mm, 8.0 m each
 - what: Cross tubes
   item: material.high-strength-steel-4340
-  mass: 3832.4
-  note: 7 of 4340 tube 200 x 15 mm, 8.0 m each
+  mass: 2737.43
+  note: 5 of 4340 tube 200 x 15 mm, 8.0 m each at x [-3.987, -2.819, 0.0, 2.819, 3.987]; untrimmed stock mass, fishmouth deductions pending
 - what: Socket pads and inserts
   item: material.high-strength-steel-4340
   mass: 10.6
-  note: 8 4340 pads, each an M30 insert
+  note: 8 4340 pads, each an M30 insert; pad thickness 0.03 m, crosses lowered by that thickness with fishmouth seats to retain socket face z 0.45; joints unqualified
 - what: Fixing lugs
   item: material.aluminium-alloy-6061
   mass: 7.78
@@ -166,7 +166,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 524.8
+  mass: 456.4
   force: 78500.0
   at:
   - -3.5
@@ -183,7 +183,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 524.8
+  mass: 456.4
   force: 78500.0
   at:
   - -2.5
@@ -200,7 +200,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 524.8
+  mass: 456.4
   force: 78500.0
   at:
   - -1.5
@@ -217,7 +217,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 524.8
+  mass: 456.4
   force: 78500.0
   at:
   - -0.5
@@ -234,7 +234,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 524.8
+  mass: 456.4
   force: 78500.0
   at:
   - 0.5
@@ -251,7 +251,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 524.8
+  mass: 456.4
   force: 78500.0
   at:
   - 1.5
@@ -268,7 +268,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 524.8
+  mass: 456.4
   force: 78500.0
   at:
   - 2.5
@@ -285,7 +285,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 524.8
+  mass: 456.4
   force: 78500.0
   at:
   - 3.5
@@ -302,7 +302,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 524.8
+  mass: 456.4
   force: 78500.0
   at:
   - -3.5
@@ -319,7 +319,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 524.8
+  mass: 456.4
   force: 78500.0
   at:
   - -2.5
@@ -336,7 +336,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 524.8
+  mass: 456.4
   force: 78500.0
   at:
   - -1.5
@@ -353,7 +353,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 524.8
+  mass: 456.4
   force: 78500.0
   at:
   - -0.5
@@ -370,7 +370,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 524.8
+  mass: 456.4
   force: 78500.0
   at:
   - 0.5
@@ -387,7 +387,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 524.8
+  mass: 456.4
   force: 78500.0
   at:
   - 1.5
@@ -404,7 +404,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 524.8
+  mass: 456.4
   force: 78500.0
   at:
   - 2.5
@@ -421,7 +421,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 524.8
+  mass: 456.4
   force: 78500.0
   at:
   - 3.5

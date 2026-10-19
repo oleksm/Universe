@@ -10,8 +10,8 @@ rating:
   compression: 2096000.0
   shear: 1048000.0
 physical:
-  length: 11.0
-  width: 11.0
+  length: 11.16
+  width: 11.16
   height: 0.32
   mass: 4069.3
 built_of:
@@ -22,11 +22,11 @@ built_of:
 - what: Cross tubes
   item: material.high-strength-steel-4340
   mass: 1471.68
-  note: 7 of 4340 tube 160 x 5 mm, 11.0 m each
+  note: 7 of 4340 tube 160 x 5 mm, 11.0 m each at x [-5.5, -5.13, -3.627, 0.0, 3.627, 5.13, 5.5]; untrimmed stock mass, fishmouth deductions pending
 - what: Socket pads and inserts
   item: material.high-strength-steel-4340
   mass: 10.6
-  note: 8 4340 pads, each an M30 insert
+  note: 8 4340 pads, each an M30 insert; pad thickness 0.03 m, crosses lowered by that thickness with fishmouth seats to retain socket face z 0.32; joints unqualified
 - what: Fixing lugs
   item: material.aluminium-alloy-6061
   mass: 64.15

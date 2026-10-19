@@ -11,8 +11,8 @@ made_from:
 - item: material.aluminium-alloy-6061
 - item: material.high-strength-steel-4340
 size:
-  length: 2.0
-  width: 1.0
+  length: 2.06
+  width: 1.08
   height: 0.14
 supplies:
   item: adapter.capacitor-s1

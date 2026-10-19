@@ -11,8 +11,8 @@ made_from:
 - item: material.aluminium-alloy-6061
 - item: material.high-strength-steel-4340
 size:
-  length: 13.0
-  width: 7.0
+  length: 13.2
+  width: 7.16
   height: 0.36
 supplies:
   item: adapter.thermal-s2

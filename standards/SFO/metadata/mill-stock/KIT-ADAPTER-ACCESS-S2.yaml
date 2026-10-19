@@ -11,13 +11,13 @@ made_from:
 - item: material.high-strength-steel-4340
 - item: material.aluminium-alloy-6061
 size:
-  length: 5.0
-  width: 5.0
+  length: 5.2
+  width: 5.2
   height: 0.45
 supplies:
   item: adapter.access-s2
 physical:
-  mass: 4244.89
+  mass: 3110.46
 basis:
 - of:
   - size

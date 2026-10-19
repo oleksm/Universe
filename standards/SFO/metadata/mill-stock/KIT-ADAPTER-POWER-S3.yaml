@@ -12,12 +12,12 @@ made_from:
 - item: material.high-strength-steel-4340
 size:
   length: 32.0
-  width: 17.0
+  width: 17.2
   height: 0.45
 supplies:
   item: adapter.power-s3
 physical:
-  mass: 3129.89
+  mass: 2102.74
 basis:
 - of:
   - size

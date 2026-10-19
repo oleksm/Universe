@@ -12,12 +12,12 @@ made_from:
 - item: material.aluminium-alloy-6061
 size:
   length: 7.0
-  width: 7.0
+  width: 7.25
   height: 0.5
 supplies:
   item: adapter.tank-s2
 physical:
-  mass: 1310.09
+  mass: 887.14
 basis:
 - of:
   - size

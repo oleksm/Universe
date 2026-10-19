@@ -11,8 +11,8 @@ made_from:
 - item: material.aluminium-alloy-6061
 - item: material.high-strength-steel-4340
 size:
-  length: 3.0
-  width: 2.0
+  length: 3.08
+  width: 2.06
   height: 0.14
 supplies:
   item: adapter.command-s2
