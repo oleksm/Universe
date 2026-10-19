@@ -351,6 +351,15 @@ definitions:
       direction: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "1", description: "Its axis, a unit vector" }
       angle: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "rad", description: "rad from rest it turns, least and most (a tilt or a rotation)" }
       distance: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "m", description: "m from rest it moves, least and most (a travel or a lift)" }
+      interlock:
+        type: object
+        additionalProperties: false
+        required: [axis, when_abs_below, angle]
+        description: "Conditional angular limit on this motion. While abs(the named axis angle) is strictly below when_abs_below, this motion must stay within angle (inclusive). Before crossing into that region, move this motion into the allowed interval; hold it there while crossing. Equality is outside the restricted region. Applies throughout trajectories, not only at endpoints."
+        properties:
+          axis: { type: string, description: "Id of another angular motion in this same record." }
+          when_abs_below: { type: number, exclusiveMinimum: 0, x-unit: "rad" }
+          angle: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "rad", description: "Restricted inclusive interval, contained within this motion's normal angle limits." }
       rate: { type: number, x-unit: "rad/s", description: "How fast a tilt or rotation turns in service; a rotation with no angle turns without end at this rate" }
       speed: { type: number, x-unit: "m/s", description: "How fast a travel or lift moves in service" }
       moves: { type: array, items: { type: string }, description: "What moves: the whole thing, or its named parts" }

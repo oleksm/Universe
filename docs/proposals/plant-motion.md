@@ -79,3 +79,10 @@ as before: rigid strands, or covered.
 ## Still asked
 - Registry (mine): give the record motions their `rate` where known, and keep `moves` naming the parts so blender knows
   which geometry to separate.
+
+## Conditional angular interlock (2026-10-19)
+
+The registry motion may carry `interlock: {axis: slew, when_abs_below: 0.20943951023931956, angle: [-0.2094, 0.08]}`.
+This restricts the carrying motion's angle, inclusively, while the absolute angle of the named motion is strictly below the threshold. Both axes belong to the same record and are angular; the restricted interval lies inside the carrying motion's ordinary limits. At equality the restricted region ends. This is a trajectory constraint: first move the carrying axis into its restricted interval, then cross with the controlling axis, and only restore its wider range after leaving. Endpoint-only clamping is insufficient.
+
+For `unit.stacker-reclaimer-1500th`, luff carries this guard on slew. Raise to luff <= 0.08 rad before crossing into |slew| < 12 degrees; lower to +0.16 only outside. Both ore yards use the same unit rule. The registry is authoritative; do not copy thresholds into the asset pose file or hard-code them in the runtime. Runtime sequencing/pose reading is pending with engine. This does not qualify wheel rotation, loads or the other machines' sequencing requirements.

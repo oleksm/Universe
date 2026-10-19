@@ -35,6 +35,10 @@ motion:
   point: [2.5, 0.0, 8.0]
   direction: [0.0, 1.0, 0.0]
   angle: [-0.2094, 0.16]
+  interlock:
+    axis: slew
+    when_abs_below: 0.20943951023931956
+    angle: [-0.2094, 0.08]
   moves: [the boom and its bucket wheel]
   note: 'negative raises, positive lowers: about 12 degrees up and 9.17 down (invented). At +0.16 rad the 29 m arm puts the wheel centre at 8 - 29 sin(0.16) = 3.380 m, a radial estimate of 0.228 m clearance; the candidate v03 sweep measures 0.191 m including bucket corners, which supersedes that estimate. The former +12-degree limit put the rim below grade. Yard operating guard: raise to luff <= 0.08 rad before entering abs(slew) < 12 degrees; full +0.16 rad lowering is permitted only at abs(slew) >= 12 degrees. Sector envelopes require this interlock, not yet implemented in game. Clearance proof uses fixed wheel phase; wheel rotation is not qualified. Two mast-to-boom luff ropes use variable free spans with winch payout; the mast follows slew but stays fixed against luff. Rope construction, winch support, load qualification and full swept clearance remain provisional (blender proposal 2026-10-19).'
 envelope:

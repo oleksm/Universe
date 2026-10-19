@@ -277,6 +277,31 @@ def key_in(rec):
 SEEN = []      # (every record the last check_all read: its key, file, content and schema)
 
 
+def motion_interlocks(rec):
+    """Semantic checks after schema validation: local references and angular limits."""
+    motions = rec.get("motion", [])
+    by_id = {m["id"]: m for m in motions}
+    out = []
+    for m in motions:
+        guard = m.get("interlock")
+        if guard is None:
+            continue
+        at = f"motion.{m['id']}.interlock"
+        if len(by_id) != len(motions):
+            out.append(f"{at}: motion ids must be unique")
+        other = by_id.get(guard["axis"])
+        if other is None or other is m:
+            out.append(f"{at}: axis must name another motion in this record")
+        elif other["kind"] not in ("tilt", "rotate"):
+            out.append(f"{at}: controlling axis must be angular")
+        bounds, limited = m.get("angle"), guard["angle"]
+        if m["kind"] not in ("tilt", "rotate") or bounds is None:
+            out.append(f"{at}: guarded motion needs angular limits")
+        elif not bounds[0] <= limited[0] <= limited[1] <= bounds[1]:
+            out.append(f"{at}: restricted angle must be ordered and inside normal limits")
+    return out
+
+
 def check_all():
     """Every record against its schema: (file, what does not fit)."""
     found, unheld, named, labels = [], [], [], {}
@@ -298,8 +323,11 @@ def check_all():
                 continue
             with open(full, encoding="utf-8") as f:
                 rec = yaml.safe_load(f) or {}
-            for e in validate(rec, schema(sp), sp):
+            errors = validate(rec, schema(sp), sp)
+            for e in errors:
                 found.append((full, e))
+            if not errors:
+                found.extend((full, e) for e in motion_interlocks(rec))
             # (Its key: there, of its kind, as its file says, and no other record's.)
             key, want = key_in(rec), key_of(rel, rec)
             if not isinstance(key, str) or not KEY.match(key):
