@@ -2,14 +2,11 @@
 identity:
   key: planet-process.zones-arc-front
   name: Volcanic arc front on a continent over a trench
-  about: 'Each plate step: every trench contact (a sinking particle under a riding continental particle) moved ARC_FRONT_M
-    from the sinker toward the rider''s crust gives one front point; the points join one forming ''arc front'' line per riding
-    plate (key (''arc'', plate)), opened with a ''subduction'' event. Newly accepted points spawn arc volcano records; all
-    front points refresh nearby volcano records'' ''last''.'
+  about: 'Each plate step: every trench contact (a sinking particle under a riding continental particle) moved ARC_FRONT_M from the sinker toward the rider''s crust gives one front point; the points join one forming ''arc front'' line
+    per riding plate (key (''arc'', plate)), opened with a ''subduction'' event. Newly accepted points spawn arc volcano records; all front points refresh nearby volcano records'' ''last''.'
 area: relief
 clock:
-  when: every plate step in the subduction pass, plates.py:1040; t is sim time in Gyr since formation (code converts with
-    *1e3 to Myr)
+  when: every plate step in the subduction pass, plates.py:1040; t is sim time in Gyr since formation (code converts with *1e3 to Myr)
 reads:
 - name: trench points
   field: planet-field.trench-position
@@ -44,21 +41,23 @@ params:
   meaning: the volcanic front behind the trench (Earth's arc-trench gaps 100-300 km)
   source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:20
 - name: POINT_SEP
-  value: 0.6
-  unit: '1'
+  value: 78235.4
+  unit: m
   said_as:
-    unit: x gap
-    factor: 1.0
+    unit: km
+    factor: 0.001
   meaning: point merge distance
   source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:21
+  note: '19 Oct 2026: was 0.6 sample spacings (30,000 samples, 130.4 km on Earth): the same distance in metres, no samples'
 - name: REACH
-  value: 1.5
-  unit: '1'
+  value: 195588.4
+  unit: m
   said_as:
-    unit: x gap
-    factor: 1.0
+    unit: km
+    factor: 0.001
   meaning: grow-along-length gate
   source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:23
+  note: '19 Oct 2026: was 1.5 sample spacings (30,000 samples, 130.4 km on Earth): the same distance in metres, no samples'
 - name: rider search
   value: 24.0
   unit: '1'
@@ -87,16 +86,13 @@ basis:
   - reads
   - writes
   tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
-    from the code at planet-sim-landform 9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read from the code at planet-sim-landform 9747f0d-c437724.'
 - of:
   - reads
   - writes
   - params
   tier: derived
-  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
-    9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform 9747f0d-c437724.'
 cautions:
-- 'the Python''s reads were its line store''s internals: sinker positions w.x[sinker]; rider particle ids; w.xcont[rider]
-  (only continental riders); w.xplate[rider]; R (planet radius, m); gap = sphere.spacing(n) of the current lattice, radians
-  on the unit sphere (x R = metres); refined as the present nears'
+- 'the Python''s reads were its line store''s internals: sinker positions w.x[sinker]; rider particle ids; w.xcont[rider] (only continental riders); w.xplate[rider]; R (planet radius, m); gap = sphere.spacing(n) of the current lattice,
+  radians on the unit sphere (x R = metres); refined as the present nears'

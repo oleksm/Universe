@@ -39,21 +39,23 @@ writes:
 note: 'Emits: store event kind ''collision'' (plates=[u,v]) Emits: trace row what=''spawn'' rule=''zones.collision'' (Relief.tag_line)'
 params:
 - name: POINT_SEP
-  value: 0.6
-  unit: '1'
+  value: 78235.4
+  unit: m
   said_as:
-    unit: x gap (rad)
-    factor: 1.0
+    unit: km
+    factor: 0.001
   meaning: points of a forming line closer than this are one
   source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:21
+  note: '19 Oct 2026: was 0.6 sample spacings (30,000 samples, 130.4 km on Earth): the same distance in metres, no samples'
 - name: REACH
-  value: 1.5
-  unit: '1'
+  value: 195588.4
+  unit: m
   said_as:
-    unit: x gap (rad)
-    factor: 1.0
+    unit: km
+    factor: 0.001
   meaning: 'once a line has points, only points farther than this from all of them are taken: the line grows along its length, never behind itself'
   source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:23
+  note: '19 Oct 2026: was 1.5 sample spacings (30,000 samples, 130.4 km on Earth): the same distance in metres, no samples'
 - name: causes
   setting: '{"plates": 0.6, "history": 0.4}'
   meaning: provenance weights stored on the line

@@ -2,13 +2,11 @@
 identity:
   key: planet-process.zones-close-stale
   name: Forming sutures and arc fronts ended and chained
-  about: 'End of every plate step, after Store.settle: each forming line with no new points for CLOSE_MYR is finished (chained
-    into polylines by Store.finish with LINK and smoothing 0.7 gap); for sutures relief.orogen is called on the resulting
-    lines; the line and its children are marked state ''ended''.'
+  about: 'End of every plate step, after Store.settle: each forming line with no new points for CLOSE_MYR is finished (chained into polylines by Store.finish with LINK and smoothing 0.7 gap); for sutures relief.orogen is called on the
+    resulting lines; the line and its children are marked state ''ended''.'
 area: relief
 clock:
-  when: end of every plate step, plates.py:1408-1409 (after lines.settle); t is sim time in Gyr since formation (code converts
-    with *1e3 to Myr)
+  when: end of every plate step, plates.py:1408-1409 (after lines.settle); t is sim time in Gyr since formation (code converts with *1e3 to Myr)
 reads:
 - name: features (planet-feature.suture)
   meaning: forming, with their contacts
@@ -34,28 +32,29 @@ params:
   meaning: a suture or arc with no new points for this long is ended and chained
   source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:18
 - name: LINK
-  value: 2.5
-  unit: '1'
+  value: 325980.7
+  unit: m
   said_as:
-    unit: x gap (rad)
-    factor: 1.0
+    unit: km
+    factor: 0.001
   meaning: points of a forming line linked when chaining (spanning tree radius)
   source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:22
+  note: '19 Oct 2026: was 2.5 sample spacings (30,000 samples, 130.4 km on Earth): the same distance in metres, no samples'
 - name: smooth
-  value: 0.7
-  unit: '1'
+  value: 91274.6
+  unit: m
   said_as:
-    unit: x gap (rad)
-    factor: 1.0
+    unit: km
+    factor: 0.001
   meaning: Gaussian smoothing sigma along the chained line (ends kept)
   source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:163
+  note: '19 Oct 2026: was 0.7 sample spacings (30,000 samples, 130.4 km on Earth): the same distance in metres, no samples'
 - name: final
   setting: 'False'
   meaning: close every forming line regardless of age
   source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:154
-  note: 'no caller passes final=True (grep, 17 Oct): lines still forming at a checkpoint are not chained; Store.arrays is
-    called without link in planet_form.py:232 so forming lines are NOT written to <ck>_store.npz (unverified intent); unit:
-    bool'
+  note: 'no caller passes final=True (grep, 17 Oct): lines still forming at a checkpoint are not chained; Store.arrays is called without link in planet_form.py:232 so forming lines are NOT written to <ck>_store.npz (unverified intent);
+    unit: bool'
 - name: min points
   value: 3.0
   unit: '1'
@@ -85,16 +84,13 @@ basis:
   - reads
   - writes
   tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
-    from the code at planet-sim-landform 9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read from the code at planet-sim-landform 9747f0d-c437724.'
 - of:
   - reads
   - writes
   - params
   tier: derived
-  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
-    9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform 9747f0d-c437724.'
 cautions:
-- 'the Python''s reads were its line store''s internals: S.open; line[''last''], line[''forming'']; gap = sphere.spacing(n)
-  of the current lattice, radians on the unit sphere (x R = metres); refined as the present nears; w.x (re-anchoring after
-  smoothing)'
+- 'the Python''s reads were its line store''s internals: S.open; line[''last''], line[''forming'']; gap = sphere.spacing(n) of the current lattice, radians on the unit sphere (x R = metres); refined as the present nears; w.x (re-anchoring
+  after smoothing)'

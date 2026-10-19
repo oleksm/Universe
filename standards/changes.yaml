@@ -2637,7 +2637,7 @@
 - { record: planet-process.relief-great-escarpment, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: reads, writes, implementations, basis, cautions", sha: "1b86d131321d45e7" }
 - { record: planet-process.relief-hotspot-chain, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: reads, writes, params, implementations, basis, cautions", sha: "812b079f77675a13" }
 - { record: planet-process.relief-layer-hooks, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "94dc2c1de9d8543e" }
-- { record: planet-process.relief-orogen-axis, at: "2026-10-18T04:31:28Z", status: "", summary: "changed: params, basis", sha: "c2fd4f681c562e0f" }
+- { record: planet-process.relief-orogen-axis, at: "2026-10-19T14:45:22Z", status: "", summary: "changed: params", sha: "b547731569da9cfa" }
 - { record: planet-process.relief-rift-floor-axis, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: reads, writes, implementations, basis, cautions", sha: "62ccfbe193197698" }
 - { record: planet-process.relief-rift-scarps, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: reads, writes, params, depends_on, implementations, basis, cautions", sha: "c48f23465252916a" }
 - { record: planet-process.relief-rift-shoulders, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: reads, writes, implementations, basis, cautions", sha: "bc64c8a2c3e4d484" }
@@ -2671,13 +2671,13 @@
 - { record: planet-process.vplanet-earth-check, at: "2026-10-17T19:32:13Z", status: "", summary: "changed: reads", sha: "819fe21b61c3b0fb" }
 - { record: planet-process.water-optics, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "44bfe1d23b3abca3" }
 - { record: planet-process.world-spec-derived, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "4bf6affeb156db6e" }
-- { record: planet-process.zones-arc-front, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: reads, writes, params, implementations, basis, cautions", sha: "a95a3caedecdb403" }
-- { record: planet-process.zones-arc-volcanoes, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: reads, writes, implementations, basis, cautions", sha: "6bb3eab665062fc9" }
-- { record: planet-process.zones-close-stale, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: reads, writes, params, implementations, basis, cautions", sha: "071573cd50907456" }
+- { record: planet-process.zones-arc-front, at: "2026-10-19T14:45:22Z", status: "", summary: "changed: params", sha: "7ca1019dc88ecf9b" }
+- { record: planet-process.zones-arc-volcanoes, at: "2026-10-19T14:45:22Z", status: "", summary: "changed: params", sha: "5035f709daa3557f" }
+- { record: planet-process.zones-close-stale, at: "2026-10-19T14:45:22Z", status: "", summary: "changed: params", sha: "307dda3083c09c4c" }
 - { record: planet-process.zones-flood-basalt, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: reads, writes, implementations, basis, cautions", sha: "d1ba4c2bcca3a7a5" }
-- { record: planet-process.zones-hotspot-volcano, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: reads, writes, implementations, basis, cautions", sha: "7b1d839a752ed17f" }
-- { record: planet-process.zones-rift-margins, at: "2026-10-17T23:32:39Z", status: "", summary: "changed: reads", sha: "60093b99a7967fa1" }
-- { record: planet-process.zones-suture-forming, at: "2026-10-17T23:32:39Z", status: "", summary: "changed: reads", sha: "d8b69ef65bc49ace" }
+- { record: planet-process.zones-hotspot-volcano, at: "2026-10-19T14:45:22Z", status: "", summary: "changed: params", sha: "ecc27861dd461d4b" }
+- { record: planet-process.zones-rift-margins, at: "2026-10-19T14:45:22Z", status: "", summary: "changed: params", sha: "d40be70c09ac2e72" }
+- { record: planet-process.zones-suture-forming, at: "2026-10-19T14:45:22Z", status: "", summary: "changed: params", sha: "2bb1b46cdd409a8e" }
 - { record: planet-process.zones-water-gap, at: "2026-10-17T22:25:37Z", status: "", summary: "changed: reads, writes, implementations, basis", sha: "124d94924199954d" }
 - { record: planet-process.zones-water-history, at: "2026-10-17T22:25:37Z", status: "", summary: "changed: reads, writes, params, implementations, basis", sha: "896d9d7b0aa640e9" }
 - { record: planet-process.zones-water-mouths, at: "2026-10-17T22:25:37Z", status: "", summary: "changed: reads, writes, implementations, basis", sha: "8c152337692acd72" }
