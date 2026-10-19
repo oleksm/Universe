@@ -56,6 +56,8 @@ writes:
   field: planet-field.boundary-left-continental
 - name: boundary-right-continental
   field: planet-field.boundary-right-continental
+- name: crust-origin
+  field: planet-field.crust-origin
 events_emitted:
 - event: planet-event.rift
   where: crates/tectonics/src/rift.rs split

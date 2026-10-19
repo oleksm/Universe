@@ -2159,6 +2159,7 @@
 - { record: planet-field.core-radius, at: "2026-10-17T21:42:08Z", status: "", summary: "first tracked", sha: "bfb8fa689292dd75" }
 - { record: planet-field.crust-age, at: "2026-10-17T15:50:54Z", status: "", summary: "changed", sha: "0266bd4320b629de" }
 - { record: planet-field.crust-kind, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "21eb899705b6f648" }
+- { record: planet-field.crust-origin, at: "2026-10-19T18:00:59Z", status: "", summary: "first tracked", sha: "2784d637dc1e15ab" }
 - { record: planet-field.crust-thickness, at: "2026-10-17T15:50:54Z", status: "", summary: "changed", sha: "3070dbee1a851c6a" }
 - { record: planet-field.denuded, at: "2026-10-17T23:17:32Z", status: "", summary: "first tracked", sha: "947b5dc0457beb30" }
 - { record: planet-field.dipole-moment, at: "2026-10-17T21:42:08Z", status: "", summary: "first tracked", sha: "b2c0835a3acb1818" }
@@ -2697,7 +2698,7 @@
 - { record: planet-process.tile-snow, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "7a16e5045efc1d08" }
 - { record: planet-process.vector-climate, at: "2026-10-19T04:05:52Z", status: "", summary: "first tracked", sha: "9c03499ba9b06784" }
 - { record: planet-process.vector-geology, at: "2026-10-19T04:24:20Z", status: "", summary: "changed: params", sha: "49e27cadfb7a9b35" }
-- { record: planet-process.vector-plates, at: "2026-10-19T17:33:17Z", status: "", summary: "changed: params", sha: "659fe4cd7dfc323e" }
+- { record: planet-process.vector-plates, at: "2026-10-19T18:00:59Z", status: "", summary: "changed: writes", sha: "952729451dcd898d" }
 - { record: planet-process.vector-recent, at: "2026-10-19T04:15:08Z", status: "", summary: "first tracked", sha: "539f04782c4cd076" }
 - { record: planet-process.vector-water, at: "2026-10-19T04:18:08Z", status: "", summary: "changed", sha: "b2467e93516f0a46" }
 - { record: planet-process.vplanet-earth-check, at: "2026-10-17T19:32:13Z", status: "", summary: "changed: reads", sha: "819fe21b61c3b0fb" }
@@ -2732,6 +2733,7 @@
 - { record: planet-view.context-volcanoes, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "9fa453584717c5bc" }
 - { record: planet-view.context-zones, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "3b0834d531df695c" }
 - { record: planet-view.contours, at: "2026-10-18T02:17:46Z", status: "", summary: "changed: identity, draws, implementations, legend, basis", sha: "841a69ebd2f3e361" }
+- { record: planet-view.crust-origin, at: "2026-10-19T18:00:59Z", status: "", summary: "first tracked", sha: "85ea9d7ebf2d711f" }
 - { record: planet-view.delivery-conversion-error, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "2daa8e6db323e6eb" }
 - { record: planet-view.delivery-detailed, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "2c583a34a18e2610" }
 - { record: planet-view.delivery-mesh, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "9b2ca6dd9213268e" }

@@ -1,0 +1,97 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+identity:
+  key: planet-view.crust-origin
+  name: crust origin
+  about: 'what made the continents: continental crust coloured by the process that made most of it (the plates crust ledger), sea floor dimmed; plate boundaries and coastlines'
+title: crust origin
+row: top (history views)
+file_suffix: _origin.png
+draws:
+  words: continental crust by the process that made most of it; sea floor dimmed; plate boundaries, coastlines; each origin share of the continental area in the stamp
+shown: true
+implementations:
+- where: planet-forge crates/viewer/src/layers/origin.rs
+  state: current
+  note: the viewer
+status: draft
+legend:
+  title: 'CRUST ORIGIN: what made the continents (the process that made most of each band)'
+  source: the vector plates crust ledger
+  rows:
+  - kind: fill
+    label: first continents
+    colour:
+    - 150
+    - 120
+    - 90
+    shown_when: always
+  - kind: fill
+    label: arc
+    colour:
+    - 220
+    - 80
+    - 60
+    shown_when: always
+  - kind: fill
+    label: collision
+    colour:
+    - 150
+    - 60
+    - 170
+    shown_when: always
+  - kind: fill
+    label: terrane
+    colour:
+    - 230
+    - 160
+    - 40
+    shown_when: always
+  - kind: fill
+    label: plume
+    colour:
+    - 240
+    - 220
+    - 60
+    shown_when: always
+  - kind: fill
+    label: sediment
+    colour:
+    - 90
+    - 170
+    - 200
+    shown_when: always
+  - kind: fill
+    label: lower-crust flow
+    colour:
+    - 110
+    - 190
+    - 110
+    shown_when: always
+  - kind: fill
+    label: unknown
+    colour:
+    - 160
+    - 160
+    - 160
+    shown_when: always
+  - kind: fill
+    label: sea floor
+    colour:
+    - 40
+    - 60
+    - 90
+    shown_when: always
+  - kind: line
+    label: plate boundaries
+    colour:
+    - 20
+    - 20
+    - 20
+    shown_when: always
+  - kind: line
+    label: coastlines
+    colour:
+    - 255
+    - 255
+    - 255
+    shown_when: always
