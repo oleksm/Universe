@@ -2602,12 +2602,12 @@
 - { record: planet-process.clouds, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "6cf3cc69333f4caf" }
 - { record: planet-process.coast-features, at: "2026-10-17T21:22:32Z", status: "", summary: "first tracked", sha: "bd1a7b296e3bd8eb" }
 - { record: planet-process.collision-and-docking, at: "2026-10-19T21:13:59Z", status: "", summary: "changed: params", sha: "40534413d5084375" }
-- { record: planet-process.continental-sedimentation, at: "2026-10-20T04:26:15Z", status: "", summary: "changed", sha: "3c9f1a378b6846d5" }
+- { record: planet-process.continental-sedimentation, at: "2026-10-20T04:48:51Z", status: "", summary: "changed", sha: "5d4ba072166ab12c" }
 - { record: planet-process.core-dynamo, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "184950bc7642ea25" }
 - { record: planet-process.core-heat-loss, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "937cde0588809800" }
 - { record: planet-process.core-melting-and-inner-core, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "0e8b18a368c57f9a" }
 - { record: planet-process.coupled-climate, at: "2026-10-18T05:21:37Z", status: "", summary: "changed: params, implementations", sha: "3361be594797f0d7" }
-- { record: planet-process.coupled-erosion, at: "2026-10-17T22:25:37Z", status: "", summary: "changed: reads, writes, params, implementations, basis", sha: "a37c95f1c684247a" }
+- { record: planet-process.coupled-erosion, at: "2026-10-20T04:48:51Z", status: "", summary: "changed", sha: "afff7766c744f824" }
 - { record: planet-process.coupled-host, at: "2026-10-17T19:32:13Z", status: "", summary: "changed: writes", sha: "517d8324f4b53b56" }
 - { record: planet-process.coupled-surface-hook, at: "2026-10-17T19:32:13Z", status: "", summary: "changed: reads", sha: "e5d9612395084945" }
 - { record: planet-process.crater-preservation, at: "2026-10-18T01:09:30Z", status: "", summary: "changed: writes, implementations, basis", sha: "a451290f3aebaf36" }
@@ -2622,7 +2622,7 @@
 - { record: planet-process.denudation-and-rivers, at: "2026-10-20T04:26:15Z", status: "", summary: "changed", sha: "4b569c75d5a4518d" }
 - { record: planet-process.deposit-contents, at: "2026-10-18T01:09:30Z", status: "", summary: "changed: implementations", sha: "af5d12495ee9e186" }
 - { record: planet-process.deposit-draw, at: "2026-10-18T01:09:30Z", status: "", summary: "changed: params, implementations, basis", sha: "35f3b99ab16fe826" }
-- { record: planet-process.dust, at: "2026-10-17T22:25:37Z", status: "", summary: "changed: reads, writes, params, implementations, basis", sha: "6f8f355f0eba9d8c" }
+- { record: planet-process.dust, at: "2026-10-20T04:48:51Z", status: "", summary: "changed", sha: "7f3ab1d0b6df0f79" }
 - { record: planet-process.flow-routing, at: "2026-10-17T22:25:37Z", status: "", summary: "changed: reads, writes, params, implementations, basis", sha: "691fc957c078b330" }
 - { record: planet-process.glacial-cycles, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: clock, reads, writes, params, tables, implementations, basis", sha: "3ef80670638a9ca9" }
 - { record: planet-process.glacial-erosion, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: clock, reads, writes, params, implementations, basis", sha: "d034057e47c479aa" }
@@ -2685,7 +2685,7 @@
 - { record: planet-process.run-ledger-and-snapshots, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "b7bbaf279b1afd75" }
 - { record: planet-process.sea-level, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: reads, params, basis", sha: "b3e08b421390ff27" }
 - { record: planet-process.seafloor-spreading, at: "2026-10-17T23:17:32Z", status: "", summary: "changed: reads, writes, events_emitted", sha: "a02fe788afd608b8" }
-- { record: planet-process.sediment-routing, at: "2026-10-17T22:25:37Z", status: "", summary: "changed: reads, writes, params, implementations, basis", sha: "27cc80727e29a3e7" }
+- { record: planet-process.sediment-routing, at: "2026-10-20T04:48:51Z", status: "", summary: "changed", sha: "11326409912dd8c7" }
 - { record: planet-process.small-body-origin-mix, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "0370075c0101e5a5" }
 - { record: planet-process.sphere-sampling, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "29bd64b15d3a2ff2" }
 - { record: planet-process.stagnant-lid-crust, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "5e543fc898282b9b" }
