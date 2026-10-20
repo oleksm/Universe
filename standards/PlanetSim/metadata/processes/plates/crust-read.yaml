@@ -137,6 +137,12 @@ params:
     factor: 1500.0
   meaning: geology.py:730
   source: stages/plates.py:529
+- name: coast kernel
+  value: 0.5
+  unit: '1'
+  meaning: 'the kind (continent or ocean) is read with a Gaussian this many sample spacings wide (0: off, the KERNEL read); where that read and the KERNEL read disagree on the kind, the narrow thickness stands, so the coast carries
+    the sub-500 km features the particles hold (forge shape audit: the 0.8-gap read left one-ring bays at 1% of the land against Earth 5%; the 0.5-gap re-read of the same particles gave 6%) while the interior keeps the wide smooth read'
+  source: planets, 20 Oct 2026 (chosen); docs/shape-audit-2026-10-20.md section 2.2; forge models/plates/read.rs; e74
 random_draws:
 - none
 invariants:
