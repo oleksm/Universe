@@ -2595,7 +2595,7 @@
 - { record: planet-pattern.volcanic.province.volcanic-arc, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "37301b761198157f" }
 - { record: planet-pattern.volcanic.rift-zone, at: "2026-10-17T15:50:54Z", status: "", summary: "first tracked", sha: "6e8b06ea70a64210" }
 - { record: planet-process.air-optics, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "0e862e019d4b43bb" }
-- { record: planet-process.arcs-and-margin-erosion, at: "2026-10-18T03:20:39Z", status: "", summary: "changed: params, basis", sha: "80cce873e1363392" }
+- { record: planet-process.arcs-and-margin-erosion, at: "2026-10-20T03:48:17Z", status: "", summary: "changed", sha: "63272354a517573d" }
 - { record: planet-process.biosphere-box, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "7764979a3551d8f9" }
 - { record: planet-process.carbon-thermostat, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: reads, writes, params, implementations, basis", sha: "63dc6586228fa3f6" }
 - { record: planet-process.climate-ebm, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "96f9c6b3cc77c279" }
