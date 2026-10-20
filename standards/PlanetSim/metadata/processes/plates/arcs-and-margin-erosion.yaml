@@ -84,10 +84,12 @@ params:
   source: stages/plates.py:146
   note: 'real: arc-trench gaps 100-300 km'
 - name: ARC_PER_AREA
-  value: 1266.6666666666665
+  value: 2216.6666666666665
   unit: m
   meaning: 'Arc crust added per area of subducted floor (m3/m2), spread evenly over the arc band: base 3.8 km3/yr of arcs over 3.0 km2/yr of floor consumed, without the historical Python calibration multiplier.'
-  source: Scholl & von Huene 2009 (arc addition 3.8 km3/yr); Parsons 1981 (3.0 km2/yr consumed)
+  source: 'Scholl & von Huene 2009 (arc addition 3.8 km3/yr); Parsons 1981 (3.0 km2/yr consumed): 1.27 km per km2; x1.75 = 2.22 km is the Python calibration to Earth crust volume (planet-sim-landform d7442bb, made together with its
+    re-lay). planets, 20 Oct 2026: retried as experiment e55 once the continent outline is held by the processes alone (forge e53: 1.27 km gave 5.0e18 m3 on 29% of the planet, Earth 7.2e18 on 40%); e38 had rejected it under the leaky
+    representation. Acceptance: volume 6.5-8e18 at 35-45% area, thickness kept, ocean age and texture unchanged; land reported, not targeted. Roll back to 1266.67 if it fails.'
   note: The owner-authorized forge_e38 comparison restored the historical Python multiplier 1.75 with corrected speeds. It raised final continental area from 36.06% to 59.17% and reduced exposed land from 24.68% to 17.56% at the same
     water inventory. Rejected and reverted on 19 Oct 2026; see planet-forge/docs/terrain-canvas-recovery.md. No forced land fraction.
 - name: MARGIN_LOSS_PER_AREA
@@ -138,11 +140,10 @@ basis:
   source: Scholl & von Huene 2009; Parsons 1981
   note: Base ratio 3.8 km3/yr divided by 3.0 km2/yr, converted to metres. The original Python multiplier 1.75 was a chosen volume calibration; the isolated forge_e38 comparison rejected restoring it with the corrected speed law. The
     default returns to the unmultiplied base ratio.
+- of:
+  - params
+  tier: calibrated
+  note: 'planets, 20 Oct 2026: ARC_PER_AREA x1.75 as experiment e55 (see params.1.source); the 20 Oct e54 launch wrote a stray key and ran at 1.27 km (aborted, a duplicate of e53).'
 events_emitted:
 - event: planet-event.arc
   where: 'forge: one per substep with arcs (volumes added and eaten)'
-params[1]:
-  value: 2216.6666666666665
-  source: 'Scholl & von Huene 2009 (arc addition 3.8 km3/yr); Parsons 1981 (3.0 km2/yr consumed): 1.27 km per km2; x1.75 = 2.22 km: the Python calibration to Earth crust volume (planet-sim-landform d7442bb, made together with its re-lay).
-    planets, 20 Oct 2026: retried as experiment e54 once the continent outline is held by the processes alone (forge e53: 1.27 km gave 5.0e18 m3 on 29% of the planet, Earth 7.2e18 on 40%); e38 had rejected it under the leaky representation
-    (59% of the planet). Acceptance: volume 6.5-8e18 at 35-45% area, thickness kept, ocean age and texture unchanged; land reported, not targeted.'

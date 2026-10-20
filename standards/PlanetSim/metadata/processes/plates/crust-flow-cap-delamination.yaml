@@ -159,6 +159,8 @@ invariants:
 - flow and cap conserve continental volume
 - delamination only removes volume
 - flow only between pairs of continental samples
+- the diffusion runs between interior continental samples only (both with every neighbour continental); the edge ring is its boundary, so the continent outline changes only through the tectonic processes, never through the flow or its
+  fit (forge d64169e, e53 on)
 depends_on:
 - planet-process.crust-read
 - planet-process.crust-fit
@@ -184,12 +186,12 @@ basis:
   source: Clark & Royden 2000; Bird 1991; Turcotte & Schubert 2014
   review: true
   note: 'Figures from memory, 18 Oct 2026: check.'
+- of:
+  - identity.about
+  - invariants
+  tier: derived
+  note: 'planets, 20 Oct 2026: the fit after the flow holds the read at every sample the kernel reaches (fd2b178, e52) and the diffusion runs between interior samples only (d64169e, e53): fitted at the continental samples alone with
+    the edge ring receiving, the edge particles smeared past CONTINENT_EDGE a ring at a time (e51: +0.47 of the planet of continental area at zero volume; e52 +0.21; e53 +0.01). See planet-forge docs/terrain-canvas-recovery.md.'
 events_emitted:
 - event: planet-event.ledger-row
   where: 'forge: the step''s volume moved, shed, worn, denuded or laid on the shelf (the Python''s ledger rows)'
-provenance:
-  note: 'planets, 20 Oct 2026: the crust-fit after this model now holds the read at every sample the kernel reaches, not only at the continental samples. Fitted at the continental samples alone, the edge particles it scaled up smeared
-    past CONTINENT_EDGE through the kernel and the continent widened a ring at a time at constant volume (forge e51 to 2000 Myr: +0.21 of the planet from crust flow alone, zero volume; continents 23 km instead of 33). The outline is
-    the tectonic processes to change, not the fit. See planet-forge docs/terrain-canvas-recovery.md (e52).'
-invariants[9]: the diffusion runs between interior continental samples only (both with every neighbour continental); the edge ring is its boundary, so the continent outline changes only through the tectonic processes, never through
-  the flow or its fit
