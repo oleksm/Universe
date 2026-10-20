@@ -97,7 +97,7 @@ basis:
   note: 'planets, 17 Oct 2026: forge reads the present from the run profile (one clock from formation); the duplicate param is gone.'
 - of:
   - params
-  tier: calibrated
+  tier: invented
   note: 'planets, 20 Oct 2026 (owner: the game look): water scale 0.975 -> 1.07 (Earth water x1.0) with ARC_PER_AREA x1.3 as e65. The shape audit against ETOPO on the same 30,000 samples (tools/audit_shape.py) found the land standing
     a kilometre too high (median 1367 m against 418; 67% above 1 km against 26%) because the sea sat at 1600 m on the ridge reference against Earth 2600: an ocean with almost no shallow margin. The offline water sweep on the saved states
     (docs/terrain-canvas-recovery.md) puts the Earth hypsometry at ~45% continental area with ~10% more water: forge_e57 state at that water: sea 2742, land 28%, median 412 m, shelf 7.2% (Earth 7.3).'

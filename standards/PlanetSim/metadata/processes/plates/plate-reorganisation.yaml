@@ -159,7 +159,7 @@ basis:
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'
 - of:
   - params
-  tier: calibrated
+  tier: invented
   note: 'planets, 20 Oct 2026 (the shape audit): BIG_SHARE 0.35 -> 0.25 and INSULATE_MYR 200 -> 150 Myr so the supercontinent rift (the only cut through continent) fires: in e71 it never did in 4 Gyr (the largest plate held over 35%
     of the continent in 15 of 83 checkpoints, never 200 Myr running), 85 of 87 rifts were ocean-only, and 0% of the coast was a rifted margin (Earth ~50%). The cut follows old sutures (SUTURE_STRENGTH) and the halves stretch before
     parting. e73.'

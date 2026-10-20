@@ -170,7 +170,7 @@ basis:
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'
 - of:
   - params
-  tier: calibrated
+  tier: invented
   note: 'planets, 20 Oct 2026: CONTINENT_MEAN 39 -> 41 km (Mooney et al. 1998 global mean ~41 km; Christensen & Mooney 1995 39 km): the continent stands 840 m above Earth sea at 41 km, so every thickness stands 303 m lower on the ridge
     reference. From the shape audit against ETOPO on the same lattice: at 39 km the land stood too high (e65: median 668 m, Earth 418; shelves 2.4% of the ocean, Earth 7.3%); the static check on the e65 state at 41 km: median 476 m,
     shelf 5.0%, shallow 11.7% (Earth 11.6), land 33%. e66.'

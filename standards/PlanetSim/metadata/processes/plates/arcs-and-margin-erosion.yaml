@@ -155,7 +155,7 @@ basis:
     default returns to the unmultiplied base ratio.
 - of:
   - params
-  tier: calibrated
+  tier: invented
   note: 'planets, 20 Oct 2026: ARC_PER_AREA x1.75 as experiment e55 (see params.1.source); the 20 Oct e54 launch wrote a stray key and ran at 1.27 km (aborted, a duplicate of e53).'
 - of:
   - params
@@ -164,16 +164,16 @@ basis:
     km. The gross crust budget is set by the floor consumed (10 km2/yr against Earth 3.0-3.4): the boundary length is the lever, not the rate per km2.'
 - of:
   - params
-  tier: calibrated
+  tier: invented
   note: 'planets, 20 Oct 2026 (owner: looks right for the game, try tweaks): ARC_PER_AREA x1.4 = 1.77 km as e56, between the sourced 1.27 (e53: 5.0e18 m3 on 29%) and x1.75 (e55: 1.7e19 on 80%).'
 - of:
   - params
-  tier: calibrated
+  tier: invented
   note: 'planets, 20 Oct 2026: ARC_PER_AREA = 1.77 km (x1.4 of the sourced 1.27) is the default for the game look, chosen on e56 against e53 (1.27: 23% land, 29% continental) and e57 (x1.3: 37% land, 47%, flatter, ocean 107 Myr). e56:
     37-40% land, continents on 51% at 37 km, volume 1.0e19 m3, sea 2764 m on the ridge reference (Earth 2600), ocean median 87 Myr, ranges to 7.9 km. Owner: not bad at all. See planet-forge docs/decisions-2026-10-20.md D8.'
 - of:
   - params
-  tier: calibrated
+  tier: invented
   note: 'planets, 20 Oct 2026 (late): default ARC_PER_AREA = 1.46 km (x1.15 of the sourced 1.27) together with the denudation base level 300 m, chosen on forge e60: land 33% (late 31-33%), continents on 39.5% of the planet (Earth 40%)
     at 32 km, drowned interiors 1.6%, sea 1721 m, ocean median 107 Myr, relief p50 834 m, max 5.3 km. Replaces the x1.4 choice of e56 (37-40% land, 18% drowned interiors, the cheesy inland seas). Bracket: x1.0 + base level (e59) 26.6%;
     x1.4 + base level (e58) 25% with 52% drowned. See planet-forge docs/decisions-2026-10-20.md D8/D11.'

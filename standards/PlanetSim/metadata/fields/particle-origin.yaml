@@ -13,10 +13,9 @@ producer:
 per: particle
 status: draft
 basis:
-  +:
-    of:
-    - identity
-    - unit
-    - producer
-    tier: derived
-    note: 'planets, 20 Oct 2026: the provenance the shape audit asked for (docs/shape-audit-2026-10-20.md section 5.1)'
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 20 Oct 2026: the provenance the shape audit asked for (docs/shape-audit-2026-10-20.md section 5.1)'
