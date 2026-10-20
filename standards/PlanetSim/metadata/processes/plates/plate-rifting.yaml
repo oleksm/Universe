@@ -189,6 +189,7 @@ invariants:
 - continental volume unchanged by rifting
 depends_on:
 - planet-process.plate-reorganisation
+- planet-process.subduction
 backends:
 - cpu
 implementations:

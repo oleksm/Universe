@@ -142,6 +142,7 @@ invariants:
 - an insulated reorganisation adds no top-ups
 depends_on:
 - planet-process.plate-rifting
+- planet-process.subduction
 backends:
 - cpu
 implementations:
