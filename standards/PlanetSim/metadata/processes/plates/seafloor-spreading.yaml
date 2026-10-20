@@ -2,8 +2,9 @@
 identity:
   key: planet-process.seafloor-spreading
   name: 'Gaps: new ridge floor and continental stretching'
-  about: 'Coverage gaps are classified by local plate kinematics. New ocean floor or rift stretching and ridge push require distinct plates bracketing the gap with positive normal separation. Other gaps repair sampling only: inherit
-    source age, floor and geology; split continental source volume where needed. Repair creates no newborn thermal floor, ridge force or ridge ores. The ledger separates physical births and material-preserving repairs.'
+  about: Coverage gaps are classified by local plate kinematics. New ocean floor or rift stretching and ridge push require distinct plates bracketing the gap with positive normal separation. Nondivergent gaps already covered by continental
+    thickness need no new marker; other gaps inherit the crust-read ocean source age, floor and geology. Numerical repair creates no newborn thermal floor, ridge force, ridge ores or continental stretching. The ledger separates physical
+    births, ocean repairs and already-covered continental samples.
 area: plates
 clock:
   when: every step
@@ -167,6 +168,7 @@ invariants:
 - repair markers inherit source thermal history and geology
 depends_on:
 - planet-process.subduction
+- planet-process.crust-read
 backends:
 - cpu
 implementations:
