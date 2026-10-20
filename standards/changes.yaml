@@ -2601,7 +2601,7 @@
 - { record: planet-process.climate-ebm, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "96f9c6b3cc77c279" }
 - { record: planet-process.clouds, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "6cf3cc69333f4caf" }
 - { record: planet-process.coast-features, at: "2026-10-17T21:22:32Z", status: "", summary: "first tracked", sha: "bd1a7b296e3bd8eb" }
-- { record: planet-process.collision-and-docking, at: "2026-10-20T13:25:24Z", status: "", summary: "changed", sha: "444ca0ded6bd107b" }
+- { record: planet-process.collision-and-docking, at: "2026-10-20T13:49:47Z", status: "", summary: "changed", sha: "40534413d5084375" }
 - { record: planet-process.continental-sedimentation, at: "2026-10-20T04:48:51Z", status: "", summary: "changed", sha: "5d4ba072166ab12c" }
 - { record: planet-process.core-dynamo, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "184950bc7642ea25" }
 - { record: planet-process.core-heat-loss, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "937cde0588809800" }
@@ -2654,10 +2654,10 @@
 - { record: planet-process.organics-burial, at: "2026-10-18T01:09:30Z", status: "", summary: "changed: params, basis", sha: "193498d4e5f71f3d" }
 - { record: planet-process.orographic-downscale, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "8277c3b07c0a8717" }
 - { record: planet-process.paleo-climate, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "1027f9d4a0268b8a" }
-- { record: planet-process.plate-motion-and-forces, at: "2026-10-20T13:26:52Z", status: "", summary: "changed", sha: "e7dd55592207b3e4" }
+- { record: planet-process.plate-motion-and-forces, at: "2026-10-20T13:49:47Z", status: "", summary: "changed", sha: "74aacf627ed110d6" }
 - { record: planet-process.plate-reorganisation, at: "2026-10-17T21:22:32Z", status: "", summary: "changed: reads, writes", sha: "ee93fc26afda54b7" }
 - { record: planet-process.plate-rifting, at: "2026-10-17T21:22:32Z", status: "", summary: "changed: reads, writes, params", sha: "cbdecd7cc3a1bc9e" }
-- { record: planet-process.plate-welding, at: "2026-10-20T13:33:40Z", status: "", summary: "changed", sha: "e10866a8f4a465c6" }
+- { record: planet-process.plate-welding, at: "2026-10-20T13:49:47Z", status: "", summary: "changed", sha: "166798827e76ccbb" }
 - { record: planet-process.plates-init, at: "2026-10-18T13:26:47Z", status: "", summary: "changed: params, basis", sha: "9ff00b655ae12d75" }
 - { record: planet-process.radiogenic-heating, at: "2026-10-17T21:58:07Z", status: "", summary: "changed: params, tables", sha: "6c7bf8e3ae5b3362" }
 - { record: planet-process.recent-rivers, at: "2026-10-17T22:25:37Z", status: "", summary: "changed: reads, writes, params, implementations, basis, cautions", sha: "6c14fd5a025b9899" }
