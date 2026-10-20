@@ -173,7 +173,7 @@ params:
     by the exact total (the Python global rescale). At 150 m the fringe is kept; the Python truncation (= CONTINENT_EDGE) has not been run: the 20 Oct attempt to set it (e50) wrote a stray key instead and e50-e53 ran at 150 m'
   source: 'planets, 20 Oct 2026: 1% of CONTINENT_EDGE; forge models/plates/remesh.rs. e50-e53 ran at this value (the set to CONTINENT_EDGE on 20 Oct did not apply); e53 is the reference'
 - name: re-lay jitter
-  value: 0.3
+  value: 0.0
   unit: '1'
   meaning: 'the re-laid particles leave the sample lattice by up to this many sample spacings in a random direction (keyed draws per new id). Particles exactly on the lattice let the coast kernel read (crust-read coast kernel, 0.5 gaps)
     pick up the lattice spiral rows as streaks in the coast (slicing, line-bias chops: forge e75). The fit reads at the samples as before; 0 turns it off'
@@ -223,3 +223,8 @@ basis:
   tier: derived
   note: 'planets, 20 Oct 2026 (late): the re-lay fit reaches every sample the old kernel reached (forge fd2b178, e52 on). The fringe floor stays 150 m: the set to CONTINENT_EDGE for e50 wrote a stray key, so e50-e53 ran at 150 m and
     the Python truncation is untested; corrected here. e53 (d64169e): stable 22-23% land, continents 31 km on 29%, ocean 49 Myr. See planet-forge docs/terrain-canvas-recovery.md.'
+- of:
+  - params
+  tier: invented
+  note: 'planets, 20 Oct 2026 (late): re-lay jitter 0.3 -> 0 (off). Off the lattice the re-laid particles reintroduce the sub-sample noise the re-lay exists to remove (forge e77: 128 interior minima per 1000; e78 at 1200 Myr with the
+    coast kernel off: 104). The lattice line bias in the coast is to be met by the finer late lattice and the renderer, not by moving the particles.'
