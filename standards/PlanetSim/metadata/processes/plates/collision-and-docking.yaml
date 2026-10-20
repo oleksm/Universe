@@ -57,6 +57,9 @@ reads:
 - name: w.xcover
   field: planet-field.particle-rock-cover
   unit: m
+- name: w.xage
+  field: planet-field.particle-age
+  unit: s
 writes:
 - name: w.xcont
   field: planet-field.particle-continental
@@ -198,6 +201,29 @@ params:
   meaning: 'vector plates: the shortened crust of a continental collision thickens a belt this wide on each side of the suture (the colliding continents keep their outlines); the belt widens further by lower-crust flow'
   source: 'collisional orogen widths: Alps ~200 km, Zagros and Himalaya ~250-350 km across the thrust belt (e.g. Dewey & Burke 1973; Molnar & Lyon-Caen 1988)'
   note: '19 Oct 2026, replaces the 125 km strip (ARC_WIDTH/2); from memory: verify'
+- name: pocket max area
+  value: 6.8e11
+  unit: m2
+  tier: invented
+  meaning: 'a closed patch of ocean floor shut inside continent (connected ocean particles linked within pocket link gaps, all older than pocket min age) with at most this area docks whole as continent (ophiolite): the remnant of a
+    closed ocean, which on Earth is filled and thrust up; 0 = off'
+  source: 'planets, 20 Oct 2026 (chosen; e82: an 8-sample sea 6.6 km deep inside a continent); forge models/plates/collision.rs'
+  note: 40 particle cells at 30,000 samples (about 820 km square)
+- name: pocket link
+  value: 1.5
+  unit: '1'
+  tier: invented
+  meaning: ocean particles within this many sample gaps of each other belong to one patch (the pocket rule)
+  source: planets, 20 Oct 2026 (chosen); forge models/plates/collision.rs
+- name: pocket min age
+  value: 3.156e15
+  unit: s
+  tier: invented
+  said_as:
+    unit: Myr
+    factor: 3.156e13
+  meaning: 'a patch docks as a pocket only when all its floor is older than this (100 Myr): a young rift strait keeps opening, a basin that sat shut for 100 Myr is filled'
+  source: planets, 20 Oct 2026 (chosen); forge models/plates/collision.rs
 random_draws:
 - none
 invariants:
