@@ -68,7 +68,7 @@ params:
   note: Appalachians, Urals; Watts 1982 (chosen)
 - name: ERODE_MYR
   env: SIM_ERODE_MYR
-  value: 4733640000000000.0
+  value: 9467280000000000.0
   unit: s
   said_as:
     unit: Myr
@@ -85,7 +85,7 @@ params:
   note: (and from what thickness; 45 km built 2-3 km high plains on s19, 14-24 % of land above 2 km)
 - name: COUPLED_ERODE_MYR
   env: SIM_COUPLED_ERODE_MYR
-  value: 7889400000000000.0
+  value: 1.262304e+16
   unit: s
   said_as:
     unit: Myr
@@ -240,6 +240,11 @@ basis:
   - identity.about
   tier: derived
   note: 'planets, 20 Oct 2026: the fit after the wear holds the read at every sample the kernel reaches (fd2b178, e52 on): the outline is not the fit to change.'
+- of:
+  - params
+  tier: calibrated
+  note: 'planets, 20 Oct 2026 (owner: mountains for the game look): ERODE_MYR 150 -> 300 Myr and COUPLED_ERODE_MYR 250 -> 400 Myr with CRUST_MAX 80 -> 65 km (crust-flow), experiment e62 on the e61 default: ranges should last longer
+    and peaks stop near 6 km (e61: highest 9.4 km from stacks near 88 km).'
 events_emitted:
 - event: planet-event.ledger-row
   where: 'forge: the step''s volume moved, shed, worn, denuded or laid on the shelf (the Python''s ledger rows)'

@@ -65,7 +65,7 @@ params:
   note: Bird 1991; Clark & Royden 2000; override for A/B grows
 - name: CRUST_MAX
   env: SIM_CRUST_MAX
-  value: 80000.0
+  value: 65000.0
   unit: m
   meaning: hard cap on continental read thickness; excess passed to continental neighbours (up to 12 rounds), none lost
   source: stages/plates.py:180
@@ -192,6 +192,10 @@ basis:
   tier: derived
   note: 'planets, 20 Oct 2026: the fit after the flow holds the read at every sample the kernel reaches (fd2b178, e52) and the diffusion runs between interior samples only (d64169e, e53): fitted at the continental samples alone with
     the edge ring receiving, the edge particles smeared past CONTINENT_EDGE a ring at a time (e51: +0.47 of the planet of continental area at zero volume; e52 +0.21; e53 +0.01). See planet-forge docs/terrain-canvas-recovery.md.'
+- of:
+  - params
+  tier: calibrated
+  note: 'planets, 20 Oct 2026: CRUST_MAX 80 -> 65 km for e62 (peaks near 6 km instead of 9.4; the cap moves the excess to the neighbours, none lost).'
 events_emitted:
 - event: planet-event.ledger-row
   where: 'forge: the step''s volume moved, shed, worn, denuded or laid on the shelf (the Python''s ledger rows)'
