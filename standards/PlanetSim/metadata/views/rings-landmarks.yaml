@@ -1,16 +1,13 @@
 # yaml-language-server: $schema=../../schema/planet-view.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-view.rings-landmarks
   name: Landmarks
-  about: coast from <ck>_lines.npz and every alive non-worn landmark record from <ck>_store.npz by MARK_STYLE (solid active,
-    faint former)
+  about: coast from <ck>_lines.npz and every alive non-worn landmark record from <ck>_store.npz by MARK_STYLE (solid active, faint former)
 title: Landmarks
 row: line rings
 file_suffix: _rings_landmarks.png (+ .legend.json)
 draws:
-  words: coast from <ck>_lines.npz and every alive non-worn landmark record from <ck>_store.npz by MARK_STYLE (solid active,
-    faint former)
+  words: coast from <ck>_lines.npz and every alive non-worn landmark record from <ck>_store.npz by MARK_STYLE (solid active, faint former)
 legend:
   title: Landmarks
   rows:
@@ -102,6 +99,20 @@ legend:
     - 0
     - 0
     label: coastline
+  - key: mark:planet-feature.impact-crater-complex
+    kind: ring
+    colour:
+    - 150
+    - 90
+    - 200
+    label: 'impact crater (20 km and up): {impact-crater-complex_active} young, {impact-crater-complex_former} older'
+  - key: mark:planet-feature.multi-ring-impact-basin
+    kind: ring
+    colour:
+    - 110
+    - 50
+    - 170
+    label: 'impact basin: {multi-ring-impact-basin_active} young, {multi-ring-impact-basin_former} older'
 shown: true
 implementations:
 - where: planet-trees-pgs2 ~/git/planet-trees-pgs2/tools/layer_lines.py:rings (376 (landmarks 452-497))
