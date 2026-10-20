@@ -84,7 +84,7 @@ params:
   source: stages/plates.py:146
   note: 'real: arc-trench gaps 100-300 km'
 - name: ARC_PER_AREA
-  value: 1773.3333333333333
+  value: 1646.6666666666667
   unit: m
   meaning: 'Arc crust added per area of subducted floor (m3/m2), spread evenly over the arc band: base 3.8 km3/yr of arcs over 3.0 km2/yr of floor consumed, without the historical Python calibration multiplier.'
   source: 'Scholl & von Huene 2009 (arc addition 3.8 km3/yr); Parsons 1981 (3.0 km2/yr consumed): 1.27 km per km2; x1.75 = 2.22 km is the Python calibration to Earth crust volume (planet-sim-landform d7442bb, made together with its
