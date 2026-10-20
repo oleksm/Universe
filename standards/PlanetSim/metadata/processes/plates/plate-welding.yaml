@@ -2,8 +2,8 @@
 identity:
   key: planet-process.plate-welding
   name: Welding of colliding plates into one
-  about: For each plate pair with a collision front, the loser particles seen within the last WELD_MYR are kept; if their count*cell >= WELD_AREA and both plates exist, the higher plate id is merged into the lower (all its particles
-    relabelled, plate deleted) and a weld is counted. Fronts with nothing recent are dropped.
+  about: Recent continental collision fronts are grouped by plate pair. Their current occupied footprint is counted once per nearest equal-area readout cell; compressed markers sharing a cell do not multiply its area. Weld when this
+    footprint reaches WELD_AREA and both plates exist, retaining the lower id. Stale fronts clear after WELD_MYR. This remains a resolution-limited area criterion; marker multiplicity and occupied cells are reported separately.
 area: plates
 clock:
   when: every step, after collisions
@@ -22,6 +22,9 @@ reads:
   unit: '1'
 - name: w.xplate
   field: planet-field.particle-plate
+  unit: '1'
+- name: collision marker position
+  field: planet-field.particle-position
   unit: '1'
 writes:
 - name: w.xplate
@@ -72,6 +75,8 @@ writes:
 events_emitted:
 - event: planet-event.weld
   where: stages/plates.py:1117
+- event: planet-event.ledger-row
+  where: Rust collision footprint and marker multiplicity audit
 params:
 - name: WELD_AREA
   value: 3000000000000.0
