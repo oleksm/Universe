@@ -158,6 +158,12 @@ basis:
   tier: calibrated
   note: 'planets, 20 Oct 2026: ARC_PER_AREA = 1.77 km (x1.4 of the sourced 1.27) is the default for the game look, chosen on e56 against e53 (1.27: 23% land, 29% continental) and e57 (x1.3: 37% land, 47%, flatter, ocean 107 Myr). e56:
     37-40% land, continents on 51% at 37 km, volume 1.0e19 m3, sea 2764 m on the ridge reference (Earth 2600), ocean median 87 Myr, ranges to 7.9 km. Owner: not bad at all. See planet-forge docs/decisions-2026-10-20.md D8.'
+- of:
+  - params
+  tier: calibrated
+  note: 'planets, 20 Oct 2026 (late): default ARC_PER_AREA = 1.46 km (x1.15 of the sourced 1.27) together with the denudation base level 300 m, chosen on forge e60: land 33% (late 31-33%), continents on 39.5% of the planet (Earth 40%)
+    at 32 km, drowned interiors 1.6%, sea 1721 m, ocean median 107 Myr, relief p50 834 m, max 5.3 km. Replaces the x1.4 choice of e56 (37-40% land, 18% drowned interiors, the cheesy inland seas). Bracket: x1.0 + base level (e59) 26.6%;
+    x1.4 + base level (e58) 25% with 52% drowned. See planet-forge docs/decisions-2026-10-20.md D8/D11.'
 events_emitted:
 - event: planet-event.arc
   where: 'forge: one per substep with arcs (volumes added and eaten)'
