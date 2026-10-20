@@ -4737,7 +4737,7 @@
 - { record: template.plug-socket, at: "2026-10-18T05:10:36Z", status: "", summary: "changed", sha: "5aff04409b33b553" }
 - { record: template.roof, at: "2026-10-18T01:14:24Z", status: "", summary: "changed", sha: "a966489b0bd9126b" }
 - { record: template.roof-pressure, at: "2026-10-18T15:50:18Z", status: "", summary: "changed", sha: "63e52626b85327fb" }
-- { record: template.run-clip, at: "2026-10-20T04:37:17Z", status: "", summary: "changed: visual", sha: "c36cf2dfd67fda08" }
+- { record: template.run-clip, at: "2026-10-20T13:13:09Z", status: "", summary: "changed", sha: "9ef240916e7ad2a9" }
 - { record: template.single-pole, at: "2026-10-18T05:21:02Z", status: "", summary: "changed", sha: "891598fccf7fa541" }
 - { record: template.stair, at: "2026-10-18T01:25:38Z", status: "", summary: "changed", sha: "dc0f89d97f6807ea" }
 - { record: template.strut-clamp, at: "2026-10-18T17:53:40Z", status: "", summary: "first tracked", sha: "466ad2dc88757182" }
