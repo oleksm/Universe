@@ -93,29 +93,29 @@ params:
 - name: boundary segment
   values:
   - 200000.0
+  - 200000.0
   - 100000.0
   - 50000.0
-  - 25000.0
   unit: m
   said_as:
     unit: km
     factor: 0.001
   meaning: 'the longest plate-boundary segment in each stretch of the schedule (also the substep: half a segment at the fastest plate)'
   source: owner, 19 Oct 2026
-  note: chosen; review
+  note: '19 Oct 2026 (owner): the backbone at 200 km before 500 Ma; was 200, 100, 50, 25 km'
 - name: crust tolerance
   values:
-  - 20000.0
+  - 100000.0
+  - 100000.0
   - 10000.0
-  - 5000.0
-  - 1000.0
+  - 2000.0
   unit: m
   said_as:
     unit: km
     factor: 0.001
   meaning: how closely crust band outlines follow the true edge in each stretch (bands simplified to it; thick crust and margins grown from outlines held to it, at least 5 km)
   source: owner, 19 Oct 2026
-  note: chosen; review
+  note: '19 Oct 2026 (owner): before 500 Ma only the backbone (100 km); detail in the last 500 Myr; was 20, 10, 5, 1 km'
 - name: MELT_EFOLD
   value: 175.0
   unit: K
@@ -138,8 +138,8 @@ params:
   note: derived from the interior model; review if the interior changes
 - name: isopach step
   values:
-  - 4000.0
-  - 2000.0
+  - 5000.0
+  - 5000.0
   - 1000.0
   - 1000.0
   unit: m
@@ -164,6 +164,43 @@ params:
   unit: '1'
   meaning: how much coarser than the crust tolerance a quiet band is held
   source: owner, 19 Oct 2026 (consolidate old crust)
+  note: chosen; review
+- name: backbone until
+  value: 1.5778463e+16
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 3.168808781402895e-14
+  meaning: 'before this long ago the plates make only the planet''s backbone: continents glued into solid bodies every step at the backbone tolerance; after it, the detailed era (its first step smooths the bodies'' outlines)'
+  source: 'owner, 19 Oct 2026: "before 500 mil y there is no need for such a detailed simulation, we only need to generate enough shapes as a planet backbone"'
+  note: 500 Myr
+- name: glue distance
+  value: 300000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 0.001
+  meaning: in the backbone era, gaps between a plate's continents narrower than twice this are closed by the glue (the crust there joins the body)
+  source: 'owner, 19 Oct 2026: "a process to glue things together"; derived: about the width of a collision belt (2 x OROGEN_HALF_WIDTH 250 km) and three backbone tolerances'
+  note: chosen; review
+- name: hole size
+  value: 300000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 0.001
+  meaning: in the backbone era, holes in a continent smaller than this across (area under its square) are filled
+  source: owner, 19 Oct 2026 (clean the fragmentation, peaks and dips); as glue distance
+  note: chosen; review
+- name: crust vertex budget
+  values:
+  - 40000.0
+  - 40000.0
+  - 400000.0
+  - 1500000.0
+  unit: '1'
+  meaning: the most crust outline vertices kept in each stretch of the resolution schedule; above it every band is simplified half again as coarse until under it
+  source: 'owner, 19 Oct 2026: "keep some budget"; e20 held ~300,000 at 1-0.9 Ga, e15 8 million at 3.5 Ga'
   note: chosen; review
 reads:
 - name: mantle temperature

@@ -2698,7 +2698,7 @@
 - { record: planet-process.tile-snow, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "7a16e5045efc1d08" }
 - { record: planet-process.vector-climate, at: "2026-10-19T04:05:52Z", status: "", summary: "first tracked", sha: "9c03499ba9b06784" }
 - { record: planet-process.vector-geology, at: "2026-10-19T04:24:20Z", status: "", summary: "changed: params", sha: "49e27cadfb7a9b35" }
-- { record: planet-process.vector-plates, at: "2026-10-19T22:48:50Z", status: "", summary: "changed: params", sha: "aaccdb4b61a6ba88" }
+- { record: planet-process.vector-plates, at: "2026-10-20T00:15:57Z", status: "", summary: "changed: params", sha: "8e75fc8822b1aa48" }
 - { record: planet-process.vector-recent, at: "2026-10-19T04:15:08Z", status: "", summary: "first tracked", sha: "539f04782c4cd076" }
 - { record: planet-process.vector-water, at: "2026-10-19T04:18:08Z", status: "", summary: "changed", sha: "b2467e93516f0a46" }
 - { record: planet-process.vplanet-earth-check, at: "2026-10-17T19:32:13Z", status: "", summary: "changed: reads", sha: "819fe21b61c3b0fb" }
