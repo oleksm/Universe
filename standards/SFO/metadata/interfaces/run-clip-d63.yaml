@@ -8,8 +8,8 @@ domain: load
 kind: run-clip
 size: 0.063
 envelope:
-  tension: 12758.0
-  shear: 3827.0
+  tension: 16200.0
+  shear: 4860.0
 media:
 - load
 sealing: open

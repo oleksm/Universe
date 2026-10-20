@@ -401,35 +401,47 @@ OWN = {"belt": (1.2, "its idler frames"), "drag-conveyor": (3.0, "its casing's s
        "conductor-rail": (1.5, "its brackets"), "festoon": (1.0, "its trolleys on their track"), "lined-duct": (6.0, "its own steel"), "jacketed-duct": (6.0, "its own steel")}
 
 
+AF = {10: 0.016, 16: 0.024, 20: 0.030, 30: 0.046, 42: 0.065, 56: 0.085, 64: 0.095, 80: 0.120, 100: 0.150}   # m, a nut across flats (ISO 4032 to M64; M80 and M100 by 1.5 d, invented)
+BORE = {10: 0.011, 16: 0.0175, 20: 0.022, 30: 0.033, 42: 0.045, 56: 0.062, 64: 0.070, 80: 0.086, 100: 0.107}   # m, the medium clearance hole (ISO 273 to M64; beyond, d + 7 %, invented)
+
+
 def run_clip(band):
     """A P-clip, in its own frame (x along, y across, z up): origin at the tab's bolt bore on the clamp lug's face
-    (z 0), the tab along x; the loop beyond the tab's -x end, its axis across (y), its outside tangent to z 0."""
+    (z 0), the tab along x; the loop beyond the tab's -x end, its axis across (y), its outside tangent to z 0. The strap
+    leaves the loop tangentially into the tab: the lower leg along z 0, the upper down onto it, the tab two straps thick.
+    Its one bolt (the smallest the frames stock whose proof load carries the strap's hold, M10 at least) closes the tab
+    and fixes it to the lug: the strap is at least the nut across flats plus 4 mm wide, so the nut sits on it."""
     mm = round(band * 1000)
-    w, t = max(0.012, 0.25 * band), max(0.0015, 0.02 * band)
-    tab = 0.02 + band / 4                      # the tab, both strap ends lying together, the bore at its middle
+    t = max(0.0015, 0.02 * band)
+    w, b = max(0.012, 0.25 * band), 10
+    for _ in range(4):                          # (a wider strap holds more, which may ask a bigger bolt: settle it)
+        hold = 2 * w * t * YIELD[AL]
+        b = bolt_for(hold, MU * hold) or max(AS)
+        w2 = max(w, AF[b] + 0.004)
+        if w2 == w:
+            break
+        w = w2
+    tab = max(0.02 + band / 4, AF[b] + 0.01)   # the tab, both strap ends lying together, the bore at its middle
     ro = (band + 0.004) / 2 + t                # the loop's outside radius: the band, its 2 mm cushion, the strap
     loop = math.pi * (band + 0.004) + 2 * tab
     strap = w * t * loop * RHO[AL]
     cushion = math.pi * (band + 0.002) * 0.002 * w * 1100.0
-    b = 10 if band <= 0.063 else 16
-    hold = 2 * w * t * YIELD[AL]
     ports = [{"id": "run", "flow": "in", "medium": "load", "interface": f"interface.run-clip-d{mm}", "half": "female", "make": "bolted",
               "at": [r(-(tab / 2 + ro)), 0.0, r(ro)], "facing": [0.0, 1.0, 0.0],
               "note": f"The loop's axis: one run up to {mm} mm outside passes along y, either way, on the 2 mm cushion."},
              {"id": "fix", "flow": "out", "medium": "load", "interface": "interface.kit-clamp", "half": "male", "make": "bolted",
               "at": [0.0, 0.0, 0.0], "facing": [0.0, 0.0, -1.0],
-              "note": f"Required: the tab's M{b} bore down onto a strut clamp's lug. The lug's own datum is still open (strut clamp parked, 2026-10-19); no stiffness or load rating is approved."}]
+              "note": f"Required: the tab's {BORE[b] * 1000:g} mm bore, down onto a strut clamp's lug, closed by one M{b} bolt and nut (ST4340-BOLT-M{b}, separate hardware, not drawn nor in this mass). The lug's own datum is still open (strut clamp parked, 2026-10-19); no stiffness or load rating is approved."}]
     rec = {"identity": {"key": f"connector.run-clip-d{mm}", "name": f"Run clip, up to {mm} mm",
-                        "description": f"A cushioned 6061 loop clip holding one run up to {mm} mm outside (a cable, a hose, a tube), its tab bolted by an M{b} to a strut clamp's lug: how a run is held on a ship's frame (docs/proposals/physical-mounts.md). Origin at the tab's bore on the lug face, z 0, the tab along x; the loop beyond the tab at -x, its axis across (y), its outside from z 0 up to z {r(2 * ro)}."},
+                        "description": f"A cushioned 6061 loop clip holding one run up to {mm} mm outside (a cable, a hose, a tube), its tab bolted by one M{b} to a strut clamp's lug: how a run is held on a ship's frame (docs/proposals/physical-mounts.md). Origin at the tab's {BORE[b] * 1000:g} mm bore on the lug face, z 0, the tab along x, {round(tab * 1000)} mm long and two straps thick; the loop beyond the tab at -x, its axis across (y), its outside from z 0 up to z {r(2 * ro)}, the strap leaving it tangentially into the tab. Strap and cushion only: the bolt and nut are separate hardware."},
            "kind": "run-clip", "size": band, "rating": {"tension": r(hold, 0), "shear": r(MU * hold, 0)},
-           "physical": {"length": r(tab + 2 * ro), "width": r(w), "height": r(2 * ro), "mass": r(strap + cushion + bolt_mass(b), 3)},
+           "physical": {"length": r(tab + 2 * ro), "width": r(w), "height": r(2 * ro), "mass": r(strap + cushion, 4)},
            "built_of": [{"what": "Strap", "item": AL, "mass": r(strap, 4), "note": f"6061, {round(w * 1000)} x {t * 1000:.1f} mm"},
-                        {"what": "Cushion", "item": "material.silicone-rubber", "mass": r(cushion, 4), "note": "2 mm silicone lining"},
-                        {"what": "Bolt", "item": ST, "mass": r(bolt_mass(b), 4), "note": f"M{b} with nut, into the strut clamp's lug"}],
+                        {"what": "Cushion", "item": "material.silicone-rubber", "mass": r(cushion, 4), "note": "2 mm silicone lining"}],
            "ports": ports,
            "interface": f"interface.run-clip-d{mm}", "provides": "female", "fixing": "interface.kit-clamp", "template": "template.run-clip",
-           "basis": [{"of": ["physical", "rating"], "tier": "invented", "review": True,
-                      "note": f"A P-clip by rule (mounting.py): strap a quarter of the band wide, 2% thick; holds both legs at 6061's yield pulled, friction 0.3 sliding. {REVIEW}"},
+           "basis": [{"of": ["physical", "rating", "built_of"], "tier": "invented", "review": True,
+                      "note": f"A P-clip by rule (mounting.py): strap a quarter of the band wide, 2% thick, at least the nut across flats plus 4 mm (M{b}: the smallest stocked bolt whose proof load carries the strap's hold at the {FACTOR} factor); holds both legs at 6061's yield pulled, friction 0.3 sliding. The bolt is separate hardware, as the shoe's. {REVIEW}"},
                      {"of": ["ports"], "tier": "invented", "review": True,
                       "note": "P-clip datums by rule (2026-10-19): the tab's bore on the lug face is the origin, the loop's centre at (-(tab/2 + outside radius), 0, outside radius). The clamp lug's mating datum is open: the strut clamp is parked."}]}
     iface = {"identity": {"key": f"interface.run-clip-d{mm}", "name": f"Run clip, {mm} mm",

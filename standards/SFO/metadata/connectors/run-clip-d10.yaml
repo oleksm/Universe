@@ -3,31 +3,28 @@
 identity:
   key: connector.run-clip-d10
   name: Run clip, up to 10 mm
-  description: 'A cushioned 6061 loop clip holding one run up to 10 mm outside (a cable, a hose, a tube), its tab bolted by an M10 to a strut clamp''s lug: how a run is held on a ship''s frame (docs/proposals/physical-mounts.md). Origin
-    at the tab''s bore on the lug face, z 0, the tab along x; the loop beyond the tab at -x, its axis across (y), its outside from z 0 up to z 0.017.'
+  description: 'A cushioned 6061 loop clip holding one run up to 10 mm outside (a cable, a hose, a tube), its tab bolted by one M10 to a strut clamp''s lug: how a run is held on a ship''s frame (docs/proposals/physical-mounts.md). Origin
+    at the tab''s 11 mm bore on the lug face, z 0, the tab along x, 26 mm long and two straps thick; the loop beyond the tab at -x, its axis across (y), its outside from z 0 up to z 0.017, the strap leaving it tangentially into the
+    tab. Strap and cushion only: the bolt and nut are separate hardware.'
 kind: run-clip
 size: 0.01
 rating:
-  tension: 9720.0
-  shear: 2916.0
+  tension: 16200.0
+  shear: 4860.0
 physical:
-  length: 0.0395
-  width: 0.012
+  length: 0.043
+  width: 0.02
   height: 0.017
-  mass: 0.037
+  mass: 0.0094
 built_of:
 - what: Strap
   item: material.aluminium-alloy-6061
-  mass: 0.0043
-  note: 6061, 12 x 1.5 mm
+  mass: 0.0078
+  note: 6061, 20 x 1.5 mm
 - what: Cushion
   item: material.silicone-rubber
-  mass: 0.001
+  mass: 0.0017
   note: 2 mm silicone lining
-- what: Bolt
-  item: material.high-strength-steel-4340
-  mass: 0.0321
-  note: M10 with nut, into the strut clamp's lug
 ports:
 - id: run
   flow: in
@@ -36,7 +33,7 @@ ports:
   half: female
   make: bolted
   at:
-  - -0.0198
+  - -0.0215
   - 0.0
   - 0.0085
   facing:
@@ -58,7 +55,8 @@ ports:
   - 0.0
   - 0.0
   - -1.0
-  note: 'Required: the tab''s M10 bore down onto a strut clamp''s lug. The lug''s own datum is still open (strut clamp parked, 2026-10-19); no stiffness or load rating is approved.'
+  note: 'Required: the tab''s 11 mm bore, down onto a strut clamp''s lug, closed by one M10 bolt and nut (ST4340-BOLT-M10, separate hardware, not drawn nor in this mass). The lug''s own datum is still open (strut clamp parked, 2026-10-19);
+    no stiffness or load rating is approved.'
 interface: interface.run-clip-d10
 provides: female
 fixing: interface.kit-clamp
@@ -67,9 +65,11 @@ basis:
 - of:
   - physical
   - rating
+  - built_of
   tier: invented
   review: true
-  note: 'A P-clip by rule (mounting.py): strap a quarter of the band wide, 2% thick; holds both legs at 6061''s yield pulled, friction 0.3 sliding. Review-pending (docs/proposals/physical-mounts.md): chosen, not approved.'
+  note: 'A P-clip by rule (mounting.py): strap a quarter of the band wide, 2% thick, at least the nut across flats plus 4 mm (M10: the smallest stocked bolt whose proof load carries the strap''s hold at the 1.5 factor); holds both legs
+    at 6061''s yield pulled, friction 0.3 sliding. The bolt is separate hardware, as the shoe''s. Review-pending (docs/proposals/physical-mounts.md): chosen, not approved.'
 - of:
   - ports
   tier: invented

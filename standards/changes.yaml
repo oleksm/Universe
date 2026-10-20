@@ -333,15 +333,15 @@
 - { record: connector.plug-iec60309-32a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "c21a0b2f7fa8508a" }
 - { record: connector.plug-iec60309-63a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "3da7c6192318b95d" }
 - { record: connector.powerlock-400a, at: "2026-10-18T05:15:35Z", status: draft, summary: "changed: physical, built_of, basis", sha: "528acdaf49ddd12d" }
-- { record: connector.run-clip-d10, at: "2026-10-20T04:18:39Z", status: draft, summary: "changed: identity, physical, ports, basis", sha: "e82ba57bc616b076" }
-- { record: connector.run-clip-d100, at: "2026-10-20T04:18:39Z", status: draft, summary: "changed: identity, physical, ports, basis", sha: "9e75266c0d6f2b6b" }
-- { record: connector.run-clip-d16, at: "2026-10-20T04:18:39Z", status: draft, summary: "changed: identity, physical, ports, basis", sha: "67be7d9566e683e6" }
-- { record: connector.run-clip-d160, at: "2026-10-20T04:18:39Z", status: draft, summary: "changed: identity, physical, ports, basis", sha: "056134ce81171dfc" }
-- { record: connector.run-clip-d25, at: "2026-10-20T04:18:39Z", status: draft, summary: "changed: identity, physical, ports, basis", sha: "63594950778f3665" }
-- { record: connector.run-clip-d250, at: "2026-10-20T04:18:39Z", status: draft, summary: "changed: identity, physical, ports, basis", sha: "4b83b1f6fb4a65d0" }
-- { record: connector.run-clip-d40, at: "2026-10-20T04:18:39Z", status: draft, summary: "changed: identity, physical, ports, basis", sha: "30b669797997bb2c" }
-- { record: connector.run-clip-d400, at: "2026-10-20T04:18:39Z", status: draft, summary: "changed: identity, physical, ports, basis", sha: "6e809e5a7b703798" }
-- { record: connector.run-clip-d63, at: "2026-10-20T04:18:39Z", status: draft, summary: "changed: identity, physical, ports, basis", sha: "fd0dc138b824a551" }
+- { record: connector.run-clip-d10, at: "2026-10-20T04:32:26Z", status: draft, summary: "changed: identity, rating, physical, built_of, ports, basis", sha: "9366f62708fb11a0" }
+- { record: connector.run-clip-d100, at: "2026-10-20T04:32:26Z", status: draft, summary: "changed: identity, physical, built_of, ports, basis", sha: "47dd5d60c1ce8cb2" }
+- { record: connector.run-clip-d16, at: "2026-10-20T04:32:26Z", status: draft, summary: "changed: identity, rating, physical, built_of, ports, basis", sha: "51e3e18292c8dd19" }
+- { record: connector.run-clip-d160, at: "2026-10-20T04:32:26Z", status: draft, summary: "changed: identity, physical, built_of, ports, basis", sha: "eae6d7750294893a" }
+- { record: connector.run-clip-d25, at: "2026-10-20T04:32:26Z", status: draft, summary: "changed: identity, rating, physical, built_of, ports, basis", sha: "659130ce8ec4554f" }
+- { record: connector.run-clip-d250, at: "2026-10-20T04:32:26Z", status: draft, summary: "changed: identity, physical, built_of, ports, basis", sha: "bcadd25384f770d3" }
+- { record: connector.run-clip-d40, at: "2026-10-20T04:32:26Z", status: draft, summary: "changed: identity, rating, physical, built_of, ports, basis", sha: "134241a356c26ac5" }
+- { record: connector.run-clip-d400, at: "2026-10-20T04:32:26Z", status: draft, summary: "changed: identity, physical, built_of, ports, basis", sha: "c7e0ad14068e1282" }
+- { record: connector.run-clip-d63, at: "2026-10-20T04:32:26Z", status: draft, summary: "changed: identity, rating, physical, built_of, ports, basis", sha: "334de7bc9586fcf8" }
 - { record: connector.strut-clamp-d100, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "9df8138ee2125e4c" }
 - { record: connector.strut-clamp-d120, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "ff86538c8db2f29f" }
 - { record: connector.strut-clamp-d150, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "aaaa0b0420640043" }
@@ -1143,15 +1143,15 @@
 - { record: interface.plug-iec60309-32a, at: "2026-10-18T16:52:32Z", status: "", summary: "changed", sha: "7f01be8a5c944a75" }
 - { record: interface.plug-iec60309-63a, at: "2026-10-18T16:52:32Z", status: "", summary: "changed", sha: "f40fe29d2e1c739f" }
 - { record: interface.powerlock-400a, at: "2026-10-18T16:52:32Z", status: "", summary: "changed", sha: "b8bdad34fc56e2ec" }
-- { record: interface.run-clip-d10, at: "2026-10-18T20:37:52Z", status: "", summary: "first tracked", sha: "3d269e2b54902509" }
+- { record: interface.run-clip-d10, at: "2026-10-20T04:32:26Z", status: "", summary: "changed: envelope", sha: "33fec5331b3b03cc" }
 - { record: interface.run-clip-d100, at: "2026-10-18T20:37:52Z", status: "", summary: "first tracked", sha: "b1f3e4d6bd9d2286" }
-- { record: interface.run-clip-d16, at: "2026-10-18T20:37:52Z", status: "", summary: "first tracked", sha: "5fb80026bbda8131" }
+- { record: interface.run-clip-d16, at: "2026-10-20T04:32:26Z", status: "", summary: "changed: envelope", sha: "b7dcc38b40bf371a" }
 - { record: interface.run-clip-d160, at: "2026-10-18T20:37:52Z", status: "", summary: "first tracked", sha: "e8900d560701913f" }
-- { record: interface.run-clip-d25, at: "2026-10-18T20:37:52Z", status: "", summary: "first tracked", sha: "3bb11db505601ca1" }
+- { record: interface.run-clip-d25, at: "2026-10-20T04:32:26Z", status: "", summary: "changed: envelope", sha: "6ce82bf246d4b332" }
 - { record: interface.run-clip-d250, at: "2026-10-18T20:37:52Z", status: "", summary: "first tracked", sha: "844c775b5ab9971e" }
-- { record: interface.run-clip-d40, at: "2026-10-18T20:37:52Z", status: "", summary: "first tracked", sha: "09b0f8a153eca0d3" }
+- { record: interface.run-clip-d40, at: "2026-10-20T04:32:26Z", status: "", summary: "changed: envelope", sha: "ae3d955c209edc4a" }
 - { record: interface.run-clip-d400, at: "2026-10-18T20:37:52Z", status: "", summary: "first tracked", sha: "436faad5f04b3186" }
-- { record: interface.run-clip-d63, at: "2026-10-18T20:37:52Z", status: "", summary: "first tracked", sha: "d417d9fa4e5cb475" }
+- { record: interface.run-clip-d63, at: "2026-10-20T04:32:26Z", status: "", summary: "changed: envelope", sha: "9a505364a9d85212" }
 - { record: interface.termination-11kv-500mm2, at: "2026-10-17T15:19:33Z", status: "", summary: "first tracked", sha: "eed6ac0d1865ee7a" }
 - { record: interface.termination-132kv-240mm2, at: "2026-10-17T13:40:50Z", status: "", summary: "changed", sha: "5fd1a51634b310c0" }
 - { record: interface.termination-33kv-120mm2, at: "2026-10-17T13:40:50Z", status: "", summary: "changed", sha: "fc3902ab6a8596e5" }
@@ -3991,15 +3991,15 @@
 - { record: stock.kit-plug-iec60309-32a, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "d0a273e2ba50b3eb" }
 - { record: stock.kit-plug-iec60309-63a, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "cf91e00d14157b89" }
 - { record: stock.kit-powerlock-400a, at: "2026-10-18T05:15:35Z", status: review, summary: "changed: physical", sha: "2d8a975deef2f8e9" }
-- { record: stock.kit-run-clip-d10, at: "2026-10-20T04:20:36Z", status: review, summary: "changed: size", sha: "1a5f489419d98a04" }
-- { record: stock.kit-run-clip-d100, at: "2026-10-20T04:20:36Z", status: review, summary: "changed: size", sha: "0669d01fe6f3e4f5" }
-- { record: stock.kit-run-clip-d16, at: "2026-10-20T04:20:36Z", status: review, summary: "changed: size", sha: "ca7b878137f6de90" }
-- { record: stock.kit-run-clip-d160, at: "2026-10-20T04:20:36Z", status: review, summary: "changed: size", sha: "74c6e80735a10917" }
-- { record: stock.kit-run-clip-d25, at: "2026-10-20T04:20:36Z", status: review, summary: "changed: size", sha: "61e4269ca9e3a81c" }
-- { record: stock.kit-run-clip-d250, at: "2026-10-20T04:20:36Z", status: review, summary: "changed: size", sha: "8c697485131bdd9d" }
-- { record: stock.kit-run-clip-d40, at: "2026-10-20T04:20:36Z", status: review, summary: "changed: size", sha: "445eec1fe73fb027" }
-- { record: stock.kit-run-clip-d400, at: "2026-10-20T04:20:36Z", status: review, summary: "changed: size", sha: "013d62d2229e158c" }
-- { record: stock.kit-run-clip-d63, at: "2026-10-20T04:20:36Z", status: review, summary: "changed: size", sha: "e4219a8cb92357ed" }
+- { record: stock.kit-run-clip-d10, at: "2026-10-20T04:32:26Z", status: review, summary: "changed: made_from, size, physical", sha: "139d86dcbe3fb9bd" }
+- { record: stock.kit-run-clip-d100, at: "2026-10-20T04:32:26Z", status: review, summary: "changed: made_from, physical", sha: "678099540d7c7cb5" }
+- { record: stock.kit-run-clip-d16, at: "2026-10-20T04:32:26Z", status: review, summary: "changed: made_from, size, physical", sha: "0e21094d53f01eff" }
+- { record: stock.kit-run-clip-d160, at: "2026-10-20T04:32:26Z", status: review, summary: "changed: made_from, physical", sha: "f5202ee2425080f7" }
+- { record: stock.kit-run-clip-d25, at: "2026-10-20T04:32:26Z", status: review, summary: "changed: made_from, size, physical", sha: "16faec1e7374f5d8" }
+- { record: stock.kit-run-clip-d250, at: "2026-10-20T04:32:26Z", status: review, summary: "changed: made_from, physical", sha: "65ba11aca82d3039" }
+- { record: stock.kit-run-clip-d40, at: "2026-10-20T04:32:26Z", status: review, summary: "changed: made_from, size, physical", sha: "61c24d984246726b" }
+- { record: stock.kit-run-clip-d400, at: "2026-10-20T04:32:26Z", status: review, summary: "changed: made_from, physical", sha: "e58bbe00125b7917" }
+- { record: stock.kit-run-clip-d63, at: "2026-10-20T04:32:26Z", status: review, summary: "changed: made_from, size, physical", sha: "4de50104f8d11121" }
 - { record: stock.kit-strut-clamp-d100, at: "2026-10-18T20:37:52Z", status: review, summary: "changed", sha: "ead6be6653e86e56" }
 - { record: stock.kit-strut-clamp-d120, at: "2026-10-18T20:37:52Z", status: review, summary: "changed", sha: "69776da4162ffaf1" }
 - { record: stock.kit-strut-clamp-d150, at: "2026-10-18T20:37:52Z", status: review, summary: "changed", sha: "fb320ea84216356c" }

@@ -101,12 +101,19 @@ The 27 kN single-seat / 54 kN two-seat factored cases and 1080 N m offset-moment
 
 `connector.run-clip-d10` to `-d400` are P-clips with two ports each, drawn by `template.run-clip` (reference
 `connector.run-clip-d25`). Frame: x along, y across, z up; origin at the tab's bolt bore on the strut clamp lug's face
-(z 0), the tab along x, both strap ends lying together in it. The loop sits beyond the tab's -x end, its axis across
-(y), its outside tangent to z 0: `run` (female `interface.run-clip-d<mm>`) at (-(tab/2 + ro), 0, ro), facing +y, where
-tab = 0.02 + band/4 and ro = (band + 0.004)/2 + strap thickness; `fix` (male `interface.kit-clamp`, required) at the
-origin, facing down. Sides: length tab + 2 ro, width the strap, height 2 ro (d25: 58.3 x 12 x 32 mm, 0.041 kg). The
-lug's own datum is open: the strut clamp is parked (2026-10-19). No rating is approved; figures are the generator's
-rule, review-pending.
+(z 0), the tab along x, both strap ends lying together in it (two straps thick). The loop sits beyond the tab's -x end,
+its axis across (y), its outside tangent to z 0, the strap leaving it tangentially into the tab (about 270 degrees of
+loop, the lower leg along z 0, the upper bent down onto it): `run` (female `interface.run-clip-d<mm>`) at
+(-(tab/2 + ro), 0, ro), facing +y, where tab = max(0.02 + band/4, nut across flats + 10 mm) and
+ro = (band + 0.004)/2 + strap thickness; `fix` (male `interface.kit-clamp`, required) at the origin, facing down.
+Hardware (2026-10-19, blender's question on the M10 nut over a 12 mm strap): the model and the record are the strap
+and cushion only; the one bolt and nut that close the tab and fix it to the lug are separate stocked hardware
+(`ST4340-BOLT-M<d>`), as the shoe's. The bolt is the smallest the frames stock (M10 at least) whose proof load carries
+the strap's hold at the 1.5 factor, and the strap is at least the nut across flats plus 4 mm wide so the nut sits on it:
+M10 to 63 mm (20 mm strap), M16 at 160, M30 at 250, M42 at 400. The tab's bore is the ISO medium clearance hole
+(M10: 11 mm). Sides: length tab + 2 ro, width the strap, height 2 ro (d25: 58.3 x 20 x 32 mm, 0.0154 kg). The lug's
+own datum is open: the strut clamp is parked (2026-10-19). No rating is approved; figures are the generator's rule,
+review-pending.
 
 ## 4. The duty of a link
 
