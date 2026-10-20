@@ -60,6 +60,12 @@ reads:
 - name: w.xage
   field: planet-field.particle-age
   unit: s
+- name: kind
+  field: planet-field.crust-kind
+  unit: '1'
+- name: crust age
+  field: planet-field.crust-age
+  unit: s
 writes:
 - name: w.xcont
   field: planet-field.particle-continental
@@ -205,15 +211,15 @@ params:
   value: 6.8e11
   unit: m2
   tier: invented
-  meaning: 'a closed patch of ocean floor shut inside continent (connected ocean particles linked within pocket link gaps, all older than pocket min age) with at most this area docks whole as continent (ophiolite): the remnant of a
-    closed ocean, which on Earth is filled and thrust up; 0 = off'
+  meaning: 'a connected patch of ocean-kind samples with at most this area, every sample older than pocket min age, is a trapped pocket (the remnant of a closed ocean, which on Earth is filled and thrust up): its ocean particles dock
+    as continent (ophiolite); 0 = off'
   source: 'planets, 20 Oct 2026 (chosen; e82: an 8-sample sea 6.6 km deep inside a continent); forge models/plates/collision.rs'
   note: 40 particle cells at 30,000 samples (about 820 km square)
 - name: pocket link
   value: 1.5
   unit: '1'
   tier: invented
-  meaning: ocean particles within this many sample gaps of each other belong to one patch (the pocket rule)
+  meaning: the ocean particles within this many sample gaps of a pocket sample dock (the pocket rule)
   source: planets, 20 Oct 2026 (chosen); forge models/plates/collision.rs
 - name: pocket min age
   value: 3.156e15
@@ -231,6 +237,8 @@ params:
   meaning: 'a patch docks as a pocket only when the distinct continental particles within pocket link of its members number at least this times the patch (shut inside continent, not cut off by the empty space subduction leaves: e83
     docked 4,500 such particles)'
   source: planets, 20 Oct 2026 (chosen); forge models/plates/collision.rs
+  note: 'unused since e85: the pocket test moved to the sample graph (a maximal patch of ocean-kind samples is shut in by construction); the particle-level test (e83, e84) saw single old particles at a margin as shut in because the
+    particle field is sparse at sea'
 random_draws:
 - none
 invariants:
