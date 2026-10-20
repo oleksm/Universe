@@ -36,6 +36,8 @@ visual:
   manifest_sha256: "92da5ed45c983784168d8d71a94fc8c2dd7075c33986f8eef3215029f8d2daae"
   version: 1
   triangles: 11556
+model_requests:
+- {work: keep, of_version: 1, asked: '2026-10-20', by: registry, because: "Blender's review (2026-10-20, command-review-20261020/review.json): the wiring part was only renamed (Wiring and linings to Internal wiring and linings) and the station's own looms and linings are hidden inside the shells; the model never drew them, and the new ports are the game's joints."}
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "Four stations in a room: pilot, co-pilot, engineer, navigator; seats rated to 6 g (a transport's, not a fighter's), consoles for each and a shared display wall. From memory; chosen." }

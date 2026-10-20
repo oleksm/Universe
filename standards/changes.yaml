@@ -604,9 +604,9 @@
 - { record: equipment.cargo.rack.s4, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "eaf2fd39178d35ef" }
 - { record: equipment.comm.basic.s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "327d2380fd9b5879" }
 - { record: equipment.comm.long.s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "4e3018c65be20c8d" }
-- { record: equipment.command.s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "9aa09fd13e6ac8da" }
-- { record: equipment.command.s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "ce5fcacf81388df6" }
-- { record: equipment.command.s3, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "b4c809797efa3698" }
+- { record: equipment.command.s1, at: "2026-10-20T13:11:22Z", status: draft, summary: "changed: model_requests", sha: "eb1ba55796f43bfe" }
+- { record: equipment.command.s2, at: "2026-10-20T13:11:22Z", status: draft, summary: "changed: model_requests", sha: "39ce6150e2ccd536" }
+- { record: equipment.command.s3, at: "2026-10-20T13:11:22Z", status: draft, summary: "changed: model_requests", sha: "8fc4e66e3d85167d" }
 - { record: equipment.computer.fbw.fast, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "99dc5e2df5afe9be" }
 - { record: equipment.computer.fbw.s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "85cb89f14ed058c0" }
 - { record: equipment.drive.kestrel.k2, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "7bc0edb68afad967" }

@@ -10,15 +10,15 @@ scales_by:
 - physical
 reference: connector.run-clip-d25
 members: 9
-visual:
-  format: "freefall-model/1"
-  path: "models/run-clip/v1"
-  manifest_sha256: "72718ce531b78f3f752030bd3f0143b4105821f2d72ca44bc259b19f53ba1a38"
-  version: 1
-  triangles: 1660
 basis:
 - of:
   - draws
   - scales_by
   tier: derived
   note: 'The owner, 2026-10-18 (via ships): equipment held by typed mounts on cradles or deck panels made from stock; one template a family.'
+visual:
+  format: freefall-model/1
+  path: models/run-clip/v1
+  manifest_sha256: 72718ce531b78f3f752030bd3f0143b4105821f2d72ca44bc259b19f53ba1a38
+  version: 1
+  triangles: 1660

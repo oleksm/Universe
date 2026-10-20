@@ -36,6 +36,8 @@ visual:
   manifest_sha256: "10934661807a7736464a1cf4779d403e9939c011dfbb938cacf6e3016f35b70c"
   version: 2
   triangles: 4876
+model_requests:
+- {work: keep, of_version: 2, asked: '2026-10-20', by: registry, because: "Blender's review (2026-10-20, command-review-20261020/review.json): the wiring part was only renamed (Wiring and linings to Internal wiring and linings) and the station's own looms and linings are hidden inside the shells; the model never drew them, and the new ports are the game's joints."}
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "Two seats side by side, each as the pilot's station, with a shared console between (an airliner's pedestal). From memory; chosen." }

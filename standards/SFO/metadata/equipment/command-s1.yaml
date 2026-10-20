@@ -36,6 +36,8 @@ visual:
   manifest_sha256: "c597abcfd9971e2646936dc376fc3c9c9d2e67a7ceb3da65812321fe02402db4"
   version: 2
   triangles: 3408
+model_requests:
+- {work: keep, of_version: 2, asked: '2026-10-20', by: registry, because: "Blender's review (2026-10-20, command-review-20261020/review.json): the wiring part was only renamed (Wiring and linings to Internal wiring and linings) and the station's own looms and linings are hidden inside the shells; the model never drew them, and the new ports are the game's joints."}
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "One pilot: a seat rated to 9 g eyeballs-in (a fighter's seat and harness, 40 kg), a console of controls (60 kg) and its displays, computers and frame (80 kg); 1.5 kW of displays and computers. An airliner's flight deck seat is about 35 kg. From memory; chosen." }
