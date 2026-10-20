@@ -245,6 +245,12 @@ params:
   meaning: reference continental thickness for isostasy; also fold-belt index base in coupled struct
   source: stages/plates.py:86
   note: Christensen & Mooney 1995 (real)
+- name: base level
+  value: 300.0
+  unit: m
+  meaning: 'land wears down to this height above the sea, not to the sea: the continental freeboard (Earth median land ~500 m; Wise 1974). A plain worn to the sea drowned at the next rise of the sea: the inland seas of forge e56/e57
+    (drowned interiors 15%, their crust 33 km = the sea-level thickness) once the growing continents lifted the sea 450 m. The coupled era wear is capped the same way'
+  source: 'planets, 20 Oct 2026 (owner: the cheesy look); forge models/plates/denudation.rs; e58'
 random_draws:
 - 'drain(): roughness from np.random.default_rng(n) (n = sample count), a fresh generator each call, independent of the run''s seed; same roughness every call at a resolution.'
 invariants:
