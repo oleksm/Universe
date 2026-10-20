@@ -208,13 +208,14 @@ params:
   source: 'collisional orogen widths: Alps ~200 km, Zagros and Himalaya ~250-350 km across the thrust belt (e.g. Dewey & Burke 1973; Molnar & Lyon-Caen 1988)'
   note: '19 Oct 2026, replaces the 125 km strip (ARC_WIDTH/2); from memory: verify'
 - name: pocket max area
-  value: 2.0e12
+  value: 6.8e11
   unit: m2
   tier: invented
   meaning: 'a connected patch of ocean-kind samples with at most this area, every sample older than pocket min age, is a trapped pocket (the remnant of a closed ocean, which on Earth is filled and thrust up): its ocean particles dock
     as continent (ophiolite); 0 = off'
   source: 'planets, 20 Oct 2026 (chosen; e82: an 8-sample sea 6.6 km deep inside a continent); forge models/plates/collision.rs'
-  note: '6.8e11 (40 cells at 30,000 samples) for e83-e86: the trapped seas left in e85/e86 are 100-160 samples at 60,000 (thin floor 3-5 km, 150-250 Myr), above that; 2.0e12 (118 cells at 30,000, 235 samples at 60,000) from e87'
+  note: '6.8e11 (40 cells at 30,000) e83-e86 and from e88; 2.0e12 in e87 docked the 100-160-sample trapped seas but as 7 km floor volume the read puts below the sea (interiors 11% drowned, land 28.6%): the dock needs the sea-level thickness
+    or a sediment fill before the larger seas are taken'
 - name: pocket link
   value: 1.5
   unit: '1'
