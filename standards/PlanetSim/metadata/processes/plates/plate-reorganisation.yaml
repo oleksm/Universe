@@ -24,6 +24,9 @@ reads:
 - name: next_reorg
   field: planet-field.next-reorganisation
   unit: s
+- name: w.xage
+  field: planet-field.particle-age
+  unit: s
 writes:
 - name: next_reorg
   field: planet-field.next-reorganisation
