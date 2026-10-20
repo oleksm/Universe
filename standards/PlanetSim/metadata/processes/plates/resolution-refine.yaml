@@ -128,12 +128,12 @@ params:
   meaning: never coarser than this
   source: stages/plates.py:723
 - name: deep past fraction
-  value: 0.0625
+  value: 0.5
   unit: '1'
   meaning: 'unverified: the code names it deep past fraction without saying what it is'
   source: stages/plates.py:723
 - name: last Gyr fraction
-  value: 0.25
+  value: 0.5
   unit: '1'
   meaning: 'unverified: the code names it last Gyr fraction without saying what it is'
   source: stages/plates.py:723
@@ -173,3 +173,8 @@ basis:
   - writes
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - params
+  tier: invented
+  note: 'planets, 20 Oct 2026: deep past and last-Gyr fractions 0.0625 and 0.25 -> 0.5 (30,000 of the manifest 60,000 through the history, 60,000 for the last 300 Myr). At 10,000 and 15,000 the crust reached the fine era with 190 km
+    resolution and the fine lattice only rendered it smoothly (forge e76 at 60k: small bays 0.7% of the land, Earth at 60k 3.7%), and the two resolution changes dipped the land (late minimum 17.9%). e78.'
