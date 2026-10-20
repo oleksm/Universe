@@ -130,15 +130,18 @@ params:
   source: stages/plates.py:55
   note: Forsyth & Uyeda 1975
 - name: stretch share
-  value: 0.5
+  value: 0.35
   unit: '1'
   meaning: share of the source's volume given to the stretched new particle
   source: stages/plates.py:1224
+  note: 0.5 to e89; 0.35 from e90 with stretch threshold factor 1.2 (the margin taper)
 - name: stretch threshold factor
-  value: 2.0
+  value: 1.2
   unit: '1'
   meaning: source must exceed 2*STRETCH_MIN to stretch
   source: stages/plates.py:1221
+  note: '2.0 to e89: a 41 km source gave half and both halves (20 km) fell below 2 x STRETCH_MIN, so a rifted margin was one 20 km particle wide (the coast fell 13 km of crust in one sample). 1.2 from e90 with stretch share 0.35: the
+    source keeps 65% (27 km), still above 1.2 x 20 km, and stretches again at the next opening: a tapered margin over 2-3 particles (Earth: 100-300 km)'
 - name: new xsuture
   value: -3.15576e+22
   unit: s

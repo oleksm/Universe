@@ -147,10 +147,10 @@ params:
   meaning: 'unverified: the code names it side balance without saying what it is'
   source: stages/plates.py:433
 - name: band half width
-  value: 1.5
+  value: 0.6
   unit: '1'
-  meaning: 'half width of the cut band in sample gaps: the strength summed in it is the cut cost, and the continental particles in it are the rifted margin (origin 8), stretched into the opening; 0.6 to e88 made a margin one particle
-    wide (the coast fell 13 km of crust in one sample: a cliff coast, shelf 2% of the ocean against Earth 7%); 1.5 from e89 for a margin of three samples'
+  meaning: 'half width of the cut band in sample gaps: the strength summed in it is the cut cost, the continental particles in it count against RIFT_OCEAN_EDGE for an ocean-only cut, and those particles are labelled rifted margin (origin
+    8); the thinning itself is seafloor-spreading stretch. 1.5 in e89 let 20 cuts through continent (0.6: 7) and drowned 9.8% of the interiors; 0.6 again from e90'
   source: stages/plates.py:439
 - name: rift bumps
   values:
