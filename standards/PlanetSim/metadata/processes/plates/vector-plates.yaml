@@ -92,8 +92,8 @@ params:
   note: chosen; review
 - name: boundary segment
   values:
-  - 200000.0
-  - 200000.0
+  - 100000.0
+  - 100000.0
   - 100000.0
   - 50000.0
   unit: m
@@ -102,11 +102,11 @@ params:
     factor: 0.001
   meaning: 'the longest plate-boundary segment in each stretch of the schedule (also the substep: half a segment at the fastest plate)'
   source: owner, 19 Oct 2026
-  note: '19 Oct 2026 (owner): the backbone at 200 km before 500 Ma; was 200, 100, 50, 25 km'
+  note: '19 Oct 2026 (owner): 200 km cut continents along straight lines: 100 km'
 - name: crust tolerance
   values:
-  - 100000.0
-  - 100000.0
+  - 25000.0
+  - 25000.0
   - 10000.0
   - 2000.0
   unit: m
@@ -115,7 +115,7 @@ params:
     factor: 0.001
   meaning: how closely crust band outlines follow the true edge in each stretch (bands simplified to it; thick crust and margins grown from outlines held to it, at least 5 km)
   source: owner, 19 Oct 2026
-  note: '19 Oct 2026 (owner): before 500 Ma only the backbone (100 km); detail in the last 500 Myr; was 20, 10, 5, 1 km'
+  note: '19 Oct 2026 (owner): 100 km in the backbone looked straight-edged and angular ("too simplified / straight lines sharp angles"): 25 km; was 20, 10, 5, 1 km before the backbone era'
 - name: MELT_EFOLD
   value: 175.0
   unit: K
@@ -194,8 +194,8 @@ params:
   note: chosen; review
 - name: crust vertex budget
   values:
-  - 40000.0
-  - 40000.0
+  - 100000.0
+  - 100000.0
   - 400000.0
   - 1500000.0
   unit: '1'
