@@ -2,9 +2,8 @@
 identity:
   key: planet-process.crust-remesh
   name: 'Remesh: re-laying particles on the sample lattice'
-  about: Every REMESH_MYR particles are replaced by one per sample; continent where spread thickness >= CONTINENT_EDGE, continental volumes fitted and rescaled to the previous total. Plate, suture and memory follow the geometric nearest
-    particle. Ocean age and floor thickness follow the nearest old ocean particle, matching crust-read. Geology follows the material class when the geometric source has the opposite class. Detailed terrain features keep their plate
-    frames and independent geometry. Phase receipts record untrenched basin capacity before and after this representation change.
+  about: Preserve all continental particles, including positions, volume, identity and geology. Refresh ocean markers only, at ocean-class samples, retaining the nearest old ocean thermal age, floor and geology and the geometric readout
+    owner. This representation-only operation preserves sampled continental thickness, untrenched land share and basin capacity. Continental density is handled by physical transport and spreading, not periodic continental refitting.
 area: plates
 clock:
   when: every REMESH_MYR (50 Myr), checked at the step start
@@ -167,9 +166,10 @@ params:
 random_draws:
 - none
 invariants:
+- continental particles preserved exactly
 - continental volume conserved exactly
-- particle count == sample count after remesh
-- continental crust thinner than CONTINENT_EDGE as read is turned to ocean (its volume redistributed to the rest by the rescale)
+- sampled untrenched basin level unchanged within numerical precision
+- sampled untrenched land share unchanged
 depends_on:
 - planet-process.crust-read
 - planet-process.crust-fit
