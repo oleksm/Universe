@@ -2,11 +2,11 @@
 identity:
   key: planet-process.crust-remesh
   name: 'Remesh: re-laying particles on the sample lattice'
-  about: 'Every REMESH_MYR the crust is re-laid on the sample lattice, conservatively. One continental particle per sample reading at least fringe floor of continental crust (the fringe below CONTINENT_EDGE included; crust under the
-    floor added to the nearest kept sample), its volume fitted to the read thickness (crust-fit, PROJECT_ROUNDS rounds) and the continental total made exact. One ocean particle per ocean-class sample with the nearest old ocean thermal
-    age, floor and geology and the geometric readout owner. Why: between re-lays the fits adjust particle volumes multiplicatively until neighbours differ by an order of magnitude and the crust holds sample-scale noise (pits, scalloped
-    shores). Re-laying every 50 Myr keeps the crust at the kernel resolution, as the Python did, without the dropped-fringe redistribution that raised land before e43. The fit is not exact; kind flips, fit error, land share and basin
-    level before and after are recorded in the ledger row, and a land-share move of 0.01 or more stops the run.'
+  about: 'Every REMESH_MYR the crust is re-laid on the sample lattice, the Python rule: one continental particle per sample reading at least fringe floor (= CONTINENT_EDGE) of continental crust, its volume fitted to the read thickness
+    (crust-fit, PROJECT_ROUNDS rounds) and the continental total made exact, which folds the crust the kernel smears below the line back over the whole continent. One ocean particle per ocean-class sample with the nearest old ocean
+    thermal age, floor and geology and the geometric readout owner. Why: between re-lays the fits adjust particle volumes multiplicatively until neighbours differ by an order of magnitude and the crust holds sample-scale noise (pits,
+    scalloped shores; e45 134 interior minima per 1000); and the truncation at the edge is the anti-diffusion that keeps continents compact against the kernel smearing (e49 kept a 150 m fringe: continents on half the planet at 24 km,
+    land 6.8%). Kind flips, fit error, folded volume, rescale, land share and basin level before and after are recorded in the ledger row; a land-share move of 0.01 or more stops the run.'
 area: plates
 clock:
   when: every REMESH_MYR (50 Myr), checked at the step start
@@ -209,3 +209,12 @@ basis:
   tier: derived
   note: 'planets, 20 Oct 2026: conservative lattice re-lay restored after the e43-e48 ocean-only refresh let sample-scale texture accumulate (e45 134 interior minima per 1000 against e42 12). Offline check on e45 final state: 6 rounds
     cut minima to 106, 108 kind flips of 30000, land +0.2 points, volume exact. See planet-forge docs/terrain-canvas-recovery.md (e49).'
+params[4]:
+  value: 15000.0
+  meaning: 'a sample is re-laid as a continental particle where the read continental thickness is at least this (set to CONTINENT_EDGE: the Python rule); the crust the kernel smears below it is not laid as particles but folded back
+    over the whole continent by the exact total (the Python global rescale), and the folded volume and the rescale factor go into the ledger receipt'
+  source: 'planets, 20 Oct 2026: = CONTINENT_EDGE after e49 (150 m: continents spread to half the planet at 24 km, land 6.8%); planet-forge docs/tectonics-audit-2026-10-20.md; forge models/plates/remesh.rs'
+invariants[1]: 'continental volume conserved: the crust read below the fringe floor is folded back over the continent by the exact total; the folded volume and the rescale factor are recorded per re-lay'
+provenance:
+  note: 'planets, 20 Oct 2026: fringe floor raised from 150 m to CONTINENT_EDGE after e49 (texture 7.5 minima per 1000 but land 6.8%: the kept fringe spread the continents and shattered the plates). The Python truncating re-lay is restored,
+    now booked. See planet-forge docs/tectonics-audit-2026-10-20.md.'
