@@ -141,3 +141,8 @@ basis:
 events_emitted:
 - event: planet-event.arc
   where: 'forge: one per substep with arcs (volumes added and eaten)'
+params[1]:
+  value: 2216.6666666666665
+  source: 'Scholl & von Huene 2009 (arc addition 3.8 km3/yr); Parsons 1981 (3.0 km2/yr consumed): 1.27 km per km2; x1.75 = 2.22 km: the Python calibration to Earth crust volume (planet-sim-landform d7442bb, made together with its re-lay).
+    planets, 20 Oct 2026: retried as experiment e54 once the continent outline is held by the processes alone (forge e53: 1.27 km gave 5.0e18 m3 on 29% of the planet, Earth 7.2e18 on 40%); e38 had rejected it under the leaky representation
+    (59% of the planet). Acceptance: volume 6.5-8e18 at 35-45% area, thickness kept, ocean age and texture unchanged; land reported, not targeted.'
