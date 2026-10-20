@@ -124,11 +124,12 @@ params:
   meaning: 'top-ups = PLATES - #plates - 2 (plus chance)'
   source: stages/plates.py:1442
 - name: old floor share
-  value: 0.3
+  value: 0.15
   unit: '1'
   meaning: 'at a reorganisation a plate whose ocean floor older than FOUNDER_AGE_MYR is at least this share of its ocean gets a convergent ocean-only cut through that floor (subduction initiation, Stern 2004): an interior ocean closes
     instead of foundering in place forever (forge e60: a continental rim round a 139 Myr interior ocean on a third of the planet)'
   source: planets, 20 Oct 2026 (chosen); forge models/plates/reorganisation.rs; e61
+  note: '0.3 for e61-e81; 0.15 from e82: e79 held 20% of its floor older than 180 Myr (Earth 5%) in deep bays wedged between continents on plates with 15-23% old floor, below the 0.3 trigger (the owner: enclosed ocean pits)'
 - name: old floor min particles
   value: 400.0
   unit: '1'

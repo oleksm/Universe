@@ -185,7 +185,7 @@ params:
   source: planets, 20 Oct 2026 (chosen); forge models/plates/rifting.rs
 - name: rift fine bumps
   values:
-  - 300.0
+  - 0.0
   - 0.08
   - 0.08
   unit: '1'
@@ -196,7 +196,8 @@ params:
   meaning: 'a second, finer _bumps field added to the cut warp (count of Gaussian bumps, their width in unit-sphere chord, the amplitude of each bump in the cut function): the segment-scale irregularity of a rifted margin (transform
     offsets, rift jumps, a few hundred km) that the 40 x 0.25 field (1600 km bumps) cannot give; 0 count = off'
   source: planets, 20 Oct 2026 (chosen; e79 coasts straight over 2000 km); forge models/plates/rifting.rs
-  note: 'e80 at 600 x 0.05, amplitude 0.03 (190 km, 1.5 sample gaps): the cut stayed a smooth curve, coast scales unchanged; e81: 300 x 0.08 (500 km bumps) at 0.08 (up to 500 km offset)'
+  note: 'OFF (count 0) since e81: at 190 km (e80) and 500 km (e81) the rifted-margin coast kept the same local shape as e79 (28% straight, 65% bay-side, 7% headland at the 92 km ring): the cut geometry does not reach the final coast,
+    which the kernel read and the margin history set; e81 also fell into another history (62 rifts, polar continents)'
 random_draws:
 - 'Per candidate: (ocean-only) rng.integers(len(ocean_pts)); random_unit = normal(3); _bumps(40) = normal(40,3) + normal(40). Rejected candidates still consume draws. If a fallback recursion happens, it draws again. apart() draws random_unit
   only if a degenerate axis. Draws happen even for candidates rejected by balance.'
