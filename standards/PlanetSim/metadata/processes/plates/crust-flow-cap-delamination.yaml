@@ -72,14 +72,14 @@ params:
   note: owner 16 Oct; large value turns it off
 - name: ECLOGITE
   env: SIM_ECLOGITE
-  value: 70000.0
+  value: 62000.0
   unit: m
   meaning: continental thickness above which the root delaminates (excess decays on DELAMINATE_MYR)
   source: stages/plates.py:179
   note: '16 Oct: 62 -> 70 km; Kay & Kay 1993; Jull & Kelemen 2001. The block comment above still says 62 km / 40 Myr (stale)'
 - name: DELAMINATE_MYR
   env: SIM_DELAMINATE_MYR
-  value: 3155760000000000.0
+  value: 1262304000000000.0
   unit: s
   said_as:
     unit: Myr
@@ -196,6 +196,11 @@ basis:
   - params
   tier: calibrated
   note: 'planets, 20 Oct 2026: CRUST_MAX 80 -> 65 km for e62 (peaks near 6 km instead of 9.4; the cap moves the excess to the neighbours, none lost).'
+- of:
+  - params
+  tier: calibrated
+  note: 'planets, 20 Oct 2026: ECLOGITE 70 -> 62 km and DELAMINATE_MYR 100 -> 40 Myr (the planet-sim originals) for e63: the hot early plates stack crust to 100+ km faster than the 70 km / 100 Myr delamination sheds it (e61/e62 at ~1
+    Gyr: 73-80% of the land above 2 km, a plateau world), and the 65 km cap only shuffles excess among thick neighbours.'
 events_emitted:
 - event: planet-event.ledger-row
   where: 'forge: the step''s volume moved, shed, worn, denuded or laid on the shelf (the Python''s ledger rows)'
