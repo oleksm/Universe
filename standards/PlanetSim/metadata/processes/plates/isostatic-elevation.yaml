@@ -135,6 +135,17 @@ params:
   unit: K
   meaning: the interior model mantle potential temperature today (its Earth), above which the floor shallows
   source: planet-sim interior model (Earth today 1530 K; real ~1623 K, docs/accuracy.md)
+- name: margin wedge lift
+  value: 1800.0
+  unit: m
+  meaning: 'the lift of a thinned continental margin by its sediment wedge (shelf, slope and rise: 5-15 km of sediment on 13-30 km of crust; Airy with sediment at 2400 kg/m3 lifts the surface by ~0.27 of the wedge), added in full at
+    CONTINENT_EDGE and fading to nothing at margin wedge full thickness. Without it the margins stand at -0.5 to -1.5 km on the ridge reference instead of shelf depth (forge e69: shelf 0 to -200 m 1.8% of the ocean, Earth 7.3%)'
+  source: Watts 1982 (passive-margin sediment wedges to ~15 km); planets, 20 Oct 2026 (magnitude chosen for the shelf look); forge models/plates/elevation.rs, basins.rs; e70
+- name: margin wedge full thickness
+  value: 32000.0
+  unit: m
+  meaning: crust this thick or thicker carries no margin wedge lift; the lift grows linearly from here to CONTINENT_EDGE
+  source: planets, 20 Oct 2026 (chosen)
 random_draws:
 - none
 invariants:
@@ -142,6 +153,7 @@ invariants:
 depends_on:
 - planet-process.crust-read
 - planet-process.thermal-evolution
+- planet-process.crust-read
 backends:
 - cpu
 implementations:
