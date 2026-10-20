@@ -224,6 +224,13 @@ params:
     factor: 3.156e13
   meaning: 'a patch docks as a pocket only when all its floor is older than this (100 Myr): a young rift strait keeps opening, a basin that sat shut for 100 Myr is filled'
   source: planets, 20 Oct 2026 (chosen); forge models/plates/collision.rs
+- name: pocket surround
+  value: 1.0
+  unit: '1'
+  tier: invented
+  meaning: 'a patch docks as a pocket only when the distinct continental particles within pocket link of its members number at least this times the patch (shut inside continent, not cut off by the empty space subduction leaves: e83
+    docked 4,500 such particles)'
+  source: planets, 20 Oct 2026 (chosen); forge models/plates/collision.rs
 random_draws:
 - none
 invariants:
