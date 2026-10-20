@@ -817,9 +817,10 @@ impl Interior {
     }
 
     /// The tool in hand set by name (dev: `freefall --studio` with UNIVERSE_TOOL):
-    /// select, path, door, modules, frame.
+    /// select, path, door, modules, frame, wire.
     pub fn use_tool(&mut self, name: &str) {
         self.tool = match name {
+            "wire" => Tool::Wire,
             "path" => Tool::Path,
             "door" => Tool::Door,
             "modules" => Tool::Modules,
@@ -8677,9 +8678,10 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
     // The harness: each run along its way, in its bus's colour; a sheet of what it
     // weighs, by bus, and what can't be wired.
     if interior.shown(layer::WIRING) || interior.tool == Tool::Wire { wire_tool::draw(frame, interior, &cam, plane); }
-    if interior.shown(layer::WIRING) && interior.plan.wiring.is_none() && interior.tool != Tool::Wire {
+    if interior.shown(layer::WIRING) || interior.tool == Tool::Wire {
         let h = interior.harness();
-        for r in &h.runs {
+        // (The inferred harness's runs; authored wires are drawn by the wire tool.)
+        for r in h.runs.iter().filter(|_| interior.plan.wiring.is_none() && interior.tool != Tool::Wire) {
             let col = WIRE_COLOURS[wiring::BUSES.iter().position(|&v| v == r.volts).unwrap_or(2)];
             let col = if r.cable.is_some() { col } else { CLASH };
             for w in r.path.windows(2) {

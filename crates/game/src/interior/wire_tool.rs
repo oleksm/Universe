@@ -129,8 +129,12 @@ fn cables() -> Vec<Value> {
         })
         .collect()
 }
+/// The cables a wire may be laid with here: of the registry's cables, those it
+/// lays aboard a ship (a ship hold spacing: rule.run-support), and, once a port
+/// is picked, those that can mate it.
 fn available(i: &Interior) -> Vec<Value> {
     let mut list = cables();
+    list.retain(|c| c["hold"]["ship"].as_f64().is_some());
     if let Some(a) = i
         .wire_editor
         .start
@@ -192,12 +196,15 @@ fn compatible(a: &Port, b: &Port, cable: &Value) -> Result<Vec<WirePin>, String>
                 return Err("Cable or connector voltage rating is too low".into());
             }
         }
+        // (Each sized conductor within the contacts' size; a screen has no
+        // cross-section in its record, so nothing to check.)
         for c in cable["conductors"]
             .as_array()
             .ok_or("Cable has no conductors")?
         {
-            if c["size"].as_f64().unwrap_or(f64::INFINITY)
-                > connector["size"].as_f64().unwrap_or(0.0) * 1.000001
+            if c["size"]
+                .as_f64()
+                .is_some_and(|size| size > connector["size"].as_f64().unwrap_or(0.0) * 1.000001)
             {
                 return Err("Cable conductor does not fit the connector".into());
             }
@@ -277,6 +284,20 @@ pub(super) fn click(i: &mut Interior, cam: &Camera, plane: f32) {
                         );
                         return;
                     }
+                    let sup = match support(&points, c) {
+                        Err(e) => {
+                            i.note(&e.to_uppercase());
+                            return;
+                        }
+                        Ok(sup) => sup,
+                    };
+                    if let Some(k) = sup.tight.first() {
+                        i.note(&format!(
+                            "BEND AT WAYPOINT {k} TOO TIGHT FOR {:.3} M RADIUS — BACKSPACE TO MOVE IT",
+                            sup.radius
+                        ));
+                        return;
+                    }
                     let map = i.plan.wiring.get_or_insert_with(Default::default);
                     let mut n = 1;
                     while map.contains_key(&format!("wire_{n}")) {
@@ -284,7 +305,12 @@ pub(super) fn click(i: &mut Interior, cam: &Camera, plane: f32) {
                     }
                     map.insert(format!("wire_{n}"), w);
                     i.wire_editor.cancel();
-                    i.note("WIRE LAID — ROUTE SUPPORT AND ELECTRICAL LOAD CHECKS STILL REQUIRED");
+                    i.note(&format!(
+                        "WIRE LAID — NEEDS {} X {} EVERY {:.1} M (NOT PLACED); ELECTRICAL LOAD CHECK PENDING",
+                        sup.stations.len(),
+                        sup.clip.trim_start_matches("connector.").to_uppercase(),
+                        sup.spacing
+                    ));
                 }
             }
         } else {
@@ -316,6 +342,101 @@ fn route(w: &Wire, ports: &[Port]) -> Option<Vec<Vec3>> {
             .chain(std::iter::once(b.at))
             .collect(),
     )
+}
+/// How a route is held and bent, by its cable's record: the run clip and the
+/// most spacing between clips aboard a ship (`hold`, rule.run-support), the
+/// stations along the route that spacing calls for (one at each end, the rest
+/// no farther apart than it: the fewest, none of them placed), the least
+/// radius its corners turn at (`elbow.radius`) and the waypoints whose corners
+/// have not the straight that radius takes.
+#[derive(Clone, Debug, PartialEq)]
+pub(super) struct Support {
+    pub clip: String,
+    pub spacing: f64,
+    pub stations: Vec<Vec3>,
+    pub radius: f64,
+    pub tight: Vec<usize>,
+}
+fn support(path: &[Vec3], cable: &Value) -> Result<Support, String> {
+    let h = &cable["hold"];
+    let spacing = h["ship"]
+        .as_f64()
+        .filter(|s| *s > 0.0)
+        .ok_or("Cable is not laid aboard a ship: no ship hold spacing")?;
+    let clip = s(h, "clip");
+    if clip.is_empty() {
+        return Err("Cable names no run clip".into());
+    }
+    let size = universe_sim::world::registry::registry()
+        .connector(clip)
+        .map(|c| c.size)
+        .ok_or("Run clip unknown")?;
+    let outside = cable["outside"]
+        .as_array()
+        .map(|o| o.iter().filter_map(Value::as_f64).fold(0.0, f64::max))
+        .unwrap_or(f64::INFINITY);
+    if outside > size * 1.000001 {
+        return Err("Cable does not fit its run clip".into());
+    }
+    let radius = cable["elbow"]["radius"]
+        .as_f64()
+        .filter(|r| *r > 0.0)
+        .ok_or("Cable has no least bend radius")?;
+    Ok(Support { clip: clip.into(), spacing, stations: stations(path, spacing), radius, tight: tight(path, radius) })
+}
+/// The point `d` m along a route.
+fn along(path: &[Vec3], mut d: f32) -> Vec3 {
+    for p in path.windows(2) {
+        let l = p[0].distance(p[1]);
+        if d <= l {
+            return p[0].lerp(p[1], if l > 0.0 { d / l } else { 0.0 });
+        }
+        d -= l;
+    }
+    *path.last().unwrap_or(&Vec3::ZERO)
+}
+/// Where a route needs holding at `spacing` at most: both ends and the fewest
+/// between them, evenly along it.
+fn stations(path: &[Vec3], spacing: f64) -> Vec<Vec3> {
+    let length: f32 = path.windows(2).map(|p| p[0].distance(p[1])).sum();
+    let n = ((f64::from(length) / spacing).ceil() as usize).max(1);
+    (0..=n).map(|k| along(path, length * k as f32 / n as f32)).collect()
+}
+/// The waypoints (1-based, as the route's vertices) whose corners have not the
+/// straight their bend takes: a corner turning `theta` at radius `radius` uses
+/// radius * tan(theta / 2) of each leg, and a leg must hold both its corners'.
+fn tight(path: &[Vec3], radius: f64) -> Vec<usize> {
+    let tangent: Vec<f32> = (0..path.len())
+        .map(|k| {
+            if k == 0 || k + 1 == path.len() {
+                return 0.0;
+            }
+            let (a, b) = (path[k] - path[k - 1], path[k + 1] - path[k]);
+            if a.length() <= 1e-6 || b.length() <= 1e-6 {
+                return 0.0;
+            }
+            let theta = a.angle_between(b);
+            if theta < 1e-3 {
+                return 0.0;
+            }
+            if theta > std::f32::consts::PI - 1e-3 {
+                return f32::INFINITY;
+            }
+            radius as f32 * (theta / 2.0).tan()
+        })
+        .collect();
+    let mut out: Vec<usize> = Vec::new();
+    for (i, p) in path.windows(2).enumerate() {
+        if p[0].distance(p[1]) < tangent[i] + tangent[i + 1] {
+            for k in [i, i + 1] {
+                if tangent[k] > 0.0 && !out.contains(&k) {
+                    out.push(k);
+                }
+            }
+        }
+    }
+    out.sort_unstable();
+    out
 }
 pub(super) fn remove(i: &mut Interior, cam: &Camera) {
     let all = ports(i);
@@ -351,11 +472,22 @@ pub(super) fn back(i: &mut Interior) {
 }
 pub(super) fn draw(frame: &mut Frame, i: &Interior, cam: &Camera, plane: f32) {
     let all = ports(i);
+    let reg = universe_sim::world::registry::registry();
     if let Some(wires) = &i.plan.wiring {
         for w in wires.values() {
             if let Some(path) = route(w, &all) {
                 for s in path.windows(2) {
                     draw_line(frame, cam, s[0], s[1], PICKED);
+                }
+                // (Where it must be clipped: wanted, none placed.)
+                if let Some(sup) = reg
+                    .runs
+                    .iter()
+                    .find(|c| c.identity.key == w.cable)
+                    .and_then(|c| serde_json::to_value(c).ok())
+                    .and_then(|c| support(&path, &c).ok())
+                {
+                    draw_stations(frame, cam, &sup.stations, CLASH);
                 }
             }
         }
@@ -431,6 +563,21 @@ pub(super) fn draw(frame: &mut Frame, i: &Interior, cam: &Camera, plane: f32) {
         for s in points.windows(2) {
             draw_line(frame, cam, s[0], s[1], PICKED);
         }
+        if let Some(sup) = chosen.and_then(|c| support(&points, c).ok()) {
+            draw_stations(frame, cam, &sup.stations, LABEL);
+            for &k in &sup.tight {
+                if let Some((q, _)) = cam.project(points[k]) {
+                    frame.hud_box(q - Vec2::splat(6.0), Vec2::splat(12.0), CLASH);
+                }
+            }
+        }
+    }
+}
+fn draw_stations(frame: &mut Frame, cam: &Camera, at: &[Vec3], col: Color) {
+    for p in at {
+        if let Some((q, _)) = cam.project(*p) {
+            frame.hud_box(q - Vec2::splat(2.0), Vec2::splat(4.0), col);
+        }
     }
 }
 fn cable_row(n: usize) -> Rect {
@@ -465,6 +612,16 @@ pub(super) fn panel(frame: &mut Frame, i: &Interior) {
         format!("CABLE {}/{} — N: NEXT", selected + 1, list.len())
     };
     frame.text_scaled(PANEL.0 + Vec2::new(8., 96.), &label, LABEL, 0.65);
+    if let Some(c) = list.get(selected) {
+        let hold = match (c["hold"]["clip"].as_str(), c["hold"]["ship"].as_f64(), c["elbow"]["radius"].as_f64()) {
+            (Some(clip), Some(every), Some(r)) => format!(
+                "{} EVERY {every:.1} M · BEND R {r:.3} M",
+                clip.trim_start_matches("connector.").to_uppercase()
+            ),
+            _ => "NOT LAID ABOARD A SHIP".into(),
+        };
+        frame.text_scaled(PANEL.0 + Vec2::new(8., 262.), &hold, LABEL, 0.6);
+    }
     for (n, text) in [
         "CLICK ROW TO SELECT CABLE",
         "BACKSPACE: LAST WAYPOINT",
@@ -476,7 +633,7 @@ pub(super) fn panel(frame: &mut Frame, i: &Interior) {
     .enumerate()
     {
         frame.text_scaled(
-            PANEL.0 + Vec2::new(8., 270. + n as f32 * 14.),
+            PANEL.0 + Vec2::new(8., 276. + n as f32 * 14.),
             text,
             LABEL,
             0.65,
@@ -484,7 +641,7 @@ pub(super) fn panel(frame: &mut Frame, i: &Interior) {
     }
     if ports(i).is_empty() {
         frame.text_scaled(
-            PANEL.0 + Vec2::new(8., 342.),
+            PANEL.0 + Vec2::new(8., 346.),
             "NO RESOLVED PORTS IN THIS DESIGN",
             CLASH,
             0.6,
@@ -499,6 +656,9 @@ fn draw_line(frame: &mut Frame, cam: &Camera, a: Vec3, b: Vec3, col: Color) {
 }
 
 /// Explicit wires replace the inferred harness, including its mass accounting.
+/// Each is checked for its ends (ports, connectors, contacts) and its hold (the
+/// clips its cable calls for, which nothing places yet; its bends); what it
+/// carries is not yet.
 pub(super) fn harness(plan: &Plan, fit: &[Fitted]) -> wiring::Harness {
     let mut h = wiring::Harness::default();
     let all = ports_for(plan, fit);
@@ -529,6 +689,26 @@ pub(super) fn harness(plan: &Plan, fit: &[Fitted]) -> wiring::Harness {
             )),
             Err(e) => h.faults.push(format!("WIRE {id}: {e}")),
         }
+        // (Its hold: the clips it needs along its way, none of them placed yet, and
+        // the corners too tight for its cable.)
+        match support(&path, &c) {
+            Err(e) => h.faults.push(format!("WIRE {id}: {e}")),
+            Ok(sup) => {
+                if !sup.tight.is_empty() {
+                    h.faults.push(format!(
+                        "WIRE {id}: BEND AT WAYPOINT {} TOO TIGHT FOR {:.3} M RADIUS",
+                        sup.tight.iter().map(|k| k.to_string()).collect::<Vec<_>>().join(", "),
+                        sup.radius
+                    ));
+                }
+                h.faults.push(format!(
+                    "WIRE {id}: NEEDS {} X {} EVERY {:.1} M, NOT PLACED",
+                    sup.stations.len(),
+                    sup.clip.trim_start_matches("connector."),
+                    sup.spacing
+                ));
+            }
+        }
         let length: f64 = path.windows(2).map(|p| p[0].distance(p[1]) as f64).sum();
         let ends: f64 = [&w.from, &w.to]
             .iter()
@@ -548,7 +728,7 @@ pub(super) fn harness(plan: &Plan, fit: &[Fitted]) -> wiring::Harness {
         });
     }
     h.faults
-        .push("AUTHORED WIRING: SUPPORTS AND ELECTRICAL LOADS NOT YET VALIDATED".into());
+        .push("AUTHORED WIRING: ELECTRICAL LOADS NOT YET VALIDATED".into());
     h
 }
 
@@ -605,10 +785,42 @@ mod tests {
         assert!(h.runs[0].mass > 0. && h.runs[0].length > 0.);
         assert_eq!(
             h.faults.len(),
-            1,
-            "only pending load/support validation: {:?}",
+            2,
+            "its unplaced clips and the pending load validation: {:?}",
             h.faults
         );
+        assert!(h.faults[0].starts_with("WIRE wire_1: NEEDS ") && h.faults[0].contains("run-clip-d10 EVERY 0.6 M"), "{:?}", h.faults);
+    }
+    #[test]
+    fn a_wire_is_held_at_its_cable_spacing_and_bent_no_tighter_than_it_turns() {
+        // (A 10 mm hook-up wire's figures: clipped every 0.6 m, turning at 38 mm.)
+        let cable = json!({"outside":[0.004,0.004],"elbow":{"radius":0.038},"hold":{"clip":"connector.run-clip-d10","ship":0.6,"plant":1.5}});
+        let path = [Vec3::ZERO, Vec3::X * 2.0, Vec3::new(2.0, 1.0, 0.0)];
+        let sup = support(&path, &cable).expect("laid aboard, fits its clip, has a radius");
+        assert_eq!((sup.clip.as_str(), sup.spacing, sup.radius), ("connector.run-clip-d10", 0.6, 0.038));
+        // (3 m at 0.6 m: five stretches, six stations, the ends among them.)
+        assert_eq!(sup.stations.len(), 6);
+        assert_eq!(sup.stations[0], Vec3::ZERO);
+        assert_eq!(*sup.stations.last().unwrap(), Vec3::new(2.0, 1.0, 0.0));
+        assert!((sup.stations[1] - Vec3::X * 0.6).length() < 1e-5 && (sup.stations[4] - Vec3::new(2.0, 0.4, 0.0)).length() < 1e-5);
+        assert!(sup.tight.is_empty(), "a right angle at 38 mm wants 38 mm of each leg");
+        // (A leg too short for its corners' tangents: 10 mm between two right angles.)
+        let hairpin = [Vec3::ZERO, Vec3::X, Vec3::new(1.0, 0.01, 0.0), Vec3::new(0.0, 0.01, 0.0)];
+        assert_eq!(tight(&hairpin, 0.038), vec![1, 2]);
+        // (A straight run has no corner to speak of; a reversal has no radius.)
+        assert!(tight(&[Vec3::ZERO, Vec3::X, Vec3::X * 2.0], 0.038).is_empty());
+        assert_eq!(tight(&[Vec3::ZERO, Vec3::X, Vec3::ZERO], 0.038), vec![1]);
+        // (The registry's rules: no ship spacing is not laid aboard; a cable too
+        // big for its clip is a registry fault; no radius, no bend check.)
+        let mut plant = cable.clone();
+        plant["hold"].as_object_mut().unwrap().remove("ship");
+        assert!(support(&path, &plant).is_err());
+        let mut fat = cable.clone();
+        fat["outside"] = json!([0.02, 0.02]);
+        assert!(support(&path, &fat).unwrap_err().contains("fit"));
+        let mut stiff = cable.clone();
+        stiff["elbow"] = json!({});
+        assert!(support(&path, &stiff).unwrap_err().contains("radius"));
     }
     #[test]
     fn player_wires_require_matching_ports_and_keep_their_route() {
@@ -643,6 +855,9 @@ mod tests {
         let mut big = c.clone();
         big["conductors"][0]["size"] = json!(1e-3);
         assert!(compatible(&a, &b, &big).is_err());
+        let mut screened = c.clone();
+        screened["conductors"][2] = json!({"id":"S","role":"earth"});
+        assert!(compatible(&a, &b, &screened).is_ok(), "an unsized screen is not a conductor too big");
         let mut low = c.clone();
         low["rating"]["voltage"] = json!(12);
         assert!(compatible(&a, &b, &low).is_err());
