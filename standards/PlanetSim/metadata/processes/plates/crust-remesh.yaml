@@ -2,8 +2,11 @@
 identity:
   key: planet-process.crust-remesh
   name: 'Remesh: re-laying particles on the sample lattice'
-  about: Preserve all continental particles, including positions, volume, identity and geology. Refresh ocean markers only, at ocean-class samples, retaining the nearest old ocean thermal age, floor and geology and the geometric readout
-    owner. This representation-only operation preserves sampled continental thickness, untrenched land share and basin capacity. Continental density is handled by physical transport and spreading, not periodic continental refitting.
+  about: 'Every REMESH_MYR the crust is re-laid on the sample lattice, conservatively. One continental particle per sample reading at least fringe floor of continental crust (the fringe below CONTINENT_EDGE included; crust under the
+    floor added to the nearest kept sample), its volume fitted to the read thickness (crust-fit, PROJECT_ROUNDS rounds) and the continental total made exact. One ocean particle per ocean-class sample with the nearest old ocean thermal
+    age, floor and geology and the geometric readout owner. Why: between re-lays the fits adjust particle volumes multiplicatively until neighbours differ by an order of magnitude and the crust holds sample-scale noise (pits, scalloped
+    shores). Re-laying every 50 Myr keeps the crust at the kernel resolution, as the Python did, without the dropped-fringe redistribution that raised land before e43. The fit is not exact; kind flips, fit error, land share and basin
+    level before and after are recorded in the ledger row, and a land-share move of 0.01 or more stops the run.'
 area: plates
 clock:
   when: every REMESH_MYR (50 Myr), checked at the step start
@@ -163,13 +166,19 @@ params:
   meaning: 'unverified: the code names it kernel cutoff without saying what it is'
   source: stages/plates.py:483
   note: the continents' spread (_continental), as crust-read's
+- name: fringe floor
+  value: 150.0
+  unit: m
+  meaning: a sample reading at least this much continental crust is re-laid as a continental particle whatever its kind (the fringe below CONTINENT_EDGE keeps its material); thinner crust, the kernel tail, is added to the nearest kept
+    sample, so nothing is dropped
+  source: 'planets, 20 Oct 2026: 1% of CONTINENT_EDGE; forge models/plates/remesh.rs'
 random_draws:
 - none
 invariants:
-- continental particles preserved exactly
-- continental volume conserved exactly
-- sampled untrenched basin level unchanged within numerical precision
-- sampled untrenched land share unchanged
+- continental volume conserved exactly (relative 1e-9)
+- 'no crust dropped: thickness under the fringe floor is merged into the nearest kept sample'
+- the sampled untrenched land share moves by less than 0.01 per re-lay (asserted); the exact move, the basin level move, kind flips and fit error are in the ledger row
+- ocean rows keep the nearest old ocean particle thermal age and floor used by crust-read
 depends_on:
 - planet-process.crust-read
 - planet-process.crust-fit
@@ -193,3 +202,10 @@ basis:
   tier: derived
   note: '19 Oct 2026: remeshing ocean rows now preserves the same old ocean source used by crust-read for age, floor and geology. Before/after basin receipts are read-only diagnostics. See planet-forge models/plates/remesh.rs and basins.rs;
     no numerical parameter changed.'
+- of:
+  - identity.about
+  - params
+  - invariants
+  tier: derived
+  note: 'planets, 20 Oct 2026: conservative lattice re-lay restored after the e43-e48 ocean-only refresh let sample-scale texture accumulate (e45 134 interior minima per 1000 against e42 12). Offline check on e45 final state: 6 rounds
+    cut minima to 106, 108 kind flips of 30000, land +0.2 points, volume exact. See planet-forge docs/terrain-canvas-recovery.md (e49).'
