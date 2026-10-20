@@ -2,9 +2,8 @@
 identity:
   key: planet-process.seafloor-spreading
   name: 'Gaps: new ridge floor and continental stretching'
-  about: 'After removal of sunk particles, every sample whose nearest particle is farther than GAP*gap is an opening. If the nearest (source) particle is continental and thicker than 2*STRETCH_MIN (xvol/cell), it stretches: half its
-    volume goes to a new continental particle at the sample (age copied, rift geology, rift ores and evaporites in the arid band). Otherwise a new ocean floor particle (OCEAN_CRUST, age 0, MORB, VMS) is added at the sample on the source''s
-    plate. Ridge push force from the new point toward the source is added to the source''s plate.'
+  about: 'Coverage gaps are classified by local plate kinematics. New ocean floor or rift stretching and ridge push require distinct plates bracketing the gap with positive normal separation. Other gaps repair sampling only: inherit
+    source age, floor and geology; split continental source volume where needed. Repair creates no newborn thermal floor, ridge force or ridge ores. The ledger separates physical births and material-preserving repairs.'
 area: plates
 clock:
   when: every step
@@ -41,6 +40,12 @@ reads:
   unit: '1'
 - name: w.xcover
   field: planet-field.particle-rock-cover
+  unit: m
+- name: plate-spin
+  field: planet-field.plate-spin
+  unit: 1/s
+- name: particle-floor-thickness
+  field: planet-field.particle-floor-thickness
   unit: m
 writes:
 - name: w.x
@@ -149,11 +154,17 @@ params:
   meaning: continental particles with xvol <= 0.05*OCEAN_CRUST*cell (350 m equivalent) are dropped
   source: stages/plates.py:1210
   note: 'forge: the removal (the Python''s keep) runs here, just before the gaps; subduction marks the sunk'
+- name: boundary search reach
+  value: 3.0
+  unit: '1'
+  meaning: Local search radius in sample spacings for an opposite-side, different-plate neighbor bracketing a coverage gap. Positive relative normal separation is required for physical spreading.
+  note: Chosen numerical search radius; not a geological rate or land-share calibration.
 random_draws:
 - none
 invariants:
-- stretching conserves continental volume
-- after this step no sample is farther than GAP*gap from a particle
+- continental volume conserved across stretching and marker repair
+- only positive normal plate divergence creates newborn floor
+- repair markers inherit source thermal history and geology
 depends_on:
 - planet-process.subduction
 backends:
