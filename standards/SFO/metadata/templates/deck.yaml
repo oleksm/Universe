@@ -10,15 +10,15 @@ scales_by:
 - physical
 reference: panel.deck-1x1
 members: 4
-visual:
-  format: "freefall-model/1"
-  path: "models/deck/v1"
-  manifest_sha256: "1e2a8cbb3ae06e0ad7e71fc8345f07ce98009a154019caaea94ffa689cee717d"
-  version: 1
-  triangles: 11780
 basis:
 - of:
   - draws
   - scales_by
   tier: derived
   note: 'The owner, 2026-10-18 (via ships): equipment held by typed mounts on cradles or deck panels made from stock; one template a family.'
+visual:
+  format: freefall-model/1
+  path: models/deck/v1
+  manifest_sha256: 1e2a8cbb3ae06e0ad7e71fc8345f07ce98009a154019caaea94ffa689cee717d
+  version: 1
+  triangles: 11780

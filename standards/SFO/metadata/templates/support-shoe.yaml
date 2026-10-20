@@ -10,15 +10,15 @@ scales_by:
 - physical
 reference: connector.deck-support-shoe
 members: 1
-visual:
-  format: "freefall-model/1"
-  path: "models/support-shoe/v1"
-  manifest_sha256: "bdd045ab92f57cad34e88fd9dbf6c37250e3098cd0a9b3b64458b34fd9d6220b"
-  version: 1
-  triangles: 320
 basis:
 - of:
   - draws
   - scales_by
   tier: derived
   note: 'The owner, 2026-10-18 (via ships): equipment held by typed mounts on cradles or deck panels made from stock; one template a family.'
+visual:
+  format: freefall-model/1
+  path: models/support-shoe/v1
+  manifest_sha256: bdd045ab92f57cad34e88fd9dbf6c37250e3098cd0a9b3b64458b34fd9d6220b
+  version: 1
+  triangles: 320

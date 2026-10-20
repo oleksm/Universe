@@ -3,16 +3,17 @@
 identity:
   key: connector.run-clip-d100
   name: Run clip, up to 100 mm
-  description: 'A cushioned 6061 loop clip holding one run up to 100 mm outside (a cable, a hose, a tube), its tab bolted by an M16 to a strut clamp''s lug: how a run is held on a ship''s frame (docs/proposals/physical-mounts.md).'
+  description: 'A cushioned 6061 loop clip holding one run up to 100 mm outside (a cable, a hose, a tube), its tab bolted by an M16 to a strut clamp''s lug: how a run is held on a ship''s frame (docs/proposals/physical-mounts.md). Origin
+    at the tab''s bore on the lug face, z 0, the tab along x; the loop beyond the tab at -x, its axis across (y), its outside from z 0 up to z 0.108.'
 kind: run-clip
 size: 0.1
 rating:
   tension: 27000.0
   shear: 8100.0
 physical:
-  length: 0.19
-  width: 0.108
-  height: 0.025
+  length: 0.153
+  width: 0.025
+  height: 0.108
   mass: 0.205
 built_of:
 - what: Strap
@@ -27,6 +28,37 @@ built_of:
   item: material.high-strength-steel-4340
   mass: 0.1313
   note: M16 with nut, into the strut clamp's lug
+ports:
+- id: run
+  flow: in
+  medium: load
+  interface: interface.run-clip-d100
+  half: female
+  make: bolted
+  at:
+  - -0.0765
+  - 0.0
+  - 0.054
+  facing:
+  - 0.0
+  - 1.0
+  - 0.0
+  note: 'The loop''s axis: one run up to 100 mm outside passes along y, either way, on the 2 mm cushion.'
+- id: fix
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  at:
+  - 0.0
+  - 0.0
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: 'Required: the tab''s M16 bore down onto a strut clamp''s lug. The lug''s own datum is still open (strut clamp parked, 2026-10-19); no stiffness or load rating is approved.'
 interface: interface.run-clip-d100
 provides: female
 fixing: interface.kit-clamp
@@ -38,3 +70,8 @@ basis:
   tier: invented
   review: true
   note: 'A P-clip by rule (mounting.py): strap a quarter of the band wide, 2% thick; holds both legs at 6061''s yield pulled, friction 0.3 sliding. Review-pending (docs/proposals/physical-mounts.md): chosen, not approved.'
+- of:
+  - ports
+  tier: invented
+  review: true
+  note: 'P-clip datums by rule (2026-10-19): the tab''s bore on the lug face is the origin, the loop''s centre at (-(tab/2 + outside radius), 0, outside radius). The clamp lug''s mating datum is open: the strut clamp is parked.'

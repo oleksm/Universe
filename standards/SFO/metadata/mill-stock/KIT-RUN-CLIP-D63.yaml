@@ -12,9 +12,9 @@ made_from:
 - item: material.silicone-rubber
 - item: material.high-strength-steel-4340
 size:
-  length: 0.1345
-  width: 0.07
-  height: 0.0158
+  length: 0.1058
+  width: 0.0158
+  height: 0.07
 supplies:
   item: connector.run-clip-d63
 physical:

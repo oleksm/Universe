@@ -333,15 +333,15 @@
 - { record: connector.plug-iec60309-32a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "c21a0b2f7fa8508a" }
 - { record: connector.plug-iec60309-63a, at: "2026-10-17T21:18:58Z", status: draft, summary: "first tracked", sha: "3da7c6192318b95d" }
 - { record: connector.powerlock-400a, at: "2026-10-18T05:15:35Z", status: draft, summary: "changed: physical, built_of, basis", sha: "528acdaf49ddd12d" }
-- { record: connector.run-clip-d10, at: "2026-10-18T20:37:52Z", status: draft, summary: "first tracked", sha: "36352f2599fab715" }
-- { record: connector.run-clip-d100, at: "2026-10-18T20:37:52Z", status: draft, summary: "first tracked", sha: "73b5ef7e29aa9d53" }
-- { record: connector.run-clip-d16, at: "2026-10-18T20:37:52Z", status: draft, summary: "first tracked", sha: "cac88d1a6efed827" }
-- { record: connector.run-clip-d160, at: "2026-10-18T20:37:52Z", status: draft, summary: "first tracked", sha: "791f133d656b4057" }
-- { record: connector.run-clip-d25, at: "2026-10-18T20:37:52Z", status: draft, summary: "first tracked", sha: "2d8a748e40a12b8b" }
-- { record: connector.run-clip-d250, at: "2026-10-18T20:37:52Z", status: draft, summary: "first tracked", sha: "403ceeb3deaf1fd9" }
-- { record: connector.run-clip-d40, at: "2026-10-18T20:37:52Z", status: draft, summary: "first tracked", sha: "75ff8f6585302913" }
-- { record: connector.run-clip-d400, at: "2026-10-18T20:37:52Z", status: draft, summary: "first tracked", sha: "9e67448bd4dd6332" }
-- { record: connector.run-clip-d63, at: "2026-10-18T20:37:52Z", status: draft, summary: "first tracked", sha: "023ef572a3359463" }
+- { record: connector.run-clip-d10, at: "2026-10-20T04:18:39Z", status: draft, summary: "changed: identity, physical, ports, basis", sha: "e82ba57bc616b076" }
+- { record: connector.run-clip-d100, at: "2026-10-20T04:18:39Z", status: draft, summary: "changed: identity, physical, ports, basis", sha: "9e75266c0d6f2b6b" }
+- { record: connector.run-clip-d16, at: "2026-10-20T04:18:39Z", status: draft, summary: "changed: identity, physical, ports, basis", sha: "67be7d9566e683e6" }
+- { record: connector.run-clip-d160, at: "2026-10-20T04:18:39Z", status: draft, summary: "changed: identity, physical, ports, basis", sha: "056134ce81171dfc" }
+- { record: connector.run-clip-d25, at: "2026-10-20T04:18:39Z", status: draft, summary: "changed: identity, physical, ports, basis", sha: "63594950778f3665" }
+- { record: connector.run-clip-d250, at: "2026-10-20T04:18:39Z", status: draft, summary: "changed: identity, physical, ports, basis", sha: "4b83b1f6fb4a65d0" }
+- { record: connector.run-clip-d40, at: "2026-10-20T04:18:39Z", status: draft, summary: "changed: identity, physical, ports, basis", sha: "30b669797997bb2c" }
+- { record: connector.run-clip-d400, at: "2026-10-20T04:18:39Z", status: draft, summary: "changed: identity, physical, ports, basis", sha: "6e809e5a7b703798" }
+- { record: connector.run-clip-d63, at: "2026-10-20T04:18:39Z", status: draft, summary: "changed: identity, physical, ports, basis", sha: "fd0dc138b824a551" }
 - { record: connector.strut-clamp-d100, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "9df8138ee2125e4c" }
 - { record: connector.strut-clamp-d120, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "ff86538c8db2f29f" }
 - { record: connector.strut-clamp-d150, at: "2026-10-18T17:53:40Z", status: draft, summary: "first tracked", sha: "aaaa0b0420640043" }
@@ -3820,7 +3820,7 @@
 - { record: stock.kit-conductor-rail-500a, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "1ffeebc58db3aadc" }
 - { record: stock.kit-corner-casting-iso1161, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "aea7ba02a5c2a39c" }
 - { record: stock.kit-coupler-11kv-400a, at: "2026-10-18T04:24:58Z", status: review, summary: "changed: made_from, physical", sha: "72e03863ba78c631" }
-- { record: stock.kit-deck-support-shoe, at: "2026-10-19T17:12:19Z", status: review, summary: "first tracked", sha: "87c24016643e22da" }
+- { record: stock.kit-deck-support-shoe, at: "2026-10-20T04:20:36Z", status: review, summary: "changed", sha: "8db5cd67a25bd1ce" }
 - { record: stock.kit-drag-conveyor-800, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "a8b1f3e09c3573d7" }
 - { record: stock.kit-expansion-joint-dn100-pn10, at: "2026-10-18T04:35:53Z", status: review, summary: "changed: physical", sha: "530d9e61ca980586" }
 - { record: stock.kit-expansion-joint-dn1000-pn10, at: "2026-10-18T04:35:53Z", status: review, summary: "changed: physical", sha: "1e54753b3e2cf437" }
@@ -3991,15 +3991,15 @@
 - { record: stock.kit-plug-iec60309-32a, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "d0a273e2ba50b3eb" }
 - { record: stock.kit-plug-iec60309-63a, at: "2026-10-17T21:18:58Z", status: review, summary: "first tracked", sha: "cf91e00d14157b89" }
 - { record: stock.kit-powerlock-400a, at: "2026-10-18T05:15:35Z", status: review, summary: "changed: physical", sha: "2d8a975deef2f8e9" }
-- { record: stock.kit-run-clip-d10, at: "2026-10-18T20:37:52Z", status: review, summary: "first tracked", sha: "44c974513c0e646f" }
-- { record: stock.kit-run-clip-d100, at: "2026-10-18T20:37:52Z", status: review, summary: "first tracked", sha: "f12be3ead889306f" }
-- { record: stock.kit-run-clip-d16, at: "2026-10-18T20:37:52Z", status: review, summary: "first tracked", sha: "5ed7df4ea23ac31c" }
-- { record: stock.kit-run-clip-d160, at: "2026-10-18T20:37:52Z", status: review, summary: "first tracked", sha: "c79be510615a1ce7" }
-- { record: stock.kit-run-clip-d25, at: "2026-10-18T20:37:52Z", status: review, summary: "first tracked", sha: "2662b73b387491a1" }
-- { record: stock.kit-run-clip-d250, at: "2026-10-18T20:37:52Z", status: review, summary: "first tracked", sha: "0fc50c1061f37050" }
-- { record: stock.kit-run-clip-d40, at: "2026-10-18T20:37:52Z", status: review, summary: "first tracked", sha: "60f30a71d1fa6a0a" }
-- { record: stock.kit-run-clip-d400, at: "2026-10-18T20:37:52Z", status: review, summary: "first tracked", sha: "7ba8cd433ae62367" }
-- { record: stock.kit-run-clip-d63, at: "2026-10-18T20:37:52Z", status: review, summary: "first tracked", sha: "32265c7e9d9fa0d7" }
+- { record: stock.kit-run-clip-d10, at: "2026-10-20T04:20:36Z", status: review, summary: "changed: size", sha: "1a5f489419d98a04" }
+- { record: stock.kit-run-clip-d100, at: "2026-10-20T04:20:36Z", status: review, summary: "changed: size", sha: "0669d01fe6f3e4f5" }
+- { record: stock.kit-run-clip-d16, at: "2026-10-20T04:20:36Z", status: review, summary: "changed: size", sha: "ca7b878137f6de90" }
+- { record: stock.kit-run-clip-d160, at: "2026-10-20T04:20:36Z", status: review, summary: "changed: size", sha: "74c6e80735a10917" }
+- { record: stock.kit-run-clip-d25, at: "2026-10-20T04:20:36Z", status: review, summary: "changed: size", sha: "61e4269ca9e3a81c" }
+- { record: stock.kit-run-clip-d250, at: "2026-10-20T04:20:36Z", status: review, summary: "changed: size", sha: "8c697485131bdd9d" }
+- { record: stock.kit-run-clip-d40, at: "2026-10-20T04:20:36Z", status: review, summary: "changed: size", sha: "445eec1fe73fb027" }
+- { record: stock.kit-run-clip-d400, at: "2026-10-20T04:20:36Z", status: review, summary: "changed: size", sha: "013d62d2229e158c" }
+- { record: stock.kit-run-clip-d63, at: "2026-10-20T04:20:36Z", status: review, summary: "changed: size", sha: "e4219a8cb92357ed" }
 - { record: stock.kit-strut-clamp-d100, at: "2026-10-18T20:37:52Z", status: review, summary: "changed", sha: "ead6be6653e86e56" }
 - { record: stock.kit-strut-clamp-d120, at: "2026-10-18T20:37:52Z", status: review, summary: "changed", sha: "69776da4162ffaf1" }
 - { record: stock.kit-strut-clamp-d150, at: "2026-10-18T20:37:52Z", status: review, summary: "changed", sha: "fb320ea84216356c" }
@@ -4710,7 +4710,7 @@
 - { record: template.corner-casting, at: "2026-10-18T04:18:11Z", status: "", summary: "changed", sha: "d419adb8082c4d81" }
 - { record: template.coupler, at: "2026-10-18T04:31:06Z", status: "", summary: "changed", sha: "92f33e0051a9f6f6" }
 - { record: template.cradle, at: "2026-10-19T17:00:28Z", status: "", summary: "changed", sha: "de151696556f4f99" }
-- { record: template.deck, at: "2026-10-19T21:21:02Z", status: "", summary: "changed: visual", sha: "3386977e31980c09" }
+- { record: template.deck, at: "2026-10-20T04:18:39Z", status: "", summary: "changed", sha: "fec279f4a4b70300" }
 - { record: template.drag-conveyor, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "da78b5e8e253b112" }
 - { record: template.expansion-joint, at: "2026-10-18T04:42:30Z", status: "", summary: "changed", sha: "35f0e9f3830a86f9" }
 - { record: template.feeder, at: "2026-10-18T15:11:23Z", status: "", summary: "changed: members", sha: "c358ef3c93a961a6" }
@@ -4741,7 +4741,7 @@
 - { record: template.single-pole, at: "2026-10-18T05:21:02Z", status: "", summary: "changed", sha: "891598fccf7fa541" }
 - { record: template.stair, at: "2026-10-18T01:25:38Z", status: "", summary: "changed", sha: "dc0f89d97f6807ea" }
 - { record: template.strut-clamp, at: "2026-10-18T17:53:40Z", status: "", summary: "first tracked", sha: "466ad2dc88757182" }
-- { record: template.support-shoe, at: "2026-10-19T21:25:38Z", status: "", summary: "changed: visual", sha: "020eabd61cd83ba9" }
+- { record: template.support-shoe, at: "2026-10-20T04:18:39Z", status: "", summary: "changed", sha: "8c5109392c630761" }
 - { record: template.termination-hv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "b0398bafc880c882" }
 - { record: template.termination-lv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "b3fff31e02cd79e5" }
 - { record: template.termination-mv, at: "2026-10-17T19:00:12Z", status: "", summary: "first tracked", sha: "5098fcf4fe0ded80" }

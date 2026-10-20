@@ -402,23 +402,36 @@ OWN = {"belt": (1.2, "its idler frames"), "drag-conveyor": (3.0, "its casing's s
 
 
 def run_clip(band):
+    """A P-clip, in its own frame (x along, y across, z up): origin at the tab's bolt bore on the clamp lug's face
+    (z 0), the tab along x; the loop beyond the tab's -x end, its axis across (y), its outside tangent to z 0."""
     mm = round(band * 1000)
     w, t = max(0.012, 0.25 * band), max(0.0015, 0.02 * band)
-    loop = math.pi * (band + 0.004) + 2 * (0.02 + band / 4)
+    tab = 0.02 + band / 4                      # the tab, both strap ends lying together, the bore at its middle
+    ro = (band + 0.004) / 2 + t                # the loop's outside radius: the band, its 2 mm cushion, the strap
+    loop = math.pi * (band + 0.004) + 2 * tab
     strap = w * t * loop * RHO[AL]
     cushion = math.pi * (band + 0.002) * 0.002 * w * 1100.0
     b = 10 if band <= 0.063 else 16
     hold = 2 * w * t * YIELD[AL]
+    ports = [{"id": "run", "flow": "in", "medium": "load", "interface": f"interface.run-clip-d{mm}", "half": "female", "make": "bolted",
+              "at": [r(-(tab / 2 + ro)), 0.0, r(ro)], "facing": [0.0, 1.0, 0.0],
+              "note": f"The loop's axis: one run up to {mm} mm outside passes along y, either way, on the 2 mm cushion."},
+             {"id": "fix", "flow": "out", "medium": "load", "interface": "interface.kit-clamp", "half": "male", "make": "bolted",
+              "at": [0.0, 0.0, 0.0], "facing": [0.0, 0.0, -1.0],
+              "note": f"Required: the tab's M{b} bore down onto a strut clamp's lug. The lug's own datum is still open (strut clamp parked, 2026-10-19); no stiffness or load rating is approved."}]
     rec = {"identity": {"key": f"connector.run-clip-d{mm}", "name": f"Run clip, up to {mm} mm",
-                        "description": f"A cushioned 6061 loop clip holding one run up to {mm} mm outside (a cable, a hose, a tube), its tab bolted by an M{b} to a strut clamp's lug: how a run is held on a ship's frame (docs/proposals/physical-mounts.md)."},
+                        "description": f"A cushioned 6061 loop clip holding one run up to {mm} mm outside (a cable, a hose, a tube), its tab bolted by an M{b} to a strut clamp's lug: how a run is held on a ship's frame (docs/proposals/physical-mounts.md). Origin at the tab's bore on the lug face, z 0, the tab along x; the loop beyond the tab at -x, its axis across (y), its outside from z 0 up to z {r(2 * ro)}."},
            "kind": "run-clip", "size": band, "rating": {"tension": r(hold, 0), "shear": r(MU * hold, 0)},
-           "physical": {"length": r(band + 2 * (0.02 + band / 4)), "width": r(band + 2 * t + 0.004), "height": r(w), "mass": r(strap + cushion + bolt_mass(b), 3)},
+           "physical": {"length": r(tab + 2 * ro), "width": r(w), "height": r(2 * ro), "mass": r(strap + cushion + bolt_mass(b), 3)},
            "built_of": [{"what": "Strap", "item": AL, "mass": r(strap, 4), "note": f"6061, {round(w * 1000)} x {t * 1000:.1f} mm"},
                         {"what": "Cushion", "item": "material.silicone-rubber", "mass": r(cushion, 4), "note": "2 mm silicone lining"},
                         {"what": "Bolt", "item": ST, "mass": r(bolt_mass(b), 4), "note": f"M{b} with nut, into the strut clamp's lug"}],
+           "ports": ports,
            "interface": f"interface.run-clip-d{mm}", "provides": "female", "fixing": "interface.kit-clamp", "template": "template.run-clip",
            "basis": [{"of": ["physical", "rating"], "tier": "invented", "review": True,
-                      "note": f"A P-clip by rule (mounting.py): strap a quarter of the band wide, 2% thick; holds both legs at 6061's yield pulled, friction 0.3 sliding. {REVIEW}"}]}
+                      "note": f"A P-clip by rule (mounting.py): strap a quarter of the band wide, 2% thick; holds both legs at 6061's yield pulled, friction 0.3 sliding. {REVIEW}"},
+                     {"of": ["ports"], "tier": "invented", "review": True,
+                      "note": "P-clip datums by rule (2026-10-19): the tab's bore on the lug face is the origin, the loop's centre at (-(tab/2 + outside radius), 0, outside radius). The clamp lug's mating datum is open: the strut clamp is parked."}]}
     iface = {"identity": {"key": f"interface.run-clip-d{mm}", "name": f"Run clip, {mm} mm",
                           "description": f"A run's outside (male: any run up to {mm} mm and over the next band down) held in a clip's loop (female)."},
              "domain": "load", "kind": "run-clip", "size": band, "envelope": dict(rec["rating"]), "media": ["load"], "sealing": "open",
@@ -501,7 +514,7 @@ def build():
                                          "tier": "invented", "source": "FAA AC 43.13-1B (wire clamps 24 in); ASME B31.1 suggested pipe spans; both from memory", "review": True}, "rule")
     shoe = deck_support_shoe()
     n += write("connectors", "deck-support-shoe", shoe, "connector")
-    n += write("mill-stock", "KIT-DECK-SUPPORT-SHOE", stock_for("KIT-DECK-SUPPORT-SHOE", shoe, "piece"), "mill-stock")
+    # (its stock KIT-DECK-SUPPORT-SHOE is kit_catalogue.py's, as every connector's)
     tl = tubes()
     cradles, decks = [], []
     for slug, (path, m) in load("mounts").items():
