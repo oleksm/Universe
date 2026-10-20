@@ -61,7 +61,7 @@ writes:
 params:
 - name: ERODE_ABOVE
   env: SIM_ERODE_ABOVE
-  value: 38000.0
+  value: 35000.0
   unit: m
   meaning: continental thickness above which crust-level wear removes the excess (pre-coupled era)
   source: stages/plates.py:161, stages/plates.py:162
@@ -78,7 +78,7 @@ params:
   note: 'chosen: mountain belts fall to plains in a few hundred Myr'
 - name: COUPLED_ERODE_ABOVE
   env: SIM_COUPLED_ERODE_ABOVE
-  value: 38000.0
+  value: 35000.0
   unit: m
   meaning: threshold for crust-level wear in the coupled era (default = ERODE_ABOVE after its own env override)
   source: stages/plates.py:166
@@ -245,6 +245,11 @@ basis:
   tier: calibrated
   note: 'planets, 20 Oct 2026 (owner: mountains for the game look): ERODE_MYR 150 -> 300 Myr and COUPLED_ERODE_MYR 250 -> 400 Myr with CRUST_MAX 80 -> 65 km (crust-flow), experiment e62 on the e61 default: ranges should last longer
     and peaks stop near 6 km (e61: highest 9.4 km from stacks near 88 km).'
+- of:
+  - params
+  tier: calibrated
+  note: 'planets, 20 Oct 2026: ERODE_ABOVE and COUPLED_ERODE_ABOVE 38 -> 35 km for e68: with the growth curve holding Earth volume (e67: 6.5e18 m3) the continents stood on 32% of the planet at 40 km; Earth holds 7.2e18 on 40% at ~35
+    km with the extra area in thinned, sediment-built margins. The wear above 35 km thins the continents toward that mean and lays the debris on the shelves.'
 events_emitted:
 - event: planet-event.ledger-row
   where: 'forge: the step''s volume moved, shed, worn, denuded or laid on the shelf (the Python''s ledger rows)'
