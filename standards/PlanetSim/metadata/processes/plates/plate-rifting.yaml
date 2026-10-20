@@ -200,7 +200,7 @@ params:
 random_draws:
 - 'Per candidate: (ocean-only) rng.integers(len(ocean_pts)); random_unit = normal(3); _bumps(40) = normal(40,3) + normal(40). Rejected candidates still consume draws. If a fallback recursion happens, it draws again. apart() draws random_unit
   only if a degenerate axis. Draws happen even for candidates rejected by balance.'
-- rift fine bumps: _bumps(count) = normal(count,3) + normal(count) on draw slots k*64+6, k*64+7
+- 'rift fine bumps: _bumps(count) = normal(count,3) + normal(count), draw slots k*64+6 and k*64+7'
 invariants:
 - both halves have 20-80% of the plate's particles
 - no half with 0 < continental volume < RIFT_MIN_CONT x world's
