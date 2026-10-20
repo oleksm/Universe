@@ -84,12 +84,12 @@ params:
   source: stages/plates.py:146
   note: 'real: arc-trench gaps 100-300 km'
 - name: ARC_PER_AREA
-  value: 2216.6666666666665
+  value: 1266.6666666666665
   unit: m
-  meaning: 'Arc crust added per area of subducted floor (m3/m2), spread evenly over the arc band: base 3.8 km3/yr over 3.0 km2/yr, multiplied by the original Python calibration of 1.75.'
+  meaning: 'Arc crust added per area of subducted floor (m3/m2), spread evenly over the arc band: base 3.8 km3/yr of arcs over 3.0 km2/yr of floor consumed, without the historical Python calibration multiplier.'
   source: Scholl & von Huene 2009 (arc addition 3.8 km3/yr); Parsons 1981 (3.0 km2/yr consumed)
-  note: 'Owner-authorized restoration, 19 Oct 2026: the original Python model multiplied the base rate by 1.75 to calibrate continental crust volume. This multiplier is a model calibration, not a measured arc-production rate. Restored
-    with the corrected Python speed rule; validate the resulting volume, land share and flooding before further tuning.'
+  note: The owner-authorized forge_e38 comparison restored the historical Python multiplier 1.75 with corrected speeds. It raised final continental area from 36.06% to 59.17% and reduced exposed land from 24.68% to 17.56% at the same
+    water inventory. Rejected and reverted on 19 Oct 2026; see planet-forge/docs/terrain-canvas-recovery.md. No forced land fraction.
 - name: MARGIN_LOSS_PER_AREA
   value: 900.0
   unit: m
@@ -134,9 +134,10 @@ basis:
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'
 - of:
   - params.ARC_PER_AREA
-  tier: invented
-  note: 'Original Python calibration restored at the owner request on 19 Oct 2026: ARC_PER_AREA = 3.8 / 3.0 * 1000 * 1.75 in planet-sim/src/planet_sim/stages/plates.py. The published rates support the base ratio; the 1.75 multiplier
-    was chosen for continental-volume calibration and is not independently sourced.'
+  tier: derived
+  source: Scholl & von Huene 2009; Parsons 1981
+  note: Base ratio 3.8 km3/yr divided by 3.0 km2/yr, converted to metres. The original Python multiplier 1.75 was a chosen volume calibration; the isolated forge_e38 comparison rejected restoring it with the corrected speed law. The
+    default returns to the unmultiplied base ratio.
 events_emitted:
 - event: planet-event.arc
   where: 'forge: one per substep with arcs (volumes added and eaten)'
