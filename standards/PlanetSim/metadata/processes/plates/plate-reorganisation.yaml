@@ -120,6 +120,17 @@ params:
   unit: '1'
   meaning: 'top-ups = PLATES - #plates - 2 (plus chance)'
   source: stages/plates.py:1442
+- name: old floor share
+  value: 0.3
+  unit: '1'
+  meaning: 'at a reorganisation a plate whose ocean floor older than FOUNDER_AGE_MYR is at least this share of its ocean gets a convergent ocean-only cut through that floor (subduction initiation, Stern 2004): an interior ocean closes
+    instead of foundering in place forever (forge e60: a continental rim round a 139 Myr interior ocean on a third of the planet)'
+  source: planets, 20 Oct 2026 (chosen); forge models/plates/reorganisation.rs; e61
+- name: old floor min particles
+  value: 400.0
+  unit: '1'
+  meaning: a plate needs at least this many ocean particles for a subduction-initiation cut
+  source: planets, 20 Oct 2026 (chosen)
 random_draws:
 - 'next_reorg = t + rng.uniform(100,250)/1e3 at each scheduled reorganisation; rng.uniform() for RIFT_CHANCE drawn only when no plate is insulated (conditional expression evaluated lazily); then each rift''s draws in order: insulated
   targets first, then top-ups.'
