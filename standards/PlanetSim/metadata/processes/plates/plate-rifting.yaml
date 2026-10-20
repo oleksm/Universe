@@ -147,9 +147,10 @@ params:
   meaning: 'unverified: the code names it side balance without saying what it is'
   source: stages/plates.py:433
 - name: band half width
-  value: 0.6
+  value: 1.5
   unit: '1'
-  meaning: 'unverified: the code names it band half width without saying what it is'
+  meaning: 'half width of the cut band in sample gaps: the strength summed in it is the cut cost, and the continental particles in it are the rifted margin (origin 8), stretched into the opening; 0.6 to e88 made a margin one particle
+    wide (the coast fell 13 km of crust in one sample: a cliff coast, shelf 2% of the ocean against Earth 7%); 1.5 from e89 for a margin of three samples'
   source: stages/plates.py:439
 - name: rift bumps
   values:

@@ -77,14 +77,15 @@ params:
   source: stages/plates.py:67
   note: Gurnis 1988 (chosen)
 - name: INSULATE_MYR
-  value: 7.8894e15
+  value: 4.73364e15
   unit: s
   said_as:
     unit: Myr
     factor: 200.0
   meaning: a big plate that stays big this long is rifted (supercontinent breakup)
   source: stages/plates.py:68
-  note: 'Gurnis 1988 (chosen): 150 Myr to e87; 250 Myr from e88 for the owner (land clustering: e85/e86 had 6 landmasses over 0.2% of the planet with the largest three holding 74-86% of the land; Earth 4 and 91%)'
+  note: 'Gurnis 1988 (chosen); e88 at 250 Myr: no insulation rift fired and one cut through continent, yet the largest three landmasses held 70% of the land (e86 86%, Earth 91%), the sea stood 450 m higher and interiors were 13.8% drowned:
+    clustering is not set by the supercontinent breakup; back to 150 Myr'
 - name: REORGANISE_MYR
   values:
   - 3155760000000000.0
