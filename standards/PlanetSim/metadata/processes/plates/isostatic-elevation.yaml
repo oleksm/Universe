@@ -34,6 +34,9 @@ reads:
 - name: (forge) the latest substep's
   field: planet-field.trench-time
   unit: s
+- name: mantle T
+  field: planet-field.mantle-temperature
+  unit: K
 writes:
 - name: z
   field: planet-field.height-above-ridge
@@ -120,12 +123,25 @@ params:
   unit: '1'
   meaning: 'unverified: the code names it trench reach without saying what it is'
   source: stages/plates.py:1525
+- name: ridge thermal shallowing
+  value: 8.0
+  unit: m/K
+  meaning: 'the whole ocean floor stands this much shallower per kelvin of the mantle potential temperature above modern mantle temperature (a hotter mantle: thicker, more buoyant floor and shallower ridges; the Archean freeboard: Galer
+    1991, Flament et al. 2008). At +250 K (the run start) 2 km: the early sea stands high and the early continents near it instead of 2-4 km up (forge e61-e63 at 1 Gyr: three quarters of the land above 2 km over an 84% ocean at today
+    ridge depth)'
+  source: 'planets, 20 Oct 2026 (chosen magnitude: ~2 km at 4 Ga, Flament et al. 2008 order); forge models/plates/elevation.rs and basins.rs; e64'
+- name: modern mantle temperature
+  value: 1530.0
+  unit: K
+  meaning: the interior model mantle potential temperature today (its Earth), above which the floor shallows
+  source: planet-sim interior model (Earth today 1530 K; real ~1623 K, docs/accuracy.md)
 random_draws:
 - none
 invariants:
 - 'monotone: thicker crust stands higher'
 depends_on:
 - planet-process.crust-read
+- planet-process.thermal-evolution
 backends:
 - cpu
 implementations:
