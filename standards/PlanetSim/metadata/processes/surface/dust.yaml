@@ -2,10 +2,8 @@
 identity:
   key: planet-process.dust
   name: Wind-blown dust (loess) transport and deposition
-  about: 'The deflated volume (wear_wind x cell) is carried downwind sample to sample: each sample''s downwind neighbour is
-    the one most aligned with the climate''s wind direction. Over DUST_HOPS hops, each hop drops trap x load: on land trap
-    = 0.15 + 0.6 V (plants and wet ground trap dust), at sea 0.05 (dropped at sea and lost from the record). What is still
-    airborne after 12 hops is lost. Laid depth = laid volume / cell.'
+  about: 'The deflated volume (wear_wind x cell) is carried downwind sample to sample: each sample''s downwind neighbour is the one most aligned with the climate''s wind direction. Over DUST_HOPS hops, each hop drops trap x load: on
+    land trap = 0.15 + 0.6 V (plants and wet ground trap dust), at sea 0.05 (dropped at sea and lost from the record). What is still airborne after 12 hops is lost. Laid depth = laid volume / cell.'
 area: surface
 clock:
   when: each coupled step
@@ -28,6 +26,15 @@ reads:
   field: planet-field.wind-north
   unit: '1'
   meaning: north component
+- name: denuded
+  field: planet-field.denuded
+  unit: m
+- name: crust-kind
+  field: planet-field.crust-kind
+  unit: '1'
+- name: wear-total
+  field: planet-field.wear-total
+  unit: m
 writes:
 - name: dust
   unit: m per step
@@ -70,11 +77,12 @@ params:
 random_draws:
 - none
 invariants:
-- sum(dust*cell) <= sum(wear_wind*cell)
+- sum(dust*cell) <= actual wind source from measured denudation
 - dust laid only on land
 depends_on:
 - planet-process.coupled-erosion
 - planet-process.coupled-climate
+- planet-process.denudation-and-rivers
 backends:
 - cpu
 implementations:
@@ -91,11 +99,13 @@ basis:
   - reads
   - writes
   tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
-    the code at planet-sim-landform 9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from the code at planet-sim-landform 9747f0d-c437724.'
 - of:
   - reads
   - writes
   - params
   tier: derived
   note: 'planets, 17 Oct 2026: planet-forge surface port (models/surface), read from planet-sim-landform 9747f0d-c437724.'
+events_emitted:
+- event: planet-event.ledger-row
+  where: Current-step erosion interval and conserved actual transport/deposition budget.

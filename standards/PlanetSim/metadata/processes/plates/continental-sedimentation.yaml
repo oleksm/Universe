@@ -1,10 +1,9 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
 identity:
   key: planet-process.continental-sedimentation
-  name: Platform records and conservative inland sediment retention
-  about: Existing lowland basin supply, reach and cover-room rules select inland deposits. They now restore continental particle volume, limited to the actual crust volume removed by the current denudation pass. Allocation uses the
-    transpose of the normalized crust-read kernel. Inland deposits receive rock cover; only the unretained budget goes to the ocean shelf in the coupled era, otherwise it is exported. Marine platform deposition remains a rock-unit record
-    with no added volume because its mass source is not represented. No rates or thresholds are retuned.
+  name: Conservative routed continental and coastal sediment deposition
+  about: Fallback retains e41 basin rules. With fresh coupled transport, only routed material is laid on supported continental receivers, including submerged river mouths; the unfunded platform rate is not applied in this mode. Accommodation
+    and cover room bound deposits. The normalized kernel transpose adds physical volume, funded by measured denudation; only the remaining budget goes to shelves or export. Rates are unchanged.
 area: plates
 clock:
   when: with each denudation pass
@@ -186,3 +185,5 @@ basis:
 events_emitted:
 - event: planet-event.ledger-row
   where: 'forge: measured erosion budget, inland retained volume, shelf transfer, export, budget residual, and before/after basin receipts'
+note: retained_m3 includes exposed and submerged continental deposits; marine_continental_retained_m3 reports the submerged share. Marine platform records without added volume remain only in the fallback mode. A density/compaction-aware
+  sediment column is not yet implemented.
