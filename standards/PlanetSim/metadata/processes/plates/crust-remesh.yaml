@@ -172,8 +172,14 @@ params:
   meaning: 'a sample reading at least this much continental crust is re-laid as a continental particle whatever its kind (the fringe below CONTINENT_EDGE keeps its material); thinner crust, the kernel tail, is folded back over the continent
     by the exact total (the Python global rescale). At 150 m the fringe is kept; the Python truncation (= CONTINENT_EDGE) has not been run: the 20 Oct attempt to set it (e50) wrote a stray key instead and e50-e53 ran at 150 m'
   source: 'planets, 20 Oct 2026: 1% of CONTINENT_EDGE; forge models/plates/remesh.rs. e50-e53 ran at this value (the set to CONTINENT_EDGE on 20 Oct did not apply); e53 is the reference'
+- name: re-lay jitter
+  value: 0.3
+  unit: '1'
+  meaning: 'the re-laid particles leave the sample lattice by up to this many sample spacings in a random direction (keyed draws per new id). Particles exactly on the lattice let the coast kernel read (crust-read coast kernel, 0.5 gaps)
+    pick up the lattice spiral rows as streaks in the coast (slicing, line-bias chops: forge e75). The fit reads at the samples as before; 0 turns it off'
+  source: planets, 20 Oct 2026 (chosen); forge models/plates/remesh.rs; e77
 random_draws:
-- none
+- 're-lay jitter: a unit direction and a radius per new particle id (streams 7 and 8 of the step draws)'
 invariants:
 - continental volume conserved exactly (relative 1e-9)
 - 'continental volume conserved: the crust read below the fringe floor is folded back over the continent by the exact total; the folded volume and the rescale factor are recorded per re-lay'
