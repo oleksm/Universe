@@ -2,12 +2,9 @@
 identity:
   key: planet-process.plate-motion-and-forces
   name: Plate motion (Euler rotation) driven by remembered boundary forces
-  about: 'Each step the reference speed follows the mantle heat flux from the interior history: speed = min(EARTH_SPEED*(q/EARTH_MANTLE_FLUX)^SPEED_POWER, MAX_SPEED). Each plate''s torque vector (decaying memory of slab pull, trench
-    suction and ridge push forces, each a unit tangent force at a particle, crossed with position) sets its axis (torque direction) and a speed multiplier |torque|/particle_count relative to the median over driven plates, clipped to
-    0.15-2.0; a plate with zero torque keeps its axis and gets DRIFT. The multiplier is then times the plate''s rate (collision stall) and (1 - CONTINENT_DRAG*continental particle share). dt = min(step_myr, STEP*gap*R/(speed*fastest),
-    time left). Every plate rotates its particles exactly by Rodrigues rotation about its axis by speed*mult/R*dt, and its particles'' structural grain vectors too, and the relief layer''s anchored vectors. After the step: torque <-
-    torque*exp(-dt/FORCE_MYR) + force (this step''s force sum is NOT scaled by dt), and plates not stalled this step recover rate toward base on RECOVER_MYR. w.spin records each plate''s angular velocity vector (rad/yr). Collision slowing
-    and continental drag remain in the final multipliers; there is no global mean-speed normalization (the original Python rule).'
+  about: Rust particle plates retain Euler rotation away from collisions. Continental material near a continental contact blends its convergent normal velocity toward the opposing plate within collision-and-docking.OROGEN_HALF_WIDTH;
+    tangential slip remains. This continuous kinematic approximation preserves each particle volume and compresses its footprint, rather than adding uplift volume. The same deformation carries feature pins, curve endpoints and independently
+    riding contacts. The material CFL uses a bound of twice the fastest rigid speed. This is not a stress/rheology solver; the existing 250 km width is a provisional model scale, not calibrated to a land target.
 area: plates
 clock:
   when: every step; dt <= step_myr (default 5 Myr) and <= STEP spacing for the fastest plate
@@ -98,6 +95,8 @@ writes:
 events_emitted:
 - event: planet-event.relief-move
   where: stages/plates.py:997
+- event: planet-event.ledger-row
+  where: 'Rust particle motion: deformed particle/feature counts, maximum nonrigid displacement and unchanged continental volume'
 params:
 - name: EARTH_SPEED
   value: 1.5844043907014477e-09

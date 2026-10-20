@@ -2,11 +2,9 @@
 identity:
   key: planet-process.collision-and-docking
   name: 'Buoyant-buoyant contact: terrane docking, continental collision, obduction, stalling'
-  about: 'For converging pairs where both are buoyant: an ocean particle (thick floor) docks: becomes continental with volume xfloor*cell; plain MORB becomes ophiolite with chromite. Between continental pairs the winner is the particle
-    with the larger volume; ''fresh'' losers are those not sutured within SUTURE_MYR. For fresh pairs both sides get collisional metamorphism (schist top, cover >= G.SCHIST_COVER, orogenic gold, granite base and tin-tungsten where the
-    last-read thickness >= G.TIN_THICK), grain along the contact, and ocean floor within OBDUCT*gap of a fresh winner is obducted as ophiolite continent (chromite, VMS x4, magnesite). Fresh losers lose COLLISION_LOSS of their volume.
-    Every loser''s xsuture = now, and every loser joins the winner''s plate (the smaller continent sutures to the larger''s plate). A plate whose particles among winners+losers, x cell, reach STALL_AREA is stalled: rate <- max(STALL_FLOOR,
-    rate*exp(-dt/STALL_MYR)). Continental pairs across different plates are recorded per plate pair as collision fronts (loser particle -> time) for welding.'
+  about: Buoyant ocean floor docks and obducts under the existing budgets. Existing continental pairs retain their plate identities during ongoing compression; only terrane contacts transfer the losing marker immediately. Plate-welding
+    still merges complete plates after its contact-area criterion. Collision loss, metamorphism and stalling remain as before. Plate motion uses OROGEN_HALF_WIDTH for conservative material deformation; no new continental volume is produced
+    by shortening.
 area: plates
 clock:
   when: every step with buoyant-buoyant converging pairs

@@ -2,8 +2,8 @@
 identity:
   key: planet-process.relief-orogen-axis
   name: Orogen axis from an ended suture
-  about: 'Stations every 0.5 gap along the suture; on each side the crust thickness is sampled outward to BELT_MAX_M; the belt is the run of thickness >= THICK_BELT_M from the suture. The thick side is the side with the larger median
-    belt width. If the median total belt width < 50 km the docking was soft: nothing spawned. Axis = the thickest point at each station on the thick side. relief = clip(ISOSTASY*(max thick - 35 km), 0, 6000) m.'
+  about: Create an orogen axis when a forming or ended suture has a chained line and a supported thick-crust belt. During active collision, refresh relief from physical crust thickness at its existing material-attached axis pins; do
+    not regenerate pins or seeds. After the parent ends, existing passive relief erosion applies. Previously the axis could only be created after collision ended.
 area: relief
 clock:
   when: when a suture is ended (zones.close_stale)
