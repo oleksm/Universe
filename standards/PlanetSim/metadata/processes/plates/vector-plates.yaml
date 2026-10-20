@@ -175,7 +175,7 @@ params:
   source: 'owner, 19 Oct 2026: "before 500 mil y there is no need for such a detailed simulation, we only need to generate enough shapes as a planet backbone"'
   note: 500 Myr
 - name: glue distance
-  value: 300000.0
+  value: 100000.0
   unit: m
   said_as:
     unit: km
