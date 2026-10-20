@@ -113,6 +113,18 @@ params:
   unit: m
   meaning: max arc cover (geology.py:155)
   source: stages/plates.py:1151
+- name: growth band
+  value: 0.1
+  unit: '1'
+  meaning: the arc rate falls from the full ARC_PER_AREA at the continental growth curve target (plates-init CRUST_GROWTH_AGE/SHARE of PRESENT_CRUST_VOLUME, scaled by the planet area) to growth floor factor of it this share of the target
+    above it, linear between; below the target the full rate
+  source: planets, 20 Oct 2026 (chosen); Dhuime et al. 2012 for the curve; forge models/plates/arcs.rs; e67
+- name: growth floor factor
+  value: 0.5
+  unit: '1'
+  meaning: 'the arc rate as a fraction of ARC_PER_AREA once the continental volume stands growth band above the growth curve: growth saturates at Earth volume instead of lifting the sea through the late history (forge e66: 9.9e18 m3,
+    41% of the interiors drowned at the end)'
+  source: planets, 20 Oct 2026 (chosen)
 random_draws:
 - none
 invariants:
@@ -120,6 +132,7 @@ invariants:
 - margin volume never negative
 depends_on:
 - planet-process.subduction
+- planet-process.plates-init
 backends:
 - cpu
 implementations:
