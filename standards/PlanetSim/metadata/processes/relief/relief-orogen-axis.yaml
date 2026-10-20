@@ -59,6 +59,7 @@ invariants:
 - only alive sutures with >= 3 vertices
 depends_on:
 - planet-process.zones-close-stale
+- planet-process.isostatic-elevation
 backends:
 - cpu
 implementations:

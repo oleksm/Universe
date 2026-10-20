@@ -288,6 +288,7 @@ depends_on:
 - planet-process.plates-init
 - planet-process.subduction
 - planet-process.seafloor-spreading
+- planet-process.collision-and-docking
 backends:
 - cpu
 implementations:
