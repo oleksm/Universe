@@ -218,3 +218,4 @@ invariants[1]: 'continental volume conserved: the crust read below the fringe fl
 provenance:
   note: 'planets, 20 Oct 2026: fringe floor raised from 150 m to CONTINENT_EDGE after e49 (texture 7.5 minima per 1000 but land 6.8%: the kept fringe spread the continents and shattered the plates). The Python truncating re-lay is restored,
     now booked. See planet-forge docs/tectonics-audit-2026-10-20.md.'
+invariants[4]: 'the re-lay fit holds the old read at every sample the old kernel reached (the sub-edge tail included): the outline is reproduced, not only the continental samples'

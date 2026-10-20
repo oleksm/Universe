@@ -187,3 +187,7 @@ basis:
 events_emitted:
 - event: planet-event.ledger-row
   where: 'forge: the step''s volume moved, shed, worn, denuded or laid on the shelf (the Python''s ledger rows)'
+provenance:
+  note: 'planets, 20 Oct 2026: the crust-fit after this model now holds the read at every sample the kernel reaches, not only at the continental samples. Fitted at the continental samples alone, the edge particles it scaled up smeared
+    past CONTINENT_EDGE through the kernel and the continent widened a ring at a time at constant volume (forge e51 to 2000 Myr: +0.21 of the planet from crust flow alone, zero volume; continents 23 km instead of 33). The outline is
+    the tectonic processes to change, not the fit. See planet-forge docs/terrain-canvas-recovery.md (e52).'
