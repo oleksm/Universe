@@ -96,6 +96,9 @@ writes:
 - name: w.xcover
   field: planet-field.particle-rock-cover
   unit: m
+- name: origin
+  field: planet-field.particle-origin
+  unit: '1'
 params:
 - name: PLATES
   env: SIM_PLATES

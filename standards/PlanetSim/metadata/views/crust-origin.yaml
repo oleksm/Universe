@@ -95,3 +95,10 @@ legend:
     - 255
     - 255
     shown_when: always
+  - kind: fill
+    label: rifted margin
+    colour:
+    - 235
+    - 150
+    - 60
+    shown_when: always

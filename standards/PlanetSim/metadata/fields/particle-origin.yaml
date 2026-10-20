@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.particle-origin
+  name: Particle origin
+  about: 'What made the particle continental crust, the crust-origin codes: 0 first continents (a protocontinent seed), 1 arc (floor thickened by arcs, accreted), 2 collision, 3 terrane (thick floor docked, floor obducted), 4 plume
+    (flood basalt accreted), 5 sediment (shelf sediment accreted), 6 lower-crust flow, 7 unknown (ocean floor, not yet made), 8 rifted margin (continent stretched at a rift or in the band of a continental cut). Carried through the re-lay
+    with the particle; crust-read reads it onto the samples as planet-field.crust-origin for the origin view.'
+unit: '1'
+producer:
+  where: planet-forge crates/forge-core/src/models/plates (init, accretion, collision, spreading, rifting)
+  file: checkpoint
+  key: tables/particles/planet-field.particle-origin
+per: particle
+status: draft
+basis:
+  +:
+    of:
+    - identity
+    - unit
+    - producer
+    tier: derived
+    note: 'planets, 20 Oct 2026: the provenance the shape audit asked for (docs/shape-audit-2026-10-20.md section 5.1)'

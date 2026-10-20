@@ -45,6 +45,9 @@ reads:
 - name: w.xmem
   field: planet-field.particle-lake-mark
   unit: '1'
+- name: origin
+  field: planet-field.particle-origin
+  unit: '1'
 writes:
 - name: w.thick
   field: planet-field.crust-thickness
@@ -73,6 +76,9 @@ writes:
   field: planet-field.river-change-time
 - name: cs[...] = xmem[nearest particle]
   field: planet-field.lake-mark
+- name: crust origin
+  field: planet-field.crust-origin
+  unit: '1'
 params:
 - name: KERNEL
   value: 0.8

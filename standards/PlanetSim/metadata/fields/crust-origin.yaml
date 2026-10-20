@@ -2,11 +2,11 @@
 identity:
   key: planet-field.crust-origin
   name: Crust origin
-  about: 'What made the continental crust at a place: the process that made most of its volume (0 first continents, 1 arc, 2 collision, 3 terrane, 4 plume, 5 sediment, 6 lower-crust flow, 7 unknown); -1 on sea floor. From the vector
-    plates crust ledger (each band keeps the share each process made).'
+  about: 'What made the continental crust at a place (0 first continents, 1 arc, 2 collision, 3 terrane, 4 plume, 5 sediment, 6 lower-crust flow, 7 unknown, 8 rifted margin); -1 on sea floor. Vector plates: the crust ledger (the share
+    each process made). Particle plates: the nearest continental particle origin (planet-field.particle-origin).'
 unit: '1'
 producer:
-  where: planet-forge crates/tectonics/src/forge_model.rs (PlatesSurface)
+  where: 'planet-forge crates/forge-core/src/models/plates/read.rs (the particle plates: the nearest continental particle origin, -1 on sea floor) and crates/tectonics/src/forge_model.rs (the vector plates: the crust ledger)'
   file: surface
   key: planet-field.crust-origin
 per: sample
