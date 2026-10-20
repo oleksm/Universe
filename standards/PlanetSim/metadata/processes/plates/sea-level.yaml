@@ -32,11 +32,11 @@ writes:
 params:
 - name: water scale
   env: SIM_WATER_SCALE
-  value: 1.04
+  value: 1.07
   unit: '1'
   meaning: ocean volume = water_mass_fraction * planet mass / 1025 kg/m3 * this
   source: stages/plates.py:896
-  note: '16 Oct owner: halfway between Earth and 5% less (1.07 to e90, D15); 1.04 from e91: with the margin taper (D27) the sea stood 200 m higher and 6% of the interiors were drowned at -76 m (e90)'
+  note: '16 Oct owner: halfway between Earth and 5% less (D15). 1.04 tried in e91 (stopped: the owner rolled back to e90)'
 - name: share
   env: SIM_LAND_SHARE
   setting: none
