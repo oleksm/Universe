@@ -65,6 +65,10 @@ reads:
 - name: w.xcover
   field: planet-field.particle-rock-cover
   unit: m
+- name: basin diagnostic ocean age
+  field: planet-field.particle-age
+  unit: s
+  meaning: Read-only before/after basin receipt; does not drive denudation.
 writes:
 - name: w.xvol
   field: planet-field.particle-volume

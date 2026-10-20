@@ -2,8 +2,9 @@
 identity:
   key: planet-process.crust-remesh
   name: 'Remesh: re-laying particles on the sample lattice'
-  about: 'Every REMESH_MYR: particles are replaced by one per sample; plate, floor, age, suture from the nearest particle; geology from the nearest continental particle where the sample reads continent but its nearest particle is ocean;
-    continent where spread thickness >= CONTINENT_EDGE, volumes fitted to the read thickness (_set_continents) and rescaled to the exact previous total. Relief layer re-anchored.'
+  about: Every REMESH_MYR particles are replaced by one per sample; continent where spread thickness >= CONTINENT_EDGE, continental volumes fitted and rescaled to the previous total. Plate, suture and memory follow the geometric nearest
+    particle. Ocean age and floor thickness follow the nearest old ocean particle, matching crust-read. Geology follows the material class when the geometric source has the opposite class. Detailed terrain features keep their plate
+    frames and independent geometry. Phase receipts record untrenched basin capacity before and after this representation change.
 area: plates
 clock:
   when: every REMESH_MYR (50 Myr), checked at the step start
@@ -123,6 +124,14 @@ writes:
 - name: (forge) next id
   field: planet-field.particle-id-next
   unit: '1'
+- name: ocean readout thermal age
+  field: planet-field.particle-age
+  unit: s
+  meaning: New ocean particles preserve the nearest old ocean particle age used by crust-read, even where the geometric nearest particle is continental.
+- name: ocean readout floor thickness
+  field: planet-field.particle-floor-thickness
+  unit: m
+  meaning: New ocean particles preserve crust-read floor thickness from the nearest old ocean particle.
 events_emitted:
 - event: planet-event.relief-reanchor
   where: stages/plates.py:941
@@ -178,3 +187,9 @@ basis:
   - writes
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - identity.about
+  - writes
+  tier: derived
+  note: '19 Oct 2026: remeshing ocean rows now preserves the same old ocean source used by crust-read for age, floor and geology. Before/after basin receipts are read-only diagnostics. See planet-forge models/plates/remesh.rs and basins.rs;
+    no numerical parameter changed.'
