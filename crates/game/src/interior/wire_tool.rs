@@ -298,6 +298,13 @@ pub(super) fn click(i: &mut Interior, cam: &Camera, plane: f32) {
                         ));
                         return;
                     }
+                    let carried = match load(a, p, c, length(&points)) {
+                        Err(e) => {
+                            i.note(&e.to_uppercase());
+                            return;
+                        }
+                        Ok(l) => l,
+                    };
                     let map = i.plan.wiring.get_or_insert_with(Default::default);
                     let mut n = 1;
                     while map.contains_key(&format!("wire_{n}")) {
@@ -305,8 +312,16 @@ pub(super) fn click(i: &mut Interior, cam: &Camera, plane: f32) {
                     }
                     map.insert(format!("wire_{n}"), w);
                     i.wire_editor.cancel();
+                    let carried = carried.map_or(String::new(), |l| {
+                        format!(
+                            " — {:.1} A OF {:.0} A IN VACUUM, DROP {:.1}%",
+                            l.amps,
+                            l.rating,
+                            l.drop * 100.0
+                        )
+                    });
                     i.note(&format!(
-                        "WIRE LAID — NEEDS {} X {} EVERY {:.1} M (NOT PLACED); ELECTRICAL LOAD CHECK PENDING",
+                        "WIRE LAID — NEEDS {} X {} EVERY {:.1} M (NOT PLACED){carried}",
                         sup.stations.len(),
                         sup.clip.trim_start_matches("connector.").to_uppercase(),
                         sup.spacing
@@ -383,6 +398,89 @@ fn support(path: &[Vec3], cable: &Value) -> Result<Support, String> {
         .filter(|r| *r > 0.0)
         .ok_or("Cable has no least bend radius")?;
     Ok(Support { clip: clip.into(), spacing, stations: stations(path, spacing), radius, tight: tight(path, radius) })
+}
+/// What a power wire must carry and what carries it. Its duty is the greater
+/// of its two ports' currents: the load's at its rating and the feed's (a
+/// board's way is its breaker, and a cable is protected by what feeds it). Its
+/// cable's rating is the one in vacuum (`rating.current`: radiation alone
+/// cools it; a bay is not yet said to hold air, and bundling is not counted),
+/// each end connector's is its own, and out and back at that current it may
+/// lose no more than `wiring::MAX_DROP` of its voltage (the studio's limit, an
+/// electrical convention, not a registry rule). A signal wire states no
+/// current: nothing to check.
+#[derive(Clone, Debug, PartialEq)]
+pub(super) struct Load {
+    pub amps: f64,
+    pub volts: f64,
+    /// W the ports state, the greater.
+    pub watts: f64,
+    /// A the cable carries in vacuum, and in free air where its record says.
+    pub rating: f64,
+    pub air: Option<f64>,
+    /// The share of its voltage lost out and back.
+    pub drop: f64,
+}
+fn load(a: &Port, b: &Port, cable: &Value, length: f64) -> Result<Option<Load>, String> {
+    let amps = [a, b].iter().filter_map(|p| p.data["current"].as_f64()).fold(0.0, f64::max);
+    if s(&a.data, "medium") != "power" || amps <= 0.0 {
+        return Ok(None);
+    }
+    let volts = a.data["voltage"]
+        .as_f64()
+        .or(b.data["voltage"].as_f64())
+        .filter(|v| *v > 0.0)
+        .ok_or("Power port states no voltage")?;
+    let watts = [a, b].iter().filter_map(|p| p.data["power"].as_f64()).fold(0.0, f64::max);
+    let rating = cable["rating"]["current"].as_f64().ok_or("Cable has no current rating")?;
+    let air = cable["rating"]["current_air"].as_f64();
+    if rating < amps {
+        return Err(format!(
+            "Ports need {amps:.1} A, cable carries {rating:.0} A in vacuum{} — choose a heavier cable (N)",
+            air.map_or(String::new(), |a| format!(" ({a:.0} A in air)"))
+        ));
+    }
+    let reg = universe_sim::world::registry::registry();
+    for p in [a, b] {
+        let r = reg
+            .connector(&p.end.connector)
+            .and_then(|c| c.rating.current)
+            .ok_or("Connector has no current rating")?;
+        if r < amps {
+            return Err(format!(
+                "Ports need {amps:.1} A, connector {} carries {r:.0} A",
+                p.end.connector.trim_start_matches("connector.")
+            ));
+        }
+    }
+    // (A pole's cross-section: the conductor that takes plus, minus or line,
+    // else the cable's size; its conductivity from its first material's record.)
+    let area = cable["conductors"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .find(|c| matches!(s(c, "role"), "plus" | "minus" | "line"))
+        .and_then(|c| c["size"].as_f64())
+        .or(cable["size"].as_f64())
+        .filter(|a| *a > 0.0)
+        .ok_or("Cable conductor has no cross-section")?;
+    let sigma = cable["per_m"]["built_of"][0]["item"]
+        .as_str()
+        .and_then(|m| reg.material(m))
+        .and_then(|m| m.electrical_magnetic.electrical_conductivity)
+        .unwrap_or(1.0 / wiring::COPPER);
+    let drop = 2.0 * length * amps / (sigma * area) / volts;
+    if drop > wiring::MAX_DROP {
+        return Err(format!(
+            "Drops {:.1}% of {volts:.0} V over {length:.1} m, the studio allows {:.0}% — a shorter way or a heavier cable (N)",
+            drop * 100.0,
+            wiring::MAX_DROP * 100.0
+        ));
+    }
+    Ok(Some(Load { amps, volts, watts, rating, air, drop }))
+}
+/// m along a route.
+fn length(path: &[Vec3]) -> f64 {
+    path.windows(2).map(|p| p[0].distance(p[1]) as f64).sum()
 }
 /// The point `d` m along a route.
 fn along(path: &[Vec3], mut d: f32) -> Vec3 {
@@ -621,6 +719,14 @@ pub(super) fn panel(frame: &mut Frame, i: &Interior) {
             _ => "NOT LAID ABOARD A SHIP".into(),
         };
         frame.text_scaled(PANEL.0 + Vec2::new(8., 262.), &hold, LABEL, 0.6);
+        let rating = match (c["rating"]["current"].as_f64(), c["rating"]["current_air"].as_f64(), c["rating"]["voltage"].as_f64()) {
+            (Some(a), air, Some(v)) => format!(
+                "CARRIES {a:.0} A IN VACUUM{} · {v:.0} V",
+                air.map_or(String::new(), |x| format!(", {x:.0} A IN AIR"))
+            ),
+            _ => "NO CURRENT RATING".into(),
+        };
+        frame.text_scaled(PANEL.0 + Vec2::new(8., 276.), &rating, LABEL, 0.6);
     }
     for (n, text) in [
         "CLICK ROW TO SELECT CABLE",
@@ -633,7 +739,7 @@ pub(super) fn panel(frame: &mut Frame, i: &Interior) {
     .enumerate()
     {
         frame.text_scaled(
-            PANEL.0 + Vec2::new(8., 276. + n as f32 * 14.),
+            PANEL.0 + Vec2::new(8., 290. + n as f32 * 13.),
             text,
             LABEL,
             0.65,
@@ -641,7 +747,7 @@ pub(super) fn panel(frame: &mut Frame, i: &Interior) {
     }
     if ports(i).is_empty() {
         frame.text_scaled(
-            PANEL.0 + Vec2::new(8., 346.),
+            PANEL.0 + Vec2::new(8., 356.),
             "NO RESOLVED PORTS IN THIS DESIGN",
             CLASH,
             0.6,
@@ -709,7 +815,15 @@ pub(super) fn harness(plan: &Plan, fit: &[Fitted]) -> wiring::Harness {
                 ));
             }
         }
-        let length: f64 = path.windows(2).map(|p| p[0].distance(p[1]) as f64).sum();
+        let length = length(&path);
+        let (watts, drop) = match load(a, b, &c, length) {
+            Err(e) => {
+                h.faults.push(format!("WIRE {id}: {e}"));
+                (0.0, 0.0)
+            }
+            Ok(None) => (0.0, 0.0),
+            Ok(Some(l)) => (l.watts, l.drop),
+        };
         let ends: f64 = [&w.from, &w.to]
             .iter()
             .filter_map(|e| reg.connector(&e.connector)?.physical.mass)
@@ -718,17 +832,18 @@ pub(super) fn harness(plan: &Plan, fit: &[Fitted]) -> wiring::Harness {
         h.runs.push(wiring::WireRun {
             module: w.to.module.clone(),
             volts: a.data["voltage"].as_f64().unwrap_or(0.),
-            watts: 0.,
+            watts,
             cable: Some(w.cable.clone()),
             pairs: 1,
             path,
             length,
             mass,
-            drop: 0.,
+            drop,
         });
     }
-    h.faults
-        .push("AUTHORED WIRING: ELECTRICAL LOADS NOT YET VALIDATED".into());
+    h.faults.push(
+        "AUTHORED WIRING: RATED IN VACUUM, UNBUNDLED; RUNTIME NETS NOT YET VALIDATED".into(),
+    );
     h
 }
 
@@ -783,13 +898,18 @@ mod tests {
         let h = harness(&plan, &fit);
         assert_eq!(h.runs.len(), 1);
         assert!(h.runs[0].mass > 0. && h.runs[0].length > 0.);
-        assert_eq!(
-            h.faults.len(),
-            2,
-            "its unplaced clips and the pending load validation: {:?}",
-            h.faults
-        );
+        // (Its unplaced clips; the way's 15 A breaker above the 1 mm2 cable's
+        // 6 A in vacuum; and what the studio does not yet validate.)
+        assert_eq!(h.faults.len(), 3, "{:?}", h.faults);
         assert!(h.faults[0].starts_with("WIRE wire_1: NEEDS ") && h.faults[0].contains("run-clip-d10 EVERY 0.6 M"), "{:?}", h.faults);
+        assert!(h.faults[1].contains("need 15.0 A, cable carries 6 A in vacuum (11 A in air)"), "{:?}", h.faults);
+        assert_eq!((h.runs[0].watts, h.runs[0].drop), (0.0, 0.0), "a refused wire carries nothing on the sheet");
+        // (The registry's 2.5 mm2 three-core, the one sized to the shell: 12 A in
+        // vacuum, still under the way's breaker; its way is said as much.)
+        let wiring = plan.wiring.as_mut().unwrap();
+        wiring.get_mut("wire_1").unwrap().cable = "run.cable-dc-600v-3x2p5mm2".into();
+        let h = harness(&plan, &fit);
+        assert!(h.faults.iter().any(|f| f.contains("need 15.0 A, cable carries 12 A in vacuum (21 A in air)")), "{:?}", h.faults);
     }
     #[test]
     fn a_wire_is_held_at_its_cable_spacing_and_bent_no_tighter_than_it_turns() {
@@ -821,6 +941,44 @@ mod tests {
         let mut stiff = cable.clone();
         stiff["elbow"] = json!({});
         assert!(support(&path, &stiff).unwrap_err().contains("radius"));
+    }
+    #[test]
+    fn a_power_wire_is_rated_for_the_greater_of_its_ports_and_loses_little() {
+        let make = |name: &str, flow: &str, amps: f64, watts: f64| Port {
+            end: WireEnd {
+                module: name.into(),
+                port: "dc".into(),
+                connector: "connector.circular-shell-17".into(),
+            },
+            at: Vec3::ZERO,
+            data: json!({"medium":"power","channel":"dc-28v","flow":flow,"voltage":28,"current":amps,"power":watts}),
+        };
+        // (A board's 15 A way to a 3.57 A load: the way's breaker sets the duty.)
+        let way = make("board", "out", 15.0, 420.0);
+        let nav = make("nav", "in", 3.57, 100.0);
+        let cable = json!({"carries":"power","size":2.5e-6,"rating":{"voltage":600,"current":15,"current_air":30},
+            "conductors":[{"id":"plus","role":"plus","size":2.5e-6},{"id":"minus","role":"minus","size":2.5e-6},{"id":"earth","role":"earth","size":2.5e-6}],
+            "per_m":{"mass":0.1,"built_of":[{"what":"Conductors","item":"material.copper","mass":0.07}]}});
+        let l = load(&way, &nav, &cable, 4.0).unwrap().unwrap();
+        assert_eq!((l.amps, l.volts, l.watts, l.rating, l.air), (15.0, 28.0, 420.0, 15.0, Some(30.0)));
+        // (2 x 4 m of 2.5 mm2 copper at 15 A: 0.054 ohm, 0.81 V of 28.)
+        assert!((l.drop - 2.0 * 4.0 * 15.0 / (59e6 * 2.5e-6) / 28.0).abs() < 1e-9 && l.drop < 0.03, "{l:?}");
+        let mut thin = cable.clone();
+        thin["rating"]["current"] = json!(12);
+        assert!(load(&way, &nav, &thin, 4.0).unwrap_err().contains("12 A in vacuum (30 A in air)"));
+        // (Long enough, the same wire drops too much: 25 m is 5.1 V of 28.)
+        assert!(load(&way, &nav, &cable, 25.0).unwrap_err().starts_with("Drops 18"));
+        // (A port above the connector's 15 A.)
+        let big = make("heater", "in", 20.0, 560.0);
+        let mut fat = cable.clone();
+        fat["rating"]["current"] = json!(28);
+        assert!(load(&way, &big, &fat, 1.0).unwrap_err().contains("connector circular-shell-17 carries 15 A"));
+        // (Two batteries' ports both feeding and fed take the greater; a signal wire has no current.)
+        let (p, q) = (make("battery", "both", 333.33, 0.0), make("board", "both", 400.0, 11200.0));
+        assert!(load(&p, &q, &cable, 1.0).unwrap_err().starts_with("Ports need 400.0 A"));
+        let mut can = make("nav", "both", 0.0, 0.0);
+        can.data = json!({"medium":"signal","channel":"can-a","flow":"both"});
+        assert_eq!(load(&can, &can, &cable, 1.0), Ok(None));
     }
     #[test]
     fn player_wires_require_matching_ports_and_keep_their_route() {

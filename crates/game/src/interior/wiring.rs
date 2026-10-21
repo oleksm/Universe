@@ -12,9 +12,9 @@ pub const BUSES: [f64; 3] = [28.0, 270.0, 3000.0];
 /// The most each lower bus is given (W); above the last, the power bus.
 const BUS_UP_TO: [f64; 2] = [1_000.0, 30_000.0];
 /// The most of its voltage a run may lose (out and back).
-const MAX_DROP: f64 = 0.05;
+pub(super) const MAX_DROP: f64 = 0.05;
 /// Copper's resistivity at 20 C (ohm m).
-const COPPER: f64 = 1.72e-8;
+pub(super) const COPPER: f64 = 1.72e-8;
 /// The most parallel pairs a run is given before it's said not to fit (a
 /// pole of a few big cores, not a sheaf of thin ones).
 const MOST_PAIRS: usize = 4;
