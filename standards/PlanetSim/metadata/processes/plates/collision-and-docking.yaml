@@ -208,9 +208,8 @@ params:
   source: 'collisional orogen widths: Alps ~200 km, Zagros and Himalaya ~250-350 km across the thrust belt (e.g. Dewey & Burke 1973; Molnar & Lyon-Caen 1988)'
   note: '19 Oct 2026, replaces the 125 km strip (ARC_WIDTH/2); from memory: verify'
 - name: pocket max area
-  value: 6.8e11
+  value: 680000000000.0
   unit: m2
-  tier: invented
   meaning: 'a connected patch of ocean-kind samples with at most this area, every sample older than pocket min age, is a trapped pocket (the remnant of a closed ocean, which on Earth is filled and thrust up): its ocean particles dock
     as continent (ophiolite); 0 = off'
   source: 'planets, 20 Oct 2026 (chosen; e82: an 8-sample sea 6.6 km deep inside a continent); forge models/plates/collision.rs'
@@ -219,22 +218,19 @@ params:
 - name: pocket link
   value: 1.5
   unit: '1'
-  tier: invented
   meaning: the ocean particles within this many sample gaps of a pocket sample dock (the pocket rule)
   source: planets, 20 Oct 2026 (chosen); forge models/plates/collision.rs
 - name: pocket min age
-  value: 3.156e15
+  value: 3156000000000000.0
   unit: s
-  tier: invented
   said_as:
     unit: Myr
-    factor: 3.156e13
+    factor: 31560000000000.0
   meaning: 'a patch docks as a pocket only when all its floor is older than this (100 Myr): a young rift strait keeps opening, a basin that sat shut for 100 Myr is filled'
   source: planets, 20 Oct 2026 (chosen); forge models/plates/collision.rs
 - name: pocket surround
   value: 1.0
   unit: '1'
-  tier: invented
   meaning: 'a patch docks as a pocket only when the distinct continental particles within pocket link of its members number at least this times the patch (shut inside continent, not cut off by the empty space subduction leaves: e83
     docked 4,500 such particles)'
   source: planets, 20 Oct 2026 (chosen); forge models/plates/collision.rs

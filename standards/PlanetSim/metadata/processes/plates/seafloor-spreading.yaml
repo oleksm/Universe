@@ -167,12 +167,11 @@ params:
   meaning: Local search radius in sample spacings for an opposite-side, different-plate neighbor bracketing a coverage gap. Positive relative normal separation is required for physical spreading.
   note: Chosen numerical search radius; not a geological rate or land-share calibration.
 - name: vacated floor age
-  value: 1.8936e15
+  value: 1893600000000000.0
   unit: s
-  tier: invented
   said_as:
     unit: Myr
-    factor: 3.156e13
+    factor: 31560000000000.0
   meaning: 'the age of the floor laid where old floor foundered this substep (a vacated opening, not a ridge): 60 Myr sits at 5.2 km, near the foundered floor, where age 0 made a 2.6 km bright spot (a bubble) in every foundered site;
     the ridge keeps new floor age'
   source: 'planets, 20 Oct 2026 (chosen; e85: 36 local highs per 1000 ocean samples, a third young floor inside old); forge models/plates/spreading.rs'

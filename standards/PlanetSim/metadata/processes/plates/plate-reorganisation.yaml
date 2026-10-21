@@ -77,7 +77,7 @@ params:
   source: stages/plates.py:67
   note: Gurnis 1988 (chosen)
 - name: INSULATE_MYR
-  value: 4.73364e15
+  value: 4733640000000000.0
   unit: s
   said_as:
     unit: Myr

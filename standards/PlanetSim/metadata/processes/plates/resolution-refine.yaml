@@ -157,38 +157,33 @@ params:
 - name: adaptive
   value: 0.0
   unit: '1'
-  tier: invented
   meaning: '1: the lattice is adaptive (the ladder, 20 Oct 2026): at each stage, and every refine every of time, the Fibonacci lattice of n / fine fraction^2 points thinned to the density the record asks for: finer within refine reach
     of the active lines (sutures, arc fronts, orogen axes, thrust fronts, arc chains, folds, rift margins, shoulders, floors, scarps, typed coasts, escarpments) and the coast; 0: the Fibonacci lattice of the stage count'
   source: planets, 20 Oct 2026 (chosen); forge models/plates/refine.rs
 - name: fine fraction
   value: 0.5
   unit: '1'
-  tier: invented
   meaning: 'the fine spacing as a fraction of the stage spacing (0.5: four times the density on the lines)'
   source: planets, 20 Oct 2026 (chosen); forge models/plates/refine.rs
 - name: refine reach
   value: 300000.0
   unit: m
-  tier: invented
   meaning: the spacing ramps from the fine fraction at an active line to the stage spacing this far from it
   source: 'planets, 20 Oct 2026 (chosen: the entropy map zones belts and margins by 300 km); forge models/plates/refine.rs'
 - name: refine every
-  value: 1.57788e15
+  value: 1577880000000000.0
   unit: s
-  tier: invented
   said_as:
     unit: Myr
-    factor: 3.15576e13
+    factor: 31557600000000.0
   meaning: 'an adaptive lattice is laid again this often (the lines move with their plates; the crust re-lays on it); 0: only at the stages'
   source: 'planets, 20 Oct 2026 (chosen: the re-lay cadence, 50 Myr); forge models/plates/refine.rs'
 - name: adaptive from
-  value: 2.20903e16
+  value: 2.20903e+16
   unit: s
-  tier: invented
   said_as:
     unit: Myr
-    factor: 3.15576e13
+    factor: 31557600000000.0
   meaning: 'the adaptive lattice only within this time before the present (700 Myr: the coupled era, when the record holds the tectonic lines; deep time is recycled and its record holds coasts alone); before it the stage lattice'
   source: 'planets, 20 Oct 2026 (chosen: e100, adaptive from the start, 10x the cost for nothing the final backbone keeps); forge models/plates/refine.rs'
 random_draws:

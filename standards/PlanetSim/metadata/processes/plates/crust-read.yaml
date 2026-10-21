@@ -170,5 +170,4 @@ basis:
   note: 'planets, 20 Oct 2026 (late): coast kernel 0.5 -> 0 (off). It brought back half of Earth small-scale coast by the numbers (forge e75) but as a sponge of one-sample islands and holes with the lattice spiral rows and the viewer
     pixel grid showing through (owner: sponge pattern, line / square bias): particle-scale volume noise shaped like coast, not coast. Coast detail comes from the processes on the finer late lattice (resolution-refine 30,000 -> 60,000)
     and later from amplification in the terrain canvas; the re-lay jitter (crust-remesh) stays.'
-depends_on:
-  +: planet-process.isostatic-elevation
+depends_on: []

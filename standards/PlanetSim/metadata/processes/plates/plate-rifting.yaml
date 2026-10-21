@@ -190,7 +190,6 @@ params:
   - 0.08
   - 0.08
   unit: '1'
-  tier: invented
   said_as:
     unit: '[count, width, amplitude]'
     factor: 1.0
