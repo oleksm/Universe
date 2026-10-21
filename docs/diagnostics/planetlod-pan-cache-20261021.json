@@ -1,0 +1,70 @@
+{
+  "task": "20261021T135043-planets-3a32",
+  "reported_log": "/home/alexm/planet-data/scratch/shots/pan2_keep.log",
+  "base_commit": "15fd7c5c241c0f3b3ac81a6ff15ce5563fc64096",
+  "root_causes": [
+    "Diagnostic pan accumulated a sinusoidal offset each frame, producing an FPS-dependent route that leaves the supplied continent.",
+    "Cache expired unselected tiles after120 updates, even with unused memory budget."
+  ],
+  "changes": [
+    "Pan is an absolute longitude offset of +/-0.25 degrees about its initial location, based on elapsed seconds.",
+    "Evict least-recently-used unselected entries only under byte pressure; retain the coarse root.",
+    "Log camera longitude/latitude alongside the terrain statistics."
+  ],
+  "coverage_analysis": {
+    "path": "out/review/planetlod-pan/old-pan-coverage.json",
+    "method": "Independent selector/coverage calculation; 273 spherical ground rays per camera, actual fine mask. Old helper sampled every second at120fps, assumed first app update at2.75s (matching reported startup).",
+    "samples": 45,
+    "lon_min": 67.14,
+    "lon_max": 217.07,
+    "zero_selection_samples": 31,
+    "zero_selection_with_covered_ground": 0
+  },
+  "tests": {
+    "pyramid_unit_passed": 7,
+    "fixture_tests_ignored_in_unit_run": 2,
+    "explicit_pan_fixture_passed": 1,
+    "actual_package_sweep": "451 camera samples across45 seconds at60km,25S,108E;12..14 selected,never zero",
+    "regressions": [
+      "long absence retains cached geometry below budget",
+      "LRU refresh protects revisited tiles; pressure releases the older mesh",
+      "coarse root and cold tiles remain while looking away",
+      "diagnostic route bounded at30,60,120,240fps"
+    ]
+  },
+  "native": {
+    "log": "out/review/planetlod-pan/pan-fixed.log",
+    "capture": "out/review/planetlod-pan/pan-fixed.png",
+    "frames": 5400,
+    "wall_seconds": 45.55,
+    "logged_samples": 42,
+    "selected_min": 12,
+    "selected_max": 15,
+    "empty_selection_samples": 0,
+    "pending_samples": 0,
+    "fallback_samples": 0,
+    "cache_tiles_min": 52,
+    "cache_tiles_max": 62,
+    "cache_bytes_peak": 65934248,
+    "budget_bytes": 268435456,
+    "gpu_scene_ms_last": 0.2,
+    "last": {
+      "selected": 14,
+      "drawn": 14,
+      "triangles": 473088,
+      "pending": 0,
+      "cached": 62,
+      "bytes": 65934248,
+      "fallback": 0
+    }
+  },
+  "snapshot": "/home/alexm/git/universe/out/review/planetlod-pan/fixture",
+  "metadata_sha256": "42dbf142ef95ea639b725237bc689757cf0c7c8a4720284f5e31d9bb611b8a2c",
+  "validation_environment": "UNIVERSE_TEST=1, workspace8 verified, auto-no-vsync, Vulkan RTX5090. Reflink package snapshot.",
+  "limits": [
+    "The supplied pyramid covers one land region. Empty selections outside that coverage remain correct.",
+    "Selected working geometry is protected from eviction; the measured run remained below the256MiB cache target.",
+    "Capture timings include startup and hidden workspace presentation; no interactive benchmark claim."
+  ],
+  "integration": "local main only; no push"
+}

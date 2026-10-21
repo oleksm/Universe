@@ -741,6 +741,29 @@ impl Pyramid {
         }
         None
     }
+    /// Keep recently used tiles until the byte budget needs their space. Selected work is pinned.
+    fn trim_cache(&mut self, protected: &HashSet<usize>, budget: usize) -> usize {
+        let mut bytes: usize = self.cache.values().map(|c| c.tile.bytes()).sum();
+        if bytes <= budget {
+            return bytes;
+        }
+        let mut evict: Vec<_> = self
+            .cache
+            .iter()
+            .filter(|(id, _)| !protected.contains(id))
+            .map(|(&id, c)| (c.last, id))
+            .collect();
+        evict.sort_unstable();
+        for (_, id) in evict {
+            if bytes <= budget {
+                break;
+            }
+            let c = self.cache.remove(&id).unwrap();
+            bytes -= c.tile.bytes();
+            self.releases.push(c.tile.mesh.id());
+        }
+        bytes
+    }
     pub fn update(&mut self, cam: &Camera, aspect: f64, ex: f64, real: bool) {
         let _scope = universe_prof::scope("update/planetlod/pyramid");
         self.tick += 1;
@@ -820,22 +843,9 @@ impl Pyramid {
                 c.last = self.tick;
             }
         }
-        let mut bytes: usize = self.cache.values().map(|c| c.tile.bytes()).sum();
-        let mut evict: Vec<_> = self
-            .cache
-            .iter()
-            .filter(|(id, _)| !protected.contains(id))
-            .map(|(&id, c)| (c.last, id))
-            .collect();
-        evict.sort_unstable();
-        for (last, id) in evict {
-            if bytes <= CACHE_BYTES && self.tick - last < 120 {
-                continue;
-            }
-            let c = self.cache.remove(&id).unwrap();
-            bytes -= c.tile.bytes();
-            self.releases.push(c.tile.mesh.id());
-        }
+        // Keep the coarse cover warm even while the camera looks away from this pyramid.
+        protected.insert(self.source.index[&(self.source.m.top_level, 0, 0)]);
+        let bytes = self.trim_cache(&protected, CACHE_BYTES);
         // Queue one missing working set at a time; generation changes supersede stale work.
         let missing: Vec<_> = want
             .into_iter()
@@ -1248,22 +1258,103 @@ mod tests {
         assert!(out.is_empty());
     }
     #[test]
-    fn pyramid_far_tiles_leave_cache_and_release_gpu_ranges() {
+    fn pyramid_lru_keeps_cold_tiles_until_budget_pressure() {
         let f = fixture();
         let mut p = Pyramid::open(&f.0, 1000.).unwrap().unwrap();
+        let root = p.source.index[&(1, 0, 0)];
+        let a = p.source.index[&(0, 0, 0)];
+        let b = p.source.index[&(0, 1, 1)];
+        for (id, last) in [(a, 10), (b, 20)] {
+            p.cache.insert(
+                id,
+                Cached {
+                    tile: build(&p.source, id, 1., false).unwrap(),
+                    last,
+                },
+            );
+        }
+        p.tick = 10000;
+        let full: usize = p.cache.values().map(|c| c.tile.bytes()).sum();
+        let protected = HashSet::from([root]);
+        assert_eq!(p.trim_cache(&protected, full), full);
+        assert_eq!(
+            p.cache.len(),
+            3,
+            "age alone must not expire reusable geometry"
+        );
+        assert!(p.releases.is_empty());
+        // A revisit refreshes recency, so the other tile is evicted first.
+        p.cache.get_mut(&a).unwrap().last = p.tick;
+        let b_bytes = p.cache[&b].tile.bytes();
+        let b_mesh = p.cache[&b].tile.mesh.id();
+        assert_eq!(p.trim_cache(&protected, full - b_bytes), full - b_bytes);
+        assert!(p.cache.contains_key(&a) && p.cache.contains_key(&root));
+        assert!(!p.cache.contains_key(&b));
+        assert_eq!(p.releases, vec![b_mesh]);
+    }
+    #[test]
+    fn pyramid_looking_away_preserves_budgeted_cache_and_root() {
+        let f = fixture();
+        let mut p = Pyramid::open(&f.0, 1000.).unwrap().unwrap();
+        let root = p.source.index[&(1, 0, 0)];
         let id = p.source.index[&(0, 1, 1)];
-        let tile = build(&p.source, id, 1.0, false).unwrap();
-        let mesh_id = tile.mesh.id();
+        let tile = build(&p.source, id, 1., false).unwrap();
         p.cache.insert(id, Cached { tile, last: 0 });
-        p.tick = 120;
+        p.tick = 10000;
         let cam = Camera {
             position: DVec3::new(0., 0., 1e6),
             orientation: Quat::from_rotation_y(std::f32::consts::PI),
             ..Default::default()
         };
-        p.update(&cam, 1.0, 1.0, false);
-        assert!(!p.cache.contains_key(&id));
-        assert!(p.releases.contains(&mesh_id));
+        p.update(&cam, 1., 1., false);
+        assert!(p.selection.leaves.is_empty());
+        assert!(p.cache.contains_key(&id) && p.cache.contains_key(&root));
+        assert!(p.releases.is_empty());
+        assert!(p.stats.bytes <= CACHE_BYTES);
+    }
+    #[test]
+    fn pyramid_diagnostic_pan_stays_local_at_every_frame_rate() {
+        for fps in [30, 60, 120, 240] {
+            let mut lon = 108.;
+            for frame in 0..fps * 45 {
+                lon = pan_longitude(108., frame as f64 / fps as f64);
+                assert!((lon - 108.).abs() <= 0.25);
+            }
+            assert!((lon - pan_longitude(108., 45. - 1. / fps as f64)).abs() < 1e-12);
+        }
+    }
+    #[test]
+    #[ignore = "requires full land pyramid fixture"]
+    fn pyramid_pan_fixture_keeps_land_selected() {
+        let dir = std::env::var("UNIVERSE_PYRAMID_TEST_VIEW").unwrap();
+        let p = Pyramid::open(Path::new(&dir), 6371000.).unwrap().unwrap();
+        let mut min = usize::MAX;
+        let mut max = 0;
+        for step in 0..=450 {
+            let time = step as f64 * 0.1;
+            let lon = pan_longitude(108., time);
+            let up = unit(lon, -25.);
+            assert!(p.covered(up), "bounded pan stays over the supplied land");
+            let east = DVec3::Y.cross(up).normalize();
+            let north = up.cross(east);
+            let pitch = 54f64.to_radians();
+            let forward = north * pitch.cos() - up * pitch.sin();
+            let cam_up = up * pitch.cos() + north * pitch.sin();
+            let mut cam = Camera {
+                position: up * (6371000. + 60000.),
+                fov_y: 50f32.to_radians(),
+                ..Default::default()
+            };
+            cam.look_at(cam.position + forward, cam_up.as_vec3());
+            let selection = p.source.select(&cam, 16. / 9., 1.);
+            min = min.min(selection.leaves.len());
+            max = max.max(selection.leaves.len());
+            assert!(
+                !selection.leaves.is_empty(),
+                "land selection must not disappear at time={time},lon={lon}"
+            );
+        }
+        println!("PYRAMID bounded pan selection min={min} max={max}, samples=451");
     }
     #[test]
     #[ignore = "requires full land pyramid fixture"]

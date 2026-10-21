@@ -151,8 +151,9 @@ cover differing morph weights. Coarse masks approximate coastlines; there is no 
 The viewer targets 4 MiB of tile preparation per frame (one larger tile may proceed to avoid starvation), and publishes a complete resident
 subtree or retains one parent. The initial root can upload with its first draw. Near-split children
 are prefetched; a finest tile under the camera supplies ground altitude even before it is drawn.
-Cold cache entries expire after 120 updates; a 256 MiB CPU working-cache target evicts unselected
-entries sooner. Selected ancestors and the underfoot tile remain protected. GPU receipts are weak,
+The 256 MiB CPU cache target evicts unselected entries in least-recently-used order only when
+space is needed. Looking away does not expire reusable tiles. The coarse root, selected ancestors
+and the underfoot tile remain protected. GPU receipts are weak,
 so eviction and closing the viewer release pool ranges rather than pinning CPU geometry.
 `LAND PYRAMID` and observer status report selected/drawn tiles, triangles, pending reads, fallback,
 cache size and the worst selected geometric error ratio. A parent fallback can temporarily exceed
@@ -163,3 +164,10 @@ per-vertex normals from centred differences of the height grid in planet space. 
 one neighbouring sample on each side, so both tiles compute the same shared-edge normal. At the
 raster boundary differences are one-sided; skirts retain the surface normals. This avoids flat
 triangle lighting without averaging skirt walls into the ground normals.
+
+`UNIVERSE_PLANETLOD_FLY=pan` is a bounded diagnostic sweep: starting longitude ±0.25°, with
+phase based on elapsed seconds since its first update. It traverses the same route at every frame
+rate. Previously it accumulated 0.25 sin(time × 0.4) degrees every frame, sweeping over 100° at
+120 fps and leaving this continent's raster; empty selections there correctly meant no supplied
+pyramid land in view. `PLANETLOD` logs now include longitude and latitude to distinguish coverage
+from loading problems. Manual flight still uses the supplied pyramid only where it has land.

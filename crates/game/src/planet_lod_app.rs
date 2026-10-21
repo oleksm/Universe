@@ -536,6 +536,7 @@ pub struct PlanetLodApp {
     /// =pan: it slides sideways at its altitude instead.
     fly: bool,
     pan: bool,
+    pan_start: Option<(f64, f64)>,
     /// UNIVERSE_PLANETLOD_MAXDRAW: at most this many chunks drawn (to tell a draw's cost from a triangle's).
     max_draw: usize,
     meta: Meta,
@@ -741,6 +742,11 @@ impl Layers {
 fn srgb_to_linear(c: u8) -> f32 {
     let c = c as f32 / 255.0;
     if c <= 0.04045 { c / 12.92 } else { ((c + 0.055) / 1.055).powf(2.4) }
+}
+
+/// A local diagnostic pan about its starting longitude, independent of frame rate and startup time.
+fn pan_longitude(origin: f64, elapsed: f64) -> f64 {
+    origin + 0.25 * (elapsed * 0.4).sin()
 }
 
 impl PlanetLodApp {
@@ -1036,6 +1042,7 @@ impl PlanetLodApp {
             easing: false,
             fly: std::env::var_os("UNIVERSE_PLANETLOD_FLY").is_some(),
             pan: std::env::var("UNIVERSE_PLANETLOD_FLY").is_ok_and(|v| v == "pan"),
+            pan_start: None,
             max_draw: std::env::var("UNIVERSE_PLANETLOD_MAXDRAW").ok().and_then(|v| v.parse().ok()).unwrap_or(usize::MAX),
             meta,
             ex: 1.0,
@@ -1541,7 +1548,8 @@ impl App for PlanetLodApp {
         }
         self.heading += input.axis(KeyCode::ArrowLeft, KeyCode::ArrowRight) as f64 * (1.2 * dt).to_degrees();
         if self.pan {
-            self.lon += 0.25 * (ctx.time * 0.4).sin();
+            let (origin, started) = *self.pan_start.get_or_insert((self.lon, ctx.time));
+            self.lon = pan_longitude(origin, ctx.time - started);
         } else if self.fly {
             self.alt = (self.alt * 0.995).max(300.0);
             self.lon += 2e-4;
@@ -1689,7 +1697,7 @@ impl App for PlanetLodApp {
         l[5] = l[5].max(self.stats.mesh_ms);
         l[6] += rebuilt as f64;
         if l[1] >= 1.0 {
-            log::info!("PLANETLOD alt_m={:.0} fps={:.1} lod_ms={:.3} (max {:.2}) mesh_ms={:.3} (max {:.2}) rebuilt_per_s={:.0} drawn={}", self.alt, l[0] / l[1], l[2] / l[0], l[4], l[3] / l[0], l[5], l[6] / l[1], self.stats.drawn);
+            log::info!("PLANETLOD alt_m={:.0} fps={:.1} lod_ms={:.3} (max {:.2}) mesh_ms={:.3} (max {:.2}) rebuilt_per_s={:.0} drawn={} lon={:.6} lat={:.6}", self.alt, l[0] / l[1], l[2] / l[0], l[4], l[3] / l[0], l[5], l[6] / l[1], self.stats.drawn, self.lon, self.lat);
             if let Some(p) = &self.pyramid {
                 let s=p.lock().unwrap().stats;
                 log::info!("PYRAMID selected={} drawn={} triangles={} pending={} cached={} bytes={} fallback={} error_ratio={:.3} resident={} largest_tile={}", s.selected,s.drawn,s.triangles,s.pending,s.cached,s.bytes,s.fallback,s.worst,s.resident,s.largest_tile);
