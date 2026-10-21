@@ -3187,7 +3187,7 @@
 - { record: settlement.treistun.port-eikir, at: "2026-10-06T19:44:49Z", status: "", summary: "changed: buildings, census", sha: "193712523481731f" }
 - { record: settlement.treistun.port-fabindum, at: "2026-10-06T19:44:49Z", status: "", summary: "changed: buildings, census", sha: "eba00c6e85659bc3" }
 - { record: settlement.treistun.port-lisaur, at: "2026-10-06T19:44:49Z", status: "", summary: "changed: buildings, census", sha: "3123ac04c9f89b1f" }
-- { record: settlement.treistun.port-nacaubun, at: "2026-10-06T19:44:49Z", status: "", summary: "changed: buildings, census", sha: "2cbed17bb0644068" }
+- { record: settlement.treistun.port-nacaubun, at: "2026-10-21T23:17:33Z", status: "", summary: "changed: position, about, story", sha: "33e17bfb5b1ee7cb" }
 - { record: settlement.treistun.port-seiwiti, at: "2026-10-06T19:44:49Z", status: "", summary: "changed: buildings, census", sha: "f7070cb182461a08" }
 - { record: settlement.treistun.port-sirnendis, at: "2026-10-06T19:44:49Z", status: "", summary: "changed: buildings, census", sha: "946ab4bf47dc9967" }
 - { record: settlement.treistun.port-trethi, at: "2026-10-07T01:54:51Z", status: "", summary: "changed", sha: "815867bc1c10980a" }

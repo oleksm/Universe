@@ -1,0 +1,78 @@
+settlement: settlement.treistun.port-nacaubun
+requested: Place Hoar E port on plain ground in the installed Shasta area.
+ground_snapshot: worlds/TRE3/ground/forge_e104-land-c4-600-shasta-4ad675930cb1
+manifest_sha256: 879705041f560bc449f33f970d1c0c9e4e1dc06da0c90b905253c01d9e2aa6bb
+previous_position:
+  latitude: 23.813
+  longitude: -79.362
+position:
+  latitude: -37.22982227888752
+  longitude: 100.66788693903489
+source_radius_m: 6371000
+body_radius_m: 6281370
+distance_from_shasta_centre_m: 21366.405874643493
+method:
+  source_files:
+  - morph_vertex.u32
+  - dir.f32
+  - z.f32
+  description: Scan Shasta pattern vertices for low relief. Measure the existing zone
+    rectangles in the site tangent frame at body radius. Fit z = a + b*east + c*north;
+    slope is atan(hypot(b,c)). Heights below are raw package metres; runtime scales
+    by body/package radius.
+  coordinate_frame: Package unit direction [cos(lat)*sin(lon), sin(lat), cos(lat)*cos(lon)];
+    latitude/longitude recorded in degrees.
+  limitations: Source-vertex statistics at about 60 m spacing; boundaries checked
+    with 90 m extra margin. These measurements do not certify pad contact, runtime
+    rendering or perfect levelling.
+port:
+  bounds_east_north_m:
+  - -400
+  - 400
+  - -900
+  - 400
+  samples: 308
+  height_min_m: 847.6959228515625
+  height_max_m: 849.9563598632812
+  relief_m: 2.26043701171875
+  plane_slope_deg: 0.14479028579341385
+industrial:
+  bounds_east_north_m:
+  - 500
+  - 2500
+  - -1000
+  - 1000
+  samples: 1089
+  height_min_m: 850.0879516601562
+  height_max_m: 856.7793579101562
+  relief_m: 6.69140625
+  plane_slope_deg: 0.17486369648595831
+conservative_margin_checks:
+  margin_m: 90
+  port:
+    samples: 400
+    height_min_m: 847.5517578125
+    height_max_m: 850.2259521484375
+    relief_m: 2.6741943359375
+  industrial:
+    samples: 1369
+    height_min_m: 849.7627563476562
+    height_max_m: 857.438720703125
+    relief_m: 7.67596435546875
+pad_grid_envelope:
+  bounds_east_north_m:
+  - -300
+  - 300
+  - -300
+  - 300
+  samples: 110
+  height_min_m: 847.9747314453125
+  height_max_m: 849.6317749023438
+  relief_m: 1.65704345703125
+preserved:
+- Installed ground snapshot and manifest
+- Survey TRE3
+- Port identity, population, facilities, streets, parcels and relative zone geometry
+- Hoar E physical and atmospheric properties
+runtime_handoff: 'Engine task 20261021T181156-registry-836a: ground seating, saved
+  locations and runtime integration.'
