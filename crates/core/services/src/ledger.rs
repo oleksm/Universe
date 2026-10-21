@@ -124,17 +124,36 @@ impl Ledger {
 
     /// Out of pilot `pilot`'s hold: `units` of good `good` (`kg` of it), their marks and lots,
     /// oldest first.
-    pub fn unload_marked(&mut self, pilot: ShipId, good: usize, units: usize, kg: f64) -> (Vec<Mark>, Vec<(Batch, f64)>) {
-        let (marks, lots, _) = self.unload_cargo(pilot, good, units, kg);
+    pub fn unload_marked(&mut self, pilot: ShipId, good: usize, units: usize, kg: f64, tick: Tick, cause: Cause) -> (Vec<Mark>, Vec<(Batch, f64)>) {
+        // This is the damage/write-off path: neither split nor whole shells are reusable.
+        let (marks, lots, _) = self.unload_cargo_inner(pilot, good, units, kg, tick, cause, false);
         (marks, lots)
     }
 
-    pub fn unload_cargo(&mut self, pilot: ShipId, good: usize, units: usize, kg: f64) -> (Vec<Mark>, Vec<(Batch, f64)>, Vec<crate::packages::Unit>) {
+    pub fn unload_cargo(&mut self, pilot: ShipId, good: usize, units: usize, kg: f64, tick: Tick, cause: Cause) -> (Vec<Mark>, Vec<(Batch, f64)>, Vec<crate::packages::Unit>) {
+        self.unload_cargo_inner(pilot, good, units, kg, tick, cause, true)
+    }
+
+    fn unload_cargo_inner(&mut self, pilot: ShipId, good: usize, units: usize, kg: f64, tick: Tick, cause: Cause, intact: bool) -> (Vec<Mark>, Vec<(Batch, f64)>, Vec<crate::packages::Unit>) {
         let before = self.lots.get(&pilot).and_then(|l| l.get(&good)).cloned().unwrap_or_default();
         let marks = self.marks.get_mut(&pilot).and_then(|m| m.get_mut(&good)).map_or(Vec::new(), |m| m.drain(..units.min(m.len())).collect());
         let lots = self.lots.get_mut(&pilot).and_then(|l| l.get_mut(&good)).map_or(Vec::new(), |l| crate::lots::take(l, kg));
-        let packages = self.packages.get_mut(&pilot).and_then(|p| p.get_mut(&good)).map_or_else(Vec::new, |p| crate::packages::take(p, &before, &lots));
-        (marks, lots, packages)
+        let selected = self.packages.get_mut(&pilot).and_then(|p| p.get_mut(&good)).map(|p| crate::packages::take(p, &before, &lots)).unwrap_or_default();
+        let mut opened = selected.opened;
+        let carried = if intact { selected.carried } else {
+            opened.extend(selected.carried);
+            Vec::new()
+        };
+        for unit in opened {
+            if let Some((key, kg, lots)) = unit.opened_stock(intact) {
+                let item = universe_world::goods::item(&key).expect("packing disposition stock is in the catalogue");
+                let mass = universe_world::content::content().stock[item].mass;
+                // Release reserved tare into the source hold with the cargo operation's cause.
+                self.transfer(Party::World, Party::Pilot(pilot), Asset::Goods(item), kg / mass, tick, cause).expect("world can release reserved packaging");
+                self.load_marked(pilot, item, vec![], lots);
+            }
+        }
+        (marks, lots, carried)
     }
 
     pub fn load_cargo(&mut self, pilot: ShipId, good: usize, marks: Vec<Mark>, lots: Vec<(Batch, f64)>, packages: Vec<crate::packages::Unit>) {
@@ -150,6 +169,29 @@ impl Ledger {
             (Some(units), Some(lots)) => crate::packages::preview(units, lots, kg),
             _ => Vec::new(),
         }
+    }
+
+    /// Volume change in the source hold after withdrawal, including empties released by a split.
+    pub fn withdrawal_volume_change(&self, pilot: ShipId, good: usize, kg: f64, goods: &[universe_world::goods::Item]) -> f64 {
+        let density = 1000. * goods[good].bulk_density;
+        let mut delta = -kg / density;
+        if let (Some(units), Some(lots)) = (
+            self.packages.get(&pilot).and_then(|p| p.get(&good)),
+            self.lots.get(&pilot).and_then(|p| p.get(&good)),
+        ) {
+            let pieces = crate::lots::take(&mut lots.clone(), kg);
+            let selected = crate::packages::take(&mut units.clone(), lots, &pieces);
+            for unit in selected.carried.iter().chain(&selected.opened) {
+                delta -= (unit.volume - unit.net_mass / density).max(0.);
+            }
+            for unit in selected.opened {
+                if let Some((key, tare, _)) = unit.opened_stock(true) {
+                    let item = universe_world::goods::item(&key).expect("packing disposition stock is in the catalogue");
+                    delta += tare / (1000. * goods[item].bulk_density);
+                }
+            }
+        }
+        delta
     }
 
     pub fn cargo_mass(&self, pilot: ShipId, goods: &[universe_world::goods::Item]) -> f64 {

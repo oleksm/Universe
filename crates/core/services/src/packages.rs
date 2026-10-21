@@ -1,6 +1,6 @@
 //! Physical handling units, stamped at sealing (docs/packing-contract.md).
 //! Quantities and lots remain the inventory's source of truth. These units describe the
-//! packaging around those kilograms; opening one removes its tare and ends its label.
+//! packaging around those kilograms; opening ends its label and releases reserved empty stock.
 
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, VecDeque};
@@ -8,6 +8,17 @@ use universe_world::registry::{Batch, Label, LabelBarcode};
 
 pub type Units = VecDeque<Unit>;
 pub type Sequences = BTreeMap<String, u16>;
+
+/// The manufactured unit held by a package. Keys, not catalogue indices, survive saves.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct EmptyStock {
+    pub key: String,
+    pub lots: Vec<(Batch, f64)>,
+    /// An operation can mark damaged or cut binding stock unserviceable before opening.
+    pub serviceable: bool,
+    pub returns_empty: bool,
+    pub waste_stock: String,
+}
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Unit {
@@ -22,10 +33,16 @@ pub struct Unit {
     pub volume: f64,
     /// None while filling. Once sealed the label is immutable.
     pub label: Option<Label>,
+    /// Legacy packages have no reservation and must never create manufactured stock on opening.
+    #[serde(default)]
+    pub empty: Option<EmptyStock>,
 }
 
 #[derive(Clone, Debug)]
 pub struct Spec {
+    pub empty_stock: String,
+    pub returns_empty: bool,
+    pub waste_stock: String,
     pub template: String,
     pub capacity: f64,
     pub tare: f64,
@@ -39,7 +56,21 @@ impl Spec {
         let template = reg.stock(key)?.package.as_ref()?;
         let p = reg.package(template)?;
         let capacity = p.holds.mass.min(p.holds.volume * density);
+        // Exactly one matching manufactured unit; missing/ambiguous stock leaves output loose.
+        let mut matches = reg
+            .stock
+            .iter()
+            .filter(|s| s.supplies.as_ref().is_some_and(|x| x.item == *template));
+        let empty = matches.next()?;
+        if matches.next().is_some()
+            || (empty.physical.mass? - p.physical.mass).abs() > 1e-9 * p.physical.mass
+        {
+            return None;
+        }
         let s = Self {
+            empty_stock: empty.identity.key.clone(),
+            returns_empty: p.returns_empty?,
+            waste_stock: p.waste_stock.clone()?,
             template: template.clone(),
             capacity,
             tare: p.physical.mass,
@@ -58,6 +89,25 @@ impl Spec {
 impl Unit {
     pub fn gross_mass(&self) -> f64 {
         self.net_mass + self.tare
+    }
+
+    /// On opening, tare stays in the source inventory as an empty or as unpacked waste.
+    /// Legacy shells can become waste but cannot mint a manufactured empty unit.
+    pub fn opened_stock(self, intact: bool) -> Option<(String, f64, Vec<(Batch, f64)>)> {
+        if let Some(empty) = self.empty {
+            let key = if intact && empty.serviceable && empty.returns_empty {
+                empty.key
+            } else {
+                empty.waste_stock
+            };
+            Some((key, self.tare, empty.lots))
+        } else {
+            let key = universe_world::registry::registry()
+                .package(&self.template)?
+                .waste_stock
+                .clone()?;
+            Some((key, self.tare, vec![]))
+        }
     }
 
     /// False means this lot has exhausted its four-digit suffix; never wrap it.
@@ -90,8 +140,9 @@ impl Unit {
     }
 }
 
-/// Fill at most one lot. Returns kilograms still unpacked when suffix 9999 closes the lot.
-/// The caller opens a new batch for those kilograms. Invalid input is left untouched.
+/// Fill at most one lot, reserving one manufactured empty for each new unit.
+/// Returns unpacked kilograms on empty-stock shortage or suffix exhaustion. The caller
+/// keeps shortage output loose; suffix exhaustion alone opens a new lot.
 pub fn fill(
     units: &mut Units,
     sequences: &mut Sequences,
@@ -101,6 +152,7 @@ pub fn fill(
     brand: &str,
     kg: f64,
     at: f64,
+    mut reserve: impl FnMut() -> Option<EmptyStock>,
 ) -> f64 {
     if !spec.valid() || !kg.is_finite() || kg <= 0.0 || !at.is_finite() || at < batch.made_on {
         return kg;
@@ -117,7 +169,10 @@ pub fn fill(
                 && u.template == spec.template
                 && u.brand == brand
         });
-        let i = open.unwrap_or_else(|| {
+        let i = if let Some(i) = open {
+            i
+        } else {
+            let Some(empty) = reserve() else { break };
             units.push_back(Unit {
                 batch: batch.clone(),
                 product: product.into(),
@@ -128,9 +183,10 @@ pub fn fill(
                 tare: spec.tare,
                 volume: spec.volume,
                 label: None,
+                empty: Some(empty),
             });
             units.len() - 1
-        });
+        };
         let u = &mut units[i];
         let room = (u.capacity - u.net_mass).max(0.0);
         let add = left.min(room);
@@ -159,8 +215,8 @@ pub fn close(units: &mut Units, lot: &str, at: f64, sequences: &mut Sequences) -
 /// Remove packaging for the lot pieces taken from an inventory. Whole sealed units travel;
 /// a split or unsealed unit is opened and BOTH portions become loose, retaining their lot.
 /// Loose stock is consumed before packages within each lot.
-pub fn take(units: &mut Units, before: &crate::lots::Lots, pieces: &[(Batch, f64)]) -> Vec<Unit> {
-    let mut out = Vec::new();
+pub fn take(units: &mut Units, before: &crate::lots::Lots, pieces: &[(Batch, f64)]) -> Taken {
+    let mut out = Taken::default();
     for (batch, kg) in pieces {
         let packed: f64 = units
             .iter()
@@ -187,9 +243,12 @@ pub fn take(units: &mut Units, before: &crate::lots::Lots, pieces: &[(Batch, f64
             if want + roundoff >= u.net_mass {
                 want = (want - u.net_mass).max(0.0);
                 if u.label.is_some() {
-                    out.push(u);
+                    out.carried.push(u);
+                } else {
+                    out.opened.push(u);
                 }
             } else {
+                out.opened.push(u);
                 // Remainder is already accounted for in the inventory's lot kilograms.
                 want = 0.0;
             }
@@ -198,11 +257,17 @@ pub fn take(units: &mut Units, before: &crate::lots::Lots, pieces: &[(Batch, f64
     out
 }
 
+#[derive(Default)]
+pub struct Taken {
+    pub carried: Vec<Unit>,
+    pub opened: Vec<Unit>,
+}
+
 /// Same selection as take, without opening or moving any units.
 pub fn preview(units: &Units, lots: &crate::lots::Lots, kg: f64) -> Vec<Unit> {
     let mut selected_lots = lots.clone();
     let pieces = crate::lots::take(&mut selected_lots, kg);
-    take(&mut units.clone(), lots, &pieces)
+    take(&mut units.clone(), lots, &pieces).carried
 }
 
 pub fn extra_volume(units: &[Unit], density: f64) -> f64 {
@@ -225,6 +290,9 @@ mod tests {
     }
     fn spec() -> Spec {
         Spec {
+            empty_stock: "stock.empty-test".into(),
+            returns_empty: true,
+            waste_stock: "stock.waste-test".into(),
             template: "package.test".into(),
             capacity: 100.0,
             tare: 7.0,
@@ -242,11 +310,68 @@ mod tests {
                 "stock.test",
                 "org.test",
                 kg,
-                12.0
+                12.0,
+                || Some(EmptyStock {
+                    key: "stock.empty-test".into(),
+                    lots: vec![],
+                    serviceable: true,
+                    returns_empty: true,
+                    waste_stock: "stock.waste-test".into()
+                })
             ),
             0.0
         );
         (u, s)
+    }
+
+    #[test]
+    fn shortage_never_creates_a_shell_or_spends_a_serial() {
+        let (mut u, mut seq) = (Units::new(), Sequences::new());
+        let left = fill(
+            &mut u,
+            &mut seq,
+            &spec(),
+            &batch(),
+            "stock.test",
+            "org.test",
+            50.,
+            12.,
+            || None,
+        );
+        assert_eq!(left, 50.);
+        assert!(u.is_empty());
+        assert!(seq.is_empty());
+        let mut remaining = 1;
+        let left = fill(
+            &mut u,
+            &mut seq,
+            &spec(),
+            &batch(),
+            "stock.test",
+            "org.test",
+            250.,
+            12.,
+            || {
+                if remaining == 0 {
+                    return None;
+                }
+                remaining -= 1;
+                Some(EmptyStock {
+                    key: "stock.empty-test".into(),
+                    lots: vec![],
+                    serviceable: true,
+                    returns_empty: true,
+                    waste_stock: "stock.waste-test".into(),
+                })
+            },
+        );
+        assert_eq!(left, 150.);
+        assert_eq!(u.len(), 1);
+        assert_eq!(seq[&batch().lot], 1);
+        let selected = take(&mut u, &[(batch(), 100.)].into(), &[(batch(), 25.)]);
+        assert!(selected.carried.is_empty());
+        assert_eq!(selected.opened.len(), 1);
+        assert!(u.is_empty());
     }
 
     #[test]
@@ -262,6 +387,15 @@ mod tests {
             "org.test",
             99.0,
             20.0,
+            || {
+                Some(EmptyStock {
+                    key: "stock.empty-test".into(),
+                    lots: vec![],
+                    serviceable: true,
+                    returns_empty: true,
+                    waste_stock: "stock.waste-test".into(),
+                })
+            },
         );
         close(&mut u, &batch().lot, 20.0, &mut s);
         assert_eq!(u[0].label.as_ref().unwrap().serial, "HHI-000001-0002");
@@ -275,7 +409,14 @@ mod tests {
                 "stock.test",
                 "org.test",
                 200.0,
-                30.0
+                30.0,
+                || Some(EmptyStock {
+                    key: "stock.empty-test".into(),
+                    lots: vec![],
+                    serviceable: true,
+                    returns_empty: true,
+                    waste_stock: "stock.waste-test".into()
+                })
             ),
             100.0
         );

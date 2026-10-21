@@ -134,7 +134,12 @@ pub(crate) fn build_catalog(reg: &crate::registry::Registry, priced: &HashMap<St
             let parts: f64 = reg.built_of(key).iter().filter_map(|(p, n)| Some(p.physical.mass.or_else(|| of_parts(reg, &p.identity.key))? * *n as f64)).sum();
             Some(h.physical.mass.or((parts > 0.0).then_some(parts)))
         };
-        p.or_else(e).or_else(h).flatten()
+        let empty = || {
+            let s = reg.stock(key)?;
+            reg.package(&s.supplies.as_ref()?.item)?;
+            s.physical.mass
+        };
+        p.or_else(e).or_else(h).flatten().or_else(empty)
     };
     let masses: Vec<f64> = keys.iter().map(|k| piece(k).filter(|m| *m > 0.0).unwrap_or(TONNE)).collect();
     let recipes = crate::recipes::build(reg, &index, &|i| masses[i]);
@@ -176,7 +181,11 @@ pub(crate) fn build_catalog(reg: &crate::registry::Registry, priced: &HashMap<St
             let physical = reg.good(key).map(|g| &g.physical).or_else(|| reg.stock(key).map(|s| &s.physical).filter(|p| p.bulk_density.is_some() || made_of.is_none())).or(made_of);
             let c = category(key);
             let bulk = physical
-                .and_then(|p| p.bulk_density.or_else(|| Some(p.mass? / p.volume?)))
+                .and_then(|p| p.bulk_density.or_else(|| Some(p.mass? / p.volume?)).or_else(|| {
+                    let s = reg.stock(key)?;
+                    reg.package(&s.supplies.as_ref()?.item)?;
+                    Some(p.mass? / (p.length? * p.width? * p.height?))
+                }))
                 .map(|d| d / 1000.0)
                 .or_else(|| c.map(|c| goods.get(c).bulk_density))
                 .filter(|d| *d > 0.0)

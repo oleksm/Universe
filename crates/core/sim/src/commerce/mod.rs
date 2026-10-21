@@ -170,7 +170,7 @@ impl Universe {
         let goods = self.world.goods.clone();
         let broken: Vec<(usize, f64)> = self.services.ledger.hold_quantities(id).into_iter().flatten().filter(|(i, q)| **q > 0. && goods[**i].shock_limit.is_some_and(|l| g > l)).map(|(&i, &q)| (i, q)).collect();
         for &(item, units) in &broken {
-            self.services.ledger.unload_marked(id, item, units.ceil() as usize, goods[item].mass * units);
+            self.services.ledger.unload_marked(id, item, units.ceil() as usize, goods[item].mass * units, self.tick, universe_protocol::Cause::Rules);
             self.services.ledger.settle(Party::Pilot(id), universe_services::ledger::Asset::Goods(item), 0.0, self.tick, universe_protocol::Cause::Rules);
         }
         if !broken.is_empty() {

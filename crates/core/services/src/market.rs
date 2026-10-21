@@ -177,11 +177,14 @@ impl Markets {
             if q.sell <= 0.0 {
                 return Err("THEY WON'T BUY IT".into());
             }
+            if ledger.withdrawal_volume_change(o.pilot, item.id, kg, &self.goods) > o.space + 1e-9 {
+                return Err("NO SPACE TO OPEN THE PACKAGE".into());
+            }
             let paid = q.sell * n;
             ledger.transfer(who, me, Asset::Goods(item.id), n, tick, cause)?;
             ledger.transfer(me, who, Asset::Credits, paid, tick, cause)?;
             ledger.transfer(who, Party::Administration(o.system), Asset::Credits, paid * duty, tick, cause)?;
-            let (marks, lots, packages) = ledger.unload_cargo(o.pilot, item.id, n as usize, kg);
+            let (marks, lots, packages) = ledger.unload_cargo(o.pilot, item.id, n as usize, kg, tick, cause);
             assert!(self.economy.put_cargo(o.system, o.market, item.id, kg, marks, lots, packages), "capacity checked before trade");
             Ok(-paid * (1.0 - duty))
         }

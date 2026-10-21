@@ -282,6 +282,7 @@ mod tests {
             made_on: 10.,
         };
         let mut unit = Unit {
+            empty: None,
             batch: batch.clone(),
             product: u.world.goods[good].key.clone(),
             brand: "org.test".into(),
@@ -318,10 +319,32 @@ mod tests {
         serde_json::to_value(x).unwrap()
     }
     #[test]
+    fn packing_stock_reservations_round_trip_and_legacy_has_no_free_empty() {
+        let (_, _, mut unit) = fixture();
+        let mut legacy = json(&unit);
+        legacy.as_object_mut().unwrap().remove("empty");
+        let legacy: Unit = serde_json::from_value(legacy).unwrap();
+        assert!(legacy.empty.is_none());
+        unit.empty = Some(universe_services::packages::EmptyStock {
+            key: "stock.pkg-skip".into(),
+            lots: vec![(unit.batch.clone(), unit.tare)],
+            serviceable: false,
+            returns_empty: true,
+            waste_stock: "stock.packaging-waste-bulk".into(),
+        });
+        let decoded: Unit = serde_json::from_value(json(&unit)).unwrap();
+        assert_eq!(json(decoded), json(unit));
+    }
+
+    #[test]
     fn works_partial_packages_and_keyed_inventory_restore_with_fresh_views() {
         let (mut u, g, mut unit) = fixture();
         unit.label = None;
         unit.net_mass /= 2.;
+        unit.empty = Some(universe_services::packages::EmptyStock {
+            key: "stock.pkg-skip".into(), lots: vec![(unit.batch.clone(), unit.tare)],
+            serviceable: true, returns_empty: true, waste_stock: "stock.packaging-waste-bulk".into(),
+        });
         let key = u.services.markets.economy.works[0].key.clone();
         let site_key = site(&u, &u.services.markets.economy.works[0]);
         let w = &mut u.services.markets.economy.works[0];
