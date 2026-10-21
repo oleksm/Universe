@@ -1,0 +1,47 @@
+# yaml-language-server: $schema=../../schema/ship-rule.schema.yaml
+identity:
+  key: ship-rule.local-regeneration
+  name: Local regeneration and reproducibility
+  about: Build owned regions from pinned inputs through an acyclic dependency graph; promote only checked candidates.
+status: draft
+implementation: proposed
+owner: blender
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 5.2 Compile a dependency DAG for local regeneration
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+statement: 'Build owned regions from pinned inputs through an acyclic dependency graph; promote only checked
+  candidates.
+
+
+  Design exploration can alternate hull and interior decisions, but an individual build requires an acyclic
+  dependency graph. Freeze a coherent arrangement revision, then derive geometry from that revision. The proposed
+  graph runs from brief/reference selections through profiles and shared boundaries to region geometry, mechanisms,
+  detail, collision/LOD, export and evidence.
+
+
+  A change identifies its owned region and affected dependencies before mutation. Build into a candidate collection
+  or clean file, validate, compare with accepted neighbors, then promote the candidate. Unaffected equipment
+  and manually authored sources retain their hashes. Shared boundary changes notify both consumers; the system
+  must not silently repair the neighbor by regenerating it.
+
+
+  Manual geometry is first-class source. Its file, object IDs, revision and input hash are pinned. Editing
+  generated output is either temporary and discarded or explicitly promoted into a manual input with ownership
+  changed. Never rely on a hidden live-session adjustment that disappears during a clean build.
+
+
+  Pin Blender, exporter settings, scripts, registry dependency versions, source files and seed streams. A clean
+  background build must not depend on selection or active-object state. Blender provides command-line execution
+  mechanisms; determinism across arbitrary versions is not guaranteed. Compare canonical geometry/attribute/transform
+  signatures, documenting nondeterministic metadata rather than demanding unexplained byte identity. ([Blender
+  command-line documentation](https://docs.blender.org/manual/en/3.6/advanced/command_line/arguments.html))'
+applies_to:
+- Compile a dependency DAG for local regeneration
+verification:
+- Clean build does not depend on selection or hidden session edits.
+- Manual source is pinned; unrelated geometry remains unchanged.
+limitations:
+- This is a reusable workflow definition, not a ship approval or evidence that a proposed tool exists.
+related:
+- ship-artifact.build-inputs

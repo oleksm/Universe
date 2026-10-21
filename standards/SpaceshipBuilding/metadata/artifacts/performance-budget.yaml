@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=../../schema/ship-artifact.schema.yaml
+identity:
+  key: ship-artifact.performance-budget
+  name: Consumer workload and budgets
+  about: What workload and measured costs must the ship satisfy?
+status: draft
+implementation: proposed
+owner: engine
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 4.5 Set budgets against a named workload
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+purpose: What workload and measured costs must the ship satisfy?
+contents:
+- Consumer revision, hardware, resolution/settings, ship count and camera path.
+- Allocated exported geometry, instances, primitives, textures, transparency, shadows, collision and motion
+  costs.
+- Interior/exterior/region LOD criteria with measured transition and frame-time evidence.
+- 'Detailed authored information and examples:
+
+  Record exported triangles/vertices, unique meshes and instances, material primitives, texture residency,
+  transparency, lights, shadow casters, collision shapes, motion channels, loading cost and file size. Allocate
+  budgets by exterior, cockpit, interior zone and equipment. Numeric limits require an engine benchmark with
+  hardware, resolution, graphics settings, ship count and camera path; this proposal supplies no universal
+  AAA budget.
+
+
+  LOD must retain silhouette, cockpit proportions and visible mechanism state. Reduce small hardware before
+  primary form. Do not shrink collision or interaction volumes merely because a render LOD changes. Inspect
+  transitions and transparent canopy/interior behavior in the target renderer. Frame-time and visibility evidence
+  matter alongside triangle counts; performance advice from other engines is methodological evidence, not an
+  assertion of FREEFALL features. ([Godot LOD example](https://docs.godotengine.org/en/4.7/tutorials/3d/mesh_lod.html),
+  [performance guide](https://docs.godotengine.org/en/stable/tutorials/performance/optimizing_3d_performance.html))'
+boundary: No universal AAA triangle count; actual engine support and benchmark define limits.
+consumers:
+- engine
+- ships
+- blender
+rules:
+- ship-rule.representations
+checks:
+- ship-check.material-export
+- ship-check.runtime
+- ship-check.performance

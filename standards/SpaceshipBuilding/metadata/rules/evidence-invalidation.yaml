@@ -1,0 +1,56 @@
+# yaml-language-server: $schema=../../schema/ship-rule.schema.yaml
+identity:
+  key: ship-rule.evidence-invalidation
+  name: Change impact and stale evidence
+  about: Invalidate evidence by dependency and changed hash, retaining independent results.
+status: draft
+implementation: proposed
+owner: blender
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 5.4 Invalidate only evidence that depends on the change
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+statement: 'Invalidate evidence by dependency and changed hash, retaining independent results.
+
+
+  | Change | Invalidate | Normally retain |
+
+  |---|---|---|
+
+  | Hull profile or global scale | Affected form, space, interfaces, collision, mass inputs, export | Unchanged
+  reusable component sources |
+
+  | Module placement | Mount alignment, routes, access, assembly collision and mass distribution | Module model
+  package |
+
+  | Registry mass only | Accounting and dependent load analyses | Geometry if no geometry requirement changed
+  |
+
+  | Port datum | Mating, routing, required marker and placement checks | Body mesh unless an actual conflict
+  exists |
+
+  | Axis/hierarchy | Bind transforms, motion, connections, swept envelopes and runtime poses | Unrelated static
+  regions |
+
+  | Material/shader | Appearance, export materials and performance | Geometry checks with identical geometry
+  inputs |
+
+  | Exporter/toolchain | Raw GLB, materials, transforms, package compatibility | Source design decision, unless
+  output drift changes it |
+
+  | Reference/identity decision | Related visual gates and downstream form evidence | Independent functional
+  results where inputs are unchanged |
+
+
+  An accepted design decision reopens only when its premises changed. Every evidence item contains input hashes,
+  not merely a timestamp. The existing runner already supports stale evidence and protected accepted packages;
+  use that mechanism rather than create a second approval database. (Execution-loop contract (external installed
+  workflow reference: `freefall-asset-delivery/references/execution-loop.md`; not bundled))'
+applies_to:
+- Invalidate only evidence that depends on the change
+verification:
+- Test a source mutation and check expected stale results.
+- Port/mass-only changes do not mandate body rebuild without a geometric conflict.
+limitations:
+- This is a reusable workflow definition, not a ship approval or evidence that a proposed tool exists.
+related: []

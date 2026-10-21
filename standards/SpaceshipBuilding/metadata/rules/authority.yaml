@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../schema/ship-rule.schema.yaml
+identity:
+  key: ship-rule.authority
+  name: Design and implementation authority
+  about: Preserve decision ownership and existing delegation; resolve cross-owner contradictions explicitly.
+status: draft
+implementation: proposed
+owner: owner
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 2.3 Establish authority before generating geometry
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+statement: 'Preserve decision ownership and existing delegation; resolve cross-owner contradictions explicitly.
+
+
+  | Decision or artifact | Authority | Modeller''s responsibility |
+
+  |---|---|---|
+
+  | Purpose, identity and major aesthetic trade-offs | Owner, with existing delegation recorded | Present bounded
+  alternatives and preserve the decision |
+
+  | Hull/type design and ship assembly semantics | Ships | Coordinate region and assembly changes |
+
+  | Registry facts, interfaces, ratings and reusable asset requirements | Registry | Use pinned records; report
+  contradictions |
+
+  | Blender source, custom surfaces and geometry evidence | Blender | Build, inspect and retain editable provenance
+  |
+
+  | Runtime placement, rendering, interaction and playback | Engine/integrator | Supply reproducible package
+  and test cases |
+
+  | Release tooling and package manifests | Existing installer/workflow | Use the tooling; do not hand-edit
+  its outputs |
+
+
+  An agent must not resolve a cross-owner contradiction by silently changing a record or inventing a rating.
+  It records the exact conflict and proposes an option. Work independent of that conflict can continue. Existing
+  authorization carries forward; the workflow does not require another “continue?” between routine regional
+  tasks.'
+applies_to:
+- Establish authority before generating geometry
+verification:
+- Identity trade-offs go to the owner unless delegated.
+- Registry facts are not changed silently by a modelling repair; engine claims require consumer evidence.
+limitations:
+- This is a reusable workflow definition, not a ship approval or evidence that a proposed tool exists.
+related:
+- ship-decision.design-change
+- ship-decision.identity
+- ship-decision.release

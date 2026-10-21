@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/ship-artifact.schema.yaml
+identity:
+  key: ship-artifact.requirements
+  name: Ship requirements
+  about: What must the selected ship do and preserve?
+status: draft
+implementation: proposed
+owner: ships
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 2.2 Keep three complementary specification layers
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 2.5 Use IDs to connect prose, geometry and evidence
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+purpose: What must the selected ship do and preserve?
+contents:
+- Stable ID, statement, rationale, source, owner, severity, status and verification IDs.
+- Separate functional constraints, visual identity and preferences.
+- Family/type/instance scope and mappings to concrete runtime identifiers.
+boundary: Registry owns referenced facts; project requirements must not duplicate or silently override them.
+consumers:
+- ships
+- blender
+rules:
+- ship-rule.specification-layers
+- ship-rule.traceability
+checks:
+- ship-check.requirements

@@ -145,6 +145,11 @@ p { margin: 4px 0 8px; max-width: 80ch; }
   nav { max-height: 45vh; border-right: 0; border-bottom: 1px solid var(--line); }
   header { flex-wrap: wrap; }
 }
+.workflow-prose { white-space: pre-wrap; margin: 0 0 10px; line-height: 1.5; }
+.workflow-prose:last-child { margin-bottom: 0; }
+.workflow-code { white-space: pre-wrap; overflow-wrap: anywhere; padding: 12px; background: var(--bg); font-size: 12px; }
+.workflow-list { margin: 0; padding-left: 20px; }
+.workflow-list > li + li { margin-top: 10px; }
 </style>
 </head>
 <body>
@@ -458,7 +463,24 @@ function addressed() {
   return [...ORGS.filter(placeOf).map(o => ({ key: o.key, who: o.name, tag: o.tag, to: o.to, org: o, address: addressText(o) })), ...land].sort((p, r) => p.address.localeCompare(r.address, undefined, { numeric: true }));
 }
 
-const ROOT_NAMES = { PlanetSim: "Planet Simulator", PlanetLOD: "Planet LOD" };     // (roots shown as trees of their own)
+// Workflow procedures retain paragraphs, examples and source links in the registry view.
+// Escape source text before interpreting the small Markdown subset used by the proposal.
+const workflowInline = text => esc(text).replace(/\[([^\]]+)\]\(([^\s)]+)\)/g, (all, label, target) => {
+  const href = /^https?:\/\//.test(target) ? target : /^(docs|standards|crates|tools|config)\//.test(target) ? "../" + target : "";
+  return href ? `<a href="${href}">${label}</a>` : `${label} (${target})`;
+}).replace(/`([^`]+)`/g, "<code>$1</code>").replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+const workflowProse = text => String(text).split(/(```[\s\S]*?```)/g).map(part => {
+  if (part.startsWith("```")) return `<pre class="workflow-code">${esc(part.replace(/^```[^\n]*\n?/, "").replace(/```$/, ""))}</pre>`;
+  return part.split(/\n\s*\n/).filter(x => x.trim()).map(block => {
+    const lines = block.trim().split("\n");
+    if (lines.length > 1 && lines.every(line => line.trim().startsWith("|"))) {
+      const rows = lines.filter(line => !/^\s*\|[\s:|\-]+\|\s*$/.test(line));
+      return `<table>${rows.map((line, i) => `<tr>${line.trim().replace(/^\||\|$/g, "").split("|").map(cell => `<${i ? "td" : "th"}>${workflowInline(cell.trim())}</${i ? "td" : "th"}>`).join("")}</tr>`).join("")}</table>`;
+    }
+    return `<div class="workflow-prose">${workflowInline(block)}</div>`;
+  }).join("");
+}).join("");
+const ROOT_NAMES = { PlanetSim: "Planet Simulator", PlanetLOD: "Planet LOD", SpaceshipBuilding: "Spaceship Building" };     // (roots shown as trees of their own)
 let current = decodeURIComponent(location.hash.slice(1));
 const stdOf = k => k.startsWith("s:") ? byId[k.slice(2).split("@")[0]] : null;
 // (Open the way to a standard: its body.)
@@ -651,12 +673,29 @@ function detail(k) {
     const e = r.records.find(x => x.slug === rest.slice(1).join(":")); if (!e) return "";
     const G = (DATA.register_groups || {})[r.kind] || {}, KP = DATA.key_pages || {};
     const keyish = v => typeof v === "string" && /^[a-z][a-z0-9-]*\.[a-z0-9.-]+$/.test(v);
-    const val = v => v === null || v === undefined ? "–" : Array.isArray(v) ? (v.length ? v.map(val).join(", ") : "–") : typeof v === "object" ? Object.entries(v).map(([a, b]) => `${esc(a)}: ${val(b)}`).join("; ") : keyish(v) && KP[v] ? `<a data-k="${esc(KP[v])}">${esc(v)}</a>` : typeof v === "number" ? esc((+v).toLocaleString(undefined, { maximumFractionDigits: 6 })) : esc(String(v));
+    const workflow = r.root === "SpaceshipBuilding";
+    const val = v => {
+      if (v === null || v === undefined) return "–";
+      if (Array.isArray(v)) {
+        if (!v.length) return "–";
+        return workflow && v.every(x => typeof x === "string") && !v.every(keyish)
+          ? `<ul class="workflow-list">${v.map(x => `<li>${val(x)}</li>`).join("")}</ul>` : v.map(val).join(", ");
+      }
+      if (typeof v === "object") return Object.entries(v).map(([a, b]) => `${esc(a)}: ${val(b)}`).join("; ");
+      if (keyish(v) && KP[v]) return `<a data-k="${esc(KP[v])}">${esc(v)}</a>`;
+      if (typeof v === "number") return esc((+v).toLocaleString(undefined, { maximumFractionDigits: 6 }));
+      if (workflow && /^(docs|standards|crates|tools|config)\/[\w./-]+(?:#[\w-]+)?$/.test(v)) return `<a href="../${esc(v)}">${esc(v)}</a>`;
+      if (workflow && /^https?:\/\/[^\s]+$/.test(v)) return `<a href="${esc(v)}">${esc(v)}</a>`;
+      return workflow ? workflowProse(v) : esc(String(v));
+    };
     const idn = e.identity && typeof e.identity === "object" ? e.identity : {};
     let h = `<h2>${esc(e.name)}</h2><div class="meta">${esc(r.title.toLowerCase())} · <a data-k="${esc("rg:" + r.kind)}">${esc(r.title)}</a> · ${esc(e.key)}</div>`;
     if (idn.about || idn.description) h += `<p>${esc(idn.about || idn.description)}</p>`;
-    const skip = new Set(["slug", "key", "name", "file", "identity", "basis", "revision"]);
-    for (const [g, v] of Object.entries(e)) {
+    if (workflow) h += `<p class="meta">${esc(e.status)} · owner: ${esc(e.owner)} · implementation: ${esc(e.implementation)}${e.order !== undefined ? ` · order: ${esc(e.order)}` : ""}</p>`;
+    const skip = new Set(["slug", "key", "name", "file", "identity", "basis", "revision", ...(workflow ? ["status", "owner", "implementation", "order"] : [])]);
+    const entries = Object.entries(e);
+    if (workflow) entries.sort(([a], [b]) => Number(a === "sources") - Number(b === "sources"));
+    for (const [g, v] of entries) {
       if (skip.has(g) || v === null || v === undefined) continue;
       const gd = G[g] || {}, props = gd.props || {};
       if (g === "legends" && Array.isArray(v)) {      // (a legend drawn as its page draws it: swatches and labels)
@@ -664,7 +703,7 @@ function detail(k) {
         h += `<h3>legends</h3>` + v.map(L => `<h4 style="margin:14px 0 4px">${esc(L.title)}${L.sub ? ` <span class="meta">· ${esc(L.sub)}</span>` : ""}</h4><table>` + (L.rows || []).map(r => `<tr><td style="width:34px">${sw(r)}</td><td${r.kind === "head" ? ' class="meta"' : ""}>${esc(r.label)}</td></tr>`).join("") + `</table>` + (L.source ? `<div class="meta">${esc(L.source)}</div>` : "")).join("");
         continue;
       }
-      h += `<h3>${esc(g.replace(/_/g, " "))}</h3>` + (gd.description ? `<p class="meta">${esc(gd.description)}</p>` : "");
+      h += `<h3>${esc(g.replace(/_/g, " "))}</h3>` + (!workflow && gd.description ? `<p class="meta">${esc(gd.description)}</p>` : "");
       if (Array.isArray(v) && v.length && typeof v[0] === "object" && v[0] !== null) {
         const cols = [...new Set(v.flatMap(x => Object.keys(x)))];
         h += `<table><tr>${cols.map(c => `<th title="${esc(props[c] || "")}">${esc(c.replace(/_/g, " "))}</th>`).join("")}</tr>` + v.map(x => `<tr>${cols.map(c => `<td>${val(x[c])}</td>`).join("")}</tr>`).join("") + `</table>`;

@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/ship-artifact.schema.yaml
+identity:
+  key: ship-artifact.build-inputs
+  name: Pinned build inputs
+  about: Can this candidate be rebuilt without hidden session state?
+status: draft
+implementation: mixed
+owner: blender
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 5.2 Compile a dependency DAG for local regeneration
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+purpose: Can this candidate be rebuilt without hidden session state?
+contents:
+- Scripts, Blender/exporter versions and settings, source assets, registry dependencies and hashes.
+- Dependency DAG, separate seed streams, owned collections and manual-input revisions.
+- Canonical geometry/attribute/transform signatures and known nondeterministic metadata.
+boundary: Existing loft helpers are reusable building blocks, not an implemented generic ship compiler.
+consumers:
+- blender
+- ships
+rules:
+- ship-rule.local-regeneration

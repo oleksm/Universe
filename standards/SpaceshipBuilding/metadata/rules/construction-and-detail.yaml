@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schema/ship-rule.schema.yaml
+identity:
+  key: ship-rule.construction-and-detail
+  name: Construction and detail hierarchy
+  about: Resolve structural masses and openings before surface detail; detail must explain use or construction.
+status: draft
+implementation: proposed
+owner: blender
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 3.6 Establish readable construction without false engineering claims
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+statement: 'Resolve structural masses and openings before surface detail; detail must explain use or construction.
+
+
+  Primary structure and openings precede decorative detail. Each substantial external part should have an intelligible
+  attachment path, and each service opening should correspond to access or an explicitly aesthetic purpose.
+  “Looks manufactured” is a visual criterion; actual strength, pressure, thermal and propulsion performance
+  require their own evidence.
+
+
+  Use three detail levels: primary masses/negative spaces, secondary armour/openings/attachments, and tertiary
+  seams/fasteners/markings. No fixed percentage is prescribed. Leave restrained areas deliberately clean. A
+  detail that changes the visible outline at the target distance belongs to silhouette review regardless of
+  its nominal category.'
+applies_to:
+- Establish readable construction without false engineering claims
+verification:
+- Trace substantial external parts to support.
+- Do not use visual manufacture cues as proof of pressure, strength or thermal capacity.
+limitations:
+- This is a reusable workflow definition, not a ship approval or evidence that a proposed tool exists.
+related: []

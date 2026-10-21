@@ -1,0 +1,219 @@
+status: Registry definition validation and section coverage review passed; pilot checks remain definitions, not executed results
+source_sha256: d3b3b69f9c612a883b22bf260058bf513038767014b83fb6d7543a48ed1511e0
+root: standards/SpaceshipBuilding
+coverage:
+- source_section: '1.1'
+  source_title: Scope and intended outcome
+  records:
+  - ship-rule.scope
+- source_section: '1.2'
+  source_title: Findings that shape the proposal
+  records:
+  - ship-rule.research-basis
+- source_section: '1.3'
+  source_title: What exists and what this proposal adds
+  records:
+  - ship-rule.capability-boundaries
+- source_section: '2.1'
+  source_title: Separate family, type and instance
+  records:
+  - ship-rule.family-type-instance
+- source_section: '2.2'
+  source_title: Keep three complementary specification layers
+  records:
+  - ship-artifact.requirements
+  - ship-artifact.assumptions
+  - ship-rule.specification-layers
+- source_section: '2.3'
+  source_title: Establish authority before generating geometry
+  records:
+  - ship-rule.authority
+  - ship-decision.identity
+  - ship-decision.design-change
+  - ship-decision.release
+- source_section: '2.4'
+  source_title: Add an authoring sidecar, not another runtime format
+  records:
+  - ship-artifact.authoring-sidecar
+  - ship-rule.runtime-compatibility
+- source_section: '2.5'
+  source_title: Use IDs to connect prose, geometry and evidence
+  records:
+  - ship-rule.traceability
+- source_section: '3.1'
+  source_title: Build a reference atlas with confidence labels
+  records:
+  - ship-artifact.reference-atlas
+  - ship-stage.references
+- source_section: '3.2'
+  source_title: Compare a small set of coherent silhouettes
+  records:
+  - ship-artifact.silhouette-study
+  - ship-stage.silhouette
+  - ship-decision.silhouette
+- source_section: '3.3'
+  source_title: Define named regions and shared boundaries
+  records:
+  - ship-artifact.region-spec
+  - ship-artifact.interfaces
+  - ship-rule.region-ownership
+- source_section: '3.4'
+  source_title: Author stations, profiles and guide curves
+  records:
+  - ship-rule.hull-sections
+  - ship-stage.architecture
+- source_section: '3.5'
+  source_title: Co-design cockpit, routes and hull
+  records:
+  - ship-artifact.spatial-layout
+  - ship-stage.architecture
+  - ship-check.inhabitation
+- source_section: '3.6'
+  source_title: Establish readable construction without false engineering claims
+  records:
+  - ship-rule.construction-and-detail
+- source_section: '4.1'
+  source_title: Use explicit local and global frames
+  records:
+  - ship-artifact.interfaces
+  - ship-check.raw-port-frames
+  - ship-rule.coordinate-profiles
+- source_section: '4.2'
+  source_title: Resolve the complete ramp and landing mechanism
+  records:
+  - ship-artifact.mechanism-spec
+  - ship-stage.mechanisms
+  - ship-check.motion-coverage
+- source_section: '4.3'
+  source_title: Keep physical attachment and visual adjacency separate
+  records:
+  - ship-rule.attachment-qualification
+- source_section: '4.4'
+  source_title: Maintain separate representations
+  records:
+  - ship-rule.representations
+- source_section: '4.5'
+  source_title: Set budgets against a named workload
+  records:
+  - ship-artifact.performance-budget
+  - ship-check.performance
+- source_section: '4.6'
+  source_title: Build surfaces from material roles and readable scale
+  records:
+  - ship-rule.materials-and-surfaces
+  - ship-check.material-export
+- source_section: '5.1'
+  source_title: Use the existing release state machine
+  records:
+  - ship-rule.lifecycle
+  - ship-stage.brief
+  - ship-stage.references
+  - ship-stage.silhouette
+  - ship-stage.architecture
+  - ship-stage.mechanisms
+  - ship-stage.design-lock
+  - ship-stage.production
+  - ship-stage.release
+  - ship-stage.integration
+- source_section: '5.2'
+  source_title: Compile a dependency DAG for local regeneration
+  records:
+  - ship-artifact.build-inputs
+  - ship-rule.local-regeneration
+- source_section: '5.3'
+  source_title: Define bounded AI task packets
+  records:
+  - ship-artifact.task-packet
+- source_section: '5.4'
+  source_title: Invalidate only evidence that depends on the change
+  records:
+  - ship-rule.evidence-invalidation
+- source_section: '5.5'
+  source_title: Record defects and recover without endless regeneration
+  records:
+  - ship-artifact.defect-record
+  - ship-rule.recovery
+- source_section: '6.1'
+  source_title: Use a complete evidence checklist
+  records:
+  - ship-check.requirements
+  - ship-check.identity
+  - ship-check.hull-geometry
+  - ship-check.mesh-integrity
+  - ship-check.inhabitation
+  - ship-check.construction
+  - ship-check.motion-coverage
+  - ship-check.material-export
+  - ship-check.raw-port-frames
+  - ship-check.assembly
+  - ship-check.runtime
+  - ship-check.release
+- source_section: '6.2'
+  source_title: Store enough evidence to reproduce a result
+  records:
+  - ship-artifact.evidence
+  - ship-rule.claim-boundaries
+- source_section: '6.3'
+  source_title: Reuse verified command entry points carefully
+  records:
+  - ship-rule.existing-tools
+- source_section: '6.4'
+  source_title: Freeze releases and retain their provenance
+  records:
+  - ship-artifact.release-package
+  - ship-decision.release
+  - ship-rule.immutable-release
+- source_section: '7.1'
+  source_title: Proposed pilot scope
+  records:
+  - ship-rule.pilot-scope
+- source_section: '7.2'
+  source_title: Pilot acceptance tests
+  records:
+  - ship-check.pilot-01
+  - ship-check.pilot-02
+  - ship-check.pilot-03
+  - ship-check.pilot-04
+  - ship-check.pilot-05
+  - ship-check.pilot-06
+  - ship-check.pilot-07
+  - ship-check.pilot-08
+  - ship-check.pilot-09
+  - ship-check.pilot-10
+  - ship-check.pilot-11
+  - ship-check.pilot-12
+  - ship-check.pilot-13
+  - ship-check.pilot-14
+  - ship-check.pilot-15
+  - ship-check.pilot-16
+- source_section: '7.3'
+  source_title: Implement in phases with measurable exits
+  records:
+  - ship-rule.implementation-phases
+- source_section: '7.4'
+  source_title: Decisions still needed and proposed defaults
+  records:
+  - ship-decision.pilot-brief
+  - ship-decision.crew-fixtures
+  - ship-decision.landing-environment
+  - ship-decision.sidecar-contract
+  - ship-decision.coordinate-profile
+  - ship-decision.runtime-target
+  - ship-decision.budgets
+  - ship-decision.engineering-depth
+  - ship-decision.autonomy
+  - ship-decision.silhouette
+sources_section:
+  source_section: '8'
+  destination: ship-rule.research-basis plus sources on every definition
+refinements:
+- Decision definitions describe who may decide and what evidence is required; they are not approvals for any ship.
+- Check definitions name method, expected evidence, failure handling and responsible consumer; no pass result may
+  be inferred from defining a check.
+- Stage prerequisites form a DAG; revision/rework transitions may loop without changing prerequisite graph.
+- Sidecar examples are authoring proposals, not changes to the existing runtime ship schema.
+- Do not expose local private agent review paths as required runtime dependencies; retain public-safe summaries
+  of lessons.
+source_document_in_registry: docs/spaceship-building-workflow-proposal.md
+source_sha256_basis: Original proposal bytes before provenance/path normalization; not the archived normalized copy.
+normalized_document_sha256: 2902d7008e38e75d7df0e9949190c280585775ad47350e8a020542f5e027048f

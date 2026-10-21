@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/ship-decision.schema.yaml
+identity:
+  key: ship-decision.runtime-target
+  name: Runtime feature target
+  about: Reusable decision definition, not a selected design value or approval.
+status: draft
+implementation: proposed
+owner: engine
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 7.4 Decisions still needed and proposed defaults
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+question: Which consumer features must the pilot actually demonstrate?
+proposed_default: Minimal supported walking and motion prototype, with engine-owned evidence.
+affects:
+- Decisions still needed and proposed defaults
+resolution: The responsible role records the actual choice, authority/delegation, candidate inputs, evidence
+  and affected requirements in project files; unresolved essential decisions block dependent work.
+rules:
+- ship-rule.authority
+- ship-rule.claim-boundaries

@@ -1,0 +1,124 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Ship Workflow Artifact
+x-kind:
+- ship-artifact
+description: 'standards/SpaceshipBuilding/metadata/artifacts/<name>.yaml: reusable
+  workflow definitions, never ship instances or runtime state.'
+type: object
+additionalProperties: false
+required:
+- identity
+- status
+- implementation
+- owner
+- sources
+- purpose
+- contents
+- boundary
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required:
+    - key
+    - name
+    - about
+    properties:
+      key:
+        $ref: ../../common.schema.yaml#/definitions/key
+      name:
+        type: string
+        minLength: 1
+        description: Name of the workflow definition.
+      about:
+        type: string
+        minLength: 1
+        description: What this definition means; not a ship instance.
+  status:
+    enum:
+    - draft
+    - published
+    - retired
+  implementation:
+    enum:
+    - proposed
+    - existing
+    - mixed
+    description: Whether the described capability exists; publishing a definition
+      does not implement it.
+  owner: &id001
+    enum:
+    - owner
+    - ships
+    - registry
+    - blender
+    - engine
+    - installer
+    description: Responsible role; existing delegation still applies.
+  sources:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required:
+      - document
+      - section
+      properties:
+        document:
+          type: string
+          minLength: 1
+          description: Source URL or repository path.
+        section:
+          type: string
+          minLength: 1
+          description: Source section or anchor.
+        note:
+          type: string
+          minLength: 1
+          description: Scope, historical context or limits of the source.
+  limitations:
+    type: array
+    minItems: 1
+    items:
+      type: string
+      minLength: 1
+    description: What this definition does not establish.
+  rules:
+    type: array
+    items:
+      type: string
+      x-ref:
+      - ship-rule
+  purpose:
+    type: string
+    minLength: 1
+    description: Question answered by this artifact.
+  contents:
+    type: array
+    minItems: 1
+    items:
+      type: string
+      minLength: 1
+    description: Required authored information; actual values live in project files.
+  boundary:
+    type: string
+    minLength: 1
+    description: Authority and ownership boundary, including relationship to existing
+      runtime and release formats.
+  consumers:
+    type: array
+    minItems: 1
+    items: *id001
+  depends_on:
+    type: array
+    items:
+      type: string
+      x-ref:
+      - ship-artifact
+  checks:
+    type: array
+    items:
+      type: string
+      x-ref:
+      - ship-check

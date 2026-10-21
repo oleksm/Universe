@@ -1,0 +1,77 @@
+# yaml-language-server: $schema=../../schema/ship-rule.schema.yaml
+identity:
+  key: ship-rule.lifecycle
+  name: Workflow lifecycle
+  about: Use design gates inside the existing delivery progression, with blocked as an overlay and integration
+    separate from installation.
+status: draft
+implementation: mixed
+owner: ships
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 5.1 Use the existing release state machine
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+statement: 'Use design gates inside the existing delivery progression, with blocked as an overlay and integration
+  separate from installation.
+
+
+  Retain the existing outer progression: **Proposed → Approved → Building → Optimizing → QC passed → Accepted
+  → Installed**. Inside it, the ship has design gates and region/check states. `blocked` is an overlay with
+  a reason, owner and recovery action; it does not erase the last good candidate. Installation is distinct
+  from consumer validation. (Asset-delivery workflow (external installed workflow reference: `freefall-asset-delivery/SKILL.md`;
+  not bundled))
+
+
+  | Gate | Entry condition | Exit evidence and decision | Failure/rollback |
+
+  |---|---|---|---|
+
+  | G0 brief | Authorized design study | Role, identity, scope, unknowns and success tests recorded | Resolve
+  missing essential input; no detailed build |
+
+  | G1 references | Brief accepted or delegated | Annotated atlas; conflicts and inferred views declared |
+  Return disputed feature to owner interpretation |
+
+  | G2 silhouette | Coherent reference interpretation | Comparable blockouts; selected candidate and landmarks
+  | Retain alternatives; discard no source |
+
+  | G3 architecture | Selected silhouette | Sections, cockpit fixtures, task routes, equipment allocations
+  | Reopen affected shape/arrangement only |
+
+  | G4 mechanisms | Openings and interfaces defined | State storyboard, supports, pose checks and limitations
+  | Roll back mechanism candidate; preserve shell baseline |
+
+  | G5 design lock | Functional blockout accepted | Primary/secondary form reviewed in full context | Reopen
+  visual gate if identity changes |
+
+  | G6 production | Stable form and component ownership | Evaluated geometry, materials, budgets, collision
+  and export | Repair the owning region; invalidate dependents |
+
+  | G7 release | Current source/export evidence | Exact-candidate acceptance and immutable package | New candidate
+  required after content changes |
+
+  | G8 integration | Installed package and compatible consumer | Actual placement, walking, playback and GPU
+  evidence | Keep package status separate from runtime failure |
+
+
+  The owner normally chooses identity, silhouette and significant arrangement/mechanism trade-offs. Explicit
+  delegation can cover other gates or predefine acceptable outcomes. Routine repairs proceed autonomously inside
+  approved constraints. A gate is not an excuse to ask permission for every bevel, nor to continue through
+  a newly discovered fundamental design fork.'
+applies_to:
+- Use the existing release state machine
+verification:
+- Prerequisite graph is acyclic; named rework returns do not redefine dependency edges.
+- Acceptance binds exact candidate evidence and does not imply runtime qualification.
+limitations:
+- This is a reusable workflow definition, not a ship approval or evidence that a proposed tool exists.
+related:
+- ship-stage.architecture
+- ship-stage.brief
+- ship-stage.design-lock
+- ship-stage.integration
+- ship-stage.mechanisms
+- ship-stage.production
+- ship-stage.references
+- ship-stage.release
+- ship-stage.silhouette

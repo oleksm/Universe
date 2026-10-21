@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../../schema/ship-stage.schema.yaml
+identity:
+  key: ship-stage.architecture
+  name: G3 Architecture
+  about: Reusable G3 Architecture gate; prerequisite order does not pre-approve any ship.
+status: draft
+implementation: mixed
+owner: ships
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 5.1 Use the existing release state machine
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+order: 3
+depends_on:
+- ship-stage.silhouette
+entry:
+- Selected silhouette, declared fixtures and reusable-equipment choices.
+exit:
+- Sections, task routes, pilot space and equipment allocation satisfy the declared scope.
+failure:
+- Reopen the affected shape/arrangement only; keep approved unrelated regions.
+inputs:
+- ship-artifact.silhouette-study
+- ship-artifact.requirements
+outputs:
+- ship-artifact.region-spec
+- ship-artifact.interfaces
+- ship-artifact.spatial-layout
+- ship-artifact.build-inputs
+checks:
+- ship-check.hull-geometry
+- ship-check.inhabitation
+- ship-check.assembly
+rules:
+- ship-rule.lifecycle
+- ship-rule.authority
+- ship-rule.claim-boundaries
+decision: Carry existing authorization/delegation forward. Owner resolves identity and major aesthetic/scope
+  forks; technical roles resolve routine repairs within those constraints.

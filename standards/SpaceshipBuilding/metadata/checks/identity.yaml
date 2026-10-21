@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schema/ship-check.schema.yaml
+identity:
+  key: ship-check.identity
+  name: Reference and identity review
+  about: Reference and identity review for an exact candidate; this record defines the check, not its result.
+status: draft
+implementation: mixed
+owner: owner
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 3.1 Build a reference atlas with confidence labels
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 3.2 Compare a small set of coherent silhouettes
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 6.1 Use a complete evidence checklist
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+method:
+- Compare registered full-ship views and protected landmarks against the selected candidate.
+- Inspect thumbnail silhouette and declared camera distances; expose inferred reference regions.
+evidence:
+- Decision packet, views, reference provenance and owner/delegate decision bound to candidate.
+failure: Retain the failing witness and last passing candidate. Block only dependent claims/stages; repair
+  or obtain the missing decision, then rerun affected checks.
+scope: visual
+artifacts:
+- ship-artifact.reference-atlas
+- ship-artifact.silhouette-study
+coverage: Scope is the declared candidate, inputs, methods and consumer features. No engineering or unsampled/runtime
+  claim is inferred.
+rules:
+- ship-rule.claim-boundaries

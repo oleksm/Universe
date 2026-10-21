@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/ship-check.schema.yaml
+identity:
+  key: ship-check.release
+  name: Exact candidate release acceptance
+  about: Exact candidate release acceptance for an exact candidate; this record defines the check, not its
+    result.
+status: draft
+implementation: mixed
+owner: installer
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 6.1 Use a complete evidence checklist
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 6.4 Freeze releases and retain their provenance
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+method:
+- Verify all required evidence is current for the frozen inputs and honest claim scope.
+- Run existing precheck/installer, compare accepted hashes and record package/version plus pending consumer
+  checks.
+evidence:
+- Hash-bound acceptance, precheck output, immutable manifest and validation handoff.
+failure: Retain the failing witness and last passing candidate. Block only dependent claims/stages; repair
+  or obtain the missing decision, then rerun affected checks.
+scope: release
+artifacts:
+- ship-artifact.evidence
+- ship-artifact.release-package
+coverage: Scope is the declared candidate, inputs, methods and consumer features. No engineering or unsampled/runtime
+  claim is inferred.
+rules:
+- ship-rule.claim-boundaries

@@ -993,7 +993,7 @@ for ad in administrations:
 bodies, standards = [], []
 for name in sorted(os.listdir(TREE)):
     folder = os.path.join(TREE, name)
-    if not os.path.isdir(folder) or name in ("schema", "sources", HOUSE, LOCAL, "Celestial", "Dogma", "People", "Engine", "PlanetSim", "PlanetLOD"):
+    if not os.path.isdir(folder) or name in ("schema", "sources", HOUSE, LOCAL, "Celestial", "Dogma", "People", "Engine", "PlanetSim", "PlanetLOD", "SpaceshipBuilding"):
         continue
     # (The body's own file: named after its folder, SFO/metadata/SFO.yaml.)
     meta_path = os.path.join(folder, "metadata", name + ".yaml")
@@ -2683,13 +2683,18 @@ _REG = [("mounts", "Mounts", "SFO", os.path.join("SFO", "metadata", "mounts"), "
         ("planet-targets", "Targets", "PlanetSim", os.path.join("PlanetSim", "metadata", "targets"), "PlanetSim/schema/planet-target.schema.yaml", None),
         ("planet-gates", "Run gates", "PlanetSim", os.path.join("PlanetSim", "metadata", "gates"), "PlanetSim/schema/planet-gate.schema.yaml", None),
         ("planet-run-profiles", "Run profiles", "PlanetSim", os.path.join("PlanetSim", "metadata", "run-profiles"), "PlanetSim/schema/planet-run-profile.schema.yaml", None),
-        ("planet-objects", "Data model", "PlanetSim", os.path.join("PlanetSim", "metadata", "objects"), "PlanetSim/schema/planet-object.schema.yaml", None)]
+        ("planet-objects", "Data model", "PlanetSim", os.path.join("PlanetSim", "metadata", "objects"), "PlanetSim/schema/planet-object.schema.yaml", None),
+        ("ship-stages", "Design stages", "SpaceshipBuilding", os.path.join("SpaceshipBuilding", "metadata", "stages"), "SpaceshipBuilding/schema/ship-stage.schema.yaml", None),
+        ("ship-artifacts", "Authoring artifacts", "SpaceshipBuilding", os.path.join("SpaceshipBuilding", "metadata", "artifacts"), "SpaceshipBuilding/schema/ship-artifact.schema.yaml", None),
+        ("ship-checks", "Verification checks", "SpaceshipBuilding", os.path.join("SpaceshipBuilding", "metadata", "checks"), "SpaceshipBuilding/schema/ship-check.schema.yaml", None),
+        ("ship-rules", "Workflow rules", "SpaceshipBuilding", os.path.join("SpaceshipBuilding", "metadata", "rules"), "SpaceshipBuilding/schema/ship-rule.schema.yaml", None),
+        ("ship-decisions", "Open decision types", "SpaceshipBuilding", os.path.join("SpaceshipBuilding", "metadata", "decisions"), "SpaceshipBuilding/schema/ship-decision.schema.yaml", None)]
 for _kind, _title, _root, _dir, _schema, _std in _REG:
     _recs = []
     for _f in sorted(glob.glob(os.path.join(TREE, _dir, "**", "*.yaml"), recursive=True)):      # (the Planet Simulator's patterns lie in a folder a family)
         _r = yaml.safe_load(open(_f, encoding="utf-8")) or {}
         _idn = _r.get("identity") if isinstance(_r.get("identity"), dict) else _r
-        _slug = _idn.get("key", "").split(".", 1)[1] if _root in ("PlanetSim", "PlanetLOD") and "." in _idn.get("key", "") else os.path.basename(_f)[:-5]
+        _slug = _idn.get("key", "").split(".", 1)[1] if _root in ("PlanetSim", "PlanetLOD", "SpaceshipBuilding") and "." in _idn.get("key", "") else os.path.basename(_f)[:-5]
         _r["slug"], _r["key"], _r["name"], _r["file"] = _slug, _idn.get("key", ""), _idn.get("name", os.path.basename(_f)[:-5]), os.path.relpath(_f, TREE)
         _recs.append(_r)
         if _r["key"]:
@@ -3222,7 +3227,7 @@ def write_html():
         # (Each property's unit or note, from the schemas.)
         "element_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["elements"]["properties"].items() if "properties" in d},
         "material_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["materials"]["properties"].items() if "properties" in d},
-        "registers": REGISTERS, "roots": {r_: {"name": (yaml.safe_load(open(os.path.join(TREE, r_, "metadata", r_ + ".yaml"))) or {})["identity"]["name"], "note": (yaml.safe_load(open(os.path.join(TREE, r_, "metadata", r_ + ".yaml"))) or {}).get("note", "")} for r_ in ("PlanetSim", "PlanetLOD")},
+        "registers": REGISTERS, "roots": {r_: {"name": (yaml.safe_load(open(os.path.join(TREE, r_, "metadata", r_ + ".yaml"))) or {})["identity"]["name"], "note": (yaml.safe_load(open(os.path.join(TREE, r_, "metadata", r_ + ".yaml"))) or {}).get("note", "")} for r_ in ("PlanetSim", "PlanetLOD", "SpaceshipBuilding")},
         "register_groups": REGISTER_GROUPS,
         "key_pages": KEY_PAGES,
         "standards": sorted(standards, key=lambda s: (s["body"], s["number"])),

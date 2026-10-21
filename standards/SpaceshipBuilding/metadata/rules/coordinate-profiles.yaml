@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=../../schema/ship-rule.schema.yaml
+identity:
+  key: ship-rule.coordinate-profiles
+  name: Explicit coordinate profiles
+  about: Declare source, region, module, joint and port frames; verify raw accumulated export frames independently.
+status: draft
+implementation: mixed
+owner: blender
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 4.1 Use explicit local and global frames
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+statement: 'Declare source, region, module, joint and port frames; verify raw accumulated export frames independently.
+
+
+  The proposed pilot authoring profile uses metres, +X right, +Y forward and +Z up; its runtime mapping is
+  `(x,z,-y)`. This is a named profile, not a universal assumption about every existing Blender file. MC-07
+  has a rotated root, and equipment has its own mount frames. A region''s local frame, ship frame, module frame,
+  hinge frame and port frame must be distinguishable.
+
+
+  A port/interface record includes stable ID, kind, owning rigid part, parent frame, origin, full orientation
+  including roll, mating role, registry key where applicable, permitted transform, occupied envelope and access
+  envelope. Surface boundaries, service connections and structural joints must not share an undifferentiated
+  “socket” type. Exported names are required to be unique under this workflow even though glTF itself does
+  not guarantee name uniqueness. ([Khronos glTF specification](https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html))
+
+
+  Existing equipment mounting uses `hull_placement * hull_mount * inverse(primary_model_mount)`, without arbitrary
+  bounds centering or scale. The workflow must preserve that consumer-specific behavior. A generic centering
+  convenience must not move a physical attachment datum. (Equipment mounting contract (external repository
+  `universe-ships:docs/equipment-mounting.md`))
+
+
+  Use an asymmetric calibration fixture with labelled axes, known distances, an off-axis port and a rotated
+  parent. Verify source coordinates, accumulated raw-GLB transforms and actual consumer placement. Check orientation
+  and handedness as well as positions. The independent checker should not reuse the same transformation function
+  as the exporter it is testing.'
+applies_to:
+- Use explicit local and global frames
+verification:
+- Use an asymmetric rotated-parent fixture.
+- Verify roll and facing as well as position; preserve the primary mount transform rather than centering bounds.
+limitations:
+- This is a reusable workflow definition, not a ship approval or evidence that a proposed tool exists.
+related:
+- ship-artifact.interfaces
+- ship-check.raw-port-frames

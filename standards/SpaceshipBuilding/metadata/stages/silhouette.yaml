@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../schema/ship-stage.schema.yaml
+identity:
+  key: ship-stage.silhouette
+  name: G2 Silhouette
+  about: Reusable G2 Silhouette gate; prerequisite order does not pre-approve any ship.
+status: draft
+implementation: mixed
+owner: owner
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 5.1 Use the existing release state machine
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+order: 2
+depends_on:
+- ship-stage.references
+entry:
+- Coherent reference interpretation and rough functional occupancy available.
+exit:
+- One coherent alternative selected with registered views and protected landmarks.
+failure:
+- Keep alternatives; do not erase prior source or mix incompatible features silently.
+inputs:
+- ship-artifact.reference-atlas
+- ship-artifact.requirements
+outputs:
+- ship-artifact.silhouette-study
+checks:
+- ship-check.identity
+rules:
+- ship-rule.lifecycle
+- ship-rule.authority
+- ship-rule.claim-boundaries
+decision: Carry existing authorization/delegation forward. Owner resolves identity and major aesthetic/scope
+  forks; technical roles resolve routine repairs within those constraints.

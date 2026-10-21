@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=../../schema/ship-rule.schema.yaml
+identity:
+  key: ship-rule.recovery
+  name: Bounded repairs and recovery
+  about: Preserve the last passing candidate and retain defect witnesses; change approach after repeated failed
+    repair.
+status: draft
+implementation: mixed
+owner: blender
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 5.5 Record defects and recover without endless regeneration
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+statement: 'Preserve the last passing candidate and retain defect witnesses; change approach after repeated
+  failed repair.
+
+
+  A defect record names failing requirement/check, affected objects, geometric witness or pose, expected and
+  observed result, severity, suspected cause and repair scope. Keep the last passing candidate. After two unsuccessful
+  attempts at the same defect, change the approach materially or report the precise missing decision; do not
+  spend repeated cycles reproducing the same failure.
+
+
+  Before opening or rebuilding a live scene, preserve unsaved work. Keep one active candidate visible in Blender.
+  Background builds must not reset the live session. On crash, recover from pinned inputs and the last complete
+  candidate, verify package/index state before resuming and avoid overwriting a release to “finish” an interrupted
+  operation.'
+applies_to:
+- Record defects and recover without endless regeneration
+verification:
+- After two unsuccessful attempts, materially change the approach or name the missing decision; this is a proposed
+  workflow limit.
+- Interrupted builds cannot overwrite accepted releases; unsaved live work is preserved.
+limitations:
+- This is a reusable workflow definition, not a ship approval or evidence that a proposed tool exists.
+related:
+- ship-artifact.defect-record

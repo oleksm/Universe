@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=../../schema/ship-artifact.schema.yaml
+identity:
+  key: ship-artifact.evidence
+  name: Candidate evidence record
+  about: What was tested against which exact inputs?
+status: draft
+implementation: mixed
+owner: blender
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 6.2 Store enough evidence to reproduce a result
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+purpose: What was tested against which exact inputs?
+contents:
+- Check/requirement IDs, candidate, source/spec/script/export hashes and frame profile.
+- Command/arguments, timestamp, reviewer, method, tolerance authority and measured result.
+- Worst-case witness, images, coverage/exclusions and pending/pass/fail/blocked/stale/not-applicable reason.
+- Separate geometry/package/placement/runtime/engineering claim states; explicit waiver owner and invalidation.
+boundary: The existing delivery workflow owns acceptance state. This artifact definition is not an evidence
+  instance.
+consumers:
+- blender
+- ships
+rules:
+- ship-rule.claim-boundaries
+- ship-rule.evidence-invalidation
+checks:
+- ship-check.mesh-integrity
+- ship-check.motion-coverage
+- ship-check.release
+- ship-check.pilot-01
+- ship-check.pilot-02
+- ship-check.pilot-03
+- ship-check.pilot-04
+- ship-check.pilot-05
+- ship-check.pilot-06
+- ship-check.pilot-07
+- ship-check.pilot-08
+- ship-check.pilot-09
+- ship-check.pilot-10
+- ship-check.pilot-11
+- ship-check.pilot-12
+- ship-check.pilot-13
+- ship-check.pilot-14
+- ship-check.pilot-15
+- ship-check.pilot-16

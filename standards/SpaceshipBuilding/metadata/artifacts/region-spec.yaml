@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schema/ship-artifact.schema.yaml
+identity:
+  key: ship-artifact.region-spec
+  name: Region source contract
+  about: What can a local build change and what must it preserve?
+status: draft
+implementation: proposed
+owner: blender
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 3.3 Define named regions and shared boundaries
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 3.4 Author stations, profiles and guide curves
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+purpose: What can a local build change and what must it preserve?
+contents:
+- Stable region ID, source kind/path, owned collections, manual inputs and pinned hashes.
+- Semantic stations, profile correspondence, guide curves, protected landmarks and permitted ranges.
+- Shared boundary owners, read-only neighbors, interfaces and keep-in/out volumes.
+- Requirements, material roles, cost/accounting ownership and acceptance views/checks.
+boundary: A generator may mutate only its owned output. A topology transition requires explicit design treatment.
+consumers:
+- blender
+- ships
+rules:
+- ship-rule.hull-sections
+- ship-rule.region-ownership
+checks:
+- ship-check.hull-geometry
+- ship-check.mesh-integrity
+- ship-check.construction
+- ship-check.material-export

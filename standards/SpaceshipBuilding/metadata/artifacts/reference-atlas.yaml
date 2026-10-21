@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=../../schema/ship-artifact.schema.yaml
+identity:
+  key: ship-artifact.reference-atlas
+  name: Annotated reference atlas
+  about: Which observed features control the design and which are inferred?
+status: draft
+implementation: proposed
+owner: blender
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 3.1 Build a reference atlas with confidence labels
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+purpose: Which observed features control the design and which are inferred?
+contents:
+- Source URLs or file hashes, provenance, crop, camera, scale cues and controlled regions.
+- Observed, inferred, owner-selected and unresolved labels per feature.
+- Borrowed and excluded traits, contradictory views and rights/attribution.
+- Coherent rendered baseline views from the actual blockout.
+- 'Detailed authored information and examples:
+
+  Each reference entry records its source URL or file hash, provenance, crop, visible camera, scale cues, controlled
+  regions, borrowed features and excluded features. Label statements as **observed**, **inferred**, **owner-selected**
+  or **unresolved**. A visible canopy profile is observed; a hidden rear bulkhead reconstructed from it is
+  inferred. Record contradictions rather than averaging them invisibly.
+
+
+  An atlas contains whole-ship silhouettes, cockpit treatment, neck/shoulder transitions, central sections,
+  belly access, stern and equipment attachment. A source can inform one feature without dictating the whole
+  ship. Rights and attribution must be retained for references used in public deliverables; “inspired by” does
+  not establish permission to redistribute source artwork.
+
+
+  Generated images can explore mood or annotate a proposed paintover. Independently generated top, side and
+  front pictures do not establish one consistent object. Once a blockout exists, its own rendered views become
+  the geometric baseline. Further image studies use those views so a new concept does not quietly invent different
+  engine spacing or internal volume.'
+boundary: Reference imagery does not establish hidden geometry or a qualified design.
+consumers:
+- blender
+- ships
+rules:
+- ship-rule.research-basis
+checks:
+- ship-check.identity

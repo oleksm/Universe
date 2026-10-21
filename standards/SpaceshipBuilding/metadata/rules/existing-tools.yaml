@@ -1,0 +1,54 @@
+# yaml-language-server: $schema=../../schema/ship-rule.schema.yaml
+identity:
+  key: ship-rule.existing-tools
+  name: Verified tool entry points
+  about: Use maintained existing CLIs for their actual scope; new sidecar and regional commands remain proposed.
+status: draft
+implementation: mixed
+owner: blender
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 6.3 Reuse verified command entry points carefully
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+statement: 'Use maintained existing CLIs for their actual scope; new sidecar and regional commands remain proposed.
+
+
+  The following are existing local entry points documented or inspected during research. They were **not run
+  for this proposal**. Substitute actual candidate paths and inspect the current CLI help before execution;
+  this document does not authorize installation.
+
+
+  ```bash
+
+  # Run from external repository universe-ships:
+
+  cargo run --bin freefall-studio -- --validate-ship /absolute/design.ship.yaml
+
+
+  # Run from registry repository:
+
+  python tools/standards/next_asset.py --key template.run-clip --json
+
+  python tools/standards/precheck_model.py /absolute/candidate/delivery.yaml
+
+
+  # Existing independent registry-port checker (its registry-record scope matters):
+
+  python external repository blender/physical-mounts/check_ports.py   /absolute/model.glb /absolute/reference-record.yaml
+
+  ```
+
+
+  The first command validates the existing ship document, not the proposed sidecar. The port checker provides
+  an established independent test pattern, not a generic parser for proposed ship interfaces. A new sidecar
+  validator, region-build command, camera-regression command and whole-ship runtime harness remain implementation
+  tasks. Their flags must be designed and tested rather than invented here as working commands.'
+applies_to:
+- Reuse verified command entry points carefully
+verification:
+- Read current CLI help before execution.
+- A ship-document validator does not validate proposed authoring sidecars; raw port checker scope is a registry
+  record.
+limitations:
+- This is a reusable workflow definition, not a ship approval or evidence that a proposed tool exists.
+related: []

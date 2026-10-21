@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=../../schema/ship-check.schema.yaml
+identity:
+  key: ship-check.construction
+  name: Construction and attachment continuity
+  about: Construction and attachment continuity for an exact candidate; this record defines the check, not
+    its result.
+status: draft
+implementation: mixed
+owner: blender
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 3.6 Establish readable construction without false engineering claims
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 4.3 Keep physical attachment and visual adjacency separate
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 6.1 Use a complete evidence checklist
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+method:
+- Trace each component to a support and compatible interface.
+- Verify intended contact at joint surfaces separately from collision; check actual frame allocation and accounting
+  ownership.
+evidence:
+- Contact/access witnesses, interface references, BOM ownership and qualified/unqualified links.
+failure: Retain the failing witness and last passing candidate. Block only dependent claims/stages; repair
+  or obtain the missing decision, then rerun affected checks.
+scope: construction
+artifacts:
+- ship-artifact.interfaces
+- ship-artifact.region-spec
+coverage: Scope is the declared candidate, inputs, methods and consumer features. No engineering or unsampled/runtime
+  claim is inferred.
+rules:
+- ship-rule.claim-boundaries

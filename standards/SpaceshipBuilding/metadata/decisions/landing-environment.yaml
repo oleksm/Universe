@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/ship-decision.schema.yaml
+identity:
+  key: ship-decision.landing-environment
+  name: Environment and landing stance
+  about: Reusable decision definition, not a selected design value or approval.
+status: draft
+implementation: proposed
+owner: ships
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 7.4 Decisions still needed and proposed defaults
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+question: What environment and ground stance must mechanisms satisfy?
+proposed_default: One declared nominal condition for the first pilot; expand only with explicit scope.
+affects:
+- Decisions still needed and proposed defaults
+resolution: The responsible role records the actual choice, authority/delegation, candidate inputs, evidence
+  and affected requirements in project files; unresolved essential decisions block dependent work.
+rules:
+- ship-rule.authority
+- ship-rule.claim-boundaries

@@ -1,0 +1,57 @@
+{
+  "base_main": "5b013aa7bd67df33c7686554ae08b807c5241ff0",
+  "source": "78643bf2124e63342c53d29b73eec83c802f5e78",
+  "content_commit": "ec25d694",
+  "tested_tree": "b390b9dde0ce951d56c6674f60cd8aa4a088fe08",
+  "registry_task": "20261020T223443-registry-3b6e",
+  "status": "passed",
+  "definition_counts": {
+    "stages": 9,
+    "artifacts": 15,
+    "checks": 29,
+    "rules": 24,
+    "decisions": 13
+  },
+  "all_90_definitions_draft": true,
+  "schemas": 5,
+  "rust_code_and_base_content_unchanged": true,
+  "registry_override_used": false,
+  "merge_conflicts": [
+    "standards/index.html"
+  ],
+  "page_resolution": "Regenerated from merged records. Final source adds only a page refresh; its registry/build inputs equal the content cutoff, so the verified generator output was retained.",
+  "checks": [
+    {
+      "command": "python3 tools/standards/build.py",
+      "exit": 0
+    },
+    {
+      "command": "cargo test -p universe-services -p universe-sim -p universe --lib packing",
+      "exit": 0,
+      "passed": 10
+    },
+    {
+      "command": "cargo test --workspace --test celestial",
+      "exit": 0,
+      "passed": 1
+    },
+    {
+      "command": "PYTHONPATH=tools/standards python3 -m unittest test_ship_workflow test_production_chain test_motion_interlocks test_deck_support",
+      "exit": 0,
+      "passed": 20
+    },
+    {
+      "check": "Five generated page registers, all 90 records and representative stage/rule/check links",
+      "passed": true
+    }
+  ],
+  "regression_tests_passed": 31,
+  "boundaries": [
+    "Workflow definitions only; existing .ship.yaml schema unchanged.",
+    "No sidecar, regional compiler, runtime harness or pilot implementation is introduced.",
+    "No design qualification or modelling authorization is created.",
+    "Other held/legacy branches remain excluded.",
+    "Local integration; no push or release installation."
+  ],
+  "supersedes": "The earlier stable integration audit excluded this workflow before its separate delivery; this audit certifies only source 78643bf2."
+}

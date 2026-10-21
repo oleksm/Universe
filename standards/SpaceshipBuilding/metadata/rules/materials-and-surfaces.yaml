@@ -1,0 +1,47 @@
+# yaml-language-server: $schema=../../schema/ship-rule.schema.yaml
+identity:
+  key: ship-rule.materials-and-surfaces
+  name: Materials and surface detail
+  about: Use coherent material roles and choose geometry or supported texture detail according to function
+    and viewing distance.
+status: draft
+implementation: proposed
+owner: blender
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 4.6 Build surfaces from material roles and readable scale
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+statement: 'Use coherent material roles and choose geometry or supported texture detail according to function
+  and viewing distance.
+
+
+  The proposed surface pipeline assigns material roles to each region before making individual shaders: outer
+  hull, armour, structural metal, canopy, interior lining, floor, seals and markings as applicable. A shared
+  PBR baseline defines the approved palette and roughness/metallic behavior, while deliberate regional exceptions
+  remain recorded. Start with simple neutral materials during form reviews; use final lighting and finish only
+  after primary form is stable. Material variation must not conceal unresolved seams or make every region look
+  like a different manufacturer.
+
+
+  Choose the representation of each surface feature deliberately. Openings, deep recesses, silhouette breaks
+  and moving joints require geometry where their function or viewing distance demands it. Shallow panel markings,
+  labels and wear can use textures, trim sheets or decals if the actual exporter and engine support the selected
+  method. UV density and trim reuse should follow viewing distance and material scale, with an agreed reference
+  object for comparison. Avoid baking misleading shadows into a finish to imitate unsupported construction.
+  Decal and texture support are compatibility questions to test, not capabilities asserted by this proposal.
+
+
+  Inspect materials in the source scene, the exported/reimported package and the target renderer. Record color-space
+  handling, normals, transparency, texture dependencies and any substituted shader behavior. Optional wear,
+  fasteners and microdetail must earn their geometry, texture and draw cost through visible improvement at
+  the target camera distances. If a feature disappears in the intended view or obscures a readable construction
+  boundary, omit it or move it to a cheaper supported representation.'
+applies_to:
+- Build surfaces from material roles and readable scale
+verification:
+- Inspect source, export and target renderer separately.
+- Optional detail must justify its measured cost; do not hide broken joints with shading.
+limitations:
+- This is a reusable workflow definition, not a ship approval or evidence that a proposed tool exists.
+related:
+- ship-check.material-export

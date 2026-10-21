@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=../../schema/ship-rule.schema.yaml
+identity:
+  key: ship-rule.traceability
+  name: Stable identifiers and traceability
+  about: Keep stable IDs linking requirements, assumptions, geometry, interfaces, decisions and evidence.
+status: draft
+implementation: proposed
+owner: ships
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 2.5 Use IDs to connect prose, geometry and evidence
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+statement: 'Keep stable IDs linking requirements, assumptions, geometry, interfaces, decisions and evidence.
+
+
+  IDs remain stable when filenames, object ordering or labels change. Suggested namespaces are `REQ-`, `ASM-`,
+  `REF-`, `REG-`, `IF-`, `MECH-`, `CHECK-` and `DEC-`. Runtime instance IDs follow the existing runtime contract;
+  the sidecar records the mapping instead of renaming them casually. Blender collection names are convenient
+  labels, not sufficient identity on their own.
+
+
+  ```yaml
+
+  id: REQ-RAMP-01
+
+  statement: Belly ramp opens forward toward the cockpit.
+
+  kind: identity_and_function
+
+  owner: owner
+
+  status: proposed
+
+  source: illustrative_pilot_brief
+
+  verify: [CHECK-RAMP-DIRECTION, CHECK-ENTRY-ROUTE, CHECK-RAMP-VISUAL]
+
+  related: [REG-BELLY, MECH-RAMP]
+
+  assumptions: [ASM-LANDING-STANCE]
+
+  ```
+
+
+  An identity requirement such as this needs a directional diagram and owner interpretation. It should be decomposed
+  into separate checks for hinge support, passage, ground contact and playback. Otherwise one attractive image
+  could incorrectly satisfy several unrelated claims.'
+applies_to:
+- Use IDs to connect prose, geometry and evidence
+verification:
+- Renaming display labels does not recreate runtime instances.
+- Every geometry requirement maps to current evidence or an explicit blocker.
+limitations:
+- This is a reusable workflow definition, not a ship approval or evidence that a proposed tool exists.
+related: []

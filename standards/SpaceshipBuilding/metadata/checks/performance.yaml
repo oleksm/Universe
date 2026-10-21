@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/ship-check.schema.yaml
+identity:
+  key: ship-check.performance
+  name: Measured workload and LOD
+  about: Measured workload and LOD for an exact candidate; this record defines the check, not its result.
+status: draft
+implementation: mixed
+owner: engine
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 4.5 Set budgets against a named workload
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+method:
+- Measure exported costs and runtime workload at agreed camera paths and settings.
+- Inspect silhouette and mechanism state through LOD transitions; preserve collision and interaction independently.
+evidence:
+- Frame-time/load-cost results, geometry/material/texture counts and transition captures.
+failure: Retain the failing witness and last passing candidate. Block only dependent claims/stages; repair
+  or obtain the missing decision, then rerun affected checks.
+scope: runtime
+artifacts:
+- ship-artifact.performance-budget
+coverage: Scope is the declared candidate, inputs, methods and consumer features. No engineering or unsampled/runtime
+  claim is inferred.
+rules:
+- ship-rule.claim-boundaries

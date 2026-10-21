@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/ship-check.schema.yaml
+identity:
+  key: ship-check.mesh-integrity
+  name: Evaluated mesh integrity
+  about: Evaluated mesh integrity for an exact candidate; this record defines the check, not its result.
+status: draft
+implementation: mixed
+owner: blender
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 6.1 Use a complete evidence checklist
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+method:
+- Classify solids, sheets, intended seams and overlaps before testing.
+- Inspect degenerates, normals, unintended intersections and important Boolean cuts in evaluated/exported geometry.
+evidence:
+- Before/after cut witnesses, geometry statistics and defect list.
+failure: Retain the failing witness and last passing candidate. Block only dependent claims/stages; repair
+  or obtain the missing decision, then rerun affected checks.
+scope: geometry
+artifacts:
+- ship-artifact.region-spec
+- ship-artifact.evidence
+coverage: Scope is the declared candidate, inputs, methods and consumer features. No engineering or unsampled/runtime
+  claim is inferred.
+rules:
+- ship-rule.claim-boundaries
