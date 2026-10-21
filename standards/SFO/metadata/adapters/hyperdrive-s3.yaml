@@ -3,7 +3,7 @@
 identity:
   key: adapter.hyperdrive-s3
   name: Hyperdrive cradle, class 3
-  description: 'Holds what fits mount.hyperdrive-s3 on a ship''s frame: 2 6061 tube 200 x 5 mm beams over the frame''s struts, 1 m or more apart, clamped at the middle of every 1 m, 5 cross tubes, the mount''s 8 sockets on top.'
+  description: 'Holds what fits mount.hyperdrive-s3 on a ship''s frame: 2 6061 tube 200 x 5 mm beams over the frame''s struts, 1 m or more apart, clamped at the middle of every 1 m, 3 cross tubes, the mount''s 8 sockets on top.'
 offers: mount.hyperdrive-s3
 rating:
   tension: 345600.0
@@ -11,9 +11,9 @@ rating:
   shear: 172800.0
 physical:
   length: 4.0
-  width: 3.0
+  width: 3.2
   height: 0.45
-  mass: 227.52
+  mass: 165.18
 built_of:
 - what: Beams
   item: material.aluminium-alloy-6061
@@ -21,12 +21,12 @@ built_of:
   note: 2 of 6061 tube 200 x 5 mm, 4.0 m each
 - what: Cross tubes
   item: material.aluminium-alloy-6061
-  mass: 155.86
-  note: 5 of 6061 tube 250 x 5 mm, 3.0 m each
+  mass: 93.52
+  note: 3 of 6061 tube 250 x 5 mm, 3.0 m each at x [-1.818, 0.0, 1.818]; untrimmed stock mass, fishmouth deductions pending
 - what: Socket pads and inserts
   item: material.high-strength-steel-4340
   mass: 1.61
-  note: 8 4340 pads, each an M16 insert
+  note: 8 4340 pads, each an M16 insert; pad thickness 0.016 m, crosses lowered by that thickness with fishmouth seats to retain socket face z 0.45; joints unqualified
 - what: Fixing lugs
   item: material.aluminium-alloy-6061
   mass: 3.89
@@ -166,7 +166,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 1503.4
+  mass: 1495.6
   force: 43200.0
   at:
   - -1.5
@@ -183,7 +183,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 1503.4
+  mass: 1495.6
   force: 43200.0
   at:
   - -0.5
@@ -200,7 +200,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 1503.4
+  mass: 1495.6
   force: 43200.0
   at:
   - 0.5
@@ -217,7 +217,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 1503.4
+  mass: 1495.6
   force: 43200.0
   at:
   - 1.5
@@ -234,7 +234,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 1503.4
+  mass: 1495.6
   force: 43200.0
   at:
   - -1.5
@@ -251,7 +251,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 1503.4
+  mass: 1495.6
   force: 43200.0
   at:
   - -0.5
@@ -268,7 +268,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 1503.4
+  mass: 1495.6
   force: 43200.0
   at:
   - 0.5
@@ -285,7 +285,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 1503.4
+  mass: 1495.6
   force: 43200.0
   at:
   - 1.5

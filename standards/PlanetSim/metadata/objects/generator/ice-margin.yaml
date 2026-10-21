@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../../schema/planet-object.schema.yaml
+identity:
+  key: planet-object.ice-margin
+  name: Ice margin
+  about: 'The edge of the ice at a moment: where the mass balance changes sign.'
+scope: generator
+about_model: Inside it the ice is as thick as plastic ice that far inside its margin (Nye 1951).
+extends: planet-object.record
+generator: planet-process.vector-recent
+geometry:
+  kind: line
+  frame: body
+persistence:
+  how: derived
+provides:
+- planet-field.ice
+- planet-field.ice-lgm
+- planet-field.ice-cycles
+- planet-field.glacial-erosion
+- planet-field.lowstand-shore
+code:
+- type: RecentSurface
+  file: crates/vfields/src/forge_model.rs
+status: draft
+basis:
+- of:
+  - identity
+  - about_model
+  - attributes
+  - dynamics
+  - persistence
+  - code
+  tier: derived
+  note: 'planets, 19 Oct 2026: read from planet-forge''s types (docs/data-model.md)'

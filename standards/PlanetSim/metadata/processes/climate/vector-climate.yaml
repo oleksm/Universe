@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.vector-climate
+  name: Vector climate
+  about: 'The climate as vectors (crates/vfields climate): temperature by latitude, lapse rate and continentality, the wind by the belts, moisture walked upwind from the sea along the wind lines, rain, evaporation demand, Budyko evaporation
+    and runoff, over the height surface and the coast traced from it to the cm. Its laws and constants are the coupled-climate and ice-sheets records; in the run it replaces the sampled coupled-climate. No state: a surface evaluated
+    at any point, with the step''s sea level and thermostat offset (the recent epoch: the glacial cycle''s shifted sea, no offset).'
+area: climate
+clock:
+  when: every step of the coupled and recent phases, after the relief
+reads:
+- name: height
+  field: planet-field.height
+- name: thermostat state
+  field: planet-field.thermostat-state
+- name: glaciality
+  field: planet-field.glaciality
+- name: glacial sea offset
+  field: planet-field.glacial-sea-offset
+writes:
+- name: temperature
+  field: planet-field.temperature
+- name: rain
+  field: planet-field.rain
+- name: runoff
+  field: planet-field.runoff
+- name: aridity
+  field: planet-field.aridity
+- name: potential evaporation
+  field: planet-field.potential-evaporation
+- name: column moisture
+  field: planet-field.column-moisture
+- name: wind
+  field: planet-field.wind
+- name: wind north
+  field: planet-field.wind-north
+depends_on:
+- planet-process.coupled-climate
+- planet-process.ice-sheets

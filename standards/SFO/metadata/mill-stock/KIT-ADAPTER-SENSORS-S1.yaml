@@ -11,13 +11,13 @@ made_from:
 - item: material.aluminium-alloy-6061
 - item: material.high-strength-steel-4340
 size:
-  length: 4.0
-  width: 2.0
+  length: 4.02
+  width: 2.06
   height: 0.12
 supplies:
   item: adapter.sensors-s1
 physical:
-  mass: 19.83
+  mass: 15.9
 basis:
 - of:
   - size

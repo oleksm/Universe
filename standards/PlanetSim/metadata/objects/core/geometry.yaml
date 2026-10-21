@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../../schema/planet-object.schema.yaml
+identity:
+  key: planet-object.geometry
+  name: Geometry
+  about: 'A record''s shape in planet coordinates: a location, a line, a closed ring or an area, kept to a stated tolerance.'
+scope: core
+about_model: 'Never a set of points standing for a surface: lines and edges are the shapes themselves, held as vertices within a tolerance of the true line; finer detail is generated from the record when asked, never contradicting it.'
+geometry:
+  kind: line
+  frame: body
+  tolerance: 'per object: its generator''s tolerance knob (planet-object.resolution)'
+attributes:
+- name: vertices
+  meaning: coordinates along the line or edge
+- name: tolerance
+  unit: m
+  meaning: how far the true shape may lie from the stored one between vertices
+code:
+- type: Region, Ring, Polygon
+  file: crates/vector/src/region.rs, crates/vector/src/poly.rs
+status: draft
+basis:
+- of:
+  - identity
+  - about_model
+  - attributes
+  - dynamics
+  - persistence
+  - code
+  tier: derived
+  note: 'planets, 19 Oct 2026: read from planet-forge''s types (docs/data-model.md)'

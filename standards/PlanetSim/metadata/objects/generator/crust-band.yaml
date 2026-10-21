@@ -1,0 +1,77 @@
+# yaml-language-server: $schema=../../../schema/planet-object.schema.yaml
+identity:
+  key: planet-object.crust-band
+  name: Crust band
+  about: 'An area of a plate where the crust has one thickness and kind: continental crust and thickened floor, as polygons on the plate.'
+scope: generator
+about_model: The continents are the bands flagged continental and at least CONTINENT_EDGE thick; the crust's volume budget (start + in - out) is kept over them.
+extends: planet-object.record
+generator: planet-process.vector-plates
+geometry:
+  kind: area
+  frame: plate
+  tolerance: simplified to 1 km where the area moves under 10 percent; cut by the crust tiles
+attributes:
+- name: plate
+  meaning: its plate
+  object: planet-object.plate
+- name: region
+  meaning: its area, plate frame
+- name: thick
+  unit: m
+  meaning: crust thickness
+  field: planet-field.crust-thickness
+- name: born
+  unit: s
+  meaning: 'when formed (older than CRATON_MYR: craton)'
+- name: cont
+  meaning: continental crust (the Python's xcont)
+  field: planet-field.crust-kind
+- name: tile
+  meaning: its crust tile (an index, to be replaced)
+dynamics:
+- what: created
+  how: the first continents; arcs, plume tracks, accretion and sediment folded in from additions
+- what: changes
+  how: capped at CRUST_MAX, lower-crust flow above FLOW_ABOVE, delamination below ECLOGITE, Ahnert erosion of relief, margin sediment wedge
+- what: splits
+  how: a rift divides it between the halves
+- what: ends
+  how: consumed at trenches (continents resist), merged with bands of the same isopach
+annotations:
+- born
+- cont flag
+persistence:
+  how: bytes
+  table: vector-plates-world (CRUS)
+  resumed: World restore
+provides:
+- planet-field.crust-thickness
+- planet-field.crust-kind
+- planet-field.height-above-ridge
+- planet-field.height
+knobs:
+- name: isopach step
+  param: 'code: ISOPACH_M'
+  meaning: bands of thickness differing less are merged
+  cost: bands
+- name: band simplification
+  param: 'code: 1 km'
+  meaning: vertex tolerance
+  cost: vertices 1/tol
+code:
+- type: Crust
+  file: crates/tectonics/src/lib.rs
+open:
+- the arcs, accretions and erosion folded into band thicknesses are not kept as records of their own
+status: draft
+basis:
+- of:
+  - identity
+  - about_model
+  - attributes
+  - dynamics
+  - persistence
+  - code
+  tier: derived
+  note: 'planets, 19 Oct 2026: read from planet-forge''s types (docs/data-model.md)'

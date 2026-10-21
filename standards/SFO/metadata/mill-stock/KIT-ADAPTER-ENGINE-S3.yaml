@@ -11,13 +11,13 @@ made_from:
 - item: material.high-strength-steel-4340
 - item: material.aluminium-alloy-6061
 size:
-  length: 8.0
-  width: 8.0
+  length: 8.17
+  width: 8.25
   height: 0.5
 supplies:
   item: adapter.engine-s3
 physical:
-  mass: 11077.54
+  mass: 10313.63
 basis:
 - of:
   - size

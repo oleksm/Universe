@@ -9,6 +9,7 @@ physical:
   length: 250
   width: 50
   height: 15
+  mass: 500000.0
 staff:
 - profession: profession.metalworker
   count: 4
@@ -80,7 +81,7 @@ recipes:
     quantity: 0.1519
   - item: stock.sta36-pl-8
     quantity: 0.0019
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.0002
   outputs:
   - item: stock.al6061-scrap
@@ -94,7 +95,7 @@ recipes:
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.8724
-  - item: material.pir-foam
+  - item: stock.chem-pir-foam
     quantity: 0.153
   outputs:
   - item: stock.sta36-scrap
@@ -106,7 +107,7 @@ recipes:
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9213
-  - item: material.pir-foam
+  - item: stock.chem-pir-foam
     quantity: 0.1056
   outputs:
   - item: stock.sta36-scrap
@@ -142,9 +143,9 @@ recipes:
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.6078
-  - item: material.pir-foam
+  - item: stock.chem-pir-foam
     quantity: 0.3027
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.1072
   outputs:
   - item: stock.sta36-scrap
@@ -156,7 +157,7 @@ recipes:
   inputs:
   - item: stock.al6061-pl-5
     quantity: 1.0164
-  - item: material.polyimide-film
+  - item: stock.chem-polyimide-film
     quantity: 0.0132
   outputs:
   - item: stock.al6061-scrap
@@ -180,7 +181,7 @@ recipes:
     quantity: 0.8614
   - item: stock.sta36-pl-8
     quantity: 0.1597
-  - item: material.polyimide-film
+  - item: stock.chem-polyimide-film
     quantity: 0.0086
   outputs:
   - item: stock.al6061-scrap
@@ -194,7 +195,7 @@ recipes:
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.8666
-  - item: material.pir-foam
+  - item: stock.chem-pir-foam
     quantity: 0.1587
   outputs:
   - item: stock.sta36-scrap
@@ -206,7 +207,7 @@ recipes:
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9434
-  - item: material.pir-foam
+  - item: stock.chem-pir-foam
     quantity: 0.0841
   outputs:
   - item: stock.sta36-scrap
@@ -222,7 +223,7 @@ recipes:
     quantity: 0.2771
   - item: stock.sta36-pl-8
     quantity: 0.0462
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.0135
   outputs:
   - item: stock.al6061-scrap
@@ -238,7 +239,7 @@ recipes:
     quantity: 0.8898
   - item: stock.sta36-pl-8
     quantity: 0.1286
-  - item: material.polyimide-film
+  - item: stock.chem-polyimide-film
     quantity: 0.0112
   outputs:
   - item: stock.al6061-scrap
@@ -252,7 +253,7 @@ recipes:
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.7675
-  - item: material.pir-foam
+  - item: stock.chem-pir-foam
     quantity: 0.2549
   outputs:
   - item: stock.sta36-scrap
@@ -264,7 +265,7 @@ recipes:
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.7675
-  - item: material.pir-foam
+  - item: stock.chem-pir-foam
     quantity: 0.2549
   outputs:
   - item: stock.sta36-scrap
@@ -276,7 +277,7 @@ recipes:
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.7675
-  - item: material.pir-foam
+  - item: stock.chem-pir-foam
     quantity: 0.2549
   outputs:
   - item: stock.sta36-scrap
@@ -288,7 +289,7 @@ recipes:
   inputs:
   - item: stock.al6061-pl-5
     quantity: 1.0135
-  - item: material.polyimide-film
+  - item: stock.chem-polyimide-film
     quantity: 0.016
   outputs:
   - item: stock.al6061-scrap
@@ -300,7 +301,7 @@ recipes:
   inputs:
   - item: stock.al6061-pl-5
     quantity: 1.0135
-  - item: material.polyimide-film
+  - item: stock.chem-polyimide-film
     quantity: 0.016
   outputs:
   - item: stock.al6061-scrap
@@ -312,7 +313,7 @@ recipes:
   inputs:
   - item: stock.al6061-pl-5
     quantity: 1.0164
-  - item: material.polyimide-film
+  - item: stock.chem-polyimide-film
     quantity: 0.0132
   outputs:
   - item: stock.al6061-scrap
@@ -338,7 +339,7 @@ recipes:
     quantity: 0.3343
   - item: stock.sta36-pl-8
     quantity: 0.0492
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.0066
   outputs:
   - item: stock.al6061-scrap
@@ -354,7 +355,7 @@ recipes:
     quantity: 0.9209
   - item: stock.fs-pl-6
     quantity: 0.0949
-  - item: material.polyimide-film
+  - item: stock.chem-polyimide-film
     quantity: 0.011
   outputs:
   - item: stock.al6061-scrap
@@ -370,9 +371,9 @@ recipes:
     quantity: 0.3274
   - item: stock.al6061-pl-5
     quantity: 0.1684
-  - item: material.pir-foam
+  - item: stock.chem-pir-foam
     quantity: 0.1019
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.0081
   outputs:
   - item: stock.sta36-scrap
@@ -405,3 +406,8 @@ basis:
 - of:
   - life
   rule: rule.life-plant
+- of:
+  - physical.mass
+  tier: derived
+  review: true
+  note: Sum of its construction parts, at their recorded counts. The coarse construction budgets remain invented and under review.

@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=../../../schema/planet-object.schema.yaml
+identity:
+  key: planet-object.isochron
+  name: Isochron
+  about: 'A piece of ridge as it was at a time, on a plate: the ocean floor between two isochrons is between their ages.'
+scope: generator
+about_model: The floor's age anywhere is interpolated between the two nearest isochrons of different times; its depth follows from its age (GDH1).
+extends: planet-object.record
+generator: planet-process.vector-plates
+geometry:
+  kind: line
+  frame: plate
+attributes:
+- name: plate
+  meaning: its plate
+- name: a, b
+  meaning: its ends
+- name: t
+  unit: s
+  meaning: when it was the ridge
+dynamics:
+- what: created
+  how: every 10 Myr along each ridge
+- what: ends
+  how: subducted with its floor
+persistence:
+  how: bytes
+  table: vector-plates-world (ISOC)
+provides:
+- planet-field.crust-age
+code:
+- type: Isochron
+  file: crates/tectonics/src/lib.rs
+status: draft
+basis:
+- of:
+  - identity
+  - about_model
+  - attributes
+  - dynamics
+  - persistence
+  - code
+  tier: derived
+  note: 'planets, 19 Oct 2026: read from planet-forge''s types (docs/data-model.md)'

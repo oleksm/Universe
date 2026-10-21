@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../../schema/planet-object.schema.yaml
+identity:
+  key: planet-object.ore-deposit
+  name: Ore deposit
+  about: 'An ore body: kind, place, tonnage, grades, depth.'
+scope: generator
+about_model: Placed by the deposit-type records' rates on the provinces and lines that host them.
+extends: planet-object.record
+generator: planet-process.vector-geology
+geometry:
+  kind: location
+  frame: plate
+persistence:
+  how: derived
+code:
+- type: Ore, ImpactDeposit
+  file: crates/geology-vector/src/ores.rs, crates/geology-vector/src/craters.rs
+open:
+- 'not written out as records yet: the chances are computed, the deposits are not drawn in the run'
+status: draft
+basis:
+- of:
+  - identity
+  - about_model
+  - attributes
+  - dynamics
+  - persistence
+  - code
+  tier: derived
+  note: 'planets, 19 Oct 2026: read from planet-forge''s types (docs/data-model.md)'

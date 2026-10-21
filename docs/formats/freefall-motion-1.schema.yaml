@@ -144,6 +144,28 @@ properties:
               parent: { $ref: "#/definitions/node" }
               point: { $ref: "#/definitions/vec3" }
               radius: { type: number, description: "m, how far from the point the centreline may pass" }
+  spans:
+    type: array
+    description: >-
+      Straight members whose length follows the pose (hoist ropes, stays): the node's mesh is modelled `unit_length`
+      long along its local `axis`, from its origin. At a pose its origin is placed at `from`, it is turned by the
+      shortest rotation taking `axis` to the line toward `to` (as an actuator, v11), then stretched along `axis` by the
+      anchors' distance over `unit_length`: M = T(from) R S. The node may be listed in `nodes`, under the root only, for
+      its bind; no axis moves it.
+    items:
+      type: object
+      additionalProperties: false
+      required: [name, node, from, to, axis, unit_length, min_length, max_length, diameter]
+      properties:
+        name: { type: string }
+        node: { $ref: "#/definitions/node" }
+        from: { $ref: "#/definitions/attachment", description: "the fixed end (a drum, a sheave block): the origin sits here" }
+        to: { $ref: "#/definitions/attachment", description: "the far end (the hook block, the beam)" }
+        axis: { $ref: "#/definitions/vec3", description: "unit, the mesh's local axis aimed at `to`" }
+        unit_length: { type: number, exclusiveMinimum: 0, description: "m, the mesh's modelled length along `axis`" }
+        min_length: { type: number, exclusiveMinimum: 0, description: "m, the shortest the span may be at any pose" }
+        max_length: { type: number, exclusiveMinimum: 0, description: "m, the longest (the rope on the drum)" }
+        diameter: { type: number, exclusiveMinimum: 0, description: "m" }
   links:
     type: array
     description: >-

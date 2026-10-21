@@ -45,6 +45,12 @@ reads:
 - name: w.xmem
   field: planet-field.particle-lake-mark
   unit: '1'
+- name: origin
+  field: planet-field.particle-origin
+  unit: '1'
+- name: sea level
+  field: planet-field.sea-level
+  unit: m
 writes:
 - name: w.thick
   field: planet-field.crust-thickness
@@ -73,6 +79,9 @@ writes:
   field: planet-field.river-change-time
 - name: cs[...] = xmem[nearest particle]
   field: planet-field.lake-mark
+- name: crust origin
+  field: planet-field.crust-origin
+  unit: '1'
 params:
 - name: KERNEL
   value: 0.8
@@ -131,6 +140,12 @@ params:
     factor: 1500.0
   meaning: geology.py:730
   source: stages/plates.py:529
+- name: coast kernel
+  value: 0.0
+  unit: '1'
+  meaning: 'the kind (continent or ocean) is read with a Gaussian this many sample spacings wide (0: off, the KERNEL read); where that read and the KERNEL read disagree on the kind, the narrow thickness stands, so the coast carries
+    the sub-500 km features the particles hold (forge shape audit: the 0.8-gap read left one-ring bays at 1% of the land against Earth 5%; the 0.5-gap re-read of the same particles gave 6%) while the interior keeps the wide smooth read'
+  source: planets, 20 Oct 2026 (chosen); docs/shape-audit-2026-10-20.md section 2.2; forge models/plates/read.rs; e74
 random_draws:
 - none
 invariants:
@@ -149,3 +164,10 @@ basis:
   - writes
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - params
+  tier: invented
+  note: 'planets, 20 Oct 2026 (late): coast kernel 0.5 -> 0 (off). It brought back half of Earth small-scale coast by the numbers (forge e75) but as a sponge of one-sample islands and holes with the lattice spiral rows and the viewer
+    pixel grid showing through (owner: sponge pattern, line / square bias): particle-scale volume noise shaped like coast, not coast. Coast detail comes from the processes on the finer late lattice (resolution-refine 30,000 -> 60,000)
+    and later from amplification in the terrain canvas; the re-lay jitter (crust-remesh) stays.'
+depends_on: []

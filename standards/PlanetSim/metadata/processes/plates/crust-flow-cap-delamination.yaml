@@ -65,7 +65,7 @@ params:
   note: Bird 1991; Clark & Royden 2000; override for A/B grows
 - name: CRUST_MAX
   env: SIM_CRUST_MAX
-  value: 80000.0
+  value: 75000.0
   unit: m
   meaning: hard cap on continental read thickness; excess passed to continental neighbours (up to 12 rounds), none lost
   source: stages/plates.py:180
@@ -79,7 +79,7 @@ params:
   note: '16 Oct: 62 -> 70 km; Kay & Kay 1993; Jull & Kelemen 2001. The block comment above still says 62 km / 40 Myr (stale)'
 - name: DELAMINATE_MYR
   env: SIM_DELAMINATE_MYR
-  value: 3155760000000000.0
+  value: 1262304000000000.0
   unit: s
   said_as:
     unit: Myr
@@ -159,6 +159,8 @@ invariants:
 - flow and cap conserve continental volume
 - delamination only removes volume
 - flow only between pairs of continental samples
+- the diffusion runs between interior continental samples only (both with every neighbour continental); the edge ring is its boundary, so the continent outline changes only through the tectonic processes, never through the flow or its
+  fit (forge d64169e, e53 on)
 depends_on:
 - planet-process.crust-read
 - planet-process.crust-fit
@@ -184,6 +186,25 @@ basis:
   source: Clark & Royden 2000; Bird 1991; Turcotte & Schubert 2014
   review: true
   note: 'Figures from memory, 18 Oct 2026: check.'
+- of:
+  - identity.about
+  - invariants
+  tier: derived
+  note: 'planets, 20 Oct 2026: the fit after the flow holds the read at every sample the kernel reaches (fd2b178, e52) and the diffusion runs between interior samples only (d64169e, e53): fitted at the continental samples alone with
+    the edge ring receiving, the edge particles smeared past CONTINENT_EDGE a ring at a time (e51: +0.47 of the planet of continental area at zero volume; e52 +0.21; e53 +0.01). See planet-forge docs/terrain-canvas-recovery.md.'
+- of:
+  - params
+  tier: invented
+  note: 'planets, 20 Oct 2026: CRUST_MAX 80 -> 65 km for e62 (peaks near 6 km instead of 9.4; the cap moves the excess to the neighbours, none lost).'
+- of:
+  - params
+  tier: invented
+  note: 'planets, 20 Oct 2026: ECLOGITE 70 -> 62 km and DELAMINATE_MYR 100 -> 40 Myr (the planet-sim originals) for e63: the hot early plates stack crust to 100+ km faster than the 70 km / 100 Myr delamination sheds it (e61/e62 at ~1
+    Gyr: 73-80% of the land above 2 km, a plateau world), and the 65 km cap only shuffles excess among thick neighbours.'
+- of:
+  - params
+  tier: invented
+  note: 'planets, 20 Oct 2026: CRUST_MAX 65 -> 75 km and ECLOGITE 62 -> 70 km for e66: on the higher sea (water 1.07, CONTINENT_MEAN 41 km) the 65 km cap left the ranges too low (e65: highest 4.3 km, 3% of the land above 2 km).'
 events_emitted:
 - event: planet-event.ledger-row
   where: 'forge: the step''s volume moved, shed, worn, denuded or laid on the shelf (the Python''s ledger rows)'

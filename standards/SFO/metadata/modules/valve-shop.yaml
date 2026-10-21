@@ -9,6 +9,7 @@ physical:
   length: 150
   width: 50
   height: 12
+  mass: 300000.0
 staff:
 - profession: profession.machinist
   count: 4
@@ -24,7 +25,7 @@ recipes:
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.9785
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.05
   outputs:
   - item: stock.al6061-scrap
@@ -36,7 +37,7 @@ recipes:
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.9785
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.05
   outputs:
   - item: stock.al6061-scrap
@@ -48,7 +49,7 @@ recipes:
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.9785
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.05
   outputs:
   - item: stock.al6061-scrap
@@ -60,7 +61,7 @@ recipes:
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.9783
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.0502
   outputs:
   - item: stock.al6061-scrap
@@ -82,7 +83,7 @@ recipes:
   inputs:
   - item: stock.st304-pl-3
     quantity: 1.014
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.0156
   outputs:
   - item: stock.st304-scrap
@@ -94,7 +95,7 @@ recipes:
   inputs:
   - item: stock.st304-pl-3
     quantity: 1.0142
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.0154
   outputs:
   - item: stock.st304-scrap
@@ -106,7 +107,7 @@ recipes:
   inputs:
   - item: stock.st304-pl-3
     quantity: 1.0139
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.0157
   outputs:
   - item: stock.st304-scrap
@@ -118,7 +119,7 @@ recipes:
   inputs:
   - item: stock.st304-pl-3
     quantity: 1.0128
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.0167
   outputs:
   - item: stock.st304-scrap
@@ -148,145 +149,109 @@ recipes:
 - makes: stock.kit-run-clip-d10
   does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
-  - item: stock.st4340-bar-120
-    quantity: 0.884
   - item: stock.al6061-pl-5
-    quantity: 0.1184
-  - item: material.silicone-rubber
-    quantity: 0.0267
+    quantity: 0.8457
+  - item: stock.chem-silicone-rubber
+    quantity: 0.1789
   outputs:
-  - item: stock.st4340-scrap
-    quantity: 0.0257
   - item: stock.al6061-scrap
-    quantity: 0.0034
+    quantity: 0.0246
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-run-clip-d100
   does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
-  - item: stock.st4340-bar-120
-    quantity: 0.6591
   - item: stock.al6061-pl-5
-    quantity: 0.2826
-  - item: material.silicone-rubber
-    quantity: 0.0858
+    quantity: 0.7847
+  - item: stock.chem-silicone-rubber
+    quantity: 0.2382
   outputs:
-  - item: stock.st4340-scrap
-    quantity: 0.0192
   - item: stock.al6061-scrap
-    quantity: 0.0082
+    quantity: 0.0229
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-run-clip-d16
   does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
-  - item: stock.st4340-bar-120
-    quantity: 0.8478
   - item: stock.al6061-pl-5
-    quantity: 0.1426
-  - item: material.silicone-rubber
-    quantity: 0.0385
+    quantity: 0.8118
+  - item: stock.chem-silicone-rubber
+    quantity: 0.2119
   outputs:
-  - item: stock.st4340-scrap
-    quantity: 0.0247
   - item: stock.al6061-scrap
-    quantity: 0.0042
+    quantity: 0.0236
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-run-clip-d160
   does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
-    quantity: 0.5715
-  - item: stock.st4340-bar-120
-    quantity: 0.3419
-  - item: material.silicone-rubber
-    quantity: 0.1132
+    quantity: 0.8554
+  - item: stock.chem-silicone-rubber
+    quantity: 0.1695
   outputs:
   - item: stock.al6061-scrap
-    quantity: 0.0166
-  - item: stock.st4340-scrap
-    quantity: 0.01
+    quantity: 0.0249
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-run-clip-d25
   does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
-  - item: stock.st4340-bar-120
-    quantity: 0.8006
   - item: stock.al6061-pl-5
-    quantity: 0.1746
-  - item: material.silicone-rubber
-    quantity: 0.0533
+    quantity: 0.7809
+  - item: stock.chem-silicone-rubber
+    quantity: 0.2418
   outputs:
-  - item: stock.st4340-scrap
-    quantity: 0.0233
   - item: stock.al6061-scrap
-    quantity: 0.0051
+    quantity: 0.0227
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-run-clip-d250
   does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
-    quantity: 0.795
-  - item: stock.st4340-bar-120
-    quantity: 0.1285
-  - item: material.silicone-rubber
-    quantity: 0.1034
+    quantity: 0.9083
+  - item: stock.chem-silicone-rubber
+    quantity: 0.1182
   outputs:
   - item: stock.al6061-scrap
-    quantity: 0.0232
-  - item: stock.st4340-scrap
-    quantity: 0.0037
+    quantity: 0.0265
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-run-clip-d40
   does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
-  - item: stock.st4340-bar-120
-    quantity: 0.7315
   - item: stock.al6061-pl-5
-    quantity: 0.2188
-  - item: material.silicone-rubber
-    quantity: 0.0774
+    quantity: 0.7572
+  - item: stock.chem-silicone-rubber
+    quantity: 0.2648
   outputs:
-  - item: stock.st4340-scrap
-    quantity: 0.0213
   - item: stock.al6061-scrap
-    quantity: 0.0064
+    quantity: 0.0221
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-run-clip-d400
   does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
-    quantity: 0.9152
-  - item: material.silicone-rubber
-    quantity: 0.0757
-  - item: stock.st4340-bar-120
-    quantity: 0.0369
+    quantity: 0.9491
+  - item: stock.chem-silicone-rubber
+    quantity: 0.0785
   outputs:
   - item: stock.al6061-scrap
-    quantity: 0.0267
-  - item: stock.st4340-scrap
-    quantity: 0.0011
+    quantity: 0.0276
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-run-clip-d63
   does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
-  - item: stock.st4340-bar-120
-    quantity: 0.578
   - item: stock.al6061-pl-5
-    quantity: 0.3241
-  - item: material.silicone-rubber
-    quantity: 0.1241
+    quantity: 0.7385
+  - item: stock.chem-silicone-rubber
+    quantity: 0.283
   outputs:
-  - item: stock.st4340-scrap
-    quantity: 0.0168
   - item: stock.al6061-scrap
-    quantity: 0.0094
+    quantity: 0.0215
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-strut-clamp-d100
@@ -418,7 +383,7 @@ recipes:
     quantity: 0.9665
   - item: stock.st304-pl-3
     quantity: 0.0624
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.0011
   outputs:
   - item: stock.sta36-scrap
@@ -434,7 +399,7 @@ recipes:
     quantity: 0.9668
   - item: stock.st304-pl-3
     quantity: 0.0621
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.0011
   outputs:
   - item: stock.sta36-scrap
@@ -450,7 +415,7 @@ recipes:
     quantity: 0.7725
   - item: stock.st304-pl-3
     quantity: 0.206
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.05
   outputs:
   - item: stock.sta36-scrap
@@ -466,7 +431,7 @@ recipes:
     quantity: 0.7725
   - item: stock.st304-pl-3
     quantity: 0.206
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.05
   outputs:
   - item: stock.sta36-scrap
@@ -482,7 +447,7 @@ recipes:
     quantity: 0.7728
   - item: stock.st304-pl-3
     quantity: 0.2058
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.0499
   outputs:
   - item: stock.sta36-scrap
@@ -498,7 +463,7 @@ recipes:
     quantity: 0.7725
   - item: stock.st304-pl-3
     quantity: 0.206
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.05
   outputs:
   - item: stock.sta36-scrap
@@ -514,7 +479,7 @@ recipes:
     quantity: 0.9801
   - item: stock.st304-pl-3
     quantity: 0.0497
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.0002
   outputs:
   - item: stock.sta36-scrap
@@ -530,7 +495,7 @@ recipes:
     quantity: 0.9799
   - item: stock.st304-pl-3
     quantity: 0.0498
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.0002
   outputs:
   - item: stock.sta36-scrap
@@ -619,3 +584,8 @@ basis:
 - of:
   - life
   rule: rule.life-plant
+- of:
+  - physical.mass
+  tier: derived
+  review: true
+  note: Sum of its construction parts, at their recorded counts. The coarse construction budgets remain invented and under review.

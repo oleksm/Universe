@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schema/template.schema.yaml
+# Written by tools/standards/mounting.py: change it there.
+identity:
+  key: template.support-shoe
+  name: Shared deck support shoe
+  description: 'Shared deck support shoe: one look for the whole family, scaled to each record''s figures (docs/asset-contract.md, Templates; docs/proposals/physical-mounts.md).'
+family: support-shoe
+draws: model
+scales_by:
+- physical
+reference: connector.deck-support-shoe
+members: 1
+basis:
+- of:
+  - draws
+  - scales_by
+  tier: derived
+  note: 'The owner, 2026-10-18 (via ships): equipment held by typed mounts on cradles or deck panels made from stock; one template a family.'
+visual:
+  format: freefall-model/1
+  path: models/support-shoe/v1
+  manifest_sha256: bdd045ab92f57cad34e88fd9dbf6c37250e3098cd0a9b3b64458b34fd9d6220b
+  version: 1
+  triangles: 320

@@ -65,6 +65,24 @@ times its ratio. An axis rides the nearest axis above its node in the hierarchy.
 motion the axes answer, in the order they first appear. Chain strands that change length are not motion: draw each as
 a rigid piece riding the carriage or the inner mast, its excess hidden in the upright's channel past the sheave.
 
+## Spans (2026-10-18, blender's 150 t moon gantry, thread 20261018T231801-blender-1c16)
+
+A hoist rope's falls lengthen as the hook lowers, so a rigid piece will not do. `spans` lists straight members whose
+length follows the pose. Each is one node, modelled `unit_length` long along its local `axis`. At a pose its origin sits
+at `from`; it is turned toward `to` by the shortest rotation, as an actuator is (v11); then it is stretched along
+`axis` to the anchors' distance: M = T(from) R S. Each fall of the reeving is one span (eight falls, eight spans), from
+the trolley's sheave block to the hook block's. The check sweeps the axes and holds the anchors' distance within
+`min_length` to `max_length`. References check the stretched transform. No axis moves a span's node, and it is listed
+under the root only, if at all. The engine draws a span by that transform; it needs no other rope solver. Chains stay
+as before: rigid strands, or covered.
+
 ## Still asked
 - Registry (mine): give the record motions their `rate` where known, and keep `moves` naming the parts so blender knows
   which geometry to separate.
+
+## Conditional angular interlock (2026-10-19)
+
+The registry motion may carry `interlock: {axis: slew, when_abs_below: 0.20943951023931956, angle: [-0.2094, 0.08]}`.
+This restricts the carrying motion's angle, inclusively, while the absolute angle of the named motion is strictly below the threshold. Both axes belong to the same record and are angular; the restricted interval lies inside the carrying motion's ordinary limits. At equality the restricted region ends. This is a trajectory constraint: first move the carrying axis into its restricted interval, then cross with the controlling axis, and only restore its wider range after leaving. Endpoint-only clamping is insufficient.
+
+For `unit.stacker-reclaimer-1500th`, luff carries this guard on slew. Raise to luff <= 0.08 rad before crossing into |slew| < 12 degrees; lower to +0.16 only outside. Both ore yards use the same unit rule. The registry is authoritative; do not copy thresholds into the asset pose file or hard-code them in the runtime. Runtime sequencing/pose reading is pending with engine. This does not qualify wheel rotation, loads or the other machines' sequencing requirements.

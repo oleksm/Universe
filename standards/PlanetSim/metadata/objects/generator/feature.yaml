@@ -1,0 +1,59 @@
+# yaml-language-server: $schema=../../../schema/planet-object.schema.yaml
+identity:
+  key: planet-object.feature
+  name: Feature
+  about: 'A landform the zone and relief generators record: a suture, arc front, rift margin, orogen axis, fold, scarp, volcano, flood basalt... each a planet-feature kind.'
+scope: generator
+about_model: Pinned to the cm on its plate, with its spans, dimensions, layout, trigger, rule and history; carried through rifts and welds; worn by relief erosion.
+extends: planet-object.record
+generator: planet-process.line-store-ride-crust
+geometry:
+  kind: line
+  frame: plate
+  precision: pins in integer cm
+attributes:
+- name: kind
+  meaning: its planet-feature record
+- name: pin
+  meaning: where it is pinned
+- name: spans
+  meaning: chains of pins (lines)
+- name: profiles, dims, layout
+  meaning: values along spans, dimensions, layout, SI
+- name: born_myr, last_myr, ended_myr
+  unit: Myr
+  meaning: its life
+- name: rule, trigger
+  meaning: what made it
+- name: state
+  meaning: forming, ended, worn, replaced
+- name: parent
+  meaning: the feature it belongs to
+annotations:
+- trigger
+- rule
+- history
+- seed
+- state
+persistence:
+  how: features
+  format: features.jsonl; archived ones in features_archive.jsonl
+knobs:
+- name: point separation, reach, link
+  param: planet-process.zones-* POINT_SEP, REACH, LINK (m)
+  meaning: spacing of a line's pins
+  cost: pins 1/sep
+code:
+- type: Feature
+  file: crates/forge-core/src/features.rs
+status: draft
+basis:
+- of:
+  - identity
+  - about_model
+  - attributes
+  - dynamics
+  - persistence
+  - code
+  tier: derived
+  note: 'planets, 19 Oct 2026: read from planet-forge''s types (docs/data-model.md)'

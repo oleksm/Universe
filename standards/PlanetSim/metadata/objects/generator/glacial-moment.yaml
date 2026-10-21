@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=../../../schema/planet-object.schema.yaml
+identity:
+  key: planet-object.glacial-moment
+  name: Glacial moment
+  about: 'One moment of the glacial cycle: glaciality, equatorial and polar cooling, the sea''s offset, the step.'
+scope: generator
+about_model: The ice at any coordinate and moment follows from the climate cooled by the moment's cooling; the cycles, the last glacial maximum and the glacial erosion are counted over the moments.
+extends: planet-object.record
+generator: planet-process.vector-recent
+geometry:
+  kind: clock
+  frame: none
+attributes:
+- name: bp
+  unit: s
+  meaning: time before the present
+- name: g
+  unit: '1'
+  meaning: glaciality
+- name: cool, cool_p
+  unit: K
+  meaning: cooling at the equator and its polar part
+- name: sea
+  unit: m
+  meaning: the sea's offset
+- name: dt
+  unit: s
+  meaning: the step
+persistence:
+  how: bytes
+  table: vector-recent-cycle (JSON)
+code:
+- type: Moment
+  file: crates/vfields/src/forge_model.rs
+status: draft
+basis:
+- of:
+  - identity
+  - about_model
+  - attributes
+  - dynamics
+  - persistence
+  - code
+  tier: derived
+  note: 'planets, 19 Oct 2026: read from planet-forge''s types (docs/data-model.md)'

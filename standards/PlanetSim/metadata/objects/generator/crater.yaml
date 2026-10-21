@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=../../../schema/planet-object.schema.yaml
+identity:
+  key: planet-object.crater
+  name: Crater
+  about: 'An impact crater: where, how big, when, and what is left of it.'
+scope: generator
+about_model: Made by the impact laws over the planet's history; its preservation read from the rock and erosion at its place. Craters under d_min are generated on demand from the same laws.
+extends: planet-object.record
+generator: planet-process.vector-geology
+geometry:
+  kind: location
+  frame: plate
+attributes:
+- name: d_m
+  unit: m
+  meaning: diameter
+- name: born_s
+  unit: s
+  meaning: when
+- name: shape, depth, rim, relief left, eroded, buried
+  meaning: what is left
+persistence:
+  how: derived
+knobs:
+- name: smallest crater kept
+  param: planet-process.crater-production / d_min
+  meaning: 'below it: generated on demand'
+  cost: craters ~ d^-2
+code:
+- type: Crater
+  file: crates/geology-vector/src/craters.rs
+status: draft
+basis:
+- of:
+  - identity
+  - about_model
+  - attributes
+  - dynamics
+  - persistence
+  - code
+  tier: derived
+  note: 'planets, 19 Oct 2026: read from planet-forge''s types (docs/data-model.md)'

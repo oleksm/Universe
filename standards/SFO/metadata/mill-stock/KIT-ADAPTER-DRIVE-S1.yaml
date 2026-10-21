@@ -11,13 +11,13 @@ made_from:
 - item: material.aluminium-alloy-6061
 - item: material.high-strength-steel-4340
 size:
-  length: 8.0
-  width: 8.0
+  length: 8.174
+  width: 8.25
   height: 0.45
 supplies:
   item: adapter.drive-s1
 physical:
-  mass: 4017.03
+  mass: 2922.06
 basis:
 - of:
   - size

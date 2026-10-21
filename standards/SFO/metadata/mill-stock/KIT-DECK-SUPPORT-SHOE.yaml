@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/kit_catalogue.py: change it there.
+identity:
+  key: stock.kit-deck-support-shoe
+  code: KIT-DECK-SUPPORT-SHOE
+  name: Shared deck support shoe
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.aluminium-alloy-6061
+size:
+  length: 0.08
+  width: 0.14
+  height: 0.06
+supplies:
+  item: connector.deck-support-shoe
+physical:
+  mass: 0.755797
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One connector.deck-support-shoe, as made.

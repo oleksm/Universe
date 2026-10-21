@@ -5,7 +5,8 @@ identity:
   about: Every SEA_EVERY steps (CP.COUPLE_EVERY in the coupled era), the crust is read, elevation and sea level found; land above sea loses above*(1-exp(-every*dt/DENUDE_MYR)). Outside the coupled era a FLUVIAL share of this is redistributed
     by stream power sqrt(A/cell)*S from drain() (D8 steepest descent on the 6-neighbour graph after Planchon-Darboux depression filling, with seeded roughness), total kept, capped at the height above sea. The loss is passed through
     _wear (erodibility) and exhumed, then continental volume is scaled down by (H-lost)/H. Outside the coupled era the lost volume leaves the system (sediment subducted); in the coupled era it goes to the shelf. Zone statistics (land
-    share, sea, flooded, mean height, share above 3 km) are recorded.
+    share, sea, flooded, mean height, share above 3 km) are recorded. Physical sediment budget uses actual removed particle volume. A later scheduled continental-sedimentation pass partitions it between inland retention, shelf transfer
+    and export; without that pass denudation sends the measured volume directly to the shelf in the coupled era.
 area: plates
 clock:
   when: every SEA_EVERY (20) steps; in the coupled era every CP.COUPLE_EVERY (default 1, env SIM_COUPLE_EVERY) steps
@@ -65,6 +66,10 @@ reads:
 - name: w.xcover
   field: planet-field.particle-rock-cover
   unit: m
+- name: basin diagnostic ocean age
+  field: planet-field.particle-age
+  unit: s
+  meaning: Read-only before/after basin receipt; does not drive denudation.
 writes:
 - name: w.xvol
   field: planet-field.particle-volume
@@ -240,6 +245,12 @@ params:
   meaning: reference continental thickness for isostasy; also fold-belt index base in coupled struct
   source: stages/plates.py:86
   note: Christensen & Mooney 1995 (real)
+- name: base level
+  value: 300.0
+  unit: m
+  meaning: 'land wears down to this height above the sea, not to the sea: the continental freeboard (Earth median land ~500 m; Wise 1974). A plain worn to the sea drowned at the next rise of the sea: the inland seas of forge e56/e57
+    (drowned interiors 15%, their crust 33 km = the sea-level thickness) once the growing continents lifted the sea 450 m. The coupled era wear is capped the same way'
+  source: 'planets, 20 Oct 2026 (owner: the cheesy look); forge models/plates/denudation.rs; e58'
 random_draws:
 - 'drain(): roughness from np.random.default_rng(n) (n = sample count), a fresh generator each call, independent of the run''s seed; same roughness every call at a resolution.'
 invariants:
@@ -263,6 +274,12 @@ basis:
   - writes
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'
+- note: 'planets, 19 Oct 2026: defer the measured erosion budget to a later continental-sedimentation pass when scheduled this step. Otherwise transfer actual removed volume to the shelf in the coupled era. Record deferred status, shelf
+    eligibility and export; never use the uncapped requested sediment sum as the physical budget.'
+  of:
+  - writes
+  - invariants
+  tier: derived
 events_emitted:
 - event: planet-event.ledger-row
   where: 'forge: the step''s volume moved, shed, worn, denuded or laid on the shelf (the Python''s ledger rows)'

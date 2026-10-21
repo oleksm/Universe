@@ -35,13 +35,14 @@ events_emitted:
 - event: planet-event.calls-relief-rift-features
 params:
 - name: near cut
-  value: 0.6
-  unit: '1'
+  value: 78235.4
+  unit: m
   said_as:
-    unit: x gap (rad)
-    factor: 1.0
+    unit: km
+    factor: 0.001
   meaning: particles this close to the cut make the margins
   source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:138
+  note: '19 Oct 2026: was 0.6 sample spacings (30,000 samples, 130.4 km on Earth): the same distance in metres, no samples'
 - name: min points
   value: 3.0
   unit: '1'
@@ -51,29 +52,32 @@ params:
   meaning: 'fewer continental points: no rift event / no margin for that half'
   source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:139
 - name: POINT_SEP
-  value: 0.6
-  unit: '1'
+  value: 78235.4
+  unit: m
   said_as:
-    unit: x gap
-    factor: 1.0
+    unit: km
+    factor: 0.001
   meaning: point merge distance (no reach)
   source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:147
+  note: '19 Oct 2026: was 0.6 sample spacings (30,000 samples, 130.4 km on Earth): the same distance in metres, no samples'
 - name: LINK
-  value: 2.5
-  unit: '1'
+  value: 325980.7
+  unit: m
   said_as:
-    unit: x gap
-    factor: 1.0
+    unit: km
+    factor: 0.001
   meaning: chaining radius
   source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:148
+  note: '19 Oct 2026: was 2.5 sample spacings (30,000 samples, 130.4 km on Earth): the same distance in metres, no samples'
 - name: smooth
-  value: 0.7
-  unit: '1'
+  value: 91274.6
+  unit: m
   said_as:
-    unit: x gap
-    factor: 1.0
+    unit: km
+    factor: 0.001
   meaning: smoothing sigma
   source: ~/git/planet-sim-landform/src/planet_sim/stages/zones.py:148
+  note: '19 Oct 2026: was 0.7 sample spacings (30,000 samples, 130.4 km on Earth): the same distance in metres, no samples'
 - name: cut reach
   value: 2.0
   unit: '1'

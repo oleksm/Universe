@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+# Written by tools/standards/supply_chains.py: change it there.
+identity:
+  key: part.wk09-01
+  code: WK09-01
+  name: 'Specialty chemical works: Frames and guards'
+physical:
+  mass: 230400.0
+  length: 72.0
+  width: 40.0
+  height: 12.5
+made_from:
+- item: stock.sta36-pl-20-panel
+  quantity: 230400.0
+making:
+  module: module.welding-bay
+fit:
+  count: 1
+basis:
+- of:
+  - physical
+  - made_from
+  - fit
+  tier: invented
+  review: true
+  source: standards/sources/production-chains.yaml
+  note: 'Coarse construction budget: 40 kg of machinery per allocated square metre, split 40% frames, 45% process machinery, 10% drives, 5% controls. Allocated
+    component envelopes are placeholders, not model geometry or a load-qualified design. No cutting loss assumed in this first budget.'

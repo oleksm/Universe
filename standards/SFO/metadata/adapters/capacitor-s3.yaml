@@ -3,7 +3,7 @@
 identity:
   key: adapter.capacitor-s3
   name: Capacitor cradle, class 3
-  description: 'Holds what fits mount.capacitor-s3 on a ship''s frame: 2 6061 tube 160 x 3 mm beams over the frame''s struts, 1 m or more apart, clamped at the middle of every 1 m, 5 cross tubes, the mount''s 8 sockets on top.'
+  description: 'Holds what fits mount.capacitor-s3 on a ship''s frame: 2 6061 tube 160 x 3 mm beams over the frame''s struts, 1 m or more apart, clamped at the middle of every 1 m, 3 cross tubes, the mount''s 8 sockets on top.'
 offers: mount.capacitor-s3
 rating:
   tension: 147200.0
@@ -11,9 +11,9 @@ rating:
   shear: 73520.0
 physical:
   length: 3.0
-  width: 2.0
+  width: 2.16
   height: 0.32
-  mass: 67.23
+  mass: 51.25
 built_of:
 - what: Beams
   item: material.aluminium-alloy-6061
@@ -21,12 +21,12 @@ built_of:
   note: 2 of 6061 tube 160 x 3 mm, 3.0 m each
 - what: Cross tubes
   item: material.aluminium-alloy-6061
-  mass: 39.95
-  note: 5 of 6061 tube 160 x 3 mm, 2.0 m each
+  mass: 23.97
+  note: 3 of 6061 tube 160 x 3 mm, 2.0 m each at x [-1.395, 0.0, 1.395]; untrimmed stock mass, fishmouth deductions pending
 - what: Socket pads and inserts
   item: material.high-strength-steel-4340
   mass: 0.39
-  note: 8 4340 pads, each an M10 insert
+  note: 8 4340 pads, each an M10 insert; pad thickness 0.01 m, crosses lowered by that thickness with fishmouth seats to retain socket face z 0.32; joints unqualified
 - what: Fixing lugs
   item: material.aluminium-alloy-6061
   mass: 2.92
@@ -166,7 +166,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 844.5
+  mass: 841.9
   force: 24533.0
   at:
   - -1.0
@@ -183,7 +183,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 844.5
+  mass: 841.9
   force: 24533.0
   at:
   - 0.0
@@ -200,7 +200,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 844.5
+  mass: 841.9
   force: 24533.0
   at:
   - 1.0
@@ -217,7 +217,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 844.5
+  mass: 841.9
   force: 24533.0
   at:
   - -1.0
@@ -234,7 +234,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 844.5
+  mass: 841.9
   force: 24533.0
   at:
   - 0.0
@@ -251,7 +251,7 @@ ports:
   interface: interface.kit-clamp
   half: male
   make: bolted
-  mass: 844.5
+  mass: 841.9
   force: 24533.0
   at:
   - 1.0

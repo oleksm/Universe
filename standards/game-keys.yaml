@@ -159,6 +159,7 @@
 - { key: module.electrical-fittings-works, game: "electrical-fittings-works", in: "formerly industry.ron, settlements.ron" }
 - { key: module.electronics-works, game: "electronics-works", in: "formerly industry.ron, settlements.ron" }
 - { key: module.extrusion-press, game: "extrusion-press", in: "formerly industry.ron, settlements.ron" }
+- { key: module.factory-works, game: "factory-works", in: "formerly industry.ron, settlements.ron" }
 - { key: module.feed-mill, game: "feed-mill", in: "formerly industry.ron, settlements.ron" }
 - { key: module.ferroalloy-furnace, game: "ferroalloy-furnace", in: "formerly industry.ron, settlements.ron" }
 - { key: module.fertiliser-works, game: "fertiliser-works", in: "formerly industry.ron, settlements.ron" }
@@ -202,6 +203,7 @@
 - { key: module.orchard, game: "orchard", in: "formerly industry.ron, settlements.ron" }
 - { key: module.ore-yard, game: "ore-yard", in: "formerly industry.ron, settlements.ron" }
 - { key: module.oxygen-plant, game: "oxygen-plant", in: "formerly industry.ron, settlements.ron" }
+- { key: module.packaging-works, game: "packaging-works", in: "formerly industry.ron, settlements.ron" }
 - { key: module.panel-former, game: "panel-former", in: "formerly industry.ron, settlements.ron" }
 - { key: module.panel-line, game: "panel-line", in: "formerly industry.ron, settlements.ron" }
 - { key: module.panel-press, game: "panel-press", in: "formerly industry.ron, settlements.ron" }
@@ -220,6 +222,7 @@
 - { key: module.silicon-refinery, game: "silicon-refinery", in: "formerly industry.ron, settlements.ron" }
 - { key: module.soap-works, game: "soap-works", in: "formerly industry.ron, settlements.ron" }
 - { key: module.soda-works, game: "soda-works", in: "formerly industry.ron, settlements.ron" }
+- { key: module.specialty-chemical-works, game: "specialty-chemical-works", in: "formerly industry.ron, settlements.ron" }
 - { key: module.stock-yard, game: "stock-yard", in: "formerly industry.ron, settlements.ron" }
 - { key: module.sugar-works, game: "sugar-works", in: "formerly industry.ron, settlements.ron" }
 - { key: module.sulphur-works, game: "sulphur-works", in: "formerly industry.ron, settlements.ron" }

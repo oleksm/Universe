@@ -11,13 +11,13 @@ made_from:
 - item: material.high-strength-steel-4340
 - item: material.aluminium-alloy-6061
 size:
-  length: 12.0
-  width: 12.0
+  length: 12.13
+  width: 12.2
   height: 0.45
 supplies:
   item: adapter.drive-s3
 physical:
-  mass: 5235.34
+  mass: 4841.21
 basis:
 - of:
   - size

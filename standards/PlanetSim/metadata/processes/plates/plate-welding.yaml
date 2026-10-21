@@ -87,6 +87,35 @@ params:
     factor: 50.0
   meaning: window over which collision front particles are counted for welding
   source: stages/plates.py:242
+- name: WELD_CONTACT_MYR
+  value: 946728000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 30.0
+  meaning: 'vector plates: two plates whose continents have stayed in contact (a continent-continent collision on their boundary at every step, gaps under two steps) this long weld into one: the suture locks and the convergence moves
+    elsewhere'
+  source: 'collisional orogens run a few tens of Myr from first contact to the end of convergence across the suture (e.g. Caledonian-Scandian ~40 Myr, Alpine ~30-50 Myr); figures from memory: verify'
+  note: '19 Oct 2026: alongside WELD_AREA; with stiff collision coupling the area brought in is small, so stalled contacts did not weld and kept trading crust'
+- name: WELD_CONTACT_LENGTH
+  value: 500000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 0.001
+  meaning: 'vector plates: a continental contact welds two plates (WELD_CONTACT_MYR) only once it is at least this long: a promontory touching another continent indents it; a wide front locks the suture'
+  source: 'derived from collision fronts that ended convergence (hundreds to thousands of km: Arabia ~1,000 km; India ~2,500 km); chosen at the small end for small Archean continents'
+  note: '19 Oct 2026: e15 welded 45 times by 3.5 Ga with plates holding at 9-10 (weld-rift churn) on any brief touch'
+- name: WELD_LOCK_SPEED
+  value: 1.584e-10
+  unit: m/s
+  said_as:
+    unit: cm/yr
+    factor: 3155760000.0
+  meaning: 'vector plates: a continental contact counts toward welding (WELD_CONTACT_MYR over WELD_CONTACT_LENGTH) only while the two plates close across it slower than this: the collision has locked; a faster contact restarts the count.
+    The WELD_AREA rule is no longer used by the vector plates'
+  source: 'derived: shortening across mature, stalling orogens is a few mm/yr (e.g. the Zagros and the Alps today, ~0.5 cm/yr); figures from memory: verify'
+  note: '19 Oct 2026: e31 welded 48 times by 3.0 Ga and ended as one plate; welds came from contacts still converging'
 random_draws:
 - none
 invariants:

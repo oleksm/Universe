@@ -10,15 +10,14 @@ package: package.crate-steel
 made_from:
 - item: material.aluminium-alloy-6061
 - item: material.silicone-rubber
-- item: material.high-strength-steel-4340
 size:
-  length: 0.064
-  width: 0.023
-  height: 0.012
+  length: 0.049
+  width: 0.02
+  height: 0.023
 supplies:
   item: connector.run-clip-d16
 physical:
-  mass: 0.039
+  mass: 0.0118
 basis:
 - of:
   - size

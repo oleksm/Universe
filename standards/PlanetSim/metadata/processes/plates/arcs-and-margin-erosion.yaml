@@ -2,15 +2,11 @@
 identity:
   key: planet-process.arcs-and-margin-erosion
   name: Arc growth behind trenches and subduction erosion of continental margins
-  about: 'Particles within ARC_WIDTH (as ARC_WIDTH/R on the unit sphere) of any sunk particle, not themselves sunk, and on
-    the same plate as the rider of their nearest trench point form the arc band. The volume ARC_PER_AREA * (#sunk * cell)
-    is spread evenly: each band particle gains ARC_PER_AREA*#sunk/#band metres (floor thickness on ocean particles, volume*cell
-    on continental ones). This is per step, scaled by consumed area, not by dt. New volcanic rock: greenstone while mantle
-    T > G.KOMATIITE_MANTLE_K else arc_volcanic; arc_plutonic basement; cover grows to G.ARC_COVER; ore fertility (porphyry,
-    epithermal, volcanic sulphur on continent; VMS, porphyry on island arcs) with gain e-fold G.ARC_FERTILE_M; grain along
-    the trench. Where a continent rides over the trench, continental particles within ARC_WIDTH of a continent-ridden trench
-    on the rider''s plate lose MARGIN_LOSS_PER_AREA*(#sunk under continent)/#margin*cell of volume (clamped at 0). Arc additions
-    also go to the per-sample volcano record w.volc[''arc''] (metres and last time).'
+  about: 'Particles within ARC_WIDTH (as ARC_WIDTH/R on the unit sphere) of any sunk particle, not themselves sunk, and on the same plate as the rider of their nearest trench point form the arc band. The volume ARC_PER_AREA * (#sunk
+    * cell) is spread evenly: each band particle gains ARC_PER_AREA*#sunk/#band metres (floor thickness on ocean particles, volume*cell on continental ones). This is per step, scaled by consumed area, not by dt. New volcanic rock: greenstone
+    while mantle T > G.KOMATIITE_MANTLE_K else arc_volcanic; arc_plutonic basement; cover grows to G.ARC_COVER; ore fertility (porphyry, epithermal, volcanic sulphur on continent; VMS, porphyry on island arcs) with gain e-fold G.ARC_FERTILE_M;
+    grain along the trench. Where a continent rides over the trench, continental particles within ARC_WIDTH of a continent-ridden trench on the rider''s plate lose MARGIN_LOSS_PER_AREA*(#sunk under continent)/#margin*cell of volume
+    (clamped at 0). Arc additions also go to the per-sample volcano record w.volc[''arc''] (metres and last time).'
 area: plates
 clock:
   when: every step with sunk particles
@@ -88,12 +84,14 @@ params:
   source: stages/plates.py:146
   note: 'real: arc-trench gaps 100-300 km'
 - name: ARC_PER_AREA
-  value: 1266.6666666666665
+  value: 1646.6666666666667
   unit: m
-  meaning: 'arc crust added per area of subducted floor (m3/m2), spread evenly over the arc band: 3.8 km3/yr of arcs over
-    3.0 km2/yr of floor consumed'
-  source: Scholl & von Huene 2009 (arc addition 3.8 km3/yr); Parsons 1981 (3.0 km2/yr consumed)
-  note: sourced; the Python had x1.75 recalibrated to Earth crust volume at its slow plates (dropped 18 Oct 2026)
+  meaning: 'Arc crust added per area of subducted floor (m3/m2), spread evenly over the arc band: base 3.8 km3/yr of arcs over 3.0 km2/yr of floor consumed, without the historical Python calibration multiplier.'
+  source: 'Scholl & von Huene 2009 (arc addition 3.8 km3/yr); Parsons 1981 (3.0 km2/yr consumed): 1.27 km per km2; x1.75 = 2.22 km is the Python calibration to Earth crust volume (planet-sim-landform d7442bb, made together with its
+    re-lay). planets, 20 Oct 2026: retried as experiment e55 once the continent outline is held by the processes alone (forge e53: 1.27 km gave 5.0e18 m3 on 29% of the planet, Earth 7.2e18 on 40%); e38 had rejected it under the leaky
+    representation. Acceptance: volume 6.5-8e18 at 35-45% area, thickness kept, ocean age and texture unchanged; land reported, not targeted. Roll back to 1266.67 if it fails.'
+  note: The owner-authorized forge_e38 comparison restored the historical Python multiplier 1.75 with corrected speeds. It raised final continental area from 36.06% to 59.17% and reduced exposed land from 24.68% to 17.56% at the same
+    water inventory. Rejected and reverted on 19 Oct 2026; see planet-forge/docs/terrain-canvas-recovery.md. No forced land fraction.
 - name: MARGIN_LOSS_PER_AREA
   value: 900.0
   unit: m
@@ -115,6 +113,18 @@ params:
   unit: m
   meaning: max arc cover (geology.py:155)
   source: stages/plates.py:1151
+- name: growth band
+  value: 0.1
+  unit: '1'
+  meaning: the arc rate falls from the full ARC_PER_AREA at the continental growth curve target (plates-init CRUST_GROWTH_AGE/SHARE of PRESENT_CRUST_VOLUME, scaled by the planet area) to growth floor factor of it this share of the target
+    above it, linear between; below the target the full rate
+  source: planets, 20 Oct 2026 (chosen); Dhuime et al. 2012 for the curve; forge models/plates/arcs.rs; e67
+- name: growth floor factor
+  value: 0.5
+  unit: '1'
+  meaning: 'the arc rate as a fraction of ARC_PER_AREA once the continental volume stands growth band above the growth curve: growth saturates at Earth volume instead of lifting the sea through the late history (forge e66: 9.9e18 m3,
+    41% of the interiors drowned at the end)'
+  source: planets, 20 Oct 2026 (chosen)
 random_draws:
 - none
 invariants:
@@ -122,6 +132,7 @@ invariants:
 - margin volume never negative
 depends_on:
 - planet-process.subduction
+- planet-process.plates-init
 backends:
 - cpu
 implementations:
@@ -135,14 +146,37 @@ basis:
   - reads
   - writes
   tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
-    code at planet-sim-landform 9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'
 - of:
   - params.ARC_PER_AREA
-  tier: sourced
-  note: 'planets, 18 Oct 2026: the plates variant the owner chose (planet-forge plates-foundation), measured on plates_earth,
-    3 seeds.'
+  tier: derived
   source: Scholl & von Huene 2009; Parsons 1981
+  note: Base ratio 3.8 km3/yr divided by 3.0 km2/yr, converted to metres. The original Python multiplier 1.75 was a chosen volume calibration; the isolated forge_e38 comparison rejected restoring it with the corrected speed law. The
+    default returns to the unmultiplied base ratio.
+- of:
+  - params
+  tier: invented
+  note: 'planets, 20 Oct 2026: ARC_PER_AREA x1.75 as experiment e55 (see params.1.source); the 20 Oct e54 launch wrote a stray key and ran at 1.27 km (aborted, a duplicate of e53).'
+- of:
+  - params
+  tier: derived
+  note: 'planets, 20 Oct 2026: e55 with x1.75 under the held outline: 1.6e19 m3 on 80% of the planet by 3850 Myr, sea level 4800 m, land 10% (continents hold 40 km and drown under the rising sea). Rejected; back to the sourced 1.27
+    km. The gross crust budget is set by the floor consumed (10 km2/yr against Earth 3.0-3.4): the boundary length is the lever, not the rate per km2.'
+- of:
+  - params
+  tier: invented
+  note: 'planets, 20 Oct 2026 (owner: looks right for the game, try tweaks): ARC_PER_AREA x1.4 = 1.77 km as e56, between the sourced 1.27 (e53: 5.0e18 m3 on 29%) and x1.75 (e55: 1.7e19 on 80%).'
+- of:
+  - params
+  tier: invented
+  note: 'planets, 20 Oct 2026: ARC_PER_AREA = 1.77 km (x1.4 of the sourced 1.27) is the default for the game look, chosen on e56 against e53 (1.27: 23% land, 29% continental) and e57 (x1.3: 37% land, 47%, flatter, ocean 107 Myr). e56:
+    37-40% land, continents on 51% at 37 km, volume 1.0e19 m3, sea 2764 m on the ridge reference (Earth 2600), ocean median 87 Myr, ranges to 7.9 km. Owner: not bad at all. See planet-forge docs/decisions-2026-10-20.md D8.'
+- of:
+  - params
+  tier: invented
+  note: 'planets, 20 Oct 2026 (late): default ARC_PER_AREA = 1.46 km (x1.15 of the sourced 1.27) together with the denudation base level 300 m, chosen on forge e60: land 33% (late 31-33%), continents on 39.5% of the planet (Earth 40%)
+    at 32 km, drowned interiors 1.6%, sea 1721 m, ocean median 107 Myr, relief p50 834 m, max 5.3 km. Replaces the x1.4 choice of e56 (37-40% land, 18% drowned interiors, the cheesy inland seas). Bracket: x1.0 + base level (e59) 26.6%;
+    x1.4 + base level (e58) 25% with 52% drowned. See planet-forge docs/decisions-2026-10-20.md D8/D11.'
 events_emitted:
 - event: planet-event.arc
   where: 'forge: one per substep with arcs (volumes added and eaten)'

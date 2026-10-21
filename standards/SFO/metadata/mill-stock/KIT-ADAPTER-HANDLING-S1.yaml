@@ -12,12 +12,12 @@ made_from:
 - item: material.high-strength-steel-4340
 size:
   length: 8.0
-  width: 2.0
+  width: 2.1
   height: 0.16
 supplies:
   item: adapter.handling-s1
 physical:
-  mass: 55.34
+  mass: 51.41
 basis:
 - of:
   - size

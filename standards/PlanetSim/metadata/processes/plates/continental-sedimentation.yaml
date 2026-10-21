@@ -1,13 +1,9 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
 identity:
   key: planet-process.continental-sedimentation
-  name: Platform and basin sediment on continents (record only)
-  about: 'Flooded continent lays PLATFORM_M_PER_MYR*every*dt*clip(depth/200 m, 0, 1). Land basins: coupled era - the rivers''
-    deposits; else the eroded supply smoothed BASIN_REACH times over neighbours, BASIN_SHARE of it laid on low land (< BASIN_BELOW
-    above sea) x (1-above/BASIN_BELOW). Limited to room: 2.5 x sea depth ((rho_m-rho_w)/(rho_m-rho_s)) or BASIN_FILL on land,
-    minus existing sediment cover. _deposit lays units (iron formation / carbonate in warm marine within 100 m of sea / clastic),
-    evaporites in the arid band, manganese in the oxygenation window. A rock-unit record only: it adds no crust volume. Organics
-    are buried and heated.'
+  name: Conservative routed continental and coastal sediment deposition
+  about: Fallback retains e41 basin rules. With fresh coupled transport, only routed material is laid on supported continental receivers, including submerged river mouths; the unfunded platform rate is not applied in this mode. Accommodation
+    and cover room bound deposits. The normalized kernel transpose adds physical volume, funded by measured denudation; only the remaining budget goes to shelves or export. Rates are unchanged.
 area: plates
 clock:
   when: with each denudation pass
@@ -44,6 +40,21 @@ reads:
 - name: (coupled era) the rivers' deposits
   field: planet-field.laid
   unit: m
+- field: planet-field.particle-volume
+  name: w.xvol
+  unit: m3
+- field: planet-field.particle-plate
+  name: w.xplate
+  unit: '1'
+- field: planet-field.particle-age
+  meaning: Read-only before/after basin receipt; does not drive denudation.
+  name: basin diagnostic ocean age
+  unit: s
+- field: planet-field.particle-floor-thickness
+  name: w.xfloor
+  unit: m
+- name: current-step deferred denudation ledger receipt
+  unit: m3
 writes:
 - name: w.xtop, w.xcover, w.xfert, w.xdep, w.xorg...
   field: planet-field.organic-carbon
@@ -55,6 +66,14 @@ writes:
   unit: '1'
 - name: w.xcover
   field: planet-field.particle-rock-cover
+  unit: m
+- field: planet-field.particle-volume
+  meaning: the continents thinned by the loss
+  name: w.xvol
+  unit: m3
+- field: planet-field.particle-floor-thickness
+  meaning: the eroded volume laid on the shelves
+  name: _to_shelf (coupled era)
   unit: m
 params:
 - name: PLATFORM_M_PER_MYR
@@ -130,7 +149,9 @@ params:
 random_draws:
 - none
 invariants:
-- no change to crust volume (xvol)
+- inland retained volume plus shelf transfer plus exported volume equals the measured denudation budget
+- inland addition is nonnegative and never exceeds current-step measured erosion
+- marine platform records do not add crust volume
 depends_on:
 - planet-process.denudation-and-rivers
 backends:
@@ -149,12 +170,20 @@ basis:
   - reads
   - writes
   tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the
-    code at planet-sim-landform 9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'
 - of:
   - params
   tier: derived
   note: 'planets, 17 Oct 2026: planet-forge geology port (models/geology, models/impacts), read from planet-sim-landform 1df4daf.'
+- note: 'planets, 19 Oct 2026: physical-model correction authorized after forge_e40 erosion audit; inland cover previously recorded sediment without restoring volume, while all late denudation went offshore. Rates and basin allocation
+    rules unchanged; deposited volume is funded by measured current-step erosion.'
+  of:
+  - identity
+  - writes
+  - invariants
+  tier: derived
 events_emitted:
 - event: planet-event.ledger-row
-  where: 'forge: what the step laid (a rock record, no volume)'
+  where: 'forge: measured erosion budget, inland retained volume, shelf transfer, export, budget residual, and before/after basin receipts'
+note: retained_m3 includes exposed and submerged continental deposits; marine_continental_retained_m3 reports the submerged share. Marine platform records without added volume remain only in the fallback mode. A density/compaction-aware
+  sediment column is not yet implemented.

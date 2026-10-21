@@ -34,6 +34,9 @@ reads:
 - name: (forge) the latest substep's
   field: planet-field.trench-time
   unit: s
+- name: mantle T
+  field: planet-field.mantle-temperature
+  unit: K
 writes:
 - name: z
   field: planet-field.height-above-ridge
@@ -53,7 +56,7 @@ params:
   source: stages/plates.py:85
   note: Cogley 1984 (real)
 - name: CONTINENT_MEAN
-  value: 39000.0
+  value: 41000.0
   unit: m
   meaning: reference continental thickness for isostasy; also fold-belt index base in coupled struct
   source: stages/plates.py:86
@@ -120,11 +123,36 @@ params:
   unit: '1'
   meaning: 'unverified: the code names it trench reach without saying what it is'
   source: stages/plates.py:1525
+- name: ridge thermal shallowing
+  value: 8.0
+  unit: m/K
+  meaning: 'the whole ocean floor stands this much shallower per kelvin of the mantle potential temperature above modern mantle temperature (a hotter mantle: thicker, more buoyant floor and shallower ridges; the Archean freeboard: Galer
+    1991, Flament et al. 2008). At +250 K (the run start) 2 km: the early sea stands high and the early continents near it instead of 2-4 km up (forge e61-e63 at 1 Gyr: three quarters of the land above 2 km over an 84% ocean at today
+    ridge depth)'
+  source: 'planets, 20 Oct 2026 (chosen magnitude: ~2 km at 4 Ga, Flament et al. 2008 order); forge models/plates/elevation.rs and basins.rs; e64'
+- name: modern mantle temperature
+  value: 1530.0
+  unit: K
+  meaning: the interior model mantle potential temperature today (its Earth), above which the floor shallows
+  source: planet-sim interior model (Earth today 1530 K; real ~1623 K, docs/accuracy.md)
+- name: margin wedge lift
+  value: 1800.0
+  unit: m
+  meaning: 'the lift of a thinned continental margin by its sediment wedge (shelf, slope and rise: 5-15 km of sediment on 13-30 km of crust; Airy with sediment at 2400 kg/m3 lifts the surface by ~0.27 of the wedge), added in full at
+    CONTINENT_EDGE and fading to nothing at margin wedge full thickness. Without it the margins stand at -0.5 to -1.5 km on the ridge reference instead of shelf depth (forge e69: shelf 0 to -200 m 1.8% of the ocean, Earth 7.3%)'
+  source: Watts 1982 (passive-margin sediment wedges to ~15 km); planets, 20 Oct 2026 (magnitude chosen for the shelf look); forge models/plates/elevation.rs, basins.rs; e70
+- name: margin wedge full thickness
+  value: 32000.0
+  unit: m
+  meaning: crust this thick or thicker carries no margin wedge lift; the lift grows linearly from here to CONTINENT_EDGE
+  source: planets, 20 Oct 2026 (chosen)
 random_draws:
 - none
 invariants:
 - 'monotone: thicker crust stands higher'
 depends_on:
+- planet-process.crust-read
+- planet-process.thermal-evolution
 - planet-process.crust-read
 backends:
 - cpu
@@ -140,3 +168,9 @@ basis:
   - writes
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - params
+  tier: invented
+  note: 'planets, 20 Oct 2026: CONTINENT_MEAN 39 -> 41 km (Mooney et al. 1998 global mean ~41 km; Christensen & Mooney 1995 39 km): the continent stands 840 m above Earth sea at 41 km, so every thickness stands 303 m lower on the ridge
+    reference. From the shape audit against ETOPO on the same lattice: at 39 km the land stood too high (e65: median 668 m, Earth 418; shelves 2.4% of the ocean, Earth 7.3%); the static check on the e65 state at 41 km: median 476 m,
+    shelf 5.0%, shallow 11.7% (Earth 11.6), land 33%. e66.'

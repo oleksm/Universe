@@ -9,6 +9,7 @@ physical:
   length: 300
   width: 60
   height: 18
+  mass: 720000.0
 staff:
 - profession: profession.welder
   count: 6
@@ -90,7 +91,7 @@ recipes:
     quantity: 0.8719
   - item: good.refractory-brick
     quantity: 0.1527
-  - item: material.silicone-rubber
+  - item: stock.chem-silicone-rubber
     quantity: 0.0008
   outputs:
   - item: stock.sta36-scrap
@@ -976,7 +977,7 @@ recipes:
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9109
-  - item: material.silica-aerogel
+  - item: stock.chem-silica-aerogel
     quantity: 0.0522
   - item: stock.st4340-bar-120
     quantity: 0.0497
@@ -998,7 +999,7 @@ recipes:
     quantity: 0.9084
   - item: stock.st4340-bar-120
     quantity: 0.1097
-  - item: material.silica-aerogel
+  - item: stock.chem-silica-aerogel
     quantity: 0.0067
   - item: stock.st304-pl-3
     quantity: 0.0051
@@ -1018,7 +1019,7 @@ recipes:
     quantity: 0.9134
   - item: stock.st4340-bar-120
     quantity: 0.1027
-  - item: material.silica-aerogel
+  - item: stock.chem-silica-aerogel
     quantity: 0.007
   - item: stock.st304-pl-3
     quantity: 0.0067
@@ -1503,3 +1504,8 @@ basis:
 - of:
   - life
   rule: rule.life-plant
+- of:
+  - physical.mass
+  tier: derived
+  review: true
+  note: Sum of its construction parts, at their recorded counts. The coarse construction budgets remain invented and under review.

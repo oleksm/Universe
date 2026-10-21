@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../schema/planet-object.schema.yaml
+identity:
+  key: planet-object.river
+  name: River
+  about: A river's course down the height, with its discharge, area, width and depth along it, the river it joins and where it ends.
+scope: generator
+about_model: Traced by steepest descent; contributing area by quadrature; channel heads by the channel-head law; any river can be retraced at any vertex spacing from the same function.
+extends: planet-object.record
+generator: planet-process.vector-water
+geometry:
+  kind: line
+  frame: body
+  tolerance: vector-water precision, vertex spacing, descent step
+attributes:
+- name: q
+  unit: m3/s
+  meaning: discharge per vertex
+  field: planet-field.discharge
+- name: area
+  unit: m2
+  meaning: contributing area per vertex
+  field: planet-field.drainage-area
+- name: width, depth
+  unit: m
+  meaning: from the river laws
+- name: parent
+  meaning: the river it joins
+- name: end
+  meaning: sea, lake, node, pit
+persistence:
+  how: derived
+provides:
+- planet-field.discharge
+- planet-field.drainage-area
+- planet-field.basin
+- planet-field.basin-closed
+code:
+- type: River
+  file: crates/water/src/rivers.rs
+open:
+- history (dry valleys, captures, misfits) needs rivers kept across steps
+status: draft
+basis:
+- of:
+  - identity
+  - about_model
+  - attributes
+  - dynamics
+  - persistence
+  - code
+  tier: derived
+  note: 'planets, 19 Oct 2026: read from planet-forge''s types (docs/data-model.md)'

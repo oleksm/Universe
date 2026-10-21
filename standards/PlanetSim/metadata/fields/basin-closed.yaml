@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.basin-closed
+  name: Closed basin
+  about: 1 where a point's water ends in a closed lake or a playa (the vector water's lake balance).
+unit: '1'
+producer:
+  where: planet-forge crates/water/src/forge_model.rs
+  file: surface
+  key: planet-field.basin-closed
+per: sample
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 18 Oct 2026: the vector water surface'

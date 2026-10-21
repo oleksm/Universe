@@ -1689,6 +1689,7 @@ for m in modules:
     for kind in (m.get("rate") or {}).get("stores") or []:
         if kind not in GOODS_KINDS:
             problem(os.path.join(TREE, m["file"]), f"rate.stores: the game has no kind of goods '{kind}'")
+_stock_and_part_names = {os.path.basename(rel_)[:-5] for key_, (rel_, _) in REGISTRY.items() if key_.startswith(("stock.", "part."))}
 for pr in processes + modules:
     where = os.path.join(TREE, pr["file"])
     for group in ("inputs", "outputs"):
@@ -1697,8 +1698,8 @@ for pr in processes + modules:
                 item = x.get("item")
                 if item is None and not x.get("name"):
                     problem(where, f"{group}.{listed}: an entry needs item or name")
-                elif item is not None and item not in symbols and item not in slugs:
-                    problem(where, f"{group}.{listed}: '{item}' is no element's symbol and no material's or good's file name")
+                elif item is not None and item not in symbols and item not in slugs and item not in _stock_and_part_names:
+                    problem(where, f"{group}.{listed}: '{item}' is no element, material, good, stock or part")
 
 ids = {s["id"] for s in standards}
 for s in standards:
@@ -1743,7 +1744,7 @@ reports = []
 
 # Each report belongs to a group on the page, and names the docs that say its rules (paths from the repository root).
 REPORT_GROUPS = {"ships": ["equipment-parts", "equipment", "mounts", "members", "hulls", "budgets", "volume", "dimensions", "structure-mc-07", "shock", "mass", "chains"],
-                 "industry": ["plant", "balance", "materials", "goods", "takers", "power", "gates"],
+                 "industry": ["plant", "stock-chains", "balance", "materials", "goods", "takers", "power", "gates"],
                  "people": ["needs", "work", "buildings", "census", "traffic"],
                  "sky": ["worlds", "celestial", "planet-lod", "planet-models"], "engine": ["clocks"],
                  "quality": ["confidence", "invented", "review", "revisions", "dictionary"]}
@@ -2555,6 +2556,26 @@ for kind, sch in SCHEMAS.items():
         rows.append(row("note", KIND_NAME.get(kind, kind) if "KIND_NAME" in globals() else kind, dflt.get("status", ""), dflt.get("on_conflict", ""), dflt.get("because", ""), ", ".join(f"{e['identity'].get('name', e['slug'])}: {e['revision']['status']}" for e in own) or "none"))
 report("revisions", "Revisions: how firm each kind of record is", "What a record of each kind is unless it says otherwise, and the records that say otherwise. draft: do not balance against it. review: build against it, propose changes. complete: a hard limit, and its record may not change.", ["Kind", "Status", "On conflict", "Because", "Records that say otherwise"], rows)
 
+# Stock coverage includes all ingredients and the independently manufactured
+# empty handling unit. Work from raw records, not the legacy first-material view.
+from production_chain import audit as audit_production_chain
+_chain = audit_production_chain({key: value[1] for key, value in REGISTRY.items()})
+_chain_rows = []
+for _cr in _chain["rows"]:
+    _key = _cr["key"]
+    _state = "gap" if _cr["issues"] else "ok"
+    _chain_rows.append(row(_state, link(_cr["name"], _key),
+                           f"{_cr['mass']:g} kg" if _cr["mass"] is not None else "by load",
+                           ", ".join(_cr["sources"]) or "bulk wrapper / natural resource",
+                           _cr["empty_stock"] or ("empty unit itself" if _key.startswith("stock.pkg-") else "none"),
+                           "; ".join(_cr["issues"]) or "route present"))
+for _cw in _chain["works"]:
+    _cw_mass = (REGISTRY[_cw][1].get("physical") or {}).get("mass")
+    _chain_rows.append(row("ok" if _cw in _chain["available"] else "gap", link(_cw, _cw), f"{_cw_mass:g} kg" if _cw_mass is not None else "not said", "construction recipe", "", "route present" if _cw in _chain["available"] else "no construction route"))
+report("stock-chains", "Stock: ingredients and manufactured packaging",
+       "A manufacturing route for every stock item and every empty package, following all recipe inputs and shop-made parts. Natural resources and elemental feeds are declared supply boundaries, not proof of a mine or supplier. A route may contain draft recipes: this proves data coverage, not qualified chemistry, throughput, installed facilities or power. Packing uses one empty handling unit separately from its contents (rule.packing-stock); runtime inventory enforcement remains the game's work.",
+       ["Stock / package / works", "Mass of one", "Made by", "Empty packaging stock", "Coverage"], _chain_rows)
+
 # 4. What goes in against what comes out, for each industrial module.
 rows = []
 for m, rc in [(m, rc) for m in modules for rc in m.get("recipes") or []]:
@@ -2593,6 +2614,8 @@ for gd in goods:
 rows = []
 for gd in goods:
     made = [m for m in modules if any(rc.get("product") == gd["slug"] or any(x.get("item") == gd["slug"] for x in rc.get("outputs") or []) for rc in m.get("recipes") or [])]
+    if _op_sources := _chain["operation_sources"].get("good." + gd["slug"]):
+        made.append({"identity": {"name": f"Packaging opening/disposal ({len(_op_sources)} handling types)"}, "slug": ""})
     made += [{"identity": {"name": "People"}, "slug": ""}] if any(g_["item"] == gd["slug"] for nd in needs for g_ in nd.get("gives") or []) else []
     uses = lambda slug: [m for m in modules if any(x.get("item") == slug for rc in m.get("recipes") or [] for x in rc.get("inputs") or [])]
     used = uses(gd["slug"])
@@ -2618,6 +2641,8 @@ report("goods", "Goods: where each comes from and goes", "Each good: where it co
 # (Record kinds the page had no view for: shown as written, each group a table with its schema's descriptions.)
 REGISTERS, REGISTER_GROUPS, KEY_PAGES = [], {}, {}
 _REG = [("mounts", "Mounts", "SFO", os.path.join("SFO", "metadata", "mounts"), "SFO/schema/mount.schema.yaml", "SFO 19"),
+        ("stock", "Bulk stock and empty packaging", "SFO", os.path.join("SFO", "metadata", "stock"), "SFO/schema/mill-stock.schema.yaml", "SFO 8"),
+        ("packages", "Handling packages", "SFO", os.path.join("SFO", "metadata", "packages"), "SFO/schema/package.schema.yaml", "SFO 8"),
         ("plant-mounts", "Plant mounts", "SFO", os.path.join("SFO", "metadata", "plant-mounts"), "SFO/schema/plant-mount.schema.yaml", "SFO 24"),
         ("units", "Plant units", "SFO", os.path.join("SFO", "metadata", "units"), "SFO/schema/unit.schema.yaml", "SFO 24"),
         ("layouts", "Plant layouts", "SFO", os.path.join("SFO", "metadata", "layouts"), "SFO/schema/layout.schema.yaml", "SFO 24"),
@@ -2657,7 +2682,8 @@ _REG = [("mounts", "Mounts", "SFO", os.path.join("SFO", "metadata", "mounts"), "
         ("planet-views", "Views", "PlanetSim", os.path.join("PlanetSim", "metadata", "views"), "PlanetSim/schema/planet-view.schema.yaml", None),
         ("planet-targets", "Targets", "PlanetSim", os.path.join("PlanetSim", "metadata", "targets"), "PlanetSim/schema/planet-target.schema.yaml", None),
         ("planet-gates", "Run gates", "PlanetSim", os.path.join("PlanetSim", "metadata", "gates"), "PlanetSim/schema/planet-gate.schema.yaml", None),
-        ("planet-run-profiles", "Run profiles", "PlanetSim", os.path.join("PlanetSim", "metadata", "run-profiles"), "PlanetSim/schema/planet-run-profile.schema.yaml", None)]
+        ("planet-run-profiles", "Run profiles", "PlanetSim", os.path.join("PlanetSim", "metadata", "run-profiles"), "PlanetSim/schema/planet-run-profile.schema.yaml", None),
+        ("planet-objects", "Data model", "PlanetSim", os.path.join("PlanetSim", "metadata", "objects"), "PlanetSim/schema/planet-object.schema.yaml", None)]
 for _kind, _title, _root, _dir, _schema, _std in _REG:
     _recs = []
     for _f in sorted(glob.glob(os.path.join(TREE, _dir, "**", "*.yaml"), recursive=True)):      # (the Planet Simulator's patterns lie in a folder a family)
@@ -2693,6 +2719,12 @@ for _lst, _pre in ((equipment, "eq:"), (modules, "mod:"), (goods, "good:"), (mil
 for _el in elements: KEY_PAGES["element." + str((_el.get("identity") or {}).get("symbol", "")).lower()] = "el:" + str((_el.get("identity") or {}).get("symbol", ""))
 for _mk in makers: KEY_PAGES[str(_mk.get("key", ""))] = "mk:" + str(_mk.get("key", ""))
 KEY_PAGES.pop("", None)
+for _report in reports:
+    if _report["key"] == "stock-chains":
+        for _row in _report["rows"]:
+            for _cell in _row["cells"]:
+                if _cell.get("k") in KEY_PAGES:
+                    _cell["k"] = KEY_PAGES[_cell["k"]]
 
 # 8. Confidence: where every number comes from.
 # (Elements and materials are from published sources, named in their files; a process's amounts are

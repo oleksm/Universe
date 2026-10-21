@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=../../../schema/planet-object.schema.yaml
+identity:
+  key: planet-object.resolution
+  name: Resolution
+  about: 'The knobs that set how much a generator records and how finely: geometric tolerance, time resolution, event threshold, era window, activity, focus.'
+scope: core
+about_model: 'Detail below a generator''s tolerance or threshold is not stored; it is generated from the record and its seed when asked. Cost: lines scale as 1/tolerance, areas as 1/tolerance^2, steps as 1/step over the era, records
+  as their count.'
+knobs:
+- name: geometric tolerance
+  meaning: how closely stored geometry follows the true shape
+  cost: lines 1/tol, areas 1/tol^2
+- name: time resolution
+  meaning: a generator's step; how often it records
+  cost: 1/step over its era
+- name: event threshold
+  meaning: the smallest event recorded; how long records stay apart before merging
+  cost: number of records
+- name: era window
+  meaning: when a generator runs
+  cost: its whole cost outside it
+- name: activity
+  meaning: tolerance and step scaled by events nearby
+  cost: spends where things happen
+- name: focus
+  meaning: named regions with finer knobs and longer history
+  cost: detail where it will be looked at
+open:
+- run profiles (preview, standard, focus) as named knob sets
+- activity scaling not built yet
+status: draft
+basis:
+- of:
+  - identity
+  - about_model
+  - attributes
+  - dynamics
+  - persistence
+  - code
+  tier: derived
+  note: 'planets, 19 Oct 2026: read from planet-forge''s types (docs/data-model.md)'

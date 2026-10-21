@@ -24,6 +24,9 @@ reads:
 - name: next_reorg
   field: planet-field.next-reorganisation
   unit: s
+- name: w.xage
+  field: planet-field.particle-age
+  unit: s
 writes:
 - name: next_reorg
   field: planet-field.next-reorganisation
@@ -68,20 +71,21 @@ events_emitted:
   where: stages/plates.py:1438
 params:
 - name: BIG_SHARE
-  value: 0.35
+  value: 0.25
   unit: '1'
   meaning: a plate carrying more than this share of the world's continental particles (by count, not volume) is 'big' (insulating)
   source: stages/plates.py:67
   note: Gurnis 1988 (chosen)
 - name: INSULATE_MYR
-  value: 6311520000000000.0
+  value: 4733640000000000.0
   unit: s
   said_as:
     unit: Myr
     factor: 200.0
   meaning: a big plate that stays big this long is rifted (supercontinent breakup)
   source: stages/plates.py:68
-  note: Gurnis 1988 (chosen)
+  note: 'Gurnis 1988 (chosen); e88 at 250 Myr: no insulation rift fired and one cut through continent, yet the largest three landmasses held 70% of the land (e86 86%, Earth 91%), the sea stood 450 m higher and interiors were 13.8% drowned:
+    clustering is not set by the supercontinent breakup; back to 150 Myr'
 - name: REORGANISE_MYR
   values:
   - 3155760000000000.0
@@ -120,6 +124,24 @@ params:
   unit: '1'
   meaning: 'top-ups = PLATES - #plates - 2 (plus chance)'
   source: stages/plates.py:1442
+- name: old floor share
+  value: 0.15
+  unit: '1'
+  meaning: 'at a reorganisation a plate whose ocean floor older than FOUNDER_AGE_MYR is at least this share of its ocean gets a convergent ocean-only cut through that floor (subduction initiation, Stern 2004): an interior ocean closes
+    instead of foundering in place forever (forge e60: a continental rim round a 139 Myr interior ocean on a third of the planet)'
+  source: planets, 20 Oct 2026 (chosen); forge models/plates/reorganisation.rs; e61
+  note: '0.3 for e61-e81; 0.15 from e82: e79 held 20% of its floor older than 180 Myr (Earth 5%) in deep bays wedged between continents on plates with 15-23% old floor, below the 0.3 trigger (the owner: enclosed ocean pits)'
+- name: old floor min particles
+  value: 400.0
+  unit: '1'
+  meaning: a plate needs at least this many ocean particles for a subduction-initiation cut
+  source: planets, 20 Oct 2026 (chosen)
+- name: insulation cooling
+  value: 0.5
+  unit: '1'
+  meaning: 'the insulation clock is a leaky integrator: a plate carrying more than BIG_SHARE of the continent gains the step time as heat; below that share it loses this fraction of the step; past INSULATE_MYR of heat it is insulated
+    and rifts (any cut). The clock that reset at every dip of the share never ran 150 Myr in 4 Gyr (forge e73 tracker)'
+  source: planets, 20 Oct 2026 (chosen); forge models/plates/reorganisation.rs; e77
 random_draws:
 - 'next_reorg = t + rng.uniform(100,250)/1e3 at each scheduled reorganisation; rng.uniform() for RIFT_CHANCE drawn only when no plate is insulated (conditional expression evaluated lazily); then each rift''s draws in order: insulated
   targets first, then top-ups.'
@@ -128,6 +150,7 @@ invariants:
 - an insulated reorganisation adds no top-ups
 depends_on:
 - planet-process.plate-rifting
+- planet-process.subduction
 backends:
 - cpu
 implementations:
@@ -142,3 +165,9 @@ basis:
   - writes
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - params
+  tier: invented
+  note: 'planets, 20 Oct 2026 (the shape audit): BIG_SHARE 0.35 -> 0.25 and INSULATE_MYR 200 -> 150 Myr so the supercontinent rift (the only cut through continent) fires: in e71 it never did in 4 Gyr (the largest plate held over 35%
+    of the continent in 15 of 83 checkpoints, never 200 Myr running), 85 of 87 rifts were ocean-only, and 0% of the coast was a rifted margin (Earth ~50%). The cut follows old sutures (SUTURE_STRENGTH) and the halves stretch before
+    parting. e73.'

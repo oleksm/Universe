@@ -9,6 +9,7 @@ physical:
   length: 240
   width: 40
   height: 15
+  mass: 384000.0
 staff:
 - profession: profession.plant-operator
   count: 6
@@ -422,7 +423,7 @@ recipes:
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.5886
-  - item: material.ptfe
+  - item: stock.chem-ptfe
     quantity: 0.4286
   outputs:
   - item: stock.cu-scrap
@@ -434,7 +435,7 @@ recipes:
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.8723
-  - item: material.ptfe
+  - item: stock.chem-ptfe
     quantity: 0.1531
   outputs:
   - item: stock.cu-scrap
@@ -446,7 +447,7 @@ recipes:
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.7839
-  - item: material.ptfe
+  - item: stock.chem-ptfe
     quantity: 0.2389
   outputs:
   - item: stock.cu-scrap
@@ -458,7 +459,7 @@ recipes:
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.5917
-  - item: material.ptfe
+  - item: stock.chem-ptfe
     quantity: 0.4255
   outputs:
   - item: stock.cu-scrap
@@ -470,7 +471,7 @@ recipes:
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.6331
-  - item: material.ptfe
+  - item: stock.chem-ptfe
     quantity: 0.3853
   outputs:
   - item: stock.cu-scrap
@@ -482,7 +483,7 @@ recipes:
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.7538
-  - item: material.ptfe
+  - item: stock.chem-ptfe
     quantity: 0.2682
   outputs:
   - item: stock.cu-scrap
@@ -494,7 +495,7 @@ recipes:
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.5889
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.4283
   outputs:
   - item: stock.cu-scrap
@@ -506,7 +507,7 @@ recipes:
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.6493
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.3696
   outputs:
   - item: stock.cu-scrap
@@ -518,7 +519,7 @@ recipes:
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.7059
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.3147
   outputs:
   - item: stock.cu-scrap
@@ -530,7 +531,7 @@ recipes:
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.7547
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.2672
   outputs:
   - item: stock.cu-scrap
@@ -638,7 +639,7 @@ recipes:
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.828
-  - item: material.ptfe
+  - item: stock.chem-ptfe
     quantity: 0.1962
   outputs:
   - item: stock.cu-scrap
@@ -650,7 +651,7 @@ recipes:
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.8678
-  - item: material.ptfe
+  - item: stock.chem-ptfe
     quantity: 0.1575
   outputs:
   - item: stock.cu-scrap
@@ -662,7 +663,7 @@ recipes:
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.6008
-  - item: material.ptfe
+  - item: stock.chem-ptfe
     quantity: 0.4167
   outputs:
   - item: stock.cu-scrap
@@ -674,7 +675,7 @@ recipes:
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.7034
-  - item: material.ptfe
+  - item: stock.chem-ptfe
     quantity: 0.3171
   outputs:
   - item: stock.cu-scrap
@@ -686,7 +687,7 @@ recipes:
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.7819
-  - item: material.ptfe
+  - item: stock.chem-ptfe
     quantity: 0.2409
   outputs:
   - item: stock.cu-scrap
@@ -698,7 +699,7 @@ recipes:
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.5699
-  - item: material.ptfe
+  - item: stock.chem-ptfe
     quantity: 0.4467
   outputs:
   - item: stock.al6061-scrap
@@ -710,7 +711,7 @@ recipes:
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.6357
-  - item: material.ptfe
+  - item: stock.chem-ptfe
     quantity: 0.3829
   outputs:
   - item: stock.al6061-scrap
@@ -722,7 +723,7 @@ recipes:
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.7014
-  - item: material.ptfe
+  - item: stock.chem-ptfe
     quantity: 0.319
   outputs:
   - item: stock.al6061-scrap
@@ -732,7 +733,7 @@ recipes:
 - makes: stock.kit-feeder-3kv-dc-al-50mm2
   does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
-  - item: material.ptfe
+  - item: stock.chem-ptfe
     quantity: 0.6064
   - item: stock.al6061-pl-5
     quantity: 0.4054
@@ -744,7 +745,7 @@ recipes:
 - makes: stock.kit-feeder-3kv-dc-al-95mm2
   does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
-  - item: material.ptfe
+  - item: stock.chem-ptfe
     quantity: 0.5133
   - item: stock.al6061-pl-5
     quantity: 0.5013
@@ -758,7 +759,7 @@ recipes:
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.5886
-  - item: material.ptfe
+  - item: stock.chem-ptfe
     quantity: 0.4286
   outputs:
   - item: stock.cu-scrap
@@ -770,7 +771,7 @@ recipes:
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.8321
-  - item: material.ptfe
+  - item: stock.chem-ptfe
     quantity: 0.1921
   outputs:
   - item: stock.cu-scrap
@@ -782,7 +783,7 @@ recipes:
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.7725
-  - item: material.ptfe
+  - item: stock.chem-ptfe
     quantity: 0.25
   outputs:
   - item: stock.cu-scrap
@@ -794,7 +795,7 @@ recipes:
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.731
-  - item: material.ptfe
+  - item: stock.chem-ptfe
     quantity: 0.2903
   outputs:
   - item: stock.cu-scrap
@@ -806,7 +807,7 @@ recipes:
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.9137
-  - item: material.ptfe
+  - item: stock.chem-ptfe
     quantity: 0.1129
   outputs:
   - item: stock.cu-scrap
@@ -818,7 +819,7 @@ recipes:
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.8301
-  - item: material.ptfe
+  - item: stock.chem-ptfe
     quantity: 0.194
   outputs:
   - item: stock.cu-scrap
@@ -849,3 +850,8 @@ basis:
 - of:
   - life
   rule: rule.life-plant
+- of:
+  - physical.mass
+  tier: derived
+  review: true
+  note: Sum of its construction parts, at their recorded counts. The coarse construction budgets remain invented and under review.

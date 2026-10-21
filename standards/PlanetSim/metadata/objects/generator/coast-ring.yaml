@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../../schema/planet-object.schema.yaml
+identity:
+  key: planet-object.coast-ring
+  name: Coast ring
+  about: 'A closed coast: the sea level''s line around land, with its deltas.'
+scope: generator
+about_model: Traced on the height to the precision asked; every river mouth is one of its vertices.
+extends: planet-object.record
+generator: planet-process.vector-water
+geometry:
+  kind: ring
+  frame: body
+  tolerance: vector-water precision and vertex spacing
+persistence:
+  how: derived
+code:
+- type: Water::coast
+  file: crates/water/src/lib.rs
+status: draft
+basis:
+- of:
+  - identity
+  - about_model
+  - attributes
+  - dynamics
+  - persistence
+  - code
+  tier: derived
+  note: 'planets, 19 Oct 2026: read from planet-forge''s types (docs/data-model.md)'

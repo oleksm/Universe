@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/supply_chains.py: change it there.
+identity:
+  key: stock.pkg-tote
+  code: PKG-TOTE
+  name: Tote tank, empty
+  form: piece
+  traded_as: market.machinery
+made_from:
+- item: good.polyethylene
+  quantity: 18.0
+- item: stock.sta36-pl-8
+  quantity: 30.0
+- item: good.fibreboard
+  quantity: 12.0
+physical:
+  length: 1.2
+  width: 1.0
+  height: 1.16
+  mass: 60
+supplies:
+  item: package.tote
+basis:
+- of:
+  - identity
+  - made_from
+  - physical
+  tier: derived
+  review: true
+  source: standards/sources/production-chains.yaml
+  note: A stocked feedstock, or one empty handling unit. Empty-unit mass is the existing package's tare; its contents are separate.

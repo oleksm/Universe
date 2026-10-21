@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+# Written by tools/standards/supply_chains.py: change it there.
+identity:
+  key: good.fluorspar
+  name: Fluorspar
+  kind: rock
+  description: Calcium fluoride feed; acid-grade concentrate is the idealisation used by this draft chain.
+physical:
+  bulk_density: 1800
+basis:
+- of:
+  - physical.bulk_density
+  tier: invented
+  review: true
+  source: standards/sources/production-chains.yaml
+  note: Chosen handling density; to be reviewed.
+source:
+  occurs: rocky planets and moons
+  note: A resource class, not a claimed deposit or a chosen supplier. Beneficiation and actual deposit grades remain to qualify.

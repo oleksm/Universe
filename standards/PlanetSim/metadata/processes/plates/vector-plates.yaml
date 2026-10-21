@@ -1,0 +1,207 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.vector-plates
+  name: Vector plates
+  about: 'The plates as vectors (crates/tectonics World): plates bounded by their boundary lines, moved by the balance of their forces; crust as bands (cube-face polygons) with its ledger; isochrons, sutures, spots. Its laws and constants
+    are the plates records (plates-init, plate-motion-and-forces, subduction, collision-and-docking, arcs-and-margin-erosion, hotspots, oceanic-accretion, seafloor-spreading, plate-welding, plate-reorganisation, plate-rifting, crust-flow-cap-delamination,
+    crust-wear-to-shelf, isostatic-elevation, sea-level); in the run it replaces their sampled models. Shared with the models after it as the live object vector-plates; for the views it writes the fields evaluated from the vectors at
+    their points; sea level and land share by quadrature over the vector height.'
+area: plates
+clock:
+  when: every step of the plates and coupled phases (substeps by its own fastest plate)
+writes:
+- name: plate
+  field: planet-field.plate
+- name: crust-kind
+  field: planet-field.crust-kind
+- name: crust-thickness
+  field: planet-field.crust-thickness
+- name: crust-age
+  field: planet-field.crust-age
+- name: ocean-floor-thickness
+  field: planet-field.ocean-floor-thickness
+- name: height-above-ridge
+  field: planet-field.height-above-ridge
+- name: height
+  field: planet-field.height
+- name: sea-level
+  field: planet-field.sea-level
+- name: land-share
+  field: planet-field.land-share
+- name: plate-id
+  field: planet-field.plate-id
+- name: plate-rotation
+  field: planet-field.plate-rotation
+- name: plate-spin
+  field: planet-field.plate-spin
+- name: plate-axis
+  field: planet-field.plate-axis
+- name: hotspot-position
+  field: planet-field.hotspot-position
+- name: boundary-from
+  field: planet-field.boundary-from
+- name: boundary-to
+  field: planet-field.boundary-to
+- name: boundary-left
+  field: planet-field.boundary-left
+- name: boundary-right
+  field: planet-field.boundary-right
+- name: boundary-kind
+  field: planet-field.boundary-kind
+- name: boundary-down
+  field: planet-field.boundary-down
+- name: boundary-closing
+  field: planet-field.boundary-closing
+- name: boundary-left-continental
+  field: planet-field.boundary-left-continental
+- name: boundary-right-continental
+  field: planet-field.boundary-right-continental
+- name: crust-origin
+  field: planet-field.crust-origin
+events_emitted:
+- event: planet-event.rift
+  where: crates/tectonics/src/rift.rs split
+- event: planet-event.weld
+  where: crates/tectonics/src/rift.rs weld
+params:
+- name: share
+  setting: none
+  unit: '1'
+  meaning: 'in the coupled era (the last couple_from of the planet''s age) the sea level is the one that leaves this share of the surface above it (by the quadrature over the vector height); unset: the level holds the ocean volume'
+  source: planet-process.sea-level share (stages/plates.py:1544)
+  note: owner targets land 30%+ (2026-10-09, 17 Oct)
+- name: couple_from
+  value: 2.209032e+16
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 700.0
+  meaning: 'the coupled era: the last couple_from of the planet''s age'
+  source: planet-process.sea-level couple_from (stages/plates.py:138)
+- name: resolution ages
+  values:
+  - 3.15576e+16
+  - 1.57788e+16
+  - 3155760000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 3.168808781402895e-14
+  meaning: 'the resolution schedule: how long before the present each finer stretch starts (oldest first); boundary segment and crust tolerance give one value more, the coarsest before the first age'
+  source: 'owner, 19 Oct 2026: coarse (~200 km) in deep time, finer toward the present'
+  note: chosen; review
+- name: boundary segment
+  values:
+  - 100000.0
+  - 100000.0
+  - 100000.0
+  - 50000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 0.001
+  meaning: 'the longest plate-boundary segment in each stretch of the schedule (also the substep: half a segment at the fastest plate)'
+  source: owner, 19 Oct 2026
+  note: '19 Oct 2026 (owner): 200 km cut continents along straight lines: 100 km'
+- name: crust tolerance
+  values:
+  - 25000.0
+  - 25000.0
+  - 10000.0
+  - 2000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 0.001
+  meaning: how closely crust band outlines follow the true edge in each stretch (bands simplified to it; thick crust and margins grown from outlines held to it, at least 5 km)
+  source: owner, 19 Oct 2026
+  note: '19 Oct 2026 (owner): 100 km in the backbone looked straight-edged and angular ("too simplified / straight lines sharp angles"): 25 km; was 20, 10, 5, 1 km before the backbone era'
+- name: MELT_EFOLD
+  value: 175.0
+  unit: K
+  meaning: 'melt production (crust made by melting: plumes) grows as exp(excess / MELT_EFOLD) with the mantle temperature above today''s'
+  source: 'McKenzie & Bickle 1988: crust ~7 km today, ~15 km at +130 K, ~26 km at +230 K (fit)'
+  note: derived from the source curve; review
+- name: ARC_ONSET_EXCESS
+  values:
+  - 250.0
+  - 160.0
+  unit: K
+  meaning: 'arc crust from modern one-sided subduction: none while the mantle is more than [0] above today''s, all below [1] (between: the hot mantle''s transitional regime of weak, shallow underthrusting)'
+  source: Sizova et al. 2010 (regimes by mantle excess temperature); van Hunen & Moyen 2012; Dhuime et al. 2012 and Cawood et al. 2018 (arc-dominated growth from ~3 Ga)
+  note: review
+- name: MODERN_MANTLE_T
+  value: 1530.0
+  unit: K
+  meaning: 'the interior model''s present mantle temperature (planet-field.mantle-temperature at the present in forge_e3): the excess is measured from it'
+  source: planet-forge run forge_e3 (1257 degC at 4570 Myr)
+  note: derived from the interior model; review if the interior changes
+- name: isopach step
+  values:
+  - 5000.0
+  - 5000.0
+  - 1000.0
+  - 1000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 0.001
+  meaning: 'the thickness step crust bands are kept at in each stretch of the resolution schedule: neighbouring crust within a step is one band (its thickness the volume over the area), so the crust is not a mosaic of patches a metre
+    apart'
+  source: 'derived: 4 km of crust is ~550 m of height (BUOYANCY), below what deep time is judged on; 1 km in the last 500 Myr as before'
+  note: '19 Oct 2026: e15 at 3.5 Ga had 815,000 patches under 40 km touching other bands, 38% of the crust volume, at 1 km steps'
+- name: quiet distance
+  value: 500000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 0.001
+  meaning: 'crust bands lying wholly farther than this from their plate''s boundary are quiet: held to twice the crust tolerance (cratons and old floor interiors change only by erosion)'
+  source: 'derived: twice OROGEN_HALF_WIDTH, beyond which no boundary process (arcs, belts, flow, docking) reaches in a step'
+  note: chosen; review
+- name: quiet tolerance factor
+  value: 2.0
+  unit: '1'
+  meaning: how much coarser than the crust tolerance a quiet band is held
+  source: owner, 19 Oct 2026 (consolidate old crust)
+  note: chosen; review
+- name: backbone until
+  value: 1.5778463e+16
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 3.168808781402895e-14
+  meaning: 'before this long ago the plates make only the planet''s backbone: continents glued into solid bodies every step at the backbone tolerance; after it, the detailed era (its first step smooths the bodies'' outlines)'
+  source: 'owner, 19 Oct 2026: "before 500 mil y there is no need for such a detailed simulation, we only need to generate enough shapes as a planet backbone"'
+  note: 500 Myr
+- name: glue distance
+  value: 100000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 0.001
+  meaning: in the backbone era, gaps between a plate's continents narrower than twice this are closed by the glue (the crust there joins the body)
+  source: 'owner, 19 Oct 2026: "a process to glue things together"; derived: about the width of a collision belt (2 x OROGEN_HALF_WIDTH 250 km) and three backbone tolerances'
+  note: chosen; review
+- name: hole size
+  value: 300000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 0.001
+  meaning: in the backbone era, holes in a continent smaller than this across (area under its square) are filled
+  source: owner, 19 Oct 2026 (clean the fragmentation, peaks and dips); as glue distance
+  note: chosen; review
+- name: crust vertex budget
+  values:
+  - 100000.0
+  - 100000.0
+  - 400000.0
+  - 1500000.0
+  unit: '1'
+  meaning: the most crust outline vertices kept in each stretch of the resolution schedule; above it every band is simplified half again as coarse until under it
+  source: 'owner, 19 Oct 2026: "keep some budget"; e20 held ~300,000 at 1-0.9 Ga, e15 8 million at 3.5 Ga'
+  note: chosen; review
+reads:
+- name: mantle temperature
+  field: planet-field.mantle-temperature

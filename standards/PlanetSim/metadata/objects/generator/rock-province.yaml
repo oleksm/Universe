@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=../../../schema/planet-object.schema.yaml
+identity:
+  key: planet-object.rock-province
+  name: Rock province
+  about: 'An area of crust a process laid: continent, craton, shelf, rift fill, orogen, granite core, ophiolite, arc, flood basalt; with what it does to the rock stack.'
+scope: generator
+about_model: The rock at a coordinate is the stack of the provinces over it applied oldest first, then the erosion since the youngest.
+extends: planet-object.record
+generator: planet-process.vector-geology
+geometry:
+  kind: area
+  frame: plate
+attributes:
+- name: kind
+  meaning: continent, craton, shelf, rift, orogen, granite core, ophiolite, arc, flood basalt
+- name: plate
+  meaning: its plate
+- name: ring, holes
+  meaning: its area
+- name: born_s
+  unit: s
+  meaning: when laid
+- name: op
+  meaning: what it does to the stack (bury, over, arc, base, remake, mark, shelf)
+- name: line
+  meaning: the history line it was laid from
+persistence:
+  how: derived
+  resumed: built when the rock is first read, from the history lines and the plates
+provides:
+- planet-field.rock
+code:
+- type: Province
+  file: crates/geology-vector/src/rock.rs
+status: draft
+basis:
+- of:
+  - identity
+  - about_model
+  - attributes
+  - dynamics
+  - persistence
+  - code
+  tier: derived
+  note: 'planets, 19 Oct 2026: read from planet-forge''s types (docs/data-model.md)'

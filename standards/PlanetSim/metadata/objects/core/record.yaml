@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=../../../schema/planet-object.schema.yaml
+identity:
+  key: planet-object.record
+  name: Record
+  about: 'What a generator writes when its process acts: one generating event and what it left.'
+scope: core
+about_model: The model is the set of records. Every property of the planet at a coordinate and time follows from the records that affect it there.
+attributes:
+- name: kind
+  meaning: what it is (a generator object's key)
+- name: generator
+  meaning: the process that wrote it
+- name: time
+  unit: s
+  meaning: when, or its span (born, ended)
+- name: geometry
+  meaning: 'where: location, line, ring or area'
+  object: planet-object.geometry
+- name: frame
+  meaning: body, or the plate it rides
+- name: cause
+  meaning: 'its trigger: the event and the records it came from'
+- name: parameters
+  meaning: what it sets (thickness, discharge, width...), SI
+- name: seed
+  meaning: 'derived from where and when: the same detail whenever asked'
+- name: state
+  meaning: forming, active, ended, worn, replaced
+annotations:
+- cause and trigger
+- rule that made it
+- seed
+- history of changes (each with time and cause)
+- state
+lineage: Each record names the records it came from and is named by those it becomes (eroded, cut, buried, welded, merged).
+status: draft
+basis:
+- of:
+  - identity
+  - about_model
+  - attributes
+  - dynamics
+  - persistence
+  - code
+  tier: derived
+  note: 'planets, 19 Oct 2026: read from planet-forge''s types (docs/data-model.md)'

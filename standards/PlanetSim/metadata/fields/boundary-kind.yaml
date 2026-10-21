@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.boundary-kind
+  name: Boundary type
+  about: 'The segment''s type by the last substep''s relative motion: 0 ridge, 1 trench, 2 collision, 3 transform.'
+unit: '1'
+producer:
+  where: planet-forge crates/tectonics/src/forge_model.rs
+  file: checkpoint
+  key: tables/plate-boundary/planet-field.boundary-kind
+per: point
+status: draft
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  note: 'planets, 18 Oct 2026: the vector plates boundary graph'

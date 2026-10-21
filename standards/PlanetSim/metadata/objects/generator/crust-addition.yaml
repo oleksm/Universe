@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=../../../schema/planet-object.schema.yaml
+identity:
+  key: planet-object.crust-addition
+  name: Crust addition
+  about: 'Crust added or taken this step over a small polygon beside the line that made it: an arc''s strip behind its trench, a stack along its suture, a plume''s disc, a margin loss.'
+scope: generator
+about_model: Additions are folded into the bands at the step's end (consolidate); until then they are their own records.
+extends: planet-object.record
+generator: planet-process.vector-plates
+geometry:
+  kind: area
+  frame: plate
+attributes:
+- name: plate
+  meaning: its plate
+- name: p, ring
+  meaning: its middle and outline
+- name: vol
+  unit: m3
+  meaning: 'volume (negative: taken)'
+- name: kind
+  meaning: arc, margin, stack, plume
+dynamics:
+- what: created
+  how: at trenches (ARC_PER_AREA of floor consumed), sutures, plumes, margins
+- what: ends
+  how: folded into the bands
+persistence:
+  how: bytes
+  table: vector-plates-world (SPOT within CRUS/additions)
+  resumed: World restore
+code:
+- type: Spot
+  file: crates/tectonics/src/lib.rs
+status: draft
+basis:
+- of:
+  - identity
+  - about_model
+  - attributes
+  - dynamics
+  - persistence
+  - code
+  tier: derived
+  note: 'planets, 19 Oct 2026: read from planet-forge''s types (docs/data-model.md)'

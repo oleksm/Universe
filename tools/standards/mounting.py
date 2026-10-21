@@ -259,16 +259,39 @@ def cradle(slot, m, socks, d, tl):
             break
     else:
         return None
+    # End ties are redundant when they overlap a socket-bearing cross tube.
+    # Keep socket rows fixed; removing unloaded end ties does not alter size().
+    socket_x = sorted({round(x, 3) for x in xs})
+    cross_x = sorted(set(socket_x) | {end for end in (-Xb, Xb)
+                                   if all(abs(end - x) >= tc["D"] for x in socket_x)})
     h = r(tb["D"] + tc["D"])
+    pad_side = 2.5 * d / 1000
+    length = 2 * max(Xb, max(abs(x) for x in cross_x) + tc["D"] / 2,
+                     max(abs(x) for x in xs) + pad_side / 2)
+    width = 2 * max(Yb + tb["D"] / 2, max(ys) + pad_side / 2)
     lb, lc = len(lines) * 2 * Xb, len(cross_x) * 2 * Yb
     pad = (2.5 * d / 1000) ** 2 * (d / 1000) * RHO[ST]
     lug = 0.15 * 0.1 * 0.012 * RHO[AL]
     nfix = len(lines) * nfix_beam
     parts = [{"what": "Beams", "item": tb["mat"], "mass": r(lb * tb["kgm"], 2), "note": f"{len(lines)} of {tb['name']}, {r(2 * Xb, 2)} m each"},
-             {"what": "Cross tubes", "item": tc["mat"], "mass": r(lc * tc["kgm"], 2), "note": f"{len(cross_x)} of {tc['name']}, {r(2 * Yb, 2)} m each"},
-             {"what": "Socket pads and inserts", "item": ST, "mass": r(n * pad, 2), "note": f"{n} 4340 pads, each an M{d} insert"},
+             {"what": "Cross tubes", "item": tc["mat"], "mass": r(lc * tc["kgm"], 2), "note": f"{len(cross_x)} of {tc['name']}, {r(2 * Yb, 2)} m each at x {cross_x}; untrimmed stock mass, fishmouth deductions pending"},
+             {"what": "Socket pads and inserts", "item": ST, "mass": r(n * pad, 2), "note": f"{n} 4340 pads, each an M{d} insert; pad thickness {d / 1000:g} m, crosses lowered by that thickness with fishmouth seats to retain socket face z {h:g}; joints unqualified"},
              {"what": "Fixing lugs", "item": AL, "mass": r(nfix * lug, 2), "note": f"{nfix} 6061 lugs, a strut clamp bolted to each"}]
-    mass = r(sum(p["mass"] for p in parts), 2)
+    if slot == "access-s1":
+        # Measured reference only; do not spread its cuts across differently sized cradles.
+        # Blender cradle/candidate-v01/review/mass-review.json, 2026-10-19.
+        assert (n, nfix, cross_x, tb["D"], tc["D"], d) == (8, 6, [-1.485, -1.05, 0.0, 1.05, 1.485], 0.2, 0.25, 42)
+        measured = [143.46569443534898, 703.4717793548417, 28.123396788736326, 3.66273821116026]
+        notes = [
+            "2 hollow 4340 tubes 200 x 5 mm, 3 m; bottom raised 12 mm over fixing plates",
+            "5 hollow 4340 tubes 250 x 8 mm, at x [-1.485, -1.05, 0, 1.05, 1.485], fishmouth seats cut; socket face z 0.45 retained",
+            "8 4340 pads, 42 mm thick, nominal 42 mm socket bores; detailed threads/inserts unqualified",
+            "6 6061 saddle lugs, top z 0.055, 12 mm bottom plates, 46 mm clearance bores for provisional M42 fixings; all fixing datums retained"
+        ]
+        for part, value, note in zip(parts, measured, notes):
+            part["mass"] = r(value, 3)
+            part["note"] = note + "; measured from Blender cradle candidate-v01 final 48-segment mesh, 2026-10-19 mass-review.json; joint/load qualification pending"
+    mass = r(sum(p["mass"] for p in parts), 3 if slot == "access-s1" else 2)
     ports = [{"id": s["id"], "flow": "in", "medium": "load", "interface": s["interface"], "half": "female", "make": "bolted",
               "at": [s["at"][0], s["at"][1], h], "facing": [0.0, 0.0, 1.0], "optional": True,
               "note": f"the mount's socket, an M{d} insert (bolt {s['connector']}); spare when no foot is on it"} for s in socks]
@@ -286,11 +309,40 @@ def cradle(slot, m, socks, d, tl):
                          "description": f"Holds what fits {m['identity']['key']} on a ship's frame: {len(lines)} {tb['name']} beams over the frame's struts, 1 m or more apart, clamped at the middle of every 1 m, {len(cross_x)} cross tubes, the mount's {n} sockets on top."},
             "offers": m["identity"]["key"],
             "rating": {"tension": r(n * each["tension"], 0), "compression": r(n * each["compression"], 0), "shear": r(n * each["shear"], 0)},
-            "physical": {"length": r(2 * Xb), "width": r(2 * Yb), "height": h, "mass": mass},
+            "physical": {"length": r(length), "width": r(width), "height": h, "mass": mass},
             "built_of": parts, "ports": ports, "template": "template.cradle",
             "basis": [{"of": ["built_of", "physical", "ports"], "tier": "derived", "review": True,
                        "note": f"By the cradle rule in tools/standards/mounting.py: tubes chosen for the mount's points times {FACTOR} in bending (cross tubes {m_cross / 1e3:.1f} kN m, beams {m_beam / 1e3:.1f} kN m); fixings' duty the mount's mass and points shared evenly, a placeholder: a design's duty comes from the stiffness model. {REVIEW}"},
                       {"of": ["rating"], "tier": "derived", "note": f"The mount's {n} points ({m['identity']['key']})."}]}
+
+
+# ------------------------------------------------------------------ shared deck support
+DECK_INSET = 0.04
+
+
+def deck_support_shoe():
+    parts = [
+        {"what": "Crossbar", "item": AL, "mass": 0.5964142370450011,
+         "note": "80 x 140 x 20 mm 6061, two nominal M10 seat bores; measured cut volume"},
+        {"what": "Fixing boss", "item": AL, "mass": 0.15938280935569557,
+         "note": "40 x 40 x 40 mm 6061, nominal M16 blind bore 25 mm deep from bottom; measured cut volume"}
+    ]
+    ports = [{"id": name, "flow": "in", "medium": "load", "interface": "interface.insert-m10",
+              "half": "female", "make": "bolted", "at": [0.0, y, 0.0], "facing": [0.0, 0.0, 1.0],
+              "optional": True, "note": "One panel edge per seat. At least one seat must be linked; a perimeter shoe may leave the other spare. Thread/insert and bearing strength unqualified."}
+             for name, y in (("panel-a", -DECK_INSET), ("panel-b", DECK_INSET))]
+    ports.append({"id": "frame", "flow": "out", "medium": "load", "interface": "interface.kit-clamp",
+                  "half": "male", "make": "bolted", "at": [0.0, 0.0, -0.06], "facing": [0.0, 0.0, -1.0],
+                  "note": "Required: one strut clamp. Resolve both seat forces and their offset moments at this face, including the 60 mm vertical offset; no stiffness or load rating is approved."})
+    return {"identity": {"key": "connector.deck-support-shoe", "name": "Shared deck support shoe",
+                         "description": "A separate support beneath a deck edge: two inboard panel seats and one fixing to a strut clamp. Origin midway between the top seat faces, z 0; bottom fixing z -0.06. Rotate about z for each edge. One shoe and one clamp per support, shared by adjacent panels; a perimeter shoe has one spare seat. Bolts and clamp are separate connection hardware, not included in this body's measured mass."},
+            "kind": "support-shoe", "size": 0.08, "provides": "adapter",
+            "physical": {"length": 0.08, "width": 0.14, "height": 0.06, "mass": r(sum(p["mass"] for p in parts), 6)},
+            "built_of": parts, "ports": ports, "template": "template.support-shoe",
+            "basis": [{"of": ["physical", "built_of", "ports"], "tier": "derived", "review": True,
+                       "note": "Blender deck candidate-v01 shared-shoe-20mm-qc.json, 2026-10-19: cut volume 0.755797 kg, manifold solids, sixteen mating pairs and sampled bolt access clear; actual clamp/head/tool access pending. Ships confirmed separate instance and single-count load path (8765/fc34)."},
+                      {"of": ["built_of", "ports"], "tier": "invented", "review": True,
+                       "note": "Trial geometry only, no strength rating. Screening cases: 27 kN factored per panel, 54 kN both, 1080 N m single-seat offset. Gross/net crossbar stress 202.5/231.4 MPa against the existing 270 MPa rule. These are not complete service envelopes: resolve asymmetric shear/tension and moments including the 60 mm offset. Thread stripping, concentrations, bearing, welds, fatigue and clamp compliance remain unqualified."}]}
 
 
 # ------------------------------------------------------------------ deck panels
@@ -305,8 +357,20 @@ def deck(L, W):
     parts = [{"what": "Skins", "item": AL, "mass": r(skins, 2), "note": "two 1 mm 6061 sheets"},
              {"what": "Honeycomb core", "item": AL, "mass": r(core, 2), "note": "25 mm aluminium honeycomb, 50 kg/m3"},
              {"what": "Seat track", "item": AL, "mass": r(rails, 2), "note": f"{nr} rails, 0.6 kg/m extruded 6061"},
-             {"what": "Edge lugs", "item": AL, "mass": r(lugs, 2), "note": f"{segs}, a strut clamp bolted to each"}]
-    mass = r(sum(p["mass"] for p in parts), 2)
+             {"what": "Edge lugs", "item": AL, "mass": r(lugs, 2), "note": f"{segs} recessed inboard lugs for shared support shoes; inherited 0.15 kg each allowance, final panel cut masses pending"}]
+    if (L, W) == (1.0, 1.0):
+        # Reference cut volumes only: deck/candidate-v01/review/final-panel-mass.json,
+        # Blender 2026-10-19. Other panel sizes retain their calculated allowances.
+        assert nr == 4 and segs == 8 and DECK_INSET == 0.04
+        measured = [4.941059824257454, 1.140257672632459, 2.3992502916082934, 1.0165064488375128]
+        notes = ["two 1 mm 6061 skins after rail recesses, lug seats and access bores",
+                 "25 mm honeycomb proxy after recesses; retained assumed density 50 kg/m3, not solid aluminium",
+                 "four recessed seat tracks after entry/slot cuts, at existing 25.4 mm pitch",
+                 "eight 40 mm-inboard lugs with 11 mm M10 clearance bores; shoes and joining bolts separate"]
+        for part, value, note in zip(parts, measured, notes):
+            part["mass"] = value
+            part["note"] = note + "; measured Blender deck candidate-v01 final-panel-mass.json, 2026-10-19; joints and loads unqualified"
+    mass = r(sum(p["mass"] for p in parts), 6 if (L, W) == (1.0, 1.0) else 2)
     th = 0.03
     ports = [{"id": f"track-{k + 1}", "flow": "in", "medium": "load", "interface": "interface.deck-track", "half": "female", "make": "bolted",
               "at": [r(-L / 2 + TRACK_PITCH / 2), r(-W / 2 + RAIL_GAP / 2 + RAIL_GAP * k), th], "facing": [0.0, 0.0, 1.0], "optional": True,
@@ -318,11 +382,11 @@ def deck(L, W):
         for i in range(n):
             f = (i + 0.5) / n
             k += 1
-            ports.append({"id": f"edge-{k}", "flow": "out", "medium": "load", "interface": "interface.kit-clamp", "half": "male", "make": "bolted",
-                          "mass": r(mass / segs, 2), "at": [r(x0 + (x1 - x0) * f), r(y0 + (y1 - y0) * f), 0.0], "facing": [0.0, 0.0, -1.0],
-                          "note": "clamped onto the edge strut under it, 0.25 m from the nodes"})
+            ports.append({"id": f"edge-{k}", "flow": "out", "medium": "load", "interface": "interface.insert-m10", "half": "male", "make": "bolted",
+                          "mass": r(mass / segs, 2), "at": [r(x0 + (x1 - x0) * f - DECK_INSET * (y1 - y0) / math.dist((x0, y0), (x1, y1))), r(y0 + (y1 - y0) * f + DECK_INSET * (x1 - x0) / math.dist((x0, y0), (x1, y1))), 0.0], "facing": [0.0, 0.0, -1.0],
+                          "note": "40 mm inboard of the edge, 0.25 m along from a cell corner: male M10 clearance lug onto one seat of connector.deck-support-shoe; the separate shoe attaches to the frame through one strut clamp"})
     return tag, {"identity": {"key": f"panel.deck-{tag}", "name": f"Deck panel, {L:g} x {W:g} m",
-                              "description": f"A ship's floor panel on its frame: 6061 skins on aluminium honeycomb, {nr} seat-track rails along it for small equipment's feet, clamped onto the struts under its edges."},
+                              "description": f"A ship's floor panel on its frame: 6061 skins on aluminium honeycomb, {nr} seat-track rails along it for small equipment's feet; inboard edge lugs bolt to separate shared support shoes, each held by one strut clamp."},
                  "kind": "deck", "site": "ship", "cell": [L, W], "thickness": th, "load": 10000.0, "point_load": STUD["compression"],
                  "ports": ports, "physical": {"length": L, "width": W, "height": th, "mass": mass}, "built_of": parts, "template": "template.deck",
                  "basis": [{"of": ["built_of", "physical", "load", "point_load", "ports"], "tier": "invented", "review": True,
@@ -337,24 +401,49 @@ OWN = {"belt": (1.2, "its idler frames"), "drag-conveyor": (3.0, "its casing's s
        "conductor-rail": (1.5, "its brackets"), "festoon": (1.0, "its trolleys on their track"), "lined-duct": (6.0, "its own steel"), "jacketed-duct": (6.0, "its own steel")}
 
 
+AF = {10: 0.016, 16: 0.024, 20: 0.030, 30: 0.046, 42: 0.065, 56: 0.085, 64: 0.095, 80: 0.120, 100: 0.150}   # m, a nut across flats (ISO 4032 to M64; M80 and M100 by 1.5 d, invented)
+BORE = {10: 0.011, 16: 0.0175, 20: 0.022, 30: 0.033, 42: 0.045, 56: 0.062, 64: 0.070, 80: 0.086, 100: 0.107}   # m, the medium clearance hole (ISO 273 to M64; beyond, d + 7 %, invented)
+
+
 def run_clip(band):
+    """A P-clip, in its own frame (x along, y across, z up): origin at the tab's bolt bore on the clamp lug's face
+    (z 0), the tab along x; the loop beyond the tab's -x end, its axis across (y), its outside tangent to z 0. The strap
+    leaves the loop tangentially into the tab: the lower leg along z 0, the upper down onto it, the tab two straps thick.
+    Its one bolt (the smallest the frames stock whose proof load carries the strap's hold, M10 at least) closes the tab
+    and fixes it to the lug: the strap is at least the nut across flats plus 4 mm wide, so the nut sits on it."""
     mm = round(band * 1000)
-    w, t = max(0.012, 0.25 * band), max(0.0015, 0.02 * band)
-    loop = math.pi * (band + 0.004) + 2 * (0.02 + band / 4)
+    t = max(0.0015, 0.02 * band)
+    w, b = max(0.012, 0.25 * band), 10
+    for _ in range(4):                          # (a wider strap holds more, which may ask a bigger bolt: settle it)
+        hold = 2 * w * t * YIELD[AL]
+        b = bolt_for(hold, MU * hold) or max(AS)
+        w2 = max(w, AF[b] + 0.004)
+        if w2 == w:
+            break
+        w = w2
+    tab = max(0.02 + band / 4, AF[b] + 0.01)   # the tab, both strap ends lying together, the bore at its middle
+    ro = (band + 0.004) / 2 + t                # the loop's outside radius: the band, its 2 mm cushion, the strap
+    loop = math.pi * (band + 0.004) + 2 * tab
     strap = w * t * loop * RHO[AL]
     cushion = math.pi * (band + 0.002) * 0.002 * w * 1100.0
-    b = 10 if band <= 0.063 else 16
-    hold = 2 * w * t * YIELD[AL]
+    ports = [{"id": "run", "flow": "in", "medium": "load", "interface": f"interface.run-clip-d{mm}", "half": "female", "make": "bolted",
+              "at": [r(-(tab / 2 + ro)), 0.0, r(ro)], "facing": [0.0, 1.0, 0.0],
+              "note": f"The loop's axis: one run up to {mm} mm outside passes along y, either way, on the 2 mm cushion."},
+             {"id": "fix", "flow": "out", "medium": "load", "interface": "interface.kit-clamp", "half": "male", "make": "bolted",
+              "at": [0.0, 0.0, 0.0], "facing": [0.0, 0.0, -1.0],
+              "note": f"Required: the tab's {BORE[b] * 1000:g} mm bore, down onto a strut clamp's lug, closed by one M{b} bolt and nut (ST4340-BOLT-M{b}, separate hardware, not drawn nor in this mass). The lug's own datum is still open (strut clamp parked, 2026-10-19); no stiffness or load rating is approved."}]
     rec = {"identity": {"key": f"connector.run-clip-d{mm}", "name": f"Run clip, up to {mm} mm",
-                        "description": f"A cushioned 6061 loop clip holding one run up to {mm} mm outside (a cable, a hose, a tube), its tab bolted by an M{b} to a strut clamp's lug: how a run is held on a ship's frame (docs/proposals/physical-mounts.md)."},
+                        "description": f"A cushioned 6061 loop clip holding one run up to {mm} mm outside (a cable, a hose, a tube), its tab bolted by one M{b} to a strut clamp's lug: how a run is held on a ship's frame (docs/proposals/physical-mounts.md). Origin at the tab's {BORE[b] * 1000:g} mm bore on the lug face, z 0, the tab along x, {round(tab * 1000)} mm long and two straps thick; the loop beyond the tab at -x, its axis across (y), its outside from z 0 up to z {r(2 * ro)}, the strap leaving it tangentially into the tab. Strap and cushion only: the bolt and nut are separate hardware."},
            "kind": "run-clip", "size": band, "rating": {"tension": r(hold, 0), "shear": r(MU * hold, 0)},
-           "physical": {"length": r(band + 2 * (0.02 + band / 4)), "width": r(band + 2 * t + 0.004), "height": r(w), "mass": r(strap + cushion + bolt_mass(b), 3)},
+           "physical": {"length": r(tab + 2 * ro), "width": r(w), "height": r(2 * ro), "mass": r(strap + cushion, 4)},
            "built_of": [{"what": "Strap", "item": AL, "mass": r(strap, 4), "note": f"6061, {round(w * 1000)} x {t * 1000:.1f} mm"},
-                        {"what": "Cushion", "item": "material.silicone-rubber", "mass": r(cushion, 4), "note": "2 mm silicone lining"},
-                        {"what": "Bolt", "item": ST, "mass": r(bolt_mass(b), 4), "note": f"M{b} with nut, into the strut clamp's lug"}],
+                        {"what": "Cushion", "item": "material.silicone-rubber", "mass": r(cushion, 4), "note": "2 mm silicone lining"}],
+           "ports": ports,
            "interface": f"interface.run-clip-d{mm}", "provides": "female", "fixing": "interface.kit-clamp", "template": "template.run-clip",
-           "basis": [{"of": ["physical", "rating"], "tier": "invented", "review": True,
-                      "note": f"A P-clip by rule (mounting.py): strap a quarter of the band wide, 2% thick; holds both legs at 6061's yield pulled, friction 0.3 sliding. {REVIEW}"}]}
+           "basis": [{"of": ["physical", "rating", "built_of"], "tier": "invented", "review": True,
+                      "note": f"A P-clip by rule (mounting.py): strap a quarter of the band wide, 2% thick, at least the nut across flats plus 4 mm (M{b}: the smallest stocked bolt whose proof load carries the strap's hold at the {FACTOR} factor); holds both legs at 6061's yield pulled, friction 0.3 sliding. The bolt is separate hardware, as the shoe's. {REVIEW}"},
+                     {"of": ["ports"], "tier": "invented", "review": True,
+                      "note": "P-clip datums by rule (2026-10-19): the tab's bore on the lug face is the origin, the loop's centre at (-(tab/2 + outside radius), 0, outside radius). The clamp lug's mating datum is open: the strut clamp is parked."}]}
     iface = {"identity": {"key": f"interface.run-clip-d{mm}", "name": f"Run clip, {mm} mm",
                           "description": f"A run's outside (male: any run up to {mm} mm and over the next band down) held in a clip's loop (female)."},
              "domain": "load", "kind": "run-clip", "size": band, "envelope": dict(rec["rating"]), "media": ["load"], "sealing": "open",
@@ -435,6 +524,9 @@ def build():
     n += write("rules", "run-support", {"identity": {"key": "rule.run-support", "name": "Run support spacing", "about": "The most spacing between a run's supports, by its family and where it is laid."},
                                          "statement": "Aboard a ship: cable and hose clipped every 0.6 m at most (aircraft practice); tube and pipe every 0.6 m up to 30 mm outside, 1.0 m to 65, 1.5 m to 120, 2.0 m above. In a plant at 1 g: steel pipe at the suggested spans of ASME B31.1 by size (2.1 m at 34 mm to 9.1 m at 610 mm outside), cable 1.5 m, hose 1.0 m; belts, conveyors, busbars, conductor rails, festoons and ducts on their own supports at their family's pitch. A run whose family has no figure for a place is not to be laid there. The studio enforces it, and the clips' load, the run's bend radius and its end restraint.",
                                          "tier": "invented", "source": "FAA AC 43.13-1B (wire clamps 24 in); ASME B31.1 suggested pipe spans; both from memory", "review": True}, "rule")
+    shoe = deck_support_shoe()
+    n += write("connectors", "deck-support-shoe", shoe, "connector")
+    # (its stock KIT-DECK-SUPPORT-SHOE is kit_catalogue.py's, as every connector's)
     tl = tubes()
     cradles, decks = [], []
     for slug, (path, m) in load("mounts").items():
@@ -460,9 +552,11 @@ def build():
     for t, fam, name, ref, cnt in (("cradle", "adapter", "Equipment cradle", cradles[0]["identity"]["key"] if cradles else None, len(cradles)),
                                    ("deck", "panel", "Deck panel", "panel.deck-1x1", len(DECKS)),
                                    ("strut-clamp", "strut-clamp", "Strut clamp", "connector.strut-clamp-d100", len(clamps)),
-                                   ("run-clip", "run-clip", "Run clip", "connector.run-clip-d25", len(CLIP_BANDS))):
+                                   ("run-clip", "run-clip", "Run clip", "connector.run-clip-d25", len(CLIP_BANDS)),
+                                   ("support-shoe", "support-shoe", "Shared deck support shoe", "connector.deck-support-shoe", 1)):
         n += write("templates", t, {"identity": {"key": f"template.{t}", "name": name, "description": f"{name}: one look for the whole family, scaled to each record's figures (docs/asset-contract.md, Templates; docs/proposals/physical-mounts.md)."},
                                     "family": fam, "draws": "model", "scales_by": ["physical"], "reference": ref, "members": cnt,
+                                    **({"model_requests": [{"work": "rig", "because": "Hold v1: exported port-node local +Y does not match registry facing. Correct all 14 frames and verify positions and +Y directions directly from raw GLB world matrices; source/reimport checks alone missed the export-axis conversion.", "asked": "2026-10-19", "of_version": 1, "by": "registry"}]} if t == "cradle" else {}),
                                     "basis": [{"of": ["draws", "scales_by"], "tier": "derived", "note": "The owner, 2026-10-18 (via ships): equipment held by typed mounts on cradles or deck panels made from stock; one template a family."}]}, "template")
     return n, faults, cradles, decks
 

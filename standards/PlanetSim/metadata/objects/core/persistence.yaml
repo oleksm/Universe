@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../../schema/planet-object.schema.yaml
+identity:
+  key: planet-object.persistence
+  name: Persistence
+  about: How records are kept between steps and in checkpoints, and how they come back.
+scope: core
+about_model: 'The state holds only records: tables of rows (plates, hotspots, boundary segments), a generator''s objects as bytes, named scalars, the line store''s features, and the events since the last checkpoint. A resumed run and
+  a client rebuild every generator''s objects and surface from them (Model::restore).'
+persistence:
+  how: table
+  format: tables/<table>/<column>.npy, state.json (clock, scalars), features.jsonl, events.jsonl
+  resumed: checkpoint::load then Runner::restore
+code:
+- type: State, checkpoint
+  file: crates/forge-core/src/state.rs, crates/forge-core/src/checkpoint.rs
+status: draft
+basis:
+- of:
+  - identity
+  - about_model
+  - attributes
+  - dynamics
+  - persistence
+  - code
+  tier: derived
+  note: 'planets, 19 Oct 2026: read from planet-forge''s types (docs/data-model.md)'

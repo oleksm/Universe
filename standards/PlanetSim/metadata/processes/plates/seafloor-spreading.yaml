@@ -2,9 +2,9 @@
 identity:
   key: planet-process.seafloor-spreading
   name: 'Gaps: new ridge floor and continental stretching'
-  about: 'After removal of sunk particles, every sample whose nearest particle is farther than GAP*gap is an opening. If the nearest (source) particle is continental and thicker than 2*STRETCH_MIN (xvol/cell), it stretches: half its
-    volume goes to a new continental particle at the sample (age copied, rift geology, rift ores and evaporites in the arid band). Otherwise a new ocean floor particle (OCEAN_CRUST, age 0, MORB, VMS) is added at the sample on the source''s
-    plate. Ridge push force from the new point toward the source is added to the source''s plate.'
+  about: Coverage gaps are classified by local plate kinematics. New ocean floor or rift stretching and ridge push require distinct plates bracketing the gap with positive normal separation. Nondivergent gaps already covered by continental
+    thickness need no new marker; other gaps inherit the crust-read ocean source age, floor and geology. Numerical repair creates no newborn thermal floor, ridge force, ridge ores or continental stretching. The ledger separates physical
+    births, ocean repairs and already-covered continental samples.
 area: plates
 clock:
   when: every step
@@ -41,6 +41,12 @@ reads:
   unit: '1'
 - name: w.xcover
   field: planet-field.particle-rock-cover
+  unit: m
+- name: plate-spin
+  field: planet-field.plate-spin
+  unit: 1/s
+- name: particle-floor-thickness
+  field: planet-field.particle-floor-thickness
   unit: m
 writes:
 - name: w.x
@@ -95,6 +101,9 @@ writes:
 - name: w.xcover
   field: planet-field.particle-rock-cover
   unit: m
+- name: origin
+  field: planet-field.particle-origin
+  unit: '1'
 params:
 - name: GAP
   value: 0.75
@@ -121,15 +130,18 @@ params:
   source: stages/plates.py:55
   note: Forsyth & Uyeda 1975
 - name: stretch share
-  value: 0.5
+  value: 0.35
   unit: '1'
   meaning: share of the source's volume given to the stretched new particle
   source: stages/plates.py:1224
+  note: 0.5 to e89; 0.35 from e90 with stretch threshold factor 1.2 (the margin taper)
 - name: stretch threshold factor
-  value: 2.0
+  value: 1.2
   unit: '1'
   meaning: source must exceed 2*STRETCH_MIN to stretch
   source: stages/plates.py:1221
+  note: '2.0 to e89: a 41 km source gave half and both halves (20 km) fell below 2 x STRETCH_MIN, so a rifted margin was one 20 km particle wide (the coast fell 13 km of crust in one sample). 1.2 from e90 with stretch share 0.35: the
+    source keeps 65% (27 km), still above 1.2 x 20 km, and stretches again at the next opening: a tapered margin over 2-3 particles (Earth: 100-300 km)'
 - name: new xsuture
   value: -3.15576e+22
   unit: s
@@ -149,13 +161,30 @@ params:
   meaning: continental particles with xvol <= 0.05*OCEAN_CRUST*cell (350 m equivalent) are dropped
   source: stages/plates.py:1210
   note: 'forge: the removal (the Python''s keep) runs here, just before the gaps; subduction marks the sunk'
+- name: boundary search reach
+  value: 3.0
+  unit: '1'
+  meaning: Local search radius in sample spacings for an opposite-side, different-plate neighbor bracketing a coverage gap. Positive relative normal separation is required for physical spreading.
+  note: Chosen numerical search radius; not a geological rate or land-share calibration.
+- name: vacated floor age
+  value: 1893600000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31560000000000.0
+  meaning: 'the age of the floor laid where old floor foundered this substep (a vacated opening, not a ridge): 60 Myr sits at 5.2 km, near the foundered floor, where age 0 made a 2.6 km bright spot (a bubble) in every foundered site;
+    the ridge keeps new floor age'
+  source: 'planets, 20 Oct 2026 (chosen; e85: 36 local highs per 1000 ocean samples, a third young floor inside old); forge models/plates/spreading.rs'
+  note: 0 before e86 (e51-e85)
 random_draws:
 - none
 invariants:
-- stretching conserves continental volume
-- after this step no sample is farther than GAP*gap from a particle
+- continental volume conserved across stretching and marker repair
+- only positive normal plate divergence creates newborn floor
+- repair markers inherit source thermal history and geology
 depends_on:
 - planet-process.subduction
+- planet-process.crust-read
 backends:
 - cpu
 implementations:

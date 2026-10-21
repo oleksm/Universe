@@ -36,6 +36,10 @@ reads:
 - name: w.xcover
   field: planet-field.particle-rock-cover
   unit: m
+- name: basin diagnostic ocean age
+  field: planet-field.particle-age
+  unit: s
+  meaning: Read-only before/after basin receipt; does not drive highland wear.
 writes:
 - name: w.xvol
   field: planet-field.particle-volume
@@ -57,14 +61,14 @@ writes:
 params:
 - name: ERODE_ABOVE
   env: SIM_ERODE_ABOVE
-  value: 38000.0
+  value: 35000.0
   unit: m
   meaning: continental thickness above which crust-level wear removes the excess (pre-coupled era)
   source: stages/plates.py:161, stages/plates.py:162
   note: Appalachians, Urals; Watts 1982 (chosen)
 - name: ERODE_MYR
   env: SIM_ERODE_MYR
-  value: 4733640000000000.0
+  value: 9467280000000000.0
   unit: s
   said_as:
     unit: Myr
@@ -74,14 +78,14 @@ params:
   note: 'chosen: mountain belts fall to plains in a few hundred Myr'
 - name: COUPLED_ERODE_ABOVE
   env: SIM_COUPLED_ERODE_ABOVE
-  value: 38000.0
+  value: 35000.0
   unit: m
   meaning: threshold for crust-level wear in the coupled era (default = ERODE_ABOVE after its own env override)
   source: stages/plates.py:166
   note: (and from what thickness; 45 km built 2-3 km high plains on s19, 14-24 % of land above 2 km)
 - name: COUPLED_ERODE_MYR
   env: SIM_COUPLED_ERODE_MYR
-  value: 7889400000000000.0
+  value: 1.262304e+16
   unit: s
   said_as:
     unit: Myr
@@ -166,6 +170,28 @@ params:
   meaning: 'vector plates: width of the ring around a plate''s continents where the worn crust is laid (shelf, slope and rise: the passive-margin sediment wedge)'
   source: 'passive margins: shelf ~80 km, shelf to rise some 100-300 km (Shepard 1963; Kennett 1982)'
   note: 'from memory, 18 Oct 2026: verify'
+- name: WEDGE_EFOLD
+  value: 45000.0
+  unit: m
+  meaning: 'vector plates: the margin sediment wedge thins away from the coast as exp(-d / WEDGE_EFOLD), out to MARGIN_WEDGE'
+  source: 'the Python WEDGE 0.35 sample spacings (~130 km at 30,000 samples), chosen 16 Oct (s22: laid evenly, sediment built a broad thin apron)'
+  note: invented (the Python's choice in metres); to replace with a margin profile from a source
+- name: SUBDUCTED_SEDIMENT
+  value: 450.0
+  unit: m
+  meaning: 'vector plates: the sediment column ocean floor brings to its trench and takes down (eroded continent, shed to the sea): sediment subducted = floor consumed x SUBDUCTED_SEDIMENT, taken from the eroded volume waiting to be
+    laid on the margins'
+  source: Rea & Ruff 1996 and Plank & Langmuir 1998 (mean sediment entering trenches some 400-500 m); Scholl & von Huene 2009 (sediment subduction ~1.65 km3/yr at ~3 km2/yr of floor)
+  note: 'from memory, 18 Oct 2026: verify; the Python lost all land denudation to subduction (DENUDE_MYR, chosen)'
+- name: EARTH_SEDIMENT_SUPPLY
+  value: 237.6
+  unit: m3/s
+  said_as:
+    unit: km3/yr
+    factor: 7.5
+  meaning: 'vector plates: the sediment Earth''s land sheds to the sea today; the sediment column a floor brings to its trench (SUBDUCTED_SEDIMENT) scales with the planet''s own supply against this'
+  source: Milliman & Syvitski 1992 (~20 Gt/yr of sediment to the oceans, / 2,650 kg/m3)
+  note: 'from memory, 18 Oct 2026: verify'
 random_draws:
 - none
 invariants:
@@ -193,6 +219,37 @@ basis:
   source: Ahnert 1970; Shepard 1963; Kennett 1982
   review: true
   note: 'Figures from memory, 18 Oct 2026: check.'
+- of:
+  - params.WEDGE_EFOLD
+  tier: invented
+  review: true
+  note: The Python chose WEDGE 0.35 spacings; carried over in metres 18 Oct 2026.
+- of:
+  - params.SUBDUCTED_SEDIMENT
+  tier: sourced
+  source: Rea & Ruff 1996; Plank & Langmuir 1998; Scholl & von Huene 2009
+  review: true
+  note: 'From memory, 18 Oct 2026: check.'
+- of:
+  - params.EARTH_SEDIMENT_SUPPLY
+  tier: sourced
+  source: Milliman & Syvitski 1992
+  review: true
+  note: 'From memory, 18 Oct 2026: check.'
+- of:
+  - identity.about
+  tier: derived
+  note: 'planets, 20 Oct 2026: the fit after the wear holds the read at every sample the kernel reaches (fd2b178, e52 on): the outline is not the fit to change.'
+- of:
+  - params
+  tier: invented
+  note: 'planets, 20 Oct 2026 (owner: mountains for the game look): ERODE_MYR 150 -> 300 Myr and COUPLED_ERODE_MYR 250 -> 400 Myr with CRUST_MAX 80 -> 65 km (crust-flow), experiment e62 on the e61 default: ranges should last longer
+    and peaks stop near 6 km (e61: highest 9.4 km from stacks near 88 km).'
+- of:
+  - params
+  tier: invented
+  note: 'planets, 20 Oct 2026: ERODE_ABOVE and COUPLED_ERODE_ABOVE 38 -> 35 km for e68: with the growth curve holding Earth volume (e67: 6.5e18 m3) the continents stood on 32% of the planet at 40 km; Earth holds 7.2e18 on 40% at ~35
+    km with the extra area in thinned, sediment-built margins. The wear above 35 km thins the continents toward that mean and lays the debris on the shelves.'
 events_emitted:
 - event: planet-event.ledger-row
   where: 'forge: the step''s volume moved, shed, worn, denuded or laid on the shelf (the Python''s ledger rows)'

@@ -1,16 +1,12 @@
 # yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
 identity:
   key: planet-process.coupled-erosion
-  name: 'Coupled erosion: river incision by unit stream power, hillslope wear (Langbein-Schumm, frost, relief), landslides,
-    wind deflation, base level'
-  about: 'Each sample''s own wear rate, no global budget. River: unit stream power omega = rho g Qs S / w (W/m2), Qs = Q x
-    flash / yr, flash = clip(1 + 0.5 (aridity - 1), 1, 3) (rarer, bigger floods in dry land), w = max(2.7 Qs^0.5, 1); rate
-    = K_RIVER max(omega - OMEGA_C, 0) (1 + FAULT_SOFT fault) off lakes. Hillslope: local relief = height above the neighbours''
-    mean + 0.5 drop to the lowest (sea floored at sea level); rate = ((1-hs) K_HILL relief (1 + RELIEF_NONLIN (relief/1 km)^2)
-    + hs K_HILL_H height) x (0.3 + LangbeinSchumm(P)) x (1 + frost), frost = clip(1 - |T + 2|/12, 0, 1) (freeze-thaw near
-    0 degC). Landslides: relief above RELIEF_MAX goes at half per step. Wind: K_WIND x dry x (1 - V), dry = clip((aridity
-    - 2)/4, 0, 1), plant cover V = 1 - exp(-P/0.4). River and hill rates fade to 0 toward sea level over BASE_M (base level);
-    all three scaled by WEAR_SCALE. Wear = min(sum x dt, height above sea); the per-process parts are scaled by the same share.'
+  name: 'Coupled erosion: river incision by unit stream power, hillslope wear (Langbein-Schumm, frost, relief), landslides, wind deflation, base level'
+  about: 'Each sample''s own wear rate, no global budget. River: unit stream power omega = rho g Qs S / w (W/m2), Qs = Q x flash / yr, flash = clip(1 + 0.5 (aridity - 1), 1, 3) (rarer, bigger floods in dry land), w = max(2.7 Qs^0.5,
+    1); rate = K_RIVER max(omega - OMEGA_C, 0) (1 + FAULT_SOFT fault) off lakes. Hillslope: local relief = height above the neighbours'' mean + 0.5 drop to the lowest (sea floored at sea level); rate = ((1-hs) K_HILL relief (1 + RELIEF_NONLIN
+    (relief/1 km)^2) + hs K_HILL_H height) x (0.3 + LangbeinSchumm(P)) x (1 + frost), frost = clip(1 - |T + 2|/12, 0, 1) (freeze-thaw near 0 degC). Landslides: relief above RELIEF_MAX goes at half per step. Wind: K_WIND x dry x (1 -
+    V), dry = clip((aridity - 2)/4, 0, 1), plant cover V = 1 - exp(-P/0.4). River and hill rates fade to 0 toward sea level over BASE_M (base level); all three scaled by WEAR_SCALE. Wear = min(sum x dt, height above sea); the per-process
+    parts are scaled by the same share.'
 area: surface
 clock:
   when: each coupled step; wear integrated over dt = plate step (Myr x 1e6 yr)
@@ -75,8 +71,7 @@ params:
     factor: 3.1685678073510773e-08
   meaning: river incision per unit stream power above threshold
   source: stages/coupled.py:39
-  note: 'calibrated once against the old height rule on S15 at 50 Ma: planet total 0.013-0.020 mm/yr over land, 60 % by rivers
-    (comment 33-37)'
+  note: 'calibrated once against the old height rule on S15 at 50 Ma: planet total 0.013-0.020 mm/yr over land, 60 % by rivers (comment 33-37)'
 - name: OMEGA_C
   value: 5.0
   unit: W/m2
@@ -120,8 +115,7 @@ params:
   open: true
   meaning: steepen = 1 + RELIEF_NONLIN (relief/1000 m)^2
   source: stages/coupled.py:44
-  note: 'Montgomery & Brandon 2002, Ahnert 1970; test t5; unit as the code says it: ''dimensionless (per km^2 of relief)'';
-    SI conversion unverified'
+  note: 'Montgomery & Brandon 2002, Ahnert 1970; test t5; unit as the code says it: ''dimensionless (per km^2 of relief)''; SI conversion unverified'
 - name: RELIEF_MAX
   value: 3500.0
   unit: m
@@ -154,8 +148,7 @@ params:
   open: true
   meaning: global multiplier on all three rates
   source: stages/coupled.py:43
-  note: 'owner 16 Oct: kept at 0.4; 0.6 sank s23 at 30k (land 24 %); 0.4 holds land 28-30 % from s23''s 700 Ma state; 0 rises
-    to 32 %; unit as the code says it: ''dimensionless''; SI conversion unverified'
+  note: 'owner 16 Oct: kept at 0.4; 0.6 sank s23 at 30k (land 24 %); 0.4 holds land 28-30 % from s23''s 700 Ma state; 0 rises to 32 %; unit as the code says it: ''dimensionless''; SI conversion unverified'
 - name: FAULT_SOFT
   value: 1.0
   unit: '1'
@@ -297,11 +290,13 @@ basis:
   - reads
   - writes
   tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
-    the code at planet-sim-landform 9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from the code at planet-sim-landform 9747f0d-c437724.'
 - of:
   - reads
   - writes
   - params
   tier: derived
   note: 'planets, 17 Oct 2026: planet-forge surface port (models/surface), read from planet-sim-landform 9747f0d-c437724.'
+events_emitted:
+- event: planet-event.ledger-row
+  where: Current-step erosion interval and conserved actual transport/deposition budget.

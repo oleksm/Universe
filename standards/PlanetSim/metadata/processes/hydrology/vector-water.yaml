@@ -1,0 +1,88 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.vector-water
+  name: Vector water
+  about: 'The water as vectors (crates/water): the coast to the precision asked, depressions filled to their spill saddle, rivers down the height function with discharge, width and depth from the river laws, deltas by the mouth laws,
+    divides between basins; on the height surface with the climate''s rain, temperature and wind. Only the water balance makes a lake: open where inflow (its rivers, the rain on it) beats the evaporation over it, closed where less,
+    a playa under PLAYA_SHARE of it. In the run it replaces the sampled flow-routing, lakes, river-discharge, river-memory, erosion, dust, sediment, river and coast features and water zones. No state: traced when its surface is first
+    read.'
+area: hydrology
+clock:
+  when: every 10 steps of the coupled phase (its surface traced when first read)
+reads:
+- name: height
+  field: planet-field.height
+- name: rain
+  field: planet-field.rain
+- name: temperature
+  field: planet-field.temperature
+- name: potential evaporation
+  field: planet-field.potential-evaporation
+- name: wind
+  field: planet-field.wind
+- name: wind north
+  field: planet-field.wind-north
+writes:
+- name: lake
+  field: planet-field.lake
+- name: lake level
+  field: planet-field.lake-level
+- name: discharge
+  field: planet-field.discharge
+- name: drainage area
+  field: planet-field.drainage-area
+- name: basin
+  field: planet-field.basin
+- name: basin closed
+  field: planet-field.basin-closed
+params:
+- name: scaffold depth
+  value: 7.0
+  unit: '1'
+  meaning: 'icosahedron splits of the search scaffold: the smallest island, lake or basin found is about its spacing (~55 km on Earth)'
+  source: chosen
+  note: invented; review
+- name: precision
+  value: 10.0
+  unit: m
+  meaning: lines stay within this of the true line between their vertices
+  source: chosen
+  note: invented; review
+- name: vertex spacing
+  value: 2000.0
+  unit: m
+  meaning: no two vertices of a line farther apart
+  source: chosen
+  note: invented; review
+- name: descent step
+  value: 4000.0
+  unit: m
+  meaning: the network descent step
+  source: crates/water examples/demo.rs
+  note: invented; review
+- name: merge distance
+  value: 2500.0
+  unit: m
+  meaning: two descents closer than this join
+  source: crates/water examples/demo.rs
+  note: invented; review
+- name: WIND_SPEED
+  value: 7.0
+  unit: m/s
+  meaning: the surface wind speed along the climate wind direction, for the deltas' waves
+  source: mean ocean surface wind ~7 m/s (Wentz et al. 2007 satellite climatology)
+  note: sourced from memory; review
+- name: TIDE_RANGE
+  value: 1.0
+  unit: m
+  meaning: mean tidal range at the coast
+  source: Earth open-coast mean 1-2 m (crates/water delta.rs)
+  note: review
+- name: PLAYA_SHARE
+  value: 0.1
+  unit: '1'
+  meaning: a closed lake whose inflow covers under this share of its evaporation is a playa
+  source: the sampled lakes' playa rule (under a tenth)
+  note: derived; review
+depends_on:
+- planet-process.river-discharge

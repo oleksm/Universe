@@ -6,8 +6,8 @@ identity:
     suction and ridge push forces, each a unit tangent force at a particle, crossed with position) sets its axis (torque direction) and a speed multiplier |torque|/particle_count relative to the median over driven plates, clipped to
     0.15-2.0; a plate with zero torque keeps its axis and gets DRIFT. The multiplier is then times the plate''s rate (collision stall) and (1 - CONTINENT_DRAG*continental particle share). dt = min(step_myr, STEP*gap*R/(speed*fastest),
     time left). Every plate rotates its particles exactly by Rodrigues rotation about its axis by speed*mult/R*dt, and its particles'' structural grain vectors too, and the relief layer''s anchored vectors. After the step: torque <-
-    torque*exp(-dt/FORCE_MYR) + force (this step''s force sum is NOT scaled by dt), and plates not stalled this step recover rate toward base on RECOVER_MYR. w.spin records each plate''s angular velocity vector (rad/yr). The multipliers
-    are then scaled so their particle-weighted mean is 1: the mean plate speed is the reference speed (EARTH_SPEED at Earth''s flux).'
+    torque*exp(-dt/FORCE_MYR) + force (this step''s force sum is NOT scaled by dt), and plates not stalled this step recover rate toward base on RECOVER_MYR. w.spin records each plate''s angular velocity vector (rad/yr). Collision slowing
+    and continental drag remain in the final multipliers; there is no global mean-speed normalization (the original Python rule).'
 area: plates
 clock:
   when: every step; dt <= step_myr (default 5 Myr) and <= STEP spacing for the fastest plate
@@ -105,9 +105,9 @@ params:
   said_as:
     unit: m/yr
     factor: 0.05
-  meaning: 'the particle-weighted mean plate speed at EARTH_MANTLE_FLUX: the multipliers (torque per area, rate, continental drag) are scaled so their particle-weighted mean is 1'
+  meaning: reference speed at EARTH_MANTLE_FLUX, before each plate's torque multiplier, collision slowing and continental drag; the actual mean is not forced
   source: stages/plates.py:95
-  note: m/yr, (real) DeMets et al. 2010; the mean enforced since 18 Oct 2026 (the Python ran at 0.35 of it)
+  note: 'm/yr; the Earth speed figure supplies the reference scale. Restored to the Python rule on 20 Oct 2026: the 18 Oct Rust mean-speed normalization cancelled collective slowing and could accelerate other plates.'
 - name: EARTH_MANTLE_FLUX
   value: 0.04745098039215686
   unit: W/m2
@@ -350,3 +350,9 @@ basis:
   source: arc curvatures (Calabria, Gibraltar, Scotia); Turcotte & Schubert 2014 flexure
   review: true
   note: 'From memory, 18 Oct 2026: check; a stand-in for rollback and ridge segmentation.'
+- of:
+  - params.EARTH_SPEED
+  - identity.about
+  tier: derived
+  note: 'Planets, 20 Oct 2026: restore the algorithm in planet-sim/src/planet_sim/stages/plates.py, run() lines 778-797. Retain torque/median clipping, then rate and continental-drag factors without normalizing the particle-weighted
+    mean. Recovery comparison against forge_e36 is required; no numerical parameter was retuned.'

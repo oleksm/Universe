@@ -10,9 +10,22 @@ scales_by:
 - physical
 reference: adapter.access-s1
 members: 56
+model_requests:
+- work: rig
+  because: 'Hold v1: exported port-node local +Y does not match registry facing. Correct all 14 frames and verify positions and +Y directions directly from raw GLB world matrices; source/reimport checks alone missed the export-axis
+    conversion.'
+  asked: '2026-10-19'
+  of_version: 1
+  by: registry
 basis:
 - of:
   - draws
   - scales_by
   tier: derived
   note: 'The owner, 2026-10-18 (via ships): equipment held by typed mounts on cradles or deck panels made from stock; one template a family.'
+visual:
+  format: freefall-model/1
+  path: models/cradle/v2
+  manifest_sha256: e80920aae301385fec89883532c17efe6d80a787c188a88d8cef1394a02aef01
+  version: 2
+  triangles: 9688

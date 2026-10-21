@@ -12,12 +12,12 @@ made_from:
 - item: material.aluminium-alloy-6061
 size:
   length: 27.0
-  width: 6.0
+  width: 6.25
   height: 0.5
 supplies:
   item: adapter.cargo-s4
 physical:
-  mass: 25136.81
+  mass: 23775.49
 basis:
 - of:
   - size

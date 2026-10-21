@@ -156,6 +156,8 @@ def cmd_check(opt, pages):
              ("module", [sys.executable, "tools/standards/planet_lod_module.py", "--check"], None),
              ("fit", [sys.executable, "tools/standards/fit_layout.py"], lambda o: not re.search(r"[1-9]\d* fault\(s\)", o)),
              ("makers", [sys.executable, "tools/standards/kit_works.py", "--check"], lambda o: not re.search(r"[1-9]\d* fault\(s\)", o)),
+             ("supply records", [sys.executable, "tools/standards/supply_chains.py", "--check"], None),
+             ("stock chains", [sys.executable, "tools/standards/production_chain.py"], None),
              ("ports", [sys.executable, "tools/standards/equipment_ports.py", "--check"], lambda o: not re.search(r"[1-9]\d* fault\(s\)", o)),
              ("mounts", [sys.executable, "tools/standards/mounting.py", "--check"], lambda o: not re.search(r"[1-9]\d* fault\(s\)", o))]
     failed = 0

@@ -2,11 +2,8 @@
 identity:
   key: planet-process.relief-erosion
   name: Feature relief eroded by rock and rain
-  about: 'For every alive finished line with meta.relief0_m and not worn: er = mean geology.ERODIBILITY of the rock under
-    its vertices (1.0 if no rock), wet = clip(mean rain P under them / 1.0, 0.2, 3.0) (1.0 if no climate); tau = TAU0_MYR
-    / max(er*wet, 0.05); relief_m *= exp(-dt/tau) with dt the Myr since the last call. Below WORN_SHARE x relief0 the line
-    becomes state ''worn'' (trace ''worn''); otherwise a trace ''eroded'' row each time it falls under 0.9 of the last traced
-    value. The first call only records the time.'
+  about: 'Passive line-feature relief decays by its recorded rock/rain-dependent e-fold. Axes supported by a currently forming suture and their immediate child ridges/fronts/folds do not receive an additional passive decay while active:
+    axis relief is read from the physically evolved, already eroded crust. Unrelated and inactive features retain the existing decay law.'
 area: relief
 clock:
   when: every EVERY_MYR (25 Myr)
@@ -301,15 +298,12 @@ basis:
   - reads
   - writes
   tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read
-    from the code at planet-sim-landform 9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read from the code at planet-sim-landform 9747f0d-c437724.'
 - of:
   - reads
   - writes
   - params
   tier: derived
-  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
-    9747f0d-c437724.'
+  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform 9747f0d-c437724.'
 cautions:
-- 'the Python''s reads were its line store''s internals: geology.ERODIBILITY (per unit); w.hydro[''P''] (rain, m/yr); line
-  meta relief0_m/relief_m'
+- 'the Python''s reads were its line store''s internals: geology.ERODIBILITY (per unit); w.hydro[''P''] (rain, m/yr); line meta relief0_m/relief_m'

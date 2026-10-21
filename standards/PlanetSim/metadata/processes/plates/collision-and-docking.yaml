@@ -57,6 +57,15 @@ reads:
 - name: w.xcover
   field: planet-field.particle-rock-cover
   unit: m
+- name: w.xage
+  field: planet-field.particle-age
+  unit: s
+- name: kind
+  field: planet-field.crust-kind
+  unit: '1'
+- name: crust age
+  field: planet-field.crust-age
+  unit: s
 writes:
 - name: w.xcont
   field: planet-field.particle-continental
@@ -96,6 +105,9 @@ writes:
 - name: w.xcover
   field: planet-field.particle-rock-cover
   unit: m
+- name: origin
+  field: planet-field.particle-origin
+  unit: '1'
 events_emitted:
 - event: planet-event.relief-collision
   where: stages/plates.py:1107
@@ -180,11 +192,50 @@ params:
   source: 'Molnar & Lyon-Caen 1988 (GSA Special Paper 218): Tibet''s excess potential energy, a few 10^12 N/m'
   note: sourced (order of magnitude); replaces STALL_AREA (a count of sample cells) for the vector plates
 - name: COLLISION_COUPLING
-  value: 2.0e+21
+  value: 4.0e+22
   unit: Pa s
-  meaning: 'vector plates: colliding plates resist each other with force per metre of contact = COLLISION_COUPLING x their closing speed: 2 x viscosity x thickness / width of the orogen (2 x 1e22 Pa s x 100 km / 1000 km)'
-  source: England & Molnar 1997 (Tibet effective viscosity ~1e22 Pa s); Molnar & Lyon-Caen 1988 (resisting force ~5e12 N/m)
-  note: 'derived; at 5 cm/yr it gives 3.2e12 N/m, the order Molnar & Lyon-Caen give (figures from memory, 18 Oct 2026: verify)'
+  meaning: 'vector plates: colliding plates resist each other with force per metre of contact = COLLISION_COUPLING x their closing speed: 2 x viscosity x thickness / width of the collision zone (2 x 1e23 Pa s x 100 km / 500 km: strong
+    continental lithosphere across the belt, 2 x OROGEN_HALF_WIDTH)'
+  source: England & Molnar 1997 (Tibet's weak crust ~1e22 Pa s; continental lithosphere 1e22-1e23); Molnar & Lyon-Caen 1988
+  note: '19 Oct 2026: was 2e21 (Tibet''s crust over 1000 km); continents in contact are near-solid at plate scale; figures from memory: verify'
+- name: OROGEN_HALF_WIDTH
+  value: 250000.0
+  unit: m
+  said_as:
+    unit: km
+    factor: 0.001
+  meaning: 'vector plates: the shortened crust of a continental collision thickens a belt this wide on each side of the suture (the colliding continents keep their outlines); the belt widens further by lower-crust flow'
+  source: 'collisional orogen widths: Alps ~200 km, Zagros and Himalaya ~250-350 km across the thrust belt (e.g. Dewey & Burke 1973; Molnar & Lyon-Caen 1988)'
+  note: '19 Oct 2026, replaces the 125 km strip (ARC_WIDTH/2); from memory: verify'
+- name: pocket max area
+  value: 680000000000.0
+  unit: m2
+  meaning: 'a connected patch of ocean-kind samples with at most this area, every sample older than pocket min age, is a trapped pocket (the remnant of a closed ocean, which on Earth is filled and thrust up): its ocean particles dock
+    as continent (ophiolite); 0 = off'
+  source: 'planets, 20 Oct 2026 (chosen; e82: an 8-sample sea 6.6 km deep inside a continent); forge models/plates/collision.rs'
+  note: '6.8e11 (40 cells at 30,000) e83-e86 and from e88; 2.0e12 in e87 docked the 100-160-sample trapped seas but as 7 km floor volume the read puts below the sea (interiors 11% drowned, land 28.6%): the dock needs the sea-level thickness
+    or a sediment fill before the larger seas are taken'
+- name: pocket link
+  value: 1.5
+  unit: '1'
+  meaning: the ocean particles within this many sample gaps of a pocket sample dock (the pocket rule)
+  source: planets, 20 Oct 2026 (chosen); forge models/plates/collision.rs
+- name: pocket min age
+  value: 3156000000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31560000000000.0
+  meaning: 'a patch docks as a pocket only when all its floor is older than this (100 Myr): a young rift strait keeps opening, a basin that sat shut for 100 Myr is filled'
+  source: planets, 20 Oct 2026 (chosen); forge models/plates/collision.rs
+- name: pocket surround
+  value: 1.0
+  unit: '1'
+  meaning: 'a patch docks as a pocket only when the distinct continental particles within pocket link of its members number at least this times the patch (shut inside continent, not cut off by the empty space subduction leaves: e83
+    docked 4,500 such particles)'
+  source: planets, 20 Oct 2026 (chosen); forge models/plates/collision.rs
+  note: 'unused since e85: the pocket test moved to the sample graph (a maximal patch of ocean-kind samples is shut in by construction); the particle-level test (e83, e84) saw single old particles at a margin as shut in because the
+    particle field is sparse at sea'
 random_draws:
 - none
 invariants:
@@ -217,3 +268,9 @@ basis:
   tier: derived
   review: true
   note: '2 x 1e22 Pa s (England & Molnar 1997) x 100 km / 1000 km; checked against Molnar & Lyon-Caen 1988 (~5e12 N/m). Figures from memory, 18 Oct 2026: check.'
+- of:
+  - params.OROGEN_HALF_WIDTH
+  tier: sourced
+  source: Dewey & Burke 1973; Molnar & Lyon-Caen 1988
+  review: true
+  note: 'From memory, 19 Oct 2026: check.'

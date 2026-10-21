@@ -1,0 +1,29 @@
+reviewed: '2026-10-20'
+scope: Process routes only. No source below supports the chosen plant sizes, construction budgets, rates or power.
+sources:
+  - url: https://www.epa.gov/sites/default/files/2020-09/documents/8.7_hydrofluoric_acid.pdf
+    title: EPA AP-42 8.7 Hydrofluoric Acid
+    supports: Fluorspar and sulphuric acid digestion, purification of HF and calcium sulphate residue.
+  - url: https://www.epa.gov/sites/production/files/2015-07/documents/tetrafluoroethylene_final_volume_19apr2015.pdf
+    title: National Academies / EPA tetrafluoroethylene
+    supports: HF and chloroform to chlorodifluoromethane, cracking to tetrafluoroethylene, polymer feed.
+  - url: https://patents.google.com/patent/EP0417710A2/en
+    title: Ethylene/propylene/ethylidene norbornene rubbers
+    supports: EPDM monomer identity and polymerisation route; not the draft methanol-to-monomer sublines or formulation.
+  - url: https://reports.wacker.com/2022/annual-report/management-report/group-business-fundamentals/products-services.html
+    title: Wacker products and services
+    supports: Silicon and methanol feed the integrated silicone chain. Does not specify this draft compound or its cure package.
+  - url: https://chemicals.basf.com/north-america/en/Monomers/isocyanates-and-polyols/markets/polyiso-and-rigid-insulation
+    title: BASF Polyiso and rigid foam insulation
+    supports: MDI and polyol chemistry for PIR. Does not support this draft formulation or an engineered monomer plant.
+  - url: https://patents.google.com/patent/EP0053927B1/en
+    title: Polyimide manufacture
+    supports: PMDA and ODA precursor, casting and heat treatment. Does not support the draft aggregate aromatic-monomer synthesis budget.
+  - url: https://www.aerogel.org/?p=16
+    title: Silica aerogel, Aerogel.org
+    supports: Silicate-derived gel and solvent exchange/drying. Does not support the chosen solvent makeup.
+limits:
+  - New recipes are draft aggregate mass budgets, not qualified chemical-process designs.
+  - Internal intermediates, catalysts, cure packages, solvent charges and their makeup require further engineering.
+  - Packaging material shares and factory parts are chosen first-layer budgets, not measured model quantities.
+  - Natural resources and elemental feeds are supply boundaries; these records do not claim a deposit, supplier or operating facility exists.

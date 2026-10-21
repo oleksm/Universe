@@ -11,8 +11,8 @@ made_from:
 - item: material.high-strength-steel-4340
 - item: material.aluminium-alloy-6061
 size:
-  length: 12.0
-  width: 12.0
+  length: 12.25
+  width: 12.25
   height: 0.5
 supplies:
   item: adapter.tank-s4

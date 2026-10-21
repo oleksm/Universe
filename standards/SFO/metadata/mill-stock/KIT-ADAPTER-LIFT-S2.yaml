@@ -11,8 +11,8 @@ made_from:
 - item: material.aluminium-alloy-6061
 - item: material.high-strength-steel-4340
 size:
-  length: 11.0
-  width: 9.0
+  length: 11.25
+  width: 9.25
   height: 0.5
 supplies:
   item: adapter.lift-s2

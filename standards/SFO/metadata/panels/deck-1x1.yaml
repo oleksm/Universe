@@ -3,7 +3,7 @@
 identity:
   key: panel.deck-1x1
   name: Deck panel, 1 x 1 m
-  description: 'A ship''s floor panel on its frame: 6061 skins on aluminium honeycomb, 4 seat-track rails along it for small equipment''s feet, clamped onto the struts under its edges.'
+  description: 'A ship''s floor panel on its frame: 6061 skins on aluminium honeycomb, 4 seat-track rails along it for small equipment''s feet; inboard edge lugs bolt to separate shared support shoes, each held by one strut clamp.'
 kind: deck
 site: ship
 cell:
@@ -80,153 +80,153 @@ ports:
 - id: edge-1
   flow: out
   medium: load
-  interface: interface.kit-clamp
+  interface: interface.insert-m10
   half: male
   make: bolted
-  mass: 1.28
+  mass: 1.19
   at:
   - -0.25
-  - -0.5
+  - -0.46
   - 0.0
   facing:
   - 0.0
   - 0.0
   - -1.0
-  note: clamped onto the edge strut under it, 0.25 m from the nodes
+  note: '40 mm inboard of the edge, 0.25 m along from a cell corner: male M10 clearance lug onto one seat of connector.deck-support-shoe; the separate shoe attaches to the frame through one strut clamp'
 - id: edge-2
   flow: out
   medium: load
-  interface: interface.kit-clamp
+  interface: interface.insert-m10
   half: male
   make: bolted
-  mass: 1.28
+  mass: 1.19
   at:
   - 0.25
-  - -0.5
+  - -0.46
   - 0.0
   facing:
   - 0.0
   - 0.0
   - -1.0
-  note: clamped onto the edge strut under it, 0.25 m from the nodes
+  note: '40 mm inboard of the edge, 0.25 m along from a cell corner: male M10 clearance lug onto one seat of connector.deck-support-shoe; the separate shoe attaches to the frame through one strut clamp'
 - id: edge-3
   flow: out
   medium: load
-  interface: interface.kit-clamp
+  interface: interface.insert-m10
   half: male
   make: bolted
-  mass: 1.28
+  mass: 1.19
   at:
-  - 0.5
+  - 0.46
   - -0.25
   - 0.0
   facing:
   - 0.0
   - 0.0
   - -1.0
-  note: clamped onto the edge strut under it, 0.25 m from the nodes
+  note: '40 mm inboard of the edge, 0.25 m along from a cell corner: male M10 clearance lug onto one seat of connector.deck-support-shoe; the separate shoe attaches to the frame through one strut clamp'
 - id: edge-4
   flow: out
   medium: load
-  interface: interface.kit-clamp
+  interface: interface.insert-m10
   half: male
   make: bolted
-  mass: 1.28
+  mass: 1.19
   at:
-  - 0.5
+  - 0.46
   - 0.25
   - 0.0
   facing:
   - 0.0
   - 0.0
   - -1.0
-  note: clamped onto the edge strut under it, 0.25 m from the nodes
+  note: '40 mm inboard of the edge, 0.25 m along from a cell corner: male M10 clearance lug onto one seat of connector.deck-support-shoe; the separate shoe attaches to the frame through one strut clamp'
 - id: edge-5
   flow: out
   medium: load
-  interface: interface.kit-clamp
+  interface: interface.insert-m10
   half: male
   make: bolted
-  mass: 1.28
+  mass: 1.19
   at:
   - 0.25
-  - 0.5
+  - 0.46
   - 0.0
   facing:
   - 0.0
   - 0.0
   - -1.0
-  note: clamped onto the edge strut under it, 0.25 m from the nodes
+  note: '40 mm inboard of the edge, 0.25 m along from a cell corner: male M10 clearance lug onto one seat of connector.deck-support-shoe; the separate shoe attaches to the frame through one strut clamp'
 - id: edge-6
   flow: out
   medium: load
-  interface: interface.kit-clamp
+  interface: interface.insert-m10
   half: male
   make: bolted
-  mass: 1.28
+  mass: 1.19
   at:
   - -0.25
-  - 0.5
+  - 0.46
   - 0.0
   facing:
   - 0.0
   - 0.0
   - -1.0
-  note: clamped onto the edge strut under it, 0.25 m from the nodes
+  note: '40 mm inboard of the edge, 0.25 m along from a cell corner: male M10 clearance lug onto one seat of connector.deck-support-shoe; the separate shoe attaches to the frame through one strut clamp'
 - id: edge-7
   flow: out
   medium: load
-  interface: interface.kit-clamp
+  interface: interface.insert-m10
   half: male
   make: bolted
-  mass: 1.28
+  mass: 1.19
   at:
-  - -0.5
+  - -0.46
   - 0.25
   - 0.0
   facing:
   - 0.0
   - 0.0
   - -1.0
-  note: clamped onto the edge strut under it, 0.25 m from the nodes
+  note: '40 mm inboard of the edge, 0.25 m along from a cell corner: male M10 clearance lug onto one seat of connector.deck-support-shoe; the separate shoe attaches to the frame through one strut clamp'
 - id: edge-8
   flow: out
   medium: load
-  interface: interface.kit-clamp
+  interface: interface.insert-m10
   half: male
   make: bolted
-  mass: 1.28
+  mass: 1.19
   at:
-  - -0.5
+  - -0.46
   - -0.25
   - 0.0
   facing:
   - 0.0
   - 0.0
   - -1.0
-  note: clamped onto the edge strut under it, 0.25 m from the nodes
+  note: '40 mm inboard of the edge, 0.25 m along from a cell corner: male M10 clearance lug onto one seat of connector.deck-support-shoe; the separate shoe attaches to the frame through one strut clamp'
 physical:
   length: 1.0
   width: 1.0
   height: 0.03
-  mass: 10.25
+  mass: 9.497074
 built_of:
 - what: Skins
   item: material.aluminium-alloy-6061
-  mass: 5.4
-  note: two 1 mm 6061 sheets
+  mass: 4.941059824257454
+  note: two 1 mm 6061 skins after rail recesses, lug seats and access bores; measured Blender deck candidate-v01 final-panel-mass.json, 2026-10-19; joints and loads unqualified
 - what: Honeycomb core
   item: material.aluminium-alloy-6061
-  mass: 1.25
-  note: 25 mm aluminium honeycomb, 50 kg/m3
+  mass: 1.140257672632459
+  note: 25 mm honeycomb proxy after recesses; retained assumed density 50 kg/m3, not solid aluminium; measured Blender deck candidate-v01 final-panel-mass.json, 2026-10-19; joints and loads unqualified
 - what: Seat track
   item: material.aluminium-alloy-6061
-  mass: 2.4
-  note: 4 rails, 0.6 kg/m extruded 6061
+  mass: 2.3992502916082934
+  note: four recessed seat tracks after entry/slot cuts, at existing 25.4 mm pitch; measured Blender deck candidate-v01 final-panel-mass.json, 2026-10-19; joints and loads unqualified
 - what: Edge lugs
   item: material.aluminium-alloy-6061
-  mass: 1.2
-  note: 8, a strut clamp bolted to each
+  mass: 1.0165064488375128
+  note: eight 40 mm-inboard lugs with 11 mm M10 clearance bores; shoes and joining bolts separate; measured Blender deck candidate-v01 final-panel-mass.json, 2026-10-19; joints and loads unqualified
 template: template.deck
 basis:
 - of:

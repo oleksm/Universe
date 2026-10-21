@@ -12,12 +12,12 @@ made_from:
 - item: material.high-strength-steel-4340
 size:
   length: 4.0
-  width: 3.0
+  width: 3.2
   height: 0.45
 supplies:
   item: adapter.hyperdrive-s3
 physical:
-  mass: 227.52
+  mass: 165.18
 basis:
 - of:
   - size

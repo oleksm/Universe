@@ -128,12 +128,12 @@ params:
   meaning: never coarser than this
   source: stages/plates.py:723
 - name: deep past fraction
-  value: 0.0625
+  value: 0.5
   unit: '1'
   meaning: 'unverified: the code names it deep past fraction without saying what it is'
   source: stages/plates.py:723
 - name: last Gyr fraction
-  value: 0.25
+  value: 0.5
   unit: '1'
   meaning: 'unverified: the code names it last Gyr fraction without saying what it is'
   source: stages/plates.py:723
@@ -154,6 +154,38 @@ params:
   unit: '1'
   meaning: run() default samples
   source: stages/plates.py:776
+- name: adaptive
+  value: 0.0
+  unit: '1'
+  meaning: '1: the lattice is adaptive (the ladder, 20 Oct 2026): at each stage, and every refine every of time, the Fibonacci lattice of n / fine fraction^2 points thinned to the density the record asks for: finer within refine reach
+    of the active lines (sutures, arc fronts, orogen axes, thrust fronts, arc chains, folds, rift margins, shoulders, floors, scarps, typed coasts, escarpments) and the coast; 0: the Fibonacci lattice of the stage count'
+  source: planets, 20 Oct 2026 (chosen); forge models/plates/refine.rs
+- name: fine fraction
+  value: 0.5
+  unit: '1'
+  meaning: 'the fine spacing as a fraction of the stage spacing (0.5: four times the density on the lines)'
+  source: planets, 20 Oct 2026 (chosen); forge models/plates/refine.rs
+- name: refine reach
+  value: 300000.0
+  unit: m
+  meaning: the spacing ramps from the fine fraction at an active line to the stage spacing this far from it
+  source: 'planets, 20 Oct 2026 (chosen: the entropy map zones belts and margins by 300 km); forge models/plates/refine.rs'
+- name: refine every
+  value: 1577880000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+  meaning: 'an adaptive lattice is laid again this often (the lines move with their plates; the crust re-lays on it); 0: only at the stages'
+  source: 'planets, 20 Oct 2026 (chosen: the re-lay cadence, 50 Myr); forge models/plates/refine.rs'
+- name: adaptive from
+  value: 2.20903e+16
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+  meaning: 'the adaptive lattice only within this time before the present (700 Myr: the coupled era, when the record holds the tectonic lines; deep time is recycled and its record holds coasts alone); before it the stage lattice'
+  source: 'planets, 20 Oct 2026 (chosen: e100, adaptive from the start, 10x the cost for nothing the final backbone keeps); forge models/plates/refine.rs'
 random_draws:
 - _refine takes rng but draws nothing.
 invariants:
@@ -173,3 +205,8 @@ basis:
   - writes
   tier: derived
   note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'
+- of:
+  - params
+  tier: invented
+  note: 'planets, 20 Oct 2026: deep past and last-Gyr fractions 0.0625 and 0.25 -> 0.5 (30,000 of the manifest 60,000 through the history, 60,000 for the last 300 Myr). At 10,000 and 15,000 the crust reached the fine era with 190 km
+    resolution and the fine lattice only rendered it smoothly (forge e76 at 60k: small bays 0.7% of the land, Earth at 60k 3.7%), and the two resolution changes dipped the land (late minimum 17.9%). e78.'

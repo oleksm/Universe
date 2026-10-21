@@ -11,13 +11,13 @@ made_from:
 - item: material.aluminium-alloy-6061
 - item: material.high-strength-steel-4340
 size:
-  length: 3.0
-  width: 3.0
+  length: 3.03
+  width: 3.06
   height: 0.12
 supplies:
   item: adapter.comm-s1
 physical:
-  mass: 20.83
+  mass: 14.92
 basis:
 - of:
   - size

@@ -21,9 +21,9 @@ motion:
 - id: traverse
   kind: travel
   direction: [0.0, 1.0, 0.0]
-  distance: [-10.6, 10.6]
+  distance: [-9.0, 9.0]
   moves: [the trolley and its hook]
-  note: across the bridge, about 1.5 m short of each end (invented)
+  note: 'across the bridge, 9 m either way as the description says (at most 1.5 m short of each end), its end stops there (invented; blender''s sweep of the 150 t moon gantry, 2026-10-18: at 10.7 m its wheels met the stops)'
 - id: hoist
   kind: lift
   direction: [0.0, 0.0, 1.0]
@@ -34,7 +34,12 @@ envelope:
 - [-4.902, -12.571, -0.041, 4.902, -11.429, 22.001]
 - [-4.902, 11.429, -0.041, 4.902, 12.571, 22.001]
 life: 788940000
-visual: {format: freefall-model/1, path: models/gantry-crane-20t-moon/v1, manifest_sha256: 410195f4ab5b7ad60ddfc6f651edff50de697389a61c573e7d96190916c0e417, version: 1, triangles: 5824}
+visual:
+  format: "freefall-model/1"
+  path: "models/gantry-crane-20t-moon/v2"
+  manifest_sha256: "9f6edb7247c262807bfdd0fd57b4ec218f546f0021be6e1160405b1e0a3be0f2"
+  version: 2
+  triangles: 5824
 basis:
 - of: [physical, built_of]
   tier: derived

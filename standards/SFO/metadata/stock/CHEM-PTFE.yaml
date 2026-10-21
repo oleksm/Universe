@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/supply_chains.py: change it there.
+identity:
+  key: stock.chem-ptfe
+  code: CHEM-PTFE
+  name: PTFE resin
+  form: bulk
+  traded_as: market.chemicals
+made_from:
+- item: material.ptfe
+package: package.bulk-bag
+basis:
+- of:
+  - identity
+  - made_from
+  tier: derived
+  review: true
+  source: standards/sources/production-chains.yaml
+  note: A stocked feedstock, or one empty handling unit. Empty-unit mass is the existing package's tare; its contents are separate.

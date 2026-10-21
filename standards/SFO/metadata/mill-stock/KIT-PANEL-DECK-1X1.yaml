@@ -16,7 +16,7 @@ size:
 supplies:
   item: panel.deck-1x1
 physical:
-  mass: 10.25
+  mass: 9.497074
 basis:
 - of:
   - size

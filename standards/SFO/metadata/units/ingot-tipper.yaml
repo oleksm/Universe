@@ -36,14 +36,20 @@ product: product.ingot-tipper
 motion:
 - id: tip
   kind: tilt
-  direction: [1.0, 0.0, 0.0]
+  point: [0.0, 0.0, 1.0]
+  direction: [0.0, 1.0, 0.0]
   angle: [0.0, 1.571]
   moves: [the cradle and the ingot in it]
-  note: a quarter turn, upright to lying (from its job)
+  note: a quarter turn about the pivot along y, upright to lying toward +x (positive about +y), from its job; blender's rig, 2026-10-18 (was direction +x, the way it tips, not its axis)
 envelope:
 - [-2.851, -1.501, -0.001, 2.551, 1.501, 2.101]
 life: 788940000
-visual: {format: freefall-model/1, path: models/ingot-tipper/v1, manifest_sha256: 67d9cd587fc04cae1634b6c443a34520b966bd13bca31b1d19ac354ab4657a9a, version: 1, triangles: 1768}
+visual:
+  format: "freefall-model/1"
+  path: "models/ingot-tipper/v2"
+  manifest_sha256: "789050153d4927b7f0fcad7b153f3e1157f52fb7bb94a370c2af8aa11fd9cea6"
+  version: 2
+  triangles: 1768
 basis:
 - of: [physical, built_of, needs]
   tier: invented

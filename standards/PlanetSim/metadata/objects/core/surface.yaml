@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=../../../schema/planet-object.schema.yaml
+identity:
+  key: planet-object.surface
+  name: Surface
+  about: 'A generator''s answer to: what is property K at coordinate x, time t; and its lines by kind.'
+scope: core
+about_model: Properties are functions of coordinate and time, evaluated on demand from records; the surface is that function. Models after it and clients (views, mesher) ask it; it holds no values per place.
+attributes:
+- name: provides
+  meaning: the field keys it answers
+  field: planet-field.height
+- name: lines
+  meaning: its lines by kind (plate boundaries, coast, rivers, margins)
+dynamics:
+- what: created
+  how: published by its generator each step it runs, and on restore
+- what: read
+  how: 'Live::provider(key): the latest published that provides the key'
+persistence:
+  how: derived
+  resumed: Model::restore rebuilds it from the generator's records
+code:
+- type: Surface (trait), Live
+  file: crates/forge-core/src/state.rs
+status: draft
+basis:
+- of:
+  - identity
+  - about_model
+  - attributes
+  - dynamics
+  - persistence
+  - code
+  tier: derived
+  note: 'planets, 19 Oct 2026: read from planet-forge''s types (docs/data-model.md)'

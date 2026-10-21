@@ -1,15 +1,15 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
 identity: {key: unit.stacker-reclaimer-1500th, name: 'Bucket wheel stacker-reclaimer, 1,500 t an hour', description: 'Runs on its rail between two stockpile beds: stacking, its boom (29 m from its luff pivot at x 2.5 to the wheel''s axle at 31.5, slewing either side) drops ore from the yard belt''s tripper onto a bed; reclaiming, the bucket wheel at the boom''s end cuts into the pile''s face and sends the ore back down the boom onto the yard belt, which then runs the other way. Stacks 1,500 t an hour (a ship''s load landed at the port in a day), reclaims 500. Travels along its x on 10 m gauge, its origin on the running plane at the slewing centre. Stacking, its tripper (unit.yard-tripper-1500th, a separate car on the same rails, coupled behind it on -x) drops the ore into a feed hopper over the slewing centre at local (0, 0, 8.5), onto the boom''s belt. Its counterweight arm reaches back to x -16, its underside 11.8 m up, clear of the tripper''s head; the ballast, 152 t of cast iron blocks
-    centred at x -14, balances the boom horizontal and stacking about the slewing centre. The boom reaches x 34.75 with the wheel. It slews 95 degrees either way from along +x, enough to reach both beds as it travels, but not further, so its tripper can stand behind it: between z 7 and 11.8, no part of the slewing frame may enter the tripper''s corridor (y -1.8 to 1.8, from x -0.8 back) anywhere in that range, as checked by sweeping it (a point r from the axis enters it after slewing to about 180 - asin(1.8 / r) degrees, so near the axis only parts close to the boom''s line pass); its counterweight arm and supports hang from the mast above z 11.8; the mast stands at x 3, the luff pivot''s towers at x 2.5, y -1.6 and 1.6, outside the boom''s belt. The feed hopper is the tripper''s, not the machine''s, and the boom''s tail turns under it at the axis. It runs on four bogies, two to a rail with their centres at x -4.5 and 4.5, each 5.4 m long with four wheels of 1.2 m: sixteen wheels, about
-    290 kN each at 1 g.'}
+    centred at x -14, balances the boom horizontal and stacking about the slewing centre. The machinery house sits on transverse seats above the counterweight arm, centre (-4, 0, 12.9), seats at z 12.55 across y -1.6 to 1.6. An open reclaim catch hopper lies below the boom tail''s sweep and tapers to the central chute at z 6.0, retaining its output datum. The boom reaches x 34.75 with the wheel. It slews 95 degrees either way from along +x, enough to reach both beds as it travels, but not further, so its tripper can stand behind it: between z 7 and 11.8, no part of the slewing frame may enter the tripper''s corridor (y -1.8 to 1.8, from x -0.8 back) anywhere in that range, as checked by sweeping it (a point r from the axis enters it after slewing to about 180 - asin(1.8 / r) degrees, so near the axis only parts close to the boom''s line pass); its counterweight arm and supports hang from the mast above z 11.8; the mast stands at x 3, the luff pivot''s towers at x 2.5, y -1.6 and 1.6, outside
+    the boom''s belt. The feed hopper is the tripper''s, not the machine''s, and the boom''s tail turns under it at the axis. It runs on four bogies, two to a rail with their centres at x -4.5 and 4.5, each 5.4 m long with four wheels of 1.2 m: sixteen wheels, about 290 kN each at 1 g.'}
 size_class: 3
-physical: {length: 51.0, width: 12.0, height: 20.0, mass: 523200.0}
+physical: {length: 51.0, width: 12.0, height: 20.0, mass: 522700.0}
 built_of:
 - {what: Portal and slewing base, item: material.structural-steel-a36, mass: 69270.0, note: 'the portal''s legs and girders, the slewing base''s rings, the bogies'' ties and rail flanges; measured on model v2'}
 - {what: 'Wheels, axles and bearings', item: material.high-strength-steel-4340, mass: 75950.0, note: 'sixteen running wheels of 1.2 m and their axles and bearings, drawn solid as they are; measured on model v2'}
 - {what: Bogie frames, item: material.structural-steel-a36, mass: 22020.0, note: 'four bogies 5.4 m long drawn solid (66.1 t); counted at a third, about how full a fabricated box is (from memory)'}
-- {what: Slewing frame and mast, item: material.structural-steel-a36, mass: 44170.0, note: 'the slewing rings, luff tower, the mast forward at x 3 with its rear stays, the counterweight''s supports from the mast, the house''s seats and the central chute; measured on model v2'}
+- {what: Slewing frame and mast, item: material.structural-steel-a36, mass: 43750.0, note: 'the slewing rings, luff tower, the mast forward at x 3 with its rear stays, the counterweight''s supports from the mast, the house''s seats and the central chute; measured on model v2. Candidate v03: seats +68.70 kg, old cantilever -206.10 kg, open reclaim receiver +85.90 kg, central chute -371.01 kg; net -422.51 kg, blender 19 Oct 2026 mass-review.json'}
 - {what: Counterweight arm, item: material.structural-steel-a36, mass: 26660.0, note: 'to x -16 from the mast, its underside 11.8 m up; measured on model v2'}
 - {what: Boom, item: material.structural-steel-a36, mass: 58110.0, note: 'chords, diagonals, stays, idlers and the wheel''s axle, bearings and pedestal at its tip; measured on model v2'}
 - {what: Bucket wheel, item: material.structural-steel-a36, mass: 25170.0, note: 'rim, spokes and buckets; measured on model v2'}
@@ -27,24 +27,68 @@ motion:
   kind: rotate
   point: [0.0, 0.0, 0.0]
   direction: [0.0, 0.0, 1.0]
-  angle: [-1.92, 1.92]
-  moves: [the boom and its bucket wheel]
-  note: about 110 degrees each way (invented)
+  angle: [-1.6580627893946132, 1.6580627893946132]
+  moves: ['the slewing upperworks, mast, counterweight, boom and bucket wheel']
+  note: 95 degrees each way as the description requires for the tripper corridor; invented operating limit, corrected from 110 degrees for blender rig 2026-10-19
 - id: luff
   kind: tilt
+  point: [2.5, 0.0, 8.0]
   direction: [0.0, 1.0, 0.0]
-  angle: [-0.2094, 0.2094]
-  moves: [the boom]
-  note: about 12 degrees up and down (invented)
+  angle: [-0.2094, 0.16]
+  interlock:
+    axis: slew
+    when_abs_below: 0.20943951023931956
+    angle: [-0.2094, 0.08]
+  moves: [the boom and its bucket wheel]
+  note: 'negative raises, positive lowers: about 12 degrees up and 9.17 down (invented). At +0.16 rad the 29 m arm puts the wheel centre at 8 - 29 sin(0.16) = 3.380 m, a radial estimate of 0.228 m clearance; the candidate v03 sweep measures 0.191 m including bucket corners, which supersedes that estimate. The former +12-degree limit put the rim below grade. Yard operating guard: raise to luff <= 0.08 rad before entering abs(slew) < 12 degrees; full +0.16 rad lowering is permitted only at abs(slew) >= 12 degrees. Sector envelopes require this interlock, not yet implemented in game. Clearance proof uses fixed wheel phase; wheel rotation is not qualified. Two mast-to-boom luff ropes use variable free spans with winch payout; the mast follows slew but stays fixed against luff. Rope construction, winch support, load qualification and full swept clearance remain provisional (blender proposal 2026-10-19).'
 envelope:
-- [23.965, -1.271, 4.848, 34.651, 3.601, 11.152]
-- [-16.001, -5.688, -0.062, 4.501, 5.688, 19.939]
-- [0.007, -1.272, 7.078, 32.001, 1.272, 19.664]
-- [0.007, -1.272, 7.078, 32.001, 1.272, 9.422]
-- [-4.501, -5.688, -0.062, 11.972, 5.688, 20.001]
-- [-16.001, -2.001, 11.799, 3.462, 2.001, 19.939]
+- [-6.57, -5.687, 0.479, 6.57, -4.386, 0.721]
+- [-6.57, 4.386, 0.479, 6.57, 5.687, 0.721]
+- [-6.65, -5.612, 0.399, 6.65, -4.46, 0.9]
+- [-6.65, 4.46, 0.399, 6.65, 5.612, 0.9]
+- [-7.2, -5.361, 0.8, 7.2, -4.71, 1.401]
+- [-7.2, 4.71, 0.8, 7.2, 5.361, 1.401]
+- [-4.5, -5.237, 1.299, 4.5, -4.835, 1.701]
+- [-4.5, 4.835, 1.299, 4.5, 5.237, 1.701]
+- [-3.101, -2.77, 5.299, 3.101, 2.77, 6.1]
+- [-4.89, -5.418, 1.232, 4.89, -2.388, 5.868]
+- [-4.89, 2.388, 1.232, 4.89, 5.418, 5.868]
+- [-2.701, -3.171, 5.299, 2.701, -2.369, 6.1]
+- [-2.701, 2.369, 5.299, 2.701, 3.171, 6.1]
+- [-7.11, -4.836, -0.061, 7.11, -4.806, 1.261]
+- [-7.11, 4.806, -0.061, 7.11, 4.836, 1.261]
+- [-1.191, -1.191, 5.76, 1.191, 1.191, 6.091]
+- [-2.901, -2.901, 5.699, 2.901, 2.901, 5.761]
+- [-2.901, -2.901, 5.76, 2.901, 2.901, 6.091]
+- [-2.901, -2.901, 6.09, 2.901, 2.901, 6.151]
+- [-4.95, -5.336, 1.5, 4.95, -4.735, 2.0]
+- [-4.95, 4.735, 1.5, 4.95, 5.336, 2.0]
+- [-5.0, -5.386, 1.4, 5.0, -4.685, 1.5]
+- [-5.0, 4.685, 1.4, 5.0, 5.386, 1.5]
+- [-7.05, -5.237, -0.001, 7.05, -4.835, 1.201]
+- [-7.05, 4.835, -0.001, 7.05, 5.237, 1.201]
+- [-0.729, -0.891, 1.392, 1.51, 0.891, 6.0]
+- [-16.124, -5.281, 5.981, 3.896, 5.281, 20.0]
+- [-0.569, -7.903, 4.749, 32.193, 10.133, 15.93]
+- [26.479, -5.642, 2.511, 34.762, 10.142, 17.237]
+- [3.016, -6.193, 7.507, 24.137, 6.193, 19.67]
+- [-0.869, -0.869, 1.392, 1.54, 1.54, 6.0]
+- [-16.064, -16.124, 5.981, 4.025, 4.025, 20.0]
+- [-6.358, -1.529, 2.434, 31.639, 32.193, 15.93]
+- [-6.063, 7.334, 0.191, 33.503, 34.762, 17.237]
+- [-3.311, -0.488, 5.788, 23.824, 24.137, 19.67]
+- [-0.869, -1.54, 1.392, 1.54, 0.869, 6.0]
+- [-16.064, -4.025, 5.981, 4.025, 16.124, 20.0]
+- [-4.058, -32.193, 2.434, 31.854, 1.529, 15.93]
+- [-1.48, -34.762, 0.191, 34.459, -2.834, 17.237]
+- [-3.311, -24.137, 5.788, 23.824, 0.488, 19.67]
+visual:
+  format: "freefall-model/1"
+  path: "models/stacker-reclaimer-1500th/v3"
+  manifest_sha256: "059fc1f69d9b801af3b9f28c0bba1d17316212933b95ce1fb57052d67b5b47c8"
+  version: 3
+  triangles: 20444
 life: 788940000
-visual: {format: freefall-model/1, path: models/stacker-reclaimer-1500th/v2, manifest_sha256: 486e11f161b99293de9fc4ded7a926f6631e5eb27203d496aa3029d2d6f3a134, version: 2, triangles: 20492}
 basis:
 - of: [physical, built_of]
   tier: derived
@@ -54,5 +98,9 @@ basis:
   tier: invented
   review: true
   note: Rates and power from memory of stacker-reclaimers of this size.
+- of: [motion]
+  tier: invented
+  review: true
+  note: '19 Oct 2026 rig correction: slew follows the existing 95-degree tripper-corridor limit; luff pivot from model, lower stop +0.16 rad chosen for about 0.2 m wheel clearance (candidate v03 measured 0.191 m including bucket corners). 117 coupled poses clear against the repaired tripper fixture, aside from ten intended host-plate/bolt contacts. Yard guard checked at 500 poses with zero contacts; continuous vertex extrema give 0.662 m crossing clearance over the conservative belt top and at least 1.825 m lateral margin in the lowered pile sectors (blender yard-guard-proof.json, 2026-10-19). These guarded sector envelopes exclude forbidden slew/luff combinations; wheel spin, runtime sequencing and loaded clearances remain pending. Rope spans describe paid-out free length, not elastic stretch; retained rope mass and inherited winch allowance, construction and load qualification pending.'
 - of: [life]
   rule: rule.life-plant

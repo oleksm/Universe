@@ -1,0 +1,67 @@
+# yaml-language-server: $schema=../../../schema/planet-object.schema.yaml
+identity:
+  key: planet-object.boundary-segment
+  name: Boundary segment
+  about: A segment of the boundary graph between two plates, typed by their relative motion.
+scope: generator
+about_model: 'The plates tile the sphere by their boundary graph: every segment has one plate on each side, so the areas sum to 4 pi exactly. Its type (ridge, trench, collision, transform) is read from the last substep''s motion.'
+extends: planet-object.record
+generator: planet-process.vector-plates
+geometry:
+  kind: line
+  frame: body
+  tolerance: segments at most the boundary resolution long (1 degree), shorter than a third merged, transforms straightened, bends no tighter than LITHOSPHERE_BEND_RADIUS
+attributes:
+- name: a, b
+  meaning: its vertices
+  field: planet-field.boundary-from
+- name: left, right
+  meaning: the plates either side
+  field: planet-field.boundary-left
+- name: kind
+  meaning: 0 ridge, 1 trench, 2 collision, 3 transform
+  field: planet-field.boundary-kind
+- name: down
+  meaning: the sinking plate at a trench
+  field: planet-field.boundary-down
+- name: closing
+  unit: m/s
+  meaning: closing speed (negative opening)
+  field: planet-field.boundary-closing
+- name: left/right continental
+  meaning: each side's crust at the middle
+  field: planet-field.boundary-left-continental
+dynamics:
+- what: moves
+  how: each vertex moves with the plates it borders (rubber-band least squares)
+- what: changes
+  how: split long, merged short, re-cut where lines cross, retyped each substep
+- what: created
+  how: a rift's cut adds segments
+  event: planet-event.rift
+- what: ends
+  how: a weld removes the shared boundary
+  event: planet-event.weld
+persistence:
+  how: bytes
+  table: vector-plates-world (GRAF, TYPE); written each step to table plate-boundary for the zones
+  resumed: World restore
+knobs:
+- name: boundary resolution
+  param: 'code: RES_DEG (crates/tectonics/src/forge_model.rs)'
+  meaning: longest segment
+  cost: segments 1/res
+code:
+- type: Seg, Graph, Typed
+  file: crates/tectonics/src/topo.rs, crates/tectonics/src/lib.rs
+status: draft
+basis:
+- of:
+  - identity
+  - about_model
+  - attributes
+  - dynamics
+  - persistence
+  - code
+  tier: derived
+  note: 'planets, 19 Oct 2026: read from planet-forge''s types (docs/data-model.md)'

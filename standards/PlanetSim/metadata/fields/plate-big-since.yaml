@@ -2,7 +2,8 @@
 identity:
   key: planet-field.plate-big-since
   name: Plate big since
-  about: Since when a plate has carried more than BIG_SHARE of the planet's continent (heat building beneath it), on the planet's clock; NaN when it does not.
+  about: 'The plate insulation heat (s): the time it has carried more than BIG_SHARE of the planet continent, leaking at insulation cooling times the step while below; 0 after a rift. (Before 20 Oct 2026: the time since the share rose
+    above BIG_SHARE, NaN below it.)'
 unit: s
 producer:
   where: planet-forge crates/forge-core/src/models/plates/init.rs

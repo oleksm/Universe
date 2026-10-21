@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../../schema/planet-object.schema.yaml
+identity:
+  key: planet-object.generator
+  name: Generator
+  about: 'A process that writes records: plates, geology, climate, water, glacial cycles, interior, line store, zones, relief features.'
+scope: core
+about_model: 'Generators are the planet''s entropy sources: each adds records where its process acts and costs nothing where nothing happens. Each declares its objects, the events it emits, the surfaces it provides, the era it runs
+  in and its resolution knobs.'
+attributes:
+- name: process
+  meaning: its planet-process record
+- name: objects
+  meaning: the planet-object kinds it keeps
+- name: era
+  meaning: when it runs (the manifest's phases)
+- name: knobs
+  meaning: its resolution and threshold parameters
+code:
+- type: Model (trait)
+  file: crates/forge-core/src/model.rs
+status: draft
+basis:
+- of:
+  - identity
+  - about_model
+  - attributes
+  - dynamics
+  - persistence
+  - code
+  tier: derived
+  note: 'planets, 19 Oct 2026: read from planet-forge''s types (docs/data-model.md)'

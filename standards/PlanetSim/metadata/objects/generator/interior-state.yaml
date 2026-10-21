@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../../schema/planet-object.schema.yaml
+identity:
+  key: planet-object.interior-state
+  name: Interior state
+  about: 'The interior as planet-wide numbers: structure, temperatures, heat flows, the dynamo.'
+scope: generator
+about_model: 'No geometry: values of the whole planet at a time, read by the plates (heat flux) and the thermostat (outgassing).'
+extends: planet-object.record
+generator: planet-process.thermal-evolution
+geometry:
+  kind: none
+  frame: none
+persistence:
+  how: scalar
+  table: state.json scalars
+provides:
+- planet-field.mantle-heat-flux
+code:
+- type: interior models
+  file: crates/forge-core/src/models/interior
+status: draft
+basis:
+- of:
+  - identity
+  - about_model
+  - attributes
+  - dynamics
+  - persistence
+  - code
+  tier: derived
+  note: 'planets, 19 Oct 2026: read from planet-forge''s types (docs/data-model.md)'
