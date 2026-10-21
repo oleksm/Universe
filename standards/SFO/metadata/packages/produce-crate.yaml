@@ -11,6 +11,8 @@ physical:
 holds:
   volume: 1.3
   mass: 800
+waste_stock: stock.packaging-waste-bulk
+returns_empty: true
 handling: forklift
 stack: 3
 keeps: ventilated
@@ -25,4 +27,5 @@ visual:
   version: 2
   triangles: 4806
 basis:
+  - { of: [returns_empty, waste_stock], tier: invented, review: true, note: "Draft opening policy: a complete binding/wrapping unit is spent; an intact returnable container goes back to stock. Damage overrides return; material recovery is separate (rule.packing-stock)." }
   - { of: [physical, holds, handling, stack], tier: invented, review: true, note: "A standard unit as logistics uses them (pallet 1.2 x 1.0 m, 1 m3 bags and totes, 6 m bundles), sized by the registry (2026-10-10); not sourced figure by figure." }

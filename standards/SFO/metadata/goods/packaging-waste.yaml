@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+# Written by tools/standards/supply_chains.py: change it there.
+identity:
+  key: good.packaging-waste
+  name: Spent packaging
+  kind: by-product
+  description: Mixed spent bindings, wrapping or discarded containers, awaiting sorting or disposal. No automatic recovery of their original materials is
+    claimed.
+physical:
+  bulk_density: 300
+basis:
+- of:
+  - physical.bulk_density
+  tier: invented
+  review: true
+  source: standards/sources/production-chains.yaml
+  note: Chosen handling density; to be reviewed.
+waste: true

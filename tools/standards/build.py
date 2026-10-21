@@ -2614,6 +2614,8 @@ for gd in goods:
 rows = []
 for gd in goods:
     made = [m for m in modules if any(rc.get("product") == gd["slug"] or any(x.get("item") == gd["slug"] for x in rc.get("outputs") or []) for rc in m.get("recipes") or [])]
+    if _op_sources := _chain["operation_sources"].get("good." + gd["slug"]):
+        made.append({"identity": {"name": f"Packaging opening/disposal ({len(_op_sources)} handling types)"}, "slug": ""})
     made += [{"identity": {"name": "People"}, "slug": ""}] if any(g_["item"] == gd["slug"] for nd in needs for g_ in nd.get("gives") or []) else []
     uses = lambda slug: [m for m in modules if any(x.get("item") == slug for rc in m.get("recipes") or [] for x in rc.get("inputs") or [])]
     used = uses(gd["slug"])

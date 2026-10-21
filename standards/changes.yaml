@@ -951,6 +951,7 @@
 - { record: good.onions, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "39597a711fca3bab" }
 - { record: good.oranges, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "b3b0fa4faf4fe5fe" }
 - { record: good.orogenic-gold-ore, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "e1f10decefa2d8cc" }
+- { record: good.packaging-waste, at: "2026-10-21T02:16:03Z", status: review, summary: "first tracked", sha: "141ed8e35987c754" }
 - { record: good.paper, at: "2026-10-21T01:51:06Z", status: review, summary: "first tracked", sha: "2093379d077c93fe" }
 - { record: good.peas, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "9c38689bbc2db7ac" }
 - { record: good.peppers, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "45c769cc93420991" }
@@ -1564,23 +1565,23 @@
 - { record: org.treistun-mutual, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: brand", sha: "925ffb2ed2d90544" }
 - { record: org.verdance, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: brand", sha: "196f09d68b59e56a" }
 - { record: org.vireo, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: brand", sha: "adf509b82f447687" }
-- { record: package.bale, at: "2026-10-11T16:38:07Z", status: "", summary: "changed: visual", sha: "acaf999c19ba47ee" }
-- { record: package.bar-bundle, at: "2026-10-11T15:57:49Z", status: "", summary: "changed: visual", sha: "df0cbb3575c1656b" }
-- { record: package.bulk-bag, at: "2026-10-11T16:03:27Z", status: "", summary: "changed: visual", sha: "206d41f29970f4a2" }
-- { record: package.carton-pallet, at: "2026-10-11T16:23:03Z", status: "", summary: "changed: visual", sha: "6e91bc9d58b4cee9" }
-- { record: package.coil, at: "2026-10-11T16:41:22Z", status: "", summary: "changed: visual", sha: "92599addc98d32a4" }
-- { record: package.cold-crate, at: "2026-10-11T16:15:53Z", status: "", summary: "changed: visual", sha: "bfd01383484de204" }
-- { record: package.crate-heavy, at: "2026-10-11T16:09:26Z", status: "", summary: "changed: visual", sha: "ad320ca7ba5fce5f" }
-- { record: package.crate-steel, at: "2026-10-16T15:07:27Z", status: "", summary: "changed: visual", sha: "73ea86c165ca7d9d" }
-- { record: package.cryo-dewar, at: "2026-10-11T16:47:47Z", status: "", summary: "changed: visual", sha: "651b39e23672e69f" }
-- { record: package.fish-tank, at: "2026-10-11T15:54:27Z", status: "", summary: "changed: visual", sha: "820c0c779fdcda26" }
-- { record: package.gas-rack, at: "2026-10-11T16:51:54Z", status: "", summary: "changed: visual", sha: "871e5cbebd31e7cb" }
-- { record: package.ladle, at: "2026-10-11T16:32:58Z", status: "", summary: "changed: visual", sha: "d899b250b69f533f" }
-- { record: package.livestock-crate, at: "2026-10-11T16:44:07Z", status: "", summary: "changed: visual", sha: "6cfcd785d32ad390" }
-- { record: package.plate-stack, at: "2026-10-11T16:06:31Z", status: "", summary: "changed: visual", sha: "4db1b0efdc4097a2" }
-- { record: package.produce-crate, at: "2026-10-11T16:19:35Z", status: "", summary: "changed: visual", sha: "f0cab56c9bde0cbb" }
-- { record: package.skip, at: "2026-10-11T15:49:48Z", status: "", summary: "changed: visual", sha: "fdd5513503fc0f8c" }
-- { record: package.tote, at: "2026-10-11T16:12:54Z", status: "", summary: "changed: visual", sha: "b2a5f3077bb1d0cb" }
+- { record: package.bale, at: "2026-10-21T02:16:03Z", status: "", summary: "changed: waste_stock, returns_empty, basis", sha: "a266e2a4e82e7e07" }
+- { record: package.bar-bundle, at: "2026-10-21T02:16:03Z", status: "", summary: "changed: waste_stock, returns_empty, basis", sha: "27a83f1dcab12ec4" }
+- { record: package.bulk-bag, at: "2026-10-21T02:16:03Z", status: "", summary: "changed: waste_stock, returns_empty, basis", sha: "5e9196469662e963" }
+- { record: package.carton-pallet, at: "2026-10-21T02:16:03Z", status: "", summary: "changed: waste_stock, returns_empty, basis", sha: "66de76457033dee2" }
+- { record: package.coil, at: "2026-10-21T02:16:03Z", status: "", summary: "changed: waste_stock, returns_empty, basis", sha: "a2248698a5e16df6" }
+- { record: package.cold-crate, at: "2026-10-21T02:16:03Z", status: "", summary: "changed: waste_stock, returns_empty, basis", sha: "de91106a36d7b662" }
+- { record: package.crate-heavy, at: "2026-10-21T02:16:03Z", status: "", summary: "changed: waste_stock, returns_empty, basis", sha: "bb212329f2884a2a" }
+- { record: package.crate-steel, at: "2026-10-21T02:16:03Z", status: "", summary: "changed: waste_stock, returns_empty, basis", sha: "7993acb39a4e5e5b" }
+- { record: package.cryo-dewar, at: "2026-10-21T02:16:03Z", status: "", summary: "changed: waste_stock, returns_empty, basis", sha: "a6c93689c4809f9f" }
+- { record: package.fish-tank, at: "2026-10-21T02:16:03Z", status: "", summary: "changed: waste_stock, returns_empty, basis", sha: "34440d24d211e9f4" }
+- { record: package.gas-rack, at: "2026-10-21T02:16:03Z", status: "", summary: "changed: waste_stock, returns_empty, basis", sha: "95d2f93ab18cfb8d" }
+- { record: package.ladle, at: "2026-10-21T02:16:03Z", status: "", summary: "changed: waste_stock, returns_empty, basis", sha: "7bd37f92bc33f204" }
+- { record: package.livestock-crate, at: "2026-10-21T02:16:03Z", status: "", summary: "changed: waste_stock, returns_empty, basis", sha: "b1f27723ccd74d82" }
+- { record: package.plate-stack, at: "2026-10-21T02:16:03Z", status: "", summary: "changed: waste_stock, returns_empty, basis", sha: "d098f6cce4aed933" }
+- { record: package.produce-crate, at: "2026-10-21T02:16:03Z", status: "", summary: "changed: waste_stock, returns_empty, basis", sha: "5e1c828411f832de" }
+- { record: package.skip, at: "2026-10-21T02:16:03Z", status: "", summary: "changed: waste_stock, returns_empty, basis", sha: "23aa3a75f2451419" }
+- { record: package.tote, at: "2026-10-21T02:16:03Z", status: "", summary: "changed: waste_stock, returns_empty, basis", sha: "5c811f31abebd5b7" }
 - { record: panel.deck-0p5x0p5, at: "2026-10-19T17:12:19Z", status: draft, summary: "changed: identity, ports, built_of", sha: "6c6a9d6e6d47af4e" }
 - { record: panel.deck-1x0p5, at: "2026-10-19T17:12:19Z", status: draft, summary: "changed: identity, ports, built_of", sha: "9ec624ab5d1beafe" }
 - { record: panel.deck-1x1, at: "2026-10-19T17:18:04Z", status: draft, summary: "changed: ports, physical, built_of", sha: "373a2c4fa71d8315" }
@@ -3026,7 +3027,7 @@
 - { record: rule.life-plant, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "fbda7bc757c6f115" }
 - { record: rule.life-ship-system, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "dfb76750c01c37b7" }
 - { record: rule.mounts-margin, at: "2026-10-13T05:32:00Z", status: review, summary: "changed: statement", sha: "88491f348e30a319" }
-- { record: rule.packing-stock, at: "2026-10-21T01:51:06Z", status: review, summary: "first tracked", sha: "f4b4ab9486f3afb6" }
+- { record: rule.packing-stock, at: "2026-10-21T02:16:03Z", status: review, summary: "changed: statement", sha: "ab2daed972d26559" }
 - { record: rule.plant-weights-from-memory, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "d4bff33987b75c18" }
 - { record: rule.run-support, at: "2026-10-18T20:37:52Z", status: review, summary: "first tracked", sha: "2d38160a4d228cbc" }
 - { record: rule.shares-chosen, at: "2026-10-07T03:53:08Z", status: review, summary: "first tracked", sha: "2f29f0362d9d7f04" }
@@ -4169,6 +4170,7 @@
 - { record: stock.onions-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "6690bc876c80e98a" }
 - { record: stock.oranges-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "e8fc00ad1048191f" }
 - { record: stock.orogenic-gold-ore-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "6973e0577dd0903b" }
+- { record: stock.packaging-waste-bulk, at: "2026-10-21T02:16:03Z", status: review, summary: "first tracked", sha: "073cde732e36108c" }
 - { record: stock.panel-alal-12p7, at: "2026-10-14T00:49:09Z", status: review, summary: "changed: size, basis", sha: "b49d4f5fef51a507" }
 - { record: stock.panel-alal-25p4, at: "2026-10-14T00:49:09Z", status: review, summary: "changed: size, basis", sha: "02db00cc505df063" }
 - { record: stock.panel-alal-50p8, at: "2026-10-14T00:49:09Z", status: review, summary: "changed: size, basis", sha: "e8a1abbc838e4581" }

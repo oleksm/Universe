@@ -154,6 +154,11 @@ def build():
     for slug, name, pkg in (("ptfe","PTFE resin","bulk-bag"), ("epdm-rubber","EPDM compound","crate-heavy"), ("silicone-rubber","Silicone rubber compound","crate-heavy"), ("pir-foam","PIR foam","plate-stack"), ("polyimide-film","Polyimide film","coil"), ("silica-aerogel","Silica aerogel","bulk-bag")):
         stock("chem-"+slug, name, "material."+slug, pkg)
     stock("refractory-brick-bulk", "Refractory brick, in bulk", "good.refractory-brick", "crate-heavy")
+    good("packaging-waste", "Spent packaging", "by-product", 300, "Mixed spent bindings, wrapping or discarded containers, awaiting sorting or disposal. No automatic recovery of their original materials is claimed.")
+    wp = META / "goods/packaging-waste.yaml"
+    wd = yaml.safe_load(OUT[wp]); wd["waste"] = True
+    put("goods", "packaging-waste", "good", wd)
+    stock("packaging-waste-bulk", "Spent packaging, in bulk", "good.packaging-waste", "skip")
 
     # Shares of each package's existing empty mass, not its payload.
     steel, ss, al, pe, board, paper = "stock.sta36-pl-8", "stock.st304-pl-3", "stock.al6061-pl-5", "good.polyethylene", "good.fibreboard", "good.paper"

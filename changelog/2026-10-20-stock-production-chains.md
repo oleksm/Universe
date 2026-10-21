@@ -10,6 +10,14 @@ types and all empty packaging had no recorded manufacturing route.
   recipe inputs separate from the payload. Their masses equal existing tares.
   `rule.packing-stock` defines reservation, return and gross-mass accounting;
   it requires a game inventory implementation before those operations run.
+  Each package now says `returns_empty`: rigid handling units normally return
+  when serviceable; bale bindings, bundle/stack straps, carton wrapping sets and
+  bulk bags are spent as complete units on opening. Their tare becomes waste;
+  partial pallet or material recovery is a separate future operation.
+  `waste_stock` names `stock.packaging-waste-bulk`: spent tare stays in the source
+  inventory as mixed waste, one kg per kg. It can remain unpacked in the works;
+  transporting it in a skip requires manufactured empty skip stock. Opening is
+  an explicit source in the chain audit; material recovery remains an open gap.
 - Give the eight kit works and the three new works construction recipes and
   coarse component budgets. These are drafts, not plant modelling briefs.
 - Connect kit recipes to manufactured insulation and seal feedstocks. Add the

@@ -31,6 +31,8 @@ properties:
       volume: { type: number, exclusiveMinimum: 0, x-unit: "m3", description: "m3 of contents at most" }
       mass: { type: number, exclusiveMinimum: 0, x-unit: "kg", description: "kg of contents at most: a dense stock fills it by weight before volume" }
   handling: { enum: [forklift, crane, pump, walk], description: "what moves it: a forklift's tines (pallets, skids), a crane's hook (skips, ladles, bundles), a pump through its valves (and a forklift), or animals led" }
+  returns_empty: { type: boolean, description: "Whether normal intact opening returns this complete empty handling unit to stock. False for spent bindings or wrapping sets: their tare becomes waste. Damage or deliberate disposal may also prevent return; true never repairs a damaged unit." }
+  waste_stock: { type: string, x-ref: [stock], description: "Where this unit's tare goes when spent or discarded: the stock key, at one kg of waste for each kg of tare. It stays in the source inventory; this grants no material recovery or free enclosing package." }
   stack: { type: integer, minimum: 1, x-unit: "1", description: "how many high it may stand, full" }
   shows_contents: { type: boolean, description: "true: its load can be seen, and its model carries it under a node and material named contents, tinted by the stock; false: closed, no contents node (docs/asset-contract.md, Packages)" }
   labels:

@@ -9,12 +9,19 @@ statement: >-
   (one binding set for a bale). Packing one handling unit reserves one such item
   from the store and contents within both holds.mass and holds.volume. Its gross
   mass is the contents plus the package tare exactly once. Unpacking returns the
-  empty unit if it remains serviceable; binding, damage and disposal must be
-  accounted for by the operation. An empty handling unit needs no enclosing
+  empty unit only if package.returns_empty is true and the operation reports it
+  serviceable. Otherwise its tare becomes package.waste_stock in the source
+  inventory, one kg for each kg of tare, never a reusable empty unit or
+  vanished mass. A binding or wrapping set is spent on opening; any later recovery
+  of its pallet, spacers or materials needs a separate recovery operation. Damage
+  or deliberate disposal can prevent return even for a returnable container. An
+  empty handling unit needs no enclosing
   package. Recipe quantities remain per kg of product, excluding logistics
   packaging; packing is a separate inventory operation, whose count follows the
   actual load rather than an assumed full package. This is the registry contract;
   the game must implement the inventory operation before container use is enforced.
+  Spent packaging can remain unpacked in the works' stock pool. Packing it for
+  transport is another operation and must reserve its own manufactured skip.
 tier: invented
 review: true
 source: Owner's stock production-chain review, 2026-10-20

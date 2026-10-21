@@ -49,6 +49,7 @@ OVERRIDES = {"cement": "bulk-bag", "lime": "bulk-bag", "alumina": "bulk-bag", "g
 OVERRIDES.update({"hydrogen-fluoride": "tote", "hydrogen-chloride": "gas-rack", "paper": "plate-stack", "fibreboard": "plate-stack",
                   "ptfe": "bulk-bag", "epdm-rubber": "crate-heavy", "silicone-rubber": "crate-heavy", "pir-foam": "plate-stack",
                   "polyimide-film": "coil", "silica-aerogel": "bulk-bag", "refractory-brick": "crate-heavy", "fluorspar": "bulk-bag"})
+OVERRIDES["packaging-waste"] = "skip"
 
 
 def package_for(d, g):

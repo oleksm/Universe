@@ -18,11 +18,14 @@ class ProductionChainTests(unittest.TestCase):
     def setUp(self):
         self.records = {
             "element.c": record("element.c"),
-            "package.box": record("package.box", physical={"mass": 2}),
+            "package.box": record("package.box", physical={"mass": 2}, returns_empty=True, waste_stock="stock.waste"),
             "stock.box": record("stock.box", supplies={"item": "package.box"}, physical={"mass": 2}),
+            "stock.waste": record("stock.waste", package="package.box", made_from=[{"item": "good.waste"}]),
+            "good.waste": record("good.waste"),
             "stock.product": record("stock.product", package="package.box"),
             "module.shop": record("module.shop", recipes=[recipe("stock.box", "element.c")]),
         }
+        self.records["stock.waste"]["identity"]["form"] = "bulk"
 
     def product_issues(self):
         return next(r["issues"] for r in audit(self.records)["rows"] if r["key"] == "stock.product")
@@ -56,6 +59,13 @@ class ProductionChainTests(unittest.TestCase):
         self.records["module.shop"]["recipes"].append(recipe("stock.product", "material.resin"))
         self.assertTrue(self.product_issues())
         self.assertNotIn("material.resin", audit(self.records)["available"])
+
+    def test_opening_policy_must_be_explicit_and_can_mark_spent_units(self):
+        self.records["module.shop"]["recipes"].append(recipe("stock.product", "element.c"))
+        del self.records["package.box"]["returns_empty"]
+        self.assertTrue(any("return policy" in i for i in audit(self.records)["issues"]))
+        self.records["package.box"]["returns_empty"] = False
+        self.assertFalse(audit(self.records)["issues"])
 
     def test_new_manufacturing_budgets_conserve_mass(self):
         for slug in ("specialty-chemical-works", "packaging-works", "factory-works"):

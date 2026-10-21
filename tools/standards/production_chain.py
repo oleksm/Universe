@@ -57,6 +57,25 @@ def audit(records):
                 if item.startswith("material."):
                     aliases.append((key, item))
 
+    # Opening/disposal is an inventory transformation, not a factory recipe:
+    # it turns manufactured tare into the same mass of mixed waste. It cannot
+    # bootstrap manufacturing, and does not recover virgin materials for free.
+    operation_sources = defaultdict(set)
+    for key, d in records.items():
+        if not key.startswith("package.") or not (waste := d.get("waste_stock")):
+            continue
+        empty = supplied.get(key, [])
+        if len(empty) != 1 or waste not in records:
+            continue
+        outs = {waste}
+        composition = records[waste].get("made_from") or []
+        if len(composition) == 1:
+            outs.add(composition[0]["item"])
+        recipes.append(("Opening/disposal of " + key, {empty[0]}, outs))
+        for out in outs:
+            sources[out].add("Opening/disposal of " + key)
+            operation_sources[out].add(key)
+
     # Element supply is the existing registry boundary pending world composition.
     # Natural sources likewise identify a resource, not a placed, operating mine.
     boundary = {k for k, d in records.items() if (k.startswith("element.") and k not in sources) or (k.startswith("good.") and (d.get("source") or {}).get("occurs"))}
@@ -89,6 +108,10 @@ def audit(records):
                 missing.append(f"package has {len(packers)} empty-stock definitions (one required)")
             elif packers[0] not in available:
                 missing.append("empty package has no ingredient-complete manufacturing route")
+            if pkg in records and not isinstance(records[pkg].get("returns_empty"), bool):
+                missing.append("normal-opening return policy not specified")
+            if pkg in records and records[pkg].get("waste_stock") not in records:
+                missing.append("spent-tare waste stock not specified")
         if empty:
             target = records.get(d["supplies"]["item"], {})
             if d.get("package"):
@@ -107,7 +130,7 @@ def audit(records):
         if maker not in available:
             issues.append(f"{maker}: no ingredient-complete construction recipe")
     blocked_inputs = sorted({i for _, ins, _ in recipes for i in ins if i not in available})
-    return {"rows": rows, "issues": issues, "available": available, "boundary": boundary, "blocked_inputs": blocked_inputs, "works": sorted(kit_makers)}
+    return {"rows": rows, "issues": issues, "available": available, "boundary": boundary, "blocked_inputs": blocked_inputs, "works": sorted(kit_makers), "operation_sources": operation_sources}
 
 
 def main():
