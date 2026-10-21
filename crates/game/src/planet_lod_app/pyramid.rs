@@ -644,6 +644,7 @@ pub(super) struct Pyramid {
     results: Receiver<ResultTile>,
     selection: Selection,
     split_history: HashSet<usize>,
+    drawn: HashMap<usize, f32>,
     generation: u64,
     key: (u64, bool),
     tick: u64,
@@ -809,6 +810,7 @@ impl Pyramid {
             results,
             selection: Selection::default(),
             split_history: HashSet::new(),
+            drawn: HashMap::new(),
             generation: 0,
             key: (1.0f64.to_bits(), false),
             tick: 0,
@@ -832,6 +834,79 @@ impl Pyramid {
             && i < n as i64
             && j < n as i64
             && self.mask[j as usize * n + i as usize] == 1
+    }
+    /// World height from the last submitted resident cover, including its actual morph weight.
+    /// Prefetched fine tiles never substitute for a coarse fallback drawn on screen.
+    pub fn drawn_ground_at_world(&self, dir: DVec3) -> Option<f64> {
+        let (x, y) = self.source.project(dir)?;
+        let m = &self.source.m;
+        for k in 0..=m.top_level {
+            let cell = m.cell0_m * m.scale(k) as f64;
+            let (u, v) = (
+                (x - m.x0 - 0.5 * m.cell0_m) / cell,
+                (y - m.y0 - 0.5 * m.cell0_m) / cell,
+            );
+            if u < 0. || v < 0. || u >= m.levels[k].n as f64 || v >= m.levels[k].n as f64 {
+                continue;
+            }
+            let (i, j) = (u.floor() as usize, v.floor() as usize);
+            let id = match self.source.index.get(&(k, j / m.tile, i / m.tile)) {
+                Some(&id) => id,
+                None => continue,
+            };
+            let Some(&weight) = self.drawn.get(&id) else {
+                continue;
+            };
+            let Some(c) = self.cache.get(&id) else {
+                continue;
+            };
+            let t = m.tiles[id];
+            let data = &c.tile.ground;
+            // The morph can shift the projected cell slightly; test its immediate neighbours too.
+            for dj in -1isize..=1 {
+                for di in -1isize..=1 {
+                    let (li, lj) = (
+                        i as isize - (t.col * m.tile) as isize + di,
+                        j as isize - (t.row * m.tile) as isize + dj,
+                    );
+                    if li < 0 || lj < 0 || li >= m.tile as isize || lj >= m.tile as isize {
+                        continue;
+                    }
+                    let (li, lj) = (li as usize, lj as usize);
+                    let (gi, gj) = (t.col * m.tile + li, t.row * m.tile + lj);
+                    let masks = [
+                        data.mask[data.at(gi, gj)],
+                        data.mask[data.at(gi + 1, gj)],
+                        data.mask[data.at(gi, gj + 1)],
+                        data.mask[data.at(gi + 1, gj + 1)],
+                    ];
+                    let (x0, y0) = self.source.xy(t, li as f64, lj as f64);
+                    let (x1, y1) = self.source.xy(t, (li + 1) as f64, (lj + 1) as f64);
+                    if !masks.contains(&1)
+                        || masks.contains(&2)
+                        || (k > 0 && self.source.hole_rect(x0, y0, x1, y1))
+                    {
+                        continue;
+                    }
+                    let a = lj * (m.tile + 1) + li;
+                    for tri in [
+                        [a, a + 1, a + m.tile + 2],
+                        [a, a + m.tile + 2, a + m.tile + 1],
+                    ] {
+                        let points = tri.map(|vi| {
+                            c.tile.origin
+                                + c.tile.mesh.morphed_position(vi, weight).unwrap().as_dvec3()
+                        });
+                        if let Some(h) =
+                            super::flight::triangle_height(dir, points, m.projection.radius_m)
+                        {
+                            return Some(h);
+                        }
+                    }
+                }
+            }
+        }
+        None
     }
     pub fn ground_at(&self, dir: DVec3) -> Option<f64> {
         let (x, y) = self.source.project(dir)?;
@@ -905,6 +980,7 @@ impl Pyramid {
             self.generation += 1;
             self.pending.clear();
             self.failed.clear();
+            self.drawn.clear();
             for (_, c) in self.cache.drain() {
                 self.releases.push(c.tile.mesh.id());
             }
@@ -1075,6 +1151,7 @@ impl Pyramid {
             if edges { 1.0 } else { 0.0 },
             true,
         );
+        self.drawn.clear();
         self.stats.drawn = drawn.len();
         self.stats.triangles = 0;
         self.stats.fallback = 0;
@@ -1087,6 +1164,7 @@ impl Pyramid {
             } else {
                 self.source.weight(id, frame.camera.position, ex)
             };
+            self.drawn.insert(id, weight);
             frame.pooled_morphed(group, &tile.mesh, tile.origin, weight);
             self.stats.triangles += tile.mesh.faces() as usize;
         }
@@ -1265,6 +1343,34 @@ mod tests {
         }
         std::fs::write(pyramid.join("pyramid.json"), meta.to_string()).unwrap();
         Fixture(dir)
+    }
+    #[test]
+    fn pyramid_flight_samples_submitted_cover_and_morph_not_prefetched_detail() {
+        let f = fixture();
+        let mut p = Pyramid::open(&f.0, 1000.).unwrap().unwrap();
+        let root = p.source.index[&(1, 0, 0)];
+        let fine = p.source.index[&(0, 0, 0)];
+        p.cache.insert(
+            fine,
+            Cached {
+                tile: build(&p.source, fine, 1., true).unwrap(),
+                last: 0,
+            },
+        );
+        let dir = p.source.inverse(-5., -5.);
+        assert!(p.drawn_ground_at_world(dir).is_none());
+        p.drawn.insert(root, 0.);
+        let coarse = p.drawn_ground_at_world(dir).unwrap();
+        p.drawn.clear();
+        p.drawn.insert(fine, 0.);
+        let detailed = p.drawn_ground_at_world(dir).unwrap();
+        assert!((coarse - detailed).abs() > 1.);
+        p.drawn.insert(fine, 1.);
+        let morphed = p.drawn_ground_at_world(dir).unwrap();
+        assert!(
+            (morphed - coarse).abs() < 0.02,
+            "fully morphed fine surface meets the parent"
+        );
     }
     #[test]
     fn pyramid_windowed_rows_mask_and_boundary_cover() {

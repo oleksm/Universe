@@ -12,6 +12,7 @@
 //! Shift x5, a drag slides over the ground, V mesh or real, H the panel, ESC closes.
 //! `UNIVERSE_PLANETLOD_AT="alt=20000&lat=-50.99&lon=71.44&heading=0&ex=1&view=real"` sets the start.
 
+mod flight;
 mod objects;
 mod pyramid;
 use pyramid::Pyramid;
@@ -106,6 +107,7 @@ struct Chunk {
     edges: Vec<u32>,
     mesh: Option<Mesh>,
     mesh_view: Option<View>,
+    surface: Option<(Arc<Vec<u8>>, Arc<BuildData>)>,
     stale: bool,
     tri_count: usize,
 }
@@ -442,6 +444,7 @@ struct Built {
     meshes: Vec<(usize, Mesh, usize)>,
     /// How many of them have been handed to the engine to upload.
     prepared: usize,
+    surface: (Arc<Vec<u8>>, Arc<BuildData>),
 }
 
 /// A chunk's mesh from a snapshot `on` of what is drawn: its finest triangles and edges through their drawn
@@ -529,6 +532,7 @@ pub struct PlanetLodApp {
     generation: u64,
     last_view: View,
     built: Mutex<Option<Built>>,
+    flight_reference: flight::Reference,
     /// The wheel's target altitude, eased to.
     alt_target: f64,
     easing: bool,
@@ -822,7 +826,7 @@ impl PlanetLodApp {
         let grid = Grid { p0, east, north, min: lo, n: gn, size: chunk };
         let cn = ((hi - lo) / CELL).ceil() as i32 + 1;
         let cell_grid = Grid { p0, east, north, min: lo, n: cn, size: CELL };
-        let mut chunks: Vec<Chunk> = (0..gn * gn).map(|_| Chunk { origin: DVec3::ZERO, radius: 0.0, tris: vec![], edges: vec![], mesh: None, mesh_view: None, stale: true, tri_count: 0 }).collect();
+        let mut chunks: Vec<Chunk> = (0..gn * gn).map(|_| Chunk { origin: DVec3::ZERO, radius: 0.0, tris: vec![], edges: vec![], mesh: None, mesh_view: None, surface: None, stale: true, tri_count: 0 }).collect();
         let mut cells: Vec<Cell> = (0..cn * cn).map(|_| Cell { verts: vec![], eye_at: DVec3::splat(f64::INFINITY), margin: 0.0 }).collect();
         for (k, t) in d.ft.iter().enumerate() {
             chunks[grid.id(d.pos[t[0] as usize] + d.pos[t[1] as usize] + d.pos[t[2] as usize]) as usize].tris.push(k as u32);
@@ -975,7 +979,7 @@ impl PlanetLodApp {
                     let (m, n) = build_mesh(&job.bd, &job.on, c, job.view);
                     (c, m, n)
                 }).collect();
-                if outbox.send(Built { generation: job.generation, view: job.view, meshes, prepared: 0 }).is_err() {
+                if outbox.send(Built { generation: job.generation, view: job.view, meshes, prepared: 0, surface: (job.on.clone(), job.bd.clone()) }).is_err() {
                     return;
                 }
             }
@@ -1038,6 +1042,7 @@ impl PlanetLodApp {
             generation: 0,
             last_view: View::Mesh,
             built: Mutex::new(None),
+            flight_reference: flight::Reference::default(),
             alt_target: 20_000.0,
             easing: false,
             fly: std::env::var_os("UNIVERSE_PLANETLOD_FLY").is_some(),
@@ -1184,12 +1189,14 @@ impl PlanetLodApp {
 
     fn eye(&self) -> DVec3 {
         let up = unit(self.lon, self.lat);
-        up * (self.d.r + self.ground_h.unwrap_or(0.0) * self.ex + self.alt)
+        up * (self.d.r + self.flight_reference.height.unwrap_or(0.0) + self.alt)
     }
 
-    /// The drawn ground under direction `u` (m, before the height x): the drawn triangle it is in (the
-    /// pattern's through their stand-ins, else the planet's), its corners' heights blended.
+    /// Finest available ground, before exaggeration, used only for peak clearance and the HUD.
     fn ground_at(&self, u: DVec3) -> Option<f64> {
+        if let Some(p) = &self.pyramid {
+            if let Some(h) = p.lock().unwrap().ground_at(u) { return Some(h); }
+        }
         let d = &self.d;
         let hit = |t: [u32; 3]| -> Option<f64> {
             let [a, b, c] = t.map(|v| d.dirs[v as usize]);
@@ -1212,9 +1219,6 @@ impl PlanetLodApp {
                 }
             }
         }
-        if let Some(p) = &self.pyramid {
-            if let Some(h) = p.lock().unwrap().ground_at(u) { return Some(h); }
-        }
         for g in &self.tiles {
             if u.dot(g.dir) >= g.cos_a {
                 for &t in &g.tris {
@@ -1222,6 +1226,35 @@ impl PlanetLodApp {
                         return Some(h);
                     }
                 }
+            }
+        }
+        None
+    }
+
+    /// The published pyramid/chunk surface, in world metres, rather than prefetched or desired detail.
+    fn drawn_ground_at_world(&self, u: DVec3) -> Option<f64> {
+        if let Some(p) = &self.pyramid {
+            if let Some(h) = p.lock().unwrap().drawn_ground_at_world(u) { return Some(h); }
+        }
+        let (cu,cv) = self.grid.uv(u);
+        for du in -1..=1 { for dv in -1..=1 {
+            let (x,y)=(cu+du,cv+dv);
+            if x<0 || y<0 || x>=self.grid.n || y>=self.grid.n { continue; }
+            let ch=&self.chunks[(x*self.grid.n+y) as usize];
+            let Some((on,bd))=&ch.surface else { continue; };
+            let resolve=|mut v:u32| { while on[v as usize]==0 { v=bd.stand_in[v as usize]; } v };
+            for &t in &ch.tris {
+                let tri=bd.ft[t as usize].map(resolve);
+                // Meshes retain f32 local positions relative to this origin.
+                let points=tri.map(|v|ch.origin+(bd.pos[v as usize]-ch.origin).as_vec3().as_dvec3());
+                if let Some(h)=flight::triangle_height(u,points,self.d.r) { return Some(h); }
+            }
+        }}
+        for g in &self.tiles {
+            if g.mesh.is_none() || u.dot(g.dir)<g.cos_a { continue; }
+            for &tri in &g.tris {
+                let points=tri.map(|v|g.origin+(self.d.pos[v as usize]-g.origin).as_vec3().as_dvec3());
+                if let Some(h)=flight::triangle_height(u,points,self.d.r) { return Some(h); }
             }
         }
         None
@@ -1414,6 +1447,8 @@ impl App for PlanetLodApp {
             "view": if self.view == View::Mesh { "mesh" } else { "real" },
             "altitude_m": self.alt, "lat": self.lat, "lon": self.lon, "heading_deg": self.heading.rem_euclid(360.0),
             "ground_m": self.ground_h, "height_x": self.ex,
+            "terrain_reference_m": self.flight_reference.height, "terrain_target_m": self.flight_reference.target,
+            "clearance_m": self.ground_h.map(|h|self.eye().length()-self.d.r-h*self.ex),
             "pattern_vertices_drawn": self.stats.drawn, "pattern_vertices": self.d.mv.len(),
             "fully_risen": self.risen.0, "rising": self.risen.1,
             "lod_ms": self.stats.lod_ms, "cells_decided": self.stats.decided, "vertices_changed": self.stats.changed,
@@ -1628,6 +1663,7 @@ impl App for PlanetLodApp {
                     ch.mesh = Some(mesh);
                     ch.mesh_view = Some(b.view);
                     ch.tri_count = tris;
+                    ch.surface = Some(b.surface.clone());
                     rebuilt += 1;
                 }
             }
@@ -1678,7 +1714,10 @@ impl App for PlanetLodApp {
         }
         self.stats.rebuilt = rebuilt;
         self.stats.mesh_ms = t0.elapsed().as_secs_f64() * 1e3;
-        self.ground_h = self.ground_at(unit(self.lon, self.lat));
+        let up = unit(self.lon,self.lat);
+        self.ground_h = self.ground_at(up);
+        let mean = flight::average(up,self.alt,self.d.r,|u|self.drawn_ground_at_world(u));
+        self.flight_reference.update(mean,self.ground_h.map(|h|h*self.ex),self.alt,dt);
         let n = self.d.mv.len();
         if ctx.time - self.last_hist > 0.15 {
             self.last_hist = ctx.time;
@@ -1698,6 +1737,7 @@ impl App for PlanetLodApp {
         l[6] += rebuilt as f64;
         if l[1] >= 1.0 {
             log::info!("PLANETLOD alt_m={:.0} fps={:.1} lod_ms={:.3} (max {:.2}) mesh_ms={:.3} (max {:.2}) rebuilt_per_s={:.0} drawn={} lon={:.6} lat={:.6}", self.alt, l[0] / l[1], l[2] / l[0], l[4], l[3] / l[0], l[5], l[6] / l[1], self.stats.drawn, self.lon, self.lat);
+            log::info!("FLIGHT ground_m={:.3} reference_m={:.3} target_m={:.3} clearance_m={:.3}",self.ground_h.unwrap_or(0.)*self.ex,self.flight_reference.height.unwrap_or(0.),self.flight_reference.target.unwrap_or(0.),self.flight_reference.height.unwrap_or(0.)+self.alt-self.ground_h.unwrap_or(0.)*self.ex);
             if let Some(p) = &self.pyramid {
                 let s=p.lock().unwrap().stats;
                 log::info!("PYRAMID selected={} drawn={} triangles={} pending={} cached={} bytes={} fallback={} error_ratio={:.3} resident={} largest_tile={}", s.selected,s.drawn,s.triangles,s.pending,s.cached,s.bytes,s.fallback,s.worst,s.resident,s.largest_tile);
@@ -2056,9 +2096,12 @@ impl PlanetLodApp {
         let fc = if fps >= 50.0 { GOOD } else if fps >= 25.0 { WARN } else { BAD };
         p.title("Planet LOD", (&format!("{fps:.0} fps"), fc), ("–", ID_HIDE));
         let alt = if self.alt >= 10_000.0 { format!("{} km", thousands((self.alt / 1000.0).round())) } else { format!("{} m", thousands(self.alt.round())) };
-        p.big(&alt, "over the surface");
+        p.big(&alt, "above average ground");
         match self.ground_h {
-            Some(h) => p.row("ground under you", &format!("{} m", thousands(h.round())), ""),
+            Some(h) => {
+                p.row("ground under you", &format!("{} m", thousands(h.round())), "");
+                p.row("clearance", &format!("{} m",thousands((self.eye().length()-self.d.r-h*self.ex).round())), "");
+            },
             None => p.row("ground under you", "no triangle under the eye", ""),
         }
         let lo = (self.lon + 540.0).rem_euclid(360.0) - 180.0;

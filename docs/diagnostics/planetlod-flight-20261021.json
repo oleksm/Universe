@@ -1,0 +1,79 @@
+{
+  "task": "20261021T155703-planets-a274",
+  "base_commit": "c8e2ce286",
+  "changes": [
+    "Average25 available drawn-ground samples over a disc with radius2*altitude.",
+    "Exact critically damped spring, omega4.75/s (~95% at1s).",
+    "Immediate reference floor=real_ground_world-0.7*altitude, ensuring0.3*altitude clearance.",
+    "Published pyramid cover/weight and published pattern build snapshots provide actual submitted geometry. Cached finer detail only supplies real-ground clearance.",
+    "Ground, reference,target and clearance telemetry; HUD altitude above average ground."
+  ],
+  "tests": {
+    "viewer_passed": 16,
+    "viewer_fixture_tests_ignored": 4,
+    "engine_pool_passed": 3,
+    "regressions": [
+      "spring15/30/60/120/240fps equivalence, monotonic step",
+      "peak clearance and missing-sample hold",
+      "spatial peak dilution",
+      "radial triangle sampling",
+      "submitted coarse cover vs prefetched fine tile",
+      "morph vertex sampling across packed attribute layouts"
+    ]
+  },
+  "native": {
+    "capture": "/home/alexm/git/universe/out/review/planetlod-flight/pan10km.png",
+    "log": "/home/alexm/git/universe/out/review/planetlod-flight/pan10km.log",
+    "snapshot": "/home/alexm/git/universe/out/review/planetlod-flight/fixture",
+    "metadata_sha256": "a8f36c9e7bcdd04e932eba0fe1ffc7f58a1b1d7e938bbc1ceda03ff79784439f",
+    "frames": 3000,
+    "lat": -33.75,
+    "lon_origin": 97.4,
+    "altitude_m": 10000,
+    "logged_samples": 22,
+    "steady_samples": 16,
+    "excluded_startup_samples": 6,
+    "stats": {
+      "ground_m": {
+        "min": 2568.604,
+        "max": 6110.785,
+        "rms_one_second_change": 1138.1718149846856,
+        "max_one_second_change": 1751.58
+      },
+      "reference_m": {
+        "min": 2596.769,
+        "max": 4641.125,
+        "rms_one_second_change": 338.27770896942064,
+        "max_one_second_change": 704.9410000000003
+      },
+      "clearance_m": {
+        "min": 8248.042,
+        "max": 11657.247,
+        "rms_one_second_change": 1071.025297332109,
+        "max_one_second_change": 1964.3449999999993
+      }
+    },
+    "reference_rms_change_reduction": 0.7027885381488099,
+    "pool_full_warnings": 0,
+    "last_pyramid": {
+      "selected": 344.0,
+      "drawn": 344.0,
+      "triangles": 25890816.0,
+      "pending": 0.0,
+      "cached": 630.0,
+      "bytes": 1539213492.0,
+      "fallback": 0.0,
+      "error_ratio": 1.346,
+      "resident": 385.0,
+      "largest_tile": 2142932.0
+    }
+  },
+  "validation_environment": "UNIVERSE_TEST=1; workspace8 verified; auto-no-vsync, RTX5090; frozen reflink package.",
+  "limits": [
+    "Metrics compare simultaneous one-second samples of point ground and reference; they are not a per-frame jitter or interactive performance benchmark.",
+    "Clearance uses the finest currently available ground; unavailable finer data cannot be inferred.",
+    "The local spatial mean uses available submitted coverage, so a partially visible footprint samples its available portion.",
+    "Separate zoom pool-exhaustion report20261021T160144-planets-8df5 is queued next."
+  ],
+  "integration": "local main only; no push"
+}

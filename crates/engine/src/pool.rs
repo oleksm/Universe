@@ -121,6 +121,18 @@ impl PooledMesh {
         self.0.words.len() * 4
     }
 
+    /// A packed vertex with an explicit morph weight, in model coordinates (as submitted by
+    /// Frame::pooled_morphed). Lets CPU surface queries use the same positions without a second mesh copy.
+    pub fn morphed_position(&self, index: usize, weight: f32) -> Option<Vec3> {
+        let w = &self.0.words;
+        if index >= w[0] as usize { return None; }
+        let flags = w[3];
+        let stride = 3 + (flags & F_NORMALS != 0) as usize + (flags & F_COLORS != 0) as usize;
+        let vec_at = |at: usize| Vec3::new(f32::from_bits(w[at]),f32::from_bits(w[at+1]),f32::from_bits(w[at+2]));
+        let position = vec_at(HEADER as usize + index * stride);
+        Some(if flags & F_MORPH != 0 { position + vec_at(w[7] as usize + index * 4) * weight.clamp(0.0,1.0) } else { position })
+    }
+
     pub(crate) fn words(&self) -> &[u32] {
         &self.0.words
     }
@@ -471,6 +483,22 @@ impl PoolStore {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn pool_cpu_surface_positions_match_explicit_morphs() {
+        for attributes in [false,true] {
+            let m=PoolModel { positions:vec![Vec3::X,Vec3::Y],
+                normals:if attributes {vec![Vec3::Z;2]} else {vec![]},
+                colors:if attributes {vec![[255;4];2]} else {vec![]},
+                morph:vec![Morph {offset:Vec3::Z*20.,near:0.,far:1.};2],..Default::default() };
+            let mesh=PooledMesh::new(&m);
+            assert_eq!(mesh.morphed_position(0,0.),Some(Vec3::X));
+            assert_eq!(mesh.morphed_position(1,0.5),Some(Vec3::Y+Vec3::Z*10.));
+            assert_eq!(mesh.morphed_position(2,1.),None);
+            let plain=PooledMesh::new(&PoolModel {morph:vec![],..m});
+            assert_eq!(plain.morphed_position(1,1.),Some(Vec3::Y));
+        }
+    }
 
     /// The free list hands out and joins ranges back; a mesh packs to its header's layout.
     #[test]
