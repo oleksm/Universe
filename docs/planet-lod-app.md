@@ -157,3 +157,9 @@ so eviction and closing the viewer release pool ranges rather than pinning CPU g
 `LAND PYRAMID` and observer status report selected/drawn tiles, triangles, pending reads, fallback,
 cache size and the worst selected geometric error ratio. A parent fallback can temporarily exceed
 the requested error while its children stream.
+
+Pyramid shading uses per-vertex colours (perspective-interpolated by the pool shader) and smooth
+per-vertex normals from centred differences of the height grid in planet space. Tile reads include
+one neighbouring sample on each side, so both tiles compute the same shared-edge normal. At the
+raster boundary differences are one-sided; skirts retain the surface normals. This avoids flat
+triangle lighting without averaging skirt walls into the ground normals.

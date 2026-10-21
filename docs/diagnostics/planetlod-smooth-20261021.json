@@ -1,0 +1,57 @@
+{
+  "task": "20261021T132931-planets-4f2f",
+  "implementation": "smooth grid normals, one-sample halo, explicit smooth pool flag, inherited skirt normals; perspective-interpolated vertex colours retained without face overrides",
+  "fixture": "/home/alexm/git/universe/out/review/planetlod-smooth/fixture",
+  "metadata_sha256": "42dbf142ef95ea639b725237bc689757cf0c7c8a4720284f5e31d9bb611b8a2c",
+  "hole": [
+    {
+      "lat": -37.1172,
+      "lon": 100.4723,
+      "radius_km": 30.0
+    }
+  ],
+  "producer_head_at_snapshot": "f6954fb5ea4db905d135e7ec03cf17e4dbff38b6",
+  "camera": {
+    "lat": -37.3,
+    "lon": 100.475,
+    "altitude_m": 12000,
+    "heading_deg": 0,
+    "view": "real",
+    "height_x": 1
+  },
+  "tests": {
+    "pyramid_tests_passed": 5,
+    "pyramid_tests_ignored": 1,
+    "explicit_full_fixture_passed": 1,
+    "new_regression": "unit finite normals and expected slope; bit-identical normals/colours on adjacent tile edge; smooth flags and no face overrides"
+  },
+  "comparison": {
+    "before": {
+      "selected": 133,
+      "drawn": 133,
+      "triangles": 4478374,
+      "pending": 0,
+      "cached": 206,
+      "cache_bytes": 225506944,
+      "fallback": 0,
+      "error_ratio": 0.965
+    },
+    "after": {
+      "selected": 133,
+      "drawn": 133,
+      "triangles": 4478374,
+      "pending": 0,
+      "cached": 206,
+      "cache_bytes": 226351376,
+      "fallback": 0,
+      "error_ratio": 0.965
+    }
+  },
+  "captures": {
+    "before": "out/review/planetlod-smooth/before-12km.png",
+    "after": "out/review/planetlod-smooth/after-12km.png",
+    "pattern_isolation": "out/review/planetlod-smooth/after-12km-without-pattern.png"
+  },
+  "presentation": "UNIVERSE_TEST=1; workspace8; auto-no-vsync; Vulkan RTX5090. Entire package reflink snapshot, no symlinks to mutable producer files.",
+  "remaining_review": "Large flat tan rim triangles disappear with UNIVERSE_PLANETLOD_MAXDRAW=0 while the pyramid and static terrain remain drawn. They belong to the pre-existing pattern boundary, not the pyramid shading; follow-up assigned to planets under shasta-rim-boundary."
+}

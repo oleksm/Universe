@@ -337,7 +337,18 @@ fn build_model(
     let side = tile + 1;
     let i0 = t.col * tile;
     let j0 = t.row * tile;
-    let data = raster(source, t.k, i0, j0, side, side)?;
+    // Central differences use the same global neighbours on both sides of a tile boundary.
+    let hi0 = i0.saturating_sub(1);
+    let hj0 = j0.saturating_sub(1);
+    let n = source.m.levels[t.k].n;
+    let data = raster(
+        source,
+        t.k,
+        hi0,
+        hj0,
+        (i0 + side + 1).min(n) - hi0,
+        (j0 + side + 1).min(n) - hj0,
+    )?;
     let parent = if t.k < source.m.top_level {
         Some(raster(
             source,
@@ -360,7 +371,10 @@ fn build_model(
     };
     let (cx, cy) = source.xy(t, tile as f64 * 0.5, tile as f64 * 0.5);
     let origin = source.inverse(cx, cy) * r;
-    let mut model = PoolModel::default();
+    let mut model = PoolModel {
+        smooth: true,
+        ..Default::default()
+    };
     for j in 0..side {
         for i in 0..side {
             let gi = (i0 + i).min(data.n - 1);
@@ -368,6 +382,14 @@ fn build_model(
             let at = data.at(gi, gj);
             let p = point(gi, gj, t.k, data.z[at] as f64);
             model.positions.push((p - origin).as_vec3());
+            let (left, right) = (gi.saturating_sub(1), (gi + 1).min(data.n - 1));
+            let (down, up) = (gj.saturating_sub(1), (gj + 1).min(data.n - 1));
+            let dx =
+                point(right, gj, t.k, data.z(right, gj)) - point(left, gj, t.k, data.z(left, gj));
+            let dy = point(gi, up, t.k, data.z(gi, up)) - point(gi, down, t.k, data.z(gi, down));
+            model
+                .normals
+                .push(dx.cross(dy).normalize_or(p.normalize()).as_vec3());
             model.colors.push(if real {
                 let c = data.rgb[at];
                 [c[0], c[1], c[2], 255]
@@ -477,6 +499,7 @@ fn build_model(
                     let down = (origin + p.as_dvec3()).normalize() * depth;
                     model.positions.push(p - down.as_vec3());
                     model.colors.push(model.colors[w as usize]);
+                    model.normals.push(model.normals[w as usize]);
                     model.morph.push(model.morph[w as usize]);
                 }
                 model.faces.extend([[u, k, k + 1], [u, k + 1, v]]);
@@ -1117,6 +1140,44 @@ mod tests {
         std::fs::write(f.0.join("pyramid/mask_0.u8"), mask).unwrap();
         let (hole, _, _) = build_model(s, a, 1.0, true).unwrap();
         assert!(!hole.faces.contains(&[0, 1, 4]));
+    }
+    #[test]
+    fn pyramid_smooth_grid_normals_and_vertex_colours_match_shared_edges() {
+        let f = fixture();
+        let height = |i: usize, j: usize| (i * i * 3 + j * j * 7) as f32;
+        let z: Vec<u8> = (0..16)
+            .flat_map(|v| height(v % 4, v / 4).to_le_bytes())
+            .collect();
+        let rgb: Vec<u8> = (0..16)
+            .flat_map(|v| [(v % 4 * 31) as u8, (v / 4 * 41) as u8, 100])
+            .collect();
+        std::fs::write(f.0.join("pyramid/z_0.f32"), z).unwrap();
+        std::fs::write(f.0.join("pyramid/rgb_0.u8"), rgb).unwrap();
+        let p = Pyramid::open(&f.0, 1000.).unwrap().unwrap();
+        let s = &p.source;
+        let (a, _, _) = build_model(s, s.index[&(0, 0, 0)], 1.0, true).unwrap();
+        let (b, _, _) = build_model(s, s.index[&(0, 0, 1)], 1.0, true).unwrap();
+        assert!(a.smooth && b.smooth);
+        assert!(a.face_colors.is_empty() && b.face_colors.is_empty());
+        assert_eq!(a.normals.len(), a.positions.len());
+        assert!(
+            a.normals
+                .iter()
+                .all(|n| n.is_finite() && (n.length() - 1.0).abs() < 1e-6)
+        );
+        assert_ne!(a.colors[0], a.colors[1]);
+        for j in 0..3 {
+            assert_eq!(a.normals[j * 3 + 2], b.normals[j * 3]);
+            assert_eq!(a.colors[j * 3 + 2], b.colors[j * 3]);
+        }
+        let point = |i: usize, j: usize| {
+            s.inverse(-15. + i as f64 * 10., -15. + j as f64 * 10.) * (1000. + height(i, j) as f64)
+        };
+        let expected = (point(3, 1) - point(1, 1))
+            .cross(point(2, 2) - point(2, 0))
+            .normalize()
+            .as_vec3();
+        assert!((a.normals[5] - expected).length() < 1e-6);
     }
     #[test]
     fn pyramid_selection_refines_and_rejects_bad_metadata() {
