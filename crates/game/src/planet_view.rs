@@ -221,11 +221,12 @@ impl PlanetView {
         let b = &s.system.bodies[i];
         let (t, cam) = (s.t, frame.camera.position);
         let rotation = b.rotation(t).as_quat();
-        // A world whose ground is a land package: the planet LOD renderer's ground, in the world's air.
+        // A world whose ground is a land package: the terrain subsystem's ground, in the world's air (casting no
+        // shadow maps, as the planet LOD app draws it).
         if let Some(v) = self.land.borrow_mut().as_mut().filter(|v| v.at == (s.cache, i)) {
             let (depth, shell) = terrain_view::air(b).unwrap_or_default();
             let mut drawn = false;
-            universe_prof::time("draw/scene/bodies/land", || frame.with_air(depth, shell, |frame| drawn = v.draw(frame, center, b.rotation(t))));
+            universe_prof::time("draw/scene/bodies/land", || frame.no_shadow(|frame| frame.with_air(depth, shell, |frame| drawn = v.draw(frame, center, b.rotation(t), |d| b.terrain.as_ref().map_or(0.0, |t| t.surface(d))))));
             if drawn {
                 return true;
             }

@@ -1,0 +1,29 @@
+{
+  "tasks": ["20261021T171257-planets-9b79", "20261021T175147-planets-c4fc"],
+  "base_commit": "bb3e7becb",
+  "registry": {"fso_commit": "e01ef48e1", "record": "body.treistun.treistun-e", "format": "planet-land-pyramid/1",
+    "snapshot": "worlds/TRE3/ground/forge_e104-land-c4-600-shasta-4ad675930cb1", "files": 46, "bytes": 4970978484,
+    "note": "applied uncommitted in the engine worktree for these runs; main needs the owner's merge of the fso commit"},
+  "tests": {"terrain_crate": "14 passed, 3 fixture tests ignored", "game_lib_filtered": "6 passed (incl. land_view placement)",
+    "world_land_installed_package": "pass: belt 6211.2 m from pyramid, Shasta 3707.0 m from pattern, 2000 global queries 22.8 us each, frame turn equals worlds::direction"},
+  "app_regression": {"views": 8, "fixture": "out/review/planetlod-flight/fixture", "max_pixel_difference": 1,
+    "captures": "out/review/e104-game/app-before vs app-engine"},
+  "game": {
+    "captures": "out/review/e104-game/game/{belt,shasta}_{10000000,1215000,100000,10000}.png",
+    "cover": "every view selected = drawn, pending 0, fallback 0",
+    "fps_median_hidden_ws8": {"belt": {"10000km": 119.7, "1215km": 119.8, "100km": 119.8, "10km": 116.0},
+      "shasta_after_no_shadow": {"10000km": 119.8, "1215km": 119.8, "100km": 119.8},
+      "shasta_10km": "~35-40, same in the app (35) on the same package: GPU-bound, 19.2M pyramid triangles plus the pattern; worst error ratio 7.6 at the Shasta hole; open renderer item"},
+    "zoom_loop": {"flight": "out/review/e104-game/game-zoom/zoom.flight", "loops": 3, "pool_warnings": 3,
+      "holds_loops_2_3": {"10km": "24/24", "6300km": "101/101", "350km": "346/346"}, "pending": 0,
+      "first_loop": "cold streaming from disk at the 350 km hold, as the app"},
+    "contact": {"belt_ground_drawn_m": 6124.33, "belt_ground_contact_m": 6123.82, "capture": "out/review/e104-game/game/contact_30.png"}
+  },
+  "limits": [
+    "Body rotation passes through an f32 quaternion: about 0.4 m lateral at the surface between drawn and contact ground.",
+    "Far from Hoar E (beyond 30 radii) and while the package opens (about 3.3 s) the plain globe draws; its colour is the plain look (no bake, no lines).",
+    "The game's 60 degree view draws more tiles than the app's 50 (350 km: 346 vs 272), GPU-bound about 107 fps there.",
+    "Timings are hidden test-window measurements, not an interactive benchmark.",
+    "Shared target/ with other worktrees served stale artifacts once; rebuilt after touching crate roots."
+  ]
+}

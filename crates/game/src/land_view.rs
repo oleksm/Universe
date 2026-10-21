@@ -86,7 +86,7 @@ impl LandView {
     }
 
     /// The renderer's step for this frame and its ground drawn, the eye `frame.camera`; false: not open yet.
-    pub fn draw(&mut self, frame: &mut Frame, center: DVec3, rotation: DQuat) -> bool {
+    pub fn draw(&mut self, frame: &mut Frame, center: DVec3, rotation: DQuat, physics: impl Fn(DVec3) -> f64) -> bool {
         if let State::Opening(rx) = &self.state {
             match rx.try_recv() {
                 Ok(Ok(app)) => self.state = State::Open(Box::new(app)),
@@ -108,7 +108,11 @@ impl LandView {
         let since = *self.log.1.get_or_insert(now);
         if (now - since).as_secs_f64() >= 1.0 {
             let alt = cam.position.length() * self.scale - self.scale * app.package_radius();
-            log::info!("LAND fps={:.1} alt_m={:.0} {}", self.log.0 as f64 / (now - since).as_secs_f64(), alt, app.pyramid_line().unwrap_or_default());
+            // (The ground under the eye as drawn and as contact finds it, body metres over its radius.)
+            let up = cam.position.normalize();
+            let drawn = app.drawn_ground_at_world(up).map(|h| h * self.scale);
+            let solid = physics(rotation.inverse().normalize() * (body.rotation.as_dquat().normalize() * up));
+            log::info!("LAND fps={:.1} alt_m={:.0} drawn_ground_m={} contact_ground_m={solid:.2} {}", self.log.0 as f64 / (now - since).as_secs_f64(), alt, drawn.map_or("none".into(), |d| format!("{d:.2}")), app.pyramid_line().unwrap_or_default());
             self.log = (0, Some(now));
         }
         true
