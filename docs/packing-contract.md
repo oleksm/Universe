@@ -5,15 +5,18 @@ stamps one. Coarse first; each can be refined once it runs.
 
 ## 1. When a package is packed
 
-- **Automatically, at the works, as output accrues.** A works fills its output into the stock's package (the stock's
-  `package`) as it is made. A package is sealed and labelled when it is full (its `holds` volume or mass, whichever
+- **Automatically, at the works, as output accrues and empty stock is available.** A works fills its output into the
+  stock's package (the stock's `package`), reserving one manufactured empty whose `supplies.item` names that package.
+  Without an empty unit, output stays loose. A package is sealed and labelled when it is full (its `holds` volume or mass, whichever
   comes first) or when its lot closes. A part-full package is labelled with its true net mass.
 - **One lot to a package.** Mixed lots never share a package.
 - **Unpacking ends the label.** Opening a package (to use, to split) returns its contents to loose stock that keeps its
   lot; repacking makes a new package with a new serial in the same lot. A package moved whole (sold, hauled, stored)
   keeps its label for ever.
 - **Tare is physical.** A package's tare travels with it: its gross mass is what a hold carries and a crane lifts.
-  Empty packages are not yet traded (later: packages as stock of their own).
+  Packing converts reserved empty-stock mass into tare once. Opening returns the intact empty only when its stamped
+  `returns_empty` policy and serviceability allow it; otherwise tare stays in the source inventory as unpacked
+  `waste_stock`. Empty handling units trade by the piece and need no enclosing package (`rule.packing-stock`).
 
 ## 2. What `made_on` means
 

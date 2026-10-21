@@ -111,7 +111,8 @@ impl Pool {
 
     /// Take up to `kg`, and the marks of the whole units and the lots it was, oldest first.
     pub fn take_with(&mut self, item: usize, kg: f64) -> (f64, Vec<Mark>, Vec<(Batch, f64)>) {
-        let (kg, marks, lots, _) = self.take_cargo(item, kg);
+        let (kg, marks, lots, packages) = self.take_cargo(item, kg);
+        for unit in packages { self.return_empty(unit); }
         (kg, marks, lots)
     }
 
@@ -147,8 +148,17 @@ impl Pool {
                 self.lots.remove(&item);
             }
         }
-        let packages = self.packages.get_mut(&item).map_or_else(Vec::new, |units| crate::packages::take(units, &before, &lots));
-        (t, marks, lots, packages)
+        let selected = self.packages.get_mut(&item).map(|units| crate::packages::take(units, &before, &lots)).unwrap_or_default();
+        for unit in selected.opened { self.return_empty(unit); }
+        (t, marks, lots, selected.carried)
+    }
+
+    /// Opening returns an intact reusable empty, or retains spent/damaged tare as loose waste.
+    fn return_empty(&mut self, unit: crate::packages::Unit) {
+        if let Some((key, kg, lots)) = unit.opened_stock(true) {
+            let item = universe_world::goods::item(&key).expect("packing disposition stock is in the catalogue");
+            self.put_with(item, kg, Vec::new(), lots);
+        }
     }
 
     pub fn preview_packages(&self, item: usize, kg: f64) -> Vec<crate::packages::Unit> {
@@ -270,12 +280,23 @@ fn stamp_output(w: &mut Works, sequences: &mut BTreeMap<String, u32>, package_se
             }
             if package_sequences.get(&batch.lot).copied().unwrap_or(0) >= 9999 { continue; }
         }
+        let mut units = w.pool.packages.remove(&item).unwrap_or_default();
         let remainder = match &spec {
-            Some(spec) => crate::packages::fill(w.pool.packages.entry(item).or_default(), package_sequences, spec, &batch, key, maker, left, at),
+            Some(spec) => crate::packages::fill(&mut units, package_sequences, spec, &batch, key, maker, left, at, || {
+                let empty_item = universe_world::goods::item(&spec.empty_stock)?;
+                if w.pool.of(empty_item) + spec.tare * 1e-9 < spec.tare { return None; }
+                let (_, _, lots) = w.pool.take_with(empty_item, spec.tare);
+                Some(crate::packages::EmptyStock { key: spec.empty_stock.clone(), lots, serviceable: true,
+                    returns_empty: spec.returns_empty, waste_stock: spec.waste_stock.clone() })
+            }),
             None => 0.0,
         };
-        w.pool.put_with(item, 0.0, Vec::new(), vec![(batch, left - remainder)]);
-        left = remainder;
+        if !units.is_empty() { w.pool.packages.insert(item, units); }
+        // Lack of containers leaves output loose. Only serial exhaustion rotates the lot.
+        let exhausted = package_sequences.get(&batch.lot).copied().unwrap_or(0) >= 9999;
+        let stamped = if exhausted { left - remainder } else { left };
+        w.pool.put_with(item, 0.0, Vec::new(), vec![(batch, stamped)]);
+        left = if exhausted { remainder } else { 0.0 };
     }
 }
 
@@ -1047,17 +1068,10 @@ impl Economy {
                     }
                 }
                 let out: Vec<(usize, f64)> = std::iter::once((r.makes, 1.0)).chain(r.outputs.iter().copied()).collect();
-                let packaging: Vec<_> = out.iter().filter_map(|&(i,q)| {
-                    h.maker.as_ref()?;
-                    Some((q, crate::packages::Spec::for_stock(&goods[i].key, goods[i].bulk_density * 1000.0)?))
-                }).collect();
-                // Conservative room reservation: at most one extra shell per output plus
-                // proportional shells. Input packaging released below only adds headroom.
-                let shells: f64 = packaging.iter().map(|(_, p)| p.tare).sum();
-                let grows = out.iter().map(|o| o.1).sum::<f64>() - r.inputs.iter().map(|o| o.1).sum::<f64>()
-                    + packaging.iter().map(|(q,p)| q*p.tare/p.capacity).sum::<f64>();
-                if grows > 0.0 || w.pool.free() < shells {
-                    let can = (w.pool.free() - shells).max(0.0) / (grows * full).max(1e-12);
+                // Packing moves existing empty-stock mass into tare; it adds no pool mass.
+                let grows = out.iter().map(|o| o.1).sum::<f64>() - r.inputs.iter().map(|o| o.1).sum::<f64>();
+                if grows > 0.0 {
+                    let can = w.pool.free() / (grows * full).max(1e-12);
                     if can < k {
                         k = can;
                         why = Some("STORE FULL".into());
@@ -1186,5 +1200,163 @@ impl Economy {
                 self.places[p].stock = self.works[h].pool.clone();
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod packing_stock_tests {
+    use super::*;
+    use universe_protocol::{Cause, ShipId};
+
+    fn fixture() -> (Works, Vec<Item>, usize, usize, crate::packages::Spec) {
+        let goods = universe_world::goods::catalog();
+        let item = universe_world::goods::item("stock.stony-ore-bulk").unwrap();
+        let spec = crate::packages::Spec::for_stock(&goods[item].key, goods[item].bulk_density * 1000.).expect("test with the packaging-stock registry");
+        let empty = universe_world::goods::item(&spec.empty_stock).unwrap();
+        let w = Works {
+            site: Site::Ground(0), works: 0, name: "Test".into(), setups: vec![],
+            pool: Pool { room: 1e9, ..Default::default() }, exchange: false,
+            owner: None, last: None, deposit: None, key: "facility.test".into(),
+            progress: BTreeMap::new(), parts_in: vec![], maker: Some("org.test".into()),
+            open_lots: BTreeMap::new(),
+        };
+        (w, goods, item, empty, spec)
+    }
+
+    fn output(w: &mut Works, goods: &[Item], item: usize, kg: f64,
+        seq: &mut BTreeMap<String, u32>, pkg: &mut crate::packages::Sequences) {
+        w.pool.put(item, kg);
+        stamp_output(w, seq, pkg, "org.test", "TEST", item, kg, 10., goods);
+    }
+
+    #[test]
+    fn packing_stock_reserves_actual_partial_units_and_conserves_tare() {
+        let (mut w, goods, item, empty, spec) = fixture();
+        let (mut seq, mut pkg) = (BTreeMap::new(), BTreeMap::new());
+        w.pool.put(empty, 2. * spec.tare);
+        output(&mut w, &goods, item, spec.capacity / 4., &mut seq, &mut pkg);
+        assert_eq!(w.pool.of(empty), spec.tare);
+        assert_eq!(w.pool.packages[&item].len(), 1);
+        assert_eq!(w.pool.total(), 2. * spec.tare + spec.capacity / 4.);
+        output(&mut w, &goods, item, spec.capacity / 4., &mut seq, &mut pkg);
+        assert_eq!(w.pool.of(empty), spec.tare, "same open unit needs no second empty");
+        let lot = w.open_lots[&item].lot.clone();
+        assert!(crate::packages::close(w.pool.packages.get_mut(&item).unwrap(), &lot, 11., &mut pkg));
+        let label = w.pool.packages[&item][0].label.as_ref().unwrap();
+        assert_eq!(label.gross_mass, spec.capacity / 2. + spec.tare);
+        let before = w.pool.total();
+        w.pool.take(item, spec.capacity / 4.);
+        assert_eq!(w.pool.of(empty), 2. * spec.tare, "split returns one empty at the source");
+        assert!(w.pool.packages[&item].is_empty());
+        assert_eq!(w.pool.total(), before - spec.capacity / 4.);
+    }
+
+    #[test]
+    fn packing_stock_shortage_stays_loose_and_whole_transfer_keeps_reservation() {
+        let (mut w, goods, item, empty, spec) = fixture();
+        let (mut seq, mut pkg) = (BTreeMap::new(), BTreeMap::new());
+        output(&mut w, &goods, item, 10., &mut seq, &mut pkg);
+        assert!(!w.pool.packages.contains_key(&item));
+        assert_eq!(w.pool.total(), 10.);
+        w.pool.put(empty, spec.tare);
+        output(&mut w, &goods, item, spec.capacity, &mut seq, &mut pkg);
+        let preview = w.pool.preview_packages(item, spec.capacity + 10.);
+        assert_eq!(preview.len(), 1);
+        assert_eq!(w.pool.of(empty), 0.);
+        let (kg, marks, lots, units) = w.pool.take_cargo(item, spec.capacity + 10.);
+        assert_eq!(units.len(), 1);
+        assert_eq!(w.pool.of(empty), 0., "whole package travels rather than returning its shell");
+        let mut dest = Pool::default();
+        dest.put_cargo(item, kg, marks, lots, units);
+        assert_eq!(dest.total(), spec.capacity + 10. + spec.tare);
+        dest.take(item, spec.capacity + 10.);
+        assert_eq!(dest.of(empty), spec.tare);
+        assert_eq!(dest.total(), spec.tare);
+    }
+
+    #[test]
+    fn packing_stock_spent_bindings_become_unpacked_waste() {
+        let (mut w, goods, _, _, _) = fixture();
+        let item = universe_world::goods::item("stock.wool-bulk").unwrap();
+        let spec = crate::packages::Spec::for_stock(&goods[item].key, goods[item].bulk_density * 1000.).unwrap();
+        assert!(!spec.returns_empty);
+        let empty = universe_world::goods::item(&spec.empty_stock).unwrap();
+        let waste = universe_world::goods::item(&spec.waste_stock).unwrap();
+        w.pool.put(empty, spec.tare);
+        output(&mut w, &goods, item, spec.capacity, &mut BTreeMap::new(), &mut BTreeMap::new());
+        let total = w.pool.total();
+        w.pool.take(item, spec.capacity);
+        assert_eq!(w.pool.of(empty), 0.);
+        assert_eq!(w.pool.of(waste), spec.tare);
+        assert!(!w.pool.packages.contains_key(&waste), "waste stays unpacked until a real skip is reserved");
+        assert_eq!(w.pool.total(), total - spec.capacity);
+    }
+
+    #[test]
+    fn packing_stock_legacy_shells_cannot_mint_empty_stock() {
+        let (mut w, goods, item, empty, spec) = fixture();
+        let waste = universe_world::goods::item(&spec.waste_stock).unwrap();
+        w.pool.put(empty, spec.tare);
+        output(&mut w, &goods, item, spec.capacity, &mut BTreeMap::new(), &mut BTreeMap::new());
+        w.pool.packages.get_mut(&item).unwrap()[0].empty = None;
+        w.pool.take(item, spec.capacity);
+        assert_eq!(w.pool.of(empty), 0.);
+        assert_eq!(w.pool.of(waste), spec.tare);
+        assert_eq!(w.pool.total(), spec.tare);
+    }
+
+    #[test]
+    fn packing_stock_damage_writes_tare_to_waste_instead_of_repairing_empty() {
+        for damaged_before_opening in [false, true] {
+            let (mut w, goods, item, empty, spec) = fixture();
+            let waste = universe_world::goods::item(&spec.waste_stock).unwrap();
+            w.pool.put(empty, spec.tare);
+            output(&mut w, &goods, item, spec.capacity, &mut BTreeMap::new(), &mut BTreeMap::new());
+            let (kg, marks, lots, mut packages) = w.pool.take_cargo(item, spec.capacity);
+            if damaged_before_opening { packages[0].empty.as_mut().unwrap().serviceable = false; }
+            let pilot = ShipId(0);
+            let mut ledger = Ledger::default();
+            ledger.settle(Party::Pilot(pilot), Asset::Goods(item), kg / goods[item].mass, 0, Cause::Rules);
+            ledger.load_cargo(pilot, item, marks, lots, packages);
+            if damaged_before_opening {
+                ledger.unload_cargo(pilot, item, 1, kg / 2., 42, Cause::Rules);
+                assert_eq!(ledger.balance(Party::Pilot(pilot), Asset::Goods(empty)), 0.);
+                assert_eq!(ledger.balance(Party::Pilot(pilot), Asset::Goods(waste)) * goods[waste].mass, spec.tare);
+            } else {
+                ledger.unload_marked(pilot, item, 1, kg, 42, Cause::Rules);
+                ledger.settle(Party::Pilot(pilot), Asset::Goods(item), 0., 42, Cause::Rules);
+                assert_eq!(ledger.cargo_mass(pilot, &goods), spec.tare);
+                assert_eq!(ledger.balance(Party::Pilot(pilot), Asset::Goods(empty)), 0.);
+            }
+            let returned = ledger.journal.iter().find(|e| e.to == Party::Pilot(pilot) && e.asset == Asset::Goods(waste)).unwrap();
+            assert_eq!(returned.tick, 42);
+            assert!(ledger.balanced());
+        }
+    }
+
+    #[test]
+    fn packing_stock_ledger_split_returns_at_source_and_conserves_tare() {
+        let (mut w, goods, item, empty, spec) = fixture();
+        let (mut seq, mut pkg) = (BTreeMap::new(), BTreeMap::new());
+        w.pool.put(empty, spec.tare);
+        output(&mut w, &goods, item, spec.capacity, &mut seq, &mut pkg);
+        let (kg, marks, lots, units) = w.pool.take_cargo(item, spec.capacity);
+        let pilot = ShipId(0);
+        let mut ledger = Ledger::default();
+        ledger.settle(Party::Pilot(pilot), Asset::Goods(item), kg / goods[item].mass, 0, Cause::Rules);
+        ledger.load_cargo(pilot, item, marks, lots, units);
+        let total = ledger.cargo_mass(pilot, &goods);
+        let volume = ledger.cargo_volume(pilot, &goods);
+        let change = ledger.withdrawal_volume_change(pilot, item, kg / 2., &goods);
+        let (_, _, carried) = ledger.unload_cargo(pilot, item, 1, kg / 2., 1, Cause::Rules);
+        ledger.transfer(Party::Pilot(pilot), Party::World, Asset::Goods(item), kg / 2. / goods[item].mass, 1, Cause::Rules).unwrap();
+        assert!(carried.is_empty());
+        assert!((ledger.cargo_volume(pilot, &goods) - volume - change).abs() < 1e-9);
+        assert!(change > 0., "a returned empty and loose remainder need room to open");
+        assert_eq!(ledger.balance(Party::Pilot(pilot), Asset::Goods(empty)), 1.);
+        assert_eq!(ledger.cargo_mass(pilot, &goods), total - kg / 2.);
+        assert!(ledger.balanced());
+        assert_eq!(goods[empty].mass, spec.tare);
+        assert!((goods[empty].mass / (1000. * goods[empty].bulk_density) - spec.volume).abs() < 1e-9);
     }
 }

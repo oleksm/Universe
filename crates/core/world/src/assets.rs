@@ -1,6 +1,6 @@
 //! Models for the things the registry describes (docs/asset-contract.md): a record of a kind that takes
 //! a model (equipment, industrial modules, buildings, structures, gate rings, hulls, plant units, kit runs,
-//! connectors and their family templates) may carry `visual`,
+//! connectors, their family templates and handling packages) may carry `visual`,
 //! a version folder in the assets store (`UNIVERSE_ASSETS`, else `~/git/freefall-assets`) holding
 //! `model.glb` and `manifest.json` (`freefall-model/1`). The manifest is checked against the record's
 //! hash and the model against the manifest, as a world's ground is; anything that fails is said once and
@@ -21,6 +21,11 @@ pub fn store() -> Option<PathBuf> {
     Some(PathBuf::from(home).join("git/freefall-assets")).filter(|p| p.is_dir())
 }
 
+/// An empty manufactured handling unit resolves through supplies.item, never its enclosing package.
+pub fn empty_package(key: &str) -> Option<&'static crate::registry::Package> {
+    registry().package(&registry().stock(key)?.supplies.as_ref()?.item)
+}
+
 /// The `visual` of the record `key`, of whichever kind takes a model. None: no such record, or no model.
 pub fn visual(key: &str) -> Option<&'static Visual> {
     let r = registry();
@@ -35,6 +40,8 @@ pub fn visual(key: &str) -> Option<&'static Visual> {
         .or_else(|| r.run(key).and_then(|x| x.visual.as_ref()))
         .or_else(|| r.connector(key).and_then(|x| x.visual.as_ref()))
         .or_else(|| r.template(key).and_then(|x| x.visual.as_ref()))
+        .or_else(|| r.package(key).and_then(|x| x.visual.as_ref()))
+        .or_else(|| empty_package(key).and_then(|x| x.visual.as_ref()))
 }
 
 /// A model, checked: its glTF bytes, and its bounds in its own frame (m; zero when the manifest lacks

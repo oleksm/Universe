@@ -62,7 +62,8 @@ pub fn request(key: &str, class: u8) -> Option<Arc<Visual>> {
 }
 pub fn request_demand(key: &str, mut demand: Demand) -> Option<Arc<Visual>> {
     let record = assets::visual(key)?;
-    let identity = format!("package:{}:{}", record.format, record.manifest_sha256);
+    let empty = assets::empty_package(key).is_some();
+    let identity = format!("package:{}:{}:empty={empty}", record.format, record.manifest_sha256);
     let key = key.to_owned();
     cache().request(
         identity,
@@ -73,7 +74,9 @@ pub fn request_demand(key: &str, mut demand: Demand) -> Option<Arc<Visual>> {
             );
             demand
         },
-        move || match prepare(record) {
+        move || match if empty {
+            prepare_empty(record)
+        } else { prepare(record) } {
             Ok(value) => {
                 if let Some(e) = &value.neutral_error {
                     log::warn!("asset {key}: neutral/mounted view held: {e}");
@@ -139,6 +142,13 @@ pub fn request_native(path: &std::path::Path, parts: &[&str]) -> Option<Arc<Visu
         },
     )
 }
+/// Empty units use the package shell only. Part zero omits both load and old label plates;
+/// decode options have their own cache identity so a filled model cannot alias this one.
+fn prepare_empty(record: &universe_sim::world::registry::Visual) -> Result<Visual, String> {
+    let p = assets::model(record)?;
+    prepare_bytes(&p.glb, &["contents", "label"], true, p.lo, p.hi, p.has_motion)
+}
+
 fn prepare(record: &universe_sim::world::registry::Visual) -> Result<Visual, String> {
     let package = assets::model(record)?;
     prepare_bytes(
@@ -302,5 +312,24 @@ mod tests {
             "asset_scene_return {}",
             serde_json::to_string(&snapshot).unwrap()
         );
+    }
+}
+
+#[cfg(test)]
+mod packing_stock_tests {
+    use super::*;
+    #[test]
+    fn packing_stock_empty_model_uses_shell_without_contents_or_labels() {
+        let package = assets::empty_package("stock.pkg-skip").expect("test with the packing-stock registry");
+        let record = assets::visual("stock.pkg-skip").unwrap();
+        assert_eq!(record.path, package.visual.as_ref().unwrap().path);
+        let full = prepare(record).unwrap();
+        let empty = prepare_empty(record).unwrap();
+        let triangles = |m: &Visual, part| m.model.data.primitives.iter().filter(|p| p.part == part).map(|p| p.indices.len() / 3).sum::<usize>();
+        assert!(triangles(&empty, 0) > 0);
+        assert!(triangles(&empty, 1) > 0, "skip has visible contents to hide");
+        assert!(triangles(&empty, 2) > 0, "empty shell has no old label plates");
+        assert!(triangles(&empty, 0) < triangles(&full, 0));
+        assert_eq!(empty.source_sha256, full.source_sha256);
     }
 }
