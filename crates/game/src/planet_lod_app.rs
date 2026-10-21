@@ -2078,7 +2078,8 @@ impl PlanetLodApp {
         p.section("VIEW", &[]);
         p.seg(&["Mesh", "Real"], if self.view == View::Mesh { 0 } else { 1 }, ID_MESH);
         let real = self.view == View::Real;
-        p.chips(&[("edges", self.show_edges && !real, !real, ID_EDGES), ("faces", self.show_faces, true, ID_FACES), ("crest & valleys", self.show_feat, !m.features.is_empty(), ID_FEAT), ("peaks", self.show_peaks, !self.peak_pins.is_empty(), ID_PEAKS), ("landmarks", self.show_marks, !self.marks.is_empty(), ID_MARKS)]);
+        p.chips(&[("edges", self.show_edges && !real, !real, ID_EDGES), ("faces", self.show_faces, true, ID_FACES), ("crest & valleys", self.show_feat, !m.features.is_empty(), ID_FEAT)]);
+        p.chips(&[("peaks", self.show_peaks, !self.peak_pins.is_empty(), ID_PEAKS), ("landmarks", self.show_marks, !self.marks.is_empty(), ID_MARKS)]);
         p.slider("height ×", self.ex as f32, 1.0, 50.0, &format!("{:.0}", self.ex), ID_EX);
         if let Some(l) = &self.layers {
             p.section("LAYERS", &[]);

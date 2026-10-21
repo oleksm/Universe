@@ -1,0 +1,23 @@
+{
+  "task": "20261021T092844-planets-28e5",
+  "view": "/home/alexm/planet-data/views/forge_e104-anchor-base",
+  "fixture": {"boxes": 61179, "families": 6, "landmarks": 12431},
+  "tests": {
+    "command": "cargo test -p universe-engine -p universe --lib --jobs 2",
+    "passed": 34,
+    "ignored": 3,
+    "explicit_fixture_command": "UNIVERSE_PLANETLOD_TEST_VIEW=/home/alexm/planet-data/views/forge_e104-anchor-base cargo test -p universe --lib object_overlay_full_fixture -- --ignored",
+    "explicit_fixture_passed": 1,
+    "shared_geometry_test": "61179 instances form one sorted GPU run; per-axis scales retained; no shadow casting"
+  },
+  "captures": [
+    {"path": "out/review/planetlod-boxes/all.png", "altitude_m": 300000, "selection": "all", "boxes_drawn": 95, "stage": "before landmark merge"},
+    {"path": "out/review/planetlod-boxes/none.png", "altitude_m": 300000, "selection": "none", "boxes_drawn": 0, "stage": "before landmark merge"},
+    {"path": "out/review/planetlod-boxes/fluvial-landmarks.png", "altitude_m": 150000, "selection": "fluvial", "boxes_drawn": 8, "landmarks": true, "stage": "combined final build"}
+  ],
+  "renderer": "Vulkan NVIDIA GeForce RTX 5090; depth test GreaterEqual (reversed Z), depth write false, alpha blending, drawn after opaque terrain/models",
+  "performance_limit": "Captures validate rendering, not an interactive FPS benchmark. Hidden-workspace presentation and startup affect wall time.",
+  "known_limit": "Intersecting transparent boxes use centre-distance sorting, so intersection blending is approximate.",
+  "landmark_commit": "664a459102ffc5b61ad0d2dbfb825c32b9b87ca7",
+  "scope": "Local integration only; no push."
+}
