@@ -155,6 +155,8 @@ pub struct Frame {
     pub(crate) hud: Vec<Vertex>,
     /// Meshes to draw this frame (transformed and lit on the GPU).
     pub(crate) meshes: Vec<MeshDraw>,
+    /// Transparent, depth-tested meshes after opaque terrain/models; never depth writers or casters.
+    pub(crate) overlays: Vec<MeshDraw>,
     pub(crate) mesh_uploads: Vec<Mesh>,
     pub(crate) mesh_releases: Vec<u64>,
     /// Pooled meshes to draw this frame (see `pool_group`).
@@ -355,7 +357,7 @@ impl Frame {
     /// geometry submissions; PBR counts include only the requested part. These
     /// are demand counts, not GPU residency or post-culling raster counts.
     pub(crate) fn counts(&self) -> (u32, u32, u32) {
-        let meshes = || self.meshes.iter().chain(&self.front);
+        let meshes = || self.meshes.iter().chain(&self.front).chain(&self.overlays);
         let mut lines = (self.lines.len() + self.front_lines.len() + self.hud.len()) / 2
             + meshes().filter(|m| m.edges).map(|m| m.mesh.edges.len()).sum::<usize>();
         let mut triangles = (self.solids.len() + self.hud_tris.len()) / 3
@@ -424,6 +426,7 @@ impl Frame {
             canvas_scene: 1,
             hud: Vec::new(),
             meshes: Vec::new(),
+            overlays: Vec::new(),
             mesh_uploads: Vec::new(),
             mesh_releases: Vec::new(),
             pool: Default::default(),
@@ -742,6 +745,19 @@ impl Frame {
         let inst = self.instance(t, line, fill, lit);
         let d = MeshDraw { mesh: mesh.clone(), instance: inst, edges, casts: self.casts, reach: mesh.radius() * t.scale as f32, ground: self.ground };
         if self.in_front { self.front.push(d) } else { self.meshes.push(d) }
+    }
+
+    /// Unlit transparent mesh, scaled along its local axes. Shares GPU geometry across
+    /// instances, blends far to near after opaque terrain/models, tests depth and never writes it.
+    pub fn model_overlay_scaled(&mut self, mesh: &Mesh, t: &Transform, axes: Vec3, color: Color) {
+        let mut instance = self.instance(t, [0.; 4], color.0, false);
+        for i in 0..3 {
+            instance.c0[i] *= axes.x;
+            instance.c1[i] *= axes.y;
+            instance.c2[i] *= axes.z;
+        }
+        self.overlays.push(MeshDraw { mesh: mesh.clone(), instance, edges: false, casts: false,
+            reach: mesh.radius() * axes.abs().max_element() * t.scale.abs() as f32, ground: false });
     }
 
     /// A group of pooled draws (see `pooled`): every member turned and scaled by `t` and lit as at

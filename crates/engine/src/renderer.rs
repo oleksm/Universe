@@ -498,6 +498,7 @@ pub(crate) struct Renderer {
     capture_pipe: wgpu::RenderPipeline,
     sky: DynBuffer,
     mesh_pipe: wgpu::RenderPipeline,
+    overlay_pipe: wgpu::RenderPipeline,
     /// The air's light behind everything (a full-screen pass: `air_sky`).
     air_sky_pipe: wgpu::RenderPipeline,
     mesh_line_pipe: wgpu::RenderPipeline,
@@ -514,6 +515,7 @@ pub(crate) struct Renderer {
     /// (mesh, first instance, count) for each.
     instances: DynBuffer,
     face_runs: Vec<(u64, u32, u32)>,
+    overlay_runs: Vec<(u64, u32, u32)>,
     edge_runs: Vec<(u64, u32, u32)>,
     /// The same for the front layer's meshes.
     front_face_runs: Vec<(u64, u32, u32)>,
@@ -785,6 +787,7 @@ impl Renderer {
             })
         };
         let mesh_pipe = mesh_pipeline("mesh faces", "vs_mesh", wgpu::PrimitiveTopology::TriangleList, true, wgpu::CompareFunction::Greater);
+        let overlay_pipe = mesh_pipeline("transparent mesh overlays", "vs_mesh", wgpu::PrimitiveTopology::TriangleList, false, wgpu::CompareFunction::GreaterEqual);
         // (Pooled meshes: no vertex buffers, everything read from the pool by index; group 3.)
         let pool = crate::pool::PoolStore::new(device);
         let pool_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
@@ -880,6 +883,7 @@ impl Renderer {
             view_targets: HashMap::new(),
             sky: DynBuffer::new(device, "sky"),
             mesh_pipe,
+            overlay_pipe,
             air_sky_pipe,
             mesh_line_pipe,
             pool,
@@ -888,6 +892,7 @@ impl Renderer {
             meshes: HashMap::new(),
             instances: DynBuffer::new(device, "mesh instances"),
             face_runs: Vec::new(),
+            overlay_runs: Vec::new(),
             edge_runs: Vec::new(),
             front_face_runs: Vec::new(),
             front_edge_runs: Vec::new(),
@@ -1320,6 +1325,7 @@ impl Renderer {
         self.pbr.draw(&mut pass);
         // (The textured models take group 2 for their materials: the world's maps back.)
         pass.set_bind_group(2, &self.world.bind, &[]);
+        self.draw_meshes(&mut pass, &self.overlay_runs, &self.overlay_pipe, |m| (&m.faces, m.face_vertices));
         self.lines.draw(&mut pass, &self.line_pipe);
         self.draw_meshes(&mut pass, &self.edge_runs, &self.mesh_line_pipe, |m| (&m.edges, m.edge_vertices));
         self.draw_pool(&mut pass, 0, true);
@@ -1430,7 +1436,7 @@ impl Renderer {
     fn upload_meshes(&mut self, gpu: &Gpu, frame: &Frame) {
         self.frames += 1;
         let now = self.frames;
-        for d in frame.meshes.iter().chain(&frame.front) {
+        for d in frame.meshes.iter().chain(&frame.front).chain(&frame.overlays) {
             self.meshes.entry(d.mesh.id()).or_insert_with(|| GpuMesh::new(gpu, &d.mesh)).used = now;
         }
         for mesh in &frame.mesh_uploads {self.meshes.entry(mesh.id()).or_insert_with(||GpuMesh::new(gpu,mesh)).used=now;}
@@ -1441,9 +1447,10 @@ impl Renderer {
         let gone = std::mem::take(&mut *crate::model::GONE.lock().unwrap_or_else(|e| e.into_inner()));
         for id in gone { self.meshes.remove(&id); }
         self.meshes.retain(|_,m|now-m.used<MESH_KEEP);
-        let mut data: Vec<Instance> = Vec::with_capacity((frame.meshes.len() + frame.front.len()) * 2);
+        let mut data: Vec<Instance> = Vec::with_capacity((frame.meshes.len() + frame.front.len()) * 2 + frame.overlays.len());
         (self.face_runs, self.edge_runs) = batch(&frame.meshes, &mut data);
         (self.front_face_runs, self.front_edge_runs) = batch(&frame.front, &mut data);
+        self.overlay_runs = overlay_batch(&frame.overlays, &mut data);
         // Globe maps: each in a layer (new ones uploaded); instances name the layer.
         // With more maps than layers, those already up and the most drawn (the
         // world underfoot is many patches) come first; the rest go plain this frame.
@@ -1630,6 +1637,24 @@ fn batch(draws: &[crate::frame::MeshDraw], data: &mut Vec<Instance>) -> (Runs, R
     let faces = runs(&|_| true);
     let edges = runs(&|i| draws[i].edges);
     (faces, edges)
+}
+
+/// Preserve transparency order across meshes; consecutive instances of the same
+/// mesh share one GPU draw (all boxes using one cube stay one instanced run).
+fn overlay_batch(draws: &[crate::frame::MeshDraw], data: &mut Vec<Instance>) -> Runs {
+    let mut order: Vec<_> = (0..draws.len()).collect();
+    let distance = |i: usize| glam::Vec3::from_slice(&draws[i].instance.t[..3]).length_squared();
+    order.sort_by(|&a, &b| distance(b).total_cmp(&distance(a)));
+    let mut runs: Runs = Vec::new();
+    for i in order {
+        let id = draws[i].mesh.id();
+        match runs.last_mut() {
+            Some(r) if r.0 == id => r.2 += 1,
+            _ => runs.push((id, data.len() as u32, 1)),
+        }
+        data.push(draws[i].instance);
+    }
+    runs
 }
 
 /// Captures still being compressed and written (see `save_png`).
@@ -1896,5 +1921,29 @@ mod globe_stream_tests {
         assert_eq!(bytes, total);
         let mut empty = 0;
         assert!(layer.take(&map, &mut empty).is_empty());
+    }
+}
+
+#[cfg(test)]
+mod object_overlay_tests {
+    use super::*;
+    #[test]
+    fn object_overlay_instances_share_one_run_and_sort_without_casting() {
+        use crate::{Camera,Color,Frame,Mesh,Transform,WireModel};
+        use glam::{DVec3,Vec2,Vec3};
+        let mesh=Mesh::new(WireModel { positions:vec![Vec3::ZERO,Vec3::X,Vec3::Y],faces:vec![[0,1,2]],..Default::default() });
+        let mut frame=Frame::new(Camera::default(),Vec2::splat(100.),Vec2::splat(100.));
+        for i in 0..61179 {
+            let t=Transform { position:DVec3::new(i as f64,0.,0.),..Default::default() };
+            frame.model_overlay_scaled(&mesh,&t,Vec3::new(2.,3.,4.),Color([1.,0.,0.,0.35]));
+        }
+        assert!(frame.meshes.is_empty());
+        assert!(frame.overlays.iter().all(|d| !d.casts && !d.edges));
+        assert_eq!(frame.overlays[0].instance.c0[0],2.);
+        assert_eq!(frame.overlays[0].instance.c1[1],3.);
+        assert_eq!(frame.overlays[0].instance.c2[2],4.);
+        let mut data=Vec::new(); let runs=overlay_batch(&frame.overlays,&mut data);
+        assert_eq!(runs,vec![(mesh.id(),0,61179)]);
+        assert!(data.windows(2).all(|w| w[0].t[0]>=w[1].t[0]));
     }
 }

@@ -201,11 +201,17 @@ impl Panel {
 
     /// Check boxes in a row, as chips: (label, on, enabled, id).
     pub fn chips(&mut self, items: &[(&str, bool, bool, u32)]) {
+        let tinted: Vec<_> = items.iter().map(|&(label,on,enabled,id)| (label,on,enabled,id,ACCENT)).collect();
+        self.colored_chips(&tinted);
+    }
+
+    /// Chips whose checked markers also serve as a colour legend.
+    pub fn colored_chips(&mut self, items: &[(&str, bool, bool, u32, Color)]) {
         let k = self.k;
         let mut x = self.x + PAD;
         let y = self.y;
         let b = GLYPH * k * 0.8;
-        for &(label, on, enabled, id) in items {
+        for &(label, on, enabled, id, tint) in items {
             let w = b + 4.0 + width(label, k) + 9.0;
             let p = Vec2::new(x, y - 3.0);
             let size = Vec2::new(w, GLYPH * k + 6.0);
@@ -214,7 +220,7 @@ impl Panel {
             let bp = Vec2::new(x + 4.0, y + (GLYPH * k - b) * 0.5);
             self.cmds.push(Cmd::Frame(bp, Vec2::splat(b), c));
             if on {
-                self.cmds.push(Cmd::Rect(bp + Vec2::splat(b * 0.22), Vec2::splat(b * 0.56), if enabled { ACCENT } else { LINE }));
+                self.cmds.push(Cmd::Rect(bp + Vec2::splat(b * 0.22), Vec2::splat(b * 0.56), if enabled { tint } else { LINE }));
             }
             self.put(Vec2::new(bp.x + b + 4.0, y), label, c, k);
             if enabled {

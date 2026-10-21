@@ -105,3 +105,20 @@ on the main thread 7.7 ms mean (25 worst), mesh upload on the render thread 7.3 
   pool, not a buffer creation.
 - Flat-shaded faces with per-face colour must stay possible (the Real view), and the per-vertex morph band (ask 1)
   should work on pooled meshes.
+
+## Object boxes (21 Oct)
+
+Optional `boxes.json` beside the view, produced by planet-forge `tools/object_boxes.py`:
+`legend: [{family, rgb:[0..255,0..255,0..255]}]`, `boxes: [{lat,lon,z,heading_deg,
+length_m,width_m,height_m,rgba:[0..255,0..255,0..255,0..1],label,family}]`.
+Coordinates and heading are degrees, dimensions and base altitude are metres; heading is
+clockwise from north. Height exaggeration moves the base with terrain, retaining physical dimensions.
+The optional label defaults to empty. Invalid sidecars report a load error; absent sidecars leave the viewer usable.
+
+One shared cube supplies all geometry. Camera-relative per-axis transforms and linearised colours
+are instances, culled against the view and horizon. The renderer sorts instances far to near and blends
+after opaque terrain/models with depth testing, no depth writes and no shadows. Intersecting transparent
+volumes use centre sorting, so intersection blending is approximate. Nearest 40 labelled objects whose
+top anchors are in view receive terrain-depth-tested labels. OBJECTS has a coloured toggle per legend family.
+`UNIVERSE_PLANETLOD_AT` accepts `boxes=all`, `boxes=none` or comma-separated family names;
+observer status includes `objects_drawn` and enabled `object_families`.

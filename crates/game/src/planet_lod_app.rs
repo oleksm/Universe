@@ -12,6 +12,9 @@
 //! Shift x5, a drag slides over the ground, V mesh or real, H the panel, ESC closes.
 //! `UNIVERSE_PLANETLOD_AT="alt=20000&lat=-50.99&lon=71.44&heading=0&ex=1&view=real"` sets the start.
 
+mod objects;
+use objects::Objects;
+
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
@@ -53,6 +56,7 @@ const ID_KEYS: u32 = 40;
 const ID_VIS: u32 = 50;
 /// The layer chips: ID_LAYER + the layer's index.
 const ID_LAYER: u32 = 100;
+const ID_BOX_FAMILY: u32 = 200;
 /// Each layer's own lift over the ground (m), the k-th at (k + 1) x this: shells, not one surface.
 const LAYER_LIFT: f64 = 1500.0;
 /// A layer's faces are this opaque (75 % transparent, the owner's).
@@ -130,6 +134,7 @@ struct Meta {
 /// What the last draw left for the next update (the panel's boxes) and its own counts.
 #[derive(Default)]
 struct Ui {
+    objects_drawn: usize,
     panel: Option<Hit>,
     hits: Vec<Hit>,
     /// The last view-box count, from a worker (one at a time, every 0.3 s).
@@ -550,6 +555,7 @@ pub struct PlanetLodApp {
     pins: Vec<(DVec3, f64, String, bool)>,
     /// The landform layers over the land, when the view has them.
     layers: Option<Layers>,
+    objects: Option<Objects>,
     ui: Mutex<Ui>,
     /// Sums for the log line written each second: frames, seconds, LOD ms, mesh ms, max of each, rebuilt.
     log: [f64; 7],
@@ -965,6 +971,7 @@ impl PlanetLodApp {
                 }
             }
         }).map_err(|e| format!("decider: {e}"))?;
+        let objects = Objects::open(&dir)?;
         let mut app = PlanetLodApp {
             dir,
             d,
@@ -1014,6 +1021,7 @@ impl PlanetLodApp {
             feat: None,
             pins,
             layers,
+            objects,
             ui: Mutex::new(Ui::default()),
             log: [0.0; 7],
         };
@@ -1030,6 +1038,9 @@ impl PlanetLodApp {
                     ("feat", Some(v)) => app.show_feat = v > 0.0,
                     ("peaks", Some(v)) => app.show_peaks = v > 0.0,
                     ("view", _) if kv.ends_with("real") => app.view = View::Real,
+                    ("boxes", _) => {
+                        if let Some(o) = &mut app.objects { o.select(&kv[6..]); }
+                    }
                     ("layers", _) => {
                         // (layers=0,2 or layers=none: which layer meshes are on)
                         if let Some(l) = &mut app.layers {
@@ -1337,6 +1348,8 @@ impl App for PlanetLodApp {
             "lod_ms": self.stats.lod_ms, "cells_decided": self.stats.decided, "vertices_changed": self.stats.changed,
             "mesh_ms": self.stats.mesh_ms, "chunks_rebuilt": self.stats.rebuilt,
             "chunks_drawn": ui.chunks_drawn, "tile_groups_drawn": ui.tiles_drawn,
+            "objects_drawn": ui.objects_drawn,
+            "object_families": self.objects.as_ref().map(|o| o.families.iter().filter(|f| f.on).map(|f| &f.name).collect::<Vec<_>>()),
             "triangles_sent": ui.sent, "pattern_triangles_drawn": ui.pattern_tris,
             "in_view_box": ui.in_view.load(std::sync::atomic::Ordering::Acquire),
         }).to_string()
@@ -1374,6 +1387,11 @@ impl App for PlanetLodApp {
                 Some(ID_KEYS) => self.keys_open = !self.keys_open,
                 Some(ID_VIS) => self.ui.lock().unwrap().vis_note = true,
                 Some(ID_EX) => self.sliding = true,
+                Some(x) if x >= ID_BOX_FAMILY => {
+                    if let Some(o) = &mut self.objects {
+                        if let Some(f) = o.families.get_mut((x-ID_BOX_FAMILY) as usize) { f.on = !f.on; }
+                    }
+                }
                 Some(x) if (ID_LAYER..ID_LAYER + 64).contains(&x) => {
                     if let Some(l) = &mut self.layers {
                         let k = (x - ID_LAYER) as usize;
@@ -1748,6 +1766,7 @@ impl App for PlanetLodApp {
             let t = Transform { position: self.meta.peak * self.d.r, rotation: Quat::IDENTITY, scale: 1.0 };
             frame.model_colored(f, &t, 1.0, 0.0);
         }
+        let objects_drawn = self.objects.as_ref().map_or(0, |o| o.draw(self, frame));
         // Pins: a post from the ground and its label.
         let alt_r = (eye.length() - self.d.r).max(0.0);
         let post = (0.08 * alt_r).max(0.004 * self.d.r).min(0.08 * alt_r.max(1.0));
@@ -1810,6 +1829,7 @@ impl App for PlanetLodApp {
         // The counts the panel shows that need the drawn meshes: the view box every 0.3 s.
         let mut ui = self.ui.lock().unwrap();
         ui.sent = sent;
+        ui.objects_drawn = objects_drawn;
         ui.aspect = aspect;
         ui.chunks_drawn = chunks_drawn;
         ui.tiles_drawn = tiles_drawn;
@@ -1976,6 +1996,14 @@ impl PlanetLodApp {
             p.rect(Vec2::new(x_of(h[0]) - 1.0, y_of(h[2]) - 1.0), Vec2::splat(2.0), INK);
         }
         p.note("drawn (orange) · fully risen (white) · per altitude flown", INK3);
+        if let Some(o) = &self.objects {
+            p.section("OBJECTS", &[]);
+            p.row("boxes in view", &thousands(ui.objects_drawn as f64), "instanced");
+            for (row, families) in o.families.chunks(2).enumerate() {
+                let items: Vec<_> = families.iter().enumerate().map(|(i,f)| (f.name.as_str(),f.on,true,ID_BOX_FAMILY+(row*2+i) as u32,f.color)).collect();
+                p.colored_chips(&items);
+            }
+        }
         // The mesh.
         p.section("MESH", &[]);
         p.row("vertices", &thousands(self.d.pos.len() as f64), &format!("{} in the pattern", kilo(n)));
