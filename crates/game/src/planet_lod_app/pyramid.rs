@@ -7,8 +7,8 @@ use std::io::{Read, Seek, SeekFrom};
 use std::sync::mpsc::{self, Receiver, SyncSender};
 
 const PX: f64 = 0.0007;
-const CACHE_BYTES: usize = 256 * 1024 * 1024;
-const UPLOAD_BYTES: usize = 4 * 1024 * 1024;
+const CACHE_BYTES: usize = 8 * 1024 * 1024 * 1024;
+const UPLOAD_BYTES: usize = 32 * 1024 * 1024;
 #[derive(Deserialize)]
 struct Projection {
     kind: String,
