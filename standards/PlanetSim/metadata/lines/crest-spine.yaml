@@ -4,14 +4,14 @@ identity:
   name: Crest spine
   about: A range's crest line, with its peaks and passes.
 born_from: range detection
-first_level: planet-level.cluster
+first_level: planet-level.1000-km
 expands_into:
 - peaks and passes
 - spurs
 levels:
-- planet-level.cluster
-- planet-level.pattern
-- planet-level.square
+- planet-level.1000-km
+- planet-level.100-km
+- planet-level.10-km
 basis:
 - of:
   - identity

@@ -7,16 +7,16 @@ born_from: a plate breaking
 ends: no new points for 30 Myr
 ends_idle: 946728000000000.0
 sides: 2
-first_level: planet-level.planet
+first_level: planet-level.10000-km
 constants:
 - CLOSE_MYR
 made_by:
 - rift
 source: rift
 levels:
-- planet-level.planet
-- planet-level.cluster
-- planet-level.pattern
+- planet-level.10000-km
+- planet-level.1000-km
+- planet-level.100-km
 rules:
 - 'a line lies on one plate: cut where its vertices ride different plates'
 - crossings are cut; every fate (split, ended, sunk, reindexed) is logged

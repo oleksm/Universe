@@ -5,8 +5,6 @@ identity:
   about: 'A relief feature of the glacial family: mega-scale glacial lineations.'
 register: feature
 family: glacial
-level:
-- 2
 geometry: polygon + direction
 properties:
 - field: length
@@ -16,14 +14,13 @@ generator: area
 wave: 3
 built: false
 levels:
-- planet-level.pattern
+- planet-level.100-km
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

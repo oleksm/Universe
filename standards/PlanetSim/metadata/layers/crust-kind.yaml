@@ -16,7 +16,7 @@ classes:
     op: '>='
     value: 15000.0
 levels:
-- planet-level.planet
+- planet-level.10000-km
 basis:
 - of:
   - classes

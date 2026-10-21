@@ -154,6 +154,7 @@ def cmd_check(opt, pages):
     steps = [("validate", [sys.executable, "tools/standards/validate.py"], lambda o: o.strip().splitlines()[-1].startswith("0 thing")),
              ("build", [sys.executable, "tools/standards/build.py"], None),
              ("module", [sys.executable, "tools/standards/planet_lod_module.py", "--check"], None),
+             ("planet catalogue", [sys.executable, "tools/standards/planet_catalogue.py"], None),
              ("fit", [sys.executable, "tools/standards/fit_layout.py"], lambda o: not re.search(r"[1-9]\d* fault\(s\)", o)),
              ("makers", [sys.executable, "tools/standards/kit_works.py", "--check"], lambda o: not re.search(r"[1-9]\d* fault\(s\)", o)),
              ("supply records", [sys.executable, "tools/standards/supply_chains.py", "--check"], None),

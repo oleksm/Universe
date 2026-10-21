@@ -6,7 +6,7 @@ strength, match, context) bound to it.
     python3 tools/standards/planet_lod_module.py --check     # exit 1 when the written module is out of date
 
 Use: sys.path.insert(0, "<fso>/standards/PlanetSim/generated"); import planet_lod_words as W;
-W.classify("climate", {"fields": {...}}); W.match({...}); W.context("pattern"); W.DATA["planet-field"]["planet-field.rain"]["unit"].
+W.classify("climate", {"fields": {...}}); W.match({...}); W.context_of("100-km"); W.DATA["planet-field"]["planet-field.rain"]["unit"].
 Generated: change the records, then run this again.
 """
 import hashlib, inspect, json, os, sys

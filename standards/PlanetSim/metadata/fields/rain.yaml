@@ -15,8 +15,8 @@ producer:
   key: h_P
 source: h_P
 levels:
-- planet-level.planet
-- planet-level.cluster
+- planet-level.10000-km
+- planet-level.1000-km
 basis:
 - of:
   - identity

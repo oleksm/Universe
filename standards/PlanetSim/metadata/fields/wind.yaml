@@ -19,8 +19,8 @@ cautions:
 - 'a direction only: there is no speed'
 source: h_wind_e
 levels:
-- planet-level.planet
-- planet-level.cluster
+- planet-level.10000-km
+- planet-level.1000-km
 basis:
 - of:
   - identity

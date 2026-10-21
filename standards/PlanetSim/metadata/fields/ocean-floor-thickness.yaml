@@ -13,7 +13,7 @@ cautions:
 - defined under continents too
 source: floor
 levels:
-- planet-level.planet
+- planet-level.10000-km
 basis:
 - of:
   - identity

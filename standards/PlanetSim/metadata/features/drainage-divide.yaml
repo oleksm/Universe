@@ -5,8 +5,6 @@ identity:
   about: 'A relief feature of the fluvial family: drainage divide.'
 register: feature
 family: fluvial
-level:
-- 1
 geometry: polyline
 properties:
 - field: basin order
@@ -16,15 +14,14 @@ overrides: capture moves it
 wave: 1
 built: true
 levels:
-- planet-level.planet
-- planet-level.cluster
+- planet-level.10000-km
+- planet-level.1000-km
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger
@@ -54,3 +51,5 @@ layout:
     meaning: 1 rides, 0 snapshot
     source: 'planet-forge src/ride.rs (from the Python: stages/lines.py Store vs its rivers and coast)'
     open: true
+line_kinds:
+- planet-line.divide

@@ -5,8 +5,6 @@ identity:
   about: 'A relief province of the volcanic family: flood basalt plateau.'
 register: province
 family: volcanic
-level:
-- 1
 geometry: polygon + step rings
 properties:
 - field: thickness
@@ -19,15 +17,14 @@ overrides: erosion into terraces
 wave: 1
 built: true
 levels:
-- planet-level.planet
-- planet-level.cluster
+- planet-level.10000-km
+- planet-level.1000-km
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

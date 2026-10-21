@@ -5,8 +5,6 @@ identity:
   about: 'A relief feature of the tectonic family: range front (fault-bounded).'
 register: feature
 family: tectonic
-level:
-- 1
 geometry: polyline
 properties:
 - field: throw
@@ -17,15 +15,14 @@ overrides: erosion (relief decays by rock and rain), tear at plate edges, sink w
 wave: 1
 built: false
 levels:
-- planet-level.planet
-- planet-level.cluster
+- planet-level.10000-km
+- planet-level.1000-km
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

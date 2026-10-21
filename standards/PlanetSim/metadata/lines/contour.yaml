@@ -4,11 +4,11 @@ identity:
   name: Contour
   about: 'A height line: the relief layer''s 500 to 5000 m.'
 born_from: the relief layer
-first_level: planet-level.planet
+first_level: planet-level.10000-km
 levels:
-- planet-level.planet
-- planet-level.cluster
-- planet-level.pattern
+- planet-level.10000-km
+- planet-level.1000-km
+- planet-level.100-km
 basis:
 - of:
   - identity

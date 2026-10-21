@@ -5,8 +5,6 @@ identity:
   about: 'A relief landmark of the impact family: multi-ring impact basin.'
 register: landmark
 family: impact
-level:
-- 1
 geometry: rings
 properties:
 - field: rings
@@ -19,15 +17,14 @@ overrides: erosion
 wave: 2
 built: false
 levels:
-- planet-level.planet
-- planet-level.cluster
+- planet-level.10000-km
+- planet-level.1000-km
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

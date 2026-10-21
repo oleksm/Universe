@@ -36,8 +36,8 @@ sources:
 library_status: written
 source: fluvial.erosion.gully_rill
 levels:
-- planet-level.pattern
-- planet-level.square
+- planet-level.100-km
+- planet-level.10-km
 basis:
 - of:
   - factors

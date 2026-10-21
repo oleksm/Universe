@@ -12,8 +12,8 @@ signal:
   from: 7.922e-09
   to: 6.3376e-08
 levels:
-- planet-level.cluster
-- planet-level.pattern
+- planet-level.1000-km
+- planet-level.100-km
 basis:
 - of:
   - identity

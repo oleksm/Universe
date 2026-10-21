@@ -11,8 +11,8 @@ producer:
   key: r_lowstand_shore
 source: r_lowstand_shore
 levels:
-- planet-level.planet
-- planet-level.cluster
+- planet-level.10000-km
+- planet-level.1000-km
 basis:
 - of:
   - identity

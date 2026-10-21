@@ -13,11 +13,11 @@ cautions:
 - 'z leaves out the recent epoch''s erosion (up to 2.4 km of rivers and 1.1 km of ice in the last 2.6 Myr): recent-height has it'
 source: z
 levels:
-- planet-level.planet
-- planet-level.cluster
-- planet-level.pattern
-- planet-level.square
-- planet-level.detail
+- planet-level.10000-km
+- planet-level.1000-km
+- planet-level.100-km
+- planet-level.10-km
+- planet-level.1-km
 basis:
 - of:
   - identity

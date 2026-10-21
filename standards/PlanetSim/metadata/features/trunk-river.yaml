@@ -5,8 +5,6 @@ identity:
   about: 'A relief feature of the fluvial family: trunk river.'
 register: feature
 family: fluvial
-level:
-- 1
 geometry: polyline
 properties:
 - field: discharge profile
@@ -21,8 +19,8 @@ overrides: capture, drowning, glacial overprint
 wave: 1
 built: false
 levels:
-- planet-level.planet
-- planet-level.cluster
+- planet-level.10000-km
+- planet-level.1000-km
 status: draft
 basis:
 - note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical
@@ -31,7 +29,6 @@ basis:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger
@@ -132,3 +129,5 @@ layout:
     open: true
 parent_kinds:
 - planet-feature.trunk-river
+line_kinds:
+- planet-line.river

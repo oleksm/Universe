@@ -5,8 +5,6 @@ identity:
   about: 'A relief feature of the lacustrine family: lake basin (rift / glacial / volcanic / dammed).'
 register: feature
 family: lacustrine
-level:
-- 1
 geometry: polygon + rings
 properties:
 - field: level
@@ -21,15 +19,14 @@ overrides: drying -> former lake bed
 wave: 1
 built: true
 levels:
-- planet-level.planet
-- planet-level.cluster
+- planet-level.10000-km
+- planet-level.1000-km
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

@@ -13,7 +13,7 @@ producer:
   where: stages/recent.py run
   key: melt
 levels:
-- planet-level.planet
+- planet-level.10000-km
 status: draft
 basis:
 - of:

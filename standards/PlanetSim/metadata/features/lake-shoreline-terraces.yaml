@@ -5,8 +5,6 @@ identity:
   about: 'A relief feature of the lacustrine family: lake shoreline terraces.'
 register: feature
 family: lacustrine
-level:
-- 2
 geometry: rings
 properties:
 - field: levels
@@ -18,14 +16,13 @@ generator: rings
 wave: 2
 built: false
 levels:
-- planet-level.pattern
+- planet-level.100-km
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

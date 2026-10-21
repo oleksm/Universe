@@ -35,8 +35,8 @@ sources:
 library_status: written
 source: glacial.erosion.roche_moutonnee
 levels:
-- planet-level.pattern
-- planet-level.square
+- planet-level.100-km
+- planet-level.10-km
 basis:
 - of:
   - factors

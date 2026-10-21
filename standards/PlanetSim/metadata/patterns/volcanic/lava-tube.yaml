@@ -29,8 +29,8 @@ sources:
 library_status: planned
 source: volcanic.flow.lava_tube
 levels:
-- planet-level.pattern
-- planet-level.square
+- planet-level.100-km
+- planet-level.10-km
 basis:
 - of:
   - factors

@@ -12,10 +12,10 @@ producer:
   key: grain
 source: grain
 levels:
-- planet-level.planet
-- planet-level.cluster
-- planet-level.pattern
-- planet-level.detail
+- planet-level.10000-km
+- planet-level.1000-km
+- planet-level.100-km
+- planet-level.1-km
 basis:
 - of:
   - identity

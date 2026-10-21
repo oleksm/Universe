@@ -9,7 +9,7 @@ producer:
   where: stages/plates.py:1346-1348
   key: w.hf_ref
 levels:
-- planet-level.planet
+- planet-level.10000-km
 status: draft
 basis:
 - of:

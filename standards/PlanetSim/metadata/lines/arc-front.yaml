@@ -8,7 +8,7 @@ ends: no new points for 30 Myr
 ends_idle: 946728000000000.0
 offset: 150000.0
 sides: 1
-first_level: planet-level.planet
+first_level: planet-level.10000-km
 constants:
 - CLOSE_MYR
 - ARC_FRONT_M
@@ -18,9 +18,9 @@ children:
 - planet-landmark.arc-volcano
 source: arc
 levels:
-- planet-level.planet
-- planet-level.cluster
-- planet-level.pattern
+- planet-level.10000-km
+- planet-level.1000-km
+- planet-level.100-km
 rules:
 - 'a line lies on one plate: cut where its vertices ride different plates'
 - crossings are cut; every fate (split, ended, sunk, reindexed) is logged

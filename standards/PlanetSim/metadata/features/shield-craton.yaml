@@ -5,8 +5,6 @@ identity:
   about: 'A relief province of the tectonic family: shield / craton.'
 register: province
 family: tectonic
-level:
-- 1
 geometry: polygon
 properties:
 - field: age
@@ -17,15 +15,14 @@ overrides: burial by platform cover
 wave: 2
 built: false
 levels:
-- planet-level.planet
-- planet-level.cluster
+- planet-level.10000-km
+- planet-level.1000-km
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

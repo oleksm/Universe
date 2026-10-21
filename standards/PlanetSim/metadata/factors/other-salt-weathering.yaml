@@ -5,8 +5,8 @@ identity:
   about: 'Named by the library outside its vocabulary: salt weathering.'
 source: OTHER:salt_weathering
 levels:
-- planet-level.cluster
-- planet-level.pattern
+- planet-level.1000-km
+- planet-level.100-km
 basis:
 - of:
   - identity

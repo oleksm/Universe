@@ -5,8 +5,6 @@ identity:
   about: 'A relief feature of the arid family: pediment.'
 register: feature
 family: arid
-level:
-- 2
 geometry: polygon
 properties:
 - field: slope
@@ -16,14 +14,13 @@ generator: band at the range foot
 wave: 2
 built: false
 levels:
-- planet-level.pattern
+- planet-level.100-km
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

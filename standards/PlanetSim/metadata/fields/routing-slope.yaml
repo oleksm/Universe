@@ -13,7 +13,7 @@ producer:
 missing: 0 at sea and on sinks
 amount: snapshot
 levels:
-- planet-level.planet
+- planet-level.10000-km
 status: draft
 basis:
 - of:

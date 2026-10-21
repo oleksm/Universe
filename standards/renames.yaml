@@ -79,3 +79,15 @@ renames:
   - { was: org.hearth-line, is: org.hoar-line, date: "2026-10-07", why: "the planet renamed (Hearth to Hoar)" }
   - { was: equipment.hardpoint.mining-laser.mc07, is: equipment.hardpoint.mining-hammer.mc07, date: "2026-10-10", why: "the MC-07 model draws a hydraulic breaker, not a laser (ships, 2026-10-10)" }
   - { was: equipment.access.anchor-clamp.mc07, is: equipment.access.anchor-clamp.mc07-aft, date: "2026-10-10", why: "the MC-07 has two clamps of different geometry (source rig: aft 2.3 m stages, forward 2.9 m); the forward one is a new key, equipment.access.anchor-clamp.mc07-fwd" }
+  - { was: planet-level.planet, is: planet-level.10000-km, date: "2026-10-21", why: "Owner: PlanetSim detail bands named by their upper view bound" }
+  - { was: planet-level.continent, is: planet-level.1000-km, date: "2026-10-21", why: "Owner: PlanetSim detail bands named by their upper view bound" }
+  - { was: planet-level.region, is: planet-level.100-km, date: "2026-10-21", why: "Owner: PlanetSim detail bands named by their upper view bound" }
+  - { was: planet-level.landscape, is: planet-level.10-km, date: "2026-10-21", why: "Owner: PlanetSim detail bands named by their upper view bound" }
+  - { was: planet-level.site, is: planet-level.1-km, date: "2026-10-21", why: "Owner: PlanetSim detail bands named by their upper view bound" }
+  - { was: planet-level.slope, is: planet-level.100-m, date: "2026-10-21", why: "Owner: PlanetSim detail bands named by their upper view bound" }
+  - { was: planet-level.ground, is: planet-level.10-m, date: "2026-10-21", why: "Owner: PlanetSim detail bands named by their upper view bound" }
+  - { was: planet-level.surface, is: planet-level.1-m, date: "2026-10-21", why: "Owner: PlanetSim detail bands named by their upper view bound" }
+  - { was: planet-level.cluster, is: planet-level.1000-km, date: "2026-10-21", why: "Owner: PlanetSim detail bands named by their upper view bound" }
+  - { was: planet-level.pattern, is: planet-level.100-km, date: "2026-10-21", why: "Owner: PlanetSim detail bands named by their upper view bound" }
+  - { was: planet-level.square, is: planet-level.10-km, date: "2026-10-21", why: "Owner: PlanetSim detail bands named by their upper view bound" }
+  - { was: planet-level.detail, is: planet-level.1-km, date: "2026-10-21", why: "Owner: PlanetSim detail bands named by their upper view bound" }

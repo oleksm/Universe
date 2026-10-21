@@ -15,8 +15,8 @@ cautions:
 - 'not a valley depth: it reaches 21 km'
 source: h_incision
 levels:
-- planet-level.planet
-- planet-level.cluster
+- planet-level.10000-km
+- planet-level.1000-km
 basis:
 - of:
   - identity

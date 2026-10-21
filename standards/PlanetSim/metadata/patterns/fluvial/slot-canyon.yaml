@@ -35,8 +35,8 @@ sources:
 library_status: written
 source: fluvial.valley.slot_canyon
 levels:
-- planet-level.pattern
-- planet-level.square
+- planet-level.100-km
+- planet-level.10-km
 basis:
 - of:
   - factors

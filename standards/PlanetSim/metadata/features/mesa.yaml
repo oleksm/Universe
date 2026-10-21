@@ -5,8 +5,6 @@ identity:
   about: 'A relief feature of the structural family: mesa.'
 register: feature
 family: structural
-level:
-- 2
 geometry: polygon
 properties:
 - field: caprock height
@@ -19,14 +17,13 @@ overrides: shrink
 wave: 3
 built: false
 levels:
-- planet-level.pattern
+- planet-level.100-km
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

@@ -5,8 +5,6 @@ identity:
   about: 'A relief feature of the periglacial family: rock glacier.'
 register: feature
 family: periglacial
-level:
-- 3
 geometry: polygon
 properties:
 - field: length
@@ -16,15 +14,14 @@ generator: lobe
 wave: 3
 built: false
 levels:
-- planet-level.square
-- planet-level.detail
+- planet-level.10-km
+- planet-level.1-km
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

@@ -1,0 +1,36 @@
+# Snapshot: planet-forge 903ae35, docs/catalogue/emitted_kinds.json; source freshness checked upstream.
+source: planet-forge crates/**/*.rs, every "planet-feature.<slug>" string
+commit: 94e4c4f
+kinds:
+- planet-feature.anticline-axis
+- planet-feature.arc-front
+- planet-feature.arc-volcano-centre
+- planet-feature.coastline-typed
+- planet-feature.delta-river-dominated
+- planet-feature.dry-valley
+- planet-feature.flood-basalt-plateau
+- planet-feature.floodplain
+- planet-feature.former-lake-bed
+- planet-feature.great-escarpment
+- planet-feature.hotspot-chain
+- planet-feature.hotspot-volcano-centre
+- planet-feature.impact-crater-complex
+- planet-feature.impact-crater-simple
+- planet-feature.meander-belt
+- planet-feature.misfit-river
+- planet-feature.multi-ring-impact-basin
+- planet-feature.normal-fault-scarp
+- planet-feature.orogen-axis
+- planet-feature.rift-floor-axis
+- planet-feature.rift-margin
+- planet-feature.rift-shoulder
+- planet-feature.river-capture
+- planet-feature.river-mouth
+- planet-feature.subsidiary-ridge
+- planet-feature.suture
+- planet-feature.syncline-axis
+- planet-feature.thrust-front
+- planet-feature.trunk-river
+- planet-feature.volcanic-arc-chain
+- planet-feature.water-carved-land
+- planet-feature.water-gap

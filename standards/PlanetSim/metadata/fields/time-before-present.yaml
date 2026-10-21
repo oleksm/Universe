@@ -10,7 +10,7 @@ producer:
   where: stages/recent.py run
   key: t_kyr
 levels:
-- planet-level.planet
+- planet-level.10000-km
 status: draft
 basis:
 - of:

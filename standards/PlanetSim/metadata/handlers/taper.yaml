@@ -11,8 +11,8 @@ params:
 applies_when: at every region's margin
 where: tools/anchored_mesh.py
 levels:
-- planet-level.cluster
-- planet-level.pattern
+- planet-level.1000-km
+- planet-level.100-km
 basis:
 - of:
   - identity

@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schema/planet-level.schema.yaml
+identity:
+  key: planet-level.100-km
+  name: 100 km band
+  about: Detail from a 100 km view down to a 10 km view.
+span: 100000.0
+spacing:
+- 100.0
+- 100.0
+goal: true
+exists:
+- ranges
+- volcano chains
+- deltas
+- lakes
+- big craters
+from_parent:
+- Frozen coarser ground anchors; detail adds without moving them.
+levels:
+- planet-level.100-km
+status: draft
+basis:
+- of:
+  - span
+  tier: invented
+  review: true
+  note: Owner’s eight-decade view ladder, planet-forge docs/catalogue/README.md §1,
+    94e4c4f; design target, not achieved sampler resolution.
+- of:
+  - spacing
+  tier: derived
+  review: true
+  note: Target ground pixel is view span / 1000. Surface is texture only.

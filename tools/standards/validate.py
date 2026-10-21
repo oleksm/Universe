@@ -5,7 +5,8 @@ registry's schemas use), so the build needs nothing but PyYAML.
 
     python3 tools/standards/validate.py        # lists what does not fit; exits 1 if anything
 """
-import os, re, sys
+import os, re, sys, math
+from planet_catalogue import size_ranges, example_sources
 import yaml
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -61,6 +62,8 @@ def validate(v, sch, here, at=""):
             out.append(f"{where}: {v!r} does not match {sch['pattern']}")
         if "minLength" in sch and len(v) < sch["minLength"]:
             out.append(f"{where}: too short")
+    if isinstance(v, float) and not math.isfinite(v):
+        out.append(f"{where}: must be finite")
     if isinstance(v, (int, float)) and not isinstance(v, bool):
         if "minimum" in sch and v < sch["minimum"]:
             out.append(f"{where}: {v} is below {sch['minimum']}")
@@ -368,6 +371,8 @@ def check_all():
                 found.append((full, e))
             if not errors:
                 found.extend((full, e) for e in motion_interlocks(rec))
+                found.extend((full, e) for e in size_ranges(rec))
+                found.extend((full, e) for e in example_sources(rec))
             # (Its key: there, of its kind, as its file says, and no other record's.)
             key, want = key_in(rec), key_of(rel, rec)
             if not isinstance(key, str) or not KEY.match(key):

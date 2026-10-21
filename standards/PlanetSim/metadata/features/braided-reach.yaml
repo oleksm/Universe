@@ -5,8 +5,6 @@ identity:
   about: 'A relief feature of the fluvial family: braided reach.'
 register: feature
 family: fluvial
-level:
-- 2
 geometry: polygon
 properties:
 - field: bar spacing
@@ -16,14 +14,13 @@ generator: band along the river
 wave: 2
 built: false
 levels:
-- planet-level.pattern
+- planet-level.100-km
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

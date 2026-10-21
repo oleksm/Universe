@@ -33,8 +33,8 @@ sources:
 library_status: written
 source: periglacial.slope.talus
 levels:
-- planet-level.pattern
-- planet-level.square
+- planet-level.100-km
+- planet-level.10-km
 basis:
 - of:
   - factors

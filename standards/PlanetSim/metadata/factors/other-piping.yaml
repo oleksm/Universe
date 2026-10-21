@@ -5,8 +5,8 @@ identity:
   about: 'Named by the library outside its vocabulary: piping.'
 source: OTHER:piping
 levels:
-- planet-level.cluster
-- planet-level.pattern
+- planet-level.1000-km
+- planet-level.100-km
 basis:
 - of:
   - identity

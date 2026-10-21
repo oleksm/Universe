@@ -12,7 +12,7 @@ producer:
 class_of: planet-layer.crust-kind
 source: kind
 levels:
-- planet-level.planet
+- planet-level.10000-km
 basis:
 - of:
   - identity

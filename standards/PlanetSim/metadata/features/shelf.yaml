@@ -5,8 +5,6 @@ identity:
   about: 'A relief province of the coastal family: shelf.'
 register: province
 family: coastal
-level:
-- 1
 geometry: polygon
 properties:
 - field: width
@@ -18,15 +16,14 @@ generator: area to the shelf break
 wave: 1
 built: false
 levels:
-- planet-level.planet
-- planet-level.cluster
+- planet-level.10000-km
+- planet-level.1000-km
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

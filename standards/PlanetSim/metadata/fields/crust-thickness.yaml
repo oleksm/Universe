@@ -13,7 +13,7 @@ cautions:
 - 'not zero on ocean samples: thin continent below 15 km reads there (up to 15 km)'
 source: thick
 levels:
-- planet-level.planet
+- planet-level.10000-km
 basis:
 - of:
   - identity

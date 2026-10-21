@@ -24,8 +24,8 @@ sources:
 library_status: planned
 source: tectonic.basin.intermontane
 levels:
-- planet-level.pattern
-- planet-level.square
+- planet-level.100-km
+- planet-level.10-km
 basis:
 - of:
   - factors

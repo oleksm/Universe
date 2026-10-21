@@ -5,8 +5,6 @@ identity:
   about: 'A relief feature of the coastal family: shelf edge.'
 register: feature
 family: coastal
-level:
-- 1
 geometry: polyline
 properties:
 - field: depth
@@ -16,15 +14,14 @@ generator: the shelf break
 wave: 1
 built: false
 levels:
-- planet-level.planet
-- planet-level.cluster
+- planet-level.10000-km
+- planet-level.1000-km
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

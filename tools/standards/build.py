@@ -1746,9 +1746,9 @@ reports = []
 REPORT_GROUPS = {"ships": ["equipment-parts", "equipment", "mounts", "members", "hulls", "budgets", "volume", "dimensions", "structure-mc-07", "shock", "mass", "chains"],
                  "industry": ["plant", "stock-chains", "balance", "materials", "goods", "takers", "power", "gates"],
                  "people": ["needs", "work", "buildings", "census", "traffic"],
-                 "sky": ["worlds", "celestial", "planet-lod", "planet-models"], "engine": ["clocks"],
+                 "sky": ["worlds", "celestial", "planet-lod", "planet-models", "planet-catalogue"], "engine": ["clocks"],
                  "quality": ["confidence", "invented", "review", "revisions", "dictionary"]}
-REPORT_DOCS = {"mounts": ["docs/ships/registry-note-for-ships.md"], "members": ["docs/ships/registry-note-for-ships.md"], "budgets": ["docs/ships/registry-note-for-ships.md", "docs/ships/equipment-review.md"],
+REPORT_DOCS = {"planet-catalogue": ["docs/planet-ground-catalogue.md"], "mounts": ["docs/ships/registry-note-for-ships.md"], "members": ["docs/ships/registry-note-for-ships.md"], "budgets": ["docs/ships/registry-note-for-ships.md", "docs/ships/equipment-review.md"],
                "needs": ["docs/registry-people.md", "docs/registry-spirit.md"], "work": ["docs/registry-people.md"], "buildings": ["docs/registry-people.md"], "census": ["docs/registry-people.md", "docs/registry-order.md"],
                "traffic": ["docs/registry-people.md", "docs/registry-stocking.md"], "worlds": ["docs/survey-contract.md"], "celestial": ["docs/survey-contract.md"], "clocks": ["docs/tick-tree.md"], "planet-models": ["standards/PlanetSim/metadata/PlanetSim.yaml"], "planet-lod": ["standards/PlanetSim/metadata/PlanetSim.yaml"],
                "balance": ["docs/registry-recipes.md"], "materials": ["docs/registry-recipes.md"], "goods": ["docs/registry-recipes.md"], "takers": ["docs/registry-recipes.md"],
@@ -2397,6 +2397,25 @@ for _k, _m in sorted(_PL["planet-model"].items()):
 report("planet-models", "Planet models: how a planet is described and meshed", "standards/PlanetSim/metadata/models: each model used to describe or mesh a planet, its anchors and how they are found, the rule that weaves detail round them, what it guarantees and leaves out, its parameters (open ones mark it a gap), its implementations and the measures that judge it. Its rules and the owner's words are on the record.",
        ["Model", "Anchors", "Detail", "Guarantees", "Leaves out", "Parameters", "Implementations", "Measured by"], _mrows)
 
+# The six catalogue checks share one implementation with the CLI; gaps stay visible
+# during the agreed data migration rather than masquerading as populated examples.
+import planet_catalogue as _pc
+_pc_records = {k: d for group in ("planet-feature", "planet-line", "planet-level") for k, d in _PL[group].items()}
+_pc_issues = _pc.audit(_pc_records, _pc.manifest())
+_pc_rows = []
+for _key, _rec in sorted(_pc_records.items()):
+    if not _key.startswith("planet-feature."):
+        continue
+    _messages = [[x["message"] for x in _pc_issues if x["key"] == _key and x["check"] == n] for n in range(1, 7)]
+    _pc_rows.append(row("gap" if any(_messages) else "ok", link(_rec["identity"]["name"], "x:planet-features:" + _key.split(".", 1)[1]),
+                        *("; ".join(m) or "ok" for m in _messages)))
+for _x in _pc_issues:
+    if _x["key"] not in _PL["planet-feature"]:
+        _pc_rows.append(row("gap", _x["key"], *( _x["message"] if n == _x["check"] else "" for n in range(1, 7))))
+report("planet-catalogue", "Ground catalogue: kinds at their level of detail",
+       "Eight detail bands named by upper view bound, 10,000 km to 1 m. Six checks: derived size/ladder and descriptions, acyclic expansion, measured examples and built geometry, emitted-kind coverage, blend restrictions and reciprocal line/feature links. Migration gaps remain explicit; planet_catalogue.py --strict fails until the records are complete. Emitted kinds use the versioned forge manifest snapshot, not an implicit neighboring checkout.",
+       ["Kind", *_pc.CHECKS], _pc_rows)
+
 # 3d'''. Members (SFO 13): the tubes a frame is cut from, read as an engineer sizes: weight a metre, the load
 # at which each yields (with the safety factor 1.5), and the pinned length at which it buckles under 50 and 200 kN (Euler).
 rows = []
@@ -2524,7 +2543,7 @@ for b_ in sorted((yaml.safe_load(open(f__, encoding="utf-8")) or {} for f__ in _
     w_ = _index.get(sv["world_id"], {})
     energy_s = ("empty: no life, so no oil, gas or coal" if en and not (en.get("oil_fields") or en.get("gas_fields") or en.get("coalfields")) else f"{en['oil_fields']:,} oil, {en['gas_fields']:,} gas fields, {en['coalfields']} coalfields" if en else ("none: no life, so no oil, gas or coal" if w_ and (w_.get("packages") or {}).get("energy") is None else "not installed"))
     gr = b_.get("ground")
-    surface_s = f"v{bk['version']}, {bk.get('bytes', 0) / 1e9:.2f} GB in the store" if bk else (f"ground: {gr['path'].split('/')[-1]} (planet-unfold)" if gr else "none")
+    surface_s = f"v{bk['version']}, {bk.get('bytes', 0) / 1e9:.2f} GB in the store" if bk else (f"ground: {gr['path'].split('/')[-1]} ({gr['format']})" if gr else "none")
     hist = "history" if (w_.get("packages") or {}).get("history") else ""
     rows.append(row("ok", (b_.get("identity") or {}).get("name", ""), sv["world_id"], f"{sv.get('deposits', 0):,} deposits in {sv.get('districts', 0):,} districts; land {sv.get('land_share', 0):.0%}", energy_s, surface_s + (f"; {hist} in the store" if hist else ""), ", ".join(sv.get("in_store") or []) or "all copied", w_.get("status", "no index")))
 for wid, w_ in sorted(_index.items()):
@@ -2699,6 +2718,8 @@ for _kind, _title, _root, _dir, _schema, _std in _REG:
         _recs.append(_r)
         if _r["key"]:
             KEY_PAGES[_r["key"]] = f"x:{_kind}:{_r['slug']}"
+    if _kind == "planet-levels":
+        _recs.sort(key=lambda rec: -rec["span"])
     _sch = flatten_schema(yaml.safe_load(open(os.path.join(TREE, _schema), encoding="utf-8")), os.path.join(TREE, _schema))
     _groups = {}
     for _g, _d in (_sch.get("properties") or {}).items():

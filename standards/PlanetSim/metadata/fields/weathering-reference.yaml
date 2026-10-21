@@ -10,7 +10,7 @@ producer:
   where: stages/coupled.py step
   key: state['W_ref']
 levels:
-- planet-level.planet
+- planet-level.10000-km
 status: draft
 basis:
 - of:

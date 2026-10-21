@@ -5,8 +5,6 @@ identity:
   about: 'A relief landmark of the fluvial family: water-carved land.'
 register: landmark
 family: fluvial
-level:
-- 1
 geometry: point / polygon
 properties:
 - field: incision
@@ -17,15 +15,14 @@ wave: 1
 built: true
 landmark: planet-landmark.water-carved-land
 levels:
-- planet-level.planet
-- planet-level.cluster
+- planet-level.10000-km
+- planet-level.1000-km
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

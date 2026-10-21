@@ -5,8 +5,6 @@ identity:
   about: 'A relief feature of the fluvial family: meander belt.'
 register: feature
 family: fluvial
-level:
-- 2
 geometry: polygon + loops
 properties:
 - field: wavelength
@@ -19,7 +17,7 @@ overrides: migration
 wave: 3
 built: false
 levels:
-- planet-level.pattern
+- planet-level.100-km
 status: draft
 basis:
 - note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical
@@ -28,7 +26,6 @@ basis:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger
