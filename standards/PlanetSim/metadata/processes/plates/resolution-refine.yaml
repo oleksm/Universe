@@ -154,6 +154,34 @@ params:
   unit: '1'
   meaning: run() default samples
   source: stages/plates.py:776
+- name: adaptive
+  value: 0.0
+  unit: '1'
+  tier: invented
+  meaning: '1: the lattice is adaptive (the ladder, 20 Oct 2026): at each stage, and every refine every of time, the Fibonacci lattice of n / fine fraction^2 points thinned to the density the record asks for: finer within refine reach
+    of the active lines (sutures, arc fronts, orogen axes, thrust fronts, arc chains, folds, rift margins, shoulders, floors, scarps, typed coasts, escarpments) and the coast; 0: the Fibonacci lattice of the stage count'
+  source: planets, 20 Oct 2026 (chosen); forge models/plates/refine.rs
+- name: fine fraction
+  value: 0.5
+  unit: '1'
+  tier: invented
+  meaning: 'the fine spacing as a fraction of the stage spacing (0.5: four times the density on the lines)'
+  source: planets, 20 Oct 2026 (chosen); forge models/plates/refine.rs
+- name: refine reach
+  value: 300000.0
+  unit: m
+  tier: invented
+  meaning: the spacing ramps from the fine fraction at an active line to the stage spacing this far from it
+  source: 'planets, 20 Oct 2026 (chosen: the entropy map zones belts and margins by 300 km); forge models/plates/refine.rs'
+- name: refine every
+  value: 1.57788e15
+  unit: s
+  tier: invented
+  said_as:
+    unit: Myr
+    factor: 3.15576e13
+  meaning: 'an adaptive lattice is laid again this often (the lines move with their plates; the crust re-lays on it); 0: only at the stages'
+  source: 'planets, 20 Oct 2026 (chosen: the re-lay cadence, 50 Myr); forge models/plates/refine.rs'
 random_draws:
 - _refine takes rng but draws nothing.
 invariants:
