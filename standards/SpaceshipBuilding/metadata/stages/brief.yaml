@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schema/ship-stage.schema.yaml
+identity:
+  key: ship-stage.brief
+  name: G0 Brief
+  about: Reusable G0 Brief gate; prerequisite order does not pre-approve any ship.
+status: draft
+implementation: mixed
+owner: owner
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 5.1 Use the existing release state machine
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+order: 0
+depends_on: []
+entry:
+- Authorized design study; existing owner constraints and holds identified.
+exit:
+- Mission, identity, scope, unknowns and success tests recorded.
+failure:
+- Resolve essential missing inputs before detailed geometry.
+inputs: []
+outputs:
+- ship-artifact.requirements
+- ship-artifact.assumptions
+- ship-artifact.authoring-sidecar
+checks:
+- ship-check.requirements
+rules:
+- ship-rule.lifecycle
+- ship-rule.authority
+- ship-rule.claim-boundaries
+decision: Carry existing authorization/delegation forward. Owner resolves identity and major aesthetic/scope
+  forks; technical roles resolve routine repairs within those constraints.

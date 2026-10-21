@@ -1,0 +1,53 @@
+# yaml-language-server: $schema=../../schema/ship-artifact.schema.yaml
+identity:
+  key: ship-artifact.mechanism-spec
+  name: Mechanism and state contract
+  about: What moves, how is it supported, and what states are permitted?
+status: draft
+implementation: proposed
+owner: blender
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 4.2 Resolve the complete ramp and landing mechanism
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+purpose: What moves, how is it supported, and what states are permitted?
+contents:
+- Owning hierarchy, fixed/moving parts, pivots, axes, limits and neutral pose.
+- Actuator anchors, closed length, stroke and overlap; cable/hose endpoints, length and bend model.
+- State storyboard, dependencies/interlocks, landing/contact assumptions and access route.
+- Sampling/adaptive refinement method, worst-clearance witness and intended runtime mapping.
+- 'Detailed authored information and examples:
+
+  For a belly ramp, specify the opening boundary, hinge line, moving leaf, deployment direction relative to
+  cockpit, landing stance, operating limits, latch state, actuator anchors and passenger/cargo route. “Forward-opening”
+  is insufficient without a side-section trajectory diagram. Define closed, unlocked, first-open, intermediate,
+  fully open and entry states.
+
+
+  The hinge must attach to structure; an actuator needs both fixed and moving anchors, closed length, usable
+  stroke and overlap. Hoses or cables need endpoint frames, length, bend criteria and an approximation model.
+  Landing gear needs a support/contact interpretation and declared ground conditions. These checks precede
+  detailed skins, seals and decorative joints.
+
+
+  Combined-state checks cover gear down with ramp moving, ramp open with a person entering, hatch open with
+  service access, and all other permitted interactions. Forbidden configurations belong in an interlock contract;
+  a geometry test that avoids them does not prove runtime enforcement. Sample endpoints, intermediate states
+  and near-contact intervals, retaining the worst-case pose and object pair. **Sampled clearance is a screen,
+  not proof of continuous collision freedom.** Stronger claims require conservative bounds or continuous methods.
+
+
+  FREEFALL motion uses its own static-model-plus-description contract. Blender drivers remain authoring aids
+  unless an actual consumer supports them. The existing motion checker and runtime playback have distinct scopes;
+  a plain-axis check can pass while game consumption remains pending. (Motion proposal and schema evolution
+  (registry repository `docs/proposals/plant-motion.md`), motion schema (registry repository `docs/formats/freefall-motion-1.schema.yaml`))'
+boundary: Blender drivers are not runtime support; sample clearance does not prove all continuous poses.
+consumers:
+- blender
+- ships
+rules:
+- ship-rule.coordinate-profiles
+- ship-rule.claim-boundaries
+checks:
+- ship-check.motion-coverage
+- ship-check.runtime

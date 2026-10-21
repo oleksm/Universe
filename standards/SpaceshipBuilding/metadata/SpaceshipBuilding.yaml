@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../root.schema.yaml
+identity:
+  key: root.spaceship-building
+  name: Spaceship Building
+note: 'Reusable definitions for designing and building spaceships: authoring artifacts,
+  design stages, verification checks, workflow rules and unresolved decision types.
+  Family, type and instance inputs remain in project authoring files; the existing
+  .ship.yaml runtime schema and delivery/installer contracts retain their authority.
+  Definitions describe required evidence and distinguish proposed tools from implemented
+  capabilities. This root neither starts a ship build nor changes existing modelling
+  holds.'

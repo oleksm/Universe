@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/ship-decision.schema.yaml
+identity:
+  key: ship-decision.engineering-depth
+  name: Engineering claim scope
+  about: Reusable decision definition, not a selected design value or approval.
+status: draft
+implementation: proposed
+owner: owner
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 7.4 Decisions still needed and proposed defaults
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+question: Which engineering claims are required now and which remain provisional?
+proposed_default: Visual prototype with separately listed unqualified systems unless stronger qualification
+  is explicitly required.
+affects:
+- Decisions still needed and proposed defaults
+resolution: The responsible role records the actual choice, authority/delegation, candidate inputs, evidence
+  and affected requirements in project files; unresolved essential decisions block dependent work.
+rules:
+- ship-rule.authority
+- ship-rule.claim-boundaries

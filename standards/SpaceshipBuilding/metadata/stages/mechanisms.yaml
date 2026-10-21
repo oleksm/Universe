@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=../../schema/ship-stage.schema.yaml
+identity:
+  key: ship-stage.mechanisms
+  name: G4 Mechanisms
+  about: Reusable G4 Mechanisms gate; prerequisite order does not pre-approve any ship.
+status: draft
+implementation: mixed
+owner: blender
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 5.1 Use the existing release state machine
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+order: 4
+depends_on:
+- ship-stage.architecture
+entry:
+- Openings, owning structures, permitted states and frame contracts defined.
+exit:
+- Storyboard, supported joints, sample/combined-state evidence and limitations recorded.
+failure:
+- Rollback the mechanism candidate while retaining shell baseline and witnesses.
+inputs:
+- ship-artifact.interfaces
+- ship-artifact.spatial-layout
+- ship-artifact.region-spec
+outputs:
+- ship-artifact.mechanism-spec
+- ship-artifact.evidence
+checks:
+- ship-check.motion-coverage
+- ship-check.construction
+rules:
+- ship-rule.lifecycle
+- ship-rule.authority
+- ship-rule.claim-boundaries
+decision: Carry existing authorization/delegation forward. Owner resolves identity and major aesthetic/scope
+  forks; technical roles resolve routine repairs within those constraints.

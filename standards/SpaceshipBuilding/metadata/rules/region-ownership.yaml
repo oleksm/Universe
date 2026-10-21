@@ -1,0 +1,62 @@
+# yaml-language-server: $schema=../../schema/ship-rule.schema.yaml
+identity:
+  key: ship-rule.region-ownership
+  name: Regional source ownership
+  about: Give each region and shared boundary one authoritative source and controlled consumers.
+status: draft
+implementation: proposed
+owner: blender
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 3.3 Define named regions and shared boundaries
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+statement: 'Give each region and shared boundary one authoritative source and controlled consumers.
+
+
+  Regions follow meaningful shape and construction changes: cockpit pod, canopy, neck, shoulder, belly, stern,
+  nacelles or fins. They are not arbitrary equal-length slices. Each has one authoritative source: procedural
+  generator, editable manual surface, referenced component or derived output. A generator may replace only
+  its owned output collections.
+
+
+  ```yaml
+
+  id: REG-COCKPIT
+
+  source_kind: editable_sections
+
+  source: source/cockpit-profiles.yaml
+
+  requirements: [REQ-COCKPIT-01, REQ-PILOT-VIEW-01]
+
+  references: [REF-COCKPIT-SIDE-02]
+
+  owned_collections: [Hull_Cockpit, Canopy_Frame]
+
+  interfaces: [IF-COCKPIT-NECK-01]
+
+  read_only_neighbors: [REG-NECK]
+
+  acceptance_views: [CAM-TOP, CAM-SIDE, CAM-FRONT, CAM-PILOT]
+
+  checks: [CHECK-PILOT-CLEARANCE, CHECK-CANOPY-PROFILE]
+
+  allowed_auto_changes: [repair_normals, remove_duplicate_faces]
+
+  ```
+
+
+  The region record also carries editable parameters, permitted ranges, keep-in/out volumes, mass ownership,
+  protected landmarks, material roles and downstream dependencies. Boundary curves are owned once and consumed
+  by both sides. An intentional crease, tangent-continuous join and curvature-continuous join are different
+  contracts; coincident vertices alone do not satisfy all three.'
+applies_to:
+- Define named regions and shared boundaries
+verification:
+- Generated collections are the only allowed mutation targets.
+- Manual inputs and read-only neighbors retain their hashes unless a recorded design change reopens them.
+limitations:
+- This is a reusable workflow definition, not a ship approval or evidence that a proposed tool exists.
+related:
+- ship-artifact.interfaces
+- ship-artifact.region-spec

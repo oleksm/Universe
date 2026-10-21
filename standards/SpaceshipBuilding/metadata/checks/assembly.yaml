@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/ship-check.schema.yaml
+identity:
+  key: ship-check.assembly
+  name: Runtime document and reuse validation
+  about: Runtime document and reuse validation for an exact candidate; this record defines the check, not its
+    result.
+status: draft
+implementation: mixed
+owner: ships
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 2.4 Add an authoring sidecar, not another runtime format
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 6.1 Use a complete evidence checklist
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+method:
+- Validate the existing .ship.yaml with maintained schema/CLI.
+- Check stable IDs, pinned reusable component references, mounting transforms and no duplicated BOM instances.
+- Roundtrip supported author data through Studio without dropping required fields.
+evidence:
+- Validator output, ID/placement comparison and lock/reference report.
+failure: Retain the failing witness and last passing candidate. Block only dependent claims/stages; repair
+  or obtain the missing decision, then rerun affected checks.
+scope: assembly
+artifacts:
+- ship-artifact.authoring-sidecar
+- ship-artifact.interfaces
+coverage: Scope is the declared candidate, inputs, methods and consumer features. No engineering or unsampled/runtime
+  claim is inferred.
+rules:
+- ship-rule.claim-boundaries

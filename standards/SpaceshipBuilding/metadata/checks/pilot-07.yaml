@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/ship-check.schema.yaml
+identity:
+  key: ship-check.pilot-07
+  name: P07 Ramp usability
+  about: Pilot acceptance definition; no pilot ship or passing result is created.
+status: draft
+implementation: proposed
+owner: blender
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 7.2 Pilot acceptance tests
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+method:
+- Demonstrate the complete forward-opening ramp at its declared landing stance, with hinge support and both
+  actuator anchors.
+evidence:
+- Documented landing stance, supported hinge/actuator, directional trajectory and usable passage
+- Exact candidate inputs, method, expected/observed result and retained failure witness.
+failure: Do not declare the pilot complete while this required test fails or lacks evidence. Preserve the candidate
+  and correct only its affected scope.
+scope: motion
+coverage: A proposed test definition, not evidence of implemented tooling. Sampling limits and held engineering
+  work remain explicit.
+artifacts:
+- ship-artifact.evidence
+rules:
+- ship-rule.pilot-scope
+- ship-rule.claim-boundaries

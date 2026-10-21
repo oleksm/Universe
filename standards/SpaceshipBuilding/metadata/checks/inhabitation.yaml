@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/ship-check.schema.yaml
+identity:
+  key: ship-check.inhabitation
+  name: Crew cargo and service access
+  about: Crew cargo and service access for an exact candidate; this record defines the check, not its result.
+status: draft
+implementation: mixed
+owner: blender
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 3.5 Co-design cockpit, routes and hull
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 6.1 Use a complete evidence checklist
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+method:
+- Exercise actual fixture ingress, movement, seated reach/view and equipment removal routes.
+- Check declared emergency-route scope, narrow obstacles and service-volume preservation.
+evidence:
+- Pose/route witnesses, pilot views and minimum clearances with fixture limitations.
+failure: Retain the failing witness and last passing candidate. Block only dependent claims/stages; repair
+  or obtain the missing decision, then rerun affected checks.
+scope: inhabitation
+artifacts:
+- ship-artifact.spatial-layout
+coverage: Scope is the declared candidate, inputs, methods and consumer features. No engineering or unsampled/runtime
+  claim is inferred.
+rules:
+- ship-rule.claim-boundaries

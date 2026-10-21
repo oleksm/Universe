@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=../../schema/ship-stage.schema.yaml
+identity:
+  key: ship-stage.production
+  name: G6 Production
+  about: Reusable G6 Production gate; prerequisite order does not pre-approve any ship.
+status: draft
+implementation: mixed
+owner: blender
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 5.1 Use the existing release state machine
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+order: 6
+depends_on:
+- ship-stage.design-lock
+entry:
+- Stable form, ownership, interfaces and agreed detail budget.
+exit:
+- Evaluated geometry, materials, export/collision representations and measured costs have current evidence.
+failure:
+- Repair only the owning region and invalidate downstream evidence by dependency.
+inputs:
+- ship-artifact.region-spec
+- ship-artifact.build-inputs
+- ship-artifact.mechanism-spec
+outputs:
+- ship-artifact.region-spec
+- ship-artifact.performance-budget
+- ship-artifact.evidence
+- ship-artifact.release-package
+checks:
+- ship-check.mesh-integrity
+- ship-check.hull-geometry
+- ship-check.material-export
+- ship-check.raw-port-frames
+- ship-check.construction
+rules:
+- ship-rule.lifecycle
+- ship-rule.authority
+- ship-rule.claim-boundaries
+decision: Carry existing authorization/delegation forward. Owner resolves identity and major aesthetic/scope
+  forks; technical roles resolve routine repairs within those constraints.

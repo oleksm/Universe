@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/ship-artifact.schema.yaml
+identity:
+  key: ship-artifact.defect-record
+  name: Reproducible defect report
+  about: What failed and what is the bounded repair?
+status: draft
+implementation: proposed
+owner: blender
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 5.5 Record defects and recover without endless regeneration
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+purpose: What failed and what is the bounded repair?
+contents:
+- Failing requirement/check, candidate and object IDs, pose/geometric witness.
+- Expected/observed result, severity, suspected cause, repair scope and attempts.
+- Rollback candidate, affected evidence and recovery owner.
+boundary: Unsuccessful repair does not invalidate unrelated accepted geometry.
+consumers:
+- blender
+- ships
+rules:
+- ship-rule.recovery

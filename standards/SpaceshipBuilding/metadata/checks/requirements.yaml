@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/ship-check.schema.yaml
+identity:
+  key: ship-check.requirements
+  name: Requirements coverage
+  about: Requirements coverage for an exact candidate; this record defines the check, not its result.
+status: draft
+implementation: mixed
+owner: ships
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 2.2 Keep three complementary specification layers
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 6.1 Use a complete evidence checklist
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+method:
+- Trace every must requirement and assumption to an owner, current artifact and check.
+- Confirm hard function and visual identity are separately verified.
+evidence:
+- Requirement-to-check matrix with unresolved conflicts and candidate input hashes.
+failure: Retain the failing witness and last passing candidate. Block only dependent claims/stages; repair
+  or obtain the missing decision, then rerun affected checks.
+scope: requirements
+artifacts:
+- ship-artifact.requirements
+- ship-artifact.assumptions
+coverage: Scope is the declared candidate, inputs, methods and consumer features. No engineering or unsampled/runtime
+  claim is inferred.
+rules:
+- ship-rule.claim-boundaries

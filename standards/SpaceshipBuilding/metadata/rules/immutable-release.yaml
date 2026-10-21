@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=../../schema/ship-rule.schema.yaml
+identity:
+  key: ship-rule.immutable-release
+  name: Immutable releases and provenance
+  about: Freeze accepted contents and use the existing installer for manifests and pointers.
+status: draft
+implementation: mixed
+owner: installer
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 6.4 Freeze releases and retain their provenance
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+statement: 'Freeze accepted contents and use the existing installer for manifests and pointers.
+
+
+  Each candidate preserves source, inputs, generator revision, toolchain, export, motion/collision definitions
+  where supported, reports and previews. Exact acceptance freezes those contents. Further changes create a
+  new candidate and release version. The existing installer owns immutable manifests, hashes and registry pointers;
+  the authoring coordinator supplies inputs and evidence, not hand-edited manifests. (Installation contract
+  (registry repository `docs/asset-contract.md`))
+
+
+  A release''s compatibility entry names tested consumer revision and feature set. An unsupported feature stays
+  pending or blocks the relevant promised use. If only a visual prototype is accepted, label it that way rather
+  than weakening tests until it resembles a production release. Reopening an old release for a new renderer
+  creates new compatibility evidence without silently changing its original files.'
+applies_to:
+- Freeze releases and retain their provenance
+verification:
+- Changed contents require a new candidate/version.
+- Consumer compatibility evidence names revision/features separately from package acceptance.
+limitations:
+- This is a reusable workflow definition, not a ship approval or evidence that a proposed tool exists.
+related:
+- ship-artifact.release-package
+- ship-decision.release

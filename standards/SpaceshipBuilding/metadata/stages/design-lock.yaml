@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=../../schema/ship-stage.schema.yaml
+identity:
+  key: ship-stage.design-lock
+  name: G5 Design lock
+  about: Reusable G5 Design lock gate; prerequisite order does not pre-approve any ship.
+status: draft
+implementation: mixed
+owner: owner
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 5.1 Use the existing release state machine
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+order: 5
+depends_on:
+- ship-stage.mechanisms
+entry:
+- Functional blockout and major mechanism design reviewed.
+exit:
+- Primary and secondary form accepted in complete-ship context with explicit unresolved qualifications.
+failure:
+- Identity-changing repairs reopen the visual gate; no silent design drift.
+inputs:
+- ship-artifact.silhouette-study
+- ship-artifact.spatial-layout
+- ship-artifact.mechanism-spec
+outputs:
+- ship-artifact.requirements
+- ship-artifact.evidence
+checks:
+- ship-check.identity
+- ship-check.inhabitation
+- ship-check.construction
+rules:
+- ship-rule.lifecycle
+- ship-rule.authority
+- ship-rule.claim-boundaries
+decision: Carry existing authorization/delegation forward. Owner resolves identity and major aesthetic/scope
+  forks; technical roles resolve routine repairs within those constraints.

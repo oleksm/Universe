@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/ship-check.schema.yaml
+identity:
+  key: ship-check.raw-port-frames
+  name: Independent raw export frame check
+  about: Independent raw export frame check for an exact candidate; this record defines the check, not its
+    result.
+status: draft
+implementation: mixed
+owner: blender
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 4.1 Use explicit local and global frames
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 6.1 Use a complete evidence checklist
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+method:
+- Read raw GLB hierarchy and accumulate transforms independently of exporter/importer helpers.
+- Compare required unique marker positions, facing, roll, parent and scale to the selected frame contract.
+- Use an asymmetric fixture and intentionally rotated marker to ensure orientation failure is detectable.
+evidence:
+- Per-port expected/actual transforms, errors/tolerances and negative-test witness.
+failure: Retain the failing witness and last passing candidate. Block only dependent claims/stages; repair
+  or obtain the missing decision, then rerun affected checks.
+scope: export
+artifacts:
+- ship-artifact.interfaces
+- ship-artifact.release-package
+coverage: Scope is the declared candidate, inputs, methods and consumer features. No engineering or unsampled/runtime
+  claim is inferred.
+rules:
+- ship-rule.claim-boundaries

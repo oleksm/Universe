@@ -239,6 +239,8 @@ def key_of(rel, rec):
         if kind in ("equipment", "gates"):
             return {"equipment": "equipment.", "gates": "gate."}[kind]
         return {"materials": "material.", "processes": "process.", "modules": "module.", "goods": "good.", "hulls": "hull.", "mill-stock": "stock.", "stock": "stock.", "assemblies": "assembly.", "parts": "part.", "structures": "structure.", "markets": "market.", "buildings": "building.", "mounts": "mount.", "plant-mounts": "plant-mount.", "units": "unit.", "layouts": "layout.", "connectors": "connector.", "runs": "run.", "products": "product.", "interfaces": "interface.", "sights": "sight.", "rules": "rule.", "packages": "package.", "templates": "template.", "panels": "panel.", "arrangements": "arrangement.", "adapters": "adapter."}[kind] + low
+    if root == "SpaceshipBuilding":
+        return {"stages": "ship-stage.", "artifacts": "ship-artifact.", "checks": "ship-check.", "rules": "ship-rule.", "decisions": "ship-decision."}[p[2]] + low
     if root == "MakerHouse":
         return "org."
     if root == "People":
@@ -302,6 +304,44 @@ def motion_interlocks(rec):
     return out
 
 
+def workflow_dependencies(records):
+    """Definition prerequisites must form a DAG; related/check links are not prerequisites.
+
+    Ship instances and evidence state live outside this root. Only explicit depends_on
+    edges of stage/artifact definitions participate, so consuming and producing the
+    same authoring artifact at different gates does not invent a dependency cycle.
+    """
+    nodes = {key: (path, rec) for key, path, rec, _ in records
+             if key.split(".")[0] in ("ship-stage", "ship-artifact")}
+    found, active, done = [], [], set()
+
+    def visit(key):
+        if key in active:
+            path, _ = nodes[key]
+            found.append((path, "depends_on: cycle " + " -> ".join(active[active.index(key):] + [key])))
+            return
+        if key in done:
+            return
+        active.append(key)
+        path, rec = nodes[key]
+        deps = rec.get("depends_on", [])
+        if not isinstance(deps, list) or any(not isinstance(d, str) for d in deps):
+            active.pop()
+            done.add(key)
+            return  # the schema reports malformed prerequisites
+        if len(deps) != len(set(deps)):
+            found.append((path, "depends_on: duplicate prerequisite"))
+        for dep in deps:
+            if dep in nodes:
+                visit(dep)
+        active.pop()
+        done.add(key)
+
+    for key in sorted(nodes):
+        visit(key)
+    return found
+
+
 def check_all():
     """Every record against its schema: (file, what does not fit)."""
     found, unheld, named, labels = [], [], [], {}
@@ -359,6 +399,7 @@ def check_all():
             found.append((full, f"{at}: {key!r} is no record's key"))
         elif key.split(".")[0] not in kinds:
             found.append((full, f"{at}: {key} is not {' or '.join(('an ' if k[0] in 'aeiou' else 'a ') + k for k in kinds)}"))
+    found += workflow_dependencies(SEEN)
     # (A record the tracker holds as complete may not have changed: standards/changes.yaml.)
     import tracker
     found += list(tracker.check(SEEN))

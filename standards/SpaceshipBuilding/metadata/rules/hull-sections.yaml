@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=../../schema/ship-rule.schema.yaml
+identity:
+  key: ship-rule.hull-sections
+  name: Hull stations and guide curves
+  about: Place semantic stations at shape events and preserve profile correspondence through each loft.
+status: draft
+implementation: proposed
+owner: blender
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 3.4 Author stations, profiles and guide curves
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+statement: 'Place semantic stations at shape events and preserve profile correspondence through each loft.
+
+
+  Place stations at shape events: nose, pilot eye, canopy apex, canopy rear, neck minimum, shoulder onset,
+  maximum beam, ramp corners, equipment bulkheads and stern interface. Each station specifies its local plane,
+  centerline offset, profile control points and semantic correspondence. Longitudinal dorsal, keel and shoulder
+  curves guide transitions between sections. Port/starboard symmetry is explicit and can be intentionally broken.
+
+
+  Station order and section orientation must be checked before lofting. A profile''s vertex correspondence
+  cannot change accidentally between sections: an upper chine must not connect to a lower shoulder because
+  an array was reordered. Changes in topology—window openings, branching nacelles, a split stern—require an
+  explicit transition region or manual patch with its own boundary contract. They are not ordinary parameter
+  edits.
+
+
+  A local MC-07 helper already lofts X-ordered sections with matching vertex counts; Blender also documents
+  bridging loops with twist and interpolation controls. Neither provides an automatic general-purpose ship
+  designer. The proposed tool should retain profile editing and purpose-built surfaces instead of forcing every
+  cockpit into one fixed polygon ring. (MC-07 helper (external repository `blender:build_mining_ship.py:361`),
+  [Blender Bridge Edge Loops](https://docs.blender.org/manual/en/4.4/modeling/meshes/editing/edge/bridge_edge_loops.html))
+
+
+  Review section overlays on evaluated geometry, not only control curves. For each edited station, compare
+  local interior clearance, skin/service allowance, neighboring tangents and registered silhouette. Choose
+  per-region tolerances from the actual design scale and output purpose; there is no universal station spacing
+  or millimetre tolerance in this proposal.'
+applies_to:
+- Author stations, profiles and guide curves
+verification:
+- Check ordering, winding and semantic vertex correspondence.
+- Branching or changed topology uses an explicit transition region; inspect evaluated section overlays.
+limitations:
+- This is a reusable workflow definition, not a ship approval or evidence that a proposed tool exists.
+related:
+- ship-stage.architecture

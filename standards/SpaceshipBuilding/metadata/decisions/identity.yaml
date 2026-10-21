@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/ship-decision.schema.yaml
+identity:
+  key: ship-decision.identity
+  name: Ship identity
+  about: Reusable decision definition, not a selected design value or approval.
+status: draft
+implementation: proposed
+owner: owner
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 2.3 Establish authority before generating geometry
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+question: Which mission and visual character should this type preserve?
+proposed_default: Record a small set of distinctive traits and unwanted alternatives before detail.
+affects:
+- Establish authority before generating geometry
+resolution: The responsible role records the actual choice, authority/delegation, candidate inputs, evidence
+  and affected requirements in project files; unresolved essential decisions block dependent work.
+rules:
+- ship-rule.authority
+- ship-rule.claim-boundaries

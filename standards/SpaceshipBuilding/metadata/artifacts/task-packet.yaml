@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=../../schema/ship-artifact.schema.yaml
+identity:
+  key: ship-artifact.task-packet
+  name: Bounded modelling task
+  about: What exact change is authorized for this region?
+status: draft
+implementation: proposed
+owner: blender
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 5.3 Define bounded AI task packets
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+purpose: What exact change is authorized for this region?
+contents:
+- Candidate and region IDs, goal, requirements and reference crops.
+- Permitted edits, frozen neighbors/boundaries, prohibited changes and test/view outputs.
+- Dependency impact before mutation and escalation options if infeasible.
+- "Detailed authored information and examples:\nA task packet contains candidate ID, target region, requirement\
+  \ IDs, reference crops, permitted edits, fixed neighbors/interfaces, tests and required output views. It\
+  \ specifies the intended result, not merely a mesh operation. The agent first reports affected dependencies,\
+  \ then performs the smallest coherent edit and records the result.\n\n```text\nCandidate: candidate-004;\
+  \ region: REG-COCKPIT\nGoal: recover the accepted hawk-like canopy profile in REF-COCKPIT-SIDE-02.\nPreserve:\
+  \ one pilot fixture, IF-COCKPIT-NECK-01, accepted cockpit rear station,\n          REG-NECK geometry and\
+  \ all equipment instances.\nMay edit: canopy roof guide and two cockpit profile stations within recorded\
+  \ bounds.\nMust not: widen the cabin to fit an unresolved fixture; regenerate the whole hull.\nEvidence:\
+  \ same-camera side/front/top overlays, pilot-view mask, section clearance,\n          interface position/tangent\
+  \ check, source hashes for untouched regions.\nIf infeasible: retain candidate and show two local alternatives\
+  \ with trade-offs.\n```\n\nA mechanism packet similarly names pivots, anchors, allowed states, required source/export\
+  \ comparisons and runtime limitations. A review packet requests diagnosis before alteration. Prompt templates\
+  \ are proposed helpers, not an autonomous authority to reinterpret the owner's brief."
+boundary: A prompt cannot reinterpret the brief or authorize unrelated geometry changes.
+consumers:
+- blender
+- ships
+rules:
+- ship-rule.authority
+- ship-rule.region-ownership

@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../schema/ship-rule.schema.yaml
+identity:
+  key: ship-rule.claim-boundaries
+  name: Evidence states and claims
+  about: Separate geometry, package, placement, runtime and engineering readiness.
+status: draft
+implementation: mixed
+owner: blender
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 6.2 Store enough evidence to reproduce a result
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+statement: 'Separate geometry, package, placement, runtime and engineering readiness.
+
+
+  Each check record contains check and requirement IDs, candidate ID, input/spec/script/export hashes, frame
+  profile, command and arguments, timestamp, reviewer, method, tolerance with authority, expected/observed
+  values, worst-case witness, images and limitations. States are pending, pass, fail, blocked, stale or not-applicable-with-reason.
+  A waiver names its owner and expires when its responsible input changes.
+
+
+  Maintain separate statuses for `geometry_ready`, `package_valid`, `placement_verified`, `runtime_verified`
+  and `engineering_qualified`. “Reader compiles” is not “GPU renders”; “axes validate” is not “game enforces
+  sequencing”; “mesh volume measured” is not “mass qualified.” Final summaries state exactly which representations
+  and consumers were tested.'
+applies_to:
+- Store enough evidence to reproduce a result
+verification:
+- A definition is not an executed result.
+- Record candidate hashes, method and limits; unavailable checks stay blocked or pending, never silently pass.
+limitations:
+- This is a reusable workflow definition, not a ship approval or evidence that a proposed tool exists.
+related:
+- ship-artifact.evidence

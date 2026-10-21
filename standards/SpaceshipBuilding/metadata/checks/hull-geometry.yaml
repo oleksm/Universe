@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schema/ship-check.schema.yaml
+identity:
+  key: ship-check.hull-geometry
+  name: Hull sections and regional joins
+  about: Hull sections and regional joins for an exact candidate; this record defines the check, not its result.
+status: draft
+implementation: mixed
+owner: blender
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 3.3 Define named regions and shared boundaries
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 3.4 Author stations, profiles and guide curves
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 6.1 Use a complete evidence checklist
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+method:
+- Check station ordering, winding and semantic vertex correspondence.
+- Compare evaluated section cuts and boundary continuity with local contracts; verify protected neighbors.
+evidence:
+- Section overlays, seam witnesses and unchanged-region hashes.
+failure: Retain the failing witness and last passing candidate. Block only dependent claims/stages; repair
+  or obtain the missing decision, then rerun affected checks.
+scope: geometry
+artifacts:
+- ship-artifact.region-spec
+- ship-artifact.interfaces
+coverage: Scope is the declared candidate, inputs, methods and consumer features. No engineering or unsampled/runtime
+  claim is inferred.
+rules:
+- ship-rule.claim-boundaries

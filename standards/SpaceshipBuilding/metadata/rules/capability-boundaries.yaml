@@ -1,0 +1,61 @@
+# yaml-language-server: $schema=../../schema/ship-rule.schema.yaml
+identity:
+  key: ship-rule.capability-boundaries
+  name: Existing and proposed capabilities
+  about: Label each capability existing, mixed or proposed against an inspected implementation.
+status: draft
+implementation: mixed
+owner: ships
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 1.3 What exists and what this proposal adds
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+statement: 'Label each capability existing, mixed or proposed against an inspected implementation.
+
+
+  | Capability | Evidence at research snapshot | Treatment in this proposal |
+
+  |---|---|---|
+
+  | `.ship.yaml` parser, validation and Studio projection | Implemented according to current documentation
+  and inspected CLI source | Reuse; do not create a competing runtime schema |
+
+  | Registry models, family templates and installation tools | Existing local contracts and packages | Reference
+  and pin their versions |
+
+  | Profile extrusion and matching-profile loft helpers | Present in MC-07 generator | Reuse selectively, after
+  separating its coordinate assumptions |
+
+  | Static GLB plus `freefall-motion/1` | Existing schema and validation tools | Use only supported mechanisms;
+  test consumer behavior separately |
+
+  | Delivery states and hash-bound evidence runner | Existing asset-delivery workflow | Extend with ship-specific
+  checks rather than replace |
+
+  | Reference atlas and visual-grammar sidecar | Proposed | Implement as authoring files first |
+
+  | Region dependency compiler and safe partial regeneration | Proposed | Prove on a bounded pilot before generalizing
+  |
+
+  | Generic continuous clearance certification | Not established | Never infer from sampled poses |
+
+  | Qualified automatic structural mounting | Blocked by incomplete data/contracts in relevant cases | Preserve
+  explicit qualification limits |
+
+  | Full ship GPU, motion and walkability harness | Not audited by this research | Require feature-specific
+  runtime evidence |
+
+
+  The local research inspected registry revision `c5d3861f886c8df5e6d78206f0a8c04ee7cbe7ec` and ships revision
+  `24152fd12bb42aa6a3f54cd5f795ccbd37c9c629`. These are worktree snapshots, not claims of merger to main. No
+  compilation, GPU session or engineering qualification was performed for this document. Current implementation
+  documentation takes precedence over older roadmap prose. (Ship-code implementation (external repository `universe-ships:docs/ship-code.md`),
+  CLI source (external repository `universe-ships:crates/game/src/interior/ship_code.rs:1204`))'
+applies_to:
+- What exists and what this proposal adds
+verification:
+- Inspect maintained schema/consumer instead of treating old roadmap prose as current behavior.
+- Keep unexecuted runtime checks pending.
+limitations:
+- This is a reusable workflow definition, not a ship approval or evidence that a proposed tool exists.
+related: []

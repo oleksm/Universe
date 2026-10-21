@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../schema/ship-rule.schema.yaml
+identity:
+  key: ship-rule.implementation-phases
+  name: Implementation roadmap
+  about: Build authoring discipline, local generation, representation checks, assembly projection and runtime
+    proof in measured phases.
+status: draft
+implementation: proposed
+owner: ships
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 7.3 Implement in phases with measurable exits
+  note: Owner-authorized workflow definition; project values and results are not instantiated.
+statement: 'Build authoring discipline, local generation, representation checks, assembly projection and runtime
+  proof in measured phases.
+
+
+  | Phase | Build or formalize | Exit condition |
+
+  |---|---|---|
+
+  | A: authoring discipline | Sidecar, IDs, reference atlas, camera set and decision records | One manually
+  orchestrated pilot has traceable design gates |
+
+  | B: regional generation | Owned collections, profile inputs, shared boundaries, dependency cache and manual-source
+  preservation | P02–P04, P12–P14 pass |
+
+  | C: representation checks | Raw-frame fixture, evaluated/source/export comparisons and mechanism evidence
+  adapter | P07–P09 pass with explicit limitations |
+
+  | D: assembly projection | Supported sidecar-to-`.ship.yaml` mapping and locked component references | P10–P11
+  and roundtrip validation pass |
+
+  | E: runtime proof | Engine-owned walk, placement, playback and performance test scenes | Claimed runtime
+  features have actual consumer evidence |
+
+  | F: controlled expansion | Additional hull families and larger interior zones | Second type demonstrates
+  reuse without erasing distinctive identity |
+
+
+  Measure elapsed effort, repeated defects, avoidable regeneration, owner decisions and stale-evidence incidents
+  during the pilot. These observations should determine further automation. Do not promise a production schedule
+  from a conceptual specification. A full fleet generator is justified only after a second distinct type shows
+  that the workflow generalizes beyond one script.'
+applies_to:
+- Implement in phases with measurable exits
+verification:
+- Use pilot failures to prioritize automation.
+- A second distinct type demonstrates reuse before claiming a general fleet generator.
+limitations:
+- This is a reusable workflow definition, not a ship approval or evidence that a proposed tool exists.
+related: []
