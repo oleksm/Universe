@@ -2991,6 +2991,7 @@ dependencies = [
  "universe-prof",
  "universe-ship-design",
  "universe-sim",
+ "universe-terrain",
  "universe-terrain-contact",
 ]
 
@@ -3095,6 +3096,19 @@ dependencies = [
  "universe-prof",
  "universe-protocol",
  "universe-services",
+ "universe-world",
+]
+
+[[package]]
+name = "universe-terrain"
+version = "0.1.0"
+dependencies = [
+ "log",
+ "rayon",
+ "serde",
+ "serde_json",
+ "universe-engine",
+ "universe-prof",
  "universe-world",
 ]
 

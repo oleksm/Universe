@@ -1,5 +1,6 @@
 //! Optional producer boxes: one shared cube, camera-relative instances, nearest visible labels.
 use super::*;
+use universe_terrain::srgb_to_linear;
 use serde::Deserialize;
 use universe_engine::glam::{DMat3, DQuat};
 
@@ -205,7 +206,7 @@ impl Objects {
             if !self.families[b.family].on {
                 continue;
             }
-            let base = app.d.r + b.z * app.ex;
+            let base = app.g.d.r + b.z * app.g.ex;
             let centre = b.dir * (base + 0.5 * b.size.y as f64);
             let to = centre - cam.position;
             let depth = to.dot(forward);
@@ -215,10 +216,10 @@ impl Objects {
             {
                 continue;
             }
-            if !app.above_horizon(
+            if !app.g.above_horizon(
                 b.dir,
                 1.0 - b.radius * b.radius / (2.0 * base * base),
-                b.z * app.ex + b.size.y as f64,
+                b.z * app.g.ex + b.size.y as f64,
                 cam.position,
             ) {
                 continue;

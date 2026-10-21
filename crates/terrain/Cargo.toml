@@ -1,0 +1,15 @@
+[package]
+name = "universe-terrain"
+edition.workspace = true
+version.workspace = true
+
+# The terrain subsystem: a world's ground drawn by the planet LOD renderer (the game's planet view and the
+# planet LOD app both on it). On the engine; reads ground packages through the world crate's reader.
+[dependencies]
+universe-engine = { path = "../engine" }
+universe-world = { path = "../core/world" }
+universe-prof = { path = "../core/prof" }
+rayon.workspace = true
+log.workspace = true
+serde.workspace = true
+serde_json.workspace = true

@@ -6,9 +6,7 @@ use std::sync::mpsc::{self, Receiver, SyncSender};
 const PX: f64 = 0.0007;
 const CACHE_BYTES: usize = 8 * 1024 * 1024 * 1024;
 const UPLOAD_BYTES: usize = 32 * 1024 * 1024;
-use universe_sim::world::worlds::land::{Meta, Raster, Tile};
-#[cfg(test)]
-use universe_sim::world::worlds::land::Window;
+use universe_world::worlds::land::{Meta, Raster, Tile};
 struct Source {
     dir: PathBuf,
     m: Meta,
@@ -224,7 +222,7 @@ fn raster(
     width: usize,
     height: usize,
 ) -> Result<Raster, String> {
-    universe_sim::world::worlds::land::raster(&source.dir, &source.m, k, i0, j0, width, height, true)
+    universe_world::worlds::land::raster(&source.dir, &source.m, k, i0, j0, width, height, true)
 }
 struct Built {
     mesh: PooledMesh,
@@ -444,7 +442,7 @@ struct Cached {
     tile: Built,
     last: u64,
 }
-pub(super) struct Pyramid {
+pub struct Pyramid {
     source: Arc<Source>,
     pub mask: Vec<u8>,
     mask_level: usize,
@@ -463,7 +461,7 @@ pub(super) struct Pyramid {
     pub stats: PyramidStats,
 }
 #[derive(Default, Clone, Copy)]
-pub(super) struct PyramidStats {
+pub struct PyramidStats {
     pub selected: usize,
     pub drawn: usize,
     pub triangles: usize,
@@ -1107,6 +1105,8 @@ fn validate(m: &Meta, radius: f64) -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::flight::pan_longitude;
+    use universe_engine::glam::Quat;
     struct Fixture(PathBuf);
     impl Drop for Fixture {
         fn drop(&mut self) {

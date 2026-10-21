@@ -1,4 +1,4 @@
-//! A world whose ground is a land package (`worlds::land`), drawn by the planet LOD renderer exactly as
+//! A world whose ground is a land package (`worlds::land`), drawn by the terrain subsystem (`universe_terrain`) exactly as
 //! `freefall --app planetlod <package>` draws it: opened on a thread of its own when the eye comes within
 //! `OPEN_RADII` of the world, let go past `CLOSE_RADII` (its tile cache with it). The package keeps its
 //! frame; the world places it (its centre, spin and the scale from the package's radius to its own) and
@@ -10,15 +10,15 @@ use universe_engine::glam::{DQuat, DVec3};
 use universe_engine::{Camera, Frame, Transform};
 use universe_sim::world::worlds::land;
 
-use crate::planet_lod_app::PlanetLodApp;
+use universe_terrain::Ground;
 
 /// Opened within this many radii of the world's centre, let go beyond the other.
 const OPEN_RADII: f64 = 30.0;
 const CLOSE_RADII: f64 = 40.0;
 
 enum State {
-    Opening(Receiver<Result<PlanetLodApp, String>>),
-    Open(Box<PlanetLodApp>),
+    Opening(Receiver<Result<Ground, String>>),
+    Open(Box<Ground>),
     Failed,
 }
 
@@ -74,7 +74,7 @@ impl LandView {
             .name("land view open".into())
             .spawn(move || {
                 let t0 = std::time::Instant::now();
-                let app = PlanetLodApp::open_land(&PathBuf::from(&dir));
+                let app = Ground::open(&PathBuf::from(&dir));
                 match &app {
                     Ok(_) => log::info!("{key}: land package open in {:.1} s ({})", t0.elapsed().as_secs_f64(), dir.display()),
                     Err(e) => log::warn!("{key}: land package not opened: {e}"),
@@ -102,8 +102,8 @@ impl LandView {
         let aspect = (size.x / size.y.max(1.0)) as f64;
         let body = body_transform(center, rotation, self.scale);
         let cam = local_camera(&frame.camera, &body);
-        app.land_update(&cam, aspect, dt);
-        app.land_draw(frame, &cam, &body);
+        app.update(&cam, aspect, dt);
+        app.draw(frame, &cam, &body);
         self.log.0 += 1;
         let since = *self.log.1.get_or_insert(now);
         if (now - since).as_secs_f64() >= 1.0 {
@@ -125,7 +125,7 @@ mod tests {
         let body = body_transform(DVec3::new(1e11, -2e10, 3e9), DQuat::from_rotation_z(0.7) * DQuat::from_rotation_x(-0.3), 6_281_370.0 / 6_371_000.0);
         let cam = Camera { position: body.position + DVec3::new(3e6, 5e6, -4.1e6), orientation: universe_engine::glam::Quat::from_rotation_y(0.4), fov_y: 1.0, near: 0.1 };
         let local = local_camera(&cam, &body);
-        let back = crate::planet_lod_app::placed(&body, local.position).position;
+        let back = universe_terrain::placed(&body, local.position).position;
         assert!((back - cam.position).length() < 1e-3, "{}", (back - cam.position).length());
         // (The view direction too: what is ahead of the eye in the scene is ahead of it in the package.)
         let ahead = cam.position + cam.forward().as_dvec3() * 1000.0;

@@ -2,7 +2,7 @@
 use super::DVec3;
 
 #[derive(Default)]
-pub(super) struct Reference {
+pub struct Reference {
     pub height: Option<f64>,
     pub target: Option<f64>,
     velocity: f64,
@@ -40,7 +40,7 @@ impl Reference {
 }
 
 /// Average the available drawn ground over a disc of radius twice the nominal altitude.
-pub(super) fn average(
+pub fn average(
     up: DVec3,
     alt: f64,
     radius: f64,
@@ -70,7 +70,7 @@ pub(super) fn average(
 }
 
 /// Radial ray against an actual submitted triangle. Returns world height above the datum.
-pub(super) fn triangle_height(up: DVec3, [a, b, c]: [DVec3; 3], radius: f64) -> Option<f64> {
+pub fn triangle_height(up: DVec3, [a, b, c]: [DVec3; 3], radius: f64) -> Option<f64> {
     let (ab, ac) = (b - a, c - a);
     let normal = ab.cross(ac);
     let denom = normal.dot(up);
@@ -92,6 +92,11 @@ pub(super) fn triangle_height(up: DVec3, [a, b, c]: [DVec3; 3], radius: f64) -> 
         (aa * hit.dot(ac) - bb * hit.dot(ab)) / det,
     );
     (u >= -1e-6 && v >= -1e-6 && u + v <= 1.0 + 1e-6).then_some(distance - radius)
+}
+
+/// A local diagnostic pan about its starting longitude, independent of frame rate and startup time.
+pub fn pan_longitude(origin: f64, elapsed: f64) -> f64 {
+    origin + 0.25 * (elapsed * 0.4).sin()
 }
 
 #[cfg(test)]
