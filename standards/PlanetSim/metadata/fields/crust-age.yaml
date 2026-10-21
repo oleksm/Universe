@@ -15,7 +15,7 @@ producer:
 time_base: since-formed
 source: age
 levels:
-- planet-level.planet
+- planet-level.10000-km
 basis:
 - of:
   - identity

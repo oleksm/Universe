@@ -14,9 +14,9 @@ cautions:
 - 2.4 km of river erosion in 2.6 Myr (0.9 mm/yr) looks high (planets)
 source: r_z
 levels:
-- planet-level.planet
-- planet-level.continent
-- planet-level.region
+- planet-level.10000-km
+- planet-level.1000-km
+- planet-level.100-km
 basis:
 - of:
   - identity

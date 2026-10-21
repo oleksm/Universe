@@ -19,8 +19,8 @@ also_from:
   note: per mesh node
 source: acc
 levels:
-- planet-level.region
-- planet-level.landscape
+- planet-level.100-km
+- planet-level.10-km
 basis:
 - of:
   - identity

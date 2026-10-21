@@ -1,7 +1,7 @@
 """The context of a level or a Planet Simulator record (tools/standards/planet_lod.py context): for a level, what is
 meaningful there, by kind, and what its parent hands down frozen; for a record, what it names and what names it.
 
-    python3 tools/standards/planet_lod_context.py region            # a level, by slug or key
+    python3 tools/standards/planet_lod_context.py 100-km            # a level, by slug or key
     python3 tools/standards/planet_lod_context.py water-gap          # a record, by key or its last part
     python3 tools/standards/planet_lod_context.py <target> --json
 """

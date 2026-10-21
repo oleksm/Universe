@@ -5,8 +5,8 @@ identity:
   about: 'Named by the library outside its vocabulary: effusion rate.'
 source: OTHER:effusion_rate
 levels:
-- planet-level.continent
-- planet-level.region
+- planet-level.1000-km
+- planet-level.100-km
 basis:
 - of:
   - identity

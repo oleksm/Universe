@@ -5,8 +5,8 @@ identity:
   about: 'Named by the library outside its vocabulary: isostatic rebound.'
 source: OTHER:isostatic_rebound
 levels:
-- planet-level.continent
-- planet-level.region
+- planet-level.1000-km
+- planet-level.100-km
 basis:
 - of:
   - identity

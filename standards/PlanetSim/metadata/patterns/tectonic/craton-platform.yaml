@@ -36,8 +36,8 @@ sources:
 library_status: planned
 source: tectonic.province.craton_platform
 levels:
-- planet-level.region
-- planet-level.landscape
+- planet-level.100-km
+- planet-level.10-km
 basis:
 - of:
   - factors

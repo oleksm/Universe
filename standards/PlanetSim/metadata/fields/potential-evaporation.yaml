@@ -14,7 +14,7 @@ producer:
   file: climate
   key: PET
 levels:
-- planet-level.planet
+- planet-level.10000-km
 status: draft
 basis:
 - of:

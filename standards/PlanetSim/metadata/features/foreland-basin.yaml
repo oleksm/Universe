@@ -17,8 +17,8 @@ overrides: filled by sediment
 wave: 2
 built: false
 levels:
-- planet-level.planet
-- planet-level.continent
+- planet-level.10000-km
+- planet-level.1000-km
 status: draft
 basis:
 - of:

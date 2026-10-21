@@ -18,8 +18,8 @@ cautions:
 - 'the planet''s age then, present 4.5699 Gyr: ago in Myr = (4.5699 - t) x 1000'
 source: v_arc_last
 levels:
-- planet-level.planet
-- planet-level.continent
+- planet-level.10000-km
+- planet-level.1000-km
 basis:
 - of:
   - identity

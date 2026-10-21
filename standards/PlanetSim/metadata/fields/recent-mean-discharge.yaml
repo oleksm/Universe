@@ -13,7 +13,7 @@ producer:
 amount: running-total
 e_fold: 946800000000.0
 levels:
-- planet-level.planet
+- planet-level.10000-km
 status: draft
 basis:
 - of:

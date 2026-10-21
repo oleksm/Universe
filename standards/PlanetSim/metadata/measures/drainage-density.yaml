@@ -10,8 +10,8 @@ said_as:
 how: channel length over area
 tool: tools/terrain_compare.py
 levels:
-- planet-level.landscape
-- planet-level.site
+- planet-level.10-km
+- planet-level.1-km
 basis:
 - of:
   - identity

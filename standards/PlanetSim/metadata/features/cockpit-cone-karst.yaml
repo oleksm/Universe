@@ -14,8 +14,8 @@ generator: cones
 wave: 3
 built: false
 levels:
-- planet-level.landscape
-- planet-level.site
+- planet-level.10-km
+- planet-level.1-km
 status: draft
 basis:
 - of:

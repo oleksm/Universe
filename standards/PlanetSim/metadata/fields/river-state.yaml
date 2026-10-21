@@ -17,8 +17,8 @@ also_from:
 class_of: planet-layer.river-state
 source: h_river_state
 levels:
-- planet-level.planet
-- planet-level.continent
+- planet-level.10000-km
+- planet-level.1000-km
 basis:
 - of:
   - identity

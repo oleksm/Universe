@@ -14,7 +14,7 @@ generator: along the coast
 wave: 2
 built: false
 levels:
-- planet-level.region
+- planet-level.100-km
 status: draft
 basis:
 - of:

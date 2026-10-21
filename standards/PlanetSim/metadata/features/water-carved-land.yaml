@@ -15,8 +15,8 @@ wave: 1
 built: true
 landmark: planet-landmark.water-carved-land
 levels:
-- planet-level.planet
-- planet-level.continent
+- planet-level.10000-km
+- planet-level.1000-km
 status: draft
 basis:
 - of:

@@ -1,23 +1,19 @@
 # yaml-language-server: $schema=../../schema/planet-level.schema.yaml
 identity:
-  key: planet-level.continent
-  name: Continent
-  about: 'The continent view: 1e+06 m across; target ground pixel 1000 m.'
-span: 1000000.0
+  key: planet-level.1-m
+  name: 1 m band
+  about: 'Texture only: detail from a 1 m view down to a 10 cm view.'
+span: 1.0
 spacing:
-- 1000.0
-- 1000.0
+- 0.001
+- 0.001
 goal: true
 exists:
-- belts
-- rifts
-- basins
-- great rivers
-- deserts
+- texture only; GPU last octave
 from_parent:
 - Frozen coarser ground anchors; detail adds without moving them.
 levels:
-- planet-level.continent
+- planet-level.1-m
 status: draft
 basis:
 - of:

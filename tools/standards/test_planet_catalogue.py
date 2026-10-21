@@ -4,6 +4,7 @@ import contextlib
 import io
 import json
 import tempfile
+import yaml
 from unittest.mock import patch
 from pathlib import Path
 import unittest
@@ -47,8 +48,20 @@ class PlanetCatalogue(unittest.TestCase):
         recs["planet-feature.parent"]["levels"] = [LEVELS[6]]  # obsolete context hint
         grouped = {kind: {k: r for k, r in recs.items() if k.startswith(kind + ".")}
                    for kind in ("planet-level", "planet-feature", "planet-line")}
-        self.assertIn("planet-feature.parent", context(grouped, "site")["records"]["planet-feature"])
-        self.assertNotIn("planet-feature.parent", context(grouped, "ground")["records"].get("planet-feature", []))
+        self.assertIn("planet-feature.parent", context(grouped, "1-km")["records"]["planet-feature"])
+        self.assertNotIn("planet-feature.parent", context(grouped, "10-m")["records"].get("planet-feature", []))
+
+    def test_legacy_level_keys_resolve_to_live_band_bounds(self):
+        root = Path(__file__).resolve().parents[2]
+        aliases = {r["was"]: r["is"] for r in yaml.safe_load((root / "standards/renames.yaml").read_text())["renames"]}
+        levels = {rec["identity"]["key"]: rec for path in (root / "standards/PlanetSim/metadata/levels").glob("*.yaml")
+                  for rec in [yaml.safe_load(path.read_text())]}
+        targets = {"planet": 1e7, "continent": 1e6, "cluster": 1e6, "region": 1e5, "pattern": 1e5,
+                   "landscape": 1e4, "square": 1e4, "site": 1e3, "detail": 1e3, "slope": 1e2,
+                   "ground": 1e1, "surface": 1.}
+        for old, view in targets.items():
+            with self.subTest(old=old):
+                self.assertEqual(levels[aliases["planet-level." + old]]["span"], view)
 
     def test_unrepresentable_or_invalid_sizes(self):
         for size in ([0, 1], [-1, 1], [2, 1], [.001, .001], [1e8, 1e8], [float("nan"), 1]):

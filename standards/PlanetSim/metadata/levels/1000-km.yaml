@@ -1,23 +1,23 @@
 # yaml-language-server: $schema=../../schema/planet-level.schema.yaml
 identity:
-  key: planet-level.site
-  name: Site
-  about: 'The site view: 1000 m across; target ground pixel 1 m.'
-span: 1000.0
+  key: planet-level.1000-km
+  name: 1,000 km band
+  about: Detail from a 1,000 km view down to a 100 km view.
+span: 1000000.0
 spacing:
-- 1.0
-- 1.0
+- 1000.0
+- 1000.0
 goal: true
 exists:
-- cones
-- cirques
-- dunes
-- beaches
-- river reaches
+- belts
+- rifts
+- basins
+- great rivers
+- deserts
 from_parent:
 - Frozen coarser ground anchors; detail adds without moving them.
 levels:
-- planet-level.site
+- planet-level.1000-km
 status: draft
 basis:
 - of:

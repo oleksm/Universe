@@ -29,8 +29,8 @@ sources:
 library_status: written
 source: glacial.deposit.moraine_medial
 levels:
-- planet-level.region
-- planet-level.landscape
+- planet-level.100-km
+- planet-level.10-km
 basis:
 - of:
   - factors

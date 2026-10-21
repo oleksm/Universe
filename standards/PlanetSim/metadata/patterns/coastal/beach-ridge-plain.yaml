@@ -39,8 +39,8 @@ sources:
 library_status: planned
 source: coastal.barrier.beach_ridge_plain
 levels:
-- planet-level.region
-- planet-level.landscape
+- planet-level.100-km
+- planet-level.10-km
 basis:
 - of:
   - factors

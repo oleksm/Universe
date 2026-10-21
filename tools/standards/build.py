@@ -2413,7 +2413,7 @@ for _x in _pc_issues:
     if _x["key"] not in _PL["planet-feature"]:
         _pc_rows.append(row("gap", _x["key"], *( _x["message"] if n == _x["check"] else "" for n in range(1, 7))))
 report("planet-catalogue", "Ground catalogue: kinds at their level of detail",
-       "Eight view decades, 10,000 km to 1 m. Six checks: derived size/ladder and descriptions, acyclic expansion, measured examples and built geometry, emitted-kind coverage, blend restrictions and reciprocal line/feature links. Migration gaps remain explicit; planet_catalogue.py --strict fails until the records are complete. Emitted kinds use the versioned forge manifest snapshot, not an implicit neighboring checkout.",
+       "Eight detail bands named by upper view bound, 10,000 km to 1 m. Six checks: derived size/ladder and descriptions, acyclic expansion, measured examples and built geometry, emitted-kind coverage, blend restrictions and reciprocal line/feature links. Migration gaps remain explicit; planet_catalogue.py --strict fails until the records are complete. Emitted kinds use the versioned forge manifest snapshot, not an implicit neighboring checkout.",
        ["Kind", *_pc.CHECKS], _pc_rows)
 
 # 3d'''. Members (SFO 13): the tubes a frame is cut from, read as an engineer sizes: weight a metre, the load

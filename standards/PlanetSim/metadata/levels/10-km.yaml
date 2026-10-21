@@ -1,22 +1,23 @@
 # yaml-language-server: $schema=../../schema/planet-level.schema.yaml
 identity:
-  key: planet-level.slope
-  name: Slope
-  about: 'The slope view: 100 m across; target ground pixel 0.1 m.'
-span: 100.0
+  key: planet-level.10-km
+  name: 10 km band
+  about: Detail from a 10 km view down to a 1 km view.
+span: 10000.0
 spacing:
-- 0.1
-- 0.1
+- 10.0
+- 10.0
 goal: true
 exists:
-- gullies
-- talus
-- stacks
-- pingos
+- volcanoes
+- valleys
+- fjords
+- escarpments
+- moraines
 from_parent:
 - Frozen coarser ground anchors; detail adds without moving them.
 levels:
-- planet-level.slope
+- planet-level.10-km
 status: draft
 basis:
 - of:

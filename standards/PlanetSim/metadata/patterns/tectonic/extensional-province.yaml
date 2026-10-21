@@ -35,8 +35,8 @@ sources:
 library_status: planned
 source: tectonic.province.extensional_province
 levels:
-- planet-level.region
-- planet-level.landscape
+- planet-level.100-km
+- planet-level.10-km
 basis:
 - of:
   - factors

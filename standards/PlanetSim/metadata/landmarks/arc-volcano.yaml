@@ -17,9 +17,9 @@ source: arc volcano
 made_by:
 - arc
 levels:
-- planet-level.planet
-- planet-level.continent
-- planet-level.region
+- planet-level.10000-km
+- planet-level.1000-km
+- planet-level.100-km
 basis:
 - of:
   - identity

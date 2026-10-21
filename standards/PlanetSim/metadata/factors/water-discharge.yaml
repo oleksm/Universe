@@ -13,8 +13,8 @@ signal:
   from: 10.0
   to: 5000.0
 levels:
-- planet-level.continent
-- planet-level.region
+- planet-level.1000-km
+- planet-level.100-km
 basis:
 - of:
   - identity

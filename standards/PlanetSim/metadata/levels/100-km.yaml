@@ -1,19 +1,23 @@
 # yaml-language-server: $schema=../../schema/planet-level.schema.yaml
 identity:
-  key: planet-level.surface
-  name: Surface
-  about: 'The surface view: 1 m across; target ground pixel 0.001 m.'
-span: 1.0
+  key: planet-level.100-km
+  name: 100 km band
+  about: Detail from a 100 km view down to a 10 km view.
+span: 100000.0
 spacing:
-- 0.001
-- 0.001
+- 100.0
+- 100.0
 goal: true
 exists:
-- texture only; GPU last octave
+- ranges
+- volcano chains
+- deltas
+- lakes
+- big craters
 from_parent:
 - Frozen coarser ground anchors; detail adds without moving them.
 levels:
-- planet-level.surface
+- planet-level.100-km
 status: draft
 basis:
 - of:

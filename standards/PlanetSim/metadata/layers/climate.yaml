@@ -101,8 +101,8 @@ bounded_by:
 - planet-line.isoline
 - planet-line.class-boundary
 levels:
-- planet-level.planet
-- planet-level.continent
+- planet-level.10000-km
+- planet-level.1000-km
 basis:
 - of:
   - identity

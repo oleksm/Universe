@@ -34,8 +34,8 @@ sources:
 library_status: planned
 source: coastal.delta.tidal_delta
 levels:
-- planet-level.region
-- planet-level.landscape
+- planet-level.100-km
+- planet-level.10-km
 basis:
 - of:
   - factors

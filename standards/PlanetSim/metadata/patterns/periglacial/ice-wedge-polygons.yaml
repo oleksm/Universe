@@ -36,8 +36,8 @@ sources:
 library_status: written
 source: periglacial.ground.ice_wedge_polygons
 levels:
-- planet-level.region
-- planet-level.landscape
+- planet-level.100-km
+- planet-level.10-km
 basis:
 - of:
   - factors

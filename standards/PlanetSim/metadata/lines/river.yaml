@@ -4,16 +4,16 @@ identity:
   name: River (trunk)
   about: A trunk river from the coupled step's routing, with its discharge and ground profile.
 born_from: river routing in the coupled step
-first_level: planet-level.continent
+first_level: planet-level.1000-km
 expands_into:
 - tributaries
 - channel heads
 made_by:
 - river
 levels:
-- planet-level.continent
-- planet-level.region
-- planet-level.landscape
+- planet-level.1000-km
+- planet-level.100-km
+- planet-level.10-km
 basis:
 - of:
   - identity

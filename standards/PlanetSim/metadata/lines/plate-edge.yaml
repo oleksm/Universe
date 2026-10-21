@@ -6,11 +6,11 @@ identity:
 born_from: plate boundaries
 ends: redrawn each step
 sides: 1
-first_level: planet-level.planet
+first_level: planet-level.10000-km
 levels:
-- planet-level.planet
-- planet-level.continent
-- planet-level.region
+- planet-level.10000-km
+- planet-level.1000-km
+- planet-level.100-km
 basis:
 - of:
   - identity

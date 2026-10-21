@@ -9,7 +9,7 @@ producer:
   where: stages/recent.py run
   key: dT (its sin^2 lat part)
 levels:
-- planet-level.planet
+- planet-level.10000-km
 status: draft
 basis:
 - of:

@@ -21,8 +21,8 @@ amount: running-total
 e_fold: 1577880000000000.0
 source: h_peakQ
 levels:
-- planet-level.planet
-- planet-level.continent
+- planet-level.10000-km
+- planet-level.1000-km
 basis:
 - of:
   - identity

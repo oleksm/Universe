@@ -1,8 +1,8 @@
 # yaml-language-server: $schema=../../schema/planet-level.schema.yaml
 identity:
-  key: planet-level.ground
-  name: Ground
-  about: 'The ground view: 10 m across; target ground pixel 0.01 m.'
+  key: planet-level.10-m
+  name: 10 m band
+  about: Detail from a 10 m view down to a 1 m view.
 span: 10.0
 spacing:
 - 0.01
@@ -15,7 +15,7 @@ exists:
 from_parent:
 - Frozen coarser ground anchors; detail adds without moving them.
 levels:
-- planet-level.ground
+- planet-level.10-m
 status: draft
 basis:
 - of:

@@ -15,7 +15,7 @@ generator: down the ice-surface slope
 wave: 3
 built: false
 levels:
-- planet-level.region
+- planet-level.100-km
 status: draft
 basis:
 - of:

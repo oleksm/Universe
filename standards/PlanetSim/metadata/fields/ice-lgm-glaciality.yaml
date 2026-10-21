@@ -14,7 +14,7 @@ producer:
   key: best_g
 missing: -1 before the window
 levels:
-- planet-level.planet
+- planet-level.10000-km
 status: draft
 basis:
 - of:

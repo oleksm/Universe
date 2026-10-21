@@ -13,10 +13,10 @@ import yaml
 ROOT = Path(__file__).resolve().parents[2]
 TREE = ROOT / "standards"
 STRICT = False  # Switch only after Planets completes the catalogue migration.
-NAMES = ("planet", "continent", "region", "landscape", "site", "slope", "ground", "surface")
+NAMES = ("10000-km", "1000-km", "100-km", "10-km", "1-km", "100-m", "10-m", "1-m")
 LEVELS = tuple("planet-level." + name for name in NAMES)
 VIEWS = tuple(10.0 ** power for power in range(7, -1, -1))
-CHECKS = ("size and ladder", "expansion graph", "examples and built geometry",
+CHECKS = ("size and band ladder", "expansion graph", "examples and built geometry",
           "emitted kinds", "surface blend", "line/feature reciprocity")
 
 
@@ -32,7 +32,7 @@ def derived_ladder(across):
     coarse = next((i for i, view in enumerate(VIEWS) if high >= view / 100), None)
     fine = next((i for i in range(7, -1, -1) if VIEWS[i] >= low), None)
     if coarse is None or fine is None or coarse > fine:
-        raise ValueError("size has no representable view interval in the eight-decade ladder")
+        raise ValueError("size has no representable view interval in the eight-decade band ladder")
     return [LEVELS[coarse], LEVELS[fine]]
 
 

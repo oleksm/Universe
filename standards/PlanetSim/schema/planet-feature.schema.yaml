@@ -204,8 +204,9 @@ properties:
       type: string
       x-ref:
       - planet-level
-    description: 'Derived [coarsest,finest] from size.across_m: largest >= 1% view;
-      smallest fits whole in finest view. Not the legacy numeric level.'
+    description: 'Derived [coarsest band, finest band], planet-level keys named by
+      upper view bound: largest >= 1% view; smallest fits whole in finest band view.
+      Not the legacy numeric level.'
   description:
     type: string
     minLength: 1

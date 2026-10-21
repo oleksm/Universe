@@ -35,8 +35,8 @@ sources:
 library_status: written
 source: hillslope.ridge.interfluve
 levels:
-- planet-level.region
-- planet-level.landscape
+- planet-level.100-km
+- planet-level.10-km
 basis:
 - of:
   - factors

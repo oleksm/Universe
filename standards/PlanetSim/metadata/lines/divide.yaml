@@ -4,11 +4,11 @@ identity:
   name: Divide
   about: Between drainage basins.
 born_from: the basins layer
-first_level: planet-level.continent
+first_level: planet-level.1000-km
 levels:
-- planet-level.continent
-- planet-level.region
-- planet-level.landscape
+- planet-level.1000-km
+- planet-level.100-km
+- planet-level.10-km
 basis:
 - of:
   - identity

@@ -195,11 +195,11 @@ implementations:
   state: current
   note: 'at 9de220d: anchor_mesher.py RUN [--d0 50] [--workers 12] [--lod]'
 levels:
-- planet-level.planet
-- planet-level.continent
-- planet-level.region
-- planet-level.landscape
-- planet-level.site
+- planet-level.10000-km
+- planet-level.1000-km
+- planet-level.100-km
+- planet-level.10-km
+- planet-level.1-km
 measured_by:
 - planet-measure.coast-fidelity
 - planet-measure.rms-against-samples

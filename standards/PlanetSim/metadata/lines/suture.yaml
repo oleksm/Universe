@@ -10,7 +10,7 @@ ends_idle_said:
   unit: Myr
   factor: 31557600000000.0
 sides: 1
-first_level: planet-level.planet
+first_level: planet-level.10000-km
 rules:
 - 'extension-only reach: takes later points only near its own'
 - overthrust lines are cut at the suture
@@ -24,9 +24,9 @@ made_by:
 - collision
 source: suture
 levels:
-- planet-level.planet
-- planet-level.continent
-- planet-level.region
+- planet-level.10000-km
+- planet-level.1000-km
+- planet-level.100-km
 basis:
 - of:
   - identity
