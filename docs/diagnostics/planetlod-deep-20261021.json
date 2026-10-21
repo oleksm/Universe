@@ -1,0 +1,195 @@
+{
+  "task": "20261021T150738-planets-9488",
+  "base_commit": "29d1b1e65",
+  "producer_spec": "planet-forge 213bec3 docs/pyramid-format.md windowed revision",
+  "changes": [
+    "Prefer pyramid_deep; validate file dimensions against level.window.",
+    "Read stored rows using nonzero global offsets and stored column stride; halo heights/colours clamp, outside masks are0.",
+    "Only split listed-child parents when child window covers the complete parent footprint. This preserves coarse ground at cut boundaries.",
+    "Use finest full level for static coverage, keeping continent-wide masking without an implied full fine raster."
+  ],
+  "fixture": {
+    "snapshot": "/home/alexm/git/universe/out/review/planetlod-deep/fixture",
+    "metadata_sha256": "f664d3dc97e6c0a9c1e9f4a26b562caa2acfab8377ef0b84634b0cc567626944",
+    "base_cell_m": 37.5,
+    "branch": 4,
+    "levels": 6,
+    "fine_windows": [
+      {
+        "row0": 60336,
+        "col0": 63664,
+        "rows": 15505,
+        "cols": 12337
+      },
+      {
+        "row0": 15084,
+        "col0": 15916,
+        "rows": 3877,
+        "cols": 3085
+      }
+    ],
+    "coverage_mask_level": 2,
+    "coverage_mask_bytes": 150994944
+  },
+  "tests": {
+    "unit_passed": 9,
+    "full_fixture_passed": 3,
+    "total": 12,
+    "log": "/home/alexm/git/universe/out/review/planetlod-deep/tests.log",
+    "regressions": [
+      "nonzero row/column window reads",
+      "outside samples absent",
+      "finite normals at cut tile/window boundaries",
+      "invalid zero/overflow windows",
+      "missing-child parents terminal",
+      "full static mask beyond fine window",
+      "legacy branch2/4 formats and existing LRU/pan/ready cover"
+    ],
+    "initial_cold_belt_selection": {
+      "100km": [
+        359,
+        0,
+        2,
+        0,
+        0,
+        0
+      ],
+      "30km": [
+        44,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "10km": [
+        11,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "3km": [
+        2,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "final_cold_belt_selection": {
+      "100km": [
+        0,
+        33,
+        0,
+        0,
+        0,
+        0
+      ],
+      "30km": [
+        44,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "10km": [
+        11,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "3km": [
+        2,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "final_log": "/home/alexm/git/universe/out/review/planetlod-deep/padded-tests.log"
+  },
+  "validation_environment": "UNIVERSE_TEST=1, test window verified workspace8; auto-no-vsync,VulkanRTX5090. Owner app on workspace4 untouched. Reflink data snapshot.",
+  "limits": [
+    "Existing256MiB cache target remains soft: selected and prefetched geometry are protected. Initial worst-point data needed1.069GB and28.8M triangles; final percentile data uses297.6MB and2.78M triangles in the native100km view.",
+    "Partial outer windows conservatively retain coarse parents. Final producer86bd97e pads windows to tile boundaries and passes all12 tests.",
+    "Native timing is diagnostic, not an interactive performance guarantee."
+  ],
+  "integration": "local main only; no push",
+  "producer_final": "planet-forge86bd97e padded windows;50cdd68 percentile error metadata",
+  "final_fixture": {
+    "snapshot": "/home/alexm/git/universe/out/review/planetlod-deep/padded-fixture",
+    "metadata_sha256": "a8f36c9e7bcdd04e932eba0fe1ffc7f58a1b1d7e938bbc1ceda03ff79784439f",
+    "fine_windows": [
+      {
+        "row0": 58368,
+        "col0": 61440,
+        "rows": 18433,
+        "cols": 15361
+      },
+      {
+        "row0": 14592,
+        "col0": 15360,
+        "rows": 4609,
+        "cols": 3841
+      }
+    ],
+    "fine_tiles": [
+      7857,
+      525
+    ],
+    "coverage_mask_level": 2
+  },
+  "initial_native": {
+    "capture": "/home/alexm/git/universe/out/review/planetlod-deep/belt100km.png",
+    "log": "/home/alexm/git/universe/out/review/planetlod-deep/belt100km.log",
+    "frames": 3600,
+    "altitude_m": 100000,
+    "lat": -33.6,
+    "lon": 97.4,
+    "samples": 30,
+    "cache_peak_bytes": 1068426580,
+    "last": {
+      "selected": 383,
+      "drawn": 383,
+      "triangles": 28826112,
+      "pending": 0,
+      "cached": 438,
+      "bytes": 1068426580,
+      "fallback": 0,
+      "error_ratio": 6.481,
+      "resident": 438,
+      "largest_tile": 2142788
+    },
+    "settled_last_ten_samples": true
+  },
+  "native": {
+    "capture": "/home/alexm/git/universe/out/review/planetlod-deep/belt100km-padded.png",
+    "log": "/home/alexm/git/universe/out/review/planetlod-deep/belt100km-padded.log",
+    "frames": 2400,
+    "altitude_m": 100000,
+    "lat": -33.6,
+    "lon": 97.4,
+    "samples": 18,
+    "cache_peak_bytes": 297625360,
+    "last": {
+      "selected": 37,
+      "drawn": 37,
+      "triangles": 2784768,
+      "pending": 0,
+      "cached": 123,
+      "bytes": 297625360,
+      "fallback": 0,
+      "error_ratio": 0.748,
+      "resident": 58,
+      "largest_tile": 2142788
+    },
+    "settled_last_ten_samples": true
+  }
+}

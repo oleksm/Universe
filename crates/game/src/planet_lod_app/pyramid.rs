@@ -17,14 +17,33 @@ struct Projection {
     east: [f64; 3],
     north: [f64; 3],
 }
+#[derive(Clone, Copy, Deserialize)]
+struct Window {
+    row0: usize,
+    col0: usize,
+    rows: usize,
+    cols: usize,
+}
 #[derive(Deserialize)]
 struct Level {
+    #[serde(default)]
+    window: Option<Window>,
     k: usize,
     n: usize,
     cell_m: f64,
     z: String,
     rgb: String,
     mask: String,
+}
+impl Level {
+    fn storage(&self) -> Window {
+        self.window.unwrap_or(Window {
+            row0: 0,
+            col0: 0,
+            rows: self.n,
+            cols: self.n,
+        })
+    }
 }
 #[derive(Clone, Copy, Deserialize)]
 struct Tile {
@@ -138,6 +157,20 @@ impl Source {
             })
             .collect()
     }
+    fn can_split(&self, id: usize) -> bool {
+        let t = self.m.tiles[id];
+        if t.k == 0 || self.children(id).is_empty() {
+            return false;
+        }
+        let level = &self.m.levels[t.k - 1];
+        let w = level.storage();
+        let span = self.m.tile * self.m.branch;
+        let (i0, j0) = (t.col * span, t.row * span);
+        let (i1, j1) = ((i0 + span).min(level.n - 1), (j0 + span).min(level.n - 1));
+        // A missing child outside a local window can still contain coarse ground.
+        // Retain the complete parent at that boundary rather than punch out its remainder.
+        i0 >= w.col0 && j0 >= w.row0 && i1 < w.col0 + w.cols && j1 < w.row0 + w.rows
+    }
     fn parent(&self, id: usize) -> Option<usize> {
         let t = self.m.tiles[id];
         self.index
@@ -224,7 +257,7 @@ impl Source {
             };
             // Retain invisible tiles' state; changing view direction must not reset hysteresis.
             let ratio = error / distance / PX;
-            let split = t.k > 0
+            let split = s.can_split(id)
                 && if history.contains(&id) {
                     ratio >= 0.7
                 } else {
@@ -300,25 +333,38 @@ impl Raster {
 }
 fn read_rect(
     path: &Path,
-    n: usize,
+    level: &Level,
     i0: usize,
     j0: usize,
     width: usize,
     height: usize,
     stride: usize,
 ) -> Result<Vec<u8>, String> {
+    let w = level.storage();
     let mut file = File::open(path).map_err(|e| format!("{}: {e}", path.display()))?;
-    if file.metadata().map_err(|e| e.to_string())?.len() != (n as u64 * n as u64 * stride as u64) {
+    if file.metadata().map_err(|e| e.to_string())?.len()
+        != (w.rows as u64 * w.cols as u64 * stride as u64)
+    {
         return Err(format!("{}: wrong raster length", path.display()));
     }
+    // Read only the stored row interval. Extend edge heights/colours for a tile's halo;
+    // raster() marks samples outside the actual window as absent in its mask.
+    let first = i0.clamp(w.col0, w.col0 + w.cols - 1);
+    let last = (i0 + width - 1).clamp(w.col0, w.col0 + w.cols - 1);
+    let mut row = vec![0; (last - first + 1) * stride];
     let mut bytes = vec![0; width * height * stride];
-    for row in 0..height {
+    for j in 0..height {
+        let r = (j0 + j).clamp(w.row0, w.row0 + w.rows - 1);
         file.seek(SeekFrom::Start(
-            ((j0 + row) * n + i0) as u64 * stride as u64,
+            ((r - w.row0) * w.cols + first - w.col0) as u64 * stride as u64,
         ))
         .map_err(|e| e.to_string())?;
-        file.read_exact(&mut bytes[row * width * stride..(row + 1) * width * stride])
-            .map_err(|e| e.to_string())?;
+        file.read_exact(&mut row).map_err(|e| e.to_string())?;
+        for i in 0..width {
+            let src = ((i0 + i).clamp(first, last) - first) * stride;
+            let dst = (j * width + i) * stride;
+            bytes[dst..dst + stride].copy_from_slice(&row[src..src + stride]);
+        }
     }
     Ok(bytes)
 }
@@ -333,7 +379,7 @@ fn raster(
     let l = &source.m.levels[k];
     let width = width.min(l.n - i0);
     let height = height.min(l.n - j0);
-    let bytes = read_rect(&source.dir.join(&l.z), l.n, i0, j0, width, height, 4)?;
+    let bytes = read_rect(&source.dir.join(&l.z), l, i0, j0, width, height, 4)?;
     let z: Vec<_> = bytes
         .chunks_exact(4)
         .map(|c| f32::from_le_bytes(c.try_into().unwrap()))
@@ -341,9 +387,21 @@ fn raster(
     if z.iter().any(|v| !v.is_finite()) {
         return Err("non-finite pyramid height".into());
     }
-    let bytes = read_rect(&source.dir.join(&l.rgb), l.n, i0, j0, width, height, 3)?;
+    let bytes = read_rect(&source.dir.join(&l.rgb), l, i0, j0, width, height, 3)?;
     let rgb = bytes.chunks_exact(3).map(|c| [c[0], c[1], c[2]]).collect();
-    let mask = read_rect(&source.dir.join(&l.mask), l.n, i0, j0, width, height, 1)?;
+    let mut mask = read_rect(&source.dir.join(&l.mask), l, i0, j0, width, height, 1)?;
+    let w = l.storage();
+    for j in 0..height {
+        for i in 0..width {
+            if j0 + j < w.row0
+                || j0 + j >= w.row0 + w.rows
+                || i0 + i < w.col0
+                || i0 + i >= w.col0 + w.cols
+            {
+                mask[j * width + i] = 0;
+            }
+        }
+    }
     if mask.iter().any(|&v| v > 2) {
         return Err("pyramid mask must be 0, 1 or 2".into());
     }
@@ -578,6 +636,7 @@ struct Cached {
 pub(super) struct Pyramid {
     source: Arc<Source>,
     pub mask: Vec<u8>,
+    mask_level: usize,
     cache: HashMap<usize, Cached>,
     pending: HashSet<usize>,
     failed: HashSet<usize>,
@@ -606,7 +665,9 @@ pub(super) struct PyramidStats {
 }
 impl Pyramid {
     pub fn open(view: &Path, radius: f64) -> Result<Option<Self>, String> {
-        let dir = if view.join("pyramid4/pyramid.json").exists() {
+        let dir = if view.join("pyramid_deep/pyramid.json").exists() {
+            view.join("pyramid_deep")
+        } else if view.join("pyramid4/pyramid.json").exists() {
             view.join("pyramid4")
         } else {
             view.join("pyramid")
@@ -626,7 +687,8 @@ impl Pyramid {
                 let size = std::fs::metadata(&p)
                     .map_err(|e| format!("{}: {e}", p.display()))?
                     .len();
-                if size != l.n as u64 * l.n as u64 * stride {
+                let w = l.storage();
+                if size != w.rows as u64 * w.cols as u64 * stride {
                     return Err(format!("{}: wrong raster length", p.display()));
                 }
             }
@@ -673,10 +735,20 @@ impl Pyramid {
             .iter()
             .map(|&t| source.bounds(t, 1.0))
             .collect();
-        let mask =
-            std::fs::read(source.dir.join(&source.m.levels[0].mask)).map_err(|e| e.to_string())?;
+        // Static-package coverage needs the whole continent, including outside local fine windows.
+        let mask_level = source
+            .m
+            .levels
+            .iter()
+            .position(|l| {
+                let w = l.storage();
+                w.row0 == 0 && w.col0 == 0 && w.rows == l.n && w.cols == l.n
+            })
+            .ok_or("pyramid requires a full coverage level")?;
+        let mask = std::fs::read(source.dir.join(&source.m.levels[mask_level].mask))
+            .map_err(|e| e.to_string())?;
         if mask.iter().any(|&v| v > 2) {
-            return Err("invalid level-zero pyramid mask".into());
+            return Err("invalid coverage pyramid mask".into());
         }
         let root = source.index[&(source.m.top_level, 0, 0)];
         let root_tile = build(&source, root, 1.0, false)?;
@@ -723,6 +795,7 @@ impl Pyramid {
         Ok(Some(Self {
             source,
             mask,
+            mask_level,
             cache: HashMap::from([(
                 root,
                 Cached {
@@ -748,13 +821,17 @@ impl Pyramid {
             return false;
         };
         let m = &self.source.m;
-        let i = ((x - m.x0) / m.cell0_m).floor() as i64;
-        let j = ((y - m.y0) / m.cell0_m).floor() as i64;
+        let n = m.levels[self.mask_level].n;
+        let cell = m.cell0_m * m.scale(self.mask_level) as f64;
+        let x0 = m.x0 + 0.5 * m.cell0_m - 0.5 * cell;
+        let y0 = m.y0 + 0.5 * m.cell0_m - 0.5 * cell;
+        let i = ((x - x0) / cell).floor() as i64;
+        let j = ((y - y0) / cell).floor() as i64;
         i >= 0
             && j >= 0
-            && i < m.side as i64
-            && j < m.side as i64
-            && self.mask[j as usize * m.side + i as usize] == 1
+            && i < n as i64
+            && j < n as i64
+            && self.mask[j as usize * n + i as usize] == 1
     }
     pub fn ground_at(&self, dir: DVec3) -> Option<f64> {
         let (x, y) = self.source.project(dir)?;
@@ -875,7 +952,9 @@ impl Pyramid {
         let mut want = self.selection.visited.clone();
         for &id in &self.selection.leaves {
             let t = self.source.m.tiles[id];
-            if t.k > 0 && t.error_m * ex / self.source.distance(id, cam.position, ex) > PX * 0.6 {
+            if self.source.can_split(id)
+                && t.error_m * ex / self.source.distance(id, cam.position, ex) > PX * 0.6
+            {
                 let children = self.source.children(id);
                 // Limit speculative geometry so it cannot churn the cache around the selected cover.
                 if want.len() + children.len() <= CACHE_BYTES / (2 * 1024 * 1024) {
@@ -1090,6 +1169,14 @@ fn validate(m: &Meta, radius: f64) -> Result<(), String> {
         {
             return Err(err());
         }
+        let w = l.storage();
+        if w.rows == 0
+            || w.cols == 0
+            || w.row0.checked_add(w.rows).is_none_or(|end| end > l.n)
+            || w.col0.checked_add(w.cols).is_none_or(|end| end > l.n)
+        {
+            return Err(err());
+        }
         for name in [&l.z, &l.rgb, &l.mask] {
             if Path::new(name).components().count() != 1
                 || !matches!(
@@ -1178,6 +1265,68 @@ mod tests {
         }
         std::fs::write(pyramid.join("pyramid.json"), meta.to_string()).unwrap();
         Fixture(dir)
+    }
+    #[test]
+    fn pyramid_windowed_rows_mask_and_boundary_cover() {
+        let f = fixture_branch(4, 12);
+        let dir = f.0.join("pyramid");
+        let path = dir.join("pyramid.json");
+        let mut m: serde_json::Value =
+            serde_json::from_slice(&std::fs::read(&path).unwrap()).unwrap();
+        let (row0, col0, rows, cols) = (7, 5, 34, 38);
+        m["levels"][0]["window"] =
+            serde_json::json!({"row0":row0,"col0":col0,"rows":rows,"cols":cols});
+        for (name, stride) in [("z_0.f32", 4), ("rgb_0.u8", 3), ("mask_0.u8", 1)] {
+            let bytes = std::fs::read(dir.join(name)).unwrap();
+            let cropped: Vec<u8> = (row0..row0 + rows)
+                .flat_map(|r| {
+                    bytes[(r * 48 + col0) * stride..(r * 48 + col0 + cols) * stride]
+                        .iter()
+                        .copied()
+                })
+                .collect();
+            std::fs::write(dir.join(name), cropped).unwrap();
+        }
+        std::fs::write(&path, m.to_string()).unwrap();
+        let p = Pyramid::open(&f.0, 1000.).unwrap().unwrap();
+        let s = &p.source;
+        assert_eq!(p.mask_level, 1);
+        assert_eq!(p.mask.len(), 12 * 12); // Never allocate the implied full fine raster.
+        let data = raster(s, 0, 3, 5, 8, 8).unwrap();
+        assert_eq!(data.z(5, 7), (7 * 48 + 5) as f64 * 3.);
+        assert_eq!(data.mask[data.at(4, 7)], 0);
+        assert_eq!(data.mask[data.at(5, 6)], 0);
+        assert_eq!(data.mask[data.at(5, 7)], 1);
+        let root = s.index[&(1, 0, 0)];
+        assert!(
+            !s.can_split(root),
+            "partial fine window retains coarse ground outside it"
+        );
+        let (tile, _, _) = build_model(s, s.index[&(0, 0, 0)], 1., true).unwrap();
+        assert!(!tile.faces.is_empty());
+        assert!(tile.normals.iter().all(|n| n.is_finite()));
+        assert!(
+            p.covered(s.inverse(0., 0.)),
+            "static package uses whole-continent coverage"
+        );
+        let mut invalid: Meta = serde_json::from_value(m.clone()).unwrap();
+        invalid.levels[0].window.as_mut().unwrap().rows = 0;
+        assert!(validate(&invalid, 1000.).is_err());
+        invalid.levels[0].window.as_mut().unwrap().rows = rows;
+        invalid.levels[0].window.as_mut().unwrap().row0 = usize::MAX;
+        assert!(validate(&invalid, 1000.).is_err());
+        // A listed parent with no listed children is terminal even with nonzero error.
+        m["tiles"].as_array_mut().unwrap().retain(|t| t["k"] == 1);
+        // Read metadata directly: the terminal decision does not depend on has_fine hints.
+        let terminal: Meta = serde_json::from_value(m).unwrap();
+        let source = Source {
+            dir,
+            m: terminal,
+            index: HashMap::from([((1, 0, 0), 0)]),
+            bounds: vec![],
+            holes: vec![],
+        };
+        assert!(!source.can_split(0));
     }
     #[test]
     fn pyramid_branch_four_bilinear_morph_and_hysteresis() {
@@ -1495,6 +1644,72 @@ mod tests {
         println!("PYRAMID bounded pan selection min={min} max={max}, samples=451");
     }
     #[test]
+    #[ignore = "requires windowed deep belt fixture"]
+    fn pyramid_deep_fixture_window_edges_and_belt() {
+        let dir = std::env::var("UNIVERSE_PYRAMID_TEST_VIEW").unwrap();
+        let p = Pyramid::open(Path::new(&dir), 6371000.).unwrap().unwrap();
+        let s = &p.source;
+        assert_eq!(s.m.levels.len(), 6);
+        assert_eq!(p.mask_level, 2);
+        assert_eq!(p.mask.len(), s.m.levels[2].n * s.m.levels[2].n);
+        for k in [0, 1] {
+            let mut ids: Vec<_> =
+                s.m.tiles
+                    .iter()
+                    .enumerate()
+                    .filter(|(_, t)| t.k == k)
+                    .map(|(id, _)| id)
+                    .collect();
+            ids.sort_unstable_by_key(|&id| (s.m.tiles[id].row, s.m.tiles[id].col));
+            let samples = [ids[0], ids[ids.len() / 2], *ids.last().unwrap()];
+            for id in samples {
+                let built = build(s, id, 1., true).unwrap();
+                assert!(built.mesh.bytes() <= UPLOAD_BYTES);
+                let w = s.m.levels[k].storage();
+                for j in 0..built.ground.mask.len() / built.ground.width {
+                    for i in 0..built.ground.width {
+                        let (gi, gj) = (built.ground.i0 + i, built.ground.j0 + j);
+                        if gi < w.col0
+                            || gi >= w.col0 + w.cols
+                            || gj < w.row0
+                            || gj >= w.row0 + w.rows
+                        {
+                            assert_eq!(built.ground.mask[j * built.ground.width + i], 0);
+                        }
+                    }
+                }
+            }
+        }
+        let up = unit(97.4, -33.6);
+        let mut history = HashSet::new();
+        for alt in [100000., 30000., 10000., 3000.] {
+            let mut cam = Camera {
+                position: up * (6371000. + alt),
+                fov_y: 50f32.to_radians(),
+                ..Default::default()
+            };
+            cam.look_at(DVec3::ZERO, Vec3::Y);
+            let selection = s.select(&cam, 16. / 9., 1., &mut history);
+            let mut counts = [0usize; 6];
+            for &id in &selection.leaves {
+                counts[s.m.tiles[id].k] += 1;
+            }
+            println!(
+                "DEEP belt alt={alt} leaves={} levels={counts:?}",
+                selection.leaves.len()
+            );
+            if alt == 100000. {
+                assert!(
+                    counts[0] + counts[1] > 0,
+                    "the 100km band reaches at least150m detail"
+                );
+            } else {
+                assert!(counts[0] > 0, "near belt views reach37.5m detail");
+            }
+            assert!(selection.split.iter().all(|&id| s.can_split(id)));
+        }
+    }
+    #[test]
     #[ignore = "requires full land pyramid fixture"]
     fn pyramid_full_fixture_selection_and_streaming() {
         let dir = std::env::var("UNIVERSE_PYRAMID_TEST_VIEW").unwrap();
@@ -1523,7 +1738,7 @@ mod tests {
                 },
                 "bounded selection, not finest full raster"
             );
-            assert!(sel.leaves.iter().all(|&i| p.source.m.tiles[i].k == 0
+            assert!(sel.leaves.iter().all(|&i| !p.source.can_split(i)
                 || p.source.m.tiles[i].error_m / p.source.distance(i, cam.position, 1.0) <= PX));
         }
         let mut cam = Camera {
@@ -1552,8 +1767,9 @@ mod tests {
             .tiles
             .iter()
             .position(|t| t.k == 0 && p.source.intersects_hole(*t))
+            .or_else(|| p.source.m.tiles.iter().position(|t| t.k == 0))
             .unwrap();
         let built = build(&p.source, fine, 1., true).unwrap();
-        assert!(built.mesh.bytes() < 2 * 1024 * 1024);
+        assert!(built.mesh.bytes() <= UPLOAD_BYTES);
     }
 }
