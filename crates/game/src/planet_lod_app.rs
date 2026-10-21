@@ -49,6 +49,10 @@ const ID_EDGES: u32 = 20;
 const ID_FACES: u32 = 21;
 const ID_FEAT: u32 = 22;
 const ID_PEAKS: u32 = 23;
+const ID_MARKS: u32 = 24;
+/// Landmark markers (markers.json beside the view): labels on at most this many, the nearest to the eye; size in px.
+const MARK_LABELS: usize = 60;
+const MARK_PX: f32 = 5.0;
 /// Peak and dip pins: labels on at most this many, the nearest to the eye (posts on all).
 const PEAK_LABELS: usize = 300;
 const ID_EX: u32 = 30;
@@ -539,6 +543,10 @@ pub struct PlanetLodApp {
     show_feat: bool,
     /// Pins on every peak and dip with its height (peaks.json beside the view: [{lon, lat, z, kind}]).
     show_peaks: bool,
+    /// Landmark markers as the slideshow draws them (markers.json: [{lat, lon, z, shape, rgb, label}]; shape tri,
+    /// dot, ring, square, diamond or cross), a fixed size on screen, labels on the nearest MARK_LABELS.
+    show_marks: bool,
+    marks: Vec<(DVec3, f64, u8, Color, String)>,
     peak_pins: Vec<(DVec3, f64, String, bool)>,
     keys_open: bool,
     /// The slider being dragged, a drag over the ground (its button), the ground under the eye (m, drawn).
@@ -915,6 +923,13 @@ impl PlanetLodApp {
                 (unit(num(&a["lon"]), num(&a["lat"])), z, format!("{} {} m", if peak { "^" } else { "v" }, thousands(z.round())), peak)
             })
             .collect();
+        let marks: Vec<(DVec3, f64, u8, Color, String)> = json(&dir, "markers.json").ok().and_then(|a| a.as_array().cloned()).unwrap_or_default().iter()
+            .map(|a| {
+                let shape = match a["shape"].as_str().unwrap_or("dot") { "tri" => 0, "dot" => 1, "ring" => 2, "square" => 3, "diamond" => 4, _ => 5 };
+                let c = |k: usize| a["rgb"][k].as_f64().unwrap_or(200.0) as f32 / 255.0;
+                (unit(num(&a["lon"]), num(&a["lat"])), num(&a["z"]), shape, Color::rgb(c(0), c(1), c(2)), a["label"].as_str().unwrap_or("").to_string())
+            })
+            .collect();
         let queued = vec![false; cells.len()];
         let bd = Arc::new(BuildData {
             pos: d.pos.clone(),
@@ -1009,6 +1024,8 @@ impl PlanetLodApp {
             show_faces: true,
             show_feat: false,
             show_peaks: false,
+            show_marks: !marks.is_empty(),
+            marks,
             peak_pins,
             keys_open: false,
             sliding: false,
@@ -1037,6 +1054,7 @@ impl PlanetLodApp {
                     ("ex", Some(v)) => app.ex = v.clamp(1.0, 50.0),
                     ("feat", Some(v)) => app.show_feat = v > 0.0,
                     ("peaks", Some(v)) => app.show_peaks = v > 0.0,
+                    ("marks", Some(v)) => app.show_marks = v > 0.0,
                     ("view", _) if kv.ends_with("real") => app.view = View::Real,
                     ("boxes", _) => {
                         if let Some(o) = &mut app.objects { o.select(&kv[6..]); }
@@ -1384,6 +1402,7 @@ impl App for PlanetLodApp {
                 Some(ID_FACES) => self.show_faces = !self.show_faces,
                 Some(ID_FEAT) => self.show_feat = !self.show_feat,
                 Some(ID_PEAKS) => self.show_peaks = !self.show_peaks,
+                Some(ID_MARKS) => self.show_marks = !self.show_marks,
                 Some(ID_KEYS) => self.keys_open = !self.keys_open,
                 Some(ID_VIS) => self.ui.lock().unwrap().vis_note = true,
                 Some(ID_EX) => self.sliding = true,
@@ -1810,6 +1829,43 @@ impl App for PlanetLodApp {
                 frame.text_boxed(p - Vec2::new(w * 0.5, universe_engine::GLYPH + 6.0), label, Color::hex(0x111111), c);
             }
         }
+        // Landmark markers: the slideshow's shape and colour at a fixed size, those in view; labels on the nearest.
+        if self.show_marks {
+            let mut shown: Vec<(f64, Vec2, usize)> = vec![];
+            let r = MARK_PX;
+            for (i, (dir, z, shape, c, _)) in self.marks.iter().enumerate() {
+                let base = *dir * (self.d.r + self.ex * z.max(0.0));
+                if dir.dot(eye - base) <= 0.0 {
+                    continue;
+                }
+                let Some(p) = frame.project(base).filter(|p| p.x > 0.0 && p.y > 0.0 && p.x < size.x && p.y < size.y) else { continue };
+                let c = *c;
+                match shape {
+                    0 => frame.hud_triangle_colored([p + Vec2::new(0.0, -r), p + Vec2::new(r, 0.8 * r), p + Vec2::new(-r, 0.8 * r)], [c; 3]),
+                    1 => frame.hud_glow(p, 0.75 * r, 12, c, c),
+                    2 => frame.hud_ellipse(p, Vec2::splat(1.6 * r), 20, c),
+                    3 => frame.hud_rect(p - Vec2::splat(0.8 * r), Vec2::splat(1.6 * r), c),
+                    4 => {
+                        frame.hud_triangle_colored([p + Vec2::new(0.0, -r), p + Vec2::new(r, 0.0), p + Vec2::new(-r, 0.0)], [c; 3]);
+                        frame.hud_triangle_colored([p + Vec2::new(0.0, r), p + Vec2::new(-r, 0.0), p + Vec2::new(r, 0.0)], [c; 3]);
+                    }
+                    _ => {
+                        frame.hud_line(p - Vec2::new(r, 0.0), p + Vec2::new(r, 0.0), c);
+                        frame.hud_line(p - Vec2::new(0.0, r), p + Vec2::new(0.0, r), c);
+                    }
+                }
+                shown.push(((eye - base).length(), p, i));
+            }
+            shown.sort_by(|a, b| a.0.total_cmp(&b.0));
+            for (_, p, i) in shown.into_iter().take(MARK_LABELS) {
+                let (_, _, _, c, label) = &self.marks[i];
+                if label.is_empty() {
+                    continue;
+                }
+                let w = label.len() as f32 * universe_engine::GLYPH;
+                frame.text_boxed(p - Vec2::new(w * 0.5, universe_engine::GLYPH + 2.0 * r + 4.0), label, Color::hex(0x111111), *c);
+            }
+        }
         // The built job's meshes handed to the engine to upload (not drawn yet), within the frame's budget.
         if let Some(b) = self.built.lock().unwrap().as_mut() {
             let mut tris = 0;
@@ -2022,7 +2078,7 @@ impl PlanetLodApp {
         p.section("VIEW", &[]);
         p.seg(&["Mesh", "Real"], if self.view == View::Mesh { 0 } else { 1 }, ID_MESH);
         let real = self.view == View::Real;
-        p.chips(&[("edges", self.show_edges && !real, !real, ID_EDGES), ("faces", self.show_faces, true, ID_FACES), ("crest & valleys", self.show_feat, !m.features.is_empty(), ID_FEAT), ("peaks", self.show_peaks, !self.peak_pins.is_empty(), ID_PEAKS)]);
+        p.chips(&[("edges", self.show_edges && !real, !real, ID_EDGES), ("faces", self.show_faces, true, ID_FACES), ("crest & valleys", self.show_feat, !m.features.is_empty(), ID_FEAT), ("peaks", self.show_peaks, !self.peak_pins.is_empty(), ID_PEAKS), ("landmarks", self.show_marks, !self.marks.is_empty(), ID_MARKS)]);
         p.slider("height ×", self.ex as f32, 1.0, 50.0, &format!("{:.0}", self.ex), ID_EX);
         if let Some(l) = &self.layers {
             p.section("LAYERS", &[]);
