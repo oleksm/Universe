@@ -1117,6 +1117,7 @@ impl Pyramid {
         ids.sort_unstable_by_key(|&i| std::cmp::Reverse(self.source.m.tiles[i].k));
         for id in ids {
             if let Some(c) = self.cache.get(&id) {
+                frame.retain_pooled(c.tile.mesh.id());
                 if !c.tile.mesh.gpu_resident()
                     && (c.tile.mesh.bytes() <= budget || budget == UPLOAD_BYTES)
                 {

@@ -541,6 +541,8 @@ pub struct PlanetLodApp {
     fly: bool,
     pan: bool,
     pan_start: Option<(f64, f64)>,
+    /// =zoom: it zooms out and back in on a loop (zoom_altitude).
+    zoom: bool,
     /// UNIVERSE_PLANETLOD_MAXDRAW: at most this many chunks drawn (to tell a draw's cost from a triangle's).
     max_draw: usize,
     meta: Meta,
@@ -751,6 +753,16 @@ fn srgb_to_linear(c: u8) -> f32 {
 /// A local diagnostic pan about its starting longitude, independent of frame rate and startup time.
 fn pan_longitude(origin: f64, elapsed: f64) -> f64 {
     origin + 0.25 * (elapsed * 0.4).sin()
+}
+
+/// FLY=zoom: the owner's repeated zoom, looping 10 km -> 6.3 Mm -> 350 km -> 10 km; each hold 6 s,
+/// each move 3 s even in log altitude.
+fn zoom_altitude(elapsed: f64) -> f64 {
+    const STOPS: [f64; 3] = [10_000.0, 6_300_000.0, 350_000.0];
+    let t = elapsed.rem_euclid(27.0);
+    let (i, u) = ((t / 9.0) as usize, (t % 9.0 - 6.0).max(0.0) / 3.0);
+    let (a, b) = (STOPS[i].ln(), STOPS[(i + 1) % 3].ln());
+    (a + (b - a) * u * u * (3.0 - 2.0 * u)).exp()
 }
 
 impl PlanetLodApp {
@@ -1048,6 +1060,7 @@ impl PlanetLodApp {
             fly: std::env::var_os("UNIVERSE_PLANETLOD_FLY").is_some(),
             pan: std::env::var("UNIVERSE_PLANETLOD_FLY").is_ok_and(|v| v == "pan"),
             pan_start: None,
+            zoom: std::env::var("UNIVERSE_PLANETLOD_FLY").is_ok_and(|v| v == "zoom"),
             max_draw: std::env::var("UNIVERSE_PLANETLOD_MAXDRAW").ok().and_then(|v| v.parse().ok()).unwrap_or(usize::MAX),
             meta,
             ex: 1.0,
@@ -1585,6 +1598,10 @@ impl App for PlanetLodApp {
         if self.pan {
             let (origin, started) = *self.pan_start.get_or_insert((self.lon, ctx.time));
             self.lon = pan_longitude(origin, ctx.time - started);
+        } else if self.zoom {
+            let (_, started) = *self.pan_start.get_or_insert((self.lon, ctx.time));
+            self.alt = zoom_altitude(ctx.time - started);
+            self.easing = false;
         } else if self.fly {
             self.alt = (self.alt * 0.995).max(300.0);
             self.lon += 2e-4;

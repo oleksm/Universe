@@ -789,6 +789,10 @@ impl Frame {
     /// Evict streamed pooled geometry once no draw in this frame names it.
     pub fn release_pooled(&mut self, id: u64) { self.pool.releases.push(id); }
 
+    /// Protect an existing GPU allocation needed for a pending cover, without uploading it.
+    /// Unprotected allocations can be evicted under pool pressure while CPU meshes stay cached.
+    pub fn retain_pooled(&mut self, id: u64) { self.pool.keep.push(id); }
+
     /// Copy `mesh` into the pool without drawing it (`PooledMesh::gpu_resident` says when it is).
     pub fn prepare_pooled(&mut self, mesh: &crate::pool::PooledMesh) {
         self.pool.uploads.push(mesh.clone());

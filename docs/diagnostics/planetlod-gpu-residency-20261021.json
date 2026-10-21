@@ -1,0 +1,34 @@
+{
+  "task": "20261021T160144-planets-8df5",
+  "base_commit": "350d89cad",
+  "cause": "8 GiB CPU land cache kept every visited tile's GPU allocation alive; the single pool buffer is capped at 1 GiB by gpu.rs device limits, so it filled and new covers could not upload (owner log: countless 'mesh pool full (1024 MB)').",
+  "changes": [
+    "PoolStore evicts least recently used unprotected GPU ranges when allocation fails at max size; CPU PooledMesh stays cached and re-uploads via prepare_pooled.",
+    "Protected each frame: drawn meshes, uploads, Frame::retain_pooled ids (every cached tile on the pyramid's visited cover, incl. fallback ancestors and prepared children).",
+    "Pool growth may grow partially up to the device max.",
+    "Working-set-full warning throttled to once per 120 frames.",
+    "UNIVERSE_PLANETLOD_FLY=zoom diagnostic route."
+  ],
+  "unchanged": {"cpu_cache_bytes": "8 GiB", "upload_bytes_per_frame": "32 MiB", "gpu_pool_max": "1 GiB"},
+  "tests": {"engine_pool_passed": 4, "viewer_passed": 16, "viewer_fixture_tests_ignored": 4},
+  "native": {
+    "snapshot": "/home/alexm/git/universe/out/review/planetlod-flight/fixture",
+    "route": "lat -33.75 lon 97.4, loop 10 km -> 6300 km -> 350 km -> 10 km, 6 s holds, 3 s moves, 100 s (~3.7 loops)",
+    "present": "auto-no-vsync, workspace 8, ~120 fps",
+    "old_build": {"log": "/home/alexm/git/universe/out/review/planetlod-zoom/zoom_old.log", "pool_full_lines": 120304,
+      "hold_6300km_drawn_selected": "12/101 (fallback 10) every loop", "hold_350km_drawn_selected": "41/272 (fallback 16)", "hold_10km": "330/330"},
+    "fixed_build": {"log": "/home/alexm/git/universe/out/review/planetlod-zoom/zoom1.log", "pool_warnings": 3,
+      "warnings_when": "one per loop during the fast zoom-out transient (selected up to 471)",
+      "holds_after_first_cold_loop": {"10km": "330/330", "6300km": "101/101", "350km": "272/272", "pending": 0, "fallback": 0},
+      "cpu_cached_tiles_end": 2120, "gpu_resident_at_holds": {"10km": 371, "6300km": 113, "350km": 314}},
+    "captures": ["/home/alexm/git/universe/out/review/planetlod-zoom/hold6300km.png", "/home/alexm/git/universe/out/review/planetlod-zoom/hold350km.png"],
+    "captures_checked": "visually: sharp continent at 6300 km, full mountain detail at 350 km, second loop"
+  },
+  "limits": [
+    "First cold loop still streams from disk (32 MiB/frame budget); seconds of fallback on first visit are expected.",
+    "Allocator coalesces adjacent free ranges only; no compaction. Not needed in this run (tiles are ~2.1 MB, nearly equal).",
+    "If a single cover's working set exceeds 1 GiB, fallback tiles are drawn for its remainder.",
+    "Timings from a hidden test window; not an interactive benchmark.",
+    "Shasta black square at 1,200 km (owner_1215km.png) not diagnosed here."
+  ]
+}

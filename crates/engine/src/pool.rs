@@ -4,7 +4,8 @@
 //!
 //! A mesh is made on any thread (`PooledMesh::new`: packed there, ready to copy), copied into the
 //! pool the first frame it's drawn or prepared (`Frame::prepare_pooled`), and its range let go
-//! when its last copy is dropped. Drawn in groups (`Frame::pool_group`): one placement's rotation
+//! when its last copy is dropped, or when GPU pressure evicts an unprotected allocation. CPU copies
+//! can be prepared again without rebuilding. Drawn in groups (`Frame::pool_group`): one placement's rotation
 //! and scale, tints and light for every member, each member at its own origin (exact: made
 //! camera-relative in f64, as every draw).
 //!
@@ -16,7 +17,7 @@
 //! km, two f16). The shader reads them by index (`vs_pool` in scene.wgsl): faces flat-shaded
 //! from their own corners unless the mesh is smooth.
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::sync::Arc;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
@@ -279,6 +280,7 @@ pub(crate) struct PoolFrame {
     pub front: Vec<Draw>,
     pub uploads: Vec<PooledMesh>,
     pub releases: Vec<u64>,
+    pub keep: Vec<u64>,
 }
 
 impl PoolFrame {
@@ -312,7 +314,9 @@ pub(crate) struct PoolStore {
     max: u32,
     free: Free,
     /// Each mesh in it: where (words), how long, and its receipt.
-    live: HashMap<u64, (u32, u32, Arc<PooledMeshRef>)>,
+    live: Live,
+    tick: u64,
+    last_full_warning: u64,
     draws: wgpu::Buffer,
     draws_cap: u64,
     groups: wgpu::Buffer,
@@ -322,6 +326,23 @@ pub(crate) struct PoolStore {
     /// This frame's corners to draw: the scene's faces and edges, the front layer's.
     pub scene: (u32, u32),
     pub front: (u32, u32),
+}
+
+type Live = HashMap<u64, (u32, u32, Arc<PooledMeshRef>, u64)>;
+
+/// Make a contiguous range by evicting the oldest unprotected GPU allocations. Their CPU meshes
+/// remain cached; dropping each receipt makes gpu_resident false so a later prepare can upload it again.
+fn allocate_lru(free: &mut Free, live: &mut Live, words: u32, protected: &HashSet<u64>) -> Option<u32> {
+    if let Some(at) = free.take(words) { return Some(at); }
+    let mut cold: Vec<_> = live.iter().filter(|(id,_)|!protected.contains(id)).map(|(&id,e)|(e.3,id)).collect();
+    cold.sort_unstable();
+    for (_,id) in cold {
+        let (at,len,receipt,_) = live.remove(&id).unwrap();
+        free.give(at,len);
+        drop(receipt);
+        if let Some(at) = free.take(words) { return Some(at); }
+    }
+    None
 }
 
 /// What the store holds of a mesh to tell it it's resident (and no longer when let go).
@@ -355,7 +376,7 @@ impl PoolStore {
         let groups = Self::storage(device, "pool groups", 4096);
         let lists = Self::storage(device, "pool lists", 64);
         let bind = Self::bind(device, &layout, &buffer, &draws, &groups, &lists);
-        Self { layout, buffer, cap, max, free: Free::new(cap), live: HashMap::new(), draws, draws_cap: 4096, groups, groups_cap: 4096, lists, bind, scene: (0, 0), front: (0, 0) }
+        Self { layout, buffer, cap, max, free: Free::new(cap), live: HashMap::new(), tick: 0, last_full_warning: 0, draws, draws_cap: 4096, groups, groups_cap: 4096, lists, bind, scene: (0, 0), front: (0, 0) }
     }
 
     fn pool_buffer(device: &wgpu::Device, words: u32) -> wgpu::Buffer {
@@ -390,56 +411,59 @@ impl PoolStore {
     }
 
     /// Copy `m` in if it isn't (growing the pool if it must). False: no room even grown.
-    fn put(&mut self, gpu: &crate::gpu::Gpu, m: &PooledMesh) -> bool {
-        if self.live.contains_key(&m.id()) {
+    fn put(&mut self, gpu: &crate::gpu::Gpu, m: &PooledMesh, protected: &HashSet<u64>) -> bool {
+        if let Some(entry) = self.live.get_mut(&m.id()) {
+            entry.3 = self.tick;
             return true;
         }
         let len = m.words().len() as u32;
-        let at = match self.free.take(len) {
-            Some(at) => at,
-            None => {
-                // (Grown to twice, or what it needs, the old copied over on the GPU: every range
-                // stays where it was.)
-                let want = (self.cap as u64 * 2).max(self.cap as u64 + len as u64).min(self.max as u64) as u32;
-                if want < self.cap + len {
-                    log::warn!("mesh pool full ({} MB): a mesh of {} KB not drawn", self.cap / 262_144, len / 256);
-                    return false;
+        let mut at = self.free.take(len);
+        if at.is_none() && self.cap < self.max {
+            let want = (self.cap as u64 * 2).max(self.cap as u64 + len as u64).min(self.max as u64) as u32;
+            let bigger = Self::pool_buffer(&gpu.device, want);
+            let mut enc = gpu.device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: Some("mesh pool grows") });
+            enc.copy_buffer_to_buffer(&self.buffer, 0, &bigger, 0, self.cap as u64 * 4);
+            gpu.queue.submit([enc.finish()]);
+            self.free.give(self.cap,want-self.cap);
+            self.buffer=bigger; self.cap=want;
+            self.bind=Self::bind(&gpu.device,&self.layout,&self.buffer,&self.draws,&self.groups,&self.lists);
+            at=self.free.take(len);
+        }
+        let at = match at.or_else(||allocate_lru(&mut self.free,&mut self.live,len,protected)) {
+            Some(at)=>at,
+            None=>{
+                if self.last_full_warning==0 || self.tick.saturating_sub(self.last_full_warning)>=120 {
+                    log::warn!("mesh pool working set full ({} MB): protected geometry leaves no room for {} KB",self.cap/262_144,len/256);
+                    self.last_full_warning=self.tick;
                 }
-                let bigger = Self::pool_buffer(&gpu.device, want);
-                let mut enc = gpu.device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: Some("mesh pool grows") });
-                enc.copy_buffer_to_buffer(&self.buffer, 0, &bigger, 0, self.cap as u64 * 4);
-                gpu.queue.submit([enc.finish()]);
-                self.free.give(self.cap, want - self.cap);
-                self.buffer = bigger;
-                self.cap = want;
-                self.bind = Self::bind(&gpu.device, &self.layout, &self.buffer, &self.draws, &self.groups, &self.lists);
-                match self.free.take(len) {
-                    Some(at) => at,
-                    None => return false,
-                }
+                return false;
             }
         };
         gpu.queue.write_buffer(&self.buffer, at as u64 * 4, bytemuck::cast_slice(m.words()));
         m.0.resident.fetch_add(1, Ordering::Release);
-        self.live.insert(m.id(), (at, len, Arc::new(PooledMeshRef(Arc::downgrade(&m.0)))));
+        self.live.insert(m.id(), (at, len, Arc::new(PooledMeshRef(Arc::downgrade(&m.0))),self.tick));
         true
     }
 
     /// This frame's pool: meshes let go, new ones copied in, the draws laid out for the GPU.
     pub fn frame(&mut self, gpu: &crate::gpu::Gpu, pf: &PoolFrame) {
+        self.tick+=1;
+        // Protect the whole required cover, including prepared children not yet drawn and fallback ancestors.
+        let protected: HashSet<_> = pf.keep.iter().copied().chain(pf.meshes.iter().chain(&pf.uploads).map(PooledMesh::id)).collect();
+        for id in &protected { if let Some(e)=self.live.get_mut(id) { e.3=self.tick; } }
         let gone = std::mem::take(&mut *GONE.lock().unwrap_or_else(|e| e.into_inner()));
         for id in gone {
-            if let Some((at, len, _)) = self.live.remove(&id) {
+            if let Some((at, len, _, _)) = self.live.remove(&id) {
                 self.free.give(at, len);
             }
         }
         for id in &pf.releases {
             if !pf.meshes.iter().any(|m| m.id() == *id) {
-                if let Some((at, len, _)) = self.live.remove(id) { self.free.give(at, len); }
+                if let Some((at, len, _, _)) = self.live.remove(id) { self.free.give(at, len); }
             }
         }
         for m in pf.uploads.iter().chain(&pf.meshes) {
-            self.put(gpu, m);
+            self.put(gpu, m, &protected);
         }
         let mut out: Vec<GpuDraw> = Vec::with_capacity(pf.draws.len() + pf.front.len());
         let lay = |draws: &[Draw], out: &mut Vec<GpuDraw>| {
@@ -498,6 +522,31 @@ mod tests {
             let plain=PooledMesh::new(&PoolModel {morph:vec![],..m});
             assert_eq!(plain.morphed_position(1,1.),Some(Vec3::Y));
         }
+    }
+
+    #[test]
+    fn pool_pressure_evicts_cold_gpu_ranges_but_preserves_cpu_meshes_and_cover() {
+        let meshes: Vec<_>=(0..3).map(|_|PooledMesh::new(&PoolModel {positions:vec![Vec3::ZERO],..Default::default()})).collect();
+        let n=meshes[0].words().len() as u32;
+        let mut free=Free::new(4*n);
+        let mut live=Live::new();
+        for (i,m) in meshes.iter().enumerate() {
+            m.0.resident.store(1,Ordering::Release);
+            live.insert(m.id(),(free.take(n).unwrap(),n,Arc::new(PooledMeshRef(Arc::downgrade(&m.0))),i as u64));
+        }
+        let protected=HashSet::from([meshes[0].id()]);
+        assert_eq!(allocate_lru(&mut free,&mut live,2*n,&protected),Some(n));
+        assert!(meshes[0].gpu_resident(),"coarse cover remains protected");
+        assert!(!meshes[1].gpu_resident() && !meshes[2].gpu_resident());
+        assert!(meshes[1].morphed_position(0,0.).is_some(),"eviction retains the cached CPU geometry");
+        // A revisited cached tile gets a range again without any file read or rebuild.
+        let at=allocate_lru(&mut free,&mut live,n,&protected).unwrap();
+        meshes[1].0.resident.fetch_add(1,Ordering::Release);
+        live.insert(meshes[1].id(),(at,n,Arc::new(PooledMeshRef(Arc::downgrade(&meshes[1].0))),4));
+        assert!(meshes[1].gpu_resident());
+        let all=live.keys().copied().collect();
+        assert!(allocate_lru(&mut free,&mut live,2*n,&all).is_none(),"required cover is never evicted");
+        assert!(meshes[0].gpu_resident() && meshes[1].gpu_resident());
     }
 
     /// The free list hands out and joins ranges back; a mesh packs to its header's layout.
