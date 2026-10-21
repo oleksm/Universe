@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+# Written by tools/standards/supply_chains.py: change it there.
+identity:
+  key: good.hydrogen-chloride
+  name: Hydrogen chloride
+  kind: intermediate
+  description: Dry HCl returned from fluorination or taken for silicate gel production; recovered by electrolysis. Stocked under pressure; its handling
+    density is a draft liquefied-gas budget.
+physical:
+  bulk_density: 1000
+basis:
+- of:
+  - physical.bulk_density
+  tier: invented
+  review: true
+  source: standards/sources/production-chains.yaml
+  note: Chosen handling density; to be reviewed.

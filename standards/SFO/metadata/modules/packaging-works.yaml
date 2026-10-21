@@ -1,0 +1,219 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+# Written by tools/standards/supply_chains.py: change it there.
+identity:
+  key: module.packaging-works
+  name: Packaging works
+  step: Make empty handling units
+  description: Make empty handling units. Sheet fabrication, tank and crate assembly, plastics moulding and bag/carton conversion; draft material budgets.
+physical:
+  length: 120
+  width: 60
+  height: 15
+  mass: 288000
+staff:
+- profession: profession.plant-operator
+  count: 4
+- profession: profession.technician
+  count: 1
+recipes:
+- makes: stock.pkg-bale
+  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
+    here.
+  inputs:
+  - item: good.cotton-cloth
+    quantity: 1
+  rate: 0.5
+  power: 1000000
+- makes: stock.pkg-bar-bundle
+  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
+    here.
+  inputs:
+  - item: good.fibreboard
+    quantity: 0.6
+  - item: stock.sta36-pl-8
+    quantity: 0.4
+  rate: 0.5
+  power: 1000000
+- makes: stock.pkg-bulk-bag
+  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
+    here.
+  inputs:
+  - item: good.polyethylene
+    quantity: 0.4
+  - item: good.fibreboard
+    quantity: 0.6
+  rate: 0.5
+  power: 1000000
+- makes: stock.pkg-carton-pallet
+  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
+    here.
+  inputs:
+  - item: good.paper
+    quantity: 0.35
+  - item: good.fibreboard
+    quantity: 0.6
+  - item: good.polyethylene
+    quantity: 0.05
+  rate: 0.5
+  power: 1000000
+- makes: stock.pkg-coil
+  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
+    here.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.2
+  - item: good.fibreboard
+    quantity: 0.8
+  rate: 0.5
+  power: 1000000
+- makes: stock.pkg-cold-crate
+  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
+    here.
+  inputs:
+  - item: good.polyethylene
+    quantity: 0.3
+  - item: stock.al6061-pl-5
+    quantity: 0.65
+  - item: stock.chem-pir-foam
+    quantity: 0.05
+  rate: 0.5
+  power: 1000000
+- makes: stock.pkg-crate-heavy
+  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
+    here.
+  inputs:
+  - item: good.fibreboard
+    quantity: 0.85
+  - item: stock.sta36-pl-8
+    quantity: 0.15
+  rate: 0.5
+  power: 1000000
+- makes: stock.pkg-crate-steel
+  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
+    here.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1
+  rate: 0.5
+  power: 1000000
+- makes: stock.pkg-cryo-dewar
+  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
+    here.
+  inputs:
+  - item: stock.st304-pl-3
+    quantity: 0.95
+  - item: stock.mli-fl
+    quantity: 0.03
+  - item: stock.chem-ptfe
+    quantity: 0.02
+  rate: 0.5
+  power: 1000000
+- makes: stock.pkg-fish-tank
+  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
+    here.
+  inputs:
+  - item: good.polyethylene
+    quantity: 0.9
+  - item: stock.sta36-pl-8
+    quantity: 0.1
+  rate: 0.5
+  power: 1000000
+- makes: stock.pkg-gas-rack
+  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
+    here.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.98
+  - item: stock.chem-epdm-rubber
+    quantity: 0.02
+  rate: 0.5
+  power: 1000000
+- makes: stock.pkg-ladle
+  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
+    here.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 0.7
+  - item: good.refractory-brick
+    quantity: 0.3
+  rate: 0.5
+  power: 1000000
+- makes: stock.pkg-livestock-crate
+  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
+    here.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1
+  rate: 0.5
+  power: 1000000
+- makes: stock.pkg-plate-stack
+  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
+    here.
+  inputs:
+  - item: good.fibreboard
+    quantity: 0.9
+  - item: stock.sta36-pl-8
+    quantity: 0.1
+  rate: 0.5
+  power: 1000000
+- makes: stock.pkg-produce-crate
+  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
+    here.
+  inputs:
+  - item: good.polyethylene
+    quantity: 1
+  rate: 0.5
+  power: 1000000
+- makes: stock.pkg-skip
+  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
+    here.
+  inputs:
+  - item: stock.sta36-pl-8
+    quantity: 1
+  rate: 0.5
+  power: 1000000
+- makes: stock.pkg-tote
+  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
+    here.
+  inputs:
+  - item: good.polyethylene
+    quantity: 0.3
+  - item: stock.sta36-pl-8
+    quantity: 0.5
+  - item: good.fibreboard
+    quantity: 0.2
+  rate: 0.5
+  power: 1000000
+life: 788940000
+revision:
+  status: draft
+  owner: registry
+  on_conflict: propose
+  because: First production-chain budget. Chemistry sublines, plant construction and operating figures remain to qualify; no model is commissioned.
+basis:
+- of:
+  - recipes
+  tier: invented
+  review: true
+  source: standards/sources/production-chains.yaml
+  note: Draft integrated recipes. Routes from the listed sources; ideal net balances or chosen recoveries, not measured industrial yields. Catalysts and
+    circulating solvents are internal inventory; their makeup and detailed process equipment remain to qualify.
+- of:
+  - physical
+  - recipes.rate
+  - recipes.power
+  - staff
+  tier: invented
+  review: true
+  source: standards/sources/production-chains.yaml
+  note: Chosen plant allocation, throughput, electric draw and watch. Construction is a coarse budget, not an engineered plant or an authorization to model
+    one.
+- of:
+  - life
+  rule: rule.life-plant
+- of:
+  - physical.mass
+  tier: derived
+  review: true
+  source: standards/sources/production-chains.yaml
+  note: Sum of the four construction parts, one of each. Their budgets remain invented and under review.

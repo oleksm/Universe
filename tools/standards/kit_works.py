@@ -23,6 +23,8 @@ FEED = {"material.structural-steel-a36": "stock.sta36-pl-8", "material.stainless
         "material.polyethylene-uhmw": "good.polyethylene", "material.multi-layer-insulation": "stock.mli-fl",
         "material.fused-silica": "stock.fs-pl-6", "material.soda-lime-glass": "good.glass",
         "good.concrete": "good.concrete", "good.water": "good.water", "good.refractory-brick": "good.refractory-brick"}
+FEED.update({"material." + slug: "stock.chem-" + slug for slug in
+             ("ptfe", "epdm-rubber", "silicone-rubber", "pir-foam", "polyimide-film", "silica-aerogel")})
 COPPER = "material.copper"          # (drawn wire for a cable's or a wire's cores; an ingot for cast and machined fittings)
 SCRAP = {"stock.sta36-pl-8": "stock.sta36-scrap", "stock.st304-pl-3": "stock.st304-scrap", "stock.al6061-pl-5": "stock.al6061-scrap",
          "stock.st4340-bar-120": "stock.st4340-scrap", "stock.cu-ingot": "stock.cu-scrap", "stock.cu-wire-2": "stock.cu-scrap"}
@@ -138,6 +140,10 @@ def build(recs):
                             {"of": ["physical", "recipes.rate", "recipes.power"], "tier": "invented", "review": True, "note": "Its size, rate and power chosen for the kind of plant; to be reviewed."},
                             {"of": ["staff"], "tier": "invented", "review": True, "note": "Coarse: by the kind of plant, not this one; to be reviewed."},
                             {"of": ["life"], "rule": "rule.life-plant"}]}
+        components = [yaml.safe_load(open(f, encoding="utf-8")) for f in sorted(glob.glob(os.path.join(M, "parts", w, "*.yaml")))]
+        if components and all((p.get("physical") or {}).get("mass") is not None for p in components):
+            out[w]["physical"]["mass"] = sum(p["physical"]["mass"] * (p.get("fit") or {}).get("count", 1) for p in components)
+            out[w]["basis"].append({"of": ["physical.mass"], "tier": "derived", "review": True, "note": "Sum of its construction parts, at their recorded counts. The coarse construction budgets remain invented and under review."})
     return out, unmade
 
 

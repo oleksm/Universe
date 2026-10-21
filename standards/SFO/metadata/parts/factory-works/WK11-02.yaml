@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+# Written by tools/standards/supply_chains.py: change it there.
+identity:
+  key: part.wk11-02
+  code: WK11-02
+  name: 'Factory works: Process machinery'
+physical:
+  mass: 129600.0
+  length: 54.0
+  width: 30.0
+  height: 10.0
+made_from:
+- item: stock.st4340-fg
+  quantity: 129600.0
+making:
+  module: module.machining-centre
+fit:
+  count: 1
+basis:
+- of:
+  - physical
+  - made_from
+  - fit
+  tier: invented
+  review: true
+  source: standards/sources/production-chains.yaml
+  note: 'Coarse construction budget: 40 kg of machinery per allocated square metre, split 40% frames, 45% process machinery, 10% drives, 5% controls. Allocated
+    component envelopes are placeholders, not model geometry or a load-qualified design. No cutting loss assumed in this first budget.'

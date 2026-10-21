@@ -1,0 +1,206 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+# Written by tools/standards/supply_chains.py: change it there.
+identity:
+  key: module.factory-works
+  name: Factory works
+  step: Build industrial works
+  description: Build industrial works. Assemble prepared machinery parts, connect drives and controls, test and commission; can build another factory works
+    from its parts.
+physical:
+  length: 120
+  width: 60
+  height: 20
+  mass: 288000
+staff:
+- profession: profession.plant-operator
+  count: 4
+- profession: profession.technician
+  count: 1
+recipes:
+- makes: module.cable-works
+  does: Assemble the works' frames, process machinery, drives and controls, then commission it. Draft construction budget; foundations and buildings are
+    separate.
+  inputs:
+  - item: part.wk01-01
+    quantity: 0.4
+  - item: part.wk01-02
+    quantity: 0.45
+  - item: part.wk01-03
+    quantity: 0.1
+  - item: part.wk01-04
+    quantity: 0.05
+  rate: 0.25
+  power: 1000000
+- makes: module.pipe-shop
+  does: Assemble the works' frames, process machinery, drives and controls, then commission it. Draft construction budget; foundations and buildings are
+    separate.
+  inputs:
+  - item: part.wk02-01
+    quantity: 0.4
+  - item: part.wk02-02
+    quantity: 0.45
+  - item: part.wk02-03
+    quantity: 0.1
+  - item: part.wk02-04
+    quantity: 0.05
+  rate: 0.25
+  power: 1000000
+- makes: module.hose-works
+  does: Assemble the works' frames, process machinery, drives and controls, then commission it. Draft construction budget; foundations and buildings are
+    separate.
+  inputs:
+  - item: part.wk03-01
+    quantity: 0.4
+  - item: part.wk03-02
+    quantity: 0.45
+  - item: part.wk03-03
+    quantity: 0.1
+  - item: part.wk03-04
+    quantity: 0.05
+  rate: 0.25
+  power: 1000000
+- makes: module.valve-shop
+  does: Assemble the works' frames, process machinery, drives and controls, then commission it. Draft construction budget; foundations and buildings are
+    separate.
+  inputs:
+  - item: part.wk04-01
+    quantity: 0.4
+  - item: part.wk04-02
+    quantity: 0.45
+  - item: part.wk04-03
+    quantity: 0.1
+  - item: part.wk04-04
+    quantity: 0.05
+  rate: 0.25
+  power: 1000000
+- makes: module.electrical-fittings-works
+  does: Assemble the works' frames, process machinery, drives and controls, then commission it. Draft construction budget; foundations and buildings are
+    separate.
+  inputs:
+  - item: part.wk05-01
+    quantity: 0.4
+  - item: part.wk05-02
+    quantity: 0.45
+  - item: part.wk05-03
+    quantity: 0.1
+  - item: part.wk05-04
+    quantity: 0.05
+  rate: 0.25
+  power: 1000000
+- makes: module.building-panel-works
+  does: Assemble the works' frames, process machinery, drives and controls, then commission it. Draft construction budget; foundations and buildings are
+    separate.
+  inputs:
+  - item: part.wk06-01
+    quantity: 0.4
+  - item: part.wk06-02
+    quantity: 0.45
+  - item: part.wk06-03
+    quantity: 0.1
+  - item: part.wk06-04
+    quantity: 0.05
+  rate: 0.25
+  power: 1000000
+- makes: module.cradle-shop
+  does: Assemble the works' frames, process machinery, drives and controls, then commission it. Draft construction budget; foundations and buildings are
+    separate.
+  inputs:
+  - item: part.wk07-01
+    quantity: 0.4
+  - item: part.wk07-02
+    quantity: 0.45
+  - item: part.wk07-03
+    quantity: 0.1
+  - item: part.wk07-04
+    quantity: 0.05
+  rate: 0.25
+  power: 1000000
+- makes: module.conveyor-shop
+  does: Assemble the works' frames, process machinery, drives and controls, then commission it. Draft construction budget; foundations and buildings are
+    separate.
+  inputs:
+  - item: part.wk08-01
+    quantity: 0.4
+  - item: part.wk08-02
+    quantity: 0.45
+  - item: part.wk08-03
+    quantity: 0.1
+  - item: part.wk08-04
+    quantity: 0.05
+  rate: 0.25
+  power: 1000000
+- makes: module.specialty-chemical-works
+  does: Assemble the works' frames, process machinery, drives and controls, then commission it. Draft construction budget; foundations and buildings are
+    separate.
+  inputs:
+  - item: part.wk09-01
+    quantity: 0.4
+  - item: part.wk09-02
+    quantity: 0.45
+  - item: part.wk09-03
+    quantity: 0.1
+  - item: part.wk09-04
+    quantity: 0.05
+  rate: 0.25
+  power: 1000000
+- makes: module.packaging-works
+  does: Assemble the works' frames, process machinery, drives and controls, then commission it. Draft construction budget; foundations and buildings are
+    separate.
+  inputs:
+  - item: part.wk10-01
+    quantity: 0.4
+  - item: part.wk10-02
+    quantity: 0.45
+  - item: part.wk10-03
+    quantity: 0.1
+  - item: part.wk10-04
+    quantity: 0.05
+  rate: 0.25
+  power: 1000000
+- makes: module.factory-works
+  does: Assemble the works' frames, process machinery, drives and controls, then commission it. Draft construction budget; foundations and buildings are
+    separate.
+  inputs:
+  - item: part.wk11-01
+    quantity: 0.4
+  - item: part.wk11-02
+    quantity: 0.45
+  - item: part.wk11-03
+    quantity: 0.1
+  - item: part.wk11-04
+    quantity: 0.05
+  rate: 0.25
+  power: 1000000
+life: 788940000
+revision:
+  status: draft
+  owner: registry
+  on_conflict: propose
+  because: First production-chain budget. Chemistry sublines, plant construction and operating figures remain to qualify; no model is commissioned.
+basis:
+- of:
+  - recipes
+  tier: invented
+  review: true
+  source: standards/sources/production-chains.yaml
+  note: Draft integrated recipes. Routes from the listed sources; ideal net balances or chosen recoveries, not measured industrial yields. Catalysts and
+    circulating solvents are internal inventory; their makeup and detailed process equipment remain to qualify.
+- of:
+  - physical
+  - recipes.rate
+  - recipes.power
+  - staff
+  tier: invented
+  review: true
+  source: standards/sources/production-chains.yaml
+  note: Chosen plant allocation, throughput, electric draw and watch. Construction is a coarse budget, not an engineered plant or an authorization to model
+    one.
+- of:
+  - life
+  rule: rule.life-plant
+- of:
+  - physical.mass
+  tier: derived
+  review: true
+  source: standards/sources/production-chains.yaml
+  note: Sum of the four construction parts, one of each. Their budgets remain invented and under review.

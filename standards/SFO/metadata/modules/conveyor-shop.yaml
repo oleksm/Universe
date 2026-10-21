@@ -9,6 +9,7 @@ physical:
   length: 200
   width: 40
   height: 15
+  mass: 320000.0
 staff:
 - profession: profession.metalworker
   count: 4
@@ -22,7 +23,7 @@ recipes:
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.68
-  - item: material.silicone-rubber
+  - item: stock.chem-silicone-rubber
     quantity: 0.3398
   outputs:
   - item: stock.sta36-scrap
@@ -34,7 +35,7 @@ recipes:
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9128
-  - item: material.silicone-rubber
+  - item: stock.chem-silicone-rubber
     quantity: 0.0872
   - item: stock.mli-fl
     quantity: 0.0266
@@ -48,7 +49,7 @@ recipes:
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.637
-  - item: material.silicone-rubber
+  - item: stock.chem-silicone-rubber
     quantity: 0.3816
   outputs:
   - item: stock.sta36-scrap
@@ -60,7 +61,7 @@ recipes:
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.5986
-  - item: material.silicone-rubber
+  - item: stock.chem-silicone-rubber
     quantity: 0.4189
   outputs:
   - item: stock.sta36-scrap
@@ -72,7 +73,7 @@ recipes:
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.7715
-  - item: material.silicone-rubber
+  - item: stock.chem-silicone-rubber
     quantity: 0.251
   outputs:
   - item: stock.sta36-scrap
@@ -84,7 +85,7 @@ recipes:
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.7293
-  - item: material.silicone-rubber
+  - item: stock.chem-silicone-rubber
     quantity: 0.2919
   outputs:
   - item: stock.sta36-scrap
@@ -96,7 +97,7 @@ recipes:
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9289
-  - item: material.silicone-rubber
+  - item: stock.chem-silicone-rubber
     quantity: 0.0711
   - item: stock.mli-fl
     quantity: 0.0271
@@ -194,7 +195,7 @@ recipes:
   inputs:
   - item: stock.st304-pl-3
     quantity: 0.8128
-  - item: material.silica-aerogel
+  - item: stock.chem-silica-aerogel
     quantity: 0.2109
   outputs:
   - item: stock.st304-scrap
@@ -225,3 +226,8 @@ basis:
 - of:
   - life
   rule: rule.life-plant
+- of:
+  - physical.mass
+  tier: derived
+  review: true
+  note: Sum of its construction parts, at their recorded counts. The coarse construction budgets remain invented and under review.

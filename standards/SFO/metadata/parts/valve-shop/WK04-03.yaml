@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+# Written by tools/standards/supply_chains.py: change it there.
+identity:
+  key: part.wk04-03
+  code: WK04-03
+  name: 'Valve and coupling shop: Drives'
+physical:
+  mass: 30000.0
+  length: 15.0
+  width: 25.0
+  height: 6.0
+made_from:
+- item: good.electric-motors
+  quantity: 30000.0
+making:
+  module: module.assembly-shop
+fit:
+  count: 1
+basis:
+- of:
+  - physical
+  - made_from
+  - fit
+  tier: invented
+  review: true
+  source: standards/sources/production-chains.yaml
+  note: 'Coarse construction budget: 40 kg of machinery per allocated square metre, split 40% frames, 45% process machinery, 10% drives, 5% controls. Allocated
+    component envelopes are placeholders, not model geometry or a load-qualified design. No cutting loss assumed in this first budget.'

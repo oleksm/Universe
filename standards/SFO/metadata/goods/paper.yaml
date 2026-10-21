@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+# Written by tools/standards/supply_chains.py: change it there.
+identity:
+  key: good.paper
+  name: Packaging paper
+  kind: intermediate
+  description: Dry bagasse pulp sheet for cartons.
+physical:
+  bulk_density: 500
+basis:
+- of:
+  - physical.bulk_density
+  tier: invented
+  review: true
+  source: standards/sources/production-chains.yaml
+  note: Chosen handling density; to be reviewed.

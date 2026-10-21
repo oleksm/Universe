@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+# Written by tools/standards/supply_chains.py: change it there.
+identity:
+  key: part.wk08-01
+  code: WK08-01
+  name: 'Conveyor shop: Frames and guards'
+physical:
+  mass: 128000.0
+  length: 80.0
+  width: 20.0
+  height: 7.5
+made_from:
+- item: stock.sta36-pl-20-panel
+  quantity: 128000.0
+making:
+  module: module.welding-bay
+fit:
+  count: 1
+basis:
+- of:
+  - physical
+  - made_from
+  - fit
+  tier: invented
+  review: true
+  source: standards/sources/production-chains.yaml
+  note: 'Coarse construction budget: 40 kg of machinery per allocated square metre, split 40% frames, 45% process machinery, 10% drives, 5% controls. Allocated
+    component envelopes are placeholders, not model geometry or a load-qualified design. No cutting loss assumed in this first budget.'

@@ -1,0 +1,218 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+# Written by tools/standards/supply_chains.py: change it there.
+identity:
+  key: module.specialty-chemical-works
+  name: Specialty chemical works
+  step: Make insulation polymers, refractory and packaging feedstocks
+  description: Make insulation polymers, refractory and packaging feedstocks. Integrated reactors, separation, polymerisation, drying and recovery sections;
+    all are draft net budgets.
+physical:
+  length: 180
+  width: 80
+  height: 25
+  mass: 576000
+staff:
+- profession: profession.plant-operator
+  count: 4
+- profession: profession.technician
+  count: 1
+recipes:
+- makes: good.hydrogen-fluoride
+  does: Digest fluorspar with sulphuric acid, distil HF, and hydrate the calcium sulphate to gypsum. Ideal pure-feed balance; ore beneficiation is internal
+    and not yet sized.
+  inputs:
+  - item: good.fluorspar
+    quantity: 1.95129544
+  - item: good.sulphuric-acid
+    quantity: 2.45126521
+  - item: good.water
+    quantity: 0.90046171
+  rate: 0.3
+  power: 3000000
+  outputs:
+  - item: good.gypsum
+    quantity: 4.30302235
+- makes: stock.chem-ptfe
+  does: Chlorinate methane to chloroform; exchange chlorine for fluorine with HF; crack R22 to TFE and polymerise it. Intermediates stay inside this integrated
+    works. Ideal net balance.
+  inputs:
+  - item: good.methane
+    quantity: 0.32080991
+  - item: good.hydrogen-fluoride
+    quantity: 0.8001312
+  - item: element.cl
+    quantity: 4.25333594
+  rate: 0.3
+  power: 3000000
+  outputs:
+  - item: good.hydrogen-chloride
+    quantity: 4.37427706
+- makes: element.cl
+  does: Electrolyse recovered hydrogen chloride; return chlorine to chlorination and collect hydrogen.
+  inputs:
+  - item: good.hydrogen-chloride
+    quantity: 1.02843441
+  rate: 0.3
+  power: 3000000
+  outputs:
+  - item: element.h
+    quantity: 0.02843441
+- makes: stock.chem-epdm-rubber
+  does: 'Draft integrated olefin and ENB synthesis from methanol, terpolymerisation and compounding: 80% EPDM (60/35/5 ethylene/propylene/ENB), 19% carbon
+    filler and 1% sulphur. Ideal net balance; formulation and catalyst makeup unqualified.'
+  inputs:
+  - item: good.methanol
+    quantity: 1.83204476
+  - item: good.carbon
+    quantity: 0.19
+  - item: element.s
+    quantity: 0.01
+  rate: 0.3
+  power: 3000000
+  outputs:
+  - item: good.water
+    quantity: 1.03003203
+  - item: element.h
+    quantity: 0.00201273
+- makes: stock.chem-silicone-rubber
+  does: Make methylchlorosilanes from silicon and methanol via recycled HCl, hydrolyse to siloxane, polymerise and cure with silica filler. Draft 80% PDMS
+    / 20% silica; ideal net balance, cure package unqualified.
+  inputs:
+  - item: good.silicon
+    quantity: 0.30299107
+  - item: good.methanol
+    quantity: 0.69136122
+  - item: good.silica-sand
+    quantity: 0.2
+  rate: 0.3
+  power: 3000000
+  outputs:
+  - item: good.water
+    quantity: 0.19435229
+- makes: stock.chem-pir-foam
+  does: Draft integrated methanol-to-aromatics and isocyanate synthesis, then foam and cure an MDI-rich system with glycerine polyol. 90% ideal MDI / 10%
+    glycerine mass model; proprietary formulation, catalysts and blowing-agent makeup unqualified.
+  inputs:
+  - item: good.methanol
+    quantity: 1.72849111
+  - item: element.n
+    quantity: 0.10074683
+  - item: good.glycerine
+    quantity: 0.1
+  rate: 0.3
+  power: 3000000
+  outputs:
+  - item: good.water
+    quantity: 0.84223618
+  - item: element.h
+    quantity: 0.08700176
+- makes: stock.chem-polyimide-film
+  does: Draft integrated aromatic monomer synthesis from methanol and nitrogen, PMDA/ODA polyamic-acid formation, casting and thermal imidisation. Ideal
+    C22H10N2O5 film net balance; monomer sublines and solvent makeup unqualified.
+  inputs:
+  - item: good.methanol
+    quantity: 1.84375319
+  - item: element.n
+    quantity: 0.07327159
+  rate: 0.05
+  power: 1500000
+  outputs:
+  - item: good.water
+    quantity: 0.80102058
+  - item: element.h
+    quantity: 0.1160042
+- makes: stock.chem-silica-aerogel
+  does: Dissolve silica in caustic, acidify sodium silicate with HCl, wash, exchange solvent and dry the gel. Ideal silica/salt/water balance plus chosen
+    0.05 kg solvent makeup lost to chemical waste per kg; recovery and hydrophobisation unqualified.
+  inputs:
+  - item: good.silica-sand
+    quantity: 1
+  - item: good.caustic-soda
+    quantity: 1.3313839
+  - item: good.hydrogen-chloride
+    quantity: 1.21358787
+  - item: good.methanol
+    quantity: 0.05
+  rate: 0.3
+  power: 3000000
+  outputs:
+  - item: good.salt
+    quantity: 1.94530131
+  - item: good.water
+    quantity: 0.59967046
+  - item: good.chemical-waste
+    quantity: 0.05
+- makes: good.refractory-brick
+  does: Beneficiate and calcine magnesite, press dead-burned magnesia with carbon and cure its bond. Draft 90% MgO / 10% carbon budget; binder chemistry
+    and firing losses unqualified.
+  inputs:
+  - item: good.magnesite-ore
+    quantity: 1.99977043
+  - item: good.carbon
+    quantity: 0.1
+  rate: 0.3
+  power: 3000000
+  outputs:
+  - item: good.carbon-dioxide
+    quantity: 0.98273372
+  - item: good.tailings
+    quantity: 0.1170367
+- makes: good.paper
+  does: Pulp bagasse, wash and press sheet, and dry it. Draft recovery and process-water budget; spent liquor goes to chemical waste.
+  inputs:
+  - item: good.bagasse
+    quantity: 2
+  - item: good.water
+    quantity: 4
+  - item: good.caustic-soda
+    quantity: 0.05
+  rate: 0.3
+  power: 3000000
+  outputs:
+  - item: good.chemical-waste
+    quantity: 5.05
+- makes: good.fibreboard
+  does: Dry and press crop fibre with polyethylene binder into pallet board and spacers. Draft moisture and binder budget.
+  inputs:
+  - item: good.crop-residue
+    quantity: 1.2
+  - item: good.polyethylene
+    quantity: 0.1
+  rate: 0.3
+  power: 3000000
+  outputs:
+  - item: good.waste-water
+    quantity: 0.3
+life: 788940000
+revision:
+  status: draft
+  owner: registry
+  on_conflict: propose
+  because: First production-chain budget. Chemistry sublines, plant construction and operating figures remain to qualify; no model is commissioned.
+basis:
+- of:
+  - recipes
+  tier: invented
+  review: true
+  source: standards/sources/production-chains.yaml
+  note: Draft integrated recipes. Routes from the listed sources; ideal net balances or chosen recoveries, not measured industrial yields. Catalysts and
+    circulating solvents are internal inventory; their makeup and detailed process equipment remain to qualify.
+- of:
+  - physical
+  - recipes.rate
+  - recipes.power
+  - staff
+  tier: invented
+  review: true
+  source: standards/sources/production-chains.yaml
+  note: Chosen plant allocation, throughput, electric draw and watch. Construction is a coarse budget, not an engineered plant or an authorization to model
+    one.
+- of:
+  - life
+  rule: rule.life-plant
+- of:
+  - physical.mass
+  tier: derived
+  review: true
+  source: standards/sources/production-chains.yaml
+  note: Sum of the four construction parts, one of each. Their budgets remain invented and under review.

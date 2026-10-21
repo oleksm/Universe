@@ -9,6 +9,7 @@ physical:
   length: 120
   width: 40
   height: 12
+  mass: 192000.0
 staff:
 - profession: profession.welder
   count: 3
@@ -825,3 +826,8 @@ basis:
 - of:
   - life
   rule: rule.life-plant
+- of:
+  - physical.mass
+  tier: derived
+  review: true
+  note: Sum of its construction parts, at their recorded counts. The coarse construction budgets remain invented and under review.

@@ -9,6 +9,7 @@ physical:
   length: 150
   width: 30
   height: 12
+  mass: 180000.0
 staff:
 - profession: profession.plant-operator
   count: 4
@@ -18,7 +19,7 @@ recipes:
 - makes: stock.kit-hose-dn100-pn16
   does: A tube is extruded or corrugated, braided, covered, cured and cut to lengths.
   inputs:
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.7623
   - item: stock.sta36-pl-8
     quantity: 0.2449
@@ -30,7 +31,7 @@ recipes:
 - makes: stock.kit-hose-dn150-pn16
   does: A tube is extruded or corrugated, braided, covered, cured and cut to lengths.
   inputs:
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.7614
   - item: stock.sta36-pl-8
     quantity: 0.2457
@@ -42,7 +43,7 @@ recipes:
 - makes: stock.kit-hose-dn25-pn16
   does: A tube is extruded or corrugated, braided, covered, cured and cut to lengths.
   inputs:
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.762
   - item: stock.sta36-pl-8
     quantity: 0.2451
@@ -54,7 +55,7 @@ recipes:
 - makes: stock.kit-hose-dn50-pn16
   does: A tube is extruded or corrugated, braided, covered, cured and cut to lengths.
   inputs:
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.7618
   - item: stock.sta36-pl-8
     quantity: 0.2453
@@ -68,7 +69,7 @@ recipes:
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.5664
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.4501
   outputs:
   - item: stock.sta36-scrap
@@ -80,7 +81,7 @@ recipes:
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.5671
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.4494
   outputs:
   - item: stock.sta36-scrap
@@ -92,7 +93,7 @@ recipes:
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.5665
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.45
   outputs:
   - item: stock.sta36-scrap
@@ -104,7 +105,7 @@ recipes:
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.5663
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.4502
   outputs:
   - item: stock.sta36-scrap
@@ -175,3 +176,8 @@ basis:
 - of:
   - life
   rule: rule.life-plant
+- of:
+  - physical.mass
+  tier: derived
+  review: true
+  note: Sum of its construction parts, at their recorded counts. The coarse construction budgets remain invented and under review.

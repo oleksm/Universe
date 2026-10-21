@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.packing-stock
+  name: Packing uses manufactured stock
+  about: Empty handling units are made, stored and counted separately from their contents.
+statement: >-
+  A stock record's package is a handling type, not a source of free containers.
+  The stock whose supplies.item names that package is one empty handling unit
+  (one binding set for a bale). Packing one handling unit reserves one such item
+  from the store and contents within both holds.mass and holds.volume. Its gross
+  mass is the contents plus the package tare exactly once. Unpacking returns the
+  empty unit if it remains serviceable; binding, damage and disposal must be
+  accounted for by the operation. An empty handling unit needs no enclosing
+  package. Recipe quantities remain per kg of product, excluding logistics
+  packaging; packing is a separate inventory operation, whose count follows the
+  actual load rather than an assumed full package. This is the registry contract;
+  the game must implement the inventory operation before container use is enforced.
+tier: invented
+review: true
+source: Owner's stock production-chain review, 2026-10-20

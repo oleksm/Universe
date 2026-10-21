@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/supply_chains.py: change it there.
+identity:
+  key: stock.pkg-plate-stack
+  code: PKG-PLATE-STACK
+  name: Plate stack, empty
+  form: piece
+  traded_as: market.machinery
+made_from:
+- item: good.fibreboard
+  quantity: 36.0
+- item: stock.sta36-pl-8
+  quantity: 4.0
+physical:
+  length: 2.0
+  width: 1.0
+  height: 0.6
+  mass: 40
+supplies:
+  item: package.plate-stack
+basis:
+- of:
+  - identity
+  - made_from
+  - physical
+  tier: derived
+  review: true
+  source: standards/sources/production-chains.yaml
+  note: A stocked feedstock, or one empty handling unit. Empty-unit mass is the existing package's tare; its contents are separate.

@@ -26,8 +26,17 @@ recipes:
       - { item: good.slag, quantity: 1.0 }
     rate: 50.0
     power: 351000
+  - makes: good.meteoritic-iron
+    does: "Crush stony asteroid ore and separate its metal magnetically. The existing good's laboratory recovery is the draft yield."
+    inputs:
+      - { item: good.stony-ore, quantity: 7.1942446 }
+    outputs:
+      - { item: good.tailings, quantity: 6.1942446 }
+    rate: 1.0
+    power: 351000
 life: 788940000
 basis:
+  - { of: [recipes], tier: derived, review: true, source: "standards/SFO/metadata/goods/meteoritic-iron.yaml", note: "Meteoritic iron: 13.9% metal recovery from the existing good's source, 1 / 0.139 kg of ore per kg of metal; the rest is tailings. The 1 kg/s metal rate and use of the existing crusher draw are chosen, not qualified separation-plant figures." }
   - { of: [recipes.power], tier: sourced, source: "standards/sources/research_machines.json", note: "1.95 kWh a tonne: a crushed-stone quarry takes 1.7 to 2.2 (US Department of Energy)." }
   - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs], tier: invented, review: true, note: "Its size and rate are chosen; the 2% lost as fines is a guess. To be reviewed." }
   - { of: [staff], tier: invented, review: true, note: "Operators and a couple of miners. Coarse: by the kind of plant, not this one; to be reviewed." }

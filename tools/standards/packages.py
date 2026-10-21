@@ -46,9 +46,14 @@ OVERRIDES = {"cement": "bulk-bag", "lime": "bulk-bag", "alumina": "bulk-bag", "g
              "carbon-anode": "crate-heavy", "graphite-electrode": "crate-heavy", "diamonds": "carton-pallet",
              "polysilicon": "crate-heavy", "silicon": "crate-heavy", "meteoritic-iron": "crate-heavy", "sponge-iron": "skip",
              "iron-ore-pellets": "skip", "asteroid-water-ice": "cold-crate", "polyethylene": "bulk-bag", "pvc": "bulk-bag"}
+OVERRIDES.update({"hydrogen-fluoride": "tote", "hydrogen-chloride": "gas-rack", "paper": "plate-stack", "fibreboard": "plate-stack",
+                  "ptfe": "bulk-bag", "epdm-rubber": "crate-heavy", "silicone-rubber": "crate-heavy", "pir-foam": "plate-stack",
+                  "polyimide-film": "coil", "silica-aerogel": "bulk-bag", "refractory-brick": "crate-heavy", "fluorspar": "bulk-bag"})
 
 
 def package_for(d, g):
+    if (d.get("supplies") or {}).get("item", "").startswith("package."):
+        return None          # The empty handling unit itself, not a load inside another unit.
     i = d["identity"]; form = i.get("form"); market = i.get("traded_as", "")
     item = ((d.get("made_from") or [{}])[0]).get("item", "")
     name = item.split(".", 1)[-1]
@@ -93,6 +98,8 @@ def main(argv):
     for f in files:
         d = yaml.safe_load(open(f))
         k = package_for(d, g)
+        if k is None:
+            continue
         if k not in known:
             missing.append((d["identity"]["key"], k)); continue
         counts[k] = counts.get(k, 0) + 1

@@ -9,6 +9,7 @@ physical:
   length: 150
   width: 40
   height: 12
+  mass: 240000.0
 staff:
 - profession: profession.electrician
   count: 2
@@ -26,7 +27,7 @@ recipes:
     quantity: 0.8378
   - item: stock.st4340-bar-120
     quantity: 0.1382
-  - item: material.silicone-rubber
+  - item: stock.chem-silicone-rubber
     quantity: 0.0524
   outputs:
   - item: stock.cu-scrap
@@ -42,7 +43,7 @@ recipes:
     quantity: 0.8762
   - item: stock.st4340-bar-120
     quantity: 0.0827
-  - item: material.silicone-rubber
+  - item: stock.chem-silicone-rubber
     quantity: 0.069
   outputs:
   - item: stock.cu-scrap
@@ -58,7 +59,7 @@ recipes:
     quantity: 0.861
   - item: stock.st4340-bar-120
     quantity: 0.1092
-  - item: material.silicone-rubber
+  - item: stock.chem-silicone-rubber
     quantity: 0.058
   outputs:
   - item: stock.cu-scrap
@@ -162,7 +163,7 @@ recipes:
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.7403
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.1562
   - item: stock.cu-ingot
     quantity: 0.1288
@@ -178,7 +179,7 @@ recipes:
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.7642
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.1452
   - item: stock.cu-ingot
     quantity: 0.1163
@@ -194,7 +195,7 @@ recipes:
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.7602
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.1508
   - item: stock.cu-ingot
     quantity: 0.1144
@@ -210,7 +211,7 @@ recipes:
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.7592
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.1514
   - item: stock.cu-ingot
     quantity: 0.1149
@@ -352,7 +353,7 @@ recipes:
 - makes: stock.kit-coupler-11kv-400a
   does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.6453
   - item: stock.cu-ingot
     quantity: 0.2168
@@ -412,7 +413,7 @@ recipes:
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.4623
-  - item: material.ptfe
+  - item: stock.chem-ptfe
     quantity: 0.3529
   - item: stock.cu-ingot
     quantity: 0.2042
@@ -428,7 +429,7 @@ recipes:
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.462
-  - item: material.ptfe
+  - item: stock.chem-ptfe
     quantity: 0.3529
   - item: stock.cu-ingot
     quantity: 0.2045
@@ -444,7 +445,7 @@ recipes:
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.4628
-  - item: material.ptfe
+  - item: stock.chem-ptfe
     quantity: 0.3524
   - item: stock.cu-ingot
     quantity: 0.2042
@@ -460,7 +461,7 @@ recipes:
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.4624
-  - item: material.ptfe
+  - item: stock.chem-ptfe
     quantity: 0.3527
   - item: stock.cu-ingot
     quantity: 0.2043
@@ -522,7 +523,7 @@ recipes:
 - makes: stock.kit-powerlock-400a
   does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
-  - item: material.epdm-rubber
+  - item: stock.chem-epdm-rubber
     quantity: 0.4494
   - item: stock.cu-ingot
     quantity: 0.3287
@@ -538,7 +539,7 @@ recipes:
 - makes: stock.kit-termination-11kv-500mm2
   does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
-  - item: material.silicone-rubber
+  - item: stock.chem-silicone-rubber
     quantity: 0.7052
   - item: stock.al6061-pl-5
     quantity: 0.2052
@@ -558,7 +559,7 @@ recipes:
     quantity: 0.656
   - item: stock.al6061-pl-5
     quantity: 0.1516
-  - item: material.silicone-rubber
+  - item: stock.chem-silicone-rubber
     quantity: 0.1312
   - item: stock.cu-ingot
     quantity: 0.0676
@@ -572,7 +573,7 @@ recipes:
 - makes: stock.kit-termination-33kv-120mm2
   does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
-  - item: material.silicone-rubber
+  - item: stock.chem-silicone-rubber
     quantity: 0.9193
   - item: stock.al6061-pl-5
     quantity: 0.0742
@@ -588,7 +589,7 @@ recipes:
 - makes: stock.kit-termination-33kv-150mm2
   does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
-  - item: material.silicone-rubber
+  - item: stock.chem-silicone-rubber
     quantity: 0.918
   - item: stock.al6061-pl-5
     quantity: 0.0741
@@ -604,7 +605,7 @@ recipes:
 - makes: stock.kit-termination-33kv-185mm2
   does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
-  - item: material.silicone-rubber
+  - item: stock.chem-silicone-rubber
     quantity: 0.9154
   - item: stock.al6061-pl-5
     quantity: 0.0739
@@ -620,7 +621,7 @@ recipes:
 - makes: stock.kit-termination-33kv-630mm2
   does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
-  - item: material.silicone-rubber
+  - item: stock.chem-silicone-rubber
     quantity: 0.8886
   - item: stock.al6061-pl-5
     quantity: 0.0717
@@ -818,7 +819,7 @@ recipes:
 - makes: stock.kit-termination-6p6kv-185mm2
   does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
-  - item: material.silicone-rubber
+  - item: stock.chem-silicone-rubber
     quantity: 0.6289
   - item: stock.al6061-pl-5
     quantity: 0.3239
@@ -834,7 +835,7 @@ recipes:
 - makes: stock.kit-termination-6p6kv-400mm2
   does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
-  - item: material.silicone-rubber
+  - item: stock.chem-silicone-rubber
     quantity: 0.5917
   - item: stock.al6061-pl-5
     quantity: 0.3047
@@ -850,7 +851,7 @@ recipes:
 - makes: stock.kit-termination-6p6kv-50mm2
   does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
-  - item: material.silicone-rubber
+  - item: stock.chem-silicone-rubber
     quantity: 0.6579
   - item: stock.al6061-pl-5
     quantity: 0.3388
@@ -866,7 +867,7 @@ recipes:
 - makes: stock.kit-termination-6p6kv-630mm2
   does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
-  - item: material.silicone-rubber
+  - item: stock.chem-silicone-rubber
     quantity: 0.5556
   - item: stock.al6061-pl-5
     quantity: 0.2861
@@ -882,7 +883,7 @@ recipes:
 - makes: stock.kit-termination-6p6kv-70mm2
   does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
-  - item: material.silicone-rubber
+  - item: stock.chem-silicone-rubber
     quantity: 0.6536
   - item: stock.al6061-pl-5
     quantity: 0.3366
@@ -898,7 +899,7 @@ recipes:
 - makes: stock.kit-termination-6p6kv-95mm2
   does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
-  - item: material.silicone-rubber
+  - item: stock.chem-silicone-rubber
     quantity: 0.6452
   - item: stock.al6061-pl-5
     quantity: 0.3323
@@ -951,3 +952,8 @@ basis:
 - of:
   - life
   rule: rule.life-plant
+- of:
+  - physical.mass
+  tier: derived
+  review: true
+  note: Sum of its construction parts, at their recorded counts. The coarse construction budgets remain invented and under review.

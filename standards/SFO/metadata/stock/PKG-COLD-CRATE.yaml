@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/supply_chains.py: change it there.
+identity:
+  key: stock.pkg-cold-crate
+  code: PKG-COLD-CRATE
+  name: Cold crate, empty
+  form: piece
+  traded_as: market.machinery
+made_from:
+- item: good.polyethylene
+  quantity: 27.0
+- item: stock.al6061-pl-5
+  quantity: 58.5
+- item: stock.chem-pir-foam
+  quantity: 4.5
+physical:
+  length: 1.2
+  width: 1.0
+  height: 1.4
+  mass: 90
+supplies:
+  item: package.cold-crate
+basis:
+- of:
+  - identity
+  - made_from
+  - physical
+  tier: derived
+  review: true
+  source: standards/sources/production-chains.yaml
+  note: A stocked feedstock, or one empty handling unit. Empty-unit mass is the existing package's tare; its contents are separate.
