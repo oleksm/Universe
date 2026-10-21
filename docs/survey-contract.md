@@ -108,6 +108,35 @@ from the survey world through `world_install.py`, `ground` through `set_ground.p
 stay the record's); runs the validators and the registry build and puts the record back if either fails; with
 `--push` commits the record and the survey folder on fso and pushes. A second run with the same files changes nothing.
 
+## 2d. Installing the planet LOD anchor and live land pyramid
+
+`ground.format` also accepts `planet-land-pyramid/1`. This is the original planet
+LOD app directory, including its anchor arrays, colours, morph/LOD data and live
+`pyramid/`, not a conversion to PTL2. The existing format remains supported.
+
+    python3 tools/standards/install_ground.py <view-directory> body.treistun.treistun-e --world TRE3
+    python3 tools/standards/install_ground.py <view-directory> body.treistun.treistun-e --world TRE3 --apply --json
+
+The first command is a dry run. Apply copies source bytes into a temporary folder
+under `worlds/TRE3/ground/`, excludes root comparison directories `pyramid2`,
+`pyramid_600belt`, `pyramid_nobelt`, verifies source stability and all copied hashes,
+then publishes `<view-name>-<fileset-sha256-prefix>/` atomically. It refuses to
+overwrite a different named snapshot. The manifest holds `format`, `world_id`,
+`body`, `name`, package `radius_m`, source/fileset provenance and
+`files: {relative_path: {sha256, size}}`; the manifest itself is hashed in the
+body's ground pointer. Pyramid arrays are checked against their full or windowed
+raster dimensions before copying. Binary payload stays in the worlds store.
+
+Only the body's `ground` block changes. Its survey world, physical radius,
+gravity, climate and lore stay as recorded. `set_ground.py` accepts either format
+and checks the listed files and sizes when pointing at a snapshot. Hashes are
+verified during installation; runtime open-time size checks are the game
+consumer's responsibility, with no per-read hashing required. A size check alone
+is not a fresh integrity certification after a snapshot is modified.
+
+This installer does not certify the game renderer, walking/landing, height queries
+or frame rate. Those are separate engine checks against the installed snapshot.
+
 ## 2b. Installing without anyone: the watcher
 
 `tools/standards/watch_worlds.py` watches the store's `releases.json`. When it has changed since
