@@ -46,8 +46,8 @@ sources:
 library_status: written
 source: coastal.rocky.rocky_coast
 levels:
-- planet-level.pattern
-- planet-level.square
+- planet-level.region
+- planet-level.landscape
 basis:
 - of:
   - factors

@@ -19,8 +19,8 @@ children:
 source: arc
 levels:
 - planet-level.planet
-- planet-level.cluster
-- planet-level.pattern
+- planet-level.continent
+- planet-level.region
 rules:
 - 'a line lies on one plate: cut where its vertices ride different plates'
 - crossings are cut; every fate (split, ended, sunk, reindexed) is logged

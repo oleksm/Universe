@@ -15,7 +15,7 @@ producer:
 source: h_water_lost
 levels:
 - planet-level.planet
-- planet-level.cluster
+- planet-level.continent
 basis:
 - of:
   - identity

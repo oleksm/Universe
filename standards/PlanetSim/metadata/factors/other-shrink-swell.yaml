@@ -5,8 +5,8 @@ identity:
   about: 'Named by the library outside its vocabulary: shrink swell.'
 source: OTHER:shrink_swell
 levels:
-- planet-level.cluster
-- planet-level.pattern
+- planet-level.continent
+- planet-level.region
 basis:
 - of:
   - identity

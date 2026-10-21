@@ -5,8 +5,6 @@ identity:
   about: 'A relief province of the karst family: karst plateau.'
 register: province
 family: karst
-level:
-- 2
 geometry: polygon
 properties:
 - field: doline density
@@ -16,14 +14,13 @@ generator: area
 wave: 2
 built: false
 levels:
-- planet-level.pattern
+- planet-level.region
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

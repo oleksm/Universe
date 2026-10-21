@@ -5,8 +5,6 @@ identity:
   about: 'A relief feature of the tectonic family: range crest (main divide).'
 register: feature
 family: tectonic
-level:
-- 1
 geometry: polyline
 properties:
 - field: height profile
@@ -18,14 +16,13 @@ wave: 1
 built: false
 levels:
 - planet-level.planet
-- planet-level.cluster
+- planet-level.continent
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

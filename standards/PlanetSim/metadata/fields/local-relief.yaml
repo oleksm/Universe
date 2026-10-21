@@ -13,7 +13,7 @@ derived_from:
 source: relief
 levels:
 - planet-level.planet
-- planet-level.cluster
+- planet-level.continent
 basis:
 - of:
   - identity

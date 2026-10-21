@@ -5,8 +5,6 @@ identity:
   about: 'A relief feature of the fluvial family: alluvial fan.'
 register: feature
 family: fluvial
-level:
-- 2
 geometry: polygon (cone)
 properties:
 - field: apex
@@ -21,14 +19,13 @@ overrides: coalescence
 wave: 2
 built: false
 levels:
-- planet-level.pattern
+- planet-level.region
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

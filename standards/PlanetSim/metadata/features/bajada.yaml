@@ -5,8 +5,6 @@ identity:
   about: 'A relief feature of the fluvial family: bajada.'
 register: feature
 family: fluvial
-level:
-- 2
 geometry: polygon
 properties:
 - field: width
@@ -16,14 +14,13 @@ generator: band along the front
 wave: 2
 built: false
 levels:
-- planet-level.pattern
+- planet-level.region
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

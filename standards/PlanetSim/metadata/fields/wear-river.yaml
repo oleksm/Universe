@@ -13,7 +13,7 @@ amount: per-step
 source: h_wear_river
 levels:
 - planet-level.planet
-- planet-level.cluster
+- planet-level.continent
 basis:
 - of:
   - identity

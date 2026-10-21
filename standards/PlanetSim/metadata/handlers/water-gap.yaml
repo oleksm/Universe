@@ -7,8 +7,8 @@ law: the trunk kept, the crest cut
 applies_when: where a water gap landmark stands
 where: tools/anchored_mesh.py
 levels:
-- planet-level.pattern
-- planet-level.square
+- planet-level.region
+- planet-level.landscape
 basis:
 - of:
   - identity

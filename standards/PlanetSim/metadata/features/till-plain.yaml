@@ -5,8 +5,6 @@ identity:
   about: 'A relief province of the glacial family: till plain.'
 register: province
 family: glacial
-level:
-- 2
 geometry: polygon
 properties:
 - field: relief
@@ -16,14 +14,13 @@ generator: area
 wave: 2
 built: false
 levels:
-- planet-level.pattern
+- planet-level.region
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

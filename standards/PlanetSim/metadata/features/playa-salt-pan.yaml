@@ -5,8 +5,6 @@ identity:
   about: 'A relief landmark of the arid family: playa / salt pan.'
 register: landmark
 family: arid
-level:
-- 1
 geometry: polygon
 properties:
 - field: area
@@ -19,14 +17,13 @@ wave: 1
 built: true
 levels:
 - planet-level.planet
-- planet-level.cluster
+- planet-level.continent
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

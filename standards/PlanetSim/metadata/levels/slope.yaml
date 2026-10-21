@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/planet-level.schema.yaml
+identity:
+  key: planet-level.slope
+  name: Slope
+  about: 'The slope view: 100 m across; target ground pixel 0.1 m.'
+span: 100.0
+spacing:
+- 0.1
+- 0.1
+goal: true
+exists:
+- gullies
+- talus
+- stacks
+- pingos
+from_parent:
+- Frozen coarser ground anchors; detail adds without moving them.
+levels:
+- planet-level.slope
+status: draft
+basis:
+- of:
+  - span
+  tier: invented
+  review: true
+  note: Owner’s eight-decade view ladder, planet-forge docs/catalogue/README.md §1,
+    94e4c4f; design target, not achieved sampler resolution.
+- of:
+  - spacing
+  tier: derived
+  review: true
+  note: Target ground pixel is view span / 1000. Surface is texture only.

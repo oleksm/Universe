@@ -9,8 +9,8 @@ sides: 1
 first_level: planet-level.planet
 levels:
 - planet-level.planet
-- planet-level.cluster
-- planet-level.pattern
+- planet-level.continent
+- planet-level.region
 basis:
 - of:
   - identity

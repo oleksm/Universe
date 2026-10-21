@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schema/planet-level.schema.yaml
+identity:
+  key: planet-level.region
+  name: Region
+  about: 'The region view: 100000 m across; target ground pixel 100 m.'
+span: 100000.0
+spacing:
+- 100.0
+- 100.0
+goal: true
+exists:
+- ranges
+- volcano chains
+- deltas
+- lakes
+- big craters
+from_parent:
+- Frozen coarser ground anchors; detail adds without moving them.
+levels:
+- planet-level.region
+status: draft
+basis:
+- of:
+  - span
+  tier: invented
+  review: true
+  note: Owner’s eight-decade view ladder, planet-forge docs/catalogue/README.md §1,
+    94e4c4f; design target, not achieved sampler resolution.
+- of:
+  - spacing
+  tier: derived
+  review: true
+  note: Target ground pixel is view span / 1000. Surface is texture only.

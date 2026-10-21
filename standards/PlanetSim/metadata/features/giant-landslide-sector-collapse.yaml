@@ -5,8 +5,6 @@ identity:
   about: 'A relief landmark of the hillslope family: giant landslide / sector collapse.'
 register: landmark
 family: hillslope
-level:
-- 2
 geometry: polygon
 properties:
 - field: volume
@@ -18,14 +16,13 @@ generator: scar + deposit
 wave: 3
 built: false
 levels:
-- planet-level.pattern
+- planet-level.region
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

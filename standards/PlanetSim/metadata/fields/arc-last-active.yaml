@@ -19,7 +19,7 @@ cautions:
 source: v_arc_last
 levels:
 - planet-level.planet
-- planet-level.cluster
+- planet-level.continent
 basis:
 - of:
   - identity

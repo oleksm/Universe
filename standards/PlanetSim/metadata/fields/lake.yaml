@@ -18,7 +18,7 @@ class_of: planet-layer.lake
 source: h_lake
 levels:
 - planet-level.planet
-- planet-level.cluster
+- planet-level.continent
 basis:
 - of:
   - identity

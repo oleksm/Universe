@@ -5,8 +5,6 @@ identity:
   about: 'A relief feature of the glacial family: esker.'
 register: feature
 family: glacial
-level:
-- 2
 geometry: polyline
 properties:
 - field: height
@@ -17,14 +15,13 @@ generator: down the ice-surface slope
 wave: 3
 built: false
 levels:
-- planet-level.pattern
+- planet-level.region
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

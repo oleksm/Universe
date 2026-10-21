@@ -5,8 +5,6 @@ identity:
   about: 'A relief feature of the structural family: flatiron.'
 register: feature
 family: structural
-level:
-- 3
 geometry: point set
 properties:
 - field: facet height
@@ -17,15 +15,14 @@ overrides: erosion
 wave: 3
 built: false
 levels:
-- planet-level.square
-- planet-level.detail
+- planet-level.landscape
+- planet-level.site
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

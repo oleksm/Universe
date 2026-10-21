@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schema/planet-level.schema.yaml
+identity:
+  key: planet-level.continent
+  name: Continent
+  about: 'The continent view: 1e+06 m across; target ground pixel 1000 m.'
+span: 1000000.0
+spacing:
+- 1000.0
+- 1000.0
+goal: true
+exists:
+- belts
+- rifts
+- basins
+- great rivers
+- deserts
+from_parent:
+- Frozen coarser ground anchors; detail adds without moving them.
+levels:
+- planet-level.continent
+status: draft
+basis:
+- of:
+  - span
+  tier: invented
+  review: true
+  note: Owner’s eight-decade view ladder, planet-forge docs/catalogue/README.md §1,
+    94e4c4f; design target, not achieved sampler resolution.
+- of:
+  - spacing
+  tier: derived
+  review: true
+  note: Target ground pixel is view span / 1000. Surface is texture only.

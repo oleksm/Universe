@@ -34,8 +34,8 @@ sources:
 library_status: written
 source: fluvial.network.dendritic
 levels:
-- planet-level.pattern
-- planet-level.square
+- planet-level.region
+- planet-level.landscape
 basis:
 - of:
   - factors

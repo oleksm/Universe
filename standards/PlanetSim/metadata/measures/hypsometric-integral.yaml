@@ -7,8 +7,8 @@ unit: '1'
 how: mean height above the lowest, over the relief
 tool: tools/terrain_compare.py
 levels:
-- planet-level.square
-- planet-level.detail
+- planet-level.landscape
+- planet-level.site
 basis:
 - of:
   - identity

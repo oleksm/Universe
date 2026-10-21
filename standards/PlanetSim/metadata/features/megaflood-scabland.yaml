@@ -5,8 +5,6 @@ identity:
   about: 'A relief landmark of the fluvial family: megaflood scabland.'
 register: landmark
 family: fluvial
-level:
-- 1
 geometry: polygon + channels
 properties:
 - field: discharge
@@ -19,14 +17,13 @@ wave: 2
 built: false
 levels:
 - planet-level.planet
-- planet-level.cluster
+- planet-level.continent
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

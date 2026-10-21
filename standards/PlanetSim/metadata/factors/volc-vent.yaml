@@ -17,8 +17,8 @@ signal:
   - planet-landmark.arc-volcano
   - planet-landmark.hotspot-volcano
 levels:
-- planet-level.cluster
-- planet-level.pattern
+- planet-level.continent
+- planet-level.region
 basis:
 - of:
   - identity

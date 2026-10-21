@@ -5,8 +5,6 @@ identity:
   about: 'A relief feature of the aeolian family: coastal foredune.'
 register: feature
 family: aeolian
-level:
-- 3
 geometry: polyline
 properties:
 - field: height
@@ -16,15 +14,14 @@ generator: line behind the beach
 wave: 3
 built: false
 levels:
-- planet-level.square
-- planet-level.detail
+- planet-level.landscape
+- planet-level.site
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

@@ -7,8 +7,8 @@ vocabulary: ground-vocabulary.pattern
 bounded_by:
 - planet-line.class-boundary
 levels:
-- planet-level.cluster
-- planet-level.pattern
+- planet-level.continent
+- planet-level.region
 basis:
 - of:
   - identity

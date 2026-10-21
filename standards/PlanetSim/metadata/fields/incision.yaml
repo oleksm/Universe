@@ -16,7 +16,7 @@ cautions:
 source: h_incision
 levels:
 - planet-level.planet
-- planet-level.cluster
+- planet-level.continent
 basis:
 - of:
   - identity

@@ -8,8 +8,8 @@ reads:
   fields:
   - planet-field.rock
 levels:
-- planet-level.cluster
-- planet-level.pattern
+- planet-level.continent
+- planet-level.region
 basis:
 - of:
   - identity

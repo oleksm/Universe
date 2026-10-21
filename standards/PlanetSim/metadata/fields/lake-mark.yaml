@@ -14,7 +14,7 @@ e_fold: 946728000000000.0
 source: h_lake_mem
 levels:
 - planet-level.planet
-- planet-level.cluster
+- planet-level.continent
 basis:
 - of:
   - identity

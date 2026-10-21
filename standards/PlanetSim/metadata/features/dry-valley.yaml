@@ -5,8 +5,6 @@ identity:
   about: 'A relief landmark of the fluvial family: dry valley.'
 register: landmark
 family: fluvial
-level:
-- 1
 geometry: polyline
 properties:
 - field: valley vs river size
@@ -18,14 +16,13 @@ built: true
 landmark: planet-landmark.dry-valley
 levels:
 - planet-level.planet
-- planet-level.cluster
+- planet-level.continent
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

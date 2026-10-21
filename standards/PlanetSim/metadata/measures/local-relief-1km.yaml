@@ -17,8 +17,8 @@ ours:
   what: old mesher
   date: '2026-10-17'
 levels:
-- planet-level.square
-- planet-level.detail
+- planet-level.landscape
+- planet-level.site
 basis:
 - of:
   - identity

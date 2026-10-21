@@ -43,8 +43,8 @@ sources:
 library_status: written
 source: glacial.landscape.ice_sheet_bed
 levels:
-- planet-level.pattern
-- planet-level.square
+- planet-level.region
+- planet-level.landscape
 basis:
 - of:
   - factors

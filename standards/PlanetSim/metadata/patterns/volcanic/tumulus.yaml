@@ -27,8 +27,8 @@ sources:
 library_status: planned
 source: volcanic.flow.tumulus
 levels:
-- planet-level.pattern
-- planet-level.square
+- planet-level.region
+- planet-level.landscape
 basis:
 - of:
   - factors

@@ -196,10 +196,10 @@ implementations:
   note: 'at 9de220d: anchor_mesher.py RUN [--d0 50] [--workers 12] [--lod]'
 levels:
 - planet-level.planet
-- planet-level.cluster
-- planet-level.pattern
-- planet-level.square
-- planet-level.detail
+- planet-level.continent
+- planet-level.region
+- planet-level.landscape
+- planet-level.site
 measured_by:
 - planet-measure.coast-fidelity
 - planet-measure.rms-against-samples

@@ -13,7 +13,7 @@ class_of: planet-layer.zones
 source: rock
 levels:
 - planet-level.planet
-- planet-level.cluster
+- planet-level.continent
 basis:
 - of:
   - identity

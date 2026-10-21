@@ -5,8 +5,6 @@ identity:
   about: 'A relief feature of the fluvial family: floodplain.'
 register: feature
 family: fluvial
-level:
-- 1
 geometry: polygon
 properties:
 - field: width
@@ -18,7 +16,7 @@ wave: 1
 built: false
 levels:
 - planet-level.planet
-- planet-level.cluster
+- planet-level.continent
 status: draft
 basis:
 - note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical
@@ -27,7 +25,6 @@ basis:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

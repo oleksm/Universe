@@ -1,45 +1,377 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Relief feature kind
-x-kind: [planet-feature]
-description: "standards/PlanetSim/metadata/features/<name>.yaml: a kind of relief feature the planet sim generates as vectors with metadata (the owner, 17 Oct 2026: the relief layer is the feature store, the skeleton the mesher meshes round): its register and family, the levels it appears at, its geometry, the metadata each feature of it carries, the sim's trigger, its geometry generator, what overrides it later, its wave and whether the sim builds it yet."
+x-kind:
+- planet-feature
+description: 'standards/PlanetSim/metadata/features/<name>.yaml: every kind of ground,
+  its Earth size range and derived eight-decade ladder, description, shape laws, expansion,
+  settings and measured examples. Missing draft catalogue fields are reported as gaps
+  until migration completes; provided values are validated.'
 type: object
 additionalProperties: false
-required: [identity, register, family, trigger]
+required:
+- identity
+- register
+- family
+- trigger
 allOf:
-  - { $ref: "../../common.schema.yaml#/definitions/planet_context" }
+- $ref: ../../common.schema.yaml#/definitions/planet_context
 properties:
   identity:
     type: object
     additionalProperties: false
-    required: [key, name, about]
+    required:
+    - key
+    - name
+    - about
     properties:
-      key: { $ref: "../../common.schema.yaml#/definitions/key" }
-      name: { type: string }
-      about: { type: string }
-  register: { enum: [province, feature, landmark], description: "province: an area where a kind of relief holds, bounded by lines; feature: a land-forming line, area or point inside provinces (the skeleton); landmark: a single dated event (a volcano, an impact)." }
-  family: { enum: [aeolian, arid, coastal, fluvial, glacial, hillslope, impact, karst, lacustrine, landmark, periglacial, structural, tectonic, volcanic], description: "Its family (the relief features map colours by family, on the Relief model page)." }
-  level: { type: array, minItems: 1, maxItems: 2, items: { type: integer, minimum: 0, maximum: 3, x-unit: "1" }, description: "The coarsest and finest levels it appears at: 1 10 to 50 km, 2 2 to 10 km, 3 under 2 km (0: the coast, exact at every level)." }
-  geometry: { type: string, description: "polyline, polygon, point, ring, network, or a set of them." }
-  metadata: { type: string, description: "The metadata its features carry beyond every feature's (relief-features.md), with units." }
+      key:
+        $ref: ../../common.schema.yaml#/definitions/key
+      name:
+        type: string
+      about:
+        type: string
+  register:
+    enum:
+    - province
+    - feature
+    - landmark
+    - realm
+    - water
+    - cover
+    description: 'realm: continental/ocean/island units; province: a relief domain;
+      feature: a land-forming line, area or point; landmark: a distinct recognizable
+      ground feature, including but not limited to dated events; water: bodies of
+      water or ice; cover: biome zones and edges.'
+  family:
+    enum:
+    - aeolian
+    - arid
+    - coastal
+    - fluvial
+    - glacial
+    - hillslope
+    - impact
+    - karst
+    - lacustrine
+    - landmark
+    - periglacial
+    - structural
+    - tectonic
+    - volcanic
+    - marine
+    - orographic
+    - biotic
+    description: Its family (the relief features map colours by family, on the Relief
+      model page).
+  geometry:
+    type: string
+    description: polyline, polygon, point, ring, network, or a set of them.
+  metadata:
+    type: string
+    description: The metadata its features carry beyond every feature's (relief-features.md),
+      with units.
   properties:
     type: array
-    description: "What its features carry beyond the common fields every feature fills (planet-model.relief record_fields): each property and its unit."
-    items: { type: object, additionalProperties: false, required: [field], properties: { field: { type: string }, unit: { type: string, description: "As the catalogue says it (mm/yr, m, deg, class, 1...)." } } }
-  pinned_to: { type: string, description: "What an instance's pin marks (the river mouth, a reach's start, a cliff stretch's midpoint). Every instance has a pin: an anchor point in integer centimetres in the planet's body-fixed frame (on its plate's frame while its crust moves), and gives its spans, dimensions and layout relative to it (owner, 2026-10-17: so it always renders the same)." }
-  dimensions: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/feature_quantity" }, description: "The dimensions every instance must carry, each with its law." }
+    description: 'What its features carry beyond the common fields every feature fills
+      (planet-model.relief record_fields): each property and its unit.'
+    items:
+      type: object
+      additionalProperties: false
+      required:
+      - field
+      properties:
+        field:
+          type: string
+        unit:
+          type: string
+          description: As the catalogue says it (mm/yr, m, deg, class, 1...).
+  pinned_to:
+    type: string
+    description: 'What an instance''s pin marks (the river mouth, a reach''s start,
+      a cliff stretch''s midpoint). Every instance has a pin: an anchor point in integer
+      centimetres in the planet''s body-fixed frame (on its plate''s frame while its
+      crust moves), and gives its spans, dimensions and layout relative to it (owner,
+      2026-10-17: so it always renders the same).'
+  dimensions:
+    type: array
+    items:
+      $ref: ../../common.schema.yaml#/definitions/feature_quantity
+    description: The dimensions every instance must carry, each with its law.
   spans:
     type: array
-    description: "The polylines every instance must carry, in cm offsets east/north/up of its pin."
-    items: { type: object, additionalProperties: false, required: [name, meaning], properties: { name: { type: string }, meaning: { type: string } } }
-  layout: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/feature_quantity" }, description: "How its parts sit (a meander's wavelength as a multiple of the width), each with its law." }
-  parent_kinds: { type: array, items: { type: string, x-ref: [planet-feature] }, description: "The kinds an instance can hang from (its pin then given in its parent's frame)." }
-  trigger: { type: string, description: "What in the sim makes one." }
-  generator: { type: string, description: "How its geometry is made." }
-  metadata_from: { type: string, description: "Where its metadata come from." }
-  overrides: { type: string, description: "What changes it after it is born." }
-  wave: { type: integer, minimum: 1, maximum: 3, x-unit: "1", description: "1: signals at existing hooks; 2: needs a new hook or field; 3: level 2-3 detail generated by the mesher from its parent feature." }
-  built: { type: boolean, description: "true: the sim generates it now (its KINDS)." }
-  sim_kinds: { type: array, items: { type: string }, description: "The sim's own kind names for it (stages/relief.py KINDS)." }
-  landmark: { type: string, x-ref: [planet-landmark], description: "The landmark type it is or comes from, when one." }
-  status: { enum: [draft, published, retired] }
-  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }
+    description: The polylines every instance must carry, in cm offsets east/north/up
+      of its pin.
+    items:
+      type: object
+      additionalProperties: false
+      required:
+      - name
+      - meaning
+      properties:
+        name:
+          type: string
+        meaning:
+          type: string
+  layout:
+    type: array
+    items:
+      $ref: ../../common.schema.yaml#/definitions/feature_quantity
+    description: How its parts sit (a meander's wavelength as a multiple of the width),
+      each with its law.
+  parent_kinds:
+    type: array
+    items:
+      type: string
+      x-ref:
+      - planet-feature
+    description: The kinds an instance can hang from (its pin then given in its parent's
+      frame).
+  trigger:
+    type: string
+    description: What in the sim makes one.
+  generator:
+    type: string
+    description: How its geometry is made.
+  metadata_from:
+    type: string
+    description: Where its metadata come from.
+  overrides:
+    type: string
+    description: What changes it after it is born.
+  wave:
+    type: integer
+    minimum: 1
+    maximum: 3
+    x-unit: '1'
+    description: '1: signals at existing hooks; 2: needs a new hook or field; 3: finer
+      ground generated by the mesher from its parent feature. Wave is not a numeric
+      ladder level.'
+  built:
+    type: boolean
+    description: 'true: the sim generates it now (its KINDS).'
+  sim_kinds:
+    type: array
+    items:
+      type: string
+    description: The sim's own kind names for it (stages/relief.py KINDS).
+  landmark:
+    type: string
+    x-ref:
+    - planet-landmark
+    description: The landmark type it is or comes from, when one.
+  status:
+    enum:
+    - draft
+    - published
+    - retired
+  basis:
+    $ref: ../../common.schema.yaml#/definitions/basis
+  size:
+    type: object
+    additionalProperties: false
+    required:
+    - across_m
+    - basis
+    properties:
+      across_m:
+        type: array
+        minItems: 2
+        maxItems: 2
+        items: &id001
+          type: number
+          exclusiveMinimum: 0
+          x-unit: m
+        description: Earth minimum and maximum, metres; minimum must not exceed maximum.
+      length_m:
+        type: array
+        minItems: 2
+        maxItems: 2
+        items: *id001
+        description: Earth minimum and maximum, metres; minimum must not exceed maximum.
+      relief_m:
+        type: array
+        minItems: 2
+        maxItems: 2
+        items: *id001
+        description: Earth minimum and maximum, metres; minimum must not exceed maximum.
+      basis:
+        $ref: ../../common.schema.yaml#/definitions/basis
+  ladder:
+    type: array
+    minItems: 2
+    maxItems: 2
+    items:
+      type: string
+      x-ref:
+      - planet-level
+    description: 'Derived [coarsest,finest] from size.across_m: largest >= 1% view;
+      smallest fits whole in finest view. Not the legacy numeric level.'
+  description:
+    type: string
+    minLength: 1
+    description: What it is, how it forms, and its appearance from orbit and the ground.
+  shape:
+    type: object
+    additionalProperties: false
+    required:
+    - plan
+    - blend
+    properties:
+      plan:
+        type: string
+        minLength: 1
+        description: Outline in words.
+      cross_section: &id002
+        type: object
+        additionalProperties: false
+        required:
+        - rule
+        properties:
+          rule:
+            type: string
+            minLength: 1
+            description: Cross-section or longitudinal law in words or a formula.
+          parameters:
+            type: array
+            items:
+              type: string
+            description: Names from this kind’s dimensions; no copied numeric constants.
+      long_profile: *id002
+      blend:
+        enum:
+        - max
+        - min
+        - step
+        - level
+        - material
+      flat_floor:
+        type: boolean
+        description: Explicitly declares a flat floor, allowing level blend outside
+          water; not a claim of a measured elevation.
+  children:
+    type: array
+    items:
+      type: string
+      x-ref:
+      - planet-feature
+    description: Ground kinds expanded below this kind. Unlike common context children
+      these name feature kinds.
+  grows_into:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required:
+      - kind
+      - rule
+      properties:
+        kind:
+          type: string
+          x-ref:
+          - planet-feature
+        rule:
+          type: string
+          minLength: 1
+          description: Rule selecting this ground kind from the emitted record kind.
+  line_kinds:
+    type: array
+    items:
+      type: string
+      x-ref:
+      - planet-line
+    description: Line kinds carrying this feature meaning; reciprocal feature_kinds
+      link required.
+  examples:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required:
+      - name
+      - lat
+      - lon
+      - size
+      - source
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: Real instance name.
+        lat:
+          type: number
+          minimum: -90
+          maximum: 90
+          x-unit: deg
+        lon:
+          type: number
+          minimum: -180
+          maximum: 180
+          x-unit: deg
+        size:
+          type: object
+          additionalProperties: false
+          required:
+          - across_m
+          properties:
+            across_m:
+              type: number
+              exclusiveMinimum: 0
+              x-unit: m
+            length_m:
+              type: number
+              exclusiveMinimum: 0
+              x-unit: m
+            relief_m:
+              type: number
+              exclusiveMinimum: 0
+              x-unit: m
+        source:
+          type: string
+          minLength: 1
+          description: Measurement/provenance URL or reference.
+        source_dem:
+          type: object
+          additionalProperties: false
+          required: &id003
+          - name
+          - source
+          properties: &id004
+            name:
+              type: string
+              minLength: 1
+              description: DEM product, e.g. USGS 3DEP, Copernicus GLO-30, GEBCO.
+            source:
+              type: string
+              minLength: 1
+              description: Dataset URL or versioned source reference.
+            resolution_m:
+              type: number
+              exclusiveMinimum: 0
+              x-unit: m
+        source_data:
+          type: object
+          additionalProperties: false
+          required: *id003
+          properties: *id004
+          description: Cover dataset such as ESA WorldCover; cover examples may use
+            this instead of a DEM. Other registers require source_dem (conditional
+            provenance checked by validate.py).
+    description: 'Measured real instances: non-cover requires source_dem; cover requires
+      source_dem or source_data.'
+  setting:
+    type: object
+    additionalProperties: false
+    required: []
+    properties:
+      tectonic:
+        type: string
+        minLength: 1
+        description: Tectonic setting.
+      rock:
+        type: string
+        minLength: 1
+        description: Rock or substrate.
+      climate:
+        type: string
+        minLength: 1
+        description: Climate band or conditions.

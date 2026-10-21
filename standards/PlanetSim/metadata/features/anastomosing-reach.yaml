@@ -5,8 +5,6 @@ identity:
   about: 'A relief feature of the fluvial family: anastomosing reach.'
 register: feature
 family: fluvial
-level:
-- 2
 geometry: polygon
 properties:
 - field: channels
@@ -16,14 +14,13 @@ generator: band along the river
 wave: 3
 built: false
 levels:
-- planet-level.pattern
+- planet-level.region
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

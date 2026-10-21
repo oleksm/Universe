@@ -13,9 +13,9 @@ producer:
 source: grain
 levels:
 - planet-level.planet
-- planet-level.cluster
-- planet-level.pattern
-- planet-level.detail
+- planet-level.continent
+- planet-level.region
+- planet-level.site
 basis:
 - of:
   - identity

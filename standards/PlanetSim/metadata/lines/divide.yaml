@@ -4,11 +4,11 @@ identity:
   name: Divide
   about: Between drainage basins.
 born_from: the basins layer
-first_level: planet-level.cluster
+first_level: planet-level.continent
 levels:
-- planet-level.cluster
-- planet-level.pattern
-- planet-level.square
+- planet-level.continent
+- planet-level.region
+- planet-level.landscape
 basis:
 - of:
   - identity
@@ -20,3 +20,5 @@ basis:
   tier: derived
   note: 'planet-sim-landform stages/zones.py: CLOSE_MYR 30, ARC_FRONT_M 150e3.'
 status: draft
+feature_kinds:
+- planet-feature.drainage-divide

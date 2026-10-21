@@ -5,8 +5,6 @@ identity:
   about: 'A relief feature of the glacial family: ice-dammed lake shorelines.'
 register: feature
 family: glacial
-level:
-- 2
 geometry: rings
 properties:
 - field: levels
@@ -18,14 +16,13 @@ generator: rings at the dammed level
 wave: 2
 built: false
 levels:
-- planet-level.pattern
+- planet-level.region
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

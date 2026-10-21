@@ -5,8 +5,6 @@ identity:
   about: 'A relief province of the tectonic family: foreland basin.'
 register: province
 family: tectonic
-level:
-- 1
 geometry: polygon
 properties:
 - field: depth
@@ -20,14 +18,13 @@ wave: 2
 built: false
 levels:
 - planet-level.planet
-- planet-level.cluster
+- planet-level.continent
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

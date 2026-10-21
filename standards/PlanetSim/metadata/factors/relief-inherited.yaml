@@ -9,7 +9,7 @@ reads:
   landmarks: [planet-landmark.water-gap, planet-landmark.river-capture, planet-landmark.dry-valley]
 signal:
   landmarks: [planet-landmark.water-gap, planet-landmark.river-capture, planet-landmark.dry-valley]
-levels: [planet-level.cluster, planet-level.pattern]
+levels: [planet-level.continent, planet-level.region]
 status: draft
 basis:
 - of: [identity]

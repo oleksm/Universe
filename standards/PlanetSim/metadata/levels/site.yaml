@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schema/planet-level.schema.yaml
+identity:
+  key: planet-level.site
+  name: Site
+  about: 'The site view: 1000 m across; target ground pixel 1 m.'
+span: 1000.0
+spacing:
+- 1.0
+- 1.0
+goal: true
+exists:
+- cones
+- cirques
+- dunes
+- beaches
+- river reaches
+from_parent:
+- Frozen coarser ground anchors; detail adds without moving them.
+levels:
+- planet-level.site
+status: draft
+basis:
+- of:
+  - span
+  tier: invented
+  review: true
+  note: Owner’s eight-decade view ladder, planet-forge docs/catalogue/README.md §1,
+    94e4c4f; design target, not achieved sampler resolution.
+- of:
+  - spacing
+  tier: derived
+  review: true
+  note: Target ground pixel is view span / 1000. Surface is texture only.

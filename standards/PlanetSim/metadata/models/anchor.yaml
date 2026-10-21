@@ -76,10 +76,10 @@ implementations:
   note: 'at cf14939: on earth_s30 against the smoothed field, rms 66 m (land 32 m, p95 128 m), watertight, 5 % flat triangles, 426k vertices and 851k triangles, about 20 s for the whole planet'
 levels:
 - planet-level.planet
-- planet-level.cluster
-- planet-level.pattern
-- planet-level.square
-- planet-level.detail
+- planet-level.continent
+- planet-level.region
+- planet-level.landscape
+- planet-level.site
 measured_by:
 - planet-measure.rms-against-samples
 - planet-measure.coast-fidelity

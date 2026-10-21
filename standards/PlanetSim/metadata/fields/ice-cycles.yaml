@@ -12,7 +12,7 @@ producer:
 source: r_ice_cycles
 levels:
 - planet-level.planet
-- planet-level.cluster
+- planet-level.continent
 basis:
 - of:
   - identity

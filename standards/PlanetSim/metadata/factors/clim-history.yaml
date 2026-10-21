@@ -13,8 +13,8 @@ signal:
   from: 0.0
   to: 20.0
 levels:
-- planet-level.cluster
-- planet-level.pattern
+- planet-level.continent
+- planet-level.region
 basis:
 - of:
   - identity

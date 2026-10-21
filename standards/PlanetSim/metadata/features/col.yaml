@@ -5,8 +5,6 @@ identity:
   about: 'A relief feature of the glacial family: col.'
 register: feature
 family: glacial
-level:
-- 3
 geometry: point
 properties:
 - field: height
@@ -16,15 +14,14 @@ generator: saddle point
 wave: 3
 built: false
 levels:
-- planet-level.square
-- planet-level.detail
+- planet-level.landscape
+- planet-level.site
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

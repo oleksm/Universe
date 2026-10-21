@@ -5,8 +5,6 @@ identity:
   about: 'A relief feature of the coastal family: barrier island.'
 register: feature
 family: coastal
-level:
-- 2
 geometry: polyline
 properties:
 - field: length
@@ -18,14 +16,13 @@ generator: offshore line
 wave: 2
 built: false
 levels:
-- planet-level.pattern
+- planet-level.region
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

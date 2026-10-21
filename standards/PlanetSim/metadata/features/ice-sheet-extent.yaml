@@ -5,8 +5,6 @@ identity:
   about: 'A relief province of the glacial family: ice sheet extent.'
 register: province
 family: glacial
-level:
-- 1
 geometry: polygon
 properties:
 - field: thickness
@@ -19,14 +17,13 @@ wave: 1
 built: false
 levels:
 - planet-level.planet
-- planet-level.cluster
+- planet-level.continent
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

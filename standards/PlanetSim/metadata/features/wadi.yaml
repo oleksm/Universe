@@ -5,8 +5,6 @@ identity:
   about: 'A relief feature of the arid family: wadi.'
 register: feature
 family: arid
-level:
-- 2
 geometry: polyline
 properties:
 - field: depth
@@ -16,14 +14,13 @@ generator: river lines in deserts
 wave: 2
 built: false
 levels:
-- planet-level.pattern
+- planet-level.region
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

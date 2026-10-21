@@ -16,7 +16,7 @@ classes:
   source: '3'
 levels:
 - planet-level.planet
-- planet-level.cluster
+- planet-level.continent
 basis:
 - of:
   - classes

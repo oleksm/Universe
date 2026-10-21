@@ -5,7 +5,7 @@ identity:
   about: "How far a model's coast lies from the sim's 0 m line: the largest distance between them. The anchor model holds it at 0."
 unit: m
 how: "The greatest distance from any point of the model's coast to the sim's 0 m line, and back (a Hausdorff distance)."
-levels: [planet-level.planet, planet-level.cluster, planet-level.pattern, planet-level.square, planet-level.detail]
+levels: [planet-level.planet, planet-level.continent, planet-level.region, planet-level.landscape, planet-level.site]
 status: draft
 basis:
   - { of: [identity, how], tier: derived, note: "planets, 17 Oct 2026 (the anchor model's measures)." }

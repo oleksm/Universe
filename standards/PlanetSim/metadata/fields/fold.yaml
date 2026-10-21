@@ -12,7 +12,7 @@ producer:
 source: h_fold
 levels:
 - planet-level.planet
-- planet-level.cluster
+- planet-level.continent
 basis:
 - of:
   - identity

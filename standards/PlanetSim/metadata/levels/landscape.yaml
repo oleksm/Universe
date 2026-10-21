@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schema/planet-level.schema.yaml
+identity:
+  key: planet-level.landscape
+  name: Landscape
+  about: 'The landscape view: 10000 m across; target ground pixel 10 m.'
+span: 10000.0
+spacing:
+- 10.0
+- 10.0
+goal: true
+exists:
+- volcanoes
+- valleys
+- fjords
+- escarpments
+- moraines
+from_parent:
+- Frozen coarser ground anchors; detail adds without moving them.
+levels:
+- planet-level.landscape
+status: draft
+basis:
+- of:
+  - span
+  tier: invented
+  review: true
+  note: Owner’s eight-decade view ladder, planet-forge docs/catalogue/README.md §1,
+    94e4c4f; design target, not achieved sampler resolution.
+- of:
+  - spacing
+  tier: derived
+  review: true
+  note: Target ground pixel is view span / 1000. Surface is texture only.

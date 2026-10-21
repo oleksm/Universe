@@ -5,8 +5,6 @@ identity:
   about: 'A relief feature of the volcanic family: lava flow field.'
 register: feature
 family: volcanic
-level:
-- 2
 geometry: polygons + flow lines
 properties:
 - field: length
@@ -19,14 +17,13 @@ overrides: burial
 wave: 2
 built: false
 levels:
-- planet-level.pattern
+- planet-level.region
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

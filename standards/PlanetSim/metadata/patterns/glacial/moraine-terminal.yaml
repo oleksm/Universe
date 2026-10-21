@@ -36,8 +36,8 @@ sources:
 library_status: written
 source: glacial.deposit.moraine_terminal
 levels:
-- planet-level.pattern
-- planet-level.square
+- planet-level.region
+- planet-level.landscape
 basis:
 - of:
   - factors

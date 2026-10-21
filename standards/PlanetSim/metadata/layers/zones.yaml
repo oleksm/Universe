@@ -9,7 +9,7 @@ bounded_by:
 - planet-line.plate-edge
 levels:
 - planet-level.planet
-- planet-level.cluster
+- planet-level.continent
 basis:
 - of:
   - identity

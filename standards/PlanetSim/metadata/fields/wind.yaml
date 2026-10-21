@@ -20,7 +20,7 @@ cautions:
 source: h_wind_e
 levels:
 - planet-level.planet
-- planet-level.cluster
+- planet-level.continent
 basis:
 - of:
   - identity

@@ -5,8 +5,6 @@ identity:
   about: 'A relief province of the volcanic family: monogenetic volcanic field.'
 register: province
 family: volcanic
-level:
-- 2
 geometry: polygon + point set
 properties:
 - field: cone density
@@ -17,14 +15,13 @@ overrides: erosion
 wave: 2
 built: false
 levels:
-- planet-level.pattern
+- planet-level.region
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

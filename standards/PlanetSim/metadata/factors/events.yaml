@@ -11,8 +11,8 @@ reads:
   - planet-landmark.hotspot-volcano
   - planet-landmark.flood-basalt-province
 levels:
-- planet-level.cluster
-- planet-level.pattern
+- planet-level.continent
+- planet-level.region
 basis:
 - of:
   - identity

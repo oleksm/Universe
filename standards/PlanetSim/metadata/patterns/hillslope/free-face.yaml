@@ -40,8 +40,8 @@ sources:
 library_status: planned
 source: hillslope.scarp.free_face
 levels:
-- planet-level.pattern
-- planet-level.square
+- planet-level.region
+- planet-level.landscape
 basis:
 - of:
   - factors

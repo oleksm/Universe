@@ -32,8 +32,8 @@ sources:
 library_status: written
 source: volcanic.intrusion.volcanic_neck
 levels:
-- planet-level.pattern
-- planet-level.square
+- planet-level.region
+- planet-level.landscape
 basis:
 - of:
   - factors

@@ -5,8 +5,6 @@ identity:
   about: 'A relief feature of the fluvial family: slot canyon.'
 register: feature
 family: fluvial
-level:
-- 3
 geometry: polyline
 properties:
 - field: depth
@@ -18,15 +16,14 @@ generator: narrow reach
 wave: 3
 built: false
 levels:
-- planet-level.square
-- planet-level.detail
+- planet-level.landscape
+- planet-level.site
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

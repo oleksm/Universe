@@ -7,8 +7,8 @@ unit: m
 how: At each sim sample in the region, the model's height there less the sample's height; the root mean square of those.
 levels:
 - planet-level.planet
-- planet-level.cluster
-- planet-level.pattern
+- planet-level.continent
+- planet-level.region
 status: draft
 basis:
 - of:

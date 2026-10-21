@@ -5,8 +5,6 @@ identity:
   about: 'A relief feature of the fluvial family: consequent / subsequent / obsequent valley.'
 register: feature
 family: fluvial
-level:
-- 2
 geometry: polyline
 properties:
 - field: relation to dip
@@ -16,14 +14,13 @@ generator: valleys by direction to dip
 wave: 3
 built: false
 levels:
-- planet-level.pattern
+- planet-level.region
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

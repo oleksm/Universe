@@ -18,7 +18,7 @@ class_of: planet-layer.river-state
 source: h_river_state
 levels:
 - planet-level.planet
-- planet-level.cluster
+- planet-level.continent
 basis:
 - of:
   - identity

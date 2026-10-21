@@ -12,7 +12,7 @@ producer:
 source: r_lowstand_shore
 levels:
 - planet-level.planet
-- planet-level.cluster
+- planet-level.continent
 basis:
 - of:
   - identity

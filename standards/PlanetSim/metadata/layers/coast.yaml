@@ -25,10 +25,10 @@ bounded_by:
 - planet-line.coast
 levels:
 - planet-level.planet
-- planet-level.cluster
-- planet-level.pattern
-- planet-level.square
-- planet-level.detail
+- planet-level.continent
+- planet-level.region
+- planet-level.landscape
+- planet-level.site
 basis:
 - of:
   - identity

@@ -102,7 +102,7 @@ bounded_by:
 - planet-line.class-boundary
 levels:
 - planet-level.planet
-- planet-level.cluster
+- planet-level.continent
 basis:
 - of:
   - identity

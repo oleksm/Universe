@@ -7,7 +7,7 @@ law: multifractal noise along the grain, a few % of local relief
 applies_when: everywhere, seeded by provenance
 where: tools/anchored_mesh.py
 levels:
-- planet-level.detail
+- planet-level.site
 basis:
 - of:
   - identity

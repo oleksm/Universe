@@ -2,27 +2,31 @@
 identity:
   key: planet-level.planet
   name: Planet
-  about: 'The planet level: a view about 40,000 km across.'
-span: 40000000.0
+  about: 'The planet view: 1e+07 m across; target ground pixel 10000 m.'
+span: 10000000.0
 spacing:
-- 130000.0
-- 130000.0
+- 10000.0
+- 10000.0
+goal: true
 exists:
-- plates
 - continents
-- climate belts
-- layers as classes per sample
+- oceans
+- ice sheets
+- biome belts
+from_parent:
+- Frozen coarser ground anchors; detail adds without moving them.
 levels:
 - planet-level.planet
+status: draft
 basis:
 - of:
-  - identity
-  tier: derived
-  note: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
-- of:
   - span
+  tier: invented
+  review: true
+  note: Owner’s eight-decade view ladder, planet-forge docs/catalogue/README.md §1,
+    94e4c4f; design target, not achieved sampler resolution.
+- of:
   - spacing
-  - segment_n
   tier: derived
-  note: 'sim-architecture.md 2: SEG_N 20, n 200 and 2000 for the finer segments.'
-status: draft
+  review: true
+  note: Target ground pixel is view span / 1000. Surface is texture only.

@@ -36,8 +36,8 @@ sources:
 library_status: planned
 source: tectonic.margin.passive
 levels:
-- planet-level.pattern
-- planet-level.square
+- planet-level.region
+- planet-level.landscape
 basis:
 - of:
   - factors

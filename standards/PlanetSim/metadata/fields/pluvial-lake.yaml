@@ -12,7 +12,7 @@ producer:
 source: r_lake_max
 levels:
 - planet-level.planet
-- planet-level.cluster
+- planet-level.continent
 basis:
 - of:
   - identity

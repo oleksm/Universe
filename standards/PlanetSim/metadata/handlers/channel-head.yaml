@@ -15,7 +15,7 @@ params:
 applies_when: everywhere
 where: tools/anchored_mesh.py
 levels:
-- planet-level.square
+- planet-level.landscape
 basis:
 - of:
   - identity

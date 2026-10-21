@@ -5,8 +5,6 @@ identity:
   about: 'A relief feature of the glacial family: terminal moraine.'
 register: feature
 family: glacial
-level:
-- 2
 geometry: polyline
 properties:
 - field: height
@@ -19,14 +17,13 @@ overrides: erosion
 wave: 2
 built: false
 levels:
-- planet-level.pattern
+- planet-level.region
 status: draft
 basis:
 - of:
   - identity
   - register
   - family
-  - level
   - geometry
   - properties
   - trigger

@@ -142,7 +142,11 @@ def context(R, target):
         i = order.index(key)
         here = {}
         for k, d in every.items():
-            if key in (d.get("levels") or []) and not k.startswith("planet-level."):
+            ladder = d.get("ladder") if k.startswith("planet-feature.") else None
+            meaningful = key in (d.get("levels") or [])
+            if ladder and len(ladder) == 2 and all(x in order for x in ladder):
+                meaningful = order.index(ladder[0]) <= i <= order.index(ladder[1])
+            if meaningful and not k.startswith("planet-level."):
                 here.setdefault(k.split(".")[0], []).append(k)
         return {"level": key, "span_m": lv[key]["span"], "spacing_m": lv[key]["spacing"], "parent": order[i - 1] if i else None,
                 "child": order[i + 1] if i + 1 < len(order) else None, "exists": lv[key].get("exists"), "from_parent": lv[key].get("from_parent"),
