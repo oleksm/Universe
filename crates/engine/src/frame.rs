@@ -790,10 +790,10 @@ impl Frame {
         self.pbr.push(PbrDraw { model: model.clone(), instance: inst, casts: self.casts, reach: model.radius() * t.scale as f32, part });
     }
 
-    /// As `model_pbr`, the model stretched along its own axes by `axes` (on top of `t.scale`) first: one
-    /// model drawing every size of a family. (Its normals turn with the stretch, not against it: near
-    /// enough for stretches of a few times.)
-    pub fn model_pbr_scaled(&mut self, model: &crate::pbr::PbrModel, t: &Transform, axes: Vec3) {
+    /// As `model_pbr_part`, the part stretched along the model's own axes by `axes` (on top of `t.scale`)
+    /// first: one model drawing every size of a family. (Its normals turn with the stretch, not against it:
+    /// near enough for stretches of a few times.)
+    pub fn model_pbr_scaled(&mut self, model: &crate::pbr::PbrModel, t: &Transform, axes: Vec3, part: u8) {
         let mut inst = self.instance(t, [1.0; 4], [1.0; 4], true);
         for (c, k) in [(&mut inst.c0, axes.x), (&mut inst.c1, axes.y), (&mut inst.c2, axes.z)] {
             c[0] *= k;
@@ -801,7 +801,7 @@ impl Frame {
             c[2] *= k;
         }
         let reach = model.radius() * t.scale as f32 * axes.max_element();
-        self.pbr.push(PbrDraw { model: model.clone(), instance: inst, casts: self.casts, reach, part: 0 });
+        self.pbr.push(PbrDraw { model: model.clone(), instance: inst, casts: self.casts, reach, part });
     }
 
     /// Where a draw is (camera-relative), its tints, and the light on it here.

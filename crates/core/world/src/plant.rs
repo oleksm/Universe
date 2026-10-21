@@ -56,6 +56,25 @@ pub struct Laid {
     pub supports: Vec<DVec3>,
     /// Its blind ends (`cap`, the run's welded plate): where, and which way out of the run.
     pub caps: Vec<(DVec3, DVec3)>,
+    /// Where other runs or tapped ports branch off it.
+    pub tees: Vec<Tee>,
+}
+
+/// A branch off a run: where on its path, its way along there, and the branch's way out (unit vectors).
+pub struct Tee {
+    pub at: DVec3,
+    pub along: DVec3,
+    pub branch: DVec3,
+}
+
+/// The way along `path` at its point nearest `at`.
+pub fn along(path: &[DVec3], at: DVec3) -> DVec3 {
+    let near = |w: &[DVec3]| {
+        let d = w[1] - w[0];
+        let t = ((at - w[0]).dot(d) / d.length_squared().max(1e-12)).clamp(0.0, 1.0);
+        at.distance(w[0] + d * t)
+    };
+    path.windows(2).min_by(|a, b| near(a).total_cmp(&near(b))).map_or(DVec3::X, |w| (w[1] - w[0]).normalize_or_zero())
 }
 
 impl Laid {
@@ -120,6 +139,8 @@ pub fn lay(key: &str) -> Option<Plant> {
     };
     let mut runs = Vec::new();
     let mut joints = Vec::new();
+    // (Branches ending `tee:<main>`, put on their main once every run is laid: its name, where, the way out.)
+    let mut branches: Vec<(String, DVec3, DVec3)> = Vec::new();
     for (i, link) in layout.links.iter().enumerate() {
         let name = link.name.clone().unwrap_or_else(|| format!("link {i}"));
         let Some(key) = &link.run else { continue };
@@ -137,10 +158,14 @@ pub fn lay(key: &str) -> Option<Plant> {
                 caps.push((at, (at - inner).normalize_or_zero()));
                 continue;
             }
-            let Some((place, _)) = end.split_once(':') else {
+            let Some((place, main)) = end.split_once(':') else {
                 faults.push(format!("{name}: an end {end:?}"));
                 continue;
             };
+            if place == "tee" {
+                let (at, next) = if k == 0 { (path[0], path[1]) } else { (path[path.len() - 1], path[path.len() - 2]) };
+                branches.push((main.to_string(), at, (next - at).normalize_or_zero()));
+            }
             if matches!(place, "tee" | "onto" | "jacket") {
                 continue;
             }
@@ -155,14 +180,27 @@ pub fn lay(key: &str) -> Option<Plant> {
             }
             joints.extend(joint(p, &run.connector, at, facing, index, end));
         }
+        let mut tees = Vec::new();
         for end in &link.taps {
             match port(end) {
-                Some((p, at, facing)) => joints.extend(joint(p, &run.connector, at, facing, index, end)),
+                Some((p, at, facing)) => {
+                    joints.extend(joint(p, &run.connector, at, facing, index, end));
+                    tees.push(Tee { at, along: along(&path, at), branch: -facing });
+                }
                 None => faults.push(format!("{name}: no tapped port {end}")),
             }
         }
         let (elbows, supports) = fittings(run, &path);
-        runs.push(Laid { name, run, template: run.template.as_deref().and_then(|t| reg.template(t)), count: link.count.unwrap_or(1), path, elbows, supports, caps });
+        runs.push(Laid { name, run, template: run.template.as_deref().and_then(|t| reg.template(t)), count: link.count.unwrap_or(1), path, elbows, supports, caps, tees });
+    }
+    for (main, at, branch) in branches {
+        match runs.iter_mut().find(|r| r.name == main) {
+            Some(m) => {
+                let along = along(&m.path, at);
+                m.tees.push(Tee { at, along, branch });
+            }
+            None => faults.push(format!("a branch off {main}, which isn't laid")),
+        }
     }
     Some(Plant { layout, units, runs, joints, faults })
 }
@@ -253,7 +291,7 @@ mod tests {
     use super::*;
 
     /// The trial layout lays from its records alone: every run's end at the port it names, every port end
-    /// joined, every blind end capped, and its elbows and supports as many as the registry's generator counted;
+    /// joined, every blind end capped, a tee at each branch, and its elbows and supports as many as the registry's generator counted;
     /// and every other layout lays without a fault.
     #[test]
     fn shaft_furnace_lays_from_records() {
@@ -271,6 +309,8 @@ mod tests {
         let port_ends = links.iter().flat_map(|l| &l.ends).filter(|e| *e != "cap" && !e.starts_with("tee:") && !e.starts_with("onto:") && !e.starts_with("jacket:")).count();
         let taps: usize = links.iter().map(|l| l.taps.len()).sum();
         assert_eq!(plant.joints.len(), port_ends + taps, "a joint at every port end and tap");
+        let tees: u32 = links.iter().map(|l| l.fittings.tees.unwrap_or(0)).sum();
+        assert_eq!(plant.runs.iter().map(|r| r.tees.len() as u32).sum::<u32>(), tees, "a tee at every branch and tap");
         let faults: Vec<String> = registry().layouts.iter().filter_map(|l| lay(&l.identity.key)).flat_map(|p| p.faults.into_iter().map(move |f| format!("{}: {f}", p.layout.identity.key))).collect();
         assert!(faults.is_empty(), "every layout lays: {}", faults.join("\n"));
     }

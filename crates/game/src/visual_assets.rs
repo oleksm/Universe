@@ -89,6 +89,23 @@ pub fn request_demand(key: &str, mut demand: Demand) -> Option<Arc<Visual>> {
         },
     )
 }
+/// The registry model of `key` with its named pieces apart (`PbrModel::load_gltf_parts`: a node whose name
+/// holds `parts[k]` is part `k + 1`), as a kit's run model is drawn piece by piece.
+pub fn request_parts(key: &str, parts: &'static [&'static str]) -> Option<Arc<Visual>> {
+    let record = assets::visual(key)?;
+    let identity = format!("package:{}:{}:{parts:?}", record.format, record.manifest_sha256);
+    let key = key.to_owned();
+    cache().request(
+        identity,
+        Demand { estimated_bytes: RESERVATION, ..Default::default() },
+        move || {
+            let package = assets::model(record).inspect_err(|e| log::warn!("asset failed: {key}: {e}; keeping fallback"))?;
+            let value = prepare_bytes(&package.glb, parts, true, package.lo, package.hi, package.has_motion)?;
+            let bytes = resident_bytes(&value);
+            Ok(Loaded { value, bytes })
+        },
+    )
+}
 /// Native paths are immutable within a process. Decode options participate in
 /// identity; the actual bytes' hash is published for hull-overlay validation.
 pub fn request_native(path: &std::path::Path, parts: &[&str]) -> Option<Arc<Visual>> {
