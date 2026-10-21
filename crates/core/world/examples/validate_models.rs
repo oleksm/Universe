@@ -15,6 +15,9 @@ fn main() {
         .chain(r.hulls.iter().filter_map(|x| x.visual.as_ref().map(|v| (x.identity.key.as_str(), v))))
         .chain(r.packages.iter().filter_map(|x| x.visual.as_ref().map(|v| (x.identity.key.as_str(), v))))
         .chain(r.units.iter().filter_map(|x| x.visual.as_ref().map(|v| (x.identity.key.as_str(), v))))
+        .chain(r.runs.iter().filter_map(|x| x.visual.as_ref().map(|v| (x.identity.key.as_str(), v))))
+        .chain(r.connectors.iter().filter_map(|x| x.visual.as_ref().map(|v| (x.identity.key.as_str(), v))))
+        .chain(r.templates.iter().filter_map(|x| x.visual.as_ref().map(|v| (x.identity.key.as_str(), v))))
         .chain(r.layouts.iter().filter_map(|x| x.visual.as_ref().map(|v| (x.identity.key.as_str(), v))))
         .collect();
     let mut bad = Vec::new();

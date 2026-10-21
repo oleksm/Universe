@@ -1,5 +1,6 @@
 //! Models for the things the registry describes (docs/asset-contract.md): a record of a kind that takes
-//! a model (equipment, industrial modules, buildings, structures, gate rings, hulls) may carry `visual`,
+//! a model (equipment, industrial modules, buildings, structures, gate rings, hulls, plant units, kit runs,
+//! connectors and their family templates) may carry `visual`,
 //! a version folder in the assets store (`UNIVERSE_ASSETS`, else `~/git/freefall-assets`) holding
 //! `model.glb` and `manifest.json` (`freefall-model/1`). The manifest is checked against the record's
 //! hash and the model against the manifest, as a world's ground is; anything that fails is said once and
@@ -30,6 +31,10 @@ pub fn visual(key: &str) -> Option<&'static Visual> {
         .or_else(|| r.structure(key).and_then(|x| x.visual.as_ref()))
         .or_else(|| r.gate(key).and_then(|x| x.visual.as_ref()))
         .or_else(|| r.hull(key).and_then(|x| x.visual.as_ref()))
+        .or_else(|| r.unit(key).and_then(|x| x.visual.as_ref()))
+        .or_else(|| r.run(key).and_then(|x| x.visual.as_ref()))
+        .or_else(|| r.connector(key).and_then(|x| x.visual.as_ref()))
+        .or_else(|| r.template(key).and_then(|x| x.visual.as_ref()))
 }
 
 /// A model, checked: its glTF bytes, and its bounds in its own frame (m; zero when the manifest lacks

@@ -44,6 +44,7 @@ pub mod radar;
 pub mod network;
 pub mod port;
 pub mod order;
+pub mod plant;
 pub mod rigs;
 pub mod worlds;
 pub mod assets;
