@@ -16,8 +16,13 @@ entry:
 - Authorized design study; existing owner constraints and holds identified.
 exit:
 - Mission, identity, scope, unknowns and success tests recorded.
+- Six feature areas considered in small rounds; inherited answers preserved and priorities explicit.
+- Consolidated feature brief confirmed by owner or explicit delegation; required conflicts resolved and remaining
+  unknowns bounded.
 failure:
 - Resolve essential missing inputs before detailed geometry.
+- Do not commission a whole-ship sketch from an incomplete or unconfirmed brief; clarification diagrams remain
+  permitted.
 inputs: []
 outputs:
 - ship-artifact.requirements
@@ -29,5 +34,6 @@ rules:
 - ship-rule.lifecycle
 - ship-rule.authority
 - ship-rule.claim-boundaries
+- ship-rule.feature-intake
 decision: Carry existing authorization/delegation forward. Owner resolves identity and major aesthetic/scope
   forks; technical roles resolve routine repairs within those constraints.

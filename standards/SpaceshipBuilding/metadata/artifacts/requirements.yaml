@@ -18,6 +18,12 @@ contents:
 - Stable ID, statement, rationale, source, owner, severity, status and verification IDs.
 - Separate functional constraints, visual identity and preferences.
 - Family/type/instance scope and mappings to concrete runtime identifiers.
+- Feature intake across purpose, shape, occupied spaces, access/motion, visual character and exclusions; each
+  area answered, undecided or not applicable.
+- Per-feature required/preferred/undecided priority, interpretation confirmation status, inherited answers
+  and unresolved conflicts.
+- Consolidated brief revision and owner confirmation or explicit delegation; unknowns classified as permitted
+  exploration or blockers.
 boundary: Registry owns referenced facts; project requirements must not duplicate or silently override them.
 consumers:
 - ships
@@ -25,5 +31,6 @@ consumers:
 rules:
 - ship-rule.specification-layers
 - ship-rule.traceability
+- ship-rule.feature-intake
 checks:
 - ship-check.requirements

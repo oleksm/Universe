@@ -33,11 +33,14 @@ contents:
   candidate''s input hash and camera set. After approval, a geometry repair that changes the beak, canopy slope,
   neck constriction or maximum beam location returns to this visual gate if it exceeds agreed guardrails. A
   normal correction does not.'
+- 'Prompt revision and per-feature review: met, missed, ambiguous or intentionally varied, with visual witnesses
+  and unseen-feature limitations.'
 boundary: A metric flags visual drift; owner or delegate judges identity.
 consumers:
 - blender
 - ships
 rules:
 - ship-rule.family-type-instance
+- ship-rule.feature-intake
 checks:
 - ship-check.identity

@@ -1,0 +1,62 @@
+# yaml-language-server: $schema=../../schema/ship-rule.schema.yaml
+identity:
+  key: ship-rule.feature-intake
+  name: Feature intake before sketching
+  about: Collect and confirm design intent before deriving a sketch prompt.
+status: draft
+implementation: proposed
+owner: blender
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 3.1 Build a reference atlas with confidence labels
+  note: 'Owner refinement: feature collection and confirmed brief precede sketch prompting.'
+statement: 'Collect features before commissioning a whole-ship sketch. Intake is a conversation in small rounds,
+  usually one to three related questions, not a demand for a complete specification in one prompt. Carry previous
+  answers and corrections forward; ask only about missing information or genuine contradictions.
+
+
+  Cover six areas: purpose (mission, crew, endurance, cargo and environment); shape (cockpit, nose, proportions,
+  belly, wings and engines); occupied spaces (seating, aisle, rooms, storage and equipment); access and motion
+  (ramps, doors, gear and deployables); visual character (reference features, finish and colours); and exclusions
+  (features the owner does not want). Mark each area answered, explicitly undecided or not applicable. Do not
+  force dimensions or equipment choices before their implications are understood.
+
+
+  Give each feature a stable ID, required/preferred/undecided classification, source, interpretation and decision
+  status. A proposed default is not a user answer. Separate the priority of a feature from whether its interpretation
+  is confirmed. Surface conflicting features with the consequence and available trade-off; retain unresolved
+  issues rather than hiding them in the prompt.
+
+
+  Summarize the consolidated feature brief for owner correction and confirmation, or apply an explicit existing
+  delegation. G0 is ready when all six areas have been considered, the required features are coherent, and
+  remaining unknowns are explicitly bounded as permitted exploration or blockers. Silence is not confirmation.
+  Small labelled clarification diagrams may resolve a hinge direction or other ambiguity during intake; they
+  are not a selected whole-ship design.
+
+
+  After the brief is confirmed and reference interpretation is coherent, derive a versioned sketch prompt from
+  that exact brief. Include mission/context, every required feature by ID, preferred features, exclusions,
+  reference priorities, requested views, permitted variation and explicitly undecided details. Do not silently
+  resolve undecided features. Check prompt coverage before sketching; text must not introduce unsupported dimensions
+  or technical claims. This is a reusable instruction for a human or image tool, not a requirement to use a
+  particular generator.
+
+
+  Review each sketch against the same feature IDs, recording met, missed, ambiguous or intentionally varied
+  features and the limits of what the view can show. Sketch approval does not prove interior fit or engineering.
+  A changed feature invalidates the affected prompt and sketch evidence; preserve unaffected answers and earlier
+  candidates. A new material design choice returns to brief confirmation, while wording corrections within
+  confirmed intent need no repeated approval.'
+applies_to:
+- New ship intake and material revisions of a confirmed feature brief.
+verification:
+- Check all six feature areas have an explicit disposition and inherited answers are retained.
+- Verify owner confirmation or explicit delegation against the exact brief revision.
+- Trace required feature IDs, exclusions and permitted variation into the prompt and sketch review.
+related:
+- ship-artifact.requirements
+- ship-artifact.sketch-prompt
+- ship-stage.brief
+- ship-stage.references
+- ship-stage.silhouette

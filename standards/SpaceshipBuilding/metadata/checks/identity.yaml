@@ -19,6 +19,8 @@ sources:
 method:
 - Compare registered full-ship views and protected landmarks against the selected candidate.
 - Inspect thumbnail silhouette and declared camera distances; expose inferred reference regions.
+- Review each sketch against brief feature IDs and prompt variation limits; record met, missed, ambiguous or
+  intentionally varied without treating hidden geometry as observed.
 evidence:
 - Decision packet, views, reference provenance and owner/delegate decision bound to candidate.
 failure: Retain the failing witness and last passing candidate. Block only dependent claims/stages; repair
@@ -27,7 +29,9 @@ scope: visual
 artifacts:
 - ship-artifact.reference-atlas
 - ship-artifact.silhouette-study
+- ship-artifact.sketch-prompt
 coverage: Scope is the declared candidate, inputs, methods and consumer features. No engineering or unsampled/runtime
   claim is inferred.
 rules:
 - ship-rule.claim-boundaries
+- ship-rule.feature-intake

@@ -1,4 +1,5 @@
-status: Registry definition validation and section coverage review passed; pilot checks remain definitions, not executed results
+status: Registry definition validation and section coverage review passed; pilot checks remain definitions, not
+  executed results
 source_sha256: d3b3b69f9c612a883b22bf260058bf513038767014b83fb6d7543a48ed1511e0
 root: standards/SpaceshipBuilding
 coverage:
@@ -45,6 +46,8 @@ coverage:
   records:
   - ship-artifact.reference-atlas
   - ship-stage.references
+  - ship-rule.feature-intake
+  - ship-artifact.sketch-prompt
 - source_section: '3.2'
   source_title: Compare a small set of coherent silhouettes
   records:
@@ -215,5 +218,8 @@ refinements:
 - Do not expose local private agent review paths as required runtime dependencies; retain public-safe summaries
   of lessons.
 source_document_in_registry: docs/spaceship-building-workflow-proposal.md
-source_sha256_basis: Original proposal bytes before provenance/path normalization; not the archived normalized copy.
-normalized_document_sha256: 2902d7008e38e75d7df0e9949190c280585775ad47350e8a020542f5e027048f
+source_sha256_basis: Original research proposal before normalization and subsequent owner refinements; normalized_document_sha256
+  identifies the current archived proposal.
+normalized_document_sha256: f412d6674a2ede90aa71eca3551b4b308a5d6e6ff8f88876279532e4a01faa01
+owner_refinements:
+- Feature-first intake; confirmed consolidated brief; derived prompt before whole-ship sketch.

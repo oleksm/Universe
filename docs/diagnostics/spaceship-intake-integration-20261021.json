@@ -1,0 +1,55 @@
+{
+  "base_main": "adb52a0f18079cbcb9b1bcec2671505423c69a60",
+  "source": "961f94abe5690ec2aaacef71393b975067ff6da6",
+  "content_commit": "bed80995",
+  "tested_tree": "ae6643f7029dd6d30ab57738d20b31d3fec39e6a",
+  "registry_task": "20261021T082504-registry-38fc",
+  "status": "passed",
+  "definition_counts": {
+    "stages": 9,
+    "artifacts": 16,
+    "checks": 29,
+    "rules": 25,
+    "decisions": 13
+  },
+  "all_92_definitions_draft": true,
+  "schemas_code_and_base_content_unchanged": true,
+  "registry_override_used": false,
+  "merge_conflicts": [
+    "standards/index.html"
+  ],
+  "page_resolution": "Regenerated from merged records.",
+  "checks": [
+    {
+      "command": "python3 tools/standards/build.py",
+      "exit": 0
+    },
+    {
+      "command": "PYTHONPATH=tools/standards python3 -m unittest test_ship_workflow test_production_chain test_motion_interlocks test_deck_support",
+      "exit": 0,
+      "passed": 20
+    },
+    {
+      "command": "cargo test -p universe-services -p universe-sim -p universe --lib packing",
+      "exit": 0,
+      "passed": 10
+    },
+    {
+      "command": "cargo test --workspace --test celestial",
+      "exit": 0,
+      "passed": 1
+    },
+    {
+      "check": "Generated intake rule, sketch prompt and G0/G1/G2 pages: links, confirmation/classification language, prompt prerequisites and stage wiring",
+      "passed": 5
+    }
+  ],
+  "regression_tests_passed": 31,
+  "headless_page_checks_passed": 5,
+  "scope": "Small-round feature intake, classified features, confirmed brief, derived versioned prompt and feature-based sketch review.",
+  "boundaries": [
+    "Draft workflow definitions only; no ship instances or modelling started.",
+    "No schema, tools, Rust runtime code or .ship.yaml changes.",
+    "Local integration only; no push or release installation."
+  ]
+}

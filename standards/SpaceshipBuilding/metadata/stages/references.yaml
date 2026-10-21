@@ -17,6 +17,8 @@ entry:
 - Brief accepted or covered by recorded delegation.
 exit:
 - Atlas identifies controlled features, conflicting views and inferred geometry.
+- Sketch prompt derived from the confirmed brief and atlas; required features, exclusions and variation limits
+  checked.
 failure:
 - Return disputed interpretation to the owner; preserve reference provenance.
 inputs:
@@ -24,11 +26,14 @@ inputs:
 - ship-artifact.assumptions
 outputs:
 - ship-artifact.reference-atlas
+- ship-artifact.sketch-prompt
 checks:
 - ship-check.identity
+- ship-check.requirements
 rules:
 - ship-rule.lifecycle
 - ship-rule.authority
 - ship-rule.claim-boundaries
+- ship-rule.feature-intake
 decision: Carry existing authorization/delegation forward. Owner resolves identity and major aesthetic/scope
   forks; technical roles resolve routine repairs within those constraints.

@@ -16,15 +16,22 @@ sources:
 method:
 - Trace every must requirement and assumption to an owner, current artifact and check.
 - Confirm hard function and visual identity are separately verified.
+- At intake, verify six feature areas, carried-forward answers, required/preferred/undecided labels and confirmed
+  brief revision.
+- Before sketching, trace every required feature and exclusion to the current prompt; verify remaining unknowns
+  are permitted variation rather than silent choices.
 evidence:
 - Requirement-to-check matrix with unresolved conflicts and candidate input hashes.
+- Confirmed brief, feature-to-prompt checklist and bounded unresolved decisions.
 failure: Retain the failing witness and last passing candidate. Block only dependent claims/stages; repair
   or obtain the missing decision, then rerun affected checks.
 scope: requirements
 artifacts:
 - ship-artifact.requirements
 - ship-artifact.assumptions
+- ship-artifact.sketch-prompt
 coverage: Scope is the declared candidate, inputs, methods and consumer features. No engineering or unsampled/runtime
   claim is inferred.
 rules:
 - ship-rule.claim-boundaries
+- ship-rule.feature-intake
