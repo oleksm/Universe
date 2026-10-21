@@ -35,6 +35,7 @@ mod studio_only;
 mod test_drive;
 mod flight_input;
 mod factory_app;
+mod plant_app;
 mod planet_app;
 mod hud_kit;
 mod planet_lod_app;
@@ -1616,6 +1617,7 @@ pub const APPS: &[(&str, &str)] = &[
     ("studio", "the ship studio: [design] to open"),
     ("scene", "a scene: <file.scene.yaml>, run on its own clocks in a world of its own"),
     ("factory", "the factory layout studio: a works' modules on its parcel, [facility key] to open"),
+    ("plant", "the plant viewer: a layout snapped together from its records, [layout key] to open"),
     ("planetlod", "the planet-trees pattern's levels of detail: [view dir], default ~/planet-data/views/earth_s15-pattern"),
 ];
 
@@ -1638,6 +1640,13 @@ fn launch(args: &[String]) -> bool {
             let key = rest.get(1).cloned();
             run_app(Config { title: "Freefall factory layout".into(), ..Default::default() }, move || {
                 factory_app::FactoryApp::new(key.as_deref()).unwrap_or_else(|e| panic!("factory layout: {e}"))
+            });
+        }
+        Some("plant") => {
+            let _ = env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info,wgpu_core=warn,wgpu_hal=warn")).try_init();
+            let key = rest.get(1).cloned();
+            run_app(Config { title: "Freefall plant".into(), ..Default::default() }, move || {
+                plant_app::PlantApp::new(key.as_deref()).unwrap_or_else(|e| panic!("plant: {e}"))
             });
         }
         Some("planetlod") => {

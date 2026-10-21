@@ -150,7 +150,7 @@ pub fn lay(key: &str) -> Option<Plant> {
             };
             let laid_end = if k == 0 { path[0] } else { path[path.len() - 1] };
             let gap = laid_end.distance(at);
-            if gap > AT_PORT && !p.connector.as_deref().and_then(|c| reg.connector(c)).is_some_and(|c| stands_off(c)) {
+            if gap > AT_PORT && !p.connector.as_deref().and_then(|c| reg.connector(c)).is_some_and(stands_off) {
                 faults.push(format!("{name}: its end lies {gap:.2} m from {end}"));
             }
             joints.extend(joint(p, &run.connector, at, facing, index, end));

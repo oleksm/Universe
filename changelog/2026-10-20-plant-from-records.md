@@ -17,3 +17,21 @@ as the registry's generator counted.
 
 The asset lookup and `validate_models` now take units, runs, connectors and templates: all 521
 installed models read. Nothing draws a plant yet; the renderer is the next step.
+
+## The plant viewer
+
+`freefall --app plant [layout key]` draws a layout snapped together from its records. It lists the 15
+layouts laid of runs. Units are their installed models standing at their bays, or a labelled box at
+their size while none is loaded. Runs are swept along their paths at their `outside`: round, or a box
+section for belts, drag conveyors, buses and conductor rails. They bend round each corner at the run's
+elbow radius (a cable's riser radius), cables lie as many circuits as the link has, and colour shows what
+a run carries. Stands go from under the run to the ground, and blind ends get a plate. Each joint is its
+family template's model: the template's own, else its `model_of` member's in the older kit frame (the
+run's axis along +X), stretched per axis to the connector's figures. A joint with neither is a disc at
+its size. On the airless shaft furnace all 50 units draw as models, and all 165 joints by template.
+
+The engine gains `Frame::model_pbr_scaled`, which stretches a model along its own axes. Its normals turn
+with the stretch, which is close enough at a few times.
+
+Not yet drawn from the templates' pieces: elbows, supports, a belt's idlers and terminals, and tees.
+They are swept or drawn bare for now.
