@@ -154,6 +154,18 @@ An identity requirement such as this needs a directional diagram and owner inter
 
 ### 3.1 Build a reference atlas with confidence labels
 
+Collect features before commissioning a whole-ship sketch. Intake is a conversation in small rounds, usually one to three related questions, not a demand for a complete specification in one prompt. Carry previous answers and corrections forward; ask only about missing information or genuine contradictions.
+
+Cover six areas: purpose (mission, crew, endurance, cargo and environment); shape (cockpit, nose, proportions, belly, wings and engines); occupied spaces (seating, aisle, rooms, storage and equipment); access and motion (ramps, doors, gear and deployables); visual character (reference features, finish and colours); and exclusions (features the owner does not want). Mark each area answered, explicitly undecided or not applicable. Do not force dimensions or equipment choices before their implications are understood.
+
+Give each feature a stable ID, required/preferred/undecided classification, source, interpretation and decision status. A proposed default is not a user answer. Separate the priority of a feature from whether its interpretation is confirmed. Surface conflicting features with the consequence and available trade-off; retain unresolved issues rather than hiding them in the prompt.
+
+Summarize the consolidated feature brief for owner correction and confirmation, or apply an explicit existing delegation. G0 is ready when all six areas have been considered, the required features are coherent, and remaining unknowns are explicitly bounded as permitted exploration or blockers. Silence is not confirmation. Small labelled clarification diagrams may resolve a hinge direction or other ambiguity during intake; they are not a selected whole-ship design.
+
+After the brief is confirmed and reference interpretation is coherent, derive a versioned sketch prompt from that exact brief. Include mission/context, every required feature by ID, preferred features, exclusions, reference priorities, requested views, permitted variation and explicitly undecided details. Do not silently resolve undecided features. Check prompt coverage before sketching; text must not introduce unsupported dimensions or technical claims. This is a reusable instruction for a human or image tool, not a requirement to use a particular generator.
+
+Review each sketch against the same feature IDs, recording met, missed, ambiguous or intentionally varied features and the limits of what the view can show. Sketch approval does not prove interior fit or engineering. A changed feature invalidates the affected prompt and sketch evidence; preserve unaffected answers and earlier candidates. A new material design choice returns to brief confirmation, while wording corrections within confirmed intent need no repeated approval.
+
 Each reference entry records its source URL or file hash, provenance, crop, visible camera, scale cues, controlled regions, borrowed features and excluded features. Label statements as **observed**, **inferred**, **owner-selected** or **unresolved**. A visible canopy profile is observed; a hidden rear bulkhead reconstructed from it is inferred. Record contradictions rather than averaging them invisibly.
 
 An atlas contains whole-ship silhouettes, cockpit treatment, neck/shoulder transitions, central sections, belly access, stern and equipment attachment. A source can inform one feature without dictating the whole ship. Rights and attribution must be retained for references used in public deliverables; “inspired by” does not establish permission to redistribute source artwork.

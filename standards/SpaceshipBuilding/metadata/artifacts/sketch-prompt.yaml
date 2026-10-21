@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=../../schema/ship-artifact.schema.yaml
+identity:
+  key: ship-artifact.sketch-prompt
+  name: Brief-derived sketch prompt
+  about: Versioned visual instructions derived from a confirmed feature brief.
+status: draft
+implementation: proposed
+owner: blender
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 3.1 Build a reference atlas with confidence labels
+  note: 'Owner refinement: feature collection and confirmed brief precede sketch prompting.'
+purpose: Translate confirmed ship intent into reviewable sketch instructions without inventing decisions.
+contents:
+- Confirmed brief revision/hash and confirmation or delegation evidence.
+- Mission context and feature IDs classified required, preferred or undecided.
+- Exact required features, exclusions and reference priorities with provenance.
+- Requested views, comparison framing and scale cues where established.
+- Permitted variation and unresolved choices; no unsupported size, engineering or hidden-geometry claims.
+- Prompt revision and feature-to-prompt coverage checklist; generated sketch IDs and feature review results.
+boundary: Project authoring artifact, not runtime ship data or evidence that a generated design is feasible.
+  Clarification diagrams may precede it; whole-ship concept sketches require it.
+consumers:
+- owner
+- blender
+- ships
+depends_on:
+- ship-artifact.requirements
+- ship-artifact.reference-atlas
+rules:
+- ship-rule.feature-intake
+- ship-rule.authority
+checks:
+- ship-check.requirements
+- ship-check.identity

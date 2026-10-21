@@ -15,13 +15,17 @@ depends_on:
 - ship-stage.references
 entry:
 - Coherent reference interpretation and rough functional occupancy available.
+- Current sketch prompt traces to a confirmed feature brief; no unresolved blocker concealed as an image-generation
+  choice.
 exit:
 - One coherent alternative selected with registered views and protected landmarks.
+- Sketches reviewed feature by feature; misses and ambiguities resolved or explicitly retained before selection.
 failure:
 - Keep alternatives; do not erase prior source or mix incompatible features silently.
 inputs:
 - ship-artifact.reference-atlas
 - ship-artifact.requirements
+- ship-artifact.sketch-prompt
 outputs:
 - ship-artifact.silhouette-study
 checks:
@@ -30,5 +34,6 @@ rules:
 - ship-rule.lifecycle
 - ship-rule.authority
 - ship-rule.claim-boundaries
+- ship-rule.feature-intake
 decision: Carry existing authorization/delegation forward. Owner resolves identity and major aesthetic/scope
   forks; technical roles resolve routine repairs within those constraints.
