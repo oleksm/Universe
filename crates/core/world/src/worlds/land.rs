@@ -246,18 +246,24 @@ impl Pyramid {
     }
 
     fn tile(&self, id: usize) -> Option<Arc<Raster>> {
-        let mut c = self.cache.lock().unwrap_or_else(|e| e.into_inner());
-        c.0 += 1;
-        let tick = c.0;
-        if let Some(e) = c.1.get_mut(&id) {
-            e.0 = tick;
-            return Some(e.1.clone());
+        {
+            let mut c = self.cache.lock().unwrap_or_else(|e| e.into_inner());
+            c.0 += 1;
+            let tick = c.0;
+            if let Some(e) = c.1.get_mut(&id) {
+                e.0 = tick;
+                return Some(e.1.clone());
+            }
         }
+        // (Read with the cache let go: other threads' queries don't wait on the file.)
         let t = self.m.tiles[id];
         let r = raster(&self.dir, &self.m, t.k, t.col * self.m.tile, t.row * self.m.tile, self.m.tile + 1, self.m.tile + 1, false)
             .map_err(|e| log::warn!("land pyramid tile {id}: {e}"))
             .ok()?;
         let r = Arc::new(r);
+        let mut c = self.cache.lock().unwrap_or_else(|e| e.into_inner());
+        c.0 += 1;
+        let tick = c.0;
         if c.1.len() >= RASTERS
             && let Some(old) = c.1.iter().min_by_key(|e| e.1 .0).map(|e| *e.0)
         {
@@ -306,6 +312,8 @@ pub struct LandHeights {
     /// The anchor mesh's tiles ([first triangle, count, first edge, edges, sea]) by cube-face cell.
     tiles: Vec<[u32; 5]>,
     cells: HashMap<(u8, u8, u8), Vec<u32>>,
+    /// Each tile's triangles by SUB x SUB parts of its face cell, made the first time it is asked.
+    sub: Vec<std::sync::OnceLock<SubGrid>>,
     /// The pattern's finest triangles, by PATTERN_CELL degrees of latitude and longitude.
     pattern: Vec<[u32; 3]>,
     pattern_cells: HashMap<(i32, i32), Vec<u32>>,
@@ -319,7 +327,28 @@ impl std::fmt::Debug for LandHeights {
     }
 }
 
-const PATTERN_CELL: f64 = 0.05;
+/// About 450 m: a few dozen of the pattern's 60 m triangles to a cell.
+const PATTERN_CELL: f64 = 0.004;
+/// A tile's sub-grid, SUB parts to a side.
+const SUB: usize = 8;
+
+/// A tile's triangles by where they lie on its cube face (in face cells, 32 a side).
+struct SubGrid {
+    face: u8,
+    min: [f64; 2],
+    size: [f64; 2],
+    parts: Vec<Vec<u32>>,
+}
+
+/// Where `c` lies on cube face `face` (in face cells, 32 a side). None: not that side of the planet.
+fn on_face(c: DVec3, face: u8) -> Option<[f64; 2]> {
+    let ax = (face / 2) as usize;
+    let m = if face % 2 == 1 { -c[ax] } else { c[ax] };
+    (m > 1e-9).then(|| {
+        let (o1, o2) = ((ax + 1) % 3, (ax + 2) % 3);
+        [(c[o1] / m + 1.0) / 2.0 * 32.0, (c[o2] / m + 1.0) / 2.0 * 32.0]
+    })
+}
 
 /// A cube face and its cell (32 a side) for a direction, as the lab keys the anchor mesh's tiles.
 fn face_cell(c: DVec3) -> (u8, u8, u8) {
@@ -405,7 +434,8 @@ impl LandHeights {
         let pyramid = Pyramid::open(dir.join("pyramid"))?;
         let max = z.iter().copied().fold(0.0f32, f32::max).max(pyramid.as_ref().map_or(0.0, |p| p.m.tiles.iter().map(|t| t.zmax).fold(0.0, f64::max) as f32)) as f64;
         log::info!("land heights: {} vertices, {} triangles, {} pattern, pyramid {} in {:.1} s from {}", z.len(), tri.len() / 3, pattern.len(), pyramid.is_some(), t0.elapsed().as_secs_f64(), dir.display());
-        Ok(Self { radius, dirs, z, tri, tiles, cells, pattern, pattern_cells, pyramid, max })
+        let sub = (0..tiles.len()).map(|_| std::sync::OnceLock::new()).collect();
+        Ok(Self { radius, dirs, z, tri, tiles, cells, sub, pattern, pattern_cells, pyramid, max })
     }
 
     /// The highest ground (m over `radius`).
@@ -425,12 +455,61 @@ impl LandHeights {
         (s.abs() > 0.0 && wa / s >= -1e-9 && wb / s >= -1e-9 && wc / s >= -1e-9).then(|| (wa * self.z[t[0] as usize] as f64 + wb * self.z[t[1] as usize] as f64 + wc * self.z[t[2] as usize] as f64) / s)
     }
 
+    fn triangle(&self, k: u32) -> [u32; 3] {
+        let k = 3 * k as usize;
+        [self.tri[k], self.tri[k + 1], self.tri[k + 2]]
+    }
+
+    /// Tile `j`'s sub-grid on the face of its cell `face`: each triangle in every part its corners' box
+    /// covers (a corner beyond the face's side: in all of them).
+    fn sub_grid(&self, j: u32, face: u8) -> &SubGrid {
+        self.sub[j as usize].get_or_init(|| {
+            let [s0, n, ..] = self.tiles[j as usize];
+            let corners: Vec<Option<[[f64; 2]; 3]>> = (s0..s0 + n)
+                .map(|k| {
+                    let t = self.triangle(k).map(|v| on_face(self.dir(v), face));
+                    Some([t[0]?, t[1]?, t[2]?])
+                })
+                .collect();
+            let (mut lo, mut hi) = ([f64::MAX; 2], [f64::MIN; 2]);
+            for c in corners.iter().flatten().flatten() {
+                for a in 0..2 {
+                    lo[a] = lo[a].min(c[a]);
+                    hi[a] = hi[a].max(c[a]);
+                }
+            }
+            let size = [((hi[0] - lo[0]) / SUB as f64).max(1e-9), ((hi[1] - lo[1]) / SUB as f64).max(1e-9)];
+            let part = |p: [f64; 2], a: usize| (((p[a] - lo[a]) / size[a]).floor().max(0.0) as usize).min(SUB - 1);
+            let mut parts = vec![Vec::new(); SUB * SUB];
+            for (i, c) in corners.iter().enumerate() {
+                let k = s0 + i as u32;
+                match c {
+                    Some(c) => {
+                        let (u0, u1) = (c.iter().map(|p| part(*p, 0)).min().unwrap(), c.iter().map(|p| part(*p, 0)).max().unwrap());
+                        let (v0, v1) = (c.iter().map(|p| part(*p, 1)).min().unwrap(), c.iter().map(|p| part(*p, 1)).max().unwrap());
+                        for a in u0..=u1 {
+                            for b in v0..=v1 {
+                                parts[a * SUB + b].push(k);
+                            }
+                        }
+                    }
+                    None => parts.iter_mut().for_each(|p| p.push(k)),
+                }
+            }
+            SubGrid { face, min: lo, size, parts }
+        })
+    }
+
     fn in_tiles(&self, u: DVec3, cell: (u8, u8, u8)) -> Option<f64> {
         for &j in self.cells.get(&cell)? {
-            let [s0, n, ..] = self.tiles[j as usize];
-            for k in s0..s0 + n {
-                let k = 3 * k as usize;
-                if let Some(h) = self.hit(u, [self.tri[k], self.tri[k + 1], self.tri[k + 2]]) {
+            let g = self.sub_grid(j, cell.0);
+            let Some(p) = on_face(u, g.face) else { continue };
+            let (a, b) = (((p[0] - g.min[0]) / g.size[0]).floor(), ((p[1] - g.min[1]) / g.size[1]).floor());
+            if a < 0.0 || b < 0.0 || a >= SUB as f64 || b >= SUB as f64 {
+                continue;
+            }
+            for &k in &g.parts[a as usize * SUB + b as usize] {
+                if let Some(h) = self.hit(u, self.triangle(k)) {
                     return Some(h);
                 }
             }
@@ -520,5 +599,43 @@ mod tests {
         // (The body's frame: lon/lat as `super::direction` gives them.)
         let d = super::super::direction(super::super::LonLat { lon: 97.4, lat: -33.75 });
         assert!((to_body() * belt - d).length() < 1e-12);
+    }
+
+    /// Query cost round the places ships fly (UNIVERSE_LAND_PACKAGE): the port and Shasta in the pattern,
+    /// the belt in the pyramid, the anchor mesh anywhere; and every answer the same as a full scan's.
+    #[test]
+    #[ignore]
+    fn land_heights_query_cost() {
+        let dir = PathBuf::from(std::env::var("UNIVERSE_LAND_PACKAGE").expect("UNIVERSE_LAND_PACKAGE"));
+        let l = LandHeights::open(&dir, 6_371_000.0).unwrap();
+        let mut seed = 7u64;
+        let mut rnd = || { seed = seed.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407); (seed >> 11) as f64 / (1u64 << 53) as f64 };
+        for (name, lon, lat, spread) in [("port", 100.6679, -37.2298, 0.05), ("shasta", 100.47, -37.12, 0.2), ("belt", 97.4, -33.75, 0.3), ("world", 0.0, 0.0, 180.0)] {
+            let pts: Vec<DVec3> = (0..2000).map(|_| unit(lon + spread * (2.0 * rnd() - 1.0), (lat + spread.min(80.0) * (2.0 * rnd() - 1.0)).clamp(-80.0, 80.0))).collect();
+            let _ = pts.iter().map(|&p| l.at_package(p)).sum::<f64>();
+            let t0 = std::time::Instant::now();
+            let hs: Vec<f64> = pts.iter().map(|&p| l.at_package(p)).collect();
+            println!("{name}: {:.2} us a query", t0.elapsed().as_secs_f64() / pts.len() as f64 * 1e6);
+            assert!(hs.iter().all(|h| h.is_finite()));
+            // (The same heights as scanning every pattern triangle, then every triangle of the cells round about.)
+            for (p, h) in pts.iter().zip(&hs).step_by(20) {
+                let u = p.normalize();
+                let brute = l.pyramid.as_ref().and_then(|py| py.at(u))
+                    .or_else(|| l.pattern.iter().find_map(|&t| l.hit(u, t)))
+                    .or_else(|| {
+                        let e = DVec3::Y.cross(u).normalize_or(DVec3::X);
+                        let n = u.cross(e);
+                        let step = std::f64::consts::FRAC_PI_2 / 32.0;
+                        let mut cells = vec![face_cell(u)];
+                        for (de, dn) in [(1.0, 0.0), (-1.0, 0.0), (0.0, 1.0), (0.0, -1.0), (1.0, 1.0), (1.0, -1.0), (-1.0, 1.0), (-1.0, -1.0)] {
+                            let c = face_cell((u + (e * de + n * dn) * step).normalize());
+                            if !cells.contains(&c) { cells.push(c); }
+                        }
+                        cells.iter().find_map(|c| l.cells.get(c)?.iter().find_map(|&j| { let [s0, n, ..] = l.tiles[j as usize]; (s0..s0 + n).find_map(|k| l.hit(u, l.triangle(k))) }))
+                    })
+                    .unwrap_or(0.0);
+                assert!((brute - h).abs() < 1e-6, "{name}: {h} indexed, {brute} scanned at {u:?}");
+            }
+        }
     }
 }

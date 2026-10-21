@@ -4,6 +4,13 @@ use std::collections::{HashMap, HashSet};
 use std::sync::mpsc::{self, Receiver, SyncSender};
 
 const PX: f64 = 0.0007;
+/// UNIVERSE_TERRAIN_CELL_PX=n: a tile is refined only while its children's cells stay at least n pixels across
+/// (the error it answers to capped at its children's cell over n). Cells finer than a pixel alias into sparkle as
+/// the eye moves, but 1 also softens ridges seen from afar; off (0) by default.
+fn min_cell_px() -> f64 {
+    static V: std::sync::OnceLock<f64> = std::sync::OnceLock::new();
+    *V.get_or_init(|| std::env::var("UNIVERSE_TERRAIN_CELL_PX").ok().and_then(|v| v.parse().ok()).unwrap_or(0.0))
+}
 const CACHE_BYTES: usize = 8 * 1024 * 1024 * 1024;
 const UPLOAD_BYTES: usize = 32 * 1024 * 1024;
 use universe_world::worlds::land::{Meta, Raster, Tile};
@@ -151,9 +158,9 @@ impl Source {
             let t = s.m.tiles[id];
             let distance = s.distance(id, cam.position, ex);
             let error = if s.intersects_hole(t) {
-                (t.error_m * ex).max(s.m.cell0_m * s.m.scale(t.k) as f64)
+                s.refine_error(t, ex).max(s.m.cell0_m * s.m.scale(t.k) as f64)
             } else {
-                t.error_m * ex
+                s.refine_error(t, ex)
             };
             // Retain invisible tiles' state; changing view direction must not reset hysteresis.
             let ratio = error / distance / PX;
@@ -182,6 +189,14 @@ impl Source {
         }
         out
     }
+    /// The error refinement answers to: the tile's own, no more than its children's cell at min_cell_px.
+    fn refine_error(&self, t: Tile, ex: f64) -> f64 {
+        let e = t.error_m * ex;
+        if t.k == 0 || min_cell_px() <= 0.0 {
+            return e;
+        }
+        e.min(self.m.cell0_m * self.m.scale(t.k - 1) as f64 / min_cell_px())
+    }
     fn weight(&self, id: usize, eye: DVec3, ex: f64) -> f32 {
         let Some(parent) = self.parent(id) else {
             return 0.0;
@@ -196,14 +211,14 @@ impl Source {
             t * t * (3.0 - 2.0 * t)
         };
         let m =
-            smooth((self.distance(parent, eye, ex) * PX / (p.error_m * ex).max(1e-9) - 0.5) / 0.5);
+            smooth((self.distance(parent, eye, ex) * PX / self.refine_error(p, ex).max(1e-9) - 0.5) / 0.5);
         let t = self.m.tiles[id];
         // Keep the parent unmorphed through both the split and hysteretic merge boundary.
         // Children then meet the same surface on either side of a hierarchy change.
         let own = if t.k == 0 || t.error_m == 0.0 {
             1.0
         } else {
-            smooth((self.distance(id, eye, ex) * PX / (t.error_m * ex) - 1.0 / 0.7) / (0.5 / 0.7))
+            smooth((self.distance(id, eye, ex) * PX / self.refine_error(t, ex) - 1.0 / 0.7) / (0.5 / 0.7))
         };
         (m * own) as f32
     }
