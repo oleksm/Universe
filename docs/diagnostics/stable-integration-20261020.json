@@ -1,0 +1,206 @@
+{
+  "base_main": "9fabad166488e79f0541b48f7310ee54eb5068c5",
+  "target": "main",
+  "registry_source": "94cb9b0c9b629c92d8e8bdde67b8389ffb22f3a4",
+  "packing_source": "0df4427c6a40cd668840fce99bd6d63fac5959a5",
+  "branches": [
+    {
+      "branch": "agentmsg-handoff-network",
+      "head": "414da81d98b9019ec7b0911d26a9c3903ade819e",
+      "disposition": "already-integrated",
+      "reason": "All commits outside main are patch-equivalent to integrated changes."
+    },
+    {
+      "branch": "engine-canvas-alpha",
+      "head": "a48f78700e1a10e7de32940a89d541c56c3f025a",
+      "disposition": "already-integrated",
+      "reason": "All commits outside main are patch-equivalent to integrated changes."
+    },
+    {
+      "branch": "engine-claude-levels",
+      "head": "fa96890b9491daba55e9d0ac8be90a0bc198e7e6",
+      "disposition": "excluded",
+      "reason": "Stopped levels experiments; excluded by earlier integration record; superseded viewer work is already on main."
+    },
+    {
+      "branch": "engine-claude-planetlod-levels20",
+      "head": "1cd044bcae3836a00b29eebedb5c72a820da1e3b",
+      "disposition": "excluded",
+      "reason": "Stopped levels experiments; excluded by earlier integration record; superseded viewer work is already on main."
+    },
+    {
+      "branch": "engine-live-devices",
+      "head": "f4bcb0c1da7af058aff3ed9f82ccd342b3c4f058",
+      "disposition": "already-integrated",
+      "reason": "All commits outside main are patch-equivalent to integrated changes."
+    },
+    {
+      "branch": "engine-packing-stock",
+      "head": "0df4427c6a40cd668840fce99bd6d63fac5959a5",
+      "disposition": "integrated",
+      "reason": "Tested candidate; 11 targeted checks passed before integration."
+    },
+    {
+      "branch": "engine-scene-runtime",
+      "head": "d2c7920d929d39a71dfc5b70cd99d955572babe9",
+      "disposition": "already-integrated",
+      "reason": "All commits outside main are patch-equivalent to integrated changes."
+    },
+    {
+      "branch": "engine-ship-design",
+      "head": "f9f2abb22caa1309b2fa0619bdf398575b18aaef",
+      "disposition": "already-integrated",
+      "reason": "All commits outside main are patch-equivalent to integrated changes."
+    },
+    {
+      "branch": "engine-text-editor",
+      "head": "683423db078dc64773339e0d9e756a6df4a101db",
+      "disposition": "excluded",
+      "reason": "Historical YAML implementation variants; functional integration is documented on main, but old branch wholesale merge is not certified."
+    },
+    {
+      "branch": "fso",
+      "head": "94cb9b0c9b629c92d8e8bdde67b8389ffb22f3a4",
+      "disposition": "integrated",
+      "reason": "Stable fso delivery 94cb9b0c includes these heads; registry owner confirmed."
+    },
+    {
+      "branch": "fso-arc-kit",
+      "head": "94cb9b0c9b629c92d8e8bdde67b8389ffb22f3a4",
+      "disposition": "integrated",
+      "reason": "Stable fso delivery 94cb9b0c includes these heads; registry owner confirmed."
+    },
+    {
+      "branch": "fso-planets",
+      "head": "63c3cf567e458afeba81526207c7cbb7c67e1d53",
+      "disposition": "integrated",
+      "reason": "Stable fso delivery 94cb9b0c includes these heads; registry owner confirmed."
+    },
+    {
+      "branch": "fso-spaceship-building",
+      "head": "94cb9b0c9b629c92d8e8bdde67b8389ffb22f3a4",
+      "disposition": "excluded-new-workflow",
+      "reason": "Starts at certified fso cutoff, but new spaceship-building work is explicitly excluded until separately delivered (registry task 20261020T222015-registry-c108)."
+    },
+    {
+      "branch": "registry-asset-bounds",
+      "head": "fbacb0878a314dde871879935fe811e1c82f685f",
+      "disposition": "already-integrated",
+      "reason": "All commits outside main are patch-equivalent to integrated changes."
+    },
+    {
+      "branch": "registry-axes",
+      "head": "d2949699b2b86e3d390b957de14f1486d156242b",
+      "disposition": "excluded",
+      "reason": "Staged model basis proposal; not certified merge-ready; consumer integration remains held."
+    },
+    {
+      "branch": "registry-worldmaps-staging",
+      "head": "48a4d00666bb6ad17c851ec1d39d339c3844cd9b",
+      "disposition": "already-integrated",
+      "reason": "All commits outside main are patch-equivalent to integrated changes."
+    },
+    {
+      "branch": "ships",
+      "head": "24152fd12bb42aa6a3f54cd5f795ccbd37c9c629",
+      "disposition": "excluded",
+      "reason": "Historical YAML implementation variants; functional integration is documented on main, but old branch wholesale merge is not certified."
+    },
+    {
+      "branch": "ships-drive-controls",
+      "head": "65d56619e9ce0bb778949618b7a4a94557971c01",
+      "disposition": "already-integrated",
+      "reason": "All commits outside main are patch-equivalent to integrated changes."
+    },
+    {
+      "branch": "ships-drive-runtime",
+      "head": "d27a97ce8306fe5f121eb652a6f5eb4a6e248dd1",
+      "disposition": "already-integrated",
+      "reason": "All commits outside main are patch-equivalent to integrated changes."
+    },
+    {
+      "branch": "ships-editor-session",
+      "head": "7f5711d1dc1e03dbf68c48e0ff74137328846df6",
+      "disposition": "already-integrated",
+      "reason": "All commits outside main are patch-equivalent to integrated changes."
+    },
+    {
+      "branch": "ships-local-world",
+      "head": "593b569dea96075bf4f79055e79ac2f6a408112c",
+      "disposition": "already-integrated",
+      "reason": "All commits outside main are patch-equivalent to integrated changes."
+    },
+    {
+      "branch": "ships-package-save",
+      "head": "a00a1e98451ccb1f74dd1133be2fe9e060aaadc4",
+      "disposition": "already-integrated",
+      "reason": "All commits outside main are patch-equivalent to integrated changes."
+    },
+    {
+      "branch": "ships-scene-visuals",
+      "head": "03e8d132cac07d2f8ef93c52ad90df4a407eb8da",
+      "disposition": "already-integrated",
+      "reason": "All commits outside main are patch-equivalent to integrated changes."
+    },
+    {
+      "branch": "ships-startup-loader",
+      "head": "d9772660561cd253795951795b28395896e331be",
+      "disposition": "already-integrated",
+      "reason": "All commits outside main are patch-equivalent to integrated changes."
+    }
+  ],
+  "validation": "passed",
+  "other_repositories": "Planet tool repository heads were reported separately; they are not game-repository merge candidates.",
+  "preserved": [
+    "Owner .claude/settings.json on main",
+    "Untracked installed_screen.rs on old scene worktree",
+    "All excluded branches and worktrees"
+  ],
+  "cutoff_note": "Only exact certified source commits are integrated; later branch movements are outside this audit.",
+  "tested_code_commit": "ab1ab81e",
+  "merge_commits": {
+    "registry": "3de437a8",
+    "packing": "ab1ab81e"
+  },
+  "code_and_base_content_match_tested_candidate": true,
+  "registry_override_used": false,
+  "checks": [
+    {
+      "command": "python3 tools/standards/build.py",
+      "exit": 0,
+      "scope": "Rebuilt merged registry and resolved generated page conflict; known report gaps remain."
+    },
+    {
+      "command": "cargo test -p universe-services -p universe-sim -p universe --lib packing",
+      "exit": 0,
+      "passed": 10
+    },
+    {
+      "command": "cargo test -p universe-services -p universe-sim -p universe --lib packages",
+      "exit": 0,
+      "passed": 3
+    },
+    {
+      "command": "cargo test -p universe-world -p universe --lib plant",
+      "exit": 0,
+      "passed": 2
+    },
+    {
+      "command": "cargo test --workspace --test celestial",
+      "exit": 0,
+      "passed": 1
+    },
+    {
+      "command": "PYTHONPATH=tools/standards python3 -m unittest test_production_chain test_motion_interlocks test_deck_support",
+      "exit": 0,
+      "passed": 14
+    }
+  ],
+  "distinct_tests_passed": 28,
+  "test_executions": 30,
+  "limits": [
+    "Targeted tests; no new visual playtest or release binary installation.",
+    "Local integration only; no remote push.",
+    "Stable registry definitions retain their existing review flags and engineering/report gaps."
+  ]
+}

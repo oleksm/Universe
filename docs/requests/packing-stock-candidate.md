@@ -1,7 +1,7 @@
 # Manufactured packing stock candidate
 
-Prepared on `engine-packing-stock`, based on main. No registry files are copied
-into the tracked patch, and nothing is merged to main.
+Originally prepared on `engine-packing-stock`, based on main, with no registry
+files copied into its tracked patch. The completed integration is recorded below.
 
 The existing output-stamping path reserves one matching manufactured empty stock
 when it creates a package. Subsequent fills use the same reservation. The
@@ -53,10 +53,13 @@ The checks cover partial fills, shortage, serial exhaustion, transfers, splittin
 source volume, spent/damaged tare, legacy packages, reservation save/load and a
 real skip GLB's empty shell. They run without opening a test window.
 
-## Remaining integration
+## Integration completed
 
-Obtain owner authorization for registry/main integration, including the stock
-records and opening/waste policy delivery. Then apply this candidate to that
-integrated tree and rerun its targeted service, save and model checks against the
-merged standards without an external registry override. This candidate grants no
-merge authority and has not been merged or pushed.
+The owner authorized integration of all stable work on 2026-10-20. Registry
+`94cb9b0c` and candidate `0df4427c` were combined in merges `3de437a8` and
+`ab1ab81e`. The combined code passed its packing, package, save, real-model,
+plant and celestial checks against branch-local standards without a registry
+override. Registry generation and 14 Python regression tests also passed.
+
+The full branch audit is `docs/diagnostics/stable-integration-20261020.json`.
+The original candidate branch remains available as its preparation record.
