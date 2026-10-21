@@ -253,7 +253,10 @@ impl Terrain {
             None => self.lines.as_ref().map(|l| l.at(d)),
         };
         let mut out = at(dir)?;
-        for p in &self.pads {
+        // (A land package's ground is drawn as it is: its ports stand on it, unlevelled, so contact meets
+        // the drawn ground.)
+        let pads: &[DVec3] = if self.land.is_some() { &[] } else { &self.pads };
+        for p in pads {
             let ground = dir.distance(*p) * self.body_radius;
             let t = ((ground - PAD_FLAT_INNER) / (PAD_FLAT_OUTER - PAD_FLAT_INNER)).clamp(0.0, 1.0);
             if t < 1.0 {

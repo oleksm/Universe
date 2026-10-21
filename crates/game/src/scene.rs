@@ -1482,7 +1482,8 @@ fn spaceports(frame: &mut Frame, app: &App) {
         let b = &sys.bodies[sp.body];
         let rot = b.rotation(t);
         let up = rot * sp.direction;
-        let pad = app.view.positions[sp.body] + up * b.rail.radius;
+        let ground_r = universe_sim::world::spaceport::ground_radius(sys, i);
+        let pad = app.view.positions[sp.body] + up * ground_r;
         let dist = pad.distance(cam);
         if dist > 400_000.0 {
             continue;
@@ -1492,7 +1493,7 @@ fn spaceports(frame: &mut Frame, app: &App) {
         let e2 = up.cross(e1);
         let center = app.view.positions[sp.body];
         // A point on the true surface, `x`/`y` meters from the pad along the ground.
-        let ground = |x: f64, y: f64| center + (up * b.rail.radius + e1 * x + e2 * y).normalize() * (b.rail.radius + 2.0);
+        let ground = |x: f64, y: f64| center + (up * ground_r + e1 * x + e2 * y).normalize() * (ground_r + 2.0);
 
         let c = if targeted { Color::hex(0x60e0ff) } else { Color::hex(0x4090b0) };
         let r = PAD_RADIUS;

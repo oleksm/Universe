@@ -71,7 +71,7 @@ impl PadFrame {
                 // Its place on the holding circle now, raised so that its
                 // entry point is the place.
                 let sp = &sys.spaceports[port];
-                let r = sys.bodies[sp.body].rail.radius;
+                let r = spaceport::ground_radius(sys, port);
                 let place = sp.direction * (r + HOLD_ALTITUDE) + hold_offset(sp.direction, n, t).0;
                 Self::at(sys, port, place.normalize(), place.length() - r - ENTRY_ALTITUDE, t, positions)
             }
@@ -90,7 +90,7 @@ impl PadFrame {
             body_radius: b.rail.radius,
             mu: b.rail.mu,
             angular_velocity: b.angular_velocity(),
-            pad: body_center + up * (b.rail.radius + lift),
+            pad: body_center + up * (spaceport::ground_radius(sys, port) + lift),
             up,
             rotation: b.rotation(t),
             terrain_top: b.max_radius() - b.rail.radius,

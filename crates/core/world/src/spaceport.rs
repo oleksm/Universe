@@ -53,12 +53,19 @@ pub fn hangar_direction(sys: &StarSystem, port: usize) -> DVec3 {
     (sp.direction * r - north * ((GRID as f64 / 2.0 + 1.0) * PAD_SPACING)).normalize()
 }
 
+/// Distance from its body's centre to spaceport `port`'s ground at its centre (m): the body's radius
+/// and the ground's height there (a port on a world whose ground is a package stands on that ground).
+pub fn ground_radius(sys: &StarSystem, port: usize) -> f64 {
+    let sp = &sys.spaceports[port];
+    sys.bodies[sp.body].surface_radius(sp.direction)
+}
+
 /// Where spaceport `port`'s pad center is at `t` (`positions` at `t`).
 pub fn pad_position(sys: &StarSystem, port: usize, t: f64, positions: &[DVec3]) -> DVec3 {
     let sp = &sys.spaceports[port];
     let b = &sys.bodies[sp.body];
     let up = b.rotation(t) * sp.direction;
-    positions[sp.body] + up * b.rail.radius
+    positions[sp.body] + up * ground_radius(sys, port)
 }
 
 

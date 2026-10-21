@@ -511,7 +511,7 @@ impl Universe {
                     port: universe_world::Facility::Spaceport(i),
                     center: positions[sp.body],
                     unturn: sys.bodies[sp.body].rotation(now).inverse(),
-                    ground: Some((sys.bodies[sp.body].rail.radius, sp.direction)),
+                    ground: Some((universe_world::spaceport::ground_radius(&sys, i), sp.direction)),
                 });
                 let decks = sys.bodies.iter().enumerate().filter(|(_, b)| b.kind == universe_world::BodyKind::Station).map(|(i, b)| Port {
                     port: universe_world::Facility::Station(i),
