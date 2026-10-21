@@ -1448,6 +1448,292 @@ impl PlanetLodApp {
     }
 }
 
+impl PlanetLodApp {
+    /// The ground's own work for an eye: decisions, chunk and tile meshes, the pyramid's cover; `cam` is in the
+    /// package's frame (its centre, unrotated, at its own radius).
+    pub fn land_update(&mut self, cam: &Camera, aspect: f64, dt: f64) {
+        let eye = cam.position;
+        if self.clusters.is_none() {
+            let _ = self.to_decider.send(ToDecider::Eye(eye));
+        }
+        let decided: Vec<Decided> = self.from_decider.lock().unwrap().try_iter().collect();
+        let gn = self.grid.n;
+        let (mut n_dec, mut n_chg, mut ms) = (0, 0, 0.0f64);
+        for dd in decided {
+            if let Some(on) = dd.on {
+                self.on_snap = on;
+            }
+            for b in dd.stale {
+                if b[0] > b[2] {
+                    continue;
+                }
+                for u in b[0]..=b[2] {
+                    for v in b[1]..=b[3] {
+                        self.chunks[(u * gn + v) as usize].stale = true;
+                    }
+                }
+            }
+            self.stats.drawn = dd.drawn;
+            self.lvl_count = dd.lvl_count;
+            if let Some(r) = dd.risen {
+                self.risen = r;
+            }
+            n_dec += dd.decided;
+            n_chg += dd.changed;
+            ms = ms.max(dd.ms);
+        }
+        self.stats.decided = n_dec;
+        self.stats.changed = n_chg;
+        self.stats.lod_ms = ms;
+        if let Some(prev) = self.last_eye
+            && dt > 0.0
+        {
+            let k = (dt / 0.25).min(1.0);
+            self.vel = self.vel * (1.0 - k) + (eye - prev) / dt * k;
+        }
+        self.last_eye = Some(eye);
+        if self.clusters.is_some() {
+            self.update_clusters(eye, dt);
+        }
+        // Meshes again, built first and drawn after: a job's meshes all go on screen together once all are on
+        // the GPU; then the next job: every stale chunk in view and every chunk not built yet, from a snapshot of
+        // what is drawn (stale chunks out of view keep their mesh until they come into view).
+        use rayon::prelude::*;
+        let t0 = Instant::now();
+        let mut rebuilt = 0;
+        let view = self.view;
+        if let Some(p) = &mut self.pyramid { p.get_mut().unwrap().update(&cam, aspect, self.ex, view == View::Real); }
+        if view != self.last_view {
+            self.last_view = view;
+            self.generation += 1;
+            *self.built.lock().unwrap() = None;
+            self.busy = false;
+        }
+        if let Some(b) = self.done.lock().unwrap().try_iter().last() {
+            if b.generation == self.generation {
+                *self.built.lock().unwrap() = Some(b);
+            }
+            self.busy = false;
+        }
+        {
+            let mut slot = self.built.lock().unwrap();
+            let ready = slot.as_ref().is_some_and(|b| b.prepared == b.meshes.len() && b.meshes.iter().all(|(_, m, _)| m.gpu_resident()));
+            if ready && let Some(b) = slot.take() {
+                for (c, mesh, tris) in b.meshes {
+                    let ch = &mut self.chunks[c];
+                    ch.mesh = Some(mesh);
+                    ch.mesh_view = Some(b.view);
+                    ch.tri_count = tris;
+                    ch.surface = Some(b.surface.clone());
+                    rebuilt += 1;
+                }
+            }
+        }
+        if self.clusters.is_none() && !self.busy && self.built.lock().unwrap().is_none() {
+            // (In view first; with nothing in view to do, chunks never built, 400 at a time, nearest first.)
+            let mut chunks: Vec<(f64, usize)> = (0..self.chunks.len())
+                .filter(|&c| {
+                    let ch = &self.chunks[c];
+                    !ch.tris.is_empty() && (ch.mesh.is_none() || ch.stale || ch.mesh_view != Some(view)) && self.chunk_visible(ch, &cam, aspect)
+                })
+                .map(|c| (self.chunks[c].origin.distance(cam.position), c))
+                .collect();
+            if chunks.is_empty() {
+                chunks = (0..self.chunks.len()).filter(|&c| !self.chunks[c].tris.is_empty() && self.chunks[c].mesh.is_none()).map(|c| (self.chunks[c].origin.distance(cam.position), c)).collect();
+                chunks.sort_by(|a, b| a.0.total_cmp(&b.0));
+                chunks.truncate(400);
+            }
+            chunks.sort_by(|a, b| a.0.total_cmp(&b.0));
+            if !chunks.is_empty() {
+                for &(_, c) in &chunks {
+                    // (Marked built now: a vertex flipping while the job is out marks it stale again.)
+                    self.chunks[c].stale = false;
+                }
+                let job = Job { generation: self.generation, view, on: self.on_snap.clone(), bd: self.bd.clone(), chunks: chunks.into_iter().map(|(_, c)| c).collect() };
+                self.busy = self.jobs.send(job).is_ok();
+            }
+        }
+        let need: Vec<usize> = (0..self.tiles.len()).filter(|&g| self.tiles[g].mesh.as_ref().is_none_or(|(v, _)| *v != view)).collect();
+        if !need.is_empty() {
+            let built: Vec<(usize, Mesh)> = need.par_iter().map(|&g| (g, self.build_tiles(&self.tiles[g]))).collect();
+            for (g, mesh) in built {
+                self.tiles[g].mesh = Some((view, mesh));
+            }
+        }
+        // (The layers after the tiles: built later, drawn later, so they blend over the ground drawn this frame.)
+        if let Some(l) = &mut self.layers {
+            let key = Some(self.ex.to_bits() ^ ((view == View::Real) as u64));
+            for k in 0..l.list.len() {
+                if l.on[k] && l.built[k] != key && !self.sliding {
+                    l.meshes[k] = l.build(k, &self.d.pos, &self.d.dirs);
+                    l.built[k] = key;
+                }
+            }
+        }
+        if self.show_feat && self.feat.is_none() && !self.meta.features.is_empty() {
+            self.feat = Some(self.build_features());
+        }
+        self.stats.rebuilt = rebuilt;
+        self.stats.mesh_ms = t0.elapsed().as_secs_f64() * 1e3;
+    }
+
+    /// Draw the ground as the app does, the package placed by `body` (its centre, spin and scale) and seen
+    /// from `cam`, the eye in the package's frame. Hands the built meshes to the engine to upload.
+    pub fn land_draw<'a>(&'a self, frame: &mut Frame, cam: &Camera, body: &Transform) -> LandDrawn<'a> {
+        let cam = *cam;
+        let eye = cam.position;
+        let size = frame.size();
+        let aspect = (size.x / size.y.max(1.0)) as f64;
+        let mesh_view = self.view == View::Mesh;
+        let clear = Color([0.0; 4]);
+        let edges = mesh_view && self.show_edges;
+        let fill_of = |c: Color| if self.show_faces { c } else { clear };
+        let (land, sea) = if mesh_view { (Color::hex(0x8a8f99), Color::hex(0x2f5fa8)) } else { (Color::WHITE, Color::WHITE) };
+        let (pat_line, land_line, sea_line) = (Color::hex(0xff6a00), Color::hex(0xf0c060), Color::hex(0x6fc3ff));
+        let draw = |frame: &mut Frame, mesh: &Mesh, t: &Transform, line: Color, fill: Color| {
+            frame.model_shaded_faded(mesh, t, line, fill, if edges { 1.0 } else { 0.0 });
+        };
+        let mut drawn: Vec<(&Mesh, DVec3)> = vec![];
+        let (mut chunks_drawn, mut tiles_drawn, mut sent, mut pattern_tris) = (0, 0, 0, 0);
+        for g in &self.tiles {
+            let Some((_, mesh)) = &g.mesh else { continue };
+            if !self.above_horizon(g.dir, g.cos_a, g.zmax * self.ex, eye) {
+                continue;
+            }
+            let radius = self.d.r * (2.0 - 2.0 * g.cos_a).max(0.0).sqrt() + (g.zmax * self.ex).max(0.0) + 12_000.0;
+            if !Self::in_view(&cam, g.origin, radius, aspect) {
+                continue;
+            }
+            let t = placed(body, g.origin);
+            let (fill, line) = if g.sea { (sea, sea_line) } else { (land, land_line) };
+            draw(frame, mesh, &t, line, fill_of(fill));
+            tiles_drawn += 1;
+            sent += g.tris.len();
+            drawn.push((mesh, g.origin));
+        }
+        if let Some(p) = &self.pyramid {
+            let mut p = p.lock().unwrap();
+            p.draw(frame, eye, body, self.ex, fill_of(land), land_line, edges);
+            sent += p.stats.triangles;
+        }
+        if let Some(l) = &self.layers {
+            for k in 0..l.list.len() {
+                if !l.on[k] {
+                    continue;
+                }
+                for (mesh, origin, top) in &l.meshes[k] {
+                    let r = mesh.radius() as f64;
+                    if !Self::in_view(&cam, *origin, r, aspect) {
+                        continue;
+                    }
+                    // (behind the planet: every corner beyond the horizon, as a whole group)
+                    let dir = origin.normalize();
+                    let cos_a = 1.0 - 0.5 * (r / top.max(1.0)).powi(2);
+                    if !self.above_horizon(dir, cos_a.clamp(-1.0, 1.0), top - self.d.r, eye) {
+                        continue;
+                    }
+                    let t = placed(body, *origin);
+                    frame.model_colored_shaded(mesh, &t, 0.0, 1.0);
+                }
+            }
+        }
+        let mut drawn_clusters: Vec<u32> = vec![];
+        let cl_data = self.clusters.as_ref().map(|c| { let c = c.lock().unwrap(); (c.ptr.clone(), c.tris.clone()) });
+        if let Some(cl) = &self.clusters {
+            let mut cl = cl.lock().unwrap();
+            // (Asked again every frame until on the GPU: a frame the render thread skips loses its requests, and
+            // asking once left meshes never uploaded. The engine skips those it has.)
+            let mut handed = 0;
+            let first = std::mem::take(&mut cl.upload_first);
+            for i in first.iter().map(|&i| i as usize).chain(0..cl.meshes.len()) {
+                if handed >= 3000 {
+                    break;
+                }
+                if let Some(m) = cl.meshes[i].as_mut().filter(|m| !m.1.gpu_resident()) {
+                    frame.prepare_pooled(&m.1);
+                    m.2 = true;
+                    handed += 1;
+                }
+            }
+            cl.upload_first = first;
+            let mut tris_shown = 0;
+            // (One group for every cluster drawn: the engine draws them all in one call for faces, one for edges.)
+            let group = frame.pool_group(&placed(body, DVec3::ZERO), pat_line, fill_of(land), if edges { 1.0 } else { 0.0 }, true);
+            for &i in &cl.shown {
+                let i = i as usize;
+                let Some((_, mesh, _)) = &cl.meshes[i] else { continue };
+                let o = cl.origin(i);
+                if !Self::in_view(&cam, o, cl.row[i][4] as f64, aspect) {
+                    continue;
+                }
+                if !mesh.gpu_resident() {
+                    // (a cluster in view with nothing on the GPU yet: a hole this frame; should never happen)
+                    log::warn!("PLANETLOD hole: cluster {i} in view not on the GPU");
+                }
+                frame.pooled(group, mesh, placed(body, o).position);
+                drawn_clusters.push(i as u32);
+                chunks_drawn += 1;
+                tris_shown += cl.ptr[i][1] as usize;
+            }
+            sent += tris_shown;
+            pattern_tris += tris_shown;
+        }
+        let max_draw = if self.clusters.is_some() { 0 } else { self.max_draw };
+        for ch in &self.chunks {
+            if chunks_drawn >= max_draw {
+                break;
+            }
+            let Some(mesh) = &ch.mesh else { continue };
+            if ch.tri_count == 0 {
+                continue;
+            }
+            if !self.chunk_visible(ch, &cam, aspect) {
+                continue;
+            }
+            let t = placed(body, ch.origin);
+            draw(frame, mesh, &t, pat_line, fill_of(land));
+            chunks_drawn += 1;
+            sent += ch.tri_count;
+            pattern_tris += ch.tri_count;
+            drawn.push((mesh, ch.origin));
+        }
+        // The built job's meshes handed to the engine to upload (not drawn yet), within the frame's budget.
+        if let Some(b) = self.built.lock().unwrap().as_mut() {
+            let mut tris = 0;
+            while b.prepared < b.meshes.len() && tris < UPLOAD_TRIS {
+                let (_, mesh, n) = &b.meshes[b.prepared];
+                frame.prepare_mesh(mesh);
+                tris += n;
+                b.prepared += 1;
+            }
+            // (Those handed over and still not on the GPU asked again: a skipped frame loses its requests.)
+            if b.prepared == b.meshes.len() {
+                for (_, mesh, _) in b.meshes.iter().filter(|(_, m, _)| !m.gpu_resident()).take(200) {
+                    frame.prepare_mesh(mesh);
+                }
+            }
+        }
+        LandDrawn { drawn, sent, chunks_drawn, tiles_drawn, pattern_tris, drawn_clusters, cl_data, aspect }
+    }
+}
+
+/// What `land_draw` drew, for the app's panel and its view-box count.
+pub struct LandDrawn<'a> {
+    drawn: Vec<(&'a Mesh, DVec3)>,
+    sent: usize,
+    chunks_drawn: usize,
+    tiles_drawn: usize,
+    pattern_tris: usize,
+    drawn_clusters: Vec<u32>,
+    cl_data: Option<(Arc<Vec<[u32; 2]>>, Arc<Vec<[u32; 3]>>)>,
+    aspect: f64,
+}
+
+/// A point of the package's frame placed by `body` (centre, spin, scale), as a model's transform there.
+fn placed(body: &Transform, at: DVec3) -> Transform {
+    Transform { position: body.position + body.rotation.as_dquat() * (at * body.scale), rotation: body.rotation, scale: body.scale }
+}
+
 impl App for PlanetLodApp {
     fn name(&self) -> &str {
         "planetlod"
@@ -1606,131 +1892,10 @@ impl App for PlanetLodApp {
             self.alt = (self.alt * 0.995).max(300.0);
             self.lon += 2e-4;
         }
-        let eye = self.eye();
-        if self.clusters.is_none() {
-            let _ = self.to_decider.send(ToDecider::Eye(eye));
-        }
-        let decided: Vec<Decided> = self.from_decider.lock().unwrap().try_iter().collect();
-        let gn = self.grid.n;
-        let (mut n_dec, mut n_chg, mut ms) = (0, 0, 0.0f64);
-        for dd in decided {
-            if let Some(on) = dd.on {
-                self.on_snap = on;
-            }
-            for b in dd.stale {
-                if b[0] > b[2] {
-                    continue;
-                }
-                for u in b[0]..=b[2] {
-                    for v in b[1]..=b[3] {
-                        self.chunks[(u * gn + v) as usize].stale = true;
-                    }
-                }
-            }
-            self.stats.drawn = dd.drawn;
-            self.lvl_count = dd.lvl_count;
-            if let Some(r) = dd.risen {
-                self.risen = r;
-            }
-            n_dec += dd.decided;
-            n_chg += dd.changed;
-            ms = ms.max(dd.ms);
-        }
-        self.stats.decided = n_dec;
-        self.stats.changed = n_chg;
-        self.stats.lod_ms = ms;
-        if let Some(prev) = self.last_eye
-            && dt > 0.0
-        {
-            let k = (dt / 0.25).min(1.0);
-            self.vel = self.vel * (1.0 - k) + (eye - prev) / dt * k;
-        }
-        self.last_eye = Some(eye);
-        if self.clusters.is_some() {
-            self.update_clusters(eye, dt);
-        }
-        // Meshes again, built first and drawn after: a job's meshes all go on screen together once all are on
-        // the GPU; then the next job: every stale chunk in view and every chunk not built yet, from a snapshot of
-        // what is drawn (stale chunks out of view keep their mesh until they come into view).
-        use rayon::prelude::*;
-        let t0 = Instant::now();
-        let mut rebuilt = 0;
         let cam = self.camera();
         let aspect = match self.ui.lock().unwrap().aspect { a if a > 0.0 => a, _ => 16.0 / 9.0 };
-        let view = self.view;
-        if let Some(p) = &mut self.pyramid { p.get_mut().unwrap().update(&cam, aspect, self.ex, view == View::Real); }
-        if view != self.last_view {
-            self.last_view = view;
-            self.generation += 1;
-            *self.built.lock().unwrap() = None;
-            self.busy = false;
-        }
-        if let Some(b) = self.done.lock().unwrap().try_iter().last() {
-            if b.generation == self.generation {
-                *self.built.lock().unwrap() = Some(b);
-            }
-            self.busy = false;
-        }
-        {
-            let mut slot = self.built.lock().unwrap();
-            let ready = slot.as_ref().is_some_and(|b| b.prepared == b.meshes.len() && b.meshes.iter().all(|(_, m, _)| m.gpu_resident()));
-            if ready && let Some(b) = slot.take() {
-                for (c, mesh, tris) in b.meshes {
-                    let ch = &mut self.chunks[c];
-                    ch.mesh = Some(mesh);
-                    ch.mesh_view = Some(b.view);
-                    ch.tri_count = tris;
-                    ch.surface = Some(b.surface.clone());
-                    rebuilt += 1;
-                }
-            }
-        }
-        if self.clusters.is_none() && !self.busy && self.built.lock().unwrap().is_none() {
-            // (In view first; with nothing in view to do, chunks never built, 400 at a time, nearest first.)
-            let mut chunks: Vec<(f64, usize)> = (0..self.chunks.len())
-                .filter(|&c| {
-                    let ch = &self.chunks[c];
-                    !ch.tris.is_empty() && (ch.mesh.is_none() || ch.stale || ch.mesh_view != Some(view)) && self.chunk_visible(ch, &cam, aspect)
-                })
-                .map(|c| (self.chunks[c].origin.distance(cam.position), c))
-                .collect();
-            if chunks.is_empty() {
-                chunks = (0..self.chunks.len()).filter(|&c| !self.chunks[c].tris.is_empty() && self.chunks[c].mesh.is_none()).map(|c| (self.chunks[c].origin.distance(cam.position), c)).collect();
-                chunks.sort_by(|a, b| a.0.total_cmp(&b.0));
-                chunks.truncate(400);
-            }
-            chunks.sort_by(|a, b| a.0.total_cmp(&b.0));
-            if !chunks.is_empty() {
-                for &(_, c) in &chunks {
-                    // (Marked built now: a vertex flipping while the job is out marks it stale again.)
-                    self.chunks[c].stale = false;
-                }
-                let job = Job { generation: self.generation, view, on: self.on_snap.clone(), bd: self.bd.clone(), chunks: chunks.into_iter().map(|(_, c)| c).collect() };
-                self.busy = self.jobs.send(job).is_ok();
-            }
-        }
-        let need: Vec<usize> = (0..self.tiles.len()).filter(|&g| self.tiles[g].mesh.as_ref().is_none_or(|(v, _)| *v != view)).collect();
-        if !need.is_empty() {
-            let built: Vec<(usize, Mesh)> = need.par_iter().map(|&g| (g, self.build_tiles(&self.tiles[g]))).collect();
-            for (g, mesh) in built {
-                self.tiles[g].mesh = Some((view, mesh));
-            }
-        }
-        // (The layers after the tiles: built later, drawn later, so they blend over the ground drawn this frame.)
-        if let Some(l) = &mut self.layers {
-            let key = Some(self.ex.to_bits() ^ ((view == View::Real) as u64));
-            for k in 0..l.list.len() {
-                if l.on[k] && l.built[k] != key && !self.sliding {
-                    l.meshes[k] = l.build(k, &self.d.pos, &self.d.dirs);
-                    l.built[k] = key;
-                }
-            }
-        }
-        if self.show_feat && self.feat.is_none() && !self.meta.features.is_empty() {
-            self.feat = Some(self.build_features());
-        }
-        self.stats.rebuilt = rebuilt;
-        self.stats.mesh_ms = t0.elapsed().as_secs_f64() * 1e3;
+        self.land_update(&cam, aspect, dt);
+        let rebuilt = self.stats.rebuilt;
         let up = unit(self.lon,self.lat);
         self.ground_h = self.ground_at(up);
         let mean = flight::average(up,self.alt,self.d.r,|u|self.drawn_ground_at_world(u));
@@ -1789,120 +1954,7 @@ impl App for PlanetLodApp {
         let sun = (up * 0.574 + north * 0.579 - east * 0.579).normalize();
         frame.light = Some(Light { position: eye + sun * 1.5e11, color: [1.0, 0.98, 0.94], luminosity: 1.0, reference: 1.5e11, radius: 7e8 });
         let size = frame.size();
-        let aspect = (size.x / size.y.max(1.0)) as f64;
-        let mesh_view = self.view == View::Mesh;
-        let clear = Color([0.0; 4]);
-        let edges = mesh_view && self.show_edges;
-        let fill_of = |c: Color| if self.show_faces { c } else { clear };
-        let (land, sea) = if mesh_view { (Color::hex(0x8a8f99), Color::hex(0x2f5fa8)) } else { (Color::WHITE, Color::WHITE) };
-        let (pat_line, land_line, sea_line) = (Color::hex(0xff6a00), Color::hex(0xf0c060), Color::hex(0x6fc3ff));
-        let draw = |frame: &mut Frame, mesh: &Mesh, t: &Transform, line: Color, fill: Color| {
-            frame.model_shaded_faded(mesh, t, line, fill, if edges { 1.0 } else { 0.0 });
-        };
-        let mut drawn: Vec<(&Mesh, DVec3)> = vec![];
-        let (mut chunks_drawn, mut tiles_drawn, mut sent, mut pattern_tris) = (0, 0, 0, 0);
-        for g in &self.tiles {
-            let Some((_, mesh)) = &g.mesh else { continue };
-            if !self.above_horizon(g.dir, g.cos_a, g.zmax * self.ex, eye) {
-                continue;
-            }
-            let radius = self.d.r * (2.0 - 2.0 * g.cos_a).max(0.0).sqrt() + (g.zmax * self.ex).max(0.0) + 12_000.0;
-            if !Self::in_view(&cam, g.origin, radius, aspect) {
-                continue;
-            }
-            let t = Transform { position: g.origin, rotation: Quat::IDENTITY, scale: 1.0 };
-            let (fill, line) = if g.sea { (sea, sea_line) } else { (land, land_line) };
-            draw(frame, mesh, &t, line, fill_of(fill));
-            tiles_drawn += 1;
-            sent += g.tris.len();
-            drawn.push((mesh, g.origin));
-        }
-        if let Some(p) = &self.pyramid {
-            let mut p = p.lock().unwrap();
-            p.draw(frame, self.ex, fill_of(land), land_line, edges);
-            sent += p.stats.triangles;
-        }
-        if let Some(l) = &self.layers {
-            for k in 0..l.list.len() {
-                if !l.on[k] {
-                    continue;
-                }
-                for (mesh, origin, top) in &l.meshes[k] {
-                    let r = mesh.radius() as f64;
-                    if !Self::in_view(&cam, *origin, r, aspect) {
-                        continue;
-                    }
-                    // (behind the planet: every corner beyond the horizon, as a whole group)
-                    let dir = origin.normalize();
-                    let cos_a = 1.0 - 0.5 * (r / top.max(1.0)).powi(2);
-                    if !self.above_horizon(dir, cos_a.clamp(-1.0, 1.0), top - self.d.r, eye) {
-                        continue;
-                    }
-                    let t = Transform { position: *origin, rotation: Quat::IDENTITY, scale: 1.0 };
-                    frame.model_colored_shaded(mesh, &t, 0.0, 1.0);
-                }
-            }
-        }
-        let mut drawn_clusters: Vec<u32> = vec![];
-        let cl_data = self.clusters.as_ref().map(|c| { let c = c.lock().unwrap(); (c.ptr.clone(), c.tris.clone()) });
-        if let Some(cl) = &self.clusters {
-            let mut cl = cl.lock().unwrap();
-            // (Asked again every frame until on the GPU: a frame the render thread skips loses its requests, and
-            // asking once left meshes never uploaded. The engine skips those it has.)
-            let mut handed = 0;
-            let first = std::mem::take(&mut cl.upload_first);
-            for i in first.iter().map(|&i| i as usize).chain(0..cl.meshes.len()) {
-                if handed >= 3000 {
-                    break;
-                }
-                if let Some(m) = cl.meshes[i].as_mut().filter(|m| !m.1.gpu_resident()) {
-                    frame.prepare_pooled(&m.1);
-                    m.2 = true;
-                    handed += 1;
-                }
-            }
-            cl.upload_first = first;
-            let mut tris_shown = 0;
-            // (One group for every cluster drawn: the engine draws them all in one call for faces, one for edges.)
-            let group = frame.pool_group(&Transform { position: DVec3::ZERO, rotation: Quat::IDENTITY, scale: 1.0 }, pat_line, fill_of(land), if edges { 1.0 } else { 0.0 }, true);
-            for &i in &cl.shown {
-                let i = i as usize;
-                let Some((_, mesh, _)) = &cl.meshes[i] else { continue };
-                let o = cl.origin(i);
-                if !Self::in_view(&cam, o, cl.row[i][4] as f64, aspect) {
-                    continue;
-                }
-                if !mesh.gpu_resident() {
-                    // (a cluster in view with nothing on the GPU yet: a hole this frame; should never happen)
-                    log::warn!("PLANETLOD hole: cluster {i} in view not on the GPU");
-                }
-                frame.pooled(group, mesh, o);
-                drawn_clusters.push(i as u32);
-                chunks_drawn += 1;
-                tris_shown += cl.ptr[i][1] as usize;
-            }
-            sent += tris_shown;
-            pattern_tris += tris_shown;
-        }
-        let max_draw = if self.clusters.is_some() { 0 } else { self.max_draw };
-        for ch in &self.chunks {
-            if chunks_drawn >= max_draw {
-                break;
-            }
-            let Some(mesh) = &ch.mesh else { continue };
-            if ch.tri_count == 0 {
-                continue;
-            }
-            if !self.chunk_visible(ch, &cam, aspect) {
-                continue;
-            }
-            let t = Transform { position: ch.origin, rotation: Quat::IDENTITY, scale: 1.0 };
-            draw(frame, mesh, &t, pat_line, fill_of(land));
-            chunks_drawn += 1;
-            sent += ch.tri_count;
-            pattern_tris += ch.tri_count;
-            drawn.push((mesh, ch.origin));
-        }
+        let LandDrawn { drawn, sent, chunks_drawn, tiles_drawn, pattern_tris, drawn_clusters, cl_data, aspect } = self.land_draw(frame, &cam, &Transform::default());
         if self.show_feat && let Some(f) = &self.feat {
             let t = Transform { position: self.meta.peak * self.d.r, rotation: Quat::IDENTITY, scale: 1.0 };
             frame.model_colored(f, &t, 1.0, 0.0);
@@ -1986,22 +2038,6 @@ impl App for PlanetLodApp {
                 }
                 let w = label.len() as f32 * universe_engine::GLYPH;
                 frame.text_boxed(p - Vec2::new(w * 0.5, universe_engine::GLYPH + 2.0 * r + 4.0), label, Color::hex(0x111111), *c);
-            }
-        }
-        // The built job's meshes handed to the engine to upload (not drawn yet), within the frame's budget.
-        if let Some(b) = self.built.lock().unwrap().as_mut() {
-            let mut tris = 0;
-            while b.prepared < b.meshes.len() && tris < UPLOAD_TRIS {
-                let (_, mesh, n) = &b.meshes[b.prepared];
-                frame.prepare_mesh(mesh);
-                tris += n;
-                b.prepared += 1;
-            }
-            // (Those handed over and still not on the GPU asked again: a skipped frame loses its requests.)
-            if b.prepared == b.meshes.len() {
-                for (_, mesh, _) in b.meshes.iter().filter(|(_, m, _)| !m.gpu_resident()).take(200) {
-                    frame.prepare_mesh(mesh);
-                }
             }
         }
         // The counts the panel shows that need the drawn meshes: the view box every 0.3 s.

@@ -1106,7 +1106,7 @@ impl Pyramid {
             })
             .fold(0.0, f64::max);
     }
-    pub fn draw(&mut self, frame: &mut Frame, ex: f64, fill: Color, line: Color, edges: bool) {
+    pub fn draw(&mut self, frame: &mut Frame, eye: DVec3, body: &Transform, ex: f64, fill: Color, line: Color, edges: bool) {
         let _scope = universe_prof::scope("draw/planetlod/pyramid");
         for id in self.releases.drain(..) {
             frame.release_pooled(id);
@@ -1146,7 +1146,7 @@ impl Pyramid {
             drawn.push(root);
         }
         let group = frame.pool_group(
-            &Transform::default(),
+            &placed(body, DVec3::ZERO),
             line,
             fill,
             if edges { 1.0 } else { 0.0 },
@@ -1163,10 +1163,10 @@ impl Pyramid {
                 self.stats.fallback += 1;
                 0.0
             } else {
-                self.source.weight(id, frame.camera.position, ex)
+                self.source.weight(id, eye, ex)
             };
             self.drawn.insert(id, weight);
-            frame.pooled_morphed(group, &tile.mesh, tile.origin, weight);
+            frame.pooled_morphed(group, &tile.mesh, placed(body, tile.origin).position, weight);
             self.stats.triangles += tile.mesh.faces() as usize;
         }
     }
