@@ -786,7 +786,7 @@ struct PoolDraw {
     mesh: u32,
     face_start: u32,
     edge_start: u32,
-    pad: u32,
+    morph: f32,
 };
 struct PoolGroup {
     c0: vec4<f32>,
@@ -881,7 +881,9 @@ fn pool_pos(d: PoolDraw, h: u32, flags: u32, i: u32) -> vec3<f32> {
         let band = unpack2x16float(pool[m + 3u]) * 1000.0;
         let off = vec3<f32>(bitcast<f32>(pool[m]), bitcast<f32>(pool[m + 1u]), bitcast<f32>(pool[m + 2u]));
         let v = pool_in(d, p, vec3<f32>(0.0), vec4<f32>(1.0));
-        p = p + off * smoothstep(band.x, band.y, length(place(v)));
+        var weight = smoothstep(band.x, band.y, length(place(v)));
+        if (d.morph >= 0.0) { weight = d.morph; }
+        p = p + off * weight;
     }
     return p;
 }

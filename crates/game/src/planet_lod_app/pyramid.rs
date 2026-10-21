@@ -1,0 +1,1265 @@
+//! Streamed vertex-aligned land pyramid. Immutable tiles; only selection and morph weights change per frame.
+use super::*;
+use serde::Deserialize;
+use std::collections::{HashMap, HashSet};
+use std::fs::File;
+use std::io::{Read, Seek, SeekFrom};
+use std::sync::mpsc::{self, Receiver, SyncSender};
+
+const PX: f64 = 0.0007;
+const CACHE_BYTES: usize = 256 * 1024 * 1024;
+const UPLOAD_BYTES: usize = 4 * 1024 * 1024;
+#[derive(Deserialize)]
+struct Projection {
+    kind: String,
+    radius_m: f64,
+    centre: [f64; 3],
+    east: [f64; 3],
+    north: [f64; 3],
+}
+#[derive(Deserialize)]
+struct Level {
+    k: usize,
+    n: usize,
+    cell_m: f64,
+    z: String,
+    rgb: String,
+    mask: String,
+}
+#[derive(Clone, Copy, Deserialize)]
+struct Tile {
+    k: usize,
+    row: usize,
+    col: usize,
+    error_m: f64,
+    zmin: f64,
+    zmax: f64,
+}
+#[derive(Deserialize)]
+struct Hole {
+    lat: f64,
+    lon: f64,
+    radius_km: f64,
+}
+#[derive(Deserialize)]
+struct Meta {
+    format: String,
+    projection: Projection,
+    x0: f64,
+    y0: f64,
+    cell0_m: f64,
+    side: usize,
+    tile: usize,
+    top_level: usize,
+    levels: Vec<Level>,
+    tiles: Vec<Tile>,
+    #[serde(default)]
+    holes: Vec<Hole>,
+}
+struct Source {
+    dir: PathBuf,
+    m: Meta,
+    index: HashMap<(usize, usize, usize), usize>,
+    bounds: Vec<(DVec3, f64)>,
+    holes: Vec<(f64, f64, f64)>,
+}
+impl Source {
+    fn inverse(&self, x: f64, y: f64) -> DVec3 {
+        let p = &self.m.projection;
+        let r = x.hypot(y);
+        let c = r / p.radius_m;
+        let centre = DVec3::from_array(p.centre);
+        if r < 1e-12 {
+            centre
+        } else {
+            centre * c.cos()
+                + (DVec3::from_array(p.east) * x + DVec3::from_array(p.north) * y) * (c.sin() / r)
+        }
+    }
+    fn project(&self, dir: DVec3) -> Option<(f64, f64)> {
+        let p = &self.m.projection;
+        let c = dir.dot(DVec3::from_array(p.centre)).clamp(-1.0, 1.0).acos();
+        if c >= std::f64::consts::PI - 1e-8 {
+            return None;
+        }
+        let f = if c < 1e-10 {
+            p.radius_m
+        } else {
+            p.radius_m * c / c.sin()
+        };
+        Some((
+            dir.dot(DVec3::from_array(p.east)) * f,
+            dir.dot(DVec3::from_array(p.north)) * f,
+        ))
+    }
+    fn xy(&self, t: Tile, i: f64, j: f64) -> (f64, f64) {
+        let step = self.m.cell0_m * (1usize << t.k) as f64;
+        (
+            self.m.x0 + 0.5 * self.m.cell0_m + (t.col * self.m.tile) as f64 * step + i * step,
+            self.m.y0 + 0.5 * self.m.cell0_m + (t.row * self.m.tile) as f64 * step + j * step,
+        )
+    }
+    fn intersects_hole(&self, t: Tile) -> bool {
+        let (x0, y0) = self.xy(t, 0.0, 0.0);
+        let (x1, y1) = self.xy(t, self.m.tile as f64, self.m.tile as f64);
+        self.hole_rect(x0, y0, x1, y1)
+    }
+    fn hole_rect(&self, x0: f64, y0: f64, x1: f64, y1: f64) -> bool {
+        self.holes
+            .iter()
+            .any(|&(x, y, r)| (x - x.clamp(x0, x1)).hypot(y - y.clamp(y0, y1)) <= r)
+    }
+    fn children(&self, id: usize) -> Vec<usize> {
+        let t = self.m.tiles[id];
+        if t.k == 0 {
+            return vec![];
+        }
+        (0..2)
+            .flat_map(|j| {
+                (0..2).filter_map(move |i| {
+                    self.index
+                        .get(&(t.k - 1, t.row * 2 + j, t.col * 2 + i))
+                        .copied()
+                })
+            })
+            .collect()
+    }
+    fn parent(&self, id: usize) -> Option<usize> {
+        let t = self.m.tiles[id];
+        self.index.get(&(t.k + 1, t.row / 2, t.col / 2)).copied()
+    }
+    fn bounds(&self, t: Tile, ex: f64) -> (DVec3, f64) {
+        let (x, y) = self.xy(t, self.m.tile as f64 * 0.5, self.m.tile as f64 * 0.5);
+        let dir = self.inverse(x, y);
+        let mid = (t.zmin + t.zmax) * 0.5 * ex;
+        let centre = dir * (self.m.projection.radius_m + mid);
+        // Exp-map is non-expanding within the supported hemisphere. Chord/sagitta and vertical relief
+        // are both bounded by this enclosing sphere, including the clamped last row/column.
+        let half = self.m.tile as f64
+            * self.m.cell0_m
+            * (1usize << t.k) as f64
+            * std::f64::consts::FRAC_1_SQRT_2;
+        let radius = half * (1.0 + mid.abs() / self.m.projection.radius_m)
+            + (t.zmax - t.zmin).abs() * 0.5 * ex
+            + 1.0;
+        (centre, radius)
+    }
+    fn distance(&self, id: usize, eye: DVec3, ex: f64) -> f64 {
+        let (c, r) = if ex == 1.0 {
+            self.bounds[id]
+        } else {
+            self.bounds(self.m.tiles[id], ex)
+        };
+        ((eye - c).length() - r).max(1.0)
+    }
+    fn visible(&self, id: usize, cam: &Camera, aspect: f64, ex: f64) -> bool {
+        let (c, r) = if ex == 1.0 {
+            self.bounds[id]
+        } else {
+            self.bounds(self.m.tiles[id], ex)
+        };
+        let to = c - cam.position;
+        let depth = to.dot(cam.forward().as_dvec3());
+        let ty = (cam.fov_y as f64 * 0.5).tan();
+        let tx = ty * aspect;
+        if depth < -r
+            || to.dot(cam.right().as_dvec3()).abs() > depth * tx + r * (1.0 + tx * tx).sqrt()
+            || to.dot(cam.up().as_dvec3()).abs() > depth * ty + r * (1.0 + ty * ty).sqrt()
+        {
+            return false;
+        }
+        let planet = self.m.projection.radius_m;
+        let occ = (planet - 12000.0 * ex).max(1.0);
+        let dc = cam.position.length();
+        let cap = (r / c.length()).min(1.0).asin();
+        let h = (occ / dc).clamp(0.0, 1.0).acos()
+            + (occ / (planet + self.m.tiles[id].zmax.max(0.0) * ex))
+                .clamp(0.0, 1.0)
+                .acos();
+        c.normalize().dot(cam.position / dc).clamp(-1.0, 1.0).acos() <= h + cap
+    }
+    fn select(&self, cam: &Camera, aspect: f64, ex: f64) -> Selection {
+        let mut out = Selection::default();
+        fn walk(s: &Source, id: usize, cam: &Camera, aspect: f64, ex: f64, out: &mut Selection) {
+            if !s.visible(id, cam, aspect, ex) {
+                return;
+            }
+            out.visited.push(id);
+            let t = s.m.tiles[id];
+            let distance = s.distance(id, cam.position, ex);
+            let split = t.k > 0
+                && (t.error_m * ex / distance > PX
+                    || (s.intersects_hole(t)
+                        && s.m.cell0_m * (1usize << t.k) as f64 / distance > PX));
+            if split {
+                out.split.insert(id);
+                for c in s.children(id) {
+                    walk(s, c, cam, aspect, ex, out);
+                }
+            } else {
+                out.leaves.push(id);
+            }
+        }
+        if let Some(&root) = self.index.get(&(self.m.top_level, 0, 0)) {
+            walk(self, root, cam, aspect, ex, &mut out);
+        }
+        out
+    }
+    fn weight(&self, id: usize, eye: DVec3, ex: f64) -> f32 {
+        let Some(parent) = self.parent(id) else {
+            return 0.0;
+        };
+        // Hole boundaries deliberately stay fine; never morph back across their missing coarse quads.
+        if self.intersects_hole(self.m.tiles[parent]) {
+            return 0.0;
+        }
+        let p = self.m.tiles[parent];
+        let smooth = |x: f64| {
+            let t = x.clamp(0.0, 1.0);
+            t * t * (3.0 - 2.0 * t)
+        };
+        let m =
+            smooth((self.distance(parent, eye, ex) * PX / (p.error_m * ex).max(1e-9) - 0.7) / 0.3);
+        let t = self.m.tiles[id];
+        // At its own split the parent's mesh is fully unmorphed. This prevents overlapping
+        // per-tile error ranges from introducing a second jump when children replace it.
+        let own = if t.k == 0 || t.error_m == 0.0 {
+            1.0
+        } else {
+            smooth((self.distance(id, eye, ex) * PX / (t.error_m * ex) - 1.0) / 0.3)
+        };
+        (m * own) as f32
+    }
+}
+#[derive(Default)]
+struct Selection {
+    visited: Vec<usize>,
+    leaves: Vec<usize>,
+    split: HashSet<usize>,
+}
+struct Raster {
+    n: usize,
+    i0: usize,
+    j0: usize,
+    width: usize,
+    z: Vec<f32>,
+    rgb: Vec<[u8; 3]>,
+    mask: Vec<u8>,
+}
+impl Raster {
+    fn at(&self, i: usize, j: usize) -> usize {
+        (j.min(self.n - 1) - self.j0) * self.width + i.min(self.n - 1) - self.i0
+    }
+    fn z(&self, i: usize, j: usize) -> f64 {
+        self.z[self.at(i, j)] as f64
+    }
+}
+fn read_rect(
+    path: &Path,
+    n: usize,
+    i0: usize,
+    j0: usize,
+    width: usize,
+    height: usize,
+    stride: usize,
+) -> Result<Vec<u8>, String> {
+    let mut file = File::open(path).map_err(|e| format!("{}: {e}", path.display()))?;
+    if file.metadata().map_err(|e| e.to_string())?.len() != (n as u64 * n as u64 * stride as u64) {
+        return Err(format!("{}: wrong raster length", path.display()));
+    }
+    let mut bytes = vec![0; width * height * stride];
+    for row in 0..height {
+        file.seek(SeekFrom::Start(
+            ((j0 + row) * n + i0) as u64 * stride as u64,
+        ))
+        .map_err(|e| e.to_string())?;
+        file.read_exact(&mut bytes[row * width * stride..(row + 1) * width * stride])
+            .map_err(|e| e.to_string())?;
+    }
+    Ok(bytes)
+}
+fn raster(
+    source: &Source,
+    k: usize,
+    i0: usize,
+    j0: usize,
+    width: usize,
+    height: usize,
+) -> Result<Raster, String> {
+    let l = &source.m.levels[k];
+    let width = width.min(l.n - i0);
+    let height = height.min(l.n - j0);
+    let bytes = read_rect(&source.dir.join(&l.z), l.n, i0, j0, width, height, 4)?;
+    let z: Vec<_> = bytes
+        .chunks_exact(4)
+        .map(|c| f32::from_le_bytes(c.try_into().unwrap()))
+        .collect();
+    if z.iter().any(|v| !v.is_finite()) {
+        return Err("non-finite pyramid height".into());
+    }
+    let bytes = read_rect(&source.dir.join(&l.rgb), l.n, i0, j0, width, height, 3)?;
+    let rgb = bytes.chunks_exact(3).map(|c| [c[0], c[1], c[2]]).collect();
+    let mask = read_rect(&source.dir.join(&l.mask), l.n, i0, j0, width, height, 1)?;
+    if mask.iter().any(|&v| v > 2) {
+        return Err("pyramid mask must be 0, 1 or 2".into());
+    }
+    Ok(Raster {
+        n: l.n,
+        i0,
+        j0,
+        width,
+        z,
+        rgb,
+        mask,
+    })
+}
+struct Built {
+    mesh: PooledMesh,
+    origin: DVec3,
+    ground: Raster,
+}
+impl Built {
+    fn bytes(&self) -> usize {
+        self.mesh.bytes()
+            + self.ground.z.len() * 4
+            + self.ground.rgb.len() * 3
+            + self.ground.mask.len()
+    }
+}
+fn build_model(
+    source: &Source,
+    id: usize,
+    ex: f64,
+    real: bool,
+) -> Result<(PoolModel, DVec3, Raster), String> {
+    let t = source.m.tiles[id];
+    let tile = source.m.tile;
+    let side = tile + 1;
+    let i0 = t.col * tile;
+    let j0 = t.row * tile;
+    let data = raster(source, t.k, i0, j0, side, side)?;
+    let parent = if t.k < source.m.top_level {
+        Some(raster(
+            source,
+            t.k + 1,
+            i0 / 2,
+            j0 / 2,
+            tile / 2 + 2,
+            tile / 2 + 2,
+        )?)
+    } else {
+        None
+    };
+    let r = source.m.projection.radius_m;
+    let point = |i: usize, j: usize, k: usize, z: f64| {
+        let s = (1usize << k) as f64 * source.m.cell0_m;
+        source.inverse(
+            source.m.x0 + 0.5 * source.m.cell0_m + i as f64 * s,
+            source.m.y0 + 0.5 * source.m.cell0_m + j as f64 * s,
+        ) * (r + z * ex)
+    };
+    let (cx, cy) = source.xy(t, tile as f64 * 0.5, tile as f64 * 0.5);
+    let origin = source.inverse(cx, cy) * r;
+    let mut model = PoolModel::default();
+    for j in 0..side {
+        for i in 0..side {
+            let gi = (i0 + i).min(data.n - 1);
+            let gj = (j0 + j).min(data.n - 1);
+            let at = data.at(gi, gj);
+            let p = point(gi, gj, t.k, data.z[at] as f64);
+            model.positions.push((p - origin).as_vec3());
+            model.colors.push(if real {
+                let c = data.rgb[at];
+                [c[0], c[1], c[2], 255]
+            } else {
+                [255; 4]
+            });
+            let target = if let Some(parent) = &parent {
+                let pi = gi / 2;
+                let pj = gj / 2;
+                let u = (gi % 2) as f64 * 0.5;
+                let v = (gj % 2) as f64 * 0.5;
+                let p00 = point(pi, pj, t.k + 1, parent.z(pi, pj));
+                let p10 = point(
+                    (pi + 1).min(parent.n - 1),
+                    pj,
+                    t.k + 1,
+                    parent.z(pi + 1, pj),
+                );
+                let p01 = point(
+                    pi,
+                    (pj + 1).min(parent.n - 1),
+                    t.k + 1,
+                    parent.z(pi, pj + 1),
+                );
+                let p11 = point(
+                    (pi + 1).min(parent.n - 1),
+                    (pj + 1).min(parent.n - 1),
+                    t.k + 1,
+                    parent.z(pi + 1, pj + 1),
+                );
+                if u >= v {
+                    p00 * (1.0 - u) + p10 * (u - v) + p11 * v
+                } else {
+                    p00 * (1.0 - v) + p11 * u + p01 * (v - u)
+                }
+            } else {
+                p
+            };
+            model.morph.push(Morph {
+                offset: (target - p).as_vec3(),
+                near: 0.0,
+                far: 1.0,
+            });
+        }
+    }
+    let mut quads = vec![false; tile * tile];
+    for j in 0..tile {
+        for i in 0..tile {
+            let a = (j * side + i) as u32;
+            let b = a + 1;
+            let c = a + side as u32;
+            let d = c + 1;
+            let masks = [
+                data.mask[data.at(i0 + i, j0 + j)],
+                data.mask[data.at(i0 + i + 1, j0 + j)],
+                data.mask[data.at(i0 + i, j0 + j + 1)],
+                data.mask[data.at(i0 + i + 1, j0 + j + 1)],
+            ];
+            let (x0, y0) = source.xy(t, i as f64, j as f64);
+            let (x1, y1) = source.xy(t, (i + 1) as f64, (j + 1) as f64);
+            // Guard a hole smaller than a coarse cell even if none of its coarse samples falls in it.
+            if !masks.contains(&1)
+                || masks.contains(&2)
+                || (t.k > 0 && source.hole_rect(x0, y0, x1, y1))
+            {
+                continue;
+            }
+            quads[j * tile + i] = true;
+            model.faces.extend([[a, b, d], [a, d, c]]);
+            model.edges.extend([[a, b], [a, c]]);
+        }
+    }
+    // Skirts on all exposed tile/mask edges also cover unequal morphs on same-level neighbours.
+    let parent_error = source
+        .parent(id)
+        .map_or(t.error_m, |p| source.m.tiles[p].error_m);
+    let depth = 2.0 * parent_error.max(t.error_m).max(1.0) * ex;
+    for j in 0..tile {
+        for i in 0..tile {
+            if !quads[j * tile + i] {
+                continue;
+            }
+            let a = (j * side + i) as u32;
+            let b = a + 1;
+            let c = a + side as u32;
+            let d = c + 1;
+            for (exposed, u, v) in [
+                (j == 0 || !quads[(j.saturating_sub(1)) * tile + i], a, b),
+                (
+                    i + 1 == tile || !quads[j * tile + (i + 1).min(tile - 1)],
+                    b,
+                    d,
+                ),
+                (
+                    j + 1 == tile || !quads[(j + 1).min(tile - 1) * tile + i],
+                    d,
+                    c,
+                ),
+                (i == 0 || !quads[j * tile + i.saturating_sub(1)], c, a),
+            ] {
+                if !exposed {
+                    continue;
+                }
+                let k = model.positions.len() as u32;
+                for w in [u, v] {
+                    let p = model.positions[w as usize];
+                    let down = (origin + p.as_dvec3()).normalize() * depth;
+                    model.positions.push(p - down.as_vec3());
+                    model.colors.push(model.colors[w as usize]);
+                    model.morph.push(model.morph[w as usize]);
+                }
+                model.faces.extend([[u, k, k + 1], [u, k + 1, v]]);
+            }
+        }
+    }
+    Ok((model, origin, data))
+}
+fn build(source: &Source, id: usize, ex: f64, real: bool) -> Result<Built, String> {
+    let (model, origin, ground) = build_model(source, id, ex, real)?;
+    Ok(Built {
+        mesh: PooledMesh::new(&model),
+        origin,
+        ground,
+    })
+}
+
+struct Request {
+    generation: u64,
+    ex: f64,
+    real: bool,
+    ids: Vec<usize>,
+}
+struct ResultTile {
+    generation: u64,
+    id: usize,
+    result: Result<Built, String>,
+}
+struct Cached {
+    tile: Built,
+    last: u64,
+}
+pub(super) struct Pyramid {
+    source: Arc<Source>,
+    pub mask: Vec<u8>,
+    cache: HashMap<usize, Cached>,
+    pending: HashSet<usize>,
+    failed: HashSet<usize>,
+    requests: SyncSender<Request>,
+    results: Receiver<ResultTile>,
+    selection: Selection,
+    generation: u64,
+    key: (u64, bool),
+    tick: u64,
+    releases: Vec<u64>,
+    pub stats: PyramidStats,
+}
+#[derive(Default, Clone, Copy)]
+pub(super) struct PyramidStats {
+    pub selected: usize,
+    pub drawn: usize,
+    pub triangles: usize,
+    pub pending: usize,
+    pub bytes: usize,
+    pub cached: usize,
+    pub fallback: usize,
+    pub worst: f64,
+    pub resident: usize,
+    pub largest_tile: usize,
+}
+impl Pyramid {
+    pub fn open(view: &Path, radius: f64) -> Result<Option<Self>, String> {
+        let dir = view.join("pyramid");
+        let path = dir.join("pyramid.json");
+        let text = match std::fs::read_to_string(&path) {
+            Ok(t) => t,
+            Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Ok(None),
+            Err(e) => return Err(format!("{}: {e}", path.display())),
+        };
+        let m: Meta =
+            serde_json::from_str(&text).map_err(|e| format!("{}: {e}", path.display()))?;
+        validate(&m, radius)?;
+        for l in &m.levels {
+            for (name, stride) in [(&l.z, 4u64), (&l.rgb, 3), (&l.mask, 1)] {
+                let p = dir.join(name);
+                let size = std::fs::metadata(&p)
+                    .map_err(|e| format!("{}: {e}", p.display()))?
+                    .len();
+                if size != l.n as u64 * l.n as u64 * stride {
+                    return Err(format!("{}: wrong raster length", p.display()));
+                }
+            }
+        }
+        let mut source = Source {
+            dir,
+            m,
+            index: HashMap::new(),
+            bounds: Vec::new(),
+            holes: Vec::new(),
+        };
+        for (i, t) in source.m.tiles.iter().enumerate() {
+            if source.index.insert((t.k, t.row, t.col), i).is_some() {
+                return Err("duplicate pyramid tile".into());
+            }
+        }
+        for t in &source.m.tiles {
+            if t.k < source.m.top_level
+                && !source.index.contains_key(&(t.k + 1, t.row / 2, t.col / 2))
+            {
+                return Err("pyramid tile without parent".into());
+            }
+        }
+        if !source.index.contains_key(&(source.m.top_level, 0, 0)) {
+            return Err("pyramid root missing".into());
+        }
+        source.holes = source
+            .m
+            .holes
+            .iter()
+            .filter_map(|h| {
+                source
+                    .project(unit(h.lon, h.lat))
+                    .map(|(x, y)| (x, y, h.radius_km * 1000.0))
+            })
+            .collect();
+        source.bounds = source
+            .m
+            .tiles
+            .iter()
+            .map(|&t| source.bounds(t, 1.0))
+            .collect();
+        let mask =
+            std::fs::read(source.dir.join(&source.m.levels[0].mask)).map_err(|e| e.to_string())?;
+        if mask.iter().any(|&v| v > 2) {
+            return Err("invalid level-zero pyramid mask".into());
+        }
+        let root = source.index[&(source.m.top_level, 0, 0)];
+        let root_tile = build(&source, root, 1.0, false)?;
+        let source = Arc::new(source);
+        let worker_source = source.clone();
+        let (requests, inbox) = mpsc::sync_channel::<Request>(1);
+        let (outbox, results) = mpsc::sync_channel(8);
+        std::thread::Builder::new()
+            .name("planetlod pyramid".into())
+            .spawn(move || {
+                while let Ok(mut request) = inbox.recv() {
+                    let mut index = 0;
+                    loop {
+                        if let Ok(next) = inbox.try_recv() {
+                            request = next;
+                            index = 0;
+                        }
+                        let Some(&id) = request.ids.get(index) else {
+                            break;
+                        };
+                        index += 1;
+                        let result = build(&worker_source, id, request.ex, request.real);
+                        if outbox
+                            .send(ResultTile {
+                                generation: request.generation,
+                                id,
+                                result,
+                            })
+                            .is_err()
+                        {
+                            return;
+                        }
+                    }
+                }
+            })
+            .map_err(|e| e.to_string())?;
+        log::info!(
+            "planet LOD pyramid: {} tiles, {} levels; root ready",
+            source.m.tiles.len(),
+            source.m.levels.len()
+        );
+        Ok(Some(Self {
+            source,
+            mask,
+            cache: HashMap::from([(
+                root,
+                Cached {
+                    tile: root_tile,
+                    last: 0,
+                },
+            )]),
+            pending: HashSet::new(),
+            failed: HashSet::new(),
+            requests,
+            results,
+            selection: Selection::default(),
+            generation: 0,
+            key: (1.0f64.to_bits(), false),
+            tick: 0,
+            releases: vec![],
+            stats: PyramidStats::default(),
+        }))
+    }
+    pub fn covered(&self, dir: DVec3) -> bool {
+        let Some((x, y)) = self.source.project(dir) else {
+            return false;
+        };
+        let m = &self.source.m;
+        let i = ((x - m.x0) / m.cell0_m).floor() as i64;
+        let j = ((y - m.y0) / m.cell0_m).floor() as i64;
+        i >= 0
+            && j >= 0
+            && i < m.side as i64
+            && j < m.side as i64
+            && self.mask[j as usize * m.side + i as usize] == 1
+    }
+    pub fn ground_at(&self, dir: DVec3) -> Option<f64> {
+        let (x, y) = self.source.project(dir)?;
+        let m = &self.source.m;
+        for k in 0..=m.top_level {
+            let cell = m.cell0_m * (1usize << k) as f64;
+            let u = (x - m.x0 - 0.5 * m.cell0_m) / cell;
+            let v = (y - m.y0 - 0.5 * m.cell0_m) / cell;
+            let n = m.levels[k].n;
+            if u < 0.0 || v < 0.0 || u >= n as f64 || v >= n as f64 {
+                continue;
+            }
+            let i = u.floor() as usize;
+            let j = v.floor() as usize;
+            let Some(&id) = self.source.index.get(&(k, j / m.tile, i / m.tile)) else {
+                continue;
+            };
+            let Some(c) = self.cache.get(&id) else {
+                continue;
+            };
+            let d = &c.tile.ground;
+            let indices = [
+                d.at(i, j),
+                d.at(i + 1, j),
+                d.at(i, j + 1),
+                d.at(i + 1, j + 1),
+            ];
+            let masks = indices.map(|i| d.mask[i]);
+            if masks.contains(&2) || !masks.contains(&1) {
+                return None;
+            }
+            let [a, b, c, d] = indices.map(|i| d.z[i] as f64);
+            let (u, v) = (u - i as f64, v - j as f64);
+            return Some(if u >= v {
+                a * (1.0 - u) + b * (u - v) + d * v
+            } else {
+                a * (1.0 - v) + d * u + c * (v - u)
+            });
+        }
+        None
+    }
+    pub fn update(&mut self, cam: &Camera, aspect: f64, ex: f64, real: bool) {
+        let _scope = universe_prof::scope("update/planetlod/pyramid");
+        self.tick += 1;
+        let key = (ex.to_bits(), real);
+        if key != self.key {
+            self.key = key;
+            self.generation += 1;
+            self.pending.clear();
+            self.failed.clear();
+            for (_, c) in self.cache.drain() {
+                self.releases.push(c.tile.mesh.id());
+            }
+        }
+        while let Ok(result) = self.results.try_recv() {
+            if result.generation != self.generation {
+                continue;
+            }
+            self.pending.remove(&result.id);
+            match result.result {
+                Ok(tile) => {
+                    if let Some(old) = self.cache.insert(
+                        result.id,
+                        Cached {
+                            tile,
+                            last: self.tick,
+                        },
+                    ) {
+                        self.releases.push(old.tile.mesh.id());
+                    }
+                }
+                Err(e) => {
+                    log::error!("planet LOD pyramid tile {}: {e}", result.id);
+                    self.failed.insert(result.id);
+                }
+            }
+        }
+        self.selection = self.source.select(cam, aspect, ex);
+        let underfoot = self
+            .source
+            .project(cam.position.normalize())
+            .and_then(|(x, y)| {
+                let m = &self.source.m;
+                let i = ((x - m.x0 - 0.5 * m.cell0_m) / m.cell0_m).floor();
+                let j = ((y - m.y0 - 0.5 * m.cell0_m) / m.cell0_m).floor();
+                if i < 0.0 || j < 0.0 || i >= m.side as f64 || j >= m.side as f64 {
+                    None
+                } else {
+                    self.source
+                        .index
+                        .get(&(0, j as usize / m.tile, i as usize / m.tile))
+                        .copied()
+                }
+            });
+        let mut want = self.selection.visited.clone();
+        for &id in &self.selection.leaves {
+            let t = self.source.m.tiles[id];
+            if t.k > 0 && t.error_m * ex / self.source.distance(id, cam.position, ex) > PX * 0.6 {
+                let children = self.source.children(id);
+                // Limit speculative geometry so it cannot churn the cache around the selected cover.
+                if want.len() + children.len() <= CACHE_BYTES / (2 * 1024 * 1024) {
+                    want.extend(children);
+                }
+            }
+        }
+        want.sort_unstable_by_key(|&i| (std::cmp::Reverse(self.source.m.tiles[i].k), i));
+        want.dedup();
+        if let Some(id) = underfoot {
+            want.retain(|&i| i != id);
+            want.insert(0, id);
+        }
+        let mut protected: HashSet<_> = want.iter().copied().collect();
+        if let Some(id) = underfoot {
+            protected.insert(id);
+        }
+        for id in &protected {
+            if let Some(c) = self.cache.get_mut(id) {
+                c.last = self.tick;
+            }
+        }
+        let mut bytes: usize = self.cache.values().map(|c| c.tile.bytes()).sum();
+        let mut evict: Vec<_> = self
+            .cache
+            .iter()
+            .filter(|(id, _)| !protected.contains(id))
+            .map(|(&id, c)| (c.last, id))
+            .collect();
+        evict.sort_unstable();
+        for (last, id) in evict {
+            if bytes <= CACHE_BYTES && self.tick - last < 120 {
+                continue;
+            }
+            let c = self.cache.remove(&id).unwrap();
+            bytes -= c.tile.bytes();
+            self.releases.push(c.tile.mesh.id());
+        }
+        // Queue one missing working set at a time; generation changes supersede stale work.
+        let missing: Vec<_> = want
+            .into_iter()
+            .filter(|i| !self.cache.contains_key(i) && !self.failed.contains(i))
+            .collect();
+        if !missing.is_empty() && self.pending.is_empty() {
+            if self
+                .requests
+                .try_send(Request {
+                    generation: self.generation,
+                    ex,
+                    real,
+                    ids: missing.clone(),
+                })
+                .is_ok()
+            {
+                self.pending = missing.into_iter().collect();
+            }
+        }
+        self.stats.resident = self
+            .selection
+            .visited
+            .iter()
+            .filter(|i| {
+                self.cache
+                    .get(i)
+                    .is_some_and(|c| c.tile.mesh.gpu_resident())
+            })
+            .count();
+        self.stats.largest_tile = self
+            .cache
+            .values()
+            .map(|c| c.tile.mesh.bytes())
+            .max()
+            .unwrap_or(0);
+        self.stats.selected = self.selection.leaves.len();
+        self.stats.cached = self.cache.len();
+        self.stats.bytes = bytes;
+        self.stats.pending = self.pending.len();
+        self.stats.worst = self
+            .selection
+            .leaves
+            .iter()
+            .map(|&id| {
+                self.source.m.tiles[id].error_m * ex
+                    / self.source.distance(id, cam.position, ex)
+                    / PX
+            })
+            .fold(0.0, f64::max);
+    }
+    pub fn draw(&mut self, frame: &mut Frame, ex: f64, fill: Color, line: Color, edges: bool) {
+        let _scope = universe_prof::scope("draw/planetlod/pyramid");
+        for id in self.releases.drain(..) {
+            frame.release_pooled(id);
+        }
+        let mut budget = UPLOAD_BYTES;
+        // Coarse ancestors first, so incomplete refinement always has a resident cover.
+        let mut ids = self.selection.visited.clone();
+        ids.sort_unstable_by_key(|&i| std::cmp::Reverse(self.source.m.tiles[i].k));
+        for id in ids {
+            if let Some(c) = self.cache.get(&id) {
+                if !c.tile.mesh.gpu_resident()
+                    && (c.tile.mesh.bytes() <= budget || budget == UPLOAD_BYTES)
+                {
+                    frame.prepare_pooled(&c.tile.mesh);
+                    budget = budget.saturating_sub(c.tile.mesh.bytes());
+                }
+            }
+        }
+        let visible: HashSet<_> = self.selection.visited.iter().copied().collect();
+        let root = self.source.index[&(self.source.m.top_level, 0, 0)];
+        let mut drawn = Vec::new();
+        if !ready_cover(
+            &self.source,
+            &self.selection,
+            root,
+            &visible,
+            &|id| {
+                self.cache
+                    .get(&id)
+                    .is_some_and(|c| c.tile.mesh.gpu_resident())
+            },
+            &mut drawn,
+        ) && visible.contains(&root)
+            && self.cache.contains_key(&root)
+        {
+            drawn.push(root);
+        }
+        let group = frame.pool_group(
+            &Transform::default(),
+            line,
+            fill,
+            if edges { 1.0 } else { 0.0 },
+            true,
+        );
+        self.stats.drawn = drawn.len();
+        self.stats.triangles = 0;
+        self.stats.fallback = 0;
+        for id in drawn {
+            let tile = &self.cache[&id].tile;
+            let fallback = self.selection.split.contains(&id);
+            let weight = if fallback {
+                self.stats.fallback += 1;
+                0.0
+            } else {
+                self.source.weight(id, frame.camera.position, ex)
+            };
+            frame.pooled_morphed(group, &tile.mesh, tile.origin, weight);
+            self.stats.triangles += tile.mesh.faces() as usize;
+        }
+    }
+}
+// Publish a complete resident subtree, or one parent; never publish a partial replacement.
+fn ready_cover(
+    source: &Source,
+    selection: &Selection,
+    id: usize,
+    visible: &HashSet<usize>,
+    ready: &impl Fn(usize) -> bool,
+    out: &mut Vec<usize>,
+) -> bool {
+    if !visible.contains(&id) {
+        return true;
+    }
+    let start = out.len();
+    if selection.split.contains(&id) {
+        if source
+            .children(id)
+            .into_iter()
+            .all(|c| ready_cover(source, selection, c, visible, ready, out))
+        {
+            return true;
+        }
+        out.truncate(start);
+    }
+    if ready(id) {
+        out.push(id);
+        true
+    } else {
+        false
+    }
+}
+
+fn validate(m: &Meta, radius: f64) -> Result<(), String> {
+    let p = &m.projection;
+    let err = || "invalid or unsupported pyramid metadata".to_string();
+    if m.format != "planet-forge land pyramid 1"
+        || p.kind != "azimuthal equidistant"
+        || !radius.is_finite()
+        || radius <= 0.0
+        || (p.radius_m - radius).abs() > 1.0
+        || !p.radius_m.is_finite()
+        || !m.cell0_m.is_finite()
+        || m.cell0_m <= 0.0
+        || !m.x0.is_finite()
+        || !m.y0.is_finite()
+        || m.top_level > 16
+        || m.tile < 2
+        || m.tile > 256
+        || !m.tile.is_power_of_two()
+        || m.side != m.tile.checked_shl(m.top_level as u32).ok_or_else(err)?
+        || m.levels.len() != m.top_level + 1
+    {
+        return Err(err());
+    }
+    let [c, e, n] = [p.centre, p.east, p.north].map(DVec3::from_array);
+    if [c, e, n]
+        .iter()
+        .any(|v| !v.is_finite() || (v.length() - 1.0).abs() > 1e-5)
+        || c.dot(e).abs() > 1e-5
+        || c.dot(n).abs() > 1e-5
+        || e.dot(n).abs() > 1e-5
+        || e.cross(n).dot(c) < 0.999
+    {
+        return Err(err());
+    }
+    for (k, l) in m.levels.iter().enumerate() {
+        if l.k != k
+            || l.n != m.side >> k
+            || !l.cell_m.is_finite()
+            || (l.cell_m - m.cell0_m * (1usize << k) as f64).abs() > 1e-5
+        {
+            return Err(err());
+        }
+        for name in [&l.z, &l.rgb, &l.mask] {
+            if Path::new(name).components().count() != 1
+                || !matches!(
+                    Path::new(name).components().next(),
+                    Some(std::path::Component::Normal(_))
+                )
+            {
+                return Err(err());
+            }
+        }
+    }
+    for t in &m.tiles {
+        if t.k > m.top_level
+            || t.row >= 1usize << (m.top_level - t.k)
+            || t.col >= 1usize << (m.top_level - t.k)
+            || !t.error_m.is_finite()
+            || t.error_m < 0.0
+            || !t.zmin.is_finite()
+            || !t.zmax.is_finite()
+            || t.zmax < t.zmin
+        {
+            return Err(err());
+        }
+    }
+    for h in &m.holes {
+        if !h.lat.is_finite()
+            || h.lat.abs() > 90.0
+            || !h.lon.is_finite()
+            || !h.radius_km.is_finite()
+            || h.radius_km <= 0.0
+        {
+            return Err(err());
+        }
+    }
+    Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    struct Fixture(PathBuf);
+    impl Drop for Fixture {
+        fn drop(&mut self) {
+            let _ = std::fs::remove_dir_all(&self.0);
+        }
+    }
+    fn fixture() -> Fixture {
+        static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+        let dir = std::env::temp_dir().join(format!(
+            "universe-pyramid-{}-{}",
+            std::process::id(),
+            NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed)
+        ));
+        let pyramid = dir.join("pyramid");
+        std::fs::create_dir_all(&pyramid).unwrap();
+        let mut levels = Vec::new();
+        let mut tiles = Vec::new();
+        for k in 0..2 {
+            let n = 4 >> k;
+            let z: Vec<u8> = (0..n * n)
+                .flat_map(|i| ((i * 3 + k * 7) as f32).to_le_bytes())
+                .collect();
+            let rgb = vec![128u8; n * n * 3];
+            let mask = vec![1u8; n * n];
+            for (name, bytes) in [
+                (format!("z_{k}.f32"), z),
+                (format!("rgb_{k}.u8"), rgb),
+                (format!("mask_{k}.u8"), mask),
+            ] {
+                std::fs::write(pyramid.join(name), bytes).unwrap();
+            }
+            levels.push(serde_json::json!({"k":k,"n":n,"cell_m":10*(1<<k),"z":format!("z_{k}.f32"),"rgb":format!("rgb_{k}.u8"),"mask":format!("mask_{k}.u8")}));
+            for row in 0..(2 >> k) {
+                for col in 0..(2 >> k) {
+                    tiles.push(serde_json::json!({"k":k,"row":row,"col":col,"error_m":if k==0 {0} else {100},"zmin":0,"zmax":100}));
+                }
+            }
+        }
+        let meta = serde_json::json!({"format":"planet-forge land pyramid 1","projection":{"kind":"azimuthal equidistant","radius_m":1000,"centre":[0,0,1],"east":[1,0,0],"north":[0,1,0]},"x0":-20,"y0":-20,"cell0_m":10,"side":4,"tile":2,"top_level":1,"levels":levels,"tiles":tiles,"holes":[]});
+        std::fs::write(pyramid.join("pyramid.json"), meta.to_string()).unwrap();
+        Fixture(dir)
+    }
+    #[test]
+    fn pyramid_projection_masks_shared_edges_and_exact_parent_targets() {
+        let f = fixture();
+        let p = Pyramid::open(&f.0, 1000.0).unwrap().unwrap();
+        let s = &p.source;
+        let (x, y) = (4.0, -13.0);
+        let q = s.project(s.inverse(x, y)).unwrap();
+        assert!((q.0 - x).abs() < 1e-8 && (q.1 - y).abs() < 1e-8);
+        assert!(p.covered(s.inverse(0.0, 0.0)));
+        assert!(!p.covered(s.inverse(100.0, 0.0)));
+        let a = s.index[&(0, 0, 0)];
+        let b = s.index[&(0, 0, 1)];
+        let root = s.index[&(1, 0, 0)];
+        let (fine, origin, _) = build_model(s, a, 1.0, true).unwrap();
+        let (neighbour, no, _) = build_model(s, b, 1.0, true).unwrap();
+        let (coarse, co, _) = build_model(s, root, 1.0, true).unwrap();
+        for j in 0..3 {
+            let a = origin + fine.positions[j * 3 + 2].as_dvec3();
+            let b = no + neighbour.positions[j * 3].as_dvec3();
+            assert!(a.distance(b) < 1e-4);
+        }
+        // Fine corner and centre both land on the actual parent's triangle, including filtered even heights.
+        for (fi, target) in [
+            (0, coarse.positions[0]),
+            (4, (coarse.positions[0] + coarse.positions[4]) * 0.5),
+        ] {
+            let parent = co + target.as_dvec3();
+            let morphed = origin + (fine.positions[fi] + fine.morph[fi].offset).as_dvec3();
+            assert!(parent.distance(morphed) < 1e-4);
+        }
+        assert_eq!(fine.positions.len(), fine.morph.len());
+        assert!(fine.faces.len() > 8, "boundary skirts added");
+        // A hole at a corner rejects that quad even when other corners are ground.
+        let mut mask = vec![1u8; 16];
+        mask[0] = 2;
+        std::fs::write(f.0.join("pyramid/mask_0.u8"), mask).unwrap();
+        let (hole, _, _) = build_model(s, a, 1.0, true).unwrap();
+        assert!(!hole.faces.contains(&[0, 1, 4]));
+    }
+    #[test]
+    fn pyramid_selection_refines_and_rejects_bad_metadata() {
+        let f = fixture();
+        let p = Pyramid::open(&f.0, 1000.0).unwrap().unwrap();
+        let mut cam = Camera {
+            position: DVec3::new(0., 0., 1e6),
+            ..Default::default()
+        };
+        cam.look_at(DVec3::ZERO, Vec3::Y);
+        let far = p.source.select(&cam, 1.0, 1.0);
+        assert_eq!(far.leaves.len(), 1);
+        cam.position.z = 1100.;
+        let close = p.source.select(&cam, 1.0, 1.0);
+        assert!(close.leaves.len() > 1);
+        for &id in &close.leaves {
+            assert_eq!(p.source.m.tiles[id].k, 0);
+            assert_eq!(p.source.weight(id, cam.position, 1.0), 0.0);
+        }
+        let path = f.0.join("pyramid/pyramid.json");
+        let mut m: serde_json::Value =
+            serde_json::from_str(&std::fs::read_to_string(&path).unwrap()).unwrap();
+        m["levels"][0]["z"] = "../escape".into();
+        std::fs::write(path, m.to_string()).unwrap();
+        assert!(Pyramid::open(&f.0, 1000.).is_err());
+    }
+    #[test]
+    fn pyramid_refinement_publishes_whole_subtrees() {
+        let f = fixture();
+        let p = Pyramid::open(&f.0, 1000.).unwrap().unwrap();
+        let s = &p.source;
+        let root = s.index[&(1, 0, 0)];
+        let children = s.children(root);
+        let mut selection = Selection::default();
+        selection.split.insert(root);
+        let visible: HashSet<_> = std::iter::once(root)
+            .chain(children.iter().copied())
+            .collect();
+        let mut out = vec![];
+        assert!(ready_cover(
+            s,
+            &selection,
+            root,
+            &visible,
+            &|id| id != children[3],
+            &mut out
+        ));
+        assert_eq!(out, vec![root], "one missing child retains only the parent");
+        out.clear();
+        assert!(ready_cover(
+            s,
+            &selection,
+            root,
+            &visible,
+            &|_| true,
+            &mut out
+        ));
+        assert_eq!(out, children);
+        out.clear();
+        assert!(!ready_cover(
+            s,
+            &selection,
+            root,
+            &visible,
+            &|_| false,
+            &mut out
+        ));
+        assert!(out.is_empty());
+    }
+    #[test]
+    fn pyramid_far_tiles_leave_cache_and_release_gpu_ranges() {
+        let f = fixture();
+        let mut p = Pyramid::open(&f.0, 1000.).unwrap().unwrap();
+        let id = p.source.index[&(0, 1, 1)];
+        let tile = build(&p.source, id, 1.0, false).unwrap();
+        let mesh_id = tile.mesh.id();
+        p.cache.insert(id, Cached { tile, last: 0 });
+        p.tick = 120;
+        let cam = Camera {
+            position: DVec3::new(0., 0., 1e6),
+            orientation: Quat::from_rotation_y(std::f32::consts::PI),
+            ..Default::default()
+        };
+        p.update(&cam, 1.0, 1.0, false);
+        assert!(!p.cache.contains_key(&id));
+        assert!(p.releases.contains(&mesh_id));
+    }
+    #[test]
+    #[ignore = "requires full land pyramid fixture"]
+    fn pyramid_full_fixture_selection_and_streaming() {
+        let dir = std::env::var("UNIVERSE_PYRAMID_TEST_VIEW").unwrap();
+        let mut p = Pyramid::open(Path::new(&dir), 6371000.).unwrap().unwrap();
+        let u = unit(100.4723, -37.1172);
+        for alt in [
+            10000000., 3000000., 1000000., 300000., 100000., 30000., 10000.,
+        ] {
+            let mut cam = Camera {
+                position: u * (6371000. + alt),
+                fov_y: 50f32.to_radians(),
+                ..Default::default()
+            };
+            cam.look_at(DVec3::ZERO, Vec3::Y);
+            let sel = p.source.select(&cam, 16.0 / 9.0, 1.0);
+            let tris = sel.leaves.len() * 2 * p.source.m.tile * p.source.m.tile;
+            println!(
+                "PYRAMID selection altitude={alt} tiles={} upper_triangles={tris}",
+                sel.leaves.len()
+            );
+            assert!(
+                tris < 5_000_000,
+                "bounded selection, not finest full raster"
+            );
+            assert!(sel.leaves.iter().all(|&i| p.source.m.tiles[i].k == 0
+                || p.source.m.tiles[i].error_m / p.source.distance(i, cam.position, 1.0) <= PX));
+        }
+        let mut cam = Camera {
+            position: u * (6371000. + 3000000.),
+            fov_y: 50f32.to_radians(),
+            ..Default::default()
+        };
+        cam.look_at(DVec3::ZERO, Vec3::Y);
+        let selection = p.source.select(&cam, 16.0 / 9.0, 1.0);
+        let mut largest = 0;
+        let mut oversized = 0;
+        for id in selection.visited {
+            let tile = build(&p.source, id, 1., true).unwrap();
+            let size = tile.mesh.bytes();
+            largest = largest.max(size);
+            oversized += (size > UPLOAD_BYTES) as usize;
+        }
+        println!("PYRAMID tile bytes largest={largest} over_upload_target={oversized}");
+        let hole = u;
+        assert!(!p.covered(hole), "Shasta remains the pattern");
+        p.mask.clear();
+        // Read a finest tile and its parent via row ranges; never materialise a full height level.
+        let fine = p
+            .source
+            .m
+            .tiles
+            .iter()
+            .position(|t| t.k == 0 && p.source.intersects_hole(*t))
+            .unwrap();
+        let built = build(&p.source, fine, 1., true).unwrap();
+        assert!(built.mesh.bytes() < 2 * 1024 * 1024);
+    }
+}

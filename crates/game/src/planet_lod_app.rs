@@ -13,6 +13,8 @@
 //! `UNIVERSE_PLANETLOD_AT="alt=20000&lat=-50.99&lon=71.44&heading=0&ex=1&view=real"` sets the start.
 
 mod objects;
+mod pyramid;
+use pyramid::Pyramid;
 use objects::Objects;
 
 use std::path::{Path, PathBuf};
@@ -564,6 +566,7 @@ pub struct PlanetLodApp {
     /// The landform layers over the land, when the view has them.
     layers: Option<Layers>,
     objects: Option<Objects>,
+    pyramid: Option<Mutex<Pyramid>>,
     ui: Mutex<Ui>,
     /// Sums for the log line written each second: frames, seconds, LOD ms, mesh ms, max of each, rebuilt.
     log: [f64; 7],
@@ -771,7 +774,23 @@ impl PlanetLodApp {
         let fe32: Vec<u32> = read(&dir, &format!("lvl_{levels}.e.u32"))?;
         let ft: Vec<[u32; 3]> = ft32.chunks_exact(3).map(|c| [c[0], c[1], c[2]]).collect();
         let fe: Vec<[u32; 2]> = fe32.chunks_exact(2).map(|c| [c[0], c[1]]).collect();
-        let d = Data { r, dirs: unit_dirs, pos, z, col, mv, ma, dptr, dep, ao, am, ml, stand_in, ft, fe };
+        let mut d = Data { r, dirs: unit_dirs, pos, z, col, mv, ma, dptr, dep, ao, am, ml, stand_in, ft, fe };
+        drop(dirs);
+        drop(col8);
+        let mut pyramid = Pyramid::open(&dir, r)?;
+        let mut tiles = Self::tile_groups(&dir, &d, pyramid.as_ref())?;
+        if let Some(p) = &mut pyramid {
+            // The full fine mask is only needed for this one-time static-package exclusion.
+            p.mask = Vec::new();
+            // Optional legacy overlays and cluster indices use the package's original vertex ids.
+            // Keep those ids when present; otherwise release covered vertices before worker snapshots.
+            let clusters = PathBuf::from(format!("{}-clusters", dir.display()));
+            if !dir.join("layers/layers.json").exists() && !clusters.join("cluster.f32").exists() {
+                Self::compact_package(&mut d, &mut tiles);
+            }
+        }
+        let n = d.pos.len();
+        let pyramid = pyramid.map(Mutex::new);
         let mut layers = Layers::open(&dir)?;
         if let Some(l) = &mut layers {
             l.group(&d.dirs);
@@ -878,7 +897,7 @@ impl PlanetLodApp {
         for &v in &d.mv {
             on[v as usize] = 0;
         }
-        let tiles = Self::tile_groups(&dir, &d)?;
+
         let info = &info;
         let num = |v: &serde_json::Value| v.as_f64().unwrap_or(0.0);
         let features = json(&dir, "features.json").ok().and_then(|f| f.as_array().cloned()).unwrap_or_default().iter()
@@ -1039,6 +1058,7 @@ impl PlanetLodApp {
             pins,
             layers,
             objects,
+            pyramid,
             ui: Mutex::new(Ui::default()),
             log: [0.0; 7],
         };
@@ -1090,7 +1110,7 @@ impl PlanetLodApp {
     }
 
     /// The planet outside the pattern: its tiles (land and sea apart) grouped TILE_GROUP to a side.
-    fn tile_groups(dir: &Path, d: &Data) -> Result<Vec<TileGroup>, String> {
+    fn tile_groups(dir: &Path, d: &Data, pyramid: Option<&Pyramid>) -> Result<Vec<TileGroup>, String> {
         let tri: Vec<u32> = read(dir, "tri.u32")?;
         let tf: Vec<f32> = read(dir, "tiles.f32")?;
         let tu: Vec<u32> = read(dir, "tiles.u32")?;
@@ -1115,21 +1135,44 @@ impl PlanetLodApp {
             let mut dir_sum = DVec3::ZERO;
             for &j in &js {
                 let (s0, n, e0, en) = (tu[5 * j] as usize, tu[5 * j + 1] as usize, tu[5 * j + 2] as usize, tu[5 * j + 3] as usize);
-                tris.extend((s0..s0 + n).map(|t| [tri[3 * t], tri[3 * t + 1], tri[3 * t + 2]]));
-                edges.extend((e0..e0 + en).map(|e| [te[2 * e], te[2 * e + 1]]));
+                tris.extend((s0..s0 + n).map(|t| [tri[3 * t], tri[3 * t + 1], tri[3 * t + 2]]).filter(|t| {
+                    !pyramid.is_some_and(|p| p.covered((d.pos[t[0] as usize] + d.pos[t[1] as usize] + d.pos[t[2] as usize]).normalize()))
+                }));
+                edges.extend((e0..e0 + en).map(|e| [te[2 * e], te[2 * e + 1]]).filter(|e| {
+                    !pyramid.is_some_and(|p| p.covered((d.pos[e[0] as usize] + d.pos[e[1] as usize]).normalize()))
+                }));
                 dir_sum += DVec3::new(tf[6 * j] as f64, tf[6 * j + 1] as f64, tf[6 * j + 2] as f64);
             }
+            if tris.is_empty() && edges.is_empty() { continue; }
             let dir = dir_sum.normalize();
             let (mut cos_a, mut zmax) = (1.0f64, f64::NEG_INFINITY);
-            for t in &tris {
-                for &v in t {
-                    cos_a = cos_a.min(d.pos[v as usize].normalize().dot(dir));
-                    zmax = zmax.max(d.z[v as usize] as f64);
-                }
+            for &v in tris.iter().flatten().chain(edges.iter().flatten()) {
+                cos_a = cos_a.min(d.pos[v as usize].normalize().dot(dir));
+                zmax = zmax.max(d.z[v as usize] as f64);
             }
             out.push(TileGroup { origin: dir * d.r, dir, cos_a: cos_a - 1e-6, zmax, tris, edges, sea: sea == 1, mesh: None });
         }
         Ok(out)
+    }
+
+    fn compact_package(d: &mut Data, tiles: &mut [TileGroup]) {
+        let before = d.pos.len();
+        let mut used = vec![false; before];
+        for &v in d.ft.iter().flatten().chain(d.fe.iter().flatten()).chain(&d.mv).chain(&d.ma).chain(&d.dep)
+            .chain(tiles.iter().flat_map(|g| g.tris.iter().flatten().chain(g.edges.iter().flatten()))) { used[v as usize] = true; }
+        // Collapse ancestors are needed even if no retained triangle directly references them.
+        for &v in &d.mv { if used[v as usize] { used[d.stand_in[v as usize] as usize] = true; } }
+        let ids: Vec<_> = used.iter().enumerate().filter_map(|(i,&on)| on.then_some(i)).collect();
+        let mut remap = vec![u32::MAX; before];
+        for (new,&old) in ids.iter().enumerate() { remap[old] = new as u32; }
+        d.pos = ids.iter().map(|&i| d.pos[i]).collect();
+        d.dirs = ids.iter().map(|&i| d.dirs[i]).collect();
+        d.z = ids.iter().map(|&i| d.z[i]).collect();
+        d.col = ids.iter().map(|&i| d.col[i]).collect();
+        d.stand_in = ids.iter().map(|&i| remap[d.stand_in[i] as usize]).collect();
+        for v in d.ft.iter_mut().flatten().chain(d.fe.iter_mut().flatten()).chain(&mut d.mv).chain(&mut d.ma).chain(&mut d.dep)
+            .chain(tiles.iter_mut().flat_map(|g| g.tris.iter_mut().flatten().chain(g.edges.iter_mut().flatten()))) { *v = remap[*v as usize]; }
+        log::info!("planet LOD: compacted pyramid-covered package: {} -> {} vertices", before, d.pos.len());
     }
 
     fn eye(&self) -> DVec3 {
@@ -1161,6 +1204,9 @@ impl PlanetLodApp {
                     }
                 }
             }
+        }
+        if let Some(p) = &self.pyramid {
+            if let Some(h) = p.lock().unwrap().ground_at(u) { return Some(h); }
         }
         for g in &self.tiles {
             if u.dot(g.dir) >= g.cos_a {
@@ -1366,6 +1412,7 @@ impl App for PlanetLodApp {
             "lod_ms": self.stats.lod_ms, "cells_decided": self.stats.decided, "vertices_changed": self.stats.changed,
             "mesh_ms": self.stats.mesh_ms, "chunks_rebuilt": self.stats.rebuilt,
             "chunks_drawn": ui.chunks_drawn, "tile_groups_drawn": ui.tiles_drawn,
+            "pyramid": self.pyramid.as_ref().map(|p| { let s=p.lock().unwrap().stats; serde_json::json!({"selected":s.selected,"drawn":s.drawn,"triangles":s.triangles,"pending":s.pending,"cached":s.cached,"bytes":s.bytes,"fallback":s.fallback,"worst_error_ratio":s.worst,"cover_resident":s.resident,"largest_tile_bytes":s.largest_tile}) }),
             "objects_drawn": ui.objects_drawn,
             "object_families": self.objects.as_ref().map(|o| o.families.iter().filter(|f| f.on).map(|f| &f.name).collect::<Vec<_>>()),
             "triangles_sent": ui.sent, "pattern_triangles_drawn": ui.pattern_tris,
@@ -1551,6 +1598,7 @@ impl App for PlanetLodApp {
         let cam = self.camera();
         let aspect = match self.ui.lock().unwrap().aspect { a if a > 0.0 => a, _ => 16.0 / 9.0 };
         let view = self.view;
+        if let Some(p) = &mut self.pyramid { p.get_mut().unwrap().update(&cam, aspect, self.ex, view == View::Real); }
         if view != self.last_view {
             self.last_view = view;
             self.generation += 1;
@@ -1642,6 +1690,10 @@ impl App for PlanetLodApp {
         l[6] += rebuilt as f64;
         if l[1] >= 1.0 {
             log::info!("PLANETLOD alt_m={:.0} fps={:.1} lod_ms={:.3} (max {:.2}) mesh_ms={:.3} (max {:.2}) rebuilt_per_s={:.0} drawn={}", self.alt, l[0] / l[1], l[2] / l[0], l[4], l[3] / l[0], l[5], l[6] / l[1], self.stats.drawn);
+            if let Some(p) = &self.pyramid {
+                let s=p.lock().unwrap().stats;
+                log::info!("PYRAMID selected={} drawn={} triangles={} pending={} cached={} bytes={} fallback={} error_ratio={:.3} resident={} largest_tile={}", s.selected,s.drawn,s.triangles,s.pending,s.cached,s.bytes,s.fallback,s.worst,s.resident,s.largest_tile);
+            }
             *l = [0.0; 7];
         }
         Next::Stay
@@ -1699,6 +1751,11 @@ impl App for PlanetLodApp {
             tiles_drawn += 1;
             sent += g.tris.len();
             drawn.push((mesh, g.origin));
+        }
+        if let Some(p) = &self.pyramid {
+            let mut p = p.lock().unwrap();
+            p.draw(frame, self.ex, fill_of(land), land_line, edges);
+            sent += p.stats.triangles;
         }
         if let Some(l) = &self.layers {
             for k in 0..l.list.len() {
@@ -2052,6 +2109,13 @@ impl PlanetLodApp {
             p.rect(Vec2::new(x_of(h[0]) - 1.0, y_of(h[2]) - 1.0), Vec2::splat(2.0), INK);
         }
         p.note("drawn (orange) · fully risen (white) · per altitude flown", INK3);
+        if let Some(land) = &self.pyramid {
+            let s = land.lock().unwrap().stats;
+            p.section("LAND PYRAMID", &[]);
+            p.row("tiles drawn / selected", &format!("{} / {}", s.drawn, s.selected), &format!("{} fallback", s.fallback));
+            p.row("triangles", &thousands(s.triangles as f64), "");
+            p.row("streaming", &format!("{} pending", s.pending), &format!("{} MB", s.bytes / (1024*1024)));
+        }
         if let Some(o) = &self.objects {
             p.section("OBJECTS", &[]);
             p.row("boxes in view", &thousands(ui.objects_drawn as f64), "instanced");

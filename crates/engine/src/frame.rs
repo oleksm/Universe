@@ -774,9 +774,20 @@ impl Frame {
     /// Draw pooled `mesh` at `origin` in `group`'s look (copied into the pool first if it isn't:
     /// it shows from the frame it's in).
     pub fn pooled(&mut self, group: PoolGroup, mesh: &crate::pool::PooledMesh, origin: DVec3) {
-        let d = crate::pool::Draw { t: self.rel(origin), group: group.0, mesh: self.pool.mesh(mesh) };
+        let d = crate::pool::Draw { t: self.rel(origin), group: group.0, mesh: self.pool.mesh(mesh), morph: -1.0 };
         if self.in_front { self.pool.front.push(d) } else { self.pool.draws.push(d) }
     }
+
+    /// Pooled geometry with one explicit morph weight, shared by every vertex of the tile.
+    /// The offset stored in each vertex still supplies its exact parent-surface target.
+    pub fn pooled_morphed(&mut self, group: PoolGroup, mesh: &crate::pool::PooledMesh, origin: DVec3, weight: f32) {
+        self.pooled(group, mesh, origin);
+        let draws = if self.in_front { &mut self.pool.front } else { &mut self.pool.draws };
+        draws.last_mut().unwrap().morph = weight.clamp(0.0, 1.0);
+    }
+
+    /// Evict streamed pooled geometry once no draw in this frame names it.
+    pub fn release_pooled(&mut self, id: u64) { self.pool.releases.push(id); }
 
     /// Copy `mesh` into the pool without drawing it (`PooledMesh::gpu_resident` says when it is).
     pub fn prepare_pooled(&mut self, mesh: &crate::pool::PooledMesh) {
@@ -1113,5 +1124,19 @@ mod count_tests {
         child.hud_rect(Vec2::ZERO, Vec2::ONE, Color::WHITE);
         frame.views.push((1, crate::viewport::PixelRect { origin: Vec2::ZERO, size: Vec2::splat(50.) }, Box::new(child), 0));
         assert_eq!(frame.counts(), (2, 10, 1));
+    }
+}
+
+#[cfg(test)]
+mod pyramid_tests {
+    use super::*;
+    #[test]
+    fn pyramid_morph_override_preserves_distance_mode_and_explicit_eviction() {
+        let mesh=crate::PooledMesh::new(&crate::PoolModel {positions:vec![Vec3::ZERO,Vec3::X,Vec3::Y],faces:vec![[0,1,2]],morph:vec![crate::Morph {offset:Vec3::Z,near:1.,far:2.};3],..Default::default()});
+        let mut f=Frame::new(Camera::default(),Vec2::splat(100.),Vec2::splat(100.));
+        let g=f.pool_group(&Transform::default(),Color::WHITE,Color::WHITE,0.,false);
+        f.pooled(g,&mesh,DVec3::ZERO);f.pooled_morphed(g,&mesh,DVec3::ZERO,0.75);f.release_pooled(mesh.id());
+        assert_eq!(f.pool.draws[0].morph,-1.);assert_eq!(f.pool.draws[1].morph,0.75);assert_eq!(f.pool.releases,vec![mesh.id()]);
+        assert_eq!(std::mem::size_of::<crate::pool::GpuDraw>(),32);
     }
 }

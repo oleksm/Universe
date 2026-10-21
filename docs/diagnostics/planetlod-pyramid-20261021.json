@@ -1,0 +1,111 @@
+{
+  "task": "20261021T123006-planets-bb89",
+  "producer": "planet-forge e318b77 + a1a436cfa0fa6b1363cda07922e1645b306e4201",
+  "view": "/home/alexm/planet-data/views/forge_e104-land-c4-600-shasta",
+  "snapshot": "/home/alexm/git/universe/out/review/planetlod-pyramid/fixture",
+  "metadata_sha256": "30e6f5db03a1d8790c74890e621956d9434a7d12fac41cd44f7005692e01a9b0",
+  "holes": [
+    {
+      "lat": -37.1172,
+      "lon": 100.4723,
+      "radius_km": 32.0
+    }
+  ],
+  "tests": {
+    "library_passed": 40,
+    "library_ignored": 4,
+    "shader_validation_passed": 1,
+    "explicit_full_fixture_passed": 1,
+    "coverage": [
+      "projection and static masks",
+      "shared tile edges and exact parent targets",
+      "metadata validation",
+      "complete subtree publication",
+      "CPU eviction and GPU release",
+      "weak GPU receipts",
+      "morph override and legacy distance mode",
+      "real fixture selection over seven altitudes"
+    ]
+  },
+  "selection_upper_bounds": [
+    {
+      "altitude_m": 10000000,
+      "tiles": 13,
+      "grid_triangles": 425984
+    },
+    {
+      "altitude_m": 3000000,
+      "tiles": 107,
+      "grid_triangles": 3506176
+    },
+    {
+      "altitude_m": 1000000,
+      "tiles": 91,
+      "grid_triangles": 2981888
+    },
+    {
+      "altitude_m": 300000,
+      "tiles": 38,
+      "grid_triangles": 1245184
+    },
+    {
+      "altitude_m": 100000,
+      "tiles": 12,
+      "grid_triangles": 393216
+    },
+    {
+      "altitude_m": 30000,
+      "tiles": 4,
+      "grid_triangles": 131072
+    },
+    {
+      "altitude_m": 10000,
+      "tiles": 4,
+      "grid_triangles": 131072
+    }
+  ],
+  "final_held_3000km": {
+    "selected": 107,
+    "drawn": 107,
+    "triangles": 2938894,
+    "pending": 0,
+    "cached": 157,
+    "cache_bytes": 161827872,
+    "fallback": 0,
+    "error_ratio": 0.999
+  },
+  "gpu_scene_ms_held_3000km": 1.46,
+  "retained_package_vertices": {
+    "before": 13077333,
+    "after": 1522357
+  },
+  "captures": {
+    "orbit_first_revision": "out/review/planetlod-pyramid/orbit.png",
+    "moving_descent_before_prefetch_bound": "out/review/planetlod-pyramid/descent.png",
+    "held_latest_snapshot": "out/review/planetlod-pyramid/held-3000km-settled.png",
+    "shasta_legacy_control": "out/review/planetlod-pyramid/shasta-legacy-100km.png",
+    "shasta_latest_snapshot": "out/review/planetlod-pyramid/shasta-100km-final.png"
+  },
+  "notes": [
+    "All test windows used UNIVERSE_TEST=1 on workspace 8. Native Vulkan, RTX 5090.",
+    "Non-vsync diagnostic presentation allowed uploads to settle without hidden-window surface waits; these are capture measurements, not an interactive benchmark.",
+    "Initial orbit capture: 214228 actual land triangles; complete 13-tile cover, zero pending/fallback. It precedes producer hole32/color revision.",
+    "Shasta central grid is also present in the control without pyramid/; pattern renderer remains unchanged.",
+    "A prior held-3000km.png capture raced a producer rebuild while pyramid/ was absent and is excluded.",
+    "Cold streaming may temporarily retain an ancestor above the selected error bound; skirts cover exposed edges.",
+    "Cache target is 256 MiB; selected working set is protected. Initial fine mask is discarded after filtering; heights read in row ranges.",
+    "No pushes; own tested work integrated into local main.",
+    "Latest 100 km capture and legacy control reproduce the same central Shasta grid. Confirmed independent of the pyramid renderer; reported to planets."
+  ],
+  "final_held_100km": {
+    "selected": 12,
+    "drawn": 12,
+    "triangles": 387336,
+    "pending": 0,
+    "cached": 37,
+    "cache_bytes": 38649384,
+    "fallback": 0,
+    "error_ratio": 0.0
+  },
+  "gpu_scene_ms_held_100km": 0.36
+}

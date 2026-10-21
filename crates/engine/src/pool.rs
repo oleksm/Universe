@@ -252,6 +252,8 @@ pub(crate) struct Draw {
     pub t: [f32; 3],
     pub group: u32,
     pub mesh: u32,
+    /// Negative: per-vertex distance band. Otherwise a shared tile morph weight.
+    pub morph: f32,
 }
 
 /// The frame's pooled draws: their groups (one instance each), the meshes they name, and those
@@ -264,6 +266,7 @@ pub(crate) struct PoolFrame {
     pub draws: Vec<Draw>,
     pub front: Vec<Draw>,
     pub uploads: Vec<PooledMesh>,
+    pub releases: Vec<u64>,
 }
 
 impl PoolFrame {
@@ -285,7 +288,7 @@ pub(crate) struct GpuDraw {
     pub mesh: u32,
     pub face_start: u32,
     pub edge_start: u32,
-    pub pad: u32,
+    pub morph: f32,
 }
 
 /// The pool on the GPU, and this frame's draws.
@@ -311,11 +314,11 @@ pub(crate) struct PoolStore {
 
 /// What the store holds of a mesh to tell it it's resident (and no longer when let go).
 #[derive(Debug)]
-pub(crate) struct PooledMeshRef(PooledMesh);
+pub(crate) struct PooledMeshRef(std::sync::Weak<Inner>);
 
 impl Drop for PooledMeshRef {
     fn drop(&mut self) {
-        self.0.0.resident.fetch_sub(1, Ordering::Release);
+        if let Some(inner) = self.0.upgrade() { inner.resident.fetch_sub(1, Ordering::Release); }
     }
 }
 
@@ -406,7 +409,7 @@ impl PoolStore {
         };
         gpu.queue.write_buffer(&self.buffer, at as u64 * 4, bytemuck::cast_slice(m.words()));
         m.0.resident.fetch_add(1, Ordering::Release);
-        self.live.insert(m.id(), (at, len, Arc::new(PooledMeshRef(m.clone()))));
+        self.live.insert(m.id(), (at, len, Arc::new(PooledMeshRef(Arc::downgrade(&m.0)))));
         true
     }
 
@@ -418,6 +421,11 @@ impl PoolStore {
                 self.free.give(at, len);
             }
         }
+        for id in &pf.releases {
+            if !pf.meshes.iter().any(|m| m.id() == *id) {
+                if let Some((at, len, _)) = self.live.remove(id) { self.free.give(at, len); }
+            }
+        }
         for m in pf.uploads.iter().chain(&pf.meshes) {
             self.put(gpu, m);
         }
@@ -427,7 +435,7 @@ impl PoolStore {
             for d in draws {
                 let m = &pf.meshes[d.mesh as usize];
                 let Some(&(at, ..)) = self.live.get(&m.id()) else { continue };
-                out.push(GpuDraw { t: d.t, group: d.group, mesh: at, face_start: faces, edge_start: edges, pad: 0 });
+                out.push(GpuDraw { t: d.t, group: d.group, mesh: at, face_start: faces, edge_start: edges, morph: d.morph });
                 faces += m.faces() * 3;
                 if pf.groups[d.group as usize].1 {
                     edges += m.edges() * 2;
@@ -500,5 +508,23 @@ mod tests {
         assert_eq!(w.len(), h[7] as usize);
         // (Under a fifth of the bytes the plain mesh path sends for it, header and all: 56 B a corner.)
         assert!(w.len() * 4 * 5 < (2 * 3 + 4 * 2) * 56);
+    }
+}
+
+#[cfg(test)]
+mod pyramid_residency_tests {
+    use super::*;
+    #[test]
+    fn pyramid_gpu_receipt_does_not_pin_evicted_cpu_geometry() {
+        let mesh=PooledMesh::new(&PoolModel::default());
+        let id=mesh.id();
+        mesh.0.resident.store(1,Ordering::Release);
+        let receipt=PooledMeshRef(Arc::downgrade(&mesh.0));
+        assert!(mesh.gpu_resident());
+        drop(receipt);assert!(!mesh.gpu_resident());
+        let receipt=PooledMeshRef(Arc::downgrade(&mesh.0));
+        drop(mesh);
+        assert!(receipt.0.upgrade().is_none(),"renderer receipt must not keep a streamed tile alive");
+        assert!(GONE.lock().unwrap().contains(&id));
     }
 }

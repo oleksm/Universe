@@ -122,3 +122,38 @@ volumes use centre sorting, so intersection blending is approximate. Nearest 40 
 top anchors are in view receive terrain-depth-tested labels. OBJECTS has a coloured toggle per legend family.
 `UNIVERSE_PLANETLOD_AT` accepts `boxes=all`, `boxes=none` or comma-separated family names;
 observer status includes `objects_drawn` and enabled `object_families`.
+
+## Streamed land pyramid (21 Oct)
+
+When `pyramid/pyramid.json` exists, Planet LOD reads planet-forge's **vertex-aligned** land pyramid
+(revised format contract in `planet-forge/docs/pyramid-format.md`, producer e318b77). Each tile is a
+129×129 grid for 128 cells. Arrays stay on disk: a worker reads row ranges of the tile's height,
+sRGB and mask arrays, plus its parent's samples, and packs shared indexed geometry for the GPU pool.
+The level-zero mask is read once to exclude static triangles by their projected centroid, then released.
+Masked static edges are excluded too. Shasta's pattern and collapse dependencies remain in use.
+For packages without legacy index-based layers/clusters, covered vertices are compacted before
+making the pattern workers' snapshots; packages with those overlays retain their original indices.
+
+The quadtree splits at `error_m × height_exaggeration / nearest_bound_distance > 0.0007`, with
+rectangular frustum and conservative horizon culling. Hole-intersecting tiles also refine until
+one cell projects below that threshold. This guards holes smaller than a coarse cell; mask 2
+and explicit hole discs keep the pattern uncovered at every level. Masked triangle counts can
+be much lower than the selector's full-grid upper bound.
+
+Vertices morph in the final 30% before the parent would merge, targeting the **actual parent
+triangles**, including the filtered height of even samples. One GPU morph weight per tile avoids
+per-vertex distance disagreement during a tile swap. A tile is fully unmorphed at its own split;
+this handles overlapping error ranges. Boundary/hole tiles stay unmorphed where the parent has
+missing quads. Skirts extend down at least twice the parent/current error at exposed tile and
+mask edges, including edges against coarser neighbours. Skirts on equal-level boundaries also
+cover differing morph weights. Coarse masks approximate coastlines; there is no colour crossfade.
+
+The viewer targets 4 MiB of tile preparation per frame (one larger tile may proceed to avoid starvation), and publishes a complete resident
+subtree or retains one parent. The initial root can upload with its first draw. Near-split children
+are prefetched; a finest tile under the camera supplies ground altitude even before it is drawn.
+Cold cache entries expire after 120 updates; a 256 MiB CPU working-cache target evicts unselected
+entries sooner. Selected ancestors and the underfoot tile remain protected. GPU receipts are weak,
+so eviction and closing the viewer release pool ranges rather than pinning CPU geometry.
+`LAND PYRAMID` and observer status report selected/drawn tiles, triangles, pending reads, fallback,
+cache size and the worst selected geometric error ratio. A parent fallback can temporarily exceed
+the requested error while its children stream.
