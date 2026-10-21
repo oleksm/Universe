@@ -1,90 +1,14 @@
 //! Streamed vertex-aligned land pyramid. Immutable tiles; only selection and morph weights change per frame.
 use super::*;
-use serde::Deserialize;
 use std::collections::{HashMap, HashSet};
-use std::fs::File;
-use std::io::{Read, Seek, SeekFrom};
 use std::sync::mpsc::{self, Receiver, SyncSender};
 
 const PX: f64 = 0.0007;
 const CACHE_BYTES: usize = 8 * 1024 * 1024 * 1024;
 const UPLOAD_BYTES: usize = 32 * 1024 * 1024;
-#[derive(Deserialize)]
-struct Projection {
-    kind: String,
-    radius_m: f64,
-    centre: [f64; 3],
-    east: [f64; 3],
-    north: [f64; 3],
-}
-#[derive(Clone, Copy, Deserialize)]
-struct Window {
-    row0: usize,
-    col0: usize,
-    rows: usize,
-    cols: usize,
-}
-#[derive(Deserialize)]
-struct Level {
-    #[serde(default)]
-    window: Option<Window>,
-    k: usize,
-    n: usize,
-    cell_m: f64,
-    z: String,
-    rgb: String,
-    mask: String,
-}
-impl Level {
-    fn storage(&self) -> Window {
-        self.window.unwrap_or(Window {
-            row0: 0,
-            col0: 0,
-            rows: self.n,
-            cols: self.n,
-        })
-    }
-}
-#[derive(Clone, Copy, Deserialize)]
-struct Tile {
-    k: usize,
-    row: usize,
-    col: usize,
-    error_m: f64,
-    zmin: f64,
-    zmax: f64,
-}
-#[derive(Deserialize)]
-struct Hole {
-    lat: f64,
-    lon: f64,
-    radius_km: f64,
-}
-#[derive(Deserialize)]
-struct Meta {
-    #[serde(default = "default_branch")]
-    branch: usize,
-    format: String,
-    projection: Projection,
-    x0: f64,
-    y0: f64,
-    cell0_m: f64,
-    side: usize,
-    tile: usize,
-    top_level: usize,
-    levels: Vec<Level>,
-    tiles: Vec<Tile>,
-    #[serde(default)]
-    holes: Vec<Hole>,
-}
-fn default_branch() -> usize {
-    2
-}
-impl Meta {
-    fn scale(&self, k: usize) -> usize {
-        self.branch.pow(k as u32)
-    }
-}
+use universe_sim::world::worlds::land::{Meta, Raster, Tile};
+#[cfg(test)]
+use universe_sim::world::worlds::land::Window;
 struct Source {
     dir: PathBuf,
     m: Meta,
@@ -94,32 +18,10 @@ struct Source {
 }
 impl Source {
     fn inverse(&self, x: f64, y: f64) -> DVec3 {
-        let p = &self.m.projection;
-        let r = x.hypot(y);
-        let c = r / p.radius_m;
-        let centre = DVec3::from_array(p.centre);
-        if r < 1e-12 {
-            centre
-        } else {
-            centre * c.cos()
-                + (DVec3::from_array(p.east) * x + DVec3::from_array(p.north) * y) * (c.sin() / r)
-        }
+        self.m.projection.inverse(x, y)
     }
     fn project(&self, dir: DVec3) -> Option<(f64, f64)> {
-        let p = &self.m.projection;
-        let c = dir.dot(DVec3::from_array(p.centre)).clamp(-1.0, 1.0).acos();
-        if c >= std::f64::consts::PI - 1e-8 {
-            return None;
-        }
-        let f = if c < 1e-10 {
-            p.radius_m
-        } else {
-            p.radius_m * c / c.sin()
-        };
-        Some((
-            dir.dot(DVec3::from_array(p.east)) * f,
-            dir.dot(DVec3::from_array(p.north)) * f,
-        ))
+        self.m.projection.project(dir)
     }
     fn xy(&self, t: Tile, i: f64, j: f64) -> (f64, f64) {
         let step = self.m.cell0_m * self.m.scale(t.k) as f64;
@@ -314,60 +216,6 @@ struct Selection {
     leaves: Vec<usize>,
     split: HashSet<usize>,
 }
-struct Raster {
-    n: usize,
-    i0: usize,
-    j0: usize,
-    width: usize,
-    z: Vec<f32>,
-    rgb: Vec<[u8; 3]>,
-    mask: Vec<u8>,
-}
-impl Raster {
-    fn at(&self, i: usize, j: usize) -> usize {
-        (j.min(self.n - 1) - self.j0) * self.width + i.min(self.n - 1) - self.i0
-    }
-    fn z(&self, i: usize, j: usize) -> f64 {
-        self.z[self.at(i, j)] as f64
-    }
-}
-fn read_rect(
-    path: &Path,
-    level: &Level,
-    i0: usize,
-    j0: usize,
-    width: usize,
-    height: usize,
-    stride: usize,
-) -> Result<Vec<u8>, String> {
-    let w = level.storage();
-    let mut file = File::open(path).map_err(|e| format!("{}: {e}", path.display()))?;
-    if file.metadata().map_err(|e| e.to_string())?.len()
-        != (w.rows as u64 * w.cols as u64 * stride as u64)
-    {
-        return Err(format!("{}: wrong raster length", path.display()));
-    }
-    // Read only the stored row interval. Extend edge heights/colours for a tile's halo;
-    // raster() marks samples outside the actual window as absent in its mask.
-    let first = i0.clamp(w.col0, w.col0 + w.cols - 1);
-    let last = (i0 + width - 1).clamp(w.col0, w.col0 + w.cols - 1);
-    let mut row = vec![0; (last - first + 1) * stride];
-    let mut bytes = vec![0; width * height * stride];
-    for j in 0..height {
-        let r = (j0 + j).clamp(w.row0, w.row0 + w.rows - 1);
-        file.seek(SeekFrom::Start(
-            ((r - w.row0) * w.cols + first - w.col0) as u64 * stride as u64,
-        ))
-        .map_err(|e| e.to_string())?;
-        file.read_exact(&mut row).map_err(|e| e.to_string())?;
-        for i in 0..width {
-            let src = ((i0 + i).clamp(first, last) - first) * stride;
-            let dst = (j * width + i) * stride;
-            bytes[dst..dst + stride].copy_from_slice(&row[src..src + stride]);
-        }
-    }
-    Ok(bytes)
-}
 fn raster(
     source: &Source,
     k: usize,
@@ -376,44 +224,7 @@ fn raster(
     width: usize,
     height: usize,
 ) -> Result<Raster, String> {
-    let l = &source.m.levels[k];
-    let width = width.min(l.n - i0);
-    let height = height.min(l.n - j0);
-    let bytes = read_rect(&source.dir.join(&l.z), l, i0, j0, width, height, 4)?;
-    let z: Vec<_> = bytes
-        .chunks_exact(4)
-        .map(|c| f32::from_le_bytes(c.try_into().unwrap()))
-        .collect();
-    if z.iter().any(|v| !v.is_finite()) {
-        return Err("non-finite pyramid height".into());
-    }
-    let bytes = read_rect(&source.dir.join(&l.rgb), l, i0, j0, width, height, 3)?;
-    let rgb = bytes.chunks_exact(3).map(|c| [c[0], c[1], c[2]]).collect();
-    let mut mask = read_rect(&source.dir.join(&l.mask), l, i0, j0, width, height, 1)?;
-    let w = l.storage();
-    for j in 0..height {
-        for i in 0..width {
-            if j0 + j < w.row0
-                || j0 + j >= w.row0 + w.rows
-                || i0 + i < w.col0
-                || i0 + i >= w.col0 + w.cols
-            {
-                mask[j * width + i] = 0;
-            }
-        }
-    }
-    if mask.iter().any(|&v| v > 2) {
-        return Err("pyramid mask must be 0, 1 or 2".into());
-    }
-    Ok(Raster {
-        n: l.n,
-        i0,
-        j0,
-        width,
-        z,
-        rgb,
-        mask,
-    })
+    universe_sim::world::worlds::land::raster(&source.dir, &source.m, k, i0, j0, width, height, true)
 }
 struct Built {
     mesh: PooledMesh,

@@ -19,6 +19,7 @@ use sha2::{Digest, Sha256};
 use crate::registry::registry;
 
 mod heights;
+pub mod land;
 mod lines;
 pub mod pgs;
 mod releases;

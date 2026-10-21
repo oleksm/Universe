@@ -28,6 +28,8 @@ pub struct PlanetView {
         (usize, usize),
         Arc<std::sync::Mutex<Option<Arc<universe_engine::WorldMaps>>>>,
     >,
+    /// The world near the eye whose ground is a land package, drawn by the planet LOD renderer.
+    pub land: std::cell::RefCell<Option<crate::land_view::LandView>>,
 }
 
 /// What the view is drawn from this frame.
@@ -63,6 +65,7 @@ impl PlanetView {
         self.globes.retain(|&(o, _), _| o == origin);
         self.world_maps.retain(|&(o, _), _| o == origin);
         crate::globe_assets::maintain();
+        crate::land_view::LandView::maintain(self.land.get_mut(), system, cache, positions, camera.position);
         for (i, b) in system.bodies.iter().enumerate() {
             let position = positions.get(i).copied().unwrap_or_default();
             if let Some(globe) = crate::globe_assets::request(system.clone(), i, &camera, position)
@@ -218,6 +221,16 @@ impl PlanetView {
         let b = &s.system.bodies[i];
         let (t, cam) = (s.t, frame.camera.position);
         let rotation = b.rotation(t).as_quat();
+        // A world whose ground is a land package: the planet LOD renderer's ground, in the world's air.
+        if let Some(v) = self.land.borrow_mut().as_mut().filter(|v| v.at == (s.cache, i)) {
+            let (depth, shell) = terrain_view::air(b).unwrap_or_default();
+            let mut drawn = false;
+            universe_prof::time("draw/scene/bodies/land", || frame.with_air(depth, shell, |frame| drawn = v.draw(frame, center, b.rotation(t))));
+            if drawn {
+                return true;
+            }
+        }
+        let land = b.terrain.as_ref().is_some_and(|t| t.land().is_some());
         let Some(ready) = self.globes.get(&(s.cache, i)) else {
             return false;
         };
@@ -227,7 +240,8 @@ impl PlanetView {
         let globe = if px > GLOBE_FULL_PX { full } else { coarse };
         // Terrain world: from afar its globe; near, its ground as patches
         // finer toward the eye (see `terrain_lod`).
-        let near = cam.distance(center) - b.rail.radius < terrain_view::near_altitude(b);
+        // (A land package's world is never drawn as patches: its globe till its renderer is open.)
+        let near = !land && cam.distance(center) - b.rail.radius < terrain_view::near_altitude(b);
         let patches_ready = near
             && universe_prof::time("draw/scene/bodies/ground", || {
                 self.terrain_lod.borrow_mut().draw(

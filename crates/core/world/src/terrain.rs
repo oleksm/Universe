@@ -66,6 +66,9 @@ pub struct Terrain {
     /// A world drawn from its vector lines: its ground from them (see `worlds::LineHeights`), in
     /// place of its bake's heights.
     lines: Option<std::sync::Arc<crate::worlds::LineHeights>>,
+    /// A world whose ground is a land package (see `worlds::land`): its ground from it, scaled to
+    /// this body's radius, in place of lines or a bake.
+    land: Option<std::sync::Arc<crate::worlds::land::LandHeights>>,
     /// Canonical PGS1 surface, currently used by the explicit development preview.
     graph: Option<std::sync::Arc<crate::worlds::pgs::Surface>>,
 }
@@ -85,7 +88,7 @@ impl Terrain {
                 Crater { dir: rng.unit_vector(), radius, depth: (radius * body_radius * 0.1).min(amplitude * 0.8) }
             })
             .collect();
-        Self { kind, amplitude, seed, body_radius, craters, pads: Vec::new(), baked: None, lines: None, graph: None }
+        Self { kind, amplitude, seed, body_radius, craters, pads: Vec::new(), baked: None, lines: None, land: None, graph: None }
     }
 
     /// The ground is the bake's `heights` from now (its craters and noise gone).
@@ -105,6 +108,25 @@ impl Terrain {
         self.lines = Some(lines);
     }
 
+    /// The ground is `land`'s from now (see `worlds::land`), scaled from its radius to the body's.
+    pub fn from_land(&mut self, land: std::sync::Arc<crate::worlds::land::LandHeights>) {
+        self.graph = None;
+        self.baked = None;
+        self.lines = None;
+        self.craters.clear();
+        self.amplitude = land.max() * self.land_scale(&land) / 1.3;
+        self.land = Some(land);
+    }
+
+    fn land_scale(&self, land: &crate::worlds::land::LandHeights) -> f64 {
+        self.body_radius / land.radius
+    }
+
+    /// The land package and the scale from its radius to the body's, if the ground is one.
+    pub fn land(&self) -> Option<(&std::sync::Arc<crate::worlds::land::LandHeights>, f64)> {
+        self.land.as_ref().map(|l| (l, self.land_scale(l)))
+    }
+
     /// Attach a canonical surface for development and acceptance. The source field is
     /// used unchanged: no old bake, contours, noise or port flattening is mixed into it.
     /// Production package installation is deliberately separate from this operation.
@@ -112,6 +134,7 @@ impl Terrain {
         self.amplitude = surface.max_height().max(1.0) / 1.3;
         self.baked = None;
         self.lines = None;
+        self.land = None;
         self.craters.clear();
         self.pads.clear();
         self.graph = Some(surface);
@@ -224,14 +247,18 @@ impl Terrain {
     /// A world drawn from its lines: their ground's height at `dir` (see `worlds::LineHeights`), a
     /// port's plain levelled to the ground at the port as a bake's is. None: not such a world.
     fn lines_height(&self, dir: DVec3) -> Option<f64> {
-        let l = self.lines.as_ref()?;
-        let mut out = l.at(dir);
+        // (A land package's ground the same way, scaled to the body.)
+        let at = |d: DVec3| match &self.land {
+            Some(l) => Some(l.at(d) * self.land_scale(l)),
+            None => self.lines.as_ref().map(|l| l.at(d)),
+        };
+        let mut out = at(dir)?;
         for p in &self.pads {
             let ground = dir.distance(*p) * self.body_radius;
             let t = ((ground - PAD_FLAT_INNER) / (PAD_FLAT_OUTER - PAD_FLAT_INNER)).clamp(0.0, 1.0);
             if t < 1.0 {
                 let w = t * t * (3.0 - 2.0 * t);
-                let at = l.at(*p).max(0.0);
+                let at = at(*p).unwrap_or(0.0).max(0.0);
                 out = at + (out - at) * w;
             }
         }
@@ -283,7 +310,7 @@ impl Terrain {
     /// `worlds::Heights::surface_at`), as far as they're read; and whether that's all of it.
     /// None: no bake, or none there (the sea).
     pub fn surface_fields_view(&self, dir: DVec3) -> (Option<[f32; 3]>, bool) {
-        if self.lines.is_some() || self.graph.is_some() {
+        if self.lines.is_some() || self.land.is_some() || self.graph.is_some() {
             return (None, true);
         }
         match &self.baked {
@@ -316,6 +343,9 @@ impl Terrain {
     /// Upper bound on the surface height (m).
     pub fn max_height(&self) -> f64 {
         if let Some(s) = &self.graph { return s.max_height(); }
+        if let Some(l) = &self.land {
+            return l.max() * self.land_scale(l);
+        }
         if let Some(l) = &self.lines {
             return l.max();
         }

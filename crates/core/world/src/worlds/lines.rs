@@ -17,7 +17,7 @@ const H: usize = 4096;
 /// package in the worlds store, checked by its manifest's hash). None: it has none (or the store
 /// lacks them: said).
 fn open(key: &str) -> Option<Vec<Line>> {
-    let g = crate::registry::registry().body(key)?.ground.as_ref()?;
+    let g = crate::registry::registry().body(key)?.ground.as_ref().filter(|g| g.format != super::land::FORMAT)?;
     let lines = (|| -> Result<Vec<Line>, String> {
         let folder = store().ok_or("no worlds store (set UNIVERSE_WORLDS)")?.join(&g.path);
         let package = Package::open(folder.clone(), &g.manifest_sha256)?;
@@ -389,7 +389,7 @@ impl LineHeights {
         use std::collections::HashMap;
         use std::sync::{Arc, Mutex, OnceLock};
         static MADE: OnceLock<Mutex<HashMap<String, Option<Arc<LineHeights>>>>> = OnceLock::new();
-        crate::registry::registry().body(key)?.ground.as_ref()?;
+        crate::registry::registry().body(key)?.ground.as_ref().filter(|g| g.format != super::land::FORMAT)?;
         let mut made = MADE.get_or_init(Default::default).lock().ok()?;
         made.entry(key.to_string()).or_insert_with(|| open(key).map(|l| Arc::new(LineHeights::new(&l)))).clone()
     }

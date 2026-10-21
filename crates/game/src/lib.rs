@@ -39,6 +39,7 @@ mod plant_app;
 mod planet_app;
 mod hud_kit;
 mod planet_lod_app;
+mod land_view;
 mod scene_app;
 mod planet_studio;
 mod planet_view;

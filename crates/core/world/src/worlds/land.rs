@@ -1,0 +1,524 @@
+//! A world whose ground is a land package (`planet-land-pyramid/1`, the folder its record's `ground`
+//! names in the worlds store): the planet lab's anchor mesh (`dir.f32`, `z.f32`, `tri.u32`, `tiles.*`),
+//! its pattern's finest triangles, and its land pyramid (`pyramid/`: height, colour and mask rasters per
+//! level, read a rectangle at a time). The game draws it with the planet LOD renderer; `LandHeights` is
+//! the same ground for landing and contact: the pyramid where it covers, else the pattern, else the
+//! anchor mesh, as the renderer's own `ground_at` finds it.
+//!
+//! The package keeps its own frame and radius: directions as the planet lab writes them (a quarter turn
+//! about the pole from the body's, `to_body`), heights in metres over `radius`. The body scales it to its
+//! own radius (heights with it).
+
+use super::{store, Package};
+use glam::{DQuat, DVec3};
+use serde::Deserialize;
+use std::collections::HashMap;
+use std::fs::File;
+use std::io::{Read, Seek, SeekFrom};
+use std::path::{Path, PathBuf};
+use std::sync::{Arc, Mutex};
+
+pub const FORMAT: &str = "planet-land-pyramid/1";
+
+/// Tile rasters of the pyramid kept for height queries (each about 190 KB at 193 samples a side).
+const RASTERS: usize = 512;
+
+/// From the package's frame to the body's (`super::direction`): the lab's (x, y, z) is the body's (-z, y, x).
+pub fn to_body() -> DQuat {
+    DQuat::from_rotation_y(std::f64::consts::FRAC_PI_2)
+}
+
+/// Body `key`'s land package: its folder (manifest hash and every file's size checked) and its radius
+/// (m). None: its ground is not a land package.
+pub fn ground(key: &str) -> Option<Result<(PathBuf, f64), String>> {
+    let g = crate::registry::registry().body(key)?.ground.as_ref()?;
+    if g.format != FORMAT {
+        return None;
+    }
+    Some((|| {
+        let folder = store().ok_or("no worlds store (set UNIVERSE_WORLDS)")?.join(&g.path);
+        let package = Package::open(folder.clone(), &g.manifest_sha256)?;
+        let manifest: serde_json::Value = serde_json::from_slice(package.manifest()).map_err(|e| e.to_string())?;
+        let radius = manifest.get("radius_m").and_then(|v| v.as_f64()).ok_or("manifest: radius_m")?;
+        Ok((folder, radius))
+    })())
+}
+
+#[derive(Clone, Deserialize)]
+pub struct Projection {
+    pub kind: String,
+    pub radius_m: f64,
+    pub centre: [f64; 3],
+    pub east: [f64; 3],
+    pub north: [f64; 3],
+}
+
+impl Projection {
+    /// The direction at (x, y) m on the azimuthal equidistant plane.
+    pub fn inverse(&self, x: f64, y: f64) -> DVec3 {
+        let r = x.hypot(y);
+        let c = r / self.radius_m;
+        let centre = DVec3::from_array(self.centre);
+        if r < 1e-12 {
+            centre
+        } else {
+            centre * c.cos() + (DVec3::from_array(self.east) * x + DVec3::from_array(self.north) * y) * (c.sin() / r)
+        }
+    }
+
+    /// Where `dir` lies on the plane. None: the far pole.
+    pub fn project(&self, dir: DVec3) -> Option<(f64, f64)> {
+        let c = dir.dot(DVec3::from_array(self.centre)).clamp(-1.0, 1.0).acos();
+        if c >= std::f64::consts::PI - 1e-8 {
+            return None;
+        }
+        let f = if c < 1e-10 { self.radius_m } else { self.radius_m * c / c.sin() };
+        Some((dir.dot(DVec3::from_array(self.east)) * f, dir.dot(DVec3::from_array(self.north)) * f))
+    }
+}
+
+#[derive(Clone, Copy, Deserialize)]
+pub struct Window {
+    pub row0: usize,
+    pub col0: usize,
+    pub rows: usize,
+    pub cols: usize,
+}
+
+#[derive(Clone, Deserialize)]
+pub struct Level {
+    #[serde(default)]
+    pub window: Option<Window>,
+    pub k: usize,
+    pub n: usize,
+    pub cell_m: f64,
+    pub z: String,
+    pub rgb: String,
+    pub mask: String,
+}
+
+impl Level {
+    /// The rows and columns the files hold (all of the level unless it is windowed).
+    pub fn storage(&self) -> Window {
+        self.window.unwrap_or(Window { row0: 0, col0: 0, rows: self.n, cols: self.n })
+    }
+}
+
+#[derive(Clone, Copy, Deserialize)]
+pub struct Tile {
+    pub k: usize,
+    pub row: usize,
+    pub col: usize,
+    pub error_m: f64,
+    pub zmin: f64,
+    pub zmax: f64,
+}
+
+#[derive(Clone, Deserialize)]
+pub struct Hole {
+    pub lat: f64,
+    pub lon: f64,
+    pub radius_km: f64,
+}
+
+/// `pyramid.json`.
+#[derive(Clone, Deserialize)]
+pub struct Meta {
+    #[serde(default = "default_branch")]
+    pub branch: usize,
+    pub format: String,
+    pub projection: Projection,
+    pub x0: f64,
+    pub y0: f64,
+    pub cell0_m: f64,
+    pub side: usize,
+    pub tile: usize,
+    pub top_level: usize,
+    pub levels: Vec<Level>,
+    pub tiles: Vec<Tile>,
+    #[serde(default)]
+    pub holes: Vec<Hole>,
+}
+
+fn default_branch() -> usize {
+    2
+}
+
+impl Meta {
+    /// Level `k`'s cell in level-0 cells.
+    pub fn scale(&self, k: usize) -> usize {
+        self.branch.pow(k as u32)
+    }
+}
+
+/// A rectangle of one level: heights, colours and mask (0 absent, 1 ground, 2 a hole) by the level's
+/// own sample indices.
+pub struct Raster {
+    pub n: usize,
+    pub i0: usize,
+    pub j0: usize,
+    pub width: usize,
+    pub z: Vec<f32>,
+    pub rgb: Vec<[u8; 3]>,
+    pub mask: Vec<u8>,
+}
+
+impl Raster {
+    pub fn at(&self, i: usize, j: usize) -> usize {
+        (j.min(self.n - 1) - self.j0) * self.width + i.min(self.n - 1) - self.i0
+    }
+    pub fn z(&self, i: usize, j: usize) -> f64 {
+        self.z[self.at(i, j)] as f64
+    }
+}
+
+/// `width` x `height` samples of `level`'s file at `path` from (i0, j0), `stride` bytes each.
+pub fn read_rect(path: &Path, level: &Level, i0: usize, j0: usize, width: usize, height: usize, stride: usize) -> Result<Vec<u8>, String> {
+    let w = level.storage();
+    let mut file = File::open(path).map_err(|e| format!("{}: {e}", path.display()))?;
+    if file.metadata().map_err(|e| e.to_string())?.len() != (w.rows as u64 * w.cols as u64 * stride as u64) {
+        return Err(format!("{}: wrong raster length", path.display()));
+    }
+    // Read only the stored row interval. Extend edge heights/colours for a tile's halo;
+    // raster() marks samples outside the actual window as absent in its mask.
+    let first = i0.clamp(w.col0, w.col0 + w.cols - 1);
+    let last = (i0 + width - 1).clamp(w.col0, w.col0 + w.cols - 1);
+    let mut row = vec![0; (last - first + 1) * stride];
+    let mut bytes = vec![0; width * height * stride];
+    for j in 0..height {
+        let r = (j0 + j).clamp(w.row0, w.row0 + w.rows - 1);
+        file.seek(SeekFrom::Start(((r - w.row0) * w.cols + first - w.col0) as u64 * stride as u64)).map_err(|e| e.to_string())?;
+        file.read_exact(&mut row).map_err(|e| e.to_string())?;
+        for i in 0..width {
+            let src = ((i0 + i).clamp(first, last) - first) * stride;
+            let dst = (j * width + i) * stride;
+            bytes[dst..dst + stride].copy_from_slice(&row[src..src + stride]);
+        }
+    }
+    Ok(bytes)
+}
+
+/// Level `k`'s rectangle from the pyramid in `dir`; its colours too if `rgb`.
+pub fn raster(dir: &Path, m: &Meta, k: usize, i0: usize, j0: usize, width: usize, height: usize, rgb: bool) -> Result<Raster, String> {
+    let l = &m.levels[k];
+    let width = width.min(l.n - i0);
+    let height = height.min(l.n - j0);
+    let bytes = read_rect(&dir.join(&l.z), l, i0, j0, width, height, 4)?;
+    let z: Vec<_> = bytes.chunks_exact(4).map(|c| f32::from_le_bytes(c.try_into().unwrap())).collect();
+    if z.iter().any(|v| !v.is_finite()) {
+        return Err("non-finite pyramid height".into());
+    }
+    let rgb = if rgb { read_rect(&dir.join(&l.rgb), l, i0, j0, width, height, 3)?.chunks_exact(3).map(|c| [c[0], c[1], c[2]]).collect() } else { vec![] };
+    let mut mask = read_rect(&dir.join(&l.mask), l, i0, j0, width, height, 1)?;
+    let w = l.storage();
+    for j in 0..height {
+        for i in 0..width {
+            if j0 + j < w.row0 || j0 + j >= w.row0 + w.rows || i0 + i < w.col0 || i0 + i >= w.col0 + w.cols {
+                mask[j * width + i] = 0;
+            }
+        }
+    }
+    if mask.iter().any(|&v| v > 2) {
+        return Err("pyramid mask must be 0, 1 or 2".into());
+    }
+    Ok(Raster { n: l.n, i0, j0, width, z, rgb, mask })
+}
+
+/// The pyramid for heights: its tiles' rasters read as asked, the latest RASTERS kept.
+struct Pyramid {
+    dir: PathBuf,
+    m: Meta,
+    index: HashMap<(usize, usize, usize), usize>,
+    cache: Mutex<(u64, HashMap<usize, (u64, Arc<Raster>)>)>,
+}
+
+impl Pyramid {
+    fn open(dir: PathBuf) -> Result<Option<Self>, String> {
+        let path = dir.join("pyramid.json");
+        let text = match std::fs::read_to_string(&path) {
+            Ok(t) => t,
+            Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Ok(None),
+            Err(e) => return Err(format!("{}: {e}", path.display())),
+        };
+        let m: Meta = serde_json::from_str(&text).map_err(|e| format!("{}: {e}", path.display()))?;
+        let index = m.tiles.iter().enumerate().map(|(i, t)| ((t.k, t.row, t.col), i)).collect();
+        Ok(Some(Self { dir, m, index, cache: Mutex::new((0, HashMap::new())) }))
+    }
+
+    fn tile(&self, id: usize) -> Option<Arc<Raster>> {
+        let mut c = self.cache.lock().unwrap_or_else(|e| e.into_inner());
+        c.0 += 1;
+        let tick = c.0;
+        if let Some(e) = c.1.get_mut(&id) {
+            e.0 = tick;
+            return Some(e.1.clone());
+        }
+        let t = self.m.tiles[id];
+        let r = raster(&self.dir, &self.m, t.k, t.col * self.m.tile, t.row * self.m.tile, self.m.tile + 1, self.m.tile + 1, false)
+            .map_err(|e| log::warn!("land pyramid tile {id}: {e}"))
+            .ok()?;
+        let r = Arc::new(r);
+        if c.1.len() >= RASTERS
+            && let Some(old) = c.1.iter().min_by_key(|e| e.1 .0).map(|e| *e.0)
+        {
+            c.1.remove(&old);
+        }
+        c.1.insert(id, (tick, r.clone()));
+        Some(r)
+    }
+
+    /// The finest level's height at `dir` (package frame), as the renderer's tiles split their cells.
+    /// None: the pyramid has no ground there (outside it, or a hole the pattern fills).
+    fn at(&self, dir: DVec3) -> Option<f64> {
+        let (x, y) = self.m.projection.project(dir)?;
+        let m = &self.m;
+        for k in 0..=m.top_level {
+            let cell = m.cell0_m * m.scale(k) as f64;
+            let u = (x - m.x0 - 0.5 * m.cell0_m) / cell;
+            let v = (y - m.y0 - 0.5 * m.cell0_m) / cell;
+            let n = m.levels[k].n;
+            if u < 0.0 || v < 0.0 || u >= n as f64 || v >= n as f64 {
+                continue;
+            }
+            let (i, j) = (u.floor() as usize, v.floor() as usize);
+            let Some(&id) = self.index.get(&(k, j / m.tile, i / m.tile)) else { continue };
+            let d = self.tile(id)?;
+            let indices = [d.at(i, j), d.at(i + 1, j), d.at(i, j + 1), d.at(i + 1, j + 1)];
+            let masks = indices.map(|i| d.mask[i]);
+            if masks.contains(&2) || !masks.contains(&1) {
+                return None;
+            }
+            let [a, b, c, d] = indices.map(|i| d.z[i] as f64);
+            let (u, v) = (u - i as f64, v - j as f64);
+            return Some(if u >= v { a * (1.0 - u) + b * (u - v) + d * v } else { a * (1.0 - v) + d * u + c * (v - u) });
+        }
+        None
+    }
+}
+
+/// The land package's ground for landing and contact (see the module).
+pub struct LandHeights {
+    /// The package's radius (m).
+    pub radius: f64,
+    dirs: Vec<[f32; 3]>,
+    z: Vec<f32>,
+    tri: Vec<u32>,
+    /// The anchor mesh's tiles ([first triangle, count, first edge, edges, sea]) by cube-face cell.
+    tiles: Vec<[u32; 5]>,
+    cells: HashMap<(u8, u8, u8), Vec<u32>>,
+    /// The pattern's finest triangles, by PATTERN_CELL degrees of latitude and longitude.
+    pattern: Vec<[u32; 3]>,
+    pattern_cells: HashMap<(i32, i32), Vec<u32>>,
+    pyramid: Option<Pyramid>,
+    max: f64,
+}
+
+impl std::fmt::Debug for LandHeights {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "LandHeights({} vertices, {} triangles)", self.z.len(), self.tri.len() / 3)
+    }
+}
+
+const PATTERN_CELL: f64 = 0.05;
+
+/// A cube face and its cell (32 a side) for a direction, as the lab keys the anchor mesh's tiles.
+fn face_cell(c: DVec3) -> (u8, u8, u8) {
+    let a = c.abs();
+    let (ax, m) = if a.x >= a.y && a.x >= a.z { (0, c.x) } else if a.y >= a.z { (1, c.y) } else { (2, c.z) };
+    let (o1, o2) = ((ax + 1) % 3, (ax + 2) % 3);
+    let cell = |o: usize| ((((c[o] / m.abs()) + 1.0) / 2.0 * 32.0).floor().clamp(0.0, 31.0)) as u8;
+    ((2 * ax + (m < 0.0) as usize) as u8, cell(o1), cell(o2))
+}
+
+fn lat_lon(d: DVec3) -> (f64, f64) {
+    (d.y.clamp(-1.0, 1.0).asin().to_degrees(), d.x.atan2(d.z).to_degrees())
+}
+
+fn read<T: bytemuck::Pod + bytemuck::Zeroable>(dir: &Path, name: &str) -> Result<Vec<T>, String> {
+    let bytes = std::fs::read(dir.join(name)).map_err(|e| format!("{name}: {e}"))?;
+    if bytes.len() % std::mem::size_of::<T>() != 0 {
+        return Err(format!("{name}: not whole values"));
+    }
+    let mut out = vec![T::zeroed(); bytes.len() / std::mem::size_of::<T>()];
+    bytemuck::cast_slice_mut::<T, u8>(&mut out).copy_from_slice(&bytes);
+    Ok(out)
+}
+
+impl LandHeights {
+    /// Body `key`'s land heights, made once. None: its ground is not a land package (or it could not
+    /// be read: said).
+    pub fn of(key: &str) -> Option<Arc<LandHeights>> {
+        use std::sync::OnceLock;
+        static MADE: OnceLock<Mutex<HashMap<String, Option<Arc<LandHeights>>>>> = OnceLock::new();
+        let made = MADE.get_or_init(Default::default);
+        if let Some(l) = made.lock().ok()?.get(key) {
+            return l.clone();
+        }
+        let l = ground(key)?.and_then(|(folder, radius)| Self::open(&folder, radius)).map_err(|e| log::warn!("{key}: no land heights: {e}")).ok().map(Arc::new);
+        made.lock().ok()?.insert(key.to_string(), l.clone());
+        l
+    }
+
+    pub fn open(dir: &Path, radius: f64) -> Result<Self, String> {
+        let t0 = std::time::Instant::now();
+        let d: Vec<f32> = read(dir, "dir.f32")?;
+        let dirs: Vec<[f32; 3]> = d.chunks_exact(3).map(|c| DVec3::new(c[0] as f64, c[1] as f64, c[2] as f64).normalize().as_vec3().to_array()).collect();
+        let z: Vec<f32> = read(dir, "z.f32")?;
+        if z.len() != dirs.len() {
+            return Err("dir.f32 and z.f32 differ in length".into());
+        }
+        let tri: Vec<u32> = read(dir, "tri.u32")?;
+        let tf: Vec<f32> = read(dir, "tiles.f32")?;
+        let tu: Vec<u32> = read(dir, "tiles.u32")?;
+        let tiles: Vec<[u32; 5]> = tu.chunks_exact(5).map(|c| [c[0], c[1], c[2], c[3], c[4]]).collect();
+        if tf.len() != 6 * tiles.len() {
+            return Err("tiles.f32 and tiles.u32 differ".into());
+        }
+        let mut cells: HashMap<(u8, u8, u8), Vec<u32>> = HashMap::new();
+        for (j, t) in tiles.iter().enumerate() {
+            if (t[0] as usize + t[1] as usize) * 3 > tri.len() {
+                return Err(format!("tile {j} beyond tri.u32"));
+            }
+            cells.entry(face_cell(DVec3::new(tf[6 * j] as f64, tf[6 * j + 1] as f64, tf[6 * j + 2] as f64))).or_default().push(j as u32);
+        }
+        if tri.iter().any(|&v| v as usize >= z.len()) {
+            return Err("tri.u32 names a vertex beyond dir.f32".into());
+        }
+        let lod: serde_json::Value = serde_json::from_slice(&std::fs::read(dir.join("lod.json")).map_err(|e| format!("lod.json: {e}"))?).map_err(|e| format!("lod.json: {e}"))?;
+        let levels = lod["levels"].as_array().ok_or("lod.json: levels")?.len();
+        let ft: Vec<u32> = read(dir, &format!("lvl_{levels}.u32"))?;
+        let pattern: Vec<[u32; 3]> = ft.chunks_exact(3).map(|c| [c[0], c[1], c[2]]).filter(|t| t.iter().all(|&v| (v as usize) < z.len())).collect();
+        let mut pattern_cells: HashMap<(i32, i32), Vec<u32>> = HashMap::new();
+        for (i, t) in pattern.iter().enumerate() {
+            let ll = t.map(|v| lat_lon(DVec3::from_array(dirs[v as usize].map(|x| x as f64))));
+            let (la0, la1) = (ll.iter().map(|p| p.0).fold(f64::MAX, f64::min), ll.iter().map(|p| p.0).fold(f64::MIN, f64::max));
+            let (lo0, lo1) = (ll.iter().map(|p| p.1).fold(f64::MAX, f64::min), ll.iter().map(|p| p.1).fold(f64::MIN, f64::max));
+            if lo1 - lo0 > 180.0 {
+                continue;
+            }
+            for a in (la0 / PATTERN_CELL).floor() as i32..=(la1 / PATTERN_CELL).floor() as i32 {
+                for b in (lo0 / PATTERN_CELL).floor() as i32..=(lo1 / PATTERN_CELL).floor() as i32 {
+                    pattern_cells.entry((a, b)).or_default().push(i as u32);
+                }
+            }
+        }
+        let pyramid = Pyramid::open(dir.join("pyramid"))?;
+        let max = z.iter().copied().fold(0.0f32, f32::max).max(pyramid.as_ref().map_or(0.0, |p| p.m.tiles.iter().map(|t| t.zmax).fold(0.0, f64::max) as f32)) as f64;
+        log::info!("land heights: {} vertices, {} triangles, {} pattern, pyramid {} in {:.1} s from {}", z.len(), tri.len() / 3, pattern.len(), pyramid.is_some(), t0.elapsed().as_secs_f64(), dir.display());
+        Ok(Self { radius, dirs, z, tri, tiles, cells, pattern, pattern_cells, pyramid, max })
+    }
+
+    /// The highest ground (m over `radius`).
+    pub fn max(&self) -> f64 {
+        self.max
+    }
+
+    fn dir(&self, v: u32) -> DVec3 {
+        DVec3::from_array(self.dirs[v as usize].map(|x| x as f64))
+    }
+
+    /// The height of triangle `t` under `u`, if `u` is in it.
+    fn hit(&self, u: DVec3, t: [u32; 3]) -> Option<f64> {
+        let [a, b, c] = t.map(|v| self.dir(v));
+        let (wa, wb, wc) = (u.dot(b.cross(c)), u.dot(c.cross(a)), u.dot(a.cross(b)));
+        let s = wa + wb + wc;
+        (s.abs() > 0.0 && wa / s >= -1e-9 && wb / s >= -1e-9 && wc / s >= -1e-9).then(|| (wa * self.z[t[0] as usize] as f64 + wb * self.z[t[1] as usize] as f64 + wc * self.z[t[2] as usize] as f64) / s)
+    }
+
+    fn in_tiles(&self, u: DVec3, cell: (u8, u8, u8)) -> Option<f64> {
+        for &j in self.cells.get(&cell)? {
+            let [s0, n, ..] = self.tiles[j as usize];
+            for k in s0..s0 + n {
+                let k = 3 * k as usize;
+                if let Some(h) = self.hit(u, [self.tri[k], self.tri[k + 1], self.tri[k + 2]]) {
+                    return Some(h);
+                }
+            }
+        }
+        None
+    }
+
+    /// The ground's height (m over `radius`) at `dir` in the package's frame.
+    pub fn at_package(&self, dir: DVec3) -> f64 {
+        let u = dir.normalize();
+        if let Some(h) = self.pyramid.as_ref().and_then(|p| p.at(u)) {
+            return h;
+        }
+        let (la, lo) = lat_lon(u);
+        if let Some(ts) = self.pattern_cells.get(&((la / PATTERN_CELL).floor() as i32, (lo / PATTERN_CELL).floor() as i32)) {
+            for &t in ts {
+                if let Some(h) = self.hit(u, self.pattern[t as usize]) {
+                    return h;
+                }
+            }
+        }
+        let home = face_cell(u);
+        if let Some(h) = self.in_tiles(u, home) {
+            return h;
+        }
+        // (A triangle across a cell's edge belongs to the tile its centre is in: the cells round about,
+        // found by stepping a cell's width each way, over a cube edge too.)
+        let (e, n) = {
+            let e = DVec3::Y.cross(u).normalize_or(DVec3::X);
+            (e, u.cross(e))
+        };
+        let step = std::f64::consts::FRAC_PI_2 / 32.0;
+        let mut seen = vec![home];
+        for (de, dn) in [(1.0, 0.0), (-1.0, 0.0), (0.0, 1.0), (0.0, -1.0), (1.0, 1.0), (1.0, -1.0), (-1.0, 1.0), (-1.0, -1.0)] {
+            let c = face_cell((u + (e * de + n * dn) * step).normalize());
+            if seen.contains(&c) {
+                continue;
+            }
+            seen.push(c);
+            if let Some(h) = self.in_tiles(u, c) {
+                return h;
+            }
+        }
+        0.0
+    }
+
+    /// The ground's height (m over `radius`) at `dir` in the body's frame.
+    pub fn at(&self, dir: DVec3) -> f64 {
+        self.at_package(to_body().inverse() * dir)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn unit(lon: f64, lat: f64) -> DVec3 {
+        let (lo, la) = (lon.to_radians(), lat.to_radians());
+        DVec3::new(la.cos() * lo.sin(), la.sin(), la.cos() * lo.cos())
+    }
+
+    /// The installed e104 package (UNIVERSE_LAND_PACKAGE): the belt from the pyramid, Shasta from the
+    /// pattern, the rest from the anchor mesh; the package's frame turned to the body's.
+    #[test]
+    #[ignore]
+    fn land_heights_from_the_installed_package() {
+        let dir = PathBuf::from(std::env::var("UNIVERSE_LAND_PACKAGE").expect("UNIVERSE_LAND_PACKAGE"));
+        let l = LandHeights::open(&dir, 6_371_000.0).unwrap();
+        let p = l.pyramid.as_ref().expect("pyramid");
+        let belt = unit(97.4, -33.75);
+        let h = p.at(belt).expect("the belt is in the pyramid");
+        assert!((l.at_package(belt) - h).abs() < 1e-6);
+        assert!((-500.0..9000.0).contains(&h), "{h}");
+        let t0 = std::time::Instant::now();
+        let n = 2000;
+        let mut hs = vec![];
+        for i in 0..n {
+            let (lon, lat) = (-180.0 + 360.0 * (i as f64 * 0.618).fract(), -80.0 + 160.0 * (i as f64 / n as f64));
+            let h = l.at_package(unit(lon, lat));
+            assert!(h.is_finite() && h.abs() < 15_000.0, "{lon} {lat} {h}");
+            hs.push(h);
+        }
+        let per = t0.elapsed().as_secs_f64() / n as f64 * 1e6;
+        println!("belt {h:.1} m; {n} global queries {per:.1} us each; min {:.0} max {:.0}; shasta {:.1}", hs.iter().cloned().fold(f64::MAX, f64::min), hs.iter().cloned().fold(f64::MIN, f64::max), l.at_package(unit(100.47, -37.12)));
+        assert!(hs.iter().filter(|h| **h == 0.0).count() < n / 10, "most queries found a triangle");
+        assert!((l.at(to_body() * belt) - h).abs() < 1e-9);
+        // (The body's frame: lon/lat as `super::direction` gives them.)
+        let d = super::super::direction(super::super::LonLat { lon: 97.4, lat: -33.75 });
+        assert!((to_body() * belt - d).length() < 1e-12);
+    }
+}

@@ -3112,6 +3112,7 @@ dependencies = [
 name = "universe-world"
 version = "0.1.0"
 dependencies = [
+ "bytemuck",
  "glam",
  "gltf",
  "libc",

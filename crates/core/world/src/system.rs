@@ -434,6 +434,12 @@ impl StarSystem {
             {
                 t.from_lines(l);
             }
+            // (A world whose ground is a land package: its ground from that.)
+            if let Some(t) = b.terrain.as_mut()
+                && let Some(l) = crate::worlds::land::LandHeights::of(&b.key)
+            {
+                t.from_land(l);
+            }
         }
         system.add_spaceports(star.seed);
         crate::belt::add_fields(&mut system, frost_line, star.seed);

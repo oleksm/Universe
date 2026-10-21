@@ -1134,6 +1134,23 @@ impl PlanetLodApp {
         Ok(app)
     }
 
+    /// The ground of a land package for the game's planet view: the real colours, no panel, none of the
+    /// app's diagnostic flights or landmark marks (the eye and the light are the game's).
+    pub fn open_land(dir: &Path) -> Result<Self, String> {
+        let mut app = Self::new(Some(&dir.to_string_lossy()))?;
+        app.view = View::Real;
+        app.last_view = View::Real;
+        app.hud = false;
+        (app.fly, app.pan, app.zoom) = (false, false, false);
+        app.show_marks = false;
+        Ok(app)
+    }
+
+    /// The package's radius (m).
+    pub fn package_radius(&self) -> f64 {
+        self.d.r
+    }
+
     /// The planet outside the pattern: its tiles (land and sea apart) grouped TILE_GROUP to a side.
     fn tile_groups(dir: &Path, d: &Data, pyramid: Option<&Pyramid>) -> Result<Vec<TileGroup>, String> {
         let tri: Vec<u32> = read(dir, "tri.u32")?;
@@ -1717,6 +1734,14 @@ impl PlanetLodApp {
     }
 }
 
+impl PlanetLodApp {
+    /// The pyramid's counts as the app logs them (selected, drawn, pending, ...), for the game's log.
+    pub fn pyramid_line(&self) -> Option<String> {
+        let s = self.pyramid.as_ref()?.lock().unwrap().stats;
+        Some(format!("selected={} drawn={} triangles={} pending={} cached={} bytes={} fallback={} error_ratio={:.3} resident={} largest_tile={}", s.selected, s.drawn, s.triangles, s.pending, s.cached, s.bytes, s.fallback, s.worst, s.resident, s.largest_tile))
+    }
+}
+
 /// What `land_draw` drew, for the app's panel and its view-box count.
 pub struct LandDrawn<'a> {
     drawn: Vec<(&'a Mesh, DVec3)>,
@@ -1730,8 +1755,9 @@ pub struct LandDrawn<'a> {
 }
 
 /// A point of the package's frame placed by `body` (centre, spin, scale), as a model's transform there.
-fn placed(body: &Transform, at: DVec3) -> Transform {
-    Transform { position: body.position + body.rotation.as_dquat() * (at * body.scale), rotation: body.rotation, scale: body.scale }
+pub(crate) fn placed(body: &Transform, at: DVec3) -> Transform {
+    // (Normalised in f64: an f32 rotation's length is off by about 1e-7, a metre at a planet's radius.)
+    Transform { position: body.position + body.rotation.as_dquat().normalize() * (at * body.scale), rotation: body.rotation, scale: body.scale }
 }
 
 impl App for PlanetLodApp {

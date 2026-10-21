@@ -7,6 +7,7 @@ version.workspace = true
 # services. Built on Dogma; knows nothing about navigation.
 [dependencies]
 log.workspace = true
+bytemuck.workspace = true
 gltf = { version = "1", default-features = false, features = ["utils", "names", "extras"] }
 serde_json.workspace = true
 universe-protocol = { path = "../protocol" }
