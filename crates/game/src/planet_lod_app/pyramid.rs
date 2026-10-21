@@ -43,6 +43,8 @@ struct Hole {
 }
 #[derive(Deserialize)]
 struct Meta {
+    #[serde(default = "default_branch")]
+    branch: usize,
     format: String,
     projection: Projection,
     x0: f64,
@@ -55,6 +57,14 @@ struct Meta {
     tiles: Vec<Tile>,
     #[serde(default)]
     holes: Vec<Hole>,
+}
+fn default_branch() -> usize {
+    2
+}
+impl Meta {
+    fn scale(&self, k: usize) -> usize {
+        self.branch.pow(k as u32)
+    }
 }
 struct Source {
     dir: PathBuf,
@@ -93,7 +103,7 @@ impl Source {
         ))
     }
     fn xy(&self, t: Tile, i: f64, j: f64) -> (f64, f64) {
-        let step = self.m.cell0_m * (1usize << t.k) as f64;
+        let step = self.m.cell0_m * self.m.scale(t.k) as f64;
         (
             self.m.x0 + 0.5 * self.m.cell0_m + (t.col * self.m.tile) as f64 * step + i * step,
             self.m.y0 + 0.5 * self.m.cell0_m + (t.row * self.m.tile) as f64 * step + j * step,
@@ -114,11 +124,15 @@ impl Source {
         if t.k == 0 {
             return vec![];
         }
-        (0..2)
+        (0..self.m.branch)
             .flat_map(|j| {
-                (0..2).filter_map(move |i| {
+                (0..self.m.branch).filter_map(move |i| {
                     self.index
-                        .get(&(t.k - 1, t.row * 2 + j, t.col * 2 + i))
+                        .get(&(
+                            t.k - 1,
+                            t.row * self.m.branch + j,
+                            t.col * self.m.branch + i,
+                        ))
                         .copied()
                 })
             })
@@ -126,7 +140,9 @@ impl Source {
     }
     fn parent(&self, id: usize) -> Option<usize> {
         let t = self.m.tiles[id];
-        self.index.get(&(t.k + 1, t.row / 2, t.col / 2)).copied()
+        self.index
+            .get(&(t.k + 1, t.row / self.m.branch, t.col / self.m.branch))
+            .copied()
     }
     fn bounds(&self, t: Tile, ex: f64) -> (DVec3, f64) {
         let (x, y) = self.xy(t, self.m.tile as f64 * 0.5, self.m.tile as f64 * 0.5);
@@ -137,7 +153,7 @@ impl Source {
         // are both bounded by this enclosing sphere, including the clamped last row/column.
         let half = self.m.tile as f64
             * self.m.cell0_m
-            * (1usize << t.k) as f64
+            * self.m.scale(t.k) as f64
             * std::f64::consts::FRAC_1_SQRT_2;
         let radius = half * (1.0 + mid.abs() / self.m.projection.radius_m)
             + (t.zmax - t.zmin).abs() * 0.5 * ex
@@ -178,30 +194,58 @@ impl Source {
                 .acos();
         c.normalize().dot(cam.position / dc).clamp(-1.0, 1.0).acos() <= h + cap
     }
-    fn select(&self, cam: &Camera, aspect: f64, ex: f64) -> Selection {
+    fn select(
+        &self,
+        cam: &Camera,
+        aspect: f64,
+        ex: f64,
+        history: &mut HashSet<usize>,
+    ) -> Selection {
         let mut out = Selection::default();
-        fn walk(s: &Source, id: usize, cam: &Camera, aspect: f64, ex: f64, out: &mut Selection) {
+        fn walk(
+            s: &Source,
+            id: usize,
+            cam: &Camera,
+            aspect: f64,
+            ex: f64,
+            history: &mut HashSet<usize>,
+            out: &mut Selection,
+        ) {
             if !s.visible(id, cam, aspect, ex) {
                 return;
             }
             out.visited.push(id);
             let t = s.m.tiles[id];
             let distance = s.distance(id, cam.position, ex);
+            let error = if s.intersects_hole(t) {
+                (t.error_m * ex).max(s.m.cell0_m * s.m.scale(t.k) as f64)
+            } else {
+                t.error_m * ex
+            };
+            // Retain invisible tiles' state; changing view direction must not reset hysteresis.
+            let ratio = error / distance / PX;
             let split = t.k > 0
-                && (t.error_m * ex / distance > PX
-                    || (s.intersects_hole(t)
-                        && s.m.cell0_m * (1usize << t.k) as f64 / distance > PX));
+                && if history.contains(&id) {
+                    ratio >= 0.7
+                } else {
+                    ratio > 1.0
+                };
+            if split {
+                history.insert(id);
+            } else {
+                history.remove(&id);
+            }
             if split {
                 out.split.insert(id);
                 for c in s.children(id) {
-                    walk(s, c, cam, aspect, ex, out);
+                    walk(s, c, cam, aspect, ex, history, out);
                 }
             } else {
                 out.leaves.push(id);
             }
         }
         if let Some(&root) = self.index.get(&(self.m.top_level, 0, 0)) {
-            walk(self, root, cam, aspect, ex, &mut out);
+            walk(self, root, cam, aspect, ex, history, &mut out);
         }
         out
     }
@@ -219,14 +263,14 @@ impl Source {
             t * t * (3.0 - 2.0 * t)
         };
         let m =
-            smooth((self.distance(parent, eye, ex) * PX / (p.error_m * ex).max(1e-9) - 0.7) / 0.3);
+            smooth((self.distance(parent, eye, ex) * PX / (p.error_m * ex).max(1e-9) - 0.5) / 0.5);
         let t = self.m.tiles[id];
-        // At its own split the parent's mesh is fully unmorphed. This prevents overlapping
-        // per-tile error ranges from introducing a second jump when children replace it.
+        // Keep the parent unmorphed through both the split and hysteretic merge boundary.
+        // Children then meet the same surface on either side of a hierarchy change.
         let own = if t.k == 0 || t.error_m == 0.0 {
             1.0
         } else {
-            smooth((self.distance(id, eye, ex) * PX / (t.error_m * ex) - 1.0) / 0.3)
+            smooth((self.distance(id, eye, ex) * PX / (t.error_m * ex) - 1.0 / 0.7) / (0.5 / 0.7))
         };
         (m * own) as f32
     }
@@ -353,17 +397,17 @@ fn build_model(
         Some(raster(
             source,
             t.k + 1,
-            i0 / 2,
-            j0 / 2,
-            tile / 2 + 2,
-            tile / 2 + 2,
+            i0 / source.m.branch,
+            j0 / source.m.branch,
+            tile / source.m.branch + 2,
+            tile / source.m.branch + 2,
         )?)
     } else {
         None
     };
     let r = source.m.projection.radius_m;
     let point = |i: usize, j: usize, k: usize, z: f64| {
-        let s = (1usize << k) as f64 * source.m.cell0_m;
+        let s = source.m.scale(k) as f64 * source.m.cell0_m;
         source.inverse(
             source.m.x0 + 0.5 * source.m.cell0_m + i as f64 * s,
             source.m.y0 + 0.5 * source.m.cell0_m + j as f64 * s,
@@ -397,10 +441,10 @@ fn build_model(
                 [255; 4]
             });
             let target = if let Some(parent) = &parent {
-                let pi = gi / 2;
-                let pj = gj / 2;
-                let u = (gi % 2) as f64 * 0.5;
-                let v = (gj % 2) as f64 * 0.5;
+                let pi = gi / source.m.branch;
+                let pj = gj / source.m.branch;
+                let u = (gi % source.m.branch) as f64 / source.m.branch as f64;
+                let v = (gj % source.m.branch) as f64 / source.m.branch as f64;
                 let p00 = point(pi, pj, t.k + 1, parent.z(pi, pj));
                 let p10 = point(
                     (pi + 1).min(parent.n - 1),
@@ -420,11 +464,10 @@ fn build_model(
                     t.k + 1,
                     parent.z(pi + 1, pj + 1),
                 );
-                if u >= v {
-                    p00 * (1.0 - u) + p10 * (u - v) + p11 * v
-                } else {
-                    p00 * (1.0 - v) + p11 * u + p01 * (v - u)
-                }
+                p00 * ((1.0 - u) * (1.0 - v))
+                    + p10 * (u * (1.0 - v))
+                    + p01 * ((1.0 - u) * v)
+                    + p11 * (u * v)
             } else {
                 p
             };
@@ -541,6 +584,7 @@ pub(super) struct Pyramid {
     requests: SyncSender<Request>,
     results: Receiver<ResultTile>,
     selection: Selection,
+    split_history: HashSet<usize>,
     generation: u64,
     key: (u64, bool),
     tick: u64,
@@ -562,7 +606,11 @@ pub(super) struct PyramidStats {
 }
 impl Pyramid {
     pub fn open(view: &Path, radius: f64) -> Result<Option<Self>, String> {
-        let dir = view.join("pyramid");
+        let dir = if view.join("pyramid4/pyramid.json").exists() {
+            view.join("pyramid4")
+        } else {
+            view.join("pyramid")
+        };
         let path = dir.join("pyramid.json");
         let text = match std::fs::read_to_string(&path) {
             Ok(t) => t,
@@ -597,7 +645,11 @@ impl Pyramid {
         }
         for t in &source.m.tiles {
             if t.k < source.m.top_level
-                && !source.index.contains_key(&(t.k + 1, t.row / 2, t.col / 2))
+                && !source.index.contains_key(&(
+                    t.k + 1,
+                    t.row / source.m.branch,
+                    t.col / source.m.branch,
+                ))
             {
                 return Err("pyramid tile without parent".into());
             }
@@ -662,9 +714,11 @@ impl Pyramid {
             })
             .map_err(|e| e.to_string())?;
         log::info!(
-            "planet LOD pyramid: {} tiles, {} levels; root ready",
+            "planet LOD pyramid: branch {}, {} tiles, {} levels at {}; root ready",
+            source.m.branch,
             source.m.tiles.len(),
-            source.m.levels.len()
+            source.m.levels.len(),
+            source.dir.display()
         );
         Ok(Some(Self {
             source,
@@ -681,6 +735,7 @@ impl Pyramid {
             requests,
             results,
             selection: Selection::default(),
+            split_history: HashSet::new(),
             generation: 0,
             key: (1.0f64.to_bits(), false),
             tick: 0,
@@ -705,7 +760,7 @@ impl Pyramid {
         let (x, y) = self.source.project(dir)?;
         let m = &self.source.m;
         for k in 0..=m.top_level {
-            let cell = m.cell0_m * (1usize << k) as f64;
+            let cell = m.cell0_m * m.scale(k) as f64;
             let u = (x - m.x0 - 0.5 * m.cell0_m) / cell;
             let v = (y - m.y0 - 0.5 * m.cell0_m) / cell;
             let n = m.levels[k].n;
@@ -800,7 +855,7 @@ impl Pyramid {
                 }
             }
         }
-        self.selection = self.source.select(cam, aspect, ex);
+        self.selection = self.source.select(cam, aspect, ex, &mut self.split_history);
         let underfoot = self
             .source
             .project(cam.position.normalize())
@@ -1005,8 +1060,13 @@ fn validate(m: &Meta, radius: f64) -> Result<(), String> {
         || m.top_level > 16
         || m.tile < 2
         || m.tile > 256
-        || !m.tile.is_power_of_two()
-        || m.side != m.tile.checked_shl(m.top_level as u32).ok_or_else(err)?
+        || !matches!(m.branch, 2 | 4)
+        || m.tile % m.branch != 0
+        || m.side
+            != m.branch
+                .checked_pow(m.top_level as u32)
+                .and_then(|n| n.checked_mul(m.tile))
+                .ok_or_else(err)?
         || m.levels.len() != m.top_level + 1
     {
         return Err(err());
@@ -1024,9 +1084,9 @@ fn validate(m: &Meta, radius: f64) -> Result<(), String> {
     }
     for (k, l) in m.levels.iter().enumerate() {
         if l.k != k
-            || l.n != m.side >> k
+            || l.n != m.side / m.scale(k)
             || !l.cell_m.is_finite()
-            || (l.cell_m - m.cell0_m * (1usize << k) as f64).abs() > 1e-5
+            || (l.cell_m - m.cell0_m * m.scale(k) as f64).abs() > 1e-5
         {
             return Err(err());
         }
@@ -1043,8 +1103,8 @@ fn validate(m: &Meta, radius: f64) -> Result<(), String> {
     }
     for t in &m.tiles {
         if t.k > m.top_level
-            || t.row >= 1usize << (m.top_level - t.k)
-            || t.col >= 1usize << (m.top_level - t.k)
+            || t.row >= m.scale(m.top_level - t.k)
+            || t.col >= m.scale(m.top_level - t.k)
             || !t.error_m.is_finite()
             || t.error_m < 0.0
             || !t.zmin.is_finite()
@@ -1077,6 +1137,9 @@ mod tests {
         }
     }
     fn fixture() -> Fixture {
+        fixture_branch(2, 2)
+    }
+    fn fixture_branch(branch: usize, tile: usize) -> Fixture {
         static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
         let dir = std::env::temp_dir().join(format!(
             "universe-pyramid-{}-{}",
@@ -1088,7 +1151,7 @@ mod tests {
         let mut levels = Vec::new();
         let mut tiles = Vec::new();
         for k in 0..2 {
-            let n = 4 >> k;
+            let n = tile * branch / branch.pow(k as u32);
             let z: Vec<u8> = (0..n * n)
                 .flat_map(|i| ((i * 3 + k * 7) as f32).to_le_bytes())
                 .collect();
@@ -1101,16 +1164,81 @@ mod tests {
             ] {
                 std::fs::write(pyramid.join(name), bytes).unwrap();
             }
-            levels.push(serde_json::json!({"k":k,"n":n,"cell_m":10*(1<<k),"z":format!("z_{k}.f32"),"rgb":format!("rgb_{k}.u8"),"mask":format!("mask_{k}.u8")}));
-            for row in 0..(2 >> k) {
-                for col in 0..(2 >> k) {
+            levels.push(serde_json::json!({"k":k,"n":n,"cell_m":10*branch.pow(k as u32),"z":format!("z_{k}.f32"),"rgb":format!("rgb_{k}.u8"),"mask":format!("mask_{k}.u8")}));
+            for row in 0..branch.pow(1 - k as u32) {
+                for col in 0..branch.pow(1 - k as u32) {
                     tiles.push(serde_json::json!({"k":k,"row":row,"col":col,"error_m":if k==0 {0} else {100},"zmin":0,"zmax":100}));
                 }
             }
         }
-        let meta = serde_json::json!({"format":"planet-forge land pyramid 1","projection":{"kind":"azimuthal equidistant","radius_m":1000,"centre":[0,0,1],"east":[1,0,0],"north":[0,1,0]},"x0":-20,"y0":-20,"cell0_m":10,"side":4,"tile":2,"top_level":1,"levels":levels,"tiles":tiles,"holes":[]});
+        let meta = serde_json::json!({"format":"planet-forge land pyramid 1","projection":{"kind":"azimuthal equidistant","radius_m":1000,"centre":[0,0,1],"east":[1,0,0],"north":[0,1,0]},"x0":-20,"y0":-20,"cell0_m":10,"branch":branch,"side":tile*branch,"tile":tile,"top_level":1,"levels":levels,"tiles":tiles,"holes":[]});
+        let mut meta = meta;
+        if branch == 2 {
+            meta.as_object_mut().unwrap().remove("branch");
+        }
         std::fs::write(pyramid.join("pyramid.json"), meta.to_string()).unwrap();
         Fixture(dir)
+    }
+    #[test]
+    fn pyramid_branch_four_bilinear_morph_and_hysteresis() {
+        let f = fixture_branch(4, 12); // Real data likewise has a non-power-of-two tile size.
+        std::fs::rename(f.0.join("pyramid"), f.0.join("pyramid4")).unwrap();
+        let p = Pyramid::open(&f.0, 1000.).unwrap().unwrap();
+        let s = &p.source;
+        let root = s.index[&(1, 0, 0)];
+        let fine = s.index[&(0, 0, 0)];
+        assert_eq!(s.children(root).len(), 16);
+        for id in s.children(root) {
+            assert_eq!(s.parent(id), Some(root));
+        }
+        let (model, origin, _) = build_model(s, fine, 1., true).unwrap();
+        let (parent, po, _) = build_model(s, root, 1., true).unwrap();
+        // A quarter across and three quarters up: all four corners contribute.
+        let (u, v) = (0.25, 0.75);
+        let target = po
+            + (parent.positions[0] * ((1. - u) * (1. - v))
+                + parent.positions[1] * (u * (1. - v))
+                + parent.positions[13] * ((1. - u) * v)
+                + parent.positions[14] * (u * v))
+                .as_dvec3();
+        let index = 3 * 13 + 1;
+        let actual = origin + (model.positions[index] + model.morph[index].offset).as_dvec3();
+        assert!(actual.distance(target) < 1e-3);
+        let (centre, radius) = s.bounds[root];
+        let direction = centre.normalize();
+        let camera = |ratio: f64| {
+            let mut cam = Camera {
+                position: centre + direction * (radius + 100. / (PX * ratio)),
+                ..Default::default()
+            };
+            cam.look_at(centre, Vec3::Y);
+            cam
+        };
+        let mut history = HashSet::new();
+        for (ratio, split) in [
+            (0.99, false),
+            (1.01, true),
+            (0.99, true),
+            (0.71, true),
+            (0.69, false),
+            (0.99, false),
+        ] {
+            let selection = s.select(&camera(ratio), 1., 1., &mut history);
+            assert_eq!(selection.split.contains(&root), split, "ratio={ratio}");
+        }
+        // The last half of the geometric range morphs smoothly; the hysteresis tail is fully coarse.
+        for (distance_ratio, weight) in [(0.5, 0.), (0.75, 0.5), (1., 1.), (1. / 0.7, 1.)] {
+            let cam = camera(1. / distance_ratio);
+            assert!((s.weight(fine, cam.position, 1.) - weight).abs() < 1e-5);
+        }
+        let mut invalid: Meta =
+            serde_json::from_slice(&std::fs::read(f.0.join("pyramid4/pyramid.json")).unwrap())
+                .unwrap();
+        invalid.branch = 0;
+        assert!(validate(&invalid, 1000.).is_err());
+        invalid.branch = 4;
+        invalid.tile = 10;
+        assert!(validate(&invalid, 1000.).is_err());
     }
     #[test]
     fn pyramid_projection_masks_shared_edges_and_exact_parent_targets() {
@@ -1133,10 +1261,17 @@ mod tests {
             let b = no + neighbour.positions[j * 3].as_dvec3();
             assert!(a.distance(b) < 1e-4);
         }
-        // Fine corner and centre both land on the actual parent's triangle, including filtered even heights.
+        // Fine corner and centre land on the bilinear parent, including filtered lattice heights.
         for (fi, target) in [
             (0, coarse.positions[0]),
-            (4, (coarse.positions[0] + coarse.positions[4]) * 0.5),
+            (
+                4,
+                (coarse.positions[0]
+                    + coarse.positions[1]
+                    + coarse.positions[3]
+                    + coarse.positions[4])
+                    * 0.25,
+            ),
         ] {
             let parent = co + target.as_dvec3();
             let morphed = origin + (fine.positions[fi] + fine.morph[fi].offset).as_dvec3();
@@ -1198,10 +1333,10 @@ mod tests {
             ..Default::default()
         };
         cam.look_at(DVec3::ZERO, Vec3::Y);
-        let far = p.source.select(&cam, 1.0, 1.0);
+        let far = p.source.select(&cam, 1.0, 1.0, &mut HashSet::new());
         assert_eq!(far.leaves.len(), 1);
         cam.position.z = 1100.;
-        let close = p.source.select(&cam, 1.0, 1.0);
+        let close = p.source.select(&cam, 1.0, 1.0, &mut HashSet::new());
         assert!(close.leaves.len() > 1);
         for &id in &close.leaves {
             assert_eq!(p.source.m.tiles[id].k, 0);
@@ -1216,46 +1351,48 @@ mod tests {
     }
     #[test]
     fn pyramid_refinement_publishes_whole_subtrees() {
-        let f = fixture();
-        let p = Pyramid::open(&f.0, 1000.).unwrap().unwrap();
-        let s = &p.source;
-        let root = s.index[&(1, 0, 0)];
-        let children = s.children(root);
-        let mut selection = Selection::default();
-        selection.split.insert(root);
-        let visible: HashSet<_> = std::iter::once(root)
-            .chain(children.iter().copied())
-            .collect();
-        let mut out = vec![];
-        assert!(ready_cover(
-            s,
-            &selection,
-            root,
-            &visible,
-            &|id| id != children[3],
-            &mut out
-        ));
-        assert_eq!(out, vec![root], "one missing child retains only the parent");
-        out.clear();
-        assert!(ready_cover(
-            s,
-            &selection,
-            root,
-            &visible,
-            &|_| true,
-            &mut out
-        ));
-        assert_eq!(out, children);
-        out.clear();
-        assert!(!ready_cover(
-            s,
-            &selection,
-            root,
-            &visible,
-            &|_| false,
-            &mut out
-        ));
-        assert!(out.is_empty());
+        for branch in [2, 4] {
+            let f = fixture_branch(branch, branch);
+            let p = Pyramid::open(&f.0, 1000.).unwrap().unwrap();
+            let s = &p.source;
+            let root = s.index[&(1, 0, 0)];
+            let children = s.children(root);
+            let mut selection = Selection::default();
+            selection.split.insert(root);
+            let visible: HashSet<_> = std::iter::once(root)
+                .chain(children.iter().copied())
+                .collect();
+            let mut out = vec![];
+            assert!(ready_cover(
+                s,
+                &selection,
+                root,
+                &visible,
+                &|id| id != children[3],
+                &mut out
+            ));
+            assert_eq!(out, vec![root], "one missing child retains only the parent");
+            out.clear();
+            assert!(ready_cover(
+                s,
+                &selection,
+                root,
+                &visible,
+                &|_| true,
+                &mut out
+            ));
+            assert_eq!(out, children);
+            out.clear();
+            assert!(!ready_cover(
+                s,
+                &selection,
+                root,
+                &visible,
+                &|_| false,
+                &mut out
+            ));
+            assert!(out.is_empty());
+        }
     }
     #[test]
     fn pyramid_lru_keeps_cold_tiles_until_budget_pressure() {
@@ -1330,6 +1467,7 @@ mod tests {
         let p = Pyramid::open(Path::new(&dir), 6371000.).unwrap().unwrap();
         let mut min = usize::MAX;
         let mut max = 0;
+        let mut history = HashSet::new();
         for step in 0..=450 {
             let time = step as f64 * 0.1;
             let lon = pan_longitude(108., time);
@@ -1346,7 +1484,7 @@ mod tests {
                 ..Default::default()
             };
             cam.look_at(cam.position + forward, cam_up.as_vec3());
-            let selection = p.source.select(&cam, 16. / 9., 1.);
+            let selection = p.source.select(&cam, 16. / 9., 1., &mut history);
             min = min.min(selection.leaves.len());
             max = max.max(selection.leaves.len());
             assert!(
@@ -1371,14 +1509,18 @@ mod tests {
                 ..Default::default()
             };
             cam.look_at(DVec3::ZERO, Vec3::Y);
-            let sel = p.source.select(&cam, 16.0 / 9.0, 1.0);
+            let sel = p.source.select(&cam, 16.0 / 9.0, 1.0, &mut HashSet::new());
             let tris = sel.leaves.len() * 2 * p.source.m.tile * p.source.m.tile;
             println!(
                 "PYRAMID selection altitude={alt} tiles={} upper_triangles={tris}",
                 sel.leaves.len()
             );
             assert!(
-                tris < 5_000_000,
+                tris < if p.source.m.branch == 4 {
+                    20_000_000
+                } else {
+                    5_000_000
+                },
                 "bounded selection, not finest full raster"
             );
             assert!(sel.leaves.iter().all(|&i| p.source.m.tiles[i].k == 0
@@ -1390,7 +1532,7 @@ mod tests {
             ..Default::default()
         };
         cam.look_at(DVec3::ZERO, Vec3::Y);
-        let selection = p.source.select(&cam, 16.0 / 9.0, 1.0);
+        let selection = p.source.select(&cam, 16.0 / 9.0, 1.0, &mut HashSet::new());
         let mut largest = 0;
         let mut oversized = 0;
         for id in selection.visited {

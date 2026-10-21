@@ -1,0 +1,99 @@
+{
+  "task": "20261021T140731-planets-fdf0",
+  "base_commit": "b0816ff7d699b700cca1a5d7c86fae3ef8c4c35a",
+  "producer_spec": "planet-forge 56c3c08 docs/pyramid-format.md Revision",
+  "changes": [
+    "Prefer pyramid4 when present; omitted branch defaults to2.",
+    "Use branch-dependent hierarchy, projection spacing, parent raster ranges and tile validation; accepts192-cell tiles.",
+    "Morph to bilinear parent over normalized distances0.5..1; parent remains unmorphed through its own hysteretic merge.",
+    "Split above ratio1; retain split until below0.7; retain split history across invisible frames."
+  ],
+  "tests": {
+    "unit_passed": 8,
+    "fixture_passed": 2,
+    "fixture_route_samples": 451,
+    "fixture_selected_min": 10,
+    "fixture_selected_max": 12,
+    "largest_tested_gpu_mesh_bytes": 2144504,
+    "upload_target_bytes": 4194304,
+    "regressions": [
+      "omitted branch2 compatibility",
+      "branch4 bilinear quarter/three-quarter target",
+      "sixteen-child publication waits for every visible child",
+      "split/merge jitter band",
+      "morph endpoints and midpoint",
+      "invalid branch and tile dimensions",
+      "existing masks/shared edges/normals/cache/pan"
+    ]
+  },
+  "cold_selection_upper_triangles": {
+    "10000km": 1916928,
+    "3000km": 6856704,
+    "1000km": 11427840,
+    "300km": 1843200,
+    "100km": 663552,
+    "30km": 147456,
+    "10km": 147456
+  },
+  "native": {
+    "pan": {
+      "log": "/home/alexm/git/universe/out/review/planetlod-branch4/pan.log",
+      "capture": "/home/alexm/git/universe/out/review/planetlod-branch4/pan.png",
+      "frames": 5400,
+      "samples": 42,
+      "selected_min": 10,
+      "selected_max": 12,
+      "empty_selection_samples": 0,
+      "pending_samples": 0,
+      "fallback_samples": 0,
+      "cache_bytes_peak": 64753200,
+      "last": {
+        "selected": 12,
+        "drawn": 12,
+        "triangles": 903168,
+        "pending": 0,
+        "cached": 27,
+        "bytes": 64753200,
+        "fallback": 0,
+        "error_ratio": 0.0,
+        "resident": 26,
+        "largest_tile": 2142788
+      }
+    },
+    "orbit": {
+      "log": "/home/alexm/git/universe/out/review/planetlod-branch4/orbit.log",
+      "capture": "/home/alexm/git/universe/out/review/planetlod-branch4/orbit.png",
+      "frames": 2400,
+      "samples": 17,
+      "selected_min": 157,
+      "selected_max": 157,
+      "empty_selection_samples": 0,
+      "pending_samples": 2,
+      "fallback_samples": 2,
+      "cache_bytes_peak": 435188368,
+      "last": {
+        "selected": 157,
+        "drawn": 157,
+        "triangles": 10771924,
+        "pending": 0,
+        "cached": 185,
+        "bytes": 435188368,
+        "fallback": 0,
+        "error_ratio": 0.0,
+        "resident": 185,
+        "largest_tile": 2142788
+      }
+    }
+  },
+  "snapshot": "/home/alexm/git/universe/out/review/planetlod-branch4/fixture",
+  "metadata_sha256": "ea20d4df67e009b61d1bed3fab982c99611123b637db84b1a79741b108775508",
+  "validation_environment": "UNIVERSE_TEST=1, workspace8 verified, auto-no-vsync, Vulkan RTX5090; reflink package snapshot.",
+  "limits": [
+    "Existing PX=.0007 remains unchanged; large orbital selected working sets can exceed the soft256MiB cache target.",
+    "Selected geometry and ancestors are protected from eviction. Pixel tolerance/memory adaptation remains a separate policy change.",
+    "Capture timing is diagnostic; no interactive benchmark claim.",
+    "Broad diagonal colour bands are present in the producer fine RGB raster itself; independent raw-raster preview source-rgb.png matches the orbital capture. Producer repair requested separately."
+  ],
+  "integration": "local main only; no push",
+  "source_rgb_preview": "/home/alexm/git/universe/out/review/planetlod-branch4/source-rgb.png"
+}
