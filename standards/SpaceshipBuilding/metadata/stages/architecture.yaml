@@ -15,13 +15,20 @@ depends_on:
 - ship-stage.silhouette
 entry:
 - Selected silhouette, declared fixtures and reusable-equipment choices.
+- Module discovery and consumer contract lookup completed before aisle/cabin/cockpit sizing; candidate versus
+  selected equipment and geometry ownership recorded.
 exit:
 - Sections, task routes, pilot space and equipment allocation satisfy the declared scope.
+- Actual reusable module allocations, supported poses, mounts/services and access paths are validated; no custom
+  fit-out substitute or exported reservation proxy fills a gap.
 failure:
 - Reopen the affected shape/arrangement only; keep approved unrelated regions.
+- Missing inventory, product, model or consumer support blocks dependent arrangement/release; record the gap
+  with Registry/Ships rather than fabricate a module.
 inputs:
 - ship-artifact.silhouette-study
 - ship-artifact.requirements
+- ship-artifact.module-inventory
 outputs:
 - ship-artifact.region-spec
 - ship-artifact.interfaces
@@ -35,5 +42,6 @@ rules:
 - ship-rule.lifecycle
 - ship-rule.authority
 - ship-rule.claim-boundaries
+- ship-rule.module-reuse
 decision: Carry existing authorization/delegation forward. Owner resolves identity and major aesthetic/scope
   forks; technical roles resolve routine repairs within those constraints.

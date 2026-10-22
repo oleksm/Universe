@@ -18,6 +18,12 @@ method:
 - Validate the existing .ship.yaml with maintained schema/CLI.
 - Check stable IDs, pinned reusable component references, mounting transforms and no duplicated BOM instances.
 - Roundtrip supported author data through Studio without dropping required fields.
+- Verify current module inventory/search and actual catalogue/placement consumer before accepting interior
+  or cockpit sizing.
+- Compare selected equipment IDs, model origin/basis, actual envelope, slot/fit restrictions, mounting/services
+  and BOM ownership; reject baked substitutes, scale-to-fit, duplicate instances and exported proxies.
+- Exercise unsearched inventory, duplicate mesh/BOM ownership, promoted reservation and missing-module fabrication
+  failures; declaration checks cannot pass actual geometry or consumer evidence.
 evidence:
 - Validator output, ID/placement comparison and lock/reference report.
 failure: Retain the failing witness and last passing candidate. Block only dependent claims/stages; repair
@@ -26,7 +32,9 @@ scope: assembly
 artifacts:
 - ship-artifact.authoring-sidecar
 - ship-artifact.interfaces
+- ship-artifact.module-inventory
 coverage: Scope is the declared candidate, inputs, methods and consumer features. No engineering or unsampled/runtime
   claim is inferred.
 rules:
 - ship-rule.claim-boundaries
+- ship-rule.module-reuse

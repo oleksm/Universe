@@ -1,0 +1,142 @@
+scope: Independent audit of G0-G2 explorer workflow rehearsal; no real-owner approval or production authorization.
+reviewer: registry
+actual_answers_frozen:
+  path: blender:ships/explorer-study/intake/brief.yaml
+  sha256: b7d779ac3e88ab5477644506da7be20a07d8ad97cb055d438cf220184e97bc02
+reviewed_v2_inputs:
+  scenario.yaml: 8707f8fb946e37c9f5c6c89e4bb77e2f564e753d07be5f5ba101b1b9c77458fb
+  brief-v2.yaml: 7cb50425fdbeca4ac5dfbd683ed49e64100e64d4ca6785fe3a94c5023f31ca0e
+  trial-confirmation.yaml: 4d09655dffc136c978ca8167d8bfa6246a31f83f1c98290d9efec19f11a52129
+  sketch-prompt-v2.txt: 497d9d052f63e2c80b85b74416e6e44354c066d33680de1ace07a5f40197f881
+  prompt-coverage-v2.yaml: a8c5ab99fe4705c6e6a2b17b964774886ec1aee6fcb9e87365d06593058ab47c
+real_design:
+  gate: G0 incomplete
+  reason: Actual mission/environment answers and consolidated-brief confirmation remain pending; rehearsal
+    delegation cannot supply them.
+next_intake_rounds:
+- round: 1
+  questions:
+  - Short survey or extended expedition, and roughly how long aboard?
+  - Space and airless surfaces, or atmospheric planetary operation too?
+  preserve: 'Crew is already answered: one person.'
+- round: 2
+  questions:
+  - Which overnight, sample storage and suit facilities matter for that mission?
+  - Clarify ramp direction and the proposed aft hinge; pressure isolation remains a later fit check.
+- round: 3
+  questions:
+  - Only unresolved visual character, references and exclusions.
+  then: Summarize the consolidated brief and obtain scoped confirmation before the whole-ship prompt.
+findings:
+- id: R01
+  severity: blocker_for_current_trial
+  issue: F03 labels an external visibly narrow neck as actual-owner intent; frozen brief explicitly requires
+    narrow passage, with widening hull.
+  repair: Separate the inherited aisle requirement from the proposed exterior-neck interpretation, with
+    source-ID mapping.
+  resolution: Repaired for the rehearsal; real gates remain independent.
+- id: R02
+  severity: provenance_gap
+  issue: v2 lacks frozen actual-brief/scenario input hashes and per-feature inherited source-ID mapping.
+  repair: Pin baseline and authority provenance in brief, confirmation and dependent evidence; preserve
+    actual file bytes.
+  resolution: Repaired for the rehearsal; real gates remain independent.
+- id: R03
+  severity: provenance_gap
+  issue: No explicit absent-reference atlas disposition.
+  repair: State no source image is selected; distinguish text constraints and proposed interpretations.
+  resolution: Repaired for the rehearsal; real gates remain independent.
+- id: R04
+  severity: definition_gap
+  issue: ID-only coverage, simulated authority promoted to real, unseen features and stale inputs need
+    explicit rejection.
+  repair: Strengthen existing reusable definitions and exercise project-local negative tests; registry
+    definitions are not instance approval.
+  resolution: Repaired for the rehearsal; real gates remain independent.
+- id: R05
+  severity: gate_gap
+  issue: Current trial supplies no rough functional occupancy, an explicit G2 entry prerequisite.
+  repair: Permit bounded exterior feedback without claiming G2 complete; supply rough occupancy evidence
+    before rehearsal silhouette selection.
+  resolution: Repaired for the rehearsal; real gates remain independent.
+positive_v2_findings:
+- All twelve feature spans are present verbatim in the prompt.
+- Six feature areas and bounded sketch unknowns are represented.
+- Confirmation and prompt-coverage hashes match current brief and prompt.
+- Simulation is explicitly scoped rehearsal-only; real_owner_approval is false.
+- Prompt disclaims interior fit, pressure, dimensions and engineering proof.
+revised_v2_inputs:
+  brief-v2.yaml: 8ffa348446d0d4243cb560c430ed8d2b3d82f01d0fe64077959fb0f4daf7de6d
+  trial-confirmation.yaml: 6d4003e06eb2a28a0e9f0894afaaeb2db2d48a88f32dcb7157a45067150aa0ad
+  sketch-prompt-v2.txt: 584c62dc723a35c2dc57a8d452580a71c1bc8a0f4e00180d5b55015731ba3a91
+  prompt-coverage-v2.yaml: bf65e0f9283c999b08bd40fa150324d3c7b9ab849ac81f3d1d77d2570a0e035c
+  audit_trial.py: 4176806cf83960b5c1c761d528306e3d36733e805ec9eb5de09fbbd349254b70
+  round-02-tests.yaml: 65847bc3b325fe8b2e7383936cfa3fbca57ede38946cbe0ef602ff39ad53ed63
+  occupancy-study.svg: 72f289060fc925470dd1bec1f4087125b65aa09f4ef43c7658cb43556e9574f2
+revised_v2_review:
+  actual_brief_unchanged: true
+  provenance: F03 retains inherited passage; F13 separately declares exterior neck as proposed interpretation.
+    Source hashes and inherited mapping verified.
+  prompt_coverage: All thirteen feature texts are present in the current prompt and preserve their stated
+    provenance and intent.
+  references: No source image; text-only reference basis explicit.
+  project_tests:
+    passed: 13
+    scope: Project-only rehearsal assertions; not a generic approval engine.
+    independent_counterexamples_repaired:
+    - Coverage promoted to real-design scope
+    - Empty area dispositions
+    - Unresolved sketch blocker
+  occupancy: Revised unscaled diagram puts vestibule forward-central beside the aisle, matching the depicted
+    opening; no dimensional or pressure fit inferred.
+visual_iterations:
+- candidate: sketch-v1.png
+  sha256: d1c0b7a751353cb1c34ed39d27d9a1ab8ac2bf27b0a554e939c172083008d331
+  result: revise
+  witnesses:
+  - SIDE label on perspective image; cannot compare true side/top projections.
+  - Top view reads a central nozzle plus twin pods; count/layout witness inconsistent.
+  - Dashed closed-ramp witness lowers away from hull instead of showing closed pose.
+  retained: Open forward ramp/aft hinge and downward belly profile depict intended direction.
+  not_observable:
+  - Interior aisle
+  - Berth and toilet fit
+  - Pressure isolation
+  - Mechanism clearance
+registry_validator_repair:
+  trigger: 'Mistyped reg: page keys silently passed with empty detail.'
+  repair: Require nonempty article detail and a successful browser exit; retain JavaScript error detection.
+  regression_tests: 3
+  live_negative_test: Mistyped reg:ship-rules:feature-intake is now rejected with empty or missing detail.
+final_review:
+  result: reviewable_feedback_only
+  g2_selected: false
+  real_owner_approval: false
+  actual_answer_baseline_unchanged: true
+  evidence_hashes:
+    final-review.yaml: bac08afc2d97072fa2ced9d2110b7b498fb8b6e4e38bca370c92f66c9945ea52
+    sketch-v3.png: c41d0728bd4896bee16d058ce4bc2aca52f97e358c76f608d4c7cfab1f82fa7a
+    occupancy-study.svg: 91ccf41a49a2d2f1e4561b582e6a8220d0a4927670121ca0591ba241eb142a08
+    round-02-tests.yaml: 65847bc3b325fe8b2e7383936cfa3fbca57ede38946cbe0ef602ff39ad53ed63
+  verified: Brief and effective prompt hashes, all three image hashes, both parent-image/edit-prompt chains,
+    occupancy hash, and all thirteen feature review IDs verified independently.
+  visual_findings:
+  - Forward-opening ramp with aft hinge and downward belly direction depicted.
+  - Two lateral engine pods identifiable after removing the apparent third nozzle.
+  - Exterior neck remains a trial interpretation rather than inherited owner fact.
+  - Interior aisle, overnight facilities, pressure isolation and operational capacity remain unobserved.
+  residuals:
+  - The originally requested dashed closed-ramp witness is absent; removing the false witness did not
+    satisfy that request.
+  - Low placement of the preferred twin pods remains ambiguous; F11 is partial.
+  - View projection is approximate and cannot certify orthographic agreement or dimensional fit.
+  gate_boundary: Rehearsal intake/prompt/provenance and independent review are complete for feedback.
+    Real G0 confirmation and G2 selection remain open; G3-G8 unexercised.
+validation:
+  registry_regressions_passed: 47
+  project_adversarial_cases_passed: 13
+  full_registry_checks: pass
+  final_definition_page_checks: pass
+  visually_inspected_page: x:ship-checks:identity
+  schemas_runtime_ship_format: unchanged
+  existing_report_gaps: unchanged

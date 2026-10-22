@@ -143,9 +143,14 @@ def pagetest(keys, html):
                 "--dump-dom", f"file://{html}#{key}"], timeout=90)
         errs = [l for l in r.stderr.splitlines() if "Uncaught" in l]
         dom = re.sub(r"<script.*?</script>", "", r.stdout, flags=re.S)
-        body = dom[dom.find('id="detail"'):]
+        detail = re.search(r'<article\b[^>]*\bid="detail"[^>]*>(.*?)</article>', dom, re.S)
+        body = detail.group(1) if detail else ""
+        if r.returncode:
+            errs.append(f"browser exited {r.returncode}")
+        if not re.sub(r"<[^>]+>", "", body).strip():
+            errs.append("empty or missing detail; check the page key")
         links = len(re.findall(r'<a data-k="', body))
-        print(f"  page {key}: {'JS ERROR ' + errs[0][:160] if errs else 'ok'} ({links} links)")
+        print(f"  page {key}: {'ERROR ' + errs[0][:160] if errs else 'ok'} ({links} links)")
         bad += bool(errs)
     return bad
 

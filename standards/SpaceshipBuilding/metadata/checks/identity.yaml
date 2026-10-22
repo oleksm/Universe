@@ -2,7 +2,8 @@
 identity:
   key: ship-check.identity
   name: Reference and identity review
-  about: Reference and identity review for an exact candidate; this record defines the check, not its result.
+  about: Reference and identity review for an exact candidate; this record defines the check, not its
+    result.
 status: draft
 implementation: mixed
 owner: owner
@@ -19,8 +20,15 @@ sources:
 method:
 - Compare registered full-ship views and protected landmarks against the selected candidate.
 - Inspect thumbnail silhouette and declared camera distances; expose inferred reference regions.
-- Review each sketch against brief feature IDs and prompt variation limits; record met, missed, ambiguous or
-  intentionally varied without treating hidden geometry as observed.
+- Review each sketch against brief feature IDs and prompt variation limits; record met, missed, ambiguous
+  or intentionally varied without treating hidden geometry as observed.
+- Identify candidate image hash, current prompt hash and view/region witnesses for visual findings. Record
+  hidden features as not observable; separate exterior identity from occupancy and engineering.
+- Review the current iteration independently and retain previous candidates, misses and bounded limitations;
+  a passing text-coverage check is not visual acceptance.
+- Compare component counts, fore/aft positions, camera projection and mechanism poses across every labelled
+  view and the rough occupancy diagram. Labels and image captions cannot override visible contradictions;
+  a closed ramp witness must depict its closed pose.
 evidence:
 - Decision packet, views, reference provenance and owner/delegate decision bound to candidate.
 failure: Retain the failing witness and last passing candidate. Block only dependent claims/stages; repair

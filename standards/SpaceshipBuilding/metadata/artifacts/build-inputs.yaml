@@ -15,9 +15,12 @@ contents:
 - Scripts, Blender/exporter versions and settings, source assets, registry dependencies and hashes.
 - Dependency DAG, separate seed streams, owned collections and manual-input revisions.
 - Canonical geometry/attribute/transform signatures and known nondeterministic metadata.
+- Pinned reusable module inventory, selected instance/model identities, supported transforms and export ownership
+  filters; unselected reservations excluded.
 boundary: Existing loft helpers are reusable building blocks, not an implemented generic ship compiler.
 consumers:
 - blender
 - ships
 rules:
 - ship-rule.local-regeneration
+- ship-rule.module-reuse

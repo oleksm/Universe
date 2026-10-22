@@ -16,10 +16,18 @@ sources:
 method:
 - Trace every must requirement and assumption to an owner, current artifact and check.
 - Confirm hard function and visual identity are separately verified.
-- At intake, verify six feature areas, carried-forward answers, required/preferred/undecided labels and confirmed
-  brief revision.
-- Before sketching, trace every required feature and exclusion to the current prompt; verify remaining unknowns
-  are permitted variation rather than silent choices.
+- At intake, verify six feature areas, carried-forward answers, required/preferred/undecided labels and
+  confirmed brief revision.
+- Before sketching, trace every required feature and exclusion to the current prompt; verify remaining
+  unknowns are permitted variation rather than silent choices.
+- Compare inherited answers against the frozen actual-owner baseline by stable ID and meaning; simulated
+  inputs and proposed interpretations cannot replace or confirm actual answers.
+- Check confirmation authority and real-design or rehearsal-only scope against the exact current brief
+  hash. Permission to rehearse does not grant real design approval.
+- Check coverage witnesses in the actual prompt text for every required feature and exclusion; independently
+  review meaning, not just IDs or checklist status.
+- Exercise missing-feature, simulated-authority-as-real and changed-input negative cases; stale dependent
+  evidence cannot pass a later gate.
 evidence:
 - Requirement-to-check matrix with unresolved conflicts and candidate input hashes.
 - Confirmed brief, feature-to-prompt checklist and bounded unresolved decisions.

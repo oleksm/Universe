@@ -10,44 +10,78 @@ sources:
 - document: docs/spaceship-building-workflow-proposal.md
   section: 3.1 Build a reference atlas with confidence labels
   note: 'Owner refinement: feature collection and confirmed brief precede sketch prompting.'
-statement: 'Collect features before commissioning a whole-ship sketch. Intake is a conversation in small rounds,
-  usually one to three related questions, not a demand for a complete specification in one prompt. Carry previous
-  answers and corrections forward; ask only about missing information or genuine contradictions.
+statement: 'Collect features before commissioning a whole-ship sketch. Intake is a conversation in small
+  rounds, usually one to three related questions, not a demand for a complete specification in one prompt.
+  Carry previous answers and corrections forward; ask only about missing information or genuine contradictions.
 
 
   Cover six areas: purpose (mission, crew, endurance, cargo and environment); shape (cockpit, nose, proportions,
-  belly, wings and engines); occupied spaces (seating, aisle, rooms, storage and equipment); access and motion
-  (ramps, doors, gear and deployables); visual character (reference features, finish and colours); and exclusions
-  (features the owner does not want). Mark each area answered, explicitly undecided or not applicable. Do not
-  force dimensions or equipment choices before their implications are understood.
+  belly, wings and engines); occupied spaces (seating, aisle, rooms, storage and equipment); access and
+  motion (ramps, doors, gear and deployables); visual character (reference features, finish and colours);
+  and exclusions (features the owner does not want). Mark each area answered, explicitly undecided or
+  not applicable. Do not force dimensions or equipment choices before their implications are understood.
 
 
-  Give each feature a stable ID, required/preferred/undecided classification, source, interpretation and decision
-  status. A proposed default is not a user answer. Separate the priority of a feature from whether its interpretation
-  is confirmed. Surface conflicting features with the consequence and available trade-off; retain unresolved
-  issues rather than hiding them in the prompt.
+  Give each feature a stable ID, required/preferred/undecided classification, source, interpretation and
+  decision status. A proposed default is not a user answer. Separate the priority of a feature from whether
+  its interpretation is confirmed. Surface conflicting features with the consequence and available trade-off;
+  retain unresolved issues rather than hiding them in the prompt.
 
 
-  Summarize the consolidated feature brief for owner correction and confirmation, or apply an explicit existing
-  delegation. G0 is ready when all six areas have been considered, the required features are coherent, and
-  remaining unknowns are explicitly bounded as permitted exploration or blockers. Silence is not confirmation.
-  Small labelled clarification diagrams may resolve a hinge direction or other ambiguity during intake; they
-  are not a selected whole-ship design.
+  Summarize the consolidated feature brief for owner correction and confirmation, or apply an explicit
+  existing delegation. G0 is ready when all six areas have been considered, the required features are
+  coherent, and remaining unknowns are explicitly bounded as permitted exploration or blockers. Silence
+  is not confirmation. Small labelled clarification diagrams may resolve a hinge direction or other ambiguity
+  during intake; they are not a selected whole-ship design.
 
 
-  After the brief is confirmed and reference interpretation is coherent, derive a versioned sketch prompt from
-  that exact brief. Include mission/context, every required feature by ID, preferred features, exclusions,
-  reference priorities, requested views, permitted variation and explicitly undecided details. Do not silently
-  resolve undecided features. Check prompt coverage before sketching; text must not introduce unsupported dimensions
-  or technical claims. This is a reusable instruction for a human or image tool, not a requirement to use a
-  particular generator.
+  After the brief is confirmed and reference interpretation is coherent, derive a versioned sketch prompt
+  from that exact brief. Include mission/context, every required feature by ID, preferred features, exclusions,
+  reference priorities, requested views, permitted variation and explicitly undecided details. Do not
+  silently resolve undecided features. Check prompt coverage before sketching; text must not introduce
+  unsupported dimensions or technical claims. This is a reusable instruction for a human or image tool,
+  not a requirement to use a particular generator.
 
 
   Review each sketch against the same feature IDs, recording met, missed, ambiguous or intentionally varied
   features and the limits of what the view can show. Sketch approval does not prove interior fit or engineering.
-  A changed feature invalidates the affected prompt and sketch evidence; preserve unaffected answers and earlier
-  candidates. A new material design choice returns to brief confirmation, while wording corrections within
-  confirmed intent need no repeated approval.'
+  A changed feature invalidates the affected prompt and sketch evidence; preserve unaffected answers and
+  earlier candidates. A new material design choice returns to brief confirmation, while wording corrections
+  within confirmed intent need no repeated approval.
+
+
+  For a rehearsal, freeze the actual owner answers as a separate hashed input. Label each added answer
+  or interpretation as actual-owner evidence, simulated trial input or a proposed interpretation; priority
+  is independent of provenance. Permission to run a rehearsal is not permission to confirm the real brief
+  or select a production design. A simulated confirmation names the exact trial brief hash, the simulator
+  and rehearsal-only scope. It cannot satisfy a real-owner gate. Check inherited answers by stable ID
+  and meaning, not merely by counting features.
+
+
+  Prompt coverage requires a witness in the exact prompt text for every required feature and exclusion,
+  not just the presence of its ID in a checklist. Include retained interpretations, permitted variation
+  and bounded unknowns. An independent reviewer checks that the witness expresses the requirement without
+  weakening it. Record absent references explicitly; do not invent an atlas image. Before whole-ship sketching,
+  reject missing confirmation, an unbounded blocker, a dropped required feature or an unresolved contradiction.
+
+
+  Bind the brief, confirmation, prompt, generated candidate and review through exact input hashes and
+  the workflow revision. A changed brief invalidates its dependent coverage and prompt; a changed prompt
+  invalidates claims that an existing image was generated from that prompt. Keep earlier inputs and candidates
+  as history. Reconfirm material design choices only; an intent-preserving wording repair does not invent
+  a new approval requirement. Tests must demonstrate rejection of a missing prompt feature, a forged real-owner
+  confirmation using simulated authority and a stale dependent input.
+
+
+  Visual review records met, missed, ambiguous, intentionally varied or not observable for each feature,
+  with a view/region witness and a separate claim scope. A requirement mentioned in the prompt is not
+  proof it appears in the image. An exterior picture cannot verify a hidden aisle, berth, pressure boundary,
+  mechanism clearance or equipment fit; carry those as not observable and identify the later check. Keep
+  prompt coverage, visual identity, occupancy and engineering results separate. Compare component counts,
+  fore/aft positions, camera projection and mechanism poses across labelled views and the rough occupancy
+  diagram; a caption cannot turn perspective into an orthographic witness or a lowered ramp into a closed
+  one. Iterate with specific misses and retain prior candidates; close a rehearsal only after independent
+  review of the current evidence, with remaining limitations explicit.'
 applies_to:
 - New ship intake and material revisions of a confirmed feature brief.
 verification:
