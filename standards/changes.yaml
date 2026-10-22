@@ -3195,12 +3195,13 @@
 - { record: settlement.treistun.port-zaudalein, at: "2026-10-06T19:44:49Z", status: "", summary: "changed: buildings, census", sha: "c2664d01238ddfc6" }
 - { record: settlement.treistun.treistun-e-station, at: "2026-10-07T01:43:50Z", status: "", summary: "changed", sha: "04ad7e61a074b351" }
 - { record: ship-artifact.assumptions, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "10f44273ac583f9e" }
-- { record: ship-artifact.authoring-sidecar, at: "2026-10-21T03:31:55Z", status: "", summary: "changed", sha: "e4411d3a3eb045b0" }
-- { record: ship-artifact.build-inputs, at: "2026-10-21T03:31:55Z", status: "", summary: "changed", sha: "bee80d722e5d1a45" }
+- { record: ship-artifact.authoring-sidecar, at: "2026-10-22T01:24:47Z", status: "", summary: "changed: contents, rules", sha: "0f35630bd1a78f0d" }
+- { record: ship-artifact.build-inputs, at: "2026-10-22T01:24:47Z", status: "", summary: "changed: contents, rules", sha: "f2b96cfcbc4ae229" }
 - { record: ship-artifact.defect-record, at: "2026-10-21T03:31:55Z", status: "", summary: "changed", sha: "6c44b01068c84b8c" }
 - { record: ship-artifact.evidence, at: "2026-10-22T00:31:15Z", status: "", summary: "changed: contents", sha: "665fc49f6b4c8ca3" }
 - { record: ship-artifact.interfaces, at: "2026-10-21T03:31:55Z", status: "", summary: "changed", sha: "ed21ded8665717d8" }
 - { record: ship-artifact.mechanism-spec, at: "2026-10-21T03:31:55Z", status: "", summary: "changed", sha: "cb81a2c99894dd2b" }
+- { record: ship-artifact.module-inventory, at: "2026-10-22T01:24:47Z", status: "", summary: "first tracked", sha: "82f396c0487224a4" }
 - { record: ship-artifact.performance-budget, at: "2026-10-21T03:31:55Z", status: "", summary: "changed", sha: "c5b46cc4bd9293fc" }
 - { record: ship-artifact.reference-atlas, at: "2026-10-21T03:31:55Z", status: "", summary: "changed", sha: "3bdc91b42289d2b6" }
 - { record: ship-artifact.region-spec, at: "2026-10-21T03:31:55Z", status: "", summary: "changed", sha: "a942ca84213d6aaa" }
@@ -3208,13 +3209,13 @@
 - { record: ship-artifact.requirements, at: "2026-10-22T00:31:15Z", status: "", summary: "changed: contents", sha: "95f2a2b33d3d4b34" }
 - { record: ship-artifact.silhouette-study, at: "2026-10-22T00:31:15Z", status: "", summary: "changed: contents", sha: "1d9dd32186e36ce7" }
 - { record: ship-artifact.sketch-prompt, at: "2026-10-22T00:31:15Z", status: "", summary: "changed: contents", sha: "4aceee9dbe82888f" }
-- { record: ship-artifact.spatial-layout, at: "2026-10-21T03:31:55Z", status: "", summary: "changed", sha: "27981c9bf73a7520" }
+- { record: ship-artifact.spatial-layout, at: "2026-10-22T01:24:47Z", status: "", summary: "changed: contents, rules, depends_on", sha: "bccf2ca2ec8d2504" }
 - { record: ship-artifact.task-packet, at: "2026-10-21T03:31:55Z", status: "", summary: "changed", sha: "670031c142bbaf9a" }
-- { record: ship-check.assembly, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "ab63d6e1a03015d6" }
+- { record: ship-check.assembly, at: "2026-10-22T01:24:47Z", status: "", summary: "changed: method, artifacts, rules", sha: "c1916ee2325af715" }
 - { record: ship-check.construction, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "cb093c9d05ed9408" }
 - { record: ship-check.hull-geometry, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "b4183fb69a6f413e" }
 - { record: ship-check.identity, at: "2026-10-22T00:34:36Z", status: "", summary: "changed: method", sha: "ed16ee4c1fb1f805" }
-- { record: ship-check.inhabitation, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "ecee81cb81714963" }
+- { record: ship-check.inhabitation, at: "2026-10-22T01:24:47Z", status: "", summary: "changed: method, artifacts, rules", sha: "5cd40d11f4513848" }
 - { record: ship-check.material-export, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "6cb3acb2c6877492" }
 - { record: ship-check.mesh-integrity, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "32d01b1266f153d2" }
 - { record: ship-check.motion-coverage, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "8020ed24e095d54c" }
@@ -3268,6 +3269,7 @@
 - { record: ship-rule.lifecycle, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "834b03cce68af732" }
 - { record: ship-rule.local-regeneration, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "4d965831bba62adb" }
 - { record: ship-rule.materials-and-surfaces, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "7ef942124902837e" }
+- { record: ship-rule.module-reuse, at: "2026-10-22T01:24:47Z", status: "", summary: "first tracked", sha: "d3b2a0506e833c06" }
 - { record: ship-rule.pilot-scope, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "cafd22baad8b7614" }
 - { record: ship-rule.recovery, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "4dc98e3214e19a1e" }
 - { record: ship-rule.region-ownership, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "2334a8db20b8b5a1" }
@@ -3277,7 +3279,7 @@
 - { record: ship-rule.scope, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "dcef59f59edaa3a3" }
 - { record: ship-rule.specification-layers, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "445c9e221fcdee3a" }
 - { record: ship-rule.traceability, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "68ee0190820203dc" }
-- { record: ship-stage.architecture, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "f426a80120e7b69f" }
+- { record: ship-stage.architecture, at: "2026-10-22T01:24:47Z", status: "", summary: "changed: entry, exit, failure, inputs, rules", sha: "cbcf25b57c31fdfd" }
 - { record: ship-stage.brief, at: "2026-10-21T05:03:40Z", status: "", summary: "changed: exit, failure, rules", sha: "e141ef6facd16af0" }
 - { record: ship-stage.design-lock, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "071695eb13a48883" }
 - { record: ship-stage.integration, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "237d3f77f3b7ca44" }

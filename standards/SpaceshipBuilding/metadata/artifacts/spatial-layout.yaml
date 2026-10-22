@@ -12,6 +12,8 @@ sources:
   note: Owner-authorized workflow definition; project values and results are not instantiated.
 purpose: Can crew, cargo and service tasks use the arrangement?
 contents:
+- Pre-sizing module discovery/selection and ownership map, using actual product envelopes and consumer frames;
+  reservations remain non-exported.
 - Separate space adjacency and actual traversal graphs; declared crew/suit/cargo fixtures.
 - Pilot ingress, eye/reach/knee/pedal space and direct/sensor-view distinction.
 - Useful volume, structure, skin, service/insulation and armour allowances.
@@ -55,5 +57,8 @@ consumers:
 rules:
 - ship-rule.specification-layers
 - ship-rule.representations
+- ship-rule.module-reuse
 checks:
 - ship-check.inhabitation
+depends_on:
+- ship-artifact.module-inventory

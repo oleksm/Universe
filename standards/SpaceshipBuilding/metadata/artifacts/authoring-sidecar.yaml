@@ -16,6 +16,8 @@ contents:
 - Requirement, assumption, region, interface, reference, decision and active candidate links.
 - Manual source identities and separate geometry/layout/finish seed streams.
 - Existing delivery record reference rather than duplicate acceptance state.
+- Module discovery/allocation artifact, hull-versus-product geometry ownership and consumer gaps; runtime fields
+  remain those of the maintained ship schema.
 boundary: Proposed authoring format only; runtime .ship.yaml and installer manifests retain their existing
   authority.
 consumers:
@@ -24,5 +26,6 @@ consumers:
 rules:
 - ship-rule.runtime-compatibility
 - ship-rule.traceability
+- ship-rule.module-reuse
 checks:
 - ship-check.assembly

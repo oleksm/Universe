@@ -1,0 +1,200 @@
+owner_correction: Reuse the existing modular system; do not build interior modules. Discover before sizing aisle,
+  cabin or cockpit.
+scope: Registry workflow and independent discovery/declaration audit; no module selection or explorer arrangement
+  acceptance.
+workflow_changes:
+  new_definitions:
+  - ship-artifact.module-inventory
+  - ship-rule.module-reuse
+  G3: Inventory/consumer lookup and geometry ownership are entry conditions; actual reusable allocation and gap
+    handling required before exit.
+  checks: Assembly/inhabitation trace actual product references, transforms, envelopes, slots, mounts, services
+    and routes.
+  runtime_schema: Unchanged; no new runtime fields or approval database.
+sources:
+  AGENTS.md: fd58e556942d4d2649c2bfc92ed33f0bd98589a1ac5aae4ed93ae6ed1b894a94
+  module-discovery.json: 74de79c3151a08b6e5c15d90ad803e7e7da820f94ed87b8a5a988b64f16c025c
+  module-reuse-correction.json: 72c9c631ce70d41c6547f0e3e07ca5e428110a17bbc00a88ab9ad908570e3fd9
+  check_module_reuse.py: d13fab1016da8abefb9fbd9ff65df2c5b6cdf25759c23bf5901e70eb03f8dd63
+  module-reuse-tests.json: 79440bf42843deb163e92d952160d48fe83b00dd48c2bc12d48e93d7782a82e2
+inventory:
+  status: Seven discovered candidates, none selected; shortlist is not a complete craft equipment inventory.
+  items:
+  - key: equipment.command.s1
+    record_sha256: eb1ba55796f43bfe1ace1eaebee259d564af883a1fc7f5e72229d17fee467f14
+    revision: draft
+    dimensions_m:
+      length: 1.2
+      width: 1
+      height: 1.5
+    mass_kg: 180
+    mount: mount.command-s1
+    installed_visual:
+      format: freefall-model/1
+      path: models/command-s1/v2
+      manifest_sha256: c597abcfd9971e2646936dc376fc3c9c9d2e67a7ceb3da65812321fe02402db4
+      version: 2
+      triangles: 3408
+    manifest_and_model_hashes_verified: true
+    selected: false
+    placement_status: Not allocated; actual consumer/catalogue/slot/mount/service/access checks pending.
+  - key: equipment.cargo.galley.s1
+    record_sha256: 0f57d4b97ecb575f52d777f183195f2a9d0c2040b1bb611ced234be22dfb9f6d
+    revision: draft
+    dimensions_m:
+      length: 1.5
+      width: 0.9
+      height: 2
+    mass_kg: 250
+    mount: mount.cargo-s1
+    installed_visual:
+      format: freefall-model/1
+      path: models/cargo-galley-s1/v1
+      manifest_sha256: 5ca1683385fa40036adc4053a07267af9ae02f7df92765e4608b3a7f6f4ec559
+      version: 1
+      triangles: 6492
+    manifest_and_model_hashes_verified: true
+    selected: false
+    placement_status: Not allocated; actual consumer/catalogue/slot/mount/service/access checks pending.
+  - key: equipment.cargo.berths.2
+    record_sha256: 453df22ebb24900a048885a4f36067d0a620a27553c53cfeff33cf648087fb5f
+    revision: draft
+    dimensions_m:
+      length: 2
+      width: 1.07
+      height: 2
+    mass_kg: 260
+    mount: mount.cargo-s1
+    installed_visual:
+      format: freefall-model/1
+      path: models/cargo-berths-2/v1
+      manifest_sha256: 79b4d33a111b1027d0e16a3c28a0738f7328a42d24850a03757a7d10d682e17e
+      version: 1
+      triangles: 3400
+    manifest_and_model_hashes_verified: true
+    selected: false
+    placement_status: Not allocated; actual consumer/catalogue/slot/mount/service/access checks pending.
+  - key: equipment.cargo.cabin.s1
+    record_sha256: 44f53fe6f069036ccab4220a70de7be4e9cc2a570b2d05c9a0c899f07e18e5b7
+    revision: outdated
+    dimensions_m:
+      length: 3.16
+      width: 2.16
+      height: 2.18
+    mass_kg: 1825
+    mount: mount.cargo-s1
+    installed_visual:
+      format: freefall-model/1
+      path: models/cargo-cabin-s1/v1
+      manifest_sha256: 45aa71129d070020fa8876183127afbcb1815bf6e73bd290c38b05fd89c0f84e
+      version: 1
+      triangles: 9808
+    manifest_and_model_hashes_verified: true
+    selected: false
+    placement_status: Not allocated; actual consumer/catalogue/slot/mount/service/access checks pending.
+  - key: equipment.access.airlock.crew
+    record_sha256: 46e22f99ccaaea57f0aaa4e68cbfe29a2da65c3899d5556f022ab06b8ad8e19a
+    revision: draft
+    dimensions_m:
+      length: 2.5
+      width: 1.5
+      height: 2.2
+    mass_kg: 1200
+    mount: mount.access-s1
+    installed_visual:
+      format: freefall-model/1
+      path: models/access-airlock-crew/v1
+      manifest_sha256: f10b41eaad437cd78dd6d288b773eda7130984cdc71911645e38e0965cfced7a
+      version: 1
+      triangles: 3768
+    manifest_and_model_hashes_verified: true
+    selected: false
+    placement_status: Not allocated; actual consumer/catalogue/slot/mount/service/access checks pending.
+  - key: equipment.cargo.head.s1
+    record_sha256: 5d3c6a6e53c94b9d41d417ee0f6aa73af5862f9183a31572fc727493a2748480
+    revision: draft
+    dimensions_m:
+      length: 1.2
+      width: 1.061
+      height: 2
+    mass_kg: 200
+    mount: mount.cargo-s1
+    installed_visual:
+      format: freefall-model/1
+      path: models/cargo-head-s1/v1
+      manifest_sha256: bdb6548385e1104bd8c71d3cc163f45ef424ba29f0898d3965db3183f20f9a1e
+      version: 1
+      triangles: 6040
+    manifest_and_model_hashes_verified: true
+    selected: false
+    placement_status: Not allocated; actual consumer/catalogue/slot/mount/service/access checks pending.
+  - key: equipment.utility.suits.s1
+    record_sha256: 9e7bce51da6890b87be5b3067e11b6e9a604cff122620e484960a13165cf5d7a
+    revision: draft
+    dimensions_m:
+      length: 1
+      width: 0.6
+      height: 2
+    mass_kg: 160
+    mount: mount.utility-s1
+    installed_visual:
+      format: freefall-model/1
+      path: models/utility-suits-s1/v1
+      manifest_sha256: b822701138f329875cf006a2aa47d34b7624a8e30c021242a20a5aacddc76aa1
+      version: 1
+      triangles: 3076
+    manifest_and_model_hashes_verified: true
+    selected: false
+    placement_status: Not allocated; actual consumer/catalogue/slot/mount/service/access checks pending.
+  revision_caveat: Installed does not mean approved; equipment.cargo.cabin.s1 is outdated. No automatic choice or
+    scaling to satisfy the one-person brief.
+consumer_contract:
+  revision: f767e0e6056d95ad612fa8e33689ea93738d0281
+  source: ships:20261021-explorer-module-placement.yaml
+  equipment: One stable modules.<id>, kind equipment, existing equipment.* record, centred position/rotation and
+    real envelope; no implicit model scale.
+  hull_bound: Each placement must match an actual hull fit slot; arbitrary free-fitting is not implemented.
+  hull_free: Existing catalogue equipment can support layout studies with hull:null and no slot, but does not display
+    the explorer hull GLB.
+  architectural_floors: Editable decks floor/wall polygons are walking architecture, not stocked panel/shoe/clamp
+    instances or a qualified load path.
+  structural_stock: Explicit structure members/plates retain stock identity. No implemented holder/panel-instance
+    layer or generic lining product field.
+  ownership: One authoritative floor surface. Exclude module-owned meshes and non-exported reservations from hull
+    export. Pilot seat/console replacement remains required.
+tests:
+  registry_regressions_passed: 47
+  project_executable_declaration_cases_passed: 9
+  independently_rerun: true
+  expected_failures:
+  - Unsearched inventory
+  - Baked module mesh
+  - Duplicate module BOM
+  - Reservation promoted to equipment
+  - Missing module treated as fabrication permission
+  - Unknown record
+  - Unresolved floor ownership
+  - Unresolved consumer contract
+  limits: Synthetic declaration checks do not detect arbitrary duplicate meshes, certify dimensions, prove mounts/services
+    or test runtime placement. The actual project remains blocked before allocation.
+  manual_check_attribution: Blender reports a live name-based fixture-removal assertion; registry did not independently
+    inspect the live scene. This is not a generic mesh-ownership proof.
+remaining:
+- Module choice remains separate from actual owner mission/endurance decisions.
+- Replace provisional pilot seat/console with an existing referenced station, then re-evaluate cockpit route and
+  neck sizing.
+- Assign floor/lining ownership and exclude withdrawn custom fit-out artifacts from all active exports.
+- Validate real instances against the supported consumer and actual geometry/access, mounting and services.
+- Do not pass G3 arrangement or G7/G8 while dependent requirements or consumer gaps remain unresolved.
+release_route: /home/alexm/.agents/reviews/registry/20261021-explorer-release-route.yaml
+validation:
+  full_registry_checks: pass
+  page_checks:
+    x:ship-stages:architecture: 16
+    x:ship-artifacts:module-inventory: 7
+    x:ship-rules:module-reuse: 5
+    x:ship-checks:assembly: 6
+  page_visually_inspected: x:ship-artifacts:module-inventory
+  workflow_definitions: 94
+  registry_regressions_passed: 47
+  existing_report_gaps: unchanged

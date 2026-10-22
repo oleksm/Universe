@@ -16,6 +16,8 @@ sources:
 method:
 - Exercise actual fixture ingress, movement, seated reach/view and equipment removal routes.
 - Check declared emergency-route scope, narrow obstacles and service-volume preservation.
+- Use discovered/selected real module envelopes and poses, including pilot station and service/removal space;
+  a custom fixture or unselected proxy does not verify product fit.
 evidence:
 - Pose/route witnesses, pilot views and minimum clearances with fixture limitations.
 failure: Retain the failing witness and last passing candidate. Block only dependent claims/stages; repair
@@ -23,7 +25,9 @@ failure: Retain the failing witness and last passing candidate. Block only depen
 scope: inhabitation
 artifacts:
 - ship-artifact.spatial-layout
+- ship-artifact.module-inventory
 coverage: Scope is the declared candidate, inputs, methods and consumer features. No engineering or unsampled/runtime
   claim is inferred.
 rules:
 - ship-rule.claim-boundaries
+- ship-rule.module-reuse

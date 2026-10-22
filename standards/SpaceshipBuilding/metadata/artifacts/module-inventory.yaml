@@ -1,0 +1,43 @@
+# yaml-language-server: $schema=../../schema/ship-artifact.schema.yaml
+identity:
+  key: ship-artifact.module-inventory
+  name: Module discovery and allocation
+  about: Which existing products and consumer contracts constrain the ship arrangement?
+status: draft
+implementation: mixed
+owner: ships
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 3.5 Co-design cockpit, routes and hull
+  note: 'Owner correction, 2026-10-21: discover and reuse existing modules before interior sizing; no custom
+    fit-out substitutes.'
+purpose: Discover existing reusable modules before G3 sizing and retain explicit selection, ownership and consumer
+  gaps.
+contents:
+- Requirement/function IDs, search scope and registry/catalogue/consumer revisions; distinguish discovery from
+  selected allocation.
+- Candidate record keys, revision/hash, dimensions/mass, mount/port frames, service/access/removal allowances
+  and installed model version/manifest hash.
+- Selected stable instance IDs, source model references, supported transforms and one BOM owner per physical
+  instance; no model scaling to fit.
+- Ownership map for hull geometry, equipment, editable deck architecture and stock-built structure; explicit
+  floors/lining/door/fixture decisions.
+- Non-exported reservation proxies and unresolved gaps with affected requirements, owner, next action and any
+  new-module authorization.
+- Declaration adversarial checks plus separately scoped actual mesh, fit, mounting/service, export and runtime
+  evidence.
+boundary: Project authoring evidence using existing equipment references; not a new runtime schema, module
+  approval database or implicit installation.
+consumers:
+- registry
+- ships
+- blender
+depends_on:
+- ship-artifact.requirements
+rules:
+- ship-rule.module-reuse
+- ship-rule.authority
+- ship-rule.claim-boundaries
+checks:
+- ship-check.assembly
+- ship-check.inhabitation
