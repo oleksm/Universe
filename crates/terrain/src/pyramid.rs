@@ -18,11 +18,12 @@ fn min_tri_px() -> f64 {
     *V.get_or_init(|| std::env::var("UNIVERSE_TERRAIN_TRI_PX").ok().and_then(|v| v.parse().ok()).unwrap_or(0.0))
 }
 /// UNIVERSE_TERRAIN_VERSION_PX=n: each drawn tile on its coarsest version (nested coarser meshes, `mesh_lod`)
-/// whose triangles still average no more than n pixels on screen, morphing between versions; 0: always the
-/// finest. Default 2.
+/// whose triangles still average no more than n pixels on screen, morphing between versions; 0 (the default):
+/// always the finest. (Off until tiles carry their own colour and normal textures: on big triangles the
+/// per-vertex colour and shading blur, the owner finds.)
 fn version_px() -> f64 {
     static V: std::sync::OnceLock<f64> = std::sync::OnceLock::new();
-    *V.get_or_init(|| std::env::var("UNIVERSE_TERRAIN_VERSION_PX").ok().and_then(|v| v.parse().ok()).unwrap_or(2.0))
+    *V.get_or_init(|| std::env::var("UNIVERSE_TERRAIN_VERSION_PX").ok().and_then(|v| v.parse().ok()).unwrap_or(0.0))
 }
 const CACHE_BYTES: usize = 8 * 1024 * 1024 * 1024;
 const UPLOAD_BYTES: usize = 32 * 1024 * 1024;
@@ -117,17 +118,18 @@ impl Source {
         side * side * seen
     }
     /// Which of tile `id`'s versions to draw and how far it morphs to the next coarser one (the coarsest: to
-    /// its parent): the coarsest whose triangles average no more than `version_px` pixels, between versions by
+    /// its parent): the coarsest whose triangles average no more than `per_tri` pixels (0: the finest), between versions by
     /// their triangle counts (log); no finer than its morph to its parent (`level`, 0 to 1) asks, which steps
     /// through its versions before it meets its parent.
-    fn version(&self, id: usize, eye: DVec3, ex: f64, pixel: f64, level: f32) -> (usize, f32) {
+    fn version(&self, id: usize, eye: DVec3, ex: f64, pixel: f64, level: f32, per_tri: f64) -> (usize, f32) {
         let t = self.m.tiles[id];
         let counts: Vec<f64> = std::iter::once(t.mesh_nt).chain(t.mesh_lod.get().iter().map(|l| l.3)).map(|n| n.max(1) as f64).collect();
-        let last = if t.mesh_nv == 0 { 0 } else { counts.len() - 1 };
-        let by_pixels = if last == 0 || pixel <= 0.0 || version_px() <= 0.0 {
+        // (No pixels to answer to: the finest, morphing to its parent, as with no versions.)
+        let last = if t.mesh_nv == 0 || per_tri <= 0.0 { 0 } else { counts.len() - 1 };
+        let by_pixels = if last == 0 || pixel <= 0.0 || per_tri <= 0.0 {
             0.0
         } else {
-            let want = self.footprint_px(id, eye, ex, pixel) / version_px();
+            let want = self.footprint_px(id, eye, ex, pixel) / per_tri;
             match counts.windows(2).position(|w| want > w[1]) {
                 _ if want >= counts[0] => 0.0,
                 Some(k) => k as f64 + (counts[k] / want).ln() / (counts[k] / counts[k + 1]).ln(),
@@ -1159,7 +1161,7 @@ impl Pyramid {
             .filter(|id| self.cache.contains_key(id))
             .map(|&id| {
                 let level = if self.selection.split.contains(&id) { 0.0 } else { self.source.weight(id, eye, ex, self.pixel) };
-                (id, self.source.version(id, eye, ex, self.pixel, level))
+                (id, self.source.version(id, eye, ex, self.pixel, level, version_px()))
             })
             .collect();
         let mut budget = UPLOAD_BYTES;
@@ -1464,13 +1466,14 @@ mod tests {
         // Which is drawn: by its morph to its parent (half way: the coarser, unmorphed), or by pixels (between
         // the two counts, 4 and 2: half way at 2.83 a version's px).
         let eye = p.source.bounds[meshed].0 * 1.5;
-        assert_eq!(p.source.version(meshed, eye, 1., 0., 0.5), (1, 0.));
-        assert_eq!(p.source.version(meshed, eye, 1., 0., 0.25), (0, 0.5));
+        assert_eq!(p.source.version(meshed, eye, 1., 0., 0.5, 2.), (1, 0.));
+        assert_eq!(p.source.version(meshed, eye, 1., 0., 0.25, 2.), (0, 0.5));
+        assert_eq!(p.source.version(meshed, eye, 1., 1., 0.5, 0.), (0, 0.5), "off: the finest, to its parent");
         let area = p.source.footprint_px(meshed, eye, 1., 1.);
-        let (v, w) = p.source.version(meshed, eye, 1., (area / (2. * 8f64.sqrt())).sqrt(), 0.);
+        let (v, w) = p.source.version(meshed, eye, 1., (area / (2. * 8f64.sqrt())).sqrt(), 0., 2.);
         assert!(v == 0 && (w - 0.5).abs() < 1e-4, "{v} {w}");
-        assert_eq!(p.source.version(meshed, eye, 1., (area / (2. * 10.)).sqrt(), 0.), (0, 0.));
-        assert_eq!(p.source.version(meshed, eye, 1., (area / (2. * 1.)).sqrt(), 0.), (1, 0.));
+        assert_eq!(p.source.version(meshed, eye, 1., (area / (2. * 10.)).sqrt(), 0., 2.), (0, 0.));
+        assert_eq!(p.source.version(meshed, eye, 1., (area / (2. * 1.)).sqrt(), 0., 2.), (1, 0.));
         for id in [meshed, plain] {
             p.cache.insert(id, Cached { tile: build(&p.source, id, 1., true).unwrap(), last: 0 });
             p.drawn.insert(id, (0., 0));

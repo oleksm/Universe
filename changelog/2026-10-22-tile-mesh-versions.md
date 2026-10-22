@@ -20,3 +20,9 @@ triangles → 3.4 M, 2 km 8.4 M → 3.4 M, the sight and ridges kept (14 % of pi
 cap); a 24-frame pan steady (no pops). The tile cache holds every version: ~4.0 GB here against ~2.9-4.0 for the
 finest alone (within its 8 GB). Mesh3 (no versions): unchanged. Tests: the versions in
 `pyramid_tile_mesh_drawn_and_touched_on_its_triangles`.
+
+Later the same night: `UNIVERSE_TERRAIN_VERSION_PX` defaults to 0 (always the finest version). The owner finds the
+versions blurry: colour and shading are per vertex, and big triangles spread them. Off, a tile also no longer
+steps through its versions before meeting its parent: the finest, morphing to its parent, as before versions
+(mesh4, 24.8 km: 12.7 M triangles; the "all finest" figure above, 9.6 M, still stepped). On again once tiles carry
+their own colour and normal textures.
