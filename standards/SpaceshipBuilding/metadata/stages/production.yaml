@@ -15,6 +15,9 @@ depends_on:
 - ship-stage.design-lock
 entry:
 - Stable form, ownership, interfaces and agreed detail budget.
+- For the assembly to be detailed, current per-assembly intent/interfaces and both technical and independent
+  complete-ship visual reviews support that scope. Use the existing checkpoint and defect records; fresh object
+  names or isolated renders do not pass this gate.
 exit:
 - Evaluated geometry, materials, export/collision representations and measured costs have current evidence.
 - Inherited product substitutes are retired and all required module occupied, attachment/tool, install/removal,

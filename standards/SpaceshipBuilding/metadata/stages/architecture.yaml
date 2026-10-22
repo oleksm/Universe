@@ -35,6 +35,9 @@ exit:
 - After clearance-driven reshaping, current silhouette/clay and protected-landmark identity review passes within
   actual authority as well as functional checks; no old silhouette approval or provisional envelope supplies
   visual acceptance.
+- Each claimed designed assembly has a current region-spec intent/interface contract, actual object mapping
+  and scoped construction evidence plus independent assembled visual critique. Mesh separation alone does not
+  establish parts-designed; unresolved required interfaces or whole-ship visual failures hold dependent detail.
 failure:
 - Reopen the affected shape/arrangement only; keep approved unrelated regions.
 - Missing inventory, product, model or consumer support blocks dependent arrangement/release; record the gap
@@ -63,6 +66,7 @@ checks:
 - ship-check.module-clearance
 - ship-check.crew-routes
 - ship-check.identity
+- ship-check.construction
 rules:
 - ship-rule.lifecycle
 - ship-rule.authority
