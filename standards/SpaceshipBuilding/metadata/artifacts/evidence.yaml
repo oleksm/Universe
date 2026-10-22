@@ -22,6 +22,8 @@ contents:
   samples and worst-case witnesses; inherited-substitute retirement invalidates dependent outputs.
 - Independent expected/actual assembly part/state/pair/view coverage and reasoned exclusions; closure/support
   witnesses separate from collision tests, with no subset-to-assembly promotion.
+- After clearance-driven shape edits, separate current functional and visual-identity results, registered silhouette/clay
+  before/after, protected intent witnesses and changed-source invalidation; no synthetic aesthetic acceptance.
 boundary: The existing delivery workflow owns acceptance state. This artifact definition is not an evidence
   instance.
 consumers:

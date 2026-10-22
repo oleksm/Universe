@@ -31,6 +31,8 @@ failure:
 - Required route/module envelope conflict with hull space returns affected G2/G3 shape and arrangement; preserve
   design intent and applicable envelopes, escalate incompatible constraints, and invalidate dependent detail/export
   evidence before resuming.
+- If clearance-driven shape changes erase protected identity, return affected G2/G3 alternatives with unchanged
+  applicable envelopes; no detail, shrink-to-fit or stale visual packet closes the conflict.
 inputs:
 - ship-artifact.reference-atlas
 - ship-artifact.requirements

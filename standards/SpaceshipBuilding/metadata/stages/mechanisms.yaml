@@ -21,6 +21,9 @@ exit:
   cockpit and interior witnesses; no partial sweep substitutes for required rows.
 - Required crew routes and reachable controls, staging and recovery remain usable through declared mechanism
   states; zero mechanism collisions alone cannot establish operation or escape.
+- After clearance-driven reshaping, current silhouette/clay and protected-landmark identity review passes within
+  actual authority as well as functional checks; no old silhouette approval or provisional envelope supplies
+  visual acceptance.
 failure:
 - Rollback the mechanism candidate while retaining shell baseline and witnesses.
 - Required route/module envelope conflict with hull space returns affected G2/G3 shape and arrangement; preserve
@@ -40,6 +43,7 @@ checks:
 - ship-check.construction
 - ship-check.assembly-state-coverage
 - ship-check.crew-routes
+- ship-check.identity
 rules:
 - ship-rule.lifecycle
 - ship-rule.authority

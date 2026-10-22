@@ -103,7 +103,14 @@ statement: 'Invalidate evidence by dependency and changed hash, retaining indepe
   stale or withdrawn until regenerated and rechecked for exact new hashes. Preserve prior candidates as history
   and unchanged reusable module sources and unrelated valid evidence. Do not overwrite an accepted package
   or reuse its stale export as evidence for the new shape. This is a rework transition, not a cycle in prerequisite
-  dependencies.'
+  dependencies.
+
+
+  A clearance-driven shape edit invalidates dependent identity decisions and visual witnesses as well as geometric
+  checks, detail and exports. Bind the new source/evaluated candidate, side/top/front silhouette/clay renders
+  and camera/state set to the original brief/reference landmark IDs and last selected baseline where one exists.
+  Old views, a coverage count or an omitted required canopy cannot pass the new shape. Preserve history and
+  unrelated results; record current functional and visual outcomes separately before resuming dependent claims.'
 applies_to:
 - Invalidate only evidence that depends on the change
 verification:
@@ -112,6 +119,9 @@ verification:
 - A route/module containment failure returns to affected G2/G3 shape/arrangement; shrinking fixtures/products,
   silent intent relaxation and stale dependent export/detail cannot resolve it. Unchanged module packages remain
   valid.
+- 'Review counterexamples: headroom fix erases cockpit identity, broad generic-ring expansion claimed approved
+  without allocation, omitted canopy marked accepted, panels replace silhouette decision, or old views pass
+  new shape. Keep these manual visual findings separate from synthetic declaration tests.'
 limitations:
 - This is a reusable workflow definition, not a ship approval or evidence that a proposed tool exists.
 related: []

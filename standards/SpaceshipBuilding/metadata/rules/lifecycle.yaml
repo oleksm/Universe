@@ -54,7 +54,13 @@ statement: "Use design gates inside the existing delivery progression, with bloc
   \ collision, mass inputs, exports and release/integration evidence stale or withdrawn until regenerated and\
   \ rechecked for exact new hashes. Preserve prior candidates as history and unchanged reusable module sources\
   \ and unrelated valid evidence. Do not overwrite an accepted package or reuse its stale export as evidence\
-  \ for the new shape. This is a rework transition, not a cycle in prerequisite dependencies."
+  \ for the new shape. This is a rework transition, not a cycle in prerequisite dependencies.\n\nAfter clearance-driven\
+  \ hull reshaping, rerun ship-check.identity on the current candidate before dependent G3/G4/G6 acceptance.\
+  \ Functional clearance and visual identity are separate, jointly required outcomes. Use registered silhouette/clay\
+  \ views and original intent witnesses under actual owner/delegate authority; an envelope passing probes does\
+  \ not select an exterior. Lost or unresolved identity returns affected G2/G3 form/arrangement alternatives\
+  \ with applicable crew/module envelopes unchanged. Escalate genuinely incompatible constraints rather than\
+  \ shrinking products/fixtures, abandoning intent or decorating the failed primary form."
 applies_to:
 - Use the existing release state machine
 verification:
@@ -63,6 +69,9 @@ verification:
 - A route/module containment failure returns to affected G2/G3 shape/arrangement; shrinking fixtures/products,
   silent intent relaxation and stale dependent export/detail cannot resolve it. Unchanged module packages remain
   valid.
+- 'Review counterexamples: headroom fix erases cockpit identity, broad generic-ring expansion claimed approved
+  without allocation, omitted canopy marked accepted, panels replace silhouette decision, or old views pass
+  new shape. Keep these manual visual findings separate from synthetic declaration tests.'
 limitations:
 - This is a reusable workflow definition, not a ship approval or evidence that a proposed tool exists.
 related:
