@@ -1,7 +1,7 @@
 //! Streamed vertex-aligned land pyramid. Immutable tiles; only selection and morph weights change per frame.
 use super::*;
 use std::collections::{HashMap, HashSet};
-use std::sync::mpsc::{self, Receiver, SyncSender};
+use std::sync::mpsc::{self, Receiver};
 
 const PX: f64 = 0.0007;
 /// UNIVERSE_TERRAIN_CELL_PX=n: a tile is refined only while its children's cells stay at least n pixels across
@@ -442,12 +442,27 @@ fn build(source: &Source, id: usize, ex: f64, real: bool) -> Result<Built, Strin
     })
 }
 
-struct Request {
+/// Tiles built at once, each by a loader of its own.
+const LOADERS: usize = 4;
+/// Tiles wanted where the eye will be this far ahead (s), at its speed and heading, after those wanted now.
+const LOOKAHEAD_S: f64 = 2.0;
+/// Kept by where tiles are from the eye, not only when the budget is full: a tile not used for PURGE_UNUSED
+/// updates is let go once it is behind the eye (behind where it looks and where it heads) and past
+/// PURGE_BEHIND times the distance it refines at, or anywhere past PURGE_FAR times it.
+const PURGE_UNUSED: u64 = 60;
+const PURGE_BEHIND: f64 = 2.0;
+const PURGE_FAR: f64 = 6.0;
+
+/// The loaders' work: what to build next, best first (rewritten each update), and what they're building.
+struct Plan {
     generation: u64,
     ex: f64,
     real: bool,
-    ids: Vec<usize>,
+    queue: std::collections::VecDeque<usize>,
+    building: HashSet<usize>,
+    stop: bool,
 }
+type Shared = Arc<(Mutex<Plan>, std::sync::Condvar)>;
 struct ResultTile {
     generation: u64,
     id: usize,
@@ -462,9 +477,11 @@ pub struct Pyramid {
     pub mask: Vec<u8>,
     mask_level: usize,
     cache: HashMap<usize, Cached>,
-    pending: HashSet<usize>,
     failed: HashSet<usize>,
-    requests: SyncSender<Request>,
+    plan: Shared,
+    /// The eye's last place and when, and its velocity (m/s, smoothed): for what's ahead.
+    last_eye: Option<(DVec3, std::time::Instant)>,
+    velocity: DVec3,
     results: Receiver<ResultTile>,
     selection: Selection,
     split_history: HashSet<usize>,
@@ -488,6 +505,18 @@ pub struct PyramidStats {
     pub resident: usize,
     pub largest_tile: usize,
 }
+fn lock<T>(m: &Mutex<T>) -> std::sync::MutexGuard<'_, T> {
+    m.lock().unwrap_or_else(|e| e.into_inner())
+}
+
+impl Drop for Pyramid {
+    fn drop(&mut self) {
+        let (m, ready) = &*self.plan;
+        lock(m).stop = true;
+        ready.notify_all();
+    }
+}
+
 impl Pyramid {
     pub fn open(view: &Path, radius: f64) -> Result<Option<Self>, String> {
         let dir = if view.join("pyramid_deep/pyramid.json").exists() {
@@ -578,38 +607,35 @@ impl Pyramid {
         let root = source.index[&(source.m.top_level, 0, 0)];
         let root_tile = build(&source, root, 1.0, false)?;
         let source = Arc::new(source);
-        let worker_source = source.clone();
-        let (requests, inbox) = mpsc::sync_channel::<Request>(1);
-        let (outbox, results) = mpsc::sync_channel(8);
-        std::thread::Builder::new()
-            .name("planetlod pyramid".into())
-            .spawn(move || {
-                while let Ok(mut request) = inbox.recv() {
-                    let mut index = 0;
-                    loop {
-                        if let Ok(next) = inbox.try_recv() {
-                            request = next;
-                            index = 0;
+        let plan: Shared = Arc::new((Mutex::new(Plan { generation: 0, ex: 1.0, real: false, queue: Default::default(), building: HashSet::new(), stop: false }), std::sync::Condvar::new()));
+        let (outbox, results) = mpsc::channel::<ResultTile>();
+        for k in 0..LOADERS {
+            let (source, plan, outbox) = (source.clone(), plan.clone(), outbox.clone());
+            std::thread::Builder::new()
+                .name(format!("planetlod pyramid {k}"))
+                .spawn(move || loop {
+                    // (The best next tile of the latest plan; built with the plan let go.)
+                    let (id, generation, ex, real) = {
+                        let (m, ready) = &*plan;
+                        let mut p = m.lock().unwrap_or_else(|e| e.into_inner());
+                        loop {
+                            if p.stop {
+                                return;
+                            }
+                            if let Some(id) = p.queue.pop_front() {
+                                p.building.insert(id);
+                                break (id, p.generation, p.ex, p.real);
+                            }
+                            p = ready.wait(p).unwrap_or_else(|e| e.into_inner());
                         }
-                        let Some(&id) = request.ids.get(index) else {
-                            break;
-                        };
-                        index += 1;
-                        let result = build(&worker_source, id, request.ex, request.real);
-                        if outbox
-                            .send(ResultTile {
-                                generation: request.generation,
-                                id,
-                                result,
-                            })
-                            .is_err()
-                        {
-                            return;
-                        }
+                    };
+                    let result = build(&source, id, ex, real);
+                    if outbox.send(ResultTile { generation, id, result }).is_err() {
+                        return;
                     }
-                }
-            })
-            .map_err(|e| e.to_string())?;
+                })
+                .map_err(|e| e.to_string())?;
+        }
         log::info!(
             "planet LOD pyramid: branch {}, {} tiles, {} levels at {}; root ready",
             source.m.branch,
@@ -628,9 +654,10 @@ impl Pyramid {
                     last: 0,
                 },
             )]),
-            pending: HashSet::new(),
             failed: HashSet::new(),
-            requests,
+            plan,
+            last_eye: None,
+            velocity: DVec3::ZERO,
             results,
             selection: Selection::default(),
             split_history: HashSet::new(),
@@ -773,19 +800,47 @@ impl Pyramid {
         None
     }
     /// Keep recently used tiles until the byte budget needs their space. Selected work is pinned.
-    fn trim_cache(&mut self, protected: &HashSet<usize>, budget: usize) -> usize {
+    /// How readily tile `id` goes from the eye at `eye` looking along `look` and heading along `heading`
+    /// (unit or zero): its distance over the distance it refines at, doubled when it is behind both.
+    fn remoteness(&self, id: usize, eye: DVec3, look: DVec3, heading: DVec3, ex: f64) -> (f64, bool) {
+        let s = &self.source;
+        let far = s.distance(id, eye, ex) / (s.refine_error(s.m.tiles[id], ex) / PX).max(1.0);
+        let to = (s.bounds[id].0 - eye).normalize_or_zero();
+        let behind = to.dot(look) < 0.0 && to.dot(heading) <= 0.0;
+        (if behind { far * 2.0 } else { far }, behind)
+    }
+
+    fn trim_cache(&mut self, protected: &HashSet<usize>, budget: usize, eye: DVec3, look: DVec3, heading: DVec3, ex: f64) -> usize {
+        // By where tiles are, whatever the budget: unused a while and behind the eye past PURGE_BEHIND times
+        // where they refine, or anywhere past PURGE_FAR times it.
+        let tick = self.tick;
+        let gone: Vec<usize> = self
+            .cache
+            .iter()
+            .filter(|(id, c)| !protected.contains(id) && tick.saturating_sub(c.last) > PURGE_UNUSED)
+            .map(|(&id, _)| id)
+            .filter(|&id| {
+                let (r, behind) = self.remoteness(id, eye, look, heading, ex);
+                (behind && r > 2.0 * PURGE_BEHIND) || r > PURGE_FAR
+            })
+            .collect();
+        for id in gone {
+            let c = self.cache.remove(&id).unwrap();
+            self.releases.push(c.tile.mesh.id());
+        }
         let mut bytes: usize = self.cache.values().map(|c| c.tile.bytes()).sum();
         if bytes <= budget {
             return bytes;
         }
+        // Over budget: the most remote first (behind and far before ahead and near), then the longest unused.
         let mut evict: Vec<_> = self
             .cache
             .iter()
             .filter(|(id, _)| !protected.contains(id))
-            .map(|(&id, c)| (c.last, id))
+            .map(|(&id, c)| (-self.remoteness(id, eye, look, heading, ex).0, c.last, id))
             .collect();
-        evict.sort_unstable();
-        for (_, id) in evict {
+        evict.sort_unstable_by(|a, b| a.0.total_cmp(&b.0).then(a.1.cmp(&b.1)));
+        for (_, _, id) in evict {
             if bytes <= budget {
                 break;
             }
@@ -802,18 +857,24 @@ impl Pyramid {
         if key != self.key {
             self.key = key;
             self.generation += 1;
-            self.pending.clear();
+            lock(&self.plan.0).queue.clear();
             self.failed.clear();
             self.drawn.clear();
             for (_, c) in self.cache.drain() {
                 self.releases.push(c.tile.mesh.id());
             }
         }
-        while let Ok(result) = self.results.try_recv() {
+        let arrived: Vec<ResultTile> = self.results.try_iter().collect();
+        if !arrived.is_empty() {
+            let mut p = lock(&self.plan.0);
+            for r in &arrived {
+                p.building.remove(&r.id);
+            }
+        }
+        for result in arrived {
             if result.generation != self.generation {
                 continue;
             }
-            self.pending.remove(&result.id);
             match result.result {
                 Ok(tile) => {
                     if let Some(old) = self.cache.insert(
@@ -879,26 +940,58 @@ impl Pyramid {
         }
         // Keep the coarse cover warm even while the camera looks away from this pyramid.
         protected.insert(self.source.index[&(self.source.m.top_level, 0, 0)]);
-        let bytes = self.trim_cache(&protected, CACHE_BYTES);
-        // Queue one missing working set at a time; generation changes supersede stale work.
-        let missing: Vec<_> = want
-            .into_iter()
-            .filter(|i| !self.cache.contains_key(i) && !self.failed.contains(i))
-            .collect();
-        if !missing.is_empty() && self.pending.is_empty() {
-            if self
-                .requests
-                .try_send(Request {
-                    generation: self.generation,
-                    ex,
-                    real,
-                    ids: missing.clone(),
-                })
-                .is_ok()
-            {
-                self.pending = missing.into_iter().collect();
+        // Where the eye will be LOOKAHEAD_S on (its speed and heading): what it would select there, after
+        // what's wanted now (not protected: still let go under pressure).
+        let now = std::time::Instant::now();
+        if let Some((at, then)) = self.last_eye {
+            let dt = (now - then).as_secs_f64();
+            if dt > 0.0 {
+                let k = (dt / 0.25).min(1.0);
+                self.velocity = self.velocity * (1.0 - k) + (cam.position - at) / dt * k;
             }
         }
+        self.last_eye = Some((cam.position, now));
+        let ahead: Vec<usize> = if self.velocity.length() * LOOKAHEAD_S > 0.05 * (cam.position.length() - self.source.m.projection.radius_m).abs().max(100.0) {
+            let mut seen = Camera { position: cam.position + self.velocity * LOOKAHEAD_S, ..*cam };
+            // (Never under the ground the camera is over.)
+            seen.position = seen.position.normalize() * seen.position.length().max(cam.position.length());
+            let mut history = self.split_history.clone();
+            self.source.select(&seen, aspect, ex, &mut history).visited
+        } else {
+            Vec::new()
+        };
+        let look = cam.forward().as_dvec3();
+        let heading = self.velocity.normalize_or_zero();
+        let bytes = self.trim_cache(&protected, CACHE_BYTES, cam.position, look, heading, ex);
+        // The loaders' plan, rewritten each update: missing tiles underfoot first, then in view coarse before
+        // fine and each level by where the eye looks and heads (nearest, toward the middle of the view and
+        // the way it moves, first), then those ahead; what's no longer wanted is never started.
+        let order = |id: usize| {
+            let to = (self.source.bounds[id].0 - cam.position).normalize_or_zero();
+            let toward = 0.5 + 0.5 * to.dot(look).max(to.dot(heading));
+            self.source.distance(id, cam.position, ex) / toward.max(0.1)
+        };
+        let first = want.first().copied().filter(|&i| Some(i) == underfoot);
+        let mut rest: Vec<usize> = want.into_iter().filter(|&i| Some(i) != first).collect();
+        rest.sort_by(|&a, &b| self.source.m.tiles[b].k.cmp(&self.source.m.tiles[a].k).then(order(a).total_cmp(&order(b))));
+        let mut queued = HashSet::new();
+        let missing: Vec<usize> = first
+            .into_iter()
+            .chain(rest)
+            .chain(ahead)
+            .filter(|i| !self.cache.contains_key(i) && !self.failed.contains(i) && queued.insert(*i))
+            .collect();
+        let pending = {
+            let (m, ready) = &*self.plan;
+            let mut p = lock(m);
+            (p.generation, p.ex, p.real) = (self.generation, ex, real);
+            let building = p.building.clone();
+            p.queue = missing.into_iter().filter(|i| !building.contains(i)).collect();
+            if !p.queue.is_empty() {
+                ready.notify_all();
+            }
+            p.queue.len() + p.building.len()
+        };
         self.stats.resident = self
             .selection
             .visited
@@ -918,7 +1011,7 @@ impl Pyramid {
         self.stats.selected = self.selection.leaves.len();
         self.stats.cached = self.cache.len();
         self.stats.bytes = bytes;
-        self.stats.pending = self.pending.len();
+        self.stats.pending = pending;
         self.stats.worst = self
             .selection
             .leaves
@@ -1477,39 +1570,36 @@ mod tests {
         }
     }
     #[test]
-    fn pyramid_lru_keeps_cold_tiles_until_budget_pressure() {
+    fn pyramid_cache_keeps_tiles_by_place_not_only_by_budget() {
         let f = fixture();
         let mut p = Pyramid::open(&f.0, 1000.).unwrap().unwrap();
         let root = p.source.index[&(1, 0, 0)];
         let a = p.source.index[&(0, 0, 0)];
         let b = p.source.index[&(0, 1, 1)];
         for (id, last) in [(a, 10), (b, 20)] {
-            p.cache.insert(
-                id,
-                Cached {
-                    tile: build(&p.source, id, 1., false).unwrap(),
-                    last,
-                },
-            );
+            p.cache.insert(id, Cached { tile: build(&p.source, id, 1., false).unwrap(), last });
         }
         p.tick = 10000;
         let full: usize = p.cache.values().map(|c| c.tile.bytes()).sum();
         let protected = HashSet::from([root]);
-        assert_eq!(p.trim_cache(&protected, full), full);
-        assert_eq!(
-            p.cache.len(),
-            3,
-            "age alone must not expire reusable geometry"
-        );
+        let (ca, cb) = (p.source.bounds[a].0, p.source.bounds[b].0);
+        let mid = (ca + cb) * 0.5;
+        let eye = mid.normalize() * (mid.length() + 1.0);
+        // Near and in view: cold tiles stay (age alone expires nothing).
+        assert_eq!(p.trim_cache(&protected, full, eye, (mid - eye).normalize(), DVec3::ZERO, 1.), full);
+        assert_eq!(p.cache.len(), 3);
         assert!(p.releases.is_empty());
-        // A revisit refreshes recency, so the other tile is evicted first.
-        p.cache.get_mut(&a).unwrap().last = p.tick;
+        // Under pressure the one behind where the eye looks goes first, though it was used last.
+        p.cache.get_mut(&b).unwrap().last = p.tick;
         let b_bytes = p.cache[&b].tile.bytes();
         let b_mesh = p.cache[&b].tile.mesh.id();
-        assert_eq!(p.trim_cache(&protected, full - b_bytes), full - b_bytes);
-        assert!(p.cache.contains_key(&a) && p.cache.contains_key(&root));
-        assert!(!p.cache.contains_key(&b));
+        assert_eq!(p.trim_cache(&protected, full - b_bytes, eye, (ca - eye).normalize(), DVec3::ZERO, 1.), full - b_bytes);
+        assert!(p.cache.contains_key(&a) && p.cache.contains_key(&root) && !p.cache.contains_key(&b));
         assert_eq!(p.releases, vec![b_mesh]);
+        // Left far behind: gone whatever the budget; the root stays.
+        let far = mid.normalize() * 1e9;
+        p.trim_cache(&protected, usize::MAX, far, -mid.normalize(), DVec3::ZERO, 1.);
+        assert!(!p.cache.contains_key(&a) && p.cache.contains_key(&root));
     }
     #[test]
     fn pyramid_looking_away_preserves_budgeted_cache_and_root() {
@@ -1520,13 +1610,13 @@ mod tests {
         let tile = build(&p.source, id, 1., false).unwrap();
         p.cache.insert(id, Cached { tile, last: 0 });
         p.tick = 10000;
+        // (Turning the head close by drops nothing; tiles far behind do go: see the test above.)
         let cam = Camera {
-            position: DVec3::new(0., 0., 1e6),
+            position: DVec3::new(0., 0., 1100.),
             orientation: Quat::from_rotation_y(std::f32::consts::PI),
             ..Default::default()
         };
         p.update(&cam, 1., 1., false);
-        assert!(p.selection.leaves.is_empty());
         assert!(p.cache.contains_key(&id) && p.cache.contains_key(&root));
         assert!(p.releases.is_empty());
         assert!(p.stats.bytes <= CACHE_BYTES);

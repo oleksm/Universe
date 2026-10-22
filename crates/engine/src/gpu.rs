@@ -2,6 +2,9 @@ use std::sync::Arc;
 
 use winit::window::Window;
 
+/// The most the mesh pool's one buffer may hold (bytes, whole words).
+const POOL_MAX_BYTES: u64 = (1 << 32) - 4;
+
 /// Owns the wgpu device and the window surface.
 pub struct Gpu {
     pub surface: wgpu::Surface<'static>,
@@ -45,9 +48,11 @@ impl Gpu {
                 max_inter_stage_shader_variables: adapter.limits().max_inter_stage_shader_variables.min(32),
                 // (A world's maps, tables and clouds beside the shadows and globes: past 16.)
                 max_sampled_textures_per_shader_stage: adapter.limits().max_sampled_textures_per_shader_stage.min(32),
-                // (The mesh pool grows past the default 128 MB binding where the GPU lets it: to 1 GB.)
-                max_storage_buffer_binding_size: adapter.limits().max_storage_buffer_binding_size.min(1 << 30),
-                max_buffer_size: adapter.limits().max_buffer_size.min(1 << 30),
+                // (The mesh pool grows past the default 128 MB binding where the GPU lets it: to just under
+                // 4 GB, what its 32-bit word addresses and one binding reach; a land pyramid's cover at low
+                // altitude needs more than 1 GB.)
+                max_storage_buffer_binding_size: adapter.limits().max_storage_buffer_binding_size.min(POOL_MAX_BYTES),
+                max_buffer_size: adapter.limits().max_buffer_size.min(POOL_MAX_BYTES),
                 ..wgpu::Limits::default()
             },
             experimental_features: wgpu::ExperimentalFeatures::disabled(),
