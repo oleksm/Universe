@@ -81,7 +81,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
         }
     }
     universe_prof::time("draw/scene/collision path", || collision_path(frame, app));
-    if !(app.showcase.is_some() && std::env::var_os("UNIVERSE_MODEL_CLEAN").is_some()) {
+    if !(app.showcase.is_some() && crate::devenv::var_os("UNIVERSE_MODEL_CLEAN").is_some()) {
         universe_prof::time("draw/scene/ship", || ship(frame, app));
     }
     crate::onfoot::ramp(frame, app);
@@ -90,8 +90,8 @@ pub fn draw(frame: &mut Frame, app: &App) {
     // (Dev: a model shown ahead of the eye, slowly turning: `UNIVERSE_MODEL`.)
     if let Some(m) = &app.showcase {
         let ahead = frame.camera.forward().as_dvec3();
-        let distance = std::env::var("UNIVERSE_MODEL_AT").ok().and_then(|v| v.parse().ok()).unwrap_or(60.0);
-        let turn = std::env::var("UNIVERSE_MODEL_TURN").ok().and_then(|v| v.parse::<f32>().ok()).unwrap_or(app.now() as f32 * 0.15);
+        let distance = crate::devenv::var("UNIVERSE_MODEL_AT").ok().and_then(|v| v.parse().ok()).unwrap_or(60.0);
+        let turn = crate::devenv::var("UNIVERSE_MODEL_TURN").ok().and_then(|v| v.parse::<f32>().ok()).unwrap_or(app.now() as f32 * 0.15);
         let rotation = frame.camera.orientation * universe_engine::glam::Quat::from_rotation_y(turn) * universe_engine::glam::Quat::from_rotation_x(0.25);
         frame.model_pbr(m, &Transform { position: frame.camera.position + ahead * distance, rotation, scale: 1.0 });
     }

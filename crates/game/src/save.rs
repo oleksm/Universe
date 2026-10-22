@@ -21,10 +21,10 @@ struct GameSave {
 /// Where the game keeps its files: `XDG_DATA_HOME`, else Windows' `APPDATA`,
 /// else `~/.local/share`, else the folder it was started from.
 pub fn data_dir() -> PathBuf {
-    std::env::var_os("XDG_DATA_HOME")
+    crate::devenv::var_os("XDG_DATA_HOME")
         .map(PathBuf::from)
-        .or_else(|| std::env::var_os("APPDATA").map(PathBuf::from))
-        .or_else(|| std::env::var_os("HOME").map(|h| PathBuf::from(h).join(".local/share")))
+        .or_else(|| crate::devenv::var_os("APPDATA").map(PathBuf::from))
+        .or_else(|| crate::devenv::var_os("HOME").map(|h| PathBuf::from(h).join(".local/share")))
         .unwrap_or_else(|| PathBuf::from("."))
 }
 

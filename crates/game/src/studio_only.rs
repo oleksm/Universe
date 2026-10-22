@@ -38,29 +38,29 @@ impl StudioOnly {
         // Saved decks must be present before a startup WALK or test drive is built.
         let mut deckplans = Vec::new();
         interior.sync_decks(&mut deckplans, 0.0);
-        if let Ok(t) = std::env::var("UNIVERSE_TOOL") {
+        if let Ok(t) = crate::devenv::var("UNIVERSE_TOOL") {
             interior.use_tool(&t);
         }
-        if let Ok(at) = std::env::var("UNIVERSE_STUDIO_WALK") {
+        if let Ok(at) = crate::devenv::var("UNIVERSE_STUDIO_WALK") {
             let values: Vec<f64> = at.split(',').filter_map(|v|v.parse().ok()).collect();
             let at = <[f64;4]>::try_from(values).ok();
             interior.stand_test(at);
         }
-        if let Ok(how) = std::env::var("UNIVERSE_BALANCE") {
+        if let Ok(how) = crate::devenv::var("UNIVERSE_BALANCE") {
             interior.balance_room(how == "trim");
         }
-        if std::env::var_os("UNIVERSE_DRIVE").is_some() {
+        if crate::devenv::var_os("UNIVERSE_DRIVE").is_some() {
             interior.test_drive(crate::devenv::num("UNIVERSE_DRIVE"));
         }
-        if let Ok(other) = std::env::var("UNIVERSE_COMPARE") {
+        if let Ok(other) = crate::devenv::var("UNIVERSE_COMPARE") {
             interior.compare_with(&other);
         }
         if let Some(k) = crate::devenv::num("UNIVERSE_VIEW").map(|n| n as u8) {
             interior.flat_view(k);
         }
-        if std::env::var_os("UNIVERSE_SHIP_CODE").is_some(){interior.open_code();}
+        if crate::devenv::var_os("UNIVERSE_SHIP_CODE").is_some(){interior.open_code();}
         let issue = crate::devenv::num("UNIVERSE_ISSUE").map(|n| n as usize);
-        StudioOnly { interior, deckplans, issue, #[cfg(feature = "dev")] diagnostics: Diagnostics::default(), debug: std::env::var("UNIVERSE_DEBUG").ok().and_then(|v|v.parse().ok()).unwrap_or(0) }
+        StudioOnly { interior, deckplans, issue, #[cfg(feature = "dev")] diagnostics: Diagnostics::default(), debug: crate::devenv::var("UNIVERSE_DEBUG").ok().and_then(|v|v.parse().ok()).unwrap_or(0) }
     }
 }
 
@@ -171,7 +171,7 @@ struct Diagnostics {
 #[cfg(feature = "dev")]
 impl Default for Diagnostics {
     fn default() -> Self {
-        Self { on: std::env::var("UNIVERSE_OBSERVING").as_deref() == Ok("1"), tried: false, port: None, recording: None }
+        Self { on: crate::devenv::observing(), tried: false, port: None, recording: None }
     }
 }
 #[cfg(feature = "dev")]

@@ -374,7 +374,7 @@ impl Trace {
     /// Bound to the source the world actually holds: the SHA256 of the bytes it was read from
     /// (none: no trace).
     pub fn from_env(radius: f64, surface: &universe_sim::world::worlds::pgs::Surface) -> Option<Self> {
-        let path: std::path::PathBuf = std::env::var_os("UNIVERSE_PGS1_READINESS_TRACE")?.into();
+        let path: std::path::PathBuf = crate::devenv::var_os("UNIVERSE_PGS1_READINESS_TRACE")?.into();
         let Some(sha) = crate::pgs_preview::loaded_hash(surface) else {
             log::warn!("readiness trace: the world's source is not the one this process loaded and hashed; no trace");
             return None;

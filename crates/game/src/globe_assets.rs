@@ -53,7 +53,7 @@ fn current(epoch: u64) -> Result<(), String> {
 fn prepare(system: Arc<StarSystem>, i: usize, epoch: u64) -> Result<Loaded<Globe>, String> {
     current(epoch)?;
     // Development fixture: delay preparation without sleeping the requesting/UI thread.
-    if let Some(delay) = std::env::var("UNIVERSE_GLOBE_LOAD_DELAY_MS").ok().and_then(|s| s.parse::<u64>().ok()) {
+    if let Some(delay) = crate::devenv::var("UNIVERSE_GLOBE_LOAD_DELAY_MS").ok().and_then(|s| s.parse::<u64>().ok()) {
         std::thread::sleep(Duration::from_millis(delay.min(60_000)));
     }
     current(epoch)?;

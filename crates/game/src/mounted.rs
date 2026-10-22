@@ -28,7 +28,7 @@ struct Overlay {
 static OVERLAY: OnceLock<Result<Option<Overlay>, String>> = OnceLock::new();
 pub fn prepare() {
     OVERLAY.get_or_init(|| {
-        let Some(file) = std::env::var_os("UNIVERSE_EQUIPMENT_MOUNTS") else { return Ok(None); };
+        let Some(file) = crate::devenv::var_os("UNIVERSE_EQUIPMENT_MOUNTS") else { return Ok(None); };
         use std::io::Read;
         // Development metadata ceiling, not a hull/equipment specification.
         let mut bytes = Vec::new();

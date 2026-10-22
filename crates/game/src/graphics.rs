@@ -47,7 +47,7 @@ fn path() -> std::path::PathBuf {
 /// As last set (all on, the first time), then `UNIVERSE_GRAPHICS`'s changes.
 pub fn load() -> Graphics {
     let mut g: Graphics = std::fs::read_to_string(path()).ok().and_then(|s| serde_json::from_str(&s).ok()).unwrap_or_default();
-    if let Ok(list) = std::env::var("UNIVERSE_GRAPHICS") {
+    if let Ok(list) = crate::devenv::var("UNIVERSE_GRAPHICS") {
         for item in list.split(',').map(str::trim).filter(|s| !s.is_empty()) {
             let (on, name) = match item.strip_prefix('-') {
                 Some(n) => (false, n),

@@ -12,12 +12,12 @@ use crate::{App, Mode};
 /// and charts receive the same source before either is generated.
 pub fn world(seed: u64) -> Result<universe_sim::world::World, String> {
     use universe_sim::world::{World, worlds::{pgs::Surface, sha256}};
-    let Some(folder) = std::env::var_os("UNIVERSE_PGS1") else { return Ok(World::new(seed)); };
-    let key = std::env::var("UNIVERSE_BODY").map_err(|_| "UNIVERSE_PGS1 requires UNIVERSE_BODY")?;
-    if !matches!(std::env::var("UNIVERSE_SCENARIO").as_deref(), Ok("planet" | "lowflight" | "groundwalk")) {
+    let Some(folder) = crate::devenv::var_os("UNIVERSE_PGS1") else { return Ok(World::new(seed)); };
+    let key = crate::devenv::var("UNIVERSE_BODY").map_err(|_| "UNIVERSE_PGS1 requires UNIVERSE_BODY")?;
+    if !matches!(crate::devenv::var("UNIVERSE_SCENARIO").as_deref(), Ok("planet" | "lowflight" | "groundwalk")) {
         return Err("PGS1 preview requires UNIVERSE_SCENARIO=planet, lowflight or groundwalk".into());
     }
-    if std::env::var_os("UNIVERSE_RECORD").is_some() { return Err("PGS1 preview sources are not supported by seed-only replay yet".into()); }
+    if crate::devenv::var_os("UNIVERSE_RECORD").is_some() { return Err("PGS1 preview sources are not supported by seed-only replay yet".into()); }
     let folder = std::path::PathBuf::from(folder);
     // (A revision-4 package, `planet.json`: root and regions mapped, regions read on first touch;
     // its identity is the manifest's SHA256. Else one surface.pgs, read whole.)
@@ -56,7 +56,7 @@ pub fn apply(app: &mut App, name: &str) {
         app.engine.universe().start_in_flight();
     }
     // (UNIVERSE_HOURS: the scenario that many hours on, for the sun somewhere else.)
-    if let Some(h) = std::env::var("UNIVERSE_HOURS").ok().and_then(|h| h.parse::<f64>().ok()) {
+    if let Some(h) = crate::devenv::var("UNIVERSE_HOURS").ok().and_then(|h| h.parse::<f64>().ok()) {
         app.engine.universe().world.time += h * 3600.0;
     }
     let home = app.engine.universe().world.home_system;
@@ -67,7 +67,7 @@ pub fn apply(app: &mut App, name: &str) {
     let outer = sys.bodies.iter().filter_map(|b| b.rail.orbit.as_ref().filter(|_| b.rail.parent == Some(0) && b.kind.is_planet())).map(|o| o.apoapsis()).fold(0.0, f64::max);
     let station = sys.station().unwrap_or(0);
     // (UNIVERSE_BODY: another body, by its key.)
-    let planet = std::env::var("UNIVERSE_BODY").ok().and_then(|k| sys.bodies.iter().position(|b| b.key == k)).unwrap_or(sys.bodies[station].rail.parent.unwrap_or(0));
+    let planet = crate::devenv::var("UNIVERSE_BODY").ok().and_then(|k| sys.bodies.iter().position(|b| b.key == k)).unwrap_or(sys.bodies[station].rail.parent.unwrap_or(0));
     let c = Ctx { home, sys, t, positions, outer, station, planet };
 
     if name.starts_with("look_") {
@@ -87,14 +87,14 @@ pub fn apply(app: &mut App, name: &str) {
     }
     let u = app.engine.universe();
     log::info!("scenario {name}: pending events {:?}, clearance {:?}", u.events, u.avionics().clearance);
-    if std::env::var_os("UNIVERSE_ATC_JOURNAL").is_some() {
+    if crate::devenv::var_os("UNIVERSE_ATC_JOURNAL").is_some() {
         for c in u.services.atc.journal.iter().filter(|c| c.ship == universe_sim::PLAYER) {
             log::info!("atc: {c:?}");
         }
     }
 
     // Optional camera override: UNIVERSE_CAM=cockpit | map (observer watching the ship from afar).
-    match std::env::var("UNIVERSE_CAM").as_deref() {
+    match crate::devenv::var("UNIVERSE_CAM").as_deref() {
         Ok("cockpit") => app.chase_cam = false,
         Ok("map") => {
             app.mode = Mode::Observer;
@@ -332,10 +332,10 @@ fn s_settlement(app: &mut App, _name: &str, c: &Ctx) {
     let sys = &c.sys;
     // Our ship on a pad at a port with ground recorded (UNIVERSE_PORT, else Port
     // Trethi), the camera over it (UNIVERSE_DIST m off, UNIVERSE_YAW, UNIVERSE_PITCH).
-    let name = std::env::var("UNIVERSE_PORT").unwrap_or_else(|_| "Port Trethi".into());
+    let name = crate::devenv::var("UNIVERSE_PORT").unwrap_or_else(|_| "Port Trethi".into());
     let Some(port) = sys.spaceports.iter().position(|p| p.name.eq_ignore_ascii_case(&name)) else { return };
     // (Land done first as in `zoning`: UNIVERSE_LAND, UNIVERSE_AFTER.)
-    if std::env::var_os("UNIVERSE_LAND").is_some() {
+    if crate::devenv::var_os("UNIVERSE_LAND").is_some() {
         apply(app, "zoning");
         app.panels.economy_panel = None;
     }
@@ -361,7 +361,7 @@ fn s_settlement(app: &mut App, _name: &str, c: &Ctx) {
     app.observer.distance = env("UNIVERSE_DIST", 2500.0);
     app.observer.yaw = env("UNIVERSE_YAW", 0.6);
     app.observer.pitch = env("UNIVERSE_PITCH", 0.45);
-    app.observer.studio = std::env::var_os("UNIVERSE_STUDIO").is_some();
+    app.observer.studio = crate::devenv::var_os("UNIVERSE_STUDIO").is_some();
 }
 
 fn s_system(app: &mut App, _name: &str, c: &Ctx) {
@@ -380,8 +380,8 @@ fn s_planet(app: &mut App, _name: &str, c: &Ctx) {
     let home = c.home;
     let sys = &c.sys;
     let planet = c.planet;
-    observe(app, home, planet, sys.bodies[planet].rail.radius * std::env::var("UNIVERSE_DIST").ok().and_then(|d| d.parse().ok()).unwrap_or(6.0), 0.3);
-    if let Some(y) = std::env::var("UNIVERSE_YAW").ok().and_then(|d| d.parse().ok()) {
+    observe(app, home, planet, sys.bodies[planet].rail.radius * crate::devenv::var("UNIVERSE_DIST").ok().and_then(|d| d.parse().ok()).unwrap_or(6.0), 0.3);
+    if let Some(y) = crate::devenv::var("UNIVERSE_YAW").ok().and_then(|d| d.parse().ok()) {
         app.observer.yaw = y;
     }
 }
@@ -443,7 +443,7 @@ fn s_standards(app: &mut App, _name: &str, _c: &Ctx) {
     // Docked, the standards registry open on UNIVERSE_STANDARD (a key; the first otherwise).
     apply(app, "docked");
     let mut view = crate::standards::StandardsView::new();
-    view.focus(&std::env::var("UNIVERSE_STANDARD").unwrap_or_else(|_| "SFO/3.1/001".into()));
+    view.focus(&crate::devenv::var("UNIVERSE_STANDARD").unwrap_or_else(|_| "SFO/3.1/001".into()));
     app.panels.standards = Some(view);
 }
 
@@ -598,7 +598,7 @@ fn s_galaxymap(app: &mut App, name: &str, _c: &Ctx) {
     }
     let mut map = crate::galaxymap::GalaxyMap::open(app, universe_engine::glam::Vec2::new(960.0, 540.0));
     // (UNIVERSE_ZOOM: closer by that much, or farther under 1.)
-    if let Some(k) = std::env::var("UNIVERSE_ZOOM").ok().and_then(|z| z.parse().ok()) {
+    if let Some(k) = crate::devenv::var("UNIVERSE_ZOOM").ok().and_then(|z| z.parse().ok()) {
         map.zoom(k);
     } else if name == "galaxyzoom" {
         map.zoom(4.0);
@@ -619,7 +619,7 @@ fn s_zoning(app: &mut App, _name: &str, c: &Ctx) {
     let mut panel: crate::economy::EconomyPanel = Default::default();
     let trethi = app.v.economy.iter().position(|p| matches!(p.facility, universe_sim::world::Facility::Spaceport(i) if sys.spaceports[i].name == "Port Trethi"));
     // (UNIVERSE_LAND: what's done first, as the player: "buy4", "claim:w,s,e,n", "build4:Trethi Power Station", comma... separated by ';'.)
-    if let (Some(port), Ok(ops)) = (sys.spaceports.iter().position(|p| p.name == "Port Trethi"), std::env::var("UNIVERSE_LAND")) {
+    if let (Some(port), Ok(ops)) = (sys.spaceports.iter().position(|p| p.name == "Port Trethi"), crate::devenv::var("UNIVERSE_LAND")) {
         let u = app.engine.universe();
         for op in ops.split(';') {
             let r = if let Some(n) = op.strip_prefix("buy") {
@@ -634,7 +634,7 @@ fn s_zoning(app: &mut App, _name: &str, c: &Ctx) {
             };
             log::info!("land {op}: {r:?}");
         }
-        if let Ok(s) = std::env::var("UNIVERSE_AFTER") {
+        if let Ok(s) = crate::devenv::var("UNIVERSE_AFTER") {
             let until = app.engine.universe().world.time + s.parse::<f64>().unwrap_or(0.0);
             while app.engine.universe().world.time < until {
                 app.engine.universe().step_world(1.0, 1.0, &Controls::default());
@@ -646,7 +646,7 @@ fn s_zoning(app: &mut App, _name: &str, c: &Ctx) {
     if let Some(k) = trethi {
         panel.selected = k;
         panel.zoning = crate::zoning::Zoning::open(app, &app.v.economy[k]);
-        if let (Some(z), Ok(pick)) = (panel.zoning.as_mut(), std::env::var("UNIVERSE_PICK")) {
+        if let (Some(z), Ok(pick)) = (panel.zoning.as_mut(), crate::devenv::var("UNIVERSE_PICK")) {
             z.pick(&pick);
         }
     }
@@ -667,7 +667,7 @@ fn s_economy(app: &mut App, name: &str, _c: &Ctx) {
     // From the registry's day 0, the economy run (alone: no ships flown) for
     // UNIVERSE_DAYS days (22: an MC-07 off Trethi Yard's dock), its companies seeing
     // to their works each step.
-    let days: f64 = std::env::var("UNIVERSE_DAYS").ok().and_then(|d| d.parse().ok()).unwrap_or(22.0);
+    let days: f64 = crate::devenv::var("UNIVERSE_DAYS").ok().and_then(|d| d.parse().ok()).unwrap_or(22.0);
     let u = app.engine.universe();
     let step = universe_sim::services::economy::step();
     let end = u.world.time + days * 86_400.0;
@@ -679,7 +679,7 @@ fn s_economy(app: &mut App, name: &str, _c: &Ctx) {
     }
     app.engine.refresh();
     app.v = app.engine.view();
-    let at = app.v.economy.iter().position(|p| p.name == std::env::var("UNIVERSE_PLACE").as_deref().unwrap_or("Port Trethi")).unwrap_or(0);
+    let at = app.v.economy.iter().position(|p| p.name == crate::devenv::var("UNIVERSE_PLACE").as_deref().unwrap_or("Port Trethi")).unwrap_or(0);
     let site = app.v.economy.get(at).map(|p| p.site);
     let mut panel: crate::economy::EconomyPanel = Default::default();
     panel.selected = at;
@@ -737,7 +737,7 @@ fn s_landing(app: &mut App, name: &str, c: &Ctx) {
         for _ in 0..60 * 60 * 30 {
             app.engine.universe().step_world(1.0 / 60.0, 20.0, &Controls::default());
             let low = matches!(app.engine.universe().approach(), Some(universe_sim::Approach::Land { ref status, .. })
-                if status.phase == Phase::Descent && status.altitude < std::env::var("UNIVERSE_ALT").ok().and_then(|a| a.parse().ok()).unwrap_or(1500.0));
+                if status.phase == Phase::Descent && status.altitude < crate::devenv::var("UNIVERSE_ALT").ok().and_then(|a| a.parse().ok()).unwrap_or(1500.0));
             if (name == "autoland" && low) || !app.engine.universe().vessels[universe_sim::PLAYER].ship.is_flying() {
                 break;
             }
@@ -821,9 +821,9 @@ fn s_worlds(app: &mut App, _name: &str, _c: &Ctx) {
     // The planet viewer over the game, gone to UNIVERSE_WORLD (a world id: TRD1 Heath by default),
     // in UNIVERSE_LOOK (colour, geology, energy); UNIVERSE_HISTORY_FRAME: its history's frame n,
     // counted from 0, in place of today.
-    let want = std::env::var("UNIVERSE_WORLD").unwrap_or_else(|_| "TRD1".into());
+    let want = crate::devenv::var("UNIVERSE_WORLD").unwrap_or_else(|_| "TRD1".into());
     let mut planet = crate::planet_app::PlanetApp::with_home(app.charts.system(app.v.ship_system), Some(&want)).unwrap_or_else(|e| panic!("worlds: {e}"));
-    planet.set_look(match std::env::var("UNIVERSE_LOOK").as_deref() {
+    planet.set_look(match crate::devenv::var("UNIVERSE_LOOK").as_deref() {
         Ok("geology") => crate::planet_studio::Look::Geology,
         Ok("energy") => crate::planet_studio::Look::Energy,
         _ => crate::planet_studio::Look::Colour,
@@ -1011,7 +1011,7 @@ fn s_gate(app: &mut App, name: &str, c: &Ctx) {
             let stop = match name {
                 "gateauto" => running,
                 // (So far into the tube: UNIVERSE_SINCE s, 20 by default.)
-                "transit" => matches!(app.engine.universe().vessels[universe_sim::PLAYER].ship.state, ShipState::Transit { remaining, duration, .. } if duration - remaining > std::env::var("UNIVERSE_SINCE").ok().and_then(|v| v.parse().ok()).unwrap_or(20.0)),
+                "transit" => matches!(app.engine.universe().vessels[universe_sim::PLAYER].ship.state, ShipState::Transit { remaining, duration, .. } if duration - remaining > crate::devenv::var("UNIVERSE_SINCE").ok().and_then(|v| v.parse().ok()).unwrap_or(20.0)),
                 _ => app.engine.universe().vessels[universe_sim::PLAYER].system != home && app.engine.universe().vessels[universe_sim::PLAYER].ship.is_flying(),
             };
             if stop {
@@ -1087,14 +1087,14 @@ fn s_gateflash(app: &mut App, _name: &str, c: &Ctx) {
     u.vessels[universe_sim::PLAYER].ship.velocity = f.velocity;
     u.vessels[universe_sim::PLAYER].ship.orientation = universe_sim::ship::facing(f.center - u.vessels[universe_sim::PLAYER].ship.position, f.rotation * DVec3::Z);
     // (UNIVERSE_SIDE: side on instead, 25 km off its axis, looking at the way out of it.)
-    if std::env::var("UNIVERSE_SIDE").is_ok() {
+    if crate::devenv::var("UNIVERSE_SIDE").is_ok() {
         let look = f.center + f.axis() * 7_000.0;
         u.vessels[universe_sim::PLAYER].ship.position = look + f.rotation * DVec3::X * 25_000.0;
         u.vessels[universe_sim::PLAYER].ship.orientation = universe_sim::ship::facing(look - u.vessels[universe_sim::PLAYER].ship.position, f.rotation * DVec3::Z);
     }
     const TRANSIT_TIME: f64 = 10.0;
     // (How long since the first went in: UNIVERSE_SINCE s, 0.4 by default.)
-    let since = std::env::var("UNIVERSE_SINCE").ok().and_then(|v| v.parse().ok()).unwrap_or(0.4);
+    let since = crate::devenv::var("UNIVERSE_SINCE").ok().and_then(|v| v.parse().ok()).unwrap_or(0.4);
     for (k, (from, to, remaining, at)) in [(home, dest, TRANSIT_TIME - since, DVec3::new(400.0, 0.0, 250.0)), (dest, home, 0.5, DVec3::new(-500.0, 0.0, -300.0))].into_iter().enumerate() {
         let c = &mut u.vessels[universe_sim::craft_id(k)];
         c.system = from;
@@ -1174,10 +1174,10 @@ fn s_alarms(app: &mut App, _name: &str, _c: &Ctx) {
 }
 
 fn s_showship(app: &mut App, _name: &str, _c: &Ctx) {
-    app.observer.studio = std::env::var_os("UNIVERSE_STUDIO").is_some();
+    app.observer.studio = crate::devenv::var_os("UNIVERSE_STUDIO").is_some();
     // Our ship as the hull UNIVERSE_HULL names (default the hauler),
     // in sunlight by the home station, seen from the side and above.
-    let key = std::env::var("UNIVERSE_HULL").unwrap_or_else(|_| "hull.hauler".into());
+    let key = crate::devenv::var("UNIVERSE_HULL").unwrap_or_else(|_| "hull.hauler".into());
     let u = app.engine.universe();
     u.start_in_flight();
     if let Some(h) = universe_sim::world::content::content().handle(&key) {
@@ -1185,7 +1185,7 @@ fn s_showship(app: &mut App, _name: &str, _c: &Ctx) {
         u.vessels[universe_sim::PLAYER].ship.fit = None;
         u.vessels[universe_sim::PLAYER].ship.refresh();
     }
-    if let Some(slot) = std::env::var("UNIVERSE_INSPECT_SLOT").ok().filter(|s| !s.is_empty()) {
+    if let Some(slot) = crate::devenv::var("UNIVERSE_INSPECT_SLOT").ok().filter(|s| !s.is_empty()) {
         let ship=&u.vessels[universe_sim::PLAYER].ship;
         if let Some(at)=crate::mounted::for_ship(ship).slot_origin(&slot) {
             app.observer.inspection_offset=at-ship.spec().shape().made_centre;
@@ -1193,11 +1193,11 @@ fn s_showship(app: &mut App, _name: &str, _c: &Ctx) {
     }
     app.mode = Mode::Observer;
     app.observer.focus = Focus::Ship;
-    app.observer.distance = std::env::var("UNIVERSE_DIST").ok().and_then(|d| d.parse().ok()).unwrap_or(160.0);
-    app.observer.pitch = std::env::var("UNIVERSE_PITCH").ok().and_then(|d| d.parse().ok()).unwrap_or(0.35);
-    app.observer.yaw = std::env::var("UNIVERSE_YAW").ok().and_then(|d| d.parse().ok()).unwrap_or(2.3);
+    app.observer.distance = crate::devenv::var("UNIVERSE_DIST").ok().and_then(|d| d.parse().ok()).unwrap_or(160.0);
+    app.observer.pitch = crate::devenv::var("UNIVERSE_PITCH").ok().and_then(|d| d.parse().ok()).unwrap_or(0.35);
+    app.observer.yaw = crate::devenv::var("UNIVERSE_YAW").ok().and_then(|d| d.parse().ok()).unwrap_or(2.3);
     // UNIVERSE_BURN: the mains held (to see the drive lit).
-    if std::env::var("UNIVERSE_BURN").is_ok() {
+    if crate::devenv::var("UNIVERSE_BURN").is_ok() {
         let u = app.engine.universe();
         u.vessels[universe_sim::PLAYER].ship.manual = true;
         u.vessels[universe_sim::PLAYER].ship.held = u.vessels[universe_sim::PLAYER].ship.spec().thrusters.iter().enumerate().filter(|(_, t)| t.role == universe_sim::world::ship::ThrusterRole::Main).map(|(k, _)| 1u64 << k).sum();
@@ -1215,7 +1215,7 @@ fn s_manual(app: &mut App, _name: &str, _c: &Ctx) {
     u.start_in_flight();
     let s = u.vessels[universe_sim::PLAYER].ship.spec();
     let bit = |name: &str| s.thrusters.iter().position(|t| t.nozzle.ends_with(name)).map_or(0, |k| 1u64 << k);
-    let held = if std::env::var("UNIVERSE_BURN").is_ok() {
+    let held = if crate::devenv::var("UNIVERSE_BURN").is_ok() {
         s.thrusters.iter().take(64).enumerate().filter(|(_, t)| t.role == universe_sim::world::ship::ThrusterRole::Main).map(|(k, _)| 1u64 << k).sum()
     } else {bit("nose_left_side") | bit("tail_right_side")};
     u.vessels[universe_sim::PLAYER].ship.manual = true;
@@ -1440,7 +1440,7 @@ fn s_noon(app: &mut App, name: &str, c: &Ctx) {
     app.engine.universe().vessels[universe_sim::PLAYER].ship.velocity = sys.velocity(planet, t) + b.angular_velocity().cross(app.engine.universe().vessels[universe_sim::PLAYER].ship.position - center);
     // Look toward the sun's side along the horizon, a little down.
     let ahead = (sun - up * sun.dot(up)).normalize_or(side);
-    let look = (ahead - up * std::env::var("UNIVERSE_DOWN").ok().and_then(|v| v.parse::<f64>().ok()).unwrap_or(0.08)).normalize();
+    let look = (ahead - up * crate::devenv::var("UNIVERSE_DOWN").ok().and_then(|v| v.parse::<f64>().ok()).unwrap_or(0.08)).normalize();
     app.engine.universe().vessels[universe_sim::PLAYER].ship.orientation = universe_sim::ship::facing(look, up);
 }
 
@@ -1469,7 +1469,7 @@ fn s_lowflight(app: &mut App, _name: &str, c: &Ctx) {
     }
     // Stand off from the peak and look toward it. (UNIVERSE_LAT, UNIVERSE_LON: over that
     // place instead, as the registry gives it, looking north or UNIVERSE_HEADING.)
-    let at = std::env::var("UNIVERSE_LAT").ok().and_then(|a| a.parse().ok()).zip(std::env::var("UNIVERSE_LON").ok().and_then(|o| o.parse().ok()));
+    let at = crate::devenv::var("UNIVERSE_LAT").ok().and_then(|a| a.parse().ok()).zip(crate::devenv::var("UNIVERSE_LON").ok().and_then(|o| o.parse().ok()));
     let best = match at {
         Some((lat, lon)) => (0.0, universe_sim::world::worlds::direction(universe_sim::world::worlds::LonLat { lat, lon })),
         None => best,
@@ -1501,7 +1501,7 @@ fn s_lowflight(app: &mut App, _name: &str, c: &Ctx) {
     app.engine.universe().vessels[universe_sim::PLAYER].ship.velocity = sys.velocity(planet, t) + b.angular_velocity().cross(app.engine.universe().vessels[universe_sim::PLAYER].ship.position - positions[planet]) + fwd * env("UNIVERSE_SPEED").unwrap_or(200.0);
     // (UNIVERSE_DOWN: how far down it looks, as a slope.)
     app.engine.universe().vessels[universe_sim::PLAYER].ship.orientation = universe_sim::ship::facing(fwd - up * env("UNIVERSE_DOWN").unwrap_or(0.15), up);
-    app.chase_cam = std::env::var_os("UNIVERSE_CHASE").is_some();
+    app.chase_cam = crate::devenv::var_os("UNIVERSE_CHASE").is_some();
 }
 
 fn s_moon(app: &mut App, _name: &str, c: &Ctx) {
@@ -1710,7 +1710,7 @@ fn s_groundwalk(app: &mut App, _name: &str, c: &Ctx) {
 /// walker walks on (forward held, as W is) through the game's own walking commands.)
 pub fn walker_input(mut c: universe_sim::world::WalkCommands) -> universe_sim::world::WalkCommands {
     static START: std::sync::OnceLock<std::time::Instant> = std::sync::OnceLock::new();
-    if std::env::var_os("UNIVERSE_PGS1_WALKER").is_some() {
+    if crate::devenv::var_os("UNIVERSE_PGS1_WALKER").is_some() {
         let after = crate::devenv::num("UNIVERSE_PGS1_CAMERA_WALK_AFTER").unwrap_or(20.0);
         if START.get_or_init(std::time::Instant::now).elapsed().as_secs_f64() > after {
             c.forward = 1.0;
@@ -1727,7 +1727,7 @@ fn s_sunlook(app: &mut App, _name: &str, _c: &Ctx) {
     app.chase_cam = false;
     at_hatch(app, std::f64::consts::PI);
     // (UNIVERSE_OUT: down the ramp and out from under the ship first, under the open sky.)
-    if std::env::var_os("UNIVERSE_OUT").is_some() {
+    if crate::devenv::var_os("UNIVERSE_OUT").is_some() {
         app.engine.universe().walk(&universe_sim::world::WalkCommands { yaw: std::f64::consts::PI, ..Default::default() }, 0.02);
         for _ in 0..1200 {
             app.engine.universe().walk(&universe_sim::world::WalkCommands { forward: 1.0, run: true, ..Default::default() }, 0.02);
@@ -1759,7 +1759,7 @@ fn s_studiowalk(app: &mut App, _name: &str, _c: &Ctx) {
     app.deckplans.retain(|p| p.hull != plan.hull);
     app.deckplans.push(plan);
     at_hatch(app, 0.0);
-    let side: f64 = std::env::var("UNIVERSE_SIDE").ok().and_then(|v| v.parse().ok()).unwrap_or(0.0);
+    let side: f64 = crate::devenv::var("UNIVERSE_SIDE").ok().and_then(|v| v.parse().ok()).unwrap_or(0.0);
     // Down the ramp and out, then back up it, forward (and off to the side first).
     for _ in 0..300 {
         app.engine.universe().walk(&universe_sim::world::WalkCommands { forward: 1.0, ..Default::default() }, 0.02);
@@ -1791,7 +1791,7 @@ fn s_layoutlook(app: &mut App, _name: &str, _c: &Ctx) {
     let mut plan = demo_plan(app);
     plan.decks = (0..6).map(|k| {
         let mut d = universe_sim::world::deckplan::Deck::at(mesh.lo.y + 5.6 + 2.9 * k as f64);
-        if std::env::var_os("UNIVERSE_EMPTY").is_none() {
+        if crate::devenv::var_os("UNIVERSE_EMPTY").is_none() {
             d.planes = universe_sim::world::deckplan::fill(&mesh, d.floor).into_iter().map(Into::into).collect();
         }
         d
@@ -1824,7 +1824,7 @@ fn s_layoutlook(app: &mut App, _name: &str, _c: &Ctx) {
     for _ in 0..900 {
         app.engine.universe().walk(&universe_sim::world::WalkCommands { forward: 1.0, ..Default::default() }, 0.02);
     }
-    let side: f64 = std::env::var("UNIVERSE_SIDE").ok().and_then(|v| v.parse().ok()).unwrap_or(0.0);
+    let side: f64 = crate::devenv::var("UNIVERSE_SIDE").ok().and_then(|v| v.parse().ok()).unwrap_or(0.0);
     for _ in 0..(side.abs() / 1.6 / 0.02) as usize {
         app.engine.universe().walk(&universe_sim::world::WalkCommands { right: side.signum(), ..Default::default() }, 0.02);
     }
@@ -1844,7 +1844,7 @@ fn s_studiopreview(app: &mut App, _name: &str, _c: &Ctx) {
     // (UNIVERSE_FLOOR=m: one deck that far up from the keel, filled, instead.)
     let mut plan = demo_plan(app);
     let mut floor = floor;
-    if let Some(up) = std::env::var("UNIVERSE_FLOOR").ok().and_then(|v| v.parse::<f64>().ok())
+    if let Some(up) = crate::devenv::var("UNIVERSE_FLOOR").ok().and_then(|v| v.parse::<f64>().ok())
         && let Some(mesh) = app.ship.spec().shape().walk.clone()
     {
         floor = mesh.lo.y + up;
@@ -1890,21 +1890,21 @@ fn s_interior(app: &mut App, _name: &str, _c: &Ctx) {
     }
     // (UNIVERSE_NEW=none|<hull key>: a new design; UNIVERSE_DIALOG=new|open: that
     // dialog open.)
-    if let Ok(h) = std::env::var("UNIVERSE_NEW") {
+    if let Ok(h) = crate::devenv::var("UNIVERSE_NEW") {
         y.interior_mut().start_new((h != "none").then_some(h.as_str()));
     }
-    if let Ok(id) = std::env::var("UNIVERSE_OPEN") {
+    if let Ok(id) = crate::devenv::var("UNIVERSE_OPEN") {
         y.interior_mut().open_saved(&id);
     }
     // (UNIVERSE_STAND=x,y,z,yaw, or 1: the design on its test stand.)
     if crate::devenv::flag("UNIVERSE_STAND") {
         y.interior_mut().stand_test(<[f64; 4]>::try_from(crate::devenv::list::<f64>("UNIVERSE_STAND")).ok());
     }
-    if let Ok(d) = std::env::var("UNIVERSE_DIALOG") {
+    if let Ok(d) = crate::devenv::var("UNIVERSE_DIALOG") {
         y.interior_mut().show_dialog(d == "open");
     }
     // (UNIVERSE_MODULES: the ship's fit laid out, the MODULES tool in hand.)
-    if std::env::var_os("UNIVERSE_MODULES").is_some() {
+    if crate::devenv::var_os("UNIVERSE_MODULES").is_some() {
         let spec = app.ship.spec();
         y.interior_mut().sample_modules(spec);
     }
@@ -1913,11 +1913,11 @@ fn s_interior(app: &mut App, _name: &str, _c: &Ctx) {
         y.interior_mut().frame_tool();
     }
     // (UNIVERSE_PICK=member:N|module:N|deck:N|room:N|node:N: SELECT, that picked.)
-    if let Ok(w) = std::env::var("UNIVERSE_PICK") {
+    if let Ok(w) = crate::devenv::var("UNIVERSE_PICK") {
         y.interior_mut().select(&w);
     }
     // (UNIVERSE_DECKMODE: the FRAME tool in DECK mode.)
-    if std::env::var_os("UNIVERSE_DECKMODE").is_some() {
+    if crate::devenv::var_os("UNIVERSE_DECKMODE").is_some() {
         y.interior_mut().deck_tool();
     }
     // (UNIVERSE_DECK_STUDIO: the deck studio open instead.)
@@ -1934,14 +1934,14 @@ fn s_interior(app: &mut App, _name: &str, _c: &Ctx) {
         y.interior_mut().walk = Some((universe_engine::glam::DVec3::new(v[0], v[1], v[2]), v[3]));
     }
     // (UNIVERSE_PLAN: a sample access plan drawn.)
-    if std::env::var_os("UNIVERSE_PLAN").is_some() {
+    if crate::devenv::var_os("UNIVERSE_PLAN").is_some() {
         let spec = app.ship.spec();
         y.interior_mut().sample(&spec.key, spec.shape());
         // (And the deck studio's demo decks, to be seen here too.)
         let decks = demo_plan(app);
         studio_decks(&mut y, decks);
         // (UNIVERSE_WALK=k: walked in the middle of line k, as WALK HERE.)
-        if let Some(k) = std::env::var("UNIVERSE_WALK").ok().and_then(|v| v.parse().ok()) {
+        if let Some(k) = crate::devenv::var("UNIVERSE_WALK").ok().and_then(|v| v.parse().ok()) {
             y.interior_mut().walk_line(k);
         }
     }
@@ -1956,12 +1956,12 @@ fn s_studio(app: &mut App, _name: &str, _c: &Ctx) {
     let key = app.ship.spec().key.clone();
     let mut y = crate::shipyard::Shipyard::laying_out(app);
     // (UNIVERSE_PLAN: the 3D studio's sample access plan, to be seen here.)
-    if std::env::var_os("UNIVERSE_PLAN").is_some() {
+    if crate::devenv::var_os("UNIVERSE_PLAN").is_some() {
         let spec = app.ship.spec();
         y.interior_mut().sample(&spec.key, spec.shape());
     }
     // (UNIVERSE_TOOL: plane, wall, door, ladder or stair in hand.)
-    y.studio_mut().tool = match std::env::var("UNIVERSE_TOOL").as_deref() {
+    y.studio_mut().tool = match crate::devenv::var("UNIVERSE_TOOL").as_deref() {
         Ok("plane") => crate::studio::Tool::Plane,
         Ok("wall") => crate::studio::Tool::Wall,
         Ok("door") => crate::studio::Tool::Door,
@@ -1970,17 +1970,17 @@ fn s_studio(app: &mut App, _name: &str, _c: &Ctx) {
         _ => crate::studio::Tool::Select,
     };
     // (UNIVERSE_FLIP=side,end: those views flipped.)
-    let flip = std::env::var("UNIVERSE_FLIP").unwrap_or_default();
+    let flip = crate::devenv::var("UNIVERSE_FLIP").unwrap_or_default();
     y.studio_mut().side_flip = flip.contains("side");
     y.studio_mut().end_flip = flip.contains("end");
     // (UNIVERSE_CURSOR=x,y: the mouse there, in pixels.)
-    if let Some((cx, cy)) = std::env::var("UNIVERSE_CURSOR").ok().and_then(|v| v.split_once(',').and_then(|(a, b)| Some((a.trim().parse::<f32>().ok()?, b.trim().parse::<f32>().ok()?)))) {
+    if let Some((cx, cy)) = crate::devenv::var("UNIVERSE_CURSOR").ok().and_then(|v| v.split_once(',').and_then(|(a, b)| Some((a.trim().parse::<f32>().ok()?, b.trim().parse::<f32>().ok()?)))) {
         y.studio_mut().cursor = universe_engine::glam::Vec2::new(cx, cy);
     }
-    if std::env::var_os("UNIVERSE_EMPTY").is_none() {
+    if crate::devenv::var_os("UNIVERSE_EMPTY").is_none() {
         let mut plan = demo_plan(app);
         // (UNIVERSE_CARVE=x,z: deck 1's floor carved round that point instead.)
-        if let Some((x, z)) = std::env::var("UNIVERSE_CARVE").ok().and_then(|v| v.split_once(',').and_then(|(a, b)| Some((a.trim().parse::<f64>().ok()?, b.trim().parse::<f64>().ok()?))))
+        if let Some((x, z)) = crate::devenv::var("UNIVERSE_CARVE").ok().and_then(|v| v.split_once(',').and_then(|(a, b)| Some((a.trim().parse::<f64>().ok()?, b.trim().parse::<f64>().ok()?))))
             && let Some(mesh) = app.ship.spec().shape().walk.as_ref()
         {
             let deck = &mut plan.decks[0];
@@ -2000,13 +2000,13 @@ fn s_studio(app: &mut App, _name: &str, _c: &Ctx) {
             plan.decks.push(deck);
         }
         // (UNIVERSE_FLOOR=m: deck 1 that far up from the keel, alone.)
-        if let Some(up) = std::env::var("UNIVERSE_FLOOR").ok().and_then(|v| v.parse::<f64>().ok())
+        if let Some(up) = crate::devenv::var("UNIVERSE_FLOOR").ok().and_then(|v| v.parse::<f64>().ok())
             && let Some(mesh) = app.ship.spec().shape().walk.as_ref()
         {
             plan.decks = vec![universe_sim::world::deckplan::Deck::at(mesh.lo.y + up)];
         }
         // (UNIVERSE_FILL: deck 1 filled, as the floors' FILL button does.)
-        if std::env::var_os("UNIVERSE_FILL").is_some()
+        if crate::devenv::var_os("UNIVERSE_FILL").is_some()
             && let Some(mesh) = app.ship.spec().shape().walk.as_ref()
         {
             let deck = &mut plan.decks[0];
@@ -2237,7 +2237,7 @@ pub fn camera_walk(app: &mut App) {
     let t = app.now();
     let Ok(mut walk) = WALK.lock() else { return };
     if walk.is_none() {
-        let Some(planet) = std::env::var("UNIVERSE_BODY").ok().and_then(|k| sys.bodies.iter().position(|b| b.key == k)) else { return };
+        let Some(planet) = crate::devenv::var("UNIVERSE_BODY").ok().and_then(|k| sys.bodies.iter().position(|b| b.key == k)) else { return };
         let Some(centre) = app.view.positions.get(planet).copied() else { return };
         let inv = sys.bodies[planet].rotation(t).inverse();
         let from = (inv * (app.camera.position - centre)).normalize();
@@ -2278,7 +2278,7 @@ pub fn camera_flight(app: &mut App) {
     static FLIGHT: std::sync::Mutex<Option<Option<Flight>>> = std::sync::Mutex::new(None);
     let Ok(mut flight) = FLIGHT.lock() else { return };
     if flight.is_none() {
-        let Some(path) = std::env::var_os("UNIVERSE_PGS1_FLIGHT") else { *flight = Some(None); return };
+        let Some(path) = crate::devenv::var_os("UNIVERSE_PGS1_FLIGHT") else { *flight = Some(None); return };
         let path = std::path::PathBuf::from(path);
         let text = std::fs::read_to_string(&path).unwrap_or_else(|e| panic!("UNIVERSE_PGS1_FLIGHT {}: {e}", path.display()));
         let mut keys = vec![];
@@ -2290,8 +2290,8 @@ pub fn camera_flight(app: &mut App) {
         }
         assert!(keys.windows(2).all(|w| w[0].frame < w[1].frame), "flight keyframes must ascend");
         let sys = app.charts.system(app.v.ship_system);
-        let planet = std::env::var("UNIVERSE_BODY").ok().and_then(|k| sys.bodies.iter().position(|b| b.key == k)).expect("UNIVERSE_PGS1_FLIGHT needs UNIVERSE_BODY");
-        let folder = std::env::var_os("UNIVERSE_SCREENSHOT").map(std::path::PathBuf::from).and_then(|p| p.parent().map(|p| p.to_owned())).unwrap_or_else(|| path.parent().unwrap().to_owned());
+        let planet = crate::devenv::var("UNIVERSE_BODY").ok().and_then(|k| sys.bodies.iter().position(|b| b.key == k)).expect("UNIVERSE_PGS1_FLIGHT needs UNIVERSE_BODY");
+        let folder = crate::devenv::var_os("UNIVERSE_SCREENSHOT").map(std::path::PathBuf::from).and_then(|p| p.parent().map(|p| p.to_owned())).unwrap_or_else(|| path.parent().unwrap().to_owned());
         log::info!("FLIGHT {}: {} keyframes to frame {}", path.display(), keys.len(), keys.last().map_or(0, |k| k.frame));
         *flight = Some(Some(Flight { keys, frame: 0, planet, folder }));
     }

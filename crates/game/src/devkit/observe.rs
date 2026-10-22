@@ -111,10 +111,10 @@ pub fn clean_up() {
 
 /// The live port, listening (None: off, or the port taken).
 pub fn listen() -> Option<mpsc::Receiver<Request>> {
-    if std::env::var("UNIVERSE_OBSERVE").as_deref() == Ok("0") || std::env::var_os("UNIVERSE_SCREENSHOT").is_some() {
+    if crate::devenv::var("UNIVERSE_OBSERVE").as_deref() == Ok("0") || crate::devenv::var_os("UNIVERSE_SCREENSHOT").is_some() {
         return None;
     }
-    let port: u16 = std::env::var("UNIVERSE_OBSERVE_PORT").ok().and_then(|p| p.parse().ok()).unwrap_or(7878);
+    let port: u16 = crate::devenv::var("UNIVERSE_OBSERVE_PORT").ok().and_then(|p| p.parse().ok()).unwrap_or(7878);
     let listener = match TcpListener::bind(("127.0.0.1", port)) {
         Ok(l) => l,
         Err(e) => {
@@ -421,7 +421,7 @@ pub struct AppObserver {
 /// The game's observer for apps on the host (see `AppObserver`); observing from the start with
 /// `UNIVERSE_OBSERVING=1`.
 pub fn service() -> Option<Box<dyn universe_engine::apps::Service>> {
-    let on = std::env::var("UNIVERSE_OBSERVING").as_deref() == Ok("1");
+    let on = crate::devenv::observing();
     Some(Box::new(AppObserver { on, ..Default::default() }))
 }
 

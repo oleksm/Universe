@@ -57,12 +57,12 @@ pub fn loaded_hash(surface: &universe_sim::world::worlds::pgs::Surface) -> Optio
 pub fn configure(folder: &std::path::Path, body: &str, surface: &universe_sim::world::worlds::pgs::Surface, surface_hash: &str, manifest: &serde_json::Value) -> Result<(), String> {
     let _ = LOADED.set((body.to_owned(), surface_hash.to_owned(), surface as *const _ as usize));
     crate::pgs_debug::configure(body, surface, surface_hash)?;
-    let shadows = match std::env::var("UNIVERSE_PGS1_SHADOWS").as_deref() {
+    let shadows = match crate::devenv::var("UNIVERSE_PGS1_SHADOWS").as_deref() {
         Err(std::env::VarError::NotPresent) | Ok("off") => false,
         Ok("on") => true,
         _ => return Err("UNIVERSE_PGS1_SHADOWS must be on or off".into()),
     };
-    let mode = std::env::var("UNIVERSE_PGS1_COLOURS").unwrap_or_else(|_| "neutral".into());
+    let mode = crate::devenv::var("UNIVERSE_PGS1_COLOURS").unwrap_or_else(|_| "neutral".into());
     let palette = match mode.as_str() {
         "neutral" => None,
         "categories" | "materials" => {

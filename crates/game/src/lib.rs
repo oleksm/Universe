@@ -372,11 +372,11 @@ impl App {
         let mut u = Universe::from_world(dev::world(seed()).unwrap_or_else(|e| panic!("PGS1 preview: {e}")));
         // UNIVERSE_RECORD=path: record the session from its start, saved there
         // on exit (replay it: `cargo run -p universe-sim --release --example replay -- path`).
-        if std::env::var_os("UNIVERSE_RECORD").is_some() {
+        if crate::devenv::var_os("UNIVERSE_RECORD").is_some() {
             u.record_inputs();
         }
         // Traffic: reproducible settlers (UNIVERSE_SETTLERS, default 1,000).
-        let settlers = std::env::var("UNIVERSE_SETTLERS").ok().and_then(|v| v.parse().ok()).unwrap_or(1_000);
+        let settlers = crate::devenv::var("UNIVERSE_SETTLERS").ok().and_then(|v| v.parse().ok()).unwrap_or(1_000);
         u.spawn_settlers(settlers, seed());
         log::info!("startup world and traffic: {:.3} ms", started.elapsed().as_secs_f64()*1000.);
         let engine = EngineHandle::new(u);
@@ -395,7 +395,7 @@ impl App {
             chase_cam: true,
             chase_turn: None,
             warp_index: 0,
-            time_scale: std::env::var("UNIVERSE_TIME_SCALE")
+            time_scale: crate::devenv::var("UNIVERSE_TIME_SCALE")
                 .ok()
                 .and_then(|v| v.parse::<f64>().ok())
                 .map_or(DEFAULT_TIME_SCALE, |v| v.clamp(1.0, 100.0)),
@@ -403,7 +403,7 @@ impl App {
             last_step: StepResult::default(),
             show_help: false,
             // (UNIVERSE_DEBUG: start with the debug info up.)
-            debug: std::env::var("UNIVERSE_DEBUG").ok().and_then(|v| v.parse().ok()).unwrap_or(0),
+            debug: crate::devenv::var("UNIVERSE_DEBUG").ok().and_then(|v| v.parse().ok()).unwrap_or(0),
             show_grid: false,
             show_labels: true,
             muted: false,
@@ -438,14 +438,14 @@ impl App {
             },
             observe_tried: false,
             observing: {
-                let on = std::env::var_os("UNIVERSE_OBSERVING").is_some();
+                let on = crate::devenv::observing();
                 if on { universe_prof::enable(true); }
                 on
             },
             recording: None,
             sparks: Vec::new(),
             showcase: None,
-            showcase_path: std::env::var_os("UNIVERSE_MODEL").map(Into::into),
+            showcase_path: crate::devenv::var_os("UNIVERSE_MODEL").map(Into::into),
             reach: None,
             turrets: Vec::new(),
             following: None,
@@ -460,7 +460,7 @@ impl App {
             camera: Camera::default(),
             models: Models::new(),
             prev_focus: None,
-            sound_test: std::env::var_os("UNIVERSE_SOUND_TEST").map(|_| 0.0),
+            sound_test: crate::devenv::var_os("UNIVERSE_SOUND_TEST").map(|_| 0.0),
             launched: false,
             panels: Panels {
                 standards: None,
@@ -504,7 +504,7 @@ impl App {
         // A hull imported from a glTF file, the ship we fly (`UNIVERSE_HULL=file.glb`;
         // by default, for now, the MC-07, if its file is there).
         const DEFAULT_HULL: &str = "assets/models/mc07.glb";
-        let hull = std::env::var("UNIVERSE_HULL").ok().or_else(|| std::path::Path::new(DEFAULT_HULL).exists().then(|| DEFAULT_HULL.to_string()));
+        let hull = crate::devenv::var("UNIVERSE_HULL").ok().or_else(|| std::path::Path::new(DEFAULT_HULL).exists().then(|| DEFAULT_HULL.to_string()));
         if let Some(path) = hull {
             match std::fs::read(&path).map_err(|e| e.to_string()).and_then(|b| universe_sim::world::import::commission(&b, &path)) {
                 Ok(h) => {
@@ -525,17 +525,17 @@ impl App {
                 Err(e) => app.say(format!("HULL {path}: {e}").to_uppercase()),
             }
         }
-        if let Ok(name) = std::env::var("UNIVERSE_SCENARIO") {
+        if let Ok(name) = crate::devenv::var("UNIVERSE_SCENARIO") {
             dev::apply(&mut app, &name);
             app.engine.refresh();
             app.v = app.engine.view();
         }
         // (UNIVERSE_PAUSED: start paused, as F6 pauses: look round before the world runs.)
-        if std::env::var_os("UNIVERSE_PAUSED").is_some() {
+        if crate::devenv::var_os("UNIVERSE_PAUSED").is_some() {
             app.paused = true;
         }
         // The world engine runs on its own thread (UNIVERSE_ENGINE_THREAD=0: here, for debugging).
-        if std::env::var("UNIVERSE_ENGINE_THREAD").as_deref() != Ok("0") {
+        if crate::devenv::var("UNIVERSE_ENGINE_THREAD").as_deref() != Ok("0") {
             app.engine.start();
         }
         app
@@ -1500,7 +1500,7 @@ impl universe_engine::apps::App for App {
             })
             .collect();
         self.update_camera(dt, focus_changed);
-        if std::env::var_os("UNIVERSE_DEBUG_MOTION").is_some() {
+        if crate::devenv::var_os("UNIVERSE_DEBUG_MOTION").is_some() {
             // Where the nearest craft (chosen once) is drawn relative to the camera, and the world time drawn.
             static PICK: std::sync::OnceLock<usize> = std::sync::OnceLock::new();
             let cam = self.camera.position;
@@ -1540,7 +1540,7 @@ impl universe_engine::apps::App for App {
         frame.graphics = self.graphics;
         universe_prof::time("draw/scene", || scene::draw(frame, self));
         // (Dev: the showcased model alone, no HUD: `UNIVERSE_MODEL_CLEAN`.)
-        if !(self.showcase.is_some() && std::env::var_os("UNIVERSE_MODEL_CLEAN").is_some()) {
+        if !(self.showcase.is_some() && crate::devenv::var_os("UNIVERSE_MODEL_CLEAN").is_some()) {
             universe_prof::time("draw/hud", || hud::draw(frame, self, ctx));
         }
         if self.graphics_panel {
@@ -1702,7 +1702,7 @@ pub fn play() {
     // The renderer and simulation configure their worker pools before startup.
     universe_sim::engine::size_thread_pools();
     // (UNIVERSE_HEIGHTS_STRETCH: the lines' heights stretched from the start, as SHIFT+F4 does.)
-    if let Some(k) = std::env::var("UNIVERSE_HEIGHTS_STRETCH").ok().and_then(|k| k.parse::<f64>().ok()) {
+    if let Some(k) = crate::devenv::var("UNIVERSE_HEIGHTS_STRETCH").ok().and_then(|k| k.parse::<f64>().ok()) {
         universe_sim::world::worlds::set_stretch(k);
     }
     // (Slow frames written down beside the quicksave: hitches.log.)

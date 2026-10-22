@@ -189,7 +189,7 @@ impl PlanetView {
         if let Some((i, maps)) = near
             && let Some(globe) = self.globes.get(&(s.cache, i))
         {
-            if std::env::var_os("UNIVERSE_NO_WORLD_MAPS").is_none() {
+            if crate::devenv::var_os("UNIVERSE_NO_WORLD_MAPS").is_none() {
                 frame.keep_alive(globe.clone());
                 frame.world_maps(&maps, &globe.map, s.positions[i], sys.bodies[i].rail.radius);
                 // Its clouds now: the year's phase and El Niño's index at world time (one epoch for

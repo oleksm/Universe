@@ -168,7 +168,7 @@ fn zoom_altitude(elapsed: f64) -> f64 {
 
 impl PlanetLodApp {
     pub fn new(dir: Option<&str>) -> Result<Self, String> {
-        let g = Ground::open(&dir.map(PathBuf::from).unwrap_or_else(|| PathBuf::from(std::env::var("HOME").unwrap_or_default()).join("planet-data/views/earth_s15-pattern")))?;
+        let g = Ground::open(&dir.map(PathBuf::from).unwrap_or_else(|| PathBuf::from(crate::devenv::var("HOME").unwrap_or_default()).join("planet-data/views/earth_s15-pattern")))?;
         let mut g = g;
         g.view = View::Mesh;
         let dir = g.dir.clone();
@@ -215,10 +215,10 @@ impl PlanetLodApp {
             flight_reference: flight::Reference::default(),
             alt_target: 20_000.0,
             easing: false,
-            fly: std::env::var_os("UNIVERSE_PLANETLOD_FLY").is_some(),
-            pan: std::env::var("UNIVERSE_PLANETLOD_FLY").is_ok_and(|v| v == "pan"),
+            fly: crate::devenv::var_os("UNIVERSE_PLANETLOD_FLY").is_some(),
+            pan: crate::devenv::var("UNIVERSE_PLANETLOD_FLY").is_ok_and(|v| v == "pan"),
             pan_start: None,
-            zoom: std::env::var("UNIVERSE_PLANETLOD_FLY").is_ok_and(|v| v == "zoom"),
+            zoom: crate::devenv::var("UNIVERSE_PLANETLOD_FLY").is_ok_and(|v| v == "zoom"),
             show_feat: false,
             show_peaks: false,
             show_marks: !marks.is_empty(),
@@ -237,7 +237,7 @@ impl PlanetLodApp {
             log: [0.0; 7],
 
         };
-        if let Ok(at) = std::env::var("UNIVERSE_PLANETLOD_AT") {
+        if let Ok(at) = crate::devenv::var("UNIVERSE_PLANETLOD_AT") {
             for kv in at.split('&') {
                 let mut p = kv.splitn(2, '=');
                 let (k, v) = (p.next().unwrap_or(""), p.next().and_then(|v| v.parse::<f64>().ok()));

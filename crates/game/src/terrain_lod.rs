@@ -401,7 +401,7 @@ impl Lod {
         if missing_root {
             self.contact_inputs.invalidate();
             #[cfg(feature = "dev")]
-            if canonical && (now <= 10 || now % 30 == 0) && std::env::var_os("UNIVERSE_PGS1_CONTACT_AUDIT").is_some() {
+            if canonical && (now <= 10 || now % 30 == 0) && crate::devenv::var_os("UNIVERSE_PGS1_CONTACT_AUDIT").is_some() {
                 log::info!("PGS_CONTACT {}", serde_json::json!({"frame":now,"state":"base_globe_pending_roots","resident":self.patches.len(),"pending":self.pending.len(),"hits":[]}));
             }
             return None;
@@ -409,7 +409,7 @@ impl Lod {
         // Settled round the eye: nothing it wants within 300 m is standing in for.
         let settled = draw.iter().all(|k| self.patches.contains_key(k) || k.centre(&self.patches, r, canonical).distance(eye_local) > 300.0 + k.shape().1 * r);
         let natural = self.stand_in(draw);
-        if !(canonical && surface.is_some() && std::env::var_os("UNIVERSE_PGS1_CONTACT_GROUP").is_some()) {
+        if !(canonical && surface.is_some() && crate::devenv::var_os("UNIVERSE_PGS1_CONTACT_GROUP").is_some()) {
             self.contact_inputs.invalidate();
             return Some(natural);
         }
@@ -530,7 +530,7 @@ impl Lod {
             log::info!("SCENERY DEBUG frame={now} resident_draw_levels={levels:?} pending={} eye_height_m={:.6}", self.pending.len(), eye_dist-r);
         }
         #[cfg(feature = "dev")]
-        if canonical && (now <= 10 || now % 30 == 0) && std::env::var_os("UNIVERSE_PGS1_CONTACT_AUDIT").is_some() {
+        if canonical && (now <= 10 || now % 30 == 0) && crate::devenv::var_os("UNIVERSE_PGS1_CONTACT_AUDIT").is_some() {
             let canonical_height = body.terrain.as_ref().unwrap().surface(eye_dir);
             let mut hits = Vec::new();
             for key in &draw {
@@ -582,7 +582,7 @@ impl Lod {
             if crate::pgs_preview::terrain_shadows(body) { frame.ground_shadow(draw_patch); }
             else { frame.no_shadow(draw_patch); }
         }
-        if canonical && std::env::var_os("UNIVERSE_PGS1_CONTACT_GROUP").is_some() {
+        if canonical && crate::devenv::var_os("UNIVERSE_PGS1_CONTACT_GROUP").is_some() {
             let surface = body.terrain.as_ref().and_then(|t| t.surface_source());
             if self.readiness.is_none() {
                 self.readiness = surface.as_ref().and_then(|s| group::Trace::from_env(r, s));
@@ -677,9 +677,9 @@ mod contact_export {
     #[ignore = "requires frozen PGS and feature witnesses; bounded CPU scheduler export"]
     fn actual_selected_contact_inputs() {
         use universe_sim::world::{World, worlds::{pgs::{Surface,Water},sha256}};
-        let folder=std::path::PathBuf::from(std::env::var("UNIVERSE_CONTACT_EXPORT").expect("output folder"));
+        let folder=std::path::PathBuf::from(crate::devenv::var("UNIVERSE_CONTACT_EXPORT").expect("output folder"));
         std::fs::create_dir_all(&folder).unwrap();
-        let bytes=std::fs::read(std::env::var("UNIVERSE_CONTACT_PGS").expect("frozen PGS")).unwrap();
+        let bytes=std::fs::read(crate::devenv::var("UNIVERSE_CONTACT_PGS").expect("frozen PGS")).unwrap();
         let hash=sha256(&bytes);
         assert_eq!(hash,"4b30e7eda8e707dff50498f0be80476bf82d5dfd4b8160c662b1a2113dadfe80");
         let source=Arc::new(Surface::read(&bytes).unwrap());drop(bytes);
@@ -687,7 +687,7 @@ mod contact_export {
         let system=world.home_system;let sys=world.system(system);
         let body=sys.bodies.iter().position(|b|b.key=="body.treistun.treistun-e").unwrap();
         let radius=sys.bodies[body].rail.radius;assert_eq!(radius,6281370.);
-        let fs:serde_json::Value=serde_json::from_slice(&std::fs::read(std::env::var("UNIVERSE_CONTACT_FEATURES").expect("frozen features")).unwrap()).unwrap();
+        let fs:serde_json::Value=serde_json::from_slice(&std::fs::read(crate::devenv::var("UNIVERSE_CONTACT_FEATURES").expect("frozen features")).unwrap()).unwrap();
         struct Limit<W>{writer:W,bytes:usize}
         impl<W:Write> Write for Limit<W>{
             fn write(&mut self,b:&[u8])->std::io::Result<usize>{if b.len()>128*1024*1024-self.bytes{return Err(std::io::Error::other("128MiB snapshot disk cap"));}let n=self.writer.write(b)?;self.bytes+=n;Ok(n)}

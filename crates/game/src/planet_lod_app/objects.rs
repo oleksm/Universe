@@ -300,7 +300,7 @@ mod tests {
     #[test]
     #[ignore = "requires planet-forge sample view"]
     fn object_overlay_full_fixture() {
-        let dir = std::env::var("UNIVERSE_PLANETLOD_TEST_VIEW").unwrap();
+        let dir = crate::devenv::var("UNIVERSE_PLANETLOD_TEST_VIEW").unwrap();
         let o = Objects::open(Path::new(&dir)).unwrap().unwrap();
         assert_eq!(o.boxes.len(), 61179);
         assert_eq!(o.families.len(), 6);

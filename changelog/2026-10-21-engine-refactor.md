@@ -51,3 +51,7 @@ From the engine review of 2026-10-21 (duplication, fragmentation, control, perfo
    crate's `unit` re-exports it; land's own copy and its test's go), beside `to_body` and the game's
    `worlds::direction`. The crew's north-east tangent is the spaceport's (they were the same code). The ATC
    presence check over a pad stays its own: a column at any height, where `pad_at` is resting on it.
+8. The game's developer settings (`UNIVERSE_*`, 124 of them) are read from one snapshot of the environment taken
+   at the first ask (`devenv::var`, `var_os`, as `std::env`'s): 122 direct reads in 20 files go through it, among
+   them about ten a frame (each a lock and a copy). A test keeps it so. `UNIVERSE_OBSERVING` meant "set" in the
+   game and "= 1" in the studio and observer: one `devenv::observing()` now (any value but empty or 0).

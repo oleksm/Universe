@@ -107,15 +107,15 @@ fn validate(file: File, s: &Surface, hash: &str) -> Result<(Vec<Layer>, Vec<Mark
     Ok((file.layers, file.markers))
 }
 pub fn configure(body: &str, s: &Surface, hash: &str) -> Result<(), String> {
-    let file = std::env::var_os("UNIVERSE_PGS1_DEBUG");
-    let mode = std::env::var("UNIVERSE_PGS1_GEOMETRY").unwrap_or_else(|_| "off".into());
+    let file = crate::devenv::var_os("UNIVERSE_PGS1_DEBUG");
+    let mode = crate::devenv::var("UNIVERSE_PGS1_GEOMETRY").unwrap_or_else(|_| "off".into());
     if !["off", "wire", "normals", "both"].contains(&mode.as_str()) {
         return Err("UNIVERSE_PGS1_GEOMETRY: off|wire|normals|both".into());
     }
     if file.is_none() && mode == "off" {
         return Ok(());
     }
-    let lift = std::env::var("UNIVERSE_PGS1_DEBUG_LIFT")
+    let lift = crate::devenv::var("UNIVERSE_PGS1_DEBUG_LIFT")
         .ok()
         .map(|v| v.parse::<f64>())
         .transpose()
@@ -135,7 +135,7 @@ pub fn configure(body: &str, s: &Surface, hash: &str) -> Result<(), String> {
     } else {
         (Vec::new(), Vec::new())
     };
-    if let Ok(selected) = std::env::var("UNIVERSE_PGS1_DEBUG_LAYERS") {
+    if let Ok(selected) = crate::devenv::var("UNIVERSE_PGS1_DEBUG_LAYERS") {
         let ids: HashSet<_> = selected.split(',').collect();
         if ids.iter().any(|id| !layers.iter().any(|l| &l.id == id)) {
             return Err("unknown scenery debug layer requested".into());

@@ -4,7 +4,7 @@ pub mod dev {
     use crate::App;
 
     pub fn world(seed: u64) -> Result<universe_sim::world::World, String> {
-        if std::env::var_os("UNIVERSE_PGS1").is_some() {
+        if crate::devenv::var_os("UNIVERSE_PGS1").is_some() {
             return Err("PGS1 preview requires a dev build".into());
         }
         Ok(universe_sim::world::World::new(seed))
