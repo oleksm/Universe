@@ -55,3 +55,8 @@ From the engine review of 2026-10-21 (duplication, fragmentation, control, perfo
    at the first ask (`devenv::var`, `var_os`, as `std::env`'s): 122 direct reads in 20 files go through it, among
    them about ten a frame (each a lock and a copy). A test keeps it so. `UNIVERSE_OBSERVING` meant "set" in the
    game and "= 1" in the studio and observer: one `devenv::observing()` now (any value but empty or 0).
+9. How a frame draws what's drawn now is one `DrawState` (front or scene, shadow casting and the ground's cascade,
+   surface, globe and its place and grain, air) in place of eight fields each saved and put back by hand; the
+   seven `in_front`, `in_scene`, `with_surface`, `with_globe`, `with_air`, `no_shadow`, `ground_shadow` are one line
+   each over `with_state` (the whole state put back, nothing forgotten). Captures of a baked world, a moon and
+   Hoar E match before/after.

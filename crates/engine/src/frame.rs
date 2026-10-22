@@ -131,11 +131,8 @@ pub struct Frame {
     pub shadow_reach: f64,
     /// What's drawn of what can be (see `Graphics`).
     pub graphics: Graphics,
-    casts: bool,
-    /// Meshes drawn now are ground (see `ground_shadow`).
-    ground: bool,
-    /// The surface meshes are drawn with now (see `Instance::material`, `with_surface`).
-    surface: [f32; 4],
+    /// How what's drawn now is drawn (see `DrawState`): set for a closure by `in_front`, `with_globe`...
+    state: DrawState,
     /// Low-res scene resolution.
     scene_size: Vec2,
     /// HUD layer resolution (a multiple of the scene's).
@@ -165,7 +162,6 @@ pub struct Frame {
     pub(crate) front: Vec<MeshDraw>,
     /// Textured, physically based models to draw this frame (see `model_pbr`).
     pub(crate) pbr: Vec<PbrDraw>,
-    in_front: bool,
     /// Globe maps drawn this frame (instances name them by place here + 1).
     pub(crate) globe_maps: Vec<std::sync::Arc<crate::model::GlobeMap>>,
     /// A world's full-resolution maps, and the globe map (its id) of the world they're for.
@@ -174,11 +170,31 @@ pub struct Frame {
     /// (wrapped), 1 (see `world_clouds`).
     pub(crate) world_turn: glam::DQuat,
     pub(crate) world_clouds: [f32; 4],
+}
+
+/// How what's drawn now is drawn: one state, changed for a closure and put back after it (`Frame::with_state`).
+#[derive(Clone, Copy, Debug)]
+struct DrawState {
+    /// Over everything, the HUD included (see `in_front`), or in the scene.
+    in_front: bool,
+    /// Meshes cast shadows (see `no_shadow`); they cast into the ground's own cascade (see `ground_shadow`).
+    casts: bool,
+    ground: bool,
+    /// The surface meshes are drawn with (see `Instance::material`, `with_surface`).
+    surface: [f32; 4],
+    /// A world's globe surfacing them (see `with_globe`): its map's place + 1, kind, relief, brightness; where
+    /// its vertices are; a patch's fine grain origin.
     globe: [f32; 4],
     globe_at: [f32; 4],
     globe_micro: [f32; 4],
-    /// The air drawn over a globe (see `with_air`): its depths packed, its shell (m).
+    /// The air over a globe (see `with_air`): its depths packed, its shell (m).
     globe_air: [f32; 2],
+}
+
+impl Default for DrawState {
+    fn default() -> Self {
+        Self { in_front: false, casts: true, ground: false, surface: [0.0, 16.0, 0.0, 0.0], globe: [0.0; 4], globe_at: [0.0, 0.0, 0.0, 1.0], globe_micro: [0.0; 4], globe_air: [0.0; 2] }
+    }
 }
 
 /// A group of pooled draws this frame (see `Frame::pool_group`).
@@ -407,9 +423,7 @@ impl Frame {
             eclipsers: Vec::new(),
             shadow_reach: 0.0,
             graphics: Graphics::default(),
-            casts: true,
-            ground: false,
-            surface: [0.0, 16.0, 0.0, 0.0],
+            state: DrawState::default(),
             scene_size,
             size: hud_size,
             studio: false,
@@ -433,15 +447,10 @@ impl Frame {
             pbr: Vec::new(),
             front: Vec::new(),
             front_glows: Vec::new(),
-            in_front: false,
             globe_maps: Vec::new(),
             world_maps: None,
             world_turn: glam::DQuat::IDENTITY,
             world_clouds: [0.0; 4],
-            globe: [0.0; 4],
-            globe_at: [0.0, 0.0, 0.0, 1.0],
-            globe_micro: [0.0; 4],
-            globe_air: [0.0; 2],
         }
     }
 
@@ -477,17 +486,21 @@ impl Frame {
     /// (with their own depth among themselves). For what's nearest the eye,
     /// like our own ship seen from just behind it: nothing shows through it.
     pub fn in_front(&mut self, f: impl FnOnce(&mut Frame)) {
-        let before = std::mem::replace(&mut self.in_front, true);
+        self.with_state(|s| s.in_front = true, f);
+    }
+
+    /// Draw `f` with the state changed by `change`, then put it back as it was.
+    fn with_state(&mut self, change: impl FnOnce(&mut DrawState), f: impl FnOnce(&mut Frame)) {
+        let before = self.state;
+        change(&mut self.state);
         f(self);
-        self.in_front = before;
+        self.state = before;
     }
 
     /// The opposite of `in_front`: what `f` draws is in the scene, hidden by
     /// what's nearer the eye, even while drawing in front.
     pub fn in_scene(&mut self, f: impl FnOnce(&mut Frame)) {
-        let before = std::mem::replace(&mut self.in_front, false);
-        f(self);
-        self.in_front = before;
+        self.with_state(|s| s.in_front = false, f);
     }
 
     /// A light's glow at `at` (world): a soft disc facing the eye (`RIM`), `radius`
@@ -515,7 +528,7 @@ impl Frame {
             let (c, s) = RIM[k % 12];
             Vertex { pos: (at + right * c + up * s).to_array(), color: [0.0, 0.0, 0.0, 0.0] }
         });
-        let glows = if self.in_front { &mut self.front_glows } else { &mut self.glows };
+        let glows = if self.state.in_front { &mut self.front_glows } else { &mut self.glows };
         for k in 0..12 {
             glows.extend([centre, rim[k], rim[k + 1]]);
         }
@@ -526,16 +539,14 @@ impl Frame {
     pub fn glow_triangle(&mut self, p: [DVec3; 3], light: [[f32; 3]; 3]) {
         for k in 0..3 {
             let pos = self.rel(p[k]);
-            (if self.in_front { &mut self.front_glows } else { &mut self.glows }).push(Vertex { pos, color: [light[k][0], light[k][1], light[k][2], 1.0] });
+            (if self.state.in_front { &mut self.front_glows } else { &mut self.glows }).push(Vertex { pos, color: [light[k][0], light[k][1], light[k][2], 1.0] });
         }
     }
 
     /// Meshes drawn in `f` have this surface: `glint` (0 matte .. 1 polished
     /// metal), `sharp` (its power: 8 broad .. 80 tight), `glow` (lit by itself).
     pub fn with_surface(&mut self, glint: f32, sharp: f32, glow: f32, f: impl FnOnce(&mut Frame)) {
-        let before = std::mem::replace(&mut self.surface, [glint, sharp, glow, 0.0]);
-        f(self);
-        self.surface = before;
+        self.with_state(|s| s.surface = [glint, sharp, glow, 0.0], f);
     }
 
     /// Meshes drawn in `f` are a world's globe surfaced from `map`: `kind`
@@ -568,14 +579,15 @@ impl Frame {
                 self.globe_maps.len() - 1
             }
         };
-        let before = std::mem::replace(&mut self.globe, [k as f32 + 1.0, kind, relief, bright]);
-        let before_at = std::mem::replace(&mut self.globe_at, at);
         let wrap = micro.map(|v| v.rem_euclid(MICRO_PERIOD)).as_vec3();
-        let before_micro = std::mem::replace(&mut self.globe_micro, [wrap.x, wrap.y, wrap.z, 0.0]);
-        f(self);
-        self.globe = before;
-        self.globe_at = before_at;
-        self.globe_micro = before_micro;
+        self.with_state(
+            |s| {
+                s.globe = [k as f32 + 1.0, kind, relief, bright];
+                s.globe_at = at;
+                s.globe_micro = [wrap.x, wrap.y, wrap.z, 0.0];
+            },
+            f,
+        );
     }
 
     /// Meshes drawn in `f` (a globe, its ground) are seen through air: `depth`
@@ -585,17 +597,13 @@ impl Frame {
     pub fn with_air(&mut self, depth: [f32; 3], shell: f32, f: impl FnOnce(&mut Frame)) {
         // (Packed in 24 bits, a hundredth each, exact in an f32: see `air_depth` in the shader.)
         let q = depth.map(|d| (d * 100.0).round().clamp(0.0, 255.0));
-        let before = std::mem::replace(&mut self.globe_air, [q[0] * 65536.0 + q[1] * 256.0 + q[2], shell]);
-        f(self);
-        self.globe_air = before;
+        self.with_state(|s| s.globe_air = [q[0] * 65536.0 + q[1] * 256.0 + q[2], shell], f);
     }
 
     /// Meshes drawn in `f` cast no shadows (a planet's globe: its night is
     /// its own shading, and its eclipses are `eclipsers`).
     pub fn no_shadow(&mut self, f: impl FnOnce(&mut Frame)) {
-        let before = std::mem::replace(&mut self.casts, false);
-        f(self);
-        self.casts = before;
+        self.with_state(|s| s.casts = false, f);
     }
 
     /// Meshes drawn in `f` are ground: they cast only into the ground's own
@@ -603,9 +611,13 @@ impl Frame {
     /// shades the valley beyond it without the ground shading itself up
     /// close in the fine cascades.
     pub fn ground_shadow(&mut self, f: impl FnOnce(&mut Frame)) {
-        let before = (std::mem::replace(&mut self.casts, false), std::mem::replace(&mut self.ground, true));
-        f(self);
-        (self.casts, self.ground) = before;
+        self.with_state(
+            |s| {
+                s.casts = false;
+                s.ground = true;
+            },
+            f,
+        );
     }
 
     /// How much of the light's disc is in sight from `at` (world), 0..1:
@@ -743,8 +755,8 @@ impl Frame {
     /// light on it here, for the GPU to transform and light.
     fn mesh(&mut self, mesh: &Mesh, t: &Transform, line: [f32; 4], fill: [f32; 4], edges: bool, lit: bool) {
         let inst = self.instance(t, line, fill, lit);
-        let d = MeshDraw { mesh: mesh.clone(), instance: inst, edges, casts: self.casts, reach: mesh.radius() * t.scale as f32, ground: self.ground };
-        if self.in_front { self.front.push(d) } else { self.meshes.push(d) }
+        let d = MeshDraw { mesh: mesh.clone(), instance: inst, edges, casts: self.state.casts, reach: mesh.radius() * t.scale as f32, ground: self.state.ground };
+        if self.state.in_front { self.front.push(d) } else { self.meshes.push(d) }
     }
 
     /// Unlit transparent mesh, scaled along its local axes. Shares GPU geometry across
@@ -775,14 +787,14 @@ impl Frame {
     /// it shows from the frame it's in).
     pub fn pooled(&mut self, group: PoolGroup, mesh: &crate::pool::PooledMesh, origin: DVec3) {
         let d = crate::pool::Draw { t: self.rel(origin), group: group.0, mesh: self.pool.mesh(mesh), morph: -1.0 };
-        if self.in_front { self.pool.front.push(d) } else { self.pool.draws.push(d) }
+        if self.state.in_front { self.pool.front.push(d) } else { self.pool.draws.push(d) }
     }
 
     /// Pooled geometry with one explicit morph weight, shared by every vertex of the tile.
     /// The offset stored in each vertex still supplies its exact parent-surface target.
     pub fn pooled_morphed(&mut self, group: PoolGroup, mesh: &crate::pool::PooledMesh, origin: DVec3, weight: f32) {
         self.pooled(group, mesh, origin);
-        let draws = if self.in_front { &mut self.pool.front } else { &mut self.pool.draws };
+        let draws = if self.state.in_front { &mut self.pool.front } else { &mut self.pool.draws };
         draws.last_mut().unwrap().morph = weight.clamp(0.0, 1.0);
     }
 
@@ -827,7 +839,7 @@ impl Frame {
     /// One part of such a model (see `PbrModel::load_gltf_parts`; 0: its body), placed by `t`.
     pub fn model_pbr_part(&mut self, model: &crate::pbr::PbrModel, t: &Transform, part: u8) {
         let inst = self.instance(t, [1.0; 4], [1.0; 4], true);
-        self.pbr.push(PbrDraw { model: model.clone(), instance: inst, casts: self.casts, reach: model.radius() * t.scale as f32, part });
+        self.pbr.push(PbrDraw { model: model.clone(), instance: inst, casts: self.state.casts, reach: model.radius() * t.scale as f32, part });
     }
 
     /// As `model_pbr_part`, the part stretched along the model's own axes by `axes` (on top of `t.scale`)
@@ -841,7 +853,7 @@ impl Frame {
             c[2] *= k;
         }
         let reach = model.radius() * t.scale as f32 * axes.max_element();
-        self.pbr.push(PbrDraw { model: model.clone(), instance: inst, casts: self.casts, reach, part });
+        self.pbr.push(PbrDraw { model: model.clone(), instance: inst, casts: self.state.casts, reach, part });
     }
 
     /// Where a draw is (camera-relative), its tints, and the light on it here.
@@ -853,7 +865,7 @@ impl Frame {
             c0: m.x_axis.extend(0.0).to_array(),
             c1: m.y_axis.extend(0.0).to_array(),
             c2: m.z_axis.extend(0.0).to_array(),
-            t: at.extend(self.globe_air[1]).to_array(),
+            t: at.extend(self.state.globe_air[1]).to_array(),
             line_tint: line,
             fill_tint: fill,
             // Unlit: full brightness (ambient 1).
@@ -861,12 +873,12 @@ impl Frame {
             light_color: [0.0, 0.0, 0.0, 1.0],
             refl_dir: [0.0; 4],
             refl_color: [0.0; 4],
-            material: self.surface,
-            globe: self.globe,
-            globe_at: self.globe_at,
+            material: self.state.surface,
+            globe: self.state.globe,
+            globe_at: self.state.globe_at,
         };
-        (inst.c0[3], inst.c1[3], inst.c2[3]) = (self.globe_micro[0], self.globe_micro[1], self.globe_micro[2]);
-        inst.material[3] = self.globe_air[0];
+        (inst.c0[3], inst.c1[3], inst.c2[3]) = (self.state.globe_micro[0], self.state.globe_micro[1], self.state.globe_micro[2]);
+        inst.material[3] = self.state.globe_air[0];
         if lit && let Some(light) = self.light {
             let dir = (light.position - t.position).normalize_or_zero().as_vec3();
             // (What a planet or moon leaves of the sun here.)
@@ -885,7 +897,7 @@ impl Frame {
     /// Line with a color at each end (blended along it).
     pub fn line2(&mut self, a: DVec3, b: DVec3, ca: Color, cb: Color) {
         let (a, b) = (self.rel(a), self.rel(b));
-        let lines = if self.in_front { &mut self.front_lines } else { &mut self.lines };
+        let lines = if self.state.in_front { &mut self.front_lines } else { &mut self.lines };
         lines.push(Vertex { pos: a, color: ca.0 });
         lines.push(Vertex { pos: b, color: cb.0 });
     }
