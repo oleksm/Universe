@@ -12,7 +12,7 @@
 use glam::DVec3;
 use universe_physics::contact::{self, Contacts, Ground, MassProps, Strut};
 use universe_physics::laws::{FOOT_FRICTION, HULL_FRICTION};
-use universe_physics::{surface_radius_at, Collider, OnRails, RigidBody, Weld};
+use universe_physics::{Collider, OnRails, RigidBody, Weld};
 
 use crate::events::ShipEvent;
 use crate::rules::{Part, Pose, Rule, Rules};
@@ -415,11 +415,38 @@ pub fn mass_props(ship: &Ship) -> MassProps {
 
 /// The ground of body `i` under `p` at `t` (bodies at `positions`).
 pub fn ground_at(bodies: &[Body], i: usize, t: f64, positions: &[DVec3], p: DVec3) -> Ground {
-    let b = &bodies[i];
-    let center = positions[i];
-    let v = universe_physics::velocity(bodies, i, t);
-    let spin = b.rail().angular_velocity();
-    contact::ground_of(center, |q| v + spin.cross(q - center), |q| surface_radius_at(b, center, q, t), p, SLOPE_SPAN)
+    GroundFrame::new(bodies, i, t, positions).at(p)
+}
+
+/// Body `i`'s place, motion and turn at `t`, worked out once for every point a substep asks of its ground
+/// (each point asks three heights for its slope).
+pub struct GroundFrame<'a> {
+    b: &'a Body,
+    center: DVec3,
+    velocity: DVec3,
+    spin: DVec3,
+    unturn: glam::DQuat,
+}
+
+impl<'a> GroundFrame<'a> {
+    pub fn new(bodies: &'a [Body], i: usize, t: f64, positions: &[DVec3]) -> Self {
+        let b = &bodies[i];
+        Self { b, center: positions[i], velocity: universe_physics::velocity(bodies, i, t), spin: b.rail().angular_velocity(), unturn: b.rail().rotation(t).inverse() }
+    }
+
+    /// The ground under `p` (as `ground_at`).
+    pub fn at(&self, p: DVec3) -> Ground {
+        let c = self.center;
+        contact::ground_of(c, |q| self.velocity + self.spin.cross(q - c), |q| self.radius(q), p, SLOPE_SPAN)
+    }
+
+    /// The surface's distance from the centre under `q` (as `surface_radius_at`).
+    fn radius(&self, q: DVec3) -> f64 {
+        match self.b.surface() {
+            Some(_) => universe_physics::surface_radius(self.b, self.unturn * (q - self.center).normalize()),
+            None => self.b.rail().radius,
+        }
+    }
 }
 
 /// The body whose ground the ship could touch within `reach` metres (plus its
@@ -462,7 +489,8 @@ impl Step {
     pub fn apply(&mut self, bodies: &[Body], t: f64, positions: &[DVec3], rigid: &mut RigidBody, ship: &mut Ship, events: &mut Vec<ShipEvent>) -> DVec3 {
         let h = CONTACT_STEP;
         let i = self.body;
-        let c = contact::forces(&|p| Some(ground_at(bodies, i, t, positions, p)), rigid, &self.mass, &self.profile.struts, &self.profile.hull, ship.broken_legs, h);
+        let ground = GroundFrame::new(bodies, i, t, positions);
+        let c = contact::forces(&|p| Some(ground.at(p)), rigid, &self.mass, &self.profile.struts, &self.profile.hull, ship.broken_legs, h);
         // Legs pushed past what they hold give way: the ship comes down on that corner.
         for (k, (&f, s)) in c.struts.iter().zip(&self.profile.struts).enumerate() {
             if f > s.holds && k < 64 && ship.broken_legs & (1 << k) == 0 {

@@ -20,8 +20,10 @@ use std::sync::{Arc, Mutex};
 
 pub const FORMAT: &str = "planet-land-pyramid/1";
 
-/// Tile rasters of the pyramid kept for height queries (each about 190 KB at 193 samples a side).
+/// Tile rasters of the pyramid kept for height queries (each about 190 KB at 193 samples a side), in SHARDS
+/// caches locked apart so parallel ships rarely wait on each other.
 const RASTERS: usize = 512;
+const SHARDS: usize = 16;
 
 /// From the package's frame to the body's (`super::direction`): the lab's (x, y, z) is the body's (-z, y, x).
 pub fn to_body() -> DQuat {
@@ -229,7 +231,7 @@ struct Pyramid {
     dir: PathBuf,
     m: Meta,
     index: HashMap<(usize, usize, usize), usize>,
-    cache: Mutex<(u64, HashMap<usize, (u64, Arc<Raster>)>)>,
+    cache: [Mutex<(u64, HashMap<usize, (u64, Arc<Raster>)>)>; SHARDS],
 }
 
 impl Pyramid {
@@ -242,12 +244,13 @@ impl Pyramid {
         };
         let m: Meta = serde_json::from_str(&text).map_err(|e| format!("{}: {e}", path.display()))?;
         let index = m.tiles.iter().enumerate().map(|(i, t)| ((t.k, t.row, t.col), i)).collect();
-        Ok(Some(Self { dir, m, index, cache: Mutex::new((0, HashMap::new())) }))
+        Ok(Some(Self { dir, m, index, cache: std::array::from_fn(|_| Mutex::new((0, HashMap::new()))) }))
     }
 
     fn tile(&self, id: usize) -> Option<Arc<Raster>> {
+        let shard = &self.cache[id % SHARDS];
         {
-            let mut c = self.cache.lock().unwrap_or_else(|e| e.into_inner());
+            let mut c = shard.lock().unwrap_or_else(|e| e.into_inner());
             c.0 += 1;
             let tick = c.0;
             if let Some(e) = c.1.get_mut(&id) {
@@ -261,10 +264,10 @@ impl Pyramid {
             .map_err(|e| log::warn!("land pyramid tile {id}: {e}"))
             .ok()?;
         let r = Arc::new(r);
-        let mut c = self.cache.lock().unwrap_or_else(|e| e.into_inner());
+        let mut c = shard.lock().unwrap_or_else(|e| e.into_inner());
         c.0 += 1;
         let tick = c.0;
-        if c.1.len() >= RASTERS
+        if c.1.len() >= RASTERS / SHARDS
             && let Some(old) = c.1.iter().min_by_key(|e| e.1 .0).map(|e| *e.0)
         {
             c.1.remove(&old);
@@ -542,13 +545,15 @@ impl LandHeights {
             (e, u.cross(e))
         };
         let step = std::f64::consts::FRAC_PI_2 / 32.0;
-        let mut seen = vec![home];
+        let mut seen = [home; 9];
+        let mut n_seen = 1;
         for (de, dn) in [(1.0, 0.0), (-1.0, 0.0), (0.0, 1.0), (0.0, -1.0), (1.0, 1.0), (1.0, -1.0), (-1.0, 1.0), (-1.0, -1.0)] {
             let c = face_cell((u + (e * de + n * dn) * step).normalize());
-            if seen.contains(&c) {
+            if seen[..n_seen].contains(&c) {
                 continue;
             }
-            seen.push(c);
+            seen[n_seen] = c;
+            n_seen += 1;
             if let Some(h) = self.in_tiles(u, c) {
                 return h;
             }
