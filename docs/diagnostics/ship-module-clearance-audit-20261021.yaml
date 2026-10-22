@@ -1,0 +1,64 @@
+owner_corrections:
+- Inherited pilot seat/console must be replaced by an existing command module, not retained as a concept exception.
+- Module clearances belong in QC and must distinguish requirements from provisional allowances.
+scope: Reusable definitions and independent project screening audit; no actual module selection, geometry-fit certificate
+  or release approval.
+new_definition: ship-check.module-clearance
+linked_stages:
+- G3 Architecture
+- G6 Production
+coverage:
+- Actual referenced record/model/consumer basis, origin and pose; no scaling
+- Occupied geometry, containment and interference
+- Mount/holder seating, fastener insertion and tool space
+- Installation and removal paths
+- User approach, seat/aisle transition, reach and emergency egress
+- Motion extrema, intermediate/combined states, joints and flexible runs
+- Maintenance/service paths, connectors and replacement access
+allowance_authority: Published record/consumer requirement, derived value with method, or explicit provisional project
+  assumption; no universal distance invented. Missing data remains unresolved, not zero or pass.
+inherited_geometry:
+  required: Inventory every source object/collection/build output including inherited/hidden/disabled geometry,
+    linked products and export helpers. Retire active substitutes and stop regeneration; preserve withdrawn history.
+  object_audit_sha256: 49ce7355b439b1f37d161ec7b9a1c8b3b6c9c8e88e851101a189a4e2fba2b5db
+  source_sha256: e80314056b04846d1a918136c50bfcacb6f6de0cc6a2d4b480cd150b1f6c7aea
+  objects_in_triage_inventory: 113
+  reported_custom_pilot_fitout_substitutes: 0
+  source_hash_verified: true
+  limits: Blender generated the bpy object roster. Registry verified file/source hashes and reviewed scope; semantic
+    ownership of remaining architecture is still pending. A zero name-based substitute count is not complete ownership
+    or geometry acceptance.
+  invalidation: Affected previews/exports, layout, BOM/mass and clearance evidence must be regenerated after substitute
+    removal; independent unchanged results may be retained only through matching scoped inputs.
+project_cases:
+  script: blender:ships/explorer-study/check_module_clearance_cases.py
+  script_sha256: 1b0f79202cabff5bd5e469880b8c46b5233073a6a1e6d09ed4b36d34a62ea45a
+  report_sha256: 57b4fb2ce38157ad2d7aaeedcbae714063ab82bb7368463e3cb78588eb0a1904
+  cases_passed: 22
+  independently_rerun: true
+  cases_include:
+  - Six occupied/mount-fastener/install-remove/approach-egress/motion/service categories missing and obstructed
+  - Scale-to-fit, unverified frame, changed reference hash
+  - Provisional requirement promoted to pass, unjustified not-applicable
+  - Hidden inherited pilot substitute
+  - Unresolved required clearance state
+  - Unresolved or absent source-object owner
+  independent_false_passes_repaired:
+  - service.state=unresolved with retained box/basis previously returned no errors; now missing_service.
+  - Hidden source object owner=unresolved previously returned no errors; now unresolved_object_owner.
+  limits: Synthetic declaration/AABB screening only. An AABB overlap is not a narrow-phase mesh collision certificate,
+    and these tests do not exercise the explorer installation, ergonomics, continuous motion, load paths or runtime.
+actual_project: Required product selection, inherited ownership resolution, actual frames and geometric/operational
+  clearances are unresolved; G3/G6 dependent claims and G7/G8 cannot pass.
+runtime_schema: Unchanged; definitions do not implement missing consumer support or a generic clearance solver.
+validation:
+  registry_regressions_passed: 47
+  full_registry_checks: pass
+  page_checks:
+    x:ship-checks:module-clearance: 8
+    x:ship-rules:module-reuse: 6
+    x:ship-stages:architecture: 17
+    x:ship-stages:production: 19
+  page_visually_inspected: x:ship-checks:module-clearance
+  workflow_definitions: 95
+  existing_report_gaps: unchanged

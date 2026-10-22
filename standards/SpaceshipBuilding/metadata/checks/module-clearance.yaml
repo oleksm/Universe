@@ -1,0 +1,61 @@
+# yaml-language-server: $schema=../../schema/ship-check.schema.yaml
+identity:
+  key: ship-check.module-clearance
+  name: Referenced module clearance and access
+  about: Verify actual reusable module space, attachment, operation and service paths without inventing clearance
+    requirements.
+status: draft
+implementation: mixed
+owner: blender
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 3.5 Co-design cockpit, routes and hull
+  note: 'Owner corrections, 2026-10-21: inherited pilot products must be reused and module clearances must
+    be explicit in QC.'
+method:
+- Identify every selected instance, existing record/model hash, actual consumer basis/origin and pose; reject
+  model scaling or an envelope smaller than the product. Include command station and inherited instances.
+- Inventory source objects, linked collections and build outputs by owner; retire inherited substitutes and
+  exclude reservations, helper meshes and withdrawn copies from export. A name-only check is insufficient.
+- Check actual occupied geometry, containment and interference in the hull and between modules, with structural,
+  lining and route ownership explicit.
+- Check mount/holder seating plus fastener, bolt insertion and tool-access volumes; missing holder geometry
+  or ratings remain explicit gaps.
+- Exercise installation and removal sweeps, including approaches, access openings and intervening structure;
+  a final pose alone does not prove the path.
+- Exercise user/suit approach, seated ingress/reach, aisle transition and declared emergency egress with recorded
+  fixtures; exterior appearance does not prove usability.
+- Check required operational motion, extrema, intermediate and combined states, rigid joints and flexible runs,
+  retaining witness poses and sampling limitations.
+- Check maintenance/service space, connector access, consumable replacement, inspection and required removal
+  paths; decorative panels do not prove a service route.
+- For every required allowance record sourced/derived/provisional authority and input, measured minimum or
+  collision witness, result and scope. Missing data is unresolved and blocks dependent acceptance; not-applicable
+  needs evidence.
+- Invalidate dependent clearance results after model/pose, ownership, mount, route, fixture, motion or export
+  changes; demonstrate failure for inherited substitutes, unknown clearances claimed pass and scale-to-fit.
+evidence:
+- Per-instance clearance matrix with requirement/allowance provenance, actual model/record/consumer/frame hashes,
+  poses, geometry and fixtures.
+- Worst-case measurements, intersections or failed routes, views and motion/path samples; separate declared
+  tests from geometry/export/runtime evidence.
+- Source-object ownership roster, retired substitute/export exclusions and fresh preview/export hashes.
+failure: Keep the witness and mark the affected module, route and release claim failed or unresolved; repair
+  or obtain missing data before dependent acceptance. Continue independent work without substituting an invented
+  module or clearance.
+scope: assembly
+artifacts:
+- ship-artifact.module-inventory
+- ship-artifact.spatial-layout
+- ship-artifact.interfaces
+- ship-artifact.evidence
+coverage: Applies to the actual selected instances, consumer frame, fixtures and sampled paths/states. Declaration
+  tests, boxes and static collision samples do not establish complete access, continuous motion, engineering
+  or runtime behavior.
+rules:
+- ship-rule.module-reuse
+- ship-rule.claim-boundaries
+- ship-rule.evidence-invalidation
+limitations:
+- The check definition does not implement a generic clearance engine or supply missing module, holder, human-fixture
+  or consumer data.

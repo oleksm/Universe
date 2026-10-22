@@ -73,6 +73,7 @@ coverage:
   - ship-check.inhabitation
   - ship-artifact.module-inventory
   - ship-rule.module-reuse
+  - ship-check.module-clearance
 - source_section: '3.6'
   source_title: Establish readable construction without false engineering claims
   records:
@@ -223,8 +224,10 @@ refinements:
 source_document_in_registry: docs/spaceship-building-workflow-proposal.md
 source_sha256_basis: Original research proposal before normalization and subsequent owner refinements; normalized_document_sha256
   identifies the current archived proposal.
-normalized_document_sha256: 33c15d245bae3350112202befc6c07650456b5a6b6cf721baec3b07e2c0a953a
+normalized_document_sha256: 2ff53fee062bac2b0b8a4e33eb92eb764167b31c59356f5fc0d13f9e590a0d74
 owner_refinements:
 - Feature-first intake; confirmed consolidated brief; derived prompt before whole-ship sketch.
 - Rehearsal provenance, exact prompt witnesses, hidden-feature limits and stale-input negative cases.
 - Discover existing modules and supported placement consumer before G3 sizing; no custom fit-out substitutes.
+- Audit inherited module substitutes and explicit per-instance occupied, attachment/tool, installation/removal,
+  user, motion and service clearances with authority/provisional provenance.

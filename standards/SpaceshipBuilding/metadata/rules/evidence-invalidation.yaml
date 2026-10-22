@@ -17,44 +17,62 @@ statement: 'Invalidate evidence by dependency and changed hash, retaining indepe
 
   |---|---|---|
 
-  | Hull profile or global scale | Affected form, space, interfaces, collision, mass inputs, export |
-  Unchanged reusable component sources |
+  | Hull profile or global scale | Affected form, space, interfaces, collision, mass inputs, export | Unchanged
+  reusable component sources |
 
-  | Module placement | Mount alignment, routes, access, assembly collision and mass distribution | Module
-  model package |
+  | Module placement | Mount alignment, routes, access, assembly collision and mass distribution | Module model
+  package |
 
-  | Registry mass only | Accounting and dependent load analyses | Geometry if no geometry requirement
-  changed |
+  | Registry mass only | Accounting and dependent load analyses | Geometry if no geometry requirement changed
+  |
 
   | Port datum | Mating, routing, required marker and placement checks | Body mesh unless an actual conflict
   exists |
 
-  | Axis/hierarchy | Bind transforms, motion, connections, swept envelopes and runtime poses | Unrelated
-  static regions |
+  | Axis/hierarchy | Bind transforms, motion, connections, swept envelopes and runtime poses | Unrelated static
+  regions |
 
   | Material/shader | Appearance, export materials and performance | Geometry checks with identical geometry
   inputs |
 
-  | Exporter/toolchain | Raw GLB, materials, transforms, package compatibility | Source design decision,
-  unless output drift changes it |
+  | Exporter/toolchain | Raw GLB, materials, transforms, package compatibility | Source design decision, unless
+  output drift changes it |
 
   | Reference/identity decision | Related visual gates and downstream form evidence | Independent functional
   results where inputs are unchanged |
 
 
-  An accepted design decision reopens only when its premises changed. Every evidence item contains input
-  hashes, not merely a timestamp. The existing runner already supports stale evidence and protected accepted
-  packages; use that mechanism rather than create a second approval database. (Execution-loop contract
-  (external installed workflow reference: `freefall-asset-delivery/references/execution-loop.md`; not
-  bundled))
+  An accepted design decision reopens only when its premises changed. Every evidence item contains input hashes,
+  not merely a timestamp. The existing runner already supports stale evidence and protected accepted packages;
+  use that mechanism rather than create a second approval database. (Execution-loop contract (external installed
+  workflow reference: `freefall-asset-delivery/references/execution-loop.md`; not bundled))
 
 
-  Bind the brief, confirmation, prompt, generated candidate and review through exact input hashes and
-  the workflow revision. A changed brief invalidates its dependent coverage and prompt; a changed prompt
-  invalidates claims that an existing image was generated from that prompt. Keep earlier inputs and candidates
-  as history. Reconfirm material design choices only; an intent-preserving wording repair does not invent
-  a new approval requirement. Tests must demonstrate rejection of a missing prompt feature, a forged real-owner
-  confirmation using simulated authority and a stale dependent input.'
+  Bind the brief, confirmation, prompt, generated candidate and review through exact input hashes and the workflow
+  revision. A changed brief invalidates its dependent coverage and prompt; a changed prompt invalidates claims
+  that an existing image was generated from that prompt. Keep earlier inputs and candidates as history. Reconfirm
+  material design choices only; an intent-preserving wording repair does not invent a new approval requirement.
+  Tests must demonstrate rejection of a missing prompt feature, a forged real-owner confirmation using simulated
+  authority and a stale dependent input.
+
+
+  Apply the reuse audit to inherited geometry as well as new builds. Before continuing a resumed candidate,
+  inventory every source object, linked asset, collection and build-script output by semantic owner: hull construction,
+  referenced product instance or non-exported helper/reservation. Include the inherited pilot seat/console,
+  hidden objects and disabled export collections; a name-prefix check is not a complete ownership audit. Retire
+  custom substitutes from the active source and build path, prevent regeneration, and mark their renders/exports
+  withdrawn. Preserve history, but invalidate dependent previews, exports, mass/BOM, arrangement and clearance
+  evidence until regenerated from the corrected inputs.
+
+
+  Each clearance requirement and allowance records its source and authority: a published record/consumer requirement,
+  a derived value with method or an explicitly provisional project assumption. Do not invent universal clearance
+  distances or promote a provisional figure into a certified requirement. Missing model, frame, holder, fastener,
+  human/suit fixture, motion or service data remains unresolved and blocks the dependent claim; it is not zero
+  clearance, not applicable or pass by default. A reasoned not-applicable disposition needs evidence. Recheck
+  affected clearances after placement, source/model, mount, route, ownership or export changes. Declaration
+  counterexamples include an inherited pilot substitute, an unknown required clearance marked pass and scaled
+  reference geometry presented as unchanged equipment.'
 applies_to:
 - Invalidate only evidence that depends on the change
 verification:
