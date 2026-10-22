@@ -16,6 +16,10 @@ claims beyond the code. production-v01 holds only `review/fit-inputs.json` so fa
 - Preview: `UNIVERSE_HULL=path.glb freefall` flies it as the player's ship (set down at its gear height). The
   studio (`freefall --studio`, `--report/--fit/--compare <design>`) works on registry hulls whose record names the
   model. Both are the ships session's tools; the hull fit itself is theirs.
+- Look only, no hull: `UNIVERSE_SCENARIO=showcase UNIVERSE_MODEL=review.glb UNIVERSE_MODEL_CLEAN=1 freefall` shows the
+  model ahead of the eye, slowly turning (`crates/game/src/lib.rs:1271`, `scene.rs:112`; CLEAN hides the player's
+  own ship). It commissions nothing: no collision, nodes, ramp or gear are read. Distinct from `UNIVERSE_HULL`, the
+  flight import above. (Registry's audit addition, 2026-10-22.)
 
 ## Ramp and boarding
 
@@ -35,6 +39,8 @@ claims beyond the code. production-v01 holds only `review/fit-inputs.json` so fa
 - Static only. A fitted landing-gear visual with motion (`has_motion`) is refused
   (`crates/game/src/mounted.rs:83`), and an overlay replacing native nodes too (`:43`). No retraction, no stowed
   state, no animated oleo: the gear-strut-s0 hinge/oleo nodes would be drawn fixed.
+- The explorer's intent is retractable gear. A preview on main shows it fixed, as a limit of the engine, not an
+  acceptance of fixed gear: retraction stays an open engine capability (an articulated mounted consumer).
 
 ## Before preview or commissioning
 
