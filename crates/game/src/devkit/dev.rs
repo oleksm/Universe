@@ -99,8 +99,8 @@ pub fn apply(app: &mut App, name: &str) {
         Ok("map") => {
             app.mode = Mode::Observer;
             app.observer.focus = Focus::Ship;
-            app.observer.distance = 7_000.0;
-            app.observer.pitch = 0.25;
+            app.observer.orbit.distance = 7_000.0;
+            app.observer.orbit.pitch = 0.25;
         }
         _ => {}
     }
@@ -216,8 +216,8 @@ pub struct Ctx {
 fn observe(app: &mut App, home: usize, body: usize, distance: f64, pitch: f64) {
     app.mode = Mode::Observer;
     app.observer.focus = Focus::Body { system: home, body };
-    app.observer.distance = distance;
-    app.observer.pitch = pitch;
+    app.observer.orbit.distance = distance;
+    app.observer.orbit.pitch = pitch;
 }
 
 /// Every scenario, in the order they're listed.
@@ -358,9 +358,9 @@ fn s_settlement(app: &mut App, _name: &str, c: &Ctx) {
     app.mode = Mode::Observer;
     app.observer.focus = Focus::Ship;
     let env = |k: &str, d: f64| crate::devenv::num(k).unwrap_or(d);
-    app.observer.distance = env("UNIVERSE_DIST", 2500.0);
-    app.observer.yaw = env("UNIVERSE_YAW", 0.6);
-    app.observer.pitch = env("UNIVERSE_PITCH", 0.45);
+    app.observer.orbit.distance = env("UNIVERSE_DIST", 2500.0);
+    app.observer.orbit.yaw = env("UNIVERSE_YAW", 0.6);
+    app.observer.orbit.pitch = env("UNIVERSE_PITCH", 0.45);
     app.observer.studio = crate::devenv::var_os("UNIVERSE_STUDIO").is_some();
 }
 
@@ -382,7 +382,7 @@ fn s_planet(app: &mut App, _name: &str, c: &Ctx) {
     let planet = c.planet;
     observe(app, home, planet, sys.bodies[planet].rail.radius * crate::devenv::var("UNIVERSE_DIST").ok().and_then(|d| d.parse().ok()).unwrap_or(6.0), 0.3);
     if let Some(y) = crate::devenv::var("UNIVERSE_YAW").ok().and_then(|d| d.parse().ok()) {
-        app.observer.yaw = y;
+        app.observer.orbit.yaw = y;
     }
 }
 
@@ -401,8 +401,8 @@ fn s_rings(app: &mut App, _name: &str, c: &Ctx) {
         if let Some(i) = s.bodies.iter().position(|b| b.rings.is_some()) {
             app.mode = Mode::Observer;
             app.observer.focus = Focus::Body { system: n, body: i };
-            app.observer.distance = s.bodies[i].rail.radius * 6.0;
-            app.observer.pitch = 0.3;
+            app.observer.orbit.distance = s.bodies[i].rail.radius * 6.0;
+            app.observer.orbit.pitch = 0.3;
             break;
         }
     }
@@ -430,12 +430,12 @@ fn s_watch(app: &mut App, name: &str, _c: &Ctx) {
     app.mode = Mode::Observer;
     app.observer.focus = crate::observer::Focus::Ship;
     let env = crate::devenv::num;
-    app.observer.distance = env("UNIVERSE_DIST").unwrap_or(160.0);
+    app.observer.orbit.distance = env("UNIVERSE_DIST").unwrap_or(160.0);
     if let Some(p) = env("UNIVERSE_PITCH") {
-        app.observer.pitch = p;
+        app.observer.orbit.pitch = p;
     }
     if let Some(y) = env("UNIVERSE_YAW") {
-        app.observer.yaw = y;
+        app.observer.orbit.yaw = y;
     }
 }
 
@@ -455,10 +455,10 @@ fn s_sunlit(app: &mut App, _name: &str, c: &Ctx) {
     app.mode = Mode::Observer;
     app.observer.focus = crate::observer::Focus::Ship;
     let env = crate::devenv::num;
-    app.observer.distance = env("UNIVERSE_DIST").unwrap_or(110.0);
-    app.observer.pitch = env("UNIVERSE_PITCH").unwrap_or(0.25);
-    app.observer.yaw = env("UNIVERSE_YAW").unwrap_or(2.3);
-    let (p, y) = (app.observer.pitch, app.observer.yaw);
+    app.observer.orbit.distance = env("UNIVERSE_DIST").unwrap_or(110.0);
+    app.observer.orbit.pitch = env("UNIVERSE_PITCH").unwrap_or(0.25);
+    app.observer.orbit.yaw = env("UNIVERSE_YAW").unwrap_or(2.3);
+    let (p, y) = (app.observer.orbit.pitch, app.observer.orbit.yaw);
     let eye = DVec3::new(p.cos() * y.sin(), p.sin(), p.cos() * y.cos());
     let side = eye.cross(DVec3::Y).normalize_or(DVec3::X);
     let local_sun = (eye + DVec3::Y * 0.6 + side * 0.4).normalize();
@@ -952,8 +952,8 @@ fn s_mining(app: &mut App, name: &str, c: &Ctx) {
         if name == "closingwatch" {
             app.mode = Mode::Observer;
             app.observer.focus = Focus::Ship;
-            app.observer.distance = 400.0;
-            app.observer.pitch = 0.4;
+            app.observer.orbit.distance = 400.0;
+            app.observer.orbit.pitch = 0.4;
         }
     }
     if matches!(name, "mining" | "cargo") {
@@ -996,8 +996,8 @@ fn s_gate(app: &mut App, name: &str, c: &Ctx) {
         if name == "gateorbitwatch" || name == "gateorbitjets" {
             app.mode = Mode::Observer;
             app.observer.focus = Focus::Ship;
-            app.observer.distance = if name == "gateorbitjets" { 150.0 } else { 30_000.0 };
-            app.observer.pitch = if name == "gateorbitjets" { -0.35 } else { 1.4 };
+            app.observer.orbit.distance = if name == "gateorbitjets" { 150.0 } else { 30_000.0 };
+            app.observer.orbit.pitch = if name == "gateorbitjets" { -0.35 } else { 1.4 };
         }
         return;
     }
@@ -1193,9 +1193,9 @@ fn s_showship(app: &mut App, _name: &str, _c: &Ctx) {
     }
     app.mode = Mode::Observer;
     app.observer.focus = Focus::Ship;
-    app.observer.distance = crate::devenv::var("UNIVERSE_DIST").ok().and_then(|d| d.parse().ok()).unwrap_or(160.0);
-    app.observer.pitch = crate::devenv::var("UNIVERSE_PITCH").ok().and_then(|d| d.parse().ok()).unwrap_or(0.35);
-    app.observer.yaw = crate::devenv::var("UNIVERSE_YAW").ok().and_then(|d| d.parse().ok()).unwrap_or(2.3);
+    app.observer.orbit.distance = crate::devenv::var("UNIVERSE_DIST").ok().and_then(|d| d.parse().ok()).unwrap_or(160.0);
+    app.observer.orbit.pitch = crate::devenv::var("UNIVERSE_PITCH").ok().and_then(|d| d.parse().ok()).unwrap_or(0.35);
+    app.observer.orbit.yaw = crate::devenv::var("UNIVERSE_YAW").ok().and_then(|d| d.parse().ok()).unwrap_or(2.3);
     // UNIVERSE_BURN: the mains held (to see the drive lit).
     if crate::devenv::var("UNIVERSE_BURN").is_ok() {
         let u = app.engine.universe();
@@ -1293,8 +1293,8 @@ fn s_orbitship(app: &mut App, name: &str, c: &Ctx) {
     if name == "orbitshipwatch" {
         app.mode = Mode::Observer;
         app.observer.focus = Focus::Ship;
-        app.observer.distance = 6_000.0;
-        app.observer.pitch = 0.9;
+        app.observer.orbit.distance = 6_000.0;
+        app.observer.orbit.pitch = 0.9;
     }
 }
 
@@ -2106,8 +2106,8 @@ fn s_follow(app: &mut App, _name: &str, _c: &Ctx) {
         app.engine.universe().step_world(1.0 / 60.0, 3.0, &Controls::default());
         if let Some(i) = app.engine.universe().vessels.crafts().iter().position(|c| c.ship.is_flying() && !c.ship.hyperdrive && c.status.clearance.is_some_and(|x| x.autopilot)) {
             app.observer.focus = Focus::Craft(i);
-            app.observer.distance = 300.0;
-            app.observer.pitch = 0.3;
+            app.observer.orbit.distance = 300.0;
+            app.observer.orbit.pitch = 0.3;
             break;
         }
     }
@@ -2117,8 +2117,8 @@ fn s_network(app: &mut App, _name: &str, c: &Ctx) {
     let home = c.home;
     app.mode = Mode::Observer;
     app.observer.focus = Focus::Body { system: home, body: 0 };
-    app.observer.distance = 4.0e17;
-    app.observer.pitch = 0.9;
+    app.observer.orbit.distance = 4.0e17;
+    app.observer.orbit.pitch = 0.9;
 }
 
 fn s_autodock(app: &mut App, name: &str, _c: &Ctx) {

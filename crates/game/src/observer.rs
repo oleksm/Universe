@@ -1,4 +1,3 @@
-use std::f64::consts::FRAC_PI_2;
 
 use serde::{Deserialize, Serialize};
 use universe_engine::glam::DVec3;
@@ -18,9 +17,9 @@ pub enum Focus {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Observer {
     pub focus: Focus,
-    pub yaw: f64,
-    pub pitch: f64,
-    pub distance: f64,
+    /// Its orbit round the focus (saved as its own yaw, pitch and distance, as before).
+    #[serde(flatten)]
+    pub orbit: crate::orbit_cam::OrbitCam,
     /// Remaining offset of an in-flight focus change; decays to zero.
     #[serde(skip)]
     pub transition: DVec3,
@@ -40,7 +39,7 @@ const SHIP_SIZE: f64 = 30.0;
 
 impl Observer {
     pub fn new() -> Self {
-        Self { focus: Focus::Ship, yaw: 0.6, pitch: 0.25, distance: 180.0, transition: DVec3::ZERO, star_cycle: None, studio: false, inspection_offset: DVec3::ZERO }
+        Self { focus: Focus::Ship, orbit: crate::orbit_cam::OrbitCam::new(0.6, 0.25, 180.0), transition: DVec3::ZERO, star_cycle: None, studio: false, inspection_offset: DVec3::ZERO }
     }
 
     /// The galaxy index of the system this camera is looking at.
@@ -62,16 +61,9 @@ impl Observer {
     /// Handle observer input. Returns true if the focus target changed.
     pub fn input(&mut self, ctx: &Context, u: &View, charts: &Charts) -> bool {
         let input = &ctx.input;
-        if input.button_down(MouseButton::Left) || input.button_down(MouseButton::Right) {
-            self.yaw -= input.mouse_delta.x as f64 * 0.006;
-            self.pitch = (self.pitch + input.mouse_delta.y as f64 * 0.006).clamp(-FRAC_PI_2 + 0.01, FRAC_PI_2 - 0.01);
-        }
-        let orbit_keys = 1.2 * ctx.dt as f64;
-        self.yaw += input.axis(KeyCode::ArrowRight, KeyCode::ArrowLeft) as f64 * orbit_keys;
-        self.pitch = (self.pitch + input.axis(KeyCode::ArrowDown, KeyCode::ArrowUp) as f64 * orbit_keys)
-            .clamp(-FRAC_PI_2 + 0.01, FRAC_PI_2 - 0.01);
-        let zoom = input.scroll as f64 + input.axis(KeyCode::KeyS, KeyCode::KeyW) as f64 * ctx.dt as f64 * 4.0;
-        self.distance *= 0.85f64.powf(zoom);
+        self.orbit.drag(input, &[MouseButton::Left, MouseButton::Right], (-crate::orbit_cam::PITCH_LIMIT, crate::orbit_cam::PITCH_LIMIT));
+        self.orbit.keys(input, ctx.dt as f64, Some((-crate::orbit_cam::PITCH_LIMIT, crate::orbit_cam::PITCH_LIMIT)));
+        self.orbit.zoom(input, ctx.dt as f64, true, (0.0, f64::INFINITY));
 
         let old = self.focus;
         let origin = self.origin(u);
@@ -85,7 +77,7 @@ impl Observer {
             let step = if input.pressed(KeyCode::BracketRight) { 1 } else { n - 1 };
             let body = (current_body + step) % n;
             self.focus = Focus::Body { system: origin, body };
-            self.distance = sys.bodies[body].rail.radius * 5.0;
+            self.orbit.distance = sys.bodies[body].rail.radius * 5.0;
             self.star_cycle = None;
         }
         if crate::keys::pressed(input, crate::keys::Act::NextStar) || crate::keys::pressed(input, crate::keys::Act::PreviousStar) {
@@ -111,7 +103,7 @@ impl Observer {
                 _ => 0,
             };
             self.focus = Focus::Craft(next);
-            self.distance = 250.0;
+            self.orbit.distance = 250.0;
             self.star_cycle = None;
         }
         // The studio: only for a ship.
@@ -124,7 +116,7 @@ impl Observer {
         if crate::keys::pressed(input, crate::keys::Act::Home) {
             self.focus = Focus::Ship;
             self.inspection_offset = DVec3::ZERO;
-            self.distance = 180.0;
+            self.orbit.distance = 180.0;
             self.star_cycle = None;
         }
 
@@ -133,7 +125,7 @@ impl Observer {
         } else {
             self.focus_radius(charts) * 1.2
         };
-        self.distance = self.distance.clamp(min, MAX_DISTANCE);
+        self.orbit.distance = self.orbit.distance.clamp(min, MAX_DISTANCE);
         self.focus != old
     }
 
@@ -143,11 +135,8 @@ impl Observer {
 
     /// Orbiting `target` in `frame` (a ship's turn: yaw about its up, pitch over its top).
     pub fn camera_in(&self, target: DVec3, frame: glam::DQuat) -> Camera {
-        let dir = frame * DVec3::new(self.pitch.cos() * self.yaw.sin(), self.pitch.sin(), self.pitch.cos() * self.yaw.cos());
         let target = target + self.transition;
         let near = if matches!(self.focus, Focus::Ship) && self.inspection_offset != DVec3::ZERO { 0.02 } else { 1.0 };
-        let mut camera = Camera { position: target + dir * self.distance, near, ..Default::default() };
-        camera.look_at(target, (frame * DVec3::Y).as_vec3());
-        camera
+        Camera { near, ..self.orbit.camera(target, frame) }
     }
 }

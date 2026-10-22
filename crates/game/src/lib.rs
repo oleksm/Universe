@@ -1,5 +1,6 @@
 mod palette;
 mod devenv;
+mod orbit_cam;
 mod devkit;
 mod visuals;
 mod visual_assets;
@@ -729,7 +730,7 @@ impl App {
                 Mode::Pilot => {
                     ctx.grab_cursor(false);
                     self.observer.focus = Focus::Ship;
-                    self.observer.distance = 180.0;
+                    self.observer.orbit.distance = 180.0;
                     self.mode = Mode::Observer;
                 }
             }

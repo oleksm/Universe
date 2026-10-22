@@ -64,3 +64,7 @@ From the engine review of 2026-10-21 (duplication, fragmentation, control, perfo
     `runs` (each only picks its order); the overlay and PBR axis scalings share `Instance::scale_axes`. The six
     `model_*` calls stay: each is already one line over the frame's one `mesh()` (a style struct would change 37
     callers for no gain).
+11. One orbiting eye (`orbit_cam::OrbitCam`: drag, keys, zoom, camera) for the observer and the planet, scene,
+    plant and factory apps, each with its own buttons, tilt and range; five copies of the same yaw, pitch and
+    distance code go. The observer saves its orbit as before (flattened). Captures match. Left to the ships
+    session (its code): the studio's and test drive's own orbit (other drag and zoom rates).

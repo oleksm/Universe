@@ -7,7 +7,6 @@
 //! document, not a world. Up and down pick a works, ENTER opens it; a right drag or left and right
 //! turn, the wheel zooms, ESC closes.
 
-use std::f64::consts::FRAC_PI_2;
 
 use serde::{Deserialize, Serialize};
 use universe_engine::apps::{App, Next};
@@ -80,9 +79,7 @@ pub struct FactoryApp {
     list: Vec<(String, String)>,
     selected: usize,
     open: Option<Open>,
-    yaw: f64,
-    pitch: f64,
-    distance: f64,
+    orbit: crate::orbit_cam::OrbitCam,
     /// The cursor's ray on the ground, last frame (for picking and dragging).
     ground: Option<DVec3>,
     camera: Camera,
@@ -100,7 +97,7 @@ impl FactoryApp {
             Some(k) => list.iter().position(|(key, _)| key == k).ok_or_else(|| format!("no works {k} with modules in the registry"))?,
             None => 0,
         };
-        let mut app = FactoryApp { list, selected, open: None, yaw: 0.7, pitch: 0.7, distance: 600.0, ground: None, camera: Camera::default() };
+        let mut app = FactoryApp { list, selected, open: None, orbit: crate::orbit_cam::OrbitCam::new(0.7, 0.7, 600.0), ground: None, camera: Camera::default() };
         app.go(selected);
         Ok(app)
     }
@@ -159,7 +156,7 @@ impl FactoryApp {
             }
         }
         let span = outline.iter().map(|p| p[0].hypot(p[1])).fold(150.0, f64::max);
-        self.distance = span * 2.2;
+        self.orbit.distance = span * 2.2;
         let mut open = Open { name: f.identity.name.clone(), layout, outline, shown: vec![], no_size, picked: None, dragging: false, unsaved: false, note: String::new() };
         open.reshow();
         self.open = Some(open);
@@ -246,12 +243,9 @@ impl App for FactoryApp {
         if input.pressed(KeyCode::Enter) {
             self.go(self.selected);
         }
-        if input.button_down(MouseButton::Right) {
-            self.yaw -= input.mouse_delta.x as f64 * 0.006;
-            self.pitch = (self.pitch + input.mouse_delta.y as f64 * 0.006).clamp(0.1, FRAC_PI_2 - 0.01);
-        }
-        self.yaw += input.axis(KeyCode::ArrowRight, KeyCode::ArrowLeft) as f64 * 1.2 * ctx.dt as f64;
-        self.distance = (self.distance * 0.85f64.powf(input.scroll as f64)).clamp(20.0, 20_000.0);
+        self.orbit.drag(input, &[MouseButton::Right], (0.1, crate::orbit_cam::PITCH_LIMIT));
+        self.orbit.keys(input, ctx.dt as f64, None);
+        self.orbit.zoom(input, ctx.dt as f64, false, (20.0, 20_000.0));
         let ground = self.ground_at(ctx);
         let ctrl = input.down(KeyCode::ControlLeft) || input.down(KeyCode::ControlRight);
         if let Some(o) = self.open.as_mut() {
@@ -306,8 +300,8 @@ impl App for FactoryApp {
     fn draw(&self, frame: &mut Frame, _: &Context) {
         frame.light = Some(Light { position: DVec3::new(-3.0e11, 6.0e11, 2.0e11), color: [1.0, 0.97, 0.92], luminosity: 1.0, reference: universe_sim::units::AU, radius: 7.0e8 });
         // The ground's grid, every 10 m, out past the parcel.
-        let reach = (self.distance * 0.8).clamp(100.0, 3000.0);
-        let step = if self.distance > 600.0 { 50.0 } else { 10.0 };
+        let reach = (self.orbit.distance * 0.8).clamp(100.0, 3000.0);
+        let step = if self.orbit.distance > 600.0 { 50.0 } else { 10.0 };
         let grid = Color::hex(0x1d2a36);
         let mut v = -reach;
         while v <= reach {
@@ -374,10 +368,7 @@ impl App for FactoryApp {
 
 impl FactoryApp {
     fn camera_now(&self) -> Camera {
-        let dir = DVec3::new(self.pitch.cos() * self.yaw.sin(), self.pitch.sin(), self.pitch.cos() * self.yaw.cos());
-        let mut camera = Camera { position: dir * self.distance, ..Default::default() };
-        camera.look_at(DVec3::ZERO, universe_engine::glam::Vec3::Y);
-        camera
+        self.orbit.camera(DVec3::ZERO, universe_engine::glam::DQuat::IDENTITY)
     }
 }
 

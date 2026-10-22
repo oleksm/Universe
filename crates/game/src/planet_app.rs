@@ -6,7 +6,6 @@
 //! ENTER goes, PAGE UP and DOWN move through the world's history, L changes the look, ESC closes;
 //! a drag or left and right turn, the wheel or W and S zoom.
 
-use std::f64::consts::FRAC_PI_2;
 use std::sync::Arc;
 
 use universe_engine::apps::{App, Next};
@@ -34,9 +33,7 @@ pub struct PlanetApp {
     view: PlanetView,
     clocks: Runtime,
     positions: Vec<DVec3>,
-    yaw: f64,
-    pitch: f64,
-    distance: f64,
+    orbit: crate::orbit_cam::OrbitCam,
 }
 
 impl PlanetApp {
@@ -60,11 +57,9 @@ impl PlanetApp {
             view: PlanetView::default(),
             clocks,
             positions: vec![],
-            yaw: 0.6,
-            pitch: 0.25,
-            distance: 0.0,
+            orbit: crate::orbit_cam::OrbitCam::new(0.6, 0.25, 0.0),
         };
-        app.distance = app.system.bodies[body].rail.radius * 3.0;
+        app.orbit.distance = app.system.bodies[body].rail.radius * 3.0;
         // (At world `id`, else the home world: the first of the home system's worlds with a bake and
         // air, as the game's start is; through the list, so its cursor and timeline are that world's.)
         let home_world = app.home.bodies.iter().find(|b| b.rail.atmosphere.is_some() && b.terrain.as_ref().is_some_and(|t| t.baked())).map(|b| b.key.clone());
@@ -100,13 +95,13 @@ impl PlanetApp {
         self.studio.shown = Some((key, history));
         self.then = None;
         self.view = PlanetView::default();
-        self.distance = system.bodies[body].rail.radius * 3.0;
+        self.orbit.distance = system.bodies[body].rail.radius * 3.0;
         (self.system, self.body) = (system, body);
         // (Looked at from the sun's side, a little round towards evening.)
         self.update_positions();
         if let Some(star) = self.system.bodies.iter().position(|b| b.kind == BodyKind::Star) {
             let sun = (self.positions[star] - self.positions[body]).normalize_or_zero();
-            (self.yaw, self.pitch) = (sun.x.atan2(sun.z) + 0.6, 0.25);
+            (self.orbit.yaw, self.orbit.pitch) = (sun.x.atan2(sun.z) + 0.6, 0.25);
         }
         Ok(())
     }
@@ -143,7 +138,7 @@ impl App for PlanetApp {
 
     fn status(&self) -> String {
         let b = &self.system.bodies[self.body];
-        serde_json::json!({"world": b.key, "radius_m": b.rail.radius, "distance_m": self.distance, "look": format!("{:?}", self.look),
+        serde_json::json!({"world": b.key, "radius_m": b.rail.radius, "distance_m": self.orbit.distance, "look": format!("{:?}", self.look),
             "history_frame": self.then.as_ref().map(|f| f.frame), "time_s": self.clocks.time()}).to_string()
     }
 
@@ -184,14 +179,10 @@ impl App for PlanetApp {
         }
         // (Turned by a drag or left and right, zoomed by the wheel or W and S, as the observer is; up
         // and down pick a world, as in the WORLDS panel.)
-        if input.button_down(MouseButton::Left) || input.button_down(MouseButton::Right) {
-            self.yaw -= input.mouse_delta.x as f64 * 0.006;
-            self.pitch = (self.pitch + input.mouse_delta.y as f64 * 0.006).clamp(-FRAC_PI_2 + 0.01, FRAC_PI_2 - 0.01);
-        }
-        self.yaw += input.axis(KeyCode::ArrowRight, KeyCode::ArrowLeft) as f64 * 1.2 * ctx.dt as f64;
-        let zoom = input.scroll as f64 + input.axis(KeyCode::KeyS, KeyCode::KeyW) as f64 * ctx.dt as f64 * 4.0;
+        self.orbit.drag(input, &[MouseButton::Left, MouseButton::Right], (-crate::orbit_cam::PITCH_LIMIT, crate::orbit_cam::PITCH_LIMIT));
+        self.orbit.keys(input, ctx.dt as f64, None);
         let radius = self.system.bodies[self.body].rail.radius;
-        self.distance = (self.distance * 0.85f64.powf(zoom)).clamp(radius * 1.0005, radius * 200.0);
+        self.orbit.zoom(input, ctx.dt as f64, true, (radius * 1.0005, radius * 200.0));
         // Its own clocks: the world's time moves on (nothing of theirs is stepped yet).
         self.clocks.advance(ctx.dt as f64, &mut |_, _, _| {});
         self.update_positions();
@@ -202,10 +193,7 @@ impl App for PlanetApp {
 
     fn camera(&self) -> Camera {
         let target = self.positions.get(self.body).copied().unwrap_or_default();
-        let dir = DVec3::new(self.pitch.cos() * self.yaw.sin(), self.pitch.sin(), self.pitch.cos() * self.yaw.cos());
-        let mut camera = Camera { position: target + dir * self.distance, ..Default::default() };
-        camera.look_at(target, universe_engine::glam::Vec3::Y);
-        camera
+        self.orbit.camera(target, universe_engine::glam::DQuat::IDENTITY)
     }
 
     fn draw(&self, frame: &mut Frame, _: &Context) {
@@ -241,7 +229,7 @@ impl App for PlanetApp {
         }
         planet_studio::panel(frame, &self.studio, self.look, self.then.as_ref());
         let b = &sys.bodies[self.body];
-        let line = format!("{}  RADIUS {:.0} KM  {:.0} KM OFF   DRAG OR LEFT/RIGHT TURN  WHEEL OR W/S ZOOM", b.name.to_uppercase(), b.rail.radius / 1000.0, (self.distance - b.rail.radius) / 1000.0);
+        let line = format!("{}  RADIUS {:.0} KM  {:.0} KM OFF   DRAG OR LEFT/RIGHT TURN  WHEEL OR W/S ZOOM", b.name.to_uppercase(), b.rail.radius / 1000.0, (self.orbit.distance - b.rail.radius) / 1000.0);
         frame.text(Vec2::new(12.0, frame.size().y - 24.0), &line, Color::hex(0x91adbb));
     }
 }

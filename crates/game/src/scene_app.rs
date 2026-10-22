@@ -18,7 +18,6 @@
 //! SPACE pauses and runs it, R starts it over, a drag or left and right turn, the wheel zooms, ESC
 //! closes.
 
-use std::f64::consts::FRAC_PI_2;
 use std::sync::Arc;
 
 use serde::Deserialize;
@@ -93,9 +92,7 @@ pub struct SceneApp {
     view: PlanetView,
     positions: Vec<DVec3>,
     trail_at: f64,
-    yaw: f64,
-    pitch: f64,
-    distance: f64,
+    orbit: crate::orbit_cam::OrbitCam,
 }
 
 impl SceneApp {
@@ -169,7 +166,7 @@ impl SceneApp {
             Err(e) => return Err(format!("look_at: {e}, nor a craft's name")),
         };
         let distance = target_radius * file.distance_radii;
-        let mut app = SceneApp { file, path: path.into(), world, crafts, clocks, running: true, view: PlanetView::default(), positions, trail_at: 0.0, yaw: 0.6, pitch: 0.35, distance };
+        let mut app = SceneApp { file, path: path.into(), world, crafts, clocks, running: true, view: PlanetView::default(), positions, trail_at: 0.0, orbit: crate::orbit_cam::OrbitCam::new(0.6, 0.35, distance) };
         app.update_positions();
         Ok(app)
     }
@@ -220,21 +217,18 @@ impl App for SceneApp {
         }
         if input.pressed(KeyCode::KeyR) {
             if let Ok(fresh) = Self::new(self.file.clone(), &self.path) {
-                let (yaw, pitch, distance) = (self.yaw, self.pitch, self.distance);
+                let (yaw, pitch, distance) = (self.orbit.yaw, self.orbit.pitch, self.orbit.distance);
                 *self = fresh;
-                (self.yaw, self.pitch, self.distance) = (yaw, pitch, distance);
+                (self.orbit.yaw, self.orbit.pitch, self.orbit.distance) = (yaw, pitch, distance);
             }
             return Next::Stay;
         }
         if input.pressed(KeyCode::Space) {
             self.running = !self.running;
         }
-        if input.button_down(MouseButton::Left) || input.button_down(MouseButton::Right) {
-            self.yaw -= input.mouse_delta.x as f64 * 0.006;
-            self.pitch = (self.pitch + input.mouse_delta.y as f64 * 0.006).clamp(-FRAC_PI_2 + 0.01, FRAC_PI_2 - 0.01);
-        }
-        self.yaw += input.axis(KeyCode::ArrowRight, KeyCode::ArrowLeft) as f64 * 1.2 * ctx.dt as f64;
-        self.distance = (self.distance * 0.85f64.powf(input.scroll as f64)).max(10.0);
+        self.orbit.drag(input, &[MouseButton::Left, MouseButton::Right], (-crate::orbit_cam::PITCH_LIMIT, crate::orbit_cam::PITCH_LIMIT));
+        self.orbit.keys(input, ctx.dt as f64, None);
+        self.orbit.zoom(input, ctx.dt as f64, false, (10.0, f64::INFINITY));
         // Its clocks, and only its: realtime steps the crafts; the others move its time.
         if self.running {
             let mut ticks = vec![];
@@ -266,10 +260,7 @@ impl App for SceneApp {
 
     fn camera(&self) -> Camera {
         let target = self.target();
-        let dir = DVec3::new(self.pitch.cos() * self.yaw.sin(), self.pitch.sin(), self.pitch.cos() * self.yaw.cos());
-        let mut camera = Camera { position: target + dir * self.distance, ..Default::default() };
-        camera.look_at(target, universe_engine::glam::Vec3::Y);
-        camera
+        self.orbit.camera(target, universe_engine::glam::DQuat::IDENTITY)
     }
 
     fn draw(&self, frame: &mut Frame, _: &Context) {

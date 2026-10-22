@@ -349,9 +349,7 @@ pub struct PlantApp {
     list: Vec<(String, String)>,
     selected: usize,
     open: Option<(Plant, Vec<RunView>)>,
-    yaw: f64,
-    pitch: f64,
-    distance: f64,
+    orbit: crate::orbit_cam::OrbitCam,
     /// What the camera turns round: the middle of what's laid (view frame).
     centre: DVec3,
     camera: Camera,
@@ -368,7 +366,7 @@ impl PlantApp {
             Some(k) => list.iter().position(|(key, _)| key == k).ok_or_else(|| format!("no layout {k} laid of runs"))?,
             None => 0,
         };
-        let mut app = PlantApp { list, selected, open: None, yaw: 0.7, pitch: 0.5, distance: 300.0, centre: DVec3::ZERO, camera: Camera::default() };
+        let mut app = PlantApp { list, selected, open: None, orbit: crate::orbit_cam::OrbitCam::new(0.7, 0.5, 300.0), centre: DVec3::ZERO, camera: Camera::default() };
         app.go(selected);
         Ok(app)
     }
@@ -384,16 +382,13 @@ impl PlantApp {
             let (lo, hi) = points.fold((DVec3::MAX, DVec3::MIN), |(lo, hi), q| (lo.min(q), hi.max(q)));
             if lo.x <= hi.x {
                 self.centre = view((lo + hi) / 2.0);
-                self.distance = (hi - lo).length().max(20.0) * 0.9;
+                self.orbit.distance = (hi - lo).length().max(20.0) * 0.9;
             }
         }
     }
 
     fn camera_now(&self) -> Camera {
-        let dir = DVec3::new(self.pitch.cos() * self.yaw.sin(), self.pitch.sin(), self.pitch.cos() * self.yaw.cos());
-        let mut camera = Camera { position: self.centre + dir * self.distance, ..Default::default() };
-        camera.look_at(self.centre, Vec3::Y);
-        camera
+        self.orbit.camera(self.centre, universe_engine::glam::DQuat::IDENTITY)
     }
 }
 
@@ -423,12 +418,9 @@ impl App for PlantApp {
         if input.pressed(KeyCode::Enter) {
             self.go(self.selected);
         }
-        if input.button_down(MouseButton::Right) {
-            self.yaw -= input.mouse_delta.x as f64 * 0.006;
-            self.pitch = (self.pitch + input.mouse_delta.y as f64 * 0.006).clamp(0.05, FRAC_PI_2 - 0.01);
-        }
-        self.yaw += input.axis(KeyCode::ArrowRight, KeyCode::ArrowLeft) as f64 * 1.2 * ctx.dt as f64;
-        self.distance = (self.distance * 0.85f64.powf(input.scroll as f64)).clamp(5.0, 5_000.0);
+        self.orbit.drag(input, &[MouseButton::Right], (0.05, crate::orbit_cam::PITCH_LIMIT));
+        self.orbit.keys(input, ctx.dt as f64, None);
+        self.orbit.zoom(input, ctx.dt as f64, false, (5.0, 5_000.0));
         self.camera = self.camera_now();
         Next::Stay
     }
@@ -440,7 +432,7 @@ impl App for PlantApp {
     fn draw(&self, frame: &mut Frame, _: &Context) {
         frame.light = Some(Light { position: DVec3::new(-3.0e11, 6.0e11, 2.0e11), color: [1.0, 0.97, 0.92], luminosity: 1.0, reference: universe_sim::units::AU, radius: 7.0e8 });
         let grid = Color::hex(0x1d2a36);
-        let reach = (self.distance * 0.8).clamp(100.0, 2000.0);
+        let reach = (self.orbit.distance * 0.8).clamp(100.0, 2000.0);
         let mut v = -reach;
         while v <= reach {
             frame.line(DVec3::new(v, 0.0, -reach), DVec3::new(v, 0.0, reach), grid);
