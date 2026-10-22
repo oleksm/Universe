@@ -36,3 +36,8 @@ From the engine review of 2026-10-21 (duplication, fragmentation, control, perfo
     now lets go its longest-unasked past 1,024 and makes patches unlocked; a rock whose distance from the star
     (between its periapsis and apoapsis) can't come within reach is passed over unsolved. Field look 4.1 ->
     2.3 ms (no spikes), the world step 9.1 -> 7.5 ms. Profiler scopes for the flight step's parts.
+5d. Small per-frame work: the PBR uploads' order worked out once per upload (its importance scanned every draw
+    inside the sort's comparisons); ATC's change lists sorted by their text once each (`sort_by_cached_key`,
+    the same order); the pool's releases checked against the frame's mesh index, not a scan. Left as they are,
+    measured small in the busy scene: the pilots' copies of awake ships (0.15 ms: sharing them would put every
+    ship behind an Arc), the crash log's `remove(0)` (a short list), ship shape pairs (already culled by spheres).

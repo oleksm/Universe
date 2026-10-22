@@ -458,7 +458,7 @@ impl PoolStore {
             }
         }
         for id in &pf.releases {
-            if !pf.meshes.iter().any(|m| m.id() == *id) {
+            if !pf.index.contains_key(id) {
                 if let Some((at, len, _, _)) = self.live.remove(id) { self.free.give(at, len); }
             }
         }

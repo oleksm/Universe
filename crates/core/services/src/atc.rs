@@ -280,7 +280,7 @@ impl TrafficControl {
         for (&(system, body), _) in self.corridors.iter().filter(|(_, s)| **s == ship) {
             freed.push(What::CorridorFreed { system, body });
         }
-        freed.sort_by_key(|w| format!("{w:?}"));
+        freed.sort_by_cached_key(|w| format!("{w:?}"));
         for w in freed {
             self.noted(ship, w);
         }
@@ -331,7 +331,7 @@ impl TrafficControl {
                 changes.push((ship, What::PadOccupied { system, port, pad: k }));
             }
         }
-        changes.sort_by_key(|(s, w)| (*s, format!("{w:?}")));
+        changes.sort_by_cached_key(|(s, w)| (*s, format!("{w:?}")));
         for (ship, w) in changes {
             self.noted(ship, w);
         }

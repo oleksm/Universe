@@ -867,7 +867,6 @@ impl PbrRenderer {
             });
             self.retired_pending.push((done, p));
         }
-        let mut ids: Vec<_> = self.pending.keys().copied().collect();
         let importance = |id: &u64| {
             draws
                 .iter()
@@ -878,23 +877,14 @@ impl PbrRenderer {
                 })
                 .fold(0.001, f64::max)
         };
-        ids.sort_by(|a, b| {
-            let pa = &self.pending[a];
-            let pb = &self.pending[b];
-            (!visible.contains(a))
-                .cmp(&(!visible.contains(b)))
-                .then_with(|| {
-                    (now.duration_since(pb.last_served) > std::time::Duration::from_secs(1)).cmp(
-                        &(now.duration_since(pa.last_served) > std::time::Duration::from_secs(1)),
-                    )
-                })
-                .then_with(|| {
-                    ((pa.bytes as f64) / importance(a))
-                        .total_cmp(&((pb.bytes as f64) / importance(b)))
-                })
-                .then(a.cmp(b))
-        });
-        for id in ids {
+        // (Each upload's place worked out once: unseen last, then the longest unserved, then bytes per importance.)
+        let mut keyed: Vec<(bool, bool, f64, u64)> = self
+            .pending
+            .iter()
+            .map(|(&id, p)| (!visible.contains(&id), now.duration_since(p.last_served) <= std::time::Duration::from_secs(1), p.bytes as f64 / importance(&id), id))
+            .collect();
+        keyed.sort_by(|a, b| a.0.cmp(&b.0).then(a.1.cmp(&b.1)).then(a.2.total_cmp(&b.2)).then(a.3.cmp(&b.3)));
+        for id in keyed.into_iter().map(|k| k.3) {
             let job = self.pending.get_mut(&id).unwrap();
             while upload_bytes < 8 * 1024 * 1024
                 && self.upload_spent + frame_start.elapsed() < std::time::Duration::from_millis(2)
