@@ -18,13 +18,18 @@ contents:
 - Stable ID, statement, rationale, source, owner, severity, status and verification IDs.
 - Separate functional constraints, visual identity and preferences.
 - Family/type/instance scope and mappings to concrete runtime identifiers.
-- Feature intake across purpose, shape, occupied spaces, access/motion, visual character and exclusions; each
-  area answered, undecided or not applicable.
+- Feature intake across purpose, shape, occupied spaces, access/motion, visual character and exclusions;
+  each area answered, undecided or not applicable.
 - Per-feature required/preferred/undecided priority, interpretation confirmation status, inherited answers
   and unresolved conflicts.
 - Consolidated brief revision and owner confirmation or explicit delegation; unknowns classified as permitted
   exploration or blockers.
-boundary: Registry owns referenced facts; project requirements must not duplicate or silently override them.
+- Per-feature provenance distinguishing actual owner answers, simulated rehearsal inputs and proposed
+  interpretations; preserve a hashed frozen actual-answer baseline.
+- Confirmation binds the exact brief hash, decision maker, evidence and real-design or rehearsal-only
+  scope; simulated authority never confirms the real brief.
+boundary: Registry owns referenced facts; project requirements must not duplicate or silently override
+  them.
 consumers:
 - ships
 - blender

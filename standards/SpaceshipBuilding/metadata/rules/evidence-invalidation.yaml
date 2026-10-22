@@ -17,35 +17,44 @@ statement: 'Invalidate evidence by dependency and changed hash, retaining indepe
 
   |---|---|---|
 
-  | Hull profile or global scale | Affected form, space, interfaces, collision, mass inputs, export | Unchanged
-  reusable component sources |
+  | Hull profile or global scale | Affected form, space, interfaces, collision, mass inputs, export |
+  Unchanged reusable component sources |
 
-  | Module placement | Mount alignment, routes, access, assembly collision and mass distribution | Module model
-  package |
+  | Module placement | Mount alignment, routes, access, assembly collision and mass distribution | Module
+  model package |
 
-  | Registry mass only | Accounting and dependent load analyses | Geometry if no geometry requirement changed
-  |
+  | Registry mass only | Accounting and dependent load analyses | Geometry if no geometry requirement
+  changed |
 
   | Port datum | Mating, routing, required marker and placement checks | Body mesh unless an actual conflict
   exists |
 
-  | Axis/hierarchy | Bind transforms, motion, connections, swept envelopes and runtime poses | Unrelated static
-  regions |
+  | Axis/hierarchy | Bind transforms, motion, connections, swept envelopes and runtime poses | Unrelated
+  static regions |
 
   | Material/shader | Appearance, export materials and performance | Geometry checks with identical geometry
   inputs |
 
-  | Exporter/toolchain | Raw GLB, materials, transforms, package compatibility | Source design decision, unless
-  output drift changes it |
+  | Exporter/toolchain | Raw GLB, materials, transforms, package compatibility | Source design decision,
+  unless output drift changes it |
 
   | Reference/identity decision | Related visual gates and downstream form evidence | Independent functional
   results where inputs are unchanged |
 
 
-  An accepted design decision reopens only when its premises changed. Every evidence item contains input hashes,
-  not merely a timestamp. The existing runner already supports stale evidence and protected accepted packages;
-  use that mechanism rather than create a second approval database. (Execution-loop contract (external installed
-  workflow reference: `freefall-asset-delivery/references/execution-loop.md`; not bundled))'
+  An accepted design decision reopens only when its premises changed. Every evidence item contains input
+  hashes, not merely a timestamp. The existing runner already supports stale evidence and protected accepted
+  packages; use that mechanism rather than create a second approval database. (Execution-loop contract
+  (external installed workflow reference: `freefall-asset-delivery/references/execution-loop.md`; not
+  bundled))
+
+
+  Bind the brief, confirmation, prompt, generated candidate and review through exact input hashes and
+  the workflow revision. A changed brief invalidates its dependent coverage and prompt; a changed prompt
+  invalidates claims that an existing image was generated from that prompt. Keep earlier inputs and candidates
+  as history. Reconfirm material design choices only; an intent-preserving wording repair does not invent
+  a new approval requirement. Tests must demonstrate rejection of a missing prompt feature, a forged real-owner
+  confirmation using simulated authority and a stale dependent input.'
 applies_to:
 - Invalidate only evidence that depends on the change
 verification:

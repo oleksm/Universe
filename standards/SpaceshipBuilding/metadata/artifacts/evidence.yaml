@@ -16,6 +16,8 @@ contents:
 - Command/arguments, timestamp, reviewer, method, tolerance authority and measured result.
 - Worst-case witness, images, coverage/exclusions and pending/pass/fail/blocked/stale/not-applicable reason.
 - Separate geometry/package/placement/runtime/engineering claim states; explicit waiver owner and invalidation.
+- For G0-G2, frozen actual-answer baseline and exact brief/confirmation/prompt/candidate/review hashes;
+  record real-design versus rehearsal-only authority and independent semantic/visual review.
 boundary: The existing delivery workflow owns acceptance state. This artifact definition is not an evidence
   instance.
 consumers:

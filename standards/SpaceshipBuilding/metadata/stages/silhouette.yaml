@@ -19,7 +19,11 @@ entry:
   choice.
 exit:
 - One coherent alternative selected with registered views and protected landmarks.
-- Sketches reviewed feature by feature; misses and ambiguities resolved or explicitly retained before selection.
+- Sketches reviewed feature by feature; misses and ambiguities resolved or explicitly retained before
+  selection.
+- A rehearsal selection and a real design selection are distinct. Exterior-only feedback cannot close
+  the gate while its rough functional occupancy prerequisite or required observable identity features
+  remain unresolved.
 failure:
 - Keep alternatives; do not erase prior source or mix incompatible features silently.
 inputs:

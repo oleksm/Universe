@@ -17,24 +17,26 @@ contents:
 - Protected landmarks and selected candidate hash, trade-off and decision reference.
 - 'Detailed authored information and examples:
 
-  The proposed default is three inexpensive directions, adjustable when the design problem warrants fewer or
-  more. Use identical camera positions, orthographic framing, lighting and flat materials. Show top, side,
-  front, underside and two three-quarter views. Include one scale fixture and a minimal cockpit/interior occupancy
-  outline; omit panel lines and small hardware.
+  The proposed default is three inexpensive directions, adjustable when the design problem warrants fewer
+  or more. Use identical camera positions, orthographic framing, lighting and flat materials. Show top,
+  side, front, underside and two three-quarter views. Include one scale fixture and a minimal cockpit/interior
+  occupancy outline; omit panel lines and small hardware.
 
 
-  Evaluate first-read character, volume distribution, important negative spaces, cockpit-to-body relation and
-  recognizability at thumbnail size. Select one coherent candidate rather than mixing every appealing feature
-  across alternatives. Record the selected proportions and distinctive landmarks. Numeric image differences
-  are review triggers, not a substitute for aesthetic judgment.
+  Evaluate first-read character, volume distribution, important negative spaces, cockpit-to-body relation
+  and recognizability at thumbnail size. Select one coherent candidate rather than mixing every appealing
+  feature across alternatives. Record the selected proportions and distinctive landmarks. Numeric image
+  differences are review triggers, not a substitute for aesthetic judgment.
 
 
-  The owner packet states one decision, a recommended direction and its main trade-off. It includes the chosen
-  candidate''s input hash and camera set. After approval, a geometry repair that changes the beak, canopy slope,
-  neck constriction or maximum beam location returns to this visual gate if it exceeds agreed guardrails. A
-  normal correction does not.'
-- 'Prompt revision and per-feature review: met, missed, ambiguous or intentionally varied, with visual witnesses
-  and unseen-feature limitations.'
+  The owner packet states one decision, a recommended direction and its main trade-off. It includes the
+  chosen candidate''s input hash and camera set. After approval, a geometry repair that changes the beak,
+  canopy slope, neck constriction or maximum beam location returns to this visual gate if it exceeds agreed
+  guardrails. A normal correction does not.'
+- 'Prompt revision and per-feature review: met, missed, ambiguous or intentionally varied, with visual
+  witnesses and unseen-feature limitations.'
+- Per-feature view/region witnesses and a not-observable outcome for hidden features; prompt mention alone
+  never proves visual compliance. Retain failed alternatives and specific iteration changes.
 boundary: A metric flags visual drift; owner or delegate judges identity.
 consumers:
 - blender
