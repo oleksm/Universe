@@ -86,3 +86,8 @@ From the engine review of 2026-10-21 (duplication, fragmentation, control, perfo
     studio and the apps' host, in place of three copies of the toggle, the port's first opening, the hitch watch,
     the answers and the recorded frames; the game keeps its own "OBSERVING OFF" and F3's debug cycle (now F3
     without SHIFT). Checked live: the game's and an app's port answer /status and /profile.
+18. `hud.rs` (2,120 lines) split along its seams: `hud/pilot.rs` (the pilot's readouts, approach, docking, landing,
+    banner), `hud/markers.rs` (target, contacts, gunsight, overlay, scanner, glare, turrets), `hud/actions.rs`
+    (the action grid and mode bar), `hud/feeds.rs` (news, trades, performance, help); `hud.rs` keeps `draw` and
+    the status strip (378 lines). Moved as they were; captures match. `interior.rs` and `devkit/dev.rs` are the
+    ships session's to split.
