@@ -248,6 +248,12 @@ When packaging conflicts arise, compare local alternatives: move equipment, adju
 
 ### 3.6 Establish readable construction without false engineering claims
 
+Before G2 selection and G3 arrangement acceptance, declare the assembly state plan rather than only an exterior silhouette. Inventory intended openings and their boundaries: stern, cockpit/canopy, belly ramp, gear doors, module interfaces and service penetrations. Give each an owner and intended open/closed condition in every relevant state, with its closure, mating/support geometry, access and any pressure-boundary claim. An engine exhaust is not the same as an unintended hole into occupied space. Unknown closure ownership is an unresolved requirement, not a successful hollow hull; backface shading or a camera that hides the gap cannot close it.
+
+Reserve landing-gear states, stow bays, doors and support structure while they can still affect the silhouette and interior. A retractable design needs actual deployed, stowed and transition envelopes, pivot/support/actuator locations, ground contacts and permitted ramp/gear combinations. Fixed deployed supports require an explicitly authorized limited prototype scope; they do not satisfy requested retractability or explain away a missing required bay. Trace service pipes, hoses and cables from real endpoints through supported routes and owned penetrations. Keep them out of floors, crew paths, gear bays and swept mechanisms; a plausible exposed pipe or floating actuator is not a complete installation.
+
+Reconcile cockpit interfaces with the referenced command module: canopy, sill, roof/neck transition, floor, access opening, structure and module mount. Identify designed seams, clearances and openings separately from unintended gaps or overlaps. Preserve declared direction and ownership across the source, assembly, collision/walking and export representations. These are early packaging decisions, not decorative details to discover during final renders.
+
 Primary structure and openings precede decorative detail. Each substantial external part should have an intelligible attachment path, and each service opening should correspond to access or an explicitly aesthetic purpose. “Looks manufactured” is a visual criterion; actual strength, pressure, thermal and propulsion performance require their own evidence.
 
 Use three detail levels: primary masses/negative spaces, secondary armour/openings/attachments, and tertiary seams/fasteners/markings. No fixed percentage is prescribed. Leave restrained areas deliberately clean. A detail that changes the visible outline at the target distance belongs to silhouette review regardless of its nominal category.
@@ -381,6 +387,12 @@ Before opening or rebuilding a live scene, preserve unsaved work. Keep one activ
 ## 6. Verify the exact artifact and its limits
 
 ### 6.1 Use a complete evidence checklist
+
+Whole-assembly QC starts from an independently reconciled actual component roster, intended state list, relevant interaction pairs and required view matrix. Include hull shell/closures, cockpit, floors, reusable products, landing gear/bays/doors, ramp, both actuator bodies/rods/anchors, pipes/hoses/cables and their supports. Record excluded objects, pairs and states with bounded justification; do not let a name-prefix or parent filter silently define the claimed assembly. Every required state, category, pair and witness must have a current result before aggregating a pass; coverage labels alone are not results.
+
+Inspect the complete assembly closed/rest, open/deployed, at intermediate motion and in permitted combined states. Review stern, underside, cockpit/interface and interior views as well as useful side/top/hero views, with state and camera tied to the evidence. Check expected closures and intended openings separately from collisions or material-mesh manifoldness; an annular end can close wall thickness while leaving the cabin open. Zero intersections or closed material boundaries cannot prove that a stern or canopy closes. Check actuator/pipe versus floor and structure, support/endpoint continuity, gear stowage and clear access throughout. Intended joint contacts require their own seating witnesses, not blanket collision exclusions.
+
+Keep a partial sweep result attached only to its measured subset. A zero-hit ramp-plate-versus-shell test does not cover actuator rods, gear, service runs, closures or cockpit interfaces. Missing, failed, stale, unresolved or unjustifiably excluded required rows prevent whole-assembly acceptance; preserve the failing witness and last passing subset. Forbidden combined states need an interlock contract and separate consumer evidence, not convenient omission. Sampled clearance does not prove continuous freedom, and visual closure is not pressure or structural qualification.
 
 | Check group | Required evidence |
 |---|---|

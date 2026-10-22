@@ -19,12 +19,15 @@ exit:
 - Evaluated geometry, materials, export/collision representations and measured costs have current evidence.
 - Inherited product substitutes are retired and all required module occupied, attachment/tool, install/removal,
   user, motion and service clearances have current scoped evidence; missing data remains unresolved.
+- Complete assembly closed/open/intermediate and permitted combined-state coverage includes stern, underside,
+  cockpit and interior witnesses; no partial sweep substitutes for required rows.
 failure:
 - Repair only the owning region and invalidate downstream evidence by dependency.
 inputs:
 - ship-artifact.region-spec
 - ship-artifact.build-inputs
 - ship-artifact.mechanism-spec
+- ship-artifact.assembly-state-plan
 outputs:
 - ship-artifact.region-spec
 - ship-artifact.performance-budget
@@ -37,10 +40,12 @@ checks:
 - ship-check.raw-port-frames
 - ship-check.construction
 - ship-check.module-clearance
+- ship-check.assembly-state-coverage
 rules:
 - ship-rule.lifecycle
 - ship-rule.authority
 - ship-rule.claim-boundaries
 - ship-rule.module-reuse
+- ship-rule.construction-and-detail
 decision: Carry existing authorization/delegation forward. Owner resolves identity and major aesthetic/scope
   forks; technical roles resolve routine repairs within those constraints.

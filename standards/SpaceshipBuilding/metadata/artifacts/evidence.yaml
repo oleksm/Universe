@@ -20,6 +20,8 @@ contents:
   real-design versus rehearsal-only authority and independent semantic/visual review.
 - Module-clearance requirement/allowance provenance, actual product/frame/pose inputs, fixture/motion/path
   samples and worst-case witnesses; inherited-substitute retirement invalidates dependent outputs.
+- Independent expected/actual assembly part/state/pair/view coverage and reasoned exclusions; closure/support
+  witnesses separate from collision tests, with no subset-to-assembly promotion.
 boundary: The existing delivery workflow owns acceptance state. This artifact definition is not an evidence
   instance.
 consumers:
@@ -49,3 +51,4 @@ checks:
 - ship-check.pilot-15
 - ship-check.pilot-16
 - ship-check.module-clearance
+- ship-check.assembly-state-coverage

@@ -19,11 +19,11 @@ entry:
   choice.
 exit:
 - One coherent alternative selected with registered views and protected landmarks.
-- Sketches reviewed feature by feature; misses and ambiguities resolved or explicitly retained before
-  selection.
-- A rehearsal selection and a real design selection are distinct. Exterior-only feedback cannot close
-  the gate while its rough functional occupancy prerequisite or required observable identity features
-  remain unresolved.
+- Sketches reviewed feature by feature; misses and ambiguities resolved or explicitly retained before selection.
+- A rehearsal selection and a real design selection are distinct. Exterior-only feedback cannot close the gate
+  while its rough functional occupancy prerequisite or required observable identity features remain unresolved.
+- Direction includes an opening/closure, gear/bay, service/support and cockpit interface plan; unresolved installation
+  or state requirements remain explicit before selection.
 failure:
 - Keep alternatives; do not erase prior source or mix incompatible features silently.
 inputs:
@@ -32,6 +32,7 @@ inputs:
 - ship-artifact.sketch-prompt
 outputs:
 - ship-artifact.silhouette-study
+- ship-artifact.assembly-state-plan
 checks:
 - ship-check.identity
 rules:
@@ -39,5 +40,6 @@ rules:
 - ship-rule.authority
 - ship-rule.claim-boundaries
 - ship-rule.feature-intake
+- ship-rule.construction-and-detail
 decision: Carry existing authorization/delegation forward. Owner resolves identity and major aesthetic/scope
   forks; technical roles resolve routine repairs within those constraints.

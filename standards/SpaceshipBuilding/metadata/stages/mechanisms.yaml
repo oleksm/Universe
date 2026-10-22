@@ -17,21 +17,26 @@ entry:
 - Openings, owning structures, permitted states and frame contracts defined.
 exit:
 - Storyboard, supported joints, sample/combined-state evidence and limitations recorded.
+- Complete assembly closed/open/intermediate and permitted combined-state coverage includes stern, underside,
+  cockpit and interior witnesses; no partial sweep substitutes for required rows.
 failure:
 - Rollback the mechanism candidate while retaining shell baseline and witnesses.
 inputs:
 - ship-artifact.interfaces
 - ship-artifact.spatial-layout
 - ship-artifact.region-spec
+- ship-artifact.assembly-state-plan
 outputs:
 - ship-artifact.mechanism-spec
 - ship-artifact.evidence
 checks:
 - ship-check.motion-coverage
 - ship-check.construction
+- ship-check.assembly-state-coverage
 rules:
 - ship-rule.lifecycle
 - ship-rule.authority
 - ship-rule.claim-boundaries
+- ship-rule.construction-and-detail
 decision: Carry existing authorization/delegation forward. Owner resolves identity and major aesthetic/scope
   forks; technical roles resolve routine repairs within those constraints.

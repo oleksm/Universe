@@ -21,6 +21,8 @@ method:
 - Trace each component to a support and compatible interface.
 - Verify intended contact at joint surfaces separately from collision; check actual frame allocation and accounting
   ownership.
+- Check stern/cockpit closure, gear bays, service penetrations and supports in the actual state plan. Zero
+  collision hits cannot prove missing closure geometry or a supported installation.
 evidence:
 - Contact/access witnesses, interface references, BOM ownership and qualified/unqualified links.
 failure: Retain the failing witness and last passing candidate. Block only dependent claims/stages; repair
@@ -29,6 +31,7 @@ scope: construction
 artifacts:
 - ship-artifact.interfaces
 - ship-artifact.region-spec
+- ship-artifact.assembly-state-plan
 coverage: Scope is the declared candidate, inputs, methods and consumer features. No engineering or unsampled/runtime
   claim is inferred.
 rules:

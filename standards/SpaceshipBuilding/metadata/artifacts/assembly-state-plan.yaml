@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=../../schema/ship-artifact.schema.yaml
+identity:
+  key: ship-artifact.assembly-state-plan
+  name: Assembly openings, states and coverage plan
+  about: Which components close, move, connect and need evidence in each state?
+status: draft
+implementation: proposed
+owner: blender
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 3.6 Establish readable construction without false engineering claims
+  note: 'Owner assembly-QC correction, 2026-10-21: closure, gear bays, services and cockpit direction; complete
+    state/pair/view coverage.'
+purpose: Declare closure and installation ownership early, then bind complete assembly QC to actual parts,
+  states, pairs and views.
+contents:
+- Stable actual component IDs and ownership, including inherited/hidden/export geometry, modules, closures,
+  gear/bays, ramp/actuators and service runs/supports.
+- 'Opening register: boundary, owner, intended open/closed state, closure/mating/support geometry, designed
+  seams, crew/pressure implications and unresolved decisions.'
+- Gear deployed/stowed/transition and bay/door envelopes; supports/contacts, actuator anchors, service routes
+  and permitted combinations/interlocks.
+- Cockpit command-module/canopy/sill/roof-neck/floor interfaces, access and module mounts; deliberate gaps
+  distinguished from defects.
+- Independent required component/state/interaction-pair/view matrix, measured coverage, exclusions with authority,
+  aggregate status and retained partial results.
+- Closed/open/intermediate/combined-state stern, underside, cockpit and interior witnesses, exact source/export
+  hashes, sampling limits and consumer status.
+boundary: An early plan may contain bounded unknowns; it does not pass architecture, mechanism, pressure, assembly
+  or runtime acceptance.
+consumers:
+- blender
+- ships
+- registry
+- engine
+depends_on:
+- ship-artifact.requirements
+rules:
+- ship-rule.construction-and-detail
+- ship-rule.claim-boundaries
+checks:
+- ship-check.assembly-state-coverage
+- ship-check.motion-coverage
+- ship-check.construction

@@ -16,6 +16,8 @@ contents:
 - Origin, complete orientation including roll, mating role and registry key if applicable.
 - Permitted transform, occupied volume, tool/insertion/service access and shared boundary continuity intent.
 - Source-to-runtime profile and unique exported marker name mapping.
+- Opening/closure owners and complete mating/support boundaries, cockpit/canopy/module interfaces and service
+  penetrations; intended seams/holes distinguished from defects.
 boundary: Registry interface facts stay upstream; full primary mount transforms cannot be replaced by bounds
   centering.
 consumers:
@@ -29,3 +31,4 @@ checks:
 - ship-check.construction
 - ship-check.raw-port-frames
 - ship-check.assembly
+- ship-check.assembly-state-coverage

@@ -17,6 +17,8 @@ method:
 - Exercise rest, extrema, intermediate and permitted combined states; refine near contact.
 - Measure anchor continuity, actuator reach/overlap, cable seating and supported pose hierarchy.
 - Test interlocks in consumer separately; sampled poses alone do not prove continuous clearance.
+- State all tested and omitted parts/pairs; include actuators, services, gear/bays, floors and cockpit boundaries
+  for full-assembly claims. Aggregate only through complete required coverage.
 evidence:
 - Sampling schedule, worst pose/pair, measured margins, excluded states and runtime status.
 failure: Retain the failing witness and last passing candidate. Block only dependent claims/stages; repair
@@ -25,6 +27,7 @@ scope: motion
 artifacts:
 - ship-artifact.mechanism-spec
 - ship-artifact.evidence
+- ship-artifact.assembly-state-plan
 coverage: Scope is the declared candidate, inputs, methods and consumer features. No engineering or unsampled/runtime
   claim is inferred.
 rules:

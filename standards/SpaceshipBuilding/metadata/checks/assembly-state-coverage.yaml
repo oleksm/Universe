@@ -1,0 +1,62 @@
+# yaml-language-server: $schema=../../schema/ship-check.schema.yaml
+identity:
+  key: ship-check.assembly-state-coverage
+  name: Complete assembly state and view coverage
+  about: Prevent a partial collision sweep or hidden opening from passing whole-assembly QC.
+status: draft
+implementation: mixed
+owner: blender
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 6.1 Use a complete evidence checklist
+  note: 'Owner assembly-QC correction, 2026-10-21: closure, gear bays, services and cockpit direction; complete
+    state/pair/view coverage.'
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 4.2 Resolve the complete ramp and landing mechanism
+  note: 'Owner assembly-QC correction, 2026-10-21: closure, gear bays, services and cockpit direction; complete
+    state/pair/view coverage.'
+method:
+- Reconcile expected versus actual component, state, interaction-pair and view rosters independently of checker
+  name/parent filters; preserve hashes and classify every exclusion with a bounded reason.
+- Cover shell and closures, cockpit/command interfaces, floors/products, gear/bays/doors, ramp, both sides
+  of actuators, services and supports. Include inherited/hidden/export parts relevant to the claim.
+- Inspect complete closed/rest, open/deployed, intermediate and permitted combined configurations, including
+  gear/ramp/access/service interactions. Validate forbidden-state interlocks separately in the consumer.
+- 'Check opening boundaries and intended closure/mating/support geometry independently of collisions. An unclosed
+  stern/cockpit or missing gear bay cannot pass because no meshes intersect. Material-mesh manifoldness alone
+  is insufficient: an annular shell end can leave the occupied enclosure open.'
+- Check actuator/pipe/hose routing through floors, structure and crew paths, endpoint/joint seating and supports;
+  require actual gear stow/transition and bay clearance for retractability claims.
+- Review state-bound stern, underside, cockpit/interface and interior witnesses as well as side/top/hero views.
+  Sparse rays or a beauty render do not prove complete closure or internal assembly.
+- Record measured subset and worst pair/pose. Reject any promotion of a ramp-only or component-only sweep to
+  full assembly, even when all its sampled poses have zero hits.
+- 'Aggregate required rows fail-closed: missing, failed, stale, unresolved or unjustifiably excluded parts/states/pairs/views
+  prevent acceptance. Preserve independent valid subset results and invalidate affected rows after changes.
+  Require actual current outcomes for required pair, state and view rows, not just labels saying they were
+  tested.'
+evidence:
+- Assembly-state plan with independent expected/actual component/state/pair/view reconciliation and reasoned
+  exclusions.
+- Source/export hashes, complete state-view witnesses, closure/interface/support findings, collision/clearance
+  measurements and worst-case poses.
+- Aggregate result explicitly bounded to measured coverage; partial results and unresolved consumer/continuous-motion
+  claims retained.
+failure: Keep the candidate in failed or incomplete assembly review for the affected scope; retain witnesses
+  and repair the owning geometry or missing coverage before dependent G4/G6 and release acceptance.
+scope: assembly
+artifacts:
+- ship-artifact.assembly-state-plan
+- ship-artifact.mechanism-spec
+- ship-artifact.interfaces
+- ship-artifact.module-inventory
+- ship-artifact.evidence
+coverage: Full assembly only for the reconciled declared scope and exact inputs. Subset sweeps, declaration
+  tests and sparse rays cannot establish whole geometry, continuous motion, pressure, structural or runtime
+  qualification.
+rules:
+- ship-rule.claim-boundaries
+- ship-rule.construction-and-detail
+- ship-rule.evidence-invalidation
+limitations:
+- This definition is a review/check contract, not an implemented generic whole-assembly geometry engine.

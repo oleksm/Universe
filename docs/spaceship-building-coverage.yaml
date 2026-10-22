@@ -78,6 +78,7 @@ coverage:
   source_title: Establish readable construction without false engineering claims
   records:
   - ship-rule.construction-and-detail
+  - ship-artifact.assembly-state-plan
 - source_section: '4.1'
   source_title: Use explicit local and global frames
   records:
@@ -154,6 +155,7 @@ coverage:
   - ship-check.assembly
   - ship-check.runtime
   - ship-check.release
+  - ship-check.assembly-state-coverage
 - source_section: '6.2'
   source_title: Store enough evidence to reproduce a result
   records:
@@ -224,10 +226,12 @@ refinements:
 source_document_in_registry: docs/spaceship-building-workflow-proposal.md
 source_sha256_basis: Original research proposal before normalization and subsequent owner refinements; normalized_document_sha256
   identifies the current archived proposal.
-normalized_document_sha256: 2ff53fee062bac2b0b8a4e33eb92eb764167b31c59356f5fc0d13f9e590a0d74
+normalized_document_sha256: 1463946fab32f2ef3d07c03613d0905f7b208d368af21f4e9f287d40ea7f6451
 owner_refinements:
 - Feature-first intake; confirmed consolidated brief; derived prompt before whole-ship sketch.
 - Rehearsal provenance, exact prompt witnesses, hidden-feature limits and stale-input negative cases.
 - Discover existing modules and supported placement consumer before G3 sizing; no custom fit-out substitutes.
 - Audit inherited module substitutes and explicit per-instance occupied, attachment/tool, installation/removal,
   user, motion and service clearances with authority/provisional provenance.
+- Declare opening/closure, gear/bay, service/support and cockpit interfaces at G2/G3; require complete assembly
+  part/state/pair/view evidence at G4/G6 and reject subset-to-whole promotion.
