@@ -28,11 +28,16 @@ impl Weld {
     /// Put `rb` where the weld holds it at `t`, moving with the rail body's
     /// material there.
     pub fn place<B: OnRails>(&self, bodies: &[B], t: f64, positions: &[DVec3], rb: &mut RigidBody) {
+        self.place_moving(bodies, t, positions, velocity(bodies, self.body, t), rb);
+    }
+
+    /// As `place`, the rail body's velocity given (its orbits solved once for all the ships on it).
+    pub fn place_moving<B: OnRails>(&self, bodies: &[B], t: f64, positions: &[DVec3], body_velocity: DVec3, rb: &mut RigidBody) {
         let b = bodies[self.body].rail();
         let rot = b.rotation(t);
         let offset = rot * self.local_position;
         rb.position = positions[self.body] + offset;
-        rb.velocity = velocity(bodies, self.body, t) + b.angular_velocity().cross(offset);
+        rb.velocity = body_velocity + b.angular_velocity().cross(offset);
         rb.orientation = rot * self.local_orientation;
     }
 }

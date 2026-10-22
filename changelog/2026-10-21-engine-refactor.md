@@ -21,3 +21,7 @@ From the engine review of 2026-10-21 (duplication, fragmentation, control, perfo
    made (its worlds read from disk) with the systems cache let go, the first made kept; ephemerides and field
    ephemerides are worked out unlocked; a field's dug rocks are only gathered when its total has changed (a
    flight step asked it, allocating, every time). The 64-system trim runs on insertion only.
+5a. A landed ship's step solved its world's orbits (the planet's and its moons' pull) for its velocity, every ship
+    every step: 1,577 landed ships took 7.8 ms a frame in a busy port scene. The world keeps body velocities as it
+    keeps positions (`velocities_at`, frozen with the rails while ships step side by side; one two-moment cache
+    for both), and `Weld::place_moving` takes it: 2.0 ms. The world step went from 14.8 to 9.1 ms.

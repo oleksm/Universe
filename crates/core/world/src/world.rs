@@ -60,6 +60,8 @@ pub struct World {
     depleted: Mutex<HashMap<(usize, usize), (f64, FieldBodies)>>,
     /// Body positions per system at the last two moments asked for: see `rails_at`.
     rails: Mutex<HashMap<usize, [RailsAt; 2]>>,
+    /// Body velocities the same way: see `velocities_at`.
+    velocities: Mutex<HashMap<usize, [RailsAt; 2]>>,
     /// Each system's contact rules, as their owners registered them (see `rules`).
     rules: Mutex<HashMap<usize, Arc<crate::rules::Rules>>>,
     /// While ships step side by side: what they'll look up, gathered first
@@ -90,6 +92,7 @@ struct Frozen {
     systems: HashMap<usize, Arc<StarSystem>>,
     neighbours: HashMap<usize, Arc<[usize]>>,
     rails: HashMap<(usize, u64), Arc<Vec<DVec3>>>,
+    velocities: HashMap<(usize, u64), Arc<Vec<DVec3>>>,
     ephemerides: HashMap<(usize, u64), Arc<Ephemeris>>,
     turrets: HashMap<usize, Arc<Vec<crate::turrets::Turret>>>,
     rules: HashMap<usize, Arc<crate::rules::Rules>>,
@@ -163,6 +166,7 @@ impl World {
             field_ephemerides: Default::default(),
             depleted: Default::default(),
             rails: Default::default(),
+            velocities: Default::default(),
             rules: Default::default(),
             frozen: None,
             slugs: Vec::new(),
@@ -464,6 +468,7 @@ impl World {
             f.neighbours.insert(i, self.neighbours(i));
             for t in [t0, t1] {
                 f.rails.insert((i, t.to_bits()), self.rails_at(i, t));
+                f.velocities.insert((i, t.to_bits()), self.velocities_at(i, t));
             }
             f.ephemerides.insert((i, t0.to_bits()), self.ephemeris(&sys, t0));
             f.turrets.insert(i, self.turrets_of(i));
@@ -505,20 +510,40 @@ impl World {
     /// moments asked for (each ship's turn runs from the frame's start to its
     /// end, so both are asked for, turn after turn).
     pub fn rails_at(&self, system: usize, t: f64) -> Arc<Vec<DVec3>> {
-        if let Some(p) = self.frozen.as_ref().and_then(|f| f.rails.get(&(system, t.to_bits()))) {
+        let frozen = self.frozen.as_ref().map(|f| &f.rails);
+        self.two_moments(&self.rails, frozen, system, t, |sys, p| sys.positions(t, p))
+    }
+
+    /// How fast the bodies of `system` move at `t` (each up its chain of orbits, solved once for every ship
+    /// that asks: a landed ship or a contact asks every step), kept as `rails_at`.
+    pub fn velocities_at(&self, system: usize, t: f64) -> Arc<Vec<DVec3>> {
+        let frozen = self.frozen.as_ref().map(|f| &f.velocities);
+        self.two_moments(&self.velocities, frozen, system, t, |sys, v| v.extend((0..sys.bodies.len()).map(|i| sys.velocity(i, t))))
+    }
+
+    /// A per-system table at `t`: frozen, or kept for the last two moments asked for, or made (unlocked).
+    fn two_moments(
+        &self,
+        cache: &Mutex<HashMap<usize, [RailsAt; 2]>>,
+        frozen: Option<&HashMap<(usize, u64), Arc<Vec<DVec3>>>>,
+        system: usize,
+        t: f64,
+        make: impl Fn(&StarSystem, &mut Vec<DVec3>),
+    ) -> Arc<Vec<DVec3>> {
+        if let Some(p) = frozen.and_then(|f| f.get(&(system, t.to_bits()))) {
             return p.clone();
         }
-        if let Some(slots) = lock(&self.rails).get(&system)
+        if let Some(slots) = lock(cache).get(&system)
             && let Some((_, p)) = slots.iter().find(|(at, _)| *at == t)
         {
             return p.clone();
         }
         let sys = self.system(system);
         let mut p = Vec::with_capacity(sys.bodies.len());
-        sys.positions(t, &mut p);
+        make(&sys, &mut p);
         let p = Arc::new(p);
-        let mut rails = lock(&self.rails);
-        let slots = rails.entry(system).or_insert_with(|| [(f64::NAN, p.clone()), (f64::NAN, p.clone())]);
+        let mut c = lock(cache);
+        let slots = c.entry(system).or_insert_with(|| [(f64::NAN, p.clone()), (f64::NAN, p.clone())]);
         if !slots.iter().any(|(at, _)| *at == t) {
             slots[1] = std::mem::replace(&mut slots[0], (t, p.clone()));
         }
@@ -677,7 +702,7 @@ impl World {
         };
 
         let mut rigid = ship.rigid();
-        weld.place(&sys.bodies, t, &positions, &mut rigid);
+        weld.place_moving(&sys.bodies, t, &positions, self.velocities_at(system, t)[weld.body], &mut rigid);
         ship.set_rigid(&rigid);
         // On ground that takes ships by contact (a world's): asleep where it
         // lies, never turned in place; any push or turn commanded wakes it,
