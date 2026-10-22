@@ -419,21 +419,6 @@ impl Design {
         Ok(spec)
     }
 
-    /// Built, kept (per set of numbers: turning a knob back finds it again).
-    pub fn spec(&self) -> Result<&'static ClassSpec, String> {
-        use std::collections::HashMap;
-        use std::sync::{Mutex, OnceLock};
-        static BUILT: OnceLock<Mutex<HashMap<String, Result<&'static ClassSpec, String>>>> = OnceLock::new();
-        let key = self.key();
-        let cache = BUILT.get_or_init(Default::default);
-        if let Some(r) = cache.lock().unwrap_or_else(|e| e.into_inner()).get(&key) {
-            return r.clone();
-        }
-        let built = self.build().map(|s| &*Box::leak(Box::new(s)));
-        cache.lock().unwrap_or_else(|e| e.into_inner()).insert(key, built.clone());
-        built
-    }
-
     /// Commissioned: a hull among the others for good (the same numbers,
     /// the same hull).
     pub fn commission(&self) -> Result<Hull, String> {

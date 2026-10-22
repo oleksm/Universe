@@ -73,3 +73,7 @@ From the engine review of 2026-10-21 (duplication, fragmentation, control, perfo
     and the scene app did each with the same lines; `scene::studio_sun` and `scene::ground_grid` for the plant
     and factory apps. Captures match. Not done: one theme for `palette` and `hud_kit` (the HUD's look, a design
     decision for the owner) and splitting `hud.rs`, `interior.rs`, `dev.rs` (the last two the ships session's).
+15. Caches: `Design::spec` leaked a whole hull spec (its shape mesh with it) for every set of knob values and kept
+    it, and nothing called it: gone. Kept, bounded in practice: hull specs per fit (`&'static`, 196 callers rely on
+    it; one per distinct fit), the per-world height caches (one per world with a bake, lines or a land package;
+    physics needs them while ships are there), the contact hulls by shape (guarded against a reused address).
