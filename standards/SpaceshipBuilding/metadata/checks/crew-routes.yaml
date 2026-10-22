@@ -1,0 +1,65 @@
+# yaml-language-server: $schema=../../schema/ship-check.schema.yaml
+identity:
+  key: ship-check.crew-routes
+  name: Crew route continuity and operation by state
+  about: Reject a disconnected or inoperable route even when mechanism meshes do not collide.
+status: draft
+implementation: mixed
+owner: blender
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 3.5 Co-design cockpit, routes and hull
+  note: Owner crew-pathway correction, 2026-10-21; state-bound traversal and operation, with requirement and
+    fixture provenance.
+method:
+- Reconcile required route/state/task/actor rows against the confirmed brief and state plan independently of
+  the checker traversal list. Check actual module/hull arrangement and relevant hidden/export/collision geometry,
+  not endpoint positions or adjacent space labels.
+- Trace each full required route with its actual body/suit/carry envelope and postures; inspect continuous
+  support, floor transitions, slopes/steps, landings, turning, headroom, thresholds, handholds where required and bottleneck
+  witnesses. Raw gap width, bounding-box fit, a centreline or disconnected reachable endpoints cannot establish
+  passage.
+- Check cockpit-to-cabin and cabin-to-exit connections in declared closed/open/intermediate/combined states.
+  A route resting on the ramp must be reevaluated when the ramp opens. Prove a reachable, supported opening/closing
+  sequence instead of requiring a closed door to be passable or silently excluding it.
+- Validate operator/control reach, landing/staging/refuge space and transition paths outside mechanism swept
+  volumes throughout actuation. A clear final pose or empty mechanism-vs-hull sweep does not prove crew operation
+  or recovery.
+- Exercise declared emergency/escape and jam/power-loss recovery sequences, from each required occupied side
+  and state. A release reachable only through the obstruction or a circular interlock/route dependency is a
+  failure. Missing consumer/interlock/manual-operation evidence remains unresolved.
+- Compare measured values only with applicable sourced requirements or explicitly derived criteria retaining
+  source inputs, method, units and authority. Separately label provisional fixture/allowance trials; no invented
+  minimum aisle, height, slope or body size and no promotion of a provisional trial to compliance. A measured
+  dimension without an applicable criterion is a measurement, not pass.
+- Require current row-level outcomes and bound aggregation to the exact actor/task/state scope. Missing, failed,
+  unknown, stale or unjustifiably excluded required rows block the dependent claim. Not-applicable needs authority
+  and evidence; it cannot discard an inconvenient route or requested actor/state.
+- Invalidate affected evidence after hull/floor/ramp/gear/module/control placement, source/export, fixture,
+  requirement or sequence changes. Keep declaration counterexamples separate from actual geometric/task tests
+  and actual engine walking/operation tests.
+evidence:
+- Independent expected/actual route-state-task-actor matrix with scoped current results, source/fixture/model/criterion
+  hashes and authority; reasons for exclusions and unresolved requirements.
+- Full-route sections and state/pose witnesses with measured bottlenecks, continuous support and operating/recovery
+  sequence evidence; method, sampling, representation and consumer limits.
+failure: Retain failed/unknown route witnesses and block affected G3/G4/G6 and release claims. Rework the owning
+  arrangement or obtain missing requirements/fixtures/consumer evidence, then rerun dependent checks. Preserve
+  valid unrelated measurements.
+scope: inhabitation
+artifacts:
+- ship-artifact.crew-route-plan
+- ship-artifact.spatial-layout
+- ship-artifact.assembly-state-plan
+- ship-artifact.mechanism-spec
+- ship-artifact.module-inventory
+- ship-artifact.evidence
+coverage: Only exact declared actors, tasks, states, fixtures and tested representations. Static/sampled proxies
+  do not prove continuous traversal, all populations, emergency safety or runtime operation.
+rules:
+- ship-rule.claim-boundaries
+- ship-rule.evidence-invalidation
+- ship-rule.module-reuse
+limitations:
+- This definition is a reusable review contract, not an implemented generic human-motion or escape certification
+  engine.

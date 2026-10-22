@@ -42,3 +42,4 @@ checks:
 - ship-check.assembly-state-coverage
 - ship-check.motion-coverage
 - ship-check.construction
+- ship-check.crew-routes

@@ -35,6 +35,8 @@ method:
   prevent acceptance. Preserve independent valid subset results and invalidate affected rows after changes.
   Require actual current outcomes for required pair, state and view rows, not just labels saying they were
   tested.'
+- Apply ship-check.crew-routes to continuous support and actor/task/state traversal, reachable operating positions
+  outside mechanism sweeps and declared recovery sequences; collision-only results cannot pass inhabitation.
 evidence:
 - Assembly-state plan with independent expected/actual component/state/pair/view reconciliation and reasoned
   exclusions.
@@ -51,6 +53,7 @@ artifacts:
 - ship-artifact.interfaces
 - ship-artifact.module-inventory
 - ship-artifact.evidence
+- ship-artifact.crew-route-plan
 coverage: Full assembly only for the reconciled declared scope and exact inputs. Subset sweeps, declaration
   tests and sparse rays cannot establish whole geometry, continuous motion, pressure, structural or runtime
   qualification.

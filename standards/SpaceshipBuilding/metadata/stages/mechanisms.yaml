@@ -19,6 +19,8 @@ exit:
 - Storyboard, supported joints, sample/combined-state evidence and limitations recorded.
 - Complete assembly closed/open/intermediate and permitted combined-state coverage includes stern, underside,
   cockpit and interior witnesses; no partial sweep substitutes for required rows.
+- Required crew routes and reachable controls, staging and recovery remain usable through declared mechanism
+  states; zero mechanism collisions alone cannot establish operation or escape.
 failure:
 - Rollback the mechanism candidate while retaining shell baseline and witnesses.
 inputs:
@@ -26,6 +28,7 @@ inputs:
 - ship-artifact.spatial-layout
 - ship-artifact.region-spec
 - ship-artifact.assembly-state-plan
+- ship-artifact.crew-route-plan
 outputs:
 - ship-artifact.mechanism-spec
 - ship-artifact.evidence
@@ -33,6 +36,7 @@ checks:
 - ship-check.motion-coverage
 - ship-check.construction
 - ship-check.assembly-state-coverage
+- ship-check.crew-routes
 rules:
 - ship-rule.lifecycle
 - ship-rule.authority

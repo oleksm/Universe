@@ -24,6 +24,8 @@ exit:
   while its rough functional occupancy prerequisite or required observable identity features remain unresolved.
 - Direction includes an opening/closure, gear/bay, service/support and cockpit interface plan; unresolved installation
   or state requirements remain explicit before selection.
+- Direction includes connected crew routes and operating/staging space across intended ramp/door states before
+  shape selection; unresolved human/suit/carry fixtures and recovery scope remain explicit.
 failure:
 - Keep alternatives; do not erase prior source or mix incompatible features silently.
 inputs:
@@ -33,6 +35,7 @@ inputs:
 outputs:
 - ship-artifact.silhouette-study
 - ship-artifact.assembly-state-plan
+- ship-artifact.crew-route-plan
 checks:
 - ship-check.identity
 rules:

@@ -52,3 +52,4 @@ checks:
 - ship-check.pilot-16
 - ship-check.module-clearance
 - ship-check.assembly-state-coverage
+- ship-check.crew-routes

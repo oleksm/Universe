@@ -51,6 +51,8 @@ contents:
   fit, mechanisms and the selected visual proportions.'
 - Actual selected module clearance/access matrix and inherited geometry ownership; boxes alone do not prove
   containment, traversal, assembly or serviceability.
+- State-bound continuous crew route, operating/refuge and recovery plan with human/suit/carry fixture and criterion
+  provenance; see ship-artifact.crew-route-plan.
 boundary: Provisional fixtures do not certify population coverage or safety; actual gameplay routes need consumer
   checks.
 consumers:
@@ -63,5 +65,6 @@ rules:
 checks:
 - ship-check.inhabitation
 - ship-check.module-clearance
+- ship-check.crew-routes
 depends_on:
 - ship-artifact.module-inventory

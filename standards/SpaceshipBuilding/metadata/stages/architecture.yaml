@@ -27,6 +27,9 @@ exit:
   user, motion and service clearances have current scoped evidence; missing data remains unresolved.
 - Assembly direction resolves required closures and installations; unknown gear bays, service penetrations
   or cockpit boundaries cannot be hidden as later surface detail.
+- Required cockpit/cabin/exit routes, support/landing/turn/headroom and operating/recovery sequences have current
+  state-bound evidence and applicable fixture/criterion provenance; missing or provisional criteria cannot
+  become compliance.
 failure:
 - Reopen the affected shape/arrangement only; keep approved unrelated regions.
 - Missing inventory, product, model or consumer support blocks dependent arrangement/release; record the gap
@@ -36,16 +39,19 @@ inputs:
 - ship-artifact.requirements
 - ship-artifact.module-inventory
 - ship-artifact.assembly-state-plan
+- ship-artifact.crew-route-plan
 outputs:
 - ship-artifact.region-spec
 - ship-artifact.interfaces
 - ship-artifact.spatial-layout
 - ship-artifact.build-inputs
+- ship-artifact.crew-route-plan
 checks:
 - ship-check.hull-geometry
 - ship-check.inhabitation
 - ship-check.assembly
 - ship-check.module-clearance
+- ship-check.crew-routes
 rules:
 - ship-rule.lifecycle
 - ship-rule.authority

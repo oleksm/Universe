@@ -21,6 +21,8 @@ exit:
   user, motion and service clearances have current scoped evidence; missing data remains unresolved.
 - Complete assembly closed/open/intermediate and permitted combined-state coverage includes stern, underside,
   cockpit and interior witnesses; no partial sweep substitutes for required rows.
+- Required crew routes and reachable controls, staging and recovery remain usable through declared mechanism
+  states; zero mechanism collisions alone cannot establish operation or escape.
 failure:
 - Repair only the owning region and invalidate downstream evidence by dependency.
 inputs:
@@ -28,6 +30,7 @@ inputs:
 - ship-artifact.build-inputs
 - ship-artifact.mechanism-spec
 - ship-artifact.assembly-state-plan
+- ship-artifact.crew-route-plan
 outputs:
 - ship-artifact.region-spec
 - ship-artifact.performance-budget
@@ -41,6 +44,7 @@ checks:
 - ship-check.construction
 - ship-check.module-clearance
 - ship-check.assembly-state-coverage
+- ship-check.crew-routes
 rules:
 - ship-rule.lifecycle
 - ship-rule.authority

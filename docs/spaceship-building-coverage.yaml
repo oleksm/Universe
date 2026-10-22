@@ -74,6 +74,7 @@ coverage:
   - ship-artifact.module-inventory
   - ship-rule.module-reuse
   - ship-check.module-clearance
+  - ship-artifact.crew-route-plan
 - source_section: '3.6'
   source_title: Establish readable construction without false engineering claims
   records:
@@ -156,6 +157,7 @@ coverage:
   - ship-check.runtime
   - ship-check.release
   - ship-check.assembly-state-coverage
+  - ship-check.crew-routes
 - source_section: '6.2'
   source_title: Store enough evidence to reproduce a result
   records:
@@ -226,7 +228,7 @@ refinements:
 source_document_in_registry: docs/spaceship-building-workflow-proposal.md
 source_sha256_basis: Original research proposal before normalization and subsequent owner refinements; normalized_document_sha256
   identifies the current archived proposal.
-normalized_document_sha256: 1463946fab32f2ef3d07c03613d0905f7b208d368af21f4e9f287d40ea7f6451
+normalized_document_sha256: b3ab224d9d76065b32d1231d7b7003320dfba7439f7356fedb8786d6130495bd
 owner_refinements:
 - Feature-first intake; confirmed consolidated brief; derived prompt before whole-ship sketch.
 - Rehearsal provenance, exact prompt witnesses, hidden-feature limits and stale-input negative cases.
@@ -235,3 +237,5 @@ owner_refinements:
   user, motion and service clearances with authority/provisional provenance.
 - Declare opening/closure, gear/bay, service/support and cockpit interfaces at G2/G3; require complete assembly
   part/state/pair/view evidence at G4/G6 and reject subset-to-whole promotion.
+- Plan continuous state-bound crew routes and operable/recovery sequences before G2/G3 acceptance; G4/G6 require
+  exact fixture/criterion provenance and row-level current evidence without invented numerical compliance.

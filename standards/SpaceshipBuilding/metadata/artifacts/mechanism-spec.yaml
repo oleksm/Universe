@@ -55,3 +55,4 @@ checks:
 - ship-check.motion-coverage
 - ship-check.runtime
 - ship-check.assembly-state-coverage
+- ship-check.crew-routes
