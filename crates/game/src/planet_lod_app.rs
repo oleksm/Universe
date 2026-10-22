@@ -636,7 +636,7 @@ impl App for PlanetLodApp {
             let aspect = aspect as f32;
             // (Pooled clusters keep no triangles the app can read back: counted from the clusters' own lists.)
             let bd = self.g.bd.clone();
-            std::thread::spawn(move || {
+            crate::background::spawn(move || {
                 let refs: Vec<(&Mesh, DVec3)> = meshes.iter().map(|(m, o)| (m, *o)).collect();
                 let mut k = view_box_count(&cam, aspect, &refs);
                 if let Some((ptr, tris)) = cl_data {

@@ -77,3 +77,8 @@ From the engine review of 2026-10-21 (duplication, fragmentation, control, perfo
     it, and nothing called it: gone. Kept, bounded in practice: hull specs per fit (`&'static`, 196 callers rely on
     it; one per distinct fit), the per-world height caches (one per world with a bake, lines or a land package;
     physics needs them while ships are there), the contact hulls by shape (guarded against a reused address).
+14. The game's background jobs run on one small named pool (`background`, two threads) beside the world's and
+    the pilots': opening a world's land, reading a world's maps, laying the lines round the eye, the planet LOD
+    app's view-box count (a new thread every 0.3 s before). Captures match. Not done: one GPU residency manager
+    (one budget, frame counter and upload allowance for meshes, pool, PBR, globes, world maps): a redesign of
+    the renderer's memory, to plan with the owner, not a refactor.

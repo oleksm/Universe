@@ -100,7 +100,7 @@ impl PlanetView {
                     .globes
                     .get(&(origin, i))
                     .is_some_and(|g| g.lines.is_some());
-                std::thread::spawn(move || {
+                crate::background::spawn(move || {
                     let started = std::time::Instant::now();
                     // (Each read and encoded before the next is read: one image held at a time.)
                     let names = [

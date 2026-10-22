@@ -72,7 +72,7 @@ pub fn draw(near: &mut Near, frame: &mut Frame, key: (usize, usize), sys: &Arc<S
         if stale {
             let slot = Arc::new(Mutex::new(None));
             let (out, sys, lines) = (slot.clone(), sys.clone(), lines.clone());
-            std::thread::spawn(move || {
+            crate::background::spawn(move || {
                 if let Some(laid) = lay(asked, &sys, &lines, eye_local)
                     && let Ok(mut s) = out.lock()
                 {

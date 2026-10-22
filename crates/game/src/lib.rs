@@ -1,5 +1,6 @@
 mod palette;
 mod devenv;
+mod background;
 mod orbit_cam;
 mod devkit;
 mod visuals;

@@ -70,18 +70,15 @@ impl LandView {
         let key = system.bodies[i].key.clone();
         let Some(Ok((dir, _))) = land::ground(&key) else { return };
         let (tx, rx) = mpsc::sync_channel(1);
-        std::thread::Builder::new()
-            .name("land view open".into())
-            .spawn(move || {
-                let t0 = std::time::Instant::now();
-                let app = Ground::open(&PathBuf::from(&dir));
-                match &app {
-                    Ok(_) => log::info!("{key}: land package open in {:.1} s ({})", t0.elapsed().as_secs_f64(), dir.display()),
-                    Err(e) => log::warn!("{key}: land package not opened: {e}"),
-                }
-                let _ = tx.send(app);
-            })
-            .ok();
+        crate::background::spawn(move || {
+            let t0 = std::time::Instant::now();
+            let app = Ground::open(&PathBuf::from(&dir));
+            match &app {
+                Ok(_) => log::info!("{key}: land package open in {:.1} s ({})", t0.elapsed().as_secs_f64(), dir.display()),
+                Err(e) => log::warn!("{key}: land package not opened: {e}"),
+            }
+            let _ = tx.send(app);
+        });
         *slot = Some(LandView { at: (cache, i), state: State::Opening(rx), scale, last: None, log: (0, None) });
     }
 
