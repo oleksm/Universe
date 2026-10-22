@@ -786,6 +786,15 @@ impl Frame {
         draws.last_mut().unwrap().morph = weight.clamp(0.0, 1.0);
     }
 
+    /// Take on what `old`, a frame replaced before it was drawn, asked of the GPU besides drawing: its
+    /// uploads and releases (a release is sent once; lost, its range would stay till pool pressure).
+    pub(crate) fn carry_requests(&mut self, old: &Frame) {
+        self.mesh_uploads.extend(old.mesh_uploads.iter().cloned());
+        self.mesh_releases.extend_from_slice(&old.mesh_releases);
+        self.pool.uploads.extend(old.pool.uploads.iter().cloned());
+        self.pool.releases.extend_from_slice(&old.pool.releases);
+    }
+
     /// Evict streamed pooled geometry once no draw in this frame names it.
     pub fn release_pooled(&mut self, id: u64) { self.pool.releases.push(id); }
 
@@ -1134,6 +1143,17 @@ mod count_tests {
 #[cfg(test)]
 mod pyramid_tests {
     use super::*;
+    /// A frame replaced before it was drawn hands its uploads and releases to the next.
+    #[test]
+    fn replaced_frame_requests_carry_over() {
+        let mesh=crate::PooledMesh::new(&crate::PoolModel {positions:vec![Vec3::ZERO,Vec3::X,Vec3::Y],faces:vec![[0,1,2]],..Default::default()});
+        let mut old=Frame::new(Camera::default(),Vec2::splat(100.),Vec2::splat(100.));
+        old.prepare_pooled(&mesh);old.release_pooled(7);old.release_mesh(9);
+        let mut new=Frame::new(Camera::default(),Vec2::splat(100.),Vec2::splat(100.));
+        new.release_pooled(8);
+        new.carry_requests(&old);
+        assert_eq!(new.pool.releases,vec![8,7]);assert_eq!(new.mesh_releases,vec![9]);assert_eq!(new.pool.uploads.len(),1);
+    }
     #[test]
     fn pyramid_morph_override_preserves_distance_mode_and_explicit_eviction() {
         let mesh=crate::PooledMesh::new(&crate::PoolModel {positions:vec![Vec3::ZERO,Vec3::X,Vec3::Y],faces:vec![[0,1,2]],morph:vec![crate::Morph {offset:Vec3::Z,near:1.,far:2.};3],..Default::default()});

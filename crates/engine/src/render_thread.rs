@@ -114,9 +114,20 @@ impl RenderThread {
             let wait = if saving { std::time::Duration::from_millis(5) } else { left };
             s = ready.wait_timeout(s, wait).unwrap_or_else(|e| e.into_inner()).0;
         }
-        let capture = capture.or_else(|| s.frame.take().and_then(|(_, c)| c));
+        // (A frame replaced before it was drawn hands its requests on: uploads, and releases sent once.)
+        let mut frame = frame;
+        let old = s.frame.take();
+        let capture = match &old {
+            Some((o, c)) => {
+                frame.carry_requests(o);
+                capture.or_else(|| c.clone())
+            }
+            None => capture,
+        };
         s.frame = Some((Box::new(frame), capture));
         ready.notify_one();
+        drop(s);
+        drop(old);
     }
 
     pub fn resize(&self, width: u32, height: u32) {
