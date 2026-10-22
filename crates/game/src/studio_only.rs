@@ -117,7 +117,7 @@ impl App for StudioOnly {
         if ctx.input.pressed(universe_engine::KeyCode::F3) && !shift {
             self.debug = (self.debug+1)%3;
             #[cfg(feature = "dev")]
-            let observing = self.diagnostics.on;
+            let observing = self.diagnostics.observer.on;
             #[cfg(not(feature = "dev"))]
             let observing = false;
             universe_prof::enable(self.debug == 2 || observing);
@@ -155,7 +155,7 @@ impl App for StudioOnly {
         crate::interior::draw(frame, "STUDIO", &self.interior);
         crate::hud::studio_assets(frame, ctx, self.debug);
         #[cfg(feature = "dev")]
-        if self.diagnostics.on {
+        if self.diagnostics.observer.on {
             frame.text(Vec2::new(12., 55.), "OBSERVING  SHIFT+F3 TO STOP", Color::hex(0xe5c778));
         }
     }
@@ -163,42 +163,19 @@ impl App for StudioOnly {
 
 #[cfg(feature = "dev")]
 struct Diagnostics {
-    on: bool,
-    tried: bool,
-    port: Option<std::sync::mpsc::Receiver<crate::devkit::observe::Request>>,
+    observer: crate::devkit::observe::Observing,
     recording: Option<crate::devkit::observe::Recording>,
 }
 #[cfg(feature = "dev")]
 impl Default for Diagnostics {
     fn default() -> Self {
-        Self { on: crate::devenv::observing(), tried: false, port: None, recording: None }
+        Self { observer: crate::devkit::observe::Observing::new(), recording: None }
     }
 }
 #[cfg(feature = "dev")]
 impl StudioOnly {
     fn observe(&mut self, ctx: &mut Context) {
-        use crate::devkit::observe;
-        let shift = ctx.input.shift();
-        if ctx.input.pressed(universe_engine::KeyCode::F3) && shift {
-            if self.diagnostics.on {
-                observe::stop(self, ctx);
-                self.diagnostics.on = false;
-                universe_prof::enable(self.debug == 2);
-            } else {
-                self.diagnostics.on = true;
-                observe::start(self, ctx);
-            }
-        }
-        if !self.diagnostics.tried {
-            if self.diagnostics.on {
-                self.diagnostics.tried = true;
-                self.diagnostics.port = observe::listen();
-                universe_prof::enable(true);
-            }
-        }
-        ctx.watch_hitches = self.diagnostics.on;
-        observe::answer(self, ctx);
-        observe::frame(self, ctx);
+        crate::devkit::observe::serve(self, ctx, |s| &mut s.diagnostics.observer, self.debug);
         // Flush recordings before the app exits through Escape/window navigation.
     }
 }
@@ -212,9 +189,9 @@ impl crate::devkit::observe::Host for StudioOnly {
         serde_json::json!({"renderer":ctx.perf.resources,"assets":crate::visual_assets::snapshot(),"world_visuals":crate::globe_assets::snapshot(),"rock_visuals":crate::rocks::snapshot()})
     }
     fn recording(&mut self) -> &mut Option<crate::devkit::observe::Recording> { &mut self.diagnostics.recording }
-    fn requests(&self) -> Option<&std::sync::mpsc::Receiver<crate::devkit::observe::Request>> { self.diagnostics.port.as_ref() }
-    fn observing(&self) -> bool { self.diagnostics.on }
-    fn profiling(&self) -> bool { self.debug == 2 || self.diagnostics.on }
+    fn requests(&self) -> Option<&std::sync::mpsc::Receiver<crate::devkit::observe::Request>> { self.diagnostics.observer.port() }
+    fn observing(&self) -> bool { self.diagnostics.observer.on }
+    fn profiling(&self) -> bool { self.debug == 2 || self.diagnostics.observer.on }
     fn notify(&mut self, text: String) { log::info!("{text}"); }
     fn graphics(&mut self, _query: &str) -> serde_json::Value {
         serde_json::json!({"supported":false,"reason":"Studio uses the shared canvas; world PBR graphics switches do not apply"})

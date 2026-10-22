@@ -1764,13 +1764,13 @@ fn mode_bar(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
     ];
     // (Debug on, or observing: SHIFT+F3, for whoever's helping.)
     let mut cells = cells;
-    if app.debug > 0 || app.observing {
+    if app.debug > 0 || app.observing.on {
         let label = match &app.recording {
             Some(r) => format!("REC {:.0} S", r.seconds()),
-            None if app.observing => "OBSERVING".into(),
+            None if app.observing.on => "OBSERVING".into(),
             None => "OBSERVE".into(),
         };
-        let lamp = if app.recording.is_some() { Lamp::Hot } else if app.observing { Lamp::On } else { Lamp::Off };
+        let lamp = if app.recording.is_some() { Lamp::Hot } else if app.observing.on { Lamp::On } else { Lamp::Off };
         cells.push(("S+F3".into(), label, lamp));
     }
     // (A mode only with its gear: combat with a weapon fitted, mining with a rig.)

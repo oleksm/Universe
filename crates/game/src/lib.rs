@@ -220,13 +220,10 @@ pub struct App {
     /// What's drawn of what can be (see `graphics`), and its panel open.
     pub graphics: universe_engine::Graphics,
     pub graphics_panel: bool,
-    /// The live observer port's questions (see `observe`), and a recording under way.
-    pub observe_port: Option<std::sync::mpsc::Receiver<observe::Request>>,
+    /// Observing (SHIFT+F3): the live port answering, the profiler and hitch log on (see `observe`); and a
+    /// recording under way.
+    pub observing: observe::Observing,
     pub recording: Option<observe::Recording>,
-    /// The port tried (once: it stays open, answering only while observing).
-    pub observe_tried: bool,
-    /// Observing (SHIFT+F3): the port answering, the profiler and hitch log on.
-    pub observing: bool,
     /// Recent hits, for their sparks.
     pub sparks: Vec<Spark>,
     /// A glTF model shown ahead of the eye (dev: `UNIVERSE_MODEL=file.glb`).
@@ -434,15 +431,9 @@ impl App {
             news_panel: false,
             graphics: graphics::load(),
             graphics_panel: false,
-            observe_port: {
-                observe::clean_up();
-                None
-            },
-            observe_tried: false,
             observing: {
-                let on = crate::devenv::observing();
-                if on { universe_prof::enable(true); }
-                on
+                observe::clean_up();
+                observe::Observing::new()
             },
             recording: None,
             sparks: Vec::new(),
@@ -764,19 +755,9 @@ impl App {
         // SHIFT+F3: observing, for whoever's helping — the live port, the profiler and
         // the hitch log on, and a recording (profile, trace, every frame); again: all off.
         let shift = input.shift();
-        if input.pressed(KeyCode::F3) && shift {
-            if self.observing {
-                observe::stop(self, ctx);
-                self.observing = false;
-                universe_prof::enable(self.debug == 2);
-                self.say("OBSERVING OFF".into());
-            } else {
-                self.observing = true;
-                observe::start(self, ctx);
-            }
-        } else if input.pressed(KeyCode::F3) {
+        if input.pressed(KeyCode::F3) && !shift {
             self.debug = (self.debug + 1) % 3;
-            if !self.observing {
+            if !self.observing.on {
                 universe_prof::enable(self.debug == 2);
             }
         }
@@ -1302,14 +1283,10 @@ impl universe_engine::apps::App for App {
         }
         let dt = ctx.dt as f64;
         // The observer: the live port's questions answered; a recording's frame kept.
-        observe::answer(self, ctx);
-        observe::frame(self, ctx);
         // (Slow frames written down only while observing.)
-        ctx.watch_hitches = self.observing;
-        if self.observing && self.observe_port.is_none() && !self.observe_tried {
-            // The live port, opened the first time observing comes on.
-            self.observe_tried = true;
-            self.observe_port = observe::listen();
+        ctx.watch_hitches = false;
+        if observe::serve(self, ctx, |a| &mut a.observing, self.debug) == Some(false) {
+            self.say("OBSERVING OFF".into());
         }
         if !self.launched {
             self.launched = true;

@@ -82,3 +82,7 @@ From the engine review of 2026-10-21 (duplication, fragmentation, control, perfo
     app's view-box count (a new thread every 0.3 s before). Captures match. Not done: one GPU residency manager
     (one budget, frame counter and upload allowance for meshes, pool, PBR, globes, world maps): a redesign of
     the renderer's memory, to plan with the owner, not a refactor.
+13. Observing (SHIFT+F3, the live port) is one `observe::Observing` and one `observe::serve` for the game, the
+    studio and the apps' host, in place of three copies of the toggle, the port's first opening, the hitch watch,
+    the answers and the recorded frames; the game keeps its own "OBSERVING OFF" and F3's debug cycle (now F3
+    without SHIFT). Checked live: the game's and an app's port answer /status and /profile.

@@ -29,6 +29,60 @@ use universe_engine::Context;
 
 use crate::App;
 
+/// What every observing host keeps: on or off, the live port (tried once, the first time observing comes on:
+/// it stays open, answering only while on).
+#[derive(Default)]
+pub struct Observing {
+    pub on: bool,
+    tried: bool,
+    port: Option<mpsc::Receiver<Request>>,
+}
+
+impl Observing {
+    /// On from the start with `UNIVERSE_OBSERVING` (the profiler with it).
+    pub fn new() -> Self {
+        let on = crate::devenv::observing();
+        if on {
+            universe_prof::enable(true);
+        }
+        Self { on, ..Default::default() }
+    }
+
+    pub fn port(&self) -> Option<&mpsc::Receiver<Request>> {
+        self.port.as_ref()
+    }
+}
+
+/// SHIFT+F3 and the live port, as every host has them: observing toggled (a recording started, or stopped and
+/// written), the port opened the first time it comes on, slow frames watched while on, the port's questions
+/// answered and a recording's frame kept. `state` finds the host's `Observing`; `debug` its F3 level (the
+/// profiler's when observing stops). Some(on): SHIFT+F3 turned it on or off.
+pub fn serve<H: Host>(h: &mut H, ctx: &mut Context, state: fn(&mut H) -> &mut Observing, debug: u8) -> Option<bool> {
+    let mut toggled = None;
+    if ctx.input.pressed(universe_engine::KeyCode::F3) && ctx.input.shift() {
+        if state(h).on {
+            stop(h, ctx);
+            state(h).on = false;
+            universe_prof::enable(debug == 2);
+            toggled = Some(false);
+        } else {
+            state(h).on = true;
+            start(h, ctx);
+            toggled = Some(true);
+        }
+    }
+    let s = state(h);
+    if s.on && !s.tried {
+        s.tried = true;
+        s.port = listen();
+        universe_prof::enable(true);
+    }
+    ctx.watch_hitches |= s.on;
+    answer(h, ctx);
+    frame(h, ctx);
+    toggled
+}
+
 /// Host data is supplied by the current app; transport, recordings and profiling are shared.
 pub trait Host {
     fn status(&self, ctx: &Context) -> Value;
@@ -44,9 +98,9 @@ impl Host for App {
     fn status(&self, ctx: &Context) -> Value { status(self, ctx) }
     fn resources(&self, ctx: &Context) -> Value { resources(self, ctx) }
     fn recording(&mut self) -> &mut Option<Recording> { &mut self.recording }
-    fn requests(&self) -> Option<&mpsc::Receiver<Request>> { self.observe_port.as_ref() }
-    fn observing(&self) -> bool { self.observing }
-    fn profiling(&self) -> bool { self.debug == 2 || self.observing }
+    fn requests(&self) -> Option<&mpsc::Receiver<Request>> { self.observing.port() }
+    fn observing(&self) -> bool { self.observing.on }
+    fn profiling(&self) -> bool { self.debug == 2 || self.observing.on }
     fn notify(&mut self, text: String) { self.say(text); }
     fn graphics(&mut self, query: &str) -> Value {
         for pair in query.split('&').filter(|p| !p.is_empty()) {
@@ -409,9 +463,7 @@ pub fn answer(app: &mut impl Host, ctx: &mut Context) {
 /// of the app is the app's own `App::status`.
 #[derive(Default)]
 pub struct AppObserver {
-    on: bool,
-    tried: bool,
-    port: Option<mpsc::Receiver<Request>>,
+    observer: Observing,
     recording: Option<Recording>,
     debug: u8,
     name: String,
@@ -421,22 +473,21 @@ pub struct AppObserver {
 /// The game's observer for apps on the host (see `AppObserver`); observing from the start with
 /// `UNIVERSE_OBSERVING=1`.
 pub fn service() -> Option<Box<dyn universe_engine::apps::Service>> {
-    let on = crate::devenv::observing();
-    Some(Box::new(AppObserver { on, ..Default::default() }))
+    Some(Box::new(AppObserver { observer: Observing::new(), ..Default::default() }))
 }
 
 impl Host for AppObserver {
     fn status(&self, ctx: &Context) -> Value {
         let own: Value = serde_json::from_str(&self.app).unwrap_or(Value::Null);
-        json!({"mode": "app", "app": self.name, "state": own, "fps": ctx.fps, "debug": self.debug, "observing": self.on, "cpu": cpu()})
+        json!({"mode": "app", "app": self.name, "state": own, "fps": ctx.fps, "debug": self.debug, "observing": self.observer.on, "cpu": cpu()})
     }
     fn resources(&self, ctx: &Context) -> Value {
         json!({"renderer": ctx.perf.resources, "assets": crate::visual_assets::snapshot(), "world_visuals": crate::globe_assets::snapshot(), "rock_visuals": crate::rocks::snapshot()})
     }
     fn recording(&mut self) -> &mut Option<Recording> { &mut self.recording }
-    fn requests(&self) -> Option<&mpsc::Receiver<Request>> { self.port.as_ref() }
-    fn observing(&self) -> bool { self.on }
-    fn profiling(&self) -> bool { self.debug == 2 || self.on }
+    fn requests(&self) -> Option<&mpsc::Receiver<Request>> { self.observer.port() }
+    fn observing(&self) -> bool { self.observer.on }
+    fn profiling(&self) -> bool { self.debug == 2 || self.observer.on }
     fn notify(&mut self, text: String) { log::info!("{text}"); }
     fn graphics(&mut self, _query: &str) -> Value {
         json!({"supported": false, "reason": "this app has no graphics switches of the game's"})
@@ -450,31 +501,11 @@ impl universe_engine::apps::Service for AppObserver {
             self.name = top.name().to_string();
         }
         self.app = top.status();
-        let input = &ctx.input;
-        let shift = input.shift();
-        if input.pressed(universe_engine::KeyCode::F3) && shift {
-            if self.on {
-                stop(self, ctx);
-                self.on = false;
-                universe_prof::enable(self.debug == 2);
-            } else {
-                self.on = true;
-                start(self, ctx);
-            }
-        }
-        // (The port opened the first time observing comes on; it stays open, answering only then.)
-        if self.on && !self.tried {
-            self.tried = true;
-            self.port = listen();
-            universe_prof::enable(true);
-        }
-        ctx.watch_hitches |= self.on;
-        answer(self, ctx);
-        frame(self, ctx);
+        serve(self, ctx, |o| &mut o.observer, debug);
     }
 
     fn draw(&self, frame: &mut universe_engine::Frame, _ctx: &Context) {
-        if self.on {
+        if self.observer.on {
             let rec = self.recording.as_ref().map_or(String::new(), |r| format!("  REC {:.0} S", r.seconds()));
             frame.text(universe_engine::glam::Vec2::new(12.0, frame.size().y - 44.0), &format!("OBSERVING{rec}  SHIFT+F3 TO STOP"), universe_engine::Color::hex(0xe5c778));
         }
